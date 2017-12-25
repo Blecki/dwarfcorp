@@ -727,7 +727,8 @@
       "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_1",
       "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_2",
       "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_3"
-    ]
+    ],
+    "GrassSpreadsHere": true
   },
   {
     "$id": "18",
@@ -893,7 +894,8 @@
       "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_1",
       "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_2",
       "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_3"
-    ]
+    ],
+    "GrassSpreadsHere": true
   },
   {
     "$id": "22",
@@ -1443,6 +1445,7 @@
       "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_1",
       "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_2",
       "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_3"
-    ]
+    ],
+    "GrassSpreadsHere": true
   }
 ]

@@ -84,6 +84,7 @@ namespace DwarfCorp
         public bool IsSoil = false;
         public bool IsSurface = false;
         public bool IsInvincible = false;
+        public bool GrassSpreadsHere = false;
         public Color Tint = Color.White;
         //public bool UseBiomeGrassTint = false;
                 

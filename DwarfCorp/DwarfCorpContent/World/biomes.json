@@ -639,7 +639,7 @@
         "Depth": 128
       }
     ],
-    "GrassDecal": "haunted-grass",
+    "GrassDecal": "cavemoss",
     "ShoreVoxel": "Dirt",
     "ClumpGrass": false,
     "ClumpSize": 30.0,

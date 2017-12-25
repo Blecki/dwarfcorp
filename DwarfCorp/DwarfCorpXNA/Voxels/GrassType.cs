@@ -37,5 +37,6 @@ namespace DwarfCorp
         public String BecomeWhenDecays = null;
         public bool Decay = false;
         public byte InitialDataValue = 0;
+        public bool NeedsSunlight = true;
     }
 }

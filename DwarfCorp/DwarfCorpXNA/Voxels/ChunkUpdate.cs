@@ -60,6 +60,7 @@ namespace DwarfCorp
 
         private static void UpdateChunk(VoxelChunk chunk)
         {
+            var addGrassToThese = new List<Tuple<VoxelHandle, byte>>();
             for (var y = 0; y < VoxelConstants.ChunkSizeY; ++y)
             {
                 // Skip empty slices.
@@ -70,10 +71,14 @@ namespace DwarfCorp
                     {
                         var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
 
+                        // Allow grass to decay
                         if (voxel.GrassType != 0)
                         {
                             var decal = GrassLibrary.GetGrassType(voxel.GrassType);
-                            if (decal.Decay)
+
+                            if (decal.NeedsSunlight && voxel.SunColor < 255)
+                                voxel.GrassType = 0;
+                            else if (decal.Decay)
                             {
                                 voxel.GrassDecay -= 1;
                                 if (voxel.GrassDecay == 0)
@@ -84,7 +89,32 @@ namespace DwarfCorp
                                 }
                             } 
                         }
+                        else if (voxel.Type.GrassSpreadsHere)
+                        {
+
+                            var grassyNeighbors = VoxelHelpers.EnumerateManhattanNeighbors2D(voxel.Coordinate)
+                                .Select(c => new VoxelHandle(voxel.Chunk.Manager.ChunkData, c))
+                                .Where(v => v.IsValid && v.GrassType != 0)
+                                .ToList();
+
+                            if (grassyNeighbors.Count > 0)
+                                if (MathFunctions.RandEvent(0.1f))
+                                    addGrassToThese.Add(Tuple.Create(voxel, grassyNeighbors[MathFunctions.RandInt(0, grassyNeighbors.Count)].GrassType));
+                        }
+
+
+                        
+
                     }
+            }
+
+            foreach (var v in addGrassToThese)
+            {
+                var l = v.Item1;
+                var grassType = GrassLibrary.GetGrassType(v.Item2);
+                if (grassType.NeedsSunlight && l.SunColor != 255)
+                    continue;
+                l.GrassType = v.Item2;
             }
         }
     }
