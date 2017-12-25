@@ -15,6 +15,7 @@ namespace ABTest
             var random = new Random();
             var randomPrisms = 10000;
             var iterations = 100000;
+            var repeat = 10;
             var cubeSize = 128;
             var octtree = new DwarfCorp.OctTreeNode<int>(new Vector3(0, 0, 0), new Vector3(cubeSize, cubeSize, cubeSize));
 
@@ -32,21 +33,49 @@ namespace ABTest
             }
 
             var stopwatch = new Stopwatch();
+            var enumeratorTotal = 0l;
+            var hashTotal = 0l;
+            var total = 0l;
 
-            stopwatch.Start();
-            var totalHit = 0;
-            foreach (var volume in randomVolumes)
-                totalHit += octtree.EnumerateItems(volume).Count();
-            stopwatch.Stop();
-            Console.WriteLine("HIT: " + totalHit + "  - Old speed " + stopwatch.ElapsedTicks);
+            for (var i = 0; i < repeat; ++i)
+            {
+                stopwatch.Start();
+                var totalHit = 0;
+                foreach (var volume in randomVolumes)
+                    totalHit += octtree.EnumerateItems(volume).Count();
+                stopwatch.Stop();
+                enumeratorTotal += stopwatch.ElapsedTicks;
+                Console.WriteLine("HIT: " + totalHit + "  - Old speed " + stopwatch.ElapsedTicks);
 
-            stopwatch.Reset();
-            stopwatch.Start();
-            totalHit = 0;
-            foreach (var volume in randomVolumes)
-                totalHit += octtree.EnumerateItems(volume).Count();
-            stopwatch.Stop();
-            Console.WriteLine("HIT: " + totalHit + "  - Old speed " + stopwatch.ElapsedTicks);
+                stopwatch.Reset();
+                stopwatch.Start();
+                totalHit = 0;
+                foreach (var volume in randomVolumes)
+                {
+                    var hash = new HashSet<int>();
+                    octtree.EnumerateItems(volume, hash);
+                    foreach (var x in hash)
+                        total += x;
+                    totalHit += hash.Count;
+                }
+                stopwatch.Stop();
+                hashTotal += stopwatch.ElapsedTicks;
+                Console.WriteLine("HIT: " + totalHit + "  - New speed " + stopwatch.ElapsedTicks);
+            }
+
+            Console.WriteLine("ENUM: " + enumeratorTotal);
+            Console.WriteLine("HASH: " + hashTotal);
+
+            {
+                var totalHit = 0;
+                foreach (var volume in randomVolumes)
+                    totalHit += octtree.EnumerateItems(volume).Distinct().Count();
+                Console.WriteLine("HIT: " + totalHit);
+            }
+
+            Console.WriteLine(total);
+            Console.WriteLine((float)hashTotal / (float)enumeratorTotal);
+
 
             Console.ReadLine();
         }

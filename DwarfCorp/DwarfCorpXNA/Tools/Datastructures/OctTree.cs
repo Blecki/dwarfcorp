@@ -92,8 +92,8 @@ namespace DwarfCorp
                 if (Children == null)
                     Items.RemoveAll(t => Object.ReferenceEquals(t.Item1, Item.Item1));
                 else
-                    foreach (var child in Children)
-                        child.RemoveFromTree(Item);
+                    for (int i = 0; i < 8; ++i)
+                        Children[i].RemoveFromTree(Item);
             }
         }
 
@@ -116,6 +116,27 @@ namespace DwarfCorp
                                 yield return item;
                     }
                 }   
+            }
+        }
+
+        public void EnumerateItems(BoundingBox SearchBounds, HashSet<T> Into)
+        {
+            lock (Lock)
+            {
+                if (SearchBounds.Intersects(Bounds))
+                {
+                    if (Children == null)
+                    {
+                        for (var i = 0; i < Items.Count; ++i)
+                            if (Items[i].Item2.Intersects(SearchBounds))
+                                Into.Add(Items[i].Item1);
+                    }
+                    else
+                    {
+                        for (var i = 0; i < 8; ++i)
+                            Children[i].EnumerateItems(SearchBounds, Into);
+                    }
+                }
             }
         }
 

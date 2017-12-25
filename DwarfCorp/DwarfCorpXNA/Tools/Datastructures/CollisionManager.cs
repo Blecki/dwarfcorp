@@ -87,16 +87,21 @@ namespace DwarfCorp
 
         public IEnumerable<IBoundedObject> EnumerateIntersectingObjects(BoundingBox box, CollisionType queryType)
         {
+            var hash = new HashSet<IBoundedObject>();
             switch((int) queryType)
             {
                 case (int) CollisionType.Static:
                 case (int) CollisionType.Dynamic:
-                    return Hashes[queryType].EnumerateItems(box);
+                    Hashes[queryType].EnumerateItems(box, hash);
+                    break;
                 case ((int) CollisionType.Static | (int) CollisionType.Dynamic):
-                    return Hashes[CollisionType.Static].EnumerateItems(box).Concat(Hashes[CollisionType.Dynamic].EnumerateItems(box));
+                    Hashes[CollisionType.Static].EnumerateItems(box, hash);
+                    Hashes[CollisionType.Dynamic].EnumerateItems(box, hash);
+                    break;
                 default:
                     throw new InvalidOperationException();
             }
+            return hash;
         }
     }
 }
