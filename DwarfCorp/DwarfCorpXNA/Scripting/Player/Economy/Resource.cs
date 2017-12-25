@@ -120,7 +120,8 @@ namespace DwarfCorp
             Glass,
             Fruit,
             Gourd,
-            Evil
+            Evil,
+            Jolly
         }
 
         public Resource()

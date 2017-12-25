@@ -81,6 +81,7 @@ namespace DwarfCorp
         public PriorityType Priority { get; set; }
         public int MaxAssignable = 1;
         public int CurrentAssigned = 0;
+        public bool ReassignOnDeath = true;
 
         public enum Feasibility
         {
@@ -182,6 +183,7 @@ namespace DwarfCorp
 
         public ActWrapperTask(Act act)
         {
+            ReassignOnDeath = false;
             Script = act;
             Name = Script.Name;
         }

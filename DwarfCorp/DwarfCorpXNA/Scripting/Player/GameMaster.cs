@@ -374,8 +374,7 @@ namespace DwarfCorp
                             orphanedTasks.Add(task);
                         }
                     }
-                    // TODO... other voxel task types
-
+                    // TODO... other tasks here ?
                 }
 
                 foreach (var ent in Faction.Designations.EnumerateEntityDesignations())

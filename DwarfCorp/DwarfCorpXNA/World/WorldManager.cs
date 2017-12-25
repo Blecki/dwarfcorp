@@ -478,6 +478,7 @@ namespace DwarfCorp
 
                 GamePerformance.Instance.StartTrackPerformance("All Asleep");
                 bool allAsleep = Master.AreAllEmployeesAsleep();
+#if !UPTIME_TEST
                 if (SleepPrompt && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
                     var sleepingPrompt = Gui.ConstructWidget(new Gui.Widgets.Confirm
@@ -498,6 +499,7 @@ namespace DwarfCorp
                 {
                     SleepPrompt = true;
                 }
+#endif
                 GamePerformance.Instance.StopTrackPerformance("All Asleep");
             }
 
@@ -710,6 +712,14 @@ namespace DwarfCorp
             if (!ShowingWorld)
                 return;
 
+#if RENDER_VOXEL_ICONS
+            var voxels = VoxelLibrary.RenderIcons(GraphicsDevice, DefaultShader, ChunkManager, -1, -1, 32);
+            using (var stream = new FileStream("voxels.png", FileMode.OpenOrCreate))
+            {
+                GraphicsDevice.SetRenderTarget(null);
+                voxels.SaveAsPng(stream, voxels.Width, voxels.Height);
+            }
+#endif
             GamePerformance.Instance.StartTrackPerformance("Render - RENDER");
             GamePerformance.Instance.StartTrackPerformance("Render - Prep");
 
@@ -751,7 +761,7 @@ namespace DwarfCorp
             GamePerformance.Instance.StopTrackPerformance("Render - Prep");
             GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer");
 
-            #region Draw Selection Buffer.
+#region Draw Selection Buffer.
 
             if (SelectionBuffer == null)
                 SelectionBuffer = new SelectionBuffer(8, GraphicsDevice);
@@ -793,7 +803,7 @@ namespace DwarfCorp
                 GamePerformance.Instance.TrackValueType("SBUFFER RENDERED", false);
 
 
-            #endregion
+#endregion
 
             GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer");
             GamePerformance.Instance.StartTrackPerformance("Render - BG Stuff");

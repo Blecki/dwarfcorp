@@ -423,15 +423,18 @@ namespace DwarfCorp
 
         public class Entities
         {
+            public static string snowman_animation = ProgramData.CreatePath("Entities", "Mudman", "snowman_animation.json");
             public static string mudman_animation = ProgramData.CreatePath("Entities", "Mudman", "mudman_animation.json");
             public static string mudman_projectile = ProgramData.CreatePath("Entities", "Mudman", "mudman-projectile");
-
+            public static string mudball = ProgramData.CreatePath("Entities", "Mudman", "mudball");
+            public static string snowball = ProgramData.CreatePath("Entities", "Mudman", "snowball");
             public class Animals
             {
                 public static string chicken_animations = ProgramData.CreatePath("Entities", "Animals",
                     "chicken_animation.json");
 
                 public static string turkey_animations = ProgramData.CreatePath("Entities", "Animals", "turkey_animation.json");
+                public static string penguin_animations = ProgramData.CreatePath("Entities", "Animals", "penguin_animation.json");
 
                 public static Dictionary<string, string> fowl = new Dictionary<string, string>()
                 {
@@ -443,6 +446,10 @@ namespace DwarfCorp
 
                         "Turkey",
                         turkey_animations
+                    },
+                    {
+                        "Penguin",
+                        penguin_animations
                     }
                 };
 
@@ -661,6 +668,9 @@ namespace DwarfCorp
                 public static string pumpkinvinesprout = ProgramData.CreatePath("Entities", "Plants", "pumpkinvine-sprout");
                 public static string cactus = ProgramData.CreatePath("Entities", "Plants", "cactus");
                 public static string cactussprout = ProgramData.CreatePath("Entities", "Plants", "cactus-sprout");
+                public static string candycane = ProgramData.CreatePath("Entities", "Plants", "candycane");
+                public static string candycane_snow = ProgramData.CreatePath("Entities", "Plants", "candycane-snow");
+                public static string candycanesprout = ProgramData.CreatePath("Entities", "Plants", "candycane-sprout");
             }
             public class Resources
             {

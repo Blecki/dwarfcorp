@@ -86,11 +86,10 @@ namespace DwarfCorp
 
         public override bool ShouldRetry(Creature agent)
         {
-            return EntityToGather != null && 
-                  !EntityToGather.IsDead && 
-                  !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather) && 
-                  agent.AI.Faction.Designations.IsDesignation(EntityToGather, DesignationType.Gather) &&
-                  PlanAct.PathExists(EntityToGather.GetRoot().GetComponent<Physics>().CurrentVoxel, agent.Physics.CurrentVoxel, agent.AI);
+            return EntityToGather != null &&
+                  !EntityToGather.IsDead &&
+                  !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather) &&
+                  agent.AI.Faction.Designations.IsDesignation(EntityToGather, DesignationType.Gather);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

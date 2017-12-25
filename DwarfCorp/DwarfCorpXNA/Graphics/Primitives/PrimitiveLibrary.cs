@@ -87,9 +87,20 @@ namespace DwarfCorp
                     if (member.IsStatic && member.FieldType == typeof(String))
                     {
                         var texture = TextureManager.GetTexture(member.GetValue(null).ToString());
-                        BatchBillboardPrimitives[member.Name] = new BatchBillboardPrimitive(graphics, texture, texture.Width, texture.Height,
-                            new Point(0, 0), texture.Width / 32.0f, texture.Height / 32.0f, false,
-                            treeTransforms, treeTints, treeTints);
+
+                        // lol, worst hack. This should be data driven.
+                        if (member.Name != "candycane")
+                        {
+                            BatchBillboardPrimitives[member.Name] = new BatchBillboardPrimitive(graphics, texture, texture.Width, texture.Height,
+                                new Point(0, 0), texture.Width / 32.0f, texture.Height / 32.0f, false,
+                                treeTransforms, treeTints, treeTints);
+                        }
+                        else
+                        {
+                            BatchBillboardPrimitives[member.Name] = new BatchBillboardPrimitive(graphics, texture, texture.Width, texture.Height,
+                                new Point(0, 0), texture.Width / 32.0f, texture.Height / 32.0f, false,
+                                new List<Matrix>() { treeTransforms[0] }, new List<Color>() { treeTints[0] }, new List<Color>() { treeTints[0] });
+                        }
                     }
 
             }

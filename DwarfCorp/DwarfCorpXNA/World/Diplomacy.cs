@@ -247,6 +247,35 @@ namespace DwarfCorp
                         }
                     }
 
+                    float trustingness = faction.Value.GoodWill;
+
+                    if (trustingness < -0.8f)
+                    {
+                        if (!politics.HasEvent("we just don't trust you"))
+                        {
+                            politics.RecentEvents.Add(new PoliticalEvent()
+                            {
+                                Change = -10.0f, // Make this negative and we get an instant war party rush.
+                                Description = "we just don't trust you",
+                                Duration = forever,
+                                Time = Now
+                            });
+                        }
+                    }
+                    else if (trustingness > 0.8f)
+                    {
+                        if (!politics.HasEvent("we trust you"))
+                        {
+                            politics.RecentEvents.Add(new PoliticalEvent()
+                            {
+                                Change = 10.0f,
+                                Description = "we trust you",
+                                Duration = forever,
+                                Time = Now
+                            });
+                        }
+                    }
+
                     FactionPolitics[pair] = politics;
                 }
 
@@ -400,10 +429,12 @@ namespace DwarfCorp
             return party;
         }
 
-
         public void Update(DwarfTime time, DateTime currentDate, WorldManager world)
         {
             World = world;
+#if UPTIME_TEST
+            return;
+#endif
             var timeSinceLastTrade = world.Time.CurrentDate  - TimeOfLastTrade;
             foreach (var mypolitics in FactionPolitics)
             {

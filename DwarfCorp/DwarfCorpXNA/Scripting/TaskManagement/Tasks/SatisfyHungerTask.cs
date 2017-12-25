@@ -44,6 +44,7 @@ namespace DwarfCorp
     {
         public SatisfyHungerTask()
         {
+            ReassignOnDeath = false;
             Name = "Satisfy Hunger";
             Priority = PriorityType.Medium;
         }

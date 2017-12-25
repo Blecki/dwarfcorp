@@ -1331,8 +1331,11 @@ namespace DwarfCorp
 
         public void AssignTask(Task task)
         {
-            Tasks.Add(task);
-            task.OnAssign(this.Creature);
+            if (!Tasks.Contains(task))
+            {
+                Tasks.Add(task);
+                task.OnAssign(this.Creature);
+            }
         }
 
         public void RemoveTask(Task task)
@@ -1487,8 +1490,25 @@ namespace DwarfCorp
             if (CurrentTask != null)
             {
                 CurrentTask.Cancel();
+                if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
+                {
+                    World.Master.TaskManager.AddTask(CurrentTask);
+                }
             }
             base.Die();
+        }
+
+        public override void Delete()
+        {
+            if (CurrentTask != null)
+            {
+                CurrentTask.Cancel();
+                if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
+                {
+                    World.Master.TaskManager.AddTask(CurrentTask);
+                }
+            }
+            base.Delete();
         }
 
     }

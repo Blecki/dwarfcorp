@@ -80,6 +80,9 @@ namespace DwarfCorp
             RegisterEntity("Snow Pine Tree", (position, data) => new Tree("Pine Tree", world.ComponentManager, position, "snowpine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f), "pinesprout"));
             RegisterEntity("Snow Pine Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Snow Pine Tree", position, "pinesprout", 12));
 
+            RegisterEntity("Candycane", (position, data) => new Tree("Candycane", world.ComponentManager, position, "candycane", ResourceLibrary.ResourceType.Peppermint, data.GetData("Scale", 1.0f), "candycanesprout", false));
+            RegisterEntity("Candycane Sprout", (position, data) => new Seedling(world.ComponentManager, "Candycane", position, "candycanesprout", 12));
+
             RegisterEntity("Palm Tree", (position, data) => new Tree("Palm Tree", world.ComponentManager, position, "palm", ResourceLibrary.ResourceType.Coconut, data.GetData("Scale", 1.0f), "palmsprout"));
             RegisterEntity("Palm Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Palm Tree", position, "palmsprout", 12));
 
@@ -181,8 +184,11 @@ namespace DwarfCorp
             });
             RegisterEntity("Chicken", (position, data) => new Chicken(position, world.ComponentManager, "Chicken", "Chicken"));
             RegisterEntity("Turkey", (position, data) => new Chicken(position, world.ComponentManager, "Turkey", "Turkey"));
-            RegisterEntity("MudGolem", (position, data) => new MudGolem(new CreatureStats(new MudGolemClass(), 0), "Carnivore", world.PlanService, World.Factions.Factions["Carnivore"], world.ComponentManager, "Mud Golem", position));
+            RegisterEntity("Penguin", (position, data) => new Chicken(position, world.ComponentManager, "Penguin", "Penguin"));
+            RegisterEntity("MudGolem", (position, data) => new MudGolem(new CreatureStats(new MudGolemClass(), 0), "dirt_particle", "Carnivore", world.PlanService, World.Factions.Factions["Carnivore"], world.ComponentManager, "Mud Golem", position));
+            RegisterEntity("SnowGolem", (position, data) => new MudGolem(new CreatureStats(new SnowGolemClass(), 0), "snow_particle", "Carnivore", world.PlanService, World.Factions.Factions["Carnivore"], world.ComponentManager, "Snow Golem", position));
             RegisterEntity("Mud", (position, data) => new MudProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
+            RegisterEntity("Snowball", (position, data) => new SnowballProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
             RegisterEntity("Grave", (position, data) => new Grave(world.ComponentManager, position));
             RegisterEntity("Coins", (position, data) => new CoinPileFixture(world.ComponentManager, position));
         }

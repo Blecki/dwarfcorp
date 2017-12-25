@@ -239,7 +239,8 @@ namespace DwarfCorp
             Jungle = 6,
             Waste = 7,
             Cave = 8,
-            HauntedForest = 9
+            HauntedForest = 9,
+            JollyForest = 10
         }
 
 
