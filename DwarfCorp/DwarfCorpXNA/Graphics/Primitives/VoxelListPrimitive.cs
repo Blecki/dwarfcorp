@@ -456,9 +456,11 @@ namespace DwarfCorp
 
                 if (V.Decal != 0)
                 {
-                    var decalType = DecalLibrary.GetGrassType(V.Decal);
+                    var decalTypeID = DecalType.DecodeDecalType(V.Decal);
+                    var decalOrientation = DecalType.DecodeDecalOrientation(V.Decal);
+                    var decalType = DecalLibrary.GetGrassType(decalTypeID);
 
-                    AddDecalGeometry(Into, Cache.AmbientValues, Primitive, V, faceDescriptor, exploredVerts, vertexPositions, vertexColors, vertexTint, decalType);
+                    AddDecalGeometry(Into, Cache.AmbientValues, Primitive, V, faceDescriptor, exploredVerts, vertexPositions, vertexColors, vertexTint, decalType, (byte)decalOrientation);
                 }
             }
             else
@@ -764,11 +766,19 @@ namespace DwarfCorp
             Vector3[] VertexPositions,
             VertexColorInfo[] VertexColors,
             Color[] VertexTints,
-            DecalType Decal)
+            DecalType Decal,
+            byte Orientation)
         {
             var indexOffset = Into.VertexCount;
             var UV = new Vector2(Decal.Tile.X * (1.0f / 16.0f), Decal.Tile.Y * (1.0f / 16.0f));
             var UVBounds = new Vector4(UV.X + 0.001f, UV.Y + 0.001f, UV.X + (1.0f / 16.0f) - 0.001f, UV.Y + (1.0f / 16.0f) - 0.001f);
+            var UVs = new Vector2[faceDescriptor.VertexCount];
+
+            for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
+            {
+                var vertex = Primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
+                UVs[faceVertex] = UV + new Vector2(vertex.Position.X / 16.0f, vertex.Position.Z / 16.0f);
+            }
 
             for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
             {
@@ -776,11 +786,14 @@ namespace DwarfCorp
 
                 AmbientScratchSpace[faceVertex] = VertexColors[faceVertex].AmbientColor;
 
+                var uv = faceVertex + Orientation;
+                uv %= faceDescriptor.VertexCount; // This will only work if the face has 4 verts...
+
                 Into.AddVertex(new ExtendedVertex(
                     VertexPositions[faceVertex] + VertexNoise.GetNoiseVectorFromRepeatingTexture(VertexPositions[faceVertex]),
                     VertexColors[faceVertex].AsColor(),
                     VertexTints[faceVertex],
-                    UV + new Vector2(vertex.Position.X / 16.0f, vertex.Position.Z / 16.0f),
+                    UVs[uv],
                     UVBounds));
             }
 
