@@ -895,7 +895,7 @@
       "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_2",
       "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_3"
     ],
-    "GrassSpreadsHere": true
+    "GrassSpreadsHere": false
   },
   {
     "$id": "22",

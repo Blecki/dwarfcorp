@@ -139,11 +139,7 @@ namespace DwarfCorp
                     var biomeData = BiomeLibrary.Biomes[biome];
 
                     // Don't generate if not on grass type.
-                    // Should check for grass decal.
-                    if (v.Type.Name != biomeData.SoilLayer.VoxelType)
-                        continue;
-
-                    if (v.GrassType != 0 && GrassLibrary.GetGrassType(v.GrassType).Name != biomeData.GrassDecal)
+                    if (v.GrassType == 0 || GrassLibrary.GetGrassType(v.GrassType).Name != biomeData.GrassDecal)
                         continue;
 
                     // Biomes can contain multiple types of mote.

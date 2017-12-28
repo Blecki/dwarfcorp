@@ -91,10 +91,14 @@ namespace DwarfCorp
                         }
                         else if (voxel.Type.GrassSpreadsHere)
                         {
+                            // Spread grass onto this tile - but only from the same biome.
+
+                            var biome = Overworld.GetBiomeAt(voxel.Coordinate.ToVector3());
 
                             var grassyNeighbors = VoxelHelpers.EnumerateManhattanNeighbors2D(voxel.Coordinate)
                                 .Select(c => new VoxelHandle(voxel.Chunk.Manager.ChunkData, c))
                                 .Where(v => v.IsValid && v.GrassType != 0)
+                                .Where(v => biome == Overworld.GetBiomeAt(v.Coordinate.ToVector3()))
                                 .ToList();
 
                             if (grassyNeighbors.Count > 0)
