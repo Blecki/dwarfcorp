@@ -2324,6 +2324,10 @@
       <Name>penguin_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="rail-junctions.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>rail-junctions</Name>
+    </None>
     <None Include="Entities\Animals\Birds\bird0_animation.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>bird0_animation</Name>

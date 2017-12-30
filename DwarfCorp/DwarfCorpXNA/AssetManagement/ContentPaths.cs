@@ -58,6 +58,7 @@ namespace DwarfCorp
         public static string voxel_types = ProgramData.CreatePath("Content", "voxel-types.json");
         public static string grass_types = ProgramData.CreatePath("Content", "grass-types.json");
         public static string decal_types = ProgramData.CreatePath("Content", "decal-types.json");
+        public static string rail_junctions = ProgramData.CreatePath("Content", "rail-junctions.json");
 
         public class Audio
     {

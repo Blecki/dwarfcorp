@@ -1,0 +1,49 @@
+[
+  {
+    "Name": "basic",
+    "Pieces": [
+      {
+        "Offset": "0, 0",
+        "Decal": "rail-straight",
+        "Orientation": "North"
+      }
+    ]
+  },
+
+  {
+    "Name": "small-curve",
+    "Pieces": [
+      {
+        "Offset": "0, 0",
+        "Decal": "rail-small-curve",
+        "Orientation": "North"
+      }
+    ]
+  },
+
+  {
+    "Name": "large-curve",
+    "Pieces": [
+      {
+        "Offset": "0, 0",
+        "Decal": "rail-large-curve-a",
+        "Orientation": "North"
+      },
+      {
+        "Offset": "1, 0",
+        "Decal": "rail-large-curve-b",
+        "Orientation": "North"
+      },
+      {
+        "Offset": "0, 1",
+        "Decal": "rail-large-curve-b",
+        "Orientation": "South"
+      },
+      {
+        "Offset": "1, 1",
+        "Decal": "rail-large-curve-c",
+        "Orientation": "North"
+      }
+    ]
+  }
+]

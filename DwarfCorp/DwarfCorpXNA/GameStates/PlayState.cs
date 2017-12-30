@@ -1991,6 +1991,63 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
+            #region icon_Rail
+
+            var icon_menu_Rail_Return = new FlatToolTray.Icon
+            {
+                Icon = new TileReference("tool-icons", 11),
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
+            };
+
+            var menu_Rail = new FlatToolTray.Tray
+            {
+                Tag = "build rail",
+                ItemSource = new List<Widget>(),
+                OnShown = (widget) =>
+                {
+                    // Dynamically rebuild the tray
+                    widget.Clear();
+                    (widget as FlatToolTray.Tray).ItemSource =
+                        (new Widget[] { icon_menu_Rail_Return }).Concat(
+                            Rail.RailLibrary.EnumeratePatterns()
+                            .Select(data => new FlatToolTray.Icon
+                            {
+                                Tooltip = "Build " + data.Name,
+                                Icon = new TileReference("voxels", 0),
+                                //Todo: Popup info
+                                OnClick = (sender, args) =>
+                                {
+                                    var tool = Master.Tools[GameMaster.ToolMode.BuildRail] as BuildRailTool;
+                                    tool.Pattern = data;
+                                    ChangeTool(GameMaster.ToolMode.BuildRail);
+                                },
+                                Behavior = FlatToolTray.IconBehavior.LeafIcon,
+                                Hidden = false
+                            }));
+                    widget.Construct();
+                    widget.Hidden = false;
+                    widget.Layout();
+                }
+            };
+
+            var icon_RailTool = new FlatToolTray.Icon
+            {
+                Text = "Rail",
+                TextVerticalAlign = VerticalAlign.Below,
+                Icon = new TileReference("tool-icons", 14),
+                Tooltip = "Rail",
+                KeepChildVisible = true,
+                ReplacementMenu = menu_Rail,
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+            };
+
+            #endregion
+
             MainMenu = new FlatToolTray.Tray
             {
                 ItemSource = new Gui.Widget[]
@@ -2004,7 +2061,8 @@ namespace DwarfCorp.GameStates
                     icon_GuardTool,
                     icon_AttackTool,
                     icon_FarmTool,
-                    icon_MagicTool
+                    icon_MagicTool,
+                    icon_RailTool
                 },
                 OnShown = (sender) => ChangeTool(GameMaster.ToolMode.SelectUnits),
                 Tag = "tools"
@@ -2032,7 +2090,8 @@ namespace DwarfCorp.GameStates
                     menu_ResourceTypes,
                     menu_RoomTypes,
                     menu_WallTypes,
-                    menu_Floortypes
+                    menu_Floortypes,
+                    menu_Rail
                 },
                 /*OnLayout = (sender) =>
                 {

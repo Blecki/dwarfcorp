@@ -37,6 +37,7 @@ namespace DwarfCorp
             Craft,
             MoveObjects,
             DeconstructObjects,
+            BuildRail,
             God
         }
 
@@ -223,6 +224,11 @@ namespace DwarfCorp
             };
 
             Tools[ToolMode.DeconstructObjects] = new DeconstructObjectTool()
+            {
+                Player = this
+            };
+
+            Tools[ToolMode.BuildRail] = new BuildRailTool()
             {
                 Player = this
             };
