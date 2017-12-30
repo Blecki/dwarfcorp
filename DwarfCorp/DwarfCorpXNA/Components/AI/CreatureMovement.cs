@@ -538,9 +538,368 @@ namespace DwarfCorp
             public float Speed = 1.0f;
         }
 
+        private GameComponent GetBodyAt(VoxelHandle voxel, CollisionManager objectHash, string tag)
+        {
+            return objectHash.EnumerateIntersectingObjects(voxel.GetBoundingBox(),
+                CollisionManager.CollisionType.Static).OfType<GameComponent>().FirstOrDefault(component => component.Tags.Contains(tag));
+        }
+
+
+        public IEnumerable<MoveAction> GetInverseMoveActions(VoxelHandle voxel)
+        {
+            if (!voxel.IsValid || !voxel.IsEmpty)
+                yield break;
+
+            CollisionManager objectHash = Creature.Manager.World.CollisionManager;
+
+            var neighborHood = GetNeighborhood(voxel);
+            bool inWater = (neighborHood[1, 1, 1].IsValid && neighborHood[1, 1, 1].WaterCell.WaterLevel > WaterManager.inWaterThreshold);
+            bool standingOnGround = (neighborHood[1, 0, 1].IsValid && !neighborHood[1, 0, 1].IsEmpty);
+            bool topCovered = (neighborHood[1, 2, 1].IsValid && !neighborHood[1, 2, 1].IsEmpty);
+            bool hasNeighbors = HasNeighbors(neighborHood);
+            bool isClimbing = false;
+
+            var successors = new List<MoveAction>();
+
+            if (CanClimb)
+            {
+                var ladderAt = GetBodyAt(voxel, objectHash, "Climbable");
+                var ladderAbove = GetBodyAt(VoxelHelpers.GetVoxelAbove(voxel), objectHash, "Climbable");
+                var ladderBelow = GetBodyAt(VoxelHelpers.GetNeighbor(voxel, new GlobalVoxelOffset(0, -1, 0)), objectHash, "Climbable");
+                // If there was a ladder above the creature, we could have climbed down it to get here.
+                if (ladderAbove != null)
+                {
+                    successors.Add(new MoveAction
+                    {
+                        Diff = new Vector3(1, 2, 1),
+                        MoveType = MoveType.Climb,
+                        InteractObject = ladderAbove
+                    });
+                }
+
+                // If there was a ladder below the creature, we could have climbed up to get here.
+                if (ladderBelow != null)
+                {
+                    successors.Add(new MoveAction
+                    {
+                        Diff = new Vector3(1, 0, 1),
+                        MoveType = MoveType.Climb,
+                        InteractObject = ladderBelow
+                    });
+                }
+
+                if (ladderAt != null)
+                {
+                    standingOnGround = true;
+                    isClimbing = true;
+                }
+            }
+
+            // If the creature can climb walls, check to see if there are any walls nearby that we could have climbed here from.
+            if (CanClimbWalls && !topCovered)
+            {
+
+                // First check the voxel above to see if it has any walls nearby.
+                if (!topCovered)
+                {
+                    var wallsAbove = new VoxelHandle[]
+                    {
+                        neighborHood[2, 2, 1], neighborHood[0, 2, 1], neighborHood[1, 2, 2],
+                        neighborHood[1, 2, 0]
+                    };
+                    var wallAbove = VoxelHandle.InvalidHandle;
+                    foreach (var w in wallsAbove)
+                        if (w.IsValid && !w.IsEmpty)
+                        {
+                            wallAbove = w;
+                            break;
+                        }
+                   
+
+                    // If there was a wall above us, we could have climbed down to get here.
+                    if (wallAbove.IsValid)
+                    {
+                        successors.Add(new MoveAction
+                        {
+                            Diff = new Vector3(1, 2, 1),
+                            MoveType = MoveType.ClimbWalls,
+                            ActionVoxel = wallAbove
+                        });
+                    }
+                }
+
+                // Now check the walls below
+                if (!standingOnGround)
+                {
+                    var wallsBelow = new VoxelHandle[]
+                    {
+                        neighborHood[2, 0, 1], neighborHood[0, 0, 1], neighborHood[1, 0, 2],
+                        neighborHood[1, 0, 0]
+                    };
+                    var wallBelow = VoxelHandle.InvalidHandle;
+                    foreach (var w in wallsBelow)
+                        if (w.IsValid && !w.IsEmpty)
+                        {
+                            wallBelow = w;
+                            break;
+                        }
+
+
+                    // If there was a wall below us, we could have climbed up to get here.
+                    if (wallBelow.IsValid)
+                    {
+                        successors.Add(new MoveAction
+                        {
+                            Diff = new Vector3(1, 0, 1),
+                            MoveType = MoveType.ClimbWalls,
+                            ActionVoxel = wallBelow
+                        });
+                    }
+                }
+            }
+
+            // If the creature either can walk or is in water, add the 
+            // eight-connected free neighbors around the voxel.
+            if (CanWalk || CanSwim)
+            {
+                // If the creature is in water, it can swim. Otherwise, it will walk.
+                var moveType = inWater ? MoveType.Swim : MoveType.Walk;
+                if (neighborHood[0, 1, 1].IsValid &&
+                    neighborHood[0, 1, 1].IsEmpty)
+                {
+                    if (moveType == MoveType.Swim || (neighborHood[0, 0, 1].IsValid &&
+                    !neighborHood[0, 0, 1].IsEmpty))
+                    {
+                        successors.Add(new MoveAction
+                        {
+                            Diff = new Vector3(0, 1, 1),
+                            MoveType = moveType
+                        });
+                    }
+                }
+
+                if (neighborHood[2, 1, 1].IsValid && neighborHood[2, 1, 1].IsEmpty)
+                {
+                    if (moveType == MoveType.Swim || (neighborHood[2, 0, 1].IsValid &&
+                    !neighborHood[2, 0, 1].IsEmpty))
+                    {
+                        successors.Add(new MoveAction
+                        {
+                            Diff = new Vector3(2, 1, 1),
+                            MoveType = moveType
+                        });
+                    }
+                }
+
+
+                if (neighborHood[1, 1, 0].IsValid && neighborHood[1, 1, 0].IsEmpty)
+                {
+                    if (moveType == MoveType.Swim || (neighborHood[1, 0, 0].IsValid &&
+                    !neighborHood[1, 0, 0].IsEmpty))
+                    {
+                        successors.Add(new MoveAction
+                        {
+                            Diff = new Vector3(1, 1, 0),
+                            MoveType = moveType
+                        });
+                    }
+                }
+
+                if (neighborHood[1, 1, 2].IsValid && neighborHood[1, 1, 2].IsEmpty)
+                {
+                    if (moveType == MoveType.Swim || (neighborHood[1, 0, 2].IsValid &&
+                    !neighborHood[1, 0, 2].IsEmpty))
+                    {
+                        successors.Add(new MoveAction
+                        {
+                            Diff = new Vector3(1, 1, 2),
+                            MoveType = moveType
+                        });
+                    }
+                }
+
+                // Only bother worrying about 8-connected movement if there are
+                // no full neighbors around the voxel.
+                if (!hasNeighbors)
+                {
+                    if (neighborHood[2, 1, 2].IsValid && neighborHood[2, 1, 2].IsEmpty)
+                    {
+                        if (moveType == MoveType.Swim || (neighborHood[2, 0, 2].IsValid &&
+                        !neighborHood[2, 0, 2].IsEmpty))
+                        {
+                            successors.Add(new MoveAction
+                            {
+                                Diff = new Vector3(2, 1, 2),
+                                MoveType = moveType
+                            });
+                        }
+                    }
+
+                    if (neighborHood[2, 1, 0].IsValid && neighborHood[2, 1, 0].IsEmpty)
+                    {
+                        if (moveType == MoveType.Swim || (neighborHood[2, 0, 0].IsValid &&
+                        !neighborHood[2, 0, 0].IsEmpty))
+                        {
+                            successors.Add(new MoveAction
+                            {
+                                Diff = new Vector3(2, 1, 0),
+                                MoveType = moveType
+                            });
+                        }
+                    }
+
+                    if (neighborHood[0, 1, 2].IsValid && neighborHood[0, 1, 2].IsEmpty)
+                    {
+                        if (moveType == MoveType.Swim || (neighborHood[0, 0, 2].IsValid &&
+                        !neighborHood[0, 0, 2].IsEmpty))
+                        {
+                            successors.Add(new MoveAction
+                            {
+                                Diff = new Vector3(0, 1, 2),
+                                MoveType = moveType
+                            });
+                        }
+                    }
+
+                    if (neighborHood[0, 1, 0].IsValid && neighborHood[0, 1, 0].IsEmpty)
+                    {
+                        if (moveType == MoveType.Swim || (neighborHood[0, 0, 0].IsValid &&
+                        !neighborHood[0, 0, 0].IsEmpty))
+                        {
+                            successors.Add(new MoveAction
+                            {
+                                Diff = new Vector3(0, 1, 0),
+                                MoveType = moveType
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Now a somewhat tricky part. We've got to figure out which cells can jump to this cell.
+            // The rules for jumping are as follows:
+            // 1) The voxel must be exactly 1 below this one.
+            // 2) The voxel must be exactly 1 away in the other dimensions
+            // 3) The voxel above the one we're jumping from must be free.
+            // 4) The voxel below the one we're jumping from must be filled, or be in water, or
+            //    must be part of a climb action.
+            // Step 4 is really hard, so let's ignore it for now.
+
+            // First, check the 3x3 neighborhood around the voxel.
+            if (standingOnGround)
+            {
+                for (int dx = 0; dx <= 2; dx++)
+                {
+                    for (int dz = 0; dz <= 2; dz++)
+                    {
+                        // Ignore the current voxel (can't jump from there)
+                        if (dx == 1 && dz == 1) continue;
+                        // Can't jump from neighbor because neighbor's head isn't clear.
+                        if (!(neighborHood[dx, 1, dz].IsValid && neighborHood[dx, 1, dz].IsEmpty)) continue;
+                        
+                        // Now just assume we can jump from the neighbor below us. TODO (step 4)
+                        successors.Add(new MoveAction
+                        {
+                            Diff = new Vector3(dx, 0, dz),
+                            MoveType = MoveType.Jump
+                        });
+                    }
+                }
+            }
+
+
+            // If the creature is not in water and is not standing on ground,
+            // it can fall one voxel downward in free space. So check the voxel above,
+            // if it is free and has no water, then we could have fallen from it.
+            if (neighborHood[1, 2, 1].IsValid && neighborHood[1, 2, 1].IsEmpty && neighborHood[1, 2, 1].WaterCell.WaterLevel == 0)
+            {
+                successors.Add(new MoveAction
+                {
+                    Diff = new Vector3(1, 2, 1),
+                    MoveType = MoveType.Fall
+                });
+            }
+
+            // If the creature can fly and is not underwater, it can fly
+            // to any adjacent empty cell. Luckily this is reversible so we don't have to change
+            // anything from GetMoveactions
+            if (CanFly && !inWater)
+            {
+                for (int dx = 0; dx <= 2; dx++)
+                {
+                    for (int dz = 0; dz <= 2; dz++)
+                    {
+                        for (int dy = 0; dy <= 2; dy++)
+                        {
+                            if (dx == 1 && dz == 1 && dy == 1) continue;
+
+                            if (!neighborHood[dx, 1, dz].IsValid || neighborHood[dx, 1, dz].IsEmpty)
+                            {
+                                successors.Add(new MoveAction
+                                {
+                                    Diff = new Vector3(dx, dy, dz),
+                                    MoveType = MoveType.Fly
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Now, validate each move action that the creature might take.
+            foreach (MoveAction v in successors)
+            {
+                var n = neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
+                if (n.IsValid && (n.IsEmpty || n.WaterCell.WaterLevel > 0))
+                {
+                    // Do one final check to see if there is an object blocking the motion.
+                    bool blockedByObject = false;
+                    var objectsAtNeighbor = Creature.Manager.World.CollisionManager.EnumerateIntersectingObjects(
+                        n.GetBoundingBox(), CollisionManager.CollisionType.Static);
+
+                    // If there is an object blocking the motion, determine if it can be passed through.
+
+                    foreach (var body in objectsAtNeighbor.OfType<GameComponent>())
+                    {
+                        var door = body.GetRoot().EnumerateAll().OfType<Door>().FirstOrDefault();
+                        // If there is an enemy door blocking movement, we can destroy it to get through.
+                        if (door != null)
+                        {
+                            if (
+                                Creature.World.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
+                                    .GetCurrentRelationship() !=
+                                Relationship.Loving)
+                            {
+                                if (Can(MoveType.DestroyObject))
+                                    yield return (new MoveAction
+                                    {
+                                        Diff = -(v.Diff - Vector3.One),
+                                        MoveType = MoveType.DestroyObject,
+                                        InteractObject = door,
+                                        DestinationVoxel = voxel,
+                                        SourceVoxel = n
+                                    });
+                                blockedByObject = true;
+                            }
+                        }
+                    }
+
+                    // If no object blocked us, we can move freely as normal.
+                    if (!blockedByObject)
+                    {
+                        MoveAction newAction = v;
+                        newAction.Diff = -(v.Diff - Vector3.One);
+                        newAction.DestinationVoxel = voxel;
+                        newAction.SourceVoxel = n;
+                        yield return newAction;
+                    }
+                }
+            }
+        }
+
         // Inverts GetMoveActions. So, returns the list of move actions whose target is the current voxel.
         // Very, very slow.
-        public IEnumerable<MoveAction> GetInverseMoveActions(VoxelHandle current)
+        public IEnumerable<MoveAction> GetInverseMoveActions_Naive(VoxelHandle current)
         {
             foreach (var v in VoxelHelpers.EnumerateAllNeighbors(current.Coordinate)
                 .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))

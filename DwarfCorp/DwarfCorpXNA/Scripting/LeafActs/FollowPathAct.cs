@@ -95,9 +95,10 @@ namespace DwarfCorp
             }
             for (int i = 0; i < path.Count - 1; i++)
             {
-                if (!path[i].DestinationVoxel.IsEmpty) return false;
-                var neighbors = Agent.Movement.GetMoveActions(path[i].DestinationVoxel);
-                if (!neighbors.Any(n => n.DestinationVoxel == path[i + 1].DestinationVoxel))
+                if (!path[i].SourceVoxel.IsValid) continue;
+                if (!path[i].SourceVoxel.IsEmpty) return false;
+                var neighbors = Agent.Movement.GetMoveActions(path[i].SourceVoxel);
+                if (!neighbors.Any(n => n.DestinationVoxel == path[i + 1].SourceVoxel))
                     return false;
             }
             return true;
@@ -115,11 +116,17 @@ namespace DwarfCorp
             {
                 hasNextAction = true;
                 nextAction = Path[nextID];
-                if (nextAction.DestinationVoxel.IsValid)
+                if (nextAction.SourceVoxel.IsValid)
                 {
-                    diff = (nextAction.DestinationVoxel.WorldPosition + half - (action.DestinationVoxel.WorldPosition + half));
+                    diff = (nextAction.SourceVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half));
                     diffNorm = diff.Length();
                 }
+            }
+            else
+            {
+                diff = (action.DestinationVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half));
+                diffNorm = diff.Length();
+                hasNextAction = true;
             }
             float unitTime = (1.25f / (Agent.Stats.BuffedDex + 0.001f) + RandomTimeOffset) /
                              Agent.Movement.Speed(action.MoveType);
@@ -162,8 +169,7 @@ namespace DwarfCorp
                     i++;
                 }
                 Vector3 half = GetBoundingBoxOffset();
-                //Todo: Find replace .WorldPosition -> .WorldPosition
-                RandomPositionOffsets[0] = Agent.Position - (Path[0].DestinationVoxel.WorldPosition + half);
+                RandomPositionOffsets[0] = Agent.Position - (Path[0].SourceVoxel.WorldPosition + half);
                 TrajectoryTimer = new Timer(time, true);
                 return true;
             }
@@ -174,9 +180,9 @@ namespace DwarfCorp
         {
             Vector3 half = GetBoundingBoxOffset();
 
-            if (!Path[0].DestinationVoxel.IsValid)
+            if (!Path[0].SourceVoxel.IsValid)
                 yield break;
-            Vector3 target = Path[0].DestinationVoxel.WorldPosition + half + RandomPositionOffsets[0];
+            Vector3 target = Path[0].SourceVoxel.WorldPosition + half + RandomPositionOffsets[0];
             Matrix transform = Agent.Physics.LocalTransform;
             do
             {
@@ -236,14 +242,19 @@ namespace DwarfCorp
             bool hasNextAction = false;
             Vector3 half = GetBoundingBoxOffset();
             Vector3 nextPosition = Vector3.Zero;
-            Vector3 currPosition = action.DestinationVoxel.WorldPosition + half;
+            Vector3 currPosition = action.SourceVoxel.WorldPosition + half;
 
             currPosition += RandomPositionOffsets[currentIndex];
             if (nextID < Path.Count)
             {
                 hasNextAction = true;
-                nextPosition = Path[nextID].DestinationVoxel.WorldPosition;
+                nextPosition = Path[nextID].SourceVoxel.WorldPosition;
                 nextPosition += RandomPositionOffsets[nextID] + half;
+            }
+            else
+            {
+                hasNextAction = true;
+                nextPosition = action.DestinationVoxel.WorldPosition + half;
             }
 
             Matrix transform = Agent.Physics.LocalTransform;
@@ -405,8 +416,10 @@ namespace DwarfCorp
                 {
                     List<Vector3> points =
                         Path.Select(
-                            (v, i) => v.DestinationVoxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f) + RandomPositionOffsets[i])
+                            (v, i) => v.SourceVoxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f) + RandomPositionOffsets[i])
                             .ToList();
+                    points.Add(Path[Path.Count - 1].DestinationVoxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f));
+
                     List<Color> colors =
                             Path.Select((v, i) =>
                             {
@@ -432,6 +445,7 @@ namespace DwarfCorp
                                 return Color.White;
                             })
                             .ToList();
+                    colors.Add(Color.White);
                     Drawer3D.DrawLineList(points, colors, 0.1f);
                 }
 

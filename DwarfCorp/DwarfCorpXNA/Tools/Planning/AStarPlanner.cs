@@ -79,6 +79,7 @@ namespace DwarfCorp
             // the path is reversed, and source/destination of edges need to be flipped
             // keeping in mind the "cameFrom" terminology from A*
             toReturn.Reverse();
+            /*
             for (int i = 0; i < toReturn.Count; i++)
             {
                 var a = toReturn[i];
@@ -87,6 +88,7 @@ namespace DwarfCorp
                 a.DestinationVoxel = temp;
                 toReturn[i] = a;
             }
+            */
             return toReturn;
         }
 
@@ -95,19 +97,52 @@ namespace DwarfCorp
             Dictionary<VoxelHandle, MoveAction> cameFrom, MoveAction currentNode)
         {
             var toReturn = new List<MoveAction>() { currentNode };
-            while (!goal.IsInGoalRegion(currentNode.DestinationVoxel) && cameFrom.ContainsKey(currentNode.DestinationVoxel))
+            while (true)
             {
+                if (!cameFrom.ContainsKey(currentNode.DestinationVoxel))
+                    break;
                 currentNode = cameFrom[currentNode.DestinationVoxel];
                 toReturn.Add(currentNode);
+
+                /*
+                for (int frames = 0; frames < 6; frames++)
+                {
+                    var sourceColor = goal.IsInGoalRegion(currentNode.SourceVoxel) ? Color.Green : Color.Red;
+                    Drawer3D.DrawLine(currentNode.SourceVoxel.WorldPosition + Vector3.One * 0.5f,
+                           currentNode.DestinationVoxel.WorldPosition + Vector3.One * 0.5f, Color.Red, 0.1f);
+                    Drawer3D.DrawBox(currentNode.SourceVoxel.GetBoundingBox(), sourceColor, 0.1f, true);
+                    Drawer3D.DrawBox(currentNode.DestinationVoxel.GetBoundingBox(), Color.Yellow, 0.1f, true);
+                    foreach (var pair in cameFrom)
+                    {
+                        var color = Color.White;
+                        if (goal.IsInGoalRegion(pair.Value.SourceVoxel))
+                            color = Color.Green;
+                        Drawer3D.DrawLine(pair.Value.SourceVoxel.WorldPosition + Vector3.One * 0.5f,
+                            pair.Value.DestinationVoxel.WorldPosition + Vector3.One * 0.5f, color, 0.05f);
+
+                    }
+                    System.Threading.Thread.Sleep(16);
+                }
+                */
+                if (goal.IsInGoalRegion(currentNode.DestinationVoxel))
+                    break;
             }
-            for (int i = 0; i < toReturn.Count; i++)
+
+            /*
+            List<MoveAction> scratch = new List<MoveAction>();
+            scratch.AddRange(toReturn);
+            for (int i = 0; i < toReturn.Count - 1; i++)
             {
-                var a = toReturn[i];
-                var temp = a.SourceVoxel;
-                a.SourceVoxel = a.DestinationVoxel;
-                a.DestinationVoxel = temp;
+                var a = scratch[i];
+                var a1 = scratch[i + 1];
+                a.MoveType = a1.MoveType;
                 toReturn[i] = a;
+                //var temp = a.SourceVoxel;
+                //a.SourceVoxel = a.DestinationVoxel;
+                //a.DestinationVoxel = temp;
+                //toReturn[i] = a;
             }
+            */
             return toReturn;
         }
 
@@ -253,7 +288,7 @@ namespace DwarfCorp
                 //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
 
 
-                var foundGoalAdjacent = neighbors.FirstOrDefault(n => goal.IsInGoalRegion(n.SourceVoxel));
+                var foundGoalAdjacent = neighbors.FirstOrDefault(n => goal.IsInGoalRegion(n.DestinationVoxel));
 
                 // A quick test to see if we're already adjacent to the goal. If we are, assume
                 // that we can just walk to it.
@@ -629,7 +664,6 @@ namespace DwarfCorp
             var openness_end = OpennessHeuristic(goal.GetVoxel());
 
             bool use_inverse = openness_end < openness_start;
-
             var result = use_inverse ? InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc)
                 : Path(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc);
 
