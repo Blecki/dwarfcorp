@@ -150,6 +150,16 @@ namespace DwarfCorp
 
         [JsonIgnore]
         public static double MaximumElapsedGameTime = 60.0f / 10.0f;
+
+        public static double Tick()
+        {
+            return DwarfTime.LastTime.TotalRealTime.TotalSeconds;
+        }
+
+        public static double Tock(double start)
+        {
+            return Tick() - start;
+        }
     }
 
     /// <summary>

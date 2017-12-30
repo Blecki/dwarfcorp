@@ -130,11 +130,6 @@ namespace DwarfCorp
 
         public bool AddRequest(TRequest request, uint subscriberID)
         {
-            if (Requests.Count > 100)
-            {
-                return false;
-            }
-
             Requests.Enqueue(new KeyValuePair<uint, TRequest>(subscriberID, request));
             return true;
         }

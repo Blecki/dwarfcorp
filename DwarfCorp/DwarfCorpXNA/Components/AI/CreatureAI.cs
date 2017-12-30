@@ -1466,7 +1466,7 @@ namespace DwarfCorp
                 GoalRegion = region,
                 Start = Creature.Physics.CurrentVoxel,
                 Sender = this,
-                MaxExpansions = 5000
+                MaxExpansions = 50000
             };
 
             return WaitForPlan(request);

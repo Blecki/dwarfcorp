@@ -35,6 +35,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using System.IO;
 
 namespace DwarfCorp
 {
@@ -90,33 +91,43 @@ namespace DwarfCorp
         }
 
 
-        public static List<MoveAction> ReconstructInversePath(IEnumerable<VoxelHandle> goal, Dictionary<VoxelHandle, MoveAction> cameFrom, MoveAction first)
+        public static List<MoveAction> ReconstructInversePath(GoalRegion goal, 
+            Dictionary<VoxelHandle, MoveAction> cameFrom, MoveAction currentNode)
         {
-            /*
-            foreach (var came in cameFrom)
+            var toReturn = new List<MoveAction>() { currentNode };
+            while (!goal.IsInGoalRegion(currentNode.DestinationVoxel) && cameFrom.ContainsKey(currentNode.DestinationVoxel))
             {
-                Vector3 end = came.Value.DestinationVoxel.Position + Vector3.One*0.5f;
-                Drawer3D.DrawLine(came.Key.Position + Vector3.One * 0.5f,  end, Color.Green, 0.01f);
-                Drawer3D.DrawLine(end, end + Vector3.Up * 0.1f, Color.Green, 0.01f);
+                currentNode = cameFrom[currentNode.DestinationVoxel];
+                toReturn.Add(currentNode);
             }
-             */
-            var toReturn = new List<MoveAction>();
-            toReturn.AddRange(ReconstructInversePath(first.SourceVoxel, cameFrom));
+            for (int i = 0; i < toReturn.Count; i++)
+            {
+                var a = toReturn[i];
+                var temp = a.SourceVoxel;
+                a.SourceVoxel = a.DestinationVoxel;
+                a.DestinationVoxel = temp;
+                toReturn[i] = a;
+            }
             return toReturn;
         }
 
-        public static IEnumerable<MoveAction> ReconstructInversePath(VoxelHandle voxel, Dictionary<VoxelHandle, MoveAction> cameFrom)
+
+        public enum PlanResultCode
         {
-            // If there is a dictionary entry for the current voxel, add it to the path recursively.
-            if (cameFrom.ContainsKey(voxel))
-            {
-                yield return  cameFrom[voxel];
-                foreach (var action in ReconstructInversePath(cameFrom[voxel].DestinationVoxel, cameFrom))
-                {
-                    yield return action;
-                }
-            }   
+            Cancelled,
+            Invalid,
+            NoSolution,
+            MaxExpansionsReached,
+            Success
         }
+
+        public struct PlanResult
+        {
+            public PlanResultCode Result;
+            public int Expansions;
+            public double TimeSeconds;
+        }
+
 
         /// <summary>
         ///     Creates a path from the start voxel to some goal region, returning a list of movements that can
@@ -133,12 +144,19 @@ namespace DwarfCorp
         ///     usually result in faster plans that are suboptimal.
         /// </param>
         /// <returns>True if a path could be found, or false otherwise.</returns>
-        private static bool Path(CreatureMovement mover, VoxelHandle start, GoalRegion goal, ChunkManager chunks,
-            int maxExpansions, ref List<MoveAction> toReturn, float weight)
+        private static PlanResult Path(CreatureMovement mover, VoxelHandle start, GoalRegion goal, ChunkManager chunks,
+            int maxExpansions, ref List<MoveAction> toReturn, float weight, Func<bool> continueFunc)
         {
+            var startTime = DwarfTime.Tick();
             if (mover.IsSessile)
             {
-                return false;
+                return new PlanResult()
+                {
+                    Expansions = 0,
+                    Result = PlanResultCode.Invalid,
+                    TimeSeconds = DwarfTime.Tock(startTime)
+                };
+
             }
 
             // Sometimes a goal may not even be achievable a.priori. If this is true, we know there can't be a path 
@@ -146,7 +164,12 @@ namespace DwarfCorp
             if (!goal.IsPossible())
             {
                 toReturn = null;
-                return false;
+                return new PlanResult()
+                {
+                    Expansions = 0,
+                    Result = PlanResultCode.Invalid,
+                    TimeSeconds = DwarfTime.Tock(startTime)
+                };
             }
 
             // Voxels that have already been explored.
@@ -185,9 +208,16 @@ namespace DwarfCorp
             // expansions.
             while (openSet.Count > 0 && numExpansions < maxExpansions)
             {
-                // Throttle this thread...
-                if (numExpansions % 10 == 0)
-                    System.Threading.Thread.Sleep(1);
+
+                if (numExpansions % 10 == 0 && !continueFunc())
+                    return new PlanResult
+                    {
+                        Result = PlanResultCode.Cancelled,
+                        Expansions = numExpansions,
+                        TimeSeconds = DwarfTime.Tock(startTime)
+                    };
+
+
                 // Check the next voxel to explore.
                 var current = GetVoxelWithMinimumFScore(fScore);
                 if (!current.IsValid)
@@ -233,7 +263,12 @@ namespace DwarfCorp
                     {
                         List<MoveAction> subPath = ReconstructPath(cameFrom, foundGoalAdjacent, start);
                         toReturn = subPath;
-                        return true;
+                        return new PlanResult()
+                        {
+                            Result = PlanResultCode.Success,
+                            Expansions = numExpansions,
+                            TimeSeconds = DwarfTime.Tock(startTime)
+                        };
                     }
 
                 }
@@ -273,29 +308,52 @@ namespace DwarfCorp
                 // If we've expanded too many voxels, just give up.
                 if (numExpansions >= maxExpansions)
                 {
-                    return false;
+                    return new PlanResult()
+                    {
+                        Expansions = numExpansions,
+                        Result = PlanResultCode.MaxExpansionsReached,
+                        TimeSeconds = DwarfTime.Tock(startTime)
+                    };
                 }
             }
 
             // Somehow we've reached this code without having found a path. Return false.
             toReturn = null;
-            return false;
+            return new PlanResult()
+            {
+                Expansions = numExpansions,
+                Result = PlanResultCode.NoSolution,
+                TimeSeconds = DwarfTime.Tock(startTime)
+            };
+
         }
 
         // Find a path from the start to the goal by computing an inverse path from goal to the start. Should only be used
         // if the forward path fails.
-        private static bool InversePath(CreatureMovement mover, VoxelHandle start, GoalRegion goal, ChunkManager chunks,
-                int maxExpansions, ref List<MoveAction> toReturn, float weight)
+        private static PlanResult InversePath(CreatureMovement mover, VoxelHandle start, GoalRegion goal, ChunkManager chunks,
+                int maxExpansions, ref List<MoveAction> toReturn, float weight, Func<bool> continueFunc)
         {
+            var startTime = DwarfTime.Tick();
             if (mover.IsSessile)
             {
-                return false;
+                return new PlanResult()
+                {
+                    Result = PlanResultCode.Invalid,
+                    Expansions = 0,
+                    TimeSeconds = 0
+                };
             }
 
             if (!start.IsValid)
             {
-                return false;
+                return new PlanResult()
+                {
+                    Result = PlanResultCode.Invalid,
+                    Expansions = 0,
+                    TimeSeconds = 0
+                };
             }
+
 
             // Sometimes a goal may not even be achievable a.priori. If this is true, we know there can't be a path 
             // which satisifies that goal.
@@ -303,18 +361,31 @@ namespace DwarfCorp
             if (!goal.IsPossible() || !goal.GetVoxel().IsValid)
             {
                 toReturn = null;
-                return false;
+                return new PlanResult()
+                {
+                    Result = PlanResultCode.Invalid,
+                    Expansions = 0,
+                    TimeSeconds = 0
+                };
             }
 
+
+            if (goal.IsInGoalRegion(start))
+            {
+                toReturn = new List<MoveAction>();
+                return new PlanResult()
+                {
+                    Result = PlanResultCode.Success,
+                    Expansions = 0,
+                    TimeSeconds = 0
+                };
+            }
 
             // Voxels that have already been explored.
             var closedSet = new HashSet<VoxelHandle>();
 
             // Voxels which should be explored.
-            var openSet = new HashSet<VoxelHandle>
-            {
-                start
-            };
+            var openSet = new HashSet<VoxelHandle>();
 
             // Dictionary of voxels to the optimal action that got the mover to that voxel.
             var cameFrom = new Dictionary<VoxelHandle, MoveAction>();
@@ -337,15 +408,12 @@ namespace DwarfCorp
                 if (goal.IsInGoalRegion(goalVoxel))
                 {
                     goalVoxels.Add(goalVoxel);
+                    openSet.Add(goalVoxel);
                     gScore[goalVoxel] = 0.0f;
                     fScore.Enqueue(goalVoxel,
                         gScore[goalVoxel] + weight*(goalVoxel.WorldPosition - start.WorldPosition).LengthSquared());
                 }
             }
-
-            gScore[goal.GetVoxel()] = 0.0f;
-            fScore.Enqueue(goal.GetVoxel(),
-                gScore[goal.GetVoxel()] + weight * (goal.GetVoxel().WorldPosition - start.WorldPosition).LengthSquared());
 
             // Keep count of the number of expansions we've taken to get to the goal.
             int numExpansions = 0;
@@ -354,11 +422,19 @@ namespace DwarfCorp
             // expansions.
             while (openSet.Count > 0 && numExpansions < maxExpansions)
             {
+                if (numExpansions % 10 == 0 && !continueFunc())
+                    return new PlanResult
+                    {
+                        Result = PlanResultCode.Cancelled,
+                        Expansions = numExpansions,
+                        TimeSeconds = DwarfTime.Tock(startTime)
+                    };
+
                 // Check the next voxel to explore.
                 var current = GetVoxelWithMinimumFScore(fScore);
                 if (!current.IsValid)
                 {
-                    return false;
+                    continue;
                 }
                 //Drawer3D.DrawBox(current.GetBoundingBox(), Color.Blue, 0.1f);
                 numExpansions++;
@@ -367,21 +443,13 @@ namespace DwarfCorp
                 // goal.
                 if (current.Equals(start))
                 {
-                    // Assume that the last action in the path involves walking to the start.
-                    var first = new MoveAction
+                    toReturn = ReconstructInversePath(goal, cameFrom, cameFrom[start]);
+                    return new PlanResult()
                     {
-                        DestinationVoxel = current,
-                        SourceVoxel = start,
-                        MoveType = MoveType.Walk
+                        Result = PlanResultCode.Success,
+                        Expansions = numExpansions,
+                        TimeSeconds = DwarfTime.Tock(startTime)
                     };
-                    var last = new MoveAction
-                    {
-                        DestinationVoxel = goal.GetVoxel(),
-                        MoveType = MoveType.Walk
-                    };
-                    toReturn = ReconstructInversePath(goalVoxels, cameFrom, first);
-                    toReturn.Add(last);
-                    return true;
                 }
 
                 // We've already considered the voxel, so add it to the closed set.
@@ -428,15 +496,112 @@ namespace DwarfCorp
                 // If we've expanded too many voxels, just give up.
                 if (numExpansions >= maxExpansions)
                 {
-                    return false;
+                    return new PlanResult()
+                    {
+                        Result = PlanResultCode.MaxExpansionsReached,
+                        Expansions = numExpansions,
+                        TimeSeconds = DwarfTime.Tock(startTime)
+                    };
                 }
             }
 
             // Somehow we've reached this code without having found a path. Return false.
             toReturn = null;
-            return false;
+            return new PlanResult()
+            {
+                Result = PlanResultCode.NoSolution,
+                Expansions = numExpansions,
+                TimeSeconds = DwarfTime.Tock(startTime)
+            };
         }
 
+        public static float OpennessHeuristic(VoxelHandle vox)
+        {
+            if (!vox.IsValid)
+            {
+                return 0.0f;
+            }
+
+            var p = vox.Coordinate;
+            var data = vox.Chunk.Manager.ChunkData;
+
+            float sumLength = 0;
+            for (int x = -10; x < 1; x++)
+            {
+                var n = p + new GlobalVoxelOffset(x, 0, 0);
+                var voxAt = new VoxelHandle(data, n);
+                if (!voxAt.IsValid)
+                    continue;
+                if (voxAt.IsEmpty)
+                    sumLength++;
+                else
+                    break;
+            }
+
+            for (int x = 0; x < 11; x++)
+            {
+                var n = p + new GlobalVoxelOffset(x, 0, 0);
+                var voxAt = new VoxelHandle(data, n);
+                if (!voxAt.IsValid)
+                    continue;
+                if (voxAt.IsEmpty)
+                    sumLength++;
+                else
+                    break;
+            }
+
+            for (int x = -10; x < 1; x++)
+            {
+                var n = p + new GlobalVoxelOffset(0, x, 0);
+                var voxAt = new VoxelHandle(data, n);
+                if (!voxAt.IsValid)
+                    continue;
+                if (voxAt.IsEmpty)
+                    sumLength++;
+                else
+                    break;
+            }
+
+            for (int x = 0; x < 11; x++)
+            {
+                var n = p + new GlobalVoxelOffset(0, x, 0);
+                var voxAt = new VoxelHandle(data, n);
+                if (!voxAt.IsValid)
+                    continue;
+                if (voxAt.IsEmpty)
+                    sumLength++;
+                else
+                    break;
+            }
+
+            for (int x = -10; x < 1; x++)
+            {
+                var n = p + new GlobalVoxelOffset(0, 0, x);
+                var voxAt = new VoxelHandle(data, n);
+                if (!voxAt.IsValid)
+                    continue;
+                if (voxAt.IsEmpty)
+                    sumLength++;
+                else
+                    break;
+            }
+
+            for (int x = 0; x < 11; x++)
+            {
+                var n = p + new GlobalVoxelOffset(0, 0, x);
+                var voxAt = new VoxelHandle(data, n);
+                if (!voxAt.IsValid)
+                    continue;
+                if (voxAt.IsEmpty)
+                    sumLength++;
+                else
+                    break;
+            }
+
+            return sumLength;
+        }
+
+        private static StreamWriter _planLog = null;
 
         /// <summary>
         ///     Finds the path from the start to the goal region of move actions that can be performed by the creature.
@@ -452,16 +617,41 @@ namespace DwarfCorp
         /// </param>
         /// <returns>The path of movements the creature must take to reach the goal. Returns null if no such path exists.</returns>
         public static List<MoveAction> FindPath(CreatureMovement mover, VoxelHandle start, GoalRegion goal,
-            ChunkManager chunks, int maxExpansions, float weight)
+            ChunkManager chunks, int maxExpansions, float weight, int numPlans, Func<bool> continueFunc)
         {
+            if (_planLog == null)
+            {
+                _planLog = new StreamWriter("plans.txt");
+            }
+
             var p = new List<MoveAction>();
-            bool success = Path(mover, start, goal, chunks, maxExpansions, ref p, weight);
-            if (success)
+            var openness_start = OpennessHeuristic(start);
+            var openness_end = OpennessHeuristic(goal.GetVoxel());
+
+            bool use_inverse = openness_end < openness_start;
+
+            var result = use_inverse ? InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc)
+                : Path(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc);
+
+            var length = (start.WorldPosition - goal.GetVoxel().WorldPosition).Length();
+            _planLog.WriteLine(String.Format("{5}, {0}, {1}, {2}, {3}, {4}", (int)result.Result, result.Expansions, result.TimeSeconds, length, numPlans, use_inverse));
+
+            if (result.Result == PlanResultCode.Success)
             {
                 return p;
             }
-            success = InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight);
-            return success ? p : null;
+
+            if (result.Result == PlanResultCode.Invalid || 
+                result.Result == PlanResultCode.NoSolution || 
+                result.Result == PlanResultCode.Cancelled)
+            {
+                return null;
+            }
+            result = use_inverse ? Path(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc)
+                : InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc);
+            _planLog.WriteLine(String.Format("{5}, {0}, {1}, {2}, {3}, {4}", (int)result.Result, result.Expansions, result.TimeSeconds, length, numPlans, use_inverse));
+
+            return result.Result == PlanResultCode.Success ? p : null;
         }
 
         /// <summary>
