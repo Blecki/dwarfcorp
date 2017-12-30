@@ -127,22 +127,6 @@ namespace DwarfCorp
                 if (goal.IsInGoalRegion(currentNode.DestinationVoxel))
                     break;
             }
-
-            /*
-            List<MoveAction> scratch = new List<MoveAction>();
-            scratch.AddRange(toReturn);
-            for (int i = 0; i < toReturn.Count - 1; i++)
-            {
-                var a = scratch[i];
-                var a1 = scratch[i + 1];
-                a.MoveType = a1.MoveType;
-                toReturn[i] = a;
-                //var temp = a.SourceVoxel;
-                //a.SourceVoxel = a.DestinationVoxel;
-                //a.DestinationVoxel = temp;
-                //toReturn[i] = a;
-            }
-            */
             return toReturn;
         }
 
@@ -292,7 +276,7 @@ namespace DwarfCorp
 
                 // A quick test to see if we're already adjacent to the goal. If we are, assume
                 // that we can just walk to it.
-                if (foundGoalAdjacent.DestinationVoxel.IsValid)
+                if (foundGoalAdjacent.DestinationVoxel.IsValid && foundGoalAdjacent.SourceVoxel.IsValid)
                 {
                     if (cameFrom.ContainsKey(current))
                     {
@@ -332,7 +316,6 @@ namespace DwarfCorp
 
                     // Add an edge to the voxel from the current voxel.
                     var cameAction = n;
-                    cameAction.SourceVoxel = current;
                     cameFrom[n.DestinationVoxel] = cameAction;
 
                     // Update the expansion scores for the next voxel.
@@ -363,11 +346,15 @@ namespace DwarfCorp
 
         }
 
+        private static FileStream _planLog = null;
+
         // Find a path from the start to the goal by computing an inverse path from goal to the start. Should only be used
         // if the forward path fails.
         private static PlanResult InversePath(CreatureMovement mover, VoxelHandle start, GoalRegion goal, ChunkManager chunks,
                 int maxExpansions, ref List<MoveAction> toReturn, float weight, Func<bool> continueFunc)
         {
+            if (_planLog == null)
+                _planLog = new FileStream("timing.txt", FileMode.OpenOrCreate);
             var startTime = DwarfTime.Tick();
             if (mover.IsSessile)
             {
@@ -435,7 +422,7 @@ namespace DwarfCorp
             goalVoxels.Add(goal.GetVoxel());
             // Starting conditions of the search.
 
-            foreach (var goalVoxel in VoxelHelpers.EnumerateAllNeighbors(goal.GetVoxel().Coordinate)
+            foreach (var goalVoxel in VoxelHelpers.EnumerateCube(goal.GetVoxel().Coordinate)
                 .Select(c => new VoxelHandle(start.Chunk.Manager.ChunkData, c))) 
             {
                 if (!goalVoxel.IsValid) continue;
@@ -636,7 +623,6 @@ namespace DwarfCorp
             return sumLength;
         }
 
-        private static StreamWriter _planLog = null;
 
         /// <summary>
         ///     Finds the path from the start to the goal region of move actions that can be performed by the creature.
@@ -654,22 +640,16 @@ namespace DwarfCorp
         public static List<MoveAction> FindPath(CreatureMovement mover, VoxelHandle start, GoalRegion goal,
             ChunkManager chunks, int maxExpansions, float weight, int numPlans, Func<bool> continueFunc)
         {
-            if (_planLog == null)
-            {
-                _planLog = new StreamWriter("plans.txt");
-            }
-
             var p = new List<MoveAction>();
             var openness_start = OpennessHeuristic(start);
             var openness_end = OpennessHeuristic(goal.GetVoxel());
 
-            bool use_inverse = openness_end < openness_start;
+            //bool use_inverse = openness_end < openness_start;
+            bool use_inverse = true;
             var result = use_inverse ? InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc)
                 : Path(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc);
 
             var length = (start.WorldPosition - goal.GetVoxel().WorldPosition).Length();
-            _planLog.WriteLine(String.Format("{5}, {0}, {1}, {2}, {3}, {4}", (int)result.Result, result.Expansions, result.TimeSeconds, length, numPlans, use_inverse));
-
             if (result.Result == PlanResultCode.Success)
             {
                 return p;
@@ -683,8 +663,6 @@ namespace DwarfCorp
             }
             result = use_inverse ? Path(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc)
                 : InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc);
-            _planLog.WriteLine(String.Format("{5}, {0}, {1}, {2}, {3}, {4}", (int)result.Result, result.Expansions, result.TimeSeconds, length, numPlans, use_inverse));
-
             return result.Result == PlanResultCode.Success ? p : null;
         }
 

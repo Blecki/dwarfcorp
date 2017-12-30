@@ -95,11 +95,19 @@ namespace DwarfCorp
             }
             for (int i = 0; i < path.Count - 1; i++)
             {
-                if (!path[i].SourceVoxel.IsValid) continue;
-                if (!path[i].SourceVoxel.IsEmpty) return false;
+                if (!path[i].SourceVoxel.IsValid)
+                {
+                    continue;
+                }
+                if (!path[i].SourceVoxel.IsEmpty)
+                {
+                    return false;
+                }
                 var neighbors = Agent.Movement.GetMoveActions(path[i].SourceVoxel);
                 if (!neighbors.Any(n => n.DestinationVoxel == path[i + 1].SourceVoxel))
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -238,6 +246,7 @@ namespace DwarfCorp
                 yield break;
             }
             Trace.Assert(t >= 0);
+            Trace.Assert(action.SourceVoxel.IsValid);
             int nextID = currentIndex + 1;
             bool hasNextAction = false;
             Vector3 half = GetBoundingBoxOffset();

@@ -545,7 +545,7 @@ namespace DwarfCorp
         }
 
 
-        public IEnumerable<MoveAction> GetInverseMoveActions(VoxelHandle voxel)
+        public IEnumerable<MoveAction> GetInverseMoveActions_Experimental(VoxelHandle voxel)
         {
             if (!voxel.IsValid || !voxel.IsEmpty)
                 yield break;
@@ -899,7 +899,7 @@ namespace DwarfCorp
 
         // Inverts GetMoveActions. So, returns the list of move actions whose target is the current voxel.
         // Very, very slow.
-        public IEnumerable<MoveAction> GetInverseMoveActions_Naive(VoxelHandle current)
+        public IEnumerable<MoveAction> GetInverseMoveActions(VoxelHandle current)
         {
             foreach (var v in VoxelHelpers.EnumerateAllNeighbors(current.Coordinate)
                 .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
