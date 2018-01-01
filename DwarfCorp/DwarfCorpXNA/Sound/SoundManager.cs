@@ -394,7 +394,9 @@ namespace DwarfCorp
             }
             catch (InvalidOperationException exception)
             {
-                Console.Error.WriteLine(exception.ToString());
+                Cue newCue = SoundBank.GetCue(sound);
+                newCue.Play();
+                ActiveCues[sound] = newCue;
             }
         }
 
