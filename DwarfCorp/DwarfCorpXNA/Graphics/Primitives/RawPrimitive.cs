@@ -15,7 +15,7 @@ namespace DwarfCorp
     {
         public int IndexCount = 0;
         public int VertexCount = 0;
-        public ushort[] Indexes = null;
+        public short[] Indexes = null;
         public ExtendedVertex[] Vertices = null;
 
         private static void EnsureSpace<T>(ref T[] In, int Size)
@@ -35,11 +35,34 @@ namespace DwarfCorp
             VertexCount += 1;
         }
 
-        public void AddIndex(ushort Index)
+        public void AddIndex(short Index)
         {
             EnsureSpace(ref Indexes, IndexCount);
             Indexes[IndexCount] = Index;
             IndexCount += 1;
+        }
+
+        public void Reset()
+        {
+            IndexCount = 0;
+            VertexCount = 0;
+        }
+
+        public virtual void Render(GraphicsDevice device)
+        {
+#if MONOGAME_BUILD
+                device.SamplerStates[0].Filter = TextureFilter.MinLinearMagPointMipLinear;
+                device.SamplerStates[1].Filter = TextureFilter.MinLinearMagPointMipLinear;
+                device.SamplerStates[2].Filter = TextureFilter.MinLinearMagPointMipLinear;
+                device.SamplerStates[3].Filter = TextureFilter.MinLinearMagPointMipLinear;
+                device.SamplerStates[4].Filter = TextureFilter.MinLinearMagPointMipLinear;
+#endif
+                if (Vertices == null || Vertices.Length < 3)
+                    return;
+
+            device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList,
+                Vertices, 0, VertexCount,
+                Indexes, 0, IndexCount / 3);
         }
 
         public static RawPrimitive Concat(IEnumerable<RawPrimitive> Primitives)
@@ -52,7 +75,7 @@ namespace DwarfCorp
                 VertexCount = totalVertexCount,
                 Vertices = new ExtendedVertex[totalVertexCount],
                 IndexCount = totalIndexCount,
-                Indexes = new ushort[totalIndexCount]
+                Indexes = new short[totalIndexCount]
             };
 
             var vBase = 0;
@@ -63,7 +86,7 @@ namespace DwarfCorp
                 for (var i = 0; i < primitive.VertexCount; ++i)
                     r.Vertices[vBase + i] = primitive.Vertices[i];
                 for (var i = 0; i < primitive.IndexCount; ++i)
-                    r.Indexes[iBase + i] = (ushort)(primitive.Indexes[i] + vBase);
+                    r.Indexes[iBase + i] = (short)(primitive.Indexes[i] + vBase);
 
                 vBase += primitive.VertexCount;
                 iBase += primitive.IndexCount;

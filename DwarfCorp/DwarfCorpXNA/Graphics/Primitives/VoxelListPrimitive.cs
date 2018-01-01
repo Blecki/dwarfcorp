@@ -178,7 +178,7 @@ namespace DwarfCorp
                     sliceGeometry = new RawPrimitive
                     {
                         Vertices = new ExtendedVertex[128],
-                        Indexes = new ushort[128]
+                        Indexes = new short[128]
                     };
 
                     chunk.Data.SliceCache[y] = sliceGeometry;
@@ -202,7 +202,7 @@ namespace DwarfCorp
 
                 Vertices = combinedGeometry.Vertices;
                 VertexCount = combinedGeometry.VertexCount;
-                Indexes = combinedGeometry.Indexes;
+                Indexes = combinedGeometry.Indexes.Select(s => (ushort)s).ToArray();
                 IndexCount = combinedGeometry.IndexCount;
 
                 chunk.PrimitiveMutex.WaitOne();
@@ -337,7 +337,7 @@ namespace DwarfCorp
             {
                 ushort offset = flippedQuad ? Primitive.FlippedIndexes[idx] : Primitive.Indexes[idx];
                 ushort offset0 = flippedQuad ? Primitive.FlippedIndexes[faceDescriptor.IndexOffset] : Primitive.Indexes[faceDescriptor.IndexOffset];
-                Into.AddIndex((ushort)(indexOffset + offset - offset0));
+                Into.AddIndex((short)(indexOffset + offset - offset0));
             }
         }
 
@@ -482,7 +482,7 @@ namespace DwarfCorp
                 {
                     ushort offset = Primitive.Indexes[idx];
                     ushort offset0 = Primitive.Indexes[faceDescriptor.IndexOffset];
-                    Into.AddIndex((ushort)(indexOffset + offset - offset0));
+                    Into.AddIndex((short)(indexOffset + offset - offset0));
                 }
             }
         }
@@ -710,7 +710,7 @@ namespace DwarfCorp
             {
                 ushort offset = flippedQuad ? Primitive.FlippedIndexes[idx] : Primitive.Indexes[idx];
                 ushort offset0 = flippedQuad ? Primitive.FlippedIndexes[faceDescriptor.IndexOffset] : Primitive.Indexes[faceDescriptor.IndexOffset];
-                Into.AddIndex((ushort)(indexOffset + offset - offset0));
+                Into.AddIndex((short)(indexOffset + offset - offset0));
             }
         }
 
@@ -752,7 +752,7 @@ namespace DwarfCorp
             {
                 ushort offset = flippedQuad ? Primitive.FlippedIndexes[idx] : Primitive.Indexes[idx];
                 ushort offset0 = flippedQuad ? Primitive.FlippedIndexes[faceDescriptor.IndexOffset] : Primitive.Indexes[faceDescriptor.IndexOffset];
-                Into.AddIndex((ushort)(indexOffset + offset - offset0));
+                Into.AddIndex((short)(indexOffset + offset - offset0));
             }
         }
 
@@ -805,13 +805,13 @@ namespace DwarfCorp
             {
                 ushort offset = flippedQuad ? Primitive.FlippedIndexes[idx] : Primitive.Indexes[idx];
                 ushort offset0 = flippedQuad ? Primitive.FlippedIndexes[faceDescriptor.IndexOffset] : Primitive.Indexes[faceDescriptor.IndexOffset];
-                Into.AddIndex((ushort)(indexOffset + offset - offset0));
+                Into.AddIndex((short)(indexOffset + offset - offset0));
             }
         }
 
 
 
-        private static bool ShouldRamp(VoxelVertex vertex, RampType rampType)
+        public static bool ShouldRamp(VoxelVertex vertex, RampType rampType)
         {
             bool toReturn = false;
 

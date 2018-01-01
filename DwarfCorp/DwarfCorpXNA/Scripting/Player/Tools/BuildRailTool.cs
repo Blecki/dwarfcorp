@@ -45,9 +45,18 @@ namespace DwarfCorp
 {
     public class BuildRailTool : PlayerTool
     {
+        public class RailDesignationInfo
+        {
+            public DecalType DecalType;
+            public DecalOrientation Orientation;
+        }
+
         public Shader Effect;
-        private List<VoxelHandle> Selected = new List<VoxelHandle>();
+        private VoxelHandle Selected = VoxelHandle.InvalidHandle;
         public Rail.JunctionPattern Pattern;
+        private bool RotateLeftPressed = false;
+        private bool RotateRightPressed = false;
+        private Rail.Orientations Orientation = Rail.Orientations.North;
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
@@ -99,8 +108,7 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            if (Selected != null)
-                Selected.Clear();
+            Selected = VoxelHandle.InvalidHandle;
             Player.VoxSelector.Clear();
         }
 
@@ -126,6 +134,17 @@ namespace DwarfCorp
                 Player.World.SetMouse(Player.World.MousePointer);
             else
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+
+            KeyboardState state = Keyboard.GetState();
+            bool leftKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectLeft);
+            bool rightKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectRight);
+            if (RotateLeftPressed && !leftKey)
+                Orientation = Rail.Orientation.Rotate(Orientation, -1);
+            else if (RotateRightPressed && !rightKey)
+                Orientation = Rail.Orientation.Rotate(Orientation, 1);
+
+            RotateLeftPressed = leftKey;
+            RotateRightPressed = rightKey;
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
@@ -185,10 +204,7 @@ namespace DwarfCorp
             else
                 Player.World.ShowToolPopup("Release to cancel.");
 
-            Selected.Clear();
-
-            foreach (var voxel in voxels)
-                Selected.Add(voxel);
+            Selected = Player.VoxSelector.VoxelUnderMouse;
         }
     }
 }
