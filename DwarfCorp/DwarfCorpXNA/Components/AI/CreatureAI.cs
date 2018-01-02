@@ -427,10 +427,6 @@ namespace DwarfCorp
             PreEmptTasks();
             HandleReproduction();
             
-            if (Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Microsoft.Xna.Framework.Input.Keys.OemMinus))
-            {
-                this.Creature.Damage(1);
-            }
 
             // Heal thyself
             if (Status.Health.IsDissatisfied() && Stats.CanSleep)
