@@ -70,6 +70,7 @@ namespace DwarfCorp
         public float Hp { get; set; }
         public float MaxHealth { get; set; }
         public float MinHealth { get; set; }
+        public float TimeWithNegativeHealth = 0.0f;
 
         public Health()
         {
@@ -100,6 +101,8 @@ namespace DwarfCorp
 
         public virtual void Heal(float amount)
         {
+            bool wasHealthNegative = (int)Hp <= (int)MinHealth;
+
             Hp = Math.Min(Math.Max(Hp + amount, MinHealth), MaxHealth);
 
             if(!(Hp <= MinHealth))
@@ -107,7 +110,14 @@ namespace DwarfCorp
                 return;
             }
 
-            if(Parent != null)
+
+            float now = (float)DwarfTime.LastTime.TotalGameTime.TotalSeconds;
+
+            if (!wasHealthNegative)
+            {
+                TimeWithNegativeHealth = now;
+            }
+            else if (amount < 0 && Parent != null)
             {
                 Parent.Die();
             }

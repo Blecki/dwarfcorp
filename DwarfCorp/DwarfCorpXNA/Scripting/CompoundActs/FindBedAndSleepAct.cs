@@ -150,7 +150,7 @@ namespace DwarfCorp
             }
             else
             {
-                Tree = null;
+                Tree = new SleepAct(Creature.AI) { HealRate = 0.1f, RechargeRate = 1.0f, Teleport = false, Type = SleepAct.SleepType.Heal };
             }
             base.Initialize();
         }
