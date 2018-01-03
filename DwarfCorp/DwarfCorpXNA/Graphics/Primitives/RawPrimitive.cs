@@ -15,8 +15,8 @@ namespace DwarfCorp
     {
         public int IndexCount = 0;
         public int VertexCount = 0;
-        public short[] Indexes = null;
-        public ExtendedVertex[] Vertices = null;
+        public short[] Indexes = new short[6];
+        public ExtendedVertex[] Vertices = new ExtendedVertex[4];
 
         private static void EnsureSpace<T>(ref T[] In, int Size)
         {

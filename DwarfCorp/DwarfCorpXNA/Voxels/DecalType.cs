@@ -15,15 +15,6 @@ namespace DwarfCorp
         West = 3
     }
 
-    public class DecalConversionEntry
-    {
-        public DecalOrientation ThisOrientation;
-        public String OverlayDecal;
-        public DecalOrientation OverlayOrientation;
-        public String ResultDecal;
-        public DecalOrientation ResultOrientation;
-    }
-
     public class DecalType
     {
         public static DecalOrientation RotateOrientation(DecalOrientation Orientation, int Amount)
@@ -49,6 +40,5 @@ namespace DwarfCorp
         public byte ID;
         public String Name;
         public Point Tile;
-        public List<DecalConversionEntry> ConversionTable;
     }
 }

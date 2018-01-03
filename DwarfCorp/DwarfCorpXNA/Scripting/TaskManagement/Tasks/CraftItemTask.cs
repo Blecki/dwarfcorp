@@ -42,7 +42,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class CraftItemTask : Task
     {
-        public CraftBuilder.CraftDesignation Designation { get; set; }
+        public CraftDesignation Designation { get; set; }
         public CraftItemTask()
         {
             MaxAssignable = 3;
@@ -50,7 +50,7 @@ namespace DwarfCorp
             AutoRetry = true;
         }
 
-        public CraftItemTask(CraftBuilder.CraftDesignation type)
+        public CraftItemTask(CraftDesignation type)
         {
             Category = TaskCategory.BuildObject;
             MaxAssignable = 3;
@@ -134,7 +134,7 @@ namespace DwarfCorp
     {
         public int TaskID = 0;
         private static int MaxID = 0;
-        public CraftBuilder.CraftDesignation Item { get; set; }
+        public CraftDesignation Item { get; set; }
         private string noise;
         public bool IsAutonomous { get; set; }
 
@@ -148,7 +148,7 @@ namespace DwarfCorp
             Category = TaskCategory.CraftItem;
             TaskID = id < 0 ? MaxID : id;
             MaxID++;
-            Item = new CraftBuilder.CraftDesignation()
+            Item = new CraftDesignation()
             {
                 ItemType = selectedResource.Clone(),
                 Location = VoxelHandle.InvalidHandle,

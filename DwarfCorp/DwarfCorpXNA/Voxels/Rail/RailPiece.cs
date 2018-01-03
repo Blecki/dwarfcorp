@@ -6,18 +6,20 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Rail
 {
+    public class RailConversionEntry
+    {
+        public DecalOrientation ThisOrientation;
+        public String OverlayDecal;
+        public DecalOrientation OverlayOrientation;
+        public String ResultDecal;
+        public DecalOrientation ResultOrientation;
+    }
+
     public class RailPiece
     {
-        /// <summary>
-        /// Offset from the origin of the junction pattern.
-        /// </summary>
-        public Point Offset;
+        public String Name;
+        public Point Tile;
+        public List<RailConversionEntry> ConversionTable;
 
-        public String Decal;
-
-        /// <summary>
-        /// Orientation of this piece in junction pattern.
-        /// </summary>
-        public Orientations Orientation;
     }
 }

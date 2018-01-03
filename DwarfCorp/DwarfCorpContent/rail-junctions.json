@@ -1,49 +1,99 @@
-[
-  {
-    "Name": "basic",
-    "Pieces": [
-      {
-        "Offset": "0, 0",
-        "Decal": "rail-straight",
-        "Orientation": "North"
-      }
-    ]
-  },
+{
+  "Pieces": [
 
-  {
-    "Name": "small-curve",
-    "Pieces": [
-      {
-        "Offset": "0, 0",
-        "Decal": "rail-small-curve",
-        "Orientation": "North"
-      }
-    ]
-  },
+    {
+      "Name": "rail-straight",
+      "Tile": "0, 4"
+    },
 
-  {
-    "Name": "large-curve",
-    "Pieces": [
-      {
-        "Offset": "0, 0",
-        "Decal": "rail-large-curve-a",
-        "Orientation": "North"
-      },
-      {
-        "Offset": "1, 0",
-        "Decal": "rail-large-curve-b",
-        "Orientation": "North"
-      },
-      {
-        "Offset": "0, 1",
-        "Decal": "rail-large-curve-b",
-        "Orientation": "South"
-      },
-      {
-        "Offset": "1, 1",
-        "Decal": "rail-large-curve-c",
-        "Orientation": "North"
-      }
-    ]
-  }
-]
+    {
+      "Name": "rail-small-curve",
+      "Tile": "0, 5"
+    },
+
+    {
+      "Name": "rail-cross",
+      "Tile": "0, 6"
+    },
+
+    {
+      "Name": "rail-large-curve-a",
+      "Tile": "1, 4"
+    },
+
+    {
+      "Name": "rail-large-curve-b",
+      "Tile": "2, 4",
+      "ConversionTable": [
+        {
+          "ThisOrientation": "North",
+          "OverlayDecal": "rail-small-curve",
+          "OverlayOrientation": "South",
+          "ResultDecal": "rail-small-curve-inside-large",
+          "ResultOrientation": "South"
+        }
+
+      ]
+    },
+
+    {
+      "Name": "rail-large-curve-c",
+      "Tile": "2, 5"
+    },
+
+    {
+      "Name": "rail-small-curve-inside-large",
+      "Tile": "1, 6"
+    }
+  ],
+  "Patterns": [
+
+    {
+      "Name": "basic",
+      "Pieces": [
+        {
+          "Offset": "0, 0",
+          "RailPiece": "rail-straight",
+          "Orientation": "North"
+        }
+      ]
+    },
+
+    {
+      "Name": "small-curve",
+      "Pieces": [
+        {
+          "Offset": "0, 0",
+          "RailPiece": "rail-small-curve",
+          "Orientation": "North"
+        }
+      ]
+    },
+
+    {
+      "Name": "large-curve",
+      "Pieces": [
+        {
+          "Offset": "0, 0",
+          "RailPiece": "rail-large-curve-a",
+          "Orientation": "North"
+        },
+        {
+          "Offset": "1, 0",
+          "RailPiece": "rail-large-curve-b",
+          "Orientation": "North"
+        },
+        {
+          "Offset": "0, 1",
+          "RailPiece": "rail-large-curve-b",
+          "Orientation": "South"
+        },
+        {
+          "Offset": "1, 1",
+          "RailPiece": "rail-large-curve-c",
+          "Orientation": "North"
+        }
+      ]
+    }
+  ]
+}

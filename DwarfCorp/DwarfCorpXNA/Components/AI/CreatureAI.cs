@@ -876,6 +876,8 @@ namespace DwarfCorp
                 return new BuildVoxelsTask(voxels);
             }
 
+            // Todo: Check gather manager for rail building orders and execute.
+
             return new LookInterestingTask();
         }
 

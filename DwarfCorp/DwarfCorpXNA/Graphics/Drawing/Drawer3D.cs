@@ -52,7 +52,6 @@ namespace DwarfCorp
         private static Shader Effect;
         private static OrbitCamera Camera;
         private static object renderLock = new object();
-        private static RawPrimitive DecalPrimitive = new RawPrimitive();
 
         private struct Box
         {
@@ -210,29 +209,6 @@ namespace DwarfCorp
                         Effect.LightRampTint = Color.White;
                         Effect.VertexColorTint = Color.White;
                         Effect.World = Matrix.Identity;
-                    },
-                    (pos, type, orientation) =>
-                    {
-                        DecalPrimitive.Reset();
-                        AddDecalGeometry(DecalPrimitive, new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(pos)), type, (byte)orientation);
-
-                        Effect.MainTexture = World.ChunkManager.ChunkData.Tilemap;
-                        Effect.LightRampTint = Color.White;
-                        // Todo: Alpha pulse
-                        Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 1.0f);
-                        Effect.SetTexturedTechnique();
-                        Effect.World = Matrix.CreateTranslation(pos + Vector3.Up * 0.15f);
-
-                        foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
-                        {
-                            pass.Apply();
-                            DecalPrimitive.Render(Device);
-                        }
-
-                        Effect.LightRampTint = Color.White;
-                        Effect.VertexColorTint = Color.White;
-                        Effect.World = Matrix.Identity;
-
                     });
 
                 foreach (var box in Boxes)
@@ -245,70 +221,6 @@ namespace DwarfCorp
 
                 Boxes.Clear();
                 Segments.Clear();
-            }
-        }
-
-        private static void AddDecalGeometry(
-            RawPrimitive Into,
-            VoxelHandle V,
-            DecalType Decal,
-            byte Orientation)
-        {
-            var face = BoxFace.Top;
-            var delta = new Vector3(0, 1, 0);
-            var Primitive = VoxelLibrary.GetPrimitive("Bedrock");
-
-            var faceDescriptor = Primitive.GetFace(face);
-
-            // Find all verticies to use for geometry later, and for the fringe
-            var vertexPositions = new Vector3[4];
-
-            for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
-            {
-                var vertex = Primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
-                var voxelVertex = Primitive.Deltas[faceDescriptor.VertexOffset + faceVertex];
-
-                var rampOffset = Vector3.Zero;
-                if (V.Type.CanRamp && VoxelListPrimitive.ShouldRamp(voxelVertex, V.RampType))
-                    rampOffset = new Vector3(0, -V.Type.RampSize, 0);
-
-                var worldPosition = V.WorldPosition + vertex.Position + rampOffset;
-
-                vertexPositions[faceVertex] = worldPosition;
-            }
-
-            var indexOffset = Into.VertexCount;
-            var UV = new Vector2(Decal.Tile.X * (1.0f / 16.0f), Decal.Tile.Y * (1.0f / 16.0f));
-            var UVBounds = new Vector4(UV.X + 0.001f, UV.Y + 0.001f, UV.X + (1.0f / 16.0f) - 0.001f, UV.Y + (1.0f / 16.0f) - 0.001f);
-            var UVs = new Vector2[faceDescriptor.VertexCount];
-
-            for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
-            {
-                var vertex = Primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
-                UVs[faceVertex] = UV + new Vector2(vertex.Position.X / 16.0f, vertex.Position.Z / 16.0f);
-            }
-
-            for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
-            {
-                var vertex = Primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
-
-                var uv = faceVertex + Orientation;
-                uv %= faceDescriptor.VertexCount; // This will only work if the face has 4 verts...
-
-                Into.AddVertex(new ExtendedVertex(
-                    vertexPositions[faceVertex] + VertexNoise.GetNoiseVectorFromRepeatingTexture(vertexPositions[faceVertex]),
-                    Color.White,
-                    Color.White,
-                    UVs[uv],
-                    UVBounds));
-            }
-
-            for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
-                faceDescriptor.IndexOffset; idx++)
-            {
-                ushort offset = Primitive.Indexes[idx];
-                ushort offset0 = Primitive.Indexes[faceDescriptor.IndexOffset];
-                Into.AddIndex((short)(indexOffset + offset - offset0));
             }
         }
 

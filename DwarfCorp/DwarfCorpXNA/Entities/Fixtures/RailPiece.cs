@@ -1,4 +1,4 @@
-// RailLibrary.cs
+// Fixture.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -34,43 +34,49 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
-namespace DwarfCorp.Rail
+namespace DwarfCorp
 {
-    public class RailLibrary
+    public class RailPiece : Body
     {
-        private static List<JunctionPattern> Patterns;
-        private static List<RailPiece> Pieces;
+        private Rail.RailPiece Piece;
 
-        public class Data
+        public RailPiece()
         {
-            public List<RailPiece> Pieces;
-            public List<JunctionPattern> Patterns;
+            
         }
 
-        private static void Initialize()
-        {
-            if (Patterns == null)
-            {
-                var data = FileUtils.LoadJson<Data>(ContentPaths.rail_junctions, false);
-                Patterns = data.Patterns;
-                Pieces = data.Pieces;
-            }
-        }
+        public RailPiece(
+            ComponentManager Manager,
+            VoxelHandle Location,
+            Rail.RailPiece Piece) :
 
-        public static IEnumerable<JunctionPattern> EnumeratePatterns()
+            base(Manager, "Fixture", Matrix.CreateTranslation(Location.WorldPosition), Vector3.One,
+                Location.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f),
+                true)
         {
-            Initialize();
-            return Patterns;
-        }
+            this.Piece = Piece;
 
-        public static RailPiece GetRailPiece(String Name)
-        {
-            Initialize();
-            return Pieces.FirstOrDefault(p => p.Name == Name);
+            CollisionType = CollisionManager.CollisionType.Static;
+            AddChild(new Health(Manager, "Hp", 100, 0, 100));
+            
+            PropogateTransforms();
+            CreateCosmeticChildren(Manager);
         }
+        
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            base.CreateCosmeticChildren(manager);
+
+            Matrix transform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
+
+            AddChild(new SimpleSprite(manager, "Sprite", transform, false, new SpriteSheet(ContentPaths.rail_tiles, 32, 32), Piece.Tile)
+            { 
+                OrientationType = SimpleSprite.OrientMode.Fixed
+            }).SetFlag(Flag.ShouldSerialize, false);
+        }            
     }
 }

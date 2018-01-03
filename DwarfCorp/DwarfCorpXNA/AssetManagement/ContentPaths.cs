@@ -60,6 +60,9 @@ namespace DwarfCorp
         public static string decal_types = ProgramData.CreatePath("Content", "decal-types.json");
         public static string rail_junctions = ProgramData.CreatePath("Content", "rail-junctions.json");
 
+        // Todo: Move to own texture.
+        public static string rail_tiles = ProgramData.CreatePath("Terrain", "terrain_tiles");
+
         public class Audio
     {
         public class Oscar

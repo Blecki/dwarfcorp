@@ -190,6 +190,7 @@
     <Compile Include="Entities\Fixtures\CoinPileFixture.cs" />
     <Compile Include="Entities\Fixtures\Banner.cs" />
     <Compile Include="Entities\Fixtures\Fence.cs" />
+    <Compile Include="Entities\Fixtures\RailPiece.cs" />
     <Compile Include="Entities\Plants\Cactus.cs" />
     <Compile Include="Entities\Plants\Seedling.cs" />
     <Compile Include="Entities\Plants\Plant.cs" />
@@ -389,8 +390,8 @@
     <Compile Include="Scripting\Factions\RaceLibrary.cs" />
     <Compile Include="Scripting\LeafActs\PutMoneyInZoneAct.cs" />
     <Compile Include="Scripting\LeafActs\StashMoneyAct.cs" />
+    <Compile Include="Scripting\Player\Building\CraftDesignation.cs" />
     <Compile Include="Scripting\Player\Tools\BuildObjectTool.cs" />
-    <Compile Include="Scripting\Player\Tools\BuildRailTool.cs" />
     <Compile Include="Scripting\Player\Tools\CookTool.cs" />
     <Compile Include="Scripting\Player\Tools\BuildWallTool.cs" />
     <Compile Include="Scripting\Player\Tools\FarmTile.cs" />

@@ -1,4 +1,4 @@
-// RailLibrary.cs
+// CraftDesignation.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -30,47 +30,21 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
 
-namespace DwarfCorp.Rail
+
+namespace DwarfCorp
 {
-    public class RailLibrary
+    public class CraftDesignation
     {
-        private static List<JunctionPattern> Patterns;
-        private static List<RailPiece> Pieces;
-
-        public class Data
-        {
-            public List<RailPiece> Pieces;
-            public List<JunctionPattern> Patterns;
-        }
-
-        private static void Initialize()
-        {
-            if (Patterns == null)
-            {
-                var data = FileUtils.LoadJson<Data>(ContentPaths.rail_junctions, false);
-                Patterns = data.Patterns;
-                Pieces = data.Pieces;
-            }
-        }
-
-        public static IEnumerable<JunctionPattern> EnumeratePatterns()
-        {
-            Initialize();
-            return Patterns;
-        }
-
-        public static RailPiece GetRailPiece(String Name)
-        {
-            Initialize();
-            return Pieces.FirstOrDefault(p => p.Name == Name);
-        }
+        public CraftItem ItemType;
+        public VoxelHandle Location;
+        public Body WorkPile;
+        public bool OverrideOrientation;
+        public float Orientation;
+        public bool Valid;
+        public Body GhostBody;
+        public float Progress = 0.0f;
+        public bool HasResources = false;
+        public CreatureAI ResourcesReservedFor = null;
     }
 }

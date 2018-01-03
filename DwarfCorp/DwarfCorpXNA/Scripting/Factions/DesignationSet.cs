@@ -66,6 +66,7 @@ namespace DwarfCorp
         {
             public Body Body;
             public DesignationType Type;
+            public Object Tag;
         }
 
         public enum AddDesignationResult
@@ -214,14 +215,15 @@ namespace DwarfCorp
             EntityDesignations.RemoveAll(b => b.Body.IsDead);
         }
 
-        public AddDesignationResult AddEntityDesignation(Body Entity, DesignationType Type)
+        public AddDesignationResult AddEntityDesignation(Body Entity, DesignationType Type, Object Tag = null)
         {
             if (EntityDesignations.Count(e => Object.ReferenceEquals(e.Body, Entity) && e.Type == Type) == 0)
             {
                 EntityDesignations.Add(new EntityDesignation
                 {
                     Body = Entity,
-                    Type = Type
+                    Type = Type,
+                    Tag = Tag
                 });
 
                 return AddDesignationResult.Added;

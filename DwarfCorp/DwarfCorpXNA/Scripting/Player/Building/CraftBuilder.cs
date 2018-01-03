@@ -55,22 +55,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CraftBuilder
     {
-        public class CraftDesignation
-        {
-            public CraftItem ItemType;
-            public VoxelHandle Location;
-            public Body WorkPile;
-            public bool OverrideOrientation;
-            public float Orientation;
-            public bool Valid;
-            public Body GhostBody;
-            public float Progress = 0.0f;
-            public bool HasResources = false;
-            public CreatureAI ResourcesReservedFor = null;
-        }
-
         public Faction Faction { get; set; }
-        public List<CraftDesignation> Designations { get; set; }
         public CraftItem CurrentCraftType { get; set; }
         public bool IsEnabled { get; set; }
         public Body CurrentCraftBody { get; set; }
@@ -111,20 +96,19 @@ namespace DwarfCorp
         {
             World = world;
             Faction = faction;
-            Designations = new List<CraftDesignation>();
             IsEnabled = false;
         }
 
-        public bool IsDesignation(VoxelHandle reference)
+        public bool IsDesignation(VoxelHandle v)
         {
-            if (!reference.IsValid) return false;
-            return Designations.Any(put => put.Location == reference);
+            if (!v.IsValid) return false;
+            return Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).Any(d => d.Location == v);
         }
 
 
         public CraftDesignation GetDesignation(VoxelHandle v)
         {
-            return Designations.FirstOrDefault(put => put.Location == v);
+            return Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == v);
         }
 
         public void AddDesignation(CraftDesignation des, Vector3 AdditionalOffset)
@@ -136,20 +120,16 @@ namespace DwarfCorp
             World.ComponentManager.RootComponent.AddChild(des.GhostBody);
 
             if (des.OverrideOrientation)
-            {
                 des.GhostBody.Orient(des.Orientation);
-            }
             else
-            {
                 des.GhostBody.OrientToWalls();
-            }
 
-            Designations.Add(des);
+            Faction.Designations.AddEntityDesignation(des.GhostBody, DesignationType.Craft, des);
         }
 
         public void RemoveDesignation(CraftDesignation des)
         {
-            Designations.Remove(des);
+            Faction.Designations.RemoveEntityDesignation(des.GhostBody, DesignationType.Craft);
 
             if (des.WorkPile != null)
                 des.WorkPile.Die();
@@ -161,9 +141,9 @@ namespace DwarfCorp
 
         public void RemoveDesignation(VoxelHandle v)
         {
-            CraftDesignation des = GetDesignation(v);
+            var des = GetDesignation(v);
 
-            if (des.Valid)
+            if (des != null)
             {
                 RemoveDesignation(des);
             }
@@ -180,10 +160,6 @@ namespace DwarfCorp
                     CurrentCraftBody = null;
                 }
 
-                foreach (var designation in Designations)
-                {
-                    designation.GhostBody.SetFlagRecursive(GameComponent.Flag.Visible, false);
-                }
                 return;
             }
 
@@ -285,13 +261,6 @@ namespace DwarfCorp
 
         public void Render(DwarfTime gameTime, GraphicsDevice graphics, Effect effect)
         {
-            foreach (var designation in Designations)
-            {
-                designation.GhostBody.SetFlagRecursive(GameComponent.Flag.Visible, true);
-                designation.GhostBody.SetTintRecursive(MathFunctions.Pulsate(Color.Blue, gameTime, 0.7f));
-                designation.GhostBody.PropogateTransforms();
-            }
-
             if (CurrentCraftBody != null)
             {
                 Drawer2D.DrawPolygon(World.Camera, new List<Vector3>() { CurrentCraftBody.Position, CurrentCraftBody.Position + CurrentCraftBody.GlobalTransform.Right * 0.5f }, Color.White, 1, false, graphics.Viewport);
@@ -371,8 +340,11 @@ namespace DwarfCorp
                     o => o != null &&
                     o != CurrentCraftBody &&
                     o.GetRotatedBoundingBox().Intersects(CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)));
-                var intersectsBuildObjects = this.Designations.Any(d => d.GhostBody != CurrentCraftBody &&
-                    d.GhostBody.GetRotatedBoundingBox().Intersects(CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)));
+
+                var intersectsBuildObjects = Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft)
+                    .Any(d => d.Body != CurrentCraftBody && d.Body.GetRotatedBoundingBox().Intersects(
+                        CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)));
+
                 bool intersectsWall = VoxelHelpers.EnumerateCoordinatesInBoundingBox
                     (CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)).Any(
                     v =>
@@ -450,7 +422,6 @@ namespace DwarfCorp
                         if (assignments.Count > 0)
                         {
                             World.Master.TaskManager.AddTasks(assignments);
-                            //TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Craft));
                         }
 
                         break;

@@ -2,50 +2,5 @@
   {
     "Name": "empty",
     "Tile": "0, 0"
-  },
-
-  {
-    "Name": "rail-straight",
-    "Tile": "0, 4"
-  },
-
-  {
-    "Name": "rail-small-curve",
-    "Tile": "0, 5"
-  },
-
-  {
-    "Name": "rail-cross",
-    "Tile": "0, 6"
-  },
-
-  {
-    "Name": "rail-large-curve-a",
-    "Tile": "1, 4"
-  },
-
-  {
-    "Name": "rail-large-curve-b",
-    "Tile": "2, 4",
-    "ConversionTable": [
-      {
-        "ThisOrientation": "North",
-        "OverlayDecal": "rail-small-curve",
-        "OverlayOrientation": "South",
-        "ResultDecal": "rail-small-curve-inside-large",
-        "ResultOrientation": "South"
-      }
-
-    ]
-  },
-
-  {
-    "Name": "rail-large-curve-c",
-    "Tile": "2, 5"
-  },
-
-  {
-    "Name": "rail-small-curve-inside-large",
-    "Tile": "2, 6"
   }
 ]
