@@ -61,17 +61,11 @@ namespace DwarfCorp
             }
             float time = 5 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt);
 
-            Body item = EntityFactory.CreateEntity<Body>(Item.ItemType.Name, Voxel.WorldPosition + Vector3.One * 0.5f + Item.ItemType.SpawnOffset, 
-                            Blackboard.Create("Resources", Item.ItemType.SelectedResources));
+            // Use the existing entity instead of creating a new one.
+            var item = Item.GhostBody;
+            item.SetFlagRecursive(GameComponent.Flag.Active, true);
+            item.SetTintRecursive(Color.White);
 
-            if (Item.OverrideOrientation)
-            {
-                item.Orient(Item.Orientation);
-            }
-            else
-            {
-                item.OrientToWalls();
-            }
             item.Tags.Add("Moveable");
 
             CraftDetails details = item.GetComponent<CraftDetails>();

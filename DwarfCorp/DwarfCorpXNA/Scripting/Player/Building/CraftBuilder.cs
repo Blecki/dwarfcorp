@@ -113,18 +113,12 @@ namespace DwarfCorp
 
         public void AddDesignation(CraftDesignation des, Vector3 AdditionalOffset)
         {
-            des.GhostBody = EntityFactory.CreateGhostedEntity<Body>(des.ItemType.Name,
-                des.Location.WorldPosition + Vector3.One * 0.5f + AdditionalOffset, Color.LightBlue,
-                Blackboard.Create<List<ResourceAmount>>("Resources", des.ItemType.SelectedResources));
-
-            World.ComponentManager.RootComponent.AddChild(des.GhostBody);
-
             if (des.OverrideOrientation)
                 des.GhostBody.Orient(des.Orientation);
             else
                 des.GhostBody.OrientToWalls();
 
-            Faction.Designations.AddEntityDesignation(des.GhostBody, DesignationType.Craft, des);
+            Faction.Designations.AddEntityDesignation(des.WorkPile, DesignationType.Craft, des);
         }
 
         public void RemoveDesignation(CraftDesignation des)
@@ -133,22 +127,15 @@ namespace DwarfCorp
 
             if (des.WorkPile != null)
                 des.WorkPile.Die();
-
-            if (des.GhostBody != null)
-                des.GhostBody.Delete();
         }
-
 
         public void RemoveDesignation(VoxelHandle v)
         {
             var des = GetDesignation(v);
 
             if (des != null)
-            {
                 RemoveDesignation(des);
-            }
         }
-
 
         public void Update(DwarfTime gameTime, GameMaster player)
         {
@@ -170,15 +157,18 @@ namespace DwarfCorp
 
             if (CurrentCraftType != null && CurrentCraftBody == null)
             {
-                CurrentCraftBody = EntityFactory.CreateGhostedEntity<Body>(CurrentCraftType.Name, 
-                    player.VoxSelector.VoxelUnderMouse.WorldPosition, Color.White,
+                CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, 
+                    player.VoxSelector.VoxelUnderMouse.WorldPosition,
                      Blackboard.Create<List<ResourceAmount>>("Resources", CurrentCraftType.SelectedResources));
+                EntityFactory.GhostEntity(CurrentCraftBody, Color.White);
+
                 CurrentDesignation = new CraftDesignation()
                 {
                     ItemType = CurrentCraftType,
                     Location = VoxelHandle.InvalidHandle,
                     Valid = true
                 };
+
                 OverrideOrientation = false;
                 CurrentCraftBody.SetTintRecursive(Color.Green);
             }
@@ -402,7 +392,8 @@ namespace DwarfCorp
                                     WorkPile = new WorkPile(World.ComponentManager, startPos),
                                     Orientation = CurrentDesignation.Orientation,
                                     OverrideOrientation = CurrentDesignation.OverrideOrientation,
-                                    Valid = true
+                                    Valid = true,
+                                    GhostBody = CurrentCraftBody
                                 };
                                 World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
                                 newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
@@ -416,6 +407,7 @@ namespace DwarfCorp
                                 {
                                     newDesignation.WorkPile.Die();
                                 }
+                                CurrentCraftBody = null;
                             }
                         }
 

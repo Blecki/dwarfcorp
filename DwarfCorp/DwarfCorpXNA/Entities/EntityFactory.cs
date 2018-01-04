@@ -232,16 +232,6 @@ namespace DwarfCorp
                 tinter.VertexColorTint = Tint;
         }
 
-        // Create an entity and make it a transparent ghost object that doesn't interact with anything.
-        // This is for displaying stuff, for example in tools.
-        // TODO: DEPRECATE
-        public static Body CreateGhostedEntity<T>(string id, Vector3 location, Color tint, Blackboard data = null) where T : Body
-        {
-            var ent = CreateEntity<T>(id, location, data);
-            GhostEntity(ent, tint);
-            return ent;
-        }
-
         public static T CreateEntity<T>(string id, Vector3 location, Blackboard data = null) where T : GameComponent
         {
             if (data == null) data = new Blackboard();
