@@ -70,7 +70,6 @@ namespace DwarfCorp
         public float Hp { get; set; }
         public float MaxHealth { get; set; }
         public float MinHealth { get; set; }
-        public float TimeWithNegativeHealth = 0.0f;
 
         public Health()
         {
@@ -111,13 +110,9 @@ namespace DwarfCorp
             }
 
 
-            float now = (float)DwarfTime.LastTime.TotalGameTime.TotalSeconds;
-
-            if (!wasHealthNegative)
-            {
-                TimeWithNegativeHealth = now;
-            }
-            else if (amount < 0 && Parent != null)
+            // Only die when damaged after health already reached (integer) zero.
+            // otherwise, go unconscious. This is similar to D&D rules.
+            if (wasHealthNegative && amount < 0 && Parent != null)
             {
                 Parent.Die();
             }
