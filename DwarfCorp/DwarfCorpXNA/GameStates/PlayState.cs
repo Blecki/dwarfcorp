@@ -1281,8 +1281,7 @@ namespace DwarfCorp.GameStates
                                 if (buildInfo == null)
                                     return;
                                 sender.Parent.Hidden = true;
-                                data.SelectedResources = buildInfo.GetSelectedResources();
-                                data.NumRepeats = buildInfo.GetNumRepeats();
+                                Master.Faction.CraftBuilder.SelectedResources = buildInfo.GetSelectedResources();
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                 Master.Faction.CraftBuilder.IsEnabled = true;
@@ -1355,15 +1354,10 @@ namespace DwarfCorp.GameStates
                                 if (buildInfo == null)
                                     return;
                                 sender.Parent.Hidden = true;
-                                data.SelectedResources = buildInfo.GetSelectedResources();
-                                data.NumRepeats = 1;
                                 var assignments = new List<Task>();
-                                for(int i = 0; i < buildInfo.GetNumRepeats(); i++)
-                                {
-                                    assignments.Add(new CraftResourceTask(data));
-                                }
+                                assignments.Add(new CraftResourceTask(data, buildInfo.GetNumRepeats(), buildInfo.GetSelectedResources()));
                                 World.Master.TaskManager.AddTasks(assignments);
-                                World.ShowToolPopup(data.CurrentVerb + " " + data.NumRepeats + " " + data.Name);
+                                World.ShowToolPopup(data.CurrentVerb + " " + buildInfo.GetNumRepeats() + " " + data.Name);
                                 World.Tutorial("build crafts");
                             },
                         },
@@ -1476,9 +1470,7 @@ namespace DwarfCorp.GameStates
                             {
                                 var buildInfo = sender.Parent as Gui.Widgets.BuildCraftInfo;
                                 sender.Parent.Hidden = true;
-                                data.SelectedResources = buildInfo.GetSelectedResources();
-                                data.NumRepeats = buildInfo.GetNumRepeats();
-                                List<Task> assignments = new List<Task> { new CraftResourceTask(data) };
+                                List<Task> assignments = new List<Task> { new CraftResourceTask(data, buildInfo.GetNumRepeats(), buildInfo.GetSelectedResources()) };
                                 World.Master.TaskManager.AddTasks(assignments);
                                 World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
                                 World.Tutorial("cook");
@@ -2038,8 +2030,7 @@ namespace DwarfCorp.GameStates
                                         if (buildInfo == null)
                                             return;
                                         sender.Parent.Hidden = true;
-                                        buildInfo.Data.SelectedResources = buildInfo.GetSelectedResources();
-                                        buildInfo.Data.NumRepeats = buildInfo.GetNumRepeats();
+                                        Master.Faction.CraftBuilder.SelectedResources = buildInfo.GetSelectedResources();
                                         Master.Faction.RoomBuilder.CurrentRoomData = null;
                                         Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                         Master.Faction.CraftBuilder.IsEnabled = true;

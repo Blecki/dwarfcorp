@@ -493,7 +493,7 @@ namespace DwarfCorp
                 {
                     continue;
                 }
-                return item.Value.Clone();
+                return item.Value;
             }
             return null;
         }

@@ -398,6 +398,7 @@
     <Compile Include="Scripting\Player\Tools\WrangleTool.cs" />
     <Compile Include="Scripting\Player\Tools\PlantTool.cs" />
     <Compile Include="Scripting\Player\Tools\TillTool.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\CraftResourceTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\WrangleAnimalTask.cs" />
     <Compile Include="Scripting\Player\Tools\MoveObjectTool.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\AnimalPen.cs" />

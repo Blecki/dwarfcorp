@@ -90,7 +90,7 @@ namespace DwarfCorp
         {
             if (!Item.HasResources && Item.ResourcesReservedFor == Agent)
             {
-                Creature.Inventory.RemoveAndCreateWithToss(Item.ItemType.SelectedResources, pos, Inventory.RestockType.None);
+                Creature.Inventory.RemoveAndCreateWithToss(Item.SelectedResources, pos, Inventory.RestockType.None);
                 Item.HasResources = true;
             }
             yield return Status.Success;
@@ -127,7 +127,7 @@ namespace DwarfCorp
                 yield break;
             }
 
-            Item.ItemType.SelectedResources = stashed;
+            Item.SelectedResources = stashed;
             if (Item.ItemType.Name == ResourceLibrary.ResourceType.Trinket)
             {
                 Resource craft = ResourceLibrary.GenerateTrinket(stashed.ElementAt(0).ResourceType,
@@ -213,7 +213,7 @@ namespace DwarfCorp
             Act unreserveAct = new Wrap(UnReserve);
             float time = 3 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt);
             Act getResources = null;
-            if (Item.ItemType.SelectedResources == null || Item.ItemType.SelectedResources.Count == 0)
+            if (Item.SelectedResources == null || Item.SelectedResources.Count == 0)
             {
                 getResources = new Select(new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
                                           new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
@@ -224,7 +224,7 @@ namespace DwarfCorp
             {
                 getResources = new Select(new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
                                           new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
-                                                     new Sequence(new Wrap(ReserveResources), new GetResourcesAct(Agent, Item.ItemType.SelectedResources))),
+                                                     new Sequence(new Wrap(ReserveResources), new GetResourcesAct(Agent, Item.SelectedResources))),
                                           new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true));
             }
 

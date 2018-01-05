@@ -56,16 +56,12 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             if (!Creature.Faction.CraftBuilder.IsDesignation(Voxel))
-            {
                 yield return Status.Fail;
-            }
-            float time = 5 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt);
 
             // Use the existing entity instead of creating a new one.
             var item = Item.GhostBody;
             item.SetFlagRecursive(GameComponent.Flag.Active, true);
             item.SetTintRecursive(Color.White);
-
             item.Tags.Add("Moveable");
 
             CraftDetails details = item.GetComponent<CraftDetails>();
@@ -74,19 +70,18 @@ namespace DwarfCorp
             {
                 item.AddChild(new CraftDetails(Creature.Manager)
                 {
-                    Resources = Item.ItemType.SelectedResources.ConvertAll(p => new ResourceAmount(p)),
+                    Resources = Item.SelectedResources.ConvertAll(p => new ResourceAmount(p)),
                     CraftType = Item.ItemType.Name
                 });
 
-                if (Item.ItemType.SelectedResources.Count > 0)
-                    item.Name = Item.ItemType.SelectedResources.FirstOrDefault().ResourceType + " " + item.Name;
-
+                if (Item.SelectedResources.Count > 0)
+                    item.Name = Item.SelectedResources.FirstOrDefault().ResourceType + " " + item.Name;
             }
 
             Creature.Faction.OwnedObjects.Add(item);
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, 10);
             Creature.Faction.CraftBuilder.RemoveDesignation(Voxel);
-            Creature.AI.AddXP((int)time);
+            Creature.AI.AddXP((int)(5 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt)));
             yield return Status.Success;
         }
     }

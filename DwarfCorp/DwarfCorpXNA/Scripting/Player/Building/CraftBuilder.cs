@@ -59,6 +59,7 @@ namespace DwarfCorp
         public CraftItem CurrentCraftType { get; set; }
         public bool IsEnabled { get; set; }
         public Body CurrentCraftBody { get; set; }
+        public List<ResourceAmount> SelectedResources;
 
         public void End()
         {
@@ -159,7 +160,7 @@ namespace DwarfCorp
             {
                 CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, 
                     player.VoxSelector.VoxelUnderMouse.WorldPosition,
-                     Blackboard.Create<List<ResourceAmount>>("Resources", CurrentCraftType.SelectedResources));
+                     Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
                 EntityFactory.GhostEntity(CurrentCraftBody, Color.White);
 
                 CurrentDesignation = new CraftDesignation()
@@ -387,7 +388,7 @@ namespace DwarfCorp
                                 Vector3 endPos = pos;
                                 CraftDesignation newDesignation = new CraftDesignation()
                                 {
-                                    ItemType = CurrentCraftType.Clone(),
+                                    ItemType = CurrentCraftType,
                                     Location = r,
                                     WorkPile = new WorkPile(World.ComponentManager, startPos),
                                     Orientation = CurrentDesignation.Orientation,
