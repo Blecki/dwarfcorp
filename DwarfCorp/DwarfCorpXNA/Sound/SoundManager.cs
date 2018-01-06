@@ -364,7 +364,7 @@ namespace DwarfCorp
             {
                 return;
             }
-            if (cue.IsPlaying && !cue.IsStopped)
+            if (cue.IsPlaying && !cue.IsStopped && !cue.IsStopping)
             {
                 cue.Stop(AudioStopOptions.AsAuthored);
             }
@@ -381,7 +381,7 @@ namespace DwarfCorp
             }
             try
             {
-                if (!cue.IsPlaying && !cue.IsStopped)
+                if (!cue.IsPlaying && !cue.IsStopped && !cue.IsStopping)
                 {
                     cue.Play();
                 }
@@ -394,7 +394,9 @@ namespace DwarfCorp
             }
             catch (InvalidOperationException exception)
             {
-                Console.Error.WriteLine(exception.ToString());
+                Cue newCue = SoundBank.GetCue(sound);
+                newCue.Play();
+                ActiveCues[sound] = newCue;
             }
         }
 

@@ -159,7 +159,7 @@ namespace DwarfCorp
                 while (true)
                 {
                     Act.Status planStatus = planAct.Tick();
-
+                    LastTickedChild = planAct;
                     if (planStatus == Status.Fail)
                     {
                         yield return Act.Status.Running;
@@ -190,7 +190,7 @@ namespace DwarfCorp
                     BlendStart = existingPath == null
                 };
                 followPath.Initialize();
-
+                
                 while (true)
                 {
                     if (PlanType == PlanAct.PlanType.Radius && (Creature.Physics.Position - entity.Position).Length() < Radius)
@@ -199,7 +199,7 @@ namespace DwarfCorp
                     }
 
                     Act.Status pathStatus = followPath.Tick();
-
+                    LastTickedChild = followPath;
                     if (pathStatus == Status.Fail)
                     {
                         break;

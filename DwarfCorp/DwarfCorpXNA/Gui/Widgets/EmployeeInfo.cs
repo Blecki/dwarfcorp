@@ -359,11 +359,17 @@ namespace DwarfCorp.Gui.Widgets
                 var diseases = Employee.Creature.Buffs.OfType<Disease>();
                 if (diseases.Any())
                 {
-                    thoughtsBuilder.Append("Diseases: ");
+                    thoughtsBuilder.Append("Conditions: ");
                 }
+
+                if (Employee.Status.IsAsleep)
+                {
+                    thoughtsBuilder.AppendLine("Unconscious");
+                }
+
                 foreach (var disease in diseases)
                 {
-                    thoughtsBuilder.Append(disease.Name + "\n");
+                    thoughtsBuilder.AppendLine(disease.Name);
                 }
                 Thoughts.Text = thoughtsBuilder.ToString();
 

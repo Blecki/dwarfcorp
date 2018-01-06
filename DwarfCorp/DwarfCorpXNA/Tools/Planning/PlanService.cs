@@ -66,8 +66,19 @@ namespace DwarfCorp
     {
         public override AStarPlanResponse HandleRequest(AstarPlanRequest req)
         {
+            // If there are no subscribers that want this request, it must be old. So remove it.
+            if (Subscribers.Find(s => s.ID == req.Subscriber.ID) == null)
+            {
+                return new AStarPlanResponse
+                {
+                    Path = null,
+                    Success = false,
+                    Request = req
+                };
+               
+            }
             List<MoveAction> path = AStarPlanner.FindPath(req.Sender.Movement, req.Start, req.GoalRegion, req.Sender.Manager.World.ChunkManager, 
-                req.MaxExpansions, req.HeuristicWeight);
+                req.MaxExpansions, req.HeuristicWeight, Requests.Count, () => { return Subscribers.Find(s => s.ID == req.Subscriber.ID) != null; } );
 
             AStarPlanResponse res = new AStarPlanResponse
             {

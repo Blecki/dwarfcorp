@@ -307,6 +307,7 @@ namespace DwarfCorp
             return bestTask;
         }
 
+        private Timer _preEmptTimer = new Timer(1.21f, false);
         /// <summary> Looks for any tasks with higher priority than the current task. Cancel the current task and do that one instead. </summary>
         public void PreEmptTasks()
         {
@@ -320,6 +321,12 @@ namespace DwarfCorp
                     newTask = task;
                     break;
                 }
+            }
+
+            _preEmptTimer.Update(DwarfTime.LastTime);
+            if (_preEmptTimer.HasTriggered && newTask == null && Faction == World.PlayerFaction)
+            {
+                newTask = World.Master.TaskManager.GetBestTask(this, (int)CurrentTask.Priority);
             }
 
             if (newTask != null)
@@ -420,6 +427,7 @@ namespace DwarfCorp
             PreEmptTasks();
             HandleReproduction();
             
+
             // Heal thyself
             if (Status.Health.IsDissatisfied() && Stats.CanSleep)
             {
@@ -670,6 +678,15 @@ namespace DwarfCorp
             if (!IsPosessed && Creature.Physics.IsInLiquid && MathFunctions.RandEvent(0.01f))
             {
                 return new FindLandTask();
+            }
+
+            if (Faction == World.PlayerFaction)
+            {
+                var candidate = World.Master.TaskManager.GetBestTask(this);
+                if (candidate != null)
+                {
+                    return candidate;
+                }
             }
 
             if (!IsPosessed && Creature.Inventory.Resources.Count > 0)
@@ -1109,6 +1126,11 @@ namespace DwarfCorp
                 desc += "\n    Last failed: " + LastFailedAct;
             }
 
+            if (Status.IsAsleep)
+            {
+                desc += "\n UNCONSCIOUS";
+            }
+
             return desc;
         }
 
@@ -1447,7 +1469,7 @@ namespace DwarfCorp
                 GoalRegion = region,
                 Start = Creature.Physics.CurrentVoxel,
                 Sender = this,
-                MaxExpansions = 5000
+                MaxExpansions = 50000
             };
 
             return WaitForPlan(request);
