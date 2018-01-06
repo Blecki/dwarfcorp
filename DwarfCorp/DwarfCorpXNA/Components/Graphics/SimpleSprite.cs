@@ -47,6 +47,12 @@ namespace DwarfCorp
         {
         }
         
+        public void SetFrame(Point Frame)
+        {
+            this.Frame = Frame;
+            Verticies = null;
+        }
+
         // Perhaps should be handled in base class?
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {

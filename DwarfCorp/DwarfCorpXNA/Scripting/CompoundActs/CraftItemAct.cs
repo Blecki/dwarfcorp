@@ -199,7 +199,7 @@ namespace DwarfCorp
 
         public bool IsNotCancelled()
         {
-            return Creature.Faction.CraftBuilder.IsDesignation(Voxel);
+            return Creature.Faction.Designations.IsDesignation(Item.GhostBody, DesignationType.Craft);
         }
 
         public bool ResourceStateValid()

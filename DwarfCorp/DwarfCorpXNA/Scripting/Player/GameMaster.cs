@@ -37,6 +37,7 @@ namespace DwarfCorp
             Craft,
             MoveObjects,
             DeconstructObjects,
+            BuildRail,
             God
         }
 
@@ -226,6 +227,8 @@ namespace DwarfCorp
             {
                 Player = this
             };
+
+            Tools[ToolMode.BuildRail] = new BuildRailTool(this);
         }
 
         void Time_NewDay(DateTime time)
@@ -415,6 +418,16 @@ namespace DwarfCorp
                             orphanedTasks.Add(task);
                         }
                     }
+                    else if (ent.Type == DesignationType.Craft)
+                    {
+                        var task = new CraftItemTask(ent.Tag as CraftDesignation);
+                        if (!TaskManager.HasTask(task) &&
+                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
+                        {
+                            orphanedTasks.Add(task);
+                        }
+                    }
+                    
                     /// TODO ... other entity task types
                 }
 

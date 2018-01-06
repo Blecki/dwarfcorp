@@ -42,7 +42,7 @@ namespace DwarfCorp
 {
     public class RailPiece : Body
     {
-        private Rail.RailPiece Piece;
+        private Rail.JunctionPiece Piece;
 
         public RailPiece()
         {
@@ -52,9 +52,9 @@ namespace DwarfCorp
         public RailPiece(
             ComponentManager Manager,
             VoxelHandle Location,
-            Rail.RailPiece Piece) :
+            Rail.JunctionPiece Piece) :
 
-            base(Manager, "Fixture", Matrix.CreateTranslation(Location.WorldPosition), Vector3.One,
+            base(Manager, "Fixture", Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y)), Vector3.One,
                 Location.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f),
                 true)
         {
@@ -71,12 +71,27 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(manager);
 
-            Matrix transform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
+            var piece = Rail.RailLibrary.GetRailPiece(Piece.RailPiece);
 
-            AddChild(new SimpleSprite(manager, "Sprite", transform, false, new SpriteSheet(ContentPaths.rail_tiles, 32, 32), Piece.Tile)
+            Matrix transform = Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
+
+            AddChild(new SimpleSprite(manager, "Sprite", transform, false, new SpriteSheet(ContentPaths.rail_tiles, 32, 32), piece.Tile)
             { 
                 OrientationType = SimpleSprite.OrientMode.Fixed
             }).SetFlag(Flag.ShouldSerialize, false);
-        }            
+        }         
+        
+        public void UpdatePiece(Rail.JunctionPiece Piece, VoxelHandle Location)
+        {
+            this.Piece = Piece;
+
+            LocalTransform = Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y) + new Vector3(0.5f, 0.2f, 0.5f));
+
+            var piece = Rail.RailLibrary.GetRailPiece(Piece.RailPiece);
+            var spriteChild = EnumerateChildren().FirstOrDefault(c => c.Name == "Sprite") as SimpleSprite;
+            Matrix transform = Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
+            spriteChild.LocalTransform = transform;
+            spriteChild.SetFrame(piece.Tile);
+        }
     }
 }

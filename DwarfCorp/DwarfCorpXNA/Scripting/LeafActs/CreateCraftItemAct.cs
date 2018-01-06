@@ -44,6 +44,7 @@ namespace DwarfCorp
     {
         public VoxelHandle Voxel { get; set; }
         public CraftDesignation Item { get; set; }
+
         public CreateCraftItemAct(VoxelHandle voxel, CreatureAI agent, CraftDesignation itemType) :
             base(agent)
         {
@@ -62,7 +63,11 @@ namespace DwarfCorp
             var item = Item.GhostBody;
             item.SetFlagRecursive(GameComponent.Flag.Active, true);
             item.SetTintRecursive(Color.White);
+            item.SetFlagRecursive(GameComponent.Flag.Visible, true);
             item.Tags.Add("Moveable");
+
+            if (Item.WorkPile != null)
+                Item.WorkPile.Die();
 
             CraftDetails details = item.GetComponent<CraftDetails>();
             
@@ -80,7 +85,7 @@ namespace DwarfCorp
 
             Creature.Faction.OwnedObjects.Add(item);
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, 10);
-            Creature.Faction.CraftBuilder.RemoveDesignation(Voxel);
+            Creature.Faction.Designations.RemoveEntityDesignation(item, DesignationType.Craft);
             Creature.AI.AddXP((int)(5 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt)));
             yield return Status.Success;
         }

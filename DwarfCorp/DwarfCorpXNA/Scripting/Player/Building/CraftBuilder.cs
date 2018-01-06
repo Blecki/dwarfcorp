@@ -394,7 +394,8 @@ namespace DwarfCorp
                                     Orientation = CurrentDesignation.Orientation,
                                     OverrideOrientation = CurrentDesignation.OverrideOrientation,
                                     Valid = true,
-                                    GhostBody = CurrentCraftBody
+                                    GhostBody = CurrentCraftBody,
+                                    SelectedResources = SelectedResources
                                 };
                                 World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
                                 newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));

@@ -2011,38 +2011,18 @@ namespace DwarfCorp.GameStates
                                 Icon = new TileReference("voxels", 0),
                                 KeepChildVisible = true,
                                 ExpandChildWhenDisabled = true,
-                                Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
-                                PopupChild = new BuildCraftInfo
+                                Behavior = FlatToolTray.IconBehavior.LeafIcon,
+                                OnClick = (sender, args) =>
                                 {
-                                    Data = new CraftItem
+                                    Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // This should be set by the tool.
+                                    Master.Faction.CraftBuilder.IsEnabled = false;
+                                    var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as BuildRailTool;
+                                    railTool.Pattern = data;
+                                    railTool.SelectedResources = new List<ResourceAmount>
                                     {
-                                        CraftLocation = "",
-                                        Type = CraftItem.CraftType.Object,
-                                        // Todo: Create a proper craft item.
-                                    },
-                                    Rect = new Rectangle(0, 0, 350, 150),
-                                    Master = Master,
-                                    World = World,
-                                    OnShown = (sender) => Master.Faction.CraftBuilder.IsEnabled = false,
-                                    BuildAction = (sender, args) =>
-                                    {
-                                        var buildInfo = sender.Parent as BuildCraftInfo;
-                                        if (buildInfo == null)
-                                            return;
-                                        sender.Parent.Hidden = true;
-                                        Master.Faction.CraftBuilder.SelectedResources = buildInfo.GetSelectedResources();
-                                        Master.Faction.RoomBuilder.CurrentRoomData = null;
-                                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                        Master.Faction.CraftBuilder.IsEnabled = true;
-                                        Master.Faction.CraftBuilder.CurrentCraftType = buildInfo.Data;
-                                        if (Master.Faction.CraftBuilder.CurrentCraftBody != null)
-                                        {
-                                            Master.Faction.CraftBuilder.CurrentCraftBody.Delete();
-                                            Master.Faction.CraftBuilder.CurrentCraftBody = null;
-                                        }
-                                        ChangeTool(GameMaster.ToolMode.BuildObject);
-                                        World.ShowToolPopup("Click and drag to " + buildInfo.Data.Verb + " " + data.Name);
-                                    }
+                                        new ResourceAmount(ResourceLibrary.ResourceType.Iron, 2)
+                                    };
+                                    ChangeTool(GameMaster.ToolMode.BuildRail);
                                 },
                                 Hidden = false
                             }));
@@ -2089,6 +2069,7 @@ namespace DwarfCorp.GameStates
             icon_menu_Edibles_Return.ReplacementMenu = MainMenu;
             icon_menu_Farm_Return.ReplacementMenu = MainMenu;
             icon_menu_Magic_Return.ReplacementMenu = MainMenu;
+            icon_menu_Rail_Return.ReplacementMenu = MainMenu;
 
             BottomToolBar = secondBar.AddChild(new FlatToolTray.RootTray
             {

@@ -43,6 +43,7 @@ namespace DwarfCorp
     internal class CraftItemTask : Task
     {
         public CraftDesignation Designation { get; set; }
+
         public CraftItemTask()
         {
             MaxAssignable = 3;
@@ -77,18 +78,13 @@ namespace DwarfCorp
 
         public override bool ShouldRetry(Creature agent)
         {
-            if (!agent.Faction.CraftBuilder.IsDesignation(Designation.Location))
-            {
-                return false;
-            }
-
-            return true;
+            return agent.Faction.Designations.IsDesignation(Designation.GhostBody, DesignationType.Craft);
         }
 
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !agent.Faction.CraftBuilder.IsDesignation(Designation.Location) || Designation.Progress > 1.0f;
+            return !agent.Faction.Designations.IsDesignation(Designation.GhostBody, DesignationType.Craft) || Designation.Progress > 1.0f;
         }
 
         public override Feasibility IsFeasible(Creature agent)
@@ -102,17 +98,17 @@ namespace DwarfCorp
         }
 
         public bool CanBuild(Creature agent)
-        {
-            if (!agent.Faction.CraftBuilder.IsDesignation(Designation.Location))
-            {
-                return false;
-            }
+        {            
             if (!String.IsNullOrEmpty(Designation.ItemType.CraftLocation))
             {
                 var nearestBuildLocation = agent.Faction.FindNearestItemWithTags(Designation.ItemType.CraftLocation, Vector3.Zero, false);
 
                 if (nearestBuildLocation == null)
                     return false;
+            }
+            else if (!agent.Faction.Designations.IsDesignation(Designation.GhostBody, DesignationType.Craft))
+            {
+                return false;
             }
 
             foreach (var resourceAmount in Designation.ItemType.RequiredResources)

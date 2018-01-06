@@ -74,22 +74,22 @@
       "Name": "large-curve",
       "Pieces": [
         {
-          "Offset": "0, 0",
+          "Offset": "0, 1",
           "RailPiece": "rail-large-curve-a",
           "Orientation": "North"
         },
         {
-          "Offset": "1, 0",
+          "Offset": "1, 1",
           "RailPiece": "rail-large-curve-b",
           "Orientation": "North"
         },
         {
-          "Offset": "0, 1",
+          "Offset": "0, 0",
           "RailPiece": "rail-large-curve-b",
           "Orientation": "South"
         },
         {
-          "Offset": "1, 1",
+          "Offset": "1, 0",
           "RailPiece": "rail-large-curve-c",
           "Orientation": "North"
         }
