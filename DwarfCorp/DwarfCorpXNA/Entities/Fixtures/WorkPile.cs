@@ -44,12 +44,13 @@ namespace DwarfCorp
     {
         public WorkPile()
         {
-            
+            Name = "Workpile";
         }
 
         public WorkPile(ComponentManager componentManager, Vector3 position) :
             base(componentManager, position, new SpriteSheet(ContentPaths.Entities.DwarfObjects.underconstruction, 32, 32), new Point(0, 0))
         {
+            Name = "Workpile";
         }
     }
 }

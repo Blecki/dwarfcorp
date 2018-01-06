@@ -50,6 +50,6 @@ namespace DwarfCorp
 
         _InactiveFarm = 1024,
         _AllFarms = Till | Plant | _InactiveFarm,
-        _All     = Dig | Till | Guard | Gather | Attack | Wrangle | Chop | Put | Plant,
+        _All     = Dig | Till | Guard | Gather | Attack | Wrangle | Chop | Put | Plant | Craft,
     }
 }
