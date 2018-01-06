@@ -134,7 +134,7 @@ namespace DwarfCorp
             Body closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true);
 
 
-            if (Agent.Status.Health.IsDissatisfied() && closestItem != null)
+            if (closestItem != null)
             {
                 closestItem.ReservedFor = Agent;
                 Creature.AI.Blackboard.SetData("Bed", closestItem);
@@ -150,6 +150,10 @@ namespace DwarfCorp
             }
             else
             {
+                if (Agent.Faction == Agent.World.PlayerFaction)
+                {
+                    Agent.World.MakeAnnouncement(String.Format("{0} passed out.", Agent.Stats.FullName));
+                }
                 Tree = new SleepAct(Creature.AI) { HealRate = 0.1f, RechargeRate = 1.0f, Teleport = false, Type = SleepAct.SleepType.Heal };
             }
             base.Initialize();

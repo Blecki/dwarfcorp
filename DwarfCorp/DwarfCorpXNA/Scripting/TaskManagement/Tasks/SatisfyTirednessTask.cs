@@ -94,7 +94,9 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return Feasibility.Feasible;
+            Body closestItem = agent.Faction.FindNearestItemWithTags("Bed", agent.AI.Position, true);
+
+            return closestItem != null || agent.AI.Status.Health.IsCritical() ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

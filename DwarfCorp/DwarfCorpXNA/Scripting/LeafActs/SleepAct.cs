@@ -138,7 +138,7 @@ namespace DwarfCorp
             }
             else
             {
-                while (!Creature.Status.Health.IsSatisfied() || Creature.Buffs.Any(buff => buff is Disease))
+                while (Creature.Status.Health.IsDissatisfied() || Creature.Buffs.Any(buff => buff is Disease))
                 {
                     if (Teleport)
                     {

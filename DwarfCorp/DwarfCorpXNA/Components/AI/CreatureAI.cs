@@ -1129,6 +1129,11 @@ namespace DwarfCorp
                 desc += "\n    Last failed: " + LastFailedAct;
             }
 
+            if (Status.IsAsleep)
+            {
+                desc += "\n UNCONSCIOUS";
+            }
+
             return desc;
         }
 
