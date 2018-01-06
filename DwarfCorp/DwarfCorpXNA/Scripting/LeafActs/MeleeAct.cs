@@ -471,7 +471,8 @@ namespace DwarfCorp
                     new MoveAction()
                     {
                         Diff = Vector3.Zero,
-                        DestinationVoxel = Creature.Physics.CurrentVoxel,
+                        DestinationVoxel = path[0].SourceVoxel,
+                        SourceVoxel = Creature.Physics.CurrentVoxel,
                         MoveType = MoveType.Walk
                     });
                 Creature.AI.Blackboard.SetData("RandomPath", path);

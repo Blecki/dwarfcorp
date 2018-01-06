@@ -70,7 +70,8 @@ namespace DwarfCorp
             {
                 Resources = resourceType.ConvertAll(p => new ResourceAmount(p)),
                 Sprites = Ladder.Sprites,
-                DefaultSpriteFrame = Ladder.DefaultSprite
+                DefaultSpriteFrame = Ladder.DefaultSprite,
+                CraftType = "Ladder"
             }, SimpleSprite.OrientMode.Fixed)
         {
             Name = resourceType[0].ResourceType + " Ladder";

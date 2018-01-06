@@ -79,5 +79,10 @@ namespace DwarfCorp
         {
             currentValue = Math.Abs(MaxValue - MinValue) < 1e-12 ? v : Math.Max(Math.Min(v, MaxValue), MinValue);
         }
+
+        public bool IsCritical()
+        {
+            return CurrentValue <= DissatisfiedThreshold * 0.5f;
+        }
     }
 }

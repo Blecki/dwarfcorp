@@ -123,7 +123,8 @@ namespace DwarfCorp
             {
                 Resources = new List<ResourceAmount>(),
                 Sprites = new Dictionary<Resource.ResourceTags, Point>(),
-                DefaultSpriteFrame = DefaultSpriteFrame
+                DefaultSpriteFrame = DefaultSpriteFrame,
+                CraftType = CraftType
             };
             details.Resources.AddRange(Resources);
             foreach (var pair in Sprites)

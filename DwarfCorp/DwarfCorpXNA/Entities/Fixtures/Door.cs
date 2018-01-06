@@ -107,7 +107,8 @@ namespace DwarfCorp
             {
                 Resources = resourceType.ConvertAll(p => new ResourceAmount(p)),
                 Sprites = Door.Sprites,
-                DefaultSpriteFrame = Door.DefaultSprite
+                DefaultSpriteFrame = Door.DefaultSprite,
+                CraftType = "Door"
             }, SimpleSprite.OrientMode.Fixed)
         {
             IsMoving = false;

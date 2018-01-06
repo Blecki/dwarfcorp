@@ -100,6 +100,8 @@ namespace DwarfCorp
 
         public virtual void Heal(float amount)
         {
+            bool wasHealthNegative = (int)Hp <= (int)MinHealth;
+
             Hp = Math.Min(Math.Max(Hp + amount, MinHealth), MaxHealth);
 
             if(!(Hp <= MinHealth))
@@ -107,7 +109,10 @@ namespace DwarfCorp
                 return;
             }
 
-            if(Parent != null)
+
+            // Only die when damaged after health already reached (integer) zero.
+            // otherwise, go unconscious. This is similar to D&D rules.
+            if (wasHealthNegative && amount < 0 && Parent != null)
             {
                 Parent.Die();
             }

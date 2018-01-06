@@ -89,8 +89,8 @@ namespace DwarfCorp
         {
             Type = planType;
             Name = "Plan to " + target;
-            PlannerTimer = new Timer(1.0f, false);
-            MaxExpansions = 1000;
+            PlannerTimer = new Timer(60.0f, false);
+            MaxExpansions = 10000;
             PathOut = pathOut;
             TargetName = target;
             PlanSubscriber = new PlanSubscriber(agent.Manager.World.PlanService);
@@ -98,7 +98,14 @@ namespace DwarfCorp
             MaxTimeouts = 4;
             Timeouts = 0;
             Radius = 0;
-            Weights = new List<float> {1.0f, 10.0f, 20.0f, 30.0f, 40.0f};
+            Weights = new List<float> {5.0f, 10.0f, 20.0f, 30.0f, 40.0f};
+        }
+
+        public override void OnCanceled()
+        {
+            if (PlanSubscriber != null)
+                PlanSubscriber.Service.RemoveSubscriber(PlanSubscriber);
+            base.OnCanceled();
         }
 
         public VoxelHandle GetTarget()
@@ -119,12 +126,6 @@ namespace DwarfCorp
         public void SetPath(List<MoveAction> path)
         {
             Agent.Blackboard.SetData(PathOut, path);
-        }
-
-        public static bool PathExists(VoxelHandle voxA, VoxelHandle voxB, CreatureAI creature)
-        {
-            var path = AStarPlanner.FindPath(creature.Movement, voxA, new VoxelGoalRegion(voxB), creature.Manager.World.ChunkManager, 1000, 1);
-            return path != null && path.Count > 0;
         }
 
         public GoalRegion GetGoal()
@@ -306,6 +307,7 @@ namespace DwarfCorp
                         {
                             Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                             statusResult = Status.Fail;
+                            PlanSubscriber.Service.RemoveSubscriber(PlanSubscriber);
                         }
                     }
                     yield return statusResult;
