@@ -72,7 +72,6 @@ namespace DwarfCorp
                     
                     while (!motion.IsDone())
                     {
-                            Creature.Physics.Active = false;
                             Creature.Physics.PropogateTransforms();
                             Creature.Physics.IsSleeping = true;
                             motion.Update(DwarfTime.LastTime);
@@ -80,7 +79,6 @@ namespace DwarfCorp
                             Creature.CurrentCharacterMode = CharacterMode.Falling;
                             yield return Status.Running;
                     }
-                        Creature.Physics.Active = true;
                         Creature.Physics.IsSleeping = false;
                     break;
                 }    
@@ -89,13 +87,11 @@ namespace DwarfCorp
                     EaseMotion motion = new EaseMotion(0.6f, Creature.Physics.GlobalTransform, Location);
                     while (!motion.IsDone())
                     {
-                            Creature.Physics.Active = false;
                             Creature.Physics.PropogateTransforms();
                         motion.Update(DwarfTime.LastTime);
                         Creature.AI.Position = motion.GetTransform().Translation;
                         yield return Status.Running;
                     }
-                        Creature.Physics.Active = true;
                         Creature.Physics.IsSleeping = false;
                         break;
                 }
