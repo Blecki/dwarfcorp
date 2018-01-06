@@ -2059,7 +2059,9 @@ namespace DwarfCorp.GameStates
                     icon_AttackTool,
                     icon_FarmTool,
                     icon_MagicTool,
+#if DEBUG
                     icon_RailTool
+#endif
                 },
                 OnShown = (sender) => ChangeTool(GameMaster.ToolMode.SelectUnits),
                 Tag = "tools"

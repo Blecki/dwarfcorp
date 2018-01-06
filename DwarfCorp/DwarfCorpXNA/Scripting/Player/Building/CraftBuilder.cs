@@ -391,26 +391,23 @@ namespace DwarfCorp
                                 {
                                     ItemType = CurrentCraftType,
                                     Location = r,
-                                    WorkPile = new WorkPile(World.ComponentManager, startPos),
                                     Orientation = CurrentDesignation.Orientation,
                                     OverrideOrientation = CurrentDesignation.OverrideOrientation,
                                     Valid = true,
                                     GhostBody = CurrentCraftBody,
                                     SelectedResources = SelectedResources
                                 };
-                                World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
-                                newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
-                                World.ParticleManager.Trigger("puff", pos, Color.White, 10);
+
                                 if (IsValid(newDesignation))
                                 {
                                     AddDesignation(newDesignation, CurrentCraftType.SpawnOffset);
                                     assignments.Add(new CraftItemTask(newDesignation));
+                                    CurrentCraftBody = null;
+                                    newDesignation.WorkPile = new WorkPile(World.ComponentManager, startPos);
+                                    World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
+                                    newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
+                                    World.ParticleManager.Trigger("puff", pos, Color.White, 10);
                                 }
-                                else
-                                {
-                                    newDesignation.WorkPile.Die();
-                                }
-                                CurrentCraftBody = null;
                             }
                         }
 

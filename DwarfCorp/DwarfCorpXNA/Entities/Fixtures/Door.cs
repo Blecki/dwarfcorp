@@ -137,7 +137,7 @@ namespace DwarfCorp
         public Matrix CreateHingeTransform(float angle)
         {
             Matrix toReturn = Matrix.Identity;
-            Vector3 hinge = new Vector3(0, 0, -0.5f);
+            Vector3 hinge = new Vector3(0, 0, 0.5f);
             toReturn = Matrix.CreateTranslation(-hinge) * toReturn;
             toReturn = Matrix.CreateRotationY(angle) * toReturn;
             toReturn = Matrix.CreateTranslation(hinge)* toReturn;
@@ -185,14 +185,12 @@ namespace DwarfCorp
                 {
                     float t = Easing.CubicEaseInOut(OpenTimer.CurrentTimeSeconds, 0.0f, 1.0f,
                         OpenTimer.TargetTimeSeconds);
+
+                    // Transform the sprite instead of the entire thing.
                     if (IsOpen)
-                    {
-                        LocalTransform = CreateHingeTransform(t*1.57f)*ClosedTransform;
-                    }
+                        GetComponent<SimpleSprite>().LocalTransform = Matrix.CreateRotationY(0.5f * (float)Math.PI) * CreateHingeTransform(t * 1.57f);
                     else
-                    {
-                        LocalTransform = CreateHingeTransform((1.0f - t)*1.57f)*ClosedTransform;
-                    }
+                        GetComponent<SimpleSprite>().LocalTransform = Matrix.CreateRotationY(0.5f * (float)Math.PI) * CreateHingeTransform((1.0f - t) * 1.57f);
                 }
             }
             else
