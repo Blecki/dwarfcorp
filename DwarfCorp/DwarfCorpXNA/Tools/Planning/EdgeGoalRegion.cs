@@ -48,6 +48,11 @@ namespace DwarfCorp
     /// </summary>
     public class EdgeGoalRegion : GoalRegion
     {
+        public override bool IsReversible()
+        {
+            return false;
+        }
+
         public override bool IsInGoalRegion(VoxelHandle voxel)
         {
             return Heuristic(voxel) < 2.0f;

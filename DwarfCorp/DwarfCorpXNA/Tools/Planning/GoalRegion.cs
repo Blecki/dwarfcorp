@@ -75,5 +75,7 @@ namespace DwarfCorp
         ///   <c>true</c> if this instance is possible; otherwise, <c>false</c>.
         /// </returns>
         public abstract bool IsPossible();
+
+        public abstract bool IsReversible();
     }
 }
