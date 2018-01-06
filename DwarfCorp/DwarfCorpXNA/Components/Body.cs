@@ -237,7 +237,7 @@ namespace DwarfCorp
 
         }
 
-        public void OrientToWalls()
+        public virtual void OrientToWalls()
         {
             Orient(0);
             var curr = new VoxelHandle(Manager.World.ChunkManager.ChunkData,
@@ -257,7 +257,7 @@ namespace DwarfCorp
             }
         }
 
-        public void Orient(float angle)
+        public virtual void Orient(float angle)
         {
             Matrix mat = Matrix.CreateRotationY(angle);
             mat.Translation = LocalTransform.Translation;

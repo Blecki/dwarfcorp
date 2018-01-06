@@ -64,13 +64,17 @@ namespace DwarfCorp
  
             var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.Identity, false)
             {
-                LightsWithVoxels = true,
+                LightsWithVoxels = false,
                 OrientationType = AnimatedSprite.OrientMode.YAxis,
             }) as AnimatedSprite;
 
             sprite.AddAnimation(lampAnimation);
             sprite.AnimPlayer.Loop(lampAnimation);
             sprite.SetFlag(Flag.ShouldSerialize, false);
+
+            // This is a hack to make the animation update at least once even when the object is created inactive by the craftbuilder.
+            sprite.AnimPlayer.Update(new DwarfTime());
+
         }
 
         private void CreateSpriteWall(Vector3 diff)
@@ -146,6 +150,14 @@ namespace DwarfCorp
             {
                 HasMoved = true
             }).SetFlag(Flag.ShouldSerialize, false);
+        }
+
+        public override void Orient(float angle)
+        {
+            base.Orient(angle);
+            var sprite = EnumerateChildren().First(c => c.Name == "sprite");
+            sprite.Delete();
+            CreateSprite();
         }
     }
 }

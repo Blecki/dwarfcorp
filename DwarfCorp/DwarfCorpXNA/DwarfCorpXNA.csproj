@@ -209,6 +209,7 @@
     <Compile Include="Gui\Widgets\AllowedTaskFilter.cs" />
     <Compile Include="Gui\Widgets\DesignationFilter.cs" />
     <Compile Include="Gui\Widgets\TrayBackground.cs" />
+    <Compile Include="Scripting\CompoundActs\MournGraves.cs" />
     <Compile Include="Scripting\Factions\DesignationType.cs" />
     <Compile Include="Scripting\Factions\DesignationDrawer.cs" />
     <Compile Include="Graphics\Instancing\InstanceRenderData.cs" />

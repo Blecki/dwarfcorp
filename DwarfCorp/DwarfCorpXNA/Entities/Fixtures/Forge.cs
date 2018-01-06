@@ -71,7 +71,7 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(Manager);
 
-            var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
+            var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32);
 
             var frames = new List<Point>
             {
@@ -96,6 +96,9 @@ namespace DwarfCorp
             {
                 HasMoved = true
             }).SetFlag(Flag.ShouldSerialize, false);
+
+            // This is a hack to make the animation update at least once even when the object is created inactive by the craftbuilder.
+            sprite.AnimPlayer.Update(new DwarfTime());
         }
     }
 }

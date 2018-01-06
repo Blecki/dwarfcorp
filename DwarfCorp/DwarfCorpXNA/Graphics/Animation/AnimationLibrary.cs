@@ -99,7 +99,8 @@ namespace DwarfCorp
                         SpriteSheet = Sheet,
                         Frames = Frames,
                         Name = UniqueName,
-                        FrameHZ = 5.0f
+                        FrameHZ = 5.0f,
+                        Tint = Color.White
                     }
                 });
             }
