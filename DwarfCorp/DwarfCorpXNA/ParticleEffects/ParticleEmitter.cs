@@ -58,6 +58,14 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class EmitterData : ICloneable
     {
+
+        [OnSerialized]
+        private void _onSerialized(StreamingContext Context)
+        {
+            var x = 5;
+
+        }
+
         public enum ParticleBlend
         {
             NonPremultiplied,

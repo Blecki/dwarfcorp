@@ -37,6 +37,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -48,6 +49,13 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class OrientedAnimatedSprite : AnimatedSprite, IUpdateableComponent
     {
+        [OnSerialized]
+        private void _onSerialized(StreamingContext Context)
+        {
+            var x = 5;
+
+        }
+
         public enum Orientation
         {
             Right = 0,

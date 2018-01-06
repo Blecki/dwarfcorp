@@ -6,6 +6,7 @@ using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -16,6 +17,13 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class AnimatedSprite : Tinter, IUpdateableComponent, IRenderableComponent
     {
+        [OnSerialized]
+        private void _onSerialized(StreamingContext Context)
+        {
+            var x = 5;
+
+        }
+
         public Dictionary<string, Animation> Animations { get; set; }
 
         [JsonIgnore]
@@ -62,7 +70,7 @@ namespace DwarfCorp
 
         public virtual void SetCurrentAnimation(string name, bool Play = false)
         {
-            Animation anim = GetAnimation(name);
+            var anim = GetAnimation(name);
             SetCurrentAnimation(anim, Play);
         }
 

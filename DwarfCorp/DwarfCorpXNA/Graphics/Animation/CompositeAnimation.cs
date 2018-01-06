@@ -14,7 +14,7 @@ namespace DwarfCorp
     public class CompositeAnimation : Animation
     {
         [OnSerialized]
-        private void _onSerialized(Object Context)
+        private void _onSerialized(StreamingContext Context)
         {
             var x = 5;
 

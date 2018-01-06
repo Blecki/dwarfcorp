@@ -64,8 +64,8 @@ namespace DwarfCorp
  
             var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.Identity, false)
             {
-                LightsWithVoxels = false,
-                OrientationType = AnimatedSprite.OrientMode.YAxis
+                LightsWithVoxels = true,
+                OrientationType = AnimatedSprite.OrientMode.YAxis,
             }) as AnimatedSprite;
 
             sprite.AddAnimation(lampAnimation);

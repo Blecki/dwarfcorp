@@ -119,7 +119,7 @@ namespace DwarfCorp
             else
                 des.GhostBody.OrientToWalls();
 
-            Faction.Designations.AddEntityDesignation(des.WorkPile, DesignationType.Craft, des);
+            Faction.Designations.AddEntityDesignation(des.GhostBody, DesignationType.Craft, des);
         }
 
         public void RemoveDesignation(CraftDesignation des)
@@ -386,6 +386,7 @@ namespace DwarfCorp
 
                                 Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
                                 Vector3 endPos = pos;
+                                // TODO: Why are we creating a new designation?
                                 CraftDesignation newDesignation = new CraftDesignation()
                                 {
                                     ItemType = CurrentCraftType,

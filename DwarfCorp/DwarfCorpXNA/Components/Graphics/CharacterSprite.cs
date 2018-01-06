@@ -50,6 +50,13 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CharacterSprite : OrientedAnimatedSprite, IUpdateableComponent, IRenderableComponent
     {
+        [OnSerialized]
+        private void _onSerialized(StreamingContext Context)
+        {
+            var x = 5;
+
+        }
+
         [JsonIgnore]
         public GraphicsDevice Graphics { get; set; }
 

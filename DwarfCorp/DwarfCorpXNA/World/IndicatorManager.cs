@@ -42,6 +42,7 @@ using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Color = Microsoft.Xna.Framework.Color;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -118,6 +119,13 @@ namespace DwarfCorp
 
     public class AnimatedIndicator : Indicator
     {
+        [OnSerialized]
+        private void _onSerialized(StreamingContext Context)
+        {
+            var x = 5;
+
+        }
+
         public AnimationPlayer Player = new AnimationPlayer();
         public Animation Animation;
         

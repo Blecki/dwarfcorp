@@ -79,8 +79,10 @@ namespace DwarfCorp
         public Timer RechargeTimer { get; set; }
         public float Knockback { get; set; }
         public string AnimationAsset { get; set; }
+
         [JsonIgnore]
         protected Animation HitAnimation { get; set; }
+
         public string HitParticles { get; set; }
         public string ProjectileType { get; set; }
         public float LaunchSpeed { get; set; }

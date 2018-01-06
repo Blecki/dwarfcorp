@@ -39,47 +39,34 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class GoToChairAndSitAct : CompoundCreatureAct
+    public class MournGraves : CompoundCreatureAct
     {
         public float SitTime { get; set; }
 
-        public GoToChairAndSitAct()
+        public MournGraves()
         {
-            Name = "Go to chair and sit";
+            Name = "Mourn the dead";
             SitTime = 30.0f;
         }
 
-        public GoToChairAndSitAct(CreatureAI agent) :
+        public MournGraves(CreatureAI agent) :
             base(agent)
         {
-            Name = "Go to chair and sit";
+            Name = "Mourn the dead";
             SitTime = 30.0f;
         }
 
 
-        public void ConverseFriends()
+        public void ConverseWithDead()
         {
-            foreach (CreatureAI minion in Creature.Faction.Minions)
-            {
-                if (minion == Creature.AI || minion.Creature.IsAsleep)
-                    continue;
-
-                float dist = (minion.Position - Creature.AI.Position).Length();
-
-                if (dist < 2 && MathFunctions.Rand(0, 1) < 0.1f)
-                {
-                    Creature.AI.Converse(minion);
-                }
-            }
+            Creature.AI.Converse(Creature.AI);
         }
 
         public IEnumerable<Status> WaitUntilBored()
         {
             Timer waitTimer = new Timer(SitTime, false);
-            Body body = Creature.AI.Blackboard.GetData<Body>("Chair");
-
-            // Snap relative the chair's position, not their own...
-            Vector3 snapPosition = body.Position + new Vector3(0, 0.4f, 0);
+            Vector3 snapPosition = Agent.Position;
+            Body body = Creature.AI.Blackboard.GetData<Body>("Grave");
 
             if (body == null || body.IsDead)
             {
@@ -122,11 +109,10 @@ namespace DwarfCorp
                     yield return Status.Success;
                 }
 
-                ConverseFriends();
+                ConverseWithDead();
 
 
                 Agent.Position = snapPosition;
-                Agent.Physics.PropogateTransforms();
                 Agent.Physics.IsSleeping = true;
                 Agent.Physics.Velocity = Vector3.Zero;
                 Creature.CurrentCharacterMode = CharacterMode.Sitting;
@@ -138,21 +124,18 @@ namespace DwarfCorp
         public override void Initialize()
         {
             Creature.OverrideCharacterMode = false;
-           
-            Tree = new Sequence(new ClearBlackboardData(Creature.AI, "Chair"),
-                                new Wrap(() => Creature.FindAndReserve("Chair", "Chair")),
-                                new GoToTaggedObjectAct(Creature.AI) {Tag = "Chair", Teleport = true, TeleportOffset = new Vector3(0, 0.1f, 0), ObjectName = "Chair", CheckForOcclusion = false},
+
+            Tree = new Sequence(new ClearBlackboardData(Creature.AI, "Grave"),
+                                new Wrap(() => Creature.FindAndReserve("Grave", "Grave")),
+                                new GoToTaggedObjectAct(Creature.AI) { Tag = "Grave", Teleport = false, TeleportOffset = new Vector3(1.0f, 0.0f, 0), ObjectName = "Grave" },
                                 new Wrap(WaitUntilBored),
-                                new Wrap(() => Creature.Unreserve("Chair"))) | new Wrap(() => Creature.Unreserve("Chair"));
+                                new Wrap(() => Creature.Unreserve("Grave"))) | new Wrap(() => Creature.Unreserve("Grave"));
             base.Initialize();
         }
 
         public override void OnCanceled()
         {
-            Agent.Physics.IsSleeping = false;
-            Agent.Physics.Velocity = Vector3.Zero;
-            Creature.OverrideCharacterMode = false;
-            foreach (var statuses in Creature.Unreserve("Chair"))
+            foreach (var statuses in Creature.Unreserve("Grave"))
             {
                 continue;
             }
