@@ -224,7 +224,7 @@ namespace DwarfCorp
                 }
                 
                 var logFile = new FileInfo(path);
-                if (logFile.Length > 5)
+                if (logFile.Length > 5e7)
                 {
                     Console.Out.WriteLine("Log file at {0} was too large ({1} bytes). Clearing it.", path, logFile.Length);
                     System.IO.File.WriteAllText(path, string.Empty);
