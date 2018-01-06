@@ -5,7 +5,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleExecutable</key>
-    <string>DwarfCorpFNA.bin.osx</string>
+    <string>DwarfCorpFNA</string>
     <key>CFBundleIconFile</key>
     <string>DwarfCorp</string>
     <key>CFBundleIdentifier</key>

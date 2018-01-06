@@ -209,6 +209,7 @@ namespace DwarfCorp
             }
             else
             {
+                Console.Out.WriteLine("Failed to load overworld texture.");
                 return false;
             }
             return true;
