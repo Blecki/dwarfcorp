@@ -159,7 +159,13 @@ namespace DwarfCorp
             var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
             UpdatePreviewBodies(voxelUnderMouse);
 
-            // Todo: Change colors based on ability to place!
+            var tint = Color.White;
+            if (CanPlace(voxelUnderMouse))
+                tint = Color.Green;
+            else
+                tint = Color.Red;
+            foreach (var body in PreviewBodies)
+                body.SetTintRecursive(tint);
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
@@ -177,9 +183,34 @@ namespace DwarfCorp
 
         }
 
+        private bool CanPlace(VoxelHandle Location, Rail.JunctionPiece Piece, RailPiece PreviewEntity)
+        {
+            var actualPosition = new VoxelHandle(Location.Chunk.Manager.ChunkData, Location.Coordinate + new GlobalVoxelOffset(Piece.Offset.X, 0, Piece.Offset.Y));
+            if (!actualPosition.IsValid) return false;
+            if (!actualPosition.IsEmpty) return false;
+
+            if (actualPosition.Coordinate.Y == 0) return false; // ???
+
+            var local = actualPosition.Coordinate.GetLocalVoxelCoordinate();
+            var voxelUnder = new VoxelHandle(actualPosition.Chunk, new LocalVoxelCoordinate(local.X, local.Y - 1, local.Z));
+            if (voxelUnder.IsEmpty) return false;
+
+            foreach (var entity in  Player.World.CollisionManager.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionManager.CollisionType.Static))
+            {
+                if (Object.ReferenceEquals(entity, PreviewEntity)) continue;
+
+                // Todo: Check for rail pieces we can combine with
+                return false;
+            }
+
+            return true;
+        }
+
         private bool CanPlace(VoxelHandle Location)
         {
-            // Todo: Actually check!
+            for (var i = 0; i < Pattern.Pieces.Count; ++i)
+                if (!CanPlace(Location, Pattern.Pieces[i], PreviewBodies[i]))
+                    return false;
             return true;
         }
 
@@ -194,7 +225,7 @@ namespace DwarfCorp
 
                 var designation = new CraftDesignation
                 {
-                    GhostBody = body,
+                    Entity = body,
                     WorkPile = new WorkPile(Player.World.ComponentManager, startPos),
                     OverrideOrientation = false,
                     Valid = true,
@@ -204,7 +235,8 @@ namespace DwarfCorp
                     HasResources = false,
                     ResourcesReservedFor = null,
                     Orientation = 0.0f,
-                    Progress = 0.0f
+                    Progress = 0.0f,
+                    Moveable = false
                 };
 
                 Player.World.ComponentManager.RootComponent.AddChild(designation.WorkPile);

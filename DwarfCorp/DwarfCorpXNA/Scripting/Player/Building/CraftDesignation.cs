@@ -42,10 +42,11 @@ namespace DwarfCorp
         public bool OverrideOrientation;
         public float Orientation;
         public bool Valid;
-        public Body GhostBody;
+        public Body Entity;
         public float Progress = 0.0f;
         public bool HasResources = false;
         public CreatureAI ResourcesReservedFor = null;
         public List<ResourceAmount> SelectedResources = new List<ResourceAmount>();
+        public bool Moveable = true;
     }
 }

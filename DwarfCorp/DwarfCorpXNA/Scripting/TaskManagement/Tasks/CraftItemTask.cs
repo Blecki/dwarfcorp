@@ -78,13 +78,13 @@ namespace DwarfCorp
 
         public override bool ShouldRetry(Creature agent)
         {
-            return agent.Faction.Designations.IsDesignation(Designation.GhostBody, DesignationType.Craft);
+            return agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft);
         }
 
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !agent.Faction.Designations.IsDesignation(Designation.GhostBody, DesignationType.Craft) || Designation.Progress > 1.0f;
+            return !agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft) || Designation.Progress > 1.0f;
         }
 
         public override Feasibility IsFeasible(Creature agent)
@@ -106,7 +106,7 @@ namespace DwarfCorp
                 if (nearestBuildLocation == null)
                     return false;
             }
-            else if (!agent.Faction.Designations.IsDesignation(Designation.GhostBody, DesignationType.Craft))
+            else if (!agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft))
             {
                 return false;
             }

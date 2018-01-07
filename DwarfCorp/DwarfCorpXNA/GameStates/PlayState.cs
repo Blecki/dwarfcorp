@@ -1382,6 +1382,71 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
+            #region icon_Rail
+
+            var icon_menu_Rail_Return = new FlatToolTray.Icon
+            {
+                Icon = new TileReference("tool-icons", 11),
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
+            };
+
+            var menu_Rail = new FlatToolTray.Tray
+            {
+                Tag = "build rail",
+                ItemSource = new List<Widget>(),
+                OnShown = (widget) =>
+                {
+                    // Dynamically rebuild the tray
+                    widget.Clear();
+                    (widget as FlatToolTray.Tray).ItemSource =
+                        (new Widget[] { icon_menu_Rail_Return }).Concat(
+                            Rail.RailLibrary.EnumeratePatterns()
+                            .Select(data => new FlatToolTray.Icon
+                            {
+                                Tooltip = "Build " + data.Name,
+                                Icon = new TileReference("voxels", 0),
+                                KeepChildVisible = true,
+                                ExpandChildWhenDisabled = true,
+                                Behavior = FlatToolTray.IconBehavior.LeafIcon,
+                                OnClick = (sender, args) =>
+                                {
+                                    Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // This should be set by the tool.
+                                    Master.Faction.CraftBuilder.IsEnabled = false;
+                                    var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as BuildRailTool;
+                                    railTool.Pattern = data;
+                                    railTool.SelectedResources = new List<ResourceAmount>
+                                    {
+                                        new ResourceAmount(ResourceLibrary.ResourceType.Iron, 2)
+                                    };
+                                    ChangeTool(GameMaster.ToolMode.BuildRail);
+                                },
+                                Hidden = false
+                            }));
+                    widget.Construct();
+                    widget.Hidden = false;
+                    widget.Layout();
+                }
+            };
+
+            var icon_RailTool = new FlatToolTray.Icon
+            {
+                Text = "Rail",
+                EnabledTextColor = Vector4.One,
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                Tooltip = "Rail",
+                KeepChildVisible = true,
+                ReplacementMenu = menu_Rail,
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+            };
+
+            #endregion
+
             #region icon_BuildTool
 
             var icon_menu_BuildTools_Return = new FlatToolTray.Icon
@@ -1406,7 +1471,10 @@ namespace DwarfCorp.GameStates
                         icon_BuildWall,
                         icon_BuildFloor,
                         icon_BuildCraft,
-                        icon_BuildResource
+                        icon_BuildResource,
+#if DEBUG
+                        icon_RailTool,
+#endif
                     }
             };
 
@@ -1414,6 +1482,7 @@ namespace DwarfCorp.GameStates
             icon_menu_ResourceTypes_Return.ReplacementMenu = menu_BuildTools;
             icon_menu_RoomTypes_Return.ReplacementMenu = menu_BuildTools;
             icon_menu_WallTypes_Return.ReplacementMenu = menu_BuildTools;
+            icon_menu_Rail_Return.ReplacementMenu = menu_BuildTools;
 
             var icon_BuildTool = new FlatToolTray.Icon
             {
@@ -1981,70 +2050,6 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
-            #region icon_Rail
-
-            var icon_menu_Rail_Return = new FlatToolTray.Icon
-            {
-                Icon = new TileReference("tool-icons", 11),
-                Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
-                OnClick = (widget, args) =>
-                {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
-                }
-            };
-
-            var menu_Rail = new FlatToolTray.Tray
-            {
-                Tag = "build rail",
-                ItemSource = new List<Widget>(),
-                OnShown = (widget) =>
-                {
-                    // Dynamically rebuild the tray
-                    widget.Clear();
-                    (widget as FlatToolTray.Tray).ItemSource =
-                        (new Widget[] { icon_menu_Rail_Return }).Concat(
-                            Rail.RailLibrary.EnumeratePatterns()
-                            .Select(data => new FlatToolTray.Icon
-                            {
-                                Tooltip = "Build " + data.Name,
-                                Icon = new TileReference("voxels", 0),
-                                KeepChildVisible = true,
-                                ExpandChildWhenDisabled = true,
-                                Behavior = FlatToolTray.IconBehavior.LeafIcon,
-                                OnClick = (sender, args) =>
-                                {
-                                    Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // This should be set by the tool.
-                                    Master.Faction.CraftBuilder.IsEnabled = false;
-                                    var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as BuildRailTool;
-                                    railTool.Pattern = data;
-                                    railTool.SelectedResources = new List<ResourceAmount>
-                                    {
-                                        new ResourceAmount(ResourceLibrary.ResourceType.Iron, 2)
-                                    };
-                                    ChangeTool(GameMaster.ToolMode.BuildRail);
-                                },
-                                Hidden = false
-                            }));
-                    widget.Construct();
-                    widget.Hidden = false;
-                    widget.Layout();
-                }
-            };
-            
-            var icon_RailTool = new FlatToolTray.Icon
-            {
-                Text = "Rail",
-                TextVerticalAlign = VerticalAlign.Below,
-                Icon = new TileReference("tool-icons", 14),
-                Tooltip = "Rail",
-                KeepChildVisible = true,
-                ReplacementMenu = menu_Rail,
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
-            };
-
-            #endregion
-
             MainMenu = new FlatToolTray.Tray
             {
                 ItemSource = new Gui.Widget[]
@@ -2059,9 +2064,6 @@ namespace DwarfCorp.GameStates
                     icon_AttackTool,
                     icon_FarmTool,
                     icon_MagicTool,
-#if DEBUG
-                    icon_RailTool
-#endif
                 },
                 OnShown = (sender) => ChangeTool(GameMaster.ToolMode.SelectUnits),
                 Tag = "tools"
@@ -2071,7 +2073,6 @@ namespace DwarfCorp.GameStates
             icon_menu_Edibles_Return.ReplacementMenu = MainMenu;
             icon_menu_Farm_Return.ReplacementMenu = MainMenu;
             icon_menu_Magic_Return.ReplacementMenu = MainMenu;
-            icon_menu_Rail_Return.ReplacementMenu = MainMenu;
 
             BottomToolBar = secondBar.AddChild(new FlatToolTray.RootTray
             {

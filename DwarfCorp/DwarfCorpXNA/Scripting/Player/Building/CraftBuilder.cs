@@ -115,16 +115,16 @@ namespace DwarfCorp
         public void AddDesignation(CraftDesignation des, Vector3 AdditionalOffset)
         {
             if (des.OverrideOrientation)
-                des.GhostBody.Orient(des.Orientation);
+                des.Entity.Orient(des.Orientation);
             else
-                des.GhostBody.OrientToWalls();
+                des.Entity.OrientToWalls();
 
-            Faction.Designations.AddEntityDesignation(des.GhostBody, DesignationType.Craft, des);
+            Faction.Designations.AddEntityDesignation(des.Entity, DesignationType.Craft, des);
         }
 
         public void RemoveDesignation(CraftDesignation des)
         {
-            Faction.Designations.RemoveEntityDesignation(des.GhostBody, DesignationType.Craft);
+            Faction.Designations.RemoveEntityDesignation(des.Entity, DesignationType.Craft);
 
             if (des.WorkPile != null)
                 des.WorkPile.Die();
@@ -394,7 +394,7 @@ namespace DwarfCorp
                                     Orientation = CurrentDesignation.Orientation,
                                     OverrideOrientation = CurrentDesignation.OverrideOrientation,
                                     Valid = true,
-                                    GhostBody = CurrentCraftBody,
+                                    Entity = CurrentCraftBody,
                                     SelectedResources = SelectedResources
                                 };
 

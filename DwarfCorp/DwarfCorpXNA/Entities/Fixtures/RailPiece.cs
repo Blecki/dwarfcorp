@@ -36,11 +36,15 @@ using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     public class RailPiece : Body
+#if DEBUG
+        , IRenderableComponent
+#endif
     {
         private Rail.JunctionPiece Piece;
 
@@ -55,7 +59,7 @@ namespace DwarfCorp
             Rail.JunctionPiece Piece) :
 
             base(Manager, "Fixture", Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y)), Vector3.One,
-                Location.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f),
+                Location.WorldPosition,
                 true)
         {
             this.Piece = Piece;
@@ -79,8 +83,16 @@ namespace DwarfCorp
             { 
                 OrientationType = SimpleSprite.OrientMode.Fixed
             }).SetFlag(Flag.ShouldSerialize, false);
-        }         
-        
+        }
+
+#if DEBUG
+        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        {
+            if (GamePerformance.DebugVisualizationEnabled)
+                Drawer3D.DrawBox(this.GetBoundingBox(), Color.Yellow, 0.2f, false);
+        }
+#endif
+
         public void UpdatePiece(Rail.JunctionPiece Piece, VoxelHandle Location)
         {
             this.Piece = Piece;

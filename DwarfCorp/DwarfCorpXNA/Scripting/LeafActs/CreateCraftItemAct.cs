@@ -60,11 +60,13 @@ namespace DwarfCorp
                 yield return Status.Fail;
 
             // Use the existing entity instead of creating a new one.
-            var item = Item.GhostBody;
+            var item = Item.Entity;
             item.SetFlagRecursive(GameComponent.Flag.Active, true);
             item.SetTintRecursive(Color.White);
             item.SetFlagRecursive(GameComponent.Flag.Visible, true);
-            item.Tags.Add("Moveable");
+
+            if (Item.Moveable)
+                item.Tags.Add("Moveable");
 
             if (Item.WorkPile != null)
                 Item.WorkPile.Die();
