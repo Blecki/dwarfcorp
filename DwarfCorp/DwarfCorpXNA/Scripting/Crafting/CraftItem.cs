@@ -67,7 +67,9 @@ namespace DwarfCorp
         public string PastTeseVerb { get; set; }
         public string CurrentVerb { get; set; }
         public bool AllowHeterogenous { get; set; }
-        public Vector3 SpawnOffset = Vector3.Zero;
+        public Vector3 SpawnOffset = new Vector3(0.0f, 0.5f, 0.0f);
+        public bool AddToOwnedPool = false;
+        public bool Moveable = false;
 
         public CraftItem()
         {

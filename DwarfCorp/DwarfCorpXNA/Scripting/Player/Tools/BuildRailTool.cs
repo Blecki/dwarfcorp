@@ -65,7 +65,8 @@ namespace DwarfCorp
             CraftLocation = "",
             Name = "Rail",
             Type = CraftItem.CraftType.Object,
-            
+            AddToOwnedPool = false,
+            Moveable = false            
         };
 
         public BuildRailTool(GameMaster Player)
@@ -117,6 +118,9 @@ namespace DwarfCorp
 
             foreach (var body in PreviewBodies)
                 ComponentManager.RootComponent.AddChild(body);
+
+            foreach (var body in PreviewBodies)
+                body.SetFlagRecursive(GameComponent.Flag.Active, false);
 
             // Todo: Add CraftDetails component.
         }
@@ -236,7 +240,6 @@ namespace DwarfCorp
                     ResourcesReservedFor = null,
                     Orientation = 0.0f,
                     Progress = 0.0f,
-                    Moveable = false
                 };
 
                 Player.World.ComponentManager.RootComponent.AddChild(designation.WorkPile);

@@ -177,7 +177,7 @@ namespace DwarfCorp
             if (CurrentCraftBody == null || !player.VoxSelector.VoxelUnderMouse.IsValid) 
                 return;
 
-            CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.WorldPosition + Vector3.One * 0.5f + CurrentCraftType.SpawnOffset;
+            CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CurrentCraftType.SpawnOffset;
 
             CurrentCraftBody.GlobalTransform = CurrentCraftBody.LocalTransform;
             CurrentCraftBody.UpdateTransform();
@@ -374,6 +374,7 @@ namespace DwarfCorp
                 case (InputManager.MouseButton.Left):
                     {
                         List<Task> assignments = new List<Task>();
+                        // Creating multiples doesn't work anyway - kill it.
                         foreach (var r in refs)
                         {
                             if (IsDesignation(r) || !r.IsValid || !r.IsEmpty)
@@ -382,7 +383,7 @@ namespace DwarfCorp
                             }
                             else
                             {
-                                Vector3 pos = r.WorldPosition + Vector3.One * 0.5f + CurrentCraftType.SpawnOffset;
+                                Vector3 pos = r.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CurrentCraftType.SpawnOffset;
 
                                 Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
                                 Vector3 endPos = pos;
@@ -402,7 +403,12 @@ namespace DwarfCorp
                                 {
                                     AddDesignation(newDesignation, CurrentCraftType.SpawnOffset);
                                     assignments.Add(new CraftItemTask(newDesignation));
-                                    CurrentCraftBody = null;
+
+                                    // Todo: Maybe don't support create huge numbers of entities at once?
+                                    CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, r.WorldPosition,
+                     Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
+                                    EntityFactory.GhostEntity(CurrentCraftBody, Color.White);
+
                                     newDesignation.WorkPile = new WorkPile(World.ComponentManager, startPos);
                                     World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
                                     newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));

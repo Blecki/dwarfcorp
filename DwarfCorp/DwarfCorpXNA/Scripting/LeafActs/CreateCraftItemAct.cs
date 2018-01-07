@@ -65,7 +65,7 @@ namespace DwarfCorp
             item.SetTintRecursive(Color.White);
             item.SetFlagRecursive(GameComponent.Flag.Visible, true);
 
-            if (Item.Moveable)
+            if (Item.ItemType.Moveable)
                 item.Tags.Add("Moveable");
 
             if (Item.WorkPile != null)
@@ -85,7 +85,9 @@ namespace DwarfCorp
                     item.Name = Item.SelectedResources.FirstOrDefault().ResourceType + " " + item.Name;
             }
 
-            Creature.Faction.OwnedObjects.Add(item);
+            if (Item.ItemType.AddToOwnedPool)
+                Creature.Faction.OwnedObjects.Add(item);
+
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, 10);
             Creature.Faction.Designations.RemoveEntityDesignation(item, DesignationType.Craft);
             Creature.AI.AddXP((int)(5 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt)));

@@ -111,18 +111,21 @@ namespace DwarfCorp
                 {
                     if (vox.IsEmpty)
                     {
+                        CraftItem craftItem = null;
+                        CraftLibrary.CraftItems.TryGetValue(type, out craftItem);
+
                         Vector3 offset = Vector3.Zero;
-                        // Evil hack to spawn plants above ground!
-                        //if (type == "Pine Tree" || type == "Palm Tree" || type == "Cactus" || type == "Wheat" ||
-                        //    type == "Mushroom" || type == "Snow Pine Tree")
-                        //{
-                        //    offset += Vector3.Up;
-                        //}
+                        if (craftItem != null)
+                            offset = craftItem.SpawnOffset;
 
                         var body = EntityFactory.CreateEntity<Body>(type, vox.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + offset);
-                        //body.LocalPosition += Vector3.UnitY * (body.GetBoundingBox().Extents().Y / 2);
                         if (body != null)
+                        {
                             body.PropogateTransforms();
+
+                            if (craftItem != null && craftItem.AddToOwnedPool)
+                                Player.Faction.OwnedObjects.Add(body);
+                        }
                     }
                 }
             }

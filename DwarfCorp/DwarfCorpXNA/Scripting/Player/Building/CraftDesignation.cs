@@ -47,6 +47,5 @@ namespace DwarfCorp
         public bool HasResources = false;
         public CreatureAI ResourcesReservedFor = null;
         public List<ResourceAmount> SelectedResources = new List<ResourceAmount>();
-        public bool Moveable = true;
     }
 }

@@ -74,7 +74,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("beartrap", 0),
                         BaseCraftTime = 60,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -90,7 +92,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 17),
                         BaseCraftTime = 1,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -106,7 +110,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 9),
                         BaseCraftTime = 10,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -122,7 +128,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 2),
                         BaseCraftTime = 10,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -138,7 +146,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 11),
                         BaseCraftTime = 30,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.NearWall},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -256,7 +266,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 57),
                         BaseCraftTime = 90,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -272,7 +284,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 50),
                         BaseCraftTime = 9,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -288,7 +302,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 48),
                         BaseCraftTime = 20,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -304,7 +320,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 24),
                         BaseCraftTime = 30,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -319,7 +337,10 @@ namespace DwarfCorp
                         },
                         Icon = new Gui.TileReference("furniture", 25),
                         BaseCraftTime = 30,
-                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround}
+                        Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -335,7 +356,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 35),
                         BaseCraftTime = 30,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -352,7 +375,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 56),
                         BaseCraftTime = 30,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -369,7 +394,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 1),
                         BaseCraftTime = 20,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -386,7 +413,9 @@ namespace DwarfCorp
                         BaseCraftTime = 30,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
                         CraftLocation = "",
-                        SpawnOffset = new Vector3(0.0f, -0.5f, 0.0f)
+                        SpawnOffset = new Vector3(0.0f, 0.0f, 0.0f),
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -402,7 +431,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 41),
                         BaseCraftTime = 10,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -418,7 +449,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 33),
                         BaseCraftTime = 40,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -434,7 +467,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 32),
                         BaseCraftTime = 40,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
                 {
@@ -450,7 +485,9 @@ namespace DwarfCorp
                         Icon = new Gui.TileReference("furniture", 32),
                         BaseCraftTime = 50,
                         Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround},
-                        CraftLocation = ""
+                        CraftLocation = "",
+                        AddToOwnedPool = true,
+                        Moveable = true
                     }
                 },
             };
