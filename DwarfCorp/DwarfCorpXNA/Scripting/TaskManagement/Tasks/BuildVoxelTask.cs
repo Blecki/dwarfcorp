@@ -53,7 +53,7 @@ namespace DwarfCorp
         public BuildVoxelTask()
         {
             Category = TaskCategory.BuildBlock;
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
         }
 
         public BuildVoxelTask(VoxelHandle voxel, string type)
@@ -62,7 +62,7 @@ namespace DwarfCorp
             Name = "Put voxel of type: " + type + " on voxel " + voxel.Coordinate;
             Voxel = voxel;
             VoxType = type;
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
         }
 
         public override Feasibility IsFeasible(Creature agent)
@@ -112,7 +112,7 @@ namespace DwarfCorp
 
         public override Task Clone()
         {
-            return new BuildVoxelTask(Voxel, VoxType);
+            return new BuildVoxelTask(Voxel, VoxType) { Priority = this.Priority };
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
@@ -122,8 +122,14 @@ namespace DwarfCorp
 
         public bool Validate(CreatureAI creature, VoxelHandle voxel, ResourceAmount resources)
         {
-            return creature.Faction.Designations.IsVoxelDesignation(voxel, DesignationType.Put) &&
+            bool success =  creature.Faction.Designations.IsVoxelDesignation(voxel, DesignationType.Put) &&
                 creature.Creature.Inventory.HasResource(resources);
+
+            if (!success)
+            {
+                var x = 0;
+            }
+            return success;
         }
 
         public override Act CreateScript(Creature creature)

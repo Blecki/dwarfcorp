@@ -189,7 +189,8 @@ namespace DwarfCorp
                     Tilesheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
                     AspectRatio = GraphicsDevice.Viewport.AspectRatio;
                     DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
-
+                    DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
+                    DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
                     VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice, Tilesheet);
                     DecalLibrary.InitializeDefaultLibrary();
 

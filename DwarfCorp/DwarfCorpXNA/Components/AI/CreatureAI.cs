@@ -314,16 +314,21 @@ namespace DwarfCorp
             if (CurrentTask == null) return;
 
             Task newTask = null;
-            foreach (Task task in Tasks)
+
+            _preEmptTimer.Update(DwarfTime.LastTime);
+
+            if (_preEmptTimer.HasTriggered)
             {
-                if (task.Priority > CurrentTask.Priority && task.IsFeasible(Creature) == Task.Feasibility.Feasible)
+                foreach (Task task in Tasks)
                 {
-                    newTask = task;
-                    break;
+                    if (task.Priority > CurrentTask.Priority && task.IsFeasible(Creature) == Task.Feasibility.Feasible)
+                    {
+                        newTask = task;
+                        break;
+                    }
                 }
             }
 
-            _preEmptTimer.Update(DwarfTime.LastTime);
             if (_preEmptTimer.HasTriggered && newTask == null && Faction == World.PlayerFaction)
             {
                 newTask = World.Master.TaskManager.GetBestTask(this, (int)CurrentTask.Priority);

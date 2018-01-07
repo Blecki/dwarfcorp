@@ -132,7 +132,7 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 ///////////// Technique untextured
 	struct UTVertexToPixel
 	{
-	float4 Position     : POSITION;
+	float4 Position     : POSITION0;
 	float4 Color        : COLOR0;
 	float4 ClipDistance     : TEXCOORD5;
 	};
@@ -260,7 +260,7 @@ technique ShadowInstanced
 //------- Technique: Textured --------
 struct TVertexToPixel
 {
-	float4 Position      : POSITION;
+	float4 Position      : SV_Position;
 	float4 Color         : COLOR0;
 	float4 WorldPosition : TEXCOORD0;
 	float2 TextureCoords : TEXCOORD1;
@@ -699,6 +699,26 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
     return Output;
 }
 
+int transparencytable[4] =
+{ 
+0, 255,
+255, 0
+};
+
+int xTextureWidth;
+int xTextureHeight;
+int xScreenWidth;
+int xScreenHeight;
+
+TPixelToFrame TexturedPS_Alphatest_Stipple(TVertexToPixel PSIn)
+{
+    TPixelToFrame Output = TexturedPS_Alphatest(PSIn);
+	int x = (int)(fmod(PSIn.Position.x, 2));
+	int y = (int)(fmod(PSIn.Position.y, 2));
+	clip(100 - transparencytable[x + y * 2]);
+	return Output;
+}
+
 
 TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 {
@@ -762,6 +782,15 @@ technique Textured
     {   
         VertexShader = compile vs_3_0 TexturedVSNonInstanced(MAX_LIGHTS);
         PixelShader  = compile ps_3_0 TexturedPS_Alphatest();
+    }
+}
+
+technique Textured_Stipple
+{
+    pass Pass0
+    {   
+        VertexShader = compile vs_3_0 TexturedVSNonInstanced(1);
+        PixelShader  = compile ps_3_0 TexturedPS_Alphatest_Stipple();
     }
 }
 

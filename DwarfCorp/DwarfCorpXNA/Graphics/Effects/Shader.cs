@@ -199,7 +199,13 @@ namespace DwarfCorp
         public Texture2D MainTexture
         {
             get { return Parameters["xTexture"].GetValueTexture2D(); }
-            set {  Parameters["xTexture"].SetValue(value);}
+            set {  Parameters["xTexture"].SetValue(value);
+                if (value != null)
+                {
+                    TextureWidth = value.Width;
+                    TextureHeight = value.Height;
+                }
+            }
         }
 
         public Texture2D SelfIlluminationTexture
@@ -275,6 +281,31 @@ namespace DwarfCorp
             set { Parameters["xEnableWind"].SetValue(value ? 1 : 0); }
         }
 
+        public int TextureWidth
+        {
+            get { return Parameters["xTextureWidth"].GetValueInt32(); }
+            set { Parameters["xTextureWidth"].SetValue(value); }
+        }
+
+        public int TextureHeight
+        {
+            get { return Parameters["xTextureHeight"].GetValueInt32(); }
+            set { Parameters["xTextureHeight"].SetValue(value); }
+        }
+
+        public int ScreenWidth
+        {
+            get { return Parameters["xScreenWidth"].GetValueInt32(); }
+            set { Parameters["xScreenWidth"].SetValue(value); }
+        }
+
+        public int ScreenHeight
+        {
+            get { return Parameters["xScreenHeight"].GetValueInt32(); }
+            set { Parameters["xScreenHeight"].SetValue(value); }
+        }
+
+
         public int CurrentNumLights { get; set; }
 
         public class Technique
@@ -295,6 +326,7 @@ namespace DwarfCorp
             public static string Instanced_ = "Instanced";
             public static string SelectionBufferInstanced = "Instanced_SelectionBuffer";
             public static string Silhouette = "Silhouette";
+            public static string Stipple = "Textured_Stipple";
         }
 
 
@@ -353,11 +385,6 @@ namespace DwarfCorp
             CurrentTechnique = Techniques[InstancedTechniques[CurrentNumLights]];
         }
 
-        public Shader(GraphicsDevice graphicsDevice, byte[] effectCode) 
-            : base(graphicsDevice, effectCode)
-        {
-            SetDefaults();
-        }
 
         public Shader(Effect cloneSource, bool defaults) :
             this(cloneSource)
