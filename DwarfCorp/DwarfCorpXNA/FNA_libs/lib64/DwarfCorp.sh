@@ -27,7 +27,7 @@ if [ "$UNAME" == "Darwin" ]; then
 
 	./DwarfCorpFNA.bin.osx $@
 else
-	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:`dirname "$0"`
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"$(cd "$(dirname "$0")" && pwd -P)"
 	if [ "$ARCH" == "x86_64" ]; then
 		LD_PRELOAD="/usr/lib/libSDL2-2.0.so.0" ./DwarfCorpFNA.bin.x86_64 $@
 	else
