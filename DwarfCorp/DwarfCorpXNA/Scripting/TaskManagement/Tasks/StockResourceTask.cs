@@ -72,6 +72,9 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
+            if (agent.AI.Status.IsAsleep)
+                return Feasibility.Infeasible;
+
             return agent.Faction.HasFreeStockpile() && 
                 !agent.AI.Movement.IsSessile && agent.Inventory.HasResource(EntityToGather) ? Feasibility.Feasible : Feasibility.Infeasible;
         }

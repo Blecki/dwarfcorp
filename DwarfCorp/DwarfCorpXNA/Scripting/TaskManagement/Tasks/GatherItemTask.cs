@@ -81,7 +81,8 @@ namespace DwarfCorp
             return EntityToGather != null
                    && !EntityToGather.IsDead
                    && !agent.AI.Movement.IsSessile
-                   && agent.AI.Faction.Designations.IsDesignation(EntityToGather, DesignationType.Gather) ? Feasibility.Feasible : Feasibility.Infeasible;
+                   && agent.AI.Faction.Designations.IsDesignation(EntityToGather, DesignationType.Gather)
+                   && !agent.AI.Status.IsAsleep ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool ShouldRetry(Creature agent)

@@ -87,6 +87,9 @@ namespace DwarfCorp
             if (!VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0)
                 return Feasibility.Infeasible;
 
+            if (agent.AI.Status.IsAsleep)
+                return Feasibility.Infeasible;
+
             return agent.Faction.Designations.IsVoxelDesignation(VoxelToKill, DesignationType.Dig) 
                 && !VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill) ? Feasibility.Feasible : Feasibility.Infeasible;
         }

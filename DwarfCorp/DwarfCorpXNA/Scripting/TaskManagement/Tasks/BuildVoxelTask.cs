@@ -117,7 +117,7 @@ namespace DwarfCorp
 
         public BuildVoxelsTask()
         {
-            
+            Category = TaskCategory.BuildBlock;
         }
 
         public BuildVoxelsTask(List<KeyValuePair<VoxelHandle, string>> voxels)
@@ -131,6 +131,7 @@ namespace DwarfCorp
             Name = nameBuilder.ToString();
             Voxels = voxels;
             Priority = PriorityType.Medium;
+            Category = TaskCategory.BuildBlock;
         }
 
         public override Task Clone()
@@ -140,6 +141,12 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
+            if (!agent.AI.Stats.CurrentClass.IsTaskAllowed(TaskCategory.BuildBlock))
+                return Feasibility.Infeasible;
+
+            if (agent.AI.Status.IsAsleep)
+                return Feasibility.Infeasible;
+
             Dictionary<ResourceLibrary.ResourceType, int> numResources = new Dictionary<ResourceLibrary.ResourceType, int>();
             int numFeasibleVoxels = 0;
             var factionResources = agent.Faction.ListResources();

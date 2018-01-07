@@ -93,6 +93,9 @@ namespace DwarfCorp
                 !agent.Stats.IsTaskAllowed(Task.TaskCategory.Plant))
                 return Feasibility.Infeasible;
 
+            if (agent.AI.Status.IsAsleep)
+                return Feasibility.Infeasible;
+
             bool farmValid =  FarmToWork != null && !FarmToWork.IsCanceled;
             if (!farmValid)
             {

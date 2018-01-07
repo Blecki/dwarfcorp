@@ -98,6 +98,9 @@ namespace DwarfCorp
                 return Feasibility.Infeasible;
             }
 
+            if (agent.AI.Status.IsAsleep)
+                return Feasibility.Infeasible;
+
             return CanBuild(agent) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
