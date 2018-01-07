@@ -58,7 +58,8 @@ namespace DwarfCorp
         private static DesignationTypeProperties DefaultProperties = new DesignationTypeProperties
         {
             Color = Color.Gray,
-            Icon = null
+            Icon = null,
+            ModulatedColor = new Color(255, 255, 255, 128)
         };
 
         public DesignationDrawer()
@@ -111,6 +112,12 @@ namespace DwarfCorp
                 Color = Color.LimeGreen,
                 Icon = new NamedImageFrame("newgui/pointers", 32, 4, 1)
             });
+
+            DesignationProperties.Add(DesignationType.Craft, new DesignationTypeProperties
+            {
+                Color = Color.AntiqueWhite,
+                Icon = new NamedImageFrame("newgui/pointers", 32, 4, 0)
+            });
         }
 
         public void DrawHilites(
@@ -157,7 +164,7 @@ namespace DwarfCorp
                     if (DesignationProperties.ContainsKey(entity.Type))
                         props = DesignationProperties[entity.Type];
 
-                    entity.Body.SetTintRecursive(props.ModulatedColor, true);
+                    entity.Body.SetTintRecursive(props.ModulatedColor);
 
                     // Todo: More consistent drawing?
                     if (entity.Type == DesignationType.Craft)
@@ -168,10 +175,11 @@ namespace DwarfCorp
                     {
                         var box = entity.Body.GetBoundingBox();
                         DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, props.LineWidth);
-                        if (props.Icon != null)
-                        {
-                            Drawer2D.DrawSprite(props.Icon, entity.Body.Position + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
-                        }
+                    }
+
+                    if (props.Icon != null)
+                    {
+                        Drawer2D.DrawSprite(props.Icon, entity.Body.Position + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
                     }
                 }
                 else if (entity.Type == DesignationType.Craft) // Make the ghost object invisible if these designations are turned off.

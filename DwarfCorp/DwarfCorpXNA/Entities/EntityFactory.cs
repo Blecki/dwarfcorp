@@ -228,8 +228,7 @@ namespace DwarfCorp
         public static void GhostEntity(Body Entity, Color Tint)
         {
             Entity.SetFlagRecursive(GameComponent.Flag.Active, false);
-            foreach (var tinter in Entity.EnumerateAll().OfType<Tinter>())
-                tinter.VertexColorTint = Tint;
+            Entity.SetTintRecursive(Tint);
         }
 
         public static T CreateEntity<T>(string id, Vector3 location, Blackboard data = null) where T : GameComponent
