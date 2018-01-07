@@ -123,8 +123,14 @@ namespace DwarfCorp
                         {
                             body.PropogateTransforms();
 
-                            if (craftItem != null && craftItem.AddToOwnedPool)
-                                Player.Faction.OwnedObjects.Add(body);
+                            if (craftItem != null)
+                            {
+                                if (craftItem.AddToOwnedPool)
+                                    Player.Faction.OwnedObjects.Add(body);
+
+                                if (craftItem.Moveable)
+                                    body.Tags.Add("Moveable");
+                            }
                         }
                     }
                 }
