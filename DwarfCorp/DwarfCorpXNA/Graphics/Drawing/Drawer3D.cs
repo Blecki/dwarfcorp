@@ -198,7 +198,8 @@ namespace DwarfCorp
                         // Todo: Alpha pulse
                         Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 1.0f);
                         Effect.SetTexturedTechnique();
-                        Effect.World = Matrix.CreateTranslation(pos + Vector3.Up * 0.15f);
+                        var pos_distorted = pos + Vector3.Up * 0.15f + VertexNoise.GetNoiseVectorFromRepeatingTexture(pos + Vector3.One * 0.5f);
+                        Effect.World = Matrix.CreateTranslation(pos_distorted);
 
                         foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
                         {

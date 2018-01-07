@@ -699,7 +699,7 @@ namespace DwarfCorp
             }
             
 
-            if (!IsPosessed && GatherManager.VoxelOrders.Count == 0 &&
+            if (!IsPosessed &&
                 (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()) &&
                 (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury())
                 && Tasks.Count == 0)
@@ -854,7 +854,7 @@ namespace DwarfCorp
             }
 
             // If we have no more build orders, look for gather orders
-            if (GatherManager.VoxelOrders.Count == 0 && GatherManager.StockOrders.Count > 0)
+            if (GatherManager.StockOrders.Count > 0)
             {
                 GatherManager.StockOrder order = GatherManager.StockOrders[0];
                 if (Faction.HasFreeStockpile(order.Resource))
@@ -871,7 +871,7 @@ namespace DwarfCorp
                 }
             }
             
-            if (GatherManager.VoxelOrders.Count == 0 && GatherManager.StockMoneyOrders.Count > 0)
+            if (GatherManager.StockMoneyOrders.Count > 0)
             {
                 var order = GatherManager.StockMoneyOrders[0];
                 if (Faction.HasFreeTreasury(order.Money))
@@ -882,15 +882,6 @@ namespace DwarfCorp
                         Priority = Task.PriorityType.Low
                     };
                 }
-            }
-
-            if (GatherManager.VoxelOrders.Count > 0)
-            {
-                // Otherwise handle build orders.
-                var voxels = GatherManager.VoxelOrders.Select(order => new KeyValuePair<VoxelHandle, string>(order.Voxel, order.Type)).ToList();
-
-                GatherManager.VoxelOrders.Clear();
-                return new BuildVoxelsTask(voxels);
             }
 
             return new LookInterestingTask();

@@ -67,10 +67,37 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.BuildBlock))
+            if (!agent.AI.Stats.CurrentClass.IsTaskAllowed(TaskCategory.BuildBlock))
                 return Feasibility.Infeasible;
 
-            return Voxel.IsValid && agent.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put) ? Feasibility.Feasible : Feasibility.Infeasible;
+            if (agent.AI.Status.IsAsleep)
+                return Feasibility.Infeasible;
+
+            Dictionary<ResourceLibrary.ResourceType, int> numResources = new Dictionary<ResourceLibrary.ResourceType, int>();
+            int numFeasibleVoxels = 0;
+            var factionResources = agent.Faction.ListResources();
+            if (!agent.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put))
+            {
+                return Feasibility.Infeasible;
+            }
+            var voxtype = VoxelLibrary.GetVoxelType(VoxType);
+            if (!numResources.ContainsKey(voxtype.ResourceToRelease))
+            {
+                numResources.Add(voxtype.ResourceToRelease, 0);
+            }
+            int num = numResources[voxtype.ResourceToRelease] + 1;
+            if (!factionResources.ContainsKey(voxtype.ResourceToRelease))
+            {
+                return Feasibility.Infeasible;
+            }
+            var numInStocks = factionResources[voxtype.ResourceToRelease];
+            if (numInStocks.NumResources < num)
+            {
+                return Feasibility.Infeasible;
+            }
+            numResources[voxtype.ResourceToRelease]++;
+            numFeasibleVoxels++;
+            return numFeasibleVoxels > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool ShouldDelete(Creature agent)
@@ -93,15 +120,23 @@ namespace DwarfCorp
             return !Voxel.IsValid ? 1000 : 0.01f * (agent.AI.Position - Voxel.WorldPosition).LengthSquared() + (Voxel.Coordinate.Y);
         }
 
-        public IEnumerable<Act.Status> AddBuildOrder(Creature creature)
+        public bool Validate(CreatureAI creature, VoxelHandle voxel, ResourceAmount resources)
         {
-            creature.AI.GatherManager.AddVoxelOrder(new GatherManager.BuildVoxelOrder() { Type = VoxType, Voxel = Voxel });
-            yield return Act.Status.Success;
+            return creature.Faction.Designations.IsVoxelDesignation(voxel, DesignationType.Put) &&
+                creature.Creature.Inventory.HasResource(resources);
         }
 
         public override Act CreateScript(Creature creature)
         {
-            return new Wrap(() => AddBuildOrder(creature));
+            var voxType = VoxelLibrary.GetVoxelType(VoxType);
+            var resources = new ResourceAmount(voxType.ResourceToRelease, 1);
+            return new Select(new Sequence(new Domain(() => creature.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put), 
+                                                      new GetResourcesAct(creature.AI, new List<ResourceAmount>() { resources })), 
+                new Domain(() => Validate(creature.AI, Voxel, resources),
+                             new GoToVoxelAct(Voxel, PlanAct.PlanType.Radius, creature.AI, 4.0f)),
+                             new PlaceVoxelAct(Voxel, creature.AI, resources)), new Wrap(creature.RestockAll)
+                            )
+            { Name = "Build Voxel" };
         }
 
         public override void Render(DwarfTime time)
@@ -110,6 +145,7 @@ namespace DwarfCorp
         }
     }
 
+    /*
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     class BuildVoxelsTask : Task
     {
@@ -220,6 +256,7 @@ namespace DwarfCorp
                 creature.Creature.Inventory.HasResource(resources);
         }
 
+
         public override Act CreateScript(Creature agent)
         {
              List<KeyValuePair<VoxelHandle, string>> feasibleVoxels = new List<KeyValuePair<VoxelHandle, string>>();
@@ -277,5 +314,5 @@ namespace DwarfCorp
             };
         }
     }
-
+    */
 }

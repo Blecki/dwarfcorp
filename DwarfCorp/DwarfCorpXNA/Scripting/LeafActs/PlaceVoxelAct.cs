@@ -134,20 +134,19 @@ namespace DwarfCorp
                     grabbed.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                     grabbed.AnimationQueue.Add(motion);
 
-                    while (!motion.IsDone())
+                    motion.OnComplete += () =>
                     {
-                        yield return Status.Running;
-                    }
+                        grabbed.Die();
 
-                    grabbed.Die();
+                        var put = Creature.Faction.Designations.GetVoxelDesignation(Location, DesignationType.Put) as short?;
+                        var putType = VoxelLibrary.GetVoxelType(put.Value);
+                        PlaceVoxel(Location, putType, Creature.Manager.World);
 
-                    var put = Creature.Faction.Designations.GetVoxelDesignation(Location, DesignationType.Put) as short?;
-                    var putType = VoxelLibrary.GetVoxelType(put.Value);
-                    PlaceVoxel(Location, putType, Creature.Manager.World);
-                    
-                    Creature.Faction.Designations.RemoveVoxelDesignation(Location, DesignationType.Put);
-                    Creature.Stats.NumBlocksPlaced++;
-                    Creature.AI.AddXP(1);
+                        Creature.Faction.Designations.RemoveVoxelDesignation(Location, DesignationType.Put);
+                        Creature.Stats.NumBlocksPlaced++;
+                        Creature.AI.AddXP(1);
+                    };
+
                     yield return Status.Success;
                     yield break;
                 }
