@@ -46,6 +46,7 @@ using Newtonsoft.Json.Converters;
 
 namespace DwarfCorp
 {
+    [JsonObject(IsReference =true)]
     public class Expedition
     {
         public enum State
@@ -62,6 +63,17 @@ namespace DwarfCorp
         public Faction OtherFaction { get; set; }
         public State ExpiditionState { get; set; }
         public bool ShouldRemove { get; set; }
+
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext ctx)
+        {
+            // nothing for now.
+        }
+
+        public Expedition()
+        {
+
+        }
 
         public Expedition(DateTime date)
         {
