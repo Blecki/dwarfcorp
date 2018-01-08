@@ -83,10 +83,10 @@ namespace DwarfCorp
                     return;
                 }
 
-                if(!Active)
-                {
-                    return;
-                }
+                //if(!Active)
+                //{
+                //    return;
+                //}
 
                 if (!ExceedsMovementThreshold && wasEverAddedToOctree)
                     return;

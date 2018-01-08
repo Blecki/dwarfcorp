@@ -10,7 +10,7 @@ namespace DwarfCorp.Rail
     {
         public Point Offset;
         public String RailPiece;
-        public Orientations Orientation;
+        public Orientation Orientation;
     }
 
     public class JunctionPattern
@@ -27,13 +27,13 @@ namespace DwarfCorp.Rail
                     {
                         Offset = new Point(piece.Offset.Y, -piece.Offset.X),
                         RailPiece = piece.RailPiece,
-                        Orientation = Orientation.Rotate(piece.Orientation, 1)
+                        Orientation = OrientationHelper.Rotate(piece.Orientation, 1)
                     }
                 ).ToList()
             };
         }
 
-        public JunctionPattern Rotate(Orientations Orientation)
+        public JunctionPattern Rotate(Orientation Orientation)
         {
             var orient = (byte)Orientation;
             var r = this;

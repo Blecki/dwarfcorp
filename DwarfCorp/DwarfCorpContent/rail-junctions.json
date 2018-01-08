@@ -3,34 +3,40 @@
 
     {
       "Name": "rail-straight",
-      "Tile": "0, 4"
+      "Tile": "0, 0"
     },
 
     {
       "Name": "rail-small-curve",
-      "Tile": "0, 5"
+      "Tile": "0, 1"
     },
 
     {
       "Name": "rail-cross",
-      "Tile": "0, 6"
+      "Tile": "0, 2"
     },
 
     {
       "Name": "rail-large-curve-a",
-      "Tile": "1, 4"
+      "Tile": "1, 0"
     },
 
     {
       "Name": "rail-large-curve-b",
-      "Tile": "2, 4",
-      "ConversionTable": [
+      "Tile": "2, 0",
+      "CombinationTable": [
         {
-          "ThisOrientation": "North",
-          "OverlayDecal": "rail-small-curve",
-          "OverlayOrientation": "South",
+          "Overlay": "rail-small-curve",
+          "OverlayRelativeOrientation": "South",
           "ResultDecal": "rail-small-curve-inside-large",
-          "ResultOrientation": "South"
+          "ResultRelativeOrientation": "South"
+        },
+
+        {
+          "Overlay": "rail-large-curve-b",
+          "OverlayRelativeOrientation": "South",
+          "Result": "rail-large-curve-diagonal",
+          "ResultRelativeOrientation": "North"
         }
 
       ]
@@ -38,14 +44,21 @@
 
     {
       "Name": "rail-large-curve-c",
-      "Tile": "2, 5"
+      "Tile": "2, 1"
     },
 
     {
       "Name": "rail-small-curve-inside-large",
-      "Tile": "1, 6"
+      "Tile": "1, 2"
+    },
+
+    {
+      "Name": "rail-large-curve-diagonal",
+      "Tile":  "2, 2"
     }
   ],
+
+
   "Patterns": [
 
     {

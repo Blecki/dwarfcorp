@@ -154,9 +154,9 @@ namespace DwarfCorp
             bool leftKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectLeft);
             bool rightKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectRight);
             if (LeftPressed && !leftKey)
-                Pattern = Pattern.Rotate(Rail.Orientations.East);
+                Pattern = Pattern.Rotate(Rail.Orientation.East);
             if (RightPressed && !rightKey)
-                Pattern = Pattern.Rotate(Rail.Orientations.West);
+                Pattern = Pattern.Rotate(Rail.Orientation.West);
             LeftPressed = leftKey;
             RightPressed = rightKey;
 
@@ -203,11 +203,27 @@ namespace DwarfCorp
             {
                 if (Object.ReferenceEquals(entity, PreviewEntity)) continue;
 
-                // Todo: Check for rail pieces we can combine with
+                if (FindPossibleCombination(Piece, entity) != null)
+                    return true;
+
                 return false;
             }
 
             return true;
+        }
+
+        private static Rail.RailCombination FindPossibleCombination(Rail.JunctionPiece Piece, IBoundedObject Entity)
+        {
+            if (Entity is RailPiece)
+            {
+                var baseJunction = (Entity as RailPiece).Piece;
+                var basePiece = Rail.RailLibrary.GetRailPiece(baseJunction.RailPiece);
+                var relativeOrientation = Rail.OrientationHelper.Relative(baseJunction.Orientation, Piece.Orientation);
+                var matchingCombination = basePiece.CombinationTable.FirstOrDefault(c => c.Overlay == Piece.RailPiece && c.OverlayRelativeOrientation == relativeOrientation);
+                return matchingCombination;
+            }
+
+            return null;
         }
 
         private bool CanPlace(VoxelHandle Location)

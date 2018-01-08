@@ -5,8 +5,7 @@ using System.Text;
 
 namespace DwarfCorp.Rail
 {
-    // These corrospond to decal orientation values
-    public enum Orientations
+    public enum Orientation
     {
         North = 0,
         East = 1,
@@ -14,11 +13,24 @@ namespace DwarfCorp.Rail
         West = 3
     }
 
-    public class Orientation
+    public class OrientationHelper
     {
-        public static Orientations Rotate(Orientations In, int Ammount)
+        public static Orientation Rotate(Orientation In, int Ammount)
         {
-            return (Orientations)(((int)In + Ammount) % 4);
+            return (Orientation)(((int)In + Ammount) % 4);
+        }
+
+        public static Orientation Relative(Orientation Base, Orientation Top)
+        {
+            int c = 0;
+
+            while (Base != Top)
+            {
+                Base = Rotate(Base, 1);
+                c += 1;
+            }
+
+            return (Orientation)c;
         }
     }
 }

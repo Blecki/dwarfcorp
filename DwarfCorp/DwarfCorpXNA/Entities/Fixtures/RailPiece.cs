@@ -46,7 +46,7 @@ namespace DwarfCorp
         , IRenderableComponent
 #endif
     {
-        private Rail.JunctionPiece Piece;
+        public Rail.JunctionPiece Piece;
 
         public RailPiece()
         {
@@ -58,8 +58,10 @@ namespace DwarfCorp
             VoxelHandle Location,
             Rail.JunctionPiece Piece) :
 
-            base(Manager, "Fixture", Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y)), Vector3.One,
-                Location.WorldPosition,
+            base(Manager, "Fixture", 
+                Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y)), 
+                Vector3.One,
+                Vector3.Zero,
                 true)
         {
             this.Piece = Piece;

@@ -61,7 +61,7 @@ namespace DwarfCorp
         public static string rail_junctions = ProgramData.CreatePath("Content", "rail-junctions.json");
 
         // Todo: Move to own texture.
-        public static string rail_tiles = ProgramData.CreatePath("Terrain", "terrain_tiles");
+        public static string rail_tiles = ProgramData.CreatePath("Terrain", "rail");
 
         public class Audio
     {

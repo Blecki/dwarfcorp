@@ -6,20 +6,20 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Rail
 {
-    public class RailConversionEntry
+    public class RailCombination
     {
-        public DecalOrientation ThisOrientation;
-        public String OverlayDecal;
-        public DecalOrientation OverlayOrientation;
-        public String ResultDecal;
-        public DecalOrientation ResultOrientation;
+        public String Overlay;
+        public Orientation OverlayRelativeOrientation;
+
+        public String Result;
+        public Orientation ResultRelativeOrientation;
     }
 
     public class RailPiece
     {
-        public String Name;
-        public Point Tile;
-        public List<RailConversionEntry> ConversionTable;
+        public String Name = "";
+        public Point Tile = Point.Zero;
+        public List<RailCombination> CombinationTable = new List<RailCombination>();
 
     }
 }
