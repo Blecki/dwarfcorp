@@ -17,6 +17,7 @@ namespace DwarfCorp.Rail
     {
         public String Name;
         public List<JunctionPiece> Pieces;
+        public int Icon;
 
         public JunctionPattern Rotate()
         {

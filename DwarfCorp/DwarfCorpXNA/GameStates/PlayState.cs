@@ -1409,7 +1409,7 @@ namespace DwarfCorp.GameStates
                             .Select(data => new FlatToolTray.Icon
                             {
                                 Tooltip = "Build " + data.Name,
-                                Icon = new TileReference("voxels", 0),
+                                Icon = new TileReference("rail", data.Icon),
                                 KeepChildVisible = true,
                                 ExpandChildWhenDisabled = true,
                                 Behavior = FlatToolTray.IconBehavior.LeafIcon,

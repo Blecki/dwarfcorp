@@ -63,6 +63,7 @@
 
     {
       "Name": "basic",
+      "Icon": 0,
       "Pieces": [
         {
           "Offset": "0, 0",
@@ -74,6 +75,7 @@
 
     {
       "Name": "small-curve",
+      "Icon": 1,
       "Pieces": [
         {
           "Offset": "0, 0",
@@ -85,28 +87,84 @@
 
     {
       "Name": "large-curve",
+      "Icon": 2,
       "Pieces": [
-        {
-          "Offset": "0, 1",
-          "RailPiece": "rail-large-curve-a",
-          "Orientation": "North"
-        },
-        {
-          "Offset": "1, 1",
-          "RailPiece": "rail-large-curve-b",
-          "Orientation": "North"
-        },
         {
           "Offset": "0, 0",
           "RailPiece": "rail-large-curve-b",
           "Orientation": "South"
         },
         {
+          "Offset": "0, 1",
+          "RailPiece": "rail-large-curve-a",
+          "Orientation": "North"
+        },
+        {
           "Offset": "1, 0",
           "RailPiece": "rail-large-curve-c",
           "Orientation": "North"
+        },
+        {
+          "Offset": "1, 1",
+          "RailPiece": "rail-large-curve-b",
+          "Orientation": "North"
+        }
+      ]
+    },
+
+    {
+      "Name": "right-s",
+      "Icon": 3,
+      "Pieces": [
+        {
+          "Offset": "0, 0",
+          "RailPiece": "rail-large-curve-b",
+          "Orientation": "South"
+        },
+        {
+          "Offset": "0, 1",
+          "RailPiece": "rail-large-curve-a",
+          "Orientation": "North"
+        },
+        {
+          "Offset": "1, 0",
+          "RailPiece": "rail-large-curve-a",
+          "Orientation": "South"
+        },
+        {
+          "Offset": "1, 1",
+          "RailPiece": "rail-large-curve-b",
+          "Orientation": "North"
+        }
+      ]
+    },
+
+    {
+      "Name": "left-s",
+      "Icon": 4,
+      "Pieces": [
+        {
+          "Offset": "0, 0",
+          "RailPiece": "rail-large-curve-c",
+          "Orientation": "East"
+        },
+        {
+          "Offset": "0, 1",
+          "RailPiece": "rail-large-curve-b",
+          "Orientation": "West"
+        },
+        {
+          "Offset": "1, 0",
+          "RailPiece": "rail-large-curve-b",
+          "Orientation": "East"
+        },
+        {
+          "Offset": "1, 1",
+          "RailPiece": "rail-large-curve-c",
+          "Orientation": "West"
         }
       ]
     }
+
   ]
 }
