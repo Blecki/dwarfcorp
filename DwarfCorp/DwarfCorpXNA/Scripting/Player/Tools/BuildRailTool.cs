@@ -268,7 +268,10 @@ namespace DwarfCorp
                             addNewDesignation = false;
                         }
                         else
+                        {
+                            (entity as RailPiece).Delete();
                             body.UpdatePiece(combinedPiece, actualPosition);
+                        }
                     }
                 }
 

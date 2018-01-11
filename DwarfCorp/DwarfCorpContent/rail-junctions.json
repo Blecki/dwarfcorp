@@ -17,7 +17,64 @@
           "OverlayRelativeOrientation": "West",
           "Result": "rail-cross",
           "ResultRelativeOrientation": "North"
+        },
+
+        {
+          "Overlay": "rail-large-curve-a",
+          "OverlayRelativeOrientation": "North",
+          "Result": "rail-left-switch-open-b",
+          "ResultRelativeOrientation": "South"
+        },
+
+        {
+          "Overlay": "rail-large-curve-a",
+          "OverlayRelativeOrientation": "South",
+          "Result": "rail-left-switch-open-b",
+          "ResultRelativeOrientation": "North"
+        },
+
+        {
+          "Overlay": "rail-large-curve-c",
+          "OverlayRelativeOrientation": "East",
+          "Result": "rail-right-switch-open-b",
+          "ResultRelativeOrientation": "North"
+        },
+
+        {
+          "Overlay": "rail-large-curve-c",
+          "OverlayRelativeOrientation": "West",
+          "Result": "rail-right-switch-open-b",
+          "ResultRelativeOrientation": "South"
+        },
+
+        {
+          "Overlay": "rail-large-curve-b",
+          "OverlayRelativeOrientation": "North",
+          "Result": "rail-left-switch-open-a",
+          "ResultRelativeOrientation": "South"
+        },
+
+        {
+          "Overlay": "rail-large-curve-b",
+          "OverlayRelativeOrientation": "South",
+          "Result": "rail-left-switch-open-a",
+          "ResultRelativeOrientation": "North"
+        },
+
+        {
+          "Overlay": "rail-large-curve-b",
+          "OverlayRelativeOrientation": "East",
+          "Result": "rail-right-switch-open-a",
+          "ResultRelativeOrientation": "North"
+        },
+
+        {
+          "Overlay": "rail-large-curve-b",
+          "OverlayRelativeOrientation": "West",
+          "Result": "rail-right-switch-open-a",
+          "ResultRelativeOrientation": "South"
         }
+
       ]
     },
 
@@ -41,7 +98,22 @@
 
     {
       "Name": "rail-large-curve-a",
-      "Tile": "1, 0"
+      "Tile": "1, 0",
+      "CombinationTable": [
+        {
+          "Overlay": "rail-straight",
+          "OverlayRelativeDirection": "North",
+          "Result": "rail-left-switch-open-b",
+          "ResultRelativeOrientation": "South"
+        },
+
+        {
+          "Overlay": "rail-straight",
+          "OverlayRelativeDirection": "South",
+          "Result": "rail-left-switch-open-b",
+          "ResultRelativeOrientation": "South"
+        }
+      ]
     },
 
     {
@@ -67,7 +139,22 @@
 
     {
       "Name": "rail-large-curve-c",
-      "Tile": "2, 1"
+      "Tile": "2, 1",
+      "CombinationTable": [
+        {
+          "Overlay": "rail-straight",
+          "OverlayRelativeDirection": "East",
+          "Result": "rail-right-switch-open-b",
+          "ResultRelativeOrientation": "East"
+        },
+
+        {
+          "Overlay": "rail-straight",
+          "OverlayRelativeDirection": "West",
+          "Result": "rail-right-switch-open-b",
+          "ResultRelativeOrientation": "West"
+        }
+      ]
     },
 
     {
@@ -77,8 +164,29 @@
 
     {
       "Name": "rail-large-curve-diagonal",
-      "Tile":  "2, 2"
+      "Tile": "2, 2"
+    },
+
+    {
+      "Name": "rail-left-switch-open-a",
+      "Tile": "3, 0"
+    },
+
+    {
+      "Name": "rail-left-switch-open-b",
+      "Tile": "4, 0"
+    },
+
+    {
+      "Name": "rail-right-switch-open-a",
+      "Tile": "6, 0"
+    },
+
+    {
+      "Name": "rail-right-switch-open-b",
+      "Tile": "5, 0"
     }
+
   ],
 
 
