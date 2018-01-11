@@ -3,12 +3,35 @@
 
     {
       "Name": "rail-straight",
-      "Tile": "0, 0"
+      "Tile": "0, 0",
+      "CombinationTable": [
+        {
+          "Overlay": "rail-straight",
+          "OverlayRelativeOrientation": "East",
+          "Result": "rail-cross",
+          "ResultRelativeOrientation": "North"
+        },
+
+        {
+          "Overlay": "rail-straight",
+          "OverlayRelativeOrientation": "West",
+          "Result": "rail-cross",
+          "ResultRelativeOrientation": "North"
+        }
+      ]
     },
 
     {
       "Name": "rail-small-curve",
-      "Tile": "0, 1"
+      "Tile": "0, 1",
+      "CombinationTable": [
+        {
+          "Overlay": "rail-large-curve-b",
+          "OverlayRelativeOrientation": "South",
+          "Result": "rail-small-curve-inside-large",
+          "ResultRelativeOrientation": "North"
+        }
+      ]
     },
 
     {
@@ -28,7 +51,7 @@
         {
           "Overlay": "rail-small-curve",
           "OverlayRelativeOrientation": "South",
-          "ResultDecal": "rail-small-curve-inside-large",
+          "Result": "rail-small-curve-inside-large",
           "ResultRelativeOrientation": "South"
         },
 

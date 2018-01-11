@@ -238,34 +238,71 @@ namespace DwarfCorp
         {
             var assignments = new List<Task>();
 
-            foreach (var body in PreviewBodies)
+            for (var i = 0; i < PreviewBodies.Count; ++i)
             {
-                var startPos = body.Position + new Vector3(0.0f, -0.3f, 0.0f);
-                var endPos = body.Position;
+                var body = PreviewBodies[i];
+                var piece = Pattern.Pieces[i];
+                var actualPosition = new VoxelHandle(Location.Chunk.Manager.ChunkData, Location.Coordinate + new GlobalVoxelOffset(piece.Offset.X, 0, piece.Offset.Y));
+                var addNewDesignation = true;
 
-                var designation = new CraftDesignation
+                foreach (var entity in Player.World.CollisionManager.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionManager.CollisionType.Static))
                 {
-                    Entity = body,
-                    WorkPile = new WorkPile(Player.World.ComponentManager, startPos),
-                    OverrideOrientation = false,
-                    Valid = true,
-                    ItemType = RailCraftItem,
-                    SelectedResources = SelectedResources,
-                    Location = new VoxelHandle(Player.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(body.Position)),
-                    HasResources = false,
-                    ResourcesReservedFor = null,
-                    Orientation = 0.0f,
-                    Progress = 0.0f,
-                };
+                    if (!addNewDesignation) break;
+                    if (Object.ReferenceEquals(entity, body)) continue;
 
-                Player.World.ComponentManager.RootComponent.AddChild(designation.WorkPile);
-                designation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
-                Player.World.ParticleManager.Trigger("puff", endPos, Color.White, 10);
-                Player.Faction.Designations.AddEntityDesignation(body, DesignationType.Craft, designation);
-                assignments.Add(new CraftItemTask(designation));
+                    var possibleCombination = FindPossibleCombination(piece, entity);
+                    if (possibleCombination != null)
+                    {
+                        var combinedPiece = new Rail.JunctionPiece
+                        {
+                            RailPiece = possibleCombination.Result,
+                            Orientation = Rail.OrientationHelper.Rotate((entity as RailPiece).Piece.Orientation, (int)possibleCombination.ResultRelativeOrientation),
+                        };
+
+                        var existingDesignation = Player.Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, entity));
+                        if (existingDesignation != null)
+                        {
+                            (entity as RailPiece).UpdatePiece(combinedPiece, actualPosition);
+                            (existingDesignation.Tag as CraftDesignation).Progress = 0.0f;
+                            body.Delete();
+                            addNewDesignation = false;
+                        }
+                        else
+                            body.UpdatePiece(combinedPiece, actualPosition);
+                    }
+                }
+
+                if (addNewDesignation)
+                {
+
+                    var startPos = body.Position + new Vector3(0.0f, -0.3f, 0.0f);
+                    var endPos = body.Position;
+
+                    var designation = new CraftDesignation
+                    {
+                        Entity = body,
+                        WorkPile = new WorkPile(Player.World.ComponentManager, startPos),
+                        OverrideOrientation = false,
+                        Valid = true,
+                        ItemType = RailCraftItem,
+                        SelectedResources = SelectedResources,
+                        Location = new VoxelHandle(Player.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(body.Position)),
+                        HasResources = false,
+                        ResourcesReservedFor = null,
+                        Orientation = 0.0f,
+                        Progress = 0.0f,
+                    };
+
+                    Player.World.ComponentManager.RootComponent.AddChild(designation.WorkPile);
+                    designation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
+                    Player.World.ParticleManager.Trigger("puff", endPos, Color.White, 10);
+                    Player.Faction.Designations.AddEntityDesignation(body, DesignationType.Craft, designation);
+                    assignments.Add(new CraftItemTask(designation));
+                }
             }
 
-            Player.World.Master.TaskManager.AddTasks(assignments);
+            if (assignments.Count > 0)
+                Player.World.Master.TaskManager.AddTasks(assignments);
         }
     }
 }
