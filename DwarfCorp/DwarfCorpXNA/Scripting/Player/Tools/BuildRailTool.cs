@@ -206,6 +206,11 @@ namespace DwarfCorp
                 if (FindPossibleCombination(Piece, entity) != null)
                     return true;
 
+                if (GamePerformance.DebugVisualizationEnabled)
+                {
+                    Drawer3D.DrawBox(entity.GetBoundingBox(), Color.Yellow, 0.1f, false);
+                }
+
                 return false;
             }
 
@@ -269,7 +274,7 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            (entity as RailPiece).Delete();
+                            (entity as RailPiece).Die();
                             body.UpdatePiece(combinedPiece, actualPosition);
                         }
                     }

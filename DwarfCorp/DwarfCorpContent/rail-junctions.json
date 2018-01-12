@@ -102,16 +102,16 @@
       "CombinationTable": [
         {
           "Overlay": "rail-straight",
-          "OverlayRelativeDirection": "North",
+          "OverlayRelativeOrientation": "North",
           "Result": "rail-left-switch-open-b",
           "ResultRelativeOrientation": "South"
         },
 
         {
           "Overlay": "rail-straight",
-          "OverlayRelativeDirection": "South",
+          "OverlayRelativeOrientation": "South",
           "Result": "rail-left-switch-open-b",
-          "ResultRelativeOrientation": "South"
+          "ResultRelativeOrientation": "North"
         }
       ]
     },
@@ -132,6 +132,34 @@
           "OverlayRelativeOrientation": "South",
           "Result": "rail-large-curve-diagonal",
           "ResultRelativeOrientation": "North"
+        },
+
+        {
+          "Overlay": "rail-straight",
+          "OverlayRelativeOrientation": "North",
+          "Result": "rail-left-switch-open-a",
+          "ResultRelativeOrientation": "South"
+        },
+
+        {
+          "Overlay": "rail-straight",
+          "OverlayRelativeOrientation": "South",
+          "Result": "rail-left-switch-open-a",
+          "ResultRelativeOrientation": "North"
+        },
+
+        {
+          "Overlay": "rail-straight",
+          "OverlayRelativeOrientation": "East",
+          "Result": "rail-right-switch-open-a",
+          "ResultRelativeOrientation": "West"
+        },
+
+        {
+          "Overlay": "rail-straight",
+          "OverlayRelativeOrientation": "West",
+          "Result": "rail-right-switch-open-a",
+          "ResultRelativeOrientation": "East"
         }
 
       ]
@@ -143,14 +171,14 @@
       "CombinationTable": [
         {
           "Overlay": "rail-straight",
-          "OverlayRelativeDirection": "East",
+          "OverlayRelativeOrientation": "East",
           "Result": "rail-right-switch-open-b",
-          "ResultRelativeOrientation": "East"
+          "ResultRelativeOrientation": "West"
         },
 
         {
           "Overlay": "rail-straight",
-          "OverlayRelativeDirection": "West",
+          "OverlayRelativeOrientation": "West",
           "Result": "rail-right-switch-open-b",
           "ResultRelativeOrientation": "West"
         }

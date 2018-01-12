@@ -85,13 +85,29 @@ namespace DwarfCorp
             { 
                 OrientationType = SimpleSprite.OrientMode.Fixed
             }).SetFlag(Flag.ShouldSerialize, false);
+
+            AddChild(new NewVoxelListener(manager, Matrix.Identity, new Vector3(0.8f, 1.5f, 0.8f), Vector3.Zero, (_event) =>
+            {
+                this.Die();
+                var designation = World.PlayerFaction.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, this));
+                if (designation != null)
+                {
+                    World.PlayerFaction.Designations.RemoveEntityDesignation(this, DesignationType.Craft);
+                    var craftDesignation = designation.Tag as CraftDesignation;
+                    if (craftDesignation.WorkPile != null)
+                        craftDesignation.WorkPile.Die();
+                }
+            }));
         }
 
 #if DEBUG
         public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             if (GamePerformance.DebugVisualizationEnabled)
-                Drawer3D.DrawBox(this.GetBoundingBox(), Color.Yellow, 0.2f, false);
+            {
+                //Drawer3D.DrawBox(this.GetBoundingBox(), Color.Yellow, 0.1f, false);
+                Drawer3D.DrawBox(this.EnumerateChildren().OfType<NewVoxelListener>().First().GetBoundingBox(), Color.Orange, 0.1f, false);
+            }
         }
 #endif
 
