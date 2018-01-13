@@ -83,6 +83,8 @@ namespace DwarfCorp
             }
             if (Item.ResourcesReservedFor == Agent)
                 Item.ResourcesReservedFor = null;
+            Agent.Physics.Active = true;
+            Agent.Physics.IsSleeping = false;
             yield return Act.Status.Success;
         }
 
@@ -322,6 +324,7 @@ namespace DwarfCorp
         public override void OnCanceled()
         {
             Creature.Physics.Active = true;
+            Creature.Physics.IsSleeping = false;
             foreach (var statuses in Creature.Unreserve(Item.ItemType.CraftLocation))
             {
                 continue;
