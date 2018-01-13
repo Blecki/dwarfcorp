@@ -313,13 +313,15 @@ namespace DwarfCorp
 
             foreach (var m in Faction.Minions)
             {
-                m.Creature.SelectionCircle.IsVisible = false;
+                if (m.Creature.SelectionCircle != null)
+                    m.Creature.SelectionCircle.IsVisible = false;
                 m.Creature.Sprite.DrawSilhouette = false;
             };
 
             foreach (CreatureAI creature in Faction.SelectedMinions)
             {
-                creature.Creature.SelectionCircle.IsVisible = true;
+                if (creature.Creature.SelectionCircle != null)
+                    creature.Creature.SelectionCircle.IsVisible = true;
                 creature.Creature.Sprite.DrawSilhouette = true;
 
                 foreach (Task task in creature.Tasks)

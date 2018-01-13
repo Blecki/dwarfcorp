@@ -122,7 +122,7 @@ namespace DwarfCorp
 
         public void DrawHilites(
             DesignationSet Set,
-            Action<Vector3, Vector3, Color, float> DrawBoxCallback,
+            Action<Vector3, Vector3, Color, float, bool> DrawBoxCallback,
             Action<Vector3, VoxelType> DrawPhantomCallback)
         {
             var colorModulation = Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds * 2.0f));
@@ -152,7 +152,7 @@ namespace DwarfCorp
                     if (voxel.Type == DesignationType.Put) // Hate this.
                         DrawPhantomCallback(v, VoxelLibrary.GetVoxelType((voxel.Tag as short?).Value));
                     else
-                        DrawBoxCallback(v, Vector3.One, props.ModulatedColor, props.LineWidth);
+                        DrawBoxCallback(v, Vector3.One, props.ModulatedColor, props.LineWidth, true);
                 }
             }
 
@@ -174,7 +174,7 @@ namespace DwarfCorp
                     else
                     {
                         var box = entity.Body.GetBoundingBox();
-                        DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, props.LineWidth);
+                        DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, props.LineWidth, false);
                     }
 
                     if (props.Icon != null)

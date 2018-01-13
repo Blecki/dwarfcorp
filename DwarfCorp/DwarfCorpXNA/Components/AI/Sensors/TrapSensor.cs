@@ -57,7 +57,6 @@ namespace DwarfCorp
         {
             OnSensed += TrapSensor_OnSensed;
             Tags.Add("Sensor");
-            DrawBoundingBox = true;
             FireTimer = new Timer(0.5f, false);
         }
 
@@ -74,11 +73,8 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            //if (DrawBoundingBox)
-            //{
-                Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f, false);
-                Drawer3D.DrawBox(GetRotatedBoundingBox(), Color.Red, 0.02f, false);
-            //}
+            Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f, false);
+            Drawer3D.DrawBox(GetRotatedBoundingBox(), Color.Red, 0.02f, false);
 
             base.Update(gameTime, chunks, camera);
         }

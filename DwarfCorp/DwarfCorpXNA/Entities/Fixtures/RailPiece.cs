@@ -123,7 +123,9 @@ namespace DwarfCorp
             Matrix transform = Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
             spriteChild.LocalTransform = transform;
             spriteChild.SetFrame(piece.Tile);
-            EnumerateChildren().OfType<NewVoxelListener>().FirstOrDefault().LocalTransform = transform;
+
+            // Hack to make the listener update it's damn bounding box
+            EnumerateChildren().OfType<NewVoxelListener>().FirstOrDefault().LocalTransform = Matrix.Identity;
         }
     }
 }

@@ -219,10 +219,7 @@ namespace DwarfCorp
             Tags = new List<string>();
             Name = "uninitialized";
 
-            SetFlag(Flag.Active, true);
-            SetFlag(Flag.Visible, true);
-            SetFlag(Flag.Dead, false);
-            SetFlag(Flag.ShouldSerialize, true);
+            Flags = Flag.Active | Flag.Visible | Flag.ShouldSerialize;
         }
 
         public GameComponent(ComponentManager Manager) : this()

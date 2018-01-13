@@ -32,44 +32,39 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// This is a special kind of component which has a position and orientation. The global position of an object
-    /// is computed from its local position relative to its parent. This is known as a "scene graph". Locatable components
-    /// also live inside an octree for faster access to colliding or nearby objects.
-    /// </summary>
-    [JsonObject(IsReference = true)]
     public class Body : GameComponent, IBoundedObject, IUpdateableComponent
+
+#if DEBUG
+        , IRenderableComponent
+#endif
     {
-        public bool WasAddedToOctree
+#if DEBUG
+        void IRenderableComponent.Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
-            get { return wasEverAddedToOctree; }
-            set { wasEverAddedToOctree = value; }
+            if (GamePerformance.DebugVisualizationEnabled)
+                Drawer3D.DrawBox(GetBoundingBox(), Color.Blue, 0.02f, false);
         }
+#endif
 
-        private bool wasEverAddedToOctree = false;
-
-        public CollisionManager.CollisionType CollisionType { get; set; }
+        public CollisionManager.CollisionType CollisionType = CollisionManager.CollisionType.None;
+        public bool AddToCollisionManager = true;
+        private Vector3 BoundingBoxSize = Vector3.One;
+        private Vector3 LocalBoundingBoxOffset = Vector3.Zero;
 
         public delegate void BodyDestroyed();
         public event BodyDestroyed OnDestroyed;
 
-
         public bool IsReserved = false;
         public GameComponent ReservedFor = null;
         private BoundingBox lastBounds = new BoundingBox();
-        private Vector3 thresholdPos = new Vector3();
         
         [JsonIgnore]public Matrix GlobalTransform
         {
@@ -79,25 +74,12 @@ namespace DwarfCorp
                 globalTransform = value;
                 UpdateBoundingBox();
                 if(!AddToCollisionManager)
-                {
-                    return;
-                }
-
-                //if(!Active)
-                //{
-                //    return;
-                //}
-
-                if (!ExceedsMovementThreshold && wasEverAddedToOctree)
                     return;
 
                 Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
                 Manager.World.CollisionManager.AddObject(this, CollisionType);
 
                 lastBounds = GetBoundingBox();
-                wasEverAddedToOctree = true;
-                ExceedsMovementThreshold = false;
-                thresholdPos = Position;
             }
         }
 
@@ -109,10 +91,6 @@ namespace DwarfCorp
             {
                 localTransform = value;
                 HasMoved = true;
-
-                if ((Position - thresholdPos).LengthSquared() > 0.001)
-                    ExceedsMovementThreshold = true;
-
                 propogateTransforms = true;
             }
         }
@@ -135,12 +113,9 @@ namespace DwarfCorp
         public BoundingBox BoundingBox = new BoundingBox();
 
 
-        public bool DrawScreenRect { get; set; }
         public Vector3 BoundingBoxPos { get; set; }
-        public bool DrawBoundingBox { get; set; }
         public bool DepthSort { get; set; }
         public bool FrustrumCull { get; set; }
-        public bool DrawInFrontOfSiblings { get; set; }
 
         public bool IsAboveCullPlane(ChunkManager Chunks)
         {
@@ -148,8 +123,6 @@ namespace DwarfCorp
         }
 
         public List<MotionAnimation> AnimationQueue { get; set; }
-
-        public bool ExceedsMovementThreshold { get; set; }
 
         public bool HasMoved
         {
@@ -176,16 +149,6 @@ namespace DwarfCorp
         protected Matrix globalTransform = Matrix.Identity;
         private bool hasMoved = true;
 
-        public bool AddToCollisionManager { get; set; }
-        public bool DrawReservation { get; set; }
-
-
-        [OnDeserialized]
-        public void OnDesrialized(StreamingContext ctx)
-        {
-            WasAddedToOctree = false;
-        }
-
         public Body()
         {
             if(OnDestroyed == null)
@@ -200,11 +163,8 @@ namespace DwarfCorp
         public Body(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             this(manager, name, localTransform, boundingBoxExtents, boundingBoxPos, true)
         {
-            DrawReservation = false;
             AnimationQueue = new List<MotionAnimation>();
-            DrawInFrontOfSiblings = false;
             CollisionType = CollisionManager.CollisionType.None;
-            DrawScreenRect = false;
 
             if (OnDestroyed == null)
                 OnDestroyed += Body_OnDestroyed;
@@ -215,20 +175,19 @@ namespace DwarfCorp
         public Body(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToCollisionManager) :
             base(name, manager)
         {
-            DrawReservation = false;
+            BoundingBoxSize = boundingBoxExtents;
+            LocalBoundingBoxOffset = boundingBoxPos;
+
             AnimationQueue = new List<MotionAnimation>();
             AddToCollisionManager = addToCollisionManager;
             BoundingBoxPos = boundingBoxPos;
-            DrawBoundingBox = false;
             BoundingBox = new BoundingBox(localTransform.Translation - boundingBoxExtents / 2.0f + boundingBoxPos, localTransform.Translation + boundingBoxExtents / 2.0f + boundingBoxPos);
 
             LocalTransform = localTransform;
             HasMoved = true;
             DepthSort = true;
             FrustrumCull = true;
-            DrawInFrontOfSiblings = false;
             CollisionType = CollisionManager.CollisionType.None;
-            DrawScreenRect = false;
             
             if (OnDestroyed == null)
                 OnDestroyed += Body_OnDestroyed;
@@ -262,9 +221,9 @@ namespace DwarfCorp
             Matrix mat = Matrix.CreateRotationY(angle);
             mat.Translation = LocalTransform.Translation;
             LocalTransform = mat;
-        }
- 
+        } 
 
+        // Move to only place that uses it.
         public Rectangle GetScreenRect(Camera camera)
         {
             BoundingBox box = GetBoundingBox();
@@ -288,29 +247,6 @@ namespace DwarfCorp
             return new Rectangle((int)min.X, (int)min.Y, (int)(max.X - min.X), (int)(max.Y - min.Y));
 
         }
-
-
-        public bool Intersects(BoundingSphere sphere)
-        {
-            return (sphere.Intersects(BoundingBox));
-        }
-
-
-        public bool Intersects(BoundingFrustum fr)
-        {
-            return (fr.Intersects(BoundingBox));
-        }
-
-        public bool Intersects(BoundingBox box)
-        {
-            return (box.Intersects(BoundingBox));
-        }
-
-        public bool Intersects(Ray ray)
-        {
-            return (ray.Intersects(BoundingBox) != null);
-        }
-
 
         public virtual void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
@@ -338,21 +274,6 @@ namespace DwarfCorp
                 propogateTransforms = false;
             }
         }
-
-        ///// <summary>
-        ///// Renders the component.
-        ///// </summary>
-        ///// <param name="gameTime">The game time.</param>
-        ///// <param name="chunks">The chunk manager.</param>
-        ///// <param name="camera">The camera.</param>
-        ///// <param name="spriteBatch">The sprite batch.</param>
-        ///// <param name="graphicsDevice">The graphics device.</param>
-        ///// <param name="effect">The shader to use.</param>
-        ///// <param name="renderingForWater">if set to <c>true</c> rendering for water reflections.</param>
-        //public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
-        //{
-        //}
-
 
         public void UpdateTransform()
         {
@@ -387,6 +308,11 @@ namespace DwarfCorp
         public BoundingBox GetBoundingBox()
         {
             return BoundingBox;
+            return new BoundingBox(GlobalTransform.Translation + LocalBoundingBoxOffset + (BoundingBoxSize * -0.5f),
+                GlobalTransform.Translation + LocalBoundingBoxOffset + (BoundingBoxSize * 0.5f));
+            var min = Vector3.Transform(GlobalTransform.Translation + LocalBoundingBoxOffset + (BoundingBoxSize * -0.5f), GlobalTransform);
+            var max = Vector3.Transform(GlobalTransform.Translation + LocalBoundingBoxOffset + (BoundingBoxSize * 0.5f), GlobalTransform);
+            return new BoundingBox(MathFunctions.Min(min, max), MathFunctions.Max(min, max));
         }
 
         public BoundingBox GetRotatedBoundingBox()
@@ -395,8 +321,7 @@ namespace DwarfCorp
             Vector3 max = Vector3.Transform(BoundingBox.Max - GlobalTransform.Translation, GlobalTransform);
             return new BoundingBox(MathFunctions.Min(min, max), MathFunctions.Max(min, max));
         }
-
-
+        
         public void UpdateBoundingBox()
         {
             Vector3 extents = (BoundingBox.Max - BoundingBox.Min) * 0.5f;
