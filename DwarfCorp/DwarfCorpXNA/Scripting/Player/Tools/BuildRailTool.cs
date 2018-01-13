@@ -202,6 +202,7 @@ namespace DwarfCorp
             foreach (var entity in  Player.World.CollisionManager.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionManager.CollisionType.Static))
             {
                 if (Object.ReferenceEquals(entity, PreviewEntity)) continue;
+                if (entity is NewVoxelListener) continue;
 
                 if (FindPossibleCombination(Piece, entity) != null)
                     return true;

@@ -88,7 +88,8 @@ namespace DwarfCorp
 
             AddChild(new NewVoxelListener(manager, Matrix.Identity, new Vector3(0.8f, 1.5f, 0.8f), Vector3.Zero, (_event) =>
             {
-                this.Die();
+                
+                Die();
                 var designation = World.PlayerFaction.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, this));
                 if (designation != null)
                 {
@@ -122,6 +123,7 @@ namespace DwarfCorp
             Matrix transform = Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
             spriteChild.LocalTransform = transform;
             spriteChild.SetFrame(piece.Tile);
+            EnumerateChildren().OfType<NewVoxelListener>().FirstOrDefault().LocalTransform = transform;
         }
     }
 }

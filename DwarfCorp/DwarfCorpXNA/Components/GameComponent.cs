@@ -153,6 +153,11 @@ namespace DwarfCorp
 
         public void SetFlag(Flag F, bool Value)
         {
+            if (F == Flag.Dead && Value == true)
+            {
+                var x = 5;
+            }
+
             if (Value)
                 Flags |= F;
             else
