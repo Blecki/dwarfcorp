@@ -612,8 +612,10 @@ namespace DwarfCorp
         }
 
         public IEnumerable<Act.Status> HitAndWait(bool loadBar, Func<float> maxProgress, 
-            Func<float> progress, Action incrementProgress, Func<Vector3> pos, string playSound = "", Func<bool> continueHitting = null)
+            Func<float> progress, Action incrementProgress, 
+            Func<Vector3> pos, string playSound = "", Func<bool> continueHitting = null, bool maintainPos = true)
         {
+            Vector3 currentPos = Physics.LocalTransform.Translation;
             CurrentCharacterMode = CharacterMode.Attacking;
             Sprite.ResetAnimations(CharacterMode.Attacking);
             Sprite.PlayAnimations(CharacterMode.Attacking);
@@ -646,6 +648,13 @@ namespace DwarfCorp
                 if (incrementTimer.HasTriggered)
                 {
                     incrementProgress();
+                }
+
+                if (maintainPos)
+                {
+                    var matrix = Physics.LocalTransform;
+                    matrix.Translation = currentPos;
+                    Physics.LocalTransform = matrix;
                 }
 
                 yield return Act.Status.Running;

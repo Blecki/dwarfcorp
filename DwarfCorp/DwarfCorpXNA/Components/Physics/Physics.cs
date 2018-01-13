@@ -231,7 +231,9 @@ namespace DwarfCorp
             // Never apply physics when animating!
             if (AnimationQueue.Count > 0)
             {
+                Velocity = Vector3.Zero;
                 PropogateTransforms();
+                UpdateBoundingBox();
                 base.Update(gameTime, chunks, camera);
                 return;
             }
@@ -244,7 +246,7 @@ namespace DwarfCorp
 
             // How would this get a NaN anyway?
             if (MathFunctions.HasNan(Velocity))
-                throw new InvalidOperationException(string.Format("Physics went haywire for object {0} : {1}", GlobalID, Name));
+                Velocity = Vector3.Zero;
 
             if (IsSleeping)
             {

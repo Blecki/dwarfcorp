@@ -69,7 +69,7 @@ namespace DwarfCorp
                 {
                     TossMotion motion = new TossMotion(0.6f, 0.9f, Creature.Physics.GlobalTransform, Location);
                     Creature.Physics.AnimationQueue.Add(motion);
-                    Creature.AI.Jump(DwarfTime.LastTime);
+                    SoundManager.PlaySound(ContentPaths.Audio.jump, Creature.Physics.GlobalTransform.Translation);
                     
                     while (!motion.IsDone())
                     {

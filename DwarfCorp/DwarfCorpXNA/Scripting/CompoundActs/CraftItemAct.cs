@@ -251,7 +251,7 @@ namespace DwarfCorp
                             new Wrap(WaitForResources) { Name = "Wait for resources."},
                             new Wrap(() => Creature.HitAndWait(true, () => 1.0f, 
                             () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
-                            () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft")),
+                            () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft", null, true)),
                             new CreateCraftItemAct(Voxel, Creature.AI, Item))),
                             unreserveAct
                             ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
