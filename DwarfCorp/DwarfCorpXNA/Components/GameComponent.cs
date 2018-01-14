@@ -192,7 +192,9 @@ namespace DwarfCorp
         public bool IsDead
         {
             get { return IsFlagSet(Flag.Dead); }
-            set { SetFlag(Flag.Dead, value); }
+            set {
+                SetFlag(Flag.Dead, value);
+            }
         }
         
         public virtual void ReceiveMessageRecursive(Message messageToReceive)

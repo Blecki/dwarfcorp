@@ -79,7 +79,7 @@ namespace DwarfCorp
                     voxelUnder));
             //*/
 
-            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
+            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBoxSize, LocalBoundingBoxOffset)) as Inventory;
 
             // Can these be spawned when the tree dies rather than when it is created?
             if (emitWood)
@@ -104,7 +104,7 @@ namespace DwarfCorp
             }
 
             AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
-                Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
+                Matrix.Identity, LocalBoundingBoxOffset, GetBoundingBox().Extents())
             {
                 SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_tree_cut_down_1
             });

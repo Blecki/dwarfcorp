@@ -77,8 +77,8 @@ namespace DwarfCorp
         {
             if (VertexCount == 0) return;
 
-            for (var i = 0; i < VertexCount; ++i)
-                Verticies[i].Position += VertexNoise.GetNoiseVectorFromRepeatingTexture(Verticies[i].Position);
+            //for (var i = 0; i < VertexCount; ++i)
+            //    Verticies[i].Position += VertexNoise.GetNoiseVectorFromRepeatingTexture(Verticies[i].Position);
 
             BlendState origBlen = Device.BlendState;
             Device.BlendState = BlendState.NonPremultiplied;

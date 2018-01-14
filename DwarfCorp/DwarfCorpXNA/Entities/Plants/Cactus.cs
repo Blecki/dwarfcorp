@@ -48,7 +48,7 @@ namespace DwarfCorp
         public Pumpkin(ComponentManager Manager, Vector3 position, string asset, float bushSize) :
             base(Manager, "Pumpkin", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), asset, bushSize)
         {
-            BoundingBoxPos = Vector3.Zero;
+            LocalBoundingBoxOffset = Vector3.Zero;
             SeedlingAsset = "pumpkinvinesprout";
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
@@ -56,7 +56,7 @@ namespace DwarfCorp
             AddChild(new Health(Manager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(Manager, "Flames"));
 
-            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
+            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), LocalBoundingBoxOffset)
             {
                 Resources = new List<Inventory.InventoryItem>(),
             }) as Inventory;
@@ -68,7 +68,7 @@ namespace DwarfCorp
             });
 
             var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
-                Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
+                Matrix.Identity, LocalBoundingBoxOffset, GetBoundingBox().Extents())
             {
                 SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_bush_harvest_1
             }) as ParticleTrigger;
@@ -97,7 +97,7 @@ namespace DwarfCorp
             AddChild(new Health(Manager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(Manager, "Flames"));
 
-            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
+            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), LocalBoundingBoxOffset)
             {
                 Resources = new List<Inventory.InventoryItem>(),
             }) as Inventory;
@@ -109,7 +109,7 @@ namespace DwarfCorp
             });
 
             var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
-                Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
+                Matrix.Identity, LocalBoundingBoxOffset, GetBoundingBox().Extents())
             {
                 SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_bush_harvest_1
             }) as ParticleTrigger;

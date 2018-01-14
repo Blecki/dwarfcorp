@@ -50,14 +50,14 @@ namespace DwarfCorp
         void IRenderableComponent.Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             if (GamePerformance.DebugVisualizationEnabled)
-                Drawer3D.DrawBox(GetBoundingBox(), Color.Blue, 0.02f, false);
+                Drawer3D.DrawBox(BoundingBox, Color.Blue, 0.02f, false);
         }
 #endif
 
         public CollisionManager.CollisionType CollisionType = CollisionManager.CollisionType.None;
         public bool AddToCollisionManager = true;
-        private Vector3 BoundingBoxSize = Vector3.One;
-        private Vector3 LocalBoundingBoxOffset = Vector3.Zero;
+        public Vector3 BoundingBoxSize = Vector3.One;
+        public Vector3 LocalBoundingBoxOffset = Vector3.Zero;
 
         public delegate void BodyDestroyed();
         public event BodyDestroyed OnDestroyed;
@@ -72,6 +72,7 @@ namespace DwarfCorp
             set
             {
                 globalTransform = value;
+
                 UpdateBoundingBox();
 
                 if (AddToCollisionManager)
@@ -80,7 +81,7 @@ namespace DwarfCorp
                     Manager.World.CollisionManager.AddObject(this, CollisionType);
                 }
 
-                lastBounds = GetBoundingBox();
+                lastBounds = BoundingBox;
             }
         }
 
@@ -113,8 +114,6 @@ namespace DwarfCorp
 
         public BoundingBox BoundingBox = new BoundingBox();
 
-
-        public Vector3 BoundingBoxPos { get; set; }
         public bool DepthSort { get; set; }
         public bool FrustrumCull { get; set; }
 
@@ -152,7 +151,6 @@ namespace DwarfCorp
         public Body(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             this(manager, name, localTransform, boundingBoxExtents, boundingBoxPos, true)
         {
-            lastBounds = GetBoundingBox();
         }
 
         public Body(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToCollisionManager) :
@@ -162,15 +160,11 @@ namespace DwarfCorp
             LocalBoundingBoxOffset = boundingBoxPos;
 
             AddToCollisionManager = addToCollisionManager;
-            BoundingBoxPos = boundingBoxPos;
-            BoundingBox = new BoundingBox(localTransform.Translation - boundingBoxExtents / 2.0f + boundingBoxPos, localTransform.Translation + boundingBoxExtents / 2.0f + boundingBoxPos);
-
             LocalTransform = localTransform;
-            HasMoved = true;
+            GlobalTransform = localTransform;
+
             DepthSort = true;
             FrustrumCull = true;
-            
-            lastBounds = GetBoundingBox();
         }
 
         public virtual void OrientToWalls()
@@ -268,26 +262,23 @@ namespace DwarfCorp
 
         public BoundingBox GetRotatedBoundingBox()
         {
-            Vector3 min = Vector3.Transform(BoundingBox.Min - GlobalTransform.Translation, GlobalTransform);
-            Vector3 max = Vector3.Transform(BoundingBox.Max - GlobalTransform.Translation, GlobalTransform);
+            var min = LocalBoundingBoxOffset - (BoundingBoxSize * 0.5f);
+            var max = LocalBoundingBoxOffset + (BoundingBoxSize * 0.5f);
+            min = Vector3.Transform(min, GlobalTransform);
+            max = Vector3.Transform(max, GlobalTransform);
             return new BoundingBox(MathFunctions.Min(min, max), MathFunctions.Max(min, max));
         }
         
         public void UpdateBoundingBox()
         {
-            Vector3 extents = (BoundingBox.Max - BoundingBox.Min) * 0.5f;
-            Vector3 translation = GlobalTransform.Translation;
-            BoundingBox.Min = translation - extents + BoundingBoxPos;
-            BoundingBox.Max = translation + extents + BoundingBoxPos;
+            BoundingBox.Min = GlobalTransform.Translation + LocalBoundingBoxOffset - (BoundingBoxSize * 0.5f);
+            BoundingBox.Max = GlobalTransform.Translation + LocalBoundingBoxOffset + (BoundingBoxSize * 0.5f);
         }
 
         public override void Die()
         {
-            UpdateBoundingBox();
             if(AddToCollisionManager)
-            {
-                Manager.World.CollisionManager.RemoveObject(this, GetBoundingBox(), CollisionType);
-            }
+                Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
             Active = false;
             IsVisible = false;
             if (OnDestroyed != null) OnDestroyed();

@@ -121,7 +121,7 @@ namespace DwarfCorp
 
             Attacks = new List<Attack>() { new Attack("Bite", 50.0f, 1.0f, 3.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_giant_snake_attack_1), ContentPaths.Effects.bite) };
 
-            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)) as Inventory;
+            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
 
             Physics.Tags.Add("Snake");
             Physics.Tags.Add("Animal");
@@ -200,7 +200,7 @@ namespace DwarfCorp
 
                 tailPiece.AddChild(new Shadow(Manager));
 
-                var inventory = tailPiece.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)) as Inventory;
+                var inventory = tailPiece.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
                 inventory.SetFlag(Flag.ShouldSerialize, false);
 
                 if (HasMeat)

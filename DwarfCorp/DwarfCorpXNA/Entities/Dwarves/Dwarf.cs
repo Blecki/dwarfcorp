@@ -86,7 +86,7 @@ namespace DwarfCorp
          
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
-            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)) as Inventory;
+            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
 
 
             Physics.Tags.Add("Dwarf");

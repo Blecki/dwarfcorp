@@ -77,8 +77,8 @@ namespace DwarfCorp
             DropRate = 1.0f;
         }
 
-        public Inventory(ComponentManager Manager, string name, Vector3 BoundingBoxExtents, Vector3 BoundingBoxPos) :
-            base(Manager, name, Matrix.Identity, BoundingBoxExtents, BoundingBoxPos)
+        public Inventory(ComponentManager Manager, string name, Vector3 BoundingBoxExtents, Vector3 LocalBoundingBoxOffset) :
+            base(Manager, name, Matrix.Identity, BoundingBoxExtents, LocalBoundingBoxOffset)
         {
             DropRate = 1.0f;
             Resources = new List<InventoryItem>();

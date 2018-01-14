@@ -57,7 +57,7 @@ namespace DwarfCorp
             matrix.Translation = position;// + new Vector3(0.5f, 0.0f, 0.5f);
             LocalTransform = matrix;
 
-            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
+            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), LocalBoundingBoxOffset)) as Inventory;
 
             for (int i = 0; i < MathFunctions.RandInt(1, 5); i++)
             {
@@ -70,7 +70,7 @@ namespace DwarfCorp
             }
 
             AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
-                Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
+                Matrix.Identity, LocalBoundingBoxOffset, GetBoundingBox().Extents())
             {
                 SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_bush_harvest_1
             });
