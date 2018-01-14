@@ -106,8 +106,12 @@ namespace DwarfCorp
                 yield break;
             }
 
+            WanderAct wander = new WanderAct(Agent, 60.0f, 5.0f, 1.0f);
+            wander.Initialize();
+            var enumerator = wander.Enumerator;
             while (!Item.HasResources)
             {
+                enumerator.MoveNext();
                 if (Item.ResourcesReservedFor == null || Item.ResourcesReservedFor.IsDead)
                 {
                     yield return Act.Status.Fail;

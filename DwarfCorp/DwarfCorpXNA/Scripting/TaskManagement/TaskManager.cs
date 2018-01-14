@@ -80,6 +80,7 @@ namespace DwarfCorp
             Task best = null;
             float bestCost = float.MaxValue;
             Task.PriorityType bestPriority = Task.PriorityType.Eventually;
+
             foreach(var task in Tasks)
             {
                 if (task.IsFeasible(creature.Creature) != Task.Feasibility.Feasible)
@@ -88,18 +89,13 @@ namespace DwarfCorp
                     continue;
                 if ((int)task.Priority <= minPriority)
                     continue;
+                var cost = task.ComputeCost(creature.Creature) * (1 + task.CurrentAssigned);
 
-                var cost = task.ComputeCost(creature.Creature);
-
-                if (task.Priority > bestPriority && (int)task.Priority > minPriority)
+                if (cost < bestCost || task.Priority > bestPriority)
                 {
+                    bestCost = cost;
+                    best = task;
                     bestPriority = task.Priority;
-                    if (cost < bestCost)
-                    {
-                        bestCost = cost;
-                        best = task;
-                    }
-                    continue;
                 }
 
             }
