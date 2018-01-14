@@ -58,7 +58,7 @@ namespace DwarfCorp
 
         public Plant(ComponentManager Manager, string name, Matrix localTransform, Vector3 bboxSize,
            string meshAsset, float meshScale) :
-            base(Manager, name, localTransform, bboxSize, new Vector3(0.0f, bboxSize.Y / 2, 0.0f))
+            base(Manager, name, localTransform, bboxSize, new Vector3(0.0f, bboxSize.Y / 2, 0.0f), false)
         {
             MeshAsset = meshAsset;
             MeshScale = meshScale;

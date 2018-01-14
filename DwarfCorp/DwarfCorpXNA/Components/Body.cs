@@ -52,16 +52,14 @@ namespace DwarfCorp
             if (GamePerformance.DebugVisualizationEnabled)
                 Drawer3D.DrawBox(BoundingBox, Color.Blue, 0.02f, false);
         }
+
+        public bool FrustumCull { get { return IsFlagSet(Flag.FrustumCull); } }
 #endif
 
         public CollisionManager.CollisionType CollisionType = CollisionManager.CollisionType.None;
-        public bool AddToCollisionManager = true;
         public Vector3 BoundingBoxSize = Vector3.One;
         public Vector3 LocalBoundingBoxOffset = Vector3.Zero;
-
-        public delegate void BodyDestroyed();
-        public event BodyDestroyed OnDestroyed;
-
+        public Action OnDestroyed;
         public bool IsReserved = false;
         public GameComponent ReservedFor = null;
         private BoundingBox lastBounds = new BoundingBox();
@@ -75,7 +73,7 @@ namespace DwarfCorp
 
                 UpdateBoundingBox();
 
-                if (AddToCollisionManager)
+                if (IsFlagSet(Flag.AddToCollisionManager))
                 {
                     Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
                     Manager.World.CollisionManager.AddObject(this, CollisionType);
@@ -114,15 +112,6 @@ namespace DwarfCorp
 
         public BoundingBox BoundingBox = new BoundingBox();
 
-        public bool DepthSort { get; set; }
-        public bool FrustrumCull { get; set; }
-
-        // Move to ChunkManager
-        public bool IsAboveCullPlane(ChunkManager Chunks)
-        {
-            return GlobalTransform.Translation.Y - GetBoundingBox().Extents().Y > (Chunks.ChunkData.MaxViewingLevel + 5);
-        }
-
         public List<MotionAnimation> AnimationQueue = new List<MotionAnimation>();
 
         public bool HasMoved
@@ -159,12 +148,11 @@ namespace DwarfCorp
             BoundingBoxSize = boundingBoxExtents;
             LocalBoundingBoxOffset = boundingBoxPos;
 
-            AddToCollisionManager = addToCollisionManager;
+            SetFlag(Flag.AddToCollisionManager, addToCollisionManager);
             LocalTransform = localTransform;
             GlobalTransform = localTransform;
 
-            DepthSort = true;
-            FrustrumCull = true;
+            SetFlag(Flag.FrustumCull, true);
         }
 
         public virtual void OrientToWalls()
@@ -193,32 +181,7 @@ namespace DwarfCorp
             mat.Translation = LocalTransform.Translation;
             LocalTransform = mat;
         } 
-
-        // Move to only place that uses it.
-        public Rectangle GetScreenRect(Camera camera)
-        {
-            BoundingBox box = GetBoundingBox();
-
-            
-            Vector3 ext = (box.Max - box.Min);
-            Vector3 center = box.Center();
-
-
-            Vector3 p1 = camera.Project(box.Min);
-            Vector3 p2 = camera.Project(box.Max);
-            Vector3 p3 = camera.Project(box.Min + new Vector3(ext.X, 0, 0));
-            Vector3 p4 = camera.Project(box.Min + new Vector3(0, ext.Y, 0));
-            Vector3 p5 = camera.Project(box.Min + new Vector3(0, 0, ext.Z));
-            Vector3 p6 = camera.Project(box.Min + new Vector3(ext.X, ext.Y, 0));
-
-
-            Vector3 min = MathFunctions.Min(p1, p2, p3, p4, p5, p6);
-            Vector3 max = MathFunctions.Max(p1, p2, p3, p4, p5, p6);
-
-            return new Rectangle((int)min.X, (int)min.Y, (int)(max.X - min.X), (int)(max.Y - min.Y));
-
-        }
-
+        
         public virtual void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (AnimationQueue.Count > 0)
@@ -277,7 +240,7 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            if(AddToCollisionManager)
+            if(IsFlagSet(Flag.AddToCollisionManager))
                 Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
             Active = false;
             IsVisible = false;

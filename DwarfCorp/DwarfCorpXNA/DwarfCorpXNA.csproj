@@ -191,6 +191,7 @@
     <Compile Include="Entities\Fixtures\Banner.cs" />
     <Compile Include="Entities\Fixtures\Fence.cs" />
     <Compile Include="Entities\Fixtures\RailPiece.cs" />
+    <Compile Include="Entities\Plants\Pumpkin.cs" />
     <Compile Include="Entities\Plants\Cactus.cs" />
     <Compile Include="Entities\Plants\Seedling.cs" />
     <Compile Include="Entities\Plants\Plant.cs" />

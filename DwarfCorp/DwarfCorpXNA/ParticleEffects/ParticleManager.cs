@@ -72,9 +72,7 @@ namespace DwarfCorp
                 emitters.Add(Components.RootComponent.AddChild(new ParticleEmitter(Device, Components, name, Matrix.Identity, emitter)
                 {
                     LightsWithVoxels = false,
-                    DepthSort = false,
                     Tint = Color.White,
-                    FrustrumCull = false
                 }) as ParticleEmitter);
             }
             Effects[name] = new ParticleEffect()

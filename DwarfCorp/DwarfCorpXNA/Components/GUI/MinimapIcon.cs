@@ -18,12 +18,10 @@ namespace DwarfCorp
         }
 
         public MinimapIcon(ComponentManager Manager, NamedImageFrame icon) :
-            base(Manager, "Icon", Matrix.Identity, Vector3.One, Vector3.Zero)
+            base(Manager, "Icon", Matrix.Identity, Vector3.One, Vector3.Zero, false)
         {
             Icon = icon;
             IconScale = 1.0f;
-            AddToCollisionManager = false;
-            FrustrumCull = false;
             IsVisible = false;
         }
 

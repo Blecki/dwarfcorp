@@ -86,6 +86,8 @@ namespace DwarfCorp
                                     var newDecal = GrassLibrary.GetGrassType(decal.BecomeWhenDecays);
                                     if (newDecal != null)
                                         voxel.GrassType = newDecal.ID;
+                                    else
+                                        voxel.GrassType = 0;
                                 }
                             } 
                         }

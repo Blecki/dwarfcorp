@@ -120,7 +120,6 @@ namespace DwarfCorp
 
             OrientToWalls();
             ClosedTransform = LocalTransform;
-            AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
             var hp = GetHealth(resourceType.FirstOrDefault().ResourceType);
             AddChild(new Health(manager, "Health", hp, 0.0f, hp));

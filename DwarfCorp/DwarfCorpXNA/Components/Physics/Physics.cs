@@ -193,8 +193,8 @@ namespace DwarfCorp
 
         }
 
-        public Physics(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float mass, float i, float linearDamping, float angularDamping, Vector3 gravity, OrientMode orientation = OrientMode.Fixed) :
-            base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
+        public Physics(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float mass, float i, float linearDamping, float angularDamping, Vector3 gravity, OrientMode orientation = OrientMode.Fixed, bool AddToCollisionManager = true) :
+            base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos, AddToCollisionManager)
         {
             Mass = mass;
             Velocity = Vector3.Zero;
@@ -244,7 +244,10 @@ namespace DwarfCorp
 
             // How would this get a NaN anyway?
             if (MathFunctions.HasNan(Velocity))
-                throw new InvalidOperationException(string.Format("Physics went haywire for object {0} : {1}", GlobalID, Name));
+            {
+                Velocity = Vector3.Zero;
+                //throw new InvalidOperationException(string.Format("Physics went haywire for object {0} : {1}", GlobalID, Name));
+            }
 
             if (IsSleeping)
             {

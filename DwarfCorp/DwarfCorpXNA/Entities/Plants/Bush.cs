@@ -74,7 +74,6 @@ namespace DwarfCorp
                 ResourceType = ResourceLibrary.ResourceType.Berry
             });
 
-            AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
             PropogateTransforms();
         }

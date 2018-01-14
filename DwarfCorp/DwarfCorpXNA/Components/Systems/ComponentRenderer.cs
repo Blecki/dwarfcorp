@@ -48,8 +48,8 @@ namespace DwarfCorp
             var visibleComponents = Renderables.Where(r =>
             {
                 if (!r.IsVisible) return false;
-                if (r.IsAboveCullPlane(chunks)) return false;
-                if (r.FrustrumCull)
+                if (chunks.IsAboveCullPlane(r.GetBoundingBox())) return false;
+                if (r.FrustumCull)
                 {
                     if ((r.GlobalTransform.Translation - Camera.Position).LengthSquared() >=
                         chunks.DrawDistanceSquared) return false;

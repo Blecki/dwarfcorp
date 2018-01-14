@@ -143,7 +143,9 @@ namespace DwarfCorp
             Visible = 1,
             Active = 2,
             Dead = 4,
-            ShouldSerialize = 8
+            ShouldSerialize = 8,
+            FrustumCull = 16,
+            AddToCollisionManager = 32,
         }
 
         public bool IsFlagSet(Flag F)

@@ -51,7 +51,6 @@ namespace DwarfCorp
             position + MathFunctions.RandVector3Box(-0.05f, 0.05f, -0.001f, 0.001f, -0.05f, 0.05f), 
             new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(MathFunctions.RandInt(4, 8), 1))
         {
-            AddToCollisionManager = false;
             Name = "Grave";
             Tags.Add("Grave");
             Matrix transform = Matrix.CreateRotationY(1.57f + MathFunctions.Rand(-0.1f, 0.1f));

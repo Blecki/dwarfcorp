@@ -59,7 +59,7 @@ namespace DwarfCorp
         }
 
         public Projectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Health.DamageAmount damage, float size, string asset, string hitParticles, string hitNoise, Body target, bool animated = false, bool singleSprite = false) :
-            base(manager, "Projectile", Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0))
+            base(manager, "Projectile", Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0), OrientMode.Fixed, false)
         {
             this.AllowPhysicsSleep = false; 
             Target = target;
@@ -67,7 +67,6 @@ namespace DwarfCorp
             IsSleeping = false;
             Velocity = initialVelocity;
             Orientation = OrientMode.LookAt;
-            AddToCollisionManager = false;
             CollideMode = Physics.CollisionMode.None;
             var spriteSheet = new SpriteSheet(asset);
 

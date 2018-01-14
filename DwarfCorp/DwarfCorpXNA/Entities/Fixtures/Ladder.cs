@@ -77,7 +77,6 @@ namespace DwarfCorp
             Name = resourceType[0].ResourceType + " Ladder";
             Tags.Add("Climbable");
             OrientToWalls();
-            AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
         }
 

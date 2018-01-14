@@ -116,10 +116,10 @@ namespace DwarfCorp
 
         }
 
-        public static Task ChopTree(Body Tree, Faction PlayerFaction)
+        public static Task ChopPlant(Body Plant, Faction PlayerFaction)
         {
-            if (PlayerFaction.Designations.AddEntityDesignation(Tree, DesignationType.Chop) == DesignationSet.AddDesignationResult.Added)
-                return new KillEntityTask(Tree, KillEntityTask.KillType.Chop)
+            if (PlayerFaction.Designations.AddEntityDesignation(Plant, DesignationType.Chop) == DesignationSet.AddDesignationResult.Added)
+                return new KillEntityTask(Plant, KillEntityTask.KillType.Chop)
                 {
                     Priority = Task.PriorityType.Low
                 };
@@ -129,18 +129,19 @@ namespace DwarfCorp
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
-            var treesPicked = bodies.Where(c => c.Tags.Contains("Vegetation"));
+            var plantsPicked = bodies.Where(c => c.Tags.Contains("Vegetation"));
 
             if (button == InputManager.MouseButton.Left)
             {
                 List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.Faction.SelectedMinions, Task.TaskCategory.Chop);
                 List<Task> tasks = new List<Task>();
 
-                foreach (Body tree in treesPicked)
+                foreach (var plant in plantsPicked)
                 {
-                    if (!tree.IsVisible || tree.IsAboveCullPlane(Player.World.ChunkManager)) continue;
+                    if (!plant.IsVisible) continue;
+                    if (Player.World.ChunkManager.IsAboveCullPlane(plant.BoundingBox)) continue;
 
-                    var task = ChopTree(tree, Player.Faction);
+                    var task = ChopPlant(plant, Player.Faction);
                     if (task != null)
                         tasks.Add(task);
                 }
@@ -153,10 +154,11 @@ namespace DwarfCorp
             }
             else if (button == InputManager.MouseButton.Right)
             {
-                foreach (Body tree in treesPicked)
+                foreach (var plant in plantsPicked)
                 {
-                    if (!tree.IsVisible || tree.IsAboveCullPlane(Player.World.ChunkManager)) continue;
-                    Player.Faction.Designations.RemoveEntityDesignation(tree, DesignationType.Chop);
+                    if (!plant.IsVisible) continue;
+                    if (Player.World.ChunkManager.IsAboveCullPlane(plant.BoundingBox)) continue;
+                    Player.Faction.Designations.RemoveEntityDesignation(plant, DesignationType.Chop);
                 }
             }
         }

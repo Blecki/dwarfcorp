@@ -41,14 +41,15 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Cactus : Plant
+    public class Pumpkin : Plant
     {
-        public Cactus() { }
+        public Pumpkin() { }
 
-        public Cactus(ComponentManager Manager, Vector3 position, string asset, float bushSize) :
-            base(Manager, "Cactus", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize),  asset, bushSize)
+        public Pumpkin(ComponentManager Manager, Vector3 position, string asset, float bushSize) :
+            base(Manager, "Pumpkin", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), asset, bushSize)
         {
-            SeedlingAsset = "cactussprout";
+            LocalBoundingBoxOffset = Vector3.Zero;
+            SeedlingAsset = "pumpkinvinesprout";
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
             LocalTransform = matrix;
@@ -63,7 +64,7 @@ namespace DwarfCorp
             inventory.AddResource(new ResourceAmount()
             {
                 NumResources = 2,
-                ResourceType = ResourceLibrary.ResourceType.Cactus
+                ResourceType = ResourceLibrary.ResourceType.Pumkin
             });
 
             var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
@@ -73,7 +74,7 @@ namespace DwarfCorp
             }) as ParticleTrigger;
 
             Tags.Add("Vegetation");
-            Tags.Add("Cactus");
+            Tags.Add("Pumpkin");
 
             CollisionType = CollisionManager.CollisionType.Static;
             PropogateTransforms();
