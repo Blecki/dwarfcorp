@@ -9,7 +9,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Bed : Body, IRenderableComponent
     {
         public Bed()
@@ -38,18 +37,6 @@ namespace DwarfCorp
         public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
-#if DEBUG
-            if (GamePerformance.DebugVisualizationEnabled)
-            {
-                Drawer3D.DrawBox(GetBoundingBox(), Color.DarkRed, 0.02f, false);
-                Drawer3D.DrawLine(this.LocalTransform.Translation, this.LocalTransform.Translation +
-    (Vector3.UnitY * 10), Color.Blue, 0.3f);
-                Drawer3D.DrawLine(this.LocalTransform.Translation, this.LocalTransform.Translation +
-                    (Vector3.UnitX * 10), Color.Red, 0.3f);
-                Drawer3D.DrawLine(this.LocalTransform.Translation, this.LocalTransform.Translation +
-                    (Vector3.UnitZ * 10), Color.Green, 0.3f);
-            }
-#endif
         }
 
         public override void CreateCosmeticChildren(ComponentManager Manager)

@@ -72,11 +72,6 @@ namespace DwarfCorp
 
         public GlobalChunkCoordinate ID { get; set; }
 
-        public uint GetID()
-        {
-            return (uint)ID.GetHashCode();
-        }
-
         public void InvalidateSlice(int Y)
         {
             if (Y < 0 || Y >= VoxelConstants.ChunkSizeY) throw new InvalidOperationException();

@@ -74,7 +74,6 @@ namespace DwarfCorp
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f, false);
-            Drawer3D.DrawBox(GetRotatedBoundingBox(), Color.Red, 0.02f, false);
 
             base.Update(gameTime, chunks, camera);
         }
