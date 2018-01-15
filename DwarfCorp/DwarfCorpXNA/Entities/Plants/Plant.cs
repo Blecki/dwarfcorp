@@ -65,13 +65,16 @@ namespace DwarfCorp
             GrowthHours = 12;
             IsGrown = false;
 
+            /*
             var under = new VoxelHandle(Manager.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(LocalTransform.Translation - new Vector3(0.0f, 0.5f, 0.0f)));
+            
             if (under.IsValid && under.RampType != RampType.None)
             {
                 var local = LocalTransform;
                 local.Translation -= new Vector3(0.0f, 0.5f, 0.0f);
                 LocalTransform = local;
             }
+            */
 
             impl_CreateCosmeticChildren(Manager);
         }
