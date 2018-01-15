@@ -361,7 +361,10 @@ namespace DwarfCorp
 
                         bool invalidCave = false;
                         for (int dy = 0; dy < caveHeight; dy++)
-                        { 
+                        {
+                            if (y - dy <= 0)
+                                continue;
+
                             var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y - dy, z));
 
                             foreach (var coord in VoxelHelpers.EnumerateAllNeighbors(voxel.Coordinate))
@@ -445,15 +448,21 @@ namespace DwarfCorp
 
                     EntityFactory.DoLazy(() =>
                     {
-                        GameComponent entity = EntityFactory.CreateEntity<GameComponent>(veg.Name,
-                            vUnder.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
-                            Blackboard.Create("Scale", treeSize));
-                        if (GameSettings.Default.FogofWar)
+                        if (!GameSettings.Default.FogofWar)
                         {
-                            entity.AddChild(new ExploredListener(
-                                world.ComponentManager, world.ChunkManager, vUnder));
-                            entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Active, false);
-                            entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
+                            GameComponent entity = EntityFactory.CreateEntity<GameComponent>(veg.Name,
+                                vUnder.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
+                                Blackboard.Create("Scale", treeSize));
+                        }
+                        else
+                        {
+                            world.ComponentManager.RootComponent.AddChild(new ExploredListener(
+                                world.ComponentManager, world.ChunkManager, vUnder)
+                            {
+                                EntityToSpawn = veg.Name,
+                                SpawnLocation = vUnder.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
+                                BlackboardData = Blackboard.Create("Scale", treeSize)
+                            });
                         }
                     });
                 }
@@ -467,16 +476,21 @@ namespace DwarfCorp
                 FaunaData animal1 = animal;
                 EntityFactory.DoLazy(() =>
                 {
-                    var entity = EntityFactory.CreateEntity<GameComponent>(animal1.Name,
+                    if (!GameSettings.Default.FogofWar)
+                    {
+                        var entity = EntityFactory.CreateEntity<GameComponent>(animal1.Name,
                         wayUnder.WorldPosition + Vector3.Up * 1.5f);
 
-                    if (GameSettings.Default.FogofWar)
+                    }
+                    else
                     {
-                        entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Active, false);
-                        entity.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
-                        entity.AddChild(new ExploredListener
+                        world.ComponentManager.RootComponent.AddChild(new ExploredListener
                             (world.ComponentManager,
-                                world.ChunkManager, new VoxelHandle(chunk, wayUnder.Coordinate.GetLocalVoxelCoordinate())));
+                                world.ChunkManager, new VoxelHandle(chunk, wayUnder.Coordinate.GetLocalVoxelCoordinate()))
+                        {
+                            EntityToSpawn = animal1.Name,
+                            SpawnLocation = wayUnder.WorldPosition + Vector3.Up * 1.5f
+                        });
                     }
                 });
                 break;

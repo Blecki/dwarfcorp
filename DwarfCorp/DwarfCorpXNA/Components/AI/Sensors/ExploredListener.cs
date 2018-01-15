@@ -51,6 +51,9 @@ namespace DwarfCorp
 
         public GlobalChunkCoordinate ChunkID { get; set; }
 
+        public string EntityToSpawn { get; set; }
+        public Vector3 SpawnLocation { get; set; }
+        public Blackboard BlackboardData { get; set; }
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
@@ -78,9 +81,8 @@ namespace DwarfCorp
         {
             if (voxelID == VoxelID)
             {
-                GetRoot().SetFlagRecursive(Flag.Active, true);
-                GetRoot().SetFlagRecursive(Flag.Visible, true);
                 Delete();
+                EntityFactory.CreateEntity<GameComponent>(EntityToSpawn, SpawnLocation, BlackboardData);
             }
         }
 
