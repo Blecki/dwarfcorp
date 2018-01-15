@@ -280,8 +280,6 @@ namespace DwarfCorp
 
         public List<Faction> Natives { get; set; }
 
-        private bool SleepPrompt = false;
-
         public CraftLibrary CraftLibrary = null;
 
         public int GameID = -1;
@@ -300,10 +298,12 @@ namespace DwarfCorp
         public GameState gameState;
 
         public Gui.Root Gui;
+        private Widget SleepPrompt = null;
 
         public Action<String> ShowTooltip = null;
         public Action<String> ShowInfo = null;
         public Action<String> ShowToolPopup = null;
+        
         public Action<Gui.MousePointer> SetMouse = null;
         public Action<String, int> SetMouseOverlay = null;
         public Gui.MousePointer MousePointer = new Gui.MousePointer("mouse", 1, 0);
@@ -479,25 +479,28 @@ namespace DwarfCorp
                 GamePerformance.Instance.StartTrackPerformance("All Asleep");
                 bool allAsleep = Master.AreAllEmployeesAsleep();
 #if !UPTIME_TEST
-                if (SleepPrompt && allAsleep && !FastForwardToDay && Time.IsNight())
+                if (SleepPrompt == null && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
-                    var sleepingPrompt = Gui.ConstructWidget(new Gui.Widgets.Confirm
+                    SleepPrompt = Gui.ConstructWidget(new Gui.Widgets.Confirm
                     {
                         Text = "All of your employees are asleep. Skip to daytime?",
                         OkayText = "Skip to Daytime",
                         CancelText = "Don't Skip",
                         OnClose = (sender) =>
                         {
-                            if ((sender as Gui.Widgets.Confirm).DialogResult == DwarfCorp.Gui.Widgets.Confirm.Result.OKAY)
+                            if ((sender as Confirm).DialogResult == Confirm.Result.OKAY)
                                 FastForwardToDay = true;
                         }
                     });
-                    Gui.ShowModalPopup(sleepingPrompt);
-                    SleepPrompt = false;
+                    Gui.ShowModalPopup(SleepPrompt);
                 }
                 else if (!allAsleep)
                 {
-                    SleepPrompt = true;
+                    if (SleepPrompt != null)
+                        SleepPrompt.Close();
+                    Time.Speed = 100;
+                    FastForwardToDay = false;
+                    SleepPrompt = null;
                 }
 #endif
                 GamePerformance.Instance.StopTrackPerformance("All Asleep");
