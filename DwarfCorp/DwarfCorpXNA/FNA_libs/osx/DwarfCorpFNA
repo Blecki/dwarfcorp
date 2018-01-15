@@ -12,7 +12,7 @@ ARCH=`uname -m`
 # MonoKickstart picks the right libfolder, so just execute the right binary.
 if [ "$UNAME" == "Darwin" ]; then
 	# ... Except on OSX.
-	export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:./osx/
+	export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:"$(cd "$(dirname "$0")" && pwd -P)"
 
 	# El Capitan is a total idiot and wipes this variable out, making the
 	# Steam overlay disappear. This sidesteps "System Integrity Protection"

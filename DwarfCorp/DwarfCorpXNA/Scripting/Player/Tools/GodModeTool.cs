@@ -104,7 +104,7 @@ namespace DwarfCorp
                 Player.Faction.RoomBuilder.DesignatedRooms.Add(des.ToBuild);
                 des.Build();
             }
-            else if (Command.Contains("Spawn/"))
+            if (Command.Contains("Spawn/"))
             {
                 string type = Command.Substring(6);
                 foreach (var vox in refs.Where(vox => vox.IsValid))
@@ -115,6 +115,7 @@ namespace DwarfCorp
                         CraftLibrary.CraftItems.TryGetValue(type, out craftItem);
 
                         Vector3 offset = Vector3.Zero;
+
                         if (craftItem != null)
                             offset = craftItem.SpawnOffset;
 

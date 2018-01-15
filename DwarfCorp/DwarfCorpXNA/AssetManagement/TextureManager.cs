@@ -111,7 +111,7 @@ namespace DwarfCorp
             {
                 if (!stream.CanRead)
                 {
-                    Console.Error.WriteLine("Failed to read {0}, stream cannot be read.", file);
+                    Console.Out.WriteLine("Failed to read {0}, stream cannot be read.", file);
                     return null;
                 }
                 try
@@ -123,7 +123,7 @@ namespace DwarfCorp
                 }
                 catch (Exception exception)
                 {
-                    Console.Error.Write("Failed to load texture {0}: {1}", file, exception.ToString());
+                    Console.Out.Write("Failed to load texture {0}: {1}", file, exception.ToString());
                     return null;
                 }
            }

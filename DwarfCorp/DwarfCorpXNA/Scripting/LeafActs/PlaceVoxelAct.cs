@@ -93,7 +93,7 @@ namespace DwarfCorp
             }
 
             var grabbed = Creature.Inventory.RemoveAndCreate(Resource, 
-                                                             Inventory.RestockType.None).FirstOrDefault();
+                                                             Inventory.RestockType.Any).FirstOrDefault();
 
             if(grabbed == null)
             {
@@ -131,17 +131,22 @@ namespace DwarfCorp
                         }
                     }
                     TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Location.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
-                    motion.OnComplete += grabbed.Die;
                     grabbed.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                     grabbed.AnimationQueue.Add(motion);
 
-                    var put = Creature.Faction.Designations.GetVoxelDesignation(Location, DesignationType.Put) as short?;
-                    var putType = VoxelLibrary.GetVoxelType(put.Value);
-                    PlaceVoxel(Location, putType, Creature.Manager.World);
-                    
-                    Creature.Faction.Designations.RemoveVoxelDesignation(Location, DesignationType.Put);
-                    Creature.Stats.NumBlocksPlaced++;
-                    Creature.AI.AddXP(1);
+                    motion.OnComplete += () =>
+                    {
+                        grabbed.Die();
+
+                        var put = Creature.Faction.Designations.GetVoxelDesignation(Location, DesignationType.Put) as short?;
+                        var putType = VoxelLibrary.GetVoxelType(put.Value);
+                        PlaceVoxel(Location, putType, Creature.Manager.World);
+
+                        Creature.Faction.Designations.RemoveVoxelDesignation(Location, DesignationType.Put);
+                        Creature.Stats.NumBlocksPlaced++;
+                        Creature.AI.AddXP(1);
+                    };
+
                     yield return Status.Success;
                     yield break;
                 }
@@ -160,7 +165,11 @@ namespace DwarfCorp
             Vox.Type = Type;
             Vox.WaterCell = new WaterCell();
             Vox.Health = Type.StartingHealth;
-            World.ParticleManager.Trigger("puff", Vox.WorldPosition, Color.White, 20);
+
+            for (int i = 0; i < 4; i++)
+            {
+                World.ParticleManager.Trigger("puff", MathFunctions.RandVector3Box(Vox.GetBoundingBox().Expand(0.25f)), Color.White, 5);
+            }
 
             foreach (Physics phys in World.CollisionManager.EnumerateIntersectingObjects(Vox.GetBoundingBox(), CollisionManager.CollisionType.Dynamic).OfType<Physics>())
             {

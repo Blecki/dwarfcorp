@@ -74,6 +74,11 @@ namespace DwarfCorp
             Position = voxel.WorldPosition;
         }
 
+        public override bool IsReversible()
+        {
+            return true;
+        }
+
         public override float Heuristic(VoxelHandle voxel)
         {
             if (!voxel.IsValid)

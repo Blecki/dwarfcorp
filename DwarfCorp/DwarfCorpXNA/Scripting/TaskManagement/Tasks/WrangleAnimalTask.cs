@@ -143,6 +143,9 @@ namespace DwarfCorp
             if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Wrangle))
                 return Feasibility.Infeasible;
 
+            if (agent.AI.Status.IsAsleep)
+                return Feasibility.Infeasible;
+
             return Animal != null
                 && !Animal.IsDead
                 && agent.Faction.Designations.IsDesignation(Animal.GetRoot().GetComponent<Physics>(), DesignationType.Wrangle)

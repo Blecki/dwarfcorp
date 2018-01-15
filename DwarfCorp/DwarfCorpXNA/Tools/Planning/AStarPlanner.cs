@@ -641,11 +641,7 @@ namespace DwarfCorp
             ChunkManager chunks, int maxExpansions, float weight, int numPlans, Func<bool> continueFunc)
         {
             var p = new List<MoveAction>();
-            var openness_start = OpennessHeuristic(start);
-            var openness_end = OpennessHeuristic(goal.GetVoxel());
-
-            //bool use_inverse = openness_end < openness_start;
-            bool use_inverse = true;
+            bool use_inverse = goal.IsReversible() && OpennessHeuristic(goal.GetVoxel()) < OpennessHeuristic(start);
             var result = use_inverse ? InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc)
                 : Path(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc);
 
@@ -661,6 +657,12 @@ namespace DwarfCorp
             {
                 return null;
             }
+
+            if (!goal.IsReversible())
+            {
+                return null;
+            }
+
             result = use_inverse ? Path(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc)
                 : InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc);
             return result.Result == PlanResultCode.Success ? p : null;

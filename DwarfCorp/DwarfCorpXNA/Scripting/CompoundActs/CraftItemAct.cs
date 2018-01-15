@@ -241,7 +241,7 @@ namespace DwarfCorp
                             {
                                 Tag = Item.ItemType.CraftLocation,
                                 Teleport = true,
-                                TeleportOffset = new Vector3(0.5f, -0.5f, 0),
+                                TeleportOffset = new Vector3(0.5f, 0.0f, 0),
                                 ObjectName = Item.ItemType.CraftLocation,
                                 CheckForOcclusion = true
                             },
@@ -287,7 +287,7 @@ namespace DwarfCorp
                             {
                                 Tag = Item.ItemType.CraftLocation,
                                 Teleport = true,
-                                TeleportOffset = new Vector3(0.5f, -0.5f, 0),
+                                TeleportOffset = new Vector3(0.5f, 0.0f, 0),
                                 ObjectName = Item.ItemType.CraftLocation,
                                 CheckForOcclusion = true
                             },

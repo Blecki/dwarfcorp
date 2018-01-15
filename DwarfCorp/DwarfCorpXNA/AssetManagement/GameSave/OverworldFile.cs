@@ -202,8 +202,16 @@ namespace DwarfCorp
             Data = FileUtils.LoadJson<OverworldData>(metaFilePath, false);
 
             var worldTexture = TextureManager.LoadInstanceTexture(worldFilePath, false);
-            Data.LoadFromTexture(worldTexture);
 
+            if (worldTexture != null)
+            {
+                Data.LoadFromTexture(worldTexture);
+            }
+            else
+            {
+                Console.Out.WriteLine("Failed to load overworld texture.");
+                return false;
+            }
             return true;
         }
         

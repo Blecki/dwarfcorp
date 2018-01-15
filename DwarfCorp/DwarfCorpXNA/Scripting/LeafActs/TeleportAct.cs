@@ -68,20 +68,14 @@ namespace DwarfCorp
                 case TeleportType.Jump:
                 {
                     TossMotion motion = new TossMotion(0.6f, 0.9f, Creature.Physics.GlobalTransform, Location);
+                    Creature.Physics.AnimationQueue.Add(motion);
                     Creature.AI.Jump(DwarfTime.LastTime);
                     
                     while (!motion.IsDone())
                     {
-                            Creature.Physics.Active = false;
-                            Creature.Physics.PropogateTransforms();
-                            Creature.Physics.IsSleeping = true;
-                            motion.Update(DwarfTime.LastTime);
-                            Creature.AI.Position = motion.GetTransform().Translation;
-                            Creature.CurrentCharacterMode = CharacterMode.Falling;
-                            yield return Status.Running;
+                        Creature.CurrentCharacterMode = CharacterMode.Falling;
+                        yield return Status.Running;
                     }
-                        Creature.Physics.Active = true;
-                        Creature.Physics.IsSleeping = false;
                     break;
                 }    
                 case TeleportType.Lerp:
@@ -89,13 +83,11 @@ namespace DwarfCorp
                     EaseMotion motion = new EaseMotion(0.6f, Creature.Physics.GlobalTransform, Location);
                     while (!motion.IsDone())
                     {
-                            Creature.Physics.Active = false;
                             Creature.Physics.PropogateTransforms();
                         motion.Update(DwarfTime.LastTime);
                         Creature.AI.Position = motion.GetTransform().Translation;
                         yield return Status.Running;
                     }
-                        Creature.Physics.Active = true;
                         Creature.Physics.IsSleeping = false;
                         break;
                 }

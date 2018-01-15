@@ -76,6 +76,14 @@ namespace DwarfCorp
         {
 
         }
+
+        public override Feasibility IsFeasible(Creature agent)
+        {
+            if (agent.AI.Status.IsAsleep)
+                return Feasibility.Infeasible;
+
+            return base.IsFeasible(agent);
+        }
     }
 
 }

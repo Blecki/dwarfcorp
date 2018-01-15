@@ -86,22 +86,22 @@ namespace DwarfCorp
                     continue;
                 if (task.Priority < bestPriority)
                     continue;
+                if ((int)task.Priority <= minPriority)
+                    continue;
 
                 var cost = task.ComputeCost(creature.Creature);
 
                 if (task.Priority > bestPriority && (int)task.Priority > minPriority)
                 {
                     bestPriority = task.Priority;
-                    best = task;
-                    bestCost = cost;
+                    if (cost < bestCost)
+                    {
+                        bestCost = cost;
+                        best = task;
+                    }
                     continue;
                 }
 
-                if (cost < bestCost)
-                {
-                    bestCost = cost;
-                    best = task;
-                }
             }
             if (best != null)
             {

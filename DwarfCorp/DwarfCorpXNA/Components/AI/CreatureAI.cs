@@ -314,16 +314,21 @@ namespace DwarfCorp
             if (CurrentTask == null) return;
 
             Task newTask = null;
-            foreach (Task task in Tasks)
+
+            _preEmptTimer.Update(DwarfTime.LastTime);
+
+            if (_preEmptTimer.HasTriggered)
             {
-                if (task.Priority > CurrentTask.Priority && task.IsFeasible(Creature) == Task.Feasibility.Feasible)
+                foreach (Task task in Tasks)
                 {
-                    newTask = task;
-                    break;
+                    if (task.Priority > CurrentTask.Priority && task.IsFeasible(Creature) == Task.Feasibility.Feasible)
+                    {
+                        newTask = task;
+                        break;
+                    }
                 }
             }
 
-            _preEmptTimer.Update(DwarfTime.LastTime);
             if (_preEmptTimer.HasTriggered && newTask == null && Faction == World.PlayerFaction)
             {
                 newTask = World.Master.TaskManager.GetBestTask(this, (int)CurrentTask.Priority);
@@ -699,7 +704,7 @@ namespace DwarfCorp
             }
             
 
-            if (!IsPosessed && GatherManager.VoxelOrders.Count == 0 &&
+            if (!IsPosessed &&
                 (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()) &&
                 (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury())
                 && Tasks.Count == 0)
@@ -849,7 +854,7 @@ namespace DwarfCorp
             }
 
             // If we have no more build orders, look for gather orders
-            if (GatherManager.VoxelOrders.Count == 0 && GatherManager.StockOrders.Count > 0)
+            if (GatherManager.StockOrders.Count > 0)
             {
                 GatherManager.StockOrder order = GatherManager.StockOrders[0];
                 if (Faction.HasFreeStockpile(order.Resource))
@@ -866,7 +871,7 @@ namespace DwarfCorp
                 }
             }
             
-            if (GatherManager.VoxelOrders.Count == 0 && GatherManager.StockMoneyOrders.Count > 0)
+            if (GatherManager.StockMoneyOrders.Count > 0)
             {
                 var order = GatherManager.StockMoneyOrders[0];
                 if (Faction.HasFreeTreasury(order.Money))
@@ -878,18 +883,7 @@ namespace DwarfCorp
                     };
                 }
             }
-
-            if (GatherManager.VoxelOrders.Count > 0)
-            {
-                // Otherwise handle build orders.
-                var voxels = GatherManager.VoxelOrders.Select(order => new KeyValuePair<VoxelHandle, string>(order.Voxel, order.Type)).ToList();
-
-                GatherManager.VoxelOrders.Clear();
-                return new BuildVoxelsTask(voxels);
-            }
-
-            // Todo: Check gather manager for rail building orders and execute.
-
+            
             return new LookInterestingTask();
         }
 

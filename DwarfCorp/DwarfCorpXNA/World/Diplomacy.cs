@@ -680,7 +680,7 @@ namespace DwarfCorp
             }
 
             bool hadFactions = faction.TradeEnvoys.Count > 0;
-            faction.TradeEnvoys.RemoveAll(t => t.ShouldRemove);
+            faction.TradeEnvoys.RemoveAll(t => t == null || t.ShouldRemove);
 
             if (hadFactions && faction.TradeEnvoys.Count == 0)
             {

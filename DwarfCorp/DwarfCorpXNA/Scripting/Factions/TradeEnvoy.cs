@@ -46,8 +46,14 @@ using Newtonsoft.Json.Converters;
 
 namespace DwarfCorp
 {
+    [JsonObject(IsReference =true)]
     public class TradeEnvoy : Expedition
     {
+        public TradeEnvoy()
+        {
+
+        }
+
         public TradeEnvoy(DateTime date) : base(date)
         {
         }

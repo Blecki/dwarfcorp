@@ -51,6 +51,11 @@ namespace DwarfCorp
     {
         public VoxelHandle Voxel { get; set; }
 
+        public override bool IsReversible()
+        {
+            return true;
+        }
+
         public override bool IsPossible()
         {
             return Voxel.IsValid && !VoxelHelpers.VoxelIsCompletelySurrounded(Voxel);

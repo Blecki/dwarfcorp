@@ -35,8 +35,9 @@ namespace DwarfCorp.GameStates
                 {
                     return TextureManager.LoadInstanceTexture(path + ProgramData.DirChar + "screenshot.png", false);
                 }
-                catch (Exception)
+                catch (Exception exception)
                 {
+                    Console.Error.WriteLine(exception.ToString());
                     return null;
                 }
             };

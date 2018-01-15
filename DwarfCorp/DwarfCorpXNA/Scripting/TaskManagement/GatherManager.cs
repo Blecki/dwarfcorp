@@ -69,31 +69,14 @@ namespace DwarfCorp
         public List<Body> ItemsToGather { get; set; }
         public List<StockOrder> StockOrders { get; set; }
         public List<StockMoneyOrder> StockMoneyOrders { get; set; } 
-        public List<BuildVoxelOrder> VoxelOrders { get; set; } 
 
         public GatherManager(CreatureAI creature)
         {
             Creature = creature;
             ItemsToGather = new List<Body>();
             StockOrders = new List<StockOrder>();
-            VoxelOrders = new List<BuildVoxelOrder>();
             StockMoneyOrders = new List<StockMoneyOrder>();
         }
 
-
-        public void AddVoxelOrder(BuildVoxelOrder buildVoxelOrder)
-        {
-            if (Creature.Movement.IsSessile) return;
-
-            foreach (BuildVoxelOrder order in VoxelOrders)
-            {
-                if (order.Voxel.Equals(buildVoxelOrder.Voxel))
-                {
-                    return;
-                }
-            }
-
-            VoxelOrders.Add(buildVoxelOrder);
-        }
     }
 }

@@ -12,7 +12,7 @@ ARCH=`uname -m`
 # MonoKickstart picks the right libfolder, so just execute the right binary.
 if [ "$UNAME" == "Darwin" ]; then
 	# ... Except on OSX.
-	export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:./osx/
+	export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:`dirname "$0"`
 
 	# El Capitan is a total idiot and wipes this variable out, making the
 	# Steam overlay disappear. This sidesteps "System Integrity Protection"
@@ -27,6 +27,7 @@ if [ "$UNAME" == "Darwin" ]; then
 
 	./DwarfCorpFNA.bin.osx $@
 else
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"$(cd "$(dirname "$0")" && pwd -P)"
 	if [ "$ARCH" == "x86_64" ]; then
 		LD_PRELOAD="/usr/lib/libSDL2-2.0.so.0" ./DwarfCorpFNA.bin.x86_64 $@
 	else
