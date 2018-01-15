@@ -299,12 +299,8 @@ namespace DwarfCorp
             _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
             _cache_Chunk.Data.Health[_cache_Index] = (byte)NewType.StartingHealth;
 
-            //if (_cache_Chunk.Data.GrassType[_cache_Index & 0xFF] != 0)
-            //{
-            //    var grassLayer = _cache_Chunk.Data.GrassLayer[_cache_Index & 0xFF];
-            //    if (grassLayer <= Coordinate.Y)
-            //        _cache_Chunk.Data.GrassType[_cache_Index & 0xFF] = 0;
-            //}
+            // Changing the voxel type clears grass.
+            _cache_Chunk.Data.GrassType[_cache_Index] = 0;
 
             // Did we go from empty to filled or vice versa? Update filled counter.
             if (previous == 0 && NewType.ID != 0)
