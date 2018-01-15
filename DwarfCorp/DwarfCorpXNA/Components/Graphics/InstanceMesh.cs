@@ -83,7 +83,7 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            bool saveHasMoved = HasMoved || ParentMoved;
+            bool saveHasMoved = HasMoved || ParentMoved || firstIter;
 
             base.Update(gameTime, chunks, camera);
 

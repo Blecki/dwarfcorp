@@ -146,6 +146,7 @@ namespace DwarfCorp
             ShouldSerialize = 8,
             FrustumCull = 16,
             AddToCollisionManager = 32,
+            RotateBoundingBox = 64,
         }
 
         public bool IsFlagSet(Flag F)
@@ -153,7 +154,7 @@ namespace DwarfCorp
             return (Flags & F) == F;
         }
 
-        public void SetFlag(Flag F, bool Value)
+        public GameComponent SetFlag(Flag F, bool Value)
         {
             if (F == Flag.Dead && Value == true)
             {
@@ -164,6 +165,8 @@ namespace DwarfCorp
                 Flags |= F;
             else
                 Flags &= ~F;
+
+            return this;
         }
 
         public void SetFlagRecursive(Flag F, bool Value)

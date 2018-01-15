@@ -22,6 +22,7 @@ namespace DwarfCorp
         {
             Tags.Add("Bed");
             CollisionType = CollisionManager.CollisionType.Static;
+            SetFlag(Flag.RotateBoundingBox, true);
 
             CreateCosmeticChildren(manager);
 
@@ -59,15 +60,16 @@ namespace DwarfCorp
 
             AddChild(new NewVoxelListener(Manager,
                 Matrix.Identity,
-                new Vector3(0.5f, 0.5f, 1.0f), // Position just below surface.
-                new Vector3(0.0f, -0.30f, -1.0f),
+                new Vector3(1.5f, 0.5f, 0.75f), // Position just below surface.
+                new Vector3(0.5f, -0.30f, 0.0f),
                 (v) =>
                 {
                     if (v.Type == VoxelChangeEventType.VoxelTypeChanged
                         && v.NewVoxelType == 0)
                         Die();
-                 }))
-                .SetFlag(Flag.ShouldSerialize, false);
+                }))
+                .SetFlag(Flag.ShouldSerialize, false)
+                .SetFlag(Flag.RotateBoundingBox, true);
         }
     }
 }

@@ -197,6 +197,8 @@ namespace DwarfCorp
 
             if (HasMoved || ParentMoved)
                 PropogateTransforms();
+
+            ParentMoved = false;
         }
 
         public void UpdateTransform()
@@ -207,7 +209,6 @@ namespace DwarfCorp
                 GlobalTransform = LocalTransform;
 
             hasMoved = false;
-            ParentMoved = false; // Doesn't matter if parent moved anymore.
         }
 
         public void PropogateTransforms()
@@ -231,11 +232,16 @@ namespace DwarfCorp
             max = Vector3.Transform(max, GlobalTransform);
             return new BoundingBox(MathFunctions.Min(min, max), MathFunctions.Max(min, max));
         }
-        
+
         public void UpdateBoundingBox()
         {
-            BoundingBox.Min = GlobalTransform.Translation + LocalBoundingBoxOffset - (BoundingBoxSize * 0.5f);
-            BoundingBox.Max = GlobalTransform.Translation + LocalBoundingBoxOffset + (BoundingBoxSize * 0.5f);
+            if (IsFlagSet(Flag.RotateBoundingBox))
+                BoundingBox = GetRotatedBoundingBox();
+            else
+            {
+                BoundingBox.Min = GlobalTransform.Translation + LocalBoundingBoxOffset - (BoundingBoxSize * 0.5f);
+                BoundingBox.Max = GlobalTransform.Translation + LocalBoundingBoxOffset + (BoundingBoxSize * 0.5f);
+            }
         }
 
         public override void Die()
