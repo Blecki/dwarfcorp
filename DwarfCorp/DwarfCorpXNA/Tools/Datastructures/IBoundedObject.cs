@@ -41,7 +41,5 @@ namespace DwarfCorp
     public interface IBoundedObject
     {
         BoundingBox GetBoundingBox();
-        uint GetID();
     }
-
 }

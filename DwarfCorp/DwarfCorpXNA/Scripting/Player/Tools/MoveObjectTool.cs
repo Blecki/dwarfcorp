@@ -175,7 +175,11 @@ namespace DwarfCorp
                 {
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_click_voxel, voxelUnderMouse.WorldPosition,
                         0.1f);
-                    var offset = craftDetails != null ? CraftLibrary.CraftItems[craftDetails.CraftType].SpawnOffset : Vector3.Zero;
+
+                    var offset = Vector3.Zero;
+                    if (craftDetails != null && CraftLibrary.CraftItems.ContainsKey(craftDetails.CraftType))
+                        offset = CraftLibrary.CraftItems[craftDetails.CraftType].SpawnOffset;
+
                     SelectedBody.LocalPosition = voxelUnderMouse.WorldPosition + Vector3.One * 0.5f + offset;
                     SelectedBody.HasMoved = true;
                     SelectedBody.UpdateTransform();

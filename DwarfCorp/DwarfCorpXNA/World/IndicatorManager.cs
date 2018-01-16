@@ -42,6 +42,7 @@ using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Color = Microsoft.Xna.Framework.Color;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -118,23 +119,31 @@ namespace DwarfCorp
 
     public class AnimatedIndicator : Indicator
     {
+        [OnSerialized]
+        private void _onSerialized(StreamingContext Context)
+        {
+            var x = 5;
+
+        }
+
+        public AnimationPlayer Player = new AnimationPlayer();
         public Animation Animation;
         
         public override void Update(DwarfTime time)
         {
             base.Update(time);
-            Animation.Update(time);
 
-            Image = new ImageFrame(Animation.SpriteSheet.GetTexture(), Animation.GetCurrentFrameRect());
+            if (!Player.HasValidAnimation()) Player.Play(Animation);
+            Player.Update(time);
 
-            if (Animation.IsDone())
-            {
+            Image = Animation.GetAsImageFrame(Player.CurrentFrame);
+
+            if (Player.IsDone())
                 ShouldDelete = true;
-            }
-        }
-
-       
+        }       
     }
+
+
     /// <summary>
     /// This class exists to draw simple sprites (indicators) to the screen. Indicators
     /// are just a sprite at a location which grows, shrinks, and disappears over time.

@@ -6,6 +6,7 @@ using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -14,12 +15,20 @@ namespace DwarfCorp
     /// The rectangle is drawn in such a way that it is always more or less facing the camera.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class Sprite : Tinter, IUpdateableComponent, IRenderableComponent
+    public class AnimatedSprite : Tinter, IUpdateableComponent, IRenderableComponent
     {
+        [OnSerialized]
+        private void _onSerialized(StreamingContext Context)
+        {
+            var x = 5;
+
+        }
+
         public Dictionary<string, Animation> Animations { get; set; }
-        
-        public SpriteSheet SpriteSheet { get; set; }
-        public Animation CurrentAnimation { get; set; }
+
+        [JsonIgnore]
+        public AnimationPlayer AnimPlayer = new AnimationPlayer();
+
         public OrientMode OrientationType { get; set; }
         public bool DrawSilhouette { get; set; }
         public Color SilhouetteColor { get; set; }
@@ -34,10 +43,9 @@ namespace DwarfCorp
 
         public bool EnableWind { get; set; }
 
-        public Sprite(ComponentManager Manager, string name, Matrix localTransform, SpriteSheet spriteSheet, bool addToCollisionManager) :
+        public AnimatedSprite(ComponentManager Manager, string name, Matrix localTransform, bool addToCollisionManager) :
             base(Manager, name, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
         {
-            SpriteSheet = spriteSheet;
             Animations = new Dictionary<string, Animation>();
             OrientationType = OrientMode.Spherical;
             DrawSilhouette = false;
@@ -45,37 +53,13 @@ namespace DwarfCorp
             EnableWind = false;
         }
 
-        public Sprite()
+        public AnimatedSprite()
         {
-        }
-
-        public void SetSimpleAnimation(int row = 0)
-        {
-            List<Point> frames = new List<Point>();
-
-            for (int c = 0; c < SpriteSheet.Width/SpriteSheet.FrameWidth; c++)
-            {
-                frames.Add(new Point(c, row));
-            }
-            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", frames, true, Color.White, 5.0f, false));
-        }
-
-        public void SetSingleFrameAnimation(Point frame)
-        {
-            AddAnimation(new Animation(GameState.Game.GraphicsDevice, SpriteSheet, "Sprite", new List<Point>() { frame }, true, Color.White, 10.0f, false));
-        }
-
-        public void SetSingleFrameAnimation()
-        {
-            SetSingleFrameAnimation(new Point(0, 0));
         }
 
         public void AddAnimation(Animation animation)
         {
-            if(CurrentAnimation == null)
-            {
-                CurrentAnimation = animation;
-            }
+            AnimPlayer.Play(animation);
             Animations[animation.Name] = animation;
         }
 
@@ -84,16 +68,16 @@ namespace DwarfCorp
             return Animations.ContainsKey(name) ? Animations[name] : null;
         }
 
-        public virtual void SetCurrentAnimation(string name)
+        public virtual void SetCurrentAnimation(string name, bool Play = false)
         {
-            Animation anim = GetAnimation(name);
-
-            if(anim != null)
-            {
-                CurrentAnimation = anim;
-            }
+            var anim = GetAnimation(name);
+            SetCurrentAnimation(anim, Play);
         }
 
+        public void SetCurrentAnimation(Animation Animation, bool Play = false)
+        {
+            AnimPlayer.ChangeAnimation(Animation, Play ? AnimationPlayer.ChangeAnimationOptions.Play : AnimationPlayer.ChangeAnimationOptions.Stop);
+        }
 
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {
@@ -110,9 +94,7 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (CurrentAnimation != null)
-                CurrentAnimation.Update(gameTime);
-
+            AnimPlayer.Update(gameTime);
             base.Update(gameTime, chunks, camera);
         }
 
@@ -137,15 +119,18 @@ namespace DwarfCorp
             if (!IsVisible)
                 return;
 
-            if (CurrentAnimation == null || CurrentAnimation.CurrentFrame < 0 ||
-                CurrentAnimation.CurrentFrame >= CurrentAnimation.Primitives.Count) return;
+            if (!AnimPlayer.HasValidAnimation())
+                return;
+
+            if (AnimPlayer.Primitive == null) return;
 
             GamePerformance.Instance.StartTrackPerformance("Render - Sprite");
 
+            //AnimPlayer.PreRender(graphicsDevice);
+
             // Everything that draws should set it's tint, making this pointless.
-            Color origTint = effect.VertexColorTint;  
-            CurrentAnimation.PreRender();
-            SpriteSheet = CurrentAnimation.SpriteSheet;
+            Color origTint = effect.VertexColorTint;
+
             var currDistortion = VertexNoise.GetNoiseVectorFromRepeatingTexture(GlobalTransform.Translation);
             var distortion = currDistortion * 0.1f + prevDistortion * 0.9f;
             prevDistortion = distortion;
@@ -178,8 +163,9 @@ namespace DwarfCorp
                     }
             }
              
-            effect.MainTexture = SpriteSheet.GetTexture();
+            effect.MainTexture = AnimPlayer.GetTexture();
             ApplyTintingToEffect(effect);
+           
 
             if (DrawSilhouette)
             {
@@ -191,7 +177,7 @@ namespace DwarfCorp
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    CurrentAnimation.Primitives[CurrentAnimation.CurrentFrame].Render(graphicsDevice);
+                    AnimPlayer.Primitive.Render(graphicsDevice);
                 }
 
                 graphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -207,7 +193,7 @@ namespace DwarfCorp
             foreach(EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                CurrentAnimation.Primitives[CurrentAnimation.CurrentFrame].Render(graphicsDevice);
+                AnimPlayer.Primitive.Render(graphicsDevice);
             }
             effect.VertexColorTint = origTint;
             effect.EnableWind = false;

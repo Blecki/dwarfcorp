@@ -102,11 +102,7 @@ namespace DwarfCorp
 
         void InitializeAnimations()
         {
-            CompositeAnimation.Descriptor descriptor =
-    FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
-        ContentPaths.GetFileAsString(ContentPaths.Entities.Dwarf.Sprites.fairy_animation));
-            Animations = new List<Animation>();
-            Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Dwarf));
+            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Dwarf.Sprites.fairy_animation, "Dwarf");
         }
 
         public void InitializeWeapons()

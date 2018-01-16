@@ -159,12 +159,13 @@ namespace DwarfCorp
                     ? (Body)(new Strawman(world.ComponentManager, position))
                     : (value < 0.66 ? (Body)(new WeightRack(world.ComponentManager, position)) : (Body)(new PunchingBag(world.ComponentManager, position)));
             });
-            RegisterEntity("Snake", (position, data) => GenerateSnake(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice,
-                world.ChunkManager));
+            RegisterEntity("Snake", (position, data) =>
+                new Snake(false,
+                    position, world.ComponentManager, "Snake").Physics);
             RegisterEntity("Necrosnake", (position, data) =>
             {
-                var snek = new Snake(new SpriteSheet(ContentPaths.Entities.Animals.Snake.bonesnake, 32),
-                position, world.ComponentManager, "Snake", false, true);
+                var snek = new Snake(true, 
+                position, world.ComponentManager, "Snake");
                 snek.Attacks[0].DiseaseToSpread = "Necrorot";
                 return snek.Physics;
             });
@@ -224,19 +225,10 @@ namespace DwarfCorp
             EntityFuncs[id] = function;
         }
 
-        // Create an entity and make it a transparent ghost object that doesn't interact with anything.
-        // This is for displaying stuff, for example in tools.
-        public static Body CreateGhostedEntity<T>(string id, Vector3 location, Color tint, Blackboard data = null) where T : Body
+        public static void GhostEntity(Body Entity, Color Tint)
         {
-            var ent = CreateEntity<T>(id, location, data);
-            ent.SetFlagRecursive(GameComponent.Flag.Active, false);
-            var tinters = ent.EnumerateAll().OfType<Tinter>();
-
-            foreach (var tinter in tinters)
-            {
-                tinter.VertexColorTint = tint;
-            }
-            return ent;
+            Entity.SetFlagRecursive(GameComponent.Flag.Active, false);
+            Entity.SetTintRecursive(Tint);
         }
 
         public static T CreateEntity<T>(string id, Vector3 location, Blackboard data = null) where T : GameComponent
@@ -262,29 +254,10 @@ namespace DwarfCorp
             LazyActions.Add(action);
         }
 
-        public static Body CreateBalloon(Vector3 target, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ShipmentOrder order, Faction master)
+        public static Body CreateBalloon(
+            Vector3 target, Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ShipmentOrder order, Faction master)
         {
-            var balloon = new Body(componentManager, "Balloon",
-                Matrix.CreateTranslation(position), new Vector3(0.5f, 1, 0.5f), new Vector3(0, -2, 0));
-
-            SpriteSheet tex = new SpriteSheet(ContentPaths.Entities.Balloon.Sprites.balloon);
-            List<Point> points = new List<Point>
-            {
-                new Point(0, 0)
-            };
-            Animation balloonAnimation = new Animation(graphics, new SpriteSheet(ContentPaths.Entities.Balloon.Sprites.balloon), "balloon", points, false, Color.White, 0.001f, false);
-            Sprite sprite = balloon.AddChild(new Sprite(componentManager, "sprite", Matrix.Identity, tex, false)
-            {
-                OrientationType = Sprite.OrientMode.Spherical
-            }) as Sprite;
-            sprite.AddAnimation(balloonAnimation);
-
-            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            balloon.AddChild(new Shadow(componentManager, "shadow", shadowTransform, new SpriteSheet(ContentPaths.Effects.shadowcircle)));
-            balloon.AddChild(new BalloonAI(componentManager, target, order, master));
-            balloon.AddChild(new MinimapIcon(componentManager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 0)));
-
-            return balloon;
+            return new Balloon(componentManager, position, target, order, master);
         }
 
         public static Body GenerateSkeleton(Vector3 position, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, ChunkManager chunks, Camera camera, Faction faction, PlanService planService, string allies)
@@ -347,16 +320,6 @@ namespace DwarfCorp
             Dwarf toReturn = new Dwarf(componentManager, stats, allies, planService, faction, "Dwarf", dwarfClass, position);
             toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, componentManager.World.Time.CurrentDate), false);
             return toReturn.Physics;
-        }
-
-        public static GameComponent GenerateSnake(Vector3 position,
-            ComponentManager componentManager,
-            ContentManager content,
-            GraphicsDevice graphics,
-            ChunkManager chunks)
-        {
-            return new Snake(new SpriteSheet(ContentPaths.Entities.Animals.Snake.snake, 32),
-                position, componentManager, "Snake").Physics;
         }
     }
 }

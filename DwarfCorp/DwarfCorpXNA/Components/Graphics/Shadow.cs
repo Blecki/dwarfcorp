@@ -43,7 +43,7 @@ namespace DwarfCorp
     /// <summary>
     /// This component projects a billboard shadow to the ground below an entity.
     /// </summary>
-    public class Shadow : Sprite, IUpdateableComponent
+    public class Shadow : SimpleSprite, IUpdateableComponent
     {
         public float GlobalScale { get; set; }
         public Timer UpdateTimer { get; set; }
@@ -60,14 +60,6 @@ namespace DwarfCorp
                 GlobalScale = scale
             };
             shadow.SetFlag(Flag.ShouldSerialize, false);
-            List<Point> shP = new List<Point>
-            {
-                new Point(0, 0)
-            };
-            var anim = new Animation(ContentPaths.Effects.shadowcircle, 32, 32, 0);
-            shadow.AddAnimation(anim);
-            anim.Play();
-            shadow.SetCurrentAnimation(anim.Name);
             return shadow;
         }
         public Shadow() : base()
@@ -75,24 +67,14 @@ namespace DwarfCorp
         }
 
         public Shadow(ComponentManager Manager) :
-            this(Manager, "Shadow", Matrix.CreateRotationX((float)Math.PI * 0.5f) * 
+            this(Manager, "Shadow", Matrix.CreateRotationX((float)Math.PI * 0.5f) *
             Matrix.CreateTranslation(Vector3.Down * 0.5f), new SpriteSheet(ContentPaths.Effects.shadowcircle))
         {
             GlobalScale = 1.0f;
-            var shP = new List<Point>
-                {
-                    new Point(0, 0)
-                };
-            var shadowAnimation = new Animation(Manager.World.GraphicsDevice, 
-                new SpriteSheet(ContentPaths.Effects.shadowcircle),
-                "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
-            AddAnimation(shadowAnimation);
-            shadowAnimation.Play();
-            SetCurrentAnimation("sh");
         }
 
         public Shadow(ComponentManager manager, string name, Matrix localTransform, SpriteSheet spriteSheet) :
-            base(manager, name, localTransform, spriteSheet, false)
+            base(manager, name, localTransform, false, spriteSheet, Point.Zero)
         {
             OrientationType = OrientMode.Fixed;
             GlobalScale = LocalTransform.Left.Length();

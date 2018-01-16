@@ -37,6 +37,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -46,8 +47,15 @@ namespace DwarfCorp
     /// of the camera.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class OrientedAnimation : Sprite, IUpdateableComponent
+    public class OrientedAnimatedSprite : AnimatedSprite, IUpdateableComponent
     {
+        [OnSerialized]
+        private void _onSerialized(StreamingContext Context)
+        {
+            var x = 5;
+
+        }
+
         public enum Orientation
         {
             Right = 0,
@@ -68,32 +76,20 @@ namespace DwarfCorp
 
         protected string currentMode = "";
 
-        public override void SetCurrentAnimation(string name)
+        public override void SetCurrentAnimation(string name, bool Play = false)
         {
             currentMode = name;
         }
 
-        public void AddAnimation(string mode, Animation rightAnimation, Animation leftAnimation, Animation forwardAnimation, Animation backwardAnimation)
-        {
-            Animations[mode + OrientationStrings[(int) Orientation.Right]] = rightAnimation;
-            Animations[mode + OrientationStrings[(int) Orientation.Left]] = leftAnimation;
-            Animations[mode + OrientationStrings[(int) Orientation.Forward]] = forwardAnimation;
-            Animations[mode + OrientationStrings[(int) Orientation.Backward]] = backwardAnimation;
 
-            if(currentMode == "")
-            {
-                currentMode = mode;
-            }
-        }
-
-        public OrientedAnimation()
+        public OrientedAnimatedSprite()
         {
             
         }
 
-        public OrientedAnimation(ComponentManager manager, string name,
+        public OrientedAnimatedSprite(ComponentManager manager, string name,
             Matrix localTransform) :
-                base(manager, name, localTransform, null, false)
+                base(manager, name, localTransform, false)
         {
         }
 
@@ -101,29 +97,10 @@ namespace DwarfCorp
         {
             CalculateCurrentOrientation(camera);
 
-            foreach (string orient in OrientationStrings)
-            {
-                string animationName = currentMode + orient;
 
-                if (!Animations.ContainsKey(animationName)) continue;
-
-                Animation animation = Animations[animationName];
-
-                // Update all the animations! Why? Because we trigger things based on the FORWARD animation frame,
-                // not based on whatever is current.
-                if (animation != CurrentAnimation)
-                    animation.Update(gameTime);
-            }
-
-            string s = currentMode + OrientationStrings[(int)CurrentOrientation];
+            var s = currentMode + OrientationStrings[(int)CurrentOrientation];
             if (Animations.ContainsKey(s))
-            {
-                var previousAnimation = CurrentAnimation;
-                CurrentAnimation = Animations[s];
-                if (previousAnimation != null && previousAnimation.Name.StartsWith(currentMode))
-                    CurrentAnimation.Sychronize(previousAnimation);
-                SpriteSheet = CurrentAnimation.SpriteSheet;
-            }
+                AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.Play | AnimationPlayer.ChangeAnimationOptions.Loop);
 
             base.Update(gameTime, chunks, camera);
         }

@@ -22,7 +22,7 @@ namespace DwarfCorp.ContextCommands
             var minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.Minions, Task.TaskCategory.Chop);
             if (minions.Count > 0)
             {
-                var task = ChopTool.ChopTree(Entity, World.PlayerFaction);
+                var task = ChopTool.ChopPlant(Entity, World.PlayerFaction);
                 if (task != null)
                 {
                     var tasks = new List<Task>();

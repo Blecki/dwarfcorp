@@ -222,23 +222,26 @@ namespace DwarfCorp
             set
             {
                 _cache_Chunk.Data.Decals[_cache_Index] = value;
-                if (value == 0)
-                    _cache_Chunk.Data.DecalData[_cache_Index] = 0;
-                else
-                    _cache_Chunk.Data.DecalData[_cache_Index] = DecalLibrary.GetDecalType(value).InitialDataValue;
                 InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
             }
         }
 
         [JsonIgnore]
-        public byte DecalData
+        public byte GrassType
         {
-            get { return _cache_Chunk.Data.DecalData[_cache_Index]; }
+            get { return _cache_Chunk.Data.GrassType[_cache_Index]; }
             set
             {
-                _cache_Chunk.Data.DecalData[_cache_Index] = value;
-                InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
+                _cache_Chunk.Data.GrassType[_cache_Index] = value;
+               InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
             }
+        }
+
+        [JsonIgnore]
+        public byte GrassDecay
+        {
+            get { return _cache_Chunk.Data.GrassDecay[_cache_Index]; }
+            set { _cache_Chunk.Data.GrassDecay[_cache_Index] = value; }
         }
 
         [JsonIgnore]
@@ -295,8 +298,9 @@ namespace DwarfCorp
             // Change actual data
             _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
             _cache_Chunk.Data.Health[_cache_Index] = (byte)NewType.StartingHealth;
-            _cache_Chunk.Data.Decals[_cache_Index] = 0;
-            _cache_Chunk.Data.DecalData[_cache_Index] = 0;
+
+            // Changing the voxel type clears grass.
+            _cache_Chunk.Data.GrassType[_cache_Index] = 0;
 
             // Did we go from empty to filled or vice versa? Update filled counter.
             if (previous == 0 && NewType.ID != 0)
@@ -310,13 +314,10 @@ namespace DwarfCorp
         /// Should only be used by ChunkGenerator as it can break geometry building.
         /// </summary>
         /// <param name="Decal"></param>
-        public void RawSetDecal(byte Decal)
+        public void RawSetGrass(byte Type)
         {
-            _cache_Chunk.Data.Decals[_cache_Index] = Decal;
-            if (Decal == 0)
-                _cache_Chunk.Data.DecalData[_cache_Index] = 0;
-            else
-                _cache_Chunk.Data.DecalData[_cache_Index] = DecalLibrary.GetDecalType(Decal).InitialDataValue;
+            _cache_Chunk.Data.GrassType[_cache_Index] = Type;
+            _cache_Chunk.Data.GrassDecay[_cache_Index] = GrassLibrary.GetGrassType(Type).InitialDataValue;
         }
 
         private void OnTypeSet(VoxelType NewType)
@@ -331,8 +332,8 @@ namespace DwarfCorp
             _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
             _cache_Chunk.Data.Health[_cache_Index] = (byte)NewType.StartingHealth;
 
-            // Changing the voxel type clears all decals.
-            _cache_Chunk.Data.Decals[_cache_Index] = 0;
+            // Changing the voxel type clears grass.
+            _cache_Chunk.Data.GrassType[_cache_Index] = 0;
 
             // Did we go from empty to filled or vice versa? Update filled counter.
             if (previous == 0 && NewType.ID != 0)

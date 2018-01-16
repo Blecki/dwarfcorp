@@ -38,6 +38,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System;
+using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
@@ -48,6 +49,9 @@ namespace DwarfCorp
     public class GodModeTool : PlayerTool
     {
         public String Command;
+        private bool RotateLeftPressed = false;
+        private bool RotateRightPressed = false;
+        private DecalOrientation DecalOrientation = DecalOrientation.North;
 
         public ChunkManager Chunks { get; set; }
 
@@ -74,7 +78,7 @@ namespace DwarfCorp
 
         private VoxelSelectionType GetSelectionTypeBySelectionBoxValue(string arg)
         {
-            if (arg == "Delete Block" || arg.Contains("Build") || arg == "Kill Block" || arg.Contains("Decal"))
+            if (arg == "Delete Block" || arg.Contains("Build") || arg == "Kill Block" || arg.Contains("Decal") || arg.Contains("Grass"))
             {
                 return VoxelSelectionType.SelectFilled;
             }
@@ -107,21 +111,49 @@ namespace DwarfCorp
                 {
                     if (vox.IsEmpty)
                     {
+                        CraftItem craftItem = null;
+                        CraftLibrary.CraftItems.TryGetValue(type, out craftItem);
+
                         Vector3 offset = Vector3.Zero;
+
+                        if (craftItem != null)
+                            offset = craftItem.SpawnOffset;
+
                         var body = EntityFactory.CreateEntity<Body>(type, vox.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + offset);
                         if (body != null)
+                        {
                             body.PropogateTransforms();
+
+                            if (craftItem != null)
+                            {
+                                if (craftItem.AddToOwnedPool)
+                                    Player.Faction.OwnedObjects.Add(body);
+
+                                if (craftItem.Moveable)
+                                    body.Tags.Add("Moveable");
+                            }
+                        }
                     }
                 }
             }
-            else if (Command.Contains("Decal/"))
+            else if (Command.Contains("Grass/"))
             {
-                var type = DecalLibrary.GetDecalType(Command.Substring(6));
+                var type = GrassLibrary.GetGrassType(Command.Substring(6));
                 foreach (var vox in refs.Where(v => v.IsValid))
                 {
                     var v = vox;
                     if (!vox.IsEmpty)
-                        v.Decal = type.ID;
+                        v.GrassType = type.ID;
+                }
+            }
+            else if (Command.Contains("Decal/"))
+            {
+                var type = DecalLibrary.GetGrassType(Command.Substring(6));
+                foreach (var vox in refs.Where(v => v.IsValid))
+                {
+                    var v = vox;
+                    if (!vox.IsEmpty)
+                        v.Decal = DecalType.EncodeDecal(DecalOrientation, type.ID);
                 }
             }
             else
@@ -244,6 +276,20 @@ namespace DwarfCorp
             Player.VoxSelector.Enabled = true;
             Player.BodySelector.Enabled = false;
             Player.World.SetMouse(Player.World.MousePointer);
+
+            if (Command.Contains("Decal/"))
+            {
+                KeyboardState state = Keyboard.GetState();
+                bool leftKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectLeft);
+                bool rightKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectRight);
+                if (RotateLeftPressed && !leftKey)
+                    DecalOrientation = DecalType.RotateOrientation(DecalOrientation, -1);
+                else if (RotateRightPressed && !rightKey)
+                    DecalOrientation = DecalType.RotateOrientation(DecalOrientation, 1);
+
+                RotateLeftPressed = leftKey;
+                RotateRightPressed = rightKey;
+            }
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

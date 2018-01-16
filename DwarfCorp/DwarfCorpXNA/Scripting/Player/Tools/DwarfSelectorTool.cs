@@ -231,30 +231,35 @@ namespace DwarfCorp
             Player.World.SetMouse(Player.World.MousePointer);
         }
 
+        public Rectangle GetScreenRect(BoundingBox Box, Camera Camera)
+        {
+            Vector3 ext = (Box.Max - Box.Min);
+            Vector3 center = Box.Center();
+
+
+            Vector3 p1 = Camera.Project(Box.Min);
+            Vector3 p2 = Camera.Project(Box.Max);
+            Vector3 p3 = Camera.Project(Box.Min + new Vector3(ext.X, 0, 0));
+            Vector3 p4 = Camera.Project(Box.Min + new Vector3(0, ext.Y, 0));
+            Vector3 p5 = Camera.Project(Box.Min + new Vector3(0, 0, ext.Z));
+            Vector3 p6 = Camera.Project(Box.Min + new Vector3(ext.X, ext.Y, 0));
+
+
+            Vector3 min = MathFunctions.Min(p1, p2, p3, p4, p5, p6);
+            Vector3 max = MathFunctions.Max(p1, p2, p3, p4, p5, p6);
+
+            return new Rectangle((int)min.X, (int)min.Y, (int)(max.X - min.X), (int)(max.Y - min.Y));
+        }
+
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
             DwarfGame.SpriteBatch.Begin();
-            Viewport port = GameState.Game.GraphicsDevice.Viewport;
 
-            // Todo: Reimplement list of selected dwarves?
-            //int i = 0;
-            //foreach (CreatureAI creature in Player.SelectedMinions)
-            //{
-            //    Drawer2D.DrawAlignedText(DwarfGame.SpriteBatch, creature.Stats.FullName, Player.World.GUI.SmallFont, Color.White, Drawer2D.Alignment.Right, new Rectangle(port.Width - 300, 68 + i * 24, 300, 24));
-            //    i++;
-            //}
-
-            foreach (Body body in Player.BodySelector.CurrentBodies)
-            {
+            foreach (var body in Player.BodySelector.CurrentBodies)
                 if (IsDwarf(body))
-                {
-                    Drawer2D.DrawRect(DwarfGame.SpriteBatch, body.GetScreenRect(Player.World.Camera), Color.White, 1.0f);
-                }
-            }
-             
+                    Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, Player.World.Camera), Color.White, 1.0f);
 
             DwarfGame.SpriteBatch.End();
-
         }
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)

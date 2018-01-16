@@ -7,36 +7,38 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    public enum DecalOrientation
+    {
+        North = 0,
+        East = 1,
+        South = 2,
+        West = 3
+    }
+
     public class DecalType
     {
-        public class FringeTileUV
+        public static DecalOrientation RotateOrientation(DecalOrientation Orientation, int Amount)
         {
-            public Vector2 UV;
-            public Vector4 Bounds;
+            return (DecalOrientation)(((int)Orientation + Amount) % 4);
+        }
 
-            public FringeTileUV(int x, int y, int textureWidth, int textureHeight)
-            {
-                UV = new Microsoft.Xna.Framework.Vector2((float)x / (float)textureWidth,
-                    (float)y / (float)textureHeight);
-                Bounds = new Microsoft.Xna.Framework.Vector4((float)x / (float)textureWidth + 0.001f,
-                    (float)y / (float)textureHeight + 0.001f, (float)(x + 1) / (float)textureWidth - 0.001f,
-                    (float)(y + 1) / (float)textureHeight - 0.001f);
-            }
+        public static byte DecodeDecalType(byte RawData)
+        {
+            return (byte)(RawData & 0x3F);
+        }
+
+        public static DecalOrientation DecodeDecalOrientation(byte RawData)
+        {
+            return (DecalOrientation)((RawData & 0xC0) >> 6);
+        }
+
+        public static byte EncodeDecal(DecalOrientation Orientation, byte Type)
+        {
+            return (byte)((((byte)Orientation) << 6) + (Type & 0x3F));
         }
 
         public byte ID;
         public String Name;
-
         public Point Tile;
-        public bool HasFringeTransitions = false;
-        public Point[] FringeTiles = null;
-        [JsonIgnore]
-        public FringeTileUV[] FringeTransitionUVs = null;
-
-        public int FringePrecedence = 0;
-        public String BecomeWhenSnowedOn = null;
-        public String BecomeWhenDecays = null;
-        public bool Decay = false;
-        public byte InitialDataValue = 0;
     }
 }

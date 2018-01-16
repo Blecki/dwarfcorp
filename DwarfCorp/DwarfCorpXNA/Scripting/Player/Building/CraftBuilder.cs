@@ -55,25 +55,11 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CraftBuilder
     {
-        public class CraftDesignation
-        {
-            public CraftItem ItemType;
-            public VoxelHandle Location;
-            public Body WorkPile;
-            public bool OverrideOrientation;
-            public float Orientation;
-            public bool Valid;
-            public Body GhostBody;
-            public float Progress = 0.0f;
-            public bool HasResources = false;
-            public CreatureAI ResourcesReservedFor = null;
-        }
-
         public Faction Faction { get; set; }
-        public List<CraftDesignation> Designations { get; set; }
         public CraftItem CurrentCraftType { get; set; }
         public bool IsEnabled { get; set; }
         public Body CurrentCraftBody { get; set; }
+        public List<ResourceAmount> SelectedResources;
 
         public void End()
         {
@@ -111,63 +97,46 @@ namespace DwarfCorp
         {
             World = world;
             Faction = faction;
-            Designations = new List<CraftDesignation>();
             IsEnabled = false;
         }
 
-        public bool IsDesignation(VoxelHandle reference)
+        public bool IsDesignation(VoxelHandle v)
         {
-            if (!reference.IsValid) return false;
-            return Designations.Any(put => put.Location == reference);
+            if (!v.IsValid) return false;
+            return Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).Any(d => d.Location == v);
         }
 
 
         public CraftDesignation GetDesignation(VoxelHandle v)
         {
-            return Designations.FirstOrDefault(put => put.Location == v);
+            return Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == v);
         }
 
         public void AddDesignation(CraftDesignation des, Vector3 AdditionalOffset)
         {
-            des.GhostBody = EntityFactory.CreateGhostedEntity<Body>(des.ItemType.Name,
-                des.Location.WorldPosition + Vector3.One * 0.5f + AdditionalOffset, Color.LightBlue,
-                Blackboard.Create<List<ResourceAmount>>("Resources", des.ItemType.SelectedResources));
-            World.ComponentManager.RootComponent.AddChild(des.GhostBody);
-
             if (des.OverrideOrientation)
-            {
-                des.GhostBody.Orient(des.Orientation);
-            }
+                des.Entity.Orient(des.Orientation);
             else
-            {
-                des.GhostBody.OrientToWalls();
-            }
+                des.Entity.OrientToWalls();
 
-            Designations.Add(des);
+            Faction.Designations.AddEntityDesignation(des.Entity, DesignationType.Craft, des);
         }
 
         public void RemoveDesignation(CraftDesignation des)
         {
-            Designations.Remove(des);
+            Faction.Designations.RemoveEntityDesignation(des.Entity, DesignationType.Craft);
 
             if (des.WorkPile != null)
                 des.WorkPile.Die();
-
-            if (des.GhostBody != null)
-                des.GhostBody.Delete();
         }
-
 
         public void RemoveDesignation(VoxelHandle v)
         {
-            CraftDesignation des = GetDesignation(v);
+            var des = GetDesignation(v);
 
-            if (des.Valid)
-            {
+            if (des != null)
                 RemoveDesignation(des);
-            }
         }
-
 
         public void Update(DwarfTime gameTime, GameMaster player)
         {
@@ -179,10 +148,6 @@ namespace DwarfCorp
                     CurrentCraftBody = null;
                 }
 
-                foreach (var designation in Designations)
-                {
-                    designation.GhostBody.SetFlagRecursive(GameComponent.Flag.Visible, false);
-                }
                 return;
             }
 
@@ -193,15 +158,18 @@ namespace DwarfCorp
 
             if (CurrentCraftType != null && CurrentCraftBody == null)
             {
-                CurrentCraftBody = EntityFactory.CreateGhostedEntity<Body>(CurrentCraftType.Name, 
-                    player.VoxSelector.VoxelUnderMouse.WorldPosition, Color.White,
-                     Blackboard.Create<List<ResourceAmount>>("Resources", CurrentCraftType.SelectedResources));
+                CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, 
+                    player.VoxSelector.VoxelUnderMouse.WorldPosition,
+                     Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
+                EntityFactory.GhostEntity(CurrentCraftBody, Color.White);
+
                 CurrentDesignation = new CraftDesignation()
                 {
                     ItemType = CurrentCraftType,
                     Location = VoxelHandle.InvalidHandle,
                     Valid = true
                 };
+
                 OverrideOrientation = false;
                 CurrentCraftBody.SetTintRecursive(Color.Green);
             }
@@ -209,7 +177,7 @@ namespace DwarfCorp
             if (CurrentCraftBody == null || !player.VoxSelector.VoxelUnderMouse.IsValid) 
                 return;
 
-            CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.WorldPosition + Vector3.One * 0.5f + CurrentCraftType.SpawnOffset;
+            CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CurrentCraftType.SpawnOffset;
 
             CurrentCraftBody.GlobalTransform = CurrentCraftBody.LocalTransform;
             CurrentCraftBody.UpdateTransform();
@@ -284,13 +252,6 @@ namespace DwarfCorp
 
         public void Render(DwarfTime gameTime, GraphicsDevice graphics, Effect effect)
         {
-            foreach (var designation in Designations)
-            {
-                designation.GhostBody.SetFlagRecursive(GameComponent.Flag.Visible, true);
-                designation.GhostBody.SetTintRecursive(MathFunctions.Pulsate(Color.Blue, gameTime, 0.7f));
-                designation.GhostBody.PropogateTransforms();
-            }
-
             if (CurrentCraftBody != null)
             {
                 Drawer2D.DrawPolygon(World.Camera, new List<Vector3>() { CurrentCraftBody.Position, CurrentCraftBody.Position + CurrentCraftBody.GlobalTransform.Right * 0.5f }, Color.White, 1, false, graphics.Viewport);
@@ -370,8 +331,11 @@ namespace DwarfCorp
                     o => o != null &&
                     o != CurrentCraftBody &&
                     o.GetRotatedBoundingBox().Intersects(CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)));
-                var intersectsBuildObjects = this.Designations.Any(d => d.GhostBody != CurrentCraftBody &&
-                    d.GhostBody.GetRotatedBoundingBox().Intersects(CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)));
+
+                var intersectsBuildObjects = Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft)
+                    .Any(d => d.Body != CurrentCraftBody && d.Body.GetRotatedBoundingBox().Intersects(
+                        CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)));
+
                 bool intersectsWall = VoxelHelpers.EnumerateCoordinatesInBoundingBox
                     (CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)).Any(
                     v =>
@@ -410,6 +374,7 @@ namespace DwarfCorp
                 case (InputManager.MouseButton.Left):
                     {
                         List<Task> assignments = new List<Task>();
+                        // Creating multiples doesn't work anyway - kill it.
                         foreach (var r in refs)
                         {
                             if (IsDesignation(r) || !r.IsValid || !r.IsEmpty)
@@ -418,30 +383,36 @@ namespace DwarfCorp
                             }
                             else
                             {
-                                Vector3 pos = r.WorldPosition + Vector3.One * 0.5f + CurrentCraftType.SpawnOffset;
+                                Vector3 pos = r.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CurrentCraftType.SpawnOffset;
 
                                 Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
                                 Vector3 endPos = pos;
+                                // TODO: Why are we creating a new designation?
                                 CraftDesignation newDesignation = new CraftDesignation()
                                 {
-                                    ItemType = CurrentCraftType.Clone(),
+                                    ItemType = CurrentCraftType,
                                     Location = r,
-                                    WorkPile = new WorkPile(World.ComponentManager, startPos),
                                     Orientation = CurrentDesignation.Orientation,
                                     OverrideOrientation = CurrentDesignation.OverrideOrientation,
-                                    Valid = true
+                                    Valid = true,
+                                    Entity = CurrentCraftBody,
+                                    SelectedResources = SelectedResources
                                 };
-                                World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
-                                newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
-                                World.ParticleManager.Trigger("puff", pos, Color.White, 10);
+
                                 if (IsValid(newDesignation))
                                 {
                                     AddDesignation(newDesignation, CurrentCraftType.SpawnOffset);
                                     assignments.Add(new CraftItemTask(newDesignation));
-                                }
-                                else
-                                {
-                                    newDesignation.WorkPile.Die();
+
+                                    // Todo: Maybe don't support create huge numbers of entities at once?
+                                    CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, r.WorldPosition,
+                     Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
+                                    EntityFactory.GhostEntity(CurrentCraftBody, Color.White);
+
+                                    newDesignation.WorkPile = new WorkPile(World.ComponentManager, startPos);
+                                    World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
+                                    newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
+                                    World.ParticleManager.Trigger("puff", pos, Color.White, 10);
                                 }
                             }
                         }
@@ -449,7 +420,6 @@ namespace DwarfCorp
                         if (assignments.Count > 0)
                         {
                             World.Master.TaskManager.AddTasks(assignments);
-                            //TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.Craft));
                         }
 
                         break;

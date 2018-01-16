@@ -58,6 +58,7 @@ namespace DwarfCorp
             public BoundingBox RealBox;
             public float Thickness;
             public Color Color;
+            public bool Warp;
         }
 
         private static List<Box> Boxes = new List<Box>();
@@ -76,8 +77,8 @@ namespace DwarfCorp
         {
             if (VertexCount == 0) return;
 
-            for (var i = 0; i < VertexCount; ++i)
-                Verticies[i].Position += VertexNoise.GetNoiseVectorFromRepeatingTexture(Verticies[i].Position);
+            //for (var i = 0; i < VertexCount; ++i)
+            //    Verticies[i].Position += VertexNoise.GetNoiseVectorFromRepeatingTexture(Verticies[i].Position);
 
             BlendState origBlen = Device.BlendState;
             Device.BlendState = BlendState.NonPremultiplied;
@@ -135,8 +136,14 @@ namespace DwarfCorp
                 _flush();
         }
 
-        private static void _addLineSegment(Vector3 A, Vector3 B, Color Color, float Thickness)
+        private static void _addLineSegment(Vector3 A, Vector3 B, Color Color, float Thickness, bool Warp)
         {
+            if (Warp)
+            {
+                A += VertexNoise.GetNoiseVectorFromRepeatingTexture(A);
+                B += VertexNoise.GetNoiseVectorFromRepeatingTexture(B);
+            }
+
             var aRay = A - Camera.Position;
             var bRay = A - B;
             var perp = Vector3.Cross(aRay, bRay);
@@ -147,28 +154,28 @@ namespace DwarfCorp
             _addTriangle(A - perp, B - perp, B + perp, Color);
         }
 
-        private static void _addBox(Vector3 M, Vector3 S, Color C, float T)
+        private static void _addBox(Vector3 M, Vector3 S, Color C, float T, bool Warp)
         {
             float halfT = T * 0.5f;
             S += Vector3.One * T;
             M -= Vector3.One * halfT;
             // Draw bottom loop.
-            _addLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z), C, T);
-            _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z + S.Z), C, T);
-            _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y, M.Z + S.Z), C, T);
-            _addLineSegment(new Vector3(M.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y, M.Z), C, T);
+            _addLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z), C, T, Warp);
+            _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z + S.Z), C, T, Warp);
+            _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y, M.Z + S.Z), C, T, Warp);
+            _addLineSegment(new Vector3(M.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y, M.Z), C, T, Warp);
 
             // Draw top loop.
-            _addLineSegment(new Vector3(M.X, M.Y + S.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z), C, T);
-            _addLineSegment(new Vector3(M.X + S.X, M.Y + S.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.Z), C, T);
-            _addLineSegment(new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.Z), new Vector3(M.X, M.Y + S.Y, M.Z + S.Z), C, T);
-            _addLineSegment(new Vector3(M.X, M.Y + S.Y, M.Z + S.Z), new Vector3(M.X, M.Y + S.Y, M.Z), C, T);
+            _addLineSegment(new Vector3(M.X, M.Y + S.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z), C, T, Warp);
+            _addLineSegment(new Vector3(M.X + S.X, M.Y + S.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.Z), C, T, Warp);
+            _addLineSegment(new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.Z), new Vector3(M.X, M.Y + S.Y, M.Z + S.Z), C, T, Warp);
+            _addLineSegment(new Vector3(M.X, M.Y + S.Y, M.Z + S.Z), new Vector3(M.X, M.Y + S.Y, M.Z), C, T, Warp);
 
             // Draw uprights
-            _addLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X, M.Y + S.Y, M.Z), C, T);
-            _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z), C, T);
-            _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z + S.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.Z), C, T);
-            _addLineSegment(new Vector3(M.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y + S.Y, M.Z + S.Z), C, T);
+            _addLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X, M.Y + S.Y, M.Z), C, T, Warp);
+            _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z), C, T, Warp);
+            _addLineSegment(new Vector3(M.X + S.X, M.Y, M.Z + S.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.Z), C, T, Warp);
+            _addLineSegment(new Vector3(M.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y + S.Y, M.Z + S.Z), C, T, Warp);
 
         }
 
@@ -213,10 +220,10 @@ namespace DwarfCorp
                     });
 
                 foreach (var box in Boxes)
-                    _addBox(box.RealBox.Min, box.RealBox.Max - box.RealBox.Min, box.Color, box.Thickness);
+                    _addBox(box.RealBox.Min, box.RealBox.Max - box.RealBox.Min, box.Color, box.Thickness, box.Warp);
 
                 foreach (var segment in Segments)
-                    _addLineSegment(segment.A, segment.B, segment.Color, segment.Thickness);
+                    _addLineSegment(segment.A, segment.B, segment.Color, segment.Thickness, false);
 
                 _flush();
 
@@ -234,7 +241,8 @@ namespace DwarfCorp
                 {
                     RealBox = box,
                     Color = color,
-                    Thickness = thickness
+                    Thickness = thickness,
+                    Warp = warp
                 });
             }
         }

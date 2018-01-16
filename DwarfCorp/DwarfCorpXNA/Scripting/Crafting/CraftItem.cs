@@ -62,14 +62,14 @@ namespace DwarfCorp
         public CraftType Type { get; set; }
         public List<CraftPrereq> Prerequisites { get; set; }
         public ResourceLibrary.ResourceType ResourceCreated { get; set; }
-        public List<ResourceAmount> SelectedResources { get; set; }
-        public int NumRepeats { get; set; }
         public string CraftLocation { get; set; }
         public string Verb { get; set; }
         public string PastTeseVerb { get; set; }
         public string CurrentVerb { get; set; }
         public bool AllowHeterogenous { get; set; }
-        public Vector3 SpawnOffset = Vector3.Zero;
+        public Vector3 SpawnOffset = new Vector3(0.0f, 0.5f, 0.0f);
+        public bool AddToOwnedPool = false;
+        public bool Moveable = false;
 
         public CraftItem()
         {
@@ -80,43 +80,11 @@ namespace DwarfCorp
             Description = "";
             Type = CraftType.Object;
             ResourceCreated = "";
-            SelectedResources = new List<ResourceAmount>();
             CraftLocation = "Anvil";
             Verb = "Build";
             PastTeseVerb = "Built";
             CurrentVerb = "Building";
-            NumRepeats = 1;
             AllowHeterogenous = false;
-        }
-
-        public CraftItem Clone()
-        {
-            var item = new CraftItem()
-            {
-                Name = this.Name,
-                BaseCraftTime = this.BaseCraftTime,
-                Description = this.Description,
-                Type = this.Type,
-                ResourceCreated = this.ResourceCreated,
-                CraftLocation = this.CraftLocation,
-                Verb = this.Verb,
-                PastTeseVerb = this.PastTeseVerb,
-                CurrentVerb = this.CurrentVerb,
-                NumRepeats = this.NumRepeats,
-                AllowHeterogenous = this.AllowHeterogenous,
-                SpawnOffset = this.SpawnOffset
-            };
-            foreach(var resource in this.SelectedResources)
-            {
-                item.SelectedResources.Add(resource.CloneResource());
-            }
-            foreach (var resource in this.RequiredResources)
-            {
-                item.RequiredResources.Add(resource.CloneQuantity());
-            }
-            item.Prerequisites.AddRange(this.Prerequisites);
-            
-            return item;
         }
     }
 }

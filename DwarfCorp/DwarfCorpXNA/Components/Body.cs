@@ -32,44 +32,37 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// This is a special kind of component which has a position and orientation. The global position of an object
-    /// is computed from its local position relative to its parent. This is known as a "scene graph". Locatable components
-    /// also live inside an octree for faster access to colliding or nearby objects.
-    /// </summary>
-    [JsonObject(IsReference = true)]
     public class Body : GameComponent, IBoundedObject, IUpdateableComponent
+
+#if DEBUG
+        , IRenderableComponent
+#endif
     {
-        public bool WasAddedToOctree
+#if DEBUG
+        void IRenderableComponent.Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
-            get { return wasEverAddedToOctree; }
-            set { wasEverAddedToOctree = value; }
+            if (GamePerformance.DebugVisualizationEnabled)
+                Drawer3D.DrawBox(BoundingBox, Color.Blue, 0.02f, false);
         }
 
-        private bool wasEverAddedToOctree = false;
+        public bool FrustumCull { get { return IsFlagSet(Flag.FrustumCull); } }
+#endif
 
-        public CollisionManager.CollisionType CollisionType { get; set; }
-
-        public delegate void BodyDestroyed();
-        public event BodyDestroyed OnDestroyed;
-
-
+        public CollisionManager.CollisionType CollisionType = CollisionManager.CollisionType.None;
+        public Vector3 BoundingBoxSize = Vector3.One;
+        public Vector3 LocalBoundingBoxOffset = Vector3.Zero;
+        public Action OnDestroyed;
         public bool IsReserved = false;
         public GameComponent ReservedFor = null;
         private BoundingBox lastBounds = new BoundingBox();
-        private Vector3 thresholdPos = new Vector3();
         
         [JsonIgnore]public Matrix GlobalTransform
         {
@@ -77,31 +70,19 @@ namespace DwarfCorp
             set
             {
                 globalTransform = value;
+
                 UpdateBoundingBox();
-                if(!AddToCollisionManager)
+
+                if (IsFlagSet(Flag.AddToCollisionManager))
                 {
-                    return;
+                    Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
+                    Manager.World.CollisionManager.AddObject(this, CollisionType);
                 }
 
-                if(!Active)
-                {
-                    return;
-                }
-
-                if (!ExceedsMovementThreshold && wasEverAddedToOctree)
-                    return;
-
-                Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
-                Manager.World.CollisionManager.AddObject(this, CollisionType);
-
-                lastBounds = GetBoundingBox();
-                wasEverAddedToOctree = true;
-                ExceedsMovementThreshold = false;
-                thresholdPos = Position;
+                lastBounds = BoundingBox;
             }
         }
 
-        private bool propogateTransforms = false;
         public Matrix LocalTransform
         {
             get { return localTransform; }
@@ -109,15 +90,8 @@ namespace DwarfCorp
             {
                 localTransform = value;
                 HasMoved = true;
-
-                if ((Position - thresholdPos).LengthSquared() > 0.001)
-                    ExceedsMovementThreshold = true;
-
-                propogateTransforms = true;
             }
         }
-
-        private bool firstIter = true;
 
         [JsonIgnore]
         public Vector3 Position
@@ -129,27 +103,16 @@ namespace DwarfCorp
         public Vector3 LocalPosition
         {
             get { return LocalTransform.Translation; }
-            set { localTransform.Translation = value; }
+            set
+            {
+                localTransform.Translation = value;
+                HasMoved = true;
+            }
         }
 
         public BoundingBox BoundingBox = new BoundingBox();
 
-
-        public bool DrawScreenRect { get; set; }
-        public Vector3 BoundingBoxPos { get; set; }
-        public bool DrawBoundingBox { get; set; }
-        public bool DepthSort { get; set; }
-        public bool FrustrumCull { get; set; }
-        public bool DrawInFrontOfSiblings { get; set; }
-
-        public bool IsAboveCullPlane(ChunkManager Chunks)
-        {
-            return GlobalTransform.Translation.Y - GetBoundingBox().Extents().Y > (Chunks.ChunkData.MaxViewingLevel + 5);
-        }
-
-        public List<MotionAnimation> AnimationQueue { get; set; }
-
-        public bool ExceedsMovementThreshold { get; set; }
+        public List<MotionAnimation> AnimationQueue = new List<MotionAnimation>();
 
         public bool HasMoved
         {
@@ -166,78 +129,33 @@ namespace DwarfCorp
 
         public bool ParentMoved = false;
 
-        public uint GetID()
-        {
-            return GlobalID;
-        }
-
-
         protected Matrix localTransform = Matrix.Identity;
         protected Matrix globalTransform = Matrix.Identity;
         private bool hasMoved = true;
 
-        public bool AddToCollisionManager { get; set; }
-        public bool DrawReservation { get; set; }
-
-
-        [OnDeserialized]
-        public void OnDesrialized(StreamingContext ctx)
-        {
-            WasAddedToOctree = false;
-        }
-
         public Body()
         {
-            if(OnDestroyed == null)
-                OnDestroyed +=Body_OnDestroyed;
-        }
-
-        void Body_OnDestroyed()
-        {
-
         }
 
         public Body(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             this(manager, name, localTransform, boundingBoxExtents, boundingBoxPos, true)
         {
-            DrawReservation = false;
-            AnimationQueue = new List<MotionAnimation>();
-            DrawInFrontOfSiblings = false;
-            CollisionType = CollisionManager.CollisionType.None;
-            DrawScreenRect = false;
-
-            if (OnDestroyed == null)
-                OnDestroyed += Body_OnDestroyed;
-
-            lastBounds = GetBoundingBox();
         }
 
         public Body(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToCollisionManager) :
             base(name, manager)
         {
-            DrawReservation = false;
-            AnimationQueue = new List<MotionAnimation>();
-            AddToCollisionManager = addToCollisionManager;
-            BoundingBoxPos = boundingBoxPos;
-            DrawBoundingBox = false;
-            BoundingBox = new BoundingBox(localTransform.Translation - boundingBoxExtents / 2.0f + boundingBoxPos, localTransform.Translation + boundingBoxExtents / 2.0f + boundingBoxPos);
+            BoundingBoxSize = boundingBoxExtents;
+            LocalBoundingBoxOffset = boundingBoxPos;
 
+            SetFlag(Flag.AddToCollisionManager, addToCollisionManager);
             LocalTransform = localTransform;
-            HasMoved = true;
-            DepthSort = true;
-            FrustrumCull = true;
-            DrawInFrontOfSiblings = false;
-            CollisionType = CollisionManager.CollisionType.None;
-            DrawScreenRect = false;
-            
-            if (OnDestroyed == null)
-                OnDestroyed += Body_OnDestroyed;
+            GlobalTransform = localTransform;
 
-            lastBounds = GetBoundingBox();
-
+            SetFlag(Flag.FrustumCull, true);
         }
 
-        public void OrientToWalls()
+        public virtual void OrientToWalls()
         {
             Orient(0);
             var curr = new VoxelHandle(Manager.World.ChunkManager.ChunkData,
@@ -257,132 +175,49 @@ namespace DwarfCorp
             }
         }
 
-        public void Orient(float angle)
+        public virtual void Orient(float angle)
         {
             Matrix mat = Matrix.CreateRotationY(angle);
             mat.Translation = LocalTransform.Translation;
             LocalTransform = mat;
-        }
- 
-
-        public Rectangle GetScreenRect(Camera camera)
-        {
-            BoundingBox box = GetBoundingBox();
-
-            
-            Vector3 ext = (box.Max - box.Min);
-            Vector3 center = box.Center();
-
-
-            Vector3 p1 = camera.Project(box.Min);
-            Vector3 p2 = camera.Project(box.Max);
-            Vector3 p3 = camera.Project(box.Min + new Vector3(ext.X, 0, 0));
-            Vector3 p4 = camera.Project(box.Min + new Vector3(0, ext.Y, 0));
-            Vector3 p5 = camera.Project(box.Min + new Vector3(0, 0, ext.Z));
-            Vector3 p6 = camera.Project(box.Min + new Vector3(ext.X, ext.Y, 0));
-
-
-            Vector3 min = MathFunctions.Min(p1, p2, p3, p4, p5, p6);
-            Vector3 max = MathFunctions.Max(p1, p2, p3, p4, p5, p6);
-
-            return new Rectangle((int)min.X, (int)min.Y, (int)(max.X - min.X), (int)(max.Y - min.Y));
-
-        }
-
-
-        public bool Intersects(BoundingSphere sphere)
-        {
-            return (sphere.Intersects(BoundingBox));
-        }
-
-
-        public bool Intersects(BoundingFrustum fr)
-        {
-            return (fr.Intersects(BoundingBox));
-        }
-
-        public bool Intersects(BoundingBox box)
-        {
-            return (box.Intersects(BoundingBox));
-        }
-
-        public bool Intersects(Ray ray)
-        {
-            return (ray.Intersects(BoundingBox) != null);
-        }
-
-
+        } 
+        
         public virtual void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (ParentMoved) HasMoved = true;
-            ParentMoved = false;
-
-            if(AnimationQueue.Count > 0)
+            if (AnimationQueue.Count > 0)
             {
-                HasMoved = true;
-                MotionAnimation anim = AnimationQueue[0];
+                var anim = AnimationQueue[0];
                 anim.Update(gameTime);
 
                 LocalTransform = anim.GetTransform();
 
                 if(anim.IsDone())
-                {
                     AnimationQueue.RemoveAt(0);
-                }
             }
 
-            if (firstIter || propogateTransforms || HasMoved)
-            {
+            if (HasMoved || ParentMoved)
                 PropogateTransforms();
-                firstIter = false;
-                propogateTransforms = false;
-            }
+
+            ParentMoved = false;
         }
-
-        ///// <summary>
-        ///// Renders the component.
-        ///// </summary>
-        ///// <param name="gameTime">The game time.</param>
-        ///// <param name="chunks">The chunk manager.</param>
-        ///// <param name="camera">The camera.</param>
-        ///// <param name="spriteBatch">The sprite batch.</param>
-        ///// <param name="graphicsDevice">The graphics device.</param>
-        ///// <param name="effect">The shader to use.</param>
-        ///// <param name="renderingForWater">if set to <c>true</c> rendering for water reflections.</param>
-        //public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
-        //{
-        //}
-
 
         public void UpdateTransform()
         {
-            if (Parent != Manager.RootComponent && Parent != null)
-            {
+            if (Parent != null)
                 GlobalTransform = LocalTransform * (Parent as Body).GlobalTransform;
-                hasMoved = false;
-            }
             else
-            {
                 GlobalTransform = LocalTransform;
-                hasMoved = false;
-            }
-        }
 
+            hasMoved = false;
+        }
 
         public void PropogateTransforms()
         {
             UpdateTransform();
+
             foreach (var child in EnumerateChildren().OfType<Body>())
-            {
-                if (child == this)
-                {
-                    throw new InvalidOperationException("Somehow we ended up our own parent?");
-                }
-
                 child.PropogateTransforms();
-            }
         }
-
 
         public BoundingBox GetBoundingBox()
         {
@@ -391,34 +226,32 @@ namespace DwarfCorp
 
         public BoundingBox GetRotatedBoundingBox()
         {
-            Vector3 min = Vector3.Transform(BoundingBox.Min - GlobalTransform.Translation, GlobalTransform);
-            Vector3 max = Vector3.Transform(BoundingBox.Max - GlobalTransform.Translation, GlobalTransform);
+            var min = LocalBoundingBoxOffset - (BoundingBoxSize * 0.5f);
+            var max = LocalBoundingBoxOffset + (BoundingBoxSize * 0.5f);
+            min = Vector3.Transform(min, GlobalTransform);
+            max = Vector3.Transform(max, GlobalTransform);
             return new BoundingBox(MathFunctions.Min(min, max), MathFunctions.Max(min, max));
         }
 
-
         public void UpdateBoundingBox()
         {
-            Vector3 extents = (BoundingBox.Max - BoundingBox.Min) * 0.5f;
-            Vector3 translation = GlobalTransform.Translation;
-            BoundingBox.Min = translation - extents + BoundingBoxPos;
-            BoundingBox.Max = translation + extents + BoundingBoxPos;
+            if (IsFlagSet(Flag.RotateBoundingBox))
+                BoundingBox = GetRotatedBoundingBox();
+            else
+            {
+                BoundingBox.Min = GlobalTransform.Translation + LocalBoundingBoxOffset - (BoundingBoxSize * 0.5f);
+                BoundingBox.Max = GlobalTransform.Translation + LocalBoundingBoxOffset + (BoundingBoxSize * 0.5f);
+            }
         }
 
         public override void Die()
         {
-            UpdateBoundingBox();
-            if(AddToCollisionManager)
-            {
-                Manager.World.CollisionManager.RemoveObject(this, GetBoundingBox(), CollisionType);
-            }
+            if(IsFlagSet(Flag.AddToCollisionManager))
+                Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
             Active = false;
             IsVisible = false;
-            OnDestroyed.Invoke();
+            if (OnDestroyed != null) OnDestroyed();
             base.Die();
         }
-
-
     }
-
 }

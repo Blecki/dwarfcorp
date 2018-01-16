@@ -79,7 +79,7 @@ namespace DwarfCorp
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
-            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)) as Inventory;
+            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
 
             Physics.AddChild(Shadow.Create(0.75f, Manager));
 
@@ -251,11 +251,7 @@ namespace DwarfCorp
 
         void InitializeAnimations()
         {
-            CompositeAnimation.Descriptor descriptor =
-    FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
-        ContentPaths.GetFileAsString(ContentPaths.Entities.Demon.demon_animations));
-            Animations = new List<Animation>();
-            Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Demon));
+            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Demon.demon_animations, "Demon");
         }
 
         public void InitializeWeapons()

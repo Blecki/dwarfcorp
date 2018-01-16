@@ -44,11 +44,12 @@ namespace DwarfCorp
         {
             var frustrum = Camera.GetFrustrum();
 
+            // Todo: Use an octtree for this.
             var visibleComponents = Renderables.Where(r =>
             {
                 if (!r.IsVisible) return false;
-                if (r.IsAboveCullPlane(chunks)) return false;
-                if (r.FrustrumCull)
+                if (chunks.IsAboveCullPlane(r.GetBoundingBox())) return false;
+                if (r.FrustumCull)
                 {
                     if ((r.GlobalTransform.Translation - Camera.Position).LengthSquared() >=
                         chunks.DrawDistanceSquared) return false;
@@ -57,16 +58,6 @@ namespace DwarfCorp
 
                 return true;
             }).ToList();
-
-            // Need to identify transparent entities and draw them last. Alpha masked entities do not 
-            //   count - they don't blend!
-            //visibleComponents.Sort((A, B) =>
-            //{
-            //    if (A == B) return 0;
-            //    return
-            //    -(Camera.Position - A.GlobalTransform.Translation).LengthSquared()
-            //        .CompareTo((Camera.Position - B.GlobalTransform.Translation).LengthSquared());
-            //});
 
             return visibleComponents;
         }

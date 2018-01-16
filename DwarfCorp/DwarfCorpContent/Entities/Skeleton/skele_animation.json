@@ -185,7 +185,7 @@
          "AssetName" : "Entities\\Skeleton\\skele",
          "FrameHeight" : 40,
          "FrameWidth" : 32
-      },
+      }
    ],
    "Tints" : [ "255, 255, 255, 255"]
 }

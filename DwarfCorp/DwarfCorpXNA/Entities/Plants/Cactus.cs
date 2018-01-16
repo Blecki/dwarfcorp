@@ -41,48 +41,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Pumpkin : Plant
-    {
-        public Pumpkin() { }
-
-        public Pumpkin(ComponentManager Manager, Vector3 position, string asset, float bushSize) :
-            base(Manager, "Pumpkin", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), asset, bushSize)
-        {
-            BoundingBoxPos = Vector3.Zero;
-            SeedlingAsset = "pumpkinvinesprout";
-            Matrix matrix = Matrix.Identity;
-            matrix.Translation = position;
-            LocalTransform = matrix;
-            AddChild(new Health(Manager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
-            AddChild(new Flammable(Manager, "Flames"));
-
-            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
-            {
-                Resources = new List<Inventory.InventoryItem>(),
-            }) as Inventory;
-
-            inventory.AddResource(new ResourceAmount()
-            {
-                NumResources = 2,
-                ResourceType = ResourceLibrary.ResourceType.Pumkin
-            });
-
-            var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
-                Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
-            {
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_bush_harvest_1
-            }) as ParticleTrigger;
-
-            Tags.Add("Vegetation");
-            Tags.Add("Pumpkin");
-
-            AddToCollisionManager = true;
-            CollisionType = CollisionManager.CollisionType.Static;
-            PropogateTransforms();
-        }
-    }
-
-    [JsonObject(IsReference =true)]
     public class Cactus : Plant
     {
         public Cactus() { }
@@ -97,7 +55,7 @@ namespace DwarfCorp
             AddChild(new Health(Manager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(Manager, "Flames"));
 
-            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)
+            Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), LocalBoundingBoxOffset)
             {
                 Resources = new List<Inventory.InventoryItem>(),
             }) as Inventory;
@@ -109,7 +67,7 @@ namespace DwarfCorp
             });
 
             var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
-                Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
+                Matrix.Identity, LocalBoundingBoxOffset, GetBoundingBox().Extents())
             {
                 SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_bush_harvest_1
             }) as ParticleTrigger;
@@ -117,7 +75,6 @@ namespace DwarfCorp
             Tags.Add("Vegetation");
             Tags.Add("Cactus");
 
-            AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
             PropogateTransforms();
         }

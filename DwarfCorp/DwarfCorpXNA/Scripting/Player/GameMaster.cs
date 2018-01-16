@@ -37,6 +37,7 @@ namespace DwarfCorp
             Craft,
             MoveObjects,
             DeconstructObjects,
+            BuildRail,
             God
         }
 
@@ -226,6 +227,8 @@ namespace DwarfCorp
             {
                 Player = this
             };
+
+            Tools[ToolMode.BuildRail] = new BuildRailTool(this);
         }
 
         void Time_NewDay(DateTime time)
@@ -310,13 +313,15 @@ namespace DwarfCorp
 
             foreach (var m in Faction.Minions)
             {
-                m.Creature.SelectionCircle.IsVisible = false;
+                if (m.Creature.SelectionCircle != null)
+                    m.Creature.SelectionCircle.IsVisible = false;
                 m.Creature.Sprite.DrawSilhouette = false;
             };
 
             foreach (CreatureAI creature in Faction.SelectedMinions)
             {
-                creature.Creature.SelectionCircle.IsVisible = true;
+                if (creature.Creature.SelectionCircle != null)
+                    creature.Creature.SelectionCircle.IsVisible = true;
                 creature.Creature.Sprite.DrawSilhouette = true;
 
                 foreach (Task task in creature.Tasks)
@@ -415,6 +420,16 @@ namespace DwarfCorp
                             orphanedTasks.Add(task);
                         }
                     }
+                    else if (ent.Type == DesignationType.Craft)
+                    {
+                        var task = new CraftItemTask(ent.Tag as CraftDesignation);
+                        if (!TaskManager.HasTask(task) &&
+                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
+                        {
+                            orphanedTasks.Add(task);
+                        }
+                    }
+                    
                     /// TODO ... other entity task types
                 }
 

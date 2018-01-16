@@ -23,9 +23,10 @@ namespace DwarfCorp
         [JsonIgnore]
         public IndexBuffer IndexBuffer = null;
 
-        public ushort[] Indexes = new ushort[8];
+        // Todo: Store shorts instead
+        public ushort[] Indexes = new ushort[6];
 
-        public ExtendedVertex[] Vertices = new ExtendedVertex[8];
+        public ExtendedVertex[] Vertices = new ExtendedVertex[6];
 
         [JsonIgnore]
         public VertexBuffer VertexBuffer = null;

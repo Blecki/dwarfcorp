@@ -43,19 +43,19 @@ namespace DwarfCorp
           
         }
 
-        public void Load(ComponentManager Components, Dictionary<string, List<EmitterData>> data)
+        public void Load(GraphicsDevice Device, ComponentManager Components, Dictionary<string, List<EmitterData>> data)
         {
             Effects.Clear();
             foreach (var effect in data)
             {
-                RegisterEffect(Components, effect.Key, effect.Value.ToArray());
+                RegisterEffect(Device, Components, effect.Key, effect.Value.ToArray());
             }
         }
 
-        public ParticleManager(ComponentManager Components)
+        public ParticleManager(GraphicsDevice Device, ComponentManager Components)
         {
             Effects = new Dictionary<string, ParticleEffect>();
-            Load(Components, ContentPaths.LoadFromJson<Dictionary<string, List<EmitterData>>>(ContentPaths.Particles.particles));
+            Load(Device, Components, ContentPaths.LoadFromJson<Dictionary<string, List<EmitterData>>>(ContentPaths.Particles.particles));
         }
 
         public void Trigger(string emitter, Vector3 position, Color tint, int num)
@@ -63,18 +63,16 @@ namespace DwarfCorp
             Effects[emitter].Trigger(num, position, tint);
         }
 
-        public void RegisterEffect(ComponentManager Components, string name, params EmitterData[] data)
+        public void RegisterEffect(GraphicsDevice Device, ComponentManager Components, string name, params EmitterData[] data)
         {
             List<ParticleEmitter> emitters = new List<ParticleEmitter>();
 
             foreach (EmitterData emitter in data)
             {
-                emitters.Add(Components.RootComponent.AddChild(new ParticleEmitter(Components, name, Matrix.Identity, emitter)
+                emitters.Add(Components.RootComponent.AddChild(new ParticleEmitter(Device, Components, name, Matrix.Identity, emitter)
                 {
                     LightsWithVoxels = false,
-                    DepthSort = false,
                     Tint = Color.White,
-                    FrustrumCull = false
                 }) as ParticleEmitter);
             }
             Effects[name] = new ParticleEffect()

@@ -205,12 +205,9 @@ namespace DwarfCorp
 
         void InitializeAnimations()
         {
-            CompositeAnimation.Descriptor descriptor =
-    FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
-        ContentPaths.GetFileAsString(ContentPaths.Entities.Skeleton.necro_animations));
-            Animations = new List<Animation>();
-            Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Skeleton));
+            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Skeleton.necro_animations, "Skeleton");
         }
+
         void InitializeActions()
         {
             Actions =

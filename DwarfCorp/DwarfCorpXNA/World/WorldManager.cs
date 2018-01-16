@@ -280,8 +280,6 @@ namespace DwarfCorp
 
         public List<Faction> Natives { get; set; }
 
-        private bool SleepPrompt = false;
-
         public CraftLibrary CraftLibrary = null;
 
         public int GameID = -1;
@@ -300,10 +298,12 @@ namespace DwarfCorp
         public GameState gameState;
 
         public Gui.Root Gui;
+        private Widget SleepPrompt = null;
 
         public Action<String> ShowTooltip = null;
         public Action<String> ShowInfo = null;
         public Action<String> ShowToolPopup = null;
+        
         public Action<Gui.MousePointer> SetMouse = null;
         public Action<String, int> SetMouseOverlay = null;
         public Gui.MousePointer MousePointer = new Gui.MousePointer("mouse", 1, 0);
@@ -479,25 +479,28 @@ namespace DwarfCorp
                 GamePerformance.Instance.StartTrackPerformance("All Asleep");
                 bool allAsleep = Master.AreAllEmployeesAsleep();
 #if !UPTIME_TEST
-                if (SleepPrompt && allAsleep && !FastForwardToDay && Time.IsNight())
+                if (SleepPrompt == null && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
-                    var sleepingPrompt = Gui.ConstructWidget(new Gui.Widgets.Confirm
+                    SleepPrompt = Gui.ConstructWidget(new Gui.Widgets.Confirm
                     {
                         Text = "All of your employees are asleep. Skip to daytime?",
                         OkayText = "Skip to Daytime",
                         CancelText = "Don't Skip",
                         OnClose = (sender) =>
                         {
-                            if ((sender as Gui.Widgets.Confirm).DialogResult == DwarfCorp.Gui.Widgets.Confirm.Result.OKAY)
+                            if ((sender as Confirm).DialogResult == Confirm.Result.OKAY)
                                 FastForwardToDay = true;
                         }
                     });
-                    Gui.ShowModalPopup(sleepingPrompt);
-                    SleepPrompt = false;
+                    Gui.ShowModalPopup(SleepPrompt);
                 }
                 else if (!allAsleep)
                 {
-                    SleepPrompt = true;
+                    if (SleepPrompt != null)
+                        SleepPrompt.Close();
+                    Time.Speed = 100;
+                    FastForwardToDay = false;
+                    SleepPrompt = null;
                 }
 #endif
                 GamePerformance.Instance.StopTrackPerformance("All Asleep");
@@ -1124,11 +1127,10 @@ namespace DwarfCorp
             // Now check for biome ambience.
             var pos = vox.WorldPosition;
             var biome = Overworld.GetBiomeAt(pos);
-            var biomeData = BiomeLibrary.Biomes[biome];
 
-            if (!string.IsNullOrEmpty(biomeData.DayAmbience))
+            if (!string.IsNullOrEmpty(biome.DayAmbience))
             {
-                if (prevAmbience[0] != biomeData.DayAmbience)
+                if (prevAmbience[0] != biome.DayAmbience)
                 {
                     if (!string.IsNullOrEmpty(prevAmbience[0]))
                     {
@@ -1140,17 +1142,17 @@ namespace DwarfCorp
                         SoundManager.StopAmbience(prevAmbience[1]);
                         prevAmbience[1] = null;
                     }
-                    SoundManager.PlayAmbience(biomeData.DayAmbience);
+                    SoundManager.PlayAmbience(biome.DayAmbience);
                 }
 
-                prevAmbience[0] = biomeData.DayAmbience;
+                prevAmbience[0] = biome.DayAmbience;
             }
 
-            if (!string.IsNullOrEmpty(biomeData.NightAmbience) && prevAmbience[1] != biomeData.NightAmbience)
+            if (!string.IsNullOrEmpty(biome.NightAmbience) && prevAmbience[1] != biome.NightAmbience)
             {
-                prevAmbience[1] = biomeData.NightAmbience;
+                prevAmbience[1] = biome.NightAmbience;
 
-                SoundManager.PlayAmbience(biomeData.NightAmbience);
+                SoundManager.PlayAmbience(biome.NightAmbience);
             }
         }
     }

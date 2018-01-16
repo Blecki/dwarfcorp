@@ -144,6 +144,11 @@ namespace DwarfCorp
 
         public WaterManager Water { get; set; }
 
+        public bool IsAboveCullPlane(BoundingBox Box)
+        {
+            return Box.Min.Y > (ChunkData.MaxViewingLevel + 5);
+        }
+
         public ChunkData ChunkData
         {
             get { return chunkData; }

@@ -1,0 +1,113 @@
+{
+  "Animations": [
+    {
+      "Frames": [
+        [ 0, 0, 0 ]
+      ],
+      "Name": "IdleFORWARD",
+      "Speed": [ 5.0 ]
+    },
+    {
+      "Frames": [
+        [ 0, 1, 0 ]
+      ],
+      "Name": "IdleLEFT",
+      "Speed": [ 5.0 ]
+    },
+    {
+      "Frames": [
+        [ 0, 2, 0 ]
+      ],
+      "Name": "IdleRIGHT",
+      "Speed": [ 5.0 ]
+    },
+    {
+      "Frames": [
+        [ 0, 3, 0 ]
+      ],
+      "Name": "IdleBACKWARD",
+      "Speed": [ 5.0 ]
+    },
+
+
+    {
+      "Frames": [
+        [ 0, 0, 0 ],
+        [ 1, 0, 0 ]
+      ],
+      "Name": "WalkingFORWARD",
+      "Speed": [ 5.0 ]
+    },
+    {
+      "Frames": [
+        [ 0, 1, 0 ],
+        [ 1, 1, 0 ]
+      ],
+      "Name": "WalkingLEFT",
+      "Speed": [ 5.0 ]
+    },
+    {
+      "Frames": [
+        [ 0, 2, 0 ],
+        [ 1, 2, 0 ]
+      ],
+      "Name": "WalkingRIGHT",
+      "Speed": [ 5.0 ]
+    },
+    {
+      "Frames": [
+        [ 0, 3, 0 ],
+        [ 1, 3, 0 ]
+      ],
+      "Name": "WalkingBACKWARD",
+      "Speed": [ 5.0 ]
+    },
+
+
+    {
+      "Frames": [
+        [ 0, 4, 0 ],
+        [ 1, 4, 0 ],
+        [ 2, 4, 0 ]
+      ],
+      "Name": "FlyingFORWARD",
+      "Speed": [ 0.1 ]
+    },
+    {
+      "Frames": [
+        [ 0, 5, 0 ],
+        [ 1, 5, 0 ],
+        [ 2, 5, 0 ]
+      ],
+      "Name": "FlyingLEFT",
+      "Speed": [ 0.1 ]
+    },
+    {
+      "Frames": [
+        [ 0, 6, 0 ],
+        [ 1, 6, 0 ],
+        [ 2, 6, 0 ]
+      ],
+      "Name": "FlyingRIGHT",
+      "Speed": [ 0.1 ]
+    },
+    {
+      "Frames": [
+        [ 0, 7, 0 ],
+        [ 1, 7, 0 ],
+        [ 2, 7, 0 ]
+      ],
+      "Name": "FlyingBACKWARD",
+      "Speed": [ 0.1 ]
+    }
+   ],
+   "Layers" : [
+      {
+         "$id" : "1",
+         "AssetName" : "Entities\\Animals\\Birds\\bird5",
+         "FrameHeight" : 16,
+         "FrameWidth" : 24
+      }
+   ],
+   "Tints" : [ "255, 255, 255, 255"]
+}

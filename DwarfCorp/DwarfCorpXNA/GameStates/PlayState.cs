@@ -1277,14 +1277,11 @@ namespace DwarfCorp.GameStates
                             },
                             BuildAction = (sender, args) =>
                             {
-                                var buildInfo = sender.Parent as Gui.Widgets.BuildCraftInfo;
+                                var buildInfo = sender.Parent as BuildCraftInfo;
                                 if (buildInfo == null)
-                                {
                                     return;
-                                }
                                 sender.Parent.Hidden = true;
-                                data.SelectedResources = buildInfo.GetSelectedResources();
-                                data.NumRepeats = buildInfo.GetNumRepeats();
+                                Master.Faction.CraftBuilder.SelectedResources = buildInfo.GetSelectedResources();
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                 Master.Faction.CraftBuilder.IsEnabled = true;
@@ -1357,15 +1354,10 @@ namespace DwarfCorp.GameStates
                                 if (buildInfo == null)
                                     return;
                                 sender.Parent.Hidden = true;
-                                data.SelectedResources = buildInfo.GetSelectedResources();
-                                data.NumRepeats = 1;
                                 var assignments = new List<Task>();
-                                for(int i = 0; i < buildInfo.GetNumRepeats(); i++)
-                                {
-                                    assignments.Add(new CraftResourceTask(data));
-                                }
+                                assignments.Add(new CraftResourceTask(data, buildInfo.GetNumRepeats(), buildInfo.GetSelectedResources()));
                                 World.Master.TaskManager.AddTasks(assignments);
-                                World.ShowToolPopup(data.CurrentVerb + " " + data.NumRepeats + " " + data.Name);
+                                World.ShowToolPopup(data.CurrentVerb + " " + buildInfo.GetNumRepeats() + " " + data.Name);
                                 World.Tutorial("build crafts");
                             },
                         },
@@ -1385,6 +1377,71 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = VerticalAlign.Center,
                 KeepChildVisible = true,
                 ReplacementMenu = menu_ResourceTypes,
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+            };
+
+            #endregion
+
+            #region icon_Rail
+
+            var icon_menu_Rail_Return = new FlatToolTray.Icon
+            {
+                Icon = new TileReference("tool-icons", 11),
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
+            };
+
+            var menu_Rail = new FlatToolTray.Tray
+            {
+                Tag = "build rail",
+                ItemSource = new List<Widget>(),
+                OnShown = (widget) =>
+                {
+                    // Dynamically rebuild the tray
+                    widget.Clear();
+                    (widget as FlatToolTray.Tray).ItemSource =
+                        (new Widget[] { icon_menu_Rail_Return }).Concat(
+                            Rail.RailLibrary.EnumeratePatterns()
+                            .Select(data => new FlatToolTray.Icon
+                            {
+                                Tooltip = "Build " + data.Name,
+                                Icon = new TileReference("rail", data.Icon),
+                                KeepChildVisible = true,
+                                ExpandChildWhenDisabled = true,
+                                Behavior = FlatToolTray.IconBehavior.LeafIcon,
+                                OnClick = (sender, args) =>
+                                {
+                                    Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // This should be set by the tool.
+                                    Master.Faction.CraftBuilder.IsEnabled = false;
+                                    var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as BuildRailTool;
+                                    railTool.Pattern = data;
+                                    railTool.SelectedResources = new List<ResourceAmount>
+                                    {
+                                        new ResourceAmount(ResourceLibrary.ResourceType.Iron, 2)
+                                    };
+                                    ChangeTool(GameMaster.ToolMode.BuildRail);
+                                },
+                                Hidden = false
+                            }));
+                    widget.Construct();
+                    widget.Hidden = false;
+                    widget.Layout();
+                }
+            };
+
+            var icon_RailTool = new FlatToolTray.Icon
+            {
+                Text = "Rail",
+                EnabledTextColor = Vector4.One,
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                Tooltip = "Rail",
+                KeepChildVisible = true,
+                ReplacementMenu = menu_Rail,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
@@ -1414,7 +1471,10 @@ namespace DwarfCorp.GameStates
                         icon_BuildWall,
                         icon_BuildFloor,
                         icon_BuildCraft,
-                        icon_BuildResource
+                        icon_BuildResource,
+#if DEBUG
+                        icon_RailTool,
+#endif
                     }
             };
 
@@ -1422,6 +1482,7 @@ namespace DwarfCorp.GameStates
             icon_menu_ResourceTypes_Return.ReplacementMenu = menu_BuildTools;
             icon_menu_RoomTypes_Return.ReplacementMenu = menu_BuildTools;
             icon_menu_WallTypes_Return.ReplacementMenu = menu_BuildTools;
+            icon_menu_Rail_Return.ReplacementMenu = menu_BuildTools;
 
             var icon_BuildTool = new FlatToolTray.Icon
             {
@@ -1478,9 +1539,7 @@ namespace DwarfCorp.GameStates
                             {
                                 var buildInfo = sender.Parent as Gui.Widgets.BuildCraftInfo;
                                 sender.Parent.Hidden = true;
-                                data.SelectedResources = buildInfo.GetSelectedResources();
-                                data.NumRepeats = buildInfo.GetNumRepeats();
-                                List<Task> assignments = new List<Task> { new CraftResourceTask(data) };
+                                List<Task> assignments = new List<Task> { new CraftResourceTask(data, buildInfo.GetNumRepeats(), buildInfo.GetSelectedResources()) };
                                 World.Master.TaskManager.AddTasks(assignments);
                                 World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
                                 World.Tutorial("cook");
@@ -2004,7 +2063,7 @@ namespace DwarfCorp.GameStates
                     icon_GuardTool,
                     icon_AttackTool,
                     icon_FarmTool,
-                    icon_MagicTool
+                    icon_MagicTool,
                 },
                 OnShown = (sender) => ChangeTool(GameMaster.ToolMode.SelectUnits),
                 Tag = "tools"
@@ -2032,7 +2091,8 @@ namespace DwarfCorp.GameStates
                     menu_ResourceTypes,
                     menu_RoomTypes,
                     menu_WallTypes,
-                    menu_Floortypes
+                    menu_Floortypes,
+                    menu_Rail
                 },
                 /*OnLayout = (sender) =>
                 {

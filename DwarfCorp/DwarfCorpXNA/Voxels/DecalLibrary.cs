@@ -51,34 +51,6 @@ namespace DwarfCorp
         {
         }
 
-        private static DecalType.FringeTileUV[] CreateFringeUVs(Point[] Tiles)
-        {
-            System.Diagnostics.Debug.Assert(Tiles.Length == 3);
-
-            var r = new DecalType.FringeTileUV[8];
-
-            // North
-            r[0] = new DecalType.FringeTileUV(Tiles[0].X, (Tiles[0].Y * 2) + 1, 16, 32);
-            // East
-            r[1] = new DecalType.FringeTileUV((Tiles[1].X * 2) + 1, Tiles[1].Y, 32, 16);
-            // South
-            r[2] = new DecalType.FringeTileUV(Tiles[0].X, (Tiles[0].Y * 2), 16, 32);
-            // West
-            r[3] = new DecalType.FringeTileUV(Tiles[1].X * 2, Tiles[1].Y, 32, 16);
-
-            // NW
-            r[4] = new DecalType.FringeTileUV((Tiles[2].X * 2) + 1, (Tiles[2].Y * 2) + 1, 32, 32);
-            // NE
-            r[5] = new DecalType.FringeTileUV((Tiles[2].X * 2), (Tiles[2].Y * 2) + 1, 32, 32);
-            // SE
-            r[6] = new DecalType.FringeTileUV((Tiles[2].X * 2), (Tiles[2].Y * 2), 32, 32);
-            // SW
-            r[7] = new DecalType.FringeTileUV((Tiles[2].X * 2) + 1, (Tiles[2].Y * 2), 32, 32);
-
-            return r;
-        }
-
-
         public static void InitializeDefaultLibrary()
         {
             TypeList = FileUtils.LoadJson<List<DecalType>>(ContentPaths.decal_types, false);
@@ -91,23 +63,19 @@ namespace DwarfCorp
                 ++ID;
 
                 Types[type.Name] = type;
-
-                if (type.HasFringeTransitions)
-                    type.FringeTransitionUVs = CreateFringeUVs(type.FringeTiles);
             }
         }
 
-        public static DecalType GetDecalType(byte id)
+        public static DecalType GetGrassType(byte id)
         {
             return TypeList[id];
         }
 
-        public static DecalType GetDecalType(string name)
+        public static DecalType GetGrassType(string name)
         {
             if (name == null)
-            {
                 return null;
-            }
+
             DecalType r = null;
             Types.TryGetValue(name, out r);
             return r;

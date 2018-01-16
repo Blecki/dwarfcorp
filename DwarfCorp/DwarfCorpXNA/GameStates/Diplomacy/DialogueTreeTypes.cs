@@ -16,7 +16,7 @@ namespace DwarfCorp.Dialogue
         public Gui.Widget ChoicePanel;
         public Gui.Widget SpeechBubble;
         public Gui.Widgets.TradePanel TradePanel;
-        public Animation SpeakerAnimation;
+        public AnimationPlayer SpeakerAnimation;
 
         public TradeEnvoy Envoy;
         public int NumOffensiveTrades = 0;

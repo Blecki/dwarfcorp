@@ -256,7 +256,7 @@ namespace DwarfCorp
                 }
 
                 // Wait until the animation is done playing before continuing.
-                while (!agent.Sprite.CurrentAnimation.IsDone() && agent.Sprite.CurrentAnimation.IsPlaying)
+                while (!agent.Sprite.AnimPlayer.IsDone() && agent.Sprite.AnimPlayer.IsPlaying)
                 {
                     agent.Physics.Face(vox.WorldPosition + Vector3.One * 0.5f);
                     agent.Physics.Velocity *= 0.01f;

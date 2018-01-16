@@ -143,7 +143,10 @@ namespace DwarfCorp
             Visible = 1,
             Active = 2,
             Dead = 4,
-            ShouldSerialize = 8
+            ShouldSerialize = 8,
+            FrustumCull = 16,
+            AddToCollisionManager = 32,
+            RotateBoundingBox = 64,
         }
 
         public bool IsFlagSet(Flag F)
@@ -151,12 +154,19 @@ namespace DwarfCorp
             return (Flags & F) == F;
         }
 
-        public void SetFlag(Flag F, bool Value)
+        public GameComponent SetFlag(Flag F, bool Value)
         {
+            if (F == Flag.Dead && Value == true)
+            {
+                var x = 5;
+            }
+
             if (Value)
                 Flags |= F;
             else
                 Flags &= ~F;
+
+            return this;
         }
 
         public void SetFlagRecursive(Flag F, bool Value)
@@ -187,7 +197,9 @@ namespace DwarfCorp
         public bool IsDead
         {
             get { return IsFlagSet(Flag.Dead); }
-            set { SetFlag(Flag.Dead, value); }
+            set {
+                SetFlag(Flag.Dead, value);
+            }
         }
         
         public virtual void ReceiveMessageRecursive(Message messageToReceive)
@@ -214,10 +226,7 @@ namespace DwarfCorp
             Tags = new List<string>();
             Name = "uninitialized";
 
-            SetFlag(Flag.Active, true);
-            SetFlag(Flag.Visible, true);
-            SetFlag(Flag.Dead, false);
-            SetFlag(Flag.ShouldSerialize, true);
+            Flags = Flag.Active | Flag.Visible | Flag.ShouldSerialize;
         }
 
         public GameComponent(ComponentManager Manager) : this()

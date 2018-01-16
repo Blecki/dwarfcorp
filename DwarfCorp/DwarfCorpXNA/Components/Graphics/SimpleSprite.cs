@@ -47,6 +47,12 @@ namespace DwarfCorp
         {
         }
         
+        public void SetFrame(Point Frame)
+        {
+            this.Frame = Frame;
+            Verticies = null;
+        }
+
         // Perhaps should be handled in base class?
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {
@@ -85,7 +91,7 @@ namespace DwarfCorp
             if (Verticies == null)
             {
                 float normalizeX = Sheet.FrameWidth / (float)(Sheet.Width);
-                float normalizeY = Sheet.FrameWidth / (float)(Sheet.Height);
+                float normalizeY = Sheet.FrameHeight / (float)(Sheet.Height);
 
                 List<Vector2> uvs = new List<Vector2>
                 {

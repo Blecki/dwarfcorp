@@ -71,9 +71,9 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(Manager);
 
-            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
+            var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32);
 
-            List<Point> frames = new List<Point>
+            var frames = new List<Point>
             {
                 new Point(1, 3),
                 new Point(3, 3),
@@ -81,25 +81,24 @@ namespace DwarfCorp
                 new Point(3, 3)
             };
 
-            var lampAnimation = new Animation(GameState.Game.GraphicsDevice, 
-                new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture), 
-                "Forge", 32, 32, 
-                frames, 
-                true, Color.White, 3.0f, 1f, 1.0f, false);
+            var forgeAnimation = AnimationLibrary.CreateAnimation(spriteSheet, frames, "ForgeLightAnimation");
 
-            var sprite = AddChild(new Sprite(Manager, "sprite", Matrix.Identity, spriteSheet, false)
+            var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.Identity, false)
             {
                 LightsWithVoxels = false
-            }) as Sprite;
+            }) as AnimatedSprite;
 
-            sprite.AddAnimation(lampAnimation);
+            sprite.AddAnimation(forgeAnimation);
+            sprite.AnimPlayer.Loop(forgeAnimation);
             sprite.SetFlag(Flag.ShouldSerialize, false);
-            lampAnimation.Play();
 
             AddChild(new LightEmitter(Manager, "light", Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 50, 4)
             {
                 HasMoved = true
             }).SetFlag(Flag.ShouldSerialize, false);
+
+            // This is a hack to make the animation update at least once even when the object is created inactive by the craftbuilder.
+            sprite.AnimPlayer.Update(new DwarfTime());
         }
     }
 }

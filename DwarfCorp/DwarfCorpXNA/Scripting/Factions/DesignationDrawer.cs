@@ -58,7 +58,8 @@ namespace DwarfCorp
         private static DesignationTypeProperties DefaultProperties = new DesignationTypeProperties
         {
             Color = Color.Gray,
-            Icon = null
+            Icon = null,
+            ModulatedColor = new Color(255, 255, 255, 128)
         };
 
         public DesignationDrawer()
@@ -111,11 +112,17 @@ namespace DwarfCorp
                 Color = Color.LimeGreen,
                 Icon = new NamedImageFrame("newgui/pointers", 32, 4, 1)
             });
+
+            DesignationProperties.Add(DesignationType.Craft, new DesignationTypeProperties
+            {
+                Color = Color.AntiqueWhite,
+                Icon = new NamedImageFrame("newgui/pointers", 32, 4, 0)
+            });
         }
 
         public void DrawHilites(
             DesignationSet Set,
-            Action<Vector3, Vector3, Color, float> DrawBoxCallback,
+            Action<Vector3, Vector3, Color, float, bool> DrawBoxCallback,
             Action<Vector3, VoxelType> DrawPhantomCallback)
         {
             var colorModulation = Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds * 2.0f));
@@ -145,7 +152,7 @@ namespace DwarfCorp
                     if (voxel.Type == DesignationType.Put) // Hate this.
                         DrawPhantomCallback(v, VoxelLibrary.GetVoxelType((voxel.Tag as short?).Value));
                     else
-                        DrawBoxCallback(v, Vector3.One, props.ModulatedColor, props.LineWidth);
+                        DrawBoxCallback(v, Vector3.One, props.ModulatedColor, props.LineWidth, true);
                 }
             }
 
@@ -157,14 +164,26 @@ namespace DwarfCorp
                     if (DesignationProperties.ContainsKey(entity.Type))
                         props = DesignationProperties[entity.Type];
 
-                    entity.Body.SetTintRecursive(props.ModulatedColor, true);
-                    var box = entity.Body.GetBoundingBox();
-                    DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, props.LineWidth);
+                    entity.Body.SetTintRecursive(props.ModulatedColor);
+
+                    // Todo: More consistent drawing?
+                    if (entity.Type == DesignationType.Craft)
+                    {
+                        entity.Body.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                    }
+                    else
+                    {
+                        var box = entity.Body.GetBoundingBox();
+                        DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, props.LineWidth, false);
+                    }
+
                     if (props.Icon != null)
                     {
                         Drawer2D.DrawSprite(props.Icon, entity.Body.Position + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
                     }
                 }
+                else if (entity.Type == DesignationType.Craft) // Make the ghost object invisible if these designations are turned off.
+                    entity.Body.SetFlagRecursive(GameComponent.Flag.Visible, false);
             }
         }
     }

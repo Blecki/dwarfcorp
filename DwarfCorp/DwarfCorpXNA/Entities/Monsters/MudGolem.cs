@@ -82,7 +82,7 @@ namespace DwarfCorp
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
-            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)) as Inventory;
+            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
 
             var gems = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.Gem);
             for (int i = 0; i < 16;  i++)
@@ -197,11 +197,7 @@ namespace DwarfCorp
 
         void InitializeAnimations()
         {
-            CompositeAnimation.Descriptor descriptor =
-            FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
-                ContentPaths.GetFileAsString(ContentPaths.Entities.mudman_animation));
-            Animations = new List<Animation>();
-            Animations.AddRange(descriptor.GenerateAnimations("MudGolem"));
+            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.mudman_animation, "MudGolem");
         }
 
         public void InitializeWeapons()
@@ -271,11 +267,7 @@ namespace DwarfCorp
 
         void InitializeAnimations()
         {
-            CompositeAnimation.Descriptor descriptor =
-            FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
-                ContentPaths.GetFileAsString(ContentPaths.Entities.snowman_animation));
-            Animations = new List<Animation>();
-            Animations.AddRange(descriptor.GenerateAnimations("SnowGolem"));
+            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.snowman_animation, "Snowman");
         }
 
         public void InitializeWeapons()

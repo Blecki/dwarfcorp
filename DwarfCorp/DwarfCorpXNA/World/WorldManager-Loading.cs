@@ -173,8 +173,6 @@ namespace DwarfCorp
                     Vector3 extents = new Vector3(1500, 1500, 1500);
                     CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
-
-                    CompositeLibrary.Initialize();
                     CraftLibrary = new CraftLibrary();
 
                     new PrimitiveLibrary(GraphicsDevice, Content);
@@ -192,7 +190,8 @@ namespace DwarfCorp
                     DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
                     DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
                     VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice, Tilesheet);
-                    DecalLibrary.InitializeDefaultLibrary();
+                    GrassLibrary.InitializeDefaultLibrary();
+                DecalLibrary.InitializeDefaultLibrary();
 
                     bloom = new BloomComponent(Game)
                     {
@@ -458,7 +457,7 @@ namespace DwarfCorp
                 ChunkManager.camera = Camera;
 
                 SetLoadingMessage("Creating Particles ...");
-                ParticleManager = new ParticleManager(ComponentManager);
+                ParticleManager = new ParticleManager(GraphicsDevice, ComponentManager);
 
                 SetLoadingMessage("Creating GameMaster ...");
                 Master = new GameMaster(Factions.Factions["Player"], Game, ComponentManager, ChunkManager,

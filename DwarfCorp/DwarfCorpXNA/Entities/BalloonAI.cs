@@ -142,7 +142,7 @@ namespace DwarfCorp
                 case BalloonState.Leaving:
                     TargetPosition = Vector3.UnitY * 100 + body.GlobalTransform.Translation;
 
-                    if(body.GlobalTransform.Translation.Y > 300)
+                    if(body.GlobalTransform.Translation.Y > 65)
                     {
                         Die();
                     }

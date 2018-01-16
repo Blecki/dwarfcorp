@@ -1,10 +1,9 @@
-{
-  "Grassland": {
-    "Biome": 1,
+[
+  {
     "Name": "Grassland",
-    "Icon":  13,
-	"DayAmbience" : "grassland_ambience_day",
-	"NightAmbience" : "grassland_ambience_night",
+    "Icon": 13,
+    "DayAmbience": "grassland_ambience_day",
+    "NightAmbience": "grassland_ambience_night",
     "Vegetation": [
       {
         "Name": "Wheat",
@@ -72,31 +71,31 @@
       }
     ],
     "SoilLayer": {
-        "VoxelType" :  "Dirt",
-        "Depth" :  3
+      "VoxelType": "Dirt",
+      "Depth": 3
     },
-    "SubsurfaceLayers": [ 
-    {
-        "VoxelType" :  "Stone",
-        "Depth" :  128
-    }
+    "SubsurfaceLayers": [
+      {
+        "VoxelType": "Stone",
+        "Depth": 128
+      }
     ],
-	"GrassDecal": "grass",
+    "GrassDecal": "grass",
     "ShoreVoxel": "Sand",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
     "ClumpTreshold": 0.75,
-    "MapColor": [0, 255, 0, 255],
+    "MapColor": [ 0, 255, 0, 255 ],
     "Height": 0.35,
     "Temp": 0.45,
     "Rain": 0.35,
   },
-  "BorealForest": {
-    "Biome": 2,
-    "Name": "Forest (Boreal)",
-    "Icon":  1,
-	"DayAmbience" : "sfx_amb_forest_day",
-	"NightAmbience" : "sfx_amb_forest_night",
+
+  {
+    "Name": "BorealForest",
+    "Icon": 1,
+    "DayAmbience": "sfx_amb_forest_day",
+    "NightAmbience": "sfx_amb_forest_night",
     "Vegetation": [
       {
         "Name": "Pine Tree",
@@ -161,31 +160,31 @@
       },
     ],
     "SoilLayer": {
-        "VoxelType" :  "Dirt",
-        "Depth" :  3
+      "VoxelType": "Dirt",
+      "Depth": 3
     },
-    "SubsurfaceLayers": [ 
-    {
-        "VoxelType" :  "Stone",
-        "Depth" :  128
-    }
+    "SubsurfaceLayers": [
+      {
+        "VoxelType": "Stone",
+        "Depth": 128
+      }
     ],
     "GrassDecal": "grass",
     "ShoreVoxel": "Sand",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
     "ClumpTreshold": 0.75,
-    "MapColor": [24, 129, 24, 255],
+    "MapColor": [ 24, 129, 24, 255 ],
     "Height": 0.36,
     "Temp": 0.39,
     "Rain": 0.5,
   },
-  "DeciduousForest": {
-    "Biome": 3,
-    "Name": "Forest (Deciduous)",
+
+  {
+    "Name": "DeciduousForest",
     "Icon": 8,
-	"DayAmbience" : "sfx_amb_forest_day",
-	"NightAmbience" : "sfx_amb_forest_night",
+    "DayAmbience": "sfx_amb_forest_day",
+    "NightAmbience": "sfx_amb_forest_night",
     "Vegetation": [
       {
         "Name": "Pine Tree",
@@ -268,30 +267,30 @@
       },
     ],
     "SoilLayer": {
-        "VoxelType" :  "Dirt",
-        "Depth" :  3
+      "VoxelType": "Dirt",
+      "Depth": 3
     },
-    "SubsurfaceLayers": [ 
-    {
-        "VoxelType" :  "Stone",
-        "Depth" :  128
-    }
+    "SubsurfaceLayers": [
+      {
+        "VoxelType": "Stone",
+        "Depth": 128
+      }
     ],
-	"GrassDecal": "grass",
+    "GrassDecal": "grass",
     "ShoreVoxel": "Sand",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
     "ClumpTreshold": 0.75,
-    "MapColor": [0, 100, 0, 255],
+    "MapColor": [ 0, 100, 0, 255 ],
     "Height": 0.3,
     "Temp": 0.4,
     "Rain": 0.5,
   },
-  "Taiga": {
-    "Biome": 5,
+
+  {
     "Name": "Taiga",
-    "Icon":  10,
-	"DayAmbience" : "sfx_amb_tundra",
+    "Icon": 10,
+    "DayAmbience": "sfx_amb_tundra",
     "Vegetation": [
       {
         "Name": "Snow Pine Tree",
@@ -324,62 +323,63 @@
       }
     ],
     "SoilLayer": {
-        "VoxelType" :  "Dirt",
-        "Depth" :  3
+      "VoxelType": "Dirt",
+      "Depth": 3
     },
-    "SubsurfaceLayers": [ 
-    {
-        "VoxelType" :  "Stone",
-        "Depth" :  128
-    }
+    "SubsurfaceLayers": [
+      {
+        "VoxelType": "Stone",
+        "Depth": 128
+      }
     ],
-	"GrassDecal": "permafrost-grass",
+    "GrassDecal": "permafrost-grass",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
     "ClumpTreshold": 0.75,
-    "MapColor": [211, 230, 211, 255],
+    "MapColor": [ 211, 230, 211, 255 ],
     "Height": 0.5,
     "Temp": 0.2,
     "Rain": 0.3,
   },
-  "Tundra": {
-    "Biome": 4,
+
+  {
     "Name": "Tundra",
-    "Icon":  13,
-	"WaterSurfaceIce" : true,
-	"DayAmbience" : "sfx_amb_tundra",
+    "Icon": 13,
+    "WaterSurfaceIce": true,
+    "DayAmbience": "sfx_amb_tundra",
     "Vegetation": [],
     "Motes": [
     ],
-    "Fauna": [      
-	{
+    "Fauna": [
+      {
         "Name": "Penguin",
         "SpawnProbability": 0.0001
-    }],
-    "SoilLayer": {
-        "VoxelType" :  "Ice",
-        "Depth" :  5
-    },
-    "SubsurfaceLayers": [ 
-    {
-        "VoxelType" :  "Stone",
-        "Depth" :  128
-    }
+      }
     ],
-    "ShoreVoxel":  "Sand",
+    "SoilLayer": {
+      "VoxelType": "Ice",
+      "Depth": 5
+    },
+    "SubsurfaceLayers": [
+      {
+        "VoxelType": "Stone",
+        "Depth": 128
+      }
+    ],
+    "ShoreVoxel": "Sand",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
     "ClumpTreshold": 0.75,
-    "MapColor": [255, 255, 255, 255],
+    "MapColor": [ 255, 255, 255, 255 ],
     "Height": 0.0,
     "Temp": 0.1,
     "Rain": 0.1,
   },
-  "Desert": {
-    "Biome": 0,
+
+  {
     "Name": "Desert",
-    "Icon":  12,
-	"DayAmbience" : "sfx_amb_desert",
+    "Icon": 12,
+    "DayAmbience": "sfx_amb_desert",
     "Vegetation": [
       {
         "Name": "Wheat",
@@ -443,31 +443,31 @@
       },
     ],
     "SoilLayer": {
-        "VoxelType" :  "Sand",
-        "Depth" :  4
+      "VoxelType": "Sand",
+      "Depth": 4
     },
-    "SubsurfaceLayers": [ 
-    {
-        "VoxelType" :  "Stone",
-        "Depth" :  128
-    }
+    "SubsurfaceLayers": [
+      {
+        "VoxelType": "Stone",
+        "Depth": 128
+      }
     ],
-	"GrassDecal": "desert-grass",
+    "GrassDecal": "desert-grass",
     "ShoreVoxel": "Sand",
     "ClumpGrass": true,
     "ClumpSize": 30.0,
     "ClumpTreshold": 0.75,
-    "MapColor": [160, 140, 100, 255],
+    "MapColor": [ 160, 140, 100, 255 ],
     "Height": 0.2,
     "Temp": 0.65,
     "Rain": 0.05,
   },
-  "Jungle": {
-    "Biome": 6,
+
+  {
     "Name": "Jungle",
-    "Icon":  9,
-	"DayAmbience" : "sfx_amb_forest_day",
-	"NightAmbience" : "sfx_amb_forest_night",
+    "Icon": 9,
+    "DayAmbience": "sfx_amb_forest_day",
+    "NightAmbience": "sfx_amb_forest_night",
     "Vegetation": [
       {
         "Name": "Mushroom",
@@ -524,32 +524,32 @@
       },
     ],
     "SoilLayer": {
-        "VoxelType" :  "Dirt",
-        "Depth" :  2
+      "VoxelType": "Dirt",
+      "Depth": 2
     },
-    "SubsurfaceLayers": [ 
-    {
-        "VoxelType" :  "Stone",
-        "Depth" :  128
-    }
+    "SubsurfaceLayers": [
+      {
+        "VoxelType": "Stone",
+        "Depth": 128
+      }
     ],
-	"GrassDecal": "grass",
+    "GrassDecal": "grass",
     "ShoreVoxel": "Sand",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
     "ClumpTreshold": 0.75,
-    "MapColor": [0, 30, 0, 255],
+    "MapColor": [ 0, 30, 0, 255 ],
     "Height": 0.5,
     "Temp": 0.8,
     "Rain": 0.75,
   },
-  "Waste": {
-    "Biome": 7,
+
+  {
     "Name": "Waste",
     "Icon": 11,
     "Vegetation": [],
-	"DayAmbience" : "sfx_amb_forest_day",
-	"NightAmbience" : "sfx_amb_forest_night",
+    "DayAmbience": "sfx_amb_forest_day",
+    "NightAmbience": "sfx_amb_forest_night",
     "Motes": [
       {
         "Name": "deadbush",
@@ -563,31 +563,32 @@
       {
         "Name": "Demon",
         "SpawnProbability": 0.0005
-      }],
+      }
+    ],
     "SoilLayer": {
-        "VoxelType" :  "Stone",
-        "Depth" :  5
+      "VoxelType": "Stone",
+      "Depth": 5
     },
-    "SubsurfaceLayers": [ 
-    {
-        "VoxelType" :  "Stone",
-        "Depth" :  128
-    }
+    "SubsurfaceLayers": [
+      {
+        "VoxelType": "Stone",
+        "Depth": 128
+      }
     ],
     "ShoreVoxel": "Sand",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
     "ClumpTreshold": 0.75,
-    "MapColor": [255, 140, 0, 255],
+    "MapColor": [ 255, 140, 0, 255 ],
     "Height": 1.5,
     "Temp": 1.5,
     "Rain": 0.0
   },
-  "Cave": {
-    "Biome": 8,
+
+  {
     "Name": "Cave",
-    "Icon":  11,
-	"DayAmbience" : "sfx_amb_cave",
+    "Icon": 11,
+    "DayAmbience": "sfx_amb_cave",
     "Underground": true,
     "Vegetation": [
       {
@@ -599,7 +600,8 @@
         "VerticalOffset": 0.2,
         "NoiseOffset": 265.476837,
         "SpawnProbability": 0.4
-      }],
+      }
+    ],
     "Motes": [
       {
         "Name": "deadbush",
@@ -628,33 +630,33 @@
       }
     ],
     "SoilLayer": {
-        "VoxelType" :  "DarkDirt",
-        "Depth" :  5
+      "VoxelType": "DarkDirt",
+      "Depth": 5
     },
-    "SubsurfaceLayers": [ 
-    {
-        "VoxelType" :  "Stone",
-        "Depth" :  128
-    }
+    "SubsurfaceLayers": [
+      {
+        "VoxelType": "Stone",
+        "Depth": 128
+      }
     ],
-	"GrassDecal": "haunted-grass",
+    "GrassDecal": "cavemoss",
     "ShoreVoxel": "Dirt",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
     "ClumpTreshold": 0.75,
-    "MapColor": [10, 10, 01, 255],
+    "MapColor": [ 10, 10, 01, 255 ],
     "Height": 1.5,
     "Temp": 1.5,
     "Rain": 0.0,
   },
-    "HauntedForest": {
-    "Biome": 9,
+
+  {
     "Name": "Haunted Forest",
     "Icon": 11,
-	"DayAmbience" : "sfx_amb_forest_day",
-	"NightAmbience" : "sfx_amb_forest_night",
+    "DayAmbience": "sfx_amb_forest_day",
+    "NightAmbience": "sfx_amb_forest_night",
     "Vegetation": [
-	{
+      {
         "Name": "Pumpkin",
         "ClumpSize": 8.0,
         "ClumpThreshold": 0.9,
@@ -664,7 +666,7 @@
         "NoiseOffset": 265.476837,
         "SpawnProbability": 0.3
       },
-	  {
+      {
         "Name": "Haunted Tree",
         "ClumpSize": 30.0,
         "ClumpThreshold": 0.5,
@@ -674,8 +676,8 @@
         "NoiseOffset": 57.248703,
         "SpawnProbability": 0.1
       }
-	  
-	  ],
+
+    ],
     "Motes": [
       {
         "Name": "deadbush",
@@ -698,36 +700,35 @@
         "Name": "Bat",
         "SpawnProbability": 0.0008
       },
-	  {
+      {
         "Name": "Necrosnake",
         "SpawnProbability": 0.00005
       },
-	  ],
-    "SoilLayer": {
-        "VoxelType" :  "DarkDirt",
-        "Depth" :  5
-    },
-    "SubsurfaceLayers": [ 
-    {
-        "VoxelType" :  "Stone",
-        "Depth" :  128
-    }
     ],
-	"GrassDecal": "haunted-grass",
+    "SoilLayer": {
+      "VoxelType": "DarkDirt",
+      "Depth": 5
+    },
+    "SubsurfaceLayers": [
+      {
+        "VoxelType": "Stone",
+        "Depth": 128
+      }
+    ],
+    "GrassDecal": "haunted-grass",
     "ShoreVoxel": "DarkDirt",
     "ClumpGrass": true,
     "ClumpSize": 10.0,
     "ClumpTreshold": 0.2,
-    "MapColor": [255, 30, 255, 255],
+    "MapColor": [ 255, 30, 255, 255 ],
     "Height": 1.5,
     "Temp": 1.5,
-    "Rain": 0.0,
+    "Rain": 0.0
   },
-    "JollyForest": {
-    "Biome": 10,
+  {
     "Name": "JollyForest",
-    "Icon":  10,
-	"DayAmbience" : "sfx_amb_tundra",
+    "Icon": 10,
+    "DayAmbience": "sfx_amb_tundra",
     "Vegetation": [
       {
         "Name": "Candycane",
@@ -739,7 +740,7 @@
         "NoiseOffset": 164.433014,
         "SpawnProbability": 0.05
       },
-	  {
+      {
         "Name": "Snow Pine Tree",
         "ClumpSize": 45.0,
         "ClumpThreshold": 0.7,
@@ -778,22 +779,22 @@
       }
     ],
     "SoilLayer": {
-        "VoxelType" :  "Dirt",
-        "Depth" :  3
+      "VoxelType": "Dirt",
+      "Depth": 3
     },
-    "SubsurfaceLayers": [ 
-    {
-        "VoxelType" :  "Ice",
-        "Depth" :  128
-    }
+    "SubsurfaceLayers": [
+      {
+        "VoxelType": "Ice",
+        "Depth": 128
+      }
     ],
-	"GrassDecal": "permafrost-grass",
+    "GrassDecal": "permafrost-grass",
     "ClumpGrass": false,
     "ClumpSize": 30.0,
     "ClumpTreshold": 0.75,
-    "MapColor": [199, 230, 255, 255],
+    "MapColor": [ 199, 230, 255, 255 ],
     "Height": 0.0,
     "Temp": 0.0,
-    "Rain": 1.0,
-  },
-}
+    "Rain": 1.0
+  }
+]

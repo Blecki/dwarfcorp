@@ -2295,6 +2295,12 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="newgui\rail.png">
+      <Name>rail</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
+    </Compile>
     <Content Include="Particles\particles.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>
@@ -2303,6 +2309,12 @@
       <Name>Background</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
+    </Compile>
+    <Compile Include="Terrain\rail.png">
+      <Name>rail</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
     </Compile>
     <Content Include="Text\Templates\names_moleman.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2324,10 +2336,70 @@
       <Name>penguin_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="rail-junctions.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>rail-junctions</Name>
+    </None>
+    <None Include="Entities\Animals\Birds\bird0_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird0_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Birds\bird3_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird3_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Birds\bird1_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird1_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Birds\bird7_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird7_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Birds\bird6_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird6_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Birds\bird5_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird5_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Birds\bird4_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird4_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Birds\bird2_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bird2_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Deer\deer_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>deer_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Snake\snake_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>snake_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Snake\tail_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>tail_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Snake\bonetail_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bonetail_animation</Name>
+    </None>
+    <None Include="Entities\Animals\Snake\bonesnake_animation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bonesnake_animation</Name>
+    </None>
     <Content Include="Entities\Mudman\snowman_animation.json">
       <Name>snowman_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="decal-types.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>decal-types</Name>
+    </None>
     <None Include="tutorial.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>tutorial</Name>
@@ -2624,9 +2696,9 @@
       <Name>animal</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="decal-types.json">
+    <None Include="grass-types.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>decal-types</Name>
+      <Name>grass-types</Name>
     </None>
     <None Include="voxel-types.json">
       <Name>voxel-types</Name>

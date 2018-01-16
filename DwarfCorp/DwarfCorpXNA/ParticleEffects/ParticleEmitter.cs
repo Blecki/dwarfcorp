@@ -58,6 +58,14 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class EmitterData : ICloneable
     {
+
+        [OnSerialized]
+        private void _onSerialized(StreamingContext Context)
+        {
+            var x = 5;
+
+        }
+
         public enum ParticleBlend
         {
             NonPremultiplied,
@@ -117,19 +125,6 @@ namespace DwarfCorp
         {
             return this.MemberwiseClone();
         }
-
-        public EmitterData Clone(SpriteSheet sheet, Point frame)
-        {
-            EmitterData toReturn = Clone() as EmitterData;
-            if (toReturn == null) return null;
-            if (toReturn.Animation != null)
-            {
-                toReturn.Animation = new Animation(GameState.Game.GraphicsDevice,
-                    new SpriteSheet(sheet.AssetName), sheet.AssetName, sheet.FrameWidth, sheet.FrameHeight,
-                    new List<Point>() {frame}, true, Color.White, 1.0f, 1.0f, 1.0f, false);
-            }
-            return toReturn;
-        }
     }
 
     /// <summary>
@@ -141,6 +136,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public List<FixedInstanceArray> Sprites { get; set; }
         private int maxParticles = 0;
+        private AnimationPlayer AnimPlayer = new AnimationPlayer();
 
         public int MaxParticles
         {
@@ -169,7 +165,7 @@ namespace DwarfCorp
             return worldRot;
         }
 
-        public ParticleEmitter(ComponentManager manager, string name, Matrix localTransform, EmitterData emitterData) :
+        public ParticleEmitter(GraphicsDevice Device, ComponentManager manager, string name, Matrix localTransform, EmitterData emitterData) :
             base(manager, name, localTransform, Vector3.Zero, Vector3.Zero, false)
         {
             Particles = new List<Particle>();
@@ -181,13 +177,15 @@ namespace DwarfCorp
             Data = emitterData;
             maxParticles = Data.MaxParticles;
             Sprites = new List<FixedInstanceArray>();
-            foreach (BillboardPrimitive t in Data.Animation.Primitives)
+            for (var t = 0; t < Data.Animation.GetFrameCount(); ++t)
             {
-                Sprites.Add(new FixedInstanceArray(Name, t,
+                var primitive = new BillboardPrimitive();
+                Data.Animation.UpdatePrimitive(primitive, t);
+                Sprites.Add(new FixedInstanceArray(Name, primitive,
                     Data.Animation.SpriteSheet.GetTexture(),
                     Data.MaxParticles, Data.BlendMode));
             }
-            Data.Animation.Play();
+            AnimPlayer.Play(Data.Animation);
 
             TriggerTimer = new Timer(Data.EmissionFrequency, Data.ReleaseOnce);
 
@@ -387,7 +385,7 @@ namespace DwarfCorp
                 {
                     p.TimeAlive += (float)gameTime.ElapsedGameTime.TotalSeconds + MathFunctions.Rand() * 0.01f;
                     int prevFrame = p.Frame;
-                    int newFrame = Data.Animation.GetFrame(p.TimeAlive);
+                    int newFrame = AnimPlayer.GetFrame(p.TimeAlive);
                     if (newFrame != prevFrame)
                     {
                         p.Frame = newFrame;
@@ -396,7 +394,7 @@ namespace DwarfCorp
                             Sprites[prevFrame].Remove(p.InstanceData);
                             Sprites[newFrame].Add(p.InstanceData);
                         }
-                        if (!Data.Animation.Loops && p.Frame == Data.Animation.Frames.Count - 1)
+                        if (/*!Data.Animation.Loops && */p.Frame == Data.Animation.Frames.Count - 1)
                         {
                             p.LifeRemaining *= 0.1f;
                         }

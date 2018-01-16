@@ -14,10 +14,10 @@ namespace DwarfCorp.Dialogue
     {
         private Gui.Root GuiRoot;
         private DialogueContext DialogueContext;
+        private AnimationPlayer SpeakerAnimationPlayer;
         private Animation SpeakerAnimation;
         private WorldManager World;
         private Gui.Widget SpeakerWidget;
-        private int prevFrame = 0;
 
         public DialogueState(
             DwarfGame Game, 
@@ -75,9 +75,9 @@ namespace DwarfCorp.Dialogue
                 AutoLayout = AutoLayout.DockFill
             });
 
-            SpeakerAnimation = new Animation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);
-            DialogueContext.SpeakerAnimation = SpeakerAnimation;
-            DialogueContext.SpeakerAnimation.Loops = false;
+            SpeakerAnimation = AnimationLibrary.CreateAnimation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);
+            SpeakerAnimationPlayer = new AnimationPlayer(SpeakerAnimation);
+            DialogueContext.SpeakerAnimation = SpeakerAnimationPlayer;
 
 
             SpeakerWidget = bg.AddChild(new Widget()
@@ -145,13 +145,10 @@ namespace DwarfCorp.Dialogue
         public override void Render(DwarfTime gameTime)
         {
             GuiRoot.Draw();
-            
-            if (prevFrame != SpeakerAnimation.Frames[SpeakerAnimation.CurrentFrame].X)
-            {
-                SpeakerWidget.Background = new TileReference(SpeakerAnimation.SpriteSheet.AssetName, SpeakerAnimation.Frames[SpeakerAnimation.CurrentFrame].X);
-                prevFrame = SpeakerAnimation.Frames[SpeakerAnimation.CurrentFrame].X;
-                SpeakerWidget.Invalidate();
-            }
+
+            SpeakerWidget.Background = new TileReference(SpeakerAnimation.SpriteSheet.AssetName, SpeakerAnimation.Frames[SpeakerAnimationPlayer.CurrentFrame].X);
+            SpeakerWidget.Invalidate();
+
             base.Render(gameTime);
         }
     }

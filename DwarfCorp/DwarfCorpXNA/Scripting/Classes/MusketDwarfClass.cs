@@ -212,15 +212,7 @@ namespace DwarfCorp
 
         private void InitializeAnimations()
         {
-            /*
-            Texture2D dwarfSprites = TextureManager.GetTexture(ContentPaths.Entities.Dwarf.Sprites.dwarf_animations);
-            Animations = Dwarf.CreateDefaultAnimations(dwarfSprites, 32, 40);
-             */
-            var descriptor =
-                FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
-                    ContentPaths.GetFileAsString(ContentPaths.Entities.Dwarf.Sprites.musketdwarf_animations));
-            Animations = new List<Animation>();
-            Animations.AddRange(descriptor.GenerateAnimations(CompositeLibrary.Dwarf));
+            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Dwarf.Sprites.musketdwarf_animations, "Dwarf");
         }
 
         public void InitializeWeapons()

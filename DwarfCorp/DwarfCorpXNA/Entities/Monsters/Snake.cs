@@ -51,14 +51,17 @@ namespace DwarfCorp
             public Vector3 Target;
         }
 
+        [JsonIgnore]
         public List<TailSegment> Tail;
+
+        public bool Bonesnake = false;
         
         public Snake()
         {
             
         }
 
-        public Snake(SpriteSheet sprites, Vector3 position, ComponentManager manager, string name, bool hasMeat = true, bool hasBones = true):
+        public Snake(bool Bone, Vector3 position, ComponentManager manager, string name):
             base
             (
                 manager,
@@ -78,8 +81,10 @@ namespace DwarfCorp
                 name
             )
         {
-            HasMeat = hasMeat;
-            HasBones = hasBones;
+            Bonesnake = Bone;
+            HasMeat = !Bone;
+            HasBones = true;
+
             Physics = new Physics
                 (
                     manager,
@@ -98,46 +103,105 @@ namespace DwarfCorp
                 IsVisible = false
             });
 
-            Initialize(sprites);
+            Initialize();
         }
 
-        public void Initialize(SpriteSheet spriteSheet)
+        public void Initialize()
         {
             Physics.Orientation = Physics.OrientMode.Fixed;
             Species = "Snake";
-            const int frameWidth = 32;
-            const int frameHeight = 32;
+            CreateGraphics();
 
-            var sprite = Physics.AddChild(new CharacterSprite
-                (Graphics,
-                Manager,
-                "snake Sprite",
-                Matrix.Identity
-                )) as CharacterSprite;
+            // Add sensor
+            Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
-            // Add the idle animation
-            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, 1, frameWidth, frameHeight, 0, 0);
-            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, spriteSheet, 1, frameWidth, frameHeight, 1, 0);
-            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, spriteSheet, 1, frameWidth, frameHeight, 2, 0);
-            sprite.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, 1, frameWidth, frameHeight, 3, 0);
+            // Add AI
+            AI = Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors, PlanService)) as CreatureAI;
+
+
+            Attacks = new List<Attack>() { new Attack("Bite", 50.0f, 1.0f, 3.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_giant_snake_attack_1), ContentPaths.Effects.bite) };
+
+            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
+
+            Physics.Tags.Add("Snake");
+            Physics.Tags.Add("Animal");
+            AI.Movement.SetCan(MoveType.ClimbWalls, true);
+            AI.Stats.FullName = "Giant Snake";
+            AI.Stats.CurrentClass = new EmployeeClass()
+            {
+                Name = "Giant Snake",
+                Levels = new List<EmployeeClass.Level>()
+                {
+                    new EmployeeClass.Level()
+                    {
+                        BaseStats = new CreatureStats.StatNums()
+                        {
+                            Charisma = AI.Stats.Charisma,
+                            Constitution = AI.Stats.Constitution,
+                            Dexterity = AI.Stats.Dexterity,
+                            Intelligence = AI.Stats.Intelligence,
+                            Size = AI.Stats.Size,
+                            Strength = AI.Stats.Strength,
+                            Wisdom = AI.Stats.Wisdom
+                        },
+                        Name = "Giant Snake",
+                        Index = 0
+                    },
+
+                }
+            };
+            AI.Stats.LevelIndex = 0;
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 1,
+                BoxTriggerTimes = 10,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_giant_snake_hurt_1,
+            });
+
+
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_giant_snake_hurt_1 };
+            NoiseMaker.Noises["Chirp"] = new List<string>()
+            {
+                ContentPaths.Audio.Oscar.sfx_oc_giant_snake_neutral_1,
+                ContentPaths.Audio.Oscar.sfx_oc_giant_snake_neutral_2
+            };
+
+            Physics.AddChild(new Flammable(Manager, "Flames"));
+        }
+
+        private void CreateGraphics()
+        {
+            Physics.AddChild(new Shadow(Manager));
+
+            var animFile = Bonesnake ? ContentPaths.Entities.Animals.Snake.bonesnake_animation :
+                ContentPaths.Entities.Animals.Snake.snake_animation;
+
+            var tailFile = Bonesnake ? ContentPaths.Entities.Animals.Snake.bonetail_animation :
+                ContentPaths.Entities.Animals.Snake.tail_animation;
+
+
+            var sprite = CreateSprite(animFile, Manager, 0.0f);
 
             Tail = new List<TailSegment>();
-            Physics.AddChild(new Shadow(Manager));
+
             for (int i = 0; i < 10; ++i)
             {
-                var animation = new CharacterSprite(Graphics, Manager, "tail sprite", Matrix.Identity);
-                animation.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Forward, spriteSheet, 1, frameWidth, frameHeight, 0, 1);
-                animation.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Left, spriteSheet, 1, frameWidth, frameHeight, 1, 1);
-                animation.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Right, spriteSheet, 1, frameWidth, frameHeight, 2, 1);
-                animation.AddAnimation(CharacterMode.Idle, OrientedAnimation.Orientation.Backward, spriteSheet, 1, frameWidth, frameHeight, 3, 1);
+                var tailPiece = CreateSprite(tailFile, Manager, 0.0f, false);
+
                 Tail.Add(
                     new TailSegment()
                     {
-                        Sprite = Manager.RootComponent.AddChild(animation) as Body,
+                        Sprite = Manager.RootComponent.AddChild(tailPiece) as Body,
                         Target = Physics.LocalTransform.Translation
                     });
-                Tail[i].Sprite.AddChild(new Shadow(Manager));
-                var inventory = Tail[i].Sprite.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)) as Inventory;
+
+
+                tailPiece.AddChild(new Shadow(Manager));
+
+                var inventory = tailPiece.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
+                inventory.SetFlag(Flag.ShouldSerialize, false);
 
                 if (HasMeat)
                 {
@@ -171,66 +235,12 @@ namespace DwarfCorp
                     inventory.AddResource(new ResourceAmount(type, 1));
                 }
             }
+        }
 
-            // Add sensor
-            Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
-
-            // Add AI
-            AI = Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors, PlanService)) as CreatureAI;
-
-
-            Attacks = new List<Attack>() {new Attack("Bite", 50.0f, 1.0f, 3.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_giant_snake_attack_1), ContentPaths.Effects.bite)};
-
-            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)) as Inventory;
-
-            Physics.Tags.Add("Snake");
-            Physics.Tags.Add("Animal");
-            AI.Movement.SetCan(MoveType.ClimbWalls, true);
-            AI.Stats.FullName = "Giant Snake";
-            AI.Stats.CurrentClass = new EmployeeClass()
-            {
-                Name = "Giant Snake",
-                Levels = new List<EmployeeClass.Level>()
-                {
-                    new EmployeeClass.Level()
-                    {
-                        BaseStats = new CreatureStats.StatNums()
-                        {
-                            Charisma = AI.Stats.Charisma,
-                            Constitution = AI.Stats.Constitution,
-                            Dexterity = AI.Stats.Dexterity,
-                            Intelligence = AI.Stats.Intelligence,
-                            Size = AI.Stats.Size,
-                            Strength = AI.Stats.Strength,
-                            Wisdom = AI.Stats.Wisdom
-                        },
-                        Name = "Giant Snake",
-                        Index = 0
-                    },
-                  
-                }
-            };
-            AI.Stats.LevelIndex = 0;
-
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 1,
-                BoxTriggerTimes = 10,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_giant_snake_hurt_1,
-            });
-
-
-            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_giant_snake_hurt_1 };
-            NoiseMaker.Noises["Chirp"] = new List<string>()
-            {
-                ContentPaths.Audio.Oscar.sfx_oc_giant_snake_neutral_1,
-                ContentPaths.Audio.Oscar.sfx_oc_giant_snake_neutral_2
-            };
-
-            Physics.AddChild(new Flammable(Manager, "Flames"));
-            HasBones = true;
-            HasMeat = true;
+        public override void CreateCosmeticChildren(ComponentManager Manager)
+        {
+            CreateGraphics();
+            base.CreateCosmeticChildren(Manager);
         }
 
         public override void Die()

@@ -11,10 +11,8 @@ namespace DwarfCorp
 
         bool IsVisible { get; }
 
-        bool IsAboveCullPlane(ChunkManager Chunks);
-
         Matrix GlobalTransform { get; }
 
-        bool FrustrumCull { get; }
+        bool FrustumCull { get; }
     }
 }

@@ -42,7 +42,8 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class CraftItemTask : Task
     {
-        public CraftBuilder.CraftDesignation Designation { get; set; }
+        public CraftDesignation Designation { get; set; }
+
         public CraftItemTask()
         {
             MaxAssignable = 3;
@@ -50,7 +51,7 @@ namespace DwarfCorp
             AutoRetry = true;
         }
 
-        public CraftItemTask(CraftBuilder.CraftDesignation type)
+        public CraftItemTask(CraftDesignation type)
         {
             Category = TaskCategory.BuildObject;
             MaxAssignable = 3;
@@ -77,18 +78,13 @@ namespace DwarfCorp
 
         public override bool ShouldRetry(Creature agent)
         {
-            if (!agent.Faction.CraftBuilder.IsDesignation(Designation.Location))
-            {
-                return false;
-            }
-
-            return true;
+            return agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft);
         }
 
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !agent.Faction.CraftBuilder.IsDesignation(Designation.Location) || Designation.Progress > 1.0f;
+            return !agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft) || Designation.Progress > 1.0f;
         }
 
         public override Feasibility IsFeasible(Creature agent)
@@ -105,17 +101,17 @@ namespace DwarfCorp
         }
 
         public bool CanBuild(Creature agent)
-        {
-            if (!agent.Faction.CraftBuilder.IsDesignation(Designation.Location))
-            {
-                return false;
-            }
+        {            
             if (!String.IsNullOrEmpty(Designation.ItemType.CraftLocation))
             {
                 var nearestBuildLocation = agent.Faction.FindNearestItemWithTags(Designation.ItemType.CraftLocation, Vector3.Zero, false);
 
                 if (nearestBuildLocation == null)
                     return false;
+            }
+            else if (!agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft))
+            {
+                return false;
             }
 
             foreach (var resourceAmount in Designation.ItemType.RequiredResources)
@@ -131,113 +127,4 @@ namespace DwarfCorp
         }
 
     }
-
-
-    class CraftResourceTask : Task
-    {
-        public int TaskID = 0;
-        private static int MaxID = 0;
-        public CraftBuilder.CraftDesignation Item { get; set; }
-        private string noise;
-        public bool IsAutonomous { get; set; }
-
-        public CraftResourceTask()
-        {
-            Category = TaskCategory.CraftItem;
-        }
-
-        public CraftResourceTask(CraftItem selectedResource, int id = -1)
-        {
-            Category = TaskCategory.CraftItem;
-            TaskID = id < 0 ? MaxID : id;
-            MaxID++;
-            Item = new CraftBuilder.CraftDesignation()
-            {
-                ItemType = selectedResource.Clone(),
-                Location = VoxelHandle.InvalidHandle,
-                Valid = true
-            };
-            Name = String.Format("Craft order {0}", TaskID);
-            Priority = PriorityType.Low;
-
-            noise = ResourceLibrary.GetResourceByName(Item.ItemType.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible)
-                ? "Cook"
-                : "Craft";
-            AutoRetry = true;
-        }
-
-        public IEnumerable<Act.Status> Repeat(Creature creature)
-        {
-            CraftItem newItem = Item.ItemType.Clone();
-            newItem.NumRepeats--;
-            if (newItem.NumRepeats >= 1)
-            {
-                if (creature.AI.Faction == creature.World.PlayerFaction)
-                {
-                    creature.World.Master.TaskManager.AddTask(new CraftResourceTask(newItem, TaskID));
-                }
-                else
-                {
-                    creature.AI.AssignTask(new CraftResourceTask(newItem, TaskID));
-                }
-            }
-            yield return Act.Status.Success;
-        }
-
-        public override bool ShouldDelete(Creature agent)
-        {
-            if (Item.Progress > 1.0f)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        private bool HasResources(Creature agent)
-        {
-            if (Item.HasResources)
-            {
-                return true;
-            }
-
-            var resources = agent.Faction.HasResources(Item.ItemType.SelectedResources);
-            if (!resources)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private bool HasLocation(Creature agent)
-        {
-            if (Item.ItemType.CraftLocation != "")
-            {
-                var anyCraftLocation = agent.Faction.OwnedObjects.Any(o => o.Tags.Contains(Item.ItemType.CraftLocation) && (!o.IsReserved || o.ReservedFor == agent.AI));
-                if (!anyCraftLocation)
-                    return false;
-            }
-            return true;
-        }
-
-        public override Feasibility IsFeasible(Creature agent)
-        {
-            if (!agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
-                return Feasibility.Infeasible;
-            return HasResources(agent) && HasLocation(agent) ? Feasibility.Feasible : Feasibility.Infeasible;
-        }
-
-        public override Act CreateScript(Creature creature)
-        {
-            return new Sequence(new CraftItemAct(creature.AI, Item)
-            {
-                Noise = noise
-            }, new Wrap(() => Repeat(creature)));
-        }
-
-        public override Task Clone()
-        {
-            return new CraftResourceTask(Item.ItemType, TaskID) {IsAutonomous = this.IsAutonomous};
-        }
-    }
-
 }

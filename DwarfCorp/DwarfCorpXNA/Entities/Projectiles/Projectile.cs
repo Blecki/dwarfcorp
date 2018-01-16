@@ -43,12 +43,14 @@ namespace DwarfCorp
 {
     public class Projectile : Physics, IUpdateableComponent
     {
-        public Sprite Sprite { get; set; }
-        public Sprite Sprite2 { get; set; }
+        public AnimatedSprite Sprite { get; set; }
+        public AnimatedSprite Sprite2 { get; set; }
         public ParticleTrigger HitParticles { get; set; }
         public Health.DamageAmount Damage { get; set; }
         public Body Target { get; set; }
         public float DamageRadius { get; set; }
+
+        [JsonIgnore]
         public Animation HitAnimation { get; set; }
 
         public Projectile()
@@ -57,7 +59,7 @@ namespace DwarfCorp
         }
 
         public Projectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Health.DamageAmount damage, float size, string asset, string hitParticles, string hitNoise, Body target, bool animated = false, bool singleSprite = false) :
-            base(manager, "Projectile", Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0))
+            base(manager, "Projectile", Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0), OrientMode.Fixed, false)
         {
             this.AllowPhysicsSleep = false; 
             Target = target;
@@ -65,7 +67,6 @@ namespace DwarfCorp
             IsSleeping = false;
             Velocity = initialVelocity;
             Orientation = OrientMode.LookAt;
-            AddToCollisionManager = false;
             CollideMode = Physics.CollisionMode.None;
             var spriteSheet = new SpriteSheet(asset);
 
@@ -75,44 +76,29 @@ namespace DwarfCorp
                 spriteSheet.FrameHeight = spriteSheet.FrameWidth;
             }
 
-            Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f),
-                spriteSheet, false)
+            Sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f),
+                false)
             {
-                OrientationType = Sprite.OrientMode.Fixed
-            }) as Sprite;
+                OrientationType = AnimatedSprite.OrientMode.Fixed
+            }) as AnimatedSprite;
 
-            if (animated)
-            {
-               Sprite.SetSimpleAnimation();
-               Sprite.CurrentAnimation.Play();
-            }
-            else
-            {
-                Sprite.SetSingleFrameAnimation();   
-            }
+            Sprite.AddAnimation(AnimationLibrary.CreateSimpleAnimation(asset));
 
             if (singleSprite)
             {
-                this.Sprite.OrientationType = Sprite.OrientMode.Spherical;
+                this.Sprite.OrientationType = AnimatedSprite.OrientMode.Spherical;
             }
 
             if (!singleSprite)
             {
-                Sprite2 = Sprite.AddChild(new Sprite(Manager, "Sprite2",
+                Sprite2 = Sprite.AddChild(new AnimatedSprite(Manager, "Sprite2",
                     Matrix.CreateRotationX((float)Math.PI * 0.5f),
-                    spriteSheet, false)
+                    false)
                 {
-                    OrientationType = Sprite.OrientMode.Fixed
-                }) as Sprite;
+                    OrientationType = AnimatedSprite.OrientMode.Fixed
+                }) as AnimatedSprite;
 
-                if (animated)
-                {
-                    Sprite2.SetSimpleAnimation();
-                }
-                else
-                {
-                    Sprite2.SetSingleFrameAnimation();
-                }
+                Sprite2.AddAnimation(AnimationLibrary.CreateSimpleAnimation(asset));
             }
             Damage = damage;
             HitParticles = AddChild(new ParticleTrigger(hitParticles, manager, "Hit Particles",
@@ -172,8 +158,9 @@ namespace DwarfCorp
         {
             if (HitAnimation != null)
             {
-                HitAnimation.Reset();
-                HitAnimation.Play();
+                Sprite.AnimPlayer.Reset();
+                Sprite.AnimPlayer.Play(HitAnimation);
+
                 if (Target != null)
                 {
                     Vector3 camvelocity0 = GameState.Game.GraphicsDevice.Viewport.Project( Position,

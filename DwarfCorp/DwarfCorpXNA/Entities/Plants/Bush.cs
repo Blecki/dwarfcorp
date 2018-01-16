@@ -58,7 +58,7 @@ namespace DwarfCorp
             AddChild(new Flammable(componentManager, "Flames"));
 
             var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
-    Matrix.Identity, BoundingBoxPos, GetBoundingBox().Extents())
+    Matrix.Identity, LocalBoundingBoxOffset, GetBoundingBox().Extents())
             {
                 SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_bush_harvest_1
             }) as ParticleTrigger;
@@ -66,7 +66,7 @@ namespace DwarfCorp
             Tags.Add("Vegetation");
             Tags.Add("Bush");
             Tags.Add("EmitsFood");
-            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), BoundingBoxPos)) as Inventory;
+            Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), LocalBoundingBoxOffset)) as Inventory;
 
             inventory.AddResource(new ResourceAmount()
             {
@@ -74,7 +74,6 @@ namespace DwarfCorp
                 ResourceType = ResourceLibrary.ResourceType.Berry
             });
 
-            AddToCollisionManager = true;
             CollisionType = CollisionManager.CollisionType.Static;
             PropogateTransforms();
         }

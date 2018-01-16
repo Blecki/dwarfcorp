@@ -60,6 +60,7 @@ namespace DwarfCorp
 
         private static void UpdateChunk(VoxelChunk chunk)
         {
+            var addGrassToThese = new List<Tuple<VoxelHandle, byte>>();
             for (var y = 0; y < VoxelConstants.ChunkSizeY; ++y)
             {
                 // Skip empty slices.
@@ -70,23 +71,56 @@ namespace DwarfCorp
                     {
                         var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
 
-                        if (voxel.Decal != 0)
+                        // Allow grass to decay
+                        if (voxel.GrassType != 0)
                         {
-                            var decal = DecalLibrary.GetDecalType(voxel.Decal);
-                            if (decal.Decay)
+                            var decal = GrassLibrary.GetGrassType(voxel.GrassType);
+
+                            if (decal.NeedsSunlight && voxel.SunColor < 255)
+                                voxel.GrassType = 0;
+                            else if (decal.Decay)
                             {
-                                voxel.DecalData -= 1;
-                                if (voxel.DecalData == 0)
+                                voxel.GrassDecay -= 1;
+                                if (voxel.GrassDecay == 0)
                                 {
-                                    var newDecal = DecalLibrary.GetDecalType(decal.BecomeWhenDecays);
+                                    var newDecal = GrassLibrary.GetGrassType(decal.BecomeWhenDecays);
                                     if (newDecal != null)
-                                        voxel.Decal = newDecal.ID;
+                                        voxel.GrassType = newDecal.ID;
                                     else
-                                        voxel.Decal = 0;
+                                        voxel.GrassType = 0;
                                 }
                             } 
                         }
+                        else if (voxel.Type.GrassSpreadsHere)
+                        {
+                            // Spread grass onto this tile - but only from the same biome.
+
+                            var biome = Overworld.GetBiomeAt(voxel.Coordinate.ToVector3());
+
+                            var grassyNeighbors = VoxelHelpers.EnumerateManhattanNeighbors2D(voxel.Coordinate)
+                                .Select(c => new VoxelHandle(voxel.Chunk.Manager.ChunkData, c))
+                                .Where(v => v.IsValid && v.GrassType != 0)
+                                .Where(v => biome == Overworld.GetBiomeAt(v.Coordinate.ToVector3()))
+                                .ToList();
+
+                            if (grassyNeighbors.Count > 0)
+                                if (MathFunctions.RandEvent(0.1f))
+                                    addGrassToThese.Add(Tuple.Create(voxel, grassyNeighbors[MathFunctions.RandInt(0, grassyNeighbors.Count)].GrassType));
+                        }
+
+
+                        
+
                     }
+            }
+
+            foreach (var v in addGrassToThese)
+            {
+                var l = v.Item1;
+                var grassType = GrassLibrary.GetGrassType(v.Item2);
+                if (grassType.NeedsSunlight && l.SunColor != 255)
+                    continue;
+                l.GrassType = v.Item2;
             }
         }
     }

@@ -43,8 +43,9 @@ namespace DwarfCorp
     public class CreateCraftItemAct : CreatureAct
     {
         public VoxelHandle Voxel { get; set; }
-        public CraftBuilder.CraftDesignation Item { get; set; }
-        public CreateCraftItemAct(VoxelHandle voxel, CreatureAI agent, CraftBuilder.CraftDesignation itemType) :
+        public CraftDesignation Item { get; set; }
+
+        public CreateCraftItemAct(VoxelHandle voxel, CreatureAI agent, CraftDesignation itemType) :
             base(agent)
         {
             Agent = agent;
@@ -56,21 +57,19 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             if (!Creature.Faction.CraftBuilder.IsDesignation(Voxel))
-            {
                 yield return Status.Fail;
-            }
-            float time = 5 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt);
-            Body item = EntityFactory.CreateEntity<Body>(Item.ItemType.Name, Voxel.WorldPosition + Vector3.One * 0.5f + Item.ItemType.SpawnOffset, 
-                            Blackboard.Create("Resources", Item.ItemType.SelectedResources));
-            if (Item.OverrideOrientation)
-            {
-                item.Orient(Item.Orientation);
-            }
-            else
-            {
-                item.OrientToWalls();
-            }
-            item.Tags.Add("Moveable");
+
+            // Use the existing entity instead of creating a new one.
+            var item = Item.Entity;
+            item.SetFlagRecursive(GameComponent.Flag.Active, true);
+            item.SetTintRecursive(Color.White);
+            item.SetFlagRecursive(GameComponent.Flag.Visible, true);
+
+            if (Item.ItemType.Moveable)
+                item.Tags.Add("Moveable");
+
+            if (Item.WorkPile != null)
+                Item.WorkPile.Die();
 
             CraftDetails details = item.GetComponent<CraftDetails>();
             
@@ -78,19 +77,20 @@ namespace DwarfCorp
             {
                 item.AddChild(new CraftDetails(Creature.Manager)
                 {
-                    Resources = Item.ItemType.SelectedResources.ConvertAll(p => new ResourceAmount(p)),
+                    Resources = Item.SelectedResources.ConvertAll(p => new ResourceAmount(p)),
                     CraftType = Item.ItemType.Name
                 });
 
-                if (Item.ItemType.SelectedResources.Count > 0)
-                    item.Name = Item.ItemType.SelectedResources.FirstOrDefault().ResourceType + " " + item.Name;
-
+                if (Item.SelectedResources.Count > 0)
+                    item.Name = Item.SelectedResources.FirstOrDefault().ResourceType + " " + item.Name;
             }
 
-            Creature.Faction.OwnedObjects.Add(item);
+            if (Item.ItemType.AddToOwnedPool)
+                Creature.Faction.OwnedObjects.Add(item);
+
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, 10);
-            Creature.Faction.CraftBuilder.RemoveDesignation(Voxel);
-            Creature.AI.AddXP((int)time);
+            Creature.Faction.Designations.RemoveEntityDesignation(item, DesignationType.Craft);
+            Creature.AI.AddXP((int)(5 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt)));
             yield return Status.Success;
         }
     }

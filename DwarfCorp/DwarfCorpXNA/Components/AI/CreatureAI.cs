@@ -714,25 +714,20 @@ namespace DwarfCorp
                 if (Stats.IsTaskAllowed(Task.TaskCategory.CraftItem) && MathFunctions.RandEvent(0.0005f))
                 {
                     var item = CraftLibrary.GetRandomApplicableCraftItem(Faction);
+
                     if (item != null)
                     {
-                        item.NumRepeats = 1;
-                        bool gotAny = true;
+                        var resources = new List<ResourceAmount>();
                         foreach (var resource in item.RequiredResources)
                         {
                             var amount = Faction.GetResourcesWithTags(new List<Quantitiy<Resource.ResourceTags>>() { resource });
                             if (amount == null || amount.Count == 0)
-                            {
-                                gotAny = false;
                                 break;
-                            }
-                            item.SelectedResources.Add(Datastructures.SelectRandom(amount));
+                            resources.Add(Datastructures.SelectRandom(amount));
                         }
                         
-                        if (gotAny)
-                        {
-                            return new CraftResourceTask(item) {IsAutonomous = true, Priority = Task.PriorityType.Low};
-                        }
+                        if (resources.Count > 0)
+                            return new CraftResourceTask(item, 1, resources) {IsAutonomous = true, Priority = Task.PriorityType.Low};
                     }
                 }
 
@@ -888,7 +883,7 @@ namespace DwarfCorp
                     };
                 }
             }
-
+            
             return new LookInterestingTask();
         }
 

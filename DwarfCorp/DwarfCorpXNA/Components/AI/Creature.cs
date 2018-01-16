@@ -226,7 +226,7 @@ namespace DwarfCorp
                 currentCharacterMode = value;
                 if (Parent != null && Sprite != null)
                 {
-                    if (Sprite.HasAnimation(currentCharacterMode, OrientedAnimation.Orientation.Forward))
+                    if (Sprite.HasAnimation(currentCharacterMode, OrientedAnimatedSprite.Orientation.Forward))
                     {
                         Sprite.SetCurrentAnimation(value.ToString());
                     }
@@ -790,37 +790,34 @@ namespace DwarfCorp
             }
 
             var sprite = Physics.AddChild(new CharacterSprite(manager.World.GraphicsDevice, manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as CharacterSprite;
+            // Todo: Share the list of animations too?
             foreach (Animation animation in employeeClass.Animations)
-            {
-                sprite.AddAnimation(animation.Clone());
-            }
-            sprite.SpriteSheet = Sprite.Animations.First().Value.SpriteSheet;
-            sprite.CurrentAnimation = Sprite.Animations.First().Value;
-            sprite.CurrentAnimation.NextFrame();
+                sprite.AddAnimation(animation);
+
+
+            sprite.SetCurrentAnimation(Sprite.Animations.First().Value);
             sprite.SetFlag(Flag.ShouldSerialize, false);
         }
 
-        protected void CreateSprite(string animations, ComponentManager manager)
+        protected CharacterSprite CreateSprite(string animations, ComponentManager manager,
+            float VerticalOffset = 0.5f, bool AddToPhysics = true)
         {
-            // Create the sprite component for the bird.
-            var sprite = Physics.AddChild(new CharacterSprite
+            var sprite = new CharacterSprite
                                   (manager.World.GraphicsDevice,
                                   manager,
                                   "Sprite",
-                                  Matrix.CreateTranslation(0, 0.5f, 0)
-                                  )) as CharacterSprite;
+                                  Matrix.CreateTranslation(0, VerticalOffset, 0)
+                                  );
 
-            CompositeAnimation.Descriptor descriptor =
-                FileUtils.LoadJsonFromString<CompositeAnimation.Descriptor>(
-                    ContentPaths.GetFileAsString(animations));
+            if (AddToPhysics)
+                Physics.AddChild(sprite);
 
-            List<CompositeAnimation> animations_list = descriptor.GenerateAnimations(Name);
-
-            foreach (CompositeAnimation animation in animations_list)
-            {
+            foreach (var animation in AnimationLibrary.LoadCompositeAnimationSet(animations, Name))
                 sprite.AddAnimation(animation);
-            }
+
             sprite.SetFlag(Flag.ShouldSerialize, false);
+
+            return sprite;
         }
 
     }

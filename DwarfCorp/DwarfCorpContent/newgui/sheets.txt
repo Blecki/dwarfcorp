@@ -50,6 +50,12 @@
 			"TileHeight": 32
 		},
 		{
+			"Name": "rail",
+			"Texture": "newgui/rail",
+			"TileWidth": 32,
+			"TileHeight": 32
+		},
+		{
 			"Name": "indicator-circle",
 			"Texture": "newgui/indicator-circle",
 			"TileWidth": 32,

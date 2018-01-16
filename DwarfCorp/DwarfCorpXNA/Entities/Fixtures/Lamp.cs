@@ -50,7 +50,7 @@ namespace DwarfCorp
 
         private void CreateSpriteStanding()
         {
-            var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture);
+            var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32);
 
             List<Point> frames = new List<Point>
             {
@@ -60,19 +60,21 @@ namespace DwarfCorp
                 new Point(2, 1)
             };
 
-            var lampAnimation = new Animation(GameState.Game.GraphicsDevice, 
-                spriteSheet, 
-                "Lamp", 32, 32, frames, true, Color.White, 3.0f, 1f, 1.0f, false);
-
-            var sprite = AddChild(new Sprite(Manager, "sprite", Matrix.Identity, spriteSheet, false)
+            var lampAnimation = AnimationLibrary.CreateAnimation(spriteSheet, frames, "LampAnimation");
+ 
+            var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.Identity, false)
             {
                 LightsWithVoxels = false,
-                OrientationType = Sprite.OrientMode.YAxis
-            }) as Sprite;
+                OrientationType = AnimatedSprite.OrientMode.YAxis,
+            }) as AnimatedSprite;
 
             sprite.AddAnimation(lampAnimation);
+            sprite.AnimPlayer.Loop(lampAnimation);
             sprite.SetFlag(Flag.ShouldSerialize, false);
-            lampAnimation.Play();
+
+            // This is a hack to make the animation update at least once even when the object is created inactive by the craftbuilder.
+            sprite.AnimPlayer.Update(new DwarfTime());
+
         }
 
         private void CreateSpriteWall(Vector3 diff)
@@ -148,6 +150,14 @@ namespace DwarfCorp
             {
                 HasMoved = true
             }).SetFlag(Flag.ShouldSerialize, false);
+        }
+
+        public override void Orient(float angle)
+        {
+            base.Orient(angle);
+            var sprite = EnumerateChildren().First(c => c.Name == "sprite");
+            sprite.Delete();
+            CreateSprite();
         }
     }
 }

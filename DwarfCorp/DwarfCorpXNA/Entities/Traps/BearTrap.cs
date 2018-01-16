@@ -45,7 +45,7 @@ namespace DwarfCorp
     public class BearTrap : Body, IUpdateableComponent
     {
         public Sensor Sensor { get; set; }
-        public Sprite Sprite { get; set; }
+        public AnimatedSprite Sprite { get; set; }
         public VoxelListener VoxListener { get; set; }
         public ParticleTrigger DeathParticles { get; set; }
         public float DamageAmount { get; set; }
@@ -92,15 +92,36 @@ namespace DwarfCorp
             VoxListener = AddChild(new VoxelListener(manager, manager.World.ChunkManager, voxelUnder))
                     as VoxelListener;
 
-            Sprite = AddChild(new Sprite(Manager, "Sprite", Matrix.Identity, new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap), false)) as Sprite;
-            Sprite.AddAnimation(new Animation(0, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0) {Name = IdleAnimation});
-            Sprite.AddAnimation(new Animation(1, ContentPaths.Entities.DwarfObjects.beartrap, 32, 32,  0, 1, 2, 3) {Name = TriggerAnimation, Speeds =  new List<float>() {6.6f}, Loops = true});
+            
+
             CreateCosmeticChildren(manager);
+
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             AddChild(new Shadow(manager));
+
+            var spriteSheet = new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap);
+
+            Sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.Identity, false)) as AnimatedSprite;
+
+            Sprite.AddAnimation(AnimationLibrary.CreateAnimation(spriteSheet, new List<Point> { Point.Zero }, IdleAnimation));
+
+            var sprung = AnimationLibrary.CreateAnimation
+                (spriteSheet, new List<Point>
+                {
+                    new Point(0,1),
+                    new Point(1,1),
+                    new Point(2,1),
+                    new Point(3,1)
+                }, TriggerAnimation);
+
+            sprung.FrameHZ = 6.6f;
+
+            Sprite.AddAnimation(sprung);
+
+            Sprite.SetFlag(Flag.ShouldSerialize, false);
             base.CreateCosmeticChildren(manager);
         }
 
@@ -142,13 +163,10 @@ namespace DwarfCorp
 
         public void Trigger()
         {
-            Sprite.SetCurrentAnimation(TriggerAnimation);
-            Sprite.CurrentAnimation.Play();
+            Sprite.SetCurrentAnimation(TriggerAnimation, true);
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_trap_trigger, GlobalTransform.Translation, false);
             ShouldDie = true;
             DeathTimer.Reset(DeathTimer.TargetTimeSeconds);
         }
-
-
     }
 }

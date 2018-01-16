@@ -135,20 +135,16 @@ namespace DwarfCorp
                 }
                 else if (TypeofStorm == StormType.SnowStorm && above.IsEmpty && above.WaterCell.WaterLevel == 0)
                 {
-                    if (test.Decal == 0)
-                        test.Decal = DecalLibrary.GetDecalType("snow").ID;
+                    if (test.GrassType == 0)
+                        test.GrassType = GrassLibrary.GetGrassType("snow").ID;
                     else
                     {
-                        // Todo - Just store bytes
-                        var existingDecal = DecalLibrary.GetDecalType((byte)test.Decal);
-                        if (!String.IsNullOrEmpty(existingDecal.BecomeWhenSnowedOn))
-                            test.Decal = DecalLibrary.GetDecalType(existingDecal.BecomeWhenSnowedOn).ID;
+                        var existingGrass = GrassLibrary.GetGrassType((byte)test.GrassType);
+                        if (!String.IsNullOrEmpty(existingGrass.BecomeWhenSnowedOn))
+                            test.GrassType = GrassLibrary.GetGrassType(existingGrass.BecomeWhenSnowedOn).ID;
                     }
-                    // otherwise if we're a grass type decal...
                 }
             }
-
-
 
             Matrix tf = LocalTransform;
             tf.Translation += Velocity * DwarfTime.Dt;

@@ -61,8 +61,9 @@ namespace DwarfCorp
         public byte[] Liquid;
         public byte[] LiquidTypes;
         public byte[] Types;
+        public byte[] GrassType;
+        public byte[] GrassDecay;
         public byte[] Decals;
-        public byte[] DecalData;
         
         public ChunkFile()
         {
@@ -75,8 +76,9 @@ namespace DwarfCorp
             LiquidTypes = new byte[VoxelConstants.ChunkVoxelCount];
             Liquid = new byte[VoxelConstants.ChunkVoxelCount];
             Explored = new bool[VoxelConstants.ChunkVoxelCount];
+            GrassType = new byte[VoxelConstants.ChunkVoxelCount];
+            GrassDecay = new byte[VoxelConstants.ChunkVoxelCount];
             Decals = new byte[VoxelConstants.ChunkVoxelCount];
-            DecalData = new byte[VoxelConstants.ChunkVoxelCount];
             Origin = chunk.Origin;
             FillDataFromChunk(chunk);
         }
@@ -94,8 +96,8 @@ namespace DwarfCorp
             Origin = chunkFile.Origin;
             Types = chunkFile.Types;
             Explored = chunkFile.Explored;
-            Decals = chunkFile.Decals;
-            DecalData = chunkFile.DecalData;
+            GrassType = chunkFile.GrassType;
+            GrassDecay = chunkFile.GrassDecay;
         }
 
         public bool ReadFile(string filePath, bool isCompressed, bool isBinary)
@@ -160,8 +162,9 @@ namespace DwarfCorp
                     c.Data.LiquidPresent[(i >> VoxelConstants.ZDivShift) >> VoxelConstants.XDivShift] += 1;
             }
 
+            GrassType.CopyTo(c.Data.GrassType, 0);
+            GrassDecay.CopyTo(c.Data.GrassDecay, 0);
             Decals.CopyTo(c.Data.Decals, 0);
-            DecalData.CopyTo(c.Data.DecalData, 0);
 
             c.CalculateInitialSunlight();
             return c;
@@ -171,8 +174,9 @@ namespace DwarfCorp
         {
             chunk.Data.Types.CopyTo(Types, 0);
             chunk.Data.IsExplored.CopyTo(Explored, 0);
+            chunk.Data.GrassType.CopyTo(GrassType, 0);
+            chunk.Data.GrassDecay.CopyTo(GrassDecay, 0);
             chunk.Data.Decals.CopyTo(Decals, 0);
-            chunk.Data.DecalData.CopyTo(DecalData, 0);
 
             for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
             {

@@ -45,7 +45,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class CraftItemAct : CompoundCreatureAct
     {
-        public CraftBuilder.CraftDesignation Item { get; set; }
+        public CraftDesignation Item { get; set; }
         public VoxelHandle Voxel { get; set; }
         public string Noise { get; set; }
         public CraftItemAct()
@@ -92,7 +92,7 @@ namespace DwarfCorp
         {
             if (!Item.HasResources && Item.ResourcesReservedFor == Agent)
             {
-                Creature.Inventory.RemoveAndCreateWithToss(Item.ItemType.SelectedResources, pos, Inventory.RestockType.None);
+                Creature.Inventory.RemoveAndCreateWithToss(Item.SelectedResources, pos, Inventory.RestockType.None);
                 Item.HasResources = true;
             }
             yield return Status.Success;
@@ -133,7 +133,7 @@ namespace DwarfCorp
                 yield break;
             }
 
-            Item.ItemType.SelectedResources = stashed;
+            Item.SelectedResources = stashed;
             if (Item.ItemType.Name == ResourceLibrary.ResourceType.Trinket)
             {
                 Resource craft = ResourceLibrary.GenerateTrinket(stashed.ElementAt(0).ResourceType,
@@ -195,7 +195,7 @@ namespace DwarfCorp
         }
 
 
-        public CraftItemAct(CreatureAI creature, CraftBuilder.CraftDesignation type) :
+        public CraftItemAct(CreatureAI creature, CraftDesignation type) :
             base(creature)
         {
             Item = type;
@@ -205,7 +205,7 @@ namespace DwarfCorp
 
         public bool IsNotCancelled()
         {
-            return Creature.Faction.CraftBuilder.IsDesignation(Voxel);
+            return Creature.Faction.Designations.IsDesignation(Item.Entity, DesignationType.Craft);
         }
 
         public bool ResourceStateValid()
@@ -219,7 +219,7 @@ namespace DwarfCorp
             Act unreserveAct = new Wrap(UnReserve);
             float time = 3 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt);
             Act getResources = null;
-            if (Item.ItemType.SelectedResources == null || Item.ItemType.SelectedResources.Count == 0)
+            if (Item.SelectedResources == null || Item.SelectedResources.Count == 0)
             {
                 getResources = new Select(new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
                                           new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
@@ -230,7 +230,7 @@ namespace DwarfCorp
             {
                 getResources = new Select(new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
                                           new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
-                                                     new Sequence(new Wrap(ReserveResources), new GetResourcesAct(Agent, Item.ItemType.SelectedResources))),
+                                                     new Sequence(new Wrap(ReserveResources), new GetResourcesAct(Agent, Item.SelectedResources))),
                                           new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true));
             }
 

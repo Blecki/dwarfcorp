@@ -56,7 +56,6 @@ namespace DwarfCorp
             base(manager, stats, allies, planService, faction, name)
         {
             Physics = new Physics(manager, "Elf", Matrix.CreateTranslation(position), new Vector3(0.5f, 1.0f, 0.5f), new Vector3(0.0f, -0.0f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
-            Physics.DrawBoundingBox = true;
             Physics.AddChild(this);
 
             Physics.AddChild(new SelectionCircle(Manager)
@@ -82,7 +81,7 @@ namespace DwarfCorp
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
-            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.BoundingBoxPos)) as Inventory;
+            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
 
             Physics.AddChild(Shadow.Create(0.75f, Manager));
 

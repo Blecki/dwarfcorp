@@ -50,11 +50,18 @@ namespace DwarfCorp
     /// </summary>
     public class ContentPaths
     {
+        public static string Error = ProgramData.CreatePath("Content", "newgui", "error");
+
         public static string controls = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "controls.json");
         public static string settings = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "settings.json");
         public static string mixer = ProgramData.CreatePath("Content", "Audio", "mixer.json");
         public static string voxel_types = ProgramData.CreatePath("Content", "voxel-types.json");
+        public static string grass_types = ProgramData.CreatePath("Content", "grass-types.json");
         public static string decal_types = ProgramData.CreatePath("Content", "decal-types.json");
+        public static string rail_junctions = ProgramData.CreatePath("Content", "rail-junctions.json");
+
+        // Todo: Move to own texture.
+        public static string rail_tiles = ProgramData.CreatePath("Terrain", "rail");
 
         public class Audio
     {
@@ -484,6 +491,11 @@ namespace DwarfCorp
                     {
                         return bird_prefix + MathFunctions.Random.Next(8);
                     }
+
+                    public static string GetBirdAnimations(string Bird)
+                    {
+                        return Bird + "_animation.json";
+                    }
                 }
 
                 public class Rabbit
@@ -512,12 +524,19 @@ namespace DwarfCorp
                 public class Deer
                 {
                     public static string deer = ProgramData.CreatePath("Entities", "Animals", "Deer", "deer");
+                    public static string animations = ProgramData.CreatePath("Entities", "Animals", "Deer", "deer_animation.json");
                 }
 
                 public class Snake
                 {
                     public static string snake = ProgramData.CreatePath("Entities", "Animals", "Snake", "snake");
+                    public static string snake_animation = ProgramData.CreatePath("Entities", "Animals", "Snake", "snake_animation.json");
+                    public static string tail_animation = ProgramData.CreatePath("Entities", "Animals", "Snake", "tail_animation.json");
+
                     public static string bonesnake = ProgramData.CreatePath("Entities", "Animals", "Snake", "bonesnake");
+                    public static string bonesnake_animation = ProgramData.CreatePath("Entities", "Animals", "Snake", "bonesnake_animation.json");
+                    public static string bonetail_animation = ProgramData.CreatePath("Entities", "Animals", "Snake", "bonetail_animation.json");
+
                 }
             }
 
@@ -632,6 +651,9 @@ namespace DwarfCorp
 
                 public static string necro_animations = ProgramData.CreatePath("Entities", "Skeleton",
                     "necro_animation.json");
+
+                public static string skeleton_animation =
+                    ProgramData.CreatePath("Entities", "Skeleton", "skele_animation.json");
 
                 public class Sprites
                 {

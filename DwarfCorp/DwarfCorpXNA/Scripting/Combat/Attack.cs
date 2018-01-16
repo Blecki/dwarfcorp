@@ -79,8 +79,10 @@ namespace DwarfCorp
         public Timer RechargeTimer { get; set; }
         public float Knockback { get; set; }
         public string AnimationAsset { get; set; }
+
         [JsonIgnore]
         protected Animation HitAnimation { get; set; }
+
         public string HitParticles { get; set; }
         public string ProjectileType { get; set; }
         public float LaunchSpeed { get; set; }
@@ -93,7 +95,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            CreateHitAnimation();
+            HitAnimation = AnimationLibrary.CreateSimpleAnimation(AnimationAsset);
         }
 
         public Attack()
@@ -122,17 +124,6 @@ namespace DwarfCorp
             DiseaseToSpread = other.DiseaseToSpread;
         }
 
-        public void CreateHitAnimation()
-        {
-            Texture2D text = TextureManager.GetTexture(AnimationAsset);
-            List<int> frames = new List<int>();
-            for (int i = 0; i < text.Width/text.Height; i++)
-            {
-                frames.Add(i);
-            }
-            HitAnimation = new Animation(AnimationAsset, text.Height, text.Height, frames.ToArray());
-        }
-
         public Attack(string name, float damage, float time, float range, SoundSource noise, string animation)
         {
             Name = name;
@@ -147,8 +138,7 @@ namespace DwarfCorp
             HitParticles = "";
             ProjectileType = "";
             AnimationAsset = animation;
-            CreateHitAnimation();
-        }
+            HitAnimation = AnimationLibrary.CreateSimpleAnimation(AnimationAsset);        }
 
         public IEnumerable<Act.Status> Perform(Creature performer, Vector3 pos, VoxelHandle other, DwarfTime time, float bonus, string faction)
         {
@@ -171,11 +161,11 @@ namespace DwarfCorp
                         }
                         break;
                     case AttackTrigger.Animation:
-                        if (performer.Sprite.CurrentAnimation == null ||
-                            performer.Sprite.CurrentAnimation.CurrentFrame != TriggerFrame)
+                        if (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
+                            performer.Sprite.AnimPlayer.CurrentFrame != TriggerFrame)
                         {
-                            if (performer.Sprite.CurrentAnimation != null)
-                                performer.Sprite.CurrentAnimation.Play();
+                            if (performer.Sprite.AnimPlayer.HasValidAnimation())
+                                performer.Sprite.AnimPlayer.Play();
                             yield return Act.Status.Running;
                             continue;
                         }
@@ -196,9 +186,7 @@ namespace DwarfCorp
 
                         if (HitAnimation != null)
                         {
-                            HitAnimation.Reset();
-                            HitAnimation.Play();
-                            IndicatorManager.DrawIndicator(HitAnimation.Clone(), other.WorldPosition + Vector3.One*0.5f,
+                            IndicatorManager.DrawIndicator(HitAnimation, other.WorldPosition + Vector3.One*0.5f,
                                 10.0f, 1.0f, MathFunctions.RandVector2Circle()*10, HitColor, MathFunctions.Rand() > 0.5f);
                         }
                         break;
@@ -241,8 +229,8 @@ namespace DwarfCorp
                     }
                     break;
                 case AttackTrigger.Animation:
-                    if (performer.Sprite.CurrentAnimation == null ||
-                        performer.Sprite.GetAnimation("AttackingFORWARD").CurrentFrame != TriggerFrame)
+                    if (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
+                        performer.Sprite.AnimPlayer.CurrentFrame != TriggerFrame)
                     {
                         HasTriggered = false;
                         return false;
@@ -259,9 +247,7 @@ namespace DwarfCorp
 
                 if (HitAnimation != null && !HasTriggered)
                 {
-                    HitAnimation.Reset();
-                    HitAnimation.Play();
-                    IndicatorManager.DrawIndicator(HitAnimation.Clone(), pos, 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
+                    IndicatorManager.DrawIndicator(HitAnimation, pos, 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
                     PlayNoise(pos);
                 }
             }
@@ -283,8 +269,8 @@ namespace DwarfCorp
                     }
                     break;
                 case AttackTrigger.Animation:
-                    if (performer.Sprite.CurrentAnimation == null ||
-                        performer.Sprite.GetAnimation("AttackingFORWARD").CurrentFrame != TriggerFrame)
+                    if (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
+                        performer.Sprite.AnimPlayer.CurrentFrame != TriggerFrame)
                     {
                         HasTriggered = false;
                         return false;
@@ -339,9 +325,7 @@ namespace DwarfCorp
 
                     if (HitAnimation != null)
                     {
-                        HitAnimation.Reset();
-                        HitAnimation.Play();
-                        IndicatorManager.DrawIndicator(HitAnimation.Clone(), other.BoundingBox.Center(), 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
+                            IndicatorManager.DrawIndicator(HitAnimation, other.BoundingBox.Center(), 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
                     }
 
                     Physics physics = other as Physics;

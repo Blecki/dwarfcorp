@@ -48,8 +48,15 @@ namespace DwarfCorp
     /// certain effects such as blinking.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class CharacterSprite : OrientedAnimation, IUpdateableComponent, IRenderableComponent
+    public class CharacterSprite : OrientedAnimatedSprite, IUpdateableComponent, IRenderableComponent
     {
+        [OnSerialized]
+        private void _onSerialized(StreamingContext Context)
+        {
+            var x = 5;
+
+        }
+
         [JsonIgnore]
         public GraphicsDevice Graphics { get; set; }
 
@@ -110,78 +117,12 @@ namespace DwarfCorp
 
         public void ReloopAnimations(CharacterMode mode)
         {
-            List<Animation> animations = GetAnimations(mode);
-            foreach (Animation a in animations)
-            {
-                if (a.IsDone())
-                {
-                    a.Reset();
-                }
-            }
+            if (AnimPlayer.IsDone()) AnimPlayer.Reset();
         }
 
         public void ResetAnimations(CharacterMode mode)
         {
-            List<Animation> animations = GetAnimations(mode);
-            foreach (Animation a in animations)
-            {
-                a.Reset();
-            }
-        }
-
-        public static Animation CreateAnimation(CharacterMode mode,
-            Orientation orient,
-            SpriteSheet texture,
-            float frameHz,
-            int frameWidth,
-            int frameHeight,
-            int row,
-            params int[] cols)
-        {
-            return CreateAnimation(mode, orient, texture, frameHz, frameWidth, frameHeight, row, cols.ToList());
-        }
-
-        public static Animation CreateAnimation(CharacterMode mode,
-            Orientation orient,
-            SpriteSheet texture,
-            float frameHz,
-            int frameWidth,
-            int frameHeight,
-            int row,
-            List<int> cols)
-        {
-            List<Point> frames = new List<Point>();
-            int numCols = texture.Width / frameWidth;
-
-            if (cols.Count == 0)
-            {
-                for (int i = 0; i < numCols; i++)
-                {
-                    frames.Add(new Point(i, row));
-                }
-            }
-            else
-            {
-                frames.AddRange(cols.Select(c => new Point(c, row)));
-            }
-
-            return new Animation(GameState.Game.GraphicsDevice, texture, mode.ToString() + OrientationStrings[(int)orient], frameWidth, frameHeight, frames, true, Color.White, frameHz, (float)frameWidth / 35.0f, (float)frameHeight / 35.0f, false);
-        }
-
-        public void AddAnimation(CharacterMode mode,
-            Orientation orient,
-            SpriteSheet texture,
-            float frameHz,
-            int frameWidth,
-            int frameHeight,
-            int row,
-            params int[] cols)
-        {
-            List<int> ints = new List<int>();
-            ints.AddRange(cols);
-            Animation animation = CreateAnimation(mode, orient, texture, frameHz, frameWidth, frameHeight, row, ints);
-            Animations[mode.ToString() + OrientationStrings[(int) orient]] = animation;
-            animation.Play();
+            AnimPlayer.Reset();
         }
 
         public void Blink(float blinkTime)
@@ -224,22 +165,12 @@ namespace DwarfCorp
 
         public void PauseAnimations(CharacterMode mode)
         {
-            List<Animation> animations = GetAnimations(mode);
-            foreach (Animation a in animations)
-            {
-                a.IsPlaying = false;
-            }
-
+            AnimPlayer.Pause();
         }
 
         public void PlayAnimations(CharacterMode mode)
         {
-            List<Animation> animations = GetAnimations(mode);
-            foreach (Animation a in animations)
-            {
-                a.IsPlaying = true;
-            }
-
+            AnimPlayer.Play();
         }
     }
 
