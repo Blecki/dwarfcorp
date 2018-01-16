@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    [JsonObject(IsReference =true)]
     public class SimpleSprite : Tinter, IRenderableComponent
     {
         public enum OrientMode
@@ -75,6 +76,14 @@ namespace DwarfCorp
             base.RenderSelectionBuffer(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect);
             effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
+        }
+
+        public void AutoSetWorldSize()
+        {
+            if (Sheet == null)
+                return;
+            WorldWidth = Sheet.FrameWidth / 32.0f;
+            WorldHeight = Sheet.FrameHeight / 32.0f;
         }
 
         public void Render(DwarfTime gameTime,

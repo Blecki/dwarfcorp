@@ -98,6 +98,7 @@ namespace DwarfCorp
             Explored = chunkFile.Explored;
             GrassType = chunkFile.GrassType;
             GrassDecay = chunkFile.GrassDecay;
+            Decals = chunkFile.Decals;
         }
 
         public bool ReadFile(string filePath, bool isCompressed, bool isBinary)
