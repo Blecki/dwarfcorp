@@ -254,5 +254,11 @@ namespace DwarfCorp
             if (OnDestroyed != null) OnDestroyed();
             base.Die();
         }
+
+        public override void CreateCosmeticChildren(ComponentManager Manager)
+        {
+            PropogateTransforms();
+            base.CreateCosmeticChildren(Manager);
+        }
     }
 }
