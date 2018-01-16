@@ -92,7 +92,7 @@
   },
 
   {
-    "Name": "BorealForest",
+    "Name": "Boreal Forest",
     "Icon": 1,
     "DayAmbience": "sfx_amb_forest_day",
     "NightAmbience": "sfx_amb_forest_night",
@@ -181,7 +181,7 @@
   },
 
   {
-    "Name": "DeciduousForest",
+    "Name": "Deciduous Forest",
     "Icon": 8,
     "DayAmbience": "sfx_amb_forest_day",
     "NightAmbience": "sfx_amb_forest_night",
@@ -726,7 +726,7 @@
     "Rain": 0.0
   },
   {
-    "Name": "JollyForest",
+    "Name": "Jolly Forest",
     "Icon": 10,
     "DayAmbience": "sfx_amb_tundra",
     "Vegetation": [

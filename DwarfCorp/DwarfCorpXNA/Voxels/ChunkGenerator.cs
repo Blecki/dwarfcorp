@@ -315,6 +315,9 @@ namespace DwarfCorp
 
                     foreach (VegetationData veg in biomeData.Vegetation)
                     {
+                        if (topVoxel.GrassType == 0)
+                            continue;
+
                         if (MathFunctions.RandEvent(veg.SpawnProbability) &&
                             NoiseGenerator.Noise(topVoxel.Coordinate.X / veg.ClumpSize,
                             veg.NoiseOffset, topVoxel.Coordinate.Z / veg.ClumpSize) >= veg.ClumpThreshold)
