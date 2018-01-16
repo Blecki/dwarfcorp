@@ -124,11 +124,6 @@ namespace DwarfCorp
         {
             bool success =  creature.Faction.Designations.IsVoxelDesignation(voxel, DesignationType.Put) &&
                 creature.Creature.Inventory.HasResource(resources);
-
-            if (!success)
-            {
-                var x = 0;
-            }
             return success;
         }
 

@@ -59,6 +59,7 @@ namespace DwarfCorp
         public CollisionManager.CollisionType CollisionType = CollisionManager.CollisionType.None;
         public Vector3 BoundingBoxSize = Vector3.One;
         public Vector3 LocalBoundingBoxOffset = Vector3.Zero;
+        [JsonIgnore]
         public Action OnDestroyed;
         public bool IsReserved = false;
         public GameComponent ReservedFor = null;
@@ -252,6 +253,12 @@ namespace DwarfCorp
             IsVisible = false;
             if (OnDestroyed != null) OnDestroyed();
             base.Die();
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager Manager)
+        {
+            PropogateTransforms();
+            base.CreateCosmeticChildren(Manager);
         }
     }
 }

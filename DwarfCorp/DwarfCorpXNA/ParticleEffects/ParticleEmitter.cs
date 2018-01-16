@@ -152,7 +152,11 @@ namespace DwarfCorp
         public EmitterData Data { get; set; }
         public Timer TriggerTimer { get; set; }
         private static Camera _camera = null;
-        
+
+        private bool _frustumCull = false;
+
+        public new bool FrustumCull {  get { return _frustumCull; } }
+
         public static Matrix MatrixFromParticle(Particle particle)
         {
             Matrix rot = Matrix.CreateRotationZ(particle.Angle);

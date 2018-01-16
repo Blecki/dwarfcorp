@@ -37,10 +37,12 @@ using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class SelectionCircle : SimpleSprite
+    [JsonObject(IsReference = true)]
+    public class SelectionCircle : Body
     {
         public SelectionCircle()
             : base()
@@ -49,16 +51,26 @@ namespace DwarfCorp
         }
 
         public SelectionCircle(ComponentManager manager) :
-            base(manager, "Selection", Matrix.CreateRotationX((float)Math.PI), false, new SpriteSheet(ContentPaths.Effects.selection_circle), Point.Zero)
+            base(manager, "Selection", Matrix.CreateRotationX((float)Math.PI), Vector3.One, Vector3.Zero)
         {
-            LightsWithVoxels = false;
-            OrientationType = OrientMode.Fixed;
-            
 
             var shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.25f, 0.0f);
 
             LocalTransform = shadowTransform;
+            CreateCosmeticChildren(manager);
+            SetFlagRecursive(Flag.Visible, false);
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager Manager)
+        {
+            AddChild(new SimpleSprite(Manager, "Sprite", Matrix.Identity, false, new SpriteSheet(ContentPaths.Effects.selection_circle), Point.Zero)
+            {
+                LightsWithVoxels = false,
+                OrientationType = SimpleSprite.OrientMode.Fixed
+            }
+            );
+            base.CreateCosmeticChildren(Manager);
         }
     }
 }

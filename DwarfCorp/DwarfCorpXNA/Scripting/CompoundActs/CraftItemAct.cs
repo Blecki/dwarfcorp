@@ -83,6 +83,8 @@ namespace DwarfCorp
             }
             if (Item.ResourcesReservedFor == Agent)
                 Item.ResourcesReservedFor = null;
+            Agent.Physics.Active = true;
+            Agent.Physics.IsSleeping = false;
             yield return Act.Status.Success;
         }
 
@@ -104,8 +106,12 @@ namespace DwarfCorp
                 yield break;
             }
 
+            WanderAct wander = new WanderAct(Agent, 60.0f, 5.0f, 1.0f);
+            wander.Initialize();
+            var enumerator = wander.Enumerator;
             while (!Item.HasResources)
             {
+                enumerator.MoveNext();
                 if (Item.ResourcesReservedFor == null || Item.ResourcesReservedFor.IsDead)
                 {
                     yield return Act.Status.Fail;
@@ -249,7 +255,7 @@ namespace DwarfCorp
                             new Wrap(WaitForResources) { Name = "Wait for resources."},
                             new Wrap(() => Creature.HitAndWait(true, () => 1.0f, 
                             () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
-                            () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft")),
+                            () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft", null, true)),
                             new CreateCraftItemAct(Voxel, Creature.AI, Item))),
                             unreserveAct
                             ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
@@ -322,6 +328,7 @@ namespace DwarfCorp
         public override void OnCanceled()
         {
             Creature.Physics.Active = true;
+            Creature.Physics.IsSleeping = false;
             foreach (var statuses in Creature.Unreserve(Item.ItemType.CraftLocation))
             {
                 continue;

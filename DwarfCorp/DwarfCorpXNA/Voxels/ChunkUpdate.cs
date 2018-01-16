@@ -107,10 +107,6 @@ namespace DwarfCorp
                                 if (MathFunctions.RandEvent(0.1f))
                                     addGrassToThese.Add(Tuple.Create(voxel, grassyNeighbors[MathFunctions.RandInt(0, grassyNeighbors.Count)].GrassType));
                         }
-
-
-                        
-
                     }
             }
 

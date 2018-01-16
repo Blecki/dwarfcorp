@@ -78,7 +78,13 @@ namespace DwarfCorp
 
         public override void SetCurrentAnimation(string name, bool Play = false)
         {
-            currentMode = name;
+            if (currentMode != name || Play)
+            {
+                currentMode = name;
+                var s = currentMode + OrientationStrings[(int)CurrentOrientation];
+                if (Animations.ContainsKey(s))
+                    AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.NoStateChange);
+            }
         }
 
 

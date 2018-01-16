@@ -177,13 +177,13 @@ namespace DwarfCorp
 
             foreach (var m in Minions)
             {
-                m.Creature.SelectionCircle.IsVisible = false;
+                m.Creature.SelectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, false);
                 m.Creature.Sprite.DrawSilhouette = false;
             };
 
             foreach (CreatureAI creature in SelectedMinions)
             {
-                creature.Creature.SelectionCircle.IsVisible = true;
+                creature.Creature.SelectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, true);
                 creature.Creature.Sprite.DrawSilhouette = true;
             }
 

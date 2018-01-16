@@ -56,7 +56,10 @@ namespace DwarfCorp
             Biomes = ContentPaths.LoadFromJson<List<BiomeData>>(ContentPaths.World.biomes);
             byte id = 0;
             foreach (var biome in Biomes)
+            {
                 biome.Biome = id;
+                id++;
+            }
         }
 
         public static Dictionary<string, Color> CreateBiomeColors()

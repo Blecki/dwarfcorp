@@ -49,6 +49,7 @@ namespace DwarfCorp
             Frames = new List<Point>();
             Speeds = new List<float>();
             SpeedMultiplier = 1.0f;
+            Tint = Color.White;
         }
 
         private Rectangle GetFrameRect(int Frame)

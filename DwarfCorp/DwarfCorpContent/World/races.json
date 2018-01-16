@@ -243,8 +243,8 @@
         },
 		"Biomes" : 
         {
-            "Tundra" :  "JollyForest",
-            "Taiga" :  "JollyForest",
+            "Tundra" :  "Jolly Forest",
+            "Taiga" :  "Jolly Forest",
         },
         "NaturalEnemies" :  ["Demon", "Undead", "Goblins", "Carnivore"],
         "Speech" : {
@@ -362,7 +362,7 @@
         },
 		"Biomes" : 
         {
-            "BorealForest" :  "HauntedForest",
+            "Boreal Forest" :  "Haunted Forest",
         },
         "Crafts" :  ["Bone"],
         "Encrustings":  ["Gem"],

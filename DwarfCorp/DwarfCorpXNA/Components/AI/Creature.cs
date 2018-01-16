@@ -68,6 +68,10 @@ namespace DwarfCorp
 
         public bool CanReproduce = false;
 
+        private static int _maxPerSpecies = 50;
+        private static Dictionary<string, int> _speciesCounts = new Dictionary<string, int>();
+        private bool _addedToSpeciesRegister = false;
+
         public bool IsPregnant
         {
             get { return CurrentPregnancy != null; }
@@ -288,6 +292,26 @@ namespace DwarfCorp
             }
         }
 
+        private void addToSpeciesCount()
+        {
+            if (_addedToSpeciesRegister)
+                return;
+            if (!_speciesCounts.ContainsKey(Species))
+                _speciesCounts.Add(Species, 1);
+            else
+                _speciesCounts[Species]++;
+
+            _addedToSpeciesRegister = true;
+        }
+
+        private void removeFromSpeciesCount()
+        {
+            if (!_speciesCounts.ContainsKey(Species))
+                _speciesCounts.Add(Species, 0);
+            else
+                _speciesCounts[Species]--;
+        }
+
         /// <summary> Updates the creature </summary>
         public virtual void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
@@ -296,6 +320,8 @@ namespace DwarfCorp
                 FirstUpdate = false;
                 Faction.Minions.Add(AI);
                 Physics.AllowPhysicsSleep = false;
+
+                addToSpeciesCount();
             }
 
             if (!Active) return;
@@ -324,15 +350,21 @@ namespace DwarfCorp
 
                 if (EggTimer.HasTriggered)
                 {
-                    LayEgg();
-                    EggTimer = new Timer(1200f + MathFunctions.Rand(-30, 30), false);
+                    if (!_speciesCounts.ContainsKey(Species) || _speciesCounts[Species] < _maxPerSpecies)
+                    {
+                        LayEgg();
+                        EggTimer = new Timer(1200f + MathFunctions.Rand(-30, 30), false);
+                    }
                 }
             }
 
             if (IsPregnant && World.Time.CurrentDate > CurrentPregnancy.EndDate)
             {
-                var baby = EntityFactory.CreateEntity<GameComponent>(BabyType, Physics.Position);
-                baby.GetRoot().GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint;
+                if (!_speciesCounts.ContainsKey(Species) || _speciesCounts[Species] < _maxPerSpecies)
+                {
+                    var baby = EntityFactory.CreateEntity<GameComponent>(BabyType, Physics.Position);
+                    baby.GetRoot().GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint;
+                }
                 CurrentPregnancy = null;
             }
 
@@ -424,7 +456,7 @@ namespace DwarfCorp
             // This is just a silly hack to make sure that creatures
             // carrying resources to a trade depot release their resources
             // when they die.
-
+            removeFromSpeciesCount();
             CreateMeatAndBones();
             NoiseMaker.MakeNoise("Die", Physics.Position, true);
 
@@ -612,8 +644,10 @@ namespace DwarfCorp
         }
 
         public IEnumerable<Act.Status> HitAndWait(bool loadBar, Func<float> maxProgress, 
-            Func<float> progress, Action incrementProgress, Func<Vector3> pos, string playSound = "", Func<bool> continueHitting = null)
+            Func<float> progress, Action incrementProgress, 
+            Func<Vector3> pos, string playSound = "", Func<bool> continueHitting = null, bool maintainPos = true)
         {
+            Vector3 currentPos = Physics.LocalTransform.Translation;
             CurrentCharacterMode = CharacterMode.Attacking;
             Sprite.ResetAnimations(CharacterMode.Attacking);
             Sprite.PlayAnimations(CharacterMode.Attacking);
@@ -646,6 +680,13 @@ namespace DwarfCorp
                 if (incrementTimer.HasTriggered)
                 {
                     incrementProgress();
+                }
+
+                if (maintainPos)
+                {
+                    var matrix = Physics.LocalTransform;
+                    matrix.Translation = currentPos;
+                    Physics.LocalTransform = matrix;
                 }
 
                 yield return Act.Status.Running;

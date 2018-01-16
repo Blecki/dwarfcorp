@@ -70,11 +70,14 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return agent.Stats.IsTaskAllowed(Task.TaskCategory.BuildZone) ? Feasibility.Feasible : Feasibility.Infeasible;
+            return Zone != null && agent.Stats.IsTaskAllowed(Task.TaskCategory.BuildZone) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override Act CreateScript(Creature creature)
         {
+            if (Zone == null)
+                return null;
+
             return new BuildRoomAct(creature.AI, Zone);
         }
 
