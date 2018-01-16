@@ -87,6 +87,10 @@ namespace DwarfCorp
             }
 
             BuildRoomOrder designation = voxVoxelOrder.Order;
+
+            if (designation == null)
+                return null;
+
             return  new BuildRoomAct(creature.AI, designation);
         }
 
