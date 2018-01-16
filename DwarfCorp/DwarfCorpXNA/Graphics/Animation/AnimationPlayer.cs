@@ -86,15 +86,12 @@ namespace DwarfCorp
         public void ChangeAnimation(Animation Animation, ChangeAnimationOptions Options)
         {
             CurrentAnimation = Animation;
-
+            IsLooping = Animation.Loops;
             if ((Options & ChangeAnimationOptions.Reset) == ChangeAnimationOptions.Reset)
                 CurrentFrame = 0;
 
             if ((Options & ChangeAnimationOptions.Play) == ChangeAnimationOptions.Play)
                 IsPlaying = true;
-
-            if ((Options & ChangeAnimationOptions.Loop) == ChangeAnimationOptions.Loop)
-                IsLooping = true;
 
             if ((Options & ChangeAnimationOptions.Stop) == ChangeAnimationOptions.Stop)
                 IsPlaying = false;
@@ -103,7 +100,6 @@ namespace DwarfCorp
             {
                 if (CurrentFrame >= Animation.GetFrameCount())
                     CurrentFrame = Animation.GetFrameCount() - 1;
-                IsLooping = IsLooping | Animation.Loops;
             }
         }
 
