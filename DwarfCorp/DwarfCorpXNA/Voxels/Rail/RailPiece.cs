@@ -20,6 +20,7 @@ namespace DwarfCorp.Rail
         public String Name = "";
         public Point Tile = Point.Zero;
         public List<RailCombination> CombinationTable = new List<RailCombination>();
+        public List<List<Vector3>> SplinePoints = new List<List<Vector3>>();
 
     }
 }

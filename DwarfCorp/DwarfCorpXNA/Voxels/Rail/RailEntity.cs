@@ -41,19 +41,19 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class RailPiece : Body
+    public class RailEntity : Body
 #if DEBUG
         , IRenderableComponent
 #endif
     {
         public Rail.JunctionPiece Piece;
 
-        public RailPiece()
+        public RailEntity()
         {
             
         }
 
-        public RailPiece(
+        public RailEntity(
             ComponentManager Manager,
             VoxelHandle Location,
             Rail.JunctionPiece Piece) :
@@ -102,12 +102,18 @@ namespace DwarfCorp
         }
 
 #if DEBUG
-        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
+            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+
             if (GamePerformance.DebugVisualizationEnabled)
             {
-                //Drawer3D.DrawBox(this.GetBoundingBox(), Color.Yellow, 0.1f, false);
-                Drawer3D.DrawBox(this.EnumerateChildren().OfType<NewVoxelListener>().First().GetBoundingBox(), Color.Orange, 0.1f, false);
+                var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
+                var piece = Rail.RailLibrary.GetRailPiece(Piece.RailPiece);
+                foreach (var spline in piece.SplinePoints)
+                    for (var i = 1; i < spline.Count; ++i)
+                        Drawer3D.DrawLine(Vector3.Transform(spline[i - 1], transform),
+                            Vector3.Transform(spline[i], transform), Color.Purple, 0.1f);
             }
         }
 #endif

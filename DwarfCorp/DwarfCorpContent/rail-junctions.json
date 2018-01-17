@@ -75,7 +75,14 @@
           "ResultRelativeOrientation": "South"
         }
 
+      ],
+      "SplinePoints": [
+        [
+          "-0.5, 0.1, 0",
+          "0.5, 0.1, 0"
+        ]
       ]
+
     },
 
     {
@@ -88,12 +95,52 @@
           "Result": "rail-small-curve-inside-large",
           "ResultRelativeOrientation": "North"
         }
+      ],
+      "SplinePoints": [
+        [
+          "-0.5, 0.1, 0",
+          "-0.1, 0.1, -0.1",
+          "0, 0.1, -0.5"
+        ]
       ]
     },
 
     {
       "Name": "rail-cross",
-      "Tile": "0, 2"
+      "Tile": "0, 2",
+      "SplinePoints": [
+        [
+          "-0.5, 0.1, 0",
+          "0.5, 0.1, 0"
+        ],
+
+        [
+          "0, 0.1, -0.5",
+          "0, 0.1, 0.5"
+        ]
+      ]
+    },
+
+    {
+      "Name": "rail-opposite-diagonals-a",
+      "Tile": "1, 1",
+      "SplinePoints": [
+        [
+          "-0.5, 0.1, 0",
+          "0.5, 0.1, 0"
+        ]
+      ]
+    },
+
+    {
+      "Name": "rail-opposite-diagonals-b",
+      "Tile": "3, 1",
+      "SplinePoints": [
+        [
+          "-0.5, 0.1, 0",
+          "0.5, 0.1, 0"
+        ]
+      ]
     },
 
     {
@@ -111,8 +158,15 @@
           "Overlay": "rail-straight",
           "OverlayRelativeOrientation": "South",
           "Result": "rail-left-switch-open-b",
-          "ResultRelativeOrientation": "North"
+          "ResultRelativeOrientation": "South"
         }
+      ],
+      "SplinePoints": [
+        [
+          "-0.5, 0.1, 0",
+          "0, 0.1, -0.1",
+          "0.5, 0.1, -0.5"
+        ]
       ]
     },
 
@@ -182,37 +236,132 @@
           "Result": "rail-right-switch-open-b",
           "ResultRelativeOrientation": "West"
         }
+      ],
+      "SplinePoints": [
+        [
+          "-0.5, 0.1, 0.5",
+          "-0.1, 0.1, 0",
+          "0, 0.1, -0.5"
+        ]
       ]
     },
 
     {
       "Name": "rail-small-curve-inside-large",
-      "Tile": "1, 2"
+      "Tile": "1, 2",
+      "SplinePoints": [
+        [
+          "-0.5, 0.1, 0",
+          "-0.1, 0.1, -0.1",
+          "0, 0.1, -0.5"
+        ]
+      ]
     },
 
     {
       "Name": "rail-large-curve-diagonal",
-      "Tile": "2, 2"
+      "Tile": "2, 2",
+      "CombinationTable": [
+        {
+          "Overlay": "rail-straight",
+          "OverlayRelativeOrientation": "North",
+          "Result": "rail-opposite-diagonals-a",
+          "ResultRelativeOrientation": "North"
+        },
+
+        {
+          "Overlay": "rail-straight",
+          "OverlayRelativeOrientation": "South",
+          "Result": "rail-opposite-diagonals-a",
+          "ResultRelativeOrientation": "North"
+        },
+
+        {
+          "Overlay": "rail-straight",
+          "OverlayRelativeOrientation": "East",
+          "Result": "rail-opposite-diagonals-b",
+          "ResultRelativeOrientation": "North"
+        },
+
+        {
+          "Overlay": "rail-straight",
+          "OverlayRelativeOrientation": "West",
+          "Result": "rail-opposite-diagonals-b",
+          "ResultRelativeOrientation": "North"
+        }
+      ]
     },
 
     {
       "Name": "rail-left-switch-open-a",
-      "Tile": "3, 0"
+      "Tile": "3, 0",
+      "CombinationTable": [
+        {
+          "Overlay": "rail-large-curve-b",
+          "OverlayRelativeOrientation": "North",
+          "Result": "rail-opposite-diagonals-a",
+          "ResultRelativeOrientation": "North"
+        }
+      ],
+      "SplinePoints": [
+        [
+          "-0.5, 0.1, 0",
+          "0.5, 0.1, 0"
+        ]
+      ]
     },
 
     {
       "Name": "rail-left-switch-open-b",
-      "Tile": "4, 0"
+      "Tile": "4, 0",
+      "SplinePoints": [
+        [
+          "-0.5, 0.1, 0",
+          "0.5, 0.1, 0"
+        ],
+
+        [
+          "-0.5, 0.1, 0.5",
+          "-0.1, 0.1, 0.1",
+          "0.5, 0.1, 0"
+        ]
+      ]
     },
 
     {
       "Name": "rail-right-switch-open-a",
-      "Tile": "6, 0"
+      "Tile": "6, 0",
+      "CombinationTable": [
+        {
+          "Overlay": "rail-large-curve-b",
+          "OverlayRelativeOrientation": "South",
+          "Result": "rail-opposite-diagonals-b",
+          "ResultRelativeOrientation": "North"
+        }
+      ],
+      "SplinePoints": [
+        [
+          "-0.5, 0.1, 0",
+          "0.5, 0.1, 0"
+        ]
+      ]
     },
 
     {
       "Name": "rail-right-switch-open-b",
-      "Tile": "5, 0"
+      "Tile": "5, 0",
+      "SplinePoints": [
+        [
+          "-0.5, 0.1, 0",
+          "0.5, 0.1, 0"
+        ],
+
+        [
+          "0.5, 0.1, 0.5",
+          "0.1, 0.1, 0.1",
+          "-0.5, 0.1, 0"
+        ]
+      ]
     }
 
   ],

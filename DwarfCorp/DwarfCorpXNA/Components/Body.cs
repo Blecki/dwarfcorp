@@ -47,7 +47,7 @@ namespace DwarfCorp
 #endif
     {
 #if DEBUG
-        void IRenderableComponent.Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             if (GamePerformance.DebugVisualizationEnabled)
                 Drawer3D.DrawBox(BoundingBox, Color.Blue, 0.02f, false);
@@ -243,6 +243,13 @@ namespace DwarfCorp
                 BoundingBox.Min = GlobalTransform.Translation + LocalBoundingBoxOffset - (BoundingBoxSize * 0.5f);
                 BoundingBox.Max = GlobalTransform.Translation + LocalBoundingBoxOffset + (BoundingBoxSize * 0.5f);
             }
+        }
+
+        public override void Delete()
+        {
+            base.Delete();
+            if (IsFlagSet(Flag.AddToCollisionManager))
+                Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
         }
 
         public override void Die()

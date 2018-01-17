@@ -46,7 +46,7 @@ namespace DwarfCorp
     public class BuildRailTool : PlayerTool
     {
         public Rail.JunctionPattern Pattern;
-        private List<RailPiece> PreviewBodies = new List<RailPiece>();
+        private List<RailEntity> PreviewBodies = new List<RailEntity>();
         private Faction Faction;
         private bool RightPressed = false;
         private bool LeftPressed = false;
@@ -114,7 +114,7 @@ namespace DwarfCorp
 
             PreviewBodies.Clear();
             foreach (var piece in Pattern.Pieces)
-                PreviewBodies.Add(new RailPiece(ComponentManager, Location, piece));
+                PreviewBodies.Add(new RailEntity(ComponentManager, Location, piece));
 
             foreach (var body in PreviewBodies)
                 ComponentManager.RootComponent.AddChild(body);
@@ -187,7 +187,7 @@ namespace DwarfCorp
 
         }
 
-        private bool CanPlace(VoxelHandle Location, Rail.JunctionPiece Piece, RailPiece PreviewEntity)
+        private bool CanPlace(VoxelHandle Location, Rail.JunctionPiece Piece, RailEntity PreviewEntity)
         {
             var actualPosition = new VoxelHandle(Location.Chunk.Manager.ChunkData, Location.Coordinate + new GlobalVoxelOffset(Piece.Offset.X, 0, Piece.Offset.Y));
             if (!actualPosition.IsValid) return false;
@@ -201,8 +201,12 @@ namespace DwarfCorp
 
             foreach (var entity in  Player.World.CollisionManager.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionManager.CollisionType.Static))
             {
+                if ((entity as GameComponent).IsDead)
+                    continue;
+
                 if (Object.ReferenceEquals(entity, PreviewEntity)) continue;
                 if (entity is NewVoxelListener) continue;
+                if (entity is WorkPile) continue;
 
                 if (FindPossibleCombination(Piece, entity) != null)
                     return true;
@@ -220,9 +224,9 @@ namespace DwarfCorp
 
         private static Rail.RailCombination FindPossibleCombination(Rail.JunctionPiece Piece, IBoundedObject Entity)
         {
-            if (Entity is RailPiece)
+            if (Entity is RailEntity)
             {
-                var baseJunction = (Entity as RailPiece).Piece;
+                var baseJunction = (Entity as RailEntity).Piece;
                 var basePiece = Rail.RailLibrary.GetRailPiece(baseJunction.RailPiece);
                 var relativeOrientation = Rail.OrientationHelper.Relative(baseJunction.Orientation, Piece.Orientation);
                 var matchingCombination = basePiece.CombinationTable.FirstOrDefault(c => c.Overlay == Piece.RailPiece && c.OverlayRelativeOrientation == relativeOrientation);
@@ -250,9 +254,13 @@ namespace DwarfCorp
                 var piece = Pattern.Pieces[i];
                 var actualPosition = new VoxelHandle(Location.Chunk.Manager.ChunkData, Location.Coordinate + new GlobalVoxelOffset(piece.Offset.X, 0, piece.Offset.Y));
                 var addNewDesignation = true;
+                var hasResources = false;
 
                 foreach (var entity in Player.World.CollisionManager.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionManager.CollisionType.Static))
                 {
+                    if ((entity as GameComponent).IsDead)
+                        continue;
+
                     if (!addNewDesignation) break;
                     if (Object.ReferenceEquals(entity, body)) continue;
 
@@ -262,21 +270,22 @@ namespace DwarfCorp
                         var combinedPiece = new Rail.JunctionPiece
                         {
                             RailPiece = possibleCombination.Result,
-                            Orientation = Rail.OrientationHelper.Rotate((entity as RailPiece).Piece.Orientation, (int)possibleCombination.ResultRelativeOrientation),
+                            Orientation = Rail.OrientationHelper.Rotate((entity as RailEntity).Piece.Orientation, (int)possibleCombination.ResultRelativeOrientation),
                         };
 
                         var existingDesignation = Player.Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, entity));
                         if (existingDesignation != null)
                         {
-                            (entity as RailPiece).UpdatePiece(combinedPiece, actualPosition);
+                            (entity as RailEntity).UpdatePiece(combinedPiece, actualPosition);
                             (existingDesignation.Tag as CraftDesignation).Progress = 0.0f;
                             body.Delete();
                             addNewDesignation = false;
                         }
                         else
                         {
-                            (entity as RailPiece).Die();
+                            (entity as RailEntity).Delete();
                             body.UpdatePiece(combinedPiece, actualPosition);
+                            hasResources = true;
                         }
                     }
                 }
@@ -296,7 +305,7 @@ namespace DwarfCorp
                         ItemType = RailCraftItem,
                         SelectedResources = SelectedResources,
                         Location = new VoxelHandle(Player.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(body.Position)),
-                        HasResources = false,
+                        HasResources = hasResources,
                         ResourcesReservedFor = null,
                         Orientation = 0.0f,
                         Progress = 0.0f,
