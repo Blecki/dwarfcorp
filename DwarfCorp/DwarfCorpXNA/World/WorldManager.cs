@@ -859,6 +859,9 @@ namespace DwarfCorp
             DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
             DefaultShader.ClippingEnabled = true;
 
+            if (GameSettings.Default.DrawOcttree)
+                CollisionManager.EnumerateBounds((box, depth) => Drawer3D.DrawBox(box, Color.Yellow, 1.0f / (float)depth, false));
+
             GamePerformance.Instance.StartTrackPerformance("Render - Drawer3D");
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer, PlayerFaction.Designations, this);

@@ -80,13 +80,14 @@ namespace DwarfCorp
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
+        {           
+            base.Update(gameTime, chunks, camera);
+
             LifeTimer.Update(gameTime);
             if (LifeTimer.HasTriggered)
             {
                 Die();
             }
-            base.Update(gameTime, chunks, camera);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)

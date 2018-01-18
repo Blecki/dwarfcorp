@@ -83,6 +83,7 @@ namespace DwarfCorp
             public bool UseDynamicShadows = false;
             public bool UseLightmaps = false;
             public bool DrawPaths = false;
+            public bool DrawOcttree = false;
             public bool AutoSave = true;
             public float AutoSaveTimeMinutes = 2.0f;
             public string SaveLocation = null;

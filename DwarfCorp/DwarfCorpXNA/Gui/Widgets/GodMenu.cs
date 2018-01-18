@@ -223,6 +223,14 @@ namespace DwarfCorp.Gui.Widgets
                 },
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "DRAW OCTTREE",
+                    OnClick = (sender, args) =>
+                    {
+                        GameSettings.Default.DrawOcttree = !GameSettings.Default.DrawOcttree;
+                    }
+                },
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "+1 HOUR",
                     OnClick = (sender, args) =>
                     {
@@ -247,6 +255,27 @@ namespace DwarfCorp.Gui.Widgets
                         var storm = Weather.CreateStorm(Vector3.One, 100.0f, Master.World);
                         storm.TypeofStorm = StormType.SnowStorm;
                         storm.Start();
+                    }
+                },
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "SCAN OCTTREE",
+                    OnClick = (sender, args) =>
+                    {
+                        var deadObjectsInTree = Master.World.CollisionManager.EnumerateAll().OfType<GameComponent>().Where(c => c.IsDead);
+                        var dict = new Dictionary<String, int>();
+                        foreach (var item in deadObjectsInTree)
+                        {
+                            if (!dict.ContainsKey(item.ToString()))
+                                dict.Add(item.ToString(), 1);
+                            else
+                                dict[item.ToString()] += 1;
+                        }
+
+                        Root.ShowModalPopup(Root.ConstructWidget(new Popup {
+                            Rect = Root.RenderData.VirtualScreen,
+                            Text = String.Join("\n", dict.Select(k => String.Format("{0} - {1}", k.Value, k.Key)))
+                        }));
                     }
                 },
 

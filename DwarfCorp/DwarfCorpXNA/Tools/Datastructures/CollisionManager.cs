@@ -79,7 +79,7 @@ namespace DwarfCorp
 
         public void RemoveObject(IBoundedObject bounded, BoundingBox oldLocation, CollisionType type)
         {
-            if(type == CollisionType.None)
+            if (type == CollisionType.None)
                 return;
 
             Hashes[type].RemoveItem(bounded, oldLocation);
@@ -102,6 +102,20 @@ namespace DwarfCorp
                     throw new InvalidOperationException();
             }
             return hash;
+        }
+
+        public IEnumerable<IBoundedObject> EnumerateAll()
+        {
+            var hash = new HashSet<IBoundedObject>();
+            Hashes[CollisionType.Static].EnumerateAll(hash);
+            Hashes[CollisionType.Dynamic].EnumerateAll(hash);
+            return hash;
+        }
+
+        public void EnumerateBounds(Action<BoundingBox, int> Callback)
+        {
+            foreach (var hash in Hashes)
+                hash.Value.EnumerateBounds(0, Callback);
         }
     }
 }

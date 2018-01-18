@@ -51,10 +51,10 @@ namespace DwarfCorp
         {
             if (GamePerformance.DebugVisualizationEnabled)
                 Drawer3D.DrawBox(BoundingBox, Color.Blue, 0.02f, false);
-        }
+        }        
+#endif
 
         public bool FrustumCull { get { return IsFlagSet(Flag.FrustumCull); } }
-#endif
 
         public CollisionManager.CollisionType CollisionType = CollisionManager.CollisionType.None;
         public Vector3 BoundingBoxSize = Vector3.One;
@@ -77,7 +77,8 @@ namespace DwarfCorp
                 if (IsFlagSet(Flag.AddToCollisionManager))
                 {
                     Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
-                    Manager.World.CollisionManager.AddObject(this, CollisionType);
+                    if (!IsDead)
+                        Manager.World.CollisionManager.AddObject(this, CollisionType);
                 }
 
                 lastBounds = BoundingBox;
@@ -247,18 +248,20 @@ namespace DwarfCorp
 
         public override void Delete()
         {
-            base.Delete();
             if (IsFlagSet(Flag.AddToCollisionManager))
                 Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
+
+            base.Delete();
         }
 
         public override void Die()
         {
-            if(IsFlagSet(Flag.AddToCollisionManager))
+            // Todo: Get rid of this flag.
+            if (IsFlagSet(Flag.AddToCollisionManager))
                 Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
-            Active = false;
-            IsVisible = false;
+
             if (OnDestroyed != null) OnDestroyed();
+
             base.Die();
         }
 
