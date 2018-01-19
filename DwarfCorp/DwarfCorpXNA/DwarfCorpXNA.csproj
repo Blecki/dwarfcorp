@@ -393,7 +393,7 @@
     <Compile Include="Scripting\LeafActs\PutMoneyInZoneAct.cs" />
     <Compile Include="Scripting\LeafActs\StashMoneyAct.cs" />
     <Compile Include="Scripting\Player\Building\CraftDesignation.cs" />
-    <Compile Include="Scripting\Player\Tools\BuildRailTool.cs" />
+    <Compile Include="Voxels\Rail\BuildRailTool.cs" />
     <Compile Include="Scripting\Player\Tools\BuildObjectTool.cs" />
     <Compile Include="Scripting\Player\Tools\CookTool.cs" />
     <Compile Include="Scripting\Player\Tools\BuildWallTool.cs" />
@@ -434,6 +434,7 @@
     <Compile Include="Voxels\Rail\JunctionPattern.cs" />
     <Compile Include="Voxels\Rail\RailPiece.cs" />
     <Compile Include="Voxels\Rail\Orientation.cs" />
+    <Compile Include="Voxels\Rail\RailSprite.cs" />
     <Compile Include="Voxels\VoxelChunk-Motes.cs" />
     <Compile Include="Voxels\VoxelHelpers\GetVoxelBoundingBox.cs" />
     <Compile Include="Voxels\VoxelHelpers\GetVoxelAbove.cs" />

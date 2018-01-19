@@ -41,7 +41,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using Microsoft.Xna.Framework.Input;
 
-namespace DwarfCorp
+namespace DwarfCorp.Rail
 {
     public class BuildRailTool : PlayerTool
     {

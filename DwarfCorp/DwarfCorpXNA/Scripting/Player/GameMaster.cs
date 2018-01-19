@@ -228,7 +228,7 @@ namespace DwarfCorp
                 Player = this
             };
 
-            Tools[ToolMode.BuildRail] = new BuildRailTool(this);
+            Tools[ToolMode.BuildRail] = new Rail.BuildRailTool(this);
         }
 
         void Time_NewDay(DateTime time)

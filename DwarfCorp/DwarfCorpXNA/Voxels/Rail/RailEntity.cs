@@ -39,7 +39,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
-namespace DwarfCorp
+namespace DwarfCorp.Rail
 {
     public class RailEntity : Body
 #if DEBUG
@@ -81,10 +81,7 @@ namespace DwarfCorp
 
             Matrix transform = Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
 
-            AddChild(new SimpleSprite(manager, "Sprite", transform, false, new SpriteSheet(ContentPaths.rail_tiles, 32, 32), piece.Tile)
-            { 
-                OrientationType = SimpleSprite.OrientMode.Fixed
-            }).SetFlag(Flag.ShouldSerialize, false);
+            AddChild(new RailSprite(manager, "Sprite", transform, new SpriteSheet(ContentPaths.rail_tiles, 32, 32), piece.Tile)).SetFlag(Flag.ShouldSerialize, false);
 
             AddChild(new NewVoxelListener(manager, Matrix.Identity, new Vector3(0.8f, 1.5f, 0.8f), Vector3.Zero, (_event) =>
             {
@@ -125,7 +122,7 @@ namespace DwarfCorp
             LocalTransform = Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y) + new Vector3(0.5f, 0.2f, 0.5f));
 
             var piece = Rail.RailLibrary.GetRailPiece(Piece.RailPiece);
-            var spriteChild = EnumerateChildren().FirstOrDefault(c => c.Name == "Sprite") as SimpleSprite;
+            var spriteChild = EnumerateChildren().FirstOrDefault(c => c.Name == "Sprite") as RailSprite;
             Matrix transform = Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
             spriteChild.LocalTransform = transform;
             spriteChild.SetFrame(piece.Tile);

@@ -1417,7 +1417,7 @@ namespace DwarfCorp.GameStates
                                 {
                                     Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // This should be set by the tool.
                                     Master.Faction.CraftBuilder.IsEnabled = false;
-                                    var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as BuildRailTool;
+                                    var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as Rail.BuildRailTool;
                                     railTool.Pattern = data;
                                     railTool.SelectedResources = new List<ResourceAmount>
                                     {

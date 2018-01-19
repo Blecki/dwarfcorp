@@ -15,12 +15,19 @@ namespace DwarfCorp.Rail
         public Orientation ResultRelativeOrientation;
     }
 
+    public enum RailShape
+    {
+        Flat,
+        TopHalfSlope,
+        BottomHalfSlope
+    }
+
     public class RailPiece
     {
         public String Name = "";
+        public RailShape Shape = RailShape.Flat;
         public Point Tile = Point.Zero;
         public List<RailCombination> CombinationTable = new List<RailCombination>();
         public List<List<Vector3>> SplinePoints = new List<List<Vector3>>();
-
     }
 }
