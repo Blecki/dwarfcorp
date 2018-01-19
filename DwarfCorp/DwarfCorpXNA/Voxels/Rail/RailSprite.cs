@@ -15,6 +15,7 @@ namespace DwarfCorp.Rail
         private Point Frame;
         private ExtendedVertex[] Verticies;
         private int[] Indicies;
+        public float[] VertexHeightOffsets = new float[] { 0.0f, 0.0f, 0.0f, 0.0f };
 
         public RailSprite(
             ComponentManager Manager,
@@ -91,21 +92,14 @@ namespace DwarfCorp.Rail
                 var bounds = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
 
                 for (int vert = 0; vert < 4; vert++)
-                {
                     uvs[vert] = new Vector2(normalizedCoords.X + uvs[vert].X * normalizeX, normalizedCoords.Y + uvs[vert].Y * normalizeY);
-                }
-                
-                Vector3 topLeftFront = new Vector3(-0.5f, 0.5f, 0.0f);
-                Vector3 topRightFront = new Vector3(0.5f, 0.5f, 0.0f);
-                Vector3 btmRightFront = new Vector3(0.5f, -0.5f, 0.0f);
-                Vector3 btmLeftFront = new Vector3(-0.5f, -0.5f, 0.0f);
 
                 Verticies = new[]
                 {
-                    new ExtendedVertex(topLeftFront, Color.White, Color.White, uvs[0], bounds), // 0
-                    new ExtendedVertex(topRightFront, Color.White, Color.White, uvs[1], bounds), // 1
-                    new ExtendedVertex(btmRightFront, Color.White, Color.White, uvs[2], bounds), // 2
-                    new ExtendedVertex(btmLeftFront, Color.White, Color.White, uvs[3], bounds) // 3
+                    new ExtendedVertex(new Vector3(-0.5f, VertexHeightOffsets[0], 0.5f), Color.White, Color.White, uvs[0], bounds),
+                    new ExtendedVertex(new Vector3(0.5f, VertexHeightOffsets[1], 0.5f), Color.White, Color.White, uvs[1], bounds),
+                    new ExtendedVertex(new Vector3(0.5f, VertexHeightOffsets[2], -0.5f), Color.White, Color.White, uvs[2], bounds),
+                    new ExtendedVertex(new Vector3(-0.5f, VertexHeightOffsets[3], -0.5f), Color.White, Color.White, uvs[3], bounds)
                 };
 
                 Indicies = new int[]
@@ -115,29 +109,24 @@ namespace DwarfCorp.Rail
                 };
             }
 
-            GamePerformance.Instance.StartTrackPerformance("Render - Simple Sprite");
-
             // Everything that draws should set it's tint, making this pointless.
-            Color origTint = effect.VertexColorTint;  
-            ApplyTintingToEffect(effect);            
-           
-                        effect.World = GlobalTransform;
-           
+            Color origTint = effect.VertexColorTint;
+            ApplyTintingToEffect(effect);
+
+            effect.World = GlobalTransform;
+
             effect.MainTexture = Sheet.GetTexture();
 
-           
-                effect.EnableWind = false;
 
-            foreach(EffectPass pass in effect.CurrentTechnique.Passes)
+            effect.EnableWind = false;
+
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList,
-                                        Verticies, 0, 4, Indicies, 0, 2);
+                graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, Verticies, 0, 4, Indicies, 0, 2);
             }
 
             effect.VertexColorTint = origTint;
-
-            GamePerformance.Instance.StopTrackPerformance("Render - Simple Sprite");
         }
     }
 

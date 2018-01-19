@@ -47,6 +47,7 @@ namespace DwarfCorp.Rail
 #endif
     {
         public Rail.JunctionPiece Piece;
+        public VoxelHandle Location;
 
         public RailEntity()
         {
@@ -65,6 +66,7 @@ namespace DwarfCorp.Rail
                 true)
         {
             this.Piece = Piece;
+            this.Location = Location;
 
             CollisionType = CollisionManager.CollisionType.Static;
             AddChild(new Health(Manager, "Hp", 100, 0, 100));
@@ -79,9 +81,8 @@ namespace DwarfCorp.Rail
 
             var piece = Rail.RailLibrary.GetRailPiece(Piece.RailPiece);
 
-            Matrix transform = Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
-
-            AddChild(new RailSprite(manager, "Sprite", transform, new SpriteSheet(ContentPaths.rail_tiles, 32, 32), piece.Tile)).SetFlag(Flag.ShouldSerialize, false);
+            AddChild(new RailSprite(manager, "Sprite", Matrix.Identity, new SpriteSheet(ContentPaths.rail_tiles, 32, 32), piece.Tile))
+                .SetFlag(Flag.ShouldSerialize, false);
 
             AddChild(new NewVoxelListener(manager, Matrix.Identity, new Vector3(0.8f, 1.5f, 0.8f), Vector3.Zero, (_event) =>
             {
@@ -96,6 +97,8 @@ namespace DwarfCorp.Rail
                         craftDesignation.WorkPile.Die();
                 }
             }));
+
+            UpdatePiece(Piece, Location);
         }
 
 #if DEBUG
@@ -118,13 +121,36 @@ namespace DwarfCorp.Rail
         public void UpdatePiece(Rail.JunctionPiece Piece, VoxelHandle Location)
         {
             this.Piece = Piece;
+            this.Location = Location;
 
             LocalTransform = Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y) + new Vector3(0.5f, 0.2f, 0.5f));
 
             var piece = Rail.RailLibrary.GetRailPiece(Piece.RailPiece);
             var spriteChild = EnumerateChildren().FirstOrDefault(c => c.Name == "Sprite") as RailSprite;
-            Matrix transform = Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
-            spriteChild.LocalTransform = transform;
+            spriteChild.LocalTransform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
+
+            switch (piece.Shape)
+            {
+                case RailShape.Flat:
+                    spriteChild.VertexHeightOffsets[0] = 0.0f;
+                    spriteChild.VertexHeightOffsets[1] = 0.0f;
+                    spriteChild.VertexHeightOffsets[2] = 0.0f;
+                    spriteChild.VertexHeightOffsets[3] = 0.0f;
+                    break;
+                case RailShape.TopHalfSlope:
+                    spriteChild.VertexHeightOffsets[0] = 1.0f;
+                    spriteChild.VertexHeightOffsets[1] = 0.5f;
+                    spriteChild.VertexHeightOffsets[2] = 0.5f;
+                    spriteChild.VertexHeightOffsets[3] = 1.0f;
+                    break;
+                case RailShape.BottomHalfSlope:
+                    spriteChild.VertexHeightOffsets[0] = 0.5f;
+                    spriteChild.VertexHeightOffsets[1] = 0.0f;
+                    spriteChild.VertexHeightOffsets[2] = 0.0f;
+                    spriteChild.VertexHeightOffsets[3] = 0.5f;
+                    break;
+            }
+
             spriteChild.SetFrame(piece.Tile);
 
             // Hack to make the listener update it's damn bounding box

@@ -86,6 +86,32 @@
     },
 
     {
+      "Name": "rail-straight-topslope",
+      "Tile": "0, 0",
+      "Shape": "TopHalfSlope",
+      "SplinePoints": [
+        [
+          "-0.5, 1.1, 0",
+          "0.5, 0.6, 0"
+        ]
+      ]
+
+    },
+
+    {
+      "Name": "rail-straight-botslope",
+      "Tile": "0, 0",
+      "Shape": "BottomHalfSlope",
+      "SplinePoints": [
+        [
+          "-0.5, 0.6, 0",
+          "0.5, 0.1, 0"
+        ]
+      ]
+
+    },
+
+    {
       "Name": "rail-small-curve",
       "Tile": "0, 1",
       "CombinationTable": [
@@ -280,14 +306,14 @@
           "Overlay": "rail-straight",
           "OverlayRelativeOrientation": "East",
           "Result": "rail-opposite-diagonals-b",
-          "ResultRelativeOrientation": "North"
+          "ResultRelativeOrientation": "East"
         },
 
         {
           "Overlay": "rail-straight",
           "OverlayRelativeOrientation": "West",
           "Result": "rail-opposite-diagonals-b",
-          "ResultRelativeOrientation": "North"
+          "ResultRelativeOrientation": "East"
         }
       ]
     },
@@ -470,6 +496,23 @@
           "Offset": "1, 1",
           "RailPiece": "rail-large-curve-c",
           "Orientation": "West"
+        }
+      ]
+    },
+
+    {
+      "Name": "slope",
+      "Icon": 0,
+      "Pieces": [
+        {
+          "Offset": "0,0",
+          "RailPiece": "rail-straight-topslope",
+          "Orientation": "North"
+        },
+        {
+          "Offset": "1,0",
+          "RailPiece": "rail-straight-botslope",
+          "Orientation": "North"
         }
       ]
     }
