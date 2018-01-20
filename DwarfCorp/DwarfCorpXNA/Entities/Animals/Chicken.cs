@@ -36,7 +36,8 @@ namespace DwarfCorp
                     Intelligence = 1,
                     Size = 0.25f,
                     CanSleep = false,
-                    LaysEggs = true
+                    LaysEggs = true,
+                    IsMigratory = true
                 },
                 // Belongs to herbivore team
                 "Herbivore",

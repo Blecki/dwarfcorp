@@ -53,9 +53,9 @@ namespace DwarfCorp
         }
 
         public List<Faction> SpawnFactions = new List<Faction>();
-        public int LastSpawnHour = 0;
-        public int SpawnRate = 4;
+ 
         public WorldManager World { get; set; }
+        public Timer MigrationTimer = new Timer(1200, false);
 
         public MonsterSpawner(WorldManager world)
         {
@@ -65,16 +65,81 @@ namespace DwarfCorp
 
         public void Update(DwarfTime t)
         {
-            bool shouldSpawn = World.Time.IsNight() && Math.Abs(World.Time.CurrentDate.TimeOfDay.Hours - LastSpawnHour) > SpawnRate;
-
-            if (shouldSpawn)
+            MigrationTimer.Update(t);
+            if (MigrationTimer.HasTriggered)
             {
-                /*
-                int numToSpawn = PlayState.Random.Next(5) + 1;
-                Spawn(GenerateSpawnEvent(SpawnFactions[PlayState.Random.Next(SpawnFactions.Count)],
-                    PlayState.ComponentManager.Factions.Factions["Player"], numToSpawn));
-                LastSpawnHour = PlayState.Time.CurrentDate.TimeOfDay.Hours;
-                 */
+                CreateMigration();
+            }
+        }
+
+        public void CreateMigration()
+        {
+            int tries = 0;
+            float padding = 2.0f;
+
+            while (tries < 10)
+            {
+                int side = MathFunctions.Random.Next(4);
+                BoundingBox bounds = World.ChunkManager.Bounds;
+                Vector3 pos = Vector3.Zero;
+                switch (side)
+                {
+                    case 0:
+                        pos = new Vector3(bounds.Min.X + padding, bounds.Max.Y - padding, MathFunctions.Rand(bounds.Min.Z + padding, bounds.Max.Z - padding));
+                        break;
+                    case 1:
+                        pos = new Vector3(bounds.Max.X - padding, bounds.Max.Y - padding, MathFunctions.Rand(bounds.Min.Z + padding, bounds.Max.Z - padding));
+                        break;
+                    case 2:
+                        pos = new Vector3(MathFunctions.Rand(bounds.Min.X + padding, bounds.Max.X - padding), bounds.Max.Y - padding, bounds.Min.Z + padding);
+                        break;
+                    case 3:
+                        pos = new Vector3(MathFunctions.Rand(bounds.Min.X + padding, bounds.Max.X - padding), bounds.Max.Y - padding, bounds.Max.Z - padding);
+                        break;
+                }
+
+                var biome = Overworld.GetBiomeAt(pos);
+                if (biome.Fauna.Count == 0)
+                {
+                    tries++;
+                    continue;
+                }
+
+                var randomFauna = Datastructures.SelectRandom(biome.Fauna);
+                var testCreature = EntityFactory.CreateEntity<GameComponent>(randomFauna.Name, Vector3.Zero);
+
+                if (testCreature == null)
+                {
+                    tries++;
+                    continue;
+                }
+
+                var testCreatureAI = testCreature.GetRoot().GetComponent<CreatureAI>();
+                if (testCreatureAI == null || testCreatureAI.Movement.IsSessile)
+                {
+                    testCreature.GetRoot().Delete();
+                    tries++;
+                    continue;
+                }
+
+
+                var count = Creature.GetNumSpecies(testCreatureAI.Creature.Species);
+
+                testCreature.GetRoot().Delete();
+
+                if (count < 30)
+                {
+                    var randomNum = Math.Min(MathFunctions.RandInt(1, 3), 30 - count);
+                    for (int i = 0; i < randomNum; i++)
+                    {
+                        var randompos = MathFunctions.Clamp(pos + MathFunctions.RandVector3Cube() * 2, World.ChunkManager.Bounds);
+                        var vox = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(pos)));
+                        if (!vox.IsValid)
+                            continue;
+                        EntityFactory.CreateEntity<GameComponent>(randomFauna.Name, vox.GetBoundingBox().Center() + Vector3.Up * 1.5f);
+                    }
+                }
+                break;
             }
         }
 

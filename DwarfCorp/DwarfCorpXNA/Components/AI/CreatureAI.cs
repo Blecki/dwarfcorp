@@ -354,6 +354,11 @@ namespace DwarfCorp
             Tasks.RemoveAll(task => task.ShouldDelete(Creature));
         }
 
+        public bool IsPositionConstrained()
+        {
+            return (PositionConstraint.Max.X) < float.MaxValue;
+        }
+
         /// <summary> Animate the PlayState Camera to look at this creature </summary>
         public void ZoomToMe()
         {
@@ -1141,6 +1146,8 @@ namespace DwarfCorp
 
                     if (edgeGoal.IsInGoalRegion(creatureVoxel))
                     {
+                        foreach (var status in Die(agent))
+                            continue;
                         yield return Act.Status.Success;
                         yield break;
                     }
@@ -1187,13 +1194,21 @@ namespace DwarfCorp
                 }
             }
 
+            public IEnumerable<Act.Status> Die(Creature agent)
+            {
+                agent.GetRoot().Delete();
+                yield return Act.Status.Success;
+            }
+
             public override Act CreateScript(Creature agent)
             {
                 return new Select(
                     new Sequence(new SetBlackboardData<VoxelHandle>(agent.AI, "EdgeVoxel", VoxelHandle.InvalidHandle),
                                  new PlanAct(agent.AI, "PathToVoxel", "EdgeVoxel", PlanAct.PlanType.Edge),
-                                 new FollowPathAct(agent.AI, "PathToVoxel")),
-                    new Wrap(() => GreedyFallbackBehavior(agent))
+                                 new FollowPathAct(agent.AI, "PathToVoxel"),
+                                 new Wrap(() => Die(agent)) { Name = "Die" }
+                                 ),
+                    new Wrap(() => GreedyFallbackBehavior(agent)) { Name = "Go to edge of world." }
                     );
             }
 

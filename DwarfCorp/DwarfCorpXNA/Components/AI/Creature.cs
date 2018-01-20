@@ -72,6 +72,16 @@ namespace DwarfCorp
         private static Dictionary<string, int> _speciesCounts = new Dictionary<string, int>();
         private bool _addedToSpeciesRegister = false;
 
+        public static int GetNumSpecies(string species)
+        { 
+            if (!_speciesCounts.ContainsKey(species))
+            {
+                return 0;
+            }
+
+            return _speciesCounts[species];
+        }
+
         public bool IsPregnant
         {
             get { return CurrentPregnancy != null; }
@@ -179,6 +189,8 @@ namespace DwarfCorp
         /// <summary> The creature can hold objects in its inventory </summary>
         public Inventory Inventory { get; set; }
         public Timer EggTimer { get; set; }
+        public Timer MigrationTimer { get; set; }
+
         /// <summary> Reference to the graphics device. </summary>
         [JsonIgnore]
         public GraphicsDevice Graphics { get { return Manager.World.GraphicsDevice; } }
@@ -339,6 +351,19 @@ namespace DwarfCorp
             Status.Update(this, gameTime, chunks, camera);
             JumpTimer.Update(gameTime);
             HandleBuffs(gameTime);
+
+            if (Stats.IsMigratory && !AI.IsPositionConstrained())
+            {
+                if (MigrationTimer == null)
+                {
+                    MigrationTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
+                }
+                MigrationTimer.Update(gameTime);
+                if (MigrationTimer.HasTriggered)
+                {
+                    AI.LeaveWorld();
+                }
+            }
 
             if (Stats.LaysEggs)
             {

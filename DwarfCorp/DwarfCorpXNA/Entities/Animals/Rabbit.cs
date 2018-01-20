@@ -35,7 +35,8 @@ namespace DwarfCorp
                     Charisma = 1,
                     Intelligence = 1,
                     Size = 0.25f,
-                    CanSleep = false
+                    CanSleep = false,
+                    IsMigratory = true
                 },
                 "Herbivore",
                 manager.World.PlanService,
