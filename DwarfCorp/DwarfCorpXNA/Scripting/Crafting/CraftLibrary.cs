@@ -167,7 +167,8 @@ namespace DwarfCorp
                         ResourceCreated = "Trinket",
                         Verb = "Craft",
                         CurrentVerb = "Crafting",
-                        PastTeseVerb = "Crafted"
+                        PastTeseVerb = "Crafted",
+                        CraftActBehavior = CraftItem.CraftActBehaviors.Trinket
                     }
                 },
                 {
@@ -187,7 +188,8 @@ namespace DwarfCorp
                         ResourceCreated = "Gem-set Trinket",
                         Verb = "Encrust",
                         CurrentVerb = "Encrusting",
-                        PastTeseVerb = "Encrusted"
+                        PastTeseVerb = "Encrusted",
+                        CraftActBehavior = CraftItem.CraftActBehaviors.GemTrinket
                     }
                 },
                 {
@@ -209,7 +211,8 @@ namespace DwarfCorp
                         Verb = "Cook",
                         PastTeseVerb = "Cooked",
                         CurrentVerb = "Cooking",
-                        AllowHeterogenous = true
+                        AllowHeterogenous = true,
+                        CraftActBehavior = CraftItem.CraftActBehaviors.Meal
                     }
                 },
                 {
@@ -229,7 +232,8 @@ namespace DwarfCorp
                         CraftLocation = "Stove",
                         Verb = "Bake",
                         PastTeseVerb = "Baked",
-                        CurrentVerb = "Baking"
+                        CurrentVerb = "Baking",
+                        CraftActBehavior = CraftItem.CraftActBehaviors.Bread
                     }
                 },
                 {
@@ -249,7 +253,8 @@ namespace DwarfCorp
                         CraftLocation = "Barrel",
                         Verb = "Brew",
                         PastTeseVerb = "Brewed",
-                        CurrentVerb = "Brewing"
+                        CurrentVerb = "Brewing",
+                        CraftActBehavior = CraftItem.CraftActBehaviors.Ale
                     }
                 },
                 {

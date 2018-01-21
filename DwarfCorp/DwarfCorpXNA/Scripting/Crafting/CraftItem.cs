@@ -54,6 +54,16 @@ namespace DwarfCorp
             NearWall
         }
 
+        public enum CraftActBehaviors
+        {
+            Normal,
+            Trinket,
+            Meal,
+            Ale,
+            Bread,
+            GemTrinket
+        }
+
         public string Name = "";
         public string EntityName = "";
         public List<Quantitiy<Resource.ResourceTags>> RequiredResources = new List<Quantitiy<Resource.ResourceTags>>();
@@ -71,5 +81,6 @@ namespace DwarfCorp
         public Vector3 SpawnOffset = new Vector3(0.0f, 0.5f, 0.0f);
         public bool AddToOwnedPool = false;
         public bool Moveable = false;
+        public CraftActBehaviors CraftActBehavior = CraftActBehaviors.Normal;
     }
 }
