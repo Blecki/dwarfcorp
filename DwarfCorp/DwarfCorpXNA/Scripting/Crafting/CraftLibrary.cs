@@ -507,6 +507,8 @@ namespace DwarfCorp
                 craftItem.Value.EntityName = craftItem.Value.Name;
 
             staticsInitialized = true;
+
+//            FileUtils.SaveJSon(CraftItems, "craft-items.json", false);
         }
 
         public static CraftItem ResourceToCraftItem(ResourceLibrary.ResourceType resource)

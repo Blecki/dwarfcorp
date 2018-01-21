@@ -2336,6 +2336,10 @@
       <Name>penguin_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="craft-items.json">
+      <Name>craft-items</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="rail-junctions.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>rail-junctions</Name>

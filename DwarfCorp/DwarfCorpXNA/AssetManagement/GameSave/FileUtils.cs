@@ -128,7 +128,8 @@ namespace DwarfCorp
                         new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap),
                         new RectangleConverter(),
                         new MoneyConverter(),
-                        new ColorConverter()
+                        new ColorConverter(),
+                        new Newtonsoft.Json.Converters.StringEnumConverter()
                     }
             });
         }
@@ -154,9 +155,12 @@ namespace DwarfCorp
                     serializer.Converters.Add(new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap));
                     serializer.Converters.Add(new RectangleConverter());
                     serializer.Converters.Add(new ColorConverter());
+                    serializer.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+
                     {
                         return serializer.Deserialize<T>(json);
                     }
+
                 }
             }
             return default(T);
@@ -218,6 +222,7 @@ namespace DwarfCorp
             serializer.Converters.Add(new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap));
             serializer.Converters.Add(new RectangleConverter());
             serializer.Converters.Add(new MoneyConverter());
+            serializer.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
 
             return Save(serializer, obj, filePath, false);
 
@@ -241,6 +246,8 @@ namespace DwarfCorp
             serializer.Converters.Add(new RectangleConverter());
             serializer.Converters.Add(new MoneyConverter());
             serializer.Converters.Add(new ColorConverter());
+            serializer.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+
             return JsonConvert.SerializeObject(obj, Formatting.Indented, serializer.Converters.ToArray());
 
         }
@@ -275,6 +282,7 @@ namespace DwarfCorp
             serializer.Converters.Add(new RectangleConverter());
             serializer.Converters.Add(new MoneyConverter());
             serializer.Converters.Add(new ColorConverter());
+            serializer.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
             return Save(serializer, obj, filePath, compress);
 
         }
