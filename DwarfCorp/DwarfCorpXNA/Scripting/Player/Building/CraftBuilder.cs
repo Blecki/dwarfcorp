@@ -158,7 +158,7 @@ namespace DwarfCorp
 
             if (CurrentCraftType != null && CurrentCraftBody == null)
             {
-                CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, 
+                CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.EntityName, 
                     player.VoxSelector.VoxelUnderMouse.WorldPosition,
                      Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
                 EntityFactory.GhostEntity(CurrentCraftBody, Color.White);
@@ -405,7 +405,7 @@ namespace DwarfCorp
                                     assignments.Add(new CraftItemTask(newDesignation));
 
                                     // Todo: Maybe don't support create huge numbers of entities at once?
-                                    CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, r.WorldPosition,
+                                    CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.EntityName, r.WorldPosition,
                      Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
                                     EntityFactory.GhostEntity(CurrentCraftBody, Color.White);
 

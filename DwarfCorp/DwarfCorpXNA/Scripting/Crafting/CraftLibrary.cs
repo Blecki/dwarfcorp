@@ -494,8 +494,12 @@ namespace DwarfCorp
 
             foreach (var res in ResourceLibrary.Resources.Where(res => res.Value.CanCraft))
             {
-                CraftItems[res.Key] = ResourceToCraftItem(res.Key);
+                CraftItems[res.Key] = ResourceToCraftItem(res.Key);                
             }
+
+            // This is a hack to be deleted once craft items are serialized.
+            foreach (var craftItem in CraftItems)
+                craftItem.Value.EntityName = craftItem.Value.Name;
 
             staticsInitialized = true;
         }

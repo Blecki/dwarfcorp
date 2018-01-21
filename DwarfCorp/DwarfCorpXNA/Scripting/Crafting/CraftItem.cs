@@ -54,37 +54,22 @@ namespace DwarfCorp
             NearWall
         }
 
-        public string Name { get; set; }
-        public List<Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
-        public Gui.TileReference Icon { get; set; }
-        public float BaseCraftTime { get; set; }
-        public string Description { get; set; }
-        public CraftType Type { get; set; }
-        public List<CraftPrereq> Prerequisites { get; set; }
-        public ResourceLibrary.ResourceType ResourceCreated { get; set; }
-        public string CraftLocation { get; set; }
-        public string Verb { get; set; }
-        public string PastTeseVerb { get; set; }
-        public string CurrentVerb { get; set; }
-        public bool AllowHeterogenous { get; set; }
+        public string Name = "";
+        public string EntityName = "";
+        public List<Quantitiy<Resource.ResourceTags>> RequiredResources = new List<Quantitiy<Resource.ResourceTags>>();
+        public Gui.TileReference Icon = null;
+        public float BaseCraftTime = 0.0f;
+        public string Description = "";
+        public CraftType Type = CraftType.Object;
+        public List<CraftPrereq> Prerequisites = new List<CraftPrereq>();
+        public ResourceLibrary.ResourceType ResourceCreated = "";
+        public string CraftLocation = "Anvil";
+        public string Verb = "Build";
+        public string PastTeseVerb = "Built";
+        public string CurrentVerb = "Building";
+        public bool AllowHeterogenous = false;
         public Vector3 SpawnOffset = new Vector3(0.0f, 0.5f, 0.0f);
         public bool AddToOwnedPool = false;
         public bool Moveable = false;
-
-        public CraftItem()
-        {
-            Name = "";
-            Prerequisites = new List<CraftPrereq>();
-            RequiredResources = new List<Quantitiy<Resource.ResourceTags>>();
-            BaseCraftTime = 0.0f;
-            Description = "";
-            Type = CraftType.Object;
-            ResourceCreated = "";
-            CraftLocation = "Anvil";
-            Verb = "Build";
-            PastTeseVerb = "Built";
-            CurrentVerb = "Building";
-            AllowHeterogenous = false;
-        }
     }
 }

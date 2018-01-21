@@ -30,14 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
+using System;
+using System.Linq;
 
 namespace DwarfCorp.Rail
 {
@@ -46,9 +42,9 @@ namespace DwarfCorp.Rail
         , IRenderableComponent
 #endif
     {
-        public Rail.JunctionPiece Piece;
-        public VoxelHandle Location;
-
+        public JunctionPiece Piece { get; private set; }
+        private VoxelHandle Location;
+        
         public RailEntity()
         {
             
@@ -57,7 +53,7 @@ namespace DwarfCorp.Rail
         public RailEntity(
             ComponentManager Manager,
             VoxelHandle Location,
-            Rail.JunctionPiece Piece) :
+            JunctionPiece Piece) :
 
             base(Manager, "Fixture", 
                 Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y)), 
@@ -79,7 +75,7 @@ namespace DwarfCorp.Rail
         {
             base.CreateCosmeticChildren(manager);
 
-            var piece = Rail.RailLibrary.GetRailPiece(Piece.RailPiece);
+            var piece = RailLibrary.GetRailPiece(Piece.RailPiece);
 
             AddChild(new RailSprite(manager, "Sprite", Matrix.Identity, new SpriteSheet(ContentPaths.rail_tiles, 32, 32), piece.Tile))
                 .SetFlag(Flag.ShouldSerialize, false);
@@ -118,14 +114,14 @@ namespace DwarfCorp.Rail
         }
 #endif
 
-        public void UpdatePiece(Rail.JunctionPiece Piece, VoxelHandle Location)
+        public void UpdatePiece(JunctionPiece Piece, VoxelHandle Location)
         {
             this.Piece = Piece;
             this.Location = Location;
 
             LocalTransform = Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y) + new Vector3(0.5f, 0.2f, 0.5f));
 
-            var piece = Rail.RailLibrary.GetRailPiece(Piece.RailPiece);
+            var piece = RailLibrary.GetRailPiece(Piece.RailPiece);
             var spriteChild = EnumerateChildren().FirstOrDefault(c => c.Name == "Sprite") as RailSprite;
             spriteChild.LocalTransform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
 
