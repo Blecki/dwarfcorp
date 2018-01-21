@@ -1,18 +1,14 @@
-{
-  "$id": "1",
-  "Bear Trap": {
-    "$id": "2",
+[
+  {
     "Name": "Bear Trap",
     "EntityName": "Bear Trap",
     "RequiredResources": [
       {
-        "$id": "3",
         "ResourceType": "Metal",
         "NumResources": 4
       }
     ],
     "Icon": {
-      "$id": "4",
       "Sheet": "beartrap",
       "Tile": 0
     },
@@ -23,7 +19,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "5",
       "_value": ""
     },
     "CraftLocation": "",
@@ -36,19 +31,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Flag": {
-    "$id": "6",
+
+  {
     "Name": "Flag",
     "EntityName": "Flag",
     "RequiredResources": [
       {
-        "$id": "7",
         "ResourceType": "HardMaterial",
         "NumResources": 1
       }
     ],
     "Icon": {
-      "$id": "8",
       "Sheet": "furniture",
       "Tile": 17
     },
@@ -59,7 +52,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "9",
       "_value": ""
     },
     "CraftLocation": "",
@@ -72,19 +64,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Lamp": {
-    "$id": "10",
+
+  {
     "Name": "Lamp",
     "EntityName": "Lamp",
     "RequiredResources": [
       {
-        "$id": "11",
         "ResourceType": "Fuel",
         "NumResources": 1
       }
     ],
     "Icon": {
-      "$id": "12",
       "Sheet": "furniture",
       "Tile": 9
     },
@@ -95,7 +85,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "13",
       "_value": ""
     },
     "CraftLocation": "",
@@ -108,19 +97,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Ladder": {
-    "$id": "14",
+
+  {
     "Name": "Ladder",
     "EntityName": "Ladder",
     "RequiredResources": [
       {
-        "$id": "15",
         "ResourceType": "HardMaterial",
         "NumResources": 1
       }
     ],
     "Icon": {
-      "$id": "16",
       "Sheet": "furniture",
       "Tile": 2
     },
@@ -131,7 +118,6 @@
       "NearWall"
     ],
     "ResourceCreated": {
-      "$id": "17",
       "_value": ""
     },
     "CraftLocation": "",
@@ -144,19 +130,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Door": {
-    "$id": "18",
+
+  {
     "Name": "Door",
     "EntityName": "Door",
     "RequiredResources": [
       {
-        "$id": "19",
         "ResourceType": "HardMaterial",
         "NumResources": 1
       }
     ],
     "Icon": {
-      "$id": "20",
       "Sheet": "furniture",
       "Tile": 11
     },
@@ -167,7 +151,6 @@
       "NearWall"
     ],
     "ResourceCreated": {
-      "$id": "21",
       "_value": ""
     },
     "CraftLocation": "",
@@ -180,19 +163,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Trinket": {
-    "$id": "22",
+
+  {
     "Name": "Trinket",
     "EntityName": "Trinket",
     "RequiredResources": [
       {
-        "$id": "23",
         "ResourceType": "Material",
         "NumResources": 3
       }
     ],
     "Icon": {
-      "$id": "24",
       "Sheet": "crafts",
       "Tile": 0
     },
@@ -201,7 +182,6 @@
     "Type": "Resource",
     "Prerequisites": [],
     "ResourceCreated": {
-      "$id": "25",
       "_value": "Trinket"
     },
     "CraftLocation": "Anvil",
@@ -214,24 +194,21 @@
     "Moveable": false,
     "CraftActBehavior": "Trinket"
   },
-  "Gem-set Trinket": {
-    "$id": "26",
+
+  {
     "Name": "Gem-set Trinket",
     "EntityName": "Gem-set Trinket",
     "RequiredResources": [
       {
-        "$id": "27",
         "ResourceType": "Encrustable",
         "NumResources": 1
       },
       {
-        "$id": "28",
         "ResourceType": "Gem",
         "NumResources": 1
       }
     ],
     "Icon": {
-      "$id": "29",
       "Sheet": "crafts",
       "Tile": 1
     },
@@ -240,7 +217,6 @@
     "Type": "Resource",
     "Prerequisites": [],
     "ResourceCreated": {
-      "$id": "30",
       "_value": "Gem-set Trinket"
     },
     "CraftLocation": "Anvil",
@@ -253,24 +229,21 @@
     "Moveable": false,
     "CraftActBehavior": "GemTrinket"
   },
-  "Meal": {
-    "$id": "31",
+
+  {
     "Name": "Meal",
     "EntityName": "Meal",
     "RequiredResources": [
       {
-        "$id": "32",
         "ResourceType": "RawFood",
         "NumResources": 1
       },
       {
-        "$id": "33",
         "ResourceType": "RawFood",
         "NumResources": 1
       }
     ],
     "Icon": {
-      "$id": "34",
       "Sheet": "resources",
       "Tile": 21
     },
@@ -279,7 +252,6 @@
     "Type": "Resource",
     "Prerequisites": [],
     "ResourceCreated": {
-      "$id": "35",
       "_value": "Meal"
     },
     "CraftLocation": "Cutting Board",
@@ -292,19 +264,17 @@
     "Moveable": false,
     "CraftActBehavior": "Meal"
   },
-  "Bread": {
-    "$id": "36",
+
+  {
     "Name": "Bread",
     "EntityName": "Bread",
     "RequiredResources": [
       {
-        "$id": "37",
         "ResourceType": "Bakeable",
         "NumResources": 1
       }
     ],
     "Icon": {
-      "$id": "38",
       "Sheet": "resources",
       "Tile": 22
     },
@@ -313,7 +283,6 @@
     "Type": "Resource",
     "Prerequisites": [],
     "ResourceCreated": {
-      "$id": "39",
       "_value": "Bread"
     },
     "CraftLocation": "Stove",
@@ -326,19 +295,17 @@
     "Moveable": false,
     "CraftActBehavior": "Bread"
   },
-  "Ale": {
-    "$id": "40",
+
+  {
     "Name": "Ale",
     "EntityName": "Ale",
     "RequiredResources": [
       {
-        "$id": "41",
         "ResourceType": "Brewable",
         "NumResources": 1
       }
     ],
     "Icon": {
-      "$id": "42",
       "Sheet": "resources",
       "Tile": 20
     },
@@ -347,7 +314,6 @@
     "Type": "Resource",
     "Prerequisites": [],
     "ResourceCreated": {
-      "$id": "43",
       "_value": "Ale"
     },
     "CraftLocation": "Barrel",
@@ -360,24 +326,21 @@
     "Moveable": false,
     "CraftActBehavior": "Ale"
   },
-  "Turret": {
-    "$id": "44",
+
+  {
     "Name": "Turret",
     "EntityName": "Turret",
     "RequiredResources": [
       {
-        "$id": "45",
         "ResourceType": "Metal",
         "NumResources": 2
       },
       {
-        "$id": "46",
         "ResourceType": "Magical",
         "NumResources": 1
       }
     ],
     "Icon": {
-      "$id": "47",
       "Sheet": "furniture",
       "Tile": 57
     },
@@ -388,7 +351,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "48",
       "_value": ""
     },
     "CraftLocation": "",
@@ -401,19 +363,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Chair": {
-    "$id": "49",
+
+  {
     "Name": "Chair",
     "EntityName": "Chair",
     "RequiredResources": [
       {
-        "$id": "50",
         "ResourceType": "Wood",
         "NumResources": 1
       }
     ],
     "Icon": {
-      "$id": "51",
       "Sheet": "furniture",
       "Tile": 50
     },
@@ -424,7 +384,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "52",
       "_value": ""
     },
     "CraftLocation": "",
@@ -437,19 +396,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Table": {
-    "$id": "53",
+
+  {
     "Name": "Table",
     "EntityName": "Table",
     "RequiredResources": [
       {
-        "$id": "54",
         "ResourceType": "Wood",
         "NumResources": 4
       }
     ],
     "Icon": {
-      "$id": "55",
       "Sheet": "furniture",
       "Tile": 48
     },
@@ -460,7 +417,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "56",
       "_value": ""
     },
     "CraftLocation": "",
@@ -473,19 +429,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Anvil": {
-    "$id": "57",
+
+  {
     "Name": "Anvil",
     "EntityName": "Anvil",
     "RequiredResources": [
       {
-        "$id": "58",
         "ResourceType": "Metal",
         "NumResources": 4
       }
     ],
     "Icon": {
-      "$id": "59",
       "Sheet": "furniture",
       "Tile": 24
     },
@@ -496,7 +450,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "60",
       "_value": ""
     },
     "CraftLocation": "",
@@ -509,19 +462,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Forge": {
-    "$id": "61",
+
+  {
     "Name": "Forge",
     "EntityName": "Forge",
     "RequiredResources": [
       {
-        "$id": "62",
         "ResourceType": "Fuel",
         "NumResources": 4
       }
     ],
     "Icon": {
-      "$id": "63",
       "Sheet": "furniture",
       "Tile": 25
     },
@@ -532,7 +483,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "64",
       "_value": ""
     },
     "CraftLocation": "",
@@ -545,19 +495,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Stove": {
-    "$id": "65",
+
+  {
     "Name": "Stove",
     "EntityName": "Stove",
     "RequiredResources": [
       {
-        "$id": "66",
         "ResourceType": "Fuel",
         "NumResources": 2
       }
     ],
     "Icon": {
-      "$id": "67",
       "Sheet": "furniture",
       "Tile": 35
     },
@@ -568,7 +516,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "68",
       "_value": ""
     },
     "CraftLocation": "",
@@ -581,24 +528,21 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Kitchen Table": {
-    "$id": "69",
+
+  {
     "Name": "Kitchen Table",
     "EntityName": "Kitchen Table",
     "RequiredResources": [
       {
-        "$id": "70",
         "ResourceType": "Wood",
         "NumResources": 2
       },
       {
-        "$id": "71",
         "ResourceType": "Metal",
         "NumResources": 2
       }
     ],
     "Icon": {
-      "$id": "72",
       "Sheet": "furniture",
       "Tile": 56
     },
@@ -609,7 +553,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "73",
       "_value": ""
     },
     "CraftLocation": "",
@@ -622,24 +565,21 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Barrel": {
-    "$id": "74",
+
+  {
     "Name": "Barrel",
     "EntityName": "Barrel",
     "RequiredResources": [
       {
-        "$id": "75",
         "ResourceType": "Wood",
         "NumResources": 2
       },
       {
-        "$id": "76",
         "ResourceType": "Brewable",
         "NumResources": 4
       }
     ],
     "Icon": {
-      "$id": "77",
       "Sheet": "furniture",
       "Tile": 1
     },
@@ -650,7 +590,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "78",
       "_value": ""
     },
     "CraftLocation": "",
@@ -663,19 +602,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Bed": {
-    "$id": "79",
+
+  {
     "Name": "Bed",
     "EntityName": "Bed",
     "RequiredResources": [
       {
-        "$id": "80",
         "ResourceType": "Wood",
         "NumResources": 4
       }
     ],
     "Icon": {
-      "$id": "81",
       "Sheet": "furniture",
       "Tile": 3
     },
@@ -686,7 +623,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "82",
       "_value": ""
     },
     "CraftLocation": "",
@@ -699,19 +635,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Strawman": {
-    "$id": "83",
+
+  {
     "Name": "Strawman",
     "EntityName": "Strawman",
     "RequiredResources": [
       {
-        "$id": "84",
         "ResourceType": "Grain",
         "NumResources": 4
       }
     ],
     "Icon": {
-      "$id": "85",
       "Sheet": "furniture",
       "Tile": 41
     },
@@ -722,7 +656,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "86",
       "_value": ""
     },
     "CraftLocation": "",
@@ -735,19 +668,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Potions": {
-    "$id": "87",
+
+  {
     "Name": "Potions",
     "EntityName": "Potions",
     "RequiredResources": [
       {
-        "$id": "88",
         "ResourceType": "Magical",
         "NumResources": 2
       }
     ],
     "Icon": {
-      "$id": "89",
       "Sheet": "furniture",
       "Tile": 33
     },
@@ -758,7 +689,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "90",
       "_value": ""
     },
     "CraftLocation": "",
@@ -771,19 +701,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Books": {
-    "$id": "91",
+
+  {
     "Name": "Books",
     "EntityName": "Books",
     "RequiredResources": [
       {
-        "$id": "92",
         "ResourceType": "Magical",
         "NumResources": 2
       }
     ],
     "Icon": {
-      "$id": "93",
       "Sheet": "furniture",
       "Tile": 32
     },
@@ -794,7 +722,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "94",
       "_value": ""
     },
     "CraftLocation": "",
@@ -807,19 +734,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Bookshelf": {
-    "$id": "95",
+
+  {
     "Name": "Bookshelf",
     "EntityName": "Bookshelf",
     "RequiredResources": [
       {
-        "$id": "96",
         "ResourceType": "Magical",
         "NumResources": 4
       }
     ],
     "Icon": {
-      "$id": "97",
       "Sheet": "furniture",
       "Tile": 32
     },
@@ -830,7 +755,6 @@
       "OnGround"
     ],
     "ResourceCreated": {
-      "$id": "98",
       "_value": ""
     },
     "CraftLocation": "",
@@ -843,19 +767,17 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-  "Glass": {
-    "$id": "99",
+
+  {
     "Name": "Glass",
     "EntityName": "Glass",
     "RequiredResources": [
       {
-        "$id": "100",
         "ResourceType": "Sand",
         "NumResources": 1
       }
     ],
     "Icon": {
-      "$id": "101",
       "Sheet": "resources",
       "Tile": 4
     },
@@ -864,7 +786,6 @@
     "Type": "Resource",
     "Prerequisites": [],
     "ResourceCreated": {
-      "$id": "102",
       "_value": "Glass"
     },
     "CraftLocation": "Forge",
@@ -877,19 +798,17 @@
     "Moveable": false,
     "CraftActBehavior": "Normal"
   },
-  "Brick": {
-    "$id": "103",
+
+  {
     "Name": "Brick",
     "EntityName": "Brick",
     "RequiredResources": [
       {
-        "$id": "104",
         "ResourceType": "Soil",
         "NumResources": 1
       }
     ],
     "Icon": {
-      "$id": "105",
       "Sheet": "resources",
       "Tile": 5
     },
@@ -898,7 +817,6 @@
     "Type": "Resource",
     "Prerequisites": [],
     "ResourceCreated": {
-      "$id": "106",
       "_value": "Brick"
     },
     "CraftLocation": "Forge",
@@ -911,4 +829,5 @@
     "Moveable": false,
     "CraftActBehavior": "Normal"
   }
-}
+
+]

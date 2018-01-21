@@ -2909,9 +2909,9 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <None Include="newgui\sheets.txt">
+    <None Include="newgui\sheets.json">
       <Name>sheets</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Compile Include="newgui\thin.png">
       <Name>thin</Name>

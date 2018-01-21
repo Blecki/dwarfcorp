@@ -42,23 +42,32 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CraftLibrary
     {
-        public static Dictionary<string, CraftItem> CraftItems { get; set; }
-        private static bool staticsInitialized = false;
+        private static Dictionary<string, CraftItem> CraftItems = null;
 
-
-        public CraftLibrary()
+        public static IEnumerable<CraftItem> EnumerateCraftables()
         {
-            Initialize();
+            return CraftItems.Values;
         }
 
-
-        public static void Initialize()
+        public static CraftItem GetCraftable(string Name)
         {
-            if (staticsInitialized)
-            {
-                return;
-            }
+            if (CraftItems.ContainsKey(Name))
+                return CraftItems[Name];
+            return null;
+        }
 
+        public static void InitializeDefaultLibrary()
+        {
+            if (CraftItems != null) return;
+
+            var craftList = FileUtils.LoadJson<List<CraftItem>>(ContentPaths.craft_items, false);
+            CraftItems = new Dictionary<string, CraftItem>();
+
+            foreach (var type in craftList)
+                CraftItems.Add(type.Name, type);
+
+            #region OLD
+            /* Old setup
             CraftItems = new Dictionary<string, CraftItem>()
             {
                 {
@@ -505,8 +514,8 @@ namespace DwarfCorp
             // This is a hack to be deleted once craft items are serialized.
             foreach (var craftItem in CraftItems)
                 craftItem.Value.EntityName = craftItem.Value.Name;
-
-            staticsInitialized = true;
+                */
+            #endregion
 
 //            FileUtils.SaveJSon(CraftItems, "craft-items.json", false);
         }

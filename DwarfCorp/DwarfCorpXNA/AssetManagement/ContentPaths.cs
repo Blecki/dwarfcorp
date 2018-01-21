@@ -59,6 +59,7 @@ namespace DwarfCorp
         public static string grass_types = ProgramData.CreatePath("Content", "grass-types.json");
         public static string decal_types = ProgramData.CreatePath("Content", "decal-types.json");
         public static string rail_junctions = ProgramData.CreatePath("Content", "rail-junctions.json");
+        public static string craft_items = ProgramData.CreatePath("Content", "craft-items.json");
 
         // Todo: Move to own texture.
         public static string rail_tiles = ProgramData.CreatePath("Terrain", "rail");

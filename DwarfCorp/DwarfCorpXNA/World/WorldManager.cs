@@ -280,8 +280,6 @@ namespace DwarfCorp
 
         public List<Faction> Natives { get; set; }
 
-        public CraftLibrary CraftLibrary = null;
-
         public int GameID = -1;
 
         public struct Screenshot

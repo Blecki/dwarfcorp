@@ -1257,7 +1257,7 @@ namespace DwarfCorp.GameStates
             {
                 Tag = "craft item",
                 ItemSource = (new Widget[]{ icon_menu_CraftTypes_Return }).Concat(
-                    CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Object)
+                    CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object)
                     .Select(data => new FlatToolTray.Icon
                     {
                         Icon = data.Icon,
@@ -1332,7 +1332,7 @@ namespace DwarfCorp.GameStates
                 Tag = "craft resource",
                 Tooltip = "Craft resource",
                 ItemSource = (new Widget[] { icon_menu_ResourceTypes_Return }).Concat(
-                    CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource
+                    CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) &&
                     !ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
                     .Select(data => new FlatToolTray.Icon
@@ -1520,7 +1520,7 @@ namespace DwarfCorp.GameStates
             var menu_Edibles = new FlatToolTray.Tray
             {
                 ItemSource = (new Widget[] { icon_menu_Edibles_Return }).Concat(
-                    CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource
+                    CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated)
                     && ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
                     .Select(data => new FlatToolTray.Icon

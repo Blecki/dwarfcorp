@@ -164,53 +164,54 @@ namespace DwarfCorp
                 }
             }
 
-#endregion
+            #endregion
 
-#region Initialize static data
+            #region Initialize static data
 
-                {
-                    Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
-                    Vector3 extents = new Vector3(1500, 1500, 1500);
-                    CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
+            {
+                Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
+                Vector3 extents = new Vector3(1500, 1500, 1500);
+                CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
-                    CraftLibrary = new CraftLibrary();
+                // Todo: ??
+                new PrimitiveLibrary(GraphicsDevice, Content);
 
-                    new PrimitiveLibrary(GraphicsDevice, Content);
-                    NewInstanceManager = new NewInstanceManager(GraphicsDevice, new BoundingBox(origin - extents, origin + extents),
-                        Content);
+                NewInstanceManager = new NewInstanceManager(GraphicsDevice, new BoundingBox(origin - extents, origin + extents),
+                    Content);
 
-                    Color[] white = new Color[1];
-                    white[0] = Color.White;
-                    pixel = new Texture2D(GraphicsDevice, 1, 1);
-                    pixel.SetData(white);
+                Color[] white = new Color[1];
+                white[0] = Color.White;
+                pixel = new Texture2D(GraphicsDevice, 1, 1);
+                pixel.SetData(white);
 
-                    Tilesheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
-                    AspectRatio = GraphicsDevice.Viewport.AspectRatio;
-                    DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
-                    DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
-                    DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
-                    VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice, Tilesheet);
-                    GrassLibrary.InitializeDefaultLibrary();
+                Tilesheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
+                AspectRatio = GraphicsDevice.Viewport.AspectRatio;
+                DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
+                DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
+                DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
+                CraftLibrary.InitializeDefaultLibrary();
+                VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice, Tilesheet);
+                GrassLibrary.InitializeDefaultLibrary();
                 DecalLibrary.InitializeDefaultLibrary();
 
-                    bloom = new BloomComponent(Game)
-                    {
-                        Settings = BloomSettings.PresetSettings[5]
-                    };
-                    bloom.Initialize();
+                bloom = new BloomComponent(Game)
+                {
+                    Settings = BloomSettings.PresetSettings[5]
+                };
+                bloom.Initialize();
 
 
-                    fxaa = new FXAA();
-                    fxaa.Initialize();
+                fxaa = new FXAA();
+                fxaa.Initialize();
 
-                    SoundManager.Content = Content;
-                    if (PlanService != null)
-                        PlanService.Restart();
+                SoundManager.Content = Content;
+                if (PlanService != null)
+                    PlanService.Restart();
 
-                    JobLibrary.Initialize();
-                    MonsterSpawner = new MonsterSpawner(this);
-                    EntityFactory.Initialize(this);
-                }
+                JobLibrary.Initialize();
+                MonsterSpawner = new MonsterSpawner(this);
+                EntityFactory.Initialize(this);
+            }
 
 #endregion
 
