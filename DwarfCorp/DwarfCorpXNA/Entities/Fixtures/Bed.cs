@@ -38,10 +38,6 @@ namespace DwarfCorp
         public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
-#if DEBUG
-            if (GamePerformance.DebugVisualizationEnabled)
-                Drawer3D.DrawBox(BoundingBox, Color.Blue, 0.02f, false);
-#endif
         }
 
         public override void CreateCosmeticChildren(ComponentManager Manager)

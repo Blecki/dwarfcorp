@@ -19,16 +19,11 @@ namespace DwarfCorp
         }
 
         public Bookshelf(ComponentManager manager, Vector3 position) :
-            base(manager, "Bookshelf", Matrix.CreateTranslation(position), new Vector3(32.0f / 32.0f, 8.0f / 32.0f, 20.0f / 32.0f), new Vector3(0.5f, 0.5f, 0.5f))
+            base(manager, "Bookshelf", Matrix.CreateTranslation(position), new Vector3(0.8f, 1.0f, 0.3f), new Vector3(0.0f, 0.5f, 0.35f))
         {
             Tags.Add("Books");
             CollisionType = CollisionManager.CollisionType.Static;
-
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                manager.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(position)));
-            if (voxelUnder.IsValid)
-                AddChild(new VoxelListener(manager, manager.World.ChunkManager, voxelUnder));
+            SetFlag(Flag.RotateBoundingBox, true);
 
             CreateCosmeticChildren(manager);
             OrientToWalls();
@@ -40,11 +35,13 @@ namespace DwarfCorp
             GetComponent<Box>().Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
+#if !DEBUG
         public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             // Only renders to selection buffer
         }
+#endif
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
@@ -54,11 +51,18 @@ namespace DwarfCorp
 
             AddChild(new Box(Manager,
                 "model",
-                Matrix.CreateTranslation(new Vector3(-20.0f / 64.0f, -32.0f / 64.0f, -8.0f / 64.0f)),
-                new Vector3(32.0f / 32.0f, 8.0f / 32.0f, 20.0f / 32.0f),
+                Matrix.CreateTranslation(new Vector3(-0.3f, 0, 0.2f)),
+                new Vector3(1.0f, 1.0f, 0.3f),
                 new Vector3(0.0f, 0.0f, 0.0f),
                 "bookshelf",
                 spriteSheet)).SetFlag(Flag.ShouldSerialize, false);
+
+            AddChild(new NewVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.5f, 0.0f), (changeEvent) =>
+            {
+                if (changeEvent.Type == VoxelChangeEventType.VoxelTypeChanged && changeEvent.NewVoxelType == 0)
+                    Die();
+            })).SetFlag(Flag.ShouldSerialize, false).SetFlag(Flag.RotateBoundingBox, true);
+
         }
     }
 }

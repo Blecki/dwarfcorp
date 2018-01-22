@@ -81,8 +81,9 @@ namespace DwarfCorp
             //if (currentMode != name || Play)
             //{
                 currentMode = name;
-            //    var s = currentMode + OrientationStrings[(int)CurrentOrientation];
-            //    if (Animations.ContainsKey(s))
+                var s = currentMode + OrientationStrings[(int)CurrentOrientation];
+            if (Animations.ContainsKey(s))
+                SetCurrentAnimation(Animations[s], Play);
             //        AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.NoStateChange);
             //}
         }

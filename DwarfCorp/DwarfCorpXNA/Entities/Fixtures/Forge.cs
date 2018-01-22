@@ -55,13 +55,6 @@ namespace DwarfCorp
         {
             Tags.Add("Forge");
 
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                manager.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(position)));
-            if (voxelUnder.IsValid)
-                AddChild(new VoxelListener(manager, manager.World.ChunkManager,
-                    voxelUnder));
-
             CollisionType = CollisionManager.CollisionType.Static;
 
             CreateCosmeticChildren(manager);
@@ -100,6 +93,12 @@ namespace DwarfCorp
 
             // This is a hack to make the animation update at least once even when the object is created inactive by the craftbuilder.
             sprite.AnimPlayer.Update(new DwarfTime());
+
+            AddChild(new NewVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
+            {
+                if (changeEvent.Type == VoxelChangeEventType.VoxelTypeChanged && changeEvent.NewVoxelType == 0)
+                    Die();
+            })).SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }

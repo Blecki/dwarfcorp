@@ -44,22 +44,10 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class BearTrap : Body, IUpdateableComponent
     {
-        public Sensor Sensor { get; set; }
-        public AnimatedSprite Sprite { get; set; }
-        public VoxelListener VoxListener { get; set; }
-        public ParticleTrigger DeathParticles { get; set; }
         public float DamageAmount { get; set; }
-        public static string IdleAnimation = "Idle";
-        public static string TriggerAnimation = "Trigger";
         public Faction Allies { get; set; }
         public bool ShouldDie = false;
         public Timer DeathTimer { get; set; }
-
-        [OnDeserialized]
-        public void OnDeserialized(StreamingContext ctx)
-        {
-            Sensor.OnSensed += Sensor_OnSensed;
-        }
 
         public BearTrap()
         {
@@ -72,30 +60,12 @@ namespace DwarfCorp
             new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, true)
         {
             Allies = manager.World.PlayerFaction;
-            Sensor = AddChild(new Sensor(manager, "Sensor", Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
-            {
-                FireTimer = new Timer(0.5f, false)
-            }) as Sensor;
-            Sensor.OnSensed += Sensor_OnSensed;
+            
             DeathTimer = new Timer(0.6f, true);
-            DeathParticles = AddChild(new ParticleTrigger("explode", Manager, "DeathParticles", 
-                Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
-            {
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_trap_destroyed
-            }) as ParticleTrigger;
 
             DamageAmount = 200;
 
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                manager.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(pos)));
-            VoxListener = AddChild(new VoxelListener(manager, manager.World.ChunkManager, voxelUnder))
-                    as VoxelListener;
-
-            
-
             CreateCosmeticChildren(manager);
-
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
@@ -104,9 +74,9 @@ namespace DwarfCorp
 
             var spriteSheet = new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap);
 
-            Sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.Identity, false)) as AnimatedSprite;
+            var sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.Identity, false)) as AnimatedSprite;
 
-            Sprite.AddAnimation(AnimationLibrary.CreateAnimation(spriteSheet, new List<Point> { Point.Zero }, IdleAnimation));
+            sprite.AddAnimation(AnimationLibrary.CreateAnimation(spriteSheet, new List<Point> { Point.Zero }, "BearTrapIdle"));
 
             var sprung = AnimationLibrary.CreateAnimation
                 (spriteSheet, new List<Point>
@@ -115,13 +85,34 @@ namespace DwarfCorp
                     new Point(1,1),
                     new Point(2,1),
                     new Point(3,1)
-                }, TriggerAnimation);
+                }, "BearTrapTrigger");
 
             sprung.FrameHZ = 6.6f;
 
-            Sprite.AddAnimation(sprung);
+            sprite.AddAnimation(sprung);
 
-            Sprite.SetFlag(Flag.ShouldSerialize, false);
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+
+            AddChild(new NewVoxelListener(manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
+            {
+                if (changeEvent.Type == VoxelChangeEventType.VoxelTypeChanged && changeEvent.NewVoxelType == 0)
+                    Die();
+            })).SetFlag(Flag.ShouldSerialize, false);
+
+
+            var sensor = AddChild(new Sensor(manager, "Sensor", Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
+            {
+                FireTimer = new Timer(0.5f, false)
+            }) as Sensor;
+            sensor.OnSensed += Sensor_OnSensed;
+            sensor.SetFlag(Flag.ShouldSerialize, false);
+
+            AddChild(new ParticleTrigger("explode", Manager, "DeathParticles",
+                Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
+            {
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_trap_destroyed
+            }).SetFlag(Flag.ShouldSerialize, false);
+
             base.CreateCosmeticChildren(manager);
         }
 
@@ -163,7 +154,7 @@ namespace DwarfCorp
 
         public void Trigger()
         {
-            Sprite.SetCurrentAnimation(TriggerAnimation, true);
+            EnumerateChildren().OfType<AnimatedSprite>().FirstOrDefault().SetCurrentAnimation("BearTrapTrigger", true);
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_trap_trigger, GlobalTransform.Translation, false);
             ShouldDie = true;
             DeathTimer.Reset(DeathTimer.TargetTimeSeconds);

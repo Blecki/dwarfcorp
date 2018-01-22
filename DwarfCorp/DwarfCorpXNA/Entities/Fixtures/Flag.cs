@@ -55,13 +55,6 @@ namespace DwarfCorp
 
             Tags.Add("Flag");
 
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                Manager.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(position)));
-            if (voxelUnder.IsValid)
-                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
-                    voxelUnder));
-
             CollisionType = CollisionManager.CollisionType.Static;
             CreateCosmeticChildren(Manager);
         }
@@ -81,6 +74,12 @@ namespace DwarfCorp
             {
                 Logo = Logo
             }).SetFlag(Flag.ShouldSerialize, false);
+
+            AddChild(new NewVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
+            {
+                if (changeEvent.Type == VoxelChangeEventType.VoxelTypeChanged && changeEvent.NewVoxelType == 0)
+                    Die();
+            })).SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }

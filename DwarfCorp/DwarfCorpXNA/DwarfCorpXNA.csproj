@@ -169,7 +169,6 @@
     <Compile Include="Components\VoxelRevealer.cs" />
     <Compile Include="Components\VoxelChangeEvent.cs" />
     <Compile Include="Components\NewVoxelListener.cs" />
-    <Compile Include="Components\AI\Sensors\VoxelListener.cs" />
     <Compile Include="Components\AI\StatBuff.cs" />
     <Compile Include="Components\AI\ThoughtBuff.cs" />
     <Compile Include="Components\Body.cs" />
@@ -190,6 +189,7 @@
     <Compile Include="Entities\Fixtures\CoinPileFixture.cs" />
     <Compile Include="Entities\Fixtures\Banner.cs" />
     <Compile Include="Entities\Fixtures\Fence.cs" />
+    <Compile Include="Scripting\Player\Economy\Quantity.cs" />
     <Compile Include="Voxels\Rail\RailEntity.cs" />
     <Compile Include="Entities\Plants\Pumpkin.cs" />
     <Compile Include="Entities\Plants\Cactus.cs" />

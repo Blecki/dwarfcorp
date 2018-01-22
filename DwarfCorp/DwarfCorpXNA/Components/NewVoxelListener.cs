@@ -42,9 +42,6 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     public class NewVoxelListener : Body
-#if DEBUG
-        , IRenderableComponent
-#endif
     {
         private Action<VoxelChangeEvent> Handler;
 
@@ -69,14 +66,6 @@ namespace DwarfCorp
             CollisionType = CollisionManager.CollisionType.Static;
             this.Handler = Handler;
         }
-
-#if DEBUG
-        void IRenderableComponent.Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Microsoft.Xna.Framework.Graphics.GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
-        {
-            if (GamePerformance.DebugVisualizationEnabled)
-                Drawer3D.DrawBox(GetBoundingBox(), Color.DarkRed, 0.02f, false);
-        }
-#endif
 
         public void OnVoxelChanged(VoxelChangeEvent V)
         {
