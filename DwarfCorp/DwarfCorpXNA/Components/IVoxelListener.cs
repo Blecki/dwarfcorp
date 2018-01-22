@@ -1,4 +1,4 @@
-﻿// VoxelListener.cs
+﻿// IVoxelListener.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -41,36 +41,8 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class NewVoxelListener : Body
+    public interface IVoxelListener
     {
-        private Action<VoxelChangeEvent> Handler;
-
-        [OnSerializing]
-        void Serializer(StreamingContext Context)
-        {
-            throw new InvalidProgramException("DO NOT SERIALIZE LISTENERS");
-        }
-
-        public NewVoxelListener()
-        {
-
-        }
-
-        public NewVoxelListener(ComponentManager Manager,
-            Matrix Transform,
-            Vector3 BoundingBoxExtents,
-            Vector3 BoundingBoxOffset,
-            Action<VoxelChangeEvent> Handler) :
-            base(Manager, "New Voxel Listener", Transform, BoundingBoxExtents, BoundingBoxOffset, true)
-        {
-            CollisionType = CollisionManager.CollisionType.Static;
-            this.Handler = Handler;
-        }
-
-        public void OnVoxelChanged(VoxelChangeEvent V)
-        {
-            if (Handler != null)
-                Handler(V);
-        }
+        void OnVoxelChanged(VoxelChangeEvent V);
     }
 }

@@ -94,7 +94,7 @@ namespace DwarfCorp
             // This is a hack to make the animation update at least once even when the object is created inactive by the craftbuilder.
             sprite.AnimPlayer.Update(new DwarfTime());
 
-            AddChild(new NewVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
+            AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
             {
                 if (changeEvent.Type == VoxelChangeEventType.VoxelTypeChanged && changeEvent.NewVoxelType == 0)
                     Die();

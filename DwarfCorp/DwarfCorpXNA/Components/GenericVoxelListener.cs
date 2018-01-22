@@ -1,4 +1,4 @@
-// Flag.cs
+﻿// VoxelListener.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -32,54 +32,45 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Flag : Body
+    public class GenericVoxelListener : Body, IVoxelListener
     {
-        public CompanyInformation Logo;
+        private Action<VoxelChangeEvent> Handler;
 
-        public Flag()
+        [OnSerializing]
+        void Serializer(StreamingContext Context)
+        {
+            throw new InvalidProgramException("DO NOT SERIALIZE GENERIC VOXEL LISTENERS");
+        }
+
+        public GenericVoxelListener()
         {
 
         }
 
-        public Flag(ComponentManager Manager, Vector3 position, CompanyInformation logo) :
-            base(Manager, "Flag", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+        public GenericVoxelListener(ComponentManager Manager,
+            Matrix Transform,
+            Vector3 BoundingBoxExtents,
+            Vector3 BoundingBoxOffset,
+            Action<VoxelChangeEvent> Handler) :
+            base(Manager, "New Voxel Listener", Transform, BoundingBoxExtents, BoundingBoxOffset, true)
         {
-            this.Logo = logo;
-
-            Tags.Add("Flag");
-
             CollisionType = CollisionManager.CollisionType.Static;
-            CreateCosmeticChildren(Manager);
+            this.Handler = Handler;
         }
 
-        public override void CreateCosmeticChildren(ComponentManager Manager)
+        public void OnVoxelChanged(VoxelChangeEvent V)
         {
-            base.CreateCosmeticChildren(Manager);
-
-            AddChild(new SimpleSprite(Manager, "sprite", Matrix.Identity, false,
-                new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32),
-                new Point(0, 2))
-            {
-                OrientationType = SimpleSprite.OrientMode.YAxis
-            }).SetFlag(Flag.ShouldSerialize, false);
-
-            AddChild(new Banner(Manager)
-            {
-                Logo = Logo
-            }).SetFlag(Flag.ShouldSerialize, false);
-
-            AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
-            {
-                if (changeEvent.Type == VoxelChangeEventType.VoxelTypeChanged && changeEvent.NewVoxelType == 0)
-                    Die();
-            })).SetFlag(Flag.ShouldSerialize, false);
+            if (Handler != null)
+                Handler(V);
         }
     }
 }

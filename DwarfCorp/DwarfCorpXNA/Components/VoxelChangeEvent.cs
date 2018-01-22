@@ -9,6 +9,7 @@ namespace DwarfCorp
     {
         VoxelTypeChanged,
         RampsChanged,
+        Explored,
         // Todo: Revealed, etc.
     }
 

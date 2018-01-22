@@ -460,7 +460,7 @@ namespace DwarfCorp
                         else
                         {
                             world.ComponentManager.RootComponent.AddChild(new ExploredListener(
-                                world.ComponentManager, world.ChunkManager, vUnder)
+                                world.ComponentManager, vUnder)
                             {
                                 EntityToSpawn = veg.Name,
                                 SpawnLocation = vUnder.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
@@ -488,8 +488,7 @@ namespace DwarfCorp
                     else
                     {
                         world.ComponentManager.RootComponent.AddChild(new ExploredListener
-                            (world.ComponentManager,
-                                world.ChunkManager, new VoxelHandle(chunk, wayUnder.Coordinate.GetLocalVoxelCoordinate()))
+                            (world.ComponentManager, new VoxelHandle(chunk, wayUnder.Coordinate.GetLocalVoxelCoordinate()))
                         {
                             EntityToSpawn = animal1.Name,
                             SpawnLocation = wayUnder.WorldPosition + Vector3.Up * 1.5f

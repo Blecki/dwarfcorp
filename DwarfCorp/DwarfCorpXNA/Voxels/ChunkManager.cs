@@ -456,7 +456,7 @@ namespace DwarfCorp
 
                 foreach (var intersectingBody in hashmap)
                 {
-                    var listener = intersectingBody as NewVoxelListener;
+                    var listener = intersectingBody as IVoxelListener;
                     if (listener != null)
                         listener.OnVoxelChanged(voxel);
                 }

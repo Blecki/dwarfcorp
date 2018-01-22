@@ -54,7 +54,7 @@ namespace DwarfCorp
                 "bed", 
                 spriteSheet)).SetFlag(Flag.ShouldSerialize, false);
 
-            AddChild(new NewVoxelListener(Manager,
+            AddChild(new GenericVoxelListener(Manager,
                 Matrix.Identity,
                 new Vector3(1.5f, 0.5f, 0.75f), // Position just below surface.
                 new Vector3(0.5f, -0.30f, 0.0f),

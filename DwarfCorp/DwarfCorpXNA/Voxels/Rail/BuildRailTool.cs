@@ -205,7 +205,7 @@ namespace DwarfCorp.Rail
                     continue;
 
                 if (Object.ReferenceEquals(entity, PreviewEntity)) continue;
-                if (entity is NewVoxelListener) continue;
+                if (entity is GenericVoxelListener) continue;
                 if (entity is WorkPile) continue;
 
                 if (FindPossibleCombination(Piece, entity) != null)

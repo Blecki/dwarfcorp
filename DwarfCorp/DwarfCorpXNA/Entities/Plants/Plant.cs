@@ -83,7 +83,7 @@ namespace DwarfCorp
             var mesh = AddChild(new InstanceMesh(Manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position), MeshAsset, false));
             mesh.SetFlag(Flag.ShouldSerialize, false);
 
-            AddChild(new NewVoxelListener(Manager,
+            AddChild(new GenericVoxelListener(Manager,
                 Matrix.Identity,
                 new Vector3(0.25f, 0.25f, 0.25f), // Position just below surface.
                 new Vector3(0.0f, -0.30f, 0.0f),

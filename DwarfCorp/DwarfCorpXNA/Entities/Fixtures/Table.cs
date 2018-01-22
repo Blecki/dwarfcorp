@@ -194,7 +194,7 @@ namespace DwarfCorp
             if (fixtureAsset != null)
                 AddChild(new Fixture(Manager, new Vector3(0, 0.3f, 0), fixtureAsset, fixtureFrame)).SetFlagRecursive(Flag.ShouldSerialize, false);
 
-            AddChild(new NewVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
+            AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
             {
                 if (changeEvent.Type == VoxelChangeEventType.VoxelTypeChanged && changeEvent.NewVoxelType == 0)
                     Die();

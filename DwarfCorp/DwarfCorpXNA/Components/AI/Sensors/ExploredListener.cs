@@ -42,60 +42,26 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class ExploredListener : GameComponent
+    public class ExploredListener : Body, IVoxelListener
     {
-        public LocalVoxelCoordinate VoxelID;
-
-        [JsonIgnore]
-        public VoxelChunk Chunk;
-
-        public GlobalChunkCoordinate ChunkID { get; set; }
-
+        public VoxelHandle Voxel;
         public string EntityToSpawn { get; set; }
         public Vector3 SpawnLocation { get; set; }
         public Blackboard BlackboardData { get; set; }
 
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
+       public ExploredListener(ComponentManager Manager, VoxelHandle Voxel) :
+            base(Manager, "ExplorationSpawner", Matrix.CreateTranslation(Voxel.GetBoundingBox().Center()), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero, true)
         {
-            Chunk = (context.Context as WorldManager).ChunkManager.ChunkData.GetChunk(ChunkID);
-            Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
+            this.Voxel = Voxel;
         }
 
-        public ExploredListener()
+        public void OnVoxelChanged(VoxelChangeEvent V)
         {
-
-        }
-
-        public ExploredListener(ComponentManager manager, ChunkManager chunkManager, VoxelHandle vref) :
-            base("ExploredListener", manager)
-        {
-            Chunk = vref.Chunk;
-            VoxelID = vref.Coordinate.GetLocalVoxelCoordinate();
-            Chunk.OnVoxelExplored += ExploredListener_OnVoxelExplored;
-            ChunkID = Chunk.ID;
-
-        }
-
-        void ExploredListener_OnVoxelExplored(LocalVoxelCoordinate voxelID)
-        {
-            if (voxelID == VoxelID)
+            if (V.Type == VoxelChangeEventType.Explored)
             {
                 Delete();
                 EntityFactory.CreateEntity<GameComponent>(EntityToSpawn, SpawnLocation, BlackboardData);
             }
-        }
-
-        public override void Die()
-        {
-            Chunk.OnVoxelExplored -= ExploredListener_OnVoxelExplored;
-            base.Die();
-        }
-
-        public override void Delete()
-        {
-            Chunk.OnVoxelExplored -= ExploredListener_OnVoxelExplored;
-            base.Delete();
         }
     }
 }

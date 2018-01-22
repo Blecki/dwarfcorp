@@ -80,7 +80,7 @@ namespace DwarfCorp.Rail
             AddChild(new RailSprite(manager, "Sprite", Matrix.Identity, new SpriteSheet(ContentPaths.rail_tiles, 32, 32), piece.Tile))
                 .SetFlag(Flag.ShouldSerialize, false);
 
-            AddChild(new NewVoxelListener(manager, Matrix.Identity, new Vector3(0.8f, 1.5f, 0.8f), Vector3.Zero, (_event) =>
+            AddChild(new GenericVoxelListener(manager, Matrix.Identity, new Vector3(0.8f, 1.5f, 0.8f), Vector3.Zero, (_event) =>
             {
                 
                 Die();
@@ -150,7 +150,7 @@ namespace DwarfCorp.Rail
             spriteChild.SetFrame(piece.Tile);
 
             // Hack to make the listener update it's damn bounding box
-            EnumerateChildren().OfType<NewVoxelListener>().FirstOrDefault().LocalTransform = Matrix.Identity;
+            EnumerateChildren().OfType<GenericVoxelListener>().FirstOrDefault().LocalTransform = Matrix.Identity;
         }
     }
 }
