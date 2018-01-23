@@ -54,13 +54,10 @@ namespace DwarfCorp
                         string asset, 
                         ResourceLibrary.ResourceType resource, 
                         int numRelease, bool selfIlluminate, string seedlingsheet) :
-            base(Manager, "Mushroom", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), 
+            base(Manager, "Mushroom", position, MathFunctions.Rand(-0.1f, 0.1f), new Vector3(1.0f, 1.0f, 1.0f), 
                 System.IO.Path.GetFileName(asset), 1.0f)
         {
             SeedlingAsset = seedlingsheet;
-            Matrix matrix = Matrix.CreateRotationY(MathFunctions.Rand(-0.1f, 0.1f));
-            matrix.Translation = position;// + new Vector3(0.5f, 0.0f, 0.5f);
-            LocalTransform = matrix;
 
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), LocalBoundingBoxOffset)) as Inventory;
 

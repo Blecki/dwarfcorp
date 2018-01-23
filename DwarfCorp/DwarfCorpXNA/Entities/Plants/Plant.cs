@@ -49,6 +49,8 @@ namespace DwarfCorp
         public bool IsGrown { get; set; }
         public string MeshAsset { get; set; }
         public float MeshScale { get; set; }
+        public Vector3 BasePosition = Vector3.Zero;
+        public float RandomAngle = 0.0f;
 
         public Plant()
         {
@@ -56,23 +58,23 @@ namespace DwarfCorp
             IsGrown = false;
         }
 
-        public Plant(ComponentManager Manager, string name, Matrix localTransform, Vector3 bboxSize,
+        public Plant(ComponentManager Manager, string name, Vector3 Position, float RandomAngle, Vector3 bboxSize,
            string meshAsset, float meshScale) :
-            base(Manager, name, localTransform, bboxSize, new Vector3(0.0f, bboxSize.Y / 2, 0.0f), false)
+            base(Manager, name, Matrix.Identity, bboxSize, new Vector3(0.0f, bboxSize.Y / 2, 0.0f), true)
         {
             MeshAsset = meshAsset;
             MeshScale = meshScale;
             GrowthHours = 12;
             IsGrown = false;
+            BasePosition = Position;
+            this.RandomAngle = RandomAngle;
 
             // Needs this to ensure plants are initially placed correctly. Listener below only fires when voxels change.
-            var under = new VoxelHandle(Manager.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(LocalTransform.Translation - new Vector3(0.0f, 0.5f, 0.0f)));
+            var under = new VoxelHandle(Manager.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(BasePosition - new Vector3(0.0f, 0.5f, 0.0f)));
             if (under.IsValid && under.RampType != RampType.None)
-            {
-                var local = LocalTransform;
-                local.Translation -= new Vector3(0.0f, 0.5f, 0.0f);
-                LocalTransform = local;
-            }
+                LocalTransform = Matrix.CreateRotationY(RandomAngle) * Matrix.CreateTranslation(BasePosition - new Vector3(0.0f, 0.5f, 0.0f));
+            else
+                LocalTransform = Matrix.CreateRotationY(RandomAngle) * Matrix.CreateTranslation(BasePosition);
 
             impl_CreateCosmeticChildren(Manager);
         }
@@ -97,17 +99,9 @@ namespace DwarfCorp
                     else if (v.Type == VoxelChangeEventType.RampsChanged)
                     {
                         if (v.OldRamps != RampType.None && v.NewRamps == RampType.None)
-                        {
-                            var local = LocalTransform;
-                            local.Translation += new Vector3(0.0f, 0.5f, 0.0f);
-                            LocalTransform = local;
-                        }
+                            LocalTransform = Matrix.CreateRotationY(RandomAngle) * Matrix.CreateTranslation(BasePosition);
                         else if (v.OldRamps == RampType.None && v.NewRamps != RampType.None)
-                        {
-                            var local = LocalTransform;
-                            local.Translation -= new Vector3(0.0f, 0.5f, 0.0f);
-                            LocalTransform = local;
-                        }
+                            LocalTransform = Matrix.CreateRotationY(RandomAngle) * Matrix.CreateTranslation(BasePosition - new Vector3(0.0f, 0.5f, 0.0f));
                     }
                 }))
                 .SetFlag(Flag.ShouldSerialize, false);

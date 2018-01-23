@@ -54,7 +54,7 @@ namespace DwarfCorp
         }
 
         public Seedling(ComponentManager Manager, String AdultName, Vector3 position, String Asset, int GrowthHours) :
-            base(Manager, "seedling", Matrix.CreateTranslation(position), Vector3.One, Asset, 1.0f)
+            base(Manager, "seedling", position, 0.0f, Vector3.One, Asset, 1.0f)
         {
             FullyGrownDay = Manager.World.Time.CurrentDate.AddHours(GrowthHours);
             IsGrown = false;

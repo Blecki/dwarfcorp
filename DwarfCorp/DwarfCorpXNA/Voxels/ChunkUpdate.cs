@@ -95,6 +95,12 @@ namespace DwarfCorp
                         {
                             // Spread grass onto this tile - but only from the same biome.
 
+                            // Don't spread if there's an entity here.
+                             var entityPresent = chunk.Manager.World.CollisionManager.EnumerateIntersectingObjects(
+                                new BoundingBox(voxel.WorldPosition + new Vector3(0.1f, 1.1f, 0.1f), voxel.WorldPosition + new Vector3(0.9f, 1.9f, 0.9f)),
+                                CollisionManager.CollisionType.Static).Any();
+                            if (entityPresent) continue;
+
                             var biome = Overworld.GetBiomeAt(voxel.Coordinate.ToVector3());
 
                             var grassyNeighbors = VoxelHelpers.EnumerateManhattanNeighbors2D(voxel.Coordinate)
