@@ -224,7 +224,9 @@ namespace DwarfCorp.Gui.Widgets
                                 AutoLayout = AutoLayout.FloatBottomLeft,
                                 OnClick = (currSender, currArgs) =>
                                 {
-                                    employeeInfo.Employee.Creature.RestockAllImmediately();
+                                    if (employeeInfo != null && employeeInfo.Employee != null
+                                         && employeeInfo.Employee.Creature != null)
+                                        employeeInfo.Employee.Creature.RestockAllImmediately();
                                 }
                             });
                             popup.Layout();

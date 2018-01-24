@@ -147,6 +147,8 @@ namespace DwarfCorp
         public EmployeeClass CurrentClass { get; set; }
         public Task.TaskCategory AllowedTasks = Task.TaskCategory.None;
 
+        public bool IsMigratory { get; set; }
+
         public bool IsTaskAllowed(Task.TaskCategory TaskCategory)
         {
             return (AllowedTasks & TaskCategory) == TaskCategory;
@@ -188,6 +190,7 @@ namespace DwarfCorp
             AllowedTasks = CurrentClass.Actions;
             LevelIndex = 0;
             XP = 0;
+            IsMigratory = false;
             StatBuffs = new StatNums()
             {
                 Charisma = 0,
