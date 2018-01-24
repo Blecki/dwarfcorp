@@ -20,6 +20,13 @@
         },
 
         {
+          "Overlay": "rail-straight",
+          "OverlayRelativeOrientation": "South",
+          "Result": "rail-straight",
+          "ResultRelativeOrientation": "North"
+        },
+
+        {
           "Overlay": "rail-large-curve-a",
           "OverlayRelativeOrientation": "North",
           "Result": "rail-left-switch-open-b",
@@ -185,6 +192,13 @@
           "OverlayRelativeOrientation": "South",
           "Result": "rail-left-switch-open-b",
           "ResultRelativeOrientation": "South"
+        },
+
+        {
+          "Overlay": "rail-large-curve-c",
+          "OverlayRelativeOrientation": "East",
+          "Result": "rail-y-a",
+          "ResultRelativeOrientation": "North"
         }
       ],
       "SplinePoints": [
@@ -240,6 +254,13 @@
           "OverlayRelativeOrientation": "West",
           "Result": "rail-right-switch-open-a",
           "ResultRelativeOrientation": "East"
+        },
+
+        {
+          "Overlay": "rail-large-curve-b",
+          "OverlayRelativeOrientation": "East",
+          "Result": "rail-y-b",
+          "ResultRelativeOriention": "North"
         }
 
       ]
@@ -388,6 +409,29 @@
           "-0.5, 0.1, 0"
         ]
       ]
+    },
+
+    {
+      "Name": "rail-y-a",
+      "Tile": "4, 1",
+      "SplinePoints": [
+        [
+          "0.5, 0.1, -0.5",
+          "0.1, 0.1, -0.1",
+          "-0.5, 0.1, 0"
+        ],
+
+        [
+          "0.5, 0.1, 0.5",
+          "0.1, 0.1, 0.1",
+          "-0.5, 0.1, 0"
+        ]
+      ]
+    },
+
+    {
+      "Name": "rail-y-b",
+      "Tile": "5, 1"
     }
 
   ],

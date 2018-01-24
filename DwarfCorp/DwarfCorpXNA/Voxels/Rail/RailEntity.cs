@@ -82,15 +82,19 @@ namespace DwarfCorp.Rail
 
             AddChild(new GenericVoxelListener(manager, Matrix.Identity, new Vector3(0.8f, 1.5f, 0.8f), Vector3.Zero, (_event) =>
             {
-                
-                Die();
-                var designation = World.PlayerFaction.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, this));
-                if (designation != null)
+                if (!Active) return;
+
+                if (_event.Type == VoxelChangeEventType.VoxelTypeChanged && _event.NewVoxelType == 0)
                 {
-                    World.PlayerFaction.Designations.RemoveEntityDesignation(this, DesignationType.Craft);
-                    var craftDesignation = designation.Tag as CraftDesignation;
-                    if (craftDesignation.WorkPile != null)
-                        craftDesignation.WorkPile.Die();
+                    Die();
+                    var designation = World.PlayerFaction.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, this));
+                    if (designation != null)
+                    {
+                        World.PlayerFaction.Designations.RemoveEntityDesignation(this, DesignationType.Craft);
+                        var craftDesignation = designation.Tag as CraftDesignation;
+                        if (craftDesignation.WorkPile != null)
+                            craftDesignation.WorkPile.Die();
+                    }
                 }
             }));
 
@@ -122,7 +126,7 @@ namespace DwarfCorp.Rail
             LocalTransform = Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y) + new Vector3(0.5f, 0.2f, 0.5f));
 
             var piece = RailLibrary.GetRailPiece(Piece.RailPiece);
-            var spriteChild = EnumerateChildren().FirstOrDefault(c => c.Name == "Sprite") as RailSprite;
+            var spriteChild = EnumerateChildren().OfType<RailSprite>().FirstOrDefault() as RailSprite;
             spriteChild.LocalTransform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
 
             switch (piece.Shape)

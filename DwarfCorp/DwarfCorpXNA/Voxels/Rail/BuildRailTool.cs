@@ -229,6 +229,14 @@ namespace DwarfCorp.Rail
                 var baseJunction = (Entity as RailEntity).Piece;
                 var basePiece = Rail.RailLibrary.GetRailPiece(baseJunction.RailPiece);
                 var relativeOrientation = Rail.OrientationHelper.Relative(baseJunction.Orientation, Piece.Orientation);
+
+                if (basePiece.Name == Piece.RailPiece && relativeOrientation == Orientation.North)
+                    return new RailCombination
+                    {
+                        Result = basePiece.Name,
+                        ResultRelativeOrientation = Orientation.North
+                    };
+
                 var matchingCombination = basePiece.CombinationTable.FirstOrDefault(c => c.Overlay == Piece.RailPiece && c.OverlayRelativeOrientation == relativeOrientation);
                 return matchingCombination;
             }
