@@ -1,4 +1,4 @@
-// Fixture.cs
+// RailEntity.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -34,6 +34,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace DwarfCorp.Rail
 {
@@ -117,6 +118,12 @@ namespace DwarfCorp.Rail
             }
         }
 #endif
+
+        public List<List<Vector3>> GetTransformedSplines()
+        {
+            var piece = RailLibrary.GetRailPiece(Piece.RailPiece);
+            return piece.SplinePoints.Select(s => s.Select(p => Vector3.Transform(p, GlobalTransform)).ToList()).ToList();
+        }
 
         public void UpdatePiece(JunctionPiece Piece, VoxelHandle Location)
         {

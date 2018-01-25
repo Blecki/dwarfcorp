@@ -92,7 +92,7 @@ namespace DwarfCorp
             Graphics = new GraphicsDeviceManager(this);
             Window.Title = "DwarfCorp";
             Window.AllowUserResizing = false;
-            TextureManager = new TextureManager(Content, GraphicsDevice);
+            TextureManager.Initialize(Content, GraphicsDevice);
             MainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
             GameSettings.Load();
 

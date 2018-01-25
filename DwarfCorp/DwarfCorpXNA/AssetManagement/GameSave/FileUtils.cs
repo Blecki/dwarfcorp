@@ -50,13 +50,23 @@ using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
 namespace DwarfCorp
 {
-
     /// <summary>
     /// A static class with helper functions for saving/loading data to binary, JSON, and ZIP
     /// </summary>
     public static class FileUtils
     {
-
+        private static List<JsonConverter> StandardConverters = new List<JsonConverter>
+        {
+            new BoxConverter(),
+            new Vector3Converter(),
+            new MatrixConverter(),
+            new TextureContentConverter(),
+            new RectangleConverter(),
+            new MoneyConverter(),
+            new ColorConverter(),
+            new Newtonsoft.Json.Converters.StringEnumConverter()
+        };
+        
         /// <summary>
         /// Loads a serialized binary object from the given file.
         /// </summary>
@@ -101,7 +111,7 @@ namespace DwarfCorp
             }
             return true;
         }
-
+        
 
         /// <summary>
         /// Given the inline text of a JSON serialization, creates an object of type T deserialized from it.
@@ -120,17 +130,7 @@ namespace DwarfCorp
                 ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
                 TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                Converters = new List<JsonConverter>
-                    {
-                        new BoxConverter(),
-                        new Vector3Converter(),
-                        new MatrixConverter(),
-                        new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap),
-                        new RectangleConverter(),
-                        new MoneyConverter(),
-                        new ColorConverter(),
-                        new Newtonsoft.Json.Converters.StringEnumConverter()
-                    }
+                Converters = StandardConverters
             });
         }
 
@@ -149,21 +149,11 @@ namespace DwarfCorp
                         TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
                         PreserveReferencesHandling = PreserveReferencesHandling.Objects,
                     };
-                    serializer.Converters.Add(new BoxConverter());
-                    serializer.Converters.Add(new Vector3Converter());
-                    serializer.Converters.Add(new MatrixConverter());
-                    serializer.Converters.Add(new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap));
-                    serializer.Converters.Add(new RectangleConverter());
-                    serializer.Converters.Add(new ColorConverter());
-                    serializer.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-
-                    {
-                        return serializer.Deserialize<T>(json);
-                    }
-
+                    foreach (var converter in StandardConverters)
+                        serializer.Converters.Add(converter);
+                    return serializer.Deserialize<T>(json);
                 }
             }
-            return default(T);
         }
 
         /// <summary>
@@ -216,43 +206,16 @@ namespace DwarfCorp
                 ContractResolver = new DefaultContractResolver()
             };
 
-            serializer.Converters.Add(new BoxConverter());
-            serializer.Converters.Add(new Vector3Converter());
-            serializer.Converters.Add(new MatrixConverter());
-            serializer.Converters.Add(new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap));
-            serializer.Converters.Add(new RectangleConverter());
-            serializer.Converters.Add(new MoneyConverter());
-            serializer.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            foreach (var converter in StandardConverters)
+                serializer.Converters.Add(converter);
 
             return Save(serializer, obj, filePath, false);
-
         }
 
         public static string SerializeBasicJSON<T>(T obj)
         {
-            JsonSerializer serializer = new JsonSerializer
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.Auto,
-                TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
-                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                Formatting = Formatting.Indented
-            };
-
-            serializer.Converters.Add(new BoxConverter());
-            serializer.Converters.Add(new Vector3Converter());
-            serializer.Converters.Add(new MatrixConverter());
-            //serializer.Converters.Add(new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap));
-            serializer.Converters.Add(new RectangleConverter());
-            serializer.Converters.Add(new MoneyConverter());
-            serializer.Converters.Add(new ColorConverter());
-            serializer.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-
-            return JsonConvert.SerializeObject(obj, Formatting.Indented, serializer.Converters.ToArray());
-
+            return JsonConvert.SerializeObject(obj, Formatting.Indented, StandardConverters.ToArray());
         }
-
-
 
         /// <summary>
         /// Saves an object of type T to JSON using the full serialization method (most robust).
@@ -275,14 +238,9 @@ namespace DwarfCorp
                 ContractResolver = new DefaultContractResolver()
             };
 
-            serializer.Converters.Add(new BoxConverter());
-            serializer.Converters.Add(new Vector3Converter());
-            serializer.Converters.Add(new MatrixConverter());
-            serializer.Converters.Add(new ContentConverter<Texture2D>(GameState.Game.Content, TextureManager.AssetMap));
-            serializer.Converters.Add(new RectangleConverter());
-            serializer.Converters.Add(new MoneyConverter());
-            serializer.Converters.Add(new ColorConverter());
-            serializer.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+            foreach (var converter in StandardConverters)
+                serializer.Converters.Add(converter);
+
             return Save(serializer, obj, filePath, compress);
 
         }

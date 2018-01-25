@@ -288,6 +288,21 @@ namespace DwarfCorp
                 RotateLeftPressed = leftKey;
                 RotateRightPressed = rightKey;
             }
+            else if (Command == "Repulse")
+            {
+                var location = Player.VoxSelector.VoxelUnderMouse;
+                var center = location.GetBoundingBox().Center();
+                foreach (var body in Player.World.CollisionManager.EnumerateIntersectingObjects(location.GetBoundingBox(), CollisionManager.CollisionType.Dynamic).OfType<Body>())
+                {
+                    var delta = center - body.Position;
+                    delta.Normalize();
+                    if (delta.Y < 0)
+                        delta.Y = 0;
+                    var transform = body.LocalTransform;
+                    transform.Translation += delta * (float)time.ElapsedGameTime.TotalSeconds * 5;
+                    body.LocalTransform = transform;
+                }
+            }
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

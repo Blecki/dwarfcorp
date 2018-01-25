@@ -249,6 +249,11 @@ namespace DwarfCorp.Gui.Widgets
                 },
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "REPULSE",
+                    OnClick = (sender, args) => ActivateGodTool("Repulse")
+                },
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "LET IT SNOW",
                     OnClick = (sender, args) =>
                     {

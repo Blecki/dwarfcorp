@@ -51,39 +51,33 @@ namespace DwarfCorp
     /// </summary>
     public class TextureManager
     {
-        public static Dictionary<Texture2D, string> AssetMap { get; set; }
- 
-        public ContentManager Content { get; set; }
-        public GraphicsDevice Graphics { get; set; }
-        private static bool staticsInitialized = false;
+        //Todo - don't need the instance nonsense.
 
-        public static TextureManager Instance { get; set; }
+        private static Dictionary<Texture2D, string> AssetMap = new Dictionary<Texture2D, string>();
+        private static ContentManager Content;
+        private static GraphicsDevice Graphics;
 
-
-        public TextureManager(ContentManager content, GraphicsDevice graphics)
+        public static void Initialize(ContentManager Content, GraphicsDevice Graphics)
         {
-            Content = content;
-            Graphics = graphics;
-            AssetMap = new Dictionary<Texture2D, string>();
-            if(!staticsInitialized)
-            {
-                InitializeStatics();
-                Instance = this;
-            }
+            TextureManager.Content = Content;
+            TextureManager.Graphics = Graphics;
+
         }
 
-        public static void InitializeStatics()
+        public static string ReverseLookup(Texture2D Texture)
         {
-            staticsInitialized = true;
+            if (AssetMap.ContainsKey(Texture))
+                return AssetMap[Texture];
+            return "";
         }
-
+        
         public static Texture2D GetTexture(string asset)
         {
-            Texture2D toReturn = Instance.GetInstanceTexture(asset);
+            Texture2D toReturn = GetInstanceTexture(asset);
             return toReturn;
         }
 
-        public Texture2D GetInstanceTexture(string asset, bool cache=true)
+        public static Texture2D GetInstanceTexture(string asset, bool cache=true)
         {
             if (AssetMap.ContainsValue(asset))
             {
