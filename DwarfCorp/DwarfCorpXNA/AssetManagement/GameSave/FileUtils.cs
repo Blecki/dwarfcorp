@@ -53,7 +53,7 @@ namespace DwarfCorp
     /// <summary>
     /// A static class with helper functions for saving/loading data to binary, JSON, and ZIP
     /// </summary>
-    public static class FileUtils
+    public static partial class FileUtils
     {
         private static List<JsonConverter> StandardConverters = new List<JsonConverter>
         {
@@ -67,52 +67,6 @@ namespace DwarfCorp
             new Newtonsoft.Json.Converters.StringEnumConverter()
         };
         
-        /// <summary>
-        /// Loads a serialized binary object from the given file.
-        /// </summary>
-        /// <typeparam name="T">The type to deserialize</typeparam>
-        /// <param name="filepath">The filepath.</param>
-        /// <returns>A deserialized object of type T if it could be deserialized, exception otherwise.</returns>
-        public static T LoadBinary<T>(string filepath)
-        {
-            IFormatter formatter = new BinaryFormatter();
-            T toReturn = default(T);
-            using (var stream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.None))
-            { 
-                try
-                {
-                    stream.Position = 0;
-                    toReturn = (T) formatter.Deserialize(stream);
-                }
-                catch (InvalidCastException e)
-                {
-                    Console.Error.WriteLine(e);
-                }
-
-                stream.Flush();
-            }
-            return toReturn;
-        }
-
-
-        /// <summary>
-        /// Serializes and saves an object to binary file path.
-        /// </summary>
-        /// <typeparam name="T">The type of the object to serialize</typeparam>
-        /// <param name="obj">The object.</param>
-        /// <param name="filepath">The filepath.</param>
-        /// <returns>True if the object could be saved.</returns>
-        public static bool SaveBinary<T>(T obj, string filepath)
-        {
-            IFormatter formatter = new BinaryFormatter();
-            using (var stream = new FileStream(filepath, FileMode.Create, FileAccess.Write, FileShare.None))
-            {
-                formatter.Serialize(stream, obj);
-            }
-            return true;
-        }
-        
-
         /// <summary>
         /// Given the inline text of a JSON serialization, creates an object of type T deserialized from it.
         /// </summary>
@@ -278,102 +232,5 @@ namespace DwarfCorp
                 }
             }
         }
-
-
-        /// <summary>
-        /// Writes the given string to an output file.
-        /// </summary>
-        /// <param name="output">The string to write.</param>
-        /// <param name="filePath">The file path.</param>
-        /// <param name="isCompressed">if set to <c>true</c> writes the file using gzip compression.</param>
-        /// <returns>True if the file could be saved.</returns>
-        public static bool Save(string output, string filePath, bool isCompressed)
-        {
-            if(!isCompressed)
-            {
-                using(StreamWriter filestream = new StreamWriter(filePath))
-                {
-                    filestream.Write(output);
-                    filestream.Close();
-                    return true;
-                }
-            }
-            else
-            {
-                using(GZipStream zip = new GZipStream(new FileStream(filePath, FileMode.OpenOrCreate), CompressionMode.Compress))
-                {
-                    byte[] data = Encoding.UTF8.GetBytes(output.ToCharArray());
-                    zip.Write(data, 0, data.Length);
-                    zip.Close();
-                    return true;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Loads the specified file path.
-        /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <param name="isCompressed">if set to <c>true</c> [is compressed].</param>
-        /// <returns>The text content of the file.</returns>
-        public static string Load(string filePath, bool isCompressed)
-        {
-            string text = "";
-            text = isCompressed ? Decompress(filePath) : File.ReadAllText(filePath);
-
-            return text;
-        }
-
-        /// <summary>
-        /// Decompresses a byte array from gzip.
-        /// </summary>
-        /// <param name="gzip">The gzip-encoded byte array.</param>
-        /// <returns>A decompressed byte array.</returns>
-        public static byte[] Decompress(byte[] gzip)
-        {
-            using(GZipStream stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
-            {
-                const int size = 4096;
-                byte[] buffer = new byte[size];
-                using(MemoryStream memory = new MemoryStream())
-                {
-                    int count = 0;
-                    do
-                    {
-                        count = stream.Read(buffer, 0, size);
-                        if(count > 0)
-                        {
-                            memory.Write(buffer, 0, count);
-                        }
-                    } while(count > 0);
-                    return memory.ToArray();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Decompresses the file in the specified file path, returning a decompressed string.
-        /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <returns>A decompressed string.</returns>
-        public static string Decompress(string filePath)
-        {
-            return Decompress(filePath, Encoding.UTF8);
-        }
-
-        /// <summary>
-        /// Decompresses the specified file path using the given encoding.
-        /// </summary>
-        /// <param name="filePath">The file path.</param>
-        /// <param name="encoding">The encoding.</param>
-        /// <returns>A decompressed string contents of the file.</returns>
-        public static string Decompress(string filePath, Encoding encoding)
-        {
-            byte[] file = File.ReadAllBytes(filePath);
-            byte[] decompressed = Decompress(file);
-
-            return encoding.GetString(decompressed);
-        }
     }
-
 }
