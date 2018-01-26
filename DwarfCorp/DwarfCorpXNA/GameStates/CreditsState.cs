@@ -47,7 +47,7 @@ namespace DwarfCorp
 
             CurrentScroll = 0;
             CreditsFont = GameState.Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
-            Entries = ContentPaths.LoadFromJson<List<CreditEntry>>("credits.json");
+            Entries = FileUtils.LoadJson<List<CreditEntry>>("credits.json");
             IsInitialized = true;
             IsDone = false;
             base.OnEnter();

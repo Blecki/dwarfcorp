@@ -114,7 +114,7 @@ namespace DwarfCorp
             {
                 try
                 {
-                    var descriptor = ContentPaths.LoadFromJson<AnimationSetDescriptor>(Path);
+                    var descriptor = FileUtils.LoadJson<AnimationSetDescriptor>(Path);
                     Animations.Add(Path, GenerateAnimations(CompositeName, descriptor).Select(a =>
                     {
                         bool simplify = true;

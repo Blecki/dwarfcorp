@@ -130,7 +130,9 @@
     <Compile Include="AssetManagement\ContentPathGenerator.cs" />
     <Compile Include="AssetManagement\ContentPaths.cs" />
     <Compile Include="AssetManagement\GameSave\ChunkFile.cs" />
-    <Compile Include="AssetManagement\GameSave\FileUtils.cs" />
+    <Compile Include="AssetManagement\FileUtils-SaveJson.cs" />
+    <Compile Include="AssetManagement\FileUtils-Binary.cs" />
+    <Compile Include="AssetManagement\FileUtils-LoadJson.cs" />
     <Compile Include="AssetManagement\GameSave\MetaData.cs" />
     <Compile Include="AssetManagement\GameSave\PlayData.cs" />
     <Compile Include="AssetManagement\GameSave\SaveGame.cs" />

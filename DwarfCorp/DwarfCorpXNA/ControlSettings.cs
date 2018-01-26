@@ -130,7 +130,7 @@ namespace DwarfCorp
         {
             try
             {
-                Mappings = FileUtils.LoadJson<KeyMappings>(file, false);
+                Mappings = FileUtils.LoadJson<KeyMappings>(file);
             }
             catch (DirectoryNotFoundException)
             {

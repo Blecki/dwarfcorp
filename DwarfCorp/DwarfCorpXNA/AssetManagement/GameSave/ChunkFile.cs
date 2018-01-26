@@ -88,7 +88,7 @@ namespace DwarfCorp
             ChunkFile chunkFile = null;
 
             if (!binary)
-                chunkFile = FileUtils.LoadJson<ChunkFile>(fileName, false);
+                chunkFile = FileUtils.LoadJson<ChunkFile>(fileName);
             else
                 chunkFile = FileUtils.LoadBinary<ChunkFile>(fileName);
 

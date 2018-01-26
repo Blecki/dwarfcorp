@@ -55,7 +55,7 @@ namespace DwarfCorp
         public ParticleManager(GraphicsDevice Device, ComponentManager Components)
         {
             Effects = new Dictionary<string, ParticleEffect>();
-            Load(Device, Components, ContentPaths.LoadFromJson<Dictionary<string, List<EmitterData>>>(ContentPaths.Particles.particles));
+            Load(Device, Components, FileUtils.LoadJson<Dictionary<string, List<EmitterData>>>(ContentPaths.Particles.particles));
         }
 
         public void Trigger(string emitter, Vector3 position, Color tint, int num)

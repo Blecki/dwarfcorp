@@ -143,7 +143,7 @@ namespace DwarfCorp
         {
             try
             {
-                Default = FileUtils.LoadJson<Settings>(file, false);
+                Default = FileUtils.LoadJson<Settings>(file);
                 Console.Out.WriteLine("Loaded settings {1} \n {0}", file, Default.ToString());
             }
             catch (FileNotFoundException)

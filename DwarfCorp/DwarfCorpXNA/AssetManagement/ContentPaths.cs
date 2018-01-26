@@ -50,6 +50,11 @@ namespace DwarfCorp
     /// </summary>
     public class ContentPaths
     {
+        public static string ResolveContentPath(string InputPath)
+        {
+            return InputPath;
+        }
+
         public static string Error = ProgramData.CreatePath("Content", "newgui", "error");
 
         public static string controls = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "controls.json");
@@ -383,25 +388,7 @@ namespace DwarfCorp
             public static string races = ProgramData.CreatePath("World", "races.json");
             public static string embarks = ProgramData.CreatePath("World", "embarkments.json");
         }
-
-        public static T LoadFromJson<T>(string asset)
-        {
-            return FileUtils.LoadJsonFromString<T>(ContentPaths.GetFileAsString(asset));
-        }
-
-        public static string GetFileAsString(string asset)
-        {
-            string text = "";
-            using (var stream = TitleContainer.OpenStream("Content" + ProgramData.DirChar + asset))
-            {
-                using (var reader = new StreamReader(stream))
-                {
-                    text = reader.ReadToEnd();
-                }
-            }
-            return text;
-        }
-
+                
         public class Text
         {
             public class Templates

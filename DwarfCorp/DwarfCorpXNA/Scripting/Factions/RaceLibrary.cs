@@ -43,7 +43,7 @@ namespace DwarfCorp
         public static Race FindRace(String Name)
         {
             if (Races == null)
-                Races = ContentPaths.LoadFromJson<Dictionary<string, Race>>(ContentPaths.World.races);
+                Races = FileUtils.LoadJson<Dictionary<string, Race>>(ContentPaths.World.races);
             return Races[Name];
         }
 

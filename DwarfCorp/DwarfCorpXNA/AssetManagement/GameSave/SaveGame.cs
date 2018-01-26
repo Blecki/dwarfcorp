@@ -90,8 +90,12 @@ namespace DwarfCorp
             string[] worldFiles = System.IO.Directory.GetFiles(filePath, "*." + PlayData.Extension);
 
             if (worldFiles.Length > 0)
-                PlayData = FileUtils.LoadJson<PlayData>(worldFiles[0], DwarfGame.COMPRESSED_BINARY_SAVES,
-                    world);
+            {
+                if (DwarfGame.COMPRESSED_BINARY_SAVES)
+                    PlayData = FileUtils.LoadCompressedJson<PlayData>(worldFiles[0], world);
+                else
+                    PlayData = FileUtils.LoadJson<PlayData>(worldFiles[0], world);
+            }
             else
             {
                 Console.Error.WriteLine("Can't load world from {0}, no data file found.", filePath);
@@ -111,7 +115,7 @@ namespace DwarfCorp
                 string[] metaFiles = System.IO.Directory.GetFiles(filePath, "*." + MetaData.Extension);
 
                 if (metaFiles.Length > 0)
-                    Metadata = FileUtils.LoadJson<MetaData>(metaFiles[0], false, null);
+                    Metadata = FileUtils.LoadJson<MetaData>(metaFiles[0]);
                 else
                 {
                     Console.Error.WriteLine("Can't load file {0}, no metadata found", filePath);

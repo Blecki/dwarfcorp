@@ -50,7 +50,7 @@ namespace DwarfCorp
         public static Embarkment DefaultEmbarkment = null;
         public static void Initialize()
         {
-            EmbarkmentLibrary = ContentPaths.LoadFromJson<Dictionary<string, Embarkment>>(ContentPaths.World.embarks);
+            EmbarkmentLibrary = FileUtils.LoadJson<Dictionary<string, Embarkment>>(ContentPaths.World.embarks);
             DefaultEmbarkment = EmbarkmentLibrary["Normal"];
         }
     }

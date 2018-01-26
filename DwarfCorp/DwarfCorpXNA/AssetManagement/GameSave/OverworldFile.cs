@@ -186,7 +186,7 @@ namespace DwarfCorp
             try
             {
                 var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
-                return FileUtils.LoadJson<OverworldData>(metaFilePath, false).Version == Program.Version;
+                return FileUtils.LoadJson<OverworldData>(metaFilePath).Version == Program.Version;
             }
             catch (Exception e)
             {
@@ -199,7 +199,7 @@ namespace DwarfCorp
             var worldFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "world.png";
             var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
 
-            Data = FileUtils.LoadJson<OverworldData>(metaFilePath, false);
+            Data = FileUtils.LoadJson<OverworldData>(metaFilePath);
 
             var worldTexture = TextureManager.LoadInstanceTexture(worldFilePath, false);
 

@@ -55,7 +55,7 @@ namespace DwarfCorp.Rail
         {
             if (Patterns == null)
             {
-                var data = FileUtils.LoadJson<Data>(ContentPaths.rail_junctions, false);
+                var data = FileUtils.LoadJson<Data>(ContentPaths.rail_junctions);
                 Patterns = data.Patterns;
                 Pieces = data.Pieces;
             }
