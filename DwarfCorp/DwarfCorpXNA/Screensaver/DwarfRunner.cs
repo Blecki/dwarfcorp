@@ -45,9 +45,9 @@ namespace DwarfCorp
                 ContentPaths.Entities.Dwarf.Sprites.musket
             };
 
-            Texture2D tiles = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
-            Balloon = TextureManager.GetTexture(ContentPaths.Entities.Balloon.Sprites.balloon);
-            Dwarf = TextureManager.GetTexture(Datastructures.SelectRandom(sheets));
+            Texture2D tiles = TextureManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
+            Balloon = TextureManager.GetContentTexture(ContentPaths.Entities.Balloon.Sprites.balloon);
+            Dwarf = TextureManager.GetContentTexture(Datastructures.SelectRandom(sheets));
             
             Soil = new ImageFrame(tiles, 32, 2, 0);
             Grass = new ImageFrame(tiles, 32, 3, 0);

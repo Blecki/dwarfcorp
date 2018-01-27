@@ -106,7 +106,7 @@ namespace DwarfCorp
             if (!staticClassInitialized)
                 InitializeClassStatics();
 
-            List<EmployeeClassDef> defs = FileUtils.LoadJson<List<EmployeeClassDef>>(file);
+            List<EmployeeClassDef> defs = FileUtils.LoadJsonFromResolvedPath<List<EmployeeClassDef>>(file);
 
             foreach (EmployeeClassDef empClass in defs)
                 Classes[empClass.Name] = new EmployeeClass(empClass);

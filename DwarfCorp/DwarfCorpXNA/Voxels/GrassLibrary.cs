@@ -81,7 +81,7 @@ namespace DwarfCorp
 
         public static void InitializeDefaultLibrary()
         {
-            TypeList = FileUtils.LoadJson<List<GrassType>>(ContentPaths.grass_types);
+            TypeList = FileUtils.LoadJsonFromResolvedPath<List<GrassType>>(ContentPaths.grass_types);
             emptyType = TypeList[0];
 
             byte ID = 0;

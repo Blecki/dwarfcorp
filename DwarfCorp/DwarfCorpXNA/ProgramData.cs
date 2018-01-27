@@ -72,19 +72,7 @@ namespace DwarfCorp
 
         public static string CreatePath(params string[] args)
         {
-            string toReturn = "";
-
-            for(int i = 0; i < args.Length; i++)
-            {
-                toReturn += args[i];
-
-                if(i < args.Length - 1)
-                {
-                    toReturn += DirChar;
-                }
-            }
-
-            return toReturn;
+            return String.Join(new String(DirChar, 1), args);
         }
 
         public static char DirChar = Path.DirectorySeparatorChar;

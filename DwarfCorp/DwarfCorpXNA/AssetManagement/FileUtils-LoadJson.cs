@@ -77,7 +77,7 @@ namespace DwarfCorp
             });
         }
 
-        public static T LoadCompressedJson<T>(String Path, Object Context)
+        public static T LoadCompressedJsonFromAbsolutePath<T>(String Path, Object Context)
         {
             using (FileStream fs = new FileStream(Path, FileMode.Open))
             using (var stream = new ZipInputStream(fs))
@@ -107,9 +107,32 @@ namespace DwarfCorp
             }
         }
 
-        public static T LoadJson<T>(string filePath, object context = null)
+        public static T LoadJsonFromAbsolutePath<T>(string filePath, object context = null)
         {           
             using (var stream = new FileStream(filePath, FileMode.Open))
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                using (JsonReader json = new JsonTextReader(reader))
+                {
+                    JsonSerializer serializer = new JsonSerializer()
+                    {
+                        Context = new StreamingContext(StreamingContextStates.File, context),
+                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                        TypeNameHandling = TypeNameHandling.All,
+                        ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                        TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                    };
+                    foreach (var converter in StandardConverters)
+                        serializer.Converters.Add(converter);
+                    return serializer.Deserialize<T>(json);
+                }
+            }
+        }
+
+        public static T LoadJsonFromResolvedPath<T>(string filePath, object context = null)
+        {
+            using (var stream = new FileStream("Content\\" + filePath, FileMode.Open))
             using (StreamReader reader = new StreamReader(stream))
             {
                 using (JsonReader json = new JsonTextReader(reader))

@@ -50,7 +50,7 @@ namespace DwarfCorp
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             JValue jObject = serializer.Deserialize<JValue>(reader);
-            return (jObject.Value != null && (string) jObject.Value != "") ? TextureManager.LoadInstanceTexture(jObject.Value.ToString()) : null;
+            return (jObject.Value != null && (string) jObject.Value != "") ? TextureManager.GetContentTexture(jObject.Value.ToString()) : null;
         }
 
         public override bool CanWrite

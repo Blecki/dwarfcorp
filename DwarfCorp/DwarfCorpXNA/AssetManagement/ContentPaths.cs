@@ -55,16 +55,16 @@ namespace DwarfCorp
             return InputPath;
         }
 
-        public static string Error = ProgramData.CreatePath("Content", "newgui", "error");
+        public static string Error = ProgramData.CreatePath("newgui", "error");
 
         public static string controls = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "controls.json");
         public static string settings = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "settings.json");
-        public static string mixer = ProgramData.CreatePath("Content", "Audio", "mixer.json");
-        public static string voxel_types = ProgramData.CreatePath("Content", "voxel-types.json");
-        public static string grass_types = ProgramData.CreatePath("Content", "grass-types.json");
-        public static string decal_types = ProgramData.CreatePath("Content", "decal-types.json");
-        public static string rail_junctions = ProgramData.CreatePath("Content", "rail-junctions.json");
-        public static string craft_items = ProgramData.CreatePath("Content", "craft-items.json");
+        public static string mixer = ProgramData.CreatePath("Audio", "mixer.json");
+        public static string voxel_types = ProgramData.CreatePath("voxel-types.json");
+        public static string grass_types = ProgramData.CreatePath("grass-types.json");
+        public static string decal_types = ProgramData.CreatePath("decal-types.json");
+        public static string rail_junctions = ProgramData.CreatePath("rail-junctions.json");
+        public static string craft_items = ProgramData.CreatePath("craft-items.json");
 
         // Todo: Move to own texture.
         public static string rail_tiles = ProgramData.CreatePath("Terrain", "rail");

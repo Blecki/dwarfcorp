@@ -46,7 +46,7 @@ namespace DwarfCorp
     {
         public static SpellTree CreateSpellTree(WorldManager world)
         {
-            Texture2D icons = TextureManager.GetTexture(ContentPaths.GUI.icons);
+            Texture2D icons = TextureManager.GetContentTexture(ContentPaths.GUI.icons);
 
             
             SpellTree toReturn =  new SpellTree()
@@ -128,7 +128,7 @@ namespace DwarfCorp
                                                 Name = "Minor Happiness",
                                                 Description = "Makes the selected creatures happy for 30 seconds.",
                                                 Hint = "Click and drag to select creatures",
-                                                Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 5, 2),
+                                                Image = new ImageFrame(TextureManager.GetContentTexture(ContentPaths.GUI.icons), 32, 5, 2),
                                                 TileRef =  21
                                             },
                                             ResearchTime = 60.0f,
@@ -143,7 +143,7 @@ namespace DwarfCorp
                                                         Name = "Major Happiness",
                                                         Description = "Makes the selected creatures happy for 60 seconds.",
                                                         Hint = "Click and drag to select creatures",
-                                                        Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 5, 2),
+                                                        Image = new ImageFrame(TextureManager.GetContentTexture(ContentPaths.GUI.icons), 32, 5, 2),
                                                         TileRef = 21
                                                     },
                                                     ResearchTime = 120.0f,
@@ -192,7 +192,7 @@ namespace DwarfCorp
                             {
                                 Spell = new PlaceBlockSpell(world, "Magic", false)
                                 {
-                                     Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 2, 3),
+                                     Image = new ImageFrame(TextureManager.GetContentTexture(ContentPaths.GUI.icons), 32, 2, 3),
                                      Description = "Creates a temporary magic wall.",
                                      TileRef = 26
                                 },
@@ -228,7 +228,7 @@ namespace DwarfCorp
                             Name = "Minor Heal",
                             Description = "Heals 2 damage per second for 10 seconds",
                             Hint = "Click and drag to select creatures",
-                            Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 3, 2),
+                            Image = new ImageFrame(TextureManager.GetContentTexture(ContentPaths.GUI.icons), 32, 3, 2),
                             TileRef = 19
                         },
                         ResearchProgress = 0.0f,
@@ -242,7 +242,7 @@ namespace DwarfCorp
                                     Name = "Major Heal",
                                     Description = "Heals 5 damage per second for 10 seconds",
                                     Hint = "Click and drag to select creatures",
-                                    Image = new ImageFrame(TextureManager.GetTexture(ContentPaths.GUI.icons), 32, 3, 2),
+                                    Image = new ImageFrame(TextureManager.GetContentTexture(ContentPaths.GUI.icons), 32, 3, 2),
                                     TileRef = 19
                                 },
                                 ResearchProgress = 0.0f,

@@ -53,7 +53,7 @@ namespace DwarfCorp
         public DestroyBlockSpell(WorldManager world) :
             base(world)
         {
-            Texture2D icons = TextureManager.GetTexture(ContentPaths.GUI.icons);
+            Texture2D icons = TextureManager.GetContentTexture(ContentPaths.GUI.icons);
             Description = "Magically destroys up to 8 stone, dirt, or other blocks.";
             Image = new ImageFrame(icons, 32, 2, 2);
             ManaCost = 10;

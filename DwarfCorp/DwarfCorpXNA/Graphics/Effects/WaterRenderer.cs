@@ -93,7 +93,7 @@ namespace DwarfCorp
             int height = Math.Min(pp.BackBufferHeight / 4, 4096);
             ReflectionMap = new Texture2D(device, width, height);
             reflectionRenderTarget = new RenderTarget2D(device, width, height, false, pp.BackBufferFormat, pp.DepthStencilFormat);
-            ShoreMap = TextureManager.GetTexture(ContentPaths.Gradients.shoregradient);
+            ShoreMap = TextureManager.GetContentTexture(ContentPaths.Gradients.shoregradient);
         }
 
         public Plane CreatePlane(float height, Vector3 planeNormalDirection, Matrix currentViewMatrix, bool clipSide)

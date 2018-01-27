@@ -276,7 +276,7 @@ namespace DwarfCorp
                 }
                 try
                 {
-                    Mixer = FileUtils.LoadJson<SFXMixer>(ContentPaths.mixer);
+                    Mixer = FileUtils.LoadJsonFromResolvedPath<SFXMixer>(ContentPaths.mixer);
                 }
                 catch (FileNotFoundException exception)
                 {

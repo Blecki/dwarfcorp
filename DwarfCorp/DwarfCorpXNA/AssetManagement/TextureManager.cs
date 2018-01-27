@@ -53,7 +53,7 @@ namespace DwarfCorp
     {
         //Todo - don't need the instance nonsense.
 
-        private static Dictionary<Texture2D, string> AssetMap = new Dictionary<Texture2D, string>();
+        private static Dictionary<String, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
         private static ContentManager Content;
         private static GraphicsDevice Graphics;
 
@@ -66,41 +66,34 @@ namespace DwarfCorp
 
         public static string ReverseLookup(Texture2D Texture)
         {
-            if (AssetMap.ContainsKey(Texture))
-                return AssetMap[Texture];
-            return "";
+            var r = TextureCache.Where(p => p.Value == Texture).Select(p => p.Key).FirstOrDefault();
+            if (r == null) return "";
+            return r;
         }
         
-        public static Texture2D GetTexture(string asset)
+        public static Texture2D GetContentTexture(string asset)
         {
-            Texture2D toReturn = GetInstanceTexture(asset);
-            return toReturn;
-        }
+            if (TextureCache.ContainsKey(asset))
+                return TextureCache[asset];
 
-        public static Texture2D GetInstanceTexture(string asset, bool cache=true)
-        {
-            if (AssetMap.ContainsValue(asset))
-            {
-                return AssetMap.FirstOrDefault(pair => pair.Value == asset).Key;
-            }
             try
             {
                 Texture2D toReturn = Content.Load<Texture2D>(asset);
-                if (cache)
-                    AssetMap[toReturn] = asset;
+                TextureCache[asset] = toReturn;
                 return toReturn;
             }
             catch (ContentLoadException exception)
             {
                 Console.Error.WriteLine(exception.ToString());
-                return Content.Load<Texture2D>("newgui/error");
+                var r = Content.Load<Texture2D>("newgui/error");
+                TextureCache[asset] = r;
+                return r;
             }
 
         }
 
-        public static Texture2D LoadInstanceTexture(string file, bool cache=true)
+        public static Texture2D LoadUnbuiltTextureFromAbsolutePath(string file)
         {
-            Texture2D texture = null;
             using(var stream = new FileStream(file, FileMode.Open))
             {
                 if (!stream.CanRead)
@@ -108,12 +101,10 @@ namespace DwarfCorp
                     Console.Out.WriteLine("Failed to read {0}, stream cannot be read.", file);
                     return null;
                 }
+
                 try
                 {
-                    texture = Texture2D.FromStream(GameState.Game.GraphicsDevice, stream);
-                    if (cache)
-                        AssetMap[texture] = file;
-                    return texture;
+                    return Texture2D.FromStream(GameState.Game.GraphicsDevice, stream);
                 }
                 catch (Exception exception)
                 {
@@ -121,7 +112,6 @@ namespace DwarfCorp
                     return null;
                 }
            }
-            return null;
         }
     }
 

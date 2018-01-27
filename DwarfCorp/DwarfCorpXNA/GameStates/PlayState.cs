@@ -581,7 +581,7 @@ namespace DwarfCorp.GameStates
             #region Collapsing Side Panel
 
             MinimapRenderer = new Gui.Widgets.MinimapRenderer(192, 192, World,
-                TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap));
+                TextureManager.GetContentTexture(ContentPaths.Terrain.terrain_colormap));
 
             MinimapFrame = GuiRoot.RootItem.AddChild(new MinimapFrame
             {

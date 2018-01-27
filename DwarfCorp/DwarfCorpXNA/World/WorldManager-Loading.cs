@@ -115,11 +115,11 @@ namespace DwarfCorp
                 SetLoadingMessage("Creating Sky...");
 
                 Sky = new SkyRenderer(
-                    TextureManager.GetTexture(ContentPaths.Sky.moon),
-                    TextureManager.GetTexture(ContentPaths.Sky.sun),
+                    TextureManager.GetContentTexture(ContentPaths.Sky.moon),
+                    TextureManager.GetContentTexture(ContentPaths.Sky.sun),
                     Content.Load<TextureCube>(ContentPaths.Sky.day_sky),
                     Content.Load<TextureCube>(ContentPaths.Sky.night_sky),
-                    TextureManager.GetTexture(ContentPaths.Gradients.skygradient),
+                    TextureManager.GetContentTexture(ContentPaths.Gradients.skygradient),
                     Content.Load<Model>(ContentPaths.Models.sphereLowPoly),
                     Content.Load<Effect>(ContentPaths.Shaders.SkySphere),
                     Content.Load<Effect>(ContentPaths.Shaders.Background));
@@ -184,7 +184,7 @@ namespace DwarfCorp
                 pixel = new Texture2D(GraphicsDevice, 1, 1);
                 pixel.SetData(white);
 
-                Tilesheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
+                Tilesheet = TextureManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
                 AspectRatio = GraphicsDevice.Viewport.AspectRatio;
                 DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
                 DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
@@ -236,8 +236,8 @@ namespace DwarfCorp
                     WaveHeight = 0.1f,
                     WaveLength = 0.05f,
                     WindForce = 0.001f,
-                    BumpTexture = TextureManager.GetTexture(ContentPaths.Terrain.water_normal),
-                    BaseTexture = TextureManager.GetTexture(ContentPaths.Terrain.cartoon_water),
+                    BumpTexture = TextureManager.GetContentTexture(ContentPaths.Terrain.water_normal),
+                    BaseTexture = TextureManager.GetContentTexture(ContentPaths.Terrain.cartoon_water),
                     MinOpacity = 0.4f,
                     RippleColor = new Vector4(0.6f, 0.6f, 0.6f, 0.0f),
                     FlatColor = new Vector4(0.3f, 0.3f, 0.9f, 1.0f)
@@ -254,8 +254,8 @@ namespace DwarfCorp
                     WaveLength = 0.05f,
                     WindForce = 0.001f,
                     MinOpacity = 0.8f,
-                    BumpTexture = TextureManager.GetTexture(ContentPaths.Terrain.water_normal),
-                    BaseTexture = TextureManager.GetTexture(ContentPaths.Terrain.lava),
+                    BumpTexture = TextureManager.GetContentTexture(ContentPaths.Terrain.water_normal),
+                    BaseTexture = TextureManager.GetContentTexture(ContentPaths.Terrain.lava),
                     RippleColor = new Vector4(0.5f, 0.4f, 0.04f, 0.0f),
                     FlatColor = new Vector4(0.9f, 0.7f, 0.2f, 1.0f)
                 };

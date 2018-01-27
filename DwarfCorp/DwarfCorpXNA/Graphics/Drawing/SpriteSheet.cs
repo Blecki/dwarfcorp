@@ -82,7 +82,7 @@ namespace DwarfCorp
         public SpriteSheet(string name)
         {
             AssetName = name;
-            Texture2D tex = TextureManager.GetTexture(name);
+            Texture2D tex = TextureManager.GetContentTexture(name);
             FrameWidth = tex.Width;
             FrameHeight = tex.Height;
             Width = tex.Width;
@@ -94,7 +94,7 @@ namespace DwarfCorp
             FrameWidth = frameWidth;
             FrameHeight = frameHeight;
             AssetName = name;
-            Texture2D tex = TextureManager.GetTexture(name);
+            Texture2D tex = TextureManager.GetContentTexture(name);
             Width = tex.Width;
             Height = tex.Height;
         }
@@ -104,7 +104,7 @@ namespace DwarfCorp
             FrameWidth = frameSize;
             FrameHeight = frameSize;
             AssetName = name;
-            Texture2D tex = TextureManager.GetTexture(name);
+            Texture2D tex = TextureManager.GetContentTexture(name);
             Width = tex.Width;
             Height = tex.Height;
         }
@@ -120,7 +120,7 @@ namespace DwarfCorp
         public List<NamedImageFrame> GenerateFrames()
         {
             List<NamedImageFrame> toReturn = new List<NamedImageFrame>();
-            Texture2D texture = TextureManager.GetTexture(AssetName);
+            Texture2D texture = TextureManager.GetContentTexture(AssetName);
 
             if (texture == null) return null;
 
@@ -138,7 +138,7 @@ namespace DwarfCorp
         public Texture2D GetTexture()
         {
             if (FixedTexture == null)
-                return TextureManager.GetTexture(AssetName);
+                return TextureManager.GetContentTexture(AssetName);
             else return FixedTexture;
         }
 

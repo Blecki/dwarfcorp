@@ -30,7 +30,7 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(Manager);
 
-            var spriteSheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
+            var spriteSheet = TextureManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
 
             AddChild(new Box(Manager,
                 "Cratebox",

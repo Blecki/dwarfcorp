@@ -64,7 +64,7 @@ namespace DwarfCorp
             base(world)
         {
             Type = type;
-            Texture2D icons = TextureManager.GetTexture(ContentPaths.GUI.icons);
+            Texture2D icons = TextureManager.GetContentTexture(ContentPaths.GUI.icons);
             Recharges = false;
             switch (type)
             {
