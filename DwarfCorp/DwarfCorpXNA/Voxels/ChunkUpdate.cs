@@ -91,6 +91,7 @@ namespace DwarfCorp
                                 }
                             } 
                         }
+#if false
                         else if (voxel.Type.GrassSpreadsHere)
                         {
                             // Spread grass onto this tile - but only from the same biome.
@@ -107,6 +108,7 @@ namespace DwarfCorp
                                 if (MathFunctions.RandEvent(0.1f))
                                     addGrassToThese.Add(Tuple.Create(voxel, grassyNeighbors[MathFunctions.RandInt(0, grassyNeighbors.Count)].GrassType));
                         }
+#endif
                     }
             }
 
