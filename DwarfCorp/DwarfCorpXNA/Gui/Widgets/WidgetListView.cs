@@ -12,7 +12,7 @@ namespace DwarfCorp.Gui.Widgets
     /// </summary>
     public class WidgetListView : Widget
     {
-        private int _selectedIndex = 1;
+        private int _selectedIndex = 0;
         public int SelectedIndex
         {
             get { return _selectedIndex; }
@@ -29,6 +29,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public Action<Widget> OnSelectedIndexChanged = null;
         public Vector4 SelectedItemBackgroundColor = new Vector4(0.5f, 0, 0, 1);
+        public Vector4 SelectedItemForegroundColor = new Vector4(1, 1, 1, 1);
 
         public Widget SelectedItem
         {
@@ -131,7 +132,7 @@ namespace DwarfCorp.Gui.Widgets
             if (SelectedItem != null)
             {
                 SelectedItem.BackgroundColor = SelectedItemBackgroundColor;
-                SelectedItem.TextColor = new Vector4(1, 1, 1, 1);
+                SelectedItem.TextColor = SelectedItemForegroundColor;
             }
 
             return base.Redraw();

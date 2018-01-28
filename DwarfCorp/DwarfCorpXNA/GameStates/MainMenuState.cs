@@ -122,6 +122,8 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) => StateManager.PushState(new OptionsState(Game, StateManager)));
 
+            MakeMenuItem(frame, "Manage Mods", "Enable or disable mods & adjust load order.", (sender, args) => StateManager.PushState(new ManageModsState(Game, StateManager)));
+
             MakeMenuItem(frame, "Credits", "View the credits.", (sender, args) => StateManager.PushState(new CreditsState(GameState.Game, StateManager)));
 
 #if DEBUG

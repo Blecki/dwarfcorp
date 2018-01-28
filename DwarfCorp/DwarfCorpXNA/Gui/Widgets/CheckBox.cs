@@ -9,6 +9,8 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class CheckBox : Widget
     {
+        public bool ToggleOnTextClick = true;
+
         private bool _enabled = true;
         public bool Enabled
         {
@@ -32,7 +34,19 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
-            OnClick += (sender, args) => { if (Enabled) CheckState = !CheckState; };
+            OnClick += (sender, args) => { if (Enabled)
+                {
+                    if (ToggleOnTextClick)
+                        CheckState = !CheckState;
+                    else
+                    {
+                        var drawArea = GetDrawableInterior();
+                        if (args.X < drawArea.Left + drawArea.Height)
+                            CheckState = !CheckState;
+                    }
+                }
+            };
+
             TextVerticalAlign = VerticalAlign.Center;
             ChangeColorOnHover = true;
             HoverTextColor = new Vector4(0.5f, 0, 0, 1.0f);
@@ -53,8 +67,8 @@ namespace DwarfCorp.Gui.Widgets
             var baseDrawArea = base.GetDrawableInterior();
 
             var checkMesh = Mesh.Quad()
-                .Scale(baseDrawArea.Height, baseDrawArea.Height)
-                .Translate(baseDrawArea.X, baseDrawArea.Y)
+                .Scale(baseDrawArea.Height - InteriorMargin.Top - InteriorMargin.Bottom, baseDrawArea.Height - InteriorMargin.Top - InteriorMargin.Bottom)
+                .Translate(baseDrawArea.X + InteriorMargin.Left, baseDrawArea.Y + InteriorMargin.Top)
                 .Texture(Root.GetTileSheet(Graphics).TileMatrix(CheckState ? 1 : 0));
 
             var r = Mesh.Merge(baseMesh, checkMesh);

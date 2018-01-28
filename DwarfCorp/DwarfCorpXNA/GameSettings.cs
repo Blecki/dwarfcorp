@@ -91,6 +91,7 @@ namespace DwarfCorp
             public bool AllowReporting = true;
             public bool ZoomCameraTowardMouse = true;
             public bool CameraFollowSurface = true;
+            public List<String> EnabledMods = new List<string>();
 
             public Settings Clone()
             {
