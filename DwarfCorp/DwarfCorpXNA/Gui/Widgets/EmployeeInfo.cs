@@ -50,7 +50,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
-            Text = "Select a single employee to view stats.";
+            Text = "You have no employees.";
             Font = "font16";
 
             InteriorPanel = AddChild(new Widget
@@ -85,7 +85,7 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 24)
             });
-            
+
             var columns = InteriorPanel.AddChild(new Gui.Widgets.Columns
             {
                 AutoLayout = AutoLayout.DockTop,
@@ -240,7 +240,8 @@ namespace DwarfCorp.Gui.Widgets
             CancelTask = task.AddChild(new Button
             {
                 AutoLayout = AutoLayout.DockRight,
-                Text = "Cancel Task"
+                Text = "Cancel Task",
+                ChangeColorOnHover = true
             });
 
             TaskLabel = task.AddChild(new Widget
@@ -290,6 +291,27 @@ namespace DwarfCorp.Gui.Widgets
                 });
             }
 
+            bottomBar.AddChild(new Button()
+            {
+                Text = "Tasks...",
+                Tooltip = "Open allowed tasks filter.",
+                AutoLayout = AutoLayout.DockRight,
+                OnClick = (sender, args) =>
+                {
+                    var screen = sender.Root.RenderData.VirtualScreen;
+                    sender.Root.ShowModalPopup(new AllowedTaskFilter
+                    {
+                        Employee = Employee,
+                        Tag = "selected-employee-allowable-tasks",
+                        AutoLayout = AutoLayout.DockFill,
+                        MinimumSize = new Point(256, 256),
+                        Border = "border-fancy",
+                        Rect = new Rectangle(screen.Center.X - 128, screen.Center.Y - 128, 256, 256)
+                    });
+                }
+            });
+
+
             LevelButton = bottomBar.AddChild(new Button()
             {
                 Text = "Promote!",
@@ -302,6 +324,53 @@ namespace DwarfCorp.Gui.Widgets
                     SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
                     Invalidate();
                     Employee.AddThought(Thought.ThoughtType.GotPromoted);
+                }
+            });
+
+
+            var topbuttons = top.AddChild(new Widget()
+            {
+                AutoLayout = AutoLayout.FloatTopRight,
+                MinimumSize = new Point(32, 24)
+            });
+            topbuttons.AddChild(new Widget()
+            {
+                Text = "<",
+                Font = "font10",
+                Tooltip = "Previous employee.",
+                AutoLayout = AutoLayout.DockLeft,
+                ChangeColorOnHover = true,
+                MinimumSize = new Point(16, 24),
+                OnClick = (sender, args) =>
+                {
+                    if (Employee == null)
+                        return;
+                    int idx = Employee.Faction.Minions.IndexOf(Employee);
+                    if (idx < 0)
+                        return;
+                    idx--;
+                    Employee = Employee.Faction.Minions[Math.Abs(idx) % Employee.Faction.Minions.Count];
+                    Employee.World.Master.SelectedMinions = new List<CreatureAI>() { Employee };
+                }
+            });
+            topbuttons.AddChild(new Widget()
+            {
+                Text = ">",
+                Font = "font10",
+                Tooltip = "Next employee.",
+                AutoLayout = AutoLayout.DockRight,
+                ChangeColorOnHover = true,
+                MinimumSize = new Point(16, 24),
+                OnClick = (sender, args) =>
+                {
+                    if (Employee == null)
+                        return;
+                    int idx = Employee.Faction.Minions.IndexOf(Employee);
+                    if (idx < 0)
+                        return;
+                    idx++;
+                    Employee = Employee.Faction.Minions[idx % Employee.Faction.Minions.Count];
+                    Employee.World.Master.SelectedMinions = new List<CreatureAI>() { Employee };
                 }
             });
 
