@@ -1891,11 +1891,15 @@ namespace DwarfCorp.GameStates
                                 },
                                 OnClick = (widget2, args2) =>
                                 {
+#if !DEMO
                                     ChangeTool(GameMaster.ToolMode.Magic);
                                     ((MagicTool)Master.Tools[GameMaster.ToolMode.Magic])
                                         .CurrentSpell =
                                         spell.Spell;
                                     World.Tutorial("cast spells");
+#else
+                                    GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = "Magic not available in demo." });
+#endif
                                 },
                                 Behavior = FlatToolTray.IconBehavior.ShowHoverPopup
                             }));
@@ -1915,9 +1919,9 @@ namespace DwarfCorp.GameStates
                 ReplacementMenu = menu_CastSpells,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
-            #endregion
+#endregion
 
-            #region icon_Research
+#region icon_Research
 
             var icon_menu_ResearchSpells_Return = new FlatToolTray.Icon
             {
@@ -1954,10 +1958,14 @@ namespace DwarfCorp.GameStates
                                 },
                                 OnClick = (button, args2) =>
                                 {
+#if !DEMO
                                     ChangeTool(GameMaster.ToolMode.Magic);
                                     ((MagicTool)Master.Tools[GameMaster.ToolMode.Magic])
                                         .Research(spell);
                                     World.Tutorial("research spells");
+#else
+                                    GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = "Magic not available in demo." });
+#endif
                                 },
                                 Behavior = FlatToolTray.IconBehavior.ShowHoverPopup
                             }));
@@ -1977,7 +1985,7 @@ namespace DwarfCorp.GameStates
                 ReplacementMenu = menu_ResearchSpells,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
-            #endregion
+#endregion
 
             var icon_menu_Magic_Return = new FlatToolTray.Icon
             {
@@ -2022,7 +2030,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
-            #endregion
+#endregion
 
             MainMenu = new FlatToolTray.Tray
             {
@@ -2079,9 +2087,9 @@ namespace DwarfCorp.GameStates
             BottomToolBar.SwitchTray(MainMenu);
             ChangeTool(GameMaster.ToolMode.SelectUnits);
 
-            #endregion
+#endregion
 
-            #region GOD MODE
+#region GOD MODE
 
             GodMenu = GuiRoot.RootItem.AddChild(new Gui.Widgets.GodMenu
             {
@@ -2091,7 +2099,7 @@ namespace DwarfCorp.GameStates
 
             GodMenu.Hidden = true;
 
-            #endregion
+#endregion
 
             GuiRoot.RootItem.Layout();
 
@@ -2187,6 +2195,7 @@ namespace DwarfCorp.GameStates
                     });
                 }
             }
+#if !DEMO
             else if (key == ControlSettings.Mappings.GodMode)
             {
                 if (PausePanel == null || PausePanel.Hidden)
@@ -2199,6 +2208,7 @@ namespace DwarfCorp.GameStates
                     GodMenu.Invalidate();
                 }
             }
+#endif
         }
 
         private void MakeMenuItem(Gui.Widget Menu, string Name, string Tooltip, Action<Gui.Widget, Gui.InputEventArgs> OnClick)
@@ -2275,6 +2285,7 @@ namespace DwarfCorp.GameStates
                 StateManager.PushState(state);
             });
 
+#if !DEMO
             MakeMenuItem(PausePanel, "Save", "",
                 (sender, args) =>
                 {
@@ -2289,6 +2300,7 @@ namespace DwarfCorp.GameStates
                             });
                         });
                 });
+#endif
 
 #if DEBUG
             MakeMenuItem(PausePanel, "New Save Test", "",
@@ -2333,6 +2345,7 @@ namespace DwarfCorp.GameStates
 
         public void AutoSave()
         {
+#if !DEMO
             bool paused = World.Paused;
             World.Save(
                     String.Format("{0}_{1}", Overworld.Name, World.GameID),
@@ -2341,6 +2354,7 @@ namespace DwarfCorp.GameStates
                         World.MakeAnnouncement(success ? "File autosaved." : "Autosave failed - " + exception.Message);
                         World.Paused = paused;
                     });
+#endif
         }
     }
 }
