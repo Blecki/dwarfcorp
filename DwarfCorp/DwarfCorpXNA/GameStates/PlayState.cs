@@ -786,7 +786,9 @@ namespace DwarfCorp.GameStates
                 Icon = new Gui.TileReference("tool-icons", 10),
                 OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World)),
                 DrawIndicator = true,
-                Tooltip = "Click to open the Economy screen"
+                Tooltip = "Click to open the Economy screen",
+                Text = "Econ.",
+                TextVerticalAlign = VerticalAlign.Below
             };
 
             var topRightTray = secondBar.AddChild(new Gui.Widgets.IconTray
@@ -803,7 +805,9 @@ namespace DwarfCorp.GameStates
                             {
                                 Icon = new Gui.TileReference("tool-icons", 12),
                                 OnClick = (sender, args) => { OpenPauseMenu(); },
-                                Tooltip = "Click to open the Settings screen."
+                                Tooltip = "Click to open the Settings screen.",
+                                Text = "Option",
+                                TextVerticalAlign = VerticalAlign.Below
                             }
                         },
             });
@@ -1341,6 +1345,7 @@ namespace DwarfCorp.GameStates
             var icon_BuildResource = new FlatToolTray.Icon
             {
                 Text = "Res.",
+                Tooltip = "Resource",
                 EnabledTextColor = Vector4.One,
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
