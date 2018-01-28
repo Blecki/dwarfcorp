@@ -117,10 +117,10 @@ namespace DwarfCorp
                 Sky = new SkyRenderer(
                     TextureManager.GetContentTexture(ContentPaths.Sky.moon),
                     TextureManager.GetContentTexture(ContentPaths.Sky.sun),
-                    Content.Load<TextureCube>(ContentPaths.Sky.day_sky),
-                    Content.Load<TextureCube>(ContentPaths.Sky.night_sky),
+                    Content.Load<TextureCube>(TextureManager.ResolveContentPath(ContentPaths.Sky.day_sky)),
+                    Content.Load<TextureCube>(TextureManager.ResolveContentPath(ContentPaths.Sky.night_sky)),
                     TextureManager.GetContentTexture(ContentPaths.Gradients.skygradient),
-                    Content.Load<Model>(ContentPaths.Models.sphereLowPoly),
+                    Content.Load<Model>(TextureManager.ResolveContentPath(ContentPaths.Models.sphereLowPoly)),
                     Content.Load<Effect>(ContentPaths.Shaders.SkySphere),
                     Content.Load<Effect>(ContentPaths.Shaders.Background));
 

@@ -65,7 +65,7 @@ namespace DwarfCorp
 
         public static Gui.Input.GumInputMapper GumInputMapper;
         public static Gui.Input.Input GumInput;
-        public static Gui.RenderData GumSkin;
+        public static Gui.RenderData GuiSkin;
 
         public const string GameName = "DwarfCorp";
         public static bool HasRendered = false;
@@ -87,7 +87,7 @@ namespace DwarfCorp
             //string code = ContentPathGenerator.GenerateCode();
             //Console.Out.Write(code);
             GameState.Game = this;
-            Content.RootDirectory = "Content";
+            //Content.RootDirectory = "Content";
             StateManager = new GameStateManager(this);
             Graphics = new GraphicsDeviceManager(this);
             Window.Title = "DwarfCorp";
@@ -285,8 +285,7 @@ namespace DwarfCorp
                 // Register all bindable actions with the input system.
                 //GumInput.AddAction("TEST", Gui.Input.KeyBindingType.Pressed);
 
-                GumSkin = new RenderData(GraphicsDevice, Content,
-                        "newgui/xna_draw", Program.CreatePath("Content", "newgui", "sheets.json"));
+                GuiSkin = new RenderData(GraphicsDevice, Content);
 
                 if (SoundManager.Content == null)
                 {

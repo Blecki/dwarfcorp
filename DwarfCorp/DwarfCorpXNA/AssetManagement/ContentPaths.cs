@@ -722,6 +722,9 @@ namespace DwarfCorp
             public static string dorf_diplo = ProgramData.CreatePath("GUI", "diplo-dorf");
             public static string checker = ProgramData.CreatePath("GUI", "checker");
             public static string background = ProgramData.CreatePath("GUI", "background");
+
+            public static string Shader = Program.CreatePath("Content", "newgui", "xna_draw");
+            public static string Skin = Program.CreatePath("newgui", "sheets.json");
         }
         public class Logos
         {
@@ -752,13 +755,13 @@ namespace DwarfCorp
         public class Shaders
         {
 
-            public static string BloomCombine = ProgramData.CreatePath("Shaders", "BloomCombine");
-            public static string BloomExtract = ProgramData.CreatePath("Shaders", "BloomExtract");
-            public static string GaussianBlur = ProgramData.CreatePath("Shaders", "GaussianBlur");
-            public static string SkySphere = ProgramData.CreatePath("Shaders", "SkySphere");
-            public static string TexturedShaders = ProgramData.CreatePath("Shaders", "TexturedShaders");
-            public static string FXAA = ProgramData.CreatePath("Shaders", "FXAA");
-            public static string Background = ProgramData.CreatePath("Shaders", "Background");
+            public static string BloomCombine = ProgramData.CreatePath("Content", "Shaders", "BloomCombine");
+            public static string BloomExtract = ProgramData.CreatePath("Content", "Shaders", "BloomExtract");
+            public static string GaussianBlur = ProgramData.CreatePath("Content", "Shaders", "GaussianBlur");
+            public static string SkySphere = ProgramData.CreatePath("Content", "Shaders", "SkySphere");
+            public static string TexturedShaders = ProgramData.CreatePath("Content", "Shaders", "TexturedShaders");
+            public static string FXAA = ProgramData.CreatePath("Content", "Shaders", "FXAA");
+            public static string Background = ProgramData.CreatePath("Content", "Shaders", "Background");
         }
         public class Sky
         {

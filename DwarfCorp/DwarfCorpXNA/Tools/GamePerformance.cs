@@ -1166,7 +1166,7 @@ namespace DwarfCorp
             {
                 try
                 {
-                    overlayFont = _game.Content.Load<SpriteFont>(ContentPaths.Fonts.Small);
+                    overlayFont = _game.Content.Load<SpriteFont>(TextureManager.ResolveContentPath(ContentPaths.Fonts.Small));
                 }
                 catch (Exception)
                 {

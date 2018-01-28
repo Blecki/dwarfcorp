@@ -85,11 +85,11 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
-            LogoTexture = Game.Content.Load<Texture2D>("newgui/gamelogo");
+            LogoTexture = TextureManager.GetContentTexture("newgui/gamelogo");
 
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
-            GuiRoot = new Gui.Root(DwarfGame.GumSkin);
+            GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             MakeMenu();
             IsInitialized = true;

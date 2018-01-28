@@ -70,6 +70,11 @@ namespace DwarfCorp
             if (r == null) return "";
             return r;
         }
+
+        public static String ResolveContentPath(String Asset)
+        {
+            return "Content" + ProgramData.DirChar + Asset;
+        }
         
         public static Texture2D GetContentTexture(string asset)
         {
@@ -78,14 +83,14 @@ namespace DwarfCorp
 
             try
             {
-                Texture2D toReturn = Content.Load<Texture2D>(asset);
+                Texture2D toReturn = Content.Load<Texture2D>(ResolveContentPath(asset));
                 TextureCache[asset] = toReturn;
                 return toReturn;
             }
             catch (ContentLoadException exception)
             {
                 Console.Error.WriteLine(exception.ToString());
-                var r = Content.Load<Texture2D>("newgui/error");
+                var r = Content.Load<Texture2D>(ContentPaths.Error);
                 TextureCache[asset] = r;
                 return r;
             }

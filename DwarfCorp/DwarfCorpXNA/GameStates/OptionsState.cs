@@ -99,7 +99,7 @@ namespace DwarfCorp.GameStates
             BuildingGUI = true;
 
             // Create and initialize GUI framework.
-            GuiRoot = new Gui.Root(DwarfGame.GumSkin);
+            GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             var screen = GuiRoot.RenderData.VirtualScreen;
             float scale = 0.75f;

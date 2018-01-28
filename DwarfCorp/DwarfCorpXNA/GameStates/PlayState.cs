@@ -153,7 +153,7 @@ namespace DwarfCorp.GameStates
                 DwarfTime.LastTime.Speed = 1.0f;
 
                 // Setup new gui. Double rendering the mouse?
-                GuiRoot = new Gui.Root(DwarfGame.GumSkin);
+                GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
                 GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
                 World.Gui = GuiRoot;
 
