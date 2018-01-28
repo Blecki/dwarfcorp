@@ -48,7 +48,7 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             if (String.IsNullOrEmpty(Graphics)) Graphics = "combo-down";
-
+            TextVerticalAlign = VerticalAlign.Center;
             OnClick += (sender, args) =>
                 {
                     //var interior = GetDrawableInterior();

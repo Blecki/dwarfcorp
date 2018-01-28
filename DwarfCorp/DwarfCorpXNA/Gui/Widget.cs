@@ -111,7 +111,7 @@ namespace DwarfCorp.Gui
             }
         }
 
-        public Vector4 HoverTextColor = new Vector4(1,0,0,1);
+        public Vector4 HoverTextColor = new Vector4(0.9f,0.1f,0.1f,1);
         public bool ChangeColorOnHover = false;
         public bool WrapText = true;
 
