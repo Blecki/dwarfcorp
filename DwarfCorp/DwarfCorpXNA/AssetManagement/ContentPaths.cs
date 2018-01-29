@@ -55,7 +55,7 @@ namespace DwarfCorp
             return InputPath;
         }
 
-        public static string Error = ProgramData.CreatePath("newgui", "error");
+        public static string Error = ProgramData.CreatePath("Content", "newgui", "error");
 
         public static string controls = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "controls.json");
         public static string settings = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "settings.json");

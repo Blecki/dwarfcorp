@@ -71,8 +71,27 @@ namespace DwarfCorp
             return r;
         }
 
-        public static String ResolveContentPath(String Asset)
+        public static String ResolveContentPath(String Asset, params string[] AlternateExtensions)
         {
+            var extensionList = new List<String>(AlternateExtensions);
+            if (extensionList.Count != 0)
+                extensionList.Add(".xnb");
+            else
+                extensionList.Add("");
+
+            var searchList = GameSettings.Default.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
+            searchList.Reverse();
+            searchList.Add("Content");
+
+            foreach (var mod in searchList)
+            {
+                foreach (var extension in extensionList)
+                {
+                    if (File.Exists(mod + ProgramData.DirChar + Asset + extension))
+                        return mod + ProgramData.DirChar + Asset + extension;
+                }
+            }
+
             return "Content" + ProgramData.DirChar + Asset;
         }
         
@@ -83,9 +102,19 @@ namespace DwarfCorp
 
             try
             {
-                Texture2D toReturn = Content.Load<Texture2D>(ResolveContentPath(asset));
-                TextureCache[asset] = toReturn;
-                return toReturn;
+                var filename = ResolveContentPath(asset, ".png");
+                if (Path.GetExtension(filename) == ".xnb")
+                {
+                    var toReturn = Content.Load<Texture2D>(filename.Substring(0, filename.Length - 4));
+                    TextureCache[asset] = toReturn;
+                    return toReturn;
+                }
+                else
+                {
+                    var toReturn = LoadUnbuiltTextureFromAbsolutePath(filename);
+                    TextureCache[asset] = toReturn;
+                    return toReturn;
+                }
             }
             catch (ContentLoadException exception)
             {
