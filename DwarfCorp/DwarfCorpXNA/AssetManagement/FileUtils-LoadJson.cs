@@ -31,38 +31,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using DwarfCorp.GameStates;
-using ICSharpCode.SharpZipLib;
 using ICSharpCode.SharpZipLib.Zip;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Microsoft.Xna.Framework.Graphics;
-using System.IO.Compression;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
-using Microsoft.Xna.Framework;
+using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters;
+using System.Collections.Generic;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A static class with helper functions for saving/loading data to binary, JSON, and ZIP
-    /// </summary>
     public static partial class FileUtils
     {
-        /// <summary>
-        /// Given the inline text of a JSON serialization, creates an object of type T deserialized from it.
-        /// </summary>
-        /// <typeparam name="T">The type of the object being deserialized</typeparam>
-        /// <param name="jsonText">The json text.</param>
-        /// <param name="context">The context object (ie the World).</param>
-        /// <returns>An object of type T if it could be serialized, or an exception otherwise</returns>
         public static T LoadJsonFromString<T>(string jsonText, object context = null)
         {
             return JsonConvert.DeserializeObject<T>(jsonText, new JsonSerializerSettings()
@@ -151,6 +131,32 @@ namespace DwarfCorp
                     return serializer.Deserialize<T>(json);
                 }
             }
+        }
+
+        /// <summary>
+        /// Load a json list from all enabled mods, combining entries into one list. JSON must contain a List<T> as the top level element.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="AssetPath"></param>
+        /// <param name="Context"></param>
+        /// <param name="Name">Given a T, this func must return a unique name - this is used to compare items to see if they should be overriden by the mod.</param>
+        /// <returns></returns>
+        public static List<T> LoadJsonListFromMultipleSources<T>(String AssetPath, Object Context, Func<T,String> Name)
+        {
+            var result = new Dictionary<String, T>();
+
+            foreach (var resolvedAssetPath in AssetManager.EnumerateMatchingPaths(AssetPath))
+            {
+                var list = LoadJsonFromAbsolutePath<List<T>>(resolvedAssetPath, Context);
+                foreach (var item in list)
+                {
+                    var name = Name(item);
+                    if (!result.ContainsKey(name))
+                        result.Add(name, item);
+                }
+            }
+
+            return new List<T>(result.Values);
         }
     }
 }

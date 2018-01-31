@@ -92,6 +92,25 @@ namespace DwarfCorp
 
             return "Content" + ProgramData.DirChar + Asset;
         }
+
+        /// <summary>
+        /// Enumerates the relative paths of all mods (including base content) that include the content.
+        /// </summary>
+        /// <param name="Asset"></param>
+        /// <returns></returns>
+        public static IEnumerable<String> EnumerateMatchingPaths(String AssetPath)
+        {
+            var searchList = GameSettings.Default.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
+            searchList.Reverse();
+            searchList.Add("Content");
+
+            foreach (var mod in searchList)
+            {
+                var resolvedAssetPath = mod + ProgramData.DirChar + AssetPath;
+                if (File.Exists(resolvedAssetPath))
+                    yield return resolvedAssetPath;
+            }
+        }
         
         public static Texture2D GetContentTexture(string asset)
         {
