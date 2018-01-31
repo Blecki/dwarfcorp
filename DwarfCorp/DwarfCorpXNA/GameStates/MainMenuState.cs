@@ -141,7 +141,7 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
-            LogoTexture = TextureManager.GetContentTexture("newgui/gamelogo");
+            LogoTexture = AssetManager.GetContentTexture("newgui/gamelogo");
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 

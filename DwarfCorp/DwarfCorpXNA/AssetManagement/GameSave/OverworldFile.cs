@@ -201,7 +201,7 @@ namespace DwarfCorp
 
             Data = FileUtils.LoadJsonFromAbsolutePath<OverworldData>(metaFilePath);
 
-            var worldTexture = TextureManager.LoadUnbuiltTextureFromAbsolutePath(worldFilePath);
+            var worldTexture = AssetManager.LoadUnbuiltTextureFromAbsolutePath(worldFilePath);
 
             if (worldTexture != null)
             {

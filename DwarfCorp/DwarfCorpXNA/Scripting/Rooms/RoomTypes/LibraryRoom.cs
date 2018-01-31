@@ -154,7 +154,7 @@ namespace DwarfCorp
             libraryTemplates.Add(lamp);
             libraryTemplates.Add(new RoomTemplate(PlacementType.Random, bookshlf, bookshlfAcc) { Probability = 0.15f });
             libraryTemplates.Add(book);
-            Texture2D roomIcons = TextureManager.GetContentTexture(ContentPaths.GUI.room_icons);
+            Texture2D roomIcons = AssetManager.GetContentTexture(ContentPaths.GUI.room_icons);
             return new RoomData(LibraryRoomName, 4, "Blue Tile", roomResources, libraryTemplates,
                 new Gui.TileReference("rooms", 4))
             {

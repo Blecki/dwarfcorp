@@ -330,7 +330,7 @@ namespace DwarfCorp
         /// <param name="Game">The program currently running</param>
         public WorldManager(DwarfGame Game)
         {
-            InitialEmbark = Embarkment.DefaultEmbarkment;
+            InitialEmbark = EmbarkmentLibrary.DefaultEmbarkment;
             this.Game = Game;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;

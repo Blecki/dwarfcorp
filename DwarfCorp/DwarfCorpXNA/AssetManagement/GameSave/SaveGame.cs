@@ -125,7 +125,7 @@ namespace DwarfCorp
                 string[] screenshots = System.IO.Directory.GetFiles(filePath, "*.png");
 
                 if (screenshots.Length > 0)
-                    Screenshot = TextureManager.LoadUnbuiltTextureFromAbsolutePath(screenshots[0]);
+                    Screenshot = AssetManager.LoadUnbuiltTextureFromAbsolutePath(screenshots[0]);
 
                 return true;
             }

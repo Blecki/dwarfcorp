@@ -53,7 +53,7 @@ namespace DwarfCorp.GameStates
         public override void OnEnter()
         {
             IsInitialized = true;
-            Logo = TextureManager.GetContentTexture(ContentPaths.Logos.companylogo);
+            Logo = AssetManager.GetContentTexture(ContentPaths.Logos.companylogo);
             IntroTimer.Reset(3);
 
             base.OnEnter();

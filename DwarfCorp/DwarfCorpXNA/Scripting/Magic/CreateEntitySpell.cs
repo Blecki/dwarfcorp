@@ -64,7 +64,7 @@ namespace DwarfCorp
             Transmute = transmute;
             ManaCost = 50;
             Mode = transmute ? SpellMode.SelectEntities : SpellMode.SelectEmptyVoxels;
-            Image = new ImageFrame(TextureManager.GetContentTexture(ContentPaths.GUI.icons), 32, 4, 2);
+            Image = new ImageFrame(AssetManager.GetContentTexture(ContentPaths.GUI.icons), 32, 4, 2);
             TileRef = 20;
         }
 

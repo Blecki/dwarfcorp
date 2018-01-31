@@ -63,9 +63,7 @@ namespace DwarfCorp
         public void CreateInitialDwarves()
         {
             if (InitialEmbark == null)
-            {
-                InitialEmbark = Embarkment.DefaultEmbarkment;
-            }
+                InitialEmbark = EmbarkmentLibrary.DefaultEmbarkment;
 
             var cameraCoordinate = GlobalVoxelCoordinate.FromVector3(Camera.Position);
             // Find the height of the world at the camera

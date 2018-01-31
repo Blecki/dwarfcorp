@@ -49,18 +49,16 @@ namespace DwarfCorp
     /// and texture. Additionally, the TextureManager provides an interface to directly load
     /// resources from the disk (rather than going through XNAs content system)
     /// </summary>
-    public class TextureManager
+    public class AssetManager
     {
-        //Todo - don't need the instance nonsense.
-
         private static Dictionary<String, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
         private static ContentManager Content;
         private static GraphicsDevice Graphics;
 
         public static void Initialize(ContentManager Content, GraphicsDevice Graphics)
         {
-            TextureManager.Content = Content;
-            TextureManager.Graphics = Graphics;
+            AssetManager.Content = Content;
+            AssetManager.Graphics = Graphics;
 
         }
 

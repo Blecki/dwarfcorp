@@ -141,7 +141,7 @@
     <Compile Include="AssetManagement\GameSave\JsonConverters\MatrixConverter.cs" />
     <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
     <Compile Include="AssetManagement\GameSave\OverworldFile.cs" />
-    <Compile Include="AssetManagement\TextureManager.cs" />
+    <Compile Include="AssetManagement\AssetManager.cs" />
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
@@ -192,6 +192,7 @@
     <Compile Include="Entities\Fixtures\Banner.cs" />
     <Compile Include="Entities\Fixtures\Fence.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
+    <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
     <Compile Include="Scripting\Player\Economy\Quantity.cs" />
     <Compile Include="Voxels\Rail\RailEntity.cs" />
     <Compile Include="Entities\Plants\Pumpkin.cs" />

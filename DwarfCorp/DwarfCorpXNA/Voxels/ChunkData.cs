@@ -94,12 +94,12 @@ namespace DwarfCorp
 
         public Texture2D Tilemap
         {
-            get { return TextureManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles); }
+            get { return AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles); }
         }
 
         public Texture2D IllumMap
         {
-            get { return TextureManager.GetContentTexture(ContentPaths.Terrain.terrain_illumination); }
+            get { return AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_illumination); }
         }
 
         // Todo: Why is this here?
@@ -108,17 +108,17 @@ namespace DwarfCorp
 
         public Texture2D SunMap
         {
-            get { return TextureManager.GetContentTexture(ContentPaths.Gradients.sungradient); }
+            get { return AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient); }
         }
 
         public Texture2D AmbientMap
         {
-            get { return TextureManager.GetContentTexture(ContentPaths.Gradients.ambientgradient); }
+            get { return AssetManager.GetContentTexture(ContentPaths.Gradients.ambientgradient); }
         }
 
         public Texture2D TorchMap
         {
-            get { return TextureManager.GetContentTexture(ContentPaths.Gradients.torchgradient); }
+            get { return AssetManager.GetContentTexture(ContentPaths.Gradients.torchgradient); }
         }
 
         public ChunkManager ChunkManager

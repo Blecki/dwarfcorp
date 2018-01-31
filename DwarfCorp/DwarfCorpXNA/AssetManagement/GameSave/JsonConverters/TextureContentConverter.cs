@@ -44,13 +44,13 @@ namespace DwarfCorp
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            writer.WriteValue(TextureManager.ReverseLookup((Texture2D)value));
+            writer.WriteValue(AssetManager.ReverseLookup((Texture2D)value));
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             JValue jObject = serializer.Deserialize<JValue>(reader);
-            return (jObject.Value != null && (string) jObject.Value != "") ? TextureManager.GetContentTexture(jObject.Value.ToString()) : null;
+            return (jObject.Value != null && (string) jObject.Value != "") ? AssetManager.GetContentTexture(jObject.Value.ToString()) : null;
         }
 
         public override bool CanWrite

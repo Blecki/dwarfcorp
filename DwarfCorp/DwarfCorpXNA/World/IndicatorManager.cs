@@ -177,7 +177,7 @@ namespace DwarfCorp
 
         public static void SetupStandards()
         {
-            Texture2D indicators = TextureManager.GetContentTexture(ContentPaths.GUI.indicators);
+            Texture2D indicators = AssetManager.GetContentTexture(ContentPaths.GUI.indicators);
             StandardFrames[StandardIndicators.Happy] = new ImageFrame(indicators, 16, 4, 0);
             StandardFrames[StandardIndicators.Hungry] = new ImageFrame(indicators, 16, 0, 0);
             StandardFrames[StandardIndicators.Sad] = new ImageFrame(indicators, 16, 5, 0);

@@ -1,4 +1,4 @@
-// Embarkment.cs
+// EmbarkmentLibrary.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -30,16 +30,19 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = false)]
-    public class Embarkment
+    public class EmbarkmentLibrary
     {
-        public List<string> Party;
-        public Dictionary<ResourceLibrary.ResourceType, int> Resources;
-        public DwarfBux Money;
+        public static Dictionary<string, Embarkment> Embarkments { get; set; }
+        public static Embarkment DefaultEmbarkment = null;
+
+        public static void InitializeDefaultLibrary()
+        {
+            Embarkments = FileUtils.LoadJsonFromResolvedPath<Dictionary<string, Embarkment>>(ContentPaths.World.embarks);
+            DefaultEmbarkment = Embarkments["Normal"];
+        }
     }
 }

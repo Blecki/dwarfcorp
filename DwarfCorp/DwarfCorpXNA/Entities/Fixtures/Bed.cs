@@ -44,7 +44,7 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(Manager);
 
-            var spriteSheet = TextureManager.GetContentTexture(ContentPaths.Entities.Furniture.bedtex);
+            var spriteSheet = AssetManager.GetContentTexture(ContentPaths.Entities.Furniture.bedtex);
 
             AddChild(new Box(Manager, 
                 "bedbox", 

@@ -271,7 +271,7 @@ namespace DwarfCorp
 
                 foreach (string name in defaultSounds)
                 {
-                    SoundEffect effect = Content.Load<SoundEffect>(TextureManager.ResolveContentPath(name));
+                    SoundEffect effect = Content.Load<SoundEffect>(AssetManager.ResolveContentPath(name));
                     EffectLibrary[name] = effect;
                 }
                 try
@@ -407,7 +407,7 @@ namespace DwarfCorp
 
             foreach (string song in songs)
             {
-                ActiveSongs.Add(Content.Load<Song>(TextureManager.ResolveContentPath(song)));
+                ActiveSongs.Add(Content.Load<Song>(AssetManager.ResolveContentPath(song)));
             }
         }
 
@@ -438,7 +438,7 @@ namespace DwarfCorp
 
             if (!EffectLibrary.ContainsKey(name))
             {
-                effect = Content.Load<SoundEffect>(TextureManager.ResolveContentPath(name));
+                effect = Content.Load<SoundEffect>(AssetManager.ResolveContentPath(name));
                 EffectLibrary[name] = effect;   
             }
             else
@@ -494,7 +494,7 @@ namespace DwarfCorp
 
             if (!EffectLibrary.ContainsKey(name))
             {
-                effect = Content.Load<SoundEffect>(TextureManager.ResolveContentPath(name));
+                effect = Content.Load<SoundEffect>(AssetManager.ResolveContentPath(name));
                 EffectLibrary[name] = effect;
             }
             else

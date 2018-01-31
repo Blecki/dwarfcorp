@@ -27,7 +27,7 @@ namespace DwarfCorp
 
         public static void CreateIntersecting(string name, string assetName, GraphicsDevice graphics, ContentManager content)
         {
-            Texture2D bushSheet = TextureManager.GetContentTexture(assetName);
+            Texture2D bushSheet = AssetManager.GetContentTexture(assetName);
             List<Matrix> bushTransforms = new List<Matrix>();
             List<Color> bushColors = new List<Color>();
             bushTransforms.Add(Matrix.Identity);
@@ -42,7 +42,7 @@ namespace DwarfCorp
         {
             if(!m_initialized)
             {
-                Texture2D spriteSheet = TextureManager.GetContentTexture(ContentPaths.Entities.Furniture.bedtex);
+                Texture2D spriteSheet = AssetManager.GetContentTexture(ContentPaths.Entities.Furniture.bedtex);
                 OldBoxPrimitive.BoxTextureCoords boxCoords = new OldBoxPrimitive.BoxTextureCoords(spriteSheet.Width, spriteSheet.Height,
                     new OldBoxPrimitive.FaceData(new Rectangle(0, 24, 24, 16), true),
                     new OldBoxPrimitive.FaceData(new Rectangle(72, 24, 24, 16), true),
@@ -52,7 +52,7 @@ namespace DwarfCorp
                     new OldBoxPrimitive.FaceData(new Rectangle(24, 40, 48, 16), true));
                 BoxPrimitives["bed"] = new OldBoxPrimitive(graphics, 0.8f, 0.5f, 1.8f, boxCoords);
 
-                Texture2D bookSheet = TextureManager.GetContentTexture(ContentPaths.Entities.Furniture.bookshelf);
+                Texture2D bookSheet = AssetManager.GetContentTexture(ContentPaths.Entities.Furniture.bookshelf);
                 OldBoxPrimitive.BoxTextureCoords bookshelfTexture = new OldBoxPrimitive.BoxTextureCoords(bookSheet.Width, bookSheet.Height,
                         new OldBoxPrimitive.FaceData(new Rectangle(0, 20, 20, 32), true),
                         new OldBoxPrimitive.FaceData(new Rectangle(28, 20, 20, 32), true),
@@ -65,7 +65,7 @@ namespace DwarfCorp
                 m_initialized = false;
 
 
-                Texture2D sheetTiles = TextureManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
+                Texture2D sheetTiles = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
                 OldBoxPrimitive.BoxTextureCoords crateCoords = new OldBoxPrimitive.BoxTextureCoords(sheetTiles.Width, sheetTiles.Height, 32, 32,
                     new Point(7, 0),
                     new Point(7, 0),
@@ -86,7 +86,7 @@ namespace DwarfCorp
                 foreach (var member in typeof(ContentPaths.Entities.Plants).GetFields())
                     if (member.IsStatic && member.FieldType == typeof(String))
                     {
-                        var texture = TextureManager.GetContentTexture(member.GetValue(null).ToString());
+                        var texture = AssetManager.GetContentTexture(member.GetValue(null).ToString());
 
                         // lol, worst hack. This should be data driven.
                         if (member.Name != "candycane")

@@ -132,7 +132,7 @@ namespace DwarfCorp
 
         public static T LoadJsonFromResolvedPath<T>(string filePath, object context = null)
         {
-            using (var stream = new FileStream(TextureManager.ResolveContentPath(filePath), FileMode.Open))
+            using (var stream = new FileStream(AssetManager.ResolveContentPath(filePath), FileMode.Open))
             using (StreamReader reader = new StreamReader(stream))
             {
                 using (JsonReader json = new JsonTextReader(reader))

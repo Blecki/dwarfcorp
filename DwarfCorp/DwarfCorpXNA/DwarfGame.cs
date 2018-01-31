@@ -60,7 +60,7 @@ namespace DwarfCorp
 
         public GameStateManager StateManager { get; set; }
         public GraphicsDeviceManager Graphics;
-        public TextureManager TextureManager { get; set; }
+        public AssetManager TextureManager { get; set; }
         public static SpriteBatch SpriteBatch { get; set; }
 
         public static Gui.Input.GumInputMapper GumInputMapper;
@@ -92,7 +92,7 @@ namespace DwarfCorp
             Graphics = new GraphicsDeviceManager(this);
             Window.Title = "DwarfCorp";
             Window.AllowUserResizing = false;
-            TextureManager.Initialize(Content, GraphicsDevice);
+            AssetManager.Initialize(Content, GraphicsDevice);
             MainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
             GameSettings.Load();
 
@@ -307,7 +307,7 @@ namespace DwarfCorp
                 }
 
                 BiomeLibrary.InitializeStatics();
-                Embarkment.Initialize();
+                EmbarkmentLibrary.InitializeDefaultLibrary();
                 VoxelChunk.InitializeStatics();
                 ControlSettings.Load();
                 Drawer2D.Initialize(Content, GraphicsDevice);

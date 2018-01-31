@@ -53,7 +53,7 @@ namespace DwarfCorp.GameStates
             TemperatureScale = 1.0f;
             ColonySize = new Point3(8, 1, 8);
             WorldScale = 4.0f;
-            InitalEmbarkment = Embarkment.DefaultEmbarkment;
+            InitalEmbarkment = EmbarkmentLibrary.DefaultEmbarkment;
             WorldOrigin = new Vector2(Width / WorldScale, Height / WorldScale) * 0.5f;
             ExistingFile = null;
             GenerateFromScratch = false;
