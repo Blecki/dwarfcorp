@@ -145,6 +145,18 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(frame, "Quit", "Goodbye.", (sender, args) => Game.Exit());
 
+            GuiRoot.RootItem.AddChild(new Widget()
+            {
+                Font = "font8",
+                TextColor = new Vector4(1, 1, 1, 0.5f),
+                AutoLayout = AutoLayout.FloatBottomRight,
+#if DEMO
+                Text = "DwarfCorp " + Program.Version + " (DEMO)"
+#else
+                Text = "DwarfCorp " + Program.Version
+#endif
+            });
+
             GuiRoot.RootItem.Layout();
         }
 
