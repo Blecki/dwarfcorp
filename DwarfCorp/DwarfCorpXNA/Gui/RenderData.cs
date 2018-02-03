@@ -40,6 +40,7 @@ namespace DwarfCorp.Gui
 
             CalculateScreenSize();
 
+            // Todo: Better modding = list of named things.
             // Load skin from disc. The skin is a set of tilesheets.
             var skin = FileUtils.LoadJsonFromResolvedPath<JsonTileSheetSet>(ContentPaths.GUI.Skin);
 

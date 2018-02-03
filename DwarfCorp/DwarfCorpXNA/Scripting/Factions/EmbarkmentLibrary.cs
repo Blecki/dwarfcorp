@@ -41,6 +41,7 @@ namespace DwarfCorp
 
         public static void InitializeDefaultLibrary()
         {
+            // Todo: Better modding support - load list with names.
             Embarkments = FileUtils.LoadJsonFromResolvedPath<Dictionary<string, Embarkment>>(ContentPaths.World.embarks);
             DefaultEmbarkment = Embarkments["Normal"];
         }

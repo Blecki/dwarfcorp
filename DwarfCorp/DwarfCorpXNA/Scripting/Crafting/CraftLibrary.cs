@@ -60,7 +60,7 @@ namespace DwarfCorp
         {
             if (CraftItems != null) return;
 
-            var craftList = FileUtils.LoadJsonFromResolvedPath<List<CraftItem>>(ContentPaths.craft_items);
+            var craftList = FileUtils.LoadJsonListFromMultipleSources<CraftItem>(ContentPaths.craft_items, null, c => c.Name);
             CraftItems = new Dictionary<string, CraftItem>();
 
             foreach (var type in craftList)

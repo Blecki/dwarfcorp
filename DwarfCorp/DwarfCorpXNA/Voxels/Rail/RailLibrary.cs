@@ -53,6 +53,7 @@ namespace DwarfCorp.Rail
 
         private static void Initialize()
         {
+            // Todo: Better modding support means lists of named things. Two files?
             if (Patterns == null)
             {
                 var data = FileUtils.LoadJsonFromResolvedPath<Data>(ContentPaths.rail_junctions);
