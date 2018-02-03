@@ -54,7 +54,7 @@ namespace DwarfCorp
         }
 
         public ResourceEntity(ComponentManager manager, ResourceAmount resourceType, Vector3 position) :
-            base(manager, ResourceLibrary.Resources[resourceType.ResourceType].ResourceName, 
+            base(manager, ResourceLibrary.Resources[resourceType.ResourceType].Name, 
                 Matrix.CreateTranslation(position), new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
         {
             Resource = resourceType;
@@ -66,7 +66,7 @@ namespace DwarfCorp
             Friction = 0.1f;
             Resource type = ResourceLibrary.Resources[resourceType.ResourceType];
             
-            Tags.Add(type.ResourceName);
+            Tags.Add(type.Name);
             Tags.Add("Resource");
             
             if (type.IsFlammable)

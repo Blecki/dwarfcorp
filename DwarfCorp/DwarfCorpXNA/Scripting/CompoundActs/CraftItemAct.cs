@@ -134,7 +134,7 @@ namespace DwarfCorp
             }
 
             Item.SelectedResources = stashed;
-            ResourceLibrary.ResourceType ResourceCreated = Item.ItemType.ResourceCreated;
+            ResourceType ResourceCreated = Item.ItemType.ResourceCreated;
 
             switch (Item.ItemType.CraftActBehavior)
             {
@@ -142,7 +142,7 @@ namespace DwarfCorp
                     {
                         Resource craft = ResourceLibrary.GenerateTrinket(stashed.ElementAt(0).ResourceType,
                             (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f));
-                        ResourceCreated = craft.Type;
+                        ResourceCreated = craft.Name;
                     }
                     break;
                 case CraftItem.CraftActBehaviors.Meal:
@@ -153,19 +153,19 @@ namespace DwarfCorp
                             yield break;
                         }
                         Resource craft = ResourceLibrary.CreateMeal(stashed.ElementAt(0).ResourceType, stashed.ElementAt(1).ResourceType);
-                        ResourceCreated = craft.Type;
+                        ResourceCreated = craft.Name;
                     }
                     break;
                 case CraftItem.CraftActBehaviors.Ale:
                     {
                         Resource craft = ResourceLibrary.CreateAle(stashed.ElementAt(0).ResourceType);
-                        ResourceCreated = craft.Type;
+                        ResourceCreated = craft.Name;
                     }
                     break;
                 case CraftItem.CraftActBehaviors.Bread:
                     {
                         Resource craft = ResourceLibrary.CreateBread(stashed.ElementAt(0).ResourceType);
-                        ResourceCreated = craft.Type;
+                        ResourceCreated = craft.Name;
                     }
                     break;
                 case CraftItem.CraftActBehaviors.GemTrinket:
@@ -188,8 +188,8 @@ namespace DwarfCorp
                             yield break;
                         }
 
-                        Resource craft = ResourceLibrary.EncrustTrinket(trinket.Type, gem.Type);
-                        ResourceCreated = craft.Type;
+                        Resource craft = ResourceLibrary.EncrustTrinket(trinket.Name, gem.Name);
+                        ResourceCreated = craft.Name;
                     }
                     break;
                 case CraftItem.CraftActBehaviors.Normal:

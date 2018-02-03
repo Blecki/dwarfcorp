@@ -527,7 +527,7 @@ namespace DwarfCorp
         {
             Dictionary<Resource.ResourceTags, int> tagsRequired = new Dictionary<Resource.ResourceTags, int>();
             Dictionary<Resource.ResourceTags, int> tagsGot = new Dictionary<Resource.ResourceTags, int>();
-            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> amounts = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
+            Dictionary<ResourceType, ResourceAmount> amounts = new Dictionary<ResourceType, ResourceAmount>();
 
             foreach (Quantitiy<Resource.ResourceTags> quantity in tags)
             {
@@ -617,14 +617,14 @@ namespace DwarfCorp
             return true;
         }
 
-        public bool HasResources(ResourceLibrary.ResourceType resource)
+        public bool HasResources(ResourceType resource)
         {
             return HasResources(new List<ResourceAmount>() { new ResourceAmount(resource) });
         }
 
         public bool RemoveResources(List<ResourceAmount> resources, Vector3 position, bool createItems = true)
         {
-            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> amounts = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
+            Dictionary<ResourceType, ResourceAmount> amounts = new Dictionary<ResourceType, ResourceAmount>();
 
             foreach (ResourceAmount resource in resources)
             {

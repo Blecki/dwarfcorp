@@ -260,7 +260,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             var resourceInfo = ResourceLibrary.GetResourceByName(Resource.ResourceType);
 
-            LineItem.GetChild(1).Text = resourceInfo.ShortName ?? resourceInfo.ResourceName;
+            LineItem.GetChild(1).Text = resourceInfo.ShortName ?? resourceInfo.Name;
             LineItem.GetChild(1).Invalidate();
             LineItem.GetChild(2).Text = String.Format("{0}",
                 ValueSourceEntity.ComputeValue(Resource.ResourceType));
@@ -268,7 +268,7 @@ namespace DwarfCorp.Gui.Widgets
             counter.Text = Resource.NumResources.ToString();
             counter.Invalidate();
             LineItem.GetChild(0).Invalidate();
-            LineItem.Tooltip = resourceInfo.ResourceName + "\n" + resourceInfo.Description;
+            LineItem.Tooltip = resourceInfo.Name + "\n" + resourceInfo.Description;
             for (int i = 0; i < 3; i++)
             {
                 if (i > 0)
@@ -280,7 +280,7 @@ namespace DwarfCorp.Gui.Widgets
                 LineItem.GetChild(i).BackgroundColor = Resource.NumResources > 0
                     ? resourceInfo.Tint.ToVector4()
                     : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
-                LineItem.GetChild(i).Tooltip = resourceInfo.ResourceName + "\n" + resourceInfo.Description;
+                LineItem.GetChild(i).Tooltip = resourceInfo.Name + "\n" + resourceInfo.Description;
                 LineItem.GetChild(i).Invalidate();
 
             }

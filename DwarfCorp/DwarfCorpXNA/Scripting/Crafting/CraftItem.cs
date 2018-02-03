@@ -72,7 +72,7 @@ namespace DwarfCorp
         public string Description = "";
         public CraftType Type = CraftType.Object;
         public List<CraftPrereq> Prerequisites = new List<CraftPrereq>();
-        public ResourceLibrary.ResourceType ResourceCreated = "";
+        public ResourceType ResourceCreated = "";
         public string CraftLocation = "Anvil";
         public string Verb = "Build";
         public string PastTeseVerb = "Built";

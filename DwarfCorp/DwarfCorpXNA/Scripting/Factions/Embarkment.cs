@@ -39,7 +39,7 @@ namespace DwarfCorp
     public class Embarkment
     {
         public List<string> Party;
-        public Dictionary<ResourceLibrary.ResourceType, int> Resources;
+        public Dictionary<ResourceType, int> Resources;
         public DwarfBux Money;
     }
 }

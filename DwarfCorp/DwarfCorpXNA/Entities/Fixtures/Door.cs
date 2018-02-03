@@ -84,7 +84,7 @@ namespace DwarfCorp
         protected static float DefaultHealth = 30.0f;
         protected static Point DefaultSprite = new Point(0, 8);
 
-        protected static float GetHealth(ResourceLibrary.ResourceType type)
+        protected static float GetHealth(ResourceType type)
         {
             var resource = ResourceLibrary.GetResourceByName(type);
             foreach(var tag in resource.Tags)

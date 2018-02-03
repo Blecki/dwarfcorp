@@ -68,7 +68,7 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             if (Tree != null) return base.Run();
-            ResourceAmount coins = new ResourceAmount(ResourceLibrary.ResourceType.Coins, 1);
+            ResourceAmount coins = new ResourceAmount(ResourceType.Coins, 1);
             Tree = new Sequence(
                 new SearchFreeStockpileAct(Agent, "TargetStockpile", "FreeVoxel", coins),
                         

@@ -51,8 +51,8 @@ namespace DwarfCorp
             public int SpriteRow;
             public int SpriteColumn;
         }
-        public ResourceLibrary.ResourceType Type { get; set; }
-        public string ResourceName { get { return Type; }}
+
+        public ResourceType Name { get; set; }
         public DwarfBux MoneyValue { get; set; }
         public string Description { get; set; }
         public NamedImageFrame Image { get; set; }
@@ -69,7 +69,7 @@ namespace DwarfCorp
         { 
             get
             {
-                if (shortName == null) return ResourceName;
+                if (shortName == null) return Name;
                 else return shortName;
             }
             set { shortName = value; }
@@ -131,7 +131,7 @@ namespace DwarfCorp
 
         public Resource(Resource other)
         {
-            Type = other.Type;
+            Name = other.Name;
             MoneyValue = other.MoneyValue;
             Description = new string(other.Description.ToCharArray());
             Image = other.Image;
@@ -151,9 +151,9 @@ namespace DwarfCorp
             AleName = other.AleName;
         }
 
-        public Resource(ResourceLibrary.ResourceType type,  DwarfBux money, string description, NamedImageFrame image, int WidgetsSprite, Color tint, params ResourceTags[] tags)
+        public Resource(ResourceType type,  DwarfBux money, string description, NamedImageFrame image, int WidgetsSprite, Color tint, params ResourceTags[] tags)
         {
-            Type = type;
+            Name = type;
             MoneyValue = money;
             Description = description;
             Image = image;

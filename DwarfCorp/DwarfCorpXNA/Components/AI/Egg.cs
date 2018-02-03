@@ -65,8 +65,8 @@ namespace DwarfCorp
                 || !EntityFactory.EntityFuncs.ContainsKey(adult + " Egg Resource"))
             {
                 Resource newEggResource =
-                    new Resource(ResourceLibrary.GetResourceByName(ResourceLibrary.ResourceType.Egg));
-                newEggResource.Type = adult + " Egg";
+                    new Resource(ResourceLibrary.GetResourceByName(ResourceType.Egg));
+                newEggResource.Name = adult + " Egg";
                 ResourceLibrary.Add(newEggResource);
             }
 

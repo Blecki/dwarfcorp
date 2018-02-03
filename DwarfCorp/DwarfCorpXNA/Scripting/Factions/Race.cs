@@ -99,8 +99,8 @@ namespace DwarfCorp
 
         public List<ResourceAmount> GenerateResources()
         {
-            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> toReturn =
-                new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
+            Dictionary<ResourceType, ResourceAmount> toReturn =
+                new Dictionary<ResourceType, ResourceAmount>();
             Resource.ResourceTags[] blacklistTags = { Resource.ResourceTags.Money, Resource.ResourceTags.Corpse };
             foreach (var tags in TradeGoods)
             {
@@ -118,22 +118,22 @@ namespace DwarfCorp
                     if (randResource.Tags.Any(blacklistTags.Contains))
                         continue;
 
-                    if (randResource.Type == ResourceLibrary.ResourceType.Trinket ||
-                        randResource.Type == ResourceLibrary.ResourceType.GemTrinket ||
+                    if (randResource.Name == ResourceType.Trinket ||
+                        randResource.Name == ResourceType.GemTrinket ||
                         tags.Key == Resource.ResourceTags.Craft)
                     {
                         Resource.ResourceTags craftTag = Datastructures.SelectRandom(Crafts);
                         IEnumerable<Resource> availableCrafts = ResourceLibrary.GetResourcesByTag(craftTag);
 
                         Resource trinket = ResourceLibrary.GenerateTrinket(
-                            Datastructures.SelectRandom(availableCrafts).Type, MathFunctions.Rand(0.1f, 3.0f));
+                            Datastructures.SelectRandom(availableCrafts).Name, MathFunctions.Rand(0.1f, 3.0f));
 
                         if (MathFunctions.RandEvent(0.3f) && Encrustings.Count > 0)
                         {
                             IEnumerable<Resource> availableGems =
                                 ResourceLibrary.GetResourcesByTag(Datastructures.SelectRandom(Encrustings));
-                            randResource = ResourceLibrary.EncrustTrinket(trinket.Type,
-                                Datastructures.SelectRandom(availableGems).Type);
+                            randResource = ResourceLibrary.EncrustTrinket(trinket.Name,
+                                Datastructures.SelectRandom(availableGems).Name);
                         }
                         else
                         {
@@ -141,13 +141,13 @@ namespace DwarfCorp
                         }
                     }
 
-                    if (!toReturn.ContainsKey(randResource.Type))
+                    if (!toReturn.ContainsKey(randResource.Name))
                     {
-                        toReturn[randResource.Type] = new ResourceAmount(randResource.Type, 1);
+                        toReturn[randResource.Name] = new ResourceAmount(randResource.Name, 1);
                     }
                     else
                     {
-                        toReturn[randResource.Type].NumResources += 1;
+                        toReturn[randResource.Name].NumResources += 1;
                     }
                 }
             }

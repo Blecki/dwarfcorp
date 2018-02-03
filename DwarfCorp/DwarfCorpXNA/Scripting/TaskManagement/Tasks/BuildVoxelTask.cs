@@ -73,7 +73,7 @@ namespace DwarfCorp
             if (agent.AI.Status.IsAsleep)
                 return Feasibility.Infeasible;
 
-            Dictionary<ResourceLibrary.ResourceType, int> numResources = new Dictionary<ResourceLibrary.ResourceType, int>();
+            Dictionary<ResourceType, int> numResources = new Dictionary<ResourceType, int>();
             int numFeasibleVoxels = 0;
             var factionResources = agent.Faction.ListResources();
             if (!agent.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put))

@@ -51,99 +51,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public static class ResourceLibrary
     {
-        public struct ResourceType : IEquatable<ResourceType>
-        {
-            [JsonProperty]
-            private string _value;
-
-            public static ResourceType Wood = "Wood";
-            public static ResourceType Stone = "Stone";
-            public static ResourceType Dirt = "Dirt";
-            public static ResourceType Mana = "Mana";
-            public static ResourceType Gold = "Gold";
-            public static ResourceType Iron = "Iron";
-            public static ResourceType Berry = "Berry";
-            public static ResourceType Mushroom = "Mushroom";
-            public static ResourceType Grain = "Grain";
-            public static ResourceType Sand = "Sand";
-            public static ResourceType Coal = "Coal";
-            public static ResourceType Meat = "Meat";
-            public static ResourceType Bones = "Bone";
-            public static ResourceType Gem = "Gem";
-            public static ResourceType Meal = "Meal";
-            public static ResourceType Ale = "Ale";
-            public static ResourceType Bread = "Bread";
-            public static ResourceType Trinket = "Trinket";
-            public static ResourceType CaveMushroom = "Cave Mushroom";
-            public static ResourceType GemTrinket = "Gem-set Trinket";
-            public static ResourceType PineCone = "Pine Cone";
-            public static ResourceType Peppermint = "Peppermint";
-            public static ResourceType Coconut = "Coconut";
-            public static ResourceType Pumkin = "Pumpkin";
-            public static ResourceType Cactus = "Cactus";
-            public static ResourceType Egg = "Egg";
-            public static ResourceType Apple = "Apple";
-            public static ResourceType Glass = "Glass";
-            public static ResourceType Brick = "Brick";
-            public static ResourceType Coins = "Coins";
-            public static ResourceType EvilSeed = "Seed of Evil";
-            public static ResourceType Ice = "Ice";
-
-            public static implicit operator ResourceType(string value)
-            {
-                if (value == null)
-                {
-                    return null;
-                }
-                return new ResourceType { _value = new string(value.ToCharArray()) };
-            }
-
-            public static implicit operator string(ResourceType value)
-            {
-                return value._value;
-            }
-
-            public override string ToString()
-            {
-                return _value;
-            }
-
-            public Resource GetResource()
-            {
-                if (_value == null)
-                {
-                    return null;
-                }
-                return ResourceLibrary.GetResourceByName(_value);
-            }
-
-            public static bool operator ==(ResourceType A, ResourceType B)
-            {
-                return A._value == B._value;
-            }
-
-            public static bool operator !=(ResourceType A, ResourceType B)
-            {
-                return A._value != B._value;
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (!(obj is ResourceType)) return false;
-                return this == (ResourceType)obj;
-            }
-
-            public bool Equals(ResourceType other)
-            {
-                return this == other;
-            }
-
-            public override int GetHashCode()
-            {
-                return _value.GetHashCode();
-            }
-        }
-
         public static Dictionary<ResourceType, Resource> Resources = new Dictionary<ResourceType, Resource>();
 
 
@@ -182,17 +89,17 @@ namespace DwarfCorp
 
         public static void Add(Resource resource)
         {
-            Resources[resource.ResourceName] = resource;
+            Resources[resource.Name] = resource;
             if (resource.Tags.Contains(Resource.ResourceTags.Money))
             {
-                EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new CoinPile(EntityFactory.World.ComponentManager, position)
+                EntityFactory.RegisterEntity(resource.Name + " Resource", (position, data) => new CoinPile(EntityFactory.World.ComponentManager, position)
                 {
                     Money = data.Has("Money") ? data.GetData<DwarfBux>("Money") : (DwarfBux)64m
                 });
             }
             else
             {
-                EntityFactory.RegisterEntity(resource.ResourceName + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, new ResourceAmount(resource, data.GetData<int>("num", 1)), position));   
+                EntityFactory.RegisterEntity(resource.Name + " Resource", (position, data) => new ResourceEntity(EntityFactory.World.ComponentManager, new ResourceAmount(resource, data.GetData<int>("num", 1)), position));   
             }
         }
 
@@ -355,7 +262,7 @@ namespace DwarfCorp
             });
             Add(new Resource(Resources["Ruby"])
             {
-                Type = "Emerald",
+                Name = "Emerald",
                 ShortName = "Emerald",
                 Image = new NamedImageFrame(tileSheet, GetRect(0, 4)),
                 GuiLayers = new List<TileReference>() { new TileReference("resources", 32) },
@@ -367,7 +274,7 @@ namespace DwarfCorp
 
             Add(new Resource(Resources["Ruby"])
             {
-                Type = "Amethyst",
+                Name = "Amethyst",
                 ShortName = "Amethyst",
                 Image = new NamedImageFrame(tileSheet, GetRect(2, 4)),
                 GuiLayers = new List<TileReference>() { new TileReference("resources", 34) },
@@ -379,7 +286,7 @@ namespace DwarfCorp
 
             Add(new Resource(Resources["Ruby"])
             {
-                Type = "Garnet",
+                Name = "Garnet",
                 ShortName = "Garnet",
                 Image = new NamedImageFrame(tileSheet, GetRect(1, 3)),
                 GuiLayers = new List<TileReference>() { new TileReference("resources", 25) },
@@ -391,7 +298,7 @@ namespace DwarfCorp
 
             Add(new Resource(Resources["Ruby"])
             {
-                Type = "Citrine",
+                Name = "Citrine",
                 ShortName = "Citrine",
                 Image = new NamedImageFrame(tileSheet, GetRect(2, 3)),
                 GuiLayers = new List<TileReference>() { new TileReference("resources", 26) },
@@ -403,7 +310,7 @@ namespace DwarfCorp
 
             Add(new Resource(Resources["Ruby"])
             {
-                Type = "Sapphire",
+                Name = "Sapphire",
                 ShortName = "Sapphire",
                 Image = new NamedImageFrame(tileSheet, GetRect(1, 4)),
                 GuiLayers = new List<TileReference>() { new TileReference("resources", 33) },
@@ -418,7 +325,7 @@ namespace DwarfCorp
             Add((new Resource(ResourceType.Trinket, 100.0m, "A crafted item.",
                     new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 0, 0), 0, Color.White, Resource.ResourceTags.Craft, Resource.ResourceTags.Encrustable)));
 
-            Add((new Resource(ResourceLibrary.ResourceType.GemTrinket, 100.0m, "A crafted item.",
+            Add((new Resource(ResourceType.GemTrinket, 100.0m, "A crafted item.",
                 new NamedImageFrame(ContentPaths.Entities.DwarfObjects.crafts, 32, 0, 0), 0, Color.White, Resource.ResourceTags.Craft)));
 
             Add(new Resource(ResourceType.Glass, 8.0m, "Made from sand. Allows light to pass through.", new NamedImageFrame(tileSheet, GetRect(4, 0)), 4, Color.White, Resource.ResourceTags.Material, Resource.ResourceTags.HardMaterial, Resource.ResourceTags.Craft, Resource.ResourceTags.Glass)
@@ -462,11 +369,11 @@ namespace DwarfCorp
                 {
                     Resource toReturn = new Resource(Resources[ResourceType.Ale])
                     {
-                        Type = string.IsNullOrEmpty(resource.AleName) ? resource + " Ale" : resource.AleName
+                        Name = string.IsNullOrEmpty(resource.AleName) ? resource + " Ale" : resource.AleName
                     };
-                    toReturn.ShortName = toReturn.Type;
+                    toReturn.ShortName = toReturn.Name;
 
-                    if (!Resources.ContainsKey(toReturn.Type))
+                    if (!Resources.ContainsKey(toReturn.Name))
                     {
                         toAdd.Add(toReturn);
                     }
@@ -476,11 +383,11 @@ namespace DwarfCorp
                 {
                     Resource toReturn = new Resource(Resources[ResourceType.Bread])
                     {
-                        Type = resource.Type + " Bread"
+                        Name = resource.Name + " Bread"
                     };
-                    toReturn.ShortName = toReturn.Type;
+                    toReturn.ShortName = toReturn.Name;
 
-                    if (!Resources.ContainsKey(toReturn.Type))
+                    if (!Resources.ContainsKey(toReturn.Name))
                     {
                         toAdd.Add(toReturn);
                     }
@@ -534,20 +441,20 @@ namespace DwarfCorp
             {
                 Resource resource = new Resource(Resources[ResourceType.Meat])
                 {
-                    Type = animal + " Meat"
+                    Name = animal + " Meat"
                 };
-                resource.ShortName = resource.Type;
+                resource.ShortName = resource.Name;
 
-                if (!Resources.ContainsKey(resource.Type))
+                if (!Resources.ContainsKey(resource.Name))
                     Add(resource);
 
                 Resource boneResource = new Resource(Resources[ResourceType.Bones])
                 {
-                    Type = animal + " Bone"
+                    Name = animal + " Bone"
                 };
-                boneResource.ShortName = boneResource.Type;
+                boneResource.ShortName = boneResource.Name;
 
-                if (!Resources.ContainsKey(boneResource.Type))
+                if (!Resources.ContainsKey(boneResource.Name))
                     Add(boneResource);
 
             }
@@ -560,11 +467,11 @@ namespace DwarfCorp
         {
             Resource toReturn = new Resource(Resources[ResourceType.Ale])
             {
-                Type = string.IsNullOrEmpty(Resources[type].AleName) ? type + " Ale" : Resources[type].AleName
+                Name = string.IsNullOrEmpty(Resources[type].AleName) ? type + " Ale" : Resources[type].AleName
             };
-            toReturn.ShortName = toReturn.Type;
+            toReturn.ShortName = toReturn.Name;
 
-            if (!Resources.ContainsKey(toReturn.Type))
+            if (!Resources.ContainsKey(toReturn.Name))
                 Add(toReturn);
 
             return toReturn;
@@ -577,13 +484,13 @@ namespace DwarfCorp
             Resource toReturn = new Resource(Resources[ResourceType.Meal])
             {
                 FoodContent = componentA.FoodContent + componentB.FoodContent,
-                Type =
-                    TextGenerator.GenerateRandom(new List<string>() {componentA.ResourceName, componentB.ResourceName}, TextGenerator.GetAtoms(ContentPaths.Text.Templates.food)),
+                Name =
+                    TextGenerator.GenerateRandom(new List<string>() {componentA.Name, componentB.Name}, TextGenerator.GetAtoms(ContentPaths.Text.Templates.food)),
                 MoneyValue = 2m *(componentA.MoneyValue + componentB.MoneyValue)
             };
-            toReturn.ShortName = toReturn.Type;
+            toReturn.ShortName = toReturn.Name;
 
-            if (!Resources.ContainsKey(toReturn.Type))
+            if (!Resources.ContainsKey(toReturn.Name))
                 Add(toReturn);
 
             return toReturn;
@@ -592,10 +499,10 @@ namespace DwarfCorp
         public static Resource EncrustTrinket(ResourceType resourcetype, ResourceType gemType)
         {
             Resource toReturn = new Resource(Resources[resourcetype]);
-            toReturn.Type = gemType + "-encrusted " + toReturn.ResourceName;
-            if (Resources.ContainsKey(toReturn.Type))
+            toReturn.Name = gemType + "-encrusted " + toReturn.Name;
+            if (Resources.ContainsKey(toReturn.Name))
             {
-                return Resources[toReturn.Type];
+                return Resources[toReturn.Name];
             }
 
             toReturn.MoneyValue += Resources[gemType].MoneyValue * 2m;
@@ -690,10 +597,10 @@ namespace DwarfCorp
                 qualityType = "Legendary";
             }
 
-            toReturn.Type = baseMaterial + " " + name + " (" + qualityType + ")";
-            if (Resources.ContainsKey(toReturn.Type))
+            toReturn.Name = baseMaterial + " " + name + " (" + qualityType + ")";
+            if (Resources.ContainsKey(toReturn.Name))
             {
-                return Resources[toReturn.Type];
+                return Resources[toReturn.Name];
             }
             toReturn.Tint = Resources[baseMaterial].Tint;
             toReturn.CompositeLayers = new List<KeyValuePair<Point, string>>()
@@ -713,11 +620,11 @@ namespace DwarfCorp
         {
             Resource toReturn = new Resource(Resources[ResourceType.Bread])
             {
-                Type = component + " Bread"
+                Name = component + " Bread"
             };
-            toReturn.ShortName = toReturn.Type;
+            toReturn.ShortName = toReturn.Name;
 
-            if (!Resources.ContainsKey(toReturn.Type))
+            if (!Resources.ContainsKey(toReturn.Name))
                 Add(toReturn);
 
             return toReturn;

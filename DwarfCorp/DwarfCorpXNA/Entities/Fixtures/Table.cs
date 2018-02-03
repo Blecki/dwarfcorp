@@ -95,7 +95,7 @@ namespace DwarfCorp
                 if (ReCreateTimer.HasTriggered)
                 {
                     if (faction.RemoveResources(
-                        new List<ResourceAmount>() {new ResourceAmount(ResourceLibrary.ResourceType.Mana)}, position + Vector3.Up * 0.5f))
+                        new List<ResourceAmount>() {new ResourceAmount(ResourceType.Mana)}, position + Vector3.Up * 0.5f))
                     {
                         ManaSprite = EntityFactory.CreateEntity<ResourceEntity>("Mana Resource", position);
                         ManaSprite.Gravity = Vector3.Zero;

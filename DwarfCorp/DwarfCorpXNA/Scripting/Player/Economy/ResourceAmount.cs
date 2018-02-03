@@ -39,7 +39,7 @@ namespace DwarfCorp
     /// This is just a struct of two things: a resource, and a number of that resource.
     /// This is used instead of a list, since there is nothing distinguishing resources from each other.
     /// </summary>
-    public class ResourceAmount : Quantitiy<ResourceLibrary.ResourceType>
+    public class ResourceAmount : Quantitiy<ResourceType>
     {
 
         public ResourceAmount(ResourceAmount amount)
@@ -48,7 +48,7 @@ namespace DwarfCorp
             NumResources = amount.NumResources;
         }
 
-        public ResourceAmount(ResourceLibrary.ResourceType type)
+        public ResourceAmount(ResourceType type)
         {
             ResourceType = type;
             NumResources = 1;
@@ -56,7 +56,7 @@ namespace DwarfCorp
 
         public ResourceAmount(Resource resource)
         {
-            ResourceType = resource.Type;
+            ResourceType = resource.Name;
             NumResources = 1;
         }
 
@@ -76,11 +76,11 @@ namespace DwarfCorp
 
         public ResourceAmount(Resource resourceType, int numResources)
         {
-            ResourceType = resourceType.Type;
+            ResourceType = resourceType.Name;
             NumResources = numResources;
         }
 
-        public ResourceAmount(ResourceLibrary.ResourceType type, int num) :
+        public ResourceAmount(ResourceType type, int num) :
             this(ResourceLibrary.Resources[type], num)
         {
             

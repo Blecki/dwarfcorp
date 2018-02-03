@@ -1421,7 +1421,7 @@ namespace DwarfCorp.GameStates
                                     railTool.Pattern = data;
                                     railTool.SelectedResources = new List<ResourceAmount>
                                     {
-                                        new ResourceAmount(ResourceLibrary.ResourceType.Iron, 2)
+                                        new ResourceAmount(ResourceType.Iron, 2)
                                     };
                                     ChangeTool(GameMaster.ToolMode.BuildRail);
                                 },

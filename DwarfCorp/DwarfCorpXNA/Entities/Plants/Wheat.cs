@@ -62,7 +62,7 @@ namespace DwarfCorp
                 {
                     MarkedForRestock = false,
                     MarkedForUse = false,
-                    Resource = ResourceLibrary.ResourceType.Grain
+                    Resource = ResourceType.Grain
                 });
             }
 

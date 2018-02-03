@@ -72,21 +72,21 @@ namespace DwarfCorp
             RegisterEntity("Balloon", (position, data) => CreateBalloon(position + new Vector3(0, 1000, 0), position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, null, world.PlayerFaction));
             RegisterEntity("Work Pile", (position, data) => new WorkPile(world.ComponentManager, position));
 
-            RegisterEntity("Haunted Tree", (position, data) => new Tree("Haunted Tree", world.ComponentManager, position, "eviltree", ResourceLibrary.ResourceType.EvilSeed, data.GetData("Scale", 1.0f), "eviltreesprout"));
+            RegisterEntity("Haunted Tree", (position, data) => new Tree("Haunted Tree", world.ComponentManager, position, "eviltree", ResourceType.EvilSeed, data.GetData("Scale", 1.0f), "eviltreesprout"));
             RegisterEntity("Haunted Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Haunted Tree", position, "eviltreesprout", 12));
 
-            RegisterEntity("Pine Tree", (position, data) => new Tree("Pine Tree", world.ComponentManager, position, "pine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f), "pinesprout"));
+            RegisterEntity("Pine Tree", (position, data) => new Tree("Pine Tree", world.ComponentManager, position, "pine", ResourceType.PineCone, data.GetData("Scale", 1.0f), "pinesprout"));
             RegisterEntity("Pine Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Pine Tree", position, "pinesprout", 12));
-            RegisterEntity("Snow Pine Tree", (position, data) => new Tree("Pine Tree", world.ComponentManager, position, "snowpine", ResourceLibrary.ResourceType.PineCone, data.GetData("Scale", 1.0f), "pinesprout"));
+            RegisterEntity("Snow Pine Tree", (position, data) => new Tree("Pine Tree", world.ComponentManager, position, "snowpine", ResourceType.PineCone, data.GetData("Scale", 1.0f), "pinesprout"));
             RegisterEntity("Snow Pine Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Snow Pine Tree", position, "pinesprout", 12));
 
-            RegisterEntity("Candycane", (position, data) => new Tree("Candycane", world.ComponentManager, position, "candycane", ResourceLibrary.ResourceType.Peppermint, data.GetData("Scale", 1.0f), "candycanesprout", false));
+            RegisterEntity("Candycane", (position, data) => new Tree("Candycane", world.ComponentManager, position, "candycane", ResourceType.Peppermint, data.GetData("Scale", 1.0f), "candycanesprout", false));
             RegisterEntity("Candycane Sprout", (position, data) => new Seedling(world.ComponentManager, "Candycane", position, "candycanesprout", 12));
 
-            RegisterEntity("Palm Tree", (position, data) => new Tree("Palm Tree", world.ComponentManager, position, "palm", ResourceLibrary.ResourceType.Coconut, data.GetData("Scale", 1.0f), "palmsprout"));
+            RegisterEntity("Palm Tree", (position, data) => new Tree("Palm Tree", world.ComponentManager, position, "palm", ResourceType.Coconut, data.GetData("Scale", 1.0f), "palmsprout"));
             RegisterEntity("Palm Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Palm Tree", position, "palmsprout", 12));
 
-            RegisterEntity("Apple Tree", (position, data) => new Tree("Apple Tree", world.ComponentManager, position, "appletree", ResourceLibrary.ResourceType.Apple, data.GetData("Scale", 1.0f), "appletreesprout"));
+            RegisterEntity("Apple Tree", (position, data) => new Tree("Apple Tree", world.ComponentManager, position, "appletree", ResourceType.Apple, data.GetData("Scale", 1.0f), "appletreesprout"));
             RegisterEntity("Apple Tree Sprout", (position, data) => new Seedling(world.ComponentManager, "Apple Tree", position, "appletreesprout", 12));
 
             RegisterEntity("Cactus", (position, data) => new Cactus(world.ComponentManager, position, "cactus", data.GetData("Scale", 1.0f)));
@@ -128,10 +128,10 @@ namespace DwarfCorp
             RegisterEntity("Chair", (position, data) => new Chair(world.ComponentManager, position));
             RegisterEntity("Flag", (position, data) => new Flag(world.ComponentManager, position, world.PlayerCompany.Information));
 
-            RegisterEntity("Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.mushroom, ResourceLibrary.ResourceType.Mushroom, 2, false, "mushroomsprout"));
+            RegisterEntity("Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.mushroom, ResourceType.Mushroom, 2, false, "mushroomsprout"));
             RegisterEntity("Mushroom Sprout", (position, data) => new Seedling(world.ComponentManager, "Mushroom", position, "mushroomsprout", 12));
 
-            RegisterEntity("Cave Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.caveshroom, ResourceLibrary.ResourceType.CaveMushroom, 4, true, "caveshroomsprout"));
+            RegisterEntity("Cave Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.caveshroom, ResourceType.CaveMushroom, 4, true, "caveshroomsprout"));
             RegisterEntity("Cave Mushroom Sprout", (position, data) => new Seedling(world.ComponentManager, "Cave Mushroom", position, "caveshroomsprout", 12));
 
             RegisterEntity("Wheat", (position, data) => new Wheat(world.ComponentManager, position));
@@ -170,8 +170,8 @@ namespace DwarfCorp
                 return snek.Physics;
             });
             RegisterEntity("Bookshelf", (position, data) => new Bookshelf(world.ComponentManager, position) { Tags = new List<string>() { "Research"}});
-            RegisterEntity("Door", (position, data) => new Door(world.ComponentManager, position, World.PlayerFaction, data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceLibrary.ResourceType.Wood) })));
-            RegisterEntity("Ladder", (position, data) => new Ladder(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceLibrary.ResourceType.Wood) })));
+            RegisterEntity("Door", (position, data) => new Door(world.ComponentManager, position, World.PlayerFaction, data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceType.Wood) })));
+            RegisterEntity("Ladder", (position, data) => new Ladder(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceType.Wood) })));
             RegisterEntity("RandTrinket", (position, data) => CreateRandomTrinket(world, position));
             RegisterEntity("RandFood", (position, data) => CreateRandomFood(world, position));
             RegisterEntity("Turret", (position, data) => new TurretTrap(world.ComponentManager, position, world.PlayerFaction));
@@ -198,9 +198,9 @@ namespace DwarfCorp
         {
             IEnumerable<Resource> foods = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.RawFood);
 
-            Resource randresource = ResourceLibrary.CreateMeal(Datastructures.SelectRandom(foods).Type,
-                Datastructures.SelectRandom(foods).Type);
-            return new ResourceEntity(world.ComponentManager, new ResourceAmount(randresource.Type), position);
+            Resource randresource = ResourceLibrary.CreateMeal(Datastructures.SelectRandom(foods).Name,
+                Datastructures.SelectRandom(foods).Name);
+            return new ResourceEntity(world.ComponentManager, new ResourceAmount(randresource.Name), position);
         }
 
 
@@ -210,10 +210,10 @@ namespace DwarfCorp
 
             if (MathFunctions.RandEvent(0.5f))
             {
-                randResource = ResourceLibrary.EncrustTrinket(randResource.Type, Datastructures.SelectRandom(ResourceLibrary.Resources.Where(r => r.Value.Tags.Contains(Resource.ResourceTags.Gem))).Key);
+                randResource = ResourceLibrary.EncrustTrinket(randResource.Name, Datastructures.SelectRandom(ResourceLibrary.Resources.Where(r => r.Value.Tags.Contains(Resource.ResourceTags.Gem))).Key);
             }
 
-            return new ResourceEntity(world.ComponentManager, new ResourceAmount(randResource.Type), pos);
+            return new ResourceEntity(world.ComponentManager, new ResourceAmount(randResource.Name), pos);
         }
 
         public static void RegisterEntity<T>(string id, Func<Vector3, Blackboard, T> function) where T : GameComponent

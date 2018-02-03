@@ -92,7 +92,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public Point DefaultSpriteFrame;
 
-        public Point GetSpritesheetFrame(ResourceLibrary.ResourceType resourceType)
+        public Point GetSpritesheetFrame(ResourceType resourceType)
         {
             var resource = ResourceLibrary.GetResourceByName(resourceType);
             foreach (var tag in resource.Tags)
