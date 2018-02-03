@@ -52,33 +52,29 @@ namespace DwarfCorp
             public int SpriteColumn;
         }
 
-        public ResourceType Name { get; set; }
-        public DwarfBux MoneyValue { get; set; }
-        public string Description { get; set; }
-        public NamedImageFrame Image { get; set; }
-        public List<TileReference> GuiLayers { get; set; } 
-        public List<ResourceTags> Tags { get; set; }
-        public float FoodContent { get; set; }
-        public bool SelfIlluminating { get { return Tags.Contains(ResourceTags.SelfIlluminating); }}
-        public bool IsFlammable { get { return Tags.Contains(ResourceTags.Flammable); }}
-        public List<KeyValuePair<Point, string>> CompositeLayers { get; set; }
-        public TrinketInfo TrinketData { get; set; }
-
-        private string shortName = null;
-        public string ShortName 
-        { 
-            get
-            {
-                if (shortName == null) return Name;
-                else return shortName;
-            }
-            set { shortName = value; }
+        public struct CompositeLayer
+        {
+            public string Asset;
+            public Point FrameSize;
+            public Point Frame;
         }
+
+        public ResourceType Name;
+        public DwarfBux MoneyValue;
+        public string Description;
+        //public NamedImageFrame Image;
+        public List<TileReference> GuiLayers;
+        public List<ResourceTags> Tags;
+        public float FoodContent;
+        public List<CompositeLayer> CompositeLayers;
+        public TrinketInfo TrinketData;
+
+        public string ShortName;
 
         public string PlantToGenerate { get; set; }
 
         public bool CanCraft { get; set; }
-        public List<Quantitiy<ResourceTags>> CraftPrereqs { get; set; }  
+        public List<Quantitiy<ResourceTags>> CraftPrerequisites { get; set; }
 
         public Color Tint { get; set; }
         public string AleName { get; set; }
@@ -132,9 +128,10 @@ namespace DwarfCorp
         public Resource(Resource other)
         {
             Name = other.Name;
+            ShortName = other.ShortName;
             MoneyValue = other.MoneyValue;
             Description = new string(other.Description.ToCharArray());
-            Image = other.Image;
+            //Image = other.Image;
             GuiLayers = new List<TileReference>();
             GuiLayers.AddRange(other.GuiLayers);
             Tint = other.Tint;
@@ -144,8 +141,8 @@ namespace DwarfCorp
             ShortName = other.ShortName;
             PlantToGenerate = other.PlantToGenerate;
             CanCraft = other.CanCraft;
-            CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>();
-            CraftPrereqs.AddRange(other.CraftPrereqs);
+            CraftPrerequisites = new List<Quantitiy<Resource.ResourceTags>>();
+            CraftPrerequisites.AddRange(other.CraftPrerequisites);
             CompositeLayers = null;
             TrinketData = other.TrinketData;
             AleName = other.AleName;
@@ -154,9 +151,9 @@ namespace DwarfCorp
         public Resource(ResourceType type,  DwarfBux money, string description, NamedImageFrame image, int WidgetsSprite, Color tint, params ResourceTags[] tags)
         {
             Name = type;
+            ShortName = type;
             MoneyValue = money;
             Description = description;
-            Image = image;
             this.GuiLayers = new List<TileReference>();
             GuiLayers.Add(new TileReference("resources", WidgetsSprite));
             Tint = tint;
@@ -164,8 +161,16 @@ namespace DwarfCorp
             Tags.AddRange(tags);
             FoodContent = 0;
             CanCraft = false;
-            CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>();
-            CompositeLayers = null;
+            CraftPrerequisites = new List<Quantitiy<Resource.ResourceTags>>();
+            CompositeLayers = new List<CompositeLayer>(new CompositeLayer[]
+            {
+                new CompositeLayer
+                {
+                    Asset = image.AssetName,
+                    FrameSize = new Point(image.SourceRect.Width, image.SourceRect.Height),
+                    Frame = new Point(image.SourceRect.X / image.SourceRect.Width, image.SourceRect.Y / image.SourceRect.Height)
+                }
+            });
             AleName = "";
         }
 

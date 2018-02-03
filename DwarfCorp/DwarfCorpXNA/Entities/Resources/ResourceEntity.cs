@@ -69,7 +69,7 @@ namespace DwarfCorp
             Tags.Add(type.Name);
             Tags.Add("Resource");
             
-            if (type.IsFlammable)
+            if (type.Tags.Contains(DwarfCorp.Resource.ResourceTags.Flammable))
             {
                 AddChild(new Health(Manager, "health", 10.0f, 0.0f, 10.0f));
                 AddChild(new Flammable(Manager, "Flames"));
@@ -94,17 +94,19 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(manager);
 
-            Resource type = ResourceLibrary.GetResourceByName(Resource.ResourceType);
+            var type = ResourceLibrary.GetResourceByName(Resource.ResourceType);
 
             Tinter sprite = null;
 
-            if (type.CompositeLayers == null || type.CompositeLayers.Count == 0)
+            // Minor optimization for single layer resources.
+            if (type.CompositeLayers.Count == 1)
             {
+                var layer = type.CompositeLayers[0];
                 sprite = AddChild(new SimpleSprite(Manager, "Sprite",
                     Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
                     false,
-                    new SpriteSheet(type.Image.AssetName, 32),
-                    new Point(type.Image.SourceRect.X / 32, type.Image.SourceRect.Y / 32))
+                    new SpriteSheet(layer.Asset, layer.FrameSize.X, layer.FrameSize.Y),
+                    layer.Frame)
                 {
                     OrientationType = SimpleSprite.OrientMode.Spherical,
                     WorldHeight = 0.75f,
@@ -118,14 +120,11 @@ namespace DwarfCorp
 
                 foreach (var layer in type.CompositeLayers)
                 {
-                    if (layer.Value != null)
+                    layers.Add(new LayeredSimpleSprite.Layer
                     {
-                        layers.Add(new LayeredSimpleSprite.Layer
-                        {
-                            Sheet = new SpriteSheet(layer.Value, 32),
-                            Frame = layer.Key
-                        });
-                    }
+                        Sheet = new SpriteSheet(layer.Asset, layer.FrameSize.X, layer.FrameSize.Y),
+                        Frame = layer.Frame
+                    });
                 }
 
                 sprite = AddChild(new LayeredSimpleSprite(Manager, "Sprite",
