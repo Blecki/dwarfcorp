@@ -56,7 +56,7 @@ namespace DwarfCorp
 
         public static IEnumerable<Resource> GetResourcesByTag(Resource.ResourceTags tag)
         {
-            return Resources.Values.Where(resource => resource.Tags.Contains(tag)).ToList();
+            return Resources.Values.Where(resource => resource.Tags.Contains(tag));
         }
 
         public static Resource GetLeastValuableWithTag(Resource.ResourceTags tag)
@@ -396,51 +396,8 @@ namespace DwarfCorp
                 new NamedImageFrame(tileSheet, GetRect(6, 0)), 6, Color.White, Resource.ResourceTags.Precious,
                 Resource.ResourceTags.Money));
 
-            //GenerateAnimalProducts();
-            //GenerateFoods();
-        }
 
-        public static void GenerateFoods()
-        {
-            List<Resource> toAdd = new List<Resource>();
-            foreach (Resource resource in Resources.Values)
-            {
-                if (resource.Tags.Contains(Resource.ResourceTags.Brewable))
-                {
-                    Resource toReturn = new Resource(Resources[ResourceType.Ale])
-                    {
-                        Name = string.IsNullOrEmpty(resource.AleName) ? resource + " Ale" : resource.AleName
-                    };
-                    toReturn.ShortName = toReturn.Name;
-
-                    if (!Resources.ContainsKey(toReturn.Name))
-                    {
-                        toAdd.Add(toReturn);
-                    }
-                }
-
-                if (resource.Tags.Contains(Resource.ResourceTags.Bakeable))
-                {
-                    Resource toReturn = new Resource(Resources[ResourceType.Bread])
-                    {
-                        Name = resource.Name + " Bread"
-                    };
-                    toReturn.ShortName = toReturn.Name;
-
-                    if (!Resources.ContainsKey(toReturn.Name))
-                    {
-                        toAdd.Add(toReturn);
-                    }
-                }
-            }
-
-            foreach (Resource resource in toAdd)
-            {
-                Add(resource);
-            }
-
-            Resources.Remove(ResourceType.Ale);
-            Resources.Remove(ResourceType.Bread);
+            FileUtils.SaveJSon(Resources.Values, "resources.json", false);
         }
 
         private static Dictionary<string, string> MeatAssets = new Dictionary<string, string>()

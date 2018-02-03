@@ -62,7 +62,6 @@ namespace DwarfCorp
         public ResourceType Name;
         public DwarfBux MoneyValue;
         public string Description;
-        //public NamedImageFrame Image;
         public List<TileReference> GuiLayers;
         public List<ResourceTags> Tags;
         public float FoodContent;
@@ -131,7 +130,6 @@ namespace DwarfCorp
             ShortName = other.ShortName;
             MoneyValue = other.MoneyValue;
             Description = new string(other.Description.ToCharArray());
-            //Image = other.Image;
             GuiLayers = new List<TileReference>();
             GuiLayers.AddRange(other.GuiLayers);
             Tint = other.Tint;
