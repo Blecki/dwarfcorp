@@ -2404,6 +2404,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>decal-types</Name>
     </None>
+    <None Include="resource-items.json">
+      <Name>resource-items</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="tutorial.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>tutorial</Name>

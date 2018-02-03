@@ -141,35 +141,10 @@ namespace DwarfCorp
             CanCraft = other.CanCraft;
             CraftPrerequisites = new List<Quantitiy<Resource.ResourceTags>>();
             CraftPrerequisites.AddRange(other.CraftPrerequisites);
-            CompositeLayers = null;
+            CompositeLayers = new List<CompositeLayer>();
+            CompositeLayers.AddRange(other.CompositeLayers);
             TrinketData = other.TrinketData;
             AleName = other.AleName;
-        }
-
-        public Resource(ResourceType type,  DwarfBux money, string description, NamedImageFrame image, int WidgetsSprite, Color tint, params ResourceTags[] tags)
-        {
-            Name = type;
-            ShortName = type;
-            MoneyValue = money;
-            Description = description;
-            this.GuiLayers = new List<TileReference>();
-            GuiLayers.Add(new TileReference("resources", WidgetsSprite));
-            Tint = tint;
-            Tags = new List<ResourceTags>();
-            Tags.AddRange(tags);
-            FoodContent = 0;
-            CanCraft = false;
-            CraftPrerequisites = new List<Quantitiy<Resource.ResourceTags>>();
-            CompositeLayers = new List<CompositeLayer>(new CompositeLayer[]
-            {
-                new CompositeLayer
-                {
-                    Asset = image.AssetName,
-                    FrameSize = new Point(image.SourceRect.Width, image.SourceRect.Height),
-                    Frame = new Point(image.SourceRect.X / image.SourceRect.Width, image.SourceRect.Y / image.SourceRect.Height)
-                }
-            });
-            AleName = "";
         }
 
         public string GetTagDescription(string delimiter)
