@@ -19,7 +19,7 @@
     <ApplicationIcon>favicon.ico</ApplicationIcon>
     <Thumbnail>GameThumbnail.png</Thumbnail>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>C:\Users\Mklingen\Desktop\DwarfCorpBuild\</PublishUrl>
+    <PublishUrl>C:\Users\matth\Desktop\dwarfcorp\Installer\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -76,7 +76,7 @@
     <ManifestKeyFile>DwarfCorpXNA_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <GenerateManifests>false</GenerateManifests>
+    <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
