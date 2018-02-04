@@ -11,6 +11,12 @@ namespace DwarfCorp
 {
     public class Crate : Body
     {
+        [EntityFactory("Crate")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Crate(Manager, Position);
+        }
+
         public Crate()
         {
             Tags.Add("Crate");

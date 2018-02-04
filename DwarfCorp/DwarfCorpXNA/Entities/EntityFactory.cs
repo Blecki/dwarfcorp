@@ -82,7 +82,7 @@ namespace DwarfCorp
 
             foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
             {
-                foreach (var method in type.GetMethods())
+                foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public))
                 {
                     if (!method.IsStatic) continue;
                     if (method.ReturnType != typeof(GameComponent)) continue;
@@ -91,15 +91,16 @@ namespace DwarfCorp
                     if (attribute == null) continue;
 
                     var parameters = method.GetParameters();
-                    if (parameters.Length != 2) continue;
-                    if (parameters[0].ParameterType != typeof(Vector3)) continue;
-                    if (parameters[1].ParameterType != typeof(Blackboard)) continue;
+                    if (parameters.Length != 3) continue;
+                    if (parameters[0].ParameterType != typeof(ComponentManager)) continue;
+                    if (parameters[1].ParameterType != typeof(Vector3)) continue;
+                    if (parameters[2].ParameterType != typeof(Blackboard)) continue;
 
-                    RegisterEntity(attribute.Name, (position, data) => method.Invoke(null, new Object[] { position, data }) as GameComponent);
+                    RegisterEntity(attribute.Name, (position, data) => method.Invoke(null, new Object[] { world.ComponentManager, position, data }) as GameComponent);
                 }
             }
 
-            RegisterEntity("Crate", (position, data) => new Crate(world.ComponentManager, position));
+            //RegisterEntity("Crate", (position, data) => new Crate(world.ComponentManager, position));
             RegisterEntity("Balloon", (position, data) => CreateBalloon(position + new Vector3(0, 1000, 0), position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, null, world.PlayerFaction));
             RegisterEntity("Work Pile", (position, data) => new WorkPile(world.ComponentManager, position));
 
