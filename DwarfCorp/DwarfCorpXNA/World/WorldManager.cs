@@ -371,11 +371,15 @@ namespace DwarfCorp
                     RenderTarget2D renderTarget = new RenderTarget2D(GraphicsDevice, resolution.X, resolution.Y, false,
                         SurfaceFormat.Color, DepthFormat.Depth24))
                 {
+                    var oldProjection = Camera.ProjectionMatrix;
+                    Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(Camera.FOV, ((float)resolution.X) / resolution.Y, Camera.NearPlane, Camera.FarPlane);
+                    Camera.ProjectionMatrix = projectionMatrix;
                     GraphicsDevice.SetRenderTarget(renderTarget);
                     DrawSky(new DwarfTime(), Camera.ViewMatrix, 1.0f, Color.CornflowerBlue);
                     Draw3DThings(new DwarfTime(), DefaultShader, Camera.ViewMatrix);
 
                     DefaultShader.View = Camera.ViewMatrix;
+                    DefaultShader.Projection = Camera.ProjectionMatrix;
                     NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera,
                         InstanceRenderer.RenderMode.Normal);
 
@@ -388,6 +392,7 @@ namespace DwarfCorp
                     GraphicsDevice.Textures[0] = null;
                     GraphicsDevice.Indices = null;
                     GraphicsDevice.SetVertexBuffer(null);
+                    Camera.ProjectionMatrix = oldProjection;
                 }
             }
             catch (IOException e)
@@ -598,7 +603,7 @@ namespace DwarfCorp
                         FileName = DwarfGame.GetSaveDirectory() +
                                    Path.DirectorySeparatorChar + filename + Path.DirectorySeparatorChar +
                                    "screenshot.png",
-                        Resolution = new Point(640, 480)
+                        Resolution = new Point(128, 128)
                     });
                 }
             }

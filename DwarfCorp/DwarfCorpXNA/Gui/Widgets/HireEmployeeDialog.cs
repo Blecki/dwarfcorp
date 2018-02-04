@@ -126,6 +126,13 @@ namespace DwarfCorp.Gui.Widgets
                     var applicant = applicantInfo.Applicant;
                     if (applicant != null)
                     {
+#if DEMO
+                        if (applicant.Class.Name == "Wizard")
+                        {
+                            Root.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = "Magic not available in demo." });
+                            return;
+                        }
+#endif
                         if (applicant.Level.Pay * 4 > Faction.Economy.CurrentMoney)
                         {
                             Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Popup

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DwarfCorpXNAContent", "DwarfCorp\DwarfCorpContent\DwarfCorpXNAContent.contentproj", "{D48F9E36-1F42-4633-B745-8C659D9550D4}"
 EndProject
@@ -26,6 +26,10 @@ Global
 		Debug|Mixed Platforms = Debug|Mixed Platforms
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Demo|Any CPU = Demo|Any CPU
+		Demo|Mixed Platforms = Demo|Mixed Platforms
+		Demo|x64 = Demo|x64
+		Demo|x86 = Demo|x86
 		iOS|Any CPU = iOS|Any CPU
 		iOS|Mixed Platforms = iOS|Mixed Platforms
 		iOS|x64 = iOS|x64
@@ -64,6 +68,10 @@ Global
 		{D48F9E36-1F42-4633-B745-8C659D9550D4}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{D48F9E36-1F42-4633-B745-8C659D9550D4}.Debug|x64.ActiveCfg = Debug|x86
 		{D48F9E36-1F42-4633-B745-8C659D9550D4}.Debug|x86.ActiveCfg = Debug|x86
+		{D48F9E36-1F42-4633-B745-8C659D9550D4}.Demo|Any CPU.ActiveCfg = Debug|x86
+		{D48F9E36-1F42-4633-B745-8C659D9550D4}.Demo|Mixed Platforms.ActiveCfg = Debug|x86
+		{D48F9E36-1F42-4633-B745-8C659D9550D4}.Demo|x64.ActiveCfg = Debug|x86
+		{D48F9E36-1F42-4633-B745-8C659D9550D4}.Demo|x86.ActiveCfg = Debug|x86
 		{D48F9E36-1F42-4633-B745-8C659D9550D4}.iOS|Any CPU.ActiveCfg = Release|x86
 		{D48F9E36-1F42-4633-B745-8C659D9550D4}.iOS|Mixed Platforms.ActiveCfg = Release|x86
 		{D48F9E36-1F42-4633-B745-8C659D9550D4}.iOS|x64.ActiveCfg = Debug|x86
@@ -104,6 +112,12 @@ Global
 		{99D7D745-BBE2-458E-8108-8D2E5A8835F3}.Debug|x64.ActiveCfg = Debug|x86
 		{99D7D745-BBE2-458E-8108-8D2E5A8835F3}.Debug|x86.ActiveCfg = Debug|x86
 		{99D7D745-BBE2-458E-8108-8D2E5A8835F3}.Debug|x86.Build.0 = Debug|x86
+		{99D7D745-BBE2-458E-8108-8D2E5A8835F3}.Demo|Any CPU.ActiveCfg = Demo|x86
+		{99D7D745-BBE2-458E-8108-8D2E5A8835F3}.Demo|Mixed Platforms.ActiveCfg = Demo|x86
+		{99D7D745-BBE2-458E-8108-8D2E5A8835F3}.Demo|Mixed Platforms.Build.0 = Demo|x86
+		{99D7D745-BBE2-458E-8108-8D2E5A8835F3}.Demo|x64.ActiveCfg = Demo|x86
+		{99D7D745-BBE2-458E-8108-8D2E5A8835F3}.Demo|x86.ActiveCfg = Demo|x86
+		{99D7D745-BBE2-458E-8108-8D2E5A8835F3}.Demo|x86.Build.0 = Demo|x86
 		{99D7D745-BBE2-458E-8108-8D2E5A8835F3}.iOS|Any CPU.ActiveCfg = Release|x86
 		{99D7D745-BBE2-458E-8108-8D2E5A8835F3}.iOS|Mixed Platforms.ActiveCfg = Release|x86
 		{99D7D745-BBE2-458E-8108-8D2E5A8835F3}.iOS|Mixed Platforms.Build.0 = Release|x86
@@ -158,6 +172,13 @@ Global
 		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.Demo|Any CPU.ActiveCfg = Demo|Any CPU
+		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.Demo|Mixed Platforms.ActiveCfg = Demo|Any CPU
+		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.Demo|Mixed Platforms.Build.0 = Demo|Any CPU
+		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.Demo|x64.ActiveCfg = Demo|Any CPU
+		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.Demo|x64.Build.0 = Demo|Any CPU
+		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.Demo|x86.ActiveCfg = Demo|Any CPU
+		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.Demo|x86.Build.0 = Demo|Any CPU
 		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.iOS|Any CPU.ActiveCfg = Release|Any CPU
 		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.iOS|Any CPU.Build.0 = Release|Any CPU
 		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.iOS|Mixed Platforms.ActiveCfg = Release|Any CPU
@@ -216,6 +237,14 @@ Global
 		{6ACEB053-125E-4C17-9515-16B2776274F7}.Debug|x64.Build.0 = Debug|Any CPU
 		{6ACEB053-125E-4C17-9515-16B2776274F7}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{6ACEB053-125E-4C17-9515-16B2776274F7}.Debug|x86.Build.0 = Debug|Any CPU
+		{6ACEB053-125E-4C17-9515-16B2776274F7}.Demo|Any CPU.ActiveCfg = Demo|Any CPU
+		{6ACEB053-125E-4C17-9515-16B2776274F7}.Demo|Any CPU.Build.0 = Demo|Any CPU
+		{6ACEB053-125E-4C17-9515-16B2776274F7}.Demo|Mixed Platforms.ActiveCfg = Demo|Any CPU
+		{6ACEB053-125E-4C17-9515-16B2776274F7}.Demo|Mixed Platforms.Build.0 = Demo|Any CPU
+		{6ACEB053-125E-4C17-9515-16B2776274F7}.Demo|x64.ActiveCfg = Demo|Any CPU
+		{6ACEB053-125E-4C17-9515-16B2776274F7}.Demo|x64.Build.0 = Demo|Any CPU
+		{6ACEB053-125E-4C17-9515-16B2776274F7}.Demo|x86.ActiveCfg = Demo|Any CPU
+		{6ACEB053-125E-4C17-9515-16B2776274F7}.Demo|x86.Build.0 = Demo|Any CPU
 		{6ACEB053-125E-4C17-9515-16B2776274F7}.iOS|Any CPU.ActiveCfg = Release|Any CPU
 		{6ACEB053-125E-4C17-9515-16B2776274F7}.iOS|Any CPU.Build.0 = Release|Any CPU
 		{6ACEB053-125E-4C17-9515-16B2776274F7}.iOS|Mixed Platforms.ActiveCfg = Release|Any CPU

@@ -11,6 +11,8 @@ namespace DwarfCorp
 {
     public class Bed : Body, IRenderableComponent
     {
+        public bool FrustumCull { get { return true; } }
+
         public Bed()
         {
             Tags.Add("Bed");

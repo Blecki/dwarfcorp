@@ -14,5 +14,6 @@ namespace DwarfCorp
         public BlendState BlendMode;
         public bool EnableWind = false;
         public bool RenderInSelectionBuffer = true;
+        public bool EnableGhostClipping = true;
     }
 }

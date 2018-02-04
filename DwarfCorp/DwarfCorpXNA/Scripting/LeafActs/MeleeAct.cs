@@ -393,6 +393,10 @@ namespace DwarfCorp
         void targetInventory_OnDeath(List<Body> items)
         {
             if (items == null) return;
+            if (!Agent.Faction.Race.IsIntelligent)
+            {
+                return;
+            }
 
             foreach (Body item in items)
             {

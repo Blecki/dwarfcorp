@@ -51,6 +51,7 @@ namespace DwarfCorp
         public bool ColorAppplied = false;
         private bool entityLighting = GameSettings.Default.EntityLighting;
         public Color VertexColorTint { get; set; }
+        public bool FrustumCull { get { return true; } }
         [JsonIgnore]
         public Color OneShotTint = Color.White;
         public Tinter()

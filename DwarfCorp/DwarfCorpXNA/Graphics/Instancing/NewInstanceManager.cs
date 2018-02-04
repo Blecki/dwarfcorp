@@ -45,7 +45,6 @@ namespace DwarfCorp
             foreach (var item in OctTree.EnumerateItems(frustrum))
             {
                 if (!item.Visible) continue;
-
                 if (item.RenderPass < RenderPass)
                 {
                     uniqueInstances += 1;

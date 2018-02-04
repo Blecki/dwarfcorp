@@ -27,6 +27,17 @@ namespace DwarfCorp.Gui.Widgets
             }
         }
 
+        private int _hoverIndex = -1;
+        public int HoverIndex
+        {
+            get { return _hoverIndex; }
+            set
+            {
+                _hoverIndex = value;
+                Invalidate();
+            }
+        }
+
         public Action<Widget> OnSelectedIndexChanged = null;
         public Vector4 SelectedTextColor = new Vector4(1, 0, 0, 1);
 
@@ -64,6 +75,15 @@ namespace DwarfCorp.Gui.Widgets
             {
                 Root.SafeCall(ScrollBar.OnScroll, ScrollBar, args);
             };
+
+            OnMouseMove = (sender, args) =>
+            {
+                var newIndex = ScrollBar.ScrollPosition + ((args.Y - GetDrawableInterior().Y) / ItemHeight);
+                if (newIndex >= 0 && newIndex < Items.Count)
+                    HoverIndex = newIndex;
+                else
+                    HoverIndex = -1;
+            };
             
         }
 
@@ -93,9 +113,18 @@ namespace DwarfCorp.Gui.Widgets
             Rectangle toss;
             for (int i = 0; i < itemsThatFit && (topItem + i) < Items.Count; ++i)
             {
+                bool hovered = topItem + i == HoverIndex;
+                bool selected = !hovered && topItem + i == SelectedIndex;
+
+                var color = TextColor;
+                if (hovered)
+                    color = HoverTextColor;
+                else if (selected)
+                    color = SelectedTextColor;
+
                 meshes.Add(Mesh.CreateStringMesh(Items[topItem + i], font, new Vector2(TextSize, TextSize), out toss)
                     .Translate(drawableInterior.X, stringPos)
-                    .Colorize(topItem + i == SelectedIndex ? SelectedTextColor : TextColor));
+                    .Colorize(color));
                 stringPos += (font.TileHeight * TextSize) + 2;
             }
 

@@ -75,6 +75,9 @@ namespace DwarfCorp.Gui.Widgets
 
         protected override Mesh Redraw()
         {
+            if (ScrollArea == 0)
+                return Mesh.EmptyMesh();
+
             var tiles = Root.GetTileSheet(Graphics);
 
             var topButton = Mesh.Quad()

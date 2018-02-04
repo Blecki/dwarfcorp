@@ -103,6 +103,7 @@ namespace DwarfCorp.GameStates
 
             var frame = MakeMenuFrame("MAIN MENU");
 
+#if !DEMO
             string latestSave = SaveGame.GetLatestSaveFile();
 
             if (latestSave != null)
@@ -113,12 +114,22 @@ namespace DwarfCorp.GameStates
                         ExistingFile = latestSave
                     })));
             }
-
+#endif
             MakeMenuItem(frame, "New Game", "Start a new game of DwarfCorp.", (sender, args) => StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings() {GenerateFromScratch = true})));
 
-            MakeMenuItem(frame, "New Game (Advanced)", "Start a new game of DwarfCorp.", (sender, args) => StateManager.PushState(new CompanyMakerState(Game, Game.StateManager)));
-
-            MakeMenuItem(frame, "Load Game", "Load DwarfCorp game from a file.", (sender, args) => StateManager.PushState(new LoadSaveGameState(Game, StateManager)));
+            MakeMenuItem(frame, "New Game (Advanced)", "Start a new game of DwarfCorp.",
+#if !DEMO
+                (sender, args) => StateManager.PushState(new CompanyMakerState(Game, Game.StateManager)));
+#else
+            (sender, args) => this.GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = "Advanced world creation not available in demo." }));
+#endif
+            MakeMenuItem(frame, "Load Game", 
+                "Load DwarfCorp game from a file.",
+#if !DEMO
+                (sender, args) => StateManager.PushState(new LoadSaveGameState(Game, StateManager)));
+#else
+                            (sender, args) => this.GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = "Saving/loading not available in demo." }));
+#endif
 
             MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) => StateManager.PushState(new OptionsState(Game, StateManager)));
 
@@ -135,6 +146,18 @@ namespace DwarfCorp.GameStates
 #endif
 
             MakeMenuItem(frame, "Quit", "Goodbye.", (sender, args) => Game.Exit());
+
+            GuiRoot.RootItem.AddChild(new Widget()
+            {
+                Font = "font8",
+                TextColor = new Vector4(1, 1, 1, 0.5f),
+                AutoLayout = AutoLayout.FloatBottomRight,
+#if DEMO
+                Text = "DwarfCorp " + Program.Version + " (DEMO)"
+#else
+                Text = "DwarfCorp " + Program.Version
+#endif
+            });
 
             GuiRoot.RootItem.Layout();
         }

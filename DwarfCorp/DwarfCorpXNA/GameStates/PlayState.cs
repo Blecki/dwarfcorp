@@ -59,7 +59,6 @@ namespace DwarfCorp.GameStates
         private FramedIcon EconomyIcon;
         private Timer AutoSaveTimer;
         private EmployeeInfo SelectedEmployeeInfo;
-        private AllowedTaskFilter AllowedTaskFilter;
         private Widget ContextMenu;
         private Widget BottomBar;
         private Widget MinimapIcon;
@@ -352,16 +351,20 @@ namespace DwarfCorp.GameStates
                 if (MathFunctions.RandEvent(0.1f))
                 {
                     SelectedEmployeeInfo.Employee = Master.SelectedMinions[0];
-                    AllowedTaskFilter.Employee = Master.SelectedMinions[0];
-                    //SelectedEmployeeName.Text = Master.SelectedMinions[0].Stats.FullName;
                 }
             }
-
-            if (Master.SelectedMinions.Count != 1)
+            else
             {
-                SelectedEmployeeInfo.Employee = null;
-                AllowedTaskFilter.Employee = null;
-                //SelectedEmployeeName.Text = "No Employee Selected";
+                bool update = MathFunctions.RandEvent(0.1f);
+                if ((SelectedEmployeeInfo.Employee == null || SelectedEmployeeInfo.Employee.IsDead) && 
+                    Master.Faction.Minions.Count > 0)
+                {
+                    SelectedEmployeeInfo.Employee = Master.Faction.Minions[0];
+                }
+                else if (update)
+                {
+                    SelectedEmployeeInfo.Employee = SelectedEmployeeInfo.Employee;
+                }
             }
 #endregion
         }
@@ -592,16 +595,6 @@ namespace DwarfCorp.GameStates
                 OnLayout = (sender) => sender.Rect.Y += 4
             }) as MinimapFrame;
 
-            AllowedTaskFilter = GuiRoot.RootItem.AddChild(new AllowedTaskFilter
-            {
-                Hidden = true,
-                Border = "border-fancy",
-                Employee = null,
-                Tag = "selected-employee-allowable-tasks",
-                AutoLayout = AutoLayout.FloatBottomLeft,
-                MinimumSize = new Point(200, 200)
-            }) as AllowedTaskFilter;
-
             SelectedEmployeeInfo = GuiRoot.RootItem.AddChild(new EmployeeInfo
             {
                 Hidden = true,
@@ -659,7 +652,6 @@ namespace DwarfCorp.GameStates
                     {
                         MinimapFrame.Hidden = false;
                         SelectedEmployeeInfo.Hidden = true;
-                        AllowedTaskFilter.Hidden = true;
                         markerFilter.Hidden = true;
                     }
                     else
@@ -689,7 +681,6 @@ namespace DwarfCorp.GameStates
                                    {
                                        MinimapFrame.Hidden = true;
                                        SelectedEmployeeInfo.Hidden = false;
-                                       AllowedTaskFilter.Hidden = true;
                                        markerFilter.Hidden = true;
                                    }
                                    else
@@ -710,34 +701,12 @@ namespace DwarfCorp.GameStates
                                    {
                                        MinimapFrame.Hidden = true;
                                        SelectedEmployeeInfo.Hidden = true;
-                                       AllowedTaskFilter.Hidden = true;
                                        markerFilter.Hidden = false;
                                    }
                                    else
                                        markerFilter.Hidden = true;
                                }
                             },
-
-                            new FramedIcon
-                            {
-                               Icon = null,
-                               Text = "Tasks",
-                               TextHorizontalAlign = HorizontalAlign.Center,
-                               TextVerticalAlign = VerticalAlign.Center,
-                               EnabledTextColor = Vector4.One,
-                               OnClick = (sender, args) =>
-                               {
-                                   if (AllowedTaskFilter.Hidden)
-                                   {
-                                       MinimapFrame.Hidden = true;
-                                       SelectedEmployeeInfo.Hidden = true;
-                                       AllowedTaskFilter.Hidden = false;
-                                       markerFilter.Hidden = true;
-                                   }
-                                   else
-                                       AllowedTaskFilter.Hidden = true;
-                               }
-                            }
                         },
             });
 
@@ -817,7 +786,9 @@ namespace DwarfCorp.GameStates
                 Icon = new Gui.TileReference("tool-icons", 10),
                 OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World)),
                 DrawIndicator = true,
-                Tooltip = "Click to open the Economy screen"
+                Tooltip = "Click to open the Economy screen",
+                Text = "Econ.",
+                TextVerticalAlign = VerticalAlign.Below
             };
 
             var topRightTray = secondBar.AddChild(new Gui.Widgets.IconTray
@@ -834,7 +805,9 @@ namespace DwarfCorp.GameStates
                             {
                                 Icon = new Gui.TileReference("tool-icons", 12),
                                 OnClick = (sender, args) => { OpenPauseMenu(); },
-                                Tooltip = "Click to open the Settings screen."
+                                Tooltip = "Click to open the Settings screen.",
+                                Text = "Option",
+                                TextVerticalAlign = VerticalAlign.Below
                             }
                         },
             });
@@ -1372,6 +1345,7 @@ namespace DwarfCorp.GameStates
             var icon_BuildResource = new FlatToolTray.Icon
             {
                 Text = "Res.",
+                Tooltip = "Resource",
                 EnabledTextColor = Vector4.One,
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
@@ -1917,11 +1891,15 @@ namespace DwarfCorp.GameStates
                                 },
                                 OnClick = (widget2, args2) =>
                                 {
+#if !DEMO
                                     ChangeTool(GameMaster.ToolMode.Magic);
                                     ((MagicTool)Master.Tools[GameMaster.ToolMode.Magic])
                                         .CurrentSpell =
                                         spell.Spell;
                                     World.Tutorial("cast spells");
+#else
+                                    GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = "Magic not available in demo." });
+#endif
                                 },
                                 Behavior = FlatToolTray.IconBehavior.ShowHoverPopup
                             }));
@@ -1941,9 +1919,9 @@ namespace DwarfCorp.GameStates
                 ReplacementMenu = menu_CastSpells,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
-            #endregion
+#endregion
 
-            #region icon_Research
+#region icon_Research
 
             var icon_menu_ResearchSpells_Return = new FlatToolTray.Icon
             {
@@ -1980,10 +1958,14 @@ namespace DwarfCorp.GameStates
                                 },
                                 OnClick = (button, args2) =>
                                 {
+#if !DEMO
                                     ChangeTool(GameMaster.ToolMode.Magic);
                                     ((MagicTool)Master.Tools[GameMaster.ToolMode.Magic])
                                         .Research(spell);
                                     World.Tutorial("research spells");
+#else
+                                    GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = "Magic not available in demo." });
+#endif
                                 },
                                 Behavior = FlatToolTray.IconBehavior.ShowHoverPopup
                             }));
@@ -2003,7 +1985,7 @@ namespace DwarfCorp.GameStates
                 ReplacementMenu = menu_ResearchSpells,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
-            #endregion
+#endregion
 
             var icon_menu_Magic_Return = new FlatToolTray.Icon
             {
@@ -2048,7 +2030,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
-            #endregion
+#endregion
 
             MainMenu = new FlatToolTray.Tray
             {
@@ -2105,9 +2087,9 @@ namespace DwarfCorp.GameStates
             BottomToolBar.SwitchTray(MainMenu);
             ChangeTool(GameMaster.ToolMode.SelectUnits);
 
-            #endregion
+#endregion
 
-            #region GOD MODE
+#region GOD MODE
 
             GodMenu = GuiRoot.RootItem.AddChild(new Gui.Widgets.GodMenu
             {
@@ -2117,7 +2099,7 @@ namespace DwarfCorp.GameStates
 
             GodMenu.Hidden = true;
 
-            #endregion
+#endregion
 
             GuiRoot.RootItem.Layout();
 
@@ -2213,6 +2195,7 @@ namespace DwarfCorp.GameStates
                     });
                 }
             }
+#if !DEMO
             else if (key == ControlSettings.Mappings.GodMode)
             {
                 if (PausePanel == null || PausePanel.Hidden)
@@ -2225,6 +2208,7 @@ namespace DwarfCorp.GameStates
                     GodMenu.Invalidate();
                 }
             }
+#endif
         }
 
         private void MakeMenuItem(Gui.Widget Menu, string Name, string Tooltip, Action<Gui.Widget, Gui.InputEventArgs> OnClick)
@@ -2301,6 +2285,7 @@ namespace DwarfCorp.GameStates
                 StateManager.PushState(state);
             });
 
+#if !DEMO
             MakeMenuItem(PausePanel, "Save", "",
                 (sender, args) =>
                 {
@@ -2315,6 +2300,7 @@ namespace DwarfCorp.GameStates
                             });
                         });
                 });
+#endif
 
 #if DEBUG
             MakeMenuItem(PausePanel, "New Save Test", "",
@@ -2359,6 +2345,7 @@ namespace DwarfCorp.GameStates
 
         public void AutoSave()
         {
+#if !DEMO
             bool paused = World.Paused;
             World.Save(
                     String.Format("{0}_{1}", Overworld.Name, World.GameID),
@@ -2367,6 +2354,7 @@ namespace DwarfCorp.GameStates
                         World.MakeAnnouncement(success ? "File autosaved." : "Autosave failed - " + exception.Message);
                         World.Paused = paused;
                     });
+#endif
         }
     }
 }

@@ -12,6 +12,8 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Bookshelf : Body, IRenderableComponent
     {
+        public bool FrustumCull { get { return true; } }
+
         public Bookshelf()
         {
             Tags.Add("Books");

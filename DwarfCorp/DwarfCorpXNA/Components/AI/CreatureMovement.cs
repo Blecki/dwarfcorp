@@ -502,8 +502,8 @@ namespace DwarfCorp
                         {
                             if (
                                 Creature.World.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
-                                    .GetCurrentRelationship() !=
-                                Relationship.Loving)
+                                    .GetCurrentRelationship() ==
+                                Relationship.Hateful)
                             {
                                 if (Can(MoveType.DestroyObject))
                                     yield return (new MoveAction

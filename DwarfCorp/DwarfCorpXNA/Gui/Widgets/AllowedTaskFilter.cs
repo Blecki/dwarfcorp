@@ -26,8 +26,16 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             Text = "Choose a single employee to assign their allowed tasks.";
-            Font = "font16";
-                       
+            Font = "font10";
+
+            AddChild(new Button()
+            {
+                Text = "Ok",
+                AutoLayout = AutoLayout.DockBottom,
+                OnClick = (sender, args) => sender.Parent.Close(),
+                MinimumSize = new Point(64, 32)
+            });
+
             InteriorPanel = AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockFill,
@@ -42,7 +50,7 @@ namespace DwarfCorp.Gui.Widgets
                 TextHorizontalAlign = HorizontalAlign.Center,
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 36),
-                Font = "font16"
+                Font = "font10"
             });
             
             var columns = InteriorPanel.AddChild(new Gui.Widgets.Columns
@@ -78,6 +86,7 @@ namespace DwarfCorp.Gui.Widgets
 
                 column = (column + 1) % ColumnCount;
             }
+
 
             base.Construct();
         }

@@ -60,7 +60,7 @@
   </ItemGroup>
   -->
   <ItemGroup>
-    <Compile Include=".\**\*.cs" />
+     <Compile Include=".\**\*.cs"/>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
