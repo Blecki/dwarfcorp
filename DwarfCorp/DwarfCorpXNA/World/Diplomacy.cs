@@ -574,7 +574,9 @@ namespace DwarfCorp
                 else
                 {
                     if (envoy.Creatures.Any(
-                        creature => envoy.OtherFaction.Designations.IsDesignation(creature.Physics, DesignationType.Attack)))
+                        // TODO (mklingen) why do I need this null check?
+                        creature => creature.Creature != null && 
+                        envoy.OtherFaction.Designations.IsDesignation(creature.Physics, DesignationType.Attack)))
                     {
 
                         if (!politics.HasEvent("You attacked our trade delegates"))
