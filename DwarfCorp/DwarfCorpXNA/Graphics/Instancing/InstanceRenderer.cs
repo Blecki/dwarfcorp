@@ -49,7 +49,8 @@ namespace DwarfCorp
                             Model = PrimitiveLibrary.BatchBillboardPrimitives[member.Name],
                             BlendMode = BlendState.NonPremultiplied,
                             EnableWind = true,
-                            RenderInSelectionBuffer = !isMote
+                            RenderInSelectionBuffer = !isMote,
+                            EnableGhostClipping = !isMote
                         }
                     });
 
@@ -135,6 +136,8 @@ namespace DwarfCorp
             Device.SetVertexBuffers(Group.RenderData.Model.VertexBuffer, new VertexBufferBinding(
                 InstanceBuffer, 0, 1));
 
+            var ghostEnabled = Effect.GhostClippingEnabled;
+            Effect.GhostClippingEnabled = Group.RenderData.EnableGhostClipping && ghostEnabled;
             foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
@@ -143,7 +146,7 @@ namespace DwarfCorp
                     Group.RenderData.Model.Indexes.Length / 3,
                     Group.InstanceCount);
             }
-
+            Effect.GhostClippingEnabled = ghostEnabled;
 
             Effect.SetTexturedTechnique();
             Effect.World = Matrix.Identity;
