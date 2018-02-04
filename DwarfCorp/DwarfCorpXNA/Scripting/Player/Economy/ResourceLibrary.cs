@@ -115,6 +115,7 @@ namespace DwarfCorp
                 Add(resource);
         }
 
+        // Todo: Kill with fire
         private static Dictionary<string, string> MeatAssets = new Dictionary<string, string>()
         {
             {
@@ -147,16 +148,18 @@ namespace DwarfCorp
 
         public static Resource CreateAle(ResourceType type)
         {
-            Resource toReturn = new Resource(Resources[ResourceType.Ale])
+            var baseResource = Resources[type];
+            var aleName = String.IsNullOrEmpty(baseResource.AleName) ? type + " Ale" : baseResource.AleName;
+            if (!Resources.ContainsKey(aleName))
             {
-                Name = string.IsNullOrEmpty(Resources[type].AleName) ? type + " Ale" : Resources[type].AleName
-            };
-            toReturn.ShortName = toReturn.Name;
+                Add(new Resource(Resources[ResourceType.Ale])
+                {
+                    Name = aleName,
+                    ShortName = aleName
+                });
+            }
 
-            if (!Resources.ContainsKey(toReturn.Name))
-                Add(toReturn);
-
-            return toReturn;
+            return Resources[aleName];
         }
 
         public static Resource CreateMeal(ResourceType typeA, ResourceType typeB)

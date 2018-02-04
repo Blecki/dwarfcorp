@@ -37,9 +37,20 @@ using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Reflection;
 
 namespace DwarfCorp
 {
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+    public class EntityFactoryAttribute : Attribute
+    {
+        public String Name;
+
+        public EntityFactoryAttribute(String Name)
+        {
+            this.Name = Name;
+        }
+    }
 
     /// <summary>
     /// This class is used to create entities. It should probably be replaced with a more modular system (or a set of data files)
@@ -68,6 +79,26 @@ namespace DwarfCorp
         public static void Initialize(WorldManager world)
         {
             World = world;
+
+            foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
+            {
+                foreach (var method in type.GetMethods())
+                {
+                    if (!method.IsStatic) continue;
+                    if (method.ReturnType != typeof(GameComponent)) continue;
+
+                    var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a is EntityFactoryAttribute) as EntityFactoryAttribute;
+                    if (attribute == null) continue;
+
+                    var parameters = method.GetParameters();
+                    if (parameters.Length != 2) continue;
+                    if (parameters[0].ParameterType != typeof(Vector3)) continue;
+                    if (parameters[1].ParameterType != typeof(Blackboard)) continue;
+
+                    RegisterEntity(attribute.Name, (position, data) => method.Invoke(null, new Object[] { position, data }) as GameComponent);
+                }
+            }
+
             RegisterEntity("Crate", (position, data) => new Crate(world.ComponentManager, position));
             RegisterEntity("Balloon", (position, data) => CreateBalloon(position + new Vector3(0, 1000, 0), position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, null, world.PlayerFaction));
             RegisterEntity("Work Pile", (position, data) => new WorkPile(world.ComponentManager, position));
