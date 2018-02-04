@@ -156,9 +156,9 @@ namespace DwarfCorp
             }
             else
             {
-                foreach(var vox in refs.Where(vox => vox.IsValid))
+                foreach (var vox in refs.Where(vox => vox.IsValid))
                 {
-                    if(Command.Contains("Place/"))
+                    if (Command.Contains("Place/"))
                     {
                         string type = Command.Substring(6);
                         var v = vox;
@@ -175,85 +175,85 @@ namespace DwarfCorp
                                 });
                         }
                     }
-                    else switch(Command)
-                    {
-                        case "Delete Block":
+                    else switch (Command)
+                        {
+                            case "Delete Block":
                                 {
                                     var v = vox;
                                     Player.World.Master.Faction.OnVoxelDestroyed(vox);
                                     v.Type = VoxelLibrary.emptyType;
                                     v.WaterCell = new WaterCell();
                                 }
-                            break;
-                        case "Kill Block":
+                                break;
+                            case "Kill Block":
                                 foreach (var selected in refs)
                                 {
                                     if (!selected.IsEmpty)
                                         Player.World.ChunkManager.KillVoxel(selected);
                                 }
-                            break;
-                        case "Fill Water":
-                        {
-                            if (vox.IsEmpty)
-                            {
+                                break;
+                            case "Fill Water":
+                                {
+                                    if (vox.IsEmpty)
+                                    {
                                         var v = vox;
                                         v.WaterCell = new WaterCell
                                         {
                                             Type = LiquidType.Water,
                                             WaterLevel = WaterManager.maxWaterLevel
                                         };
-                            }
-                        }
-                            break;
-                        case "Fill Lava":
-                        {
-                            if (vox.IsEmpty)
-                            {
+                                    }
+                                }
+                                break;
+                            case "Fill Lava":
+                                {
+                                    if (vox.IsEmpty)
+                                    {
                                         var v = vox;
                                         v.WaterCell = new WaterCell
                                         {
                                             Type = LiquidType.Lava,
                                             WaterLevel = WaterManager.maxWaterLevel
                                         };
-                            }
-                        }
-                            break;
-                        case "Fire":
-                        {
-                            foreach(var flam2 in 
-                                Player.World.CollisionManager.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<GameComponent>().SelectMany(c => c.EnumerateAll()).OfType<Flammable>())
-                            {
-                                flam2.Heat = flam2.Flashpoint + 1;
-                            }
-                        }
-                            break;
-                          
-                        case "Kill Things":
-                        {
-                            foreach(var comp in Player.World.CollisionManager.EnumerateIntersectingObjects(
-                                vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<Body>())
-                            {
-                                comp.Die();
-                            }
-                        }
-                            break;
-                        case "Disease":
-                        {
-                            foreach(var comp in Player.World.CollisionManager.EnumerateIntersectingObjects(
-                                vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<Body>())
-                            {
-                                var creature = comp.GetRoot().GetComponent<Creature>();
-                                if (creature != null)
-                                {
-                                    var disease = Datastructures.SelectRandom(DiseaseLibrary.Diseases);
-                                    creature.AcquireDisease(disease.Name);
+                                    }
                                 }
-                            }
-                            break;
+                                break;
+                            case "Fire":
+                                {
+                                    foreach (var flam2 in
+                                        Player.World.CollisionManager.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<GameComponent>().SelectMany(c => c.EnumerateAll()).OfType<Flammable>())
+                                    {
+                                        flam2.Heat = flam2.Flashpoint + 1;
+                                    }
+                                }
+                                break;
+
+                            case "Kill Things":
+                                {
+                                    foreach (var comp in Player.World.CollisionManager.EnumerateIntersectingObjects(
+                                        vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<Body>())
+                                    {
+                                        comp.Die();
+                                    }
+                                }
+                                break;
+                            case "Disease":
+                                {
+                                    foreach (var comp in Player.World.CollisionManager.EnumerateIntersectingObjects(
+                                        vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<Body>())
+                                    {
+                                        var creature = comp.GetRoot().GetComponent<Creature>();
+                                        if (creature != null)
+                                        {
+                                            var disease = Datastructures.SelectRandom(DiseaseLibrary.Diseases);
+                                            creature.AcquireDisease(disease.Name);
+                                        }
+                                    }
+                                    break;
+                                }
+                            default:
+                                break;
                         }
-                        default:
-                            break;
-                    }
                 }
             }
         }

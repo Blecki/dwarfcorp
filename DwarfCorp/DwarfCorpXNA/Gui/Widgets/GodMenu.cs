@@ -58,6 +58,31 @@ namespace DwarfCorp.Gui.Widgets
 
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "DUMP ENTITY JSON",
+                    ExpansionChild = new HorizontalMenuTray.Tray
+                    {
+                        Columns = 5,
+                        ItemSource = EntityFactory.EntityFuncs.Keys.OrderBy(s => s).Select(s =>
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = s,
+                                OnClick = (sender, args) =>
+                                {
+                                    var body = EntityFactory.CreateEntity<Body>(s, Vector3.Zero);
+                                    if (body != null)
+                                    body.PropogateTransforms();
+
+                                    System.IO.Directory.CreateDirectory("DUMPEDENTITIES");
+                                    FileUtils.SaveJSon(body, "DUMPEDENTITIES/" + s + ".json", false);
+
+                                    body.Delete();
+                                }
+                            })
+                    }
+                },
+
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "PLACE",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
