@@ -9,6 +9,13 @@ namespace DwarfCorp
 {
     public class CoinPileFixture : Fixture
     {
+        [EntityFactory("Coins")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new CoinPileFixture(Manager, Position);
+        }
+
+
         private int _frame = -1;
         public void SetFullness(float value)
         {

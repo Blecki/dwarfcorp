@@ -8,9 +8,13 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Stove : Fixture, IUpdateableComponent
     {
+        [EntityFactory("Stove")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Stove(Manager, Position);
+        }
 
         public Stove()
         {
@@ -22,14 +26,6 @@ namespace DwarfCorp
         {
             Name = "Stove";
             Tags.Add("Stove");
-
-
-            /*
-            new LightEmitter("light", this, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 5, 4)
-            {
-                HasMoved = true
-            };
-             */
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)

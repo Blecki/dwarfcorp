@@ -42,6 +42,13 @@ namespace DwarfCorp
 {
     public class Door : CraftedFixture, IUpdateableComponent
     {
+        [EntityFactory("Door")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Door(Manager, Position, Manager.World.PlayerFaction, Data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceType.Wood) }));
+        }
+
+
         public Faction TeamFaction { get; set; }
         public Matrix ClosedTransform { get; set; }
         public Timer OpenTimer { get; set; }

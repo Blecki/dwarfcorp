@@ -11,6 +11,12 @@ namespace DwarfCorp
 {
     public class Bed : Body, IRenderableComponent
     {
+        [EntityFactory("Bed")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Bed(Manager, Position);
+        }
+
         public bool FrustumCull { get { return true; } }
 
         public Bed()

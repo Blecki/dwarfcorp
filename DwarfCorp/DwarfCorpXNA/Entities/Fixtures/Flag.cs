@@ -41,6 +41,12 @@ namespace DwarfCorp
 {
     public class Flag : Body
     {
+        [EntityFactory("Flag")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new DwarfCorp.Flag(Manager, Position, Manager.World.PlayerCompany.Information);
+        }
+
         public CompanyInformation Logo;
 
         public Flag()

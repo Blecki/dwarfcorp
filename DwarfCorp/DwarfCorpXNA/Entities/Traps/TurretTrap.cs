@@ -10,6 +10,12 @@ namespace DwarfCorp
 {
     public class TurretTrap : Body, IUpdateableComponent
     {
+        [EntityFactory("Turret")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new TurretTrap(Manager, Position, Manager.World.PlayerFaction);
+        }
+
         public Attack Weapon { get; set; }
         public Fixture BaseSprite { get; set; }
         public Fixture TurretSprite { get; set; }

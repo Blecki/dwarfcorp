@@ -42,9 +42,22 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Snake : Creature, IUpdateableComponent
     {
+        [EntityFactory("Snake")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Snake(false, Position, Manager, "Snake").Physics;
+        }
+
+        [EntityFactory("Necrosnake")]
+        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            var r = new Snake(true, Position, Manager, "Snake");
+            r.Attacks[0].DiseaseToSpread = "Necrorot";
+            return r.Physics;
+        }
+        
         public class TailSegment
         {
             public Body Sprite;

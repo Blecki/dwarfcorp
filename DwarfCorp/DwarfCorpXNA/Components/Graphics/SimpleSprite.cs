@@ -26,7 +26,9 @@ namespace DwarfCorp
         public float WorldWidth = 1.0f;
         public float WorldHeight = 1.0f;
         private Vector3 prevDistortion = Vector3.Zero;
+        [JsonProperty]
         private SpriteSheet Sheet;
+        [JsonProperty]
         private Point Frame;
         private ExtendedVertex[] Verticies;
         private int[] Indicies;
@@ -99,6 +101,8 @@ namespace DwarfCorp
 
             if (Verticies == null)
             {
+                System.Diagnostics.Debug.Assert(Sheet != null);
+
                 float normalizeX = Sheet.FrameWidth / (float)(Sheet.Width);
                 float normalizeY = Sheet.FrameHeight / (float)(Sheet.Height);
 

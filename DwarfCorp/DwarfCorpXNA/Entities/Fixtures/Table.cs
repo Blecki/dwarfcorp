@@ -43,6 +43,49 @@ namespace DwarfCorp
 {
     public class Table : Body, IUpdateableComponent
     {
+        [EntityFactory("Table")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Table(Manager, Position);
+        }
+
+        [EntityFactory("Kitchen Table")]
+        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Table(Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 7))
+            {
+                Tags = new List<string>() { "Cutting Board" }
+            };
+        }
+
+        [EntityFactory("Books")]
+        private static GameComponent __factory2(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Table(Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 4))
+            {
+                Tags = new List<string>() { "Research" },
+                Battery = new Table.ManaBattery()
+                {
+                    Charge = 0.0f,
+                    MaxCharge = 100.0f
+                }
+            };
+        }
+
+        [EntityFactory("Potions")]
+        private static GameComponent __factory3(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Table(Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4))
+            {
+                Tags = new List<string>() { "Research" },
+                Battery = new Table.ManaBattery()
+                {
+                    Charge = 0.0f,
+                    MaxCharge = 100.0f
+                }
+            };
+        }
+        
         public ManaBattery Battery { get; set; }
         public SpriteSheet fixtureAsset;
         public Point fixtureFrame;

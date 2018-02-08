@@ -41,9 +41,14 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class BearTrap : Body, IUpdateableComponent
     {
+        [EntityFactory("Bear Trap")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new BearTrap(Manager, Position);
+        }
+
         public float DamageAmount { get; set; }
         public Faction Allies { get; set; }
         public bool ShouldDie = false;

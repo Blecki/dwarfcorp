@@ -8,9 +8,15 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Anvil : Fixture
     {
+        [EntityFactory("Anvil")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            // Todo: Can probably eliminate Anvil class entirely!
+            return new Anvil(Manager, Position);
+        }
+
         public Anvil()
         {
             Name = "Anvil";

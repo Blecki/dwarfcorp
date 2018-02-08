@@ -202,9 +202,11 @@
     <Compile Include="ContextCommands\ChopCommand.cs" />
     <Compile Include="ContextCommands\ContextCommand.cs" />
     <Compile Include="Entities\Balloon.cs" />
+    <Compile Include="Entities\Dwarves\DwarfFactory.cs" />
     <Compile Include="Entities\Fixtures\CoinPileFixture.cs" />
     <Compile Include="Entities\Fixtures\Banner.cs" />
     <Compile Include="Entities\Fixtures\Fence.cs" />
+    <Compile Include="Entities\Plants\PlantFactories.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
     <Compile Include="Scripting\Player\Economy\Quantity.cs" />

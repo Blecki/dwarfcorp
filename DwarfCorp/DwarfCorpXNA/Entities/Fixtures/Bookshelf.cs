@@ -9,9 +9,14 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Bookshelf : Body, IRenderableComponent
     {
+        [EntityFactory("Bookshelf")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Bookshelf(Manager, Position) { Tags = new List<string>() { "Research" } };
+        }
+
         public bool FrustumCull { get { return true; } }
 
         public Bookshelf()

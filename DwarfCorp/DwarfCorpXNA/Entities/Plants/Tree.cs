@@ -48,7 +48,7 @@ namespace DwarfCorp
 
         public Tree() { }
 
-        public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceType seed, float treeSize, string seedlingAsset, bool emitWood = true) :
+        public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceType seed, float treeSize, bool emitWood = true) :
             base(manager, name, position, MathFunctions.Rand(-0.1f, 0.1f),
                 new Vector3(
                     PrimitiveLibrary.BatchBillboardPrimitives[asset].Width * 0.75f * treeSize,
@@ -56,7 +56,6 @@ namespace DwarfCorp
                     PrimitiveLibrary.BatchBillboardPrimitives[asset].Width * 0.75f * treeSize),
              asset, treeSize)
         {
-            SeedlingAsset = seedlingAsset;
             HurtTimer = new Timer(1.0f, false);
 
             AddChild(new Health(Manager, "HP", 100.0f * treeSize, 0.0f, 100.0f * treeSize));

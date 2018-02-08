@@ -43,6 +43,12 @@ namespace DwarfCorp
 {
     public class Lamp : Body
     {
+        [EntityFactory("Lamp")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Lamp(Manager, Position);
+        }
+
         public Lamp()
         {
 

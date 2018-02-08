@@ -50,7 +50,6 @@ namespace DwarfCorp
         public Bush(ComponentManager componentManager, Vector3 position, string asset, float bushSize) :
             base(componentManager, "Berry Bush", position, MathFunctions.Rand(-0.1f, 0.1f), new Vector3(bushSize, bushSize, bushSize), asset, bushSize)
         {
-            SeedlingAsset = "berrybushsprout";
             AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(componentManager, "Flames"));
 

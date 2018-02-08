@@ -52,8 +52,6 @@ namespace DwarfCorp
         public Wheat(ComponentManager Manager, Vector3 position) :
             base(Manager, "Wheat", position, MathFunctions.Rand(-0.1f, 0.1f), new Vector3(1.0f, 1.0f, 1.0f),  "wheat", 1.0f)
         {
-            SeedlingAsset = "wheatsprout";
-
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), LocalBoundingBoxOffset)) as Inventory;
 
             for (int i = 0; i < MathFunctions.RandInt(1, 5); i++)

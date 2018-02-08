@@ -53,11 +53,10 @@ namespace DwarfCorp
                         Vector3 position, 
                         string asset, 
                         ResourceType resource, 
-                        int numRelease, bool selfIlluminate, string seedlingsheet) :
+                        int numRelease, bool selfIlluminate) :
             base(Manager, "Mushroom", position, MathFunctions.Rand(-0.1f, 0.1f), new Vector3(1.0f, 1.0f, 1.0f), 
                 System.IO.Path.GetFileName(asset), 1.0f)
         {
-            SeedlingAsset = seedlingsheet;
 
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), LocalBoundingBoxOffset)) as Inventory;
 

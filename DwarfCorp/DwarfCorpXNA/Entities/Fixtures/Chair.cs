@@ -11,9 +11,14 @@ using Newtonsoft.Json.Serialization;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Chair : Body
     {
+        [EntityFactory("Chair")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Chair(Manager, Position);
+        }
+
         private void Initialize(ComponentManager manager)
         {
             Tags.Add("Chair");

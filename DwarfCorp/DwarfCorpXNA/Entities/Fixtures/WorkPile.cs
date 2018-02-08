@@ -42,6 +42,12 @@ namespace DwarfCorp
 {
     public class WorkPile : Fixture
     {
+        [EntityFactory("Work Pile")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new WorkPile(Manager, Position);
+        }
+
         public WorkPile()
         {
             Name = "Workpile";

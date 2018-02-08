@@ -42,13 +42,15 @@ using System.Text;
 
 namespace DwarfCorp
 {
-
-    [JsonObject(IsReference = true)]
     public class Deer : Creature
     {
-        private float ANIM_SPEED = 5.0f;
-        public SpriteSheet SpriteAssets { get; set; }
+        [EntityFactory("Deer")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Deer(ContentPaths.Entities.Animals.Deer.deer, Position, Manager, "Deer");
+        }
 
+        public SpriteSheet SpriteAssets { get; set; }
 
         public Deer()
         {

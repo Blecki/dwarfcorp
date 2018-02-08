@@ -49,7 +49,6 @@ namespace DwarfCorp
             base(Manager, "Pumpkin", position, 0.0f, new Vector3(bushSize, bushSize, bushSize), asset, bushSize)
         {
             LocalBoundingBoxOffset = Vector3.Zero;
-            SeedlingAsset = "pumpkinvinesprout";
             AddChild(new Health(Manager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(Manager, "Flames"));
 

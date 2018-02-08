@@ -476,6 +476,7 @@ namespace DwarfCorp
                     public static string bird7 = ProgramData.CreatePath("Entities", "Animals", "Birds", "bird7");
 
                     // Generates a random bird asset string from bird0 to bird7.
+                    // Todo: Should belong to bird type, not contentpaths.
                     public static string GetRandomBird()
                     {
                         return bird_prefix + MathFunctions.Random.Next(8);

@@ -8,9 +8,14 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Barrel : Fixture
     {
+        [EntityFactory("Barrel")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Barrel(Manager, Position);
+        }
+
         public Barrel()
         {
             Name = "Barrel";

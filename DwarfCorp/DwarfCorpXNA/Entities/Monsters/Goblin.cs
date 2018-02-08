@@ -47,6 +47,19 @@ namespace DwarfCorp
     /// </summary>
     public class Goblin : Creature
     {
+        [EntityFactory("Goblin")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Goblin(
+                new CreatureStats(new SwordGoblinClass(), 0),
+                "Goblins",
+                Manager.World.PlanService,
+                Manager.World.Factions.Factions["Goblins"],
+                Manager,
+                "Goblin",
+                Position).Physics;
+        }
+
         public Goblin()
         {
             

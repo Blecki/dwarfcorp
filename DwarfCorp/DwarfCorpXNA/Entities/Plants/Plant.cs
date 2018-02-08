@@ -44,7 +44,6 @@ namespace DwarfCorp
 {
     public class Plant : Body
     {
-        public String SeedlingAsset { get; set; }
         public int GrowthHours { get; set; }
         public bool IsGrown { get; set; }
         public string MeshAsset { get; set; }

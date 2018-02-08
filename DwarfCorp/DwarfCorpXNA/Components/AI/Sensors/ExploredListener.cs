@@ -49,7 +49,12 @@ namespace DwarfCorp
         public Vector3 SpawnLocation { get; set; }
         public Blackboard BlackboardData { get; set; }
 
-       public ExploredListener(ComponentManager Manager, VoxelHandle Voxel) :
+        public ExploredListener()
+        {
+
+        }
+
+        public ExploredListener(ComponentManager Manager, VoxelHandle Voxel) :
             base(Manager, "ExplorationSpawner", Matrix.CreateTranslation(Voxel.GetBoundingBox().Center()), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero, true)
         {
             this.Voxel = Voxel;

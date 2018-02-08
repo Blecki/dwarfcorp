@@ -69,7 +69,7 @@ namespace DwarfCorp
                 LightsWithVoxels = false,
                 OrientationType = SimpleSprite.OrientMode.Fixed
             }
-            );
+            );//.SetFlag(Flag.ShouldSerialize, false);
             base.CreateCosmeticChildren(Manager);
         }
     }

@@ -48,7 +48,6 @@ namespace DwarfCorp
         public Cactus(ComponentManager Manager, Vector3 position, string asset, float bushSize) :
             base(Manager, "Cactus", position, MathFunctions.Rand(-0.1f, 0.1f), new Vector3(bushSize, bushSize, bushSize),  asset, bushSize)
         {
-            SeedlingAsset = "cactussprout";
             AddChild(new Health(Manager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(Manager, "Flames"));
 

@@ -11,9 +11,19 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Rabbit : Creature
     {
+        [EntityFactory("Brown Rabbit")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit0_animation, Position, Manager, "Brown Rabbit");
+        }
+
+        [EntityFactory("White Rabbit")]
+        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit1_animation, Position, Manager, "White Rabbit");
+        }
 
         public string SpriteAsset { get; set; }
 

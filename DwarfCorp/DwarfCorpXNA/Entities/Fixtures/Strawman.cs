@@ -40,9 +40,25 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Strawman : Fixture
     {
+        [EntityFactory("Strawman")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            switch (MathFunctions.RandInt(0, 3))
+            {
+                case 0:
+                    return new Strawman(Manager, Position);
+                case 1:
+                    return new WeightRack(Manager, Position);
+                case 2:
+                    return new PunchingBag(Manager, Position);
+                default:
+                    return new Strawman(Manager, Position);
+            }
+        }
+
+
         public Strawman()
         {
 
