@@ -26,7 +26,9 @@ namespace DwarfCorp
         public float WorldWidth = 1.0f;
         public float WorldHeight = 1.0f;
         private Vector3 prevDistortion = Vector3.Zero;
+        [JsonProperty]
         private SpriteSheet Sheet;
+        [JsonProperty]
         private Point Frame;
         private ExtendedVertex[] Verticies;
         private int[] Indicies;
@@ -95,6 +97,9 @@ namespace DwarfCorp
             bool renderingForWater)
         {
             if (!IsVisible)
+                return;
+
+            if (Sheet == null)
                 return;
 
             if (Verticies == null)
