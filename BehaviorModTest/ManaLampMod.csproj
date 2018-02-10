@@ -7,8 +7,8 @@
     <ProjectGuid>{4ABBE531-752D-4CD7-8BFA-8ED5C46D0C9B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BehaviorModTest</RootNamespace>
-    <AssemblyName>BehaviorModTest</AssemblyName>
+    <RootNamespace>ManaLampMod</RootNamespace>
+    <AssemblyName>ManaLampMod</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="ManaLamp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

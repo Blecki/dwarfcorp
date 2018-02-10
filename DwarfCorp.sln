@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibNoise", "DwarfCorp\LibNo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABTest", "ABTest\ABTest.csproj", "{6ACEB053-125E-4C17-9515-16B2776274F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BehaviorModTest", "BehaviorModTest\BehaviorModTest.csproj", "{4ABBE531-752D-4CD7-8BFA-8ED5C46D0C9B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManaLampMod", "BehaviorModTest\ManaLampMod.csproj", "{4ABBE531-752D-4CD7-8BFA-8ED5C46D0C9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

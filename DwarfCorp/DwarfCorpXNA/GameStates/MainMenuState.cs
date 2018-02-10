@@ -66,7 +66,7 @@ namespace DwarfCorp.GameStates
 
             return GuiRoot.RootItem.AddChild(new Gui.Widget
             {
-                MinimumSize = new Point(400, 250),
+                MinimumSize = new Point(400, 280),
                 Font = "font18-outline",
                 Border = "basic",
                 Background = new TileReference("sbasic", 0),

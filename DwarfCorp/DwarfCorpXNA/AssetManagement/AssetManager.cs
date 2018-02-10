@@ -68,9 +68,10 @@ namespace DwarfCorp
             Assemblies.Add(Assembly.GetExecutingAssembly());
 
             foreach (var mod in EnumerateModDirectories(Settings))
-                foreach (var file in System.IO.Directory.EnumerateFiles(mod))
-                    if (System.IO.Path.GetExtension(file) == ".dll")
-                        Assemblies.Add(Assembly.LoadFile(System.IO.Path.GetFullPath(file)));
+                if (System.IO.Directory.Exists(mod))
+                    foreach (var file in System.IO.Directory.EnumerateFiles(mod))
+                        if (System.IO.Path.GetExtension(file) == ".dll")
+                            Assemblies.Add(Assembly.LoadFile(System.IO.Path.GetFullPath(file)));
         }
 
         public static IEnumerable<Assembly> EnumerateLoadedModAssemblies()
