@@ -102,6 +102,12 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>DwarfCorpKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -203,6 +209,7 @@
     <Compile Include="ContextCommands\ContextCommand.cs" />
     <Compile Include="Entities\Balloon.cs" />
     <Compile Include="Entities\Dwarves\DwarfFactory.cs" />
+    <Compile Include="Entities\DebugFactories.cs" />
     <Compile Include="Entities\Fixtures\CoinPileFixture.cs" />
     <Compile Include="Entities\Fixtures\Banner.cs" />
     <Compile Include="Entities\Fixtures\Fence.cs" />
@@ -822,6 +829,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="DwarfCorpKey.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

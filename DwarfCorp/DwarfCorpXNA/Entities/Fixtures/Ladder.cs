@@ -41,6 +41,15 @@ namespace DwarfCorp
 {
     public class Ladder : CraftedFixture
     {
+        [EntityFactory("Ladder")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Ladder(
+                Manager,
+                Position,
+                Data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceType.Wood) }));
+        }
+
         protected static Dictionary<Resource.ResourceTags, Point> Sprites = new Dictionary<Resource.ResourceTags, Point>()
         {
             {

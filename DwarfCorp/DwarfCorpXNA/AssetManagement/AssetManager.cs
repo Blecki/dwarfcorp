@@ -38,6 +38,10 @@ using System.Linq;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Reflection;
+using System.Security;
+using System.Security.Policy;
+using System.Security.Permissions;
 
 namespace DwarfCorp
 {
@@ -54,12 +58,32 @@ namespace DwarfCorp
         private static Dictionary<String, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
         private static ContentManager Content;
         private static GraphicsDevice Graphics;
+        private static List<Assembly> Assemblies = new List<Assembly>();
 
-        public static void Initialize(ContentManager Content, GraphicsDevice Graphics)
+        public static void Initialize(ContentManager Content, GraphicsDevice Graphics, GameSettings.Settings Settings)
         {
             AssetManager.Content = Content;
             AssetManager.Graphics = Graphics;
 
+            Assemblies.Add(Assembly.GetExecutingAssembly());
+
+            foreach (var mod in EnumerateModDirectories(Settings))
+                foreach (var file in System.IO.Directory.EnumerateFiles(mod))
+                    if (System.IO.Path.GetExtension(file) == ".dll")
+                        Assemblies.Add(Assembly.LoadFile(System.IO.Path.GetFullPath(file)));
+        }
+
+        public static IEnumerable<Assembly> EnumerateLoadedModAssemblies()
+        {
+            return Assemblies;
+        }
+
+        private static IEnumerable<String> EnumerateModDirectories(GameSettings.Settings Settings)
+        {
+            var searchList = Settings.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
+            searchList.Reverse();
+            searchList.Add("Content");
+            return searchList;
         }
 
         public static string ReverseLookup(Texture2D Texture)
@@ -77,11 +101,7 @@ namespace DwarfCorp
             else
                 extensionList.Add("");
 
-            var searchList = GameSettings.Default.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
-            searchList.Reverse();
-            searchList.Add("Content");
-
-            foreach (var mod in searchList)
+            foreach (var mod in EnumerateModDirectories(GameSettings.Default))
             {
                 foreach (var extension in extensionList)
                 {

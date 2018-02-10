@@ -1,4 +1,4 @@
-// Projectile.cs
+// EntityFactory.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -33,41 +33,33 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
+using System.Reflection;
 
 namespace DwarfCorp
 {
-    public class BulletProjectile : Projectile
+    public static class DebugDactories
     {
-        [EntityFactory("Bullet")]
+        [EntityFactory("RandTrinket")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new BulletProjectile(
-                Manager,
-                Position,
-                Data.GetData("Velocity", Vector3.Up * 10 * MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)),
-                Data.GetData<Body>("Target", null));
+            var randResource = ResourceLibrary.GenerateTrinket(Datastructures.SelectRandom(ResourceLibrary.Resources.Where(r => r.Value.Tags.Contains(Resource.ResourceTags.Material))).Key, MathFunctions.Rand(0.1f, 3.5f));
+
+            if (MathFunctions.RandEvent(0.5f))
+                randResource = ResourceLibrary.EncrustTrinket(randResource.Name, Datastructures.SelectRandom(ResourceLibrary.Resources.Where(r => r.Value.Tags.Contains(Resource.ResourceTags.Gem))).Key);
+
+            return new ResourceEntity(Manager, new ResourceAmount(randResource.Name), Position);
         }
 
-        public BulletProjectile()
+        [EntityFactory("RandFood")]
+        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-
-        }
-
-        public BulletProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
-            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Particles.stone_particle, null, ContentPaths.Audio.Oscar.sfx_ic_dwarf_musket_bullet_explode_1, target)
-        {
-            HitAnimation = AnimationLibrary.CreateSimpleAnimation(ContentPaths.Effects.explode);
-        }
-
-        public override void CreateCosmeticChildren(ComponentManager Manager)
-        {
-            base.CreateCosmeticChildren(Manager);
-            HitAnimation = AnimationLibrary.CreateSimpleAnimation(ContentPaths.Effects.explode);
+            IEnumerable<Resource> foods = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.RawFood);
+            Resource randresource = ResourceLibrary.CreateMeal(Datastructures.SelectRandom(foods).Name, Datastructures.SelectRandom(foods).Name);
+            return new ResourceEntity(Manager, new ResourceAmount(randresource.Name), Position);
         }
     }
 }

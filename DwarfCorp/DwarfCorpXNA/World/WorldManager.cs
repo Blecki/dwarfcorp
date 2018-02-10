@@ -322,6 +322,15 @@ namespace DwarfCorp
         // event that is called when the player loses in the world
         public delegate void OnLose();
         public event OnLose OnLoseEvent;
+
+        // Lazy actions - needed occasionally to spawn entities from threads among other things.
+        private static List<Action> LazyActions = new List<Action>();
+
+        public static void DoLazy(Action action)
+        {
+            LazyActions.Add(action);
+        }
+
         #endregion
 
         /// <summary>
@@ -416,7 +425,13 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void Update(DwarfTime gameTime)
         {
-            EntityFactory.DoLazyActions();
+            foreach (var func in LazyActions)
+            {
+                if (func != null)
+                    func.Invoke();
+            }
+            LazyActions.Clear();
+
             if (FastForwardToDay)
             {
                 if (Time.IsDay())

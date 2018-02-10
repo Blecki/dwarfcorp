@@ -47,7 +47,7 @@ namespace DwarfCorp.Gui.Widgets
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
                         Columns = 5,
-                        ItemSource = EntityFactory.EntityFuncs.Keys.OrderBy(s => s).Select(s =>
+                        ItemSource = EntityFactory.EnumerateEntityTypes().OrderBy(s => s).Select(s =>
                             new HorizontalMenuTray.MenuItem
                             {
                                 Text = s,
@@ -62,7 +62,7 @@ namespace DwarfCorp.Gui.Widgets
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
                         Columns = 5,
-                        ItemSource = EntityFactory.EntityFuncs.Keys.OrderBy(s => s).Select(s =>
+                        ItemSource = EntityFactory.EnumerateEntityTypes().OrderBy(s => s).Select(s =>
                             new HorizontalMenuTray.MenuItem
                             {
                                 Text = s,
@@ -228,12 +228,10 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "SPAWN TEST",
                     OnClick = (sender, args) =>
                     {
-                        var keys = EntityFactory.EntityFuncs.Keys.ToList();
+                        // Todo: Figure out why the container gets MODIFIED during this.
+                        var keys = EntityFactory.EnumerateEntityTypes().ToList();
                         foreach(var key in keys)
-                        {
                             EntityFactory.CreateEntity<GameComponent>(key, Master.World.CursorLightPos);
-                        }
-
                     }
                 },
 

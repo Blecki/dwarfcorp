@@ -441,15 +441,13 @@ namespace DwarfCorp
                     continue;
                 }
 
-
-
                 if (!vUnder.IsEmpty && vUnder.Type.Name == biome.SoilLayer.VoxelType)
                 {
                     vUnder.RawSetType(VoxelLibrary.GetVoxelType(biome.SoilLayer.VoxelType));
                     vUnder.RawSetGrass(0);
                     float treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
 
-                    EntityFactory.DoLazy(() =>
+                    WorldManager.DoLazy(() =>
                     {
                         if (!GameSettings.Default.FogofWar)
                         {
@@ -477,7 +475,7 @@ namespace DwarfCorp
                     continue;
 
                 FaunaData animal1 = animal;
-                EntityFactory.DoLazy(() =>
+                WorldManager.DoLazy(() =>
                 {
                     if (!GameSettings.Default.FogofWar)
                     {
