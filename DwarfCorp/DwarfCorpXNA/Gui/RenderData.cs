@@ -42,10 +42,10 @@ namespace DwarfCorp.Gui
 
             // Todo: Better modding = list of named things.
             // Load skin from disc. The skin is a set of tilesheets.
-            var skin = FileUtils.LoadJsonFromResolvedPath<JsonTileSheetSet>(ContentPaths.GUI.Skin);
+            var sheets = FileUtils.LoadJsonListFromMultipleSources<JsonTileSheet>(ContentPaths.GUI.Skin, null, (s) => s.Name);
 
             // Pack skin into a single texture - Build atlas information from texture sizes.
-            var atlas = TextureAtlas.Compiler.Compile(skin.Sheets.Select(s =>
+            var atlas = TextureAtlas.Compiler.Compile(sheets.Select(s =>
                 {
                     var realTexture = AssetManager.GetContentTexture(s.Texture);
                     return new TextureAtlas.Entry

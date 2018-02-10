@@ -25,9 +25,4 @@ namespace DwarfCorp.Gui
         public JsonTileSheetType Type = JsonTileSheetType.TileSheet;
         public bool RepeatWhenUsedAsBorder = false;
     }
-    
-    public class JsonTileSheetSet
-    {
-        public List<JsonTileSheet> Sheets;
-    }
 }

@@ -53,5 +53,12 @@
       <Name>DwarfCorpXNA</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="craft-items.json" />
+    <None Include="sheets.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="mana-lamp.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
