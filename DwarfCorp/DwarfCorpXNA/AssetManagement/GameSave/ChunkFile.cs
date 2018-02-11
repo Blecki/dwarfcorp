@@ -151,7 +151,8 @@ namespace DwarfCorp
                 }                
             }
 
-            Explored.CopyTo(c.Data.IsExplored, 0);
+            if (Explored != null)
+                Explored.CopyTo(c.Data.IsExplored, 0);
             // Separate loop for cache effeciency
             for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
             {
@@ -163,9 +164,12 @@ namespace DwarfCorp
                     c.Data.LiquidPresent[(i >> VoxelConstants.ZDivShift) >> VoxelConstants.XDivShift] += 1;
             }
 
-            GrassType.CopyTo(c.Data.GrassType, 0);
-            GrassDecay.CopyTo(c.Data.GrassDecay, 0);
-            Decals.CopyTo(c.Data.Decals, 0);
+            if (GrassType != null)
+                GrassType.CopyTo(c.Data.GrassType, 0);
+            if (GrassDecay != null)
+                GrassDecay.CopyTo(c.Data.GrassDecay, 0);
+            if (Decals != null)
+                Decals.CopyTo(c.Data.Decals, 0);
 
             c.CalculateInitialSunlight();
             return c;
