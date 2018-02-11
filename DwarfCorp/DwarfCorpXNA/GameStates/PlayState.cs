@@ -1328,7 +1328,10 @@ namespace DwarfCorp.GameStates
                                     return;
                                 sender.Parent.Hidden = true;
                                 var assignments = new List<Task>();
-                                assignments.Add(new CraftResourceTask(data, buildInfo.GetNumRepeats(), buildInfo.GetSelectedResources()));
+                                for (int i = 0; i < buildInfo.GetNumRepeats(); i++)
+                                {
+                                    assignments.Add(new CraftResourceTask(data, 1, buildInfo.GetSelectedResources()));
+                                }
                                 World.Master.TaskManager.AddTasks(assignments);
                                 World.ShowToolPopup(data.CurrentVerb + " " + buildInfo.GetNumRepeats() + " " + data.Name);
                                 World.Tutorial("build crafts");
