@@ -763,7 +763,7 @@ namespace DwarfCorp
                         .Where(d =>
                         {
                             var farm = d.Tag as FarmTile;
-                            return farm.PlantExists() && farm.Plant.IsGrown && !farm.IsCanceled;
+                            return farm.PlantExists() && farm.Plant.IsGrown;
                         })
                         .Select(d => d.Tag as FarmTile)
                         .FirstOrDefault();
@@ -797,9 +797,8 @@ namespace DwarfCorp
                             Creature.Faction.Designations.RemoveVoxelDesignation(plantablePlot.Voxel, DesignationType._AllFarms);
                             Creature.Faction.Designations.AddVoxelDesignation(plantablePlot.Voxel, DesignationType.Plant, plantablePlot);
 
-                            var task = new FarmTask(plantablePlot)
+                            var task = new FarmTask(plantablePlot, FarmAct.FarmMode.Plant)
                             {
-                                Mode = FarmAct.FarmMode.Plant,
                                 Category = Task.TaskCategory.Plant,
                                 Plant = plantablePlot.PlantedType,
                                 RequiredResources = new List<ResourceAmount>

@@ -45,7 +45,7 @@ namespace DwarfCorp
         public Plant Plant = null;
         public float Progress = 0.0f;
         public CreatureAI Farmer = null;
-        public bool IsCanceled = false;
+        public bool IsCanceled { get { return false; } set { } } 
         public string PlantedType = null;
         public DesignationType ActiveDesignations = DesignationType._None;
 

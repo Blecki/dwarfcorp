@@ -98,8 +98,8 @@ namespace DwarfCorp
             
             if (designation == null)
             {
-                Player.World.ShowToolPopup("This is not a farm.");
-                return false;
+                Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType._InactiveFarm, new FarmTile() { Voxel = voxel });
+                designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType._AllFarms) as FarmTile;
             }
 
             if (designation != null && designation.PlantExists())
@@ -154,9 +154,8 @@ namespace DwarfCorp
                         Player.Faction.Designations.RemoveVoxelDesignation(voxel, DesignationType._AllFarms);
                         Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Plant, existingTile);
 
-                        goals.Add(new FarmTask(existingTile)
+                        goals.Add(new FarmTask(existingTile, FarmAct.FarmMode.Plant)
                         {
-                            Mode = FarmAct.FarmMode.Plant,
                             Category = Task.TaskCategory.Plant,
                             Plant = PlantType,
                             RequiredResources = RequiredResources
@@ -193,7 +192,6 @@ namespace DwarfCorp
                     if (existingFarmTile != null)
                     {
                         // Cancel and revert to inactive designation type.
-                        existingFarmTile.IsCanceled = true;
                         existingFarmTile.Farmer = null;
                         Player.Faction.Designations.RemoveVoxelDesignation(existingFarmTile.Voxel, DesignationType._AllFarms);
                         Player.Faction.Designations.AddVoxelDesignation(existingFarmTile.Voxel, DesignationType._InactiveFarm, existingFarmTile);
