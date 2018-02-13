@@ -4,10 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-/*
- *  Encodes disc format of JSON skin file.
- */
-
 namespace DwarfCorp.Gui
 {
     public enum JsonTileSheetType

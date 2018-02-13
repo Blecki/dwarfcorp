@@ -97,8 +97,7 @@ namespace DwarfCorp
                 return _cachedCreature;
             }
         }
-        /// <summary> If this is set to true, the creature will draw the path it is following </summary>
-        public bool DrawPath { get { return GameSettings.Default.DrawPaths; }}
+
         /// <summary> The gather manager handles gathering/building tasks </summary>
         public GatherManager GatherManager { get; set; }
         /// <summary> When this timer times out, the creature will awake from Idle mode and attempt to find something to do </summary>
@@ -411,7 +410,7 @@ namespace DwarfCorp
             if (!Active)
                 return;
 
-            if (DrawPath)
+            if (Debugger.Switches.DrawPaths)
             {
                 StringBuilder taskString = new StringBuilder();
                 foreach (var task in Tasks)

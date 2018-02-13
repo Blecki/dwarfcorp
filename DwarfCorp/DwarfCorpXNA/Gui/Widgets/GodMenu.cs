@@ -29,6 +29,22 @@ namespace DwarfCorp.Gui.Widgets
                 },
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "DEBUG",
+                    ExpansionChild = new HorizontalMenuTray.Tray
+                    {
+                        ItemSize = new Point(200, 20),
+                        ItemSource = Debugger.EnumerateSwitches().Select(s =>
+                        new HorizontalMenuTray.CheckboxMenuItem
+                        {
+                            // Todo: Add spaces before capitals.
+                            Text = s.Name,
+                            InitialState = s.State,
+                            SetCallback = s.Set
+                        })
+                    }
+                },
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "BUILD",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
@@ -83,7 +99,7 @@ namespace DwarfCorp.Gui.Widgets
 
                 new HorizontalMenuTray.MenuItem
                 {
-                    Text = "PLACE",
+                    Text = "PLACE BLOCK",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
                         Columns = 3,
@@ -234,24 +250,6 @@ namespace DwarfCorp.Gui.Widgets
                             EntityFactory.CreateEntity<GameComponent>(key, Master.World.CursorLightPos);
                     }
                 },
-
-                // Shouldn't this go into some kind of 'debug' menu?
-                new HorizontalMenuTray.MenuItem
-                {
-                    Text = "DRAW PATHS",
-                    OnClick = (sender, args) =>
-                    {
-                        GameSettings.Default.DrawPaths = !GameSettings.Default.DrawPaths;
-                    }
-                },
-                new HorizontalMenuTray.MenuItem
-                {
-                    Text = "DRAW OCTTREE",
-                    OnClick = (sender, args) =>
-                    {
-                        GameSettings.Default.DrawOcttree = !GameSettings.Default.DrawOcttree;
-                    }
-                },
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "+1 HOUR",
@@ -284,29 +282,7 @@ namespace DwarfCorp.Gui.Widgets
                         storm.TypeofStorm = StormType.SnowStorm;
                         storm.Start();
                     }
-                },
-                new HorizontalMenuTray.MenuItem
-                {
-                    Text = "SCAN OCTTREE",
-                    OnClick = (sender, args) =>
-                    {
-                        var deadObjectsInTree = Master.World.CollisionManager.EnumerateAll().OfType<GameComponent>().Where(c => c.IsDead);
-                        var dict = new Dictionary<String, int>();
-                        foreach (var item in deadObjectsInTree)
-                        {
-                            if (!dict.ContainsKey(item.ToString()))
-                                dict.Add(item.ToString(), 1);
-                            else
-                                dict[item.ToString()] += 1;
-                        }
-
-                        Root.ShowModalPopup(Root.ConstructWidget(new Popup {
-                            Rect = Root.RenderData.VirtualScreen,
-                            Text = String.Join("\n", dict.Select(k => String.Format("{0} - {1}", k.Value, k.Key)))
-                        }));
-                    }
-                },
-
+                }
             };
 
             base.Construct();

@@ -22,7 +22,15 @@ namespace DwarfCorp.Gui.Widgets
         public bool CheckState 
         {
             get { return _checkState; }
-            set { _checkState = value; Root.SafeCall(OnCheckStateChange, this); Invalidate(); }
+            set {
+                _checkState = value;
+
+                if (Root != null) // If root is null, this must be being set as part of construction and events should not fire.
+                {
+                    Root.SafeCall(OnCheckStateChange, this);
+                    Invalidate();
+                }
+            }
         }
 
         public void SilentSetCheckState(bool NewState)

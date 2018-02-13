@@ -59,6 +59,9 @@ namespace DwarfCorp.Rail
                 var data = FileUtils.LoadJsonFromResolvedPath<Data>(ContentPaths.rail_junctions);
                 Patterns = data.Patterns;
                 Pieces = data.Pieces;
+
+                foreach (var piece in Pieces)
+                    piece.ComputeConnections();
             }
         }
 

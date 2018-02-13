@@ -421,7 +421,7 @@ namespace DwarfCorp
                     yield return Status.Running;
                 }
 
-                if (Agent.DrawPath)
+                if (Debugger.Switches.DrawPaths)
                 {
                     List<Vector3> points =
                         Path.Select(

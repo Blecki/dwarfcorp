@@ -38,13 +38,16 @@ using System.Collections.Generic;
 
 namespace DwarfCorp.Rail
 {
-    public class RailEntity : Body
-#if DEBUG
-        , IRenderableComponent
-#endif
+    public class RailEntity : Body, IRenderableComponent
     {
+        public class NeighborConnection
+        {
+            public uint NeighborID;
+        }
+
         public JunctionPiece Piece { get; private set; }
         private VoxelHandle Location;
+        private List<NeighborConnection> NeighborRails = new List<NeighborConnection>();
         
         public RailEntity()
         {
@@ -102,31 +105,115 @@ namespace DwarfCorp.Rail
             UpdatePiece(Piece, Location);
         }
 
-#if DEBUG
         override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
 
-            if (GamePerformance.DebugVisualizationEnabled)
+            if (Debugger.Switches.DrawRailNetwork)
             {
                 var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
                 var piece = Rail.RailLibrary.GetRailPiece(Piece.RailPiece);
+
                 foreach (var spline in piece.SplinePoints)
                     for (var i = 1; i < spline.Count; ++i)
                         Drawer3D.DrawLine(Vector3.Transform(spline[i - 1], transform),
                             Vector3.Transform(spline[i], transform), Color.Purple, 0.1f);
+
+                foreach (var connection in piece.EnumerateConnections())
+                    Drawer3D.DrawLine(Vector3.Transform(connection.Item1, transform) + new Vector3(0.0f, 0.2f, 0.0f),
+                        Vector3.Transform(connection.Item2, transform) + new Vector3(0.0f, 0.2f, 0.0f),
+                        Color.Brown, 0.1f);
+
+
+                foreach (var neighborConnection in NeighborRails)
+                {
+                    var neighbor = Manager.FindComponent(neighborConnection.NeighborID);
+                    if (neighbor == null)
+                        Drawer3D.DrawLine(Position, Position + Vector3.UnitY, Color.CornflowerBlue, 0.1f);
+                    else
+                        Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.5f, 0.0f), (neighbor as Body).Position + new Vector3(0.0f, 0.5f, 0.0f), Color.Teal, 0.1f);
+                }
             }
         }
-#endif
 
         public List<List<Vector3>> GetTransformedSplines()
         {
             var piece = RailLibrary.GetRailPiece(Piece.RailPiece);
-            return piece.SplinePoints.Select(s => s.Select(p => Vector3.Transform(p, GlobalTransform)).ToList()).ToList();
+            var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
+            return piece.SplinePoints.Select(s => s.Select(p => Vector3.Transform(p, transform)).ToList()).ToList();
+        }
+
+        public List<Tuple<Vector3, Vector3>> GetTransformedConnections()
+        {
+            var piece = RailLibrary.GetRailPiece(Piece.RailPiece);
+            var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
+            return piece.EnumerateConnections().Select(l => Tuple.Create(Vector3.Transform(l.Item1, transform), Vector3.Transform(l.Item2, transform))).ToList();
+        }
+
+        private void DetachFromNeighbors()
+        {
+            foreach (var neighbor in NeighborRails.Select(connection => Manager.FindComponent(connection.NeighborID)))
+            {
+                if (neighbor is RailEntity)
+                    (neighbor as RailEntity).DetachNeighbor(this.GlobalID);
+            }
+
+            NeighborRails.Clear();
+        }
+
+        private void DetachNeighbor(uint ID)
+        {
+            NeighborRails.RemoveAll(connection => connection.NeighborID == ID);
+        }
+
+        private void AttachToNeighbors()
+        {
+            System.Diagnostics.Debug.Assert(NeighborRails.Count == 0);
+
+            var myEndPoints = GetTransformedConnections().SelectMany(l => new Vector3[] { l.Item1, l.Item2 });
+            foreach (var entity in Manager.World.CollisionManager.EnumerateIntersectingObjects(this.BoundingBox.Expand(0.5f), CollisionManager.CollisionType.Both))
+            {
+                if (Object.ReferenceEquals(entity, this)) continue;
+                var neighborRail = entity as RailEntity;
+                if (neighborRail == null) continue;
+                var neighborEndPoints = neighborRail.GetTransformedConnections().SelectMany(l => new Vector3[] { l.Item1, l.Item2 });
+                foreach (var point in myEndPoints)
+                    foreach (var nPoint in neighborEndPoints)
+                        if ((nPoint - point).LengthSquared() < 0.01f)
+                        {
+                            // Todo: Record which entrance point matched - need to be able to map back to a connection so the pather can tell which branches are allowed when entering tile from neighbor.
+                            AttachNeighbor(neighborRail.GlobalID);
+                            neighborRail.AttachNeighbor(this.GlobalID);
+                            goto __CONTINUE;
+                        }
+                __CONTINUE: ;
+            }
+        }
+
+        private void AttachNeighbor(uint ID)
+        {
+            NeighborRails.Add(new NeighborConnection
+            {
+                NeighborID = ID,
+            });
+        }
+
+        public override void Delete()
+        {
+            base.Delete();
+            DetachFromNeighbors();
+        }
+
+        public override void Die()
+        {
+            base.Die();
+            DetachFromNeighbors();
         }
 
         public void UpdatePiece(JunctionPiece Piece, VoxelHandle Location)
         {
+            DetachFromNeighbors();
+
             this.Piece = Piece;
             this.Location = Location;
 
@@ -162,6 +249,8 @@ namespace DwarfCorp.Rail
 
             // Hack to make the listener update it's damn bounding box
             EnumerateChildren().OfType<GenericVoxelListener>().FirstOrDefault().LocalTransform = Matrix.Identity;
+
+            AttachToNeighbors();
         }
     }
 }

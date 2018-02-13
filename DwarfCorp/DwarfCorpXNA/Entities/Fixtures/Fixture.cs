@@ -40,11 +40,10 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Fixture : Body
     {
-        public SpriteSheet Asset { get; set; }
-        public Point Frame { get; set; }
+        public SpriteSheet Asset;
+        public Point Frame;
         public SimpleSprite.OrientMode OrientMode = SimpleSprite.OrientMode.Spherical;
 
         public Fixture()
@@ -58,33 +57,38 @@ namespace DwarfCorp
             SpriteSheet asset, 
             Point frame,
             SimpleSprite.OrientMode OrientMode = SimpleSprite.OrientMode.Spherical) :
-            base(Manager, "Fixture", Matrix.CreateTranslation(position), 
-                new Vector3(asset.FrameWidth * (1.0f / 32.0f), 
-                            asset.FrameHeight * (1.0f / 32.0f), 
-                            asset.FrameWidth * (1.0f / 32.0f)) * 0.9f, Vector3.Zero, true)
+            base(
+                Manager, 
+                "Fixture", 
+                Matrix.CreateTranslation(position), 
+                new Vector3(asset.FrameWidth / 32.0f, asset.FrameHeight / 32.0f, asset.FrameWidth / 32.0f) * 0.9f, 
+                Vector3.Zero, true)
         {
             Asset = asset;
             Frame = frame;
             CollisionType = CollisionManager.CollisionType.Static;
             this.OrientMode = OrientMode;
+
             AddChild(new Health(Manager, "Hp", 100, 0, 100));
 
             PropogateTransforms();
             CreateCosmeticChildren(Manager);
         }
 
-        public void ResetSprite(SpriteSheet asset, Point frame)
-        {
-            Asset = asset;
-            Frame = frame;
-            var childrenToKill = Children.OfType<SimpleSprite>().ToList();
-            foreach(var child in childrenToKill)
-            {
-                child.Delete();
-            }
-            CreateCosmeticChildren(Manager);
+        public Fixture(
+            String Name,
+            IEnumerable<String> Tags,
+            ComponentManager Manager,
+            Vector3 position,
+            SpriteSheet asset,
+            Point frame,
+            SimpleSprite.OrientMode OrientMode = SimpleSprite.OrientMode.Spherical) :
+            this(Manager, position, asset, frame, OrientMode)
+        { 
+            this.Name = Name;
+            this.Tags.AddRange(Tags);
         }
-
+        
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             base.CreateCosmeticChildren(manager);

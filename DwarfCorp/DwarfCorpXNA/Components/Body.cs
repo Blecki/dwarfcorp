@@ -40,16 +40,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    public class Body : GameComponent, IBoundedObject, IUpdateableComponent
-
-#if DEBUG
-        , IRenderableComponent
-#endif
+    public class Body : GameComponent, IBoundedObject, IUpdateableComponent, IRenderableComponent
     {
-#if DEBUG
         public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
-            if (GamePerformance.DebugVisualizationEnabled)
+            if (Debugger.Switches.DrawBoundingBoxes)
             {
                 Drawer3D.DrawBox(BoundingBox, Color.Blue, 0.02f, false);
                 Drawer3D.DrawLine(GlobalTransform.Translation, GlobalTransform.Translation + Vector3.UnitX, Color.Red, 0.02f);
@@ -57,7 +52,6 @@ namespace DwarfCorp
                 Drawer3D.DrawLine(GlobalTransform.Translation, GlobalTransform.Translation + Vector3.UnitZ, Color.Green, 0.02f);
             }
         }
-#endif
 
         public bool FrustumCull { get { return IsFlagSet(Flag.FrustumCull); } }
 

@@ -207,9 +207,11 @@
     <Compile Include="Components\Graphics\SimpleSprite.cs" />
     <Compile Include="ContextCommands\ChopCommand.cs" />
     <Compile Include="ContextCommands\ContextCommand.cs" />
+    <Compile Include="Debugger.cs" />
     <Compile Include="Entities\Balloon.cs" />
     <Compile Include="Entities\Dwarves\DwarfFactory.cs" />
     <Compile Include="Entities\DebugFactories.cs" />
+    <Compile Include="Entities\Fixtures\Barrel.cs" />
     <Compile Include="Entities\Fixtures\CoinPileFixture.cs" />
     <Compile Include="Entities\Fixtures\Banner.cs" />
     <Compile Include="Entities\Fixtures\Fence.cs" />
@@ -285,7 +287,6 @@
     <Compile Include="Entities\EntityFactory.cs" />
     <Compile Include="Entities\Fixtures\Bookshelf.cs" />
     <Compile Include="Entities\Fixtures\Stove.cs" />
-    <Compile Include="Entities\Fixtures\Barrel.cs" />
     <Compile Include="Entities\Fixtures\Anvil.cs" />
     <Compile Include="Entities\Fixtures\Bed.cs" />
     <Compile Include="Entities\Fixtures\Chair.cs" />

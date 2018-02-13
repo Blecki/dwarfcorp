@@ -211,10 +211,8 @@ namespace DwarfCorp.Rail
                 if (FindPossibleCombination(Piece, entity) != null)
                     return true;
 
-                if (GamePerformance.DebugVisualizationEnabled)
-                {
+                if (Debugger.Switches.DrawBoundingBoxes)
                     Drawer3D.DrawBox(entity.GetBoundingBox(), Color.Yellow, 0.1f, false);
-                }
 
                 return false;
             }

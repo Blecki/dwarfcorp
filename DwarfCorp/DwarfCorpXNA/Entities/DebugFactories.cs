@@ -41,7 +41,7 @@ using System.Reflection;
 
 namespace DwarfCorp
 {
-    public static class DebugDactories
+    public static class DebugFactories
     {
         [EntityFactory("RandTrinket")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)

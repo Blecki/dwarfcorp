@@ -170,5 +170,33 @@ namespace DwarfCorp.Gui.Widgets
                 }
             }
         }
+
+        public class CheckboxMenuItem : MenuItem
+        {
+            public Action<bool> SetCallback = null;
+            public bool InitialState = false;
+
+            public override void Construct()
+            {
+                base.Construct();
+
+                AddChild(new CheckBox
+                {
+                    Text = this.Text,
+                    Background = new TileReference("basic", 0),
+                    TextColor = new Vector4(0, 0, 0, 1),
+                    ChangeColorOnHover = true,
+                    TextHorizontalAlign = HorizontalAlign.Center,
+                    TextVerticalAlign = VerticalAlign.Center,
+                    AutoLayout = AutoLayout.DockFill,
+                    CheckState = InitialState,
+                    OnCheckStateChange = (sender) =>
+                    {
+                        if (SetCallback != null)
+                            SetCallback((sender as CheckBox).CheckState);
+                    }
+                });
+            }
+        }
     }
 }

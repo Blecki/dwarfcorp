@@ -11,8 +11,6 @@ namespace DwarfCorp
 {
     public class GamePerformance : IDisposable
     {
-        public static bool DebugVisualizationEnabled = false;
-        public static bool DebugVisualizationKeyPressed = false;
         private static bool FirstFrameAfterShown = true;
 
         /// <summary>
@@ -367,7 +365,7 @@ namespace DwarfCorp
                 public ZoneData(TrackerZone zone, int historySize)
                 {
                     threadName = GamePerformance.threadName;
-                    if (threadName == null) Debugger.Break();
+                    if (threadName == null) System.Diagnostics.Debugger.Break();
                     name = zone.Name;
                     history = new Queue<long>(historySize);
                     maxHistory = historySize;
@@ -375,7 +373,7 @@ namespace DwarfCorp
 
                 public void Start()
                 {
-                    if (threadName == "Main" && name == "Unknown #0") Debugger.Break();
+                    if (threadName == "Main" && name == "Unknown #0") System.Diagnostics.Debugger.Break();
                     if (tracking)
                         throw new Exception("ZoneData.Start called more than once in a row.");
                     tracking = true;
@@ -1044,16 +1042,7 @@ namespace DwarfCorp
         public void Update()
         {
             KeyboardState keyboard = Keyboard.GetState();
-
-            if (keyboard.IsKeyDown(ControlSettings.Mappings.DebugVisualizationToggle))
-                DebugVisualizationKeyPressed = true;
-            else if (DebugVisualizationKeyPressed)
-            {
-                SoundManager.PlaySound(ContentPaths.Audio.pick, .15f);
-                DebugVisualizationEnabled = !DebugVisualizationEnabled;
-                DebugVisualizationKeyPressed = false;
-            }
-
+            
             if (keyboard.IsKeyDown(ControlSettings.Mappings.TogglePerformanceOverlay))
             {
                 if (!overlayKeyPressed) overlayKeyPressed = true;

@@ -78,6 +78,7 @@ namespace DwarfCorp
         public Color Tint { get; set; }
         public string AleName { get; set; }
 
+        // Todo: Replace this with strings so mods can extend it.
         public enum ResourceTags
         {
             Edible,
