@@ -17,7 +17,7 @@ To develop DwarfCorp, you need the following libraries. If you just want to play
 * [JSON.NET](https://github.com/JamesNK/Newtonsoft.Json) (source code not included)
 
 ## Cross Platform Development
-It is not possible to develop the game on anything other than a Windows machine at the moment. The game is developed using XNA/FNA, which only supports a windows development environment. That said, the game can be cross compiled for windows/mac using FNA, but only in windows in a Visual Studio environment.
+It is not possible to develop the game on anything other than a Windows machine at the moment. The game is developed using XNA/FNA using the XNA content project, [which only supports a windows development environment](https://github.com/FNA-XNA/FNA/issues/126). That said, the game can be cross compiled for windows/mac using FNA, but only in windows in a Visual Studio environment.
 
 ## Building
 

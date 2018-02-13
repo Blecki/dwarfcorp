@@ -88,11 +88,11 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public IEnumerable<Status> DestroyResources(Vector3 pos)
+        public IEnumerable<Status> DestroyResources(Func<Vector3> pos)
         {
             if (!Item.HasResources && Item.ResourcesReservedFor == Agent)
             {
-                Creature.Inventory.RemoveAndCreateWithToss(Item.SelectedResources, pos, Inventory.RestockType.None);
+                Creature.Inventory.RemoveAndCreateWithToss(Item.SelectedResources, pos(), Inventory.RestockType.None);
                 Item.HasResources = true;
             }
             yield return Status.Success;
@@ -260,7 +260,7 @@ namespace DwarfCorp
                                 ObjectName = Item.ItemType.CraftLocation,
                                 CheckForOcclusion = true
                             },
-                            new Wrap(() => DestroyResources(Item.Location.WorldPosition)),
+                            new Wrap(() => DestroyResources(() => Item.Location.WorldPosition)),
                             new Wrap(WaitForResources) { Name = "Wait for resources."},
                             new Wrap(() => Creature.HitAndWait(true, () => 1.0f, 
                             () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
@@ -277,7 +277,7 @@ namespace DwarfCorp
                         new Sequence(new Domain(ResourceStateValid, 
                             new Sequence(
                                 new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
-                                new Wrap(() => DestroyResources(Item.Location.WorldPosition)),
+                                new Wrap(() => DestroyResources(() => Item.Location.WorldPosition)),
                                 new Wrap(WaitForResources) { Name = "Wait for resources." },
                                 new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
                                          () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
@@ -306,7 +306,7 @@ namespace DwarfCorp
                                 ObjectName = Item.ItemType.CraftLocation,
                                 CheckForOcclusion = true
                             },
-                            new Wrap(() => DestroyResources(Agent.Position + MathFunctions.RandVector3Cube() * 0.5f)),
+                            new Wrap(() => DestroyResources(() => Agent.Position + MathFunctions.RandVector3Cube() * 0.5f)),
                             new Wrap(WaitForResources) { Name = "Wait for resources." },
                             new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
                                 () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
@@ -322,7 +322,7 @@ namespace DwarfCorp
                     Tree = new Sequence(
                         getResources,
                         new Domain(ResourceStateValid, new Sequence(
-                            new Wrap(() => DestroyResources(Creature.Physics.Position + MathFunctions.RandVector3Cube() * 0.5f)),
+                            new Wrap(() => DestroyResources(() => Creature.Physics.Position + MathFunctions.RandVector3Cube() * 0.5f)),
                             new Wrap(WaitForResources) { Name = "Wait for resources." },
                             new Wrap(() => Creature.HitAndWait(time, true, () => Creature.Physics.Position)) { Name = "Construct object."},
                             new Wrap(CreateResources))

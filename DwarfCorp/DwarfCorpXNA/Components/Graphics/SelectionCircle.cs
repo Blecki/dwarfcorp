@@ -53,7 +53,6 @@ namespace DwarfCorp
         public SelectionCircle(ComponentManager manager) :
             base(manager, "Selection", Matrix.CreateRotationX((float)Math.PI), Vector3.One, Vector3.Zero)
         {
-
             var shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.25f, 0.0f);
 
@@ -69,7 +68,8 @@ namespace DwarfCorp
                 LightsWithVoxels = false,
                 OrientationType = SimpleSprite.OrientMode.Fixed
             }
-            );//.SetFlag(Flag.ShouldSerialize, false);
+            ).SetFlag(Flag.ShouldSerialize, false);
+
             base.CreateCosmeticChildren(Manager);
         }
     }

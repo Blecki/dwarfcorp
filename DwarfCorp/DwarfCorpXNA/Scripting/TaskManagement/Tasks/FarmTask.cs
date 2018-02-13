@@ -50,10 +50,11 @@ namespace DwarfCorp
             Priority = PriorityType.Low;
         }
 
-        public FarmTask(FarmTile farmToWork)
+        public FarmTask(FarmTile farmToWork, FarmAct.FarmMode mode)
         {
+            Mode = mode;
             FarmToWork = farmToWork;
-            Name = "Work " + FarmToWork.Voxel.Coordinate;
+            Name = mode.ToString() + FarmToWork.Voxel.Coordinate;
             Priority = PriorityType.Low;
             AutoRetry = true;
         }
@@ -96,7 +97,7 @@ namespace DwarfCorp
             if (agent.AI.Status.IsAsleep)
                 return Feasibility.Infeasible;
 
-            bool farmValid =  FarmToWork != null && !FarmToWork.IsCanceled;
+            bool farmValid = FarmToWork != null;
             if (!farmValid)
             {
                 return Feasibility.Infeasible;

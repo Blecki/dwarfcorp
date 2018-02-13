@@ -96,7 +96,7 @@ namespace DwarfCorp
 
                     Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Till, newFarmTile);
 
-                    goals.Add(new FarmTask(newFarmTile) { Mode = FarmAct.FarmMode.Till, Category = Task.TaskCategory.TillSoil });
+                    goals.Add(new FarmTask(newFarmTile, FarmAct.FarmMode.Till) { Category = Task.TaskCategory.TillSoil });
                 }
                 else
                 {
@@ -104,7 +104,6 @@ namespace DwarfCorp
                         as FarmTile;
                     if (existingFarmTile != null && !existingFarmTile.PlantExists())
                     {
-                        existingFarmTile.IsCanceled = true;
                         existingFarmTile.Farmer = null;
                         Player.Faction.Designations.RemoveVoxelDesignation(existingFarmTile.Voxel, DesignationType._AllFarms);
                     }

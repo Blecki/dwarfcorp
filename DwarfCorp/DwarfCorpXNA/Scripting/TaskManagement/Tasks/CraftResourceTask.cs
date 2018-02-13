@@ -83,11 +83,11 @@ namespace DwarfCorp
             {
                 if (creature.AI.Faction == creature.World.PlayerFaction)
                 {
-                    creature.World.Master.TaskManager.AddTask(new CraftResourceTask(Item.ItemType, 1, Item.SelectedResources, TaskID));
+                    creature.World.Master.TaskManager.AddTask(new CraftResourceTask(Item.ItemType, NumRepeats, Item.SelectedResources, TaskID));
                 }
                 else
                 {
-                    creature.AI.AssignTask(new CraftResourceTask(Item.ItemType, 1, Item.SelectedResources, TaskID));
+                    creature.AI.AssignTask(new CraftResourceTask(Item.ItemType, NumRepeats, Item.SelectedResources, TaskID));
                 }
             }
             yield return Act.Status.Success;

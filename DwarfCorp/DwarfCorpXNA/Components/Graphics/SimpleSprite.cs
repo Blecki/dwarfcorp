@@ -99,6 +99,9 @@ namespace DwarfCorp
             if (!IsVisible)
                 return;
 
+            if (Sheet == null)
+                return;
+
             if (Verticies == null)
             {
                 System.Diagnostics.Debug.Assert(Sheet != null);

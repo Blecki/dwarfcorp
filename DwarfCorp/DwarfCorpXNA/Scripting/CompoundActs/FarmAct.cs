@@ -82,7 +82,7 @@ namespace DwarfCorp
                 yield return Status.Fail;
                 yield break;
             }
-            if (FarmToWork.IsCanceled)
+            if (FarmToWork.Farmer == null)
             {
                 yield return Status.Fail;
                 yield break;
@@ -100,7 +100,7 @@ namespace DwarfCorp
                 Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
                 while (FarmToWork.Progress < 100.0f && !Satisfied())
                 {
-                    if (FarmToWork.IsCanceled)
+                    if (FarmToWork.Farmer == null)
                     {
                         yield return Status.Fail;
                         yield break;
@@ -145,7 +145,7 @@ namespace DwarfCorp
 
         private bool Validate()
         {
-            bool tileValid =  !FarmToWork.IsCanceled && FarmToWork.Farmer == Agent && FarmToWork.Voxel.IsValid && !FarmToWork.Voxel.IsEmpty;
+            bool tileValid = FarmToWork.Farmer == Agent && FarmToWork.Voxel.IsValid && !FarmToWork.Voxel.IsEmpty;
 
             if (!tileValid)
             {
