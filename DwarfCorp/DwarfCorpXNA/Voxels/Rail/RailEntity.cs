@@ -43,11 +43,12 @@ namespace DwarfCorp.Rail
         public class NeighborConnection
         {
             public uint NeighborID;
+            public Vector3 Position;
         }
 
         public JunctionPiece Piece { get; private set; }
         private VoxelHandle Location;
-        private List<NeighborConnection> NeighborRails = new List<NeighborConnection>();
+        public List<NeighborConnection> NeighborRails = new List<NeighborConnection>();
         
         public RailEntity()
         {
@@ -136,13 +137,6 @@ namespace DwarfCorp.Rail
             }
         }
 
-        public List<List<Vector3>> GetTransformedSplines()
-        {
-            var piece = RailLibrary.GetRailPiece(Piece.RailPiece);
-            var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
-            return piece.SplinePoints.Select(s => s.Select(p => Vector3.Transform(p, transform)).ToList()).ToList();
-        }
-
         public List<Tuple<Vector3, Vector3>> GetTransformedConnections()
         {
             var piece = RailLibrary.GetRailPiece(Piece.RailPiece);
@@ -181,20 +175,20 @@ namespace DwarfCorp.Rail
                     foreach (var nPoint in neighborEndPoints)
                         if ((nPoint - point).LengthSquared() < 0.01f)
                         {
-                            // Todo: Record which entrance point matched - need to be able to map back to a connection so the pather can tell which branches are allowed when entering tile from neighbor.
-                            AttachNeighbor(neighborRail.GlobalID);
-                            neighborRail.AttachNeighbor(this.GlobalID);
+                            AttachNeighbor(neighborRail.GlobalID, point);
+                            neighborRail.AttachNeighbor(this.GlobalID, point);
                             goto __CONTINUE;
                         }
                 __CONTINUE: ;
             }
         }
 
-        private void AttachNeighbor(uint ID)
+        private void AttachNeighbor(uint ID, Vector3 Position)
         {
             NeighborRails.Add(new NeighborConnection
             {
                 NeighborID = ID,
+                Position = Position
             });
         }
 
