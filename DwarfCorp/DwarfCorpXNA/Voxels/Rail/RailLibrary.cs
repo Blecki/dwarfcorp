@@ -45,21 +45,14 @@ namespace DwarfCorp.Rail
         private static List<JunctionPattern> Patterns;
         private static List<RailPiece> Pieces;
 
-        public class Data
-        {
-            public List<RailPiece> Pieces;
-            public List<JunctionPattern> Patterns;
-        }
-
         private static void Initialize()
         {
             // Todo: Better modding support means lists of named things. Two files?
             if (Patterns == null)
             {
-                var data = FileUtils.LoadJsonFromResolvedPath<Data>(ContentPaths.rail_junctions);
-                Patterns = data.Patterns;
-                Pieces = data.Pieces;
-
+                Pieces = FileUtils.LoadJsonListFromMultipleSources<RailPiece>(ContentPaths.rail_pieces, null, p => p.Name);
+                Patterns = FileUtils.LoadJsonListFromMultipleSources<JunctionPattern>(ContentPaths.rail_patterns, null, p => p.Name);
+                
                 foreach (var piece in Pieces)
                     piece.ComputeConnections();
             }

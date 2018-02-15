@@ -2340,9 +2340,13 @@
       <Name>craft-items</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="rail-junctions.json">
+    <None Include="rail-patterns.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>rail-junctions</Name>
+      <Name>rail-patterns</Name>
+    </None>
+    <None Include="rail-pieces.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>rail-pieces</Name>
     </None>
     <None Include="Entities\Animals\Birds\bird0_animation.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -63,11 +63,10 @@ namespace DwarfCorp
         public static string voxel_types = ProgramData.CreatePath("voxel-types.json");
         public static string grass_types = ProgramData.CreatePath("grass-types.json");
         public static string decal_types = ProgramData.CreatePath("decal-types.json");
-        public static string rail_junctions = ProgramData.CreatePath("rail-junctions.json");
+        public static string rail_pieces = ProgramData.CreatePath("rail-pieces.json");
+        public static string rail_patterns = ProgramData.CreatePath("rail-patterns.json");
         public static string craft_items = ProgramData.CreatePath("craft-items.json");
         public static string resource_items = "resource-items.json";
-
-        // Todo: Move to own texture.
         public static string rail_tiles = ProgramData.CreatePath("Terrain", "rail");
 
         public class Audio
