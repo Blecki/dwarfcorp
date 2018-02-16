@@ -434,7 +434,8 @@ namespace DwarfCorp
                 }
 
                 if (orphanedTasks.Count > 0)
-                    TaskManager.AssignTasksGreedy(orphanedTasks, Faction.Minions);
+                    //TaskManager.AssignTasksGreedy(orphanedTasks, Faction.Minions);
+                    TaskManager.AddTasks(orphanedTasks);
             }
         }
 

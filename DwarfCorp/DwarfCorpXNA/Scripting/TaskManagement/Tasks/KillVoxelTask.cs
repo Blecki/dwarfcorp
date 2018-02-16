@@ -78,6 +78,10 @@ namespace DwarfCorp
             return !VoxelToKill.IsEmpty && agent.Faction.Designations.IsVoxelDesignation(VoxelToKill, DesignationType.Dig);
         }
 
+        public override bool IsComplete()
+        {
+            return VoxelToKill.IsEmpty;
+        }
 
         public override Feasibility IsFeasible(Creature agent)
         {

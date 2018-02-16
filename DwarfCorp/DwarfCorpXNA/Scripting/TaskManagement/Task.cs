@@ -171,6 +171,11 @@ namespace DwarfCorp
                 Script.OnCanceled();
             }
         }
+
+        public virtual bool IsComplete()
+        {
+            return false;
+        }
     }
 
     public class ActWrapperTask : Task

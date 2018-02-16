@@ -52,6 +52,12 @@ namespace DwarfCorp
         public int MaxDwarfTasks = 10;
         public int NumAssignPerIteration = 1;
 
+        // By returning it as an IEnumerable, we can expose it without allowing it to be modified.
+        public IEnumerable<Task> EnumerateTasks()
+        {
+            return Tasks;
+        }
+
         public TaskManager()
         {
 
@@ -83,6 +89,8 @@ namespace DwarfCorp
 
             foreach(var task in Tasks)
             {
+                if (task.CurrentAssigned >= task.MaxAssignable)
+                    continue;
                 if (task.IsFeasible(creature.Creature) != Task.Feasibility.Feasible)
                     continue;
                 if (task.Priority < bestPriority)
@@ -102,15 +110,16 @@ namespace DwarfCorp
             if (best != null)
             {
                 best.CurrentAssigned++;
-                if (best.CurrentAssigned >= best.MaxAssignable)
-                    Tasks.Remove(best);
-                return best.Clone();
+                //if (best.CurrentAssigned >= best.MaxAssignable) // Remove task if it already has as many dwarves as possible assigned
+                //    Tasks.Remove(best);
+                return best;//.Clone(); // Todo: Why clone it when we just took it out anyway?
             }
             return null;
         }
 
         public void Update(List<CreatureAI> creatures)
         {
+            Tasks.RemoveAll(t => t.IsComplete());
             /*
             UpdateTimer.Update(DwarfTime.LastTime);
 
