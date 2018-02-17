@@ -162,7 +162,7 @@ namespace DwarfCorp
             var currentVoxel = creatureVoxel;
             while (toReturn.Count < maxsteps)
             {
-                var actions = Agent.Movement.GetMoveActions(currentVoxel);
+                var actions = Agent.Movement.GetMoveActions(new MoveState() { Voxel = currentVoxel });
 
                 float minCost = float.MaxValue;
                 var minAction = new MoveAction();

@@ -68,6 +68,7 @@ namespace DwarfCorp
         public List<float> ActionTimes { get; set; }
         public bool BlendStart { get; set; }
         public bool BlendEnd { get; set; }
+        public Fixture Cart { get; set; }
 
         // Offset from voxel location to bounding box center.
         public Vector3 GetBoundingBoxOffset()
@@ -103,8 +104,8 @@ namespace DwarfCorp
                 {
                     return false;
                 }
-                var neighbors = Agent.Movement.GetMoveActions(path[i].SourceVoxel);
-                if (!neighbors.Any(n => n.DestinationVoxel == path[i + 1].SourceVoxel))
+                var neighbors = Agent.Movement.GetMoveActions(path[i].SourceState);
+                if (!neighbors.Any(n => n.DestinationState == path[i + 1].SourceState))
                 {
                     return false;
                 }
@@ -114,6 +115,8 @@ namespace DwarfCorp
 
         public float GetActionTime(MoveAction action, int index)
         {
+            if (action.MoveType == MoveType.EnterVehicle || action.MoveType == MoveType.ExitVehicle)
+                return 0.5f;
             MoveAction nextAction = action;
             bool hasNextAction = false;
             Vector3 diff = Vector3.Zero;
@@ -138,7 +141,7 @@ namespace DwarfCorp
             }
             float unitTime = (1.25f / (Agent.Stats.BuffedDex + 0.001f) + RandomTimeOffset) /
                              Agent.Movement.Speed(action.MoveType);
-            ;
+            
             if (hasNextAction)
             {
                 return unitTime * diffNorm;
@@ -243,6 +246,8 @@ namespace DwarfCorp
             int currentIndex = 0;
             if (!GetCurrentAction(ref action, ref t, ref currentIndex))
             {
+                if (Cart != null)
+                    Cart.Die();
                 yield break;
             }
             Trace.Assert(t >= 0);
@@ -271,6 +276,80 @@ namespace DwarfCorp
 
             switch (action.MoveType)
             {
+                case MoveType.EnterVehicle:
+                    if (Cart == null)
+                    {
+                        Cart = EntityFactory.CreateEntity<Fixture>("Minecart", action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
+                    }
+                    if (t < 0.5f)
+                    {
+                        Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
+                    }
+                    Creature.OverrideCharacterMode = false;
+                    Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0
+                        ? CharacterMode.Jumping
+                        : CharacterMode.Falling;
+                    if (hasNextAction)
+                    {
+                        float z = Easing.Ballistic(t, 1.0f, 1.0f);
+                        Vector3 start = currPosition;
+                        Vector3 end = currPosition;
+                        Vector3 dx = (end - start) * t + start;
+                        dx.Y = start.Y * (1 - t) + end.Y * (t) + z;
+                        transform.Translation = dx;
+                        Agent.Physics.Velocity = new Vector3(diff.X, (dx.Y - Agent.Physics.Position.Y), diff.Z);
+                    }
+                    else
+                    {
+                        transform.Translation = currPosition;
+                    }
+                    break;
+                case MoveType.ExitVehicle:
+                    if (Cart != null)
+                        Cart.Die();
+
+                    if (t < 0.5f)
+                    {
+                        Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
+                    }
+                    Creature.OverrideCharacterMode = false;
+                    Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0
+                        ? CharacterMode.Jumping
+                        : CharacterMode.Falling;
+                    if (hasNextAction)
+                    {
+                        float z = Easing.Ballistic(t, 1.0f, 1.0f);
+                        Vector3 start = currPosition;
+                        Vector3 end = currPosition;
+                        Vector3 dx = (end - start) * t + start;
+                        dx.Y = start.Y * (1 - t) + end.Y * (t) + z;
+                        transform.Translation = dx;
+                        Agent.Physics.Velocity = new Vector3(diff.X, (dx.Y - Agent.Physics.Position.Y), diff.Z);
+                    }
+                    else
+                    {
+                        transform.Translation = currPosition;
+                    }
+                    break;
+                case MoveType.RideVehicle:
+                    if (Cart == null)
+                    {
+                        Cart = EntityFactory.CreateEntity<Fixture>("Minecart", action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
+                    }
+                    Creature.OverrideCharacterMode = true;
+                    Creature.CurrentCharacterMode = CharacterMode.Jumping;
+                    if (hasNextAction)
+                    {
+                        transform.Translation = diff * t + currPosition + Vector3.Up * 0.5f;
+                        Agent.Physics.Velocity = diff;
+                        Cart.LocalTransform = Matrix.CreateTranslation(diff * t + currPosition);
+                    }
+                    else
+                    {
+                        transform.Translation = currPosition;
+                        Cart.LocalTransform = Matrix.CreateTranslation(currPosition);
+                    }
+                    break;
                 case MoveType.Walk:
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Walking;
@@ -412,6 +491,8 @@ namespace DwarfCorp
                 {
                     if (status == Status.Fail)
                     {
+                        if (Cart != null)
+                            Cart.Die();
                         yield return Status.Fail;
                     }
                     else if (status == Status.Success)
@@ -464,12 +545,16 @@ namespace DwarfCorp
                 {
                     Creature.OverrideCharacterMode = false;
                     Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                    if (Cart != null)
+                        Cart.Die();
                     yield return Status.Fail;
                 }
                 yield return Status.Running;
             }
             Creature.OverrideCharacterMode = false;
             SetPath(null);
+            if (Cart != null)
+                Cart.Die();
             yield return Status.Success;
         }
 
@@ -477,8 +562,16 @@ namespace DwarfCorp
         public override void OnCanceled()
         {
             Creature.OverrideCharacterMode = false;
+            if (Cart != null)
+                Cart.Die();
             SetPath(null);
             base.OnCanceled();
+        }
+
+        ~FollowPathAct()
+        {
+            if (Cart != null)
+                Cart.Die();
         }
     }
 

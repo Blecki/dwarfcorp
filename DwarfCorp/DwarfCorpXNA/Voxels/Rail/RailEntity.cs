@@ -46,7 +46,7 @@ namespace DwarfCorp.Rail
             public Vector3 Position;
         }
 
-        public JunctionPiece Piece { get; private set; }
+        public JunctionPiece Piece { get; set; }
         private VoxelHandle Location;
         public List<NeighborConnection> NeighborRails = new List<NeighborConnection>();
         
@@ -101,7 +101,7 @@ namespace DwarfCorp.Rail
                             craftDesignation.WorkPile.Die();
                     }
                 }
-            }));
+            })).SetFlag(Flag.ShouldSerialize, false);
 
             UpdatePiece(Piece, Location);
         }

@@ -23,6 +23,9 @@ namespace DwarfCorp
         /// <summary> Attack a blocking object until it is destroyed </summary>
         DestroyObject,
         /// <summary> Move along a vertical surface. </summary>
-        ClimbWalls
+        ClimbWalls,
+        EnterVehicle,
+        RideVehicle,
+        ExitVehicle
     }
 }
