@@ -49,11 +49,6 @@ namespace DwarfCorp
             Priority = PriorityType.Medium;
         }
 
-        public override Task Clone()
-        {
-            return new SatisfyHungerTask();
-        }
-
         public override Act CreateScript(Creature agent)
         {
             return new FindAndEatFoodAct(agent.AI);

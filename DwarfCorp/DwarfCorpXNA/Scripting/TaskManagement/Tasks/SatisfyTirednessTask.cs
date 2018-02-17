@@ -49,11 +49,6 @@ namespace DwarfCorp
             Priority = PriorityType.Medium;
         }
 
-        public override Task Clone()
-        {
-            return new SatisfyTirednessTask();
-        }
-
         public override Act CreateScript(Creature agent)
         {
             return new FindBedAndSleepAct(agent.AI);
@@ -80,11 +75,6 @@ namespace DwarfCorp
         {
             Name = "Heal thyself";
             Priority = PriorityType.Urgent;
-        }
-
-        public override Task Clone()
-        {
-            return new GetHealedTask();
         }
 
         public override Act CreateScript(Creature agent)

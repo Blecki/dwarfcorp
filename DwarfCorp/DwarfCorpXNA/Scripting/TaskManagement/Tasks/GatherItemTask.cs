@@ -61,11 +61,6 @@ namespace DwarfCorp
             Category = TaskCategory.Gather;
         }
 
-        public override Task Clone()
-        {
-            return new GatherItemTask(EntityToGather);
-        }
-
         public override Act CreateScript(Creature creature)
         {
             return new GatherItemAct(creature.AI, EntityToGather);

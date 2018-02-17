@@ -252,7 +252,8 @@ namespace DwarfCorp
                         {
                             agent.Gather(item);
                         }
-                    }                   
+                    }
+                    yield return Act.Status.Success;
                 }
 
                 // Wait until the animation is done playing before continuing.

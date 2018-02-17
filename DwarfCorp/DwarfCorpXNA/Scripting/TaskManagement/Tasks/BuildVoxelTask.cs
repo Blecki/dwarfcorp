@@ -110,11 +110,6 @@ namespace DwarfCorp
             return Voxel.IsValid && agent.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put);
         }
 
-        public override Task Clone()
-        {
-            return new BuildVoxelTask(Voxel, VoxType) { Priority = this.Priority };
-        }
-
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return !Voxel.IsValid ? 1000 : 0.01f * (agent.AI.Position - Voxel.WorldPosition).LengthSquared() + (Voxel.Coordinate.Y);

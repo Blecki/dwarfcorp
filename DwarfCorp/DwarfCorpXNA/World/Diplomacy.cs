@@ -520,7 +520,7 @@ namespace DwarfCorp
             }
         }
 
-        [JsonObject(IsReference =true)]
+        [JsonObject(IsReference = true)]
         public class TradeTask : Task
         {
             public Zone TradePort;
@@ -551,10 +551,6 @@ namespace DwarfCorp
                 return new GoToZoneAct(agent.AI, TradePort) | new Wrap(() => RecallEnvoyOnFail(Envoy));
             }
 
-            public override Task Clone()
-            {
-                return new TradeTask(TradePort, Envoy);
-            }
         }
 
         public void UpdateTradeEnvoys(Faction faction)

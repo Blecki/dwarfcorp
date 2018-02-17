@@ -135,11 +135,5 @@ namespace DwarfCorp
                 Noise = noise
             }, new Wrap(() => Repeat(creature)));
         }
-
-        public override Task Clone()
-        {
-            return new CraftResourceTask(Item.ItemType, NumRepeats, Item.SelectedResources, TaskID) {IsAutonomous = this.IsAutonomous};
-        }
     }
-
 }

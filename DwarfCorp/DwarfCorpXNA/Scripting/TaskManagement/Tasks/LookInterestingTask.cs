@@ -52,11 +52,6 @@ namespace DwarfCorp
             Priority = PriorityType.Eventually;
         }
 
-        public override Task Clone()
-        {
-            return new LookInterestingTask();
-        }
-
         public IEnumerable<Act.Status> ConverseFriends(CreatureAI c)
         {
             CreatureAI minionToConverse = null;

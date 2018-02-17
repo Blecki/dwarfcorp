@@ -34,6 +34,7 @@
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace DwarfCorp
 {
@@ -80,8 +81,9 @@ namespace DwarfCorp
         public TaskCategory Category { get; set; }
         public PriorityType Priority { get; set; }
         public int MaxAssignable = 1;
-        public int CurrentAssigned = 0;
         public bool ReassignOnDeath = true;
+        public List<CreatureAI> AssignedCreatures = new List<CreatureAI>();
+        public bool IsComplete = false;
 
         public enum Feasibility
         {
@@ -106,8 +108,6 @@ namespace DwarfCorp
         }
 
         public string Name { get; set; }
-
-        public abstract Task Clone();
 
         public virtual void Render(DwarfTime time)
         {
@@ -154,14 +154,14 @@ namespace DwarfCorp
             return false;
         }
 
-        public virtual void OnAssign(Creature agent)
+        public virtual void OnAssign(CreatureAI agent)
         {
-            
+            AssignedCreatures.Add(agent);
         }
 
-        public virtual void OnUnAssign(Creature agent)
+        public virtual void OnUnAssign(CreatureAI agent)
         {
-            
+            AssignedCreatures.Remove(agent);   
         }
 
         public virtual void Cancel()
@@ -170,11 +170,6 @@ namespace DwarfCorp
             {
                 Script.OnCanceled();
             }
-        }
-
-        public virtual bool IsComplete()
-        {
-            return false;
         }
     }
 
@@ -191,11 +186,6 @@ namespace DwarfCorp
             ReassignOnDeath = false;
             Script = act;
             Name = Script.Name;
-        }
-
-        public override Task Clone()
-        {
-            return new ActWrapperTask(Script);
         }
 
         public override Feasibility IsFeasible(Creature agent)

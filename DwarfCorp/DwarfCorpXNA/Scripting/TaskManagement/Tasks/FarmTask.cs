@@ -70,21 +70,19 @@ namespace DwarfCorp
             return IsFeasible(agent) == Feasibility.Infeasible;
         }
 
-        public override void OnAssign(Creature agent)
+        public override void OnAssign(CreatureAI agent)
         {
             if (FarmToWork != null)
-            {
-                FarmToWork.Farmer = agent.AI;
-            }
+                FarmToWork.Farmer = agent;
+
             base.OnAssign(agent);
         }
 
-        public override void OnUnAssign(Creature agent)
+        public override void OnUnAssign(CreatureAI agent)
         {
-            if (FarmToWork != null && FarmToWork.Farmer == agent.AI)
-            {
+            if (FarmToWork != null && FarmToWork.Farmer == agent)
                 FarmToWork.Farmer = null;
-            }
+
             base.OnUnAssign(agent);
         }
 
@@ -127,11 +125,6 @@ namespace DwarfCorp
             {
                 return (FarmToWork.Voxel.WorldPosition - agent.AI.Position).LengthSquared();
             }
-        }
-
-        public override Task Clone()
-        {
-            return new FarmTask() { RequiredResources = RequiredResources, FarmToWork = FarmToWork, Name = Name, Category = Category, Mode = Mode, Plant = Plant, Priority = Priority };
         }
     }
 }
