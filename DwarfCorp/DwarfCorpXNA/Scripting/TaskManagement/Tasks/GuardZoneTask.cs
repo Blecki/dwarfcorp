@@ -52,11 +52,6 @@ namespace DwarfCorp
             MaxAssignable = 10;
         }
 
-        public override Task Clone()
-        {
-            return new GuardZoneTask();
-        }
-
         public override Act CreateScript(Creature agent)
         {
             return new GuardAreaAct(agent.AI);

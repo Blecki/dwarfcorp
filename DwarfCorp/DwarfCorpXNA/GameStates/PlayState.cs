@@ -581,7 +581,7 @@ namespace DwarfCorp.GameStates
             });
             #endregion
 
-            #region Collapsing Side Panel
+            #region Toggle panel buttons
 
             MinimapRenderer = new Gui.Widgets.MinimapRenderer(192, 192, World,
                 AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_colormap));
@@ -639,6 +639,27 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(300, 180)
             });
 
+            var taskList = GuiRoot.RootItem.AddChild(new Widget
+            {
+                Border = "border-thin",
+                AutoLayout = AutoLayout.FloatBottomLeft,
+                MinimumSize = new Point(600, 300),
+                Hidden = true,
+                OnConstruct = (sender) =>
+                {
+                    sender.Root.RegisterForUpdate(sender);
+                },
+                OnUpdate = (sender, time) =>
+                {
+                    if (sender.Hidden) return;
+
+                    sender.Text = String.Join("\n", World.PlayerFaction.Minions.Select(m => String.Format("{0}: {1}, {2}", m.Name, m.Tasks.Count, (m.CurrentTask == null ? "NULL" : m.CurrentTask.Name))));
+                    sender.Text += "\n\n";
+                    sender.Text += String.Join("\n", World.Master.TaskManager.EnumerateTasks().Select(t => t.Name));
+                    sender.Invalidate();
+                }
+            });
+
             MinimapIcon = new FramedIcon
             {
                 Icon = null,
@@ -653,6 +674,7 @@ namespace DwarfCorp.GameStates
                         MinimapFrame.Hidden = false;
                         SelectedEmployeeInfo.Hidden = true;
                         markerFilter.Hidden = true;
+                        taskList.Hidden = true;
                     }
                     else
                         MinimapFrame.Hidden = true;
@@ -682,6 +704,7 @@ namespace DwarfCorp.GameStates
                                        MinimapFrame.Hidden = true;
                                        SelectedEmployeeInfo.Hidden = false;
                                        markerFilter.Hidden = true;
+                                       taskList.Hidden = true;
                                    }
                                    else
                                        SelectedEmployeeInfo.Hidden = true;
@@ -701,12 +724,34 @@ namespace DwarfCorp.GameStates
                                    {
                                        MinimapFrame.Hidden = true;
                                        SelectedEmployeeInfo.Hidden = true;
+                                       taskList.Hidden = true;
                                        markerFilter.Hidden = false;
                                    }
                                    else
                                        markerFilter.Hidden = true;
                                }
                             },
+
+                            new FramedIcon
+                            {
+                                Icon = null,
+                                Text = "Tasks",
+                                TextHorizontalAlign = HorizontalAlign.Center,
+                                TextVerticalAlign = VerticalAlign.Center,
+                                EnabledTextColor = Vector4.One,
+                                OnClick = (sender, args) =>
+                                {
+                                    if (taskList.Hidden)
+                                    {
+                                        MinimapFrame.Hidden = true;
+                                        SelectedEmployeeInfo.Hidden = true;
+                                        markerFilter.Hidden = true;
+                                        taskList.Hidden = false;
+                                    }
+                                    else
+                                        taskList.Hidden = true;
+                                }
+                            }
                         },
             });
 

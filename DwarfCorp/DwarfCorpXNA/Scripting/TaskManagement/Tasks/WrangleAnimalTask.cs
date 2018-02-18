@@ -133,11 +133,6 @@ namespace DwarfCorp
                 new Wrap(() => ReleaseAnimal(Animal.AI)));
         }
 
-        public override Task Clone()
-        {
-            return new WrangleAnimalTask(Animal);
-        }
-
         public override Feasibility IsFeasible(Creature agent)
         {
             if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Wrangle))

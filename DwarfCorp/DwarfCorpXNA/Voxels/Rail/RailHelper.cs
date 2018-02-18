@@ -34,8 +34,8 @@ namespace DwarfCorp.Rail
             var connectionPoint = FindConnectionPoint(Leaving, Entering);
             if (connectionPoint.HasValue)
             {
-                var piece = RailLibrary.GetRailPiece(Entering.Piece.RailPiece);
-                var transformToEntitySpace = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Entering.Piece.Orientation) * Entering.GlobalTransform;
+                var piece = RailLibrary.GetRailPiece(Entering.GetPiece().RailPiece);
+                var transformToEntitySpace = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Entering.GetPiece().Orientation) * Entering.GlobalTransform;
                 var connection = FindConnectionFromTransformedEntrancePoint(piece, transformToEntitySpace, connectionPoint.Value);
                 if (connection != null)
                     foreach (var exit in connection.Exits)

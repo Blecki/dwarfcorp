@@ -57,11 +57,6 @@ namespace DwarfCorp
             Name = "Mate with " + closestMate.GlobalID;
         }
 
-        public override Task Clone()
-        {
-            return new MateTask(Them);
-        }
-
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return (Them.Position - agent.AI.Position).LengthSquared();

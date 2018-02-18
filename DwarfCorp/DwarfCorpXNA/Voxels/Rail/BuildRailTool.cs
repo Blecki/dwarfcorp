@@ -224,7 +224,7 @@ namespace DwarfCorp.Rail
         {
             if (Entity is RailEntity)
             {
-                var baseJunction = (Entity as RailEntity).Piece;
+                var baseJunction = (Entity as RailEntity).GetPiece();
                 var basePiece = Rail.RailLibrary.GetRailPiece(baseJunction.RailPiece);
                 var relativeOrientation = Rail.OrientationHelper.Relative(baseJunction.Orientation, Piece.Orientation);
 
@@ -276,7 +276,7 @@ namespace DwarfCorp.Rail
                         var combinedPiece = new Rail.JunctionPiece
                         {
                             RailPiece = possibleCombination.Result,
-                            Orientation = Rail.OrientationHelper.Rotate((entity as RailEntity).Piece.Orientation, (int)possibleCombination.ResultRelativeOrientation),
+                            Orientation = Rail.OrientationHelper.Rotate((entity as RailEntity).GetPiece().Orientation, (int)possibleCombination.ResultRelativeOrientation),
                         };
 
                         var existingDesignation = Player.Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, entity));

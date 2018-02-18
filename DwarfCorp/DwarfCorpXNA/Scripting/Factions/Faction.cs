@@ -82,6 +82,7 @@ namespace DwarfCorp
             }
         }
 
+        // Todo: Unused?
         public TaskManager TaskManager { get; set; }
         public List<Creature> Threats { get; set; }
 

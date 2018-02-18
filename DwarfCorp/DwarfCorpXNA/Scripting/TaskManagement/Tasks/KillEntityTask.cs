@@ -77,11 +77,6 @@ namespace DwarfCorp
             }
         }
 
-        public override Task Clone()
-        {
-            return new KillEntityTask(EntityToKill, Mode) { Priority = this.Priority, AutoRetry = this.AutoRetry };
-        }
-
         public override Act CreateScript(Creature creature)
         {
             var otherCreature = EntityToKill.GetRoot().GetComponent<Creature>();

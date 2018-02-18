@@ -22,11 +22,6 @@ namespace DwarfCorp
             Name = "Research " + Spell;
         }
 
-        public override Task Clone()
-        {
-            return new ResearchSpellTask(Spell);
-        }
-
         public override Feasibility IsFeasible(Creature agent)
         {
             if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Research))

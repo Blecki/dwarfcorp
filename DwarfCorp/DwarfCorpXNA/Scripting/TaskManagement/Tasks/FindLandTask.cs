@@ -52,11 +52,6 @@ namespace DwarfCorp
             Priority = PriorityType.High;
         }
 
-        public override Task Clone()
-        {
-            return new FindLandTask();
-        }
-
         public VoxelHandle FindLand(
             ChunkData Data,
             GlobalVoxelCoordinate Start,

@@ -35,6 +35,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace DwarfCorp.Rail
 {
@@ -46,10 +47,18 @@ namespace DwarfCorp.Rail
             public Vector3 Position;
         }
 
-        public JunctionPiece Piece { get; set; }
+        [JsonProperty]
+        private JunctionPiece Piece;
         private VoxelHandle Location;
+
+        [JsonIgnore]
         public List<NeighborConnection> NeighborRails = new List<NeighborConnection>();
         
+        public JunctionPiece GetPiece()
+        {
+            return Piece;
+        }
+
         public RailEntity()
         {
             

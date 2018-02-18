@@ -493,6 +493,11 @@ namespace DwarfCorp
                         }
                     }
                 }
+                else if (status == Act.Status.Success)
+                {
+                    CurrentTask.IsComplete = true;
+                }
+
 
                 if (status != Act.Status.Running && !retried)
                     CurrentTask = null;
@@ -1209,11 +1214,6 @@ namespace DwarfCorp
                     new Wrap(() => GreedyFallbackBehavior(agent)) { Name = "Go to edge of world." }
                     );
             }
-
-            public override Task Clone()
-            {
-                return new LeaveWorldTask();
-            }
         }
 
         /// <summary> History of a certain task that keeps track of how many times its failed </summary>
@@ -1351,14 +1351,14 @@ namespace DwarfCorp
             if (!Tasks.Contains(task))
             {
                 Tasks.Add(task);
-                task.OnAssign(this.Creature);
+                task.OnAssign(this);
             }
         }
 
         public void RemoveTask(Task task)
         {
             Tasks.Remove(task);
-            task.OnUnAssign(this.Creature);
+            task.OnUnAssign(this);
         }
 
 

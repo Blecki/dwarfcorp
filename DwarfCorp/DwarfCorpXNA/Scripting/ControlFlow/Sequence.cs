@@ -111,7 +111,7 @@ namespace DwarfCorp
                 else if(childStatus == Status.Success)
                 {
                     CurrentChildIndex++;
-                    yield return Status.Running;
+                    //yield return Status.Running;
                 }
                 else
                 {
