@@ -355,19 +355,20 @@ namespace DwarfCorp
                         {
                             foreach (var rail in rails)
                             {
-                                if ((rail.Position - (voxel.WorldPosition + Vector3.One * 0.5f)).Length() > 0.5f)
+
+                                if (rail.GetContainingVoxel() != state.Voxel)
                                     continue;
 
-                                /*
+                                
                                 if (!DwarfGame.IsMainThread)
                                 {
-                                    for (int i = 0; i < 10; i++)
+                                    for (int i = 0; i < 5; i++)
                                     {
-                                        Drawer3D.DrawBox(rail.BoundingBox, Color.Purple, 0.05f, false);
+                                        Drawer3D.DrawBox(rail.BoundingBox, Color.Blue, 0.05f, false);
                                         System.Threading.Thread.Sleep(10);
                                     }
                                 }
-                                */
+                                
                                 successors.Add(new MoveAction()
                                 {
                                     SourceState = state,
@@ -376,7 +377,8 @@ namespace DwarfCorp
                                         VehicleState = new VehicleState()
                                         {
                                             Rail = rail
-                                        }
+                                        },
+                                        Voxel = rail.GetContainingVoxel()
                                     },
                                     MoveType = MoveType.EnterVehicle,
                                     Diff = new Vector3(1, 1, 1)
@@ -393,7 +395,8 @@ namespace DwarfCorp
                         SourceState = state,
                         DestinationState = new MoveState()
                         {
-                            VehicleState = new VehicleState()
+                            VehicleState = new VehicleState(),
+                            Voxel = state.Voxel
                         },
                         MoveType = MoveType.ExitVehicle,
                         Diff = new Vector3(1, 1, 1)
@@ -411,27 +414,28 @@ namespace DwarfCorp
                         /*
                         if (!DwarfGame.IsMainThread)
                         {
-                            for (int i = 0; i < 10; i++)
+                            for (int i = 0; i < 50; i++)
                             {
+                                Drawer3D.DrawLine(neighborRail.GetContainingVoxel().GetBoundingBox().Center(), state.Voxel.GetBoundingBox().Center(), Color.Purple, 0.08f);
                                 Drawer3D.DrawBox(neighborRail.BoundingBox, Color.Red, 0.05f, false);
-                                System.Threading.Thread.Sleep(10);
+                                Drawer3D.DrawBox(neighborRail.GetContainingVoxel().GetBoundingBox(), Color.Purple, 0.08f, false);
+                                System.Threading.Thread.Sleep(5);
                             }
                         }
                         */
-                        var diffPosition = neighborRail.Position - state.VehicleState.Rail.Position;
-                        diffPosition.Normalize();
+
                         successors.Add(new MoveAction()
                         {
                             SourceState = state,
                             DestinationState = new MoveState()
                             {
+                                Voxel = neighborRail.GetContainingVoxel(),
                                 VehicleState = new VehicleState()
                                 {
                                     Rail = neighborRail
                                 }
                             },
                             MoveType = MoveType.RideVehicle,
-                            Diff = diffPosition + Vector3.One
                         });
                     }
                 }
@@ -608,7 +612,7 @@ namespace DwarfCorp
             // Now, validate each move action that the creature might take.
             foreach (MoveAction v in successors)
             {
-                var n = neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
+                var n = v.DestinationVoxel.IsValid ? v.DestinationVoxel : neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
                 if (n.IsValid && (isRiding || n.IsEmpty || n.WaterCell.WaterLevel > 0))
                 {
                     // Do one final check to see if there is an object blocking the motion.

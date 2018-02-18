@@ -694,11 +694,6 @@ namespace DwarfCorp
         /// <returns>The cost of going from a to b using the given action.</returns>
         public static float GetDistance(VoxelHandle a, VoxelHandle b, MoveType action, CreatureMovement movement)
         {
-            // If trying to move through a non-empty voxel, the cost is  just a big number.
-            if (!b.IsEmpty)
-            {
-                return 100000;
-            }
             // Otherwise, the cost is the distance between the voxels multiplied by the intrinsic cost
             // of an action.
             float score = (a.WorldPosition - b.WorldPosition).LengthSquared() * ActionCost(movement, action);

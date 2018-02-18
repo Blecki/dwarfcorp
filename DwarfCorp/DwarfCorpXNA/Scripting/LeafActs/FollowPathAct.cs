@@ -139,8 +139,10 @@ namespace DwarfCorp
                 diffNorm = diff.Length();
                 hasNextAction = true;
             }
+            var speed = Agent.Movement.Speed(action.MoveType);
+
             float unitTime = (1.25f / (Agent.Stats.BuffedDex + 0.001f) + RandomTimeOffset) /
-                             Agent.Movement.Speed(action.MoveType);
+                             speed;
             
             if (hasNextAction)
             {
@@ -337,17 +339,29 @@ namespace DwarfCorp
                         Cart = EntityFactory.CreateEntity<Fixture>("Minecart", action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
                     }
                     Creature.OverrideCharacterMode = true;
-                    Creature.CurrentCharacterMode = CharacterMode.Jumping;
-                    if (hasNextAction)
+                    Creature.CurrentCharacterMode = CharacterMode.Sitting;
+                    var rail = action.SourceState.VehicleState.Rail;
+                    if (rail == null)
                     {
-                        transform.Translation = diff * t + currPosition + Vector3.Up * 0.5f;
-                        Agent.Physics.Velocity = diff;
-                        Cart.LocalTransform = Matrix.CreateTranslation(diff * t + currPosition);
+                        if (hasNextAction)
+                        {
+                            transform.Translation = diff * t + currPosition + Vector3.Up * 0.5f;
+                            Agent.Physics.Velocity = diff;
+                            Cart.LocalTransform = Matrix.CreateTranslation(diff * t + currPosition);
+                        }
+                        else
+                        {
+                            transform.Translation = currPosition;
+                            Cart.LocalTransform = Matrix.CreateTranslation(currPosition);
+                        }
                     }
                     else
                     {
-                        transform.Translation = currPosition;
-                        Cart.LocalTransform = Matrix.CreateTranslation(currPosition);
+                        Drawer3D.DrawBox(rail.GetContainingVoxel().GetBoundingBox(), Color.Green, 0.1f, true);
+                        var pos = rail.InterpolateSpline(t, action.SourceVoxel.WorldPosition + Vector3.One * 0.5f, action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
+                        transform.Translation = pos + Vector3.Up * 1.5f;
+                        Agent.Physics.Velocity = diff;
+                        Cart.LocalTransform = Matrix.CreateTranslation(pos + Vector3.Up * 0.5f);
                     }
                     break;
                 case MoveType.Walk:
