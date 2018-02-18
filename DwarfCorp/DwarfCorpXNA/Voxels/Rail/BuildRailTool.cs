@@ -51,6 +51,7 @@ namespace DwarfCorp.Rail
         private bool RightPressed = false;
         private bool LeftPressed = false;
         public List<ResourceAmount> SelectedResources;
+        public bool GodModeSwitch = false;
 
         private static CraftItem RailCraftItem = new CraftItem
         {
@@ -90,6 +91,7 @@ namespace DwarfCorp.Rail
         {
             System.Diagnostics.Debug.Assert(Pattern != null);
             System.Diagnostics.Debug.Assert(SelectedResources != null);
+            GodModeSwitch = false;
             CreatePreviewBodies(Faction.World.ComponentManager, new VoxelHandle(Faction.World.ChunkManager.ChunkData, new GlobalVoxelCoordinate(0, 0, 0)));
         }
 
@@ -261,6 +263,7 @@ namespace DwarfCorp.Rail
                 var actualPosition = new VoxelHandle(Location.Chunk.Manager.ChunkData, Location.Coordinate + new GlobalVoxelOffset(piece.Offset.X, 0, piece.Offset.Y));
                 var addNewDesignation = true;
                 var hasResources = false;
+                var finalEntity = body;
 
                 foreach (var entity in Player.World.CollisionManager.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionManager.CollisionType.Static))
                 {
@@ -286,6 +289,7 @@ namespace DwarfCorp.Rail
                             (existingDesignation.Tag as CraftDesignation).Progress = 0.0f;
                             body.Delete();
                             addNewDesignation = false;
+                            finalEntity = entity as RailEntity;
                         }
                         else
                         {
@@ -296,7 +300,7 @@ namespace DwarfCorp.Rail
                     }
                 }
 
-                if (addNewDesignation)
+                if (!GodModeSwitch && addNewDesignation)
                 {
 
                     var startPos = body.Position + new Vector3(0.0f, -0.3f, 0.0f);
@@ -323,9 +327,26 @@ namespace DwarfCorp.Rail
                     Player.Faction.Designations.AddEntityDesignation(body, DesignationType.Craft, designation);
                     assignments.Add(new CraftItemTask(designation));
                 }
+
+                if (GodModeSwitch)
+                {
+                    // Go ahead and activate the entity and destroy the designation and workpile.
+                    var existingDesignation = Player.Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, finalEntity));
+                    if (existingDesignation != null)
+                    {
+                        var designation = existingDesignation.Tag as CraftDesignation;
+                        if (designation != null && designation.WorkPile != null)
+                            designation.WorkPile.Delete();
+                        Player.Faction.Designations.RemoveEntityDesignation(finalEntity, DesignationType.Craft);
+                    }
+
+                    finalEntity.SetFlagRecursive(GameComponent.Flag.Active, true);
+                    finalEntity.SetTintRecursive(Color.White);
+                    finalEntity.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                }
             }
 
-            if (assignments.Count > 0)
+            if (!GodModeSwitch && assignments.Count > 0)
                 Player.World.Master.TaskManager.AddTasks(assignments);
         }
     }

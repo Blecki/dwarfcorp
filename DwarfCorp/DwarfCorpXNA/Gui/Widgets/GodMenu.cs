@@ -163,6 +163,55 @@ namespace DwarfCorp.Gui.Widgets
 
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "PLACE RAIL",
+                    ExpansionChild = new HorizontalMenuTray.Tray
+                    {
+                        Columns = 1,
+                        ItemSource = new HorizontalMenuTray.MenuItem[]
+                        {
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "RAW PIECES",
+                                ExpansionChild = new HorizontalMenuTray.Tray
+                                {
+                                    Columns = 2,
+                                    ItemSize = new Point(200, 20),
+                                    ItemSource = Rail.RailLibrary.EnumeratePieces().Select(p =>
+                                        new HorizontalMenuTray.MenuItem
+                                        {
+                                            Text = p.Name,
+                                            OnClick = (sender, args) => ActivateGodTool("Rail/" + p.Name)
+                                        })
+                                }
+                            },
+
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "USING PATTERNS",
+                                ExpansionChild = new HorizontalMenuTray.Tray
+                                {
+                                    Columns = 1,
+                                    ItemSource = Rail.RailLibrary.EnumeratePatterns().Select( p =>
+                                        new HorizontalMenuTray.MenuItem
+                                        {
+                                            Text = p.Name,
+                                            OnClick = (sender, args) =>
+                                            {
+                                                var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as Rail.BuildRailTool;
+                                                railTool.Pattern = p;
+                                                railTool.SelectedResources = new List<ResourceAmount>(new ResourceAmount[] { new ResourceAmount(ResourceType.Iron, 2) });
+                                                Master.ChangeTool(GameMaster.ToolMode.BuildRail);
+                                                railTool.GodModeSwitch = true;
+                                            }
+                                        })
+                                }
+                            }
+                        }
+                    }
+                },
+
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "KILL THINGS",
                     OnClick = (sender, args) => ActivateGodTool("Kill Things")
                 },

@@ -134,6 +134,25 @@ namespace DwarfCorp
                     }
                 }
             }
+            else if (Command.Contains("Rail/"))
+            {
+                string type = Command.Substring("Rail/".Length);
+                var junction = new Rail.JunctionPiece
+                {
+                    RailPiece = type,
+                    Orientation = Rail.Orientation.North,
+                    Offset = Point.Zero
+                };
+
+                foreach (var vox in refs.Where(vox => vox.IsValid))
+                {
+                    if (vox.IsEmpty)
+                    {
+                        var entity = new Rail.RailEntity(Player.World.ComponentManager, vox, junction);
+                        Player.World.ComponentManager.RootComponent.AddChild(entity);
+                    }
+                }
+            }
             else if (Command.Contains("Grass/"))
             {
                 var type = GrassLibrary.GetGrassType(Command.Substring(6));

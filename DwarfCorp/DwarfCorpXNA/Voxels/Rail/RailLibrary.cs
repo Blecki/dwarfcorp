@@ -47,7 +47,6 @@ namespace DwarfCorp.Rail
 
         private static void Initialize()
         {
-            // Todo: Better modding support means lists of named things. Two files?
             if (Patterns == null)
             {
                 Pieces = FileUtils.LoadJsonListFromMultipleSources<RailPiece>(ContentPaths.rail_pieces, null, p => p.Name);
@@ -62,6 +61,12 @@ namespace DwarfCorp.Rail
         {
             Initialize();
             return Patterns;
+        }
+
+        public static IEnumerable<RailPiece> EnumeratePieces()
+        {
+            Initialize();
+            return Pieces;
         }
 
         public static RailPiece GetRailPiece(String Name)
