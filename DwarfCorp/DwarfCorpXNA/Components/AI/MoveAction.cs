@@ -10,6 +10,7 @@ namespace DwarfCorp
     public struct VehicleState : IEquatable<VehicleState>
     {
         public Rail.RailEntity Rail;
+        public Rail.RailEntity PrevRail;
 
         public override bool Equals(object obj)
         {
@@ -26,17 +27,18 @@ namespace DwarfCorp
         {
             var hashCode = -7133344;
             hashCode = hashCode * -1521134295 + EqualityComparer<RailEntity>.Default.GetHashCode(Rail);
+            hashCode = hashCode * 31 + EqualityComparer<RailEntity>.Default.GetHashCode(PrevRail);
             return hashCode;
         }
 
         public static bool operator ==(VehicleState A, VehicleState B)
         {
-            return A.Rail == B.Rail;
+            return A.Rail == B.Rail && A.PrevRail == B.PrevRail;
         }
 
         public static bool operator !=(VehicleState A, VehicleState B)
         {
-            return A.Rail != B.Rail;
+            return A.Rail != B.Rail || A.PrevRail != B.PrevRail;
         }
 
         public bool IsRidingVehicle

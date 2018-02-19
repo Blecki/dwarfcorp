@@ -405,9 +405,9 @@ namespace DwarfCorp
 
                 if (Can(MoveType.RideVehicle) && isRiding)
                 {
-                    foreach(var neighbor in state.VehicleState.Rail.NeighborRails)
+                    foreach(var neighbor in Rail.RailHelper.EnumerateForwardNetworkConnections(state.VehicleState.PrevRail, state.VehicleState.Rail))
                     {
-                        var neighborRail =  Creature.Manager.FindComponent(neighbor.NeighborID) as Rail.RailEntity;
+                        var neighborRail =  Creature.Manager.FindComponent(neighbor) as Rail.RailEntity;
                         if (neighborRail == null || !neighborRail.Active)
                             continue;
 
@@ -432,7 +432,8 @@ namespace DwarfCorp
                                 Voxel = neighborRail.GetContainingVoxel(),
                                 VehicleState = new VehicleState()
                                 {
-                                    Rail = neighborRail
+                                    Rail = neighborRail,
+                                    PrevRail = state.VehicleState.Rail
                                 }
                             },
                             MoveType = MoveType.RideVehicle,
