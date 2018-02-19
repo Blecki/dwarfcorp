@@ -35,9 +35,9 @@ namespace DwarfCorp
             return !agent.World.Master.Spells.GetSpell(Spell).IsResearched;
         }
 
-        public override void SetupScript(Creature agent)
+        public override Act CreateScript(Creature agent)
         {
-            Script = new GoResearchSpellAct(agent.AI, agent.World.Master.Spells.GetSpell(Spell));
+            return new GoResearchSpellAct(agent.AI, agent.World.Master.Spells.GetSpell(Spell));
         }
     }
 }

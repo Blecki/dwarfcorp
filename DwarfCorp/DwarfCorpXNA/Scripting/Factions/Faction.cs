@@ -232,10 +232,9 @@ namespace DwarfCorp
             {
                 if (threat != null && !threat.IsDead)
                 {
-                    Task g = new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto);
-
-                    if (!IsTaskAssigned(g))
-                    {
+                    if (!Designations.IsDesignation(threat.Physics, DesignationType.Attack))
+                    { 
+                        var g = new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto);
                         Designations.AddEntityDesignation(threat.Physics, DesignationType.Attack);
                         tasks.Add(g);
                     }

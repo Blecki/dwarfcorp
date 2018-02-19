@@ -119,16 +119,6 @@ namespace DwarfCorp
             return obj is Task && Name.Equals(((Task) (obj)).Name);
         }
 
-
-        public virtual void SetupScript(Creature agent)
-        {
-            if(Script != null)
-                Script.OnCanceled();
-
-            Script = CreateScript(agent);
-        }
-
-
         public virtual Act CreateScript(Creature agent)
         {
             return null;
