@@ -235,14 +235,8 @@ namespace DwarfCorp
         [OnDeserialized]
         public void OnDeserialize(StreamingContext ctx)
         {
-            if (CurrentTask != null)
-            {
-                CurrentTask.Script = null;
-            }
             if (Sensor == null)
-            {
                 Sensor = GetRoot().GetComponent<EnemySensor>();
-            }
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
         }
 
@@ -330,7 +324,6 @@ namespace DwarfCorp
 
             if (newTask != null)
             {
-                CurrentTask.Cancel();
                 if (CurrentTask.ShouldRetry(Creature))
                     AssignTask(CurrentTask);
                 CurrentTask = newTask;
@@ -401,6 +394,12 @@ namespace DwarfCorp
             if (CurrentAct != null)
                 CurrentAct.OnCanceled();
             CurrentAct = NewAct;
+        }
+
+        public void CancelCurrentTask()
+        {
+            ChangeAct(null);
+            CurrentTask = null;
         }
 
         /// <summary> Update this creature </summary>
@@ -1281,7 +1280,7 @@ namespace DwarfCorp
         {
             if (CurrentTask != null)
             {
-                CurrentTask.Cancel();
+                AssignTask(null);
                 if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
                 {
                     World.Master.TaskManager.AddTask(CurrentTask);
@@ -1294,7 +1293,7 @@ namespace DwarfCorp
         {
             if (CurrentTask != null)
             {
-                CurrentTask.Cancel();
+                AssignTask(null);
                 if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
                 {
                     World.Master.TaskManager.AddTask(CurrentTask);

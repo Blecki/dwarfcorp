@@ -92,9 +92,6 @@ namespace DwarfCorp
             Unknown
         }
 
-        // The script is ignored and regenerated on load.
-        [JsonIgnore]
-        public Act Script { get; set; }
         public bool AutoRetry = false;
 
         protected bool Equals(Task other)
@@ -153,52 +150,41 @@ namespace DwarfCorp
         {
             AssignedCreatures.Remove(agent);   
         }
-
-        public virtual void Cancel()
-        {
-            if (Script != null)
-            {
-                Script.OnCanceled();
-            }
-        }
     }
 
     public class ActWrapperTask : Task
     {
+        private Act WrappedAct;
+
         public ActWrapperTask()
         {
             
         }
 
-
         public ActWrapperTask(Act act)
         {
             ReassignOnDeath = false;
-            Script = act;
-            Name = Script.Name;
+            WrappedAct = act;
+            Name = WrappedAct.Name;
         }
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return Script != null ? Feasibility.Feasible : Feasibility.Infeasible;
+            return WrappedAct != null ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool ShouldDelete(Creature agent)
         {
-            if (Script == null)
-            {
+            if (WrappedAct == null)
                 return true;
-            }
             return base.ShouldDelete(agent);
         }
 
         public override Act CreateScript(Creature agent)
         {
-            if (Script != null)
-            {
-                Script.Initialize();
-            }
-            return Script;
+            if (WrappedAct != null)
+                WrappedAct.Initialize();
+            return WrappedAct;
         }
     }
 
