@@ -31,6 +31,12 @@ namespace DwarfCorp.Rail
 
         public static IEnumerable<uint> EnumerateForwardNetworkConnections(RailEntity Leaving, RailEntity Entering)
         {
+            if (Leaving == null)
+            {
+                foreach (var neighbor in Entering.NeighborRails)
+                    yield return neighbor.NeighborID;
+                yield break;
+            }
             var connectionPoint = FindConnectionPoint(Leaving, Entering);
             if (connectionPoint.HasValue)
             {

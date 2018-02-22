@@ -580,8 +580,10 @@ namespace DwarfCorp
 
         private bool SaveThreadRoutine(string filename)
         {
+#if !DEBUG
             try
             {
+#endif
                 System.Threading.Thread.CurrentThread.Name = "Save";
                 // Ensure we're using the invariant culture.
                 System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -621,6 +623,7 @@ namespace DwarfCorp
                         Resolution = new Point(128, 128)
                     });
                 }
+#if !DEBUG
             }
             catch (Exception exception)
             {
@@ -628,7 +631,8 @@ namespace DwarfCorp
                 Game.CaptureException(exception);
                 throw new WaitStateException(exception.Message);
             }
-            return true;
+#endif
+                return true;
         }
 
         /// <summary>

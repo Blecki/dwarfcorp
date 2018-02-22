@@ -56,6 +56,18 @@ namespace DwarfCorp.Rail
         [JsonIgnore]
         public List<NeighborConnection> NeighborRails = new List<NeighborConnection>();
         
+        private VoxelHandle ContainingVoxel {  get { return GetContainingVoxel(); } }
+
+        public VoxelHandle GetLocation()
+        {
+            return Location;
+        }
+
+        public VoxelHandle GetContainingVoxel()
+        {
+            return new VoxelHandle(Location.Chunk.Manager.ChunkData, Location.Coordinate + new GlobalVoxelOffset(Piece.Offset.X, 0, Piece.Offset.Y));
+        }
+
         public JunctionPiece GetPiece()
         {
             return Piece;
@@ -117,12 +129,60 @@ namespace DwarfCorp.Rail
             UpdatePiece(Piece, Location);
         }
 
+        public Vector3 InterpolateSpline(float t, Vector3 origin, Vector3 destination)
+        {
+            var piece = Rail.RailLibrary.GetRailPiece(Piece.RailPiece);
+            List<Vector3> selectedSpline = null;
+            bool isReversed = false;
+            var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
+            double closestEndpoint = double.MaxValue;
+
+            foreach (var spline in piece.SplinePoints)
+            {
+                var startPoint = Vector3.Transform(spline.First(), transform);
+                var distStart = (startPoint - destination).LengthSquared();
+                if (distStart < closestEndpoint)
+                {
+                    isReversed = true;
+                    selectedSpline = spline;
+                    closestEndpoint = distStart;
+                }
+
+                var endPoint = Vector3.Transform(spline.Last(), transform);
+                var distEnd = (endPoint - destination).LengthSquared();
+                if (distEnd < closestEndpoint)
+                {
+                    isReversed = false;
+                    selectedSpline = spline;
+                    closestEndpoint = distEnd;
+                }
+            }
+            
+            if (selectedSpline == null)
+            {
+                return origin + t * (destination - origin);
+            }
+
+            if (isReversed)
+            {
+                t = 1.0f - t;
+            }
+
+            float idx = (selectedSpline.Count - 1) * t;
+            int k = MathFunctions.Clamp((int)idx, 0, selectedSpline.Count - 1);
+            float remainder = idx - k;
+            Drawer3D.DrawLine(Vector3.Transform(selectedSpline[k], transform), Vector3.Transform(selectedSpline[k + 1], transform), isReversed ? Color.Red : Color.Blue, 0.1f);
+            return Vector3.Transform(selectedSpline[k] * (1.0f - remainder) + selectedSpline[k + 1] * remainder, transform);
+        }
+
         override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
 
             if (Debugger.Switches.DrawRailNetwork)
             {
+                Drawer3D.DrawBox(GetContainingVoxel().GetBoundingBox(), Color.White, 0.01f, true);
+                Drawer3D.DrawLine(GetContainingVoxel().GetBoundingBox().Center(), GlobalTransform.Translation, Color.White, 0.01f);
                 var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
                 var piece = Rail.RailLibrary.GetRailPiece(Piece.RailPiece);
 

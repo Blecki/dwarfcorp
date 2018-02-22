@@ -256,7 +256,7 @@ namespace DwarfCorp
         public override void Die()
         {
             // Todo: Get rid of this flag.
-            if (IsFlagSet(Flag.AddToCollisionManager))
+            if (IsFlagSet(Flag.AddToCollisionManager) && Manager != null)
                 Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
 
             if (OnDestroyed != null) OnDestroyed();
