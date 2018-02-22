@@ -45,7 +45,19 @@ namespace DwarfCorp.Rail
                         RailPiece = piece.RailPiece,
                         Orientation = OrientationHelper.Rotate(piece.Orientation, 1)
                     }
-                ).ToList()
+                ).ToList(),
+                Entrance = Entrance == null ? null :
+                    new JunctionPortal
+                    {
+                        Offset = new Point(Entrance.Offset.Y, -Entrance.Offset.X),
+                        Direction = OrientationHelper.Rotate(Entrance.Direction, 1)
+                    },
+                Exit = Exit == null ? null :
+                    new JunctionPortal
+                    {
+                        Offset = new Point(Exit.Offset.Y, -Exit.Offset.X),
+                        Direction = OrientationHelper.Rotate(Exit.Direction, 1)
+                    },
             };
         }
 

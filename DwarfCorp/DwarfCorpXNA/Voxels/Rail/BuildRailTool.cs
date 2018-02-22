@@ -93,13 +93,16 @@ namespace DwarfCorp.Rail
             else
             {
                 if (button == InputManager.MouseButton.Left)
+                {
                     if (CanPlace(DragStartVoxel))
                     {
                         Place(DragStartVoxel);
                         PreviewBodies.Clear();
                         CreatePreviewBodies(Player.World.ComponentManager, Player.VoxSelector.VoxelUnderMouse);
-                        Dragging = false;
                     }
+
+                    Dragging = false;
+                }
             }
         }
 
@@ -210,25 +213,92 @@ namespace DwarfCorp.Rail
                 }
                 else
                 {
-                    var bodyCounter = 0;
+                    var bodyCounter = 1;
 
-                    for (var x = DragStartVoxel.Coordinate.X; x <= voxelUnderMouse.Coordinate.X; ++x)
+                    // Build a list of all possible line-building patterns, in every possible configuration and with end points switched.
+                    var possibleChainPatterns = RailLibrary.EnumeratePatterns().Where(p => p.Entrance != null && p.Exit != null).SelectMany(p =>
                     {
-                        var piece = new JunctionPiece
+                        return new JunctionPattern[]
                         {
-                            Offset = new Point(x - DragStartVoxel.Coordinate.X, 0),
-                            RailPiece = Pattern.Pieces[0].RailPiece,
-                            Orientation = Orientation.North
+                            p.Rotate(Orientation.North),
+                            p.Rotate(Orientation.East),
+                            p.Rotate(Orientation.South),
+                            p.Rotate(Orientation.West)
                         };
+                    })
+                    .SelectMany(p =>
+                    {
+                        return new JunctionPattern[]
+                        {
+                            p,
+                            new JunctionPattern
+                            {
+                                Pieces = p.Pieces,
+                                Entrance = p.Exit,
+                                Exit = p.Entrance
+                            }
+                        };
+                    }) // Todo: Normalize so entrance is at 0,0
+                    .ToList();
 
-                        if (PreviewBodies.Count <= bodyCounter)
-                            PreviewBodies.Add(CreatePreviewBody(Player.World.ComponentManager, DragStartVoxel, piece));
-                        else
-                            PreviewBodies[bodyCounter].UpdatePiece(piece, DragStartVoxel);
+                    var currentVoxel = DragStartVoxel;
+                    var currentBody = PreviewBodies[0];
+                    currentBody.UpdatePiece(Pattern.Pieces[0], currentVoxel);
 
-                        bodyCounter += 1;
+                    // Determine which end of start is closer to destination.
+                    var entrancePoint = DragStartVoxel.Coordinate.ToVector3()
+                        + new Vector3(0.5f, 0.0f, 0.5f)
+                        + new Vector3(Pattern.Entrance.Offset.X, 0, Pattern.Entrance.Offset.Y)
+                        + Vector3.Transform(new Vector3(0.0f, 0.0f, 0.5f), Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Pattern.Entrance.Direction));
+
+                    // Determine which end of start is closer to destination.
+                    var exitPoint = DragStartVoxel.Coordinate.ToVector3()
+                        + new Vector3(0.5f, 0.0f, 0.5f)
+                        + new Vector3(Pattern.Exit.Offset.X, 0, Pattern.Exit.Offset.Y)
+                        + Vector3.Transform(new Vector3(0.0f, 0.0f, 0.5f), Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Pattern.Exit.Direction));
+
+                    var currentPoint = new Vector3[] { entrancePoint, exitPoint }.OrderBy(p => (voxelUnderMouse.Coordinate.ToVector3() + new Vector3(0.5f, 0.0f, 0.5f) - p).LengthSquared()).First();
+                    var destinationPoint = voxelUnderMouse.Coordinate.ToVector3() + new Vector3(0.5f, 0.0f, 0.5f);
+
+                    while (currentVoxel != voxelUnderMouse)
+                    {
+                        var nextPiece = possibleChainPatterns.OrderBy(p =>
+                        {
+                            var chainExitPoint = currentPoint + new Vector3(p.Exit.Offset.X, 0, p.Exit.Offset.Y)
+                                + Vector3.Transform(new Vector3(0.0f, 0.0f, 0.5f), Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)p.Exit.Direction));
+                            return (voxelUnderMouse.Coordinate.ToVector3() + new Vector3(0.5f, 0.0f, 0.5f) - chainExitPoint).LengthSquared();
+                        }).First();
+                        // Todo: Make sure entrance is opposite last choosen exit.
+
+                        var newPoint = currentPoint + new Vector3(nextPiece.Exit.Offset.X, 0, nextPiece.Exit.Offset.Y)
+                                + Vector3.Transform(new Vector3(0.0f, 0.0f, 0.5f), Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)nextPiece.Exit.Direction));
+
+                        if ((destinationPoint - newPoint).LengthSquared() > (destinationPoint - currentPoint).LengthSquared()) break;
+
+                        var patternOffset = new Point(currentVoxel.Coordinate.X - DragStartVoxel.Coordinate.X, currentVoxel.Coordinate.Z - DragStartVoxel.Coordinate.Z);
+
+                        // Add the next pattern to the chain
+                        foreach (var piece in nextPiece.Pieces)
+                        {
+                            var newPiece = new JunctionPiece
+                            {
+                                Offset = new Point(piece.Offset.X + patternOffset.X, piece.Offset.Y + patternOffset.Y),
+                                RailPiece = piece.RailPiece,
+                                Orientation = piece.Orientation
+                            };
+
+                            if (PreviewBodies.Count <= bodyCounter)
+                                PreviewBodies.Add(CreatePreviewBody(Player.World.ComponentManager, DragStartVoxel, newPiece));
+                            else
+                                PreviewBodies[bodyCounter].UpdatePiece(newPiece, DragStartVoxel);
+
+                            bodyCounter += 1;
+                        }
+
+                        currentVoxel = new VoxelHandle(Player.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(newPoint));
+                        currentPoint = newPoint;
                     }
-
+                    
                     var lineSize = bodyCounter;
 
                     while (bodyCounter < PreviewBodies.Count)
@@ -268,7 +338,7 @@ namespace DwarfCorp.Rail
                 if (!Dragging)
                 {
                     Dragging = true;
-                    DragStartVoxel = Player.VoxSelector.VoxelUnderMouse;
+                    DragStartVoxel = Player.VoxSelector.FirstVoxel;
                 }
             }
         }
