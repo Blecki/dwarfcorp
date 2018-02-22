@@ -50,6 +50,7 @@ namespace DwarfCorp
         public float MeshScale { get; set; }
         public Vector3 BasePosition = Vector3.Zero;
         public float RandomAngle = 0.0f;
+        public FarmTile Farm;
 
         public Plant()
         {
@@ -110,6 +111,16 @@ namespace DwarfCorp
         {
             impl_CreateCosmeticChildren(Manager);
             base.CreateCosmeticChildren(Manager);
+        }
+
+        public override void Die()
+        {
+            if (Farm != null && !(this is Seedling))
+            {
+                Farm.Plant = null;
+                Farm.TriggerAutoReplant(World);
+            }
+            base.Die();
         }
     }
 }

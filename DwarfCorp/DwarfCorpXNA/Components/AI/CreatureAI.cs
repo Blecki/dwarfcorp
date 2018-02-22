@@ -743,63 +743,6 @@ namespace DwarfCorp
                     }
                 }
 
-                // Farm stuff if applicable
-                if (Stats.IsTaskAllowed(Task.TaskCategory.Plant) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
-                {
-                    var harvestablePlot = Faction.Designations.EnumerateDesignations(DesignationType._InactiveFarm)
-                        .Where(d =>
-                        {
-                            var farm = d.Tag as FarmTile;
-                            return farm.PlantExists() && farm.Plant.IsGrown;
-                        })
-                        .Select(d => d.Tag as FarmTile)
-                        .FirstOrDefault();
-
-                    if (harvestablePlot != null)
-                    {
-                        var task = new KillEntityTask(harvestablePlot.Plant, KillEntityTask.KillType.Chop);
-                        Faction.Designations.AddEntityDesignation(harvestablePlot.Plant, DesignationType.Chop);
-                        return task;
-                    }
-                }
-
-                if (Stats.IsTaskAllowed(Task.TaskCategory.Plant) && MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction)
-                {
-                    var plantablePlot = Faction.Designations.EnumerateDesignations(DesignationType._InactiveFarm)
-                        .Where(d =>
-                        {
-                            var farm = d.Tag as FarmTile;
-                            return farm.Farmer == null && !farm.PlantExists() && !String.IsNullOrEmpty(farm.PlantedType);
-                        })
-                        .Select(d => d.Tag as FarmTile)
-                        .FirstOrDefault();
-
-                    if (plantablePlot != null)
-                    {
-                        int currentAmount = Creature.Faction.ListResources()
-                            .Sum(resource => resource.Key == plantablePlot.PlantedType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
-
-                        if (currentAmount > 0)
-                        {
-                            Creature.Faction.Designations.RemoveVoxelDesignation(plantablePlot.Voxel, DesignationType._AllFarms);
-                            Creature.Faction.Designations.AddVoxelDesignation(plantablePlot.Voxel, DesignationType.Plant, plantablePlot);
-
-                            var task = new FarmTask(plantablePlot, FarmAct.FarmMode.Plant)
-                            {
-                                Category = Task.TaskCategory.Plant,
-                                Plant = plantablePlot.PlantedType,
-                                RequiredResources = new List<ResourceAmount>
-                                {
-                                    new ResourceAmount(plantablePlot.PlantedType)
-                                },
-                                FarmToWork = plantablePlot
-                            };
-
-                            plantablePlot.Farmer = this;
-                            return task;
-                        }
-                    }
-                }
 
                 // Find a room to train in, if applicable.
                 if (Stats.IsTaskAllowed(Task.TaskCategory.Attack) && MathFunctions.RandEvent(0.01f))
