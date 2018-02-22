@@ -13,11 +13,26 @@ namespace DwarfCorp.Rail
         public Orientation Orientation;
     }
 
+    public enum JunctionPaintMode
+    {
+        SingleInstance,
+        Path
+    }
+
+    public class JunctionPortal
+    {
+        public Point Offset;
+        public Orientation Direction;
+    }
+
     public class JunctionPattern
     {
         public String Name;
         public List<JunctionPiece> Pieces;
         public int Icon;
+        public JunctionPaintMode PaintMode = JunctionPaintMode.SingleInstance;
+        public JunctionPortal Entrance = null;
+        public JunctionPortal Exit = null;
 
         public JunctionPattern Rotate()
         {

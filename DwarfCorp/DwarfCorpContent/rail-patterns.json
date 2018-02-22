@@ -8,7 +8,16 @@
         "RailPiece": "rail-straight",
         "Orientation": "North"
       }
-    ]
+    ],
+    "PaintMode": "Path",
+    "Entrance": {
+      "Offset": "0, 0",
+      "Direction": "West"
+    },
+    "Exit": {
+      "Offset": "0, 0",
+      "Direction": "East"
+    }
   },
 
   {
