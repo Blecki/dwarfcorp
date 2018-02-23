@@ -100,6 +100,10 @@ namespace DwarfCorp.Rail
                         PreviewBodies.Clear();
                         CreatePreviewBodies(Player.World.ComponentManager, Player.VoxSelector.VoxelUnderMouse);
                     }
+                    else
+                    {
+                        CreatePreviewBodies(Player.World.ComponentManager, Player.VoxSelector.VoxelUnderMouse);
+                    }
 
                     Dragging = false;
                 }
@@ -216,6 +220,7 @@ namespace DwarfCorp.Rail
                     var bodyCounter = 1;
 
                     // Build a list of all possible line-building patterns, in every possible configuration and with end points switched.
+                    // Move to rail library - build and cache once.
                     var possibleChainPatterns = RailLibrary.EnumeratePatterns().Where(p => p.Entrance != null && p.Exit != null).SelectMany(p =>
                     {
                         return new JunctionPattern[]
@@ -265,88 +270,91 @@ namespace DwarfCorp.Rail
                                 }).ToList()
                         };
 
-                        // Align piece so entrance is from 0,0
+                        return r;
 
-                        var offset = Point.Zero;
-                        switch (r.Entrance.Direction)
-                        {
-                            case Orientation.North:
-                                offset = new Point(0, 1);
-                                break;
-                            case Orientation.East:
-                                offset = new Point(-1, 0);
-                                break;
-                            case Orientation.South:
-                                offset = new Point(0, -1);
-                                break;
-                            case Orientation.West:
-                                offset = new Point(1, 0);
-                                break;
-                        }
+                        //// Align piece so entrance is from 0,0
 
-                        return new JunctionPattern
-                        {
-                            Entrance = new JunctionPortal
-                            {
-                                Direction = r.Entrance.Direction,
-                                Offset = offset
-                            },
-                            Exit = new JunctionPortal
-                            {
-                                Direction = r.Exit.Direction,
-                                Offset = new Point(r.Exit.Offset.X + offset.X, r.Exit.Offset.Y + offset.Y)
-                            },
-                            Pieces = r.Pieces.Select(piece =>
-                                new JunctionPiece
-                                {
-                                    RailPiece = piece.RailPiece,
-                                    Orientation = piece.Orientation,
-                                    Offset = new Point(piece.Offset.X + offset.X, piece.Offset.Y + offset.Y)
-                                }).ToList()
-                        };
+                        //var offset = Point.Zero;
+                        //switch (r.Entrance.Direction)
+                        //{
+                        //    case Orientation.North:
+                        //        offset = new Point(0, 1);
+                        //        break;
+                        //    case Orientation.East:
+                        //        offset = new Point(-1, 0);
+                        //        break;
+                        //    case Orientation.South:
+                        //        offset = new Point(0, -1);
+                        //        break;
+                        //    case Orientation.West:
+                        //        offset = new Point(1, 0);
+                        //        break;
+                        //}
+
+                        //return new JunctionPattern
+                        //{
+                        //    Entrance = new JunctionPortal
+                        //    {
+                        //        Direction = r.Entrance.Direction,
+                        //        Offset = offset
+                        //    },
+                        //    Exit = new JunctionPortal
+                        //    {
+                        //        Direction = r.Exit.Direction,
+                        //        Offset = new Point(r.Exit.Offset.X + offset.X, r.Exit.Offset.Y + offset.Y)
+                        //    },
+                        //    Pieces = r.Pieces.Select(piece =>
+                        //        new JunctionPiece
+                        //        {
+                        //            RailPiece = piece.RailPiece,
+                        //            Orientation = piece.Orientation,
+                        //            Offset = new Point(piece.Offset.X + offset.X, piece.Offset.Y + offset.Y)
+                        //        }).ToList()
+                        //};
                     })
                     .ToList();
 
-                    var currentVoxel = DragStartVoxel;
+                    var currentVoxel = DragStartVoxel.Coordinate;
                     var currentBody = PreviewBodies[0];
-                    currentBody.UpdatePiece(Pattern.Pieces[0], currentVoxel);
+                    currentBody.UpdatePiece(Pattern.Pieces[0], DragStartVoxel);
 
+                    // Need to include exit tweak here to pick which way to go first. Just remember to drop back to the voxel when setting currentVoxel.
                     // Determine which end of start is closer to destination.
                     var entrancePoint = DragStartVoxel.Coordinate.ToVector3()
-                        + new Vector3(0.5f, 0.0f, 0.5f)
-                        + new Vector3(Pattern.Entrance.Offset.X, 0, Pattern.Entrance.Offset.Y)
-                        + Vector3.Transform(new Vector3(0.0f, 0.0f, 0.5f), Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Pattern.Entrance.Direction));
+                        + new Vector3(Pattern.Entrance.Offset.X, 0, Pattern.Entrance.Offset.Y);
 
                     // Determine which end of start is closer to destination.
                     var exitPoint = DragStartVoxel.Coordinate.ToVector3()
-                        + new Vector3(0.5f, 0.0f, 0.5f)
-                        + new Vector3(Pattern.Exit.Offset.X, 0, Pattern.Exit.Offset.Y)
-                        + Vector3.Transform(new Vector3(0.0f, 0.0f, 0.5f), Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Pattern.Exit.Direction));
+                        + new Vector3(Pattern.Exit.Offset.X, 0, Pattern.Exit.Offset.Y);
 
-                    var currentPoint = new Vector3[] { entrancePoint, exitPoint }.OrderBy(p => (voxelUnderMouse.Coordinate.ToVector3() + new Vector3(0.5f, 0.0f, 0.5f) - p).LengthSquared()).First();
-                    var destinationPoint = voxelUnderMouse.Coordinate.ToVector3() + new Vector3(0.5f, 0.0f, 0.5f);
+                    var destinationPoint = voxelUnderMouse.Coordinate.ToVector3();
+                    var currentPoint = new Vector3[] { entrancePoint, exitPoint }.OrderBy(p => (destinationPoint - p).LengthSquared()).First();
+
                     Rail.JunctionPortal lastExit = entrancePoint == currentPoint ? Pattern.Entrance : Pattern.Exit;
 
-                    // Uh need the actual voxel we moved into
+                    currentVoxel = OffsetVoxelByDirection(currentVoxel, lastExit);
 
-                    while (currentVoxel != voxelUnderMouse)
+                    if ((destinationPoint - currentPoint).Length() > 5)
                     {
-                        var nextPiece = possibleChainPatterns.Where(p => p.Entrance.Direction == OrientationHelper.Rotate(lastExit.Direction, 2)).OrderBy(p =>
-                        {
-                            var chainExitPoint = currentPoint + new Vector3(p.Exit.Offset.X, 0, p.Exit.Offset.Y)
-                                + Vector3.Transform(new Vector3(0.0f, 0.0f, 0.5f), Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)p.Exit.Direction));
-                                //+ Vector3.Transform(new Vector3(0.0f, 0.0f, 0.5f), Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)p.Entrance.Direction));
-                            return (voxelUnderMouse.Coordinate.ToVector3() + new Vector3(0.5f, 0.0f, 0.5f) - chainExitPoint).LengthSquared();
-                        }).First();
+                        var x = 5;
+                    }
 
-                        var newPoint = currentPoint + new Vector3(nextPiece.Exit.Offset.X, 0, nextPiece.Exit.Offset.Y)
-                                + Vector3.Transform(new Vector3(0.0f, 0.0f, 0.5f), Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)nextPiece.Exit.Direction));
-                                //+ Vector3.Transform(new Vector3(0.0f, 0.0f, 0.5f), Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)nextPiece.Entrance.Direction));
+                    while (currentVoxel != voxelUnderMouse.Coordinate)
+                    {
+                        var nextPiece = possibleChainPatterns
+                            .Where(p => p.Entrance.Direction == OrientationHelper.Rotate(lastExit.Direction, 2))
+                            .OrderBy(p =>
+                            {
+                                return (destinationPoint - (currentVoxel.ToVector3() + new Vector3(p.Exit.Offset.X, 0, p.Exit.Offset.Y))).LengthSquared();
+                            })
+                            .First();
 
-                        if ((destinationPoint - newPoint).LengthSquared() > (destinationPoint - currentPoint).LengthSquared()) break;
+                        var exitVoxelPoint = currentVoxel.ToVector3() + new Vector3(nextPiece.Exit.Offset.X, 0, nextPiece.Exit.Offset.Y);
 
-                        var patternOffset = new Point(currentVoxel.Coordinate.X - DragStartVoxel.Coordinate.X, currentVoxel.Coordinate.Z - DragStartVoxel.Coordinate.Z);
-                        
+                        if ((destinationPoint - exitVoxelPoint).LengthSquared() > (destinationPoint - currentPoint).LengthSquared()) break;
+
+                        var patternOffset = new Point(currentVoxel.X - DragStartVoxel.Coordinate.X, currentVoxel.Z - DragStartVoxel.Coordinate.Z);
+
                         // Add the next pattern to the chain
                         foreach (var piece in nextPiece.Pieces)
                         {
@@ -365,12 +373,12 @@ namespace DwarfCorp.Rail
                             bodyCounter += 1;
                         }
 
-                        // This is NOT getting me the exit voxel!
-                        currentVoxel = new VoxelHandle(Player.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(newPoint + new Vector3(0.5f, 0.0f, 0.5f)));
-                        currentPoint = newPoint;
+                        currentVoxel += new GlobalVoxelOffset(nextPiece.Exit.Offset.X, 0, nextPiece.Exit.Offset.Y);
+                        currentVoxel = OffsetVoxelByDirection(currentVoxel, nextPiece.Exit);
+                        currentPoint = exitVoxelPoint;
                         lastExit = nextPiece.Exit;
                     }
-                    
+
                     var lineSize = bodyCounter;
 
                     while (bodyCounter < PreviewBodies.Count)
@@ -390,7 +398,23 @@ namespace DwarfCorp.Rail
 
             foreach (var body in PreviewBodies)
                 body.SetTintRecursive(tint);
+        }
 
+        private GlobalVoxelCoordinate OffsetVoxelByDirection(GlobalVoxelCoordinate C, JunctionPortal Portal)
+        {
+            switch (Portal.Direction)
+            {
+                case Orientation.North:
+                    return new GlobalVoxelCoordinate(C.X, C.Y, C.Z + 1);
+                case Orientation.East:
+                    return new GlobalVoxelCoordinate(C.X + 1, C.Y, C.Z);
+                case Orientation.South:
+                    return new GlobalVoxelCoordinate(C.X, C.Y, C.Z - 1);
+                case Orientation.West:
+                    return new GlobalVoxelCoordinate(C.X - 1, C.Y, C.Z);
+                default:
+                    return C;
+            }
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

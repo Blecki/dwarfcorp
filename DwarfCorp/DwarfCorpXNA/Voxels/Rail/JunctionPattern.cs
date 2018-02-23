@@ -16,7 +16,8 @@ namespace DwarfCorp.Rail
     public enum JunctionPaintMode
     {
         SingleInstance,
-        Path
+        Path,
+        Hidden
     }
 
     public class JunctionPortal
