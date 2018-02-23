@@ -286,31 +286,35 @@ namespace DwarfCorp.Rail
 
             var piece = RailLibrary.GetRailPiece(Piece.RailPiece);
             var spriteChild = EnumerateChildren().OfType<RailSprite>().FirstOrDefault() as RailSprite;
-            spriteChild.LocalTransform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
 
-            switch (piece.Shape)
+            if (spriteChild != null)
             {
-                case RailShape.Flat:
-                    spriteChild.VertexHeightOffsets[0] = 0.0f;
-                    spriteChild.VertexHeightOffsets[1] = 0.0f;
-                    spriteChild.VertexHeightOffsets[2] = 0.0f;
-                    spriteChild.VertexHeightOffsets[3] = 0.0f;
-                    break;
-                case RailShape.TopHalfSlope:
-                    spriteChild.VertexHeightOffsets[0] = 1.0f;
-                    spriteChild.VertexHeightOffsets[1] = 0.5f;
-                    spriteChild.VertexHeightOffsets[2] = 0.5f;
-                    spriteChild.VertexHeightOffsets[3] = 1.0f;
-                    break;
-                case RailShape.BottomHalfSlope:
-                    spriteChild.VertexHeightOffsets[0] = 0.5f;
-                    spriteChild.VertexHeightOffsets[1] = 0.0f;
-                    spriteChild.VertexHeightOffsets[2] = 0.0f;
-                    spriteChild.VertexHeightOffsets[3] = 0.5f;
-                    break;
-            }
+                spriteChild.LocalTransform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
 
-            spriteChild.SetFrame(piece.Tile);
+                switch (piece.Shape)
+                {
+                    case RailShape.Flat:
+                        spriteChild.VertexHeightOffsets[0] = 0.0f;
+                        spriteChild.VertexHeightOffsets[1] = 0.0f;
+                        spriteChild.VertexHeightOffsets[2] = 0.0f;
+                        spriteChild.VertexHeightOffsets[3] = 0.0f;
+                        break;
+                    case RailShape.TopHalfSlope:
+                        spriteChild.VertexHeightOffsets[0] = 1.0f;
+                        spriteChild.VertexHeightOffsets[1] = 0.5f;
+                        spriteChild.VertexHeightOffsets[2] = 0.5f;
+                        spriteChild.VertexHeightOffsets[3] = 1.0f;
+                        break;
+                    case RailShape.BottomHalfSlope:
+                        spriteChild.VertexHeightOffsets[0] = 0.5f;
+                        spriteChild.VertexHeightOffsets[1] = 0.0f;
+                        spriteChild.VertexHeightOffsets[2] = 0.0f;
+                        spriteChild.VertexHeightOffsets[3] = 0.5f;
+                        break;
+                }
+
+                spriteChild.SetFrame(piece.Tile);
+            }
 
             // Hack to make the listener update it's damn bounding box
             EnumerateChildren().OfType<GenericVoxelListener>().FirstOrDefault().LocalTransform = Matrix.Identity;

@@ -58,6 +58,7 @@ namespace DwarfCorp.Rail
                         Offset = new Point(Exit.Offset.Y, -Exit.Offset.X),
                         Direction = OrientationHelper.Rotate(Exit.Direction, 1)
                     },
+                PaintMode = PaintMode
             };
         }
 
