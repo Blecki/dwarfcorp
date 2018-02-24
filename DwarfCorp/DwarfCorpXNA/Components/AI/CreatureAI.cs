@@ -1153,6 +1153,8 @@ namespace DwarfCorp
 
         public void AssignTask(Task task)
         {
+            if (task == null) return; // Todo: Hunt down instances of this and kill. It's not the correct way to cancel the task.
+
             if (!Tasks.Contains(task))
             {
                 Tasks.Add(task);
