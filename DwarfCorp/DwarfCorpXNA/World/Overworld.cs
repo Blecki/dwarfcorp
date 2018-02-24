@@ -889,7 +889,7 @@ namespace DwarfCorp
 
 
                     Map[x, y].Height = level;
-                    Map[x, y].Biome = BiomeLibrary.GetBiome("DeciduousForest").Biome;
+                    Map[x, y].Biome = BiomeLibrary.GetBiome("Deciduous Forest").Biome;
                     Map[x, y].Erosion = 1.0f;
                     Map[x, y].Weathering = 0;
                     Map[x, y].Faults = 1.0f;
