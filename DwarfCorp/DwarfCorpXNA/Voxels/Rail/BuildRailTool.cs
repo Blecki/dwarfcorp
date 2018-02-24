@@ -51,6 +51,9 @@ namespace DwarfCorp.Rail
         private bool RightPressed = false;
         private bool LeftPressed = false;
         public List<ResourceAmount> SelectedResources;
+        public bool GodModeSwitch = false;
+        private bool Dragging = false;
+        private VoxelHandle DragStartVoxel = VoxelHandle.InvalidHandle;
 
         private static CraftItem RailCraftItem = new CraftItem
         {
@@ -77,19 +80,42 @@ namespace DwarfCorp.Rail
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            if (button == InputManager.MouseButton.Left)
-                if (CanPlace(Player.VoxSelector.VoxelUnderMouse))
+            if (!Dragging)
+            {
+                if (button == InputManager.MouseButton.Left)
+                    if (CanPlace(Player.VoxSelector.VoxelUnderMouse))
+                    {
+                        Place(Player.VoxSelector.VoxelUnderMouse);
+                        PreviewBodies.Clear();
+                        CreatePreviewBodies(Player.World.ComponentManager, Player.VoxSelector.VoxelUnderMouse);
+                    }
+            }
+            else
+            {
+                if (button == InputManager.MouseButton.Left)
                 {
-                    Place(Player.VoxSelector.VoxelUnderMouse);
-                    PreviewBodies.Clear();
-                    CreatePreviewBodies(Player.World.ComponentManager, Player.VoxSelector.VoxelUnderMouse);
+                    if (CanPlace(DragStartVoxel))
+                    {
+                        Place(DragStartVoxel);
+                        PreviewBodies.Clear();
+                        CreatePreviewBodies(Player.World.ComponentManager, Player.VoxSelector.VoxelUnderMouse);
+                    }
+                    else
+                    {
+                        CreatePreviewBodies(Player.World.ComponentManager, Player.VoxSelector.VoxelUnderMouse);
+                    }
+
+                    Dragging = false;
                 }
+            }
         }
 
         public override void OnBegin()
         {
             System.Diagnostics.Debug.Assert(Pattern != null);
             System.Diagnostics.Debug.Assert(SelectedResources != null);
+            GodModeSwitch = false;
+            Dragging = false;
             CreatePreviewBodies(Faction.World.ComponentManager, new VoxelHandle(Faction.World.ChunkManager.ChunkData, new GlobalVoxelCoordinate(0, 0, 0)));
         }
 
@@ -114,21 +140,24 @@ namespace DwarfCorp.Rail
 
             PreviewBodies.Clear();
             foreach (var piece in Pattern.Pieces)
-                PreviewBodies.Add(new RailEntity(ComponentManager, Location, piece));
-
-            foreach (var body in PreviewBodies)
-                ComponentManager.RootComponent.AddChild(body);
-
-            foreach (var body in PreviewBodies)
-                body.SetFlagRecursive(GameComponent.Flag.Active, false);
+                PreviewBodies.Add(CreatePreviewBody(ComponentManager, Location, piece));
 
             // Todo: Add CraftDetails component.
+        }
+
+        private RailEntity CreatePreviewBody(ComponentManager Manager, VoxelHandle Location, JunctionPiece Piece)
+        {
+            var r = new RailEntity(Manager, Location, Piece);
+            Manager.RootComponent.AddChild(r);
+            r.SetFlagRecursive(GameComponent.Flag.Active, false);
+            //Todo: Add craft details component.
+            return r;
         }
 
         private void UpdatePreviewBodies(VoxelHandle Location)
         {
             System.Diagnostics.Debug.Assert(PreviewBodies.Count == Pattern.Pieces.Count);
-            for (var i = 0; i < PreviewBodies.Count; ++i)
+            for (var i = 0; i < PreviewBodies.Count && i < Pattern.Pieces.Count; ++i)
                 PreviewBodies[i].UpdatePiece(Pattern.Pieces[i], Location);
         }
 
@@ -160,16 +189,136 @@ namespace DwarfCorp.Rail
             LeftPressed = leftKey;
             RightPressed = rightKey;
 
-            var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
-            UpdatePreviewBodies(voxelUnderMouse);
-
             var tint = Color.White;
-            if (CanPlace(voxelUnderMouse))
-                tint = Color.Green;
+
+            if (!Dragging)
+            {
+                var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
+                UpdatePreviewBodies(voxelUnderMouse);
+
+                if (CanPlace(voxelUnderMouse))
+                    tint = Color.Green;
+                else
+                    tint = Color.Red;
+            }
             else
-                tint = Color.Red;
+            {
+                var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
+                if (voxelUnderMouse == DragStartVoxel)
+                {
+                    if (PreviewBodies.Count > Pattern.Pieces.Count)
+                        CreatePreviewBodies(Player.World.ComponentManager, voxelUnderMouse);
+                    UpdatePreviewBodies(voxelUnderMouse);
+
+                    if (CanPlace(voxelUnderMouse))
+                        tint = Color.Green;
+                    else
+                        tint = Color.Red;
+                }
+                else
+                {
+                    PreviewBodies[0].UpdatePiece(Pattern.Pieces[0], DragStartVoxel);
+
+                    var bodyCounter = 1;
+                    var destinationPoint = voxelUnderMouse.Coordinate.ToVector3();
+                    JunctionPortal lastExit = null;
+                    var currentVoxel = DragStartVoxel.Coordinate;
+
+                    // Determine which end of start is closer to destination.
+                    var entranceCoordinate = OffsetCoordinateThroughPortal(DragStartVoxel.Coordinate + new GlobalVoxelOffset(Pattern.Entrance.Offset.X, 0, Pattern.Entrance.Offset.Y), Pattern.Entrance);
+                    var exitCoordinate = OffsetCoordinateThroughPortal(DragStartVoxel.Coordinate + new GlobalVoxelOffset(Pattern.Exit.Offset.X, 0, Pattern.Exit.Offset.Y), Pattern.Exit);
+
+                    if ((destinationPoint - entranceCoordinate.ToVector3()).LengthSquared() < (destinationPoint - exitCoordinate.ToVector3()).LengthSquared())
+                    {
+                        currentVoxel = entranceCoordinate;
+                        lastExit = Pattern.Entrance;
+                    }
+                    else
+                    {
+                        currentVoxel = exitCoordinate;
+                        lastExit = Pattern.Exit;
+                    }
+
+                    var currentPoint = DragStartVoxel.Coordinate.ToVector3() + new Vector3(lastExit.Offset.X, 0.0f, lastExit.Offset.Y);
+                    
+                    while (true)
+                    {
+                        var nextPiece = RailLibrary.EnumerateChainPatterns()
+                            .Where(p => p.Entrance.Direction == OrientationHelper.Rotate(lastExit.Direction, 2)) // Only consider pieces that line up.
+                            .OrderBy(p =>
+                            {
+                                var exitVoxel = OffsetCoordinateThroughPortal(currentVoxel + new GlobalVoxelOffset(p.Exit.Offset.X, 0, p.Exit.Offset.Y), p.Exit);
+                                return (destinationPoint - exitVoxel.ToVector3()).LengthSquared();
+                            })
+                            .First();
+
+                        var exitVoxelPoint = OffsetCoordinateThroughPortal(currentVoxel + new GlobalVoxelOffset(nextPiece.Exit.Offset.X, 0, nextPiece.Exit.Offset.Y), nextPiece.Exit);
+
+                        if ((destinationPoint - exitVoxelPoint.ToVector3()).LengthSquared() > (destinationPoint - currentPoint).LengthSquared()) break;
+
+                        var patternOffset = new Point(currentVoxel.X - DragStartVoxel.Coordinate.X, currentVoxel.Z - DragStartVoxel.Coordinate.Z);
+
+                        // Add the next pattern to the chain
+                        foreach (var piece in nextPiece.Pieces)
+                        {
+                            var newPiece = new JunctionPiece
+                            {
+                                Offset = new Point(piece.Offset.X + patternOffset.X, piece.Offset.Y + patternOffset.Y),
+                                RailPiece = piece.RailPiece,
+                                Orientation = piece.Orientation
+                            };
+
+                            if (PreviewBodies.Count <= bodyCounter)
+                                PreviewBodies.Add(CreatePreviewBody(Player.World.ComponentManager, DragStartVoxel, newPiece));
+                            else
+                                PreviewBodies[bodyCounter].UpdatePiece(newPiece, DragStartVoxel);
+
+                            bodyCounter += 1;
+                        }
+
+                        currentVoxel = OffsetCoordinateThroughPortal(currentVoxel + new GlobalVoxelOffset(nextPiece.Exit.Offset.X, 0, nextPiece.Exit.Offset.Y), nextPiece.Exit);
+                        currentPoint = exitVoxelPoint.ToVector3();
+                        lastExit = nextPiece.Exit;
+                    }
+
+                    // Clean up any excess preview entities.
+                    var lineSize = bodyCounter;
+
+                    while (bodyCounter < PreviewBodies.Count)
+                    {
+                        PreviewBodies[bodyCounter].Delete();
+                        bodyCounter += 1;
+                    }
+
+                    PreviewBodies = PreviewBodies.Take(lineSize).ToList();
+
+                    // Apply tint
+                    if (CanPlace(DragStartVoxel))
+                        tint = Color.Green;
+                    else
+                        tint = Color.Red;
+                }
+            }
+
             foreach (var body in PreviewBodies)
                 body.SetTintRecursive(tint);
+        }
+
+        private GlobalVoxelCoordinate OffsetCoordinateThroughPortal(GlobalVoxelCoordinate C, JunctionPortal Portal)
+        {
+            switch (Portal.Direction)
+            {
+                case Orientation.North:
+                    return new GlobalVoxelCoordinate(C.X, C.Y, C.Z + 1);
+                case Orientation.East:
+                    return new GlobalVoxelCoordinate(C.X + 1, C.Y, C.Z);
+                case Orientation.South:
+                    return new GlobalVoxelCoordinate(C.X, C.Y, C.Z - 1);
+                case Orientation.West:
+                    return new GlobalVoxelCoordinate(C.X - 1, C.Y, C.Z);
+                default:
+                    return C;
+            }
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
@@ -184,7 +333,14 @@ namespace DwarfCorp.Rail
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-
+            if (Pattern.PaintMode == JunctionPaintMode.Path)
+            {
+                if (!Dragging)
+                {
+                    Dragging = true;
+                    DragStartVoxel = Player.VoxSelector.FirstVoxel;
+                }
+            }
         }
 
         private bool CanPlace(VoxelHandle Location, Rail.JunctionPiece Piece, RailEntity PreviewEntity)
@@ -244,8 +400,8 @@ namespace DwarfCorp.Rail
 
         private bool CanPlace(VoxelHandle Location)
         {
-            for (var i = 0; i < Pattern.Pieces.Count; ++i)
-                if (!CanPlace(Location, Pattern.Pieces[i], PreviewBodies[i]))
+            for (var i = 0; i < PreviewBodies.Count; ++i)
+                if (!CanPlace(Location, PreviewBodies[i].GetPiece(), PreviewBodies[i]))
                     return false;
             return true;
         }
@@ -257,10 +413,11 @@ namespace DwarfCorp.Rail
             for (var i = 0; i < PreviewBodies.Count; ++i)
             {
                 var body = PreviewBodies[i];
-                var piece = Pattern.Pieces[i];
+                var piece = body.GetPiece();
                 var actualPosition = new VoxelHandle(Location.Chunk.Manager.ChunkData, Location.Coordinate + new GlobalVoxelOffset(piece.Offset.X, 0, piece.Offset.Y));
                 var addNewDesignation = true;
                 var hasResources = false;
+                var finalEntity = body;
 
                 foreach (var entity in Player.World.CollisionManager.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionManager.CollisionType.Static))
                 {
@@ -286,6 +443,7 @@ namespace DwarfCorp.Rail
                             (existingDesignation.Tag as CraftDesignation).Progress = 0.0f;
                             body.Delete();
                             addNewDesignation = false;
+                            finalEntity = entity as RailEntity;
                         }
                         else
                         {
@@ -296,7 +454,7 @@ namespace DwarfCorp.Rail
                     }
                 }
 
-                if (addNewDesignation)
+                if (!GodModeSwitch && addNewDesignation)
                 {
 
                     var startPos = body.Position + new Vector3(0.0f, -0.3f, 0.0f);
@@ -323,9 +481,26 @@ namespace DwarfCorp.Rail
                     Player.Faction.Designations.AddEntityDesignation(body, DesignationType.Craft, designation);
                     assignments.Add(new CraftItemTask(designation));
                 }
+
+                if (GodModeSwitch)
+                {
+                    // Go ahead and activate the entity and destroy the designation and workpile.
+                    var existingDesignation = Player.Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, finalEntity));
+                    if (existingDesignation != null)
+                    {
+                        var designation = existingDesignation.Tag as CraftDesignation;
+                        if (designation != null && designation.WorkPile != null)
+                            designation.WorkPile.Delete();
+                        Player.Faction.Designations.RemoveEntityDesignation(finalEntity, DesignationType.Craft);
+                    }
+
+                    finalEntity.SetFlagRecursive(GameComponent.Flag.Active, true);
+                    finalEntity.SetTintRecursive(Color.White);
+                    finalEntity.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                }
             }
 
-            if (assignments.Count > 0)
+            if (!GodModeSwitch && assignments.Count > 0)
                 Player.World.Master.TaskManager.AddTasks(assignments);
         }
     }

@@ -594,9 +594,7 @@ namespace DwarfCorp
 
             if (hadCommand)
             {
-                if (dwarf.CurrentTask != null)
-                    dwarf.CurrentTask.Cancel();
-                dwarf.CurrentTask = null;
+                dwarf.CancelCurrentTask();
                 dwarf.TryMoveVelocity(desiredVelocity, jumpCommand);
             }
             else if (dwarf.CurrentTask == null)

@@ -52,7 +52,7 @@ namespace DwarfCorp
         [EntityFactory("Pine Tree")]
         private static GameComponent __factory02(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Tree("Pine Tree", Manager, Position, "pine", ResourceType.EvilSeed, Data.GetData("Scale", 1.0f));
+            return new Tree("Pine Tree", Manager, Position, "pine", ResourceType.PineCone, Data.GetData("Scale", 1.0f));
         }
 
         [EntityFactory("Pine Tree Sprout")]
@@ -65,7 +65,7 @@ namespace DwarfCorp
         [EntityFactory("Snow Pine Tree")]
         private static GameComponent __factory04(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Tree("Pine Tree", Manager, Position, "snowpine", ResourceType.EvilSeed, Data.GetData("Scale", 1.0f));
+            return new Tree("Pine Tree", Manager, Position, "snowpine", ResourceType.PineCone, Data.GetData("Scale", 1.0f));
         }
 
         [EntityFactory("Snow Pine Tree Sprout")]
@@ -78,7 +78,7 @@ namespace DwarfCorp
         [EntityFactory("Candycane")]
         private static GameComponent __factory06(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Tree("Candycane", Manager, Position, "candycane", ResourceType.EvilSeed, Data.GetData("Scale", 1.0f));
+            return new Tree("Candycane", Manager, Position, "candycane", ResourceType.Peppermint, Data.GetData("Scale", 1.0f));
         }
 
         [EntityFactory("Candycane Sprout")]
@@ -91,7 +91,7 @@ namespace DwarfCorp
         [EntityFactory("Palm Tree")]
         private static GameComponent __factory08(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Tree("Palm Tree", Manager, Position, "palm", ResourceType.EvilSeed, Data.GetData("Scale", 1.0f));
+            return new Tree("Palm Tree", Manager, Position, "palm", ResourceType.Coconut, Data.GetData("Scale", 1.0f));
         }
 
         [EntityFactory("Palm Tree Sprout")]
@@ -104,7 +104,7 @@ namespace DwarfCorp
         [EntityFactory("Apple Tree")]
         private static GameComponent __factory0A(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Tree("Apple Tree", Manager, Position, "appletree", ResourceType.EvilSeed, Data.GetData("Scale", 1.0f));
+            return new Tree("Apple Tree", Manager, Position, "appletree", ResourceType.Apple, Data.GetData("Scale", 1.0f));
         }
 
         [EntityFactory("Apple Tree Sprout")]

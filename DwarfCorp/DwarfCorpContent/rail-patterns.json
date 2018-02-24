@@ -8,7 +8,73 @@
         "RailPiece": "rail-straight",
         "Orientation": "North"
       }
-    ]
+    ],
+    "PaintMode": "Path",
+    "Entrance": {
+      "Offset": "0, 0",
+      "Direction": "West"
+    },
+    "Exit": {
+      "Offset": "0, 0",
+      "Direction": "East"
+    }
+  },
+
+  {
+    "Name": "long-basic",
+    "Icon": 0,
+    "Pieces": [
+      {
+        "Offset": "0, 0",
+        "RailPiece": "rail-straight",
+        "Orientation": "North"
+      },
+      {
+        "Offset": "1, 0",
+        "RailPiece": "rail-straight",
+        "Orientation": "North"
+      }
+    ],
+    "PaintMode": "Hidden",
+    "Entrance": {
+      "Offset": "0, 0",
+      "Direction": "West"
+    },
+    "Exit": {
+      "Offset": "1, 0",
+      "Direction": "East"
+    }
+  },
+
+  {
+    "Name": "extra-long-basic",
+    "Icon": 0,
+    "Pieces": [
+      {
+        "Offset": "0, 0",
+        "RailPiece": "rail-straight",
+        "Orientation": "North"
+      },
+      {
+        "Offset": "1, 0",
+        "RailPiece": "rail-straight",
+        "Orientation": "North"
+      },
+      {
+        "Offset": "2, 0",
+        "RailPiece": "rail-straight",
+        "Orientation": "North"
+      }
+    ],
+    "PaintMode": "Hidden",
+    "Entrance": {
+      "Offset": "0, 0",
+      "Direction": "West"
+    },
+    "Exit": {
+      "Offset": "2, 0",
+      "Direction": "East"
+    }
   },
 
   {
@@ -47,7 +113,15 @@
         "RailPiece": "rail-large-curve-b",
         "Orientation": "North"
       }
-    ]
+    ],
+    "Entrance": {
+      "Offset": "0, 1",
+      "Direction": "West"
+    },
+    "Exit": {
+      "Offset": "1, 0",
+      "Direction": "South"
+    }
   },
 
   {
@@ -74,7 +148,15 @@
         "RailPiece": "rail-large-curve-b",
         "Orientation": "North"
       }
-    ]
+    ],
+    "Entrance": {
+      "Offset": "0, 1",
+      "Direction": "West"
+    },
+    "Exit": {
+      "Offset": "1, 0",
+      "Direction": "East"
+    }
   },
 
   {
@@ -101,7 +183,15 @@
         "RailPiece": "rail-large-curve-c",
         "Orientation": "West"
       }
-    ]
+    ],
+    "Entrance": {
+      "Offset": "0, 0",
+      "Direction": "West"
+    },
+    "Exit": {
+      "Offset": "1, 1",
+      "Direction": "East"
+    }
   },
 
   {

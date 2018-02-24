@@ -165,6 +165,8 @@
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
+    <Compile Include="Components\AI\WaitForPlanHelper.cs" />
+    <Compile Include="Components\AI\LeaveWorldTask.cs" />
     <Compile Include="Components\AI\Disease.cs" />
     <Compile Include="Components\AI\Gender.cs" />
     <Compile Include="Components\AI\MateTask.cs" />

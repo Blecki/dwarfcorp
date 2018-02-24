@@ -82,8 +82,6 @@ namespace DwarfCorp
             }
         }
 
-        // Todo: Unused?
-        public TaskManager TaskManager { get; set; }
         public List<Creature> Threats { get; set; }
 
         public string Name { get; set; }
@@ -116,7 +114,6 @@ namespace DwarfCorp
             Threats = new List<Creature>();
             Minions = new List<CreatureAI>();
             SelectedMinions = new List<CreatureAI>();
-            TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
@@ -133,7 +130,6 @@ namespace DwarfCorp
             Threats = new List<Creature>();
             Minions = new List<CreatureAI>();
             SelectedMinions = new List<CreatureAI>();
-            TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
@@ -236,10 +232,9 @@ namespace DwarfCorp
             {
                 if (threat != null && !threat.IsDead)
                 {
-                    Task g = new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto);
-
-                    if (!IsTaskAssigned(g))
-                    {
+                    if (!Designations.IsDesignation(threat.Physics, DesignationType.Attack))
+                    { 
+                        var g = new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto);
                         Designations.AddEntityDesignation(threat.Physics, DesignationType.Attack);
                         tasks.Add(g);
                     }

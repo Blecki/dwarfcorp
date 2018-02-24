@@ -260,6 +260,13 @@
         "OverlayRelativeOrientation": "East",
         "Result": "rail-y-b",
         "ResultRelativeOriention": "North"
+      },
+
+      {
+        "Overlay": "rail-large-curve-b",
+        "OverlayRelativeOrientation": "West",
+        "Result": "rail-y-b",
+        "ResultRelativeOriention": "West"
       }
 
     ]
@@ -280,6 +287,13 @@
         "Overlay": "rail-straight",
         "OverlayRelativeOrientation": "West",
         "Result": "rail-right-switch-open-b",
+        "ResultRelativeOrientation": "West"
+      },
+
+      {
+        "Overlay": "rail-large-curve-a",
+        "OverlayRelativeOrientation": "West",
+        "Result": "rail-y-a",
         "ResultRelativeOrientation": "West"
       }
     ],

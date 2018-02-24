@@ -95,16 +95,7 @@ namespace DwarfCorp
             {
                 if (minion.Creature.IsAsleep) continue;
                 if(minion.CurrentTask != null)
-                {
                     minion.AssignTask(minion.CurrentTask);
-                    if (minion.CurrentTask.Script != null)
-                    {
-                        minion.CurrentAct.OnCanceled();
-                        minion.CurrentTask.Script.Initialize();
-                    }
-                    minion.CurrentTask.SetupScript(minion.Creature);
-                    minion.CurrentTask = null;
-                }
 
                 var above = VoxelHelpers.GetVoxelAbove(vox);
                 minion.Blackboard.SetData("MoveTarget", above);
