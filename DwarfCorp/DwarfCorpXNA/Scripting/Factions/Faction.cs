@@ -889,7 +889,7 @@ namespace DwarfCorp
                 if (amountRemaining <= 0)
                     break;
 
-                DwarfBux maxInTreasury =  treasury.Voxels.Count * Treasury.MoneyPerPile -  treasury.Money;
+                DwarfBux maxInTreasury = treasury.Voxels.Count * Treasury.MoneyPerPile - treasury.Money;
                 DwarfBux amountToTake = System.Math.Min(maxInTreasury, amountRemaining);
 
                 amountRemaining -= amountToTake;
@@ -914,7 +914,8 @@ namespace DwarfCorp
                     }
                 }
             }
-           
+
         }
+
     }
 }

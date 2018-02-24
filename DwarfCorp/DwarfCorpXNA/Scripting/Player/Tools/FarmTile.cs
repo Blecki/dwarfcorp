@@ -68,7 +68,7 @@ namespace DwarfCorp
         {
             PlantedType = SeedResourceType;
             Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[SeedResourceType].PlantToGenerate, Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
-            if (Plant is Seedling) (Plant as Seedling).Farm = this;
+            Plant.Farm = this;
             
             Matrix original = Plant.LocalTransform;
             original.Translation += Vector3.Down;
@@ -79,5 +79,24 @@ namespace DwarfCorp
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Voxel.WorldPosition, true);
 
         }
+
+        public void TriggerAutoHarvest()
+        {
+            if (Plant != null && !Plant.IsDead)
+            {
+                if (Plant.World.PlayerFaction.Designations.AddEntityDesignation(Plant, DesignationType.Chop) == DesignationSet.AddDesignationResult.Added)
+                    Plant.World.Master.TaskManager.AddTask(new KillEntityTask(Plant, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low });
+            }
+        }
+
+        public void TriggerAutoReplant(WorldManager world)
+        {
+            if (Plant == null && Voxel.IsValid && Voxel.Type.Name == "TilledSoil" && !String.IsNullOrEmpty(PlantedType))
+            {
+                if (world.PlayerFaction.Designations.AddVoxelDesignation(Voxel, DesignationType.Plant, this) == DesignationSet.AddDesignationResult.Added)
+                    world.Master.TaskManager.AddTask(new FarmTask(this, FarmAct.FarmMode.Plant) { Plant = PlantedType });
+            }
+        }
+
     }
 }
