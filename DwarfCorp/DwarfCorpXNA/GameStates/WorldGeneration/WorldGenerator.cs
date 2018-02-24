@@ -136,7 +136,7 @@ namespace DwarfCorp.GameStates
                 if (inWater)
                 {
                     Settings.WorldGenerationOrigin = 
-                        new Vector2(MathFunctions.Rand(rect.Width + 1, Settings.Width - rect.Width), MathFunctions.Rand(rect.Height + 1, Settings.Height));
+                        new Vector2(MathFunctions.Rand(0, Settings.Width - rect.Width), MathFunctions.Rand(0, Settings.Height));
                     Settings.WorldOrigin = Settings.WorldGenerationOrigin;
                 }
             } while (inWater);
@@ -905,15 +905,17 @@ namespace DwarfCorp.GameStates
             int w = (int)(Settings.ColonySize.X * VoxelConstants.ChunkSizeX / Settings.WorldScale);
             int h = (int)(Settings.ColonySize.Z * VoxelConstants.ChunkSizeZ / Settings.WorldScale);
             return new Rectangle(
-                (int)Settings.WorldGenerationOrigin.X - w / 2, (int)Settings.WorldGenerationOrigin.Y - h / 2, w, h);
+                (int)Settings.WorldGenerationOrigin.X , (int)Settings.WorldGenerationOrigin.Y, w, h);
         }
 
         // Get origin in world map pixel units
         public Vector2 GetOrigin(Point clickPoint, Vector3 worldSize)
         {
+            int w = (int)(Settings.ColonySize.X * VoxelConstants.ChunkSizeX / Settings.WorldScale);
+            int h = (int)(Settings.ColonySize.Z * VoxelConstants.ChunkSizeZ / Settings.WorldScale);
             return new Vector2(
-                System.Math.Max(System.Math.Min(clickPoint.X, Settings.Width  - worldSize.X / 2), worldSize.X / 2),
-                System.Math.Max(System.Math.Min(clickPoint.Y, Settings.Height - worldSize.Z / 2), worldSize.Z / 2)
+                System.Math.Max(System.Math.Min(clickPoint.X - w/2, Settings.Width  - w/2 - 1), 0),
+                System.Math.Max(System.Math.Min(clickPoint.Y - h/2, Settings.Height - h/2 - 1), 0)
             );
         }
     }

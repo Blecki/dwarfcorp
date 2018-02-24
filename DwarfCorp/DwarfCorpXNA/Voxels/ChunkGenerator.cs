@@ -82,11 +82,9 @@ namespace DwarfCorp
         public float CaveSize { get; set; }
         public float AquiferSize { get; set; }
         public float LavaSize { get; set; }
-        public static float WorldScale { get; set; }
 
-        public ChunkGenerator(VoxelLibrary voxLibrary, int randomSeed, float noiseScale, float worldScale)
+        public ChunkGenerator(VoxelLibrary voxLibrary, int randomSeed, float noiseScale)
         {
-            WorldScale = worldScale;
             NoiseGenerator = new Perlin(randomSeed);
             NoiseScale = noiseScale;
 
@@ -196,7 +194,7 @@ namespace DwarfCorp
             {
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                 {
-                    var biome = GetBiomeAt(new Vector2(x, z) + new Vector2(chunk.Origin.X, chunk.Origin.Z));
+                    var biome = Overworld.GetBiomeAt(new Vector3(x, 0, z) + chunk.Origin, chunk.Manager.World.WorldScale, chunk.Manager.World.WorldOrigin);
                     var topVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                         chunk, new LocalVoxelCoordinate(x, VoxelConstants.ChunkSizeY - 1, z)));
 
@@ -220,7 +218,7 @@ namespace DwarfCorp
                         }
                     }
 
-                    Vector2 vec = new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z) / WorldScale;
+                    Vector2 vec = Overworld.WorldToOverworld(new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z), chunk.Manager.World.WorldScale, chunk.Manager.World.WorldOrigin);
 
 
                     if (topVoxel.Coordinate.Y < VoxelConstants.ChunkSizeY - 1
@@ -265,21 +263,6 @@ namespace DwarfCorp
             }
         }
 
-        public static BiomeData GetBiomeAt(Vector2 worldPosition)
-        {
-            var vec = worldPosition / WorldScale;
-            var biome = Overworld.Map[(int)MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1), 
-                                      (int)MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
-            return BiomeLibrary.Biomes[biome];
-        }
-
-        public static float GetValueAt(Vector3 worldPosition, Overworld.ScalarFieldType T)
-        {
-            Vector2 vec = new Vector2(worldPosition.X, worldPosition.Z) / WorldScale;
-            return Overworld.GetValue(Overworld.Map, new Vector2(MathFunctions.Clamp(vec.X, 0, Overworld.Map.GetLength(0) - 1),
-                MathFunctions.Clamp(vec.Y, 0, Overworld.Map.GetLength(1) - 1)), T);
-        }
-
         public void GenerateSurfaceLife(VoxelChunk Chunk)
         {
             var waterHeight = (int)(SeaLevel * VoxelConstants.ChunkSizeY);
@@ -288,7 +271,7 @@ namespace DwarfCorp
             {
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                 {
-                    var biomeData = GetBiomeAt(new Vector2(x + Chunk.Origin.X, z + Chunk.Origin.Z));
+                    var biomeData = Overworld.GetBiomeAt(new Vector3(x + Chunk.Origin.X, 0, z + Chunk.Origin.Z), Chunk.Manager.World.WorldScale, Chunk.Manager.World.WorldOrigin);
                     var topVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                         Chunk, new LocalVoxelCoordinate(x, VoxelConstants.ChunkSizeY - 1, z)));
 
@@ -509,13 +492,13 @@ namespace DwarfCorp
             {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
-                    Vector2 v = new Vector2(x + origin.X, z + origin.Z) / WorldScale;
+                    Vector2 v = Overworld.WorldToOverworld(new Vector2(x + origin.X, z + origin.Z), World.WorldScale, World.WorldOrigin);
 
                     var biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
 
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
-                    Vector2 pos = new Vector2(x + origin.X, z + origin.Z) / WorldScale;
+                    Vector2 pos = Overworld.WorldToOverworld(new Vector2(x + origin.X, z + origin.Z), World.WorldScale, World.WorldOrigin);
                     float hNorm = Overworld.LinearInterpolate(pos, Overworld.Map, Overworld.ScalarFieldType.Height);
                     float h = MathFunctions.Clamp(hNorm * VoxelConstants.ChunkSizeY, 0.0f, VoxelConstants.ChunkSizeY - 2);
                     int stoneHeight = (int)(MathFunctions.Clamp((int)(h - (biomeData.SoilLayer.Depth + (Math.Sin(v.X) + Math.Cos(v.Y)))), 1, h));
