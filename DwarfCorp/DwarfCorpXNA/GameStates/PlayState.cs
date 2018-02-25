@@ -2266,7 +2266,13 @@ namespace DwarfCorp.GameStates
                 {
                     GameSpeedControls.Resume();
                 }
+                else
+                {
+                    GameSpeedControls.Pause();
+                }
                 Paused = pausedRightNow;
+                PausedWidget.Hidden = !Paused;
+                PausedWidget.Invalidate();
                 PausePanel = null;
             });
 
