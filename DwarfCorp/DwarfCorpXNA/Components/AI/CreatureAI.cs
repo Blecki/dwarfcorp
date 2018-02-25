@@ -325,10 +325,8 @@ namespace DwarfCorp
             if (newTask != null)
             {
                 if (CurrentTask.ShouldRetry(Creature))
-                    AssignTask(CurrentTask);
-                CurrentTask = newTask;
-                ChangeAct(CurrentTask.CreateScript(Creature));
-                RemoveTask(newTask);
+                    ReassignCurrentTask();
+                ChangeTask(newTask);
             }
         }
 
@@ -398,8 +396,7 @@ namespace DwarfCorp
 
         public void CancelCurrentTask()
         {
-            ChangeAct(null);
-            CurrentTask = null;
+            ChangeTask(null);
         }
 
         /// <summary> Update this creature </summary>
@@ -491,14 +488,10 @@ namespace DwarfCorp
                 else if (status == Act.Status.Success)
                 {
                     CurrentTask.IsComplete = true;
-                    RemoveTask(CurrentTask);
                 }
 
                 if (status != Act.Status.Running && !retried)
-                {
-                    ChangeAct(null);
-                    CurrentTask = null;
-                }
+                    ChangeTask(null);
             }
             // Otherwise, we don't have any tasks at the moment.
             else if (CurrentTask == null)
@@ -516,6 +509,7 @@ namespace DwarfCorp
                     if (tantrum)
                     {
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
+
                         if (Creature.Faction == Manager.World.PlayerFaction)
                         {
                             Manager.World.MakeAnnouncement(
@@ -529,26 +523,25 @@ namespace DwarfCorp
                             Manager.World.Tutorial("happiness");
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                         }
-                        CurrentTask = null;
-                        ChangeAct(null);
+
+                        ChangeTask(null);
                     }
                     else
                     {
                         IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
-                        CurrentTask = goal;
-                        ChangeAct(goal.CreateScript(Creature));
-                        RemoveTask(goal);
+                        ChangeTask(goal);
                     }
                 }
                 else
                 {
-                    CurrentTask = ActOnIdle();
-                    if (CurrentTask != null)
-                        ChangeAct(CurrentTask.CreateScript(Creature));
+                    var newTask = ActOnIdle();
+                    if (newTask != null)
+                        ChangeTask(newTask);
                 }
             }
             else if (CurrentTask != null)
             {
+                // Should be impossible to have a current task and no current act.
                 ChangeAct(CurrentTask.CreateScript(Creature));
             }
             
@@ -1168,6 +1161,33 @@ namespace DwarfCorp
             task.OnUnAssign(this);
         }
 
+        public void ChangeTask(Task task)
+        {
+            if (CurrentTask != null)
+                CurrentTask.OnUnAssign(this);
+            CurrentTask = task;
+            if (CurrentTask != null)
+            {
+                ChangeAct(CurrentTask.CreateScript(Creature));
+
+                if (Tasks.Contains(task))
+                    Tasks.Remove(task);
+                else
+                    task.OnAssign(this);
+            }
+            else
+            {
+                ChangeAct(null);
+            }
+        }
+
+        public void ReassignCurrentTask()
+        {
+            var task = CurrentTask;
+            ChangeTask(null);
+            AssignTask(task);
+        }
+
         public AStarPlanResponse WaitForPlan(VoxelHandle voxel, PlanAct.PlanType type = PlanAct.PlanType.Into)
         {
             GoalRegion region = null;
@@ -1225,11 +1245,9 @@ namespace DwarfCorp
         {
             if (CurrentTask != null)
             {
-                AssignTask(null);
                 if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
-                {
                     World.Master.TaskManager.AddTask(CurrentTask);
-                }
+                ChangeTask(null);
             }
             base.Die();
         }
@@ -1238,11 +1256,9 @@ namespace DwarfCorp
         {
             if (CurrentTask != null)
             {
-                AssignTask(null);
                 if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
-                {
                     World.Master.TaskManager.AddTask(CurrentTask);
-                }
+                ChangeTask(null);
             }
             base.Delete();
         }
