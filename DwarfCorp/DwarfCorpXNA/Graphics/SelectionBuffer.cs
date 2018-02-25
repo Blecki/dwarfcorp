@@ -127,6 +127,8 @@ namespace DwarfCorp
         /// <returns></returns>
         public IEnumerable<uint> GetIDsSelected(Rectangle screenRectangle)
         {
+            ValidateBuffer(GameStates.GameState.Game.GraphicsDevice);
+
             lock (ColorBufferMutex)
             {
                 if (colorBuffer == null) yield break;
