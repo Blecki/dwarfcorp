@@ -44,6 +44,7 @@ namespace DwarfCorp.GameStates
 
         private Gui.Widget MoneyLabel;
         private Gui.Widget LevelLabel;
+        private Gui.Widget StocksLabel;
         private Gui.Widgets.FlatToolTray.RootTray BottomToolBar;
         private Gui.Widgets.FlatToolTray.Tray MainMenu;
         private Gui.Widget TimeLabel;
@@ -302,9 +303,15 @@ namespace DwarfCorp.GameStates
 
 
             #region Update top left panel
+            var pulse = 0.25f * (float)Math.Sin(gameTime.TotalRealTime.TotalSeconds * 4) + 0.25f;
             MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString();
+            MoneyLabel.TextColor = Master.Faction.Economy.CurrentMoney > 1.0m ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
             MoneyLabel.Invalidate();
-
+            int availableSpace = Master.Faction.ComputeRemainingStockpileSpace();
+            int totalSpace = Master.Faction.ComputeTotalStockpileSpace();
+            StocksLabel.Text = String.Format("    Stocks: {0}/{1}", totalSpace - availableSpace, totalSpace);
+            StocksLabel.TextColor = availableSpace > 0 ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
+            StocksLabel.Invalidate();
             LevelLabel.Text = String.Format("{0}/{1}",
                 World.ChunkManager.ChunkData.MaxViewingLevel,
                 VoxelConstants.ChunkSizeY);
@@ -510,6 +517,14 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = Gui.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Amount of money in our treasury"
+            });
+
+            StocksLabel = BottomBar.AddChild(new Gui.Widget
+            {
+                AutoLayout = Gui.AutoLayout.DockLeftCentered,
+                Font = "font10",
+                TextVerticalAlign = Gui.VerticalAlign.Center,
+                Tooltip = "Amount of stockpile space remaining. Build more stockpiles to get more space."
             });
 
             BottomBar.AddChild(new Gui.Widget

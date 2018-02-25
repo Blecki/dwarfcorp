@@ -55,6 +55,9 @@ namespace DwarfCorp
 
         private bool leftPressed = false;
         private bool rightPressed = false;
+
+        private Matrix OrigTransform { get; set; }
+
         public MoveObjectTool()
         {
         }
@@ -67,6 +70,17 @@ namespace DwarfCorp
         public override void OnEnd()
         {
             Player.VoxSelector.Clear();
+            if (SelectedBody != null)
+            {
+                var tinter = SelectedBody.GetRoot().GetComponent<Tinter>();
+                if (tinter != null)
+                {
+                    tinter.VertexColorTint = Color.White;
+                    tinter.Stipple = false;
+                }
+                SelectedBody.LocalTransform = OrigTransform;
+                SelectedBody = null;
+            }
         }
 
 
@@ -88,6 +102,7 @@ namespace DwarfCorp
                         {
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, body.Position, 0.1f);
                             SelectedBody = body;
+                            OrigTransform = SelectedBody.LocalTransform;
                             Player.World.ShowToolPopup(String.Format("Press {0}/{1} to rotate.", ControlSettings.Mappings.RotateObjectLeft, ControlSettings.Mappings.RotateObjectRight));
                             break;
                         }
@@ -218,6 +233,7 @@ namespace DwarfCorp
                 if (tinter != null)
                 {
                     tinter.VertexColorTint = intersectsAnyOther == null && !intersectsWall ? Color.Green : Color.Red;
+                    tinter.Stipple = true;
                 }
                 MouseState mouse = Mouse.GetState();
                 if (mouse.LeftButton == ButtonState.Released && mouseDown)
@@ -233,7 +249,10 @@ namespace DwarfCorp
                         OverrideOrientation = false;
                         CurrentOrientation = 0;
                         if (tinter != null)
+                        {
                             tinter.VertexColorTint = Color.White;
+                            tinter.Stipple = false;
+                        }
                     }
                     else if (!intersectsWall)
                     {
