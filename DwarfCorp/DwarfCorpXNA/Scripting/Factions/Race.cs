@@ -118,9 +118,7 @@ namespace DwarfCorp
                     if (randResource.Tags.Any(blacklistTags.Contains))
                         continue;
 
-                    if (randResource.Type == ResourceLibrary.ResourceType.Trinket ||
-                        randResource.Type == ResourceLibrary.ResourceType.GemTrinket ||
-                        tags.Key == Resource.ResourceTags.Craft)
+                    if (tags.Key == Resource.ResourceTags.Craft)
                     {
                         Resource.ResourceTags craftTag = Datastructures.SelectRandom(Crafts);
                         IEnumerable<Resource> availableCrafts = ResourceLibrary.GetResourcesByTag(craftTag);

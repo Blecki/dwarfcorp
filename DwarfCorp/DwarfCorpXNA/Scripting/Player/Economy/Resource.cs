@@ -146,7 +146,15 @@ namespace DwarfCorp
             CanCraft = other.CanCraft;
             CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>();
             CraftPrereqs.AddRange(other.CraftPrereqs);
-            CompositeLayers = null;
+            if (other.CompositeLayers != null)
+            {
+                CompositeLayers = new List<KeyValuePair<Point, string>>();
+                CompositeLayers.AddRange(other.CompositeLayers);
+            }
+            else
+            {
+                CompositeLayers = null;
+            }
             TrinketData = other.TrinketData;
             AleName = other.AleName;
         }
