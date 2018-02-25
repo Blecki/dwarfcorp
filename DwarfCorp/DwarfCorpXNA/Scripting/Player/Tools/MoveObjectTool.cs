@@ -180,7 +180,7 @@ namespace DwarfCorp
                     if (craftDetails != null && CraftLibrary.CraftItems.ContainsKey(craftDetails.CraftType))
                         offset = CraftLibrary.CraftItems[craftDetails.CraftType].SpawnOffset;
 
-                    SelectedBody.LocalPosition = voxelUnderMouse.WorldPosition + Vector3.One * 0.5f + offset;
+                    SelectedBody.LocalPosition = voxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + offset;
                     SelectedBody.HasMoved = true;
                     SelectedBody.UpdateTransform();
                     if (OverrideOrientation)

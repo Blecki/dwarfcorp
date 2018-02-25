@@ -43,15 +43,15 @@ namespace DwarfCorp
 {
   
     [JsonObject(IsReference = true)]
-    public class Forge : Body
+    public class Forge : CraftedBody
     {
         public Forge()
         {
 
         }
 
-        public Forge(ComponentManager manager, Vector3 position) :
-            base(manager, "Forge", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+        public Forge(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
+            base(manager, "Forge", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, "Forge", resources))
         {
             Tags.Add("Forge");
 

@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class Barrel : Fixture
+    public class Barrel : CraftedFixture
     {
         public Barrel()
         {
@@ -17,8 +17,8 @@ namespace DwarfCorp
             Tags.Add("Barrel");
         }
 
-        public Barrel(ComponentManager manager, Vector3 position) :
-            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 0))
+        public Barrel(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
+            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 0), new DwarfCorp.CraftDetails(manager, "Barrel", resources))
         {
             Name = "Barrel";
             Tags.Add("Barrel");

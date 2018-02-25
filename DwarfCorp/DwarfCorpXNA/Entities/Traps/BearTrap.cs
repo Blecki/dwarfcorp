@@ -42,7 +42,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class BearTrap : Body, IUpdateableComponent
+    public class BearTrap : CraftedBody, IUpdateableComponent
     {
         public Sensor Sensor { get; set; }
         public AnimatedSprite Sprite { get; set; }
@@ -66,10 +66,10 @@ namespace DwarfCorp
             
         }
 
-        public BearTrap(ComponentManager manager, Vector3 pos) :
+        public BearTrap(ComponentManager manager, Vector3 pos, List<ResourceAmount> resources) :
             base(manager,
             "BearTrap", Matrix.CreateTranslation(pos),
-            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, true)
+            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, "Bear Trap", resources))
         {
             Allies = manager.World.PlayerFaction;
             Sensor = AddChild(new Sensor(manager, "Sensor", Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
@@ -102,7 +102,7 @@ namespace DwarfCorp
         {
             AddChild(new Shadow(manager));
 
-            var spriteSheet = new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap);
+            var spriteSheet = new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap, 32);
 
             Sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.Identity, false)) as AnimatedSprite;
 
@@ -120,6 +120,7 @@ namespace DwarfCorp
             sprung.FrameHZ = 6.6f;
 
             Sprite.AddAnimation(sprung);
+            Sprite.SetCurrentAnimation(IdleAnimation, false);
 
             Sprite.SetFlag(Flag.ShouldSerialize, false);
             base.CreateCosmeticChildren(manager);
@@ -127,6 +128,9 @@ namespace DwarfCorp
 
         void Sensor_OnSensed(IEnumerable<Body> sensed)
         {
+            if (!Active)
+                return;
+
             if (ShouldDie)
             {
                 return;

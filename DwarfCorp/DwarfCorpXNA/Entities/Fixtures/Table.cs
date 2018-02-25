@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Table : Body, IUpdateableComponent
+    public class Table : CraftedBody, IUpdateableComponent
     {
         public ManaBattery Battery { get; set; }
         public SpriteSheet fixtureAsset;
@@ -123,14 +123,14 @@ namespace DwarfCorp
             
         }
 
-        public Table(ComponentManager componentManager, Vector3 position):
-            this(componentManager, position, null, Point.Zero)
+        public Table(ComponentManager componentManager, Vector3 position, List<ResourceAmount> resources) :
+            this(componentManager, position, null, Point.Zero, resources)
         {
             
         }
 
-        public Table(ComponentManager manager, Vector3 position, string asset) :
-            this(manager, position, new SpriteSheet(asset), Point.Zero)
+        public Table(ComponentManager manager, Vector3 position, string asset, List<ResourceAmount> resources) :
+            this(manager, position, new SpriteSheet(asset), Point.Zero, resources)
         {
 
         }
@@ -149,8 +149,8 @@ namespace DwarfCorp
             base.Update(time, chunks, camera);
         }
 
-        public Table(ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame) :
-            base(manager, "Table", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+        public Table(ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame, List<ResourceAmount> resources) :
+            base(manager, "Table", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, "Table", resources))
         {
             this.fixtureAsset = fixtureAsset;
             this.fixtureFrame = fixtureFrame;

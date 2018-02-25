@@ -120,13 +120,13 @@ namespace DwarfCorp
             RegisterEntity("Goblin", (position, data) => GenerateGoblin(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, World.Factions.Factions["Goblins"], world.PlanService, "Goblins"));
             RegisterEntity("Skeleton", (position, data) => GenerateSkeleton(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, World.Factions.Factions["Undead"], world.PlanService, "Undead"));
             RegisterEntity("Necromancer", (position, data) => GenerateNecromancer(position, world.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, world.ChunkManager, world.Camera, World.Factions.Factions["Undead"], world.PlanService, "Undead"));
-            RegisterEntity("Bed", (position, data) => new Bed(world.ComponentManager, position));
-            RegisterEntity("Barrel", (position, data) => new Barrel(world.ComponentManager, position));
-            RegisterEntity("Bear Trap", (position, data) => new BearTrap(world.ComponentManager, position));
-            RegisterEntity("Lamp", (position, data) => new Lamp(world.ComponentManager, position));
-            RegisterEntity("Table", (position, data) => new Table(world.ComponentManager, position));
-            RegisterEntity("Chair", (position, data) => new Chair(world.ComponentManager, position));
-            RegisterEntity("Flag", (position, data) => new Flag(world.ComponentManager, position, world.PlayerCompany.Information));
+            RegisterEntity("Bed", (position, data) => new Bed(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", null)));
+            RegisterEntity("Barrel", (position, data) => new Barrel(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", null)));
+            RegisterEntity("Bear Trap", (position, data) => new BearTrap(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", null)));
+            RegisterEntity("Lamp", (position, data) => new Lamp(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", null)));
+            RegisterEntity("Table", (position, data) => new Table(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", null)));
+            RegisterEntity("Chair", (position, data) => new Chair(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", null)));
+            RegisterEntity("Flag", (position, data) => new Flag(world.ComponentManager, position, world.PlayerCompany.Information, data.GetData<List<ResourceAmount>>("Resources", null)));
 
             RegisterEntity("Mushroom", (position, data) => new Mushroom(world.ComponentManager, position, ContentPaths.Entities.Plants.mushroom, ResourceLibrary.ResourceType.Mushroom, 2, false, "mushroomsprout"));
             RegisterEntity("Mushroom Sprout", (position, data) => new Seedling(world.ComponentManager, "Mushroom", position, "mushroomsprout", 12));
@@ -138,11 +138,11 @@ namespace DwarfCorp
             RegisterEntity("Wheat Sprout", (position, data) => new Seedling(world.ComponentManager, "Wheat", position, "wheatsprout", 12));
 
 
-            RegisterEntity("Kitchen Table", (position, data) => new Table(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 7)) { Tags = new List<string>() { "Cutting Board" } });
-            RegisterEntity("Books", (position, data) => new Table(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 4)) { Tags = new List<string>() { "Research" }, Battery = new Table.ManaBattery() { Charge = 0.0f, MaxCharge = 100.0f } });
-            RegisterEntity("Potions", (position, data) => new Table(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4)) { Tags = new List<string>() { "Research" }, Battery = new Table.ManaBattery() { Charge = 0.0f, MaxCharge = 100.0f } });
-            RegisterEntity("Anvil", (position, data) => new Anvil(world.ComponentManager, position));
-            RegisterEntity("Forge", (position, data) => new Forge(world.ComponentManager, position));
+            RegisterEntity("Kitchen Table", (position, data) => new Table(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 7), data.GetData<List<ResourceAmount>>("Resources", null)) { Tags = new List<string>() { "Cutting Board" } });
+            RegisterEntity("Books", (position, data) => new Table(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 4), data.GetData<List<ResourceAmount>>("Resources", null)) { Tags = new List<string>() { "Research" }, Battery = new Table.ManaBattery() { Charge = 0.0f, MaxCharge = 100.0f } });
+            RegisterEntity("Potions", (position, data) => new Table(world.ComponentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4), data.GetData<List<ResourceAmount>>("Resources", null)) { Tags = new List<string>() { "Research" }, Battery = new Table.ManaBattery() { Charge = 0.0f, MaxCharge = 100.0f } });
+            RegisterEntity("Anvil", (position, data) => new Anvil(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", null)));
+            RegisterEntity("Forge", (position, data) => new Forge(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", null)));
             RegisterEntity("Elf", (position, data) => GenerateElf(world, position, World.Factions.Factions["Elf"], "Elf"));
             RegisterEntity("Demon", (position, data) => GenerateDemon(world, position, World.Factions.Factions["Demon"], "Demon"));
             RegisterEntity("Arrow", (position, data) => new ArrowProjectile(world.ComponentManager, position, data.GetData("Velocity", Vector3.Up * 10 + MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)), data.GetData<Body>("Target", null)));
@@ -157,7 +157,7 @@ namespace DwarfCorp
                 float value = (float)MathFunctions.Random.NextDouble();
                 return value < 0.33
                     ? (Body)(new Strawman(world.ComponentManager, position))
-                    : (value < 0.66 ? (Body)(new WeightRack(world.ComponentManager, position)) : (Body)(new PunchingBag(world.ComponentManager, position)));
+                    : (value < 0.66 ? (Body)(new WeightRack(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", null))) : (Body)(new PunchingBag(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", null))));
             });
             RegisterEntity("Snake", (position, data) =>
                 new Snake(false,
@@ -169,12 +169,12 @@ namespace DwarfCorp
                 snek.Attacks[0].DiseaseToSpread = "Necrorot";
                 return snek.Physics;
             });
-            RegisterEntity("Bookshelf", (position, data) => new Bookshelf(world.ComponentManager, position) { Tags = new List<string>() { "Research"}});
+            RegisterEntity("Bookshelf", (position, data) => new Bookshelf(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", null)) { Tags = new List<string>() { "Research"}});
             RegisterEntity("Door", (position, data) => new Door(world.ComponentManager, position, World.PlayerFaction, data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceLibrary.ResourceType.Wood) })));
             RegisterEntity("Ladder", (position, data) => new Ladder(world.ComponentManager, position, data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceLibrary.ResourceType.Wood) })));
             RegisterEntity("RandTrinket", (position, data) => CreateRandomTrinket(world, position));
             RegisterEntity("RandFood", (position, data) => CreateRandomFood(world, position));
-            RegisterEntity("Turret", (position, data) => new TurretTrap(world.ComponentManager, position, world.PlayerFaction));
+            RegisterEntity("Turret", (position, data) => new TurretTrap(world.ComponentManager, position, world.PlayerFaction, data.GetData<List<ResourceAmount>>("Resources", null)));
             RegisterEntity("Snow Cloud", (position, data) => new Cloud(world.ComponentManager, 0.1f, 50, 40, position) { TypeofStorm = StormType.SnowStorm });
             RegisterEntity("Rain Cloud", (position, data) => new Cloud(world.ComponentManager, 0.1f, 50, 40, position) { TypeofStorm = StormType.RainStorm });
             RegisterEntity("Storm", (position, data) =>

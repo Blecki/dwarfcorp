@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class Bookshelf : Body, IRenderableComponent
+    public class Bookshelf : CraftedBody, IRenderableComponent
     {
         public bool FrustumCull { get { return true; } }
 
@@ -20,8 +20,8 @@ namespace DwarfCorp
             CollisionType = CollisionManager.CollisionType.Static;
         }
 
-        public Bookshelf(ComponentManager manager, Vector3 position) :
-            base(manager, "Bookshelf", Matrix.CreateTranslation(position), new Vector3(32.0f / 32.0f, 8.0f / 32.0f, 20.0f / 32.0f), new Vector3(0.5f, 0.5f, 0.5f))
+        public Bookshelf(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
+            base(manager, "Bookshelf", Matrix.CreateTranslation(position), new Vector3(32.0f / 32.0f, 8.0f / 32.0f, 20.0f / 32.0f), new Vector3(0.5f, 0.5f, 0.5f), new CraftDetails(manager, "Bookshelf", resources))
         {
             Tags.Add("Books");
             CollisionType = CollisionManager.CollisionType.Static;

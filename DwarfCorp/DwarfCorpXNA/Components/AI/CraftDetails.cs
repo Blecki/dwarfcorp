@@ -61,6 +61,27 @@ namespace DwarfCorp
             this.SetFlag(Flag.ShouldSerialize, true);
         }
 
+        public CraftDetails(ComponentManager manager, string craftType, List<ResourceAmount> resources = null) :
+            this(manager)
+        {
+            CraftType = craftType;
+            var libraryType = CraftLibrary.CraftItems[craftType];
+            if (resources == null)
+            {
+                Resources = new List<ResourceAmount>();
+                var required = libraryType.RequiredResources;
+                foreach (var requirement in required)
+                {
+                    Resources.Add(new ResourceAmount(ResourceLibrary.GetLeastValuableWithTag(requirement.ResourceType), requirement.NumResources));
+                }
+            }
+            else
+            {
+                Resources = resources;
+            }
+        }
+
+
 
         public override void Die()
         {
@@ -147,6 +168,13 @@ namespace DwarfCorp
             this.SetFlag(Flag.ShouldSerialize, true);
         }
 
+        public CraftedFixture(ComponentManager manager, Vector3 position, SpriteSheet sheet, Point frame, CraftDetails details, SimpleSprite.OrientMode OrientMode = SimpleSprite.OrientMode.Spherical) :
+            base(manager, position, sheet, frame, OrientMode)
+        {
+            this.SetFlag(Flag.ShouldSerialize, true);
+            AddChild(details);
+        }
+
         public CraftedFixture(
             ComponentManager Manager,
             Vector3 position,
@@ -154,6 +182,33 @@ namespace DwarfCorp
             FixtureCraftDetails details,
             SimpleSprite.OrientMode OrientMode = SimpleSprite.OrientMode.Spherical) :
             base(Manager, position, asset, details.GetSpritesheetFrame(details.Resources[0].ResourceType), OrientMode)
+        {
+            this.SetFlag(Flag.ShouldSerialize, true);
+            AddChild(details);
+        }
+
+    }
+
+    [JsonObject(IsReference = true)]
+    public class CraftedBody : Body
+    {
+        [JsonIgnore]
+        public FixtureCraftDetails CraftDetails { get { return GetRoot().GetComponent<FixtureCraftDetails>(); } }
+
+        public CraftedBody()
+        {
+            this.SetFlag(Flag.ShouldSerialize, true);
+        }
+
+        public CraftedBody(
+            ComponentManager Manager,
+            string name,
+            Matrix localTransform,
+            Vector3 bboxExtents,
+            Vector3 bboxPos,
+            CraftDetails details,
+            bool addToCollisionManager=true) :
+            base(Manager, name, localTransform, bboxExtents, bboxPos, addToCollisionManager)
         {
             this.SetFlag(Flag.ShouldSerialize, true);
             AddChild(details);

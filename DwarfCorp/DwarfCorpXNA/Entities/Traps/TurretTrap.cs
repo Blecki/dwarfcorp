@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class TurretTrap : Body, IUpdateableComponent
+    public class TurretTrap : CraftedBody, IUpdateableComponent
     {
         public Attack Weapon { get; set; }
         public Fixture BaseSprite { get; set; }
@@ -29,9 +29,9 @@ namespace DwarfCorp
             
         }
 
-        public TurretTrap(ComponentManager manager, Vector3 position, Faction faction) :
+        public TurretTrap(ComponentManager manager, Vector3 position, Faction faction, List<ResourceAmount> resources) :
             base(manager, "TurretTrap", Matrix.CreateTranslation(position),
-            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, true)
+            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, "Turret", resources), true)
         {
             Allies = faction;
             SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32);
@@ -72,6 +72,9 @@ namespace DwarfCorp
 
         void Sensor_OnEnemySensed(List<CreatureAI> enemies)
         {
+            if (!Active)
+                return;
+
             closestCreature = null;
             float minDist = float.MaxValue;
             foreach (CreatureAI enemy in enemies)
@@ -97,12 +100,12 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (closestCreature != null && !closestCreature.IsDead)
+            if (Active && closestCreature != null && !closestCreature.IsDead)
             {
                 
                 Weapon.RechargeTimer.Update(gameTime);
 
-                SetTurretAngle((float) Math.Atan2(offset.X, offset.Z) - (float)Math.PI * 0.5f);
+                SetTurretAngle((float) Math.Atan2(offset.X, offset.Z));
 
                 if (Weapon.RechargeTimer.HasTriggered)
                 {
