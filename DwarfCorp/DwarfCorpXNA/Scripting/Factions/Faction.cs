@@ -302,9 +302,14 @@ namespace DwarfCorp
             }
         }
 
-        public int ComputeStockpileSpace()
+        public int ComputeRemainingStockpileSpace()
         {
             return Stockpiles.Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
+        }
+
+        public int ComputeTotalStockpileSpace()
+        {
+            return Stockpiles.Sum(pile => pile.Resources.MaxResources);
         }
 
         public bool AddResources(ResourceAmount resources)
