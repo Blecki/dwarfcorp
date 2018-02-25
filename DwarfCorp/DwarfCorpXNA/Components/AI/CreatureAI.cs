@@ -477,10 +477,7 @@ namespace DwarfCorp
                     {
                         if (!Tasks.Contains(CurrentTask))
                         {
-                            // Lower the priority of failed tasks.
-                            //CurrentTask.Priority = Task.PriorityType.Eventually;
-                            AssignTask(CurrentTask);
-                            ChangeAct(CurrentTask.CreateScript(Creature));
+                            ReassignCurrentTask();
                             retried = true;
                         }
                     }

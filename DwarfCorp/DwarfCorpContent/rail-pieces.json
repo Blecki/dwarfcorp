@@ -176,6 +176,31 @@
   },
 
   {
+    "Name": "diagonal",
+    "Tile": "7, 0",
+    "CombinationTable": [
+      {
+        "Overlay": "diagonal",
+        "OverlayRelativeOrientation": "East",
+        "Result": "diagonal-cross",
+        "ResultRelativeOrientation": "North"
+      },
+
+      {
+        "Overlay": "diagonal",
+        "OverlayRelativeOrientation": "West",
+        "Result": "diagonal-cross",
+        "ResultRelativeOrientation": "North"
+      }
+    ]
+  },
+
+  {
+    "Name": "diagonal-cross",
+    "Tile": "6, 2"
+  },
+
+  {
     "Name": "rail-large-curve-a",
     "Tile": "1, 0",
     "CombinationTable": [
@@ -231,7 +256,7 @@
         "Overlay": "rail-straight",
         "OverlayRelativeOrientation": "North",
         "Result": "rail-left-switch-open-a",
-        "ResultRelativeOrientation": "South"
+        "ResultRelativeOrientation": "North"
       },
 
       {
@@ -252,21 +277,21 @@
         "Overlay": "rail-straight",
         "OverlayRelativeOrientation": "West",
         "Result": "rail-right-switch-open-a",
-        "ResultRelativeOrientation": "East"
+        "ResultRelativeOrientation": "West"
       },
 
       {
         "Overlay": "rail-large-curve-b",
         "OverlayRelativeOrientation": "East",
         "Result": "rail-y-b",
-        "ResultRelativeOriention": "North"
+        "ResultRelativeOrientation": "North"
       },
 
       {
         "Overlay": "rail-large-curve-b",
         "OverlayRelativeOrientation": "West",
         "Result": "rail-y-b",
-        "ResultRelativeOriention": "West"
+        "ResultRelativeOrientation": "West"
       }
 
     ]
@@ -350,6 +375,24 @@
         "ResultRelativeOrientation": "East"
       }
     ]
+  },
+
+  {
+    "Name": "three-diagonal-edges",
+    "Tile": "6, 1",
+    "CombinationTable": [
+      {
+        "Overlay": "rail-large-curve-b",
+        "OverlayRelativeOrientation": "West",
+        "Result": "four-diagonal-edges",
+        "ResultRelativeOrientation": "North"
+      }
+    ]
+  },
+
+  {
+    "Name": "four-diagonal-edges",
+    "Tile": "7, 1"
   },
 
   {
@@ -444,7 +487,22 @@
 
   {
     "Name": "rail-y-b",
-    "Tile": "5, 1"
+    "Tile": "5, 1",
+    "CombinationTable": [
+      {
+        "Overlay": "rail-large-curve-b",
+        "OverlayRelativeOrientation": "South",
+        "Result": "three-diagonal-edges",
+        "ResultRelativeOrientation": "North"
+      },
+
+      {
+        "Overlay": "rail-large-curve-b",
+        "OverlayRelativeOrientation": "West",
+        "Result": "three-diagonal-edges",
+        "ResultRelativeOrientation": "West"
+      }
+    ]
   }
 
 ]
