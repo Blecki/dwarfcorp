@@ -52,11 +52,13 @@ namespace DwarfCorp
         private bool entityLighting = GameSettings.Default.EntityLighting;
         public Color VertexColorTint { get; set; }
         public bool FrustumCull { get { return true; } }
+        public bool Stipple { get; set; }
+
         [JsonIgnore]
         public Color OneShotTint = Color.White;
         public Tinter()
         {
-            
+            Stipple = false;
         }
 
         public Tinter(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool collisionManager) :
@@ -66,6 +68,7 @@ namespace DwarfCorp
             Tint = new Color(255, 255, 0);
             TintChangeRate = 1.0f;
             VertexColorTint = Color.White;
+            Stipple = false;
         }
 
 
@@ -114,6 +117,11 @@ namespace DwarfCorp
             tintVec.W *= oneShotvec.W;
             effect.VertexColorTint = new Color(tintVec);
             OneShotTint = Color.White;
+
+            if (Stipple)
+            {
+                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Stipple];
+            }
         }
     }
 

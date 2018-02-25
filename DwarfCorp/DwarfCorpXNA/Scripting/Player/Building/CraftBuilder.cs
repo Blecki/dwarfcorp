@@ -182,6 +182,11 @@ namespace DwarfCorp
             CurrentCraftBody.GlobalTransform = CurrentCraftBody.LocalTransform;
             CurrentCraftBody.UpdateTransform();
             CurrentCraftBody.PropogateTransforms();
+            var tinters = CurrentCraftBody.EnumerateAll().OfType<Tinter>();
+            foreach(var tinter in tinters)
+            {
+                tinter.Stipple = true;
+            }
             if (OverrideOrientation)
             {
                 CurrentCraftBody.Orient(CurrentOrientation);

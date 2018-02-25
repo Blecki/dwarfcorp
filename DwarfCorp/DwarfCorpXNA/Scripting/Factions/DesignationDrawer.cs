@@ -165,11 +165,15 @@ namespace DwarfCorp
                         props = DesignationProperties[entity.Type];
 
                     entity.Body.SetTintRecursive(props.ModulatedColor);
-
                     // Todo: More consistent drawing?
                     if (entity.Type == DesignationType.Craft)
                     {
                         entity.Body.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                        var tinters = entity.Body.EnumerateAll().OfType<Tinter>();
+                        foreach (var tinter in tinters)
+                        {
+                            tinter.Stipple = true;
+                        }
                     }
                     else
                     {

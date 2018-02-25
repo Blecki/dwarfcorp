@@ -76,6 +76,7 @@ namespace DwarfCorp
                 if (tinter != null)
                 {
                     tinter.VertexColorTint = Color.White;
+                    tinter.Stipple = false;
                 }
                 SelectedBody.LocalTransform = OrigTransform;
                 SelectedBody = null;
@@ -227,6 +228,7 @@ namespace DwarfCorp
                 if (tinter != null)
                 {
                     tinter.VertexColorTint = intersectsAnyOther == null && !intersectsWall ? Color.Green : Color.Red;
+                    tinter.Stipple = true;
                 }
                 MouseState mouse = Mouse.GetState();
                 if (mouse.LeftButton == ButtonState.Released && mouseDown)
@@ -242,7 +244,10 @@ namespace DwarfCorp
                         OverrideOrientation = false;
                         CurrentOrientation = 0;
                         if (tinter != null)
+                        {
                             tinter.VertexColorTint = Color.White;
+                            tinter.Stipple = false;
+                        }
                     }
                     else if (!intersectsWall)
                     {
