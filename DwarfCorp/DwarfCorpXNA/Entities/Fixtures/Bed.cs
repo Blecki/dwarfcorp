@@ -9,15 +9,13 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Bed : Body, IRenderableComponent
+    public class Bed : CraftedBody, IRenderableComponent
     {
         [EntityFactory("Bed")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Bed(Manager, Position);
+            return new Bed(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
         }
-
-        public bool FrustumCull { get { return true; } }
 
         public Bed()
         {
@@ -25,8 +23,8 @@ namespace DwarfCorp
             CollisionType = CollisionManager.CollisionType.Static;
         }
 
-        public Bed(ComponentManager manager, Vector3 position) :
-            base(manager, "Bed", Matrix.CreateTranslation(position), new Vector3(2.0f, 0.5f, 1.0f), new Vector3(0.45f, 0.2f, 0.0f))
+        public Bed(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
+            base(manager, "Bed", Matrix.CreateTranslation(position), new Vector3(2.0f, 0.5f, 1.0f), new Vector3(0.45f, 0.2f, 0.0f), new DwarfCorp.CraftDetails(manager, "Bed", resources))
         {
             Tags.Add("Bed");
             CollisionType = CollisionManager.CollisionType.Static;

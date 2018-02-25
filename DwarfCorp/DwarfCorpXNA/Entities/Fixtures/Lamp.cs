@@ -41,12 +41,12 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Lamp : Body
+    public class Lamp : CraftedBody
     {
         [EntityFactory("Lamp")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Lamp(Manager, Position);
+            return new Lamp(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
         }
 
         public Lamp()
@@ -130,8 +130,8 @@ namespace DwarfCorp
             return;
         }
 
-        public Lamp(ComponentManager Manager, Vector3 position) :
-            base(Manager, "Lamp", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+        public Lamp(ComponentManager Manager, Vector3 position, List<ResourceAmount> resources) :
+            base(Manager, "Lamp", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(Manager, "Lamp", resources))
         {
             Tags.Add("Lamp");
             CollisionType = CollisionManager.CollisionType.Static;

@@ -166,13 +166,7 @@ namespace DwarfCorp
             drawDistSq = DrawDistance * DrawDistance;
             Content = content;
 
-            var originCoord = new GlobalVoxelCoordinate(
-                (int)(world.WorldOrigin.X * world.WorldScale),
-                0,
-                (int)(world.WorldOrigin.Y * world.WorldScale))
-                .GetGlobalChunkCoordinate();
-
-            chunkData = new ChunkData(this, maxChunksX - 1, maxChunksZ - 1, (int)(originCoord.X - WorldSize.X / 2 + 1), (int)(originCoord.Z - WorldSize.Z / 2 + 1));             
+            chunkData = new ChunkData(this, maxChunksX, maxChunksZ, 0, 0);             
 
             ChunkGen = chunkGen;
 
@@ -363,8 +357,8 @@ namespace DwarfCorp
 
             var initialChunkCoordinates = new List<GlobalChunkCoordinate>();
 
-            for (int dx = origin.X - WorldSize.X / 2 + 1; dx < origin.X + WorldSize.X/2; dx++)
-                for (int dz = origin.Z - WorldSize.Z / 2 + 1; dz < origin.Z + WorldSize.Z/2; dz++)
+            for (int dx = 0; dx < WorldSize.X; dx++)
+                for (int dz = 0; dz < WorldSize.Z; dz++)
                     initialChunkCoordinates.Add(new GlobalChunkCoordinate(dx, 0, dz));
                     
             SetLoadingMessage("Generating Chunks...");

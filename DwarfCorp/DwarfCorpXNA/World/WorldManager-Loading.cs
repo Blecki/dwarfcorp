@@ -269,7 +269,7 @@ namespace DwarfCorp
                 if (!fileExists)
                     GameID = MathFunctions.Random.Next(0, 1024);
 
-                ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f, this.WorldScale)
+                ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f)
                 {
                     SeaLevel = SeaLevel
                 };
@@ -356,15 +356,13 @@ namespace DwarfCorp
                 else
                 {
                     Time = new WorldTime();
-                    // WorldOrigin is in "map" units. Convert to voxels
-                    var globalOffset = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y)*WorldScale;
 
                     Camera = new OrbitCamera(this,
                         new Vector3(VoxelConstants.ChunkSizeX,
                             VoxelConstants.ChunkSizeY - 1.0f,
-                            VoxelConstants.ChunkSizeZ) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y)*WorldScale,
+                            VoxelConstants.ChunkSizeZ),
                         new Vector3(VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeY - 1.0f,
-                            VoxelConstants.ChunkSizeZ) + new Vector3(WorldOrigin.X, 0, WorldOrigin.Y)*WorldScale +
+                            VoxelConstants.ChunkSizeZ) +
                         Vector3.Up*10.0f + Vector3.Backward*10,
                         MathHelper.PiOver4, AspectRatio, 0.1f,
                         GameSettings.Default.VertexCullDistance);
@@ -375,22 +373,14 @@ namespace DwarfCorp
 
                     ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
 
-
-                    var chunkOffset = GlobalVoxelCoordinate.FromVector3(globalOffset).GetGlobalChunkCoordinate();
-                    //var chunkOffset = ChunkManager.ChunkData.RoundToChunkCoords(globalOffset);
-                    //globalOffset.X = chunkOffset.X * VoxelConstants.ChunkSizeX;
-                    //globalOffset.Y = chunkOffset.Y * VoxelConstants.ChunkSizeY;
-                    //globalOffset.Z = chunkOffset.Z * VoxelConstants.ChunkSizeZ;
-
-                    WorldOrigin = new Vector2(globalOffset.X, globalOffset.Z);
-                    Camera.Position = new Vector3(0, 10, 0) + globalOffset;
-                    Camera.Target = new Vector3(0, 10, 1) + globalOffset;
+                    Camera.Position = new Vector3(0, 10, 0) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
+                    Camera.Target = new Vector3(0, 10, 1) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
 
                     // If there's no file, we have to initialize the first chunk coordinate
-                    if (gameFile == null) // Todo: Always true?
+                    if (gameFile == null)
                     {
                         ChunkManager.GenerateInitialChunks(
-                            GlobalVoxelCoordinate.FromVector3(globalOffset).GetGlobalChunkCoordinate(),
+                            new GlobalChunkCoordinate(0, 0, 0),
                             SetLoadingMessage);
                     }
 

@@ -8,12 +8,12 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public static class Anvil
+    public class Anvil : CraftedFixture
     {
         [EntityFactory("Anvil")]
         private static GameComponent __factory00(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Fixture("Anvil", new String[] { "Anvil" }, Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 3));
+            return new CraftedFixture("Anvil", new String[] { "Anvil" }, Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 3), Data.GetData<List<ResourceAmount>>("Resources", null));
         }
     }
 
@@ -22,7 +22,7 @@ namespace DwarfCorp
         [EntityFactory("Minecart")]
         private static GameComponent __factory00(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Fixture("Minecart", new String[] { "Minecart" }, Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 3));
+            return new CraftedFixture("Minecart", new String[] { "Minecart" }, Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 3),Data.GetData<List<ResourceAmount>>("Resources", null));
         }
     }
 }

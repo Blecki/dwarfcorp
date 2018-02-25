@@ -9,15 +9,13 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Bookshelf : Body, IRenderableComponent
+    public class Bookshelf : CraftedBody, IRenderableComponent
     {
         [EntityFactory("Bookshelf")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Bookshelf(Manager, Position) { Tags = new List<string>() { "Research" } };
+            return new Bookshelf(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null)) { Tags = new List<string>() { "Research" } };
         }
-
-        public bool FrustumCull { get { return true; } }
 
         public Bookshelf()
         {
@@ -25,8 +23,8 @@ namespace DwarfCorp
             CollisionType = CollisionManager.CollisionType.Static;
         }
 
-        public Bookshelf(ComponentManager manager, Vector3 position) :
-            base(manager, "Bookshelf", Matrix.CreateTranslation(position), new Vector3(0.8f, 1.0f, 0.3f), new Vector3(0.0f, 0.5f, 0.35f))
+        public Bookshelf(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
+            base(manager, "Bookshelf", Matrix.CreateTranslation(position), new Vector3(32.0f / 32.0f, 8.0f / 32.0f, 20.0f / 32.0f), new Vector3(0.5f, 0.5f, 0.5f), new CraftDetails(manager, "Bookshelf", resources))
         {
             Tags.Add("Books");
             CollisionType = CollisionManager.CollisionType.Static;

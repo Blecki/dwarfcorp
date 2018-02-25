@@ -81,6 +81,9 @@ namespace DwarfCorp
 
         public void Sense()
         {
+            if (!Active)
+                return;
+
             if (Allies == null && Creature != null)
             {
                 Allies = Creature.Faction;

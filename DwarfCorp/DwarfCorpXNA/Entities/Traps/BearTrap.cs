@@ -41,12 +41,12 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class BearTrap : Body, IUpdateableComponent
+    public class BearTrap : CraftedBody, IUpdateableComponent
     {
         [EntityFactory("Bear Trap")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new BearTrap(Manager, Position);
+            return new BearTrap(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
         }
 
         public float DamageAmount { get; set; }
@@ -59,10 +59,10 @@ namespace DwarfCorp
             
         }
 
-        public BearTrap(ComponentManager manager, Vector3 pos) :
+        public BearTrap(ComponentManager manager, Vector3 pos, List<ResourceAmount> resources) :
             base(manager,
             "BearTrap", Matrix.CreateTranslation(pos),
-            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, true)
+            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, "Bear Trap", resources))
         {
             Allies = manager.World.PlayerFaction;
             
@@ -77,7 +77,7 @@ namespace DwarfCorp
         {
             AddChild(new Shadow(manager));
 
-            var spriteSheet = new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap);
+            var spriteSheet = new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap, 32);
 
             var sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.Identity, false)) as AnimatedSprite;
 
@@ -97,6 +97,7 @@ namespace DwarfCorp
             sprite.AddAnimation(sprung);
 
             sprite.SetFlag(Flag.ShouldSerialize, false);
+            sprite.SetCurrentAnimation("BearTrapIdle", false);
 
             AddChild(new GenericVoxelListener(manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
             {
@@ -123,6 +124,9 @@ namespace DwarfCorp
 
         void Sensor_OnSensed(IEnumerable<Body> sensed)
         {
+            if (!Active)
+                return;
+
             if (ShouldDie)
             {
                 return;

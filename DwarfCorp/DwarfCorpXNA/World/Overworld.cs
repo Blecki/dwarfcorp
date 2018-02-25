@@ -889,7 +889,7 @@ namespace DwarfCorp
 
 
                     Map[x, y].Height = level;
-                    Map[x, y].Biome = BiomeLibrary.GetBiome("DeciduousForest").Biome;
+                    Map[x, y].Biome = BiomeLibrary.GetBiome("Deciduous Forest").Biome;
                     Map[x, y].Erosion = 1.0f;
                     Map[x, y].Weathering = 0;
                     Map[x, y].Faults = 1.0f;
@@ -945,13 +945,27 @@ namespace DwarfCorp
             Overworld.Name = "ocean_" + MathFunctions.Random.Next(9999);
         }
 
-        public static BiomeData GetBiomeAt(Vector3 worldPos)
+        public static Vector2 WorldToOverworld(Vector2 worldXZ, float scale, Vector2 origin)
         {
-            float x = worldPos.X;
-            float y = worldPos.Z;
-            Vector2 v = new Vector2(x, y) / GameSettings.Default.WorldScale;
+            return worldXZ / scale + origin;
+        }
+
+        public static Vector2 WorldToOverworld(Vector3 worldXYZ, float scale, Vector2 origin)
+        {
+            return WorldToOverworld(new Vector2(worldXYZ.X, worldXYZ.Z), scale, origin);
+        }
+
+        public static BiomeData GetBiomeAt(Vector3 worldPos, float scale, Vector2 origin)
+        {
+            Vector2 v = WorldToOverworld(worldPos, scale, origin);
             var biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
             return BiomeLibrary.Biomes[biome];
+        }
+
+        public static float GetValueAt(Vector3 worldPos, ScalarFieldType fieldType, float scale, Vector2 origin)
+        {
+            Vector2 v = WorldToOverworld(worldPos, scale, origin);
+            return GetValue(Overworld.Map, v, fieldType);
         }
 
     }

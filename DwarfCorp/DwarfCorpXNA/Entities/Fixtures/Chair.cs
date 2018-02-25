@@ -11,12 +11,12 @@ using Newtonsoft.Json.Serialization;
 
 namespace DwarfCorp
 {
-    public class Chair : Body
+    public class Chair : CraftedBody
     {
         [EntityFactory("Chair")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Chair(Manager, Position);
+            return new Chair(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
         }
 
         private void Initialize(ComponentManager manager)
@@ -29,8 +29,8 @@ namespace DwarfCorp
         {
         }
 
-        public Chair(ComponentManager manager, Vector3 position) :
-            base(manager, "Chair", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+        public Chair(ComponentManager manager, Vector3 position, List<ResourceAmount> resources = null) :
+            base(manager, "Chair", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, "Chair", resources))
         {
             var matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
             matrix.Translation = position - new Vector3(0, 0.22f, 0);

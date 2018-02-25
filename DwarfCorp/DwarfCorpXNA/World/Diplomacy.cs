@@ -557,6 +557,7 @@ namespace DwarfCorp
         {
             foreach (TradeEnvoy envoy in faction.TradeEnvoys)
             {
+                envoy.Creatures.RemoveAll(creature => creature.IsDead);
                 if (envoy.DeathTimer.Update(faction.World.Time.CurrentDate))
                 {
                     envoy.Creatures.ForEach((creature) => creature.GetRoot().Die());
@@ -691,6 +692,7 @@ namespace DwarfCorp
         {
             foreach (var party in faction.WarParties)
             {
+                party.Creatures.RemoveAll(creature => creature.IsDead);
                 if (party.DeathTimer.Update(faction.World.Time.CurrentDate))
                 {
                     party.Creatures.ForEach((creature) => creature.Die());

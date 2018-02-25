@@ -41,12 +41,12 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Forge : Body
+    public class Forge : CraftedBody
     {
         [EntityFactory("Forge")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Forge(Manager, Position);
+            return new Forge(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
         }
 
         public Forge()
@@ -54,8 +54,8 @@ namespace DwarfCorp
 
         }
 
-        public Forge(ComponentManager manager, Vector3 position) :
-            base(manager, "Forge", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+        public Forge(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
+            base(manager, "Forge", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, "Forge", resources))
         {
             Tags.Add("Forge");
 
