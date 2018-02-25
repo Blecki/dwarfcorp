@@ -91,6 +91,8 @@ namespace DwarfCorp
         {
             get
             {
+                if (Parent == null)
+                    return null;
                 if (_cachedCreature == null)
                     _cachedCreature = Parent.EnumerateAll().OfType<Creature>().FirstOrDefault();
                 System.Diagnostics.Debug.Assert(_cachedCreature != null, "AI Could not find creature");
@@ -1261,6 +1263,9 @@ namespace DwarfCorp
         // If true, this creature can fight the other creature. Otherwise, we want to flee it.
         public bool FightOrFlight(CreatureAI creature)
         {
+            if (IsDead || creature.IsDead)
+                return false;
+
             float fear = 0;
             // If our health is low, we're a little afraid.
             if (Creature.Hp < Creature.MaxHealth * 0.25f)
@@ -1269,7 +1274,8 @@ namespace DwarfCorp
             }
 
             // If there are a lot of nearby threats vs allies, we are even more afraid.
-            if (Faction.Threats.Sum(threat => (threat.AI.Position - Position).Length() < 6.0f ? 1 : 0) - Faction.Minions.Sum(minion => (minion.Position - Position).Length() < 6.0f ? 1 : 0) > Creature.Stats.BuffedCon)
+            if (Faction.Threats.Where(threat => !threat.IsDead).Sum(threat => (threat.AI.Position - Position).Length() < 6.0f ? 1 : 0) - 
+                Faction.Minions.Where(minion => !minion.IsDead).Sum(minion => (minion.Position - Position).Length() < 6.0f ? 1 : 0) > Creature.Stats.BuffedCon)
             {
                 fear += 0.5f;
             }
