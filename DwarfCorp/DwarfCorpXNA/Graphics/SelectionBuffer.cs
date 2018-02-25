@@ -129,6 +129,7 @@ namespace DwarfCorp
         {
             ValidateBuffer(GameStates.GameState.Game.GraphicsDevice);
 
+
             lock (ColorBufferMutex)
             {
                 if (colorBuffer == null) yield break;
