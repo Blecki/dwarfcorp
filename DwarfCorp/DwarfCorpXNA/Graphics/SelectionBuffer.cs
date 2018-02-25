@@ -49,6 +49,8 @@ namespace DwarfCorp
         private int Scale = 4;
         private Timer renderTimer = new Timer(0.1f, false, Timer.TimerMode.Real);
         private bool renderThisFrame = false;
+        private object ColorBufferMutex = new object();
+
         public SelectionBuffer(int scale, GraphicsDevice device)
         {
             Scale = scale;
@@ -64,14 +66,17 @@ namespace DwarfCorp
 
         public void ValidateBuffer(GraphicsDevice device)
         {
-            PresentationParameters pp = device.PresentationParameters;
-
-            int width = pp.BackBufferWidth / Scale;
-            int height = pp.BackBufferHeight / Scale;
-            if (Buffer == null || Buffer.Width != width ||
-                Buffer.Height != height)
+            lock (ColorBufferMutex)
             {
-                Buffer = new RenderTarget2D(device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth16, 0, RenderTargetUsage.PreserveContents);
+                PresentationParameters pp = device.PresentationParameters;
+
+                int width = pp.BackBufferWidth / Scale;
+                int height = pp.BackBufferHeight / Scale;
+                if (Buffer == null || Buffer.Width != width ||
+                    Buffer.Height != height)
+                {
+                    Buffer = new RenderTarget2D(device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth16, 0, RenderTargetUsage.PreserveContents);
+                }
             }
         }
 
@@ -85,25 +90,28 @@ namespace DwarfCorp
 
         public bool Begin(GraphicsDevice device)
         {
-            switch (State)
+            lock (ColorBufferMutex)
             {
-                case SelectionBufferState.Idle:
-                    renderTimer.Update(DwarfTime.LastTime);
-                    renderThisFrame = (renderTimer.HasTriggered || colorBuffer == null);
-                    if (!renderThisFrame)
+                switch (State)
+                {
+                    case SelectionBufferState.Idle:
+                        renderTimer.Update(DwarfTime.LastTime);
+                        renderThisFrame = (renderTimer.HasTriggered || colorBuffer == null);
+                        if (!renderThisFrame)
+                            return false;
+                        ValidateBuffer(device);
+                        device.SetRenderTarget(Buffer);
+                        device.Clear(Color.Transparent);
+                        State = SelectionBufferState.Rendering;
+                        return true;
+                    case SelectionBufferState.Rendering:
+                        ValidateColorBuffer(device);
+                        Buffer.GetData(colorBuffer);
+                        State = SelectionBufferState.Idle;
                         return false;
-                    ValidateBuffer(device);
-                    device.SetRenderTarget(Buffer);
-                    device.Clear(Color.Transparent);
-                    State = SelectionBufferState.Rendering;
-                    return true;
-                case SelectionBufferState.Rendering:
-                    ValidateColorBuffer(device);
-                    Buffer.GetData(colorBuffer);
-                    State = SelectionBufferState.Idle;
-                    return false;
-                default:
-                    return false;
+                    default:
+                        return false;
+                }
             }
         }
 
@@ -119,28 +127,31 @@ namespace DwarfCorp
         /// <returns></returns>
         public IEnumerable<uint> GetIDsSelected(Rectangle screenRectangle)
         {
-            if (colorBuffer == null) yield break;
-
-            int width = Buffer.Width;
-            int height = Buffer.Height;
-
-            int startX = MathFunctions.Clamp(screenRectangle.X/Scale, 0, width - 1);
-            int startY = MathFunctions.Clamp(screenRectangle.Y/Scale, 0, height - 1);
-            int endX = MathFunctions.Clamp(screenRectangle.Right/Scale, 0, width - 1);
-            int endY = MathFunctions.Clamp(screenRectangle.Bottom/Scale, 0, height - 1);
-            HashSet<uint> selected = new HashSet<uint>();
-            for (int x = startX; x <= endX; x++)
+            lock (ColorBufferMutex)
             {
-                for (int y = startY; y <= endY; y++)
+                if (colorBuffer == null) yield break;
+
+                int width = Buffer.Width;
+                int height = Buffer.Height;
+
+                int startX = MathFunctions.Clamp(screenRectangle.X / Scale, 0, width - 1);
+                int startY = MathFunctions.Clamp(screenRectangle.Y / Scale, 0, height - 1);
+                int endX = MathFunctions.Clamp(screenRectangle.Right / Scale, 0, width - 1);
+                int endY = MathFunctions.Clamp(screenRectangle.Bottom / Scale, 0, height - 1);
+                HashSet<uint> selected = new HashSet<uint>();
+                for (int x = startX; x <= endX; x++)
                 {
-                    uint id = GameComponentExtensions.GlobalIDFromColor(colorBuffer[x + y*width]);
-                    if (id == 0) continue;
-                    if (selected.Contains(id))
+                    for (int y = startY; y <= endY; y++)
                     {
-                        continue;
+                        uint id = GameComponentExtensions.GlobalIDFromColor(colorBuffer[x + y * width]);
+                        if (id == 0) continue;
+                        if (selected.Contains(id))
+                        {
+                            continue;
+                        }
+                        selected.Add(id);
+                        yield return id;
                     }
-                    selected.Add(id);
-                    yield return id;
                 }
             }
         }
