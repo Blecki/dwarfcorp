@@ -53,7 +53,7 @@ namespace DwarfCorp
 
         public static void InitializeDefaultLibrary()
         {
-            TypeList = FileUtils.LoadJson<List<DecalType>>(ContentPaths.decal_types, false);
+            TypeList = FileUtils.LoadJsonListFromMultipleSources<DecalType>(ContentPaths.decal_types, null, (dt) => dt.Name);
             emptyType = TypeList[0];
 
             byte ID = 0;

@@ -43,6 +43,12 @@ namespace DwarfCorp
 {
     public class Lamp : CraftedBody
     {
+        [EntityFactory("Lamp")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Lamp(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+        }
+
         public Lamp()
         {
 
@@ -61,6 +67,7 @@ namespace DwarfCorp
             };
 
             var lampAnimation = AnimationLibrary.CreateAnimation(spriteSheet, frames, "LampAnimation");
+            lampAnimation.Loops = true;
  
             var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.Identity, false)
             {
@@ -69,7 +76,7 @@ namespace DwarfCorp
             }) as AnimatedSprite;
 
             sprite.AddAnimation(lampAnimation);
-            sprite.AnimPlayer.Loop(lampAnimation);
+            sprite.AnimPlayer.Play(lampAnimation);
             sprite.SetFlag(Flag.ShouldSerialize, false);
 
             // This is a hack to make the animation update at least once even when the object is created inactive by the craftbuilder.
@@ -127,14 +134,6 @@ namespace DwarfCorp
             base(Manager, "Lamp", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(Manager, "Lamp", resources))
         {
             Tags.Add("Lamp");
-
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                Manager.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(position)));
-            if (voxelUnder.IsValid)
-                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
-                    voxelUnder));
-            
             CollisionType = CollisionManager.CollisionType.Static;
 
             CreateCosmeticChildren(Manager);
@@ -150,6 +149,12 @@ namespace DwarfCorp
             {
                 HasMoved = true
             }).SetFlag(Flag.ShouldSerialize, false);
+
+            AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
+            {
+                if (changeEvent.Type == VoxelChangeEventType.VoxelTypeChanged && changeEvent.NewVoxelType == 0)
+                    Die();
+            })).SetFlag(Flag.ShouldSerialize, false);
         }
 
         public override void Orient(float angle)

@@ -78,13 +78,14 @@ namespace DwarfCorp
 
         public override void SetCurrentAnimation(string name, bool Play = false)
         {
-            if (currentMode != name || Play)
-            {
+            //if (currentMode != name || Play)
+            //{
                 currentMode = name;
                 var s = currentMode + OrientationStrings[(int)CurrentOrientation];
-                if (Animations.ContainsKey(s))
-                    AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.NoStateChange);
-            }
+            if (Animations.ContainsKey(s))
+                SetCurrentAnimation(Animations[s], Play);
+            //        AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.NoStateChange);
+            //}
         }
 
 
@@ -106,7 +107,7 @@ namespace DwarfCorp
 
             var s = currentMode + OrientationStrings[(int)CurrentOrientation];
             if (Animations.ContainsKey(s))
-                AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.Play | AnimationPlayer.ChangeAnimationOptions.Loop);
+                AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.Play);
 
             base.Update(gameTime, chunks, camera);
         }

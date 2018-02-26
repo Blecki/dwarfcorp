@@ -65,23 +65,23 @@ namespace DwarfCorp
             this(manager)
         {
             CraftType = craftType;
-            var libraryType = CraftLibrary.CraftItems[craftType];
-            if (resources == null)
-            {
-                Resources = new List<ResourceAmount>();
-                var required = libraryType.RequiredResources;
-                foreach (var requirement in required)
-                {
-                    Resources.Add(new ResourceAmount(ResourceLibrary.GetLeastValuableWithTag(requirement.ResourceType), requirement.NumResources));
-                }
-            }
+
+            if (resources != null)
+                Resources = resources;
             else
             {
-                Resources = resources;
+                Resources = new List<ResourceAmount>();
+                var libraryType = CraftLibrary.GetCraftable(craftType);
+
+                if (libraryType != null)
+                {
+                    foreach (var requirement in libraryType.RequiredResources)
+                    {
+                        Resources.Add(new ResourceAmount(ResourceLibrary.GetLeastValuableWithTag(requirement.ResourceType), requirement.NumResources));
+                    }
+                }
             }
         }
-
-
 
         public override void Die()
         {
@@ -113,7 +113,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public Point DefaultSpriteFrame;
 
-        public Point GetSpritesheetFrame(ResourceLibrary.ResourceType resourceType)
+        public Point GetSpritesheetFrame(ResourceType resourceType)
         {
             var resource = ResourceLibrary.GetResourceByName(resourceType);
             foreach (var tag in resource.Tags)
@@ -161,7 +161,7 @@ namespace DwarfCorp
     public class CraftedFixture : Fixture
     {
         [JsonIgnore]
-        public FixtureCraftDetails CraftDetails {  get { return GetRoot().GetComponent<FixtureCraftDetails>(); } }
+        public FixtureCraftDetails CraftDetails { get { return GetRoot().GetComponent<FixtureCraftDetails>(); } }
 
         public CraftedFixture()
         {
@@ -187,6 +187,19 @@ namespace DwarfCorp
             AddChild(details);
         }
 
+        public CraftedFixture(
+            String Name,
+            IEnumerable<String> Tags,
+            ComponentManager Manager,
+            Vector3 Position,
+            SpriteSheet Sheet,
+            Point Sprite,
+            List<ResourceAmount> Resources)
+            : base(Name, Tags, Manager, Position, Sheet, Sprite)
+        {
+            this.SetFlag(Flag.ShouldSerialize, true);
+            AddChild(new CraftDetails(Manager, Name, Resources));
+        }
     }
 
     [JsonObject(IsReference = true)]

@@ -61,11 +61,6 @@ namespace DwarfCorp
             Designation = type;
         }
 
-        public override Task Clone()
-        {
-            return new CraftItemTask(Designation);
-        }
-
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return !Designation.Location.IsValid || !CanBuild(agent) ? 1000 : (agent.AI.Position - Designation.Location.WorldPosition).LengthSquared();

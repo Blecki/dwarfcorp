@@ -156,11 +156,6 @@ namespace DwarfCorp
 
         public GameComponent SetFlag(Flag F, bool Value)
         {
-            if (F == Flag.Dead && Value == true)
-            {
-                var x = 5;
-            }
-
             if (Value)
                 Flags |= F;
             else
@@ -287,6 +282,7 @@ namespace DwarfCorp
             // Todo: Split into this and 'OnDie' event function.
             if(IsDead)
                 return;
+
             IsDead = true;
 
             var localList = new List<GameComponent>(Children);

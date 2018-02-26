@@ -162,7 +162,7 @@ namespace DwarfCorp
             var currentVoxel = creatureVoxel;
             while (toReturn.Count < maxsteps)
             {
-                var actions = Agent.Movement.GetMoveActions(currentVoxel);
+                var actions = Agent.Movement.GetMoveActions(new MoveState() { Voxel = currentVoxel });
 
                 float minCost = float.MaxValue;
                 var minAction = new MoveAction();
@@ -387,7 +387,7 @@ namespace DwarfCorp
 
                         foreach (var currStatus in greedyPathFollow.Run())
                         {
-                            if (Agent.DrawPath)
+                            if (Debugger.Switches.DrawPaths)
                             {
                                 foreach (var voxel in exploredVoxels)
                                 {
@@ -398,7 +398,7 @@ namespace DwarfCorp
                             {
                                 exploredVoxels.Add(Agent.Physics.CurrentVoxel);
                             }
-                            if (Agent.DrawPath)
+                            if (Debugger.Switches.DrawPaths)
                             {
                                 Drawer3D.DrawLine(Agent.Position, goal.GetVoxel().WorldPosition, debugColor, 0.1f);
                             }

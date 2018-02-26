@@ -43,21 +43,73 @@ namespace DwarfCorp.Rail
     public class RailLibrary
     {
         private static List<JunctionPattern> Patterns;
+        private static List<JunctionPattern> ChainPatterns;
         private static List<RailPiece> Pieces;
-
-        public class Data
-        {
-            public List<RailPiece> Pieces;
-            public List<JunctionPattern> Patterns;
-        }
 
         private static void Initialize()
         {
             if (Patterns == null)
             {
-                var data = FileUtils.LoadJson<Data>(ContentPaths.rail_junctions, false);
-                Patterns = data.Patterns;
-                Pieces = data.Pieces;
+                Pieces = FileUtils.LoadJsonListFromMultipleSources<RailPiece>(ContentPaths.rail_pieces, null, p => p.Name);
+                Patterns = FileUtils.LoadJsonListFromMultipleSources<JunctionPattern>(ContentPaths.rail_patterns, null, p => p.Name);
+
+                foreach (var piece in Pieces)
+                    piece.ComputeConnections();
+
+                ChainPatterns = Patterns
+                    // Only pieces with well defined entrance and exits can be used in chains.
+                    .Where(p => p.Entrance != null && p.Exit != null)
+                    // We need them in every orientation - not worried about redundancies.
+                    .SelectMany(p =>
+                    {
+                        return new JunctionPattern[]
+                        {
+                            p.Rotate(Orientation.North),
+                            p.Rotate(Orientation.East),
+                            p.Rotate(Orientation.South),
+                            p.Rotate(Orientation.West)
+                        };
+                    })
+                    // We need them with the endpoints switched as well.
+                    .SelectMany(p =>
+                    {
+                        return new JunctionPattern[]
+                        {
+                            p,
+                            new JunctionPattern
+                            {
+                                Pieces = p.Pieces,
+                                Entrance = p.Exit,
+                                Exit = p.Entrance,
+                            }
+                        };
+                    })
+                    // And they must be positioned so the entrance is at 0,0
+                    .Select(p =>
+                    {
+                        if (p.Entrance.Offset.X == 0 && p.Entrance.Offset.Y == 0) return p;
+                        else return new JunctionPattern
+                        {
+                            Entrance = new JunctionPortal
+                            {
+                                Direction = p.Entrance.Direction,
+                                Offset = Point.Zero
+                            },
+                            Exit = new JunctionPortal
+                            {
+                                Direction = p.Exit.Direction,
+                                Offset = new Point(p.Exit.Offset.X - p.Entrance.Offset.X, p.Exit.Offset.Y - p.Entrance.Offset.Y)
+                            },
+                            Pieces = p.Pieces.Select(piece =>
+                                new JunctionPiece
+                                {
+                                    RailPiece = piece.RailPiece,
+                                    Orientation = piece.Orientation,
+                                    Offset = new Point(piece.Offset.X - p.Entrance.Offset.X, piece.Offset.Y - p.Entrance.Offset.Y)
+                                }).ToList(),
+                        };
+                    })
+                    .ToList();
             }
         }
 
@@ -65,6 +117,18 @@ namespace DwarfCorp.Rail
         {
             Initialize();
             return Patterns;
+        }
+
+        public static IEnumerable<JunctionPattern> EnumerateChainPatterns()
+        {
+            Initialize();
+            return ChainPatterns;
+        }
+
+        public static IEnumerable<RailPiece> EnumeratePieces()
+        {
+            Initialize();
+            return Pieces;
         }
 
         public static RailPiece GetRailPiece(String Name)

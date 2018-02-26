@@ -35,159 +35,11 @@ using System.Diagnostics;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// This is just a struct of two things: a resource tag, and a number of that resource.
-    /// This is used instead of a list, since there is nothing distinguishing resources from each other.
-    /// </summary>
-    public class Quantitiy<T> : ICloneable
-    {
-        protected bool Equals(Quantitiy<T> other)
-        {
-            return Equals(ResourceType, other.ResourceType) && NumResources == other.NumResources;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-            if (obj.GetType() != this.GetType())
-            {
-                return false;
-            }
-            return Equals((Quantitiy<T>)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (ResourceType.GetHashCode() * 397) ^ NumResources;
-            }
-        }
-
-        public virtual object Clone()
-        {
-            return new Quantitiy<T>(ResourceType, NumResources);
-        }
-
-        public virtual Quantitiy<T> CloneQuantity()
-        {
-            return Clone() as Quantitiy<T>;
-        }
-
-        public T ResourceType { get; set; }
-        public int NumResources { get; set; }
-
-
-        public Quantitiy()
-        {
-
-        }
-
-        public Quantitiy(T type)
-        {
-            ResourceType = type;
-            NumResources = 1;
-        }
-
-        public Quantitiy(Quantitiy<T> other)
-        {
-            ResourceType = other.ResourceType;
-            NumResources = other.NumResources;
-        }
-
-        public Quantitiy(T resourceType, int numResources)
-        {
-            ResourceType = resourceType;
-            NumResources = numResources;
-        }
-
-
-        public static Quantitiy<T> operator +(int a, Quantitiy<T> b)
-        {
-            return new Quantitiy<T>()
-            {
-                ResourceType = b.ResourceType,
-                NumResources = b.NumResources + a
-            };
-        }
-
-        public static Quantitiy<T> operator -(int b, Quantitiy<T> a)
-        {
-            return new Quantitiy<T>()
-            {
-                ResourceType = a.ResourceType,
-                NumResources = a.NumResources - b
-            };
-        }
-
-        public static Quantitiy<T> operator +(Quantitiy<T> a, int b)
-        {
-            return new Quantitiy<T>()
-            {
-                ResourceType = a.ResourceType,
-                NumResources = a.NumResources + b
-            };
-        }
-
-        public static Quantitiy<T> operator -(Quantitiy<T> a, int b)
-        {
-            return new Quantitiy<T>()
-            {
-                ResourceType = a.ResourceType,
-                NumResources = a.NumResources - b
-            };
-        }
-
-        public static bool operator ==(Quantitiy<T> a, Quantitiy<T> b)
-        {
-            if (ReferenceEquals(a, null) && !ReferenceEquals(b, null))
-            {
-                return true;
-            }
-
-            if (!ReferenceEquals(a, null) && ReferenceEquals(b, null))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(a, null))
-            {
-                return true;
-            }
-
-            return a.ResourceType.Equals(b.ResourceType) && (a.NumResources == b.NumResources);
-        }
-
-        public static bool operator !=(Quantitiy<T> a, Quantitiy<T> b)
-        {
-            return !(a == b);
-        }
-
-        public static bool operator <(Quantitiy<T> a, Quantitiy<T> b)
-        {
-            return (a.ResourceType.Equals(b.ResourceType)) && (a.NumResources < b.NumResources);
-        }
-
-        public static bool operator >(Quantitiy<T> a, Quantitiy<T> b)
-        {
-            return (a.ResourceType.Equals(b.ResourceType)) && (a.NumResources > b.NumResources);
-        }
-    }
-
-
     /// <summary>
     /// This is just a struct of two things: a resource, and a number of that resource.
     /// This is used instead of a list, since there is nothing distinguishing resources from each other.
     /// </summary>
-    public class ResourceAmount : Quantitiy<ResourceLibrary.ResourceType>
+    public class ResourceAmount : Quantitiy<ResourceType>
     {
 
         public ResourceAmount(ResourceAmount amount)
@@ -196,7 +48,7 @@ namespace DwarfCorp
             NumResources = amount.NumResources;
         }
 
-        public ResourceAmount(ResourceLibrary.ResourceType type)
+        public ResourceAmount(ResourceType type)
         {
             ResourceType = type;
             NumResources = 1;
@@ -204,7 +56,7 @@ namespace DwarfCorp
 
         public ResourceAmount(Resource resource)
         {
-            ResourceType = resource.Type;
+            ResourceType = resource.Name;
             NumResources = 1;
         }
 
@@ -224,11 +76,11 @@ namespace DwarfCorp
 
         public ResourceAmount(Resource resourceType, int numResources)
         {
-            ResourceType = resourceType.Type;
+            ResourceType = resourceType.Name;
             NumResources = numResources;
         }
 
-        public ResourceAmount(ResourceLibrary.ResourceType type, int num) :
+        public ResourceAmount(ResourceType type, int num) :
             this(ResourceLibrary.Resources[type], num)
         {
             

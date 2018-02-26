@@ -501,13 +501,13 @@ namespace DwarfCorp
         {
             if (HasMeat)
             {
-                ResourceLibrary.ResourceType type = Species + " " + ResourceLibrary.ResourceType.Meat;
+                ResourceType type = Species + " " + ResourceType.Meat;
 
                 if (!ResourceLibrary.Resources.ContainsKey(type))
                 {
                     ResourceLibrary.Add(new Resource(ResourceLibrary.GetMeat(Species))
                     {
-                        Type = type,
+                        Name = type,
                         ShortName = type
                     });
                 }
@@ -517,13 +517,13 @@ namespace DwarfCorp
 
             if (HasBones)
             {
-                ResourceLibrary.ResourceType type = Species + " " + ResourceLibrary.ResourceType.Bones;
+                ResourceType type = Species + " " + ResourceType.Bones;
 
                 if (!ResourceLibrary.Resources.ContainsKey(type))
                 {
-                    ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Bones])
+                    ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceType.Bones])
                     {
-                        Type = type,
+                        Name = type,
                         ShortName = type
                     });
                 }
@@ -533,13 +533,13 @@ namespace DwarfCorp
 
             if (HasCorpse)
             {
-                ResourceLibrary.ResourceType type = AI.Stats.FullName + "'s " + "Corpse";
+                ResourceType type = AI.Stats.FullName + "'s " + "Corpse";
 
                 if (!ResourceLibrary.Resources.ContainsKey(type))
                 {
                     ResourceLibrary.Add(new Resource(ResourceLibrary.Resources["Corpse"])
                     {
-                        Type = type,
+                        Name = type,
                         ShortName = type
                     });
                 }

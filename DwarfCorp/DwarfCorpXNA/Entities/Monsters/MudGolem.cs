@@ -42,12 +42,39 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
     /// <summary>
     /// Convenience class for initializing demons as creatures.
     /// </summary>
     public class MudGolem : Creature
     {
+        [EntityFactory("MudGolem")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new MudGolem(
+                new CreatureStats(new MudGolemClass(), 0),
+                "dirt_particle",
+                "Carnivore",
+                Manager.World.PlanService,
+                Manager.World.Factions.Factions["Carnivore"],
+                Manager,
+                "Mud Golem",
+                Position);
+        }
+
+        [EntityFactory("SnowGolem")]
+        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new MudGolem(
+                new CreatureStats(new SnowGolemClass(), 0),
+                "snow_particle",
+                "Carnivore",
+                Manager.World.PlanService,
+                Manager.World.Factions.Factions["Carnivore"],
+                Manager,
+                "Snow Golem",
+                Position);
+        }
+
         public MudGolem()
         {
             

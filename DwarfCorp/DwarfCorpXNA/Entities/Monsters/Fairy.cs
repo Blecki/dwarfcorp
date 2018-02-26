@@ -10,9 +10,13 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
     public class Fairy : Creature, IUpdateableComponent
     {
+        [EntityFactory("Fairy")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Fairy(Manager, "Player", Position);
+        }
 
         public Timer ParticleTimer { get; set; }
         public Timer DeathTimer { get; set; }
@@ -20,6 +24,7 @@ namespace DwarfCorp
         {
 
         }
+
         public Fairy(ComponentManager manager, string allies, Vector3 position) :
             base(manager, new CreatureStats(new FairyClass(), 0), "Player", manager.World.PlanService, manager.World.Factions.Factions[allies], "Fairy")
         {

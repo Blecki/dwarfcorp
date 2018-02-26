@@ -10,9 +10,20 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Frog : Creature
     {
+        [EntityFactory("Frog")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Frog(ContentPaths.Entities.Animals.Frog.frog0_animation, Position, Manager, "Frog");
+        }
+
+        [EntityFactory("Tree Frog")]
+        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Frog(ContentPaths.Entities.Animals.Frog.frog1_animation, Position, Manager, "Frog");
+        }
+        
         public string SpriteAsset { get; set; }
 
         public Frog()

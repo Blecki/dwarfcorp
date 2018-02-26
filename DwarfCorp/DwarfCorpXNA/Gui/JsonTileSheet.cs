@@ -4,10 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-/*
- *  Encodes disc format of JSON skin file.
- */
-
 namespace DwarfCorp.Gui
 {
     public enum JsonTileSheetType
@@ -24,10 +20,5 @@ namespace DwarfCorp.Gui
         public int TileHeight;
         public JsonTileSheetType Type = JsonTileSheetType.TileSheet;
         public bool RepeatWhenUsedAsBorder = false;
-    }
-    
-    public class JsonTileSheetSet
-    {
-        public List<JsonTileSheet> Sheets;
     }
 }

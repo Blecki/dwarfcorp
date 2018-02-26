@@ -11,6 +11,12 @@ namespace DwarfCorp
 {
     public class Crate : Body
     {
+        [EntityFactory("Crate")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Crate(Manager, Position);
+        }
+
         public Crate()
         {
             Tags.Add("Crate");
@@ -30,7 +36,7 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(Manager);
 
-            var spriteSheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
+            var spriteSheet = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
 
             AddChild(new Box(Manager,
                 "Cratebox",

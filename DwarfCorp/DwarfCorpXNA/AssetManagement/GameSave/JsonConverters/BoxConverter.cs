@@ -88,15 +88,27 @@ namespace DwarfCorp
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            try
+            JToken token = JToken.Load(reader);
+            if (token.Type == JTokenType.Float || token.Type == JTokenType.Integer)
             {
-                JValue jObject = serializer.Deserialize<JValue>(reader);
-                return new DwarfBux(decimal.Parse(jObject.Value.ToString()));
+                return new DwarfBux(token.ToObject<decimal>());
             }
-            catch (InvalidCastException)
+            if (token.Type == JTokenType.String)
             {
-                return new DwarfBux(0);
+                // customize this to suit your needs
+                return new DwarfBux(Decimal.Parse(token.ToString(),
+                       System.Globalization.CultureInfo.GetCultureInfo("es-ES")));
             }
+            if (token.Type == JTokenType.Null && objectType == typeof(DwarfBux?))
+            {
+                return null;
+            }
+            if (token.Type == JTokenType.Object)
+            {
+                return token.ToObject<DwarfBux>();
+            }
+            throw new JsonSerializationException("Unexpected token type: " +
+                                                  token.Type.ToString());
         }
 
         public override bool CanWrite

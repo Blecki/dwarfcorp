@@ -271,12 +271,12 @@ namespace DwarfCorp
 
                 foreach (string name in defaultSounds)
                 {
-                    SoundEffect effect = Content.Load<SoundEffect>(name);
+                    SoundEffect effect = Content.Load<SoundEffect>(AssetManager.ResolveContentPath(name));
                     EffectLibrary[name] = effect;
                 }
                 try
                 {
-                    Mixer = FileUtils.LoadJson<SFXMixer>(ContentPaths.mixer, false);
+                    Mixer = FileUtils.LoadJsonFromResolvedPath<SFXMixer>(ContentPaths.mixer);
                 }
                 catch (FileNotFoundException exception)
                 {
@@ -407,7 +407,7 @@ namespace DwarfCorp
 
             foreach (string song in songs)
             {
-                ActiveSongs.Add(Content.Load<Song>(song));
+                ActiveSongs.Add(Content.Load<Song>(AssetManager.ResolveContentPath(song)));
             }
         }
 
@@ -438,7 +438,7 @@ namespace DwarfCorp
 
             if (!EffectLibrary.ContainsKey(name))
             {
-                effect = Content.Load<SoundEffect>(name);
+                effect = Content.Load<SoundEffect>(AssetManager.ResolveContentPath(name));
                 EffectLibrary[name] = effect;   
             }
             else
@@ -494,7 +494,7 @@ namespace DwarfCorp
 
             if (!EffectLibrary.ContainsKey(name))
             {
-                effect = Content.Load<SoundEffect>(name);
+                effect = Content.Load<SoundEffect>(AssetManager.ResolveContentPath(name));
                 EffectLibrary[name] = effect;
             }
             else

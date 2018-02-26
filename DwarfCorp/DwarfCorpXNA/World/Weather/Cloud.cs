@@ -10,6 +10,27 @@ namespace DwarfCorp
 {
     public class Cloud : Fixture, IUpdateableComponent
     {
+        [EntityFactory("Snow Cloud")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Cloud(Manager, 0.1f, 50, 40, Position) { TypeofStorm = StormType.SnowStorm };
+        }
+
+        [EntityFactory("Rain Cloud")]
+        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Cloud(Manager, 0.1f, 50, 40, Position) { TypeofStorm = StormType.RainStorm };
+        }
+
+        [EntityFactory("Storm")]
+        private static GameComponent __factory2(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+
+            Weather.CreateForecast(Manager.World.Time.CurrentDate, Manager.World.ChunkManager.Bounds, Manager.World, 3);
+            Weather.CreateStorm(MathFunctions.RandVector3Cube() * 10, MathFunctions.Rand(0.05f, 1.0f), Manager.World);
+            return new Cloud(Manager, 0.1f, 50, 40, Position);
+        }
+
         public float Raininess { get; set; }
         public float Height { get; set; }
         public int MaxRainDrops { get; set; }

@@ -10,11 +10,14 @@ namespace DwarfCorp
 {
     public class OctTreeNode<T>
     {
+        private const float MinimumSize = 4.0f;
+        private const int SubdivideThreshold = 8;
+
         public BoundingBox Bounds;
         public OctTreeNode<T>[] Children;
         public List<Tuple<T, BoundingBox>> Items = new List<Tuple<T, BoundingBox>>();
         private Vector3 Mid;
-        private object Lock = new object();
+        private static object Lock = new object();
         public OctTreeNode(Vector3 Min, Vector3 Max)
         {
             Bounds = new BoundingBox(Min, Max);
@@ -48,10 +51,10 @@ namespace DwarfCorp
 
         public void AddItem(T Item, BoundingBox Point)
         {
-            AddToTree(Tuple.Create(Item, Point), 8);
+            AddToTree(Tuple.Create(Item, Point));
         }
 
-        private void AddToTree(Tuple<T, BoundingBox> Item, int SubdivideThreshold)
+        private void AddToTree(Tuple<T, BoundingBox> Item)
         {
             lock (Lock)
             {
@@ -60,16 +63,16 @@ namespace DwarfCorp
                 if (Children != null)
                 {
                     for (var i = 0; i < 8; ++i)
-                        Children[i].AddToTree(Item, SubdivideThreshold);
+                        Children[i].AddToTree(Item);
                 }
-                else if (Items.Count == SubdivideThreshold && (Bounds.Max.X - Bounds.Min.X) > 8)
+                else if (Items.Count == SubdivideThreshold && (Bounds.Max.X - Bounds.Min.X) > MinimumSize)
                 {
                     Subdivide();
                     for (var i = 0; i < Items.Count; ++i)
                         for (var c = 0; c < 8; ++c)
-                            Children[c].AddToTree(Items[i], SubdivideThreshold);
+                            Children[c].AddToTree(Items[i]);
                     for (var c = 0; c < 8; ++c)
-                        Children[c].AddToTree(Item, SubdivideThreshold);
+                        Children[c].AddToTree(Item);
                     Items.Clear();
                 }
                 else
@@ -79,21 +82,32 @@ namespace DwarfCorp
             }
         }
 
-        public void RemoveItem(T Item, BoundingBox Point)
+        public void RemoveItem(T Item, BoundingBox Box)
         {
-            RemoveFromTree(Tuple.Create(Item, Point));
+            RemoveFromTree(Tuple.Create(Item, Box));
         }
 
-        private void RemoveFromTree(Tuple<T, BoundingBox> Item)
+        private int RemoveFromTree(Tuple<T, BoundingBox> Item)
         {
             lock (Lock)
             {
-                if (!Bounds.Intersects(Item.Item2)) return;
+                if (!Bounds.Intersects(Item.Item2)) return 0;
                 if (Children == null)
+                {
                     Items.RemoveAll(t => Object.ReferenceEquals(t.Item1, Item.Item1));
+                    return Items.Count;
+                }
                 else
+                {
+                    var r = 0;
                     for (int i = 0; i < 8; ++i)
-                        Children[i].RemoveFromTree(Item);
+                        r += Children[i].RemoveFromTree(Item);
+
+                    //if (r == 0)
+                    //    Children = null;
+
+                    return r;
+                }
             }
         }
 
@@ -140,6 +154,23 @@ namespace DwarfCorp
             }
         }
 
+        public void EnumerateAll(HashSet<T> Into)
+        {
+            lock (Lock)
+            {
+                if (Children == null)
+                {
+                    for (var i = 0; i < Items.Count; ++i)
+                        Into.Add(Items[i].Item1);
+                }
+                else
+                {
+                    for (var i = 0; i < 8; ++i)
+                        Children[i].EnumerateAll(Into);
+                }
+            }
+        }
+
         public IEnumerable<T> EnumerateItems(BoundingFrustum SearchBounds)
         {
             lock (Lock)
@@ -157,6 +188,14 @@ namespace DwarfCorp
                             yield return item;
                 }
             }
+        }
+
+        public void EnumerateBounds(int Depth, Action<BoundingBox, int> Callback)
+        {
+            Callback(Bounds, Depth);
+            if (Children != null)
+                for (var i = 0; i < 8; ++i)
+                    Children[i].EnumerateBounds(Depth + 1, Callback);
         }
     }
 }

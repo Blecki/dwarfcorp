@@ -482,8 +482,7 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         if (Employee.CurrentTask != null)
                         {
-                            Employee.CurrentTask.Cancel();
-                            Employee.CurrentTask = null;
+                            Employee.CancelCurrentTask();
                             TaskLabel.Text = "No tasks";
                             TaskLabel.Invalidate();
                             CancelTask.OnClick = null;

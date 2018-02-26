@@ -41,6 +41,12 @@ namespace DwarfCorp
 {
     public class Grave : Fixture
     {
+        [EntityFactory("Grave")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Grave(Manager, Position);
+        }
+
         public Grave()
         {
 

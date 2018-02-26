@@ -57,7 +57,7 @@ namespace DwarfCorp
         public static void Initialize(ContentManager content, GraphicsDevice graphics)
         {
             Content = content;
-            DefaultFont = content.Load<SpriteFont>(ContentPaths.Fonts.Default);
+            DefaultFont = content.Load<SpriteFont>(AssetManager.ResolveContentPath(ContentPaths.Fonts.Default));
             Pixel = new Texture2D(graphics, 1, 1);
             Color[] white = new Color[1];
             white[0] = Color.White;

@@ -435,7 +435,7 @@ namespace DwarfCorp
             for (int i = 0; i < PathLength; i++)
             {
                 IEnumerable<MoveAction> actions =
-                    Creature.AI.Movement.GetMoveActions(curr);
+                    Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr });
 
                 MoveAction? bestAction = null;
                 float bestDist = float.MaxValue;

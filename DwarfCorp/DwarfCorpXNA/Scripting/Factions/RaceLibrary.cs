@@ -42,8 +42,9 @@ namespace DwarfCorp
 
         public static Race FindRace(String Name)
         {
+            //Todo: Better modding - load list with names rather than dict.
             if (Races == null)
-                Races = ContentPaths.LoadFromJson<Dictionary<string, Race>>(ContentPaths.World.races);
+                Races = FileUtils.LoadJsonFromResolvedPath<Dictionary<string, Race>>(ContentPaths.World.races);
             return Races[Name];
         }
 

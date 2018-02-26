@@ -125,7 +125,7 @@ namespace DwarfCorp
             };
         }
 
-        public bool IsAllowed(ResourceLibrary.ResourceType type)
+        public bool IsAllowed(ResourceType type)
         {
             Resource resource = ResourceLibrary.GetResourceByName(type);
             if (WhitelistResources.Count == 0)

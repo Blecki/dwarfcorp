@@ -1,0 +1,833 @@
+[
+  {
+    "Name": "Bear Trap",
+    "EntityName": "Bear Trap",
+    "RequiredResources": [
+      {
+        "ResourceType": "Metal",
+        "NumResources": 4
+      }
+    ],
+    "Icon": {
+      "Sheet": "beartrap",
+      "Tile": 0
+    },
+    "BaseCraftTime": 60.0,
+    "Description": "Damages enemies and then explodes.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Flag",
+    "EntityName": "Flag",
+    "RequiredResources": [
+      {
+        "ResourceType": "HardMaterial",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 17
+    },
+    "BaseCraftTime": 1.0,
+    "Description": "Dwarfs gather at flags when they have nothing else to do.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Lamp",
+    "EntityName": "Lamp",
+    "RequiredResources": [
+      {
+        "ResourceType": "Fuel",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 9
+    },
+    "BaseCraftTime": 10.0,
+    "Description": "Dwarves need to see sometimes too!",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Ladder",
+    "EntityName": "Ladder",
+    "RequiredResources": [
+      {
+        "ResourceType": "HardMaterial",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 2
+    },
+    "BaseCraftTime": 10.0,
+    "Description": "Allows dwarves to climb up and down",
+    "Type": "Object",
+    "Prerequisites": [
+      "NearWall"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Door",
+    "EntityName": "Door",
+    "RequiredResources": [
+      {
+        "ResourceType": "HardMaterial",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 11
+    },
+    "BaseCraftTime": 30.0,
+    "Description": "Keep monsters out, and dwarves in.",
+    "Type": "Object",
+    "Prerequisites": [
+      "NearWall"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Trinket",
+    "EntityName": "Trinket",
+    "RequiredResources": [
+      {
+        "ResourceType": "Material",
+        "NumResources": 3
+      }
+    ],
+    "Icon": {
+      "Sheet": "crafts",
+      "Tile": 0
+    },
+    "BaseCraftTime": 45.0,
+    "Description": "Get creative juices flowing and make a work of art.",
+    "Type": "Resource",
+    "Prerequisites": [],
+    "ResourceCreated": {
+      "_value": "Trinket"
+    },
+    "CraftLocation": "Anvil",
+    "Verb": "Craft",
+    "PastTeseVerb": "Crafted",
+    "CurrentVerb": "Crafting",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": false,
+    "Moveable": false,
+    "CraftActBehavior": "Trinket"
+  },
+
+  {
+    "Name": "Gem-set Trinket",
+    "EntityName": "Gem-set Trinket",
+    "RequiredResources": [
+      {
+        "ResourceType": "Encrustable",
+        "NumResources": 1
+      },
+      {
+        "ResourceType": "Gem",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "crafts",
+      "Tile": 1
+    },
+    "BaseCraftTime": 55.0,
+    "Description": "Encrust a work of art with gems.",
+    "Type": "Resource",
+    "Prerequisites": [],
+    "ResourceCreated": {
+      "_value": "Gem-set Trinket"
+    },
+    "CraftLocation": "Anvil",
+    "Verb": "Encrust",
+    "PastTeseVerb": "Encrusted",
+    "CurrentVerb": "Encrusting",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": false,
+    "Moveable": false,
+    "CraftActBehavior": "GemTrinket"
+  },
+
+  {
+    "Name": "Meal",
+    "EntityName": "Meal",
+    "RequiredResources": [
+      {
+        "ResourceType": "RawFood",
+        "NumResources": 1
+      },
+      {
+        "ResourceType": "RawFood",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "resources",
+      "Tile": 21
+    },
+    "BaseCraftTime": 15.0,
+    "Description": "Take raw food and cook something",
+    "Type": "Resource",
+    "Prerequisites": [],
+    "ResourceCreated": {
+      "_value": "Meal"
+    },
+    "CraftLocation": "Cutting Board",
+    "Verb": "Cook",
+    "PastTeseVerb": "Cooked",
+    "CurrentVerb": "Cooking",
+    "AllowHeterogenous": true,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": false,
+    "Moveable": false,
+    "CraftActBehavior": "Meal"
+  },
+
+  {
+    "Name": "Bread",
+    "EntityName": "Bread",
+    "RequiredResources": [
+      {
+        "ResourceType": "Bakeable",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "resources",
+      "Tile": 22
+    },
+    "BaseCraftTime": 5.0,
+    "Description": "Turn bakeable food into bread.",
+    "Type": "Resource",
+    "Prerequisites": [],
+    "ResourceCreated": {
+      "_value": "Bread"
+    },
+    "CraftLocation": "Stove",
+    "Verb": "Bake",
+    "PastTeseVerb": "Baked",
+    "CurrentVerb": "Baking",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": false,
+    "Moveable": false,
+    "CraftActBehavior": "Bread"
+  },
+
+  {
+    "Name": "Ale",
+    "EntityName": "Ale",
+    "RequiredResources": [
+      {
+        "ResourceType": "Brewable",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "resources",
+      "Tile": 20
+    },
+    "BaseCraftTime": 8.0,
+    "Description": "Turn brewable food into alcohol",
+    "Type": "Resource",
+    "Prerequisites": [],
+    "ResourceCreated": {
+      "_value": "Ale"
+    },
+    "CraftLocation": "Barrel",
+    "Verb": "Brew",
+    "PastTeseVerb": "Brewed",
+    "CurrentVerb": "Brewing",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": false,
+    "Moveable": false,
+    "CraftActBehavior": "Ale"
+  },
+
+  {
+    "Name": "Turret",
+    "EntityName": "Turret",
+    "RequiredResources": [
+      {
+        "ResourceType": "Metal",
+        "NumResources": 2
+      },
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 57
+    },
+    "BaseCraftTime": 90.0,
+    "Description": "Crossbow automatically targets enemies with magical power.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Chair",
+    "EntityName": "Chair",
+    "RequiredResources": [
+      {
+        "ResourceType": "Wood",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 50
+    },
+    "BaseCraftTime": 9.0,
+    "Description": "Dwarves sit here and relax. Place next to tables for eating.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Table",
+    "EntityName": "Table",
+    "RequiredResources": [
+      {
+        "ResourceType": "Wood",
+        "NumResources": 4
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 48
+    },
+    "BaseCraftTime": 20.0,
+    "Description": "Dwarves gather around tables to eat. Build chairs next to the table.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Anvil",
+    "EntityName": "Anvil",
+    "RequiredResources": [
+      {
+        "ResourceType": "Metal",
+        "NumResources": 4
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 24
+    },
+    "BaseCraftTime": 30.0,
+    "Description": "Used to craft more complex items.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Forge",
+    "EntityName": "Forge",
+    "RequiredResources": [
+      {
+        "ResourceType": "Fuel",
+        "NumResources": 4
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 25
+    },
+    "BaseCraftTime": 30.0,
+    "Description": "Dwarves use the forge to refine materials.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Stove",
+    "EntityName": "Stove",
+    "RequiredResources": [
+      {
+        "ResourceType": "Fuel",
+        "NumResources": 2
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 35
+    },
+    "BaseCraftTime": 30.0,
+    "Description": "Dwarves use the stove to cook meals.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Kitchen Table",
+    "EntityName": "Kitchen Table",
+    "RequiredResources": [
+      {
+        "ResourceType": "Wood",
+        "NumResources": 2
+      },
+      {
+        "ResourceType": "Metal",
+        "NumResources": 2
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 56
+    },
+    "BaseCraftTime": 30.0,
+    "Description": "Dwarves use the cutting board to cook meals.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Barrel",
+    "EntityName": "Barrel",
+    "RequiredResources": [
+      {
+        "ResourceType": "Wood",
+        "NumResources": 2
+      },
+      {
+        "ResourceType": "Brewable",
+        "NumResources": 4
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 1
+    },
+    "BaseCraftTime": 20.0,
+    "Description": "Dwarves use the still to brew ale.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Bed",
+    "EntityName": "Bed",
+    "RequiredResources": [
+      {
+        "ResourceType": "Wood",
+        "NumResources": 4
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 3
+    },
+    "BaseCraftTime": 30.0,
+    "Description": "Dwarves use the bed to sleep.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Strawman",
+    "EntityName": "Strawman",
+    "RequiredResources": [
+      {
+        "ResourceType": "Grain",
+        "NumResources": 4
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 41
+    },
+    "BaseCraftTime": 10.0,
+    "Description": "Dwarves can train by hitting the strawman.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Potions",
+    "EntityName": "Potions",
+    "RequiredResources": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 2
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 33
+    },
+    "BaseCraftTime": 40.0,
+    "Description": "Dwarves can do magical research here.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Books",
+    "EntityName": "Books",
+    "RequiredResources": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 2
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 32
+    },
+    "BaseCraftTime": 40.0,
+    "Description": "Dwarves can do magical research here.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Bookshelf",
+    "EntityName": "Bookshelf",
+    "RequiredResources": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 4
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 32
+    },
+    "BaseCraftTime": 50.0,
+    "Description": "Dwarves can do magical research here.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Glass",
+    "EntityName": "Glass",
+    "RequiredResources": [
+      {
+        "ResourceType": "Sand",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "resources",
+      "Tile": 4
+    },
+    "BaseCraftTime": 30.0,
+    "Description": "Made from sand. Allows light to pass through.",
+    "Type": "Resource",
+    "Prerequisites": [],
+    "ResourceCreated": {
+      "_value": "Glass"
+    },
+    "CraftLocation": "Forge",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": false,
+    "Moveable": false,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Brick",
+    "EntityName": "Brick",
+    "RequiredResources": [
+      {
+        "ResourceType": "Soil",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "resources",
+      "Tile": 5
+    },
+    "BaseCraftTime": 30.0,
+    "Description": "Made from dirt. Building material.",
+    "Type": "Resource",
+    "Prerequisites": [],
+    "ResourceCreated": {
+      "_value": "Brick"
+    },
+    "CraftLocation": "Forge",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": false,
+    "Moveable": false,
+    "CraftActBehavior": "Normal"
+  }
+
+]

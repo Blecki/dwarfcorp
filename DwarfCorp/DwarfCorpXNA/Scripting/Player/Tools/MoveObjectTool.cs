@@ -192,8 +192,13 @@ namespace DwarfCorp
                         0.1f);
 
                     var offset = Vector3.Zero;
-                    if (craftDetails != null && CraftLibrary.CraftItems.ContainsKey(craftDetails.CraftType))
-                        offset = CraftLibrary.CraftItems[craftDetails.CraftType].SpawnOffset;
+
+                    if (craftDetails != null)
+                    {
+                        var craftItem = CraftLibrary.GetCraftable(craftDetails.CraftType);
+                        if (craftItem != null)
+                            offset = craftItem.SpawnOffset;
+                    }
 
                     SelectedBody.LocalPosition = voxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + offset;
                     SelectedBody.HasMoved = true;

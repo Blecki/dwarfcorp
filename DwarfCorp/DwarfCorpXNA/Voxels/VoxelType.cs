@@ -64,7 +64,7 @@ namespace DwarfCorp
         [JsonIgnore] public Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> TransitionTextures = null;
         
         public bool ReleasesResource = false;
-        public ResourceLibrary.ResourceType ResourceToRelease = ResourceLibrary.ResourceType.Stone;
+        public ResourceType ResourceToRelease = ResourceType.Stone;
         public float StartingHealth = 0.0f;
         public float ProbabilityOfRelease = 0.0f;
         public bool CanRamp = false;

@@ -47,6 +47,19 @@ namespace DwarfCorp
     /// </summary>
     public class Skeleton : Creature
     {
+        [EntityFactory("Skeleton")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Skeleton(
+                new CreatureStats(new SkeletonClass(), 0),
+                "Undead",
+                Manager.World.PlanService,
+                Manager.World.Factions.Factions["Undead"],
+                Manager,
+                "Skeleton",
+                Position).Physics;
+        }
+
         public Skeleton()
         {
             

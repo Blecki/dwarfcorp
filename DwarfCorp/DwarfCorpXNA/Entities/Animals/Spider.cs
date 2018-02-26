@@ -11,9 +11,15 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Spider : Creature
     {
+        [EntityFactory("Spider")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            // Todo: Why are we passing in the assets??
+            return new Spider(Manager, ContentPaths.Entities.Animals.Spider.spider_animation, Position);
+        }
+
         public string SpriteAsset { get; set; }
         public Spider()
         {

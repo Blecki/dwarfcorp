@@ -47,6 +47,19 @@ namespace DwarfCorp
     /// </summary>
     public class Demon : Creature
     {
+        [EntityFactory("Demon")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Demon(
+                new CreatureStats(new DemonClass(), 0),
+                "Demon",
+                Manager.World.PlanService,
+                Manager.World.Factions.Factions["Demon"],
+                Manager,
+                "Demon",
+                Position).Physics;
+        }
+
         public Demon()
         {
             

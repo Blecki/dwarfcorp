@@ -228,7 +228,7 @@ namespace DwarfCorp
                 Player = this
             };
 
-            Tools[ToolMode.BuildRail] = new BuildRailTool(this);
+            Tools[ToolMode.BuildRail] = new Rail.BuildRailTool(this);
         }
 
         void Time_NewDay(DateTime time)
@@ -434,7 +434,8 @@ namespace DwarfCorp
                 }
 
                 if (orphanedTasks.Count > 0)
-                    TaskManager.AssignTasksGreedy(orphanedTasks, Faction.Minions);
+                    //TaskManager.AssignTasksGreedy(orphanedTasks, Faction.Minions);
+                    TaskManager.AddTasks(orphanedTasks);
             }
         }
 
@@ -593,9 +594,7 @@ namespace DwarfCorp
 
             if (hadCommand)
             {
-                if (dwarf.CurrentTask != null)
-                    dwarf.CurrentTask.Cancel();
-                dwarf.CurrentTask = null;
+                dwarf.CancelCurrentTask();
                 dwarf.TryMoveVelocity(desiredVelocity, jumpCommand);
             }
             else if (dwarf.CurrentTask == null)

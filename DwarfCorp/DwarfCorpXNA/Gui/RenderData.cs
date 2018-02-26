@@ -33,21 +33,21 @@ namespace DwarfCorp.Gui
             return (int) MathFunctions.Clamp((int)Math.Ceiling(maxScale), 1, 10);
         }
 
-        public RenderData(GraphicsDevice Device, ContentManager Content, String Effect, String Skin)
+        public RenderData(GraphicsDevice Device, ContentManager Content)
         {
             this.Device = Device;
-            this.Effect = Content.Load<Effect>(Effect);
+            this.Effect = Content.Load<Effect>(ContentPaths.GUI.Shader);
 
             CalculateScreenSize();
 
+            // Todo: Better modding = list of named things.
             // Load skin from disc. The skin is a set of tilesheets.
-            var skin = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonTileSheetSet>(
-                System.IO.File.ReadAllText(Skin));
+            var sheets = FileUtils.LoadJsonListFromMultipleSources<JsonTileSheet>(ContentPaths.GUI.Skin, null, (s) => s.Name);
 
             // Pack skin into a single texture - Build atlas information from texture sizes.
-            var atlas = TextureAtlas.Compiler.Compile(skin.Sheets.Select(s =>
+            var atlas = TextureAtlas.Compiler.Compile(sheets.Select(s =>
                 {
-                    var realTexture = Content.Load<Texture2D>(s.Texture);
+                    var realTexture = AssetManager.GetContentTexture(s.Texture);
                     return new TextureAtlas.Entry
                     {
                         Sheet = s,
@@ -63,7 +63,7 @@ namespace DwarfCorp.Gui
             foreach (var texture in atlas.Textures)
             {
                 // Copy source texture into the atlas
-                var realTexture = Content.Load<Texture2D>(texture.Sheet.Texture);
+                var realTexture = AssetManager.GetContentTexture(texture.Sheet.Texture);
                 var textureData = new Color[realTexture.Width * realTexture.Height];
                 realTexture.GetData(textureData);
 

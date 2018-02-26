@@ -50,11 +50,11 @@ namespace DwarfCorp
         private int currentResourceCount = 0;
         public  int CurrentResourceCount { get { return currentResourceCount; } }
         [JsonProperty]
-        public Dictionary<ResourceLibrary.ResourceType, ResourceAmount> Resources { get; set; }
+        public Dictionary<ResourceType, ResourceAmount> Resources { get; set; }
 
         private void InitializeResources()
         {
-            Resources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
+            Resources = new Dictionary<ResourceType, ResourceAmount>();
             
             /*
             foreach(var pair in ResourceLibrary.Resources)
@@ -230,7 +230,7 @@ namespace DwarfCorp
 
         public void RemoveAnyResource()
         {
-            foreach(KeyValuePair<ResourceLibrary.ResourceType, ResourceAmount> resource in Resources)
+            foreach(KeyValuePair<ResourceType, ResourceAmount> resource in Resources)
             {
                 if(resource.Value.NumResources > 0)
                 {
@@ -289,10 +289,10 @@ namespace DwarfCorp
 
         public int GetResourceCount(Resource resourceType)
         {
-            return GetResourceCount(resourceType.Type);
+            return GetResourceCount(resourceType.Name);
         }
 
-        public int GetResourceCount(ResourceLibrary.ResourceType resourceType)
+        public int GetResourceCount(ResourceType resourceType)
         {
             return !Resources.ContainsKey(resourceType) ? 0 : Resources[resourceType].NumResources;
         }

@@ -158,10 +158,12 @@ namespace DwarfCorp
 
             if (CurrentCraftType != null && CurrentCraftBody == null)
             {
-                CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, 
+                CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.EntityName, 
                     player.VoxSelector.VoxelUnderMouse.WorldPosition,
                      Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
-                EntityFactory.GhostEntity(CurrentCraftBody, Color.White);
+
+                CurrentCraftBody.SetFlagRecursive(GameComponent.Flag.Active, false);
+                CurrentCraftBody.SetTintRecursive(Color.White);
 
                 CurrentDesignation = new CraftDesignation()
                 {
@@ -410,9 +412,10 @@ namespace DwarfCorp
                                     assignments.Add(new CraftItemTask(newDesignation));
 
                                     // Todo: Maybe don't support create huge numbers of entities at once?
-                                    CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.Name, r.WorldPosition,
-                     Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
-                                    EntityFactory.GhostEntity(CurrentCraftBody, Color.White);
+                                    CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.EntityName, r.WorldPosition,
+                                    Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
+                                    CurrentCraftBody.SetFlagRecursive(GameComponent.Flag.Active, false);
+                                    CurrentCraftBody.SetTintRecursive(Color.White);
 
                                     newDesignation.WorkPile = new WorkPile(World.ComponentManager, startPos);
                                     World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);

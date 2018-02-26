@@ -232,8 +232,6 @@ namespace DwarfCorp
             if (AnimationQueue.Count > 0)
             {
                 Velocity = Vector3.Zero;
-                PropogateTransforms();
-                UpdateBoundingBox();
                 base.Update(gameTime, chunks, camera);
                 return;
             }

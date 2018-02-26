@@ -54,7 +54,7 @@ namespace DwarfCorp
 
             foreach (ChunkFile chunk in ChunkData)
             {
-                chunk.WriteFile(directory + ProgramData.DirChar + "Chunks" + ProgramData.DirChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + "." + (DwarfGame.COMPRESSED_BINARY_SAVES ? ChunkFile.CompressedExtension : ChunkFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES);
+                chunk.WriteFile(directory + ProgramData.DirChar + "Chunks" + ProgramData.DirChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + "." + (DwarfGame.COMPRESSED_BINARY_SAVES ? ChunkFile.CompressedExtension : ChunkFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES);
             }
 
             FileUtils.SaveJSon(this.Metadata, directory + ProgramData.DirChar + "Metadata." + MetaData.Extension, false);
@@ -74,7 +74,7 @@ namespace DwarfCorp
                 ChunkData = new List<ChunkFile>();
                 foreach (string chunk in chunkFiles)
                 {
-                    ChunkData.Add(new ChunkFile(chunk, DwarfGame.COMPRESSED_BINARY_SAVES, DwarfGame.COMPRESSED_BINARY_SAVES));
+                    ChunkData.Add(new ChunkFile(chunk, DwarfGame.COMPRESSED_BINARY_SAVES));
                 }
             }
             else
@@ -90,8 +90,12 @@ namespace DwarfCorp
             string[] worldFiles = System.IO.Directory.GetFiles(filePath, "*." + PlayData.Extension);
 
             if (worldFiles.Length > 0)
-                PlayData = FileUtils.LoadJson<PlayData>(worldFiles[0], DwarfGame.COMPRESSED_BINARY_SAVES,
-                    world);
+            {
+                if (DwarfGame.COMPRESSED_BINARY_SAVES)
+                    PlayData = FileUtils.LoadCompressedJsonFromAbsolutePath<PlayData>(worldFiles[0], world);
+                else
+                    PlayData = FileUtils.LoadJsonFromAbsolutePath<PlayData>(worldFiles[0], world);
+            }
             else
             {
                 Console.Error.WriteLine("Can't load world from {0}, no data file found.", filePath);
@@ -111,7 +115,7 @@ namespace DwarfCorp
                 string[] metaFiles = System.IO.Directory.GetFiles(filePath, "*." + MetaData.Extension);
 
                 if (metaFiles.Length > 0)
-                    Metadata = FileUtils.LoadJson<MetaData>(metaFiles[0], false, null);
+                    Metadata = FileUtils.LoadJsonFromAbsolutePath<MetaData>(metaFiles[0]);
                 else
                 {
                     Console.Error.WriteLine("Can't load file {0}, no metadata found", filePath);
@@ -121,7 +125,7 @@ namespace DwarfCorp
                 string[] screenshots = System.IO.Directory.GetFiles(filePath, "*.png");
 
                 if (screenshots.Length > 0)
-                    Screenshot = TextureManager.LoadInstanceTexture(screenshots[0], false);
+                    Screenshot = AssetManager.LoadUnbuiltTextureFromAbsolutePath(screenshots[0]);
 
                 return true;
             }

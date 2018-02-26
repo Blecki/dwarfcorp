@@ -11,9 +11,14 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Bird : Creature
     {
+        [EntityFactory("Bird")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Bird(ContentPaths.Entities.Animals.Birds.GetRandomBird(), Position, Manager, "Bird");
+        }
+
         public string SpriteAsset { get; set; }
 
         public Bird()

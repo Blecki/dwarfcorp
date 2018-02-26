@@ -49,9 +49,6 @@ namespace DwarfCorp
     {
         public VoxelData Data { get; set; }
 
-        public Action<LocalVoxelCoordinate> OnVoxelDestroyed;
-        public Action<LocalVoxelCoordinate> OnVoxelExplored;
-
         public VoxelListPrimitive Primitive { get; set; }
         public VoxelListPrimitive NewPrimitive = null;
         public Dictionary<LiquidType, LiquidPrimitive> Liquids { get; set; }
@@ -104,22 +101,6 @@ namespace DwarfCorp
         }
 
         #endregion
-
-        public void NotifyExplored(LocalVoxelCoordinate voxel)
-        {
-            if (OnVoxelExplored != null)
-            {
-                OnVoxelExplored.Invoke(voxel);
-            }
-        }
-
-        public void NotifyDestroyed(LocalVoxelCoordinate voxel)
-        {
-            if (OnVoxelDestroyed != null)
-            {
-                OnVoxelDestroyed.Invoke(voxel);
-            }
-        }
 
         public VoxelChunk(ChunkManager manager, Vector3 origin, GlobalChunkCoordinate id)
         {

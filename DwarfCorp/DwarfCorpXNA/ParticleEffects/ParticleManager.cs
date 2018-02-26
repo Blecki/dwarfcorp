@@ -54,8 +54,9 @@ namespace DwarfCorp
 
         public ParticleManager(GraphicsDevice Device, ComponentManager Components)
         {
+            // Todo: Better modding support - make it a list of named emitters.
             Effects = new Dictionary<string, ParticleEffect>();
-            Load(Device, Components, ContentPaths.LoadFromJson<Dictionary<string, List<EmitterData>>>(ContentPaths.Particles.particles));
+            Load(Device, Components, FileUtils.LoadJsonFromResolvedPath<Dictionary<string, List<EmitterData>>>(ContentPaths.Particles.particles));
         }
 
         public void Trigger(string emitter, Vector3 position, Color tint, int num)

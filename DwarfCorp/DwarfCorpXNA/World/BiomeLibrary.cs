@@ -53,7 +53,8 @@ namespace DwarfCorp
 
         public static void InitializeStatics()
         {
-            Biomes = ContentPaths.LoadFromJson<List<BiomeData>>(ContentPaths.World.biomes);
+            Biomes = FileUtils.LoadJsonListFromMultipleSources<BiomeData>(ContentPaths.World.biomes, null, b => b.Name);
+
             byte id = 0;
             foreach (var biome in Biomes)
             {

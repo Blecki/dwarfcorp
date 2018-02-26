@@ -11,9 +11,15 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Scorpion : Creature
     {
+        [EntityFactory("Scorpion")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            // Todo: Why are we passing in the graphic here?
+            return new Scorpion(ContentPaths.Entities.Animals.Scorpion.scorption_animation, Position, Manager, "Scorpion");
+        }
+
         public string SpriteAsset { get; set; }
         public Scorpion()
         {

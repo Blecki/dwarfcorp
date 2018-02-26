@@ -210,8 +210,19 @@ namespace DwarfCorp
             get { return !GameSettings.Default.FogofWar || _cache_Chunk.Data.IsExplored[_cache_Index]; }
             set
             {
-                _cache_Chunk.Data.IsExplored[_cache_Index] = value;
-                InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
+                var existingValue = _cache_Chunk.Data.IsExplored[_cache_Index];
+                if (existingValue != value)
+                {
+                    _cache_Chunk.Data.IsExplored[_cache_Index] = value;
+                    InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
+                }
+
+                if (value)
+                    _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
+                    {
+                        Type = VoxelChangeEventType.Explored,
+                        Voxel = this
+                    });
             }
         }
 
@@ -370,9 +381,6 @@ namespace DwarfCorp
 
             if (blockDestroyed)
             {
-                // Invoke old voxel listener.
-                _cache_Chunk.NotifyDestroyed(Coordinate.GetLocalVoxelCoordinate());
-
                 // Reveal!
                 VoxelHelpers.RadiusReveal(_cache_Chunk.Manager.ChunkData, this, 10);
             }

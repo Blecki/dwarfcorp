@@ -11,10 +11,26 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Chicken : Creature
     {
+        [EntityFactory("Chicken")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Chicken(Position, Manager, "Chicken", "Chicken");
+        }
 
+        [EntityFactory("Turkey")]
+        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Chicken(Position, Manager, "Turkey", "Turkey");
+        }
+
+        [EntityFactory("Penguin")]
+        private static GameComponent __factory2(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Chicken(Position, Manager, "Penguin", "Penguin");
+        }
+        
         public Chicken()
         {
 

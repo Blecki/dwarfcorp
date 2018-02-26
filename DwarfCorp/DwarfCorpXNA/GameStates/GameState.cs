@@ -140,7 +140,7 @@ namespace DwarfCorp.GameStates
             });
             OnFinished = (Boolean, Exception) => { };
             Done = false;
-            GuiRoot = new Gui.Root(DwarfGame.GumSkin)
+            GuiRoot = new Gui.Root(DwarfGame.GuiSkin)
             {
                 MousePointer = new MousePointer("mouse", 15.0f, 16, 17, 18, 19, 20, 21, 22, 23)
             };

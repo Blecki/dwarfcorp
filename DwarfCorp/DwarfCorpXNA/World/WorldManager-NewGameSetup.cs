@@ -63,9 +63,7 @@ namespace DwarfCorp
         public void CreateInitialDwarves()
         {
             if (InitialEmbark == null)
-            {
-                InitialEmbark = Embarkment.DefaultEmbarkment;
-            }
+                InitialEmbark = EmbarkmentLibrary.DefaultEmbarkment;
 
             var cameraCoordinate = GlobalVoxelCoordinate.FromVector3(Camera.Position);
             // Find the height of the world at the camera
@@ -110,10 +108,10 @@ namespace DwarfCorp
                 PlayerFaction.AddResources(new ResourceAmount(res.Key, res.Value));
             }
             var portBox = port.GetBoundingBox();
-            ComponentManager.RootComponent.AddChild(EntityFactory.CreateBalloon(
+            ComponentManager.RootComponent.AddChild(Balloon.CreateBalloon(
                 portBox.Center() + new Vector3(0, 100, 0),
-                portBox.Center() + new Vector3(0, 10, 0), ComponentManager, Content,
-                GraphicsDevice, new ShipmentOrder(0, null), Master.Faction));
+                portBox.Center() + new Vector3(0, 10, 0), ComponentManager, 
+                new ShipmentOrder(0, null), Master.Faction));
 
             Camera.Target = portBox.Center();
             Camera.Position = Camera.Target + new Vector3(0, 15, -15);

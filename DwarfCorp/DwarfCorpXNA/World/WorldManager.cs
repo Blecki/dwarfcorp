@@ -280,8 +280,6 @@ namespace DwarfCorp
 
         public List<Faction> Natives { get; set; }
 
-        public CraftLibrary CraftLibrary = null;
-
         public int GameID = -1;
 
         public struct Screenshot
@@ -324,6 +322,15 @@ namespace DwarfCorp
         // event that is called when the player loses in the world
         public delegate void OnLose();
         public event OnLose OnLoseEvent;
+
+        // Lazy actions - needed occasionally to spawn entities from threads among other things.
+        private static List<Action> LazyActions = new List<Action>();
+
+        public static void DoLazy(Action action)
+        {
+            LazyActions.Add(action);
+        }
+
         #endregion
 
         /// <summary>
@@ -332,7 +339,7 @@ namespace DwarfCorp
         /// <param name="Game">The program currently running</param>
         public WorldManager(DwarfGame Game)
         {
-            InitialEmbark = Embarkment.DefaultEmbarkment;
+            InitialEmbark = EmbarkmentLibrary.DefaultEmbarkment;
             this.Game = Game;
             Content = Game.Content;
             GraphicsDevice = Game.GraphicsDevice;
@@ -418,7 +425,13 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void Update(DwarfTime gameTime)
         {
-            EntityFactory.DoLazyActions();
+            foreach (var func in LazyActions)
+            {
+                if (func != null)
+                    func.Invoke();
+            }
+            LazyActions.Clear();
+
             if (FastForwardToDay)
             {
                 if (Time.IsDay())
@@ -567,8 +580,10 @@ namespace DwarfCorp
 
         private bool SaveThreadRoutine(string filename)
         {
+#if !DEBUG
             try
             {
+#endif
                 System.Threading.Thread.CurrentThread.Name = "Save";
                 // Ensure we're using the invariant culture.
                 System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -608,6 +623,7 @@ namespace DwarfCorp
                         Resolution = new Point(128, 128)
                     });
                 }
+#if !DEBUG
             }
             catch (Exception exception)
             {
@@ -615,7 +631,8 @@ namespace DwarfCorp
                 Game.CaptureException(exception);
                 throw new WaitStateException(exception.Message);
             }
-            return true;
+#endif
+                return true;
         }
 
         /// <summary>
@@ -863,6 +880,9 @@ namespace DwarfCorp
             // Now draw all of the entities in the game
             DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
             DefaultShader.ClippingEnabled = true;
+
+            if (Debugger.Switches.DrawOcttree)
+                CollisionManager.EnumerateBounds((box, depth) => Drawer3D.DrawBox(box, Color.Yellow, 1.0f / (float)depth, false));
 
             GamePerformance.Instance.StartTrackPerformance("Render - Drawer3D");
             // Render simple geometry (boxes, etc.)

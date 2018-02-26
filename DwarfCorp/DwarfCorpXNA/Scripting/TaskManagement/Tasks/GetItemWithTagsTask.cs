@@ -57,11 +57,6 @@ namespace DwarfCorp
             Priority = PriorityType.Low;
         }
 
-        public override Task Clone()
-        {
-            return new GetItemWithTagsTask(Tags);
-        }
-
         public override Act CreateScript(Creature creature)
         {
             return null;
