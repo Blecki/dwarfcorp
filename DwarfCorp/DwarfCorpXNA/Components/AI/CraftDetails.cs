@@ -65,23 +65,23 @@ namespace DwarfCorp
             this(manager)
         {
             CraftType = craftType;
-            var libraryType = CraftLibrary.GetCraftable(craftType);
-            if (resources == null)
-            {
-                Resources = new List<ResourceAmount>();
-                var required = libraryType.RequiredResources;
-                foreach (var requirement in required)
-                {
-                    Resources.Add(new ResourceAmount(ResourceLibrary.GetLeastValuableWithTag(requirement.ResourceType), requirement.NumResources));
-                }
-            }
+
+            if (resources != null)
+                Resources = resources;
             else
             {
-                Resources = resources;
+                Resources = new List<ResourceAmount>();
+                var libraryType = CraftLibrary.GetCraftable(craftType);
+
+                if (libraryType != null)
+                {
+                    foreach (var requirement in libraryType.RequiredResources)
+                    {
+                        Resources.Add(new ResourceAmount(ResourceLibrary.GetLeastValuableWithTag(requirement.ResourceType), requirement.NumResources));
+                    }
+                }
             }
         }
-
-
 
         public override void Die()
         {
