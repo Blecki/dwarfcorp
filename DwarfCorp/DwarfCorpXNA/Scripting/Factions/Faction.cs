@@ -100,6 +100,8 @@ namespace DwarfCorp
         {
             World = ((WorldManager)ctx.Context);
             HandleThreatsTimer = new Timer(1.0f, false);
+            Threats.RemoveAll(threat => threat == null || threat.IsDead);
+            Minions.RemoveAll(minion => minion == null || minion.IsDead);
         }
 
         public Faction()
