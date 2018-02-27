@@ -20,6 +20,11 @@ namespace DwarfCorp.Rail
             return (Orientation)(((int)In + Ammount) % 4);
         }
 
+        public static Orientation Opposite(Orientation In)
+        {
+            return Rotate(In, 2);
+        }
+
         public static Orientation Relative(Orientation Base, Orientation Top)
         {
             int c = 0;

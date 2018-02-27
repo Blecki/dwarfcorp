@@ -2344,6 +2344,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>rail-patterns</Name>
     </None>
+    <None Include="rail-combinations.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>rail-combinations</Name>
+    </None>
     <None Include="rail-pieces.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>rail-pieces</Name>
