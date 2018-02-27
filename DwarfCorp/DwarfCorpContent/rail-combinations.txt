@@ -1,0 +1,4 @@
+; All possible combinations of rail pieces must be listed; however, the system will automatically generate reverse combos and back combos.
+; eg, given the combo a + b east -> c south, the combo b + a west -> c east will be generated, as will c + a south -> c north and
+; c + b west -> c north. 
+
