@@ -88,17 +88,18 @@ namespace DwarfCorp
                 return null;
 
             var otherCreature = EntityToKill.GetRoot().GetComponent<Creature>();
-            if (otherCreature == null || otherCreature.IsDead)
+            if (otherCreature != null && otherCreature.IsDead)
             {
                 return null;
             }
 
-            if (!creature.AI.FightOrFlight(otherCreature.AI))
+            if (otherCreature != null && !creature.AI.FightOrFlight(otherCreature.AI))
             {
                 Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
                 IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
                 return new FleeEntityAct(creature.AI) {Entity = EntityToKill, PathLength = 5};
             }
+
             return new KillEntityAct(EntityToKill, creature.AI, Mode);
         }
 
