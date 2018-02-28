@@ -2,3 +2,17 @@
 ; eg, given the combo a + b east -> c south, the combo b + a west -> c east will be generated, as will c + a south -> c north and
 ; c + b west -> c north. 
 
+; ortho-straight needs some extra combinations because it's symmetrical.
+; diag-straight will likely have the same issues.
+ortho-straight + ortho-straight East -> ortho-cross North
+ortho-straight + ortho-straight West -> ortho-cross North
+ortho-straight + ortho-straight South -> ortho-straight North
+ortho-cross + ortho-straight North -> ortho-cross North
+ortho-cross + ortho-straight West -> ortho-cross North
+ortho-cross + ortho-straight South -> ortho-cross North
+ortho-cross + ortho-straight East -> ortho-cross North
+
+ortho-straight + ortho-to-diag-right North -> ortho-diag-switch-right South
+ortho-straight + ortho-to-diag-right South -> ortho-diag-switch-right North
+ortho-straight + ortho-to-diag-left East -> ortho-diag-switch-left North
+ortho-striaght + ortho-to-diag-left West -> ortho-diag-switch-left South

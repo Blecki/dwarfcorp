@@ -71,7 +71,7 @@ namespace DwarfCorp.Rail
             if (Line[0] == ';') return;
 
             var pieces = Line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (pieces.Length != 6) return;
+            if (pieces.Length != 7) return;
 
             // base + overlay orient -> result orient
             // 0    1 2       3      4  5      6

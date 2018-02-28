@@ -368,7 +368,10 @@ namespace DwarfCorp.Rail
                     return true;
 
                 if (Debugger.Switches.DrawBoundingBoxes)
+                {
                     Drawer3D.DrawBox(entity.GetBoundingBox(), Color.Yellow, 0.1f, false);
+                    Player.World.ShowToolPopup(String.Format("Can't place {0}. Entity in the way: {1}", Piece.RailPiece, entity.ToString()));
+                }
 
                 return false;
             }
@@ -376,7 +379,7 @@ namespace DwarfCorp.Rail
             return true;
         }
 
-        private static Rail.RailCombination FindPossibleCombination(Rail.JunctionPiece Piece, IBoundedObject Entity)
+        private static CombinationTable.Combination FindPossibleCombination(Rail.JunctionPiece Piece, IBoundedObject Entity)
         {
             if (Entity is RailEntity)
             {
@@ -385,13 +388,14 @@ namespace DwarfCorp.Rail
                 var relativeOrientation = Rail.OrientationHelper.Relative(baseJunction.Orientation, Piece.Orientation);
 
                 if (basePiece.Name == Piece.RailPiece && relativeOrientation == Orientation.North)
-                    return new RailCombination
+                    return new CombinationTable.Combination
                     {
                         Result = basePiece.Name,
                         ResultRelativeOrientation = Orientation.North
                     };
 
-                var matchingCombination = basePiece.CombinationTable.FirstOrDefault(c => c.Overlay == Piece.RailPiece && c.OverlayRelativeOrientation == relativeOrientation);
+                var matchingCombination = RailLibrary.CombinationTable.FindCombination(
+                    basePiece.Name, Piece.RailPiece, relativeOrientation);
                 return matchingCombination;
             }
 

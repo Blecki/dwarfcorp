@@ -5,7 +5,7 @@
     "Pieces": [
       {
         "Offset": "0, 0",
-        "RailPiece": "rail-straight",
+        "RailPiece": "ortho-straight",
         "Orientation": "North"
       }
     ],
@@ -26,12 +26,12 @@
     "Pieces": [
       {
         "Offset": "0, 0",
-        "RailPiece": "rail-straight",
+        "RailPiece": "ortho-straight",
         "Orientation": "North"
       },
       {
         "Offset": "1, 0",
-        "RailPiece": "rail-straight",
+        "RailPiece": "ortho-straight",
         "Orientation": "North"
       }
     ],
@@ -52,17 +52,17 @@
     "Pieces": [
       {
         "Offset": "0, 0",
-        "RailPiece": "rail-straight",
+        "RailPiece": "ortho-straight",
         "Orientation": "North"
       },
       {
         "Offset": "1, 0",
-        "RailPiece": "rail-straight",
+        "RailPiece": "ortho-straight",
         "Orientation": "North"
       },
       {
         "Offset": "2, 0",
-        "RailPiece": "rail-straight",
+        "RailPiece": "ortho-straight",
         "Orientation": "North"
       }
     ],
@@ -83,7 +83,7 @@
     "Pieces": [
       {
         "Offset": "0, 0",
-        "RailPiece": "rail-small-curve",
+        "RailPiece": "ortho-small-curve",
         "Orientation": "North"
       }
     ]
@@ -95,22 +95,22 @@
     "Pieces": [
       {
         "Offset": "0, 0",
-        "RailPiece": "rail-large-curve-b",
+        "RailPiece": "diag-edge-1",
         "Orientation": "South"
       },
       {
         "Offset": "0, 1",
-        "RailPiece": "rail-large-curve-a",
+        "RailPiece": "ortho-to-diag-right",
         "Orientation": "North"
       },
       {
         "Offset": "1, 0",
-        "RailPiece": "rail-large-curve-c",
+        "RailPiece": "ortho-to-diag-left",
         "Orientation": "North"
       },
       {
         "Offset": "1, 1",
-        "RailPiece": "rail-large-curve-b",
+        "RailPiece": "diag-edge-1",
         "Orientation": "North"
       }
     ],
@@ -130,22 +130,22 @@
     "Pieces": [
       {
         "Offset": "0, 0",
-        "RailPiece": "rail-large-curve-b",
+        "RailPiece": "diag-edge-1",
         "Orientation": "South"
       },
       {
         "Offset": "0, 1",
-        "RailPiece": "rail-large-curve-a",
+        "RailPiece": "ortho-to-diag-right",
         "Orientation": "North"
       },
       {
         "Offset": "1, 0",
-        "RailPiece": "rail-large-curve-a",
+        "RailPiece": "ortho-to-diag-right",
         "Orientation": "South"
       },
       {
         "Offset": "1, 1",
-        "RailPiece": "rail-large-curve-b",
+        "RailPiece": "diag-edge-1",
         "Orientation": "North"
       }
     ],
@@ -165,22 +165,22 @@
     "Pieces": [
       {
         "Offset": "0, 0",
-        "RailPiece": "rail-large-curve-c",
+        "RailPiece": "ortho-to-diag-left",
         "Orientation": "East"
       },
       {
         "Offset": "0, 1",
-        "RailPiece": "rail-large-curve-b",
+        "RailPiece": "diag-edge-1",
         "Orientation": "West"
       },
       {
         "Offset": "1, 0",
-        "RailPiece": "rail-large-curve-b",
+        "RailPiece": "diag-edge-1",
         "Orientation": "East"
       },
       {
         "Offset": "1, 1",
-        "RailPiece": "rail-large-curve-c",
+        "RailPiece": "ortho-to-diag-left",
         "Orientation": "West"
       }
     ],
@@ -200,12 +200,12 @@
     "Pieces": [
       {
         "Offset": "0,0",
-        "RailPiece": "rail-straight-topslope",
+        "RailPiece": "ortho-straight-topslope",
         "Orientation": "North"
       },
       {
         "Offset": "1,0",
-        "RailPiece": "rail-straight-botslope",
+        "RailPiece": "ortho-straight-botslope",
         "Orientation": "North"
       }
     ]

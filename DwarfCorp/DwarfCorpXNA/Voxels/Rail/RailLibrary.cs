@@ -45,6 +45,7 @@ namespace DwarfCorp.Rail
         private static List<JunctionPattern> Patterns;
         private static List<JunctionPattern> ChainPatterns;
         private static List<RailPiece> Pieces;
+        public static CombinationTable CombinationTable;
 
         private static void Initialize()
         {
@@ -52,6 +53,9 @@ namespace DwarfCorp.Rail
             {
                 Pieces = FileUtils.LoadJsonListFromMultipleSources<RailPiece>(ContentPaths.rail_pieces, null, p => p.Name);
                 Patterns = FileUtils.LoadJsonListFromMultipleSources<JunctionPattern>(ContentPaths.rail_patterns, null, p => p.Name);
+
+                CombinationTable = new CombinationTable();
+                CombinationTable.LoadConfiguration(ContentPaths.rail_combinations);
 
                 foreach (var piece in Pieces)
                     piece.ComputeConnections();
