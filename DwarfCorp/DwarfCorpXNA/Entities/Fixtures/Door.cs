@@ -42,6 +42,13 @@ namespace DwarfCorp
 {
     public class Door : CraftedFixture, IUpdateableComponent
     {
+        [EntityFactory("Door")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Door(Manager, Position, Manager.World.PlayerFaction, Data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceType.Wood) }));
+        }
+
+
         public Faction TeamFaction { get; set; }
         public Matrix ClosedTransform { get; set; }
         public Timer OpenTimer { get; set; }
@@ -84,7 +91,7 @@ namespace DwarfCorp
         protected static float DefaultHealth = 30.0f;
         protected static Point DefaultSprite = new Point(0, 8);
 
-        protected static float GetHealth(ResourceLibrary.ResourceType type)
+        protected static float GetHealth(ResourceType type)
         {
             var resource = ResourceLibrary.GetResourceByName(type);
             foreach(var tag in resource.Tags)

@@ -424,15 +424,13 @@ namespace DwarfCorp
                     continue;
                 }
 
-
-
                 if (!vUnder.IsEmpty && vUnder.Type.Name == biome.SoilLayer.VoxelType)
                 {
                     vUnder.RawSetType(VoxelLibrary.GetVoxelType(biome.SoilLayer.VoxelType));
                     vUnder.RawSetGrass(0);
                     float treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
 
-                    EntityFactory.DoLazy(() =>
+                    WorldManager.DoLazy(() =>
                     {
                         if (!GameSettings.Default.FogofWar)
                         {
@@ -443,7 +441,7 @@ namespace DwarfCorp
                         else
                         {
                             world.ComponentManager.RootComponent.AddChild(new ExploredListener(
-                                world.ComponentManager, world.ChunkManager, vUnder)
+                                world.ComponentManager, vUnder)
                             {
                                 EntityToSpawn = veg.Name,
                                 SpawnLocation = vUnder.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
@@ -460,7 +458,7 @@ namespace DwarfCorp
                     continue;
 
                 FaunaData animal1 = animal;
-                EntityFactory.DoLazy(() =>
+                WorldManager.DoLazy(() =>
                 {
                     if (!GameSettings.Default.FogofWar)
                     {
@@ -471,8 +469,7 @@ namespace DwarfCorp
                     else
                     {
                         world.ComponentManager.RootComponent.AddChild(new ExploredListener
-                            (world.ComponentManager,
-                                world.ChunkManager, new VoxelHandle(chunk, wayUnder.Coordinate.GetLocalVoxelCoordinate()))
+                            (world.ComponentManager, new VoxelHandle(chunk, wayUnder.Coordinate.GetLocalVoxelCoordinate()))
                         {
                             EntityToSpawn = animal1.Name,
                             SpawnLocation = wayUnder.WorldPosition + Vector3.Up * 1.5f

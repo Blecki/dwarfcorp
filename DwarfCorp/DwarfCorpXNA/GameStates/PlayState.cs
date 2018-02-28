@@ -153,7 +153,7 @@ namespace DwarfCorp.GameStates
                 DwarfTime.LastTime.Speed = 1.0f;
 
                 // Setup new gui. Double rendering the mouse?
-                GuiRoot = new Gui.Root(DwarfGame.GumSkin);
+                GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
                 GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
                 World.Gui = GuiRoot;
 
@@ -596,10 +596,10 @@ namespace DwarfCorp.GameStates
             });
             #endregion
 
-            #region Collapsing Side Panel
+            #region Toggle panel buttons
 
             MinimapRenderer = new Gui.Widgets.MinimapRenderer(192, 192, World,
-                TextureManager.GetTexture(ContentPaths.Terrain.terrain_colormap));
+                AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_colormap));
 
             MinimapFrame = GuiRoot.RootItem.AddChild(new MinimapFrame
             {
@@ -654,6 +654,27 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(300, 180)
             });
 
+            var taskList = GuiRoot.RootItem.AddChild(new Widget
+            {
+                Border = "border-thin",
+                AutoLayout = AutoLayout.FloatBottomLeft,
+                MinimumSize = new Point(600, 300),
+                Hidden = true,
+                OnConstruct = (sender) =>
+                {
+                    sender.Root.RegisterForUpdate(sender);
+                },
+                OnUpdate = (sender, time) =>
+                {
+                    if (sender.Hidden) return;
+
+                    sender.Text = String.Join("\n", World.PlayerFaction.Minions.Select(m => String.Format("{0}: {1}, {2}", m.Name, m.Tasks.Count, (m.CurrentTask == null ? "NULL" : m.CurrentTask.Name))));
+                    sender.Text += "\n\n";
+                    sender.Text += String.Join("\n", World.Master.TaskManager.EnumerateTasks().Select(t => t.Name));
+                    sender.Invalidate();
+                }
+            });
+
             MinimapIcon = new FramedIcon
             {
                 Icon = null,
@@ -668,6 +689,7 @@ namespace DwarfCorp.GameStates
                         MinimapFrame.Hidden = false;
                         SelectedEmployeeInfo.Hidden = true;
                         markerFilter.Hidden = true;
+                        taskList.Hidden = true;
                     }
                     else
                         MinimapFrame.Hidden = true;
@@ -697,6 +719,7 @@ namespace DwarfCorp.GameStates
                                        MinimapFrame.Hidden = true;
                                        SelectedEmployeeInfo.Hidden = false;
                                        markerFilter.Hidden = true;
+                                       taskList.Hidden = true;
                                    }
                                    else
                                        SelectedEmployeeInfo.Hidden = true;
@@ -716,12 +739,34 @@ namespace DwarfCorp.GameStates
                                    {
                                        MinimapFrame.Hidden = true;
                                        SelectedEmployeeInfo.Hidden = true;
+                                       taskList.Hidden = true;
                                        markerFilter.Hidden = false;
                                    }
                                    else
                                        markerFilter.Hidden = true;
                                }
                             },
+
+                            new FramedIcon
+                            {
+                                Icon = null,
+                                Text = "Tasks",
+                                TextHorizontalAlign = HorizontalAlign.Center,
+                                TextVerticalAlign = VerticalAlign.Center,
+                                EnabledTextColor = Vector4.One,
+                                OnClick = (sender, args) =>
+                                {
+                                    if (taskList.Hidden)
+                                    {
+                                        MinimapFrame.Hidden = true;
+                                        SelectedEmployeeInfo.Hidden = true;
+                                        markerFilter.Hidden = true;
+                                        taskList.Hidden = false;
+                                    }
+                                    else
+                                        taskList.Hidden = true;
+                                }
+                            }
                         },
             });
 
@@ -1245,7 +1290,7 @@ namespace DwarfCorp.GameStates
             {
                 Tag = "craft item",
                 ItemSource = (new Widget[]{ icon_menu_CraftTypes_Return }).Concat(
-                    CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Object)
+                    CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object)
                     .Select(data => new FlatToolTray.Icon
                     {
                         Icon = data.Icon,
@@ -1320,7 +1365,7 @@ namespace DwarfCorp.GameStates
                 Tag = "craft resource",
                 Tooltip = "Craft resource",
                 ItemSource = (new Widget[] { icon_menu_ResourceTypes_Return }).Concat(
-                    CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource
+                    CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) &&
                     !ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
                     .Select(data => new FlatToolTray.Icon
@@ -1398,6 +1443,7 @@ namespace DwarfCorp.GameStates
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_Rail_Return }).Concat(
                             Rail.RailLibrary.EnumeratePatterns()
+                            .Where(p => p.PaintMode != Rail.JunctionPaintMode.Hidden)
                             .Select(data => new FlatToolTray.Icon
                             {
                                 Tooltip = "Build " + data.Name,
@@ -1409,11 +1455,11 @@ namespace DwarfCorp.GameStates
                                 {
                                     Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // This should be set by the tool.
                                     Master.Faction.CraftBuilder.IsEnabled = false;
-                                    var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as BuildRailTool;
+                                    var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as Rail.BuildRailTool;
                                     railTool.Pattern = data;
                                     railTool.SelectedResources = new List<ResourceAmount>
                                     {
-                                        new ResourceAmount(ResourceLibrary.ResourceType.Iron, 2)
+                                        new ResourceAmount(ResourceType.Iron, 2)
                                     };
                                     ChangeTool(GameMaster.ToolMode.BuildRail);
                                 },
@@ -1512,7 +1558,7 @@ namespace DwarfCorp.GameStates
             var menu_Edibles = new FlatToolTray.Tray
             {
                 ItemSource = (new Widget[] { icon_menu_Edibles_Return }).Concat(
-                    CraftLibrary.CraftItems.Values.Where(item => item.Type == CraftItem.CraftType.Resource
+                    CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated)
                     && ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
                     .Select(data => new FlatToolTray.Icon

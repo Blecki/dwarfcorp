@@ -55,7 +55,7 @@ namespace DwarfCorp
         public PlaceBlockSpell(WorldManager world, string voxelType, bool transmute) :
             base(world)
         {
-            Texture2D icons = TextureManager.GetTexture(ContentPaths.GUI.icons);
+            Texture2D icons = AssetManager.GetContentTexture(ContentPaths.GUI.icons);
             Image = new ImageFrame(icons, 32, 1, 2);
             VoxelType = voxelType;
             Transmute = transmute;

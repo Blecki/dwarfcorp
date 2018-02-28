@@ -1,0 +1,353 @@
+[
+  {    
+    "Name": "font8",
+    "Texture": "newgui/font-8px",
+    "Type": "VariableWidthFont"
+  },
+  {
+    "Name": "font10",
+    "Texture": "newgui/font-10px",
+    "Type": "VariableWidthFont"
+  },
+  {
+    "Name": "font10-outline-numsonly",
+    "Texture": "newgui/font-10px-outline-numsonly",
+    "Type": "VariableWidthFont"
+  },
+  {
+    "Name": "14pt-numbers",
+    "Texture": "newgui/14pt-numbers",
+    "TileWidth": 12,
+    "TileHeight": 18
+  },
+  {
+    "Name": "font16",
+    "Texture": "newgui/font-16px",
+    "Type": "VariableWidthFont"
+  },
+  {
+    "Name": "font18-outline",
+    "Texture": "newgui/font-18px-outline",
+    "Type": "VariableWidthFont"
+  },
+  {
+    "Name": "mouse",
+    "Texture": "newgui/pointers",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "basic",
+    "Texture": "newgui/basic",
+    "TileWidth": 8,
+    "TileHeight": 8
+  },
+  {
+    "Name": "error",
+    "Texture": "newgui/error",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "rail",
+    "Texture": "newgui/rail",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "indicator-circle",
+    "Texture": "newgui/indicator-circle",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "dwarves",
+    "Texture": "newgui/dwarves",
+    "TileWidth": 32,
+    "TileHeight": 48
+  },
+  {
+    "Name": "border-one",
+    "Texture": "newgui/border",
+    "TileWidth": 16,
+    "TileHeight": 16
+  },
+  {
+    "Name": "border-fancy",
+    "Texture": "newgui/fancy-border",
+    "TileWidth": 30,
+    "TileHeight": 30
+  },
+  {
+    "Name": "border-dark",
+    "Texture": "newgui/dark-border",
+    "TileWidth": 11,
+    "TileHeight": 11
+  },
+  {
+    "Name": "border-hilite",
+    "Texture": "newgui/hilite-border",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "border-button",
+    "Texture": "newgui/button",
+    "TileWidth": 8,
+    "TileHeight": 8
+  },
+  {
+    "Name": "checkbox",
+    "Texture": "newgui/checkbox",
+    "TileWidth": 18,
+    "TileHeight": 18
+  },
+  {
+    "Name": "radiobutton",
+    "Texture": "newgui/radiobutton",
+    "TileWidth": 18,
+    "TileHeight": 18
+  },
+  {
+    "Name": "border-thin",
+    "Texture": "newgui/thin",
+    "TileWidth": 2,
+    "TileHeight": 2
+  },
+  {
+    "Name": "brown-frame",
+    "Texture": "newgui/brown-frame",
+    "TileWidth": 8,
+    "TileHeight": 8
+  },
+  {
+    "Name": "border-thin-transparent",
+    "Texture": "newgui/thin-transparent",
+    "TileWidth": 2,
+    "TileHeight": 2
+  },
+  {
+    "Name": "vertical-scrollbar",
+    "Texture": "newgui/vertical-scrollbar",
+    "TileWidth": 24,
+    "TileHeight": 24
+  },
+  {
+    "Name": "horizontal-slider",
+    "Texture": "newgui/slider",
+    "TileWidth": 24,
+    "TileHeight": 24
+  },
+  {
+    "Name": "combo-down",
+    "Texture": "newgui/down",
+    "TileWidth": 16,
+    "TileHeight": 16
+  },
+  {
+    "Name": "company-logo-background",
+    "Texture": "newgui/logo-bg",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "company-logo-symbol",
+    "Texture": "newgui/logo-fg",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "icon-frame",
+    "Texture": "newgui/icon-frame",
+    "TileWidth": 40,
+    "TileHeight": 40
+  },
+  {
+    "Name": "tool-icons",
+    "Texture": "newgui/icons",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "tray-border",
+    "Texture": "newgui/tray-border",
+    "TileWidth": 32,
+    "TileHeight": 32,
+    "RepeatWhenUsedAsBorder": true
+  },
+  {
+    "Name": "tray-border-transparent",
+    "Texture": "newgui/tray-border-transparent",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "round-buttons",
+    "Texture": "newgui/round-buttons",
+    "TileWidth": 16,
+    "TileHeight": 16
+  },
+  {
+    "Name": "speech-bubble",
+    "Texture": "newgui/speech-bubble",
+    "TileWidth": 30,
+    "TileHeight": 30
+  },
+  {
+    "Name": "speech-bubble-reverse",
+    "Texture": "newgui/speech-bubble-reverse",
+    "TileWidth": 30,
+    "TileHeight": 30
+  },
+  {
+    "Name": "dwarf",
+    "Texture": "newgui/diplo-dorf",
+    "TileWidth": 64,
+    "TileHeight": 64
+  },
+  {
+    "Name": "GUI\\diplo-dorf",
+    "Texture": "GUI/diplo-dorf",
+    "TileWidth": 64,
+    "TileHeight": 64
+  },
+  {
+    "Name": "GUI\\diplo-elf",
+    "Texture": "GUI/diplo-elf",
+    "TileWidth": 64,
+    "TileHeight": 64
+  },
+  {
+    "Name": "GUI\\diplo-goblin",
+    "Texture": "GUI/diplo-goblin",
+    "TileWidth": 64,
+    "TileHeight": 64
+  },
+  {
+    "Name": "GUI\\diplo-moleman",
+    "Texture": "GUI/diplo-moleman",
+    "TileWidth": 64,
+    "TileHeight": 64
+  },
+  {
+    "Name": "GUI\\diplo-necro",
+    "Texture": "GUI/diplo-necro",
+    "TileWidth": 64,
+    "TileHeight": 64
+  },
+  {
+    "Name": "resources",
+    "Texture": "newgui/resources",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "coins",
+    "Texture": "Entities/DwarfObjects/coinpiles",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "voxels",
+    "Texture": "newgui/voxels",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "crafts",
+    "Texture": "newgui/crafts",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "rooms",
+    "Texture": "newgui/room_icons",
+    "TileWidth": 16,
+    "TileHeight": 16
+  },
+  {
+    "Name": "furniture",
+    "Texture": "Entities/Furniture/interior_furniture",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "beartrap",
+    "Texture": "Entities/DwarfObjects/beartrap",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "progress-sides",
+    "Texture": "newgui/progress-sides",
+    "TileWidth": 16,
+    "TileHeight": 32
+  },
+  {
+    "Name": "progress-middle",
+    "Texture": "newgui/progress-middle",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "progress-fill",
+    "Texture": "newgui/progress-fill",
+    "TileWidth": 8,
+    "TileHeight": 32
+  },
+  {
+    "Name": "map-icons",
+    "Texture": "GUI/map_icons",
+    "TileWidth": 16,
+    "TileHeight": 16
+  },
+  {
+    "Name": "hand",
+    "Texture": "newgui/hand",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "newgui\\trinkets-carve-insets-bone",
+    "Texture": "newgui/trinkets-carve-insets-bone",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "newgui\\trinkets-carve-insets",
+    "Texture": "newgui/trinkets-carve-insets",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "newgui\\trinkets-carve",
+    "Texture": "newgui/trinkets-carve",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "newgui\\trinkets-cast-insets",
+    "Texture": "newgui/trinkets-cast-insets",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "newgui\\trinkets-cast",
+    "Texture": "newgui/trinkets-cast",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "newgui\\trinkets-sculpt-insets",
+    "Texture": "newgui/trinkets-sculpt-insets",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+  {
+    "Name": "newgui\\trinkets-sculpt",
+    "Texture": "newgui/trinkets-sculpt",
+    "TileWidth": 32,
+    "TileHeight": 32
+  }
+]
+

@@ -29,6 +29,22 @@ namespace DwarfCorp.Gui.Widgets
                 },
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "DEBUG",
+                    ExpansionChild = new HorizontalMenuTray.Tray
+                    {
+                        ItemSize = new Point(200, 20),
+                        ItemSource = Debugger.EnumerateSwitches().Select(s =>
+                        new HorizontalMenuTray.CheckboxMenuItem
+                        {
+                            // Todo: Add spaces before capitals.
+                            Text = s.Name,
+                            InitialState = s.State,
+                            SetCallback = s.Set
+                        })
+                    }
+                },
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "BUILD",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
@@ -47,7 +63,7 @@ namespace DwarfCorp.Gui.Widgets
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
                         Columns = 5,
-                        ItemSource = EntityFactory.EntityFuncs.Keys.OrderBy(s => s).Select(s =>
+                        ItemSource = EntityFactory.EnumerateEntityTypes().OrderBy(s => s).Select(s =>
                             new HorizontalMenuTray.MenuItem
                             {
                                 Text = s,
@@ -58,7 +74,32 @@ namespace DwarfCorp.Gui.Widgets
 
                 new HorizontalMenuTray.MenuItem
                 {
-                    Text = "PLACE",
+                    Text = "DUMP ENTITY JSON",
+                    ExpansionChild = new HorizontalMenuTray.Tray
+                    {
+                        Columns = 5,
+                        ItemSource = EntityFactory.EnumerateEntityTypes().OrderBy(s => s).Select(s =>
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = s,
+                                OnClick = (sender, args) =>
+                                {
+                                    var body = EntityFactory.CreateEntity<Body>(s, Vector3.Zero);
+                                    if (body != null)
+                                    body.PropogateTransforms();
+
+                                    System.IO.Directory.CreateDirectory("DUMPEDENTITIES");
+                                    FileUtils.SaveJSon(body, "DUMPEDENTITIES/" + s + ".json", false);
+
+                                    body.Delete();
+                                }
+                            })
+                    }
+                },
+
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "PLACE BLOCK",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
                         Columns = 3,
@@ -117,6 +158,55 @@ namespace DwarfCorp.Gui.Widgets
                                     Text = s.Name,
                                     OnClick = (sender, args) => ActivateGodTool("Decal/" + s.Name)
                                 })
+                    }
+                },
+
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "PLACE RAIL",
+                    ExpansionChild = new HorizontalMenuTray.Tray
+                    {
+                        Columns = 1,
+                        ItemSource = new HorizontalMenuTray.MenuItem[]
+                        {
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "RAW PIECES",
+                                ExpansionChild = new HorizontalMenuTray.Tray
+                                {
+                                    Columns = 2,
+                                    ItemSize = new Point(200, 20),
+                                    ItemSource = Rail.RailLibrary.EnumeratePieces().Select(p =>
+                                        new HorizontalMenuTray.MenuItem
+                                        {
+                                            Text = p.Name,
+                                            OnClick = (sender, args) => ActivateGodTool("Rail/" + p.Name)
+                                        })
+                                }
+                            },
+
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "USING PATTERNS",
+                                ExpansionChild = new HorizontalMenuTray.Tray
+                                {
+                                    Columns = 1,
+                                    ItemSource = Rail.RailLibrary.EnumeratePatterns().Select( p =>
+                                        new HorizontalMenuTray.MenuItem
+                                        {
+                                            Text = p.Name,
+                                            OnClick = (sender, args) =>
+                                            {
+                                                var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as Rail.BuildRailTool;
+                                                railTool.Pattern = p;
+                                                railTool.SelectedResources = new List<ResourceAmount>(new ResourceAmount[] { new ResourceAmount(ResourceType.Iron, 2) });
+                                                Master.ChangeTool(GameMaster.ToolMode.BuildRail);
+                                                railTool.GodModeSwitch = true;
+                                            }
+                                        })
+                                }
+                            }
+                        }
                     }
                 },
 
@@ -203,22 +293,10 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "SPAWN TEST",
                     OnClick = (sender, args) =>
                     {
-                        var keys = EntityFactory.EntityFuncs.Keys.ToList();
+                        // Todo: Figure out why the container gets MODIFIED during this.
+                        var keys = EntityFactory.EnumerateEntityTypes().ToList();
                         foreach(var key in keys)
-                        {
                             EntityFactory.CreateEntity<GameComponent>(key, Master.World.CursorLightPos);
-                        }
-
-                    }
-                },
-
-                // Shouldn't this go into some kind of 'debug' menu?
-                new HorizontalMenuTray.MenuItem
-                {
-                    Text = "DRAW PATHS",
-                    OnClick = (sender, args) =>
-                    {
-                        GameSettings.Default.DrawPaths = !GameSettings.Default.DrawPaths;
                     }
                 },
                 new HorizontalMenuTray.MenuItem
@@ -241,6 +319,11 @@ namespace DwarfCorp.Gui.Widgets
                 },
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "REPULSE",
+                    OnClick = (sender, args) => ActivateGodTool("Repulse")
+                },
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "LET IT SNOW",
                     OnClick = (sender, args) =>
                     {
@@ -248,8 +331,7 @@ namespace DwarfCorp.Gui.Widgets
                         storm.TypeofStorm = StormType.SnowStorm;
                         storm.Start();
                     }
-                },
-
+                }
             };
 
             base.Construct();

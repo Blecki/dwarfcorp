@@ -22,11 +22,6 @@ namespace DwarfCorp
             Name = "Research " + Spell;
         }
 
-        public override Task Clone()
-        {
-            return new ResearchSpellTask(Spell);
-        }
-
         public override Feasibility IsFeasible(Creature agent)
         {
             if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Research))
@@ -40,9 +35,9 @@ namespace DwarfCorp
             return !agent.World.Master.Spells.GetSpell(Spell).IsResearched;
         }
 
-        public override void SetupScript(Creature agent)
+        public override Act CreateScript(Creature agent)
         {
-            Script = new GoResearchSpellAct(agent.AI, agent.World.Master.Spells.GetSpell(Spell));
+            return new GoResearchSpellAct(agent.AI, agent.World.Master.Spells.GetSpell(Spell));
         }
     }
 }

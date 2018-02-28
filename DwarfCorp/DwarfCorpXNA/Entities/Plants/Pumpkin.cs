@@ -46,13 +46,9 @@ namespace DwarfCorp
         public Pumpkin() { }
 
         public Pumpkin(ComponentManager Manager, Vector3 position, string asset, float bushSize) :
-            base(Manager, "Pumpkin", Matrix.Identity, new Vector3(bushSize, bushSize, bushSize), asset, bushSize)
+            base(Manager, "Pumpkin", position, 0.0f, new Vector3(bushSize, bushSize, bushSize), asset, bushSize)
         {
             LocalBoundingBoxOffset = Vector3.Zero;
-            SeedlingAsset = "pumpkinvinesprout";
-            Matrix matrix = Matrix.Identity;
-            matrix.Translation = position;
-            LocalTransform = matrix;
             AddChild(new Health(Manager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(Manager, "Flames"));
 
@@ -64,7 +60,7 @@ namespace DwarfCorp
             inventory.AddResource(new ResourceAmount()
             {
                 NumResources = 2,
-                ResourceType = ResourceLibrary.ResourceType.Pumkin
+                ResourceType = ResourceType.Pumkin
             });
 
             var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",

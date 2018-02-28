@@ -117,8 +117,8 @@ namespace DwarfCorp
             device.SetRenderTarget(data.Texture);
             device.Viewport = new Viewport(0, 0, width, height); // Must set viewport after target bound.
             device.Clear(new Color(Logo.LogoBackgroundColor * 0.5f + Logo.LogoSymbolColor * 0.5f));
-            Texture2D logoBg = TextureManager.GetTexture("newgui/logo-bg");
-            Texture2D logoFg = TextureManager.GetTexture("newgui/logo-fg");
+            Texture2D logoBg = AssetManager.GetContentTexture("newgui/logo-bg");
+            Texture2D logoFg = AssetManager.GetContentTexture("newgui/logo-fg");
             int bgIdx = Logo.LogoBackground.Tile;
             int bgX = (bgIdx%(logoBg.Width / 32)) * 32;
             int bgY = (bgIdx/(logoBg.Width / 32)) * 32; 

@@ -48,7 +48,7 @@ namespace DwarfCorp
         //public ResourceContainer Resources { get; set; }
         public class InventoryItem
         {
-            public ResourceLibrary.ResourceType Resource;
+            public ResourceType Resource;
             public bool MarkedForRestock = false;
             public bool MarkedForUse = false;
         }
@@ -303,7 +303,7 @@ namespace DwarfCorp
                 return Resources.Count(resource => ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(itemToStock.ResourceType)) >= itemToStock.NumResources;
             else
             {
-                Dictionary<ResourceLibrary.ResourceType, int> resourceCounts = new Dictionary<ResourceLibrary.ResourceType, int>();
+                Dictionary<ResourceType, int> resourceCounts = new Dictionary<ResourceType, int>();
                 foreach (var resource in Resources)
                 {
                     if (ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(itemToStock.ResourceType))

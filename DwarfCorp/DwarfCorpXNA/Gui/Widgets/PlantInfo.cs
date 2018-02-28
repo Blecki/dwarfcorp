@@ -7,12 +7,9 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Gui.Widgets
 {
-    /// <summary>
-    /// A properly framed Icon for use in an icon tray.
-    /// </summary>
     public class PlantInfo : Widget
     {
-        public ResourceLibrary.ResourceType Type;
+        public ResourceType Type;
         public GameMaster Master;
 
         public override void Construct()

@@ -83,9 +83,17 @@ namespace DwarfCorp
             FillDataFromChunk(chunk);
         }
 
-        public ChunkFile(string fileName, bool compressed, bool binary)
+        public ChunkFile(string fileName, bool binary)
         {
-            ReadFile(fileName, compressed, binary);
+            ChunkFile chunkFile = null;
+
+            if (!binary)
+                chunkFile = FileUtils.LoadJsonFromAbsolutePath<ChunkFile>(fileName);
+            else
+                chunkFile = FileUtils.LoadBinary<ChunkFile>(fileName);
+
+            if (chunkFile != null)
+                CopyFrom(chunkFile);
         }
 
         public void CopyFrom(ChunkFile chunkFile)
@@ -101,36 +109,10 @@ namespace DwarfCorp
             Decals = chunkFile.Decals;
         }
 
-        public bool ReadFile(string filePath, bool isCompressed, bool isBinary)
-        {
-            if (!isBinary)
-            {
-                ChunkFile chunkFile = FileUtils.LoadJson<ChunkFile>(filePath, isCompressed);
-
-                if (chunkFile == null)
-                {
-                    return false;
-                }
-                CopyFrom(chunkFile);
-                return true;
-            }
-            else
-            {
-                ChunkFile chunkFile = FileUtils.LoadBinary<ChunkFile>(filePath);
-
-                if (chunkFile == null)
-                {
-                    return false;
-                }
-                CopyFrom(chunkFile);
-                return true;
-            }
-        }
-
-        public bool WriteFile(string filePath, bool compress, bool binary)
+        public bool WriteFile(string filePath, bool binary)
         {
             if (!binary)
-                return FileUtils.SaveJSon(this, filePath, compress);
+                return FileUtils.SaveJSon(this, filePath, false);
             return FileUtils.SaveBinary(this, filePath);
         }
 

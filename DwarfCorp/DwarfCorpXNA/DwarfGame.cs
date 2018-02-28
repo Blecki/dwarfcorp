@@ -60,12 +60,12 @@ namespace DwarfCorp
 
         public GameStateManager StateManager { get; set; }
         public GraphicsDeviceManager Graphics;
-        public TextureManager TextureManager { get; set; }
+        public AssetManager TextureManager { get; set; }
         public static SpriteBatch SpriteBatch { get; set; }
 
         public static Gui.Input.GumInputMapper GumInputMapper;
         public static Gui.Input.Input GumInput;
-        public static Gui.RenderData GumSkin;
+        public static Gui.RenderData GuiSkin;
 
         public const string GameName = "DwarfCorp";
         public static bool HasRendered = false;
@@ -87,14 +87,15 @@ namespace DwarfCorp
             //string code = ContentPathGenerator.GenerateCode();
             //Console.Out.Write(code);
             GameState.Game = this;
-            Content.RootDirectory = "Content";
+            //Content.RootDirectory = "Content";
             StateManager = new GameStateManager(this);
             Graphics = new GraphicsDeviceManager(this);
             Window.Title = "DwarfCorp";
             Window.AllowUserResizing = false;
-            TextureManager = new TextureManager(Content, GraphicsDevice);
             MainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
             GameSettings.Load();
+            AssetManager.Initialize(Content, GraphicsDevice, GameSettings.Default);
+
 
             try
             {
@@ -283,10 +284,9 @@ namespace DwarfCorp
                 GumInput = new Gui.Input.Input(GumInputMapper);
 
                 // Register all bindable actions with the input system.
-                GumInput.AddAction("TEST", Gui.Input.KeyBindingType.Pressed);
+                //GumInput.AddAction("TEST", Gui.Input.KeyBindingType.Pressed);
 
-                GumSkin = new RenderData(GraphicsDevice, Content,
-                        "newgui/xna_draw", Program.CreatePath("Content", "newgui", "sheets.txt"));
+                GuiSkin = new RenderData(GraphicsDevice, Content);
 
                 if (SoundManager.Content == null)
                 {
@@ -308,7 +308,7 @@ namespace DwarfCorp
                 }
 
                 BiomeLibrary.InitializeStatics();
-                Embarkment.Initialize();
+                EmbarkmentLibrary.InitializeDefaultLibrary();
                 VoxelChunk.InitializeStatics();
                 ControlSettings.Load();
                 Drawer2D.Initialize(Content, GraphicsDevice);

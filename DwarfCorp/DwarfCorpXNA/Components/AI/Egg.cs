@@ -39,6 +39,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace DwarfCorp
 {
@@ -62,11 +63,11 @@ namespace DwarfCorp
             Birthday = Manager.World.Time.CurrentDate + new TimeSpan(0, 12, 0, 0);
 
             if (ResourceLibrary.GetResourceByName(adult + " Egg") == null 
-                || !EntityFactory.EntityFuncs.ContainsKey(adult + " Egg Resource"))
+                || !EntityFactory.EnumerateEntityTypes().Contains(adult + " Egg Resource"))
             {
                 Resource newEggResource =
-                    new Resource(ResourceLibrary.GetResourceByName(ResourceLibrary.ResourceType.Egg));
-                newEggResource.Type = adult + " Egg";
+                    new Resource(ResourceLibrary.GetResourceByName(ResourceType.Egg));
+                newEggResource.Name = adult + " Egg";
                 ResourceLibrary.Add(newEggResource);
             }
 

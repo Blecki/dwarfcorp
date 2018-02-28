@@ -47,10 +47,24 @@ namespace DwarfCorp
     /// </summary>
     public class Moleman : Creature
     {
+        [EntityFactory("Moleman")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Moleman(
+                new CreatureStats(new MolemanMinerClass(), 0),
+                "Molemen",
+                Manager.World.PlanService,
+                Manager.World.Factions.Factions["Molemen"],
+                Manager,
+                "Moleman",
+                Position).Physics;
+        }
+        
         public Moleman()
         {
             
         }
+
         public Moleman(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {

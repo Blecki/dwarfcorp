@@ -222,7 +222,7 @@ namespace DwarfCorp.GameStates
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gui.Root(DwarfGame.GumSkin);
+            GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             MakeMenu();
 
@@ -246,7 +246,7 @@ namespace DwarfCorp.GameStates
 
             var roomIcons = GuiRoot.GetTileSheet("rooms") as Gui.TileSheet;
             RoomLibrary.InitializeStatics();
-            var Tilesheet = TextureManager.GetTexture(ContentPaths.Terrain.terrain_tiles);
+            var Tilesheet = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
             VoxelLibrary.InitializeDefaultLibrary(Game.GraphicsDevice, Tilesheet);
 
 

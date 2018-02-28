@@ -41,10 +41,14 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-  
-    [JsonObject(IsReference = true)]
     public class Forge : CraftedBody
     {
+        [EntityFactory("Forge")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Forge(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+        }
+
         public Forge()
         {
 
@@ -54,13 +58,6 @@ namespace DwarfCorp
             base(manager, "Forge", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, "Forge", resources))
         {
             Tags.Add("Forge");
-
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                manager.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(position)));
-            if (voxelUnder.IsValid)
-                AddChild(new VoxelListener(manager, manager.World.ChunkManager,
-                    voxelUnder));
 
             CollisionType = CollisionManager.CollisionType.Static;
 
@@ -82,6 +79,7 @@ namespace DwarfCorp
             };
 
             var forgeAnimation = AnimationLibrary.CreateAnimation(spriteSheet, frames, "ForgeLightAnimation");
+            forgeAnimation.Loops = true;
 
             var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.Identity, false)
             {
@@ -89,7 +87,7 @@ namespace DwarfCorp
             }) as AnimatedSprite;
 
             sprite.AddAnimation(forgeAnimation);
-            sprite.AnimPlayer.Loop(forgeAnimation);
+            sprite.AnimPlayer.Play(forgeAnimation);
             sprite.SetFlag(Flag.ShouldSerialize, false);
 
             AddChild(new LightEmitter(Manager, "light", Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero, 50, 4)
@@ -99,6 +97,12 @@ namespace DwarfCorp
 
             // This is a hack to make the animation update at least once even when the object is created inactive by the craftbuilder.
             sprite.AnimPlayer.Update(new DwarfTime());
+
+            AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
+            {
+                if (changeEvent.Type == VoxelChangeEventType.VoxelTypeChanged && changeEvent.NewVoxelType == 0)
+                    Die();
+            })).SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }

@@ -117,7 +117,7 @@ namespace DwarfCorp
 
         public void ReloopAnimations(CharacterMode mode)
         {
-            SetCurrentAnimation(mode.ToString() + OrientationStrings[(int)CurrentOrientation]);
+            SetCurrentAnimation(mode.ToString(), true);
             if (AnimPlayer.IsDone()) AnimPlayer.Reset();
         }
 

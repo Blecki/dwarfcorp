@@ -86,7 +86,6 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            bool failed = false;
             if (Children == null)
             {
                 yield return Status.Fail;
@@ -104,14 +103,13 @@ namespace DwarfCorp
                 LastTickedChild = CurrentChild;
                 if(childStatus == Status.Fail)
                 {
-                    failed = true;
                     yield return Status.Fail;
-                    break;
+                    yield break;
                 }
                 else if(childStatus == Status.Success)
                 {
                     CurrentChildIndex++;
-                    yield return Status.Running;
+                    //yield return Status.Running;
                 }
                 else
                 {
@@ -119,10 +117,7 @@ namespace DwarfCorp
                 }
             }
 
-            if(!failed)
-            {
-                yield return Status.Success;
-            }
+            yield return Status.Success;
         }
     }
 

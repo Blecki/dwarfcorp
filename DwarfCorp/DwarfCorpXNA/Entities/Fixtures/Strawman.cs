@@ -40,16 +40,32 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
-    public class Strawman : Fixture
+    public class Strawman : CraftedFixture
     {
+        [EntityFactory("Strawman")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            switch (MathFunctions.RandInt(0, 3))
+            {
+                case 0:
+                    return new Strawman(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+                case 1:
+                    return new WeightRack(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+                case 2:
+                    return new PunchingBag(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+                default:
+                    return new Strawman(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+            }
+        }
+
+
         public Strawman()
         {
 
         }
 
-        public Strawman(ComponentManager manager, Vector3 position) :
-            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 5))
+        public Strawman(ComponentManager manager, Vector3 position, List<ResourceAmount> Resources) :
+            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 5), new DwarfCorp.CraftDetails(manager, "Weight Rack", Resources))
         {
             Name = "Strawman";
             Tags.Add("Strawman");

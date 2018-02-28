@@ -46,8 +46,8 @@ namespace DwarfCorp
             DwarfGame.GumInputMapper.GetInputQueue();
 
             CurrentScroll = 0;
-            CreditsFont = GameState.Game.Content.Load<SpriteFont>(ContentPaths.Fonts.Default);
-            Entries = ContentPaths.LoadFromJson<List<CreditEntry>>("credits.json");
+            CreditsFont = GameState.Game.Content.Load<SpriteFont>(AssetManager.ResolveContentPath(ContentPaths.Fonts.Default));
+            Entries = FileUtils.LoadJsonFromResolvedPath<List<CreditEntry>>("credits.json");
             IsInitialized = true;
             IsDone = false;
             base.OnEnter();

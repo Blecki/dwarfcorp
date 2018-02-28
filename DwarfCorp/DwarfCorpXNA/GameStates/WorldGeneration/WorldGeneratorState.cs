@@ -59,7 +59,7 @@ namespace DwarfCorp.GameStates
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gui.Root(DwarfGame.GumSkin);
+            GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
             GuiRoot.MousePointer = new MousePointer("mouse", 15.0f, 16, 17, 18, 19, 20, 21, 22, 23);
 
             var mainPanel = GuiRoot.RootItem.AddChild(new Gui.Widget
@@ -224,12 +224,12 @@ namespace DwarfCorp.GameStates
             var difficultySelectorCombo = rightPanel.AddChild(new Gui.Widgets.ComboBox
             {
                 AutoLayout = Gui.AutoLayout.DockTop,
-                Items = Embarkment.EmbarkmentLibrary.Select(e => e.Key).ToList(),
+                Items = EmbarkmentLibrary.Embarkments.Select(e => e.Key).ToList(),
                 TextColor = new Vector4(0, 0, 0, 1),
                 Font = "font8",
                 OnSelectedIndexChanged = (sender) =>
                 {
-                    Settings.InitalEmbarkment = Embarkment.EmbarkmentLibrary[(sender as Gui.Widgets.ComboBox).SelectedItem];
+                    Settings.InitalEmbarkment = EmbarkmentLibrary.Embarkments[(sender as Gui.Widgets.ComboBox).SelectedItem];
                 }
             }) as Gui.Widgets.ComboBox;
 

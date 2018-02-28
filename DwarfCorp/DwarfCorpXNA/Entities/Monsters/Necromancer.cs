@@ -47,6 +47,19 @@ namespace DwarfCorp
     /// </summary>
     public class Necromancer : Creature
     {
+        [EntityFactory("Necromancer")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Necromancer(
+                new CreatureStats(new NecromancerClass(), 0),
+                "Undead",
+                Manager.World.PlanService,
+                Manager.World.Factions.Factions["Undead"],
+                Manager,
+                "Necromancer",
+                Position).Physics;
+        }
+
         public Necromancer()
         {
             

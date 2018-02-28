@@ -54,9 +54,9 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="fScore">Queue of voxels by their expansion scores.</param>
         /// <returns>The DestinationVoxel with minimu expansion score.</returns>
-        public static VoxelHandle GetVoxelWithMinimumFScore(PriorityQueue<VoxelHandle> fScore)
+        public static MoveState GetStateWithMinimumFScore(PriorityQueue<MoveState> fScore)
         {
-            return fScore.Count == 0 ? VoxelHandle.InvalidHandle : fScore.Dequeue();
+            return fScore.Count == 0 ? MoveState.InvalidState : fScore.Dequeue();
         }
 
 
@@ -66,13 +66,13 @@ namespace DwarfCorp
         /// <param name="cameFrom">A dictionary of Voxels to the movement that was taken to get there.</param>
         /// <param name="currentNode">The very last movement in the path.</param>
         /// <returns>The path of movements. from the start to the current node</returns>
-        public static List<MoveAction> ReconstructPath(Dictionary<VoxelHandle, MoveAction> cameFrom,
-            MoveAction currentNode, VoxelHandle start)
+        public static List<MoveAction> ReconstructPath(Dictionary<MoveState, MoveAction> cameFrom,
+            MoveAction currentNode, MoveState start)
         {
             var toReturn = new List<MoveAction>() { currentNode };
-            while (currentNode.SourceVoxel != start && cameFrom.ContainsKey(currentNode.SourceVoxel))
+            while (currentNode.SourceState != start && cameFrom.ContainsKey(currentNode.SourceState))
             {
-                currentNode = cameFrom[currentNode.SourceVoxel];
+                currentNode = cameFrom[currentNode.SourceState];
                 toReturn.Add(currentNode);
             }
          
@@ -94,14 +94,14 @@ namespace DwarfCorp
 
 
         public static List<MoveAction> ReconstructInversePath(GoalRegion goal, 
-            Dictionary<VoxelHandle, MoveAction> cameFrom, MoveAction currentNode)
+            Dictionary<MoveState, MoveAction> cameFrom, MoveAction currentNode)
         {
             var toReturn = new List<MoveAction>() { currentNode };
             while (true)
             {
-                if (!cameFrom.ContainsKey(currentNode.DestinationVoxel))
+                if (!cameFrom.ContainsKey(currentNode.DestinationState))
                     break;
-                currentNode = cameFrom[currentNode.DestinationVoxel];
+                currentNode = cameFrom[currentNode.DestinationState];
                 toReturn.Add(currentNode);
 
                 /*
@@ -124,7 +124,7 @@ namespace DwarfCorp
                     System.Threading.Thread.Sleep(16);
                 }
                 */
-                if (goal.IsInGoalRegion(currentNode.DestinationVoxel))
+                if (goal.IsInGoalRegion(currentNode.DestinationState.Voxel))
                     break;
             }
             return toReturn;
@@ -163,9 +163,14 @@ namespace DwarfCorp
         ///     usually result in faster plans that are suboptimal.
         /// </param>
         /// <returns>True if a path could be found, or false otherwise.</returns>
-        private static PlanResult Path(CreatureMovement mover, VoxelHandle start, GoalRegion goal, ChunkManager chunks,
+        private static PlanResult Path(CreatureMovement mover, VoxelHandle startVoel, GoalRegion goal, ChunkManager chunks,
             int maxExpansions, ref List<MoveAction> toReturn, float weight, Func<bool> continueFunc)
         {
+            var start = new MoveState()
+            {
+                Voxel = startVoel
+            };
+
             var startTime = DwarfTime.Tick();
             if (mover.IsSessile)
             {
@@ -192,26 +197,26 @@ namespace DwarfCorp
             }
 
             // Voxels that have already been explored.
-            var closedSet = new HashSet<VoxelHandle>();
+            var closedSet = new HashSet<MoveState>();
 
             // Voxels which should be explored.
-            var openSet = new HashSet<VoxelHandle>
+            var openSet = new HashSet<MoveState>
             {
                 start
             };
 
             // Dictionary of voxels to the optimal action that got the mover to that voxel.
-            var cameFrom = new Dictionary<VoxelHandle, MoveAction>();
+            var cameFrom = new Dictionary<MoveState, MoveAction>();
 
             // Optimal score of a voxel based on the path it took to get there.
-            var gScore = new Dictionary<VoxelHandle, float>();
+            var gScore = new Dictionary<MoveState, float>();
 
             // Expansion priority of voxels.
-            var fScore = new PriorityQueue<VoxelHandle>();
+            var fScore = new PriorityQueue<MoveState>();
 
             // Starting conditions of the search.
             gScore[start] = 0.0f;
-            fScore.Enqueue(start, gScore[start] + weight * goal.Heuristic(start));
+            fScore.Enqueue(start, gScore[start] + weight * goal.Heuristic(start.Voxel));
 
             // Keep count of the number of expansions we've taken to get to the goal.
             int numExpansions = 0;
@@ -238,13 +243,17 @@ namespace DwarfCorp
 
 
                 // Check the next voxel to explore.
-                var current = GetVoxelWithMinimumFScore(fScore);
+                var current = GetStateWithMinimumFScore(fScore);
                 if (!current.IsValid)
                 {
                     // If there wasn't a voxel to explore, just try to expand from
                     // the start again.
                     current = start;
                     numExpansions++;
+                }
+                if (current.VehicleState.IsRidingVehicle)
+                {
+                    Console.Out.WriteLine("Yes");
                 }
                 numExpansions++;
 
@@ -268,15 +277,15 @@ namespace DwarfCorp
                 IEnumerable<MoveAction> neighbors = null;
 
                 // Get the voxels that can be moved to from the current voxel.
-                neighbors = mover.GetMoveActions(current);
+                neighbors = mover.GetMoveActions(current).ToList();
                 //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
 
 
-                var foundGoalAdjacent = neighbors.FirstOrDefault(n => goal.IsInGoalRegion(n.DestinationVoxel));
+                var foundGoalAdjacent = neighbors.FirstOrDefault(n => !n.DestinationState.VehicleState.IsRidingVehicle && goal.IsInGoalRegion(n.DestinationState.Voxel));
 
                 // A quick test to see if we're already adjacent to the goal. If we are, assume
                 // that we can just walk to it.
-                if (foundGoalAdjacent.DestinationVoxel.IsValid && foundGoalAdjacent.SourceVoxel.IsValid)
+                if (foundGoalAdjacent.DestinationState.IsValid && foundGoalAdjacent.SourceState.IsValid)
                 {
                     if (cameFrom.ContainsKey(current))
                     {
@@ -297,30 +306,30 @@ namespace DwarfCorp
                 foreach (MoveAction n in neighbors)
                 {
                     // If we've already explored that voxel, don't explore it again.
-                    if (closedSet.Contains(n.DestinationVoxel))
+                    if (closedSet.Contains(n.DestinationState))
                     {
                         continue;
                     }
 
                     // Otherwise, consider the case of moving to that neighbor.
-                    float tenativeGScore = gScore[current] + GetDistance(current, n.DestinationVoxel, n.MoveType, mover);
+                    float tenativeGScore = gScore[current] + GetDistance(current.Voxel, n.DestinationState.Voxel, n.MoveType, mover);
 
                     // IF the neighbor can already be reached more efficiently, ignore it.
-                    if (openSet.Contains(n.DestinationVoxel) && !(tenativeGScore < gScore[n.DestinationVoxel]))
+                    if (openSet.Contains(n.DestinationState) && !(tenativeGScore < gScore[n.DestinationState]))
                     {
                         continue;
                     }
 
                     // Otherwise, add it to the list of voxels for consideration.
-                    openSet.Add(n.DestinationVoxel);
+                    openSet.Add(n.DestinationState);
 
                     // Add an edge to the voxel from the current voxel.
                     var cameAction = n;
-                    cameFrom[n.DestinationVoxel] = cameAction;
+                    cameFrom[n.DestinationState] = cameAction;
 
                     // Update the expansion scores for the next voxel.
-                    gScore[n.DestinationVoxel] = tenativeGScore;
-                    fScore.Enqueue(n.DestinationVoxel, gScore[n.DestinationVoxel] + weight * goal.Heuristic(n.DestinationVoxel));
+                    gScore[n.DestinationState] = tenativeGScore;
+                    fScore.Enqueue(n.DestinationState, gScore[n.DestinationState] + weight * (goal.Heuristic(n.DestinationState.Voxel) + (!n.DestinationState.VehicleState.IsRidingVehicle ? 100.0f : 0.0f)));
                 }
 
                 // If we've expanded too many voxels, just give up.
@@ -350,9 +359,14 @@ namespace DwarfCorp
 
         // Find a path from the start to the goal by computing an inverse path from goal to the start. Should only be used
         // if the forward path fails.
-        private static PlanResult InversePath(CreatureMovement mover, VoxelHandle start, GoalRegion goal, ChunkManager chunks,
+        private static PlanResult InversePath(CreatureMovement mover, VoxelHandle startVoxel, GoalRegion goal, ChunkManager chunks,
                 int maxExpansions, ref List<MoveAction> toReturn, float weight, Func<bool> continueFunc)
         {
+            MoveState start = new MoveState()
+            {
+                Voxel = startVoxel
+            };
+
             if (_planLog == null)
                 _planLog = new FileStream("timing.txt", FileMode.OpenOrCreate);
             var startTime = DwarfTime.Tick();
@@ -392,7 +406,7 @@ namespace DwarfCorp
             }
 
 
-            if (goal.IsInGoalRegion(start))
+            if (goal.IsInGoalRegion(start.Voxel))
             {
                 toReturn = new List<MoveAction>();
                 return new PlanResult()
@@ -404,36 +418,36 @@ namespace DwarfCorp
             }
 
             // Voxels that have already been explored.
-            var closedSet = new HashSet<VoxelHandle>();
+            var closedSet = new HashSet<MoveState>();
 
             // Voxels which should be explored.
-            var openSet = new HashSet<VoxelHandle>();
+            var openSet = new HashSet<MoveState>();
 
             // Dictionary of voxels to the optimal action that got the mover to that voxel.
-            var cameFrom = new Dictionary<VoxelHandle, MoveAction>();
+            var cameFrom = new Dictionary<MoveState, MoveAction>();
 
             // Optimal score of a voxel based on the path it took to get there.
-            var gScore = new Dictionary<VoxelHandle, float>();
+            var gScore = new Dictionary<MoveState, float>();
 
             // Expansion priority of voxels.
-            var fScore = new PriorityQueue<VoxelHandle>();
+            var fScore = new PriorityQueue<MoveState>();
 
             var goalVoxels = new List<VoxelHandle>();
             goalVoxels.Add(goal.GetVoxel());
             // Starting conditions of the search.
 
             foreach (var goalVoxel in VoxelHelpers.EnumerateCube(goal.GetVoxel().Coordinate)
-                .Select(c => new VoxelHandle(start.Chunk.Manager.ChunkData, c))) 
+                .Select(c => new VoxelHandle(start.Voxel.Chunk.Manager.ChunkData, c))) 
             {
                 if (!goalVoxel.IsValid) continue;
-
+                var goalState = new MoveState() { Voxel = goalVoxel };
                 if (goal.IsInGoalRegion(goalVoxel))
                 {
                     goalVoxels.Add(goalVoxel);
-                    openSet.Add(goalVoxel);
-                    gScore[goalVoxel] = 0.0f;
-                    fScore.Enqueue(goalVoxel,
-                        gScore[goalVoxel] + weight*(goalVoxel.WorldPosition - start.WorldPosition).LengthSquared());
+                    openSet.Add(goalState);
+                    gScore[goalState] = 0.0f;
+                    fScore.Enqueue(goalState,
+                        gScore[goalState] + weight*(goalVoxel.WorldPosition - start.Voxel.WorldPosition).LengthSquared());
                 }
             }
 
@@ -453,7 +467,7 @@ namespace DwarfCorp
                     };
 
                 // Check the next voxel to explore.
-                var current = GetVoxelWithMinimumFScore(fScore);
+                var current = GetStateWithMinimumFScore(fScore);
                 if (!current.IsValid)
                 {
                     continue;
@@ -489,30 +503,30 @@ namespace DwarfCorp
                 {
                     //Drawer3D.DrawBox(n.SourceVoxel.GetBoundingBox(), Color.Red, 0.1f);
                     // If we've already explored that voxel, don't explore it again.
-                    if (closedSet.Contains(n.SourceVoxel))
+                    if (closedSet.Contains(n.SourceState))
                     {
                         continue;
                     }
 
                     // Otherwise, consider the case of moving to that neighbor.
-                    float tenativeGScore = gScore[current] + GetDistance(current, n.SourceVoxel, n.MoveType, mover);
+                    float tenativeGScore = gScore[current] + GetDistance(current.Voxel, n.SourceState.Voxel, n.MoveType, mover);
 
                     // IF the neighbor can already be reached more efficiently, ignore it.
-                    if (openSet.Contains(n.SourceVoxel) && gScore.ContainsKey(n.SourceVoxel) && !(tenativeGScore < gScore[n.SourceVoxel]))
+                    if (openSet.Contains(n.SourceState) && gScore.ContainsKey(n.SourceState) && !(tenativeGScore < gScore[n.SourceState]))
                     {
                         continue;
                     }
 
                     // Otherwise, add it to the list of voxels for consideration.
-                    openSet.Add(n.SourceVoxel);
+                    openSet.Add(n.SourceState);
 
                     // Add an edge to the voxel from the current voxel.
                     var cameAction = n;
-                    cameFrom[n.SourceVoxel] = cameAction;
+                    cameFrom[n.SourceState] = cameAction;
 
                     // Update the expansion scores for the next voxel.
-                    gScore[n.SourceVoxel] = tenativeGScore;
-                    fScore.Enqueue(n.SourceVoxel, gScore[n.SourceVoxel] + weight * (n.SourceVoxel.WorldPosition - start.WorldPosition).LengthSquared());
+                    gScore[n.SourceState] = tenativeGScore;
+                    fScore.Enqueue(n.SourceState, gScore[n.SourceState] + weight * (n.SourceState.Voxel.WorldPosition - start.Voxel.WorldPosition).LengthSquared());
                 }
 
                 // If we've expanded too many voxels, just give up.
@@ -641,7 +655,8 @@ namespace DwarfCorp
             ChunkManager chunks, int maxExpansions, float weight, int numPlans, Func<bool> continueFunc)
         {
             var p = new List<MoveAction>();
-            bool use_inverse = goal.IsReversible() && OpennessHeuristic(goal.GetVoxel()) < OpennessHeuristic(start);
+            //bool use_inverse = goal.IsReversible() && OpennessHeuristic(goal.GetVoxel()) < OpennessHeuristic(start);
+            bool use_inverse = false;
             var result = use_inverse ? InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc)
                 : Path(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc);
 
@@ -679,11 +694,6 @@ namespace DwarfCorp
         /// <returns>The cost of going from a to b using the given action.</returns>
         public static float GetDistance(VoxelHandle a, VoxelHandle b, MoveType action, CreatureMovement movement)
         {
-            // If trying to move through a non-empty voxel, the cost is  just a big number.
-            if (!b.IsEmpty)
-            {
-                return 100000;
-            }
             // Otherwise, the cost is the distance between the voxels multiplied by the intrinsic cost
             // of an action.
             float score = (a.WorldPosition - b.WorldPosition).LengthSquared() * ActionCost(movement, action);

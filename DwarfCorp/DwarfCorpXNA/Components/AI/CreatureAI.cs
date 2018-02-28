@@ -99,8 +99,7 @@ namespace DwarfCorp
                 return _cachedCreature;
             }
         }
-        /// <summary> If this is set to true, the creature will draw the path it is following </summary>
-        public bool DrawPath { get { return GameSettings.Default.DrawPaths; }}
+
         /// <summary> The gather manager handles gathering/building tasks </summary>
         public GatherManager GatherManager { get; set; }
         /// <summary> When this timer times out, the creature will awake from Idle mode and attempt to find something to do </summary>
@@ -112,15 +111,8 @@ namespace DwarfCorp
 
         /// <summary> Gets the Act that the creature is currently performing if it exists. </summary>
         [JsonIgnore]
-        public Act CurrentAct
-        {
-            get
-            {
-                if (CurrentTask != null) return CurrentTask.Script;
-                return null;
-            }
-        }
-
+        public Act CurrentAct = null;
+        
         /// <summary> Gets the current Task the creature is trying to perform </summary>
         public Task CurrentTask { get; set; }
 
@@ -228,6 +220,8 @@ namespace DwarfCorp
         /// </summary>
         public List<Task> Tasks { get; set; }
 
+        private WaitForPlanHelper planHelper = null;
+
         /// <summary>
         /// If true, whent he creature dies its friends will mourn its death, generating unhappy Thoughts
         /// </summary>
@@ -243,14 +237,8 @@ namespace DwarfCorp
         [OnDeserialized]
         public void OnDeserialize(StreamingContext ctx)
         {
-            if (CurrentTask != null)
-            {
-                CurrentTask.Script = null;
-            }
             if (Sensor == null)
-            {
                 Sensor = GetRoot().GetComponent<EnemySensor>();
-            }
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
         }
 
@@ -338,15 +326,9 @@ namespace DwarfCorp
 
             if (newTask != null)
             {
-                CurrentTask.Cancel();
                 if (CurrentTask.ShouldRetry(Creature))
-                {
-                    AssignTask(CurrentTask);
-                    CurrentTask.SetupScript(Creature);
-                }
-                CurrentTask = newTask;
-                newTask.SetupScript(Creature);
-                RemoveTask(newTask);
+                    ReassignCurrentTask();
+                ChangeTask(newTask);
             }
         }
 
@@ -407,13 +389,25 @@ namespace DwarfCorp
 
         private Timer restockTimer = new Timer(10.0f, false);
 
+        private void ChangeAct(Act NewAct)
+        {
+            if (CurrentAct != null)
+                CurrentAct.OnCanceled();
+            CurrentAct = NewAct;
+        }
+
+        public void CancelCurrentTask()
+        {
+            ChangeTask(null);
+        }
+
         /// <summary> Update this creature </summary>
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!Active)
                 return;
 
-            if (DrawPath)
+            if (Debugger.Switches.DrawPaths)
             {
                 StringBuilder taskString = new StringBuilder();
                 foreach (var task in Tasks)
@@ -435,7 +429,7 @@ namespace DwarfCorp
             SpeakTimer.Update(gameTime);
 
             OrderEnemyAttack();
-            DeleteBadTasks();
+            //DeleteBadTasks();
             PreEmptTasks();
             HandleReproduction();
             
@@ -444,7 +438,6 @@ namespace DwarfCorp
             if (Status.Health.IsDissatisfied() && Stats.CanSleep)
             {
                 Task toReturn = new GetHealedTask();
-                toReturn.SetupScript(Creature);
                 if (!Tasks.Contains(toReturn))
                     AssignTask(toReturn);
             }
@@ -453,7 +446,6 @@ namespace DwarfCorp
             if (Status.Energy.IsDissatisfied() && Manager.World.Time.IsNight())
             {
                 Task toReturn = new SatisfyTirednessTask();
-                toReturn.SetupScript(Creature);
                 if (!Tasks.Contains(toReturn))
                     AssignTask(toReturn);
             }
@@ -462,7 +454,6 @@ namespace DwarfCorp
             if (Status.Hunger.IsDissatisfied() && Faction.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
             {
                 Task toReturn = new SatisfyHungerTask();
-                toReturn.SetupScript(Creature);
                 if (!Tasks.Contains(toReturn))
                     AssignTask(toReturn);
             }
@@ -477,7 +468,7 @@ namespace DwarfCorp
             // Update the current task.
             if (CurrentTask != null && CurrentAct != null)
             {
-                Act.Status status = CurrentAct.Tick();
+                var status = CurrentAct.Tick();
 
                 bool retried = false;
                 if (status == Act.Status.Fail)
@@ -488,17 +479,18 @@ namespace DwarfCorp
                     {
                         if (!Tasks.Contains(CurrentTask))
                         {
-                            // Lower the priority of failed tasks.
-                            //CurrentTask.Priority = Task.PriorityType.Eventually;
-                            AssignTask(CurrentTask);
-                            CurrentTask.SetupScript(Creature);
+                            ReassignCurrentTask();
                             retried = true;
                         }
                     }
                 }
+                else if (status == Act.Status.Success)
+                {
+                    CurrentTask.IsComplete = true;
+                }
 
                 if (status != Act.Status.Running && !retried)
-                    CurrentTask = null;
+                    ChangeTask(null);
             }
             // Otherwise, we don't have any tasks at the moment.
             else if (CurrentTask == null)
@@ -506,17 +498,17 @@ namespace DwarfCorp
                 // Throw a tantrum if we're unhappy.
                 bool tantrum = false;
                 if (Status.Happiness.IsDissatisfied())
-                {
                     tantrum = MathFunctions.Rand(0, 1) < 0.25f;
-                }
 
                 // Otherwise, find a new task to perform.
-                Task goal = GetEasiestTask(Tasks);
+                var goal = GetEasiestTask(Tasks);
+
                 if (goal != null)
                 {
                     if (tantrum)
                     {
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
+
                         if (Creature.Faction == Manager.World.PlayerFaction)
                         {
                             Manager.World.MakeAnnouncement(
@@ -530,31 +522,26 @@ namespace DwarfCorp
                             Manager.World.Tutorial("happiness");
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                         }
-                        CurrentTask = null;
+
+                        ChangeTask(null);
                     }
                     else
                     {
                         IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
-                        goal.SetupScript(Creature);
-                        CurrentTask = goal;
-                        RemoveTask(goal);
+                        ChangeTask(goal);
                     }
                 }
                 else
                 {
-                    CurrentTask = ActOnIdle();
-                    if (CurrentTask != null)
-                        CurrentTask.SetupScript(Creature);
+                    var newTask = ActOnIdle();
+                    if (newTask != null)
+                        ChangeTask(newTask);
                 }
             }
             else if (CurrentTask != null)
             {
-                CurrentTask.SetupScript(Creature);
-                if (CurrentAct == null)
-                {
-                    // Edge case where setting up script fails for whatever reason.
-                    CurrentTask = null;
-                }
+                // Should be impossible to have a current task and no current act.
+                ChangeAct(CurrentTask.CreateScript(Creature));
             }
             
             PlannerTimer.Update(gameTime);
@@ -663,7 +650,7 @@ namespace DwarfCorp
         {
             float hopTime = 0.5f;
 
-            TossMotion motion = new TossMotion(hopTime, location.Y - Position.Y, Physics.GlobalTransform, location);
+            var motion = new TossMotion(hopTime, location.Y - Position.Y, Physics.GlobalTransform, location);
             Physics.AnimationQueue.Add(motion);
 
             while (!motion.IsDone())
@@ -688,28 +675,18 @@ namespace DwarfCorp
              */
 
             if (!IsPosessed && Creature.Physics.IsInLiquid && MathFunctions.RandEvent(0.01f))
-            {
                 return new FindLandTask();
-            }
 
             if (Faction == World.PlayerFaction)
             {
                 var candidate = World.Master.TaskManager.GetBestTask(this);
                 if (candidate != null)
-                {
                     return candidate;
-                }
             }
 
             if (!IsPosessed && Creature.Inventory.Resources.Count > 0)
-            {
                 foreach (var status in Creature.RestockAll())
-                {
-
-                }
-
-            }
-            
+                    ; // RestockAll generates tasks for the dwarf.           
 
             if (!IsPosessed &&
                 (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()) &&
@@ -738,7 +715,7 @@ namespace DwarfCorp
                     }
                 }
 
-                Dictionary<string, ResourceAmount> aggregatedResources = new Dictionary<string, ResourceAmount>();
+                var aggregatedResources = new Dictionary<string, ResourceAmount>();
                 foreach (var resource in Creature.Inventory.Resources.Where(resource => resource.MarkedForRestock))
                 {
                     if (!aggregatedResources.ContainsKey(resource.Resource))
@@ -762,7 +739,7 @@ namespace DwarfCorp
                 // Find a room to train in, if applicable.
                 if (Stats.IsTaskAllowed(Task.TaskCategory.Attack) && MathFunctions.RandEvent(0.01f))
                 {
-                    Body closestTraining = Faction.FindNearestItemWithTags("Train", Position, true);
+                    var closestTraining = Faction.FindNearestItemWithTags("Train", Position, true);
 
                     if (closestTraining != null)
                     {
@@ -1077,132 +1054,6 @@ namespace DwarfCorp
             return desc;
         }
 
-        /// <summary> Task telling the creature to exit the world. </summary>
-        public class LeaveWorldTask : Task
-        {
-            public IEnumerable<Act.Status> GreedyFallbackBehavior(Creature agent)
-            {
-                var edgeGoal = new EdgeGoalRegion();
-
-                while (true)
-                {
-                    var creatureVoxel = agent.Physics.CurrentVoxel;
-
-                    if (edgeGoal.IsInGoalRegion(creatureVoxel))
-                    {
-                        foreach (var status in Die(agent))
-                            continue;
-                        yield return Act.Status.Success;
-                        yield break;
-                    }
-
-                    var actions = agent.AI.Movement.GetMoveActions(creatureVoxel);
-
-                    float minCost = float.MaxValue;
-                    var minAction = new MoveAction();
-                    bool hasMinAction = false;
-                    foreach (var action in actions)
-                    {
-                        var vox = action.DestinationVoxel;
-
-                        float cost = edgeGoal.Heuristic(vox) + MathFunctions.Rand(0.0f, 0.1f);
-
-                        if (cost < minCost)
-                        {
-                            minAction = action;
-                            minCost = cost;
-                            hasMinAction = true;
-                        }
-                    }
-
-                    if (hasMinAction)
-                    {
-                        var nullAction = new MoveAction
-                        {
-                            Diff = minAction.Diff,
-                            MoveType = MoveType.Walk,
-                            DestinationVoxel = creatureVoxel
-                        };
-
-                        agent.AI.Blackboard.SetData("GreedyPath", new List<MoveAction> { nullAction, minAction });
-                        var pathAct = new FollowPathAct(agent.AI, "GreedyPath");
-                        pathAct.Initialize();
-
-                        foreach (Act.Status status in pathAct.Run())
-                        {
-                            yield return Act.Status.Running;
-                        }
-                    }
-
-                    yield return Act.Status.Running;
-                }
-            }
-
-            public IEnumerable<Act.Status> Die(Creature agent)
-            {
-                agent.GetRoot().Delete();
-                yield return Act.Status.Success;
-            }
-
-            public override Act CreateScript(Creature agent)
-            {
-                return new Select(
-                    new Sequence(new SetBlackboardData<VoxelHandle>(agent.AI, "EdgeVoxel", VoxelHandle.InvalidHandle),
-                                 new PlanAct(agent.AI, "PathToVoxel", "EdgeVoxel", PlanAct.PlanType.Edge),
-                                 new FollowPathAct(agent.AI, "PathToVoxel"),
-                                 new Wrap(() => Die(agent)) { Name = "Die" }
-                                 ),
-                    new Wrap(() => GreedyFallbackBehavior(agent)) { Name = "Go to edge of world." }
-                    );
-            }
-
-            public override Task Clone()
-            {
-                return new LeaveWorldTask();
-            }
-        }
-
-        /// <summary> History of a certain task that keeps track of how many times its failed </summary>
-        public class TaskHistory
-        {
-            /// <summary> Tasks are locked for this amount of time before being tried again </summary>
-            public static float LockoutTime;
-            /// <summary> If a Task has failed this many times, it will be locked. </summary>
-            public static int MaxFailures;
-            /// <summary> While the timer is active, the creature will not try to perform the task again. </summary>
-            public Timer LockoutTimer;
-            /// <summary> Number of times the task has failed </summary>
-            public int NumFailures;
-
-            static TaskHistory()
-            {
-                LockoutTime = 30.0f;
-                MaxFailures = 3;
-            }
-
-            public TaskHistory()
-            {
-                NumFailures = 0;
-                LockoutTimer = new Timer(LockoutTime, true);
-            }
-
-            public bool IsLocked
-            {
-                get { return NumFailures >= MaxFailures && !LockoutTimer.HasTriggered; }
-            }
-
-            public void Update()
-            {
-                LockoutTimer.Update(DwarfTime.LastTime);
-                if (LockoutTimer.HasTriggered)
-                {
-                    LockoutTimer.Reset(LockoutTime * 1.5f);
-                    NumFailures = 0;
-                }
-            }
-
-        }
-
         public void TryMoveVelocity(Vector3 desiredDirection, bool jumpCommand)
         {
 
@@ -1298,109 +1149,47 @@ namespace DwarfCorp
 
         public void AssignTask(Task task)
         {
+            if (task == null) return; // Todo: Hunt down instances of this and kill. It's not the correct way to cancel the task.
+
             if (!Tasks.Contains(task))
             {
                 Tasks.Add(task);
-                task.OnAssign(this.Creature);
+                task.OnAssign(this);
             }
         }
 
         public void RemoveTask(Task task)
         {
             Tasks.Remove(task);
-            task.OnUnAssign(this.Creature);
+            task.OnUnAssign(this);
         }
 
-
-        private WaitForPlanHelper planHelper = null;
-
-        /// <summary>
-        /// This class exists to wrap the Astar planner thread. It keeps track of a single request
-        /// that it is trying to get a response for. Call WaitForResponse repeatedly until a plan has been
-        /// found, or a timeout is exceeded.
-        /// </summary>
-        private class WaitForPlanHelper
+        public void ChangeTask(Task task)
         {
-            private PlanSubscriber Subscriber;
-            private Timer Timeout;
-            private AstarPlanRequest LastRequest;
-            public WaitForPlanHelper()
+            if (CurrentTask != null)
+                CurrentTask.OnUnAssign(this);
+            CurrentTask = task;
+            if (CurrentTask != null)
             {
+                ChangeAct(CurrentTask.CreateScript(Creature));
 
-
+                if (Tasks.Contains(task))
+                    Tasks.Remove(task);
+                else
+                    task.OnAssign(this);
             }
-
-            public WaitForPlanHelper(float timeout, PlanService planService)
+            else
             {
-                Subscriber = new PlanSubscriber(planService);
-                Timeout = new Timer(timeout, true);
-            }
-
-            public AStarPlanResponse WaitForResponse(AstarPlanRequest request)
-            {
-                // If we already have a request, determine if it has been satisfied.
-                if (LastRequest != null)
-                {
-                    // first, if the timer has triggered, return an unsuccessful plan.
-                    Timeout.Update(DwarfTime.LastTime);
-                    if (Timeout.HasTriggered)
-                    {
-                        LastRequest = null;
-                        return new AStarPlanResponse() { Success = false };
-                    }
-
-                    // Otherwise, see if there are any responses yet.
-                    while (Subscriber.Responses.Count > 0)
-                    {
-                        AStarPlanResponse response;
-                        bool success = Subscriber.Responses.TryDequeue(out response);
-
-                        // If so, determine if the response is what we requested.
-                        if (success)
-                        {
-                            // If not, maybe try another response
-                            if (response.Request != LastRequest)
-                            {
-                                continue;
-                            }
-
-                            // Otherwise, we found our guy. return it.
-                            LastRequest = null;
-
-                            // Clear the response queue.
-                            while (Subscriber.Responses.Count > 0)
-                            {
-                                AStarPlanResponse dummy;
-                                Subscriber.Responses.TryDequeue(out dummy);
-                            }
-                            return response;
-                        }
-                    }
-                    // No responses? Return null.
-                    return null;
-                }
-
-                Timeout.Reset();
-                // Otherwise, this is a new request. Push it and return null.
-                LastRequest = request;
-                Subscriber.SendRequest(request);
-                return null;
+                ChangeAct(null);
             }
         }
 
-        /// <summary>
-        /// Call repeatedly until a request has been met or a timeout happens. Return null until the plan can be found,
-        /// at which point return the response. If a timeout occurs, an unsuccessful reponse will be returned.
-        /// </summary>
-        public AStarPlanResponse WaitForPlan(AstarPlanRequest request)
+        public void ReassignCurrentTask()
         {
-            request.Sender = this;
-            if (planHelper == null)
-                planHelper = new WaitForPlanHelper(5.0f, Creature.PlanService);
-
-            return planHelper.WaitForResponse(request);
+            var task = CurrentTask;
+            ChangeTask(null);
+            AssignTask(task);
         }
-
 
         public AStarPlanResponse WaitForPlan(VoxelHandle voxel, PlanAct.PlanType type = PlanAct.PlanType.Into)
         {
@@ -1429,7 +1218,10 @@ namespace DwarfCorp
                 MaxExpansions = 50000
             };
 
-            return WaitForPlan(request);
+            if (planHelper == null)
+                planHelper = new WaitForPlanHelper(5.0f, Creature.PlanService);
+
+            return planHelper.WaitForResponse(request);
         }
 
         public AStarPlanResponse WaitForPlan(Vector3 pos, PlanAct.PlanType type = PlanAct.PlanType.Into)
@@ -1456,11 +1248,9 @@ namespace DwarfCorp
         {
             if (CurrentTask != null)
             {
-                CurrentTask.Cancel();
                 if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
-                {
                     World.Master.TaskManager.AddTask(CurrentTask);
-                }
+                ChangeTask(null);
             }
             base.Die();
         }
@@ -1469,11 +1259,9 @@ namespace DwarfCorp
         {
             if (CurrentTask != null)
             {
-                CurrentTask.Cancel();
                 if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
-                {
                     World.Master.TaskManager.AddTask(CurrentTask);
-                }
+                ChangeTask(null);
             }
             base.Delete();
         }

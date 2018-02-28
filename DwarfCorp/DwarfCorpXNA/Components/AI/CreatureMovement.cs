@@ -57,6 +57,33 @@ namespace DwarfCorp
             Actions = new Dictionary<MoveType, ActionStats>
             {
                 {
+                    MoveType.EnterVehicle,
+                    new ActionStats
+                    {
+                        CanMove = false,
+                        Cost = 1.0f,
+                        Speed = 1.0f
+                    }
+                },
+                {
+                    MoveType.ExitVehicle,
+                    new ActionStats
+                    {
+                        CanMove = false,
+                        Cost = 1.0f,
+                        Speed = 1.0f
+                    }
+                },
+                {
+                    MoveType.RideVehicle,
+                    new ActionStats
+                    {
+                        CanMove = false,
+                        Cost = 0.1f,
+                        Speed = 10.0f
+                    }
+                },
+                {
                     MoveType.Climb,
                     new ActionStats
                     {
@@ -259,12 +286,15 @@ namespace DwarfCorp
         {
             var vox = new VoxelHandle(Creature.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(Pos));
-            return GetMoveActions(vox);
+            return GetMoveActions(new MoveState() { Voxel = vox });
         }
 
+
+
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
-        public IEnumerable<MoveAction> GetMoveActions(VoxelHandle voxel)
+        public IEnumerable<MoveAction> GetMoveActions(MoveState state)
         {
+            var voxel = state.Voxel;
             if (!voxel.IsValid || !voxel.IsEmpty)
                 yield break;
 
@@ -278,43 +308,142 @@ namespace DwarfCorp
             bool isClimbing = false;
 
             var successors = new List<MoveAction>();
+            bool isRiding = state.VehicleState.IsRidingVehicle;
 
-            if (CanClimb)
+            if (CanClimb || Can(MoveType.RideVehicle))
             {
                 //Climbing ladders.
                 var bodies = objectHash.EnumerateIntersectingObjects(voxel.GetBoundingBox(), CollisionManager.CollisionType.Static).OfType<GameComponent>();
 
-                var ladder = bodies.FirstOrDefault(component => component.Tags.Contains("Climbable"));
-
-                // if the creature can climb objects and a ladder is in this voxel,
-                // then add a climb action.
-                if (ladder != null)
+                if (!isRiding)
                 {
-                    successors.Add(new MoveAction
-                    {
-                        Diff = new Vector3(1, 2, 1),
-                        MoveType = MoveType.Climb,
-                        InteractObject = ladder
-                    });
+                    var ladder = bodies.FirstOrDefault(component => component.Tags.Contains("Climbable"));
 
-                    isClimbing = true;
-
-                    if (!standingOnGround)
+                    // if the creature can climb objects and a ladder is in this voxel,
+                    // then add a climb action.
+                    if (ladder != null && CanClimb)
                     {
                         successors.Add(new MoveAction
                         {
-                            Diff = new Vector3(1, 0, 1),
+                            Diff = new Vector3(1, 2, 1),
                             MoveType = MoveType.Climb,
                             InteractObject = ladder
                         });
-                    }
 
-                    standingOnGround = true;
+                        isClimbing = true;
+
+                        if (!standingOnGround)
+                        {
+                            successors.Add(new MoveAction
+                            {
+                                Diff = new Vector3(1, 0, 1),
+                                MoveType = MoveType.Climb,
+                                InteractObject = ladder
+                            });
+                        }
+
+                        standingOnGround = true;
+                    }
+                }
+
+                if (!isRiding)
+                {
+                    var rails = bodies.OfType<Rail.RailEntity>().Where(r => r.Active);
+
+                    if (rails.Count() > 0 && Can(MoveType.RideVehicle))
+                    {
+                        {
+                            foreach (var rail in rails)
+                            {
+
+                                if (rail.GetContainingVoxel() != state.Voxel)
+                                    continue;
+
+                                
+                                if (!DwarfGame.IsMainThread)
+                                {
+                                    for (int i = 0; i < 5; i++)
+                                    {
+                                        Drawer3D.DrawBox(rail.BoundingBox, Color.Blue, 0.05f, false);
+                                        System.Threading.Thread.Sleep(10);
+                                    }
+                                }
+                                
+                                successors.Add(new MoveAction()
+                                {
+                                    SourceState = state,
+                                    DestinationState = new MoveState()
+                                    {
+                                        VehicleState = new VehicleState()
+                                        {
+                                            Rail = rail
+                                        },
+                                        Voxel = rail.GetContainingVoxel()
+                                    },
+                                    MoveType = MoveType.EnterVehicle,
+                                    Diff = new Vector3(1, 1, 1)
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (Can(MoveType.ExitVehicle) && isRiding)
+                {
+                    successors.Add(new MoveAction()
+                    {
+                        SourceState = state,
+                        DestinationState = new MoveState()
+                        {
+                            VehicleState = new VehicleState(),
+                            Voxel = state.Voxel
+                        },
+                        MoveType = MoveType.ExitVehicle,
+                        Diff = new Vector3(1, 1, 1)
+                    });
+                }
+
+                if (Can(MoveType.RideVehicle) && isRiding)
+                {
+                    foreach(var neighbor in Rail.RailHelper.EnumerateForwardNetworkConnections(state.VehicleState.PrevRail, state.VehicleState.Rail))
+                    {
+                        var neighborRail =  Creature.Manager.FindComponent(neighbor) as Rail.RailEntity;
+                        if (neighborRail == null || !neighborRail.Active)
+                            continue;
+
+                        /*
+                        if (!DwarfGame.IsMainThread)
+                        {
+                            for (int i = 0; i < 50; i++)
+                            {
+                                Drawer3D.DrawLine(neighborRail.GetContainingVoxel().GetBoundingBox().Center(), state.Voxel.GetBoundingBox().Center(), Color.Purple, 0.08f);
+                                Drawer3D.DrawBox(neighborRail.BoundingBox, Color.Red, 0.05f, false);
+                                Drawer3D.DrawBox(neighborRail.GetContainingVoxel().GetBoundingBox(), Color.Purple, 0.08f, false);
+                                System.Threading.Thread.Sleep(5);
+                            }
+                        }
+                        */
+
+                        successors.Add(new MoveAction()
+                        {
+                            SourceState = state,
+                            DestinationState = new MoveState()
+                            {
+                                Voxel = neighborRail.GetContainingVoxel(),
+                                VehicleState = new VehicleState()
+                                {
+                                    Rail = neighborRail,
+                                    PrevRail = state.VehicleState.Rail
+                                }
+                            },
+                            MoveType = MoveType.RideVehicle,
+                        });
+                    }
                 }
             }
 
             // If the creature can climb walls and is not blocked by a voxl above.
-            if (CanClimbWalls && !topCovered)
+            if (!isRiding && CanClimbWalls && !topCovered)
             {
                 var walls = new VoxelHandle[]
                 {
@@ -351,7 +480,7 @@ namespace DwarfCorp
 
             // If the creature either can walk or is in water, add the 
             // eight-connected free neighbors around the voxel.
-            if ((CanWalk && standingOnGround) || (CanSwim && inWater))
+            if (!isRiding && ((CanWalk && standingOnGround) || (CanSwim && inWater)))
             {
                 // If the creature is in water, it can swim. Otherwise, it will walk.
                 var moveType = inWater ? MoveType.Swim : MoveType.Walk;
@@ -424,7 +553,7 @@ namespace DwarfCorp
             // If the creature's head is free, and it is standing on ground,
             // or if it is in water, or if it is climbing, it can also jump
             // to voxels that are 1 cell away and 1 cell up.
-            if (!topCovered && (standingOnGround || (CanSwim && inWater) || isClimbing))
+            if (!isRiding && (!topCovered && (standingOnGround || (CanSwim && inWater) || isClimbing)))
             {
                 for (int dx = 0; dx <= 2; dx++)
                 {
@@ -447,7 +576,7 @@ namespace DwarfCorp
 
             // If the creature is not in water and is not standing on ground,
             // it can fall one voxel downward in free space.
-            if (!inWater && !standingOnGround)
+            if (!isRiding && !inWater && !standingOnGround)
             {
                 successors.Add(new MoveAction
                 {
@@ -458,7 +587,7 @@ namespace DwarfCorp
 
             // If the creature can fly and is not underwater, it can fly
             // to any adjacent empty cell.
-            if (CanFly && !inWater)
+            if (!isRiding && CanFly && !inWater)
             {
                 for (int dx = 0; dx <= 2; dx++)
                 {
@@ -484,37 +613,40 @@ namespace DwarfCorp
             // Now, validate each move action that the creature might take.
             foreach (MoveAction v in successors)
             {
-                var n = neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
-                if (n.IsValid && (n.IsEmpty || n.WaterCell.WaterLevel > 0))
+                var n = v.DestinationVoxel.IsValid ? v.DestinationVoxel : neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
+                if (n.IsValid && (isRiding || n.IsEmpty || n.WaterCell.WaterLevel > 0))
                 {
                     // Do one final check to see if there is an object blocking the motion.
                     bool blockedByObject = false;
-                    var objectsAtNeighbor = Creature.Manager.World.CollisionManager.EnumerateIntersectingObjects(
-                        n.GetBoundingBox(), CollisionManager.CollisionType.Static);
-
-                    // If there is an object blocking the motion, determine if it can be passed through.
-
-                    foreach (var body in objectsAtNeighbor.OfType<GameComponent>())
+                    if (!isRiding)
                     {
-                        var door = body.GetRoot().EnumerateAll().OfType<Door>().FirstOrDefault();
-                        // If there is an enemy door blocking movement, we can destroy it to get through.
-                        if (door != null)
+                        var objectsAtNeighbor = Creature.Manager.World.CollisionManager.EnumerateIntersectingObjects(
+                            n.GetBoundingBox(), CollisionManager.CollisionType.Static);
+
+                        // If there is an object blocking the motion, determine if it can be passed through.
+
+                        foreach (var body in objectsAtNeighbor.OfType<GameComponent>())
                         {
-                            if (
-                                Creature.World.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
-                                    .GetCurrentRelationship() ==
-                                Relationship.Hateful)
+                            var door = body.GetRoot().EnumerateAll().OfType<Door>().FirstOrDefault();
+                            // If there is an enemy door blocking movement, we can destroy it to get through.
+                            if (door != null)
                             {
-                                if (Can(MoveType.DestroyObject))
-                                    yield return (new MoveAction
-                                    {
-                                        Diff = v.Diff,
-                                        MoveType = MoveType.DestroyObject,
-                                        InteractObject = door,
-                                        DestinationVoxel = n,
-                                        SourceVoxel = voxel
-                                    });
-                                blockedByObject = true;
+                                if (
+                                    Creature.World.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
+                                        .GetCurrentRelationship() ==
+                                    Relationship.Hateful)
+                                {
+                                    if (Can(MoveType.DestroyObject))
+                                        yield return (new MoveAction
+                                        {
+                                            Diff = v.Diff,
+                                            MoveType = MoveType.DestroyObject,
+                                            InteractObject = door,
+                                            DestinationVoxel = n,
+                                            SourceVoxel = voxel
+                                        });
+                                    blockedByObject = true;
+                                }
                             }
                         }
                     }
@@ -899,13 +1031,14 @@ namespace DwarfCorp
 
         // Inverts GetMoveActions. So, returns the list of move actions whose target is the current voxel.
         // Very, very slow.
-        public IEnumerable<MoveAction> GetInverseMoveActions(VoxelHandle current)
+        public IEnumerable<MoveAction> GetInverseMoveActions(MoveState currentstate)
         {
+            var current = currentstate.Voxel;
             foreach (var v in VoxelHelpers.EnumerateAllNeighbors(current.Coordinate)
                 .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
                 .Where(h => h.IsValid && h.IsEmpty))
             {
-                foreach (var a in GetMoveActions(v).Where(a => a.DestinationVoxel == current))
+                foreach (var a in GetMoveActions(new MoveState() { Voxel = v }).Where(a => a.DestinationState == currentstate))
                     yield return a;
             }
         }

@@ -104,6 +104,8 @@ namespace DwarfCorp
 
             if (Verticies == null)
             {
+                System.Diagnostics.Debug.Assert(Sheet != null);
+
                 float normalizeX = Sheet.FrameWidth / (float)(Sheet.Width);
                 float normalizeY = Sheet.FrameHeight / (float)(Sheet.Height);
 

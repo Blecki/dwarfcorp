@@ -34,6 +34,7 @@
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace DwarfCorp
 {
@@ -80,8 +81,9 @@ namespace DwarfCorp
         public TaskCategory Category { get; set; }
         public PriorityType Priority { get; set; }
         public int MaxAssignable = 1;
-        public int CurrentAssigned = 0;
         public bool ReassignOnDeath = true;
+        public List<CreatureAI> AssignedCreatures = new List<CreatureAI>();
+        public bool IsComplete = false;
 
         public enum Feasibility
         {
@@ -90,9 +92,6 @@ namespace DwarfCorp
             Unknown
         }
 
-        // The script is ignored and regenerated on load.
-        [JsonIgnore]
-        public Act Script { get; set; }
         public bool AutoRetry = false;
 
         protected bool Equals(Task other)
@@ -107,8 +106,6 @@ namespace DwarfCorp
 
         public string Name { get; set; }
 
-        public abstract Task Clone();
-
         public virtual void Render(DwarfTime time)
         {
             
@@ -118,16 +115,6 @@ namespace DwarfCorp
         {
             return obj is Task && Name.Equals(((Task) (obj)).Name);
         }
-
-
-        public virtual void SetupScript(Creature agent)
-        {
-            if(Script != null)
-                Script.OnCanceled();
-
-            Script = CreateScript(agent);
-        }
-
 
         public virtual Act CreateScript(Creature agent)
         {
@@ -154,66 +141,50 @@ namespace DwarfCorp
             return false;
         }
 
-        public virtual void OnAssign(Creature agent)
+        public virtual void OnAssign(CreatureAI agent)
         {
-            
+            AssignedCreatures.Add(agent);
         }
 
-        public virtual void OnUnAssign(Creature agent)
+        public virtual void OnUnAssign(CreatureAI agent)
         {
-            
-        }
-
-        public virtual void Cancel()
-        {
-            if (Script != null)
-            {
-                Script.OnCanceled();
-            }
+            AssignedCreatures.Remove(agent);   
         }
     }
 
     public class ActWrapperTask : Task
     {
+        private Act WrappedAct;
+
         public ActWrapperTask()
         {
             
         }
 
-
         public ActWrapperTask(Act act)
         {
             ReassignOnDeath = false;
-            Script = act;
-            Name = Script.Name;
-        }
-
-        public override Task Clone()
-        {
-            return new ActWrapperTask(Script);
+            WrappedAct = act;
+            Name = WrappedAct.Name;
         }
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return Script != null ? Feasibility.Feasible : Feasibility.Infeasible;
+            return WrappedAct != null ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool ShouldDelete(Creature agent)
         {
-            if (Script == null)
-            {
+            if (WrappedAct == null)
                 return true;
-            }
             return base.ShouldDelete(agent);
         }
 
         public override Act CreateScript(Creature agent)
         {
-            if (Script != null)
-            {
-                Script.Initialize();
-            }
-            return Script;
+            if (WrappedAct != null)
+                WrappedAct.Initialize();
+            return WrappedAct;
         }
     }
 

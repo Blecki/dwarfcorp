@@ -42,9 +42,22 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Snake : Creature, IUpdateableComponent
     {
+        [EntityFactory("Snake")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Snake(false, Position, Manager, "Snake").Physics;
+        }
+
+        [EntityFactory("Necrosnake")]
+        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            var r = new Snake(true, Position, Manager, "Snake");
+            r.Attacks[0].DiseaseToSpread = "Necrorot";
+            return r.Physics;
+        }
+        
         public class TailSegment
         {
             public Body Sprite;
@@ -205,13 +218,13 @@ namespace DwarfCorp
 
                 if (HasMeat)
                 {
-                    ResourceLibrary.ResourceType type = Species + " " + ResourceLibrary.ResourceType.Meat;
+                    ResourceType type = Species + " " + ResourceType.Meat;
 
                     if (!ResourceLibrary.Resources.ContainsKey(type))
                     {
                         ResourceLibrary.Add(new Resource(ResourceLibrary.GetMeat(Species))
                         {
-                            Type = type,
+                            Name = type,
                             ShortName = type
                         });
                     }
@@ -221,13 +234,13 @@ namespace DwarfCorp
 
                 if (HasBones)
                 {
-                    ResourceLibrary.ResourceType type = Name + " " + ResourceLibrary.ResourceType.Bones;
+                    ResourceType type = Name + " " + ResourceType.Bones;
 
                     if (!ResourceLibrary.Resources.ContainsKey(type))
                     {
-                        ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceLibrary.ResourceType.Bones])
+                        ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceType.Bones])
                         {
-                            Type = type,
+                            Name = type,
                             ShortName = type
                         });
                     }

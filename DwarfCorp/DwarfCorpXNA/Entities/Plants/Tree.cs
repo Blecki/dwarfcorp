@@ -48,20 +48,15 @@ namespace DwarfCorp
 
         public Tree() { }
 
-        public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceLibrary.ResourceType seed, float treeSize, string seedlingAsset, bool emitWood = true) :
-            base(manager, name, Matrix.Identity,
+        public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceType seed, float treeSize, bool emitWood = true) :
+            base(manager, name, position, MathFunctions.Rand(-0.1f, 0.1f),
                 new Vector3(
                     PrimitiveLibrary.BatchBillboardPrimitives[asset].Width * 0.75f * treeSize,
                     PrimitiveLibrary.BatchBillboardPrimitives[asset].Height * treeSize,
                     PrimitiveLibrary.BatchBillboardPrimitives[asset].Width * 0.75f * treeSize),
              asset, treeSize)
         {
-            SeedlingAsset = seedlingAsset;
             HurtTimer = new Timer(1.0f, false);
-            Matrix matrix = Matrix.Identity;
-            matrix.Translation = position;
-            LocalTransform = matrix;
-
 
             AddChild(new Health(Manager, "HP", 100.0f * treeSize, 0.0f, 100.0f * treeSize));
             AddChild(new Flammable(Manager, "Flames"));
@@ -69,15 +64,6 @@ namespace DwarfCorp
             Tags.Add("Vegetation");
             if (emitWood)
                 Tags.Add("EmitsWood");
-
-            /*
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                manager.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(position)));
-            if (voxelUnder.IsValid)
-                AddChild(new VoxelListener(manager, manager.World.ChunkManager,
-                    voxelUnder));
-            //*/
 
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBoxSize, LocalBoundingBoxOffset)) as Inventory;
 
@@ -89,7 +75,7 @@ namespace DwarfCorp
                 {
                     MarkedForRestock = false,
                     MarkedForUse = false,
-                    Resource = ResourceLibrary.ResourceType.Wood
+                    Resource = ResourceType.Wood
                 });
             }
 

@@ -43,6 +43,49 @@ namespace DwarfCorp
 {
     public class Table : CraftedBody, IUpdateableComponent
     {
+        [EntityFactory("Table")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Table(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+        }
+
+        [EntityFactory("Kitchen Table")]
+        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Table(Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 7), Data.GetData<List<ResourceAmount>>("Resources", null))
+            {
+                Tags = new List<string>() { "Cutting Board" }
+            };
+        }
+
+        [EntityFactory("Books")]
+        private static GameComponent __factory2(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Table(Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 4), Data.GetData<List<ResourceAmount>>("Resources", null))
+            {
+                Tags = new List<string>() { "Research" },
+                Battery = new Table.ManaBattery()
+                {
+                    Charge = 0.0f,
+                    MaxCharge = 100.0f
+                }
+            };
+        }
+
+        [EntityFactory("Potions")]
+        private static GameComponent __factory3(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Table(Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4), Data.GetData<List<ResourceAmount>>("Resources", null))
+            {
+                Tags = new List<string>() { "Research" },
+                Battery = new Table.ManaBattery()
+                {
+                    Charge = 0.0f,
+                    MaxCharge = 100.0f
+                }
+            };
+        }
+        
         public ManaBattery Battery { get; set; }
         public SpriteSheet fixtureAsset;
         public Point fixtureFrame;
@@ -95,7 +138,7 @@ namespace DwarfCorp
                 if (ReCreateTimer.HasTriggered)
                 {
                     if (faction.RemoveResources(
-                        new List<ResourceAmount>() {new ResourceAmount(ResourceLibrary.ResourceType.Mana)}, position + Vector3.Up * 0.5f))
+                        new List<ResourceAmount>() {new ResourceAmount(ResourceType.Mana)}, position + Vector3.Up * 0.5f))
                     {
                         ManaSprite = EntityFactory.CreateEntity<ResourceEntity>("Mana Resource", position);
                         ManaSprite.Gravity = Vector3.Zero;
@@ -159,13 +202,6 @@ namespace DwarfCorp
             matrix.Translation = position;
             LocalTransform = matrix;
 
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                manager.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(position)));
-            if (voxelUnder.IsValid)
-                AddChild(new VoxelListener(manager, manager.World.ChunkManager,
-                    voxelUnder));
-            
             Tags.Add("Table");
             CollisionType = CollisionManager.CollisionType.Static;
 
@@ -200,6 +236,12 @@ namespace DwarfCorp
 
             if (fixtureAsset != null)
                 AddChild(new Fixture(Manager, new Vector3(0, 0.3f, 0), fixtureAsset, fixtureFrame)).SetFlagRecursive(Flag.ShouldSerialize, false);
+
+            AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
+            {
+                if (changeEvent.Type == VoxelChangeEventType.VoxelTypeChanged && changeEvent.NewVoxelType == 0)
+                    Die();
+            })).SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }

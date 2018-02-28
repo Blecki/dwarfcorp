@@ -41,45 +41,29 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class DestroyOnTimer : GameComponent, IUpdateableComponent
+    public class DestroyOnTimer : Body, IUpdateableComponent, IVoxelListener
     {
         public VoxelHandle Voxel;
         public Timer DestroyTimer;
 
-        private bool firstIter = false;
-        
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            firstIter = true;
-
-            if (Voxel.IsValid)
-                Voxel.Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
-        }
-
-        public DestroyOnTimer()
-        {
-
-        }
-
-
         public DestroyOnTimer(ComponentManager Manager, ChunkManager chunkManager, VoxelHandle Voxel) :
-            base("VoxelListener", Manager)
+            base(Manager, "DestroyTimer", Matrix.CreateTranslation(Voxel.GetBoundingBox().Center()), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero, true)
         {
             this.Voxel = Voxel;
-            if (Voxel.IsValid)
-                Voxel.Chunk.OnVoxelDestroyed += VoxelListener_OnVoxelDestroyed;
         }
 
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void OnVoxelChanged(VoxelChangeEvent V)
         {
-            if (firstIter)
-            {
-                if (!Voxel.IsValid || Voxel.TypeID == 0)
-                    Delete();
-                firstIter = false;
-            }
+            if (V.Type == VoxelChangeEventType.VoxelTypeChanged && V.NewVoxelType == 0)
+                Die();
+        }
 
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            if (!Voxel.IsValid || Voxel.IsEmpty)
+                Die();
+
+            
                 DestroyTimer.Update(gameTime);
 
                 if (DestroyTimer.HasTriggered)
@@ -87,26 +71,8 @@ namespace DwarfCorp
                     Die();
                     chunks.KillVoxel(Voxel);
                 }
-        }
 
-        void VoxelListener_OnVoxelDestroyed(LocalVoxelCoordinate voxelID)
-        {
-            if (Voxel.IsValid && Voxel.Coordinate == (Voxel.Chunk.ID + voxelID))
-                GetRoot().Die();
-        }
-
-        public override void Die()
-        {
-            if (Voxel.IsValid)
-                Voxel.Chunk.OnVoxelDestroyed -= VoxelListener_OnVoxelDestroyed;
-            base.Die();
-        }
-
-        public override void Delete()
-        {
-            if (Voxel.IsValid)
-                Voxel.Chunk.OnVoxelDestroyed -= VoxelListener_OnVoxelDestroyed;
-            base.Delete();
-        }
+            base.Update(gameTime, chunks, camera);
+        }       
     }
 }

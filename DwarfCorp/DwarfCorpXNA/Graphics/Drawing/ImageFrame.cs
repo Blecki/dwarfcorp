@@ -126,7 +126,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Image = TextureManager.GetTexture(AssetName);
+            Image = AssetManager.GetContentTexture(AssetName);
         }
 
         public NamedImageFrame()
@@ -137,7 +137,7 @@ namespace DwarfCorp
         public NamedImageFrame(string name)
         {
             AssetName = name;
-            Image = TextureManager.GetTexture(name);
+            Image = AssetManager.GetContentTexture(name);
 
             if (Image != null)
             {
@@ -148,14 +148,14 @@ namespace DwarfCorp
         public NamedImageFrame(string name, int frameSize, int x, int y)
         {
             AssetName = name;
-            Image = TextureManager.GetTexture(name);
+            Image = AssetManager.GetContentTexture(name);
             SourceRect = new Rectangle(x * frameSize, y * frameSize, frameSize, frameSize);
         }
 
         public NamedImageFrame(string name, Rectangle sourceRect)
         {
             AssetName = name;
-            Image = TextureManager.GetTexture(name);
+            Image = AssetManager.GetContentTexture(name);
             SourceRect = sourceRect;
         }
     }

@@ -8,20 +8,21 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Anvil : CraftedFixture
     {
-        public Anvil()
+        [EntityFactory("Anvil")]
+        private static GameComponent __factory00(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            Name = "Anvil";
-            Tags.Add("Anvil");
+            return new CraftedFixture("Anvil", new String[] { "Anvil" }, Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 3), Data.GetData<List<ResourceAmount>>("Resources", null));
         }
+    }
 
-        public Anvil(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
-            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 3), new DwarfCorp.CraftDetails(manager, "Anvil", resources))
+    public static class Minecart
+    {
+        [EntityFactory("Minecart")]
+        private static GameComponent __factory00(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            Name = "Anvil";
-            Tags.Add("Anvil");
+            return new CraftedFixture("Minecart", new String[] { "Minecart" }, Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 3),Data.GetData<List<ResourceAmount>>("Resources", null));
         }
     }
 }

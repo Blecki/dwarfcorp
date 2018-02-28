@@ -1,4 +1,4 @@
-// FactionLibrary.cs
+// Embarkment.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -30,28 +30,16 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace DwarfCorp
 {
     [JsonObject(IsReference = false)]
     public class Embarkment
     {
-        public static Dictionary<string, Embarkment> EmbarkmentLibrary { get; set; } 
         public List<string> Party;
-        public Dictionary<ResourceLibrary.ResourceType, int> Resources;
+        public Dictionary<ResourceType, int> Resources;
         public DwarfBux Money;
-        public static Embarkment DefaultEmbarkment = null;
-        public static void Initialize()
-        {
-            EmbarkmentLibrary = ContentPaths.LoadFromJson<Dictionary<string, Embarkment>>(ContentPaths.World.embarks);
-            DefaultEmbarkment = EmbarkmentLibrary["Normal"];
-        }
     }
 }

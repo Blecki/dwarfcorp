@@ -63,11 +63,6 @@ namespace DwarfCorp
             Category = TaskCategory.Dig;
         }
 
-        public override Task Clone()
-        {
-            return new KillVoxelTask(VoxelToKill);
-        }
-
         public override Act CreateScript(Creature creature)
         {
             return new KillVoxelAct(VoxelToKill, creature.AI);
@@ -77,7 +72,6 @@ namespace DwarfCorp
         {
             return !VoxelToKill.IsEmpty && agent.Faction.Designations.IsVoxelDesignation(VoxelToKill, DesignationType.Dig);
         }
-
 
         public override Feasibility IsFeasible(Creature agent)
         {

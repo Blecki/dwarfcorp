@@ -82,7 +82,6 @@ namespace DwarfCorp
             }
         }
 
-        public TaskManager TaskManager { get; set; }
         public List<Creature> Threats { get; set; }
 
         public string Name { get; set; }
@@ -117,7 +116,6 @@ namespace DwarfCorp
             Threats = new List<Creature>();
             Minions = new List<CreatureAI>();
             SelectedMinions = new List<CreatureAI>();
-            TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
@@ -134,7 +132,6 @@ namespace DwarfCorp
             Threats = new List<Creature>();
             Minions = new List<CreatureAI>();
             SelectedMinions = new List<CreatureAI>();
-            TaskManager = new TaskManager();
             Stockpiles = new List<Stockpile>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
@@ -237,10 +234,9 @@ namespace DwarfCorp
             {
                 if (threat != null && !threat.IsDead)
                 {
-                    Task g = new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto);
-
-                    if (!IsTaskAssigned(g))
-                    {
+                    if (!Designations.IsDesignation(threat.Physics, DesignationType.Attack))
+                    { 
+                        var g = new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto);
                         Designations.AddEntityDesignation(threat.Physics, DesignationType.Attack);
                         tasks.Add(g);
                     }
@@ -534,7 +530,7 @@ namespace DwarfCorp
         {
             Dictionary<Resource.ResourceTags, int> tagsRequired = new Dictionary<Resource.ResourceTags, int>();
             Dictionary<Resource.ResourceTags, int> tagsGot = new Dictionary<Resource.ResourceTags, int>();
-            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> amounts = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
+            Dictionary<ResourceType, ResourceAmount> amounts = new Dictionary<ResourceType, ResourceAmount>();
 
             foreach (Quantitiy<Resource.ResourceTags> quantity in tags)
             {
@@ -624,14 +620,14 @@ namespace DwarfCorp
             return true;
         }
 
-        public bool HasResources(ResourceLibrary.ResourceType resource)
+        public bool HasResources(ResourceType resource)
         {
             return HasResources(new List<ResourceAmount>() { new ResourceAmount(resource) });
         }
 
         public bool RemoveResources(List<ResourceAmount> resources, Vector3 position, bool createItems = true)
         {
-            Dictionary<ResourceLibrary.ResourceType, ResourceAmount> amounts = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
+            Dictionary<ResourceType, ResourceAmount> amounts = new Dictionary<ResourceType, ResourceAmount>();
 
             foreach (ResourceAmount resource in resources)
             {
@@ -719,11 +715,9 @@ namespace DwarfCorp
 
             AddMoney(-currentApplicant.Level.Pay * 4m);
 
-            var dwarfPhysics =
-                EntityFactory.GenerateDwarf(
+            var dwarfPhysics = DwarfFactory.GenerateDwarf(
                     rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15,
-                    World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, World.ChunkManager,
-                    World.Camera, this, World.PlanService, "Player", currentApplicant.Class, currentApplicant.Level.Index);
+                    World.ComponentManager, "Player", currentApplicant.Class, currentApplicant.Level.Index);
             World.ComponentManager.RootComponent.AddChild(dwarfPhysics);
             var newMinion = dwarfPhysics.EnumerateAll().OfType<Dwarf>().FirstOrDefault();
             System.Diagnostics.Debug.Assert(newMinion != null);
@@ -757,7 +751,7 @@ namespace DwarfCorp
             }
 
             Vector3 pos = rooms.First().GetBoundingBox().Center();
-            return EntityFactory.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, World.ComponentManager, GameState.Game.Content, GameState.Game.GraphicsDevice, new ShipmentOrder(0, null), this);
+            return Balloon.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, World.ComponentManager, new ShipmentOrder(0, null), this);
         }
 
         public List<Body> GenerateRandomSpawn(int numCreatures, Vector3 position)

@@ -82,7 +82,6 @@ namespace DwarfCorp
             public bool FogofWar = true;
             public bool UseDynamicShadows = false;
             public bool UseLightmaps = false;
-            public bool DrawPaths = false;
             public bool AutoSave = true;
             public float AutoSaveTimeMinutes = 2.0f;
             public string SaveLocation = null;
@@ -90,6 +89,7 @@ namespace DwarfCorp
             public bool AllowReporting = true;
             public bool ZoomCameraTowardMouse = true;
             public bool CameraFollowSurface = true;
+            public List<String> EnabledMods = new List<string>();
 
             public Settings Clone()
             {
@@ -118,7 +118,6 @@ namespace DwarfCorp
         {
             Load(ContentPaths.settings);
             Default.DrawDebugData = false;
-            Default.DrawPaths = false;
         }
 
         public static void Save(string file)
@@ -142,7 +141,7 @@ namespace DwarfCorp
         {
             try
             {
-                Default = FileUtils.LoadJson<Settings>(file, false);
+                Default = FileUtils.LoadJsonFromAbsolutePath<Settings>(file);
                 Console.Out.WriteLine("Loaded settings {1} \n {0}", file, Default.ToString());
             }
             catch (FileNotFoundException)

@@ -41,6 +41,12 @@ namespace DwarfCorp
 {
     public class Flag : CraftedBody
     {
+        [EntityFactory("Flag")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new DwarfCorp.Flag(Manager, Position, Manager.World.PlayerCompany.Information);
+        }
+
         public CompanyInformation Logo;
 
         public Flag()
@@ -54,13 +60,6 @@ namespace DwarfCorp
             this.Logo = logo;
 
             Tags.Add("Flag");
-
-            var voxelUnder = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                Manager.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(position)));
-            if (voxelUnder.IsValid)
-                AddChild(new VoxelListener(Manager, Manager.World.ChunkManager,
-                    voxelUnder));
 
             CollisionType = CollisionManager.CollisionType.Static;
             CreateCosmeticChildren(Manager);
@@ -81,6 +80,12 @@ namespace DwarfCorp
             {
                 Logo = Logo
             }).SetFlag(Flag.ShouldSerialize, false);
+
+            AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
+            {
+                if (changeEvent.Type == VoxelChangeEventType.VoxelTypeChanged && changeEvent.NewVoxelType == 0)
+                    Die();
+            })).SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }

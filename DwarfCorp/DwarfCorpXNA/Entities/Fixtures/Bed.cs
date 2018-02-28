@@ -11,7 +11,11 @@ namespace DwarfCorp
 {
     public class Bed : CraftedBody, IRenderableComponent
     {
-        public bool FrustumCull { get { return true; } }
+        [EntityFactory("Bed")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Bed(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+        }
 
         public Bed()
         {
@@ -40,17 +44,13 @@ namespace DwarfCorp
         public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
-#if DEBUG
-            if (GamePerformance.DebugVisualizationEnabled)
-                Drawer3D.DrawBox(BoundingBox, Color.Blue, 0.02f, false);
-#endif
         }
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
             base.CreateCosmeticChildren(Manager);
 
-            var spriteSheet = TextureManager.GetTexture(ContentPaths.Entities.Furniture.bedtex);
+            var spriteSheet = AssetManager.GetContentTexture(ContentPaths.Entities.Furniture.bedtex);
 
             AddChild(new Box(Manager, 
                 "bedbox", 
@@ -60,7 +60,7 @@ namespace DwarfCorp
                 "bed", 
                 spriteSheet)).SetFlag(Flag.ShouldSerialize, false);
 
-            AddChild(new NewVoxelListener(Manager,
+            AddChild(new GenericVoxelListener(Manager,
                 Matrix.Identity,
                 new Vector3(1.5f, 0.5f, 0.75f), // Position just below surface.
                 new Vector3(0.5f, -0.30f, 0.0f),

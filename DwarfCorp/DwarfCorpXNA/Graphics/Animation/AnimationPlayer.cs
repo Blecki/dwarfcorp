@@ -48,7 +48,7 @@ namespace DwarfCorp
         public int CurrentFrame = 0;
         public int LastFrame = 0;
         public bool IsPlaying = false;
-        public bool IsLooping = false;
+        private bool IsLooping = false;
         private float FrameTimer = 0.0f;
         private Animation CurrentAnimation = null;
         public BillboardPrimitive Primitive = null;
@@ -75,11 +75,9 @@ namespace DwarfCorp
             NoStateChange = 0,
             Reset = 1,
             Play = 2,
-            Loop = 4,
             Stop = 8,
 
             ResetAndPlay = Reset | Play,
-            ResetAndLoop = Reset | Loop | Play,
             ResetAndStop = Reset | Stop
         }
 
@@ -87,6 +85,7 @@ namespace DwarfCorp
         {
             CurrentAnimation = Animation;
             IsLooping = Animation.Loops;
+
             if ((Options & ChangeAnimationOptions.Reset) == ChangeAnimationOptions.Reset)
                 CurrentFrame = 0;
 
@@ -122,19 +121,6 @@ namespace DwarfCorp
         {
             IsPlaying = false;
             CurrentFrame = 0;
-        }
-
-        public void Loop(Animation Animation)
-        {
-            CurrentAnimation = Animation;
-            IsPlaying = true;
-            IsLooping = true;
-        }
-
-        public void StopLooping()
-        {
-            IsPlaying = false;
-            IsLooping = false;
         }
 
         //Todo: What uses this?

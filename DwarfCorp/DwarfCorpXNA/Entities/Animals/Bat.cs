@@ -11,9 +11,13 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Bat : Creature
     {
+        [EntityFactory("Bat")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Bat(Manager, Position);
+        }
 
         public Bat()
         {

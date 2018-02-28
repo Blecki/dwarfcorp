@@ -66,7 +66,7 @@ namespace DwarfCorp.GameStates
 
             return GuiRoot.RootItem.AddChild(new Gui.Widget
             {
-                MinimumSize = new Point(400, 250),
+                MinimumSize = new Point(400, 280),
                 Font = "font18-outline",
                 Border = "basic",
                 Background = new TileReference("sbasic", 0),
@@ -133,6 +133,8 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) => StateManager.PushState(new OptionsState(Game, StateManager)));
 
+            MakeMenuItem(frame, "Manage Mods", "Enable or disable mods & adjust load order.", (sender, args) => StateManager.PushState(new ManageModsState(Game, StateManager)));
+
             MakeMenuItem(frame, "Credits", "View the credits.", (sender, args) => StateManager.PushState(new CreditsState(GameState.Game, StateManager)));
 
 #if DEBUG
@@ -162,11 +164,11 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
-            LogoTexture = Game.Content.Load<Texture2D>("newgui/gamelogo");
+            LogoTexture = AssetManager.GetContentTexture("newgui/gamelogo");
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gui.Root(DwarfGame.GumSkin);
+            GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             MakeMenu();
             IsInitialized = true;

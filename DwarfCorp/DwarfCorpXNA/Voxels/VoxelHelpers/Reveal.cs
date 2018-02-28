@@ -35,7 +35,12 @@ namespace DwarfCorp
                     if (!neighbor.IsValid) continue;
                     if (neighbor.IsExplored) continue;
 
-                    neighbor.Chunk.NotifyExplored(neighbor.Coordinate.GetLocalVoxelCoordinate());
+                    // We are skipping the invalidation mechanism but still need to trigger events.
+                    Data.ChunkManager.NotifyChangedVoxel(new VoxelChangeEvent
+                    {
+                        Type = VoxelChangeEventType.Explored,
+                        Voxel = neighbor
+                    });
                     neighbor.RawSetIsExplored(true);
 
                     if (neighbor.IsEmpty)
@@ -61,17 +66,11 @@ namespace DwarfCorp
         {
             var queue = new Queue<VisitedVoxel>(128);
             var visited = new HashSet<ulong>();
-            var explored = new List<VoxelHandle>();
 
             if (Voxel.IsValid)
             {
                 queue.Enqueue(new VisitedVoxel { Depth = 1, Voxel = Voxel });
-
-                if (!Voxel.IsExplored)
-                {
-                    Voxel.IsExplored = true;
-                    explored.Add(Voxel);
-                }
+                Voxel.IsExplored = true;
             }
 
             while (queue.Count > 0)
@@ -88,12 +87,8 @@ namespace DwarfCorp
                     if (visited.Contains(longHash)) continue;
                     visited.Add(longHash);
 
-                    if (neighbor.IsExplored == false)
-                    {
-                        explored.Add(neighbor);
-                        neighbor.IsExplored = true;
-                    }
-
+                    neighbor.IsExplored = true;
+ 
                     if (neighbor.IsEmpty)
                         queue.Enqueue(new VisitedVoxel
                         {
@@ -102,9 +97,6 @@ namespace DwarfCorp
                         });
                 }
             }
-
-            foreach (var voxel in explored)
-                voxel.Chunk.NotifyExplored(voxel.Coordinate.GetLocalVoxelCoordinate());
         }
     }
 }

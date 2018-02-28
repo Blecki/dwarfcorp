@@ -50,17 +50,23 @@ namespace DwarfCorp
     /// </summary>
     public class ContentPaths
     {
+        public static string ResolveContentPath(string InputPath)
+        {
+            return InputPath;
+        }
+
         public static string Error = ProgramData.CreatePath("Content", "newgui", "error");
 
         public static string controls = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "controls.json");
         public static string settings = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "settings.json");
-        public static string mixer = ProgramData.CreatePath("Content", "Audio", "mixer.json");
-        public static string voxel_types = ProgramData.CreatePath("Content", "voxel-types.json");
-        public static string grass_types = ProgramData.CreatePath("Content", "grass-types.json");
-        public static string decal_types = ProgramData.CreatePath("Content", "decal-types.json");
-        public static string rail_junctions = ProgramData.CreatePath("Content", "rail-junctions.json");
-
-        // Todo: Move to own texture.
+        public static string mixer = ProgramData.CreatePath("Audio", "mixer.json");
+        public static string voxel_types = ProgramData.CreatePath("voxel-types.json");
+        public static string grass_types = ProgramData.CreatePath("grass-types.json");
+        public static string decal_types = ProgramData.CreatePath("decal-types.json");
+        public static string rail_pieces = ProgramData.CreatePath("rail-pieces.json");
+        public static string rail_patterns = ProgramData.CreatePath("rail-patterns.json");
+        public static string craft_items = ProgramData.CreatePath("craft-items.json");
+        public static string resource_items = "resource-items.json";
         public static string rail_tiles = ProgramData.CreatePath("Terrain", "rail");
 
         public class Audio
@@ -382,25 +388,7 @@ namespace DwarfCorp
             public static string races = ProgramData.CreatePath("World", "races.json");
             public static string embarks = ProgramData.CreatePath("World", "embarkments.json");
         }
-
-        public static T LoadFromJson<T>(string asset)
-        {
-            return FileUtils.LoadJsonFromString<T>(ContentPaths.GetFileAsString(asset));
-        }
-
-        public static string GetFileAsString(string asset)
-        {
-            string text = "";
-            using (var stream = TitleContainer.OpenStream("Content" + ProgramData.DirChar + asset))
-            {
-                using (var reader = new StreamReader(stream))
-                {
-                    text = reader.ReadToEnd();
-                }
-            }
-            return text;
-        }
-
+                
         public class Text
         {
             public class Templates
@@ -487,6 +475,7 @@ namespace DwarfCorp
                     public static string bird7 = ProgramData.CreatePath("Entities", "Animals", "Birds", "bird7");
 
                     // Generates a random bird asset string from bird0 to bird7.
+                    // Todo: Should belong to bird type, not contentpaths.
                     public static string GetRandomBird()
                     {
                         return bird_prefix + MathFunctions.Random.Next(8);
@@ -734,6 +723,9 @@ namespace DwarfCorp
             public static string dorf_diplo = ProgramData.CreatePath("GUI", "diplo-dorf");
             public static string checker = ProgramData.CreatePath("GUI", "checker");
             public static string background = ProgramData.CreatePath("GUI", "background");
+
+            public static string Shader = Program.CreatePath("Content", "newgui", "xna_draw");
+            public static string Skin = Program.CreatePath("newgui", "sheets.json");
         }
         public class Logos
         {
@@ -764,13 +756,13 @@ namespace DwarfCorp
         public class Shaders
         {
 
-            public static string BloomCombine = ProgramData.CreatePath("Shaders", "BloomCombine");
-            public static string BloomExtract = ProgramData.CreatePath("Shaders", "BloomExtract");
-            public static string GaussianBlur = ProgramData.CreatePath("Shaders", "GaussianBlur");
-            public static string SkySphere = ProgramData.CreatePath("Shaders", "SkySphere");
-            public static string TexturedShaders = ProgramData.CreatePath("Shaders", "TexturedShaders");
-            public static string FXAA = ProgramData.CreatePath("Shaders", "FXAA");
-            public static string Background = ProgramData.CreatePath("Shaders", "Background");
+            public static string BloomCombine = ProgramData.CreatePath("Content", "Shaders", "BloomCombine");
+            public static string BloomExtract = ProgramData.CreatePath("Content", "Shaders", "BloomExtract");
+            public static string GaussianBlur = ProgramData.CreatePath("Content", "Shaders", "GaussianBlur");
+            public static string SkySphere = ProgramData.CreatePath("Content", "Shaders", "SkySphere");
+            public static string TexturedShaders = ProgramData.CreatePath("Content", "Shaders", "TexturedShaders");
+            public static string FXAA = ProgramData.CreatePath("Content", "Shaders", "FXAA");
+            public static string Background = ProgramData.CreatePath("Content", "Shaders", "Background");
         }
         public class Sky
         {

@@ -51,38 +51,34 @@ namespace DwarfCorp
             public int SpriteRow;
             public int SpriteColumn;
         }
-        public ResourceLibrary.ResourceType Type { get; set; }
-        public string ResourceName { get { return Type; }}
-        public DwarfBux MoneyValue { get; set; }
-        public string Description { get; set; }
-        public NamedImageFrame Image { get; set; }
-        public List<TileReference> GuiLayers { get; set; } 
-        public List<ResourceTags> Tags { get; set; }
-        public float FoodContent { get; set; }
-        public bool SelfIlluminating { get { return Tags.Contains(ResourceTags.SelfIlluminating); }}
-        public bool IsFlammable { get { return Tags.Contains(ResourceTags.Flammable); }}
-        public List<KeyValuePair<Point, string>> CompositeLayers { get; set; }
-        public TrinketInfo TrinketData { get; set; }
 
-        private string shortName = null;
-        public string ShortName 
-        { 
-            get
-            {
-                if (shortName == null) return ResourceName;
-                else return shortName;
-            }
-            set { shortName = value; }
+        public struct CompositeLayer
+        {
+            public string Asset;
+            public Point FrameSize;
+            public Point Frame;
         }
+
+        public ResourceType Name;
+        public DwarfBux MoneyValue;
+        public string Description;
+        public List<TileReference> GuiLayers;
+        public List<ResourceTags> Tags;
+        public float FoodContent;
+        public List<CompositeLayer> CompositeLayers;
+        public TrinketInfo TrinketData;
+
+        public string ShortName;
 
         public string PlantToGenerate { get; set; }
 
         public bool CanCraft { get; set; }
-        public List<Quantitiy<ResourceTags>> CraftPrereqs { get; set; }  
+        public List<Quantitiy<ResourceTags>> CraftPrerequisites { get; set; }
 
         public Color Tint { get; set; }
         public string AleName { get; set; }
 
+        // Todo: Replace this with strings so mods can extend it.
         public enum ResourceTags
         {
             Edible,
@@ -131,10 +127,10 @@ namespace DwarfCorp
 
         public Resource(Resource other)
         {
-            Type = other.Type;
+            Name = other.Name;
+            ShortName = other.ShortName;
             MoneyValue = other.MoneyValue;
             Description = new string(other.Description.ToCharArray());
-            Image = other.Image;
             GuiLayers = new List<TileReference>();
             GuiLayers.AddRange(other.GuiLayers);
             Tint = other.Tint;
@@ -144,37 +140,21 @@ namespace DwarfCorp
             ShortName = other.ShortName;
             PlantToGenerate = other.PlantToGenerate;
             CanCraft = other.CanCraft;
-            CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>();
-            CraftPrereqs.AddRange(other.CraftPrereqs);
+            CraftPrerequisites = new List<Quantitiy<Resource.ResourceTags>>();
+            CraftPrerequisites.AddRange(other.CraftPrerequisites);
+
             if (other.CompositeLayers != null)
             {
-                CompositeLayers = new List<KeyValuePair<Point, string>>();
+                CompositeLayers = new List<CompositeLayer>();
                 CompositeLayers.AddRange(other.CompositeLayers);
             }
             else
             {
                 CompositeLayers = null;
             }
+
             TrinketData = other.TrinketData;
             AleName = other.AleName;
-        }
-
-        public Resource(ResourceLibrary.ResourceType type,  DwarfBux money, string description, NamedImageFrame image, int WidgetsSprite, Color tint, params ResourceTags[] tags)
-        {
-            Type = type;
-            MoneyValue = money;
-            Description = description;
-            Image = image;
-            this.GuiLayers = new List<TileReference>();
-            GuiLayers.Add(new TileReference("resources", WidgetsSprite));
-            Tint = tint;
-            Tags = new List<ResourceTags>();
-            Tags.AddRange(tags);
-            FoodContent = 0;
-            CanCraft = false;
-            CraftPrereqs = new List<Quantitiy<Resource.ResourceTags>>();
-            CompositeLayers = null;
-            AleName = "";
         }
 
         public string GetTagDescription(string delimiter)

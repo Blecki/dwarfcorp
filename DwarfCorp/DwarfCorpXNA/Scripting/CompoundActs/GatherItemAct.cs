@@ -64,10 +64,10 @@ namespace DwarfCorp
 
         public IEnumerable<Status> RemoveItemFromGatherManager()
         {
-            if (!ItemToGather.IsDead)
-            {
-                yield return Status.Fail;
-            }
+            //if (!ItemToGather.IsDead)
+            //{
+            //    yield return Status.Fail;
+            //}
 
             if(Agent.GatherManager.ItemsToGather.Contains(ItemToGather))
             {
@@ -154,7 +154,8 @@ namespace DwarfCorp
                         new StashAct(Agent, StashAct.PickUpType.None, null, "GatherItem", "GatheredResource"),
                         new Wrap(RemoveItemFromGatherManager),
                         new Wrap(AddStockOrder)
-                        ) | (new Wrap(RemoveItemFromGatherManager) & new Wrap(Finally) & false);
+                        ) 
+                        | (new Wrap(RemoveItemFromGatherManager) & new Wrap(Finally) & false);
 
                     Tree.Initialize();
                 }

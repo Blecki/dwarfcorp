@@ -104,15 +104,12 @@ namespace DwarfCorp
         public static void AddClasses(string file)
         {
             if (!staticClassInitialized)
-            {
                 InitializeClassStatics();
-            }
-            List<EmployeeClassDef> defs = ContentPaths.LoadFromJson<List<EmployeeClassDef>>(file);
+
+            List<EmployeeClassDef> defs = FileUtils.LoadJsonListFromMultipleSources<EmployeeClassDef>(file, null, c => c.Name);
 
             foreach (EmployeeClassDef empClass in defs)
-            {
                 Classes[empClass.Name] = new EmployeeClass(empClass);
-            }
         }
 
         protected virtual void InitializeStatics()

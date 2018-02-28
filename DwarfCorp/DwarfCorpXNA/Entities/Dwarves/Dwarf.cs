@@ -153,6 +153,15 @@ namespace DwarfCorp
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
+            AI.Movement.SetCan(MoveType.EnterVehicle, true);
+            AI.Movement.SetCan(MoveType.ExitVehicle, true);
+            AI.Movement.SetCan(MoveType.RideVehicle, true);
+            AI.Movement.SetCost(MoveType.EnterVehicle, 1.0f);
+            AI.Movement.SetCost(MoveType.ExitVehicle, 1.0f);
+            AI.Movement.SetCost(MoveType.RideVehicle, 0.1f);
+            AI.Movement.SetSpeed(MoveType.RideVehicle, 3.0f);
+            AI.Movement.SetSpeed(MoveType.EnterVehicle, 1.0f);
+            AI.Movement.SetSpeed(MoveType.ExitVehicle, 1.0f);
             AI.TriggersMourning = true;
             AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Gender);
             Species = "Dwarf";

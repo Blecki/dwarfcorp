@@ -20,7 +20,7 @@ namespace DwarfCorp.GameStates
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gui.Root(DwarfGame.GumSkin);
+            GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
 
             IsInitialized = true;

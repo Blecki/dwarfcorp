@@ -106,7 +106,7 @@ namespace DwarfCorp
 
         public static void InitializeDefaultLibrary(GraphicsDevice graphics, Texture2D cubeTexture)
         {
-            TypeList = FileUtils.LoadJson<List<VoxelType>>(ContentPaths.voxel_types, false);
+            TypeList = FileUtils.LoadJsonListFromMultipleSources<VoxelType>(ContentPaths.voxel_types, null, v => v.Name);
             emptyType = TypeList[0];
 
             short ID = 0;

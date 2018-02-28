@@ -43,6 +43,16 @@ namespace DwarfCorp
 {
     public class ArrowProjectile : Projectile
     {
+        [EntityFactory("Arrow")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new ArrowProjectile(
+                Manager,
+                Position,
+                Data.GetData("Velocity", Vector3.Up * 10 * MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)),
+                Data.GetData<Body>("Target", null));
+        }
+        
         public ArrowProjectile()
         {
             

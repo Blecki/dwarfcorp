@@ -132,61 +132,70 @@ namespace DwarfCorp
             }
 
             Item.SelectedResources = stashed;
-            if (Item.ItemType.Name == ResourceLibrary.ResourceType.Trinket)
+            ResourceType ResourceCreated = Item.ItemType.ResourceCreated;
+
+            switch (Item.ItemType.CraftActBehavior)
             {
-                Resource craft = ResourceLibrary.GenerateTrinket(stashed.ElementAt(0).ResourceType,
-                    (Agent.Stats.Dexterity + Agent.Stats.Intelligence)/15.0f*MathFunctions.Rand(0.5f, 1.75f));
-                Item.ItemType.ResourceCreated = craft.Type;
-            }
-            else if (Item.ItemType.Name == ResourceLibrary.ResourceType.Meal)
-            {
-                if (stashed.Count < 2)
-                {
-                    yield return Act.Status.Fail;
-                    yield break;
-                }
-                Resource craft = ResourceLibrary.CreateMeal(stashed.ElementAt(0).ResourceType, stashed.ElementAt(1).ResourceType);
-                Item.ItemType.ResourceCreated = craft.Type;
-            }
-            else if (Item.ItemType.Name == ResourceLibrary.ResourceType.Ale)
-            {
-                Resource craft = ResourceLibrary.CreateAle(stashed.ElementAt(0).ResourceType);
-                Item.ItemType.ResourceCreated = craft.Type;
-            }
-            else if (Item.ItemType.Name == ResourceLibrary.ResourceType.Bread)
-            {
-                Resource craft = ResourceLibrary.CreateBread(stashed.ElementAt(0).ResourceType);
-                Item.ItemType.ResourceCreated = craft.Type;
-            }
-            else if (Item.ItemType.Name == ResourceLibrary.ResourceType.GemTrinket)
-            {
-                Resource gem = null;
-                Resource trinket = null;
-                foreach (ResourceAmount stashedResource in stashed)
-                {
-                    if (ResourceLibrary.GetResourceByName(stashedResource.ResourceType).Tags.Contains(Resource.ResourceTags.Craft))
+                case CraftItem.CraftActBehaviors.Trinket:
                     {
-                        trinket = ResourceLibrary.GetResourceByName(stashedResource.ResourceType);
+                        Resource craft = ResourceLibrary.GenerateTrinket(stashed.ElementAt(0).ResourceType,
+                            (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f));
+                        ResourceCreated = craft.Name;
                     }
-
-                    if (ResourceLibrary.GetResourceByName(stashedResource.ResourceType).Tags.Contains(Resource.ResourceTags.Gem))
+                    break;
+                case CraftItem.CraftActBehaviors.Meal:
                     {
-                        gem = ResourceLibrary.GetResourceByName(stashedResource.ResourceType);
+                        if (stashed.Count < 2)
+                        {
+                            yield return Act.Status.Fail;
+                            yield break;
+                        }
+                        Resource craft = ResourceLibrary.CreateMeal(stashed.ElementAt(0).ResourceType, stashed.ElementAt(1).ResourceType);
+                        ResourceCreated = craft.Name;
                     }
-                }
+                    break;
+                case CraftItem.CraftActBehaviors.Ale:
+                    {
+                        Resource craft = ResourceLibrary.CreateAle(stashed.ElementAt(0).ResourceType);
+                        ResourceCreated = craft.Name;
+                    }
+                    break;
+                case CraftItem.CraftActBehaviors.Bread:
+                    {
+                        Resource craft = ResourceLibrary.CreateBread(stashed.ElementAt(0).ResourceType);
+                        ResourceCreated = craft.Name;
+                    }
+                    break;
+                case CraftItem.CraftActBehaviors.GemTrinket:
+                    {
+                        Resource gem = null;
+                        Resource trinket = null;
+                        foreach (ResourceAmount stashedResource in stashed)
+                        {
+                            if (ResourceLibrary.GetResourceByName(stashedResource.ResourceType).Tags.Contains(Resource.ResourceTags.Craft))
+                                trinket = ResourceLibrary.GetResourceByName(stashedResource.ResourceType);
+
+                            if (ResourceLibrary.GetResourceByName(stashedResource.ResourceType).Tags.Contains(Resource.ResourceTags.Gem))
+                                gem = ResourceLibrary.GetResourceByName(stashedResource.ResourceType);
+                        }
 
 
-                if (gem == null || trinket == null)
-                {
-                    yield return Status.Fail;
-                    yield break;
-                }
+                        if (gem == null || trinket == null)
+                        {
+                            yield return Status.Fail;
+                            yield break;
+                        }
 
-                Resource craft = ResourceLibrary.EncrustTrinket(trinket.Type, gem.Type);
-                Item.ItemType.ResourceCreated = craft.Type;
+                        Resource craft = ResourceLibrary.EncrustTrinket(trinket.Name, gem.Name);
+                        ResourceCreated = craft.Name;
+                    }
+                    break;
+                case CraftItem.CraftActBehaviors.Normal:
+                default:
+                    break;
             }
 
-            Resource resource = ResourceLibrary.Resources[Item.ItemType.ResourceCreated];
+            Resource resource = ResourceLibrary.Resources[ResourceCreated];
             Creature.Inventory.AddResource(new ResourceAmount(resource, 1));
             Creature.AI.AddXP((int)Item.ItemType.BaseCraftTime);
             yield return Status.Success;

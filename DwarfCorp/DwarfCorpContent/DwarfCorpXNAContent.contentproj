@@ -2336,9 +2336,17 @@
       <Name>penguin_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="rail-junctions.json">
+    <None Include="craft-items.json">
+      <Name>craft-items</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>rail-junctions</Name>
+    </None>
+    <None Include="rail-patterns.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>rail-patterns</Name>
+    </None>
+    <None Include="rail-pieces.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>rail-pieces</Name>
     </None>
     <None Include="Entities\Animals\Birds\bird0_animation.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2399,6 +2407,10 @@
     <None Include="decal-types.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>decal-types</Name>
+    </None>
+    <None Include="resource-items.json">
+      <Name>resource-items</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="tutorial.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2905,9 +2917,9 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <None Include="newgui\sheets.txt">
+    <None Include="newgui\sheets.json">
       <Name>sheets</Name>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Compile Include="newgui\thin.png">
       <Name>thin</Name>

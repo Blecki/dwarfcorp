@@ -102,6 +102,12 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>DwarfCorpKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -144,20 +150,23 @@
     <Compile Include="AssetManagement\ContentPathGenerator.cs" />
     <Compile Include="AssetManagement\ContentPaths.cs" />
     <Compile Include="AssetManagement\GameSave\ChunkFile.cs" />
-    <Compile Include="AssetManagement\GameSave\FileUtils.cs" />
+    <Compile Include="AssetManagement\FileUtils-SaveJson.cs" />
+    <Compile Include="AssetManagement\FileUtils-Binary.cs" />
+    <Compile Include="AssetManagement\FileUtils-LoadJson.cs" />
     <Compile Include="AssetManagement\GameSave\MetaData.cs" />
     <Compile Include="AssetManagement\GameSave\PlayData.cs" />
     <Compile Include="AssetManagement\GameSave\SaveGame.cs" />
     <Compile Include="AssetManagement\GameSave\JsonConverters\BoxConverter.cs" />
-    <Compile Include="AssetManagement\GameSave\JsonConverters\ContentConverter.cs" />
+    <Compile Include="AssetManagement\GameSave\JsonConverters\TextureContentConverter.cs" />
     <Compile Include="AssetManagement\GameSave\JsonConverters\MatrixConverter.cs" />
     <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
     <Compile Include="AssetManagement\GameSave\OverworldFile.cs" />
-    <Compile Include="AssetManagement\TextureLoader.cs" />
-    <Compile Include="AssetManagement\TextureManager.cs" />
+    <Compile Include="AssetManagement\AssetManager.cs" />
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
+    <Compile Include="Components\AI\WaitForPlanHelper.cs" />
+    <Compile Include="Components\AI\LeaveWorldTask.cs" />
     <Compile Include="Components\AI\Disease.cs" />
     <Compile Include="Components\AI\Gender.cs" />
     <Compile Include="Components\AI\MateTask.cs" />
@@ -180,10 +189,10 @@
     <Compile Include="Components\AI\Sensors\TrapSensor.cs" />
     <Compile Include="Components\AI\Sensors\ExploredListener.cs" />
     <Compile Include="Components\AI\Sensors\DestroyOnTimer.cs" />
+    <Compile Include="Components\IVoxelListener.cs" />
     <Compile Include="Components\VoxelRevealer.cs" />
     <Compile Include="Components\VoxelChangeEvent.cs" />
-    <Compile Include="Components\NewVoxelListener.cs" />
-    <Compile Include="Components\AI\Sensors\VoxelListener.cs" />
+    <Compile Include="Components\GenericVoxelListener.cs" />
     <Compile Include="Components\AI\StatBuff.cs" />
     <Compile Include="Components\AI\ThoughtBuff.cs" />
     <Compile Include="Components\Body.cs" />
@@ -200,11 +209,20 @@
     <Compile Include="Components\Graphics\SimpleSprite.cs" />
     <Compile Include="ContextCommands\ChopCommand.cs" />
     <Compile Include="ContextCommands\ContextCommand.cs" />
+    <Compile Include="Debugger.cs" />
     <Compile Include="Entities\Balloon.cs" />
+    <Compile Include="Entities\Dwarves\DwarfFactory.cs" />
+    <Compile Include="Entities\DebugFactories.cs" />
+    <Compile Include="Entities\Fixtures\Barrel.cs" />
     <Compile Include="Entities\Fixtures\CoinPileFixture.cs" />
     <Compile Include="Entities\Fixtures\Banner.cs" />
     <Compile Include="Entities\Fixtures\Fence.cs" />
-    <Compile Include="Entities\Fixtures\RailPiece.cs" />
+    <Compile Include="Entities\Plants\PlantFactories.cs" />
+    <Compile Include="GameStates\ManageModsState.cs" />
+    <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
+    <Compile Include="Scripting\Player\Economy\Quantity.cs" />
+    <Compile Include="Scripting\Player\Economy\ResourceType.cs" />
+    <Compile Include="Voxels\Rail\RailEntity.cs" />
     <Compile Include="Entities\Plants\Pumpkin.cs" />
     <Compile Include="Entities\Plants\Cactus.cs" />
     <Compile Include="Entities\Plants\Seedling.cs" />
@@ -271,7 +289,6 @@
     <Compile Include="Entities\EntityFactory.cs" />
     <Compile Include="Entities\Fixtures\Bookshelf.cs" />
     <Compile Include="Entities\Fixtures\Stove.cs" />
-    <Compile Include="Entities\Fixtures\Barrel.cs" />
     <Compile Include="Entities\Fixtures\Anvil.cs" />
     <Compile Include="Entities\Fixtures\Bed.cs" />
     <Compile Include="Entities\Fixtures\Chair.cs" />
@@ -407,7 +424,7 @@
     <Compile Include="Scripting\LeafActs\PutMoneyInZoneAct.cs" />
     <Compile Include="Scripting\LeafActs\StashMoneyAct.cs" />
     <Compile Include="Scripting\Player\Building\CraftDesignation.cs" />
-    <Compile Include="Scripting\Player\Tools\BuildRailTool.cs" />
+    <Compile Include="Voxels\Rail\BuildRailTool.cs" />
     <Compile Include="Scripting\Player\Tools\BuildObjectTool.cs" />
     <Compile Include="Scripting\Player\Tools\CookTool.cs" />
     <Compile Include="Scripting\Player\Tools\BuildWallTool.cs" />
@@ -448,6 +465,8 @@
     <Compile Include="Voxels\Rail\JunctionPattern.cs" />
     <Compile Include="Voxels\Rail\RailPiece.cs" />
     <Compile Include="Voxels\Rail\Orientation.cs" />
+    <Compile Include="Voxels\Rail\RailHelper.cs" />
+    <Compile Include="Voxels\Rail\RailSprite.cs" />
     <Compile Include="Voxels\VoxelChunk-Motes.cs" />
     <Compile Include="Voxels\VoxelHelpers\GetVoxelBoundingBox.cs" />
     <Compile Include="Voxels\VoxelHelpers\GetVoxelAbove.cs" />
@@ -813,6 +832,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="DwarfCorpKey.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

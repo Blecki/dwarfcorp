@@ -43,6 +43,16 @@ namespace DwarfCorp
 {
     public class FireballProjectile : Projectile
     {
+        [EntityFactory("Fireball")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new FireballProjectile(
+                Manager,
+                Position,
+                Data.GetData("Velocity", Vector3.Up * 10 * MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)),
+                Data.GetData<Body>("Target", null));
+        }
+
         public FireballProjectile()
         {
             

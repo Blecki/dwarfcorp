@@ -63,11 +63,6 @@ namespace DwarfCorp
             Priority = PriorityType.High;
         }
 
-        public override Task Clone()
-        {
-            return new BuildRoomTask(Zone);
-        }
-
         public override Feasibility IsFeasible(Creature agent)
         {
             return Zone != null && agent.Stats.IsTaskAllowed(Task.TaskCategory.BuildZone) ? Feasibility.Feasible : Feasibility.Infeasible;

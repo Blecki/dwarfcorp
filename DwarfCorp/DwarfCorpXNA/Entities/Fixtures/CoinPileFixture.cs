@@ -9,6 +9,13 @@ namespace DwarfCorp
 {
     public class CoinPileFixture : Fixture
     {
+        [EntityFactory("Coins")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new CoinPileFixture(Manager, Position);
+        }
+
+
         private int _frame = -1;
         public void SetFullness(float value)
         {
@@ -17,7 +24,14 @@ namespace DwarfCorp
 
             if (_frame != frame)
             {
-                ResetSprite(new SpriteSheet(ContentPaths.Entities.DwarfObjects.coinpiles, 32, 32), new Point(frame, 0));
+                Frame = new Point(frame, 0);
+
+                var childrenToKill = Children.OfType<SimpleSprite>().ToList();
+                foreach (var child in childrenToKill)
+                    child.Delete();
+
+                CreateCosmeticChildren(Manager);
+
                 _frame = frame;
             }
             

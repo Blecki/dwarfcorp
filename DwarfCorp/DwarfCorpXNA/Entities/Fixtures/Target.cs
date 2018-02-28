@@ -40,9 +40,14 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Target : Fixture
     {
+        [EntityFactory("Target")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Target(Manager, Position);
+        }
+
         public Target()
         {
 
