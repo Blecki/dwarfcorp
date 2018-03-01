@@ -1,87 +1,7 @@
 [
-
   {
     "Name": "ortho-straight",
     "Tile": "0, 0",
-    "CombinationTable": [
-      {
-        "Overlay": "ortho-straight",
-        "OverlayRelativeOrientation": "East",
-        "Result": "ortho-cross",
-        "ResultRelativeOrientation": "North"
-      },
-
-      {
-        "Overlay": "ortho-straight",
-        "OverlayRelativeOrientation": "West",
-        "Result": "ortho-cross",
-        "ResultRelativeOrientation": "North"
-      },
-
-      {
-        "Overlay": "ortho-straight",
-        "OverlayRelativeOrientation": "South",
-        "Result": "ortho-straight",
-        "ResultRelativeOrientation": "North"
-      },
-
-      {
-        "Overlay": "ortho-to-diag-right",
-        "OverlayRelativeOrientation": "North",
-        "Result": "ortho-diag-switch-right",
-        "ResultRelativeOrientation": "South"
-      },
-
-      {
-        "Overlay": "ortho-to-diag-right",
-        "OverlayRelativeOrientation": "South",
-        "Result": "ortho-diag-switch-right",
-        "ResultRelativeOrientation": "North"
-      },
-
-      {
-        "Overlay": "ortho-to-diag-right",
-        "OverlayRelativeOrientation": "East",
-        "Result": "ortho-diag-switch-left",
-        "ResultRelativeOrientation": "North"
-      },
-
-      {
-        "Overlay": "ortho-to-diag-right",
-        "OverlayRelativeOrientation": "West",
-        "Result": "ortho-diag-switch-left",
-        "ResultRelativeOrientation": "South"
-      },
-
-      {
-        "Overlay": "diag-edge-1",
-        "OverlayRelativeOrientation": "North",
-        "Result": "ortho-under-diag-edge-right",
-        "ResultRelativeOrientation": "South"
-      },
-
-      {
-        "Overlay": "diag-edge-1",
-        "OverlayRelativeOrientation": "South",
-        "Result": "ortho-under-diag-edge-right",
-        "ResultRelativeOrientation": "North"
-      },
-
-      {
-        "Overlay": "diag-edge-1",
-        "OverlayRelativeOrientation": "East",
-        "Result": "ortho-under-diag-edge-left",
-        "ResultRelativeOrientation": "North"
-      },
-
-      {
-        "Overlay": "diag-edge-1",
-        "OverlayRelativeOrientation": "West",
-        "Result": "ortho-under-diag-edge-left",
-        "ResultRelativeOrientation": "South"
-      }
-
-    ],
     "SplinePoints": [
       [
         "-0.5, 0.1, 0",
@@ -120,14 +40,6 @@
   {
     "Name": "ortho-small-curve",
     "Tile": "0, 1",
-    "CombinationTable": [
-      {
-        "Overlay": "diag-edge-1",
-        "OverlayRelativeOrientation": "South",
-        "Result": "ortho-small-curve-under-diag-edge",
-        "ResultRelativeOrientation": "North"
-      }
-    ],
     "SplinePoints": [
       [
         "-0.5, 0.1, 0",
@@ -177,54 +89,17 @@
 
   {
     "Name": "diag-straight",
-    "Tile": "7, 0",
-    "CombinationTable": [
-      {
-        "Overlay": "diag-straight",
-        "OverlayRelativeOrientation": "East",
-        "Result": "diag-cross",
-        "ResultRelativeOrientation": "North"
-      },
-
-      {
-        "Overlay": "diag-straight",
-        "OverlayRelativeOrientation": "West",
-        "Result": "diag-cross",
-        "ResultRelativeOrientation": "North"
-      }
-    ]
+    "Tile": "7, 0"
   },
 
   {
     "Name": "diag-cross",
-    "Tile": "5, 3"
+    "Tile": "5, 2"
   },
 
   {
     "Name": "ortho-to-diag-right",
     "Tile": "1, 0",
-    "CombinationTable": [
-      {
-        "Overlay": "ortho-straight",
-        "OverlayRelativeOrientation": "North",
-        "Result": "ortho-diag-switch-right",
-        "ResultRelativeOrientation": "South"
-      },
-
-      {
-        "Overlay": "ortho-straight",
-        "OverlayRelativeOrientation": "South",
-        "Result": "ortho-diag-switch-right",
-        "ResultRelativeOrientation": "South"
-      },
-
-      {
-        "Overlay": "ortho-to-diag-right",
-        "OverlayRelativeOrientation": "East",
-        "Result": "ortho-to-diag-y",
-        "ResultRelativeOrientation": "North"
-      }
-    ],
     "SplinePoints": [
       [
         "-0.5, 0.1, 0",
@@ -236,92 +111,12 @@
 
   {
     "Name": "diag-edge-1",
-    "Tile": "2, 0",
-    "CombinationTable": [
-      {
-        "Overlay": "ortho-small-curve",
-        "OverlayRelativeOrientation": "South",
-        "Result": "ortho-small-curve-under-diag-edge",
-        "ResultRelativeOrientation": "South"
-      },
-
-      {
-        "Overlay": "diag-edge-1",
-        "OverlayRelativeOrientation": "South",
-        "Result": "diag-edge-2-opposite",
-        "ResultRelativeOrientation": "North"
-      },
-
-      {
-        "Overlay": "ortho-straight",
-        "OverlayRelativeOrientation": "North",
-        "Result": "ortho-under-diag-edge-right",
-        "ResultRelativeOrientation": "North"
-      },
-
-      {
-        "Overlay": "ortho-straight",
-        "OverlayRelativeOrientation": "South",
-        "Result": "ortho-under-diag-edge-right",
-        "ResultRelativeOrientation": "North"
-      },
-
-      {
-        "Overlay": "ortho-straight",
-        "OverlayRelativeOrientation": "East",
-        "Result": "ortho-under-diag-edge-left",
-        "ResultRelativeOrientation": "West"
-      },
-
-      {
-        "Overlay": "ortho-straight",
-        "OverlayRelativeOrientation": "West",
-        "Result": "ortho-under-diag-edge-left",
-        "ResultRelativeOrientation": "West"
-      },
-
-      {
-        "Overlay": "diag-edge-1",
-        "OverlayRelativeOrientation": "East",
-        "Result": "diag-edge-2-adjacent",
-        "ResultRelativeOrientation": "North"
-      },
-
-      {
-        "Overlay": "diag-edge-1",
-        "OverlayRelativeOrientation": "West",
-        "Result": "diag-edge-2-adjacent",
-        "ResultRelativeOrientation": "West"
-      }
-
-    ]
+    "Tile": "2, 0"    
   },
 
   {
     "Name": "ortho-to-diag-left",
     "Tile": "2, 1",
-    "CombinationTable": [
-      {
-        "Overlay": "ortho-straight",
-        "OverlayRelativeOrientation": "East",
-        "Result": "ortho-diag-switch-left",
-        "ResultRelativeOrientation": "West"
-      },
-
-      {
-        "Overlay": "ortho-straight",
-        "OverlayRelativeOrientation": "West",
-        "Result": "ortho-diag-switch-left",
-        "ResultRelativeOrientation": "West"
-      },
-
-      {
-        "Overlay": "ortho-to-diag-right",
-        "OverlayRelativeOrientation": "West",
-        "Result": "ortho-to-diag-y",
-        "ResultRelativeOrientation": "West"
-      }
-    ],
     "SplinePoints": [
       [
         "-0.5, 0.1, 0.5",
@@ -345,49 +140,12 @@
 
   {
     "Name": "diag-edge-2-opposite",
-    "Tile": "2, 2",
-    "CombinationTable": [
-      {
-        "Overlay": "ortho-straight",
-        "OverlayRelativeOrientation": "North",
-        "Result": "ortho-under-diag-edge-2-opposite-left",
-        "ResultRelativeOrientation": "North"
-      },
-
-      {
-        "Overlay": "ortho-straight",
-        "OverlayRelativeOrientation": "South",
-        "Result": "ortho-under-diag-edge-2-opposite-left",
-        "ResultRelativeOrientation": "North"
-      },
-
-      {
-        "Overlay": "ortho-straight",
-        "OverlayRelativeOrientation": "East",
-        "Result": "ortho-under-diag-edge-2-opposite-right",
-        "ResultRelativeOrientation": "East"
-      },
-
-      {
-        "Overlay": "ortho-straight",
-        "OverlayRelativeOrientation": "West",
-        "Result": "ortho-under-diag-edge-2-opposite-right",
-        "ResultRelativeOrientation": "East"
-      }
-    ]
+    "Tile": "2, 2"
   },
 
   {
     "Name": "diag-edge-3",
-    "Tile": "6, 1",
-    "CombinationTable": [
-      {
-        "Overlay": "diag-edge-1",
-        "OverlayRelativeOrientation": "West",
-        "Result": "diag-edge-4",
-        "ResultRelativeOrientation": "North"
-      }
-    ]
+    "Tile": "6, 1"
   },
 
   {
@@ -398,14 +156,6 @@
   {
     "Name": "ortho-under-diag-edge-right",
     "Tile": "3, 0",
-    "CombinationTable": [
-      {
-        "Overlay": "diag-edge-1",
-        "OverlayRelativeOrientation": "North",
-        "Result": "ortho-under-diag-edge-2-opposite-left",
-        "ResultRelativeOrientation": "North"
-      }
-    ],
     "SplinePoints": [
       [
         "-0.5, 0.1, 0",
@@ -434,14 +184,6 @@
   {
     "Name": "ortho-under-diag-edge-left",
     "Tile": "6, 0",
-    "CombinationTable": [
-      {
-        "Overlay": "diag-edge-1",
-        "OverlayRelativeOrientation": "South",
-        "Result": "ortho-under-diag-edge-2-opposite-right",
-        "ResultRelativeOrientation": "North"
-      }
-    ],
     "SplinePoints": [
       [
         "-0.5, 0.1, 0",
@@ -487,22 +229,7 @@
 
   {
     "Name": "diag-edge-2-adjacent",
-    "Tile": "5, 1",
-    "CombinationTable": [
-      {
-        "Overlay": "diag-edge-1",
-        "OverlayRelativeOrientation": "South",
-        "Result": "diag-edge-3",
-        "ResultRelativeOrientation": "North"
-      },
-
-      {
-        "Overlay": "diag-edge-1",
-        "OverlayRelativeOrientation": "West",
-        "Result": "diag-edge-3",
-        "ResultRelativeOrientation": "West"
-      }
-    ]
+    "Tile": "5, 1"
   },
 
   {
@@ -548,5 +275,20 @@
   {
     "Name": "diag-t",
     "Tile": "6, 3"
+  },
+
+  {
+    "Name": "diag-under-diag-edge",
+    "Tile": "3, 2"
+  },
+
+  {
+    "Name": "diag-under-diag-edge-2-opposite",
+    "Tile": "4, 2"
+  },
+
+  {
+    "Name": "diag-under-diag-edge-4",
+    "Tile": "5, 2"
   }
 ]

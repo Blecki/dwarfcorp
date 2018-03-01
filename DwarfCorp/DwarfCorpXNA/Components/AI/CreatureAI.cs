@@ -486,7 +486,8 @@ namespace DwarfCorp
                 }
                 else if (status == Act.Status.Success)
                 {
-                    CurrentTask.IsComplete = true;
+                    if (CurrentTask != null) // How? Some Act must be changing the current task!
+                        CurrentTask.IsComplete = true;
                 }
 
                 if (status != Act.Status.Running && !retried)

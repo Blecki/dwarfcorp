@@ -1,6 +1,6 @@
 [
   {
-    "Name": "basic",
+    "Name": "ortho",
     "Icon": 0,
     "Pieces": [
       {
@@ -21,7 +21,7 @@
   },
 
   {
-    "Name": "long-basic",
+    "Name": "long-ortho",
     "Icon": 0,
     "Pieces": [
       {
@@ -47,7 +47,7 @@
   },
 
   {
-    "Name": "extra-long-basic",
+    "Name": "extra-long-ortho",
     "Icon": 0,
     "Pieces": [
       {
@@ -192,6 +192,120 @@
       "Offset": "1, 1",
       "Direction": "East"
     }
+  },
+
+  {
+    "Name": "ortho-to-diag-right",
+    "Icon": 4,
+    "Pieces": [
+      {
+        "Offset": "0, 0",
+        "RailPiece": "diag-edge-1",
+        "Orientation": "South"
+      },
+      {
+        "Offset": "0, 1",
+        "RailPiece": "ortho-to-diag-right",
+        "Orientation": "North"
+      },
+      {
+        "Offset": "1, 0",
+        "RailPiece": "diag-end",
+        "Orientation": "North"
+      },
+      {
+        "Offset": "1, 1",
+        "RailPiece": "diag-edge-1",
+        "Orientation": "North"
+      }
+    ]
+  },
+
+  {
+    "Name": "ortho-to-diag-left",
+    "Icon": 4,
+    "Pieces": [
+      {
+        "Offset": "0, 0",
+        "RailPiece": "diag-edge-1",
+        "Orientation": "South"
+      },
+      {
+        "Offset": "0, 1",
+        "RailPiece": "diag-end",
+        "Orientation": "South"
+      },
+      {
+        "Offset": "1, 0",
+        "RailPiece": "ortho-to-diag-left",
+        "Orientation": "North"
+      },
+      {
+        "Offset": "1, 1",
+        "RailPiece": "diag-edge-1",
+        "Orientation": "North"
+      }
+    ]
+  },
+
+  {
+    "Name": "diag",
+    "Icon": 4,
+    "Pieces": [
+      {
+        "Offset": "0, 0",
+        "RailPiece": "diag-edge-1",
+        "Orientation": "South"
+      },
+      {
+        "Offset": "0, 1",
+        "RailPiece": "diag-end",
+        "Orientation": "South"
+      },
+      {
+        "Offset": "1, 0",
+        "RailPiece": "diag-end",
+        "Orientation": "North"
+      },
+      {
+        "Offset": "1, 1",
+        "RailPiece": "diag-edge-1",
+        "Orientation": "North"
+      }
+    ]
+  },
+
+  {
+    "Name": "long-diag",
+    "Icon": 4,
+    "Pieces": [
+      {
+        "Offset": "0, 0",
+        "RailPiece": "diag-edge-1",
+        "Orientation": "South"
+      },
+
+      {
+        "Offset": "1, 0",
+        "RailPiece": "diag-straight",
+        "Orientation": "North"
+      },
+      {
+        "Offset": "1, 1",
+        "RailPiece": "diag-edge-1",
+        "Orientation": "North"
+      },
+      {
+        "Offset": "1, -1",
+        "RailPiece": "diag-edge-1",
+        "Orientation": "South"
+      },
+      {
+        "Offset": "2, 0",
+        "RailPiece": "diag-edge-1",
+        "Orientation": "North"
+      }
+    ]
   },
 
   {

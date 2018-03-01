@@ -39,7 +39,7 @@ namespace DwarfCorp.Rail
             {
                 BasePiece = Combination.OverlayPiece,
                 OverlayPiece = Combination.BasePiece,
-                OverlayRelativeOrientation = OrientationHelper.Opposite(Combination.OverlayRelativeOrientation),
+                OverlayRelativeOrientation = OrientationHelper.Relative(Combination.OverlayRelativeOrientation, Orientation.North),
                 Result = Combination.Result,
                 ResultRelativeOrientation = OrientationHelper.Relative(Combination.OverlayRelativeOrientation, Combination.ResultRelativeOrientation)
             };
@@ -49,7 +49,7 @@ namespace DwarfCorp.Rail
             {
                 BasePiece = Combination.Result,
                 OverlayPiece = Combination.BasePiece,
-                OverlayRelativeOrientation = OrientationHelper.Opposite(Combination.ResultRelativeOrientation),
+                OverlayRelativeOrientation = OrientationHelper.Relative(Combination.ResultRelativeOrientation, Orientation.North),
                 Result = Combination.Result,
                 ResultRelativeOrientation = Orientation.North
             };
