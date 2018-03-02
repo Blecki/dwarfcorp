@@ -60,9 +60,9 @@ namespace DwarfCorp.Rail
             Description = "Rail.",
             RequiredResources = new List<Quantitiy<Resource.ResourceTags>>
                         {
-                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Metal, 2)
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Rail, 1)
                         },
-            Icon = new Gui.TileReference("beartrap", 0),
+            Icon = new Gui.TileReference("resources", 38),
             BaseCraftTime = 10,
             Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround },
             CraftLocation = "",
