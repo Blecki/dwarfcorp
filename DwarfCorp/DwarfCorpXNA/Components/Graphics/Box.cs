@@ -71,6 +71,7 @@ namespace DwarfCorp
                 pass.Apply();
                 PrimitiveLibrary.BoxPrimitives[Primitive].Render(graphicsDevice);
             }
+            EndDraw(effect);
         }
     }
 

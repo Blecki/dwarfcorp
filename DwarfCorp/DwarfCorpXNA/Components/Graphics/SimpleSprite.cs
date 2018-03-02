@@ -211,7 +211,7 @@ namespace DwarfCorp
 
             effect.VertexColorTint = origTint;
             effect.EnableWind = false;
-
+            EndDraw(effect);
             GamePerformance.Instance.StopTrackPerformance("Render - Simple Sprite");
         }
     }

@@ -260,6 +260,7 @@ namespace DwarfCorp
             {
                 sprites.Render(graphicsDevice, effect, camera);
             }
+            EndDraw(effect);
         }
 
         public Particle CreateParticle(Vector3 pos, Vector3 velocity, Color tint)

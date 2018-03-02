@@ -53,6 +53,8 @@ namespace DwarfCorp
         public Color VertexColorTint { get; set; }
         public bool FrustumCull { get { return true; } }
         public bool Stipple { get; set; }
+        private string previousEffect = null;
+        private Color previousColor = Color.White;
 
         [JsonIgnore]
         public Color OneShotTint = Color.White;
@@ -108,6 +110,7 @@ namespace DwarfCorp
 
         public void ApplyTintingToEffect(Shader effect)
         {
+            previousColor = effect.VertexColorTint;
             effect.LightRampTint = Tint;
             var tintVec = VertexColorTint.ToVector4();
             var oneShotvec = OneShotTint.ToVector4();
@@ -118,10 +121,24 @@ namespace DwarfCorp
             effect.VertexColorTint = new Color(tintVec);
             OneShotTint = Color.White;
 
-            if (Stipple)
+            if (Stipple && effect.CurrentTechnique != effect.Techniques[Shader.Technique.SelectionBuffer] && effect.CurrentTechnique != effect.Techniques[Shader.Technique.SelectionBufferInstanced]) 
             {
+                previousEffect = effect.CurrentTechnique.Name;
                 effect.CurrentTechnique = effect.Techniques[Shader.Technique.Stipple];
             }
+            else
+            {
+                previousEffect = null;
+            }
+        }
+
+        public void EndDraw(Shader shader)
+        {
+            if (!String.IsNullOrEmpty(previousEffect))
+            {
+                shader.CurrentTechnique = shader.Techniques[previousEffect];
+            }
+            shader.VertexColorTint = previousColor;
         }
     }
 
