@@ -126,6 +126,8 @@ namespace DwarfCorp.Rail
             PreviewBodies.Clear();
             Pattern = null;
             SelectedResources = null;
+            Player.VoxSelector.DrawVoxel = true;
+            Player.VoxSelector.DrawBox = true;
         }
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
@@ -174,6 +176,8 @@ namespace DwarfCorp.Rail
 
             Player.VoxSelector.Enabled = true;
             Player.BodySelector.Enabled = false;
+            Player.VoxSelector.DrawBox = false;
+            Player.VoxSelector.DrawVoxel = false;
 
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);

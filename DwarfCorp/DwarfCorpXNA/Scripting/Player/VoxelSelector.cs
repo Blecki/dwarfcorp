@@ -125,6 +125,9 @@ namespace DwarfCorp
 
         public WorldManager World;
 
+        public bool DrawBox = true;
+        public bool DrawVoxel = true;
+
         public VoxelSelector(WorldManager world, Camera camera, GraphicsDevice graphics, ChunkManager chunks)
         {
             World = world;
@@ -307,7 +310,7 @@ namespace DwarfCorp
             LastMouseWheel = mouse.ScrollWheelValue;
 
             // Draw a box around the current voxel under the mouse.
-            if (underMouse.IsValid)
+            if (underMouse.IsValid && DrawVoxel)
             {
                 BoundingBox box = underMouse.GetBoundingBox().Expand(0.05f);
                 Drawer3D.DrawBox(box, CurrentColor, CurrentWidth, true);
@@ -638,7 +641,8 @@ namespace DwarfCorp
 
             BoundingBox superset = GetSelectionBox(0.1f);
 
-            Drawer3D.DrawBox(superset, Mouse.GetState().LeftButton == ButtonState.Pressed ? SelectionColor : DeleteColor,
+            if (DrawBox)
+                Drawer3D.DrawBox(superset, Mouse.GetState().LeftButton == ButtonState.Pressed ? SelectionColor : DeleteColor,
                 SelectionWidth, false);
 
             var screenRect = new Rectangle(0, 0, 5, 5);
