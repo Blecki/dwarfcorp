@@ -150,6 +150,7 @@ namespace DwarfCorp.Rail
             var r = new RailEntity(Manager, Location, Piece);
             Manager.RootComponent.AddChild(r);
             r.SetFlagRecursive(GameComponent.Flag.Active, false);
+            
             //Todo: Add craft details component.
             return r;
         }
@@ -301,7 +302,14 @@ namespace DwarfCorp.Rail
             }
 
             foreach (var body in PreviewBodies)
+            {
                 body.SetTintRecursive(tint);
+                var tinters = body.EnumerateAll().OfType<Tinter>();
+                foreach(var tinter in tinters)
+                {
+                    tinter.Stipple = true;
+                }
+            }
         }
 
         private GlobalVoxelCoordinate OffsetCoordinateThroughPortal(GlobalVoxelCoordinate C, JunctionPortal Portal)
