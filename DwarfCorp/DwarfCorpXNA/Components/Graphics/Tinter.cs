@@ -120,7 +120,12 @@ namespace DwarfCorp
             tintVec.W *= oneShotvec.W;
             effect.VertexColorTint = new Color(tintVec);
             OneShotTint = Color.White;
-
+#if DEBUG
+            if(effect.CurrentTechnique.Name == Shader.Technique.Stipple)
+            {
+                throw new InvalidOperationException("Stipple technique not cleaned up. Was EndDraw called?");
+            }
+#endif
             if (Stipple && effect.CurrentTechnique != effect.Techniques[Shader.Technique.SelectionBuffer] && effect.CurrentTechnique != effect.Techniques[Shader.Technique.SelectionBufferInstanced]) 
             {
                 previousEffect = effect.CurrentTechnique.Name;
