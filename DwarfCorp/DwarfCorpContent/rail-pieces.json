@@ -89,7 +89,13 @@
 
   {
     "Name": "diag-straight",
-    "Tile": "7, 0"
+    "Tile": "7, 0",
+    "SplinePoints": [
+      [
+        "-0.5, 0.1, 0.5",
+        "0.5, 0.1, -0.5"
+      ]
+    ]
   },
 
   {
@@ -230,16 +236,6 @@
   {
     "Name": "diag-edge-2-adjacent",
     "Tile": "5, 1"
-  },
-
-  {
-    "Name": "diag-end",
-    "Tile": "6, 2"
-  },
-
-  {
-    "Name": "diag-alone",
-    "Tile": "7, 2"
   },
 
   {

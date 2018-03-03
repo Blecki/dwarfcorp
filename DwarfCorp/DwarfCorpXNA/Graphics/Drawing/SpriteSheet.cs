@@ -146,5 +146,28 @@ namespace DwarfCorp
         {
             return new NamedImageFrame(AssetName, new Rectangle(position.X * FrameWidth, position.Y * FrameHeight, FrameWidth, FrameHeight));
         }
+
+        public Vector2[] GenerateTileUVs(Point Frame, out Vector4 Bounds)
+        {
+            float normalizeX = FrameWidth / (float)(Width);
+            float normalizeY = FrameHeight / (float)(Height);
+
+            var uvs = new Vector2[]
+                {
+                    new Vector2(0.0f, 0.0f),
+                    new Vector2(1.0f, 0.0f),
+                    new Vector2(1.0f, 1.0f),
+                    new Vector2(0.0f, 1.0f)
+                };
+
+            Vector2 pixelCoords = new Vector2(Frame.X * FrameWidth, Frame.Y * FrameHeight);
+            Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float)Width, pixelCoords.Y / (float)Height);
+            Bounds = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
+
+            for (int vert = 0; vert < 4; vert++)
+                uvs[vert] = new Vector2(normalizedCoords.X + uvs[vert].X * normalizeX, normalizedCoords.Y + uvs[vert].Y * normalizeY);
+
+            return uvs;
+        }
     }
 }

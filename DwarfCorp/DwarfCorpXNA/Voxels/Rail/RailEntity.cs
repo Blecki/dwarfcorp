@@ -229,6 +229,11 @@ namespace DwarfCorp.Rail
         private void DetachNeighbor(uint ID)
         {
             NeighborRails.RemoveAll(connection => connection.NeighborID == ID);
+
+            var spriteChild = EnumerateChildren().OfType<RailSprite>().FirstOrDefault() as RailSprite;
+
+            if (spriteChild != null)
+                spriteChild.ResetPrimitive();
         }
 
         private void AttachToNeighbors()
@@ -261,6 +266,11 @@ namespace DwarfCorp.Rail
                 NeighborID = ID,
                 Position = Position
             });
+
+            var spriteChild = EnumerateChildren().OfType<RailSprite>().FirstOrDefault() as RailSprite;
+
+            if (spriteChild != null)
+                spriteChild.ResetPrimitive();
         }
 
         public override void Delete()
@@ -289,7 +299,7 @@ namespace DwarfCorp.Rail
 
             if (spriteChild != null)
             {
-                spriteChild.LocalTransform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
+                //spriteChild.LocalTransform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
 
                 switch (piece.Shape)
                 {
@@ -313,13 +323,14 @@ namespace DwarfCorp.Rail
                         break;
                 }
 
-                spriteChild.SetFrame(piece.Tile);
+                spriteChild.SetFrame(piece.Tile, Piece.Orientation);
+                spriteChild.ResetPrimitive();
             }
 
             // Hack to make the listener update it's damn bounding box
             EnumerateChildren().OfType<GenericVoxelListener>().FirstOrDefault().LocalTransform = Matrix.Identity;
 
-            AttachToNeighbors();
+            AttachToNeighbors();            
         }
     }
 }

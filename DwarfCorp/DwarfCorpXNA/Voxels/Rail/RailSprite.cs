@@ -11,11 +11,12 @@ namespace DwarfCorp.Rail
 {
     public class RailSprite : Tinter, IRenderableComponent
     {
+        private const float sqrt2 = 1.41421356237f;
         private SpriteSheet Sheet;
         private Point Frame;
-        private ExtendedVertex[] Verticies;
-        private int[] Indicies;
+        private RawPrimitive Primitive;
         public float[] VertexHeightOffsets = new float[] { 0.0f, 0.0f, 0.0f, 0.0f };
+        private Orientation Orientation;
 
         public RailSprite(
             ComponentManager Manager,
@@ -33,10 +34,16 @@ namespace DwarfCorp.Rail
         {
         }
         
-        public void SetFrame(Point Frame)
+        public void SetFrame(Point Frame, Orientation Orientation)
         {
             this.Frame = Frame;
-            Verticies = null;
+            this.Orientation = Orientation;
+            ResetPrimitive();
+        }
+
+        public void ResetPrimitive()
+        {
+            Primitive = null;
         }
 
         // Perhaps should be handled in base class?
@@ -63,7 +70,29 @@ namespace DwarfCorp.Rail
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
-        public void Render(DwarfTime gameTime,
+        private float AngleBetweenVectors(Vector2 A, Vector2 B)
+        {
+            A.Normalize();
+            B.Normalize();
+            float DotProduct = Vector2.Dot(A, B);
+            DotProduct = MathHelper.Clamp(DotProduct, -1.0f, 1.0f);
+            float Angle = (float)System.Math.Acos(DotProduct);
+            if (CrossZ(A, B) < 0) return -Angle;
+            return Angle;
+        }
+
+        private float CrossZ(Vector2 A, Vector2 B)
+        {
+            return (B.Y * A.X) - (B.X * A.Y);
+        }
+
+        private float Sign(float F)
+        {
+            if (F < 0) return -1.0f;
+            return 1.0f;
+        }
+
+        public override void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,
@@ -74,39 +103,86 @@ namespace DwarfCorp.Rail
             if (!IsVisible)
                 return;
 
-            if (Verticies == null)
+            if (Primitive == null)
             {
-                float normalizeX = Sheet.FrameWidth / (float)(Sheet.Width);
-                float normalizeY = Sheet.FrameHeight / (float)(Sheet.Height);
+                var bounds = Vector4.Zero;
+                var uvs = Sheet.GenerateTileUVs(Frame, out bounds);
 
-                List<Vector2> uvs = new List<Vector2>
+                var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Orientation);
+
+                Primitive = new RawPrimitive();
+                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(-0.5f, VertexHeightOffsets[0], 0.5f), transform), Color.White, Color.White, uvs[0], bounds));
+                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(0.5f, VertexHeightOffsets[1], 0.5f), transform), Color.White, Color.White, uvs[1], bounds));
+                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(0.5f, VertexHeightOffsets[2], -0.5f), transform), Color.White, Color.White, uvs[2], bounds));
+                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(-0.5f, VertexHeightOffsets[3], -0.5f), transform), Color.White, Color.White, uvs[3], bounds));
+                Primitive.AddIndicies(new short[] { 0, 1, 3, 1, 2, 3 });
+
+                var bumperBackBounds = Vector4.Zero;
+                var bumperBackUvs = Sheet.GenerateTileUVs(new Point(0, 5), out bumperBackBounds);
+                var bumperFrontBounds = Vector4.Zero;
+                var bumperFrontUvs = Sheet.GenerateTileUVs(new Point(1, 5), out bumperFrontBounds);
+                var bumperSideBounds = Vector4.Zero;
+                var bumperSideUvs = Sheet.GenerateTileUVs(new Point(2, 5), out bumperSideBounds);
+
+                var railEntity = Parent as RailEntity;
+                foreach (var connection in railEntity.GetTransformedConnections())
                 {
-                    new Vector2(0.0f, 0.0f),
-                    new Vector2(1.0f, 0.0f),
-                    new Vector2(1.0f, 1.0f),
-                    new Vector2(0.0f, 1.0f)
-                };
+                    var matchingNeighbor = railEntity.NeighborRails.FirstOrDefault(n => (n.Position - connection.Item1).LengthSquared() < 0.001f);
+                    if (matchingNeighbor == null)
+                    {
+                        var bumperOffset = connection.Item1 - GlobalTransform.Translation;
+                        var bumperGap = Vector3.Normalize(bumperOffset) * 0.1f;
+                        var bumperAngle = AngleBetweenVectors(new Vector2(bumperOffset.X, bumperOffset.Z), new Vector2(0, 0.5f));
 
-                Vector2 pixelCoords = new Vector2(Frame.X * Sheet.FrameWidth, Frame.Y * Sheet.FrameHeight);
-                Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float)Sheet.Width, pixelCoords.Y / (float)Sheet.Height);
-                var bounds = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
+                        var xDiag = bumperOffset.X < -0.001f || bumperOffset.X > 0.001f;
+                        var zDiag = bumperOffset.Z < -0.001f || bumperOffset.Z > 0.001f;
 
-                for (int vert = 0; vert < 4; vert++)
-                    uvs[vert] = new Vector2(normalizedCoords.X + uvs[vert].X * normalizeX, normalizedCoords.Y + uvs[vert].Y * normalizeY);
+                        if (xDiag && zDiag)
+                        {
+                            var y = bumperOffset.Y;
+                            bumperOffset *= sqrt2;
+                            bumperOffset.Y = y;
 
-                Verticies = new[]
-                {
-                    new ExtendedVertex(new Vector3(-0.5f, VertexHeightOffsets[0], 0.5f), Color.White, Color.White, uvs[0], bounds),
-                    new ExtendedVertex(new Vector3(0.5f, VertexHeightOffsets[1], 0.5f), Color.White, Color.White, uvs[1], bounds),
-                    new ExtendedVertex(new Vector3(0.5f, VertexHeightOffsets[2], -0.5f), Color.White, Color.White, uvs[2], bounds),
-                    new ExtendedVertex(new Vector3(-0.5f, VertexHeightOffsets[3], -0.5f), Color.White, Color.White, uvs[3], bounds)
-                };
+                            var endBounds = Vector4.Zero;
+                            var endUvs = Sheet.GenerateTileUVs(new Point(6, 2), out endBounds);
+                            Primitive.AddQuad(
+                                Matrix.CreateRotationY((float)Math.PI * 1.25f)
+                                * Matrix.CreateRotationY(bumperAngle)
+                                * Matrix.CreateTranslation(new Vector3(Sign(bumperOffset.X), 0.0f, Sign(bumperOffset.Z))),
+                                Color.White, Color.White, endUvs, endBounds);
+                        }
 
-                Indicies = new int[]
-                {
-                    0, 1, 3,
-                    1, 2, 3
-                };
+                        Primitive.AddQuad(
+                            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                            * Matrix.CreateTranslation(0.0f, 0.3f, -0.2f)
+                            * Matrix.CreateRotationY(bumperAngle)
+                            * Matrix.CreateTranslation(bumperOffset + bumperGap),
+                            Color.White, Color.White, bumperBackUvs, bumperBackBounds);
+
+                        Primitive.AddQuad(
+                            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                            * Matrix.CreateTranslation(0.0f, 0.3f, -0.2f)
+                            * Matrix.CreateRotationY(bumperAngle)
+                            * Matrix.CreateTranslation(bumperOffset),
+                            Color.White, Color.White, bumperFrontUvs, bumperFrontBounds);
+
+                        Primitive.AddQuad(
+                            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                            * Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
+                            * Matrix.CreateTranslation(0.3f, 0.3f, 0.18f)
+                            * Matrix.CreateRotationY(bumperAngle)
+                            * Matrix.CreateTranslation(bumperOffset),
+                            Color.White, Color.White, bumperSideUvs, bumperSideBounds);
+
+                        Primitive.AddQuad(
+                            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                            * Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
+                            * Matrix.CreateTranslation(-0.3f, 0.3f, 0.18f)
+                            * Matrix.CreateRotationY(bumperAngle)
+                            * Matrix.CreateTranslation(bumperOffset),
+                            Color.White, Color.White, bumperSideUvs, bumperSideBounds);
+                    }
+                }
             }
 
             // Everything that draws should set it's tint, making this pointless.
@@ -123,7 +199,7 @@ namespace DwarfCorp.Rail
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, Verticies, 0, 4, Indicies, 0, 2);
+                Primitive.Render(graphicsDevice);
             }
 
             effect.VertexColorTint = origTint;
