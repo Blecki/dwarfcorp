@@ -61,6 +61,28 @@ namespace DwarfCorp
             FileUtils.SaveJSon(this.PlayData, directory + ProgramData.DirChar + "World." + PlayData.Extension, DwarfGame.COMPRESSED_BINARY_SAVES);
         }
 
+        public static void DeleteOldestSave(string subdir, int maxToKeep, string blacklist)
+        {
+            var dir = System.IO.Directory.CreateDirectory(subdir);
+            var parent = dir.Parent;
+            var subdirs = parent.GetDirectories();
+            var validDirs = subdirs.Where(d => !d.Name.Contains(blacklist)).ToList();
+            if (validDirs.Count <= maxToKeep)
+                return;
+            DirectoryInfo oldestDir = null;
+            TimeSpan oldestTime = new TimeSpan(0, 0, 0, 0, 0);
+            foreach(var d in validDirs)
+            {
+                if ((DateTime.Now - d.LastWriteTime) > oldestTime)
+                {
+                    oldestTime = (DateTime.Now - d.LastWriteTime);
+                    oldestDir = d;
+                }
+            }
+            if (oldestDir != null)
+                oldestDir.Delete(true);
+        }
+
         private SaveGame() { }
         
         public bool ReadChunks(string filePath)

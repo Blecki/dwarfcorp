@@ -9,6 +9,7 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class Button : Widget
     {
+        private Vector4 previousTextColor = Color.Black.ToVector4();
         public override void Construct()
         {
             TextVerticalAlign = VerticalAlign.Center;
@@ -26,16 +27,17 @@ namespace DwarfCorp.Gui.Widgets
             }
 
 
-            var color = TextColor;
+            previousTextColor = TextColor;
             OnMouseEnter += (widget, action) =>
             {
+                previousTextColor = TextColor;
                 widget.TextColor = new Vector4(0.5f, 0, 0, 1.0f);
                 widget.Invalidate();
             };
 
             OnMouseLeave += (widget, action) =>
             {
-                widget.TextColor = color;
+                widget.TextColor = previousTextColor;
                 widget.Invalidate();
             };
         }
