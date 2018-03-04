@@ -38,6 +38,19 @@
   },
 
   {
+    "Name": "ortho-straight-steepslope",
+    "Tile": "0, 0",
+    "Shape": "SteepSlope",
+    "SplinePoints": [
+      [
+        "-0.5, 1.1, 0",
+        "0.5, 0.1, 0"
+      ]
+    ]
+
+  },
+
+  {
     "Name": "ortho-small-curve",
     "Tile": "0, 1",
     "SplinePoints": [
@@ -117,7 +130,7 @@
 
   {
     "Name": "diag-edge-1",
-    "Tile": "2, 0"    
+    "Tile": "2, 0"
   },
 
   {

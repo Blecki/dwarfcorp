@@ -10,7 +10,8 @@ namespace DwarfCorp.Rail
     {
         Flat,
         TopHalfSlope,
-        BottomHalfSlope
+        BottomHalfSlope,
+        SteepSlope
     }
 
     public class RailConnection

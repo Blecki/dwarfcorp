@@ -15,7 +15,16 @@ namespace DwarfCorp.Rail
         private SpriteSheet Sheet;
         private Point Frame;
         private RawPrimitive Primitive;
-        public float[] VertexHeightOffsets = new float[] { 0.0f, 0.0f, 0.0f, 0.0f };
+        private RailShape Shape;
+
+        private static float[,] VertexHeightOffsets =
+        {
+            { 0.0f, 0.0f, 0.0f, 0.0f },
+            { 1.0f, 0.5f, 0.5f, 1.0f },
+            { 0.5f, 0.0f, 0.0f, 0.5f },
+            { 1.0f, 0.0f, 0.0f, 1.0f }
+        };
+
         private Orientation Orientation;
 
         public RailSprite(
@@ -34,10 +43,11 @@ namespace DwarfCorp.Rail
         {
         }
         
-        public void SetFrame(Point Frame, Orientation Orientation)
+        public void SetFrame(Point Frame, Orientation Orientation, RailShape Shape)
         {
             this.Frame = Frame;
             this.Orientation = Orientation;
+            this.Shape = Shape;
             ResetPrimitive();
         }
 
@@ -111,12 +121,48 @@ namespace DwarfCorp.Rail
                 var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Orientation);
 
                 Primitive = new RawPrimitive();
-                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(-0.5f, VertexHeightOffsets[0], 0.5f), transform), Color.White, Color.White, uvs[0], bounds));
-                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(0.5f, VertexHeightOffsets[1], 0.5f), transform), Color.White, Color.White, uvs[1], bounds));
-                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(0.5f, VertexHeightOffsets[2], -0.5f), transform), Color.White, Color.White, uvs[2], bounds));
-                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(-0.5f, VertexHeightOffsets[3], -0.5f), transform), Color.White, Color.White, uvs[3], bounds));
+                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(-0.5f, VertexHeightOffsets[(int)Shape, 0], 0.5f), transform), Color.White, Color.White, uvs[0], bounds));
+                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(0.5f, VertexHeightOffsets[(int)Shape, 1], 0.5f), transform), Color.White, Color.White, uvs[1], bounds));
+                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(0.5f, VertexHeightOffsets[(int)Shape, 2], -0.5f), transform), Color.White, Color.White, uvs[2], bounds));
+                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(-0.5f, VertexHeightOffsets[(int)Shape, 3], -0.5f), transform), Color.White, Color.White, uvs[3], bounds));
                 Primitive.AddIndicies(new short[] { 0, 1, 3, 1, 2, 3 });
 
+                var sideBounds = Vector4.Zero;
+                Vector2[] sideUvs = null;
+
+                switch (Shape)
+                {
+                    case RailShape.Flat:
+                        sideUvs = Sheet.GenerateTileUVs(new Point(3, 4), out sideBounds);
+                        break;
+                    case RailShape.BottomHalfSlope:
+                        sideUvs = Sheet.GenerateTileUVs(new Point(1, 4), out sideBounds);
+                        break;
+                    case RailShape.TopHalfSlope:
+                        sideUvs = Sheet.GenerateTileUVs(new Point(2, 4), out sideBounds);
+                        break;
+                    case RailShape.SteepSlope:
+                        sideUvs = Sheet.GenerateTileUVs(new Point(0, 4), out sideBounds);
+                        break;
+                }
+
+
+                // For slopes - actually needs two layers of these. First layer is shifted up to match the rails, second is the standard side, shifted down.
+
+                Primitive.AddQuad(
+                            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                            //* Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
+                            * Matrix.CreateTranslation(0.0f, -0.5f, 0.32f)
+                            * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Orientation),
+                            Color.White, Color.White, sideUvs, sideBounds);
+                Primitive.AddQuad(
+                            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                            //* Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
+                            * Matrix.CreateTranslation(0.0f, -0.5f, -0.32f)
+                            * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Orientation),
+                            Color.White, Color.White, sideUvs, sideBounds);
+
+                // Todo: Make these static and avoid recalculating them constantly.
                 var bumperBackBounds = Vector4.Zero;
                 var bumperBackUvs = Sheet.GenerateTileUVs(new Point(0, 5), out bumperBackBounds);
                 var bumperFrontBounds = Vector4.Zero;
@@ -148,6 +194,7 @@ namespace DwarfCorp.Rail
                             Primitive.AddQuad(
                                 Matrix.CreateRotationY((float)Math.PI * 1.25f)
                                 * Matrix.CreateRotationY(bumperAngle)
+                                // This offset would not be correct if diagonals could slope.
                                 * Matrix.CreateTranslation(new Vector3(Sign(bumperOffset.X), 0.0f, Sign(bumperOffset.Z))),
                                 Color.White, Color.White, endUvs, endBounds);
                         }
