@@ -75,16 +75,14 @@ ortho-straight + diag-straight East -> ortho-diag-cross-right North
 ortho-straight + diag-straight West -> ortho-diag-cross-right North
 
 diag-straight + ortho-to-diag-left South -> diag-ortho-switch-right North
+diag-straight + ortho-to-diag-left North -> diag-ortho-switch-right South
 diag-straight + ortho-to-diag-right North -> diag-ortho-switch-left North
+diag-straight + ortho-to-diag-right South -> diag-ortho-switch-left South
 
-diag-to-ortho-y + diag-edge-1 East -> diag-t North
+diag-to-ortho-y + diag-edge-1 East -> diag-to-ortho-y-under-diag-edge-1 North
 
 diag-straight + diag-edge-1 East -> diag-under-diag-edge West
 diag-straight + diag-edge-1 West -> diag-under-diag-edge East
 diag-straight + diag-edge-2-opposite East -> diag-under-diag-edge-2-opposite West
 diag-straight + diag-edge-2-opposite West -> diag-under-diag-edge-2-opposite West
-diag-straight + diag-edge-4 North -> diag-under-diag-edge-4 North
-diag-straight + diag-edge-4 East -> diag-under-diag-edge-4 North
-diag-straight + diag-edge-4 South -> diag-under-diag-edge-4 North
-diag-straight + diag-edge-4 West -> diag-under-diag-edge-4 North
 diag-under-diag-edge + diag-edge-1 North -> diag-under-diag-edge-2-opposite North
