@@ -299,7 +299,7 @@ namespace DwarfCorp.Rail
 
             if (spriteChild != null)
             {
-                spriteChild.SetFrame(piece.Tile, Piece.Orientation, piece.Shape);
+                spriteChild.SetFrame(piece.Tile, Piece.Orientation, piece.Shape, Piece.RailPiece);
                 spriteChild.ResetPrimitive();
             }
 

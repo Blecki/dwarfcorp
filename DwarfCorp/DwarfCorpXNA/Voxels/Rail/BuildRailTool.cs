@@ -152,7 +152,10 @@ namespace DwarfCorp.Rail
             var r = new RailEntity(Manager, Location, Piece);
             Manager.RootComponent.AddChild(r);
             r.SetFlagRecursive(GameComponent.Flag.Active, false);
-            
+
+            foreach (var tinter in r.EnumerateAll().OfType<Tinter>())
+                tinter.Stipple = true;
+
             //Todo: Add craft details component.
             return r;
         }
@@ -306,14 +309,7 @@ namespace DwarfCorp.Rail
             }
 
             foreach (var body in PreviewBodies)
-            {
                 body.SetTintRecursive(tint);
-                var tinters = body.EnumerateAll().OfType<Tinter>();
-                foreach(var tinter in tinters)
-                {
-                    tinter.Stipple = true;
-                }
-            }
         }
 
         private GlobalVoxelCoordinate OffsetCoordinateThroughPortal(GlobalVoxelCoordinate C, JunctionPortal Portal)
@@ -513,6 +509,8 @@ namespace DwarfCorp.Rail
                     finalEntity.SetFlagRecursive(GameComponent.Flag.Active, true);
                     finalEntity.SetTintRecursive(Color.White);
                     finalEntity.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                    foreach (var tinter in finalEntity.EnumerateAll().OfType<Tinter>())
+                        tinter.Stipple = false;
                 }
             }
 

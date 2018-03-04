@@ -26,6 +26,7 @@ namespace DwarfCorp.Rail
         public RailShape Shape = RailShape.Flat;
         public Point Tile = Point.Zero;
         public List<List<Vector3>> SplinePoints = new List<List<Vector3>>();
+        public List<List<Vector2>> RailSplines = new List<List<Vector2>>();
 
         public List<RailConnection> Connections;
 

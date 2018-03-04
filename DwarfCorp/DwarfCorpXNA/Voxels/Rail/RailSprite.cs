@@ -16,6 +16,7 @@ namespace DwarfCorp.Rail
         private Point Frame;
         private RawPrimitive Primitive;
         private RailShape Shape;
+        private String Piece;
 
         private static float[,] VertexHeightOffsets =
         {
@@ -43,11 +44,12 @@ namespace DwarfCorp.Rail
         {
         }
         
-        public void SetFrame(Point Frame, Orientation Orientation, RailShape Shape)
+        public void SetFrame(Point Frame, Orientation Orientation, RailShape Shape, String Piece)
         {
             this.Frame = Frame;
             this.Orientation = Orientation;
             this.Shape = Shape;
+            this.Piece = Piece;
             ResetPrimitive();
         }
 
@@ -146,21 +148,42 @@ namespace DwarfCorp.Rail
                         break;
                 }
 
+                var uvDelta = uvs[1].X - uvs[0].X;
 
-                // For slopes - actually needs two layers of these. First layer is shifted up to match the rails, second is the standard side, shifted down.
+                foreach (var railSpline in RailLibrary.GetRailPiece(Piece).RailSplines)
+                {
+                    var uvStep = 1.0f / (railSpline.Count - 1);
 
-                Primitive.AddQuad(
-                            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
-                            //* Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
-                            * Matrix.CreateTranslation(0.0f, -0.5f, 0.32f)
-                            * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Orientation),
-                            Color.White, Color.White, sideUvs, sideBounds);
-                Primitive.AddQuad(
-                            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
-                            //* Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
-                            * Matrix.CreateTranslation(0.0f, -0.5f, -0.32f)
-                            * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Orientation),
-                            Color.White, Color.White, sideUvs, sideBounds);
+                    for (var i = 1; i < railSpline.Count; ++i)
+                    {
+                        var baseIndex = Primitive.VertexCount;
+                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i - 1].X, 0.0f, railSpline[i - 1].Y), transform), Color.White, Color.White,
+                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * (i - 1)), sideUvs[0].Y), sideBounds));
+                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i].X, 0.0f, railSpline[i].Y), transform), Color.White, Color.White,
+                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * i), sideUvs[0].Y), sideBounds));
+                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i].X, -1.0f, railSpline[i].Y), transform), Color.White, Color.White,
+                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * i), sideUvs[2].Y), sideBounds));
+                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i - 1].X, -1.0f, railSpline[i - 1].Y), transform), Color.White, Color.White,
+                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * (i - 1)), sideUvs[2].Y), sideBounds));
+                        Primitive.AddOffsetIndicies(new short[] { 0, 1, 3, 1, 2, 3 }, baseIndex);
+                    }
+                }
+
+                //// For slopes - actually needs two layers of these. First layer is shifted up to match the rails, second is the standard side, shifted down.
+
+
+                //Primitive.AddQuad(
+                //            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                //            //* Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
+                //            * Matrix.CreateTranslation(0.0f, -0.5f, 0.32f)
+                //            * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Orientation),
+                //            Color.White, Color.White, sideUvs, sideBounds);
+                //Primitive.AddQuad(
+                //            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                //            //* Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
+                //            * Matrix.CreateTranslation(0.0f, -0.5f, -0.32f)
+                //            * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Orientation),
+                //            Color.White, Color.White, sideUvs, sideBounds);
 
                 // Todo: Make these static and avoid recalculating them constantly.
                 var bumperBackBounds = Vector4.Zero;
