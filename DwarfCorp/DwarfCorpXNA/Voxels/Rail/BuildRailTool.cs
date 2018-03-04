@@ -126,6 +126,8 @@ namespace DwarfCorp.Rail
             PreviewBodies.Clear();
             Pattern = null;
             SelectedResources = null;
+            Player.VoxSelector.DrawVoxel = true;
+            Player.VoxSelector.DrawBox = true;
         }
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
@@ -150,6 +152,7 @@ namespace DwarfCorp.Rail
             var r = new RailEntity(Manager, Location, Piece);
             Manager.RootComponent.AddChild(r);
             r.SetFlagRecursive(GameComponent.Flag.Active, false);
+            
             //Todo: Add craft details component.
             return r;
         }
@@ -173,6 +176,8 @@ namespace DwarfCorp.Rail
 
             Player.VoxSelector.Enabled = true;
             Player.BodySelector.Enabled = false;
+            Player.VoxSelector.DrawBox = false;
+            Player.VoxSelector.DrawVoxel = false;
 
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
@@ -301,7 +306,14 @@ namespace DwarfCorp.Rail
             }
 
             foreach (var body in PreviewBodies)
+            {
                 body.SetTintRecursive(tint);
+                var tinters = body.EnumerateAll().OfType<Tinter>();
+                foreach(var tinter in tinters)
+                {
+                    tinter.Stipple = true;
+                }
+            }
         }
 
         private GlobalVoxelCoordinate OffsetCoordinateThroughPortal(GlobalVoxelCoordinate C, JunctionPortal Portal)

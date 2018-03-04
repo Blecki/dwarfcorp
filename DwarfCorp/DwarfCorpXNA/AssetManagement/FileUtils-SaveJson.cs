@@ -158,5 +158,10 @@ namespace DwarfCorp
                 }
             }
         }
+
+        internal static void DeleteOldestSave(string filename, int v1, string v2)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -607,10 +607,10 @@ namespace DwarfCorp
                 }
 
                 gameFile = SaveGame.CreateFromWorld(this);
-
-                gameFile.WriteFile(
-                    DwarfGame.GetSaveDirectory() + Path.DirectorySeparatorChar +
-                    filename);
+            var path = DwarfGame.GetSaveDirectory() + Path.DirectorySeparatorChar +
+                filename;
+                SaveGame.DeleteOldestSave(path, GameSettings.Default.MaxSaves, "Autosave");
+                gameFile.WriteFile(path);
                 ComponentManager.CleanupSaveData();
 
                 lock (ScreenshotLock)

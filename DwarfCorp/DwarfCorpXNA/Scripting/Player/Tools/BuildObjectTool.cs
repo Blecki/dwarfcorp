@@ -51,11 +51,15 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
+            Player.VoxSelector.DrawBox = false;
+            Player.VoxSelector.DrawVoxel = false;
         }
 
         public override void OnEnd()
         {
             Player.Faction.CraftBuilder.End();
+            Player.VoxSelector.DrawBox = true;
+            Player.VoxSelector.DrawVoxel = true;
         }
 
         public override void OnMouseOver(IEnumerable<Body> bodies)

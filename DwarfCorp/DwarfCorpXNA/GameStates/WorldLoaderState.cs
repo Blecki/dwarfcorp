@@ -20,7 +20,11 @@ namespace DwarfCorp.GameStates
             this.InvalidItemText = "This world was saved by an earlier version of DwarfCorp and is not compatible.";
             this.ValidateItem = (item) =>
             {
-                return NewOverworldFile.CheckCompatibility(item);
+                return NewOverworldFile.CheckCompatibility(item) ? "" : "Incompatible save file.";
+            };
+            this.GetItemName = (item) =>
+            {
+                return NewOverworldFile.GetOverworldName(item);
             };
 
             this.ItemSource = () =>
@@ -28,7 +32,7 @@ namespace DwarfCorp.GameStates
                 System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory());
                 var dirs = worldDirectory.EnumerateDirectories().ToList();
                 dirs.Sort((a, b) => b.LastWriteTime.CompareTo(a.LastWriteTime));
-                return dirs.Select(d => d.FullName).ToList();
+                return dirs;
             };
 
             this.ScreenshotSource = (path) =>

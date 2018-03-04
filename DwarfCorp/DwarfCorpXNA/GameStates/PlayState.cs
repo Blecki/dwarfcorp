@@ -2360,7 +2360,7 @@ namespace DwarfCorp.GameStates
                 (sender, args) =>
                 {
                     World.Save(
-                        String.Format("{0}_{1}", Overworld.Name, World.GameID),
+                        String.Format("{0}_{1}_{2}", Overworld.Name, World.GameID, DateTime.Now.ToFileTimeUtc()),
                         (success, exception) =>
                         {
                             GuiRoot.ShowModalPopup(new Gui.Widgets.Popup
@@ -2418,7 +2418,7 @@ namespace DwarfCorp.GameStates
 #if !DEMO
             bool paused = World.Paused;
             World.Save(
-                    String.Format("{0}_{1}", Overworld.Name, World.GameID),
+                    String.Format("{0}_{1}_{2}", Overworld.Name, World.GameID, "Autosave"),
                     (success, exception) =>
                     {
                         World.MakeAnnouncement(success ? "File autosaved." : "Autosave failed - " + exception.Message);

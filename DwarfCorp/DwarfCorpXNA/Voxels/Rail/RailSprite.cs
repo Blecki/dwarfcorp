@@ -250,6 +250,7 @@ namespace DwarfCorp.Rail
             }
 
             effect.VertexColorTint = origTint;
+            EndDraw(effect);
         }
     }
 

@@ -186,11 +186,26 @@ namespace DwarfCorp
             try
             {
                 var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
-                return FileUtils.LoadJsonFromAbsolutePath<OverworldData>(metaFilePath).Version == Program.Version;
+                var metadata = FileUtils.LoadJsonFromAbsolutePath<OverworldData>(metaFilePath);
+
+                return Program.CompatibleVersions.Contains(metadata.Version);
             }
             catch (Exception e)
             {
                 return false;
+            }
+        }
+
+        public static string GetOverworldName(string filePath)
+        {
+            try
+            {
+                var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
+                return FileUtils.LoadJsonFromAbsolutePath<OverworldData>(metaFilePath).Name;
+            }
+            catch (Exception e)
+            {
+                return "?";
             }
         }
 
