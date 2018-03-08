@@ -136,7 +136,7 @@ namespace DwarfCorp.GameStates
                 if (inWater)
                 {
                     Settings.WorldGenerationOrigin = 
-                        new Vector2(MathFunctions.Rand(0, Settings.Width - rect.Width), MathFunctions.Rand(0, Settings.Height));
+                        new Vector2(MathFunctions.Rand(0, Settings.Width - rect.Width), MathFunctions.Rand(0, Settings.Height - rect.Height));
                     Settings.WorldOrigin = Settings.WorldGenerationOrigin;
                 }
             } while (inWater);
@@ -914,8 +914,8 @@ namespace DwarfCorp.GameStates
             int w = (int)(Settings.ColonySize.X * VoxelConstants.ChunkSizeX / Settings.WorldScale);
             int h = (int)(Settings.ColonySize.Z * VoxelConstants.ChunkSizeZ / Settings.WorldScale);
             return new Vector2(
-                System.Math.Max(System.Math.Min(clickPoint.X - w/2, Settings.Width  - w/2 - 1), 0),
-                System.Math.Max(System.Math.Min(clickPoint.Y - h/2, Settings.Height - h/2 - 1), 0)
+                System.Math.Max(System.Math.Min(clickPoint.X - w/2, Settings.Width  - w - 1), 0),
+                System.Math.Max(System.Math.Min(clickPoint.Y - h/2, Settings.Height - h - 1), 0)
             );
         }
     }
