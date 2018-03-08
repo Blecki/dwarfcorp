@@ -357,7 +357,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        Drawer3D.DrawBox(rail.GetContainingVoxel().GetBoundingBox(), Color.Green, 0.1f, true);
+                        //Drawer3D.DrawBox(rail.GetContainingVoxel().GetBoundingBox(), Color.Green, 0.1f, true);
                         var pos = rail.InterpolateSpline(t, action.SourceVoxel.WorldPosition + Vector3.One * 0.5f, action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
                         transform.Translation = pos + Vector3.Up * 1.5f;
                         Agent.Physics.Velocity = diff;

@@ -171,7 +171,7 @@ namespace DwarfCorp.Rail
             float idx = (selectedSpline.Count - 1) * t;
             int k = MathFunctions.Clamp((int)idx, 0, selectedSpline.Count - 1);
             float remainder = idx - k;
-            Drawer3D.DrawLine(Vector3.Transform(selectedSpline[k], transform), Vector3.Transform(selectedSpline[k + 1], transform), isReversed ? Color.Red : Color.Blue, 0.1f);
+            //Drawer3D.DrawLine(Vector3.Transform(selectedSpline[k], transform), Vector3.Transform(selectedSpline[k + 1], transform), isReversed ? Color.Red : Color.Blue, 0.1f);
             return Vector3.Transform(selectedSpline[k] * (1.0f - remainder) + selectedSpline[k + 1] * remainder, transform);
         }
 

@@ -656,7 +656,8 @@ namespace DwarfCorp
         {
             var p = new List<MoveAction>();
             //bool use_inverse = goal.IsReversible() && OpennessHeuristic(goal.GetVoxel()) < OpennessHeuristic(start);
-            bool use_inverse = false;
+            //bool use_inverse = false;
+            bool use_inverse = true;
             var result = use_inverse ? InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc)
                 : Path(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc);
 
