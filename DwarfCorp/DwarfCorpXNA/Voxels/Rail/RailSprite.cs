@@ -26,7 +26,7 @@ namespace DwarfCorp.Rail
             { 1.0f, 0.0f, 0.0f, 1.0f }
         };
 
-        private Orientation Orientation;
+        private PieceOrientation Orientation;
 
         public RailSprite(
             ComponentManager Manager,
@@ -44,7 +44,7 @@ namespace DwarfCorp.Rail
         {
         }
         
-        public void SetFrame(Point Frame, Orientation Orientation, RailShape Shape, String Piece)
+        public void SetFrame(Point Frame, PieceOrientation Orientation, RailShape Shape, String Piece)
         {
             this.Frame = Frame;
             this.Orientation = Orientation;

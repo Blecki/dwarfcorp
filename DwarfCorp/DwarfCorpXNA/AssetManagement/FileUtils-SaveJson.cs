@@ -64,7 +64,8 @@ namespace DwarfCorp
             new RectangleConverter(),
             new MoneyConverter(),
             new ColorConverter(),
-            new Newtonsoft.Json.Converters.StringEnumConverter()
+            new Newtonsoft.Json.Converters.StringEnumConverter(),
+            new Rail.CompassConnectionConverter()
         };
 
         /// <summary>

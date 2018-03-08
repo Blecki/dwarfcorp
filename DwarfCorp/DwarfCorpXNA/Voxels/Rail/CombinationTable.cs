@@ -12,15 +12,15 @@ namespace DwarfCorp.Rail
         {
             public String BasePiece;
             public String OverlayPiece;
-            public Orientation OverlayRelativeOrientation;
+            public PieceOrientation OverlayRelativeOrientation;
 
             public String Result;
-            public Orientation ResultRelativeOrientation;
+            public PieceOrientation ResultRelativeOrientation;
         }
 
         private List<Combination> Combinations = new List<Combination>();
 
-        public Combination FindCombination(String Base, String Overlay, Orientation OverlayRelativeOrientation)
+        public Combination FindCombination(String Base, String Overlay, PieceOrientation OverlayRelativeOrientation)
         {
             return Combinations.FirstOrDefault(c => c.BasePiece == Base && c.OverlayPiece == Overlay && c.OverlayRelativeOrientation == OverlayRelativeOrientation);
         }
@@ -39,7 +39,7 @@ namespace DwarfCorp.Rail
             {
                 BasePiece = Combination.OverlayPiece,
                 OverlayPiece = Combination.BasePiece,
-                OverlayRelativeOrientation = OrientationHelper.Relative(Combination.OverlayRelativeOrientation, Orientation.North),
+                OverlayRelativeOrientation = OrientationHelper.Relative(Combination.OverlayRelativeOrientation, PieceOrientation.North),
                 Result = Combination.Result,
                 ResultRelativeOrientation = OrientationHelper.Relative(Combination.OverlayRelativeOrientation, Combination.ResultRelativeOrientation)
             };
@@ -49,9 +49,9 @@ namespace DwarfCorp.Rail
             {
                 BasePiece = Combination.Result,
                 OverlayPiece = Combination.BasePiece,
-                OverlayRelativeOrientation = OrientationHelper.Relative(Combination.ResultRelativeOrientation, Orientation.North),
+                OverlayRelativeOrientation = OrientationHelper.Relative(Combination.ResultRelativeOrientation, PieceOrientation.North),
                 Result = Combination.Result,
-                ResultRelativeOrientation = Orientation.North
+                ResultRelativeOrientation = PieceOrientation.North
             };
 
             // Result with overlay laid over it
@@ -61,7 +61,7 @@ namespace DwarfCorp.Rail
                 OverlayPiece = Combination.OverlayPiece,
                 OverlayRelativeOrientation = OrientationHelper.Relative(Combination.ResultRelativeOrientation, Combination.OverlayRelativeOrientation),
                 Result = Combination.Result,
-                ResultRelativeOrientation = Orientation.North
+                ResultRelativeOrientation = PieceOrientation.North
             };
         }
 
@@ -82,9 +82,9 @@ namespace DwarfCorp.Rail
                 {
                     BasePiece = pieces[0],
                     OverlayPiece = pieces[2],
-                    OverlayRelativeOrientation = (Orientation)Enum.Parse(typeof(Orientation), pieces[3]),
+                    OverlayRelativeOrientation = (PieceOrientation)Enum.Parse(typeof(PieceOrientation), pieces[3]),
                     Result = pieces[5],
-                    ResultRelativeOrientation = (Orientation)Enum.Parse(typeof(Orientation), pieces[6])
+                    ResultRelativeOrientation = (PieceOrientation)Enum.Parse(typeof(PieceOrientation), pieces[6])
                 };
 
                 AddCombination(combination);

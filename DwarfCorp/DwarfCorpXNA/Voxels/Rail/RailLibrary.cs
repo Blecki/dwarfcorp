@@ -68,10 +68,10 @@ namespace DwarfCorp.Rail
                     {
                         return new JunctionPattern[]
                         {
-                            p.Rotate(Orientation.North),
-                            p.Rotate(Orientation.East),
-                            p.Rotate(Orientation.South),
-                            p.Rotate(Orientation.West)
+                            p.Rotate(PieceOrientation.North),
+                            p.Rotate(PieceOrientation.East),
+                            p.Rotate(PieceOrientation.South),
+                            p.Rotate(PieceOrientation.West)
                         };
                     })
                     // We need them with the endpoints switched as well.

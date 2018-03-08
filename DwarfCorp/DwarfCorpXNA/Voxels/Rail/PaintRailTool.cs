@@ -43,17 +43,15 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp.Rail
 {
-    public class BuildRailTool : PlayerTool
+    public class PaintRailTool : PlayerTool
     {
-        public Rail.JunctionPattern Pattern;
         private List<RailEntity> PreviewBodies = new List<RailEntity>();
         private Faction Faction;
-        private bool RightPressed = false;
-        private bool LeftPressed = false;
         public List<ResourceAmount> SelectedResources;
         public bool GodModeSwitch = false;
         private bool Dragging = false;
         private VoxelHandle DragStartVoxel = VoxelHandle.InvalidHandle;
+        private List<GlobalVoxelCoordinate> PathVoxels = new List<GlobalVoxelCoordinate>();
 
         private static CraftItem RailCraftItem = new CraftItem
         {
@@ -72,7 +70,7 @@ namespace DwarfCorp.Rail
             Moveable = false            
         };
 
-        public BuildRailTool(GameMaster Player)
+        public PaintRailTool(GameMaster Player)
         {
             this.Player = Player;
             this.Faction = Player.Faction;
@@ -82,29 +80,19 @@ namespace DwarfCorp.Rail
         {
             if (!Dragging)
             {
-                if (button == InputManager.MouseButton.Left)
-                    if (CanPlace(Player.VoxSelector.VoxelUnderMouse))
-                    {
-                        Place(Player.VoxSelector.VoxelUnderMouse);
-                        PreviewBodies.Clear();
-                        CreatePreviewBodies(Player.World.ComponentManager, Player.VoxSelector.VoxelUnderMouse);
-                    }
             }
             else
             {
                 if (button == InputManager.MouseButton.Left)
                 {
                     if (CanPlace(DragStartVoxel))
-                    {
                         Place(DragStartVoxel);
-                        PreviewBodies.Clear();
-                        CreatePreviewBodies(Player.World.ComponentManager, Player.VoxSelector.VoxelUnderMouse);
-                    }
                     else
-                    {
-                        CreatePreviewBodies(Player.World.ComponentManager, Player.VoxSelector.VoxelUnderMouse);
-                    }
+                        foreach (var piece in PreviewBodies)
+                            piece.Delete();
 
+                    PreviewBodies.Clear();
+                    PathVoxels.Clear();
                     Dragging = false;
                 }
             }
@@ -112,11 +100,9 @@ namespace DwarfCorp.Rail
 
         public override void OnBegin()
         {
-            System.Diagnostics.Debug.Assert(Pattern != null);
             System.Diagnostics.Debug.Assert(SelectedResources != null);
             GodModeSwitch = false;
             Dragging = false;
-            CreatePreviewBodies(Faction.World.ComponentManager, new VoxelHandle(Faction.World.ChunkManager.ChunkData, new GlobalVoxelCoordinate(0, 0, 0)));
         }
 
         public override void OnEnd()
@@ -124,7 +110,7 @@ namespace DwarfCorp.Rail
             foreach (var body in PreviewBodies)
                 body.Delete();
             PreviewBodies.Clear();
-            Pattern = null;
+            PathVoxels.Clear();
             SelectedResources = null;
             Player.VoxSelector.DrawVoxel = true;
             Player.VoxSelector.DrawBox = true;
@@ -133,18 +119,6 @@ namespace DwarfCorp.Rail
         public override void OnMouseOver(IEnumerable<Body> bodies)
         {
 
-        }
-
-        private void CreatePreviewBodies(ComponentManager ComponentManager, VoxelHandle Location)
-        {
-            foreach (var body in PreviewBodies)
-                body.Delete();
-
-            PreviewBodies.Clear();
-            foreach (var piece in Pattern.Pieces)
-                PreviewBodies.Add(CreatePreviewBody(ComponentManager, Location, piece));
-
-            // Todo: Add CraftDetails component.
         }
 
         private RailEntity CreatePreviewBody(ComponentManager Manager, VoxelHandle Location, JunctionPiece Piece)
@@ -158,13 +132,6 @@ namespace DwarfCorp.Rail
 
             //Todo: Add craft details component.
             return r;
-        }
-
-        private void UpdatePreviewBodies(VoxelHandle Location)
-        {
-            System.Diagnostics.Debug.Assert(PreviewBodies.Count == Pattern.Pieces.Count);
-            for (var i = 0; i < PreviewBodies.Count && i < Pattern.Pieces.Count; ++i)
-                PreviewBodies[i].UpdatePiece(Pattern.Pieces[i], Location);
         }
 
         public override void Update(DwarfGame game, DwarfTime time)
@@ -187,108 +154,118 @@ namespace DwarfCorp.Rail
             else
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
 
-            KeyboardState state = Keyboard.GetState();
-            bool leftKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectLeft);
-            bool rightKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectRight);
-            if (LeftPressed && !leftKey)
-                Pattern = Pattern.Rotate(Rail.PieceOrientation.East);
-            if (RightPressed && !rightKey)
-                Pattern = Pattern.Rotate(Rail.PieceOrientation.West);
-            LeftPressed = leftKey;
-            RightPressed = rightKey;
-
             var tint = Color.White;
 
             if (!Dragging)
             {
-                var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
-                UpdatePreviewBodies(voxelUnderMouse);
-
-                if (CanPlace(voxelUnderMouse))
-                    tint = Color.Green;
-                else
-                    tint = Color.Red;
             }
             else
             {
                 var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
                 if (voxelUnderMouse == DragStartVoxel)
                 {
-                    if (PreviewBodies.Count > Pattern.Pieces.Count)
-                        CreatePreviewBodies(Player.World.ComponentManager, voxelUnderMouse);
-                    UpdatePreviewBodies(voxelUnderMouse);
-
-                    if (CanPlace(voxelUnderMouse))
-                        tint = Color.Green;
-                    else
-                        tint = Color.Red;
+                    // Create single straight preview piece
+                    
                 }
                 else
                 {
-                    PreviewBodies[0].UpdatePiece(Pattern.Pieces[0], DragStartVoxel);
+                    var destinationPoint = voxelUnderMouse.Coordinate;
 
-                    var bodyCounter = 1;
-                    var destinationPoint = voxelUnderMouse.Coordinate.ToVector3();
-                    JunctionPortal lastExit = null;
+                    // Prevent path finding from attempting slopes - not supported yet.
+                    destinationPoint = new GlobalVoxelCoordinate(destinationPoint.X, DragStartVoxel.Coordinate.Y, destinationPoint.Z);
                     var currentVoxel = DragStartVoxel.Coordinate;
 
-                    // Determine which end of start is closer to destination.
-                    var entranceCoordinate = OffsetCoordinateThroughPortal(DragStartVoxel.Coordinate + new GlobalVoxelOffset(Pattern.Entrance.Offset.X, 0, Pattern.Entrance.Offset.Y), Pattern.Entrance);
-                    var exitCoordinate = OffsetCoordinateThroughPortal(DragStartVoxel.Coordinate + new GlobalVoxelOffset(Pattern.Exit.Offset.X, 0, Pattern.Exit.Offset.Y), Pattern.Exit);
+                    PathVoxels.Clear();
+                    PathVoxels.Add(currentVoxel);
 
-                    if ((destinationPoint - entranceCoordinate.ToVector3()).LengthSquared() < (destinationPoint - exitCoordinate.ToVector3()).LengthSquared())
-                    {
-                        currentVoxel = entranceCoordinate;
-                        lastExit = Pattern.Entrance;
-                    }
-                    else
-                    {
-                        currentVoxel = exitCoordinate;
-                        lastExit = Pattern.Exit;
-                    }
-
-                    var currentPoint = DragStartVoxel.Coordinate.ToVector3() + new Vector3(lastExit.Offset.X, 0.0f, lastExit.Offset.Y);
-                    
                     while (true)
                     {
-                        var nextPiece = RailLibrary.EnumerateChainPatterns()
-                            .Where(p => p.Entrance.Direction == OrientationHelper.Rotate(lastExit.Direction, 2)) // Only consider pieces that line up.
-                            .OrderBy(p =>
-                            {
-                                var exitVoxel = OffsetCoordinateThroughPortal(currentVoxel + new GlobalVoxelOffset(p.Exit.Offset.X, 0, p.Exit.Offset.Y), p.Exit);
-                                return (destinationPoint - exitVoxel.ToVector3()).LengthSquared();
-                            })
-                            .First();
-
-                        var exitVoxelPoint = OffsetCoordinateThroughPortal(currentVoxel + new GlobalVoxelOffset(nextPiece.Exit.Offset.X, 0, nextPiece.Exit.Offset.Y), nextPiece.Exit);
-
-                        if ((destinationPoint - exitVoxelPoint.ToVector3()).LengthSquared() > (destinationPoint - currentPoint).LengthSquared()) break;
-
-                        var patternOffset = new Point(currentVoxel.X - DragStartVoxel.Coordinate.X, currentVoxel.Z - DragStartVoxel.Coordinate.Z);
-
-                        // Add the next pattern to the chain
-                        foreach (var piece in nextPiece.Pieces)
+                        var closestDirection = 0;
+                        float closestDistance = float.PositiveInfinity;
+                        for (var i = 0; i < 8; ++i)
                         {
-                            var newPiece = new JunctionPiece
+                            var offsetPos = currentVoxel + CompassOrientationHelper.GetOffset((CompassOrientation)i);
+                            var distance = (destinationPoint.ToVector3() - offsetPos.ToVector3()).LengthSquared();
+                            if (distance < closestDistance)
                             {
-                                Offset = new Point(piece.Offset.X + patternOffset.X, piece.Offset.Y + patternOffset.Y),
-                                RailPiece = piece.RailPiece,
-                                Orientation = piece.Orientation
-                            };
-
-                            if (PreviewBodies.Count <= bodyCounter)
-                                PreviewBodies.Add(CreatePreviewBody(Player.World.ComponentManager, DragStartVoxel, newPiece));
-                            else
-                                PreviewBodies[bodyCounter].UpdatePiece(newPiece, DragStartVoxel);
-
-                            bodyCounter += 1;
+                                closestDistance = distance;
+                                closestDirection = i;
+                            }
                         }
 
-                        currentVoxel = OffsetCoordinateThroughPortal(currentVoxel + new GlobalVoxelOffset(nextPiece.Exit.Offset.X, 0, nextPiece.Exit.Offset.Y), nextPiece.Exit);
-                        currentPoint = exitVoxelPoint.ToVector3();
-                        lastExit = nextPiece.Exit;
+                        var nextCoordinate = currentVoxel + CompassOrientationHelper.GetOffset((CompassOrientation)closestDirection);
+                        PathVoxels.Add(nextCoordinate);
+                        if (PathVoxels.Count >= 100)
+                        {
+                            break;
+                        }
+
+                        if (nextCoordinate == destinationPoint) break;
+                        currentVoxel = nextCoordinate;
                     }
 
+                    // Iterate PathVoxels, determining deltas and using them to decide which piece to create.
+                    var pathCompassConnections = new List<CompassConnection>();
+
+                    if (PathVoxels.Count > 1)
+                    {
+                        var firstDelta = CompassOrientationHelper.GetVoxelDelta(PathVoxels[0], PathVoxels[1]);
+                        pathCompassConnections.Add(new CompassConnection(CompassOrientationHelper.Opposite(firstDelta), firstDelta));
+
+                        for (var i = 1; i < PathVoxels.Count - 1; ++i)
+                            pathCompassConnections.Add(new CompassConnection(
+                                CompassOrientationHelper.GetVoxelDelta(PathVoxels[i], PathVoxels[i - 1]),
+                                CompassOrientationHelper.GetVoxelDelta(PathVoxels[i], PathVoxels[i + 1])));
+
+                        var lastDelta = CompassOrientationHelper.GetVoxelDelta(PathVoxels[PathVoxels.Count - 1], PathVoxels[PathVoxels.Count - 2]);
+                        pathCompassConnections.Add(new CompassConnection(lastDelta, CompassOrientationHelper.Opposite(lastDelta)));
+                    }
+
+                    var bodyCounter = 0;
+
+                    for (var i = 0; i < pathCompassConnections.Count; ++i)
+                    {
+                        var pieceAdded = false;
+
+                        foreach (var piece in RailLibrary.EnumeratePieces().Where(p => p.CompassConnections.Count != 0))
+                        {
+                            var matchedOrientation = PieceOrientation.North;
+                            bool matched = false;
+                            for (int j = 0; j < 4 && !matched; ++j)
+                            {
+                                if (piece.CompassConnections.Select(c => c.RotateToPiece((PieceOrientation)j)).Count(c => c == pathCompassConnections[i]) > 0)
+                                {
+                                    matched = true;
+                                    matchedOrientation = (PieceOrientation)j;
+                                }
+                            }
+
+                            if (matched)
+                            {
+                                var newPiece = new JunctionPiece
+                                {
+                                    Offset = new Point(PathVoxels[i].X - DragStartVoxel.Coordinate.X, PathVoxels[i].Z - DragStartVoxel.Coordinate.Z),
+                                    RailPiece = piece.Name,
+                                    Orientation = matchedOrientation
+                                };
+
+                                if (PreviewBodies.Count <= bodyCounter)
+                                   PreviewBodies.Add(CreatePreviewBody(Player.World.ComponentManager, DragStartVoxel, newPiece));
+                                else
+                                    PreviewBodies[bodyCounter].UpdatePiece(newPiece, DragStartVoxel);
+
+
+
+                                bodyCounter += 1;
+                                pieceAdded = true;
+                                break;
+                            }
+                        }
+
+                        if (!pieceAdded)
+                            break;
+                    }
+                                        
                     // Clean up any excess preview entities.
                     var lineSize = bodyCounter;
 
@@ -299,39 +276,22 @@ namespace DwarfCorp.Rail
                     }
 
                     PreviewBodies = PreviewBodies.Take(lineSize).ToList();
-
-                    // Apply tint
-                    if (CanPlace(DragStartVoxel))
-                        tint = Color.Green;
-                    else
-                        tint = Color.Red;
                 }
             }
+
+            if (CanPlace(DragStartVoxel))
+                tint = Color.Green;
+            else
+                tint = Color.Red;
 
             foreach (var body in PreviewBodies)
                 body.SetTintRecursive(tint);
         }
 
-        private GlobalVoxelCoordinate OffsetCoordinateThroughPortal(GlobalVoxelCoordinate C, JunctionPortal Portal)
-        {
-            switch (Portal.Direction)
-            {
-                case PieceOrientation.North:
-                    return new GlobalVoxelCoordinate(C.X, C.Y, C.Z + 1);
-                case PieceOrientation.East:
-                    return new GlobalVoxelCoordinate(C.X + 1, C.Y, C.Z);
-                case PieceOrientation.South:
-                    return new GlobalVoxelCoordinate(C.X, C.Y, C.Z - 1);
-                case PieceOrientation.West:
-                    return new GlobalVoxelCoordinate(C.X - 1, C.Y, C.Z);
-                default:
-                    return C;
-            }
-        }
-
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-
+            for ( var i = 1; i < PathVoxels.Count; ++i)
+                Drawer3D.DrawLine(PathVoxels[i - 1].ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), PathVoxels[i].ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), Color.Fuchsia, 0.1f);
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
@@ -341,13 +301,10 @@ namespace DwarfCorp.Rail
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            if (Pattern.PaintMode == JunctionPaintMode.Path)
+            if (!Dragging)
             {
-                if (!Dragging)
-                {
-                    Dragging = true;
-                    DragStartVoxel = Player.VoxSelector.FirstVoxel;
-                }
+                Dragging = true;
+                DragStartVoxel = Player.VoxSelector.FirstVoxel;
             }
         }
 

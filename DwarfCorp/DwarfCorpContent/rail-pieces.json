@@ -6,7 +6,8 @@
     "RailSplines": [
       [ "-0.5, -0.32", "0.5, -0.32" ],
       [ "-0.5, 0.32", "0.5, 0.32" ]
-    ]
+    ],
+    "CompassConnections": [ "West East" ]
   },
 
   {
@@ -67,6 +68,10 @@
       [ "-0.5, 0.32", "0.5, 0.32" ],
       [ "-0.32, -0.5", "-0.32, 0.5" ],
       [ "0.32, -0.5", "0.32, 0.5" ]
+    ],
+    "CompassConnections": [
+      "West East",
+      "North South"
     ]
   },
 
@@ -102,7 +107,8 @@
     "RailSplines": [
       [ "-0.5, 0.0", "0.0, -0.5" ],
       [ "0.0, 0.5", "0.5, 0.0" ]
-    ]
+    ],
+    "CompassConnections":  [ "Northwest Southeast" ]
   },
 
   {
@@ -127,7 +133,8 @@
     "RailSplines": [
       [ "-0.5, 0.32", "0.5, 0.0" ],
       [ "-0.5, -0.32", "0.0, -0.5" ]
-    ]
+    ],
+    "CompassConnections": [ "West Southeast" ]
   },
 
   {
@@ -145,7 +152,8 @@
     "RailSplines": [
       [ "0.0, 0.5", "0.32, -0.5" ],
       [ "-0.5, 0.0", "-0.32, -0.5" ]
-    ]
+    ],
+    "CompassConnections": [ "Northwest South" ]
   },
 
   {

@@ -1432,6 +1432,24 @@ namespace DwarfCorp.GameStates
                 }
             };
 
+            var icon_menu_Rail_Paint = new FlatToolTray.Icon
+            {
+                Icon = new TileReference("rail", 0),
+                Tooltip = "Paint",
+                Behavior = FlatToolTray.IconBehavior.LeafIcon,
+                OnClick = (widget, args) =>
+                {
+                    Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // This should be set by the tool.
+                    Master.Faction.CraftBuilder.IsEnabled = false;
+                    var railTool = Master.Tools[GameMaster.ToolMode.PaintRail] as Rail.PaintRailTool;
+                    railTool.SelectedResources = new List<ResourceAmount>
+                                    {
+                                        new ResourceAmount("Rail", 1)
+                                    };
+                    Master.ChangeTool(GameMaster.ToolMode.PaintRail);
+                }
+            };
+
             var menu_Rail = new FlatToolTray.Tray
             {
                 Tag = "build rail",
@@ -1441,7 +1459,7 @@ namespace DwarfCorp.GameStates
                     // Dynamically rebuild the tray
                     widget.Clear();
                     (widget as FlatToolTray.Tray).ItemSource =
-                        (new Widget[] { icon_menu_Rail_Return }).Concat(
+                        (new Widget[] { icon_menu_Rail_Return, icon_menu_Rail_Paint }).Concat(
                             Rail.RailLibrary.EnumeratePatterns()
                             .Where(p => p.PaintMode != Rail.JunctionPaintMode.Hidden)
                             .Select(data => new FlatToolTray.Icon

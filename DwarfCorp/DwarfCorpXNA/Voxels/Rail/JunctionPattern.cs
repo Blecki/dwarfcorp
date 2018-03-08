@@ -10,7 +10,7 @@ namespace DwarfCorp.Rail
     {
         public Point Offset;
         public String RailPiece;
-        public Orientation Orientation;
+        public PieceOrientation Orientation;
     }
 
     public enum JunctionPaintMode
@@ -23,7 +23,7 @@ namespace DwarfCorp.Rail
     public class JunctionPortal
     {
         public Point Offset;
-        public Orientation Direction;
+        public PieceOrientation Direction;
     }
 
     public class JunctionPattern
@@ -63,7 +63,7 @@ namespace DwarfCorp.Rail
             };
         }
 
-        public JunctionPattern Rotate(Orientation Orientation)
+        public JunctionPattern Rotate(PieceOrientation Orientation)
         {
             var orient = (byte)Orientation;
             var r = this;

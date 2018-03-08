@@ -140,7 +140,7 @@ namespace DwarfCorp
                 var junction = new Rail.JunctionPiece
                 {
                     RailPiece = type,
-                    Orientation = Rail.Orientation.North,
+                    Orientation = Rail.PieceOrientation.North,
                     Offset = Point.Zero
                 };
 

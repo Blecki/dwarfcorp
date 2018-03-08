@@ -205,6 +205,13 @@ namespace DwarfCorp.Rail
                     else
                         Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.5f, 0.0f), (neighbor as Body).Position + new Vector3(0.0f, 0.5f, 0.0f), Color.Teal, 0.1f);
                 }
+
+                foreach (var compassConnection in piece.CompassConnections)
+                {
+                    var localConnection = compassConnection.RotateToPiece(Piece.Orientation);
+                    Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.7f, 0.0f), Position + Vector3.Transform(new Vector3(0.0f, 0.7f, 0.5f), Matrix.CreateRotationY(((float)Math.PI / 4) * (float)localConnection.A)), Color.DarkBlue, 0.1f);
+                    Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.7f, 0.0f), Position + Vector3.Transform(new Vector3(0.0f, 0.7f, 0.5f), Matrix.CreateRotationY(((float)Math.PI / 4) * (float)localConnection.B)), Color.DarkBlue, 0.1f);
+                }
             }
         }
 

@@ -222,6 +222,9 @@
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
     <Compile Include="Scripting\Player\Economy\Quantity.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceType.cs" />
+    <Compile Include="Voxels\Rail\PaintRailTool.cs" />
+    <Compile Include="Voxels\Rail\OrientationHelper.cs" />
+    <Compile Include="Voxels\Rail\CompassOrientation.cs" />
     <Compile Include="Voxels\Rail\RailEntity.cs" />
     <Compile Include="Entities\Plants\Pumpkin.cs" />
     <Compile Include="Entities\Plants\Cactus.cs" />
@@ -465,7 +468,7 @@
     <Compile Include="Voxels\Rail\JunctionPattern.cs" />
     <Compile Include="Voxels\Rail\CombinationTable.cs" />
     <Compile Include="Voxels\Rail\RailPiece.cs" />
-    <Compile Include="Voxels\Rail\Orientation.cs" />
+    <Compile Include="Voxels\Rail\PieceOrientation.cs" />
     <Compile Include="Voxels\Rail\RailHelper.cs" />
     <Compile Include="Voxels\Rail\RailSprite.cs" />
     <Compile Include="Voxels\VoxelChunk-Motes.cs" />

@@ -205,6 +205,18 @@ namespace DwarfCorp.Gui.Widgets
                                             }
                                         })
                                 }
+                            },
+
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "PAINT",
+                                OnClick = (sender, args) =>
+                                {
+                                    var railTool = Master.Tools[GameMaster.ToolMode.PaintRail] as Rail.PaintRailTool;
+                                    railTool.SelectedResources = new List<ResourceAmount>(new ResourceAmount[] { new ResourceAmount("Rail", 1) });
+                                    Master.ChangeTool(GameMaster.ToolMode.PaintRail);
+                                    railTool.GodModeSwitch = true;
+                                }
                             }
                         }
                     }
