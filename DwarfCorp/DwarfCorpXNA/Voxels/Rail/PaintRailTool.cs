@@ -30,16 +30,12 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
-using DwarfCorp.Gui.Widgets;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
-using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp.Rail
 {
@@ -52,6 +48,13 @@ namespace DwarfCorp.Rail
         private bool Dragging = false;
         private VoxelHandle DragStartVoxel = VoxelHandle.InvalidHandle;
         private List<GlobalVoxelCoordinate> PathVoxels = new List<GlobalVoxelCoordinate>();
+        private bool RightPressed = false;
+        private bool LeftPressed = false;
+        private CompassOrientation StartingOppositeOrientation = CompassOrientation.North;
+        private bool OverrideStartingOrientation = false;
+        private CompassOrientation EndingOppositeOrientation = CompassOrientation.North;
+        private bool OverrideEndingOrientation = false;
+
 
         private static CraftItem RailCraftItem = new CraftItem
         {
@@ -147,12 +150,78 @@ namespace DwarfCorp.Rail
             Player.VoxSelector.Enabled = true;
             Player.BodySelector.Enabled = false;
             Player.VoxSelector.DrawBox = false;
-            Player.VoxSelector.DrawVoxel = false;
+            Player.VoxSelector.DrawVoxel = true;
 
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
             else
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+
+            KeyboardState state = Keyboard.GetState();
+            bool leftKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectLeft);
+            bool rightKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectRight);
+            if (LeftPressed && !leftKey)
+            {
+                if (PathVoxels.Count > 1)
+                {
+                    var matched = false;
+                    var firstDelta = CompassOrientationHelper.GetVoxelDelta(PathVoxels[0], PathVoxels[1]);
+                    var firstConnection = new CompassConnection(OverrideStartingOrientation ? StartingOppositeOrientation : CompassOrientationHelper.Opposite(firstDelta), firstDelta);
+
+                    var orientationDelta = 1;
+
+                    for (; orientationDelta < 8 && !matched; ++orientationDelta)
+                    {
+                        firstConnection.A = CompassOrientationHelper.Rotate(firstConnection.A, 1);
+                        foreach (var piece in RailLibrary.EnumeratePieces().Where(p => p.CompassConnections.Count != 0))
+                        {
+                            for (int j = 0; j < 4 && !matched; ++j)
+                                foreach (var compassConnection in piece.CompassConnections)
+                                    if (compassConnection.RotateToPiece((PieceOrientation)j) == firstConnection)
+                                        matched = true;
+                            if (matched)
+                                break;
+                        }
+                    }
+
+                    if (matched)
+                        StartingOppositeOrientation = firstConnection.A;
+
+                    OverrideStartingOrientation = true;
+                }
+            }
+            if (RightPressed && !rightKey)
+            {
+                if (PathVoxels.Count > 1)
+                {
+                    var matched = false;
+                    var lastDelta = CompassOrientationHelper.GetVoxelDelta(PathVoxels[PathVoxels.Count - 1], PathVoxels[PathVoxels.Count - 2]);
+                    var lastConnection = new CompassConnection(lastDelta, OverrideEndingOrientation ? EndingOppositeOrientation : CompassOrientationHelper.Opposite(lastDelta));
+
+                    var orientationDelta = 1;
+
+                    for (; orientationDelta < 8 && !matched; ++orientationDelta)
+                    {
+                        lastConnection.B = CompassOrientationHelper.Rotate(lastConnection.B, 1);
+                        foreach (var piece in RailLibrary.EnumeratePieces().Where(p => p.CompassConnections.Count != 0))
+                        {
+                            for (int j = 0; j < 4 && !matched; ++j)
+                                foreach (var compassConnection in piece.CompassConnections)
+                                    if (compassConnection.RotateToPiece((PieceOrientation)j) == lastConnection)
+                                        matched = true;
+                            if (matched)
+                                break;
+                        }
+                    }
+
+                    if (matched)
+                        EndingOppositeOrientation = lastConnection.B;
+
+                    OverrideEndingOrientation = true;
+                }
+            }
+            LeftPressed = leftKey;
+            RightPressed = rightKey;
 
             var tint = Color.White;
 
@@ -210,7 +279,7 @@ namespace DwarfCorp.Rail
                     if (PathVoxels.Count > 1)
                     {
                         var firstDelta = CompassOrientationHelper.GetVoxelDelta(PathVoxels[0], PathVoxels[1]);
-                        pathCompassConnections.Add(new CompassConnection(CompassOrientationHelper.Opposite(firstDelta), firstDelta));
+                        pathCompassConnections.Add(new CompassConnection(OverrideStartingOrientation ? StartingOppositeOrientation : CompassOrientationHelper.Opposite(firstDelta), firstDelta));
 
                         for (var i = 1; i < PathVoxels.Count - 1; ++i)
                             pathCompassConnections.Add(new CompassConnection(
@@ -218,10 +287,11 @@ namespace DwarfCorp.Rail
                                 CompassOrientationHelper.GetVoxelDelta(PathVoxels[i], PathVoxels[i + 1])));
 
                         var lastDelta = CompassOrientationHelper.GetVoxelDelta(PathVoxels[PathVoxels.Count - 1], PathVoxels[PathVoxels.Count - 2]);
-                        pathCompassConnections.Add(new CompassConnection(lastDelta, CompassOrientationHelper.Opposite(lastDelta)));
+                        pathCompassConnections.Add(new CompassConnection(lastDelta, OverrideEndingOrientation ? EndingOppositeOrientation : CompassOrientationHelper.Opposite(lastDelta)));
                     }
 
                     var bodyCounter = 0;
+                    var previousPieceAddedTrailingDiagonals = false;
 
                     for (var i = 0; i < pathCompassConnections.Count; ++i)
                     {
@@ -230,13 +300,20 @@ namespace DwarfCorp.Rail
                         foreach (var piece in RailLibrary.EnumeratePieces().Where(p => p.CompassConnections.Count != 0))
                         {
                             var matchedOrientation = PieceOrientation.North;
+                            CompassConnection matchedConnection = new CompassConnection();
                             bool matched = false;
                             for (int j = 0; j < 4 && !matched; ++j)
                             {
-                                if (piece.CompassConnections.Select(c => c.RotateToPiece((PieceOrientation)j)).Count(c => c == pathCompassConnections[i]) > 0)
+                                foreach (var compassConnection in piece.CompassConnections)
                                 {
-                                    matched = true;
-                                    matchedOrientation = (PieceOrientation)j;
+                                    var rotated = compassConnection.RotateToPiece((PieceOrientation)j);
+                                    if (rotated == pathCompassConnections[i])
+                                    {
+                                        matched = true;
+                                        matchedOrientation = (PieceOrientation)j;
+                                        matchedConnection = pathCompassConnections[i];
+                                        break;
+                                    }
                                 }
                             }
 
@@ -254,10 +331,28 @@ namespace DwarfCorp.Rail
                                 else
                                     PreviewBodies[bodyCounter].UpdatePiece(newPiece, DragStartVoxel);
 
-
-
                                 bodyCounter += 1;
                                 pieceAdded = true;
+
+                                if (!previousPieceAddedTrailingDiagonals &&
+                                    (matchedConnection.A == CompassOrientation.Northeast || matchedConnection.A == CompassOrientation.Southeast || matchedConnection.A == CompassOrientation.Southwest
+                                    || matchedConnection.A == CompassOrientation.Northwest))
+                                {
+                                    bodyCounter = AddDiagonal(bodyCounter, matchedConnection.A, newPiece, 7, 5);
+                                    bodyCounter = AddDiagonal(bodyCounter, matchedConnection.A, newPiece, 1, 1);
+                                }
+
+                                if (matchedConnection.B == CompassOrientation.Northeast || matchedConnection.B == CompassOrientation.Southeast || matchedConnection.B == CompassOrientation.Southwest
+                                    || matchedConnection.B == CompassOrientation.Northwest)
+                                {
+                                    previousPieceAddedTrailingDiagonals = true;
+
+                                    bodyCounter = AddDiagonal(bodyCounter, matchedConnection.B, newPiece, 7, 5);
+                                    bodyCounter = AddDiagonal(bodyCounter, matchedConnection.B, newPiece, 1, 1);
+                                }
+                                else
+                                    previousPieceAddedTrailingDiagonals = false;
+
                                 break;
                             }
                         }
@@ -288,6 +383,25 @@ namespace DwarfCorp.Rail
                 body.SetTintRecursive(tint);
         }
 
+        private int AddDiagonal(int bodyCounter, CompassOrientation B, JunctionPiece newPiece, int CoordinateRotation, int PieceRotation)
+        {
+            var firstEdgeOffset = CompassOrientationHelper.GetOffset(CompassOrientationHelper.Rotate(B, CoordinateRotation));
+            var firstEdgePiece = new JunctionPiece
+            {
+                Offset = new Point(newPiece.Offset.X + firstEdgeOffset.X, newPiece.Offset.Y + firstEdgeOffset.Z),
+                RailPiece = "diag-edge-1",
+                Orientation = (PieceOrientation)((int)CompassOrientationHelper.Rotate(B, PieceRotation) / 2)
+            };
+
+            if (PreviewBodies.Count <= bodyCounter)
+                PreviewBodies.Add(CreatePreviewBody(Player.World.ComponentManager, DragStartVoxel, firstEdgePiece));
+            else
+                PreviewBodies[bodyCounter].UpdatePiece(firstEdgePiece, DragStartVoxel);
+
+            bodyCounter += 1;
+            return bodyCounter;
+        }
+
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
             for ( var i = 1; i < PathVoxels.Count; ++i)
@@ -305,6 +419,10 @@ namespace DwarfCorp.Rail
             {
                 Dragging = true;
                 DragStartVoxel = Player.VoxSelector.FirstVoxel;
+                StartingOppositeOrientation = CompassOrientation.North;
+                OverrideStartingOrientation = false;
+                EndingOppositeOrientation = CompassOrientation.North;
+                OverrideEndingOrientation = false;
             }
         }
 

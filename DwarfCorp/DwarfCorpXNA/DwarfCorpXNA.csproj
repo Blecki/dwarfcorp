@@ -470,7 +470,6 @@
     <Compile Include="Voxels\Rail\RailPiece.cs" />
     <Compile Include="Voxels\Rail\PieceOrientation.cs" />
     <Compile Include="Voxels\Rail\RailHelper.cs" />
-    <Compile Include="Voxels\Rail\RailSprite.cs" />
     <Compile Include="Voxels\VoxelChunk-Motes.cs" />
     <Compile Include="Voxels\VoxelHelpers\GetVoxelBoundingBox.cs" />
     <Compile Include="Voxels\VoxelHelpers\GetVoxelAbove.cs" />
