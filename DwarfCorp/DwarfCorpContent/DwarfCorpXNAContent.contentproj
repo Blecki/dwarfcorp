@@ -3085,11 +3085,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="newgui\voxels.png">
-      <Name>voxels</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="newgui\speech-bubble-reverse.png">
       <Name>speech-bubble-reverse</Name>
       <Importer>TextureImporter</Importer>

@@ -249,9 +249,9 @@
   },
   {
     "Name": "voxels",
-    "Texture": "newgui/voxels",
     "TileWidth": 32,
-    "TileHeight": 32
+    "TileHeight": 32,
+    "Type": "Generated"
   },
   {
     "Name": "crafts",

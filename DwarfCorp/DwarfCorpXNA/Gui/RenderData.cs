@@ -47,11 +47,24 @@ namespace DwarfCorp.Gui
             // Pack skin into a single texture - Build atlas information from texture sizes.
             var atlas = TextureAtlas.Compiler.Compile(sheets.Select(s =>
                 {
-                    var realTexture = AssetManager.GetContentTexture(s.Texture);
+                    Texture2D realTexture = null;
+
+                    switch (s.Type)
+                    {
+                        case JsonTileSheetType.TileSheet:
+                        case JsonTileSheetType.VariableWidthFont:
+                            realTexture = AssetManager.GetContentTexture(s.Texture);
+                            break;
+                        case JsonTileSheetType.Generated:
+                            realTexture = VoxelLibrary.RenderIcons(Device, Content, s.TileWidth);
+                            break;
+                    }
+
                     return new TextureAtlas.Entry
                     {
                         Sheet = s,
-                        Rect = new Rectangle(0, 0, realTexture.Width, realTexture.Height)
+                        Rect = new Rectangle(0, 0, realTexture.Width, realTexture.Height),
+                        RealTexture = realTexture
                     };
                 }).ToList());
 
@@ -63,7 +76,7 @@ namespace DwarfCorp.Gui
             foreach (var texture in atlas.Textures)
             {
                 // Copy source texture into the atlas
-                var realTexture = AssetManager.GetContentTexture(texture.Sheet.Texture);
+                var realTexture = texture.RealTexture;
                 var textureData = new Color[realTexture.Width * realTexture.Height];
                 realTexture.GetData(textureData);
 

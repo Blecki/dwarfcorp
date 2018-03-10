@@ -247,7 +247,7 @@ namespace DwarfCorp.GameStates
             var roomIcons = GuiRoot.GetTileSheet("rooms") as Gui.TileSheet;
             RoomLibrary.InitializeStatics();
             var Tilesheet = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
-            VoxelLibrary.InitializeDefaultLibrary(Game.GraphicsDevice, Tilesheet);
+            VoxelLibrary.InitializeDefaultLibrary(Game.GraphicsDevice);
 
 
             var bottomRightTray = GuiRoot.RootItem.AddChild(new Gui.Widgets.ToolTray.Tray
