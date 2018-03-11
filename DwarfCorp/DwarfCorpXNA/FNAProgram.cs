@@ -74,6 +74,9 @@ namespace DwarfCorp
 #if CREATE_CRASH_LOGS
             try
 #endif
+#if !DEBUG
+            try
+#endif
             {
 
                 Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
@@ -92,6 +95,13 @@ namespace DwarfCorp
                 WriteExceptionLog(exception);
             }
 #endif
+#if !DEBUG
+            catch (Exception exception)
+            {
+                SDL2.SDL.SDL_ShowSimpleMessageBox(SDL2.SDL.SDL_MessageBoxFlags.SDL_MESSAGEBOX_ERROR, "Unhandled Exception!", String.Format("An unhandled exception occurred in DwarfCorp. This has been reported to Completely Fair Games LLC.\n {0}", exception.ToString()), IntPtr.Zero);
+                WriteExceptionLog(exception);
+            }
+#endif
         }
 
         public static void WriteExceptionLog(Exception exception)
@@ -102,10 +112,13 @@ namespace DwarfCorp
                 new StreamWriter(worldDirectory.FullName + Path.DirectorySeparatorChar + DateTime.Now.ToString("yyyyMMddHHmmssffff") + "_" + "Crashlog.txt", true);
             file.WriteLine("DwarfCorp Version " + Version);
             OperatingSystem os = Environment.OSVersion;
-            file.WriteLine("OS Version: " + os.Version);
-            file.WriteLine("OS Platform: " + os.Platform);
-            file.WriteLine("OS SP: " + os.ServicePack);
-            file.WriteLine("OS Version String: " + os.VersionString);
+            if (os != null)
+            {
+                file.WriteLine("OS Version: " + os.Version);
+                file.WriteLine("OS Platform: " + os.Platform);
+                file.WriteLine("OS SP: " + os.ServicePack);
+                file.WriteLine("OS Version String: " + os.VersionString);
+            }
             
             if (GameState.Game != null && GameState.Game.GraphicsDevice != null)
             {
