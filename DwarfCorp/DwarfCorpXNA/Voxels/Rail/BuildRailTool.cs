@@ -52,8 +52,6 @@ namespace DwarfCorp.Rail
         private bool LeftPressed = false;
         public List<ResourceAmount> SelectedResources;
         public bool GodModeSwitch = false;
-        private bool Dragging = false;
-        private VoxelHandle DragStartVoxel = VoxelHandle.InvalidHandle;
 
         private static CraftItem RailCraftItem = new CraftItem
         {
@@ -80,34 +78,13 @@ namespace DwarfCorp.Rail
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            if (!Dragging)
-            {
-                if (button == InputManager.MouseButton.Left)
-                    if (CanPlace(Player.VoxSelector.VoxelUnderMouse))
-                    {
-                        Place(Player.VoxSelector.VoxelUnderMouse);
-                        PreviewBodies.Clear();
-                        CreatePreviewBodies(Player.World.ComponentManager, Player.VoxSelector.VoxelUnderMouse);
-                    }
-            }
-            else
-            {
-                if (button == InputManager.MouseButton.Left)
+            if (button == InputManager.MouseButton.Left)
+                if (CanPlace(Player.VoxSelector.VoxelUnderMouse))
                 {
-                    if (CanPlace(DragStartVoxel))
-                    {
-                        Place(DragStartVoxel);
-                        PreviewBodies.Clear();
-                        CreatePreviewBodies(Player.World.ComponentManager, Player.VoxSelector.VoxelUnderMouse);
-                    }
-                    else
-                    {
-                        CreatePreviewBodies(Player.World.ComponentManager, Player.VoxSelector.VoxelUnderMouse);
-                    }
-
-                    Dragging = false;
+                    Place(Player.VoxSelector.VoxelUnderMouse);
+                    PreviewBodies.Clear();
+                    CreatePreviewBodies(Player.World.ComponentManager, Player.VoxSelector.VoxelUnderMouse);
                 }
-            }
         }
 
         public override void OnBegin()
@@ -115,7 +92,6 @@ namespace DwarfCorp.Rail
             System.Diagnostics.Debug.Assert(Pattern != null);
             System.Diagnostics.Debug.Assert(SelectedResources != null);
             GodModeSwitch = false;
-            Dragging = false;
             CreatePreviewBodies(Faction.World.ComponentManager, new VoxelHandle(Faction.World.ChunkManager.ChunkData, new GlobalVoxelCoordinate(0, 0, 0)));
         }
 
@@ -199,8 +175,6 @@ namespace DwarfCorp.Rail
 
             var tint = Color.White;
 
-            if (!Dragging)
-            {
                 var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
                 UpdatePreviewBodies(voxelUnderMouse);
 
@@ -208,106 +182,7 @@ namespace DwarfCorp.Rail
                     tint = Color.Green;
                 else
                     tint = Color.Red;
-            }
-            else
-            {
-                var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
-                if (voxelUnderMouse == DragStartVoxel)
-                {
-                    if (PreviewBodies.Count > Pattern.Pieces.Count)
-                        CreatePreviewBodies(Player.World.ComponentManager, voxelUnderMouse);
-                    UpdatePreviewBodies(voxelUnderMouse);
-
-                    if (CanPlace(voxelUnderMouse))
-                        tint = Color.Green;
-                    else
-                        tint = Color.Red;
-                }
-                else
-                {
-                    PreviewBodies[0].UpdatePiece(Pattern.Pieces[0], DragStartVoxel);
-
-                    var bodyCounter = 1;
-                    var destinationPoint = voxelUnderMouse.Coordinate.ToVector3();
-                    JunctionPortal lastExit = null;
-                    var currentVoxel = DragStartVoxel.Coordinate;
-
-                    // Determine which end of start is closer to destination.
-                    var entranceCoordinate = OffsetCoordinateThroughPortal(DragStartVoxel.Coordinate + new GlobalVoxelOffset(Pattern.Entrance.Offset.X, 0, Pattern.Entrance.Offset.Y), Pattern.Entrance);
-                    var exitCoordinate = OffsetCoordinateThroughPortal(DragStartVoxel.Coordinate + new GlobalVoxelOffset(Pattern.Exit.Offset.X, 0, Pattern.Exit.Offset.Y), Pattern.Exit);
-
-                    if ((destinationPoint - entranceCoordinate.ToVector3()).LengthSquared() < (destinationPoint - exitCoordinate.ToVector3()).LengthSquared())
-                    {
-                        currentVoxel = entranceCoordinate;
-                        lastExit = Pattern.Entrance;
-                    }
-                    else
-                    {
-                        currentVoxel = exitCoordinate;
-                        lastExit = Pattern.Exit;
-                    }
-
-                    var currentPoint = DragStartVoxel.Coordinate.ToVector3() + new Vector3(lastExit.Offset.X, 0.0f, lastExit.Offset.Y);
-                    
-                    while (true)
-                    {
-                        var nextPiece = RailLibrary.EnumerateChainPatterns()
-                            .Where(p => p.Entrance.Direction == OrientationHelper.Rotate(lastExit.Direction, 2)) // Only consider pieces that line up.
-                            .OrderBy(p =>
-                            {
-                                var exitVoxel = OffsetCoordinateThroughPortal(currentVoxel + new GlobalVoxelOffset(p.Exit.Offset.X, 0, p.Exit.Offset.Y), p.Exit);
-                                return (destinationPoint - exitVoxel.ToVector3()).LengthSquared();
-                            })
-                            .First();
-
-                        var exitVoxelPoint = OffsetCoordinateThroughPortal(currentVoxel + new GlobalVoxelOffset(nextPiece.Exit.Offset.X, 0, nextPiece.Exit.Offset.Y), nextPiece.Exit);
-
-                        if ((destinationPoint - exitVoxelPoint.ToVector3()).LengthSquared() > (destinationPoint - currentPoint).LengthSquared()) break;
-
-                        var patternOffset = new Point(currentVoxel.X - DragStartVoxel.Coordinate.X, currentVoxel.Z - DragStartVoxel.Coordinate.Z);
-
-                        // Add the next pattern to the chain
-                        foreach (var piece in nextPiece.Pieces)
-                        {
-                            var newPiece = new JunctionPiece
-                            {
-                                Offset = new Point(piece.Offset.X + patternOffset.X, piece.Offset.Y + patternOffset.Y),
-                                RailPiece = piece.RailPiece,
-                                Orientation = piece.Orientation
-                            };
-
-                            if (PreviewBodies.Count <= bodyCounter)
-                                PreviewBodies.Add(CreatePreviewBody(Player.World.ComponentManager, DragStartVoxel, newPiece));
-                            else
-                                PreviewBodies[bodyCounter].UpdatePiece(newPiece, DragStartVoxel);
-
-                            bodyCounter += 1;
-                        }
-
-                        currentVoxel = OffsetCoordinateThroughPortal(currentVoxel + new GlobalVoxelOffset(nextPiece.Exit.Offset.X, 0, nextPiece.Exit.Offset.Y), nextPiece.Exit);
-                        currentPoint = exitVoxelPoint.ToVector3();
-                        lastExit = nextPiece.Exit;
-                    }
-
-                    // Clean up any excess preview entities.
-                    var lineSize = bodyCounter;
-
-                    while (bodyCounter < PreviewBodies.Count)
-                    {
-                        PreviewBodies[bodyCounter].Delete();
-                        bodyCounter += 1;
-                    }
-
-                    PreviewBodies = PreviewBodies.Take(lineSize).ToList();
-
-                    // Apply tint
-                    if (CanPlace(DragStartVoxel))
-                        tint = Color.Green;
-                    else
-                        tint = Color.Red;
-                }
-            }
-
+        
             foreach (var body in PreviewBodies)
                 body.SetTintRecursive(tint);
         }
@@ -341,14 +216,6 @@ namespace DwarfCorp.Rail
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            if (Pattern.PaintMode == JunctionPaintMode.Path)
-            {
-                if (!Dragging)
-                {
-                    Dragging = true;
-                    DragStartVoxel = Player.VoxSelector.FirstVoxel;
-                }
-            }
         }
 
         private bool CanPlace(VoxelHandle Location, Rail.JunctionPiece Piece, RailEntity PreviewEntity)

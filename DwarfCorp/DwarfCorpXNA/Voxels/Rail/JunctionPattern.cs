@@ -13,13 +13,6 @@ namespace DwarfCorp.Rail
         public PieceOrientation Orientation;
     }
 
-    public enum JunctionPaintMode
-    {
-        SingleInstance,
-        Path,
-        Hidden
-    }
-
     public class JunctionPortal
     {
         public Point Offset;
@@ -31,7 +24,6 @@ namespace DwarfCorp.Rail
         public String Name;
         public List<JunctionPiece> Pieces;
         public int Icon;
-        public JunctionPaintMode PaintMode = JunctionPaintMode.SingleInstance;
         public JunctionPortal Entrance = null;
         public JunctionPortal Exit = null;
 
@@ -59,7 +51,6 @@ namespace DwarfCorp.Rail
                         Offset = new Point(Exit.Offset.Y, -Exit.Offset.X),
                         Direction = OrientationHelper.Rotate(Exit.Direction, 1)
                     },
-                PaintMode = PaintMode,
             };
         }
 

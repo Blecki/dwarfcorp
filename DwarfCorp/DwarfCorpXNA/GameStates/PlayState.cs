@@ -1461,7 +1461,6 @@ namespace DwarfCorp.GameStates
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_Rail_Return, icon_menu_Rail_Paint }).Concat(
                             Rail.RailLibrary.EnumeratePatterns()
-                            .Where(p => p.PaintMode != Rail.JunctionPaintMode.Hidden)
                             .Select(data => new FlatToolTray.Icon
                             {
                                 Tooltip = "Build " + data.Name,

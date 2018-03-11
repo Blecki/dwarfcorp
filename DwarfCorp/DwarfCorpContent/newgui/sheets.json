@@ -50,9 +50,10 @@
   },
   {
     "Name": "rail",
-    "Texture": "newgui/rail",
-    "TileWidth": 32,
-    "TileHeight": 32
+    "Texture": "RailIcons",
+    "TileWidth": 64,
+    "TileHeight": 64,
+    "Type": "Generated"
   },
   {
     "Name": "indicator-circle",
