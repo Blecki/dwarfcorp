@@ -72,6 +72,7 @@ namespace DwarfCorp
         public string Description = "";
         public CraftType Type = CraftType.Object;
         public List<CraftPrereq> Prerequisites = new List<CraftPrereq>();
+        public int CraftedResultsCount = 1;
         public ResourceType ResourceCreated = "";
         public string CraftLocation = "Anvil";
         public string Verb = "Build";
@@ -81,6 +82,7 @@ namespace DwarfCorp
         public Vector3 SpawnOffset = new Vector3(0.0f, 0.5f, 0.0f);
         public bool AddToOwnedPool = false;
         public bool Moveable = false;
+        public bool Deconstructable = true;
         public CraftActBehaviors CraftActBehavior = CraftActBehaviors.Normal;
     }
 }

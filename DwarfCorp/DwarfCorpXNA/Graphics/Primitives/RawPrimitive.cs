@@ -42,6 +42,37 @@ namespace DwarfCorp
             IndexCount += 1;
         }
 
+        public void AddIndicies(short[] Indicies)
+        {
+            EnsureSpace(ref Indexes, IndexCount + Indicies.Length);
+            for (var i = 0; i < Indicies.Length; ++i)
+            {
+                Indexes[IndexCount] = Indicies[i];
+                IndexCount += 1;
+            }
+        }
+
+        public void AddOffsetIndicies(short[] Indicies, int BaseIndex)
+        {
+            EnsureSpace(ref Indexes, IndexCount + Indicies.Length);
+            for (var i = 0; i < Indicies.Length; ++i)
+            {
+                Indexes[IndexCount] = (short)(Indicies[i] + BaseIndex);
+                IndexCount += 1;
+            }
+        }
+
+        public void AddQuad(Matrix Transform, Color Color, Color VertColor, Vector2[] Uvs, Vector4 Bounds)
+        {
+            var baseIndex = VertexCount;
+            AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(-0.5f, 0.0f, 0.5f), Transform), Color, VertColor, Uvs[0], Bounds));
+            AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(0.5f, 0.0f, 0.5f), Transform), Color, VertColor, Uvs[1], Bounds));
+            AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(0.5f, 0.0f, -0.5f), Transform), Color, VertColor, Uvs[2], Bounds));
+            AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(-0.5f, 0.0f, -0.5f), Transform), Color, VertColor, Uvs[3], Bounds));
+
+            AddOffsetIndicies(new short[] { 0, 1, 3, 1, 2, 3 }, baseIndex);
+        }
+
         public void Reset()
         {
             IndexCount = 0;

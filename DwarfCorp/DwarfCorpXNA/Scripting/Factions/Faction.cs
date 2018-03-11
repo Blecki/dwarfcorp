@@ -100,6 +100,8 @@ namespace DwarfCorp
         {
             World = ((WorldManager)ctx.Context);
             HandleThreatsTimer = new Timer(1.0f, false);
+            Threats.RemoveAll(threat => threat == null || threat.IsDead);
+            Minions.RemoveAll(minion => minion == null || minion.IsDead);
         }
 
         public Faction()
@@ -298,9 +300,14 @@ namespace DwarfCorp
             }
         }
 
-        public int ComputeStockpileSpace()
+        public int ComputeRemainingStockpileSpace()
         {
             return Stockpiles.Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
+        }
+
+        public int ComputeTotalStockpileSpace()
+        {
+            return Stockpiles.Sum(pile => pile.Resources.MaxResources);
         }
 
         public bool AddResources(ResourceAmount resources)

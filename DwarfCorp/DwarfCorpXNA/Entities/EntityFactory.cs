@@ -70,27 +70,16 @@ namespace DwarfCorp
             if (EntityFuncs == null)
                 EntityFuncs = new Dictionary<string, Func<Vector3, Blackboard, GameComponent>>();
 
-            foreach (var assembly in AssetManager.EnumerateLoadedModAssemblies())
+            foreach (var method in AssetManager.EnumerateModHooks(typeof(EntityFactoryAttribute), typeof(GameComponent), new Type[]
             {
-                foreach (var type in assembly.GetTypes())
-                {
-                    foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public))
-                    {
-                        if (!method.IsStatic) continue;
-                        if (method.ReturnType != typeof(GameComponent)) continue;
-
-                        var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a is EntityFactoryAttribute) as EntityFactoryAttribute;
-                        if (attribute == null) continue;
-
-                        var parameters = method.GetParameters();
-                        if (parameters.Length != 3) continue;
-                        if (parameters[0].ParameterType != typeof(ComponentManager)) continue;
-                        if (parameters[1].ParameterType != typeof(Vector3)) continue;
-                        if (parameters[2].ParameterType != typeof(Blackboard)) continue;
-
-                        EntityFuncs[attribute.Name] = (position, data) => method.Invoke(null, new Object[] { world.ComponentManager, position, data }) as GameComponent;
-                    }
-                }
+                typeof(ComponentManager),
+                typeof(Vector3),
+                typeof(Blackboard)
+            }))
+            {
+                var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a is EntityFactoryAttribute) as EntityFactoryAttribute;
+                if (attribute == null) continue;
+                EntityFuncs[attribute.Name] = (position, data) => method.Invoke(null, new Object[] { world.ComponentManager, position, data }) as GameComponent;
             }
         }
 

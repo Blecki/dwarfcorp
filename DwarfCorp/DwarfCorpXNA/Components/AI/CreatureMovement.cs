@@ -360,15 +360,6 @@ namespace DwarfCorp
                                     continue;
 
                                 
-                                if (!DwarfGame.IsMainThread)
-                                {
-                                    for (int i = 0; i < 5; i++)
-                                    {
-                                        Drawer3D.DrawBox(rail.BoundingBox, Color.Blue, 0.05f, false);
-                                        System.Threading.Thread.Sleep(10);
-                                    }
-                                }
-                                
                                 successors.Add(new MoveAction()
                                 {
                                     SourceState = state,
@@ -410,19 +401,6 @@ namespace DwarfCorp
                         var neighborRail =  Creature.Manager.FindComponent(neighbor) as Rail.RailEntity;
                         if (neighborRail == null || !neighborRail.Active)
                             continue;
-
-                        /*
-                        if (!DwarfGame.IsMainThread)
-                        {
-                            for (int i = 0; i < 50; i++)
-                            {
-                                Drawer3D.DrawLine(neighborRail.GetContainingVoxel().GetBoundingBox().Center(), state.Voxel.GetBoundingBox().Center(), Color.Purple, 0.08f);
-                                Drawer3D.DrawBox(neighborRail.BoundingBox, Color.Red, 0.05f, false);
-                                Drawer3D.DrawBox(neighborRail.GetContainingVoxel().GetBoundingBox(), Color.Purple, 0.08f, false);
-                                System.Threading.Thread.Sleep(5);
-                            }
-                        }
-                        */
 
                         successors.Add(new MoveAction()
                         {
@@ -1033,13 +1011,33 @@ namespace DwarfCorp
         // Very, very slow.
         public IEnumerable<MoveAction> GetInverseMoveActions(MoveState currentstate)
         {
+            CollisionManager objectHash = Creature.Manager.World.CollisionManager;
             var current = currentstate.Voxel;
             foreach (var v in VoxelHelpers.EnumerateAllNeighbors(current.Coordinate)
                 .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
                 .Where(h => h.IsValid && h.IsEmpty))
             {
-                foreach (var a in GetMoveActions(new MoveState() { Voxel = v }).Where(a => a.DestinationState == currentstate))
+                foreach (var a in GetMoveActions(new MoveState() { Voxel = v}).Where(a => a.DestinationState == currentstate))
                     yield return a;
+
+                // Now that dwarfs can ride vehicles, the inverse of the move actions becomes extremely complicated. We must now
+                // iterate through all rails intersecting every neighbor and see if we can find a connection from that rail to this one.
+                // Further, we must iterate through the entire rail network and enumerate all possible directions in and out of that rail.
+                // Yay!
+                var bodies = objectHash.EnumerateIntersectingObjects(v.GetBoundingBox(), CollisionManager.CollisionType.Static);
+                var rails = bodies.OfType<Rail.RailEntity>().Where(r => r.Active);
+                foreach (var rail in rails)
+                {
+                    if (rail.GetContainingVoxel() != v)
+                        continue;
+
+                    foreach (var neighborRail in rail.NeighborRails.Select(neighbor => Creature.Manager.FindComponent(neighbor.NeighborID) as Rail.RailEntity))
+                        foreach (var a in GetMoveActions(new MoveState() { Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = neighborRail } }).Where(a => a.DestinationState == currentstate))
+                         yield return a;
+
+                    foreach (var a in GetMoveActions(new MoveState() { Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = null } }).Where(a => a.DestinationState == currentstate))
+                        yield return a;
+                }
             }
         }
     }

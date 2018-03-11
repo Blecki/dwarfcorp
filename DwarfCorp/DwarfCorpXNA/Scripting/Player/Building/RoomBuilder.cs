@@ -78,7 +78,7 @@ namespace DwarfCorp
             {
                 foreach (var body in displayObjects)
                 {
-                    body.Die();
+                    body.Delete();
                 }
                 displayObjects.Clear();
             }
@@ -305,7 +305,10 @@ namespace DwarfCorp
         private void SetDisplayColor(Body body, Color color)
         {
             foreach (var sprite in body.EnumerateAll().OfType<Tinter>())
+            {
                 sprite.VertexColorTint = color;
+                sprite.Stipple = true;
+            }
         }
 
         public void OnVoxelsDragged(List<VoxelHandle> refs, InputManager.MouseButton button)
@@ -371,6 +374,7 @@ namespace DwarfCorp
 
                     foreach(Body thing in displayObjects)
                     {
+                        thing.SetFlagRecursive(GameComponent.Flag.ShouldSerialize, false);
                         thing.SetFlagRecursive(GameComponent.Flag.Active, false);
                         SetDisplayColor(thing, Color.Green);
                     }

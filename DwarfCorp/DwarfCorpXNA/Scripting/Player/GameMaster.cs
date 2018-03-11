@@ -38,6 +38,7 @@ namespace DwarfCorp
             MoveObjects,
             DeconstructObjects,
             BuildRail,
+            PaintRail,
             God
         }
 
@@ -229,6 +230,7 @@ namespace DwarfCorp
             };
 
             Tools[ToolMode.BuildRail] = new Rail.BuildRailTool(this);
+            Tools[ToolMode.PaintRail] = new Rail.PaintRailTool(this);
         }
 
         void Time_NewDay(DateTime time)

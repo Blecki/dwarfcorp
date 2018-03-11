@@ -92,6 +92,7 @@ namespace DwarfCorp
 
         //public ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk> ChunkMap { get; set; }
 
+            // Todo: Get rid of all these texture aliases.
         public Texture2D Tilemap
         {
             get { return AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles); }

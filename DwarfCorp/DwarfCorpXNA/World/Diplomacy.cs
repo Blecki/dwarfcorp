@@ -371,7 +371,10 @@ namespace DwarfCorp
                 Text = String.Format("Trade envoy from {0} has arrived!", natives.Name),
                 ClickAction = (gui, sender) =>
                 {
-                    envoy.Creatures.First().ZoomToMe();
+                    if (envoy.Creatures.Count > 0)
+                    {
+                        envoy.Creatures.First().ZoomToMe();
+                    }
                     gui.ShowModalPopup(gui.ConstructWidget(new Gui.Widgets.Popup
                     {
                         Text = String.Format("Traders from {0} ({1}) have entered our territory. They will try to get to our balloon port to trade with us.", natives.Name, natives.Race.Name),
@@ -557,6 +560,7 @@ namespace DwarfCorp
         {
             foreach (TradeEnvoy envoy in faction.TradeEnvoys)
             {
+                envoy.Creatures.RemoveAll(creature => creature.IsDead);
                 if (envoy.DeathTimer.Update(faction.World.Time.CurrentDate))
                 {
                     envoy.Creatures.ForEach((creature) => creature.GetRoot().Die());
@@ -691,6 +695,7 @@ namespace DwarfCorp
         {
             foreach (var party in faction.WarParties)
             {
+                party.Creatures.RemoveAll(creature => creature.IsDead);
                 if (party.DeathTimer.Update(faction.World.Time.CurrentDate))
                 {
                     party.Creatures.ForEach((creature) => creature.Die());

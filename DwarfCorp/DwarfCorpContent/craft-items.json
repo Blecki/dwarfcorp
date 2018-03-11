@@ -812,7 +812,7 @@
       "Sheet": "resources",
       "Tile": 5
     },
-    "BaseCraftTime": 30.0,
+    "BaseCraftTime": 3.0,
     "Description": "Made from dirt. Building material.",
     "Type": "Resource",
     "Prerequisites": [],
@@ -828,6 +828,38 @@
     "AddToOwnedPool": false,
     "Moveable": false,
     "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Rail",
+    "EntityName": "Rail",
+    "RequiredResources": [
+      {
+        "ResourceType": "Metal",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "resources",
+      "Tile": 38
+    },
+    "BaseCraftTime": 3.0,
+    "Description": "Made from metal. Allows fast travel, but must be laid.",
+    "Type": "Resource",
+    "Prerequisites": [],
+    "ResourceCreated": {
+      "_value": "Rail"
+    },
+    "CraftLocation": "Anvil",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": false,
+    "Moveable": false,
+    "CraftActBehavior": "Normal",
+    "CraftedResultsCount": 4
   }
 
 ]

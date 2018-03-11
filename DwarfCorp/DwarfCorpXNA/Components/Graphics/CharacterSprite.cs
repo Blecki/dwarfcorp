@@ -58,35 +58,41 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public GraphicsDevice Graphics { get; set; }
+        public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
 
         private Timer blinkTimer = new Timer(0.1f, false);
         private Timer coolDownTimer = new Timer(1.0f, false);
         private Timer blinkTrigger = new Timer(0.0f, true);
         private bool isBlinking = false;
         private bool isCoolingDown = false;
-
+        private Color tintOnBlink = Color.White;
 
         public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             if (!isBlinking)
             {
+                VertexColorTint = tintOnBlink;
                 base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
             }
             else
             {
                 if (blinkTimer.CurrentTimeSeconds < 0.5f*blinkTimer.TargetTimeSeconds)
                 {
-                    base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+                    VertexColorTint = new Color(new Vector3(1.0f, blinkTimer.CurrentTimeSeconds / blinkTimer.TargetTimeSeconds, blinkTimer.CurrentTimeSeconds / blinkTimer.TargetTimeSeconds));
                 }
+                else
+                {
+                    VertexColorTint = tintOnBlink;
+                }
+                base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
             }
         }
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Graphics = (context.Context as WorldManager).ChunkManager.Graphics;
+
         }
 
         public CharacterSprite()
@@ -98,7 +104,6 @@ namespace DwarfCorp
             Matrix localTransform) :
                 base(manager, name, localTransform)
         {
-            Graphics = graphics;
             currentMode = "Idle";
         }
 
@@ -123,7 +128,7 @@ namespace DwarfCorp
 
         public void ResetAnimations(CharacterMode mode)
         {
-            SetCurrentAnimation(mode.ToString() + OrientationStrings[(int)CurrentOrientation]);
+            SetCurrentAnimation(mode.ToString());
             AnimPlayer.Reset();
         }
 
@@ -135,6 +140,7 @@ namespace DwarfCorp
             }
 
             isBlinking = true;
+            tintOnBlink = VertexColorTint;
             blinkTrigger.Reset(blinkTime);
         }
 
@@ -154,6 +160,7 @@ namespace DwarfCorp
 
             if(isCoolingDown)
             {
+                VertexColorTint = tintOnBlink;
                 coolDownTimer.Update(gameTime);
 
                 if(coolDownTimer.HasTriggered)

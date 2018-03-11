@@ -8,12 +8,19 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public static class Barrel
+    public class Barrel : CraftedFixture
     {
         [EntityFactory("Barrel")]
         private static GameComponent __factory01(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Fixture("Barrel", new String[] { "Barrel" }, Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 0));
+            return new Barrel(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+        }
+
+        public Barrel(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
+            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 0), new DwarfCorp.CraftDetails(manager, "Barrel", resources))
+        {
+            Name = "Barrel";
+            Tags.Add("Barrel");
         }
     }
 }

@@ -52,11 +52,15 @@ namespace DwarfCorp
         private bool entityLighting = GameSettings.Default.EntityLighting;
         public Color VertexColorTint { get; set; }
         public bool FrustumCull { get { return true; } }
+        public bool Stipple { get; set; }
+        private string previousEffect = null;
+        private Color previousColor = Color.White;
+
         [JsonIgnore]
         public Color OneShotTint = Color.White;
         public Tinter()
         {
-            
+            Stipple = false;
         }
 
         public Tinter(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool collisionManager) :
@@ -66,6 +70,7 @@ namespace DwarfCorp
             Tint = new Color(255, 255, 0);
             TintChangeRate = 1.0f;
             VertexColorTint = Color.White;
+            Stipple = false;
         }
 
 
@@ -105,6 +110,7 @@ namespace DwarfCorp
 
         public void ApplyTintingToEffect(Shader effect)
         {
+            previousColor = effect.VertexColorTint;
             effect.LightRampTint = Tint;
             var tintVec = VertexColorTint.ToVector4();
             var oneShotvec = OneShotTint.ToVector4();
@@ -114,6 +120,30 @@ namespace DwarfCorp
             tintVec.W *= oneShotvec.W;
             effect.VertexColorTint = new Color(tintVec);
             OneShotTint = Color.White;
+#if DEBUG
+            if(effect.CurrentTechnique.Name == Shader.Technique.Stipple)
+            {
+                throw new InvalidOperationException("Stipple technique not cleaned up. Was EndDraw called?");
+            }
+#endif
+            if (Stipple && effect.CurrentTechnique != effect.Techniques[Shader.Technique.SelectionBuffer] && effect.CurrentTechnique != effect.Techniques[Shader.Technique.SelectionBufferInstanced]) 
+            {
+                previousEffect = effect.CurrentTechnique.Name;
+                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Stipple];
+            }
+            else
+            {
+                previousEffect = null;
+            }
+        }
+
+        public void EndDraw(Shader shader)
+        {
+            if (!String.IsNullOrEmpty(previousEffect))
+            {
+                shader.CurrentTechnique = shader.Techniques[previousEffect];
+            }
+            shader.VertexColorTint = previousColor;
         }
     }
 

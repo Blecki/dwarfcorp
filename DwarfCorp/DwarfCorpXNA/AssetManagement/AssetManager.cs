@@ -56,15 +56,12 @@ namespace DwarfCorp
     public class AssetManager
     {
         private static Dictionary<String, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
-        private static ContentManager Content;
-        private static GraphicsDevice Graphics;
+        private static ContentManager Content { get { return GameState.Game.Content; } }
+        private static GraphicsDevice Graphics {  get { return GameState.Game.GraphicsDevice; } }
         private static List<Assembly> Assemblies = new List<Assembly>();
 
         public static void Initialize(ContentManager Content, GraphicsDevice Graphics, GameSettings.Settings Settings)
         {
-            AssetManager.Content = Content;
-            AssetManager.Graphics = Graphics;
-
             Assemblies.Add(Assembly.GetExecutingAssembly());
 
             foreach (var mod in EnumerateModDirectories(Settings))
@@ -77,6 +74,36 @@ namespace DwarfCorp
         public static IEnumerable<Assembly> EnumerateLoadedModAssemblies()
         {
             return Assemblies;
+        }
+
+        private static bool CheckMethod(MethodInfo Method, Type ReturnType, Type[] ArgumentTypes)
+        {
+            if (!Method.IsStatic) return false;
+            if (Method.ReturnType != ReturnType) return false;
+
+            var parameters = Method.GetParameters();
+            if (parameters.Length != ArgumentTypes.Length) return false;
+            for (var i = 0; i < parameters.Length; ++i)
+                if (parameters[i].ParameterType != ArgumentTypes[i]) return false;
+
+            return true;
+        }
+
+        public static IEnumerable<MethodInfo> EnumerateModHooks(Type AttributeType, Type ReturnType, Type[] ArgumentTypes)
+        {
+            foreach (var assembly in EnumerateLoadedModAssemblies())
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public))
+                    {
+                        var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a.GetType() == AttributeType);
+                        if (attribute == null) continue;
+                        if (CheckMethod(method, ReturnType, ArgumentTypes))
+                            yield return method;
+                    }
+                }
+            }
         }
 
         private static IEnumerable<String> EnumerateModDirectories(GameSettings.Settings Settings)

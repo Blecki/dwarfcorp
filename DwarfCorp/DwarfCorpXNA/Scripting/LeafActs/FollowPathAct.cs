@@ -94,7 +94,7 @@ namespace DwarfCorp
             {
                 return false;
             }
-            for (int i = 0; i < path.Count - 1; i++)
+            for (int i = 1; i < path.Count - 1; i++)
             {
                 if (!path[i].SourceVoxel.IsValid)
                 {
@@ -357,7 +357,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        Drawer3D.DrawBox(rail.GetContainingVoxel().GetBoundingBox(), Color.Green, 0.1f, true);
+                        //Drawer3D.DrawBox(rail.GetContainingVoxel().GetBoundingBox(), Color.Green, 0.1f, true);
                         var pos = rail.InterpolateSpline(t, action.SourceVoxel.WorldPosition + Vector3.One * 0.5f, action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
                         transform.Translation = pos + Vector3.Up * 1.5f;
                         Agent.Physics.Velocity = diff;
@@ -513,6 +513,7 @@ namespace DwarfCorp
                     {
                         break;
                     }
+                    Creature.Physics.AnimationQueue.Clear();
                     yield return Status.Running;
                 }
 
@@ -563,6 +564,7 @@ namespace DwarfCorp
                         Cart.Die();
                     yield return Status.Fail;
                 }
+                Creature.Physics.AnimationQueue.Clear();
                 yield return Status.Running;
             }
             Creature.OverrideCharacterMode = false;

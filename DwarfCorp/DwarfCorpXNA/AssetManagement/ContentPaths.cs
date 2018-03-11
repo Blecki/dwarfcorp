@@ -65,6 +65,7 @@ namespace DwarfCorp
         public static string decal_types = ProgramData.CreatePath("decal-types.json");
         public static string rail_pieces = ProgramData.CreatePath("rail-pieces.json");
         public static string rail_patterns = ProgramData.CreatePath("rail-patterns.json");
+        public static string rail_combinations = ProgramData.CreatePath("rail-combinations.txt");
         public static string craft_items = ProgramData.CreatePath("craft-items.json");
         public static string resource_items = "resource-items.json";
         public static string rail_tiles = ProgramData.CreatePath("Terrain", "rail");
@@ -632,6 +633,11 @@ namespace DwarfCorp
                     public static string goblinhurt4 = ProgramData.CreatePath("Entities", "Goblin", "Audio", "goblinhurt4");
 
                 }
+            }
+            
+            public class Kobold
+            {
+                public static string kobold_animations = ProgramData.CreatePath("Entities", "Kobold", "kobold_animation.json");
             }
 
             public class Skeleton

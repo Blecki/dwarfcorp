@@ -91,6 +91,8 @@ namespace DwarfCorp
         {
             get
             {
+                if (Parent == null)
+                    return null;
                 if (_cachedCreature == null)
                     _cachedCreature = Parent.EnumerateAll().OfType<Creature>().FirstOrDefault();
                 System.Diagnostics.Debug.Assert(_cachedCreature != null, "AI Could not find creature");
@@ -232,6 +234,8 @@ namespace DwarfCorp
         public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
             new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
 
+        public float StealFromPlayerProbability = -1.0f;
+
         [OnDeserialized]
         public void OnDeserialize(StreamingContext ctx)
         {
@@ -325,17 +329,21 @@ namespace DwarfCorp
             if (newTask != null)
             {
                 if (CurrentTask.ShouldRetry(Creature))
-                    AssignTask(CurrentTask);
-                CurrentTask = newTask;
-                ChangeAct(CurrentTask.CreateScript(Creature));
-                RemoveTask(newTask);
+                    ReassignCurrentTask();
+                ChangeTask(newTask);
             }
         }
 
         /// <summary> remove any impossible or already completed tasks </summary>
         public void DeleteBadTasks()
         {
-            Tasks.RemoveAll(task => task.ShouldDelete(Creature));
+            var badTasks = Tasks.Where(task => task.ShouldDelete(Creature)).ToList();
+            foreach(var task in badTasks)
+            {
+                task.OnUnAssign(this);
+                Tasks.Remove(task);
+            }
+           
         }
 
         public bool IsPositionConstrained()
@@ -398,8 +406,7 @@ namespace DwarfCorp
 
         public void CancelCurrentTask()
         {
-            ChangeAct(null);
-            CurrentTask = null;
+            ChangeTask(null);
         }
 
         /// <summary> Update this creature </summary>
@@ -430,7 +437,7 @@ namespace DwarfCorp
             SpeakTimer.Update(gameTime);
 
             OrderEnemyAttack();
-            //DeleteBadTasks();
+            DeleteBadTasks();
             PreEmptTasks();
             HandleReproduction();
             
@@ -480,25 +487,19 @@ namespace DwarfCorp
                     {
                         if (!Tasks.Contains(CurrentTask))
                         {
-                            // Lower the priority of failed tasks.
-                            //CurrentTask.Priority = Task.PriorityType.Eventually;
-                            AssignTask(CurrentTask);
-                            ChangeAct(CurrentTask.CreateScript(Creature));
+                            ReassignCurrentTask();
                             retried = true;
                         }
                     }
                 }
                 else if (status == Act.Status.Success)
                 {
-                    CurrentTask.IsComplete = true;
-                    RemoveTask(CurrentTask);
+                    if (CurrentTask != null) // How? Some Act must be changing the current task!
+                        CurrentTask.IsComplete = true;
                 }
 
                 if (status != Act.Status.Running && !retried)
-                {
-                    ChangeAct(null);
-                    CurrentTask = null;
-                }
+                    ChangeTask(null);
             }
             // Otherwise, we don't have any tasks at the moment.
             else if (CurrentTask == null)
@@ -516,6 +517,7 @@ namespace DwarfCorp
                     if (tantrum)
                     {
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
+
                         if (Creature.Faction == Manager.World.PlayerFaction)
                         {
                             Manager.World.MakeAnnouncement(
@@ -529,26 +531,25 @@ namespace DwarfCorp
                             Manager.World.Tutorial("happiness");
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                         }
-                        CurrentTask = null;
-                        ChangeAct(null);
+
+                        ChangeTask(null);
                     }
                     else
                     {
                         IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
-                        CurrentTask = goal;
-                        ChangeAct(goal.CreateScript(Creature));
-                        RemoveTask(goal);
+                        ChangeTask(goal);
                     }
                 }
                 else
                 {
-                    CurrentTask = ActOnIdle();
-                    if (CurrentTask != null)
-                        ChangeAct(CurrentTask.CreateScript(Creature));
+                    var newTask = ActOnIdle();
+                    if (newTask != null)
+                        ChangeTask(newTask);
                 }
             }
             else if (CurrentTask != null)
             {
+                // Should be impossible to have a current task and no current act.
                 ChangeAct(CurrentTask.CreateScript(Creature));
             }
             
@@ -692,7 +693,7 @@ namespace DwarfCorp
                     return candidate;
             }
 
-            if (!IsPosessed && Creature.Inventory.Resources.Count > 0)
+            if (!IsPosessed && Faction == World.PlayerFaction && Creature.Inventory.Resources.Count > 0)
                 foreach (var status in Creature.RestockAll())
                     ; // RestockAll generates tasks for the dwarf.           
 
@@ -701,6 +702,24 @@ namespace DwarfCorp
                 (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury())
                 && Tasks.Count == 0)
             {
+                if (StealFromPlayerProbability > 0 && MathFunctions.RandEvent(StealFromPlayerProbability))
+                {
+                    bool stealMoney = MathFunctions.RandEvent(0.5f);
+                    if (World.PlayerFaction.Economy.CurrentMoney > 0 && stealMoney)
+                        AssignTask(new ActWrapperTask(new GetMoneyAct(this, 100m, World.PlayerFaction)) { Name = "Steal money", Priority = Task.PriorityType.High });
+                    else
+                    {
+                        var resources = World.PlayerFaction.ListResources();
+                        if (resources.Count > 0)
+                        {
+                            var resource = Datastructures.SelectRandom(resources);
+                            if (resource.Value.NumResources > 0)
+                            {
+                                AssignTask(new ActWrapperTask(new GetResourcesAct(this, new List<ResourceAmount>() { new ResourceAmount(resource.Value.ResourceType, 1) }) { Faction = World.PlayerFaction }) { Name = "Steal stuff", Priority = Task.PriorityType.High });
+                            }
+                        }
+                    }
+                }
 
                 // Craft random items for fun.
                 if (Stats.IsTaskAllowed(Task.TaskCategory.CraftItem) && MathFunctions.RandEvent(0.0005f))
@@ -794,7 +813,7 @@ namespace DwarfCorp
                 if (Faction.HasFreeStockpile(order.Resource))
                 {
                     GatherManager.StockOrders.RemoveAt(0);
-                    StockResourceTask task = new StockResourceTask(order.Resource)
+                    StockResourceTask task = new StockResourceTask(order.Resource.CloneResource())
                     {
                         Priority = Task.PriorityType.Low
                     };
@@ -1122,6 +1141,9 @@ namespace DwarfCorp
         // If true, this creature can fight the other creature. Otherwise, we want to flee it.
         public bool FightOrFlight(CreatureAI creature)
         {
+            if (IsDead || creature.IsDead)
+                return false;
+
             float fear = 0;
             // If our health is low, we're a little afraid.
             if (Creature.Hp < Creature.MaxHealth * 0.25f)
@@ -1130,7 +1152,8 @@ namespace DwarfCorp
             }
 
             // If there are a lot of nearby threats vs allies, we are even more afraid.
-            if (Faction.Threats.Sum(threat => (threat.AI.Position - Position).Length() < 6.0f ? 1 : 0) - Faction.Minions.Sum(minion => (minion.Position - Position).Length() < 6.0f ? 1 : 0) > Creature.Stats.BuffedCon)
+            if (Faction.Threats.Where(threat => !threat.IsDead).Sum(threat => (threat.AI.Position - Position).Length() < 6.0f ? 1 : 0) - 
+                Faction.Minions.Where(minion => !minion.IsDead).Sum(minion => (minion.Position - Position).Length() < 6.0f ? 1 : 0) > Creature.Stats.BuffedCon)
             {
                 fear += 0.5f;
             }
@@ -1166,6 +1189,33 @@ namespace DwarfCorp
         {
             Tasks.Remove(task);
             task.OnUnAssign(this);
+        }
+
+        public void ChangeTask(Task task)
+        {
+            if (CurrentTask != null)
+                CurrentTask.OnUnAssign(this);
+            CurrentTask = task;
+            if (CurrentTask != null)
+            {
+                ChangeAct(CurrentTask.CreateScript(Creature));
+
+                if (Tasks.Contains(task))
+                    Tasks.Remove(task);
+                else
+                    task.OnAssign(this);
+            }
+            else
+            {
+                ChangeAct(null);
+            }
+        }
+
+        public void ReassignCurrentTask()
+        {
+            var task = CurrentTask;
+            ChangeTask(null);
+            AssignTask(task);
         }
 
         public AStarPlanResponse WaitForPlan(VoxelHandle voxel, PlanAct.PlanType type = PlanAct.PlanType.Into)
@@ -1225,11 +1275,9 @@ namespace DwarfCorp
         {
             if (CurrentTask != null)
             {
-                AssignTask(null);
                 if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
-                {
                     World.Master.TaskManager.AddTask(CurrentTask);
-                }
+                ChangeTask(null);
             }
             base.Die();
         }
@@ -1238,11 +1286,9 @@ namespace DwarfCorp
         {
             if (CurrentTask != null)
             {
-                AssignTask(null);
                 if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
-                {
                     World.Master.TaskManager.AddTask(CurrentTask);
-                }
+                ChangeTask(null);
             }
             base.Delete();
         }

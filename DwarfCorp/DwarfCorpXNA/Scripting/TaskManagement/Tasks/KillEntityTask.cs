@@ -79,13 +79,20 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
+            if (creature.IsDead || creature.AI.IsDead)
+                return null;
+
             var otherCreature = EntityToKill.GetRoot().GetComponent<Creature>();
+            if (otherCreature != null && otherCreature.IsDead)
+                return null;
+
             if (otherCreature != null && !creature.AI.FightOrFlight(otherCreature.AI))
             {
                 Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
                 IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
                 return new FleeEntityAct(creature.AI) {Entity = EntityToKill, PathLength = 5};
             }
+
             return new KillEntityAct(EntityToKill, creature.AI, Mode);
         }
 
@@ -126,8 +133,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-
-            if (EntityToKill == null || EntityToKill.IsDead)
+            if (agent == null || agent.IsDead || EntityToKill == null || EntityToKill.IsDead)
             {
                 return Feasibility.Infeasible;
             }

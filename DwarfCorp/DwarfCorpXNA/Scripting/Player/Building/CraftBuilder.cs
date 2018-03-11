@@ -162,8 +162,9 @@ namespace DwarfCorp
                     player.VoxSelector.VoxelUnderMouse.WorldPosition,
                      Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
 
-                CurrentCraftBody.SetFlagRecursive(GameComponent.Flag.Active, false);
+                CurrentCraftBody.SetFlag(GameComponent.Flag.Active, false);
                 CurrentCraftBody.SetTintRecursive(Color.White);
+                CurrentCraftBody.SetFlagRecursive(GameComponent.Flag.ShouldSerialize, false);
 
                 CurrentDesignation = new CraftDesignation()
                 {
@@ -184,6 +185,11 @@ namespace DwarfCorp
             CurrentCraftBody.GlobalTransform = CurrentCraftBody.LocalTransform;
             CurrentCraftBody.UpdateTransform();
             CurrentCraftBody.PropogateTransforms();
+            var tinters = CurrentCraftBody.EnumerateAll().OfType<Tinter>();
+            foreach(var tinter in tinters)
+            {
+                tinter.Stipple = true;
+            }
             if (OverrideOrientation)
             {
                 CurrentCraftBody.Orient(CurrentOrientation);
@@ -400,6 +406,7 @@ namespace DwarfCorp
                                     Entity = CurrentCraftBody,
                                     SelectedResources = SelectedResources
                                 };
+                                CurrentCraftBody.SetFlag(GameComponent.Flag.ShouldSerialize, true);
 
                                 if (IsValid(newDesignation))
                                 {

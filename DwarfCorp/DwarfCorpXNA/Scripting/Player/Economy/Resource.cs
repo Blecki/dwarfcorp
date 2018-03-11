@@ -117,7 +117,8 @@ namespace DwarfCorp
             Fruit,
             Gourd,
             Evil,
-            Jolly
+            Jolly,
+            Rail
         }
 
         public Resource()
@@ -142,8 +143,17 @@ namespace DwarfCorp
             CanCraft = other.CanCraft;
             CraftPrerequisites = new List<Quantitiy<Resource.ResourceTags>>();
             CraftPrerequisites.AddRange(other.CraftPrerequisites);
-            CompositeLayers = new List<CompositeLayer>();
-            CompositeLayers.AddRange(other.CompositeLayers);
+
+            if (other.CompositeLayers != null)
+            {
+                CompositeLayers = new List<CompositeLayer>();
+                CompositeLayers.AddRange(other.CompositeLayers);
+            }
+            else
+            {
+                CompositeLayers = null;
+            }
+
             TrinketData = other.TrinketData;
             AleName = other.AleName;
         }

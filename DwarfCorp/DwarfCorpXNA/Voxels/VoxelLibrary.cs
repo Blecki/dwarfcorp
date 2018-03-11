@@ -51,7 +51,7 @@ namespace DwarfCorp
         public static VoxelType emptyType = null;
 
         public static Dictionary<string, VoxelType> Types = new Dictionary<string, VoxelType>();
-        public static List<VoxelType> TypeList;
+        public static List<VoxelType> TypeList = null;
 
         public VoxelLibrary()
         {
@@ -104,8 +104,11 @@ namespace DwarfCorp
             return cube;
         }
 
-        public static void InitializeDefaultLibrary(GraphicsDevice graphics, Texture2D cubeTexture)
+        public static void InitializeDefaultLibrary(GraphicsDevice graphics)
         {
+            if (TypeList != null) return;
+
+            var cubeTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
             TypeList = FileUtils.LoadJsonListFromMultipleSources<VoxelType>(ContentPaths.voxel_types, null, v => v.Name);
             emptyType = TypeList[0];
 
@@ -166,42 +169,48 @@ namespace DwarfCorp
         }
 
         // Do not delete: Used to generate block icon texture for menu.
-        public static Texture2D RenderIcons(GraphicsDevice device, Shader shader, ChunkManager chunks, int width, int height, int tileSize)
+        // Todo: Use Sheet.TileHeight as well.
+        [TextureGenerator("Voxels")]
+        public static Texture2D RenderIcons(GraphicsDevice device, Microsoft.Xna.Framework.Content.ContentManager Content, Gui.JsonTileSheet Sheet)
         {
-            if (width == -1)
-            {
-                int sqrt = (int)(Math.Ceiling(Math.Sqrt(PrimitiveMap.Count)));
-                width = MathFunctions.NearestPowerOf2(sqrt * tileSize);
-                height = MathFunctions.NearestPowerOf2(sqrt * tileSize);
-            }
+            InitializeDefaultLibrary(device);
+
+            var shader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
+
+                var sqrt = (int)(Math.Ceiling(Math.Sqrt(PrimitiveMap.Count)));
+                var width = MathFunctions.NearestPowerOf2(sqrt * Sheet.TileWidth);
+                var height = MathFunctions.NearestPowerOf2(sqrt * Sheet.TileWidth);
 
             RenderTarget2D toReturn = new RenderTarget2D(device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth16, 16, RenderTargetUsage.PreserveContents);
         
             device.SetRenderTarget(toReturn);
             device.Clear(Color.Transparent);
             shader.SetIconTechnique();
-            shader.MainTexture = chunks.ChunkData.Tilemap;
+            shader.MainTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
             shader.SelfIlluminationEnabled = true;
-            shader.SelfIlluminationTexture = chunks.ChunkData.IllumMap;
+            shader.SelfIlluminationTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_illumination);
             shader.EnableShadows = false;
             shader.EnableLighting = false;
             shader.ClippingEnabled = false;
             shader.CameraPosition = new Vector3(-0.5f, 0.5f, 0.5f);
             shader.VertexColorTint = Color.White;
             shader.LightRampTint = Color.White;
-            shader.SunlightGradient = chunks.ChunkData.SunMap;
-            shader.AmbientOcclusionGradient = chunks.ChunkData.AmbientMap;
-            shader.TorchlightGradient = chunks.ChunkData.TorchMap;
+            shader.SunlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient);
+            shader.AmbientOcclusionGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.ambientgradient);
+            shader.TorchlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.torchgradient);
+
             Viewport oldview = device.Viewport;
-            List<VoxelType> voxelsByType = Types.Select(type => type.Value).ToList();
-            voxelsByType.Sort((a, b) => a.ID < b.ID ? -1 : 1);
-            int rows = height/tileSize;
-            int cols = width/tileSize;
-            device.ScissorRectangle = new Rectangle(0, 0, tileSize, tileSize);
+            int rows = height  / Sheet.TileWidth;
+            int cols = width/ Sheet.TileWidth;
+            device.ScissorRectangle = new Rectangle(0, 0, Sheet.TileWidth, Sheet.TileWidth);
             device.RasterizerState = RasterizerState.CullNone;
             device.DepthStencilState = DepthStencilState.Default;
             Vector3 half = Vector3.One*0.5f;
             half = new Vector3(half.X, half.Y, half.Z);
+
+            List<VoxelType> voxelsByType = Types.Select(type => type.Value).ToList();
+            voxelsByType.Sort((a, b) => a.ID < b.ID ? -1 : 1);
+
             foreach (EffectPass pass in shader.CurrentTechnique.Passes)
             {
                 foreach (var type in voxelsByType)
@@ -215,7 +224,7 @@ namespace DwarfCorp
                     if (type.HasTransitionTextures)
                         primitive = new BoxPrimitive(device, 1, 1, 1, type.TransitionTextures[new BoxTransition()]);
 
-                    device.Viewport = new Viewport(col * tileSize, row * tileSize, tileSize, tileSize);
+                    device.Viewport = new Viewport(col * Sheet.TileWidth, row * Sheet.TileWidth, Sheet.TileWidth, Sheet.TileWidth);
                     Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(-1.2f, 1.0f, -1.5f), Vector3.Zero, Vector3.Up);
                     Matrix projectionMatrix = Matrix.CreateOrthographic(1.5f, 1.5f, 0, 5);
                     shader.View = viewMatrix;
@@ -226,6 +235,7 @@ namespace DwarfCorp
                 }
             }
             device.Viewport = oldview;
+            device.SetRenderTarget(null);
             return (Texture2D) toReturn;
         }
     }

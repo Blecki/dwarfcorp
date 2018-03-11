@@ -39,7 +39,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Flag : Body
+    public class Flag : CraftedBody
     {
         [EntityFactory("Flag")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
@@ -54,8 +54,8 @@ namespace DwarfCorp
 
         }
 
-        public Flag(ComponentManager Manager, Vector3 position, CompanyInformation logo) :
-            base(Manager, "Flag", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+        public Flag(ComponentManager Manager, Vector3 position, CompanyInformation logo, List<ResourceAmount> resources = null) :
+            base(Manager, "Flag", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(Manager, "Flag", resources))
         {
             this.Logo = logo;
 

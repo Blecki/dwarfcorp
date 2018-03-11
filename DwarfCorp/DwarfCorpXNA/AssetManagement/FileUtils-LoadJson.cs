@@ -158,5 +158,15 @@ namespace DwarfCorp
 
             return new List<T>(result.Values);
         }
+
+        public static List<String> LoadConfigurationLinesFromMultipleSources(String AssetPath)
+        {
+            var result = new List<String>();
+
+            foreach (var resolvedAssetPath in AssetManager.EnumerateMatchingPaths(AssetPath))
+                result.AddRange(System.IO.File.ReadAllLines(resolvedAssetPath));
+
+            return result;
+        }
     }
 }

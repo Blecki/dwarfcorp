@@ -39,7 +39,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.Rail
 {
-    public class RailEntity : Body, IRenderableComponent
+    public class RailEntity : Tinter, IRenderableComponent
     {
         public class NeighborConnection
         {
@@ -58,6 +58,19 @@ namespace DwarfCorp.Rail
         
         private VoxelHandle ContainingVoxel {  get { return GetContainingVoxel(); } }
 
+        private const float sqrt2 = 1.41421356237f;
+        private SpriteSheet Sheet;
+        private Point Frame;
+        private RawPrimitive Primitive;
+
+        private static float[,] VertexHeightOffsets =
+        {
+            { 0.0f, 0.0f, 0.0f, 0.0f },
+            { 1.0f, 0.5f, 0.5f, 1.0f },
+            { 0.5f, 0.0f, 0.0f, 0.5f },
+            { 1.0f, 0.0f, 0.0f, 1.0f }
+        };
+
         public VoxelHandle GetLocation()
         {
             return Location;
@@ -71,6 +84,47 @@ namespace DwarfCorp.Rail
         public JunctionPiece GetPiece()
         {
             return Piece;
+        }
+
+        public void ResetPrimitive()
+        {
+            Primitive = null;
+        }
+
+        // Perhaps should be handled in base class?
+        public override void ReceiveMessageRecursive(Message messageToReceive)
+        {
+            switch (messageToReceive.Type)
+            {
+                case Message.MessageType.OnChunkModified:
+                    HasMoved = true;
+                    break;
+            }
+
+
+            base.ReceiveMessageRecursive(messageToReceive);
+        }
+
+        private float AngleBetweenVectors(Vector2 A, Vector2 B)
+        {
+            A.Normalize();
+            B.Normalize();
+            float DotProduct = Vector2.Dot(A, B);
+            DotProduct = MathHelper.Clamp(DotProduct, -1.0f, 1.0f);
+            float Angle = (float)System.Math.Acos(DotProduct);
+            if (CrossZ(A, B) < 0) return -Angle;
+            return Angle;
+        }
+
+        private float CrossZ(Vector2 A, Vector2 B)
+        {
+            return (B.Y * A.X) - (B.X * A.Y);
+        }
+
+        private float Sign(float F)
+        {
+            if (F < 0) return -1.0f;
+            return 1.0f;
         }
 
         public RailEntity()
@@ -104,10 +158,8 @@ namespace DwarfCorp.Rail
             base.CreateCosmeticChildren(manager);
 
             var piece = RailLibrary.GetRailPiece(Piece.RailPiece);
-
-            AddChild(new RailSprite(manager, "Sprite", Matrix.Identity, new SpriteSheet(ContentPaths.rail_tiles, 32, 32), piece.Tile))
-                .SetFlag(Flag.ShouldSerialize, false);
-
+            Sheet = new SpriteSheet(ContentPaths.rail_tiles, 32, 32);
+            
             AddChild(new GenericVoxelListener(manager, Matrix.Identity, new Vector3(0.8f, 1.5f, 0.8f), Vector3.Zero, (_event) =>
             {
                 if (!Active) return;
@@ -171,8 +223,18 @@ namespace DwarfCorp.Rail
             float idx = (selectedSpline.Count - 1) * t;
             int k = MathFunctions.Clamp((int)idx, 0, selectedSpline.Count - 1);
             float remainder = idx - k;
-            Drawer3D.DrawLine(Vector3.Transform(selectedSpline[k], transform), Vector3.Transform(selectedSpline[k + 1], transform), isReversed ? Color.Red : Color.Blue, 0.1f);
+            //Drawer3D.DrawLine(Vector3.Transform(selectedSpline[k], transform), Vector3.Transform(selectedSpline[k + 1], transform), isReversed ? Color.Red : Color.Blue, 0.1f);
             return Vector3.Transform(selectedSpline[k] * (1.0f - remainder) + selectedSpline[k + 1] * remainder, transform);
+        }
+
+        public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+            GraphicsDevice graphicsDevice, Shader effect)
+        {
+            if (!IsVisible) return;
+
+            base.RenderSelectionBuffer(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect);
+            effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
+            Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
         override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
@@ -181,7 +243,7 @@ namespace DwarfCorp.Rail
 
             if (Debugger.Switches.DrawRailNetwork)
             {
-                Drawer3D.DrawBox(GetContainingVoxel().GetBoundingBox(), Color.White, 0.01f, true);
+                //Drawer3D.DrawBox(GetContainingVoxel().GetBoundingBox(), Color.White, 0.01f, true);
                 Drawer3D.DrawLine(GetContainingVoxel().GetBoundingBox().Center(), GlobalTransform.Translation, Color.White, 0.01f);
                 var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
                 var piece = Rail.RailLibrary.GetRailPiece(Piece.RailPiece);
@@ -205,7 +267,180 @@ namespace DwarfCorp.Rail
                     else
                         Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.5f, 0.0f), (neighbor as Body).Position + new Vector3(0.0f, 0.5f, 0.0f), Color.Teal, 0.1f);
                 }
+
+                foreach (var compassConnection in piece.CompassConnections)
+                {
+                    var localConnection = compassConnection.RotateToPiece(Piece.Orientation);
+                    Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.7f, 0.0f), Position + Vector3.Transform(new Vector3(0.0f, 0.7f, 0.5f), Matrix.CreateRotationY(((float)Math.PI / 4) * (float)localConnection.A)), Color.DarkBlue, 0.1f);
+                    Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.7f, 0.0f), Position + Vector3.Transform(new Vector3(0.0f, 0.7f, 0.5f), Matrix.CreateRotationY(((float)Math.PI / 4) * (float)localConnection.B)), Color.DarkBlue, 0.1f);
+                }
             }
+
+            if (!IsVisible)
+                return;
+
+            if (Primitive == null)
+            {
+                var bounds = Vector4.Zero;
+                var uvs = Sheet.GenerateTileUVs(Frame, out bounds);
+                var rawPiece = RailLibrary.GetRailPiece(Piece.RailPiece);
+
+                var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
+
+                Primitive = new RawPrimitive();
+                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(-0.5f, VertexHeightOffsets[(int)rawPiece.Shape, 0], 0.5f), transform), Color.White, Color.White, uvs[0], bounds));
+                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(0.5f, VertexHeightOffsets[(int)rawPiece.Shape, 1], 0.5f), transform), Color.White, Color.White, uvs[1], bounds));
+                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(0.5f, VertexHeightOffsets[(int)rawPiece.Shape, 2], -0.5f), transform), Color.White, Color.White, uvs[2], bounds));
+                Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(-0.5f, VertexHeightOffsets[(int)rawPiece.Shape, 3], -0.5f), transform), Color.White, Color.White, uvs[3], bounds));
+                Primitive.AddIndicies(new short[] { 0, 1, 3, 1, 2, 3 });
+
+                var sideBounds = Vector4.Zero;
+                Vector2[] sideUvs = null;
+
+                switch (rawPiece.Shape)
+                {
+                    case RailShape.Flat:
+                        sideUvs = Sheet.GenerateTileUVs(new Point(3, 4), out sideBounds);
+                        break;
+                    case RailShape.BottomHalfSlope:
+                        sideUvs = Sheet.GenerateTileUVs(new Point(1, 4), out sideBounds);
+                        break;
+                    case RailShape.TopHalfSlope:
+                        sideUvs = Sheet.GenerateTileUVs(new Point(2, 4), out sideBounds);
+                        break;
+                    case RailShape.SteepSlope:
+                        sideUvs = Sheet.GenerateTileUVs(new Point(0, 4), out sideBounds);
+                        break;
+                }
+
+                var uvDelta = uvs[1].X - uvs[0].X;
+
+                foreach (var railSpline in RailLibrary.GetRailPiece(Piece.RailPiece).RailSplines)
+                {
+                    var uvStep = 1.0f / (railSpline.Count - 1);
+
+                    for (var i = 1; i < railSpline.Count; ++i)
+                    {
+                        var baseIndex = Primitive.VertexCount;
+                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i - 1].X, 0.0f, railSpline[i - 1].Y), transform), Color.White, Color.White,
+                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * (i - 1)), sideUvs[0].Y), sideBounds));
+                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i].X, 0.0f, railSpline[i].Y), transform), Color.White, Color.White,
+                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * i), sideUvs[0].Y), sideBounds));
+                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i].X, -1.0f, railSpline[i].Y), transform), Color.White, Color.White,
+                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * i), sideUvs[2].Y), sideBounds));
+                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i - 1].X, -1.0f, railSpline[i - 1].Y), transform), Color.White, Color.White,
+                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * (i - 1)), sideUvs[2].Y), sideBounds));
+                        Primitive.AddOffsetIndicies(new short[] { 0, 1, 3, 1, 2, 3 }, baseIndex);
+                    }
+                }
+
+                //// For slopes - actually needs two layers of these. First layer is shifted up to match the rails, second is the standard side, shifted down.
+
+
+                //Primitive.AddQuad(
+                //            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                //            //* Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
+                //            * Matrix.CreateTranslation(0.0f, -0.5f, 0.32f)
+                //            * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Orientation),
+                //            Color.White, Color.White, sideUvs, sideBounds);
+                //Primitive.AddQuad(
+                //            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                //            //* Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
+                //            * Matrix.CreateTranslation(0.0f, -0.5f, -0.32f)
+                //            * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Orientation),
+                //            Color.White, Color.White, sideUvs, sideBounds);
+
+                // Todo: Make these static and avoid recalculating them constantly.
+                var bumperBackBounds = Vector4.Zero;
+                var bumperBackUvs = Sheet.GenerateTileUVs(new Point(0, 5), out bumperBackBounds);
+                var bumperFrontBounds = Vector4.Zero;
+                var bumperFrontUvs = Sheet.GenerateTileUVs(new Point(1, 5), out bumperFrontBounds);
+                var bumperSideBounds = Vector4.Zero;
+                var bumperSideUvs = Sheet.GenerateTileUVs(new Point(2, 5), out bumperSideBounds);
+
+                foreach (var connection in GetTransformedConnections())
+                {
+                    var matchingNeighbor = NeighborRails.FirstOrDefault(n => (n.Position - connection.Item1).LengthSquared() < 0.001f);
+                    if (matchingNeighbor == null)
+                    {
+                        var bumperOffset = connection.Item1 - GlobalTransform.Translation;
+                        var bumperGap = Vector3.Normalize(bumperOffset) * 0.1f;
+                        var bumperAngle = AngleBetweenVectors(new Vector2(bumperOffset.X, bumperOffset.Z), new Vector2(0, 0.5f));
+
+                        var xDiag = bumperOffset.X < -0.001f || bumperOffset.X > 0.001f;
+                        var zDiag = bumperOffset.Z < -0.001f || bumperOffset.Z > 0.001f;
+
+                        if (xDiag && zDiag)
+                        {
+                            var y = bumperOffset.Y;
+                            bumperOffset *= sqrt2;
+                            bumperOffset.Y = y;
+
+                            var endBounds = Vector4.Zero;
+                            var endUvs = Sheet.GenerateTileUVs(new Point(6, 2), out endBounds);
+                            Primitive.AddQuad(
+                                Matrix.CreateRotationY((float)Math.PI * 1.25f)
+                                * Matrix.CreateRotationY(bumperAngle)
+                                // This offset would not be correct if diagonals could slope.
+                                * Matrix.CreateTranslation(new Vector3(Sign(bumperOffset.X), 0.0f, Sign(bumperOffset.Z))),
+                                Color.White, Color.White, endUvs, endBounds);
+                        }
+
+                        Primitive.AddQuad(
+                            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                            * Matrix.CreateTranslation(0.0f, 0.3f, -0.2f)
+                            * Matrix.CreateRotationY(bumperAngle)
+                            * Matrix.CreateTranslation(bumperOffset + bumperGap),
+                            Color.White, Color.White, bumperBackUvs, bumperBackBounds);
+
+                        Primitive.AddQuad(
+                            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                            * Matrix.CreateTranslation(0.0f, 0.3f, -0.2f)
+                            * Matrix.CreateRotationY(bumperAngle)
+                            * Matrix.CreateTranslation(bumperOffset),
+                            Color.White, Color.White, bumperFrontUvs, bumperFrontBounds);
+
+                        if (VoxelHelpers.FindFirstVoxelBelow(GetContainingVoxel()).RampType == RampType.None)
+                        {
+                            Primitive.AddQuad(
+                                Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                                * Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
+                                * Matrix.CreateTranslation(0.3f, 0.3f, 0.18f)
+                                * Matrix.CreateRotationY(bumperAngle)
+                                * Matrix.CreateTranslation(bumperOffset),
+                                Color.White, Color.White, bumperSideUvs, bumperSideBounds);
+
+                            Primitive.AddQuad(
+                                Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                                * Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
+                                * Matrix.CreateTranslation(-0.3f, 0.3f, 0.18f)
+                                * Matrix.CreateRotationY(bumperAngle)
+                                * Matrix.CreateTranslation(bumperOffset),
+                                Color.White, Color.White, bumperSideUvs, bumperSideBounds);
+                        }
+                    }
+                }
+            }
+
+            // Everything that draws should set it's tint, making this pointless.
+            Color origTint = effect.VertexColorTint;
+            ApplyTintingToEffect(effect);
+
+            effect.World = GlobalTransform;
+
+            effect.MainTexture = Sheet.GetTexture();
+
+
+            effect.EnableWind = false;
+
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                Primitive.Render(graphicsDevice);
+            }
+
+            effect.VertexColorTint = origTint;
+            EndDraw(effect);
         }
 
         public List<Tuple<Vector3, Vector3>> GetTransformedConnections()
@@ -229,6 +464,7 @@ namespace DwarfCorp.Rail
         private void DetachNeighbor(uint ID)
         {
             NeighborRails.RemoveAll(connection => connection.NeighborID == ID);
+            ResetPrimitive();
         }
 
         private void AttachToNeighbors()
@@ -261,6 +497,8 @@ namespace DwarfCorp.Rail
                 NeighborID = ID,
                 Position = Position
             });
+
+            ResetPrimitive();
         }
 
         public override void Delete()
@@ -273,6 +511,7 @@ namespace DwarfCorp.Rail
         {
             base.Die();
             DetachFromNeighbors();
+            EntityFactory.CreateEntity<Body>("Rail Resource", MathFunctions.RandVector3Box(GetBoundingBox()));
         }
 
         public void UpdatePiece(JunctionPiece Piece, VoxelHandle Location)
@@ -285,41 +524,15 @@ namespace DwarfCorp.Rail
             LocalTransform = Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y) + new Vector3(0.5f, 0.2f, 0.5f));
 
             var piece = RailLibrary.GetRailPiece(Piece.RailPiece);
-            var spriteChild = EnumerateChildren().OfType<RailSprite>().FirstOrDefault() as RailSprite;
-
-            if (spriteChild != null)
-            {
-                spriteChild.LocalTransform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
-
-                switch (piece.Shape)
-                {
-                    case RailShape.Flat:
-                        spriteChild.VertexHeightOffsets[0] = 0.0f;
-                        spriteChild.VertexHeightOffsets[1] = 0.0f;
-                        spriteChild.VertexHeightOffsets[2] = 0.0f;
-                        spriteChild.VertexHeightOffsets[3] = 0.0f;
-                        break;
-                    case RailShape.TopHalfSlope:
-                        spriteChild.VertexHeightOffsets[0] = 1.0f;
-                        spriteChild.VertexHeightOffsets[1] = 0.5f;
-                        spriteChild.VertexHeightOffsets[2] = 0.5f;
-                        spriteChild.VertexHeightOffsets[3] = 1.0f;
-                        break;
-                    case RailShape.BottomHalfSlope:
-                        spriteChild.VertexHeightOffsets[0] = 0.5f;
-                        spriteChild.VertexHeightOffsets[1] = 0.0f;
-                        spriteChild.VertexHeightOffsets[2] = 0.0f;
-                        spriteChild.VertexHeightOffsets[3] = 0.5f;
-                        break;
-                }
-
-                spriteChild.SetFrame(piece.Tile);
-            }
+            Frame = piece.Tile;
+            ResetPrimitive();
 
             // Hack to make the listener update it's damn bounding box
-            EnumerateChildren().OfType<GenericVoxelListener>().FirstOrDefault().LocalTransform = Matrix.Identity;
+            var deathTrigger = EnumerateChildren().OfType<GenericVoxelListener>().FirstOrDefault();
+            if (deathTrigger != null)
+                deathTrigger.LocalTransform = Matrix.Identity;
 
-            AttachToNeighbors();
+            AttachToNeighbors();            
         }
     }
 }

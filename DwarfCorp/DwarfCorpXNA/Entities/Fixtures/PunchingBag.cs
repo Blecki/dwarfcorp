@@ -41,15 +41,15 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class PunchingBag : Fixture
+    public class PunchingBag : CraftedFixture
     {
         public PunchingBag()
         {
 
         }
 
-        public PunchingBag(ComponentManager componentManager, Vector3 position) :
-            base(componentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 5))
+        public PunchingBag(ComponentManager componentManager, Vector3 position, List<ResourceAmount> resources) :
+            base(componentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 5), new CraftDetails(componentManager, "Strawman", resources))
         {
             Name = "PunchingBag";
             Tags.Add("PunchingBag");

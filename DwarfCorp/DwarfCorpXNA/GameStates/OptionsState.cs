@@ -56,6 +56,7 @@ namespace DwarfCorp.GameStates
         private Gui.Widgets.ComboBox EasyGraphicsSetting;
         private CheckBox Autosave;
         private Widget AutoSaveFrequency;
+        private ComboBox MaxSaves;
 
         public WorldManager World = null;
         private CheckBox EnableTutorial;
@@ -390,6 +391,14 @@ namespace DwarfCorp.GameStates
                 },
                 Tooltip = "Minutes between auto saves"
             }));
+
+            MaxSaves = panel.AddChild(LabelAndDockWidget("Max Saves", new Gui.Widgets.ComboBox
+            {
+                Items = new String[] { "5", "15", "30", "100", "999"}.ToList(),
+                OnSelectedIndexChanged = OnItemChanged,
+                Border = "border-thin",
+                Tooltip = "The maximum number of user saves to keep on disc (doesn't count autosaves)."
+            })).GetChild(1) as Gui.Widgets.ComboBox;
 
             SaveLocation = panel.AddChild(LabelAndDockWidget("Save Location", new EditableTextField
             {
@@ -847,6 +856,7 @@ namespace DwarfCorp.GameStates
             toReturn.InvertZoom = this.InvertZoom.CheckState;
             toReturn.ZoomCameraTowardMouse = this.ZoomTowardMouse.CheckState;
             toReturn.DisplayIntro = this.PlayIntro.CheckState;
+            toReturn.MaxSaves = int.Parse(this.MaxSaves.SelectedItem);
             toReturn.AutoSave = this.Autosave.CheckState;
             toReturn.AutoSaveTimeMinutes =
                 (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition + 5.0f;
@@ -999,6 +1009,7 @@ namespace DwarfCorp.GameStates
             this.Autosave.CheckState = GameSettings.Default.AutoSave;
             (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition =
                 (int)(GameSettings.Default.AutoSaveTimeMinutes - 5);
+            this.MaxSaves.SelectedIndex = this.MaxSaves.Items.IndexOf(GameSettings.Default.MaxSaves.ToString());
             this.DisableTutorialForAllGames.CheckState = GameSettings.Default.TutorialDisabledGlobally;
             this.SaveLocation.Text = String.IsNullOrEmpty(GameSettings.Default.SaveLocation) ? "" : GameSettings.Default.SaveLocation;
 

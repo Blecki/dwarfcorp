@@ -44,6 +44,7 @@ namespace DwarfCorp.GameStates
 
         private Gui.Widget MoneyLabel;
         private Gui.Widget LevelLabel;
+        private Gui.Widget StocksLabel;
         private Gui.Widgets.FlatToolTray.RootTray BottomToolBar;
         private Gui.Widgets.FlatToolTray.Tray MainMenu;
         private Gui.Widget TimeLabel;
@@ -302,9 +303,15 @@ namespace DwarfCorp.GameStates
 
 
             #region Update top left panel
+            var pulse = 0.25f * (float)Math.Sin(gameTime.TotalRealTime.TotalSeconds * 4) + 0.25f;
             MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString();
+            MoneyLabel.TextColor = Master.Faction.Economy.CurrentMoney > 1.0m ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
             MoneyLabel.Invalidate();
-
+            int availableSpace = Master.Faction.ComputeRemainingStockpileSpace();
+            int totalSpace = Master.Faction.ComputeTotalStockpileSpace();
+            StocksLabel.Text = String.Format("    Stocks: {0}/{1}", totalSpace - availableSpace, totalSpace);
+            StocksLabel.TextColor = availableSpace > 0 ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
+            StocksLabel.Invalidate();
             LevelLabel.Text = String.Format("{0}/{1}",
                 World.ChunkManager.ChunkData.MaxViewingLevel,
                 VoxelConstants.ChunkSizeY);
@@ -510,6 +517,14 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = Gui.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1),
                 Tooltip = "Amount of money in our treasury"
+            });
+
+            StocksLabel = BottomBar.AddChild(new Gui.Widget
+            {
+                AutoLayout = Gui.AutoLayout.DockLeftCentered,
+                Font = "font10",
+                TextVerticalAlign = Gui.VerticalAlign.Center,
+                Tooltip = "Amount of stockpile space remaining. Build more stockpiles to get more space."
             });
 
             BottomBar.AddChild(new Gui.Widget
@@ -1417,6 +1432,24 @@ namespace DwarfCorp.GameStates
                 }
             };
 
+            var icon_menu_Rail_Paint = new FlatToolTray.Icon
+            {
+                Icon = new TileReference("rail", 0),
+                Tooltip = "Paint",
+                Behavior = FlatToolTray.IconBehavior.LeafIcon,
+                OnClick = (widget, args) =>
+                {
+                    Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // This should be set by the tool.
+                    Master.Faction.CraftBuilder.IsEnabled = false;
+                    var railTool = Master.Tools[GameMaster.ToolMode.PaintRail] as Rail.PaintRailTool;
+                    railTool.SelectedResources = new List<ResourceAmount>
+                                    {
+                                        new ResourceAmount("Rail", 1)
+                                    };
+                    Master.ChangeTool(GameMaster.ToolMode.PaintRail);
+                }
+            };
+
             var menu_Rail = new FlatToolTray.Tray
             {
                 Tag = "build rail",
@@ -1426,9 +1459,8 @@ namespace DwarfCorp.GameStates
                     // Dynamically rebuild the tray
                     widget.Clear();
                     (widget as FlatToolTray.Tray).ItemSource =
-                        (new Widget[] { icon_menu_Rail_Return }).Concat(
+                        (new Widget[] { icon_menu_Rail_Return, icon_menu_Rail_Paint }).Concat(
                             Rail.RailLibrary.EnumeratePatterns()
-                            .Where(p => p.PaintMode != Rail.JunctionPaintMode.Hidden)
                             .Select(data => new FlatToolTray.Icon
                             {
                                 Tooltip = "Build " + data.Name,
@@ -1444,7 +1476,7 @@ namespace DwarfCorp.GameStates
                                     railTool.Pattern = data;
                                     railTool.SelectedResources = new List<ResourceAmount>
                                     {
-                                        new ResourceAmount(ResourceType.Iron, 2)
+                                        new ResourceAmount("Rail", 1)
                                     };
                                     ChangeTool(GameMaster.ToolMode.BuildRail);
                                 },
@@ -2312,7 +2344,13 @@ namespace DwarfCorp.GameStates
                 {
                     GameSpeedControls.Resume();
                 }
+                else
+                {
+                    GameSpeedControls.Pause();
+                }
                 Paused = pausedRightNow;
+                PausedWidget.Hidden = !Paused;
+                PausedWidget.Invalidate();
                 PausePanel = null;
             });
 
@@ -2339,7 +2377,7 @@ namespace DwarfCorp.GameStates
                 (sender, args) =>
                 {
                     World.Save(
-                        String.Format("{0}_{1}", Overworld.Name, World.GameID),
+                        String.Format("{0}_{1}_{2}", Overworld.Name, World.GameID, DateTime.Now.ToFileTimeUtc()),
                         (success, exception) =>
                         {
                             GuiRoot.ShowModalPopup(new Gui.Widgets.Popup
@@ -2397,7 +2435,7 @@ namespace DwarfCorp.GameStates
 #if !DEMO
             bool paused = World.Paused;
             World.Save(
-                    String.Format("{0}_{1}", Overworld.Name, World.GameID),
+                    String.Format("{0}_{1}_{2}", Overworld.Name, World.GameID, "Autosave"),
                     (success, exception) =>
                     {
                         World.MakeAnnouncement(success ? "File autosaved." : "Autosave failed - " + exception.Message);

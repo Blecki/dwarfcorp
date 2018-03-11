@@ -41,18 +41,18 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Table : Body, IUpdateableComponent
+    public class Table : CraftedBody, IUpdateableComponent
     {
         [EntityFactory("Table")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Table(Manager, Position);
+            return new Table(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
         }
 
         [EntityFactory("Kitchen Table")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Table(Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 7))
+            return new Table(Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 7), Data.GetData<List<ResourceAmount>>("Resources", null))
             {
                 Tags = new List<string>() { "Cutting Board" }
             };
@@ -61,7 +61,7 @@ namespace DwarfCorp
         [EntityFactory("Books")]
         private static GameComponent __factory2(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Table(Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 4))
+            return new Table(Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 4), Data.GetData<List<ResourceAmount>>("Resources", null))
             {
                 Tags = new List<string>() { "Research" },
                 Battery = new Table.ManaBattery()
@@ -75,7 +75,7 @@ namespace DwarfCorp
         [EntityFactory("Potions")]
         private static GameComponent __factory3(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Table(Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4))
+            return new Table(Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4), Data.GetData<List<ResourceAmount>>("Resources", null))
             {
                 Tags = new List<string>() { "Research" },
                 Battery = new Table.ManaBattery()
@@ -166,14 +166,14 @@ namespace DwarfCorp
             
         }
 
-        public Table(ComponentManager componentManager, Vector3 position):
-            this(componentManager, position, null, Point.Zero)
+        public Table(ComponentManager componentManager, Vector3 position, List<ResourceAmount> resources) :
+            this(componentManager, position, null, Point.Zero, resources)
         {
             
         }
 
-        public Table(ComponentManager manager, Vector3 position, string asset) :
-            this(manager, position, new SpriteSheet(asset), Point.Zero)
+        public Table(ComponentManager manager, Vector3 position, string asset, List<ResourceAmount> resources) :
+            this(manager, position, new SpriteSheet(asset), Point.Zero, resources)
         {
 
         }
@@ -192,8 +192,8 @@ namespace DwarfCorp
             base.Update(time, chunks, camera);
         }
 
-        public Table(ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame) :
-            base(manager, "Table", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+        public Table(ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame, List<ResourceAmount> resources) :
+            base(manager, "Table", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, "Table", resources))
         {
             this.fixtureAsset = fixtureAsset;
             this.fixtureFrame = fixtureFrame;

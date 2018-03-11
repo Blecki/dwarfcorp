@@ -190,7 +190,7 @@ namespace DwarfCorp
                 DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
                 DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
                 CraftLibrary.InitializeDefaultLibrary();
-                VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice, Tilesheet);
+                VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice);
                 GrassLibrary.InitializeDefaultLibrary();
                 DecalLibrary.InitializeDefaultLibrary();
 

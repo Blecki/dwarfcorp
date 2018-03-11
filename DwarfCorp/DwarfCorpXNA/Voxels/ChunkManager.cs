@@ -125,7 +125,7 @@ namespace DwarfCorp
         }
 
         // Todo: %KILL% Wrong spot for this, but too large to move currently.
-        public GraphicsDevice Graphics { get; set; }
+        public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
 
         public bool PauseThreads { get; set; }
 
@@ -180,7 +180,6 @@ namespace DwarfCorp
                 (f) => Water.UpdateWater());
 
             ToGenerate = new List<GlobalChunkCoordinate>();
-            Graphics = graphics;
 
             chunkGen.Manager = this;
 

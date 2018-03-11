@@ -123,10 +123,8 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public IEnumerable<Status> CreateResources()
+        public IEnumerable<Status> CreateResources(List<ResourceAmount> stashed)
         {
-            List<ResourceAmount> stashed = Agent.Blackboard.GetData<List<ResourceAmount>>("ResourcesStashed");
-
             if (stashed == null || stashed.Count == 0)
             {
                 yield return Act.Status.Fail;
@@ -198,7 +196,7 @@ namespace DwarfCorp
             }
 
             Resource resource = ResourceLibrary.Resources[ResourceCreated];
-            Creature.Inventory.AddResource(new ResourceAmount(resource, 1));
+            Creature.Inventory.AddResource(new ResourceAmount(resource, Item.ItemType.CraftedResultsCount));
             Creature.AI.AddXP((int)Item.ItemType.BaseCraftTime);
             yield return Status.Success;
         }
@@ -249,6 +247,7 @@ namespace DwarfCorp
                 {
                     Tree = new Domain(IsNotCancelled, new Sequence(
                         new Wrap(() => Creature.FindAndReserve(Item.ItemType.CraftLocation, Item.ItemType.CraftLocation)),
+                        new ClearBlackboardData(Agent, "ResourcesStashed"),
                         getResources,
                         new Domain(ResourceStateValid, new Sequence
                             (
@@ -273,6 +272,7 @@ namespace DwarfCorp
                 else
                 {
                     Tree = new Domain(IsNotCancelled, new Sequence(
+                        new ClearBlackboardData(Agent, "ResourcesStashed"),
                         getResources,
                         new Sequence(new Domain(ResourceStateValid, 
                             new Sequence(
@@ -295,6 +295,7 @@ namespace DwarfCorp
                 {
                     Tree = new Sequence(
                         new Wrap(() => Creature.FindAndReserve(Item.ItemType.CraftLocation, Item.ItemType.CraftLocation)),
+                        new ClearBlackboardData(Agent, "ResourcesStashed"),
                         getResources,
                         new Domain(ResourceStateValid, new Sequence
                             (
@@ -312,7 +313,7 @@ namespace DwarfCorp
                                 () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
                                 () => Agent.Position, Noise)) { Name = "Construct object." },
                             unreserveAct,
-                            new Wrap(CreateResources),
+                            new Wrap(() => CreateResources(Item.SelectedResources)),
                             new Wrap(Creature.RestockAll)
                             )) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
                         ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false);
@@ -320,12 +321,13 @@ namespace DwarfCorp
                 else
                 {
                     Tree = new Sequence(
+                        new ClearBlackboardData(Agent, "ResourcesStashed"),
                         getResources,
                         new Domain(ResourceStateValid, new Sequence(
                             new Wrap(() => DestroyResources(() => Creature.Physics.Position + MathFunctions.RandVector3Cube() * 0.5f)),
                             new Wrap(WaitForResources) { Name = "Wait for resources." },
                             new Wrap(() => Creature.HitAndWait(time, true, () => Creature.Physics.Position)) { Name = "Construct object."},
-                            new Wrap(CreateResources))
+                            new Wrap(() => CreateResources(Item.SelectedResources)))
                         )
                     ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false);
                 }

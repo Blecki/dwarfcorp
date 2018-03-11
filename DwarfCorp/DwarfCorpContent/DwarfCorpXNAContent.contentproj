@@ -2301,6 +2301,11 @@
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
     </Compile>
+    <Compile Include="Entities\Kobold\kobold.png">
+      <Name>kobold</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Particles\particles.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>
@@ -2340,9 +2345,17 @@
       <Name>craft-items</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Content Include="Entities\Kobold\kobold_animation.json">
+      <Name>kobold_animation</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="rail-patterns.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>rail-patterns</Name>
+    </None>
+    <None Include="rail-combinations.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>rail-combinations</Name>
     </None>
     <None Include="rail-pieces.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3072,11 +3085,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="newgui\voxels.png">
-      <Name>voxels</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="newgui\speech-bubble-reverse.png">
       <Name>speech-bubble-reverse</Name>
       <Importer>TextureImporter</Importer>

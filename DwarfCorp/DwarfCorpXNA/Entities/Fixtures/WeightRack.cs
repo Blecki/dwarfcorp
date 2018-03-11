@@ -41,15 +41,15 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class WeightRack : Fixture
+    public class WeightRack : CraftedFixture
     {
         public WeightRack()
         {
 
         }
 
-        public WeightRack(ComponentManager componentManager, Vector3 position) :
-            base(componentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 5))
+        public WeightRack(ComponentManager componentManager, Vector3 position, List<ResourceAmount> resources) :
+            base(componentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(3, 5), new DwarfCorp.CraftDetails(componentManager, "Strawman", resources))
         {
             Name = "WeightRack";
             Tags.Add("WeightRack");

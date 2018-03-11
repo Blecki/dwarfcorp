@@ -55,6 +55,9 @@ namespace DwarfCorp
 
         private bool leftPressed = false;
         private bool rightPressed = false;
+
+        private Matrix OrigTransform { get; set; }
+
         public MoveObjectTool()
         {
         }
@@ -67,8 +70,21 @@ namespace DwarfCorp
         public override void OnEnd()
         {
             Player.VoxSelector.Clear();
+            if (SelectedBody != null)
+            {
+                var tinter = SelectedBody.GetRoot().GetComponent<Tinter>();
+                if (tinter != null)
+                {
+                    tinter.VertexColorTint = Color.White;
+                    tinter.Stipple = false;
+                }
+                SelectedBody.LocalTransform = OrigTransform;
+                SelectedBody = null;
+            }
         }
 
+
+        private List<Body> selectedBodies = new List<Body>();
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
@@ -88,32 +104,9 @@ namespace DwarfCorp
                         {
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, body.Position, 0.1f);
                             SelectedBody = body;
+                            OrigTransform = SelectedBody.LocalTransform;
                             Player.World.ShowToolPopup(String.Format("Press {0}/{1} to rotate.", ControlSettings.Mappings.RotateObjectLeft, ControlSettings.Mappings.RotateObjectRight));
                             break;
-                        }
-                    }
-                    else if (Player.Faction.OwnedObjects.Contains(body) && body.Tags.Any(tag => tag == "Moveable"))
-                    {
-                        if (body.IsReserved)
-                        {
-                            Player.World.ShowToolPopup(string.Format("Can't move this {0}. It is being used.", body.Name));
-                            continue;
-                        }
-                        body.Delete();
-                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, body.Position,
-                        0.5f);
-                        var craftDetails = body.GetRoot().GetComponent<CraftDetails>();
-                        if (craftDetails != null)
-                        {
-                            foreach (var resource in craftDetails.Resources)
-                            {
-                                var tag = resource.ResourceType;
-                                for (int i = 0; i < resource.NumResources; i++)
-                                {
-                                    EntityFactory.CreateEntity<Body>(tag + " Resource",
-                                        MathFunctions.RandVector3Box(body.GetBoundingBox()));
-                                }
-                            }
                         }
                     }
                 }
@@ -133,10 +126,18 @@ namespace DwarfCorp
                         Player.World.ShowTooltip("Can't move this " + body.Name + "\nIt is being used.");
                         continue;
                     }
-                    Player.World.ShowTooltip("Left click to move this " + body.Name + "\nRight click to destroy it.");
-
+                    Player.World.ShowTooltip("Left click to move this " + body.Name);
+                    body.SetTintRecursive(Color.Blue);
                 }
             }
+            foreach (var body in selectedBodies)
+            {
+                if (!bodies.Contains(body))
+                {
+                    body.SetTintRecursive(Color.White);
+                }
+            }
+            selectedBodies = bodies.ToList();
         }
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
@@ -185,7 +186,7 @@ namespace DwarfCorp
                             offset = craftItem.SpawnOffset;
                     }
 
-                    SelectedBody.LocalPosition = voxelUnderMouse.WorldPosition + Vector3.One * 0.5f + offset;
+                    SelectedBody.LocalPosition = voxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + offset;
                     SelectedBody.HasMoved = true;
                     SelectedBody.UpdateTransform();
                     if (OverrideOrientation)
@@ -218,6 +219,7 @@ namespace DwarfCorp
                 if (tinter != null)
                 {
                     tinter.VertexColorTint = intersectsAnyOther == null && !intersectsWall ? Color.Green : Color.Red;
+                    tinter.Stipple = true;
                 }
                 MouseState mouse = Mouse.GetState();
                 if (mouse.LeftButton == ButtonState.Released && mouseDown)
@@ -233,7 +235,10 @@ namespace DwarfCorp
                         OverrideOrientation = false;
                         CurrentOrientation = 0;
                         if (tinter != null)
+                        {
                             tinter.VertexColorTint = Color.White;
+                            tinter.Stipple = false;
+                        }
                     }
                     else if (!intersectsWall)
                     {
@@ -327,11 +332,11 @@ namespace DwarfCorp
 
             foreach (var body in bodies)
             {
-                if (Player.Faction.OwnedObjects.Contains(body) && body.Tags.Any(tag => tag == "Moveable"))
+                if (body.Tags.Any(tag => tag == "Deconstructable"))
                 {
                     if (body.IsReserved)
                     {
-                        Player.World.ShowToolPopup(string.Format("Can't move this {0}. It is being used.", body.Name));
+                        Player.World.ShowToolPopup(string.Format("Can't destroy this {0}. It is being used.", body.Name));
                         continue;
                     }
                     body.Die();
@@ -342,13 +347,15 @@ namespace DwarfCorp
             
         }
 
+        private List<Body> selectedBodies = new List<Body>();
+
         public override void OnMouseOver(IEnumerable<Body> bodies)
         {
             DefaultOnMouseOver(bodies);
 
             foreach (var body in bodies)
             {
-                if (body.Tags.Contains("Moveable"))
+                if (body.Tags.Contains("Deconstructable"))
                 {
                     if (body.IsReserved)
                     {
@@ -356,8 +363,19 @@ namespace DwarfCorp
                         continue;
                     }
                     Player.World.ShowTooltip("Left click to destroy this " + body.Name);
+                    body.SetTintRecursive(Color.Red);
                 }
             }
+
+            foreach(var body in selectedBodies)
+            {
+                if (!bodies.Contains(body))
+                {
+                    body.SetTintRecursive(Color.White);
+                }
+            }
+
+            selectedBodies = bodies.ToList();
         }
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)

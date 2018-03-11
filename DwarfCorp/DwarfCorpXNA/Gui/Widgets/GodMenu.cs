@@ -199,11 +199,23 @@ namespace DwarfCorp.Gui.Widgets
                                             {
                                                 var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as Rail.BuildRailTool;
                                                 railTool.Pattern = p;
-                                                railTool.SelectedResources = new List<ResourceAmount>(new ResourceAmount[] { new ResourceAmount(ResourceType.Iron, 2) });
+                                                railTool.SelectedResources = new List<ResourceAmount>(new ResourceAmount[] { new ResourceAmount("Rail", 1) });
                                                 Master.ChangeTool(GameMaster.ToolMode.BuildRail);
                                                 railTool.GodModeSwitch = true;
                                             }
                                         })
+                                }
+                            },
+
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "PAINT",
+                                OnClick = (sender, args) =>
+                                {
+                                    var railTool = Master.Tools[GameMaster.ToolMode.PaintRail] as Rail.PaintRailTool;
+                                    railTool.SelectedResources = new List<ResourceAmount>(new ResourceAmount[] { new ResourceAmount("Rail", 1) });
+                                    Master.ChangeTool(GameMaster.ToolMode.PaintRail);
+                                    railTool.GodModeSwitch = true;
                                 }
                             }
                         }
@@ -321,6 +333,11 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     Text = "REPULSE",
                     OnClick = (sender, args) => ActivateGodTool("Repulse")
+                },
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "SLOWMO",
+                    OnClick = (sender, args) => GameSettings.Default.EnableSlowMotion = !GameSettings.Default.EnableSlowMotion
                 },
                 new HorizontalMenuTray.MenuItem
                 {

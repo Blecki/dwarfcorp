@@ -62,7 +62,6 @@ namespace DwarfCorp
             SelectionColor = Color.White;
             CurrentColor = Color.White;
             CameraController = camera;
-            Graphics = graphics;
             Components = components;
             SelectionBuffer = new List<Body>();
             CurrentBodies = new List<Body>();
@@ -109,7 +108,7 @@ namespace DwarfCorp
         /// <summary>
         ///     Graphics device associated with the camera.
         /// </summary>
-        public GraphicsDevice Graphics { get; set; }
+        public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
 
         /// <summary>
         ///     List of bodies currently selected.
@@ -200,7 +199,7 @@ namespace DwarfCorp
             // Create a description of the body and display it on the screen.
             World.ShowInfo(desc);
         }
-
+        private List<Body> SelectedEntities = new List<Body>();
         /// <summary>
         ///     Called every tick.
         /// </summary>
@@ -218,17 +217,18 @@ namespace DwarfCorp
             MouseOverTimer.Update(DwarfTime.LastTime);
             if (MouseOverTimer.HasTriggered)
             {
-                List<Body> selected = SelectBodies(new Rectangle(mouse.X - 2, mouse.Y - 2, 4, 4));
+                SelectedEntities = SelectBodies(new Rectangle(mouse.X - 2, mouse.Y - 2, 4, 4));
 
-                if (selected.Count > 0)
+                if (SelectedEntities.Count > 0)
                 {
-                    OnMouseOver(selected);
+                    OnMouseOver(SelectedEntities);
                 }
                 else
                 {
                     OnMouseOver(new List<Body>());
                 }
             }
+
 
             // If the left mouse button is pressed, update the selection rectangle.
             if (isLeftPressed)

@@ -63,10 +63,18 @@ namespace DwarfCorp
             var item = Item.Entity;
             item.SetFlagRecursive(GameComponent.Flag.Active, true);
             item.SetTintRecursive(Color.White);
+            var tinters = item.EnumerateAll().OfType<Tinter>();
+            foreach(var tinter in tinters)
+            {
+                tinter.Stipple = false;
+            }
             item.SetFlagRecursive(GameComponent.Flag.Visible, true);
 
             if (Item.ItemType.Moveable)
                 item.Tags.Add("Moveable");
+
+            if (Item.ItemType.Deconstructable)
+                item.Tags.Add("Deconstructable");
 
             if (Item.WorkPile != null)
                 Item.WorkPile.Die();
