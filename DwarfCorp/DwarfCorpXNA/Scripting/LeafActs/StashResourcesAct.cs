@@ -44,7 +44,7 @@ namespace DwarfCorp
     public class StashResourcesAct : CreatureAct
     {
         public List<ResourceAmount> Resources { get; set; }
-
+        public Faction Faction = null;
         public StashResourcesAct()
         {
 
@@ -59,7 +59,11 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            Zone zone = Agent.Faction.GetNearestStockpile(Agent.Position, (s) => !s.IsFull() && Resources.All(resource => s.IsAllowed(resource.ResourceType)));
+            if (Faction == null)
+            {
+                Faction = Agent.Faction;
+            }
+            Zone zone = Faction.GetNearestStockpile(Agent.Position, (s) => !s.IsFull() && Resources.All(resource => s.IsAllowed(resource.ResourceType)));
 
             if (zone != null)
             {
@@ -90,7 +94,7 @@ namespace DwarfCorp
             }
 
             Timer waitTimer = new Timer(1.0f, true);
-            bool removed = Agent.Faction.RemoveResources(Resources, Agent.Position);
+            bool removed = Faction.RemoveResources(Resources, Agent.Position);
 
             if(!removed)
             {
@@ -102,12 +106,14 @@ namespace DwarfCorp
                 {
                     Agent.Creature.Inventory.AddResource(resource.CloneResource(), Inventory.RestockType.None);   
                 }
-
+                Agent.Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
                 while (!waitTimer.HasTriggered)
                 {
+                    Agent.Creature.CurrentCharacterMode = CharacterMode.Attacking;
                     waitTimer.Update(DwarfTime.LastTime);
                     yield return Status.Running;
                 }
+                Agent.Creature.CurrentCharacterMode = CharacterMode.Idle;
                 yield return Status.Success;
             }
 

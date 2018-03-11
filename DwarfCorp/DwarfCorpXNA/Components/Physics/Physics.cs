@@ -337,10 +337,22 @@ namespace DwarfCorp
                         {
                             if (Orientation == OrientMode.LookAt)
                             {
-                                Matrix newTransform =
-                                    Matrix.Invert(Matrix.CreateLookAt(Position, Position + Velocity, Vector3.Down));
-                                newTransform.Translation = transform.Translation;
-                                transform = newTransform;
+                                if (Math.Abs(Vector3.Dot(Vector3.Down, Velocity)) < 0.99 * Velocity.Length())
+                                {
+                                    Matrix newTransform =
+                                        Matrix.Invert(Matrix.CreateLookAt(LocalPosition, LocalPosition + Velocity, Vector3.Down));
+                                    newTransform.Translation = transform.Translation;
+                                    transform = newTransform;
+                                }
+                                else
+                                {
+                                    {
+                                        Matrix newTransform =
+                                            Matrix.Invert(Matrix.CreateLookAt(LocalPosition, LocalPosition + Velocity, Vector3.Right));
+                                        newTransform.Translation = transform.Translation;
+                                        transform = newTransform;
+                                    }
+                                }
                             }
                             else if (Orientation == OrientMode.RotateY)
                             {
@@ -401,8 +413,7 @@ namespace DwarfCorp
                     }
                 }
 
-            } 
-
+            }
             applyGravityThisFrame = true;
             CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             PreviousVelocity = Velocity;

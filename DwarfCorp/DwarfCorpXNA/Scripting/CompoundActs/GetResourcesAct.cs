@@ -46,6 +46,8 @@ namespace DwarfCorp
         public List<Quantitiy<Resource.ResourceTags>> Resources { get; set; }
         public List<ResourceAmount> ResourcesToStash { get; set; }
         public bool AllowHeterogenous { get; set; }
+        public Faction Faction = null;
+
         public GetResourcesAct()
         {
 
@@ -85,9 +87,9 @@ namespace DwarfCorp
         bool HasResources(CreatureAI agent)
         {
             if (ResourcesToStash != null)
-                return agent.Faction.HasResources(ResourcesToStash);
+                return Faction.HasResources(ResourcesToStash);
             if (Resources != null)
-                return agent.Faction.HasResources(Resources);
+                return Faction.HasResources(Resources);
             return true;
         }
 
@@ -125,13 +127,18 @@ namespace DwarfCorp
                 return;
             }
 
+            if (Faction == null)
+            {
+                Faction = Agent.Faction;
+            }
+
 
             if(!hasAllResources)
             { 
-                Stockpile nearestStockpile =  Agent.Faction.GetNearestStockpile(Agent.Position, (pile) => !(pile is Graveyard));
+                Stockpile nearestStockpile =  Faction.GetNearestStockpile(Agent.Position, (pile) => !(pile is Graveyard));
 
                 if(ResourcesToStash == null && Resources != null)
-                    ResourcesToStash = Agent.Faction.GetResourcesWithTags(Resources, AllowHeterogenous);
+                    ResourcesToStash = Faction.GetResourcesWithTags(Resources, AllowHeterogenous);
 
                 if(nearestStockpile == null || (ResourcesToStash != null &&  ResourcesToStash.Count == 0))
                 {
@@ -141,7 +148,7 @@ namespace DwarfCorp
                 else
                 {
                     Tree = new Sequence(new Domain(() => HasResources(Agent), new GoToZoneAct(Agent, nearestStockpile)),
-                                        new StashResourcesAct(Agent, ResourcesToStash),
+                                        new StashResourcesAct(Agent, ResourcesToStash) { Faction = Faction },
                                         new SetBlackboardData<List<ResourceAmount>>(Agent, "ResourcesStashed", ResourcesToStash)
                                         );
                 }

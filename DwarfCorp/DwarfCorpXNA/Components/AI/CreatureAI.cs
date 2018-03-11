@@ -234,6 +234,8 @@ namespace DwarfCorp
         public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
             new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
 
+        public float StealFromPlayerProbability = -1.0f;
+
         [OnDeserialized]
         public void OnDeserialize(StreamingContext ctx)
         {
@@ -335,7 +337,13 @@ namespace DwarfCorp
         /// <summary> remove any impossible or already completed tasks </summary>
         public void DeleteBadTasks()
         {
-            Tasks.RemoveAll(task => task.ShouldDelete(Creature));
+            var badTasks = Tasks.Where(task => task.ShouldDelete(Creature)).ToList();
+            foreach(var task in badTasks)
+            {
+                task.OnUnAssign(this);
+                Tasks.Remove(task);
+            }
+           
         }
 
         public bool IsPositionConstrained()
@@ -429,7 +437,7 @@ namespace DwarfCorp
             SpeakTimer.Update(gameTime);
 
             OrderEnemyAttack();
-            //DeleteBadTasks();
+            DeleteBadTasks();
             PreEmptTasks();
             HandleReproduction();
             
@@ -684,7 +692,7 @@ namespace DwarfCorp
                     return candidate;
             }
 
-            if (!IsPosessed && Creature.Inventory.Resources.Count > 0)
+            if (!IsPosessed && Faction == World.PlayerFaction && Creature.Inventory.Resources.Count > 0)
                 foreach (var status in Creature.RestockAll())
                     ; // RestockAll generates tasks for the dwarf.           
 
@@ -693,6 +701,24 @@ namespace DwarfCorp
                 (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury())
                 && Tasks.Count == 0)
             {
+                if (StealFromPlayerProbability > 0 && MathFunctions.RandEvent(StealFromPlayerProbability))
+                {
+                    bool stealMoney = MathFunctions.RandEvent(0.5f);
+                    if (World.PlayerFaction.Economy.CurrentMoney > 0 && stealMoney)
+                        AssignTask(new ActWrapperTask(new GetMoneyAct(this, 100m, World.PlayerFaction)) { Name = "Steal money", Priority = Task.PriorityType.High });
+                    else
+                    {
+                        var resources = World.PlayerFaction.ListResources();
+                        if (resources.Count > 0)
+                        {
+                            var resource = Datastructures.SelectRandom(resources);
+                            if (resource.Value.NumResources > 0)
+                            {
+                                AssignTask(new ActWrapperTask(new GetResourcesAct(this, new List<ResourceAmount>() { new ResourceAmount(resource.Value.ResourceType, 1) }) { Faction = World.PlayerFaction }) { Name = "Steal stuff", Priority = Task.PriorityType.High });
+                            }
+                        }
+                    }
+                }
 
                 // Craft random items for fun.
                 if (Stats.IsTaskAllowed(Task.TaskCategory.CraftItem) && MathFunctions.RandEvent(0.0005f))
@@ -786,7 +812,7 @@ namespace DwarfCorp
                 if (Faction.HasFreeStockpile(order.Resource))
                 {
                     GatherManager.StockOrders.RemoveAt(0);
-                    StockResourceTask task = new StockResourceTask(order.Resource)
+                    StockResourceTask task = new StockResourceTask(order.Resource.CloneResource())
                     {
                         Priority = Task.PriorityType.Low
                     };

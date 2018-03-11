@@ -94,7 +94,7 @@ namespace DwarfCorp
             {
                 return false;
             }
-            for (int i = 0; i < path.Count - 1; i++)
+            for (int i = 1; i < path.Count - 1; i++)
             {
                 if (!path[i].SourceVoxel.IsValid)
                 {
@@ -513,6 +513,7 @@ namespace DwarfCorp
                     {
                         break;
                     }
+                    Creature.Physics.AnimationQueue.Clear();
                     yield return Status.Running;
                 }
 
@@ -563,6 +564,7 @@ namespace DwarfCorp
                         Cart.Die();
                     yield return Status.Fail;
                 }
+                Creature.Physics.AnimationQueue.Clear();
                 yield return Status.Running;
             }
             Creature.OverrideCharacterMode = false;

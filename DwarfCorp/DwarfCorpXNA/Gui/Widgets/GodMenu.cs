@@ -324,6 +324,11 @@ namespace DwarfCorp.Gui.Widgets
                 },
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "SLOWMO",
+                    OnClick = (sender, args) => GameSettings.Default.EnableSlowMotion = !GameSettings.Default.EnableSlowMotion
+                },
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "LET IT SNOW",
                     OnClick = (sender, args) =>
                     {

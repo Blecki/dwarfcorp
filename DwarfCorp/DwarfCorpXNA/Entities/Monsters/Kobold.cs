@@ -123,7 +123,7 @@ namespace DwarfCorp
             {
                 Attacks = new List<Attack>()
             {
-                new Attack("Claws", 1.0f, 0.5f, 3.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_1, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_2, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_3), ContentPaths.Effects.claw)
+                new Attack("Claws", 1.0f, 1.0f, 1.5f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_1, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_2, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_3), ContentPaths.Effects.claw)
                 {
                     Knockback = 2.5f,
                     TriggerMode = Attack.AttackTrigger.Animation,
@@ -236,6 +236,7 @@ namespace DwarfCorp
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
+            AI.StealFromPlayerProbability = 0.5f;
             Species = "Kobold";
         }
 

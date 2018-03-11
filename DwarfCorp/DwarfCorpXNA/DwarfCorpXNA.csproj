@@ -217,6 +217,7 @@
     <Compile Include="Entities\Fixtures\CoinPileFixture.cs" />
     <Compile Include="Entities\Fixtures\Banner.cs" />
     <Compile Include="Entities\Fixtures\Fence.cs" />
+    <Compile Include="Entities\Monsters\Kobold.cs" />
     <Compile Include="Entities\Plants\PlantFactories.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
