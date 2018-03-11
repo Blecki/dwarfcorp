@@ -1025,6 +1025,12 @@ namespace DwarfCorp
                 Console.Error.WriteLine("Preparing device settings given null event args.");
                 return;
             }
+            
+            if (e.GraphicsDeviceInformation == null)
+            {
+                Console.Error.WriteLine("Somehow, GraphicsDeviceInformation is null!");
+                return;
+            }
 
             PresentationParameters pp = e.GraphicsDeviceInformation.PresentationParameters;
             if (pp == null)
@@ -1037,6 +1043,12 @@ namespace DwarfCorp
             if (adapter == null)
             {
                 Console.Error.WriteLine("Somehow, graphics adapter is null!");
+                return;
+            }
+
+            if (adapter.CurrentDisplayMode == null)
+            {
+                Console.Error.WriteLine("Somehow, CurrentDisplayMode is null!");
                 return;
             }
 
