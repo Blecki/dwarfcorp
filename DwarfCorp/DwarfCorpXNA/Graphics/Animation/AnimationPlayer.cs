@@ -108,6 +108,7 @@ namespace DwarfCorp
             if (CurrentFrame >= Animation.GetFrameCount())
                 CurrentFrame = Animation.GetFrameCount() - 1;
             IsPlaying = true;
+            IsLooping = Animation.Loops;
         }
 
         public void Play()
