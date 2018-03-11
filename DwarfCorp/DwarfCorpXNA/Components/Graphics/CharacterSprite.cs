@@ -58,7 +58,7 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public GraphicsDevice Graphics { get; set; }
+        public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
 
         private Timer blinkTimer = new Timer(0.1f, false);
         private Timer coolDownTimer = new Timer(1.0f, false);
@@ -92,7 +92,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            Graphics = (context.Context as WorldManager).ChunkManager.Graphics;
+
         }
 
         public CharacterSprite()
@@ -104,7 +104,6 @@ namespace DwarfCorp
             Matrix localTransform) :
                 base(manager, name, localTransform)
         {
-            Graphics = graphics;
             currentMode = "Idle";
         }
 

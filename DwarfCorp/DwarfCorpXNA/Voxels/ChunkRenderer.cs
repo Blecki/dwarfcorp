@@ -63,8 +63,8 @@ namespace DwarfCorp
             get { return GameSettings.Default.ChunkDrawDistance; }
         }
         
-        public GraphicsDevice Graphics { get; set; }
-        
+        public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
+
         public Camera camera = null;
         public WorldManager World { get; set; }
 
@@ -81,7 +81,6 @@ namespace DwarfCorp
             World = world;
             ChunkData = Data;
             RenderList = new ConcurrentQueue<VoxelChunk>();
-            Graphics = graphics;
 
             ChunkData.MaxViewingLevel = VoxelConstants.ChunkSizeY;
 

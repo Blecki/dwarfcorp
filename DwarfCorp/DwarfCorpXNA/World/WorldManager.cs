@@ -181,7 +181,7 @@ namespace DwarfCorp
         public DwarfGame Game;
 
         // Interfaces with the graphics card
-        public GraphicsDevice GraphicsDevice;
+        public GraphicsDevice GraphicsDevice { get { return GameState.Game.GraphicsDevice; } }
 
         // Loads the game in the background while a loading message displays
         public Thread LoadingThread { get; set; }
@@ -342,7 +342,6 @@ namespace DwarfCorp
             InitialEmbark = EmbarkmentLibrary.DefaultEmbarkment;
             this.Game = Game;
             Content = Game.Content;
-            GraphicsDevice = Game.GraphicsDevice;
             Seed = MathFunctions.Random.Next();
             WorldOrigin = WorldGenerationOrigin;
             Time = new WorldTime();

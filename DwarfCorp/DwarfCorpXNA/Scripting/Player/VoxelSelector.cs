@@ -137,7 +137,6 @@ namespace DwarfCorp
             CurrentWidth = 0.08f;
             CurrentColor = Color.White;
             CameraController = camera;
-            Graphics = graphics;
             Chunks = chunks;
             SelectionBuffer = new List<VoxelHandle>();
             LeftPressed = LeftPressedCallback;
@@ -205,7 +204,7 @@ namespace DwarfCorp
         /// </summary>
         public OnSelected Selected { get; set; }
         public Camera CameraController { get; set; }
-        public GraphicsDevice Graphics { get; set; }
+        public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
         public ChunkManager Chunks { get; set; }
         /// <summary>
         /// This is the list of voxels currently selected.

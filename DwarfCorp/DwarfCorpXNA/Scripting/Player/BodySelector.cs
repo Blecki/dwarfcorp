@@ -62,7 +62,6 @@ namespace DwarfCorp
             SelectionColor = Color.White;
             CurrentColor = Color.White;
             CameraController = camera;
-            Graphics = graphics;
             Components = components;
             SelectionBuffer = new List<Body>();
             CurrentBodies = new List<Body>();
@@ -109,7 +108,7 @@ namespace DwarfCorp
         /// <summary>
         ///     Graphics device associated with the camera.
         /// </summary>
-        public GraphicsDevice Graphics { get; set; }
+        public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
 
         /// <summary>
         ///     List of bodies currently selected.
