@@ -44,6 +44,19 @@ namespace DwarfCorp.Gui
             // Load skin from disc. The skin is a set of tilesheets.
             var sheets = FileUtils.LoadJsonListFromMultipleSources<JsonTileSheet>(ContentPaths.GUI.Skin, null, (s) => s.Name);
 
+            var generators = new Dictionary<String, Func<GraphicsDevice, ContentManager, JsonTileSheet, Texture2D>>();
+            foreach (var method in AssetManager.EnumerateModHooks(typeof(TextureGeneratorAttribute), typeof(Texture2D), new Type[]
+            {
+                typeof(GraphicsDevice),
+                typeof(ContentManager),
+                typeof(JsonTileSheet)
+            }))
+            {
+                var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a is TextureGeneratorAttribute) as TextureGeneratorAttribute;
+                if (attribute == null) continue;
+                generators[attribute.GeneratorName] = (device, content, sheet) => method.Invoke(null, new Object[] { device, content, sheet }) as Texture2D;
+            }
+
             // Pack skin into a single texture - Build atlas information from texture sizes.
             var atlas = TextureAtlas.Compiler.Compile(sheets.Select(s =>
                 {
@@ -56,7 +69,7 @@ namespace DwarfCorp.Gui
                             realTexture = AssetManager.GetContentTexture(s.Texture);
                             break;
                         case JsonTileSheetType.Generated:
-                            realTexture = VoxelLibrary.RenderIcons(Device, Content, s.TileWidth);
+                            realTexture = generators[s.Texture](Device, Content, s);
                             break;
                     }
 

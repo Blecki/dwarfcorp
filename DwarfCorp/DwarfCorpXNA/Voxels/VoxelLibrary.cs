@@ -169,15 +169,17 @@ namespace DwarfCorp
         }
 
         // Do not delete: Used to generate block icon texture for menu.
-        public static Texture2D RenderIcons(GraphicsDevice device, Microsoft.Xna.Framework.Content.ContentManager Content, int tileSize)
+        // Todo: Use Sheet.TileHeight as well.
+        [TextureGenerator("Voxels")]
+        public static Texture2D RenderIcons(GraphicsDevice device, Microsoft.Xna.Framework.Content.ContentManager Content, Gui.JsonTileSheet Sheet)
         {
             InitializeDefaultLibrary(device);
 
             var shader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
 
                 var sqrt = (int)(Math.Ceiling(Math.Sqrt(PrimitiveMap.Count)));
-                var width = MathFunctions.NearestPowerOf2(sqrt * tileSize);
-                var height = MathFunctions.NearestPowerOf2(sqrt * tileSize);
+                var width = MathFunctions.NearestPowerOf2(sqrt * Sheet.TileWidth);
+                var height = MathFunctions.NearestPowerOf2(sqrt * Sheet.TileWidth);
 
             RenderTarget2D toReturn = new RenderTarget2D(device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth16, 16, RenderTargetUsage.PreserveContents);
         
@@ -198,9 +200,9 @@ namespace DwarfCorp
             shader.TorchlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.torchgradient);
 
             Viewport oldview = device.Viewport;
-            int rows = height/tileSize;
-            int cols = width/tileSize;
-            device.ScissorRectangle = new Rectangle(0, 0, tileSize, tileSize);
+            int rows = height  / Sheet.TileWidth;
+            int cols = width/ Sheet.TileWidth;
+            device.ScissorRectangle = new Rectangle(0, 0, Sheet.TileWidth, Sheet.TileWidth);
             device.RasterizerState = RasterizerState.CullNone;
             device.DepthStencilState = DepthStencilState.Default;
             Vector3 half = Vector3.One*0.5f;
@@ -222,7 +224,7 @@ namespace DwarfCorp
                     if (type.HasTransitionTextures)
                         primitive = new BoxPrimitive(device, 1, 1, 1, type.TransitionTextures[new BoxTransition()]);
 
-                    device.Viewport = new Viewport(col * tileSize, row * tileSize, tileSize, tileSize);
+                    device.Viewport = new Viewport(col * Sheet.TileWidth, row * Sheet.TileWidth, Sheet.TileWidth, Sheet.TileWidth);
                     Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(-1.2f, 1.0f, -1.5f), Vector3.Zero, Vector3.Up);
                     Matrix projectionMatrix = Matrix.CreateOrthographic(1.5f, 1.5f, 0, 5);
                     shader.View = viewMatrix;

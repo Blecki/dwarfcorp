@@ -79,6 +79,36 @@ namespace DwarfCorp
             return Assemblies;
         }
 
+        private static bool CheckMethod(MethodInfo Method, Type ReturnType, Type[] ArgumentTypes)
+        {
+            if (!Method.IsStatic) return false;
+            if (Method.ReturnType != ReturnType) return false;
+
+            var parameters = Method.GetParameters();
+            if (parameters.Length != ArgumentTypes.Length) return false;
+            for (var i = 0; i < parameters.Length; ++i)
+                if (parameters[i].ParameterType != ArgumentTypes[i]) return false;
+
+            return true;
+        }
+
+        public static IEnumerable<MethodInfo> EnumerateModHooks(Type AttributeType, Type ReturnType, Type[] ArgumentTypes)
+        {
+            foreach (var assembly in EnumerateLoadedModAssemblies())
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public))
+                    {
+                        var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a.GetType() == AttributeType);
+                        if (attribute == null) continue;
+                        if (CheckMethod(method, ReturnType, ArgumentTypes))
+                            yield return method;
+                    }
+                }
+            }
+        }
+
         private static IEnumerable<String> EnumerateModDirectories(GameSettings.Settings Settings)
         {
             var searchList = Settings.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();

@@ -219,6 +219,7 @@
     <Compile Include="Entities\Fixtures\Fence.cs" />
     <Compile Include="Entities\Plants\PlantFactories.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
+    <Compile Include="Gui\TextureGeneratorAttribute.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
     <Compile Include="Scripting\Player\Economy\Quantity.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceType.cs" />
