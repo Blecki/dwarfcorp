@@ -66,7 +66,7 @@ namespace DwarfCorp.Rail
             CraftLocation = "",
             Name = "Rail",
             Type = CraftItem.CraftType.Object,
-            AddToOwnedPool = false,
+            AddToOwnedPool = true,
             Moveable = false            
         };
 
@@ -378,6 +378,7 @@ namespace DwarfCorp.Rail
                     finalEntity.SetFlagRecursive(GameComponent.Flag.Active, true);
                     finalEntity.SetTintRecursive(Color.White);
                     finalEntity.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                    finalEntity.Tags.Add("Deconstructable");
                     foreach (var tinter in finalEntity.EnumerateAll().OfType<Tinter>())
                         tinter.Stipple = false;
                 }

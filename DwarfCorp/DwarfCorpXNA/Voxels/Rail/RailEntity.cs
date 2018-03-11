@@ -137,7 +137,7 @@ namespace DwarfCorp.Rail
             VoxelHandle Location,
             JunctionPiece Piece) :
 
-            base(Manager, "Fixture", 
+            base(Manager, "Rail", 
                 Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y)), 
                 Vector3.One,
                 Vector3.Zero,
@@ -511,6 +511,7 @@ namespace DwarfCorp.Rail
         {
             base.Die();
             DetachFromNeighbors();
+            EntityFactory.CreateEntity<Body>("Rail Resource", MathFunctions.RandVector3Box(GetBoundingBox()));
         }
 
         public void UpdatePiece(JunctionPiece Piece, VoxelHandle Location)

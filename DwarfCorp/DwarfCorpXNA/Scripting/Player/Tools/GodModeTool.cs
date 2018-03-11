@@ -129,6 +129,9 @@ namespace DwarfCorp
 
                                 if (craftItem.Moveable)
                                     body.Tags.Add("Moveable");
+
+                                if (craftItem.Deconstructable)
+                                    body.Tags.Add("Deconstructable");
                             }
                         }
                     }
