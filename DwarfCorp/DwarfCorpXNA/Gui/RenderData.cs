@@ -15,7 +15,7 @@ namespace DwarfCorp.Gui
     /// </summary>
     public class RenderData
     {
-        public GraphicsDevice Device { get; private set; }
+        public GraphicsDevice Device { get { return GameStates.GameState.Game.GraphicsDevice; } }
         public Point ActualScreenBounds { get { return new Point(Device.Viewport.Width, Device.Viewport.Height); } }
         public Effect Effect { get; private set; }
         public Texture2D Texture { get; private set; }
@@ -35,7 +35,6 @@ namespace DwarfCorp.Gui
 
         public RenderData(GraphicsDevice Device, ContentManager Content)
         {
-            this.Device = Device;
             this.Effect = Content.Load<Effect>(ContentPaths.GUI.Shader);
 
             CalculateScreenSize();

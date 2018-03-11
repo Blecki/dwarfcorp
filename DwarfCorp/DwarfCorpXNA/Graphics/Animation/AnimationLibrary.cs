@@ -85,6 +85,7 @@ namespace DwarfCorp
             return Animations[TextureAsset][0];
         }
 
+
         public static Animation CreateAnimation(
             SpriteSheet Sheet,
             List<Point> Frames,

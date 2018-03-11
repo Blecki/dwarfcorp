@@ -129,12 +129,13 @@ namespace DwarfCorp
             ElapsedGameTime = new TimeSpan(0);
             ElapsedRealTime = time.ElapsedGameTime;
             TotalRealTime = time.TotalGameTime;
+            float slowmo = GameSettings.Default.EnableSlowMotion ? 0.1f : 1.0f;
             if (IsPaused) return;
             else
             {
-                ElapsedGameTime = new TimeSpan((long)(time.ElapsedGameTime.Ticks * Speed));
-                if (ElapsedGameTime.TotalSeconds > MaximumElapsedGameTime * Speed)
-                    ElapsedGameTime = TimeSpan.FromSeconds(MaximumElapsedGameTime * Speed);
+                ElapsedGameTime = new TimeSpan((long)(time.ElapsedGameTime.Ticks * Speed * slowmo));
+                if (ElapsedGameTime.TotalSeconds > MaximumElapsedGameTime * Speed * slowmo)
+                    ElapsedGameTime = TimeSpan.FromSeconds(MaximumElapsedGameTime * Speed * slowmo);
                 TotalGameTime += ElapsedGameTime;
             }
         }

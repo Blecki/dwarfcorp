@@ -131,7 +131,7 @@ namespace DwarfCorp
 
             foreach(var resource in aggregatedResources)
             {
-                var task = new StockResourceTask(resource.Value)
+                var task = new StockResourceTask(resource.Value.CloneResource())
                 {
                     Priority = Task.PriorityType.High
                 };
@@ -162,7 +162,7 @@ namespace DwarfCorp
 
             foreach (var resource in aggregatedResources)
             {
-                var task = new StockResourceTask(resource.Value);
+                var task = new StockResourceTask(resource.Value.CloneResource());
                 if (!agent.AI.Tasks.Contains(task))
                 {
                     agent.AI.AssignTask(task);

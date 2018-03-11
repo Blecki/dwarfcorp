@@ -56,15 +56,12 @@ namespace DwarfCorp
     public class AssetManager
     {
         private static Dictionary<String, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
-        private static ContentManager Content;
-        private static GraphicsDevice Graphics;
+        private static ContentManager Content { get { return GameState.Game.Content; } }
+        private static GraphicsDevice Graphics {  get { return GameState.Game.GraphicsDevice; } }
         private static List<Assembly> Assemblies = new List<Assembly>();
 
         public static void Initialize(ContentManager Content, GraphicsDevice Graphics, GameSettings.Settings Settings)
         {
-            AssetManager.Content = Content;
-            AssetManager.Graphics = Graphics;
-
             Assemblies.Add(Assembly.GetExecutingAssembly());
 
             foreach (var mod in EnumerateModDirectories(Settings))

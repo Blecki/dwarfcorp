@@ -132,6 +132,7 @@ namespace DwarfCorp.Rail
             foreach (var tinter in r.EnumerateAll().OfType<Tinter>())
                 tinter.Stipple = true;
 
+            r.SetFlag(GameComponent.Flag.ShouldSerialize, false);
             //Todo: Add craft details component.
             return r;
         }
@@ -353,6 +354,7 @@ namespace DwarfCorp.Rail
                         Orientation = 0.0f,
                         Progress = 0.0f,
                     };
+                    body.SetFlag(GameComponent.Flag.ShouldSerialize, true);
 
                     Player.World.ComponentManager.RootComponent.AddChild(designation.WorkPile);
                     designation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));

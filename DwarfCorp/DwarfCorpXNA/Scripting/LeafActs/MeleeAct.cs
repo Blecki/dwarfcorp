@@ -339,9 +339,6 @@ namespace DwarfCorp
                         yield break;
                     }
                     Creature.CurrentCharacterMode = CharacterMode.Attacking;
-                    Creature.Sprite.ReloopAnimations(CharacterMode.Attacking);
-
-                    CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
 
                     Vector3 dogfightTarget = Vector3.Zero;
                     while (!CurrentAttack.RechargeTimer.HasTriggered && !Target.IsDead)
@@ -349,15 +346,13 @@ namespace DwarfCorp
                         CurrentAttack.RechargeTimer.Update(DwarfTime.LastTime);
                         if (CurrentAttack.Mode == Attack.AttackMode.Dogfight)
                         {
-                            Creature.CurrentCharacterMode = CharacterMode.Attacking;
                             dogfightTarget += MathFunctions.RandVector3Cube()*0.1f;
                             Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, dogfightTarget + Target.Position, Creature.Physics.GlobalTransform.Translation) * 0.9f;
                             Creature.Physics.ApplyForce(output - Creature.Physics.Gravity, DwarfTime.Dt);
                         }
                         else
                         {
-                            Creature.Sprite.PauseAnimations(CharacterMode.Attacking);
-                            Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
+                            Creature.Physics.Velocity = Vector3.Zero;
                             if (Creature.AI.Movement.CanFly)
                             {
                                 Creature.Physics.ApplyForce(-Creature.Physics.Gravity, DwarfTime.Dt);
@@ -471,14 +466,6 @@ namespace DwarfCorp
 
             if (path.Count > 0)
             {
-                path.Insert(0,
-                    new MoveAction()
-                    {
-                        Diff = Vector3.Zero,
-                        DestinationVoxel = path[0].SourceVoxel,
-                        SourceVoxel = Creature.Physics.CurrentVoxel,
-                        MoveType = MoveType.Walk
-                    });
                 Creature.AI.Blackboard.SetData("RandomPath", path);
                 yield return Status.Success;
             }

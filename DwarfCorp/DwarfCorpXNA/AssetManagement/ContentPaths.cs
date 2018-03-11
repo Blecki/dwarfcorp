@@ -634,6 +634,11 @@ namespace DwarfCorp
 
                 }
             }
+            
+            public class Kobold
+            {
+                public static string kobold_animations = ProgramData.CreatePath("Entities", "Kobold", "kobold_animation.json");
+            }
 
             public class Skeleton
             {

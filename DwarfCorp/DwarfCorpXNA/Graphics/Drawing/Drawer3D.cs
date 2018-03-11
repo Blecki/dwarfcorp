@@ -48,7 +48,7 @@ namespace DwarfCorp
         private const int MaxTriangles = 64;
         private static VertexPositionColor[] Verticies = new VertexPositionColor[MaxTriangles * 3];
         private static int VertexCount;
-        private static GraphicsDevice Device;
+        private static GraphicsDevice Device {  get { return GameStates.GameState.Game.GraphicsDevice; } }
         private static Shader Effect;
         private static OrbitCamera Camera;
         private static object renderLock = new object();
@@ -189,7 +189,6 @@ namespace DwarfCorp
         {
             lock (renderLock)
             {
-                Drawer3D.Device = Device;
                 Drawer3D.Effect = Effect;
                 Drawer3D.Camera = Camera;
 

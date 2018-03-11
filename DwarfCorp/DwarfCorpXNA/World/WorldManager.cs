@@ -181,7 +181,7 @@ namespace DwarfCorp
         public DwarfGame Game;
 
         // Interfaces with the graphics card
-        public GraphicsDevice GraphicsDevice;
+        public GraphicsDevice GraphicsDevice { get { return GameState.Game.GraphicsDevice; } }
 
         // Loads the game in the background while a loading message displays
         public Thread LoadingThread { get; set; }
@@ -342,7 +342,6 @@ namespace DwarfCorp
             InitialEmbark = EmbarkmentLibrary.DefaultEmbarkment;
             this.Game = Game;
             Content = Game.Content;
-            GraphicsDevice = Game.GraphicsDevice;
             Seed = MathFunctions.Random.Next();
             WorldOrigin = WorldGenerationOrigin;
             Time = new WorldTime();
@@ -1026,6 +1025,12 @@ namespace DwarfCorp
                 Console.Error.WriteLine("Preparing device settings given null event args.");
                 return;
             }
+            
+            if (e.GraphicsDeviceInformation == null)
+            {
+                Console.Error.WriteLine("Somehow, GraphicsDeviceInformation is null!");
+                return;
+            }
 
             PresentationParameters pp = e.GraphicsDeviceInformation.PresentationParameters;
             if (pp == null)
@@ -1038,6 +1043,12 @@ namespace DwarfCorp
             if (adapter == null)
             {
                 Console.Error.WriteLine("Somehow, graphics adapter is null!");
+                return;
+            }
+
+            if (adapter.CurrentDisplayMode == null)
+            {
+                Console.Error.WriteLine("Somehow, CurrentDisplayMode is null!");
                 return;
             }
 

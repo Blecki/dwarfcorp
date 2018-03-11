@@ -43,8 +43,8 @@ namespace DwarfCorp
 {
     public class Projectile : Physics, IUpdateableComponent
     {
-        public AnimatedSprite Sprite { get; set; }
-        public AnimatedSprite Sprite2 { get; set; }
+        public Tinter Sprite { get; set; }
+        public Tinter Sprite2 { get; set; }
         public ParticleTrigger HitParticles { get; set; }
         public Health.DamageAmount Damage { get; set; }
         public Body Target { get; set; }
@@ -76,29 +76,54 @@ namespace DwarfCorp
                 spriteSheet.FrameHeight = spriteSheet.FrameWidth;
             }
 
-            Sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f),
-                false)
+            if (animated)
             {
-                OrientationType = AnimatedSprite.OrientMode.Fixed
-            }) as AnimatedSprite;
-
-            Sprite.AddAnimation(AnimationLibrary.CreateSimpleAnimation(asset));
-
-            if (singleSprite)
-            {
-                this.Sprite.OrientationType = AnimatedSprite.OrientMode.Spherical;
-            }
-
-            if (!singleSprite)
-            {
-                Sprite2 = Sprite.AddChild(new AnimatedSprite(Manager, "Sprite2",
-                    Matrix.CreateRotationX((float)Math.PI * 0.5f),
+                Sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f),
                     false)
                 {
                     OrientationType = AnimatedSprite.OrientMode.Fixed
                 }) as AnimatedSprite;
+                (Sprite as AnimatedSprite).AddAnimation(AnimationLibrary.CreateSimpleAnimation(asset));
 
-                Sprite2.AddAnimation(AnimationLibrary.CreateSimpleAnimation(asset));
+                if (singleSprite)
+                {
+                    (Sprite as AnimatedSprite).OrientationType = AnimatedSprite.OrientMode.Spherical;
+                }
+            }
+            else
+            {
+                Sprite = AddChild(new SimpleSprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f), false, spriteSheet, new Point(0, 0))
+                {
+                    OrientationType = SimpleSprite.OrientMode.Fixed
+                }) as SimpleSprite;
+                (Sprite as SimpleSprite).AutoSetWorldSize();
+                if (singleSprite)
+                {
+                    (Sprite as SimpleSprite).OrientationType = SimpleSprite.OrientMode.Spherical;
+                }
+            }
+
+            if (!singleSprite)
+            {
+                if (animated)
+                {
+                    Sprite2 = Sprite.AddChild(new AnimatedSprite(Manager, "Sprite2",
+                        Matrix.CreateRotationY((float)Math.PI * 0.5f) * Matrix.CreateRotationZ((float)Math.PI * 0.5f),
+                        false)
+                    {
+                        OrientationType = AnimatedSprite.OrientMode.Fixed
+                    }) as AnimatedSprite;
+
+                    (Sprite2 as AnimatedSprite).AddAnimation(AnimationLibrary.CreateSimpleAnimation(asset));
+                }
+                else
+                {
+                    Sprite2 = AddChild(new SimpleSprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f) * Matrix.CreateRotationZ((float)Math.PI * 0.5f), false, spriteSheet, new Point(0, 0))
+                    {
+                        OrientationType = SimpleSprite.OrientMode.Fixed
+                    }) as SimpleSprite;
+                    (Sprite2 as SimpleSprite).AutoSetWorldSize();
+                }
             }
             Damage = damage;
             HitParticles = AddChild(new ParticleTrigger(hitParticles, manager, "Hit Particles",
@@ -158,8 +183,11 @@ namespace DwarfCorp
         {
             if (HitAnimation != null)
             {
-                Sprite.AnimPlayer.Reset();
-                Sprite.AnimPlayer.Play(HitAnimation);
+                if (Sprite is AnimatedSprite)
+                {
+                    (Sprite as AnimatedSprite).AnimPlayer.Reset();
+                    (Sprite as AnimatedSprite).AnimPlayer.Play(HitAnimation);
+                }
 
                 if (Target != null)
                 {
