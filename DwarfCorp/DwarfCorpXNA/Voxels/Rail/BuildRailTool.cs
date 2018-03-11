@@ -152,7 +152,7 @@ namespace DwarfCorp.Rail
             var r = new RailEntity(Manager, Location, Piece);
             Manager.RootComponent.AddChild(r);
             r.SetFlagRecursive(GameComponent.Flag.Active, false);
-            
+            r.SetFlag(GameComponent.Flag.ShouldSerialize, false);
             //Todo: Add craft details component.
             return r;
         }
@@ -486,6 +486,7 @@ namespace DwarfCorp.Rail
                         Orientation = 0.0f,
                         Progress = 0.0f,
                     };
+                    body.SetFlag(GameComponent.Flag.ShouldSerialize, true);
 
                     Player.World.ComponentManager.RootComponent.AddChild(designation.WorkPile);
                     designation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
