@@ -2389,23 +2389,6 @@ namespace DwarfCorp.GameStates
                 });
 #endif
 
-#if DEBUG
-            MakeMenuItem(PausePanel, "New Save Test", "",
-                (sender, args) =>
-                {
-                    var saveSystem = new Saving.Saver();
-                    var playData = PlayData.CreateFromWorld(World);
-                    var nugget = saveSystem.SaveObject(playData);
-                    GuiRoot.ShowModalPopup(new Confirm
-                    {
-                        CancelText = "",
-                        Text = "Generic save objects:\n" + String.Join("\n", saveSystem.GetGenericallySavedTypes()),
-                        OnClose = (s2) => OpenPauseMenu(),
-                        Rect = GuiRoot.RenderData.VirtualScreen
-                    });
-                });
-#endif
-
             MakeMenuItem(PausePanel, "Quit", "", (sender, args) => QuitOnNextUpdate = true);
 
             PausePanel.Layout();

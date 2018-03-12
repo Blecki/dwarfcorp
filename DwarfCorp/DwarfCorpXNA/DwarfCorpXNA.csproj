@@ -466,6 +466,7 @@
     <Compile Include="Voxels\DecalLibrary.cs" />
     <Compile Include="Voxels\GrassType.cs" />
     <Compile Include="Voxels\LiquidType.cs" />
+    <Compile Include="Voxels\Rail\RailHelper-Combinations.cs" />
     <Compile Include="Voxels\Rail\RailLibrary.cs" />
     <Compile Include="Voxels\Rail\JunctionPattern.cs" />
     <Compile Include="Voxels\Rail\CombinationTable.cs" />
