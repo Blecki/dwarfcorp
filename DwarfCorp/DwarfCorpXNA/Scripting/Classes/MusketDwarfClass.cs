@@ -213,6 +213,7 @@ namespace DwarfCorp
         private void InitializeAnimations()
         {
             Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Dwarf.Sprites.musketdwarf_animations, "Dwarf");
+            MinecartAnimations = ContentPaths.Entities.Dwarf.Sprites.musket_minecart;
         }
 
         public void InitializeWeapons()

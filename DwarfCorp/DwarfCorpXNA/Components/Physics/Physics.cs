@@ -421,13 +421,6 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
-        public void Face(Vector3 target)
-        {
-            Vector3 diff = target - GlobalTransform.Translation;
-            Matrix newTransform = Matrix.CreateRotationY((float)Math.Atan2(diff.X, -diff.Z));
-            newTransform.Translation = LocalTransform.Translation;
-            LocalTransform = newTransform;
-        }
 
         public void SetPosition(Vector3 pos)
         {

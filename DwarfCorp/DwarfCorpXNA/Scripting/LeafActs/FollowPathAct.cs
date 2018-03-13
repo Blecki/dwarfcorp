@@ -68,7 +68,7 @@ namespace DwarfCorp
         public List<float> ActionTimes { get; set; }
         public bool BlendStart { get; set; }
         public bool BlendEnd { get; set; }
-        public Fixture Cart { get; set; }
+        public Body Cart { get; set; }
 
         // Offset from voxel location to bounding box center.
         public Vector3 GetBoundingBoxOffset()
@@ -115,8 +115,10 @@ namespace DwarfCorp
 
         public float GetActionTime(MoveAction action, int index)
         {
-            if (action.MoveType == MoveType.EnterVehicle || action.MoveType == MoveType.ExitVehicle)
+            if (action.MoveType == MoveType.EnterVehicle)
                 return 0.5f;
+            if (action.MoveType == MoveType.ExitVehicle)
+                return 0.1f;
             MoveAction nextAction = action;
             bool hasNextAction = false;
             Vector3 diff = Vector3.Zero;
@@ -249,7 +251,11 @@ namespace DwarfCorp
             if (!GetCurrentAction(ref action, ref t, ref currentIndex))
             {
                 if (Cart != null)
+                {
                     Cart.Die();
+                    Cart = null;
+                    Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
+                }
                 yield break;
             }
             Trace.Assert(t >= 0);
@@ -279,10 +285,6 @@ namespace DwarfCorp
             switch (action.MoveType)
             {
                 case MoveType.EnterVehicle:
-                    if (Cart == null)
-                    {
-                        Cart = EntityFactory.CreateEntity<Fixture>("Minecart", action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
-                    }
                     if (t < 0.5f)
                     {
                         Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
@@ -295,7 +297,7 @@ namespace DwarfCorp
                     {
                         float z = Easing.Ballistic(t, 1.0f, 1.0f);
                         Vector3 start = currPosition;
-                        Vector3 end = currPosition;
+                        Vector3 end = nextPosition + Vector3.Up * 0.5f;
                         Vector3 dx = (end - start) * t + start;
                         dx.Y = start.Y * (1 - t) + end.Y * (t) + z;
                         transform.Translation = dx;
@@ -304,40 +306,32 @@ namespace DwarfCorp
                     else
                     {
                         transform.Translation = currPosition;
+                    }
+                    if (t > 0.9f)
+                    {
+                        if (Cart == null)
+                        {
+                            Cart = EntityFactory.CreateEntity<Body>("Minecart", nextPosition + Vector3.Up * 0.5f, Blackboard.Create("Animations", Creature.Stats.CurrentClass.MinecartAnimations));
+                        }
+                        Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
                     }
                     break;
                 case MoveType.ExitVehicle:
                     if (Cart != null)
+                    {
                         Cart.Die();
-
-                    if (t < 0.5f)
-                    {
-                        Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
+                        Cart = null;
+                        Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
                     }
-                    Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0
-                        ? CharacterMode.Jumping
-                        : CharacterMode.Falling;
-                    if (hasNextAction)
-                    {
-                        float z = Easing.Ballistic(t, 1.0f, 1.0f);
-                        Vector3 start = currPosition;
-                        Vector3 end = currPosition;
-                        Vector3 dx = (end - start) * t + start;
-                        dx.Y = start.Y * (1 - t) + end.Y * (t) + z;
-                        transform.Translation = dx;
-                        Agent.Physics.Velocity = new Vector3(diff.X, (dx.Y - Agent.Physics.Position.Y), diff.Z);
-                    }
-                    else
-                    {
-                        transform.Translation = currPosition;
-                    }
+                    Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
+                    transform.Translation = currPosition;
                     break;
                 case MoveType.RideVehicle:
                     if (Cart == null)
                     {
-                        Cart = EntityFactory.CreateEntity<Fixture>("Minecart", action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
+                        Cart = EntityFactory.CreateEntity<Fixture>("Minecart", action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f, Blackboard.Create("Animations", Creature.Stats.CurrentClass.MinecartAnimations));
                     }
+                    Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
                     Creature.OverrideCharacterMode = true;
                     Creature.CurrentCharacterMode = CharacterMode.Sitting;
                     var rail = action.SourceState.VehicleState.Rail;
@@ -345,23 +339,26 @@ namespace DwarfCorp
                     {
                         if (hasNextAction)
                         {
-                            transform.Translation = diff * t + currPosition + Vector3.Up * 0.5f;
+                            transform.Translation = diff * t + currPosition;
                             Agent.Physics.Velocity = diff;
-                            Cart.LocalTransform = Matrix.CreateTranslation(diff * t + currPosition);
+                            Cart.LocalTransform = Matrix.CreateTranslation(diff * t + currPosition + Vector3.Up * 0.25f);
+                            Cart.Face(diff * t + currPosition + diff);
                         }
                         else
                         {
                             transform.Translation = currPosition;
-                            Cart.LocalTransform = Matrix.CreateTranslation(currPosition);
+                            Cart.LocalTransform = Matrix.CreateTranslation(currPosition + Vector3.Up * 0.25f);
+                            Cart.Face(currPosition + diff);
                         }
                     }
                     else
                     {
                         //Drawer3D.DrawBox(rail.GetContainingVoxel().GetBoundingBox(), Color.Green, 0.1f, true);
                         var pos = rail.InterpolateSpline(t, action.SourceVoxel.WorldPosition + Vector3.One * 0.5f, action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
-                        transform.Translation = pos + Vector3.Up * 1.5f;
+                        transform.Translation = pos + Vector3.Up * 0.5f;
                         Agent.Physics.Velocity = diff;
                         Cart.LocalTransform = Matrix.CreateTranslation(pos + Vector3.Up * 0.5f);
+                        Cart.Face(pos + Vector3.Up * 0.5f + diff);
                     }
                     break;
                 case MoveType.Walk:
@@ -506,7 +503,11 @@ namespace DwarfCorp
                     if (status == Status.Fail)
                     {
                         if (Cart != null)
+                        {
                             Cart.Die();
+                            Cart = null;
+                            Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
+                        }
                         yield return Status.Fail;
                     }
                     else if (status == Status.Success)
@@ -561,7 +562,11 @@ namespace DwarfCorp
                     Creature.OverrideCharacterMode = false;
                     Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                     if (Cart != null)
+                    {
                         Cart.Die();
+                        Cart = null;
+                        Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
+                    }
                     yield return Status.Fail;
                 }
                 Creature.Physics.AnimationQueue.Clear();
@@ -570,7 +575,11 @@ namespace DwarfCorp
             Creature.OverrideCharacterMode = false;
             SetPath(null);
             if (Cart != null)
+            {
                 Cart.Die();
+                Cart = null;
+                Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
+            }
             yield return Status.Success;
         }
 
@@ -579,7 +588,11 @@ namespace DwarfCorp
         {
             Creature.OverrideCharacterMode = false;
             if (Cart != null)
+            {
                 Cart.Die();
+                Cart = null;
+                Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
+            }
             SetPath(null);
             base.OnCanceled();
         }
@@ -587,7 +600,10 @@ namespace DwarfCorp
         ~FollowPathAct()
         {
             if (Cart != null)
+            {
                 Cart.Die();
+                Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
+            }
         }
     }
 
