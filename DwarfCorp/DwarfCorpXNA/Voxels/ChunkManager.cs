@@ -146,7 +146,7 @@ namespace DwarfCorp
 
         public bool IsAboveCullPlane(BoundingBox Box)
         {
-            return Box.Min.Y > (ChunkData.MaxViewingLevel + 5);
+            return Box.Min.Y > (World.Master.MaxViewingLevel + 5);
         }
 
         public ChunkData ChunkData

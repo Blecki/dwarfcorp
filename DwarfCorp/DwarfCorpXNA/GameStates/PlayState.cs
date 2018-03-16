@@ -313,7 +313,7 @@ namespace DwarfCorp.GameStates
             StocksLabel.TextColor = availableSpace > 0 ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
             StocksLabel.Invalidate();
             LevelLabel.Text = String.Format("{0}/{1}",
-                World.ChunkManager.ChunkData.MaxViewingLevel,
+                Master.MaxViewingLevel,
                 VoxelConstants.ChunkSizeY);
             LevelLabel.Invalidate();
             #endregion
@@ -544,8 +544,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockLeftCentered,
                 OnClick = (sender, args) =>
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(
-                        World.ChunkManager.ChunkData.MaxViewingLevel - 1,
+                    Master.SetMaxViewingLevel(
+                        Master.MaxViewingLevel - 1,
                         ChunkManager.SliceMode.Y);
                 },
                 Tooltip = "Go down one viewing level."
@@ -559,8 +559,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockLeftCentered,
                 OnClick = (sender, args) =>
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(
-                        World.ChunkManager.ChunkData.MaxViewingLevel + 1,
+                    Master.SetMaxViewingLevel(
+                        Master.MaxViewingLevel + 1,
                         ChunkManager.SliceMode.Y);
                 },
                 Tooltip = "Go up one viewing level."

@@ -190,7 +190,7 @@ namespace DwarfCorp
                     TimeOfDay = World.Sky.TimeOfDay,
                     GameID = World.GameID,
                     Time = World.Time,
-                    Slice = (int)World.ChunkManager.ChunkData.MaxViewingLevel,
+                    Slice = (int)World.Master.MaxViewingLevel,
                     NumChunks = World.ChunkManager.WorldSize,
                     Version = Program.Version
                 },
