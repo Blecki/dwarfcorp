@@ -61,7 +61,8 @@ namespace DwarfCorp
         public override IEnumerable<Status> Run()
         {
             LastTickedChild = this;
-            return Function();
+            foreach (var result in Function())
+                yield return result;
         }
     }
 

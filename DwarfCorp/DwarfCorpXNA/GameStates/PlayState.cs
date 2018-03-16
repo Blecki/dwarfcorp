@@ -1527,9 +1527,7 @@ namespace DwarfCorp.GameStates
                         icon_BuildFloor,
                         icon_BuildCraft,
                         icon_BuildResource,
-#if DEBUG
                         icon_RailTool,
-#endif
                     }
             };
 

@@ -173,6 +173,11 @@ namespace DwarfCorp
                 return (relation == Relationship.Hateful || relation == Relationship.Indifferent) ? Feasibility.Feasible : Feasibility.Infeasible;
             }
         }
+
+        public override bool IsComplete()
+        {
+            return EntityToKill == null || EntityToKill.IsDead;
+        }
     }
 
 }

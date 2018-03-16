@@ -222,7 +222,7 @@ namespace DwarfCorp
 
                     if (!ResourceLibrary.Resources.ContainsKey(type))
                     {
-                        ResourceLibrary.Add(new Resource(ResourceLibrary.GetMeat(Species))
+                        ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceType.Meat])
                         {
                             Name = type,
                             ShortName = type

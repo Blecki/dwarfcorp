@@ -90,6 +90,7 @@ namespace DwarfCorp
         public int PregnancyLengthHours = 24;
         public string Species = "";
         public string BabyType = "";
+        public ResourceType BaseMeatResource = ResourceType.Meat;
         
         public Pregnancy CurrentPregnancy = null;
         
@@ -505,7 +506,7 @@ namespace DwarfCorp
 
                 if (!ResourceLibrary.Resources.ContainsKey(type))
                 {
-                    ResourceLibrary.Add(new Resource(ResourceLibrary.GetMeat(Species))
+                    ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[BaseMeatResource])
                     {
                         Name = type,
                         ShortName = type

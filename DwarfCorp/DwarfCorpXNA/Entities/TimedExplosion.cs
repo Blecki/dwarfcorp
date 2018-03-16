@@ -72,8 +72,6 @@ namespace DwarfCorp
         }
 
         public float DamageAmount;
-        public Faction Allies;
-        public bool ShouldDie = false;
         public Timer DeathTimer;
         public int VoxelRadius = 5;
         public int VoxelsPerTick = 5;
@@ -108,7 +106,6 @@ namespace DwarfCorp
             "BearTrap", Matrix.CreateTranslation(pos),
             new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, "Bear Trap", resources))
         {
-            Allies = manager.World.PlayerFaction;
             DeathTimer = new Timer(2.0f, true);
             DamageAmount = 200;
             CreateCosmeticChildren(manager);

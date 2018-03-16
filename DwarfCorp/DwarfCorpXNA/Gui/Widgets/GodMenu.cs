@@ -280,7 +280,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "SPAWN TEST",
                     OnClick = (sender, args) =>
                     {
-                        // Todo: Figure out why the container gets MODIFIED during this.
+                        // Copy is required because spawning some types results in the creation of new types. EG, snakes create snake meat.
                         var keys = EntityFactory.EnumerateEntityTypes().ToList();
                         foreach(var key in keys)
                             EntityFactory.CreateEntity<GameComponent>(key, Master.World.CursorLightPos);
