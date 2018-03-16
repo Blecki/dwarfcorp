@@ -82,8 +82,6 @@ namespace DwarfCorp
             ChunkData = Data;
             RenderList = new ConcurrentQueue<VoxelChunk>();
 
-            ChunkData.ChunkManager.World.Master.MaxViewingLevel = VoxelConstants.ChunkSizeY;
-
             GameSettings.Default.VisibilityUpdateTime = 0.05f;
             visibilityChunksTimer = new Timer(GameSettings.Default.VisibilityUpdateTime, false, Timer.TimerMode.Real);
             visibilityChunksTimer.HasTriggered = true;
