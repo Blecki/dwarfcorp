@@ -357,8 +357,11 @@ namespace DwarfCorp
                         var pos = rail.InterpolateSpline(t, action.SourceVoxel.WorldPosition + Vector3.One * 0.5f, action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
                         transform.Translation = pos + Vector3.Up * 0.5f;
                         Agent.Physics.Velocity = diff;
-                        Cart.LocalTransform = Matrix.CreateTranslation(pos + Vector3.Up * 0.5f);
-                        Cart.Face(pos + Vector3.Up * 0.5f + diff);
+                        if (Cart != null)
+                        {
+                            Cart.LocalTransform = Matrix.CreateTranslation(pos + Vector3.Up * 0.5f);
+                            Cart.Face(pos + Vector3.Up * 0.5f + diff);
+                        }
                     }
                     break;
                 case MoveType.Walk:
