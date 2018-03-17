@@ -94,9 +94,10 @@ namespace DwarfCorp
                         Voxel = voxel
                     };
 
-                    Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Till, newFarmTile);
+                    var task = new TillTask(newFarmTile);
+                    Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Till, newFarmTile, task);
 
-                    goals.Add(new TillTask(newFarmTile));
+                    goals.Add(task);
                 }
                 else
                 {

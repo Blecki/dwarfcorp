@@ -64,8 +64,9 @@ namespace DwarfCorp
                         Vox = v
                     };
 
-                    Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Guard, d);
-                    assignedTasks.Add(new GuardZoneTask());
+                    var task = new GuardZoneTask();
+                    Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Guard, d, task);
+                    assignedTasks.Add(task);
                 }
 
                 List<CreatureAI> minions = 

@@ -84,6 +84,7 @@ namespace DwarfCorp
             if (agent.AI.Status.IsAsleep)
                 return Feasibility.Infeasible;
 
+            // Todo: Remove all mention of designations from checking.
             return agent.Faction.Designations.IsVoxelDesignation(VoxelToKill, DesignationType.Dig) 
                 && !VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
@@ -121,6 +122,12 @@ namespace DwarfCorp
             if (!VoxelToKill.IsValid) return false;
             return VoxelToKill.IsEmpty;
         }
+
+        public override void OnDequeued(Faction Faction)
+        {
+            Faction.Designations.RemoveVoxelDesignation(VoxelToKill, DesignationType.Dig);
+        }
+        
     }
 
 }

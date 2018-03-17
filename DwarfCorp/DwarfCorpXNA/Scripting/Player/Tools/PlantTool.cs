@@ -98,8 +98,8 @@ namespace DwarfCorp
             
             if (designation == null)
             {
-                Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType._InactiveFarm, new FarmTile() { Voxel = voxel });
-                designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType._AllFarms) as FarmTile;
+                designation = new FarmTile() { Voxel = voxel };
+                Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType._InactiveFarm, designation, null);
             }
 
             if (designation != null && designation.PlantExists())
@@ -151,15 +151,16 @@ namespace DwarfCorp
                         var existingTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType._AllFarms) as FarmTile;
                         if (existingTile == null) continue;
 
-                        Player.Faction.Designations.RemoveVoxelDesignation(voxel, DesignationType._AllFarms);
-                        Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Plant, existingTile);
-
-                        goals.Add(new PlantTask(existingTile)
+                        var task = new PlantTask(existingTile)
                         {
                             Plant = PlantType,
                             RequiredResources = RequiredResources
-                        });
+                        };
 
+                        Player.Faction.Designations.RemoveVoxelDesignation(voxel, DesignationType._AllFarms);
+                        Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Plant, existingTile, task);
+
+                        goals.Add(task);
                         currentAmount--;
                     }
                 }
@@ -194,7 +195,7 @@ namespace DwarfCorp
                         // Cancel and revert to inactive designation type.
                         existingFarmTile.Farmer = null;
                         Player.Faction.Designations.RemoveVoxelDesignation(existingFarmTile.Voxel, DesignationType._AllFarms);
-                        Player.Faction.Designations.AddVoxelDesignation(existingFarmTile.Voxel, DesignationType._InactiveFarm, existingFarmTile);
+                        Player.Faction.Designations.AddVoxelDesignation(existingFarmTile.Voxel, DesignationType._InactiveFarm, existingFarmTile, null);
                     }
                 }
             }

@@ -93,8 +93,9 @@ namespace DwarfCorp
         {
             if (Plant == null && Voxel.IsValid && Voxel.Type.Name == "TilledSoil" && !String.IsNullOrEmpty(PlantedType))
             {
-                if (world.PlayerFaction.Designations.AddVoxelDesignation(Voxel, DesignationType.Plant, this) == DesignationSet.AddDesignationResult.Added)
-                    world.Master.TaskManager.AddTask(new PlantTask(this) { Plant = PlantedType });
+                var task = new PlantTask(this) { Plant = PlantedType };
+                if (world.PlayerFaction.Designations.AddVoxelDesignation(Voxel, DesignationType.Plant, this, task) == DesignationSet.AddDesignationResult.Added)
+                    world.Master.TaskManager.AddTask(task);
             }
         }
 
