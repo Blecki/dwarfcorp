@@ -183,7 +183,7 @@ namespace DwarfCorp
             int totalFaces = 6;
             bool fogOfWar = GameSettings.Default.FogofWar;
 
-            for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY); y++)
+            for (int y = 0; y < Math.Min(chunk.Manager.World.Master.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY); y++)
             {
                 if (chunk.Data.LiquidPresent[y] == 0) continue;
 
@@ -235,7 +235,7 @@ namespace DwarfCorp
                                 {
                                     if (face == BoxFace.Top)
                                     {
-                                        if (!(vox.WaterCell.WaterLevel == 0 || y == (int)chunk.Manager.ChunkData.MaxViewingLevel))
+                                        if (!(vox.WaterCell.WaterLevel == 0 || y == (int)chunk.Manager.World.Master.MaxViewingLevel))
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;

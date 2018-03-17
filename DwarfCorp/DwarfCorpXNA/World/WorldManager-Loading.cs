@@ -290,9 +290,9 @@ namespace DwarfCorp
                     gameFile.ReadChunks(ExistingFile);
                     ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
 
-                    ChunkManager.ChunkData.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
+                    ChunkManager.World.Master.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
                         ? gameFile.Metadata.Slice
-                        : ChunkManager.ChunkData.MaxViewingLevel, ChunkManager.SliceMode.Y);
+                        : ChunkManager.World.Master.MaxViewingLevel, ChunkManager.SliceMode.Y);
                     
                     SetLoadingMessage("Loading Entities...");
                     gameFile.LoadPlayData(ExistingFile, this);

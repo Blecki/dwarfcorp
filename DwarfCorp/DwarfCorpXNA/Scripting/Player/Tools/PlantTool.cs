@@ -133,7 +133,7 @@ namespace DwarfCorp
 
                 List<CreatureAI> minions =
                     Player.World.Master.Faction.Minions.Where(minion => minion.Stats.IsTaskAllowed(Task.TaskCategory.Plant)).ToList();
-                List<FarmTask> goals = new List<FarmTask>();
+                var goals = new List<PlantTask>();
 
                 int currentAmount = Player.Faction.ListResources()
                     .Sum(resource => resource.Key == PlantType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
@@ -154,9 +154,8 @@ namespace DwarfCorp
                         Player.Faction.Designations.RemoveVoxelDesignation(voxel, DesignationType._AllFarms);
                         Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Plant, existingTile);
 
-                        goals.Add(new FarmTask(existingTile, FarmAct.FarmMode.Plant)
+                        goals.Add(new PlantTask(existingTile)
                         {
-                            Category = Task.TaskCategory.Plant,
                             Plant = PlantType,
                             RequiredResources = RequiredResources
                         });
@@ -171,6 +170,7 @@ namespace DwarfCorp
                 {
                     // Horrible hack to make it work when game is paused. Farmer doesn't get assigned until
                     // next update!
+                    // Todo: Kill Hack.
                     if (minions.Count > 0)
                     {
                         foreach (var goal in goals)

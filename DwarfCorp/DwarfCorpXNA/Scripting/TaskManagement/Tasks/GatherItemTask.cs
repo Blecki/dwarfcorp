@@ -113,6 +113,11 @@ namespace DwarfCorp
 
             base.Render(time);
         }
+
+        public override bool IsComplete()
+        {
+            return EntityToGather == null || EntityToGather.IsDead;
+        }
     }
 
 }

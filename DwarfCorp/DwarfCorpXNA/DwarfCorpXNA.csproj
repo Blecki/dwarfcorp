@@ -219,11 +219,14 @@
     <Compile Include="Entities\Fixtures\Fence.cs" />
     <Compile Include="Entities\Monsters\Kobold.cs" />
     <Compile Include="Entities\Plants\PlantFactories.cs" />
+    <Compile Include="Entities\TimedExplosion.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
     <Compile Include="Gui\TextureGeneratorAttribute.cs" />
+    <Compile Include="Scripting\CompoundActs\TillAct.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
     <Compile Include="Scripting\Player\Economy\Quantity.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceType.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\TillTask.cs" />
     <Compile Include="Voxels\Rail\PaintRailTool.cs" />
     <Compile Include="Voxels\Rail\OrientationHelper.cs" />
     <Compile Include="Voxels\Rail\CompassOrientation.cs" />
@@ -466,6 +469,7 @@
     <Compile Include="Voxels\DecalLibrary.cs" />
     <Compile Include="Voxels\GrassType.cs" />
     <Compile Include="Voxels\LiquidType.cs" />
+    <Compile Include="Voxels\Rail\RailHelper-Combinations.cs" />
     <Compile Include="Voxels\Rail\RailLibrary.cs" />
     <Compile Include="Voxels\Rail\JunctionPattern.cs" />
     <Compile Include="Voxels\Rail\CombinationTable.cs" />
@@ -602,7 +606,7 @@
     <Compile Include="Scripting\CompoundActs\CompoundAct.cs" />
     <Compile Include="Scripting\CompoundActs\CompoundCreatureAct.cs" />
     <Compile Include="Scripting\CompoundActs\CraftItemAct.cs" />
-    <Compile Include="Scripting\CompoundActs\FarmAct.cs" />
+    <Compile Include="Scripting\CompoundActs\PlantAct.cs" />
     <Compile Include="Scripting\CompoundActs\FindAndEatFoodAct.cs" />
     <Compile Include="Scripting\CompoundActs\FindBedAndSleepAct.cs" />
     <Compile Include="Scripting\CompoundActs\GatherItemAct.cs" />
@@ -722,7 +726,7 @@
     <Compile Include="Scripting\TaskManagement\Tasks\BuildRoomTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\BuildVoxelTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\CraftItemTask.cs" />
-    <Compile Include="Scripting\TaskManagement\Tasks\FarmTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\PlantTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\GatherItemTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\GetItemWithTagsTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\GuardZoneTask.cs" />

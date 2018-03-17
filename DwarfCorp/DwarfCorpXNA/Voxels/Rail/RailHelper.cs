@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.Rail
 {
-    public class RailHelper
+    public partial class RailHelper
     {
 		private static Vector3? FindConnectionPoint(RailEntity A, RailEntity B)
         {

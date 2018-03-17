@@ -80,7 +80,7 @@ namespace DwarfCorp
         {
             List<CreatureAI> minions = 
                 Player.World.Master.Faction.Minions.Where(minion => minion.Stats.IsTaskAllowed(Task.TaskCategory.TillSoil)).ToList();
-            List<FarmTask> goals = new List<FarmTask>();
+            var goals = new List<Task>();
 
             foreach (var voxel in voxels)
             {
@@ -96,7 +96,7 @@ namespace DwarfCorp
 
                     Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Till, newFarmTile);
 
-                    goals.Add(new FarmTask(newFarmTile, FarmAct.FarmMode.Till) { Category = Task.TaskCategory.TillSoil });
+                    goals.Add(new TillTask(newFarmTile));
                 }
                 else
                 {
@@ -111,7 +111,6 @@ namespace DwarfCorp
             }
 
             Player.TaskManager.AddTasks(goals);
-            //TaskManager.AssignTasksGreedy(goals.Cast<Task>().ToList(), minions, 1);
 
             foreach (CreatureAI creature in minions)
                 creature.Creature.NoiseMaker.MakeNoise("Ok", creature.Position);

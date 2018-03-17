@@ -91,16 +91,15 @@ namespace DwarfCorp
                 yield return Status.Fail;
                 yield break;
             }
+
             Timer avoidTimer = new Timer(time, true, Timer.TimerMode.Game);
             while (true)
             {
                 avoidTimer.Update(DwarfTime.LastTime);
 
                 if (avoidTimer.HasTriggered)
-                {
                     yield return Status.Success;
-                }
-
+            
                 float dist = (Target.Position - Agent.Position).Length();
 
                 if (dist > range)
@@ -147,12 +146,12 @@ namespace DwarfCorp
 
                     yield return Status.Running;
                     if (timeout.HasTriggered || (furthest.DestinationVoxel.WorldPosition - Agent.Position).Length() < 1)
-                    {
                         reachedTarget = true;
-                    }
+
                     Agent.Creature.CurrentCharacterMode = CharacterMode.Walking;
                 }
-            yield return Status.Success;
+
+                yield return Status.Success;
                 yield break;
             }
         }
@@ -181,9 +180,7 @@ namespace DwarfCorp
             Inventory targetInventory = Target.GetRoot().GetComponent<Inventory>();
 
             if (targetInventory != null)
-            {
                 targetInventory.OnDeath += targetInventory_OnDeath;
-            }
 
             CharacterMode defaultCharachterMode = Creature.AI.Movement.CanFly
                 ? CharacterMode.Flying
@@ -250,6 +247,7 @@ namespace DwarfCorp
                     Creature.CurrentCharacterMode = defaultCharachterMode;
                     yield return Status.Fail;
                 }
+
                 // If we're out of attack range, run toward the target.
                 if(!Creature.AI.Movement.IsSessile && !intersectsbounds && diff.Length() > CurrentAttack.Range)
                 {

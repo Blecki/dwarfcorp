@@ -144,7 +144,7 @@ namespace DwarfCorp
             var sliceStack = new List<RawPrimitive>();
             var cache = new Cache();
 
-            for (var y = 0; y < chunk.Manager.ChunkData.MaxViewingLevel; ++y)
+            for (var y = 0; y < chunk.Manager.World.Master.MaxViewingLevel; ++y)
             {
                 RawPrimitive sliceGeometry = null;
 

@@ -89,6 +89,8 @@ namespace DwarfCorp
         private bool sliceUpheld = false;
         private Timer sliceDownTimer = new Timer(0.5f, true);
         private Timer sliceUpTimer = new Timer(0.5f, true);
+        public int MaxViewingLevel = VoxelConstants.ChunkSizeY;
+        public ChunkManager.SliceMode Slice = ChunkManager.SliceMode.Y; // Todo: Ever not Y? Are other types even supported?
 
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
@@ -261,6 +263,26 @@ namespace DwarfCorp
         public bool AreAllEmployeesAsleep()
         {
             return (Faction.Minions.Count > 0) && Faction.Minions.All(minion => (!minion.Stats.CanSleep || minion.Creature.IsAsleep) && !minion.IsDead);
+        }
+
+        // Final argument is always mode Y.
+        // Todo: %KILL% - does not belong here.
+        public void SetMaxViewingLevel(int level, ChunkManager.SliceMode slice)
+        {
+            if (level == MaxViewingLevel && slice == Slice)
+                return;
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_click_voxel, 0.15f, (float)(level / (float)VoxelConstants.ChunkSizeY) - 0.5f);
+
+            var oldLevel = MaxViewingLevel;
+
+            Slice = slice;
+            MaxViewingLevel = Math.Max(Math.Min(level, VoxelConstants.ChunkSizeY), 1);
+
+            foreach (var c in World.ChunkManager.ChunkData.ChunkMap)
+            {
+                c.InvalidateSlice(oldLevel - 1);
+                c.InvalidateSlice(MaxViewingLevel - 1);
+            }
         }
 
         public void PayEmployees()
@@ -487,7 +509,7 @@ namespace DwarfCorp
 
                 if (sliceDownTimer.HasTriggered)
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
+                    SetMaxViewingLevel(MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
                     sliceDownTimer.Reset(0.1f);
                 }
             }
@@ -498,7 +520,7 @@ namespace DwarfCorp
 
                 if (sliceUpTimer.HasTriggered)
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
+                    SetMaxViewingLevel(MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
                     sliceUpTimer.Reset(0.1f);
                 }
             }
@@ -550,11 +572,11 @@ namespace DwarfCorp
 
                 if (above.IsValid)
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y, ChunkManager.SliceMode.Y);
+                    SetMaxViewingLevel(above.Coordinate.Y, ChunkManager.SliceMode.Y);
                 }
                 else
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
+                    SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
                         ChunkManager.SliceMode.Y);
                 }
             }
@@ -671,34 +693,34 @@ namespace DwarfCorp
             {
                 sliceUpheld = false;
                 World.Tutorial("unslice");
-                World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
+                SetMaxViewingLevel(MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
             }
 
             else if (key == ControlSettings.Mappings.SliceDown)
             {
                 sliceDownheld = false;
                 World.Tutorial("unslice");
-                World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
+                SetMaxViewingLevel(MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
             }
             else if (key == ControlSettings.Mappings.SliceSelected)
             {
                 if (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl))
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(rememberedViewValue, 
+                    SetMaxViewingLevel(rememberedViewValue, 
                         ChunkManager.SliceMode.Y);
                 }
                 else if (VoxSelector.VoxelUnderMouse.IsValid)
                 {
                     World.Tutorial("unslice");
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1,
+                    SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1,
                         ChunkManager.SliceMode.Y);
                     Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
                 }
             }
             else if (key == ControlSettings.Mappings.Unslice)
             {
-                rememberedViewValue = World.ChunkManager.ChunkData.MaxViewingLevel;
-                World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
+                rememberedViewValue = MaxViewingLevel;
+                SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
             }
         }
 

@@ -313,7 +313,7 @@ namespace DwarfCorp.GameStates
             StocksLabel.TextColor = availableSpace > 0 ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
             StocksLabel.Invalidate();
             LevelLabel.Text = String.Format("{0}/{1}",
-                World.ChunkManager.ChunkData.MaxViewingLevel,
+                Master.MaxViewingLevel,
                 VoxelConstants.ChunkSizeY);
             LevelLabel.Invalidate();
             #endregion
@@ -544,8 +544,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockLeftCentered,
                 OnClick = (sender, args) =>
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(
-                        World.ChunkManager.ChunkData.MaxViewingLevel - 1,
+                    Master.SetMaxViewingLevel(
+                        Master.MaxViewingLevel - 1,
                         ChunkManager.SliceMode.Y);
                 },
                 Tooltip = "Go down one viewing level."
@@ -559,8 +559,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockLeftCentered,
                 OnClick = (sender, args) =>
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(
-                        World.ChunkManager.ChunkData.MaxViewingLevel + 1,
+                    Master.SetMaxViewingLevel(
+                        Master.MaxViewingLevel + 1,
                         ChunkManager.SliceMode.Y);
                 },
                 Tooltip = "Go up one viewing level."
@@ -1527,9 +1527,7 @@ namespace DwarfCorp.GameStates
                         icon_BuildFloor,
                         icon_BuildCraft,
                         icon_BuildResource,
-#if DEBUG
                         icon_RailTool,
-#endif
                     }
             };
 
@@ -2386,23 +2384,6 @@ namespace DwarfCorp.GameStates
                                 OnClose = (s2) => OpenPauseMenu()
                             });
                         });
-                });
-#endif
-
-#if DEBUG
-            MakeMenuItem(PausePanel, "New Save Test", "",
-                (sender, args) =>
-                {
-                    var saveSystem = new Saving.Saver();
-                    var playData = PlayData.CreateFromWorld(World);
-                    var nugget = saveSystem.SaveObject(playData);
-                    GuiRoot.ShowModalPopup(new Confirm
-                    {
-                        CancelText = "",
-                        Text = "Generic save objects:\n" + String.Join("\n", saveSystem.GetGenericallySavedTypes()),
-                        OnClose = (s2) => OpenPauseMenu(),
-                        Rect = GuiRoot.RenderData.VirtualScreen
-                    });
                 });
 #endif
 

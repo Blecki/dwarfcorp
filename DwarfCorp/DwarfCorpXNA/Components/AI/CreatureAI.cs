@@ -361,11 +361,11 @@ namespace DwarfCorp
 
             if (above.IsValid)
             {
-                World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y, ChunkManager.SliceMode.Y);
+                World.Master.SetMaxViewingLevel(above.Coordinate.Y, ChunkManager.SliceMode.Y);
             }
             else
             {
-                World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
+                World.Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
                     ChunkManager.SliceMode.Y);
             }
         }
@@ -492,11 +492,11 @@ namespace DwarfCorp
                         }
                     }
                 }
-                else if (status == Act.Status.Success)
-                {
-                    if (CurrentTask != null) // How? Some Act must be changing the current task!
-                        CurrentTask.IsComplete = true;
-                }
+                //else if (status == Act.Status.Success)
+                //{
+                //    if (CurrentTask != null) // How? Some Act must be changing the current task!
+                //        CurrentTask.IsComplete = true;
+                //}
 
                 if (status != Act.Status.Running && !retried)
                     ChangeTask(null);

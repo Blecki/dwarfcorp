@@ -71,32 +71,7 @@ namespace DwarfCorp.Gui.Widgets
                             })
                     }
                 },
-
-                new HorizontalMenuTray.MenuItem
-                {
-                    Text = "DUMP ENTITY JSON",
-                    ExpansionChild = new HorizontalMenuTray.Tray
-                    {
-                        Columns = 5,
-                        ItemSource = EntityFactory.EnumerateEntityTypes().OrderBy(s => s).Select(s =>
-                            new HorizontalMenuTray.MenuItem
-                            {
-                                Text = s,
-                                OnClick = (sender, args) =>
-                                {
-                                    var body = EntityFactory.CreateEntity<Body>(s, Vector3.Zero);
-                                    if (body != null)
-                                    body.PropogateTransforms();
-
-                                    System.IO.Directory.CreateDirectory("DUMPEDENTITIES");
-                                    FileUtils.SaveJSon(body, "DUMPEDENTITIES/" + s + ".json", false);
-
-                                    body.Delete();
-                                }
-                            })
-                    }
-                },
-
+                
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "PLACE BLOCK",
@@ -305,7 +280,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "SPAWN TEST",
                     OnClick = (sender, args) =>
                     {
-                        // Todo: Figure out why the container gets MODIFIED during this.
+                        // Copy is required because spawning some types results in the creation of new types. EG, snakes create snake meat.
                         var keys = EntityFactory.EnumerateEntityTypes().ToList();
                         foreach(var key in keys)
                             EntityFactory.CreateEntity<GameComponent>(key, Master.World.CursorLightPos);

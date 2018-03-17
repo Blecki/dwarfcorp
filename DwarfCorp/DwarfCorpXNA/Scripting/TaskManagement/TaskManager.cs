@@ -114,7 +114,7 @@ namespace DwarfCorp
 
         public void Update(List<CreatureAI> creatures)
         {
-            Tasks.RemoveAll(t => t.IsComplete);
+            Tasks.RemoveAll(t => t.IsComplete());
             /*
             UpdateTimer.Update(DwarfTime.LastTime);
 
@@ -124,6 +124,8 @@ namespace DwarfCorp
                 Tasks.RemoveAll(task => creatures.All(c => task.ShouldDelete(c.Creature)));
             }
             */
+
+            //Tasks.RemoveAll(t => t.IsFeasible(null) == Task.Feasibility.Infeasible);
         }
 
         public int GetMaxColumnValue(int[,] matrix, int column, int numRows, int numColumns)

@@ -83,7 +83,7 @@ namespace DwarfCorp
         public int MaxAssignable = 1;
         public bool ReassignOnDeath = true;
         public List<CreatureAI> AssignedCreatures = new List<CreatureAI>();
-        public bool IsComplete = false;
+        //public bool IsComplete = false;
 
         public enum Feasibility
         {
@@ -149,6 +149,11 @@ namespace DwarfCorp
         public virtual void OnUnAssign(CreatureAI agent)
         {
             AssignedCreatures.Remove(agent);   
+        }
+
+        public virtual bool IsComplete()
+        {
+            return false;
         }
     }
 
