@@ -70,7 +70,7 @@ namespace DwarfCorp
 
         public override bool ShouldRetry(Creature agent)
         {
-            return !VoxelToKill.IsEmpty && agent.Faction.Designations.IsVoxelDesignation(VoxelToKill, DesignationType.Dig);
+            return !VoxelToKill.IsEmpty;
         }
 
         public override Feasibility IsFeasible(Creature agent)
@@ -84,15 +84,15 @@ namespace DwarfCorp
             if (agent.AI.Status.IsAsleep)
                 return Feasibility.Infeasible;
 
-            // Todo: Remove all mention of designations from checking.
-            return agent.Faction.Designations.IsVoxelDesignation(VoxelToKill, DesignationType.Dig) 
-                && !VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill) ? Feasibility.Feasible : Feasibility.Infeasible;
+            if (VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill))
+                return Feasibility.Infeasible;
+
+            return Feasibility.Feasible;
         }
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0 ||
-                   !agent.Faction.Designations.IsVoxelDesignation(VoxelToKill, DesignationType.Dig);
+            return !VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

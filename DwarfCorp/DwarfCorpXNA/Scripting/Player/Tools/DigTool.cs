@@ -70,17 +70,18 @@ namespace DwarfCorp
                     if (!v.IsValid || (v.IsEmpty && v.IsExplored))
                         continue;
 
-                    var task = new KillVoxelTask(v);
+                   
                     if(!Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !Player.Faction.RoomBuilder.IsInRoom(v))
                     {
+                        var task = new KillVoxelTask(v);
                         BuildOrder d = new BuildOrder
                         {
                             Vox = v
                         };
                         Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Dig, d, task);
+                        assignments.Add(task);
                     }
 
-                    assignments.Add(task);
                 }
 
                 // Todo: Create tasks, but make tasks create designations. Still needs to handle duplicates.

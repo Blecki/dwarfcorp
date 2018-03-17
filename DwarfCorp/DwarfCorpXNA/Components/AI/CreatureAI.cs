@@ -1187,6 +1187,8 @@ namespace DwarfCorp
 
         public void RemoveTask(Task task)
         {
+            if (Object.ReferenceEquals(CurrentTask, task))
+                CancelCurrentTask();
             Tasks.Remove(task);
             task.OnUnAssign(this);
         }
