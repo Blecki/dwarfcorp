@@ -83,7 +83,9 @@ namespace DwarfCorp
         public int MaxAssignable = 1;
         public bool ReassignOnDeath = true;
         public List<CreatureAI> AssignedCreatures = new List<CreatureAI>();
-        //public bool IsComplete = false;
+
+        [JsonIgnore]
+        public object GuiTag = null;
 
         public enum Feasibility
         {
@@ -154,6 +156,16 @@ namespace DwarfCorp
         public virtual bool IsComplete()
         {
             return false;
+        }
+
+        public virtual void OnEnqueued(Faction Faction)
+        {
+
+        }
+
+        public virtual void OnDequeued(Faction Faction)
+        {
+
         }
     }
 

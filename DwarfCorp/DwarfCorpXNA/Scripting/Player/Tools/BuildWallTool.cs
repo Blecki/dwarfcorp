@@ -69,8 +69,9 @@ namespace DwarfCorp
 
                         foreach (var r in validRefs)
                         {
+                            // Todo: Change this to use something other than the type as the tag - just wrap it up!
                             Faction.Designations.AddVoxelDesignation(r, DesignationType.Put,
-                                (short)CurrentVoxelType);
+                                (short)CurrentVoxelType, null); // Todo: Pass the build voxel task
                             assignments.Add(new BuildVoxelTask(r, VoxelLibrary.GetVoxelType(CurrentVoxelType).Name));
                         }
 

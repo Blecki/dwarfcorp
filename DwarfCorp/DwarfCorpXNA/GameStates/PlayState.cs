@@ -654,25 +654,13 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(300, 180)
             });
 
-            var taskList = GuiRoot.RootItem.AddChild(new Widget
+            var taskList = GuiRoot.RootItem.AddChild(new TaskListPanel
             {
                 Border = "border-thin",
                 AutoLayout = AutoLayout.FloatBottomLeft,
                 MinimumSize = new Point(600, 300),
                 Hidden = true,
-                OnConstruct = (sender) =>
-                {
-                    sender.Root.RegisterForUpdate(sender);
-                },
-                OnUpdate = (sender, time) =>
-                {
-                    if (sender.Hidden) return;
-
-                    sender.Text = String.Join("\n", World.PlayerFaction.Minions.Select(m => String.Format("{0}: {1}, {2}", m.Name, m.Tasks.Count, (m.CurrentTask == null ? "NULL" : m.CurrentTask.Name))));
-                    sender.Text += "\n\n";
-                    sender.Text += String.Join("\n", World.Master.TaskManager.EnumerateTasks().Select(t => t.Name));
-                    sender.Invalidate();
-                }
+                World = this.World
             });
 
             MinimapIcon = new FramedIcon

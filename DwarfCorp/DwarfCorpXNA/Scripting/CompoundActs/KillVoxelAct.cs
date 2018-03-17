@@ -53,7 +53,7 @@ namespace DwarfCorp
 
         }
 
-
+        // Todo: This is not used. Task manager already manages and tracks the number of dwarves assigned to the task.
         public IEnumerable<Status> IncrementAssignment( CreatureAI creature, string designation, int amount)
         {
             VoxelHandle vref = creature.Blackboard.GetData<VoxelHandle>(designation);

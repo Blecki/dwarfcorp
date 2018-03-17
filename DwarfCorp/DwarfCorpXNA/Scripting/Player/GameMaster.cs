@@ -98,6 +98,7 @@ namespace DwarfCorp
             World = (WorldManager)(context.Context);
             Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, World.ChunkManager.Graphics);
             World.Master = this;
+            TaskManager.Faction = Faction;
         }
 
         public GameMaster()
@@ -107,6 +108,8 @@ namespace DwarfCorp
         public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
         {
             TaskManager = new TaskManager();
+            TaskManager.Faction = faction;
+
             World = components.World;
             Faction = faction;
             Initialize(game, components, chunks, camera, graphics);

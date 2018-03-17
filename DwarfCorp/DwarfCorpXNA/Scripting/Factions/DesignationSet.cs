@@ -49,6 +49,7 @@ namespace DwarfCorp
             public VoxelHandle Voxel;
             public DesignationType Type;
             public Object Tag;
+            public Task Task;
 
             [OnDeserialized]
             public void OnDeserialized(StreamingContext ctx)
@@ -92,7 +93,7 @@ namespace DwarfCorp
             return (FilterType & DesType) != 0;
         }
 
-        public AddDesignationResult AddVoxelDesignation(VoxelHandle Voxel, DesignationType Type, Object Tag)
+        public AddDesignationResult AddVoxelDesignation(VoxelHandle Voxel, DesignationType Type, Object Tag, Task Task)
         {
             var key = GetVoxelQuickCompare(Voxel);
 
@@ -118,7 +119,8 @@ namespace DwarfCorp
                 {
                     Voxel = Voxel,
                     Type = Type,
-                    Tag = Tag
+                    Tag = Tag,
+                    Task = Task
                 });
                 return AddDesignationResult.Added;
             }
@@ -141,6 +143,15 @@ namespace DwarfCorp
             if (!VoxelDesignations.ContainsKey(key)) return null;
             var r = VoxelDesignations[key].FirstOrDefault(d => TypeSet(d.Type, Type));
             if (r != null) return r.Tag;
+            return null;
+        }
+
+        public Task GetVoxelDesignationTask(VoxelHandle Voxel, DesignationType Type)
+        {
+            var key = GetVoxelQuickCompare(Voxel);
+            if (!VoxelDesignations.ContainsKey(key)) return null;
+            var r = VoxelDesignations[key].FirstOrDefault(d => TypeSet(d.Type, Type));
+            if (r != null) return r.Task;
             return null;
         }
 
@@ -186,7 +197,7 @@ namespace DwarfCorp
                 {
                     switch (d.Type)
                     {
-                        case DesignationType.Dig:
+                        //case DesignationType.Dig:
                         case DesignationType.Guard:
                             if (!d.Voxel.IsValid || d.Voxel.IsEmpty)
                                 toRemove.Add(d);
