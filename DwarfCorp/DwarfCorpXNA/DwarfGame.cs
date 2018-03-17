@@ -389,6 +389,11 @@ namespace DwarfCorp
             DepthStencilState depthState, RasterizerState rasterState, Effect effect, Matrix world)
         {
             Debug.Assert(IsMainThread);
+            if (SpriteBatch.GraphicsDevice.IsDisposed || SpriteBatch.IsDisposed)
+            {
+                SpriteBatch = new SpriteBatch(GameState.Game.GraphicsDevice);
+            }
+
             try
             {
                 SpriteBatch.Begin(sortMode,
@@ -402,7 +407,7 @@ namespace DwarfCorp
             catch (InvalidOperationException exception)
             {
                 Console.Error.Write(exception);
-                SpriteBatch.End();
+                SpriteBatch = new SpriteBatch(GameState.Game.GraphicsDevice);
                 SpriteBatch.Begin(sortMode,
                     blendState,
                     samplerstate,
