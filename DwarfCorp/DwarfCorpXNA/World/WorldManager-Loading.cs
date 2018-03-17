@@ -289,10 +289,6 @@ namespace DwarfCorp
                     SetLoadingMessage("Loading Terrain...");
                     gameFile.ReadChunks(ExistingFile);
                     ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
-
-                    ChunkManager.World.Master.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
-                        ? gameFile.Metadata.Slice
-                        : ChunkManager.World.Master.MaxViewingLevel, ChunkManager.SliceMode.Y);
                     
                     SetLoadingMessage("Loading Entities...");
                     gameFile.LoadPlayData(ExistingFile, this);
@@ -460,7 +456,11 @@ namespace DwarfCorp
                         Master.Spells = gameFile.PlayData.Spells;
                     if (gameFile.PlayData.Tasks != null)
                         Master.TaskManager = gameFile.PlayData.Tasks;
-                }
+
+                    ChunkManager.World.Master.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
+                    ? gameFile.Metadata.Slice
+                    : ChunkManager.World.Master.MaxViewingLevel, ChunkManager.SliceMode.Y);
+            }
 
                 if (Master.Faction.Economy.Company.Information == null)
                     Master.Faction.Economy.Company.Information = new CompanyInformation();

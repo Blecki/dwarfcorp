@@ -15,6 +15,11 @@ namespace DwarfCorp
         {
             return new Barrel(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
         }
+        
+        public Barrel()
+        {
+
+        }
 
         public Barrel(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
             base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 0), new DwarfCorp.CraftDetails(manager, "Barrel", resources))

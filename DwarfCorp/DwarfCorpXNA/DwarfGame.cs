@@ -407,6 +407,7 @@ namespace DwarfCorp
             catch (InvalidOperationException exception)
             {
                 Console.Error.Write(exception);
+                SpriteBatch.Dispose();
                 SpriteBatch = new SpriteBatch(GameState.Game.GraphicsDevice);
                 SpriteBatch.Begin(sortMode,
                     blendState,
