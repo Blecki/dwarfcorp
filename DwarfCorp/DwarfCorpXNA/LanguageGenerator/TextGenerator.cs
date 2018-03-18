@@ -333,6 +333,28 @@ namespace DwarfCorp
         {
             TextAtoms[atom.Name] = atom;
         }
+
+        private static char[] vowels = { 'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U', ' ', '-', '_', '.', ',' };
+
+        public static string RemoveVowels(string name)
+        {
+            var builder = new StringBuilder();
+            foreach(var letter in name.Where((c, i) => i == 0 || !vowels.Contains(c)))
+            {
+                builder.Append(letter);
+            }
+            return builder.ToString();
+        }
+
+        public static string Shorten(string name, int v)
+        {
+            if (name.Length > v)
+            {
+                var substr = RemoveVowels(name);
+                return substr.Substring(0, Math.Min(v, substr.Length)) + ".";
+            }
+            return name;
+        }
     }
 
 }
