@@ -1051,6 +1051,9 @@ namespace DwarfCorp.GameStates
                     {
                         Icon = data.NewIcon,
                         ExpandChildWhenDisabled = true,
+                        Text = TextGenerator.Shorten(data.Name, 5),
+                        TextVerticalAlign = VerticalAlign.Below,
+                        TextColor = Color.White.ToVector4(),
                         PopupChild = new BuildRoomInfo
                         {
                             Data = data,
@@ -1286,6 +1289,9 @@ namespace DwarfCorp.GameStates
                         KeepChildVisible = true, // So the player can interact with the popup.
                         ExpandChildWhenDisabled = true,
                         Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
+                        Text = TextGenerator.Shorten(data.Name, 5),
+                        TextVerticalAlign = VerticalAlign.Below,
+                        TextColor = Color.White.ToVector4(),
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
@@ -1362,6 +1368,9 @@ namespace DwarfCorp.GameStates
                         Tooltip = data.Verb + " a " + data.Name,
                         KeepChildVisible = true, // So the player can interact with the popup.
                         ExpandChildWhenDisabled = true,
+                        Text = TextGenerator.Shorten(data.Name, 6),
+                        TextVerticalAlign = VerticalAlign.Below,
+                        TextColor = Color.White.ToVector4(),
                         Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
                         PopupChild = new BuildCraftInfo
                         {
@@ -1424,6 +1433,9 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new TileReference("rail", 0),
                 Tooltip = "Paint",
+                Text = "paint",
+                TextVerticalAlign = VerticalAlign.Below,
+                TextColor = Color.White.ToVector4(),
                 Behavior = FlatToolTray.IconBehavior.LeafIcon,
                 OnClick = (widget, args) =>
                 {
@@ -1452,6 +1464,9 @@ namespace DwarfCorp.GameStates
                             .Select(data => new FlatToolTray.Icon
                             {
                                 Tooltip = "Build " + data.Name,
+                                Text = TextGenerator.Shorten(data.Name, 6),
+                                TextVerticalAlign = VerticalAlign.Below,
+                                TextColor = Color.White.ToVector4(),
                                 Icon = new TileReference("rail", data.Icon),
                                 KeepChildVisible = true,
                                 ExpandChildWhenDisabled = true,
