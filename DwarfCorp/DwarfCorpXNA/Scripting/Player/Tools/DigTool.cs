@@ -94,6 +94,9 @@ namespace DwarfCorp
                         var designation = Player.Faction.Designations.GetVoxelDesignation(r, DesignationType.Dig);
                         if (designation != null && designation.Task != null)
                             Player.TaskManager.CancelTask(designation.Task);
+
+
+
                     }
                 }
             }
