@@ -397,15 +397,7 @@ namespace DwarfCorp
                             orphanedTasks.Add(task);
                         }
                     }
-                    else if (block.Type == DesignationType.Dig)
-                    {
-                        var task = new KillVoxelTask(block.Voxel);
-                        if (!TaskManager.HasTask(task) &&
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
+                    
                     // TODO... other tasks here ?
                 }
 
@@ -432,15 +424,6 @@ namespace DwarfCorp
                     else if (ent.Type == DesignationType.Wrangle)
                     {
                         var task = new WrangleAnimalTask(ent.Body.GetRoot().GetComponent<Creature>());
-                        if (!TaskManager.HasTask(task) &&
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
-                    else if (ent.Type == DesignationType.Gather)
-                    {
-                        var task = new GatherItemTask(ent.Body);
                         if (!TaskManager.HasTask(task) &&
                             !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
                         {

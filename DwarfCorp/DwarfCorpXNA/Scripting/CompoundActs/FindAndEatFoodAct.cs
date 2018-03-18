@@ -98,6 +98,7 @@ namespace DwarfCorp
                 FoodBody.Active = true;
                 Agent.Creature.Gather(FoodBody);
             }
+
             base.OnCanceled();
         }
 

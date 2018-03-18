@@ -259,21 +259,6 @@ namespace DwarfCorp
             TaskManager.AssignTasks(tasks, Minions);
         }
 
-        public void AssignGather(IEnumerable<Body> items)
-        {
-            var tasks = new List<Task>();
-            foreach (var item in items)
-            {
-                var task = new GatherItemTask(item);
-                if (Designations.AddEntityDesignation(item, DesignationType.Gather, null, task) == DesignationSet.AddDesignationResult.Added)
-                    tasks.Add(task);
-            }
-
-            foreach (CreatureAI creature in Minions)
-                foreach (var task in tasks)
-                    creature.AssignTask(task);
-        }
-
         public List<Room> GetRooms()
         {
             return RoomBuilder.DesignatedRooms;
@@ -407,14 +392,6 @@ namespace DwarfCorp
         {
             return Stockpiles.Any(s => s.ContainsVoxel(v));
         }
-
-        public Body GetRandomGatherDesignationWithTag(string tag)
-        {
-            var des = Designations.EnumerateEntityDesignations(DesignationType.Gather)
-                .Where(d => d.Body.Tags.Contains(tag)).ToList();
-            return des.Count == 0 ? null : des[MathFunctions.Random.Next(0, des.Count)].Body;
-        }
-
 
         public bool HasFreeStockpile()
         {
@@ -861,7 +838,10 @@ namespace DwarfCorp
                 targetInventory.OnDeath += resources =>
                 {
                     if (resources == null) return;
-                    AssignGather(resources);
+
+                    var tasks = new List<Task>();
+                    foreach (var item in resources)
+                        World.Master.TaskManager.AddTask(new GatherItemTask(item));
                 };
             }
         }
