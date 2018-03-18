@@ -526,7 +526,7 @@ namespace DwarfCorp
 
                     // Update the expansion scores for the next voxel.
                     gScore[n.SourceState] = tenativeGScore;
-                    fScore.Enqueue(n.SourceState, gScore[n.SourceState] + weight * (n.SourceState.Voxel.WorldPosition - start.Voxel.WorldPosition).LengthSquared());
+                    fScore.Enqueue(n.SourceState, gScore[n.SourceState] + weight * ((n.SourceState.Voxel.WorldPosition - start.Voxel.WorldPosition).LengthSquared() + (!n.SourceState.VehicleState.IsRidingVehicle ? 100.0f : 0.0f)));
                 }
 
                 // If we've expanded too many voxels, just give up.
@@ -655,9 +655,9 @@ namespace DwarfCorp
             ChunkManager chunks, int maxExpansions, float weight, int numPlans, Func<bool> continueFunc)
         {
             var p = new List<MoveAction>();
-            //bool use_inverse = goal.IsReversible() && OpennessHeuristic(goal.GetVoxel()) < OpennessHeuristic(start);
+            bool use_inverse = goal.IsReversible() && OpennessHeuristic(goal.GetVoxel()) < OpennessHeuristic(start);
             //bool use_inverse = false;
-            bool use_inverse = true;
+            //bool use_inverse = true;
             var result = use_inverse ? InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc)
                 : Path(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc);
 
@@ -697,8 +697,8 @@ namespace DwarfCorp
         {
             // Otherwise, the cost is the distance between the voxels multiplied by the intrinsic cost
             // of an action.
-            float score = (a.WorldPosition - b.WorldPosition).LengthSquared() * ActionCost(movement, action);
-
+            var actionCost = ActionCost(movement, action);
+            float score = (a.WorldPosition - b.WorldPosition).LengthSquared() * actionCost + actionCost;
             return score;
         }
 

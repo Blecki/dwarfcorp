@@ -2306,6 +2306,36 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\DwarfObjects\minecart-crafter.png">
+      <Name>minecart-crafter</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\DwarfObjects\minecart-musket.png">
+      <Name>minecart-musket</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\DwarfObjects\minecart-soldier.png">
+      <Name>minecart-soldier</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\DwarfObjects\minecart-wizard.png">
+      <Name>minecart-wizard</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\DwarfObjects\minecart-worker.png">
+      <Name>minecart-worker</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\DwarfObjects\minecart.png">
+      <Name>minecart</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Particles\particles.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>
@@ -2348,6 +2378,26 @@
     <Content Include="Entities\Kobold\kobold_animation.json">
       <Name>kobold_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Entities\Dwarf\Sprites\crafter_minecart.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>crafter_minecart</Name>
+    </Content>
+    <Content Include="Entities\Dwarf\Sprites\worker_minecart.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>worker_minecart</Name>
+    </Content>
+    <Content Include="Entities\Dwarf\Sprites\soldier_minecart.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>soldier_minecart</Name>
+    </Content>
+    <Content Include="Entities\Dwarf\Sprites\musket_minecart.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>musket_minecart</Name>
+    </Content>
+    <Content Include="Entities\Dwarf\Sprites\wizard_minecart.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>wizard_minecart</Name>
     </Content>
     <None Include="rail-patterns.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

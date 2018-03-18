@@ -269,5 +269,13 @@ namespace DwarfCorp
             PropogateTransforms();
             base.CreateCosmeticChildren(Manager);
         }
+
+        public void Face(Vector3 target)
+        {
+            Vector3 diff = target - GlobalTransform.Translation;
+            Matrix newTransform = Matrix.CreateRotationY((float)Math.Atan2(diff.X, -diff.Z));
+            newTransform.Translation = LocalTransform.Translation;
+            LocalTransform = newTransform;
+        }
     }
 }

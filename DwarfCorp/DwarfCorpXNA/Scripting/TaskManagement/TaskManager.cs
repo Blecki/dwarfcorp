@@ -128,10 +128,10 @@ namespace DwarfCorp
 
         public void Update(List<CreatureAI> creatures)
         {
-            foreach (var t in Tasks.Where(t => t.IsComplete()))
+            foreach (var t in Tasks.Where(t => t.IsComplete(Faction)))
                 t.OnDequeued(Faction);
 
-            Tasks.RemoveAll(t => t.IsComplete());
+            Tasks.RemoveAll(t => t.IsComplete(Faction));
             /*
             UpdateTimer.Update(DwarfTime.LastTime);
 

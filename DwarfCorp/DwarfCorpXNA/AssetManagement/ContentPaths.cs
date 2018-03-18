@@ -588,6 +588,12 @@ namespace DwarfCorp
 
                     public static string musketdwarf_animations = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "musket_animation.json");
                     public static string musket = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "musket");
+
+                    public static string soldier_minecart = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "soldier_minecart.json");
+                    public static string worker_minecart = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "worker_minecart.json");
+                    public static string crafter_minecart = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "crafter_minecart.json");
+                    public static string wizard_minecart = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "wizard_minecart.json");
+                    public static string musket_minecart = ProgramData.CreatePath("Entities", "Dwarf", "Sprites", "musket_minecart.json");
                 }
 
             }
@@ -599,6 +605,7 @@ namespace DwarfCorp
                 public static string underconstruction = ProgramData.CreatePath("Entities", "DwarfObjects", "underconstruction");
                 public static string constructiontape = ProgramData.CreatePath("Entities", "DwarfObjects", "constructiontape");
                 public static string fence = ProgramData.CreatePath("Entities", "DwarfObjects", "fence");
+                public static string minecart = ProgramData.CreatePath("Entities", "DwarfObjects", "minecart");
                 public static string crafts = ProgramData.CreatePath("newgui", "crafts");
                 public static string trinkets_carve_insets_bone = ProgramData.CreatePath("newgui", "trinkets-carve-insets-bone");
                 public static string trinkets_carve_insets = ProgramData.CreatePath("newgui", "trinkets-carve-insets");

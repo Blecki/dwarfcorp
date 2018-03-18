@@ -82,6 +82,7 @@ namespace DwarfCorp
         public Vector3 SpawnOffset = new Vector3(0.0f, 0.5f, 0.0f);
         public bool AddToOwnedPool = false;
         public bool Moveable = false;
+        public bool Deconstructable = true;
         public CraftActBehaviors CraftActBehavior = CraftActBehaviors.Normal;
     }
 }

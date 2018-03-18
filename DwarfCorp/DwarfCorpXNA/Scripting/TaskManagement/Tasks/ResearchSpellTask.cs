@@ -9,7 +9,7 @@ namespace DwarfCorp
     class ResearchSpellTask : Task
     {
         public string Spell { get; set; }
-      
+        private WorldManager World { get; set; }
         public ResearchSpellTask()
         {
             Category = TaskCategory.Research;
@@ -39,5 +39,11 @@ namespace DwarfCorp
         {
             return new GoResearchSpellAct(agent.AI, agent.World.Master.Spells.GetSpell(Spell));
         }
+
+        public override bool IsComplete(Faction faction)
+        {
+            return faction.World.Master.Spells.GetSpell(Spell).IsResearched;
+        }
+
     }
 }

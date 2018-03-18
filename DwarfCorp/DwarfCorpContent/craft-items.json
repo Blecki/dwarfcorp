@@ -812,7 +812,7 @@
       "Sheet": "resources",
       "Tile": 5
     },
-    "BaseCraftTime": 30.0,
+    "BaseCraftTime": 3.0,
     "Description": "Made from dirt. Building material.",
     "Type": "Resource",
     "Prerequisites": [],
@@ -843,7 +843,7 @@
       "Sheet": "resources",
       "Tile": 38
     },
-    "BaseCraftTime": 30.0,
+    "BaseCraftTime": 3.0,
     "Description": "Made from metal. Allows fast travel, but must be laid.",
     "Type": "Resource",
     "Prerequisites": [],

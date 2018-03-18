@@ -82,7 +82,7 @@ namespace DwarfCorp
             return !agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft) || Designation.Progress > 1.0f;
         }
 
-        public override bool IsComplete()
+        public override bool IsComplete(Faction faction)
         {
             return Designation.Entity.Active;
         }

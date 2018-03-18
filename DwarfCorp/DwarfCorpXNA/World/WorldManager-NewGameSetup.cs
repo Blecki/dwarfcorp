@@ -256,6 +256,7 @@ namespace DwarfCorp
                                 var ladder = EntityFactory.CreateEntity<Ladder>("Ladder", ladderPos);
                                 Master.Faction.OwnedObjects.Add(ladder);
                                 ladder.Tags.Add("Moveable");
+                                ladder.Tags.Add("Deconstructable");
                             }
 
                         }

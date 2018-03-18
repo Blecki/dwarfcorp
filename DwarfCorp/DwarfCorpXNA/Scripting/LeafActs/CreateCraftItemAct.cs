@@ -73,6 +73,9 @@ namespace DwarfCorp
             if (Item.ItemType.Moveable)
                 item.Tags.Add("Moveable");
 
+            if (Item.ItemType.Deconstructable)
+                item.Tags.Add("Deconstructable");
+
             if (Item.WorkPile != null)
                 Item.WorkPile.Die();
 

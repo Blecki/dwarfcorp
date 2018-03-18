@@ -95,11 +95,16 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            if (Item.Progress > 1.0f)
+            if (Item.Progress > 1.0f || NumRepeats <= 0)
             {
                 return true;
             }
             return false;
+        }
+
+        public override bool IsComplete(Faction faction)
+        {
+            return Item.Progress > 1.0f || NumRepeats <= 0;
         }
 
         private bool HasResources(Creature agent)

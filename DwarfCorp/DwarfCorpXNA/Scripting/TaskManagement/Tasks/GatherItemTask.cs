@@ -90,7 +90,7 @@ namespace DwarfCorp
             return EntityToGather == null  || EntityToGather.IsDead ? 1000 : (agent.AI.Position - EntityToGather.GlobalTransform.Translation).LengthSquared();
         }
         
-        public override bool IsComplete()
+        public override bool IsComplete(Faction Faction)
         {
             return EntityToGather == null || EntityToGather.IsDead;
         }

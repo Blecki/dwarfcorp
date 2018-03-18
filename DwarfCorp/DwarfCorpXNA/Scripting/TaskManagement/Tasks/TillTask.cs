@@ -101,7 +101,7 @@ namespace DwarfCorp
             return Feasibility.Feasible;
         }
 
-        public override bool IsComplete()
+        public override bool IsComplete(Faction faction)
         {
             return FarmToWork.Voxel.Type.Name == "TilledSoil";
         }

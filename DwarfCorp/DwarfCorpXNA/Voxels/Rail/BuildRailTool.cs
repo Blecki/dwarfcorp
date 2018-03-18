@@ -53,6 +53,23 @@ namespace DwarfCorp.Rail
         public List<ResourceAmount> SelectedResources;
         public bool GodModeSwitch = false;
 
+        private static CraftItem RailCraftItem = new CraftItem
+        {
+            Description = "Rail.",
+            RequiredResources = new List<Quantitiy<Resource.ResourceTags>>
+                        {
+                            new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Rail, 1)
+                        },
+            Icon = new Gui.TileReference("resources", 38),
+            BaseCraftTime = 10,
+            Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround },
+            CraftLocation = "",
+            Name = "Rail",
+            Type = CraftItem.CraftType.Object,
+            AddToOwnedPool = false,
+            Moveable = false            
+        };
+
         public BuildRailTool(GameMaster Player)
         {
             this.Player = Player;
