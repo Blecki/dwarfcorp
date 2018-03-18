@@ -77,27 +77,25 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> GetRandomGuardDesignation(CreatureAI agent)
         {
-            List<BuildOrder> voxes = new List<BuildOrder>();
+            var voxels = Agent.Faction.Designations.EnumerateDesignations(DesignationType.Guard)
+                .Select(d => d.Voxel).ToList();
 
-            voxes.AddRange(Agent.Faction.Designations.EnumerateDesignations(DesignationType.Guard)
-                .Select(d => d.Tag as BuildOrder));
-
-            voxes.Sort((a, b) => 
+            voxels.Sort((a, b) => 
             {
                 if (a == b)
                 {
                     return 0;
                 }
-                return (a.Vox.WorldPosition - agent.Position).LengthSquared() < (b.Vox.WorldPosition - agent.Position).LengthSquared() ? -1 : 1;
+                return (a.WorldPosition - agent.Position).LengthSquared() < (b.WorldPosition - agent.Position).LengthSquared() ? -1 : 1;
 
             });
 
 
-            foreach (BuildOrder vox in voxes)
+            foreach (var vox in voxels)
             {
                 if (MathFunctions.RandEvent(0.25f))
                 {
-                    agent.Blackboard.SetData("GuardVoxel", vox.Vox);
+                    agent.Blackboard.SetData("GuardVoxel", vox);
                     yield return Act.Status.Success;
                     yield break;
                 }

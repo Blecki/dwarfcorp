@@ -101,12 +101,11 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    var existingFarmTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType._AllFarms)
-                        as FarmTile;
-                    if (existingFarmTile != null && !existingFarmTile.PlantExists())
+                    var designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType._AllFarms);
+                    if (designation != null && !(designation.Tag as FarmTile).PlantExists())
                     {
-                        existingFarmTile.Farmer = null;
-                        Player.Faction.Designations.RemoveVoxelDesignation(existingFarmTile.Voxel, DesignationType._AllFarms);
+                        (designation.Tag as FarmTile).Farmer = null;
+                        Player.Faction.Designations.RemoveVoxelDesignation((designation.Tag as FarmTile).Voxel, DesignationType._AllFarms);
                     }
                 }
             }

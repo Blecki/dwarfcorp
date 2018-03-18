@@ -74,11 +74,7 @@ namespace DwarfCorp
                     if(!Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !Player.Faction.RoomBuilder.IsInRoom(v))
                     {
                         var task = new KillVoxelTask(v);
-                        BuildOrder d = new BuildOrder
-                        {
-                            Vox = v
-                        };
-                        Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Dig, d, task);
+                        Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Dig, null, task);
                         assignments.Add(task);
                     }
 
@@ -87,7 +83,6 @@ namespace DwarfCorp
                 // Todo: Create tasks, but make tasks create designations. Still needs to handle duplicates.
                 Player.TaskManager.AddTasks(assignments);
                 List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.SelectedMinions, Task.TaskCategory.Dig);
-                //TaskManager.AssignTasksGreedy(assignments, minions, 5);
                 OnConfirm(minions);
             }
             else
@@ -96,9 +91,9 @@ namespace DwarfCorp
                 {
                     if (r.IsValid)
                     {
-                        var designation = Player.Faction.Designations.GetVoxelDesignationTask(r, DesignationType.Dig);
-                        if (designation != null)
-                            Player.TaskManager.CancelTask(designation);
+                        var designation = Player.Faction.Designations.GetVoxelDesignation(r, DesignationType.Dig);
+                        if (designation != null && designation.Task != null)
+                            Player.TaskManager.CancelTask(designation.Task);
                     }
                 }
             }

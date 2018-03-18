@@ -677,7 +677,6 @@
     <Compile Include="Scripting\Magic\SpellTree.cs" />
     <Compile Include="Scripting\MonsterSpawner.cs" />
     <Compile Include="Scripting\Player\BodySelector.cs" />
-    <Compile Include="Scripting\Player\Building\BuildOrder.cs" />
     <Compile Include="Scripting\Player\Building\BuildRoomOrder.cs" />
     <Compile Include="Scripting\Player\Building\BuildStockpileOrder.cs" />
     <Compile Include="Scripting\Player\Building\BuildVoxelOrder.cs" />
