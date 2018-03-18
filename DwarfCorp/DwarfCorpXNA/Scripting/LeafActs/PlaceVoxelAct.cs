@@ -68,12 +68,6 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (!Creature.Faction.Designations.IsVoxelDesignation(Location, DesignationType.Put))
-            {
-                yield return Status.Success;
-                yield break;
-            }
-
             if (!Creature.Inventory.HasResource(Resource))
             {
                 yield return Status.Fail;
@@ -92,85 +86,73 @@ namespace DwarfCorp
                 }
             }
 
-            var grabbed = Creature.Inventory.RemoveAndCreate(Resource, 
-                                                             Inventory.RestockType.Any).FirstOrDefault();
+            var grabbed = Creature.Inventory.RemoveAndCreate(Resource, Inventory.RestockType.Any).FirstOrDefault();
 
-            if(grabbed == null)
+            if (grabbed == null)
             {
                 yield return Status.Fail;
                 yield break;
             }
             else
             {
-                if(Creature.Faction.Designations.IsVoxelDesignation(Location, DesignationType.Put))
+                // If the creature intersects the box, find a voxel adjacent to it that is free, and jump there to avoid getting crushed.
+                if (Creature.Physics.BoundingBox.Intersects(Location.GetBoundingBox()))
                 {
-                    // If the creature intersects the box, find a voxel adjacent to it that is free, and jump there to avoid getting crushed.
-                    if (Creature.Physics.BoundingBox.Intersects(Location.GetBoundingBox()))
+                    var neighbors = VoxelHelpers.EnumerateAllNeighbors(Location.Coordinate)
+                        .Select(c => new VoxelHandle(Agent.Chunks.ChunkData, c));
+
+                    var closest = VoxelHandle.InvalidHandle;
+                    float closestDist = float.MaxValue;
+                    foreach (var voxel in neighbors)
                     {
-                        var neighbors = VoxelHelpers.EnumerateAllNeighbors(Location.Coordinate)
-                            .Select(c => new VoxelHandle(Agent.Chunks.ChunkData, c));
+                        if (!voxel.IsValid) continue;
 
-                        var closest = VoxelHandle.InvalidHandle;
-                        float closestDist = float.MaxValue;
-                        foreach (var voxel in neighbors)
+                        float dist = (voxel.WorldPosition - Creature.Physics.Position).LengthSquared();
+                        if (dist < closestDist && voxel.IsEmpty)
                         {
-                            if (!voxel.IsValid) continue;
-
-                            float dist = (voxel.WorldPosition - Creature.Physics.Position).LengthSquared();
-                            if (dist < closestDist && voxel.IsEmpty)
-                            {
-                                closestDist = dist;
-                                closest = voxel;
-                            }
-                        }
-
-                        if (closest.IsValid)
-                        {
-                            TossMotion teleport = new TossMotion(0.5f, 1.0f, Creature.Physics.GlobalTransform, closest.WorldPosition + Vector3.One * 0.5f);
-                            Creature.Physics.AnimationQueue.Add(teleport);
+                            closestDist = dist;
+                            closest = voxel;
                         }
                     }
-                    TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Location.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
-                    grabbed.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
-                    grabbed.AnimationQueue.Add(motion);
 
-                    
-                    var designation = Creature.Faction.Designations.GetVoxelDesignation(Location, DesignationType.Put);
-                    if (designation == null)
+                    if (closest.IsValid)
                     {
-                        yield return Status.Fail;
-                        yield break;
+                        TossMotion teleport = new TossMotion(0.5f, 1.0f, Creature.Physics.GlobalTransform, closest.WorldPosition + Vector3.One * 0.5f);
+                        Creature.Physics.AnimationQueue.Add(teleport);
                     }
-                    
-                    var put = designation.Tag as short?;
-                    if (!put.HasValue)
-                    {
-                        yield return Status.Fail;
-                        yield break;
-                    }
+                }
+                TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Location.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
+                grabbed.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
+                grabbed.AnimationQueue.Add(motion);
 
-                    var putType = VoxelLibrary.GetVoxelType(put.Value);
-                    
-                    motion.OnComplete += () =>
-                    {
-                        grabbed.Die();
-                        PlaceVoxel(Location, putType, Creature.Manager.World);
-
-                        Creature.Faction.Designations.RemoveVoxelDesignation(Location, DesignationType.Put);
-                        Creature.Stats.NumBlocksPlaced++;
-                        Creature.AI.AddXP(1);
-                    };
-
-                    yield return Status.Success;
+                // Todo: This should really have been passed to the act at creation.
+                var designation = Creature.Faction.Designations.GetVoxelDesignation(Location, DesignationType.Put);
+                if (designation == null)
+                {
+                    yield return Status.Fail;
                     yield break;
                 }
-                else
+
+                var put = designation.Tag as short?;
+                if (!put.HasValue)
                 {
-                    Creature.Inventory.Pickup(grabbed, Inventory.RestockType.RestockResource);
-                    grabbed.Die();
-                    
-                    yield return Status.Success;
+                    yield return Status.Fail;
+                    yield break;
                 }
+
+                var putType = VoxelLibrary.GetVoxelType(put.Value);
+
+                motion.OnComplete += () =>
+                {
+                    grabbed.Die();
+                    PlaceVoxel(Location, putType, Creature.Manager.World);
+
+                    Creature.Stats.NumBlocksPlaced++;
+                    Creature.AI.AddXP(1);
+                };
+
+                yield return Status.Success;
+                yield break;
             }
         }
 

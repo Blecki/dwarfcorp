@@ -384,23 +384,7 @@ namespace DwarfCorp
             if (orphanedTaskRateLimiter.HasTriggered)
             {
                 List<Task> orphanedTasks = new List<Task>();
-                foreach (var block in Faction.Designations.EnumerateDesignations())
-                {
-                    if (block.Type == DesignationType.Put)
-                    {
-                        var type = (short)(block.Tag);
-                        var task = new BuildVoxelTask(block.Voxel, VoxelLibrary.GetVoxelType(type).Name);
-
-                        if (!TaskManager.HasTask(task) && 
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
-                    
-                    // TODO... other tasks here ?
-                }
-
+                
                 foreach (var ent in Faction.Designations.EnumerateEntityDesignations())
                 {
                     if (ent.Type == DesignationType.Attack)

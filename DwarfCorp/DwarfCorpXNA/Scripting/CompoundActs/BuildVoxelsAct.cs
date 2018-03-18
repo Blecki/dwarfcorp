@@ -71,9 +71,7 @@ namespace DwarfCorp
             {
                 new GetResourcesAct(Agent, resources)
             };
-
-
-
+            
             int i = 0;
             foreach (var pair in Voxels)
             {
@@ -86,12 +84,6 @@ namespace DwarfCorp
 
             Tree = new Sequence(children);
             base.Initialize();
-        }
-
-        public override void OnCanceled()
-        {
-            Voxels.RemoveAll(pair => !Creature.Faction.Designations.IsVoxelDesignation(pair.Key, DesignationType.Put));
-            base.OnCanceled();
         }
 
         public override IEnumerable<Status> Run()
