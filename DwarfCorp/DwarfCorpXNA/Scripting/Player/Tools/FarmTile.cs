@@ -84,8 +84,9 @@ namespace DwarfCorp
         {
             if (Plant != null && !Plant.IsDead)
             {
-                if (Plant.World.PlayerFaction.Designations.AddEntityDesignation(Plant, DesignationType.Chop) == DesignationSet.AddDesignationResult.Added)
-                    Plant.World.Master.TaskManager.AddTask(new KillEntityTask(Plant, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low });
+                var task = new KillEntityTask(Plant, KillEntityTask.KillType.Chop) { Priority = Task.PriorityType.Low };
+                if (Plant.World.PlayerFaction.Designations.AddEntityDesignation(Plant, DesignationType.Chop, null, task) == DesignationSet.AddDesignationResult.Added)
+                    Plant.World.Master.TaskManager.AddTask(task);
             }
         }
 

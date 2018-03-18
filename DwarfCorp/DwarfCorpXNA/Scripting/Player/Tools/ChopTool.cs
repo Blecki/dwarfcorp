@@ -118,11 +118,9 @@ namespace DwarfCorp
 
         public static Task ChopPlant(Body Plant, Faction PlayerFaction)
         {
-            if (PlayerFaction.Designations.AddEntityDesignation(Plant, DesignationType.Chop) == DesignationSet.AddDesignationResult.Added)
-                return new KillEntityTask(Plant, KillEntityTask.KillType.Chop)
-                {
-                    Priority = Task.PriorityType.Low
-                };
+            var task = new KillEntityTask(Plant, KillEntityTask.KillType.Chop);
+            if (PlayerFaction.Designations.AddEntityDesignation(Plant, DesignationType.Chop, null, task) == DesignationSet.AddDesignationResult.Added)
+                return task;
 
             return null;
         }

@@ -66,16 +66,14 @@ namespace DwarfCorp
 
                             if (pens.Any())
                             {
-                                Player.Faction.Designations.AddEntityDesignation(animal, DesignationType.Wrangle);
-                                tasks.Add(new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>()));
-                                this.Player.World.ShowToolPopup("Will wrangle this " +
-                                                                animal.GetRoot().GetComponent<Creature>().Species);
+                                var task = new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>());
+                                Player.Faction.Designations.AddEntityDesignation(animal, DesignationType.Wrangle, null, task);
+                                tasks.Add(task);
+                                Player.World.ShowToolPopup("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Species);
                             }
                             else
                             {
-                                this.Player.World.ShowToolPopup("Can't wrangle this " +
-                                                                animal.GetRoot().GetComponent<Creature>().Species +
-                                                                " : need more animal pens.");
+                                Player.World.ShowToolPopup("Can't wrangle this " + animal.GetRoot().GetComponent<Creature>().Species + " : need more animal pens.");
                             }
                         }
                         break;

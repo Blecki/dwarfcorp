@@ -68,6 +68,7 @@ namespace DwarfCorp
             public Body Body;
             public DesignationType Type;
             public Object Tag;
+            public Task Task;
         }
 
         public enum AddDesignationResult
@@ -217,7 +218,7 @@ namespace DwarfCorp
             EntityDesignations.RemoveAll(b => b.Body.IsDead);
         }
 
-        public AddDesignationResult AddEntityDesignation(Body Entity, DesignationType Type, Object Tag = null)
+        public AddDesignationResult AddEntityDesignation(Body Entity, DesignationType Type, Object Tag, Task Task)
         {
             if (EntityDesignations.Count(e => Object.ReferenceEquals(e.Body, Entity) && e.Type == Type) == 0)
             {
@@ -225,7 +226,8 @@ namespace DwarfCorp
                 {
                     Body = Entity,
                     Type = Type,
-                    Tag = Tag
+                    Tag = Tag,
+                    Task = Task
                 });
 
                 return AddDesignationResult.Added;
@@ -255,6 +257,14 @@ namespace DwarfCorp
         public IEnumerable<EntityDesignation> EnumerateEntityDesignations()
         {
             return EntityDesignations;
+        }
+
+        public EntityDesignation GetEntityDesignation(Body Entity, DesignationType Type)
+        {
+            foreach (var des in EnumerateEntityDesignations(Type))
+                if (Object.ReferenceEquals(des.Body, Entity))
+                    return des;
+            return null;
         }
 
         private static ulong GetVoxelQuickCompare(VoxelHandle V)

@@ -112,14 +112,14 @@ namespace DwarfCorp
             return Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == v);
         }
 
-        public void AddDesignation(CraftDesignation des, Vector3 AdditionalOffset)
+        public void AddDesignation(CraftDesignation des, Vector3 AdditionalOffset, Task Task)
         {
             if (des.OverrideOrientation)
                 des.Entity.Orient(des.Orientation);
             else
                 des.Entity.OrientToWalls();
 
-            Faction.Designations.AddEntityDesignation(des.Entity, DesignationType.Craft, des);
+            Faction.Designations.AddEntityDesignation(des.Entity, DesignationType.Craft, des, Task);
         }
 
         public void RemoveDesignation(CraftDesignation des)
@@ -410,8 +410,9 @@ namespace DwarfCorp
 
                                 if (IsValid(newDesignation))
                                 {
-                                    AddDesignation(newDesignation, CurrentCraftType.SpawnOffset);
-                                    assignments.Add(new CraftItemTask(newDesignation));
+                                    var task = new CraftItemTask(newDesignation);
+                                    AddDesignation(newDesignation, CurrentCraftType.SpawnOffset, task);
+                                    assignments.Add(task);
 
                                     // Todo: Maybe don't support create huge numbers of entities at once?
                                     CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.EntityName, r.WorldPosition,
