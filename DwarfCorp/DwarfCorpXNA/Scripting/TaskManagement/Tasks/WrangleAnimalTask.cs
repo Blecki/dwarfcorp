@@ -152,5 +152,10 @@ namespace DwarfCorp
         {
             return (agent.AI.Position - Animal.Physics.Position).LengthSquared();
         }
+
+        public override bool IsComplete(Faction faction)
+        {
+            return Animal == null || Animal.IsDead || (LastPen != null && LastPen.ZoneBodies.Contains(Animal.Physics));
+        }
     }
 }

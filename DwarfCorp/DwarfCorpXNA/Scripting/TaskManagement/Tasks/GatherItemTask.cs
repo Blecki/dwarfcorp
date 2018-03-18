@@ -114,7 +114,7 @@ namespace DwarfCorp
             base.Render(time);
         }
 
-        public override bool IsComplete()
+        public override bool IsComplete(Faction faction)
         {
             return EntityToGather == null || EntityToGather.IsDead;
         }

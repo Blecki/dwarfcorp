@@ -102,7 +102,7 @@ namespace DwarfCorp
             return Feasibility.Feasible;
         }
 
-        public override bool IsComplete()
+        public override bool IsComplete(Faction faction)
         {
             return FarmToWork == null || FarmToWork.PlantExists();
         }

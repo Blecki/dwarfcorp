@@ -174,7 +174,7 @@ namespace DwarfCorp
             }
         }
 
-        public override bool IsComplete()
+        public override bool IsComplete(Faction faction)
         {
             return EntityToKill == null || EntityToKill.IsDead;
         }

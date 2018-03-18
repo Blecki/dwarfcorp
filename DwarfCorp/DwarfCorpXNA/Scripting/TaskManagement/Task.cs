@@ -153,7 +153,7 @@ namespace DwarfCorp
             AssignedCreatures.Remove(agent);   
         }
 
-        public virtual bool IsComplete()
+        public virtual bool IsComplete(Faction faction)
         {
             return false;
         }

@@ -117,7 +117,7 @@ namespace DwarfCorp
             return (agent.AI.Position - VoxelToKill.WorldPosition).LengthSquared() + 10 * Math.Abs(VoxelConstants.ChunkSizeY - VoxelToKill.Coordinate.Y) + surroundedValue + freeTopValue;
         }
 
-        public override bool IsComplete()
+        public override bool IsComplete(Faction faction)
         {
             if (!VoxelToKill.IsValid) return false;
             return VoxelToKill.IsEmpty;

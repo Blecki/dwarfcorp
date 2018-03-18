@@ -139,6 +139,11 @@ namespace DwarfCorp
         {
             base.Render(time);
         }
+
+        public override bool IsComplete(Faction faction)
+        {
+            return Voxel.IsValid && Voxel.Type.Name == VoxType;
+        }
     }
 
     /*
