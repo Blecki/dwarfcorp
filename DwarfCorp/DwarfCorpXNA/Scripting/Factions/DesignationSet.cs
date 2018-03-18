@@ -137,21 +137,12 @@ namespace DwarfCorp
             return r;
         }
 
-        public Object GetVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
+        public VoxelDesignation GetVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
         {
             var key = GetVoxelQuickCompare(Voxel);
             if (!VoxelDesignations.ContainsKey(key)) return null;
             var r = VoxelDesignations[key].FirstOrDefault(d => TypeSet(d.Type, Type));
-            if (r != null) return r.Tag;
-            return null;
-        }
-
-        public Task GetVoxelDesignationTask(VoxelHandle Voxel, DesignationType Type)
-        {
-            var key = GetVoxelQuickCompare(Voxel);
-            if (!VoxelDesignations.ContainsKey(key)) return null;
-            var r = VoxelDesignations[key].FirstOrDefault(d => TypeSet(d.Type, Type));
-            if (r != null) return r.Task;
+            if (r != null) return r;
             return null;
         }
 
