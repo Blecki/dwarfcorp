@@ -72,5 +72,17 @@ namespace DwarfCorp
                 };
             }
         }
+
+        internal static string GetNicelyFormattedName(string Name)
+        {
+            var r = "";
+            foreach (var c in Name)
+            {
+                if (c >= 'A' && c <= 'Z' && !String.IsNullOrEmpty(r))
+                    r += " ";
+                r += c;
+            }
+            return r;
+        }
     }
 }

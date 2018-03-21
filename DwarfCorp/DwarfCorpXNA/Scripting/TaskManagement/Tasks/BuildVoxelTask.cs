@@ -119,15 +119,15 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
-            var voxType = VoxelLibrary.GetVoxelType(VoxType);
-            var resources = new ResourceAmount(voxType.ResourceToRelease, 1);
+            var resources = new ResourceAmount(VoxelLibrary.GetVoxelType(VoxType).ResourceToRelease, 1);
+
             return new Select(
-                new Sequence( 
+                new Sequence(
                     new GetResourcesAct(creature.AI, new List<ResourceAmount>() { resources }),
-                new Domain(() => Validate(creature.AI, Voxel, resources),
-                             new GoToVoxelAct(Voxel, PlanAct.PlanType.Radius, creature.AI, 4.0f)),
-                             new PlaceVoxelAct(Voxel, creature.AI, resources)), new Wrap(creature.RestockAll)
-                            )
+                    new Domain(() => Validate(creature.AI, Voxel, resources),
+                        new GoToVoxelAct(Voxel, PlanAct.PlanType.Radius, creature.AI, 4.0f)),
+                    new PlaceVoxelAct(Voxel, creature.AI, resources, VoxType)), 
+                new Wrap(creature.RestockAll))
             { Name = "Build Voxel" };
         }
 

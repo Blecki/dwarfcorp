@@ -47,15 +47,18 @@ namespace DwarfCorp
     {
         public VoxelHandle Location;
         public ResourceAmount Resource;
+        public String VoxelType;
 
         public PlaceVoxelAct(
             VoxelHandle Location,
             CreatureAI Agent,
-            ResourceAmount Resource) :
+            ResourceAmount Resource,
+            String VoxelType) :
             base(Agent)
         {
             this.Location = Location;
             this.Resource = Resource;
+            this.VoxelType = VoxelType;
 
             Name = "Build DestinationVoxel " + Location.ToString();
         }
@@ -75,15 +78,8 @@ namespace DwarfCorp
 
             foreach (var status in Creature.HitAndWait(1.0f, true, () => Location.Coordinate.ToVector3() + Vector3.One * 0.5f))
             {
-                if (!Creature.Faction.Designations.IsVoxelDesignation(Location, DesignationType.Put))
-                {
-                    yield return Status.Success;
-                    yield break;
-                }
                 if (status == Status.Running)
-                {
                     yield return status;
-                }
             }
 
             var grabbed = Creature.Inventory.RemoveAndCreate(Resource, Inventory.RestockType.Any).FirstOrDefault();
@@ -121,26 +117,12 @@ namespace DwarfCorp
                         Creature.Physics.AnimationQueue.Add(teleport);
                     }
                 }
+
                 TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Location.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
                 grabbed.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                 grabbed.AnimationQueue.Add(motion);
 
-                // Todo: This should really have been passed to the act at creation.
-                var designation = Creature.Faction.Designations.GetVoxelDesignation(Location, DesignationType.Put);
-                if (designation == null)
-                {
-                    yield return Status.Fail;
-                    yield break;
-                }
-
-                var put = designation.Tag as short?;
-                if (!put.HasValue)
-                {
-                    yield return Status.Fail;
-                    yield break;
-                }
-
-                var putType = VoxelLibrary.GetVoxelType(put.Value);
+                var putType = VoxelLibrary.GetVoxelType(VoxelType);
 
                 motion.OnComplete += () =>
                 {
@@ -167,6 +149,7 @@ namespace DwarfCorp
                 World.ParticleManager.Trigger("puff", MathFunctions.RandVector3Box(Vox.GetBoundingBox().Expand(0.25f)), Color.White, 5);
             }
 
+            // Todo: Should this be handled by the chunk manager while processing voxel update events?
             foreach (Physics phys in World.CollisionManager.EnumerateIntersectingObjects(Vox.GetBoundingBox(), CollisionManager.CollisionType.Dynamic).OfType<Physics>())
             {
                 phys.ApplyForce((phys.GlobalTransform.Translation - (Vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))) * 100, 0.01f);

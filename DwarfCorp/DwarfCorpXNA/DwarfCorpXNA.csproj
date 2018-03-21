@@ -222,6 +222,7 @@
     <Compile Include="Entities\TimedExplosion.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
     <Compile Include="Gui\TextureGeneratorAttribute.cs" />
+    <Compile Include="Gui\Widgets\EmployeeAIDebugPanel.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\CompoundActs\TillAct.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
@@ -602,8 +603,6 @@
     <Compile Include="Scripting\Combat\Alliance.cs" />
     <Compile Include="Scripting\Combat\Attack.cs" />
     <Compile Include="Scripting\CompoundActs\BuildRoomAct.cs" />
-    <Compile Include="Scripting\CompoundActs\BuildVoxelAct.cs" />
-    <Compile Include="Scripting\CompoundActs\BuildVoxelsAct.cs" />
     <Compile Include="Scripting\CompoundActs\CompoundAct.cs" />
     <Compile Include="Scripting\CompoundActs\CompoundCreatureAct.cs" />
     <Compile Include="Scripting\CompoundActs\CraftItemAct.cs" />

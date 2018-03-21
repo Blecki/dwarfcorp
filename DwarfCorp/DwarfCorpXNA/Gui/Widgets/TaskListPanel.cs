@@ -16,6 +16,8 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
+            Border = "border-fancy";
+
             OnConstruct = (sender) =>
             {
                 sender.Root.RegisterForUpdate(sender);
@@ -24,8 +26,11 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     AutoLayout = AutoLayout.DockFill,
                     SelectedItemForegroundColor = new Vector4(0,0,0,1),
+                    Border = null,
                     ItemHeight = 16
                 }) as WidgetListView;
+
+                ListView.Border = null; // Can't make WidgetListView stop defaulting its border without breaking everywhere else its used.
             };
 
             OnUpdate = (sender, time) =>
@@ -49,14 +54,15 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         tag = Root.ConstructWidget(new Widget
                         {
-                            Text = task.Name
+                            Text = task.Name,
+                            MinimumSize = new Point(0, 16)
                         });
 
                         tag.AddChild(new Widget
                         {
                             Text = "CANCEL",
                             AutoLayout = AutoLayout.DockRight,
-                            MinimumSize = new Point(32, 0),
+                            MinimumSize = new Point(16, 0),
                             OnClick = (_sender, args) =>
                             {
                                 World.Master.TaskManager.CancelTask(lambdaCopy);
