@@ -73,7 +73,7 @@ namespace DwarfCorp
 
         public override bool ShouldRetry(Creature agent)
         {
-            return agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft);
+            return agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft) && !IsComplete(agent.Faction);
         }
 
 
@@ -97,7 +97,7 @@ namespace DwarfCorp
             if (agent.AI.Status.IsAsleep)
                 return Feasibility.Infeasible;
 
-            return CanBuild(agent) ? Feasibility.Feasible : Feasibility.Infeasible;
+            return CanBuild(agent) && !IsComplete(agent.Faction) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public bool CanBuild(Creature agent)
