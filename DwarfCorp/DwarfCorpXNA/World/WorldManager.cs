@@ -702,10 +702,11 @@ namespace DwarfCorp
             positions.AddRange((from light in DynamicLight.TempLights select light.Position));
             positions.Sort((a, b) =>
             {
-                float dA = MathFunctions.L1(a, Camera.Position);
-                float dB = MathFunctions.L1(b, Camera.Position);
+                float dA = (a - Camera.Position).LengthSquared();
+                float dB = (b - Camera.Position).LengthSquared();
                 return dA.CompareTo(dB);
             });
+
             int numLights = Math.Min(16, positions.Count + 1);
             for (int i = 1; i < numLights; i++)
             {

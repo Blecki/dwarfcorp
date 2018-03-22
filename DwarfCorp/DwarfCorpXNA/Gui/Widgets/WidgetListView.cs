@@ -30,6 +30,8 @@ namespace DwarfCorp.Gui.Widgets
         public Action<Widget> OnSelectedIndexChanged = null;
         public Vector4 SelectedItemBackgroundColor = new Vector4(0.5f, 0, 0, 1);
         public Vector4 SelectedItemForegroundColor = new Vector4(1, 1, 1, 1);
+        public Vector4 ItemBackgroundColor1 = new Vector4(0, 0, 0, 0.2f);
+        public Vector4 ItemBackgroundColor2 = new Vector4(0, 0, 0, 0);
 
         public Widget SelectedItem
         {
@@ -118,6 +120,15 @@ namespace DwarfCorp.Gui.Widgets
             {
                 Children[i].Hidden = true;
                 Children[i].Invalidate();
+                if (i % 2 == 0)
+                {
+                    Children[i].BackgroundColor = ItemBackgroundColor1;
+                }
+                else
+                {
+                    Children[i].BackgroundColor = ItemBackgroundColor2;
+                }
+                Children[i].TextColor = TextColor;
             }
 
             for (int i = 0; i < itemsThatFit && (topItem + i) < (Children.Count - 1); ++i)
@@ -128,6 +139,7 @@ namespace DwarfCorp.Gui.Widgets
                 Children[topItem + i + 1].Hidden = false;
                 topPos += ItemHeight;
             }
+
 
             if (SelectedItem != null)
             {

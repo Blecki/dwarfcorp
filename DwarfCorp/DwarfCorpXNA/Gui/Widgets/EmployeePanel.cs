@@ -28,6 +28,7 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     AutoLayout = AutoLayout.DockLeft,
                     MinimumSize = new Point(32, 48),
+                    MaximumSize = new Point(32, 48),
                     Background = idx >= 0 ? new TileReference("dwarves", idx) : null
                 });
 
@@ -35,6 +36,7 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     AutoLayout = AutoLayout.DockFill,
                     TextVerticalAlign = VerticalAlign.Center,
+                    MinimumSize = new Point(128, 64),
                     Text = employee.Stats.IsOverQualified ? employee.Stats.FullName + "*" : employee.Stats.FullName
                 });
 
@@ -44,6 +46,7 @@ namespace DwarfCorp.Gui.Widgets
             EmployeeList.AddItem(new Widget
             {
                 Text = "+ Hire New Employee",
+                MinimumSize = new Point(128, 64),
                 OnClick = (sender, args) =>
                 {
                     // Show hire dialog.
@@ -100,7 +103,13 @@ namespace DwarfCorp.Gui.Widgets
                             if ((confirm as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
                             {
                                 SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
-                                var selectedEmployee = (sender as EmployeeInfo).Employee;
+                                var employeeInfo = (sender as EmployeeInfo);
+                                if (employeeInfo == null)
+                                {
+                                    Console.Error.WriteLine("Error firing dwarf. This should not have happened!");
+                                    return;
+                                }
+                                var selectedEmployee = employeeInfo.Employee;
                                 selectedEmployee.GetRoot().Delete();
 
                                 Faction.Minions.Remove(selectedEmployee);
@@ -123,7 +132,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 AutoLayout = AutoLayout.DockFill,
                 Font = "font16",
-                ItemHeight = 48,
+                ItemHeight = 64,
                 OnSelectedIndexChanged = (sender) =>
                 {
                     if ((sender as Gui.Widgets.WidgetListView).SelectedIndex >= 0 &&
