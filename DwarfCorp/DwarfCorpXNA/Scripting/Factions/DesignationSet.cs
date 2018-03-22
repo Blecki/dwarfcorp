@@ -56,6 +56,7 @@ namespace DwarfCorp
             {
                 // TODO: mklingen. This is a horrible hack caused by the fact that Newtonsoft.Json does not understand
                 // that this is a numeric type with a width of 16. I have to downconvert it from 64 to 16.
+                // Update: blecki. This should be unecessary now. Put designations store a string now.
                 if (Tag is Int64)
                 {
                     Tag = (short)(long)(Tag);

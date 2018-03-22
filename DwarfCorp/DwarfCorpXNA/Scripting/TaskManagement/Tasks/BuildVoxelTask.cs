@@ -143,7 +143,7 @@ namespace DwarfCorp
 
         public override void OnEnqueued(Faction Faction)
         {
-            Faction.Designations.AddVoxelDesignation(Voxel, DesignationType.Put, (short)VoxelLibrary.GetVoxelType(VoxType).ID, this);
+            Faction.Designations.AddVoxelDesignation(Voxel, DesignationType.Put, VoxType, this);
         }
 
         public override void OnDequeued(Faction Faction)
