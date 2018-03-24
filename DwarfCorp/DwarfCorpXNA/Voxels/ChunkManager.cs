@@ -111,11 +111,9 @@ namespace DwarfCorp
             get { return GameSettings.Default.ChunkDrawDistance; }
         }
 
-        protected float drawDistSq = 0;
-
         public float DrawDistanceSquared
         {
-            get { return drawDistSq; }
+            get { return DrawDistance * DrawDistance; }
         }
 
         public float GenerateDistance
@@ -163,7 +161,6 @@ namespace DwarfCorp
 
             World = world;
             ExitThreads = false;
-            drawDistSq = DrawDistance * DrawDistance;
             Content = content;
 
             chunkData = new ChunkData(this, maxChunksX, maxChunksZ, 0, 0);             

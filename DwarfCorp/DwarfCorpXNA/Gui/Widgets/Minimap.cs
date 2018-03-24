@@ -156,7 +156,6 @@ namespace DwarfCorp.Gui.Widgets
         private Timer _renderTimer = new Timer(0.05f, false, Timer.TimerMode.Real);
         public void PreRender(DwarfTime time, SpriteBatch sprites)
         {
-
             _renderTimer.Update(time);
             if (!_renderTimer.HasTriggered)
                 return;
