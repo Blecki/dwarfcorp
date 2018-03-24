@@ -104,7 +104,7 @@ namespace DwarfCorp
             {
                 BoundingBox box = chunk.GetBoundingBox();
 
-                if((camera.Position - (box.Min + box.Max) * 0.5f).Length() < DrawDistance)
+                if((camera.Position - box.Center()).Length2D() < DrawDistance)
                 {
                     chunk.IsVisible = true;
                     RenderList.Enqueue(chunk);

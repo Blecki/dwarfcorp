@@ -633,6 +633,13 @@ namespace DwarfCorp.GameStates
                             if ((confirm as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
                             {
                                 SoundManager.PlaySound(ContentPaths.Audio.change, 0.25f);
+                                var employeeInfo = (sender as EmployeeInfo);
+                                if (employeeInfo == null)
+                                {
+                                    Console.Error.WriteLine("Error firing dwarf. This should not have happened!");
+                                    World.MakeAnnouncement("Error firing dwarf. Try again?");
+                                    return;
+                                }
                                 var selectedEmployee = (sender as EmployeeInfo).Employee;
                                 selectedEmployee.GetRoot().GetComponent<Inventory>().Die();
                                 World.MakeAnnouncement(string.Format("{0} was fired.", selectedEmployee.Stats.FullName));

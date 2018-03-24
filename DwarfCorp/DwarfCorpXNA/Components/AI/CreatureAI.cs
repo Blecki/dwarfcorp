@@ -446,7 +446,7 @@ namespace DwarfCorp
             if (Status.Health.IsDissatisfied() && Stats.CanSleep)
             {
                 Task toReturn = new GetHealedTask();
-                if (!Tasks.Contains(toReturn))
+                if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
                     AssignTask(toReturn);
             }
 
@@ -454,7 +454,7 @@ namespace DwarfCorp
             if (Status.Energy.IsDissatisfied() && Manager.World.Time.IsNight())
             {
                 Task toReturn = new SatisfyTirednessTask();
-                if (!Tasks.Contains(toReturn))
+                if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
                     AssignTask(toReturn);
             }
 
@@ -462,7 +462,7 @@ namespace DwarfCorp
             if (Status.Hunger.IsDissatisfied() && Faction.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
             {
                 Task toReturn = new SatisfyHungerTask();
-                if (!Tasks.Contains(toReturn))
+                if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
                     AssignTask(toReturn);
             }
 

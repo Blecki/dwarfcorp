@@ -66,6 +66,17 @@ namespace DwarfCorp
             return (box.Max + box.Min) * 0.5f;
         }
 
+        public static float Length2DSquared(this Vector3 vec)
+        {
+            return vec.X * vec.X + vec.Z * vec.Z;
+        }
+
+
+        public static float Length2D(this Vector3 vec)
+        {
+            return (float)Math.Sqrt(vec.X * vec.X + vec.Z * vec.Z);
+        }
+
         public static Vector3 Extents(this BoundingBox box)
         {
             return (box.Max - box.Min) * 0.5f;

@@ -36,6 +36,7 @@ using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
 using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -50,7 +51,6 @@ namespace DwarfCorp
 
         [JsonIgnore]
         public Faction Faction;
-     
 
         // By returning it as an IEnumerable, we can expose it without allowing it to be modified.
         public IEnumerable<Task> EnumerateTasks()

@@ -79,11 +79,7 @@ namespace DwarfCorp
         public Vector2 WorldOrigin { get; set; }
 
         // The current coordinate of the cursor light
-        public Vector3 CursorLightPos
-        {
-            get { return LightPositions[0]; }
-            set { LightPositions[0] = value; }
-        }
+        public Vector3 CursorLightPos = Vector3.Zero;
 
         public Vector3[] LightPositions = new Vector3[16];
 
@@ -702,20 +698,30 @@ namespace DwarfCorp
             positions.AddRange((from light in DynamicLight.TempLights select light.Position));
             positions.Sort((a, b) =>
             {
-                float dA = MathFunctions.L1(a, Camera.Position);
-                float dB = MathFunctions.L1(b, Camera.Position);
+                float dA = (a - Camera.Position).LengthSquared();
+                float dB = (b - Camera.Position).LengthSquared();
                 return dA.CompareTo(dB);
             });
-            int numLights = Math.Min(16, positions.Count + 1);
-            for (int i = 1; i < numLights; i++)
+
+            if (!GameSettings.Default.CursorLightEnabled)
+            {
+                LightPositions[0] = new Vector3(-99999, -99999, -99999);
+            }
+            else
+            {
+                LightPositions[0] = CursorLightPos;
+            }
+
+            int numLights = GameSettings.Default.CursorLightEnabled ? Math.Min(16, positions.Count + 1) : Math.Min(16, positions.Count);
+            for (int i = GameSettings.Default.CursorLightEnabled ? 1 : 0; i < numLights; i++)
             {
                 if (i > positions.Count)
                 {
-                    LightPositions[i] = new Vector3(0, 0, 0);
+                    LightPositions[i] = new Vector3(-99999, -99999, -99999);
                 }
                 else
                 {
-                    LightPositions[i] = positions[i - 1];
+                    LightPositions[i] = GameSettings.Default.CursorLightEnabled ? positions[i - 1] : positions[i];
                 }
             }
 
@@ -723,7 +729,7 @@ namespace DwarfCorp
             {
                 LightPositions[j] = new Vector3(0, 0, 0);
             }
-            DefaultShader.CurrentNumLights = numLights - 1;
+            DefaultShader.CurrentNumLights = GameSettings.Default.CursorLightEnabled ? numLights - 1 : numLights;
             DynamicLight.TempLights.Clear();
         }
 

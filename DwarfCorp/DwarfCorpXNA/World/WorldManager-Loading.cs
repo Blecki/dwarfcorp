@@ -455,12 +455,15 @@ namespace DwarfCorp
                     if (gameFile.PlayData.Spells != null)
                         Master.Spells = gameFile.PlayData.Spells;
                     if (gameFile.PlayData.Tasks != null)
+                    {
                         Master.TaskManager = gameFile.PlayData.Tasks;
+                        Master.TaskManager.Faction = Master.Faction;
+                    }
 
                     ChunkManager.World.Master.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
                     ? gameFile.Metadata.Slice
                     : ChunkManager.World.Master.MaxViewingLevel, ChunkManager.SliceMode.Y);
-            }
+                }
 
                 if (Master.Faction.Economy.Company.Information == null)
                     Master.Faction.Economy.Company.Information = new CompanyInformation();

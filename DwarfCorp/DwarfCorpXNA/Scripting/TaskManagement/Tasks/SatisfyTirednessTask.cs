@@ -86,12 +86,17 @@ namespace DwarfCorp
         {
             Body closestItem = agent.Faction.FindNearestItemWithTags("Bed", agent.AI.Position, true);
 
-            return closestItem != null || agent.AI.Status.Health.IsCritical() ? Feasibility.Feasible : Feasibility.Infeasible;
+            return (closestItem != null && agent.AI.Status.Health.IsDissatisfied()) || agent.AI.Status.Health.IsCritical() ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return 0.0f;
+        }
+
+        public override bool ShouldRetry(Creature agent)
+        {
+            return false;
         }
 
     }

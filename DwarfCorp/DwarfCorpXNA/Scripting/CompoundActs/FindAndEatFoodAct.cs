@@ -65,9 +65,9 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            Tree = new Sequence(new Select(new GetResourcesAct(Agent, FoodTag), 
-                                            new GetResourcesAct(Agent, FallbackTag)), 
-                                new Select(new GoToChairAndSitAct(Agent), true),
+            Tree = new Sequence(new Select(new GetResourcesAct(Agent, FoodTag) { Name = "Get " + FoodTag },
+                                            new GetResourcesAct(Agent, FallbackTag) { Name = "Get " + FallbackTag }) { Name = "Get Food"}, 
+                                new Select(new GoToChairAndSitAct(Agent), true) { Name = "Find a place to eat." },
                                 new EatFootAct(Agent));
                 
             base.Initialize();
@@ -81,14 +81,14 @@ namespace DwarfCorp
 
         public EatFootAct()
         {
-
+            Name = "Eat food";
         }
 
 
         public EatFootAct(CreatureAI creature) :
             base(creature)
         {
-
+            Name = "Eat food";
         }
 
         public override void OnCanceled()

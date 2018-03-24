@@ -51,7 +51,7 @@ namespace DwarfCorp
                 if (chunks.IsAboveCullPlane(r.GetBoundingBox())) return false;
                 if (r.FrustumCull)
                 {
-                    if ((r.GlobalTransform.Translation - Camera.Position).LengthSquared() >=
+                    if ((r.GlobalTransform.Translation - Camera.Position).Length2DSquared() >=
                         chunks.DrawDistanceSquared) return false;
                     if (!r.GetBoundingBox().Intersects(frustrum)) return false;
                 }
