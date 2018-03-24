@@ -131,7 +131,9 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-
+            foreach (var animal in Player.BodySelector.CurrentBodies)
+                if (animal.Tags.Contains("DomesticAnimal"))
+                    Drawer3D.DrawBox(animal.BoundingBox, Color.LightGreen, 0.1f, false);
         }
     }
 }

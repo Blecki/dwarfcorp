@@ -116,15 +116,6 @@ namespace DwarfCorp
 
         }
 
-        public static Task ChopPlant(Body Plant, Faction PlayerFaction)
-        {
-            var task = new KillEntityTask(Plant, KillEntityTask.KillType.Chop);
-            if (PlayerFaction.Designations.AddEntityDesignation(Plant, DesignationType.Chop, null, task) == DesignationSet.AddDesignationResult.Added)
-                return task;
-
-            return null;
-        }
-
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
             var plantsPicked = bodies.Where(c => c.Tags.Contains("Vegetation"));
@@ -138,17 +129,12 @@ namespace DwarfCorp
                 {
                     if (!plant.IsVisible) continue;
                     if (Player.World.ChunkManager.IsAboveCullPlane(plant.BoundingBox)) continue;
-
-                    var task = ChopPlant(plant, Player.Faction);
-                    if (task != null)
-                        tasks.Add(task);
+                    tasks.Add(new ChopEntityTask(plant));
                 }
 
                 Player.TaskManager.AddTasks(tasks);
                 if (tasks.Count > 0 && minions.Count > 0)
-                {
                     OnConfirm(minions);
-                }
             }
             else if (button == InputManager.MouseButton.Right)
             {
@@ -156,7 +142,9 @@ namespace DwarfCorp
                 {
                     if (!plant.IsVisible) continue;
                     if (Player.World.ChunkManager.IsAboveCullPlane(plant.BoundingBox)) continue;
-                    Player.Faction.Designations.RemoveEntityDesignation(plant, DesignationType.Chop);
+                    var designation = Player.Faction.Designations.GetEntityDesignation(plant, DesignationType.Chop);
+                    if (designation != null)
+                        Player.TaskManager.CancelTask(designation.Task);
                 }
             }
         }

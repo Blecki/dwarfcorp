@@ -396,15 +396,7 @@ namespace DwarfCorp
                             orphanedTasks.Add(task);
                         }
                     }
-                    else if (ent.Type == DesignationType.Chop)
-                    {
-                        var task = new KillEntityTask(ent.Body, KillEntityTask.KillType.Chop);
-                        if (!TaskManager.HasTask(task) &&
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
+                    
                     
                     else if (ent.Type == DesignationType.Craft)
                     {
