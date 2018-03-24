@@ -61,6 +61,15 @@ namespace DwarfCorp
             Designation = type;
         }
 
+        public override void OnDequeued(Faction Faction)
+        {
+            if (Designation.Progress < 0.999f && Designation.Entity != null)
+            {
+                Designation.Entity.Delete();
+            }
+            base.OnDequeued(Faction);
+        }
+
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return !Designation.Location.IsValid || !CanBuild(agent) ? 1000 : (agent.AI.Position - Designation.Location.WorldPosition).LengthSquared();
@@ -79,12 +88,12 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft) || Designation.Progress > 1.0f;
+            return !agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft) || Designation.Progress > 0.999f;
         }
 
         public override bool IsComplete(Faction faction)
         {
-            return Designation.Entity.Active;
+            return Designation.Entity.Active || !faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft) || Designation.Progress > 0.999f;
         }
 
         public override Feasibility IsFeasible(Creature agent)
