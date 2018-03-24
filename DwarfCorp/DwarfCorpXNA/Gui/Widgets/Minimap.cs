@@ -144,6 +144,7 @@ namespace DwarfCorp.Gui.Widgets
             World.Camera.UpdateViewMatrix();
             World.Camera.ZoomTargets.Clear();
             World.Camera.ZoomTargets.Add(HomePosition);
+            World.Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
         }
 
                
@@ -156,7 +157,10 @@ namespace DwarfCorp.Gui.Widgets
         {
             if (!HomeSet)
             {
-                HomePosition = World.Camera.Position;
+                if (World.PlayerFaction.GetRooms().Count > 0)
+                {
+                    HomePosition = World.PlayerFaction.GetRooms().First().GetBoundingBox().Center();
+                }
                 HomeSet = true;
             }
 

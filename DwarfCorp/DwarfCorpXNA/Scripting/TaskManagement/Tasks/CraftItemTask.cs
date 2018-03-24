@@ -88,7 +88,7 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft) || Designation.Progress > 0.999f;
+            return Designation.Entity.Active || !agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft) || Designation.Progress > 0.999f;
         }
 
         public override bool IsComplete(Faction faction)

@@ -26,7 +26,7 @@
 		{
 			"Name": "slice",
 			"Title" : "Slicing",
-			"Text": "You can view slices of blocks beneath the earth. The most valuable resources are underground, and dwarves prefer living in the dark. Push the Slice key (by default Q) to slice the terrain at the mouse cursor. You can also slice terrain using the slice buttons in the top left of the screen, using the slice-up and slice-down keys (by default, pageup and pagedown), or with CTRL + mousehweel.",
+			"Text": "You can view slices of blocks beneath the earth. The most valuable resources are underground, and dwarves prefer living in the dark. Push the Slice key (by default Q) to slice the terrain at the mouse cursor. You can also slice terrain using the slice buttons at the bottom of the screen, using the slice-up and slice-down keys (by default, pageup and pagedown), or with CTRL + mousehweel.",
 			"GuiHilite" : "slice"
 		},
 		{
@@ -166,12 +166,12 @@
 		{
 			"Name" : "level up",
 			"Title" : "Promoting Dwarves",
-			"Text" : "One of your employees has gained enough experience points (XP) to get a promotion! Employees earn XP from working, digging, fighting and training.  Promoting employees makes them work harder, but they also demand higher wages. Go to the economy menu (by pushing the economy button on the top right of the screen), select an employee, and promote them. If you choose not to promote your employees, they may become unhappy."
+			"Text" : "One of your employees has gained enough experience points (XP) to get a promotion! Employees earn XP from working, digging, fighting and training.  Promoting employees makes them work harder, but they also demand higher wages. Go to the economy menu (by pushing the economy button on the bottom right of the screen), select an employee, and promote them. If you choose not to promote your employees, they may become unhappy."
 		},
 		{
 			"Name" : "happiness",
 			"Title" : "Happy Thoughts",
-			"Text" : "Dwarves get happy or unhappy thoughts depending on the circumstances. You can view their unhappy or happy thoughts by clicking on the economy menu at the top right of the screen. Unhappy employees may refuse to work, or might even quit. Make your employees happy by ensuring they are paid fairly, have access to food and ale, and beds to sleep in."
+			"Text" : "Dwarves get happy or unhappy thoughts depending on the circumstances. You can view their unhappy or happy thoughts by clicking on the economy menu at the bottom right of the screen. Unhappy employees may refuse to work, or might even quit. Make your employees happy by ensuring they are paid fairly, have access to food and ale, and beds to sleep in."
 		},
 		{
 			"Name" : "money",
@@ -183,7 +183,7 @@
 		{
 			"Name" : "combat",
 			"Title" : "Combat",
-			"Text" : "Your employees are in combat! All kinds of monsters want to eat them, and some of the natives might be hostile. Dwarves regain their health points (HP) while sleeping or eating. Make sure you hire plenty of military dwarves to keep your colony defended. (By clicking on the Economy button on the top right of the screen)" 
+			"Text" : "Your employees are in combat! All kinds of monsters want to eat them, and some of the natives might be hostile. Dwarves regain their health points (HP) while sleeping or eating. Make sure you hire plenty of military dwarves to keep your colony defended. (By clicking on the Economy button on the bottom right of the screen)" 
 		},
 		{
 			"Name" : "death",
