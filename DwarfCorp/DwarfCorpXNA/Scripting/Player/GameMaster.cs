@@ -405,15 +405,7 @@ namespace DwarfCorp
                             orphanedTasks.Add(task);
                         }
                     }
-                    else if (ent.Type == DesignationType.Wrangle)
-                    {
-                        var task = new WrangleAnimalTask(ent.Body.GetRoot().GetComponent<Creature>());
-                        if (!TaskManager.HasTask(task) &&
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
+                    
                     else if (ent.Type == DesignationType.Craft)
                     {
                         var task = new CraftItemTask(ent.Tag as CraftDesignation);

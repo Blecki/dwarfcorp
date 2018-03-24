@@ -67,7 +67,6 @@ namespace DwarfCorp
                             if (pens.Any())
                             {
                                 var task = new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>());
-                                Player.Faction.Designations.AddEntityDesignation(animal, DesignationType.Wrangle, null, task);
                                 tasks.Add(task);
                                 Player.World.ShowToolPopup("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Species);
                             }
@@ -78,15 +77,17 @@ namespace DwarfCorp
                         }
                         break;
                     case InputManager.MouseButton.Right:
-                        if (Player.Faction.Designations.RemoveEntityDesignation(animal, DesignationType.Wrangle) == DesignationSet.RemoveDesignationResult.Removed)
-                            this.Player.World.ShowToolPopup("Wrangle cancelled for " + animal.GetRoot().GetComponent<Creature>().Species);
+                        {
+                            var existingOrder = Player.Faction.Designations.GetEntityDesignation(animal, DesignationType.Wrangle);
+                            if (existingOrder != null)
+                                Player.TaskManager.CancelTask(existingOrder.Task);
+                        }
                         break;
                 }
             }
 
             if (tasks.Count > 0)
             {
-                //TaskManager.AssignTasks(tasks, Player.SelectedMinions);
                 Player.TaskManager.AddTasks(tasks);
                 OnConfirm(Player.SelectedMinions);
             }
