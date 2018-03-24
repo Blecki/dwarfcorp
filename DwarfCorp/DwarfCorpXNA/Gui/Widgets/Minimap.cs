@@ -153,8 +153,14 @@ namespace DwarfCorp.Gui.Widgets
             Gui.DrawQuad(Where, RenderTarget);
         }
 
+        private Timer _renderTimer = new Timer(0.05f, false, Timer.TimerMode.Real);
         public void PreRender(DwarfTime time, SpriteBatch sprites)
         {
+
+            _renderTimer.Update(time);
+            if (!_renderTimer.HasTriggered)
+                return;
+
             if (!HomeSet)
             {
                 if (World.PlayerFaction.GetRooms().Count > 0)
@@ -163,7 +169,6 @@ namespace DwarfCorp.Gui.Widgets
                 }
                 HomeSet = true;
             }
-
 
             //Camera.Update(time, World.ChunkManager);
             Camera.Target = World.Camera.Target;
