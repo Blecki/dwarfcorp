@@ -84,13 +84,13 @@ namespace DwarfCorp
         public float DamageAmount;
         public Timer DeathTimer;
         public int VoxelRadius = 5;
-        public int VoxelsPerTick = 5;
+        public int VoxelsPerTick = 1;
         public float FuseTime = 2.0f;
 
         private Thread PrepThread;
 
         [JsonProperty]
-        private List<GlobalVoxelCoordinate> OrderedExplosionList;
+        private List<VoxelHandle> OrderedExplosionList;
         
         public enum State
         {
@@ -184,7 +184,7 @@ namespace DwarfCorp
                                 new BoundingBox(LocalPosition - new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f), LocalPosition + new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f)), CollisionManager.CollisionType.Both))
                             {
                                 var distance = (body.Position - LocalPosition).Length();
-                                if (distance < (VoxelRadius * 2.0f))
+                                if (distance <= (VoxelRadius * 2.0f))
                                 {
                                     var health = body.EnumerateAll().OfType<Health>().FirstOrDefault();
                                     if (health != null)
@@ -212,7 +212,7 @@ namespace DwarfCorp
                                 break;
                             }
 
-                            var nextVoxel = new VoxelHandle(Manager.World.ChunkManager.ChunkData, OrderedExplosionList[ExplosionProgress]);
+                            var nextVoxel = OrderedExplosionList[ExplosionProgress];
                             ExplosionProgress += 1;
 
                             if (nextVoxel.IsValid)
@@ -254,7 +254,7 @@ namespace DwarfCorp
                             explodeList.Add(Tuple.Create(new GlobalVoxelCoordinate(x, y, z), distance));
                     }
 
-            OrderedExplosionList = explodeList.OrderBy(t => t.Item2).Select(t => t.Item1).ToList();
+            OrderedExplosionList = explodeList.OrderBy(t => t.Item2).Select(t => new VoxelHandle(World.ChunkManager.ChunkData, t.Item1)).ToList();
             _state = State.Ready;
         }
     }
