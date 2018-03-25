@@ -109,7 +109,7 @@ namespace DwarfCorp
             foreach (var fence in  Fence.CreateFences(World.ComponentManager,
                 ContentPaths.Entities.DwarfObjects.fence, Designations, false))
             {
-                AddBody(fence);
+                AddBody(fence, false);
                 fence.Manager.RootComponent.AddChild(fence);
             }
         }

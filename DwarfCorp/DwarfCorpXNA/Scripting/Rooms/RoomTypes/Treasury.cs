@@ -133,7 +133,7 @@ namespace DwarfCorp
             Body coins = EntityFactory.CreateEntity<Body>("Coins", startPos);
             coins.AnimationQueue.Add(new EaseMotion(0.8f, coins.LocalTransform, endPos));
             Coins.Add(coins);
-            AddBody(coins);
+            AddBody(coins, false);
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_dwarf_stash_money, startPos);
             if (Faction != null)
                 Faction.World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);

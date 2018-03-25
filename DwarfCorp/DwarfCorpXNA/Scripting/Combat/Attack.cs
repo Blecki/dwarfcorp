@@ -316,6 +316,10 @@ namespace DwarfCorp
                         if (other.AnimationQueue.Count == 0)
                             other.AnimationQueue.Add(new KnockbackAnimation(0.15f, other.LocalTransform, knock));
                     }
+                    else
+                    {
+                        other.GetRoot().Die();
+                    }
 
                     PlayNoise(other.GlobalTransform.Translation);
                     if (HitParticles != "")

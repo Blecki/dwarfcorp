@@ -801,7 +801,7 @@ namespace DwarfCorp
             }
         }
 
-        protected void CreateSprite(EmployeeClass employeeClass, ComponentManager manager)
+        protected void CreateSprite(EmployeeClass employeeClass, ComponentManager manager, float heightOffset=0.15f)
         {
             if (Physics == null)
             {
@@ -815,7 +815,7 @@ namespace DwarfCorp
                 return;
             }
 
-            var sprite = Physics.AddChild(new CharacterSprite(manager.World.GraphicsDevice, manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as CharacterSprite;
+            var sprite = Physics.AddChild(new CharacterSprite(manager.World.GraphicsDevice, manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, heightOffset, 0)))) as CharacterSprite;
             // Todo: Share the list of animations too?
             foreach (Animation animation in employeeClass.Animations)
                 sprite.AddAnimation(animation);

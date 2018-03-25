@@ -228,6 +228,7 @@ namespace DwarfCorp
         public bool TriggersMourning { get; set; }
         /// <summary> List of changes to the creatures XP over time.</summary>
         public List<int> XPEvents { get; set; }
+        public float DestroyPlayerObjectProbability = -1.0f;
 
         public string Biography = "";
 
@@ -718,6 +719,15 @@ namespace DwarfCorp
                                 AssignTask(new ActWrapperTask(new GetResourcesAct(this, new List<ResourceAmount>() { new ResourceAmount(resource.Value.ResourceType, 1) }) { Faction = World.PlayerFaction }) { Name = "Steal stuff", Priority = Task.PriorityType.High });
                             }
                         }
+                    }
+                }
+
+                if (DestroyPlayerObjectProbability > 0 && MathFunctions.RandEvent(DestroyPlayerObjectProbability))
+                {
+                   if (World.PlayerFaction.OwnedObjects.Count > 0)
+                    {
+                        var thing = Datastructures.SelectRandom<Body>(World.PlayerFaction.OwnedObjects);
+                        AssignTask(new KillEntityTask(thing, KillEntityTask.KillType.Auto));
                     }
                 }
 

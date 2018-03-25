@@ -647,6 +647,12 @@ namespace DwarfCorp
                 public static string kobold_animations = ProgramData.CreatePath("Entities", "Kobold", "kobold_animation.json");
             }
 
+            public class Gremlin
+            {
+                public static string gremlin_animations = ProgramData.CreatePath("Entities", "Gremlin", "gremlin_animation.json");
+            }
+
+
             public class Skeleton
             {
                 public static string skeleton = ProgramData.CreatePath("Entities", "Skeleton", "skeleton.json");
