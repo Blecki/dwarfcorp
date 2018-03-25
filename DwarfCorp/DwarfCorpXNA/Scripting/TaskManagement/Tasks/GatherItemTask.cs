@@ -82,6 +82,7 @@ namespace DwarfCorp
         {
             return EntityToGather != null &&
                   EntityToGather.Active &&
+                  !EntityToGather.IsDead &&
                   !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather);
         }
 
@@ -92,7 +93,7 @@ namespace DwarfCorp
         
         public override bool IsComplete(Faction Faction)
         {
-            return EntityToGather == null || !EntityToGather.Active;
+            return EntityToGather == null || !EntityToGather.Active || EntityToGather.IsDead;
         }
 
         public override void OnEnqueued(Faction Faction)

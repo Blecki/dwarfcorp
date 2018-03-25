@@ -169,11 +169,6 @@ namespace DwarfCorp
                     if (entity.Type == DesignationType.Craft)
                     {
                         entity.Body.SetFlagRecursive(GameComponent.Flag.Visible, true);
-                        var tinters = entity.Body.EnumerateAll().OfType<Tinter>();
-                        foreach (var tinter in tinters)
-                        {
-                            tinter.Stipple = true;
-                        }
                     }
                     else
                     {
