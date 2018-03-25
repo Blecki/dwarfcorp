@@ -63,6 +63,7 @@ namespace DwarfCorp
 
         public override void OnDequeued(Faction Faction)
         {
+
             if (Designation.Progress < 0.999f && Designation.Entity != null)
             {
                 Designation.Entity.Delete();
@@ -93,7 +94,7 @@ namespace DwarfCorp
 
         public override bool IsComplete(Faction faction)
         {
-            return Designation.Entity.Active || !faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft) || Designation.Progress > 0.999f;
+            return Designation.Entity.Active;// || !faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft) || Designation.Progress > 0.999f;
         }
 
         public override Feasibility IsFeasible(Creature agent)

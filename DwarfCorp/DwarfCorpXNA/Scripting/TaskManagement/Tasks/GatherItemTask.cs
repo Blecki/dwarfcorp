@@ -73,7 +73,7 @@ namespace DwarfCorp
         public override Feasibility IsFeasible(Creature agent)
         {
             return EntityToGather != null
-                   && !EntityToGather.IsDead
+                   && EntityToGather.Active
                    && !agent.AI.Movement.IsSessile
                    && !agent.AI.Status.IsAsleep ? Feasibility.Feasible : Feasibility.Infeasible;
         }
@@ -81,7 +81,7 @@ namespace DwarfCorp
         public override bool ShouldRetry(Creature agent)
         {
             return EntityToGather != null &&
-                  !EntityToGather.IsDead &&
+                  EntityToGather.Active &&
                   !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather);
         }
 
@@ -92,7 +92,7 @@ namespace DwarfCorp
         
         public override bool IsComplete(Faction Faction)
         {
-            return EntityToGather == null || EntityToGather.IsDead;
+            return EntityToGather == null || !EntityToGather.Active;
         }
 
         public override void OnEnqueued(Faction Faction)

@@ -56,8 +56,8 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (!Creature.Faction.CraftBuilder.IsDesignation(Voxel))
-                yield return Status.Fail;
+            //if (!Creature.Faction.CraftBuilder.IsDesignation(Voxel))
+            //    yield return Status.Fail;
 
             // Use the existing entity instead of creating a new one.
             var item = Item.Entity;
