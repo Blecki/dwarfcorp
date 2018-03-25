@@ -75,7 +75,7 @@ namespace DwarfCorp
             }
 
             // Todo: Ugh - need to seperate the acts as well
-            return new KillEntityAct(EntityToKill, creature.AI, KillEntityTask.KillType.Chop);
+            return new ChopEntityAct(EntityToKill, creature.AI);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
@@ -94,24 +94,21 @@ namespace DwarfCorp
         {
             if (EntityToKill == null || EntityToKill.IsDead || (EntityToKill.Position - agent.AI.Position).Length() > 100)
                 return true;
-
-                    return !agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Chop);
+            return false;
         }
 
         public override Feasibility IsFeasible(Creature agent)
         {
             if (agent == null || agent.IsDead || EntityToKill == null || EntityToKill.IsDead)
-            {
                 return Feasibility.Infeasible;
-            }
             else
             {
                 var ai = EntityToKill.EnumerateAll().OfType<Creature>().FirstOrDefault();
 
                         if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Chop))
                             return Feasibility.Infeasible;
-                        return agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Chop) ? Feasibility.Feasible : Feasibility.Infeasible;
 
+                return Feasibility.Feasible;
             }
         }
 
