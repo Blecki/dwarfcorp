@@ -71,10 +71,21 @@ namespace DwarfCorp
             };
         }
 
+        [EntityFactory("Primed Keg")]
+        private static GameComponent __factory03(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new TimedExplosion(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null))
+            {
+                VoxelRadius = 3,
+                FuseTime = 5.0f
+            };
+        }
+
         public float DamageAmount;
         public Timer DeathTimer;
         public int VoxelRadius = 5;
         public int VoxelsPerTick = 5;
+        public float FuseTime = 2.0f;
 
         private Thread PrepThread;
 
@@ -103,10 +114,10 @@ namespace DwarfCorp
 
         public TimedExplosion(ComponentManager manager, Vector3 pos, List<ResourceAmount> resources) :
             base(manager,
-            "BearTrap", Matrix.CreateTranslation(pos),
-            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, "Bear Trap", resources))
+            "Explosion", Matrix.CreateTranslation(pos),
+            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, "Primed Keg", resources))
         {
-            DeathTimer = new Timer(2.0f, true);
+            DeathTimer = new Timer(FuseTime, true);
             DamageAmount = 200;
             CreateCosmeticChildren(manager);
 
@@ -117,27 +128,9 @@ namespace DwarfCorp
         {
             AddChild(new Shadow(manager));
 
-            var spriteSheet = new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap, 32);
-
-            var sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.Identity, false)) as AnimatedSprite;
-
-            sprite.AddAnimation(AnimationLibrary.CreateAnimation(spriteSheet, new List<Point> { Point.Zero }, "BearTrapIdle"));
-
-            var sprung = AnimationLibrary.CreateAnimation
-                (spriteSheet, new List<Point>
-                {
-                    new Point(0,1),
-                    new Point(1,1),
-                    new Point(2,1),
-                    new Point(3,1)
-                }, "BearTrapTrigger");
-
-            sprung.FrameHZ = 6.6f;
-
-            sprite.AddAnimation(sprung);
-
-            sprite.SetFlag(Flag.ShouldSerialize, false);
-            sprite.SetCurrentAnimation("BearTrapIdle", false);
+            var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32);
+            AddChild(new SimpleSprite(Manager, "sprite", Matrix.Identity, true, spriteSheet, new Point(4, 5)))
+                .SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);
         }
@@ -157,6 +150,19 @@ namespace DwarfCorp
                         PrepThread = new Thread(PrepareForExplosion);
                         _state = State.Prep;
                         PrepThread.Start();
+
+                            foreach (Body body in Manager.World.CollisionManager.EnumerateIntersectingObjects(
+                                new BoundingBox(LocalPosition - new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f), LocalPosition + new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f)), CollisionManager.CollisionType.Both))
+                            {
+                                var distance = (body.Position - LocalPosition).Length();
+                                if (distance < (VoxelRadius * 2.0f))
+                                {
+                                    var creature = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
+                                    if (creature != null)
+                                        creature.ChangeTask(new FleeEntityTask(this, VoxelRadius * 2));
+                                }
+                            }
+                        
                         break;
 
                     case State.Prep:
@@ -172,15 +178,18 @@ namespace DwarfCorp
                         {
                             _state = State.Exploding;
 
-                            EnumerateChildren().OfType<AnimatedSprite>().FirstOrDefault().SetCurrentAnimation("BearTrapTrigger", true);
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_trap_destroyed, GlobalTransform.Translation, false);
 
                             foreach (Body body in Manager.World.CollisionManager.EnumerateIntersectingObjects(
-                                new BoundingBox(LocalPosition - new Vector3(VoxelRadius, VoxelRadius, VoxelRadius), LocalPosition + new Vector3(VoxelRadius, VoxelRadius, VoxelRadius)), CollisionManager.CollisionType.Both))
+                                new BoundingBox(LocalPosition - new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f), LocalPosition + new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f)), CollisionManager.CollisionType.Both))
                             {
-                                var health = body.EnumerateAll().OfType<Health>().FirstOrDefault();
-                                if (health != null)
-                                    health.Damage(DamageAmount);
+                                var distance = (body.Position - LocalPosition).Length();
+                                if (distance < (VoxelRadius * 2.0f))
+                                {
+                                    var health = body.EnumerateAll().OfType<Health>().FirstOrDefault();
+                                    if (health != null)
+                                        health.Damage(DamageAmount * (1.0f - (distance / (VoxelRadius * 2.0f)))); // Linear fall off on damage.
+                                }
                             }
                         }
 

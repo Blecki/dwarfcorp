@@ -1693,7 +1693,7 @@
     "GuiLayers": [
       {
         "Sheet": "furniture",
-        "Tile": 35
+        "Tile": 44
       }
     ],
     "Tags": [
@@ -1702,7 +1702,7 @@
     "FoodContent": 0.0,
     "CompositeLayers": [
       {
-        "Asset": "entities\\interior_furniture",
+        "Asset": "Entities\\Furniture\\interior_furniture",
         "FrameSize": "32, 32",
         "Frame": "4, 5"
       }

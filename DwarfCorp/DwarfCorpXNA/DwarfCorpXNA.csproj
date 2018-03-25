@@ -229,6 +229,7 @@
     <Compile Include="Scripting\Player\Economy\Quantity.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceType.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\ChopEntityTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\FleeEntityTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\TillTask.cs" />
     <Compile Include="Voxels\Rail\PaintRailTool.cs" />
     <Compile Include="Voxels\Rail\OrientationHelper.cs" />
