@@ -140,17 +140,18 @@ namespace DwarfCorp
                 if (button == InputManager.MouseButton.Left)
                 {
                     var task = new KillEntityTask(other, KillEntityTask.KillType.Attack);
-                    if (Player.Faction.Designations.AddEntityDesignation(other, DesignationType.Attack, null, task) == DesignationSet.AddDesignationResult.Added)
-                    {
-                        Player.TaskManager.AddTask(task);
-                        Player.Faction.World.ShowToolPopup("Will attack this " + creature.Species);
-                        OnConfirm(Player.Faction.SelectedMinions);
-                    }
+                    Player.TaskManager.AddTask(task);
+                    Player.Faction.World.ShowToolPopup("Will attack this " + creature.Species);
+                    OnConfirm(Player.Faction.SelectedMinions);
                 }
                 else if (button == InputManager.MouseButton.Right)
                 {
-                    Player.Faction.World.ShowToolPopup("Attack cancelled for " + creature.Species);
-                    Player.Faction.Designations.RemoveEntityDesignation(other, DesignationType.Attack);
+                    var designation = Player.Faction.Designations.GetEntityDesignation(other, DesignationType.Attack);
+                    if (designation != null)
+                    {
+                        Player.TaskManager.CancelTask(designation.Task);
+                        Player.Faction.World.ShowToolPopup("Attack cancelled for " + creature.Species);
+                    }
                 }
             }
         }
