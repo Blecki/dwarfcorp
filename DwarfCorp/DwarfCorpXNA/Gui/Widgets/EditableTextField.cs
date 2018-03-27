@@ -22,6 +22,8 @@ namespace DwarfCorp.Gui.Widgets
 
         public Action<Widget, BeforeTextChangeEventArgs> BeforeTextChange = null;
 
+        public Action<Widget, int> ArrowKeyUpDown = null;
+
         public override void Construct()
         {
             if (String.IsNullOrEmpty(Border)) Border = "border-thin";
@@ -80,6 +82,14 @@ namespace DwarfCorp.Gui.Widgets
 
             OnKeyPress += (sender, args) =>
                 {
+                   if (args.KeyValue == (int)System.Windows.Forms.Keys.Up)
+                    {
+                        Root.SafeCall(ArrowKeyUpDown, this, 1);
+                    }
+                   else if (args.KeyValue == (int)System.Windows.Forms.Keys.Down)
+                    {
+                        Root.SafeCall(ArrowKeyUpDown, this, -1);
+                    }
                     // Actual logic of modifying the string is outsourced.
                     var beforeEventArgs = new BeforeTextChangeEventArgs
                         {
@@ -140,7 +150,7 @@ namespace DwarfCorp.Gui.Widgets
                 }
 
                 var cursorTime = (int)(Math.Floor(Root.RunTime / Root.CursorBlinkTime));
-                if ((cursorTime & 1) == 1)
+                if ((cursorTime % 2) == 0)
                 {
                     var font = Root.GetTileSheet(Font);
                     var drawableArea = this.GetDrawableInterior();
