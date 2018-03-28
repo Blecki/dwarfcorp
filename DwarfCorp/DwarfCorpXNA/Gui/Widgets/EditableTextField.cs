@@ -82,14 +82,6 @@ namespace DwarfCorp.Gui.Widgets
 
             OnKeyPress += (sender, args) =>
                 {
-                   if (args.KeyValue == (int)System.Windows.Forms.Keys.Up)
-                    {
-                        Root.SafeCall(ArrowKeyUpDown, this, 1);
-                    }
-                   else if (args.KeyValue == (int)System.Windows.Forms.Keys.Down)
-                    {
-                        Root.SafeCall(ArrowKeyUpDown, this, -1);
-                    }
                     // Actual logic of modifying the string is outsourced.
                     var beforeEventArgs = new BeforeTextChangeEventArgs
                         {
@@ -107,6 +99,15 @@ namespace DwarfCorp.Gui.Widgets
 
             OnKeyDown += (sender, args) =>
                 {
+                    if (args.KeyValue == (int)System.Windows.Forms.Keys.Up)
+                    {
+                        Root.SafeCall(ArrowKeyUpDown, this, 1);
+                    }
+                    else if (args.KeyValue == (int)System.Windows.Forms.Keys.Down)
+                    {
+                        Root.SafeCall(ArrowKeyUpDown, this, -1);
+                    }
+
                     var beforeEventArgs = new BeforeTextChangeEventArgs
                         {
                             NewText = TextFieldLogic.HandleSpecialKeys(Text, CursorPosition, args.KeyValue, out CursorPosition),
