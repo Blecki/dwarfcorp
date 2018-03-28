@@ -57,9 +57,9 @@ namespace DwarfCorp
                 return false;
             }
 
-            var existingTile = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType._AllFarms);
+            var existingFarm = Player.Faction.Farms.GetVoxelDesignation(voxel);
 
-            if (existingTile != null)
+            if (existingFarm != null)
             {
                 Player.World.ShowToolPopup("You are already farming this tile.");
                 return false;
@@ -78,8 +78,6 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            List<CreatureAI> minions = 
-                Player.World.Master.Faction.Minions.Where(minion => minion.Stats.IsTaskAllowed(Task.TaskCategory.TillSoil)).ToList();
             var goals = new List<Task>();
 
             foreach (var voxel in voxels)
@@ -94,6 +92,7 @@ namespace DwarfCorp
                         Voxel = voxel
                     };
 
+                    // Todo: Task adds designations, this adds Farms.
                     var task = new TillTask(newFarmTile);
                     Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Till, newFarmTile, task);
 
@@ -112,8 +111,8 @@ namespace DwarfCorp
 
             Player.TaskManager.AddTasks(goals);
 
-            foreach (CreatureAI creature in minions)
-                creature.Creature.NoiseMaker.MakeNoise("Ok", creature.Position);
+            OnConfirm(Player.World.Master.Faction.Minions.Where(minion => minion.Stats.IsTaskAllowed(Task.TaskCategory.TillSoil)).ToList());
+
         }
 
         public override void OnEnd()
