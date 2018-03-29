@@ -46,24 +46,15 @@ namespace DwarfCorp
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            int currentAmount = Player.Faction.ListResources()
-               .Sum(resource => resource.Key == PlantType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
-
-            if (currentAmount == 0)
-            {
-                Player.World.ShowToolPopup("Not enough " + PlantType + " in stocks!");
-                return;
-            }
-
             foreach (var voxel in voxels)
                 ValidatePlanting(voxel);
         }
 
         private bool ValidatePlanting(VoxelHandle voxel)
         {
-            if (voxel.Type.Name != "TilledSoil")
+            if (!voxel.Type.IsSoil)
             {
-                Player.World.ShowToolPopup("Can only plant on tilled soil!");
+                Player.World.ShowToolPopup("Can only plant on soil!");
                 return false;
             }
 
@@ -75,9 +66,7 @@ namespace DwarfCorp
                     return false;
                 }
             }
-            else if (
-                ResourceLibrary.Resources[PlantType].Tags.Contains(
-                    Resource.ResourceTags.BelowGroundPlant))
+            else if (ResourceLibrary.Resources[PlantType].Tags.Contains(Resource.ResourceTags.BelowGroundPlant))
             {
                 if (voxel.SunColor > 0)
                 {
@@ -86,38 +75,19 @@ namespace DwarfCorp
                 }
             }
 
-            var designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Till);
+            var designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Plant);
 
             if (designation != null)
             {
-                Player.World.ShowToolPopup("Finish tilling this tile first.");
-                return false;
-            }
-            
-            designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType._AllFarms);
-            
-            if (designation == null)
-            {
-                var farmTile = new FarmTile() { Voxel = voxel };
-                Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType._InactiveFarm, farmTile, null);
-            }
-
-            if (designation != null && (designation.Tag as FarmTile).PlantExists())
-            {
-                Player.World.ShowToolPopup("Something is already planted here!");
+                Player.World.ShowToolPopup("You're already planting here.");
                 return false;
             }
 
-            var above = VoxelHelpers.GetVoxelAbove(voxel);
-            if (above.IsValid && !above.IsEmpty)
+            var entities = Player.World.CollisionManager.EnumerateIntersectingObjects(new BoundingBox(voxel.Coordinate.ToVector3() + new Vector3(0.0f, 1.0f, 0.0f), voxel.Coordinate.ToVector3()
+                + new Vector3(1.0f, 2.0f, 1.0f)), CollisionManager.CollisionType.Static);
+            if (entities.Count() > 0)
             {
-                Player.World.ShowToolPopup("Something is blocking the top of this tile.");
-                return false;
-            }
-
-            if (designation != null && (designation.Tag as FarmTile).Farmer != null)
-            {
-                Player.World.ShowToolPopup("This tile is already being worked.");
+                Player.World.ShowToolPopup("There's something in the way.");
                 return false;
             }
 
@@ -148,17 +118,19 @@ namespace DwarfCorp
 
                     if (ValidatePlanting(voxel))
                     {
-                        var designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType._AllFarms);
-                        if (designation == null) continue;
+                        var farmTile = new FarmTile
+                        {
+                            Voxel = voxel
+                        };
 
-                        var task = new PlantTask(designation.Tag as FarmTile)
+                        var task = new PlantTask(farmTile)
                         {
                             Plant = PlantType,
                             RequiredResources = RequiredResources
                         };
 
-                        Player.Faction.Designations.RemoveVoxelDesignation(voxel, DesignationType._AllFarms);
-                        Player.Faction.Designations.AddVoxelDesignation(voxel, DesignationType.Plant, designation.Tag, task);
+                        if (voxel.Type.Name != "TilledSoil")
+                            farmTile.Progress = -100.0f; // Planting on untilled soil takes longer.
 
                         goals.Add(task);
                         currentAmount--;
@@ -191,10 +163,7 @@ namespace DwarfCorp
 
                     if (designation != null)
                     {
-                        // Cancel and revert to inactive designation type.
-                        (designation.Tag as FarmTile).Farmer = null;
-                        Player.Faction.Designations.RemoveVoxelDesignation(designation.Voxel, DesignationType._AllFarms);
-                        Player.Faction.Designations.AddVoxelDesignation(designation.Voxel, DesignationType._InactiveFarm, designation.Tag, null);
+                        Player.TaskManager.CancelTask(designation.Task);
                     }
                 }
             }
@@ -245,11 +214,6 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            foreach (var farmtile in Player.Faction.Designations.EnumerateDesignations(DesignationType._InactiveFarm))
-            {
-                if (farmtile.Tag is FarmTile && (farmtile.Tag as FarmTile).IsFree())
-                    Drawer3D.DrawBox(farmtile.Voxel.GetBoundingBox(), Color.White, 0.1f, true);
-            }
         }
     }
 }

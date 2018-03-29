@@ -31,7 +31,6 @@ namespace DwarfCorp
             Chop,
             Guard,
             Attack,
-            Till,
             Plant,
             Wrangle,
             Craft,
@@ -161,11 +160,6 @@ namespace DwarfCorp
             Tools[ToolMode.God] = new GodModeTool(this);
 
             Tools[ToolMode.SelectUnits] = new DwarfSelectorTool(this);
-
-            Tools[ToolMode.Till] = new TillTool
-            {
-                Player = this
-            };
 
             Tools[ToolMode.Plant] = new PlantTool
             {

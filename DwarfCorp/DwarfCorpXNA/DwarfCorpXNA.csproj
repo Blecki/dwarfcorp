@@ -225,14 +225,11 @@
     <Compile Include="Gui\Widgets\EmployeeAIDebugPanel.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
-    <Compile Include="Scripting\CompoundActs\TillAct.cs" />
-    <Compile Include="Scripting\Factions\FarmSet.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
     <Compile Include="Scripting\Player\Economy\Quantity.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceType.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\ChopEntityTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\FleeEntityTask.cs" />
-    <Compile Include="Scripting\TaskManagement\Tasks\TillTask.cs" />
     <Compile Include="Voxels\Rail\PaintRailTool.cs" />
     <Compile Include="Voxels\Rail\OrientationHelper.cs" />
     <Compile Include="Voxels\Rail\CompassOrientation.cs" />
@@ -445,7 +442,6 @@
     <Compile Include="Scripting\Player\Tools\FarmTile.cs" />
     <Compile Include="Scripting\Player\Tools\WrangleTool.cs" />
     <Compile Include="Scripting\Player\Tools\PlantTool.cs" />
-    <Compile Include="Scripting\Player\Tools\TillTool.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\CraftResourceTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\WrangleAnimalTask.cs" />
     <Compile Include="Scripting\Player\Tools\MoveObjectTool.cs" />

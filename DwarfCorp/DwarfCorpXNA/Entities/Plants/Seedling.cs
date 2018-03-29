@@ -81,6 +81,7 @@ namespace DwarfCorp
             {
                 Farm.Plant = adult;
                 Farm.TriggerAutoHarvest();
+                adult.Farm = Farm;
             }
             Die();
         }

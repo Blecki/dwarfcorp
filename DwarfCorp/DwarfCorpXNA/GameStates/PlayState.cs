@@ -1760,33 +1760,6 @@ namespace DwarfCorp.GameStates
                 }
             };
 
-            #region icon_Till
-            var icon_Till = new FlatToolTray.Icon
-            {
-                Tag = "till",
-                Text = "Till",
-                Tooltip = "Till soil",
-                EnabledTextColor = new Vector4(1, 1, 1, 1),
-                KeepChildVisible = true,
-                TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
-                OnClick = (sender, args) =>
-                {
-                    World.ShowToolPopup("Click and drag to till soil.");
-                    ChangeTool(GameMaster.ToolMode.Till);
-                    World.Tutorial("till");
-                },
-                PopupChild = new Widget()
-                {
-                    Border = "border-fancy",
-                    Text = "Till Soil.\n Click and drag to till soil for planting.",
-                    Rect = new Rectangle(0, 0, 256, 128),
-                    TextColor = Color.Black.ToVector4(),
-                },
-                Behavior = FlatToolTray.IconBehavior.LeafIcon
-            };
-            #endregion
-
             #region icon_Plant
             #region menu_Plant
             var icon_menu_Plant_Return = new FlatToolTray.Icon
@@ -1916,7 +1889,6 @@ namespace DwarfCorp.GameStates
                 ItemSource = new FlatToolTray.Icon[]
                     {
                         icon_menu_Farm_Return,
-                        icon_Till,
                         icon_Plant,
                         icon_Harvest,
                         icon_Wrangle
