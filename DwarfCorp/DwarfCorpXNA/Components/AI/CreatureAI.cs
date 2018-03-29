@@ -499,7 +499,9 @@ namespace DwarfCorp
                 //        CurrentTask.IsComplete = true;
                 //}
 
-                if (status != Act.Status.Running && !retried)
+                if (CurrentTask != null && CurrentTask.IsComplete(Faction))
+                    ChangeTask(null);
+                else if (status != Act.Status.Running && !retried)
                     ChangeTask(null);
             }
             // Otherwise, we don't have any tasks at the moment.

@@ -66,29 +66,28 @@ namespace DwarfCorp
 
                             if (pens.Any())
                             {
-                                Player.Faction.Designations.AddEntityDesignation(animal, DesignationType.Wrangle);
-                                tasks.Add(new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>()));
-                                this.Player.World.ShowToolPopup("Will wrangle this " +
-                                                                animal.GetRoot().GetComponent<Creature>().Species);
+                                var task = new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>());
+                                tasks.Add(task);
+                                Player.World.ShowToolPopup("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Species);
                             }
                             else
                             {
-                                this.Player.World.ShowToolPopup("Can't wrangle this " +
-                                                                animal.GetRoot().GetComponent<Creature>().Species +
-                                                                " : need more animal pens.");
+                                Player.World.ShowToolPopup("Can't wrangle this " + animal.GetRoot().GetComponent<Creature>().Species + " : need more animal pens.");
                             }
                         }
                         break;
                     case InputManager.MouseButton.Right:
-                        if (Player.Faction.Designations.RemoveEntityDesignation(animal, DesignationType.Wrangle) == DesignationSet.RemoveDesignationResult.Removed)
-                            this.Player.World.ShowToolPopup("Wrangle cancelled for " + animal.GetRoot().GetComponent<Creature>().Species);
+                        {
+                            var existingOrder = Player.Faction.Designations.GetEntityDesignation(animal, DesignationType.Wrangle);
+                            if (existingOrder != null)
+                                Player.TaskManager.CancelTask(existingOrder.Task);
+                        }
                         break;
                 }
             }
 
             if (tasks.Count > 0)
             {
-                //TaskManager.AssignTasks(tasks, Player.SelectedMinions);
                 Player.TaskManager.AddTasks(tasks);
                 OnConfirm(Player.SelectedMinions);
             }
@@ -132,7 +131,9 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-
+            foreach (var animal in Player.BodySelector.CurrentBodies)
+                if (animal.Tags.Contains("DomesticAnimal"))
+                    Drawer3D.DrawBox(animal.BoundingBox, Color.LightGreen, 0.1f, false);
         }
     }
 }

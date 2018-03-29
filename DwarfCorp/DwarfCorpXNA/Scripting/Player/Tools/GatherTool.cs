@@ -76,21 +76,20 @@ namespace DwarfCorp
                 if (!resource.IsVisible) continue;
                 if (Player.World.ChunkManager.IsAboveCullPlane(resource.BoundingBox)) continue;
 
-                if(button == InputManager.MouseButton.Left)
+                if (button == InputManager.MouseButton.Left)
                 {
-                    Player.Faction.Designations.AddEntityDesignation(resource, DesignationType.Gather);
                     assignments.Add(new GatherItemTask(resource));
                 }
                 else
                 {
-                    Player.Faction.Designations.RemoveEntityDesignation(resource, DesignationType.Gather);
+                    var designation = Player.Faction.Designations.GetEntityDesignation(resource, DesignationType.Gather);
+                    if (designation != null)
+                        Player.TaskManager.CancelTask(designation.Task);
                 }
             }
 
-            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions,
-                Task.TaskCategory.Gather);
+            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, Task.TaskCategory.Gather);
             Player.TaskManager.AddTasks(assignments);
-            //TaskManager.AssignTasks(assignments, minions);
 
             OnConfirm(minions);
         }
@@ -112,11 +111,9 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-           
             if (Player.IsCameraRotationModeActive())
-            {
                 return;
-            }
+
             Player.VoxSelector.Enabled = false;
             Player.BodySelector.Enabled = true;
             Player.BodySelector.AllowRightClickSelection = true;
@@ -125,13 +122,12 @@ namespace DwarfCorp
                 Player.World.SetMouse(Player.World.MousePointer);
             else
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 6));
-
-
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
             NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 6, 0);
+
             // Draw a bounding box around the currently selected bodies.
             foreach (Body body in Player.BodySelector.CurrentBodies)
             {

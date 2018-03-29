@@ -67,11 +67,16 @@ namespace DwarfCorp
                         var validRefs = voxels.Where(r => !Faction.Designations.IsVoxelDesignation(r, DesignationType.Put)
                             && Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? r.IsEmpty : !r.IsEmpty).ToList();
 
-                        foreach (var r in validRefs)
+                        foreach (var r in voxels)
                         {
-                            // Todo: Change this to use something other than the type as the tag - just wrap it up!
-                            Faction.Designations.AddVoxelDesignation(r, DesignationType.Put,
-                                (short)CurrentVoxelType, null); // Todo: Pass the build voxel task
+                            // Todo: Mode should be a property of the tool, not grabbed out of the vox selector.
+                            if (Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty && !r.IsEmpty) continue;
+                            if (Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectFilled && r.IsEmpty) continue;
+
+                            var existingDesignation = Player.Faction.Designations.GetVoxelDesignation(r, DesignationType.Put);
+                            if (existingDesignation != null)
+                                Player.TaskManager.CancelTask(existingDesignation.Task);
+
                             assignments.Add(new BuildVoxelTask(r, VoxelLibrary.GetVoxelType(CurrentVoxelType).Name));
                         }
 
@@ -83,7 +88,9 @@ namespace DwarfCorp
                     {
                         foreach (var r in voxels)
                         {
-                            Faction.Designations.RemoveVoxelDesignation(r, DesignationType.Put);
+                            var designation = Faction.Designations.GetVoxelDesignation(r, DesignationType.Put);
+                            if (designation != null)
+                                Player.TaskManager.CancelTask(designation.Task);
                         }
                         break;
                     }

@@ -32,15 +32,35 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "DEBUG",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
-                        ItemSize = new Point(200, 20),
-                        ItemSource = Debugger.EnumerateSwitches().Select(s =>
-                        new HorizontalMenuTray.CheckboxMenuItem
+                        ItemSize = new Point(100, 20),
+                        ItemSource = new HorizontalMenuTray.MenuItem[]
                         {
-                            // Todo: Add spaces before capitals.
-                            Text = s.Name,
-                            InitialState = s.State,
-                            SetCallback = s.Set
-                        })
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "SWITCHES",
+                                ExpansionChild = new HorizontalMenuTray.Tray
+                                {
+                                    ItemSize = new Point(200, 20),
+                                    ItemSource = Debugger.EnumerateSwitches().Select(s =>
+                                    new HorizontalMenuTray.CheckboxMenuItem
+                                    {
+                                        Text = Debugger.GetNicelyFormattedName(s.Name),
+                                        InitialState = s.State,
+                                        SetCallback = s.Set
+                                    })
+                                }
+                            },
+
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "AI",
+                                ExpansionChild = new EmployeeAIDebugPanel
+                                {
+                                    World = Master.World,
+                                    MinimumSize = new Point(300, 200)
+                                }
+                            }
+                        }
                     }
                 },
                 new HorizontalMenuTray.MenuItem

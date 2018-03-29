@@ -101,12 +101,6 @@ namespace DwarfCorp
                 Icon = new NamedImageFrame("newgui/pointers", 32, 4, 1)
             });
 
-            DesignationProperties.Add(DesignationType.Till, new DesignationTypeProperties
-            {
-                Color = Color.PaleGoldenrod,
-                Icon = new NamedImageFrame("newgui/pointers", 32, 4, 1)
-            });
-
             DesignationProperties.Add(DesignationType.Plant, new DesignationTypeProperties
             {
                 Color = Color.LimeGreen,
@@ -150,7 +144,7 @@ namespace DwarfCorp
                     }
 
                     if (voxel.Type == DesignationType.Put) // Hate this.
-                        DrawPhantomCallback(v, VoxelLibrary.GetVoxelType((voxel.Tag as short?).Value));
+                        DrawPhantomCallback(v, VoxelLibrary.GetVoxelType(voxel.Tag.ToString()));
                     else
                         DrawBoxCallback(v, Vector3.One, props.ModulatedColor, props.LineWidth, true);
                 }
@@ -169,11 +163,6 @@ namespace DwarfCorp
                     if (entity.Type == DesignationType.Craft)
                     {
                         entity.Body.SetFlagRecursive(GameComponent.Flag.Visible, true);
-                        var tinters = entity.Body.EnumerateAll().OfType<Tinter>();
-                        foreach (var tinter in tinters)
-                        {
-                            tinter.Stipple = true;
-                        }
                     }
                     else
                     {

@@ -39,37 +39,23 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-
-    // Todo: Seperate tasks for chop/attack
-
-    /// <summary>
-    /// Tells a creature that it should kill an entity.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    public class KillEntityTask : Task
+    public class ChopEntityTask : Task
     {
-        public enum KillType
-        {
-            Attack,
-            Auto
-        }
         public Body EntityToKill = null;
-        public KillType Mode { get; set; }
 
-        public KillEntityTask()
+        public ChopEntityTask()
         {
             MaxAssignable = 3;
         }
 
-        public KillEntityTask(Body entity, KillType type)
+        public ChopEntityTask(Body entity)
         {
             MaxAssignable = 3;
-            Mode = type;
             Name = "Kill Entity: " + entity.Name + " " + entity.GlobalID;
             EntityToKill = entity;
             Priority = PriorityType.Urgent;
             AutoRetry = true;
-            Category = TaskCategory.Attack;
+            Category = TaskCategory.Chop;
         }
 
         public override Act CreateScript(Creature creature)
@@ -88,16 +74,14 @@ namespace DwarfCorp
                 return new FleeEntityAct(creature.AI) {Entity = EntityToKill, PathLength = 5};
             }
 
-            return new KillEntityAct(EntityToKill, creature.AI);
+            // Todo: Ugh - need to seperate the acts as well
+            return new ChopEntityAct(EntityToKill, creature.AI);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             if (agent == null || EntityToKill == null)
-            {
                 return 10000;
-            }
-
             else return (agent.AI.Position - EntityToKill.LocalTransform.Translation).LengthSquared() * 0.01f;
         }
 
@@ -109,10 +93,7 @@ namespace DwarfCorp
         public override bool ShouldDelete(Creature agent)
         {
             if (EntityToKill == null || EntityToKill.IsDead || (EntityToKill.Position - agent.AI.Position).Length() > 100)
-            {
                 return true;
-            }
-
             return false;
         }
 
@@ -124,8 +105,8 @@ namespace DwarfCorp
             {
                 var ai = EntityToKill.EnumerateAll().OfType<Creature>().FirstOrDefault();
 
-                if (Mode == KillType.Attack && !agent.Stats.IsTaskAllowed(TaskCategory.Attack))
-                    return Feasibility.Infeasible;
+                        if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Chop))
+                            return Feasibility.Infeasible;
 
                 return Feasibility.Feasible;
             }
@@ -138,12 +119,12 @@ namespace DwarfCorp
 
         public override void OnEnqueued(Faction Faction)
         {
-            Faction.Designations.AddEntityDesignation(EntityToKill, DesignationType.Attack, null, this);
+            Faction.Designations.AddEntityDesignation(EntityToKill, DesignationType.Chop, null, this);
         }
 
         public override void OnDequeued(Faction Faction)
         {
-            Faction.Designations.RemoveEntityDesignation(EntityToKill, DesignationType.Attack);
+            Faction.Designations.RemoveEntityDesignation(EntityToKill, DesignationType.Chop);
         }
     }
 

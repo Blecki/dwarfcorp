@@ -107,8 +107,7 @@ namespace DwarfCorp
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (Active && closestCreature != null && !closestCreature.IsDead)
-            {
-                
+            {                
                 Weapon.RechargeTimer.Update(gameTime);
 
                 SetTurretAngle((float) Math.Atan2(offset.X, offset.Z));

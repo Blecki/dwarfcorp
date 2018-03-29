@@ -139,17 +139,16 @@ namespace DwarfCorp
                             yield return Status.Fail;
                         }
 
-                        if (Creature.Faction.Designations.IsDesignation(Target, DesignationType.Gather))
-                            Creature.Faction.Designations.RemoveEntityDesignation(Target, DesignationType.Gather);
-                        else
-                        {
-                            yield return Status.Fail;
-                            break;
-                        }
+                        //if (Creature.Faction.Designations.IsDesignation(Target, DesignationType.Gather))
+                        //    Creature.Faction.Designations.RemoveEntityDesignation(Target, DesignationType.Gather);
+                        //else
+                        //{
+                        //    yield return Status.Fail;
+                        //    break;
+                        //}
 
                         ResourceAmount resource = new ResourceAmount(Target);
                         Agent.Blackboard.SetData(StashedItemOut, resource);
-                        //Creature.DrawIndicator(resource.ResourceType.Image, resource.ResourceType.Tint);
                         Agent.Creature.NoiseMaker.MakeNoise("Stash", Agent.Position);
                         yield return Status.Success;
                         break;

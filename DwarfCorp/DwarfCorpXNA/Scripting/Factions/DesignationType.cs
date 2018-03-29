@@ -38,7 +38,6 @@ namespace DwarfCorp
         _None   = 0,
 
         Dig     = 1,
-        Till    = 2,
         Guard   = 4,
         Gather  = 8,
         Attack  = 16,
@@ -48,8 +47,6 @@ namespace DwarfCorp
         Plant   = 256, 
         Craft   = 512,
 
-        _InactiveFarm = 1024,
-        _AllFarms = Till | Plant | _InactiveFarm,
-        _All     = Dig | Till | Guard | Gather | Attack | Wrangle | Chop | Put | Plant | Craft,
+        _All     = Dig | Guard | Gather | Attack | Wrangle | Chop | Put | Plant | Craft,
     }
 }

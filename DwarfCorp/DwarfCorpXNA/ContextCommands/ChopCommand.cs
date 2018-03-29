@@ -21,16 +21,7 @@ namespace DwarfCorp.ContextCommands
         {
             var minions = Faction.FilterMinionsWithCapability(World.PlayerFaction.Minions, Task.TaskCategory.Chop);
             if (minions.Count > 0)
-            {
-                var task = ChopTool.ChopPlant(Entity, World.PlayerFaction);
-                if (task != null)
-                {
-                    var tasks = new List<Task>();
-                    tasks.Add(task);
-                    World.Master.TaskManager.AddTasks(tasks);
-                    //TaskManager.AssignTasks(tasks, minions);
-                }
-            }
+                World.Master.TaskManager.AddTask(new ChopEntityTask(Entity));
         }
     }
 }

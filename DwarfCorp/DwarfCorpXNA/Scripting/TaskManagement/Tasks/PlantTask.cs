@@ -86,8 +86,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.TillSoil) &&
-                !agent.Stats.IsTaskAllowed(Task.TaskCategory.Plant))
+            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Plant))
                 return Feasibility.Infeasible;
 
             if (agent.AI.Status.IsAsleep)
@@ -104,7 +103,10 @@ namespace DwarfCorp
 
         public override bool IsComplete(Faction faction)
         {
-            return FarmToWork == null || FarmToWork.PlantExists();
+            if (FarmToWork == null) return true;
+            if (FarmToWork.PlantExists()) return true;
+            if (FarmToWork.Voxel.IsEmpty) return true;
+            return false;
         }
 
         public override Act CreateScript(Creature agent)
@@ -119,6 +121,16 @@ namespace DwarfCorp
             {
                 return (FarmToWork.Voxel.WorldPosition - agent.AI.Position).LengthSquared();
             }
+        }
+
+        public override void OnEnqueued(Faction Faction)
+        {
+            Faction.Designations.AddVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant, FarmToWork, this);
+        }
+
+        public override void OnDequeued(Faction Faction)
+        {
+            Faction.Designations.RemoveVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant);
         }
     }
 }

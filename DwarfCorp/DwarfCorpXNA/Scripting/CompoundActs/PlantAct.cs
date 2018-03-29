@@ -97,13 +97,17 @@ namespace DwarfCorp
                     Drawer2D.DrawLoadBar(Agent.Manager.World.Camera, Agent.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
                         FarmToWork.Progress/100.0f);
 
+                    if (FarmToWork.Progress >= 0.0f && FarmToWork.Voxel.Type.Name != "TilledSoil")
+                    {
+                        FarmToWork.Voxel.Type = VoxelLibrary.GetVoxelType("TilledSoil");
+                    }
+
                     if (FarmToWork.Progress >= 100.0f && !Satisfied())
                     {
                         FarmToWork.Progress = 0.0f;
-                            FarmToWork.CreatePlant(PlantToCreate, Creature.Manager.World);
-                            Creature.Faction.Designations.RemoveVoxelDesignation(FarmToWork.Voxel, DesignationType._AllFarms);
-                            Creature.Faction.Designations.AddVoxelDesignation(FarmToWork.Voxel, DesignationType._InactiveFarm, FarmToWork, null);
-                            DestroyResources();
+                        FarmToWork.CreatePlant(PlantToCreate, Creature.Manager.World);
+                        DestroyResources();
+
                     }
                     if (MathFunctions.RandEvent(0.01f))
                         Creature.Manager.World.ParticleManager.Trigger("dirt_particle", Creature.AI.Position, Color.White, 1);
