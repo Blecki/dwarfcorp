@@ -42,7 +42,6 @@ namespace DwarfCorp
     public class PlantAct : CompoundCreatureAct
     {
         public FarmTile FarmToWork { get; set; }
-        public string PlantToCreate { get; set; }
         public List<ResourceAmount> Resources { get; set; }   
 
         public PlantAct()
@@ -68,14 +67,8 @@ namespace DwarfCorp
                 yield return Status.Fail;
                 yield break;
             }
-            if (FarmToWork.Farmer == null)
-            {
-                yield return Status.Fail;
-                yield break;
-            }
             else if (FarmToWork.PlantExists())
             {
-                FarmToWork.Farmer = null;
                 yield return Status.Success;
             }
             else
@@ -86,11 +79,6 @@ namespace DwarfCorp
                 Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
                 while (FarmToWork.Progress < 100.0f && !Satisfied())
                 {
-                    if (FarmToWork.Farmer == null)
-                    {
-                        yield return Status.Fail;
-                        yield break;
-                    }
                     Creature.Physics.Velocity *= 0.1f;
                     FarmToWork.Progress += 3 * Creature.Stats.BaseFarmSpeed*DwarfTime.Dt;
 
@@ -105,7 +93,7 @@ namespace DwarfCorp
                     if (FarmToWork.Progress >= 100.0f && !Satisfied())
                     {
                         FarmToWork.Progress = 0.0f;
-                        FarmToWork.CreatePlant(PlantToCreate, Creature.Manager.World);
+                        FarmToWork.CreatePlant(Creature.Manager.World);
                         DestroyResources();
 
                     }
@@ -117,7 +105,6 @@ namespace DwarfCorp
                 Creature.CurrentCharacterMode = CharacterMode.Idle;
                 Creature.AI.AddThought(Thought.ThoughtType.Farmed);
                 Creature.AI.AddXP(1);
-                FarmToWork.Farmer = null;
                 Creature.Sprite.PauseAnimations(CharacterMode.Attacking);
                 yield return Status.Success;
             }
@@ -126,7 +113,7 @@ namespace DwarfCorp
 
         private bool Validate()
         {
-            bool tileValid = FarmToWork.Farmer == Agent && FarmToWork.Voxel.IsValid && !FarmToWork.Voxel.IsEmpty;
+            bool tileValid = FarmToWork.Voxel.IsValid && !FarmToWork.Voxel.IsEmpty;
 
             if (!tileValid)
             {
@@ -150,12 +137,7 @@ namespace DwarfCorp
         public override void OnCanceled()
         {
             var tile = FarmToWork;
-
-            if (tile != null && tile.Farmer == Agent)
-            {
-                tile.Farmer = null;
-            }
-
+            
             base.OnCanceled();
         }
 
@@ -170,7 +152,6 @@ namespace DwarfCorp
             {
                 if (FarmToWork.Voxel.IsValid)
                 {
-                    FarmToWork.Farmer = Agent;
                     Tree = new Select(new Sequence(
                         new GetResourcesAct(Agent, Resources),
                         new Domain(Validate, new GoToVoxelAct(FarmToWork.Voxel, PlanAct.PlanType.Adjacent, Creature.AI)),
