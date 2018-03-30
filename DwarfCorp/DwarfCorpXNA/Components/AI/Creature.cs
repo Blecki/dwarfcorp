@@ -784,21 +784,9 @@ namespace DwarfCorp
             return damage;
         }
 
-        /// <summary>
-        /// Adds a body to the creature's list of gather designations.
-        /// </summary>
         public void Gather(Body item)
         {
-            var gatherTask = new GatherItemTask(item)
-            {
-                Priority = Task.PriorityType.High
-            };
-
-            if (!AI.Tasks.Contains(gatherTask))
-            {
-                AI.Faction.Designations.AddEntityDesignation(item, DesignationType.Gather);
-                AI.AssignTask(gatherTask);
-            }
+            AI.AssignTask(new GatherItemTask(item) { Priority = Task.PriorityType.High });
         }
 
         protected void CreateSprite(EmployeeClass employeeClass, ComponentManager manager, float heightOffset=0.15f)

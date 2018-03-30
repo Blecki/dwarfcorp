@@ -247,12 +247,9 @@ namespace DwarfCorp
                     var items = agent.World.ChunkManager.KillVoxel(vox);
 
                     if (items != null)
-                    {
                         foreach (Body item in items)
-                        {
                             agent.Gather(item);
-                        }
-                    }
+
                     yield return Act.Status.Success;
                 }
 

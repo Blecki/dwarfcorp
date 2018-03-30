@@ -67,7 +67,7 @@ namespace DwarfCorp
                 List<Task> assignments = new List<Task>();
                 foreach (var v in refs)
                 {
-                    if (!v.IsValid || (v.IsEmpty && v.IsExplored))
+                    if (!v.IsValid || (v.IsEmpty && v.IsExplored) || v.Type.IsInvincible)
                         continue;
 
                    

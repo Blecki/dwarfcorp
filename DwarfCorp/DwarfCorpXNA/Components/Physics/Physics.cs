@@ -226,7 +226,11 @@ namespace DwarfCorp
  
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (!Active) return;
+            if (!Active)
+            {
+                base.Update(gameTime, chunks, camera);
+                return;
+            }
 
             // Never apply physics when animating!
             if (AnimationQueue.Count > 0)

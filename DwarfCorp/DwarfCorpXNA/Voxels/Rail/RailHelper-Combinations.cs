@@ -183,8 +183,10 @@ namespace DwarfCorp.Rail
                     Player.World.ComponentManager.RootComponent.AddChild(designation.WorkPile);
                     designation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
                     Player.World.ParticleManager.Trigger("puff", endPos, Color.White, 10);
-                    Player.Faction.Designations.AddEntityDesignation(body, DesignationType.Craft, designation);
-                    assignments.Add(new CraftItemTask(designation));
+
+                    var task = new CraftItemTask(designation);
+                    Player.Faction.Designations.AddEntityDesignation(body, DesignationType.Craft, designation, task);
+                    assignments.Add(task);
                 }
 
                 if (GodModeSwitch)

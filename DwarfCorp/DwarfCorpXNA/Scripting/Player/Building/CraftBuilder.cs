@@ -100,44 +100,6 @@ namespace DwarfCorp
             IsEnabled = false;
         }
 
-        public bool IsDesignation(VoxelHandle v)
-        {
-            if (!v.IsValid) return false;
-            return Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).Any(d => d.Location == v);
-        }
-
-
-        public CraftDesignation GetDesignation(VoxelHandle v)
-        {
-            return Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == v);
-        }
-
-        public void AddDesignation(CraftDesignation des, Vector3 AdditionalOffset)
-        {
-            if (des.OverrideOrientation)
-                des.Entity.Orient(des.Orientation);
-            else
-                des.Entity.OrientToWalls();
-
-            Faction.Designations.AddEntityDesignation(des.Entity, DesignationType.Craft, des);
-        }
-
-        public void RemoveDesignation(CraftDesignation des)
-        {
-            Faction.Designations.RemoveEntityDesignation(des.Entity, DesignationType.Craft);
-
-            if (des.WorkPile != null)
-                des.WorkPile.Die();
-        }
-
-        public void RemoveDesignation(VoxelHandle v)
-        {
-            var des = GetDesignation(v);
-
-            if (des != null)
-                RemoveDesignation(des);
-        }
-
         public void Update(DwarfTime gameTime, GameMaster player)
         {
             if (!IsEnabled)
@@ -274,12 +236,6 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (IsDesignation(designation.Location))
-            {
-                World.ShowToolPopup("Something is already being built there!");
-                return false;
-            }
-
             if (!String.IsNullOrEmpty(designation.ItemType.CraftLocation) &&
                 Faction.FindNearestItemWithTags(designation.ItemType.CraftLocation, designation.Location.WorldPosition, false) ==
                 null)
@@ -335,6 +291,9 @@ namespace DwarfCorp
 
             if (CurrentCraftBody != null)
             {
+                // Just check for any intersecting body in octtree.
+
+
                 var intersectsAnyOther = Faction.OwnedObjects.FirstOrDefault(
                     o => o != null &&
                     o != CurrentCraftBody &&
@@ -385,7 +344,7 @@ namespace DwarfCorp
                         // Creating multiples doesn't work anyway - kill it.
                         foreach (var r in refs)
                         {
-                            if (IsDesignation(r) || !r.IsValid || !r.IsEmpty)
+                            if (!r.IsValid || !r.IsEmpty)
                             {
                                 continue;
                             }
@@ -410,8 +369,14 @@ namespace DwarfCorp
 
                                 if (IsValid(newDesignation))
                                 {
-                                    AddDesignation(newDesignation, CurrentCraftType.SpawnOffset);
-                                    assignments.Add(new CraftItemTask(newDesignation));
+                                    var task = new CraftItemTask(newDesignation);
+
+                                    if (newDesignation.OverrideOrientation)
+                                        newDesignation.Entity.Orient(newDesignation.Orientation);
+                                    else
+                                        newDesignation.Entity.OrientToWalls();
+
+                                    assignments.Add(task);
 
                                     // Todo: Maybe don't support create huge numbers of entities at once?
                                     CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.EntityName, r.WorldPosition,
@@ -438,11 +403,16 @@ namespace DwarfCorp
                     {
                         foreach (var r in refs)
                         {
-                            if (!IsDesignation(r))
+                            if (r.IsValid)
                             {
-                                continue;
+                                var designation = Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == r);
+                                if (designation != null)
+                                {
+                                    var realDesignation = World.PlayerFaction.Designations.GetEntityDesignation(designation.Entity, DesignationType.Craft);
+                                    if (realDesignation != null)
+                                        World.Master.TaskManager.CancelTask(realDesignation.Task);
+                                }
                             }
-                            RemoveDesignation(r);
                         }
                         break;
                     }

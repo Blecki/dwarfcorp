@@ -68,26 +68,9 @@ namespace DwarfCorp
             return IsFeasible(agent) == Feasibility.Infeasible;
         }
 
-        public override void OnAssign(CreatureAI agent)
-        {
-            if (FarmToWork != null)
-                FarmToWork.Farmer = agent;
-
-            base.OnAssign(agent);
-        }
-
-        public override void OnUnAssign(CreatureAI agent)
-        {
-            if (FarmToWork != null && FarmToWork.Farmer == agent)
-                FarmToWork.Farmer = null;
-
-            base.OnUnAssign(agent);
-        }
-
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.TillSoil) &&
-                !agent.Stats.IsTaskAllowed(Task.TaskCategory.Plant))
+            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Plant))
                 return Feasibility.Infeasible;
 
             if (agent.AI.Status.IsAsleep)
@@ -104,12 +87,15 @@ namespace DwarfCorp
 
         public override bool IsComplete(Faction faction)
         {
-            return FarmToWork == null || FarmToWork.PlantExists();
+            if (FarmToWork == null) return true;
+            if (FarmToWork.PlantExists()) return true;
+            if (FarmToWork.Voxel.IsEmpty) return true;
+            return false;
         }
 
         public override Act CreateScript(Creature agent)
         {
-            return new PlantAct(agent.AI) { Resources = RequiredResources, PlantToCreate = Plant, FarmToWork = FarmToWork, Name = "Work " + FarmToWork.Voxel.Coordinate };
+            return new PlantAct(agent.AI) { Resources = RequiredResources, FarmToWork = FarmToWork, Name = "Work " + FarmToWork.Voxel.Coordinate };
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
@@ -119,6 +105,16 @@ namespace DwarfCorp
             {
                 return (FarmToWork.Voxel.WorldPosition - agent.AI.Position).LengthSquared();
             }
+        }
+
+        public override void OnEnqueued(Faction Faction)
+        {
+            Faction.Designations.AddVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant, FarmToWork, this);
+        }
+
+        public override void OnDequeued(Faction Faction)
+        {
+            Faction.Designations.RemoveVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant);
         }
     }
 }
