@@ -68,22 +68,6 @@ namespace DwarfCorp
             return IsFeasible(agent) == Feasibility.Infeasible;
         }
 
-        public override void OnAssign(CreatureAI agent)
-        {
-            if (FarmToWork != null)
-                FarmToWork.Farmer = agent;
-
-            base.OnAssign(agent);
-        }
-
-        public override void OnUnAssign(CreatureAI agent)
-        {
-            if (FarmToWork != null && FarmToWork.Farmer == agent)
-                FarmToWork.Farmer = null;
-
-            base.OnUnAssign(agent);
-        }
-
         public override Feasibility IsFeasible(Creature agent)
         {
             if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Plant))
@@ -111,7 +95,7 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature agent)
         {
-            return new PlantAct(agent.AI) { Resources = RequiredResources, PlantToCreate = Plant, FarmToWork = FarmToWork, Name = "Work " + FarmToWork.Voxel.Coordinate };
+            return new PlantAct(agent.AI) { Resources = RequiredResources, FarmToWork = FarmToWork, Name = "Work " + FarmToWork.Voxel.Coordinate };
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

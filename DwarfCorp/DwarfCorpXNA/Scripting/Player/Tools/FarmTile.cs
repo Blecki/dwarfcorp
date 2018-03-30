@@ -44,18 +44,12 @@ namespace DwarfCorp
         public VoxelHandle Voxel = VoxelHandle.InvalidHandle;
         public Plant Plant = null;
         public float Progress = 0.0f;
-        public CreatureAI Farmer = null;
-        public bool IsCanceled { get { return false; } set { } } 
-        public string PlantedType = null;
+        public string SeedResourceType = null;
+        public List<ResourceAmount> RequiredResources = null;
 
         public bool IsTilled()
         {
             return (Voxel.IsValid) && Voxel.Type.Name == "TilledSoil";
-        }
-
-        public bool IsFree()
-        {
-            return (Plant == null || Plant.IsDead) && Farmer == null;
         }
 
         public bool PlantExists()
@@ -63,9 +57,8 @@ namespace DwarfCorp
             return !(Plant == null || Plant.IsDead);
         }
 
-        public void CreatePlant(string SeedResourceType, WorldManager world)
+        public void CreatePlant(WorldManager world)
         {
-            PlantedType = SeedResourceType;
             Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[SeedResourceType].PlantToGenerate, Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
             Plant.Farm = this;
             
@@ -78,26 +71,5 @@ namespace DwarfCorp
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Voxel.WorldPosition, true);
 
         }
-
-        public void TriggerAutoHarvest()
-        {
-            if (Plant != null && !Plant.IsDead)
-            {
-                var task = new ChopEntityTask(Plant) { Priority = Task.PriorityType.Low };
-                if (Plant.World.PlayerFaction.Designations.AddEntityDesignation(Plant, DesignationType.Chop, null, task) == DesignationSet.AddDesignationResult.Added)
-                    Plant.World.Master.TaskManager.AddTask(task);
-            }
-        }
-
-        public void TriggerAutoReplant(WorldManager world)
-        {
-            if (Plant == null && Voxel.IsValid && Voxel.Type.Name == "TilledSoil" && !String.IsNullOrEmpty(PlantedType))
-            {
-                var task = new PlantTask(this) { Plant = PlantedType };
-                if (world.PlayerFaction.Designations.AddVoxelDesignation(Voxel, DesignationType.Plant, this, task) == DesignationSet.AddDesignationResult.Added)
-                    world.Master.TaskManager.AddTask(task);
-            }
-        }
-
     }
 }

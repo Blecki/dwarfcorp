@@ -162,6 +162,13 @@ namespace DwarfCorp
         
         public static Texture2D GetContentTexture(string asset)
         {
+            if (asset == null)
+            {
+                var r = Content.Load<Texture2D>(ContentPaths.Error);
+                TextureCache[asset] = r;
+                return r;
+            }
+
             if (TextureCache.ContainsKey(asset))
                 return TextureCache[asset];
 

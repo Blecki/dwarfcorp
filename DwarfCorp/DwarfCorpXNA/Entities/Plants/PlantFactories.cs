@@ -120,7 +120,7 @@ namespace DwarfCorp
             return new Cactus(Manager, Position, "cactus", Data.GetData("Scale", 1.0f));
         }
 
-        [EntityFactory("Candycane Sprout")]
+        [EntityFactory("Cactus Sprout")]
         private static GameComponent __factory0D(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Seedling(Manager, "Cactus", Position, "cactussprout", 12);

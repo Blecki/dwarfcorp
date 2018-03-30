@@ -120,7 +120,9 @@ namespace DwarfCorp
                     {
                         var farmTile = new FarmTile
                         {
-                            Voxel = voxel
+                            Voxel = voxel,
+                            RequiredResources = RequiredResources,
+                            SeedResourceType = PlantType
                         };
 
                         var task = new PlantTask(farmTile)
@@ -138,21 +140,7 @@ namespace DwarfCorp
                 }
 
                 Player.TaskManager.AddTasks(goals);
-
-                if (Player.World.Paused)
-                {
-                    // Horrible hack to make it work when game is paused. Farmer doesn't get assigned until
-                    // next update!
-                    // Todo: Kill Hack.
-                    if (minions.Count > 0)
-                    {
-                        foreach (var goal in goals)
-                        {
-                            goal.FarmToWork.Farmer = minions[0];
-                        }
-                    }
-                }
-
+                
                 OnConfirm(minions);
             }
             else if (button == InputManager.MouseButton.Right)
