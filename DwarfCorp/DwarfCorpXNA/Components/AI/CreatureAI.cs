@@ -228,6 +228,7 @@ namespace DwarfCorp
         public bool TriggersMourning { get; set; }
         /// <summary> List of changes to the creatures XP over time.</summary>
         public List<int> XPEvents { get; set; }
+        public float DestroyPlayerObjectProbability = -1.0f;
 
         public string Biography = "";
 
@@ -235,6 +236,7 @@ namespace DwarfCorp
             new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
 
         public float StealFromPlayerProbability = -1.0f;
+        public string PlantBomb = null;
 
         [OnDeserialized]
         public void OnDeserialize(StreamingContext ctx)
@@ -719,6 +721,29 @@ namespace DwarfCorp
                             {
                                 AssignTask(new ActWrapperTask(new GetResourcesAct(this, new List<ResourceAmount>() { new ResourceAmount(resource.Value.ResourceType, 1) }) { Faction = World.PlayerFaction }) { Name = "Steal stuff", Priority = Task.PriorityType.High });
                             }
+                        }
+                    }
+                }
+
+                if (DestroyPlayerObjectProbability > 0 && MathFunctions.RandEvent(DestroyPlayerObjectProbability))
+                {
+                    bool plantBomb = !String.IsNullOrEmpty(PlantBomb) && MathFunctions.RandEvent(0.5f);
+                    if (!plantBomb && World.PlayerFaction.OwnedObjects.Count > 0)
+                    {
+                        var thing = Datastructures.SelectRandom<Body>(World.PlayerFaction.OwnedObjects);
+                        AssignTask(new KillEntityTask(thing, KillEntityTask.KillType.Auto));
+                    }
+                    else if (plantBomb)
+                    {
+                        var room = World.PlayerFaction.GetNearestRoom(Position);
+                        if (room != null)
+                        {
+                            AssignTask(new ActWrapperTask(new Sequence(new GoToZoneAct(this, room), new Do(() => { EntityFactory.CreateEntity<Body>(PlantBomb, Position); return true; }))) { Priority = Task.PriorityType.High });
+                        }
+                        else if (World.PlayerFaction.OwnedObjects.Count > 0)
+                        {
+                            var thing = Datastructures.SelectRandom<Body>(World.PlayerFaction.OwnedObjects);
+                            AssignTask(new ActWrapperTask(new Sequence(new GoToEntityAct(thing, this), new Do(() => { EntityFactory.CreateEntity<Body>(PlantBomb, Position); return true; }))) { Priority = Task.PriorityType.High });
                         }
                     }
                 }

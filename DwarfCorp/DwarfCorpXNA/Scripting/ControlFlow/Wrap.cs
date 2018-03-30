@@ -66,4 +66,30 @@ namespace DwarfCorp
         }
     }
 
+    [Newtonsoft.Json.JsonObject(IsReference = true)]
+    public class Do : Act
+    {
+        private Func<bool> Function { get; set; }
+
+        public Do(Func<bool> fn)
+        {
+            Name = fn.Method.Name;
+            Function = fn;
+        }
+
+        public override void Initialize()
+        {
+            Enumerator = Run().GetEnumerator();
+        }
+
+        public override IEnumerable<Status> Run()
+        {
+            LastTickedChild = this;
+            if (Function())
+            {
+                yield return Status.Success;
+            }
+            yield return Status.Fail;
+        }
+    }
 }

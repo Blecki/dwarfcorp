@@ -161,9 +161,10 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public void AddBody(Body body)
+        public void AddBody(Body body, bool addToOwnedObjects = true)
         {
-            this.Faction.OwnedObjects.Add(body);
+            if (addToOwnedObjects)
+                this.Faction.OwnedObjects.Add(body);
             ZoneBodies.Add(body);
             body.OnDestroyed += () => body_onDestroyed(body);
         }

@@ -110,22 +110,39 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockFill,
                 Font = "font16",
                 TextColor = new Vector4(0, 0, 0, 1),
-                Text = "0",
+                Text = "",
+                ArrowKeyUpDown = (sender, args) =>
+                {
+                    CurrentValue = Math.Min(Math.Max(CurrentValue + args, 0), MaximumValue);   
+                    sender.Invalidate();
+                },
                 BeforeTextChange = (sender, args) =>
                 {
-                    Valid = false;
-
+                    if (args.NewText == "")
+                    {
+                        args.NewText = "";
+                        _currentValue = 0;
+                        args.Cancelled = false;
+                        return;
+                    }
                     int newValue;
-                    //if (args.NewText.Length == 0) args.NewText = "0";
-
                     if (Int32.TryParse(args.NewText, out newValue))
                     {
                         if (newValue < 0) newValue = 0;
                         if (newValue > MaximumValue) newValue = MaximumValue;
                         _currentValue = newValue;
-                        Valid = true;
-                        args.NewText = newValue.ToString();
-                    }                    
+                        if (newValue == 0)
+                        {
+                            args.NewText = "";
+                        }
+                        else
+                        {
+                            args.NewText = newValue.ToString();
+                        }
+                        args.Cancelled = false;
+                        return;
+                    }
+                    args.Cancelled = true;
                 },
                 OnTextChange = (sender) =>
                 {
