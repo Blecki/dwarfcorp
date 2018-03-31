@@ -41,7 +41,7 @@ namespace DwarfCorp
 {
     public class PlantAct : CompoundCreatureAct
     {
-        public FarmTile FarmToWork { get; set; }
+        public Farm FarmToWork { get; set; }
         public List<ResourceAmount> Resources { get; set; }   
 
         public PlantAct()
@@ -86,9 +86,23 @@ namespace DwarfCorp
 
                     if (FarmToWork.Progress >= FarmToWork.TargetProgress && !FarmToWork.Finished)
                     {
-                        FarmToWork.CreatePlant(Creature.Manager.World);
-                        DestroyResources();
+                        var plant = EntityFactory.CreateEntity<Plant>(
+                            ResourceLibrary.Resources[FarmToWork.SeedResourceType].PlantToGenerate, 
+                            FarmToWork.Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
 
+                        plant.Farm = FarmToWork;
+
+                        Matrix original = plant.LocalTransform;
+                        original.Translation += Vector3.Down;
+                        plant.AnimationQueue.Add(new EaseMotion(0.5f, original, plant.LocalTransform.Translation));
+
+                        Creature.Manager.World.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
+
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, FarmToWork.Voxel.WorldPosition, true);
+
+                        FarmToWork.Finished = true;
+
+                        DestroyResources();
                     }
 
                     if (MathFunctions.RandEvent(0.01f))

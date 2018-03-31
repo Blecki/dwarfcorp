@@ -125,7 +125,7 @@ namespace DwarfCorp
 
                     if (ValidatePlanting(voxel))
                     {
-                        var farmTile = new FarmTile
+                        var farmTile = new Farm
                         {
                             Voxel = voxel,
                             RequiredResources = RequiredResources,

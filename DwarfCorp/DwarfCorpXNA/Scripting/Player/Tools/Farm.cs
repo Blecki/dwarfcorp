@@ -39,7 +39,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class FarmTile
+    public class Farm
     {
         public VoxelHandle Voxel = VoxelHandle.InvalidHandle;
         public float Progress = 0.0f;
@@ -47,26 +47,5 @@ namespace DwarfCorp
         public string SeedResourceType = null;
         public List<ResourceAmount> RequiredResources = null;
         public bool Finished = false;
-
-        public bool IsTilled()
-        {
-            return (Voxel.IsValid) && Voxel.Type.Name == "TilledSoil";
-        }
-
-        public void CreatePlant(WorldManager world)
-        {
-            var plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[SeedResourceType].PlantToGenerate, Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
-            plant.Farm = this;
-            
-            Matrix original = plant.LocalTransform;
-            original.Translation += Vector3.Down;
-            plant.AnimationQueue.Add(new EaseMotion(0.5f, original, plant.LocalTransform.Translation));
-
-            world.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
-
-            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Voxel.WorldPosition, true);
-
-            Finished = true;
-        }
     }
 }

@@ -39,7 +39,7 @@ namespace DwarfCorp
 {
     public class PlantTask : Task
     {
-        public FarmTile FarmToWork { get; set; }
+        public Farm FarmToWork { get; set; }
         public string Plant { get; set; }
         public List<ResourceAmount> RequiredResources { get; set; } 
 
@@ -49,7 +49,7 @@ namespace DwarfCorp
             Category = TaskCategory.Plant;
         }
 
-        public PlantTask(FarmTile farmToWork)
+        public PlantTask(Farm farmToWork)
         {
             FarmToWork = farmToWork;
             Name = "Plant " + FarmToWork.Voxel.Coordinate;

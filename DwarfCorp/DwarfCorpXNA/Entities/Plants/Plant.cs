@@ -50,7 +50,7 @@ namespace DwarfCorp
         public float MeshScale { get; set; }
         public Vector3 BasePosition = Vector3.Zero;
         public float RandomAngle = 0.0f;
-        public FarmTile Farm;
+        public Farm Farm;
 
         public Plant()
         {
@@ -119,7 +119,7 @@ namespace DwarfCorp
             {
                 if (Farm.Voxel.IsValid && Farm.Voxel.Type.Name == "TilledSoil" && !String.IsNullOrEmpty(Farm.SeedResourceType))
                 {
-                    var farmTile = new FarmTile
+                    var farmTile = new Farm
                     {
                         Voxel = Farm.Voxel,
                         SeedResourceType = Farm.SeedResourceType,
