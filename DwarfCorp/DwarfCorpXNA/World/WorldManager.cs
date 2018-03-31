@@ -729,7 +729,7 @@ namespace DwarfCorp
             {
                 LightPositions[j] = new Vector3(0, 0, 0);
             }
-            DefaultShader.CurrentNumLights = GameSettings.Default.CursorLightEnabled ? numLights - 1 : numLights;
+            DefaultShader.CurrentNumLights = Math.Max(Math.Min(GameSettings.Default.CursorLightEnabled ? numLights - 1 : numLights, 15), 0);
             DynamicLight.TempLights.Clear();
         }
 
