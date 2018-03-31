@@ -11,10 +11,10 @@ namespace DwarfCorp.Rail
 {
     public partial class RailHelper
     {
-		private static Vector3? FindConnectionPoint(RailEntity A, RailEntity B)
+		private static RailEntity.NeighborConnection FindConnectionPoint(RailEntity A, RailEntity B)
         {
             if (!A.NeighborRails.Any(n => n.NeighborID == B.GlobalID)) return null;
-            return A.NeighborRails.First(n => n.NeighborID == B.GlobalID).Position;
+            return A.NeighborRails.First(n => n.NeighborID == B.GlobalID);
         }
 
         private static RailConnection FindConnectionFromTransformedEntrancePoint(RailPiece Piece, Matrix TransformToEntitySpace, Vector3 EntrancePoint)
@@ -37,19 +37,28 @@ namespace DwarfCorp.Rail
                     yield return neighbor.NeighborID;
                 yield break;
             }
+
             var connectionPoint = FindConnectionPoint(Leaving, Entering);
-            if (connectionPoint.HasValue)
+            if (connectionPoint != null)
             {
-                var piece = RailLibrary.GetRailPiece(Entering.GetPiece().RailPiece);
                 var transformToEntitySpace = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Entering.GetPiece().Orientation) * Entering.GlobalTransform;
-                var connection = FindConnectionFromTransformedEntrancePoint(piece, transformToEntitySpace, connectionPoint.Value);
+                var backConnection = FindConnectionPoint(Entering, Leaving);
+
+                var connection = FindConnectionFromTransformedEntrancePoint(RailLibrary.GetRailPiece(Entering.GetPiece().RailPiece), transformToEntitySpace, 
+                    backConnection.Raised ? (connectionPoint.Position - Vector3.UnitY) : connectionPoint.Position);
+
                 if (connection != null)
                     foreach (var exit in connection.Exits)
                     {
                         var transformedExit = Vector3.Transform(exit, transformToEntitySpace);
                         foreach (var neighbor in Entering.NeighborRails)
+                        {
+                            if (neighbor.Raised)
+                                transformedExit += Vector3.UnitY;
+
                             if ((neighbor.Position - transformedExit).LengthSquared() < 0.01f)
                                 yield return neighbor.NeighborID;
+                        }
                     }
             }
         }

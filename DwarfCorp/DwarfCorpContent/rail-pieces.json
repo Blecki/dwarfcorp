@@ -7,43 +7,8 @@
       [ "-0.5, -0.32", "0.5, -0.32" ],
       [ "-0.5, 0.32", "0.5, 0.32" ]
     ],
-    "CompassConnections": [ "West East" ]
-  },
-
-  {
-    "Name": "ortho-straight-topslope",
-    "Tile": "0, 0",
-    "Shape": "TopHalfSlope",
-    "SplinePoints": [
-      [
-        "-0.5, 1.1, 0",
-        "0.5, 0.6, 0"
-      ]
-    ]
-  },
-
-  {
-    "Name": "ortho-straight-botslope",
-    "Tile": "0, 0",
-    "Shape": "BottomHalfSlope",
-    "SplinePoints": [
-      [
-        "-0.5, 0.6, 0",
-        "0.5, 0.1, 0"
-      ]
-    ]
-  },
-
-  {
-    "Name": "ortho-straight-steepslope",
-    "Tile": "0, 0",
-    "Shape": "SteepSlope",
-    "SplinePoints": [
-      [
-        "-0.5, 1.1, 0",
-        "0.5, 0.1, 0"
-      ]
-    ]
+    "CompassConnections": [ "West East" ],
+    "AutoSlope": true
   },
 
   {

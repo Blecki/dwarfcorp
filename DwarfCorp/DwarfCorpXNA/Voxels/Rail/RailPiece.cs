@@ -28,6 +28,7 @@ namespace DwarfCorp.Rail
         public List<List<Vector3>> SplinePoints = new List<List<Vector3>>();
         public List<List<Vector2>> RailSplines = new List<List<Vector2>>();
         public List<CompassConnection> CompassConnections = new List<CompassConnection>();
+        public bool AutoSlope = false;
 
         public List<RailConnection> Connections;
 
