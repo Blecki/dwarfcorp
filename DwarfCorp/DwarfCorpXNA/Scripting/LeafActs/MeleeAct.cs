@@ -387,14 +387,10 @@ namespace DwarfCorp
         {
             if (items == null) return;
             if (!Agent.Faction.Race.IsIntelligent)
-            {
                 return;
-            }
 
             foreach (Body item in items)
-            {
                 Agent.Creature.Gather(item);
-            }
         }
     }
 

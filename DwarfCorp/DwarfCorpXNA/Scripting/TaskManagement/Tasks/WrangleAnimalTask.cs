@@ -108,10 +108,10 @@ namespace DwarfCorp
                     closestPen = pen;
                 }
             }
+
             if (closestPen == null)
-            {
                 agent.World.MakeAnnouncement("Can't wrangle " + Animal.Species + "s. Need more animal pens.");
-            }
+
             LastPen = closestPen;
             return closestPen;
         }
@@ -120,9 +120,8 @@ namespace DwarfCorp
         {
             var closestPen = GetClosestPen(agent);
             if (closestPen == null)
-            {
                 return null;
-            }
+
 
             closestPen.Species = Animal.Species;
 
@@ -143,7 +142,6 @@ namespace DwarfCorp
 
             return Animal != null
                 && !Animal.IsDead
-                && agent.Faction.Designations.IsDesignation(Animal.GetRoot().GetComponent<Physics>(), DesignationType.Wrangle)
                 && GetClosestPen(agent) != null ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
@@ -156,6 +154,16 @@ namespace DwarfCorp
         public override bool IsComplete(Faction faction)
         {
             return Animal == null || Animal.IsDead || (LastPen != null && LastPen.ZoneBodies.Contains(Animal.Physics));
+        }
+
+        public override void OnEnqueued(Faction Faction)
+        {
+            Faction.Designations.AddEntityDesignation(Animal.Physics, DesignationType.Wrangle, null, this);
+        }
+
+        public override void OnDequeued(Faction Faction)
+        {
+            Faction.Designations.RemoveEntityDesignation(Animal.Physics, DesignationType.Wrangle);
         }
     }
 }

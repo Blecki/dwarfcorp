@@ -76,10 +76,7 @@ namespace DwarfCorp
             Dictionary<ResourceType, int> numResources = new Dictionary<ResourceType, int>();
             int numFeasibleVoxels = 0;
             var factionResources = agent.Faction.ListResources();
-            if (!agent.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put))
-            {
-                return Feasibility.Infeasible;
-            }
+
             var voxtype = VoxelLibrary.GetVoxelType(VoxType);
             if (!numResources.ContainsKey(voxtype.ResourceToRelease))
             {
@@ -102,12 +99,12 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !Voxel.IsValid || !agent.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put);
+            return !Voxel.IsValid;
         }
 
         public override bool ShouldRetry(Creature agent)
         {
-            return Voxel.IsValid && agent.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put);
+            return Voxel.IsValid;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
@@ -117,21 +114,20 @@ namespace DwarfCorp
 
         public bool Validate(CreatureAI creature, VoxelHandle voxel, ResourceAmount resources)
         {
-            bool success =  creature.Faction.Designations.IsVoxelDesignation(voxel, DesignationType.Put) &&
-                creature.Creature.Inventory.HasResource(resources);
-            return success;
+            return creature.Creature.Inventory.HasResource(resources);
         }
 
         public override Act CreateScript(Creature creature)
         {
-            var voxType = VoxelLibrary.GetVoxelType(VoxType);
-            var resources = new ResourceAmount(voxType.ResourceToRelease, 1);
-            return new Select(new Sequence(new Domain(() => creature.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put), 
-                                                      new GetResourcesAct(creature.AI, new List<ResourceAmount>() { resources })), 
-                new Domain(() => Validate(creature.AI, Voxel, resources),
-                             new GoToVoxelAct(Voxel, PlanAct.PlanType.Radius, creature.AI, 4.0f)),
-                             new PlaceVoxelAct(Voxel, creature.AI, resources)), new Wrap(creature.RestockAll)
-                            )
+            var resources = new ResourceAmount(VoxelLibrary.GetVoxelType(VoxType).ResourceToRelease, 1);
+
+            return new Select(
+                new Sequence(
+                    new GetResourcesAct(creature.AI, new List<ResourceAmount>() { resources }),
+                    new Domain(() => Validate(creature.AI, Voxel, resources),
+                        new GoToVoxelAct(Voxel, PlanAct.PlanType.Radius, creature.AI, 4.0f)),
+                    new PlaceVoxelAct(Voxel, creature.AI, resources, VoxType)), 
+                new Wrap(creature.RestockAll))
             { Name = "Build Voxel" };
         }
 
@@ -144,176 +140,15 @@ namespace DwarfCorp
         {
             return Voxel.IsValid && Voxel.Type.Name == VoxType;
         }
-    }
 
-    /*
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    class BuildVoxelsTask : Task
-    {
-        public List<KeyValuePair<VoxelHandle, string>> Voxels { get; set; }
-
-        public BuildVoxelsTask()
+        public override void OnEnqueued(Faction Faction)
         {
-            Category = TaskCategory.BuildBlock;
+            Faction.Designations.AddVoxelDesignation(Voxel, DesignationType.Put, VoxType, this);
         }
 
-        public BuildVoxelsTask(List<KeyValuePair<VoxelHandle, string>> voxels)
+        public override void OnDequeued(Faction Faction)
         {
-            StringBuilder nameBuilder = new StringBuilder();
-            nameBuilder.Append("Place blocks at ");
-            foreach(var voxel in voxels)
-            {
-                nameBuilder.Append(voxel.Key.Coordinate.ToString());
-            }
-            Name = nameBuilder.ToString();
-            Voxels = voxels;
-            Priority = PriorityType.Medium;
-            Category = TaskCategory.BuildBlock;
-        }
-
-        public override Task Clone()
-        {
-            return new BuildVoxelsTask(Voxels) { Priority = this.Priority };
-        }
-
-        public override Feasibility IsFeasible(Creature agent)
-        {
-            if (!agent.AI.Stats.CurrentClass.IsTaskAllowed(TaskCategory.BuildBlock))
-                return Feasibility.Infeasible;
-
-            if (agent.AI.Status.IsAsleep)
-                return Feasibility.Infeasible;
-
-            Dictionary<ResourceLibrary.ResourceType, int> numResources = new Dictionary<ResourceLibrary.ResourceType, int>();
-            int numFeasibleVoxels = 0;
-            var factionResources = agent.Faction.ListResources();
-            foreach (var pair in Voxels)
-            {
-                if (!agent.Faction.Designations.IsVoxelDesignation(pair.Key, DesignationType.Put))
-                {
-                    continue;
-                }
-                var voxtype = VoxelLibrary.GetVoxelType(pair.Value);
-                if (!numResources.ContainsKey(voxtype.ResourceToRelease))
-                {
-                    numResources.Add(voxtype.ResourceToRelease, 0);
-                }
-                int num = numResources[voxtype.ResourceToRelease] + 1;
-                if (!factionResources.ContainsKey(voxtype.ResourceToRelease))
-                {
-                    continue;
-                }
-                var numInStocks = factionResources[voxtype.ResourceToRelease];
-                if (numInStocks.NumResources < num) continue;
-                numResources[voxtype.ResourceToRelease]++;
-                numFeasibleVoxels++;
-            }
-            return numFeasibleVoxels > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
-        }
-
-        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
-        {
-            return Voxels.Count*10;
-        }
-
-        public override bool ShouldRetry(Creature agent)
-        {
-            return Voxels.Count > 0;
-        }
-
-        private IEnumerable<Act.Status> Reloop(Creature agent)
-        {
-            List<KeyValuePair<VoxelHandle, string>> feasibleVoxels = Voxels.Where(voxel => agent.Faction.Designations.IsVoxelDesignation(voxel.Key, DesignationType.Put)).ToList();
-
-            if (feasibleVoxels.Count > 0)
-            {
-                //agent.AI.AssignTask(new BuildVoxelsTask(feasibleVoxels) { Priority = PriorityType.Medium });
-                // This is an obscene hack to allow dwarfs to share build voxel tasks.
-                for (int i = 0; i <= feasibleVoxels.Count / 4; i++)
-                {
-                    int k = i;
-                    int k4 = Math.Min(i + 4, feasibleVoxels.Count - 1);
-                    if (k >= feasibleVoxels.Count)
-                        break;
-                    agent.World.Master.TaskManager.AddTask(new BuildVoxelsTask(feasibleVoxels.GetRange(k, k4)) { Priority = PriorityType.Medium });
-                }
-            }
-            yield return Act.Status.Success;
-        }
-
-        private IEnumerable<Act.Status> Fail()
-        {
-            yield return Act.Status.Fail;
-        }
-
-        private IEnumerable<Act.Status> Succeed()
-        {
-            yield return Act.Status.Success;
-        }
-
-        public bool Validate(CreatureAI creature, VoxelHandle voxel, ResourceAmount resources)
-        {
-            return creature.Faction.Designations.IsVoxelDesignation(voxel, DesignationType.Put) && 
-                creature.Creature.Inventory.HasResource(resources);
-        }
-
-
-        public override Act CreateScript(Creature agent)
-        {
-             List<KeyValuePair<VoxelHandle, string>> feasibleVoxels = new List<KeyValuePair<VoxelHandle, string>>();
-            Dictionary<ResourceLibrary.ResourceType, int> numResources = new Dictionary<ResourceLibrary.ResourceType, int>();
-
-            List<ResourceAmount> resources = new List<ResourceAmount>();
-            var factionResources = agent.Faction.ListResources();
-            foreach (var pair in Voxels)
-            {
-                if (!agent.Faction.Designations.IsVoxelDesignation(pair.Key, DesignationType.Put))
-                {
-                    continue;
-                }
-                var voxType = VoxelLibrary.GetVoxelType(pair.Value);
-                if (!numResources.ContainsKey(voxType.ResourceToRelease))
-                {
-                    numResources.Add(voxType.ResourceToRelease, 0);
-                }
-                int num = numResources[voxType.ResourceToRelease] + 1;
-                if (!factionResources.ContainsKey(voxType.ResourceToRelease))
-                {
-                    continue;
-                }
-                var numInStocks = factionResources[voxType.ResourceToRelease];
-                if (numInStocks.NumResources < num) continue;
-                numResources[voxType.ResourceToRelease]++;
-                feasibleVoxels.Add(pair);
-                resources.Add(new ResourceAmount(voxType.ResourceToRelease));
-            }
-
-            List<Act> children = new List<Act>()
-            {
-                new GetResourcesAct(agent.AI, resources)
-            };
-
-            int i = 0;
-            foreach (var pair in feasibleVoxels)
-            {
-                int local = i;
-                var localVox = pair.Key;
-                children.Add(new Select(new Sequence(new Domain(() => Validate(agent.AI, localVox, resources[local]), 
-                             new GoToVoxelAct(localVox, PlanAct.PlanType.Radius, agent.AI, 4.0f)),
-                             new PlaceVoxelAct(localVox, agent.AI, resources[local])),
-                             new Wrap(Succeed)));
-                i++;
-            }
-
-            children.Add(new Wrap(Fail));
-            children.Add(new Wrap(agent.RestockAll));
-            children.Add(new Wrap(() => Reloop(agent)));
-
-            return new Select(new Sequence(children), new Sequence(new Wrap(()=> Reloop(agent)), new Wrap(agent.RestockAll)))
-            {
-                Name = "Build Blocks"
-            };
+            Faction.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Put);
         }
     }
-    */
 }

@@ -37,16 +37,12 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A creature goes to an entity, and then hits it until the other entity is dead.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    public class KillEntityAct : CompoundCreatureAct
+    public class ChopEntityAct : CompoundCreatureAct
     {
         public Body Entity { get; set; }
         public bool PathExists { get; set; }
         
-        public KillEntityAct()
+        public ChopEntityAct()
         {
             PathExists = false;
         }
@@ -63,7 +59,7 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public KillEntityAct(Body entity, CreatureAI creature) :
+        public ChopEntityAct(Body entity, CreatureAI creature) :
             base(creature)
         {
             Entity = entity;
@@ -92,7 +88,7 @@ namespace DwarfCorp
                         (
                         new GoToEntityAct(entity, creature)
                         {
-                            MovingTarget = true,
+                            MovingTarget = false,
                             PlanType = planType,
                             Radius = radius
                         } | new Wrap(() => OnAttackEnd(creature)),

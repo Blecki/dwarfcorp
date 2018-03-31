@@ -31,7 +31,6 @@ namespace DwarfCorp
             Chop,
             Guard,
             Attack,
-            Till,
             Plant,
             Wrangle,
             Craft,
@@ -161,11 +160,6 @@ namespace DwarfCorp
             Tools[ToolMode.God] = new GodModeTool(this);
 
             Tools[ToolMode.SelectUnits] = new DwarfSelectorTool(this);
-
-            Tools[ToolMode.Till] = new TillTool
-            {
-                Player = this
-            };
 
             Tools[ToolMode.Plant] = new PlantTool
             {
@@ -384,31 +378,7 @@ namespace DwarfCorp
             if (orphanedTaskRateLimiter.HasTriggered)
             {
                 List<Task> orphanedTasks = new List<Task>();
-                foreach (var block in Faction.Designations.EnumerateDesignations())
-                {
-                    if (block.Type == DesignationType.Put)
-                    {
-                        var type = (short)(block.Tag);
-                        var task = new BuildVoxelTask(block.Voxel, VoxelLibrary.GetVoxelType(type).Name);
-
-                        if (!TaskManager.HasTask(task) && 
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
-                    else if (block.Type == DesignationType.Dig)
-                    {
-                        var task = new KillVoxelTask(block.Voxel);
-                        if (!TaskManager.HasTask(task) &&
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
-                    // TODO... other tasks here ?
-                }
-
+                
                 foreach (var ent in Faction.Designations.EnumerateEntityDesignations())
                 {
                     if (ent.Type == DesignationType.Attack)
@@ -420,33 +390,8 @@ namespace DwarfCorp
                             orphanedTasks.Add(task);
                         }
                     }
-                    else if (ent.Type == DesignationType.Chop)
-                    {
-                        var task = new KillEntityTask(ent.Body, KillEntityTask.KillType.Chop);
-                        if (!TaskManager.HasTask(task) &&
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
-                    else if (ent.Type == DesignationType.Wrangle)
-                    {
-                        var task = new WrangleAnimalTask(ent.Body.GetRoot().GetComponent<Creature>());
-                        if (!TaskManager.HasTask(task) &&
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
-                    else if (ent.Type == DesignationType.Gather)
-                    {
-                        var task = new GatherItemTask(ent.Body);
-                        if (!TaskManager.HasTask(task) &&
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
+                    
+                    
                     else if (ent.Type == DesignationType.Craft)
                     {
                         var task = new CraftItemTask(ent.Tag as CraftDesignation);

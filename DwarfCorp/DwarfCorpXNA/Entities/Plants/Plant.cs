@@ -117,8 +117,23 @@ namespace DwarfCorp
         {
             if (Farm != null && !(this is Seedling))
             {
-                Farm.Plant = null;
-                Farm.TriggerAutoReplant(World);
+                if (Farm.Voxel.IsValid && Farm.Voxel.Type.Name == "TilledSoil" && !String.IsNullOrEmpty(Farm.SeedResourceType))
+                {
+                    var farmTile = new FarmTile
+                    {
+                        Voxel = Farm.Voxel,
+                        SeedResourceType = Farm.SeedResourceType,
+                        RequiredResources = Farm.RequiredResources
+                    };
+
+                    var task = new PlantTask(farmTile)
+                    {
+                        Plant = Farm.SeedResourceType,
+                        RequiredResources = Farm.RequiredResources
+                    };
+
+                    World.Master.TaskManager.AddTask(task);
+                }
             }
             base.Die();
         }

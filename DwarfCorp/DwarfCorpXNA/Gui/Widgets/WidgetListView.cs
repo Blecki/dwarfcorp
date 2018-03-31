@@ -93,7 +93,7 @@ namespace DwarfCorp.Gui.Widgets
         protected override Mesh Redraw()
         {
             if (Children.Count > 1)
-                ItemHeight = Math.Max(Children.GetRange(1, Children.Count - 1).Max(child => Math.Max(child.Rect.Height, child.MinimumSize.Y)), 32);
+                ItemHeight = Math.Max(Children.GetRange(1, Children.Count - 1).Max(child => Math.Max(child.Rect.Height, child.MinimumSize.Y)), ItemHeight);
             var font = Root.GetTileSheet(Font);
             var drawableInterior = GetDrawableInterior();
             drawableInterior.Width = (Children[0].Rect.Left - drawableInterior.Left - Padding.Right);

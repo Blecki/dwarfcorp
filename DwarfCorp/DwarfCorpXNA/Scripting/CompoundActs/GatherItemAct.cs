@@ -98,17 +98,6 @@ namespace DwarfCorp
             yield return Status.Success;
         }
 
-
-        public bool IsGatherable()
-        {
-            return (Agent.Faction.Designations.IsDesignation(ItemToGather, DesignationType.Gather));
-        }
-
-        public Act EntityIsGatherable()
-        {
-            return new Condition(IsGatherable);
-        }
-
         public GatherItemAct(CreatureAI agent, string item) :
             base(agent)
         {
@@ -147,10 +136,8 @@ namespace DwarfCorp
                 {
                     Tree = new Sequence(
                         new SetBlackboardData<Body>(Agent, "GatherItem", ItemToGather),
-                        EntityIsGatherable(),
                         new Wrap(AddItemToGatherManager),
                         new GoToEntityAct(ItemToGather, Agent),
-                        EntityIsGatherable(),
                         new StashAct(Agent, StashAct.PickUpType.None, null, "GatherItem", "GatheredResource"),
                         new Wrap(RemoveItemFromGatherManager),
                         new Wrap(AddStockOrder)

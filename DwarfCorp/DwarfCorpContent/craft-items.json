@@ -860,6 +860,75 @@
     "Moveable": false,
     "CraftActBehavior": "Normal",
     "CraftedResultsCount": 4
+  },
+
+  {
+    "Name": "Explosive Keg",
+    "EntityName": "Keg",
+    "RequiredResources": [
+      {
+        "ResourceType": "Alcohol",
+        "NumResources": 4
+      },
+      {
+        "ResourceType": "Wood",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 44
+    },
+    "BaseCraftTime": 3.0,
+    "Description": "An alcohol-based explosive keg.",
+    "Type": "Resource",
+    "Prerequisites": [],
+    "ResourceCreated": {
+      "_value": "Explosive Keg"
+    },
+    "CraftLocation": "Anvil",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": false,
+    "Moveable": false,
+    "CraftActBehavior": "Normal",
+    "CraftedResultsCount": 1
+  },
+
+  {
+    "Name": "Primed Keg",
+    "EntityName": "Primed Keg",
+    "RequiredResources": [
+      {
+        "ResourceType": "Explosive",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 44
+    },
+    "BaseCraftTime": 10.0,
+    "Description": "Build this, and it will explode.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
   }
 
 ]
