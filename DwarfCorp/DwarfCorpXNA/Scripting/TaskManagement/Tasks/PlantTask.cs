@@ -79,7 +79,7 @@ namespace DwarfCorp
             if (FarmToWork == null)
                 return Feasibility.Infeasible;
 
-            if (FarmToWork.PlantExists())
+            if (FarmToWork.Finished)
                 return Feasibility.Infeasible;
 
             return Feasibility.Feasible;
@@ -88,8 +88,9 @@ namespace DwarfCorp
         public override bool IsComplete(Faction faction)
         {
             if (FarmToWork == null) return true;
-            if (FarmToWork.PlantExists()) return true;
+            if (FarmToWork.Finished) return true;
             if (FarmToWork.Voxel.IsEmpty) return true;
+            if (!FarmToWork.Voxel.Type.IsSoil) return true;
             return false;
         }
 

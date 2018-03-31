@@ -666,7 +666,9 @@ namespace DwarfCorp
             effect.SetTexturedTechnique();
             effect.ClippingEnabled = true;
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-            ChunkRenderer.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
+
+                ChunkRenderer.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
+
             Camera.ViewMatrix = viewMatrix;
             effect.ClippingEnabled = true;
         }
@@ -742,14 +744,6 @@ namespace DwarfCorp
             if (!ShowingWorld)
                 return;
 
-#if RENDER_VOXEL_ICONS
-            var voxels = VoxelLibrary.RenderIcons(GraphicsDevice, DefaultShader, ChunkManager, -1, -1, 32);
-            using (var stream = new FileStream("voxels.png", FileMode.OpenOrCreate))
-            {
-                GraphicsDevice.SetRenderTarget(null);
-                voxels.SaveAsPng(stream, voxels.Width, voxels.Height);
-            }
-#endif
             GamePerformance.Instance.StartTrackPerformance("Render - RENDER");
             GamePerformance.Instance.StartTrackPerformance("Render - Prep");
 
@@ -765,6 +759,7 @@ namespace DwarfCorp
 
             CompositeLibrary.Render(GraphicsDevice);
             CompositeLibrary.Update();
+
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
 

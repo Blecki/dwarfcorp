@@ -42,34 +42,31 @@ namespace DwarfCorp
     public class FarmTile
     {
         public VoxelHandle Voxel = VoxelHandle.InvalidHandle;
-        public Plant Plant = null;
         public float Progress = 0.0f;
+        public float TargetProgress = 100.0f;
         public string SeedResourceType = null;
         public List<ResourceAmount> RequiredResources = null;
+        public bool Finished = false;
 
         public bool IsTilled()
         {
             return (Voxel.IsValid) && Voxel.Type.Name == "TilledSoil";
         }
 
-        public bool PlantExists()
-        {
-            return !(Plant == null || Plant.IsDead);
-        }
-
         public void CreatePlant(WorldManager world)
         {
-            Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[SeedResourceType].PlantToGenerate, Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
-            Plant.Farm = this;
+            var plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[SeedResourceType].PlantToGenerate, Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
+            plant.Farm = this;
             
-            Matrix original = Plant.LocalTransform;
+            Matrix original = plant.LocalTransform;
             original.Translation += Vector3.Down;
-            Plant.AnimationQueue.Add(new EaseMotion(0.5f, original, Plant.LocalTransform.Translation));
+            plant.AnimationQueue.Add(new EaseMotion(0.5f, original, plant.LocalTransform.Translation));
 
             world.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
 
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Voxel.WorldPosition, true);
 
+            Finished = true;
         }
     }
 }

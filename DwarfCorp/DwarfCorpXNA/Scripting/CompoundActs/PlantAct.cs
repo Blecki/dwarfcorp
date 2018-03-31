@@ -55,11 +55,6 @@ namespace DwarfCorp
             Name = "Work a farm";
         }
 
-        bool Satisfied()
-        {
-                return FarmToWork.PlantExists();
-        }
-
         public IEnumerable<Status> FarmATile()
         {
             if (FarmToWork == null) 
@@ -67,36 +62,35 @@ namespace DwarfCorp
                 yield return Status.Fail;
                 yield break;
             }
-            else if (FarmToWork.PlantExists())
+            else if (FarmToWork.Finished)
             {
                 yield return Status.Success;
             }
             else
             {
-                if (FarmToWork.Plant != null && FarmToWork.Plant.IsDead) FarmToWork.Plant = null;
                 Creature.CurrentCharacterMode = CharacterMode.Attacking;
                 Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
                 Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
-                while (FarmToWork.Progress < 100.0f && !Satisfied())
+                while (FarmToWork.Progress < FarmToWork.TargetProgress && !FarmToWork.Finished)
                 {
                     Creature.Physics.Velocity *= 0.1f;
                     FarmToWork.Progress += 3 * Creature.Stats.BaseFarmSpeed*DwarfTime.Dt;
 
                     Drawer2D.DrawLoadBar(Agent.Manager.World.Camera, Agent.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
-                        FarmToWork.Progress/100.0f);
+                        FarmToWork.Progress / FarmToWork.TargetProgress);
 
-                    if (FarmToWork.Progress >= 0.0f && FarmToWork.Voxel.Type.Name != "TilledSoil")
+                    if (FarmToWork.Progress >= (FarmToWork.TargetProgress * 0.5f) && FarmToWork.Voxel.Type.Name != "TilledSoil")
                     {
                         FarmToWork.Voxel.Type = VoxelLibrary.GetVoxelType("TilledSoil");
                     }
 
-                    if (FarmToWork.Progress >= 100.0f && !Satisfied())
+                    if (FarmToWork.Progress >= FarmToWork.TargetProgress && !FarmToWork.Finished)
                     {
-                        FarmToWork.Progress = 0.0f;
                         FarmToWork.CreatePlant(Creature.Manager.World);
                         DestroyResources();
 
                     }
+
                     if (MathFunctions.RandEvent(0.01f))
                         Creature.Manager.World.ParticleManager.Trigger("dirt_particle", Creature.AI.Position, Color.White, 1);
                     yield return Status.Running;
@@ -120,7 +114,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (FarmToWork.PlantExists())
+            if (FarmToWork.Finished)
             {
                 return false;
             }
