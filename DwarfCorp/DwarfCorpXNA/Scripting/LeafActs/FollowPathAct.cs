@@ -383,7 +383,7 @@ namespace DwarfCorp
                     Creature.CurrentCharacterMode = CharacterMode.Swimming;
                     if (hasNextAction)
                     {
-                        transform.Translation = diff * t + currPosition + new Vector3(0, 0.5f, 0);
+                        transform.Translation = diff * t + currPosition;
                         Agent.Physics.Velocity = diff;
                     }
                     else
