@@ -91,6 +91,12 @@ namespace DwarfCorp
                 return false;
             }
 
+            if (Player.Faction.GetIntersectingRooms(voxel.GetBoundingBox()).Count > 0)
+            {
+                Player.World.ShowToolPopup("Can't plant inside zones.");
+                return false;
+            }
+
             Player.World.ShowToolPopup("Click to plant.");
 
             return true;
