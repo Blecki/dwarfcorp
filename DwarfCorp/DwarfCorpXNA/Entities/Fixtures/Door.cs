@@ -144,9 +144,9 @@ namespace DwarfCorp
         {
             Matrix toReturn = Matrix.Identity;
             Vector3 hinge = new Vector3(0, 0, 0.5f);
-            toReturn = Matrix.CreateTranslation(-hinge) * toReturn;
+            toReturn = Matrix.CreateTranslation(hinge) * toReturn;
             toReturn = Matrix.CreateRotationY(angle) * toReturn;
-            toReturn = Matrix.CreateTranslation(hinge)* toReturn;
+            toReturn = Matrix.CreateTranslation(-hinge)* toReturn;
             return toReturn;
         }
 

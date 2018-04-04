@@ -2225,8 +2225,8 @@ namespace DwarfCorp.GameStates
                 if (PausePanel == null || PausePanel.Hidden)
                 {
                     Paused = !Paused;
-                    if (Paused) GameSpeedControls.CurrentSpeed = 0;
-                    else GameSpeedControls.CurrentSpeed = GameSpeedControls.PlaySpeed;
+                    if (Paused) GameSpeedControls.Pause();
+                    else  GameSpeedControls.Resume();
                 }
             }
             else if (key == ControlSettings.Mappings.TimeForward)

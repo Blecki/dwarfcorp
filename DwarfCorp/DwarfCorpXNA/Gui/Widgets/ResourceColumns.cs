@@ -260,7 +260,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             var resourceInfo = ResourceLibrary.GetResourceByName(Resource.ResourceType);
 
-            LineItem.GetChild(1).Text = resourceInfo.ShortName ?? resourceInfo.Name;
+            LineItem.GetChild(1).Text = TextGenerator.Shorten(resourceInfo.ShortName ?? resourceInfo.Name, 20);
             LineItem.GetChild(1).Invalidate();
             LineItem.GetChild(2).Text = String.Format("{0}",
                 ValueSourceEntity.ComputeValue(Resource.ResourceType));

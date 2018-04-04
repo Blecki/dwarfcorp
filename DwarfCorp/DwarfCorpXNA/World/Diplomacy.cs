@@ -403,12 +403,12 @@ namespace DwarfCorp
 
         public WarParty SendWarParty(Faction natives)
         {
-            natives.World.MakeAnnouncement(String.Format("War party from {0} has arrived!", natives.Name), null);
+           
             natives.World.Tutorial("war");
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
             Politics politics = GetPolitics(natives, natives.World.PlayerFaction);
             politics.WasAtWar = true;
-            List<CreatureAI> creatures = natives.World.MonsterSpawner.Spawn(natives.World.MonsterSpawner.GenerateSpawnEvent(natives, natives.World.PlayerFaction, MathFunctions.Random.Next(5) + 1, true));
+            List<CreatureAI> creatures = natives.World.MonsterSpawner.Spawn(natives.World.MonsterSpawner.GenerateSpawnEvent(natives, natives.World.PlayerFaction, MathFunctions.Random.Next(5) + 1, false));
             var party = new WarParty(natives.World.Time.CurrentDate)
             {
                 Creatures = creatures,
@@ -417,7 +417,31 @@ namespace DwarfCorp
                 OwnerFaction = natives
             };
             natives.WarParties.Add(party);
-
+            natives.World.MakeAnnouncement(new Gui.Widgets.QueuedAnnouncement()
+            {
+                Text = String.Format("A war party from {0} has arrived!", natives.Name),
+                SecondsVisible = 60,
+                ClickAction = (gui, sender) =>
+                {
+                    if (party.Creatures.Count > 0)
+                    {
+                        party.Creatures.First().ZoomToMe();
+                    }
+                    gui.ShowModalPopup(gui.ConstructWidget(new Gui.Widgets.Popup
+                    {
+                        Text = String.Format("Warriors from {0} ({1}) have entered our territory. They will prepare for a while and then attack us.", natives.Name, natives.Race.Name),
+                        OkayText = "OK.",
+                        OnClose = (widget) =>
+                        {
+                            sender.Keep = false;
+                        }
+                    }));
+                },
+                ShouldKeep = () =>
+                {
+                    return party.ExpiditionState == Expedition.State.Arriving;
+                }
+            });
             foreach (var creature in creatures)
             {
                 if (natives.Economy == null)
@@ -560,6 +584,15 @@ namespace DwarfCorp
         {
             foreach (TradeEnvoy envoy in faction.TradeEnvoys)
             {
+                if (envoy.ExpiditionState == Expedition.State.Trading)
+                {
+                    if (envoy.UpdateWaitTimer(World.Time.CurrentDate))
+                    {
+                        World.MakeAnnouncement(String.Format("The envoy from {0} is leaving.", envoy.OwnerFaction.Name));
+                        RecallEnvoy(envoy);
+                    }
+                }
+
                 envoy.Creatures.RemoveAll(creature => creature.IsDead);
                 if (envoy.DeathTimer.Update(faction.World.Time.CurrentDate))
                 {
@@ -569,6 +602,7 @@ namespace DwarfCorp
                 Diplomacy.Politics politics = faction.World.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
                 if (politics.GetCurrentRelationship() == Relationship.Hateful)
                 {
+                    World.MakeAnnouncement(String.Format("The envoy from {0} is leaving.", envoy.OwnerFaction.Name));
                     RecallEnvoy(envoy);
                 }
                 else
@@ -627,22 +661,26 @@ namespace DwarfCorp
 
                         if (!tradePort.IsRestingOnZone(creature.Position)) continue;
 
+                        if (envoy.ExpiditionState != Expedition.State.Trading)
+                        {
+                            var traders = envoy;
+                            World.MakeAnnouncement(new DwarfCorp.Gui.Widgets.QueuedAnnouncement
+                            {
+                                Text = String.Format("Click here to trade with the {0}!", envoy.OwnerFaction.Race.Name),
+                                ClickAction = (gui, sender) =>
+                                {
+                                    World.Paused = true;
+                                    GameState.Game.StateManager.PushState(new Dialogue.DialogueState(
+                                        GameState.Game,
+                                        GameState.Game.StateManager,
+                                        envoy,
+                                        World.PlayerFaction,
+                                        World));
+                                },
+                                ShouldKeep = () => { return traders.ExpiditionState == Expedition.State.Trading && !traders.ShouldRemove; }
+                            });
+                        }
                         envoy.ExpiditionState = Expedition.State.Trading;
-
-                        World.Paused = true;
-                        GameState.Game.StateManager.PushState(new Dialogue.DialogueState(
-                            GameState.Game,
-                            GameState.Game.StateManager,
-                            envoy,
-                            World.PlayerFaction,
-                            World));
-                        //GameState.Game.StateManager.PushState(new DiplomacyState(GameState.Game,
-                        //    GameState.Game.StateManager,
-                        //    faction.World, envoy)
-                        //{
-                        //    Name = "DiplomacyState_" + faction.Name,
-                        //    Envoy = envoy
-                        //});
                         break;
                     }
                 }
@@ -695,21 +733,11 @@ namespace DwarfCorp
         {
             foreach (var party in faction.WarParties)
             {
+                bool doneWaiting = party.UpdateTimer(World.Time.CurrentDate);
                 party.Creatures.RemoveAll(creature => creature.IsDead);
-                if (party.DeathTimer.Update(faction.World.Time.CurrentDate))
+                if (party.DeathTimer.Update(World.Time.CurrentDate))
                 {
                     party.Creatures.ForEach((creature) => creature.Die());
-                }
-
-                foreach (var creature in party.Creatures)
-                {
-                    if (MathFunctions.RandEvent(0.001f))
-                    {
-                        creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, (decimal)MathFunctions.Rand(0, 64.0f), party.OtherFaction))
-                        {
-                            Priority = Task.PriorityType.Medium
-                        });
-                    }
                 }
 
                 Diplomacy.Politics politics =  faction.World.Diplomacy.GetPolitics(faction, party.OtherFaction);
@@ -729,6 +757,42 @@ namespace DwarfCorp
                         PlayerFaction = party.OtherFaction,
                         OtherFaction = party.OwnerFaction
                     });
+                }
+
+                if (!doneWaiting)
+                {
+                    continue;
+                }
+                else
+                {
+                    foreach(var creature in party.OwnerFaction.Minions)
+                    {
+                        if (creature.Tasks.Count == 0)
+                        {
+                            CreatureAI enemyMinion = party.OtherFaction.GetNearestMinion(creature.Position);
+                            if (enemyMinion != null)
+                            {
+                                creature.AssignTask(new KillEntityTask(enemyMinion.Physics, KillEntityTask.KillType.Auto));
+                            }
+                        }
+                    }
+
+                    if (party.ExpiditionState == Expedition.State.Arriving)
+                    {
+                        World.MakeAnnouncement(String.Format("The war party from {0} is attacking!", party.OwnerFaction.Name));
+                        party.ExpiditionState = Expedition.State.Fighting;
+                    }
+                }
+
+                foreach (var creature in party.Creatures)
+                {
+                    if (MathFunctions.RandEvent(0.001f))
+                    {
+                        creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, (decimal)MathFunctions.Rand(0, 64.0f), party.OtherFaction))
+                        {
+                            Priority = Task.PriorityType.Medium
+                        });
+                    }
                 }
             }
 
