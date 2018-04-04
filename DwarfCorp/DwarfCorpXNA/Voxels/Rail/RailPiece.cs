@@ -6,14 +6,6 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Rail
 {
-    public enum RailShape
-    {
-        Flat,
-        TopHalfSlope,
-        BottomHalfSlope,
-        SteepSlope
-    }
-
     public class RailConnection
     {
         public Vector3 Entrance;
@@ -23,7 +15,6 @@ namespace DwarfCorp.Rail
     public class RailPiece
     {
         public String Name = "";
-        public RailShape Shape = RailShape.Flat;
         public Point Tile = Point.Zero;
         public List<List<Vector3>> SplinePoints = new List<List<Vector3>>();
         public List<List<Vector2>> RailSplines = new List<List<Vector2>>();

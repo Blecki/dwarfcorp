@@ -1761,6 +1761,7 @@ namespace DwarfCorp.GameStates
             };
 
             #region icon_Plant
+
             #region menu_Plant
             var icon_menu_Plant_Return = new FlatToolTray.Icon
             {
@@ -1819,40 +1820,15 @@ namespace DwarfCorp.GameStates
             var icon_Plant = new FlatToolTray.Icon
             {
                 Tag = "plant",
-                Text = "Plant",
-                Tooltip = "Plant",
+                Icon = new Gui.TileReference("tool-icons", 13),
+                Tooltip = "Farm",
+                Text = "Farm",
                 EnabledTextColor = new Vector4(1, 1, 1, 1),
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 KeepChildVisible = true,
                 ReplacementMenu = menu_Plant,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
-            };
-            #endregion
-
-            #region icon_Harvest
-            var icon_Harvest = new FlatToolTray.Icon
-            {
-                Text = "Harv.",
-                Tag = "harvest",
-                EnabledTextColor = new Vector4(1, 1, 1, 1),
-                Tooltip = "Harvest",
-                TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
-                KeepChildVisible = true,
-                PopupChild = new Widget()
-                {
-                    Border = "border-fancy",
-                    Text = "Harvest Plants.\n Click and drag to harvest plants.",
-                    Rect = new Rectangle(0, 0, 256, 128),
-                    TextColor = Color.Black.ToVector4(),
-                },
-                OnClick = (sender, args) =>
-                {
-                    ChangeTool(GameMaster.ToolMode.Chop);
-                    World.Tutorial("harvest");
-                },
-                Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
             #endregion
 
@@ -1883,38 +1859,6 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
             #endregion
-
-            var menu_Farm = new FlatToolTray.Tray
-            {
-                ItemSource = new FlatToolTray.Icon[]
-                    {
-                        icon_menu_Farm_Return,
-                        icon_Plant,
-                        icon_Harvest,
-                        icon_Wrangle
-                    }
-            };
-
-            icon_menu_Plant_Return.ReplacementMenu = menu_Farm;
-
-            var icon_FarmTool = new FlatToolTray.Icon
-            {
-                Icon = new Gui.TileReference("tool-icons", 13),
-                Tooltip = "Farm",
-                Text = "Farm",
-                TextVerticalAlign = VerticalAlign.Below,
-                KeepChildVisible = true,
-                OnConstruct = (sender) =>
-                {
-                    // Todo: Enable/disable individual sub icons.
-                    //AddToolbarIcon(sender, () =>
-                    //Master.Faction.SelectedMinions.Any(minion =>
-                    //    minion.Stats.CurrentClass.HasAction(GameMaster.ToolMode.Farm)));
-                    //AddToolSelectIcon(GameMaster.ToolMode.Farm, sender);
-                },
-                ReplacementMenu = menu_Farm,
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
-            };
 
             #endregion
 
@@ -2106,7 +2050,8 @@ namespace DwarfCorp.GameStates
                     icon_ChopTool,
                     icon_GuardTool,
                     icon_AttackTool,
-                    icon_FarmTool,
+                    icon_Plant,
+                    icon_Wrangle,
                     icon_MagicTool,
                 },
                 OnShown = (sender) => ChangeTool(GameMaster.ToolMode.SelectUnits),
@@ -2117,6 +2062,7 @@ namespace DwarfCorp.GameStates
             icon_menu_Edibles_Return.ReplacementMenu = MainMenu;
             icon_menu_Farm_Return.ReplacementMenu = MainMenu;
             icon_menu_Magic_Return.ReplacementMenu = MainMenu;
+            icon_menu_Plant_Return.ReplacementMenu = MainMenu;
 
             BottomToolBar = secondBar.AddChild(new FlatToolTray.RootTray
             {
@@ -2127,7 +2073,6 @@ namespace DwarfCorp.GameStates
                     menu_CastSpells,
                     menu_CraftTypes,
                     menu_Edibles,
-                    menu_Farm,
                     menu_Magic,
                     MainMenu,
                     menu_Plant,

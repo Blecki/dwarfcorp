@@ -67,8 +67,6 @@ namespace DwarfCorp.Rail
         private static float[,] VertexHeightOffsets =
         {
             { 0.0f, 0.0f, 0.0f, 0.0f },
-            { 1.0f, 0.5f, 0.5f, 1.0f },
-            { 0.5f, 0.0f, 0.0f, 0.5f },
             { 1.0f, 0.0f, 0.0f, 1.0f },
             { 0.0f, 1.0f, 1.0f, 0.0f },
             { 1.0f, 1.0f, 1.0f, 1.0f }
@@ -323,11 +321,11 @@ namespace DwarfCorp.Rail
                     var matchingNeighbor2 = NeighborRails.FirstOrDefault(n => (n.Position - transformedConnections[1].Item1 - new Vector3(0.0f, 1.0f, 0.0f)).LengthSquared() < 0.001f);
 
                     if (matchingNeighbor1 != null && matchingNeighbor2 != null)
-                        realShape = 5;
-                    else if (matchingNeighbor1 != null)
                         realShape = 3;
+                    else if (matchingNeighbor1 != null)
+                        realShape = 1;
                     else if (matchingNeighbor2 != null)
-                        realShape = 4;
+                        realShape = 2;
                 }
 
                 Primitive = new RawPrimitive();
@@ -340,58 +338,24 @@ namespace DwarfCorp.Rail
                 var sideBounds = Vector4.Zero;
                 Vector2[] sideUvs = null;
 
-                switch (rawPiece.Shape)
+                sideUvs = Sheet.GenerateTileUVs(new Point(3, 4), out sideBounds);
+
+                AddScaffoldGeometry(transform, sideBounds, sideUvs, -1.0f, false);
+
+                if (realShape == 3)
                 {
-                    case RailShape.Flat:
-                        sideUvs = Sheet.GenerateTileUVs(new Point(3, 4), out sideBounds);
-                        break;
-                    case RailShape.BottomHalfSlope:
-                        sideUvs = Sheet.GenerateTileUVs(new Point(1, 4), out sideBounds);
-                        break;
-                    case RailShape.TopHalfSlope:
-                        sideUvs = Sheet.GenerateTileUVs(new Point(2, 4), out sideBounds);
-                        break;
-                    case RailShape.SteepSlope:
-                        sideUvs = Sheet.GenerateTileUVs(new Point(0, 4), out sideBounds);
-                        break;
+                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, false);
                 }
-
-                var uvDelta = uvs[1].X - uvs[0].X;
-
-                foreach (var railSpline in RailLibrary.GetRailPiece(Piece.RailPiece).RailSplines)
+                else if (realShape == 1)
                 {
-                    var uvStep = 1.0f / (railSpline.Count - 1);
-
-                    for (var i = 1; i < railSpline.Count; ++i)
-                    {
-                        var baseIndex = Primitive.VertexCount;
-                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i - 1].X, 0.0f, railSpline[i - 1].Y), transform), Color.White, Color.White,
-                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * (i - 1)), sideUvs[0].Y), sideBounds));
-                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i].X, 0.0f, railSpline[i].Y), transform), Color.White, Color.White,
-                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * i), sideUvs[0].Y), sideBounds));
-                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i].X, -1.0f, railSpline[i].Y), transform), Color.White, Color.White,
-                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * i), sideUvs[2].Y), sideBounds));
-                        Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i - 1].X, -1.0f, railSpline[i - 1].Y), transform), Color.White, Color.White,
-                            new Vector2(sideUvs[0].X + uvDelta * (uvStep * (i - 1)), sideUvs[2].Y), sideBounds));
-                        Primitive.AddOffsetIndicies(new short[] { 0, 1, 3, 1, 2, 3 }, baseIndex);
-                    }
+                    sideUvs = Sheet.GenerateTileUVs(new Point(0, 4), out sideBounds);
+                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, false);
                 }
-
-                //// For slopes - actually needs two layers of these. First layer is shifted up to match the rails, second is the standard side, shifted down.
-
-
-                //Primitive.AddQuad(
-                //            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
-                //            //* Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
-                //            * Matrix.CreateTranslation(0.0f, -0.5f, 0.32f)
-                //            * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Orientation),
-                //            Color.White, Color.White, sideUvs, sideBounds);
-                //Primitive.AddQuad(
-                //            Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
-                //            //* Matrix.CreateRotationY(-(float)Math.PI * 0.5f)
-                //            * Matrix.CreateTranslation(0.0f, -0.5f, -0.32f)
-                //            * Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Orientation),
-                //            Color.White, Color.White, sideUvs, sideBounds);
+                else if (realShape == 2)
+                {
+                    sideUvs = Sheet.GenerateTileUVs(new Point(0, 4), out sideBounds);
+                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, true);
+                }
 
                 // Todo: Make these static and avoid recalculating them constantly.
                 var bumperBackBounds = Vector4.Zero;
@@ -487,6 +451,43 @@ namespace DwarfCorp.Rail
 
             effect.VertexColorTint = origTint;
             EndDraw(effect);
+        }
+
+        private void AddScaffoldGeometry(Matrix transform, Vector4 sideBounds, Vector2[] sideUvs, float HeightOffset, bool FlipTexture)
+        {
+            var uvDelta = sideUvs[1].X - sideUvs[0].X;
+
+            foreach (var railSpline in RailLibrary.GetRailPiece(Piece.RailPiece).RailSplines)
+            {
+                var uvStep = 1.0f / (railSpline.Count - 1);
+
+                for (var i = 1; i < railSpline.Count; ++i)
+                {
+                    var baseIndex = Primitive.VertexCount;
+
+                    Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i - 1].X, HeightOffset + 1.0f, railSpline[i - 1].Y), transform), Color.White, Color.White,
+                        FlipTexture ? new Vector2(sideUvs[0].X + uvDelta - uvDelta * (uvStep * (i - 1)), sideUvs[0].Y) :
+                        new Vector2(sideUvs[0].X + uvDelta * (uvStep * (i - 1)), sideUvs[0].Y), 
+                        sideBounds));
+
+                    Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i].X, HeightOffset + 1.0f, railSpline[i].Y), transform), Color.White, Color.White,
+                        FlipTexture ? new Vector2(sideUvs[0].X + uvDelta - uvDelta * (uvStep * i), sideUvs[0].Y) :
+                        new Vector2(sideUvs[0].X + uvDelta * (uvStep * i), sideUvs[0].Y), 
+                        sideBounds));
+
+                    Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i].X, HeightOffset, railSpline[i].Y), transform), Color.White, Color.White,
+                        FlipTexture ? new Vector2(sideUvs[0].X + uvDelta - uvDelta * (uvStep * i), sideUvs[2].Y) :
+                        new Vector2(sideUvs[0].X + uvDelta * (uvStep * i), sideUvs[2].Y), 
+                        sideBounds));
+
+                    Primitive.AddVertex(new ExtendedVertex(Vector3.Transform(new Vector3(railSpline[i - 1].X, HeightOffset, railSpline[i - 1].Y), transform), Color.White, Color.White,
+                        FlipTexture ? new Vector2(sideUvs[0].X + uvDelta - uvDelta * (uvStep * (i - 1)), sideUvs[2].Y) :
+                        new Vector2(sideUvs[0].X + uvDelta * (uvStep * (i - 1)), sideUvs[2].Y),
+                        sideBounds));
+
+                    Primitive.AddOffsetIndicies(new short[] { 0, 1, 3, 1, 2, 3 }, baseIndex);
+                }
+            }
         }
 
         public List<Tuple<Vector3, Vector3>> GetTransformedConnections()
