@@ -1,4 +1,4 @@
-// BuildTool.cs
+﻿// Point3.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -33,43 +33,63 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class FarmTile
+    public struct Point3 : IEquatable<Point3>
     {
-        public VoxelHandle Voxel = VoxelHandle.InvalidHandle;
-        public Plant Plant = null;
-        public float Progress = 0.0f;
-        public string SeedResourceType = null;
-        public List<ResourceAmount> RequiredResources = null;
+        public int X;
+        public int Y;
+        public int Z;
 
-        public bool IsTilled()
+        public static readonly Point3 Zero = new Point3(0, 0, 0);
+
+        public Point3(int x, int y, int z)
         {
-            return (Voxel.IsValid) && Voxel.Type.Name == "TilledSoil";
+            X = x;
+            Y = y;
+            Z = z;
         }
 
-        public bool PlantExists()
+        public override int GetHashCode()
         {
-            return !(Plant == null || Plant.IsDead);
+            const int p1 = 4273;
+            const int p2 = 6247;
+            return (X * p1 + Y) * p2 + Z;
         }
 
-        public void CreatePlant(WorldManager world)
+        public bool Equals(Point3 other)
         {
-            Plant = EntityFactory.CreateEntity<Plant>(ResourceLibrary.Resources[SeedResourceType].PlantToGenerate, Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
-            Plant.Farm = this;
-            
-            Matrix original = Plant.LocalTransform;
-            original.Translation += Vector3.Down;
-            Plant.AnimationQueue.Add(new EaseMotion(0.5f, original, Plant.LocalTransform.Translation));
+            return other.X == X && other.Y == Y && other.Z == Z;
+        }
 
-            world.ParticleManager.Trigger("puff", original.Translation, Color.White, 20);
+        public override bool Equals(object obj)
+        {
+            if(!(obj is Point3))
+            {
+                return false;
+            }
+            Point3 other = (Point3) obj;
+            return other.X == X && other.Y == Y && other.Z == Z;
+        }
 
-            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_plant_grow, Voxel.WorldPosition, true);
+        public static Point3 operator +(Point3 toAdd1, Point3 toAdd2)
+        {
+            return new Point3(toAdd1.X + toAdd2.X, toAdd1.Y + toAdd2.Y, toAdd1.Z + toAdd2.Z);
+        }
 
+        public Vector3 ToVector3()
+        {
+            return new Vector3(X, Y, Z);
+        }
+
+        public override string ToString()
+        {
+            return String.Format("{{{0}, {1}, {2}}}", X, Y, Z);
         }
     }
+
 }

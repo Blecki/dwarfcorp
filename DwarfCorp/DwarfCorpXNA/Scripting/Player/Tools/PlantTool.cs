@@ -83,10 +83,17 @@ namespace DwarfCorp
                 return false;
             }
 
-            var entities = Player.World.CollisionManager.EnumerateIntersectingObjects(new BoundingBox(voxel.Coordinate.ToVector3() + new Vector3(0.0f, 1.0f, 0.0f), voxel.Coordinate.ToVector3()
-                + new Vector3(1.0f, 2.0f, 1.0f)), CollisionManager.CollisionType.Static);
+            var boundingBox = new BoundingBox(voxel.Coordinate.ToVector3() + new Vector3(0.2f, 1.0f, 0.2f), voxel.Coordinate.ToVector3() + new Vector3(0.8f, 3.0f, 0.8f));
+            var entities = Player.World.CollisionManager.EnumerateIntersectingObjects(boundingBox, CollisionManager.CollisionType.Static);
             if (entities.Count() > 0)
             {
+                if (Debugger.Switches.DrawToolDebugInfo)
+                {
+                    Drawer3D.DrawBox(boundingBox, Color.Red, 0.03f, false);
+                    foreach (var entity in entities)
+                        Drawer3D.DrawBox(entity.GetBoundingBox(), Color.Yellow, 0.03f, false);
+                }
+
                 Player.World.ShowToolPopup("There's something in the way.");
                 return false;
             }
@@ -124,7 +131,7 @@ namespace DwarfCorp
 
                     if (ValidatePlanting(voxel))
                     {
-                        var farmTile = new FarmTile
+                        var farmTile = new Farm
                         {
                             Voxel = voxel,
                             RequiredResources = RequiredResources,
@@ -138,7 +145,7 @@ namespace DwarfCorp
                         };
 
                         if (voxel.Type.Name != "TilledSoil")
-                            farmTile.Progress = -100.0f; // Planting on untilled soil takes longer.
+                            farmTile.TargetProgress = 200.0f; // Planting on untilled soil takes longer.
 
                         goals.Add(task);
                         currentAmount--;

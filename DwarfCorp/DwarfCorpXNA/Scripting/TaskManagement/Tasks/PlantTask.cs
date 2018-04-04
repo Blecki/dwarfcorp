@@ -39,7 +39,7 @@ namespace DwarfCorp
 {
     public class PlantTask : Task
     {
-        public FarmTile FarmToWork { get; set; }
+        public Farm FarmToWork { get; set; }
         public string Plant { get; set; }
         public List<ResourceAmount> RequiredResources { get; set; } 
 
@@ -49,7 +49,7 @@ namespace DwarfCorp
             Category = TaskCategory.Plant;
         }
 
-        public PlantTask(FarmTile farmToWork)
+        public PlantTask(Farm farmToWork)
         {
             FarmToWork = farmToWork;
             Name = "Plant " + FarmToWork.Voxel.Coordinate;
@@ -79,7 +79,7 @@ namespace DwarfCorp
             if (FarmToWork == null)
                 return Feasibility.Infeasible;
 
-            if (FarmToWork.PlantExists())
+            if (FarmToWork.Finished)
                 return Feasibility.Infeasible;
 
             return Feasibility.Feasible;
@@ -88,8 +88,9 @@ namespace DwarfCorp
         public override bool IsComplete(Faction faction)
         {
             if (FarmToWork == null) return true;
-            if (FarmToWork.PlantExists()) return true;
+            if (FarmToWork.Finished) return true;
             if (FarmToWork.Voxel.IsEmpty) return true;
+            if (!FarmToWork.Voxel.Type.IsSoil) return true;
             return false;
         }
 
