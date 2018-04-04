@@ -98,15 +98,9 @@ namespace DwarfCorp.Dialogue
                         }
                     });
                     Context.AddOption("Declare war", ConfirmDeclareWar);
-                    Context.AddOption("Leave", (context) =>
+                    Context.AddOption("Exit", (context) =>
                      {
-                         Context.Say(Datastructures.SelectRandom(context.Envoy.OwnerFaction.Race.Speech.Farewells));
-                         Context.ClearOptions();
-                         Context.AddOption("Goodbye.", (_) =>
-                         {
-                             Diplomacy.RecallEnvoy(context.Envoy);
-                             GameState.Game.StateManager.PopState();
-                         });
+                         GameState.Game.StateManager.PopState();
                      });
                 }
             };

@@ -37,8 +37,22 @@ namespace DwarfCorp
 {
     public class WarParty : Expedition
     {
+        public DateTimer PrepareTimer = null;
         public WarParty(DateTime date) : base(date)
         {
+            PrepareTimer = new DateTimer(date, new TimeSpan(0, 4, 0, 0, 0));
+            this.ExpiditionState = Expedition.State.Arriving;
+        }
+
+        public bool IsPreparing()
+        {
+            return !PrepareTimer.HasTriggered;
+        }
+
+        public bool UpdateTimer(DateTime now)
+        {
+            PrepareTimer.Update(now);
+            return PrepareTimer.HasTriggered;
         }
     }
 }

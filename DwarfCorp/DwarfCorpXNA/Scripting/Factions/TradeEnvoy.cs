@@ -56,10 +56,19 @@ namespace DwarfCorp
 
         public TradeEnvoy(DateTime date) : base(date)
         {
+            WaitForTradeTimer = new DateTimer(date, new TimeSpan(0, 6, 0, 0, 0));
         }
 
         public DwarfBux TradeMoney { get; set; }
         public List<ResourceAmount> TradeGoods { get; set; }
+        public DateTimer WaitForTradeTimer = null;
+
+
+        public bool UpdateWaitTimer(DateTime now)
+        {
+            WaitForTradeTimer.Update(now);
+            return WaitForTradeTimer.HasTriggered;
+        }
 
         public void DistributeGoods()
         {
