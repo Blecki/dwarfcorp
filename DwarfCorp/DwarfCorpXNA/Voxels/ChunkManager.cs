@@ -312,7 +312,7 @@ namespace DwarfCorp
                         BoundingBox clusterBounds = new BoundingBox
                         {
                             Max = new Vector3(Bounds.Max.X, type.MaxSpawnHeight, Bounds.Max.Z),
-                            Min = new Vector3(Bounds.Min.X, type.MinSpawnHeight, Bounds.Min.Z)
+                            Min = new Vector3(Bounds.Min.X, Math.Max(type.MinSpawnHeight, 2), Bounds.Min.Z)
                         };
 
                         if (type.SpawnClusters)

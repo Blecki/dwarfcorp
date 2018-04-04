@@ -144,7 +144,8 @@ namespace DwarfCorp
                         Vector3 globalPosition = Vector3.Transform(locPosition, cluster.Transform);
 
                         if (globalPosition.Y > cluster.Type.MaxSpawnHeight ||
-                            globalPosition.Y < cluster.Type.MinSpawnHeight) continue;
+                            globalPosition.Y < cluster.Type.MinSpawnHeight || 
+                            globalPosition.Y <= 1) continue;
 
                         var vox = new VoxelHandle(chunks,
                             GlobalVoxelCoordinate.FromVector3(globalPosition));
@@ -168,7 +169,8 @@ namespace DwarfCorp
             for (float t = 0; t < vein.Length; t++)
             {
                 if (curr.Y > vein.Type.MaxSpawnHeight ||
-                    curr.Y < vein.Type.MinSpawnHeight) continue;
+                    curr.Y < vein.Type.MinSpawnHeight || 
+                    curr.Y <= 1) continue;
                 Vector3 p = new Vector3(curr.X, curr.Y, curr.Z);
 
                 var vox = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(p));
