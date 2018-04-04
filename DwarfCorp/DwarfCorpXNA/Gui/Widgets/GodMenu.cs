@@ -265,6 +265,25 @@ namespace DwarfCorp.Gui.Widgets
 
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "WAR PARTY",
+                    ExpansionChild = new HorizontalMenuTray.Tray
+                    {
+
+                            ItemSource = Master.World.Factions.Factions.Values.Where(f => f.Race.IsIntelligent && f != Master.Faction).Select(s =>
+                            {
+                                return new HorizontalMenuTray.MenuItem
+                                {
+                                    Text = s.Name,
+                                    OnClick = (sender, args) => Master.World.Diplomacy.SendWarParty(s)
+                                };
+
+                            }),
+                    }
+                },
+
+
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "DWARF BUX",
                     OnClick = (sender, args) => Master.Faction.AddMoney(100m)
                 },

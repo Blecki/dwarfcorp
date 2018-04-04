@@ -765,7 +765,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    foreach(var creature in party.Creatures)
+                    foreach(var creature in party.OwnerFaction.Minions)
                     {
                         if (creature.Tasks.Count == 0)
                         {
