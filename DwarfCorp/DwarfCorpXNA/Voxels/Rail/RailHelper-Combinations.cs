@@ -180,6 +180,7 @@ namespace DwarfCorp.Rail
                         Progress = 0.0f,
                     };
 
+                    body.SetFlag(GameComponent.Flag.ShouldSerialize, true);
                     Player.World.ComponentManager.RootComponent.AddChild(designation.WorkPile);
                     designation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
                     Player.World.ParticleManager.Trigger("puff", endPos, Color.White, 10);
@@ -204,6 +205,7 @@ namespace DwarfCorp.Rail
                     finalEntity.SetFlagRecursive(GameComponent.Flag.Active, true);
                     finalEntity.SetTintRecursive(Color.White);
                     finalEntity.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                    finalEntity.SetFlag(GameComponent.Flag.ShouldSerialize, true);
                     foreach (var tinter in finalEntity.EnumerateAll().OfType<Tinter>())
                         tinter.Stipple = false;
                 }

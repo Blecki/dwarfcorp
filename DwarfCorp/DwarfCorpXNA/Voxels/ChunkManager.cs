@@ -106,16 +106,6 @@ namespace DwarfCorp
 
         public BoundingBox Bounds { get; set; }
 
-        public float DrawDistance
-        {
-            get { return GameSettings.Default.ChunkDrawDistance; }
-        }
-
-        public float DrawDistanceSquared
-        {
-            get { return DrawDistance * DrawDistance; }
-        }
-
         public float GenerateDistance
         {
             get { return GameSettings.Default.ChunkGenerateDistance; }
@@ -127,6 +117,7 @@ namespace DwarfCorp
 
         public bool PauseThreads { get; set; }
 
+        // Todo: KILL. Pointless, always Y.
         public enum SliceMode
         {
             X,

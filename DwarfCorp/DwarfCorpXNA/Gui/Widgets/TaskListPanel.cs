@@ -13,6 +13,7 @@ namespace DwarfCorp.Gui.Widgets
         public WorldManager World;
 
         private WidgetListView ListView;
+        private EditableTextField FilterBox;
 
         public override void Construct()
         {
@@ -21,6 +22,13 @@ namespace DwarfCorp.Gui.Widgets
             OnConstruct = (sender) =>
             {
                 sender.Root.RegisterForUpdate(sender);
+
+                FilterBox = AddChild(new EditableTextField
+                {
+                    AutoLayout = AutoLayout.DockTop,
+                    MinimumSize = new Point(0, 24),
+                    Text = ""
+                }) as EditableTextField;
 
                 ListView = AddChild(new WidgetListView
                 {
@@ -44,7 +52,7 @@ namespace DwarfCorp.Gui.Widgets
 
 
                 ListView.ClearItems();
-                foreach (var task in World.Master.TaskManager.EnumerateTasks())
+                foreach (var task in World.Master.TaskManager.EnumerateTasks().Where(t => String.IsNullOrEmpty(FilterBox.Text) ? true : t.Name.Contains(FilterBox.Text)))
                 {
                     var tag = task.GuiTag as Widget;
                     var lambdaCopy = task;
@@ -55,7 +63,9 @@ namespace DwarfCorp.Gui.Widgets
                         tag = Root.ConstructWidget(new Widget
                         {
                             Text = task.Name,
-                            MinimumSize = new Point(0, 16)
+                            MinimumSize = new Point(0, 16),
+                            Padding = new Margin(0, 0, 4, 4),
+                            TextVerticalAlign = VerticalAlign.Center
                         });
 
                         tag.AddChild(new Widget
@@ -63,9 +73,69 @@ namespace DwarfCorp.Gui.Widgets
                             Text = "CANCEL",
                             AutoLayout = AutoLayout.DockRight,
                             MinimumSize = new Point(16, 0),
+                            TextVerticalAlign = VerticalAlign.Center,
                             OnClick = (_sender, args) =>
                             {
                                 World.Master.TaskManager.CancelTask(lambdaCopy);
+                            }
+                        });
+
+                        Widget priorityDisplay = null;
+
+                        tag.AddChild(new Gui.Widget
+                        {
+                            Background = new TileReference("round-buttons", 3),
+                            MinimumSize = new Point(16, 16),
+                            MaximumSize = new Point(16, 16),
+                            AutoLayout = AutoLayout.DockRightCentered,
+                            OnClick = (_sender, args) =>
+                            {
+                                lambdaCopy.Priority = (Task.PriorityType)(Math.Min(4, (int)lambdaCopy.Priority + 1));
+                                priorityDisplay.Text = lambdaCopy.Priority.ToString();
+                                priorityDisplay.Invalidate();
+                            },
+                            OnMouseEnter = (_sender, args) =>
+                            {
+                                _sender.BackgroundColor = Color.DarkRed.ToVector4();
+                                _sender.Invalidate();
+                            },
+                            OnMouseLeave = (_sender, args) =>
+                            {
+                                _sender.BackgroundColor = Vector4.One;
+                                _sender.Invalidate();
+                            }
+                        });
+
+                        priorityDisplay = tag.AddChild(new Gui.Widget
+                        {
+                            AutoLayout = AutoLayout.DockRight,
+                            MinimumSize = new Point(64, 0),
+                            Text = lambdaCopy.Priority.ToString(),
+                            TextHorizontalAlign = HorizontalAlign.Center,
+                            TextVerticalAlign = VerticalAlign.Center
+                        });
+
+                        tag.AddChild(new Gui.Widget
+                        {
+                            Background = new TileReference("round-buttons", 7),
+                            MinimumSize = new Point(16, 16),
+                            MaximumSize = new Point(16, 16),
+                            AutoLayout = AutoLayout.DockRightCentered,
+                            OnClick = (_sender, args) =>
+                            {
+                                lambdaCopy.Priority = (Task.PriorityType)(Math.Max(0, (int)lambdaCopy.Priority - 1));
+                                priorityDisplay.Text = lambdaCopy.Priority.ToString();
+                                priorityDisplay.Invalidate();
+                            },
+                            OnMouseEnter = (_sender, args) =>
+                            {
+                                _sender.BackgroundColor = Color.DarkRed.ToVector4();
+                                _sender.Invalidate();
+                            },
+                            OnMouseLeave = (_sender, args) =>
+                            {
+                                _sender.BackgroundColor = Vector4.One;
+                                _sender.Invalidate();
                             }
                         });
 
