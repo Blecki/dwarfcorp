@@ -53,7 +53,7 @@ namespace DwarfCorp
     public class DwarfGame : Game
     {
 #if XNA_BUILD
-        public static bool COMPRESSED_BINARY_SAVES = false;
+        public static bool COMPRESSED_BINARY_SAVES = true;
 #else
         public static bool COMPRESSED_BINARY_SAVES = false;
 #endif
