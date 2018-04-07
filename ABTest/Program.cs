@@ -12,54 +12,80 @@ namespace ABTest
     {
         static void Main(string[] args)
         {
-            //var random = new Random();
-            //var randomVoxels = 100;
-            //var iterations = 10;
+            var random = new Random();
 
-            //var naiveVoxelsStored = 16 * 64 * 16;
-            //var sumSparseVoxelsStored = 0;
+            int iterations = 10;
+            int voxels = 65000;
+            int voxelTypes = 10;
 
-            //for (int i = 0; i < iterations; ++i)
-            //{
-            //    var sparseVoxels = new SparseVoxelTree(new DwarfCorp.Point3(0, 0, 0), new DwarfCorp.Point3(16, 64, 16), 0);
+            long totalManaged = 0;
+            long totalNative = 0;
+            long totalNaive = 0;
+            var managed = new SVT.Level_TOP(0);
+            var native = new SparseVoxelTreePerformanceTest.Chunk(0);
+            var naive = new int[16 * 64 * 16];
 
-            //    for (int v = 0; v < randomVoxels; ++v)
-            //    {
-            //        var coord = new DwarfCorp.Point3(random.Next(16), random.Next(64), random.Next(16));
-            //        sparseVoxels.SetVoxel(coord, v % 10);
-            //    }
+            Console.WriteLine("Testing performance of Managed / Native / Naive");
+            for (var i = 0; i < iterations; ++i)
+            {
+                var managedResults = TestLevel(16, 64, 16, (c, v) => managed.SetVoxel(c, v), (c) => managed.GetVoxel(c));
+                var nativeResults = TestLevel(16, 64, 16, (c, v) => native.SetVoxel(c.X, c.Y, c.Z, v), (c) => native.GetVoxel(c.X, c.Y, c.Z));
+                var naiveResults = TestLevel(16, 64, 16, (c, v) =>
+                   naive[(c.Y * 16 * 16) + (c.Z * 16) + c.X] = v, (c) =>
+                   naive[(c.Y * 16 * 16) + (c.Z * 16) + c.X]);
 
-            //    var memoryUsage = sparseVoxels.CalculateMemoryUsage();
-            //    Console.WriteLine(i.ToString() + " Sparse tree: " + memoryUsage.Item2 + " voxels stored with " + memoryUsage.Item1 + " bytes overhead.");
-            //    Console.WriteLine(i.ToString() + " Sparse storage usage as % of naive: " + ((float)memoryUsage.Item2 / (float)naiveVoxelsStored));
+                Console.WriteLine(String.Format("MC:{0} MT:{1} NC:{2} NT:{3} DIFF:{4:0.000} NAC:{5} NAT:{6} NADIFF:{7:0.000}",
+                    managedResults.Item1,
+                    managedResults.Item3,
+                    nativeResults.Item1,
+                    nativeResults.Item3,
+                    (float)nativeResults.Item3 / (float)managedResults.Item3,
+                    naiveResults.Item1,
+                    naiveResults.Item3,
+                    (float)nativeResults.Item3 / (float)naiveResults.Item3));
 
-            //    sumSparseVoxelsStored += memoryUsage.Item2;
+                totalManaged += managedResults.Item3;
+                totalNative += nativeResults.Item3;
+                totalNaive += naiveResults.Item3;
+            }
 
-            //}
+            Console.WriteLine(String.Format("Overall Diff: {0} Naive Diff: {1}",
+                (float)totalNative / (float)totalManaged,
+                (float)totalNative / (float)totalNaive));
 
-            //Console.WriteLine("Total sparse voxels: " + sumSparseVoxelsStored + " - % " + ((float)sumSparseVoxelsStored / ((float)naiveVoxelsStored * iterations)));
-            var top = new SVT.Level_TOP(0);
-            top.SetVoxel(new SVT.MiniPoint3(0, 16, 0), 1);
+            Console.WriteLine(String.Format("Worst case memory comparison - Native: {0} Naive: {1}",
+                native.GetMemoryUsage(), 4 * 16 * 64 * 16));
 
 
-            var l2 = new SVT.Level2(new SVT.MiniPoint3(0, 0, 0), 0);
-            TestLevel(2, 2, 2, (c, v) => l2.SetVoxel(c, v), (c) => l2.GetVoxel(c));
-            var l4 = new SVT.Level4(new SVT.MiniPoint3(0, 0, 0), 0);
-            TestLevel(4, 4, 4, (c, v) => l4.SetVoxel(c, v), (c) => l4.GetVoxel(c));
-            var l8 = new SVT.Level8(new SVT.MiniPoint3(0, 0, 0), 0);
-            TestLevel(8, 8, 8, (c, v) => l8.SetVoxel(c, v), (c) => l8.GetVoxel(c));
-            var l16 = new SVT.Level16(new SVT.MiniPoint3(0, 0, 0), 0);
-            TestLevel(16, 16, 16, (c, v) => l16.SetVoxel(c, v), (c) => l16.GetVoxel(c));
-            var lTOP = new SVT.Level_TOP(0);
-            TestLevel(16, 64, 16, (c, v) => lTOP.SetVoxel(c, v), (c) => lTOP.GetVoxel(c));
+            long memoryUsed = 0;
 
+            Console.WriteLine("Comparing memory usage using {0} voxels from pool of {1} voxel types", voxels, voxelTypes);
+            for (var i = 0; i < iterations; ++i)
+            {
+                var nativeMemSizeTest = new SparseVoxelTreePerformanceTest.Chunk(0);
+                for (var v = 0; v < voxels; ++v)
+                    nativeMemSizeTest.SetVoxel((byte)random.Next(16), (byte)random.Next(45), (byte)random.Next(16), random.Next(voxelTypes) + 1);
+
+                nativeMemSizeTest.Compact();
+                var mem = nativeMemSizeTest.GetMemoryUsage();
+                Console.WriteLine("M:{0} %:{1}",
+                    mem,
+                    (float)mem / (float)(16 * 64 * 16 * 4));
+
+                memoryUsed += mem;
+            }
+
+            Console.WriteLine("Overall M:{0} %:{1}",
+                memoryUsed,
+                (float)memoryUsed / (float)(16 * 64 * 16 * 4 * 10));
 
             Console.ReadLine();
         }
 
-        private static void TestLevel(int X, int Y, int Z, Action<SVT.MiniPoint3, int> Set, Func<SVT.MiniPoint3, int> Get)
+        private static Tuple<int, int, long> TestLevel(int X, int Y, int Z, Action<SVT.MiniPoint3, int> Set, Func<SVT.MiniPoint3, int> Get)
         {
-            Console.WriteLine("Testing Level " + Y);
+            var watch = Stopwatch.StartNew();
+
             var good = 0;
             var bad = 0;
 
@@ -74,9 +100,14 @@ namespace ABTest
                         if (Get(new SVT.MiniPoint3(x, y, z)) == CalcTestValue(x, y, z))
                             good += 1;
                         else
-                            bad += 1;
+                        {
+                            Console.WriteLine("Fail at " + x + ", " + y + ", " + z);
 
-            Console.WriteLine("Good: " + good + " Bad: " + bad);
+                            bad += 1;
+                        }
+            watch.Stop();
+
+            return Tuple.Create(good, bad, watch.ElapsedTicks);
         }
 
         private static int CalcTestValue(byte x, byte y, byte z)

@@ -97,6 +97,12 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SparseVoxelTreePerformanceTest\SparseVoxelTreePerformanceTest.vcxproj">
+      <Project>{c9482e9d-f916-4cff-b22f-a706f5cdf393}</Project>
+      <Name>SparseVoxelTreePerformanceTest</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
