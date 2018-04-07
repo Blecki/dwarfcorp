@@ -132,7 +132,14 @@ namespace DwarfCorp
             AI = Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors, PlanService)) as CreatureAI;
 
 
-            Attacks = new List<Attack>() { new Attack("Bite", 50.0f, 1.0f, 3.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_giant_snake_attack_1), ContentPaths.Effects.bite) };
+            Attacks = new List<Attack>()
+            {
+                new Attack("Bite", 50.0f, 1.0f, 3.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_giant_snake_attack_1), ContentPaths.Effects.bite)
+                {
+                    TriggerMode = Attack.AttackTrigger.Animation,
+                    TriggerFrame = 2
+                }
+            };
 
             Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
 
@@ -195,13 +202,13 @@ namespace DwarfCorp
                 ContentPaths.Entities.Animals.Snake.tail_animation;
 
 
-            var sprite = CreateSprite(animFile, Manager, 0.0f);
+            var sprite = CreateSprite(animFile, Manager, 0.25f);
 
             Tail = new List<TailSegment>();
 
             for (int i = 0; i < 10; ++i)
             {
-                var tailPiece = CreateSprite(tailFile, Manager, 0.0f, false);
+                var tailPiece = CreateSprite(tailFile, Manager, 0.25f, false);
 
                 Tail.Add(
                     new TailSegment()

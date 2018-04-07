@@ -35,8 +35,9 @@
           [ 2, 4, 0 ],
           [ 3, 4, 0 ]
        ],
-       "Name" : "AttackFRONT",
-       "Speed" : [1]
+       "Name" : "AttackingFORWARD",
+       "Speed" : [0.15],
+	   "PlayOnce" : true
     },
     {
        "Frames" : [
@@ -45,8 +46,9 @@
           [ 2, 5, 0 ],
           [ 3, 5, 0 ]
        ],
-       "Name" : "AttackLEFT",
-       "Speed" : [1]
+       "Name" : "AttackingLEFT",
+       "Speed" : [0.15],
+	   "PlayOnce" : true
     },
     {
        "Frames" : [
@@ -55,8 +57,9 @@
           [ 2, 6, 0 ],
           [ 3, 6, 0 ]
        ],
-       "Name" : "AttackRIGHT",
-       "Speed" : [1]
+       "Name" : "AttackingRIGHT",
+       "Speed" : [0.15],
+	   "PlayOnce" : true
     },
     {
        "Frames" : [
@@ -65,16 +68,17 @@
           [ 2, 7, 0 ],
           [ 3, 7, 0 ]
        ],
-       "Name" : "AttackBACK",
-       "Speed" : [1]
+       "Name" : "AttackingBACK",
+       "Speed" : [0.15],
+	   "PlayOnce" : true
     }
    ],
    "Layers" : [
       {
          "$id" : "1",
          "AssetName" : "Entities\\Animals\\Snake\\snake",
-         "FrameHeight" : 32,
-         "FrameWidth" : 32
+         "FrameHeight" : 48,
+         "FrameWidth" : 48
       }
    ],
    "Tints" : [ "255, 255, 255, 255"]
