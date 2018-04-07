@@ -188,6 +188,33 @@
          ],
          "Name" : "AttackBACK",
          "Speed" : [1]
+      },
+      {
+         "Frames" : [
+            [ 0, 12, 0 ],
+            [ 1, 12, 0 ],
+            [ 2, 12, 0 ]
+         ],
+         "Name" : "WebFRONT",
+         "Speed" : [1]
+      },
+      {
+         "Frames" : [
+            [ 0, 13, 0 ],
+            [ 1, 13, 0 ],
+            [ 2, 13, 0 ]
+         ],
+         "Name" : "WebRIGHT",
+         "Speed" : [1]
+      },
+      {
+         "Frames" : [
+            [ 0, 14, 0 ],
+            [ 1, 14, 0 ],
+            [ 2, 14, 0 ]
+         ],
+         "Name" : "WebRIGHT",
+         "Speed" : [1]
       }
    ],
    "Layers" : [
