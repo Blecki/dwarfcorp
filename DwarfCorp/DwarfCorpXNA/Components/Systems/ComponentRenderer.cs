@@ -52,7 +52,7 @@ namespace DwarfCorp
                 if (r.FrustumCull)
                 {
                     if ((r.GlobalTransform.Translation - Camera.Position).Length2DSquared() >=
-                        chunks.DrawDistanceSquared) return false;
+                        GameSettings.Default.ChunkDrawDistance * GameSettings.Default.ChunkDrawDistance) return false;
                     if (!r.GetBoundingBox().Intersects(frustrum)) return false;
                 }
 
