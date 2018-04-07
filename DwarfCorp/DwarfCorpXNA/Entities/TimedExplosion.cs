@@ -227,6 +227,9 @@ namespace DwarfCorp
                                     voxelsExploded += 1;
                                     nextVoxel.Type = VoxelLibrary.emptyType;
                                     Manager.World.ParticleManager.Effects["explode"].Trigger(1, nextVoxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), Color.White);
+                                    Manager.World.ParticleManager.Effects["dirt_particle"].Trigger(3, nextVoxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), Color.White);
+
+                                    Manager.World.PlayerFaction.OnVoxelDestroyed(nextVoxel);
                                 }
                             }
                         }

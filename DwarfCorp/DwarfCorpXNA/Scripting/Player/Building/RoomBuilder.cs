@@ -203,8 +203,7 @@ namespace DwarfCorp
                 toCheck.AddRange(DesignatedRooms.Where(r => r.IsBuilt));
                 foreach (Room r in toCheck)
                 {
-                    r.RemoveVoxel(voxDestroyed);
-                    if (r.Voxels.Count == 0)
+                    if (r.RemoveVoxel(voxDestroyed))
                     {
                         toDestroy.Add(r);
                     }

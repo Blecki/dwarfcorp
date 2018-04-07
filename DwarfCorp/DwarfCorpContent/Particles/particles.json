@@ -126,7 +126,7 @@
       "ParticleDecay": 0.8,
       "CollidesWorld": false,
       "Sleeps": false,
-      "HasLighting": true,
+      "HasLighting": false,
       "RotatesWithVelocity": false,
       "Blend": 0,
       "EmitsLight": false,

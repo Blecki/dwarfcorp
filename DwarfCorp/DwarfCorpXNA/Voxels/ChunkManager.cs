@@ -470,6 +470,9 @@ namespace DwarfCorp
 
         public List<Body> KillVoxel(VoxelHandle Voxel)
         {
+            if (World.Master != null)
+                World.Master.Faction.OnVoxelDestroyed(Voxel);
+
             if (!Voxel.IsValid || Voxel.IsEmpty)
                 return null;
 
@@ -480,9 +483,6 @@ namespace DwarfCorp
                 World.ParticleManager.Trigger("puff", 
                     Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
             }
-
-            if (World.Master != null)
-                World.Master.Faction.OnVoxelDestroyed(Voxel);
 
             Voxel.Type.ExplosionSound.Play(Voxel.WorldPosition);
 

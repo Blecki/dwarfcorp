@@ -271,7 +271,7 @@ namespace DwarfCorp
 
         public void OnVoxelDestroyed(VoxelHandle V)
         {
-            if (!V.IsValid || V.IsEmpty)
+            if (!V.IsValid)
                 return;
 
             RoomBuilder.OnVoxelDestroyed(V);

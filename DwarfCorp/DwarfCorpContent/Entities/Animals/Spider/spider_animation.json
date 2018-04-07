@@ -167,7 +167,7 @@
             [ 1, 12, 0 ],
             [ 2, 12, 0 ]
          ],
-         "Name" : "WebFRONT",
+         "Name" : "WebFORWARD",
          "Speed" : [0.15],
 		 "PlayOnce" : true
       },
