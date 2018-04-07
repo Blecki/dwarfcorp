@@ -34,7 +34,7 @@
       {
          "$id" : "1",
          "AssetName" : "Entities\\Animals\\Snake\\snake",
-         "FrameHeight" : 48,
+         "FrameHeight" : 64,
          "FrameWidth" : 48
       }
    ],

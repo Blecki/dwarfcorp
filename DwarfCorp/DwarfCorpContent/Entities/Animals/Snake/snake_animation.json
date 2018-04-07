@@ -68,7 +68,7 @@
           [ 2, 7, 0 ],
           [ 3, 7, 0 ]
        ],
-       "Name" : "AttackingBACK",
+       "Name" : "AttackingBACKWARD",
        "Speed" : [0.15],
 	   "PlayOnce" : true
     }

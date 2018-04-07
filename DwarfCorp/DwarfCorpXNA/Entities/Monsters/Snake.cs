@@ -137,7 +137,7 @@ namespace DwarfCorp
                 new Attack("Bite", 50.0f, 1.0f, 3.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_giant_snake_attack_1), ContentPaths.Effects.bite)
                 {
                     TriggerMode = Attack.AttackTrigger.Animation,
-                    TriggerFrame = 2
+                    TriggerFrame = 2,
                 }
             };
 
@@ -202,7 +202,7 @@ namespace DwarfCorp
                 ContentPaths.Entities.Animals.Snake.tail_animation;
 
 
-            var sprite = CreateSprite(animFile, Manager, 0.25f);
+            var sprite = CreateSprite(animFile, Manager, 0.35f);
 
             Tail = new List<TailSegment>();
 

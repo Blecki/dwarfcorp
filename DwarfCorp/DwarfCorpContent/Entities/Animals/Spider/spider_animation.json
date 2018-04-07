@@ -64,38 +64,6 @@
          "Name" : "WalkingBACKWARD",
          "Speed" : [0.1]
       },
-
-      {
-         "Frames" : [
-            [ 0, 0, 0 ]
-         ],
-         "Name" : "AttackingFORWARD",
-         "Speed" : [0.15]
-      },
-      {
-         "Frames" : [
-            [ 0	, 1, 0 ]
-         ],
-         "Name" : "AttackingLEFT",
-         "Speed" : [0.15],
-         "PlayOnce" :  true
-      },
-      {
-         "Frames" : [
-            [ 0, 2, 0 ]
-         ],
-         "Name" : "AttackingRIGHT",
-         "Speed" : [0.15],
-         "PlayOnce" :  true
-      },
-      {
-         "Frames" : [
-            [ 0, 3, 0 ]
-         ],
-         "Name" : "AttackingBACKWARD",
-         "Speed" : [0.15],
-         "PlayOnce" :  true
-      },
       {
          "Frames" : [
             [ 0, 0, 0 ]
@@ -159,8 +127,9 @@
             [ 1, 8, 0 ],
             [ 2, 8, 0 ]
          ],
-         "Name" : "AttackFRONT",
-         "Speed" : [1]
+         "Name" : "AttackingFORWARD",
+         "Speed" : [0.15],
+		 "PlayOnce" : true
       },
       {
          "Frames" : [
@@ -168,8 +137,9 @@
             [ 1, 9, 0 ],
             [ 2, 9, 0 ]
          ],
-         "Name" : "AttackLEFT",
-         "Speed" : [1]
+         "Name" : "AttackingLEFT",
+         "Speed" : [0.15],
+		 "PlayOnce" : true
       },
       {
          "Frames" : [
@@ -177,8 +147,9 @@
             [ 1, 10, 0 ],
             [ 2, 10, 0 ]
          ],
-         "Name" : "AttackRIGHT",
-         "Speed" : [1]
+         "Name" : "AttackingRIGHT",
+         "Speed" : [0.15],
+		 "PlayOnce" : true
       },
       {
          "Frames" : [
@@ -186,8 +157,9 @@
             [ 1, 11, 0 ],
             [ 2, 11, 0 ]
          ],
-         "Name" : "AttackBACK",
-         "Speed" : [1]
+         "Name" : "AttackingBACKWARD",
+         "Speed" : [0.15],
+		 "PlayOnce" : true
       },
       {
          "Frames" : [
@@ -196,7 +168,8 @@
             [ 2, 12, 0 ]
          ],
          "Name" : "WebFRONT",
-         "Speed" : [1]
+         "Speed" : [0.15],
+		 "PlayOnce" : true
       },
       {
          "Frames" : [
@@ -205,7 +178,8 @@
             [ 2, 13, 0 ]
          ],
          "Name" : "WebRIGHT",
-         "Speed" : [1]
+         "Speed" : [0.15],
+		 "PlayOnce" : true
       },
       {
          "Frames" : [
@@ -213,8 +187,9 @@
             [ 1, 14, 0 ],
             [ 2, 14, 0 ]
          ],
-         "Name" : "WebRIGHT",
-         "Speed" : [1]
+         "Name" : "WebBACKWARD",
+         "Speed" : [0.15],
+		 "PlayOnce" : true
       }
    ],
    "Layers" : [
