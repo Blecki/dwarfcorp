@@ -181,7 +181,7 @@ namespace DwarfCorp
                         if (DeathTimer.HasTriggered)
                         {
                             _state = State.Exploding;
-
+                            Manager.World.ParticleManager.Effects["explode"].Trigger(10, Position, Color.White);
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_trap_destroyed, GlobalTransform.Translation, false);
 
                             foreach (Body body in Manager.World.CollisionManager.EnumerateIntersectingObjects(
@@ -200,6 +200,7 @@ namespace DwarfCorp
                         break;
 
                     case State.Exploding:
+                        SetFlagRecursive(Flag.Visible, false);
                         if (OrderedExplosionList == null)
                             throw new InvalidOperationException();
 
