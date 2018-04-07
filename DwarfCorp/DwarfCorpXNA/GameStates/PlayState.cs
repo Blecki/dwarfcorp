@@ -1789,6 +1789,8 @@ namespace DwarfCorp.GameStates
                                Icon = resource.ResourceType.GetResource().GuiLayers[0],
                                Tooltip = "Plant " + resource.ResourceType,
                                Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
+                               Text = TextGenerator.Shorten(resource.ResourceType, 6),
+                               TextVerticalAlign = VerticalAlign.Below,
                                OnClick = (sender, args) =>
                                {
                                    World.ShowToolPopup("Click and drag to plant " + resource.ResourceType + ".");
