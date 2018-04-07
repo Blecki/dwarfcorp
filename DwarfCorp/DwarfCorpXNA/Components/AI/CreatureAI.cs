@@ -323,7 +323,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (_preEmptTimer.HasTriggered && newTask == null && Faction == World.PlayerFaction)
+            if (_preEmptTimer.HasTriggered && newTask == null && Faction == World.PlayerFaction && !Status.IsOnStrike)
             {
                 newTask = World.Master.TaskManager.GetBestTask(this, (int)CurrentTask.Priority);
             }
@@ -513,36 +513,37 @@ namespace DwarfCorp
                 if (Status.Happiness.IsDissatisfied())
                     tantrum = MathFunctions.Rand(0, 1) < 0.25f;
 
+                if (tantrum && !Status.IsOnStrike)
+                {
+                    Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
+
+                    if (Creature.Faction == Manager.World.PlayerFaction)
+                    {
+                        Manager.World.MakeAnnouncement(
+                            new Gui.Widgets.QueuedAnnouncement
+                            {
+                                Text = String.Format("{0} ({1}) refuses to work!",
+                                    Stats.FullName, Stats.CurrentClass.Name),
+                                ClickAction = (gui, sender) => ZoomToMe()
+                            });
+
+                        Manager.World.Tutorial("happiness");
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.25f);
+                    }
+                    Status.IsOnStrike = true;
+                }
+                else if (Status.Happiness.IsSatisfied())
+                {
+                    Status.IsOnStrike = false;
+                }
+
                 // Otherwise, find a new task to perform.
                 var goal = GetEasiestTask(Tasks);
 
                 if (goal != null)
                 {
-                    if (tantrum)
-                    {
-                        Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
-
-                        if (Creature.Faction == Manager.World.PlayerFaction)
-                        {
-                            Manager.World.MakeAnnouncement(
-                                new Gui.Widgets.QueuedAnnouncement
-                                {
-                                    Text = String.Format("{0} ({1}) refuses to work!",
-                                        Stats.FullName, Stats.CurrentClass.Name),
-                                    ClickAction = (gui, sender) => ZoomToMe()
-                                });
-
-                            Manager.World.Tutorial("happiness");
-                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
-                        }
-
-                        ChangeTask(null);
-                    }
-                    else
-                    {
-                        IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
-                        ChangeTask(goal);
-                    }
+                    IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
+                    ChangeTask(goal);
                 }
                 else
                 {
@@ -690,7 +691,7 @@ namespace DwarfCorp
             if (!IsPosessed && Creature.Physics.IsInLiquid && MathFunctions.RandEvent(0.01f))
                 return new FindLandTask();
 
-            if (Faction == World.PlayerFaction)
+            if (Faction == World.PlayerFaction && !Status.IsOnStrike)
             {
                 var candidate = World.Master.TaskManager.GetBestTask(this);
                 if (candidate != null)
@@ -1103,6 +1104,11 @@ namespace DwarfCorp
             if (Status.IsAsleep)
             {
                 desc += "\n UNCONSCIOUS";
+            }
+
+            if (Status.IsOnStrike)
+            {
+                desc += "\n ON STRIKE";
             }
 
             return desc;
