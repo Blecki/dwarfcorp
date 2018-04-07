@@ -16,7 +16,17 @@ namespace DwarfCorp.Gui
     public class RenderData
     {
         public GraphicsDevice Device { get { return GameStates.GameState.Game.GraphicsDevice; } }
-        public Point ActualScreenBounds { get { return new Point(Device.Viewport.Width, Device.Viewport.Height); } }
+
+        public Point ActualScreenBounds
+        {
+            get
+            {
+                if (Device != null)
+                    return new Point(Device.Viewport.Width, Device.Viewport.Height);
+                throw new InvalidOperationException("Graphics device was null.");
+            }
+        }
+
         public Effect Effect { get; private set; }
         public Texture2D Texture { get; private set; }
         public Dictionary<String, ITileSheet> TileSheets { get; private set; }
