@@ -133,6 +133,8 @@ namespace DwarfCorp
 
         public WaterManager Water { get; set; }
 
+        public Timer ChunkUpdateTimer = new Timer(10.0f, false, Timer.TimerMode.Real);
+
         public bool IsAboveCullPlane(BoundingBox Box)
         {
             return Box.Min.Y > (World.Master.MaxViewingLevel + 5);
@@ -421,7 +423,13 @@ namespace DwarfCorp
             Splasher.HandleTransfers(gameTime, Water.GetTransferQueue());
 
             if (!gameTime.IsPaused)
-                ChunkUpdate.RunUpdate(this);
+            {
+                ChunkUpdateTimer.Update(gameTime);
+                if (ChunkUpdateTimer.HasTriggered)
+                {
+                    ChunkUpdate.RunUpdate(this);
+                }
+            }
 
             List<VoxelChangeEvent> localList = null;
             lock (ChangedVoxels)
