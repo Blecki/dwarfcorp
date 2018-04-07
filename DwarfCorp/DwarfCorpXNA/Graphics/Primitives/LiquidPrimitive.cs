@@ -250,6 +250,11 @@ namespace DwarfCorp
                                         }
                                     }
                                 }
+                                else
+                                {
+                                    cache.drawFace[(int)face] = false;
+                                    continue;
+                                }
 
                                 cache.drawFace[(int)face] = true;
                                 facesToDraw++;
