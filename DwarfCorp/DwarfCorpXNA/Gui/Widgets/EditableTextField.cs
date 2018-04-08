@@ -99,6 +99,7 @@ namespace DwarfCorp.Gui.Widgets
 
             OnKeyDown += (sender, args) =>
                 {
+#if XNA_BUILD
                     if (args.KeyValue == (int)System.Windows.Forms.Keys.Up)
                     {
                         Root.SafeCall(ArrowKeyUpDown, this, 1);
@@ -107,6 +108,16 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         Root.SafeCall(ArrowKeyUpDown, this, -1);
                     }
+#else
+                    if (args.KeyValue == (int)Microsoft.Xna.Framework.Input.Keys.Up)
+                    {
+                        Root.SafeCall(ArrowKeyUpDown, this, 1);
+                    }
+                    else if (args.KeyValue == (int)Microsoft.Xna.Framework.Input.Keys.Down)
+                    {
+                        Root.SafeCall(ArrowKeyUpDown, this, -1);
+                    }
+#endif
 
                     var beforeEventArgs = new BeforeTextChangeEventArgs
                         {
