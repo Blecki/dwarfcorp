@@ -327,7 +327,6 @@ namespace DwarfCorp
         /// Gets the first child component of the specified type from among the children.
         /// </summary>
         /// <typeparam name="T">The type</typeparam>
-        /// <param name="self">if set to <c>true</c> add this component to the list if it qualifies.</param>
         /// <returns>The first component of type T.</returns>
         public T GetComponent<T>() where T : GameComponent
         {

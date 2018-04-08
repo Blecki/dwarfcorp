@@ -223,7 +223,7 @@ namespace DwarfCorp
                     }
                 }
             }
-            catch (Exception e) { }
+            catch (Exception) { }
         }
         
 

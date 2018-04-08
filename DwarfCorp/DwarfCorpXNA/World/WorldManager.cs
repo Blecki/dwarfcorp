@@ -678,7 +678,9 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="time">The current time</param>
         /// <param name="view">The camera view matrix</param>
-		/// <param name="scale">The scale for the sky drawing</param>
+        /// <param name="scale">The scale for the sky drawing</param>
+        /// <param name="fogColor"></param>
+        /// <param name="drawBackground"></param>
         public void DrawSky(DwarfTime time, Matrix view, float scale, Color fogColor, bool drawBackground = true)
         {
             Matrix oldView = Camera.ViewMatrix;

@@ -278,7 +278,7 @@ namespace DwarfCorp
                 {
                     Mixer = FileUtils.LoadJsonFromResolvedPath<SFXMixer>(ContentPaths.mixer);
                 }
-                catch (FileNotFoundException exception)
+                catch (FileNotFoundException)
                 {
                     Console.Out.WriteLine("Mixer file didn't exist. Creating a new mixer.");
                     Mixer = new SFXMixer()
@@ -392,7 +392,7 @@ namespace DwarfCorp
                     ActiveCues[sound] = newCue;
                 }
             }
-            catch (InvalidOperationException exception)
+            catch (InvalidOperationException)
             {
                 Cue newCue = SoundBank.GetCue(sound);
                 newCue.Play();

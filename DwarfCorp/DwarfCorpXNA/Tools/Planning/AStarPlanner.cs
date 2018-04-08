@@ -65,6 +65,7 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="cameFrom">A dictionary of Voxels to the movement that was taken to get there.</param>
         /// <param name="currentNode">The very last movement in the path.</param>
+        /// <param name="start"></param>
         /// <returns>The path of movements. from the start to the current node</returns>
         public static List<MoveAction> ReconstructPath(Dictionary<MoveState, MoveAction> cameFrom,
             MoveAction currentNode, MoveState start)
@@ -153,7 +154,7 @@ namespace DwarfCorp
         ///     take a mover from the start voxel to the goal region.
         /// </summary>
         /// <param name="mover">The agent that we want to find a path for.</param>
-        /// <param name="start">The voxel that the agent starts in.</param>
+        /// <param name="startVoxel"></param>
         /// <param name="goal">Goal conditions that the agent is trying to satisfy.</param>
         /// <param name="chunks">The voxels that the agent is moving through</param>
         /// <param name="maxExpansions">Maximum number of voxels to consider before giving up.</param>
@@ -162,13 +163,14 @@ namespace DwarfCorp
         ///     A heuristic weight to apply to the planner. If 1.0, the path is garunteed to be optimal. Higher values
         ///     usually result in faster plans that are suboptimal.
         /// </param>
+        /// <param name="continueFunc"></param>
         /// <returns>True if a path could be found, or false otherwise.</returns>
-        private static PlanResult Path(CreatureMovement mover, VoxelHandle startVoel, GoalRegion goal, ChunkManager chunks,
+        private static PlanResult Path(CreatureMovement mover, VoxelHandle startVoxel, GoalRegion goal, ChunkManager chunks,
             int maxExpansions, ref List<MoveAction> toReturn, float weight, Func<bool> continueFunc)
         {
             var start = new MoveState()
             {
-                Voxel = startVoel
+                Voxel = startVoxel
             };
 
             var startTime = DwarfTime.Tick();
@@ -650,6 +652,8 @@ namespace DwarfCorp
         ///     The heuristic weight of the planner. If 1.0, the path returned is optimal.
         ///     Higher values result in suboptimal paths, but the search may be faster.
         /// </param>
+        /// <param name="numPlans"></param>
+        /// <param name="continueFunc"></param>
         /// <returns>The path of movements the creature must take to reach the goal. Returns null if no such path exists.</returns>
         public static List<MoveAction> FindPath(CreatureMovement mover, VoxelHandle start, GoalRegion goal,
             ChunkManager chunks, int maxExpansions, float weight, int numPlans, Func<bool> continueFunc)

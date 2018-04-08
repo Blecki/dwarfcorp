@@ -108,6 +108,9 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>DwarfCorpKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -843,6 +846,7 @@
     <None Include="app.config" />
     <None Include="DwarfCorpKey.snk" />
     <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

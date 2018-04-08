@@ -168,12 +168,9 @@ namespace DwarfCorp
             {
                 chirpTimer.Update(DwarfTime.LastTime);
                 if (chirpTimer.HasTriggered)
-                {
                     Creature.NoiseMaker.MakeNoise(ContentPaths.Audio.bunny, Creature.AI.Position, true, 0.01f);
-                }
                 yield return Act.Status.Running;
             }
-            yield break;
         }
 
 

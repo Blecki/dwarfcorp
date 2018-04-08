@@ -667,7 +667,6 @@ namespace DwarfCorp
             bool standingOnGround = (neighborHood[1, 0, 1].IsValid && !neighborHood[1, 0, 1].IsEmpty);
             bool topCovered = (neighborHood[1, 2, 1].IsValid && !neighborHood[1, 2, 1].IsEmpty);
             bool hasNeighbors = HasNeighbors(neighborHood);
-            bool isClimbing = false;
 
             var successors = new List<MoveAction>();
 
@@ -701,7 +700,6 @@ namespace DwarfCorp
                 if (ladderAt != null)
                 {
                     standingOnGround = true;
-                    isClimbing = true;
                 }
             }
 

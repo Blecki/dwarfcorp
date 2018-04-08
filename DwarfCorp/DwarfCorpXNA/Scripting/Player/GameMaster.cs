@@ -402,7 +402,7 @@ namespace DwarfCorp
                         }
                     }
                     
-                    /// TODO ... other entity task types
+                    // TODO ... other entity task types
                 }
 
                 if (orphanedTasks.Count > 0)

@@ -58,14 +58,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class EmitterData : ICloneable
     {
-
-        [OnSerialized]
-        private void _onSerialized(StreamingContext Context)
-        {
-            var x = 5;
-
-        }
-
         public enum ParticleBlend
         {
             NonPremultiplied,
@@ -253,8 +245,10 @@ namespace DwarfCorp
             }
         }
 
-        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool Ignored)
+        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool Ignored)
         {
+            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, Ignored);
+
             ApplyTintingToEffect(effect);
             foreach (var sprites in Sprites)
             {

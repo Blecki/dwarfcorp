@@ -98,6 +98,7 @@ namespace DwarfCorp
         /// Initialize function creates all the required components for the bird.
         /// </summary>
         /// <param name="sprites">The sprite sheet to use for the bird</param>
+        /// <param name="species"></param>
         public void Initialize(string sprites, string species)
         {
             // When true, causes the bird to face the direction its moving in

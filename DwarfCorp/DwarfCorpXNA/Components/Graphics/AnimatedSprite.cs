@@ -17,13 +17,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class AnimatedSprite : Tinter, IUpdateableComponent, IRenderableComponent
     {
-        [OnSerialized]
-        private void _onSerialized(StreamingContext Context)
-        {
-            var x = 5;
-
-        }
-
         public Dictionary<string, Animation> Animations { get; set; }
 
         [JsonIgnore]
@@ -108,7 +101,7 @@ namespace DwarfCorp
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
-        public virtual void Render(DwarfTime gameTime,
+        public override void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,
@@ -116,6 +109,8 @@ namespace DwarfCorp
             Shader effect,
             bool renderingForWater)
         {
+            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+
             if (!IsVisible)
                 return;
 

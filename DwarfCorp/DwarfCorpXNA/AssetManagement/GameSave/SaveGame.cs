@@ -168,7 +168,7 @@ namespace DwarfCorp
                         var saveGame = SaveGame.CreateFromDirectory(dir.FullName);
                         valid = Program.CompatibleVersions.Contains(saveGame.Metadata.Version);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     { }
 
                     if (valid) newest = dir;

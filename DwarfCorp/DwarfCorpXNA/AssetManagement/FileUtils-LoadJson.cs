@@ -134,7 +134,7 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        /// Load a json list from all enabled mods, combining entries into one list. JSON must contain a List<T> as the top level element.
+        /// Load a json list from all enabled mods, combining entries into one list. JSON must contain a List<T> as the top level element.</T>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="AssetPath"></param>

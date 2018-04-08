@@ -40,13 +40,13 @@ namespace DwarfCorp
             GetComponent<Box>().Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
-#if !DEBUG
-        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+        override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             // Only renders to selection buffer
+
+            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
         }
-#endif
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {

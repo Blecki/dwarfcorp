@@ -1251,10 +1251,8 @@ namespace DwarfCorp
         /// <summary>
         /// Draws a graph based on the data presented to it.
         /// </summary>
-        /// <param name="legend">A string array containing the labels to print down the side of the graph.</param>
         /// <param name="data">An enumerable block of data in integer format.</param>
         /// <param name="height">The height of the final graph</param>
-        /// <param name="bounds">The bounds for the data set, lower then upper.</param>
         public void DrawChangeGraph(IEnumerable<int> data, int height)
         {
             int labelSizeX = 0;

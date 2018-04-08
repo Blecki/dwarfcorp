@@ -144,7 +144,7 @@ namespace DwarfCorp
         /// <summary>
         /// Enumerates the relative paths of all mods (including base content) that include the content.
         /// </summary>
-        /// <param name="Asset"></param>
+        /// <param name="AssetPath"></param>
         /// <returns></returns>
         public static IEnumerable<String> EnumerateMatchingPaths(String AssetPath)
         {
