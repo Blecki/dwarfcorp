@@ -121,7 +121,7 @@ namespace DwarfCorp.GameStates
             TabPanel.GetTabButton(1).IndicatorValue = World.GoalManager.NewAvailableGoals;
             TabPanel.GetTabButton(3).IndicatorValue = World.GoalManager.NewCompletedGoals;
 
-            GuiRoot.Update(gameTime.ToGameTime());
+            GuiRoot.Update(gameTime.ToRealTime());
             base.Update(gameTime);
         }
 

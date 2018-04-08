@@ -299,7 +299,7 @@ namespace DwarfCorp
                 DwarfGame.SpriteBatch.End();
             }
 
-            Bloom.Draw(time.ToGameTime());
+            Bloom.Draw(time.ToRealTime());
         }
 
         public void RenderTile(TerrainElement element, SpriteBatch sprites, int ix, int iy, float x, float originX, Color tint)
