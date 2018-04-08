@@ -71,6 +71,8 @@ namespace DwarfCorp
                         .GetManifestResourceStream("DwarfCorp.version.txt"))
                 using (StreamReader reader = new StreamReader(stream))
                     Commit = reader.ReadToEnd();
+
+                Commit = Commit.Trim();
             }
             catch (Exception) { }
 

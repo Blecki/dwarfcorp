@@ -106,12 +106,14 @@ namespace DwarfCorp
                         new RavenClient(
                             "https://af78a676a448474dacee4c72a9197dd2:0dd0a01a9d4e4fa4abc6e89ac7538346@sentry.io/192119");
                     ravenClient.Tags["Version"] = Program.Version;
-                }
+                    ravenClient.Tags["Commit"] = Program.Commit;
+
 #if XNA_BUILD
-                ravenClient.Tags["Platform"] = "XNA";
+                    ravenClient.Tags["Platform"] = "XNA";
 #else
                 ravenClient.Tags["Platform"] = "FNA";
 #endif
+                }
 #endif
             }
             catch (Exception exception)
