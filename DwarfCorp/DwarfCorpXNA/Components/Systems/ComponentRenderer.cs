@@ -42,24 +42,13 @@ namespace DwarfCorp
             ChunkManager chunks,
             Camera Camera)
         {
-            var frustrum = Camera.GetFrustrum();
-
-            // Todo: Use an octtree for this.
-            var visibleComponents = Renderables.Where(r =>
+            var visibleComponents = chunks.World.CollisionManager.EnumerateIntersectingObjects(Camera.GetFrustrum());
+            return visibleComponents.OfType<IRenderableComponent>().Where(r =>
             {
                 if (!r.IsVisible) return false;
                 if (chunks.IsAboveCullPlane(r.GetBoundingBox())) return false;
-                if (r.FrustumCull)
-                {
-                    if ((r.GlobalTransform.Translation - Camera.Position).Length2DSquared() >=
-                        GameSettings.Default.ChunkDrawDistance * GameSettings.Default.ChunkDrawDistance) return false;
-                    if (!r.GetBoundingBox().Intersects(frustrum)) return false;
-                }
-
                 return true;
             }).ToList();
-
-            return visibleComponents;
         }
 
         public static void Render(

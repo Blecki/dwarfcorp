@@ -154,6 +154,27 @@ namespace DwarfCorp
             }
         }
 
+        public void EnumerateItems(BoundingFrustum SearchBounds, HashSet<T> Into)
+        {
+            lock (Lock)
+            {
+                if (SearchBounds.Intersects(Bounds))
+                {
+                    if (Children == null)
+                    {
+                        for (var i = 0; i < Items.Count; ++i)
+                            if (Items[i].Item2.Intersects(SearchBounds))
+                                Into.Add(Items[i].Item1);
+                    }
+                    else
+                    {
+                        for (var i = 0; i < 8; ++i)
+                            Children[i].EnumerateItems(SearchBounds, Into);
+                    }
+                }
+            }
+        }
+
         public void EnumerateAll(HashSet<T> Into)
         {
             lock (Lock)

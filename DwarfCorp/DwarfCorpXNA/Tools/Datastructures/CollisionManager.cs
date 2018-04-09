@@ -67,21 +67,16 @@ namespace DwarfCorp
             Hashes = new Dictionary<CollisionType, OctTreeNode<IBoundedObject>>();
             Hashes[CollisionType.Static] = new OctTreeNode<IBoundedObject>(bounds.Min, bounds.Max);
             Hashes[CollisionType.Dynamic] = new OctTreeNode<IBoundedObject>(bounds.Min, bounds.Max);
+            Hashes[CollisionType.None] = new OctTreeNode<IBoundedObject>(bounds.Min, bounds.Max);
         }
 
         public void AddObject(IBoundedObject bounded, CollisionType type)
         {
-            if(type == CollisionType.None)
-                return;
-
             Hashes[type].AddItem(bounded, bounded.GetBoundingBox());
         }
 
         public void RemoveObject(IBoundedObject bounded, BoundingBox oldLocation, CollisionType type)
         {
-            if (type == CollisionType.None)
-                return;
-
             Hashes[type].RemoveItem(bounded, oldLocation);
         }
 
@@ -90,6 +85,7 @@ namespace DwarfCorp
             var hash = new HashSet<IBoundedObject>();
             switch((int) queryType)
             {
+                case (int) CollisionType.None:
                 case (int) CollisionType.Static:
                 case (int) CollisionType.Dynamic:
                     Hashes[queryType].EnumerateItems(box, hash);
@@ -104,9 +100,18 @@ namespace DwarfCorp
             return hash;
         }
 
+        public IEnumerable<IBoundedObject> EnumerateIntersectingObjects(BoundingFrustum Frustum)
+        {
+            var hash = new HashSet<IBoundedObject>();
+            foreach (var hashType in Hashes)
+                hashType.Value.EnumerateItems(Frustum, hash);
+            return hash;
+        }
+
         public IEnumerable<IBoundedObject> EnumerateAll()
         {
             var hash = new HashSet<IBoundedObject>();
+            Hashes[CollisionType.None].EnumerateAll(hash);
             Hashes[CollisionType.Static].EnumerateAll(hash);
             Hashes[CollisionType.Dynamic].EnumerateAll(hash);
             return hash;

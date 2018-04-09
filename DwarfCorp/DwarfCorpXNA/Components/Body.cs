@@ -73,12 +73,12 @@ namespace DwarfCorp
 
                 UpdateBoundingBox();
 
-                if (IsFlagSet(Flag.AddToCollisionManager))
-                {
+               // if (IsFlagSet(Flag.AddToCollisionManager))
+               // {
                     Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
                     if (!IsDead)
                         Manager.World.CollisionManager.AddObject(this, CollisionType);
-                }
+               // }
 
                 lastBounds = BoundingBox;
             }
@@ -149,7 +149,7 @@ namespace DwarfCorp
             BoundingBoxSize = boundingBoxExtents;
             LocalBoundingBoxOffset = boundingBoxPos;
 
-            SetFlag(Flag.AddToCollisionManager, addToCollisionManager);
+            //SetFlag(Flag.AddToCollisionManager, addToCollisionManager);
             LocalTransform = localTransform;
             GlobalTransform = localTransform;
 
@@ -247,7 +247,7 @@ namespace DwarfCorp
 
         public override void Delete()
         {
-            if (IsFlagSet(Flag.AddToCollisionManager))
+            //if (IsFlagSet(Flag.AddToCollisionManager))
                 Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
 
             base.Delete();
@@ -256,7 +256,7 @@ namespace DwarfCorp
         public override void Die()
         {
             // Todo: Get rid of this flag.
-            if (IsFlagSet(Flag.AddToCollisionManager) && Manager != null)
+            if (/*IsFlagSet(Flag.AddToCollisionManager) && */Manager != null)
                 Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
 
             if (OnDestroyed != null) OnDestroyed();
