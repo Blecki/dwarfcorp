@@ -349,12 +349,12 @@ namespace DwarfCorp.Rail
                 else if (realShape == 1)
                 {
                     sideUvs = Sheet.GenerateTileUVs(new Point(0, 4), out sideBounds);
-                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, false);
+                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, true);
                 }
                 else if (realShape == 2)
                 {
                     sideUvs = Sheet.GenerateTileUVs(new Point(0, 4), out sideBounds);
-                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, true);
+                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, false);
                 }
 
                 // Todo: Make these static and avoid recalculating them constantly.
