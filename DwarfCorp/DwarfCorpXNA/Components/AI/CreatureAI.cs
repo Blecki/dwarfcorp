@@ -556,6 +556,12 @@ namespace DwarfCorp
             {
                 // Should be impossible to have a current task and no current act.
                 ChangeAct(CurrentTask.CreateScript(Creature));
+
+                // This is a bad situation!
+                if (CurrentAct == null)
+                {
+                    ChangeTask(null);
+                }
             }
             
             PlannerTimer.Update(gameTime);
