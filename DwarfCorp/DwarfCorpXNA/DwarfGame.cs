@@ -258,7 +258,6 @@ namespace DwarfCorp
                 InitializeLogger();
                 Thread.CurrentThread.Name = "Main";
                 // Goes before anything else so we can track from the very start.
-                GamePerformance.Initialize(this);
 
                 SpriteBatch = new SpriteBatch(GraphicsDevice);
                 base.Initialize();
@@ -344,11 +343,11 @@ namespace DwarfCorp
             try
             {
 #endif
-                GamePerformance.Instance.PreUpdate();
+            PerformanceMonitor.BeginFrame();
                 DwarfTime.LastTime.Update(time);
                 StateManager.Update(DwarfTime.LastTime);
                 base.Update(time);
-                GamePerformance.Instance.PostUpdate();
+            PerformanceMonitor.EndFrame();
 #if SHARP_RAVEN && !DEBUG
             }
             catch (Exception exception)
@@ -368,12 +367,10 @@ namespace DwarfCorp
             try
             {
 #endif
-            GamePerformance.Instance.PreRender();
                 StateManager.Render(DwarfTime.LastTime);
                 GraphicsDevice.SetRenderTarget(null);
                 base.Draw(time);
-                GamePerformance.Instance.PostRender();
-                GamePerformance.Instance.Render(SpriteBatch);
+            PerformanceMonitor.Render();
 #if SHARP_RAVEN && !DEBUG
             }
             catch (Exception exception)

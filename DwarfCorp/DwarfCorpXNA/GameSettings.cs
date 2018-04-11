@@ -80,8 +80,6 @@ namespace DwarfCorp
             public float VisibilityUpdateTime = 0.1f;
             public float ChunkGenerateTime = 0.5f;
             public bool FogofWar = true;
-            public bool UseDynamicShadows = false;
-            public bool UseLightmaps = false;
             public bool AutoSave = true;
             public float AutoSaveTimeMinutes = 2.0f;
             public string SaveLocation = null;

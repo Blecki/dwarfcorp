@@ -164,8 +164,7 @@ namespace DwarfCorp
             RebuildThread = new Thread(RebuildVoxelsThread);
             RebuildThread.Name = "RebuildVoxels";
 
-            WaterUpdateThread = new AutoScaleThread(this, GamePerformance.ThreadIdentifier.UpdateWater,
-                (f) => Water.UpdateWater());
+            WaterUpdateThread = new AutoScaleThread(this, (f) => Water.UpdateWater());
 
             ToGenerate = new List<GlobalChunkCoordinate>();
 
@@ -206,25 +205,17 @@ namespace DwarfCorp
             System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
-            GamePerformance.Instance.RegisterThreadLoopTracker("RebuildVoxels", GamePerformance.ThreadIdentifier.RebuildVoxels);
-
 #if CREATE_CRASH_LOGS
             try
 #endif
             {
                 while (!DwarfGame.ExitGame && !ExitThreads)
                 {
-                    GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
-                    GamePerformance.Instance.EnterZone("RebuildVoxels");
-
                     var chunk = PopInvalidChunk();
                     if (chunk != null)
                         chunk.Rebuild(Graphics);
                     else
                         System.Threading.Thread.Yield();
-                    
-                    GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
-                    GamePerformance.Instance.ExitZone("RebuildVoxels");
                 }
             }
 #if CREATE_CRASH_LOGS

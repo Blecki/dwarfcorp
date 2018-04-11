@@ -272,7 +272,6 @@ namespace DwarfCorp
                 RootComponent.UpdateTransform();
             //GamePerformance.Instance.StopTrackPerformance("Components - transforms");
 
-            GamePerformance.Instance.StartTrackPerformance("Components - update");
             //foreach (var componentType in UpdateableComponents)
             //    foreach (var component in componentType.Value)
             //        if (component.Active)
@@ -283,8 +282,6 @@ namespace DwarfCorp
             //        }
             foreach (var component in UpdateableComponents)
                 component.Update(gameTime, chunks, camera);
-
-            GamePerformance.Instance.StopTrackPerformance("Components - update");
             
             AddRemove();
         }

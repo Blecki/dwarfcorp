@@ -54,7 +54,6 @@ namespace DwarfCorp
             }
 
             Renderer.Flush(Device, Effect, Camera, Mode);
-            GamePerformance.Instance.TrackValueType("Instances Drawn", uniqueInstances);
         }
     }
 }

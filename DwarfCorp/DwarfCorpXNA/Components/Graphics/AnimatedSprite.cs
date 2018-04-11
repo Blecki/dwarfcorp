@@ -119,8 +119,6 @@ namespace DwarfCorp
 
             if (AnimPlayer.Primitive == null) return;
 
-            GamePerformance.Instance.StartTrackPerformance("Render - Sprite");
-
             //AnimPlayer.PreRender(graphicsDevice);
 
             // Everything that draws should set it's tint, making this pointless.
@@ -193,7 +191,6 @@ namespace DwarfCorp
             effect.VertexColorTint = origTint;
             effect.EnableWind = false;
             EndDraw(effect);
-            GamePerformance.Instance.StopTrackPerformance("Render - Sprite");
         }
     }
 

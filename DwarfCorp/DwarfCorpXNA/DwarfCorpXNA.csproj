@@ -227,6 +227,7 @@
     <Compile Include="GameStates\ManageModsState.cs" />
     <Compile Include="Gui\TextureGeneratorAttribute.cs" />
     <Compile Include="Gui\Widgets\EmployeeAIDebugPanel.cs" />
+    <Compile Include="Gui\Widgets\FreeText.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
@@ -234,6 +235,7 @@
     <Compile Include="Scripting\Player\Economy\ResourceType.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\ChopEntityTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\FleeEntityTask.cs" />
+    <Compile Include="Tools\PerformanceMonitor.cs" />
     <Compile Include="Voxels\Rail\PaintRailTool.cs" />
     <Compile Include="Voxels\Rail\OrientationHelper.cs" />
     <Compile Include="Voxels\Rail\CompassOrientation.cs" />
@@ -754,7 +756,6 @@
     <Compile Include="Tools\Datastructures\PriorityQueue.cs" />
     <Compile Include="Tools\Datastructures\ThreadSafeRandom.cs" />
     <Compile Include="Tools\Extensions.cs" />
-    <Compile Include="Tools\GamePerformance.cs" />
     <Compile Include="Tools\Graphics\ColorGradient.cs" />
     <Compile Include="Tools\Graphics\VertexNoise.cs" />
     <Compile Include="Tools\Math\Easing.cs" />

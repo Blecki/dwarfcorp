@@ -132,8 +132,6 @@ namespace DwarfCorp
                 }
             }
 
-            GamePerformance.Instance.StartTrackPerformance("Render - Layered Simple Sprite");
-
             // Everything that draws should set it's tint, making this pointless.
             Color origTint = effect.VertexColorTint;  
             ApplyTintingToEffect(effect);            
@@ -201,7 +199,6 @@ namespace DwarfCorp
             effect.VertexColorTint = origTint;
             effect.EnableWind = false;
             EndDraw(effect);
-            GamePerformance.Instance.StopTrackPerformance("Render - Layered Simple Sprite");
         }
     }
 
