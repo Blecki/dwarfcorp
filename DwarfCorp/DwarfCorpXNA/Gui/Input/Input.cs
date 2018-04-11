@@ -84,7 +84,7 @@ namespace DwarfCorp.Gui.Input
                 action.Value.Handler = null;
         }
 
-        public void FireActions(Gui.Root Gui, Action<Gui.InputEvents, Gui.InputEventArgs> MouseHandler)
+        public void FireActions(Gui.Root Gui, Action<Gui.InputEvents, Gui.InputEventArgs> externalHandler)
         {
             if (!GameState.Game.IsActive)
             {
@@ -99,15 +99,8 @@ namespace DwarfCorp.Gui.Input
 
                 if (!@event.Args.Handled)
                 {
-                    if (@event.Message == global::DwarfCorp.Gui.InputEvents.MouseClick ||
-                        @event.Message == global::DwarfCorp.Gui.InputEvents.MouseMove ||
-                        @event.Message == global::DwarfCorp.Gui.InputEvents.MouseDown ||
-                        @event.Message == global::DwarfCorp.Gui.InputEvents.MouseUp ||
-                        @event.Message == global::DwarfCorp.Gui.InputEvents.MouseWheel)
-                    {
-                        if (MouseHandler != null) MouseHandler(@event.Message, @event.Args);
-                    }
-                    else if (@event.Message == global::DwarfCorp.Gui.InputEvents.KeyUp)
+                    externalHandler(@event.Message, @event.Args);
+                    if (!@event.Args.Handled && @event.Message == global::DwarfCorp.Gui.InputEvents.KeyUp)
                     {
                         GumInputMapper.QueuedInput localevent = @event;
                         foreach (var binding in InputActions.Where((KeyValuePair<string, InputAction> ia) => ia.Value.Keys.Contains((Keys)localevent.Args.KeyValue) && ia.Value.Type == KeyBindingType.Pressed))

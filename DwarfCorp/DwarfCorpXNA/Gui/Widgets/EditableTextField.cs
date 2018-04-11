@@ -35,6 +35,10 @@ namespace DwarfCorp.Gui.Widgets
 
             OnClick += (sender, args) =>
                 {
+                    if (IsAnyParentHidden() || IsAnyParentTransparent())
+                    {
+                        return;
+                    }
                     if (Object.ReferenceEquals(this, Root.FocusItem))
                     {
                         // This widget already has focus - move cursor to click position.
@@ -66,6 +70,7 @@ namespace DwarfCorp.Gui.Widgets
 
                         CursorPosition = clickIndex;
                         Invalidate();
+                        args.Handled = true;
                     }
                     else
                     {
@@ -73,15 +78,29 @@ namespace DwarfCorp.Gui.Widgets
                         Root.SetFocus(this);
                         CursorPosition = Text.Length;
                         Invalidate();
+                        args.Handled = true;
                     }
                 };
 
             OnGainFocus += (sender) => this.Invalidate();
             OnLoseFocus += (sender) => this.Invalidate();
             OnUpdateWhileFocus += (sender) => this.Invalidate();
+            OnKeyUp += (sender, args) =>
+            {
+                if (IsAnyParentHidden() || IsAnyParentTransparent())
+                {
+                    return;
+                }
 
+                args.Handled = true;
+            };
             OnKeyPress += (sender, args) =>
                 {
+                    if (IsAnyParentHidden() || IsAnyParentTransparent())
+                    {
+                        return;
+                    }
+
                     // Actual logic of modifying the string is outsourced.
                     var beforeEventArgs = new BeforeTextChangeEventArgs
                         {
@@ -94,11 +113,16 @@ namespace DwarfCorp.Gui.Widgets
                         Text = beforeEventArgs.NewText;
                         Root.SafeCall(OnTextChange, this);
                         Invalidate();
+                        args.Handled = true;
                     }
                 };
 
             OnKeyDown += (sender, args) =>
                 {
+                    if (IsAnyParentHidden() || IsAnyParentTransparent())
+                    {
+                        return;
+                    }
 #if XNA_BUILD
                     if (args.KeyValue == (int)System.Windows.Forms.Keys.Up)
                     {
@@ -133,6 +157,7 @@ namespace DwarfCorp.Gui.Widgets
                     }
                     //Root.SafeCall(OnTextChange, this);
                     Invalidate();
+                    args.Handled = true;
                 };
 
             if (HiliteOnMouseOver)

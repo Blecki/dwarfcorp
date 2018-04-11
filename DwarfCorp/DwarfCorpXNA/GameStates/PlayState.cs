@@ -189,7 +189,7 @@ namespace DwarfCorp.GameStates
                 World.gameState = this;
                 World.OnLoseEvent += World_OnLoseEvent;
                 CreateGUIComponents();
-                InputManager.KeyReleasedCallback += TemporaryKeyPressHandler;
+                //InputManager.KeyReleasedCallback += TemporaryKeyPressHandler;
                 IsInitialized = true;
 
                 SoundManager.PlayMusic("main_theme_day");
@@ -287,6 +287,11 @@ namespace DwarfCorp.GameStates
                             }
                         }
                     }
+                }
+
+                if (@event == Gui.InputEvents.KeyUp)
+                {
+                    args.Handled = HandleKeyPress((Keys)args.KeyValue);
                 }
             });
 
@@ -2122,15 +2127,17 @@ namespace DwarfCorp.GameStates
         /// <param name="key">The keyboard key released</param>
         private void TemporaryKeyPressHandler(Keys key)
         {
+            /*
             if ((DateTime.Now - EnterTime).TotalSeconds >= EnterInputDelaySeconds)
             {
                 InputManager.KeyReleasedCallback -= TemporaryKeyPressHandler;
                 InputManager.KeyReleasedCallback += HandleKeyPress;
                 HandleKeyPress(key);
             }
+            */
         }
 
-        private void HandleKeyPress(Keys key)
+        private bool HandleKeyPress(Keys key)
         {
             // Special case: number keys reserved for changing tool mode
             if (FlatToolTray.Tray.Hotkeys.Contains(key))
@@ -2139,6 +2146,7 @@ namespace DwarfCorp.GameStates
                 {
                     (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray)
                        .Hotkey(key);
+                    return true;
                 }
             }
             else if (key == Keys.Escape)
@@ -2158,6 +2166,7 @@ namespace DwarfCorp.GameStates
                 }
                 else
                     OpenPauseMenu();
+                return true;
             }
             else if (key == ControlSettings.Mappings.SelectAllDwarves)
             {
@@ -2165,6 +2174,7 @@ namespace DwarfCorp.GameStates
                 {
                     Master.SelectedMinions.AddRange(Master.Faction.Minions);
                     World.Tutorial("dwarf selected");
+                    return true;
                 }
             }
             else if (key == ControlSettings.Mappings.Pause)
@@ -2174,6 +2184,7 @@ namespace DwarfCorp.GameStates
                     Paused = !Paused;
                     if (Paused) GameSpeedControls.Pause();
                     else  GameSpeedControls.Resume();
+                    return true;
                 }
             }
             else if (key == ControlSettings.Mappings.TimeForward)
@@ -2181,6 +2192,7 @@ namespace DwarfCorp.GameStates
                 if (PausePanel == null || PausePanel.Hidden)
                 {
                     GameSpeedControls.CurrentSpeed += 1;
+                    return true;
                 }
             }
             else if (key == ControlSettings.Mappings.TimeBackward)
@@ -2188,12 +2200,14 @@ namespace DwarfCorp.GameStates
                 if (PausePanel == null || PausePanel.Hidden)
                 {
                     GameSpeedControls.CurrentSpeed -= 1;
+                    return true;
                 }
             }
             else if (key == ControlSettings.Mappings.ToggleGUI)
             {
                 GuiRoot.RootItem.Hidden = !GuiRoot.RootItem.Hidden;
                 GuiRoot.RootItem.Invalidate();
+                return true;
             }
             else if (key == ControlSettings.Mappings.Map)
             {
@@ -2202,6 +2216,7 @@ namespace DwarfCorp.GameStates
                     GuiRoot.SafeCall(MinimapIcon.OnClick, MinimapIcon, new InputEventArgs
                     {
                     });
+                    return true;
                 }
             }
 #if !DEMO
@@ -2215,9 +2230,11 @@ namespace DwarfCorp.GameStates
                     }
                     GodMenu.Hidden = !GodMenu.Hidden;
                     GodMenu.Invalidate();
+                    return true;
                 }
             }
 #endif
+            return false;
         }
 
         private void MakeMenuItem(Gui.Widget Menu, string Name, string Tooltip, Action<Gui.Widget, Gui.InputEventArgs> OnClick)
@@ -2326,8 +2343,6 @@ namespace DwarfCorp.GameStates
 
         public void Destroy()
         {
-            InputManager.KeyReleasedCallback -= TemporaryKeyPressHandler;
-            InputManager.KeyReleasedCallback -= HandleKeyPress;
 
             Input.Destroy();
         }
