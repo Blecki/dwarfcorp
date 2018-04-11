@@ -99,7 +99,8 @@ namespace DwarfCorp.Gui.Input
 
                 if (!@event.Args.Handled)
                 {
-                    externalHandler(@event.Message, @event.Args);
+                    if (externalHandler != null)
+                        externalHandler(@event.Message, @event.Args);
                     if (!@event.Args.Handled && @event.Message == global::DwarfCorp.Gui.InputEvents.KeyUp)
                     {
                         GumInputMapper.QueuedInput localevent = @event;
