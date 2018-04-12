@@ -143,7 +143,10 @@ namespace DwarfCorp.Gui.Widgets
 
             if (SelectedItem != null)
             {
-                SelectedItem.BackgroundColor = SelectedItemBackgroundColor;
+                if (SelectedItemBackgroundColor.W > 1e-2)
+                {
+                    SelectedItem.BackgroundColor = SelectedItemBackgroundColor;
+                }
                 SelectedItem.TextColor = SelectedItemForegroundColor;
             }
 

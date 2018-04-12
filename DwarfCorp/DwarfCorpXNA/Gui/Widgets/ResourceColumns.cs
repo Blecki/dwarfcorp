@@ -78,7 +78,10 @@ namespace DwarfCorp.Gui.Widgets
             var leftList = leftPanel.AddChild(new Gui.Widgets.WidgetListView
             {
                 ItemHeight = 32,
-                AutoLayout = AutoLayout.DockFill
+                AutoLayout = AutoLayout.DockFill,
+                SelectedItemBackgroundColor = new Vector4(0, 0, 0, 0),
+                ItemBackgroundColor2 = new Vector4(0, 0, 0, 0.1f),
+                ItemBackgroundColor1 = new Vector4(0, 0, 0, 0)
             }) as Gui.Widgets.WidgetListView;
 
             var rightPanel = AddChild(new Widget());
@@ -103,7 +106,10 @@ namespace DwarfCorp.Gui.Widgets
             var rightList = rightPanel.AddChild(new Gui.Widgets.WidgetListView
             {
                 ItemHeight = 32,
-                AutoLayout = AutoLayout.DockFill
+                AutoLayout = AutoLayout.DockFill,
+                SelectedItemBackgroundColor = new Vector4(0, 0, 0, 0),
+                ItemBackgroundColor2 = new Vector4(0, 0, 0, 0.1f),
+                ItemBackgroundColor1 = new Vector4(0, 0, 0, 0)
             }) as Gui.Widgets.WidgetListView;
 
             // Lists should have bidirectional properties.
@@ -123,7 +129,7 @@ namespace DwarfCorp.Gui.Widgets
                 lineItem.OnClick = (sender, args) =>
                 {
                     if (lambdaResource.NumResources == 0) return;
-
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, -0.1f);
                     var toMove = 1;
                     if (args.Control) toMove = lambdaResource.NumResources;
                     if (args.Shift) toMove = Math.Min(5, lambdaResource.NumResources);
@@ -140,6 +146,7 @@ namespace DwarfCorp.Gui.Widgets
                         rightLineItem.TriggerOnChildClick = true;
                         rightLineItem.OnClick = (_sender, _args) =>
                         {
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, 0.1f);
                             var _toMove = 1;
                             if (_args.Control) _toMove = existingEntry.NumResources;
                             if (_args.Shift) _toMove = Math.Min(5, existingEntry.NumResources);
@@ -209,7 +216,8 @@ namespace DwarfCorp.Gui.Widgets
         {
             var r = Root.ConstructWidget(new Gui.Widget
             {
-                MinimumSize = new Point(1, 32)
+                MinimumSize = new Point(1, 32),
+                Background = new TileReference("basic", 0)
             });
 
             var resourceInfo = ResourceLibrary.GetResourceByName(Resource.ResourceType);
