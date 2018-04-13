@@ -198,5 +198,20 @@ namespace DwarfCorp.Gui.Widgets
                 });
             }
         }
+
+        public class UpdatingMenuItem : MenuItem
+        {
+            public Action<Widget> OnUpdateMenuItem;
+
+            public override void Construct()
+            {
+                Root.RegisterForUpdate(this);
+
+                OnUpdate = (sender, time) =>
+                {
+                    Root.SafeCall(OnUpdateMenuItem, this);
+                };
+            }
+        }
     }
 }

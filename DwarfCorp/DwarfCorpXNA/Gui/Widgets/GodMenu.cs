@@ -59,6 +59,25 @@ namespace DwarfCorp.Gui.Widgets
                                     World = Master.World,
                                     MinimumSize = new Point(300, 200)
                                 }
+                            },
+
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "STATS",
+                                ExpansionChild = new HorizontalMenuTray.Tray
+                                {
+                                    ItemSource = new HorizontalMenuTray.MenuItem[]
+                                    {
+                                        new HorizontalMenuTray.UpdatingMenuItem
+                                        {
+                                            OnUpdateMenuItem = (sender) =>
+                                            {
+                                                sender.Text = String.Format("Entities: {0}", Master.World.ComponentManager.RootComponent.Children.Count);
+                                                sender.Invalidate();
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

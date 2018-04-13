@@ -82,29 +82,40 @@ namespace DwarfCorp
 
         public IEnumerable<IBoundedObject> EnumerateIntersectingObjects(BoundingBox box, CollisionType queryType)
         {
-            var hash = new HashSet<IBoundedObject>();
-            switch((int) queryType)
+            PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects");
+
+            try
             {
-                case (int) CollisionType.None:
-                case (int) CollisionType.Static:
-                case (int) CollisionType.Dynamic:
-                    Hashes[queryType].EnumerateItems(box, hash);
-                    break;
-                case ((int) CollisionType.Static | (int) CollisionType.Dynamic):
-                    Hashes[CollisionType.Static].EnumerateItems(box, hash);
-                    Hashes[CollisionType.Dynamic].EnumerateItems(box, hash);
-                    break;
-                default:
-                    throw new InvalidOperationException();
+                var hash = new HashSet<IBoundedObject>();
+                switch ((int)queryType)
+                {
+                    case (int)CollisionType.None:
+                    case (int)CollisionType.Static:
+                    case (int)CollisionType.Dynamic:
+                        Hashes[queryType].EnumerateItems(box, hash);
+                        break;
+                    case ((int)CollisionType.Static | (int)CollisionType.Dynamic):
+                        Hashes[CollisionType.Static].EnumerateItems(box, hash);
+                        Hashes[CollisionType.Dynamic].EnumerateItems(box, hash);
+                        break;
+                    default:
+                        throw new InvalidOperationException();
+                }
+                return hash;
             }
-            return hash;
+            finally
+            {
+                PerformanceMonitor.PopFrame();
+            }
         }
 
         public IEnumerable<IBoundedObject> EnumerateIntersectingObjects(BoundingFrustum Frustum)
         {
+            PerformanceMonitor.PushFrame("CollisionManager.EnumerateFrustum");
             var hash = new HashSet<IBoundedObject>();
             foreach (var hashType in Hashes)
                 hashType.Value.EnumerateItems(Frustum, hash);
+            PerformanceMonitor.PopFrame();
             return hash;
         }
 

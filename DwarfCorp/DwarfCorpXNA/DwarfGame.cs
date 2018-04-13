@@ -344,10 +344,11 @@ namespace DwarfCorp
             {
 #endif
             PerformanceMonitor.BeginFrame();
+            PerformanceMonitor.PushFrame("Update");
                 DwarfTime.LastTime.Update(time);
                 StateManager.Update(DwarfTime.LastTime);
                 base.Update(time);
-            PerformanceMonitor.EndFrame();
+            PerformanceMonitor.PopFrame();
 #if SHARP_RAVEN && !DEBUG
             }
             catch (Exception exception)
@@ -367,9 +368,11 @@ namespace DwarfCorp
             try
             {
 #endif
+            PerformanceMonitor.PushFrame("Render");
                 StateManager.Render(DwarfTime.LastTime);
                 GraphicsDevice.SetRenderTarget(null);
                 base.Draw(time);
+            PerformanceMonitor.PopFrame();
             PerformanceMonitor.Render();
 #if SHARP_RAVEN && !DEBUG
             }
