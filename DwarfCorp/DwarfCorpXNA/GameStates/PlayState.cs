@@ -289,9 +289,14 @@ namespace DwarfCorp.GameStates
                     }
                 }
 
-                if (@event == Gui.InputEvents.KeyUp)
+                else if (@event == Gui.InputEvents.KeyUp)
                 {
-                    args.Handled = HandleKeyPress((Keys)args.KeyValue);
+                    args.Handled = HandleKeyPress((Keys)args.KeyValue) || Master.OnKeyReleased((Keys)args.KeyValue);
+                }
+
+                else if (@event == Gui.InputEvents.KeyDown)
+                {
+                    args.Handled = Master.OnKeyPressed((Keys)args.KeyValue);
                 }
             });
 

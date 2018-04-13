@@ -122,7 +122,9 @@ namespace DwarfCorp
         }
 
         public static String ResolveContentPath(String Asset, params string[] AlternateExtensions)
-        {
+        { 
+            Asset.Replace('/', Program.DirChar);
+            Asset.Replace('\\', Program.DirChar);
             var extensionList = new List<String>(AlternateExtensions);
             if (extensionList.Count != 0)
                 extensionList.Add(".xnb");

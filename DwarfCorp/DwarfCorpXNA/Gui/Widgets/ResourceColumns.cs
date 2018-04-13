@@ -126,9 +126,10 @@ namespace DwarfCorp.Gui.Widgets
 
                 var lambdaResource = resource;
                 lineItem.TriggerOnChildClick = true;
+                lineItem.EnableHoverClick();
                 lineItem.OnClick = (sender, args) =>
                 {
-                    if (lambdaResource.NumResources == 0) return;
+                    if (lambdaResource.NumResources <= 0) return;
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, -0.1f);
                     var toMove = 1;
                     if (args.Control) toMove = lambdaResource.NumResources;
@@ -141,6 +142,7 @@ namespace DwarfCorp.Gui.Widgets
                         existingEntry = new ResourceAmount(lambdaResource.ResourceType, 0);
                         selectedResources.Add(existingEntry);
                         var rightLineItem = CreateLineItem(existingEntry);
+                        rightLineItem.EnableHoverClick();
                         rightList.AddItem(rightLineItem);
 
                         rightLineItem.TriggerOnChildClick = true;

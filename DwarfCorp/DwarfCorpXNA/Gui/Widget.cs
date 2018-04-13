@@ -115,6 +115,56 @@ namespace DwarfCorp.Gui
         public bool ChangeColorOnHover = false;
         public bool WrapText = true;
 
+        private class HoverClickHelper
+        {
+            public InputEventArgs EventArgs = null;
+            public Widget Widget = null;
+            private double CurrentTime = 0.0;
+            private double TimeOnClick = 0.0;
+            private double MaxTickFrequency = 0.25f;
+            private double MinTickFrequency = 1.0f;
+            private double TickFrequency = 1.0f;
+
+            public void OnMouseDown(Widget widget, InputEventArgs args)
+            {
+                TickFrequency = MinTickFrequency;
+                TimeOnClick = CurrentTime;
+                EventArgs = args;
+                Widget = widget;
+            }
+
+            public void OnMouseUp(Widget widget, InputEventArgs args)
+            {
+                TickFrequency = MinTickFrequency;
+                TimeOnClick = 0.0;
+                Widget = null;
+                EventArgs = null;
+            }
+
+            public void OnMouseLeave(Widget widget, InputEventArgs args)
+            {
+                TickFrequency = MinTickFrequency;
+                TimeOnClick = 0.0;
+                Widget = null;
+                EventArgs = null;
+            }
+
+            public void Update(Widget widget, GameTime time)
+            {
+                CurrentTime = time.TotalGameTime.TotalSeconds;
+
+                if (Widget != null && (CurrentTime - TimeOnClick) > TickFrequency)
+                {
+                    if (Widget.OnClick != null)
+                    {
+                        Widget.OnClick.Invoke(Widget, EventArgs);
+                        TickFrequency = Math.Max(TickFrequency * 0.5f, MaxTickFrequency);
+                        TimeOnClick = CurrentTime;
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region Events
@@ -124,6 +174,8 @@ namespace DwarfCorp.Gui
         public Action<Widget, InputEventArgs> OnMouseMove = null;
         public Action<Widget> OnHover = null;
         public Action<Widget, InputEventArgs> OnClick = null;
+        public Action<Widget, InputEventArgs> OnMouseDown = null;
+        public Action<Widget, InputEventArgs> OnMouseUp = null;
         public Action<Widget, InputEventArgs> OnScroll = null;
         public Action<Widget> OnGainFocus = null;
         public Action<Widget> OnLoseFocus = null;
@@ -137,7 +189,17 @@ namespace DwarfCorp.Gui
         public Action<Widget> OnClose = null;
         public Action<Widget> OnShown = null;
         public bool TriggerOnChildClick = false;
+        private HoverClickHelper HoverClick = null;
 
+        public void EnableHoverClick()
+        {
+            HoverClick = new HoverClickHelper();
+            OnMouseDown = HoverClick.OnMouseDown;
+            OnMouseUp = HoverClick.OnMouseUp;
+            OnMouseLeave = HoverClick.OnMouseLeave;
+            OnUpdate = HoverClick.Update;
+            Root.RegisterForUpdate(this);
+        }
         #endregion
 
         public Object Tag = null;

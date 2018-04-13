@@ -451,6 +451,7 @@ namespace DwarfCorp
 
             HandlePosessedDwarf();
 
+            /*
             if (sliceDownheld)
             {
                 sliceDownTimer.Update(time);
@@ -458,7 +459,7 @@ namespace DwarfCorp
                 if (sliceDownTimer.HasTriggered)
                 {
                     SetMaxViewingLevel(MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
-                    sliceDownTimer.Reset(0.1f);
+                    sliceDownTimer.Reset(0.5f);
                 }
             }
 
@@ -469,10 +470,10 @@ namespace DwarfCorp
                 if (sliceUpTimer.HasTriggered)
                 {
                     SetMaxViewingLevel(MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
-                    sliceUpTimer.Reset(0.1f);
+                    sliceUpTimer.Reset(0.5f);
                 }
             }
-
+            */
             // Make sure that the faction's money is identical to the money in treasuries.
             Faction.Economy.CurrentMoney = Faction.Treasurys.Sum(treasury => treasury.Money);
 
@@ -619,22 +620,25 @@ namespace DwarfCorp
 
         }
 
-        public void OnKeyPressed(Keys key)
+        public bool OnKeyPressed(Keys key)
         {
             if (key == ControlSettings.Mappings.SliceUp)
             {
                 sliceUpheld = true;
                 sliceUpTimer.Reset(0.5f);
+                return true;
             }
             else if (key == ControlSettings.Mappings.SliceDown)
             {
                 sliceDownheld = true;
                 sliceDownTimer.Reset(0.5f);
+                return true;
             }
+            return false;
         }
         private int rememberedViewValue = VoxelConstants.ChunkSizeY;
 
-        public void OnKeyReleased(Keys key)
+        public bool OnKeyReleased(Keys key)
         {
             KeyboardState keys = Keyboard.GetState();
             if (key == ControlSettings.Mappings.SliceUp)
@@ -642,6 +646,7 @@ namespace DwarfCorp
                 sliceUpheld = false;
                 World.Tutorial("unslice");
                 SetMaxViewingLevel(MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
+                return true;
             }
 
             else if (key == ControlSettings.Mappings.SliceDown)
@@ -649,6 +654,7 @@ namespace DwarfCorp
                 sliceDownheld = false;
                 World.Tutorial("unslice");
                 SetMaxViewingLevel(MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
+                return true;
             }
             else if (key == ControlSettings.Mappings.SliceSelected)
             {
@@ -656,6 +662,7 @@ namespace DwarfCorp
                 {
                     SetMaxViewingLevel(rememberedViewValue, 
                         ChunkManager.SliceMode.Y);
+                    return true;
                 }
                 else if (VoxSelector.VoxelUnderMouse.IsValid)
                 {
@@ -663,13 +670,16 @@ namespace DwarfCorp
                     SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1,
                         ChunkManager.SliceMode.Y);
                     Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
+                    return true;
                 }
             }
             else if (key == ControlSettings.Mappings.Unslice)
             {
                 rememberedViewValue = MaxViewingLevel;
                 SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
+                return true;
             }
+            return false;
         }
 
         #endregion
