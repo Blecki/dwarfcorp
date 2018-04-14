@@ -302,6 +302,7 @@ namespace DwarfCorp
             if (!world.PlayerFaction.GetRooms().Any(room => room is BalloonPort && room.IsBuilt))
             {
                 world.MakeAnnouncement(String.Format("Trade envoy from {0} left. No balloon port!", natives.Name));
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
                 return null;
             }
             TradeEnvoy envoy = null;
@@ -442,6 +443,7 @@ namespace DwarfCorp
                     return party.ExpiditionState == Expedition.State.Arriving;
                 }
             });
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
             foreach (var creature in creatures)
             {
                 if (natives.Economy == null)
@@ -679,6 +681,7 @@ namespace DwarfCorp
                                 },
                                 ShouldKeep = () => { return traders.ExpiditionState == Expedition.State.Trading && !traders.ShouldRemove; }
                             });
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
                         }
                         envoy.ExpiditionState = Expedition.State.Trading;
                         break;
@@ -780,6 +783,7 @@ namespace DwarfCorp
                     if (party.ExpiditionState == Expedition.State.Arriving)
                     {
                         World.MakeAnnouncement(String.Format("The war party from {0} is attacking!", party.OwnerFaction.Name));
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
                         party.ExpiditionState = Expedition.State.Fighting;
                     }
                 }

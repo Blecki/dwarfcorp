@@ -133,8 +133,8 @@ namespace DwarfCorp
                 Spells = SpellLibrary.CreateSpellTree(components.World);
             CreateTools();
 
-            InputManager.KeyReleasedCallback += OnKeyReleased;
-            InputManager.KeyPressedCallback += OnKeyPressed;
+            //InputManager.KeyReleasedCallback += OnKeyReleased;
+            //InputManager.KeyPressedCallback += OnKeyPressed;
         }
 
         public void Destroy()
@@ -144,8 +144,8 @@ namespace DwarfCorp
             BodySelector.Selected -= OnBodiesSelected;
             BodySelector.MouseOver -= OnMouseOver;
             World.Time.NewDay -= Time_NewDay;
-            InputManager.KeyReleasedCallback -= OnKeyReleased;
-            InputManager.KeyPressedCallback -= OnKeyPressed;
+            //InputManager.KeyReleasedCallback -= OnKeyReleased;
+            //InputManager.KeyPressedCallback -= OnKeyPressed;
             Tools[ToolMode.God].Destroy();
             Tools[ToolMode.SelectUnits].Destroy();
             Tools.Clear();

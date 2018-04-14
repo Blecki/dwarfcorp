@@ -16,8 +16,8 @@ Global Settings
     Header File = Sounds.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 1177711341;
-    Last Modified High = 30627443;
+    Last Modified Low = 2308586175;
+    Last Modified High = 30658375;
 
     Category
     {
@@ -264,7 +264,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = Sound::05b194d0-5865-498c-a08e-c473c0692f73;
+            Name = Sound::1432c48b-54c3-4012-aac1-6b08635647b3;
             Property = 0;
             Sound = 1;
             Line Color = 4281237832;
@@ -325,7 +325,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = Sound::7ffa828d-488b-4810-9346-f280ec03eec7;
+            Name = Sound::f07ab375-5832-4320-9085-a3648becd16a;
             Property = 0;
             Sound = 1;
             Line Color = 4281571480;
@@ -372,7 +372,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::a8e8167a-ae78-4f1c-9f98-dfdd8199bdd7;
+            Name = 1::6ecb25a4-01f4-49e1-942a-5b4fd2667a71;
             Property = 0;
             Sound = 0;
             Line Color = 4290610889;
@@ -405,7 +405,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::ee507d2c-2a24-485f-9e73-5c3dbbe29299;
+            Name = 1::c94c324b-15af-4ef9-8561-56bb5299c432;
             Property = 0;
             Sound = 0;
             Line Color = 4289091284;
@@ -438,7 +438,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::568bead3-a957-46a0-b7df-702dfa14126d;
+            Name = 1::171879d7-8b0f-490f-9bd7-b6fbddaf3355;
             Property = 0;
             Sound = 0;
             Line Color = 4286991177;
@@ -471,7 +471,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::f019d6aa-b670-4cae-b8b1-b37632426e89;
+            Name = 1::1f3ec6cd-32a9-4587-8653-a2659eb4ddcd;
             Property = 0;
             Sound = 0;
             Line Color = 4279643065;
@@ -504,7 +504,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+            Name = 1::2ca821ed-67bd-4d20-bec2-c4cac7055f79;
             Property = 0;
             Sound = 0;
             Line Color = 4279769220;
@@ -537,7 +537,7 @@ Global Settings
 
         RPC Curve
         {
-            Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+            Name = 1::eeba31c1-f832-4ef6-8dca-9f0bef429b77;
             Property = 0;
             Sound = 0;
             Line Color = 4291114081;
@@ -589,56 +589,10 @@ Wave Bank
     Compression Preset Name = Compressed;
     Xbox Bank Last Modified Low = 0;
     Xbox Bank Last Modified High = 0;
-    PC Bank Last Modified Low = 1858921977;
-    PC Bank Last Modified High = 30627435;
-    Bank Last Revised Low = 44136349;
-    Bank Last Revised High = 30627435;
-
-    Wave
-    {
-        Name = sfx_amb_grassland_night_2;
-        File = ..\oscar\sfx_amb_grassland_night_2.wav;
-        Build Settings Last Modified Low = 3620660861;
-        Build Settings Last Modified High = 30582391;
-
-        Cache
-        {
-            Format Tag = 0;
-            Channels = 2;
-            Sampling Rate = 44100;
-            Bits Per Sample = 1;
-            Play Region Offset = 1024;
-            Play Region Length = 13306676;
-            Loop Region Offset = 0;
-            Loop Region Length = 0;
-            File Type = 1;
-            Last Modified Low = 2368728821;
-            Last Modified High = 30590608;
-        }
-    }
-
-    Wave
-    {
-        Name = sfx_amb_grassland_day_2;
-        File = ..\oscar\sfx_amb_grassland_day_2.wav;
-        Build Settings Last Modified Low = 3620675876;
-        Build Settings Last Modified High = 30582391;
-
-        Cache
-        {
-            Format Tag = 0;
-            Channels = 2;
-            Sampling Rate = 44100;
-            Bits Per Sample = 1;
-            Play Region Offset = 1024;
-            Play Region Length = 11199284;
-            Loop Region Offset = 0;
-            Loop Region Length = 0;
-            File Type = 1;
-            Last Modified Low = 2364951282;
-            Last Modified High = 30590608;
-        }
-    }
+    PC Bank Last Modified Low = 2308646361;
+    PC Bank Last Modified High = 30658375;
+    Bank Last Revised Low = 2024513983;
+    Bank Last Revised High = 30658375;
 
     Wave
     {
@@ -651,15 +605,15 @@ Wave Bank
         {
             Format Tag = 0;
             Channels = 2;
-            Sampling Rate = 44100;
+            Sampling Rate = 48000;
             Bits Per Sample = 1;
             Play Region Offset = 1024;
-            Play Region Length = 9995060;
+            Play Region Length = 10291200;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2367337837;
-            Last Modified High = 30590608;
+            Last Modified Low = 2354831582;
+            Last Modified High = 30658374;
         }
     }
 
@@ -674,15 +628,15 @@ Wave Bank
         {
             Format Tag = 0;
             Channels = 2;
-            Sampling Rate = 44100;
+            Sampling Rate = 48000;
             Bits Per Sample = 1;
             Play Region Offset = 1024;
-            Play Region Length = 8399464;
+            Play Region Length = 7948800;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2363895407;
-            Last Modified High = 30590608;
+            Last Modified Low = 2352806181;
+            Last Modified High = 30658374;
         }
     }
 
@@ -907,12 +861,12 @@ Wave Bank
             Sampling Rate = 48000;
             Bits Per Sample = 1;
             Play Region Offset = 1024;
-            Play Region Length = 8617984;
+            Play Region Length = 8358400;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2946210208;
-            Last Modified High = 30627434;
+            Last Modified Low = 2439853504;
+            Last Modified High = 30658374;
         }
     }
 
@@ -930,12 +884,12 @@ Wave Bank
             Sampling Rate = 48000;
             Bits Per Sample = 1;
             Play Region Offset = 1024;
-            Play Region Length = 10715136;
+            Play Region Length = 6585600;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2935745222;
-            Last Modified High = 30627434;
+            Last Modified Low = 2441247077;
+            Last Modified High = 30658374;
         }
     }
 
@@ -953,12 +907,12 @@ Wave Bank
             Sampling Rate = 48000;
             Bits Per Sample = 1;
             Play Region Offset = 1024;
-            Play Region Length = 5816320;
+            Play Region Length = 5177600;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2936888756;
-            Last Modified High = 30627434;
+            Last Modified Low = 2442590646;
+            Last Modified High = 30658374;
         }
     }
 
@@ -976,12 +930,12 @@ Wave Bank
             Sampling Rate = 48000;
             Bits Per Sample = 1;
             Play Region Offset = 1024;
-            Play Region Length = 9601024;
+            Play Region Length = 8569600;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2938573088;
-            Last Modified High = 30627434;
+            Last Modified Low = 2443984339;
+            Last Modified High = 30658374;
         }
     }
 
@@ -999,12 +953,12 @@ Wave Bank
             Sampling Rate = 48000;
             Bits Per Sample = 1;
             Play Region Offset = 1024;
-            Play Region Length = 10256384;
+            Play Region Length = 8307200;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2940651104;
-            Last Modified High = 30627434;
+            Last Modified Low = 2444806521;
+            Last Modified High = 30658374;
         }
     }
 
@@ -1022,12 +976,12 @@ Wave Bank
             Sampling Rate = 48000;
             Bits Per Sample = 1;
             Play Region Offset = 1024;
-            Play Region Length = 8978432;
+            Play Region Length = 8422400;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2942161888;
-            Last Modified High = 30627434;
+            Last Modified Low = 2446375421;
+            Last Modified High = 30658374;
         }
     }
 
@@ -1045,12 +999,12 @@ Wave Bank
             Sampling Rate = 48000;
             Bits Per Sample = 1;
             Play Region Offset = 1024;
-            Play Region Length = 7868416;
+            Play Region Length = 7456000;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2943603264;
-            Last Modified High = 30627434;
+            Last Modified Low = 2447784642;
+            Last Modified High = 30658374;
         }
     }
 
@@ -1068,12 +1022,12 @@ Wave Bank
             Sampling Rate = 48000;
             Bits Per Sample = 1;
             Play Region Offset = 1024;
-            Play Region Length = 5603328;
+            Play Region Length = 5158400;
             Loop Region Offset = 0;
             Loop Region Length = 0;
             File Type = 1;
-            Last Modified Low = 2944683429;
-            Last Modified High = 30627434;
+            Last Modified Low = 2448915425;
+            Last Modified High = 30658374;
         }
     }
 }
@@ -1085,6 +1039,8 @@ Sound Bank
     Windows File = Win\SoundBank.xsb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
+    Bank Last Modified Low = 2522728475;
+    Bank Last Modified High = 30658375;
     Header Last Modified High = 0;
     Header Last Modified Low = 0;
 
@@ -1143,7 +1099,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = sfx_amb_grassland_day_1;
-                    Entry Index = 3;
+                    Entry Index = 1;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1152,48 +1108,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = 1sFadeIn;
-                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+                RPC Curve Name = 1::2ca821ed-67bd-4d20-bec2-c4cac7055f79;
             }
 
             RPC Curve Entry
             {
                 RPC Name = 4sFadeout;
-                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
-            }
-        }
-
-        Track
-        {
-            Volume = 0;
-            Use Filter = 0;
-
-            Play Wave Event
-            {
-                Loop Count = 255;
-                Break Loop = 0;
-                Use Speaker Position = 0;
-                Use Center Speaker = 1;
-                New Speaker Position On Loop = 1;
-                Speaker Position Angle = 0.000000;
-                Speaker Position Arc = 0.000000;
-
-                Event Header
-                {
-                    Timestamp = 0;
-                    Relative = 0;
-                    Random Recurrence = 0;
-                    Random Offset = 0;
-                }
-
-                Wave Entry
-                {
-                    Bank Name = WaveBank;
-                    Bank Index = 0;
-                    Entry Name = sfx_amb_grassland_day_2;
-                    Entry Index = 1;
-                    Weight = 255;
-                    Weight Min = 0;
-                }
+                RPC Curve Name = 1::eeba31c1-f832-4ef6-8dca-9f0bef429b77;
             }
         }
     }
@@ -1253,7 +1174,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = sfx_amb_grassland_night_1;
-                    Entry Index = 2;
+                    Entry Index = 0;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1262,48 +1183,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = 1sFadeIn;
-                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+                RPC Curve Name = 1::2ca821ed-67bd-4d20-bec2-c4cac7055f79;
             }
 
             RPC Curve Entry
             {
                 RPC Name = 4sFadeout;
-                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
-            }
-        }
-
-        Track
-        {
-            Volume = 0;
-            Use Filter = 0;
-
-            Play Wave Event
-            {
-                Loop Count = 255;
-                Break Loop = 0;
-                Use Speaker Position = 0;
-                Use Center Speaker = 1;
-                New Speaker Position On Loop = 1;
-                Speaker Position Angle = 0.000000;
-                Speaker Position Arc = 0.000000;
-
-                Event Header
-                {
-                    Timestamp = 0;
-                    Relative = 0;
-                    Random Recurrence = 0;
-                    Random Offset = 0;
-                }
-
-                Wave Entry
-                {
-                    Bank Name = WaveBank;
-                    Bank Index = 0;
-                    Entry Name = sfx_amb_grassland_night_2;
-                    Entry Index = 0;
-                    Weight = 255;
-                    Weight Min = 0;
-                }
+                RPC Curve Name = 1::eeba31c1-f832-4ef6-8dca-9f0bef429b77;
             }
         }
     }
@@ -1347,7 +1233,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = mx_day_intro_v4;
-                    Entry Index = 6;
+                    Entry Index = 4;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1405,7 +1291,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = mx_day_loop_v4;
-                    Entry Index = 7;
+                    Entry Index = 5;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1414,13 +1300,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::a8e8167a-ae78-4f1c-9f98-dfdd8199bdd7;
+                RPC Curve Name = 1::6ecb25a4-01f4-49e1-942a-5b4fd2667a71;
             }
 
             RPC Curve Entry
             {
                 RPC Name = ShortFadeIn;
-                RPC Curve Name = 1::568bead3-a957-46a0-b7df-702dfa14126d;
+                RPC Curve Name = 1::171879d7-8b0f-490f-9bd7-b6fbddaf3355;
             }
         }
     }
@@ -1464,7 +1350,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = mx_dayToNight_trans_v1;
-                    Entry Index = 4;
+                    Entry Index = 2;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1522,7 +1408,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = mx_night_loop_v2;
-                    Entry Index = 8;
+                    Entry Index = 6;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1531,13 +1417,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::a8e8167a-ae78-4f1c-9f98-dfdd8199bdd7;
+                RPC Curve Name = 1::6ecb25a4-01f4-49e1-942a-5b4fd2667a71;
             }
 
             RPC Curve Entry
             {
                 RPC Name = FadeIn;
-                RPC Curve Name = 1::ee507d2c-2a24-485f-9e73-5c3dbbe29299;
+                RPC Curve Name = 1::c94c324b-15af-4ef9-8561-56bb5299c432;
             }
         }
     }
@@ -1582,7 +1468,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = mx_menu_loop_v2;
-                    Entry Index = 5;
+                    Entry Index = 3;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1640,7 +1526,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = mx_molemen_loop_v1;
-                    Entry Index = 9;
+                    Entry Index = 7;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1649,13 +1535,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::a8e8167a-ae78-4f1c-9f98-dfdd8199bdd7;
+                RPC Curve Name = 1::6ecb25a4-01f4-49e1-942a-5b4fd2667a71;
             }
 
             RPC Curve Entry
             {
                 RPC Name = MediumFadeIn;
-                RPC Curve Name = 1::f019d6aa-b670-4cae-b8b1-b37632426e89;
+                RPC Curve Name = 1::1f3ec6cd-32a9-4587-8653-a2659eb4ddcd;
             }
         }
     }
@@ -1710,7 +1596,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = mx_elves_loop_v1;
-                    Entry Index = 10;
+                    Entry Index = 8;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1719,13 +1605,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::a8e8167a-ae78-4f1c-9f98-dfdd8199bdd7;
+                RPC Curve Name = 1::6ecb25a4-01f4-49e1-942a-5b4fd2667a71;
             }
 
             RPC Curve Entry
             {
                 RPC Name = MediumFadeIn;
-                RPC Curve Name = 1::f019d6aa-b670-4cae-b8b1-b37632426e89;
+                RPC Curve Name = 1::1f3ec6cd-32a9-4587-8653-a2659eb4ddcd;
             }
         }
     }
@@ -1775,7 +1661,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = mx_undead_loop_v1;
-                    Entry Index = 11;
+                    Entry Index = 9;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1784,7 +1670,7 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = MediumFadeIn;
-                RPC Curve Name = 1::f019d6aa-b670-4cae-b8b1-b37632426e89;
+                RPC Curve Name = 1::1f3ec6cd-32a9-4587-8653-a2659eb4ddcd;
             }
         }
     }
@@ -1839,7 +1725,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = mx_goblin_loop_v1;
-                    Entry Index = 12;
+                    Entry Index = 10;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1848,13 +1734,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = FadeOut;
-                RPC Curve Name = 1::a8e8167a-ae78-4f1c-9f98-dfdd8199bdd7;
+                RPC Curve Name = 1::6ecb25a4-01f4-49e1-942a-5b4fd2667a71;
             }
 
             RPC Curve Entry
             {
                 RPC Name = MediumFadeIn;
-                RPC Curve Name = 1::f019d6aa-b670-4cae-b8b1-b37632426e89;
+                RPC Curve Name = 1::1f3ec6cd-32a9-4587-8653-a2659eb4ddcd;
             }
         }
 
@@ -1886,7 +1772,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = mx_goblin_loop_v1;
-                    Entry Index = 12;
+                    Entry Index = 10;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1944,7 +1830,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = sfx_amb_cave;
-                    Entry Index = 13;
+                    Entry Index = 11;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -1953,13 +1839,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = 1sFadeIn;
-                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+                RPC Curve Name = 1::2ca821ed-67bd-4d20-bec2-c4cac7055f79;
             }
 
             RPC Curve Entry
             {
                 RPC Name = 4sFadeout;
-                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+                RPC Curve Name = 1::eeba31c1-f832-4ef6-8dca-9f0bef429b77;
             }
         }
     }
@@ -2014,7 +1900,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = sfx_amb_desert;
-                    Entry Index = 14;
+                    Entry Index = 12;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -2023,13 +1909,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = 1sFadeIn;
-                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+                RPC Curve Name = 1::2ca821ed-67bd-4d20-bec2-c4cac7055f79;
             }
 
             RPC Curve Entry
             {
                 RPC Name = 4sFadeout;
-                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+                RPC Curve Name = 1::eeba31c1-f832-4ef6-8dca-9f0bef429b77;
             }
         }
     }
@@ -2089,7 +1975,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = sfx_amb_forest_day;
-                    Entry Index = 15;
+                    Entry Index = 13;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -2098,13 +1984,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = 1sFadeIn;
-                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+                RPC Curve Name = 1::2ca821ed-67bd-4d20-bec2-c4cac7055f79;
             }
 
             RPC Curve Entry
             {
                 RPC Name = 4sFadeout;
-                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+                RPC Curve Name = 1::eeba31c1-f832-4ef6-8dca-9f0bef429b77;
             }
         }
     }
@@ -2164,7 +2050,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = sfx_amb_forest_night;
-                    Entry Index = 16;
+                    Entry Index = 14;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -2173,13 +2059,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = 1sFadeIn;
-                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+                RPC Curve Name = 1::2ca821ed-67bd-4d20-bec2-c4cac7055f79;
             }
 
             RPC Curve Entry
             {
                 RPC Name = 4sFadeout;
-                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+                RPC Curve Name = 1::eeba31c1-f832-4ef6-8dca-9f0bef429b77;
             }
         }
     }
@@ -2234,7 +2120,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = sfx_amb_ocean;
-                    Entry Index = 17;
+                    Entry Index = 15;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -2243,13 +2129,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = 1sFadeIn;
-                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+                RPC Curve Name = 1::2ca821ed-67bd-4d20-bec2-c4cac7055f79;
             }
 
             RPC Curve Entry
             {
                 RPC Name = 4sFadeout;
-                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+                RPC Curve Name = 1::eeba31c1-f832-4ef6-8dca-9f0bef429b77;
             }
         }
     }
@@ -2304,7 +2190,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = sfx_amb_rain_storm;
-                    Entry Index = 18;
+                    Entry Index = 16;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -2313,13 +2199,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = 1sFadeIn;
-                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+                RPC Curve Name = 1::2ca821ed-67bd-4d20-bec2-c4cac7055f79;
             }
 
             RPC Curve Entry
             {
                 RPC Name = 4sFadeout;
-                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+                RPC Curve Name = 1::eeba31c1-f832-4ef6-8dca-9f0bef429b77;
             }
         }
     }
@@ -2374,7 +2260,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = sfx_amb_snow_storm;
-                    Entry Index = 19;
+                    Entry Index = 17;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -2383,13 +2269,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = 1sFadeIn;
-                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+                RPC Curve Name = 1::2ca821ed-67bd-4d20-bec2-c4cac7055f79;
             }
 
             RPC Curve Entry
             {
                 RPC Name = 4sFadeout;
-                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+                RPC Curve Name = 1::eeba31c1-f832-4ef6-8dca-9f0bef429b77;
             }
         }
     }
@@ -2444,7 +2330,7 @@ Sound Bank
                     Bank Name = WaveBank;
                     Bank Index = 0;
                     Entry Name = sfx_amb_tundra;
-                    Entry Index = 20;
+                    Entry Index = 18;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -2453,13 +2339,13 @@ Sound Bank
             RPC Curve Entry
             {
                 RPC Name = 1sFadeIn;
-                RPC Curve Name = 1::fd146ca5-1236-457e-9769-de2a322ae27d;
+                RPC Curve Name = 1::2ca821ed-67bd-4d20-bec2-c4cac7055f79;
             }
 
             RPC Curve Entry
             {
                 RPC Name = 4sFadeout;
-                RPC Curve Name = 1::2e219279-c4db-4596-9eea-15a506bde902;
+                RPC Curve Name = 1::eeba31c1-f832-4ef6-8dca-9f0bef429b77;
             }
         }
     }

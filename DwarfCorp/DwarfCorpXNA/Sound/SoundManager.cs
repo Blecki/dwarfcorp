@@ -506,6 +506,9 @@ namespace DwarfCorp
             instance.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.SoundEffectVolume*volume*levels.Volume;
             instance.Pitch = pitch;
             instance.Play();
+            instance.Volume = GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * volume * levels.Volume;
+            instance.Pitch = pitch;
+            
             ActiveSounds2D.Add(instance);
             return instance;
         }

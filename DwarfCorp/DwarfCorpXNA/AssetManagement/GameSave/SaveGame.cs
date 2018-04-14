@@ -192,7 +192,8 @@ namespace DwarfCorp
                     Time = World.Time,
                     Slice = (int)World.Master.MaxViewingLevel,
                     NumChunks = World.ChunkManager.WorldSize,
-                    Version = Program.Version
+                    Version = Program.Version,
+                    Commit = Program.Commit
                 },
                 PlayData = PlayData.CreateFromWorld(World),
                 ChunkData = new List<ChunkFile>(),

@@ -351,6 +351,10 @@ namespace DwarfCorp
                     if (v.IsValid && v.IsEmpty)
                         p.Tint = new Color(v.SunColor, 255, 0);
                 }
+                else
+                {
+                    p.Tint = new Color(255, 255, 0);
+                }
 
                 if(Data.CollidesWorld && particlePhysics && vel > 0.2f)
                 {

@@ -880,7 +880,7 @@ namespace DwarfCorp
                 {
                     fxaa.Begin(DwarfTime.LastTime, fxaa.RenderTarget);
                 }
-                bloom.Draw(gameTime.ToGameTime());
+                bloom.Draw(gameTime.ToRealTime());
                 if (UseFXAA)
                     fxaa.End(DwarfTime.LastTime, fxaa.RenderTarget);
             }
