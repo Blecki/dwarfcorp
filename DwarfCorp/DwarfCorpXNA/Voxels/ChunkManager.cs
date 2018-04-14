@@ -350,7 +350,6 @@ namespace DwarfCorp
                     box.Y * VoxelConstants.ChunkSizeY,
                     box.Z * VoxelConstants.ChunkSizeZ);
                 VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World);
-                chunk.IsVisible = true;
                 ChunkData.AddChunk(chunk);
             }
 

@@ -284,7 +284,7 @@ namespace DwarfCorp
                         GraphicsDevice,
                         ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
 
-                    ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
+                    ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
                     
                     SetLoadingMessage("Loading Terrain...");
                     gameFile.ReadChunks(ExistingFile);
@@ -294,7 +294,6 @@ namespace DwarfCorp
                     gameFile.LoadPlayData(ExistingFile, this);
                     Camera = gameFile.PlayData.Camera;
                     ChunkManager.camera = Camera;
-                    ChunkRenderer.camera = Camera;
                     DesignationDrawer = gameFile.PlayData.Designations;
 
                     Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
@@ -367,7 +366,7 @@ namespace DwarfCorp
                         GraphicsDevice,
                         ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
 
-                    ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
+                    ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
 
                     Camera.Position = new Vector3(0, 10, 0) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
                     Camera.Target = new Vector3(0, 10, 1) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;

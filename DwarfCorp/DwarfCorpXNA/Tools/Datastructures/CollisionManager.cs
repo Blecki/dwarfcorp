@@ -32,17 +32,11 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Maintains a number of labeled octrees, and allows collision
-    /// queries for different kinds of objects in the world.
-    /// </summary>
     [JsonObject(IsReference = true)]
     public class CollisionManager
     {
@@ -55,7 +49,7 @@ namespace DwarfCorp
             Both = Static | Dynamic
         }
 
-        public Dictionary<CollisionType, OctTreeNode<IBoundedObject>> Hashes { get; set; }
+        private OctTreeNode<Body> Tree;
 
         public CollisionManager()
         {
@@ -64,74 +58,47 @@ namespace DwarfCorp
 
         public CollisionManager(BoundingBox bounds)
         {
-            Hashes = new Dictionary<CollisionType, OctTreeNode<IBoundedObject>>();
-            Hashes[CollisionType.Static] = new OctTreeNode<IBoundedObject>(bounds.Min, bounds.Max);
-            Hashes[CollisionType.Dynamic] = new OctTreeNode<IBoundedObject>(bounds.Min, bounds.Max);
-            Hashes[CollisionType.None] = new OctTreeNode<IBoundedObject>(bounds.Min, bounds.Max);
+            Tree = new OctTreeNode<Body>(bounds.Min, bounds.Max);
         }
 
-        public void AddObject(IBoundedObject bounded, CollisionType type)
+        public void AddObject(Body bounded)
         {
-            Hashes[type].AddItem(bounded, bounded.GetBoundingBox());
+            Tree.AddItem(bounded, bounded.GetBoundingBox());
         }
 
-        public void RemoveObject(IBoundedObject bounded, BoundingBox oldLocation, CollisionType type)
+        public void RemoveObject(Body bounded, BoundingBox oldLocation)
         {
-            Hashes[type].RemoveItem(bounded, oldLocation);
+            Tree.RemoveItem(bounded, oldLocation);
         }
 
-        public IEnumerable<IBoundedObject> EnumerateIntersectingObjects(BoundingBox box, CollisionType queryType)
+        public IEnumerable<Body> EnumerateIntersectingObjects(BoundingBox box, CollisionType queryType)
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects");
-
-            try
-            {
-                var hash = new HashSet<IBoundedObject>();
-                switch ((int)queryType)
-                {
-                    case (int)CollisionType.None:
-                    case (int)CollisionType.Static:
-                    case (int)CollisionType.Dynamic:
-                        Hashes[queryType].EnumerateItems(box, hash);
-                        break;
-                    case ((int)CollisionType.Static | (int)CollisionType.Dynamic):
-                        Hashes[CollisionType.Static].EnumerateItems(box, hash);
-                        Hashes[CollisionType.Dynamic].EnumerateItems(box, hash);
-                        break;
-                    default:
-                        throw new InvalidOperationException();
-                }
-                return hash;
-            }
-            finally
-            {
-                PerformanceMonitor.PopFrame();
-            }
-        }
-
-        public IEnumerable<IBoundedObject> EnumerateIntersectingObjects(BoundingFrustum Frustum)
-        {
-            PerformanceMonitor.PushFrame("CollisionManager.EnumerateFrustum");
-            var hash = new HashSet<IBoundedObject>();
-            foreach (var hashType in Hashes)
-                hashType.Value.EnumerateItems(Frustum, hash);
+            var hash = new HashSet<Body>();
+            Tree.EnumerateItems(box, hash, t => (t.CollisionType & queryType) == t.CollisionType);
             PerformanceMonitor.PopFrame();
             return hash;
         }
 
-        public IEnumerable<IBoundedObject> EnumerateAll()
+        public IEnumerable<Body> EnumerateIntersectingObjects(BoundingFrustum Frustum)
         {
-            var hash = new HashSet<IBoundedObject>();
-            Hashes[CollisionType.None].EnumerateAll(hash);
-            Hashes[CollisionType.Static].EnumerateAll(hash);
-            Hashes[CollisionType.Dynamic].EnumerateAll(hash);
+            PerformanceMonitor.PushFrame("CollisionManager.EnumerateFrustum");
+            var hash = new HashSet<Body>();
+            Tree.EnumerateItems(Frustum, hash);
+            PerformanceMonitor.PopFrame();
+            return hash;
+        }
+
+        public IEnumerable<Body> EnumerateAll()
+        {
+            var hash = new HashSet<Body>();
+            Tree.EnumerateAll(hash);
             return hash;
         }
 
         public void EnumerateBounds(Action<BoundingBox, int> Callback)
         {
-            foreach (var hash in Hashes)
-                hash.Value.EnumerateBounds(0, Callback);
+            Tree.EnumerateBounds(0, Callback);
         }
     }
 }

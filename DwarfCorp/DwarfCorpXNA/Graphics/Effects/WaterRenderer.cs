@@ -212,14 +212,7 @@ namespace DwarfCorp
                     {
                         pass.Apply();
                         foreach (var c in chunks.ChunkData.GetChunkEnumerator())
-                        {
-                            if (c.IsVisible)
-                            {
-                                //chunk.PrimitiveMutex.WaitOne();
-                                c.Liquids[asset.Key].Render(device);
-                                //chunk.PrimitiveMutex.ReleaseMutex();
-                            }
-                        }
+                            c.Liquids[asset.Key].Render(device);
                     }
                 }
             }
@@ -293,14 +286,7 @@ namespace DwarfCorp
                 {
                     pass.Apply();
                     foreach (var chunk in chunks.ChunkData.GetChunkEnumerator())
-                    {
-                        if (chunk.IsVisible)
-                        {
-                            //chunk.PrimitiveMutex.WaitOne();
-                            chunk.Liquids[asset.Key].Render(device);
-                            //chunk.PrimitiveMutex.ReleaseMutex();
-                        }
-                    }
+                        chunk.Liquids[asset.Key].Render(device);
                 }
             }
             device.BlendState = origState;

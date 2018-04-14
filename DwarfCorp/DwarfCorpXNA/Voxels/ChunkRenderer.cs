@@ -45,52 +45,28 @@ using System.Collections.Concurrent;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// Responsible for keeping track of and accessing large collections of
-    /// voxels. There is intended to be only one chunk manager. Essentially,
-    /// it is a virtual memory lookup table for the world's voxels. It imitates
-    /// a gigantic 3D array.
-    /// </summary>
     public class ChunkRenderer
     {
-        public ConcurrentQueue<VoxelChunk> RenderList { get; set; }
-
+        private List<VoxelChunk> RenderList;
         private readonly Timer visibilityChunksTimer = new Timer(0.03f, false, Timer.TimerMode.Real);
         
-        public float DrawDistance
-        {
-            get { return GameSettings.Default.ChunkDrawDistance; }
-        }
-        
-        public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
-
-        public Camera camera = null;
-        public WorldManager World { get; set; }
-
+       
         public ChunkData ChunkData;
 
-        public ChunkRenderer( 
-            WorldManager world,
-            Camera camera, 
-            GraphicsDevice graphics,
-            ChunkData Data)
+        public ChunkRenderer(ChunkData Data)
         {
-            World = world;
             ChunkData = Data;
-            RenderList = new ConcurrentQueue<VoxelChunk>();
 
             GameSettings.Default.VisibilityUpdateTime = 0.05f;
             visibilityChunksTimer = new Timer(GameSettings.Default.VisibilityUpdateTime, false, Timer.TimerMode.Real);
             visibilityChunksTimer.HasTriggered = true;
-            this.camera = camera;
         }
 
         public void RenderAll(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Shader effect, Matrix worldMatrix, Texture2D tilemap)
         {
             effect.SelfIlluminationTexture = ChunkData.IllumMap;
             effect.MainTexture = tilemap;
-            effect.SunlightGradient = ChunkData.SunMap;
+            effect.SunlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient);
             effect.AmbientOcclusionGradient = ChunkData.AmbientMap;
             effect.TorchlightGradient = ChunkData.TorchMap;
             effect.LightRampTint = Color.White;
@@ -106,7 +82,7 @@ namespace DwarfCorp
                 {
                     if (cameraFrustrum.Intersects(chunk.GetBoundingBox()))
                     {
-                        chunk.Render(Graphics);
+                        chunk.Render(GameState.Game.GraphicsDevice);
                     }
                 }
             }
@@ -121,14 +97,14 @@ namespace DwarfCorp
             effect.World = Matrix.Identity;
             effect.View = viewmatrix;
             effect.SelectionBufferColor = Vector4.Zero;
-            List<VoxelChunk> renderListCopy = RenderList.ToArray().ToList();
 
-            foreach (VoxelChunk chunk in renderListCopy)
+            if (RenderList  != null)
+            foreach (VoxelChunk chunk in RenderList)
             {
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    chunk.Render(Graphics);
+                    chunk.Render(GameState.Game.GraphicsDevice);
                 }
             }
         }
@@ -139,7 +115,7 @@ namespace DwarfCorp
                 effect.EnableShadows = false;
             effect.SelfIlluminationTexture = ChunkData.IllumMap;
             effect.MainTexture = ChunkData.Tilemap;
-            effect.SunlightGradient = ChunkData.SunMap;
+            effect.SunlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient);
             effect.AmbientOcclusionGradient = ChunkData.AmbientMap;
             effect.TorchlightGradient = ChunkData.TorchMap;
             effect.LightRampTint = Color.White;
@@ -147,16 +123,15 @@ namespace DwarfCorp
             effect.SelfIlluminationEnabled = true;
             effect.World = Matrix.Identity;
             effect.EnableLighting = true;
-            List<VoxelChunk> renderListCopy = RenderList.ToArray().ToList();
 
-            if (!Debugger.Switches.HideTerrain)
+            if (RenderList != null && !Debugger.Switches.HideTerrain)
             {
-                foreach (VoxelChunk chunk in renderListCopy)
+                foreach (VoxelChunk chunk in RenderList)
                 {
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
-                        chunk.Render(Graphics);
+                        chunk.Render(GameState.Game.GraphicsDevice);
                     }
                 }
             }
@@ -165,28 +140,22 @@ namespace DwarfCorp
             effect.SetTexturedTechnique();
         }
 
-        public void GetChunksIntersecting(BoundingBox box, HashSet<VoxelChunk> chunks)
+        public void GetChunksIntersecting(BoundingFrustum Frustum, HashSet<VoxelChunk> chunks)
         {
             chunks.Clear();
-            var minChunk = GlobalVoxelCoordinate.FromVector3(box.Min).GetGlobalChunkCoordinate();
-            var maxChunk = GlobalVoxelCoordinate.FromVector3(box.Max).GetGlobalChunkCoordinate();
+            var frustumBox = MathFunctions.GetBoundingBox(Frustum.GetCorners());
+            var minChunk = GlobalVoxelCoordinate.FromVector3(frustumBox.Min).GetGlobalChunkCoordinate();
+            var maxChunk = GlobalVoxelCoordinate.FromVector3(frustumBox.Max).GetGlobalChunkCoordinate();
             for (var x = minChunk.X; x <= maxChunk.X; ++x)
                 for (var y = minChunk.Y; y <= maxChunk.Y; ++y)
                     for (var z = minChunk.Z; z <= maxChunk.Z; ++z)
                     {
-                        var coord = new GlobalChunkCoordinate(x, y, z);
-                        if (ChunkData.CheckBounds(coord))
-                            chunks.Add(ChunkData.GetChunk(coord));
+                        var chunkCoord = new GlobalChunkCoordinate(x, y, z);
+                        var min = new GlobalVoxelCoordinate(chunkCoord, new LocalVoxelCoordinate(0, 0, 0));
+                        var box = new BoundingBox(min.ToVector3(), min.ToVector3() + new Vector3(VoxelConstants.ChunkSizeX, VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeZ));
+                        if (ChunkData.CheckBounds(chunkCoord) && Frustum.Contains(box) != ContainmentType.Disjoint)
+                            chunks.Add(ChunkData.GetChunk(chunkCoord));
                     }
-        }
-
-        public void GetChunksIntersecting(BoundingFrustum frustum, HashSet<VoxelChunk> chunks)
-        {
-            chunks.Clear();
-            BoundingBox frustumBox = MathFunctions.GetBoundingBox(frustum.GetCorners());
-            GetChunksIntersecting(frustumBox, chunks);
-
-            chunks.RemoveWhere(chunk => frustum.Contains(chunk.GetBoundingBox()) == ContainmentType.Disjoint);
         }
 
         public void Update(DwarfTime gameTime, Camera camera, GraphicsDevice g)
@@ -194,32 +163,9 @@ namespace DwarfCorp
             visibilityChunksTimer.Update(gameTime);
             if (visibilityChunksTimer.HasTriggered)
             {
-                while (RenderList.Count > 0)
-                {
-                    VoxelChunk result;
-                    if (!RenderList.TryDequeue(out result))
-                    {
-                        break;
-                    }
-                }
-
                 var visibleSet = new HashSet<VoxelChunk>();
                 GetChunksIntersecting(camera.GetFrustrum(), visibleSet);
-
-                foreach (VoxelChunk chunk in visibleSet)
-                {
-                    BoundingBox box = chunk.GetBoundingBox();
-
-                    if ((camera.Position - box.Center()).Length2D() < DrawDistance)
-                    {
-                        chunk.IsVisible = true;
-                        RenderList.Enqueue(chunk);
-                    }
-                    else
-                    {
-                        chunk.IsVisible = false;
-                    }
-                }
+                RenderList = visibleSet.Where(c => (camera.Position - c.GetBoundingBox().Center()).Length2D() < GameSettings.Default.ChunkDrawDistance).ToList();
             }
             }
     }

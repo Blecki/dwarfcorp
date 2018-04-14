@@ -23,9 +23,6 @@ namespace DwarfCorp.GameStates
         public bool ShouldReset { get; set; }
         private DateTime EnterTime;
 
-        // Amount of time to wait when play begins, before accepting input,
-        private float EnterInputDelaySeconds = 1.0f;
-
         public WorldManager World { get; set; }
 
         public GameMaster Master

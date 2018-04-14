@@ -100,11 +100,6 @@ namespace DwarfCorp
             get { return AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_illumination); }
         }
         
-        public Texture2D SunMap
-        {
-            get { return AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient); }
-        }
-
         public Texture2D AmbientMap
         {
             get { return AssetManager.GetContentTexture(ContentPaths.Gradients.ambientgradient); }
