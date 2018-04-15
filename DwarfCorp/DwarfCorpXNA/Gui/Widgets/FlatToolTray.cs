@@ -238,7 +238,8 @@ namespace DwarfCorp.Gui.Widgets
                         {
                             AddChild(PopupChild);
                             PopupChild.Hidden = true;
-                            OnMouseEnter = ExpandPopup;
+                            OnMouseEnter += ExpandPopup;
+                            OnMouseLeave += (sender, args) => { if (PopupChild != null) { PopupChild.Hidden = true; } };
                         }
                         break;
                     case IconBehavior.ShowSubMenu:

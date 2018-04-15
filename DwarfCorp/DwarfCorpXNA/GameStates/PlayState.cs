@@ -1853,7 +1853,7 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Wrangle Animals",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
-                KeepChildVisible = true,
+                KeepChildVisible = false,
                 PopupChild = new Widget()
                 {
                     Border = "border-fancy",
@@ -1867,6 +1867,13 @@ namespace DwarfCorp.GameStates
                     World.Tutorial("wrangle");
                     World.ShowToolPopup(
                         "Left click to tell dwarves to wrangle animals.\nRight click to cancel wrangling.\nRequires animal pen.");
+                },
+                OnConstruct = (sender) =>
+                {
+                    AddToolbarIcon(sender, () =>
+                    Master.Faction.Minions.Any(minion =>
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Wrangle)));
+                    AddToolSelectIcon(GameMaster.ToolMode.Wrangle, sender);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
