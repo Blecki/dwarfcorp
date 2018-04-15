@@ -121,7 +121,7 @@ namespace DwarfCorp.Gui
             public Widget Widget = null;
             private double CurrentTime = 0.0;
             private double TimeOnClick = 0.0;
-            private double MaxTickFrequency = 0.25f;
+            private double MaxTickFrequency = 0.1f;
             private double MinTickFrequency = 1.0f;
             private double TickFrequency = 1.0f;
 

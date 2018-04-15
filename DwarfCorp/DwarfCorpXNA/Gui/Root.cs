@@ -507,6 +507,10 @@ namespace DwarfCorp.Gui
 
         private void CallOnClick(Widget Widget, InputEventArgs Args)
         {
+            if (FocusItem != null && Widget != FocusItem)
+            {
+                SetFocus(null);
+            }
             SafeCall(Widget.OnClick, Widget, Args);
             var parent = Widget.Parent;
             while (parent != null)

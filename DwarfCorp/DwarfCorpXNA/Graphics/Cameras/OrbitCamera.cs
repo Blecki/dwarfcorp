@@ -135,6 +135,11 @@ namespace DwarfCorp
 
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
+            // Don't attempt any camera control if the user is trying to type intoa focus item.
+            if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
+            {
+                return;
+            }
             float diffPhi = 0;
             float diffTheta = 0;
             float diffRadius = 0;
