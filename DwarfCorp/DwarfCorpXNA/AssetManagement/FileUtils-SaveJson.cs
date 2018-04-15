@@ -160,9 +160,11 @@ namespace DwarfCorp
             }
         }
 
-        internal static void DeleteOldestSave(string filename, int v1, string v2)
+        internal static string NormalizePath(string asset)
         {
-            throw new NotImplementedException();
+            if (asset == null)
+                return null;
+            return asset.Replace('\\', Program.DirChar).Replace('/', Program.DirChar);
         }
     }
 }
