@@ -547,9 +547,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockLeftCentered,
                 OnClick = (sender, args) =>
                 {
-                    Master.SetMaxViewingLevel(
-                        Master.MaxViewingLevel - 1,
-                        ChunkManager.SliceMode.Y);
+                    Master.SetMaxViewingLevel(Master.MaxViewingLevel - 1);
                 },
                 Tooltip = "Go down one viewing level."
             });
@@ -562,9 +560,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockLeftCentered,
                 OnClick = (sender, args) =>
                 {
-                    Master.SetMaxViewingLevel(
-                        Master.MaxViewingLevel + 1,
-                        ChunkManager.SliceMode.Y);
+                    Master.SetMaxViewingLevel(Master.MaxViewingLevel + 1);
                 },
                 Tooltip = "Go up one viewing level."
             });

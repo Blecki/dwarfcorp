@@ -108,16 +108,9 @@ namespace DwarfCorp
 
         public bool PauseThreads { get; set; }
 
-        // Todo: KILL. Pointless, always Y.
-        public enum SliceMode
-        {
-            X,
-            Y,
-            Z
-        }
-        
         public bool ExitThreads { get; set; }
 
+        // Todo: Why does chunk manager need a reference to the camera??
         public Camera camera = null;
         public WorldManager World { get; set; }
         public ContentManager Content { get; set; }
@@ -126,6 +119,7 @@ namespace DwarfCorp
 
         public Timer ChunkUpdateTimer = new Timer(10.0f, false, Timer.TimerMode.Real);
 
+        // Todo: Move this.
         public bool IsAboveCullPlane(BoundingBox Box)
         {
             return Box.Min.Y > (World.Master.MaxViewingLevel + 5);

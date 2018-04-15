@@ -363,12 +363,11 @@ namespace DwarfCorp
 
             if (above.IsValid)
             {
-                World.Master.SetMaxViewingLevel(above.Coordinate.Y, ChunkManager.SliceMode.Y);
+                World.Master.SetMaxViewingLevel(above.Coordinate.Y);
             }
             else
             {
-                World.Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
-                    ChunkManager.SliceMode.Y);
+                World.Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY);
             }
         }
 

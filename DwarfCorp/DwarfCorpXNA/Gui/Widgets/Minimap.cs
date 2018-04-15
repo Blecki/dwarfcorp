@@ -144,7 +144,7 @@ namespace DwarfCorp.Gui.Widgets
             World.Camera.UpdateViewMatrix();
             World.Camera.ZoomTargets.Clear();
             World.Camera.ZoomTargets.Add(HomePosition);
-            World.Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
+            World.Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY);
         }
 
                

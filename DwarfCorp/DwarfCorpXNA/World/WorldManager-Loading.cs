@@ -461,7 +461,7 @@ namespace DwarfCorp
 
                     ChunkManager.World.Master.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
                     ? gameFile.Metadata.Slice
-                    : ChunkManager.World.Master.MaxViewingLevel, ChunkManager.SliceMode.Y);
+                    : ChunkManager.World.Master.MaxViewingLevel);
                 }
 
                 if (Master.Faction.Economy.Company.Information == null)
