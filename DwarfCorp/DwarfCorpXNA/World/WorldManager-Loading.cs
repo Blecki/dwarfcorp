@@ -280,8 +280,7 @@ namespace DwarfCorp
                 if (fileExists)
                 {
 
-                    ChunkManager = new ChunkManager(Content, this, Camera,
-                        GraphicsDevice,
+                    ChunkManager = new ChunkManager(Content, this,
                         ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
 
                     ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
@@ -293,7 +292,6 @@ namespace DwarfCorp
                     SetLoadingMessage("Loading Entities...");
                     gameFile.LoadPlayData(ExistingFile, this);
                     Camera = gameFile.PlayData.Camera;
-                    ChunkManager.camera = Camera;
                     DesignationDrawer = gameFile.PlayData.Designations;
 
                     Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
@@ -362,8 +360,7 @@ namespace DwarfCorp
                         MathHelper.PiOver4, AspectRatio, 0.1f,
                         GameSettings.Default.VertexCullDistance);
 
-                    ChunkManager = new ChunkManager(Content, this, Camera,
-                        GraphicsDevice,
+                    ChunkManager = new ChunkManager(Content, this, 
                         ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
 
                     ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
@@ -439,8 +436,6 @@ namespace DwarfCorp
 
 
 #endregion
-
-                ChunkManager.camera = Camera;
 
                 SetLoadingMessage("Creating Particles ...");
                 ParticleManager = new ParticleManager(GraphicsDevice, ComponentManager);

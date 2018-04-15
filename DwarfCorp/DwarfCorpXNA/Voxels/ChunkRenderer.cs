@@ -47,7 +47,7 @@ namespace DwarfCorp
 {
     public class ChunkRenderer
     {
-        public List<VoxelChunk> RenderList;
+        public List<VoxelChunk> RenderList = new List<VoxelChunk>();
         private readonly Timer visibilityChunksTimer = new Timer(0.03f, false, Timer.TimerMode.Real);
         
        

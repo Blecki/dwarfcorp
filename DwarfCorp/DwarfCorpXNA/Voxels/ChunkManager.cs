@@ -110,8 +110,6 @@ namespace DwarfCorp
 
         public bool ExitThreads { get; set; }
 
-        // Todo: Why does chunk manager need a reference to the camera??
-        public Camera camera = null;
         public WorldManager World { get; set; }
         public ContentManager Content { get; set; }
 
@@ -132,7 +130,6 @@ namespace DwarfCorp
 
         public ChunkManager(ContentManager content, 
             WorldManager world,
-            Camera camera, GraphicsDevice graphics,
             ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
         {
             WorldSize = new Point3(maxChunksX, maxChunksY, maxChunksZ);
@@ -164,7 +161,6 @@ namespace DwarfCorp
             GameSettings.Default.VisibilityUpdateTime = 0.05f;
             generateChunksTimer.HasTriggered = true;
             rebuildChunksTimer.HasTriggered = true;
-            this.camera = camera;
 
             Water = new WaterManager(this);
 
