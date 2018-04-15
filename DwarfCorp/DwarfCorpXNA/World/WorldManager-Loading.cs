@@ -288,7 +288,7 @@ namespace DwarfCorp
                     
                     SetLoadingMessage("Loading Terrain...");
                     gameFile.ReadChunks(ExistingFile);
-                    ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
+                    ChunkManager.ChunkData.LoadFromFile(ChunkManager, gameFile, SetLoadingMessage);
                     
                     SetLoadingMessage("Loading Entities...");
                     gameFile.LoadPlayData(ExistingFile, this);
@@ -472,7 +472,7 @@ namespace DwarfCorp
                 {
                     chunk.CalculateInitialSunlight();
                 }
-                VoxelHelpers.InitialReveal(ChunkManager.ChunkData, new VoxelHandle(
+                VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, new VoxelHandle(
                 ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
 
                 foreach (var chunk in ChunkManager.ChunkData.ChunkMap)

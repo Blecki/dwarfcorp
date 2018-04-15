@@ -128,6 +128,7 @@ namespace DwarfCorp
         public bool DrawBox = true;
         public bool DrawVoxel = true;
 
+        // Todo: Remove unused arguments
         public VoxelSelector(WorldManager world, Camera camera, GraphicsDevice graphics, ChunkManager chunks)
         {
             World = world;

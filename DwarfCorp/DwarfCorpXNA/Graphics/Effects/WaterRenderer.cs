@@ -285,7 +285,7 @@ namespace DwarfCorp
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    foreach (var chunk in chunks.ChunkData.GetChunkEnumerator())
+                    foreach (var chunk in chunks.World.ChunkRenderer.RenderList)
                         chunk.Liquids[asset.Key].Render(device);
                 }
             }

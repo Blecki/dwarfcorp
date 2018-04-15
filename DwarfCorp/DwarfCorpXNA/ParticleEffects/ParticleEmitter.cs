@@ -416,7 +416,7 @@ namespace DwarfCorp
 
             foreach (var sprites in Sprites)
             {
-                sprites.Update(gameTime, camera, chunks.Graphics, chunks.World.Master.MaxViewingLevel);
+                sprites.Update(gameTime, camera, GameState.Game.GraphicsDevice, chunks.World.Master.MaxViewingLevel);
             }
             if (Particles.Count > 0)
                 base.Update(gameTime, chunks, camera);

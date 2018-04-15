@@ -106,15 +106,6 @@ namespace DwarfCorp
 
         public BoundingBox Bounds { get; set; }
 
-        public float GenerateDistance
-        {
-            get { return GameSettings.Default.ChunkGenerateDistance; }
-            set { GameSettings.Default.ChunkGenerateDistance = value; }
-        }
-
-        // Todo: %KILL% Wrong spot for this, but too large to move currently.
-        public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
-
         public bool PauseThreads { get; set; }
 
         // Todo: KILL. Pointless, always Y.
@@ -156,7 +147,7 @@ namespace DwarfCorp
             ExitThreads = false;
             Content = content;
 
-            chunkData = new ChunkData(this, maxChunksX, maxChunksZ, 0, 0);             
+            chunkData = new ChunkData(maxChunksX, maxChunksZ, 0, 0);             
 
             ChunkGen = chunkGen;
 
@@ -204,8 +195,8 @@ namespace DwarfCorp
 
         public void RebuildVoxelsThread()
         {
-            System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
 #if CREATE_CRASH_LOGS
             try
@@ -215,9 +206,9 @@ namespace DwarfCorp
                 {
                     var chunk = PopInvalidChunk();
                     if (chunk != null)
-                        chunk.Rebuild(Graphics);
+                        chunk.Rebuild(GameState.Game.GraphicsDevice);
                     else
-                        System.Threading.Thread.Yield();
+                        Thread.Yield();
                 }
             }
 #if CREATE_CRASH_LOGS
@@ -226,8 +217,7 @@ namespace DwarfCorp
                 ProgramData.WriteExceptionLog(exception);
                 throw;
             }
-#endif
-           
+#endif           
         }
 
         private readonly ChunkData chunkData;
@@ -331,10 +321,6 @@ namespace DwarfCorp
 
         public void GenerateInitialChunks(GlobalChunkCoordinate origin, Action<String> SetLoadingMessage)
         {
-            // todo: Since the world isn't infinite we can get rid of this.
-            float origBuildRadius = GenerateDistance;
-            GenerateDistance = origBuildRadius * 2.0f;
-
             var initialChunkCoordinates = new List<GlobalChunkCoordinate>();
 
             for (int dx = 0; dx < WorldSize.X; dx++)
@@ -371,8 +357,6 @@ namespace DwarfCorp
             SetLoadingMessage("Generating Ores...");
 
             GenerateOres();
-
-            GenerateDistance = origBuildRadius;
         }
 
         private void RecalculateBounds()

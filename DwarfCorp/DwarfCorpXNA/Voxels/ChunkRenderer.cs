@@ -47,7 +47,7 @@ namespace DwarfCorp
 {
     public class ChunkRenderer
     {
-        private List<VoxelChunk> RenderList;
+        public List<VoxelChunk> RenderList;
         private readonly Timer visibilityChunksTimer = new Timer(0.03f, false, Timer.TimerMode.Real);
         
        
@@ -64,11 +64,11 @@ namespace DwarfCorp
 
         public void RenderAll(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Shader effect, Matrix worldMatrix, Texture2D tilemap)
         {
-            effect.SelfIlluminationTexture = ChunkData.IllumMap;
+            effect.SelfIlluminationTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_illumination);
             effect.MainTexture = tilemap;
             effect.SunlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient);
-            effect.AmbientOcclusionGradient = ChunkData.AmbientMap;
-            effect.TorchlightGradient = ChunkData.TorchMap;
+            effect.AmbientOcclusionGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.ambientgradient);
+            effect.TorchlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.torchgradient);
             effect.LightRampTint = Color.White;
             effect.VertexColorTint = Color.White;
             effect.SelfIlluminationEnabled = true;
@@ -93,7 +93,7 @@ namespace DwarfCorp
             Matrix viewmatrix)
         {
             effect.CurrentTechnique = effect.Techniques[Shader.Technique.SelectionBuffer];
-            effect.MainTexture = ChunkData.Tilemap;
+            effect.MainTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
             effect.World = Matrix.Identity;
             effect.View = viewmatrix;
             effect.SelectionBufferColor = Vector4.Zero;
@@ -113,11 +113,11 @@ namespace DwarfCorp
         {
                 effect.SetTexturedTechnique();
                 effect.EnableShadows = false;
-            effect.SelfIlluminationTexture = ChunkData.IllumMap;
-            effect.MainTexture = ChunkData.Tilemap;
+            effect.SelfIlluminationTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_illumination);
+            effect.MainTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
             effect.SunlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient);
-            effect.AmbientOcclusionGradient = ChunkData.AmbientMap;
-            effect.TorchlightGradient = ChunkData.TorchMap;
+            effect.AmbientOcclusionGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.ambientgradient);
+            effect.TorchlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.torchgradient);
             effect.LightRampTint = Color.White;
             effect.VertexColorTint = Color.White;
             effect.SelfIlluminationEnabled = true;

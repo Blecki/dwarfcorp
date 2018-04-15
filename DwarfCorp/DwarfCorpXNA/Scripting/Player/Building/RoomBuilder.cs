@@ -369,7 +369,8 @@ namespace DwarfCorp
 
                     displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs,
                         World.ComponentManager, 
-                        World.ChunkManager.Content, World.ChunkManager.Graphics);
+                        World.ChunkManager.Content,
+                        GameState.Game.GraphicsDevice);
 
                     foreach(Body thing in displayObjects)
                     {

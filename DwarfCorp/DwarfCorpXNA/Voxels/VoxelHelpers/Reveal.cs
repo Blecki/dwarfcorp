@@ -14,6 +14,7 @@ namespace DwarfCorp
         /// <param name="Data"></param>
         /// <param name="voxel"></param>
         public static void InitialReveal(
+            ChunkManager Manager,
             ChunkData Data,
             VoxelHandle voxel)
         {
@@ -36,7 +37,7 @@ namespace DwarfCorp
                     if (neighbor.IsExplored) continue;
 
                     // We are skipping the invalidation mechanism but still need to trigger events.
-                    Data.ChunkManager.NotifyChangedVoxel(new VoxelChangeEvent
+                    Manager.NotifyChangedVoxel(new VoxelChangeEvent
                     {
                         Type = VoxelChangeEventType.Explored,
                         Voxel = neighbor

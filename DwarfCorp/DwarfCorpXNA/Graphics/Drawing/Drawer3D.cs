@@ -199,7 +199,7 @@ namespace DwarfCorp
                     _addBox,
                     (pos, type) =>
                     {
-                        Effect.MainTexture = World.ChunkManager.ChunkData.Tilemap;
+                        Effect.MainTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
                         Effect.LightRampTint = Color.White;
                         // Todo: Alpha pulse
                         Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 1.0f);

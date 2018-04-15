@@ -95,7 +95,7 @@ namespace DwarfCorp
         protected void OnDeserialized(StreamingContext context)
         {
             World = (WorldManager)(context.Context);
-            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, World.ChunkManager.Graphics);
+            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, GameState.Game.GraphicsDevice);
             World.Master = this;
             TaskManager.Faction = Faction;
         }
@@ -125,8 +125,8 @@ namespace DwarfCorp
             RoomLibrary.InitializeStatics();
 
             CameraController = camera;
-            VoxSelector = new VoxelSelector(World, CameraController, chunks.Graphics, chunks);
-            BodySelector = new BodySelector(CameraController, chunks.Graphics, components);
+            VoxSelector = new VoxelSelector(World, CameraController, GameState.Game.GraphicsDevice, chunks);
+            BodySelector = new BodySelector(CameraController, GameState.Game.GraphicsDevice, components);
             SelectedMinions = new List<CreatureAI>();
 
             if (Spells == null)
