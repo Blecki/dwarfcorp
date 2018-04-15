@@ -78,7 +78,10 @@ namespace DwarfCorp.Gui.Widgets
             var leftList = leftPanel.AddChild(new Gui.Widgets.WidgetListView
             {
                 ItemHeight = 32,
-                AutoLayout = AutoLayout.DockFill
+                AutoLayout = AutoLayout.DockFill,
+                SelectedItemBackgroundColor = new Vector4(0, 0, 0, 0),
+                ItemBackgroundColor2 = new Vector4(0, 0, 0, 0.1f),
+                ItemBackgroundColor1 = new Vector4(0, 0, 0, 0)
             }) as Gui.Widgets.WidgetListView;
 
             var rightPanel = AddChild(new Widget());
@@ -103,7 +106,10 @@ namespace DwarfCorp.Gui.Widgets
             var rightList = rightPanel.AddChild(new Gui.Widgets.WidgetListView
             {
                 ItemHeight = 32,
-                AutoLayout = AutoLayout.DockFill
+                AutoLayout = AutoLayout.DockFill,
+                SelectedItemBackgroundColor = new Vector4(0, 0, 0, 0),
+                ItemBackgroundColor2 = new Vector4(0, 0, 0, 0.1f),
+                ItemBackgroundColor1 = new Vector4(0, 0, 0, 0)
             }) as Gui.Widgets.WidgetListView;
 
             // Lists should have bidirectional properties.
@@ -120,21 +126,24 @@ namespace DwarfCorp.Gui.Widgets
 
                 var lambdaResource = resource;
                 lineItem.TriggerOnChildClick = true;
+                lineItem.EnableHoverClick();
                 lineItem.OnClick = (sender, args) =>
                 {
-                    if (lambdaResource.NumResources == 0) return;
-
+                    if (lambdaResource.NumResources <= 0) return;
                     var toMove = 1;
                     if (args.Control) toMove = lambdaResource.NumResources;
                     if (args.Shift) toMove = Math.Min(5, lambdaResource.NumResources);
+                    if (lambdaResource.NumResources - toMove < 0)
+                        return;
                     lambdaResource.NumResources -= toMove;
-
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, MathFunctions.Rand() * 0.25f);
                     var existingEntry = selectedResources.FirstOrDefault(r => r.ResourceType == lambdaResource.ResourceType);
                     if (existingEntry == null)
                     {
                         existingEntry = new ResourceAmount(lambdaResource.ResourceType, 0);
                         selectedResources.Add(existingEntry);
                         var rightLineItem = CreateLineItem(existingEntry);
+                        rightLineItem.EnableHoverClick();
                         rightList.AddItem(rightLineItem);
 
                         rightLineItem.TriggerOnChildClick = true;
@@ -143,8 +152,10 @@ namespace DwarfCorp.Gui.Widgets
                             var _toMove = 1;
                             if (_args.Control) _toMove = existingEntry.NumResources;
                             if (_args.Shift) _toMove = Math.Min(5, existingEntry.NumResources);
+                            if (existingEntry.NumResources - _toMove < 0)
+                                return;
                             existingEntry.NumResources -= _toMove;
-
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, MathFunctions.Rand() * 0.25f);
                             if (existingEntry.NumResources == 0)
                             {
                                 var index = selectedResources.IndexOf(existingEntry);
@@ -209,7 +220,8 @@ namespace DwarfCorp.Gui.Widgets
         {
             var r = Root.ConstructWidget(new Gui.Widget
             {
-                MinimumSize = new Point(1, 32)
+                MinimumSize = new Point(1, 32),
+                Background = new TileReference("basic", 0)
             });
 
             var resourceInfo = ResourceLibrary.GetResourceByName(Resource.ResourceType);
@@ -260,7 +272,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             var resourceInfo = ResourceLibrary.GetResourceByName(Resource.ResourceType);
 
-            LineItem.GetChild(1).Text = resourceInfo.ShortName ?? resourceInfo.Name;
+            LineItem.GetChild(1).Text = TextGenerator.Shorten(resourceInfo.ShortName ?? resourceInfo.Name, 20);
             LineItem.GetChild(1).Invalidate();
             LineItem.GetChild(2).Text = String.Format("{0}",
                 ValueSourceEntity.ComputeValue(Resource.ResourceType));

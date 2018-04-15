@@ -54,6 +54,7 @@ namespace DwarfCorp.Gui.Widgets
                             announcement.Widget = AddChild(new Widget
                             {
                                 Text = announcement.Text,
+                                ChangeColorOnHover = true,
                                 OnClick = (_s, _a) =>
                                 {
                                     if (announcement1.ClickAction != null)

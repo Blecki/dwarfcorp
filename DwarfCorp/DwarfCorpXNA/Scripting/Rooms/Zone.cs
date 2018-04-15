@@ -212,18 +212,19 @@ namespace DwarfCorp
             return Voxels.Any(store => store == voxel);
         }
 
-        public virtual void RemoveVoxel(VoxelHandle voxel)
+        public virtual bool RemoveVoxel(VoxelHandle voxel)
         {
+            bool removed = false;
             for (int i = 0; i < Voxels.Count; i++)
             {
                 var toRemove = Voxels[i];
                 if (toRemove != voxel)
                     continue;
                 if (!toRemove.IsValid)
-                    return;
+                    return true;
 
                 Voxels.Remove(toRemove);
-
+                removed = true;
                 if (ReplaceVoxelTypes)
                 {
                     if (OriginalVoxelTypes.Count > i)
@@ -235,6 +236,7 @@ namespace DwarfCorp
                 break;
             }
             RecalculateMaxResources();
+            return removed;
         }
 
         public virtual void RecalculateMaxResources()

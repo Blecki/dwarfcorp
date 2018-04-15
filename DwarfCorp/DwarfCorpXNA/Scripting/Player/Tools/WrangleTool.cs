@@ -66,7 +66,7 @@ namespace DwarfCorp
 
                             if (pens.Any())
                             {
-                                var task = new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>());
+                                var task = new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>()) { Priority = Task.PriorityType.Medium };
                                 tasks.Add(task);
                                 Player.World.ShowToolPopup("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Species);
                             }

@@ -134,7 +134,7 @@ namespace DwarfCorp.Dialogue
                 }
             }
             SoundManager.Update(gameTime, World.Camera, World.Time);
-            GuiRoot.Update(gameTime.ToGameTime());
+            GuiRoot.Update(gameTime.ToRealTime());
             DialogueContext.Update(gameTime);
             World.TutorialManager.Update(GuiRoot);
             World.Paused = true;

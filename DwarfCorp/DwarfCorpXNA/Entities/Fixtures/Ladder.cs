@@ -83,6 +83,10 @@ namespace DwarfCorp
                 CraftType = "Ladder"
             }, SimpleSprite.OrientMode.Fixed)
         {
+            this.LocalBoundingBoxOffset = new Vector3(0, 0, 0.45f);
+            this.BoundingBoxSize = new Vector3(0.7f, 1, 0.1f);
+            this.SetFlag(Flag.RotateBoundingBox, true);
+
             Name = resourceType[0].ResourceType + " Ladder";
             Tags.Add("Climbable");
             OrientToWalls();

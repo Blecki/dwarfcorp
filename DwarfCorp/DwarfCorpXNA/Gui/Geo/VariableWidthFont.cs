@@ -42,14 +42,17 @@ namespace DwarfCorp.Gui
 
             var x = 0;
             var y = 0;
-
+            bool allZeros = true;
             while (y < Data.Height)
             {
                 int glyphHeight = 1;
 
                 while (x < Data.Width)
                 {
-                    if (Data.GetPixel(x, y) == new Color(255,0,255,255))
+                    var pix = Data.GetPixel(x, y);
+                    if (pix != new Color(0, 0, 0, 0))
+                        allZeros = false;
+                    if (pix == new Color(255,0,255,255))
                         x += 1;
                     else
                     {
@@ -62,6 +65,10 @@ namespace DwarfCorp.Gui
 
                 x = 0;
                 y += glyphHeight;
+            }
+            if (allZeros)
+            {
+                Console.Out.WriteLine("Failed to load font {0} something wrong?", Texture.Name);
             }
         }
 

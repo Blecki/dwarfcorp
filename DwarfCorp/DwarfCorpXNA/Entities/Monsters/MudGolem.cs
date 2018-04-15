@@ -100,7 +100,7 @@ namespace DwarfCorp
             HasMeat = false;
             HasBones = false;
             Physics.Orientation = Physics.OrientMode.RotateY;
-            CreateSprite(Stats.CurrentClass, Manager);
+            CreateSprite(Stats.CurrentClass, Manager, 0.5f);
             Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
 
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
@@ -231,12 +231,13 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Mud", 0.1f, 1.0f, 50.0f, ContentPaths.Audio.demon_attack, ContentPaths.Effects.hit)
+                new Attack("Mud", 0.1f, 2.0f, 50.0f, ContentPaths.Audio.demon_attack, ContentPaths.Effects.hit)
                 {
                     Mode = Attack.AttackMode.Ranged,
-                    LaunchSpeed = 10.0f,
+                    LaunchSpeed = 5.0f,
                     ProjectileType = "Mud",
-                    TriggerMode = Attack.AttackTrigger.Timer
+                    TriggerMode = Attack.AttackTrigger.Animation,
+                    TriggerFrame = 1
                 }
             };
         }

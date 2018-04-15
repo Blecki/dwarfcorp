@@ -31,7 +31,14 @@ namespace DwarfCorp
             var box = new BoundingBox(Instance.Position - Instance.HalfSize, Instance.Position + Instance.HalfSize);
             OctTree.AddItem(Instance, box);
         }
-
+        private List<NewInstanceData> _cachedRenderItems = new List<NewInstanceData>();
+        private Matrix _prevCameraView = new Matrix();
+        private float MaxMatrixDiff(Matrix a, Matrix b)
+        {
+            float diffZ = (a.Forward - b.Forward).Length();
+            float diffTrans = (a.Translation - b.Translation).Length();
+            return Math.Max(diffZ, diffTrans);
+        }
         public void RenderInstances(
             GraphicsDevice Device,
             Shader Effect,
@@ -40,9 +47,13 @@ namespace DwarfCorp
         {
             int uniqueInstances = 0;
             RenderPass += 1;
-            var frustrum = Camera.GetFrustrum();
-
-            foreach (var item in OctTree.EnumerateItems(frustrum))
+            if (MaxMatrixDiff(_prevCameraView, Camera.ViewMatrix) > 1e-1)
+            {
+                var frustrum = Camera.GetFrustrum();
+                _cachedRenderItems = OctTree.EnumerateItems(frustrum).ToList();
+                _prevCameraView = Camera.ViewMatrix;
+            }
+            foreach (var item in _cachedRenderItems)
             {
                 if (!item.Visible) continue;
                 if (item.RenderPass < RenderPass)

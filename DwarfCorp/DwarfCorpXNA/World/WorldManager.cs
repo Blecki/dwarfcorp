@@ -292,7 +292,7 @@ namespace DwarfCorp
         public GameState gameState;
 
         public Gui.Root Gui;
-        private Widget SleepPrompt = null;
+        private QueuedAnnouncement SleepPrompt = null;
 
         public Action<String> ShowTooltip = null;
         public Action<String> ShowInfo = null;
@@ -494,23 +494,23 @@ namespace DwarfCorp
 #if !UPTIME_TEST
                 if (SleepPrompt == null && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
-                    SleepPrompt = Gui.ConstructWidget(new Gui.Widgets.Confirm
+                    SleepPrompt = new QueuedAnnouncement()
                     {
-                        Text = "All of your employees are asleep. Skip to daytime?",
-                        OkayText = "Skip to Daytime",
-                        CancelText = "Don't Skip",
-                        OnClose = (sender) =>
+                        Text = "All your employees are asleep. Click here to skip to day.",
+                        ClickAction = (sender, args) =>
                         {
-                            if ((sender as Confirm).DialogResult == Confirm.Result.OKAY)
-                                FastForwardToDay = true;
+                            FastForwardToDay = true;
+                            SleepPrompt = null;
+                        },
+                        ShouldKeep = () =>
+                        {
+                            return FastForwardToDay == false && Time.IsNight() && Master.AreAllEmployeesAsleep();
                         }
-                    });
-                    Gui.ShowModalPopup(SleepPrompt);
+                    };
+                    MakeAnnouncement(SleepPrompt);
                 }
                 else if (!allAsleep)
                 {
-                    if (SleepPrompt != null)
-                        SleepPrompt.Close();
                     Time.Speed = 100;
                     FastForwardToDay = false;
                     SleepPrompt = null;
@@ -666,7 +666,9 @@ namespace DwarfCorp
             effect.SetTexturedTechnique();
             effect.ClippingEnabled = true;
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-            ChunkRenderer.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
+
+                ChunkRenderer.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
+
             Camera.ViewMatrix = viewMatrix;
             effect.ClippingEnabled = true;
         }
@@ -729,7 +731,7 @@ namespace DwarfCorp
             {
                 LightPositions[j] = new Vector3(0, 0, 0);
             }
-            DefaultShader.CurrentNumLights = GameSettings.Default.CursorLightEnabled ? numLights - 1 : numLights;
+            DefaultShader.CurrentNumLights = Math.Max(Math.Min(GameSettings.Default.CursorLightEnabled ? numLights - 1 : numLights, 15), 0);
             DynamicLight.TempLights.Clear();
         }
 
@@ -742,14 +744,6 @@ namespace DwarfCorp
             if (!ShowingWorld)
                 return;
 
-#if RENDER_VOXEL_ICONS
-            var voxels = VoxelLibrary.RenderIcons(GraphicsDevice, DefaultShader, ChunkManager, -1, -1, 32);
-            using (var stream = new FileStream("voxels.png", FileMode.OpenOrCreate))
-            {
-                GraphicsDevice.SetRenderTarget(null);
-                voxels.SaveAsPng(stream, voxels.Width, voxels.Height);
-            }
-#endif
             GamePerformance.Instance.StartTrackPerformance("Render - RENDER");
             GamePerformance.Instance.StartTrackPerformance("Render - Prep");
 
@@ -765,6 +759,7 @@ namespace DwarfCorp
 
             CompositeLibrary.Render(GraphicsDevice);
             CompositeLibrary.Update();
+
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
 
@@ -958,7 +953,7 @@ namespace DwarfCorp
                 {
                     fxaa.Begin(DwarfTime.LastTime, fxaa.RenderTarget);
                 }
-                bloom.Draw(gameTime.ToGameTime());
+                bloom.Draw(gameTime.ToRealTime());
                 if (UseFXAA)
                     fxaa.End(DwarfTime.LastTime, fxaa.RenderTarget);
             }

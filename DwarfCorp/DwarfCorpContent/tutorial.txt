@@ -24,6 +24,12 @@
 			"GuiHilite" : "dig"
 		},
 		{
+			"Name": "wrangle",
+			"Title" : "Wrangling",
+			"Text": "Left click and drag over animals to capture them. Dwarves will bring the animals to an animal pen, where they may breed and lay eggs.",
+			"GuiHilite" : "wrangle"
+		},
+		{
 			"Name": "slice",
 			"Title" : "Slicing",
 			"Text": "You can view slices of blocks beneath the earth. The most valuable resources are underground, and dwarves prefer living in the dark. Push the Slice key (by default Q) to slice the terrain at the mouse cursor. You can also slice terrain using the slice buttons at the bottom of the screen, using the slice-up and slice-down keys (by default, pageup and pagedown), or with CTRL + mousehweel.",

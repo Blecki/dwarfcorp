@@ -1589,18 +1589,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
-    <Compile Include="Audio\oscar\sfx_amb_grassland_day_2.wav">
-      <Name>sfx_amb_grassland_day_2</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
     <Compile Include="Audio\oscar\sfx_amb_grassland_night_1.wav">
       <Name>sfx_amb_grassland_night_1</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Audio\oscar\sfx_amb_grassland_night_2.wav">
-      <Name>sfx_amb_grassland_night_2</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>

@@ -203,6 +203,18 @@ namespace DwarfCorp
                 WrappedAct.Initialize();
             return WrappedAct;
         }
+
+        public override bool IsComplete(Faction faction)
+        {
+            if (WrappedAct == null)
+                return true;
+            return base.IsComplete(faction);
+        }
+
+        public override bool ShouldRetry(Creature agent)
+        {
+            return false;
+        }
     }
 
 }

@@ -35,6 +35,10 @@ namespace DwarfCorp.Gui.Widgets
 
             OnClick += (sender, args) =>
                 {
+                    if (IsAnyParentHidden() || IsAnyParentTransparent())
+                    {
+                        return;
+                    }
                     if (Object.ReferenceEquals(this, Root.FocusItem))
                     {
                         // This widget already has focus - move cursor to click position.
@@ -66,6 +70,7 @@ namespace DwarfCorp.Gui.Widgets
 
                         CursorPosition = clickIndex;
                         Invalidate();
+                        args.Handled = true;
                     }
                     else
                     {
@@ -73,23 +78,29 @@ namespace DwarfCorp.Gui.Widgets
                         Root.SetFocus(this);
                         CursorPosition = Text.Length;
                         Invalidate();
+                        args.Handled = true;
                     }
                 };
 
             OnGainFocus += (sender) => this.Invalidate();
             OnLoseFocus += (sender) => this.Invalidate();
             OnUpdateWhileFocus += (sender) => this.Invalidate();
+            OnKeyUp += (sender, args) =>
+            {
+                if (IsAnyParentHidden() || IsAnyParentTransparent())
+                {
+                    return;
+                }
 
+                args.Handled = true;
+            };
             OnKeyPress += (sender, args) =>
                 {
-                   if (args.KeyValue == (int)System.Windows.Forms.Keys.Up)
+                    if (IsAnyParentHidden() || IsAnyParentTransparent())
                     {
-                        Root.SafeCall(ArrowKeyUpDown, this, 1);
+                        return;
                     }
-                   else if (args.KeyValue == (int)System.Windows.Forms.Keys.Down)
-                    {
-                        Root.SafeCall(ArrowKeyUpDown, this, -1);
-                    }
+
                     // Actual logic of modifying the string is outsourced.
                     var beforeEventArgs = new BeforeTextChangeEventArgs
                         {
@@ -102,11 +113,36 @@ namespace DwarfCorp.Gui.Widgets
                         Text = beforeEventArgs.NewText;
                         Root.SafeCall(OnTextChange, this);
                         Invalidate();
+                        args.Handled = true;
                     }
                 };
 
             OnKeyDown += (sender, args) =>
                 {
+                    if (IsAnyParentHidden() || IsAnyParentTransparent())
+                    {
+                        return;
+                    }
+#if XNA_BUILD
+                    if (args.KeyValue == (int)System.Windows.Forms.Keys.Up)
+                    {
+                        Root.SafeCall(ArrowKeyUpDown, this, 1);
+                    }
+                    else if (args.KeyValue == (int)System.Windows.Forms.Keys.Down)
+                    {
+                        Root.SafeCall(ArrowKeyUpDown, this, -1);
+                    }
+#else
+                    if (args.KeyValue == (int)Microsoft.Xna.Framework.Input.Keys.Up)
+                    {
+                        Root.SafeCall(ArrowKeyUpDown, this, 1);
+                    }
+                    else if (args.KeyValue == (int)Microsoft.Xna.Framework.Input.Keys.Down)
+                    {
+                        Root.SafeCall(ArrowKeyUpDown, this, -1);
+                    }
+#endif
+
                     var beforeEventArgs = new BeforeTextChangeEventArgs
                         {
                             NewText = TextFieldLogic.HandleSpecialKeys(Text, CursorPosition, args.KeyValue, out CursorPosition),
@@ -121,6 +157,7 @@ namespace DwarfCorp.Gui.Widgets
                     }
                     //Root.SafeCall(OnTextChange, this);
                     Invalidate();
+                    args.Handled = true;
                 };
 
             if (HiliteOnMouseOver)

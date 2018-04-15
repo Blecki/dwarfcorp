@@ -49,6 +49,16 @@ namespace DwarfCorp
             return new Lamp(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
         }
 
+        private enum OrientationType
+        {
+            Standing,
+            Wall,
+            None
+        }
+
+        private OrientationType _orientationType = OrientationType.None;
+        private int _prevdx = -2;
+        private int _prevdz = -2;
         public Lamp()
         {
 
@@ -56,6 +66,7 @@ namespace DwarfCorp
 
         private void CreateSpriteStanding()
         {
+            _orientationType = OrientationType.Standing;
             var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32);
 
             List<Point> frames = new List<Point>
@@ -81,7 +92,6 @@ namespace DwarfCorp
 
             // This is a hack to make the animation update at least once even when the object is created inactive by the craftbuilder.
             sprite.AnimPlayer.Update(new DwarfTime());
-
         }
 
         private void CreateSpriteWall(Vector3 diff)
@@ -95,20 +105,21 @@ namespace DwarfCorp
                 OrientationType = SimpleSprite.OrientMode.YAxis,
                 LightsWithVoxels = false
             }).SetFlag(Flag.ShouldSerialize, false);
+            _orientationType = OrientationType.Wall;
         }
 
-        private void CreateSprite()
+        private bool CreateSprite()
         {
             PropogateTransforms();
             var voxel = new VoxelHandle(Manager.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(LocalPosition));
-            if (!voxel.IsValid)
+            if (!voxel.IsValid && _orientationType != OrientationType.Standing)
             {
                 CreateSpriteStanding();
-                return;
+                return true;
             }
-           
-            for (var dx = -1; dx < 2; dx ++)
+
+            for (var dx = -1; dx < 2; dx++)
             {
                 for (var dz = -1; dz < 2; dz++)
                 {
@@ -120,14 +131,24 @@ namespace DwarfCorp
 
                     if (vox.IsValid && !vox.IsEmpty)
                     {
+                        if (_prevdx == dx && _prevdz == dz && _orientationType == OrientationType.Wall)
+                        {
+                            return false;
+                        }
                         CreateSpriteWall(new Vector3(dx, 0, dz));
-                        return;
+                        _prevdx = dx;
+                        _prevdz = dz;
+                        return true;
                     }
                 }
             }
 
-            CreateSpriteStanding();
-            return;
+            if (_orientationType != OrientationType.Standing)
+            {
+                CreateSpriteStanding();
+                return true;
+            }
+            return false;
         }
 
         public Lamp(ComponentManager Manager, Vector3 position, List<ResourceAmount> resources) :
@@ -160,9 +181,11 @@ namespace DwarfCorp
         public override void Orient(float angle)
         {
             base.Orient(angle);
-            var sprite = EnumerateChildren().First(c => c.Name == "sprite");
-            sprite.Delete();
-            CreateSprite();
+            if (CreateSprite())
+            {
+                var sprite = EnumerateChildren().First(c => c.Name == "sprite");
+                sprite.Delete();
+            }
         }
     }
 }

@@ -48,6 +48,7 @@ namespace DwarfCorp
         public Dictionary<string, Status> Statuses { get; set; }
 
         public bool IsAsleep { get; set; }
+        public bool IsOnStrike { get; set; }
 
         [JsonIgnore]
         public Status Hunger { get { return Statuses["Hunger"]; } set { Statuses["Hunger"] = value; } }
@@ -65,6 +66,7 @@ namespace DwarfCorp
         {
             Money = 0;
             IsAsleep = false;
+            IsOnStrike = false;
             Statuses = new Dictionary<string, Status>();
             Hunger = new Status
             {

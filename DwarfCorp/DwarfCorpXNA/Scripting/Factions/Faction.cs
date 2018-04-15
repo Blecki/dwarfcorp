@@ -198,6 +198,11 @@ namespace DwarfCorp
                 zone.Update();
             }
 
+            if (HandleThreatsTimer == null)
+            {
+                HandleThreatsTimer = new Timer(1.0f, false);
+            }
+
             HandleThreatsTimer.Update(time);
             if (HandleThreatsTimer.HasTriggered)
              HandleThreats();
@@ -266,7 +271,7 @@ namespace DwarfCorp
 
         public void OnVoxelDestroyed(VoxelHandle V)
         {
-            if (!V.IsValid || V.IsEmpty)
+            if (!V.IsValid)
                 return;
 
             RoomBuilder.OnVoxelDestroyed(V);

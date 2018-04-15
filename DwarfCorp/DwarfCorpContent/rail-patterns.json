@@ -269,23 +269,5 @@
         "Orientation": "North"
       }
     ]
-  },
-
-  {
-    "Name": "slope",
-    "Icon": 0,
-    "Pieces": [
-      {
-        "Offset": "0,0",
-        "RailPiece": "ortho-straight-topslope",
-        "Orientation": "North"
-      },
-      {
-        "Offset": "1,0",
-        "RailPiece": "ortho-straight-botslope",
-        "Orientation": "North"
-      }
-    ]
   }
-
 ]

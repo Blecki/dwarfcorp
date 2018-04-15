@@ -52,9 +52,15 @@ namespace DwarfCorp
         public Fence(ComponentManager componentManager, Vector3 position, float orientation, string asset) :
             base(componentManager, position, new SpriteSheet(asset, 32, 32), new Point(0, 0))
         {
+            this.LocalBoundingBoxOffset = new Vector3(0, -0.25f, 0);
+            this.BoundingBoxSize = new Vector3(1.0f, 0.5f, 0.1f);
+            this.SetFlag(Flag.RotateBoundingBox, true);
+
             FenceRotation = orientation;
             GetComponent<SimpleSprite>().OrientationType = SimpleSprite.OrientMode.Fixed;
-            GetComponent<SimpleSprite>().LocalTransform = Matrix.CreateRotationY(FenceRotation);
+            LocalTransform = Matrix.CreateRotationY(FenceRotation) * Matrix.CreateTranslation(position);
+
+            PropogateTransforms();
         }
 
 
@@ -62,7 +68,7 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(manager);
             GetComponent<SimpleSprite>().OrientationType = SimpleSprite.OrientMode.Fixed;
-            GetComponent<SimpleSprite>().LocalTransform = Matrix.CreateRotationY(FenceRotation);
+            //GetComponent<SimpleSprite>().LocalTransform = Matrix.CreateRotationY(FenceRotation);
         }
 
         private struct FenceSegmentInfo

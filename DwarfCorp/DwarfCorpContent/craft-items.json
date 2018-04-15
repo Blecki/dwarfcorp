@@ -37,7 +37,7 @@
     "EntityName": "Flag",
     "RequiredResources": [
       {
-        "ResourceType": "HardMaterial",
+        "ResourceType": "Stone",
         "NumResources": 1
       }
     ],
