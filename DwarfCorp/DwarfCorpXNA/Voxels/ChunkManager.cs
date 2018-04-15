@@ -55,9 +55,6 @@ namespace DwarfCorp
     /// </summary>
     public class ChunkManager
     {
-        //Todo: This belongs in WorldManager!
-        private Splasher Splasher;
-
         private Queue<VoxelChunk> RebuildQueue = new Queue<VoxelChunk>();
         private Mutex RebuildQueueLock = new Mutex();
 
@@ -173,7 +170,6 @@ namespace DwarfCorp
             Vector3 minBounds = -maxBounds;
             Bounds = new BoundingBox(minBounds, maxBounds);
 
-            Splasher = new Splasher(this);
         }
 
         public void StartThreads()
@@ -381,10 +377,6 @@ namespace DwarfCorp
 
             foreach (var chunk in ChunkData.GetChunkEnumerator())
                 chunk.RecieveNewPrimitive(gameTime);
-
-            // Todo: This belongs up in world manager.
-            Splasher.Splash(gameTime, Water.GetSplashQueue());
-            Splasher.HandleTransfers(gameTime, Water.GetTransferQueue());
 
             if (!gameTime.IsPaused)
             {

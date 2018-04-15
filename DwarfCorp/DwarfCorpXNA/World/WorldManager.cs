@@ -327,6 +327,8 @@ namespace DwarfCorp
             LazyActions.Add(action);
         }
 
+        private Splasher Splasher;
+
         #endregion
 
         /// <summary>
@@ -504,6 +506,9 @@ namespace DwarfCorp
             }
 
             // These things are updated even when the game is paused
+
+            Splasher.Splash(gameTime, ChunkManager.Water.GetSplashQueue());
+            Splasher.HandleTransfers(gameTime, ChunkManager.Water.GetTransferQueue());
 
             ChunkManager.Update(gameTime, Camera, GraphicsDevice);
             ChunkRenderer.Update(gameTime, Camera, GraphicsDevice);

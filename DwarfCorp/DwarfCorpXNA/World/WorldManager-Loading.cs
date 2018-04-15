@@ -282,8 +282,10 @@ namespace DwarfCorp
 
                     ChunkManager = new ChunkManager(Content, this,
                         ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+                Splasher = new Splasher(ChunkManager);
 
-                    ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
+
+                ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
                     
                     SetLoadingMessage("Loading Terrain...");
                     gameFile.ReadChunks(ExistingFile);
@@ -362,8 +364,10 @@ namespace DwarfCorp
 
                     ChunkManager = new ChunkManager(Content, this, 
                         ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+                Splasher = new Splasher(ChunkManager);
 
-                    ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
+
+                ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
 
                     Camera.Position = new Vector3(0, 10, 0) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
                     Camera.Target = new Vector3(0, 10, 1) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
