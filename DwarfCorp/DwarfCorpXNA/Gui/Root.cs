@@ -272,7 +272,11 @@ namespace DwarfCorp.Gui
         /// <param name="On"></param>
         public void SetFocus(Widget On)
         {
-            if (!Object.ReferenceEquals(this, On.Root)) throw new InvalidOperationException();
+            if (On != null)
+            {
+                if (!Object.ReferenceEquals(this, On.Root)) throw new InvalidOperationException();
+            }
+
             if (Object.ReferenceEquals(FocusItem, On)) return;
 
             if (FocusItem != null) SafeCall(FocusItem.OnLoseFocus, FocusItem);
@@ -448,6 +452,10 @@ namespace DwarfCorp.Gui
                         {
                             Args.Handled = true;
                             CallOnClick(HoverItem, newArgs);
+                        }
+                        else
+                        {
+                            SetFocus(null);
                         }
                         MouseDownItem = null;
                     }

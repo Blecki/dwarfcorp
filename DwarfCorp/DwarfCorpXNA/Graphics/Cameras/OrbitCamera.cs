@@ -96,6 +96,7 @@ namespace DwarfCorp
         {
             LastWheel = Mouse.GetState().ScrollWheelValue;
             ZoomTargets = new List<Vector3>();
+         
         }
 
 

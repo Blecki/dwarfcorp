@@ -491,6 +491,11 @@ namespace DwarfCorp
 
         public void HandlePosessedDwarf()
         {
+            // Don't attempt any control if the user is trying to type intoa focus item.
+            if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
+            {
+                return;
+            }
             KeyboardState keyState = Keyboard.GetState();
             if (SelectedMinions.Count != 1)
             {
