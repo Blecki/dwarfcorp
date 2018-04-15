@@ -786,7 +786,15 @@ namespace DwarfCorp
 
         public void Gather(Body item)
         {
-            AI.AssignTask(new GatherItemTask(item) { Priority = Task.PriorityType.High });
+            var task = new GatherItemTask(item) { Priority = Task.PriorityType.High };
+            if (AI.Faction == World.PlayerFaction)
+            {
+                World.Master.TaskManager.AddTask(task);
+            }
+            else
+            {
+                AI.AssignTask(task);
+            }
         }
 
         protected void CreateSprite(EmployeeClass employeeClass, ComponentManager manager, float heightOffset=0.15f)
