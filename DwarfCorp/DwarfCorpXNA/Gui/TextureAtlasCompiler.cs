@@ -11,6 +11,7 @@ namespace DwarfCorp.Gui.TextureAtlas
     {
         public JsonTileSheet Sheet;
         public Rectangle Rect;
+        public Texture2D RealTexture;
     }
 
     public class Atlas

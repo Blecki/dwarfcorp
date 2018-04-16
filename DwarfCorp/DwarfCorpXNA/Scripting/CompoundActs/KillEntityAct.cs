@@ -44,7 +44,6 @@ namespace DwarfCorp
     public class KillEntityAct : CompoundCreatureAct
     {
         public Body Entity { get; set; }
-        public KillEntityTask.KillType Mode { get; set; }
         public bool PathExists { get; set; }
         
         public KillEntityAct()
@@ -54,22 +53,7 @@ namespace DwarfCorp
 
         public bool Verify()
         {
-            switch (Mode)
-            {
-                case KillEntityTask.KillType.Auto:
-                {
-                    return Entity != null && !Entity.IsDead;
-                }
-                case KillEntityTask.KillType.Attack:
-                {
-                    return Entity != null && !Entity.IsDead && Creature.Faction.Designations.IsDesignation(Entity, DesignationType.Attack);
-                }
-                case KillEntityTask.KillType.Chop:
-                {
-                    return Entity != null && !Entity.IsDead && Creature.Faction.Designations.IsDesignation(Entity, DesignationType.Chop);
-                }
-            }
-            return false;
+            return Entity != null && !Entity.IsDead;
         }
 
         public IEnumerable<Act.Status> OnAttackEnd(CreatureAI creature)
@@ -79,10 +63,9 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public KillEntityAct(Body entity, CreatureAI creature, KillEntityTask.KillType mode) :
+        public KillEntityAct(Body entity, CreatureAI creature) :
             base(creature)
         {
-            Mode = mode;
             Entity = entity;
             Name = "Kill Entity";
             PlanAct.PlanType planType = PlanAct.PlanType.Adjacent;
@@ -109,7 +92,7 @@ namespace DwarfCorp
                         (
                         new GoToEntityAct(entity, creature)
                         {
-                            MovingTarget = mode != KillEntityTask.KillType.Chop,
+                            MovingTarget = true,
                             PlanType = planType,
                             Radius = radius
                         } | new Wrap(() => OnAttackEnd(creature)),

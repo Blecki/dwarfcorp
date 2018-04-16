@@ -235,7 +235,7 @@ namespace DwarfCorp
             }).SetFlagRecursive(Flag.ShouldSerialize, false);
 
             if (fixtureAsset != null)
-                AddChild(new Fixture(Manager, new Vector3(0, 0.3f, 0), fixtureAsset, fixtureFrame)).SetFlagRecursive(Flag.ShouldSerialize, false);
+                AddChild(new SimpleSprite(Manager, "", Matrix.CreateTranslation(new Vector3(0, 0.3f, 0)), false, fixtureAsset, fixtureFrame)).SetFlagRecursive(Flag.ShouldSerialize, false);
 
             AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
             {

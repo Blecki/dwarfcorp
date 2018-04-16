@@ -15,8 +15,18 @@ namespace DwarfCorp.Gui
     /// </summary>
     public class RenderData
     {
-        public GraphicsDevice Device { get; private set; }
-        public Point ActualScreenBounds { get { return new Point(Device.Viewport.Width, Device.Viewport.Height); } }
+        public GraphicsDevice Device { get { return GameStates.GameState.Game.GraphicsDevice; } }
+
+        public Point ActualScreenBounds
+        {
+            get
+            {
+                if (Device != null)
+                    return new Point(Device.Viewport.Width, Device.Viewport.Height);
+                throw new InvalidOperationException("Graphics device was null.");
+            }
+        }
+
         public Effect Effect { get; private set; }
         public Texture2D Texture { get; private set; }
         public Dictionary<String, ITileSheet> TileSheets { get; private set; }
@@ -35,7 +45,6 @@ namespace DwarfCorp.Gui
 
         public RenderData(GraphicsDevice Device, ContentManager Content)
         {
-            this.Device = Device;
             this.Effect = Content.Load<Effect>(ContentPaths.GUI.Shader);
 
             CalculateScreenSize();
@@ -44,14 +53,40 @@ namespace DwarfCorp.Gui
             // Load skin from disc. The skin is a set of tilesheets.
             var sheets = FileUtils.LoadJsonListFromMultipleSources<JsonTileSheet>(ContentPaths.GUI.Skin, null, (s) => s.Name);
 
+            var generators = new Dictionary<String, Func<GraphicsDevice, ContentManager, JsonTileSheet, Texture2D>>();
+            foreach (var method in AssetManager.EnumerateModHooks(typeof(TextureGeneratorAttribute), typeof(Texture2D), new Type[]
+            {
+                typeof(GraphicsDevice),
+                typeof(ContentManager),
+                typeof(JsonTileSheet)
+            }))
+            {
+                var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a is TextureGeneratorAttribute) as TextureGeneratorAttribute;
+                if (attribute == null) continue;
+                generators[attribute.GeneratorName] = (device, content, sheet) => method.Invoke(null, new Object[] { device, content, sheet }) as Texture2D;
+            }
+
             // Pack skin into a single texture - Build atlas information from texture sizes.
             var atlas = TextureAtlas.Compiler.Compile(sheets.Select(s =>
                 {
-                    var realTexture = AssetManager.GetContentTexture(s.Texture);
+                    Texture2D realTexture = null;
+
+                    switch (s.Type)
+                    {
+                        case JsonTileSheetType.TileSheet:
+                        case JsonTileSheetType.VariableWidthFont:
+                            realTexture = AssetManager.GetContentTexture(s.Texture);
+                            break;
+                        case JsonTileSheetType.Generated:
+                            realTexture = generators[s.Texture](Device, Content, s);
+                            break;
+                    }
+
                     return new TextureAtlas.Entry
                     {
                         Sheet = s,
-                        Rect = new Rectangle(0, 0, realTexture.Width, realTexture.Height)
+                        Rect = new Rectangle(0, 0, realTexture.Width, realTexture.Height),
+                        RealTexture = realTexture
                     };
                 }).ToList());
 
@@ -63,7 +98,7 @@ namespace DwarfCorp.Gui
             foreach (var texture in atlas.Textures)
             {
                 // Copy source texture into the atlas
-                var realTexture = AssetManager.GetContentTexture(texture.Sheet.Texture);
+                var realTexture = texture.RealTexture;
                 var textureData = new Color[realTexture.Width * realTexture.Height];
                 realTexture.GetData(textureData);
 

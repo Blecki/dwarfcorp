@@ -61,6 +61,7 @@ namespace DwarfCorp
             this.AdultName = AdultName;
             AddChild(new Health(Manager, "HP", 1.0f, 0.0f, 1.0f));
             AddChild(new Flammable(Manager, "Flames"));
+            CollisionType = CollisionManager.CollisionType.Static;
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -79,8 +80,9 @@ namespace DwarfCorp
             adult.IsGrown = true;
             if (Farm != null)
             {
-                Farm.Plant = adult;
-                Farm.TriggerAutoHarvest();
+                adult.Farm = Farm;
+                var task = new ChopEntityTask(adult) { Priority = Task.PriorityType.Low };
+                World.Master.TaskManager.AddTask(task);
             }
             Die();
         }

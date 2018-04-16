@@ -190,7 +190,7 @@ namespace DwarfCorp
                 DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
                 DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
                 CraftLibrary.InitializeDefaultLibrary();
-                VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice, Tilesheet);
+                VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice);
                 GrassLibrary.InitializeDefaultLibrary();
                 DecalLibrary.InitializeDefaultLibrary();
 
@@ -289,10 +289,6 @@ namespace DwarfCorp
                     SetLoadingMessage("Loading Terrain...");
                     gameFile.ReadChunks(ExistingFile);
                     ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
-
-                    ChunkManager.ChunkData.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
-                        ? gameFile.Metadata.Slice
-                        : ChunkManager.ChunkData.MaxViewingLevel, ChunkManager.SliceMode.Y);
                     
                     SetLoadingMessage("Loading Entities...");
                     gameFile.LoadPlayData(ExistingFile, this);
@@ -459,7 +455,14 @@ namespace DwarfCorp
                     if (gameFile.PlayData.Spells != null)
                         Master.Spells = gameFile.PlayData.Spells;
                     if (gameFile.PlayData.Tasks != null)
+                    {
                         Master.TaskManager = gameFile.PlayData.Tasks;
+                        Master.TaskManager.Faction = Master.Faction;
+                    }
+
+                    ChunkManager.World.Master.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
+                    ? gameFile.Metadata.Slice
+                    : ChunkManager.World.Master.MaxViewingLevel, ChunkManager.SliceMode.Y);
                 }
 
                 if (Master.Faction.Economy.Company.Information == null)

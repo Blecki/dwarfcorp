@@ -32,15 +32,35 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "DEBUG",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
-                        ItemSize = new Point(200, 20),
-                        ItemSource = Debugger.EnumerateSwitches().Select(s =>
-                        new HorizontalMenuTray.CheckboxMenuItem
+                        ItemSize = new Point(100, 20),
+                        ItemSource = new HorizontalMenuTray.MenuItem[]
                         {
-                            // Todo: Add spaces before capitals.
-                            Text = s.Name,
-                            InitialState = s.State,
-                            SetCallback = s.Set
-                        })
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "SWITCHES",
+                                ExpansionChild = new HorizontalMenuTray.Tray
+                                {
+                                    ItemSize = new Point(200, 20),
+                                    ItemSource = Debugger.EnumerateSwitches().Select(s =>
+                                    new HorizontalMenuTray.CheckboxMenuItem
+                                    {
+                                        Text = Debugger.GetNicelyFormattedName(s.Name),
+                                        InitialState = s.State,
+                                        SetCallback = s.Set
+                                    })
+                                }
+                            },
+
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "AI",
+                                ExpansionChild = new EmployeeAIDebugPanel
+                                {
+                                    World = Master.World,
+                                    MinimumSize = new Point(300, 200)
+                                }
+                            }
+                        }
                     }
                 },
                 new HorizontalMenuTray.MenuItem
@@ -71,32 +91,7 @@ namespace DwarfCorp.Gui.Widgets
                             })
                     }
                 },
-
-                new HorizontalMenuTray.MenuItem
-                {
-                    Text = "DUMP ENTITY JSON",
-                    ExpansionChild = new HorizontalMenuTray.Tray
-                    {
-                        Columns = 5,
-                        ItemSource = EntityFactory.EnumerateEntityTypes().OrderBy(s => s).Select(s =>
-                            new HorizontalMenuTray.MenuItem
-                            {
-                                Text = s,
-                                OnClick = (sender, args) =>
-                                {
-                                    var body = EntityFactory.CreateEntity<Body>(s, Vector3.Zero);
-                                    if (body != null)
-                                    body.PropogateTransforms();
-
-                                    System.IO.Directory.CreateDirectory("DUMPEDENTITIES");
-                                    FileUtils.SaveJSon(body, "DUMPEDENTITIES/" + s + ".json", false);
-
-                                    body.Delete();
-                                }
-                            })
-                    }
-                },
-
+                
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "PLACE BLOCK",
@@ -199,11 +194,23 @@ namespace DwarfCorp.Gui.Widgets
                                             {
                                                 var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as Rail.BuildRailTool;
                                                 railTool.Pattern = p;
-                                                railTool.SelectedResources = new List<ResourceAmount>(new ResourceAmount[] { new ResourceAmount(ResourceType.Iron, 2) });
+                                                railTool.SelectedResources = new List<ResourceAmount>(new ResourceAmount[] { new ResourceAmount("Rail", 1) });
                                                 Master.ChangeTool(GameMaster.ToolMode.BuildRail);
                                                 railTool.GodModeSwitch = true;
                                             }
                                         })
+                                }
+                            },
+
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "PAINT",
+                                OnClick = (sender, args) =>
+                                {
+                                    var railTool = Master.Tools[GameMaster.ToolMode.PaintRail] as Rail.PaintRailTool;
+                                    railTool.SelectedResources = new List<ResourceAmount>(new ResourceAmount[] { new ResourceAmount("Rail", 1) });
+                                    Master.ChangeTool(GameMaster.ToolMode.PaintRail);
+                                    railTool.GodModeSwitch = true;
                                 }
                             }
                         }
@@ -258,6 +265,25 @@ namespace DwarfCorp.Gui.Widgets
 
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "WAR PARTY",
+                    ExpansionChild = new HorizontalMenuTray.Tray
+                    {
+
+                            ItemSource = Master.World.Factions.Factions.Values.Where(f => f.Race.IsIntelligent && f != Master.Faction).Select(s =>
+                            {
+                                return new HorizontalMenuTray.MenuItem
+                                {
+                                    Text = s.Name,
+                                    OnClick = (sender, args) => Master.World.Diplomacy.SendWarParty(s)
+                                };
+
+                            }),
+                    }
+                },
+
+
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "DWARF BUX",
                     OnClick = (sender, args) => Master.Faction.AddMoney(100m)
                 },
@@ -293,7 +319,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "SPAWN TEST",
                     OnClick = (sender, args) =>
                     {
-                        // Todo: Figure out why the container gets MODIFIED during this.
+                        // Copy is required because spawning some types results in the creation of new types. EG, snakes create snake meat.
                         var keys = EntityFactory.EnumerateEntityTypes().ToList();
                         foreach(var key in keys)
                             EntityFactory.CreateEntity<GameComponent>(key, Master.World.CursorLightPos);
@@ -321,6 +347,11 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     Text = "REPULSE",
                     OnClick = (sender, args) => ActivateGodTool("Repulse")
+                },
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "SLOWMO",
+                    OnClick = (sender, args) => GameSettings.Default.EnableSlowMotion = !GameSettings.Default.EnableSlowMotion
                 },
                 new HorizontalMenuTray.MenuItem
                 {

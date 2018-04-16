@@ -22,6 +22,8 @@ namespace DwarfCorp.Gui.Widgets
 
         public Action<Widget, BeforeTextChangeEventArgs> BeforeTextChange = null;
 
+        public Action<Widget, int> ArrowKeyUpDown = null;
+
         public override void Construct()
         {
             if (String.IsNullOrEmpty(Border)) Border = "border-thin";
@@ -33,6 +35,10 @@ namespace DwarfCorp.Gui.Widgets
 
             OnClick += (sender, args) =>
                 {
+                    if (IsAnyParentHidden() || IsAnyParentTransparent())
+                    {
+                        return;
+                    }
                     if (Object.ReferenceEquals(this, Root.FocusItem))
                     {
                         // This widget already has focus - move cursor to click position.
@@ -64,6 +70,7 @@ namespace DwarfCorp.Gui.Widgets
 
                         CursorPosition = clickIndex;
                         Invalidate();
+                        args.Handled = true;
                     }
                     else
                     {
@@ -71,15 +78,29 @@ namespace DwarfCorp.Gui.Widgets
                         Root.SetFocus(this);
                         CursorPosition = Text.Length;
                         Invalidate();
+                        args.Handled = true;
                     }
                 };
 
             OnGainFocus += (sender) => this.Invalidate();
             OnLoseFocus += (sender) => this.Invalidate();
             OnUpdateWhileFocus += (sender) => this.Invalidate();
+            OnKeyUp += (sender, args) =>
+            {
+                if (IsAnyParentHidden() || IsAnyParentTransparent())
+                {
+                    return;
+                }
 
+                args.Handled = true;
+            };
             OnKeyPress += (sender, args) =>
                 {
+                    if (IsAnyParentHidden() || IsAnyParentTransparent())
+                    {
+                        return;
+                    }
+
                     // Actual logic of modifying the string is outsourced.
                     var beforeEventArgs = new BeforeTextChangeEventArgs
                         {
@@ -92,11 +113,36 @@ namespace DwarfCorp.Gui.Widgets
                         Text = beforeEventArgs.NewText;
                         Root.SafeCall(OnTextChange, this);
                         Invalidate();
+                        args.Handled = true;
                     }
                 };
 
             OnKeyDown += (sender, args) =>
                 {
+                    if (IsAnyParentHidden() || IsAnyParentTransparent())
+                    {
+                        return;
+                    }
+#if XNA_BUILD
+                    if (args.KeyValue == (int)System.Windows.Forms.Keys.Up)
+                    {
+                        Root.SafeCall(ArrowKeyUpDown, this, 1);
+                    }
+                    else if (args.KeyValue == (int)System.Windows.Forms.Keys.Down)
+                    {
+                        Root.SafeCall(ArrowKeyUpDown, this, -1);
+                    }
+#else
+                    if (args.KeyValue == (int)Microsoft.Xna.Framework.Input.Keys.Up)
+                    {
+                        Root.SafeCall(ArrowKeyUpDown, this, 1);
+                    }
+                    else if (args.KeyValue == (int)Microsoft.Xna.Framework.Input.Keys.Down)
+                    {
+                        Root.SafeCall(ArrowKeyUpDown, this, -1);
+                    }
+#endif
+
                     var beforeEventArgs = new BeforeTextChangeEventArgs
                         {
                             NewText = TextFieldLogic.HandleSpecialKeys(Text, CursorPosition, args.KeyValue, out CursorPosition),
@@ -111,6 +157,7 @@ namespace DwarfCorp.Gui.Widgets
                     }
                     //Root.SafeCall(OnTextChange, this);
                     Invalidate();
+                    args.Handled = true;
                 };
 
             if (HiliteOnMouseOver)
@@ -140,7 +187,7 @@ namespace DwarfCorp.Gui.Widgets
                 }
 
                 var cursorTime = (int)(Math.Floor(Root.RunTime / Root.CursorBlinkTime));
-                if ((cursorTime & 1) == 1)
+                if ((cursorTime % 2) == 0)
                 {
                     var font = Root.GetTileSheet(Font);
                     var drawableArea = this.GetDrawableInterior();

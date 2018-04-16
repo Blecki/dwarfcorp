@@ -41,7 +41,6 @@ namespace DwarfCorp
     /// <summary>
     /// Tells a creature that it should pick up an item and put it in a stockpile.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class GatherItemTask : Task
     {
         public Body EntityToGather = null;
@@ -74,44 +73,37 @@ namespace DwarfCorp
         public override Feasibility IsFeasible(Creature agent)
         {
             return EntityToGather != null
-                   && !EntityToGather.IsDead
+                   && EntityToGather.Active
                    && !agent.AI.Movement.IsSessile
-                   && agent.AI.Faction.Designations.IsDesignation(EntityToGather, DesignationType.Gather)
                    && !agent.AI.Status.IsAsleep ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool ShouldRetry(Creature agent)
         {
             return EntityToGather != null &&
+                  EntityToGather.Active &&
                   !EntityToGather.IsDead &&
-                  !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather) &&
-                  agent.AI.Faction.Designations.IsDesignation(EntityToGather, DesignationType.Gather);
+                  !agent.AI.GatherManager.ItemsToGather.Contains(EntityToGather);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return EntityToGather == null  || EntityToGather.IsDead ? 1000 : (agent.AI.Position - EntityToGather.GlobalTransform.Translation).LengthSquared();
         }
-
-        public override void Render(DwarfTime time)
+        
+        public override bool IsComplete(Faction Faction)
         {
+            return EntityToGather == null || !EntityToGather.Active || EntityToGather.IsDead;
+        }
 
-            //if (!EntityToGather.IsDead)
-            //{
-            //    Color drawColor = Color.Goldenrod;
+        public override void OnEnqueued(Faction Faction)
+        {
+            Faction.Designations.AddEntityDesignation(EntityToGather, DesignationType.Gather, null, this);
+        }
 
-            //    float alpha = (float) Math.Abs(Math.Sin(time.TotalGameTime.TotalSeconds*0.5f));
-            //    drawColor.R = (byte) (Math.Min(drawColor.R*alpha + 50, 255));
-            //    drawColor.G = (byte) (Math.Min(drawColor.G*alpha + 50, 255));
-            //    drawColor.B = (byte) (Math.Min(drawColor.B*alpha + 50, 255));
-            //    BoundingBox bounds = EntityToGather.BoundingBox;
-            //    bounds.Min += Vector3.Up * 0.5f;
-            //    bounds.Max += Vector3.Up * 0.5f;
-            //    bounds = bounds.Expand(0.25f);
-            //    Drawer3D.DrawBox(bounds, drawColor, 0.01f * alpha + 0.01f, true);
-            //}
-
-            base.Render(time);
+        public override void OnDequeued(Faction Faction)
+        {
+            Faction.Designations.RemoveEntityDesignation(EntityToGather, DesignationType.Gather);
         }
     }
 

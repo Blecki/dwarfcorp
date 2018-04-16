@@ -31,13 +31,13 @@ namespace DwarfCorp
             Chop,
             Guard,
             Attack,
-            Till,
             Plant,
             Wrangle,
             Craft,
             MoveObjects,
             DeconstructObjects,
             BuildRail,
+            PaintRail,
             God
         }
 
@@ -88,6 +88,8 @@ namespace DwarfCorp
         private bool sliceUpheld = false;
         private Timer sliceDownTimer = new Timer(0.5f, true);
         private Timer sliceUpTimer = new Timer(0.5f, true);
+        public int MaxViewingLevel = VoxelConstants.ChunkSizeY;
+        public ChunkManager.SliceMode Slice = ChunkManager.SliceMode.Y; // Todo: Ever not Y? Are other types even supported?
 
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
@@ -95,6 +97,7 @@ namespace DwarfCorp
             World = (WorldManager)(context.Context);
             Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, World.ChunkManager.Graphics);
             World.Master = this;
+            TaskManager.Faction = Faction;
         }
 
         public GameMaster()
@@ -104,6 +107,8 @@ namespace DwarfCorp
         public GameMaster(Faction faction, DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
         {
             TaskManager = new TaskManager();
+            TaskManager.Faction = faction;
+
             World = components.World;
             Faction = faction;
             Initialize(game, components, chunks, camera, graphics);
@@ -128,8 +133,8 @@ namespace DwarfCorp
                 Spells = SpellLibrary.CreateSpellTree(components.World);
             CreateTools();
 
-            InputManager.KeyReleasedCallback += OnKeyReleased;
-            InputManager.KeyPressedCallback += OnKeyPressed;
+            //InputManager.KeyReleasedCallback += OnKeyReleased;
+            //InputManager.KeyPressedCallback += OnKeyPressed;
         }
 
         public void Destroy()
@@ -139,8 +144,8 @@ namespace DwarfCorp
             BodySelector.Selected -= OnBodiesSelected;
             BodySelector.MouseOver -= OnMouseOver;
             World.Time.NewDay -= Time_NewDay;
-            InputManager.KeyReleasedCallback -= OnKeyReleased;
-            InputManager.KeyPressedCallback -= OnKeyPressed;
+            //InputManager.KeyReleasedCallback -= OnKeyReleased;
+            //InputManager.KeyPressedCallback -= OnKeyPressed;
             Tools[ToolMode.God].Destroy();
             Tools[ToolMode.SelectUnits].Destroy();
             Tools.Clear();
@@ -155,11 +160,6 @@ namespace DwarfCorp
             Tools[ToolMode.God] = new GodModeTool(this);
 
             Tools[ToolMode.SelectUnits] = new DwarfSelectorTool(this);
-
-            Tools[ToolMode.Till] = new TillTool
-            {
-                Player = this
-            };
 
             Tools[ToolMode.Plant] = new PlantTool
             {
@@ -229,6 +229,7 @@ namespace DwarfCorp
             };
 
             Tools[ToolMode.BuildRail] = new Rail.BuildRailTool(this);
+            Tools[ToolMode.PaintRail] = new Rail.PaintRailTool(this);
         }
 
         void Time_NewDay(DateTime time)
@@ -259,6 +260,26 @@ namespace DwarfCorp
         public bool AreAllEmployeesAsleep()
         {
             return (Faction.Minions.Count > 0) && Faction.Minions.All(minion => (!minion.Stats.CanSleep || minion.Creature.IsAsleep) && !minion.IsDead);
+        }
+
+        // Final argument is always mode Y.
+        // Todo: %KILL% - does not belong here.
+        public void SetMaxViewingLevel(int level, ChunkManager.SliceMode slice)
+        {
+            if (level == MaxViewingLevel && slice == Slice)
+                return;
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_click_voxel, 0.15f, (float)(level / (float)VoxelConstants.ChunkSizeY) - 0.5f);
+
+            var oldLevel = MaxViewingLevel;
+
+            Slice = slice;
+            MaxViewingLevel = Math.Max(Math.Min(level, VoxelConstants.ChunkSizeY), 1);
+
+            foreach (var c in World.ChunkManager.ChunkData.ChunkMap)
+            {
+                c.InvalidateSlice(oldLevel - 1);
+                c.InvalidateSlice(MaxViewingLevel - 1);
+            }
         }
 
         public void PayEmployees()
@@ -357,31 +378,7 @@ namespace DwarfCorp
             if (orphanedTaskRateLimiter.HasTriggered)
             {
                 List<Task> orphanedTasks = new List<Task>();
-                foreach (var block in Faction.Designations.EnumerateDesignations())
-                {
-                    if (block.Type == DesignationType.Put)
-                    {
-                        var type = (short)(block.Tag);
-                        var task = new BuildVoxelTask(block.Voxel, VoxelLibrary.GetVoxelType(type).Name);
-
-                        if (!TaskManager.HasTask(task) && 
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
-                    else if (block.Type == DesignationType.Dig)
-                    {
-                        var task = new KillVoxelTask(block.Voxel);
-                        if (!TaskManager.HasTask(task) &&
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
-                    // TODO... other tasks here ?
-                }
-
+                
                 foreach (var ent in Faction.Designations.EnumerateEntityDesignations())
                 {
                     if (ent.Type == DesignationType.Attack)
@@ -393,33 +390,8 @@ namespace DwarfCorp
                             orphanedTasks.Add(task);
                         }
                     }
-                    else if (ent.Type == DesignationType.Chop)
-                    {
-                        var task = new KillEntityTask(ent.Body, KillEntityTask.KillType.Chop);
-                        if (!TaskManager.HasTask(task) &&
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
-                    else if (ent.Type == DesignationType.Wrangle)
-                    {
-                        var task = new WrangleAnimalTask(ent.Body.GetRoot().GetComponent<Creature>());
-                        if (!TaskManager.HasTask(task) &&
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
-                    else if (ent.Type == DesignationType.Gather)
-                    {
-                        var task = new GatherItemTask(ent.Body);
-                        if (!TaskManager.HasTask(task) &&
-                            !Faction.Minions.Any(minion => minion.Tasks.Contains(task)))
-                        {
-                            orphanedTasks.Add(task);
-                        }
-                    }
+                    
+                    
                     else if (ent.Type == DesignationType.Craft)
                     {
                         var task = new CraftItemTask(ent.Tag as CraftDesignation);
@@ -479,14 +451,15 @@ namespace DwarfCorp
 
             HandlePosessedDwarf();
 
+            /*
             if (sliceDownheld)
             {
                 sliceDownTimer.Update(time);
 
                 if (sliceDownTimer.HasTriggered)
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
-                    sliceDownTimer.Reset(0.1f);
+                    SetMaxViewingLevel(MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
+                    sliceDownTimer.Reset(0.5f);
                 }
             }
 
@@ -496,11 +469,11 @@ namespace DwarfCorp
 
                 if (sliceUpTimer.HasTriggered)
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
-                    sliceUpTimer.Reset(0.1f);
+                    SetMaxViewingLevel(MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
+                    sliceUpTimer.Reset(0.5f);
                 }
             }
-
+            */
             // Make sure that the faction's money is identical to the money in treasuries.
             Faction.Economy.CurrentMoney = Faction.Treasurys.Sum(treasury => treasury.Money);
 
@@ -518,6 +491,11 @@ namespace DwarfCorp
 
         public void HandlePosessedDwarf()
         {
+            // Don't attempt any control if the user is trying to type intoa focus item.
+            if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
+            {
+                return;
+            }
             KeyboardState keyState = Keyboard.GetState();
             if (SelectedMinions.Count != 1)
             {
@@ -548,11 +526,11 @@ namespace DwarfCorp
 
                 if (above.IsValid)
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(above.Coordinate.Y, ChunkManager.SliceMode.Y);
+                    SetMaxViewingLevel(above.Coordinate.Y, ChunkManager.SliceMode.Y);
                 }
                 else
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
+                    SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
                         ChunkManager.SliceMode.Y);
                 }
             }
@@ -647,57 +625,66 @@ namespace DwarfCorp
 
         }
 
-        public void OnKeyPressed(Keys key)
+        public bool OnKeyPressed(Keys key)
         {
             if (key == ControlSettings.Mappings.SliceUp)
             {
                 sliceUpheld = true;
                 sliceUpTimer.Reset(0.5f);
+                return true;
             }
             else if (key == ControlSettings.Mappings.SliceDown)
             {
                 sliceDownheld = true;
                 sliceDownTimer.Reset(0.5f);
+                return true;
             }
+            return false;
         }
         private int rememberedViewValue = VoxelConstants.ChunkSizeY;
 
-        public void OnKeyReleased(Keys key)
+        public bool OnKeyReleased(Keys key)
         {
             KeyboardState keys = Keyboard.GetState();
             if (key == ControlSettings.Mappings.SliceUp)
             {
                 sliceUpheld = false;
                 World.Tutorial("unslice");
-                World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
+                SetMaxViewingLevel(MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
+                return true;
             }
 
             else if (key == ControlSettings.Mappings.SliceDown)
             {
                 sliceDownheld = false;
                 World.Tutorial("unslice");
-                World.ChunkManager.ChunkData.SetMaxViewingLevel(World.ChunkManager.ChunkData.MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
+                SetMaxViewingLevel(MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
+                return true;
             }
             else if (key == ControlSettings.Mappings.SliceSelected)
             {
                 if (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl))
                 {
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(rememberedViewValue, 
+                    SetMaxViewingLevel(rememberedViewValue, 
                         ChunkManager.SliceMode.Y);
+                    return true;
                 }
                 else if (VoxSelector.VoxelUnderMouse.IsValid)
                 {
                     World.Tutorial("unslice");
-                    World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1,
+                    SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1,
                         ChunkManager.SliceMode.Y);
                     Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
+                    return true;
                 }
             }
             else if (key == ControlSettings.Mappings.Unslice)
             {
-                rememberedViewValue = World.ChunkManager.ChunkData.MaxViewingLevel;
-                World.ChunkManager.ChunkData.SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
+                rememberedViewValue = MaxViewingLevel;
+                SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
+                return true;
             }
+            return false;
         }
 
         #endregion

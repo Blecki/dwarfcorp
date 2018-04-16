@@ -106,18 +106,6 @@ namespace DwarfCorp
 
         public BoundingBox Bounds { get; set; }
 
-        public float DrawDistance
-        {
-            get { return GameSettings.Default.ChunkDrawDistance; }
-        }
-
-        protected float drawDistSq = 0;
-
-        public float DrawDistanceSquared
-        {
-            get { return drawDistSq; }
-        }
-
         public float GenerateDistance
         {
             get { return GameSettings.Default.ChunkGenerateDistance; }
@@ -125,10 +113,11 @@ namespace DwarfCorp
         }
 
         // Todo: %KILL% Wrong spot for this, but too large to move currently.
-        public GraphicsDevice Graphics { get; set; }
+        public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
 
         public bool PauseThreads { get; set; }
 
+        // Todo: KILL. Pointless, always Y.
         public enum SliceMode
         {
             X,
@@ -144,9 +133,11 @@ namespace DwarfCorp
 
         public WaterManager Water { get; set; }
 
+        public Timer ChunkUpdateTimer = new Timer(10.0f, false, Timer.TimerMode.Real);
+
         public bool IsAboveCullPlane(BoundingBox Box)
         {
-            return Box.Min.Y > (ChunkData.MaxViewingLevel + 5);
+            return Box.Min.Y > (World.Master.MaxViewingLevel + 5);
         }
 
         public ChunkData ChunkData
@@ -163,7 +154,6 @@ namespace DwarfCorp
 
             World = world;
             ExitThreads = false;
-            drawDistSq = DrawDistance * DrawDistance;
             Content = content;
 
             chunkData = new ChunkData(this, maxChunksX, maxChunksZ, 0, 0);             
@@ -180,7 +170,6 @@ namespace DwarfCorp
                 (f) => Water.UpdateWater());
 
             ToGenerate = new List<GlobalChunkCoordinate>();
-            Graphics = graphics;
 
             chunkGen.Manager = this;
 
@@ -316,7 +305,7 @@ namespace DwarfCorp
                         BoundingBox clusterBounds = new BoundingBox
                         {
                             Max = new Vector3(Bounds.Max.X, type.MaxSpawnHeight, Bounds.Max.Z),
-                            Min = new Vector3(Bounds.Min.X, type.MinSpawnHeight, Bounds.Min.Z)
+                            Min = new Vector3(Bounds.Min.X, Math.Max(type.MinSpawnHeight, 2), Bounds.Min.Z)
                         };
 
                         if (type.SpawnClusters)
@@ -434,7 +423,13 @@ namespace DwarfCorp
             Splasher.HandleTransfers(gameTime, Water.GetTransferQueue());
 
             if (!gameTime.IsPaused)
-                ChunkUpdate.RunUpdate(this);
+            {
+                ChunkUpdateTimer.Update(gameTime);
+                if (ChunkUpdateTimer.HasTriggered)
+                {
+                    ChunkUpdate.RunUpdate(this);
+                }
+            }
 
             List<VoxelChangeEvent> localList = null;
             lock (ChangedVoxels)
@@ -475,6 +470,9 @@ namespace DwarfCorp
 
         public List<Body> KillVoxel(VoxelHandle Voxel)
         {
+            if (World.Master != null)
+                World.Master.Faction.OnVoxelDestroyed(Voxel);
+
             if (!Voxel.IsValid || Voxel.IsEmpty)
                 return null;
 
@@ -485,9 +483,6 @@ namespace DwarfCorp
                 World.ParticleManager.Trigger("puff", 
                     Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
             }
-
-            if (World.Master != null)
-                World.Master.Faction.OnVoxelDestroyed(Voxel);
 
             Voxel.Type.ExplosionSound.Play(Voxel.WorldPosition);
 

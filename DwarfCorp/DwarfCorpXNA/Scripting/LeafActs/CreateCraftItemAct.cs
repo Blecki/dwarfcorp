@@ -56,22 +56,21 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            if (!Creature.Faction.CraftBuilder.IsDesignation(Voxel))
-                yield return Status.Fail;
-
-            // Use the existing entity instead of creating a new one.
+            Item.Finished = true;
             var item = Item.Entity;
             item.SetFlagRecursive(GameComponent.Flag.Active, true);
             item.SetTintRecursive(Color.White);
             var tinters = item.EnumerateAll().OfType<Tinter>();
             foreach(var tinter in tinters)
-            {
                 tinter.Stipple = false;
-            }
+
             item.SetFlagRecursive(GameComponent.Flag.Visible, true);
 
             if (Item.ItemType.Moveable)
                 item.Tags.Add("Moveable");
+
+            if (Item.ItemType.Deconstructable)
+                item.Tags.Add("Deconstructable");
 
             if (Item.WorkPile != null)
                 Item.WorkPile.Die();
@@ -94,7 +93,6 @@ namespace DwarfCorp
                 Creature.Faction.OwnedObjects.Add(item);
 
             Creature.Manager.World.ParticleManager.Trigger("puff", Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, 10);
-            Creature.Faction.Designations.RemoveEntityDesignation(item, DesignationType.Craft);
             Creature.AI.AddXP((int)(5 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt)));
             yield return Status.Success;
         }

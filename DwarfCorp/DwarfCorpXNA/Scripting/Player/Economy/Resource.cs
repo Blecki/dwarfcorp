@@ -117,7 +117,9 @@ namespace DwarfCorp
             Fruit,
             Gourd,
             Evil,
-            Jolly
+            Jolly,
+            Rail,
+            Explosive
         }
 
         public Resource()

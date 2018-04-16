@@ -54,9 +54,6 @@ namespace DwarfCorp
         public ChunkData(ChunkManager chunkManager, int ChunkMapWidth, int ChunkMapHeight, int ChunkMapMinX, int ChunkMapMinZ)
         {           
             this.chunkManager = chunkManager;
-            MaxViewingLevel = VoxelConstants.ChunkSizeY;
-            Slice = ChunkManager.SliceMode.Y;
-
             this.ChunkMapWidth = ChunkMapWidth;
             this.ChunkMapHeight = ChunkMapHeight;
             this.ChunkMapMinX = ChunkMapMinX;
@@ -92,6 +89,7 @@ namespace DwarfCorp
 
         //public ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk> ChunkMap { get; set; }
 
+            // Todo: Get rid of all these texture aliases.
         public Texture2D Tilemap
         {
             get { return AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles); }
@@ -101,11 +99,7 @@ namespace DwarfCorp
         {
             get { return AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_illumination); }
         }
-
-        // Todo: Why is this here?
-        public int MaxViewingLevel { get; set; }
-        public ChunkManager.SliceMode Slice { get; set; }
-
+        
         public Texture2D SunMap
         {
             get { return AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient); }
@@ -127,27 +121,6 @@ namespace DwarfCorp
             get { return chunkManager; }
         }
 
-
-        // Final argument is always mode Y.
-        // Todo: %KILL% - does not belong here.
-        public void SetMaxViewingLevel(int level, ChunkManager.SliceMode slice)
-        {
-            if (level == MaxViewingLevel && slice == Slice)
-                return;
-            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_click_voxel, 0.15f, (float)(level / (float)VoxelConstants.ChunkSizeY) - 0.5f);
-
-            var oldLevel = MaxViewingLevel;
-
-            Slice = slice;
-            MaxViewingLevel = Math.Max(Math.Min(level, VoxelConstants.ChunkSizeY), 1);
-
-            foreach (var c in ChunkMap)
-            {
-                c.InvalidateSlice(oldLevel - 1);
-                c.InvalidateSlice(MaxViewingLevel - 1);
-            }
-        }
-        
         public bool AddChunk(VoxelChunk Chunk)
         {
             if (!CheckBounds(Chunk.ID)) throw new IndexOutOfRangeException();

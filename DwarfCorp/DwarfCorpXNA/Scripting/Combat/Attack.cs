@@ -289,15 +289,17 @@ namespace DwarfCorp
                 case AttackMode.Melee:
                 case AttackMode.Dogfight:
                 {
-                    var otherCreature = other.GetRoot().GetComponent<Creature>();
-                    if (otherCreature != null && !String.IsNullOrEmpty(DiseaseToSpread))
-                    {
-                        var disease = DiseaseLibrary.GetDisease(DiseaseToSpread);
-                        if (MathFunctions.RandEvent(disease.LikelihoodOfSpread))
+                        if (!String.IsNullOrEmpty(DiseaseToSpread))
                         {
-                            otherCreature.AcquireDisease(DiseaseToSpread);
+                            var otherCreature = other.GetRoot().GetComponent<Creature>();
+                            if (otherCreature != null)
+                            {
+                                var disease = DiseaseLibrary.GetDisease(DiseaseToSpread);
+                                if (MathFunctions.RandEvent(disease.LikelihoodOfSpread))
+                                    otherCreature.AcquireDisease(DiseaseToSpread);
+                            }
                         }
-                    }
+
                     var health = other.GetRoot().EnumerateAll().OfType<Health>().FirstOrDefault();
                     if (health != null)
                     {
@@ -310,11 +312,16 @@ namespace DwarfCorp
                             if (creature != null)
                                 creature.AcquireDisease(injury.Name);
                         }
+
                         Vector3 knock = other.Position - performer.Physics.Position;
                         knock.Normalize();
                         knock *= 0.2f;
                         if (other.AnimationQueue.Count == 0)
                             other.AnimationQueue.Add(new KnockbackAnimation(0.15f, other.LocalTransform, knock));
+                    }
+                    else
+                    {
+                        other.GetRoot().Die();
                     }
 
                     PlayNoise(other.GlobalTransform.Translation);

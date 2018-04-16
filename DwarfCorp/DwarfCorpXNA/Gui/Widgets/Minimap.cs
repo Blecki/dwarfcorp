@@ -144,6 +144,7 @@ namespace DwarfCorp.Gui.Widgets
             World.Camera.UpdateViewMatrix();
             World.Camera.ZoomTargets.Clear();
             World.Camera.ZoomTargets.Add(HomePosition);
+            World.Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
         }
 
                
@@ -152,14 +153,21 @@ namespace DwarfCorp.Gui.Widgets
             Gui.DrawQuad(Where, RenderTarget);
         }
 
+        private Timer _renderTimer = new Timer(0.05f, false, Timer.TimerMode.Real);
         public void PreRender(DwarfTime time, SpriteBatch sprites)
         {
+            _renderTimer.Update(time);
+            if (!_renderTimer.HasTriggered)
+                return;
+
             if (!HomeSet)
             {
-                HomePosition = World.Camera.Position;
+                if (World.PlayerFaction.GetRooms().Count > 0)
+                {
+                    HomePosition = World.PlayerFaction.GetRooms().First().GetBoundingBox().Center();
+                }
                 HomeSet = true;
             }
-
 
             //Camera.Update(time, World.ChunkManager);
             Camera.Target = World.Camera.Target;
@@ -191,7 +199,7 @@ namespace DwarfCorp.Gui.Widgets
 
             try
             {
-                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate,
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred,
                     BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin, null, RasterizerState.CullNone, null,
                     Matrix.Identity);
                 Viewport viewPort = new Viewport(RenderTarget.Bounds);

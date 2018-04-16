@@ -39,7 +39,20 @@ namespace DwarfCorp
             bottomBar.AddChild(new Button()
             {
                 Text = "Save",
-                OnClick = (sender, args) => FileUtils.SaveBasicJson(SoundManager.Mixer, ContentPaths.mixer),
+                OnClick = (sender, args) => {
+                try
+                {
+                    FileUtils.SaveBasicJson(SoundManager.Mixer, AssetManager.ResolveContentPath(ContentPaths.mixer));
+                }
+                catch (Exception exception)
+                {
+                        Console.Out.WriteLine(exception.ToString());
+                        Root.ShowModalPopup(new Popup()
+                        {
+                            Text = "Failed to save audio mixer. This is a debug tool. Are you a dev?",
+                        });
+                }
+                },
                 AutoLayout = AutoLayout.DockRight,
                 MinimumSize = new Point(64, 24)
             });

@@ -59,19 +59,14 @@ namespace DwarfCorp
                     if (v.IsEmpty || Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Guard))
                         continue;
 
-                    BuildOrder d = new BuildOrder
-                    {
-                        Vox = v
-                    };
-
-                    Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Guard, d);
-                    assignedTasks.Add(new GuardZoneTask());
+                    var task = new GuardZoneTask();
+                    Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Guard, null, task);
+                    assignedTasks.Add(task);
                 }
 
                 List<CreatureAI> minions = 
                     Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, Task.TaskCategory.Gather);
                 Player.TaskManager.AddTasks(assignedTasks);
-                //TaskManager.AssignTasks(assignedTasks, minions);
                 OnConfirm(minions);
 
             }

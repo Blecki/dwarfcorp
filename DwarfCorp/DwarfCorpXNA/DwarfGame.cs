@@ -106,12 +106,14 @@ namespace DwarfCorp
                         new RavenClient(
                             "https://af78a676a448474dacee4c72a9197dd2:0dd0a01a9d4e4fa4abc6e89ac7538346@sentry.io/192119");
                     ravenClient.Tags["Version"] = Program.Version;
-                }
+                    ravenClient.Tags["Commit"] = Program.Commit;
+
 #if XNA_BUILD
-                ravenClient.Tags["Platform"] = "XNA";
+                    ravenClient.Tags["Platform"] = "XNA";
 #else
                 ravenClient.Tags["Platform"] = "FNA";
 #endif
+                }
 #endif
             }
             catch (Exception exception)
@@ -389,6 +391,11 @@ namespace DwarfCorp
             DepthStencilState depthState, RasterizerState rasterState, Effect effect, Matrix world)
         {
             Debug.Assert(IsMainThread);
+            if (SpriteBatch.GraphicsDevice.IsDisposed || SpriteBatch.IsDisposed)
+            {
+                SpriteBatch = new SpriteBatch(GameState.Game.GraphicsDevice);
+            }
+
             try
             {
                 SpriteBatch.Begin(sortMode,
@@ -402,7 +409,8 @@ namespace DwarfCorp
             catch (InvalidOperationException exception)
             {
                 Console.Error.Write(exception);
-                SpriteBatch.End();
+                SpriteBatch.Dispose();
+                SpriteBatch = new SpriteBatch(GameState.Game.GraphicsDevice);
                 SpriteBatch.Begin(sortMode,
                     blendState,
                     samplerstate,

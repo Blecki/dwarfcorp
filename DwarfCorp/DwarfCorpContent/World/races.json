@@ -21,7 +21,7 @@
             "Width" : 64,
             "Height" : 64,
             "Frames" :  [0, 1, 0],
-            "Speed" : 2.0
+            "Speed" : 5.0
         },
         "NaturalEnemies" :  ["Demon", "Carnivore"],
         "Speech" : 
@@ -101,7 +101,7 @@
             "Width" : 64,
             "Height" : 64,
             "Frames" :  [0, 1, 0],
-            "Speed" : 2.0
+            "Speed" : 5.0
         },
         "Speech" : {
             "Greetings" :  ["Hi, strange beard goblins.", "Heya, bringers of shines!", "Hi stink beasts." ,"We here now.", "You more hairy than we imagined."],
@@ -169,7 +169,7 @@
             "Width" : 64,
             "Height" : 64,
             "Frames" :  [0, 1, 0],
-            "Speed" : 2.0
+            "Speed" : 5.0
         },
        "Speech" : {
             "Greetings" :  ["<The moleman lifts one claw.>", "<The moleman grunts>", "<The moleman chitters>", "<The moleman oinks>", "<The moleman stares with beady eyes>"],
@@ -239,7 +239,7 @@
             "Width" : 64,
             "Height" : 64,
             "Frames" :  [0, 1, 0],
-            "Speed" : 2.0
+            "Speed" : 5.0
         },
 		"Biomes" : 
         {
@@ -314,7 +314,7 @@
             "Width" : 64,
             "Height" : 64,
             "Frames" :  [0, 1, 0],
-            "Speed" : 2.0
+            "Speed" : 5.0
         },
         "NaturalEnemies" :  ["Demon", "Elf", "Goblins", "Carnivore"],
         "Speech" : {
@@ -389,7 +389,7 @@
             "Width" : 64,
             "Height" : 64,
             "Frames" :  [0, 1, 0],
-            "Speed" : 2.0
+            "Speed" : 5.0
         },
         "NaturalEnemies" :  ["Undead", "Player", "Herbivore", "Elf", "Goblins", "Carnivore", "Dwarf"],
         "Speech" : {

@@ -53,8 +53,8 @@ namespace DwarfCorp
 #if WINDOWS || XBOX
     internal static class Program
     {
-        public static string Version = "18.02.25_XNA";
-        public static string[] CompatibleVersions = { "18.02.25_XNA", "18.02.25_FNA"};
+        public static string Version = "18.04.16_XNA";
+        public static string[] CompatibleVersions = { "18.04.16_XNA", "18.04.16_FNA",  "18.04.08_XNA", "18.04.08_FNA"};
         public static string Commit = "UNKNOWN";
         public static char DirChar = Path.DirectorySeparatorChar;
         
@@ -71,6 +71,8 @@ namespace DwarfCorp
                         .GetManifestResourceStream("DwarfCorp.version.txt"))
                 using (StreamReader reader = new StreamReader(stream))
                     Commit = reader.ReadToEnd();
+
+                Commit = Commit.Trim();
             }
             catch (Exception) { }
 

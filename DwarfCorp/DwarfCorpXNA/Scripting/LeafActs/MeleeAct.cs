@@ -91,16 +91,15 @@ namespace DwarfCorp
                 yield return Status.Fail;
                 yield break;
             }
+
             Timer avoidTimer = new Timer(time, true, Timer.TimerMode.Game);
             while (true)
             {
                 avoidTimer.Update(DwarfTime.LastTime);
 
                 if (avoidTimer.HasTriggered)
-                {
                     yield return Status.Success;
-                }
-
+            
                 float dist = (Target.Position - Agent.Position).Length();
 
                 if (dist > range)
@@ -147,12 +146,12 @@ namespace DwarfCorp
 
                     yield return Status.Running;
                     if (timeout.HasTriggered || (furthest.DestinationVoxel.WorldPosition - Agent.Position).Length() < 1)
-                    {
                         reachedTarget = true;
-                    }
+
                     Agent.Creature.CurrentCharacterMode = CharacterMode.Walking;
                 }
-            yield return Status.Success;
+
+                yield return Status.Success;
                 yield break;
             }
         }
@@ -181,9 +180,7 @@ namespace DwarfCorp
             Inventory targetInventory = Target.GetRoot().GetComponent<Inventory>();
 
             if (targetInventory != null)
-            {
                 targetInventory.OnDeath += targetInventory_OnDeath;
-            }
 
             CharacterMode defaultCharachterMode = Creature.AI.Movement.CanFly
                 ? CharacterMode.Flying
@@ -250,6 +247,7 @@ namespace DwarfCorp
                     Creature.CurrentCharacterMode = defaultCharachterMode;
                     yield return Status.Fail;
                 }
+
                 // If we're out of attack range, run toward the target.
                 if(!Creature.AI.Movement.IsSessile && !intersectsbounds && diff.Length() > CurrentAttack.Range)
                 {
@@ -339,9 +337,6 @@ namespace DwarfCorp
                         yield break;
                     }
                     Creature.CurrentCharacterMode = CharacterMode.Attacking;
-                    Creature.Sprite.ReloopAnimations(CharacterMode.Attacking);
-
-                    CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
 
                     Vector3 dogfightTarget = Vector3.Zero;
                     while (!CurrentAttack.RechargeTimer.HasTriggered && !Target.IsDead)
@@ -349,15 +344,13 @@ namespace DwarfCorp
                         CurrentAttack.RechargeTimer.Update(DwarfTime.LastTime);
                         if (CurrentAttack.Mode == Attack.AttackMode.Dogfight)
                         {
-                            Creature.CurrentCharacterMode = CharacterMode.Attacking;
                             dogfightTarget += MathFunctions.RandVector3Cube()*0.1f;
                             Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, dogfightTarget + Target.Position, Creature.Physics.GlobalTransform.Translation) * 0.9f;
                             Creature.Physics.ApplyForce(output - Creature.Physics.Gravity, DwarfTime.Dt);
                         }
                         else
                         {
-                            Creature.Sprite.PauseAnimations(CharacterMode.Attacking);
-                            Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
+                            Creature.Physics.Velocity = Vector3.Zero;
                             if (Creature.AI.Movement.CanFly)
                             {
                                 Creature.Physics.ApplyForce(-Creature.Physics.Gravity, DwarfTime.Dt);
@@ -394,14 +387,10 @@ namespace DwarfCorp
         {
             if (items == null) return;
             if (!Agent.Faction.Race.IsIntelligent)
-            {
                 return;
-            }
 
             foreach (Body item in items)
-            {
                 Agent.Creature.Gather(item);
-            }
         }
     }
 
@@ -471,14 +460,6 @@ namespace DwarfCorp
 
             if (path.Count > 0)
             {
-                path.Insert(0,
-                    new MoveAction()
-                    {
-                        Diff = Vector3.Zero,
-                        DestinationVoxel = path[0].SourceVoxel,
-                        SourceVoxel = Creature.Physics.CurrentVoxel,
-                        MoveType = MoveType.Walk
-                    });
                 Creature.AI.Blackboard.SetData("RandomPath", path);
                 yield return Status.Success;
             }

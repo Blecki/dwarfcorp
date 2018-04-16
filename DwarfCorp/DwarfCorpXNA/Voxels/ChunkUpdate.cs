@@ -91,7 +91,7 @@ namespace DwarfCorp
                                 }
                             } 
                         }
-#if false
+//#if false
                         else if (voxel.Type.GrassSpreadsHere)
                         {
                             // Spread grass onto this tile - but only from the same biome.
@@ -102,19 +102,19 @@ namespace DwarfCorp
                                 CollisionManager.CollisionType.Static).Any();
                             if (entityPresent) continue;
 
-                            var biome = Overworld.GetBiomeAt(voxel.Coordinate.ToVector3());
+                            var biome = Overworld.GetBiomeAt(voxel.Coordinate.ToVector3(), chunk.Manager.World.WorldScale, chunk.Manager.World.WorldOrigin);
 
                             var grassyNeighbors = VoxelHelpers.EnumerateManhattanNeighbors2D(voxel.Coordinate)
                                 .Select(c => new VoxelHandle(voxel.Chunk.Manager.ChunkData, c))
                                 .Where(v => v.IsValid && v.GrassType != 0)
-                                .Where(v => biome == Overworld.GetBiomeAt(v.Coordinate.ToVector3()))
+                                .Where(v => biome == Overworld.GetBiomeAt(v.Coordinate.ToVector3(), chunk.Manager.World.WorldScale, chunk.Manager.World.WorldOrigin))
                                 .ToList();
 
                             if (grassyNeighbors.Count > 0)
                                 if (MathFunctions.RandEvent(0.1f))
                                     addGrassToThese.Add(Tuple.Create(voxel, grassyNeighbors[MathFunctions.RandInt(0, grassyNeighbors.Count)].GrassType));
                         }
-#endif
+//#endif
                     }
             }
 

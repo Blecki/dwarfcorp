@@ -81,6 +81,8 @@ namespace DwarfCorp
             NumRepeats--;
             if (NumRepeats >= 1)
             {
+                Item.Progress = 0;
+                Item.HasResources = false;
                 if (creature.AI.Faction == creature.World.PlayerFaction)
                 {
                     creature.World.Master.TaskManager.AddTask(new CraftResourceTask(Item.ItemType, NumRepeats, Item.SelectedResources, TaskID));
@@ -95,11 +97,16 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            if (Item.Progress > 1.0f)
+            if (Item.Progress > 0.999f && NumRepeats <= 0)
             {
                 return true;
             }
             return false;
+        }
+
+        public override bool IsComplete(Faction faction)
+        {
+            return Item.Progress > 0.999f && NumRepeats <= 0;
         }
 
         private bool HasResources(Creature agent)

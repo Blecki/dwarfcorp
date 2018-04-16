@@ -90,6 +90,8 @@ namespace DwarfCorp
             public bool ZoomCameraTowardMouse = true;
             public bool CameraFollowSurface = true;
             public List<String> EnabledMods = new List<string>();
+            public int MaxSaves = 15;
+            public bool EnableSlowMotion = false;
 
             public Settings Clone()
             {

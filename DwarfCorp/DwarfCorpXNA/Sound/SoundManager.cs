@@ -219,7 +219,7 @@ namespace DwarfCorp
             if (!Gains.TryGetValue(asset, out levels))
             {
                 levels.Volume = 1.0f;
-                levels.RandomPitch = 0.1f;
+                levels.RandomPitch = 0.5f;
                 Gains.Add(asset, levels);
             }
 
@@ -506,6 +506,9 @@ namespace DwarfCorp
             instance.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.SoundEffectVolume*volume*levels.Volume;
             instance.Pitch = pitch;
             instance.Play();
+            instance.Volume = GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * volume * levels.Volume;
+            instance.Pitch = pitch;
+            
             ActiveSounds2D.Add(instance);
             return instance;
         }

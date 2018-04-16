@@ -90,7 +90,7 @@ namespace DwarfCorp
         }
 
         public MudProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
-            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Entities.mudman_projectile, "dirt_particle", ContentPaths.Audio.gravel, target, true, true)
+            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Entities.mudball, "dirt_particle", ContentPaths.Audio.gravel, target, true, true)
         {
             HitAnimation = AnimationLibrary.CreateSimpleAnimation(ContentPaths.Effects.flash);
         }

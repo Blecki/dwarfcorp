@@ -90,6 +90,7 @@ namespace DwarfCorp
         public int PregnancyLengthHours = 24;
         public string Species = "";
         public string BabyType = "";
+        public ResourceType BaseMeatResource = ResourceType.Meat;
         
         public Pregnancy CurrentPregnancy = null;
         
@@ -505,7 +506,7 @@ namespace DwarfCorp
 
                 if (!ResourceLibrary.Resources.ContainsKey(type))
                 {
-                    ResourceLibrary.Add(new Resource(ResourceLibrary.GetMeat(Species))
+                    ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[BaseMeatResource])
                     {
                         Name = type,
                         ShortName = type
@@ -783,24 +784,20 @@ namespace DwarfCorp
             return damage;
         }
 
-        /// <summary>
-        /// Adds a body to the creature's list of gather designations.
-        /// </summary>
         public void Gather(Body item)
         {
-            var gatherTask = new GatherItemTask(item)
+            var task = new GatherItemTask(item) { Priority = Task.PriorityType.High };
+            if (AI.Faction == World.PlayerFaction)
             {
-                Priority = Task.PriorityType.High
-            };
-
-            if (!AI.Tasks.Contains(gatherTask))
+                World.Master.TaskManager.AddTask(task);
+            }
+            else
             {
-                AI.Faction.Designations.AddEntityDesignation(item, DesignationType.Gather);
-                AI.AssignTask(gatherTask);
+                AI.AssignTask(task);
             }
         }
 
-        protected void CreateSprite(EmployeeClass employeeClass, ComponentManager manager)
+        protected void CreateSprite(EmployeeClass employeeClass, ComponentManager manager, float heightOffset=0.15f)
         {
             if (Physics == null)
             {
@@ -814,7 +811,7 @@ namespace DwarfCorp
                 return;
             }
 
-            var sprite = Physics.AddChild(new CharacterSprite(manager.World.GraphicsDevice, manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as CharacterSprite;
+            var sprite = Physics.AddChild(new CharacterSprite(manager.World.GraphicsDevice, manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, heightOffset, 0)))) as CharacterSprite;
             // Todo: Share the list of animations too?
             foreach (Animation animation in employeeClass.Animations)
                 sprite.AddAnimation(animation);

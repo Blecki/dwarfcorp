@@ -79,11 +79,7 @@ namespace DwarfCorp
         public Vector2 WorldOrigin { get; set; }
 
         // The current coordinate of the cursor light
-        public Vector3 CursorLightPos
-        {
-            get { return LightPositions[0]; }
-            set { LightPositions[0] = value; }
-        }
+        public Vector3 CursorLightPos = Vector3.Zero;
 
         public Vector3[] LightPositions = new Vector3[16];
 
@@ -181,7 +177,7 @@ namespace DwarfCorp
         public DwarfGame Game;
 
         // Interfaces with the graphics card
-        public GraphicsDevice GraphicsDevice;
+        public GraphicsDevice GraphicsDevice { get { return GameState.Game.GraphicsDevice; } }
 
         // Loads the game in the background while a loading message displays
         public Thread LoadingThread { get; set; }
@@ -296,7 +292,7 @@ namespace DwarfCorp
         public GameState gameState;
 
         public Gui.Root Gui;
-        private Widget SleepPrompt = null;
+        private QueuedAnnouncement SleepPrompt = null;
 
         public Action<String> ShowTooltip = null;
         public Action<String> ShowInfo = null;
@@ -342,7 +338,6 @@ namespace DwarfCorp
             InitialEmbark = EmbarkmentLibrary.DefaultEmbarkment;
             this.Game = Game;
             Content = Game.Content;
-            GraphicsDevice = Game.GraphicsDevice;
             Seed = MathFunctions.Random.Next();
             WorldOrigin = WorldGenerationOrigin;
             Time = new WorldTime();
@@ -499,23 +494,23 @@ namespace DwarfCorp
 #if !UPTIME_TEST
                 if (SleepPrompt == null && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
-                    SleepPrompt = Gui.ConstructWidget(new Gui.Widgets.Confirm
+                    SleepPrompt = new QueuedAnnouncement()
                     {
-                        Text = "All of your employees are asleep. Skip to daytime?",
-                        OkayText = "Skip to Daytime",
-                        CancelText = "Don't Skip",
-                        OnClose = (sender) =>
+                        Text = "All your employees are asleep. Click here to skip to day.",
+                        ClickAction = (sender, args) =>
                         {
-                            if ((sender as Confirm).DialogResult == Confirm.Result.OKAY)
-                                FastForwardToDay = true;
+                            FastForwardToDay = true;
+                            SleepPrompt = null;
+                        },
+                        ShouldKeep = () =>
+                        {
+                            return FastForwardToDay == false && Time.IsNight() && Master.AreAllEmployeesAsleep();
                         }
-                    });
-                    Gui.ShowModalPopup(SleepPrompt);
+                    };
+                    MakeAnnouncement(SleepPrompt);
                 }
                 else if (!allAsleep)
                 {
-                    if (SleepPrompt != null)
-                        SleepPrompt.Close();
                     Time.Speed = 100;
                     FastForwardToDay = false;
                     SleepPrompt = null;
@@ -607,10 +602,10 @@ namespace DwarfCorp
                 }
 
                 gameFile = SaveGame.CreateFromWorld(this);
-
-                gameFile.WriteFile(
-                    DwarfGame.GetSaveDirectory() + Path.DirectorySeparatorChar +
-                    filename);
+            var path = DwarfGame.GetSaveDirectory() + Path.DirectorySeparatorChar +
+                filename;
+                SaveGame.DeleteOldestSave(path, GameSettings.Default.MaxSaves, "Autosave");
+                gameFile.WriteFile(path);
                 ComponentManager.CleanupSaveData();
 
                 lock (ScreenshotLock)
@@ -671,7 +666,9 @@ namespace DwarfCorp
             effect.SetTexturedTechnique();
             effect.ClippingEnabled = true;
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-            ChunkRenderer.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
+
+                ChunkRenderer.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
+
             Camera.ViewMatrix = viewMatrix;
             effect.ClippingEnabled = true;
         }
@@ -703,20 +700,30 @@ namespace DwarfCorp
             positions.AddRange((from light in DynamicLight.TempLights select light.Position));
             positions.Sort((a, b) =>
             {
-                float dA = MathFunctions.L1(a, Camera.Position);
-                float dB = MathFunctions.L1(b, Camera.Position);
+                float dA = (a - Camera.Position).LengthSquared();
+                float dB = (b - Camera.Position).LengthSquared();
                 return dA.CompareTo(dB);
             });
-            int numLights = Math.Min(16, positions.Count + 1);
-            for (int i = 1; i < numLights; i++)
+
+            if (!GameSettings.Default.CursorLightEnabled)
+            {
+                LightPositions[0] = new Vector3(-99999, -99999, -99999);
+            }
+            else
+            {
+                LightPositions[0] = CursorLightPos;
+            }
+
+            int numLights = GameSettings.Default.CursorLightEnabled ? Math.Min(16, positions.Count + 1) : Math.Min(16, positions.Count);
+            for (int i = GameSettings.Default.CursorLightEnabled ? 1 : 0; i < numLights; i++)
             {
                 if (i > positions.Count)
                 {
-                    LightPositions[i] = new Vector3(0, 0, 0);
+                    LightPositions[i] = new Vector3(-99999, -99999, -99999);
                 }
                 else
                 {
-                    LightPositions[i] = positions[i - 1];
+                    LightPositions[i] = GameSettings.Default.CursorLightEnabled ? positions[i - 1] : positions[i];
                 }
             }
 
@@ -724,7 +731,7 @@ namespace DwarfCorp
             {
                 LightPositions[j] = new Vector3(0, 0, 0);
             }
-            DefaultShader.CurrentNumLights = numLights - 1;
+            DefaultShader.CurrentNumLights = Math.Max(Math.Min(GameSettings.Default.CursorLightEnabled ? numLights - 1 : numLights, 15), 0);
             DynamicLight.TempLights.Clear();
         }
 
@@ -737,14 +744,6 @@ namespace DwarfCorp
             if (!ShowingWorld)
                 return;
 
-#if RENDER_VOXEL_ICONS
-            var voxels = VoxelLibrary.RenderIcons(GraphicsDevice, DefaultShader, ChunkManager, -1, -1, 32);
-            using (var stream = new FileStream("voxels.png", FileMode.OpenOrCreate))
-            {
-                GraphicsDevice.SetRenderTarget(null);
-                voxels.SaveAsPng(stream, voxels.Width, voxels.Height);
-            }
-#endif
             GamePerformance.Instance.StartTrackPerformance("Render - RENDER");
             GamePerformance.Instance.StartTrackPerformance("Render - Prep");
 
@@ -760,6 +759,7 @@ namespace DwarfCorp
 
             CompositeLibrary.Render(GraphicsDevice);
             CompositeLibrary.Update();
+
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
 
@@ -845,7 +845,7 @@ namespace DwarfCorp
             DrawSky(gameTime, Camera.ViewMatrix, 1.0f, DefaultShader.FogColor);
 
             // Defines the current slice for the GPU
-            float level = ChunkManager.ChunkData.MaxViewingLevel + 0.25f;
+            float level = ChunkManager.World.Master.MaxViewingLevel + 0.25f;
             if (level > VoxelConstants.ChunkSizeY)
             {
                 level = 1000;
@@ -953,7 +953,7 @@ namespace DwarfCorp
                 {
                     fxaa.Begin(DwarfTime.LastTime, fxaa.RenderTarget);
                 }
-                bloom.Draw(gameTime.ToGameTime());
+                bloom.Draw(gameTime.ToRealTime());
                 if (UseFXAA)
                     fxaa.End(DwarfTime.LastTime, fxaa.RenderTarget);
             }
@@ -973,7 +973,7 @@ namespace DwarfCorp
             //SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
             try
             {
-                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
                     null, rasterizerState, null, Matrix.Identity);
                 //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, Vector2.Zero, Color.White);
                 if (IsCameraUnderwater())
@@ -989,6 +989,15 @@ namespace DwarfCorp
             {
                 DwarfGame.SpriteBatch.End();
             }
+
+            /*
+            int px = 0;
+            foreach (var composite in CompositeLibrary.Composites)
+            {
+                composite.Value.DebugDraw(DwarfGame.SpriteBatch, px, 0);
+                px += composite.Value.Target.Width;
+            }
+            */
 
             Master.Render(Game, gameTime, GraphicsDevice);
 
@@ -1026,6 +1035,12 @@ namespace DwarfCorp
                 Console.Error.WriteLine("Preparing device settings given null event args.");
                 return;
             }
+            
+            if (e.GraphicsDeviceInformation == null)
+            {
+                Console.Error.WriteLine("Somehow, GraphicsDeviceInformation is null!");
+                return;
+            }
 
             PresentationParameters pp = e.GraphicsDeviceInformation.PresentationParameters;
             if (pp == null)
@@ -1038,6 +1053,12 @@ namespace DwarfCorp
             if (adapter == null)
             {
                 Console.Error.WriteLine("Somehow, graphics adapter is null!");
+                return;
+            }
+
+            if (adapter.CurrentDisplayMode == null)
+            {
+                Console.Error.WriteLine("Somehow, CurrentDisplayMode is null!");
                 return;
             }
 

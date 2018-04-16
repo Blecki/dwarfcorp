@@ -65,7 +65,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return Zone != null && agent.Stats.IsTaskAllowed(Task.TaskCategory.BuildZone) ? Feasibility.Feasible : Feasibility.Infeasible;
+            return Zone != null && !Zone.IsBuilt &&  agent.Stats.IsTaskAllowed(Task.TaskCategory.BuildZone) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override Act CreateScript(Creature creature)
@@ -89,6 +89,11 @@ namespace DwarfCorp
         public override bool ShouldRetry(Creature agent)
         {
             return Zone != null && !Zone.IsBuilt && !Zone.IsDestroyed;
+        }
+
+        public override bool IsComplete(Faction faction)
+        {
+            return Zone == null || Zone.IsBuilt;
         }
     }
 

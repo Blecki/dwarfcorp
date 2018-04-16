@@ -30,6 +30,8 @@ namespace DwarfCorp.Gui.Widgets
         public Action<Widget> OnSelectedIndexChanged = null;
         public Vector4 SelectedItemBackgroundColor = new Vector4(0.5f, 0, 0, 1);
         public Vector4 SelectedItemForegroundColor = new Vector4(1, 1, 1, 1);
+        public Vector4 ItemBackgroundColor1 = new Vector4(0, 0, 0, 0.2f);
+        public Vector4 ItemBackgroundColor2 = new Vector4(0, 0, 0, 0);
 
         public Widget SelectedItem
         {
@@ -90,6 +92,8 @@ namespace DwarfCorp.Gui.Widgets
 
         protected override Mesh Redraw()
         {
+            if (Children.Count > 1)
+                ItemHeight = Math.Max(Children.GetRange(1, Children.Count - 1).Max(child => Math.Max(child.Rect.Height, child.MinimumSize.Y)), ItemHeight);
             var font = Root.GetTileSheet(Font);
             var drawableInterior = GetDrawableInterior();
             drawableInterior.Width = (Children[0].Rect.Left - drawableInterior.Left - Padding.Right);
@@ -115,9 +119,16 @@ namespace DwarfCorp.Gui.Widgets
             for (int i = 1; i < Children.Count; ++i)
             {
                 Children[i].Hidden = true;
-                Children[i].BackgroundColor = new Vector4(1, 1, 1, 1);
-                Children[i].TextColor = new Vector4(0, 0, 0, 1);
                 Children[i].Invalidate();
+                if (i % 2 == 0)
+                {
+                    Children[i].BackgroundColor = ItemBackgroundColor1;
+                }
+                else
+                {
+                    Children[i].BackgroundColor = ItemBackgroundColor2;
+                }
+                Children[i].TextColor = TextColor;
             }
 
             for (int i = 0; i < itemsThatFit && (topItem + i) < (Children.Count - 1); ++i)
@@ -129,9 +140,13 @@ namespace DwarfCorp.Gui.Widgets
                 topPos += ItemHeight;
             }
 
+
             if (SelectedItem != null)
             {
-                SelectedItem.BackgroundColor = SelectedItemBackgroundColor;
+                if (SelectedItemBackgroundColor.W > 1e-2)
+                {
+                    SelectedItem.BackgroundColor = SelectedItemBackgroundColor;
+                }
                 SelectedItem.TextColor = SelectedItemForegroundColor;
             }
 

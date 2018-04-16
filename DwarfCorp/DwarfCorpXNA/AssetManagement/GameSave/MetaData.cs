@@ -51,6 +51,7 @@ namespace DwarfCorp
         public WorldTime Time { get; set; }
         public Point3 NumChunks { get; set; }
         public String Version;
+        public String Commit;
 
         public static string Extension = "meta";
         public static string CompressedExtension = "zmeta";

@@ -151,7 +151,7 @@ namespace DwarfCorp
         }
 
         public OverworldData Data { get; set; }
-        private GraphicsDevice Device;
+        private GraphicsDevice Device {  get { return GameState.Game.GraphicsDevice; } }
         private int Width;
         private int Height;
 
@@ -161,7 +161,6 @@ namespace DwarfCorp
 
         public NewOverworldFile(GraphicsDevice device, Overworld.MapData[,] map, string name, float seaLevel)
         {
-            this.Device = device;
 
             var worldFilePath = name + System.IO.Path.DirectorySeparatorChar + "world.png";
             var metaFilePath = name + System.IO.Path.DirectorySeparatorChar + "meta.txt";
@@ -186,11 +185,26 @@ namespace DwarfCorp
             try
             {
                 var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
-                return FileUtils.LoadJsonFromAbsolutePath<OverworldData>(metaFilePath).Version == Program.Version;
+                var metadata = FileUtils.LoadJsonFromAbsolutePath<OverworldData>(metaFilePath);
+
+                return Program.CompatibleVersions.Contains(metadata.Version);
             }
             catch (Exception e)
             {
                 return false;
+            }
+        }
+
+        public static string GetOverworldName(string filePath)
+        {
+            try
+            {
+                var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
+                return FileUtils.LoadJsonFromAbsolutePath<OverworldData>(metaFilePath).Name;
+            }
+            catch (Exception e)
+            {
+                return "?";
             }
         }
 

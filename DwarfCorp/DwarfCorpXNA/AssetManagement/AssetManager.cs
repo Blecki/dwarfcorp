@@ -56,15 +56,12 @@ namespace DwarfCorp
     public class AssetManager
     {
         private static Dictionary<String, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
-        private static ContentManager Content;
-        private static GraphicsDevice Graphics;
+        private static ContentManager Content { get { return GameState.Game.Content; } }
+        private static GraphicsDevice Graphics {  get { return GameState.Game.GraphicsDevice; } }
         private static List<Assembly> Assemblies = new List<Assembly>();
 
         public static void Initialize(ContentManager Content, GraphicsDevice Graphics, GameSettings.Settings Settings)
         {
-            AssetManager.Content = Content;
-            AssetManager.Graphics = Graphics;
-
             Assemblies.Add(Assembly.GetExecutingAssembly());
 
             foreach (var mod in EnumerateModDirectories(Settings))
@@ -77,6 +74,36 @@ namespace DwarfCorp
         public static IEnumerable<Assembly> EnumerateLoadedModAssemblies()
         {
             return Assemblies;
+        }
+
+        private static bool CheckMethod(MethodInfo Method, Type ReturnType, Type[] ArgumentTypes)
+        {
+            if (!Method.IsStatic) return false;
+            if (Method.ReturnType != ReturnType) return false;
+
+            var parameters = Method.GetParameters();
+            if (parameters.Length != ArgumentTypes.Length) return false;
+            for (var i = 0; i < parameters.Length; ++i)
+                if (parameters[i].ParameterType != ArgumentTypes[i]) return false;
+
+            return true;
+        }
+
+        public static IEnumerable<MethodInfo> EnumerateModHooks(Type AttributeType, Type ReturnType, Type[] ArgumentTypes)
+        {
+            foreach (var assembly in EnumerateLoadedModAssemblies())
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public))
+                    {
+                        var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a.GetType() == AttributeType);
+                        if (attribute == null) continue;
+                        if (CheckMethod(method, ReturnType, ArgumentTypes))
+                            yield return method;
+                    }
+                }
+            }
         }
 
         private static IEnumerable<String> EnumerateModDirectories(GameSettings.Settings Settings)
@@ -94,8 +121,9 @@ namespace DwarfCorp
             return r;
         }
 
-        public static String ResolveContentPath(String Asset, params string[] AlternateExtensions)
+        public static String ResolveContentPath(String _Asset, params string[] AlternateExtensions)
         {
+            string Asset = FileUtils.NormalizePath(_Asset);
             var extensionList = new List<String>(AlternateExtensions);
             if (extensionList.Count != 0)
                 extensionList.Add(".xnb");
@@ -119,8 +147,9 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="Asset"></param>
         /// <returns></returns>
-        public static IEnumerable<String> EnumerateMatchingPaths(String AssetPath)
+        public static IEnumerable<String> EnumerateMatchingPaths(String _AssetPath)
         {
+            string AssetPath = FileUtils.NormalizePath(_AssetPath);
             var searchList = GameSettings.Default.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
             searchList.Reverse();
             searchList.Add("Content");
@@ -133,8 +162,16 @@ namespace DwarfCorp
             }
         }
         
-        public static Texture2D GetContentTexture(string asset)
+        public static Texture2D GetContentTexture(string _asset)
         {
+            string asset = FileUtils.NormalizePath(_asset);
+            if (asset == null)
+            {
+                var r = Content.Load<Texture2D>(ContentPaths.Error);
+                TextureCache[asset] = r;
+                return r;
+            }
+
             if (TextureCache.ContainsKey(asset))
                 return TextureCache[asset];
 
@@ -164,8 +201,9 @@ namespace DwarfCorp
 
         }
 
-        public static Texture2D LoadUnbuiltTextureFromAbsolutePath(string file)
+        public static Texture2D LoadUnbuiltTextureFromAbsolutePath(string _file)
         {
+            string file = FileUtils.NormalizePath(_file);
             using(var stream = new FileStream(file, FileMode.Open))
             {
                 if (!stream.CanRead)

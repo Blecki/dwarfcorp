@@ -64,7 +64,8 @@ namespace DwarfCorp
             new RectangleConverter(),
             new MoneyConverter(),
             new ColorConverter(),
-            new Newtonsoft.Json.Converters.StringEnumConverter()
+            new Newtonsoft.Json.Converters.StringEnumConverter(),
+            new Rail.CompassConnectionConverter()
         };
 
         /// <summary>
@@ -138,7 +139,7 @@ namespace DwarfCorp
         {
             if (!compress)
             {
-                using (StreamWriter filestream = new StreamWriter(filePath))
+                using (StreamWriter filestream = new StreamWriter(File.Open(filePath, System.IO.FileMode.OpenOrCreate)))
                 using (JsonWriter writer = new JsonTextWriter(filestream))
                 {
                     serializer.Serialize(writer, obj);
@@ -157,6 +158,13 @@ namespace DwarfCorp
                     return true;
                 }
             }
+        }
+
+        internal static string NormalizePath(string asset)
+        {
+            if (asset == null)
+                return null;
+            return asset.Replace('\\', Program.DirChar).Replace('/', Program.DirChar);
         }
     }
 }

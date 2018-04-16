@@ -9,7 +9,8 @@ namespace DwarfCorp.Gui
     public enum JsonTileSheetType
     {
         VariableWidthFont,
-        TileSheet
+        TileSheet,
+        Generated
     }
 
     public class JsonTileSheet

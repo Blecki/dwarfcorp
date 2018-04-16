@@ -50,6 +50,8 @@ namespace DwarfCorp
             public static bool DrawOcttree = false;
             public static bool DrawPaths = false;
             public static bool DrawRailNetwork = false;
+            public static bool DrawToolDebugInfo = false;
+            public static bool HideTerrain = false;
         }
 
         public class Switch
@@ -71,6 +73,18 @@ namespace DwarfCorp
                     State = (member.GetValue(null) as bool?).Value
                 };
             }
+        }
+
+        internal static string GetNicelyFormattedName(string Name)
+        {
+            var r = "";
+            foreach (var c in Name)
+            {
+                if (c >= 'A' && c <= 'Z' && !String.IsNullOrEmpty(r))
+                    r += " ";
+                r += c;
+            }
+            return r;
         }
     }
 }

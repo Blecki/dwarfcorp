@@ -48,16 +48,22 @@ namespace DwarfCorp
         {
             // Can't cache these guys, unfortunately. Thankfully, they
             //  are only used by the dialogue screen.
-            return new Animation()
+            var anim = new Animation()
             {
                 SpriteSheet = new SpriteSheet(Descriptor.AssetName),
                 Frames = Descriptor.Frames.Select(s => new Point(s, 0)).ToList(),
                 SpeedMultiplier = Descriptor.Speed,
                 Speeds = new List<float>()
             };
+
+            foreach(var frame in anim.Frames)
+            {
+                anim.Speeds.Add(anim.SpeedMultiplier);
+            }
+            return anim;
         }
 
-        public static Animation CreateSimpleAnimation(String TextureAsset)
+        public static Animation CreateSimpleAnimation(String TextureAsset, bool loop = false)
         {
             if (!Animations.ContainsKey(TextureAsset))
             {
@@ -78,12 +84,14 @@ namespace DwarfCorp
                         Frames = frames,
                         Name = TextureAsset,
                         FrameHZ = 15.0f,
+                        Loops = loop
                     }
                 });
             }
 
             return Animations[TextureAsset][0];
         }
+
 
         public static Animation CreateAnimation(
             SpriteSheet Sheet,
@@ -153,7 +161,7 @@ namespace DwarfCorp
                                 Frames = a.CompositeFrames.Select(f => f.Cells[0].Tile).ToList(),
                             };
                         }
-
+                        a.PushFrames();
                         return a as Animation;
                         
                         }).ToList());

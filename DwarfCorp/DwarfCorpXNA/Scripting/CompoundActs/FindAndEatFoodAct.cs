@@ -65,30 +65,30 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            Tree = new Sequence(new Select(new GetResourcesAct(Agent, FoodTag), 
-                                            new GetResourcesAct(Agent, FallbackTag)), 
-                                new Select(new GoToChairAndSitAct(Agent), true),
-                                new EatFootAct(Agent));
+            Tree = new Sequence(new Select(new GetResourcesAct(Agent, FoodTag) { Name = "Get " + FoodTag },
+                                            new GetResourcesAct(Agent, FallbackTag) { Name = "Get " + FallbackTag }) { Name = "Get Food"}, 
+                                new Select(new GoToChairAndSitAct(Agent), true) { Name = "Find a place to eat." },
+                                new EatFoodAct(Agent));
                 
             base.Initialize();
         }
     }
 
 
-    public class EatFootAct : CreatureAct
+    public class EatFoodAct : CreatureAct
     {
         private Body FoodBody = null;
 
-        public EatFootAct()
+        public EatFoodAct()
         {
-
+            Name = "Eat food";
         }
 
 
-        public EatFootAct(CreatureAI creature) :
+        public EatFoodAct(CreatureAI creature) :
             base(creature)
         {
-
+            Name = "Eat food";
         }
 
         public override void OnCanceled()
@@ -98,6 +98,7 @@ namespace DwarfCorp
                 FoodBody.Active = true;
                 Agent.Creature.Gather(FoodBody);
             }
+
             base.OnCanceled();
         }
 

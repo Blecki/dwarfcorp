@@ -22,7 +22,7 @@ namespace DwarfCorp.GameStates
                 System.IO.DirectoryInfo savedirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetSaveDirectory());
                 var dirs = savedirectory.EnumerateDirectories().ToList();
                 dirs.Sort((a, b) => b.LastWriteTime.CompareTo(a.LastWriteTime));
-                return dirs.Select(d => d.FullName).ToList();
+                return dirs.ToList();
             };
 
             this.ScreenshotSource = (path) =>
@@ -50,11 +50,33 @@ namespace DwarfCorp.GameStates
                 try
                 {
                     var saveGame = SaveGame.CreateFromDirectory(path);
-                    return Program.CompatibleVersions.Contains(saveGame.Metadata.Version);
+                    if(!Program.CompatibleVersions.Contains(saveGame.Metadata.Version))
+                    {
+                        return String.Format("Incompatible version {0}", saveGame.Metadata.Version);
+                    }
+                    var overworld = saveGame.Metadata.OverworldFile;
+                    if(!System.IO.Directory.Exists(DwarfGame.GetWorldDirectory() + Program.DirChar + overworld))
+                    {
+                        return String.Format("Overworld \"{0}\" does not exist.", overworld);
+                    }
+                    return "";
+                }
+                catch (Exception e)
+                {
+                    return String.Format("Error while loading {0}", e.Message);
+                }
+            };
+
+            this.GetItemName = (path) =>
+            {
+                try
+                {
+                    var saveGame = SaveGame.CreateFromDirectory(path);
+                    return saveGame.Metadata.OverworldFile;
                 }
                 catch (Exception)
                 {
-                    return false;
+                    return "?";
                 }
             };
 

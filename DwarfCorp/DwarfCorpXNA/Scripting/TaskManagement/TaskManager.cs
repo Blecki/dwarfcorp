@@ -36,6 +36,7 @@ using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
 using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -43,11 +44,13 @@ namespace DwarfCorp
     /// The task manager attempts to optimally assign tasks to creatures based
     /// on feasibility and cost contraints.
     /// </summary>
-    [JsonObject(IsReference = true)]
     public class TaskManager
     {
         [JsonProperty]
         private List<Task> Tasks = new List<Task>();
+
+        [JsonIgnore]
+        public Faction Faction;
 
         // By returning it as an IEnumerable, we can expose it without allowing it to be modified.
         public IEnumerable<Task> EnumerateTasks()
@@ -66,7 +69,10 @@ namespace DwarfCorp
             // TODO(mklingen): do not depend on task name
             // as ID.
             if (!Tasks.Any(t => t.Name == task.Name))
+            {
                 Tasks.Add(task);
+                task.OnEnqueued(Faction);
+            }
         }
 
         public void AddTasks(IEnumerable<Task> tasks)
@@ -77,6 +83,14 @@ namespace DwarfCorp
             }
         }
 
+        public void CancelTask(Task Task)
+        {
+            var localAssigneeList = new List<CreatureAI>(Task.AssignedCreatures);
+            foreach (var actor in localAssigneeList)
+                actor.RemoveTask(Task);
+            Tasks.RemoveAll(t => Object.ReferenceEquals(t, Task));
+            Task.OnDequeued(Faction);
+        }
 
         public Task GetBestTask(CreatureAI creature, int minPriority=-1)
         {
@@ -114,7 +128,10 @@ namespace DwarfCorp
 
         public void Update(List<CreatureAI> creatures)
         {
-            Tasks.RemoveAll(t => t.IsComplete);
+            foreach (var t in Tasks.Where(t => t.IsComplete(Faction)))
+                t.OnDequeued(Faction);
+
+            Tasks.RemoveAll(t => t.IsComplete(Faction));
             /*
             UpdateTimer.Update(DwarfTime.LastTime);
 
@@ -124,6 +141,8 @@ namespace DwarfCorp
                 Tasks.RemoveAll(task => creatures.All(c => task.ShouldDelete(c.Creature)));
             }
             */
+
+            //Tasks.RemoveAll(t => t.IsFeasible(null) == Task.Feasibility.Infeasible);
         }
 
         public int GetMaxColumnValue(int[,] matrix, int column, int numRows, int numColumns)

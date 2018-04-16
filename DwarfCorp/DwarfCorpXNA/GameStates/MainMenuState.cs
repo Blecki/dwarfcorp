@@ -155,7 +155,7 @@ namespace DwarfCorp.GameStates
 #if DEMO
                 Text = "DwarfCorp " + Program.Version + " (DEMO)"
 #else
-                Text = "DwarfCorp " + Program.Version
+                Text = "DwarfCorp " + Program.Version + " (" + Program.Commit + ")"
 #endif
             });
 

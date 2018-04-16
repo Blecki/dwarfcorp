@@ -183,7 +183,7 @@ namespace DwarfCorp
             int totalFaces = 6;
             bool fogOfWar = GameSettings.Default.FogofWar;
 
-            for (int y = 0; y < Math.Min(chunk.Manager.ChunkData.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY); y++)
+            for (int y = 0; y < Math.Min(chunk.Manager.World.Master.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY); y++)
             {
                 if (chunk.Data.LiquidPresent[y] == 0) continue;
 
@@ -235,7 +235,7 @@ namespace DwarfCorp
                                 {
                                     if (face == BoxFace.Top)
                                     {
-                                        if (!(vox.WaterCell.WaterLevel == 0 || y == (int)chunk.Manager.ChunkData.MaxViewingLevel))
+                                        if (!(vox.WaterCell.WaterLevel == 0 || y == (int)chunk.Manager.World.Master.MaxViewingLevel))
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;
@@ -249,6 +249,11 @@ namespace DwarfCorp
                                             continue;
                                         }
                                     }
+                                }
+                                else
+                                {
+                                    cache.drawFace[(int)face] = false;
+                                    continue;
                                 }
 
                                 cache.drawFace[(int)face] = true;
@@ -405,7 +410,7 @@ namespace DwarfCorp
 
                     Vector3 pos = Vector3.Zero;
                     Vector3 rampOffset = Vector3.Zero;
-
+                    var uv = primitive.UVs.Uvs[vertOffset + faceDescriptor.VertexOffset];
                     // We are going to have to reuse some vertices when drawing a single so we'll store the position/foaminess
                     // for quick lookup when we find one of those reused ones.
                     // When drawing multiple faces the Vertex overlap gets bigger, which is a bonus.
@@ -444,10 +449,10 @@ namespace DwarfCorp
                         }
 
                         pos = primitive.Vertices[vertOffset + faceDescriptor.VertexOffset].Position;
-                        pos.Y -= 0.6f;// Minimum ramp position 
-
                         if ((currentVertex & VoxelVertex.Top) == VoxelVertex.Top)
                         {
+                            pos.Y -= 0.6f;// Minimum ramp position 
+
                             var neighbors = VoxelHelpers.EnumerateVertexNeighbors2D(voxel.Coordinate, currentVertex)
                                 .Select(c => new VoxelHandle(chunk.Manager.ChunkData, c))
                                 .Where(h => h.IsValid)
@@ -455,11 +460,14 @@ namespace DwarfCorp
 
                             if (neighbors.Count() > 0)
                                 pos.Y *= neighbors.Average();
-
-                            pos += VertexNoise.GetNoiseVectorFromRepeatingTexture(voxel.WorldPosition +
-                            primitive.Vertices[vertOffset + faceDescriptor.VertexOffset].Position);
+                        }
+                        else
+                        {
+                            uv.Y -= 0.6f;
                         }
 
+                        pos += VertexNoise.GetNoiseVectorFromRepeatingTexture(voxel.WorldPosition +
+       primitive.Vertices[vertOffset + faceDescriptor.VertexOffset].Position);
                         pos += origin + rampOffset;                        
 
                         // Store the vertex information for future use when we need it again on this or another face.
@@ -477,7 +485,7 @@ namespace DwarfCorp
                     vertices[startVertex].Set(pos,
                         new Color(foaminess[vertOffset], 0.0f, 1.0f, 1.0f),
                         Color.White,
-                        primitive.UVs.Uvs[vertOffset + faceDescriptor.VertexOffset],
+                        uv,
                         new Vector4(0, 0, 1, 1));
 
                     startVertex++;

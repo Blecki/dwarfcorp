@@ -144,6 +144,7 @@ namespace DwarfCorp.Gui.Widgets
         protected override Gui.Mesh Redraw()
         {
             var meshes = new List<Gui.Mesh>();
+            var interior = Rect;
 
             if (DrawFrame)
             {
@@ -154,17 +155,26 @@ namespace DwarfCorp.Gui.Widgets
                         ? new Vector4(1, 0.5f, 0.5f, 1)
                         : (Hilite ? new Vector4(1, 0, 0, 1) : BackgroundColor))
                     .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile)));
+                interior = Rect.Interior(4, 4, 4, 4);
             }
 
             if (Icon != null)
             {
                 var iconSheet = Root.GetTileSheet(Icon.Sheet);
-                meshes.Add(Gui.Mesh.Quad()
-                    .Scale(iconSheet.TileWidth, iconSheet.TileHeight)
-                    .Texture(iconSheet.TileMatrix(Icon.Tile))
-                    .Translate(Rect.X + (Rect.Width / 2) - (iconSheet.TileWidth / 2),
-                        Rect.Y + (Rect.Height / 2) - (iconSheet.TileHeight / 2))
-                    .Colorize(Enabled ? Tint : new Vector4(0.15f * Tint.X, 0.15f * Tint.Y, 0.15f * Tint.Z, 1 * Tint.W)));
+
+                if (interior.Width > iconSheet.TileWidth)
+                    meshes.Add(Gui.Mesh.Quad()
+                        .Scale(iconSheet.TileWidth, iconSheet.TileHeight)
+                        .Texture(iconSheet.TileMatrix(Icon.Tile))
+                        .Translate(Rect.X + (Rect.Width / 2) - (iconSheet.TileWidth / 2),
+                            Rect.Y + (Rect.Height / 2) - (iconSheet.TileHeight / 2))
+                        .Colorize(Enabled ? Tint : new Vector4(0.15f * Tint.X, 0.15f * Tint.Y, 0.15f * Tint.Z, 1 * Tint.W)));
+                else
+                    meshes.Add(Gui.Mesh.Quad()
+                        .Scale(interior.Width, interior.Height)
+                        .Texture(iconSheet.TileMatrix(Icon.Tile))
+                        .Translate(interior.X, interior.Y)
+                        .Colorize(Enabled ? Tint : new Vector4(0.15f * Tint.X, 0.15f * Tint.Y, 0.15f * Tint.Z, 1 * Tint.W)));
             }
 
             if (!string.IsNullOrEmpty(Text))

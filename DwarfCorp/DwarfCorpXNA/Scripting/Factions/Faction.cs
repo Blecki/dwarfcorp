@@ -198,6 +198,11 @@ namespace DwarfCorp
                 zone.Update();
             }
 
+            if (HandleThreatsTimer == null)
+            {
+                HandleThreatsTimer = new Timer(1.0f, false);
+            }
+
             HandleThreatsTimer.Update(time);
             if (HandleThreatsTimer.HasTriggered)
              HandleThreats();
@@ -237,7 +242,7 @@ namespace DwarfCorp
                     if (!Designations.IsDesignation(threat.Physics, DesignationType.Attack))
                     { 
                         var g = new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto);
-                        Designations.AddEntityDesignation(threat.Physics, DesignationType.Attack);
+                        Designations.AddEntityDesignation(threat.Physics, DesignationType.Attack, null, g);
                         tasks.Add(g);
                     }
                     else
@@ -259,18 +264,6 @@ namespace DwarfCorp
             TaskManager.AssignTasks(tasks, Minions);
         }
 
-        public void AssignGather(IEnumerable<Body> items)
-        {
-            var tasks = items
-                .Where(i => Designations.AddEntityDesignation(i, DesignationType.Gather) == DesignationSet.AddDesignationResult.Added)
-                .Select(i => new GatherItemTask(i) as Task)
-                .ToList();
-
-            foreach (CreatureAI creature in Minions)
-                foreach (var task in tasks)
-                    creature.AssignTask(task);
-        }
-
         public List<Room> GetRooms()
         {
             return RoomBuilder.DesignatedRooms;
@@ -278,7 +271,7 @@ namespace DwarfCorp
 
         public void OnVoxelDestroyed(VoxelHandle V)
         {
-            if (!V.IsValid || V.IsEmpty)
+            if (!V.IsValid)
                 return;
 
             RoomBuilder.OnVoxelDestroyed(V);
@@ -404,14 +397,6 @@ namespace DwarfCorp
         {
             return Stockpiles.Any(s => s.ContainsVoxel(v));
         }
-
-        public Body GetRandomGatherDesignationWithTag(string tag)
-        {
-            var des = Designations.EnumerateEntityDesignations(DesignationType.Gather)
-                .Where(d => d.Body.Tags.Contains(tag)).ToList();
-            return des.Count == 0 ? null : des[MathFunctions.Random.Next(0, des.Count)].Body;
-        }
-
 
         public bool HasFreeStockpile()
         {
@@ -858,7 +843,10 @@ namespace DwarfCorp
                 targetInventory.OnDeath += resources =>
                 {
                     if (resources == null) return;
-                    AssignGather(resources);
+
+                    var tasks = new List<Task>();
+                    foreach (var item in resources)
+                        World.Master.TaskManager.AddTask(new GatherItemTask(item));
                 };
             }
         }

@@ -53,45 +53,12 @@ namespace DwarfCorp
 
         }
 
-
-        public IEnumerable<Status> IncrementAssignment( CreatureAI creature, string designation, int amount)
-        {
-            VoxelHandle vref = creature.Blackboard.GetData<VoxelHandle>(designation);
-
-            if(vref.IsValid)
-            {
-                var digBuildOrder = creature.Faction.Designations.GetVoxelDesignation(vref, DesignationType.Dig) as BuildOrder;
-
-                if(digBuildOrder != null)
-                {
-                    digBuildOrder.NumCreaturesAssigned += amount;
-                    yield return Status.Success;
-                }
-                else
-                {
-                    yield return Status.Fail;
-                }
-            }
-            else
-            {
-                yield return Status.Fail;
-            }
-             
-        }
-
         public bool CheckIsDigDesignation(CreatureAI creature, string designation)
         {
             VoxelHandle vref = creature.Blackboard.GetData<VoxelHandle>(designation);
 
             if (vref.IsValid)
-            {
-                var digBuildOrder = creature.Faction.Designations.GetVoxelDesignation(vref, DesignationType.Dig) as BuildOrder;
-
-                if (digBuildOrder != null)
-                    return true;
-                else
-                    return false;
-            }
+                return creature.Faction.Designations.IsVoxelDesignation(vref, DesignationType.Dig);
 
             return false;
         }
@@ -105,11 +72,9 @@ namespace DwarfCorp
                 new SetBlackboardData<VoxelHandle>(creature, "DigVoxel", voxel),
                 new Domain(() => CheckIsDigDesignation(creature, "DigVoxel"),
                 new Sequence(
-                    new Wrap(() => IncrementAssignment(creature, "DigVoxel", 1)),
-                    new GoToVoxelAct(voxel, PlanAct.PlanType.Radius, creature) {Radius = 2.0f},
+                    new GoToVoxelAct(voxel, PlanAct.PlanType.Radius, creature) { Radius = 2.0f },
                     new DigAct(Agent, "DigVoxel"),
-                    new ClearBlackboardData(creature, "DigVoxel"))) 
-               | new Wrap(() => IncrementAssignment(creature, "DigVoxel", -1)) & false);
+                    new ClearBlackboardData(creature, "DigVoxel"))));
         }
     }
 

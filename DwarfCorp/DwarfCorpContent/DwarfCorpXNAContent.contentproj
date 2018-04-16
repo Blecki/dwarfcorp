@@ -346,13 +346,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\Goblin\Sprites\goblin_animations.png">
-      <Name>goblin_animations</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Particles\blood_particle.png">
       <Name>blood_particle</Name>
       <Importer>TextureImporter</Importer>
@@ -649,13 +642,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Entities\Goblin\Sprites\gob-withsword.png">
-      <Name>gob-withsword</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -1589,18 +1575,8 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
-    <Compile Include="Audio\oscar\sfx_amb_grassland_day_2.wav">
-      <Name>sfx_amb_grassland_day_2</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
     <Compile Include="Audio\oscar\sfx_amb_grassland_night_1.wav">
       <Name>sfx_amb_grassland_night_1</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Audio\oscar\sfx_amb_grassland_night_2.wav">
-      <Name>sfx_amb_grassland_night_2</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
@@ -2301,6 +2277,46 @@
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
     </Compile>
+    <Compile Include="Entities\Kobold\kobold.png">
+      <Name>kobold</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\DwarfObjects\minecart-crafter.png">
+      <Name>minecart-crafter</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\DwarfObjects\minecart-musket.png">
+      <Name>minecart-musket</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\DwarfObjects\minecart-soldier.png">
+      <Name>minecart-soldier</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\DwarfObjects\minecart-wizard.png">
+      <Name>minecart-wizard</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\DwarfObjects\minecart-worker.png">
+      <Name>minecart-worker</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\DwarfObjects\minecart.png">
+      <Name>minecart</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Gremlin\gremlin.png">
+      <Name>gremlin</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Particles\particles.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>
@@ -2340,9 +2356,41 @@
       <Name>craft-items</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Content Include="Entities\Kobold\kobold_animation.json">
+      <Name>kobold_animation</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Entities\Dwarf\Sprites\crafter_minecart.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>crafter_minecart</Name>
+    </Content>
+    <Content Include="Entities\Dwarf\Sprites\worker_minecart.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>worker_minecart</Name>
+    </Content>
+    <Content Include="Entities\Dwarf\Sprites\soldier_minecart.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>soldier_minecart</Name>
+    </Content>
+    <Content Include="Entities\Dwarf\Sprites\musket_minecart.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>musket_minecart</Name>
+    </Content>
+    <Content Include="Entities\Dwarf\Sprites\wizard_minecart.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>wizard_minecart</Name>
+    </Content>
+    <Content Include="Entities\Gremlin\gremlin_animation.json">
+      <Name>gremlin_animation</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="rail-patterns.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>rail-patterns</Name>
+    </None>
+    <None Include="rail-combinations.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>rail-combinations</Name>
     </None>
     <None Include="rail-pieces.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2459,11 +2507,6 @@
       <Name>chicken_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="Entities\Mudman\mudman-projectile.png">
-      <Name>mudman-projectile</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Entities\Mudman\mudman.png">
       <Name>mudman</Name>
       <Importer>TextureImporter</Importer>
@@ -3072,11 +3115,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="newgui\voxels.png">
-      <Name>voxels</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="newgui\speech-bubble-reverse.png">
       <Name>speech-bubble-reverse</Name>
       <Importer>TextureImporter</Importer>

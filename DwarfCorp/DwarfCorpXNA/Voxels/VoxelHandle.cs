@@ -172,7 +172,7 @@ namespace DwarfCorp
             }
             set
             {
-                _cache_Chunk.Data.Types[_cache_Index] = value;
+                //_cache_Chunk.Data.Types[_cache_Index] = value;
                 OnTypeSet(VoxelLibrary.TypeList[value]);
             }
         }
@@ -194,7 +194,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public bool IsVisible
         {
-            get { return Coordinate.Y < _cache_Chunk.Manager.ChunkData.MaxViewingLevel; }
+            get { return Coordinate.Y < _cache_Chunk.Manager.World.Master.MaxViewingLevel; }
         }
 
         [JsonIgnore]

@@ -39,6 +39,9 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
+
+    // Todo: Seperate tasks for chop/attack
+
     /// <summary>
     /// Tells a creature that it should kill an entity.
     /// </summary>
@@ -47,7 +50,6 @@ namespace DwarfCorp
     {
         public enum KillType
         {
-            Chop,
             Attack,
             Auto
         }
@@ -67,14 +69,7 @@ namespace DwarfCorp
             EntityToKill = entity;
             Priority = PriorityType.Urgent;
             AutoRetry = true;
-            if (type == KillType.Attack || type == KillType.Auto)
-            {
-                Category = TaskCategory.Attack;
-            }
-            else if (type == KillType.Chop)
-            {
-                Category = TaskCategory.Chop;
-            }
+            Category = TaskCategory.Attack;
         }
 
         public override Act CreateScript(Creature creature)
@@ -83,18 +78,17 @@ namespace DwarfCorp
                 return null;
 
             var otherCreature = EntityToKill.GetRoot().GetComponent<Creature>();
-            if (otherCreature == null || otherCreature.IsDead)
-            {
+            if (otherCreature != null && otherCreature.IsDead)
                 return null;
-            }
 
-            if (!creature.AI.FightOrFlight(otherCreature.AI))
+            if (otherCreature != null && !creature.AI.FightOrFlight(otherCreature.AI))
             {
                 Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
                 IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
                 return new FleeEntityAct(creature.AI) {Entity = EntityToKill, PathLength = 5};
             }
-            return new KillEntityAct(EntityToKill, creature.AI, Mode);
+
+            return new KillEntityAct(EntityToKill, creature.AI);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
@@ -119,60 +113,37 @@ namespace DwarfCorp
                 return true;
             }
 
-            switch (Mode)
-            {
-                case KillType.Attack:
-                    return !agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Attack);
-                case KillType.Chop:
-                    return !agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Chop);
-                case KillType.Auto:
-                    return false;
-            }
-
             return false;
         }
 
         public override Feasibility IsFeasible(Creature agent)
         {
             if (agent == null || agent.IsDead || EntityToKill == null || EntityToKill.IsDead)
-            {
                 return Feasibility.Infeasible;
-            }
             else
             {
                 var ai = EntityToKill.EnumerateAll().OfType<Creature>().FirstOrDefault();
 
-                switch (Mode)
-                {
-                    case KillType.Attack:
-                        if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Attack))
-                            return Feasibility.Infeasible;
-                        return agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Attack) ? Feasibility.Feasible : Feasibility.Infeasible;
-                    case KillType.Chop:
-                        if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Chop))
-                            return Feasibility.Infeasible;
-                        return agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Chop) ? Feasibility.Feasible : Feasibility.Infeasible;
-                    case KillType.Auto:
-                        return Feasibility.Feasible;
-                }
-
-                var target = new VoxelHandle(agent.World.ChunkManager.ChunkData,
-                    GlobalVoxelCoordinate.FromVector3(EntityToKill.Position));
-                // Todo: Find out if it is calculating the path twice to make PathExists work.
-                if (!target.IsValid)
-                {
+                if (Mode == KillType.Attack && !agent.Stats.IsTaskAllowed(TaskCategory.Attack))
                     return Feasibility.Infeasible;
-                }
 
-
-                if(ai == null)
-                {
-                    return Feasibility.Infeasible;
-                }
-                Relationship relation = 
-                    agent.World.Diplomacy.GetPolitics(ai.Faction, agent.Faction).GetCurrentRelationship();
-                return (relation == Relationship.Hateful || relation == Relationship.Indifferent) ? Feasibility.Feasible : Feasibility.Infeasible;
+                return Feasibility.Feasible;
             }
+        }
+
+        public override bool IsComplete(Faction faction)
+        {
+            return EntityToKill == null || EntityToKill.IsDead;
+        }
+
+        public override void OnEnqueued(Faction Faction)
+        {
+            Faction.Designations.AddEntityDesignation(EntityToKill, DesignationType.Attack, null, this);
+        }
+
+        public override void OnDequeued(Faction Faction)
+        {
+            Faction.Designations.RemoveEntityDesignation(EntityToKill, DesignationType.Attack);
         }
     }
 

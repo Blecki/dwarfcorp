@@ -127,6 +127,7 @@ namespace DwarfCorp
                         yield return Act.Status.Running;
                         continue;
                     }
+
                     yield return childStatus;
                     yield break;
                 }

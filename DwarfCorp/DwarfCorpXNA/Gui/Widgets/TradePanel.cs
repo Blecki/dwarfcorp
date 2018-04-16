@@ -270,6 +270,23 @@ namespace DwarfCorp.Gui.Widgets
                 Font = "font10",
                 Border = "border-button",
                 TextColor = new Vector4(0, 0, 0, 1),
+                Text = "Clear",
+                Tooltip = "Clear trade",
+                AutoLayout = AutoLayout.DockRight,
+                OnClick = (sender, args) =>
+                {
+                    EnvoyColumns.Reconstruct(Envoy.Resources, new List<ResourceAmount>(), (int)Envoy.Money);
+                    PlayerColumns.Reconstruct(Player.Resources, new List<ResourceAmount>(), (int)Player.Money);
+                    UpdateBottomDisplays();
+                    Layout();
+                }
+            });
+
+            bottomRow.AddChild(new Gui.Widgets.Button
+            {
+                Font = "font10",
+                Border = "border-button",
+                TextColor = new Vector4(0, 0, 0, 1),
                 Text = "Cancel",
                 AutoLayout = AutoLayout.DockRight,
                 OnLayout = (sender) => sender.Rect.X -= 16,

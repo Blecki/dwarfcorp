@@ -88,7 +88,7 @@ namespace DwarfCorp
             GravityCompensation = 0.1f;
             Damping = 0.25f;
             TurnThreshold = 2.0f;
-            OriginalGravity = creature.Physics.Gravity;
+            OriginalGravity = Vector3.Down * 10;
             CanPerchOnWalls = false;
             CanPerchOnGround = true;
             CanPerchOnObjects = true;
@@ -105,7 +105,8 @@ namespace DwarfCorp
 
         public override void OnCanceled()
         {
-            Agent.Creature.Physics.Gravity = OriginalGravity;
+            Agent.Creature.OverrideCharacterMode = false;
+            Agent.Creature.Physics.Gravity = Vector3.Down * 10;
             Agent.Creature.CurrentCharacterMode = CharacterMode.Idle;
             base.OnCanceled();
         }
@@ -119,7 +120,9 @@ namespace DwarfCorp
             {
                 if (State == FlyState.Perching)
                 {
+                    Agent.Creature.OverrideCharacterMode = false;
                     PerchTime.Reset();
+                    Agent.Creature.Physics.Gravity = Vector3.Down * 10;
                     while (!PerchTime.HasTriggered)
                     {
                         Agent.Creature.Physics.Velocity = Vector3.Zero;
@@ -129,7 +132,7 @@ namespace DwarfCorp
                     }
                     // When we're done flying, go back to walking and just fall.
                     Agent.Creature.CurrentCharacterMode = CharacterMode.Walking;
-                    Agent.Creature.Physics.Gravity = OriginalGravity;
+                    Agent.Creature.Physics.Gravity = Vector3.Down * 10;
                     yield return Act.Status.Success;
                 }
 
@@ -143,7 +146,9 @@ namespace DwarfCorp
                     .Coordinate.Y + 1;
 
                 // Immediately start flying.
+                Agent.Creature.OverrideCharacterMode = false;
                 Agent.Creature.CurrentCharacterMode = CharacterMode.Flying;
+                Agent.Creature.OverrideCharacterMode = true;
 
                 // Use this to determine when to start turning.
                 float currentDistance = 999;

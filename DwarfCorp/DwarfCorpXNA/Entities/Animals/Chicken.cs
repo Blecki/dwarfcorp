@@ -90,6 +90,7 @@ namespace DwarfCorp
             });
 
             Species = species;
+            BaseMeatResource = "Bird Meat";
             Initialize(ContentPaths.Entities.Animals.fowl[species], species);
         }
 

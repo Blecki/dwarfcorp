@@ -65,9 +65,6 @@ namespace DwarfCorp
         private static void DestroyGrassMote(WorldManager World, String Name, NewInstanceData Data)
         {
             World.NewInstanceManager.RemoveInstance(Data);
-            //EntityFactory.InstanceManager.RemoveInstance(Name, Data);
-            // Todo: Should this be automatically set whenever an instance is added or removed?
-            //EntityFactory.InstanceManager.Instances[Name].HasSelectionBuffer = false;
         }
 
         private static NewInstanceData GenerateGrassMote(WorldManager World, Vector3 Position, Color Color, float Scale, String Name)
@@ -78,7 +75,6 @@ namespace DwarfCorp
                 Vector3.One / 2,
                 Matrix.CreateScale(Scale) * Matrix.CreateRotationY(Scale * Scale)
                 * Matrix.CreateTranslation(Position), Color, true);
-            //EntityFactory.InstanceManager.AddInstance(Name, mote);
             return mote;
         }
         

@@ -63,8 +63,8 @@ namespace DwarfCorp
             get { return GameSettings.Default.ChunkDrawDistance; }
         }
         
-        public GraphicsDevice Graphics { get; set; }
-        
+        public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
+
         public Camera camera = null;
         public WorldManager World { get; set; }
 
@@ -81,9 +81,6 @@ namespace DwarfCorp
             World = world;
             ChunkData = Data;
             RenderList = new ConcurrentQueue<VoxelChunk>();
-            Graphics = graphics;
-
-            ChunkData.MaxViewingLevel = VoxelConstants.ChunkSizeY;
 
             GameSettings.Default.VisibilityUpdateTime = 0.05f;
             visibilityChunksTimer = new Timer(GameSettings.Default.VisibilityUpdateTime, false, Timer.TimerMode.Real);
@@ -107,7 +104,7 @@ namespace DwarfCorp
             {
                 BoundingBox box = chunk.GetBoundingBox();
 
-                if((camera.Position - (box.Min + box.Max) * 0.5f).Length() < DrawDistance)
+                if((camera.Position - box.Center()).Length2D() < DrawDistance)
                 {
                     chunk.IsVisible = true;
                     RenderList.Enqueue(chunk);
@@ -265,20 +262,24 @@ namespace DwarfCorp
             effect.EnableLighting = true;
             List<VoxelChunk> renderListCopy = RenderList.ToArray().ToList();
 
-            foreach (VoxelChunk chunk in renderListCopy)
+            if (!Debugger.Switches.HideTerrain)
             {
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                foreach (VoxelChunk chunk in renderListCopy)
                 {
-                    if (GameSettings.Default.UseLightmaps && chunk.Primitive.Lightmap != null)
+                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
-                        effect.LightMap = chunk.Primitive.Lightmap;
-                        effect.PixelSize = new Vector2(1.0f/chunk.Primitive.Lightmap.Width,
-                            1.0f/chunk.Primitive.Lightmap.Height);
+                        if (GameSettings.Default.UseLightmaps && chunk.Primitive.Lightmap != null)
+                        {
+                            effect.LightMap = chunk.Primitive.Lightmap;
+                            effect.PixelSize = new Vector2(1.0f / chunk.Primitive.Lightmap.Width,
+                                1.0f / chunk.Primitive.Lightmap.Height);
+                        }
+                        pass.Apply();
+                        chunk.Render(Graphics);
                     }
-                    pass.Apply();
-                    chunk.Render(Graphics);
                 }
             }
+
             effect.SelfIlluminationEnabled = false;
             effect.SetTexturedTechnique();
         }

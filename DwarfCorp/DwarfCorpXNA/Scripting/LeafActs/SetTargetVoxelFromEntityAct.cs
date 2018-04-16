@@ -67,7 +67,8 @@ namespace DwarfCorp
 
                 if (voxelUnder.IsValid)
                 {
-                    voxelUnder = VoxelHelpers.GetVoxelAbove(voxelUnder);
+                    if (!voxelUnder.IsEmpty)
+                        voxelUnder = VoxelHelpers.GetVoxelAbove(voxelUnder);
                     creature.AI.Blackboard.SetData(voxelOutName, voxelUnder);
                     return Status.Success;
                 }

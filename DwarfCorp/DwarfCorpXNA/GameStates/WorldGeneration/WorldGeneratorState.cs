@@ -203,11 +203,11 @@ namespace DwarfCorp.GameStates
 
                     var worldSize = Settings.ColonySize.ToVector3() * VoxelConstants.ChunkSizeX / Settings.WorldScale;
 
-                    float w = worldSize.X / 2;
-                    float h = worldSize.Z / 2;
+                    float w = worldSize.X;
+                    float h = worldSize.Z;
 
-                    float clickX = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.X, Settings.Width - w), w);
-                    float clickY = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.Y, Settings.Height - h), h);
+                    float clickX = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.X, Settings.Width - w), 0);
+                    float clickY = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.Y, Settings.Height - h), 0);
 
                     Settings.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
                 }

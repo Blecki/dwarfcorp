@@ -203,8 +203,7 @@ namespace DwarfCorp
                 toCheck.AddRange(DesignatedRooms.Where(r => r.IsBuilt));
                 foreach (Room r in toCheck)
                 {
-                    r.RemoveVoxel(voxDestroyed);
-                    if (r.Voxels.Count == 0)
+                    if (r.RemoveVoxel(voxDestroyed))
                     {
                         toDestroy.Add(r);
                     }
@@ -374,9 +373,9 @@ namespace DwarfCorp
 
                     foreach(Body thing in displayObjects)
                     {
+                        thing.SetFlagRecursive(GameComponent.Flag.ShouldSerialize, false);
                         thing.SetFlagRecursive(GameComponent.Flag.Active, false);
                         SetDisplayColor(thing, Color.Green);
-          
                     }
                 }
             }

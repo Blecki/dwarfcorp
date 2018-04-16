@@ -62,6 +62,7 @@ namespace DwarfCorp
 
         public Texture2D SpriteSheet { get; set; }
         public List<Animation> Animations { get; set; }
+        public string MinecartAnimations { get; set; }
         public List<Attack> Attacks { get; set; }
         public List<Level> Levels { get; set; }
         public string Name { get; set; }

@@ -76,8 +76,7 @@ namespace DwarfCorp
         {
             if (agent.AI.Status.IsAsleep)
                 return Feasibility.Infeasible;
-
-            return base.IsFeasible(agent);
+            return agent.Faction.Designations.EnumerateDesignations(DesignationType.Guard).Any() ? Feasibility.Feasible : Feasibility.Infeasible;
         }
     }
 

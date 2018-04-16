@@ -190,6 +190,7 @@ namespace DwarfCorp
                 });
             }
 
+            item.SetFlag(Flag.Active, false);
             TossMotion toss = new TossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f),
                 1.0f, item.GlobalTransform, Position);
             item.AnimationQueue.Add(toss);

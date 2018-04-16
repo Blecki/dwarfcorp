@@ -64,38 +64,6 @@
          "Name" : "WalkingBACKWARD",
          "Speed" : [0.1]
       },
-
-      {
-         "Frames" : [
-            [ 0, 0, 0 ]
-         ],
-         "Name" : "AttackingFORWARD",
-         "Speed" : [0.15]
-      },
-      {
-         "Frames" : [
-            [ 0	, 1, 0 ]
-         ],
-         "Name" : "AttackingLEFT",
-         "Speed" : [0.15],
-         "PlayOnce" :  true
-      },
-      {
-         "Frames" : [
-            [ 0, 2, 0 ]
-         ],
-         "Name" : "AttackingRIGHT",
-         "Speed" : [0.15],
-         "PlayOnce" :  true
-      },
-      {
-         "Frames" : [
-            [ 0, 3, 0 ]
-         ],
-         "Name" : "AttackingBACKWARD",
-         "Speed" : [0.15],
-         "PlayOnce" :  true
-      },
       {
          "Frames" : [
             [ 0, 0, 0 ]
@@ -152,13 +120,101 @@
          ],
          "Name" : "FallingBACKWARD",
          "Speed" : [1]
+      },
+      {
+         "Frames" : [
+            [ 0, 8, 0 ],
+            [ 1, 8, 0 ],
+            [ 2, 8, 0 ],
+            [ 0, 0, 0 ]
+         ],
+         "Name" : "AttackingFORWARD",
+         "Speed" : [0.15],
+		 "PlayOnce" : true
+      },
+      {
+         "Frames" : [
+            [ 0, 9, 0 ],
+            [ 1, 9, 0 ],
+            [ 2, 9, 0 ],
+            [ 0, 1, 0 ]
+         ],
+         "Name" : "AttackingLEFT",
+         "Speed" : [0.15],
+		 "PlayOnce" : true
+      },
+      {
+         "Frames" : [
+            [ 0, 10, 0 ],
+            [ 1, 10, 0 ],
+            [ 2, 10, 0 ],
+            [ 0, 2, 0 ]
+         ],
+         "Name" : "AttackingRIGHT",
+         "Speed" : [0.15],
+		 "PlayOnce" : true
+      },
+      {
+         "Frames" : [
+            [ 0, 11, 0 ],
+            [ 1, 11, 0 ],
+            [ 2, 11, 0 ],
+            [ 0, 3, 0 ]
+         ],
+         "Name" : "AttackingBACKWARD",
+         "Speed" : [0.15],
+		 "PlayOnce" : true
+      },
+      {
+         "Frames" : [
+            [ 0, 12, 0 ],
+            [ 1, 12, 0 ],
+            [ 2, 12, 0 ],
+            [ 0, 0, 0 ]
+         ],
+         "Name" : "WebFORWARD",
+         "Speed" : [0.15],
+		 "PlayOnce" : true
+      },
+      {
+         "Frames" : [
+            [ 0, 13, 0 ],
+            [ 1, 13, 0 ],
+            [ 2, 13, 0 ],
+            [ 0, 1, 0 ]
+         ],
+         "Name" : "WebLEFT",
+         "Speed" : [0.15],
+		 "PlayOnce" : true
+      },
+      {
+         "Frames" : [
+            [ 0, 14, 0 ],
+            [ 1, 14, 0 ],
+            [ 2, 14, 0 ],
+            [ 0, 2, 0 ]
+         ],
+         "Name" : "WebRIGHT",
+         "Speed" : [0.15],
+		 "PlayOnce" : true
+      },
+      {
+         "Frames" : [
+            [ 0, 15, 0 ],
+            [ 1, 15, 0 ],
+            [ 2, 15, 0 ],
+            [ 0, 3, 0 ]
+         ],
+         "Name" : "WebBACKWARD",
+         "Speed" : [0.15],
+		 "PlayOnce" : true
       }
    ],
    "Layers" : [
       {
          "$id" : "1",
          "AssetName" : "Entities\\Animals\\Spider\\spider",
-         "FrameHeight" : 16,
+         "FrameHeight" : 32,
          "FrameWidth" : 32
       },
    ],

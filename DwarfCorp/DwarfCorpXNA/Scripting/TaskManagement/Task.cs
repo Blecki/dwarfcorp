@@ -83,7 +83,9 @@ namespace DwarfCorp
         public int MaxAssignable = 1;
         public bool ReassignOnDeath = true;
         public List<CreatureAI> AssignedCreatures = new List<CreatureAI>();
-        public bool IsComplete = false;
+
+        [JsonIgnore]
+        public object GuiTag = null;
 
         public enum Feasibility
         {
@@ -150,6 +152,21 @@ namespace DwarfCorp
         {
             AssignedCreatures.Remove(agent);   
         }
+
+        public virtual bool IsComplete(Faction faction)
+        {
+            return false;
+        }
+
+        public virtual void OnEnqueued(Faction Faction)
+        {
+
+        }
+
+        public virtual void OnDequeued(Faction Faction)
+        {
+
+        }
     }
 
     public class ActWrapperTask : Task
@@ -185,6 +202,18 @@ namespace DwarfCorp
             if (WrappedAct != null)
                 WrappedAct.Initialize();
             return WrappedAct;
+        }
+
+        public override bool IsComplete(Faction faction)
+        {
+            if (WrappedAct == null)
+                return true;
+            return base.IsComplete(faction);
+        }
+
+        public override bool ShouldRetry(Creature agent)
+        {
+            return false;
         }
     }
 

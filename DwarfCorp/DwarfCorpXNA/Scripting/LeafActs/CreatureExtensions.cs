@@ -131,7 +131,7 @@ namespace DwarfCorp
 
             foreach(var resource in aggregatedResources)
             {
-                var task = new StockResourceTask(resource.Value)
+                var task = new StockResourceTask(resource.Value.CloneResource())
                 {
                     Priority = Task.PriorityType.High
                 };
@@ -148,22 +148,19 @@ namespace DwarfCorp
             Dictionary<string, ResourceAmount> aggregatedResources = new Dictionary<string, ResourceAmount>();
             foreach (var resource in agent.Inventory.Resources)
             {
-                if (!resource.MarkedForRestock || agent.AI.GatherManager.StockOrders.Count == 0)
-                {
-                    resource.MarkedForRestock = true;
+                resource.MarkedForRestock = true;
 
-                    if (!aggregatedResources.ContainsKey(resource.Resource))
-                    {
-                        aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
-                    }
-                    aggregatedResources[resource.Resource].NumResources++;
+                if (!aggregatedResources.ContainsKey(resource.Resource))
+                {
+                    aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
                 }
+                aggregatedResources[resource.Resource].NumResources++;
             }
 
             foreach (var resource in aggregatedResources)
             {
-                var task = new StockResourceTask(resource.Value);
-                if (!agent.AI.Tasks.Contains(task))
+                var task = new StockResourceTask(resource.Value.CloneResource());
+                if (task.IsFeasible(agent) == Task.Feasibility.Feasible && !agent.AI.Tasks.Contains(task))
                 {
                     agent.AI.AssignTask(task);
                 }
@@ -247,12 +244,9 @@ namespace DwarfCorp
                     var items = agent.World.ChunkManager.KillVoxel(vox);
 
                     if (items != null)
-                    {
                         foreach (Body item in items)
-                        {
                             agent.Gather(item);
-                        }
-                    }
+
                     yield return Act.Status.Success;
                 }
 

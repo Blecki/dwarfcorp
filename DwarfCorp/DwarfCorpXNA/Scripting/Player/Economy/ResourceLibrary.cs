@@ -114,38 +114,7 @@ namespace DwarfCorp
             foreach (var resource in resourceList)
                 Add(resource);
         }
-
-        // Todo: Kill with fire
-        private static Dictionary<string, string> MeatAssets = new Dictionary<string, string>()
-        {
-            {
-                "Bird",
-                "Bird Meat"
-            },
-            {
-                "Chicken",
-                "Bird Meat"
-            },
-            {
-                "Turkey",
-                "Bird Meat"
-            },
-            {
-                "Penguin",
-                "Bird Meat"
-            }
-        };
-
-
-        public static Resource GetMeat(string species)
-        {
-            if (MeatAssets.ContainsKey(species))
-            {
-                return Resources[MeatAssets[species]];
-            }
-            return Resources[ResourceType.Meat];
-        }
-
+        
         public static Resource CreateAle(ResourceType type)
         {
             var baseResource = Resources[type];

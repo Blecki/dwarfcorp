@@ -42,7 +42,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class CraftItemTask : Task
     {
-        public CraftDesignation Designation { get; set; }
+        public CraftDesignation CraftDesignation { get; set; }
 
         public CraftItemTask()
         {
@@ -51,67 +51,91 @@ namespace DwarfCorp
             AutoRetry = true;
         }
 
-        public CraftItemTask(CraftDesignation type)
+        public CraftItemTask(CraftDesignation CraftDesignation)
         {
             Category = TaskCategory.BuildObject;
             MaxAssignable = 3;
-            Name = string.Format("Craft {0} at {1}", type.ItemType.Name, type.Location);
+            Name = string.Format("Craft {0} at {1}", CraftDesignation.ItemType.Name, CraftDesignation.Location);
             Priority = PriorityType.Low;
             AutoRetry = true;
-            Designation = type;
+            this.CraftDesignation = CraftDesignation;
+
+            foreach (var tinter in CraftDesignation.Entity.EnumerateAll().OfType<Tinter>())
+                tinter.Stipple = true;
+        }
+
+        public override void OnEnqueued(Faction Faction)
+        {
+            Faction.Designations.AddEntityDesignation(CraftDesignation.Entity, DesignationType.Craft, CraftDesignation, this);
+        }
+
+        public override void OnDequeued(Faction Faction)
+        {
+            if (!CraftDesignation.Finished)
+            {
+                if (CraftDesignation.WorkPile != null) CraftDesignation.WorkPile.Delete();
+                if (CraftDesignation.HasResources)
+                    foreach (var resource in CraftDesignation.SelectedResources)
+                    {
+                        var resourceEntity = new ResourceEntity(Faction.World.ComponentManager, resource, CraftDesignation.Entity.GlobalTransform.Translation);
+                        Faction.World.ComponentManager.RootComponent.AddChild(resourceEntity);
+                    }
+                CraftDesignation.Entity.Delete();
+            }
+
+            Faction.Designations.RemoveEntityDesignation(CraftDesignation.Entity, DesignationType.Craft);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return !Designation.Location.IsValid || !CanBuild(agent) ? 1000 : (agent.AI.Position - Designation.Location.WorldPosition).LengthSquared();
+            return !CraftDesignation.Location.IsValid || !CanBuild(agent) ? 1000 : (agent.AI.Position - CraftDesignation.Location.WorldPosition).LengthSquared();
         }
 
         public override Act CreateScript(Creature creature)
         {
-            return new CraftItemAct(creature.AI, Designation);
+            return new CraftItemAct(creature.AI, CraftDesignation);
         }
 
         public override bool ShouldRetry(Creature agent)
         {
-            return agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft);
+            return !IsComplete(agent.Faction);
         }
 
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft) || Designation.Progress > 1.0f;
+            return CraftDesignation.Finished;
+        }
+
+        public override bool IsComplete(Faction faction)
+        {
+            return CraftDesignation.Finished;
         }
 
         public override Feasibility IsFeasible(Creature agent)
         {
             if (!agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
-            {
                 return Feasibility.Infeasible;
-            }
 
             if (agent.AI.Status.IsAsleep)
                 return Feasibility.Infeasible;
 
-            return CanBuild(agent) ? Feasibility.Feasible : Feasibility.Infeasible;
+            return CanBuild(agent) && !IsComplete(agent.Faction) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public bool CanBuild(Creature agent)
         {            
-            if (!String.IsNullOrEmpty(Designation.ItemType.CraftLocation))
+            if (!String.IsNullOrEmpty(CraftDesignation.ItemType.CraftLocation))
             {
-                var nearestBuildLocation = agent.Faction.FindNearestItemWithTags(Designation.ItemType.CraftLocation, Vector3.Zero, false);
+                var nearestBuildLocation = agent.Faction.FindNearestItemWithTags(CraftDesignation.ItemType.CraftLocation, Vector3.Zero, false);
 
                 if (nearestBuildLocation == null)
                     return false;
             }
-            else if (!agent.Faction.Designations.IsDesignation(Designation.Entity, DesignationType.Craft))
+            
+            foreach (var resourceAmount in CraftDesignation.ItemType.RequiredResources)
             {
-                return false;
-            }
-
-            foreach (var resourceAmount in Designation.ItemType.RequiredResources)
-            {
-                var resources = agent.Faction.ListResourcesWithTag(resourceAmount.ResourceType, Designation.ItemType.AllowHeterogenous);
+                var resources = agent.Faction.ListResourcesWithTag(resourceAmount.ResourceType, CraftDesignation.ItemType.AllowHeterogenous);
                 if (resources.Count == 0 || !resources.Any(r => r.NumResources >= resourceAmount.NumResources))
                 {
                     return false;

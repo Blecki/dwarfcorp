@@ -40,12 +40,12 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Target : Fixture
+    public class Target : CraftedFixture
     {
         [EntityFactory("Target")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Target(Manager, Position);
+            return new Target(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources"));
         }
 
         public Target()
@@ -53,8 +53,8 @@ namespace DwarfCorp
 
         }
 
-        public Target(ComponentManager componentManager, Vector3 position) :
-            base(componentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 5))
+        public Target(ComponentManager componentManager, Vector3 position, List<ResourceAmount> resources) :
+            base(componentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(0, 5), new DwarfCorp.CraftDetails(componentManager, "Strawman", resources))
         {
             Name = "Target";
             Tags.Add("Target");

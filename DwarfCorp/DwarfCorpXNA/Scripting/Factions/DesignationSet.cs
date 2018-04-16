@@ -49,12 +49,14 @@ namespace DwarfCorp
             public VoxelHandle Voxel;
             public DesignationType Type;
             public Object Tag;
+            public Task Task;
 
             [OnDeserialized]
             public void OnDeserialized(StreamingContext ctx)
             {
                 // TODO: mklingen. This is a horrible hack caused by the fact that Newtonsoft.Json does not understand
                 // that this is a numeric type with a width of 16. I have to downconvert it from 64 to 16.
+                // Update: blecki. This should be unecessary now. Put designations store a string now.
                 if (Tag is Int64)
                 {
                     Tag = (short)(long)(Tag);
@@ -67,6 +69,7 @@ namespace DwarfCorp
             public Body Body;
             public DesignationType Type;
             public Object Tag;
+            public Task Task;
         }
 
         public enum AddDesignationResult
@@ -92,7 +95,7 @@ namespace DwarfCorp
             return (FilterType & DesType) != 0;
         }
 
-        public AddDesignationResult AddVoxelDesignation(VoxelHandle Voxel, DesignationType Type, Object Tag)
+        public AddDesignationResult AddVoxelDesignation(VoxelHandle Voxel, DesignationType Type, Object Tag, Task Task)
         {
             var key = GetVoxelQuickCompare(Voxel);
 
@@ -118,7 +121,8 @@ namespace DwarfCorp
                 {
                     Voxel = Voxel,
                     Type = Type,
-                    Tag = Tag
+                    Tag = Tag,
+                    Task = Task
                 });
                 return AddDesignationResult.Added;
             }
@@ -135,12 +139,12 @@ namespace DwarfCorp
             return r;
         }
 
-        public Object GetVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
+        public VoxelDesignation GetVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
         {
             var key = GetVoxelQuickCompare(Voxel);
             if (!VoxelDesignations.ContainsKey(key)) return null;
             var r = VoxelDesignations[key].FirstOrDefault(d => TypeSet(d.Type, Type));
-            if (r != null) return r.Tag;
+            if (r != null) return r;
             return null;
         }
 
@@ -186,22 +190,9 @@ namespace DwarfCorp
                 {
                     switch (d.Type)
                     {
-                        case DesignationType.Dig:
+                        //case DesignationType.Dig:
                         case DesignationType.Guard:
                             if (!d.Voxel.IsValid || d.Voxel.IsEmpty)
-                                toRemove.Add(d);
-                            break;
-                        case DesignationType.Put:
-                            if (!d.Voxel.IsValid || d.Voxel.TypeID == (short)(d.Tag))
-                                toRemove.Add(d);
-                            break;
-                        case DesignationType.Till:
-                            if (!d.Voxel.IsValid || d.Voxel.IsEmpty || d.Voxel.Type.Name == "TilledSoil")
-                                toRemove.Add(d);
-                            break;
-                        case DesignationType.Plant:
-                        case DesignationType._InactiveFarm:
-                            if (!d.Voxel.IsValid || d.Voxel.IsEmpty || d.Voxel.Type.Name != "TilledSoil")
                                 toRemove.Add(d);
                             break;
                         default:
@@ -215,7 +206,7 @@ namespace DwarfCorp
             EntityDesignations.RemoveAll(b => b.Body.IsDead);
         }
 
-        public AddDesignationResult AddEntityDesignation(Body Entity, DesignationType Type, Object Tag = null)
+        public AddDesignationResult AddEntityDesignation(Body Entity, DesignationType Type, Object Tag, Task Task)
         {
             if (EntityDesignations.Count(e => Object.ReferenceEquals(e.Body, Entity) && e.Type == Type) == 0)
             {
@@ -223,7 +214,8 @@ namespace DwarfCorp
                 {
                     Body = Entity,
                     Type = Type,
-                    Tag = Tag
+                    Tag = Tag,
+                    Task = Task
                 });
 
                 return AddDesignationResult.Added;
@@ -253,6 +245,14 @@ namespace DwarfCorp
         public IEnumerable<EntityDesignation> EnumerateEntityDesignations()
         {
             return EntityDesignations;
+        }
+
+        public EntityDesignation GetEntityDesignation(Body Entity, DesignationType Type)
+        {
+            foreach (var des in EnumerateEntityDesignations(Type))
+                if (Object.ReferenceEquals(des.Body, Entity))
+                    return des;
+            return null;
         }
 
         private static ulong GetVoxelQuickCompare(VoxelHandle V)

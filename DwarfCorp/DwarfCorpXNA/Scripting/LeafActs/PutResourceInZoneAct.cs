@@ -137,6 +137,12 @@ namespace DwarfCorp
                 yield return Status.Running;
             }
 
+            var resource = ResourceLibrary.GetResourceByName(Resource.ResourceType);
+            if (resource.Tags.Contains(DwarfCorp.Resource.ResourceTags.Corpse))
+            {
+                Creature.AI.AddThought(Thought.ThoughtType.BuriedDead);
+            }
+
             yield return Status.Running;
             Creature.CurrentCharacterMode = CharacterMode.Idle;
             yield return Status.Success;

@@ -70,6 +70,7 @@ namespace DwarfCorp
             });
 
             SpriteAsset = sprites;
+            BaseMeatResource = "Bird Meat";
             CreateSprite(ContentPaths.Entities.Animals.Birds.GetBirdAnimations(SpriteAsset), Manager);
 
             // Used to grab other components

@@ -226,7 +226,11 @@ namespace DwarfCorp
  
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (!Active) return;
+            if (!Active)
+            {
+                base.Update(gameTime, chunks, camera);
+                return;
+            }
 
             // Never apply physics when animating!
             if (AnimationQueue.Count > 0)
@@ -337,10 +341,22 @@ namespace DwarfCorp
                         {
                             if (Orientation == OrientMode.LookAt)
                             {
-                                Matrix newTransform =
-                                    Matrix.Invert(Matrix.CreateLookAt(Position, Position + Velocity, Vector3.Down));
-                                newTransform.Translation = transform.Translation;
-                                transform = newTransform;
+                                if (Math.Abs(Vector3.Dot(Vector3.Down, Velocity)) < 0.99 * Velocity.Length())
+                                {
+                                    Matrix newTransform =
+                                        Matrix.Invert(Matrix.CreateLookAt(LocalPosition, LocalPosition + Velocity, Vector3.Down));
+                                    newTransform.Translation = transform.Translation;
+                                    transform = newTransform;
+                                }
+                                else
+                                {
+                                    {
+                                        Matrix newTransform =
+                                            Matrix.Invert(Matrix.CreateLookAt(LocalPosition, LocalPosition + Velocity, Vector3.Right));
+                                        newTransform.Translation = transform.Translation;
+                                        transform = newTransform;
+                                    }
+                                }
                             }
                             else if (Orientation == OrientMode.RotateY)
                             {
@@ -401,8 +417,7 @@ namespace DwarfCorp
                     }
                 }
 
-            } 
-
+            }
             applyGravityThisFrame = true;
             CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             PreviousVelocity = Velocity;
@@ -410,13 +425,6 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
-        public void Face(Vector3 target)
-        {
-            Vector3 diff = target - GlobalTransform.Translation;
-            Matrix newTransform = Matrix.CreateRotationY((float)Math.Atan2(diff.X, -diff.Z));
-            newTransform.Translation = LocalTransform.Translation;
-            LocalTransform = newTransform;
-        }
 
         public void SetPosition(Vector3 pos)
         {
@@ -429,27 +437,21 @@ namespace DwarfCorp
         {
             CurrentVoxel = new VoxelHandle(chunks.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(GlobalTransform.Translation + Vector3.Up * 0.5f));
-            var below = new VoxelHandle(chunks.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(GlobalTransform.Translation + Vector3.Down * 0.25f));
 
             if (CurrentVoxel.IsValid && CurrentVoxel.WaterCell.WaterLevel > WaterManager.inWaterThreshold)
             {
                 ApplyForce(new Vector3(0, 25, 0), dt);
                 Velocity = new Vector3(Velocity.X * 0.9f, Velocity.Y * 0.5f, Velocity.Z * 0.9f);
-            }
-
-            if (IsInLiquid && Velocity.LengthSquared() > 0.5f)
-            {
-                Manager.World.ParticleManager.Trigger("splat", Position + MathFunctions.RandVector3Box(-0.5f, 0.5f, 0.1f, 0.25f, -0.5f, 0.5f), Color.White, MathFunctions.Random.Next(0, 2));
-            }
-
-            if (below.IsValid && below.WaterCell.WaterLevel > WaterManager.inWaterThreshold)
-            {
                 IsInLiquid = true;
             }
             else
             {
                 IsInLiquid = false;
+            }
+
+            if (IsInLiquid && Velocity.LengthSquared() > 0.5f)
+            {
+                Manager.World.ParticleManager.Trigger("splat", Position + MathFunctions.RandVector3Box(-0.5f, 0.5f, 0.1f, 0.25f, -0.5f, 0.5f), Color.White, MathFunctions.Random.Next(0, 2));
             }
         }
 

@@ -50,7 +50,7 @@ namespace DwarfCorp
         public float MeshScale { get; set; }
         public Vector3 BasePosition = Vector3.Zero;
         public float RandomAngle = 0.0f;
-        public FarmTile Farm;
+        public Farm Farm;
 
         public Plant()
         {
@@ -117,8 +117,23 @@ namespace DwarfCorp
         {
             if (Farm != null && !(this is Seedling))
             {
-                Farm.Plant = null;
-                Farm.TriggerAutoReplant(World);
+                if (Farm.Voxel.IsValid && Farm.Voxel.Type.Name == "TilledSoil" && !String.IsNullOrEmpty(Farm.SeedResourceType))
+                {
+                    var farmTile = new Farm
+                    {
+                        Voxel = Farm.Voxel,
+                        SeedResourceType = Farm.SeedResourceType,
+                        RequiredResources = Farm.RequiredResources
+                    };
+
+                    var task = new PlantTask(farmTile)
+                    {
+                        Plant = Farm.SeedResourceType,
+                        RequiredResources = Farm.RequiredResources
+                    };
+
+                    World.Master.TaskManager.AddTask(task);
+                }
             }
             base.Die();
         }
