@@ -84,7 +84,7 @@ namespace DwarfCorp
             if (agent.AI.Status.IsAsleep)
                 return Feasibility.Infeasible;
 
-            if (VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill))
+            if (VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill) || VoxelHelpers.VoxelIsSurroundedByWater(VoxelToKill))
                 return Feasibility.Infeasible;
 
             return Feasibility.Feasible;
