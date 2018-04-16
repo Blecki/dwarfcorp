@@ -72,7 +72,8 @@ namespace DwarfCorp
             Farmed,
             Crafted,
             Researched,
-            Magic
+            Magic,
+            BuriedDead
         }
 
         public static Thought CreateStandardThought(ThoughtType type, DateTime time)
@@ -119,7 +120,7 @@ namespace DwarfCorp
                     break;
                 case ThoughtType.FriendDied:
                     description = "A friend died recently.";
-                    happiness = -50.0f;
+                    happiness = -25.0f;
                     limit = new TimeSpan(2, 0, 0, 0);
                     break;
                 case ThoughtType.Frightened:
@@ -175,6 +176,11 @@ namespace DwarfCorp
                 case ThoughtType.KilledThing:
                     description = "I killed somehing!";
                     happiness = 1.0f;
+                    limit = new TimeSpan(0, 8, 0, 0);
+                    break;
+                case ThoughtType.BuriedDead:
+                    description = "I laid a friend to rest.";
+                    happiness = 10.0f;
                     limit = new TimeSpan(0, 8, 0, 0);
                     break;
                 case ThoughtType.Crafted:
