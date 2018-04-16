@@ -161,7 +161,7 @@ namespace DwarfCorp
                                 Frames = a.CompositeFrames.Select(f => f.Cells[0].Tile).ToList(),
                             };
                         }
-
+                        a.PushFrames();
                         return a as Animation;
                         
                         }).ToList());
