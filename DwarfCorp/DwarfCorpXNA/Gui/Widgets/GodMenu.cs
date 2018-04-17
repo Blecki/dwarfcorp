@@ -78,6 +78,28 @@ namespace DwarfCorp.Gui.Widgets
                                         }
                                     }
                                 }
+                            },
+
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "DEBUG SAVE",
+                                OnClick = (sender, args) =>
+                                {
+                                    // Turn off binary compressed saves and save a nice straight json save for debugging purposes.
+
+                                    // Todo: Why isn't World managing this paused state itself?
+                                    bool paused = Master.World.Paused;
+                                    var previousSetting = DwarfGame.COMPRESSED_BINARY_SAVES;
+                                    DwarfGame.COMPRESSED_BINARY_SAVES = false;
+                                    Master.World.Save(
+                                        String.Format("{0}_{1}_DEBUG", Overworld.Name, Master.World.GameID),
+                                        (success, exception) =>
+                                        {
+                                            Master.World.MakeAnnouncement(success ? "Debug save created.": "Debug save failed - " + exception.Message);
+                                            DwarfGame.COMPRESSED_BINARY_SAVES = previousSetting;
+                                            Master.World.Paused = paused;
+                                        });                                    
+                                }
                             }
                         }
                     }

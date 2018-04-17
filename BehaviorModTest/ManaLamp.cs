@@ -6,12 +6,12 @@ using DwarfCorp;
 
 namespace ManaLampMod
 {
-    public class ManaLamp : Body
+    public class ManaLamp : CraftedBody
     {
         [EntityFactory("Mana Lamp")]
         private static DwarfCorp.GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Lamp(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+            return new ManaLamp(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
         }
 
         public ManaLamp()
@@ -19,8 +19,8 @@ namespace ManaLampMod
 
         }
 
-        public ManaLamp(ComponentManager Manager, Vector3 position) :
-            base(Manager, "Lamp", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero)
+        public ManaLamp(ComponentManager Manager, Vector3 position, List<ResourceAmount> Resources) :
+            base(Manager, "Lamp", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(Manager, "Mana Lamp", Resources))
         {
             Tags.Add("Lamp");
             CollisionType = CollisionManager.CollisionType.Static;
