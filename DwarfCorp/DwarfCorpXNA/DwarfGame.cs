@@ -67,6 +67,9 @@ namespace DwarfCorp
         public static Gui.Input.Input GumInput;
         public static Gui.RenderData GuiSkin;
 
+        private static Gui.Root ConsoleGui;
+        private static bool ConsoleVisible = false;
+
         public const string GameName = "DwarfCorp";
         public static bool HasRendered = false;
         private static StreamWriter _logwriter;
@@ -288,6 +291,12 @@ namespace DwarfCorp
                 //GumInput.AddAction("TEST", Gui.Input.KeyBindingType.Pressed);
 
                 GuiSkin = new RenderData(GraphicsDevice, Content);
+            ConsoleGui = new Gui.Root(GuiSkin);
+            ConsoleGui.RootItem.AddChild(new Widget
+            {
+                Background = new TileReference("basic", 0),
+                Rect = new Rectangle(0, 0, GuiSkin.VirtualScreen.Width, 128)
+            });
 
                 if (SoundManager.Content == null)
                 {
@@ -345,6 +354,17 @@ namespace DwarfCorp
             try
             {
 #endif
+            if (GumInputMapper.WasConsoleTogglePressed())
+                ConsoleVisible = !ConsoleVisible;
+
+            if (ConsoleVisible)
+            {
+                DwarfGame.GumInput.FireActions(ConsoleGui, (@event, args) =>
+                {
+                });
+                ConsoleGui.Update(time);
+            }
+
             PerformanceMonitor.BeginFrame();
             PerformanceMonitor.PushFrame("Update");
                 DwarfTime.LastTime.Update(time);
@@ -376,6 +396,10 @@ namespace DwarfCorp
                 base.Draw(time);
             PerformanceMonitor.PopFrame();
             PerformanceMonitor.Render();
+
+            if (ConsoleVisible)
+                ConsoleGui.Draw();
+
 #if SHARP_RAVEN && !DEBUG
             }
             catch (Exception exception)
