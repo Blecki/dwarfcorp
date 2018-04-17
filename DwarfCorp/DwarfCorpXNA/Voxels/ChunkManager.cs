@@ -89,8 +89,6 @@ namespace DwarfCorp
         }
 
         public ChunkGenerator ChunkGen { get; set; }
-        public List<GlobalChunkCoordinate> ToGenerate { get; set; }
-
 
         private Thread RebuildThread { get; set; }
         private AutoScaleThread WaterUpdateThread;
@@ -138,8 +136,6 @@ namespace DwarfCorp
             RebuildThread.Name = "RebuildVoxels";
 
             WaterUpdateThread = new AutoScaleThread(this, (f) => Water.UpdateWater());
-
-            ToGenerate = new List<GlobalChunkCoordinate>();
 
             chunkGen.Manager = this;
 
@@ -197,6 +193,8 @@ namespace DwarfCorp
 
         private readonly ChunkData chunkData;
 
+
+        // Todo: Why isn't this part of the chunk generator?
         public void GenerateOres()
         {
             foreach (VoxelType type in VoxelLibrary.GetTypes())
@@ -242,6 +240,7 @@ namespace DwarfCorp
             }
         }
 
+        // Todo: Move to ChunkGenerator
         public void GenerateInitialChunks(GlobalChunkCoordinate origin, Action<String> SetLoadingMessage)
         {
             var initialChunkCoordinates = new List<GlobalChunkCoordinate>();

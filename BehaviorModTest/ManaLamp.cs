@@ -9,7 +9,7 @@ namespace ManaLampMod
     public class ManaLamp : Body
     {
         [EntityFactory("Mana Lamp")]
-        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        private static DwarfCorp.GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Lamp(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
         }
