@@ -96,6 +96,7 @@ namespace DwarfCorp
         {
             LastWheel = Mouse.GetState().ScrollWheelValue;
             ZoomTargets = new List<Vector3>();
+         
         }
 
 
@@ -135,6 +136,11 @@ namespace DwarfCorp
 
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
+            // Don't attempt any camera control if the user is trying to type intoa focus item.
+            if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
+            {
+                return;
+            }
             float diffPhi = 0;
             float diffTheta = 0;
             float diffRadius = 0;
@@ -154,8 +160,15 @@ namespace DwarfCorp
                 {
                     Vector3 newTarget = 0.8f * Target + 0.2f * currTarget;
                     Vector3 d = newTarget - Target;
-                    Target += d;
-                    Position += d;
+                    if (bounds.Contains(Position + d) != ContainmentType.Contains)
+                    {
+                        ZoomTargets.RemoveAt(0);
+                    }
+                    else
+                    {
+                        Target += d;
+                        Position += d;
+                    }
                 }
                 else
                 {

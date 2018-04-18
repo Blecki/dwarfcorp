@@ -163,7 +163,7 @@ namespace DwarfCorp
         {
             try
             {
-                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate,
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred,
                     BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin, DepthStencilState.Default, RasterizerState.CullNone, null, Matrix.Identity);
                 DwarfGame.SpriteBatch.Draw((Texture2D)Buffer, rect, Color.White);
             }

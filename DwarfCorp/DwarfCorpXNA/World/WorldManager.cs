@@ -905,7 +905,7 @@ namespace DwarfCorp
             //SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
             try
             {
-                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
                     null, rasterizerState, null, Matrix.Identity);
                 //DwarfGame.SpriteBatch.Draw(Shadows.ShadowTexture, Vector2.Zero, Color.White);
                 if (IsCameraUnderwater())
@@ -921,6 +921,15 @@ namespace DwarfCorp
             {
                 DwarfGame.SpriteBatch.End();
             }
+
+            /*
+            int px = 0;
+            foreach (var composite in CompositeLibrary.Composites)
+            {
+                composite.Value.DebugDraw(DwarfGame.SpriteBatch, px, 0);
+                px += composite.Value.Target.Width;
+            }
+            */
 
             Master.Render(Game, gameTime, GraphicsDevice);
 

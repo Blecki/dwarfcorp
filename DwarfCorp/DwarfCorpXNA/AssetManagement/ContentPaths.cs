@@ -421,7 +421,6 @@ namespace DwarfCorp
         {
             public static string snowman_animation = ProgramData.CreatePath("Entities", "Mudman", "snowman_animation.json");
             public static string mudman_animation = ProgramData.CreatePath("Entities", "Mudman", "mudman_animation.json");
-            public static string mudman_projectile = ProgramData.CreatePath("Entities", "Mudman", "mudman-projectile");
             public static string mudball = ProgramData.CreatePath("Entities", "Mudman", "mudball");
             public static string snowball = ProgramData.CreatePath("Entities", "Mudman", "snowball");
             public class Animals
@@ -628,7 +627,6 @@ namespace DwarfCorp
                 public static string goblin_classes = ProgramData.CreatePath("Entities", "Goblin", "goblin_classes.json"); 
                 public class Sprites
                 {
-                    public static string goblin_withsword = ProgramData.CreatePath("Entities", "Goblin", "Sprites", "gob-withsword");
                     public static string goblin_animations = ProgramData.CreatePath("Entities", "Goblin", "Sprites", "goblin_animation.json"); 
                 }
 

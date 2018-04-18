@@ -437,27 +437,21 @@ namespace DwarfCorp
         {
             CurrentVoxel = new VoxelHandle(chunks.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(GlobalTransform.Translation + Vector3.Up * 0.5f));
-            var below = new VoxelHandle(chunks.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(GlobalTransform.Translation + Vector3.Down * 0.25f));
 
             if (CurrentVoxel.IsValid && CurrentVoxel.WaterCell.WaterLevel > WaterManager.inWaterThreshold)
             {
                 ApplyForce(new Vector3(0, 25, 0), dt);
                 Velocity = new Vector3(Velocity.X * 0.9f, Velocity.Y * 0.5f, Velocity.Z * 0.9f);
-            }
-
-            if (IsInLiquid && Velocity.LengthSquared() > 0.5f)
-            {
-                Manager.World.ParticleManager.Trigger("splat", Position + MathFunctions.RandVector3Box(-0.5f, 0.5f, 0.1f, 0.25f, -0.5f, 0.5f), Color.White, MathFunctions.Random.Next(0, 2));
-            }
-
-            if (below.IsValid && below.WaterCell.WaterLevel > WaterManager.inWaterThreshold)
-            {
                 IsInLiquid = true;
             }
             else
             {
                 IsInLiquid = false;
+            }
+
+            if (IsInLiquid && Velocity.LengthSquared() > 0.5f)
+            {
+                Manager.World.ParticleManager.Trigger("splat", Position + MathFunctions.RandVector3Box(-0.5f, 0.5f, 0.1f, 0.25f, -0.5f, 0.5f), Color.White, MathFunctions.Random.Next(0, 2));
             }
         }
 

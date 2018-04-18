@@ -127,8 +127,9 @@ namespace DwarfCorp
             return r;
         }
 
-        public static String ResolveContentPath(String Asset, params string[] AlternateExtensions)
+        public static String ResolveContentPath(String _Asset, params string[] AlternateExtensions)
         {
+            string Asset = FileUtils.NormalizePath(_Asset);
             var extensionList = new List<String>(AlternateExtensions);
             if (extensionList.Count != 0)
                 extensionList.Add(".xnb");
@@ -152,8 +153,9 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="AssetPath"></param>
         /// <returns></returns>
-        public static IEnumerable<String> EnumerateMatchingPaths(String AssetPath)
+        public static IEnumerable<String> EnumerateMatchingPaths(String _AssetPath)
         {
+            string AssetPath = FileUtils.NormalizePath(_AssetPath);
             var searchList = GameSettings.Default.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
             searchList.Reverse();
             searchList.Add("Content");
@@ -166,8 +168,9 @@ namespace DwarfCorp
             }
         }
         
-        public static Texture2D GetContentTexture(string asset)
+        public static Texture2D GetContentTexture(string _asset)
         {
+            string asset = FileUtils.NormalizePath(_asset);
             if (asset == null)
             {
                 var r = Content.Load<Texture2D>(ContentPaths.Error);
@@ -204,8 +207,9 @@ namespace DwarfCorp
 
         }
 
-        public static Texture2D LoadUnbuiltTextureFromAbsolutePath(string file)
+        public static Texture2D LoadUnbuiltTextureFromAbsolutePath(string _file)
         {
+            string file = FileUtils.NormalizePath(_file);
             using(var stream = new FileStream(file, FileMode.Open))
             {
                 if (!stream.CanRead)

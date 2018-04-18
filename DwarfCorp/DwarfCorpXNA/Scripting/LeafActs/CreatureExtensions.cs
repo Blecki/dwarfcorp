@@ -148,22 +148,19 @@ namespace DwarfCorp
             Dictionary<string, ResourceAmount> aggregatedResources = new Dictionary<string, ResourceAmount>();
             foreach (var resource in agent.Inventory.Resources)
             {
-                if (!resource.MarkedForRestock || agent.AI.GatherManager.StockOrders.Count == 0)
-                {
-                    resource.MarkedForRestock = true;
+                resource.MarkedForRestock = true;
 
-                    if (!aggregatedResources.ContainsKey(resource.Resource))
-                    {
-                        aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
-                    }
-                    aggregatedResources[resource.Resource].NumResources++;
+                if (!aggregatedResources.ContainsKey(resource.Resource))
+                {
+                    aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
                 }
+                aggregatedResources[resource.Resource].NumResources++;
             }
 
             foreach (var resource in aggregatedResources)
             {
                 var task = new StockResourceTask(resource.Value.CloneResource());
-                if (!agent.AI.Tasks.Contains(task))
+                if (task.IsFeasible(agent) == Task.Feasibility.Feasible && !agent.AI.Tasks.Contains(task))
                 {
                     agent.AI.AssignTask(task);
                 }

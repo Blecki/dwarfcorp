@@ -272,7 +272,11 @@ namespace DwarfCorp.Gui
         /// <param name="On"></param>
         public void SetFocus(Widget On)
         {
-            if (!Object.ReferenceEquals(this, On.Root)) throw new InvalidOperationException();
+            if (On != null)
+            {
+                if (!Object.ReferenceEquals(this, On.Root)) throw new InvalidOperationException();
+            }
+
             if (Object.ReferenceEquals(FocusItem, On)) return;
 
             if (FocusItem != null) SafeCall(FocusItem.OnLoseFocus, FocusItem);
@@ -362,7 +366,15 @@ namespace DwarfCorp.Gui
                 case InputEvents.MouseDown:
                     {
                         MousePosition = ScreenPointToGuiPoint(new Point(Args.X, Args.Y));
-                        var newArgs = new InputEventArgs { X = MousePosition.X, Y = MousePosition.Y };
+                        var newArgs = new InputEventArgs
+                        {
+                            Alt = Args.Alt,
+                            Control = Args.Control,
+                            Shift = Args.Shift,
+                            X = MousePosition.X,
+                            Y = MousePosition.Y,
+                            MouseButton = Args.MouseButton
+                        };
 
                         MouseDownItem = null;
                         if (PopupStack.Count != 0)
@@ -372,10 +384,31 @@ namespace DwarfCorp.Gui
                         }
                         else
                             MouseDownItem = HoverItem;
+
+                        if (MouseDownItem !=  null)
+                        {
+                            CallOnMouseDown(MouseDownItem, newArgs);
+                        }
                     }
                     break;
                 case InputEvents.MouseUp:
-                    //MouseDownItem = null;
+                    {
+                        var newArgs = new InputEventArgs
+                        {
+                            Alt = Args.Alt,
+                            Control = Args.Control,
+                            Shift = Args.Shift,
+                            X = MousePosition.X,
+                            Y = MousePosition.Y,
+                            MouseButton = Args.MouseButton
+                        };
+
+                        if (MouseDownItem != null)
+                        {
+                            CallOnMouseUp(MouseDownItem, newArgs);
+                        }
+                        //MouseDownItem = null;
+                    }
                     break;
                 case InputEvents.MouseClick:
                     {
@@ -420,6 +453,10 @@ namespace DwarfCorp.Gui
                             Args.Handled = true;
                             CallOnClick(HoverItem, newArgs);
                         }
+                        else
+                        {
+                            SetFocus(null);
+                        }
                         MouseDownItem = null;
                     }
                     break;
@@ -452,8 +489,36 @@ namespace DwarfCorp.Gui
             }
         }
 
+        private void CallOnMouseDown(Widget Widget, InputEventArgs Args)
+        {
+            SafeCall(Widget.OnMouseDown, Widget, Args);
+            var parent = Widget.Parent;
+            while (parent != null)
+            {
+                if (parent.TriggerOnChildClick)
+                    SafeCall(parent.OnMouseDown, parent, Args);
+                parent = parent.Parent;
+            }
+        }
+
+        private void CallOnMouseUp(Widget Widget, InputEventArgs Args)
+        {
+            SafeCall(Widget.OnMouseUp, Widget, Args);
+            var parent = Widget.Parent;
+            while (parent != null)
+            {
+                if (parent.TriggerOnChildClick)
+                    SafeCall(parent.OnMouseUp, parent, Args);
+                parent = parent.Parent;
+            }
+        }
+
         private void CallOnClick(Widget Widget, InputEventArgs Args)
         {
+            if (FocusItem != null && Widget != FocusItem)
+            {
+                SetFocus(null);
+            }
             SafeCall(Widget.OnClick, Widget, Args);
             var parent = Widget.Parent;
             while (parent != null)

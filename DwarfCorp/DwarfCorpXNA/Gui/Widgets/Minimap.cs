@@ -199,7 +199,7 @@ namespace DwarfCorp.Gui.Widgets
 
             try
             {
-                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate,
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred,
                     BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin, null, RasterizerState.CullNone, null,
                     Matrix.Identity);
                 Viewport viewPort = new Viewport(RenderTarget.Bounds);

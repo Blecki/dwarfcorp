@@ -33,8 +33,22 @@ namespace DwarfCorp
         public string CompositeName;
         public List<CompositeFrame> CompositeFrames = new List<CompositeFrame>();
 
+        private bool _pushed = false;
+
         [JsonIgnore]
         public Point CurrentOffset { get; set; }
+
+        public void PushFrames()
+        {
+            if (!_pushed)
+            {
+                foreach (var frame in CompositeFrames)
+                {
+                    Composite.PushFrame(frame);
+                }
+                _pushed = true;
+            }
+        }
 
         public override void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
         {

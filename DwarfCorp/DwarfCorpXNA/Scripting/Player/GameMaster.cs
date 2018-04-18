@@ -448,14 +448,20 @@ namespace DwarfCorp
 
             HandlePosessedDwarf();
 
+            /*
             if (sliceDownheld)
             {
                 sliceDownTimer.Update(time);
 
                 if (sliceDownTimer.HasTriggered)
                 {
+<<<<<<< HEAD
                     SetMaxViewingLevel(MaxViewingLevel - 1);
                     sliceDownTimer.Reset(0.1f);
+=======
+                    SetMaxViewingLevel(MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
+                    sliceDownTimer.Reset(0.5f);
+>>>>>>> 9e581f9d1c7fa418197ea0fc8cae93f2fe98c881
                 }
             }
 
@@ -465,11 +471,16 @@ namespace DwarfCorp
 
                 if (sliceUpTimer.HasTriggered)
                 {
+<<<<<<< HEAD
                     SetMaxViewingLevel(MaxViewingLevel + 1);
                     sliceUpTimer.Reset(0.1f);
+=======
+                    SetMaxViewingLevel(MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
+                    sliceUpTimer.Reset(0.5f);
+>>>>>>> 9e581f9d1c7fa418197ea0fc8cae93f2fe98c881
                 }
             }
-
+            */
             // Make sure that the faction's money is identical to the money in treasuries.
             Faction.Economy.CurrentMoney = Faction.Treasurys.Sum(treasury => treasury.Money);
 
@@ -487,6 +498,11 @@ namespace DwarfCorp
 
         public void HandlePosessedDwarf()
         {
+            // Don't attempt any control if the user is trying to type intoa focus item.
+            if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
+            {
+                return;
+            }
             KeyboardState keyState = Keyboard.GetState();
             if (SelectedMinions.Count != 1)
             {
@@ -615,22 +631,25 @@ namespace DwarfCorp
 
         }
 
-        public void OnKeyPressed(Keys key)
+        public bool OnKeyPressed(Keys key)
         {
             if (key == ControlSettings.Mappings.SliceUp)
             {
                 sliceUpheld = true;
                 sliceUpTimer.Reset(0.5f);
+                return true;
             }
             else if (key == ControlSettings.Mappings.SliceDown)
             {
                 sliceDownheld = true;
                 sliceDownTimer.Reset(0.5f);
+                return true;
             }
+            return false;
         }
         private int rememberedViewValue = VoxelConstants.ChunkSizeY;
 
-        public void OnKeyReleased(Keys key)
+        public bool OnKeyReleased(Keys key)
         {
             KeyboardState keys = Keyboard.GetState();
             if (key == ControlSettings.Mappings.SliceUp)
@@ -638,6 +657,7 @@ namespace DwarfCorp
                 sliceUpheld = false;
                 World.Tutorial("unslice");
                 SetMaxViewingLevel(MaxViewingLevel + 1);
+                return true;
             }
 
             else if (key == ControlSettings.Mappings.SliceDown)
@@ -645,25 +665,30 @@ namespace DwarfCorp
                 sliceDownheld = false;
                 World.Tutorial("unslice");
                 SetMaxViewingLevel(MaxViewingLevel - 1);
+                return true;
             }
             else if (key == ControlSettings.Mappings.SliceSelected)
             {
                 if (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl))
                 {
                     SetMaxViewingLevel(rememberedViewValue);
+                    return true;
                 }
                 else if (VoxSelector.VoxelUnderMouse.IsValid)
                 {
                     World.Tutorial("unslice");
                     SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1);
                     Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
+                    return true;
                 }
             }
             else if (key == ControlSettings.Mappings.Unslice)
             {
                 rememberedViewValue = MaxViewingLevel;
                 SetMaxViewingLevel(VoxelConstants.ChunkSizeY);
+                return true;
             }
+            return false;
         }
 
         #endregion

@@ -346,13 +346,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\Goblin\Sprites\goblin_animations.png">
-      <Name>goblin_animations</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Particles\blood_particle.png">
       <Name>blood_particle</Name>
       <Importer>TextureImporter</Importer>
@@ -649,13 +642,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Entities\Goblin\Sprites\gob-withsword.png">
-      <Name>gob-withsword</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -2521,11 +2507,6 @@
       <Name>chicken_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="Entities\Mudman\mudman-projectile.png">
-      <Name>mudman-projectile</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Entities\Mudman\mudman.png">
       <Name>mudman</Name>
       <Importer>TextureImporter</Importer>

@@ -126,32 +126,36 @@ namespace DwarfCorp.Gui.Widgets
 
                 var lambdaResource = resource;
                 lineItem.TriggerOnChildClick = true;
+                lineItem.EnableHoverClick();
                 lineItem.OnClick = (sender, args) =>
                 {
-                    if (lambdaResource.NumResources == 0) return;
-                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, -0.1f);
+                    if (lambdaResource.NumResources <= 0) return;
                     var toMove = 1;
                     if (args.Control) toMove = lambdaResource.NumResources;
                     if (args.Shift) toMove = Math.Min(5, lambdaResource.NumResources);
+                    if (lambdaResource.NumResources - toMove < 0)
+                        return;
                     lambdaResource.NumResources -= toMove;
-
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, MathFunctions.Rand() * 0.25f);
                     var existingEntry = selectedResources.FirstOrDefault(r => r.ResourceType == lambdaResource.ResourceType);
                     if (existingEntry == null)
                     {
                         existingEntry = new ResourceAmount(lambdaResource.ResourceType, 0);
                         selectedResources.Add(existingEntry);
                         var rightLineItem = CreateLineItem(existingEntry);
+                        rightLineItem.EnableHoverClick();
                         rightList.AddItem(rightLineItem);
 
                         rightLineItem.TriggerOnChildClick = true;
                         rightLineItem.OnClick = (_sender, _args) =>
                         {
-                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, 0.1f);
                             var _toMove = 1;
                             if (_args.Control) _toMove = existingEntry.NumResources;
                             if (_args.Shift) _toMove = Math.Min(5, existingEntry.NumResources);
+                            if (existingEntry.NumResources - _toMove < 0)
+                                return;
                             existingEntry.NumResources -= _toMove;
-
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, MathFunctions.Rand() * 0.25f);
                             if (existingEntry.NumResources == 0)
                             {
                                 var index = selectedResources.IndexOf(existingEntry);

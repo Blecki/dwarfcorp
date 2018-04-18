@@ -63,7 +63,7 @@ namespace DwarfCorp
             return anim;
         }
 
-        public static Animation CreateSimpleAnimation(String TextureAsset)
+        public static Animation CreateSimpleAnimation(String TextureAsset, bool loop = false)
         {
             if (!Animations.ContainsKey(TextureAsset))
             {
@@ -84,6 +84,7 @@ namespace DwarfCorp
                         Frames = frames,
                         Name = TextureAsset,
                         FrameHZ = 15.0f,
+                        Loops = loop
                     }
                 });
             }
@@ -160,7 +161,7 @@ namespace DwarfCorp
                                 Frames = a.CompositeFrames.Select(f => f.Cells[0].Tile).ToList(),
                             };
                         }
-
+                        a.PushFrames();
                         return a as Animation;
                         
                         }).ToList());

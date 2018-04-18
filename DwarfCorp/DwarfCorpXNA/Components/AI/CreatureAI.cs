@@ -693,7 +693,7 @@ namespace DwarfCorp
             }
              */
 
-            if (!IsPosessed && Creature.Physics.IsInLiquid && MathFunctions.RandEvent(0.01f))
+            if (!IsPosessed && Creature.Physics.IsInLiquid)
                 return new FindLandTask();
 
             if (Faction == World.PlayerFaction && !Status.IsOnStrike)
@@ -1147,14 +1147,14 @@ namespace DwarfCorp
                 Creature.CurrentCharacterMode = CharacterMode.Swimming;
                 Creature.Physics.ApplyForce(Vector3.Up * 10, DwarfTime.Dt);
                 force = Creature.Stats.MaxAcceleration*5;
-                Creature.NoiseMaker.MakeNoise("Swim", Position);
+                Creature.NoiseMaker.MakeNoise("Swim", Position, true);
             }
 
             Vector3 projectedForce = new Vector3(desiredDirection.X, 0, desiredDirection.Z);
 
             if (jumpCommand && !jumpHeld && (Creature.IsOnGround || Creature.Physics.IsInLiquid) && Creature.IsHeadClear)
             {
-                Creature.NoiseMaker.MakeNoise("Jump", Position);
+                Creature.NoiseMaker.MakeNoise("Jump", Position, true);
                 Creature.Physics.LocalTransform *= Matrix.CreateTranslation(Vector3.Up*0.1f);
                 Creature.Physics.Velocity += Vector3.Up*5;
                 Creature.Physics.UpdateTransform();

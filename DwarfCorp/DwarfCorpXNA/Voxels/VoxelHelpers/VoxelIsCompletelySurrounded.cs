@@ -17,6 +17,21 @@ namespace DwarfCorp
             {
                 var voxelHandle = new VoxelHandle(V.Chunk.Manager.ChunkData, neighborCoordinate);
                 if (!voxelHandle.IsValid) return false;
+                if (voxelHandle.IsEmpty) return false;
+            }
+
+            return true;
+        }
+
+        public static bool VoxelIsSurroundedByWater(VoxelHandle V)
+        {
+            if (V.Chunk == null)
+                return false;
+
+            foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors(V.Coordinate))
+            {
+                var voxelHandle = new VoxelHandle(V.Chunk.Manager.ChunkData, neighborCoordinate);
+                if (!voxelHandle.IsValid) return false;
                 if (voxelHandle.IsEmpty && voxelHandle.WaterCell.WaterLevel < 4) return false;
             }
 

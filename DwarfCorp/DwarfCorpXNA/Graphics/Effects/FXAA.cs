@@ -146,7 +146,7 @@ namespace DwarfCorp
             GameState.Game.GraphicsDevice.SetRenderTarget(null);
             try
             {
-                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, Shader, Matrix.Identity);
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, Shader, Matrix.Identity);
                 DwarfGame.SpriteBatch.Draw(renderTarget, GameState.Game.GraphicsDevice.Viewport.Bounds, Color.White);
             }
             finally
