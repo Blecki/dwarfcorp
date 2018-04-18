@@ -292,11 +292,14 @@ namespace DwarfCorp
 
                 GuiSkin = new RenderData(GraphicsDevice, Content);
             ConsoleGui = new Gui.Root(GuiSkin);
-            ConsoleGui.RootItem.AddChild(new Widget
+            ConsoleGui.RootItem.AddChild(new Gui.Widgets.DwarfConsole
             {
                 Background = new TileReference("basic", 0),
                 Rect = new Rectangle(0, 0, GuiSkin.VirtualScreen.Width, 128)
             });
+
+            ConsoleGui.RootItem.Layout();
+            (ConsoleGui.RootItem.GetChild(0) as Gui.Widgets.DwarfConsole).AddMessage("This T is\nTTTT a test\nmessage");
 
                 if (SoundManager.Content == null)
                 {

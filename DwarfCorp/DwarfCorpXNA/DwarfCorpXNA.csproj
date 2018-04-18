@@ -229,6 +229,7 @@
     <Compile Include="Gui\TextureGeneratorAttribute.cs" />
     <Compile Include="Gui\Widgets\EmployeeAIDebugPanel.cs" />
     <Compile Include="Gui\Widgets\FreeText.cs" />
+    <Compile Include="Gui\Widgets\DwarfConsole.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
