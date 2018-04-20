@@ -10,7 +10,7 @@ namespace DwarfCorp
 {
     public static class ModCompiler
     {
-        public static Assembly CompileCode(IEnumerable<String> Files, Action<String> ReportError)
+        public static Assembly CompileCode(IEnumerable<String> Files)
         {
             var codeProvider = CodeDomProvider.CreateProvider("CSharp");
 
@@ -42,16 +42,16 @@ namespace DwarfCorp
 
             var compilationResults = codeProvider.CompileAssemblyFromFile(parameters, Files.ToArray());
 
+            foreach (var msg in compilationResults.Output)
+                Console.WriteLine(msg);
+
             bool realError = false;
-            if (compilationResults.Errors.Count > 0)
-            {
                 foreach (var error in compilationResults.Errors)
                 {
                     var cError = error as CompilerError;
                     if (!cError.IsWarning) realError = true;
-                    ReportError(String.Format("{0} {1}: {2}", cError.FileName, cError.Line, cError.ErrorText));
+                    Console.WriteLine(String.Format("{0} {1}: {2}", cError.FileName, cError.Line, cError.ErrorText));
                 }
-            }
 
             if (realError) return null;
             return compilationResults.CompiledAssembly;

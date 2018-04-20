@@ -8,7 +8,7 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class DwarfConsole : Gui.Widget
     {
-        private List<String> Messages = new List<String>();
+        private List<String> Lines = new List<String>();
         private System.Threading.Mutex MessageLock = new System.Threading.Mutex();
         private bool NeedsInvalidated = false;
 
@@ -37,7 +37,7 @@ namespace DwarfCorp.Gui.Widgets
                 MessageLock.ReleaseMutex();
             };
 
-            Messages.Add("");
+            Lines.Add("");
 
             TextGrid = AddChild(new TextGrid
             {
@@ -47,40 +47,35 @@ namespace DwarfCorp.Gui.Widgets
             }) as TextGrid;
         }
 
-        public void AddMessage(String Message)
+        public void Append(char C)
         {
-            // AddMessage is called by another thread - need to protect the list.
             MessageLock.WaitOne();
-
-            var last = Messages.Last();
-            foreach (var c in Message)
+            if (C == '\n')
             {
-                if (c == '\n')
+                Lines.Add("");
+                if (Lines.Count > TextGrid.TextHeight)
+                    Lines.RemoveAt(0);
+            }
+            else
+            {
+                Lines[Lines.Count - 1] += C;
+                if (Lines[Lines.Count - 1].Length >= TextGrid.TextWidth)
                 {
-                    Messages[Messages.Count - 1] = last;
-                    Messages.Add("");
-                    if (Messages.Count > TextGrid.TextHeight)
-                        Messages.RemoveAt(0);
-                    last = "";
-                }
-                else
-                {
-                    last += c;
-                    if (last.Length >= TextGrid.TextWidth)
-                    {
-                        Messages[Messages.Count - 1] = last;
-                        Messages.Add("");
-                        if (Messages.Count > TextGrid.TextHeight)
-                            Messages.RemoveAt(0);
-                        last = "";
-                    }
+                    Lines.Add("");
+                    if (Lines.Count > TextGrid.TextHeight)
+                        Lines.RemoveAt(0);
                 }
             }
-            Messages[Messages.Count - 1] = last;
-                        
+
             // Need to invalidate inside the main GUI thread or else!
             NeedsInvalidated = true;
             MessageLock.ReleaseMutex();
+        }
+
+        public void AddMessage(String Message)
+        {
+            foreach (var c in Message)
+                Append(c);
         }
 
         protected override Gui.Mesh Redraw()
@@ -88,12 +83,12 @@ namespace DwarfCorp.Gui.Widgets
             MessageLock.WaitOne();
             var i = 0;
             var y = 0;
-            for (; y < Messages.Count; ++y)
+            for (; y < Lines.Count; ++y)
             {
                 var x = 0;
-                for (; x < Messages[y].Length; ++x)
+                for (; x < Lines[y].Length; ++x)
                 {
-                    TextGrid.SetCharacter(i, Messages[y][x]);
+                    TextGrid.SetCharacter(i, Lines[y][x]);
                     ++i;
                 }
                 for (; x < TextGrid.TextWidth; ++x)
@@ -115,11 +110,6 @@ namespace DwarfCorp.Gui.Widgets
             TextGrid.Invalidate();
 
             return base.Redraw();
-        }
-
-        public bool HasMesssage(string loadingMessage)
-        {
-            return Messages.Contains(loadingMessage);
         }
     }
 }

@@ -58,6 +58,42 @@ namespace DwarfCorp
         public static bool COMPRESSED_BINARY_SAVES = false;
 #endif
 
+        private class LogWriter : StreamWriter
+        {
+            public Gui.Widgets.DwarfConsole Console = null;
+
+            public LogWriter(FileStream Output) : base(Output)
+            {
+                AutoFlush = true;
+            }
+
+            public override void Write(char value)
+            {
+                if (Console != null)
+                    Console.Append(value);
+
+                base.Write(value);
+            }
+
+            public override void Write(string value)
+            {
+                if (Console != null) Console.AddMessage(value);
+                base.Write(value);
+            }
+
+            public override void Write(char[] buffer)
+            {
+                if (Console != null) foreach (var c in buffer) Console.Append(c);
+                base.Write(buffer);
+            }
+
+            public override void Write(char[] buffer, int index, int count)
+            {
+                if (Console != null) for (var x = index; x < index + count; ++x) Console.Append(buffer[x]);
+                base.Write(buffer, index, count);
+            }            
+        }
+
         public GameStateManager StateManager { get; set; }
         public GraphicsDeviceManager Graphics;
         public AssetManager TextureManager { get; set; }
@@ -72,7 +108,7 @@ namespace DwarfCorp
 
         public const string GameName = "DwarfCorp";
         public static bool HasRendered = false;
-        private static StreamWriter _logwriter;
+        private static LogWriter _logwriter;
         private static TextWriter _initialOut;
         private static TextWriter _initialError;
 
@@ -236,7 +272,7 @@ namespace DwarfCorp
                     System.IO.File.WriteAllText(path, string.Empty);
                 }
                 FileStream writerOutput = new FileStream(path, FileMode.Append, FileAccess.Write);
-                _logwriter = new StreamWriter(writerOutput) { AutoFlush = true };
+                _logwriter = new LogWriter(writerOutput);
                 _initialOut = Console.Out;
                 _initialError = Console.Error;
                 Console.SetOut(_logwriter);
@@ -291,15 +327,19 @@ namespace DwarfCorp
                 //GumInput.AddAction("TEST", Gui.Input.KeyBindingType.Pressed);
 
                 GuiSkin = new RenderData(GraphicsDevice, Content);
+
+            // Create console.
             ConsoleGui = new Gui.Root(GuiSkin);
-            ConsoleGui.RootItem.AddChild(new Gui.Widgets.DwarfConsole
+            var _console = ConsoleGui.RootItem.AddChild(new Gui.Widgets.DwarfConsole
             {
                 Background = new TileReference("basic", 0),
                 Rect = new Rectangle(0, 0, GuiSkin.VirtualScreen.Width, 128)
-            });
+            }) as Gui.Widgets.DwarfConsole;
 
             ConsoleGui.RootItem.Layout();
-            (ConsoleGui.RootItem.GetChild(0) as Gui.Widgets.DwarfConsole).AddMessage("This T is\nTTTT a test\nmessage");
+            _logwriter.Console = _console;
+
+            Console.Out.WriteLine("Console created.");
 
                 if (SoundManager.Content == null)
                 {

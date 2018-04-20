@@ -59,18 +59,23 @@ namespace DwarfCorp
         private static ContentManager Content { get { return GameState.Game.Content; } }
         private static GraphicsDevice Graphics {  get { return GameState.Game.GraphicsDevice; } }
         private static List<Assembly> Assemblies = new List<Assembly>();
+        private static List<String> DirectorySearchList;
 
         public static void Initialize(ContentManager Content, GraphicsDevice Graphics, GameSettings.Settings Settings)
         {
+            DirectorySearchList = Settings.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
+            DirectorySearchList.Reverse();
+            DirectorySearchList.Add("Content");
+
             Assemblies.Add(Assembly.GetExecutingAssembly());
 
-            foreach (var mod in EnumerateModDirectories(Settings))
+            foreach (var mod in DirectorySearchList)
                 if (System.IO.Directory.Exists(mod))
                 {
                     var csFiles = Directory.EnumerateFiles(mod).Where(s => Path.GetExtension(s) == ".cs");
                     if (csFiles.Count() > 0)
                     {
-                        var assembly = ModCompiler.CompileCode(csFiles, (error) => { });
+                        var assembly = ModCompiler.CompileCode(csFiles);
                         if (assembly != null)
                             Assemblies.Add(assembly);
                     }
@@ -112,14 +117,6 @@ namespace DwarfCorp
             }
         }
 
-        private static IEnumerable<String> EnumerateModDirectories(GameSettings.Settings Settings)
-        {
-            var searchList = Settings.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
-            searchList.Reverse();
-            searchList.Add("Content");
-            return searchList;
-        }
-
         public static string ReverseLookup(Texture2D Texture)
         {
             var r = TextureCache.Where(p => p.Value == Texture).Select(p => p.Key).FirstOrDefault();
@@ -136,7 +133,7 @@ namespace DwarfCorp
             else
                 extensionList.Add("");
 
-            foreach (var mod in EnumerateModDirectories(GameSettings.Default))
+            foreach (var mod in DirectorySearchList)
             {
                 foreach (var extension in extensionList)
                 {
