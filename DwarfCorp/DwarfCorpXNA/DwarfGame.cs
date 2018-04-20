@@ -60,7 +60,14 @@ namespace DwarfCorp
 
         private class LogWriter : StreamWriter
         {
-            public Gui.Widgets.DwarfConsole Console = null;
+            private Gui.Widgets.DwarfConsole Console = null;
+            private System.Text.StringBuilder PreConsoleQueue = new System.Text.StringBuilder();
+
+            public void SetConsole(Gui.Widgets.DwarfConsole Console)
+            {
+                this.Console = Console;
+                Console.AddMessage(PreConsoleQueue.ToString());
+            }
 
             public LogWriter(FileStream Output) : base(Output)
             {
@@ -71,27 +78,40 @@ namespace DwarfCorp
             {
                 if (Console != null)
                     Console.Append(value);
+                else
+                    PreConsoleQueue.Append(value);
 
                 base.Write(value);
             }
 
-            public override void Write(string value)
-            {
-                if (Console != null) Console.AddMessage(value);
-                base.Write(value);
-            }
+            //public override void Write(string value)
+            //{
+            //    if (Console != null) Console.AddMessage(value);
+            //    base.Write(value);
+            //}
 
-            public override void Write(char[] buffer)
-            {
-                if (Console != null) foreach (var c in buffer) Console.Append(c);
-                base.Write(buffer);
-            }
+            //public override void Write(char[] buffer)
+            //{
+            //    if (Console != null) foreach (var c in buffer) Console.Append(c);
+            //    base.Write(buffer);
+            //}
 
             public override void Write(char[] buffer, int index, int count)
             {
-                if (Console != null) for (var x = index; x < index + count; ++x) Console.Append(buffer[x]);
+                if (Console != null)
+                    for (var x = index; x < index + count; ++x)
+                        Console.Append(buffer[x]);
+                else
+                    PreConsoleQueue.Append(buffer, index, count);
+
                 base.Write(buffer, index, count);
-            }            
+            }
+
+            public override void WriteLine(string value)
+            {
+                foreach (var c in value) Write(c);
+                Write('\n');
+            }
         }
 
         public GameStateManager StateManager { get; set; }
@@ -133,8 +153,6 @@ namespace DwarfCorp
             Window.AllowUserResizing = false;
             MainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
             GameSettings.Load();
-            AssetManager.Initialize(Content, GraphicsDevice, GameSettings.Default);
-
 
             try
             {
@@ -291,7 +309,7 @@ namespace DwarfCorp
             try
             {
 #endif
-            var dir = GetGameDirectory();
+                var dir = GetGameDirectory();
                 if (!System.IO.Directory.Exists(dir))
                 {
                     System.IO.Directory.CreateDirectory(dir);
@@ -319,8 +337,10 @@ namespace DwarfCorp
             try
             {
 #endif
+            AssetManager.Initialize(Content, GraphicsDevice, GameSettings.Default);
+
             // Prepare GemGui
-             GumInputMapper = new Gui.Input.GumInputMapper(Window.Handle);
+            GumInputMapper = new Gui.Input.GumInputMapper(Window.Handle);
                 GumInput = new Gui.Input.Input(GumInputMapper);
 
                 // Register all bindable actions with the input system.
@@ -337,7 +357,7 @@ namespace DwarfCorp
             }) as Gui.Widgets.DwarfConsole;
 
             ConsoleGui.RootItem.Layout();
-            _logwriter.Console = _console;
+            _logwriter.SetConsole(_console);
 
             Console.Out.WriteLine("Console created.");
 
