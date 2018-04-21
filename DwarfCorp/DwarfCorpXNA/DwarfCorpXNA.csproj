@@ -162,6 +162,7 @@
     <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
     <Compile Include="AssetManagement\GameSave\OverworldFile.cs" />
     <Compile Include="AssetManagement\AssetManager.cs" />
+    <Compile Include="AssetManagement\Steam\Steam.cs" />
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
@@ -829,6 +830,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Facepunch.Steamworks\Facepunch.Steamworks\Facepunch.Steamworks.csproj">
+      <Project>{ae32c8dd-f5b8-44b2-87ae-88a04002ad1f}</Project>
+      <Name>Facepunch.Steamworks</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DwarfCorpContent\DwarfCorpXNAContent.contentproj">
       <Project>{D48F9E36-1F42-4633-B745-8C659D9550D4}</Project>
       <Name>DwarfCorpXNAContent</Name>

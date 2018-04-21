@@ -37,6 +37,7 @@ using DwarfCorp.Gui;
 using DwarfCorp.Gui.Widgets;
 using System.Linq;
 using System;
+using DwarfCorp.AssetManagement.Steam;
 
 namespace DwarfCorp.GameStates
 {
@@ -47,18 +48,26 @@ namespace DwarfCorp.GameStates
     {
         private Gui.Root GuiRoot;
         private bool HasChanges = false;
+        private Steam Steam;
 
         public ManageModsState(DwarfGame game, GameStateManager stateManager) :
             base(game, "ManageModsState", stateManager)
         {
+            Steam = new Steam();
+        }
+        struct ModName
+        {
+            public string filename;
+            public string foldername;
         }
 
-        private List<string> DetectMods()
+
+        private List<ModName> DetectMods()
         {
             if (System.IO.Directory.Exists("Mods"))
-                return System.IO.Directory.EnumerateDirectories("Mods").Select(p => System.IO.Path.GetFileName(p)).ToList();
+                return System.IO.Directory.EnumerateDirectories("Mods").Select(p => new ModName { filename = System.IO.Path.GetFileName(p), foldername = System.IO.Path.GetFullPath(p) } ).ToList();
             else
-                return new List<string>();
+                return new List<ModName>();
         }
 
         private class Mod
@@ -66,6 +75,7 @@ namespace DwarfCorp.GameStates
             public bool Enabled = false;
             public string Name;
             public Widget LineItem;
+            public string Folder;
         }
 
         public override void OnEnter()
@@ -73,13 +83,13 @@ namespace DwarfCorp.GameStates
             var availableMods = DetectMods();
             var enabledMods = new List<String>(GameSettings.Default.EnabledMods);
             foreach (var mod in GameSettings.Default.EnabledMods)
-                if (!availableMods.Contains(mod))
+                if (!availableMods.Any(m => m.filename == mod))
                     enabledMods.Remove(mod);
             foreach (var mod in enabledMods)
-                availableMods.Remove(mod);
+                availableMods.RemoveAll(m => m.filename == mod);
             var allMods = new List<Mod>();
-            allMods.AddRange(enabledMods.Select(m => new Mod { Enabled = true, Name = m }));
-            allMods.AddRange(availableMods.Select(m => new Mod { Enabled = false, Name = m }));
+            allMods.AddRange(enabledMods.Select(m => new Mod { Enabled = true, Name = m, Folder = m}));
+            allMods.AddRange(availableMods.Select(m => new Mod { Enabled = false, Name = m.filename, Folder = m.foldername }));
 
 
 
@@ -156,6 +166,30 @@ namespace DwarfCorp.GameStates
 
             foreach (var mod in allMods)
             {
+                var upload = GuiRoot.ConstructWidget(new Button()
+                {
+                    Text = "UPLOAD",
+                    OnClick = (sender, args) =>
+                    {
+                        try
+                        {
+                            Steam.CreateMod(mod.Folder);
+                            GuiRoot.ShowModalPopup(new Popup()
+                            {
+                                Text = "Successfully uploaded the mod to Steam."
+                            });
+                        }
+                        catch (Exception exception)
+                        {
+                            GuiRoot.ShowModalPopup(new Popup()
+                            {
+                                Text = exception.Message
+                            });
+                        }
+
+                    }
+                });
+
                 var lineItem = GuiRoot.ConstructWidget(new CheckBox
                 {
                     MinimumSize = new Point(1, 32),
@@ -177,7 +211,8 @@ namespace DwarfCorp.GameStates
 
                 mod.LineItem = lineItem;
 
-                list.AddItem(lineItem);               
+                list.AddItem(lineItem);
+                list.AddItem(upload);
             }
 
             bottom.AddChild(new Gui.Widgets.Button

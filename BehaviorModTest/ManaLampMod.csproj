@@ -54,11 +54,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="craft-items.json" />
+    <None Include="meta.json" />
     <None Include="sheets.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mana-lamp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="preview.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
