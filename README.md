@@ -28,7 +28,7 @@ To build and run in the game on a windows PC, you must do the following:
 2. Download and install the XNA Game Studio 4.0 library (or install [MXA](https://mxa.codeplex.com/) from our repository if you are running Windows 8 or higher)
 
 #### INSTALLING MXA ####
-We started developing DwarfCorp in 2012. Back then, XNA was still a supported library in Visual Studio 2010. Ever since then, support has been dropped. So if you want to compile the game in say, Visual Studio 2017 Community, you will need to install the hacked up "MXA". This is a version of XNA that is hacked together to work on newer versions of Windows. We have included this in a folder called "MXA" under the root of our repository. Open that zip file, and install the dependencies one by one.
+We started developing DwarfCorp in 2012. Back then, XNA was still a supported library in Visual Studio 2010. Ever since then, support has been dropped. So if you want to compile the game in say, Visual Studio 2017 Community, you will need to install the hacked up "MXA". This is a version of XNA that is hacked together to work on newer versions of Windows. We have included this in a folder called "MXA" under the root of our repository. Open that zip file, and install the dependencies one by one (there are 5 in the zip folder).
 
 Note that in 2017, the MXA project seems to have disappeared itself. Newer versions of Visual Studio (2017 and higher) don't seem to work with it. Luckily, there is *another hack* that you can apply to MXA to get it working with Visual Studio 2017 here:
 
