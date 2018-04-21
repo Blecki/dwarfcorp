@@ -58,7 +58,7 @@ namespace DwarfCorp
         private static Dictionary<String, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
         private static ContentManager Content { get { return GameState.Game.Content; } }
         private static GraphicsDevice Graphics {  get { return GameState.Game.GraphicsDevice; } }
-        private static List<Assembly> Assemblies = new List<Assembly>();
+        private static List<Tuple<String,Assembly>> Assemblies = new List<Tuple<String,Assembly>>();
         private static List<String> DirectorySearchList;
 
         public static void Initialize(ContentManager Content, GraphicsDevice Graphics, GameSettings.Settings Settings)
@@ -67,7 +67,7 @@ namespace DwarfCorp
             DirectorySearchList.Reverse();
             DirectorySearchList.Add("Content");
 
-            Assemblies.Add(Assembly.GetExecutingAssembly());
+            Assemblies.Add(Tuple.Create("BaseContent", Assembly.GetExecutingAssembly()));
 
             foreach (var mod in DirectorySearchList)
                 if (System.IO.Directory.Exists(mod))
@@ -77,14 +77,37 @@ namespace DwarfCorp
                     {
                         var assembly = ModCompiler.CompileCode(csFiles);
                         if (assembly != null)
-                            Assemblies.Add(assembly);
+                            Assemblies.Add(Tuple.Create(mod, assembly));
                     }
                 }
         }
 
-        public static IEnumerable<Assembly> EnumerateLoadedModAssemblies()
+        public static IEnumerable<Tuple<String,Assembly>> EnumerateLoadedModAssemblies()
         {
             return Assemblies;
+        }
+
+        public static String GetSourceModOfType(Type T)
+        {
+            foreach (var mod in Assemblies)
+            {
+                if (T.Assembly == mod.Item2)
+                    return mod.Item1;
+            }
+
+            return "$"; // The type wasn't from one of the loaded mods.
+        }
+
+        public static Type GetTypeFromMod(String T, String Assembly)
+        {
+            if (Assembly[0] == '$')
+                return Type.GetType(T, true);
+
+            foreach (var mod in Assemblies)
+                if (mod.Item1 == Assembly)
+                    return mod.Item2.GetType(T);
+
+            return null;
         }
 
         private static bool CheckMethod(MethodInfo Method, Type ReturnType, Type[] ArgumentTypes)
@@ -104,7 +127,7 @@ namespace DwarfCorp
         {
             foreach (var assembly in EnumerateLoadedModAssemblies())
             {
-                foreach (var type in assembly.GetTypes())
+                foreach (var type in assembly.Item2.GetTypes())
                 {
                     foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public))
                     {
