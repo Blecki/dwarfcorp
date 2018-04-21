@@ -1,0 +1,7 @@
+﻿{
+	"Name" : "Mana Lamp",
+	"Description" : "Adds a new entity called the Mana Lamp. This is a test.",
+	"PreviewURL" : "preview.png",
+	"Tags" : ["Mod", "Entity", "Test"],
+	"ChangeNote" : "First change"
+}
