@@ -167,6 +167,7 @@ namespace DwarfCorp
             VoxelListPrimitive primitive = new VoxelListPrimitive();
             primitive.InitializeFromChunk(this);
 
+            // TODO: Move to main thread!
             var changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");
             foreach (var c in Manager.World.CollisionManager.EnumerateIntersectingObjects(GetBoundingBox(),
                 CollisionManager.CollisionType.Both).OfType<GameComponent>())

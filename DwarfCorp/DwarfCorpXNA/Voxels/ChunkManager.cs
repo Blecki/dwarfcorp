@@ -179,7 +179,7 @@ namespace DwarfCorp
                     if (chunk != null)
                         chunk.Rebuild(GameState.Game.GraphicsDevice);
                     else
-                        Thread.Yield();
+                        Thread.Sleep(10);
                 }
             }
 #if CREATE_CRASH_LOGS

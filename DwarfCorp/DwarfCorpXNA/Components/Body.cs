@@ -63,6 +63,8 @@ namespace DwarfCorp
         public bool IsReserved = false;
         public GameComponent ReservedFor = null;
         private BoundingBox lastBounds = new BoundingBox();
+        private OctTreeNode<Body> CachedOcttreeNode = null;
+        private bool OcttreeNodeWasSubdivided = false;
         
         [JsonIgnore]public Matrix GlobalTransform
         {
@@ -73,11 +75,39 @@ namespace DwarfCorp
 
                 UpdateBoundingBox();
 
+                bool reinsertRoot = false;
+                //bool reinsertSub = false;
+
+                if (CachedOcttreeNode == null)
+                    reinsertRoot = true;
+                else
+                {
+                    if (CachedOcttreeNode.Bounds.Contains(BoundingBox) != ContainmentType.Contains)
+                        reinsertRoot = true;
+                    //if (!OcttreeNodeWasSubdivided && CachedOcttreeNode.Children != null)
+                    //    reinsertSub = true;
+                }
+
+                if (reinsertRoot)
+                {
+                    Manager.World.CollisionManager.Tree.RemoveItem(this, lastBounds);
+                    if (!IsDead)
+                        CachedOcttreeNode = Manager.World.CollisionManager.Tree.AddToTreeEx(Tuple.Create(this, BoundingBox));
+                }
+                else
+                {
+                    CachedOcttreeNode.RemoveItem(this, lastBounds);
+                    if (!IsDead)
+                        CachedOcttreeNode = CachedOcttreeNode.AddToTreeEx(Tuple.Create(this, BoundingBox));
+                }
+
+                // Todo: Save bounds of current cell and only update if the item moves beyond it's boundaries.
+
                // if (IsFlagSet(Flag.AddToCollisionManager))
                // {
-                    Manager.World.CollisionManager.RemoveObject(this, lastBounds);
-                    if (!IsDead)
-                        Manager.World.CollisionManager.AddObject(this);
+                    //Manager.World.CollisionManager.RemoveObject(this, lastBounds);
+                    //if (!IsDead)
+                    //    Manager.World.CollisionManager.AddObject(this);
                // }
 
                 lastBounds = BoundingBox;

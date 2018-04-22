@@ -49,7 +49,7 @@ namespace DwarfCorp
             Both = Static | Dynamic
         }
 
-        private OctTreeNode<Body> Tree;
+        public OctTreeNode<Body> Tree;
 
         public CollisionManager()
         {

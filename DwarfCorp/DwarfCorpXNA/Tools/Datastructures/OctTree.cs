@@ -54,6 +54,7 @@ namespace DwarfCorp
             AddToTree(Tuple.Create(Item, Point));
         }
 
+        // Todo: Need version that returns highest level node that fully contains item.
         private void AddToTree(Tuple<T, BoundingBox> Item)
         {
             lock (Lock)
@@ -79,6 +80,37 @@ namespace DwarfCorp
                 {
                     Items.Add(Item);
                 }
+            }
+        }
+
+        public OctTreeNode<T> AddToTreeEx(Tuple<T, BoundingBox> Item)
+        {
+            lock (Lock)
+            {
+                var containment = Bounds.Contains(Item.Item2);
+                if (containment == ContainmentType.Disjoint) return null;
+
+                if (Children == null && Items.Count == SubdivideThreshold && (Bounds.Max.X - Bounds.Min.X) > MinimumSize)
+                {
+                    Subdivide();
+                    for (var i = 0; i < Items.Count; ++i)
+                        for (var c = 0; c < 8; ++c)
+                            Children[c].AddToTree(Items[i]);
+                }
+
+                if (Children != null)
+                {
+                    for (var i = 0; i < 8; ++i)
+                    {
+                        var cr = Children[i].AddToTreeEx(Item);
+                        if (cr != null)
+                            return cr;
+                    }
+                }
+                else
+                    Items.Add(Item);
+
+                return this;
             }
         }
 
