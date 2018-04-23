@@ -101,6 +101,17 @@ namespace DwarfCorp
             }
         }
 
+        /// <summary>
+        /// Sets the global transform without any book-keeping or change detection mechanisms.
+        /// !!DANGEROUS!!
+        /// Failure to restore the transform when whatever operation called this is finished can break EVERYTHING!
+        /// </summary>
+        /// <param name="T"></param>
+        public void RawSetGlobalTransform(Matrix T)
+        {
+            globalTransform = T;
+        }
+
         [JsonIgnore]
         public Vector3 Position
         {

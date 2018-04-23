@@ -102,11 +102,10 @@ namespace DwarfCorp
             if (type.CompositeLayers.Count == 1)
             {
                 var layer = type.CompositeLayers[0];
-                sprite = AddChild(new SimpleSprite(Manager, "Sprite",
+                sprite = AddChild(new SimpleBobber(Manager, "Sprite",
                     Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
-                    false,
                     new SpriteSheet(layer.Asset, layer.FrameSize.X, layer.FrameSize.Y),
-                    layer.Frame)
+                    layer.Frame, 0.5f, 2.0f, MathFunctions.Rand() * 3.0f)
                 {
                     OrientationType = SimpleSprite.OrientMode.Spherical,
                     WorldHeight = 0.75f,
@@ -127,10 +126,9 @@ namespace DwarfCorp
                     });
                 }
 
-                sprite = AddChild(new LayeredSimpleSprite(Manager, "Sprite",
+                sprite = AddChild(new LayeredBobber(Manager, "Sprite",
                     Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
-                    false,
-                    layers)
+                    layers, 0.5f, 2.0f, MathFunctions.Rand() * 3.0f)
                 {
                     OrientationType = LayeredSimpleSprite.OrientMode.Spherical,
                     WorldHeight = 0.75f,
@@ -140,8 +138,6 @@ namespace DwarfCorp
 
             sprite.Tint = type.Tint;
             sprite.SetFlag(Flag.ShouldSerialize, false);
-
-            sprite.AddChild(new Bobber(Manager, 0.05f, 2.0f, MathFunctions.Rand() * 3.0f, sprite.LocalTransform.Translation.Y)).SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }
