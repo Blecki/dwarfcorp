@@ -24,7 +24,10 @@ namespace DwarfCorp
         }
 
         public Bed(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
-            base(manager, "Bed", Matrix.CreateTranslation(position), new Vector3(2.0f, 0.5f, 1.0f), new Vector3(0.45f, 0.2f, 0.0f), new DwarfCorp.CraftDetails(manager, "Bed", resources))
+            base(manager, "Bed", Matrix.CreateTranslation(position), 
+                new Vector3(1.9f, 0.4f, 0.9f),
+                new Vector3(0.5f, 0.25f, 0.0f), 
+                new DwarfCorp.CraftDetails(manager, "Bed", resources))
         {
             Tags.Add("Bed");
             CollisionType = CollisionManager.CollisionType.Static;
@@ -41,10 +44,6 @@ namespace DwarfCorp
             GetComponent<Box>().Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
-        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
-            GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
-        {
-        }
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {

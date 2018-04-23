@@ -181,6 +181,7 @@ namespace DwarfCorp
             Matrix mat = Matrix.CreateRotationY(angle);
             mat.Translation = LocalTransform.Translation;
             LocalTransform = mat;
+            PropogateTransforms();
         } 
         
         public virtual void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)

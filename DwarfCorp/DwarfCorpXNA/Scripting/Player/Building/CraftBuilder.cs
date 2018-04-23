@@ -299,6 +299,14 @@ namespace DwarfCorp
             {
                 // Just check for any intersecting body in octtree.
 
+                if (OverrideOrientation)
+                {
+                    CurrentCraftBody.Orient(CurrentOrientation);
+                }
+                else
+                {
+                    CurrentCraftBody.OrientToWalls();
+                }
 
                 var intersectsAnyOther = Faction.OwnedObjects.FirstOrDefault(
                     o => o != null &&
@@ -373,14 +381,14 @@ namespace DwarfCorp
                                 };
                                 CurrentCraftBody.SetFlag(GameComponent.Flag.ShouldSerialize, true);
 
+                                if (newDesignation.OverrideOrientation)
+                                    newDesignation.Entity.Orient(newDesignation.Orientation);
+                                else
+                                    newDesignation.Entity.OrientToWalls();
+
                                 if (IsValid(newDesignation))
                                 {
                                     var task = new CraftItemTask(newDesignation);
-
-                                    if (newDesignation.OverrideOrientation)
-                                        newDesignation.Entity.Orient(newDesignation.Orientation);
-                                    else
-                                        newDesignation.Entity.OrientToWalls();
 
                                     assignments.Add(task);
 
