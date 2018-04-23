@@ -315,6 +315,7 @@ namespace DwarfCorp
             public static string WaterFlat = "WaterFlat";
             public static string WaterTextured = "WaterTextured";
             public static string Untextured = "Untextured";
+            public static string Untextured_Pulse = "Untextured_Pulse";
             public static string ShadowMap = "Shadow";
             public static string ShadowMapInstanced = "ShadowInstanced";
             public static string SelectionBuffer = "Selection";

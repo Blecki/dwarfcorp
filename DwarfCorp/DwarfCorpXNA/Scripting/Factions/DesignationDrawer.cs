@@ -44,8 +44,7 @@ namespace DwarfCorp
     public class DesignationDrawer
     {
         public DesignationType VisibleTypes = DesignationType._All;
-
-        private class DesignationTypeProperties
+        public class DesignationTypeProperties
         {
             public Color Color;
             public Color ModulatedColor;
@@ -53,7 +52,7 @@ namespace DwarfCorp
             public float LineWidth = 0.1f;
         }
 
-        private Dictionary<DesignationType, DesignationTypeProperties> DesignationProperties = new Dictionary<DesignationType, DesignationTypeProperties>();
+        public static Dictionary<DesignationType, DesignationTypeProperties> DesignationProperties = new Dictionary<DesignationType, DesignationTypeProperties>();
 
         private static DesignationTypeProperties DefaultProperties = new DesignationTypeProperties
         {
@@ -129,6 +128,7 @@ namespace DwarfCorp
                     255);
             }
 
+            List<uint> removals = new List<uint>();
             foreach (var voxel in Set.EnumerateDesignations())
             {
                 if ((voxel.Type & VisibleTypes) == voxel.Type)
@@ -143,12 +143,21 @@ namespace DwarfCorp
                         Drawer2D.DrawSprite(props.Icon, v + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
                     }
 
+
                     if (voxel.Type == DesignationType.Put) // Hate this.
                         DrawPhantomCallback(v, VoxelLibrary.GetVoxelType(voxel.Tag.ToString()));
-                    else
-                        DrawBoxCallback(v, Vector3.One, props.ModulatedColor, props.LineWidth, true);
+                    else if (voxel._drawing == 0)
+                        voxel._drawing = DesignationSet.TriangleCache.AddTopBox(voxel.Voxel.GetBoundingBox(),
+                            DesignationProperties[voxel.Type].Color,
+                            DesignationProperties[voxel.Type].LineWidth, true);
+                }
+                else if (voxel._drawing > 0)
+                {
+                    removals.Add(voxel._drawing);
+                    voxel._drawing = 0;
                 }
             }
+            DesignationSet.TriangleCache.EraseSegments(removals);
 
             foreach (var entity in Set.EnumerateEntityDesignations())
             {

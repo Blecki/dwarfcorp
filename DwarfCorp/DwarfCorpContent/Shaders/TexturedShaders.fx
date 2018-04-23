@@ -157,6 +157,21 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 		return Output;
 	}
 
+    UTVertexToPixel UTexturedVS_Pulse( float4 inPos_ : POSITION,  float4 inColor : COLOR0)
+	{
+		UTVertexToPixel Output = (UTVertexToPixel)0;
+		float4 inPos = inPos_; // +GetNoise(inPos_);
+		float4x4 preViewProjection = mul (xView, xProjection);
+		float4x4 preWorldViewProjection = mul (xWorld, preViewProjection);
+
+		Output.Position = mul(inPos, preWorldViewProjection);
+		Output.Color = inColor * xTint + float4(.2, .2, .2, 0) * pow(sin(xTime * 2 + 0.1 * inPos.x + 0.2 * inPos.z), 2);
+
+		Output.ClipDistance = Clipping * dot(mul(xWorld,inPos), ClipPlane0); //MSS - Water Refactor added
+
+		return Output;
+	}
+
 	UTPixelToFrame UTexturedPS(UTVertexToPixel PSIn)
 	{	
 	    UTPixelToFrame Output = (UTPixelToFrame)0;
@@ -180,6 +195,14 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 		}
 	}
 
+	technique Untextured_Pulse
+	{
+		pass Pass0
+		{   
+			VertexShader = compile vs_2_0 UTexturedVS_Pulse();
+			PixelShader = compile ps_2_0 UTexturedPS();
+		}
+	}
 
 float2 ClampTexture(float2 uv, float4 bounds)
 {

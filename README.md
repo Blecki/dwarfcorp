@@ -11,10 +11,10 @@ If you're a developer/programmer and have the technical chops to compile C# code
 To develop DwarfCorp, you need the following libraries. If you just want to play the game, download one of the packages on our releases page.
 
 * [The XNA 4.0](https://www.microsoft.com/en-us/download/details.aspx?id=23714) library (not included)
-* Note: If you are running Windows 8 or higher, you will need to download [MXA](https://mxa.codeplex.com/) instead.
+* Note: If you are running Windows 8 or higher, you will need to use [MXA](https://mxa.codeplex.com/) instead. This is included in our repository as a convenience. XNA has gotten very old and support was dropped for it long ago, and we must jump through hoops to get it working.
 * [XNA-FNA](https://github.com/FNA-XNA/FNA) for cross-platform development (forked)
 * [LibNoise.NET](https://libnoisedotnet.codeplex.com/) (source code included)
-* [JSON.NET](https://github.com/JamesNK/Newtonsoft.Json) (source code not included)
+* [JSON.NET](https://github.com/JamesNK/Newtonsoft.Json) (source code not included. You should get this through nuget.)
 
 ## Cross Platform Development
 It is not possible to develop the game on anything other than a Windows machine at the moment. The game is developed using XNA/FNA using the XNA content project, [which only supports a windows development environment](https://github.com/FNA-XNA/FNA/issues/126). That said, the game can be cross compiled for windows/mac using FNA, but only in windows in a Visual Studio environment.
@@ -24,12 +24,26 @@ It is not possible to develop the game on anything other than a Windows machine 
 To build and run in the game on a windows PC, you must do the following:
 
 ### Building for XNA on Windows
-1. Download and install the XNA Game Studio 4.0 library (or [MXA](https://mxa.codeplex.com/) if you are running Windows 8 or higher)
-2. Download and install Visual Studio. The project files were created for Visual Studio Professional 2013. Earlier versions may not work. "Express" versions may also not work.
+1. Download and install Visual Studio. Any version after 2012 will probably work. Our dev team currently uses Visual Studio 2017 Community.
+2. Download and install the XNA Game Studio 4.0 library (or install [MXA](https://mxa.codeplex.com/) from our repository if you are running Windows 8 or higher)
+
+#### INSTALLING MXA ####
+We started developing DwarfCorp in 2012. Back then, XNA was still a supported library in Visual Studio 2010. Ever since then, support has been dropped. So if you want to compile the game in say, Visual Studio 2017 Community, you will need to install the hacked up "MXA". This is a version of XNA that is hacked together to work on newer versions of Windows. We have included this in a folder called "MXA" under the root of our repository. Open that zip file, and install the dependencies one by one (there are 5 in the zip folder).
+
+Note that in 2017, the MXA project seems to have disappeared itself. Newer versions of Visual Studio (2017 and higher) don't seem to work with it. Luckily, there is *another hack* that you can apply to MXA to get it working with Visual Studio 2017 here:
+
+https://gist.github.com/roy-t/2f089414078bf7218350e8c847951255
+
+Note that we have included those hacks in our wiki here: https://github.com/CompletelyFairGames/dwarfcorp/wiki/Installing-MXA-Hacks
+
+
+#### Important note about the MXA Hacks!! ####
+These hacks will install `Microsoft.Build.Framework.dll` into the global assembly cache (`GAC`). Since the `GAC` is no longer used to install Visual Studio dependencies, *any upgrade you make to visual studio will break all of your projects* after applying this hack. To resolve this issue, you must *completely uninstall and reinstall visual studio* instead of upgrading it, and then reapply the MXA hacks to get DwarfCorp compiling.
+
 3. Open `DwarfCorp.sln` in Visual Studio
 4. Set `DwarfCorpXNA` as the `StartUp` project.
 5. Add references to `XNA` binaries to the `DwarfCorpXNA` project. They may also need to be added to the `DwarfCorpCore` project. 
-6. Build `LibNoise` and `Json.Net` projects
+6. Build `LibNoise` project
 7. Set the `DwarfCorpXNA` build mode to `Release` or `Debug`
 8. Build `DwarfCorpXNA`
 
@@ -39,24 +53,12 @@ To build and run in the game on a windows PC, you must do the following:
 * **I can't install xna on windows 10**
     * Install xna refresh https://mxa.codeplex.com/releases/view/618279
     * (you may find that google marks this download as malware. We do not endorse this binary but we have a programmer using it and virustotal seems to find no malware scanning the file)
-* **I can't download from the mxa website because chrome says it's malware**
-    * Use another browser or temporarily disable malware/phishing protection on chrome
+* **I can't download from the mxa website**
+    * If this happens, we've included a complete copy of MXA in our repository for you to use.
 * **'Unable to find manifest signing certificate in the certificate store'**
     * Project->DwarfCorpXNA properties-> Signing-> Create Test Certificate 
     * You can use whatever password you want
-* **'Cannot find wrapper assembly for type library "Microsoft.Office.Core"'**
-    I think this is error is caused if you don't have Microsoft Office.
-    1. Remove broken Microsoft.Office.Core reference.
-        * In the Solution Explorer tab under DwarfCorpXNA expand References. Right click 'Microsoft.Office.Core' and select Remove
-    2. Add working Microsoft.Office.Core reference.
-        * Project->Add Reference..->COM 
-        * search "microsoft office" which should turn up 'Microsoft Office 15.0 Object Library'. Add that and press OK
-* **'Could not find file 'LumenWorks.Framework.IO.dll'**
-    * Project->Manage NuGet Packages..->search for 'LumenWorks.Framework'
-    * This should turn up 'LumenWorks.Framework.IO'. Click Install. If given a prompt, just check DwarfCorpXNA.
-    * In the Solution Explorer tab under DwarfCorpXNA you will find LumenWorks.Framework.IO. Delete this file. Note: There will be reference to LumenWorks.Framework.IO under References. Do /not/ delete that reference.
     
-
 ### Building for FNA on Windows
 1. Open 'DwarfCorpFNA.sln' in Visual Studio
 2. Build for XNA first. This will create the content files needed by FNA. Do this from within DwarfCorpFNA.sln

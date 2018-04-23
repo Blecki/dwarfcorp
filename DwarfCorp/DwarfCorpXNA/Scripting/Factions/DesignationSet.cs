@@ -44,12 +44,15 @@ namespace DwarfCorp
 {
     public class DesignationSet
     {
+        public static TriangleCache TriangleCache = new TriangleCache();
         public class VoxelDesignation
         {
             public VoxelHandle Voxel;
             public DesignationType Type;
             public Object Tag;
             public Task Task;
+            [JsonIgnore]
+            public uint _drawing = 0;
 
             [OnDeserialized]
             public void OnDeserialized(StreamingContext ctx)
@@ -133,6 +136,13 @@ namespace DwarfCorp
             var key = GetVoxelQuickCompare(Voxel);
             if (!VoxelDesignations.ContainsKey(key)) return RemoveDesignationResult.DidntExist;
             var list = VoxelDesignations[key];
+            foreach (var designation in list)
+            {
+                if (designation._drawing > 0)
+                {
+                    TriangleCache.EraseSegment(designation._drawing);
+                }
+            }
             var r = list.RemoveAll(d => TypeSet(d.Type, Type)) == 0 ? RemoveDesignationResult.DidntExist : RemoveDesignationResult.Removed;
             if (list.Count == 0)
                 VoxelDesignations.Remove(key);
