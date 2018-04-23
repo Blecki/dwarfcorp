@@ -52,6 +52,7 @@ namespace DwarfCorp
             public float LineWidth = 0.1f;
         }
 
+        [JsonIgnore]
         public static Dictionary<DesignationType, DesignationTypeProperties> DesignationProperties = new Dictionary<DesignationType, DesignationTypeProperties>();
 
         private static DesignationTypeProperties DefaultProperties = new DesignationTypeProperties
@@ -63,6 +64,7 @@ namespace DwarfCorp
 
         public DesignationDrawer()
         {
+            DesignationProperties = new Dictionary<DesignationType, DesignationTypeProperties>();
             DesignationProperties.Add(DesignationType.Dig, new DesignationTypeProperties
             {
                 Color = Color.Red,
