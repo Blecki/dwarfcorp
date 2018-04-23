@@ -72,23 +72,9 @@ namespace DwarfCorp
             set
             {
                 globalTransform = value;
-
                 UpdateBoundingBox();
 
-                bool reinsertRoot = false;
-                //bool reinsertSub = false;
-
-                if (CachedOcttreeNode == null)
-                    reinsertRoot = true;
-                else
-                {
-                    if (CachedOcttreeNode.Bounds.Contains(BoundingBox) != ContainmentType.Contains)
-                        reinsertRoot = true;
-                    //if (!OcttreeNodeWasSubdivided && CachedOcttreeNode.Children != null)
-                    //    reinsertSub = true;
-                }
-
-                if (reinsertRoot)
+                if (CachedOcttreeNode == null || CachedOcttreeNode.Bounds.Contains(BoundingBox) != ContainmentType.Contains)
                 {
                     Manager.World.CollisionManager.Tree.RemoveItem(this, lastBounds);
                     if (!IsDead)
@@ -100,15 +86,6 @@ namespace DwarfCorp
                     if (!IsDead)
                         CachedOcttreeNode = CachedOcttreeNode.AddToTreeEx(Tuple.Create(this, BoundingBox));
                 }
-
-                // Todo: Save bounds of current cell and only update if the item moves beyond it's boundaries.
-
-               // if (IsFlagSet(Flag.AddToCollisionManager))
-               // {
-                    //Manager.World.CollisionManager.RemoveObject(this, lastBounds);
-                    //if (!IsDead)
-                    //    Manager.World.CollisionManager.AddObject(this);
-               // }
 
                 lastBounds = BoundingBox;
             }

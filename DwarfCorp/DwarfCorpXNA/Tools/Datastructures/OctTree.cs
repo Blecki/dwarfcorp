@@ -85,33 +85,34 @@ namespace DwarfCorp
 
         public OctTreeNode<T> AddToTreeEx(Tuple<T, BoundingBox> Item)
         {
-            lock (Lock)
+            var containment = Bounds.Contains(Item.Item2);
+            if (containment == ContainmentType.Disjoint) return null;
+
+            if (Children == null && Items.Count == SubdivideThreshold && (Bounds.Max.X - Bounds.Min.X) > MinimumSize)
             {
-                var containment = Bounds.Contains(Item.Item2);
-                if (containment == ContainmentType.Disjoint) return null;
-
-                if (Children == null && Items.Count == SubdivideThreshold && (Bounds.Max.X - Bounds.Min.X) > MinimumSize)
-                {
-                    Subdivide();
-                    for (var i = 0; i < Items.Count; ++i)
-                        for (var c = 0; c < 8; ++c)
-                            Children[c].AddToTree(Items[i]);
-                }
-
-                if (Children != null)
-                {
-                    for (var i = 0; i < 8; ++i)
-                    {
-                        var cr = Children[i].AddToTreeEx(Item);
-                        if (cr != null)
-                            return cr;
-                    }
-                }
-                else
-                    Items.Add(Item);
-
-                return this;
+                Subdivide();
+                for (var i = 0; i < Items.Count; ++i)
+                    for (var c = 0; c < 8; ++c)
+                        if (Children[c].AddToTreeEx(Items[i]) != null)
+                            break;
             }
+
+            if (Children != null)
+            {
+                for (var i = 0; i < 8; ++i)
+                {
+                    var cr = Children[i].AddToTreeEx(Item);
+                    if (cr != null)
+                        return cr;
+                }
+            }
+            else
+                Items.Add(Item);
+
+            if (containment == ContainmentType.Contains)
+                return this;
+
+            return null;
         }
 
         public void RemoveItem(T Item, BoundingBox Box)
