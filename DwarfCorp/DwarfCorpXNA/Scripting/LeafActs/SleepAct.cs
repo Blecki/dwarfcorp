@@ -97,13 +97,12 @@ namespace DwarfCorp
             {
                 while (!Creature.Status.Energy.IsSatisfied() && Creature.Manager.World.Time.IsNight())
                 {
-                    Creature.Physics.AllowPhysicsSleep = true;
-                    Creature.Physics.IsSleeping = true;
                     if (Teleport)
                     {
                         Creature.AI.Position = TeleportLocation;
                         Creature.Physics.Velocity = Vector3.Zero;
                         Creature.Physics.LocalPosition = TeleportLocation;
+                        Creature.Physics.AllowPhysicsSleep = true;
                         Creature.Physics.IsSleeping = true;
                     }
                     Creature.CurrentCharacterMode = CharacterMode.Sleeping;
