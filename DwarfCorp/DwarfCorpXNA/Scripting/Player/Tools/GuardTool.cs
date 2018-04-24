@@ -59,7 +59,7 @@ namespace DwarfCorp
                     if (v.IsEmpty || Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Guard))
                         continue;
 
-                    var task = new GuardZoneTask();
+                    var task = new GuardZoneTask() { Priority = Task.PriorityType.Eventually };
                     Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Guard, null, task);
                     assignedTasks.Add(task);
                 }
