@@ -49,6 +49,7 @@ namespace DwarfCorp
             Both = Static | Dynamic
         }
 
+        [JsonIgnore]
         public OctTreeNode<Body> Tree;
 
         public CollisionManager()
