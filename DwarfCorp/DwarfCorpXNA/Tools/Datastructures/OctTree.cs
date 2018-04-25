@@ -54,6 +54,7 @@ namespace DwarfCorp
             AddToTree(Tuple.Create(Item, Point));
         }
 
+        // Todo: Need version that returns highest level node that fully contains item.
         private void AddToTree(Tuple<T, BoundingBox> Item)
         {
             lock (Lock)
@@ -80,6 +81,38 @@ namespace DwarfCorp
                     Items.Add(Item);
                 }
             }
+        }
+
+        public OctTreeNode<T> AddToTreeEx(Tuple<T, BoundingBox> Item)
+        {
+            var containment = Bounds.Contains(Item.Item2);
+            if (containment == ContainmentType.Disjoint) return null;
+
+            if (Children == null && Items.Count == SubdivideThreshold && (Bounds.Max.X - Bounds.Min.X) > MinimumSize)
+            {
+                Subdivide();
+                for (var i = 0; i < Items.Count; ++i)
+                    for (var c = 0; c < 8; ++c)
+                        if (Children[c].AddToTreeEx(Items[i]) != null)
+                            break;
+            }
+
+            if (Children != null)
+            {
+                for (var i = 0; i < 8; ++i)
+                {
+                    var cr = Children[i].AddToTreeEx(Item);
+                    if (cr != null)
+                        return cr;
+                }
+            }
+            else
+                Items.Add(Item);
+
+            if (containment == ContainmentType.Contains)
+                return this;
+
+            return null;
         }
 
         public void RemoveItem(T Item, BoundingBox Box)
@@ -134,6 +167,48 @@ namespace DwarfCorp
         }
 
         public void EnumerateItems(BoundingBox SearchBounds, HashSet<T> Into)
+        {
+            lock (Lock)
+            {
+                if (SearchBounds.Intersects(Bounds))
+                {
+                    if (Children == null)
+                    {
+                        for (var i = 0; i < Items.Count; ++i)
+                            if (Items[i].Item2.Intersects(SearchBounds))
+                                Into.Add(Items[i].Item1);
+                    }
+                    else
+                    {
+                        for (var i = 0; i < 8; ++i)
+                            Children[i].EnumerateItems(SearchBounds, Into);
+                    }
+                }
+            }
+        }
+
+        public void EnumerateItems(BoundingBox SearchBounds, HashSet<T> Into, Func<T, bool> Filter)
+        {
+            lock (Lock)
+            {
+                if (SearchBounds.Intersects(Bounds))
+                {
+                    if (Children == null)
+                    {
+                        for (var i = 0; i < Items.Count; ++i)
+                            if (Items[i].Item2.Intersects(SearchBounds) && Filter(Items[i].Item1))
+                                Into.Add(Items[i].Item1);
+                    }
+                    else
+                    {
+                        for (var i = 0; i < 8; ++i)
+                            Children[i].EnumerateItems(SearchBounds, Into, Filter);
+                    }
+                }
+            }
+        }
+
+        public void EnumerateItems(BoundingFrustum SearchBounds, HashSet<T> Into)
         {
             lock (Lock)
             {

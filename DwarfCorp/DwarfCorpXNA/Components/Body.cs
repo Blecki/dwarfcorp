@@ -267,7 +267,7 @@ namespace DwarfCorp
         public override void Delete()
         {
             if (IsFlagSet(Flag.AddToCollisionManager))
-                Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
+                Manager.World.CollisionManager.RemoveObject(this, lastBounds);
 
             base.Delete();
         }
@@ -276,7 +276,7 @@ namespace DwarfCorp
         {
             // Todo: Get rid of this flag.
             if (IsFlagSet(Flag.AddToCollisionManager) && Manager != null)
-                Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
+                Manager.World.CollisionManager.RemoveObject(this, lastBounds);
 
             if (OnDestroyed != null) OnDestroyed();
 

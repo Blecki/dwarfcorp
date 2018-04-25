@@ -88,7 +88,7 @@ namespace DwarfCorp
             WorldHeight = Sheet.FrameHeight / 32.0f;
         }
 
-        public void Render(DwarfTime gameTime,
+        public override void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,
