@@ -956,6 +956,37 @@ namespace DwarfCorp
         }
 
 
+        private void GraphicsDeviceReset(object sender, EventArgs e)
+        {
+            ResetGraphics();
+        }
+
+        private void ResetGraphics()
+        {
+            
+            if (bloom != null)
+            {
+                bloom.sceneRenderTarget = new RenderTarget2D(GraphicsDevice, Game.Graphics.PreferredBackBufferWidth, Game.Graphics.PreferredBackBufferHeight,
+                    false, Game.Graphics.PreferredBackBufferFormat, Game.Graphics.PreferredDepthStencilFormat, MultiSamples,
+                    RenderTargetUsage.DiscardContents);
+            }
+
+            foreach (var composite in CompositeLibrary.Composites)
+            {
+                composite.Value.Initialize();
+                composite.Value.HasChanged = true;
+            }
+
+            if (WaterRenderer != null)
+            {
+                WaterRenderer.Dispose();
+                WaterRenderer = new WaterRenderer(GraphicsDevice);
+            }
+            
+            AssetManager.ResetCache();
+            DwarfGame.SpriteBatch = new SpriteBatch(Game.GraphicsDevice);
+        }
+
         /// <summary>
         /// Called when the GPU is getting new settings
         /// </summary>
@@ -1006,12 +1037,9 @@ namespace DwarfCorp
                 pp.MultiSampleCount = 0;
             }
 
-            if (bloom != null)
+            if (GraphicsDevice != null)
             {
-                bloom.sceneRenderTarget = new RenderTarget2D(GraphicsDevice, pp.BackBufferWidth, pp.BackBufferHeight,
-                    false,
-                    format, pp.DepthStencilFormat, pp.MultiSampleCount,
-                    RenderTargetUsage.DiscardContents);
+                ResetGraphics();
             }
         }
 
@@ -1019,6 +1047,13 @@ namespace DwarfCorp
         {
             Tilesheet.Dispose();
             pixel.Dispose();
+            bloom.Dispose();
+            foreach(var composite in CompositeLibrary.Composites)
+            {
+                composite.Value.Dispose();
+            }
+            WaterRenderer.Dispose();
+            CompositeLibrary.Composites.Clear();
         }
 
         public void InvokeLoss()

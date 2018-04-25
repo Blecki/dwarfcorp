@@ -61,6 +61,11 @@ namespace DwarfCorp
         private static List<Tuple<String,Assembly>> Assemblies = new List<Tuple<String,Assembly>>();
         private static List<String> DirectorySearchList;
 
+        public static void ResetCache()
+        {
+            TextureCache.Clear();
+        }
+
         public static void Initialize(ContentManager Content, GraphicsDevice Graphics, GameSettings.Settings Settings)
         {
             DirectorySearchList = Settings.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
