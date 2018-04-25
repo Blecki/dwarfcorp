@@ -49,6 +49,7 @@ namespace DwarfCorp
             Both = Static | Dynamic
         }
 
+        // Todo: Should not be public.
         public OctTreeNode<Body> Tree;
 
         public CollisionManager()

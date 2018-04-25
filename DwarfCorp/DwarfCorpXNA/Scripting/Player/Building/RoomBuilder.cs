@@ -248,7 +248,7 @@ namespace DwarfCorp
                 {
                     order.VoxelOrders.Add(new BuildVoxelOrder(order, order.ToBuild, v));
                 }
-                else if (order == null)
+                else
                 {
                     if (CurrentRoomData == RoomLibrary.GetData("Stockpile"))
                     {
@@ -275,7 +275,8 @@ namespace DwarfCorp
                         BuildDesignations.Add(order);
                     }
                 }
-                else if (order.ToBuild.RoomData != CurrentRoomData || order.IsBuilt)
+
+                if (order != null && (order.ToBuild.RoomData != CurrentRoomData || order.IsBuilt))
                 {
                     order = null;
                 }

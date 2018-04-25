@@ -103,7 +103,7 @@ namespace DwarfCorp.GameStates
             GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             var screen = GuiRoot.RenderData.VirtualScreen;
-            float scale = 0.75f;
+            float scale = 0.95f;
             float newWidth = System.Math.Min(System.Math.Max(screen.Width*scale, 640), screen.Width*scale);
             float newHeight = System.Math.Min(System.Math.Max(screen.Height*scale, 480), screen.Height*scale);
             Rectangle rect = new Rectangle((int)(screen.Width / 2 - newWidth / 2), (int)(screen.Height/2 - newHeight/2),(int)newWidth, (int)newHeight);

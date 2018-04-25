@@ -24,7 +24,9 @@ namespace DwarfCorp
         }
 
         public Bookshelf(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
-            base(manager, "Bookshelf", Matrix.CreateTranslation(position), new Vector3(32.0f / 32.0f, 8.0f / 32.0f, 20.0f / 32.0f), new Vector3(0.5f, 0.5f, 0.5f), new CraftDetails(manager, "Bookshelf", resources))
+            base(manager, "Bookshelf", Matrix.CreateTranslation(position), 
+                new Vector3(0.5f, 0.9f, 0.28f), 
+                new Vector3(0.0f, 0.5f, 0.35f), new CraftDetails(manager, "Bookshelf", resources))
         {
             Tags.Add("Books");
             CollisionType = CollisionManager.CollisionType.Static;
@@ -56,8 +58,8 @@ namespace DwarfCorp
 
             AddChild(new Box(Manager,
                 "model",
-                Matrix.CreateTranslation(new Vector3(-0.3f, 0, 0.2f)),
-                new Vector3(1.0f, 1.0f, 0.3f),
+                Matrix.CreateTranslation(new Vector3(-0.25f, 0.0f, 0.35f - 0.15f)),
+                new Vector3(0.5f, 0.5f, 0.5f),
                 new Vector3(0.0f, 0.0f, 0.0f),
                 "bookshelf",
                 spriteSheet)).SetFlag(Flag.ShouldSerialize, false);

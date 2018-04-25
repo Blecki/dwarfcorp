@@ -353,7 +353,7 @@ namespace DwarfCorp
             var _console = ConsoleGui.RootItem.AddChild(new Gui.Widgets.DwarfConsole
             {
                 Background = new TileReference("basic", 0),
-                Rect = new Rectangle(0, 0, GuiSkin.VirtualScreen.Width, 128)
+                Rect = new Rectangle(0, 0, GuiSkin.VirtualScreen.Width, GuiSkin.VirtualScreen.Height)
             }) as Gui.Widgets.DwarfConsole;
 
             ConsoleGui.RootItem.Layout();

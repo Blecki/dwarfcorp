@@ -64,9 +64,8 @@ namespace DwarfCorp
         public GameComponent ReservedFor = null;
         private BoundingBox lastBounds = new BoundingBox();
         private OctTreeNode<Body> CachedOcttreeNode = null;
-        private bool OcttreeNodeWasSubdivided = false;
-        
-        [JsonIgnore]public Matrix GlobalTransform
+        [JsonIgnore]
+        public Matrix GlobalTransform
         {
             get { return globalTransform; }
             set
@@ -199,6 +198,7 @@ namespace DwarfCorp
             Matrix mat = Matrix.CreateRotationY(angle);
             mat.Translation = LocalTransform.Translation;
             LocalTransform = mat;
+            PropogateTransforms();
         } 
         
         public virtual void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
