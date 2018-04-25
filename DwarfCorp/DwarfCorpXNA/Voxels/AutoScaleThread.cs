@@ -36,7 +36,7 @@ namespace DwarfCorp
             this.Identifier = Identifier;
             this.Worker = Worker;
 
-            Thread = new Thread(MainLoop);
+            Thread = new Thread(MainLoop) { IsBackground = true };
             Thread.Name = Identifier.ToString();
         }
 

@@ -64,6 +64,7 @@ namespace DwarfCorp
         public void InvalidateChunk(VoxelChunk Chunk)
         {
             RebuildQueueLock.WaitOne();
+            RebuildEvent.Set();
             if (!RebuildQueue.Contains(Chunk))
                 RebuildQueue.Enqueue(Chunk);
             RebuildQueueLock.ReleaseMutex();
@@ -160,10 +161,10 @@ namespace DwarfCorp
 
             ChunkGen = chunkGen;
 
-            GeneratorThread = new Thread(GenerateThread);
+            GeneratorThread = new Thread(GenerateThread) { IsBackground = true };
             GeneratorThread.Name = "Generate";
 
-            RebuildThread = new Thread(RebuildVoxelsThread);
+            RebuildThread = new Thread(RebuildVoxelsThread) { IsBackground = true };
             RebuildThread.Name = "RebuildVoxels";
 
             WaterUpdateThread = new AutoScaleThread(this, GamePerformance.ThreadIdentifier.UpdateWater,
@@ -202,7 +203,7 @@ namespace DwarfCorp
             RebuildThread.Start();
             WaterUpdateThread.Start();
         }
-
+        private ManualResetEvent RebuildEvent = new ManualResetEvent(true);
         public void RebuildVoxelsThread()
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -216,15 +217,19 @@ namespace DwarfCorp
             {
                 while (!DwarfGame.ExitGame && !ExitThreads)
                 {
+                    RebuildEvent.WaitOne();
                     GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
                     GamePerformance.Instance.EnterZone("RebuildVoxels");
+                    VoxelChunk chunk = null;
+                    do
+                    {
+                        chunk = PopInvalidChunk();
+                        if (chunk != null)
+                            chunk.Rebuild(Graphics);
+                    }
+                    while (chunk != null);
+                    RebuildEvent.Reset();
 
-                    var chunk = PopInvalidChunk();
-                    if (chunk != null)
-                        chunk.Rebuild(Graphics);
-                    else
-                        System.Threading.Thread.Yield();
-                    
                     GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
                     GamePerformance.Instance.ExitZone("RebuildVoxels");
                 }

@@ -147,7 +147,7 @@ namespace DwarfCorp
                     case State.Initializing:
                         if (PrepThread != null)
                             PrepThread.Abort();
-                        PrepThread = new Thread(PrepareForExplosion);
+                        PrepThread = new Thread(PrepareForExplosion) { IsBackground = true } ;
                         _state = State.Prep;
                         PrepThread.Start();
 
