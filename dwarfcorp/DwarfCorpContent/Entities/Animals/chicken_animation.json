@@ -188,14 +188,51 @@
          ],
          "Name" : "FlyingBACKWARD",
          "Speed" : [0.05]
+      },
+      {
+         "Frames" : [
+            [ 0, 8, 0 ],
+            [ 1, 8, 0 ],
+            [ 2, 8, 0 ]
+         ],
+         "Name" : "AttackingFORWARD",
+         "Speed" : [0.05]
+      },
+      {
+         "Frames" : [
+            [ 0, 9, 0 ],
+            [ 1, 9, 0 ],
+            [ 2, 9, 0 ]
+         ],
+         "Name" : "AttackingLEFT",
+         "Speed" : [0.05]
+      },
+      {
+         "Frames" : [
+            [ 0, 10, 0 ],
+            [ 1, 10, 0 ],
+            [ 2, 10, 0 ]
+         ],
+         "Name" : "AttackingRIGHT",
+         "Speed" : [0.05]
+      },
+      {
+         "Frames" : [
+            [ 0, 11, 0 ],
+            [ 1, 11, 0 ],
+            [ 2, 11, 0 ]
+         ],
+         "Name" : "AttackingBACKWARD",
+         "Speed" : [0.05]
       }
+
    ],
    "Layers" : [
       {
          "$id" : "1",
          "AssetName" : "Entities\\Animals\\chicken",
-         "FrameHeight" : 24,
-         "FrameWidth" : 24
+         "FrameHeight" : 32,
+         "FrameWidth" : 32
       },
    ],
    "Tints" : [ "255, 255, 255, 255"]
