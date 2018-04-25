@@ -60,6 +60,11 @@ namespace DwarfCorp
         private static GraphicsDevice Graphics {  get { return GameState.Game.GraphicsDevice; } }
         private static List<Assembly> Assemblies = new List<Assembly>();
 
+        public static void ResetCache()
+        {
+            TextureCache.Clear();
+        }
+
         public static void Initialize(ContentManager Content, GraphicsDevice Graphics, GameSettings.Settings Settings)
         {
             Assemblies.Add(Assembly.GetExecutingAssembly());

@@ -72,7 +72,7 @@ namespace DwarfCorp
         {
             Screenshots = new List<Screenshot>();
             Game.Graphics.PreferMultiSampling = GameSettings.Default.AntiAliasing > 1;
-
+          
             try
             {
                 Game.Graphics.ApplyChanges();
@@ -83,7 +83,7 @@ namespace DwarfCorp
             }
 
             Game.Graphics.PreparingDeviceSettings += GraphicsPreparingDeviceSettings;
-
+            Game.Graphics.DeviceReset += GraphicsDeviceReset;
             LoadingThread = new Thread(LoadThreaded);
             LoadingThread.Name = "Load";
             LoadingThread.Start();
