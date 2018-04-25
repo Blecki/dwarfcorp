@@ -42,7 +42,7 @@ namespace DwarfCorp
             ChunkManager chunks,
             Camera Camera)
         {
-            var visibleComponents = chunks.World.CollisionManager.EnumerateIntersectingObjects(Camera.GetFrustrum());
+            var visibleComponents = chunks.World.EnumerateIntersectingObjects(Camera.GetFrustrum());
             return visibleComponents.OfType<IRenderableComponent>().Where(r =>
             {
                 if (!r.IsVisible) return false;

@@ -40,7 +40,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    public class SimpleBobber : SimpleSprite
+    public class SimpleBobber : SimpleSprite, IRenderableComponent
     {
         public float Magnitude { get; set; }
         public float Rate { get; set; }
@@ -63,7 +63,7 @@ namespace DwarfCorp
             Offset = offset;
         }
 
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             float x = (float)Math.Sin((gameTime.TotalGameTime.TotalSeconds + Offset) * Rate) * Magnitude;
             var transform = GlobalTransform;
@@ -83,7 +83,7 @@ namespace DwarfCorp
         }
     }
 
-    public class LayeredBobber : LayeredSimpleSprite
+    public class LayeredBobber : LayeredSimpleSprite, IRenderableComponent
     {
         public float Magnitude { get; set; }
         public float Rate { get; set; }
@@ -105,7 +105,7 @@ namespace DwarfCorp
             Offset = offset;
         }
 
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             float x = (float)Math.Sin((gameTime.TotalGameTime.TotalSeconds + Offset) * Rate) * Magnitude;
             var transform = GlobalTransform;

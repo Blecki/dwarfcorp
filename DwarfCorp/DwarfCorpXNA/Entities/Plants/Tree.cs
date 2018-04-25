@@ -95,7 +95,7 @@ namespace DwarfCorp
                 SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_tree_cut_down_1
             });
 
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
             PropogateTransforms();
         }
 

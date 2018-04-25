@@ -203,7 +203,7 @@ namespace DwarfCorp
             LocalTransform = matrix;
 
             Tags.Add("Table");
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
 
             CreateCosmeticChildren(Manager);
         }

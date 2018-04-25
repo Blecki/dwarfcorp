@@ -20,7 +20,7 @@ namespace DwarfCorp
         public Bookshelf()
         {
             Tags.Add("Books");
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
         }
 
         public Bookshelf(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
@@ -29,7 +29,7 @@ namespace DwarfCorp
                 new Vector3(0.0f, 0.5f, 0.35f), new CraftDetails(manager, "Bookshelf", resources))
         {
             Tags.Add("Books");
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
             SetFlag(Flag.RotateBoundingBox, true);
 
             CreateCosmeticChildren(manager);
@@ -42,7 +42,7 @@ namespace DwarfCorp
             GetComponent<Box>().Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
-        override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             // Only renders to selection buffer

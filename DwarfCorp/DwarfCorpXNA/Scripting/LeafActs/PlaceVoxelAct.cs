@@ -145,12 +145,10 @@ namespace DwarfCorp
             Vox.Health = Type.StartingHealth;
 
             for (int i = 0; i < 4; i++)
-            {
                 World.ParticleManager.Trigger("puff", MathFunctions.RandVector3Box(Vox.GetBoundingBox().Expand(0.25f)), Color.White, 5);
-            }
 
             // Todo: Should this be handled by the chunk manager while processing voxel update events?
-            foreach (Physics phys in World.CollisionManager.EnumerateIntersectingObjects(Vox.GetBoundingBox(), CollisionManager.CollisionType.Dynamic).OfType<Physics>())
+            foreach (var phys in World.EnumerateIntersectingObjects(Vox.GetBoundingBox(), CollisionType.Dynamic).OfType<Physics>())
             {
                 phys.ApplyForce((phys.GlobalTransform.Translation - (Vox.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))) * 100, 0.01f);
                 BoundingBox box = Vox.GetBoundingBox();

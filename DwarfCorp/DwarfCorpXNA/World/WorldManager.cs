@@ -50,6 +50,7 @@ using Color = Microsoft.Xna.Framework.Color;
 using Point = Microsoft.Xna.Framework.Point;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using DwarfCorp.GameStates;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -121,7 +122,9 @@ namespace DwarfCorp
         public ComponentManager ComponentManager = null;
 
         public FactionLibrary Factions = null;
-        public CollisionManager CollisionManager = null;
+
+        [JsonIgnore]
+        public OctTreeNode<Body> OctTree = null;
         public ParticleManager ParticleManager = null;
 
         // Handles interfacing with the player and sending commands to dwarves
@@ -838,7 +841,8 @@ namespace DwarfCorp
             DefaultShader.ClippingEnabled = true;
 
             if (Debugger.Switches.DrawOcttree)
-                CollisionManager.EnumerateBounds((box, depth) => Drawer3D.DrawBox(box, Color.Yellow, 1.0f / (float)depth, false));
+                foreach (var box in OctTree.EnumerateBounds())
+                    Drawer3D.DrawBox(box.Item2, Color.Yellow, 1.0f / (float)(box.Item1 + 1), false);
 
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer, PlayerFaction.Designations, this);

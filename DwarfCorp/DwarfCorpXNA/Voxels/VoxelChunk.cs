@@ -169,8 +169,7 @@ namespace DwarfCorp
 
             // TODO: Move to main thread!
             var changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");
-            foreach (var c in Manager.World.CollisionManager.EnumerateIntersectingObjects(GetBoundingBox(),
-                CollisionManager.CollisionType.Both).OfType<GameComponent>())
+            foreach (var c in Manager.World.EnumerateIntersectingObjects(GetBoundingBox(), CollisionType.Both))
                 c.ReceiveMessageRecursive(changedMessage);
         }
 

@@ -60,7 +60,7 @@ namespace DwarfCorp
         private bool isCoolingDown = false;
         private Color tintOnBlink = Color.White;
 
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             if (!isBlinking)

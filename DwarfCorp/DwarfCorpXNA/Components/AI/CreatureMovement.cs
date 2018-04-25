@@ -298,8 +298,6 @@ namespace DwarfCorp
             if (!voxel.IsValid || !voxel.IsEmpty)
                 yield break;
 
-            CollisionManager objectHash = Creature.Manager.World.CollisionManager;
-
             var neighborHood = GetNeighborhood(voxel);
             bool inWater = (neighborHood[1, 1, 1].IsValid && neighborHood[1, 1, 1].WaterCell.WaterLevel > WaterManager.inWaterThreshold);
             bool standingOnGround = (neighborHood[1, 0, 1].IsValid && !neighborHood[1, 0, 1].IsEmpty);
@@ -313,7 +311,8 @@ namespace DwarfCorp
             if (CanClimb || Can(MoveType.RideVehicle))
             {
                 //Climbing ladders.
-                var bodies = objectHash.EnumerateIntersectingObjects(voxel.GetBoundingBox(), CollisionManager.CollisionType.Static).OfType<GameComponent>();
+                
+                var bodies = Creature.Manager.World.EnumerateIntersectingObjects(voxel.GetBoundingBox(), CollisionType.Static);
 
                 if (!isRiding)
                 {
@@ -598,8 +597,8 @@ namespace DwarfCorp
                     bool blockedByObject = false;
                     if (!isRiding)
                     {
-                        var objectsAtNeighbor = Creature.Manager.World.CollisionManager.EnumerateIntersectingObjects(
-                            n.GetBoundingBox(), CollisionManager.CollisionType.Static);
+                        var objectsAtNeighbor = Creature.Manager.World.EnumerateIntersectingObjects(
+                            n.GetBoundingBox(), CollisionType.Static);
 
                         // If there is an object blocking the motion, determine if it can be passed through.
 
@@ -648,10 +647,10 @@ namespace DwarfCorp
             public float Speed = 1.0f;
         }
 
-        private GameComponent GetBodyAt(VoxelHandle voxel, CollisionManager objectHash, string tag)
+        private GameComponent GetBodyAt(VoxelHandle voxel, WorldManager World, string tag)
         {
-            return objectHash.EnumerateIntersectingObjects(voxel.GetBoundingBox(),
-                CollisionManager.CollisionType.Static).OfType<GameComponent>().FirstOrDefault(component => component.Tags.Contains(tag));
+            return World.EnumerateIntersectingObjects(voxel.GetBoundingBox(),
+                CollisionType.Static).OfType<GameComponent>().FirstOrDefault(component => component.Tags.Contains(tag));
         }
 
 
@@ -659,8 +658,6 @@ namespace DwarfCorp
         {
             if (!voxel.IsValid || !voxel.IsEmpty)
                 yield break;
-
-            CollisionManager objectHash = Creature.Manager.World.CollisionManager;
 
             var neighborHood = GetNeighborhood(voxel);
             bool inWater = (neighborHood[1, 1, 1].IsValid && neighborHood[1, 1, 1].WaterCell.WaterLevel > WaterManager.inWaterThreshold);
@@ -672,9 +669,9 @@ namespace DwarfCorp
 
             if (CanClimb)
             {
-                var ladderAt = GetBodyAt(voxel, objectHash, "Climbable");
-                var ladderAbove = GetBodyAt(VoxelHelpers.GetVoxelAbove(voxel), objectHash, "Climbable");
-                var ladderBelow = GetBodyAt(VoxelHelpers.GetNeighbor(voxel, new GlobalVoxelOffset(0, -1, 0)), objectHash, "Climbable");
+                var ladderAt = GetBodyAt(voxel, Creature.Manager.World, "Climbable");
+                var ladderAbove = GetBodyAt(VoxelHelpers.GetVoxelAbove(voxel), Creature.Manager.World, "Climbable");
+                var ladderBelow = GetBodyAt(VoxelHelpers.GetNeighbor(voxel, new GlobalVoxelOffset(0, -1, 0)), Creature.Manager.World, "Climbable");
                 // If there was a ladder above the creature, we could have climbed down it to get here.
                 if (ladderAbove != null)
                 {
@@ -962,8 +959,8 @@ namespace DwarfCorp
                 {
                     // Do one final check to see if there is an object blocking the motion.
                     bool blockedByObject = false;
-                    var objectsAtNeighbor = Creature.Manager.World.CollisionManager.EnumerateIntersectingObjects(
-                        n.GetBoundingBox(), CollisionManager.CollisionType.Static);
+                    var objectsAtNeighbor = Creature.Manager.World.EnumerateIntersectingObjects(
+                        n.GetBoundingBox(), CollisionType.Static);
 
                     // If there is an object blocking the motion, determine if it can be passed through.
 
@@ -1009,7 +1006,6 @@ namespace DwarfCorp
         // Very, very slow.
         public IEnumerable<MoveAction> GetInverseMoveActions(MoveState currentstate)
         {
-            CollisionManager objectHash = Creature.Manager.World.CollisionManager;
             var current = currentstate.Voxel;
             foreach (var v in VoxelHelpers.EnumerateCube(current.Coordinate)
                 .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
@@ -1024,7 +1020,7 @@ namespace DwarfCorp
                 // iterate through all rails intersecting every neighbor and see if we can find a connection from that rail to this one.
                 // Further, we must iterate through the entire rail network and enumerate all possible directions in and out of that rail.
                 // Yay!
-                var bodies = objectHash.EnumerateIntersectingObjects(v.GetBoundingBox(), CollisionManager.CollisionType.Static);
+                var bodies = Creature.Manager.World.EnumerateIntersectingObjects(v.GetBoundingBox(), CollisionType.Static);
                 var rails = bodies.OfType<Rail.RailEntity>().Where(r => r.Active);
                 foreach (var rail in rails)
                 {

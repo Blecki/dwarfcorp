@@ -61,7 +61,7 @@ namespace DwarfCorp
             this.AdultName = AdultName;
             AddChild(new Health(Manager, "HP", 1.0f, 0.0f, 1.0f));
             AddChild(new Flammable(Manager, "Flames"));
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)

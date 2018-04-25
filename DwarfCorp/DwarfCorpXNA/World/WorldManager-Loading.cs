@@ -171,10 +171,10 @@ namespace DwarfCorp
             {
                 Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
                 Vector3 extents = new Vector3(1500, 1500, 1500);
-                CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
+                    OctTree = new OctTreeNode<Body>(origin - extents, origin + extents);
 
-                // Todo: ??
-                new PrimitiveLibrary(GraphicsDevice, Content);
+                    // Todo: ??
+                    new PrimitiveLibrary(GraphicsDevice, Content);
 
                 NewInstanceManager = new NewInstanceManager(GraphicsDevice, new BoundingBox(origin - extents, origin + extents),
                     Content);
@@ -298,7 +298,6 @@ namespace DwarfCorp
 
                     Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
                     Vector3 extents = new Vector3(1500, 1500, 1500);
-                    CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
                     if (gameFile.PlayData.Resources != null)
                     {

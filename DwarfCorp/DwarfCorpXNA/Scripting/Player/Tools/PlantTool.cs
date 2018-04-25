@@ -84,8 +84,8 @@ namespace DwarfCorp
             }
 
             var boundingBox = new BoundingBox(voxel.Coordinate.ToVector3() + new Vector3(0.2f, 1.0f, 0.2f), voxel.Coordinate.ToVector3() + new Vector3(0.8f, 3.0f, 0.8f));
-            var entities = Player.World.CollisionManager.EnumerateIntersectingObjects(boundingBox, CollisionManager.CollisionType.Static);
-            if (entities.Count() > 0)
+            var entities = Player.World.EnumerateIntersectingObjects(boundingBox, CollisionType.Static);
+            if (entities.Any())
             {
                 if (Debugger.Switches.DrawToolDebugInfo)
                 {

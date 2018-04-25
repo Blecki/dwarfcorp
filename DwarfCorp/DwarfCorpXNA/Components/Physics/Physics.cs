@@ -209,7 +209,7 @@ namespace DwarfCorp
             PreviousPosition = LocalTransform.Translation;
             PreviousVelocity = Vector3.Zero;
             IsInLiquid = false;
-            CollisionType = CollisionManager.CollisionType.Dynamic;
+            CollisionType = CollisionType.Dynamic;
             CollideMode = CollisionMode.All;
             Orientation = orientation;
             SleepTimer = new Timer(5.0f, true);

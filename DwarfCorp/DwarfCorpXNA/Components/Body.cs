@@ -42,7 +42,7 @@ namespace DwarfCorp
 {
     public class Body : GameComponent, IBoundedObject, IUpdateableComponent, IRenderableComponent
     {
-        public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             if (Debugger.Switches.DrawBoundingBoxes)
             {
@@ -55,7 +55,7 @@ namespace DwarfCorp
 
         public bool FrustumCull { get { return IsFlagSet(Flag.FrustumCull); } }
 
-        public CollisionManager.CollisionType CollisionType = CollisionManager.CollisionType.None;
+        public CollisionType CollisionType = CollisionType.None;
         public Vector3 BoundingBoxSize = Vector3.One;
         public Vector3 LocalBoundingBoxOffset = Vector3.Zero;
         [JsonIgnore]
@@ -75,9 +75,9 @@ namespace DwarfCorp
 
                 if (CachedOcttreeNode == null || CachedOcttreeNode.Bounds.Contains(BoundingBox) != ContainmentType.Contains)
                 {
-                    Manager.World.CollisionManager.Tree.RemoveItem(this, lastBounds);
+                    Manager.World.OctTree.RemoveItem(this, lastBounds);
                     if (!IsDead)
-                        CachedOcttreeNode = Manager.World.CollisionManager.Tree.AddToTreeEx(Tuple.Create(this, BoundingBox));
+                        CachedOcttreeNode = Manager.World.OctTree.AddToTreeEx(Tuple.Create(this, BoundingBox));
                 }
                 else
                 {
@@ -265,14 +265,14 @@ namespace DwarfCorp
 
         public override void Delete()
         {
-            Manager.World.CollisionManager.RemoveObject(this, lastBounds);
+            Manager.World.OctTree.RemoveItem(this, lastBounds);
             base.Delete();
         }
 
         public override void Die()
         {
             if (Manager != null)
-                Manager.World.CollisionManager.RemoveObject(this, lastBounds);
+                Manager.World.OctTree.RemoveItem(this, lastBounds);
 
             if (OnDestroyed != null) OnDestroyed();
 

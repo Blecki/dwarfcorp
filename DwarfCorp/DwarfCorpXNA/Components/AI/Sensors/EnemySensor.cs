@@ -97,11 +97,8 @@ namespace DwarfCorp
                 return;
             }
 
-            foreach (var thing in Manager.World.CollisionManager.EnumerateIntersectingObjects(BoundingBox, CollisionManager.CollisionType.Both))
+            foreach (var body in Manager.World.EnumerateIntersectingObjects(BoundingBox, CollisionType.Both))
             {
-                Body body = thing as Body;
-                if (body == null)
-                    continue;
                 CreatureAI minion = body.GetRoot().GetComponent<CreatureAI>();
                 if (minion == null)
                     continue;

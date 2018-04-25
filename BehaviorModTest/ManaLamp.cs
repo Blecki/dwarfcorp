@@ -23,7 +23,7 @@ namespace ManaLampMod
             base(Manager, "Lamp", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(Manager, "Mana Lamp", Resources))
         {
             Tags.Add("Lamp");
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
 
             CreateCosmeticChildren(Manager);
         }

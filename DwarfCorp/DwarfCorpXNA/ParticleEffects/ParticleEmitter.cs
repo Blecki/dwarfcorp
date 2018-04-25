@@ -245,7 +245,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool Ignored)
+        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool Ignored)
         {
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, Ignored);
 

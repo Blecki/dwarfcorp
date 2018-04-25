@@ -72,7 +72,7 @@ namespace DwarfCorp
             Tags.Add("Vegetation");
             Tags.Add("Pumpkin");
 
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
             PropogateTransforms();
         }
     }

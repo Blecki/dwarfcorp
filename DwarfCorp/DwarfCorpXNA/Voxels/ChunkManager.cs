@@ -324,7 +324,7 @@ namespace DwarfCorp
             foreach (var voxel in localList)
             {
                 var box = voxel.Voxel.GetBoundingBox();
-                var hashmap = new HashSet<IBoundedObject>(World.CollisionManager.EnumerateIntersectingObjects(box, CollisionManager.CollisionType.Both));
+                var hashmap = World.EnumerateIntersectingObjects(box, CollisionType.Both);
 
                 foreach (var intersectingBody in hashmap)
                 {

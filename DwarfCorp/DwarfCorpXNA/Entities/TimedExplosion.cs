@@ -151,8 +151,8 @@ namespace DwarfCorp
                         _state = State.Prep;
                         PrepThread.Start();
 
-                            foreach (Body body in Manager.World.CollisionManager.EnumerateIntersectingObjects(
-                                new BoundingBox(LocalPosition - new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f), LocalPosition + new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f)), CollisionManager.CollisionType.Both))
+                            foreach (Body body in Manager.World.EnumerateIntersectingObjects(
+                                new BoundingBox(LocalPosition - new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f), LocalPosition + new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f)), CollisionType.Both))
                             {
                                 var distance = (body.Position - LocalPosition).Length();
                                 if (distance < (VoxelRadius * 2.0f))
@@ -184,8 +184,8 @@ namespace DwarfCorp
                             Manager.World.ParticleManager.Effects["explode"].Trigger(10, Position, Color.White);
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_trap_destroyed, GlobalTransform.Translation, false);
 
-                            foreach (Body body in Manager.World.CollisionManager.EnumerateIntersectingObjects(
-                                new BoundingBox(LocalPosition - new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f), LocalPosition + new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f)), CollisionManager.CollisionType.Both))
+                            foreach (Body body in Manager.World.EnumerateIntersectingObjects(
+                                new BoundingBox(LocalPosition - new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f), LocalPosition + new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f)), CollisionType.Both))
                             {
                                 var distance = (body.Position - LocalPosition).Length();
                                 if (distance <= (VoxelRadius * 2.0f))

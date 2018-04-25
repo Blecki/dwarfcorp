@@ -1,4 +1,4 @@
-// Sensor.cs
+// CollisionManager.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -31,46 +31,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Generic component with a box that fires when other components enter it.
-    /// </summary>
-    public class Sensor : Body, IUpdateableComponent
+    [Flags]
+    public enum CollisionType
     {
-        public delegate void Sense(IEnumerable<Body> sensed);
-        
-        public event Sense OnSensed;
-        public Timer FireTimer { get; set; }
-
-        public Sensor()
-        {
-            
-        }
-
-        public Sensor(
-            ComponentManager Manager, 
-            String name, 
-            Matrix localTransform, 
-            Vector3 boundingBoxExtents, 
-            Vector3 boundingBoxPos) :
-            base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
-        {
-            Tags.Add("Sensor");
-            FireTimer = new Timer(1.0f, false);
-        }
-        
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
-            FireTimer.Update(gameTime);
-            if (FireTimer.HasTriggered && OnSensed != null)
-                OnSensed(Manager.World.EnumerateIntersectingObjects(BoundingBox, CollisionType.Dynamic));
-
-            base.Update(gameTime, chunks, camera);
-        }
+        None = 0,
+        Static = 2,
+        Dynamic = 4,
+        Both = Static | Dynamic
     }
-
 }

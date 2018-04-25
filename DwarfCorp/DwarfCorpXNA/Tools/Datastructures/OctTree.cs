@@ -265,12 +265,13 @@ namespace DwarfCorp
             }
         }
 
-        public void EnumerateBounds(int Depth, Action<BoundingBox, int> Callback)
+        public IEnumerable<Tuple<int, BoundingBox>> EnumerateBounds(int Depth = 0)
         {
-            Callback(Bounds, Depth);
+            yield return Tuple.Create(Depth, Bounds);
             if (Children != null)
                 for (var i = 0; i < 8; ++i)
-                    Children[i].EnumerateBounds(Depth + 1, Callback);
+                    foreach (var r in Children[i].EnumerateBounds(Depth + 1))
+                        yield return r;
         }
     }
 }
