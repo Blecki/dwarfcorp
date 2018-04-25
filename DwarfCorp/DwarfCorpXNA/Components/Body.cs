@@ -63,21 +63,28 @@ namespace DwarfCorp
         public bool IsReserved = false;
         public GameComponent ReservedFor = null;
         private BoundingBox lastBounds = new BoundingBox();
-        
-        [JsonIgnore]public Matrix GlobalTransform
+        private OctTreeNode<Body> CachedOcttreeNode = null;
+
+        [JsonIgnore]
+        public Matrix GlobalTransform
         {
             get { return globalTransform; }
             set
             {
                 globalTransform = value;
-
                 UpdateBoundingBox();
 
-                if (IsFlagSet(Flag.AddToCollisionManager))
+                if (CachedOcttreeNode == null || CachedOcttreeNode.Bounds.Contains(BoundingBox) != ContainmentType.Contains)
                 {
-                    Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
+                    Manager.World.CollisionManager.Tree.RemoveItem(this, lastBounds);
                     if (!IsDead)
-                        Manager.World.CollisionManager.AddObject(this, CollisionType);
+                        CachedOcttreeNode = Manager.World.CollisionManager.Tree.AddToTreeEx(Tuple.Create(this, BoundingBox));
+                }
+                else
+                {
+                    CachedOcttreeNode.RemoveItem(this, lastBounds);
+                    if (!IsDead)
+                        CachedOcttreeNode = CachedOcttreeNode.AddToTreeEx(Tuple.Create(this, BoundingBox));
                 }
 
                 lastBounds = BoundingBox;
@@ -92,6 +99,17 @@ namespace DwarfCorp
                 localTransform = value;
                 HasMoved = true;
             }
+        }
+
+        /// <summary>
+        /// Sets the global transform without any book-keeping or change detection mechanisms.
+        /// !!DANGEROUS!!
+        /// Failure to restore the transform when whatever operation called this is finished can break EVERYTHING!
+        /// </summary>
+        /// <param name="T"></param>
+        public void RawSetGlobalTransform(Matrix T)
+        {
+            globalTransform = T;
         }
 
         [JsonIgnore]
@@ -249,7 +267,7 @@ namespace DwarfCorp
         public override void Delete()
         {
             if (IsFlagSet(Flag.AddToCollisionManager))
-                Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
+                Manager.World.CollisionManager.RemoveObject(this, lastBounds);
 
             base.Delete();
         }
@@ -258,7 +276,7 @@ namespace DwarfCorp
         {
             // Todo: Get rid of this flag.
             if (IsFlagSet(Flag.AddToCollisionManager) && Manager != null)
-                Manager.World.CollisionManager.RemoveObject(this, lastBounds, CollisionType);
+                Manager.World.CollisionManager.RemoveObject(this, lastBounds);
 
             if (OnDestroyed != null) OnDestroyed();
 
