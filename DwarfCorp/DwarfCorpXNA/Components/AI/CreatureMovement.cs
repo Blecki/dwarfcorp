@@ -31,12 +31,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
-//using System.Windows.Forms;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
@@ -308,11 +304,14 @@ namespace DwarfCorp
             var successors = new List<MoveAction>();
             bool isRiding = state.VehicleState.IsRidingVehicle;
 
+            var neighborHoodBounds = new BoundingBox(neighborHood[0, 0, 0].GetBoundingBox().Min, neighborHood[2, 2, 2].GetBoundingBox().Max);
+            var neighborObjects = Creature.Manager.World.EnumerateIntersectingObjects(neighborHoodBounds, CollisionType.Static);
+
             if (CanClimb || Can(MoveType.RideVehicle))
             {
                 //Climbing ladders.
-                
-                var bodies = Creature.Manager.World.EnumerateIntersectingObjects(voxel.GetBoundingBox(), CollisionType.Static);
+
+                var bodies = neighborObjects.Where(o => o.GetBoundingBox().Intersects(voxel.GetBoundingBox()));
 
                 if (!isRiding)
                 {
@@ -597,14 +596,14 @@ namespace DwarfCorp
                     bool blockedByObject = false;
                     if (!isRiding)
                     {
-                        var objectsAtNeighbor = Creature.Manager.World.EnumerateIntersectingObjects(
-                            n.GetBoundingBox(), CollisionType.Static);
+                        var objectsAtNeighbor = neighborObjects.Where(o => o.GetBoundingBox().Intersects(n.GetBoundingBox()));
 
                         // If there is an object blocking the motion, determine if it can be passed through.
 
-                        foreach (var body in objectsAtNeighbor.OfType<GameComponent>())
+                        foreach (var body in objectsAtNeighbor)
                         {
-                            var door = body.GetRoot().EnumerateAll().OfType<Door>().FirstOrDefault();
+                            var door = body as Door;
+                            // ** Doors are in the octtree, pretty sure this was always pointless -- var door = body.GetRoot().EnumerateAll().OfType<Door>().FirstOrDefault();
                             // If there is an enemy door blocking movement, we can destroy it to get through.
                             if (door != null)
                             {
@@ -951,6 +950,10 @@ namespace DwarfCorp
                 }
             }
 
+            var neighborHoodBounds = new BoundingBox(neighborHood[0, 0, 0].GetBoundingBox().Min, neighborHood[2, 2, 2].GetBoundingBox().Max);
+            var neighborObjects = Creature.Manager.World.EnumerateIntersectingObjects(neighborHoodBounds, CollisionType.Static);
+            //var neighborHoodBounds = neighborHood[0, 0, 0].GetBoundingBox();
+            //foreach (var v in neighborHood) neighborHoodBounds = BoundingBox.CreateMerged(neighborHoodBounds,)
             // Now, validate each move action that the creature might take.
             foreach (MoveAction v in successors)
             {
@@ -959,14 +962,15 @@ namespace DwarfCorp
                 {
                     // Do one final check to see if there is an object blocking the motion.
                     bool blockedByObject = false;
-                    var objectsAtNeighbor = Creature.Manager.World.EnumerateIntersectingObjects(
-                        n.GetBoundingBox(), CollisionType.Static);
+                    var neighborBox = n.GetBoundingBox();
+                    var objectsAtNeighbor = neighborObjects.Where(o => o.GetBoundingBox().Intersects(neighborBox));
 
                     // If there is an object blocking the motion, determine if it can be passed through.
 
-                    foreach (var body in objectsAtNeighbor.OfType<GameComponent>())
+                    foreach (var body in objectsAtNeighbor)
                     {
-                        var door = body.GetRoot().EnumerateAll().OfType<Door>().FirstOrDefault();
+                        var door = body as Door;
+                        //Doors should be in the octtree set as they are bodies - var door = body.GetRoot().EnumerateAll().OfType<Door>().FirstOrDefault();
                         // If there is an enemy door blocking movement, we can destroy it to get through.
                         if (door != null)
                         {
