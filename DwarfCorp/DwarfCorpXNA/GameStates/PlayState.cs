@@ -1856,16 +1856,17 @@ namespace DwarfCorp.GameStates
             var icon_Wrangle = new FlatToolTray.Icon
             {
                 Tag = "wrangle",
-                Text = "Wrng.",
+                Icon = new Gui.TileReference("tool-icons", 32),
+                Text = "Catch",
                 EnabledTextColor = new Vector4(1, 1, 1, 1),
-                Tooltip = "Wrangle Animals",
+                Tooltip = "Catch Animals",
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 KeepChildVisible = false,
                 PopupChild = new Widget()
                 {
                     Border = "border-fancy",
-                    Text = "Wrangle Animals.\n Click and drag to wrangle animals.\nRequires animal pen.",
+                    Text = "Catch Animals.\n Click and drag to catch animals.\nRequires animal pen.",
                     Rect = new Rectangle(0, 0, 256, 128),
                     TextColor = Color.Black.ToVector4()
                 },
@@ -1874,7 +1875,7 @@ namespace DwarfCorp.GameStates
                     ChangeTool(GameMaster.ToolMode.Wrangle);
                     World.Tutorial("wrangle");
                     World.ShowToolPopup(
-                        "Left click to tell dwarves to wrangle animals.\nRight click to cancel wrangling.\nRequires animal pen.");
+                        "Left click to tell dwarves to catch animals.\nRight click to cancel catching.\nRequires animal pen.");
                 },
                 OnConstruct = (sender) =>
                 {

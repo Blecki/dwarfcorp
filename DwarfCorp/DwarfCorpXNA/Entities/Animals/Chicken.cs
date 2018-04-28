@@ -116,7 +116,15 @@ namespace DwarfCorp
             AI = Physics.AddChild(new PacingCreatureAI(Manager, "AI", Sensors, PlanService)) as CreatureAI;
 
             // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack> { new Attack("Peck", 0.01f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_chicken_attack), ContentPaths.Effects.pierce) {Mode = Attack.AttackMode.Dogfight} };
+            Attacks = new List<Attack>
+            {
+                new Attack("Peck", 0.01f, 2.0f, 0.5f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_chicken_attack), ContentPaths.Effects.pierce)
+                {
+                    Mode = Attack.AttackMode.Melee,
+                    TriggerFrame = 2,
+                    TriggerMode = Attack.AttackTrigger.Animation
+                }
+            };
 
 
             // The bird can hold one item at a time in its inventory
