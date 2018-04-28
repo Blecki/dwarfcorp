@@ -123,9 +123,6 @@ namespace DwarfCorp.GameStates
 
         public void Render(DwarfTime time)
         {
-            if (Game.GraphicsDevice.IsDisposed || 
-                DwarfGame.SpriteBatch.IsDisposed || 
-                DwarfGame.SpriteBatch.GraphicsDevice.IsDisposed) return;
 
             Game.GraphicsDevice.Clear(Color.Black);
 

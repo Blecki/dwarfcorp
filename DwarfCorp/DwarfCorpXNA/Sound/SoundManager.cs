@@ -570,7 +570,7 @@ namespace DwarfCorp
                 }
             }
 
-            ActiveSounds2D.RemoveAll(sound => sound.State == SoundState.Stopped);
+            ActiveSounds2D.RemoveAll(sound => sound.IsDisposed || sound.State == SoundState.Stopped);
 
             /*
             MediaPlayer.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.MusicVolume * 0.1f;

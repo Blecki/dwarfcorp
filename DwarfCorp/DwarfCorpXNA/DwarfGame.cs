@@ -365,12 +365,15 @@ namespace DwarfCorp
 
         protected override void Draw(GameTime time)
         {
+
+            if (GraphicsDevice.IsDisposed) return;
+
             HasRendered = true;
 #if SHARP_RAVEN && !DEBUG
             try
             {
 #endif
-            GamePerformance.Instance.PreRender();
+                GamePerformance.Instance.PreRender();
                 StateManager.Render(DwarfTime.LastTime);
                 GraphicsDevice.SetRenderTarget(null);
                 base.Draw(time);

@@ -1052,6 +1052,18 @@ namespace DwarfCorp
             
             AssetManager.ResetCache();
             DwarfGame.SpriteBatch = new SpriteBatch(Game.GraphicsDevice);
+
+            Color[] white = new Color[1];
+            white[0] = Color.White;
+            pixel = new Texture2D(GraphicsDevice, 1, 1);
+            pixel.SetData(white);
+
+            Tilesheet = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
+            AspectRatio = GraphicsDevice.Viewport.AspectRatio;
+            DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
+            DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
+            DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
+
         }
 
         /// <summary>
