@@ -532,7 +532,7 @@ namespace DwarfCorp
                     }
                     Status.IsOnStrike = true;
                 }
-                else if (Status.Happiness.IsSatisfied())
+                else if (!Status.Happiness.IsDissatisfied())
                 {
                     Status.IsOnStrike = false;
                 }
