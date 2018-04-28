@@ -13,6 +13,7 @@ namespace DwarfCorp
         public ResearchSpellTask()
         {
             Category = TaskCategory.Research;
+            MaxAssignable = 10;
         }
 
         public ResearchSpellTask(string spell)
@@ -20,6 +21,7 @@ namespace DwarfCorp
             Category = TaskCategory.Research;
             Spell = spell;
             Name = "Research " + Spell;
+            MaxAssignable = 10;
         }
 
         public override Feasibility IsFeasible(Creature agent)

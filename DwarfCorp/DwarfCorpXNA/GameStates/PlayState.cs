@@ -63,6 +63,7 @@ namespace DwarfCorp.GameStates
         private Widget ContextMenu;
         private Widget BottomBar;
         private Widget MinimapIcon;
+        private ProgressBar ManaBar;
 
         private class ToolbarItem
         {
@@ -96,6 +97,7 @@ namespace DwarfCorp.GameStates
 
         private void ChangeTool(GameMaster.ToolMode Mode)
         {
+            ManaBar.Hidden = Mode != GameMaster.ToolMode.Magic;
             Master.ChangeTool(Mode);
             foreach (var icon in ToolHiliteItems)
                 icon.Value.Hilite = icon.Key == Mode;
@@ -300,6 +302,13 @@ namespace DwarfCorp.GameStates
                 }
             });
 
+            var magic = (int)(100 * Master.Spells.Mana / Master.Spells.MaxMana);
+            if (ManaBar.Percentage != magic)
+            {
+                ManaBar.Percentage = magic;
+                ManaBar.Tooltip = String.Format("{0}/{1} Mana", Master.Spells.Mana, Master.Spells.MaxMana);
+                ManaBar.Text = String.Format("MANA: {0}/{1}", Master.Spells.Mana, Master.Spells.MaxMana);
+            }
             World.Update(gameTime);
             Input.Update();
 
@@ -1882,6 +1891,19 @@ namespace DwarfCorp.GameStates
 
             #region icon_MagicTool
 
+            ManaBar = GuiRoot.RootItem.AddChild(new ProgressBar()
+            {
+                AutoLayout = AutoLayout.FloatTopRight,
+                Hidden = true,
+                MinimumSize = new Point(256, 32),
+                TextVerticalAlign = VerticalAlign.Center,
+                TextHorizontalAlign = HorizontalAlign.Center,
+                FillColor = new Color(0, 255, 255, 255).ToVector4(),
+                Percentage = 0,
+                TextColor = Color.Black.ToVector4()
+            }) as ProgressBar;
+
+
             #region icon_Cast
             var icon_menu_CastSpells_Return = new FlatToolTray.Icon
             {
@@ -1983,10 +2005,16 @@ namespace DwarfCorp.GameStates
                                 OnClick = (button, args2) =>
                                 {
 #if !DEMO
+                                    if (Master.Faction.OwnedObjects.Any(obj => obj.Tags.Contains("Magic")))
+                                    {
+                                        World.ShowToolPopup("Can't research. Need an object which the dwarf can do magical research with.");
+                                        return;
+                                    }
                                     ChangeTool(GameMaster.ToolMode.Magic);
                                     ((MagicTool)Master.Tools[GameMaster.ToolMode.Magic])
                                         .Research(spell);
                                     World.Tutorial("research spells");
+                                    World.MakeAnnouncement(String.Format("Researching {0}", spell.Spell.Name));
 #else
                                     GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = "Magic not available in demo." });
 #endif
