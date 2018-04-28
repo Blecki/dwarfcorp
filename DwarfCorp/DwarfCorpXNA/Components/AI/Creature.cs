@@ -598,10 +598,10 @@ namespace DwarfCorp
                     Sprite.Blink(0.5f);
                     AI.AddThought(Thought.ThoughtType.TookDamage);
 
-                    var deathParticleTrigger = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs").FirstOrDefault();
+                    var deathParticleTriggers = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs");
 
-                    if (deathParticleTrigger != null)
-                        Manager.World.ParticleManager.Trigger(deathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
+                    foreach (var trigger in deathParticleTriggers)
+                        Manager.World.ParticleManager.Trigger(trigger.EmitterName, AI.Position, Color.White, 2);
                     break;
             }
 
@@ -773,10 +773,10 @@ namespace DwarfCorp
                 Sprite.Blink(0.5f);
                 AI.AddThought(Thought.ThoughtType.TookDamage);
 
-                var deathParticleTrigger = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs").FirstOrDefault();
+                var deathParticleTriggers = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs");
 
-                if (deathParticleTrigger != null)
-                    Manager.World.ParticleManager.Trigger(deathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
+                foreach (var trigger in deathParticleTriggers)
+                    Manager.World.ParticleManager.Trigger(trigger.EmitterName, AI.Position, Color.White, 2);
                 DrawLifeTimer.Reset();
             }
 

@@ -445,6 +445,7 @@ namespace DwarfCorp
                     Time.Speed = 1000;
                 }
             }
+            //ParticleManager.Trigger("feather", CursorLightPos + Vector3.Up, Color.White, 1);
 
             //Drawer3D.DrawPlane(0, Camera.Position.X - 1500, Camera.Position.Z - 1500, Camera.Position.X + 1500, Camera.Position.Z + 1500, Color.Black);
             FillClosestLights(gameTime);

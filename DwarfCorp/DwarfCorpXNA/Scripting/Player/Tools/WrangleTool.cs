@@ -126,7 +126,7 @@ namespace DwarfCorp
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
             else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 12));
+                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 7));
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
