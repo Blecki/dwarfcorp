@@ -59,8 +59,6 @@ namespace DwarfCorp
             public int XP;
             public CreatureStats.StatNums BaseStats;
         }
-
-        public Texture2D SpriteSheet { get; set; }
         public List<Animation> Animations { get; set; }
         public string MinecartAnimations { get; set; }
         public List<Attack> Attacks { get; set; }

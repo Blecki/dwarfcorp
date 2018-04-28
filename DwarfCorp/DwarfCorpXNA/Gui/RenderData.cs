@@ -13,7 +13,7 @@ namespace DwarfCorp.Gui
     /// Encapsulates rendering data that GUI instances can share. This data is expensive to create
     /// so we only want to do it once.
     /// </summary>
-    public class RenderData
+    public class RenderData : IDisposable
     {
         public GraphicsDevice Device { get { return GameStates.GameState.Game.GraphicsDevice; } }
 
@@ -139,6 +139,12 @@ namespace DwarfCorp.Gui
             RealScreen = new Rectangle((screenSize.X - RealScreen.Width) / 2,
                 (screenSize.Y - RealScreen.Height) / 2,
                 RealScreen.Width, RealScreen.Height);
+        }
+
+        public void Dispose()
+        {
+            if (Texture != null && !Texture.IsDisposed)
+                Texture.Dispose();
         }
     }
 }

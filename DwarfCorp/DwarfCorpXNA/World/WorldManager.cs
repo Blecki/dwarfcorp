@@ -1046,7 +1046,6 @@ namespace DwarfCorp
 
             if (WaterRenderer != null)
             {
-                WaterRenderer.Dispose();
                 WaterRenderer = new WaterRenderer(GraphicsDevice);
             }
             
@@ -1063,7 +1062,7 @@ namespace DwarfCorp
             DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
             DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
             DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
-
+            PrimitiveLibrary.Reinitialize(GraphicsDevice, Content);
         }
 
         /// <summary>

@@ -609,8 +609,7 @@ namespace DwarfCorp.GameStates
 
             #region Toggle panel buttons
 
-            MinimapRenderer = new Gui.Widgets.MinimapRenderer(192, 192, World,
-                AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_colormap));
+            MinimapRenderer = new Gui.Widgets.MinimapRenderer(192, 192, World, ContentPaths.Terrain.terrain_colormap);
 
             MinimapFrame = GuiRoot.RootItem.AddChild(new MinimapFrame
             {
