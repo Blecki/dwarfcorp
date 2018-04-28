@@ -74,7 +74,7 @@ namespace DwarfCorp
             effect.SelfIlluminationEnabled = true;
             effect.EnableShadows = false;
 
-			BoundingFrustum cameraFrustrum = renderCamera.GetFrustrum();
+			BoundingFrustum cameraFrustrum = renderCamera.GetFrustum();
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
@@ -164,8 +164,8 @@ namespace DwarfCorp
             if (visibilityChunksTimer.HasTriggered)
             {
                 var visibleSet = new HashSet<VoxelChunk>();
-                GetChunksIntersecting(camera.GetFrustrum(), visibleSet);
-                RenderList = visibleSet.Where(c => (camera.Position - c.GetBoundingBox().Center()).Length2D() < GameSettings.Default.ChunkDrawDistance).ToList();
+                GetChunksIntersecting(camera.GetDrawFrustum(), visibleSet);
+                RenderList = visibleSet.ToList();
             }
             }
     }

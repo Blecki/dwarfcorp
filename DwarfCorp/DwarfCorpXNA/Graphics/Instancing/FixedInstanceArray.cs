@@ -65,7 +65,7 @@ namespace DwarfCorp
                 return;
             }
 
-            BoundingFrustum frust = inputCamera.GetFrustrum();
+            BoundingFrustum frust = inputCamera.GetFrustum();
             BoundingBox box = MathFunctions.GetBoundingBox(frust.GetCorners());
             Vector3 forward = frust.Near.Normal;
 

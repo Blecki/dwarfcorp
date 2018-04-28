@@ -141,14 +141,15 @@ namespace DwarfCorp
             }
         }
 
-        public bool IsInView(BoundingBox boundingSphere)
-        {
-            return GetFrustrum().Intersects(boundingSphere);
-        }
-
-        public BoundingFrustum GetFrustrum()
+        public BoundingFrustum GetFrustum()
         {
             return new BoundingFrustum(ViewMatrix * ProjectionMatrix);
+        }
+
+        public BoundingFrustum GetDrawFrustum()
+        {
+            var projection = Matrix.CreatePerspectiveFieldOfView(FOV, AspectRatio, NearPlane, GameSettings.Default.ChunkDrawDistance);
+            return new BoundingFrustum(ViewMatrix * projection);
         }
     }
 

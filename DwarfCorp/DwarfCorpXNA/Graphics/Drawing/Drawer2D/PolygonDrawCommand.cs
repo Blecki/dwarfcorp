@@ -68,7 +68,7 @@ namespace DwarfCorp
         {
             Points = new List<Vector2>();
 
-            BoundingFrustum cameraFrustrum = camera.GetFrustrum();
+            BoundingFrustum cameraFrustrum = camera.GetFrustum();
             foreach(Vector3 point in points)
             {
                 if(cameraFrustrum.Contains(point) == ContainmentType.Contains)
