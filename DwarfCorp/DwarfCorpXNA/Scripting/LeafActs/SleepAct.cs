@@ -97,6 +97,13 @@ namespace DwarfCorp
             {
                 while (!Creature.Status.Energy.IsSatisfied() && Creature.Manager.World.Time.IsNight())
                 {
+                    if (Creature.Physics.IsInLiquid)
+                    {
+                        Creature.Status.IsAsleep = false;
+                        Creature.CurrentCharacterMode = CharacterMode.Idle;
+                        Creature.OverrideCharacterMode = false;
+                        yield return Status.Fail;
+                    }
                     if (Teleport)
                     {
                         Creature.AI.Position = TeleportLocation;
@@ -139,6 +146,13 @@ namespace DwarfCorp
             {
                 while (Creature.Status.Health.IsDissatisfied() || Creature.Buffs.Any(buff => buff is Disease))
                 {
+                    if (Creature.Physics.IsInLiquid)
+                    {
+                        Creature.Status.IsAsleep = false;
+                        Creature.CurrentCharacterMode = CharacterMode.Idle;
+                        Creature.OverrideCharacterMode = false;
+                        yield return Status.Fail;
+                    }
                     if (Teleport)
                     {
                         Creature.AI.Position = TeleportLocation;
