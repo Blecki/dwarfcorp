@@ -74,7 +74,7 @@ namespace DwarfCorp
                 }
 
                 foreach (var function in Functions)
-                    builder.AppendFormat("{1:0000} {2:00000000} {0}\n", function.Value.Name, function.Value.FrameCalls, function.Value.FrameTicks);
+                    builder.AppendFormat("{1:0000} {2:000} {3:00000000} {0}\n", function.Value.Name, function.Value.FrameCalls, function.Value.FrameTicks / 1000, function.Value.FrameTicks);
                 if (GuiRoot != null)
                 {
                     Widget.Text = builder.ToString();

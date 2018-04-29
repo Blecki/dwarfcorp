@@ -64,13 +64,12 @@ namespace DwarfCorp
             CollisionType = CollisionType.Static;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (Manager.World.Time.CurrentDate >= FullyGrownDay)
             {
                 CreateAdult();
             }
-            base.Update(gameTime, chunks, camera);
         }
 
         public void CreateAdult()

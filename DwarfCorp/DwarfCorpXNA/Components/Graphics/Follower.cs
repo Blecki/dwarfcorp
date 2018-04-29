@@ -63,7 +63,7 @@ namespace DwarfCorp
             FollowRate = 0.1f;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             var body = Parent as Body;
             System.Diagnostics.Debug.Assert(body != null);
@@ -78,7 +78,6 @@ namespace DwarfCorp
             newTransform.Translation = newPos;
             newTransform = newTransform * Matrix.Invert(body.GlobalTransform);
             LocalTransform = newTransform;
-            base.Update(gameTime, chunks, camera);
         }
     }
 

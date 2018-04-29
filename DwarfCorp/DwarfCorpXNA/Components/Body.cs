@@ -40,7 +40,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    public class Body : GameComponent, IBoundedObject, IUpdateableComponent, IRenderableComponent
+    public class Body : GameComponent, IBoundedObject, IRenderableComponent
     {
         public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
@@ -199,18 +199,18 @@ namespace DwarfCorp
             mat.Translation = LocalTransform.Translation;
             LocalTransform = mat;
             PropogateTransforms();
-        } 
-        
-        public virtual void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        }
+
+        public void AnimationAndTransformUpdate(DwarfTime Time)
         {
             if (AnimationQueue.Count > 0)
             {
                 var anim = AnimationQueue[0];
-                anim.Update(gameTime);
+                anim.Update(Time);
 
                 LocalTransform = anim.GetTransform();
 
-                if(anim.IsDone())
+                if (anim.IsDone())
                     AnimationQueue.RemoveAt(0);
             }
 
@@ -219,7 +219,7 @@ namespace DwarfCorp
 
             ParentMoved = false;
         }
-
+        
         public void UpdateTransform()
         {
             if (Parent != null)

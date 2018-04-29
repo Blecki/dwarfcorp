@@ -85,7 +85,7 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             AnimPlayer.Update(gameTime);
             base.Update(gameTime, chunks, camera);

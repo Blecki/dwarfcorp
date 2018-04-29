@@ -137,7 +137,7 @@ namespace DwarfCorp
             blinkTrigger.Reset(blinkTime);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if(isBlinking)
             {

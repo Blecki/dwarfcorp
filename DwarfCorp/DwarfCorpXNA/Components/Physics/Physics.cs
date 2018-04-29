@@ -224,11 +224,10 @@ namespace DwarfCorp
             LocalTransform = transform;
         }
  
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!Active)
             {
-                base.Update(gameTime, chunks, camera);
                 return;
             }
 
@@ -236,13 +235,11 @@ namespace DwarfCorp
             if (AnimationQueue.Count > 0)
             {
                 Velocity = Vector3.Zero;
-                base.Update(gameTime, chunks, camera);
                 return;
             }
 
             if (gameTime.Speed < 0.01)
             {
-                base.Update(gameTime, chunks, camera);
                 return;
             }
 
@@ -422,7 +419,6 @@ namespace DwarfCorp
             CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             PreviousVelocity = Velocity;
             PreviousPosition = Position;
-            base.Update(gameTime, chunks, camera);
         }
 
 

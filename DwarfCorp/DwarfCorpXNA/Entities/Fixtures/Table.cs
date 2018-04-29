@@ -178,7 +178,7 @@ namespace DwarfCorp
 
         }
 
-        public override void Update(DwarfTime time, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime time, ChunkManager chunks, Camera camera)
         {
             if (Active && Battery != null)
             {
@@ -189,7 +189,6 @@ namespace DwarfCorp
                     Battery.Reset(Manager.World.PlayerFaction, Position + Vector3.Up, Manager.World);
                 }
             }
-            base.Update(time, chunks, camera);
         }
 
         public Table(ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame, List<ResourceAmount> resources) :

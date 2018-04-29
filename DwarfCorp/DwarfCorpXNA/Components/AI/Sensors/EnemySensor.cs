@@ -127,7 +127,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             SenseTimer.Update(gameTime);
             
@@ -136,8 +136,6 @@ namespace DwarfCorp
                 Sense();
             }
             Enemies.RemoveAll(ai => ai.IsDead);
-
-            base.Update(gameTime, chunks, camera);
         }
 
         private void EnemySensor_OnEnemySensed(List<CreatureAI> enemies)

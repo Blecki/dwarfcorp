@@ -67,7 +67,7 @@ namespace DwarfCorp
             Velocity = new Vector3(1, 0, 0);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             Storm.InitializeStatics();
             BoundingBox box = chunks.Bounds;
@@ -170,7 +170,6 @@ namespace DwarfCorp
             Matrix tf = LocalTransform;
             tf.Translation += Velocity * DwarfTime.Dt;
             LocalTransform = tf;
-            base.Update(gameTime, chunks, camera);
         }
 
         public override void Die()

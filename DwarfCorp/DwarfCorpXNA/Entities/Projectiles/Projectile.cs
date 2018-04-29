@@ -136,7 +136,7 @@ namespace DwarfCorp
             DamageRadius = (float)Math.Pow(size*4, 2);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (Target != null && (Target.Position - LocalPosition).LengthSquared() < DamageRadius)
             {

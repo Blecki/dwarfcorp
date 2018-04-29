@@ -28,13 +28,10 @@ namespace DwarfCorp
             Tags.Add("Stove");
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (MathFunctions.RandEvent(0.01f))
-            {
                 Manager.World.ParticleManager.Trigger("smoke", GlobalTransform.Translation + Vector3.Up * .5f, Color.White, 1);
-            }
-            base.Update(gameTime, chunks, camera);
         }
     }
 }

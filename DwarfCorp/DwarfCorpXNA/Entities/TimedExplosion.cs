@@ -135,7 +135,7 @@ namespace DwarfCorp
             base.CreateCosmeticChildren(manager);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (Active)
             {
@@ -243,8 +243,6 @@ namespace DwarfCorp
                         break;
                 }                
             }
-
-            base.Update(gameTime, chunks, camera);
         }
 
         private void PrepareForExplosion()

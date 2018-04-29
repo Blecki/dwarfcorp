@@ -93,7 +93,7 @@ namespace DwarfCorp
         {
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             CalculateCurrentOrientation(camera);
 

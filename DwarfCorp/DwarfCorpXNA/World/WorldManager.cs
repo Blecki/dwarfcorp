@@ -451,7 +451,6 @@ namespace DwarfCorp
                 }
             }
 
-            //Drawer3D.DrawPlane(0, Camera.Position.X - 1500, Camera.Position.Z - 1500, Camera.Position.X + 1500, Camera.Position.Z + 1500, Color.Black);
             FillClosestLights(gameTime);
             IndicatorManager.Update(gameTime);
             AspectRatio = GraphicsDevice.Viewport.AspectRatio;
@@ -481,6 +480,7 @@ namespace DwarfCorp
                 DefaultShader.TimeOfDay = Sky.TimeOfDay;
                 MonsterSpawner.Update(gameTime);
                 bool allAsleep = Master.AreAllEmployeesAsleep();
+
 #if !UPTIME_TEST
                 if (SleepPrompt == null && allAsleep && !FastForwardToDay && Time.IsNight())
                 {
@@ -730,9 +730,7 @@ namespace DwarfCorp
             if (!ShowingWorld)
                 return;
 
-            var renderables = ComponentRenderer.EnumerateVisibleRenderables(ComponentManager.GetRenderables(),
-                ChunkManager,
-                Camera);
+            var renderables = EnumerateIntersectingObjects(Camera.GetDrawFrustum()).OfType<IRenderableComponent>().Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()));
 
             // Controls the sky fog
             float x = (1.0f - Sky.TimeOfDay);

@@ -105,7 +105,7 @@ namespace DwarfCorp
             PropogateTransforms();
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (Active && closestCreature != null && !closestCreature.IsDead)
             {                
@@ -126,7 +126,6 @@ namespace DwarfCorp
                 _currentAngle = 0.9f * _currentAngle + 0.1f * _targetAngle;
                 SetTurretAngle(_currentAngle);
             }
-            base.Update(gameTime, chunks, camera);
         }
     }
 }
