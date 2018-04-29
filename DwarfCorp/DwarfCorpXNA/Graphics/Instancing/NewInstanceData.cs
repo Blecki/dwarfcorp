@@ -20,6 +20,7 @@ namespace DwarfCorp
 
         private Matrix _transform;
         private NewInstanceManager Manager;
+        public ulong EntityID = 0;
 
         [Newtonsoft.Json.JsonIgnore]
         public Matrix Transform
