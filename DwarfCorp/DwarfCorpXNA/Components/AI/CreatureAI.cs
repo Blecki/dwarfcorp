@@ -145,14 +145,6 @@ namespace DwarfCorp
         /// </value>
         public bool IsPosessed { get; set; }
 
-        /// <summary> Wrapper around Creature.Hands </summary>
-        [JsonIgnore]
-        public Grabber Hands
-        {
-            get { return Creature.Hands; }
-            set { Creature.Hands = value; }
-        }
-
         /// <summary> Wrapper around Creature.Physics </summary>
         [JsonIgnore]
         public Physics Physics

@@ -43,6 +43,7 @@ namespace DwarfCorp
             this.Owner = Owner;
 
             CreateCosmeticChildren(Manager);
+            CollisionType = CollisionType.Dynamic;
 
             AddChild(new BalloonAI(Manager, Target, Order, Owner));
         }

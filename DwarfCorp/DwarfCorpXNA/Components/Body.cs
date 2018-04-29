@@ -40,7 +40,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    public class Body : GameComponent, IBoundedObject, IRenderableComponent
+    public class Body : GameComponent, IBoundedObject, IRenderableComponent, IUpdateableComponent
     {
         public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
@@ -68,26 +68,6 @@ namespace DwarfCorp
         public Matrix GlobalTransform
         {
             get { return globalTransform; }
-            set
-            {
-                globalTransform = value;
-                UpdateBoundingBox();
-
-                if (CachedOcttreeNode == null || CachedOcttreeNode.Bounds.Contains(BoundingBox) != ContainmentType.Contains)
-                {
-                    Manager.World.OctTree.RemoveItem(this, lastBounds);
-                    if (!IsDead)
-                        CachedOcttreeNode = Manager.World.OctTree.AddToTreeEx(Tuple.Create(this, BoundingBox));
-                }
-                else
-                {
-                    CachedOcttreeNode.RemoveItem(this, lastBounds);
-                    if (!IsDead)
-                        CachedOcttreeNode = CachedOcttreeNode.AddToTreeEx(Tuple.Create(this, BoundingBox));
-                }
-
-                lastBounds = BoundingBox;
-            }
         }
 
         public Matrix LocalTransform
@@ -95,9 +75,14 @@ namespace DwarfCorp
             get { return localTransform; }
             set
             {
-                localTransform = value;
                 HasMoved = true;
+                localTransform = value;
             }
+        }
+
+        private float MaxDiff(BoundingBox a, BoundingBox b)
+        {
+            return (a.Min - b.Min).LengthSquared() + (a.Max - b.Max).LengthSquared();
         }
 
         /// <summary>
@@ -123,8 +108,9 @@ namespace DwarfCorp
             get { return LocalTransform.Translation; }
             set
             {
-                localTransform.Translation = value;
-                HasMoved = true;
+                var t = localTransform;
+                t.Translation = value;
+                LocalTransform = t;
             }
         }
 
@@ -139,13 +125,11 @@ namespace DwarfCorp
             {
                 hasMoved = value;
 
-                if (value)
-                    foreach (var child in EnumerateChildren().OfType<Body>())
-                        child.ParentMoved = true;
+               // if (value)
+               //     foreach (var child in EnumerateChildren().OfType<Body>())
+               //         child.HasMoved = true;
             }
         }
-
-        public bool ParentMoved = false;
 
         protected Matrix localTransform = Matrix.Identity;
         protected Matrix globalTransform = Matrix.Identity;
@@ -168,7 +152,7 @@ namespace DwarfCorp
 
             //SetFlag(Flag.AddToCollisionManager, addToCollisionManager);
             LocalTransform = localTransform;
-            GlobalTransform = localTransform;
+            globalTransform = localTransform;
 
             SetFlag(Flag.FrustumCull, true);
         }
@@ -201,7 +185,7 @@ namespace DwarfCorp
             PropogateTransforms();
         }
 
-        public void AnimationAndTransformUpdate(DwarfTime Time)
+        public void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         {
             if (AnimationQueue.Count > 0)
             {
@@ -214,28 +198,56 @@ namespace DwarfCorp
                     AnimationQueue.RemoveAt(0);
             }
 
-            if (HasMoved || ParentMoved)
+            if (HasMoved)
                 PropogateTransforms();
-
-            ParentMoved = false;
         }
         
         public void UpdateTransform()
         {
+            var newTransform = Matrix.Identity;
+
             if (Parent != null)
-                GlobalTransform = LocalTransform * (Parent as Body).GlobalTransform;
+                newTransform = LocalTransform * (Parent as Body).GlobalTransform;
             else
-                GlobalTransform = LocalTransform;
+                newTransform = LocalTransform;
+
+            globalTransform = newTransform;
+
+            UpdateBoundingBox();
+
+            if (CachedOcttreeNode == null || MaxDiff(lastBounds, BoundingBox) > 0.1f)
+            {
+                if (CollisionType != CollisionType.None)
+                {
+                    if (CachedOcttreeNode == null || CachedOcttreeNode.Bounds.Contains(BoundingBox) != ContainmentType.Contains)
+                    {
+                        Manager.World.OctTree.RemoveItem(this, lastBounds);
+                        if (!IsDead)
+                            CachedOcttreeNode = Manager.World.OctTree.AddToTreeEx(Tuple.Create(this, BoundingBox));
+                    }
+                    else
+                    {
+                        CachedOcttreeNode.RemoveItem(this, lastBounds);
+                        if (!IsDead)
+                            CachedOcttreeNode = CachedOcttreeNode.AddToTreeEx(Tuple.Create(this, BoundingBox));
+                    }
+                }
+
+                lastBounds = BoundingBox;
+            }
 
             hasMoved = false;
         }
 
         public void PropogateTransforms()
         {
-            UpdateTransform();
+            PerformanceMonitor.PushFrame("Propogate Transforms");
 
-            foreach (var child in EnumerateChildren().OfType<Body>())
-                child.PropogateTransforms();
+            UpdateTransform();
+            for (var i = 0; i < Children.Count; ++i)
+                if (Children[i] is Body child) child.hasMoved = true;
+
+            PerformanceMonitor.PopFrame();
         }
 
         public BoundingBox GetBoundingBox()
@@ -265,13 +277,14 @@ namespace DwarfCorp
 
         public override void Delete()
         {
-            Manager.World.OctTree.RemoveItem(this, lastBounds);
+            if (CollisionType != CollisionType.None)
+                Manager.World.OctTree.RemoveItem(this, lastBounds);
             base.Delete();
         }
 
         public override void Die()
         {
-            if (Manager != null)
+            if (Manager != null && CollisionType != CollisionType.None)
                 Manager.World.OctTree.RemoveItem(this, lastBounds);
 
             if (OnDestroyed != null) OnDestroyed();

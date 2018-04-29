@@ -67,8 +67,10 @@ namespace DwarfCorp
             Velocity = new Vector3(1, 0, 0);
         }
 
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             Storm.InitializeStatics();
             BoundingBox box = chunks.Bounds;
             box.Expand(10.0f);

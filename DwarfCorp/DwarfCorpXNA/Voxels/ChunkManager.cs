@@ -351,7 +351,7 @@ namespace DwarfCorp
         {
             PauseThreads = true;
             ExitThreads = true;
-            RebuildThread.Join();
+            RebuildThread.Abort();
             WaterUpdateThread.Join();
         }
 

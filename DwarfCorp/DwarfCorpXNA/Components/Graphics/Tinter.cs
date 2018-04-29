@@ -83,8 +83,10 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             if (!LightsWithVoxels)
                 Tint = Color.White;
 

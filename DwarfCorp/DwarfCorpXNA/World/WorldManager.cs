@@ -380,6 +380,17 @@ namespace DwarfCorp
                     RenderTarget2D renderTarget = new RenderTarget2D(GraphicsDevice, resolution.X, resolution.Y, false,
                         SurfaceFormat.Color, DepthFormat.Depth24))
                 {
+                    var frustum = Camera.GetDrawFrustum();
+                    var renderables = ComponentManager.GetRenderables()
+                        .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()))
+                        .Where(r => frustum.Intersects(r.GetBoundingBox()));
+                    //var renderables = EnumerateIntersectingObjects(Camera.GetDrawFrustum())
+                    //    .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()))
+                    //    .Where(c => Object.ReferenceEquals(c.Parent, ComponentManager.RootComponent) && c.IsVisible)
+                    //    .SelectMany(c => c.EnumerateAll())
+                    //    .OfType<IRenderableComponent>();
+
+
                     var oldProjection = Camera.ProjectionMatrix;
                     Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(Camera.FOV, ((float)resolution.X) / resolution.Y, Camera.NearPlane, Camera.FarPlane);
                     Camera.ProjectionMatrix = projectionMatrix;
@@ -392,7 +403,7 @@ namespace DwarfCorp
                     NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera,
                         InstanceRenderer.RenderMode.Normal);
 
-                    ComponentRenderer.Render(ComponentManager.GetRenderables(), new DwarfTime(), ChunkManager, Camera,
+                    ComponentRenderer.Render(renderables, new DwarfTime(), ChunkManager, Camera,
                         DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
                         ComponentRenderer.WaterRenderType.None, 0);
 
@@ -731,7 +742,15 @@ namespace DwarfCorp
             if (!ShowingWorld)
                 return;
 
-            var renderables = EnumerateIntersectingObjects(Camera.GetDrawFrustum()).OfType<IRenderableComponent>().Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()));
+            var frustum = Camera.GetDrawFrustum();
+            var renderables = ComponentManager.GetRenderables()
+                .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()))
+                .Where(r => frustum.Intersects(r.GetBoundingBox()));
+            //var renderables = EnumerateIntersectingObjects(Camera.GetDrawFrustum())
+            //    .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()))
+            //    .Where(c => Object.ReferenceEquals(c.Parent, ComponentManager.RootComponent) && c.IsVisible)
+            //    .SelectMany(c => c.EnumerateAll())
+            //    .OfType<IRenderableComponent>();
 
             // Controls the sky fog
             float x = (1.0f - Sky.TimeOfDay);

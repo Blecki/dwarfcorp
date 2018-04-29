@@ -224,8 +224,10 @@ namespace DwarfCorp
             LocalTransform = transform;
         }
  
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             if (!Active)
             {
                 return;
@@ -408,8 +410,12 @@ namespace DwarfCorp
                     if (numTimesteps*velocityLength > 1)
                     {
                         // Assume all physics are attached to the root.
-                        UpdateTransform();
+                        if (Parent != null)
+                            globalTransform = LocalTransform * (Parent as Body).GlobalTransform;
+                        else
+                            globalTransform = LocalTransform;
                         UpdateBoundingBox();
+
                         //UpdateTransformsRecursive(Parent as Body);
                     }
                 }
@@ -419,14 +425,6 @@ namespace DwarfCorp
             CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             PreviousVelocity = Velocity;
             PreviousPosition = Position;
-        }
-
-
-        public void SetPosition(Vector3 pos)
-        {
-            Matrix tf = LocalTransform;
-            tf.Translation = pos;
-            LocalTransform = tf;
         }
 
         public void CheckLiquids(ChunkManager chunks, float dt)

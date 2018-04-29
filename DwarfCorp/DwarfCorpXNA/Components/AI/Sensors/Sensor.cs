@@ -63,8 +63,10 @@ namespace DwarfCorp
             FireTimer = new Timer(1.0f, false);
         }
         
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             FireTimer.Update(gameTime);
             if (FireTimer.HasTriggered && OnSensed != null)
                 OnSensed(Manager.World.EnumerateIntersectingObjects(BoundingBox, CollisionType.Dynamic));

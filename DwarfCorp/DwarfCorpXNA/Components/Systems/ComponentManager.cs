@@ -55,11 +55,15 @@ namespace DwarfCorp
         //private Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents =
         //    new Dictionary<Type, List<IUpdateableComponent>>();
         private List<IUpdateableComponent> UpdateableComponents = new List<IUpdateableComponent>();
-        private List<Body> Bodies = new List<Body>();
         private List<IRenderableComponent> Renderables = new List<IRenderableComponent>();
         private List<MinimapIcon> MinimapIcons = new List<MinimapIcon>();
         private List<GameComponent> Removals = new List<GameComponent>();
         private List<GameComponent> Additions = new List<GameComponent>();
+
+        public List<IRenderableComponent> GetRenderables()
+        {
+            return Renderables;
+        }
 
         public Body RootComponent { get; private set; }
 
@@ -71,7 +75,6 @@ namespace DwarfCorp
         private Mutex AdditionMutex = new Mutex();
         private Mutex RemovalMutex = new Mutex();
 
-        public IEnumerable<IRenderableComponent> GetRenderables() { return Renderables; }
         public IEnumerable<MinimapIcon> GetMinimapIcons() { return MinimapIcons; }
 
         public WorldManager World { get; set; }
@@ -125,9 +128,6 @@ namespace DwarfCorp
                     //UpdateableComponents[type].Add(component.Value as IUpdateableComponent);
                     UpdateableComponents.Add(component.Value as IUpdateableComponent);
                 }
-
-                if (component.Value is Body)
-                    Bodies.Add(component.Value as Body);
 
                 if (component.Value is IRenderableComponent)
                     Renderables.Add(component.Value as IRenderableComponent);
@@ -231,9 +231,6 @@ namespace DwarfCorp
                 UpdateableComponents.Remove(component as IUpdateableComponent);
             }
 
-            if (component is Body)
-                Bodies.Remove(component as Body);
-
             if (component is IRenderableComponent)
                 Renderables.Remove(component as IRenderableComponent);
 
@@ -263,9 +260,6 @@ namespace DwarfCorp
                 UpdateableComponents.Add(component as IUpdateableComponent);
             }
 
-            if (component is Body)
-                Bodies.Add(component as Body);
-
             if (component is IRenderableComponent)
                 Renderables.Add(component as IRenderableComponent);
 
@@ -275,55 +269,6 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            // Physics updates this whenever something moves... maybe? Let's see if anything breaks.
-            //  What broke: Anything that did not move became invisible.
-            //GamePerformance.Instance.StartTrackPerformance("Components - transforms");
-
-            if (RootComponent != null)
-                RootComponent.UpdateTransform();
-
-            //GamePerformance.Instance.StopTrackPerformance("Components - transforms");
-
-            //foreach (var componentType in UpdateableComponents)
-            //    foreach (var component in componentType.Value)
-            //        if (component.Active)
-            //        {
-            //            //GamePerformance.Instance.StartTrackPerformance("Component - " + component.GetType().Name);
-            //            component.Update(gameTime, chunks, camera);
-            //            //GamePerformance.Instance.StopTrackPerformance("Component - " + component.GetType().Name);
-            //        }
-
-            PerformanceMonitor.PushFrame("Body transform update");
-
-            //if (Debugger.Switches.ABTestSwitch)
-            //{
-            //    var tasks = 1;
-            //    var done = false;
-
-            //    foreach (var body in Bodies)
-            //    {
-            //        var lambdaCopy = body;
-            //        Interlocked.Increment(ref tasks);
-            //        ThreadPool.QueueUserWorkItem((obj) =>
-            //        {
-            //            lambdaCopy.AnimationAndTransformUpdate(gameTime);
-            //            if (Interlocked.Decrement(ref tasks) == 0)
-            //                done = true;
-            //        });
-            //    }
-            //    if (Interlocked.Decrement(ref tasks) == 0)
-            //        done = true;
-
-            //    while (!done) { }
-            //}
-            //else
-            //{
-                foreach (var body in Bodies)
-                    body.AnimationAndTransformUpdate(gameTime);
-            //}
-
-            PerformanceMonitor.PopFrame();
-
             PerformanceMonitor.PushFrame("Component Update");
 
             foreach (var component in UpdateableComponents)

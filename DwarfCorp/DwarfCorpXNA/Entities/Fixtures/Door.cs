@@ -173,8 +173,10 @@ namespace DwarfCorp
             IsOpen = false;
         }
 
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             if (!Active)
             {
                 return;

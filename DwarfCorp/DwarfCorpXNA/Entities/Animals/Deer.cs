@@ -106,8 +106,6 @@ namespace DwarfCorp
 
             SpriteAssets = spriteSheet;
             CreateSprite(ContentPaths.Entities.Animals.Deer.animations, Manager);
-            // Add hands
-            Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
 
             // Add sensor
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;

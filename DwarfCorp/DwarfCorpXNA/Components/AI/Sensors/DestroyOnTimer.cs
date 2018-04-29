@@ -58,8 +58,10 @@ namespace DwarfCorp
                 Die();
         }
 
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             if (!Voxel.IsValid || Voxel.IsEmpty)
                 Die();
 

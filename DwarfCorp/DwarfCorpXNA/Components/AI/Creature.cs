@@ -175,8 +175,6 @@ namespace DwarfCorp
 
         /// <summary> Finds enemies nearby and triggers when it sees them </summary>
         public EnemySensor Sensors { get; set; }
-        /// <summary> Allows the creature to grab other objects </summary>
-        public Grabber Hands { get; set; }
         /// <summary> If true, the creature will generate meat when it dies. </summary>
         public bool HasMeat { get; set; }
         /// <summary> If true, the creature will generate bones when it dies. </summary>

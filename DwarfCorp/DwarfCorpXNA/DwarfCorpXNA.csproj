@@ -179,7 +179,6 @@
     <Compile Include="Components\AI\Egg.cs" />
     <Compile Include="Components\AI\Creature.cs" />
     <Compile Include="Components\AI\CreatureAI.cs" />
-    <Compile Include="Components\AI\Grabber.cs" />
     <Compile Include="Components\AI\Health.cs" />
     <Compile Include="Components\AI\Inventory.cs" />
     <Compile Include="Components\AI\Mating.cs" />
@@ -656,7 +655,6 @@
     <Compile Include="Scripting\LeafActs\CreatureAct.cs" />
     <Compile Include="Scripting\LeafActs\CreatureExtensions.cs" />
     <Compile Include="Scripting\LeafActs\DigAct.cs" />
-    <Compile Include="Scripting\LeafActs\DropItemAct.cs" />
     <Compile Include="Scripting\LeafActs\FlyWanderAct.cs" />
     <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />
     <Compile Include="Scripting\LeafActs\MeleeAct.cs" />
