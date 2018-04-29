@@ -93,7 +93,7 @@ namespace DwarfCorp
                 MaxValue = 100.0f,
                 MinValue = 0.0f,
                 Name = "Happiness",
-                SatisfiedThreshold = 80.0f,
+                SatisfiedThreshold = 49.0f,
                 DissatisfiedThreshold = 20.0f,
                 CurrentValue = 50.0f
             };

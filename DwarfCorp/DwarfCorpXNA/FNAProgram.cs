@@ -37,7 +37,8 @@ using System.Threading;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 namespace DwarfCorpCore
 {
@@ -47,14 +48,17 @@ namespace DwarfCorpCore
 namespace DwarfCorp
 {
 
+
+
 #if WINDOWS || XBOX
     internal static class Program
     {
-        public static string Version = "18.04.16_FNA";
-        public static string[] CompatibleVersions = { "18.04.16_FNA", "18.04.16_FNA", "18.04.08_FNA", "18.04.08_XNA" };
+        public static string Version = "18.04.28_FNA";
+        public static string[] CompatibleVersions = { "18.04.28_FNA", "18.04.28_XNA", "18.04.16_FNA", "18.04.16_FNA", "18.04.08_FNA", "18.04.08_XNA" };
         public static string Commit = "UNKNOWN";
         public static char DirChar = Path.DirectorySeparatorChar;
         
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -70,7 +74,7 @@ namespace DwarfCorp
                     Commit = reader.ReadToEnd();
             }
             catch (Exception) { }
-
+            System.Net.ServicePointManager.ServerCertificateValidationCallback = SSLCallback;
 #if CREATE_CRASH_LOGS
             try
 #endif
@@ -161,6 +165,12 @@ namespace DwarfCorp
         {
             DwarfGame.ExitGame = true;
             ShutdownEvent.Set();
+        }
+
+        // This is a very dangerous hack which forces DwarfCorp to accept all SSL certificates. This is to enable crash reporting on mac/linux.
+        public static bool SSLCallback(System.Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            return true;
         }
 
     }

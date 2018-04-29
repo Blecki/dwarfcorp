@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace DwarfCorp
@@ -34,7 +33,7 @@ namespace DwarfCorp
             this.Manager = Manager;
             this.Worker = Worker;
 
-            Thread = new Thread(MainLoop);
+            Thread = new Thread(MainLoop) { IsBackground = true };
         }
 
         public void Start()

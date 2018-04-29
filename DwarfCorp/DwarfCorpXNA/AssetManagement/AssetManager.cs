@@ -199,7 +199,6 @@ namespace DwarfCorp
             if (asset == null)
             {
                 var r = Content.Load<Texture2D>(ContentPaths.Error);
-                TextureCache[asset] = r;
                 return r;
             }
 

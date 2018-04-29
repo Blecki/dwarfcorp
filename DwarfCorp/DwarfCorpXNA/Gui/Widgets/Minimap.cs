@@ -84,18 +84,18 @@ namespace DwarfCorp.Gui.Widgets
 
     }
 
-    public class MinimapRenderer
+    public class MinimapRenderer : IDisposable
     {
         public Vector3 HomePosition { get; set; }
         protected bool HomeSet = false;
         public RenderTarget2D RenderTarget = null;
-        public Texture2D ColorMap { get; set; }
+        public string ColorMap { get; set; }
         public int RenderWidth = 196;
         public int RenderHeight = 196;
         public OrbitCamera Camera { get; set; }
         public WorldManager World { get; set; }
 
-        public MinimapRenderer(int width, int height, WorldManager world, Texture2D colormap)
+        public MinimapRenderer(int width, int height, WorldManager world, string colormap)
         {
             ColorMap = colormap;
 
@@ -156,6 +156,10 @@ namespace DwarfCorp.Gui.Widgets
         private Timer _renderTimer = new Timer(0.05f, false, Timer.TimerMode.Real);
         public void PreRender(DwarfTime time, SpriteBatch sprites)
         {
+            if (RenderTarget.IsDisposed)
+            {
+                RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, RenderWidth, RenderHeight, false, SurfaceFormat.Color, DepthFormat.Depth24);
+            }
             _renderTimer.Update(time);
             if (!_renderTimer.HasTriggered)
                 return;
@@ -189,7 +193,7 @@ namespace DwarfCorp.Gui.Widgets
             World.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             World.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             
-            World.ChunkRenderer.RenderAll(Camera, time, World.GraphicsDevice, World.DefaultShader, Matrix.Identity, ColorMap);
+            World.ChunkRenderer.RenderAll(Camera, time, World.GraphicsDevice, World.DefaultShader, Matrix.Identity, AssetManager.GetContentTexture(ColorMap));
             World.WaterRenderer.DrawWaterFlat(World.GraphicsDevice, Camera.ViewMatrix, Camera.ProjectionMatrix, World.DefaultShader, World.ChunkManager);
             World.GraphicsDevice.Textures[0] = null;
             World.GraphicsDevice.Indices = null;
@@ -227,6 +231,12 @@ namespace DwarfCorp.Gui.Widgets
             World.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             World.GraphicsDevice.SamplerStates[0] = Drawer2D.PointMagLinearMin;
             World.GraphicsDevice.SetRenderTarget(null);
+        }
+
+        public void Dispose()
+        {
+            if (RenderTarget != null && !RenderTarget.IsDisposed)
+                RenderTarget.Dispose();
         }
     }
 }

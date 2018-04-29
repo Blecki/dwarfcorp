@@ -450,6 +450,7 @@ namespace DwarfCorp
                     Time.Speed = 1000;
                 }
             }
+            //ParticleManager.Trigger("feather", CursorLightPos + Vector3.Up, Color.White, 1);
 
             FillClosestLights(gameTime);
             IndicatorManager.Update(gameTime);
@@ -977,12 +978,23 @@ namespace DwarfCorp
 
             if (WaterRenderer != null)
             {
-                WaterRenderer.Dispose();
                 WaterRenderer = new WaterRenderer(GraphicsDevice);
             }
             
             AssetManager.ResetCache();
             DwarfGame.SpriteBatch = new SpriteBatch(Game.GraphicsDevice);
+
+            Color[] white = new Color[1];
+            white[0] = Color.White;
+            pixel = new Texture2D(GraphicsDevice, 1, 1);
+            pixel.SetData(white);
+
+            Tilesheet = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
+            AspectRatio = GraphicsDevice.Viewport.AspectRatio;
+            DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
+            DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
+            DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
+            PrimitiveLibrary.Reinitialize(GraphicsDevice, Content);
         }
 
         /// <summary>

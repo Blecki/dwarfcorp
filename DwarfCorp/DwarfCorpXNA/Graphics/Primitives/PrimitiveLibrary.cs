@@ -25,6 +25,15 @@ namespace DwarfCorp
             Initialize(graphics, content);
         }
 
+        public static void Reinitialize(GraphicsDevice graphics, ContentManager content)
+        {
+            m_initialized = false;
+            BoxPrimitives = new Dictionary<string, OldBoxPrimitive>();
+            BillboardPrimitives = new Dictionary<string, BillboardPrimitive>();
+            BatchBillboardPrimitives = new Dictionary<string, BatchBillboardPrimitive>();
+            Initialize(graphics, content);
+        }
+
         public static void CreateIntersecting(string name, string assetName, GraphicsDevice graphics, ContentManager content)
         {
             Texture2D bushSheet = AssetManager.GetContentTexture(assetName);
@@ -38,7 +47,7 @@ namespace DwarfCorp
             BatchBillboardPrimitives[name] = new BatchBillboardPrimitive(graphics, bushSheet, bushSheet.Width, bushSheet.Height, new Point(0, 0), 1.0f, 1.0f, false, bushTransforms, bushColors, bushColors);
         }
 
-        public void Initialize(GraphicsDevice graphics, ContentManager content)
+        public static void Initialize(GraphicsDevice graphics, ContentManager content)
         {
             if(!m_initialized)
             {

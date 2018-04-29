@@ -68,8 +68,8 @@ namespace DwarfCorp
         public override void Initialize()
         {
             Body closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true);
-
-            
+            Zone closestZone = Agent.Faction.GetNearestRoom(Agent.Position);
+           
             if (Agent.Status.Energy.IsDissatisfied() && closestItem != null)
             {
                 closestItem.ReservedFor = Agent;
@@ -86,7 +86,17 @@ namespace DwarfCorp
                         unreserveAct
                     ) | unreserveAct;
             }
-            else if(Agent.Status.Energy.IsDissatisfied() && closestItem == null)
+            else if (Agent.Status.Energy.IsDissatisfied() && closestItem == null && closestZone != null)
+            {
+                Creature.AI.AddThought(Thought.ThoughtType.SleptOnGround);
+
+                Tree = new Sequence(new GoToZoneAct(Creature.AI, closestZone),
+                                    new SleepAct(Creature.AI)
+                                    {
+                                        RechargeRate = 1.0f
+                                    });
+            }
+            else if (Agent.Status.Energy.IsDissatisfied() && closestItem == null && closestZone == null)
             {
                 Creature.AI.AddThought(Thought.ThoughtType.SleptOnGround);
 

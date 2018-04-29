@@ -317,7 +317,7 @@ namespace DwarfCorp.GameStates
             }
 
             GenerationProgress.Text = Generator.LoadingMessage;
-            GenerationProgress.Percentage = Generator.Progress;
+            GenerationProgress.Percentage = Generator.Progress * 100.0f;
 
             // Enable or disable start button based on Generator state.
 

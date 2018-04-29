@@ -137,7 +137,8 @@ namespace DwarfCorp.GameStates
                 System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
                 System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
                 runRoutine(routine);
-            });
+            })
+            { IsBackground = true };
             OnFinished = (Boolean, Exception) => { };
             Done = false;
             GuiRoot = new Gui.Root(DwarfGame.GuiSkin)

@@ -57,10 +57,12 @@ namespace DwarfCorp
     {
         private Queue<VoxelChunk> RebuildQueue = new Queue<VoxelChunk>();
         private Mutex RebuildQueueLock = new Mutex();
+        private AutoResetEvent RebuildEvent = new AutoResetEvent(true);
 
         public void InvalidateChunk(VoxelChunk Chunk)
         {
             RebuildQueueLock.WaitOne();
+            RebuildEvent.Set();
             if (!RebuildQueue.Contains(Chunk))
                 RebuildQueue.Enqueue(Chunk);
             RebuildQueueLock.ReleaseMutex();
@@ -131,8 +133,7 @@ namespace DwarfCorp
 
             ChunkGen = chunkGen;
 
-
-            RebuildThread = new Thread(RebuildVoxelsThread);
+            RebuildThread = new Thread(RebuildVoxelsThread) { IsBackground = true };
             RebuildThread.Name = "RebuildVoxels";
 
             WaterUpdateThread = new AutoScaleThread(this, (f) => Water.UpdateWater());
@@ -175,11 +176,16 @@ namespace DwarfCorp
             {
                 while (!DwarfGame.ExitGame && !ExitThreads)
                 {
-                    var chunk = PopInvalidChunk();
-                    if (chunk != null)
-                        chunk.Rebuild(GameState.Game.GraphicsDevice);
-                    else
-                        Thread.Sleep(10);
+                    RebuildEvent.WaitOne();
+                    VoxelChunk chunk = null;
+                    do
+                    {
+                        chunk = PopInvalidChunk();
+                        if (chunk != null)
+                            chunk.Rebuild(GameState.Game.GraphicsDevice);
+                    }
+                    while (chunk != null);
+                    
                 }
             }
 #if CREATE_CRASH_LOGS
