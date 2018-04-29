@@ -110,8 +110,10 @@ namespace DwarfCorp
 
 #if XNA_BUILD
                     ravenClient.Tags["Platform"] = "XNA";
+                    ravenClient.Tags["OS"] = "Windows";
 #else
-                ravenClient.Tags["Platform"] = "FNA";
+                    ravenClient.Tags["Platform"] = "FNA";
+                    ravenClient.Tags["OS"] = SDL.SDL_GetPlatform();
 #endif
                 }
 #endif
