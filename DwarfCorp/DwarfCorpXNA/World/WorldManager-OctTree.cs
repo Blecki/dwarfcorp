@@ -42,7 +42,7 @@ namespace DwarfCorp
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects");
             var hash = new HashSet<Body>();
-            OctTree.EnumerateItems(box, hash, t => (t.CollisionType & queryType) == queryType);
+            OctTree.EnumerateItems(box, hash, t => (t.CollisionType & queryType) == t.CollisionType);
             PerformanceMonitor.PopFrame();
             return hash;
         }
