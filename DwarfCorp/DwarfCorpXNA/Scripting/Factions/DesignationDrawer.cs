@@ -44,6 +44,7 @@ namespace DwarfCorp
     public class DesignationDrawer
     {
         public DesignationType VisibleTypes = DesignationType._All;
+
         public class DesignationTypeProperties
         {
             public Color Color;
@@ -65,6 +66,7 @@ namespace DwarfCorp
         public DesignationDrawer()
         {
             DesignationProperties = new Dictionary<DesignationType, DesignationTypeProperties>();
+
             DesignationProperties.Add(DesignationType.Dig, new DesignationTypeProperties
             {
                 Color = Color.Red,
@@ -149,7 +151,7 @@ namespace DwarfCorp
                     if (voxel.Type == DesignationType.Put) // Hate this.
                         DrawPhantomCallback(v, VoxelLibrary.GetVoxelType(voxel.Tag.ToString()));
                     else if (voxel._drawing == 0)
-                        voxel._drawing = DesignationSet.TriangleCache.AddTopBox(voxel.Voxel.GetBoundingBox(),
+                        voxel._drawing = Set.TriangleCache.AddTopBox(voxel.Voxel.GetBoundingBox(),
                             DesignationProperties[voxel.Type].Color,
                             DesignationProperties[voxel.Type].LineWidth, true);
                     // Todo: Move the triangle cache out of the designation set. It belongs HERE, and needn't be static.
@@ -160,7 +162,7 @@ namespace DwarfCorp
                     voxel._drawing = 0;
                 }
             }
-            DesignationSet.TriangleCache.EraseSegments(removals);
+            Set.TriangleCache.EraseSegments(removals);
 
             foreach (var entity in Set.EnumerateEntityDesignations())
             {

@@ -44,7 +44,9 @@ namespace DwarfCorp
 {
     public class DesignationSet
     {
-        public static TriangleCache TriangleCache = new TriangleCache();
+        [JsonIgnore]
+        public TriangleCache TriangleCache = new TriangleCache();
+
         public class VoxelDesignation
         {
             public VoxelHandle Voxel;

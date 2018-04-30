@@ -468,7 +468,7 @@ namespace DwarfCorp
                         Effect.VertexColorTint = Color.White;
                         Effect.World = Matrix.Identity;
                     });
-                DesignationSet.TriangleCache.Draw(Effect, Camera);
+                Designations.TriangleCache.Draw(Effect, Camera);
                 foreach (var box in Boxes)
                     _addBox(box.RealBox.Min, box.RealBox.Max - box.RealBox.Min, box.Color, box.Thickness, box.Warp);
 
