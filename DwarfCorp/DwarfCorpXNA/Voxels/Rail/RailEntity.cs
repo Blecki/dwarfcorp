@@ -39,7 +39,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.Rail
 {
-    public class RailEntity : Tinter, IRenderableComponent
+    public class RailEntity : CraftedBody, IRenderableComponent
     {
         public class NeighborConnection
         {
@@ -130,7 +130,7 @@ namespace DwarfCorp.Rail
 
         public RailEntity()
         {
-            
+            CollisionType = CollisionType.Static;
         }
 
         public RailEntity(
@@ -142,7 +142,7 @@ namespace DwarfCorp.Rail
                 Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y)), 
                 Vector3.One,
                 Vector3.Zero,
-                true)
+                new CraftDetails(Manager, "Rail", new List<ResourceAmount> { new ResourceAmount("Rail", 1) }))
         {
             this.Piece = Piece;
             this.Location = Location;
@@ -434,7 +434,7 @@ namespace DwarfCorp.Rail
 
             // Everything that draws should set it's tint, making this pointless.
             Color origTint = effect.VertexColorTint;
-            ApplyTintingToEffect(effect);
+            //ApplyTintingToEffect(effect);
 
             effect.World = GlobalTransform;
 
@@ -450,7 +450,7 @@ namespace DwarfCorp.Rail
             }
 
             effect.VertexColorTint = origTint;
-            EndDraw(effect);
+            //EndDraw(effect);
         }
 
         private void AddScaffoldGeometry(Matrix transform, Vector4 sideBounds, Vector2[] sideUvs, float HeightOffset, bool FlipTexture)
@@ -521,7 +521,7 @@ namespace DwarfCorp.Rail
             var myPiece = RailLibrary.GetRailPiece(Piece.RailPiece);
 
             var myEndPoints = GetTransformedConnections().SelectMany(l => new Vector3[] { l.Item1, l.Item2 });
-            foreach (var entity in Manager.World.EnumerateIntersectingObjects(this.BoundingBox.Expand(0.5f), CollisionType.Both))
+            foreach (var entity in Manager.World.EnumerateIntersectingObjects(this.BoundingBox.Expand(0.5f), CollisionType.Static))
             {
                 if (Object.ReferenceEquals(entity, this)) continue;
                 var neighborRail = entity as RailEntity;

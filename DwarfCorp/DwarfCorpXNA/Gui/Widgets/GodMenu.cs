@@ -235,7 +235,6 @@ namespace DwarfCorp.Gui.Widgets
                                             {
                                                 var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as Rail.BuildRailTool;
                                                 railTool.Pattern = p;
-                                                railTool.SelectedResources = new List<ResourceAmount>(new ResourceAmount[] { new ResourceAmount("Rail", 1) });
                                                 Master.ChangeTool(GameMaster.ToolMode.BuildRail);
                                                 railTool.GodModeSwitch = true;
                                             }

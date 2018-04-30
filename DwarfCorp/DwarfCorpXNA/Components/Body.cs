@@ -204,6 +204,8 @@ namespace DwarfCorp
         
         public void UpdateTransform()
         {
+            PerformanceMonitor.PushFrame("Body.UpdateTransform");
+
             var newTransform = Matrix.Identity;
 
             if (Parent != null)
@@ -237,6 +239,8 @@ namespace DwarfCorp
             }
 
             hasMoved = false;
+
+            PerformanceMonitor.PopFrame();
         }
 
         public void PropogateTransforms()

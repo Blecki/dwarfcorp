@@ -993,12 +993,6 @@ namespace DwarfCorp
         }
 
         /// <summary> Returns whether or not the creature has a task with the same name as another </summary>
-        public bool HasTaskWithName(string other)
-        {
-            return Tasks.Any(task => task.Name == other);
-        }
-
-        /// <summary> Returns whether or not the creature has a task with the same name as another </summary>
         public bool HasTaskWithName(Task other)
         {
             return Tasks.Any(task => task.Name == other.Name);
@@ -1248,54 +1242,6 @@ namespace DwarfCorp
             var task = CurrentTask;
             ChangeTask(null);
             AssignTask(task);
-        }
-
-        public AStarPlanResponse WaitForPlan(VoxelHandle voxel, PlanAct.PlanType type = PlanAct.PlanType.Into)
-        {
-            GoalRegion region = null;
-            switch (type)
-            {
-                case PlanAct.PlanType.Into:
-                    region = new VoxelGoalRegion(voxel);
-                    break;
-                case PlanAct.PlanType.Adjacent:
-                    region = new AdjacentVoxelGoalRegion2D(voxel);
-                    break;
-                case PlanAct.PlanType.Radius:
-                    region = new SphereGoalRegion(voxel, 3.0f);
-                    break;
-                case PlanAct.PlanType.Edge:
-                    region = new EdgeGoalRegion();
-                     break;
-            }
-
-            AstarPlanRequest request = new AstarPlanRequest()
-            {
-                GoalRegion = region,
-                Start = Creature.Physics.CurrentVoxel,
-                Sender = this,
-                MaxExpansions = 50000
-            };
-
-            if (planHelper == null)
-                planHelper = new WaitForPlanHelper(5.0f, Creature.PlanService);
-
-            return planHelper.WaitForResponse(request);
-        }
-
-        public AStarPlanResponse WaitForPlan(Vector3 pos, PlanAct.PlanType type = PlanAct.PlanType.Into)
-        {
-            VoxelHandle voxel = new VoxelHandle(World.ChunkManager.ChunkData, new GlobalVoxelCoordinate((int)Math.Round(pos.X), (int)Math.Round(pos.Y), (int)Math.Round(pos.Z)));
-            return WaitForPlan(voxel);
-        }
-
-        public AStarPlanResponse WaitForPlan(Body body, PlanAct.PlanType type = PlanAct.PlanType.Into)
-        {
-            var pos = body.GlobalTransform.Translation;
-            VoxelHandle voxel = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(World.ChunkManager.ChunkData, new GlobalVoxelCoordinate((int)Math.Round(pos.X),
-                (int)Math.Round(pos.Y),
-                (int)Math.Round(pos.Z))));
-            return WaitForPlan(voxel);
         }
 
         public int CountFeasibleTasks(Task.PriorityType minPriority)

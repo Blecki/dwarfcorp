@@ -1496,10 +1496,6 @@ namespace DwarfCorp.GameStates
                                     Master.Faction.CraftBuilder.IsEnabled = false;
                                     var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as Rail.BuildRailTool;
                                     railTool.Pattern = data;
-                                    railTool.SelectedResources = new List<ResourceAmount>
-                                    {
-                                        new ResourceAmount("Rail", 1)
-                                    };
                                     ChangeTool(GameMaster.ToolMode.BuildRail);
                                 },
                                 Hidden = false

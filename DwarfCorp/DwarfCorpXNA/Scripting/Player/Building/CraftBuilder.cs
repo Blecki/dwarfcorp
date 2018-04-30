@@ -391,7 +391,7 @@ namespace DwarfCorp
 
                                     assignments.Add(task);
 
-                                    // Todo: Maybe don't support create huge numbers of entities at once?
+                                    // Todo: Maybe don't support creating huge numbers of entities at once?
                                     CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.EntityName, r.WorldPosition,
                                     Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
                                     CurrentCraftBody.SetFlagRecursive(GameComponent.Flag.Active, false);

@@ -113,22 +113,10 @@ namespace DwarfCorp
         {
             if (button == InputManager.MouseButton.Left)
             {
-
-                List<CreatureAI> minions =
-                    Player.World.Master.Faction.Minions.Where(minion => minion.Stats.IsTaskAllowed(Task.TaskCategory.Plant)).ToList();
                 var goals = new List<PlantTask>();
-
-                int currentAmount = Player.Faction.ListResources()
-                    .Sum(resource => resource.Key == PlantType && resource.Value.NumResources > 0 ? resource.Value.NumResources : 0);
 
                 foreach (var voxel in voxels)
                 {
-                    if (currentAmount == 0)
-                    {
-                        Player.World.ShowToolPopup("Not enough " + PlantType + " in stocks!");
-                        break;
-                    }
-
                     if (ValidatePlanting(voxel))
                     {
                         var farmTile = new Farm
@@ -148,13 +136,12 @@ namespace DwarfCorp
                             farmTile.TargetProgress = 200.0f; // Planting on untilled soil takes longer.
 
                         goals.Add(task);
-                        currentAmount--;
                     }
                 }
 
                 Player.TaskManager.AddTasks(goals);
                 
-                OnConfirm(minions);
+                OnConfirm(Player.World.Master.Faction.Minions.Where(minion => minion.Stats.IsTaskAllowed(Task.TaskCategory.Plant)).ToList());
             }
             else if (button == InputManager.MouseButton.Right)
             {
@@ -163,9 +150,7 @@ namespace DwarfCorp
                     var designation = Player.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Plant);
 
                     if (designation != null)
-                    {
                         Player.TaskManager.CancelTask(designation.Task);
-                    }
                 }
             }
         }
