@@ -73,15 +73,12 @@ namespace DwarfCorp
             public bool GrassMotes = true;
             public int NumMotes = 512;
             public bool InvertZoom = false;
-            public float ChunkGenerateDistance = 80.0f;
             public float ChunkRebuildTime = 0.5f;
             public float ChunkUnloadDistance = 250.0f;
             public bool DrawDebugData = false;
             public float VisibilityUpdateTime = 0.1f;
             public float ChunkGenerateTime = 0.5f;
             public bool FogofWar = true;
-            public bool UseDynamicShadows = false;
-            public bool UseLightmaps = false;
             public bool AutoSave = true;
             public float AutoSaveTimeMinutes = 2.0f;
             public string SaveLocation = null;

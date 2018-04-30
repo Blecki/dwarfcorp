@@ -147,7 +147,7 @@ namespace DwarfCorp.Rail
             this.Piece = Piece;
             this.Location = Location;
 
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
             AddChild(new Health(Manager, "Hp", 100, 0, 100));
             
             PropogateTransforms();
@@ -263,7 +263,7 @@ namespace DwarfCorp.Rail
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
-        override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
 
@@ -349,12 +349,12 @@ namespace DwarfCorp.Rail
                 else if (realShape == 1)
                 {
                     sideUvs = Sheet.GenerateTileUVs(new Point(0, 4), out sideBounds);
-                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, false);
+                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, true);
                 }
                 else if (realShape == 2)
                 {
                     sideUvs = Sheet.GenerateTileUVs(new Point(0, 4), out sideBounds);
-                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, true);
+                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, false);
                 }
 
                 // Todo: Make these static and avoid recalculating them constantly.
@@ -521,7 +521,7 @@ namespace DwarfCorp.Rail
             var myPiece = RailLibrary.GetRailPiece(Piece.RailPiece);
 
             var myEndPoints = GetTransformedConnections().SelectMany(l => new Vector3[] { l.Item1, l.Item2 });
-            foreach (var entity in Manager.World.CollisionManager.EnumerateIntersectingObjects(this.BoundingBox.Expand(0.5f), CollisionManager.CollisionType.Both))
+            foreach (var entity in Manager.World.EnumerateIntersectingObjects(this.BoundingBox.Expand(0.5f), CollisionType.Both))
             {
                 if (Object.ReferenceEquals(entity, this)) continue;
                 var neighborRail = entity as RailEntity;

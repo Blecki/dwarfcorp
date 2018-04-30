@@ -228,7 +228,8 @@ namespace DwarfCorp.GameStates
                     GenerateWorld(Seed, (int) Settings.Width, (int) Settings.Height);
                 })
                 {
-                    Name = "GenerateWorld"
+                    Name = "GenerateWorld",
+                    IsBackground = true
                 };
                 genThread.Start();
             }

@@ -17,13 +17,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class AnimatedSprite : Tinter, IUpdateableComponent, IRenderableComponent
     {
-        [OnSerialized]
-        private void _onSerialized(StreamingContext Context)
-        {
-            var x = 5;
-
-        }
-
         public Dictionary<string, Animation> Animations { get; set; }
 
         [JsonIgnore]
@@ -92,7 +85,7 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             AnimPlayer.Update(gameTime);
             base.Update(gameTime, chunks, camera);
@@ -108,7 +101,7 @@ namespace DwarfCorp
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
-        public virtual void Render(DwarfTime gameTime,
+        new public void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,
@@ -116,6 +109,8 @@ namespace DwarfCorp
             Shader effect,
             bool renderingForWater)
         {
+            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+
             if (!IsVisible)
                 return;
 
@@ -123,8 +118,6 @@ namespace DwarfCorp
                 return;
 
             if (AnimPlayer.Primitive == null) return;
-
-            GamePerformance.Instance.StartTrackPerformance("Render - Sprite");
 
             //AnimPlayer.PreRender(graphicsDevice);
 
@@ -198,7 +191,6 @@ namespace DwarfCorp
             effect.VertexColorTint = origTint;
             effect.EnableWind = false;
             EndDraw(effect);
-            GamePerformance.Instance.StopTrackPerformance("Render - Sprite");
         }
     }
 

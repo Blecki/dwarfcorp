@@ -92,9 +92,10 @@ namespace DwarfCorp
                     Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
         }
 
+        // Todo: Why is the graphics device passed in when we have a perfectly good global we're using instead?
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            Player.Faction.RoomBuilder.Render(time, Player.World.ChunkManager.Graphics);
+            Player.Faction.RoomBuilder.Render(time, GameState.Game.GraphicsDevice);
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)

@@ -11,7 +11,7 @@ If you're a developer/programmer and have the technical chops to compile C# code
 To develop DwarfCorp, you need the following libraries. If you just want to play the game, download one of the packages on our releases page.
 
 * [The XNA 4.0](https://www.microsoft.com/en-us/download/details.aspx?id=23714) library (not included)
-* Note: If you are running Windows 8 or higher, you will need to use [MXA](https://mxa.codeplex.com/) instead. This is included in our repository as a convenience. XNA has gotten very old and support was dropped for it long ago, and we must jump through hoops to get it working.
+* Note: If you are running Windows 8 or higher, you will need to use [MXA](https://github.com/CompletelyFairGames/dwarfcorp/wiki/Installing-MXA-Hacks) instead. This is included in our repository as a convenience. XNA has gotten very old and support was dropped for it long ago, and we must jump through hoops to get it working.
 * [XNA-FNA](https://github.com/FNA-XNA/FNA) for cross-platform development (forked)
 * [LibNoise.NET](https://libnoisedotnet.codeplex.com/) (source code included)
 * [JSON.NET](https://github.com/JamesNK/Newtonsoft.Json) (source code not included. You should get this through nuget.)
@@ -25,27 +25,30 @@ To build and run in the game on a windows PC, you must do the following:
 
 ### Building for XNA on Windows
 1. Download and install Visual Studio. Any version after 2012 will probably work. Our dev team currently uses Visual Studio 2017 Community.
-2. Download and install the XNA Game Studio 4.0 library (or install [MXA](https://mxa.codeplex.com/) from our repository if you are running Windows 8 or higher)
+2. Download and install the XNA Game Studio 4.0 library (or install [MXA](https://github.com/CompletelyFairGames/dwarfcorp/wiki/Installing-MXA-Hacks) from our repository if you are running Windows 8 or higher)
 
 #### INSTALLING MXA ####
 We started developing DwarfCorp in 2012. Back then, XNA was still a supported library in Visual Studio 2010. Ever since then, support has been dropped. So if you want to compile the game in say, Visual Studio 2017 Community, you will need to install the hacked up "MXA". This is a version of XNA that is hacked together to work on newer versions of Windows. We have included this in a folder called "MXA" under the root of our repository. Open that zip file, and install the dependencies one by one (there are 5 in the zip folder).
 
 Note that in 2017, the MXA project seems to have disappeared itself. Newer versions of Visual Studio (2017 and higher) don't seem to work with it. Luckily, there is *another hack* that you can apply to MXA to get it working with Visual Studio 2017 here:
 
-https://gist.github.com/roy-t/2f089414078bf7218350e8c847951255
-
 Note that we have included those hacks in our wiki here: https://github.com/CompletelyFairGames/dwarfcorp/wiki/Installing-MXA-Hacks
 
+Original source is [here.](https://gist.github.com/roy-t/2f089414078bf7218350e8c847951255)
 
 #### Important note about the MXA Hacks!! ####
-These hacks will install `Microsoft.Build.Framework.dll` into the global assembly cache (`GAC`). Since the `GAC` is no longer used to install Visual Studio dependencies, *any upgrade you make to visual studio will break all of your projects* after applying this hack. To resolve this issue, you must *completely uninstall and reinstall visual studio* instead of upgrading it, and then reapply the MXA hacks to get DwarfCorp compiling.
+These hacks will install `Microsoft.Build.Framework.dll` into the global assembly cache (`GAC`). Since the `GAC` is no longer used to install Visual Studio dependencies, **any upgrade you make to visual studio will break all of your projects** after applying this hack. To resolve this issue, you must *completely uninstall and reinstall visual studio* instead of upgrading it, and then reapply the MXA hacks to get DwarfCorp compiling.
+
+#### Compiling Build in VS ####
+Once you have Visual Studio and XNA (or MXA) installed, you're ready to compile DwarfCorp.
 
 3. Open `DwarfCorp.sln` in Visual Studio
-4. Set `DwarfCorpXNA` as the `StartUp` project.
-5. Add references to `XNA` binaries to the `DwarfCorpXNA` project. They may also need to be added to the `DwarfCorpCore` project. 
+4. Right-click on `DwarfCorpXNA` and set it as a `StartUp` project
+5. Add references to `XNA` binaries to the `DwarfCorpXNA` project. 
 6. Build `LibNoise` project
 7. Set the `DwarfCorpXNA` build mode to `Release` or `Debug`
 8. Build `DwarfCorpXNA`
+9. You're done! Launch the build!
 
 ### Problems and Solutions with building for XNA on Windows
 * **I opened the solution but I don't see anything**

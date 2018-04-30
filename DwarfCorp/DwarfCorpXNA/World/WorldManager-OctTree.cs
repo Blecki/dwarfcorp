@@ -1,4 +1,4 @@
-// CollisionManager.cs
+// PlayState.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -30,76 +30,30 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
+
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
-    public class CollisionManager
+    public partial class WorldManager
     {
-        [Flags]
-        public enum CollisionType
-        {
-            None = 0,
-            Static = 2,
-            Dynamic = 4,
-            Both = Static | Dynamic
-        }
-
-        [JsonIgnore]
-        public OctTreeNode<Body> Tree;
-
-        public CollisionManager()
-        {
-            
-        }
-
-        public CollisionManager(BoundingBox bounds)
-        {
-            Tree = new OctTreeNode<Body>(bounds.Min, bounds.Max);
-        }
-
-        public void AddObject(Body bounded)
-        {
-            Tree.AddItem(bounded, bounded.GetBoundingBox());
-        }
-
-        public void RemoveObject(Body bounded, BoundingBox oldLocation)
-        {
-            Tree.RemoveItem(bounded, oldLocation);
-        }
-
         public IEnumerable<Body> EnumerateIntersectingObjects(BoundingBox box, CollisionType queryType)
         {
-            //PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects");
+            PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects");
             var hash = new HashSet<Body>();
-            Tree.EnumerateItems(box, hash, t => (t.CollisionType & queryType) == t.CollisionType);
-            //PerformanceMonitor.PopFrame();
+            OctTree.EnumerateItems(box, hash, t => (t.CollisionType & queryType) == queryType);
+            PerformanceMonitor.PopFrame();
             return hash;
         }
 
         public IEnumerable<Body> EnumerateIntersectingObjects(BoundingFrustum Frustum)
         {
-            //PerformanceMonitor.PushFrame("CollisionManager.EnumerateFrustum");
+            PerformanceMonitor.PushFrame("CollisionManager.EnumerateFrustum");
             var hash = new HashSet<Body>();
-            Tree.EnumerateItems(Frustum, hash);
-            //PerformanceMonitor.PopFrame();
+            OctTree.EnumerateItems(Frustum, hash);
+            PerformanceMonitor.PopFrame();
             return hash;
-        }
-
-        public IEnumerable<Body> EnumerateAll()
-        {
-            var hash = new HashSet<Body>();
-            Tree.EnumerateAll(hash);
-            return hash;
-        }
-
-        public void EnumerateBounds(Action<BoundingBox, int> Callback)
-        {
-            Tree.EnumerateBounds(0, Callback);
         }
     }
 }

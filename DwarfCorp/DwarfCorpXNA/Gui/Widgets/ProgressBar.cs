@@ -28,7 +28,7 @@ namespace DwarfCorp.Gui.Widgets
             var fill = Root.GetTileSheet("progress-fill");
 
             var fillArea = Rect.Width - 24;
-            var fillTo = (int)(fillArea * Percentage);
+            var fillTo = (int)(fillArea * Percentage * 0.01f);
 
             return Mesh.Merge(
                 Mesh.TiledSprite(new Rectangle(Rect.X + 12, Rect.Y, fillTo, Rect.Height),

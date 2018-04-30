@@ -108,7 +108,7 @@ namespace DwarfCorp
                     ServiceThreadObject.Join();
                     ExitThreads = false;
                 }
-                ServiceThreadObject = new Thread(this.ServiceThread);
+                ServiceThreadObject = new Thread(this.ServiceThread) { IsBackground = true } ;
                 ServiceThreadObject.Name = "ServiceThread";
                 ServiceThreadObject.Start();
             }

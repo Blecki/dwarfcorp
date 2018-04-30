@@ -144,7 +144,6 @@ namespace DwarfCorp
 
             CurrentCraftBody.LocalPosition = player.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CurrentCraftType.SpawnOffset;
 
-            CurrentCraftBody.GlobalTransform = CurrentCraftBody.LocalTransform;
             CurrentCraftBody.UpdateTransform();
             CurrentCraftBody.PropogateTransforms();
             var tinters = CurrentCraftBody.EnumerateAll().OfType<Tinter>();

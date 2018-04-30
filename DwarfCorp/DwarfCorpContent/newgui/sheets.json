@@ -1,5 +1,11 @@
 [
-  {    
+  {
+    "Name": "monofont",
+    "Texture": "newgui/small-font",
+    "TileWidth": 6,
+    "TileHeight": 8
+  },
+  {
     "Name": "font8",
     "Texture": "newgui/font-8px",
     "Type": "VariableWidthFont"

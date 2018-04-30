@@ -13,11 +13,6 @@ namespace DwarfCorp
 {
     public class CompositeAnimation : Animation
     {
-        [OnSerialized]
-        private void _onSerialized(StreamingContext Context)
-        {
-        }
-
         [JsonIgnore]
         private Composite _cached_Composite = null;
 

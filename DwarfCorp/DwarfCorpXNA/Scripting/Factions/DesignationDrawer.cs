@@ -152,6 +152,7 @@ namespace DwarfCorp
                         voxel._drawing = DesignationSet.TriangleCache.AddTopBox(voxel.Voxel.GetBoundingBox(),
                             DesignationProperties[voxel.Type].Color,
                             DesignationProperties[voxel.Type].LineWidth, true);
+                    // Todo: Move the triangle cache out of the designation set. It belongs HERE, and needn't be static.
                 }
                 else if (voxel._drawing > 0)
                 {

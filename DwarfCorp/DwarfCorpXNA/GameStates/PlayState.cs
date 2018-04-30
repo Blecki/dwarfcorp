@@ -23,9 +23,6 @@ namespace DwarfCorp.GameStates
         public bool ShouldReset { get; set; }
         private DateTime EnterTime;
 
-        // Amount of time to wait when play begins, before accepting input,
-        private float EnterInputDelaySeconds = 1.0f;
-
         public WorldManager World { get; set; }
 
         public GameMaster Master
@@ -63,6 +60,7 @@ namespace DwarfCorp.GameStates
         private Widget ContextMenu;
         private Widget BottomBar;
         private Widget MinimapIcon;
+        private ProgressBar ManaBar;
 
         private class ToolbarItem
         {
@@ -96,6 +94,7 @@ namespace DwarfCorp.GameStates
 
         private void ChangeTool(GameMaster.ToolMode Mode)
         {
+            ManaBar.Hidden = Mode != GameMaster.ToolMode.Magic;
             Master.ChangeTool(Mode);
             foreach (var icon in ToolHiliteItems)
                 icon.Value.Hilite = icon.Key == Mode;
@@ -300,6 +299,13 @@ namespace DwarfCorp.GameStates
                 }
             });
 
+            var magic = (int)(100 * Master.Spells.Mana / Master.Spells.MaxMana);
+            if (ManaBar.Percentage != magic)
+            {
+                ManaBar.Percentage = magic;
+                ManaBar.Tooltip = String.Format("{0}/{1} Mana", Master.Spells.Mana, Master.Spells.MaxMana);
+                ManaBar.Text = String.Format("MANA: {0}/{1}", Master.Spells.Mana, Master.Spells.MaxMana);
+            }
             World.Update(gameTime);
             Input.Update();
 
@@ -555,9 +561,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockLeftCentered,
                 OnClick = (sender, args) =>
                 {
-                    Master.SetMaxViewingLevel(
-                        Master.MaxViewingLevel - 1,
-                        ChunkManager.SliceMode.Y);
+                    Master.SetMaxViewingLevel(Master.MaxViewingLevel - 1);
                 },
                 Tooltip = "Go down one viewing level."
             });
@@ -570,9 +574,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockLeftCentered,
                 OnClick = (sender, args) =>
                 {
-                    Master.SetMaxViewingLevel(
-                        Master.MaxViewingLevel + 1,
-                        ChunkManager.SliceMode.Y);
+                    Master.SetMaxViewingLevel(Master.MaxViewingLevel + 1);
                 },
                 Tooltip = "Go up one viewing level."
             });
@@ -609,8 +611,7 @@ namespace DwarfCorp.GameStates
 
             #region Toggle panel buttons
 
-            MinimapRenderer = new Gui.Widgets.MinimapRenderer(192, 192, World,
-                AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_colormap));
+            MinimapRenderer = new Gui.Widgets.MinimapRenderer(192, 192, World, ContentPaths.Terrain.terrain_colormap);
 
             MinimapFrame = GuiRoot.RootItem.AddChild(new MinimapFrame
             {
@@ -1848,16 +1849,17 @@ namespace DwarfCorp.GameStates
             var icon_Wrangle = new FlatToolTray.Icon
             {
                 Tag = "wrangle",
-                Text = "Wrng.",
+                Icon = new Gui.TileReference("tool-icons", 32),
+                Text = "Catch",
                 EnabledTextColor = new Vector4(1, 1, 1, 1),
-                Tooltip = "Wrangle Animals",
+                Tooltip = "Catch Animals",
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 KeepChildVisible = false,
                 PopupChild = new Widget()
                 {
                     Border = "border-fancy",
-                    Text = "Wrangle Animals.\n Click and drag to wrangle animals.\nRequires animal pen.",
+                    Text = "Catch Animals.\n Click and drag to catch animals.\nRequires animal pen.",
                     Rect = new Rectangle(0, 0, 256, 128),
                     TextColor = Color.Black.ToVector4()
                 },
@@ -1866,7 +1868,7 @@ namespace DwarfCorp.GameStates
                     ChangeTool(GameMaster.ToolMode.Wrangle);
                     World.Tutorial("wrangle");
                     World.ShowToolPopup(
-                        "Left click to tell dwarves to wrangle animals.\nRight click to cancel wrangling.\nRequires animal pen.");
+                        "Left click to tell dwarves to catch animals.\nRight click to cancel catching.\nRequires animal pen.");
                 },
                 OnConstruct = (sender) =>
                 {
@@ -1882,6 +1884,19 @@ namespace DwarfCorp.GameStates
             #endregion
 
             #region icon_MagicTool
+
+            ManaBar = GuiRoot.RootItem.AddChild(new ProgressBar()
+            {
+                AutoLayout = AutoLayout.FloatTopRight,
+                Hidden = true,
+                MinimumSize = new Point(256, 32),
+                TextVerticalAlign = VerticalAlign.Center,
+                TextHorizontalAlign = HorizontalAlign.Center,
+                FillColor = new Color(0, 255, 255, 255).ToVector4(),
+                Percentage = 0,
+                TextColor = Color.Black.ToVector4()
+            }) as ProgressBar;
+
 
             #region icon_Cast
             var icon_menu_CastSpells_Return = new FlatToolTray.Icon
@@ -1984,10 +1999,16 @@ namespace DwarfCorp.GameStates
                                 OnClick = (button, args2) =>
                                 {
 #if !DEMO
+                                    if (Master.Faction.OwnedObjects.Any(obj => obj.Tags.Contains("Magic")))
+                                    {
+                                        World.ShowToolPopup("Can't research. Need an object which the dwarf can do magical research with.");
+                                        return;
+                                    }
                                     ChangeTool(GameMaster.ToolMode.Magic);
                                     ((MagicTool)Master.Tools[GameMaster.ToolMode.Magic])
                                         .Research(spell);
                                     World.Tutorial("research spells");
+                                    World.MakeAnnouncement(String.Format("Researching {0}", spell.Spell.Name));
 #else
                                     GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = "Magic not available in demo." });
 #endif

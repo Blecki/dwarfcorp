@@ -68,6 +68,45 @@ namespace DwarfCorp
             new Rail.CompassConnectionConverter()
         };
 
+        public class TypeNameSerializationBinder : SerializationBinder
+        {
+            public TypeNameSerializationBinder()
+            {
+            }
+
+            public override void BindToName(Type serializedType, out string assemblyName, out string typeName)
+            {
+                assemblyName = AssetManager.GetSourceModOfType(serializedType);
+                typeName = serializedType.FullName;
+            }
+
+            public override Type BindToType(string assemblyName, string typeName)
+            {
+                return AssetManager.GetTypeFromMod(typeName, assemblyName);
+            }
+        }
+
+        private static JsonSerializer GetStandardSerializer(Object Context)
+        {
+            var serializer  = new JsonSerializer
+            {
+                Context = new StreamingContext(StreamingContextStates.File, Context),
+                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                TypeNameHandling = TypeNameHandling.Auto,
+                TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                Formatting = Formatting.Indented,
+                ContractResolver = new DefaultContractResolver(),
+                Binder = new TypeNameSerializationBinder(),
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            };
+
+            foreach (var converter in StandardConverters)
+                serializer.Converters.Add(converter);
+
+            return serializer;
+        }
+
         /// <summary>
         /// Serializes an object and writes it to a file using the most basic Json settings.
         /// </summary>
@@ -77,20 +116,7 @@ namespace DwarfCorp
         /// <returns>True if the object could be saved.</returns>
         public static bool SaveBasicJson<T>(T obj, string filePath)
         {
-            JsonSerializer serializer = new JsonSerializer
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                TypeNameHandling = TypeNameHandling.Auto,
-                TypeNameAssemblyFormat = FormatterAssemblyStyle.Simple,
-                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                Formatting = Formatting.Indented,
-                ContractResolver = new DefaultContractResolver()
-            };
-
-            foreach (var converter in StandardConverters)
-                serializer.Converters.Add(converter);
-
-            return Save(serializer, obj, filePath, false);
+            return Save(GetStandardSerializer(null), obj, filePath, false);
         }
 
         public static string SerializeBasicJSON<T>(T obj)
@@ -108,21 +134,7 @@ namespace DwarfCorp
         /// <returns>True if the object could be saved.</returns>
         public static bool SaveJSon<T>(T obj, string filePath, bool compress)
         {
-            JsonSerializer serializer = new JsonSerializer
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                TypeNameHandling = TypeNameHandling.All,
-                TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
-                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                Formatting = Formatting.Indented,
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                ContractResolver = new DefaultContractResolver()
-            };
-
-            foreach (var converter in StandardConverters)
-                serializer.Converters.Add(converter);
-
-            return Save(serializer, obj, filePath, compress);
+            return Save(GetStandardSerializer(null), obj, filePath, compress);
 
         }
 
@@ -135,7 +147,7 @@ namespace DwarfCorp
         /// <param name="filePath">The file path.</param>
         /// <param name="compress">if set to <c>true</c> uses gzip compression.</param>
         /// <returns>true if the object could be saved.</returns>
-        public static bool Save<T>(JsonSerializer serializer, T obj, string filePath, bool compress)
+        private static bool Save<T>(JsonSerializer serializer, T obj, string filePath, bool compress)
         {
             if (!compress)
             {

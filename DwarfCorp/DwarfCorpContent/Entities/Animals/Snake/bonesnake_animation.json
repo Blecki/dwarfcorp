@@ -81,8 +81,8 @@
       {
          "$id" : "1",
          "AssetName" : "Entities\\Animals\\Snake\\bonesnake",
-         "FrameHeight" : 32,
-         "FrameWidth" : 32
+         "FrameHeight" : 64,
+         "FrameWidth" : 48
       }
    ],
    "Tints" : [ "255, 255, 255, 255"]

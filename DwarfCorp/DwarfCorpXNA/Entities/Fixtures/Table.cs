@@ -101,7 +101,7 @@ namespace DwarfCorp
             public ManaBattery()
             {
                 ReCreateTimer = new Timer(3.0f, false);
-                ChargeTimer = new Timer(1.0f, false);
+                ChargeTimer = new Timer(10.0f, false);
             }
 
             public void Update(DwarfTime time, WorldManager world)
@@ -178,8 +178,10 @@ namespace DwarfCorp
 
         }
 
-        public override void Update(DwarfTime time, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime time, ChunkManager chunks, Camera camera)
         {
+            base.Update(time, chunks, camera);
+
             if (Active && Battery != null)
             {
                 Battery.Update(time, Manager.World);
@@ -189,7 +191,6 @@ namespace DwarfCorp
                     Battery.Reset(Manager.World.PlayerFaction, Position + Vector3.Up, Manager.World);
                 }
             }
-            base.Update(time, chunks, camera);
         }
 
         public Table(ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame, List<ResourceAmount> resources) :
@@ -203,7 +204,7 @@ namespace DwarfCorp
             LocalTransform = matrix;
 
             Tags.Add("Table");
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
 
             CreateCosmeticChildren(Manager);
         }

@@ -20,14 +20,14 @@ namespace DwarfCorp
         public Crate()
         {
             Tags.Add("Crate");
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
         }
 
         public Crate(ComponentManager manager, Vector3 position) :
             base(manager, "Crate", Matrix.CreateTranslation(position), new Vector3(0.75f, 0.5f, 1.5f), new Vector3(0.5f, 0.5f, 1.0f))
         {
             Tags.Add("Crate");
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
 
             CreateCosmeticChildren(manager);
         }

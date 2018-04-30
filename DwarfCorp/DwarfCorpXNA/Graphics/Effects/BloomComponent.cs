@@ -134,7 +134,8 @@ namespace BloomPostprocess
             int height = pp.BackBufferHeight / 4;
             if (renderTarget1 == null || renderTarget2 == null ||
                 renderTarget1.Width != width || renderTarget1.Height != height
-                || renderTarget2.Width != width || renderTarget2.Height != height)
+                || renderTarget2.Width != width || renderTarget2.Height != height
+                || renderTarget1.IsDisposed || renderTarget2.IsDisposed)
             {
                 renderTarget1 = new RenderTarget2D(GraphicsDevice, width, height, false, format, DepthFormat.None);
                 renderTarget2 = new RenderTarget2D(GraphicsDevice, width, height, false, format, DepthFormat.None);

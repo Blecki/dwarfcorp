@@ -43,20 +43,6 @@ namespace DwarfCorp
 {
     public static partial class FileUtils
     {
-        public static T LoadJsonFromString<T>(string jsonText, object context = null)
-        {
-            return JsonConvert.DeserializeObject<T>(jsonText, new JsonSerializerSettings()
-            {
-                Context = new StreamingContext(StreamingContextStates.File, context),
-                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                TypeNameHandling = TypeNameHandling.All,
-                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                Converters = StandardConverters
-            });
-        }
-
         public static T LoadCompressedJsonFromAbsolutePath<T>(String Path, Object Context)
         {
             using (FileStream fs = new FileStream(Path, FileMode.Open))
@@ -68,18 +54,7 @@ namespace DwarfCorp
                     {
                         using (JsonReader json = new JsonTextReader(reader))
                         {
-                            JsonSerializer serializer = new JsonSerializer()
-                            {
-                                Context = new StreamingContext(StreamingContextStates.File, Context),
-                                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                                TypeNameHandling = TypeNameHandling.All,
-                                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                                TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
-                                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                            };
-                            foreach (var converter in StandardConverters)
-                                serializer.Converters.Add(converter);
-                            return serializer.Deserialize<T>(json);
+                            return GetStandardSerializer(Context).Deserialize<T>(json);
                         }
                     }
                 }
@@ -94,18 +69,7 @@ namespace DwarfCorp
             {
                 using (JsonReader json = new JsonTextReader(reader))
                 {
-                    JsonSerializer serializer = new JsonSerializer()
-                    {
-                        Context = new StreamingContext(StreamingContextStates.File, context),
-                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                        TypeNameHandling = TypeNameHandling.All,
-                        ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                        TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                    };
-                    foreach (var converter in StandardConverters)
-                        serializer.Converters.Add(converter);
-                    return serializer.Deserialize<T>(json);
+                    return GetStandardSerializer(context).Deserialize<T>(json);
                 }
             }
         }
@@ -117,24 +81,13 @@ namespace DwarfCorp
             {
                 using (JsonReader json = new JsonTextReader(reader))
                 {
-                    JsonSerializer serializer = new JsonSerializer()
-                    {
-                        Context = new StreamingContext(StreamingContextStates.File, context),
-                        ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-                        TypeNameHandling = TypeNameHandling.All,
-                        ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-                        TypeNameAssemblyFormat = FormatterAssemblyStyle.Full,
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-                    };
-                    foreach (var converter in StandardConverters)
-                        serializer.Converters.Add(converter);
-                    return serializer.Deserialize<T>(json);
+                    return GetStandardSerializer(context).Deserialize<T>(json);
                 }
             }
         }
 
         /// <summary>
-        /// Load a json list from all enabled mods, combining entries into one list. JSON must contain a List<T> as the top level element.
+        /// Load a json list from all enabled mods, combining entries into one list. JSON must contain a List<T> as the top level element.</T>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="AssetPath"></param>

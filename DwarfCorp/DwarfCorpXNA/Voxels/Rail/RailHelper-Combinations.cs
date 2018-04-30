@@ -64,7 +64,7 @@ namespace DwarfCorp.Rail
             var voxelUnder = new VoxelHandle(actualPosition.Chunk, new LocalVoxelCoordinate(local.X, local.Y - 1, local.Z));
             if (voxelUnder.IsEmpty) return false;
 
-            foreach (var entity in Player.World.CollisionManager.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionManager.CollisionType.Static))
+            foreach (var entity in Player.World.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionType.Static))
             {
                 if ((entity as GameComponent).IsDead)
                     continue;
@@ -124,7 +124,7 @@ namespace DwarfCorp.Rail
                 var hasResources = false;
                 var finalEntity = body;
 
-                foreach (var entity in Player.World.CollisionManager.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionManager.CollisionType.Static))
+                foreach (var entity in Player.World.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionType.Static))
                 {
                     if ((entity as GameComponent).IsDead)
                         continue;

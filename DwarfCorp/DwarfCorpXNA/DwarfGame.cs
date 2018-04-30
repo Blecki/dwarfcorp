@@ -58,6 +58,62 @@ namespace DwarfCorp
         public static bool COMPRESSED_BINARY_SAVES = false;
 #endif
 
+        private class LogWriter : StreamWriter
+        {
+            private Gui.Widgets.DwarfConsole Console = null;
+            private System.Text.StringBuilder PreConsoleQueue = new System.Text.StringBuilder();
+
+            public void SetConsole(Gui.Widgets.DwarfConsole Console)
+            {
+                this.Console = Console;
+                Console.AddMessage(PreConsoleQueue.ToString());
+            }
+
+            public LogWriter(FileStream Output) : base(Output)
+            {
+                AutoFlush = true;
+            }
+
+            public override void Write(char value)
+            {
+                if (Console != null)
+                    Console.Append(value);
+                else
+                    PreConsoleQueue.Append(value);
+
+                base.Write(value);
+            }
+
+            //public override void Write(string value)
+            //{
+            //    if (Console != null) Console.AddMessage(value);
+            //    base.Write(value);
+            //}
+
+            //public override void Write(char[] buffer)
+            //{
+            //    if (Console != null) foreach (var c in buffer) Console.Append(c);
+            //    base.Write(buffer);
+            //}
+
+            public override void Write(char[] buffer, int index, int count)
+            {
+                if (Console != null)
+                    for (var x = index; x < index + count; ++x)
+                        Console.Append(buffer[x]);
+                else
+                    PreConsoleQueue.Append(buffer, index, count);
+
+                base.Write(buffer, index, count);
+            }
+
+            public override void WriteLine(string value)
+            {
+                foreach (var c in value) Write(c);
+                Write('\n');
+            }
+        }
+
         public GameStateManager StateManager { get; set; }
         public GraphicsDeviceManager Graphics;
         public AssetManager TextureManager { get; set; }
@@ -67,9 +123,12 @@ namespace DwarfCorp
         public static Gui.Input.Input GumInput;
         public static Gui.RenderData GuiSkin;
 
+        private static Gui.Root ConsoleGui;
+        private static bool ConsoleVisible = false;
+
         public const string GameName = "DwarfCorp";
         public static bool HasRendered = false;
-        private static StreamWriter _logwriter;
+        private static LogWriter _logwriter;
         private static TextWriter _initialOut;
         private static TextWriter _initialError;
 
@@ -94,8 +153,6 @@ namespace DwarfCorp
             Window.AllowUserResizing = false;
             MainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
             GameSettings.Load();
-            AssetManager.Initialize(Content, GraphicsDevice, GameSettings.Default);
-
 
             try
             {
@@ -110,8 +167,10 @@ namespace DwarfCorp
 
 #if XNA_BUILD
                     ravenClient.Tags["Platform"] = "XNA";
+                    ravenClient.Tags["OS"] = "Windows";
 #else
-                ravenClient.Tags["Platform"] = "FNA";
+                    ravenClient.Tags["Platform"] = "FNA";
+                    ravenClient.Tags["OS"] = SDL.SDL_GetPlatform();
 #endif
                 }
 #endif
@@ -233,7 +292,7 @@ namespace DwarfCorp
                     System.IO.File.WriteAllText(path, string.Empty);
                 }
                 FileStream writerOutput = new FileStream(path, FileMode.Append, FileAccess.Write);
-                _logwriter = new StreamWriter(writerOutput) { AutoFlush = true };
+                _logwriter = new LogWriter(writerOutput);
                 _initialOut = Console.Out;
                 _initialError = Console.Error;
                 Console.SetOut(_logwriter);
@@ -252,7 +311,7 @@ namespace DwarfCorp
             try
             {
 #endif
-            var dir = GetGameDirectory();
+                var dir = GetGameDirectory();
                 if (!System.IO.Directory.Exists(dir))
                 {
                     System.IO.Directory.CreateDirectory(dir);
@@ -260,7 +319,6 @@ namespace DwarfCorp
                 InitializeLogger();
                 Thread.CurrentThread.Name = "Main";
                 // Goes before anything else so we can track from the very start.
-                GamePerformance.Initialize(this);
 
                 SpriteBatch = new SpriteBatch(GraphicsDevice);
                 base.Initialize();
@@ -281,14 +339,29 @@ namespace DwarfCorp
             try
             {
 #endif
+            AssetManager.Initialize(Content, GraphicsDevice, GameSettings.Default);
+
             // Prepare GemGui
-             GumInputMapper = new Gui.Input.GumInputMapper(Window.Handle);
+            GumInputMapper = new Gui.Input.GumInputMapper(Window.Handle);
                 GumInput = new Gui.Input.Input(GumInputMapper);
 
                 // Register all bindable actions with the input system.
                 //GumInput.AddAction("TEST", Gui.Input.KeyBindingType.Pressed);
 
                 GuiSkin = new RenderData(GraphicsDevice, Content);
+
+            // Create console.
+            ConsoleGui = new Gui.Root(GuiSkin);
+            var _console = ConsoleGui.RootItem.AddChild(new Gui.Widgets.DwarfConsole
+            {
+                Background = new TileReference("basic", 0),
+                Rect = new Rectangle(0, 0, GuiSkin.VirtualScreen.Width, GuiSkin.VirtualScreen.Height)
+            }) as Gui.Widgets.DwarfConsole;
+
+            ConsoleGui.RootItem.Layout();
+            _logwriter.SetConsole(_console);
+
+            Console.Out.WriteLine("Console created.");
 
                 if (SoundManager.Content == null)
                 {
@@ -346,11 +419,23 @@ namespace DwarfCorp
             try
             {
 #endif
-                GamePerformance.Instance.PreUpdate();
+            if (GumInputMapper.WasConsoleTogglePressed())
+                ConsoleVisible = !ConsoleVisible;
+
+            if (ConsoleVisible)
+            {
+                DwarfGame.GumInput.FireActions(ConsoleGui, (@event, args) =>
+                {
+                });
+                ConsoleGui.Update(time);
+            }
+
+            PerformanceMonitor.BeginFrame();
+            PerformanceMonitor.PushFrame("Update");
                 DwarfTime.LastTime.Update(time);
                 StateManager.Update(DwarfTime.LastTime);
                 base.Update(time);
-                GamePerformance.Instance.PostUpdate();
+            PerformanceMonitor.PopFrame();
 #if SHARP_RAVEN && !DEBUG
             }
             catch (Exception exception)
@@ -365,17 +450,24 @@ namespace DwarfCorp
 
         protected override void Draw(GameTime time)
         {
+
+            if (GraphicsDevice.IsDisposed) return;
+
             HasRendered = true;
 #if SHARP_RAVEN && !DEBUG
             try
             {
 #endif
-            GamePerformance.Instance.PreRender();
+            PerformanceMonitor.PushFrame("Render");
                 StateManager.Render(DwarfTime.LastTime);
                 GraphicsDevice.SetRenderTarget(null);
                 base.Draw(time);
-                GamePerformance.Instance.PostRender();
-                GamePerformance.Instance.Render(SpriteBatch);
+            PerformanceMonitor.PopFrame();
+            PerformanceMonitor.Render();
+
+            if (ConsoleVisible)
+                ConsoleGui.Draw();
+
 #if SHARP_RAVEN && !DEBUG
             }
             catch (Exception exception)

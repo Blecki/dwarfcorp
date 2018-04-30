@@ -58,22 +58,61 @@ namespace DwarfCorp
         private static Dictionary<String, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
         private static ContentManager Content { get { return GameState.Game.Content; } }
         private static GraphicsDevice Graphics {  get { return GameState.Game.GraphicsDevice; } }
-        private static List<Assembly> Assemblies = new List<Assembly>();
+        private static List<Tuple<String,Assembly>> Assemblies = new List<Tuple<String,Assembly>>();
+        private static List<String> DirectorySearchList;
+
+        public static void ResetCache()
+        {
+            TextureCache.Clear();
+        }
 
         public static void Initialize(ContentManager Content, GraphicsDevice Graphics, GameSettings.Settings Settings)
         {
-            Assemblies.Add(Assembly.GetExecutingAssembly());
+            DirectorySearchList = Settings.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
+            DirectorySearchList.Reverse();
+            DirectorySearchList.Add("Content");
 
-            foreach (var mod in EnumerateModDirectories(Settings))
+            Assemblies.Add(Tuple.Create("BaseContent", Assembly.GetExecutingAssembly()));
+
+            foreach (var mod in DirectorySearchList)
                 if (System.IO.Directory.Exists(mod))
-                    foreach (var file in System.IO.Directory.EnumerateFiles(mod))
-                        if (System.IO.Path.GetExtension(file) == ".dll")
-                            Assemblies.Add(Assembly.LoadFile(System.IO.Path.GetFullPath(file)));
+                {
+                    var csFiles = Directory.EnumerateFiles(mod).Where(s => Path.GetExtension(s) == ".cs");
+                    if (csFiles.Count() > 0)
+                    {
+                        var assembly = ModCompiler.CompileCode(csFiles);
+                        if (assembly != null)
+                            Assemblies.Add(Tuple.Create(mod, assembly));
+                    }
+                }
         }
 
-        public static IEnumerable<Assembly> EnumerateLoadedModAssemblies()
+        public static IEnumerable<Tuple<String,Assembly>> EnumerateLoadedModAssemblies()
         {
             return Assemblies;
+        }
+
+        public static String GetSourceModOfType(Type T)
+        {
+            foreach (var mod in Assemblies)
+            {
+                if (T.Assembly == mod.Item2)
+                    return mod.Item1;
+            }
+
+            return "$"; // The type wasn't from one of the loaded mods.
+        }
+
+        public static Type GetTypeFromMod(String T, String Assembly)
+        {
+            if (Assembly[0] == '$')
+                return Type.GetType(T, true);
+
+            foreach (var mod in Assemblies)
+                if (mod.Item1 == Assembly)
+                    return mod.Item2.GetType(T);
+
+            return null;
         }
 
         private static bool CheckMethod(MethodInfo Method, Type ReturnType, Type[] ArgumentTypes)
@@ -93,7 +132,7 @@ namespace DwarfCorp
         {
             foreach (var assembly in EnumerateLoadedModAssemblies())
             {
-                foreach (var type in assembly.GetTypes())
+                foreach (var type in assembly.Item2.GetTypes())
                 {
                     foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public))
                     {
@@ -104,14 +143,6 @@ namespace DwarfCorp
                     }
                 }
             }
-        }
-
-        private static IEnumerable<String> EnumerateModDirectories(GameSettings.Settings Settings)
-        {
-            var searchList = Settings.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
-            searchList.Reverse();
-            searchList.Add("Content");
-            return searchList;
         }
 
         public static string ReverseLookup(Texture2D Texture)
@@ -130,7 +161,7 @@ namespace DwarfCorp
             else
                 extensionList.Add("");
 
-            foreach (var mod in EnumerateModDirectories(GameSettings.Default))
+            foreach (var mod in DirectorySearchList)
             {
                 foreach (var extension in extensionList)
                 {
@@ -145,7 +176,7 @@ namespace DwarfCorp
         /// <summary>
         /// Enumerates the relative paths of all mods (including base content) that include the content.
         /// </summary>
-        /// <param name="Asset"></param>
+        /// <param name="AssetPath"></param>
         /// <returns></returns>
         public static IEnumerable<String> EnumerateMatchingPaths(String _AssetPath)
         {
@@ -168,7 +199,6 @@ namespace DwarfCorp
             if (asset == null)
             {
                 var r = Content.Load<Texture2D>(ContentPaths.Error);
-                TextureCache[asset] = r;
                 return r;
             }
 

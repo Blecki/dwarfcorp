@@ -58,21 +58,20 @@ namespace DwarfCorp
                 Die();
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             if (!Voxel.IsValid || Voxel.IsEmpty)
                 Die();
 
-            
-                DestroyTimer.Update(gameTime);
+            DestroyTimer.Update(gameTime);
 
-                if (DestroyTimer.HasTriggered)
-                {
-                    Die();
-                    chunks.KillVoxel(Voxel);
-                }
-
-            base.Update(gameTime, chunks, camera);
-        }       
+            if (DestroyTimer.HasTriggered)
+            {
+                Die();
+                chunks.KillVoxel(Voxel);
+            }
+        }  
     }
 }

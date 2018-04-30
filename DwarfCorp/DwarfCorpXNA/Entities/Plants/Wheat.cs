@@ -75,7 +75,7 @@ namespace DwarfCorp
 
             Tags.Add("Wheat");
             Tags.Add("Vegetation");
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
             PropogateTransforms();
         }
     }

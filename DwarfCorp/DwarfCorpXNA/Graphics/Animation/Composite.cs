@@ -102,6 +102,10 @@ namespace DwarfCorp
         {
             if (HasChanged && CurrentFrames.Count > 0)
             {
+                if (Target == null || Target.IsDisposed || Target.GraphicsDevice.IsDisposed)
+                {
+                    return;
+                }
                 device.SetRenderTarget(Target);
                 device.Clear(ClearOptions.Target, Color.Transparent, 1.0f, 0);
                 try
@@ -137,8 +141,11 @@ namespace DwarfCorp
 
         public void Dispose()
         {
-            if(Target != null && !Target.IsDisposed)
+            if (Target != null && !Target.IsDisposed)
+            {
                 Target.Dispose();
+                Target = null;
+            }
         }
     }
 }

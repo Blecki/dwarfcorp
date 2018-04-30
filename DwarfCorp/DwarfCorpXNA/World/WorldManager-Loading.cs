@@ -72,7 +72,7 @@ namespace DwarfCorp
         {
             Screenshots = new List<Screenshot>();
             Game.Graphics.PreferMultiSampling = GameSettings.Default.AntiAliasing > 1;
-
+          
             try
             {
                 Game.Graphics.ApplyChanges();
@@ -83,8 +83,8 @@ namespace DwarfCorp
             }
 
             Game.Graphics.PreparingDeviceSettings += GraphicsPreparingDeviceSettings;
-
-            LoadingThread = new Thread(LoadThreaded);
+            Game.Graphics.DeviceReset += GraphicsDeviceReset;
+            LoadingThread = new Thread(LoadThreaded) { IsBackground = true };
             LoadingThread.Name = "Load";
             LoadingThread.Start();
         }
@@ -171,10 +171,10 @@ namespace DwarfCorp
             {
                 Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
                 Vector3 extents = new Vector3(1500, 1500, 1500);
-                CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
+                    OctTree = new OctTreeNode<Body>(origin - extents, origin + extents);
 
-                // Todo: ??
-                new PrimitiveLibrary(GraphicsDevice, Content);
+                    // Todo: ??
+                    new PrimitiveLibrary(GraphicsDevice, Content);
 
                 NewInstanceManager = new NewInstanceManager(GraphicsDevice, new BoundingBox(origin - extents, origin + extents),
                     Content);
@@ -280,26 +280,24 @@ namespace DwarfCorp
                 if (fileExists)
                 {
 
-                    ChunkManager = new ChunkManager(Content, this, Camera,
-                        GraphicsDevice,
+                    ChunkManager = new ChunkManager(Content, this,
                         ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+                Splasher = new Splasher(ChunkManager);
 
-                    ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
+
+                ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
                     
                     SetLoadingMessage("Loading Terrain...");
                     gameFile.ReadChunks(ExistingFile);
-                    ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
+                    ChunkManager.ChunkData.LoadFromFile(ChunkManager, gameFile, SetLoadingMessage);
                     
                     SetLoadingMessage("Loading Entities...");
                     gameFile.LoadPlayData(ExistingFile, this);
                     Camera = gameFile.PlayData.Camera;
-                    ChunkManager.camera = Camera;
-                    ChunkRenderer.camera = Camera;
                     DesignationDrawer = gameFile.PlayData.Designations;
 
                     Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
                     Vector3 extents = new Vector3(1500, 1500, 1500);
-                    CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
                     if (gameFile.PlayData.Resources != null)
                     {
@@ -363,11 +361,12 @@ namespace DwarfCorp
                         MathHelper.PiOver4, AspectRatio, 0.1f,
                         GameSettings.Default.VertexCullDistance);
 
-                    ChunkManager = new ChunkManager(Content, this, Camera,
-                        GraphicsDevice,
+                    ChunkManager = new ChunkManager(Content, this, 
                         ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+                Splasher = new Splasher(ChunkManager);
 
-                    ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
+
+                ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
 
                     Camera.Position = new Vector3(0, 10, 0) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
                     Camera.Target = new Vector3(0, 10, 1) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
@@ -441,8 +440,6 @@ namespace DwarfCorp
 
 #endregion
 
-                ChunkManager.camera = Camera;
-
                 SetLoadingMessage("Creating Particles ...");
                 ParticleManager = new ParticleManager(GraphicsDevice, ComponentManager);
 
@@ -462,7 +459,7 @@ namespace DwarfCorp
 
                     ChunkManager.World.Master.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
                     ? gameFile.Metadata.Slice
-                    : ChunkManager.World.Master.MaxViewingLevel, ChunkManager.SliceMode.Y);
+                    : ChunkManager.World.Master.MaxViewingLevel);
                 }
 
                 if (Master.Faction.Economy.Company.Information == null)
@@ -473,7 +470,7 @@ namespace DwarfCorp
                 {
                     chunk.CalculateInitialSunlight();
                 }
-                VoxelHelpers.InitialReveal(ChunkManager.ChunkData, new VoxelHandle(
+                VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, new VoxelHandle(
                 ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
 
                 foreach (var chunk in ChunkManager.ChunkData.ChunkMap)

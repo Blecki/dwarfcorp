@@ -137,9 +137,11 @@ namespace DwarfCorp
             device.Viewport = oldView;
         }
 
-        public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
+            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+
             if (!banners.ContainsKey(Logo))
             {
                 GenerateData(graphicsDevice, 1, 0.5f, 0.25f);

@@ -79,7 +79,7 @@ namespace DwarfCorp
             CreateCosmeticChildren(Manager);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {           
             base.Update(gameTime, chunks, camera);
 
@@ -105,7 +105,7 @@ namespace DwarfCorp
                 sprite = AddChild(new SimpleBobber(Manager, "Sprite",
                     Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
                     new SpriteSheet(layer.Asset, layer.FrameSize.X, layer.FrameSize.Y),
-                    layer.Frame, 0.5f, 2.0f, MathFunctions.Rand() * 3.0f)
+                    layer.Frame, 0.15f, 2.0f, MathFunctions.Rand() * 3.0f)
                 {
                     OrientationType = SimpleSprite.OrientMode.Spherical,
                     WorldHeight = 0.75f,
@@ -128,7 +128,7 @@ namespace DwarfCorp
 
                 sprite = AddChild(new LayeredBobber(Manager, "Sprite",
                     Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
-                    layers, 0.5f, 2.0f, MathFunctions.Rand() * 3.0f)
+                    layers, 0.15f, 2.0f, MathFunctions.Rand() * 3.0f)
                 {
                     OrientationType = LayeredSimpleSprite.OrientMode.Spherical,
                     WorldHeight = 0.75f,

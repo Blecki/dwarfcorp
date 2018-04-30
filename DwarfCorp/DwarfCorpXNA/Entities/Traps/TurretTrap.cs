@@ -23,7 +23,8 @@ namespace DwarfCorp
         public EnemySensor Sensor { get; set; }
         private CreatureAI closestCreature = null;
         private Vector3 offset = Vector3.Zero;
-
+        private float _currentAngle = 0.0f;
+        private float _targetAngle = 0.0f;
         [OnDeserialized]
         public void OnDeserialized(StreamingContext ctx)
         {
@@ -98,19 +99,21 @@ namespace DwarfCorp
 
         public void SetTurretAngle(float radians)
         {
-            Matrix turretTransform = Matrix.CreateRotationX(1.57f) * Matrix.CreateRotationY((radians));
+            Matrix turretTransform = Matrix.CreateRotationX(1.57f) * Matrix.CreateRotationY(radians + 1.57f);
             turretTransform.Translation = Vector3.Up * 0.25f;
             TurretSprite.LocalTransform = turretTransform;
             PropogateTransforms();
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             if (Active && closestCreature != null && !closestCreature.IsDead)
             {                
                 Weapon.RechargeTimer.Update(gameTime);
 
-                SetTurretAngle((float) Math.Atan2(offset.X, offset.Z));
+                _targetAngle = (float)Math.Atan2(offset.X, offset.Z);
 
                 if (Weapon.RechargeTimer.HasTriggered)
                 {
@@ -120,7 +123,11 @@ namespace DwarfCorp
                     Weapon.RechargeTimer.Reset();
                 }
             }
-            base.Update(gameTime, chunks, camera);
+            if (Math.Abs(_currentAngle - _targetAngle) > 0.001f)
+            {
+                _currentAngle = 0.9f * _currentAngle + 0.1f * _targetAngle;
+                SetTurretAngle(_currentAngle);
+            }
         }
     }
 }

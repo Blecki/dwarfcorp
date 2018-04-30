@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace DwarfCorp
 {
     public class AutoScaleThread
     {
-        private GamePerformance.ThreadIdentifier Identifier;
         private Thread Thread;
         private Action<float> Worker;
         private ChunkManager Manager;
@@ -30,14 +28,12 @@ namespace DwarfCorp
 
         private LinkedList<Run> RecentRuns = new LinkedList<Run>();
 
-        public AutoScaleThread(ChunkManager Manager, GamePerformance.ThreadIdentifier Identifier, Action<float> Worker)
+        public AutoScaleThread(ChunkManager Manager, Action<float> Worker)
         {
             this.Manager = Manager;
-            this.Identifier = Identifier;
             this.Worker = Worker;
 
-            Thread = new Thread(MainLoop);
-            Thread.Name = Identifier.ToString();
+            Thread = new Thread(MainLoop) { IsBackground = true };
         }
 
         public void Start()
@@ -52,8 +48,6 @@ namespace DwarfCorp
 
         private void MainLoop()
         {
-            GamePerformance.Instance.RegisterThreadLoopTracker(Identifier.ToString(), Identifier);
-
 #if CREATE_CRASH_LOGS
             try
 #endif
@@ -72,9 +66,6 @@ namespace DwarfCorp
                         if (delta.TotalSeconds >= Frequency)
                         {
                             LastRan = timeNow;
-
-                            GamePerformance.Instance.PreThreadLoop(Identifier);
-                            GamePerformance.Instance.EnterZone(Identifier.ToString());
 
                             Worker(1.0f);
 
@@ -100,10 +91,6 @@ namespace DwarfCorp
                             {
                                 Frequency = Math.Max(Frequency * (1.0f - FrequencyStep), MinFrequency);
                             }
-
-                            GamePerformance.Instance.TrackValueType("Water Update Frequency", Frequency);
-                            GamePerformance.Instance.PostThreadLoop(Identifier);
-                            GamePerformance.Instance.ExitZone(Identifier.ToString());
                         }
                         else
                         {

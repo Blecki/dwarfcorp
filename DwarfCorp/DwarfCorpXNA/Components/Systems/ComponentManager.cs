@@ -60,6 +60,11 @@ namespace DwarfCorp
         private List<GameComponent> Removals = new List<GameComponent>();
         private List<GameComponent> Additions = new List<GameComponent>();
 
+        public List<IRenderableComponent> GetRenderables()
+        {
+            return Renderables;
+        }
+
         public Body RootComponent { get; private set; }
 
         public void SetRootComponent(Body Component)
@@ -70,7 +75,6 @@ namespace DwarfCorp
         private Mutex AdditionMutex = new Mutex();
         private Mutex RemovalMutex = new Mutex();
 
-        public IEnumerable<IRenderableComponent> GetRenderables() { return Renderables; }
         public IEnumerable<MinimapIcon> GetMinimapIcons() { return MinimapIcons; }
 
         public WorldManager World { get; set; }
@@ -265,27 +269,13 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            // Physics updates this whenever something moves... maybe? Let's see if anything breaks.
-            //  What broke: Anything that did not move became invisible.
-            //GamePerformance.Instance.StartTrackPerformance("Components - transforms");
-            if (RootComponent != null)
-                RootComponent.UpdateTransform();
-            //GamePerformance.Instance.StopTrackPerformance("Components - transforms");
+            PerformanceMonitor.PushFrame("Component Update");
 
-            GamePerformance.Instance.StartTrackPerformance("Components - update");
-            //foreach (var componentType in UpdateableComponents)
-            //    foreach (var component in componentType.Value)
-            //        if (component.Active)
-            //        {
-            //            //GamePerformance.Instance.StartTrackPerformance("Component - " + component.GetType().Name);
-            //            component.Update(gameTime, chunks, camera);
-            //            //GamePerformance.Instance.StopTrackPerformance("Component - " + component.GetType().Name);
-            //        }
             foreach (var component in UpdateableComponents)
                 component.Update(gameTime, chunks, camera);
 
-            GamePerformance.Instance.StopTrackPerformance("Components - update");
-            
+            PerformanceMonitor.PopFrame();
+
             AddRemove();
         }
 

@@ -193,8 +193,6 @@ namespace DwarfCorp
             HasMeat = false;
             HasBones = false;
 
-            Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
-
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             AI = Physics.AddChild(new CreatureAI(Manager, "Gremlin AI", Sensors, PlanService)) as CreatureAI;

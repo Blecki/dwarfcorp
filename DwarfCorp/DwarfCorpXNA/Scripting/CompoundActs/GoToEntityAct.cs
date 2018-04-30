@@ -57,16 +57,6 @@ namespace DwarfCorp
             Radius = 3.0f;
         }
 
-        public bool EntityIsInHands()
-        {
-            return Entity == Agent.Hands.GetFirstGrab();
-        }
-
-        public Condition InHands()
-        {
-            return new Condition(EntityIsInHands);
-        }
-
         public GoToEntityAct(string entity, CreatureAI creature) :
             base(creature)
         {

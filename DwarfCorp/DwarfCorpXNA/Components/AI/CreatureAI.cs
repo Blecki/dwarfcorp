@@ -145,14 +145,6 @@ namespace DwarfCorp
         /// </value>
         public bool IsPosessed { get; set; }
 
-        /// <summary> Wrapper around Creature.Hands </summary>
-        [JsonIgnore]
-        public Grabber Hands
-        {
-            get { return Creature.Hands; }
-            set { Creature.Hands = value; }
-        }
-
         /// <summary> Wrapper around Creature.Physics </summary>
         [JsonIgnore]
         public Physics Physics
@@ -363,12 +355,11 @@ namespace DwarfCorp
 
             if (above.IsValid)
             {
-                World.Master.SetMaxViewingLevel(above.Coordinate.Y, ChunkManager.SliceMode.Y);
+                World.Master.SetMaxViewingLevel(above.Coordinate.Y);
             }
             else
             {
-                World.Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
-                    ChunkManager.SliceMode.Y);
+                World.Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY);
             }
         }
 
@@ -532,7 +523,7 @@ namespace DwarfCorp
                     }
                     Status.IsOnStrike = true;
                 }
-                else if (Status.Happiness.IsSatisfied())
+                else if (!Status.Happiness.IsDissatisfied())
                 {
                     Status.IsOnStrike = false;
                 }

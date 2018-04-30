@@ -89,13 +89,12 @@ namespace DwarfCorp
         private Timer sliceDownTimer = new Timer(0.5f, true);
         private Timer sliceUpTimer = new Timer(0.5f, true);
         public int MaxViewingLevel = VoxelConstants.ChunkSizeY;
-        public ChunkManager.SliceMode Slice = ChunkManager.SliceMode.Y; // Todo: Ever not Y? Are other types even supported?
 
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
         {
             World = (WorldManager)(context.Context);
-            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, World.ChunkManager.Graphics);
+            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, GameState.Game.GraphicsDevice);
             World.Master = this;
             TaskManager.Faction = Faction;
         }
@@ -125,8 +124,8 @@ namespace DwarfCorp
             RoomLibrary.InitializeStatics();
 
             CameraController = camera;
-            VoxSelector = new VoxelSelector(World, CameraController, chunks.Graphics, chunks);
-            BodySelector = new BodySelector(CameraController, chunks.Graphics, components);
+            VoxSelector = new VoxelSelector(World, CameraController, GameState.Game.GraphicsDevice, chunks);
+            BodySelector = new BodySelector(CameraController, GameState.Game.GraphicsDevice, components);
             SelectedMinions = new List<CreatureAI>();
 
             if (Spells == null)
@@ -262,17 +261,15 @@ namespace DwarfCorp
             return (Faction.Minions.Count > 0) && Faction.Minions.All(minion => (!minion.Stats.CanSleep || minion.Creature.IsAsleep) && !minion.IsDead);
         }
 
-        // Final argument is always mode Y.
         // Todo: %KILL% - does not belong here.
-        public void SetMaxViewingLevel(int level, ChunkManager.SliceMode slice)
+        public void SetMaxViewingLevel(int level)
         {
-            if (level == MaxViewingLevel && slice == Slice)
+            if (level == MaxViewingLevel)
                 return;
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_click_voxel, 0.15f, (float)(level / (float)VoxelConstants.ChunkSizeY) - 0.5f);
 
             var oldLevel = MaxViewingLevel;
 
-            Slice = slice;
             MaxViewingLevel = Math.Max(Math.Min(level, VoxelConstants.ChunkSizeY), 1);
 
             foreach (var c in World.ChunkManager.ChunkData.ChunkMap)
@@ -402,7 +399,7 @@ namespace DwarfCorp
                         }
                     }
                     
-                    /// TODO ... other entity task types
+                    // TODO ... other entity task types
                 }
 
                 if (orphanedTasks.Count > 0)
@@ -458,8 +455,13 @@ namespace DwarfCorp
 
                 if (sliceDownTimer.HasTriggered)
                 {
+<<<<<<< HEAD
+                    SetMaxViewingLevel(MaxViewingLevel - 1);
+                    sliceDownTimer.Reset(0.1f);
+=======
                     SetMaxViewingLevel(MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
                     sliceDownTimer.Reset(0.5f);
+>>>>>>> 9e581f9d1c7fa418197ea0fc8cae93f2fe98c881
                 }
             }
 
@@ -469,8 +471,13 @@ namespace DwarfCorp
 
                 if (sliceUpTimer.HasTriggered)
                 {
+<<<<<<< HEAD
+                    SetMaxViewingLevel(MaxViewingLevel + 1);
+                    sliceUpTimer.Reset(0.1f);
+=======
                     SetMaxViewingLevel(MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
                     sliceUpTimer.Reset(0.5f);
+>>>>>>> 9e581f9d1c7fa418197ea0fc8cae93f2fe98c881
                 }
             }
             */
@@ -526,12 +533,11 @@ namespace DwarfCorp
 
                 if (above.IsValid)
                 {
-                    SetMaxViewingLevel(above.Coordinate.Y, ChunkManager.SliceMode.Y);
+                    SetMaxViewingLevel(above.Coordinate.Y);
                 }
                 else
                 {
-                    SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
-                        ChunkManager.SliceMode.Y);
+                    SetMaxViewingLevel(VoxelConstants.ChunkSizeY);
                 }
             }
 
@@ -650,7 +656,7 @@ namespace DwarfCorp
             {
                 sliceUpheld = false;
                 World.Tutorial("unslice");
-                SetMaxViewingLevel(MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
+                SetMaxViewingLevel(MaxViewingLevel + 1);
                 return true;
             }
 
@@ -658,22 +664,20 @@ namespace DwarfCorp
             {
                 sliceDownheld = false;
                 World.Tutorial("unslice");
-                SetMaxViewingLevel(MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
+                SetMaxViewingLevel(MaxViewingLevel - 1);
                 return true;
             }
             else if (key == ControlSettings.Mappings.SliceSelected)
             {
                 if (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl))
                 {
-                    SetMaxViewingLevel(rememberedViewValue, 
-                        ChunkManager.SliceMode.Y);
+                    SetMaxViewingLevel(rememberedViewValue);
                     return true;
                 }
                 else if (VoxSelector.VoxelUnderMouse.IsValid)
                 {
                     World.Tutorial("unslice");
-                    SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1,
-                        ChunkManager.SliceMode.Y);
+                    SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1);
                     Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
                     return true;
                 }
@@ -681,7 +685,7 @@ namespace DwarfCorp
             else if (key == ControlSettings.Mappings.Unslice)
             {
                 rememberedViewValue = MaxViewingLevel;
-                SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
+                SetMaxViewingLevel(VoxelConstants.ChunkSizeY);
                 return true;
             }
             return false;

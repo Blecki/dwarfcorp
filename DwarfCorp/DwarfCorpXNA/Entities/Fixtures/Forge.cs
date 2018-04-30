@@ -59,7 +59,7 @@ namespace DwarfCorp
         {
             Tags.Add("Forge");
 
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
 
             CreateCosmeticChildren(manager);
         }

@@ -175,8 +175,6 @@ namespace DwarfCorp
 
         /// <summary> Finds enemies nearby and triggers when it sees them </summary>
         public EnemySensor Sensors { get; set; }
-        /// <summary> Allows the creature to grab other objects </summary>
-        public Grabber Hands { get; set; }
         /// <summary> If true, the creature will generate meat when it dies. </summary>
         public bool HasMeat { get; set; }
         /// <summary> If true, the creature will generate bones when it dies. </summary>
@@ -598,10 +596,10 @@ namespace DwarfCorp
                     Sprite.Blink(0.5f);
                     AI.AddThought(Thought.ThoughtType.TookDamage);
 
-                    var deathParticleTrigger = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs").FirstOrDefault();
+                    var deathParticleTriggers = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs");
 
-                    if (deathParticleTrigger != null)
-                        Manager.World.ParticleManager.Trigger(deathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
+                    foreach (var trigger in deathParticleTriggers)
+                        Manager.World.ParticleManager.Trigger(trigger.EmitterName, AI.Position, Color.White, 2);
                     break;
             }
 
@@ -773,10 +771,10 @@ namespace DwarfCorp
                 Sprite.Blink(0.5f);
                 AI.AddThought(Thought.ThoughtType.TookDamage);
 
-                var deathParticleTrigger = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs").FirstOrDefault();
+                var deathParticleTriggers = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs");
 
-                if (deathParticleTrigger != null)
-                    Manager.World.ParticleManager.Trigger(deathParticleTrigger.EmitterName, AI.Position, Color.White, 2);
+                foreach (var trigger in deathParticleTriggers)
+                    Manager.World.ParticleManager.Trigger(trigger.EmitterName, AI.Position, Color.White, 2);
                 DrawLifeTimer.Reset();
             }
 

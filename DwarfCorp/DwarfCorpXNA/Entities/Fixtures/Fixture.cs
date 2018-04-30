@@ -66,7 +66,7 @@ namespace DwarfCorp
         {
             Asset = asset;
             Frame = frame;
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
             this.OrientMode = OrientMode;
 
             AddChild(new Health(Manager, "Hp", 100, 0, 100));

@@ -17,7 +17,7 @@ namespace DwarfCorp
         public OctTreeNode<T>[] Children;
         public List<Tuple<T, BoundingBox>> Items = new List<Tuple<T, BoundingBox>>();
         private Vector3 Mid;
-        private static object Lock = new object();
+
         public OctTreeNode(Vector3 Min, Vector3 Max)
         {
             Bounds = new BoundingBox(Min, Max);
@@ -29,7 +29,7 @@ namespace DwarfCorp
         
         private void Subdivide()
         {
-            lock (Lock)
+            //lock (Lock) //All calls are from inside already locked functions.
             {
                 var Min = Bounds.Min;
                 var Max = Bounds.Max;
@@ -54,10 +54,9 @@ namespace DwarfCorp
             AddToTree(Tuple.Create(Item, Point));
         }
 
-        // Todo: Need version that returns highest level node that fully contains item.
         private void AddToTree(Tuple<T, BoundingBox> Item)
         {
-            lock (Lock)
+            lock (this)
             {
                 if (!Bounds.Intersects(Item.Item2)) return;
 
@@ -85,34 +84,37 @@ namespace DwarfCorp
 
         public OctTreeNode<T> AddToTreeEx(Tuple<T, BoundingBox> Item)
         {
-            var containment = Bounds.Contains(Item.Item2);
-            if (containment == ContainmentType.Disjoint) return null;
-
-            if (Children == null && Items.Count == SubdivideThreshold && (Bounds.Max.X - Bounds.Min.X) > MinimumSize)
+            lock (this)
             {
-                Subdivide();
-                for (var i = 0; i < Items.Count; ++i)
-                    for (var c = 0; c < 8; ++c)
-                        if (Children[c].AddToTreeEx(Items[i]) != null)
-                            break;
-            }
+                var containment = Bounds.Contains(Item.Item2);
+                if (containment == ContainmentType.Disjoint) return null;
 
-            if (Children != null)
-            {
-                for (var i = 0; i < 8; ++i)
+                if (Children == null && Items.Count == SubdivideThreshold && (Bounds.Max.X - Bounds.Min.X) > MinimumSize)
                 {
-                    var cr = Children[i].AddToTreeEx(Item);
-                    if (cr != null)
-                        return cr;
+                    Subdivide();
+                    for (var i = 0; i < Items.Count; ++i)
+                        for (var c = 0; c < 8; ++c)
+                            if (Children[c].AddToTreeEx(Items[i]) != null)
+                                break;
                 }
+
+                if (Children != null)
+                {
+                    for (var i = 0; i < 8; ++i)
+                    {
+                        var cr = Children[i].AddToTreeEx(Item);
+                        if (cr != null)
+                            return cr;
+                    }
+                }
+                else
+                    Items.Add(Item);
+
+                if (containment == ContainmentType.Contains)
+                    return this;
+
+                return null;
             }
-            else
-                Items.Add(Item);
-
-            if (containment == ContainmentType.Contains)
-                return this;
-
-            return null;
         }
 
         public void RemoveItem(T Item, BoundingBox Box)
@@ -120,157 +122,245 @@ namespace DwarfCorp
             RemoveFromTree(Tuple.Create(Item, Box));
         }
 
-        private int RemoveFromTree(Tuple<T, BoundingBox> Item)
+        private void RemoveFromTree(Tuple<T, BoundingBox> Item)
         {
-            lock (Lock)
+            lock (this)
             {
-                if (!Bounds.Intersects(Item.Item2)) return 0;
+                if (!Bounds.Intersects(Item.Item2)) return;
                 if (Children == null)
                 {
                     Items.RemoveAll(t => Object.ReferenceEquals(t.Item1, Item.Item1));
-                    return Items.Count;
                 }
                 else
                 {
-                    var r = 0;
                     for (int i = 0; i < 8; ++i)
-                        r += Children[i].RemoveFromTree(Item);
-
-                    //if (r == 0)
-                    //    Children = null;
-
-                    return r;
+                        Children[i].RemoveFromTree(Item);
                 }
+            }
+        }
+
+        public IEnumerable<T> EnumerateItems()
+        {
+            lock (this)
+            {
+                if (Children == null)
+                    for (var i = 0; i < Items.Count; ++i)
+                        yield return Items[i].Item1;
+                else
+                    for (var i = 0; i < 8; ++i)
+                        foreach (var item in Children[i].EnumerateItems())
+                            yield return item;
             }
         }
 
         public IEnumerable<T> EnumerateItems(BoundingBox SearchBounds)
         {
-            lock (Lock)
+            lock (this)
             {
-                if (SearchBounds.Intersects(Bounds))
+                switch (SearchBounds.Contains(Bounds))
                 {
-                    if (Children == null)
-                    {
-                        for (var i = 0; i < Items.Count; ++i)
-                            if (Items[i].Item2.Intersects(SearchBounds))
+                    case ContainmentType.Disjoint:
+                        break;
+                    case ContainmentType.Intersects:
+                        if (Children == null)
+                        {
+                            for (var i = 0; i < Items.Count; ++i)
+                                if (Items[i].Item2.Intersects(SearchBounds))
+                                    yield return Items[i].Item1;
+                        }
+                        else
+                        {
+                            for (var i = 0; i < 8; ++i)
+                                foreach (var item in Children[i].EnumerateItems(SearchBounds))
+                                    yield return item;
+                        }
+                        break;
+                    case ContainmentType.Contains:
+                        if (Children == null)
+                            for (var i = 0; i < Items.Count; ++i)
                                 yield return Items[i].Item1;
-                    }
-                    else
-                    {
-                        for (var i = 0; i < 8; ++i)
-                            foreach (var item in Children[i].EnumerateItems(SearchBounds))
-                                yield return item;
-                    }
-                }   
+                        else
+                            for (var i = 0; i < 8; ++i)
+                                foreach (var item in Children[i].EnumerateItems())
+                                    yield return item;
+                        break;
+                }
+            }
+        }
+
+        public void EnumerateItems(HashSet<T> Into)
+        {
+            lock (this)
+            {
+                if (Children == null)
+                    for (var i = 0; i < Items.Count; ++i)
+                        Into.Add(Items[i].Item1);
+                else
+                    for (var i = 0; i < 8; ++i)
+                        Children[i].EnumerateItems(Into);
             }
         }
 
         public void EnumerateItems(BoundingBox SearchBounds, HashSet<T> Into)
         {
-            lock (Lock)
+            lock (this)
             {
-                if (SearchBounds.Intersects(Bounds))
+                switch (SearchBounds.Contains(Bounds))
                 {
-                    if (Children == null)
-                    {
-                        for (var i = 0; i < Items.Count; ++i)
-                            if (Items[i].Item2.Intersects(SearchBounds))
+                    case ContainmentType.Disjoint:
+                        return;
+                    case ContainmentType.Intersects:
+                        if (Children == null)
+                        {
+                            for (var i = 0; i < Items.Count; ++i)
+                                if (Items[i].Item2.Intersects(SearchBounds))
+                                    Into.Add(Items[i].Item1);
+                        }
+                        else
+                        {
+                            for (var i = 0; i < 8; ++i)
+                                Children[i].EnumerateItems(SearchBounds, Into);
+                        }
+                        break;
+                    case ContainmentType.Contains:
+                        if (Children == null)
+                            for (var i = 0; i < Items.Count; ++i)
                                 Into.Add(Items[i].Item1);
-                    }
-                    else
-                    {
-                        for (var i = 0; i < 8; ++i)
-                            Children[i].EnumerateItems(SearchBounds, Into);
-                    }
+                        else
+                            for (var i = 0; i < 8; ++i)
+                                Children[i].EnumerateItems(Into);
+                        break;
                 }
+            }
+        }
+
+        public void EnumerateItems(HashSet<T> Into, Func<T, bool> Filter)
+        {
+            lock (this)
+            {
+                if (Children == null)
+                {
+                    for (var i = 0; i < Items.Count; ++i)
+                        if (Filter(Items[i].Item1))
+                            Into.Add(Items[i].Item1);
+                }
+                else
+                    for (var i = 0; i < 8; ++i)
+                        Children[i].EnumerateItems(Into, Filter);
             }
         }
 
         public void EnumerateItems(BoundingBox SearchBounds, HashSet<T> Into, Func<T, bool> Filter)
         {
-            lock (Lock)
+            lock (this)
             {
-                if (SearchBounds.Intersects(Bounds))
+                switch (SearchBounds.Contains(Bounds))
                 {
-                    if (Children == null)
-                    {
-                        for (var i = 0; i < Items.Count; ++i)
-                            if (Items[i].Item2.Intersects(SearchBounds) && Filter(Items[i].Item1))
-                                Into.Add(Items[i].Item1);
-                    }
-                    else
-                    {
-                        for (var i = 0; i < 8; ++i)
-                            Children[i].EnumerateItems(SearchBounds, Into, Filter);
-                    }
+                    case ContainmentType.Disjoint:
+                        return;
+                    case ContainmentType.Intersects:
+                        if (Children == null)
+                        {
+                            for (var i = 0; i < Items.Count; ++i)
+                                if (Items[i].Item2.Intersects(SearchBounds) && Filter(Items[i].Item1))
+                                    Into.Add(Items[i].Item1);
+                        }
+                        else
+                        {
+                            for (var i = 0; i < 8; ++i)
+                                Children[i].EnumerateItems(SearchBounds, Into, Filter);
+                        }
+                        break;
+                    case ContainmentType.Contains:
+                        if (Children == null)
+                        {
+                            for (var i = 0; i < Items.Count; ++i)
+                                if (Filter(Items[i].Item1))
+                                    Into.Add(Items[i].Item1);
+                        }
+                        else
+                            for (var i = 0; i < 8; ++i)
+                                Children[i].EnumerateItems(Into, Filter);
+                        break;
                 }
             }
         }
 
         public void EnumerateItems(BoundingFrustum SearchBounds, HashSet<T> Into)
         {
-            lock (Lock)
+            lock (this)
             {
-                if (SearchBounds.Intersects(Bounds))
+                switch (SearchBounds.Contains(Bounds))
                 {
-                    if (Children == null)
-                    {
-                        for (var i = 0; i < Items.Count; ++i)
-                            if (Items[i].Item2.Intersects(SearchBounds))
-                                Into.Add(Items[i].Item1);
-                    }
-                    else
-                    {
-                        for (var i = 0; i < 8; ++i)
-                            Children[i].EnumerateItems(SearchBounds, Into);
-                    }
-                }
-            }
-        }
-
-        public void EnumerateAll(HashSet<T> Into)
-        {
-            lock (Lock)
-            {
-                if (Children == null)
-                {
-                    for (var i = 0; i < Items.Count; ++i)
-                        Into.Add(Items[i].Item1);
-                }
-                else
-                {
-                    for (var i = 0; i < 8; ++i)
-                        Children[i].EnumerateAll(Into);
+                    case ContainmentType.Disjoint:
+                        return;
+                    case ContainmentType.Intersects:
+                        if (Children == null)
+                        {
+                            for (var i = 0; i < Items.Count; ++i)
+                                if (Items[i].Item2.Intersects(SearchBounds))
+                                    Into.Add(Items[i].Item1);
+                        }
+                        else
+                        {
+                            for (var i = 0; i < 8; ++i)
+                                Children[i].EnumerateItems(SearchBounds, Into);
+                        }
+                        break;
+                    case ContainmentType.Contains:
+                        if (Children == null)
+                            for (var i = 0; i < Items.Count; ++i)
+                                    Into.Add(Items[i].Item1);
+                        else
+                            for (var i = 0; i < 8; ++i)
+                                Children[i].EnumerateItems(Into);
+                        break;
                 }
             }
         }
 
         public IEnumerable<T> EnumerateItems(BoundingFrustum SearchBounds)
         {
-            lock (Lock)
+            lock (this)
             {
-                if (!SearchBounds.Intersects(Bounds)) yield break;
-                if (Children == null)
+                switch (SearchBounds.Contains(Bounds))
                 {
-                    foreach (var t in Items.Where(t => t.Item2.Intersects(SearchBounds)))
-                        yield return t.Item1;
-                }
-                else
-                {
-                    for (var i = 0; i < 8; ++i)
-                        foreach (var item in Children[i].EnumerateItems(SearchBounds))
-                            yield return item;
+                    case ContainmentType.Disjoint:
+                        break;
+                    case ContainmentType.Intersects:
+                        if (Children == null)
+                        {
+                            for (var i = 0; i < Items.Count; ++i)
+                                if (Items[i].Item2.Intersects(SearchBounds))
+                                    yield return Items[i].Item1;
+                        }
+                        else
+                        {
+                            for (var i = 0; i < 8; ++i)
+                                foreach (var item in Children[i].EnumerateItems(SearchBounds))
+                                    yield return item;
+                        }
+                        break;
+                    case ContainmentType.Contains:
+                        if (Children == null)
+                            for (var i = 0; i < Items.Count; ++i)
+                                yield return Items[i].Item1;
+                        else
+                            for (var i = 0; i < 8; ++i)
+                                foreach (var item in Children[i].EnumerateItems())
+                                    yield return item;
+                        break;
                 }
             }
         }
 
-        public void EnumerateBounds(int Depth, Action<BoundingBox, int> Callback)
+        public IEnumerable<Tuple<int, BoundingBox>> EnumerateBounds(int Depth = 0)
         {
-            Callback(Bounds, Depth);
+            yield return Tuple.Create(Depth, Bounds);
             if (Children != null)
                 for (var i = 0; i < 8; ++i)
-                    Children[i].EnumerateBounds(Depth + 1, Callback);
+                    foreach (var r in Children[i].EnumerateBounds(Depth + 1))
+                        yield return r;
         }
     }
 }

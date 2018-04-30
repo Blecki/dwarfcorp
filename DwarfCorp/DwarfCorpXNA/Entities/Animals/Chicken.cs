@@ -98,6 +98,7 @@ namespace DwarfCorp
         /// Initialize function creates all the required components for the bird.
         /// </summary>
         /// <param name="sprites">The sprite sheet to use for the bird</param>
+        /// <param name="species"></param>
         public void Initialize(string sprites, string species)
         {
             // When true, causes the bird to face the direction its moving in
@@ -106,9 +107,6 @@ namespace DwarfCorp
 
             CreateSprite(ContentPaths.Entities.Animals.fowl[Species], Manager);
 
-            // Used to grab other components
-            Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
-
             // Used to sense hostile creatures
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
@@ -116,7 +114,15 @@ namespace DwarfCorp
             AI = Physics.AddChild(new PacingCreatureAI(Manager, "AI", Sensors, PlanService)) as CreatureAI;
 
             // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack> { new Attack("Peck", 0.01f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_chicken_attack), ContentPaths.Effects.pierce) {Mode = Attack.AttackMode.Dogfight} };
+            Attacks = new List<Attack>
+            {
+                new Attack("Peck", 0.01f, 2.0f, 0.5f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_chicken_attack), ContentPaths.Effects.pierce)
+                {
+                    Mode = Attack.AttackMode.Melee,
+                    TriggerFrame = 2,
+                    TriggerMode = Attack.AttackTrigger.Animation
+                }
+            };
 
 
             // The bird can hold one item at a time in its inventory
@@ -128,6 +134,12 @@ namespace DwarfCorp
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 1
+            });
+
+            Physics.AddChild(new ParticleTrigger("feather", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 10
             });
 
             // The bird is flammable, and can die when exposed to fire.

@@ -108,6 +108,9 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>DwarfCorpKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -162,6 +165,7 @@
     <Compile Include="AssetManagement\GameSave\JsonConverters\RectangleConverter.cs" />
     <Compile Include="AssetManagement\GameSave\OverworldFile.cs" />
     <Compile Include="AssetManagement\AssetManager.cs" />
+    <Compile Include="AssetManagement\ModCompiler.cs" />
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
@@ -175,7 +179,6 @@
     <Compile Include="Components\AI\Egg.cs" />
     <Compile Include="Components\AI\Creature.cs" />
     <Compile Include="Components\AI\CreatureAI.cs" />
-    <Compile Include="Components\AI\Grabber.cs" />
     <Compile Include="Components\AI\Health.cs" />
     <Compile Include="Components\AI\Inventory.cs" />
     <Compile Include="Components\AI\Mating.cs" />
@@ -225,6 +228,8 @@
     <Compile Include="GameStates\ManageModsState.cs" />
     <Compile Include="Gui\TextureGeneratorAttribute.cs" />
     <Compile Include="Gui\Widgets\EmployeeAIDebugPanel.cs" />
+    <Compile Include="Gui\Widgets\FreeText.cs" />
+    <Compile Include="Gui\Widgets\DwarfConsole.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
@@ -232,6 +237,7 @@
     <Compile Include="Scripting\Player\Economy\ResourceType.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\ChopEntityTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\FleeEntityTask.cs" />
+    <Compile Include="Tools\PerformanceMonitor.cs" />
     <Compile Include="Voxels\Rail\PaintRailTool.cs" />
     <Compile Include="Voxels\Rail\OrientationHelper.cs" />
     <Compile Include="Voxels\Rail\CompassOrientation.cs" />
@@ -649,7 +655,6 @@
     <Compile Include="Scripting\LeafActs\CreatureAct.cs" />
     <Compile Include="Scripting\LeafActs\CreatureExtensions.cs" />
     <Compile Include="Scripting\LeafActs\DigAct.cs" />
-    <Compile Include="Scripting\LeafActs\DropItemAct.cs" />
     <Compile Include="Scripting\LeafActs\FlyWanderAct.cs" />
     <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />
     <Compile Include="Scripting\LeafActs\MeleeAct.cs" />
@@ -744,7 +749,7 @@
     <Compile Include="Sound\NoiseMaker.cs" />
     <Compile Include="Sound\Sound3D.cs" />
     <Compile Include="Sound\SoundManager.cs" />
-    <Compile Include="Tools\Datastructures\CollisionManager.cs" />
+    <Compile Include="World\CollisionType.cs" />
     <Compile Include="Tools\Datastructures\Datastructures.cs" />
     <Compile Include="Tools\Datastructures\IBoundedObject.cs" />
     <Compile Include="Tools\Datastructures\IntegerOctTree.cs" />
@@ -752,7 +757,6 @@
     <Compile Include="Tools\Datastructures\PriorityQueue.cs" />
     <Compile Include="Tools\Datastructures\ThreadSafeRandom.cs" />
     <Compile Include="Tools\Extensions.cs" />
-    <Compile Include="Tools\GamePerformance.cs" />
     <Compile Include="Tools\Graphics\ColorGradient.cs" />
     <Compile Include="Tools\Graphics\VertexNoise.cs" />
     <Compile Include="Tools\Math\Easing.cs" />
@@ -789,6 +793,7 @@
     <Compile Include="World\Weather\Storm.cs" />
     <Compile Include="World\Weather\StormType.cs" />
     <Compile Include="World\Weather\Weather.cs" />
+    <Compile Include="World\WorldManager-OctTree.cs" />
     <Compile Include="World\WorldManager-NewGameSetup.cs" />
     <Compile Include="World\WorldManager-Loading.cs" />
     <Compile Include="World\WorldManager.cs" />
@@ -844,6 +849,7 @@
     <None Include="app.config" />
     <None Include="DwarfCorpKey.snk" />
     <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

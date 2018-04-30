@@ -127,7 +127,7 @@ namespace DwarfCorp
 
             OrientToWalls();
             ClosedTransform = LocalTransform;
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
             var hp = GetHealth(resourceType.FirstOrDefault().ResourceType);
             AddChild(new Health(manager, "Health", hp, 0.0f, hp));
         }
@@ -173,8 +173,10 @@ namespace DwarfCorp
             IsOpen = false;
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             if (!Active)
             {
                 return;
@@ -220,7 +222,6 @@ namespace DwarfCorp
                     Close();
                 }
             }
-            base.Update(gameTime, chunks, camera);
         }
     }
 

@@ -51,7 +51,6 @@ namespace DwarfCorp
         public bool ColorAppplied = false;
         private bool entityLighting = GameSettings.Default.EntityLighting;
         public Color VertexColorTint { get; set; }
-        public bool FrustumCull { get { return true; } }
         public bool Stipple { get; set; }
         private string previousEffect = null;
         private Color previousColor = Color.White;
@@ -71,6 +70,7 @@ namespace DwarfCorp
             TintChangeRate = 1.0f;
             VertexColorTint = Color.White;
             Stipple = false;
+            SetFlag(Flag.FrustumCull, true);
         }
 
 
@@ -83,8 +83,10 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             if (!LightsWithVoxels)
                 Tint = Color.White;
 
@@ -104,8 +106,6 @@ namespace DwarfCorp
             {
                 Tint = new Color(200, 255, 0);
             }
-
-            base.Update(gameTime, chunks, camera);
         }
 
         public void ApplyTintingToEffect(Shader effect)
