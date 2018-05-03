@@ -323,7 +323,7 @@ namespace DwarfCorp.Gui.Widgets
                     Employee.Stats.LevelUp();
                     SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
                     Invalidate();
-                    Employee.AddThought(Thought.ThoughtType.GotPromoted);
+                    Employee.Creature.AddThought(Thought.ThoughtType.GotPromoted);
                 }
             });
 
@@ -423,10 +423,11 @@ namespace DwarfCorp.Gui.Widgets
 
                 StringBuilder thoughtsBuilder = new StringBuilder();
                 thoughtsBuilder.Append("Thoughts:\n");
-                foreach (var thought in Employee.Thoughts)
-                {
-                    thoughtsBuilder.Append(String.Format("{0} ({1})\n", thought.Description, thought.HappinessModifier));
-                }
+                var thoughts = Employee.Physics.GetComponent<DwarfThoughts>();
+                if (thoughts != null)
+                    foreach (var thought in thoughts.Thoughts)
+                        thoughtsBuilder.Append(String.Format("{0} ({1})\n", thought.Description, thought.HappinessModifier));
+   
                 var diseases = Employee.Creature.Buffs.OfType<Disease>();
                 if (diseases.Any())
                 {

@@ -140,7 +140,7 @@ namespace DwarfCorp
             var resource = ResourceLibrary.GetResourceByName(Resource.ResourceType);
             if (resource.Tags.Contains(DwarfCorp.Resource.ResourceTags.Corpse))
             {
-                Creature.AI.AddThought(Thought.ThoughtType.BuriedDead);
+                Creature.AddThought(Thought.ThoughtType.BuriedDead);
             }
 
             yield return Status.Running;

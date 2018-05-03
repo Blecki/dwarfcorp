@@ -155,7 +155,7 @@ namespace DwarfCorp
                         }
 
                         Agent.Creature.Status.Hunger.CurrentValue += resource.FoodContent;
-                        Agent.Creature.AI.AddThought(Thought.ThoughtType.AteFood);
+                        Agent.Creature.AddThought(Thought.ThoughtType.AteFood);
                         FoodBody.Delete();
                         yield return Act.Status.Success;
                     }

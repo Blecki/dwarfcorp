@@ -117,7 +117,7 @@ namespace DwarfCorp
             {
                 sound.Stop();
             }
-            Creature.AI.AddThought(Thought.ThoughtType.Researched);
+            Creature.AddThought(Thought.ThoughtType.Researched);
             Creature.OverrideCharacterMode = false;
             Creature.CurrentCharacterMode = CharacterMode.Idle;
             yield return Status.Success;

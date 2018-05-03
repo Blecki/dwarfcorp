@@ -279,6 +279,7 @@ namespace DwarfCorp
             }
         }
 
+        // Todo: Why exactly is Faction.Minions a list of CreatureAI and not a list of Creature?
         public void PayEmployees()
         {
             DwarfBux total = 0;
@@ -287,7 +288,7 @@ namespace DwarfCorp
             {
                 if (creature.Stats.IsOverQualified)
                 {
-                    creature.AddThought(Thought.ThoughtType.IsOverQualified);
+                    creature.Creature.AddThought(Thought.ThoughtType.IsOverQualified);
                 }
 
                 if (!noMoney)
@@ -298,7 +299,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    creature.AddThought(Thought.ThoughtType.NotPaid);
+                    creature.Creature.AddThought(Thought.ThoughtType.NotPaid);
                 }
 
                 if (total >= Faction.Economy.CurrentMoney)
@@ -313,7 +314,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    creature.AddThought(Thought.ThoughtType.GotPaid);
+                    creature.Creature.AddThought(Thought.ThoughtType.GotPaid);
                 }
             }
 
@@ -428,7 +429,7 @@ namespace DwarfCorp
             {
                 foreach (CreatureAI minion in Faction.Minions)
                 {
-                    minion.AddThought(Thought.ThoughtType.FriendDied);
+                    minion.Creature.AddThought(Thought.ThoughtType.FriendDied);
 
                     if (!minion.IsDead) continue;
 

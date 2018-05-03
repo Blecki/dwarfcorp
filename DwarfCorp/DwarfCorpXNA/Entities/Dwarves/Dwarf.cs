@@ -166,6 +166,8 @@ namespace DwarfCorp
 
 
             Physics.AddChild(new VoxelRevealer(Manager, Physics, 5)).SetFlag(Flag.ShouldSerialize, false);
+
+            Physics.AddChild(new DwarfThoughts(Manager, "Thoughts"));
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)

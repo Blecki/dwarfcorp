@@ -78,7 +78,6 @@ namespace DwarfCorp
             Sensor.Creature = this;
             CurrentTask = null;
             Tasks = new List<Task>();
-            Thoughts = new List<Thought>();
             IdleTimer = new Timer(2.0f, true);
             SpeakTimer = new Timer(5.0f, true);
             XPEvents = new List<int>();
@@ -104,8 +103,6 @@ namespace DwarfCorp
         public GatherManager GatherManager { get; set; }
         /// <summary> When this timer times out, the creature will awake from Idle mode and attempt to find something to do </summary>
         public Timer IdleTimer { get; set; }
-        /// <summary> A creature has a list of thoughts in its mind. Toughts affect the emotional state of a creature. Try not to think disturbing thoughts, little dwarfs. </summary>
-        public List<Thought> Thoughts { get; set; }
         /// <summary> When this timer triggers, the creature will attempt to speak to its neighbors, inducing thoughts. </summary>
         public Timer SpeakTimer { get; set; }
 
@@ -556,7 +553,6 @@ namespace DwarfCorp
             }
             
             PlannerTimer.Update(gameTime);
-            UpdateThoughts();
             UpdateXP();
 
             // With a small probability, the creature will drown if its under water.
@@ -879,60 +875,7 @@ namespace DwarfCorp
             SoundManager.PlaySound(ContentPaths.Audio.jump, Creature.Physics.GlobalTransform.Translation);
         }
 
-        /// <summary> returns whether or not the creature already has a thought of the given type. </summary>
-        public bool HasThought(Thought.ThoughtType type)
-        {
-            return Thoughts.Any(existingThought => existingThought.Type == type);
-        }
-
-        /// <summary> Add a standard thought to the creature. </summary>
-        public void AddThought(Thought.ThoughtType type)
-        {
-            if (!HasThought(type))
-            {
-                var thought = Thought.CreateStandardThought(type, Manager.World.Time.CurrentDate);
-                AddThought(thought, true);
-
-                if (thought.HappinessModifier > 0.01)
-                {
-                    Creature.NoiseMaker.MakeNoise("Pleased", Position, true);
-                }
-                else
-                {
-                    Creature.NoiseMaker.MakeNoise("Tantrum", Position, true);
-                }
-            }
-        }
-
-        /// <summary> Remove a standard thought from the creature. </summary>
-        public void RemoveThought(Thought.ThoughtType thoughtType)
-        {
-            Thoughts.RemoveAll(thought => thought.Type == thoughtType);
-        }
-
-        /// <summary> Add a custom thought to the creature </summary>
-        public void AddThought(Thought thought, bool allowDuplicates)
-        {
-            if (allowDuplicates)
-            {
-                Thoughts.Add(thought);
-            }
-            else
-            {
-                if (HasThought(thought.Type))
-                {
-                    return;
-                }
-
-                Thoughts.Add(thought);
-            }
-            bool good = thought.HappinessModifier > 0;
-            Color textColor = good ? Color.Yellow : Color.Red;
-            string prefix = good ? "+" : "";
-            string postfix = good ? ":)" : ":(";
-            IndicatorManager.DrawIndicator(prefix + thought.HappinessModifier + " " + postfix,
-                Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 1.0f, textColor);
-        }
+       
 
         /// <summary> Tell the creature to kill the given body. </summary>
         public void Kill(Body entity)
@@ -954,38 +897,15 @@ namespace DwarfCorp
             AssignTask(leaveTask);
         }
 
-        /// <summary> Updates the thoughts in the creature's head. </summary>
-        public void UpdateThoughts()
-        {
-            Thoughts.RemoveAll(thought => thought.IsOver(Manager.World.Time.CurrentDate));
-            Status.Happiness.CurrentValue = 50.0f;
-
-            foreach (Thought thought in Thoughts)
-            {
-                Status.Happiness.CurrentValue += thought.HappinessModifier;
-            }
-
-            if (Status.IsAsleep)
-            {
-                AddThought(Thought.ThoughtType.Slept);
-            }
-            else if (Status.Energy.IsDissatisfied())
-            {
-                AddThought(Thought.ThoughtType.FeltSleepy);
-            }
-
-            if (Status.Hunger.IsDissatisfied())
-            {
-                AddThought(Thought.ThoughtType.FeltHungry);
-            }
-        }
-
         /// <summary> Tell the creature to speak with another </summary>
         public void Converse(CreatureAI other)
         {
             if (SpeakTimer.HasTriggered)
             {
-                AddThought(Thought.ThoughtType.Talked);
+                var thoughts = Creature.Physics.GetComponent<DwarfThoughts>();
+                if (thoughts != null)
+                    thoughts.AddThought(Thought.ThoughtType.Talked);
+
                 Creature.DrawIndicator(IndicatorManager.StandardIndicators.Dots);
                 Creature.Physics.Face(other.Position);
                 SpeakTimer.Reset(SpeakTimer.TargetTimeSeconds);
