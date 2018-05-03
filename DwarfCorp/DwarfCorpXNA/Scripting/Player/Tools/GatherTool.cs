@@ -67,13 +67,12 @@ namespace DwarfCorp
         {
             List<Task> assignments = new List<Task>();
 
-            foreach (Body resource in bodies.Where(c => 
+            foreach (var resource in bodies.Where(c => 
                 c.Tags.Contains("Resource") && 
                 c.Active && 
                 c.IsVisible && 
                 c.Parent == Player.World.ComponentManager.RootComponent))
             {
-                if (!resource.IsVisible) continue;
                 if (Player.World.ChunkManager.IsAboveCullPlane(resource.BoundingBox)) continue;
 
                 if (button == InputManager.MouseButton.Left)
@@ -88,10 +87,9 @@ namespace DwarfCorp
                 }
             }
 
-            List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, Task.TaskCategory.Gather);
             Player.TaskManager.AddTasks(assignments);
 
-            OnConfirm(minions);
+            OnConfirm(Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, Task.TaskCategory.Gather));
         }
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
@@ -128,18 +126,14 @@ namespace DwarfCorp
         {
             NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 6, 0);
 
-            // Draw a bounding box around the currently selected bodies.
-            foreach (Body body in Player.BodySelector.CurrentBodies)
+            foreach (var body in Player.BodySelector.CurrentBodies)
             {
                 if (body.Tags.Contains("Resource"))
                 {
                     Drawer2D.DrawText(body.Name, body.Position, Color.White, Color.Black);
                     BoundingBox bounds = body.BoundingBox;
-                    bounds.Min += Vector3.Up * 0.5f;
-                    bounds.Max += Vector3.Up * 0.5f;
-                    bounds = bounds.Expand(0.25f);
                     Drawer3D.DrawBox(bounds, Color.Orange, 0.02f, false);
-                    Drawer2D.DrawSprite(frame, bounds.Center(), Vector2.One, Vector2.Zero, new Color(255, 255, 255, 100));
+                    Drawer2D.DrawSprite(frame, body.Position + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
                 }
             }
         }
