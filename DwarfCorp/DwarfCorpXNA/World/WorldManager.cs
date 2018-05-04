@@ -883,7 +883,6 @@ namespace DwarfCorp
                 DefaultShader.Projection = Camera.ProjectionMatrix;
                 DefaultShader.SetTexturedTechnique();
                 GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-                Master.Faction.CraftBuilder.Render(gameTime, GraphicsDevice, DefaultShader);
             }
 
             WaterRenderer.DrawWater(

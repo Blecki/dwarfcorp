@@ -448,7 +448,6 @@
     <Compile Include="Scripting\Player\Building\CraftDesignation.cs" />
     <Compile Include="Voxels\Rail\BuildRailTool.cs" />
     <Compile Include="Scripting\Player\Tools\BuildObjectTool.cs" />
-    <Compile Include="Scripting\Player\Tools\CookTool.cs" />
     <Compile Include="Scripting\Player\Tools\BuildWallTool.cs" />
     <Compile Include="Scripting\Player\Tools\Farm.cs" />
     <Compile Include="Scripting\Player\Tools\WrangleTool.cs" />
@@ -689,7 +688,6 @@
     <Compile Include="Scripting\Player\Building\BuildRoomOrder.cs" />
     <Compile Include="Scripting\Player\Building\BuildStockpileOrder.cs" />
     <Compile Include="Scripting\Player\Building\BuildVoxelOrder.cs" />
-    <Compile Include="Scripting\Player\Building\CraftBuilder.cs" />
     <Compile Include="Scripting\Player\Building\RoomBuilder.cs" />
     <Compile Include="Scripting\Player\Economy\Company.cs" />
     <Compile Include="Scripting\Player\Economy\Economy.cs" />

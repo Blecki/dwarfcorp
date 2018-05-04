@@ -205,8 +205,6 @@ namespace DwarfCorp
         /// </summary>
         public List<Task> Tasks { get; set; }
 
-        private WaitForPlanHelper planHelper = null;
-
         /// <summary>
         /// If true, whent he creature dies its friends will mourn its death, generating unhappy Thoughts
         /// </summary>

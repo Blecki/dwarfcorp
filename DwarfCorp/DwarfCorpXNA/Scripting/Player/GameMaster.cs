@@ -25,7 +25,6 @@ namespace DwarfCorp
             BuildZone,
             BuildWall,
             BuildObject,
-            Cook,
             Magic,
             Gather,
             Chop,
@@ -64,6 +63,7 @@ namespace DwarfCorp
 
         public void ChangeTool(ToolMode NewTool)
         {
+            // Todo: Should probably clean up existing tool even if they are the same tool.
             Tools[NewTool].OnBegin();
             if (CurrentToolMode != NewTool)
                 CurrentTool.OnEnd();
@@ -207,15 +207,12 @@ namespace DwarfCorp
 
             Tools[ToolMode.BuildObject] = new BuildObjectTool
             {
-                Player = this
+                Player = this,
+                Faction = Faction,
+                World = World
             };
 
             Tools[ToolMode.Magic] = new MagicTool(this);
-
-            Tools[ToolMode.Cook] = new CookTool
-            {
-                Player = this,
-            };
 
             Tools[ToolMode.MoveObjects] = new MoveObjectTool()
             {
@@ -444,8 +441,6 @@ namespace DwarfCorp
             Faction.Minions.RemoveAll(m => m.IsDead);
 
             UpdateRooms();
-
-            Faction.CraftBuilder.Update(time, this);
 
             HandlePosessedDwarf();
 

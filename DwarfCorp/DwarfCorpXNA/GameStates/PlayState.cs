@@ -1083,8 +1083,6 @@ namespace DwarfCorp.GameStates
                         {
                             Master.Faction.RoomBuilder.CurrentRoomData = data;
                             Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
-                            //Master.Faction.WallBuilder.CurrentVoxelType = 0;
-                            Master.Faction.CraftBuilder.IsEnabled = false;
                             ChangeTool(GameMaster.ToolMode.BuildZone);
                             World.ShowToolPopup("Click and drag to build " + data.Name);
                             World.Tutorial("build rooms");
@@ -1187,7 +1185,6 @@ namespace DwarfCorp.GameStates
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                 var tool = Master.Tools[GameMaster.ToolMode.BuildWall] as BuildWallTool;
                                 tool.CurrentVoxelType = (byte)data.ID;
-                                Master.Faction.CraftBuilder.IsEnabled = false;
                                 ChangeTool(GameMaster.ToolMode.BuildWall);
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
                                 World.Tutorial("build blocks");
@@ -1237,7 +1234,6 @@ namespace DwarfCorp.GameStates
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
                                 var tool = Master.Tools[GameMaster.ToolMode.BuildWall] as BuildWallTool;
                                 tool.CurrentVoxelType = (byte)data.ID;
-                                Master.Faction.CraftBuilder.IsEnabled = false;
                                 ChangeTool(GameMaster.ToolMode.BuildWall); // Wut
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " floor.");
                                 World.Tutorial("build blocks");
@@ -1319,7 +1315,6 @@ namespace DwarfCorp.GameStates
                             World = World,
                             OnShown = (sender) =>
                             {
-                               Master.Faction.CraftBuilder.IsEnabled = false;
                             },
                             BuildAction = (sender, args) =>
                             {
@@ -1327,16 +1322,19 @@ namespace DwarfCorp.GameStates
                                 if (buildInfo == null)
                                     return;
                                 sender.Parent.Hidden = true;
-                                Master.Faction.CraftBuilder.SelectedResources = buildInfo.GetSelectedResources();
+                                var tool = Master.Tools[GameMaster.ToolMode.BuildObject] as BuildObjectTool;
+                                tool.SelectedResources = buildInfo.GetSelectedResources();
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                Master.Faction.CraftBuilder.IsEnabled = true;
-                                Master.Faction.CraftBuilder.CurrentCraftType = data;
-                                if (Master.Faction.CraftBuilder.CurrentCraftBody != null)
+                                tool.CurrentCraftType = data;
+
+                                // Todo: This should never be true.
+                                if (tool.CurrentCraftBody != null)
                                 {
-                                    Master.Faction.CraftBuilder.CurrentCraftBody.Delete();
-                                    Master.Faction.CraftBuilder.CurrentCraftBody = null;
+                                    tool.CurrentCraftBody.Delete();
+                                    tool.CurrentCraftBody = null;
                                 }
+
                                 ChangeTool(GameMaster.ToolMode.BuildObject);
                                 World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
                             },
@@ -1459,7 +1457,6 @@ namespace DwarfCorp.GameStates
                 OnClick = (widget, args) =>
                 {
                     Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // This should be set by the tool.
-                    Master.Faction.CraftBuilder.IsEnabled = false;
                     var railTool = Master.Tools[GameMaster.ToolMode.PaintRail] as Rail.PaintRailTool;
                     railTool.SelectedResources = new List<ResourceAmount>
                                     {
@@ -1493,7 +1490,6 @@ namespace DwarfCorp.GameStates
                                 OnClick = (sender, args) =>
                                 {
                                     Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty; // This should be set by the tool.
-                                    Master.Faction.CraftBuilder.IsEnabled = false;
                                     var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as Rail.BuildRailTool;
                                     railTool.Pattern = data;
                                     ChangeTool(GameMaster.ToolMode.BuildRail);
@@ -1636,7 +1632,6 @@ namespace DwarfCorp.GameStates
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
                         minion.Stats.IsTaskAllowed(Task.TaskCategory.Cook)));
-                    AddToolSelectIcon(GameMaster.ToolMode.Cook, sender);
                 },
                 ReplacementMenu = menu_Edibles,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu

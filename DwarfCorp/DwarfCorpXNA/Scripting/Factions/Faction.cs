@@ -59,7 +59,6 @@ namespace DwarfCorp
         public List<Stockpile> Stockpiles { get; set; }
         public List<CreatureAI> Minions { get; set; }
         public RoomBuilder RoomBuilder { get; set; }
-        public CraftBuilder CraftBuilder { get; set; }
         public Color PrimaryColor { get; set; }
         public Color SecondaryColor { get; set; }
         public Timer HandleThreatsTimer { get; set; }
@@ -121,7 +120,6 @@ namespace DwarfCorp
             WarParties = new List<WarParty>();
             OwnedObjects = new List<Body>();
             RoomBuilder = new RoomBuilder(this, world);
-            CraftBuilder = new CraftBuilder(this, world);
             IsRaceFaction = false;
             TradeMoney = 0.0m;
             GoodWill = 0.0f;
@@ -168,7 +166,6 @@ namespace DwarfCorp
         public void Update(DwarfTime time)
         {
             RoomBuilder.Faction = this;
-            CraftBuilder.Faction = this;
             RoomBuilder.CheckRemovals();
 
             Minions.RemoveAll(m => m.IsDead);

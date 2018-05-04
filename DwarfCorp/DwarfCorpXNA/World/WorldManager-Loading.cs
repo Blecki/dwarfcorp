@@ -403,9 +403,6 @@ namespace DwarfCorp
 
                         if (faction.RoomBuilder == null)
                             faction.RoomBuilder = new RoomBuilder(faction, this);
-
-                        if (faction.CraftBuilder == null)
-                            faction.CraftBuilder = new CraftBuilder(faction, this);
                     }
 
                     Factions = new FactionLibrary();
