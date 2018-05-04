@@ -35,7 +35,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-//using System.Windows.Forms;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -49,9 +48,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CreatureAI : GameComponent, IUpdateableComponent
     {
-        public int MaxMessages = 10;
-        public List<string> MessageBuffer = new List<string>();
-
         public CreatureAI()
         {
         }
@@ -217,15 +213,11 @@ namespace DwarfCorp
         public bool TriggersMourning { get; set; }
         /// <summary> List of changes to the creatures XP over time.</summary>
         public List<int> XPEvents { get; set; }
-        public float DestroyPlayerObjectProbability = -1.0f;
 
         public string Biography = "";
 
         public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
             new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
-
-        public float StealFromPlayerProbability = -1.0f;
-        public string PlantBomb = null;
 
         [OnDeserialized]
         public void OnDeserialize(StreamingContext ctx)
@@ -700,48 +692,6 @@ namespace DwarfCorp
                 (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury())
                 && Tasks.Count == 0)
             {
-                if (StealFromPlayerProbability > 0 && MathFunctions.RandEvent(StealFromPlayerProbability))
-                {
-                    bool stealMoney = MathFunctions.RandEvent(0.5f);
-                    if (World.PlayerFaction.Economy.CurrentMoney > 0 && stealMoney)
-                        AssignTask(new ActWrapperTask(new GetMoneyAct(this, 100m, World.PlayerFaction)) { Name = "Steal money", Priority = Task.PriorityType.High });
-                    else
-                    {
-                        var resources = World.PlayerFaction.ListResources();
-                        if (resources.Count > 0)
-                        {
-                            var resource = Datastructures.SelectRandom(resources);
-                            if (resource.Value.NumResources > 0)
-                            {
-                                AssignTask(new ActWrapperTask(new GetResourcesAct(this, new List<ResourceAmount>() { new ResourceAmount(resource.Value.ResourceType, 1) }) { Faction = World.PlayerFaction }) { Name = "Steal stuff", Priority = Task.PriorityType.High });
-                            }
-                        }
-                    }
-                }
-
-                if (DestroyPlayerObjectProbability > 0 && MathFunctions.RandEvent(DestroyPlayerObjectProbability))
-                {
-                    bool plantBomb = !String.IsNullOrEmpty(PlantBomb) && MathFunctions.RandEvent(0.5f);
-                    if (!plantBomb && World.PlayerFaction.OwnedObjects.Count > 0)
-                    {
-                        var thing = Datastructures.SelectRandom<Body>(World.PlayerFaction.OwnedObjects);
-                        AssignTask(new KillEntityTask(thing, KillEntityTask.KillType.Auto));
-                    }
-                    else if (plantBomb)
-                    {
-                        var room = World.PlayerFaction.GetNearestRoom(Position);
-                        if (room != null)
-                        {
-                            AssignTask(new ActWrapperTask(new Sequence(new GoToZoneAct(this, room), new Do(() => { EntityFactory.CreateEntity<Body>(PlantBomb, Position); return true; }))) { Priority = Task.PriorityType.High });
-                        }
-                        else if (World.PlayerFaction.OwnedObjects.Count > 0)
-                        {
-                            var thing = Datastructures.SelectRandom<Body>(World.PlayerFaction.OwnedObjects);
-                            AssignTask(new ActWrapperTask(new Sequence(new GoToEntityAct(thing, this), new Do(() => { EntityFactory.CreateEntity<Body>(PlantBomb, Position); return true; }))) { Priority = Task.PriorityType.High });
-                        }
-                    }
-                }
-
                 // Craft random items for fun.
                 if (Stats.IsTaskAllowed(Task.TaskCategory.CraftItem) && MathFunctions.RandEvent(0.0005f))
                 {

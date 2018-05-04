@@ -195,7 +195,7 @@ namespace DwarfCorp
 
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
-            AI = Physics.AddChild(new CreatureAI(Manager, "Gremlin AI", Sensors, PlanService)) as CreatureAI;
+            AI = Physics.AddChild(new GremlinAI(Manager, "Gremlin AI", Sensors, PlanService)) as CreatureAI;
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
@@ -234,8 +234,8 @@ namespace DwarfCorp
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
-            AI.DestroyPlayerObjectProbability = 0.5f;
-            AI.PlantBomb = "Primed Keg";
+            (AI as GremlinAI).DestroyPlayerObjectProbability = 0.5f;
+            (AI as GremlinAI).PlantBomb = "Primed Keg";
             Species = "Gremlin";
         }
 

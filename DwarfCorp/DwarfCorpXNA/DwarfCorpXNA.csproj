@@ -169,6 +169,8 @@
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
+    <Compile Include="Entities\Monsters\KoboldAI.cs" />
+    <Compile Include="Entities\Monsters\GremlinAI.cs" />
     <Compile Include="Components\AI\DwarfThoughts.cs" />
     <Compile Include="Components\AI\WaitForPlanHelper.cs" />
     <Compile Include="Components\AI\LeaveWorldTask.cs" />
