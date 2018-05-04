@@ -238,6 +238,7 @@
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
     <Compile Include="Scripting\Player\Economy\Quantity.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceType.cs" />
+    <Compile Include="Scripting\Player\Tools\CancelTasksTool.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\ChopEntityTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\FleeEntityTask.cs" />
     <Compile Include="Tools\PerformanceMonitor.cs" />

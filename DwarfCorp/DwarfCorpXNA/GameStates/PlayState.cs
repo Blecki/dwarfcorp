@@ -2067,7 +2067,25 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
-#endregion
+            #endregion
+
+            #region icon_CancelTasks
+
+            var icon_CancelTasks = new FlatToolTray.Icon()
+            {
+                Text = "Cancel",
+                TextVerticalAlign = VerticalAlign.Below,
+                Tooltip = "Cancel voxel tasks such as mining, guarding, and planting.",
+                Icon = new TileReference("round-buttons", 5),
+                OnClick = (sender, args) =>
+                {
+                    World.ShowToolPopup("Select voxels to cancel associated tasks.");
+                    Master.ChangeTool(GameMaster.ToolMode.CancelTasks);
+                },
+                Behavior = FlatToolTray.IconBehavior.LeafIcon
+            };
+
+            #endregion
 
             MainMenu = new FlatToolTray.Tray
             {
@@ -2084,6 +2102,7 @@ namespace DwarfCorp.GameStates
                     icon_Plant,
                     icon_Wrangle,
                     icon_MagicTool,
+                    icon_CancelTasks,
                 },
                 OnShown = (sender) => ChangeTool(GameMaster.ToolMode.SelectUnits),
                 Tag = "tools"

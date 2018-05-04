@@ -37,7 +37,8 @@ namespace DwarfCorp
             DeconstructObjects,
             BuildRail,
             PaintRail,
-            God
+            God,
+            CancelTasks
         }
 
 
@@ -226,6 +227,10 @@ namespace DwarfCorp
 
             Tools[ToolMode.BuildRail] = new Rail.BuildRailTool(this);
             Tools[ToolMode.PaintRail] = new Rail.PaintRailTool(this);
+            Tools[ToolMode.CancelTasks] = new CancelTasksTool()
+            {
+                Player = this
+            };
         }
 
         void Time_NewDay(DateTime time)

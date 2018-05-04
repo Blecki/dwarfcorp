@@ -66,55 +66,44 @@ namespace DwarfCorp
                 case (InputManager.MouseButton.Left):
                     {
                         List<Task> assignments = new List<Task>();
-                        // Creating multiples doesn't work anyway - kill it.
-                        foreach (var r in voxels)
+
+                        Vector3 pos = Player.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CurrentCraftType.SpawnOffset;
+                        Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
+                        Vector3 endPos = pos;
+                        // TODO: Why are we creating a new designation?
+                        CraftDesignation newDesignation = new CraftDesignation()
                         {
-                            if (!r.IsValid || !r.IsEmpty)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                Vector3 pos = r.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CurrentCraftType.SpawnOffset;
+                            ItemType = CurrentCraftType,
+                            Location = Player.VoxSelector.VoxelUnderMouse,
+                            Orientation = CurrentDesignation.Orientation,
+                            OverrideOrientation = CurrentDesignation.OverrideOrientation,
+                            Valid = true,
+                            Entity = CurrentCraftBody,
+                            SelectedResources = SelectedResources
+                        };
+                        CurrentCraftBody.SetFlag(GameComponent.Flag.ShouldSerialize, true);
 
-                                Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
-                                Vector3 endPos = pos;
-                                // TODO: Why are we creating a new designation?
-                                CraftDesignation newDesignation = new CraftDesignation()
-                                {
-                                    ItemType = CurrentCraftType,
-                                    Location = r,
-                                    Orientation = CurrentDesignation.Orientation,
-                                    OverrideOrientation = CurrentDesignation.OverrideOrientation,
-                                    Valid = true,
-                                    Entity = CurrentCraftBody,
-                                    SelectedResources = SelectedResources
-                                };
-                                CurrentCraftBody.SetFlag(GameComponent.Flag.ShouldSerialize, true);
+                        if (newDesignation.OverrideOrientation)
+                            newDesignation.Entity.Orient(newDesignation.Orientation);
+                        else
+                            newDesignation.Entity.OrientToWalls();
 
-                                if (newDesignation.OverrideOrientation)
-                                    newDesignation.Entity.Orient(newDesignation.Orientation);
-                                else
-                                    newDesignation.Entity.OrientToWalls();
+                        if (IsValid(newDesignation))
+                        {
+                            var task = new CraftItemTask(newDesignation);
 
-                                if (IsValid(newDesignation))
-                                {
-                                    var task = new CraftItemTask(newDesignation);
+                            assignments.Add(task);
 
-                                    assignments.Add(task);
+                            // Todo: Maybe don't support creating huge numbers of entities at once?
+                            CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.EntityName, Player.VoxSelector.VoxelUnderMouse.WorldPosition,
+                            Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
+                            CurrentCraftBody.SetFlagRecursive(GameComponent.Flag.Active, false);
+                            CurrentCraftBody.SetTintRecursive(Color.White);
 
-                                    // Todo: Maybe don't support creating huge numbers of entities at once?
-                                    CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.EntityName, r.WorldPosition,
-                                    Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
-                                    CurrentCraftBody.SetFlagRecursive(GameComponent.Flag.Active, false);
-                                    CurrentCraftBody.SetTintRecursive(Color.White);
-
-                                    newDesignation.WorkPile = new WorkPile(World.ComponentManager, startPos);
-                                    World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
-                                    newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
-                                    World.ParticleManager.Trigger("puff", pos, Color.White, 10);
-                                }
-                            }
+                            newDesignation.WorkPile = new WorkPile(World.ComponentManager, startPos);
+                            World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
+                            newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
+                            World.ParticleManager.Trigger("puff", pos, Color.White, 10);
                         }
 
                         if (assignments.Count > 0)
@@ -126,18 +115,12 @@ namespace DwarfCorp
                     }
                 case (InputManager.MouseButton.Right):
                     {
-                        foreach (var r in voxels)
+                        var designation = Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == Player.VoxSelector.VoxelUnderMouse);
+                        if (designation != null)
                         {
-                            if (r.IsValid)
-                            {
-                                var designation = Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == r);
-                                if (designation != null)
-                                {
-                                    var realDesignation = World.PlayerFaction.Designations.GetEntityDesignation(designation.Entity, DesignationType.Craft);
-                                    if (realDesignation != null)
-                                        World.Master.TaskManager.CancelTask(realDesignation.Task);
-                                }
-                            }
+                            var realDesignation = World.PlayerFaction.Designations.GetEntityDesignation(designation.Entity, DesignationType.Craft);
+                            if (realDesignation != null)
+                                World.Master.TaskManager.CancelTask(realDesignation.Task);
                         }
                         break;
                     }

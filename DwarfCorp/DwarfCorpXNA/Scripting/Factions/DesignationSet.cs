@@ -182,6 +182,14 @@ namespace DwarfCorp
                         yield return d;
         }
 
+        public IEnumerable<VoxelDesignation> EnumerateDesignations(VoxelHandle Voxel)
+        {
+            var key = GetVoxelQuickCompare(Voxel);
+            if (VoxelDesignations.ContainsKey(key))
+                foreach (var des in VoxelDesignations[key])
+                    yield return des;
+        }
+
         private void RemoveVoxelDesignation(VoxelDesignation D)
         {
             var key = GetVoxelQuickCompare(D.Voxel);
