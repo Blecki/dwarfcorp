@@ -474,7 +474,6 @@ namespace DwarfCorp
             Master.Update(Game, gameTime);
             GoalManager.Update(this);
             Time.Update(gameTime);
-
             if (Paused)
             {
                 ComponentManager.UpdatePaused();
@@ -482,6 +481,7 @@ namespace DwarfCorp
             // If not paused, we want to just update the rest of the game.
             else
             {
+                ParticleManager.Update(gameTime, this);
                 TutorialManager.Update(Gui);
 
                 Diplomacy.Update(gameTime, Time.CurrentDate, this);
@@ -895,7 +895,7 @@ namespace DwarfCorp
                 new Vector3(0.1f, 0.0f, 0.1f),
                 Camera,
                 ChunkManager);
-
+            ParticleManager.Render(this, GraphicsDevice);
             DefaultShader.ClippingEnabled = false;
 
             if (GameSettings.Default.EnableGlow)

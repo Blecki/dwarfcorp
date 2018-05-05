@@ -45,7 +45,7 @@ namespace DwarfCorp
         [EntityFactory("Strawman")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            switch (MathFunctions.RandInt(0, 3))
+            switch (MathFunctions.RandInt(0, 4))
             {
                 case 0:
                     return new Strawman(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
@@ -53,8 +53,10 @@ namespace DwarfCorp
                     return new WeightRack(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
                 case 2:
                     return new PunchingBag(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+                case 3:
+                    return new Target(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
                 default:
-                    return new Strawman(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+                    return null;
             }
         }
 
@@ -65,7 +67,7 @@ namespace DwarfCorp
         }
 
         public Strawman(ComponentManager manager, Vector3 position, List<ResourceAmount> Resources) :
-            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 5), new DwarfCorp.CraftDetails(manager, "Weight Rack", Resources))
+            base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(1, 5), new DwarfCorp.CraftDetails(manager, "Strawman", Resources))
         {
             Name = "Strawman";
             Tags.Add("Strawman");
