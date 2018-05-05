@@ -40,6 +40,8 @@ namespace DwarfCorp
 {
     public class CancelTasksTool : PlayerTool
     {
+        public Gui.Widgets.CancelToolOptions Options;
+
         public override void OnBegin()
         {
            Player.World.Tutorial("cancel-tasks");
@@ -52,21 +54,20 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
-            foreach (var r in refs)
-            {
-                if (r.IsValid)
+            if (Options.Voxels.CheckState)
+                foreach (var r in refs)
                 {
-                    var designations = Player.Faction.Designations.EnumerateDesignations(r).ToList();
-                    foreach (var des in designations)
-                        if (des.Task != null)
-                            Player.TaskManager.CancelTask(des.Task);
+                    if (r.IsValid)
+                    {
+                        foreach (var des in Player.Faction.Designations.EnumerateDesignations(r).ToList())
+                            if (des.Task != null)
+                                Player.TaskManager.CancelTask(des.Task);
+                    }
                 }
-            }
         }
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
         {
-            throw new NotImplementedException();
         }
 
         public override void Update(DwarfGame game, DwarfTime time)
@@ -79,14 +80,15 @@ namespace DwarfCorp
                 return;
             }
 
-            Player.VoxSelector.Enabled = true;
+            Player.VoxSelector.Enabled = Options.Voxels.CheckState;
 
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
             else
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 1));
 
-            Player.BodySelector.Enabled = false;
+        
+            Player.BodySelector.Enabled = Options.Entities.CheckState;
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
         }
 
@@ -96,7 +98,13 @@ namespace DwarfCorp
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
-            
+            if (Options.Entities.CheckState)
+                foreach (var body in bodies)
+                {
+                    foreach (var des in Player.Faction.Designations.EnumerateEntityDesignations(body).ToList())
+                        if (des.Task != null)
+                            Player.TaskManager.CancelTask(des.Task);
+                }
         }
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)

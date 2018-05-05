@@ -243,6 +243,11 @@ namespace DwarfCorp
             return EntityDesignations.Where(e => TypeSet(e.Type, Type));
         }
 
+        public IEnumerable<EntityDesignation> EnumerateEntityDesignations(Body Entity)
+        {
+            return EntityDesignations.Where(e => Object.ReferenceEquals(Entity, e.Body));
+        }
+
         public IEnumerable<EntityDesignation> EnumerateEntityDesignations()
         {
             return EntityDesignations;

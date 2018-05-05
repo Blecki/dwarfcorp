@@ -151,7 +151,8 @@ namespace DwarfCorp.Gui.Widgets
             LeafIcon,
             ShowSubMenu,
             ShowClickPopup,
-            ShowHoverPopup
+            ShowHoverPopup,
+            ShowClickPopupAndLeafIcon,
         }
 
         public class Icon : FramedIcon
@@ -224,6 +225,13 @@ namespace DwarfCorp.Gui.Widgets
 
                 switch (Behavior)
                 {
+                    case IconBehavior.ShowClickPopupAndLeafIcon:
+                        if (PopupChild == null)
+                            throw new InvalidProgramException("Conflicting icon behavior");
+                        AddChild(PopupChild);
+                        PopupChild.Hidden = true;
+                        OnClick += ExpandPopup;
+                        break;
                     case IconBehavior.ShowClickPopup:
                         if (PopupChild == null || OnClick != null)
                             throw new InvalidProgramException("Conflicting icon behavior");

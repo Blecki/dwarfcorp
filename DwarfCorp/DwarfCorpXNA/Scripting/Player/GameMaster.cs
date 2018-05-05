@@ -209,7 +209,6 @@ namespace DwarfCorp
             Tools[ToolMode.BuildObject] = new BuildObjectTool
             {
                 Player = this,
-                Faction = Faction,
                 World = World
             };
 

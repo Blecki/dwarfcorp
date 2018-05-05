@@ -1326,13 +1326,13 @@ namespace DwarfCorp.GameStates
                                 tool.SelectedResources = buildInfo.GetSelectedResources();
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                tool.CurrentCraftType = data;
+                                tool.CraftType = data;
 
                                 // Todo: This should never be true.
-                                if (tool.CurrentCraftBody != null)
+                                if (tool.PreviewBody != null)
                                 {
-                                    tool.CurrentCraftBody.Delete();
-                                    tool.CurrentCraftBody = null;
+                                    tool.PreviewBody.Delete();
+                                    tool.PreviewBody = null;
                                 }
 
                                 ChangeTool(GameMaster.ToolMode.BuildObject);
@@ -2079,10 +2079,17 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("round-buttons", 5),
                 OnClick = (sender, args) =>
                 {
-                    World.ShowToolPopup("Select voxels to cancel associated tasks.");
                     Master.ChangeTool(GameMaster.ToolMode.CancelTasks);
+                    (Master.Tools[GameMaster.ToolMode.CancelTasks] as CancelTasksTool).Options = (sender as FlatToolTray.Icon).PopupChild as CancelToolOptions;
                 },
-                Behavior = FlatToolTray.IconBehavior.LeafIcon
+                Behavior = FlatToolTray.IconBehavior.ShowClickPopupAndLeafIcon,
+                KeepChildVisible = true, // So the player can interact with the popup.
+                ExpandChildWhenDisabled = true,
+                TextColor = Color.White.ToVector4(),
+                PopupChild = new CancelToolOptions
+                {
+                    Rect = new Rectangle(0, 0, 200, 100)
+                }
             };
 
             #endregion

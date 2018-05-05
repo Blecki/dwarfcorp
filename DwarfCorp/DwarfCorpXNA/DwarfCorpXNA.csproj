@@ -230,6 +230,7 @@
     <Compile Include="Entities\TimedExplosion.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
     <Compile Include="Gui\TextureGeneratorAttribute.cs" />
+    <Compile Include="Gui\Widgets\CancelToolOptions.cs" />
     <Compile Include="Gui\Widgets\EmployeeAIDebugPanel.cs" />
     <Compile Include="Gui\Widgets\FreeText.cs" />
     <Compile Include="Gui\Widgets\DwarfConsole.cs" />

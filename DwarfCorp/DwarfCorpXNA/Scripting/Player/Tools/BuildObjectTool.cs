@@ -46,18 +46,28 @@ namespace DwarfCorp
 {
     public class BuildObjectTool : PlayerTool
     {
-        public Faction Faction { get; set; }
-        public CraftItem CurrentCraftType { get; set; }
-        public Body CurrentCraftBody { get; set; }
+        public CraftItem CraftType { get; set; }
+        public Body PreviewBody { get; set; }
         public List<ResourceAmount> SelectedResources;
-        protected CraftDesignation CurrentDesignation;
-        private float CurrentOrientation = 0.0f;
+        private float Orientation = 0.0f;
         private bool OverrideOrientation = false;
-        private bool rightPressed = false;
-        private bool leftPressed = false;
+        private bool RightPressed = false;
+        private bool LeftPressed = false;
 
         [JsonIgnore]
         public WorldManager World { get; set; }
+
+        private Body CreatePreviewBody()
+        {
+            var previewBody = EntityFactory.CreateEntity<Body>(
+                CraftType.EntityName, 
+                Player.VoxSelector.VoxelUnderMouse.WorldPosition,
+                Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
+            previewBody.SetFlagRecursive(GameComponent.Flag.Active, false);
+            previewBody.SetTintRecursive(Color.White);
+            previewBody.SetFlagRecursive(GameComponent.Flag.ShouldSerialize, false);
+            return previewBody;
+        }
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
@@ -65,57 +75,39 @@ namespace DwarfCorp
             {
                 case (InputManager.MouseButton.Left):
                     {
-                        List<Task> assignments = new List<Task>();
-
-                        Vector3 pos = Player.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CurrentCraftType.SpawnOffset;
-                        Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
-                        Vector3 endPos = pos;
-                        // TODO: Why are we creating a new designation?
-                        CraftDesignation newDesignation = new CraftDesignation()
+                        if (IsValid(Player.VoxSelector.VoxelUnderMouse))
                         {
-                            ItemType = CurrentCraftType,
-                            Location = Player.VoxSelector.VoxelUnderMouse,
-                            Orientation = CurrentDesignation.Orientation,
-                            OverrideOrientation = CurrentDesignation.OverrideOrientation,
-                            Valid = true,
-                            Entity = CurrentCraftBody,
-                            SelectedResources = SelectedResources
-                        };
-                        CurrentCraftBody.SetFlag(GameComponent.Flag.ShouldSerialize, true);
+                            PreviewBody.SetFlag(GameComponent.Flag.ShouldSerialize, true);
 
-                        if (newDesignation.OverrideOrientation)
-                            newDesignation.Entity.Orient(newDesignation.Orientation);
-                        else
-                            newDesignation.Entity.OrientToWalls();
+                            Vector3 pos = Player.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CraftType.SpawnOffset;
+                            Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
+                         
+                           CraftDesignation newDesignation = new CraftDesignation()
+                            {
+                                ItemType = CraftType,
+                                Location = Player.VoxSelector.VoxelUnderMouse,
+                                Orientation = Orientation,
+                                OverrideOrientation = OverrideOrientation,
+                                Valid = true,
+                                Entity = PreviewBody,
+                                SelectedResources = SelectedResources,
+                                WorkPile = new WorkPile(World.ComponentManager, startPos)
+                            };
 
-                        if (IsValid(newDesignation))
-                        {
-                            var task = new CraftItemTask(newDesignation);
-
-                            assignments.Add(task);
-
-                            // Todo: Maybe don't support creating huge numbers of entities at once?
-                            CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.EntityName, Player.VoxSelector.VoxelUnderMouse.WorldPosition,
-                            Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
-                            CurrentCraftBody.SetFlagRecursive(GameComponent.Flag.Active, false);
-                            CurrentCraftBody.SetTintRecursive(Color.White);
-
-                            newDesignation.WorkPile = new WorkPile(World.ComponentManager, startPos);
                             World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
-                            newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), endPos));
+                            newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), pos));
                             World.ParticleManager.Trigger("puff", pos, Color.White, 10);
-                        }
 
-                        if (assignments.Count > 0)
-                        {
-                            World.Master.TaskManager.AddTasks(assignments);
+                            World.Master.TaskManager.AddTask(new CraftItemTask(newDesignation));
+
+                            PreviewBody = CreatePreviewBody();
                         }
 
                         break;
                     }
                 case (InputManager.MouseButton.Right):
                     {
-                        var designation = Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == Player.VoxSelector.VoxelUnderMouse);
+                        var designation = Player.Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).Select(d => d.Tag as CraftDesignation).FirstOrDefault(d => d.Location == Player.VoxSelector.VoxelUnderMouse);
                         if (designation != null)
                         {
                             var realDesignation = World.PlayerFaction.Designations.GetEntityDesignation(designation.Entity, DesignationType.Craft);
@@ -131,6 +123,13 @@ namespace DwarfCorp
         {
             Player.VoxSelector.DrawBox = false;
             Player.VoxSelector.DrawVoxel = false;
+
+            if (CraftType == null)
+                throw new InvalidOperationException();
+
+            PreviewBody = CreatePreviewBody();
+            Orientation = 0.0f;
+            OverrideOrientation = false;
         }
 
         public override void OnEnd()
@@ -138,13 +137,13 @@ namespace DwarfCorp
             Player.VoxSelector.DrawBox = true;
             Player.VoxSelector.DrawVoxel = true;
 
-            if (CurrentCraftBody != null)
+            if (PreviewBody != null)
             {
-                CurrentCraftBody.Delete();
-                CurrentCraftBody = null;
+                PreviewBody.Delete();
+                PreviewBody = null;
             }
 
-            CurrentCraftType = null;
+            CraftType = null;
         }
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
@@ -170,72 +169,33 @@ namespace DwarfCorp
             else
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
 
-            if (Faction == null)
-            {
-                Faction = Player.Faction;
-            }
-
-            if (CurrentCraftType != null && CurrentCraftBody == null)
-            {
-                CurrentCraftBody = EntityFactory.CreateEntity<Body>(CurrentCraftType.EntityName,
-                    Player.VoxSelector.VoxelUnderMouse.WorldPosition,
-                     Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
-
-                CurrentCraftBody.SetFlag(GameComponent.Flag.Active, false);
-                CurrentCraftBody.SetTintRecursive(Color.White);
-                CurrentCraftBody.SetFlagRecursive(GameComponent.Flag.ShouldSerialize, false);
-
-                CurrentDesignation = new CraftDesignation()
-                {
-                    ItemType = CurrentCraftType,
-                    Location = VoxelHandle.InvalidHandle,
-                    Valid = true
-                };
-
-                OverrideOrientation = false;
-                CurrentCraftBody.SetTintRecursive(Color.Green);
-            }
-
-            if (CurrentCraftBody == null || !Player.VoxSelector.VoxelUnderMouse.IsValid)
+            if (PreviewBody == null || !Player.VoxSelector.VoxelUnderMouse.IsValid)
                 return;
-
-            CurrentCraftBody.LocalPosition = Player.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CurrentCraftType.SpawnOffset;
-
-            CurrentCraftBody.UpdateTransform();
-            CurrentCraftBody.PropogateTransforms();
-            var tinters = CurrentCraftBody.EnumerateAll().OfType<Tinter>();
-            foreach (var tinter in tinters)
-            {
-                tinter.Stipple = true;
-            }
-            if (OverrideOrientation)
-            {
-                CurrentCraftBody.Orient(CurrentOrientation);
-            }
-            else
-            {
-                CurrentCraftBody.OrientToWalls();
-            }
 
             HandleOrientation();
 
-            if (CurrentDesignation != null)
-            {
-                if (CurrentDesignation.Location.Equals(Player.VoxSelector.VoxelUnderMouse))
-                    return;
+            PreviewBody.LocalPosition = Player.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CraftType.SpawnOffset;
+            PreviewBody.UpdateTransform();
+            PreviewBody.PropogateTransforms();
 
-                CurrentDesignation.Location = Player.VoxSelector.VoxelUnderMouse;
+            foreach (var tinter in PreviewBody.EnumerateAll().OfType<Tinter>())
+                tinter.Stipple = true;
 
-                World.ShowTooltip("Click to build. Press R/T to rotate.");
-                CurrentCraftBody.SetTintRecursive(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
-            }
+            if (OverrideOrientation)
+                PreviewBody.Orient(Orientation);
+            else
+                PreviewBody.OrientToWalls();
+
+            PreviewBody.SetTintRecursive(IsValid(Player.VoxSelector.VoxelUnderMouse) ? Color.Green : Color.Red);
+
+            World.ShowTooltip("Click to build. Press R/T to rotate.");
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            if (CurrentCraftBody != null)
+            if (PreviewBody != null)
             {
-                Drawer2D.DrawPolygon(World.Camera, new List<Vector3>() { CurrentCraftBody.Position, CurrentCraftBody.Position + CurrentCraftBody.GlobalTransform.Right * 0.5f }, Color.White, 1, false, graphics.Viewport);
+                Drawer2D.DrawPolygon(World.Camera, new List<Vector3>() { PreviewBody.Position, PreviewBody.Position + PreviewBody.GlobalTransform.Right * 0.5f }, Color.White, 1, false, graphics.Viewport);
             }
         }
 
@@ -249,41 +209,22 @@ namespace DwarfCorp
 
         }
 
-        public bool IsValid(CraftDesignation designation)
-        {
-            if (!designation.Valid)
+        public bool IsValid(VoxelHandle Location)
+        {            
+            if (!String.IsNullOrEmpty(CraftType.CraftLocation) 
+                && Player.Faction.FindNearestItemWithTags(CraftType.CraftLocation, Location.WorldPosition, false) == null)
             {
+                World.ShowToolPopup("Can't build, need " + CraftType.CraftLocation);
                 return false;
             }
 
-            if (!String.IsNullOrEmpty(designation.ItemType.CraftLocation) &&
-                Faction.FindNearestItemWithTags(designation.ItemType.CraftLocation, designation.Location.WorldPosition, false) ==
-                null)
-            {
-                World.ShowToolPopup("Can't build, need " + designation.ItemType.CraftLocation);
-                return false;
-            }
-
-            if (!Faction.HasResources(designation.ItemType.RequiredResources))
-            {
-                string neededResources = "";
-
-                foreach (Quantitiy<Resource.ResourceTags> amount in designation.ItemType.RequiredResources)
-                {
-                    neededResources += "" + amount.NumResources + " " + amount.ResourceType.ToString() + " ";
-                }
-
-                World.ShowToolPopup("Not enough resources! Need " + neededResources + ".");
-                return false;
-            }
-
-            foreach (var req in designation.ItemType.Prerequisites)
+            foreach (var req in CraftType.Prerequisites)
             {
                 switch (req)
                 {
                     case CraftItem.CraftPrereq.NearWall:
                         {
-                            var neighborFound = VoxelHelpers.EnumerateManhattanNeighbors2D(designation.Location.Coordinate)
+                            var neighborFound = VoxelHelpers.EnumerateManhattanNeighbors2D(Location.Coordinate)
                                     .Select(c => new VoxelHandle(World.ChunkManager.ChunkData, c))
                                     .Any(v => v.IsValid && !v.IsEmpty);
 
@@ -297,7 +238,7 @@ namespace DwarfCorp
                         }
                     case CraftItem.CraftPrereq.OnGround:
                         {
-                            var below = VoxelHelpers.GetNeighbor(designation.Location, new GlobalVoxelOffset(0, -1, 0));
+                            var below = VoxelHelpers.GetNeighbor(Location, new GlobalVoxelOffset(0, -1, 0));
 
                             if (!below.IsValid || below.IsEmpty)
                             {
@@ -309,30 +250,21 @@ namespace DwarfCorp
                 }
             }
 
-            if (CurrentCraftBody != null)
+            if (PreviewBody != null)
             {
                 // Just check for any intersecting body in octtree.
 
-                if (OverrideOrientation)
-                {
-                    CurrentCraftBody.Orient(CurrentOrientation);
-                }
-                else
-                {
-                    CurrentCraftBody.OrientToWalls();
-                }
+                var intersectsAnyOther = Player.Faction.OwnedObjects.FirstOrDefault(o => 
+                    o != null 
+                    && o != PreviewBody 
+                    && o.GetRotatedBoundingBox().Intersects(PreviewBody.GetRotatedBoundingBox().Expand(-0.1f)));
 
-                var intersectsAnyOther = Faction.OwnedObjects.FirstOrDefault(
-                    o => o != null &&
-                    o != CurrentCraftBody &&
-                    o.GetRotatedBoundingBox().Intersects(CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)));
-
-                var intersectsBuildObjects = Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft)
-                    .Any(d => d.Body != CurrentCraftBody && d.Body.GetRotatedBoundingBox().Intersects(
-                        CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)));
+                var intersectsBuildObjects = Player.Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft)
+                    .Any(d => d.Body != PreviewBody && d.Body.GetRotatedBoundingBox().Intersects(
+                        PreviewBody.GetRotatedBoundingBox().Expand(-0.1f)));
 
                 bool intersectsWall = VoxelHelpers.EnumerateCoordinatesInBoundingBox
-                    (CurrentCraftBody.GetRotatedBoundingBox().Expand(-0.1f)).Any(
+                    (PreviewBody.GetRotatedBoundingBox().Expand(-0.1f)).Any(
                     v =>
                     {
                         var tvh = new VoxelHandle(World.ChunkManager.ChunkData, v);
@@ -347,66 +279,46 @@ namespace DwarfCorp
                 {
                     World.ShowToolPopup("Can't build here: intersects something else being built");
                 }
-                else if (intersectsWall && !designation.ItemType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall))
+                else if (intersectsWall && !CraftType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall))
                 {
                     World.ShowToolPopup("Can't build here: intersects wall.");
                 }
 
                 return (intersectsAnyOther == null && !intersectsBuildObjects &&
-                       (!intersectsWall || designation.ItemType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall)));
+                       (!intersectsWall || CraftType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall)));
             }
             return true;
         }
 
         private void HandleOrientation()
         {
-            if (CurrentDesignation == null || CurrentCraftBody == null)
-            {
-                return;
-            }
-
             // Don't attempt any control if the user is trying to type intoa focus item.
-            if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
+            if (World.Gui.FocusItem == null || World.Gui.FocusItem.IsAnyParentTransparent() || World.Gui.FocusItem.IsAnyParentHidden())
             {
-                return;
+                KeyboardState state = Keyboard.GetState();
+                bool leftKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectLeft);
+                bool rightKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectRight);
+                if (LeftPressed && !leftKey)
+                {
+                    OverrideOrientation = true;
+                    LeftPressed = false;
+                    Orientation += (float)(Math.PI / 2);
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, PreviewBody.Position,
+                        0.5f);
+                }
+
+                if (RightPressed && !rightKey)
+                {
+                    OverrideOrientation = true;
+                    RightPressed = false;
+                    Orientation -= (float)(Math.PI / 2);
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, PreviewBody.Position, 0.5f);
+                }
+
+
+                LeftPressed = leftKey;
+                RightPressed = rightKey;
             }
-
-            KeyboardState state = Keyboard.GetState();
-            bool leftKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectLeft);
-            bool rightKey = state.IsKeyDown(ControlSettings.Mappings.RotateObjectRight);
-            if (leftPressed && !leftKey)
-            {
-                OverrideOrientation = true;
-                leftPressed = false;
-                CurrentOrientation += (float)(Math.PI / 2);
-                CurrentCraftBody.Orient(CurrentOrientation);
-                CurrentCraftBody.UpdateBoundingBox();
-                CurrentCraftBody.UpdateTransform();
-                CurrentCraftBody.PropogateTransforms();
-                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, CurrentCraftBody.Position,
-                    0.5f);
-                CurrentCraftBody.SetTintRecursive(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
-            }
-            if (rightPressed && !rightKey)
-            {
-                OverrideOrientation = true;
-                rightPressed = false;
-                CurrentOrientation -= (float)(Math.PI / 2);
-                CurrentCraftBody.Orient(CurrentOrientation);
-                CurrentCraftBody.UpdateBoundingBox();
-                CurrentCraftBody.UpdateTransform();
-                CurrentCraftBody.PropogateTransforms();
-                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, CurrentCraftBody.Position, 0.5f);
-                CurrentCraftBody.SetTintRecursive(IsValid(CurrentDesignation) ? Color.Green : Color.Red);
-            }
-
-
-            leftPressed = leftKey;
-            rightPressed = rightKey;
-
-            CurrentDesignation.OverrideOrientation = this.OverrideOrientation;
-            CurrentDesignation.Orientation = this.CurrentOrientation;
         }
-
     }
 }
