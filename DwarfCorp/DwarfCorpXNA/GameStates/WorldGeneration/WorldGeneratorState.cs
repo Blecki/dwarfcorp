@@ -180,10 +180,10 @@ namespace DwarfCorp.GameStates
 
             rightPanel.AddChild(new Gui.Widget
             {
-                Text = "Colony size",
+                Text = "Territory size",
                 AutoLayout = Gui.AutoLayout.DockTop,
                 Font = "font8",
-                TextColor = new Vector4(0, 0, 0, 1)
+                TextColor = new Vector4(0, 0, 0, 1),
             });
 
             var colonySizeCombo = rightPanel.AddChild(new Gui.Widgets.ComboBox
