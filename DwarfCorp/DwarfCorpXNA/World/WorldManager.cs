@@ -50,6 +50,7 @@ using Color = Microsoft.Xna.Framework.Color;
 using Point = Microsoft.Xna.Framework.Point;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using DwarfCorp.GameStates;
+using DwarfCorp.Goals;
 
 namespace DwarfCorp
 {
@@ -326,6 +327,49 @@ namespace DwarfCorp
         {
             LazyActions.Add(action);
         }
+        
+        private class WorldPopup
+        {
+            public Widget Widget;
+            public Body BodyToTrack;
+            public Vector2 ScreenOffset;
+
+            public void Update(DwarfTime time, Camera camera, Viewport viewport)
+            {
+                if (Widget == null || BodyToTrack == null || BodyToTrack.IsDead)
+                {
+                    return;
+                }
+
+                var projectedPosition = viewport.Project(BodyToTrack.Position, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
+                if (projectedPosition.Z > 0.999f)
+                {
+                    Widget.Hidden = true;
+                    return;
+                }
+
+                Vector2 projectedCenter = new Vector2(projectedPosition.X, projectedPosition.Y) + ScreenOffset - new Vector2(0, Widget.Rect.Height);
+                if ((new Vector2(Widget.Rect.Center.X, Widget.Rect.Center.Y) - projectedCenter).Length() < 0.1f)
+                {
+                    return;
+                }
+
+                Widget.Rect = new Rectangle((int)projectedCenter.X - Widget.Rect.Width / 2, 
+                    (int)projectedCenter.Y - Widget.Rect.Height / 2, Widget.Rect.Width, Widget.Rect.Height);
+
+                if (!viewport.Bounds.Intersects(Widget.Rect))
+                {
+                    Widget.Hidden = true;
+                }
+                else
+                {
+                    Widget.Hidden = false;
+                }
+                Widget.Invalidate();
+            }
+        }
+
+        private Dictionary<uint, WorldPopup> LastWorldPopup = new Dictionary<uint, WorldPopup>();
 
         #endregion
 
@@ -343,12 +387,12 @@ namespace DwarfCorp
             Time = new WorldTime();
         }
 
-        public void Pause()
+        public void PauseThreads()
         {
             ChunkManager.PauseThreads = true;
         }
 
-        public void Unpause()
+        public void UnpauseThreads()
         {
             if (ChunkManager != null)
             {
@@ -459,7 +503,28 @@ namespace DwarfCorp
             Master.Update(Game, gameTime);
             GoalManager.Update(this);
             Time.Update(gameTime);
+            if (LastWorldPopup != null)
+            {
+                List<uint> removals = new List<uint>();
+                foreach (var popup in LastWorldPopup)
+                {
+                    popup.Value.Update(gameTime, Camera, GraphicsDevice.Viewport);
+                    if (popup.Value.Widget == null || !Gui.RootItem.Children.Contains(popup.Value.Widget) 
+                        || popup.Value.BodyToTrack == null || popup.Value.BodyToTrack.IsDead)
+                    {
+                        removals.Add(popup.Key);
+                    }
+                }
 
+                foreach (var removal in removals)
+                {
+                    if (LastWorldPopup[removal].Widget != null && Gui.RootItem.Children.Contains(LastWorldPopup[removal].Widget))
+                    {
+                        Gui.DestroyWidget(LastWorldPopup[removal].Widget);
+                    }
+                    LastWorldPopup.Remove(removal);
+                }
+            }
             if (Paused)
             {
                 ComponentManager.UpdatePaused();
@@ -1247,6 +1312,27 @@ namespace DwarfCorp
 
                 SoundManager.PlayAmbience(biome.NightAmbience);
             }
+        }
+
+        public void MakeWorldPopup(string text, Body body, float screenOffset = -10, float time = 30.0f)
+        {
+            MakeWorldPopup(new TimedIndicatorWidget() { Text = text, DeathTimer = new Timer(time, true, Timer.TimerMode.Real) }, body, new Vector2(0, screenOffset));
+        }
+
+        public void MakeWorldPopup(Widget widget, Body body, Vector2 ScreenOffset)
+        {
+            if (LastWorldPopup.ContainsKey(body.GlobalID))
+            {
+                Gui.DestroyWidget(LastWorldPopup[body.GlobalID].Widget);
+            }
+            Gui.RootItem.AddChild(widget);
+            LastWorldPopup[body.GlobalID] = new WorldPopup()
+            {
+                Widget = widget,
+                BodyToTrack = body,
+                ScreenOffset = ScreenOffset 
+            };
+
         }
     }
 }

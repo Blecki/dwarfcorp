@@ -110,7 +110,7 @@ namespace DwarfCorp
             }
 
             if (closestPen == null)
-                agent.World.MakeAnnouncement("Can't wrangle " + Animal.Species + "s. Need more animal pens.");
+                agent.World.MakeWorldPopup("Can't wrangle " + Animal.Species + "s. Need more animal pens.", Animal.Physics, -10, 10);
 
             LastPen = closestPen;
             return closestPen;

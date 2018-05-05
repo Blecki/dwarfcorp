@@ -223,6 +223,7 @@
     <Compile Include="Entities\Plants\PlantFactories.cs" />
     <Compile Include="Entities\TimedExplosion.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
+    <Compile Include="Goals\EventScheduler.cs" />
     <Compile Include="Gui\TextureGeneratorAttribute.cs" />
     <Compile Include="Gui\Widgets\EmployeeAIDebugPanel.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />

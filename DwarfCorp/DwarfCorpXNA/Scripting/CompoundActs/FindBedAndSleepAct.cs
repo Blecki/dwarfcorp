@@ -162,7 +162,7 @@ namespace DwarfCorp
             {
                 if (Agent.Faction == Agent.World.PlayerFaction)
                 {
-                    Agent.World.MakeAnnouncement(String.Format("{0} passed out.", Agent.Stats.FullName));
+                    Agent.World.MakeWorldPopup(String.Format("{0} passed out.", Agent.Stats.FullName), Agent.Physics, -10, 10);
                 }
                 Tree = new SleepAct(Creature.AI) { HealRate = 0.1f, RechargeRate = 1.0f, Teleport = false, Type = SleepAct.SleepType.Heal };
             }

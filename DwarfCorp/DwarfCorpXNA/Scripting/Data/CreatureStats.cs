@@ -55,6 +55,22 @@ namespace DwarfCorp
             public float Intelligence = 5;
             public float Size = 5;
 
+            public StatNums()
+            {
+
+            }
+
+            public StatNums(int constant)
+            {
+                Dexterity = constant;
+                Constitution = constant;
+                Strength = constant;
+                Wisdom = constant;
+                Charisma = constant;
+                Intelligence = constant;
+                Size = constant;
+            }
+
             public static StatNums operator +(StatNums a, StatNums b)
             {
                 if (a == null || b == null) return null;

@@ -199,7 +199,6 @@ namespace DwarfCorp.GameStates
                 {
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_daytime, 0.15f);
                     SoundManager.PlayMusic("main_theme_day");
-                    DiseaseLibrary.SpreadRandomDiseases(World.PlayerFaction.Minions);
                 };
 
                 World.Time.NewNight += time =>
@@ -210,7 +209,7 @@ namespace DwarfCorp.GameStates
 
             }
 
-            World.Unpause();
+            World.UnpauseThreads();
             AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Game);
 
             ContextCommands = new List<DwarfCorp.ContextCommands.ContextCommand>();
@@ -224,7 +223,7 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public override void OnExit()
         {
-            World.Pause();
+            World.PauseThreads();
             base.OnExit();
         }
 
@@ -359,6 +358,12 @@ namespace DwarfCorp.GameStates
 
             GameSpeedControls.CurrentSpeed = (int)DwarfTime.LastTime.Speed;
            
+            if (PausedWidget.Hidden == Paused)
+            {
+                PausedWidget.Hidden = !Paused;
+                PausedWidget.Invalidate();
+            }
+
             // Really just handles mouse pointer animation.
             GuiRoot.Update(gameTime.ToRealTime());
 
@@ -395,6 +400,8 @@ namespace DwarfCorp.GameStates
 #endregion
         }
 
+        private Widget eventScheduleWidget = null;
+
         /// <summary>
         /// Called when a frame is to be drawn to the screen
         /// </summary>
@@ -425,6 +432,42 @@ namespace DwarfCorp.GameStates
                     if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
                         MinimapRenderer.Render(new Rectangle(MinimapFrame.Rect.X, MinimapFrame.Rect.Bottom - 192, 192, 192), GuiRoot);
                     GuiRoot.Draw();
+                }
+
+                if (Debugger.Switches.DrawEventSchedule)
+                {
+                    StringBuilder eventString = new StringBuilder();
+                    foreach (var scheduledEvent in World.GoalManager.EventScheduler.Forecast)
+                    {
+                        eventString.AppendLine(String.Format("{0} : {1}, {2}", scheduledEvent.Name, (scheduledEvent.Date - World.Time.CurrentDate).ToString(@"hh\:mm"), scheduledEvent.Difficulty));
+                    }
+                    eventString.AppendLine(String.Format("Difficulty: {0} Forecast {1}", World.GoalManager.EventScheduler.CurrentDifficulty, World.GoalManager.EventScheduler.ForecastDifficulty(World.Time.CurrentDate)));
+
+                    if (eventScheduleWidget == null)
+                    {
+                        eventScheduleWidget = new Widget()
+                        {
+                            Text = eventString.ToString(),
+                            AutoLayout = AutoLayout.FloatTopRight,
+                            TextColor = Color.White.ToVector4(),
+                            MinimumSize = new Point(256, 512),
+                            Rect = new Rectangle(256, 128, 256, 512)
+                        };
+
+                        World.Gui.RootItem.AddChild(eventScheduleWidget);
+                    }
+                    else
+                    {
+                        if (eventScheduleWidget.Text != eventString.ToString())
+                        {
+                            eventScheduleWidget.Text = eventString.ToString();
+                            eventScheduleWidget.Invalidate();
+                        }
+                    }
+                }
+                else if (eventScheduleWidget != null)
+                {
+                    eventScheduleWidget.Hidden = true;
                 }
             }
 
