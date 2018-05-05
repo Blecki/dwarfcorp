@@ -44,7 +44,6 @@ namespace DwarfCorp.Rail
 
         public static bool CanPlace(GameMaster Player, List<RailEntity> PreviewBodies)
         {
-            // Todo: Only turn individual pieces red? Look at code that calls this.
             for (var i = 0; i < PreviewBodies.Count; ++i)
                 if (!RailHelper.CanPlace(Player, PreviewBodies[i]))
                     return false;

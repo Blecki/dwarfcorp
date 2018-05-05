@@ -39,7 +39,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.Rail
 {
-    public class RailEntity : CraftedBody, IRenderableComponent
+    public class RailEntity : CraftedBody, IRenderableComponent, ITintable
     {
         public class NeighborConnection
         {
@@ -63,6 +63,16 @@ namespace DwarfCorp.Rail
         private SpriteSheet Sheet;
         private Point Frame;
         private RawPrimitive Primitive;
+
+        private Color Tint = Color.White;
+
+        public void SetTint(Color Tint)
+        {
+            this.Tint = Tint;
+        }
+
+        public void SetOneShotTint(Color Tint)
+        { }
 
         private static float[,] VertexHeightOffsets =
         {
@@ -435,7 +445,7 @@ namespace DwarfCorp.Rail
             // Everything that draws should set it's tint, making this pointless.
             Color origTint = effect.VertexColorTint;
             //ApplyTintingToEffect(effect);
-
+            effect.VertexColorTint = Tint;
             effect.World = GlobalTransform;
 
             effect.MainTexture = Sheet.GetTexture();

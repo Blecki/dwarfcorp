@@ -199,7 +199,11 @@ namespace DwarfCorp
             }
 
             if (HasMoved)
-                PropogateTransforms();
+            {
+                UpdateTransform();
+                for (var i = 0; i < Children.Count; ++i)
+                    if (Children[i] is Body child) child.hasMoved = true;
+            }
         }
         
         public void UpdateTransform()
@@ -249,7 +253,7 @@ namespace DwarfCorp
 
             UpdateTransform();
             for (var i = 0; i < Children.Count; ++i)
-                if (Children[i] is Body child) child.hasMoved = true;
+                if (Children[i] is Body child) child.PropogateTransforms();
 
             PerformanceMonitor.PopFrame();
         }

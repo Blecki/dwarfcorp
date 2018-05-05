@@ -40,10 +40,16 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    public interface ITintable
+    {
+        void SetTint(Color Tint);
+        void SetOneShotTint(Color Tint);
+    }
+
     /// <summary>
     /// This component has a color tint which can change over time.
     /// </summary>
-    public class Tinter : Body, IUpdateableComponent
+    public class Tinter : Body, IUpdateableComponent, ITintable
     {
         public bool LightsWithVoxels { get; set; }
         public Color Tint { get; set; }
@@ -145,22 +151,28 @@ namespace DwarfCorp
             }
             shader.VertexColorTint = previousColor;
         }
+
+        public void SetTint(Color Tint)
+        {
+            VertexColorTint = Tint;
+        }
+
+        public void SetOneShotTint(Color Tint)
+        {
+            OneShotTint = Tint;
+        }
     }
 
     public static class TintExtension
     {
         public static void SetTintRecursive(this GameComponent component, Color color, bool oneShot=false)
         {
-            foreach (var sprite in component.EnumerateAll().OfType<Tinter>())
+            foreach (var sprite in component.EnumerateAll().OfType<ITintable>())
             {
                 if (!oneShot)
-                {
-                    sprite.VertexColorTint = color;
-                }
+                    sprite.SetTint(color);
                 else
-                {
-                    sprite.OneShotTint = color;
-                }
+                    sprite.SetOneShotTint(color);
             }
         }
     }

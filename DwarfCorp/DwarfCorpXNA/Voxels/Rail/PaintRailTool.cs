@@ -54,6 +54,7 @@ namespace DwarfCorp.Rail
         private bool OverrideStartingOrientation = false;
         private CompassOrientation EndingOppositeOrientation = CompassOrientation.North;
         private bool OverrideEndingOrientation = false;
+        private bool CanPlace = false;
         
         public PaintRailTool(GameMaster Player)
         {
@@ -70,7 +71,7 @@ namespace DwarfCorp.Rail
             {
                 if (button == InputManager.MouseButton.Left)
                 {
-                    if (RailHelper.CanPlace(Player, PreviewBodies))
+                    if (CanPlace)
                         RailHelper.Place(Player, PreviewBodies, GodModeSwitch);
                     else
                         foreach (var piece in PreviewBodies)
@@ -88,6 +89,7 @@ namespace DwarfCorp.Rail
             System.Diagnostics.Debug.Assert(SelectedResources != null);
             GodModeSwitch = false;
             Dragging = false;
+            CanPlace = false;
         }
 
         public override void OnEnd()
@@ -348,13 +350,14 @@ namespace DwarfCorp.Rail
                 }
             }
 
-            if (RailHelper.CanPlace(Player, PreviewBodies))
+            CanPlace = RailHelper.CanPlace(Player, PreviewBodies);
+            if (CanPlace)
                 tint = Color.Green;
             else
                 tint = Color.Red;
 
             foreach (var body in PreviewBodies)
-                body.SetTintRecursive(tint);
+                body.SetTint(tint);
         }
 
         private int AddDiagonal(int bodyCounter, CompassOrientation B, JunctionPiece newPiece, int CoordinateRotation, int PieceRotation)
