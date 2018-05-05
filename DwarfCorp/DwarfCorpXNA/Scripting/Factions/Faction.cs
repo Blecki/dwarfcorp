@@ -63,6 +63,7 @@ namespace DwarfCorp
         public Color SecondaryColor { get; set; }
         public Timer HandleThreatsTimer { get; set; }
         public DesignationSet Designations = new DesignationSet();
+        public Dictionary<ulong, VoxelHandle> GuardedVoxels = new Dictionary<ulong, VoxelHandle>();
         
         // Todo: When converting to new save system, it can take care of this.
         [JsonProperty]

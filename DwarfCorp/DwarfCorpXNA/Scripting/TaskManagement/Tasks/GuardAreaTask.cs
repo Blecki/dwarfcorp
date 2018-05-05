@@ -38,18 +38,39 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Tells a creature that it should guard a voxel.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    internal class GuardZoneTask : Task
+    public class GuardAreaTask : Task
     {
-        public GuardZoneTask()
+        /// <summary>
+        /// Exists to pass voxel designation based task cancelling on to parent task.
+        /// </summary>
+        public class DesignationProxyTask : Task
+        {
+            public GuardAreaTask ParentTask;
+            public VoxelHandle Voxel;
+
+            public DesignationProxyTask(GuardAreaTask ParentTask, VoxelHandle Voxel)
+            {
+                this.ParentTask = ParentTask;
+                this.Voxel = Voxel;
+            }
+
+            public override void OnDequeued(Faction Faction)
+            {
+                Faction.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Guard);
+                var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
+                Faction.GuardedVoxels.Remove(key);
+
+                if (Faction.GuardedVoxels.Count == 0)
+                    Faction.World.Master.TaskManager.CancelTask(ParentTask);
+            }
+        }
+
+        public GuardAreaTask()
         {
             Category = TaskCategory.Guard;
             Name = "Guard Area";
-            Priority = PriorityType.Medium;
-            MaxAssignable = 10;
+            Priority = PriorityType.Eventually;
+            MaxAssignable = Int32.MaxValue;
         }
 
         public override Act CreateScript(Creature agent)
@@ -64,7 +85,7 @@ namespace DwarfCorp
 
         public override bool ShouldRetry(Creature agent)
         {
-            return agent.Faction.Designations.EnumerateDesignations(DesignationType.Guard).Any();
+            return agent.Faction.GuardedVoxels.Count() > 0;
         }
 
         public override void Render(DwarfTime time)
@@ -76,8 +97,23 @@ namespace DwarfCorp
         {
             if (agent.AI.Status.IsAsleep)
                 return Feasibility.Infeasible;
-            return agent.Faction.Designations.EnumerateDesignations(DesignationType.Guard).Any() ? Feasibility.Feasible : Feasibility.Infeasible;
+            return agent.Faction.GuardedVoxels.Count > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
+        }
+
+        public override void OnEnqueued(Faction Faction)
+        {
+            // Guard tool inserts the designation.
+            // Todo: Setup voxel change hook here.
+        }
+
+        public override void OnDequeued(Faction Faction)
+        {
+            // Task is cancelled - get rid of all guard designations.
+            foreach (var vox in Faction.GuardedVoxels)
+                Faction.Designations.RemoveVoxelDesignation(vox.Value, DesignationType.Guard);
+            Faction.GuardedVoxels.Clear();
+
+            // Todo: Cleanup voxel change hook here.
         }
     }
-
 }

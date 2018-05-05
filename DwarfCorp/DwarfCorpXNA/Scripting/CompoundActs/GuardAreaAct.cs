@@ -43,7 +43,6 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GuardAreaAct : CompoundCreatureAct
     {
-
         public GuardAreaAct()
         {
 
@@ -56,7 +55,7 @@ namespace DwarfCorp
 
         public bool GuardDesignationExists()
         {
-            return Agent.Faction.Designations.EnumerateDesignations(DesignationType.Guard).Any();
+            return Agent.Faction.GuardedVoxels.Count > 0;
         }
 
         public bool ExitCondition()
@@ -77,8 +76,10 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> GetRandomGuardDesignation(CreatureAI agent)
         {
-            var voxels = Agent.Faction.Designations.EnumerateDesignations(DesignationType.Guard)
-                .Select(d => d.Voxel).ToList();
+            // Todo: Less expensive algorithm.
+
+            var voxels = Agent.Faction.GuardedVoxels
+                .Select(d => d.Value).ToList();
 
             voxels.Sort((a, b) => 
             {

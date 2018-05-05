@@ -217,7 +217,7 @@ namespace DwarfCorp
                     InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
                 }
 
-                if (value)
+                if (value && !existingValue)
                     _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
                     {
                         Type = VoxelChangeEventType.Explored,

@@ -102,7 +102,7 @@ namespace DwarfCorp
 
         public AddDesignationResult AddVoxelDesignation(VoxelHandle Voxel, DesignationType Type, Object Tag, Task Task)
         {
-            var key = GetVoxelQuickCompare(Voxel);
+            var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
 
             List<VoxelDesignation> list = null;
             if (VoxelDesignations.ContainsKey(key))
@@ -135,7 +135,7 @@ namespace DwarfCorp
 
         public RemoveDesignationResult RemoveVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
         {
-            var key = GetVoxelQuickCompare(Voxel);
+            var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
             if (!VoxelDesignations.ContainsKey(key)) return RemoveDesignationResult.DidntExist;
             var list = VoxelDesignations[key];
             foreach (var designation in list)
@@ -153,7 +153,7 @@ namespace DwarfCorp
 
         public VoxelDesignation GetVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
         {
-            var key = GetVoxelQuickCompare(Voxel);
+            var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
             if (!VoxelDesignations.ContainsKey(key)) return null;
             var r = VoxelDesignations[key].FirstOrDefault(d => TypeSet(d.Type, Type));
             if (r != null) return r;
@@ -162,7 +162,7 @@ namespace DwarfCorp
 
         public bool IsVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
         {
-            var key = GetVoxelQuickCompare(Voxel);
+            var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
             if (!VoxelDesignations.ContainsKey(key)) return false;
             return VoxelDesignations[key].Any(d => TypeSet(d.Type, Type));
         }
@@ -184,7 +184,7 @@ namespace DwarfCorp
 
         public IEnumerable<VoxelDesignation> EnumerateDesignations(VoxelHandle Voxel)
         {
-            var key = GetVoxelQuickCompare(Voxel);
+            var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
             if (VoxelDesignations.ContainsKey(key))
                 foreach (var des in VoxelDesignations[key])
                     yield return des;
@@ -192,7 +192,7 @@ namespace DwarfCorp
 
         private void RemoveVoxelDesignation(VoxelDesignation D)
         {
-            var key = GetVoxelQuickCompare(D.Voxel);
+            var key = VoxelHelpers.GetVoxelQuickCompare(D.Voxel);
             if (!VoxelDesignations.ContainsKey(key)) return;
             var list = VoxelDesignations[key];
             list.Remove(D);
@@ -200,29 +200,10 @@ namespace DwarfCorp
                 VoxelDesignations.Remove(key);
         }
 
-        // Todo: Kill this. It checks every designation every frame. Hook the voxel change mechanism so it
-        //      only has to check what has changed!
+
+        // Todo: Probably a more effecient way to do this.
         public void CleanupDesignations()
         {
-            var toRemove = new List<VoxelDesignation>();
-            foreach (var key in VoxelDesignations)
-                foreach (var d in key.Value)
-                {
-                    switch (d.Type)
-                    {
-                        //case DesignationType.Dig:
-                        case DesignationType.Guard:
-                            if (!d.Voxel.IsValid || d.Voxel.IsEmpty)
-                                toRemove.Add(d);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-            foreach (var d in toRemove)
-                RemoveVoxelDesignation(d);
-
             EntityDesignations.RemoveAll(b => b.Body.IsDead);
         }
 
@@ -273,19 +254,6 @@ namespace DwarfCorp
                 if (Object.ReferenceEquals(des.Body, Entity))
                     return des;
             return null;
-        }
-
-        private static ulong GetVoxelQuickCompare(VoxelHandle V)
-        {
-            var coord = V.Coordinate.GetGlobalChunkCoordinate();
-            var index = VoxelConstants.DataIndexOf(V.Coordinate.GetLocalVoxelCoordinate());
-
-            ulong q = 0;
-            q |= (((ulong)coord.X & 0xFFFF) << 48);
-            q |= (((ulong)coord.Y & 0xFFFF) << 32);
-            q |= (((ulong)coord.Z & 0xFFFF) << 16);
-            q |= ((ulong)index & 0xFFFF);
-            return q;
         }
     }
 }
