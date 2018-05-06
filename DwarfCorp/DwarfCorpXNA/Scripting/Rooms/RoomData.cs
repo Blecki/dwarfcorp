@@ -137,12 +137,6 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (!HasAvailableResources(Voxels.Count, Faction))
-            {
-                World.ShowToolPopup("Not enough resources for this room.");
-                return false;
-            }
-
             int height = Voxels[0].Coordinate.Y;
             bool allEmpty = true;
 
