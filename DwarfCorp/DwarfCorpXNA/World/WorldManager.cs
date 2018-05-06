@@ -401,7 +401,7 @@ namespace DwarfCorp
                     DefaultShader.View = Camera.ViewMatrix;
                     DefaultShader.Projection = Camera.ProjectionMatrix;
                     NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera,
-                        InstanceRenderer.RenderMode.Normal);
+                        InstanceRenderMode.Normal);
 
                     ComponentRenderer.Render(renderables, new DwarfTime(), ChunkManager, Camera,
                         DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
@@ -806,7 +806,7 @@ namespace DwarfCorp
 
                 //GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Instances");
                 NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera,
-                    InstanceRenderer.RenderMode.SelectionBuffer);
+                    InstanceRenderMode.SelectionBuffer);
                 //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Instances");
 
                 SelectionBuffer.End(GraphicsDevice);
@@ -868,7 +868,7 @@ namespace DwarfCorp
             DefaultShader.EnableShadows = false;
 
             DefaultShader.View = Camera.ViewMatrix;
-            NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera, InstanceRenderer.RenderMode.Normal);
+            NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera, InstanceRenderMode.Normal);
 
             ComponentRenderer.Render(renderables, gameTime, ChunkManager,
                 Camera,

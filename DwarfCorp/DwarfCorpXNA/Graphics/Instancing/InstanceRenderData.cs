@@ -10,8 +10,10 @@ namespace DwarfCorp
 {
     public class InstanceRenderData
     {
+        [JsonIgnore]
         public GeometricPrimitive Model;
-        public BlendState BlendMode;
+
+        public String PrimitiveName;
         public bool EnableWind = false;
         public bool RenderInSelectionBuffer = true;
         public bool EnableGhostClipping = true;

@@ -1,0 +1,362 @@
+[
+  {
+    "$id": "1",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "2",
+      "PrimitiveName": "berrybush",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "berrybush"
+  },
+  {
+    "$id": "3",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "4",
+      "PrimitiveName": "berrybushsprout",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "berrybushsprout"
+  },
+  {
+    "$id": "5",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "6",
+      "PrimitiveName": "deadbush",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": false,
+      "EnableGhostClipping": false
+    },
+    "Name": "deadbush"
+  },
+  {
+    "$id": "7",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "8",
+      "PrimitiveName": "flower",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": false,
+      "EnableGhostClipping": false
+    },
+    "Name": "flower"
+  },
+  {
+    "$id": "9",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "10",
+      "PrimitiveName": "frostgrass",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": false,
+      "EnableGhostClipping": false
+    },
+    "Name": "frostgrass"
+  },
+  {
+    "$id": "11",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "12",
+      "PrimitiveName": "gnarled",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": false,
+      "EnableGhostClipping": false
+    },
+    "Name": "gnarled"
+  },
+  {
+    "$id": "13",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "14",
+      "PrimitiveName": "grass",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": false,
+      "EnableGhostClipping": false
+    },
+    "Name": "grass"
+  },
+  {
+    "$id": "15",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "16",
+      "PrimitiveName": "mushroom",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "mushroom"
+  },
+  {
+    "$id": "17",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "18",
+      "PrimitiveName": "mushroomsprout",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "mushroomsprout"
+  },
+  {
+    "$id": "19",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "20",
+      "PrimitiveName": "caveshroom",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "caveshroom"
+  },
+  {
+    "$id": "21",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "22",
+      "PrimitiveName": "caveshroomsprout",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "caveshroomsprout"
+  },
+  {
+    "$id": "23",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "24",
+      "PrimitiveName": "palm",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "palm"
+  },
+  {
+    "$id": "25",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "26",
+      "PrimitiveName": "palmsprout",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "palmsprout"
+  },
+  {
+    "$id": "27",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "28",
+      "PrimitiveName": "pine",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "pine"
+  },
+  {
+    "$id": "29",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "30",
+      "PrimitiveName": "pinesprout",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "pinesprout"
+  },
+  {
+    "$id": "31",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "32",
+      "PrimitiveName": "snowpine",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "snowpine"
+  },
+  {
+    "$id": "33",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "34",
+      "PrimitiveName": "vine",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": false,
+      "EnableGhostClipping": false
+    },
+    "Name": "vine"
+  },
+  {
+    "$id": "35",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "36",
+      "PrimitiveName": "wheat",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "wheat"
+  },
+  {
+    "$id": "37",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "38",
+      "PrimitiveName": "wheatsprout",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "wheatsprout"
+  },
+  {
+    "$id": "39",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "40",
+      "PrimitiveName": "appletree",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "appletree"
+  },
+  {
+    "$id": "41",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "42",
+      "PrimitiveName": "appletreesprout",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "appletreesprout"
+  },
+  {
+    "$id": "43",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "44",
+      "PrimitiveName": "eviltree",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "eviltree"
+  },
+  {
+    "$id": "45",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "46",
+      "PrimitiveName": "eviltreesprout",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "eviltreesprout"
+  },
+  {
+    "$id": "47",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "48",
+      "PrimitiveName": "pumpkinvine",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "pumpkinvine"
+  },
+  {
+    "$id": "49",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "50",
+      "PrimitiveName": "pumpkinvinesprout",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "pumpkinvinesprout"
+  },
+  {
+    "$id": "51",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "52",
+      "PrimitiveName": "cactus",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "cactus"
+  },
+  {
+    "$id": "53",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "54",
+      "PrimitiveName": "cactussprout",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "cactussprout"
+  },
+  {
+    "$id": "55",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "56",
+      "PrimitiveName": "candycane",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "candycane"
+  },
+  {
+    "$id": "57",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "58",
+      "PrimitiveName": "candycane_snow",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "candycane_snow"
+  },
+  {
+    "$id": "59",
+    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "RenderData": {
+      "$id": "60",
+      "PrimitiveName": "candycanesprout",
+      "EnableWind": true,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "candycanesprout"
+  }
+]

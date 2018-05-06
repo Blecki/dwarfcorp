@@ -48,7 +48,7 @@ namespace DwarfCorp
             GraphicsDevice Device,
             Shader Effect,
             Camera Camera,
-            InstanceRenderer.RenderMode Mode)
+            InstanceRenderMode Mode)
         {
             RenderPass += 1;
 

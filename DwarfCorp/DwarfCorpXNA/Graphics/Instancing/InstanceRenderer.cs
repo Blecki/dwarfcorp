@@ -12,144 +12,36 @@ namespace DwarfCorp
 {
     public class InstanceRenderer
     {
-        private const int InstanceQueueSize = 64;
-        private DynamicVertexBuffer InstanceBuffer;
-
-        private class InstanceGroup
-        {
-            public InstanceRenderData RenderData;
-            public InstancedVertex[] Instances = new InstancedVertex[InstanceQueueSize];
-            public int InstanceCount = 0;
-        }
-
         private Dictionary<string, InstanceGroup> InstanceTypes = new Dictionary<string, InstanceGroup>();
 
         public InstanceRenderer(GraphicsDevice Device, ContentManager Content)
         {
-            // Todo: Need better way of discovering these default instance types.
-            // Todo: Use a mod hook to discover these. But keep THIS method in place for now.
-            //  Mod hook or data?
-
-            foreach (var member in typeof(ContentPaths.Entities.Plants).GetFields())
-                if (member.IsStatic && member.FieldType == typeof(String))
-                {
-                    bool isMote = false;
-                    foreach (var attribute in member.GetCustomAttributes(false))
-                        if (attribute is MoteAttribute)
-                            isMote = true;
-
-                    InstanceTypes.Add(member.Name, new InstanceGroup
-                    {
-                        RenderData = new InstanceRenderData
-                        {
-                            Model = PrimitiveLibrary.Primitives[member.Name],
-                            BlendMode = BlendState.NonPremultiplied,
-                            EnableWind = true,
-                            RenderInSelectionBuffer = !isMote,
-                            EnableGhostClipping = !isMote
-                        }
-                    });
-
-                }
-        }
-
-        public enum RenderMode
-        {
-            Normal,
-            SelectionBuffer
-        }
-
-        public void RenderInstance(NewInstanceData Instance,
-            GraphicsDevice Device, Shader Effect, Camera Camera, RenderMode Mode)
-        {
-            if(Instance.Type == null || !InstanceTypes.ContainsKey(Instance.Type))
-                return;
-
-            var group = InstanceTypes[Instance.Type];
-
-            if (Mode == RenderMode.SelectionBuffer && !group.RenderData.RenderInSelectionBuffer)
-                return;
-
-            group.Instances[group.InstanceCount] = new InstancedVertex
+            var instanceGroups = FileUtils.LoadJsonListFromMultipleSources<InstanceGroup>(ContentPaths.instance_groups, null, g => g.Name);
+            foreach (var group in instanceGroups)
             {
-                Transform = Instance.Transform,
-                Color = Instance.Color,
-                SelectionBufferColor = Instance.SelectionBufferColor
-            };
+                group.Initialize();
+                InstanceTypes.Add(group.Name, group);
+            }
+        }
 
-            group.InstanceCount += 1;
-            if (group.InstanceCount == InstanceQueueSize)
-                Flush(group, Device, Effect, Camera, Mode);
+        public void RenderInstance(
+            NewInstanceData Instance,
+            GraphicsDevice Device, Shader Effect, Camera Camera, InstanceRenderMode Mode)
+        {
+            if (Instance.Type == null || !InstanceTypes.ContainsKey(Instance.Type))
+                return;
+
+            InstanceTypes[Instance.Type].RenderInstance(Instance, Device, Effect, Camera, Mode);
         }
 
         public void Flush(
             GraphicsDevice Device,
             Shader Effect,
             Camera Camera,
-            RenderMode Mode)
+            InstanceRenderMode Mode)
         {
             foreach (var group in InstanceTypes)
-            {
-                if (group.Value.InstanceCount != 0)
-                    Flush(group.Value, Device, Effect, Camera, Mode);
-            }
-        }
-
-        // Todo: Move to virtual function in instance group.
-        private void Flush(
-            InstanceGroup Group,
-            GraphicsDevice Device,
-            Shader Effect,
-            Camera Camera,
-            RenderMode Mode)
-        {
-            if (InstanceBuffer == null)
-            {
-                InstanceBuffer = new DynamicVertexBuffer(Device, InstancedVertex.VertexDeclaration, InstanceQueueSize, BufferUsage.None);
-            }
-
-            Effect.EnableWind = Group.RenderData.EnableWind;
-            Device.RasterizerState = new RasterizerState { CullMode = CullMode.None };
-            if (Mode == RenderMode.Normal)
-                Effect.SetInstancedTechnique();
-            else
-                Effect.CurrentTechnique = Effect.Techniques[Shader.Technique.SelectionBufferInstanced];
-            Effect.EnableLighting = true;
-            Effect.VertexColorTint = Color.White;
-
-            if (Group.RenderData.Model.VertexBuffer == null || Group.RenderData.Model.IndexBuffer == null)
-                Group.RenderData.Model.ResetBuffer(Device);
-
-            bool hasIndex = Group.RenderData.Model.IndexBuffer != null;
-            Device.Indices = Group.RenderData.Model.IndexBuffer;
-
-            BlendState blendState = Device.BlendState;
-            Device.BlendState = Mode == RenderMode.Normal ? Group.RenderData.BlendMode : BlendState.Opaque;
-
-            Effect.MainTexture = Group.RenderData.Model.Texture;
-            Effect.LightRampTint = Color.White;
-
-            InstanceBuffer.SetData(Group.Instances, 0, Group.InstanceCount, SetDataOptions.Discard);
-            Device.SetVertexBuffers(Group.RenderData.Model.VertexBuffer, new VertexBufferBinding(InstanceBuffer, 0, 1));
-
-            var ghostEnabled = Effect.GhostClippingEnabled;
-            Effect.GhostClippingEnabled = Group.RenderData.EnableGhostClipping && ghostEnabled;
-            foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                Device.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0,
-                    Group.RenderData.Model.VertexCount, 0,
-                    Group.RenderData.Model.Indexes.Length / 3,
-                    Group.InstanceCount);
-            }
-            Effect.GhostClippingEnabled = ghostEnabled;
-
-            Effect.SetTexturedTechnique();
-            Effect.World = Matrix.Identity;
-            Device.BlendState = blendState;
-            Effect.EnableWind = false;
-
-            Group.InstanceCount = 0;
+                group.Value.Flush(Device, Effect, Camera, Mode);
         }
     }
 }

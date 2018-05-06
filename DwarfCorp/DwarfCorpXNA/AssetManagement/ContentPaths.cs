@@ -70,6 +70,7 @@ namespace DwarfCorp
         public static string resource_items = "resource-items.json";
         public static string rail_tiles = ProgramData.CreatePath("Terrain", "rail");
         public static string primitives = ProgramData.CreatePath("primitives.json");
+        public static string instance_groups = ProgramData.CreatePath("instance-groups.json");
 
         public class Audio
     {
