@@ -164,7 +164,6 @@ namespace DwarfCorp.Rail
 
                 if (!GodModeSwitch && addNewDesignation)
                 {
-
                     var startPos = body.Position + new Vector3(0.0f, -0.3f, 0.0f);
                     var endPos = body.Position;
 

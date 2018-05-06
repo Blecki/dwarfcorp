@@ -229,6 +229,7 @@
     <Compile Include="Entities\Plants\PlantFactories.cs" />
     <Compile Include="Entities\TimedExplosion.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
+    <Compile Include="Graphics\Instancing\TiledInstancedVertex.cs" />
     <Compile Include="Gui\TextureGeneratorAttribute.cs" />
     <Compile Include="Gui\Widgets\CancelToolOptions.cs" />
     <Compile Include="Gui\Widgets\EmployeeAIDebugPanel.cs" />

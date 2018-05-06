@@ -20,6 +20,10 @@ namespace DwarfCorp
         public int IndexCount = 0;
         public int VertexCount = 0;
 
+        public float Width { get; set; }
+        public float Height { get; set; }
+        public Texture2D Texture { get; set; }
+
         [JsonIgnore]
         public IndexBuffer IndexBuffer = null;
 

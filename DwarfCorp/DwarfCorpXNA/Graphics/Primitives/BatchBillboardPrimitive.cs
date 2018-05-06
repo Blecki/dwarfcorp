@@ -15,9 +15,7 @@ namespace DwarfCorp
     public sealed class BatchBillboardPrimitive : GeometricPrimitive
     {
         public BillboardPrimitive.BoardTextureCoords UVs { get; set; }
-        public float Width { get; set; }
-        public float Height { get; set; }
-        public Texture2D Texture { get; set; }
+        
 
         public List<Matrix> RelativeTransforms;
         public List<Color> Tints;
@@ -39,6 +37,7 @@ namespace DwarfCorp
             CreateVerticies(Color.White);
             Texture = spriteSheet;
         }
+
         private void CreateVerticies(Color color)
         {
             Vertices = new ExtendedVertex[RelativeTransforms.Count * 4];

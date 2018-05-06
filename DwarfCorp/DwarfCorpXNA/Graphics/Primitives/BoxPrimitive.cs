@@ -26,8 +26,6 @@ namespace DwarfCorp
 
    public sealed class OldBoxPrimitive : GeometricPrimitive
     {
-        public float Width { get; set; }
-        public float Height { get; set; }
         public float Depth { get; set; }
         public BoxTextureCoords UVs { get; set; }
 
@@ -58,6 +56,8 @@ namespace DwarfCorp
                 Rect = rect;
                 FlipXY = flip;
             }
+
+            public FaceData() { }
         }
 
         public class BoxTextureCoords
@@ -345,8 +345,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public sealed class BoxPrimitive : GeometricPrimitive
     {
-        public float Width { get; set; }
-        public float Height { get; set; }
         public float Depth { get; set; }
         public BoxTextureCoords UVs { get; set; }
 

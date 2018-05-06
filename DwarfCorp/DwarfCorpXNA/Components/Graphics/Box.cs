@@ -69,7 +69,7 @@ namespace DwarfCorp
             foreach(EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                PrimitiveLibrary.BoxPrimitives[Primitive].Render(graphicsDevice);
+                PrimitiveLibrary.Primitives[Primitive].Render(graphicsDevice);
             }
             EndDraw(effect);
         }

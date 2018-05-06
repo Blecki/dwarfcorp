@@ -8,6 +8,12 @@ namespace DwarfCorp
     /// </summary>
     public class NewInstanceData
     {
+        public enum InstanceTypes
+        {
+            Traditional,
+            Tiled
+        }
+
         [Newtonsoft.Json.JsonIgnore]
         public ulong RenderPass = 0;
 
@@ -21,6 +27,10 @@ namespace DwarfCorp
         private Matrix _transform;
         private NewInstanceManager Manager;
         public ulong EntityID = 0;
+
+        public InstanceTypes InstanceType = InstanceTypes.Traditional;
+        public Vector4 SpriteBounds;
+        public string TextureAsset;
 
         [Newtonsoft.Json.JsonIgnore]
         public Matrix Transform

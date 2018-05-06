@@ -26,13 +26,9 @@ namespace DwarfCorp
 
         public InstanceRenderer(GraphicsDevice Device, ContentManager Content)
         {
-            List<Matrix> treeTransforms = new List<Matrix>();
-            treeTransforms.Add(Matrix.Identity);
-            treeTransforms.Add(Matrix.CreateRotationY(1.57f));
-
-            List<Color> treeTints = new List<Color>();
-            treeTints.Add(Color.White);
-            treeTints.Add(Color.White);
+            // Todo: Need better way of discovering these default instance types.
+            // Todo: Use a mod hook to discover these. But keep THIS method in place for now.
+            //  Mod hook or data?
 
             foreach (var member in typeof(ContentPaths.Entities.Plants).GetFields())
                 if (member.IsStatic && member.FieldType == typeof(String))
@@ -46,7 +42,7 @@ namespace DwarfCorp
                     {
                         RenderData = new InstanceRenderData
                         {
-                            Model = PrimitiveLibrary.BatchBillboardPrimitives[member.Name],
+                            Model = PrimitiveLibrary.Primitives[member.Name],
                             BlendMode = BlendState.NonPremultiplied,
                             EnableWind = true,
                             RenderInSelectionBuffer = !isMote,
@@ -99,6 +95,7 @@ namespace DwarfCorp
             }
         }
 
+        // Todo: Move to virtual function in instance group.
         private void Flush(
             InstanceGroup Group,
             GraphicsDevice Device,
@@ -133,8 +130,7 @@ namespace DwarfCorp
             Effect.LightRampTint = Color.White;
 
             InstanceBuffer.SetData(Group.Instances, 0, Group.InstanceCount, SetDataOptions.Discard);
-            Device.SetVertexBuffers(Group.RenderData.Model.VertexBuffer, new VertexBufferBinding(
-                InstanceBuffer, 0, 1));
+            Device.SetVertexBuffers(Group.RenderData.Model.VertexBuffer, new VertexBufferBinding(InstanceBuffer, 0, 1));
 
             var ghostEnabled = Effect.GhostClippingEnabled;
             Effect.GhostClippingEnabled = Group.RenderData.EnableGhostClipping && ghostEnabled;

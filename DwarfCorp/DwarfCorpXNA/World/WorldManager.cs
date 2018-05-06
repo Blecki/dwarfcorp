@@ -1012,7 +1012,7 @@ namespace DwarfCorp
             DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
             DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
             DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
-            PrimitiveLibrary.Reinitialize(GraphicsDevice, Content);
+            PrimitiveLibrary.Initialize(GraphicsDevice, Content);
         }
 
         /// <summary>

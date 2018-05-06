@@ -173,8 +173,7 @@ namespace DwarfCorp
                 Vector3 extents = new Vector3(1500, 1500, 1500);
                     OctTree = new OctTreeNode<Body>(origin - extents, origin + extents);
 
-                    // Todo: ??
-                    new PrimitiveLibrary(GraphicsDevice, Content);
+                PrimitiveLibrary.Initialize(GraphicsDevice, Content);
 
                 NewInstanceManager = new NewInstanceManager(GraphicsDevice, new BoundingBox(origin - extents, origin + extents),
                     Content);

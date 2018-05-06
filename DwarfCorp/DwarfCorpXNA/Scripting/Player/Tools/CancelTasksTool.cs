@@ -85,7 +85,7 @@ namespace DwarfCorp
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
             else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 1));
+                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 0));
 
         
             Player.BodySelector.Enabled = Options.Entities.CheckState;
