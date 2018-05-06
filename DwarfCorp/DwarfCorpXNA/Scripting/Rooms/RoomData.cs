@@ -60,6 +60,7 @@ namespace DwarfCorp
         public bool MustBeBuiltOnSoil = false;
         public int MinimumSideLength = 3;
         public int MinimumSideWidth = 3;
+        public int MaxNumRooms = int.MaxValue;
 
         public RoomData(string name, uint id, string floorTexture, Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> requiredResources, List<RoomTemplate> templates, Gui.TileReference icon)
         {
@@ -115,6 +116,12 @@ namespace DwarfCorp
             if (Voxels.Count == 0)
                 return false;
 
+            if (Faction.GetRooms().Where(room => room.RoomData.Name == this.Name).Count() + 1 > MaxNumRooms)
+            {
+                World.ShowToolPopup(String.Format("We can only build {0} {1}. Destroy the existing to build a new one.", MaxNumRooms, Name));
+                return false;
+            }
+
             // Todo: Lift into helper function that uses better algorithm.
             List<BoundingBox> boxes = Voxels.Select(voxel => voxel.GetBoundingBox()).ToList();
             BoundingBox box = MathFunctions.GetBoundingBox(boxes);
@@ -127,12 +134,6 @@ namespace DwarfCorp
             if (maxExtents < MinimumSideLength || minExtents < MinimumSideWidth)
             {
                 World.ShowToolPopup("Room is too small (minimum is " + MinimumSideLength + " x " + MinimumSideWidth + ")!");
-                return false;
-            }
-
-            if (!HasAvailableResources(Voxels.Count, Faction))
-            {
-                World.ShowToolPopup("Not enough resources for this room.");
                 return false;
             }
 

@@ -59,6 +59,8 @@ namespace DwarfCorp
         public bool IsDestroyed { get; set; }
         public bool HasResources { get; set; }
         public CreatureAI ResourcesReservedFor = null;
+        [JsonIgnore]
+        public Gui.Widget DisplayWidget = null;
 
         [OnDeserialized]
         public void OnDeserialized(StreamingContext ctx)

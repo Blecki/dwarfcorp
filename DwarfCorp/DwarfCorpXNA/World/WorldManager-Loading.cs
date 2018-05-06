@@ -169,7 +169,7 @@ namespace DwarfCorp
             #region Initialize static data
 
             {
-                Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
+                Vector3 origin = new Vector3(0, 0, 0);
                 Vector3 extents = new Vector3(1500, 1500, 1500);
                     OctTree = new OctTreeNode<Body>(origin - extents, origin + extents);
 

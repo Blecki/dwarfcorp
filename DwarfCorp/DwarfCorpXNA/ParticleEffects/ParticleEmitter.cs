@@ -123,7 +123,7 @@ namespace DwarfCorp
     /// This component manages a set of particles, and can emit them at certain locations. The particle manager keeps track of a small set of these.
     /// </summary>
     [JsonObject(IsReference =  true)]
-    public class ParticleEmitter : Tinter, IUpdateableComponent, IRenderableComponent
+    public class ParticleEmitter
     {
         [JsonIgnore]
         public List<FixedInstanceArray> Sprites { get; set; }
@@ -161,8 +161,7 @@ namespace DwarfCorp
             return worldRot;
         }
 
-        public ParticleEmitter(GraphicsDevice Device, ComponentManager manager, string name, Matrix localTransform, EmitterData emitterData) :
-            base(manager, name, localTransform, Vector3.Zero, Vector3.Zero, false)
+        public ParticleEmitter(GraphicsDevice Device, ComponentManager manager, string name, Matrix localTransform, EmitterData emitterData) 
         {
             Particles = new List<Particle>();
 
@@ -177,15 +176,13 @@ namespace DwarfCorp
             {
                 var primitive = new BillboardPrimitive();
                 Data.Animation.UpdatePrimitive(primitive, t);
-                Sprites.Add(new FixedInstanceArray(Name, primitive,
+                Sprites.Add(new FixedInstanceArray(name, primitive,
                     Data.Animation.SpriteSheet.GetTexture(),
                     Data.MaxParticles, Data.BlendMode));
             }
             AnimPlayer.Play(Data.Animation);
 
             TriggerTimer = new Timer(Data.EmissionFrequency, Data.ReleaseOnce);
-
-            SetFlag(Flag.ShouldSerialize, false);
         }
 
         public float Rand(float min, float max)
@@ -245,16 +242,12 @@ namespace DwarfCorp
             }
         }
 
-        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool Ignored)
+        public void Render(Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)
         {
-            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, Ignored);
-
-            ApplyTintingToEffect(effect);
             foreach (var sprites in Sprites)
             {
                 sprites.Render(graphicsDevice, effect, camera);
             }
-            EndDraw(effect);
         }
 
         public Particle CreateParticle(Vector3 pos, Vector3 velocity, Color tint)
@@ -286,7 +279,7 @@ namespace DwarfCorp
             p.LifeRemaining = -1;
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             ParticleEmitter._camera = camera;
 
@@ -295,7 +288,7 @@ namespace DwarfCorp
             TriggerTimer.Update(gameTime);
             if(TriggerTimer.HasTriggered && Data.ParticlesPerFrame > 0)
             {
-                Trigger(Data.ParticlesPerFrame, Vector3.Zero, Tint);
+                Trigger(Data.ParticlesPerFrame, Vector3.Zero, new Color(255, 255, 0));
             }
 
 
@@ -418,8 +411,6 @@ namespace DwarfCorp
             {
                 sprites.Update(gameTime, camera, GameState.Game.GraphicsDevice, chunks.World.Master.MaxViewingLevel);
             }
-            if (Particles.Count > 0)
-                base.Update(gameTime, chunks, camera);
         }
     }
 

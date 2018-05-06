@@ -1090,8 +1090,7 @@ namespace DwarfCorp.GameStates
                         Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                         OnConstruct = (sender) =>
                         {
-                            AddToolbarIcon(sender, () =>
-                                ((sender as FlatToolTray.Icon).PopupChild as BuildRoomInfo).CanBuild());
+                            AddToolbarIcon(sender, () => { return true; });
                         }
                     }))
             };

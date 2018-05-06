@@ -49,10 +49,10 @@ namespace DwarfCorp
     {
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            var parentTask = Player.TaskManager.EnumerateTasks().OfType<GuardAreaTask>().FirstOrDefault();
+            var parentTask = Player.TaskManager.EnumerateTasks().OfType<GuardZoneTask>().FirstOrDefault();
             if (parentTask == null)
             {
-                parentTask = new GuardAreaTask();
+                parentTask = new GuardZoneTask();
                 Player.TaskManager.AddTask(parentTask);
             }
 
@@ -64,7 +64,7 @@ namespace DwarfCorp
                     if (Player.Faction.GuardedVoxels.ContainsKey(key))
                         return;
 
-                    Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Guard, null, new GuardAreaTask.DesignationProxyTask(parentTask, v));
+                    Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Guard, null, new GuardZoneTask.DesignationProxyTask(parentTask, v));
                     Player.Faction.GuardedVoxels.Add(key, v);
                 }
 
@@ -88,7 +88,7 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-
+            Player.VoxSelector.SelectionColor = Color.White;
         }
 
         public override void OnEnd()

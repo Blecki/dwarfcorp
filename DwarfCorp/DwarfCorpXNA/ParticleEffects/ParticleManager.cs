@@ -70,16 +70,34 @@ namespace DwarfCorp
 
             foreach (EmitterData emitter in data)
             {
-                emitters.Add(Components.RootComponent.AddChild(new ParticleEmitter(Device, Components, name, Matrix.Identity, emitter)
-                {
-                    LightsWithVoxels = false,
-                    Tint = Color.White,
-                }) as ParticleEmitter);
+                emitters.Add(new ParticleEmitter(Device, Components, name, Matrix.Identity, emitter));
             }
             Effects[name] = new ParticleEffect()
             {
                 Emitters = emitters
             };
+        }
+
+        public void Update(DwarfTime time, WorldManager world)
+        {
+            foreach(var effect in Effects)
+            {
+                foreach(var emitter in effect.Value.Emitters)
+                {
+                    emitter.Update(time, world.ChunkManager, world.Camera);
+                }
+            }
+        }
+
+        public void Render(WorldManager world, GraphicsDevice device)
+        {
+            foreach (var effect in Effects)
+            {
+                foreach (var emitter in effect.Value.Emitters)
+                {
+                    emitter.Render(world.Camera, DwarfGame.SpriteBatch, device, world.DefaultShader);
+                }
+            }
         }
     }
 }

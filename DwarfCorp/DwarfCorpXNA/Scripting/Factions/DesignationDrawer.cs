@@ -51,6 +51,13 @@ namespace DwarfCorp
             public Color ModulatedColor;
             public NamedImageFrame Icon;
             public float LineWidth = 0.1f;
+            public enum DrawBoxType
+            {
+                FullBox,
+                TopBox,
+            }
+            public DrawBoxType DrawType;
+
         }
 
         [JsonIgnore]
@@ -76,7 +83,8 @@ namespace DwarfCorp
             DesignationProperties.Add(DesignationType.Guard, new DesignationTypeProperties
             {
                 Color = new Color(10, 10, 205),
-                Icon = new NamedImageFrame("newgui/pointers", 32, 3, 0)
+                Icon = new NamedImageFrame("newgui/pointers", 32, 3, 0),
+                DrawType = DesignationTypeProperties.DrawBoxType.TopBox
             });
 
             DesignationProperties.Add(DesignationType.Chop, new DesignationTypeProperties
@@ -107,7 +115,8 @@ namespace DwarfCorp
             DesignationProperties.Add(DesignationType.Plant, new DesignationTypeProperties
             {
                 Color = Color.LimeGreen,
-                Icon = new NamedImageFrame("newgui/pointers", 32, 4, 1)
+                Icon = new NamedImageFrame("newgui/pointers", 32, 4, 1),
+                DrawType = DesignationTypeProperties.DrawBoxType.TopBox
             });
 
             DesignationProperties.Add(DesignationType.Craft, new DesignationTypeProperties
@@ -151,10 +160,19 @@ namespace DwarfCorp
                     if (voxel.Type == DesignationType.Put) // Hate this.
                         DrawPhantomCallback(v, VoxelLibrary.GetVoxelType(voxel.Tag.ToString()));
                     else if (voxel._drawing == 0)
-                        voxel._drawing = Set.TriangleCache.AddTopBox(voxel.Voxel.GetBoundingBox(),
-                            DesignationProperties[voxel.Type].Color,
-                            DesignationProperties[voxel.Type].LineWidth, true);
-                    // Todo: Move the triangle cache out of the designation set. It belongs HERE, and needn't be static.
+                    {
+                        switch (props.DrawType)
+                        {
+                            case DesignationTypeProperties.DrawBoxType.TopBox:
+                                voxel._drawing = Set.TriangleCache.AddTopBox(voxel.Voxel.GetBoundingBox(), props.Color, props.LineWidth, true);
+                                break;
+                            case DesignationTypeProperties.DrawBoxType.FullBox:
+                                voxel._drawing = Set.TriangleCache.AddBox(voxel.Voxel.GetBoundingBox(), props.Color, props.LineWidth, true);
+                                break;
+                        }
+
+                    }
+                    // Todo: Move the triangle cache out of the designation set.
                 }
                 else if (voxel._drawing > 0)
                 {

@@ -157,10 +157,12 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 		return Output;
 	}
 
-    UTVertexToPixel UTexturedVS_Pulse( float4 inPos_ : POSITION,  float4 inColor : COLOR0)
+    UTVertexToPixel UTexturedVS_Pulse( float4 inPos_ : POSITION,  float3 dir : NORMAL, float4 inColor : COLOR0)
 	{
 		UTVertexToPixel Output = (UTVertexToPixel)0;
-		float4 inPos = inPos_; // +GetNoise(inPos_);
+		float3 backward = -float3(xView[0][2], xView[1][2], xView[2][2]);
+		float3 offset = normalize(cross(dir, backward)) * inPos_.w;
+		float4 inPos = float4(inPos_.xyz + offset * 0.5, 1);
 		float4x4 preViewProjection = mul (xView, xProjection);
 		float4x4 preWorldViewProjection = mul (xWorld, preViewProjection);
 

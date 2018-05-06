@@ -45,9 +45,9 @@ namespace DwarfCorp
     {
         public int MaxTriangles = 2048;
         public int VertexCount = 0;
-        private VertexPositionColor[] Verticies;
-        private VertexPositionColor[] VertexScratch;
-        private VertexBuffer Buffer; 
+        private ThickLineVertex[] Verticies;
+        private ThickLineVertex[] VertexScratch;
+        private DynamicVertexBuffer Buffer; 
         private static GraphicsDevice Device { get { return GameStates.GameState.Game.GraphicsDevice; } }
         private uint MaxSegment = 1;
 
@@ -62,24 +62,24 @@ namespace DwarfCorp
 
         public TriangleCache()
         {
-            Verticies = new VertexPositionColor[MaxTriangles * 3];
-            VertexScratch = new VertexPositionColor[MaxTriangles * 3];
+            Verticies = new ThickLineVertex[MaxTriangles * 3];
+            VertexScratch = new ThickLineVertex[MaxTriangles * 3];
             VertexCount = 0;
         }
 
         private void Grow()
         {
             MaxTriangles *= 2;
-            var newVerts = new VertexPositionColor[MaxTriangles * 3];
+            var newVerts = new ThickLineVertex[MaxTriangles * 3];
             Verticies.CopyTo(newVerts, 0);
-            VertexScratch = new VertexPositionColor[MaxTriangles * 3];
+            VertexScratch = new ThickLineVertex[MaxTriangles * 3];
             Verticies = newVerts;
             if (Buffer != null)
             {
                 Buffer.Dispose();
             }
 
-            Buffer = new VertexBuffer(Device, VertexPositionColor.VertexDeclaration, MaxTriangles * 3, BufferUsage.None);
+            Buffer = new DynamicVertexBuffer(Device, ThickLineVertex.VertexDeclaration, MaxTriangles * 3, BufferUsage.None);
             Buffer.SetData(Verticies);
         }
 
@@ -139,7 +139,7 @@ namespace DwarfCorp
             Segments.Add(newSegment.ID, newSegment);
             if (Buffer == null)
             {
-                Buffer = new VertexBuffer(Device, VertexPositionColor.VertexDeclaration, MaxTriangles * 3, BufferUsage.None);
+                Buffer = new DynamicVertexBuffer(Device, ThickLineVertex.VertexDeclaration, MaxTriangles * 3, BufferUsage.None);
             }
             Buffer.SetData(Verticies);
             return newSegment.ID;
@@ -155,6 +155,17 @@ namespace DwarfCorp
 
             Drawer3D.WriteTopBox(box.Min, box.Max - box.Min, color, thickness, warp, VertexCount, Verticies);
             return AddSegment((int)Drawer3D.PrimitiveVertexCounts.TopBox);
+        }
+
+        public uint AddBox(BoundingBox box, Color color, float thickness, bool warp)
+        {
+            if (VertexCount + (int)Drawer3D.PrimitiveVertexCounts.Box >= MaxTriangles * 3)
+            {
+                Grow();
+            }
+
+            Drawer3D.WriteBox(box.Min, box.Max - box.Min, color, thickness, warp, VertexCount, Verticies);
+            return AddSegment((int)Drawer3D.PrimitiveVertexCounts.Box);
         }
 
         public void Draw(Shader Effect, Camera Camera)
@@ -238,8 +249,8 @@ namespace DwarfCorp
         {
             Triangle = 3,
             LineSegment = 2 * Triangle,
-            Box = 4 * 6 * LineSegment,
-            TopBox = 4 * 1 * LineSegment
+            TopBox = 4 * 1 * LineSegment,
+            Box = 2 * TopBox + 4 * LineSegment,
         }
 
 
@@ -303,6 +314,31 @@ namespace DwarfCorp
             return start + 3;
         }
 
+        public static int WriteTriangle(Vector4 A, Vector4 B, Vector4 C, Vector3 direction, Color Color, int start, ThickLineVertex[] buffer)
+        {
+            buffer[start] = new ThickLineVertex
+            {
+                Position = A,
+                Color = Color,
+                Direction = direction
+            };
+
+            buffer[start + 1] = new ThickLineVertex
+            {
+                Position = B,
+                Color = Color,
+                Direction = direction
+            };
+
+            buffer[start + 2] = new ThickLineVertex
+            {
+                Position = C,
+                Color = Color,
+                Direction = direction
+            };
+            return start + 3;
+        }
+
         private static void _addTriangle(Vector3 A, Vector3 B, Vector3 C, Color Color)
         {
             WriteTriangle(A, B, C, Color, VertexCount, Verticies);
@@ -332,6 +368,22 @@ namespace DwarfCorp
             start = WriteTriangle(A + perp, B + perp, A - perp, Color, start, buffer);
             return WriteTriangle(A - perp, B - perp, B + perp, Color, start, buffer);
         }
+
+        public static int WriteLineSegment(Vector3 A, Vector3 B, Color Color, float Thickness, bool Warp, int start, ThickLineVertex[] buffer)
+        {
+            if (Warp)
+            {
+                A += VertexNoise.GetNoiseVectorFromRepeatingTexture(A);
+                B += VertexNoise.GetNoiseVectorFromRepeatingTexture(B);
+            }
+
+            var bRay = A - B;
+            bRay.Normalize();
+
+            start = WriteTriangle(new Vector4(A, Thickness), new Vector4(B, Thickness), new Vector4(A, -Thickness), bRay, Color, start, buffer);
+            return WriteTriangle(new Vector4(A, -Thickness), new Vector4(B, -Thickness), new Vector4(B, Thickness), bRay, Color, start, buffer);
+        }
+
 
         private static void _addLineSegment(Vector3 A, Vector3 B, Color Color, float Thickness, bool Warp)
         {
@@ -376,32 +428,61 @@ namespace DwarfCorp
 
         }
 
-        public static int WriteBox(Vector3 M, Vector3 S, Color C, float T, bool Warp, int start, VertexPositionColor[] buffer)
+        private static float epsilon = 0.01f;
+        private static Vector3[] boxOffsets =
         {
-            float halfT = T * 0.5f;
-            S += Vector3.One * halfT;
-            M -= Vector3.One * halfT;
-            // Draw bottom loop.
-            start = WriteLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z), C, T, Warp, start, buffer);
-            start = WriteLineSegment(new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z + S.Z), C, T, Warp, start, buffer);
-            start = WriteLineSegment(new Vector3(M.X + S.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y, M.Z + S.Z), C, T, Warp, start, buffer);
-            start = WriteLineSegment(new Vector3(M.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y, M.Z), C, T, Warp, start, buffer);
+                new Vector3(-epsilon, -epsilon, -epsilon), new Vector3(0, -epsilon, -epsilon),
+                new Vector3(0, -epsilon, -epsilon), new Vector3(0, -epsilon, 0),
+                new Vector3(0, -epsilon, 0), new Vector3(-epsilon, -epsilon, 0),
+                new Vector3(-epsilon, -epsilon, 0), new Vector3(-epsilon, -epsilon, -epsilon),
 
-            // Draw top loop.
-            start = WriteLineSegment(new Vector3(M.X, M.Y + S.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z), C, T, Warp, start, buffer);
-            start = WriteLineSegment(new Vector3(M.X + S.X, M.Y + S.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.Z), C, T, Warp, start, buffer);
-            start = WriteLineSegment(new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.Z), new Vector3(M.X, M.Y + S.Y, M.Z + S.Z), C, T, Warp, start, buffer);
-            start = WriteLineSegment(new Vector3(M.X, M.Y + S.Y, M.Z + S.Z), new Vector3(M.X, M.Y + S.Y, M.Z), C, T, Warp, start, buffer);
+                new Vector3(-epsilon, 0, -epsilon), new Vector3(0, 0, -epsilon),
+                new Vector3(0, 0, -epsilon), new Vector3(0, 0, 0),
+                new Vector3(0, 0, 0), new Vector3(-epsilon, 0, 0),
+                new Vector3(-epsilon, 0, 0), new Vector3(-epsilon, 0, -epsilon),
 
-            // Draw uprights
-            start = WriteLineSegment(new Vector3(M.X, M.Y, M.Z), new Vector3(M.X, M.Y + S.Y, M.Z), C, T, Warp, start, buffer);
-            start = WriteLineSegment(new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z), C, T, Warp, start, buffer);
-            start = WriteLineSegment(new Vector3(M.X + S.X, M.Y, M.Z + S.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.Z), C, T, Warp, start, buffer);
-            start = WriteLineSegment(new Vector3(M.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y + S.Y, M.Z + S.Z), C, T, Warp, start, buffer);
+                new Vector3(-epsilon, -epsilon, -epsilon), new Vector3(-epsilon, 0, -epsilon),
+                new Vector3(0, -epsilon, -epsilon), new Vector3(0, 0, -epsilon),
+                new Vector3(0, -epsilon, 0), new Vector3(0, 0, 0),
+                new Vector3(-epsilon, -epsilon, 0), new Vector3(-epsilon, 0, 0),
+         };
+
+        public static int WriteBox(Vector3 M, Vector3 S, Color C, float T, bool Warp, int start, ThickLineVertex[] buffer)
+        {
+
+            Vector3[] verts =
+            {
+                new Vector3(M.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z),
+                new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y, M.Z + S.Z),
+                new Vector3(M.X + S.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y, M.Z + S.Z),
+                new Vector3(M.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y, M.Z),
+
+                new Vector3(M.X, M.Y + S.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z),
+                new Vector3(M.X + S.X, M.Y + S.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.Z),
+                new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.Z), new Vector3(M.X, M.Y + S.Y, M.Z + S.Z),
+                new Vector3(M.X, M.Y + S.Y, M.Z + S.Z), new Vector3(M.X, M.Y + S.Y, M.Z),
+
+                new Vector3(M.X, M.Y, M.Z), new Vector3(M.X, M.Y + S.Y, M.Z),
+                new Vector3(M.X + S.X, M.Y, M.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z),
+                new Vector3(M.X + S.X, M.Y, M.Z + S.Z), new Vector3(M.X + S.X, M.Y + S.Y, M.Z + S.Z),
+                new Vector3(M.X, M.Y, M.Z + S.Z), new Vector3(M.X, M.Y + S.Y, M.Z + S.Z),
+            };
+            if (Warp)
+            {
+                for (int i =0; i < verts.Length; i++)
+                {
+                    verts[i] += VertexNoise.GetNoiseVectorFromRepeatingTexture(verts[i]);
+                }
+            }
+
+            for (int i = 0; i < verts.Length; i+=2)
+            {
+                start = WriteLineSegment(verts[i] + boxOffsets[i], verts[i + 1] + boxOffsets[i + 1], C, T, false, start, buffer);
+            }
             return start;
         }
 
-        public static int WriteTopBox(Vector3 M, Vector3 S, Color color, float T, bool Warp, int start, VertexPositionColor[] buffer)
+        public static int WriteTopBox(Vector3 M, Vector3 S, Color color, float T, bool Warp, int start, ThickLineVertex[] buffer)
         {
             float halfT = T * 0.5f;
 

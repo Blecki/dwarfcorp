@@ -46,6 +46,7 @@ namespace DwarfCorp
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
+            Player.VoxSelector.SelectionColor = Color.White;
             foreach (var voxel in voxels)
                 ValidatePlanting(voxel);
         }

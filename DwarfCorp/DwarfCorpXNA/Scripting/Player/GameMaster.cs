@@ -414,6 +414,7 @@ namespace DwarfCorp
         {
             TaskManager.Update(Faction.Minions);
             CurrentTool.Update(game, time);
+            Faction.RoomBuilder.Update();
             UpdateOrphanedTasks();
             if (!World.Paused)
             {
