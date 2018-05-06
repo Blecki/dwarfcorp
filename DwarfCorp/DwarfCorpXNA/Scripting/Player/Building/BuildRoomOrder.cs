@@ -151,7 +151,7 @@ namespace DwarfCorp
 
             if (!silent)
             {
-                World.MakeAnnouncement(String.Format("{0} was built", ToBuild.ID), null);
+                World.MakeAnnouncement(String.Format("{0} was built", ToBuild.RoomData.Name), null);
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
                 World.GoalManager.OnGameEvent(new Goals.Events.BuiltRoom(ToBuild.ID));
             }
