@@ -75,6 +75,7 @@ namespace DwarfCorp
         {
             Name = "Heal thyself";
             Priority = PriorityType.Urgent;
+            ReassignOnDeath = false;
         }
 
         public override Act CreateScript(Creature agent)
