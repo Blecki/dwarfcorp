@@ -30,6 +30,7 @@ namespace DwarfCorp.GameStates
         private CheckBox FollowSurface;
         private CheckBox FogOfWar;
         private CheckBox PlayIntro;
+        private CheckBox AllowReporting;
         private ComboBox GuiScale;
         private HorizontalFloatSlider MasterVolume;
         private HorizontalFloatSlider SFXVolume;
@@ -316,6 +317,15 @@ namespace DwarfCorp.GameStates
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
+
+            AllowReporting = panel.AddChild(new CheckBox
+            {
+                Text = "Crash Reporting",
+                Tooltip = "When checked, you have been opted in to automatic crash reporting.",
+                OnCheckStateChange = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop
+            }) as CheckBox;
+
 
             FogOfWar = panel.AddChild(new CheckBox
             {
@@ -846,6 +856,7 @@ namespace DwarfCorp.GameStates
             toReturn.InvertZoom = this.InvertZoom.CheckState;
             toReturn.ZoomCameraTowardMouse = this.ZoomTowardMouse.CheckState;
             toReturn.DisplayIntro = this.PlayIntro.CheckState;
+            toReturn.AllowReporting = this.AllowReporting.CheckState;
             toReturn.MaxSaves = int.Parse(this.MaxSaves.SelectedItem);
             toReturn.AutoSave = this.Autosave.CheckState;
             toReturn.AutoSaveTimeMinutes =
@@ -996,6 +1007,7 @@ namespace DwarfCorp.GameStates
             this.InvertZoom.CheckState = GameSettings.Default.InvertZoom;
             this.ZoomTowardMouse.CheckState = GameSettings.Default.ZoomCameraTowardMouse;
             this.PlayIntro.CheckState = GameSettings.Default.DisplayIntro;
+            this.AllowReporting.CheckState = GameSettings.Default.AllowReporting;
             this.Autosave.CheckState = GameSettings.Default.AutoSave;
             (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition =
                 (int)(GameSettings.Default.AutoSaveTimeMinutes - 5);
