@@ -54,7 +54,6 @@ namespace DwarfCorp
         }
 
         public bool FrustumCull { get { return IsFlagSet(Flag.FrustumCull); } }
-
         public CollisionType CollisionType = CollisionType.None;
         public Vector3 BoundingBoxSize = Vector3.One;
         public Vector3 LocalBoundingBoxOffset = Vector3.Zero;
@@ -206,6 +205,11 @@ namespace DwarfCorp
             }
         }
         
+        public virtual string GetMouseOverText()
+        {
+            return Name;
+        }
+
         public void UpdateTransform()
         {
             PerformanceMonitor.PushFrame("Body.UpdateTransform");

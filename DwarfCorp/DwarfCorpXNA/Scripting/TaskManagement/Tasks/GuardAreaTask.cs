@@ -38,17 +38,17 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class GuardAreaTask : Task
+    public class GuardZoneTask : Task
     {
         /// <summary>
         /// Exists to pass voxel designation based task cancelling on to parent task.
         /// </summary>
         public class DesignationProxyTask : Task
         {
-            public GuardAreaTask ParentTask;
+            public GuardZoneTask ParentTask;
             public VoxelHandle Voxel;
 
-            public DesignationProxyTask(GuardAreaTask ParentTask, VoxelHandle Voxel)
+            public DesignationProxyTask(GuardZoneTask ParentTask, VoxelHandle Voxel)
             {
                 this.ParentTask = ParentTask;
                 this.Voxel = Voxel;
@@ -65,7 +65,7 @@ namespace DwarfCorp
             }
         }
 
-        public GuardAreaTask()
+        public GuardZoneTask()
         {
             Category = TaskCategory.Guard;
             Name = "Guard Area";

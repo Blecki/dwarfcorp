@@ -193,17 +193,31 @@ namespace DwarfCorp
         {
             StringBuilder sb = new StringBuilder();
 
-            List<Body> bodyList = bodies.Where(IsDwarf).ToList();
+            List<Body> bodyList = bodies.ToList();
             for (int i = 0; i < bodyList.Count; i++)
             {
                 Creature dwarf = bodyList[i].GetComponent<Creature>();
                 if (dwarf != null)
                 {
                     sb.Append(dwarf.Stats.FullName + " (" + dwarf.Stats.CurrentClass.Name + ")");
+                    if (dwarf.IsAsleep)
+                    {
+                        sb.Append(" UNCONSCIOUS ");
+                    }
+                    
+                    if (dwarf.Status.IsOnStrike)
+                    {
+                        sb.Append(" ON STRIKE");
+                    }
+
                     if (i < bodyList.Count - 1)
                     {
                         sb.Append("\n");
                     }
+                }
+                else
+                {
+                    sb.Append(bodyList[i].Name);
                 }
             }
             Player.World.ShowTooltip(sb.ToString());

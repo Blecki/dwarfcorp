@@ -86,8 +86,20 @@ namespace DwarfCorp.Gui.Input
             return realCode;
         }
 
+        private bool _disableInput = false;
         private bool HandleEvent(System.Windows.Forms.Message Msg)
         {
+            if (!GameStates.GameState.Game.IsActive)
+            {
+                _disableInput = true;
+                return false;
+            }
+
+            if (_disableInput)
+            {
+                _disableInput = false;
+                return false;
+            }
             QueueLock.WaitOne();
             bool handled = false;
 
