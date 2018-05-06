@@ -50,7 +50,8 @@ namespace DwarfCorp
     {
         public override void OnBegin()
         {
-           Player.World.Tutorial("mine");
+            Player.VoxSelector.SelectionColor = Color.White;
+            Player.World.Tutorial("mine");
         }
 
         public override void OnEnd()

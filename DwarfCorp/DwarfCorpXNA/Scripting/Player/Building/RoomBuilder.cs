@@ -370,6 +370,7 @@ namespace DwarfCorp
 
         public void OnVoxelsDragged(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
+            World.Master.VoxSelector.SelectionColor = Color.White;
             if (Faction == null)
             {
                 Faction = World.PlayerFaction;
@@ -436,6 +437,10 @@ namespace DwarfCorp
                         thing.SetFlagRecursive(GameComponent.Flag.Active, false);
                         SetDisplayColor(thing, Color.Green);
                     }
+                }
+                else
+                {
+                    World.Master.VoxSelector.SelectionColor = Color.Red;
                 }
             }
             else

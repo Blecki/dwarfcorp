@@ -88,7 +88,7 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-
+            Player.VoxSelector.SelectionColor = Color.White;
         }
 
         public override void OnEnd()
