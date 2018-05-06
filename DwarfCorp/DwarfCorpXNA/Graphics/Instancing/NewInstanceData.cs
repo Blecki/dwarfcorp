@@ -58,6 +58,7 @@ namespace DwarfCorp
             this.Color = Color;
             this.ShouldDraw = ShouldDraw;
             this.VertexColorTint = Color.White;
+            this.Visible = true;
             SelectionBufferColor = Color.Black;
         }
     }

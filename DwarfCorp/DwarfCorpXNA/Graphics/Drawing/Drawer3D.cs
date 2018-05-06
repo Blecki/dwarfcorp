@@ -47,7 +47,7 @@ namespace DwarfCorp
         public int VertexCount = 0;
         private ThickLineVertex[] Verticies;
         private ThickLineVertex[] VertexScratch;
-        private VertexBuffer Buffer; 
+        private DynamicVertexBuffer Buffer; 
         private static GraphicsDevice Device { get { return GameStates.GameState.Game.GraphicsDevice; } }
         private uint MaxSegment = 1;
 
@@ -79,7 +79,7 @@ namespace DwarfCorp
                 Buffer.Dispose();
             }
 
-            Buffer = new VertexBuffer(Device, ThickLineVertex.VertexDeclaration, MaxTriangles * 3, BufferUsage.None);
+            Buffer = new DynamicVertexBuffer(Device, ThickLineVertex.VertexDeclaration, MaxTriangles * 3, BufferUsage.None);
             Buffer.SetData(Verticies);
         }
 
@@ -139,7 +139,7 @@ namespace DwarfCorp
             Segments.Add(newSegment.ID, newSegment);
             if (Buffer == null)
             {
-                Buffer = new VertexBuffer(Device, ThickLineVertex.VertexDeclaration, MaxTriangles * 3, BufferUsage.None);
+                Buffer = new DynamicVertexBuffer(Device, ThickLineVertex.VertexDeclaration, MaxTriangles * 3, BufferUsage.None);
             }
             Buffer.SetData(Verticies);
             return newSegment.ID;

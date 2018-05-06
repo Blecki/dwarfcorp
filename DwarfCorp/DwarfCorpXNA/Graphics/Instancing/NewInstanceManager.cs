@@ -58,6 +58,11 @@ namespace DwarfCorp
                 _prevCameraView = Camera.ViewMatrix;
             }
 
+            if (_cachedRenderItems == null)
+            {
+                return;
+            }
+
             foreach (var item in _cachedRenderItems)
             {
                 if (!item.Visible) continue;
