@@ -188,7 +188,8 @@ namespace DwarfCorp
 
             PreviewBody.SetTintRecursive(IsValid(Player.VoxSelector.VoxelUnderMouse) ? Color.Green : Color.Red);
 
-            World.ShowTooltip("Click to build. Press R/T to rotate.");
+            if (CraftType.AllowRotation)
+                World.ShowTooltip("Click to build. Press R/T to rotate.");
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

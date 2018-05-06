@@ -190,16 +190,18 @@ namespace DwarfCorp
                     if (DesignationProperties.ContainsKey(entity.Type))
                         props = DesignationProperties[entity.Type];
 
-                    entity.Body.SetTintRecursive(props.ModulatedColor);
                     // Todo: More consistent drawing?
                     if (entity.Type == DesignationType.Craft)
                     {
                         entity.Body.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                        if (!entity.Body.Active)
+                            entity.Body.SetTintRecursive(props.ModulatedColor);
                     }
                     else
                     {
                         var box = entity.Body.GetBoundingBox();
                         DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, props.LineWidth, false);
+                        entity.Body.SetTintRecursive(props.ModulatedColor);
                     }
 
                     if (props.Icon != null)
