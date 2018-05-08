@@ -1,6 +1,7 @@
 {
     "Easy": 
     {
+		"Difficulty" : 1,
         "Party":  ["Dwarf", "Dwarf", "Dwarf", "Dwarf", "CraftsDwarf", "AxeDwarf", "AxeDwarf"],
         "Resources": 
         {
@@ -16,6 +17,7 @@
     },
     "Normal": 
     {
+		"Difficulty" : 2,
         "Party":  ["Dwarf", "Dwarf", "Dwarf", "CraftsDwarf", "AxeDwarf"],
         "Resources": 
         {
@@ -28,6 +30,7 @@
     },
     "Hard": 
     {
+		"Difficulty" : 3,
         "Party":  ["Dwarf", "Dwarf", "Dwarf", "CraftsDwarf"],
         "Resources": 
         {
@@ -40,6 +43,7 @@
     },
     "Extreme": 
     {
+		"Difficulty" : 4,
         "Party":  ["Dwarf"],
         "Resources":  {},
         "Money" :  0.0

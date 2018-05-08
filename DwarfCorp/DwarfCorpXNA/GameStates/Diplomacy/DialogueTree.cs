@@ -23,11 +23,18 @@ namespace DwarfCorp.Dialogue
         {
             return (Context) =>
             {
-                if (Context.Politics.WasAtWar)
+                if (Context.Envoy.TributeDemanded > 0)
+                {
+                    Context.Say(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.DemandsForTribute));
+                    Context.AddOption(String.Format("Pay the {0} a tribute of {1}",
+                        Context.Envoy.OwnerFaction.Race.Name, Context.Envoy.TributeDemanded), PayTribute);
+                    Context.AddOption("Refuse to pay. (WAR)", DeclareWar);
+                }
+                else if (Context.Politics.WasAtWar)
                 {
                     Context.Say("We are at war.");
-                    Context.AddOption("Make peace", MakePeace);
-                    Context.AddOption("Continue the war", DeclareWar);
+                    Context.AddOption("Make peace.", MakePeace);
+                    Context.AddOption("Continue the war.", DeclareWar);
                 }
                 else
                 {
@@ -128,6 +135,34 @@ namespace DwarfCorp.Dialogue
             Context.Say("You really want to declare war on us?");
             Context.AddOption("Yes!", DeclareWar);
             Context.AddOption("No.", ConversationRoot);
+        }
+
+        public static void PayTribute(DialogueContext Context)
+        {
+            var difference = Context.World.PlayerFaction.Economy.CurrentMoney - Context.Envoy.TributeDemanded;
+            Context.World.PlayerFaction.Economy.CurrentMoney -= Math.Min(Context.World.PlayerFaction.Economy.CurrentMoney, 
+                Context.Envoy.TributeDemanded);
+
+            if (difference >= 0)
+            {
+                Context.Envoy.OwnerFaction.Race.Speech.Language.SayYay();
+                if (!Context.Politics.HasEvent("you paid us tribute"))
+                {
+                    Context.Politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                    {
+                        Change = 0.5f,
+                        Description = "you paid us tribute",
+                        Duration = new TimeSpan(4, 0, 0, 0),
+                        Time = Context.World.Time.CurrentDate
+                    });
+                }
+                Context.Transition(RootWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.GoodTrades)));
+                Context.Envoy.TributeDemanded = 0m;
+            }
+            else
+            {
+                Context.Transition(GoodbyeWithPrompt("You can\'t afford this. We will come back when you have more."));
+            }
         }
 
         public static void DeclareWar(DialogueContext Context)

@@ -439,7 +439,7 @@ namespace DwarfCorp.GameStates
                     StringBuilder eventString = new StringBuilder();
                     foreach (var scheduledEvent in World.GoalManager.EventScheduler.Forecast)
                     {
-                        eventString.AppendLine(String.Format("{0} : {1}, {2}", scheduledEvent.Name, (scheduledEvent.Date - World.Time.CurrentDate).ToString(@"hh\:mm"), scheduledEvent.Difficulty));
+                        eventString.AppendLine(String.Format("{0} : {1}, {2}", scheduledEvent.Event.Name, (scheduledEvent.Date - World.Time.CurrentDate).ToString(@"hh\:mm"), scheduledEvent.Event.Difficulty));
                     }
                     eventString.AppendLine(String.Format("Difficulty: {0} Forecast {1}", World.GoalManager.EventScheduler.CurrentDifficulty, World.GoalManager.EventScheduler.ForecastDifficulty(World.Time.CurrentDate)));
 

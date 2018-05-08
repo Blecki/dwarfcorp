@@ -207,25 +207,34 @@ namespace DwarfCorp
 
         public static Texture2D LoadUnbuiltTextureFromAbsolutePath(string _file)
         {
-            string file = FileUtils.NormalizePath(_file);
-            using(var stream = new FileStream(file, FileMode.Open))
+            try
             {
-                if (!stream.CanRead)
+                string file = FileUtils.NormalizePath(_file);
+                using (var stream = new FileStream(file, FileMode.Open))
                 {
-                    Console.Out.WriteLine("Failed to read {0}, stream cannot be read.", file);
-                    return null;
-                }
+                    if (!stream.CanRead)
+                    {
+                        Console.Out.WriteLine("Failed to read {0}, stream cannot be read.", file);
+                        return null;
+                    }
 
-                try
-                {
-                    return Texture2D.FromStream(GameState.Game.GraphicsDevice, stream);
+                    try
+                    {
+                        return Texture2D.FromStream(GameState.Game.GraphicsDevice, stream);
+                    }
+                    catch (Exception exception)
+                    {
+                        Console.Out.Write("Failed to load texture {0}: {1}", file, exception.ToString());
+                        return null;
+                    }
+
                 }
-                catch (Exception exception)
-                {
-                    Console.Out.Write("Failed to load texture {0}: {1}", file, exception.ToString());
-                    return null;
-                }
-           }
+            }
+            catch (Exception exception)
+            {
+                Console.Out.Write("Failed to load texture {0}", exception.ToString());
+                return null;
+            }
         }
     }
 

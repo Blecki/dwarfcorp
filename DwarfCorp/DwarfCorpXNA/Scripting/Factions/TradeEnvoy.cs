@@ -62,7 +62,7 @@ namespace DwarfCorp
         public DwarfBux TradeMoney { get; set; }
         public List<ResourceAmount> TradeGoods { get; set; }
         public DateTimer WaitForTradeTimer = null;
-
+        public DwarfBux TributeDemanded = 0m;
 
         public bool UpdateWaitTimer(DateTime now)
         {
