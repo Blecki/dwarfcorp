@@ -193,7 +193,7 @@ namespace DwarfCorp.Gui.Widgets
             World.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             World.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             
-            World.ChunkRenderer.RenderAll(Camera, time, World.GraphicsDevice, World.DefaultShader, Matrix.Identity, AssetManager.GetContentTexture(ColorMap));
+            World.ChunkRenderer.RenderForMinimap(Camera, time, World.GraphicsDevice, World.DefaultShader, Matrix.Identity, AssetManager.GetContentTexture(ColorMap));
             World.WaterRenderer.DrawWaterFlat(World.GraphicsDevice, Camera.ViewMatrix, Camera.ProjectionMatrix, World.DefaultShader, World.ChunkManager);
             World.GraphicsDevice.Textures[0] = null;
             World.GraphicsDevice.Indices = null;

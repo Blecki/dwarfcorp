@@ -36,6 +36,14 @@ namespace DwarfCorp.Gui
         public float TileU(int TileIndex) { return ColumnU(Column(TileIndex)); }
         public float TileV(int TileIndex) { return RowV(Row(TileIndex)); }
 
+        public Vector4 MapRectangleToUVBounds(Rectangle R)
+        {
+            var x = (float)(R.X + SourceRect.X) / (float)TextureWidth;
+            var y = (float)(R.Y + SourceRect.Y) / (float)TextureHeight;
+
+            return new Vector4(x, y, x + ((float)R.Width / (float)TextureWidth), y + ((float)R.Height / (float)TextureHeight));
+        }
+
         // Generate UV transform matricies that align the UV range 0..1 to a tile.
         public Matrix ScaleMatrix { get { return Matrix.CreateScale(TileUStep, TileVStep, 1.0f); } }
         public Matrix TranslationMatrix(int Column, int Row) { return Matrix.CreateTranslation(ColumnU(Column), RowV(Row), 0.0f); }

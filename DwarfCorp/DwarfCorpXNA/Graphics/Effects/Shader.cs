@@ -325,6 +325,7 @@ namespace DwarfCorp
             public static string Lightmap = "Lightmap";
             public static string TexturedWithColorScale = "Textured_colorscale";
             public static string Instanced_ = "Instanced";
+            public static string TiledInstanced_ = "TiledInstanced";
             public static string SelectionBufferInstanced = "Instanced_SelectionBuffer";
             public static string Silhouette = "Silhouette";
             public static string Stipple = "Textured_Stipple";
@@ -371,6 +372,27 @@ namespace DwarfCorp
             Shader.Technique.Instanced_ + "_16_Lights",
         };
 
+        public static string[] TiledInstancedTechniques =
+        {
+            Shader.Technique.TiledInstanced_ + "_1_Light",
+            Shader.Technique.TiledInstanced_ + "_2_Lights",
+            Shader.Technique.TiledInstanced_ + "_3_Lights",
+            Shader.Technique.TiledInstanced_ + "_4_Lights",
+            Shader.Technique.TiledInstanced_ + "_5_Lights",
+            Shader.Technique.TiledInstanced_ + "_6_Lights",
+            Shader.Technique.TiledInstanced_ + "_7_Lights",
+            Shader.Technique.TiledInstanced_ + "_8_Lights",
+            Shader.Technique.TiledInstanced_ + "_9_Lights",
+            Shader.Technique.TiledInstanced_ + "_10_Lights",
+            Shader.Technique.TiledInstanced_ + "_11_Lights",
+            Shader.Technique.TiledInstanced_ + "_12_Lights",
+            Shader.Technique.TiledInstanced_ + "_13_Lights",
+            Shader.Technique.TiledInstanced_ + "_14_Lights",
+            Shader.Technique.TiledInstanced_ + "_15_Lights",
+            Shader.Technique.TiledInstanced_ + "_16_Lights",
+        };
+
+
         public void SetTexturedTechnique()
         {
             CurrentTechnique = Techniques[TexturedTechniques[CurrentNumLights]];
@@ -384,6 +406,11 @@ namespace DwarfCorp
         public void SetInstancedTechnique()
         {
             CurrentTechnique = Techniques[InstancedTechniques[CurrentNumLights]];
+        }
+
+        public void SetTiledInstancedTechnique()
+        {
+            CurrentTechnique = Techniques[TiledInstancedTechniques[CurrentNumLights]];
         }
 
 

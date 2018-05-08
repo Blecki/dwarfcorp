@@ -10,38 +10,43 @@ namespace DwarfCorp
 {
     public class NewInstanceManager
     {
-        private OctTreeNode<NewInstanceData> OctTree;
+        //private OctTreeNode<NewInstanceData> OctTree;
         private InstanceRenderer Renderer;
-        private ulong RenderPass = 0;
+        //private ulong RenderPass = 0;
 
         public NewInstanceManager(GraphicsDevice Device, BoundingBox Bounds, ContentManager Content)
         {
-            OctTree = new OctTreeNode<NewInstanceData>(Bounds.Min, Bounds.Max);
+            //OctTree = new OctTreeNode<NewInstanceData>(Bounds.Min, Bounds.Max);
             Renderer = new InstanceRenderer(Device, Content);
         }
 
-        public void RemoveInstance(NewInstanceData Instance)
-        {
-            var box = new BoundingBox(Instance.Position - Instance.HalfSize, Instance.Position + Instance.HalfSize);
-            OctTree.RemoveItem(Instance, box);
-            Instance.Visible = false;
-        }
+        //public void RemoveInstance(NewInstanceData Instance)
+        //{
+        //    var box = new BoundingBox(Instance.Position - Instance.HalfSize, Instance.Position + Instance.HalfSize);
+        //    OctTree.RemoveItem(Instance, box);
+        //    Instance.Visible = false;
+        //}
 
-        public void AddInstance(NewInstanceData Instance)
-        {
-            var box = new BoundingBox(Instance.Position - Instance.HalfSize, Instance.Position + Instance.HalfSize);
-            OctTree.AddItem(Instance, box);
-            _cachedRenderItems = null;
-        }
+        //public void AddInstance(NewInstanceData Instance)
+        //{
+        //    var box = new BoundingBox(Instance.Position - Instance.HalfSize, Instance.Position + Instance.HalfSize);
+        //    OctTree.AddItem(Instance, box);
+        //    _cachedRenderItems = null;
+        //}
 
-        private List<NewInstanceData> _cachedRenderItems = new List<NewInstanceData>();
-        private Matrix _prevCameraView = new Matrix();
+        //private List<NewInstanceData> _cachedRenderItems = new List<NewInstanceData>();
+        //private Matrix _prevCameraView = new Matrix();
 
-        private float MaxMatrixDiff(Matrix a, Matrix b)
+        //private float MaxMatrixDiff(Matrix a, Matrix b)
+        //{
+        //    float diffZ = (a.Forward - b.Forward).Length();
+        //    float diffTrans = (a.Translation - b.Translation).Length();
+        //    return Math.Max(diffZ, diffTrans);
+        //}
+
+            public void RenderInstance(NewInstanceData Instance, GraphicsDevice Device, Shader Effect, Camera Camera, InstanceRenderMode Mode)
         {
-            float diffZ = (a.Forward - b.Forward).Length();
-            float diffTrans = (a.Translation - b.Translation).Length();
-            return Math.Max(diffZ, diffTrans);
+            Renderer.RenderInstance(Instance, Device, Effect, Camera, Mode);
         }
 
         public void RenderInstances(
@@ -50,26 +55,26 @@ namespace DwarfCorp
             Camera Camera,
             InstanceRenderMode Mode)
         {
-            RenderPass += 1;
+            //RenderPass += 1;
 
-            if (_cachedRenderItems == null || MaxMatrixDiff(_prevCameraView, Camera.ViewMatrix) > 1e-1)
-            {
-                _cachedRenderItems = OctTree.EnumerateItems(Camera.GetDrawFrustum()).ToList();
-                _prevCameraView = Camera.ViewMatrix;
-            }
+            //if (_cachedRenderItems == null || MaxMatrixDiff(_prevCameraView, Camera.ViewMatrix) > 1e-1)
+            //{
+            //    _cachedRenderItems = OctTree.EnumerateItems(Camera.GetDrawFrustum()).ToList();
+            //    _prevCameraView = Camera.ViewMatrix;
+            //}
 
-            if (_cachedRenderItems == null)
-            {
-                return;
-            }
+            //if (_cachedRenderItems == null)
+            //{
+            //    return;
+            //}
 
-            foreach (var item in _cachedRenderItems)
-            {
-                if (!item.Visible) continue;
-                if (item.RenderPass < RenderPass)
-                    Renderer.RenderInstance(item, Device, Effect, Camera, Mode);
-                item.RenderPass = RenderPass;
-            }
+            //foreach (var item in _cachedRenderItems)
+            //{
+            //    if (!item.Visible) continue;
+            //    if (item.RenderPass < RenderPass)
+            //        Renderer.RenderInstance(item, Device, Effect, Camera, Mode);
+            //    item.RenderPass = RenderPass;
+            //}
 
             Renderer.Flush(Device, Effect, Camera, Mode);
         }

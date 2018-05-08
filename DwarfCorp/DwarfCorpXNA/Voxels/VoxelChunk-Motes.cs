@@ -62,9 +62,17 @@ namespace DwarfCorp
             return v;
         }
 
+        public void RenderMotes(GraphicsDevice Device, Shader Effect, Camera Camera)
+        {
+            for (var i = 0; i < Manager.World.Master.MaxViewingLevel + 1 && i < VoxelConstants.ChunkSizeY; ++i)
+                if (MoteRecords[i] != null)
+                    foreach (var mote in MoteRecords[i])
+                        Manager.World.NewInstanceManager.RenderInstance(mote, Device, Effect, Camera, InstanceRenderMode.Normal);
+        }
+
         private static void DestroyGrassMote(WorldManager World, String Name, NewInstanceData Data)
         {
-            World.NewInstanceManager.RemoveInstance(Data);
+            //World.NewInstanceManager.RemoveInstance(Data);
         }
 
         private static NewInstanceData GenerateGrassMote(WorldManager World, Vector3 Position, Color Color, float Scale, String Name)
@@ -93,16 +101,16 @@ namespace DwarfCorp
             box.Max.Y = Y + 1;
             //Drawer3D.DrawBox(box, Color.Red, 0.1f, true);
             // Destroy old motes.
-            if (MoteRecords[Y] != null)
-            {
-                foreach (var record in MoteRecords[Y])
-                    DestroyGrassMote(this.Manager.World, record.Type, record);
-                MoteRecords[Y].Clear();
-            }
-            else
-            {
+            //if (MoteRecords[Y] != null)
+            //{
+            //    foreach (var record in MoteRecords[Y])
+            //        DestroyGrassMote(this.Manager.World, record.Type, record);
+            //    MoteRecords[Y].Clear();
+            //}
+            //else
+            //{
                 MoteRecords[Y] = new List<NewInstanceData>();
-            }
+            //}
 
             // Enumerate voxels.
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)

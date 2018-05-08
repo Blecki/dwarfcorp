@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
-    public class StandardInstanceGroup : InstanceGroup
+    public class PrimitiveInstanceGroup : InstanceGroup
     {
         private const int InstanceQueueSize = 64;
 
@@ -19,7 +19,7 @@ namespace DwarfCorp
         private int InstanceCount = 0;
         private DynamicVertexBuffer InstanceBuffer = null;
 
-        public StandardInstanceGroup()
+        public PrimitiveInstanceGroup()
         {
         }
 

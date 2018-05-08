@@ -8,12 +8,6 @@ namespace DwarfCorp
     /// </summary>
     public class NewInstanceData
     {
-        public enum InstanceTypes
-        {
-            Traditional,
-            Tiled
-        }
-
         [Newtonsoft.Json.JsonIgnore]
         public ulong RenderPass = 0;
 
@@ -28,8 +22,7 @@ namespace DwarfCorp
         private NewInstanceManager Manager;
         public ulong EntityID = 0;
 
-        public InstanceTypes InstanceType = InstanceTypes.Traditional;
-        public Vector4 SpriteBounds;
+        public Rectangle SpriteBounds;
         public string TextureAsset;
 
         [Newtonsoft.Json.JsonIgnore]
@@ -41,10 +34,10 @@ namespace DwarfCorp
             }
             set
             {
-                Manager.RemoveInstance(this);
+                //Manager.RemoveInstance(this);
                 Position = value.Translation;
                 _transform = value;
-                Manager.AddInstance(this);
+                //Manager.AddInstance(this);
             }
         }
 

@@ -400,12 +400,13 @@ namespace DwarfCorp
 
                     DefaultShader.View = Camera.ViewMatrix;
                     DefaultShader.Projection = Camera.ProjectionMatrix;
-                    NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera,
-                        InstanceRenderMode.Normal);
 
                     ComponentRenderer.Render(renderables, new DwarfTime(), ChunkManager, Camera,
                         DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
                         ComponentRenderer.WaterRenderType.None, 0);
+                    NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera,
+                        InstanceRenderMode.Normal);
+
 
                     GraphicsDevice.SetRenderTarget(null);
                     renderTarget.SaveAsPng(new FileStream(filename, FileMode.Create), resolution.X, resolution.Y);
@@ -868,12 +869,12 @@ namespace DwarfCorp
             DefaultShader.EnableShadows = false;
 
             DefaultShader.View = Camera.ViewMatrix;
-            NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera, InstanceRenderMode.Normal);
 
             ComponentRenderer.Render(renderables, gameTime, ChunkManager,
                 Camera,
                 DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
                 ComponentRenderer.WaterRenderType.None, lastWaterHeight);
+            NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera, InstanceRenderMode.Normal);
 
             if (Master.CurrentToolMode == GameMaster.ToolMode.BuildZone
                 || Master.CurrentToolMode == GameMaster.ToolMode.BuildWall ||

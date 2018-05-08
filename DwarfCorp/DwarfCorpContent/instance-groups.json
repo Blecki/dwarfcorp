@@ -1,7 +1,7 @@
 [
   {
     "$id": "1",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "2",
       "PrimitiveName": "berrybush",
@@ -13,7 +13,7 @@
   },
   {
     "$id": "3",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "4",
       "PrimitiveName": "berrybushsprout",
@@ -25,7 +25,7 @@
   },
   {
     "$id": "5",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "6",
       "PrimitiveName": "deadbush",
@@ -37,7 +37,7 @@
   },
   {
     "$id": "7",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "8",
       "PrimitiveName": "flower",
@@ -49,7 +49,7 @@
   },
   {
     "$id": "9",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "10",
       "PrimitiveName": "frostgrass",
@@ -61,7 +61,7 @@
   },
   {
     "$id": "11",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "12",
       "PrimitiveName": "gnarled",
@@ -73,7 +73,7 @@
   },
   {
     "$id": "13",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "14",
       "PrimitiveName": "grass",
@@ -85,7 +85,7 @@
   },
   {
     "$id": "15",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "16",
       "PrimitiveName": "mushroom",
@@ -97,7 +97,7 @@
   },
   {
     "$id": "17",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "18",
       "PrimitiveName": "mushroomsprout",
@@ -109,7 +109,7 @@
   },
   {
     "$id": "19",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "20",
       "PrimitiveName": "caveshroom",
@@ -121,7 +121,7 @@
   },
   {
     "$id": "21",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "22",
       "PrimitiveName": "caveshroomsprout",
@@ -133,7 +133,7 @@
   },
   {
     "$id": "23",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "24",
       "PrimitiveName": "palm",
@@ -145,7 +145,7 @@
   },
   {
     "$id": "25",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "26",
       "PrimitiveName": "palmsprout",
@@ -157,7 +157,7 @@
   },
   {
     "$id": "27",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "28",
       "PrimitiveName": "pine",
@@ -169,7 +169,7 @@
   },
   {
     "$id": "29",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "30",
       "PrimitiveName": "pinesprout",
@@ -181,7 +181,7 @@
   },
   {
     "$id": "31",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "32",
       "PrimitiveName": "snowpine",
@@ -193,7 +193,7 @@
   },
   {
     "$id": "33",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "34",
       "PrimitiveName": "vine",
@@ -205,7 +205,7 @@
   },
   {
     "$id": "35",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "36",
       "PrimitiveName": "wheat",
@@ -217,7 +217,7 @@
   },
   {
     "$id": "37",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "38",
       "PrimitiveName": "wheatsprout",
@@ -229,7 +229,7 @@
   },
   {
     "$id": "39",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "40",
       "PrimitiveName": "appletree",
@@ -241,7 +241,7 @@
   },
   {
     "$id": "41",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "42",
       "PrimitiveName": "appletreesprout",
@@ -253,7 +253,7 @@
   },
   {
     "$id": "43",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "44",
       "PrimitiveName": "eviltree",
@@ -265,7 +265,7 @@
   },
   {
     "$id": "45",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "46",
       "PrimitiveName": "eviltreesprout",
@@ -277,7 +277,7 @@
   },
   {
     "$id": "47",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "48",
       "PrimitiveName": "pumpkinvine",
@@ -289,7 +289,7 @@
   },
   {
     "$id": "49",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "50",
       "PrimitiveName": "pumpkinvinesprout",
@@ -301,7 +301,7 @@
   },
   {
     "$id": "51",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "52",
       "PrimitiveName": "cactus",
@@ -313,7 +313,7 @@
   },
   {
     "$id": "53",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "54",
       "PrimitiveName": "cactussprout",
@@ -325,7 +325,7 @@
   },
   {
     "$id": "55",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "56",
       "PrimitiveName": "candycane",
@@ -337,7 +337,7 @@
   },
   {
     "$id": "57",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "58",
       "PrimitiveName": "candycane_snow",
@@ -349,7 +349,7 @@
   },
   {
     "$id": "59",
-    "$type": "DwarfCorp.StandardInstanceGroup, BaseContent",
+    "$type": "DwarfCorp.PrimitiveInstanceGroup, BaseContent",
     "RenderData": {
       "$id": "60",
       "PrimitiveName": "candycanesprout",
@@ -358,5 +358,15 @@
       "EnableGhostClipping": true
     },
     "Name": "candycanesprout"
+  },
+  {
+    "$type": "DwarfCorp.TiledInstanceGroup, BaseContent",
+    "RenderData": {
+      "PrimitiveName": "generic-quad",
+      "EnableWind": false,
+      "RenderInSelectionBuffer": true,
+      "EnableGhostClipping": true
+    },
+    "Name": "combined-tiled-instances"
   }
 ]

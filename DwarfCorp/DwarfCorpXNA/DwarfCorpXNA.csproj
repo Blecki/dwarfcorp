@@ -230,7 +230,8 @@
     <Compile Include="Entities\TimedExplosion.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
     <Compile Include="Graphics\Instancing\InstanceGroup.cs" />
-    <Compile Include="Graphics\Instancing\StandardInstanceGroup.cs" />
+    <Compile Include="Graphics\Instancing\TiledInstanceGroup.cs" />
+    <Compile Include="Graphics\Instancing\PrimitiveInstanceGroup.cs" />
     <Compile Include="Graphics\Instancing\InstanceRenderMode.cs" />
     <Compile Include="Graphics\Instancing\TiledInstancedVertex.cs" />
     <Compile Include="Gui\TextureGeneratorAttribute.cs" />

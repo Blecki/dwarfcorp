@@ -16,5 +16,6 @@ namespace DwarfCorp.Gui
         Point MeasureString(String S);
         bool RepeatWhenUsedAsBorder { get; }
         bool HasGlyph(int TileID);
+        Vector4 MapRectangleToUVBounds(Rectangle R);
     }
 }

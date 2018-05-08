@@ -43,7 +43,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class InstanceMesh : Tinter, IUpdateableComponent
+    public class InstanceMesh : Tinter, IUpdateableComponent, IRenderableComponent
     {
         public string ModelType { get; set; }
 
@@ -79,29 +79,42 @@ namespace DwarfCorp
             Instance.SelectionBufferColor = this.GetGlobalIDColor();
         }
 
-        private bool firstIter = true;
+        //private bool firstIter = true;
 
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            bool saveHasMoved = HasMoved || firstIter;
+            //bool saveHasMoved = HasMoved || firstIter;
 
             base.Update(gameTime, chunks, camera);
 
-            if (Instance != null && IsVisible && (saveHasMoved || firstIter || Instance.Color != Tint))
-            {
-                Instance.Color = Tint;
-                Instance.Transform = GlobalTransform;
-                Instance.SelectionBufferColor = this.GetGlobalIDColor();
-                firstIter = false;
-            }
+            //if (Instance != null && IsVisible && (saveHasMoved || firstIter || Instance.Color != Tint))
+            //{
+            //    Instance.Color = Tint;
+            //    Instance.Transform = GlobalTransform;
+            //    Instance.SelectionBufferColor = this.GetGlobalIDColor();
+            //    firstIter = false;
+            //}
 
-            Instance.Visible = IsVisible;
+            //Instance.Visible = IsVisible;
         }
 
         public override void Die()
         {
-            Manager.World.NewInstanceManager.RemoveInstance(Instance);
+            //Manager.World.NewInstanceManager.RemoveInstance(Instance);
             base.Die();
+        }
+
+        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        {
+            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+
+            if (IsVisible && !renderingForWater)
+            {
+                Instance.Color = Tint;
+                Instance.Transform = GlobalTransform;
+                Instance.SelectionBufferColor = this.GetGlobalIDColor();
+                Manager.World.NewInstanceManager.RenderInstance(Instance, graphicsDevice, effect, camera, InstanceRenderMode.Normal);
+            }
         }
     }
 }

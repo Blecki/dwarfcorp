@@ -62,7 +62,7 @@ namespace DwarfCorp
             visibilityChunksTimer.HasTriggered = true;
         }
 
-        public void RenderAll(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Shader effect, Matrix worldMatrix, Texture2D tilemap)
+        public void RenderForMinimap(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Shader effect, Matrix worldMatrix, Texture2D tilemap)
         {
             effect.SelfIlluminationTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_illumination);
             effect.MainTexture = tilemap;
@@ -111,29 +111,31 @@ namespace DwarfCorp
 
         public void Render(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Shader effect, Matrix worldMatrix)
         {
-                effect.SetTexturedTechnique();
-                effect.EnableShadows = false;
-            effect.SelfIlluminationTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_illumination);
-            effect.MainTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
-            effect.SunlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient);
-            effect.AmbientOcclusionGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.ambientgradient);
-            effect.TorchlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.torchgradient);
-            effect.LightRampTint = Color.White;
-            effect.VertexColorTint = Color.White;
-            effect.SelfIlluminationEnabled = true;
-            effect.World = Matrix.Identity;
-            effect.EnableLighting = true;
-
             if (RenderList != null && !Debugger.Switches.HideTerrain)
             {
                 foreach (VoxelChunk chunk in RenderList)
                 {
+                    effect.SetTexturedTechnique();
+                    effect.EnableShadows = false;
+                    effect.SelfIlluminationTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_illumination);
+                    effect.MainTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
+                    effect.SunlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient);
+                    effect.AmbientOcclusionGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.ambientgradient);
+                    effect.TorchlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.torchgradient);
+                    effect.LightRampTint = Color.White;
+                    effect.VertexColorTint = Color.White;
+                    effect.SelfIlluminationEnabled = true;
+                    effect.World = Matrix.Identity;
+                    effect.EnableLighting = true;
+
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
                         chunk.Render(GameState.Game.GraphicsDevice);
                     }
-                }
+
+                    chunk.RenderMotes(GameState.Game.GraphicsDevice, effect, renderCamera);
+                }                
             }
 
             effect.SelfIlluminationEnabled = false;

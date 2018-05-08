@@ -274,5 +274,11 @@
     "Type": "Cross",
     "Asset": "Entities\\Plants\\candycane-sprout",
     "BoxFaceData": null
+  },
+  {
+    "Name": "generic-quad",
+    "Type": "Quad",
+    "Asset": "newgui\\error",
+    "BoxFaceData": null
   }
 ]

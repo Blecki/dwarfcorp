@@ -14,6 +14,12 @@ namespace DwarfCorp.Gui
 
         public bool RepeatWhenUsedAsBorder { get { return false; } }
 
+        public Vector4 MapRectangleToUVBounds(Rectangle R)
+        {
+            // This operation is pretty much nonsense for a font, but, whatever. Do it.
+            return Sheet.MapRectangleToUVBounds(R);
+        }
+
         private class Texture
         {
             Color[] Data;

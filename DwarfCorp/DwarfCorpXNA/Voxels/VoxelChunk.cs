@@ -146,7 +146,7 @@ namespace DwarfCorp
 
         public void Render(GraphicsDevice device)
         {
-                Primitive.Render(device);
+            Primitive.Render(device);
         }
 
         public void RebuildLiquids()
