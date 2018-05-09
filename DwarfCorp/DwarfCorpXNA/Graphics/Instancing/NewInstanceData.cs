@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -6,7 +7,6 @@ namespace DwarfCorp
     /// An instance data represents a single instantiation of an object model
     /// at a given location, with a given color.
     /// </summary>
-    // Todo: Doesn't need to know about the manager anymore.
     public class NewInstanceData
     {
         public string Type;
@@ -16,6 +16,10 @@ namespace DwarfCorp
         public Color Color;
         public Color SelectionBufferColor;
         public Color VertexColorTint;
+
+        // Todo: Cache the transformed sprite bounds as well?
+        [JsonIgnore]
+        public Gui.TileSheet AtlasCache = null;
 
         public NewInstanceData(
             string Type,

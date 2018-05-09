@@ -12,14 +12,13 @@ namespace DwarfCorp
 {
     public class TiledInstanceGroup : InstanceGroup
     {
-        private const int InstanceQueueSize = 64;
+        private const int InstanceQueueSize = 1024;
 
         public InstanceRenderData RenderData;
         private TiledInstancedVertex[] Instances = new TiledInstancedVertex[InstanceQueueSize];
         private int InstanceCount = 0;
         private DynamicVertexBuffer InstanceBuffer = null;
-        private Dictionary<String, Gui.ITileSheet> Atlas = new Dictionary<string, Gui.ITileSheet>();
-        private List<Gui.JsonTileSheet> TileSheets = new List<Gui.JsonTileSheet>();
+        private Dictionary<String, Gui.TileSheet> Atlas = new Dictionary<string, Gui.TileSheet>();
         private Gui.TextureAtlas.Atlas RawAtlas = null;
         private Texture2D AtlasTexture = null;
         private bool NeedsRendered = true;
@@ -33,52 +32,55 @@ namespace DwarfCorp
             RenderData.Model = PrimitiveLibrary.Primitives[RenderData.PrimitiveName];
         }
 
-        private Vector4 GetTileBounds(String Texture, Rectangle Tile)
+        private Vector4 GetTileBounds(NewInstanceData Instance)
         {
-            Gui.ITileSheet sheet = null;
+            if (Instance.AtlasCache != null)
+                return Instance.AtlasCache.MapRectangleToUVBounds(Instance.SpriteBounds);
 
-            if (!Atlas.TryGetValue(Texture, out sheet))
+            Gui.TileSheet sheet = null;
+
+            if (!Atlas.TryGetValue(Instance.TextureAsset, out sheet))
             {
-                var tex = AssetManager.GetContentTexture(Texture);
+                var tex = AssetManager.GetContentTexture(Instance.TextureAsset);
                 if (tex == null) return Vector4.Zero; // Actually should never happen.
 
-                // Add sheet to set and recompile atlas.
-                TileSheets.Add(new Gui.JsonTileSheet
-                {
-                    Texture = Texture,
-                    Name = Texture,
-                    TileWidth = tex.Width,
-                    TileHeight = tex.Height
-                });
+                sheet = new Gui.TileSheet(tex.Width, tex.Height, new Rectangle(0, 0, tex.Width, tex.Height), tex.Width, tex.Height, false);
+                Atlas.Add(Instance.TextureAsset, sheet);
 
                 RebuildAtlas();
-
-                sheet = Atlas[Texture];
-
                 NeedsRendered = true;
             }
 
-            return sheet.MapRectangleToUVBounds(Tile);
+            Instance.AtlasCache = sheet;
+            return sheet.MapRectangleToUVBounds(Instance.SpriteBounds);
         }
 
         private void RebuildAtlas()
         {
-            RawAtlas = Gui.TextureAtlas.Compiler.Compile(TileSheets.Select(s =>
+            RawAtlas = Gui.TextureAtlas.Compiler.Compile(Atlas.Select(s =>
             {
-                var realTexture = AssetManager.GetContentTexture(s.Texture);
                 return new Gui.TextureAtlas.Entry
                 {
-                    Sheet = s,
-                    Rect = new Rectangle(0, 0, realTexture.Width, realTexture.Height),
-                    RealTexture = realTexture
+                    Sheet = new Gui.JsonTileSheet
+                    {
+                        Texture = s.Key,
+                        Name = s.Key,
+                        Type = Gui.JsonTileSheetType.TileSheet,
+                        TileHeight = s.Value.TileHeight,
+                        TileWidth = s.Value.TileWidth
+                    },
+                    Rect = new Rectangle(0, 0, s.Value.TileWidth, s.Value.TileHeight),
+                    RealTexture = AssetManager.GetContentTexture(s.Key)
                 };
             }).ToList());
 
-            Atlas = new Dictionary<string, Gui.ITileSheet>();
-
             foreach (var texture in RawAtlas.Textures)
-                Atlas[texture.Sheet.Name] = new Gui.TileSheet(RawAtlas.Dimensions.Width,
-                    RawAtlas.Dimensions.Height, texture.Rect, texture.Sheet.TileWidth, texture.Sheet.TileHeight, texture.Sheet.RepeatWhenUsedAsBorder);
+            {
+                var sheet = Atlas[texture.Sheet.Name];
+                sheet.SourceRect = texture.Rect;
+                sheet.TextureWidth = RawAtlas.Dimensions.Width;
+                sheet.TextureHeight = RawAtlas.Dimensions.Height;
+            }
         }
 
         public override void RenderInstance(NewInstanceData Instance, GraphicsDevice Device, Shader Effect, Camera Camera, InstanceRenderMode Mode)
@@ -92,7 +94,7 @@ namespace DwarfCorp
                 Transform = Instance.Transform,
                 Color = Instance.Color,
                 SelectionBufferColor = Instance.SelectionBufferColor,
-                TileBounds = GetTileBounds(Instance.TextureAsset, Instance.SpriteBounds)
+                TileBounds = GetTileBounds(Instance)
             };
 
             InstanceCount += 1;

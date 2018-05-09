@@ -13,9 +13,9 @@ namespace DwarfCorp.Gui
     /// </summary>
     public class TileSheet : ITileSheet
     {
-        public int TextureWidth { get; private set; }
-        public int TextureHeight { get; private set; }
-        public Rectangle SourceRect { get; private set; }
+        public int TextureWidth { get; set; }
+        public int TextureHeight { get; set; }
+        public Rectangle SourceRect { get; set; }
         public int TileWidth { get; private set; }
         public int TileHeight { get; private set; }
         public bool RepeatWhenUsedAsBorder { get; private set; }
