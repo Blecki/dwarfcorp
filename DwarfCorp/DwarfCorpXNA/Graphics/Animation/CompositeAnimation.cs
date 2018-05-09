@@ -52,10 +52,9 @@ namespace DwarfCorp
 
         public override void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
         {
+            SpriteSheet = new SpriteSheet((Texture2D)Composite.Target);
             if (CurrentFrame >= CompositeFrames.Count)
                 return;
-
-            SpriteSheet = new SpriteSheet((Texture2D)Composite.Target);
             CurrentOffset = Composite.PushFrame(CompositeFrames[CurrentFrame]);
             var rect = Composite.GetFrameRect(CurrentOffset);
             Primitive.SetFrame(SpriteSheet, rect, rect.Width / 32.0f, rect.Height / 32.0f, Color.White, Color.White, Flipped);

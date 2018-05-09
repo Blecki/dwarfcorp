@@ -21,6 +21,12 @@ namespace DwarfCorp.Gui.Input
         private MouseState OldMouseState = Mouse.GetState();
         private KeyboardState OldKeyboardState = Keyboard.GetState();
         
+        public bool WasConsoleTogglePressed()
+        {
+            // TODO
+            return false;
+        }
+
         public List<QueuedInput> GetInputQueue()
         {
             QueueLock.WaitOne();
