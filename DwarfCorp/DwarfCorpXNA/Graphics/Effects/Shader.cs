@@ -327,6 +327,7 @@ namespace DwarfCorp
             public static string Instanced_ = "Instanced";
             public static string TiledInstanced_ = "TiledInstanced";
             public static string SelectionBufferInstanced = "Instanced_SelectionBuffer";
+            public static string SelectionBufferTiledInstanced = "TiledInstanced_SelectionBuffer";
             public static string Silhouette = "Silhouette";
             public static string Stipple = "Textured_Stipple";
         }

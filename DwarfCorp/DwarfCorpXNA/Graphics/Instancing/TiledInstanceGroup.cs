@@ -40,7 +40,7 @@ namespace DwarfCorp
             if (!Atlas.TryGetValue(Texture, out sheet))
             {
                 var tex = AssetManager.GetContentTexture(Texture);
-                if (tex == null) return Vector4.Zero;
+                if (tex == null) return Vector4.Zero; // Actually should never happen.
 
                 // Add sheet to set and recompile atlas.
                 TileSheets.Add(new Gui.JsonTileSheet
@@ -51,22 +51,7 @@ namespace DwarfCorp
                     TileHeight = tex.Height
                 });
 
-                RawAtlas = Gui.TextureAtlas.Compiler.Compile(TileSheets.Select(s =>
-                {
-                    var realTexture = AssetManager.GetContentTexture(Texture);
-                    return new Gui.TextureAtlas.Entry
-                    {
-                        Sheet = s,
-                        Rect = new Rectangle(0, 0, realTexture.Width, realTexture.Height),
-                        RealTexture = realTexture
-                    };
-                }).ToList());
-
-                Atlas = new Dictionary<string, Gui.ITileSheet>();
-
-                foreach (var texture in RawAtlas.Textures)
-                        Atlas[texture.Sheet.Name] = new Gui.TileSheet(RawAtlas.Dimensions.Width,
-                            RawAtlas.Dimensions.Height, texture.Rect, texture.Sheet.TileWidth, texture.Sheet.TileHeight, texture.Sheet.RepeatWhenUsedAsBorder);
+                RebuildAtlas();
 
                 sheet = Atlas[Texture];
 
@@ -76,10 +61,31 @@ namespace DwarfCorp
             return sheet.MapRectangleToUVBounds(Tile);
         }
 
+        private void RebuildAtlas()
+        {
+            RawAtlas = Gui.TextureAtlas.Compiler.Compile(TileSheets.Select(s =>
+            {
+                var realTexture = AssetManager.GetContentTexture(s.Texture);
+                return new Gui.TextureAtlas.Entry
+                {
+                    Sheet = s,
+                    Rect = new Rectangle(0, 0, realTexture.Width, realTexture.Height),
+                    RealTexture = realTexture
+                };
+            }).ToList());
+
+            Atlas = new Dictionary<string, Gui.ITileSheet>();
+
+            foreach (var texture in RawAtlas.Textures)
+                Atlas[texture.Sheet.Name] = new Gui.TileSheet(RawAtlas.Dimensions.Width,
+                    RawAtlas.Dimensions.Height, texture.Rect, texture.Sheet.TileWidth, texture.Sheet.TileHeight, texture.Sheet.RepeatWhenUsedAsBorder);
+        }
+
         public override void RenderInstance(NewInstanceData Instance, GraphicsDevice Device, Shader Effect, Camera Camera, InstanceRenderMode Mode)
         {
             if (Mode == InstanceRenderMode.SelectionBuffer && !RenderData.RenderInSelectionBuffer)
                 return;
+            if (InstanceCount >= InstanceQueueSize) return;
 
             Instances[InstanceCount] = new TiledInstancedVertex
             {
@@ -90,7 +96,7 @@ namespace DwarfCorp
             };
 
             InstanceCount += 1;
-            if (InstanceCount == InstanceQueueSize)
+            if (InstanceCount >= InstanceQueueSize)
                 Flush(Device, Effect, Camera, Mode);
         }
 
@@ -98,9 +104,18 @@ namespace DwarfCorp
         {
             if (InstanceCount == 0) return;
 
-            if (NeedsRendered)
+            if (NeedsRendered || (AtlasTexture != null && AtlasTexture.IsDisposed))
             {
-                if (RawAtlas == null || RawAtlas.Textures.Count == 0) return;
+                if (RawAtlas == null || RawAtlas.Textures.Count == 0)
+                {
+                    RebuildAtlas();
+                    if (RawAtlas == null || RawAtlas.Textures.Count == 0)
+                    {
+                        // WTF.
+                        InstanceCount = 0;
+                        return;
+                    }
+                }
 
                 AtlasTexture = new Texture2D(Device, RawAtlas.Dimensions.Width, RawAtlas.Dimensions.Height);
 
@@ -118,14 +133,13 @@ namespace DwarfCorp
             }
 
             if (InstanceBuffer == null)
-                InstanceBuffer = new DynamicVertexBuffer(Device, InstancedVertex.VertexDeclaration, InstanceQueueSize, BufferUsage.None);
-
+                InstanceBuffer = new DynamicVertexBuffer(Device, TiledInstancedVertex.VertexDeclaration, InstanceQueueSize, BufferUsage.None);
             
             Device.RasterizerState = new RasterizerState { CullMode = CullMode.None };
             if (Mode == InstanceRenderMode.Normal)
                 Effect.SetTiledInstancedTechnique();
             else
-                Effect.CurrentTechnique = Effect.Techniques[Shader.Technique.SelectionBufferInstanced];
+                Effect.CurrentTechnique = Effect.Techniques[Shader.Technique.SelectionBufferTiledInstanced];
 
             Effect.EnableWind = RenderData.EnableWind;
             Effect.EnableLighting = true;
@@ -139,7 +153,7 @@ namespace DwarfCorp
             BlendState blendState = Device.BlendState;
             Device.BlendState = Mode == InstanceRenderMode.Normal ? BlendState.NonPremultiplied : BlendState.Opaque;
 
-            Effect.MainTexture = RenderData.Model.Texture;
+            Effect.MainTexture = AtlasTexture;
             Effect.LightRampTint = Color.White;
 
             InstanceBuffer.SetData(Instances, 0, InstanceCount, SetDataOptions.Discard);

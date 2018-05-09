@@ -143,13 +143,13 @@ namespace DwarfCorp
         {
         }
 
+        // Todo: Remove unused argument addToCollisionManager
         public Body(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToCollisionManager) :
             base(name, manager)
         {
             BoundingBoxSize = boundingBoxExtents;
             LocalBoundingBoxOffset = boundingBoxPos;
 
-            //SetFlag(Flag.AddToCollisionManager, addToCollisionManager);
             LocalTransform = localTransform;
             globalTransform = localTransform;
 

@@ -592,6 +592,22 @@ TVertexToPixel TexturedVSInstanced( float4 inPos : POSITION,
 		              instanceColor, float3(1, 1, 1), max_lights);
 }
 
+TVertexToPixel TexturedVSTiledInstanced(float4 inPos : POSITION,
+	float2 inTexCoords : TEXCOORD0,
+	float4 inColor : COLOR0,
+	float4 inTexSource : TEXCOORD1,
+	float4 tint : COLOR1,
+	float4x4 transform : BLENDWEIGHT,
+	float4 instanceColor : COLOR2,
+	float4 tileTexSource : TEXCOORD5,
+	uniform int max_lights)
+{
+	float2 newTexCoord = inTexCoords * float2(tileTexSource.z - tileTexSource.x, tileTexSource.w - tileTexSource.y);
+	newTexCoord += float2(tileTexSource.x, tileTexSource.y);
+	return TexturedVS(inPos, newTexCoord, inColor, inTexSource, transpose(transform),
+		instanceColor, float3(1, 1, 1), max_lights);
+}
+
 TVertexToPixel TexturedVSInstanced_1Light(float4 inPos : POSITION,
 	float2 inTexCoords : TEXCOORD0,
 	float4 inColor : COLOR0,
@@ -601,6 +617,21 @@ TVertexToPixel TexturedVSInstanced_1Light(float4 inPos : POSITION,
 	float4 instanceColor : COLOR2)
 {
 	return TexturedVS_1Light(inPos, inTexCoords, inColor, inTexSource, transpose(transform),
+		instanceColor, float3(1, 1, 1));
+}
+
+TVertexToPixel TexturedVSTiledInstanced_1Light(float4 inPos : POSITION,
+	float2 inTexCoords : TEXCOORD0,
+	float4 inColor : COLOR0,
+	float4 inTexSource : TEXCOORD1,
+	float4 tint : COLOR1,
+	float4x4 transform : BLENDWEIGHT,
+	float4 instanceColor : COLOR2,
+	float4 tileTexSource : TEXCOORD5)
+{
+	float2 newTexCoord = inTexCoords * float2(tileTexSource.z - tileTexSource.x, tileTexSource.w - tileTexSource.y);
+	newTexCoord += float2(tileTexSource.x, tileTexSource.y);
+	return TexturedVS_1Light(inPos, newTexCoord, inColor, inTexSource, transpose(transform),
 		instanceColor, float3(1, 1, 1));
 }
 
@@ -615,6 +646,17 @@ SelectionBufferToPixel SelectionVSInstanced(float4 inPos : POSITION,
 	float4 id : COLOR3)
 {
 	return SelectionVS(inPos, inTexCoords, transpose(transform) , id);
+}
+
+SelectionBufferToPixel SelectionVSTiledInstanced(float4 inPos : POSITION,
+	float2 inTexCoords : TEXCOORD0,
+	float4x4 transform : BLENDWEIGHT,
+	float4 id : COLOR3,
+	float4 tileTexSource : TEXCOORD5)
+{
+	float2 newTexCoord = inTexCoords * float2(tileTexSource.z - tileTexSource.x, tileTexSource.w - tileTexSource.y);
+	newTexCoord += float2(tileTexSource.x, tileTexSource.y);
+	return SelectionVS(inPos, newTexCoord, transpose(transform), id);
 }
 
 
@@ -1185,12 +1227,178 @@ technique Instanced_16_Lights
 	}
 }
 
+technique TiledInstanced
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(MAX_LIGHTS);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique TiledInstanced_1_Light
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced_1Light();
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique TiledInstanced_2_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(2);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique TiledInstanced_3_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(3);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique TiledInstanced_4_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(4);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique TiledInstanced_5_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(5);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique TiledInstanced_6_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(6);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+
+technique TiledInstanced_7_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(7);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+
+technique TiledInstanced_8_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(8);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique TiledInstanced_9_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(9);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique TiledInstanced_10_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(10);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique TiledInstanced_11_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(11);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique TiledInstanced_12_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(12);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique TiledInstanced_13_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(13);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+technique TiledInstanced_14_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(14);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+
+technique TiledInstanced_15_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(15);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
+
+technique TiledInstanced_16_Lights
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 TexturedVSTiledInstanced(16);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
+	}
+}
+
 
 technique Instanced_SelectionBuffer
 {
 	pass Pass0
 	{
 		VertexShader = compile vs_3_0 SelectionVSInstanced();
+		PixelShader = compile ps_3_0 SelectionPS_Alphatest();
+	}
+}
+
+technique TiledInstanced_SelectionBuffer
+{
+	pass Pass0
+	{
+		VertexShader = compile vs_3_0 SelectionVSTiledInstanced();
 		PixelShader = compile ps_3_0 SelectionPS_Alphatest();
 	}
 }

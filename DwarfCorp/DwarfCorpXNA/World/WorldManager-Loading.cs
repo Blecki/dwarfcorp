@@ -175,8 +175,7 @@ namespace DwarfCorp
 
                 PrimitiveLibrary.Initialize(GraphicsDevice, Content);
 
-                NewInstanceManager = new NewInstanceManager(GraphicsDevice, new BoundingBox(origin - extents, origin + extents),
-                    Content);
+                InstanceRenderer = new InstanceRenderer(GraphicsDevice, Content);
 
                 Color[] white = new Color[1];
                 white[0] = Color.White;

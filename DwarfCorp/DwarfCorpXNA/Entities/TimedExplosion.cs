@@ -129,7 +129,7 @@ namespace DwarfCorp
             AddChild(new Shadow(manager));
 
             var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32);
-            AddChild(new SimpleSprite(Manager, "sprite", Matrix.Identity, true, spriteSheet, new Point(4, 5)))
+            AddChild(new SimpleSprite(Manager, "sprite", Matrix.Identity, spriteSheet, new Point(4, 5)))
                 .SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);

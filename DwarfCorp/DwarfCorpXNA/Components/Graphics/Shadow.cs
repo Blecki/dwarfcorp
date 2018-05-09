@@ -74,7 +74,7 @@ namespace DwarfCorp
         }
 
         public Shadow(ComponentManager manager, string name, Matrix localTransform, SpriteSheet spriteSheet) :
-            base(manager, name, localTransform, false, spriteSheet, Point.Zero)
+            base(manager, name, localTransform, spriteSheet, Point.Zero)
         {
             OrientationType = OrientMode.Fixed;
             GlobalScale = LocalTransform.Left.Length();

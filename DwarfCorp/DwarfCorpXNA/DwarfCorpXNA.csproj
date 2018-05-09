@@ -277,7 +277,6 @@
     <Compile Include="Graphics\Instancing\InstanceRenderData.cs" />
     <Compile Include="Graphics\Instancing\InstanceRenderer.cs" />
     <Compile Include="Graphics\Instancing\NewInstanceData.cs" />
-    <Compile Include="Graphics\Instancing\NewInstanceManager.cs" />
     <Compile Include="Graphics\Primitives\RawPrimitive.cs" />
     <Compile Include="Gui\Widgets\ContextMenu.cs" />
     <Compile Include="Gui\Widgets\CollapsableFrame.cs" />

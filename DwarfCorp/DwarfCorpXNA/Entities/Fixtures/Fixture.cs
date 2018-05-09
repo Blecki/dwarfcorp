@@ -93,7 +93,7 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(manager);
 
-            AddChild(new SimpleSprite(manager, "Sprite", Matrix.Identity, false, Asset, Frame)
+            AddChild(new SimpleSprite(manager, "Sprite", Matrix.Identity, Asset, Frame)
             {
                 OrientationType = OrientMode
             }).SetFlag(Flag.ShouldSerialize, false);

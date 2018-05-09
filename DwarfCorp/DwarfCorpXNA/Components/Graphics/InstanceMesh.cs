@@ -54,12 +54,9 @@ namespace DwarfCorp
         protected void OnDeserialized(StreamingContext context)
         {
             Instance = new NewInstanceData(
-                (context.Context as WorldManager).NewInstanceManager,
                 ModelType,
-                Vector3.One,
                 GlobalTransform,
-                Tint,
-                true);
+                Tint);
             Instance.SelectionBufferColor = this.GetGlobalIDColor();
         }
 
@@ -74,34 +71,8 @@ namespace DwarfCorp
             PropogateTransforms();
             UpdateBoundingBox();
             ModelType = modelType;
-            Instance = new NewInstanceData(Manager.World.NewInstanceManager, ModelType,
-                Vector3.One, GlobalTransform, Tint, true);
+            Instance = new NewInstanceData(ModelType, GlobalTransform, Tint);
             Instance.SelectionBufferColor = this.GetGlobalIDColor();
-        }
-
-        //private bool firstIter = true;
-
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
-            //bool saveHasMoved = HasMoved || firstIter;
-
-            base.Update(gameTime, chunks, camera);
-
-            //if (Instance != null && IsVisible && (saveHasMoved || firstIter || Instance.Color != Tint))
-            //{
-            //    Instance.Color = Tint;
-            //    Instance.Transform = GlobalTransform;
-            //    Instance.SelectionBufferColor = this.GetGlobalIDColor();
-            //    firstIter = false;
-            //}
-
-            //Instance.Visible = IsVisible;
-        }
-
-        public override void Die()
-        {
-            //Manager.World.NewInstanceManager.RemoveInstance(Instance);
-            base.Die();
         }
 
         new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
@@ -113,7 +84,21 @@ namespace DwarfCorp
                 Instance.Color = Tint;
                 Instance.Transform = GlobalTransform;
                 Instance.SelectionBufferColor = this.GetGlobalIDColor();
-                Manager.World.NewInstanceManager.RenderInstance(Instance, graphicsDevice, effect, camera, InstanceRenderMode.Normal);
+                Manager.World.InstanceRenderer.RenderInstance(Instance, graphicsDevice, effect, camera, InstanceRenderMode.Normal);
+            }
+        }
+
+        public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+            GraphicsDevice graphicsDevice, Shader effect)
+        {
+            base.RenderSelectionBuffer(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect);
+
+            if (IsVisible)
+            {
+                Instance.Color = Tint;
+                Instance.Transform = GlobalTransform;
+                Instance.SelectionBufferColor = this.GetGlobalIDColor();
+                Manager.World.InstanceRenderer.RenderInstance(Instance, graphicsDevice, effect, camera, InstanceRenderMode.SelectionBuffer);
             }
         }
     }

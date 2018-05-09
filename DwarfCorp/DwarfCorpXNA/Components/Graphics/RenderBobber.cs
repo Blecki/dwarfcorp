@@ -56,7 +56,7 @@ namespace DwarfCorp
             float mag,
             float rate, 
             float offset)
-            : base(Manager, Name, LocalTransform, true, Sheet, Frame)
+            : base(Manager, Name, LocalTransform, Sheet, Frame)
         {
             Magnitude = mag;
             Rate = rate;

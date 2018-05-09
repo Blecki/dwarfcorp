@@ -46,22 +46,21 @@ namespace DwarfCorp
 
             var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32);
 
-            // Todo: Should these be instances?
             AddChild(new SimpleSprite(Manager, "chair top", Matrix.CreateRotationX((float)Math.PI * 0.5f),
-                false, spriteSheet, new Point(2, 6))
+                spriteSheet, new Point(2, 6))
             {
                 OrientationType = SimpleSprite.OrientMode.Fixed,
             }).SetFlag(Flag.ShouldSerialize, false);
 
             AddChild(new SimpleSprite(Manager, "chair legs 1", Matrix.CreateTranslation(0, -0.05f, 0),
-                false, spriteSheet, new Point(3, 6))
+                spriteSheet, new Point(3, 6))
             {
                 OrientationType = SimpleSprite.OrientMode.Fixed
             }).SetFlag(Flag.ShouldSerialize, false);
 
             AddChild(new SimpleSprite(Manager, "chair legs 2",
                 Matrix.CreateTranslation(0, -0.05f, 0) * Matrix.CreateRotationY((float)Math.PI * 0.5f),
-                false, spriteSheet, new Point(3, 6))
+                spriteSheet, new Point(3, 6))
             {
                 OrientationType = SimpleSprite.OrientMode.Fixed
             }).SetFlag(Flag.ShouldSerialize, false);

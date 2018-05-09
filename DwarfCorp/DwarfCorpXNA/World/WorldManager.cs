@@ -171,7 +171,7 @@ namespace DwarfCorp
 
         // Responsible for handling instances of particular primitives (or models)
         // and drawing them to the screen
-        public NewInstanceManager NewInstanceManager;
+        public InstanceRenderer InstanceRenderer;
 
         // Handles loading of game assets
         public ContentManager Content;
@@ -404,7 +404,7 @@ namespace DwarfCorp
                     ComponentRenderer.Render(renderables, new DwarfTime(), ChunkManager, Camera,
                         DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
                         ComponentRenderer.WaterRenderType.None, 0);
-                    NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera,
+                    InstanceRenderer.Flush(GraphicsDevice, DefaultShader, Camera,
                         InstanceRenderMode.Normal);
 
 
@@ -806,7 +806,7 @@ namespace DwarfCorp
                 //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Components");
 
                 //GamePerformance.Instance.StartTrackPerformance("Render - Selection Buffer - Instances");
-                NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera,
+                InstanceRenderer.Flush(GraphicsDevice, DefaultShader, Camera,
                     InstanceRenderMode.SelectionBuffer);
                 //GamePerformance.Instance.StopTrackPerformance("Render - Selection Buffer - Instances");
 
@@ -874,7 +874,7 @@ namespace DwarfCorp
                 Camera,
                 DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader,
                 ComponentRenderer.WaterRenderType.None, lastWaterHeight);
-            NewInstanceManager.RenderInstances(GraphicsDevice, DefaultShader, Camera, InstanceRenderMode.Normal);
+            InstanceRenderer.Flush(GraphicsDevice, DefaultShader, Camera, InstanceRenderMode.Normal);
 
             if (Master.CurrentToolMode == GameMaster.ToolMode.BuildZone
                 || Master.CurrentToolMode == GameMaster.ToolMode.BuildWall ||

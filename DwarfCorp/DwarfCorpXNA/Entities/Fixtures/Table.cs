@@ -217,26 +217,26 @@ namespace DwarfCorp
 
             // Todo: Should these be instances?
             AddChild(new SimpleSprite(Manager, "chair top", Matrix.CreateRotationX((float)Math.PI * 0.5f),
-                false, spriteSheet, new Point(0, 6))
+                spriteSheet, new Point(0, 6))
             {
                 OrientationType = SimpleSprite.OrientMode.Fixed,
             }).SetFlagRecursive(Flag.ShouldSerialize, false);
 
             AddChild(new SimpleSprite(Manager, "chair legs 1", Matrix.CreateTranslation(0, -0.05f, 0),
-                false, spriteSheet, new Point(1, 6))
+                spriteSheet, new Point(1, 6))
             {
                 OrientationType = SimpleSprite.OrientMode.Fixed
             }).SetFlagRecursive(Flag.ShouldSerialize, false);
 
             AddChild(new SimpleSprite(Manager, "chair legs 2",
                 Matrix.CreateTranslation(0, -0.05f, 0) * Matrix.CreateRotationY((float)Math.PI * 0.5f),
-                false, spriteSheet, new Point(1, 6))
+                spriteSheet, new Point(1, 6))
             {
                 OrientationType = SimpleSprite.OrientMode.Fixed
             }).SetFlagRecursive(Flag.ShouldSerialize, false);
 
             if (fixtureAsset != null)
-                AddChild(new SimpleSprite(Manager, "", Matrix.CreateTranslation(new Vector3(0, 0.3f, 0)), false, fixtureAsset, fixtureFrame)).SetFlagRecursive(Flag.ShouldSerialize, false);
+                AddChild(new SimpleSprite(Manager, "", Matrix.CreateTranslation(new Vector3(0, 0.3f, 0)), fixtureAsset, fixtureFrame)).SetFlagRecursive(Flag.ShouldSerialize, false);
 
             AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
             {

@@ -92,7 +92,7 @@ namespace DwarfCorp
             }
             else
             {
-                Sprite = AddChild(new SimpleSprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f), false, spriteSheet, new Point(0, 0))
+                Sprite = AddChild(new SimpleSprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f), spriteSheet, new Point(0, 0))
                 {
                     OrientationType = SimpleSprite.OrientMode.Fixed
                 }) as SimpleSprite;
@@ -118,7 +118,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    Sprite2 = AddChild(new SimpleSprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f) * Matrix.CreateRotationZ((float)Math.PI * 0.5f), false, spriteSheet, new Point(0, 0))
+                    Sprite2 = AddChild(new SimpleSprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f) * Matrix.CreateRotationZ((float)Math.PI * 0.5f), spriteSheet, new Point(0, 0))
                     {
                         OrientationType = SimpleSprite.OrientMode.Fixed
                     }) as SimpleSprite;

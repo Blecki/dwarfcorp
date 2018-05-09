@@ -69,7 +69,7 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(Manager);
 
-            AddChild(new SimpleSprite(Manager, "sprite", Matrix.Identity, false,
+            AddChild(new SimpleSprite(Manager, "sprite", Matrix.Identity,
                 new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32),
                 new Point(0, 2))
             {

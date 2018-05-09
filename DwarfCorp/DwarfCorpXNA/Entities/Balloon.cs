@@ -52,7 +52,7 @@ namespace DwarfCorp
         {
             var tex = new SpriteSheet(ContentPaths.Entities.Balloon.Sprites.balloon);
 
-            var balloonSprite = AddChild(new SimpleSprite(Manager, "BALLOON", Matrix.Identity, false, tex, Point.Zero)) as SimpleSprite;
+            var balloonSprite = AddChild(new SimpleSprite(Manager, "BALLOON", Matrix.Identity, tex, Point.Zero)) as SimpleSprite;
             balloonSprite.OrientationType = SimpleSprite.OrientMode.Spherical;
             balloonSprite.SetFlag(Flag.ShouldSerialize, false);
             balloonSprite.AutoSetWorldSize();

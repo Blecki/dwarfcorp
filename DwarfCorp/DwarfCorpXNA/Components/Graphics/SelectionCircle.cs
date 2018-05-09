@@ -63,7 +63,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
-            AddChild(new SimpleSprite(Manager, "Sprite", Matrix.Identity, false, new SpriteSheet(ContentPaths.Effects.selection_circle), Point.Zero)
+            AddChild(new SimpleSprite(Manager, "Sprite", Matrix.Identity, new SpriteSheet(ContentPaths.Effects.selection_circle), Point.Zero)
             {
                 LightsWithVoxels = false,
                 OrientationType = SimpleSprite.OrientMode.Fixed
