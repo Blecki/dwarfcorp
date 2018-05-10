@@ -89,7 +89,7 @@ namespace DwarfCorp
         {
             Type = planType;
             Name = "Plan to " + target;
-            PlannerTimer = new Timer(60.0f, false);
+            PlannerTimer = new Timer(60.0f, false, Timer.TimerMode.Real);
             MaxExpansions = 10000;
             PathOut = pathOut;
             TargetName = target;
@@ -368,7 +368,7 @@ namespace DwarfCorp
                     yield return Act.Status.Running;
                     Creature.CurrentCharacterMode = CharacterMode.Idle;
                     Creature.Physics.Velocity = Vector3.Zero;
-                    Timer planTimeout = new Timer(MathFunctions.Rand(10.0f, 30.0f), false);
+                    Timer planTimeout = new Timer(MathFunctions.Rand(10.0f, 30.0f), false, Timer.TimerMode.Real);
                     List<VoxelHandle> exploredVoxels = new List<VoxelHandle>();
                     Color debugColor = new Color(MathFunctions.RandVector3Cube() + Vector3.One * 0.5f);
                     float debugScale = MathFunctions.Rand() * 0.5f + 0.5f;

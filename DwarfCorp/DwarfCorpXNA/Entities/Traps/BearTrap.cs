@@ -108,7 +108,7 @@ namespace DwarfCorp
 
             var sensor = AddChild(new Sensor(manager, "Sensor", Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
             {
-                FireTimer = new Timer(0.5f, false)
+                FireTimer = new Timer(0.5f, false, Timer.TimerMode.Real)
             }) as Sensor;
             sensor.OnSensed += Sensor_OnSensed;
             sensor.SetFlag(Flag.ShouldSerialize, false);

@@ -55,8 +55,8 @@ namespace DwarfCorp
         public MeleeAct(CreatureAI agent, string target) :
             base(agent)
         {
-            FailTimer = new Timer(5.0f, false);
-            Timeout = new Timer(100.0f, false);
+            FailTimer = new Timer(5.0f, false, Timer.TimerMode.Real);
+            Timeout = new Timer(100.0f, false, Timer.TimerMode.Real);
             Training = false;
             Name = "Attack!";
             EnergyLoss = 200.0f;
@@ -67,8 +67,8 @@ namespace DwarfCorp
         public MeleeAct(CreatureAI agent, Body target) :
             base(agent)
         {
-            FailTimer = new Timer(5.0f, false);
-            Timeout = new Timer(100.0f, false);
+            FailTimer = new Timer(5.0f, false, Timer.TimerMode.Real);
+            Timeout = new Timer(100.0f, false, Timer.TimerMode.Real);
             Training = false;
             Name = "Attack!";
             EnergyLoss = 200.0f;
@@ -130,7 +130,7 @@ namespace DwarfCorp
 
                 MoveAction furthest = neighbors.Last();
                 bool reachedTarget = false;
-                Timer timeout = new Timer(2.0f, true);
+                Timer timeout = new Timer(2.0f, true, Timer.TimerMode.Real);
                 while (!reachedTarget)
                 {
                     Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, furthest.DestinationVoxel.WorldPosition + Vector3.One*0.5f,

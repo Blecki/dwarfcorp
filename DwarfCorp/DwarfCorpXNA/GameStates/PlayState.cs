@@ -208,7 +208,7 @@ namespace DwarfCorp.GameStates
             }
 
             World.Unpause();
-            AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Game);
+            AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Real);
 
             ContextCommands = new List<DwarfCorp.ContextCommands.ContextCommand>();
             ContextCommands.Add(new ContextCommands.ChopCommand());

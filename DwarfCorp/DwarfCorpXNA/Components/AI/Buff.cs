@@ -22,7 +22,7 @@ namespace DwarfCorp
         public Buff(float time)
         {
             EffectTime = new Timer(time, true);
-            ParticleTimer = new Timer(0.25f, false);
+            ParticleTimer = new Timer(0.25f, false, Timer.TimerMode.Real);
         }
 
         /// <summary> Time that the effect persists for </summary>

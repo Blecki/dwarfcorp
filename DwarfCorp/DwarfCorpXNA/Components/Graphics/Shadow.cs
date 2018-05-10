@@ -79,7 +79,7 @@ namespace DwarfCorp
             OrientationType = OrientMode.Fixed;
             GlobalScale = LocalTransform.Left.Length();
             LightsWithVoxels = false;
-            UpdateTimer = new Timer(0.5f, false);
+            UpdateTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
             Tint = Color.Black;
             OriginalTransform = LocalTransform;
         }

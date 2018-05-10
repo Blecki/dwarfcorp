@@ -128,7 +128,7 @@ namespace DwarfCorp
             PlanService = planService;
             Allies = allies;
             Controller = new PIDController(Stats.MaxAcceleration, Stats.StoppingForce * 2, 0.0f);
-            JumpTimer = new Timer(0.2f, true);
+            JumpTimer = new Timer(0.2f, true, Timer.TimerMode.Real);
             Status = new CreatureStatus();
             IsHeadClear = true;
             NoiseMaker = new NoiseMaker();
@@ -251,7 +251,7 @@ namespace DwarfCorp
             }
         }
 
-        public Timer DrawLifeTimer = new Timer(0.25f, true);
+        public Timer DrawLifeTimer = new Timer(0.25f, true, Timer.TimerMode.Real);
 
         /// <summary> Convenience wrapper around Status.IsAsleep </summary>
         public bool IsAsleep

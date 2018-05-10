@@ -57,7 +57,7 @@ namespace DwarfCorp
 
         IEnumerable<Act.Status> ChirpRandomly()
         {
-            Timer chirpTimer = new Timer(MathFunctions.Rand(6f, 10f), false);
+            Timer chirpTimer = new Timer(MathFunctions.Rand(6f, 10f), false, Timer.TimerMode.Real);
             while (true)
             {
                 chirpTimer.Update(DwarfTime.LastTime);
