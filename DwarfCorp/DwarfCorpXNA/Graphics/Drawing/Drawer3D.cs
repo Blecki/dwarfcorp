@@ -535,6 +535,7 @@ namespace DwarfCorp
                         Effect.LightRampTint = Color.White;
                         // Todo: Alpha pulse
                         Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 1.0f);
+                        var prevTechnique = Effect.CurrentTechnique;
                         Effect.CurrentTechnique = Effect.Techniques[Shader.Technique.Stipple];
                         var pos_distorted = pos + Vector3.Up * 0.15f + VertexNoise.GetNoiseVectorFromRepeatingTexture(pos + Vector3.One * 0.5f);
                         Effect.World = Matrix.CreateTranslation(pos_distorted);
@@ -548,6 +549,7 @@ namespace DwarfCorp
                         Effect.LightRampTint = Color.White;
                         Effect.VertexColorTint = Color.White;
                         Effect.World = Matrix.Identity;
+                        Effect.CurrentTechnique = prevTechnique;
                     });
                 Designations.TriangleCache.Draw(Effect, Camera);
                 foreach (var box in Boxes)
