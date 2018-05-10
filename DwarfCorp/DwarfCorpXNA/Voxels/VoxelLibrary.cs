@@ -177,9 +177,9 @@ namespace DwarfCorp
 
             var shader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
 
-                var sqrt = (int)(Math.Ceiling(Math.Sqrt(PrimitiveMap.Count)));
-                var width = MathFunctions.NearestPowerOf2(sqrt * Sheet.TileWidth);
-                var height = MathFunctions.NearestPowerOf2(sqrt * Sheet.TileWidth);
+            var sqrt = (int)(Math.Ceiling(Math.Sqrt(PrimitiveMap.Count)));
+            var width = MathFunctions.NearestPowerOf2(sqrt * Sheet.TileWidth);
+            var height = MathFunctions.NearestPowerOf2(sqrt * Sheet.TileWidth);
 
             RenderTarget2D toReturn = new RenderTarget2D(device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth16, 16, RenderTargetUsage.PreserveContents);
         
