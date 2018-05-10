@@ -216,7 +216,7 @@ namespace DwarfCorp
 
             var newTransform = Matrix.Identity;
 
-            if (Parent != null)
+            if ((Parent as Body) != null)
                 newTransform = LocalTransform * (Parent as Body).GlobalTransform;
             else
                 newTransform = LocalTransform;

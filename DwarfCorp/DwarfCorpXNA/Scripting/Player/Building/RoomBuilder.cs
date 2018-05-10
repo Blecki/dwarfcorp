@@ -583,7 +583,7 @@ namespace DwarfCorp
                     des.Order.VoxelOrders.Remove(des);
                     buildRoomDes = des.Order;
                 }
-                if (buildRoomDes.DisplayWidget != null)
+                if (buildRoomDes != null && buildRoomDes.DisplayWidget != null)
                 {
                     World.Gui.DestroyWidget(buildRoomDes.DisplayWidget);
                 }
