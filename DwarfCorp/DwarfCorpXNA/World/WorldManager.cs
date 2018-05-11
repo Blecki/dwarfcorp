@@ -328,7 +328,7 @@ namespace DwarfCorp
             LazyActions.Add(action);
         }
         
-        private class WorldPopup
+        public class WorldPopup
         {
             public Widget Widget;
             public Body BodyToTrack;
@@ -1314,12 +1314,12 @@ namespace DwarfCorp
             }
         }
 
-        public void MakeWorldPopup(string text, Body body, float screenOffset = -10, float time = 30.0f)
+        public WorldPopup MakeWorldPopup(string text, Body body, float screenOffset = -10, float time = 30.0f)
         {
-            MakeWorldPopup(new TimedIndicatorWidget() { Text = text, DeathTimer = new Timer(time, true, Timer.TimerMode.Real) }, body, new Vector2(0, screenOffset));
+            return MakeWorldPopup(new TimedIndicatorWidget() { Text = text, DeathTimer = new Timer(time, true, Timer.TimerMode.Real) }, body, new Vector2(0, screenOffset));
         }
 
-        public void MakeWorldPopup(Widget widget, Body body, Vector2 ScreenOffset)
+        public WorldPopup MakeWorldPopup(Widget widget, Body body, Vector2 ScreenOffset)
         {
             if (LastWorldPopup.ContainsKey(body.GlobalID))
             {
@@ -1332,7 +1332,7 @@ namespace DwarfCorp
                 BodyToTrack = body,
                 ScreenOffset = ScreenOffset 
             };
-
+            return LastWorldPopup[body.GlobalID];
         }
     }
 }

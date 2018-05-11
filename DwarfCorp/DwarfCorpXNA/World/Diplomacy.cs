@@ -366,7 +366,7 @@ namespace DwarfCorp
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
             Politics politics = GetPolitics(natives, natives.World.PlayerFaction);
             politics.WasAtWar = true;
-            List<CreatureAI> creatures = natives.World.MonsterSpawner.Spawn(natives.World.MonsterSpawner.GenerateSpawnEvent(natives, natives.World.PlayerFaction, MathFunctions.Random.Next(5) + 1, false));
+            List<CreatureAI> creatures = natives.World.MonsterSpawner.Spawn(natives.World.MonsterSpawner.GenerateSpawnEvent(natives, natives.World.PlayerFaction, MathFunctions.Random.Next(World.InitialEmbark.Difficulty) + 1, false));
             var party = new WarParty(natives.World.Time.CurrentDate)
             {
                 Creatures = creatures,
@@ -547,25 +547,10 @@ namespace DwarfCorp
 
                         if (!tradePort.IsRestingOnZone(creature.Position)) continue;
 
-                        if (envoy.ExpiditionState != Expedition.State.Trading)
+                        if (envoy.ExpiditionState != Expedition.State.Trading ||
+                            !envoy.IsTradeWidgetValid())
                         {
-                            var traders = envoy;
-                            World.MakeWorldPopup(new Goals.TimedIndicatorWidget()
-                            {
-                                Text = String.Format("Click here to trade with the {0}!", envoy.OwnerFaction.Race.Name),
-                                OnClick = (gui, sender) =>
-                                {
-                                    World.Paused = true;
-                                    GameState.Game.StateManager.PushState(new Dialogue.DialogueState(
-                                        GameState.Game,
-                                        GameState.Game.StateManager,
-                                        envoy,
-                                        World.PlayerFaction,
-                                        World));
-                                },
-                                ShouldKeep = () => { return traders.ExpiditionState == Expedition.State.Trading && !traders.ShouldRemove; }
-                            }, traders.Creatures.First().Physics, new Vector2(0, -10));
-                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
+                            envoy.MakeTradeWidget(World);
                         }
                         envoy.ExpiditionState = Expedition.State.Trading;
                         break;
@@ -591,7 +576,13 @@ namespace DwarfCorp
                         }
                     }
                 }
-
+                else
+                {
+                    if (!envoy.IsTradeWidgetValid())
+                    {
+                        envoy.MakeTradeWidget(World);
+                    }
+                }
                 if (envoy.Creatures.All(creature => creature.IsDead))
                 {
                     envoy.ShouldRemove = true;

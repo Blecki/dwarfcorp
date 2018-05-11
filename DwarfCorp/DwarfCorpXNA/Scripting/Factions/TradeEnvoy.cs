@@ -63,6 +63,39 @@ namespace DwarfCorp
         public List<ResourceAmount> TradeGoods { get; set; }
         public DateTimer WaitForTradeTimer = null;
         public DwarfBux TributeDemanded = 0m;
+        [JsonIgnore]
+        public WorldManager.WorldPopup TradeWidget = null;
+
+        public bool IsTradeWidgetValid()
+        {
+            return TradeWidget != null && TradeWidget.BodyToTrack != null && !TradeWidget.BodyToTrack.IsDead;
+        }
+
+        public void MakeTradeWidget(WorldManager World)
+        {
+            var liveCreatures = Creatures.Where(creature => creature != null && !creature.IsDead);
+            if (!liveCreatures.Any())
+            {
+                return;
+            }
+
+            TradeWidget = World.MakeWorldPopup(new Goals.TimedIndicatorWidget()
+            {
+                Text = String.Format("Click here to trade with the {0}!", OwnerFaction.Race.Name),
+                OnClick = (gui, sender) =>
+                {
+                    World.Paused = true;
+                    GameState.Game.StateManager.PushState(new Dialogue.DialogueState(
+                        GameState.Game,
+                        GameState.Game.StateManager,
+                        this,
+                        World.PlayerFaction,
+                        World));
+                },
+                ShouldKeep = () => { return this.ExpiditionState == Expedition.State.Trading && !this.ShouldRemove; }
+            }, liveCreatures.First().Physics, new Vector2(0, -10));
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
+        }
 
         public bool UpdateWaitTimer(DateTime now)
         {
