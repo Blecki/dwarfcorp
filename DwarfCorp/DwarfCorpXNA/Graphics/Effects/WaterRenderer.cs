@@ -94,6 +94,40 @@ namespace DwarfCorp
             ReflectionMap = new Texture2D(device, width, height);
             reflectionRenderTarget = new RenderTarget2D(device, width, height, false, pp.BackBufferFormat, pp.DepthStencilFormat);
             ShoreMap = AssetManager.GetContentTexture(ContentPaths.Gradients.shoregradient);
+
+            LiquidAsset waterAsset = new LiquidAsset
+            {
+                Type = LiquidType.Water,
+                Opactiy = 0.8f,
+                Reflection = 1.0f,
+                WaveHeight = 0.1f,
+                WaveLength = 0.05f,
+                WindForce = 0.001f,
+                BumpTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.water_normal),
+                BaseTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.cartoon_water),
+                MinOpacity = 0.4f,
+                RippleColor = new Vector4(0.6f, 0.6f, 0.6f, 0.0f),
+                FlatColor = new Vector4(0.3f, 0.3f, 0.9f, 1.0f)
+            };
+            AddLiquidAsset(waterAsset);
+
+
+            LiquidAsset lavaAsset = new LiquidAsset
+            {
+                Type = LiquidType.Lava,
+                Opactiy = 0.95f,
+                Reflection = 0.0f,
+                WaveHeight = 0.1f,
+                WaveLength = 0.05f,
+                WindForce = 0.001f,
+                MinOpacity = 0.8f,
+                BumpTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.water_normal),
+                BaseTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.lava),
+                RippleColor = new Vector4(0.5f, 0.4f, 0.04f, 0.0f),
+                FlatColor = new Vector4(0.9f, 0.7f, 0.2f, 1.0f)
+            };
+
+            AddLiquidAsset(lavaAsset);
         }
 
         public Plane CreatePlane(float height, Vector3 planeNormalDirection, Matrix currentViewMatrix, bool clipSide)

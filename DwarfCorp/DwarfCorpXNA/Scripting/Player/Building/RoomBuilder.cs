@@ -189,6 +189,10 @@ namespace DwarfCorp
 
             foreach(BuildRoomOrder build in toRemove)
             {
+                if (build.DisplayWidget != null)
+                {
+                    World.Gui.DestroyWidget(build.DisplayWidget);
+                }
                 BuildDesignations.Remove(build);
             }
         }
@@ -248,6 +252,7 @@ namespace DwarfCorp
                                 resourceList.Append(" ");
                                 resourceList.Append(resource.ResourceType);
                             }
+                            var order = buildOrder;
                             buildOrder.DisplayWidget = World.Gui.RootItem.AddChild(new Gui.Widget()
                             {
                                 Border = "border-dark",
@@ -256,8 +261,14 @@ namespace DwarfCorp
                                 Rect = new Rectangle(0, 0, 200, 40),
                                 Font = "font8",
                                 TextVerticalAlign = Gui.VerticalAlign.Center,
-                                TextHorizontalAlign = Gui.HorizontalAlign.Center
+                                TextHorizontalAlign = Gui.HorizontalAlign.Center,
+                                OnClick = (sender, args) =>
+                                {
+                                    sender.Hidden = true;
+                                }
                             });
+
+                            World.Gui.RootItem.SendToBack(buildOrder.DisplayWidget);
                         }
                     }
                     else
@@ -532,6 +543,10 @@ namespace DwarfCorp
                     if (vox != null && vox.Order != null)
                     {
                         vox.Order.Destroy();
+                        if (vox.Order.DisplayWidget != null)
+                        {
+                            World.Gui.DestroyWidget(vox.Order.DisplayWidget);
+                        }
                         BuildDesignations.Remove(vox.Order);
                     }
                 }
@@ -568,7 +583,10 @@ namespace DwarfCorp
                     des.Order.VoxelOrders.Remove(des);
                     buildRoomDes = des.Order;
                 }
-
+                if (buildRoomDes != null && buildRoomDes.DisplayWidget != null)
+                {
+                    World.Gui.DestroyWidget(buildRoomDes.DisplayWidget);
+                }
                 BuildDesignations.Remove(buildRoomDes);
 
                 room.Destroy();

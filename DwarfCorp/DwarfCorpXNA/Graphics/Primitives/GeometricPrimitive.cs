@@ -67,7 +67,7 @@ namespace DwarfCorp
                     return;
                 }
 
-                if (VertexBuffer == null ||  VertexBuffer.IsDisposed || VertexBuffer.GraphicsDevice.IsDisposed)
+                if (VertexBuffer == null ||  VertexBuffer.IsDisposed || VertexBuffer.GraphicsDevice.IsDisposed || VertexBuffer.IsContentLost)
                 {
                     ResetBuffer(device);
                 }

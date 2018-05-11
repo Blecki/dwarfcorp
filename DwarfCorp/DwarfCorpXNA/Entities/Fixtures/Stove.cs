@@ -31,7 +31,8 @@ namespace DwarfCorp
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
-
+            if (!Active)
+                return;
             if (MathFunctions.RandEvent(0.01f))
                 Manager.World.ParticleManager.Trigger("smoke", GlobalTransform.Translation + Vector3.Up * .5f, Color.White, 1);
         }

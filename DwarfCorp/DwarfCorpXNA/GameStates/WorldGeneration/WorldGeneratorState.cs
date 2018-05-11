@@ -46,6 +46,8 @@ namespace DwarfCorp.GameStates
         {
             if (Generator != null)
                 Generator.Abort();
+            if (Settings.Natives != null)
+                Settings.Natives.Clear();
             Generator = new WorldGenerator(Settings);
             if (Preview != null) Preview.SetGenerator(Generator);
             Generator.Generate();

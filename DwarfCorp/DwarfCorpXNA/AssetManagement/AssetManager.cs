@@ -203,7 +203,13 @@ namespace DwarfCorp
             }
 
             if (TextureCache.ContainsKey(asset))
-                return TextureCache[asset];
+            {
+                var existing = TextureCache[asset];
+                if (!existing.IsDisposed)
+                {
+                    return TextureCache[asset];
+                }
+            }
 
             try
             {

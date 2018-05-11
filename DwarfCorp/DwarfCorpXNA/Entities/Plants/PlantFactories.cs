@@ -36,6 +36,10 @@ namespace DwarfCorp
 {
     public static class PlantFactories
     {
+        private static int GetPlantGrowthTime()
+        {
+            return MathFunctions.RandInt(12, 48);
+        }
         [EntityFactory("Haunted Tree")]
         private static GameComponent __factory00(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -45,7 +49,7 @@ namespace DwarfCorp
         [EntityFactory("Haunted Tree Sprout")]
         private static GameComponent __factory01(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Haunted Tree", Position, "eviltreesprout", 12);
+            return new Seedling(Manager, "Haunted Tree", Position, "eviltreesprout", GetPlantGrowthTime());
         }
 
 
@@ -58,7 +62,7 @@ namespace DwarfCorp
         [EntityFactory("Pine Tree Sprout")]
         private static GameComponent __factory03(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Pine Tree", Position, "pinesprout", 12);
+            return new Seedling(Manager, "Pine Tree", Position, "pinesprout", GetPlantGrowthTime());
         }
 
 
@@ -71,7 +75,7 @@ namespace DwarfCorp
         [EntityFactory("Snow Pine Tree Sprout")]
         private static GameComponent __factory05(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Snow Pine Tree", Position, "pinesprout", 12);
+            return new Seedling(Manager, "Snow Pine Tree", Position, "pinesprout", GetPlantGrowthTime());
         }
 
 
@@ -84,7 +88,7 @@ namespace DwarfCorp
         [EntityFactory("Candycane Sprout")]
         private static GameComponent __factory07(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Candycane", Position, "candycanesprout", 12);
+            return new Seedling(Manager, "Candycane", Position, "candycanesprout", GetPlantGrowthTime());
         }
 
 
@@ -97,7 +101,7 @@ namespace DwarfCorp
         [EntityFactory("Palm Tree Sprout")]
         private static GameComponent __factory09(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Palm Tree", Position, "palmsprout", 12);
+            return new Seedling(Manager, "Palm Tree", Position, "palmsprout", GetPlantGrowthTime());
         }
 
 
@@ -110,7 +114,7 @@ namespace DwarfCorp
         [EntityFactory("Apple Tree Sprout")]
         private static GameComponent __factory0B(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Apple Tree", Position, "appletreesprout", 12);
+            return new Seedling(Manager, "Apple Tree", Position, "appletreesprout", GetPlantGrowthTime());
         }
 
 
@@ -123,7 +127,7 @@ namespace DwarfCorp
         [EntityFactory("Cactus Sprout")]
         private static GameComponent __factory0D(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Cactus", Position, "cactussprout", 12);
+            return new Seedling(Manager, "Cactus", Position, "cactussprout", GetPlantGrowthTime());
         }
 
 
@@ -136,7 +140,7 @@ namespace DwarfCorp
         [EntityFactory("Pumpkin Sprout")]
         private static GameComponent __factory0F(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Pumpkin", Position, "pumpkinvinesprout", 12);
+            return new Seedling(Manager, "Pumpkin", Position, "pumpkinvinesprout", GetPlantGrowthTime());
         }
 
 
@@ -149,7 +153,7 @@ namespace DwarfCorp
         [EntityFactory("Berry Bush Sprout")]
         private static GameComponent __factory11(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Berry Bush", Position, "berrybushsprout", 12);
+            return new Seedling(Manager, "Berry Bush", Position, "berrybushsprout", GetPlantGrowthTime());
         }
 
 
@@ -162,7 +166,7 @@ namespace DwarfCorp
         [EntityFactory("Mushroom Sprout")]
         private static GameComponent __factory13(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Mushroom", Position, "mushroomsprout", 12);
+            return new Seedling(Manager, "Mushroom", Position, "mushroomsprout", GetPlantGrowthTime());
         }
 
 
@@ -175,7 +179,7 @@ namespace DwarfCorp
         [EntityFactory("Cave Mushroom Sprout")]
         private static GameComponent __factory15(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Cave Mushroom", Position, "caveshroomsprout", 12);
+            return new Seedling(Manager, "Cave Mushroom", Position, "caveshroomsprout", GetPlantGrowthTime());
         }
 
 
@@ -188,7 +192,7 @@ namespace DwarfCorp
         [EntityFactory("Wheat Sprout")]
         private static GameComponent __factory17(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Wheat", Position, "wheatsprout", 12);
+            return new Seedling(Manager, "Wheat", Position, "wheatsprout", GetPlantGrowthTime());
         }
     }
 }

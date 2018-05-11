@@ -628,7 +628,7 @@ namespace DwarfCorp
                     }
                     
                     // If no object blocked us, we can move freely as normal.
-                    if (!blockedByObject)
+                    if (!blockedByObject && n.WaterCell.Type != LiquidType.Lava)
                     {
                         MoveAction newAction = v;
                         newAction.SourceState = state;

@@ -612,6 +612,7 @@
         "NumResources": 4
       }
     ],
+	"AllowRotation": true,
     "Icon": {
       "Sheet": "furniture",
       "Tile": 3
@@ -744,6 +745,7 @@
         "NumResources": 4
       }
     ],
+	"AllowRotation": true,
     "Icon": {
       "Sheet": "furniture",
       "Tile": 32

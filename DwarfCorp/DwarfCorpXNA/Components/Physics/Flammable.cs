@@ -59,8 +59,7 @@ namespace DwarfCorp
 
         public void CheckForLavaAndWater(Body Body, DwarfTime gameTime, ChunkManager chunks)
         {
-            foreach (var coordinate in VoxelHelpers.EnumerateCoordinatesInBoundingBox(
-                Body.BoundingBox.Expand(0.5f)))
+            foreach (var coordinate in VoxelHelpers.EnumerateCoordinatesInBoundingBox(Body.BoundingBox))
             {
                 var voxel = new VoxelHandle(chunks.ChunkData, coordinate);
                 if (!voxel.IsValid || voxel.WaterCell.WaterLevel == 0) continue;
