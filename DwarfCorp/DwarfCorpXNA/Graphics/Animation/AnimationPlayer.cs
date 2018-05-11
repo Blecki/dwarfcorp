@@ -52,6 +52,7 @@ namespace DwarfCorp
         private float FrameTimer = 0.0f;
         private Animation CurrentAnimation = null;
         public BillboardPrimitive Primitive = null;
+        public bool InstancingPossible { get; private set; }
 
         public AnimationPlayer() { }
 
@@ -133,9 +134,14 @@ namespace DwarfCorp
             this.FrameTimer = Other.FrameTimer;
         }
 
-        public virtual void Update(DwarfTime gameTime, Timer.TimerMode mode = Timer.TimerMode.Game)
+        public virtual void Update(DwarfTime gameTime, bool WillUseInstancingIfPossible, Timer.TimerMode mode = Timer.TimerMode.Game)
         {
-            if (IsPlaying && CurrentAnimation != null)
+            InstancingPossible = false;
+
+            if (CurrentAnimation == null)
+                return;
+
+            if (IsPlaying)
             {
                 LastFrame = CurrentFrame;
                 float dt = mode == Timer.TimerMode.Game ? (float)gameTime.ElapsedGameTime.TotalSeconds : (float)gameTime.ElapsedRealTime.TotalSeconds;
@@ -153,13 +159,24 @@ namespace DwarfCorp
                 }
             }
 
-            // Todo: Track enough state to only do this as needed.
-            if (CurrentAnimation != null)
+
+            if (!WillUseInstancingIfPossible || !CurrentAnimation.CanUseInstancing)
             {
+                // Todo: Only update when actually needed.
                 if (Primitive == null)
                     Primitive = new BillboardPrimitive();
                 CurrentAnimation.UpdatePrimitive(Primitive, CurrentFrame);
             }
+            else
+                InstancingPossible = true;
+        }
+
+        public void UpdateInstance(NewInstanceData InstanceData)
+        {
+            var sheet = CurrentAnimation.SpriteSheet;
+            var frame = CurrentAnimation.Frames[CurrentFrame];
+            InstanceData.SpriteBounds = new Rectangle(sheet.FrameWidth * frame.X, sheet.FrameHeight * frame.Y, sheet.FrameWidth, sheet.FrameHeight);
+            InstanceData.TextureAsset = sheet.AssetName;
         }
 
         public void NextFrame()

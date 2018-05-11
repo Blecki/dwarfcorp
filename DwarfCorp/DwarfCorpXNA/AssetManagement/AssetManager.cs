@@ -176,7 +176,7 @@ namespace DwarfCorp
         /// <summary>
         /// Enumerates the relative paths of all mods (including base content) that include the content.
         /// </summary>
-        /// <param name="AssetPath"></param>
+        /// <param name="_AssetPath"></param>
         /// <returns></returns>
         public static IEnumerable<String> EnumerateMatchingPaths(String _AssetPath)
         {
@@ -206,9 +206,7 @@ namespace DwarfCorp
             {
                 var existing = TextureCache[asset];
                 if (!existing.IsDisposed)
-                {
                     return TextureCache[asset];
-                }
             }
 
             try

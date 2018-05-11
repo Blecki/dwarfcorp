@@ -84,15 +84,15 @@ namespace DwarfCorp
                 return false;
             }
 
-            var boundingBox = new BoundingBox(voxel.Coordinate.ToVector3() + new Vector3(0.2f, 1.0f, 0.2f), voxel.Coordinate.ToVector3() + new Vector3(0.8f, 3.0f, 0.8f));
-            var entities = Player.World.EnumerateIntersectingObjects(boundingBox, CollisionType.Static);
+            var boundingBox = new BoundingBox(voxel.Coordinate.ToVector3() + new Vector3(0.2f, 0.2f, 0.2f), voxel.Coordinate.ToVector3() + new Vector3(0.8f, 0.8f, 0.8f));
+            var entities = Player.World.EnumerateIntersectingObjects(boundingBox, CollisionType.Static).OfType<IVoxelListener>();
             if (entities.Any())
             {
                 if (Debugger.Switches.DrawToolDebugInfo)
                 {
                     Drawer3D.DrawBox(boundingBox, Color.Red, 0.03f, false);
                     foreach (var entity in entities)
-                        Drawer3D.DrawBox(entity.GetBoundingBox(), Color.Yellow, 0.03f, false);
+                        Drawer3D.DrawBox((entity as Body).GetBoundingBox(), Color.Yellow, 0.03f, false);
                 }
 
                 Player.World.ShowToolPopup("There's something in the way.");

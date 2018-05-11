@@ -27,6 +27,8 @@ namespace DwarfCorp
         public Color SilhouetteColor { get; set; }
         private Vector3 prevDistortion = Vector3.Zero;
 
+        private NewInstanceData InstanceData;
+
         public enum OrientMode
         {
             Fixed,
@@ -87,7 +89,7 @@ namespace DwarfCorp
 
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            AnimPlayer.Update(gameTime);
+            AnimPlayer.Update(gameTime, !DrawSilhouette); // Can't use instancing if we want the silhouette.
             base.Update(gameTime, chunks, camera);
         }
 
@@ -97,8 +99,18 @@ namespace DwarfCorp
             if (!IsVisible) return;
 
             base.RenderSelectionBuffer(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect);
-            effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
-            Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
+            RenderBody(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false, InstanceRenderMode.SelectionBuffer);
+        }
+
+        private void PrepareInstanceData(Camera Camera)
+        {
+            if (InstanceData == null) InstanceData = new NewInstanceData("combined-tiled-instances", Matrix.Identity, Color.White);
+            
+            InstanceData.Transform = GetWorldMatrix(Camera);
+            InstanceData.VertexColorTint = Tint;
+            InstanceData.SelectionBufferColor = this.GetGlobalIDColor();
+
+            AnimPlayer.UpdateInstance(InstanceData);
         }
 
         new public void Render(DwarfTime gameTime,
@@ -110,20 +122,66 @@ namespace DwarfCorp
             bool renderingForWater)
         {
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+            RenderBody(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater, InstanceRenderMode.Normal);
+        }
 
-            if (!IsVisible)
-                return;
+        private void RenderBody(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater,
+            InstanceRenderMode Mode)
+        {
+            if (!IsVisible) return;
+            if (!AnimPlayer.HasValidAnimation()) return;
 
-            if (!AnimPlayer.HasValidAnimation())
-                return;
+            if (AnimPlayer.InstancingPossible)
+            {
+                PrepareInstanceData(camera);
+                Manager.World.InstanceRenderer.RenderInstance(InstanceData, graphicsDevice, effect, camera, Mode);
+            }
+            else
+            {
+                if (AnimPlayer.Primitive == null) return;
 
-            if (AnimPlayer.Primitive == null) return;
+                Color origTint = effect.VertexColorTint;
+                effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
+                effect.World = GetWorldMatrix(camera);
+                effect.MainTexture = AnimPlayer.GetTexture();
+                ApplyTintingToEffect(effect);
 
-            //AnimPlayer.PreRender(graphicsDevice);
+                if (DrawSilhouette)
+                {
+                    Color oldTint = effect.VertexColorTint;
+                    effect.VertexColorTint = SilhouetteColor;
+                    graphicsDevice.DepthStencilState = DepthStencilState.None;
+                    var oldTechnique = effect.CurrentTechnique;
+                    effect.CurrentTechnique = effect.Techniques[Shader.Technique.Silhouette];
+                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        AnimPlayer.Primitive.Render(graphicsDevice);
+                    }
 
-            // Everything that draws should set it's tint, making this pointless.
-            Color origTint = effect.VertexColorTint;
+                    graphicsDevice.DepthStencilState = DepthStencilState.Default;
+                    effect.VertexColorTint = oldTint;
+                    effect.CurrentTechnique = oldTechnique;
+                }
 
+                if (EnableWind)
+                {
+                    effect.EnableWind = true;
+                }
+
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    AnimPlayer.Primitive.Render(graphicsDevice);
+                }
+                effect.VertexColorTint = origTint;
+                effect.EnableWind = false;
+                EndDraw(effect);
+            }
+        }
+
+        private Matrix GetWorldMatrix(Camera camera)
+        {
             var currDistortion = VertexNoise.GetNoiseVectorFromRepeatingTexture(GlobalTransform.Translation);
             var distortion = currDistortion * 0.1f + prevDistortion * 0.9f;
             prevDistortion = distortion;
@@ -134,63 +192,29 @@ namespace DwarfCorp
                         Matrix bill = Matrix.CreateBillboard(GlobalTransform.Translation, camera.Position, camera.UpVector, null) * Matrix.CreateTranslation(distortion);
                         //Matrix noTransBill = bill;
                         //noTransBill.Translation = Vector3.Zero;
-                        
+
                         //Matrix worldRot = noTransBill;
                         //worldRot.Translation = bill.Translation;// + VertexNoise.GetNoiseVectorFromRepeatingTexture(bill.Translation);
-                        effect.World = bill;
+                        return bill;
                         break;
                     }
                 case OrientMode.Fixed:
                     {
                         Matrix rotation = GlobalTransform;
                         rotation.Translation = rotation.Translation + distortion;
-                        effect.World = rotation;
+                        return rotation;
                         break;
                     }
                 case OrientMode.YAxis:
                     {
                         Matrix worldRot = Matrix.CreateConstrainedBillboard(GlobalTransform.Translation, camera.Position, Vector3.UnitY, null, null);
                         worldRot.Translation = worldRot.Translation + distortion;
-                        effect.World = worldRot;
+                        return worldRot;
                         break;
                     }
+                default:
+                    throw new InvalidProgramException();
             }
-             
-            effect.MainTexture = AnimPlayer.GetTexture();
-            ApplyTintingToEffect(effect);
-           
-
-            if (DrawSilhouette)
-            {
-                Color oldTint = effect.VertexColorTint; 
-                effect.VertexColorTint = SilhouetteColor;
-                graphicsDevice.DepthStencilState = DepthStencilState.None;
-                var oldTechnique = effect.CurrentTechnique;
-                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Silhouette];
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    AnimPlayer.Primitive.Render(graphicsDevice);
-                }
-
-                graphicsDevice.DepthStencilState = DepthStencilState.Default;
-                effect.VertexColorTint = oldTint;
-                effect.CurrentTechnique = oldTechnique;
-            }
-
-            if (EnableWind)
-            {
-                effect.EnableWind = true;
-            }
-
-            foreach(EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                AnimPlayer.Primitive.Render(graphicsDevice);
-            }
-            effect.VertexColorTint = origTint;
-            effect.EnableWind = false;
-            EndDraw(effect);
         }
     }
 

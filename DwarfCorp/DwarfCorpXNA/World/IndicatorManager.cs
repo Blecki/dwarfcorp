@@ -127,7 +127,7 @@ namespace DwarfCorp
             base.Update(time);
 
             if (!Player.HasValidAnimation()) Player.Play(Animation);
-            Player.Update(time);
+            Player.Update(time, false);
 
             Image = Animation.GetAsImageFrame(Player.CurrentFrame);
 

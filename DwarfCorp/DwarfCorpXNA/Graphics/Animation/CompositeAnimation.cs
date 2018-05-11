@@ -14,6 +14,9 @@ namespace DwarfCorp
     public class CompositeAnimation : Animation
     {
         [JsonIgnore]
+        public override bool CanUseInstancing { get { return false; } }
+        
+        [JsonIgnore]
         private Composite _cached_Composite = null;
 
         [JsonIgnore]

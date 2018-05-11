@@ -80,7 +80,7 @@ namespace DwarfCorp.Dialogue
                 }
                 speech.MoveNext();
             }
-            SpeakerAnimation.Update(Time, Timer.TimerMode.Real);
+            SpeakerAnimation.Update(Time, false, Timer.TimerMode.Real);
 
             var next = NextAction;
             NextAction = null;
