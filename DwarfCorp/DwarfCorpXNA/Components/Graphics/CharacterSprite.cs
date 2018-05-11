@@ -50,13 +50,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CharacterSprite : OrientedAnimatedSprite, IUpdateableComponent, IRenderableComponent
     {
-        [OnSerialized]
-        private void _onSerialized(StreamingContext Context)
-        {
-            var x = 5;
-
-        }
-
         [JsonIgnore]
         public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
 
@@ -67,7 +60,7 @@ namespace DwarfCorp
         private bool isCoolingDown = false;
         private Color tintOnBlink = Color.White;
 
-        public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             if (!isBlinking)
@@ -144,7 +137,7 @@ namespace DwarfCorp
             blinkTrigger.Reset(blinkTime);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if(isBlinking)
             {

@@ -23,13 +23,13 @@ namespace DwarfCorp
 
         public override void OnApply(Creature creature)
         {
-            creature.AI.AddThought(ThoughtType);
+            creature.Physics.GetComponent<DwarfThoughts>()?.AddThought(ThoughtType);
             base.OnApply(creature);
         }
 
         public override void OnEnd(Creature creature)
         {
-            creature.AI.RemoveThought(ThoughtType);
+            creature.Physics.GetComponent<DwarfThoughts>()?.RemoveThought(ThoughtType);
             base.OnApply(creature);
         }
 

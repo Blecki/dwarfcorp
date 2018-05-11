@@ -105,7 +105,11 @@ namespace DwarfCorp
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, body.Position, 0.1f);
                             SelectedBody = body;
                             OrigTransform = SelectedBody.LocalTransform;
-                            Player.World.ShowToolPopup(String.Format("Press {0}/{1} to rotate.", ControlSettings.Mappings.RotateObjectLeft, ControlSettings.Mappings.RotateObjectRight));
+                            var crafts = body.GetComponent<CraftDetails>();
+                            if (crafts != null && CraftLibrary.GetCraftable(crafts.CraftType).AllowRotation)
+                            {
+                                Player.World.ShowToolPopup(String.Format("Press {0}/{1} to rotate.", ControlSettings.Mappings.RotateObjectLeft, ControlSettings.Mappings.RotateObjectRight));
+                            }
                             break;
                         }
                     }

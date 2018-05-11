@@ -66,6 +66,7 @@ namespace DwarfCorp
             OnEnemySensed += EnemySensor_OnEnemySensed;
             SenseTimer = new Timer(0.5f, false);
             SenseRadius = 15 * 15;
+            CollisionType = CollisionType.None;
         }
 
         public EnemySensor(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
@@ -76,6 +77,7 @@ namespace DwarfCorp
             Tags.Add("Sensor");
             SenseTimer = new Timer(0.5f, false);
             SenseRadius = 15 * 15;
+            CollisionType = CollisionType.None;
         }
 
 
@@ -97,11 +99,8 @@ namespace DwarfCorp
                 return;
             }
 
-            foreach (var thing in Manager.World.CollisionManager.EnumerateIntersectingObjects(BoundingBox, CollisionManager.CollisionType.Both))
+            foreach (var body in Manager.World.EnumerateIntersectingObjects(BoundingBox, CollisionType.Both))
             {
-                Body body = thing as Body;
-                if (body == null)
-                    continue;
                 CreatureAI minion = body.GetRoot().GetComponent<CreatureAI>();
                 if (minion == null)
                     continue;
@@ -129,8 +128,10 @@ namespace DwarfCorp
             }
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             SenseTimer.Update(gameTime);
             
             if (SenseTimer.HasTriggered)
@@ -138,8 +139,6 @@ namespace DwarfCorp
                 Sense();
             }
             Enemies.RemoveAll(ai => ai.IsDead);
-
-            base.Update(gameTime, chunks, camera);
         }
 
         private void EnemySensor_OnEnemySensed(List<CreatureAI> enemies)

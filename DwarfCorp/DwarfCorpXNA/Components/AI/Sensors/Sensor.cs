@@ -32,22 +32,15 @@
 // THE SOFTWARE.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
-
 
 namespace DwarfCorp
 {
-
     /// <summary>
     /// Generic component with a box that fires when other components enter it.
     /// </summary>
     public class Sensor : Body, IUpdateableComponent
     {
-
         public delegate void Sense(IEnumerable<Body> sensed);
         
         public event Sense OnSensed;
@@ -70,14 +63,13 @@ namespace DwarfCorp
             FireTimer = new Timer(1.0f, false);
         }
         
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             FireTimer.Update(gameTime);
             if (FireTimer.HasTriggered && OnSensed != null)
-                OnSensed(Manager.World.CollisionManager.EnumerateIntersectingObjects(BoundingBox,
-                    CollisionManager.CollisionType.Dynamic).OfType<Body>());
-
-            base.Update(gameTime, chunks, camera);
+                OnSensed(Manager.World.EnumerateIntersectingObjects(BoundingBox, CollisionType.Dynamic));
         }
     }
 

@@ -59,11 +59,11 @@ namespace DwarfCorp
         public List<Stockpile> Stockpiles { get; set; }
         public List<CreatureAI> Minions { get; set; }
         public RoomBuilder RoomBuilder { get; set; }
-        public CraftBuilder CraftBuilder { get; set; }
         public Color PrimaryColor { get; set; }
         public Color SecondaryColor { get; set; }
         public Timer HandleThreatsTimer { get; set; }
         public DesignationSet Designations = new DesignationSet();
+        public Dictionary<ulong, VoxelHandle> GuardedVoxels = new Dictionary<ulong, VoxelHandle>();
         
         // Todo: When converting to new save system, it can take care of this.
         [JsonProperty]
@@ -100,6 +100,15 @@ namespace DwarfCorp
         {
             World = ((WorldManager)ctx.Context);
             HandleThreatsTimer = new Timer(1.0f, false);
+            if (Threats == null)
+            {
+                Threats = new List<Creature>();
+            }
+
+            if (Minions == null)
+            {
+                Minions = new List<CreatureAI>();
+            }
             Threats.RemoveAll(threat => threat == null || threat.IsDead);
             Minions.RemoveAll(minion => minion == null || minion.IsDead);
         }
@@ -121,7 +130,6 @@ namespace DwarfCorp
             WarParties = new List<WarParty>();
             OwnedObjects = new List<Body>();
             RoomBuilder = new RoomBuilder(this, world);
-            CraftBuilder = new CraftBuilder(this, world);
             IsRaceFaction = false;
             TradeMoney = 0.0m;
             GoodWill = 0.0f;
@@ -168,7 +176,6 @@ namespace DwarfCorp
         public void Update(DwarfTime time)
         {
             RoomBuilder.Faction = this;
-            CraftBuilder.Faction = this;
             RoomBuilder.CheckRemovals();
 
             Minions.RemoveAll(m => m.IsDead);

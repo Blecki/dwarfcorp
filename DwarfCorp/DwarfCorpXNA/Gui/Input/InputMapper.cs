@@ -42,6 +42,17 @@ namespace DwarfCorp.Gui.Input
         private bool CtrlDown = false;
         private bool AltDown = false;
         private bool ShiftDown = false;
+        private bool ConsoleTogglePressed = false;
+
+        public bool WasConsoleTogglePressed()
+        {
+            if (ConsoleTogglePressed)
+            {
+                ConsoleTogglePressed = false;
+                return true;
+            }
+            return false;
+        }
 
         public List<QueuedInput> GetInputQueue()
         {
@@ -75,8 +86,20 @@ namespace DwarfCorp.Gui.Input
             return realCode;
         }
 
+        private bool _disableInput = false;
         private bool HandleEvent(System.Windows.Forms.Message Msg)
         {
+            if (!GameStates.GameState.Game.IsActive)
+            {
+                _disableInput = true;
+                return false;
+            }
+
+            if (_disableInput)
+            {
+                _disableInput = false;
+                return false;
+            }
             QueueLock.WaitOne();
             bool handled = false;
 
@@ -112,17 +135,25 @@ namespace DwarfCorp.Gui.Input
 
                         var realCode = TranslateKey(Msg.LParam, args.KeyCode);
 
-                        Queued.Add(new QueuedInput
+                        if (realCode == System.Windows.Forms.Keys.Oemtilde)
                         {
-                            Message = Gui.InputEvents.KeyDown,
-                            Args = new Gui.InputEventArgs
+                            ConsoleTogglePressed = true;
+                        }
+                        else
+                        {
+                            Queued.Add(new QueuedInput
                             {
-                                Alt = args.Alt,
-                                Control = args.Control,
-                                Shift = args.Shift,
-                                KeyValue = (int)realCode,
-                            }
-                        });
+                                Message = Gui.InputEvents.KeyDown,
+                                Args = new Gui.InputEventArgs
+                                {
+                                    Alt = args.Alt,
+                                    Control = args.Control,
+                                    Shift = args.Shift,
+                                    KeyValue = (int)realCode,
+                                }
+                            });
+                        }
+
                         handled = true;
                         break;
                     }

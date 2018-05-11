@@ -155,7 +155,7 @@ namespace DwarfCorp
             base(Manager, "Lamp", Matrix.CreateTranslation(position), new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(Manager, "Lamp", resources))
         {
             Tags.Add("Lamp");
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
 
             CreateCosmeticChildren(Manager);
         }

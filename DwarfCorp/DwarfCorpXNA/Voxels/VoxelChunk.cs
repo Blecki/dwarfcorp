@@ -55,9 +55,7 @@ namespace DwarfCorp
         public bool NewPrimitiveReceived = false;
         public bool NewLiquidReceived = false;
         
-        public bool IsVisible { get; set; }
         public Vector3 Origin { get; set; }
-        public bool RenderWireframe { get; set; }
         public ChunkManager Manager { get; set; }
 
         public Mutex PrimitiveMutex { get; set; }
@@ -107,9 +105,7 @@ namespace DwarfCorp
             ID = id;
             Origin = origin;
             Data = VoxelData.Allocate();
-            IsVisible = true;
             Primitive = new VoxelListPrimitive();
-            RenderWireframe = false;
             Manager = manager;
 
             InitializeStatics();
@@ -136,21 +132,6 @@ namespace DwarfCorp
             return m_boundingBox;
         }
 
-        private BoundingSphere m_boundingSphere;
-        private bool m_boundingSphereCreated = false;
-
-        public BoundingSphere GetBoundingSphere()
-        {
-            if (!m_boundingSphereCreated)
-            {
-                float m = VoxelConstants.ChunkSizeY * 0.5f;
-                m_boundingSphere = new BoundingSphere(Origin + new Vector3(VoxelConstants.ChunkSizeX, VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeZ) * 0.5f, (float)Math.Sqrt(3 * m * m));
-                m_boundingSphereCreated = true;
-            }
-
-            return m_boundingSphere;
-        }
-
         public void RecieveNewPrimitive(DwarfTime t)
         {
             PrimitiveMutex.WaitOne();
@@ -165,15 +146,7 @@ namespace DwarfCorp
 
         public void Render(GraphicsDevice device)
         {
-            if (!RenderWireframe)
-            {
                 Primitive.Render(device);
-            }
-            else
-            {
-                Primitive.RenderWireframe(device);
-            }
-
         }
 
         public void RebuildLiquids()
@@ -194,9 +167,9 @@ namespace DwarfCorp
             VoxelListPrimitive primitive = new VoxelListPrimitive();
             primitive.InitializeFromChunk(this);
 
+            // TODO: Move to main thread!
             var changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");
-            foreach (var c in Manager.World.CollisionManager.EnumerateIntersectingObjects(GetBoundingBox(),
-                CollisionManager.CollisionType.Both).OfType<GameComponent>())
+            foreach (var c in Manager.World.EnumerateIntersectingObjects(GetBoundingBox(), CollisionType.Both))
                 c.ReceiveMessageRecursive(changedMessage);
         }
 

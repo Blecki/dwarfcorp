@@ -1,4 +1,4 @@
-﻿// DropItemAct.cs
+// CollisionManager.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -31,48 +31,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// A creature drops the item currently in its hands.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    public class DropItemAct : CreatureAct
+    [Flags]
+    public enum CollisionType
     {
-        public DropItemAct(CreatureAI creature) :
-            base(creature)
-        {
-            Name = "Drop Item";
-        }
-
-        public override IEnumerable<Status> Run()
-        {
-            Body grabbed = Creature.Hands.GetFirstGrab();
-
-            if(grabbed == null)
-            {
-                Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                yield return Status.Fail;
-            }
-            else
-            {
-                Creature.Hands.UnGrab(grabbed);
-                Matrix m = Matrix.Identity;
-                m.Translation = Creature.Physics.GlobalTransform.Translation;
-                Agent.Blackboard.SetData<object>("HeldObject", null);
-                grabbed.LocalTransform = m;
-                grabbed.HasMoved = true;
-                grabbed.Active = true;
-
-                yield return Status.Success;
-            }
-        }
+        None = 1,
+        Static = 2,
+        Dynamic = 4,
+        Both = Static | Dynamic
     }
-
 }

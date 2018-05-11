@@ -115,7 +115,7 @@ namespace DwarfCorp
 
         public override bool Equals(object obj)
         {
-            return obj is Task && Name.Equals(((Task) (obj)).Name);
+            return obj != null && obj is Task && Name.Equals(((Task) (obj)).Name);
         }
 
         public virtual Act CreateScript(Creature agent)

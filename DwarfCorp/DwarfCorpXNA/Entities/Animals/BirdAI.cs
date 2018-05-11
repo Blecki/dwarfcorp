@@ -75,7 +75,7 @@ namespace DwarfCorp
         public override Task ActOnIdle()
         {
             return new ActWrapperTask(
-                new Parallel(new FlyWanderAct(this, 10.0f + MathFunctions.Rand() * 2.0f, 2.0f + MathFunctions.Rand() * 0.5f, 20.0f, 8.0f, 10.0f)
+                new Parallel(new FlyWanderAct(this, 10.0f + MathFunctions.Rand() * 2.0f, 2.0f + MathFunctions.Rand() * 0.5f, 20.0f, 8.0f, MathFunctions.Rand() * 10.0f)
                 , new Wrap(ChirpRandomly)) {ReturnOnAllSucces = false, Name = "Fly"});
         }
     }

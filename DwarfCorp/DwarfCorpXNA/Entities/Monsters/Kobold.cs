@@ -194,11 +194,9 @@ namespace DwarfCorp
             HasMeat = false;
             HasBones = false;
 
-            Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
-
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
-            AI = Physics.AddChild(new CreatureAI(Manager, "Kobold AI", Sensors, PlanService)) as CreatureAI;
+            AI = Physics.AddChild(new KoboldAI(Manager, "Kobold AI", Sensors, PlanService)) as CreatureAI;
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
@@ -237,7 +235,7 @@ namespace DwarfCorp
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
-            AI.StealFromPlayerProbability = 0.5f;
+            (AI as KoboldAI).StealFromPlayerProbability = 0.5f; // Todo: Should probably just get a default value as they are essentially static.
             Species = "Kobold";
         }
 

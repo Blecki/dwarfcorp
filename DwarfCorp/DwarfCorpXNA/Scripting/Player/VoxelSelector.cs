@@ -128,6 +128,7 @@ namespace DwarfCorp
         public bool DrawBox = true;
         public bool DrawVoxel = true;
 
+        // Todo: Remove unused arguments
         public VoxelSelector(WorldManager world, Camera camera, GraphicsDevice graphics, ChunkManager chunks)
         {
             World = world;
@@ -463,6 +464,9 @@ namespace DwarfCorp
         /// Gets a stairstep stretching accross the box.
         /// </summary>
         /// <param name="box">The box.</param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="invert"></param>
         /// <returns>A stairstep starting filled on the bottom row, pointing in the maximum x or z direction</returns>
         private IEnumerable<GlobalVoxelCoordinate> EnumerateStairVoxels(BoundingBox box,  Vector3 start, Vector3 end, bool invert)
         {

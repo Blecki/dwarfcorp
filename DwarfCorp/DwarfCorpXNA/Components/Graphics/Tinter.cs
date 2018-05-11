@@ -40,10 +40,16 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+    public interface ITintable
+    {
+        void SetTint(Color Tint);
+        void SetOneShotTint(Color Tint);
+    }
+
     /// <summary>
     /// This component has a color tint which can change over time.
     /// </summary>
-    public class Tinter : Body, IUpdateableComponent
+    public class Tinter : Body, IUpdateableComponent, ITintable
     {
         public bool LightsWithVoxels { get; set; }
         public Color Tint { get; set; }
@@ -51,7 +57,6 @@ namespace DwarfCorp
         public bool ColorAppplied = false;
         private bool entityLighting = GameSettings.Default.EntityLighting;
         public Color VertexColorTint { get; set; }
-        public bool FrustumCull { get { return true; } }
         public bool Stipple { get; set; }
         private string previousEffect = null;
         private Color previousColor = Color.White;
@@ -71,6 +76,7 @@ namespace DwarfCorp
             TintChangeRate = 1.0f;
             VertexColorTint = Color.White;
             Stipple = false;
+            SetFlag(Flag.FrustumCull, true);
         }
 
 
@@ -83,8 +89,10 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             if (!LightsWithVoxels)
                 Tint = Color.White;
 
@@ -104,8 +112,6 @@ namespace DwarfCorp
             {
                 Tint = new Color(200, 255, 0);
             }
-
-            base.Update(gameTime, chunks, camera);
         }
 
         public void ApplyTintingToEffect(Shader effect)
@@ -145,22 +151,28 @@ namespace DwarfCorp
             }
             shader.VertexColorTint = previousColor;
         }
+
+        public void SetTint(Color Tint)
+        {
+            VertexColorTint = Tint;
+        }
+
+        public void SetOneShotTint(Color Tint)
+        {
+            OneShotTint = Tint;
+        }
     }
 
     public static class TintExtension
     {
         public static void SetTintRecursive(this GameComponent component, Color color, bool oneShot=false)
         {
-            foreach (var sprite in component.EnumerateAll().OfType<Tinter>())
+            foreach (var sprite in component.EnumerateAll().OfType<ITintable>())
             {
                 if (!oneShot)
-                {
-                    sprite.VertexColorTint = color;
-                }
+                    sprite.SetTint(color);
                 else
-                {
-                    sprite.OneShotTint = color;
-                }
+                    sprite.SetOneShotTint(color);
             }
         }
     }

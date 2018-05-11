@@ -49,11 +49,8 @@ namespace DwarfCorp
     /// </summary>
     public class ChunkData
     {
-        private ChunkManager chunkManager;
-
-        public ChunkData(ChunkManager chunkManager, int ChunkMapWidth, int ChunkMapHeight, int ChunkMapMinX, int ChunkMapMinZ)
+        public ChunkData(int ChunkMapWidth, int ChunkMapHeight, int ChunkMapMinX, int ChunkMapMinZ)
         {           
-            this.chunkManager = chunkManager;
             this.ChunkMapWidth = ChunkMapWidth;
             this.ChunkMapHeight = ChunkMapHeight;
             this.ChunkMapMinX = ChunkMapMinX;
@@ -87,40 +84,6 @@ namespace DwarfCorp
             return ChunkMap;
         }
 
-        //public ConcurrentDictionary<GlobalChunkCoordinate, VoxelChunk> ChunkMap { get; set; }
-
-            // Todo: Get rid of all these texture aliases.
-        public Texture2D Tilemap
-        {
-            get { return AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles); }
-        }
-
-        public Texture2D IllumMap
-        {
-            get { return AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_illumination); }
-        }
-        
-        public Texture2D SunMap
-        {
-            get { return AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient); }
-        }
-
-        public Texture2D AmbientMap
-        {
-            get { return AssetManager.GetContentTexture(ContentPaths.Gradients.ambientgradient); }
-        }
-
-        public Texture2D TorchMap
-        {
-            get { return AssetManager.GetContentTexture(ContentPaths.Gradients.torchgradient); }
-        }
-
-        public ChunkManager ChunkManager
-        {
-            set { chunkManager = value; }
-            get { return chunkManager; }
-        }
-
         public bool AddChunk(VoxelChunk Chunk)
         {
             if (!CheckBounds(Chunk.ID)) throw new IndexOutOfRangeException();
@@ -129,7 +92,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public void LoadFromFile(SaveGame gameFile, Action<String> SetLoadingMessage)
+        public void LoadFromFile(ChunkManager Manager, SaveGame gameFile, Action<String> SetLoadingMessage)
         {
             var maxChunkX = gameFile.ChunkData.Max(c => c.ID.X) + 1;
             var maxChunkZ = gameFile.ChunkData.Max(c => c.ID.Z) + 1;
@@ -140,10 +103,10 @@ namespace DwarfCorp
 
             ChunkMap = new VoxelChunk[ChunkMapWidth * ChunkMapHeight];
 
-            foreach (VoxelChunk chunk in gameFile.ChunkData.Select(file => file.ToChunk(chunkManager)))
+            foreach (VoxelChunk chunk in gameFile.ChunkData.Select(file => file.ToChunk(Manager)))
                 AddChunk(chunk);
 
-            chunkManager.UpdateBounds();
+            Manager.UpdateBounds();
         }
     }
 }

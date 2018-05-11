@@ -176,8 +176,6 @@ namespace DwarfCorp
 
         /// <summary> Finds enemies nearby and triggers when it sees them </summary>
         public EnemySensor Sensors { get; set; }
-        /// <summary> Allows the creature to grab other objects </summary>
-        public Grabber Hands { get; set; }
         /// <summary> If true, the creature will generate meat when it dies. </summary>
         public bool HasMeat { get; set; }
         /// <summary> If true, the creature will generate bones when it dies. </summary>
@@ -616,7 +614,7 @@ namespace DwarfCorp
                 case Message.MessageType.OnHurt:
                     NoiseMaker.MakeNoise("Hurt", AI.Position);
                     Sprite.Blink(0.5f);
-                    AI.AddThought(Thought.ThoughtType.TookDamage);
+                    AddThought(Thought.ThoughtType.TookDamage);
 
                     var deathParticleTriggers = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs");
 
@@ -627,6 +625,16 @@ namespace DwarfCorp
 
 
             base.ReceiveMessageRecursive(messageToReceive);
+        }
+
+        public void AddThought(Thought.ThoughtType ThoughtType)
+        {
+            Physics.GetComponent<DwarfThoughts>()?.AddThought(ThoughtType);
+        }
+
+        public void AddThought(Thought thought, bool allowDuplicates)
+        {
+            Physics.GetComponent<DwarfThoughts>()?.AddThought(thought, allowDuplicates);
         }
 
         /// <summary>
@@ -792,7 +800,7 @@ namespace DwarfCorp
             {
                 NoiseMaker.MakeNoise("Hurt", AI.Position);
                 Sprite.Blink(0.5f);
-                AI.AddThought(Thought.ThoughtType.TookDamage);
+                AddThought(Thought.ThoughtType.TookDamage);
 
                 var deathParticleTriggers = Parent.EnumerateAll().OfType<ParticleTrigger>().Where(p => p.Name == "Death Gibs");
 

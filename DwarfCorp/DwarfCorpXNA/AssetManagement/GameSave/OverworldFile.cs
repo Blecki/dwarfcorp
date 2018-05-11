@@ -30,26 +30,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DwarfCorp.GameStates;
-using Newtonsoft.Json.Serialization;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.IO.Compression;
-using ICSharpCode.SharpZipLib.Zip;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Microsoft.Xna.Framework.Graphics;
-using System.IO.Compression;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters;
-using System.Runtime.Serialization.Formatters.Binary;
+using System;
+using System.Collections.Generic;
 using System.IO;
-using System.ComponentModel;
+using System.Linq;
 
 namespace DwarfCorp
 {
@@ -189,7 +177,7 @@ namespace DwarfCorp
 
                 return Program.CompatibleVersions.Contains(metadata.Version);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
@@ -202,7 +190,7 @@ namespace DwarfCorp
                 var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
                 return FileUtils.LoadJsonFromAbsolutePath<OverworldData>(metaFilePath).Name;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "?";
             }

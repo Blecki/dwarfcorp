@@ -44,12 +44,20 @@ namespace DwarfCorp
     public class DesignationDrawer
     {
         public DesignationType VisibleTypes = DesignationType._All;
+
         public class DesignationTypeProperties
         {
             public Color Color;
             public Color ModulatedColor;
             public NamedImageFrame Icon;
             public float LineWidth = 0.1f;
+            public enum DrawBoxType
+            {
+                FullBox,
+                TopBox,
+            }
+            public DrawBoxType DrawType;
+
         }
 
         [JsonIgnore]
@@ -65,6 +73,7 @@ namespace DwarfCorp
         public DesignationDrawer()
         {
             DesignationProperties = new Dictionary<DesignationType, DesignationTypeProperties>();
+
             DesignationProperties.Add(DesignationType.Dig, new DesignationTypeProperties
             {
                 Color = Color.Red,
@@ -74,7 +83,8 @@ namespace DwarfCorp
             DesignationProperties.Add(DesignationType.Guard, new DesignationTypeProperties
             {
                 Color = new Color(10, 10, 205),
-                Icon = new NamedImageFrame("newgui/pointers", 32, 3, 0)
+                Icon = new NamedImageFrame("newgui/pointers", 32, 3, 0),
+                DrawType = DesignationTypeProperties.DrawBoxType.TopBox
             });
 
             DesignationProperties.Add(DesignationType.Chop, new DesignationTypeProperties
@@ -105,7 +115,8 @@ namespace DwarfCorp
             DesignationProperties.Add(DesignationType.Plant, new DesignationTypeProperties
             {
                 Color = Color.LimeGreen,
-                Icon = new NamedImageFrame("newgui/pointers", 32, 4, 1)
+                Icon = new NamedImageFrame("newgui/pointers", 32, 4, 1),
+                DrawType = DesignationTypeProperties.DrawBoxType.TopBox
             });
 
             DesignationProperties.Add(DesignationType.Craft, new DesignationTypeProperties
@@ -149,9 +160,19 @@ namespace DwarfCorp
                     if (voxel.Type == DesignationType.Put) // Hate this.
                         DrawPhantomCallback(v, VoxelLibrary.GetVoxelType(voxel.Tag.ToString()));
                     else if (voxel._drawing == 0)
-                        voxel._drawing = DesignationSet.TriangleCache.AddTopBox(voxel.Voxel.GetBoundingBox(),
-                            DesignationProperties[voxel.Type].Color,
-                            DesignationProperties[voxel.Type].LineWidth, true);
+                    {
+                        switch (props.DrawType)
+                        {
+                            case DesignationTypeProperties.DrawBoxType.TopBox:
+                                voxel._drawing = Set.TriangleCache.AddTopBox(voxel.Voxel.GetBoundingBox(), props.Color, props.LineWidth, true);
+                                break;
+                            case DesignationTypeProperties.DrawBoxType.FullBox:
+                                voxel._drawing = Set.TriangleCache.AddBox(voxel.Voxel.GetBoundingBox(), props.Color, props.LineWidth, true);
+                                break;
+                        }
+
+                    }
+                    // Todo: Move the triangle cache out of the designation set.
                 }
                 else if (voxel._drawing > 0)
                 {
@@ -159,7 +180,7 @@ namespace DwarfCorp
                     voxel._drawing = 0;
                 }
             }
-            DesignationSet.TriangleCache.EraseSegments(removals);
+            Set.TriangleCache.EraseSegments(removals);
 
             foreach (var entity in Set.EnumerateEntityDesignations())
             {
@@ -169,16 +190,18 @@ namespace DwarfCorp
                     if (DesignationProperties.ContainsKey(entity.Type))
                         props = DesignationProperties[entity.Type];
 
-                    entity.Body.SetTintRecursive(props.ModulatedColor);
                     // Todo: More consistent drawing?
                     if (entity.Type == DesignationType.Craft)
                     {
                         entity.Body.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                        if (!entity.Body.Active)
+                            entity.Body.SetTintRecursive(props.ModulatedColor);
                     }
                     else
                     {
                         var box = entity.Body.GetBoundingBox();
                         DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, props.LineWidth, false);
+                        entity.Body.SetTintRecursive(props.ModulatedColor);
                     }
 
                     if (props.Icon != null)

@@ -35,7 +35,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-//using System.Windows.Forms;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
@@ -49,9 +48,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CreatureAI : GameComponent, IUpdateableComponent
     {
-        public int MaxMessages = 10;
-        public List<string> MessageBuffer = new List<string>();
-
         public CreatureAI()
         {
         }
@@ -78,7 +74,6 @@ namespace DwarfCorp
             Sensor.Creature = this;
             CurrentTask = null;
             Tasks = new List<Task>();
-            Thoughts = new List<Thought>();
             IdleTimer = new Timer(2.0f, true);
             SpeakTimer = new Timer(5.0f, true);
             XPEvents = new List<int>();
@@ -104,8 +99,6 @@ namespace DwarfCorp
         public GatherManager GatherManager { get; set; }
         /// <summary> When this timer times out, the creature will awake from Idle mode and attempt to find something to do </summary>
         public Timer IdleTimer { get; set; }
-        /// <summary> A creature has a list of thoughts in its mind. Toughts affect the emotional state of a creature. Try not to think disturbing thoughts, little dwarfs. </summary>
-        public List<Thought> Thoughts { get; set; }
         /// <summary> When this timer triggers, the creature will attempt to speak to its neighbors, inducing thoughts. </summary>
         public Timer SpeakTimer { get; set; }
 
@@ -144,14 +137,6 @@ namespace DwarfCorp
         /// <c>true</c> if this instance is posessed; otherwise, <c>false</c>.
         /// </value>
         public bool IsPosessed { get; set; }
-
-        /// <summary> Wrapper around Creature.Hands </summary>
-        [JsonIgnore]
-        public Grabber Hands
-        {
-            get { return Creature.Hands; }
-            set { Creature.Hands = value; }
-        }
 
         /// <summary> Wrapper around Creature.Physics </summary>
         [JsonIgnore]
@@ -220,23 +205,17 @@ namespace DwarfCorp
         /// </summary>
         public List<Task> Tasks { get; set; }
 
-        private WaitForPlanHelper planHelper = null;
-
         /// <summary>
         /// If true, whent he creature dies its friends will mourn its death, generating unhappy Thoughts
         /// </summary>
         public bool TriggersMourning { get; set; }
         /// <summary> List of changes to the creatures XP over time.</summary>
         public List<int> XPEvents { get; set; }
-        public float DestroyPlayerObjectProbability = -1.0f;
 
         public string Biography = "";
 
         public BoundingBox PositionConstraint = new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
             new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));
-
-        public float StealFromPlayerProbability = -1.0f;
-        public string PlantBomb = null;
 
         [OnDeserialized]
         public void OnDeserialize(StreamingContext ctx)
@@ -363,12 +342,11 @@ namespace DwarfCorp
 
             if (above.IsValid)
             {
-                World.Master.SetMaxViewingLevel(above.Coordinate.Y, ChunkManager.SliceMode.Y);
+                World.Master.SetMaxViewingLevel(above.Coordinate.Y);
             }
             else
             {
-                World.Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
-                    ChunkManager.SliceMode.Y);
+                World.Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY);
             }
         }
 
@@ -559,7 +537,6 @@ namespace DwarfCorp
             }
             
             PlannerTimer.Update(gameTime);
-            UpdateThoughts();
             UpdateXP();
 
             // With a small probability, the creature will drown if its under water.
@@ -707,48 +684,6 @@ namespace DwarfCorp
                 (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury())
                 && Tasks.Count == 0)
             {
-                if (StealFromPlayerProbability > 0 && MathFunctions.RandEvent(StealFromPlayerProbability))
-                {
-                    bool stealMoney = MathFunctions.RandEvent(0.5f);
-                    if (World.PlayerFaction.Economy.CurrentMoney > 0 && stealMoney)
-                        AssignTask(new ActWrapperTask(new GetMoneyAct(this, 100m, World.PlayerFaction)) { Name = "Steal money", Priority = Task.PriorityType.High });
-                    else
-                    {
-                        var resources = World.PlayerFaction.ListResources();
-                        if (resources.Count > 0)
-                        {
-                            var resource = Datastructures.SelectRandom(resources);
-                            if (resource.Value.NumResources > 0)
-                            {
-                                AssignTask(new ActWrapperTask(new GetResourcesAct(this, new List<ResourceAmount>() { new ResourceAmount(resource.Value.ResourceType, 1) }) { Faction = World.PlayerFaction }) { Name = "Steal stuff", Priority = Task.PriorityType.High });
-                            }
-                        }
-                    }
-                }
-
-                if (DestroyPlayerObjectProbability > 0 && MathFunctions.RandEvent(DestroyPlayerObjectProbability))
-                {
-                    bool plantBomb = !String.IsNullOrEmpty(PlantBomb) && MathFunctions.RandEvent(0.5f);
-                    if (!plantBomb && World.PlayerFaction.OwnedObjects.Count > 0)
-                    {
-                        var thing = Datastructures.SelectRandom<Body>(World.PlayerFaction.OwnedObjects);
-                        AssignTask(new KillEntityTask(thing, KillEntityTask.KillType.Auto));
-                    }
-                    else if (plantBomb)
-                    {
-                        var room = World.PlayerFaction.GetNearestRoom(Position);
-                        if (room != null)
-                        {
-                            AssignTask(new ActWrapperTask(new Sequence(new GoToZoneAct(this, room), new Do(() => { EntityFactory.CreateEntity<Body>(PlantBomb, Position); Creature.IsCloaked = false; return true; }))) { Priority = Task.PriorityType.High });
-                        }
-                        else if (World.PlayerFaction.OwnedObjects.Count > 0)
-                        {
-                            var thing = Datastructures.SelectRandom<Body>(World.PlayerFaction.OwnedObjects);
-                            AssignTask(new ActWrapperTask(new Sequence(new GoToEntityAct(thing, this), new Do(() => { EntityFactory.CreateEntity<Body>(PlantBomb, Position); Creature.IsCloaked = false; return true; }))) { Priority = Task.PriorityType.High });
-                        }
-                    }
-                }
-
                 // Craft random items for fun.
                 if (Stats.IsTaskAllowed(Task.TaskCategory.CraftItem) && MathFunctions.RandEvent(0.0005f))
                 {
@@ -882,60 +817,7 @@ namespace DwarfCorp
             SoundManager.PlaySound(ContentPaths.Audio.jump, Creature.Physics.GlobalTransform.Translation);
         }
 
-        /// <summary> returns whether or not the creature already has a thought of the given type. </summary>
-        public bool HasThought(Thought.ThoughtType type)
-        {
-            return Thoughts.Any(existingThought => existingThought.Type == type);
-        }
-
-        /// <summary> Add a standard thought to the creature. </summary>
-        public void AddThought(Thought.ThoughtType type)
-        {
-            if (!HasThought(type))
-            {
-                var thought = Thought.CreateStandardThought(type, Manager.World.Time.CurrentDate);
-                AddThought(thought, true);
-
-                if (thought.HappinessModifier > 0.01)
-                {
-                    Creature.NoiseMaker.MakeNoise("Pleased", Position, true);
-                }
-                else
-                {
-                    Creature.NoiseMaker.MakeNoise("Tantrum", Position, true);
-                }
-            }
-        }
-
-        /// <summary> Remove a standard thought from the creature. </summary>
-        public void RemoveThought(Thought.ThoughtType thoughtType)
-        {
-            Thoughts.RemoveAll(thought => thought.Type == thoughtType);
-        }
-
-        /// <summary> Add a custom thought to the creature </summary>
-        public void AddThought(Thought thought, bool allowDuplicates)
-        {
-            if (allowDuplicates)
-            {
-                Thoughts.Add(thought);
-            }
-            else
-            {
-                if (HasThought(thought.Type))
-                {
-                    return;
-                }
-
-                Thoughts.Add(thought);
-            }
-            bool good = thought.HappinessModifier > 0;
-            Color textColor = good ? Color.Yellow : Color.Red;
-            string prefix = good ? "+" : "";
-            string postfix = good ? ":)" : ":(";
-            IndicatorManager.DrawIndicator(prefix + thought.HappinessModifier + " " + postfix,
-                Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 1.0f, textColor);
-        }
+       
 
         /// <summary> Tell the creature to kill the given body. </summary>
         public void Kill(Body entity)
@@ -957,48 +839,19 @@ namespace DwarfCorp
             AssignTask(leaveTask);
         }
 
-        /// <summary> Updates the thoughts in the creature's head. </summary>
-        public void UpdateThoughts()
-        {
-            Thoughts.RemoveAll(thought => thought.IsOver(Manager.World.Time.CurrentDate));
-            Status.Happiness.CurrentValue = 50.0f;
-
-            foreach (Thought thought in Thoughts)
-            {
-                Status.Happiness.CurrentValue += thought.HappinessModifier;
-            }
-
-            if (Status.IsAsleep)
-            {
-                AddThought(Thought.ThoughtType.Slept);
-            }
-            else if (Status.Energy.IsDissatisfied())
-            {
-                AddThought(Thought.ThoughtType.FeltSleepy);
-            }
-
-            if (Status.Hunger.IsDissatisfied())
-            {
-                AddThought(Thought.ThoughtType.FeltHungry);
-            }
-        }
-
         /// <summary> Tell the creature to speak with another </summary>
         public void Converse(CreatureAI other)
         {
             if (SpeakTimer.HasTriggered)
             {
-                AddThought(Thought.ThoughtType.Talked);
+                var thoughts = Creature.Physics.GetComponent<DwarfThoughts>();
+                if (thoughts != null)
+                    thoughts.AddThought(Thought.ThoughtType.Talked);
+
                 Creature.DrawIndicator(IndicatorManager.StandardIndicators.Dots);
                 Creature.Physics.Face(other.Position);
                 SpeakTimer.Reset(SpeakTimer.TargetTimeSeconds);
             }
-        }
-
-        /// <summary> Returns whether or not the creature has a task with the same name as another </summary>
-        public bool HasTaskWithName(string other)
-        {
-            return Tasks.Any(task => task.Name == other);
         }
 
         /// <summary> Returns whether or not the creature has a task with the same name as another </summary>
@@ -1256,54 +1109,6 @@ namespace DwarfCorp
             var task = CurrentTask;
             ChangeTask(null);
             AssignTask(task);
-        }
-
-        public AStarPlanResponse WaitForPlan(VoxelHandle voxel, PlanAct.PlanType type = PlanAct.PlanType.Into)
-        {
-            GoalRegion region = null;
-            switch (type)
-            {
-                case PlanAct.PlanType.Into:
-                    region = new VoxelGoalRegion(voxel);
-                    break;
-                case PlanAct.PlanType.Adjacent:
-                    region = new AdjacentVoxelGoalRegion2D(voxel);
-                    break;
-                case PlanAct.PlanType.Radius:
-                    region = new SphereGoalRegion(voxel, 3.0f);
-                    break;
-                case PlanAct.PlanType.Edge:
-                    region = new EdgeGoalRegion();
-                     break;
-            }
-
-            AstarPlanRequest request = new AstarPlanRequest()
-            {
-                GoalRegion = region,
-                Start = Creature.Physics.CurrentVoxel,
-                Sender = this,
-                MaxExpansions = 50000
-            };
-
-            if (planHelper == null)
-                planHelper = new WaitForPlanHelper(5.0f, Creature.PlanService);
-
-            return planHelper.WaitForResponse(request);
-        }
-
-        public AStarPlanResponse WaitForPlan(Vector3 pos, PlanAct.PlanType type = PlanAct.PlanType.Into)
-        {
-            VoxelHandle voxel = new VoxelHandle(World.ChunkManager.ChunkData, new GlobalVoxelCoordinate((int)Math.Round(pos.X), (int)Math.Round(pos.Y), (int)Math.Round(pos.Z)));
-            return WaitForPlan(voxel);
-        }
-
-        public AStarPlanResponse WaitForPlan(Body body, PlanAct.PlanType type = PlanAct.PlanType.Into)
-        {
-            var pos = body.GlobalTransform.Translation;
-            VoxelHandle voxel = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(World.ChunkManager.ChunkData, new GlobalVoxelCoordinate((int)Math.Round(pos.X),
-                (int)Math.Round(pos.Y),
-                (int)Math.Round(pos.Z))));
-            return WaitForPlan(voxel);
         }
 
         public int CountFeasibleTasks(Task.PriorityType minPriority)

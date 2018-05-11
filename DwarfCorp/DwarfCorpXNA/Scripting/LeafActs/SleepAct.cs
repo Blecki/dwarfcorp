@@ -136,7 +136,7 @@ namespace DwarfCorp
                     Creature.Physics.AllowPhysicsSleep = false;
                 }
 
-                Creature.AI.AddThought(Thought.ThoughtType.Slept);
+                Creature.AddThought(Thought.ThoughtType.Slept);
                 Creature.Status.IsAsleep = false;
                 Creature.Physics.IsSleeping = false;
                 Creature.Physics.AllowPhysicsSleep = false;
@@ -177,7 +177,7 @@ namespace DwarfCorp
                     Creature.Physics.IsSleeping = false;
                     Creature.Physics.AllowPhysicsSleep = false;
                 }
-                Creature.AI.AddThought(Thought.ThoughtType.Slept);
+                Creature.AddThought(Thought.ThoughtType.Slept);
                 Creature.Status.IsAsleep = false;
                 Creature.Physics.IsSleeping = false;
                 Creature.Physics.AllowPhysicsSleep = false;

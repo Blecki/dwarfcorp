@@ -1,4 +1,4 @@
-// GuardVoxelTask.cs
+// CreatureAI.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -30,54 +30,52 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Tells a creature that it should guard a voxel.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
-    internal class GuardZoneTask : Task
+    public class KoboldAI : CreatureAI
     {
-        public GuardZoneTask()
-        {
-            Category = TaskCategory.Guard;
-            Name = "Guard Area";
-            Priority = PriorityType.Medium;
-            MaxAssignable = 10;
-        }
+        public float StealFromPlayerProbability = -1.0f;
 
-        public override Act CreateScript(Creature agent)
-        {
-            return new GuardAreaAct(agent.AI);
-        }
-
-        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
-        {
-            return 1.0f;
-        }
-
-        public override bool ShouldRetry(Creature agent)
-        {
-            return agent.Faction.Designations.EnumerateDesignations(DesignationType.Guard).Any();
-        }
-
-        public override void Render(DwarfTime time)
+        public KoboldAI()
         {
 
         }
 
-        public override Feasibility IsFeasible(Creature agent)
+        public KoboldAI(ComponentManager Manager, String Name, EnemySensor Sensor, PlanService PlanService)
+        : base(Manager, Name, Sensor, PlanService) { }
+
+        public override Task ActOnIdle()
         {
-            if (agent.AI.Status.IsAsleep)
-                return Feasibility.Infeasible;
-            return agent.Faction.Designations.EnumerateDesignations(DesignationType.Guard).Any() ? Feasibility.Feasible : Feasibility.Infeasible;
+            if (StealFromPlayerProbability > 0 && MathFunctions.RandEvent(StealFromPlayerProbability))
+            {
+                bool stealMoney = MathFunctions.RandEvent(0.5f);
+                if (World.PlayerFaction.Economy.CurrentMoney > 0 && stealMoney)
+                    AssignTask(new ActWrapperTask(new GetMoneyAct(this, 100m, World.PlayerFaction)) { Name = "Steal money", Priority = Task.PriorityType.High });
+                else
+                {
+                    var resources = World.PlayerFaction.ListResources();
+                    if (resources.Count > 0)
+                    {
+                        var resource = Datastructures.SelectRandom(resources);
+                        if (resource.Value.NumResources > 0)
+                        {
+                            AssignTask(new ActWrapperTask(new GetResourcesAct(this, new List<ResourceAmount>() { new ResourceAmount(resource.Value.ResourceType, 1) }) { Faction = World.PlayerFaction }) { Name = "Steal stuff", Priority = Task.PriorityType.High });
+                        }
+                    }
+                }
+            }
+
+            return base.ActOnIdle();
         }
     }
-
 }

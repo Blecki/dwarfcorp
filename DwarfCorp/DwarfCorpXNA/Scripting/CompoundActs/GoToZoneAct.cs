@@ -78,7 +78,7 @@ namespace DwarfCorp
             }
             if (Tree == null)
             {
-                var voxel = Destination.GetNearestVoxel(Destination.GetBoundingBox().Center());
+                var voxel = Datastructures.SelectRandom(Destination.Voxels);
                 Tree = new GoToVoxelAct(VoxelHelpers.GetVoxelAbove(voxel), PlanAct.PlanType.Into, Agent);
                 Tree.Initialize();
             }

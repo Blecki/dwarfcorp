@@ -30,6 +30,7 @@ namespace DwarfCorp.GameStates
         private CheckBox FollowSurface;
         private CheckBox FogOfWar;
         private CheckBox PlayIntro;
+        private CheckBox AllowReporting;
         private ComboBox GuiScale;
         private HorizontalFloatSlider MasterVolume;
         private HorizontalFloatSlider SFXVolume;
@@ -103,7 +104,7 @@ namespace DwarfCorp.GameStates
             GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             var screen = GuiRoot.RenderData.VirtualScreen;
-            float scale = 0.75f;
+            float scale = 0.95f;
             float newWidth = System.Math.Min(System.Math.Max(screen.Width*scale, 640), screen.Width*scale);
             float newHeight = System.Math.Min(System.Math.Max(screen.Height*scale, 480), screen.Height*scale);
             Rectangle rect = new Rectangle((int)(screen.Width / 2 - newWidth / 2), (int)(screen.Height/2 - newHeight/2),(int)newWidth, (int)newHeight);
@@ -316,6 +317,15 @@ namespace DwarfCorp.GameStates
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
+
+            AllowReporting = panel.AddChild(new CheckBox
+            {
+                Text = "Crash Reporting",
+                Tooltip = "When checked, you have been opted in to automatic crash reporting.",
+                OnCheckStateChange = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop
+            }) as CheckBox;
+
 
             FogOfWar = panel.AddChild(new CheckBox
             {
@@ -698,8 +708,6 @@ namespace DwarfCorp.GameStates
                                 GameSettings.Default.DrawChunksReflected = false;
                                 GameSettings.Default.DrawEntityReflected = false;
                                 GameSettings.Default.DrawSkyReflected = false;
-                                GameSettings.Default.UseLightmaps = false;
-                                GameSettings.Default.UseDynamicShadows = false;
                                 GameSettings.Default.EntityLighting = false;
                                 GameSettings.Default.EnableGlow = false;
                                 GameSettings.Default.SelfIlluminationEnabled = false;
@@ -715,8 +723,6 @@ namespace DwarfCorp.GameStates
                                 GameSettings.Default.DrawChunksReflected = false;
                                 GameSettings.Default.DrawEntityReflected = false;
                                 GameSettings.Default.DrawSkyReflected = true;
-                                GameSettings.Default.UseLightmaps = false;
-                                GameSettings.Default.UseDynamicShadows = false;
                                 GameSettings.Default.EntityLighting = true;
                                 GameSettings.Default.EnableGlow = false;
                                 GameSettings.Default.SelfIlluminationEnabled = false;
@@ -732,8 +738,6 @@ namespace DwarfCorp.GameStates
                                 GameSettings.Default.DrawChunksReflected = true;
                                 GameSettings.Default.DrawEntityReflected = false;
                                 GameSettings.Default.DrawSkyReflected = true;
-                                GameSettings.Default.UseLightmaps = false;
-                                GameSettings.Default.UseDynamicShadows = false;
                                 GameSettings.Default.EntityLighting = true;
                                 GameSettings.Default.EnableGlow = false;
                                 GameSettings.Default.SelfIlluminationEnabled = true;
@@ -749,8 +753,6 @@ namespace DwarfCorp.GameStates
                                 GameSettings.Default.DrawChunksReflected = true;
                                 GameSettings.Default.DrawEntityReflected = true;
                                 GameSettings.Default.DrawSkyReflected = true;
-                                GameSettings.Default.UseLightmaps = false;
-                                GameSettings.Default.UseDynamicShadows = false;
                                 GameSettings.Default.EntityLighting = true;
                                 GameSettings.Default.EnableGlow = true;
                                 GameSettings.Default.SelfIlluminationEnabled = true;
@@ -766,8 +768,6 @@ namespace DwarfCorp.GameStates
                                 GameSettings.Default.DrawChunksReflected = true;
                                 GameSettings.Default.DrawEntityReflected = false;
                                 GameSettings.Default.DrawSkyReflected = true;
-                                GameSettings.Default.UseLightmaps = false;
-                                GameSettings.Default.UseDynamicShadows = false;
                                 GameSettings.Default.EntityLighting = true;
                                 GameSettings.Default.EnableGlow = true;
                                 GameSettings.Default.SelfIlluminationEnabled = true;
@@ -856,6 +856,7 @@ namespace DwarfCorp.GameStates
             toReturn.InvertZoom = this.InvertZoom.CheckState;
             toReturn.ZoomCameraTowardMouse = this.ZoomTowardMouse.CheckState;
             toReturn.DisplayIntro = this.PlayIntro.CheckState;
+            toReturn.AllowReporting = this.AllowReporting.CheckState;
             toReturn.MaxSaves = int.Parse(this.MaxSaves.SelectedItem);
             toReturn.AutoSave = this.Autosave.CheckState;
             toReturn.AutoSaveTimeMinutes =
@@ -1006,6 +1007,7 @@ namespace DwarfCorp.GameStates
             this.InvertZoom.CheckState = GameSettings.Default.InvertZoom;
             this.ZoomTowardMouse.CheckState = GameSettings.Default.ZoomCameraTowardMouse;
             this.PlayIntro.CheckState = GameSettings.Default.DisplayIntro;
+            this.AllowReporting.CheckState = GameSettings.Default.AllowReporting;
             this.Autosave.CheckState = GameSettings.Default.AutoSave;
             (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition =
                 (int)(GameSettings.Default.AutoSaveTimeMinutes - 5);

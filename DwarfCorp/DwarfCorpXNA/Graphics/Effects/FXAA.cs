@@ -99,9 +99,13 @@ namespace DwarfCorp
                     Console.Error.WriteLine("Uh oh. Back buffer is HUGE {0} x {1}. Will need to downscale the image to apply FXAA.",
                         pp.BackBufferWidth, pp.BackBufferHeight);
                 }
+                if (RenderTarget != null)
+                {
+                    RenderTarget.Dispose();
+                }
+
                 RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, width, height, false, pp.BackBufferFormat, DepthFormat.None);
-                GameState.Game.GraphicsDevice.Viewport = new Viewport(0, 0, RenderTarget.Width, RenderTarget.Height);
-                Viewport viewport = GameState.Game.GraphicsDevice.Viewport;
+                Viewport viewport = new Viewport(0, 0, RenderTarget.Width, RenderTarget.Height);
                 Matrix projection = Matrix.CreateOrthographicOffCenter(0, viewport.Width, viewport.Height, 0, 0, 1);
                 Matrix halfPixelOffset = Matrix.CreateTranslation(-0.5f, -0.5f, 0);
                 Shader.Parameters["World"].SetValue(Matrix.Identity);

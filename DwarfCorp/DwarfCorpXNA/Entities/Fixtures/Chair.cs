@@ -22,7 +22,7 @@ namespace DwarfCorp
         private void Initialize(ComponentManager manager)
         {
             Tags.Add("Chair");
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
         }
 
         public Chair()

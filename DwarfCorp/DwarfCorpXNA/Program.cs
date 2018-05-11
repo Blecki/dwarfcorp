@@ -95,7 +95,12 @@ namespace DwarfCorp
             catch (Exception exception)
             {
                 WriteExceptionLog(exception);
-                System.Windows.Forms.MessageBox.Show(String.Format("An unhandled exception occurred in DwarfCorp. This has been reported to Completely Fair Games LLC.\n {0}", exception.ToString()), "ERROR");
+                string report = "This was automatically reported to the devs to help us debug!";
+                if (!GameSettings.Default.AllowReporting)
+                {
+                    report = "You have opted out of automatic crash reporting.";
+                }
+                System.Windows.Forms.MessageBox.Show(String.Format("An unhandled exception occurred in DwarfCorp. {1} \n {0}", exception.ToString(), report), "ERROR");
             }
 #endif
         }

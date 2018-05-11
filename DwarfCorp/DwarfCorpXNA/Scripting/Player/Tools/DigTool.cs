@@ -50,7 +50,8 @@ namespace DwarfCorp
     {
         public override void OnBegin()
         {
-           Player.World.Tutorial("mine");
+            Player.VoxSelector.SelectionColor = Color.White;
+            Player.World.Tutorial("mine");
         }
 
         public override void OnEnd()
@@ -70,8 +71,14 @@ namespace DwarfCorp
                     if (!v.IsValid || (v.IsEmpty && v.IsExplored) || v.Type.IsInvincible)
                         continue;
 
-                   
-                    if(!Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !Player.Faction.RoomBuilder.IsInRoom(v))
+                    var boundingBox = v.GetBoundingBox();
+                    var entities = Player.World.EnumerateIntersectingObjects(boundingBox, CollisionType.Static);
+                    if (entities.OfType<IVoxelListener>().Any())
+                    {
+                        continue;
+                    }
+
+                    if (!Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !Player.Faction.RoomBuilder.IsInRoom(v))
                     {
                         var task = new KillVoxelTask(v);
                         Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Dig, null, task);

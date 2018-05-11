@@ -1006,13 +1006,11 @@ namespace DwarfCorp
             }
             else
             {
-                var transitionFrontBack = ComputeTransitionValueOnPlane(
-                    VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.Z)
+                var transitionFrontBack = ComputeTransitionValueOnPlane(VoxelHelpers.EnumerateManhattanNeighbors2D_Z(V.Coordinate)
                     .Select(c => new VoxelHandle(Data, c)),
                     Type);
 
-                var transitionLeftRight = ComputeTransitionValueOnPlane(
-                    VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate, ChunkManager.SliceMode.X)
+                var transitionLeftRight = ComputeTransitionValueOnPlane(VoxelHelpers.EnumerateManhattanNeighbors2D_X(V.Coordinate)
                     .Select(c => new VoxelHandle(Data, c)),
                     Type);
 

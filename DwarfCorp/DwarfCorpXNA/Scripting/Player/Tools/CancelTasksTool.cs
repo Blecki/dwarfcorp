@@ -1,4 +1,4 @@
-// BuildTool.cs
+// DigTool.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -30,32 +30,40 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
-using DwarfCorp.Gui.Widgets;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class CookTool : PlayerTool
+    public class CancelTasksTool : PlayerTool
     {
-        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
-        {
-            Player.Faction.CraftBuilder.VoxelsSelected(voxels, button);
-        }
+        public Gui.Widgets.CancelToolOptions Options;
 
         public override void OnBegin()
         {
+           Player.World.Tutorial("cancel-tasks");
         }
 
         public override void OnEnd()
         {
-            Player.Faction.CraftBuilder.End();
+            Player.VoxSelector.Clear();
+        }
+
+        public override void OnVoxelsSelected(List<VoxelHandle> refs, InputManager.MouseButton button)
+        {
+            if (Options.Voxels.CheckState)
+                foreach (var r in refs)
+                {
+                    if (r.IsValid)
+                    {
+                        foreach (var des in Player.Faction.Designations.EnumerateDesignations(r).ToList())
+                            if (des.Task != null)
+                                Player.TaskManager.CancelTask(des.Task);
+                    }
+                }
         }
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
@@ -67,18 +75,21 @@ namespace DwarfCorp
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
-                Player.World.SetMouse(null);
                 Player.BodySelector.Enabled = false;
+                Player.World.SetMouse(null);
                 return;
             }
 
-                Player.VoxSelector.Enabled = false;
-                Player.BodySelector.Enabled = false;
+            Player.VoxSelector.Enabled = Options.Voxels.CheckState;
 
-                if (Player.World.IsMouseOverGui)
-                    Player.World.SetMouse(Player.World.MousePointer);
-                else
-                    Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 11));
+            if (Player.World.IsMouseOverGui)
+                Player.World.SetMouse(Player.World.MousePointer);
+            else
+                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 1));
+
+        
+            Player.BodySelector.Enabled = Options.Entities.CheckState;
+            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
@@ -87,10 +98,18 @@ namespace DwarfCorp
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
+            if (Options.Entities.CheckState)
+                foreach (var body in bodies)
+                {
+                    foreach (var des in Player.Faction.Designations.EnumerateEntityDesignations(body).ToList())
+                        if (des.Task != null)
+                            Player.TaskManager.CancelTask(des.Task);
+                }
         }
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
+
         }
     }
 }

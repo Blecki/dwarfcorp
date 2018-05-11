@@ -75,7 +75,7 @@ namespace DwarfCorp
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
-        public override void Render(DwarfTime gameTime,
+        new public void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,
@@ -131,8 +131,6 @@ namespace DwarfCorp
                 };
                 }
             }
-
-            GamePerformance.Instance.StartTrackPerformance("Render - Layered Simple Sprite");
 
             // Everything that draws should set it's tint, making this pointless.
             Color origTint = effect.VertexColorTint;  
@@ -201,7 +199,6 @@ namespace DwarfCorp
             effect.VertexColorTint = origTint;
             effect.EnableWind = false;
             EndDraw(effect);
-            GamePerformance.Instance.StopTrackPerformance("Render - Layered Simple Sprite");
         }
     }
 

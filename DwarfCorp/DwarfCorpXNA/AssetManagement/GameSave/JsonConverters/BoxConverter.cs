@@ -162,7 +162,7 @@ namespace DwarfCorp
                         float.Parse((string)properties[5]))
                 };
             }
-            catch (System.OverflowException exception)
+            catch (System.OverflowException)
             {
                 return new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
                     new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));

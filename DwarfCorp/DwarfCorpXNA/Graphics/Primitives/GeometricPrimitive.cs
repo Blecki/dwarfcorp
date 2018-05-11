@@ -21,7 +21,7 @@ namespace DwarfCorp
         public int VertexCount = 0;
 
         [JsonIgnore]
-        public IndexBuffer IndexBuffer = null;
+        public DynamicIndexBuffer IndexBuffer = null;
 
         // Todo: Store shorts instead
         public ushort[] Indexes = new ushort[6];
@@ -29,7 +29,7 @@ namespace DwarfCorp
         public ExtendedVertex[] Vertices = new ExtendedVertex[6];
 
         [JsonIgnore]
-        public VertexBuffer VertexBuffer = null;
+        public DynamicVertexBuffer VertexBuffer = null;
 
         [JsonIgnore]
         protected object VertexLock = new object();
@@ -63,7 +63,7 @@ namespace DwarfCorp
                     return;
                 }
 
-                if (VertexBuffer == null ||  VertexBuffer.IsDisposed || VertexBuffer.GraphicsDevice.IsDisposed)
+                if (VertexBuffer == null ||  VertexBuffer.IsDisposed || VertexBuffer.GraphicsDevice.IsDisposed || VertexBuffer.IsContentLost)
                 {
                     ResetBuffer(device);
                 }
@@ -153,7 +153,7 @@ namespace DwarfCorp
 
                 if (Vertices != null)
                 {
-                    VertexBuffer newBuff = new VertexBuffer(device, ExtendedVertex.VertexDeclaration, Vertices.Length,
+                    DynamicVertexBuffer newBuff = new DynamicVertexBuffer(device, ExtendedVertex.VertexDeclaration, Vertices.Length,
                         BufferUsage.WriteOnly);
                     newBuff.SetData(Vertices, 0, VertexCount);
                     VertexBuffer = newBuff;
@@ -161,7 +161,7 @@ namespace DwarfCorp
 
                 if (Indexes != null)
                 {
-                    IndexBuffer newIndexBuff = new IndexBuffer(device, typeof (ushort), Indexes.Length, BufferUsage.None);
+                    DynamicIndexBuffer newIndexBuff = new DynamicIndexBuffer(device, typeof (ushort), Indexes.Length, BufferUsage.None);
                     newIndexBuff.SetData(Indexes, 0, IndexCount);
                     IndexBuffer = newIndexBuff;
                 }

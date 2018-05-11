@@ -81,9 +81,9 @@ namespace DwarfCorp
 
         private bool firstIter = true;
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            bool saveHasMoved = HasMoved || ParentMoved || firstIter;
+            bool saveHasMoved = HasMoved || firstIter;
 
             base.Update(gameTime, chunks, camera);
 

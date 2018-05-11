@@ -20,6 +20,7 @@ namespace DwarfCorp
 
         private Matrix _transform;
         private NewInstanceManager Manager;
+        public ulong EntityID = 0;
 
         [Newtonsoft.Json.JsonIgnore]
         public Matrix Transform
@@ -57,6 +58,7 @@ namespace DwarfCorp
             this.Color = Color;
             this.ShouldDraw = ShouldDraw;
             this.VertexColorTint = Color.White;
+            this.Visible = true;
             SelectionBufferColor = Color.Black;
         }
     }

@@ -78,8 +78,6 @@ namespace DwarfCorp
             Physics.Orientation = Physics.OrientMode.RotateY;
             CreateSprite(dwarfClass, Manager);
 
-            Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
-
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 
             AI = Physics.AddChild(new CreatureAI(Manager, "Dwarf AI", Sensors, PlanService)) as CreatureAI;
@@ -168,6 +166,8 @@ namespace DwarfCorp
 
 
             Physics.AddChild(new VoxelRevealer(Manager, Physics, 5)).SetFlag(Flag.ShouldSerialize, false);
+
+            Physics.AddChild(new DwarfThoughts(Manager, "Thoughts"));
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)

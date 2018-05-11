@@ -49,13 +49,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class OrientedAnimatedSprite : AnimatedSprite, IUpdateableComponent
     {
-        [OnSerialized]
-        private void _onSerialized(StreamingContext Context)
-        {
-            var x = 5;
-
-        }
-
         public enum Orientation
         {
             Right = 0,
@@ -100,7 +93,7 @@ namespace DwarfCorp
         {
         }
 
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             CalculateCurrentOrientation(camera);
 

@@ -242,34 +242,23 @@ namespace DwarfCorp
                                 break;
                             case "Fire":
                                 {
-                                    foreach (var flam2 in
-                                        Player.World.CollisionManager.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<GameComponent>().SelectMany(c => c.EnumerateAll()).OfType<Flammable>())
-                                    {
+                                    foreach (var flam2 in Player.World.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionType.Both).OfType<Flammable>())
                                         flam2.Heat = flam2.Flashpoint + 1;
-                                    }
                                 }
                                 break;
 
                             case "Kill Things":
                                 {
-                                    foreach (var comp in Player.World.CollisionManager.EnumerateIntersectingObjects(
-                                        vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<Body>())
-                                    {
+                                    foreach (var comp in Player.World.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionType.Both))
                                         comp.Die();
-                                    }
                                 }
                                 break;
                             case "Disease":
                                 {
-                                    foreach (var comp in Player.World.CollisionManager.EnumerateIntersectingObjects(
-                                        vox.GetBoundingBox(), CollisionManager.CollisionType.Both).OfType<Body>())
+                                    foreach (var creature in Player.World.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionType.Both).OfType<Creature>())
                                     {
-                                        var creature = comp.GetRoot().GetComponent<Creature>();
-                                        if (creature != null)
-                                        {
-                                            var disease = Datastructures.SelectRandom(DiseaseLibrary.Diseases);
-                                            creature.AcquireDisease(disease.Name);
-                                        }
+                                        var disease = Datastructures.SelectRandom(DiseaseLibrary.Diseases);
+                                        creature.AcquireDisease(disease.Name);
                                     }
                                     break;
                                 }
@@ -314,7 +303,7 @@ namespace DwarfCorp
             {
                 var location = Player.VoxSelector.VoxelUnderMouse;
                 var center = location.GetBoundingBox().Center();
-                foreach (var body in Player.World.CollisionManager.EnumerateIntersectingObjects(location.GetBoundingBox(), CollisionManager.CollisionType.Dynamic).OfType<Body>())
+                foreach (var body in Player.World.EnumerateIntersectingObjects(location.GetBoundingBox(), CollisionType.Dynamic))
                 {
                     var delta = center - body.Position;
                     delta.Normalize();

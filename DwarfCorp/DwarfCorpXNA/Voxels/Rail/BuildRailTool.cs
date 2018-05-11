@@ -50,7 +50,6 @@ namespace DwarfCorp.Rail
         private Faction Faction;
         private bool RightPressed = false;
         private bool LeftPressed = false;
-        public List<ResourceAmount> SelectedResources;
         public bool GodModeSwitch = false;
 
         private static CraftItem RailCraftItem = new CraftItem
@@ -90,7 +89,6 @@ namespace DwarfCorp.Rail
         public override void OnBegin()
         {
             System.Diagnostics.Debug.Assert(Pattern != null);
-            System.Diagnostics.Debug.Assert(SelectedResources != null);
             GodModeSwitch = false;
             CreatePreviewBodies(Faction.World.ComponentManager, new VoxelHandle(Faction.World.ChunkManager.ChunkData, new GlobalVoxelCoordinate(0, 0, 0)));
         }
@@ -101,7 +99,6 @@ namespace DwarfCorp.Rail
                 body.Delete();
             PreviewBodies.Clear();
             Pattern = null;
-            SelectedResources = null;
             Player.VoxSelector.DrawVoxel = true;
             Player.VoxSelector.DrawBox = true;
         }
@@ -119,8 +116,6 @@ namespace DwarfCorp.Rail
             PreviewBodies.Clear();
             foreach (var piece in Pattern.Pieces)
                 PreviewBodies.Add(RailHelper.CreatePreviewBody(ComponentManager, Location, piece));
-
-            // Todo: Add CraftDetails component.
         }
 
         public override void Update(DwarfGame game, DwarfTime time)
@@ -143,7 +138,7 @@ namespace DwarfCorp.Rail
             else
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
 
-            // Don't attempt any control if the user is trying to type intoa focus item.
+            // Don't attempt any control if the user is trying to type into a focus item.
             if (Player.World.Gui.FocusItem != null && !Player.World.Gui.FocusItem.IsAnyParentTransparent() && !Player.World.Gui.FocusItem.IsAnyParentHidden())
             {
                 return;

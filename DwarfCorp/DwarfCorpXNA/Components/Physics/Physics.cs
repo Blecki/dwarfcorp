@@ -209,7 +209,7 @@ namespace DwarfCorp
             PreviousPosition = LocalTransform.Translation;
             PreviousVelocity = Vector3.Zero;
             IsInLiquid = false;
-            CollisionType = CollisionManager.CollisionType.Dynamic;
+            CollisionType = CollisionType.Dynamic;
             CollideMode = CollisionMode.All;
             Orientation = orientation;
             SleepTimer = new Timer(5.0f, true);
@@ -224,11 +224,12 @@ namespace DwarfCorp
             LocalTransform = transform;
         }
  
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             if (!Active)
             {
-                base.Update(gameTime, chunks, camera);
                 return;
             }
 
@@ -236,13 +237,11 @@ namespace DwarfCorp
             if (AnimationQueue.Count > 0)
             {
                 Velocity = Vector3.Zero;
-                base.Update(gameTime, chunks, camera);
                 return;
             }
 
             if (gameTime.Speed < 0.01)
             {
-                base.Update(gameTime, chunks, camera);
                 return;
             }
 
@@ -411,8 +410,12 @@ namespace DwarfCorp
                     if (numTimesteps*velocityLength > 1)
                     {
                         // Assume all physics are attached to the root.
-                        UpdateTransform();
+                        if (Parent != null)
+                            globalTransform = LocalTransform * (Parent as Body).GlobalTransform;
+                        else
+                            globalTransform = LocalTransform;
                         UpdateBoundingBox();
+
                         //UpdateTransformsRecursive(Parent as Body);
                     }
                 }
@@ -422,15 +425,6 @@ namespace DwarfCorp
             CheckLiquids(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             PreviousVelocity = Velocity;
             PreviousPosition = Position;
-            base.Update(gameTime, chunks, camera);
-        }
-
-
-        public void SetPosition(Vector3 pos)
-        {
-            Matrix tf = LocalTransform;
-            tf.Translation = pos;
-            LocalTransform = tf;
         }
 
         public void CheckLiquids(ChunkManager chunks, float dt)

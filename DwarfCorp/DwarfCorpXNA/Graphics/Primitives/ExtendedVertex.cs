@@ -157,4 +157,92 @@ namespace Microsoft.Xna.Framework.Graphics
         }
     }
 
+
+    [Serializable]
+    public struct ThickLineVertex : IVertexType
+    {
+
+        public Vector4 Position;
+        public Vector3 Direction;
+        public Color Color;
+
+        //
+        // Summary:
+        //     Vertex declaration, which defines per-vertex data.
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+        public static readonly VertexDeclaration VertexDeclaration = new VertexDeclaration
+            (
+            new VertexElement(0, VertexElementFormat.Vector4, VertexElementUsage.Position, 0),
+            new VertexElement(SizeOf(Vector4.Zero), VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
+            new VertexElement(SizeOf(Vector4.Zero) + SizeOf(Vector3.Zero), VertexElementFormat.Color, VertexElementUsage.Color, 0)
+            );
+
+
+        public static int SizeOf<T>(T obj)
+        {
+            return System.Runtime.InteropServices.Marshal.SizeOf(obj);
+        }
+
+        VertexDeclaration IVertexType.VertexDeclaration
+        {
+            get { return VertexDeclaration; }
+        }
+
+        //
+        // Summary:
+        //     Initializes a new instance of the VertexPositionColorTexture class.
+        //
+        // Parameters:
+        //   position:
+        //     Position of the vertex.
+        //
+        //   color:
+        //     Color of the vertex.
+        //
+        //   textureCoordinate:
+        //     Texture coordinate of the vertex.
+        public ThickLineVertex(Vector4 position, Vector3 direction, Color color)
+        {
+            Position = position;
+            Color = color;
+            Direction = direction;
+        }
+
+        public static bool operator !=(ThickLineVertex left, ThickLineVertex right)
+        {
+            return !(left.Color == right.Color && left.Position == right.Position
+                && left.Position == right.Position
+                && left.Direction == right.Direction);
+        }
+
+        public static bool operator ==(ThickLineVertex left, ThickLineVertex right)
+        {
+            return !(left != right);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ThickLineVertex)
+            {
+                return this == (ThickLineVertex)obj;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        //
+        // Summary:
+        //     Gets the hash code for this instance.
+        public override int GetHashCode()
+        {
+            return Position.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return "Thick Vertex: " + Position.ToString();
+        }
+    }
 }

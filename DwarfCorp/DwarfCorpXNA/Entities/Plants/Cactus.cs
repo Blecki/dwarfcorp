@@ -71,7 +71,7 @@ namespace DwarfCorp
             Tags.Add("Vegetation");
             Tags.Add("Cactus");
 
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
             PropogateTransforms();
         }
     }

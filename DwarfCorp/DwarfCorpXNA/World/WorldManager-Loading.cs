@@ -169,12 +169,12 @@ namespace DwarfCorp
             #region Initialize static data
 
             {
-                Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
+                Vector3 origin = new Vector3(0, 0, 0);
                 Vector3 extents = new Vector3(1500, 1500, 1500);
-                CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
+                    OctTree = new OctTreeNode<Body>(origin - extents, origin + extents);
 
-                // Todo: ??
-                new PrimitiveLibrary(GraphicsDevice, Content);
+                    // Todo: ??
+                    new PrimitiveLibrary(GraphicsDevice, Content);
 
                 NewInstanceManager = new NewInstanceManager(GraphicsDevice, new BoundingBox(origin - extents, origin + extents),
                     Content);
@@ -228,40 +228,6 @@ namespace DwarfCorp
 
                 WaterRenderer = new WaterRenderer(GraphicsDevice);
 
-                LiquidAsset waterAsset = new LiquidAsset
-                {
-                    Type = LiquidType.Water,
-                    Opactiy = 0.8f,
-                    Reflection = 1.0f,
-                    WaveHeight = 0.1f,
-                    WaveLength = 0.05f,
-                    WindForce = 0.001f,
-                    BumpTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.water_normal),
-                    BaseTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.cartoon_water),
-                    MinOpacity = 0.4f,
-                    RippleColor = new Vector4(0.6f, 0.6f, 0.6f, 0.0f),
-                    FlatColor = new Vector4(0.3f, 0.3f, 0.9f, 1.0f)
-                };
-                WaterRenderer.AddLiquidAsset(waterAsset);
-
-
-                LiquidAsset lavaAsset = new LiquidAsset
-                {
-                    Type = LiquidType.Lava,
-                    Opactiy = 0.95f,
-                    Reflection = 0.0f,
-                    WaveHeight = 0.1f,
-                    WaveLength = 0.05f,
-                    WindForce = 0.001f,
-                    MinOpacity = 0.8f,
-                    BumpTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.water_normal),
-                    BaseTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.lava),
-                    RippleColor = new Vector4(0.5f, 0.4f, 0.04f, 0.0f),
-                    FlatColor = new Vector4(0.9f, 0.7f, 0.2f, 1.0f)
-                };
-
-                WaterRenderer.AddLiquidAsset(lavaAsset);
-
 #endregion
 
                 SetLoadingMessage("Generating Initial Terrain Chunks ...");
@@ -280,26 +246,24 @@ namespace DwarfCorp
                 if (fileExists)
                 {
 
-                    ChunkManager = new ChunkManager(Content, this, Camera,
-                        GraphicsDevice,
+                    ChunkManager = new ChunkManager(Content, this,
                         ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+                Splasher = new Splasher(ChunkManager);
 
-                    ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
+
+                ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
                     
                     SetLoadingMessage("Loading Terrain...");
                     gameFile.ReadChunks(ExistingFile);
-                    ChunkManager.ChunkData.LoadFromFile(gameFile, SetLoadingMessage);
+                    ChunkManager.ChunkData.LoadFromFile(ChunkManager, gameFile, SetLoadingMessage);
                     
                     SetLoadingMessage("Loading Entities...");
                     gameFile.LoadPlayData(ExistingFile, this);
                     Camera = gameFile.PlayData.Camera;
-                    ChunkManager.camera = Camera;
-                    ChunkRenderer.camera = Camera;
                     DesignationDrawer = gameFile.PlayData.Designations;
 
                     Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
                     Vector3 extents = new Vector3(1500, 1500, 1500);
-                    CollisionManager = new CollisionManager(new BoundingBox(origin - extents, origin + extents));
 
                     if (gameFile.PlayData.Resources != null)
                     {
@@ -363,11 +327,12 @@ namespace DwarfCorp
                         MathHelper.PiOver4, AspectRatio, 0.1f,
                         GameSettings.Default.VertexCullDistance);
 
-                    ChunkManager = new ChunkManager(Content, this, Camera,
-                        GraphicsDevice,
+                    ChunkManager = new ChunkManager(Content, this, 
                         ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+                Splasher = new Splasher(ChunkManager);
 
-                    ChunkRenderer = new ChunkRenderer(this, Camera, GraphicsDevice, ChunkManager.ChunkData);
+
+                ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
 
                     Camera.Position = new Vector3(0, 10, 0) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
                     Camera.Target = new Vector3(0, 10, 1) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
@@ -404,9 +369,6 @@ namespace DwarfCorp
 
                         if (faction.RoomBuilder == null)
                             faction.RoomBuilder = new RoomBuilder(faction, this);
-
-                        if (faction.CraftBuilder == null)
-                            faction.CraftBuilder = new CraftBuilder(faction, this);
                     }
 
                     Factions = new FactionLibrary();
@@ -441,8 +403,6 @@ namespace DwarfCorp
 
 #endregion
 
-                ChunkManager.camera = Camera;
-
                 SetLoadingMessage("Creating Particles ...");
                 ParticleManager = new ParticleManager(GraphicsDevice, ComponentManager);
 
@@ -465,7 +425,7 @@ namespace DwarfCorp
                     }
                     ChunkManager.World.Master.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
                     ? gameFile.Metadata.Slice
-                    : ChunkManager.World.Master.MaxViewingLevel, ChunkManager.SliceMode.Y);
+                    : ChunkManager.World.Master.MaxViewingLevel);
                 }
 
                 if (Master.Faction.Economy.Company.Information == null)
@@ -476,7 +436,7 @@ namespace DwarfCorp
                 {
                     chunk.CalculateInitialSunlight();
                 }
-                VoxelHelpers.InitialReveal(ChunkManager.ChunkData, new VoxelHandle(
+                VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, new VoxelHandle(
                 ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
 
                 foreach (var chunk in ChunkManager.ChunkData.ChunkMap)

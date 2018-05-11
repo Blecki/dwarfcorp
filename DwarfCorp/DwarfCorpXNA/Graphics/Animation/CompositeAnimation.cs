@@ -13,11 +13,6 @@ namespace DwarfCorp
 {
     public class CompositeAnimation : Animation
     {
-        [OnSerialized]
-        private void _onSerialized(StreamingContext Context)
-        {
-        }
-
         [JsonIgnore]
         private Composite _cached_Composite = null;
 
@@ -57,10 +52,9 @@ namespace DwarfCorp
 
         public override void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
         {
+            SpriteSheet = new SpriteSheet((Texture2D)Composite.Target);
             if (CurrentFrame >= CompositeFrames.Count)
                 return;
-
-            SpriteSheet = new SpriteSheet((Texture2D)Composite.Target);
             CurrentOffset = Composite.PushFrame(CompositeFrames[CurrentFrame]);
             var rect = Composite.GetFrameRect(CurrentOffset);
             Primitive.SetFrame(SpriteSheet, rect, rect.Width / 32.0f, rect.Height / 32.0f, Color.White, Color.White, Flipped);

@@ -52,6 +52,7 @@ namespace DwarfCorp
                     XP = 0,
                     BaseStats = new CreatureStats.StatNums()
                     {
+                        Dexterity = 3,
                         Strength = 6,
                         Constitution = 6
                     }

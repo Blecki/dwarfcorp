@@ -111,7 +111,7 @@ namespace DwarfCorp
                     Creature.Sprite.ReloopAnimations(CharacterMode.Attacking);
                 }
                 Creature.CurrentCharacterMode = CharacterMode.Idle;
-                Creature.AI.AddThought(Thought.ThoughtType.Farmed);
+                Creature.AddThought(Thought.ThoughtType.Farmed);
                 Creature.AI.AddXP(1);
                 Creature.Sprite.PauseAnimations(CharacterMode.Attacking);
                 yield return Status.Success;

@@ -217,7 +217,7 @@ namespace DwarfCorp
                     InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
                 }
 
-                if (value)
+                if (value && !existingValue)
                     _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
                     {
                         Type = VoxelChangeEventType.Explored,
@@ -324,7 +324,7 @@ namespace DwarfCorp
         /// Set the decal of the voxel without triggering all the bookkeeping mechanisms.
         /// Should only be used by ChunkGenerator as it can break geometry building.
         /// </summary>
-        /// <param name="Decal"></param>
+        /// <param name="Type"></param>
         public void RawSetGrass(byte Type)
         {
             _cache_Chunk.Data.GrassType[_cache_Index] = Type;

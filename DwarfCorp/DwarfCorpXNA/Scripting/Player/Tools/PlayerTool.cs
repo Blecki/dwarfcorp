@@ -77,7 +77,7 @@ namespace DwarfCorp
             List<Body> bodyList = bodies.ToList();
             for (int i = 0; i < bodyList.Count; i++)
             {
-                sb.Append(bodyList[i].Name);
+                sb.Append(bodyList[i].GetMouseOverText());
                 if (i < bodyList.Count - 1)
                 {
                     sb.Append("\n");

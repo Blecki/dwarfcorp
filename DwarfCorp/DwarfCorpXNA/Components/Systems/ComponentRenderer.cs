@@ -30,36 +30,8 @@ namespace DwarfCorp
             Shader effect)
         {
             effect.CurrentTechnique = effect.Techniques["Selection"];
-            foreach (var bodyToDraw in Renderables.OfType<Body>())
-            {
-                if (bodyToDraw.IsVisible)
-                    bodyToDraw.RenderSelectionBuffer(time, chunks, camera, spriteBatch, graphics, effect);
-            }
-        }
-
-        public static IEnumerable<IRenderableComponent> EnumerateVisibleRenderables(
-            IEnumerable<IRenderableComponent> Renderables,
-            ChunkManager chunks,
-            Camera Camera)
-        {
-            var frustrum = Camera.GetFrustrum();
-
-            // Todo: Use an octtree for this.
-            var visibleComponents = Renderables.Where(r =>
-            {
-                if (!r.IsVisible) return false;
-                if (chunks.IsAboveCullPlane(r.GetBoundingBox())) return false;
-                if (r.FrustumCull)
-                {
-                    if ((r.GlobalTransform.Translation - Camera.Position).Length2DSquared() >=
-                        GameSettings.Default.ChunkDrawDistance * GameSettings.Default.ChunkDrawDistance) return false;
-                    if (!r.GetBoundingBox().Intersects(frustrum)) return false;
-                }
-
-                return true;
-            }).ToList();
-
-            return visibleComponents;
+            foreach (var bodyToDraw in Renderables.OfType<Body>()) // Why does RenderSelectionBuffer belong to Body and not IRenderable?
+                bodyToDraw.RenderSelectionBuffer(time, chunks, camera, spriteBatch, graphics, effect);
         }
 
         public static void Render(
@@ -78,7 +50,7 @@ namespace DwarfCorp
 
             if (waterRenderMode == WaterRenderType.Reflective)
             {
-                foreach (IRenderableComponent bodyToDraw in Renderables)
+                foreach (var bodyToDraw in Renderables)
                 {
                     if (!(bodyToDraw.GetBoundingBox().Min.Y > waterLevel - 2))
                         continue;
@@ -88,13 +60,8 @@ namespace DwarfCorp
             }
             else
             {
-                foreach (IRenderableComponent bodyToDraw in Renderables)
-                {
-                    //GamePerformance.Instance.StartTrackPerformance("Component Render - " + bodyToDraw.GetType().Name);
+                foreach (var bodyToDraw in Renderables)
                     bodyToDraw.Render(gameTime, chunks, Camera, spriteBatch, graphicsDevice, effect, false);
-                    //GamePerformance.Instance.StopTrackPerformance("Component Render - " + bodyToDraw.GetType().Name);
-
-                }
             }
 
             effect.EnableLighting = false;

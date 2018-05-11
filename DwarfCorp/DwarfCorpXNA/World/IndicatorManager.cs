@@ -119,13 +119,6 @@ namespace DwarfCorp
 
     public class AnimatedIndicator : Indicator
     {
-        [OnSerialized]
-        private void _onSerialized(StreamingContext Context)
-        {
-            var x = 5;
-
-        }
-
         public AnimationPlayer Player = new AnimationPlayer();
         public Animation Animation;
         

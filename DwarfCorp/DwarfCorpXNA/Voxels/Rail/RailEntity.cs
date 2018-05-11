@@ -39,7 +39,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.Rail
 {
-    public class RailEntity : Tinter, IRenderableComponent
+    public class RailEntity : CraftedBody, IRenderableComponent, ITintable
     {
         public class NeighborConnection
         {
@@ -63,6 +63,16 @@ namespace DwarfCorp.Rail
         private SpriteSheet Sheet;
         private Point Frame;
         private RawPrimitive Primitive;
+
+        private Color Tint = Color.White;
+
+        public void SetTint(Color Tint)
+        {
+            this.Tint = Tint;
+        }
+
+        public void SetOneShotTint(Color Tint)
+        { }
 
         private static float[,] VertexHeightOffsets =
         {
@@ -130,7 +140,7 @@ namespace DwarfCorp.Rail
 
         public RailEntity()
         {
-            
+            CollisionType = CollisionType.Static;
         }
 
         public RailEntity(
@@ -142,12 +152,12 @@ namespace DwarfCorp.Rail
                 Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y)), 
                 Vector3.One,
                 Vector3.Zero,
-                true)
+                new CraftDetails(Manager, "Rail", new List<ResourceAmount> { new ResourceAmount("Rail", 1) }))
         {
             this.Piece = Piece;
             this.Location = Location;
 
-            CollisionType = CollisionManager.CollisionType.Static;
+            CollisionType = CollisionType.Static;
             AddChild(new Health(Manager, "Hp", 100, 0, 100));
             
             PropogateTransforms();
@@ -263,7 +273,7 @@ namespace DwarfCorp.Rail
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
-        override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
 
@@ -349,12 +359,12 @@ namespace DwarfCorp.Rail
                 else if (realShape == 1)
                 {
                     sideUvs = Sheet.GenerateTileUVs(new Point(0, 4), out sideBounds);
-                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, false);
+                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, true);
                 }
                 else if (realShape == 2)
                 {
                     sideUvs = Sheet.GenerateTileUVs(new Point(0, 4), out sideBounds);
-                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, true);
+                    AddScaffoldGeometry(transform, sideBounds, sideUvs, 0.0f, false);
                 }
 
                 // Todo: Make these static and avoid recalculating them constantly.
@@ -434,8 +444,8 @@ namespace DwarfCorp.Rail
 
             // Everything that draws should set it's tint, making this pointless.
             Color origTint = effect.VertexColorTint;
-            ApplyTintingToEffect(effect);
-
+            //ApplyTintingToEffect(effect);
+            effect.VertexColorTint = Tint;
             effect.World = GlobalTransform;
 
             effect.MainTexture = Sheet.GetTexture();
@@ -450,7 +460,7 @@ namespace DwarfCorp.Rail
             }
 
             effect.VertexColorTint = origTint;
-            EndDraw(effect);
+            //EndDraw(effect);
         }
 
         private void AddScaffoldGeometry(Matrix transform, Vector4 sideBounds, Vector2[] sideUvs, float HeightOffset, bool FlipTexture)
@@ -521,7 +531,7 @@ namespace DwarfCorp.Rail
             var myPiece = RailLibrary.GetRailPiece(Piece.RailPiece);
 
             var myEndPoints = GetTransformedConnections().SelectMany(l => new Vector3[] { l.Item1, l.Item2 });
-            foreach (var entity in Manager.World.CollisionManager.EnumerateIntersectingObjects(this.BoundingBox.Expand(0.5f), CollisionManager.CollisionType.Both))
+            foreach (var entity in Manager.World.EnumerateIntersectingObjects(this.BoundingBox.Expand(0.5f), CollisionType.Static))
             {
                 if (Object.ReferenceEquals(entity, this)) continue;
                 var neighborRail = entity as RailEntity;

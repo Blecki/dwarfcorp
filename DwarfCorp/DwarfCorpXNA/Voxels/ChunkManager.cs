@@ -55,11 +55,9 @@ namespace DwarfCorp
     /// </summary>
     public class ChunkManager
     {
-        //Todo: This belongs in WorldManager!
-        private Splasher Splasher;
-
         private Queue<VoxelChunk> RebuildQueue = new Queue<VoxelChunk>();
         private Mutex RebuildQueueLock = new Mutex();
+        private AutoResetEvent RebuildEvent = new AutoResetEvent(true);
 
         public void InvalidateChunk(VoxelChunk Chunk)
         {
@@ -93,42 +91,16 @@ namespace DwarfCorp
         }
 
         public ChunkGenerator ChunkGen { get; set; }
-        public List<GlobalChunkCoordinate> ToGenerate { get; set; }
-
-        private Thread GeneratorThread { get; set; }
 
         private Thread RebuildThread { get; set; }
         private AutoScaleThread WaterUpdateThread;
 
-        private static readonly AutoResetEvent NeedsGenerationEvent = new AutoResetEvent(false);
-
-        private readonly Timer generateChunksTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
-        
-
         public BoundingBox Bounds { get; set; }
-
-        public float GenerateDistance
-        {
-            get { return GameSettings.Default.ChunkGenerateDistance; }
-            set { GameSettings.Default.ChunkGenerateDistance = value; }
-        }
-
-        // Todo: %KILL% Wrong spot for this, but too large to move currently.
-        public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
 
         public bool PauseThreads { get; set; }
 
-        // Todo: KILL. Pointless, always Y.
-        public enum SliceMode
-        {
-            X,
-            Y,
-            Z
-        }
-        
         public bool ExitThreads { get; set; }
 
-        public Camera camera = null;
         public WorldManager World { get; set; }
         public ContentManager Content { get; set; }
 
@@ -136,6 +108,7 @@ namespace DwarfCorp
 
         public Timer ChunkUpdateTimer = new Timer(10.0f, false, Timer.TimerMode.Real);
 
+        // Todo: Move this.
         public bool IsAboveCullPlane(BoundingBox Box)
         {
             return Box.Min.Y > (World.Master.MaxViewingLevel + 5);
@@ -148,7 +121,6 @@ namespace DwarfCorp
 
         public ChunkManager(ContentManager content, 
             WorldManager world,
-            Camera camera, GraphicsDevice graphics,
             ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
         {
             WorldSize = new Point3(maxChunksX, maxChunksY, maxChunksZ);
@@ -157,31 +129,22 @@ namespace DwarfCorp
             ExitThreads = false;
             Content = content;
 
-            chunkData = new ChunkData(this, maxChunksX, maxChunksZ, 0, 0);             
+            chunkData = new ChunkData(maxChunksX, maxChunksZ, 0, 0);             
 
             ChunkGen = chunkGen;
-
-            GeneratorThread = new Thread(GenerateThread) { IsBackground = true };
-            GeneratorThread.Name = "Generate";
 
             RebuildThread = new Thread(RebuildVoxelsThread) { IsBackground = true };
             RebuildThread.Name = "RebuildVoxels";
 
-            WaterUpdateThread = new AutoScaleThread(this, GamePerformance.ThreadIdentifier.UpdateWater,
-                (f) => Water.UpdateWater());
-
-            ToGenerate = new List<GlobalChunkCoordinate>();
+            WaterUpdateThread = new AutoScaleThread(this, (f) => Water.UpdateWater());
 
             chunkGen.Manager = this;
 
             GameSettings.Default.ChunkGenerateTime = 0.5f;
-            generateChunksTimer = new Timer(GameSettings.Default.ChunkGenerateTime, false, Timer.TimerMode.Real);
             GameSettings.Default.ChunkRebuildTime = 0.1f;
             Timer rebuildChunksTimer = new Timer(GameSettings.Default.ChunkRebuildTime, false, Timer.TimerMode.Real);
             GameSettings.Default.VisibilityUpdateTime = 0.05f;
-            generateChunksTimer.HasTriggered = true;
             rebuildChunksTimer.HasTriggered = true;
-            this.camera = camera;
 
             Water = new WaterManager(this);
 
@@ -194,22 +157,18 @@ namespace DwarfCorp
             Vector3 minBounds = -maxBounds;
             Bounds = new BoundingBox(minBounds, maxBounds);
 
-            Splasher = new Splasher(this);
         }
 
         public void StartThreads()
         {
-            GeneratorThread.Start();
             RebuildThread.Start();
             WaterUpdateThread.Start();
         }
-        private ManualResetEvent RebuildEvent = new ManualResetEvent(true);
+
         public void RebuildVoxelsThread()
         {
-            System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-
-            GamePerformance.Instance.RegisterThreadLoopTracker("RebuildVoxels", GamePerformance.ThreadIdentifier.RebuildVoxels);
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
 #if CREATE_CRASH_LOGS
             try
@@ -218,20 +177,15 @@ namespace DwarfCorp
                 while (!DwarfGame.ExitGame && !ExitThreads)
                 {
                     RebuildEvent.WaitOne();
-                    GamePerformance.Instance.PreThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
-                    GamePerformance.Instance.EnterZone("RebuildVoxels");
                     VoxelChunk chunk = null;
                     do
                     {
                         chunk = PopInvalidChunk();
                         if (chunk != null)
-                            chunk.Rebuild(Graphics);
+                            chunk.Rebuild(GameState.Game.GraphicsDevice);
                     }
                     while (chunk != null);
-                    RebuildEvent.Reset();
-
-                    GamePerformance.Instance.PostThreadLoop(GamePerformance.ThreadIdentifier.RebuildVoxels);
-                    GamePerformance.Instance.ExitZone("RebuildVoxels");
+                    
                 }
             }
 #if CREATE_CRASH_LOGS
@@ -240,64 +194,13 @@ namespace DwarfCorp
                 ProgramData.WriteExceptionLog(exception);
                 throw;
             }
-#endif
-           
+#endif           
         }
 
         private readonly ChunkData chunkData;
 
-        public void GenerateThread()
-        {
-            EventWaitHandle[] waitHandles =
-            {
-                NeedsGenerationEvent,
-                Program.ShutdownEvent
-            };
 
-#if CREATE_CRASH_LOGS
-            try
-#endif
-            {
-                while (!ExitThreads)
-                {
-                    EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
-
-                    //GeneratorLock.WaitOne();
-
-                    if (!PauseThreads && ToGenerate != null && ToGenerate.Count > 0)
-                    {
- 
-                        System.Threading.Tasks.Parallel.ForEach(ToGenerate, box =>
-                        {
-                            //if (!ChunkData.CheckBounds(box))
-                            //{
-                                Vector3 worldPos = new Vector3(
-                                    box.X * VoxelConstants.ChunkSizeX, 
-                                    box.Y * VoxelConstants.ChunkSizeY,
-                                    box.Z * VoxelConstants.ChunkSizeZ);
-                                VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World);
-                                //Drawer3D.DrawBox(chunk.GetBoundingBox(), Color.Red, 0.1f, false);
-                            //}
-                        });
-                        ToGenerate.Clear();
-                    }
-
-
-                    //GeneratorLock.ReleaseMutex();
-                    if (wh == Program.ShutdownEvent)
-                    {
-                        break;
-                    }
-                }
-            }
-#if CREATE_CRASH_LOGS
-            catch (Exception exception)
-            {
-                ProgramData.WriteExceptionLog(exception);
-            }
-#endif           
-        }
-        
+        // Todo: Why isn't this part of the chunk generator?
         public void GenerateOres()
         {
             foreach (VoxelType type in VoxelLibrary.GetTypes())
@@ -343,12 +246,9 @@ namespace DwarfCorp
             }
         }
 
+        // Todo: Move to ChunkGenerator
         public void GenerateInitialChunks(GlobalChunkCoordinate origin, Action<String> SetLoadingMessage)
         {
-            // todo: Since the world isn't infinite we can get rid of this.
-            float origBuildRadius = GenerateDistance;
-            GenerateDistance = origBuildRadius * 2.0f;
-
             var initialChunkCoordinates = new List<GlobalChunkCoordinate>();
 
             for (int dx = 0; dx < WorldSize.X; dx++)
@@ -364,7 +264,6 @@ namespace DwarfCorp
                     box.Y * VoxelConstants.ChunkSizeY,
                     box.Z * VoxelConstants.ChunkSizeZ);
                 VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World);
-                chunk.IsVisible = true;
                 ChunkData.AddChunk(chunk);
             }
 
@@ -386,8 +285,6 @@ namespace DwarfCorp
             SetLoadingMessage("Generating Ores...");
 
             GenerateOres();
-
-            GenerateDistance = origBuildRadius;
         }
 
         private void RecalculateBounds()
@@ -411,21 +308,8 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, Camera camera, GraphicsDevice g)
         {
-            generateChunksTimer.Update(gameTime);
-            if(generateChunksTimer.HasTriggered)
-            {
-                if(ToGenerate.Count > 0)
-                {
-                    NeedsGenerationEvent.Set();
-                }
-            }
-
             foreach (var chunk in ChunkData.GetChunkEnumerator())
                 chunk.RecieveNewPrimitive(gameTime);
-
-            // Todo: This belongs up in world manager.
-            Splasher.Splash(gameTime, Water.GetSplashQueue());
-            Splasher.HandleTransfers(gameTime, Water.GetTransferQueue());
 
             if (!gameTime.IsPaused)
             {
@@ -445,8 +329,18 @@ namespace DwarfCorp
 
             foreach (var voxel in localList)
             {
+                // Todo: Can this be a more generic mechanism?
+                if (voxel.Type == VoxelChangeEventType.VoxelTypeChanged && voxel.NewVoxelType == VoxelLibrary.emptyType.ID)
+                {
+                    var guardDesignation = World.PlayerFaction.Designations.GetVoxelDesignation(voxel.Voxel, DesignationType.Guard);
+                    if (guardDesignation != null)
+                        World.Master.TaskManager.CancelTask(guardDesignation.Task);
+                }
+                
+                // Todo: Design generic voxel hooks and run here.
+                
                 var box = voxel.Voxel.GetBoundingBox();
-                var hashmap = new HashSet<IBoundedObject>(World.CollisionManager.EnumerateIntersectingObjects(box, CollisionManager.CollisionType.Both));
+                var hashmap = World.EnumerateIntersectingObjects(box, CollisionType.Both);
 
                 foreach (var intersectingBody in hashmap)
                 {
@@ -467,10 +361,8 @@ namespace DwarfCorp
         {
             PauseThreads = true;
             ExitThreads = true;
-            GeneratorThread.Join();
-            RebuildThread.Join();
+            RebuildThread.Abort();
             WaterUpdateThread.Join();
-            //ChunkData.ChunkMap.Clear();
         }
 
         public List<Body> KillVoxel(VoxelHandle Voxel)

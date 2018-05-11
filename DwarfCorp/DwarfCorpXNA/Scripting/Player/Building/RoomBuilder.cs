@@ -41,7 +41,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Newtonsoft.Json;
-
+using System.Text;
 
 namespace DwarfCorp
 {
@@ -189,6 +189,10 @@ namespace DwarfCorp
 
             foreach(BuildRoomOrder build in toRemove)
             {
+                if (build.DisplayWidget != null)
+                {
+                    World.Gui.DestroyWidget(build.DisplayWidget);
+                }
                 BuildDesignations.Remove(build);
             }
         }
@@ -217,14 +221,78 @@ namespace DwarfCorp
             }
         }
 
-        public void Update(MouseState mouseState, KeyboardState keyState, DwarfGame game, DwarfTime time)
+        public void Update()
         {
             if (Faction == null)
             {
                 Faction = World.PlayerFaction;
             }
 
-            World.SetMouse(World.MousePointer);
+            foreach (var buildOrder in BuildDesignations)
+            {
+                if (buildOrder.IsBuilt)
+                {
+                    if (buildOrder.DisplayWidget != null)
+                    {
+                        buildOrder.DisplayWidget.Root.DestroyWidget(buildOrder.DisplayWidget);
+                        buildOrder.DisplayWidget = null;
+                    }
+                }
+                else
+                {
+                    var requiredResources = buildOrder.ListRequiredResources();
+                    if (buildOrder.DisplayWidget == null)
+                    {
+                        if (!Faction.HasResources(requiredResources))
+                        {
+                            StringBuilder resourceList = new StringBuilder();
+                            foreach (var resource in requiredResources)
+                            {
+                                resourceList.Append(resource.NumResources);
+                                resourceList.Append(" ");
+                                resourceList.Append(resource.ResourceType);
+                            }
+                            var order = buildOrder;
+                            buildOrder.DisplayWidget = World.Gui.RootItem.AddChild(new Gui.Widget()
+                            {
+                                Border = "border-dark",
+                                TextColor = Color.White.ToVector4(),
+                                Text = String.Format("Need {0} to build this {1}", resourceList, buildOrder.ToBuild.RoomData.Name),
+                                Rect = new Rectangle(0, 0, 200, 40),
+                                Font = "font8",
+                                TextVerticalAlign = Gui.VerticalAlign.Center,
+                                TextHorizontalAlign = Gui.HorizontalAlign.Center,
+                                OnClick = (sender, args) =>
+                                {
+                                    sender.Hidden = true;
+                                }
+                            });
+
+                            World.Gui.RootItem.SendToBack(buildOrder.DisplayWidget);
+                        }
+                    }
+                    else
+                    {
+                        if (Faction.HasResources(requiredResources))
+                        {
+                            buildOrder.DisplayWidget.Root.DestroyWidget(buildOrder.DisplayWidget);
+                            buildOrder.DisplayWidget = null;
+                        }
+                        else
+                        {
+                            var center = buildOrder.GetBoundingBox().Center();
+                            var projection = Faction.World.Camera.Project(center);
+                            if (projection.Z < 0.9999)
+                            {
+                                buildOrder.DisplayWidget.Rect = new Rectangle((int)(projection.X - buildOrder.DisplayWidget.Rect.Width / 2),
+                                    (int)(projection.Y - buildOrder.DisplayWidget.Rect.Height / 2), 
+                                    buildOrder.DisplayWidget.Rect.Width, buildOrder.DisplayWidget.Rect.Height);
+                                buildOrder.DisplayWidget.Invalidate();
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void BuildNewVoxels(IEnumerable<VoxelHandle> designations)
@@ -313,6 +381,7 @@ namespace DwarfCorp
 
         public void OnVoxelsDragged(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
+            World.Master.VoxSelector.SelectionColor = Color.White;
             if (Faction == null)
             {
                 Faction = World.PlayerFaction;
@@ -370,7 +439,8 @@ namespace DwarfCorp
 
                     displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs,
                         World.ComponentManager, 
-                        World.ChunkManager.Content, World.ChunkManager.Graphics);
+                        World.ChunkManager.Content,
+                        GameState.Game.GraphicsDevice);
 
                     foreach(Body thing in displayObjects)
                     {
@@ -378,6 +448,10 @@ namespace DwarfCorp
                         thing.SetFlagRecursive(GameComponent.Flag.Active, false);
                         SetDisplayColor(thing, Color.Green);
                     }
+                }
+                else
+                {
+                    World.Master.VoxSelector.SelectionColor = Color.Red;
                 }
             }
             else
@@ -469,6 +543,10 @@ namespace DwarfCorp
                     if (vox != null && vox.Order != null)
                     {
                         vox.Order.Destroy();
+                        if (vox.Order.DisplayWidget != null)
+                        {
+                            World.Gui.DestroyWidget(vox.Order.DisplayWidget);
+                        }
                         BuildDesignations.Remove(vox.Order);
                     }
                 }
@@ -505,7 +583,10 @@ namespace DwarfCorp
                     des.Order.VoxelOrders.Remove(des);
                     buildRoomDes = des.Order;
                 }
-
+                if (buildRoomDes != null && buildRoomDes.DisplayWidget != null)
+                {
+                    World.Gui.DestroyWidget(buildRoomDes.DisplayWidget);
+                }
                 BuildDesignations.Remove(buildRoomDes);
 
                 room.Destroy();

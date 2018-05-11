@@ -44,7 +44,6 @@ namespace DwarfCorp.Rail
 
         public static bool CanPlace(GameMaster Player, List<RailEntity> PreviewBodies)
         {
-            // Todo: Only turn individual pieces red? Look at code that calls this.
             for (var i = 0; i < PreviewBodies.Count; ++i)
                 if (!RailHelper.CanPlace(Player, PreviewBodies[i]))
                     return false;
@@ -64,7 +63,7 @@ namespace DwarfCorp.Rail
             var voxelUnder = new VoxelHandle(actualPosition.Chunk, new LocalVoxelCoordinate(local.X, local.Y - 1, local.Z));
             if (voxelUnder.IsEmpty) return false;
 
-            foreach (var entity in Player.World.CollisionManager.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionManager.CollisionType.Static))
+            foreach (var entity in Player.World.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionType.Static))
             {
                 if ((entity as GameComponent).IsDead)
                     continue;
@@ -73,8 +72,18 @@ namespace DwarfCorp.Rail
                 if (entity is GenericVoxelListener) continue;
                 if (entity is WorkPile) continue;
 
-                if (FindPossibleCombination(junctionPiece, entity) != null)
+                var possibleCombination = FindPossibleCombination(junctionPiece, entity);
+                if (possibleCombination != null)
+                {
+                    var combinedPiece = new Rail.JunctionPiece
+                    {
+                        RailPiece = possibleCombination.Result,
+                        Orientation = Rail.OrientationHelper.Rotate((entity as RailEntity).GetPiece().Orientation, (int)possibleCombination.ResultRelativeOrientation),
+                    };
+
+                    PreviewEntity.UpdatePiece(combinedPiece, PreviewEntity.GetContainingVoxel());
                     return true;
+                }
 
                 if (Debugger.Switches.DrawBoundingBoxes)
                 {
@@ -113,6 +122,8 @@ namespace DwarfCorp.Rail
 
         public static void Place(GameMaster Player, List<RailEntity> PreviewBodies, bool GodModeSwitch)
         {
+            // Assume CanPlace was called and returned true.
+
             var assignments = new List<Task>();
 
             for (var i = 0; i < PreviewBodies.Count; ++i)
@@ -124,39 +135,31 @@ namespace DwarfCorp.Rail
                 var hasResources = false;
                 var finalEntity = body;
 
-                foreach (var entity in Player.World.CollisionManager.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionManager.CollisionType.Static))
+                foreach (var entity in Player.World.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionType.Static))
                 {
                     if ((entity as GameComponent).IsDead)
+                        continue;
+                    if ((entity as RailEntity) == null)
                         continue;
 
                     if (!addNewDesignation) break;
                     if (Object.ReferenceEquals(entity, body)) continue;
 
-                    var possibleCombination = RailHelper.FindPossibleCombination(piece, entity);
-                    if (possibleCombination != null)
+                    var existingDesignation = Player.Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, entity));
+                    if (existingDesignation != null)
                     {
-                        var combinedPiece = new Rail.JunctionPiece
-                        {
-                            RailPiece = possibleCombination.Result,
-                            Orientation = Rail.OrientationHelper.Rotate((entity as RailEntity).GetPiece().Orientation, (int)possibleCombination.ResultRelativeOrientation),
-                        };
-
-                        var existingDesignation = Player.Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft).FirstOrDefault(d => Object.ReferenceEquals(d.Body, entity));
-                        if (existingDesignation != null)
-                        {
-                            (entity as RailEntity).UpdatePiece(combinedPiece, actualPosition);
-                            (existingDesignation.Tag as CraftDesignation).Progress = 0.0f;
-                            body.Delete();
-                            addNewDesignation = false;
-                            finalEntity = entity as RailEntity;
-                        }
-                        else
-                        {
-                            (entity as RailEntity).Delete();
-                            body.UpdatePiece(combinedPiece, actualPosition);
-                            hasResources = true;
-                        }
+                        (entity as RailEntity).UpdatePiece(piece, actualPosition);
+                        (existingDesignation.Tag as CraftDesignation).Progress = 0.0f;
+                        body.Delete();
+                        addNewDesignation = false;
+                        finalEntity = entity as RailEntity;
                     }
+                    else
+                    {
+                        (entity as RailEntity).Delete();
+                        hasResources = true;
+                    }
+
                 }
 
                 if (!GodModeSwitch && addNewDesignation)

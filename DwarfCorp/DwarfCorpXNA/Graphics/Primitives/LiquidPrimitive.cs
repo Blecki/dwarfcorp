@@ -87,10 +87,10 @@ namespace DwarfCorp
             base()
         {
             LiqType = type;
-            InitializeStatics();
+            InitializeLiquidStatics();
         }
 
-        private void InitializeStatics()
+        private void InitializeLiquidStatics()
         {
             if (!StaticsInitialized)
             { 

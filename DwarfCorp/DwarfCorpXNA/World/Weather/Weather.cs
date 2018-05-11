@@ -43,7 +43,7 @@ namespace DwarfCorp
 
                 if (storm.IsInitialized && !storm.IsDone() && currentDate > storm.Date)
                 {
-                    CurrentWind += storm.WindSpeed;
+                    CurrentWind += storm.WindSpeed * 0.01f;
                 }
             }
 

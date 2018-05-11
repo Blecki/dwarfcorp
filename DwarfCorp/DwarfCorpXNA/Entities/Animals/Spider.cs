@@ -87,8 +87,6 @@ namespace DwarfCorp
             Physics.Orientation = Physics.OrientMode.RotateY;
                 
             CreateSprite(sprites, Manager);
-            // Used to grab other components
-            Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.2f, 0.2f, 0.2f), Vector3.Zero)) as Grabber;
 
             // Used to sense hostile creatures
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;

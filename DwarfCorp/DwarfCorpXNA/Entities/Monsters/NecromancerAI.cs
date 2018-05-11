@@ -50,7 +50,7 @@ namespace DwarfCorp
         public NecromancerAI()
         {
             Skeletons = new List<Skeleton>();
-            MaxSkeletons = 5;
+            MaxSkeletons = 3;
             SummonTimer = new Timer(5, false);
             WanderTimer = new Timer(1, false);
             AttackTimer = new Timer(3, false);
@@ -62,7 +62,7 @@ namespace DwarfCorp
             base(Manager, name, sensor, planService)
         {
             Skeletons = new List<Skeleton>();
-            MaxSkeletons = 5;
+            MaxSkeletons = 3;
             SummonTimer = new Timer(5, false);
             WanderTimer = new Timer(1, false);
             AttackTimer = new Timer(3, false);

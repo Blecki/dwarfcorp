@@ -88,7 +88,7 @@ namespace DwarfCorp
             WorldHeight = Sheet.FrameHeight / 32.0f;
         }
 
-        public override void Render(DwarfTime gameTime,
+        new public void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,
@@ -96,6 +96,8 @@ namespace DwarfCorp
             Shader effect,
             bool renderingForWater)
         {
+            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
+
             if (!IsVisible)
                 return;
 
@@ -145,8 +147,6 @@ namespace DwarfCorp
                     1, 2, 3
                 };
             }
-
-            GamePerformance.Instance.StartTrackPerformance("Render - Simple Sprite");
 
             // Everything that draws should set it's tint, making this pointless.
             Color origTint = effect.VertexColorTint;  
@@ -212,7 +212,6 @@ namespace DwarfCorp
             effect.VertexColorTint = origTint;
             effect.EnableWind = false;
             EndDraw(effect);
-            GamePerformance.Instance.StopTrackPerformance("Render - Simple Sprite");
         }
     }
 

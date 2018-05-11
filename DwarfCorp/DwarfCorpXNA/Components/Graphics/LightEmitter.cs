@@ -61,19 +61,14 @@ namespace DwarfCorp
             Light = new DynamicLight(intensity, range);
         }
 
-        public void UpdateLight()
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             if (Active)
                 Light.Position = GlobalTransform.Translation;
             else
                 Light.Position = new Vector3(-9999, -9999, -9999);
-        }
-
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
-            UpdateLight();
-
-            base.Update(gameTime, chunks, camera);
         }
 
         public override void Die()

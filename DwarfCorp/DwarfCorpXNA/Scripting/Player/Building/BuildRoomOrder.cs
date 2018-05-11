@@ -59,6 +59,8 @@ namespace DwarfCorp
         public bool IsDestroyed { get; set; }
         public bool HasResources { get; set; }
         public CreatureAI ResourcesReservedFor = null;
+        [JsonIgnore]
+        public Gui.Widget DisplayWidget = null;
 
         [OnDeserialized]
         public void OnDeserialized(StreamingContext ctx)
@@ -143,13 +145,13 @@ namespace DwarfCorp
             ToBuild.IsBuilt = true;
             List<Body> components = RoomLibrary.GenerateRoomComponentsTemplate(
                 ToBuild.RoomData, ToBuild.Voxels,
-                World.ComponentManager, World.ChunkManager.Content, World.ChunkManager.Graphics);
+                World.ComponentManager, World.ChunkManager.Content, GameState.Game.GraphicsDevice);
             RoomLibrary.BuildAllComponents(components, ToBuild, World.ParticleManager);
             ToBuild.OnBuilt();
 
             if (!silent)
             {
-                World.MakeAnnouncement(String.Format("{0} was built", ToBuild.ID), null);
+                World.MakeAnnouncement(String.Format("{0} was built", ToBuild.RoomData.Name), null);
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
                 World.GoalManager.OnGameEvent(new Goals.Events.BuiltRoom(ToBuild.ID));
             }

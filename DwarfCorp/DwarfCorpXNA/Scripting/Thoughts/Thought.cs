@@ -76,6 +76,7 @@ namespace DwarfCorp
             BuriedDead
         }
 
+        // Todo: Data drive this.
         public static Thought CreateStandardThought(ThoughtType type, DateTime time)
         {
             string description = "";

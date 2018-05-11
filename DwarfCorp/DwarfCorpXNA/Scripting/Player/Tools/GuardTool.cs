@@ -49,35 +49,34 @@ namespace DwarfCorp
     {
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
+            var parentTask = Player.TaskManager.EnumerateTasks().OfType<GuardZoneTask>().FirstOrDefault();
+            if (parentTask == null)
+            {
+                parentTask = new GuardZoneTask();
+                Player.TaskManager.AddTask(parentTask);
+            }
 
             if (button == InputManager.MouseButton.Left)
             {
-                List<Task> assignedTasks = new List<Task>();
-
-                foreach (var v in voxels.Where(v => v.IsValid))
+                foreach (var v in voxels.Where(v => v.IsValid && !v.IsEmpty))
                 {
-                    if (v.IsEmpty || Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Guard))
-                        continue;
+                    var key = VoxelHelpers.GetVoxelQuickCompare(v);
+                    if (Player.Faction.GuardedVoxels.ContainsKey(key))
+                        return;
 
-                    var task = new GuardZoneTask() { Priority = Task.PriorityType.Eventually };
-                    Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Guard, null, task);
-                    assignedTasks.Add(task);
+                    Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Guard, null, new GuardZoneTask.DesignationProxyTask(parentTask, v));
+                    Player.Faction.GuardedVoxels.Add(key, v);
                 }
 
-                List<CreatureAI> minions = 
-                    Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, Task.TaskCategory.Gather);
-                Player.TaskManager.AddTasks(assignedTasks);
-                OnConfirm(minions);
-
+                OnConfirm(Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, Task.TaskCategory.Gather));
             }
             else
             {
-                foreach (var v in voxels.Where(v => v.IsValid))
+                foreach (var v in voxels.Where(v => v.IsValid && !v.IsEmpty))
                 {
-                    if (v.IsEmpty || !Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Guard))
-                        continue;
-
-                    Player.Faction.Designations.RemoveVoxelDesignation(v, DesignationType.Guard);
+                    var des = Player.Faction.Designations.GetVoxelDesignation(v, DesignationType.Guard);
+                    if (des != null)
+                        Player.TaskManager.CancelTask(des.Task);
                 }
             }
         }
@@ -89,14 +88,13 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-
+            Player.VoxSelector.SelectionColor = Color.White;
         }
 
         public override void OnEnd()
         {
             Player.VoxSelector.Clear();
         }
-
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
         {

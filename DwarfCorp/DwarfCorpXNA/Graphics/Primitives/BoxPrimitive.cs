@@ -822,7 +822,7 @@ namespace DwarfCorp
             FlippedIndexes[34] = 20;
             FlippedIndexes[35] = 22;
 
-            IndexBuffer = new IndexBuffer(GameState.Game.GraphicsDevice, typeof(ushort), Indexes.Length, BufferUsage.WriteOnly);
+            IndexBuffer = new DynamicIndexBuffer(GameState.Game.GraphicsDevice, typeof(ushort), Indexes.Length, BufferUsage.WriteOnly);
             IndexBuffer.SetData(Indexes);
         }
     }

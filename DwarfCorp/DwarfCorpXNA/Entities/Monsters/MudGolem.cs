@@ -101,7 +101,6 @@ namespace DwarfCorp
             HasBones = false;
             Physics.Orientation = Physics.OrientMode.RotateY;
             CreateSprite(Stats.CurrentClass, Manager, 0.5f);
-            Hands = Physics.AddChild(new Grabber("hands", Manager, Matrix.Identity, new Vector3(0.1f, 0.1f, 0.1f), Vector3.Zero)) as Grabber;
 
             Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
 

@@ -51,7 +51,7 @@ namespace DwarfCorp.Gui.Widgets
             GridMesh.verticies[(Index * 4) + 3].TextureCoordinate = new Vector2(0.0f, 1.0f);
 
             var font = Root.GetTileSheet(Font);
-            GridMesh.Texture(font.TileMatrix(C - ' '), Index * 4, 4);
+            GridMesh.Texture(font.TileMatrix(C), Index * 4, 4);
             GridMesh.Colorize(TextColor, Index * 4, 4);
         }
 

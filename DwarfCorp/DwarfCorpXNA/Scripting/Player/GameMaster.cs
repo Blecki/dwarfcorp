@@ -25,7 +25,6 @@ namespace DwarfCorp
             BuildZone,
             BuildWall,
             BuildObject,
-            Cook,
             Magic,
             Gather,
             Chop,
@@ -38,7 +37,8 @@ namespace DwarfCorp
             DeconstructObjects,
             BuildRail,
             PaintRail,
-            God
+            God,
+            CancelTasks
         }
 
 
@@ -64,6 +64,7 @@ namespace DwarfCorp
 
         public void ChangeTool(ToolMode NewTool)
         {
+            // Todo: Should probably clean up existing tool even if they are the same tool.
             Tools[NewTool].OnBegin();
             if (CurrentToolMode != NewTool)
                 CurrentTool.OnEnd();
@@ -89,13 +90,12 @@ namespace DwarfCorp
         private Timer sliceDownTimer = new Timer(0.5f, true);
         private Timer sliceUpTimer = new Timer(0.5f, true);
         public int MaxViewingLevel = VoxelConstants.ChunkSizeY;
-        public ChunkManager.SliceMode Slice = ChunkManager.SliceMode.Y; // Todo: Ever not Y? Are other types even supported?
 
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
         {
             World = (WorldManager)(context.Context);
-            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, World.ChunkManager.Graphics);
+            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, GameState.Game.GraphicsDevice);
             World.Master = this;
             TaskManager.Faction = Faction;
         }
@@ -125,8 +125,8 @@ namespace DwarfCorp
             RoomLibrary.InitializeStatics();
 
             CameraController = camera;
-            VoxSelector = new VoxelSelector(World, CameraController, chunks.Graphics, chunks);
-            BodySelector = new BodySelector(CameraController, chunks.Graphics, components);
+            VoxSelector = new VoxelSelector(World, CameraController, GameState.Game.GraphicsDevice, chunks);
+            BodySelector = new BodySelector(CameraController, GameState.Game.GraphicsDevice, components);
             SelectedMinions = new List<CreatureAI>();
 
             if (Spells == null)
@@ -208,15 +208,11 @@ namespace DwarfCorp
 
             Tools[ToolMode.BuildObject] = new BuildObjectTool
             {
-                Player = this
+                Player = this,
+                World = World
             };
 
             Tools[ToolMode.Magic] = new MagicTool(this);
-
-            Tools[ToolMode.Cook] = new CookTool
-            {
-                Player = this,
-            };
 
             Tools[ToolMode.MoveObjects] = new MoveObjectTool()
             {
@@ -230,6 +226,10 @@ namespace DwarfCorp
 
             Tools[ToolMode.BuildRail] = new Rail.BuildRailTool(this);
             Tools[ToolMode.PaintRail] = new Rail.PaintRailTool(this);
+            Tools[ToolMode.CancelTasks] = new CancelTasksTool()
+            {
+                Player = this
+            };
         }
 
         void Time_NewDay(DateTime time)
@@ -262,17 +262,15 @@ namespace DwarfCorp
             return (Faction.Minions.Count > 0) && Faction.Minions.All(minion => (!minion.Stats.CanSleep || minion.Creature.IsAsleep) && !minion.IsDead);
         }
 
-        // Final argument is always mode Y.
         // Todo: %KILL% - does not belong here.
-        public void SetMaxViewingLevel(int level, ChunkManager.SliceMode slice)
+        public void SetMaxViewingLevel(int level)
         {
-            if (level == MaxViewingLevel && slice == Slice)
+            if (level == MaxViewingLevel)
                 return;
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_click_voxel, 0.15f, (float)(level / (float)VoxelConstants.ChunkSizeY) - 0.5f);
 
             var oldLevel = MaxViewingLevel;
 
-            Slice = slice;
             MaxViewingLevel = Math.Max(Math.Min(level, VoxelConstants.ChunkSizeY), 1);
 
             foreach (var c in World.ChunkManager.ChunkData.ChunkMap)
@@ -282,6 +280,7 @@ namespace DwarfCorp
             }
         }
 
+        // Todo: Why exactly is Faction.Minions a list of CreatureAI and not a list of Creature?
         public void PayEmployees()
         {
             DwarfBux total = 0;
@@ -290,7 +289,7 @@ namespace DwarfCorp
             {
                 if (creature.Stats.IsOverQualified)
                 {
-                    creature.AddThought(Thought.ThoughtType.IsOverQualified);
+                    creature.Creature.AddThought(Thought.ThoughtType.IsOverQualified);
                 }
 
                 if (!noMoney)
@@ -301,7 +300,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    creature.AddThought(Thought.ThoughtType.NotPaid);
+                    creature.Creature.AddThought(Thought.ThoughtType.NotPaid);
                 }
 
                 if (total >= Faction.Economy.CurrentMoney)
@@ -316,7 +315,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    creature.AddThought(Thought.ThoughtType.GotPaid);
+                    creature.Creature.AddThought(Thought.ThoughtType.GotPaid);
                 }
             }
 
@@ -402,7 +401,7 @@ namespace DwarfCorp
                         }
                     }
                     
-                    /// TODO ... other entity task types
+                    // TODO ... other entity task types
                 }
 
                 if (orphanedTasks.Count > 0)
@@ -415,6 +414,7 @@ namespace DwarfCorp
         {
             TaskManager.Update(Faction.Minions);
             CurrentTool.Update(game, time);
+            Faction.RoomBuilder.Update();
             UpdateOrphanedTasks();
             if (!World.Paused)
             {
@@ -431,7 +431,7 @@ namespace DwarfCorp
             {
                 foreach (CreatureAI minion in Faction.Minions)
                 {
-                    minion.AddThought(Thought.ThoughtType.FriendDied);
+                    minion.Creature.AddThought(Thought.ThoughtType.FriendDied);
 
                     if (!minion.IsDead) continue;
 
@@ -447,8 +447,6 @@ namespace DwarfCorp
 
             UpdateRooms();
 
-            Faction.CraftBuilder.Update(time, this);
-
             HandlePosessedDwarf();
 
             /*
@@ -458,8 +456,13 @@ namespace DwarfCorp
 
                 if (sliceDownTimer.HasTriggered)
                 {
+<<<<<<< HEAD
+                    SetMaxViewingLevel(MaxViewingLevel - 1);
+                    sliceDownTimer.Reset(0.1f);
+=======
                     SetMaxViewingLevel(MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
                     sliceDownTimer.Reset(0.5f);
+>>>>>>> 9e581f9d1c7fa418197ea0fc8cae93f2fe98c881
                 }
             }
 
@@ -469,8 +472,13 @@ namespace DwarfCorp
 
                 if (sliceUpTimer.HasTriggered)
                 {
+<<<<<<< HEAD
+                    SetMaxViewingLevel(MaxViewingLevel + 1);
+                    sliceUpTimer.Reset(0.1f);
+=======
                     SetMaxViewingLevel(MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
                     sliceUpTimer.Reset(0.5f);
+>>>>>>> 9e581f9d1c7fa418197ea0fc8cae93f2fe98c881
                 }
             }
             */
@@ -526,12 +534,11 @@ namespace DwarfCorp
 
                 if (above.IsValid)
                 {
-                    SetMaxViewingLevel(above.Coordinate.Y, ChunkManager.SliceMode.Y);
+                    SetMaxViewingLevel(above.Coordinate.Y);
                 }
                 else
                 {
-                    SetMaxViewingLevel(VoxelConstants.ChunkSizeY,
-                        ChunkManager.SliceMode.Y);
+                    SetMaxViewingLevel(VoxelConstants.ChunkSizeY);
                 }
             }
 
@@ -650,7 +657,7 @@ namespace DwarfCorp
             {
                 sliceUpheld = false;
                 World.Tutorial("unslice");
-                SetMaxViewingLevel(MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
+                SetMaxViewingLevel(MaxViewingLevel + 1);
                 return true;
             }
 
@@ -658,22 +665,20 @@ namespace DwarfCorp
             {
                 sliceDownheld = false;
                 World.Tutorial("unslice");
-                SetMaxViewingLevel(MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
+                SetMaxViewingLevel(MaxViewingLevel - 1);
                 return true;
             }
             else if (key == ControlSettings.Mappings.SliceSelected)
             {
                 if (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl))
                 {
-                    SetMaxViewingLevel(rememberedViewValue, 
-                        ChunkManager.SliceMode.Y);
+                    SetMaxViewingLevel(rememberedViewValue);
                     return true;
                 }
                 else if (VoxSelector.VoxelUnderMouse.IsValid)
                 {
                     World.Tutorial("unslice");
-                    SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1,
-                        ChunkManager.SliceMode.Y);
+                    SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1);
                     Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
                     return true;
                 }
@@ -681,7 +686,7 @@ namespace DwarfCorp
             else if (key == ControlSettings.Mappings.Unslice)
             {
                 rememberedViewValue = MaxViewingLevel;
-                SetMaxViewingLevel(VoxelConstants.ChunkSizeY, ChunkManager.SliceMode.Y);
+                SetMaxViewingLevel(VoxelConstants.ChunkSizeY);
                 return true;
             }
             return false;

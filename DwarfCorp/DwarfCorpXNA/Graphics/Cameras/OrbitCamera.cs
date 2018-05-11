@@ -397,7 +397,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        World.Master.SetMaxViewingLevel(World.Master.MaxViewingLevel + (int)((float)change * 0.01f), ChunkManager.SliceMode.Y);
+                        World.Master.SetMaxViewingLevel(World.Master.MaxViewingLevel + (int)((float)change * 0.01f));
                     }
                 }
             }

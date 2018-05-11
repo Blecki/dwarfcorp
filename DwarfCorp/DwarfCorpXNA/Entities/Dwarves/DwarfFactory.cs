@@ -82,7 +82,7 @@ namespace DwarfCorp
             int Level)
         {
             Dwarf toReturn = new Dwarf(Manager, new CreatureStats(DwarfClass, Level), Allies, Manager.World.PlanService, Manager.World.PlayerFaction, "Dwarf", DwarfClass, Position);
-            toReturn.AI.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, Manager.World.Time.CurrentDate), false);
+            toReturn.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, Manager.World.Time.CurrentDate), false);
             return toReturn.Physics;
         }
     }
