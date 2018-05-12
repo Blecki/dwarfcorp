@@ -97,8 +97,24 @@ namespace DwarfCorp.Gui.Widgets
             var font = Root.GetTileSheet(Font);
             var drawableInterior = GetDrawableInterior();
             drawableInterior.Width = (Children[0].Rect.Left - drawableInterior.Left - Padding.Right);
-            var itemsThatFit = drawableInterior.Height / ItemHeight;
 
+            int itemsThatFit = 0;
+            List<int> heights = new List<int>();
+            int sumHeight = 0;
+            foreach(var child in Children)
+            {
+                int h = Math.Max(ItemHeight, child.MinimumSize.Y);
+                sumHeight += h;
+                heights.Add(h);
+                if (sumHeight < drawableInterior.Height)
+                {
+                    itemsThatFit++;
+                }
+                else
+                {
+                    break;
+                }
+            }
             // Update scrollbar scroll area.
             if (itemsThatFit > Children.Count - 1)
             {
@@ -134,7 +150,7 @@ namespace DwarfCorp.Gui.Widgets
             for (int i = 0; i < itemsThatFit && (topItem + i) < (Children.Count - 1); ++i)
             {
                 Children[topItem + i + 1].Rect = new Rectangle(drawableInterior.Left, topPos, drawableInterior.Width,
-                    ItemHeight);
+                    heights[i]);
                 Children[topItem + i + 1].Layout();
                 Children[topItem + i + 1].Hidden = false;
                 topPos += ItemHeight;

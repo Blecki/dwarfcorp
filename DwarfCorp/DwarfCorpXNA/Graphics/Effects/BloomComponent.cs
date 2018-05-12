@@ -29,7 +29,6 @@ namespace BloomPostprocess
         #region Fields
 
         public RenderTarget2D DrawTarget = null;
-        private SpriteBatch spriteBatch;
 
         private Effect bloomExtractEffect;
         private Effect bloomCombineEffect;
@@ -88,7 +87,6 @@ namespace BloomPostprocess
         /// </summary>
         protected override void LoadContent()
         {
-            spriteBatch = DwarfCorp.DwarfGame.SpriteBatch;
             bloomExtractEffect = Game.Content.Load<Effect>(ContentPaths.Shaders.BloomExtract);
             bloomCombineEffect = Game.Content.Load<Effect>(ContentPaths.Shaders.BloomCombine);
             gaussianBlurEffect = Game.Content.Load<Effect>(ContentPaths.Shaders.GaussianBlur);
@@ -259,13 +257,16 @@ namespace BloomPostprocess
 
             try
             {
-                spriteBatch.Begin(0, BlendState.Opaque, null, null, null, effect);
-                spriteBatch.Draw(texture, new Rectangle(0, 0, width, height), Color.White);
-                spriteBatch.End();
+                DwarfGame.SafeSpriteBatchBegin(0, BlendState.Opaque, null, null, null, effect, Matrix.Identity);
+                DwarfGame.SpriteBatch.Draw(texture, new Rectangle(0, 0, width, height), Color.White);
             }
             catch (InvalidOperationException operationException)
             {
                 Console.Error.WriteLine(operationException.Message);
+            }
+            finally
+            {
+                DwarfGame.SpriteBatch.End();
             }
         }
 
