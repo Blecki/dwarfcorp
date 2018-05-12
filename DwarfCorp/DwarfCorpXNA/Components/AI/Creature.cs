@@ -838,6 +838,12 @@ namespace DwarfCorp
         {
             if (Physics == null)
             {
+                // Not sure under what circumstances this happens, but apparently a user
+                // ended up with a null Physics here on loading.
+                Physics = GetRoot().GetComponent<Physics>();
+            }
+            if (Physics == null)
+            {
                 return;
             }
 
