@@ -257,39 +257,24 @@ namespace DwarfCorp
                 base.Die();
             }
 
-            List<Body> release = new List<Body>();
-            foreach(var resource in Resources)
+            Dictionary<ResourceType, int> resourceCounts = new Dictionary<ResourceType, int>();
+            foreach (var resource in Resources)
             {
-                if (MathFunctions.RandEvent(DropRate))
+                if (!resourceCounts.ContainsKey(resource.Resource))
                 {
-                    const int maxIters = 10;
-
-                    for (int i = 0; i < maxIters; i++)
-                    {
-                        Vector3 pos = MathFunctions.RandVector3Box(GetBoundingBox());
-                        var voxel = new VoxelHandle(World.ChunkManager.ChunkData,
-                        GlobalVoxelCoordinate.FromVector3(pos));
-                        if ((!voxel.IsValid) || !voxel.IsEmpty)
-                        {
-                            continue;
-                        }
-                        Physics item =
-                            EntityFactory.CreateEntity<Physics>(resource.Resource + " Resource",
-                                pos) as Physics;
-                        if (item != null)
-                        {
-                            release.Add(item);
-                            item.Velocity = pos - GetBoundingBox().Center();
-                            item.Velocity.Normalize();
-                            item.Velocity *= 5.0f;
-                            item.IsSleeping = false;
-                        }
-                        break;
-                    }
+                    resourceCounts[resource.Resource] = 0;
                 }
+                resourceCounts[resource.Resource]++;
             }
 
-            OnOnDeath(release);
+            List<ResourceAmount> aggregatedResources = new List<ResourceAmount>();
+            foreach(var resource in resourceCounts)
+            {
+                aggregatedResources.Add(new ResourceAmount(resource.Key, resource.Value));
+            }
+
+
+            OnOnDeath(EntityFactory.CreateResourcePiles(aggregatedResources, GetBoundingBox()).ToList());
             base.Die();
         }
 

@@ -47,7 +47,7 @@ namespace DwarfCorp
     {
         public ResourceAmount Resource { get; set; }
         public Timer LifeTimer = new Timer(3600, true);
-
+       
         public ResourceEntity()
         {
             
@@ -60,7 +60,7 @@ namespace DwarfCorp
             Resource = resourceType;
             if (Resource.NumResources > 1)
             {
-                Name = String.Format("Pile of {0} {1}", Resource.NumResources, Resource.ResourceType);
+                Name = String.Format("Pile of {0} {1}s", Resource.NumResources, Resource.ResourceType);
             }
             Restitution = 0.1f;
             Friction = 0.1f;
@@ -98,46 +98,50 @@ namespace DwarfCorp
 
             Tinter sprite = null;
 
-            // Minor optimization for single layer resources.
-            if (type.CompositeLayers.Count == 1)
+            int numSprites = Math.Min(Resource.NumResources, 3);
+            for (int i = 0; i < numSprites; i++)
             {
-                var layer = type.CompositeLayers[0];
-                sprite = AddChild(new SimpleBobber(Manager, "Sprite",
-                    Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
-                    new SpriteSheet(layer.Asset, layer.FrameSize.X, layer.FrameSize.Y),
-                    layer.Frame, 0.15f, 2.0f, MathFunctions.Rand() * 3.0f)
+                // Minor optimization for single layer resources.
+                if (type.CompositeLayers.Count == 1)
                 {
-                    OrientationType = SimpleSprite.OrientMode.Spherical,
-                    WorldHeight = 0.75f,
-                    WorldWidth = 0.75f,
-                }) as Tinter;
-                sprite.LocalTransform = Matrix.CreateTranslation(Vector3.UnitY * 0.25f);
-            }
-            else
-            {
-                var layers = new List<LayeredSimpleSprite.Layer>();
-
-                foreach (var layer in type.CompositeLayers)
-                {
-                    layers.Add(new LayeredSimpleSprite.Layer
+                    var layer = type.CompositeLayers[0];
+                    sprite = AddChild(new SimpleBobber(Manager, "Sprite",
+                        Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
+                        new SpriteSheet(layer.Asset, layer.FrameSize.X, layer.FrameSize.Y),
+                        layer.Frame, 0.15f, MathFunctions.Rand() + 2.0f, MathFunctions.Rand() * 3.0f)
                     {
-                        Sheet = new SpriteSheet(layer.Asset, layer.FrameSize.X, layer.FrameSize.Y),
-                        Frame = layer.Frame
-                    });
+                        OrientationType = SimpleSprite.OrientMode.Spherical,
+                        WorldHeight = 0.75f,
+                        WorldWidth = 0.75f,
+                    }) as Tinter;
+                    sprite.LocalTransform = Matrix.CreateTranslation(Vector3.UnitY * 0.25f + MathFunctions.RandVector3Cube() * 0.1f);
+                }
+                else
+                {
+                    var layers = new List<LayeredSimpleSprite.Layer>();
+
+                    foreach (var layer in type.CompositeLayers)
+                    {
+                        layers.Add(new LayeredSimpleSprite.Layer
+                        {
+                            Sheet = new SpriteSheet(layer.Asset, layer.FrameSize.X, layer.FrameSize.Y),
+                            Frame = layer.Frame
+                        });
+                    }
+
+                    sprite = AddChild(new LayeredBobber(Manager, "Sprite",
+                        Matrix.CreateTranslation(Vector3.UnitY * 0.25f + MathFunctions.RandVector3Cube() * 0.1f),
+                        layers, 0.15f, MathFunctions.Rand() + 2.0f, MathFunctions.Rand() * 3.0f)
+                    {
+                        OrientationType = LayeredSimpleSprite.OrientMode.Spherical,
+                        WorldHeight = 0.75f,
+                        WorldWidth = 0.75f,
+                    }) as Tinter;
                 }
 
-                sprite = AddChild(new LayeredBobber(Manager, "Sprite",
-                    Matrix.CreateTranslation(Vector3.UnitY * 0.25f),
-                    layers, 0.15f, 2.0f, MathFunctions.Rand() * 3.0f)
-                {
-                    OrientationType = LayeredSimpleSprite.OrientMode.Spherical,
-                    WorldHeight = 0.75f,
-                    WorldWidth = 0.75f,
-                }) as Tinter;
+                sprite.Tint = type.Tint;
+                sprite.SetFlag(Flag.ShouldSerialize, false);
             }
-
-            sprite.Tint = type.Tint;
-            sprite.SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }
