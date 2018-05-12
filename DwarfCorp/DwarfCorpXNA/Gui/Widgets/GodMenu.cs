@@ -27,83 +27,45 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     Text = "CHEAT MODE",
                 },
+
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "DEBUG",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
-                        ItemSize = new Point(100, 20),
-                        ItemSource = new HorizontalMenuTray.MenuItem[]
+                        ItemSize = new Point(200, 20),
+                        ItemSource = Debugger.EnumerateSwitches().Select(s =>
+                        new HorizontalMenuTray.CheckboxMenuItem
                         {
-                            new HorizontalMenuTray.MenuItem
-                            {
-                                Text = "SWITCHES",
-                                ExpansionChild = new HorizontalMenuTray.Tray
-                                {
-                                    ItemSize = new Point(200, 20),
-                                    ItemSource = Debugger.EnumerateSwitches().Select(s =>
-                                    new HorizontalMenuTray.CheckboxMenuItem
-                                    {
-                                        Text = Debugger.GetNicelyFormattedName(s.Name),
-                                        InitialState = s.State,
-                                        SetCallback = s.Set
-                                    })
-                                }
-                            },
-
-                            new HorizontalMenuTray.MenuItem
-                            {
-                                Text = "AI",
-                                ExpansionChild = new EmployeeAIDebugPanel
-                                {
-                                    World = Master.World,
-                                    MinimumSize = new Point(300, 200)
-                                }
-                            },
-
-                            new HorizontalMenuTray.MenuItem
-                            {
-                                Text = "STATS",
-                                ExpansionChild = new HorizontalMenuTray.Tray
-                                {
-                                    ItemSource = new HorizontalMenuTray.MenuItem[]
-                                    {
-                                        new HorizontalMenuTray.UpdatingMenuItem
-                                        {
-                                            OnUpdateMenuItem = (sender) =>
-                                            {
-                                                sender.Text = String.Format("Entities: {0}", Master.World.ComponentManager.RootComponent.Children.Count);
-                                                sender.Invalidate();
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-
-                            new HorizontalMenuTray.MenuItem
-                            {
-                                Text = "DEBUG SAVE",
-                                OnClick = (sender, args) =>
-                                {
-                                    // Turn off binary compressed saves and save a nice straight json save for debugging purposes.
-
-                                    // Todo: Why isn't World managing this paused state itself?
-                                    bool paused = Master.World.Paused;
-                                    var previousSetting = DwarfGame.COMPRESSED_BINARY_SAVES;
-                                    DwarfGame.COMPRESSED_BINARY_SAVES = false;
-                                    Master.World.Save(
-                                        String.Format("{0}_{1}_DEBUG", Overworld.Name, Master.World.GameID),
-                                        (success, exception) =>
-                                        {
-                                            Master.World.MakeAnnouncement(success ? "Debug save created.": "Debug save failed - " + exception.Message);
-                                            DwarfGame.COMPRESSED_BINARY_SAVES = previousSetting;
-                                            Master.World.Paused = paused;
-                                        });                                    
-                                }
-                            }
-                        }
+                            Text = Debugger.GetNicelyFormattedName(s.Name),
+                            InitialState = s.State,
+                            SetCallback = s.Set
+                        })
                     }
                 },
+            
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "DEBUG SAVE",
+                    OnClick = (sender, args) =>
+                    {
+                        // Turn off binary compressed saves and save a nice straight json save for debugging purposes.
+
+                        // Todo: Why isn't World managing this paused state itself?
+                        bool paused = Master.World.Paused;
+                        var previousSetting = DwarfGame.COMPRESSED_BINARY_SAVES;
+                        DwarfGame.COMPRESSED_BINARY_SAVES = false;
+                        Master.World.Save(
+                            String.Format("{0}_{1}_DEBUG", Overworld.Name, Master.World.GameID),
+                                (success, exception) =>
+                                    {
+                                        Master.World.MakeAnnouncement(success ? "Debug save created.": "Debug save failed - " + exception.Message);
+                                        DwarfGame.COMPRESSED_BINARY_SAVES = previousSetting;
+                                        Master.World.Paused = paused;
+                                    });
+                    }
+                },
+
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "BUILD",

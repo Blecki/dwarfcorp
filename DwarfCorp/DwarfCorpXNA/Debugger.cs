@@ -52,7 +52,6 @@ namespace DwarfCorp
             public static bool DrawRailNetwork = false;
             public static bool DrawToolDebugInfo = false;
             public static bool HideTerrain = false;
-            public static bool MonitorPerformance = false;
             public static bool ABTestSwitch = false;
         }
 

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using DwarfCorp.Gui;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -29,13 +31,36 @@ namespace DwarfCorp
         [ThreadStatic]
         private static Dictionary<String, PerformanceFunction> Functions = new Dictionary<string, PerformanceFunction>();
 
-        private static Gui.Root GuiRoot;
-        private static Gui.Widgets.FreeText Widget;
         private static Stopwatch FPSWatch = null;
+
+        private static Gui.Widgets.DwarfConsole GetOutputWidget()
+        {
+            var display = DwarfGame.ConsolePanel.EnumerateChildren().Where(c =>
+            {
+                if (c.Tag is String tag) return tag == "PERFORMANCE";
+                return false;
+            }).FirstOrDefault() as Gui.Widgets.DwarfConsole;
+
+            if (display == null)
+            {
+                display = DwarfGame.ConsolePanel.AddChild(new Gui.Widgets.DwarfConsole
+                {
+                    AutoLayout = AutoLayout.DockLeft,
+                    Background = new TileReference("basic", 1),
+                    BackgroundColor = new Vector4(1.0f, 1.0f, 1.0f, 0.25f),
+                    MinimumSize = new Point(200, 0),
+                    Tag = "PERFORMANCE"
+                }) as Gui.Widgets.DwarfConsole;
+
+                DwarfGame.RebuildConsole();
+            }
+
+            return display;
+        }
         
         public static void BeginFrame()
         {
-            if (Debugger.Switches.MonitorPerformance)
+            if (DwarfGame.IsConsoleVisible)
             {
                 CurrentFrame = null;
                 Functions.Clear();
@@ -45,48 +70,32 @@ namespace DwarfCorp
 
         public static void Render()
         {
-            if (Debugger.Switches.MonitorPerformance)
+            if (DwarfGame.IsConsoleVisible)
             {
                 PopFrame();
 
-                if (GuiRoot == null)
-                {
-                    GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
-                    Widget = GuiRoot.RootItem.AddChild(new Gui.Widgets.FreeText
-                    {
-                        AutoLayout = Gui.AutoLayout.DockFill,
-                        TextColor = new Microsoft.Xna.Framework.Vector4(1.0f, 1.0f, 1.0f, 1.0f),
-                    }) as Gui.Widgets.FreeText;
-                }
-
-                var builder = new StringBuilder();
+                var output = GetOutputWidget();
+                output.Lines.Clear();
 
                 if (FPSWatch == null)
-                {
                     FPSWatch = Stopwatch.StartNew();
-                    builder.AppendLine();
-                }
                 else
                 {
                     FPSWatch.Stop();
-                    builder.AppendFormat("Frame time: {0:000.000} FPS: {1:000}\n", FPSWatch.Elapsed.TotalMilliseconds, 1.0f / FPSWatch.Elapsed.TotalSeconds);
+                    output.Lines.Add(String.Format("Frame time: {0:000.000} FPS: {1:000}\n", FPSWatch.Elapsed.TotalMilliseconds, 1.0f / FPSWatch.Elapsed.TotalSeconds));
                     FPSWatch = Stopwatch.StartNew();
                 }
 
                 foreach (var function in Functions)
-                    builder.AppendFormat("{1:0000} {2:000} {3:00000000} {0}\n", function.Value.Name, function.Value.FrameCalls, function.Value.FrameTicks / 1000, function.Value.FrameTicks);
-                if (GuiRoot != null)
-                {
-                    Widget.Text = builder.ToString();
-                    Widget.Invalidate();
-                    GuiRoot.Draw();
-                }
+                    output.Lines.Add(String.Format("{1:0000} {2:000} {3:00000000} {0}\n", function.Value.Name, function.Value.FrameCalls, function.Value.FrameTicks / 1000, function.Value.FrameTicks));
+
+                output.Invalidate();
             }
         }
 
         public static void PushFrame(String Name)
         {
-            if (Debugger.Switches.MonitorPerformance && CurrentFrame != null)
+            if (DwarfGame.IsConsoleVisible && CurrentFrame != null)
                 __pushFrame(Name);
         }
 
@@ -115,7 +124,7 @@ namespace DwarfCorp
 
         public static void PopFrame()
         {
-            if (Debugger.Switches.MonitorPerformance && CurrentFrame != null)
+            if (DwarfGame.IsConsoleVisible && CurrentFrame != null)
             {
                     CurrentFrame.Stopwatch.Stop();
 

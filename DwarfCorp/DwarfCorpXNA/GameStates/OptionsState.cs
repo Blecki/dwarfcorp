@@ -982,6 +982,7 @@ namespace DwarfCorp.GameStates
             {
                 GuiRoot.RenderData.CalculateScreenSize();
                 RebuildGui();
+                DwarfGame.RebuildConsole();
             }
 
             HasChanges = false;

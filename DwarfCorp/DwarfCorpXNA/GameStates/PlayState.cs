@@ -389,7 +389,46 @@ namespace DwarfCorp.GameStates
                     SelectedEmployeeInfo.Employee = SelectedEmployeeInfo.Employee;
                 }
             }
-#endregion
+            #endregion
+
+            if (DwarfGame.IsConsoleVisible)
+            {
+                var statsDisplay = GetConsoleDisplay("STATS");
+
+                statsDisplay.Lines.Clear();
+                statsDisplay.Lines.Add("** STATISTICS **");
+                statsDisplay.Lines.Add(String.Format("{0} ENTITIES", World.ComponentManager.RootComponent.Children.Count));
+                statsDisplay.Lines.Add(String.Format("{0} INSTANCES DRAWN", World.InstanceRenderer.InstancesDrawn));
+
+                statsDisplay.Invalidate();
+
+                // Todo: Employee AI debug display
+            }
+        }
+
+        private static DwarfConsole GetConsoleDisplay(String Name)
+        {
+            var statsDisplay = DwarfGame.ConsolePanel.EnumerateChildren().Where(c =>
+            {
+                if (c.Tag is String tag) return tag == Name;
+                return false;
+            }).FirstOrDefault() as Gui.Widgets.DwarfConsole;
+
+            if (statsDisplay == null)
+            {
+                statsDisplay = DwarfGame.ConsolePanel.AddChild(new Gui.Widgets.DwarfConsole
+                {
+                    AutoLayout = AutoLayout.DockLeft,
+                    Background = new TileReference("basic", 1),
+                    BackgroundColor = new Vector4(1.0f, 1.0f, 1.0f, 0.25f),
+                    MinimumSize = new Point(200, 0),
+                    Tag = Name
+                }) as Gui.Widgets.DwarfConsole;
+
+                DwarfGame.RebuildConsole();
+            }
+
+            return statsDisplay;
         }
 
         /// <summary>

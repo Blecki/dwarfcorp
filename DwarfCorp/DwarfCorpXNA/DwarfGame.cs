@@ -60,13 +60,13 @@ namespace DwarfCorp
 
         private class LogWriter : StreamWriter
         {
-            private Gui.Widgets.DwarfConsole Console = null;
-            private System.Text.StringBuilder PreConsoleQueue = new System.Text.StringBuilder();
+            private Gui.Widgets.DwarfConsole ConsoleLogOutput = null;
+            private System.Text.StringBuilder PreConsoleLogQueue = new System.Text.StringBuilder();
 
             public void SetConsole(Gui.Widgets.DwarfConsole Console)
             {
-                this.Console = Console;
-                Console.AddMessage(PreConsoleQueue.ToString());
+                this.ConsoleLogOutput = Console;
+                Console.AddMessage(PreConsoleLogQueue.ToString());
             }
 
             public LogWriter(FileStream Output) : base(Output)
@@ -76,10 +76,10 @@ namespace DwarfCorp
 
             public override void Write(char value)
             {
-                if (Console != null)
-                    Console.Append(value);
+                if (ConsoleLogOutput != null)
+                    ConsoleLogOutput.Append(value);
                 else
-                    PreConsoleQueue.Append(value);
+                    PreConsoleLogQueue.Append(value);
 
                 base.Write(value);
             }
@@ -98,11 +98,11 @@ namespace DwarfCorp
 
             public override void Write(char[] buffer, int index, int count)
             {
-                if (Console != null)
+                if (ConsoleLogOutput != null)
                     for (var x = index; x < index + count; ++x)
-                        Console.Append(buffer[x]);
+                        ConsoleLogOutput.Append(buffer[x]);
                 else
-                    PreConsoleQueue.Append(buffer, index, count);
+                    PreConsoleLogQueue.Append(buffer, index, count);
 
                 base.Write(buffer, index, count);
             }
@@ -125,6 +125,8 @@ namespace DwarfCorp
 
         private static Gui.Root ConsoleGui;
         private static bool ConsoleVisible = false;
+        public static bool IsConsoleVisible { get { return ConsoleVisible; } }
+        public static Gui.Widget ConsolePanel { get { return ConsoleGui.RootItem.GetChild(0); } }
 
         public const string GameName = "DwarfCorp";
         public static bool HasRendered = false;
@@ -352,14 +354,21 @@ namespace DwarfCorp
 
             // Create console.
             ConsoleGui = new Gui.Root(GuiSkin);
-            var _console = ConsoleGui.RootItem.AddChild(new Gui.Widgets.DwarfConsole
+            var _console = ConsoleGui.RootItem.AddChild(new Gui.Widget
             {
-                Background = new TileReference("basic", 0),
-                Rect = new Rectangle(0, 0, GuiSkin.VirtualScreen.Width, GuiSkin.VirtualScreen.Height)
+                AutoLayout = AutoLayout.DockFill
+            });
+
+            var _logOutput = _console.AddChild(new Gui.Widgets.DwarfConsole
+            {
+                Background = new TileReference("basic", 1),
+                BackgroundColor = new Vector4(1.0f, 1.0f, 1.0f, 0.25f),
+                AutoLayout = AutoLayout.DockLeft,
+                MinimumSize = new Point(GuiSkin.VirtualScreen.Width / 4, 0) // This needs to be handled differently.
             }) as Gui.Widgets.DwarfConsole;
 
             ConsoleGui.RootItem.Layout();
-            _logwriter.SetConsole(_console);
+            _logwriter.SetConsole(_logOutput);
 
             Console.Out.WriteLine("Console created.");
 
@@ -400,6 +409,11 @@ namespace DwarfCorp
 #endif
             }
 
+        public static void RebuildConsole()
+        {
+            ConsoleGui.RootItem.Layout();
+        }
+
         public void CaptureException(Exception exception)
         {
 #if SHARP_RAVEN && !DEBUG
@@ -424,9 +438,10 @@ namespace DwarfCorp
 
             if (ConsoleVisible)
             {
-                DwarfGame.GumInput.FireActions(ConsoleGui, (@event, args) =>
-                {
-                });
+                // Todo: Need some kind of global flag to turn off keyboard events when typing into a field.
+                //DwarfGame.GumInput.FireActions(ConsoleGui, (@event, args) =>
+                //{
+                //});
                 ConsoleGui.Update(time);
             }
 

@@ -8,7 +8,7 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class DwarfConsole : Gui.Widget
     {
-        private List<String> Lines = new List<String>();
+        public List<String> Lines = new List<String>();
         private System.Threading.Mutex MessageLock = new System.Threading.Mutex();
         private bool NeedsInvalidated = false;
 

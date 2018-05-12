@@ -7,6 +7,8 @@ namespace DwarfCorp
     public class InstanceRenderer
     {
         private Dictionary<string, InstanceGroup> InstanceTypes = new Dictionary<string, InstanceGroup>();
+        public int InstancesDrawn { get; private set; }
+        private int _instanceCounter = 0;
 
         public InstanceRenderer(GraphicsDevice Device, ContentManager Content)
         {
@@ -16,6 +18,8 @@ namespace DwarfCorp
                 group.Initialize();
                 InstanceTypes.Add(group.Name, group);
             }
+
+            InstancesDrawn = 0;
         }
 
         public void RenderInstance(
@@ -26,6 +30,8 @@ namespace DwarfCorp
                 return;
 
             InstanceTypes[Instance.Type].RenderInstance(Instance, Device, Effect, Camera, Mode);
+
+            _instanceCounter += 1;
         }
 
         public void Flush(
@@ -36,6 +42,9 @@ namespace DwarfCorp
         {
             foreach (var group in InstanceTypes)
                 group.Value.Flush(Device, Effect, Camera, Mode);
+
+            InstancesDrawn = _instanceCounter;
+            _instanceCounter = 0;
         }
     }
 }

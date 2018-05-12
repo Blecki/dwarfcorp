@@ -236,8 +236,6 @@
     <Compile Include="Graphics\Instancing\TiledInstancedVertex.cs" />
     <Compile Include="Gui\TextureGeneratorAttribute.cs" />
     <Compile Include="Gui\Widgets\CancelToolOptions.cs" />
-    <Compile Include="Gui\Widgets\EmployeeAIDebugPanel.cs" />
-    <Compile Include="Gui\Widgets\FreeText.cs" />
     <Compile Include="Gui\Widgets\DwarfConsole.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
