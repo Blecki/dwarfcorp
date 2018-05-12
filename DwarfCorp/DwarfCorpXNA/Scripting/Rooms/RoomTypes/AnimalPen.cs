@@ -101,7 +101,7 @@ namespace DwarfCorp
             animalBounds = animalBounds.Expand(-0.25f);
             animalBounds.Max.Y += 2;
             animalBounds.Min.Y -= 0.25f;
-            animal.GetComponent<Physics>().IsReserved = false;
+            animal.GetComponent<Physics>().ReservedFor = null; ;
             animal.GetComponent<CreatureAI>().PositionConstraint = animalBounds;
             faction.Designations.RemoveEntityDesignation(animal.GetComponent<Physics>(), DesignationType.Wrangle);
            yield return Act.Status.Success;

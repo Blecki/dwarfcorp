@@ -41,7 +41,7 @@ namespace DwarfCorp.Gui.Widgets
                     AutoLayout = Gui.AutoLayout.DockTop
                 });
 
-                var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false);
+                var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false, null);
 
                 if (!String.IsNullOrEmpty(Data.CraftLocation) && nearestBuildLocation == null)
                 {
@@ -168,7 +168,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             if (!String.IsNullOrEmpty(Data.CraftLocation))
             { 
-                var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false);
+                var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false, null);
 
                 if (nearestBuildLocation == null)
                 {

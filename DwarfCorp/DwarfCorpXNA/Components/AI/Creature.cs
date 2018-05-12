@@ -73,7 +73,7 @@ namespace DwarfCorp
         private bool _addedToSpeciesRegister = false;
 
         public static int GetNumSpecies(string species)
-        { 
+        {
             if (!_speciesCounts.ContainsKey(species))
             {
                 return 0;
@@ -91,9 +91,9 @@ namespace DwarfCorp
         public string Species = "";
         public string BabyType = "";
         public ResourceType BaseMeatResource = ResourceType.Meat;
-        
+
         public Pregnancy CurrentPregnancy = null;
-        
+
         public Creature()
         {
             CurrentCharacterMode = CharacterMode.Idle;
@@ -141,10 +141,28 @@ namespace DwarfCorp
             Manager.RootComponent.AddChild(new Egg(this.Species, Manager, Physics.Position, AI.PositionConstraint));
         }
 
+        private T _get<T>(ref T cached) where T : GameComponent
+        {
+            if (cached == null)
+                cached = Parent.EnumerateAll().OfType<T>().FirstOrDefault();
+            System.Diagnostics.Debug.Assert(cached != null, string.Format("No {0} created on creature.", typeof(T).Name));
+            return cached;
+        }
+
         /// <summary> The creature's AI determines how it will behave. </summary>
-        public CreatureAI AI { get; set; }
+        [JsonIgnore]
+        public CreatureAI AI
+        {
+            get
+            {
+                return _get(ref _ai);
+            }
+        }
+        private CreatureAI _ai = null;
+
         /// <summary> The crature's physics determines how it moves around </summary>
         public Physics Physics { get; set; }
+
         /// <summary> The selection circle is drawn when the character is selected </summary>
         private CharacterSprite _characterSprite = null;
         [JsonIgnore]
@@ -152,10 +170,7 @@ namespace DwarfCorp
         {
             get
             {
-                if (_characterSprite == null)
-                    _characterSprite = Parent.EnumerateAll().OfType<CharacterSprite>().FirstOrDefault();
-                System.Diagnostics.Debug.Assert(_selectionCircle != null, "No selection circle created on creature.");
-                return _characterSprite;
+                return _get(ref _characterSprite);
             }
         }
 
@@ -166,15 +181,21 @@ namespace DwarfCorp
         {
             get
             {
-                if (_selectionCircle == null)
-                    _selectionCircle = Parent.EnumerateAll().OfType<SelectionCircle>().FirstOrDefault();
-                System.Diagnostics.Debug.Assert(_selectionCircle != null, "No selection circle created on creature.");
-                return _selectionCircle;
+                return _get(ref _selectionCircle);
             }
         }
 
         /// <summary> Finds enemies nearby and triggers when it sees them </summary>
-        public EnemySensor Sensors { get; set; }
+        [JsonIgnore]
+        public EnemySensor Sensors
+        {
+            get
+            {
+                return _get(ref _sensors);
+            }
+        }
+
+        private EnemySensor _sensors = null;
         /// <summary> If true, the creature will generate meat when it dies. </summary>
         public bool HasMeat { get; set; }
         /// <summary> If true, the creature will generate bones when it dies. </summary>
@@ -186,7 +207,15 @@ namespace DwarfCorp
         /// <summary> Used to make sounds for the creature </summary>
         public NoiseMaker NoiseMaker { get; set; }
         /// <summary> The creature can hold objects in its inventory </summary>
-        public Inventory Inventory { get; set; }
+        [JsonIgnore]
+        public Inventory Inventory
+        {
+            get
+            {
+                return _get(ref _inventory);
+            }
+        }
+        private Inventory _inventory = null;
         public Timer EggTimer { get; set; }
         public Timer MigrationTimer { get; set; }
 
@@ -807,13 +836,6 @@ namespace DwarfCorp
 
         protected void CreateSprite(EmployeeClass employeeClass, ComponentManager manager, float heightOffset=0.15f)
         {
-            if (Physics == null)
-            {
-                // Not sure under what circumstances this happens, but apparently a user
-                // ended up with a null Physics here on loading.
-                Physics = GetRoot().GetComponent<Physics>();
-            }
-
             if (Physics == null)
             {
                 return;

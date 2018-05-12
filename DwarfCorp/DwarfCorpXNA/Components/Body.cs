@@ -59,7 +59,12 @@ namespace DwarfCorp
         public Vector3 LocalBoundingBoxOffset = Vector3.Zero;
         [JsonIgnore]
         public Action OnDestroyed;
-        public bool IsReserved = false;
+        [JsonIgnore]
+        public bool IsReserved
+        {
+            get { return ReservedFor != null; }
+        }
+        [JsonIgnore]
         public GameComponent ReservedFor = null;
         private BoundingBox lastBounds = new BoundingBox();
         private OctTreeNode<Body> CachedOcttreeNode = null;

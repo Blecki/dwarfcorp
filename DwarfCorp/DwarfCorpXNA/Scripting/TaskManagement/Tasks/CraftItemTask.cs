@@ -127,7 +127,7 @@ namespace DwarfCorp
         {            
             if (!String.IsNullOrEmpty(CraftDesignation.ItemType.CraftLocation))
             {
-                var nearestBuildLocation = agent.Faction.FindNearestItemWithTags(CraftDesignation.ItemType.CraftLocation, Vector3.Zero, false);
+                var nearestBuildLocation = agent.Faction.FindNearestItemWithTags(CraftDesignation.ItemType.CraftLocation, Vector3.Zero, false, agent.AI);
 
                 if (nearestBuildLocation == null)
                     return false;

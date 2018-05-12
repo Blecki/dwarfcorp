@@ -143,7 +143,6 @@ namespace DwarfCorp
         public Physics Physics
         {
             get { return Creature.Physics; }
-            set { Creature.Physics = value; }
         }
 
         /// <summary> Wrapper around Creature.Faction </summary>
@@ -735,7 +734,7 @@ namespace DwarfCorp
                 // Find a room to train in, if applicable.
                 if (Stats.IsTaskAllowed(Task.TaskCategory.Attack) && MathFunctions.RandEvent(0.01f))
                 {
-                    var closestTraining = Faction.FindNearestItemWithTags("Train", Position, true);
+                    var closestTraining = Faction.FindNearestItemWithTags("Train", Position, true, this);
 
                     if (closestTraining != null)
                     {

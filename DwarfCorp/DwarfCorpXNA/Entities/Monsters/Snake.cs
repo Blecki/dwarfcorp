@@ -126,10 +126,10 @@ namespace DwarfCorp
             CreateGraphics();
 
             // Add sensor
-            Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
+            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
             // Add AI
-            AI = Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors, PlanService)) as CreatureAI;
+            Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors, PlanService));
 
 
             Attacks = new List<Attack>()
@@ -141,7 +141,7 @@ namespace DwarfCorp
                 }
             };
 
-            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
+            Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
             Physics.Tags.Add("Snake");
             Physics.Tags.Add("Animal");
