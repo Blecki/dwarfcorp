@@ -869,7 +869,7 @@ namespace DwarfCorp
         /// <summary> For any enemy that this creature's enemy sensor knows about, order the creature to attack these enemies </summary>
         public void OrderEnemyAttack()
         {
-            foreach (CreatureAI enemy in Sensor.Enemies)
+            foreach (CreatureAI enemy in Sensor.Enemies.Where(e => e != null && !e.IsDead && e.Creature != null))
             {
                 Task task = new KillEntityTask(enemy.Physics, KillEntityTask.KillType.Auto);
                 if (!HasTaskWithName(task))
