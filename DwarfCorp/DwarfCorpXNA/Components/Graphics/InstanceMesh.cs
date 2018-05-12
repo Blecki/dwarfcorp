@@ -86,7 +86,6 @@ namespace DwarfCorp
             bool saveHasMoved = HasMoved || firstIter;
 
             base.Update(gameTime, chunks, camera);
-
             if (Instance != null && IsVisible && (saveHasMoved || firstIter || Instance.Color != Tint))
             {
                 Instance.Color = Tint;
