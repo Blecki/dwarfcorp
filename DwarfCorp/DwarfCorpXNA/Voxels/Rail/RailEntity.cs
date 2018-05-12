@@ -444,10 +444,10 @@ namespace DwarfCorp.Rail
 
             // Everything that draws should set it's tint, making this pointless.
             Color origTint = effect.VertexColorTint;
-            //ApplyTintingToEffect(effect);
+            DoStipple(effect);
             effect.VertexColorTint = Tint;
             effect.World = GlobalTransform;
-
+          
             effect.MainTexture = Sheet.GetTexture();
 
 
@@ -460,8 +460,37 @@ namespace DwarfCorp.Rail
             }
 
             effect.VertexColorTint = origTint;
-            //EndDraw(effect);
+            EndDraw(effect);
         }
+        private string previousEffect = null;
+
+        public void DoStipple(Shader effect)
+        {
+#if DEBUG
+            if (effect.CurrentTechnique.Name == Shader.Technique.Stipple)
+            {
+                throw new InvalidOperationException("Stipple technique not cleaned up. Was EndDraw called?");
+            }
+#endif
+            if (effect.CurrentTechnique != effect.Techniques[Shader.Technique.SelectionBuffer] && effect.CurrentTechnique != effect.Techniques[Shader.Technique.SelectionBufferInstanced])
+            {
+                previousEffect = effect.CurrentTechnique.Name;
+                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Stipple];
+            }
+            else
+            {
+                previousEffect = null;
+            }
+        }
+
+        public void EndDraw(Shader shader)
+        {
+            if (!String.IsNullOrEmpty(previousEffect))
+            {
+                shader.CurrentTechnique = shader.Techniques[previousEffect];
+            }
+        }
+
 
         private void AddScaffoldGeometry(Matrix transform, Vector4 sideBounds, Vector2[] sideUvs, float HeightOffset, bool FlipTexture)
         {
@@ -619,7 +648,8 @@ namespace DwarfCorp.Rail
             if (deathTrigger != null)
                 deathTrigger.LocalTransform = Matrix.Identity;
 
-            AttachToNeighbors();            
+            AttachToNeighbors();
+            PropogateTransforms();
         }
     }
 }
