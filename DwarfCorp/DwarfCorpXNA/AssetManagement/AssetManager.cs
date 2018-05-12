@@ -105,7 +105,8 @@ namespace DwarfCorp
 
         public static Type GetTypeFromMod(String T, String Assembly)
         {
-            if (Assembly[0] == '$')
+            // Todo: Old assembly names are a hack to preserve save compatibility.
+            if (Assembly[0] == '$' || Assembly == "DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null")
                 return Type.GetType(T, true);
 
             foreach (var mod in Assemblies)
