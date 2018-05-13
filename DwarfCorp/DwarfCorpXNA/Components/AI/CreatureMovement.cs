@@ -299,292 +299,11 @@ namespace DwarfCorp
             bool standingOnGround = (neighborHood[1, 0, 1].IsValid && !neighborHood[1, 0, 1].IsEmpty);
             bool topCovered = (neighborHood[1, 2, 1].IsValid && !neighborHood[1, 2, 1].IsEmpty);
             bool hasNeighbors = HasNeighbors(neighborHood);
-            bool isClimbing = false;
-
-            var successors = new List<MoveAction>();
             bool isRiding = state.VehicleState.IsRidingVehicle;
 
             var neighborHoodBounds = new BoundingBox(neighborHood[0, 0, 0].GetBoundingBox().Min, neighborHood[2, 2, 2].GetBoundingBox().Max);
-            var neighborObjects = octree.EnumerateItems(neighborHoodBounds);
-
-            if (CanClimb || Can(MoveType.RideVehicle))
-            {
-                //Climbing ladders.
-
-                var bodies = neighborObjects.Where(o => o.GetBoundingBox().Intersects(voxel.GetBoundingBox()));
-
-                if (!isRiding)
-                {
-                    var ladder = bodies.FirstOrDefault(component => component.Tags.Contains("Climbable"));
-
-                    // if the creature can climb objects and a ladder is in this voxel,
-                    // then add a climb action.
-                    if (ladder != null && CanClimb)
-                    {
-                        successors.Add(new MoveAction
-                        {
-                            Diff = new Vector3(1, 2, 1),
-                            MoveType = MoveType.Climb,
-                            InteractObject = ladder
-                        });
-
-                        isClimbing = true;
-
-                        if (!standingOnGround)
-                        {
-                            successors.Add(new MoveAction
-                            {
-                                Diff = new Vector3(1, 0, 1),
-                                MoveType = MoveType.Climb,
-                                InteractObject = ladder
-                            });
-                        }
-
-                        standingOnGround = true;
-                    }
-                }
-
-                if (!isRiding)
-                {
-                    var rails = bodies.OfType<Rail.RailEntity>().Where(r => r.Active);
-
-                    if (rails.Count() > 0 && Can(MoveType.RideVehicle))
-                    {
-                        {
-                            foreach (var rail in rails)
-                            {
-
-                                if (rail.GetContainingVoxel() != state.Voxel)
-                                    continue;
-
-                                
-                                successors.Add(new MoveAction()
-                                {
-                                    SourceState = state,
-                                    DestinationState = new MoveState()
-                                    {
-                                        VehicleState = new VehicleState()
-                                        {
-                                            Rail = rail
-                                        },
-                                        Voxel = rail.GetContainingVoxel()
-                                    },
-                                    MoveType = MoveType.EnterVehicle,
-                                    Diff = new Vector3(1, 1, 1)
-                                });
-                            }
-                        }
-                    }
-                }
-
-                if (Can(MoveType.ExitVehicle) && isRiding)
-                {
-                    successors.Add(new MoveAction()
-                    {
-                        SourceState = state,
-                        DestinationState = new MoveState()
-                        {
-                            VehicleState = new VehicleState(),
-                            Voxel = state.Voxel
-                        },
-                        MoveType = MoveType.ExitVehicle,
-                        Diff = new Vector3(1, 1, 1)
-                    });
-                }
-
-                if (Can(MoveType.RideVehicle) && isRiding)
-                {
-                    foreach(var neighbor in Rail.RailHelper.EnumerateForwardNetworkConnections(state.VehicleState.PrevRail, state.VehicleState.Rail))
-                    {
-                        var neighborRail =  Creature.Manager.FindComponent(neighbor) as Rail.RailEntity;
-                        if (neighborRail == null || !neighborRail.Active)
-                            continue;
-
-                        successors.Add(new MoveAction()
-                        {
-                            SourceState = state,
-                            DestinationState = new MoveState()
-                            {
-                                Voxel = neighborRail.GetContainingVoxel(),
-                                VehicleState = new VehicleState()
-                                {
-                                    Rail = neighborRail,
-                                    PrevRail = state.VehicleState.Rail
-                                }
-                            },
-                            MoveType = MoveType.RideVehicle,
-                        });
-                    }
-                }
-            }
-
-            // If the creature can climb walls and is not blocked by a voxl above.
-            if (!isRiding && CanClimbWalls && !topCovered)
-            {
-                var walls = new VoxelHandle[]
-                {
-                    neighborHood[2, 1, 1], neighborHood[0, 1, 1], neighborHood[1, 1, 2],
-                    neighborHood[1, 1, 0]
-                };
-
-                var wall = VoxelHandle.InvalidHandle;
-                foreach (var w in walls)
-                    if (w.IsValid && !w.IsEmpty)
-                        wall = w;
-
-                if (wall.IsValid)
-                {
-                    isClimbing = true;
-                    successors.Add(new MoveAction
-                    {
-                        Diff = new Vector3(1, 2, 1),
-                        MoveType = MoveType.ClimbWalls,
-                        ActionVoxel = wall
-                    });
-
-                    if (!standingOnGround)
-                    {
-                        successors.Add(new MoveAction
-                        {
-                            Diff = new Vector3(1, 0, 1),
-                            MoveType = MoveType.ClimbWalls,
-                            ActionVoxel = wall
-                        });
-                    }
-                }
-            }
-
-            // If the creature either can walk or is in water, add the 
-            // eight-connected free neighbors around the voxel.
-            if (!isRiding && ((CanWalk && standingOnGround) || (CanSwim && inWater)))
-            {
-                // If the creature is in water, it can swim. Otherwise, it will walk.
-                var moveType = inWater ? MoveType.Swim : MoveType.Walk;
-                if (!neighborHood[0, 1, 1].IsValid || neighborHood[0,1,1].IsEmpty)
-                    // +- x
-                    successors.Add(new MoveAction
-                    {
-                        Diff = new Vector3(0, 1, 1),
-                        MoveType = moveType
-                    });
-
-                if (!neighborHood[2, 1, 1].IsValid || neighborHood[2, 1, 1].IsEmpty)
-                    successors.Add(new MoveAction
-                    {
-                        Diff = new Vector3(2, 1, 1),
-                        MoveType = moveType
-                    });
-
-                if (!neighborHood[1, 1, 0].IsValid || neighborHood[1, 1, 0].IsEmpty)
-                    // +- z
-                    successors.Add(new MoveAction
-                    {
-                        Diff = new Vector3(1, 1, 0),
-                        MoveType = moveType
-                    });
-
-                if (!neighborHood[1, 1, 2].IsValid || neighborHood[1, 1, 2].IsEmpty)
-                    successors.Add(new MoveAction
-                    {
-                        Diff = new Vector3(1, 1, 2),
-                        MoveType = moveType
-                    });
-
-                // Only bother worrying about 8-connected movement if there are
-                // no full neighbors around the voxel.
-                if (!hasNeighbors)
-                {
-                    if (!neighborHood[2, 1, 2].IsValid || neighborHood[2, 1, 2].IsEmpty)
-                        // +x + z
-                        successors.Add(new MoveAction
-                        {
-                            Diff = new Vector3(2, 1, 2),
-                            MoveType = moveType
-                        });
-
-                    if (!neighborHood[2, 1, 0].IsValid || neighborHood[2, 1, 0].IsEmpty)
-                        successors.Add(new MoveAction
-                        {
-                            Diff = new Vector3(2, 1, 0),
-                            MoveType = moveType
-                        });
-
-                    if (!neighborHood[0, 1, 2].IsValid || neighborHood[0, 1, 2].IsEmpty)
-                        // -x -z
-                        successors.Add(new MoveAction
-                        {
-                            Diff = new Vector3(0, 1, 2),
-                            MoveType = moveType
-                        });
-
-                    if (!neighborHood[0, 1, 0].IsValid || neighborHood[0, 1, 0].IsEmpty)
-                        successors.Add(new MoveAction
-                        {
-                            Diff = new Vector3(0, 1, 0),
-                            MoveType = moveType
-                        });
-                }
-            }
-
-            // If the creature's head is free, and it is standing on ground,
-            // or if it is in water, or if it is climbing, it can also jump
-            // to voxels that are 1 cell away and 1 cell up.
-            if (!isRiding && (!topCovered && (standingOnGround || (CanSwim && inWater) || isClimbing)))
-            {
-                for (int dx = 0; dx <= 2; dx++)
-                {
-                    for (int dz = 0; dz <= 2; dz++)
-                    {
-                        if (dx == 1 && dz == 1) continue;
-
-                        if (neighborHood[dx, 1, dz].IsValid && !neighborHood[dx, 1, dz].IsEmpty)
-                        {
-                            successors.Add(new MoveAction
-                            {
-                                Diff = new Vector3(dx, 2, dz),
-                                MoveType = MoveType.Jump
-                            });
-                        }
-                    }
-                }
-            }
-
-
-            // If the creature is not in water and is not standing on ground,
-            // it can fall one voxel downward in free space.
-            if (!isRiding && !inWater && !standingOnGround)
-            {
-                successors.Add(new MoveAction
-                {
-                    Diff = new Vector3(1, 0, 1),
-                    MoveType = MoveType.Fall
-                });
-            }
-
-            // If the creature can fly and is not underwater, it can fly
-            // to any adjacent empty cell.
-            if (!isRiding && CanFly && !inWater)
-            {
-                for (int dx = 0; dx <= 2; dx++)
-                {
-                    for (int dz = 0; dz <= 2; dz++)
-                    {
-                        for (int dy = 0; dy <= 2; dy++)
-                        {
-                            if (dx == 1 && dz == 1 && dy == 1) continue;
-
-                            if (!neighborHood[dx, 1, dz].IsValid || neighborHood[dx, 1, dz].IsEmpty)
-                            {
-                                successors.Add(new MoveAction
-                                {
-                                    Diff = new Vector3(dx, dy, dz),
-                                    MoveType = MoveType.Fly
-                                });
-                            }
-                        }
-                    }
-                }
-            }
+            var neighborObjects = octree.EnumerateItems(neighborHoodBounds).ToList();
+            var successors = EnumerateSuccessors(state, voxel, neighborHood, inWater, standingOnGround, topCovered, hasNeighbors, isRiding, neighborObjects);
 
             // Now, validate each move action that the creature might take.
             foreach (MoveAction v in successors)
@@ -626,18 +345,322 @@ namespace DwarfCorp
                             }
                         }
                     }
-                    
+
                     // If no object blocked us, we can move freely as normal.
                     if (!blockedByObject && n.WaterCell.Type != LiquidType.Lava)
                     {
                         MoveAction newAction = v;
                         newAction.SourceState = state;
                         newAction.DestinationVoxel = n;
-                       yield return newAction;
+                        yield return newAction;
                     }
                 }
             }
         }
+
+        private IEnumerable<MoveAction> EnumerateSuccessors(MoveState state, VoxelHandle voxel, VoxelHandle[,,] neighborHood, bool inWater, bool standingOnGround, bool topCovered, bool hasNeighbors, bool isRiding, List<Body> neighborObjects)
+        {
+            bool isClimbing = false;
+            if (CanClimb || Can(MoveType.RideVehicle))
+            {
+                //Climbing ladders.
+
+                var bodies = neighborObjects.Where(o => o.GetBoundingBox().Intersects(voxel.GetBoundingBox()));
+
+                if (!isRiding)
+                {
+                    var ladder = bodies.FirstOrDefault(component => component.Tags.Contains("Climbable"));
+
+                    // if the creature can climb objects and a ladder is in this voxel,
+                    // then add a climb action.
+                    if (ladder != null && CanClimb)
+                    {
+                        yield return new MoveAction
+                        {
+                            Diff = new Vector3(1, 2, 1),
+                            MoveType = MoveType.Climb,
+                            InteractObject = ladder
+                        };
+
+                        if (!standingOnGround)
+                        {
+                            yield return (new MoveAction
+                            {
+                                Diff = new Vector3(1, 0, 1),
+                                MoveType = MoveType.Climb,
+                                InteractObject = ladder
+                            });
+                        }
+                        standingOnGround = true;
+                    }
+                }
+
+                if (!isRiding)
+                {
+                    var rails = bodies.OfType<Rail.RailEntity>().Where(r => r.Active);
+
+                    if (rails.Count() > 0 && Can(MoveType.RideVehicle))
+                    {
+                        {
+                            foreach (var rail in rails)
+                            {
+
+                                if (rail.GetContainingVoxel() != state.Voxel)
+                                    continue;
+
+
+                                yield return(new MoveAction()
+                                {
+                                    SourceState = state,
+                                    DestinationState = new MoveState()
+                                    {
+                                        VehicleState = new VehicleState()
+                                        {
+                                            Rail = rail
+                                        },
+                                        Voxel = rail.GetContainingVoxel()
+                                    },
+                                    MoveType = MoveType.EnterVehicle,
+                                    Diff = new Vector3(1, 1, 1)
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (Can(MoveType.ExitVehicle) && isRiding)
+                {
+                    yield return(new MoveAction()
+                    {
+                        SourceState = state,
+                        DestinationState = new MoveState()
+                        {
+                            VehicleState = new VehicleState(),
+                            Voxel = state.Voxel
+                        },
+                        MoveType = MoveType.ExitVehicle,
+                        Diff = new Vector3(1, 1, 1)
+                    });
+                }
+
+                if (Can(MoveType.RideVehicle) && isRiding)
+                {
+                    foreach (var neighbor in Rail.RailHelper.EnumerateForwardNetworkConnections(state.VehicleState.PrevRail, state.VehicleState.Rail))
+                    {
+                        var neighborRail = Creature.Manager.FindComponent(neighbor) as Rail.RailEntity;
+                        if (neighborRail == null || !neighborRail.Active)
+                            continue;
+
+                        yield return(new MoveAction()
+                        {
+                            SourceState = state,
+                            DestinationState = new MoveState()
+                            {
+                                Voxel = neighborRail.GetContainingVoxel(),
+                                VehicleState = new VehicleState()
+                                {
+                                    Rail = neighborRail,
+                                    PrevRail = state.VehicleState.Rail
+                                }
+                            },
+                            MoveType = MoveType.RideVehicle,
+                        });
+                    }
+                }
+            }
+
+            // If the creature can climb walls and is not blocked by a voxl above.
+            if (!isRiding && CanClimbWalls && !topCovered)
+            {
+
+                // This monstrosity is unrolling an inner loop so that we don't have to allocate an array or
+                // enumerators.
+                var wall = VoxelHandle.InvalidHandle;
+                var n211 = neighborHood[2, 1, 1];
+                if (n211.IsValid && !n211.IsEmpty)
+                {
+                    wall = n211;
+                }
+                else
+                {
+                    var n011 = neighborHood[0, 1, 1];
+                    if (n011.IsValid && !n011.IsEmpty)
+                    {
+                        wall = n011;
+                    }
+                    else
+                    {
+                        var n112 = neighborHood[1, 1, 2];
+                        if (n112.IsValid && !n112.IsEmpty)
+                        {
+                            wall = n112;
+                        }
+                        else
+                        {
+                            var n110 = neighborHood[1, 1, 0];
+                            if (n110.IsValid && !n110.IsEmpty)
+                            {
+                                wall = n110;
+                            }
+                        }
+                    }
+                }
+
+                if (wall.IsValid)
+                {
+                    isClimbing = true;
+                    yield return(new MoveAction
+                    {
+                        Diff = new Vector3(1, 2, 1),
+                        MoveType = MoveType.ClimbWalls,
+                        ActionVoxel = wall
+                    });
+
+                    if (!standingOnGround)
+                    {
+                        yield return(new MoveAction
+                        {
+                            Diff = new Vector3(1, 0, 1),
+                            MoveType = MoveType.ClimbWalls,
+                            ActionVoxel = wall
+                        });
+                    }
+                }
+            }
+
+            // If the creature either can walk or is in water, add the 
+            // eight-connected free neighbors around the voxel.
+            if (!isRiding && ((CanWalk && standingOnGround) || (CanSwim && inWater)))
+            {
+                // If the creature is in water, it can swim. Otherwise, it will walk.
+                var moveType = inWater ? MoveType.Swim : MoveType.Walk;
+                if (!neighborHood[0, 1, 1].IsValid || neighborHood[0, 1, 1].IsEmpty)
+                    // +- x
+                    yield return(new MoveAction
+                    {
+                        Diff = new Vector3(0, 1, 1),
+                        MoveType = moveType
+                    });
+
+                if (!neighborHood[2, 1, 1].IsValid || neighborHood[2, 1, 1].IsEmpty)
+                    yield return(new MoveAction
+                    {
+                        Diff = new Vector3(2, 1, 1),
+                        MoveType = moveType
+                    });
+
+                if (!neighborHood[1, 1, 0].IsValid || neighborHood[1, 1, 0].IsEmpty)
+                    // +- z
+                    yield return(new MoveAction
+                    {
+                        Diff = new Vector3(1, 1, 0),
+                        MoveType = moveType
+                    });
+
+                if (!neighborHood[1, 1, 2].IsValid || neighborHood[1, 1, 2].IsEmpty)
+                    yield return(new MoveAction
+                    {
+                        Diff = new Vector3(1, 1, 2),
+                        MoveType = moveType
+                    });
+
+                // Only bother worrying about 8-connected movement if there are
+                // no full neighbors around the voxel.
+                if (!hasNeighbors)
+                {
+                    if (!neighborHood[2, 1, 2].IsValid || neighborHood[2, 1, 2].IsEmpty)
+                        // +x + z
+                        yield return(new MoveAction
+                        {
+                            Diff = new Vector3(2, 1, 2),
+                            MoveType = moveType
+                        });
+
+                    if (!neighborHood[2, 1, 0].IsValid || neighborHood[2, 1, 0].IsEmpty)
+                        yield return(new MoveAction
+                        {
+                            Diff = new Vector3(2, 1, 0),
+                            MoveType = moveType
+                        });
+
+                    if (!neighborHood[0, 1, 2].IsValid || neighborHood[0, 1, 2].IsEmpty)
+                        // -x -z
+                        yield return(new MoveAction
+                        {
+                            Diff = new Vector3(0, 1, 2),
+                            MoveType = moveType
+                        });
+
+                    if (!neighborHood[0, 1, 0].IsValid || neighborHood[0, 1, 0].IsEmpty)
+                        yield return(new MoveAction
+                        {
+                            Diff = new Vector3(0, 1, 0),
+                            MoveType = moveType
+                        });
+                }
+            }
+
+            // If the creature's head is free, and it is standing on ground,
+            // or if it is in water, or if it is climbing, it can also jump
+            // to voxels that are 1 cell away and 1 cell up.
+            if (!isRiding && (!topCovered && (standingOnGround || (CanSwim && inWater) || isClimbing)))
+            {
+                for (int dx = 0; dx <= 2; dx++)
+                {
+                    for (int dz = 0; dz <= 2; dz++)
+                    {
+                        if (dx == 1 && dz == 1) continue;
+
+                        if (neighborHood[dx, 1, dz].IsValid && !neighborHood[dx, 1, dz].IsEmpty)
+                        {
+                            yield return(new MoveAction
+                            {
+                                Diff = new Vector3(dx, 2, dz),
+                                MoveType = MoveType.Jump
+                            });
+                        }
+                    }
+                }
+            }
+
+
+            // If the creature is not in water and is not standing on ground,
+            // it can fall one voxel downward in free space.
+            if (!isRiding && !inWater && !standingOnGround)
+            {
+                yield return(new MoveAction
+                {
+                    Diff = new Vector3(1, 0, 1),
+                    MoveType = MoveType.Fall
+                });
+            }
+
+            // If the creature can fly and is not underwater, it can fly
+            // to any adjacent empty cell.
+            if (!isRiding && CanFly && !inWater)
+            {
+                for (int dx = 0; dx <= 2; dx++)
+                {
+                    for (int dz = 0; dz <= 2; dz++)
+                    {
+                        for (int dy = 0; dy <= 2; dy++)
+                        {
+                            if (dx == 1 && dz == 1 && dy == 1) continue;
+
+                            if (!neighborHood[dx, 1, dz].IsValid || neighborHood[dx, 1, dz].IsEmpty)
+                            {
+                                yield return(new MoveAction
+                                {
+                                    Diff = new Vector3(dx, dy, dz),
+                                    MoveType = MoveType.Fly
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary> Each action has a cost, a speed, and a validity check </summary>
         public class ActionStats
         {
@@ -670,7 +693,7 @@ namespace DwarfCorp
                 // iterate through all rails intersecting every neighbor and see if we can find a connection from that rail to this one.
                 // Further, we must iterate through the entire rail network and enumerate all possible directions in and out of that rail.
                 // Yay!
-                var bodies = octree.EnumerateItems(v.GetBoundingBox());
+                var bodies = octree.EnumerateItems(v.GetBoundingBox()).ToList();
                 var rails = bodies.OfType<Rail.RailEntity>().Where(r => r.Active);
                 foreach (var rail in rails)
                 {

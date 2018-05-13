@@ -823,6 +823,7 @@ namespace DwarfCorp
 
         public void Gather(Body item)
         {
+
             var task = new GatherItemTask(item) { Priority = Task.PriorityType.High };
             if (AI.Faction == World.PlayerFaction)
             {

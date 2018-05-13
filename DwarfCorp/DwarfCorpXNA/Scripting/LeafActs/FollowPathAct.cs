@@ -52,7 +52,7 @@ namespace DwarfCorp
         {
             Name = "Follow path";
             PathName = pathName;
-            ValidPathTimer = new Timer(.75f, false);
+            ValidPathTimer = new Timer(.75f + MathFunctions.Rand(), false, Timer.TimerMode.Real);
             RandomTimeOffset = MathFunctions.Rand(0.0f, 0.1f);
             BlendStart = true;
             BlendEnd = true;
@@ -87,13 +87,13 @@ namespace DwarfCorp
             Agent.Blackboard.SetData(PathName, path);
         }
 
-        public bool IsPathValid(List<MoveAction> path)
+        public bool IsPathValid(List<MoveAction> path, int idx)
         {
             if (path.Count == 0)
             {
                 return false;
             }
-            for (int i = 1; i < path.Count - 1; i++)
+            for (int i = idx; i < path.Count - 1; i++)
             {
                 if (!path[i].SourceVoxel.IsValid)
                 {
@@ -549,15 +549,20 @@ namespace DwarfCorp
                     Drawer3D.DrawLineList(points, colors, 0.1f);
                 }
 
-
-                // Check if the path has been made invalid
-                if (ValidPathTimer.HasTriggered && !IsPathValid(Path))
-                {
-                    Creature.OverrideCharacterMode = false;
-                    Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                    CleanupCart();
-                    yield return Status.Fail;
-                }
+                float t = 0;
+                int currentIndex = 0;
+                MoveAction action = new MoveAction();
+                if (GetCurrentAction(ref action, ref t, ref currentIndex))
+                { 
+                    // Check if the path has been made invalid
+                    if (ValidPathTimer.HasTriggered && !IsPathValid(Path, currentIndex))
+                    {
+                        Creature.OverrideCharacterMode = false;
+                        Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                        CleanupCart();
+                        yield return Status.Fail;
+                    }
+                 }
                 Creature.Physics.AnimationQueue.Clear();
                 yield return Status.Running;
             }

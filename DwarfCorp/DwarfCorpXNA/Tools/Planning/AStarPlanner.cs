@@ -383,8 +383,6 @@ namespace DwarfCorp
                 Voxel = startVoxel
             };
 
-            if (_planLog == null)
-                _planLog = new FileStream("timing.txt", FileMode.OpenOrCreate);
             var startTime = DwarfTime.Tick();
             if (mover.IsSessile)
             {

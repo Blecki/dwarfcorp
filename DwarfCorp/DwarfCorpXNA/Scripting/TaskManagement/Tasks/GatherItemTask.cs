@@ -72,7 +72,8 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return EntityToGather != null
+            return agent.Stats.IsTaskAllowed(Category) &&
+                      EntityToGather != null
                    && EntityToGather.Active
                    && !agent.AI.Movement.IsSessile
                    && !agent.AI.Status.IsAsleep ? Feasibility.Feasible : Feasibility.Infeasible;
