@@ -39,6 +39,7 @@ namespace DwarfCorp
                 AddAnimation(animation);
             }
             currentMode = "";
+            SetFlagRecursive(Flag.ShouldSerialize, false);
         }
     }
 
