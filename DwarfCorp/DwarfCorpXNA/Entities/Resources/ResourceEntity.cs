@@ -139,7 +139,7 @@ namespace DwarfCorp
                     }) as Tinter;
                 }
 
-                sprite.Tint = type.Tint;
+                sprite.LightRamp = type.Tint;
                 sprite.SetFlag(Flag.ShouldSerialize, false);
             }
         }

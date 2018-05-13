@@ -131,14 +131,14 @@ namespace DwarfCorp
                         continue;
                     }
                     Player.World.ShowTooltip("Left click to move this " + body.Name);
-                    body.SetTintRecursive(Color.Blue);
+                    body.SetVertexColorRecursive(Color.Blue);
                 }
             }
             foreach (var body in selectedBodies)
             {
                 if (!bodies.Contains(body))
                 {
-                    body.SetTintRecursive(Color.White);
+                    body.SetVertexColorRecursive(Color.White);
                 }
             }
             selectedBodies = bodies.ToList();
@@ -372,7 +372,7 @@ namespace DwarfCorp
                         continue;
                     }
                     Player.World.ShowTooltip("Left click to destroy this " + body.Name);
-                    body.SetTintRecursive(Color.Red);
+                    body.SetVertexColorRecursive(Color.Red);
                 }
             }
 
@@ -380,7 +380,7 @@ namespace DwarfCorp
             {
                 if (!bodies.Contains(body))
                 {
-                    body.SetTintRecursive(Color.White);
+                    body.SetVertexColorRecursive(Color.White);
                 }
             }
 

@@ -42,7 +42,8 @@ namespace DwarfCorp
 {
     public interface ITintable
     {
-        void SetTint(Color Tint);
+        void SetLightRamp(Color Tint);
+        void SetVertexColor(Color Tint);
         void SetOneShotTint(Color Tint);
     }
 
@@ -52,7 +53,7 @@ namespace DwarfCorp
     public class Tinter : Body, IUpdateableComponent, ITintable
     {
         public bool LightsWithVoxels { get; set; }
-        public Color Tint { get; set; }
+        public Color LightRamp { get; set; }
         public float TintChangeRate { get; set; }
         public bool ColorAppplied = false;
         private bool entityLighting = GameSettings.Default.EntityLighting;
@@ -72,7 +73,7 @@ namespace DwarfCorp
             base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos, collisionManager)
         {
             LightsWithVoxels = true;
-            Tint = new Color(255, 255, 0);
+            LightRamp = new Color(255, 255, 0);
             TintChangeRate = 1.0f;
             VertexColorTint = Color.White;
             Stipple = false;
@@ -94,7 +95,7 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
 
             if (!LightsWithVoxels)
-                Tint = Color.White;
+                LightRamp = Color.White;
 
             if (entityLighting && LightsWithVoxels)
             {
@@ -105,19 +106,19 @@ namespace DwarfCorp
                 {
                     Color color = new Color(under.SunColor, 255, 0);
 
-                    Tint = color;
+                    LightRamp = color;
                 }
             }
             else
             {
-                Tint = new Color(200, 255, 0);
+                LightRamp = new Color(200, 255, 0);
             }
         }
 
         public void ApplyTintingToEffect(Shader effect)
         {
             previousColor = effect.VertexColorTint;
-            effect.LightRampTint = Tint;
+            effect.LightRampTint = LightRamp;
             var tintVec = VertexColorTint.ToVector4();
             var oneShotvec = OneShotTint.ToVector4();
             tintVec.X *= oneShotvec.X;
@@ -152,9 +153,14 @@ namespace DwarfCorp
             shader.VertexColorTint = previousColor;
         }
 
-        public void SetTint(Color Tint)
+        public void SetVertexColor(Color Tint)
         {
             VertexColorTint = Tint;
+        }
+
+        public void SetLightRamp(Color Tint)
+        {
+            LightRamp = Tint;
         }
 
         public void SetOneShotTint(Color Tint)
@@ -165,12 +171,12 @@ namespace DwarfCorp
 
     public static class TintExtension
     {
-        public static void SetTintRecursive(this GameComponent component, Color color, bool oneShot=false)
+        public static void SetVertexColorRecursive(this GameComponent component, Color color, bool oneShot=false)
         {
             foreach (var sprite in component.EnumerateAll().OfType<ITintable>())
             {
                 if (!oneShot)
-                    sprite.SetTint(color);
+                    sprite.SetVertexColor(color);
                 else
                     sprite.SetOneShotTint(color);
             }

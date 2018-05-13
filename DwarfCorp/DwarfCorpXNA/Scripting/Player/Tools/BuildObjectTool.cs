@@ -64,7 +64,7 @@ namespace DwarfCorp
                 Player.VoxSelector.VoxelUnderMouse.WorldPosition,
                 Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
             previewBody.SetFlagRecursive(GameComponent.Flag.Active, false);
-            previewBody.SetTintRecursive(Color.White);
+            previewBody.SetVertexColorRecursive(Color.White);
             previewBody.SetFlagRecursive(GameComponent.Flag.ShouldSerialize, false);
             return previewBody;
         }
@@ -186,7 +186,7 @@ namespace DwarfCorp
             else
                 PreviewBody.OrientToWalls();
 
-            PreviewBody.SetTintRecursive(IsValid(Player.VoxSelector.VoxelUnderMouse) ? Color.Green : Color.Red);
+            PreviewBody.SetVertexColorRecursive(IsValid(Player.VoxSelector.VoxelUnderMouse) ? Color.Green : Color.Red);
 
             if (CraftType.AllowRotation)
                 World.ShowTooltip("Click to build. Press R/T to rotate.");

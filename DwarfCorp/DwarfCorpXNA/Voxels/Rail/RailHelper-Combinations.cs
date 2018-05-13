@@ -206,7 +206,7 @@ namespace DwarfCorp.Rail
                     }
 
                     finalEntity.SetFlagRecursive(GameComponent.Flag.Active, true);
-                    finalEntity.SetTintRecursive(Color.White);
+                    finalEntity.SetVertexColorRecursive(Color.White);
                     finalEntity.SetFlagRecursive(GameComponent.Flag.Visible, true);
                     finalEntity.SetFlag(GameComponent.Flag.ShouldSerialize, true);
                     Player.Faction.OwnedObjects.Add(finalEntity);
