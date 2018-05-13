@@ -58,7 +58,7 @@ namespace DwarfCorp
                 ModelType,
                 Vector3.One,
                 GlobalTransform,
-                Tint,
+                LightRamp,
                 true);
             Instance.SelectionBufferColor = this.GetGlobalIDColor();
         }
@@ -75,7 +75,7 @@ namespace DwarfCorp
             UpdateBoundingBox();
             ModelType = modelType;
             Instance = new NewInstanceData(Manager.World.NewInstanceManager, ModelType,
-                Vector3.One, GlobalTransform, Tint, true);
+                Vector3.One, GlobalTransform, LightRamp, true);
             Instance.SelectionBufferColor = this.GetGlobalIDColor();
         }
 
@@ -86,9 +86,9 @@ namespace DwarfCorp
             bool saveHasMoved = HasMoved || firstIter;
 
             base.Update(gameTime, chunks, camera);
-            if (Instance != null && IsVisible && (saveHasMoved || firstIter || Instance.Color != Tint))
+            if (Instance != null && IsVisible && (saveHasMoved || firstIter || Instance.Color != LightRamp))
             {
-                Instance.Color = Tint;
+                Instance.Color = LightRamp;
                 Instance.Transform = GlobalTransform;
                 Instance.SelectionBufferColor = this.GetGlobalIDColor();
                 firstIter = false;

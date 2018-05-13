@@ -358,7 +358,7 @@ namespace DwarfCorp.Rail
                 tint = Color.Red;
 
             foreach (var body in PreviewBodies)
-                body.SetTint(tint);
+                body.SetVertexColorRecursive(tint);
         }
 
         private int AddDiagonal(int bodyCounter, CompassOrientation B, JunctionPiece newPiece, int CoordinateRotation, int PieceRotation)

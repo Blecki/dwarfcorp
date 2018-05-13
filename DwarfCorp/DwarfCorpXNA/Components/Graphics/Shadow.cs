@@ -80,7 +80,7 @@ namespace DwarfCorp
             GlobalScale = LocalTransform.Left.Length();
             LightsWithVoxels = false;
             UpdateTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
-            Tint = Color.Black;
+            LightRamp = Color.Black;
             OriginalTransform = LocalTransform;
         }
 
@@ -108,7 +108,7 @@ namespace DwarfCorp
                         Matrix newTrans = OriginalTransform;
                         newTrans *= Matrix.CreateScale(scaleFactor);
                         newTrans.Translation = (pos - p.GlobalTransform.Translation) + new Vector3(0.0f, 0.1f, 0.0f);
-                        Tint = new Color(Tint.R, Tint.G, Tint.B, (int)(scaleFactor * 255));
+                        LightRamp = new Color(LightRamp.R, LightRamp.G, LightRamp.B, (int)(scaleFactor * 255));
                         Matrix globalRotation = p.GlobalTransform;
                         globalRotation.Translation = Vector3.Zero;
                         LocalTransform = newTrans * Matrix.Invert(globalRotation);

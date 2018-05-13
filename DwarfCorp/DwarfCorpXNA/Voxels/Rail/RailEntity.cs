@@ -64,11 +64,17 @@ namespace DwarfCorp.Rail
         private Point Frame;
         private RawPrimitive Primitive;
 
-        private Color Tint = Color.White;
+        private Color VertexColor = Color.White;
+        private Color LightRamp = Color.White;
 
-        public void SetTint(Color Tint)
+        public void SetVertexColor(Color Tint)
         {
-            this.Tint = Tint;
+            this.VertexColor = Tint;
+        }
+
+        public void SetLightRamp(Color Tint)
+        {
+            this.LightRamp = Tint;
         }
 
         public void SetOneShotTint(Color Tint)
@@ -443,12 +449,25 @@ namespace DwarfCorp.Rail
             }
 
             // Everything that draws should set it's tint, making this pointless.
+
+            var under = new VoxelHandle(chunks.ChunkData,
+                    GlobalVoxelCoordinate.FromVector3(Position));
+
+                if (under.IsValid)
+                {
+                    Color color = new Color(under.SunColor, 255, 0);
+                    LightRamp = color;
+                }            
+            else
+                LightRamp = new Color(200, 255, 0);
+            
             Color origTint = effect.VertexColorTint;
             if (!Active)
             {
                 DoStipple(effect);
             }
-            effect.VertexColorTint = Tint;
+            effect.VertexColorTint = VertexColor;
+            effect.LightRampTint = LightRamp;
             effect.World = GlobalTransform;
           
             effect.MainTexture = Sheet.GetTexture();

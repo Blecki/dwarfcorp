@@ -166,7 +166,7 @@ namespace DwarfCorp.Rail
                     tint = Color.Red;
         
             foreach (var body in PreviewBodies)
-                body.SetTintRecursive(tint);
+                body.SetVertexColorRecursive(tint);
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)

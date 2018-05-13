@@ -195,13 +195,13 @@ namespace DwarfCorp
                     {
                         entity.Body.SetFlagRecursive(GameComponent.Flag.Visible, true);
                         if (!entity.Body.Active)
-                            entity.Body.SetTintRecursive(props.ModulatedColor);
+                            entity.Body.SetVertexColorRecursive(props.ModulatedColor);
                     }
                     else
                     {
                         var box = entity.Body.GetBoundingBox();
                         DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, props.LineWidth, false);
-                        entity.Body.SetTintRecursive(props.ModulatedColor);
+                        entity.Body.SetVertexColorRecursive(props.ModulatedColor);
                     }
 
                     if (props.Icon != null)
