@@ -278,17 +278,17 @@ namespace DwarfCorp
         }
 
         /// <summary> gets a list of actions that the creature can take from the given position </summary>
-        public IEnumerable<MoveAction> GetMoveActions(Vector3 Pos)
+        public IEnumerable<MoveAction> GetMoveActions(Vector3 Pos, OctTreeNode<Body> octree)
         {
             var vox = new VoxelHandle(Creature.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(Pos));
-            return GetMoveActions(new MoveState() { Voxel = vox });
+            return GetMoveActions(new MoveState() { Voxel = vox }, octree);
         }
 
 
 
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
-        public IEnumerable<MoveAction> GetMoveActions(MoveState state)
+        public IEnumerable<MoveAction> GetMoveActions(MoveState state, OctTreeNode<Body> octree)
         {
             var voxel = state.Voxel;
             if (!voxel.IsValid || !voxel.IsEmpty)
@@ -305,7 +305,7 @@ namespace DwarfCorp
             bool isRiding = state.VehicleState.IsRidingVehicle;
 
             var neighborHoodBounds = new BoundingBox(neighborHood[0, 0, 0].GetBoundingBox().Min, neighborHood[2, 2, 2].GetBoundingBox().Max);
-            var neighborObjects = Creature.Manager.World.EnumerateIntersectingObjects(neighborHoodBounds, CollisionType.Static);
+            var neighborObjects = octree.EnumerateItems(neighborHoodBounds);
 
             if (CanClimb || Can(MoveType.RideVehicle))
             {
@@ -654,14 +654,14 @@ namespace DwarfCorp
 
         // Inverts GetMoveActions. So, returns the list of move actions whose target is the current voxel.
         // Very, very slow.
-        public IEnumerable<MoveAction> GetInverseMoveActions(MoveState currentstate)
+        public IEnumerable<MoveAction> GetInverseMoveActions(MoveState currentstate, OctTreeNode<Body> octree)
         {
             var current = currentstate.Voxel;
             foreach (var v in VoxelHelpers.EnumerateCube(current.Coordinate)
                 .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
                 .Where(h => h.IsValid && h.IsEmpty))
             {
-                foreach (var a in GetMoveActions(new MoveState() { Voxel = v}).Where(a => a.DestinationState == currentstate))
+                foreach (var a in GetMoveActions(new MoveState() { Voxel = v}, octree).Where(a => a.DestinationState == currentstate))
                     yield return a;
 
                 if (!Can(MoveType.RideVehicle))
@@ -670,7 +670,7 @@ namespace DwarfCorp
                 // iterate through all rails intersecting every neighbor and see if we can find a connection from that rail to this one.
                 // Further, we must iterate through the entire rail network and enumerate all possible directions in and out of that rail.
                 // Yay!
-                var bodies = Creature.Manager.World.EnumerateIntersectingObjects(v.GetBoundingBox(), CollisionType.Static);
+                var bodies = octree.EnumerateItems(v.GetBoundingBox());
                 var rails = bodies.OfType<Rail.RailEntity>().Where(r => r.Active);
                 foreach (var rail in rails)
                 {
@@ -689,7 +689,7 @@ namespace DwarfCorp
                     foreach (var neighborRail in rail.NeighborRails.Select(neighbor => Creature.Manager.FindComponent(neighbor.NeighborID) as Rail.RailEntity))
                     {
                         var actions = GetMoveActions(new MoveState() {
-                            Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = neighborRail } });
+                            Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = neighborRail } }, octree);
                         foreach (var a in actions.Where(a => a.DestinationState == currentstate))
                         {
                             yield return a;
@@ -706,7 +706,7 @@ namespace DwarfCorp
                         }
                     }
 
-                    foreach (var a in GetMoveActions(new MoveState() { Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = null } }).Where(a => a.DestinationState == currentstate))
+                    foreach (var a in GetMoveActions(new MoveState() { Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = null } }, octree).Where(a => a.DestinationState == currentstate))
                         yield return a;
                 }
             }

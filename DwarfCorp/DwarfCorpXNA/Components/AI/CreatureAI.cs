@@ -48,6 +48,9 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CreatureAI : GameComponent, IUpdateableComponent
     {
+        // Evil hack to keep track of the creature's minecart to ensure there's only one if the creature is riding it.
+        [JsonIgnore]
+        public Body Cart = null;
         public CreatureAI()
         {
         }

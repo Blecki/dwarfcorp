@@ -65,7 +65,7 @@ namespace DwarfCorp.Rail
             CraftLocation = "",
             Name = "Rail",
             Type = CraftItem.CraftType.Object,
-            AddToOwnedPool = false,
+            AddToOwnedPool = true,
             Moveable = false            
         };
 
