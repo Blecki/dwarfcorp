@@ -44,7 +44,7 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-           Player.World.Tutorial("cancel-tasks");
+            Player.World.Tutorial("cancel-tasks");
         }
 
         public override void OnEnd()
@@ -85,7 +85,7 @@ namespace DwarfCorp
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
             else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 1));
+                Player.World.SetMouse(new Gui.MousePointer("mouse", 0, 0));
 
         
             Player.BodySelector.Enabled = Options.Entities.CheckState;

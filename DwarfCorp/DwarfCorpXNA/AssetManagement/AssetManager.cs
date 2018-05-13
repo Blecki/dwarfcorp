@@ -105,15 +105,11 @@ namespace DwarfCorp
 
         public static Type GetTypeFromMod(String T, String Assembly)
         {
-            // Todo: Old assembly names are a hack to preserve save compatibility.
-            if (Assembly[0] == '$' || Assembly == "DwarfCorp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null")
-                return Type.GetType(T, true);
-
             foreach (var mod in Assemblies)
                 if (mod.Item1 == Assembly)
                     return mod.Item2.GetType(T);
 
-            return null;
+            return Type.GetType(T, true);
         }
 
         private static bool CheckMethod(MethodInfo Method, Type ReturnType, Type[] ArgumentTypes)

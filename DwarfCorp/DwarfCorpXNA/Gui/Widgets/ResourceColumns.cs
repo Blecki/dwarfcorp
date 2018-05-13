@@ -241,12 +241,13 @@ namespace DwarfCorp.Gui.Widgets
             r.AddChild(new Gui.Widget
             {
                 AutoLayout = AutoLayout.DockLeft,
-                MinimumSize = new Point(64, 0),
+                MinimumSize = new Point(128, 0),
                 TextColor = Resource.NumResources > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                 TextVerticalAlign = VerticalAlign.Center,
                 HoverTextColor = Color.DarkRed.ToVector4(),
                 Font = "font10",
-                ChangeColorOnHover = true
+                ChangeColorOnHover = true,
+                WrapText = true
             });
 
             r.AddChild(new Gui.Widget
@@ -259,7 +260,7 @@ namespace DwarfCorp.Gui.Widgets
                 TextVerticalAlign = VerticalAlign.Center,
                 HoverTextColor = Color.DarkRed.ToVector4(),
                 Font = "font10",
-                ChangeColorOnHover = true
+                ChangeColorOnHover = true,
             });
 
             r.Layout();
@@ -271,8 +272,18 @@ namespace DwarfCorp.Gui.Widgets
         private void UpdateLineItemText(Widget LineItem, ResourceAmount Resource)
         {
             var resourceInfo = ResourceLibrary.GetResourceByName(Resource.ResourceType);
-
-            LineItem.GetChild(1).Text = TextGenerator.Shorten(resourceInfo.ShortName ?? resourceInfo.Name, 20);
+            var font = LineItem.Root.GetTileSheet("font10") as VariableWidthFont;
+            var label = resourceInfo.ShortName ?? resourceInfo.Name; 
+            if (font != null)
+            {
+                Point measurements = font.MeasureString(resourceInfo.ShortName ?? resourceInfo.Name);
+                label = font.WordWrapString(label, 1.0f, 128);
+                if (128 < measurements.X)
+                {
+                    LineItem.MinimumSize.Y = font.TileHeight * label.Split('\n').Length;
+                }
+            }
+            LineItem.GetChild(1).Text = label;
             LineItem.GetChild(1).Invalidate();
             LineItem.GetChild(2).Text = String.Format("{0}",
                 ValueSourceEntity.ComputeValue(Resource.ResourceType));
@@ -294,7 +305,6 @@ namespace DwarfCorp.Gui.Widgets
                     : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
                 LineItem.GetChild(i).Tooltip = resourceInfo.Name + "\n" + resourceInfo.Description;
                 LineItem.GetChild(i).Invalidate();
-
             }
         }
     }

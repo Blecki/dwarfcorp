@@ -108,5 +108,42 @@ namespace DwarfCorp
                 throw new KeyNotFoundException("Unable to create entity of type " + err);
             }
         }
+
+        public static IEnumerable<Body> CreateResourcePiles(IEnumerable<ResourceAmount> resources, BoundingBox box)
+        {
+            const int maxPileSize = 64;
+            foreach (ResourceAmount resource in resources)
+            {
+                for (int numRemaining = resource.NumResources; numRemaining > 0; numRemaining -= maxPileSize)
+                {
+                    const int maxIters = 10;
+
+                    for (int i = 0; i < maxIters; i++)
+                    {
+                        Vector3 pos = MathFunctions.RandVector3Box(box);
+                        var voxel = new VoxelHandle(World.ChunkManager.ChunkData,
+                        GlobalVoxelCoordinate.FromVector3(pos));
+                        if ((!voxel.IsValid) || !voxel.IsEmpty)
+                        {
+                            continue;
+                        }
+
+                        Physics body = EntityFactory.CreateEntity<Physics>(resource.ResourceType + " Resource",
+                        pos, Blackboard.Create<int>("num", Math.Min(numRemaining, maxPileSize))) as Physics;
+
+
+                        if (body != null)
+                        {
+                            body.Velocity = MathFunctions.RandVector3Cube();
+                            body.Velocity.Normalize();
+                            body.Velocity *= 5.0f;
+                            body.IsSleeping = false;
+                            yield return body;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

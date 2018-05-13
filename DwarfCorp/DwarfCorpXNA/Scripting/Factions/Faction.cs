@@ -285,7 +285,7 @@ namespace DwarfCorp
             RoomBuilder.OnVoxelDestroyed(V);
 
             var toRemove = new List<Stockpile>();
-            foreach (var s in new List<Stockpile>(Stockpiles))
+            foreach (var s in new List<Stockpile>(Stockpiles).Where(stockpile => stockpile.IsBuilt))
             {
                 if (s.ContainsVoxel(V))
                     s.RemoveVoxel(V);
@@ -426,14 +426,14 @@ namespace DwarfCorp
             return Treasurys.Any(s => s.IsBuilt && !s.IsFull());
         }
 
-        public Body FindNearestItemWithTags(string tag, Vector3 location, bool filterReserved)
+        public Body FindNearestItemWithTags(string tag, Vector3 location, bool filterReserved, GameComponent queryObject)
         {
             Body closestItem = null;
             float closestDist = float.MaxValue;
 
             foreach (Body i in OwnedObjects)
             {
-                if (i == null || i.IsDead || (i.IsReserved && filterReserved) || !(i.Tags.Any(t => tag == t))) continue;
+                if (i == null || i.IsDead || (i.IsReserved && filterReserved && i.ReservedFor != queryObject) || !(i.Tags.Any(t => tag == t))) continue;
                 float d = (i.GlobalTransform.Translation - location).LengthSquared();
                 if (!(d < closestDist)) continue;
                 closestDist = d;

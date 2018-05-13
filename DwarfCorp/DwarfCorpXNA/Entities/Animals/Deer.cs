@@ -108,14 +108,14 @@ namespace DwarfCorp
             CreateSprite(ContentPaths.Entities.Animals.Deer.animations, Manager);
 
             // Add sensor
-            Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
+            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
             // Add AI
-            AI = Physics.AddChild(new PacingCreatureAI(Manager, "Deer AI", Sensors, PlanService)) as CreatureAI;
+            Physics.AddChild(new PacingCreatureAI(Manager, "Deer AI", Sensors, PlanService));
 
             Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.Oscar.sfx_oc_deer_attack, ContentPaths.Effects.hit)};
 
-            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
+            Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
             // Shadow
             Physics.AddChild(Shadow.Create(0.75f, Manager));

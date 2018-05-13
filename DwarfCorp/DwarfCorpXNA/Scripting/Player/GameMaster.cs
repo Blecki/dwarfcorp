@@ -449,39 +449,24 @@ namespace DwarfCorp
 
             HandlePosessedDwarf();
 
-            /*
             if (sliceDownheld)
             {
                 sliceDownTimer.Update(time);
-
                 if (sliceDownTimer.HasTriggered)
                 {
-<<<<<<< HEAD
                     SetMaxViewingLevel(MaxViewingLevel - 1);
-                    sliceDownTimer.Reset(0.1f);
-=======
-                    SetMaxViewingLevel(MaxViewingLevel - 1, ChunkManager.SliceMode.Y);
-                    sliceDownTimer.Reset(0.5f);
->>>>>>> 9e581f9d1c7fa418197ea0fc8cae93f2fe98c881
+                    sliceDownTimer.Reset(sliceDownTimer.TargetTimeSeconds * 0.6f);
                 }
             }
-
-            if (sliceUpheld)
+            else if (sliceUpheld)
             {
                 sliceUpTimer.Update(time);
-
                 if (sliceUpTimer.HasTriggered)
                 {
-<<<<<<< HEAD
                     SetMaxViewingLevel(MaxViewingLevel + 1);
-                    sliceUpTimer.Reset(0.1f);
-=======
-                    SetMaxViewingLevel(MaxViewingLevel + 1, ChunkManager.SliceMode.Y);
-                    sliceUpTimer.Reset(0.5f);
->>>>>>> 9e581f9d1c7fa418197ea0fc8cae93f2fe98c881
+                    sliceUpTimer.Reset(sliceUpTimer.TargetTimeSeconds * 0.6f);
                 }
             }
-            */
             // Make sure that the faction's money is identical to the money in treasuries.
             Faction.Economy.CurrentMoney = Faction.Treasurys.Sum(treasury => treasury.Money);
 
@@ -636,15 +621,25 @@ namespace DwarfCorp
         {
             if (key == ControlSettings.Mappings.SliceUp)
             {
-                sliceUpheld = true;
-                sliceUpTimer.Reset(0.5f);
-                return true;
+                if (!sliceUpheld)
+                {
+                    sliceUpheld = true;
+                    World.Tutorial("unslice");
+                    sliceUpTimer.Reset(0.5f);
+                    SetMaxViewingLevel(MaxViewingLevel + 1);
+                    return true;
+                }
             }
             else if (key == ControlSettings.Mappings.SliceDown)
             {
-                sliceDownheld = true;
-                sliceDownTimer.Reset(0.5f);
-                return true;
+                if (!sliceDownheld)
+                {
+                    World.Tutorial("unslice");
+                    sliceDownheld = true;
+                    sliceDownTimer.Reset(0.5f);
+                    SetMaxViewingLevel(MaxViewingLevel - 1);
+                    return true;
+                }
             }
             return false;
         }
@@ -656,16 +651,12 @@ namespace DwarfCorp
             if (key == ControlSettings.Mappings.SliceUp)
             {
                 sliceUpheld = false;
-                World.Tutorial("unslice");
-                SetMaxViewingLevel(MaxViewingLevel + 1);
                 return true;
             }
 
             else if (key == ControlSettings.Mappings.SliceDown)
             {
                 sliceDownheld = false;
-                World.Tutorial("unslice");
-                SetMaxViewingLevel(MaxViewingLevel - 1);
                 return true;
             }
             else if (key == ControlSettings.Mappings.SliceSelected)

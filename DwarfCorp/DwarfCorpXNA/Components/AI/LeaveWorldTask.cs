@@ -62,7 +62,7 @@ namespace DwarfCorp
                     yield break;
                 }
 
-                var actions = agent.AI.Movement.GetMoveActions(new MoveState { Voxel = creatureVoxel });
+                var actions = agent.AI.Movement.GetMoveActions(new MoveState { Voxel = creatureVoxel }, agent.World.OctTree);
 
                 float minCost = float.MaxValue;
                 var minAction = new MoveAction();

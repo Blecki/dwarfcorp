@@ -84,10 +84,10 @@ namespace DwarfCorp
             CreateSprite(ContentPaths.Entities.Animals.Bat.bat_animations, Manager);
 
             // Used to sense hostile creatures
-            Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
+            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
             // Controls the behavior of the creature
-            AI = Physics.AddChild(new BatAI(Manager, "Bat AI", Sensors, PlanService)) as BatAI;
+            Physics.AddChild(new BatAI(Manager, "Bat AI", Sensors, PlanService));
             AI.Movement.CanFly = true;
             AI.Movement.CanSwim = false;
             AI.Movement.CanClimb = false;
@@ -98,7 +98,7 @@ namespace DwarfCorp
 
 
             // The bird can hold one item at a time in its inventory
-            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
+            Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
             Physics.AddChild(Shadow.Create(0.25f, Manager));
 

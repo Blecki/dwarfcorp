@@ -213,7 +213,7 @@ namespace DwarfCorp
         public bool IsValid(VoxelHandle Location)
         {            
             if (!String.IsNullOrEmpty(CraftType.CraftLocation) 
-                && Player.Faction.FindNearestItemWithTags(CraftType.CraftLocation, Location.WorldPosition, false) == null)
+                && Player.Faction.FindNearestItemWithTags(CraftType.CraftLocation, Location.WorldPosition, false, null) == null)
             {
                 World.ShowToolPopup("Can't build, need " + CraftType.CraftLocation);
                 return false;

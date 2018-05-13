@@ -91,17 +91,17 @@ namespace DwarfCorp
             Physics.AddChild(Shadow.Create(0.25f, Manager));
 
             // Used to sense hostile creatures
-            Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
+            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
             // Controls the behavior of the creature
-            AI = Physics.AddChild(new PacingCreatureAI(Manager, "Scorpion AI", Sensors, PlanService)) as CreatureAI;
+            Physics.AddChild(new PacingCreatureAI(Manager, "Scorpion AI", Sensors, PlanService));
 
             // The bird can peck at its enemies (0.1 damage)
             Attacks = new List<Attack> { new Attack("Sting", 4.0f, 2.0f, 1.5f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_scorpion_attack_1, ContentPaths.Audio.Oscar.sfx_oc_scorpion_attack_2), ContentPaths.Effects.pierce) { TriggerFrame = 2, TriggerMode = Attack.AttackTrigger.Animation} };
 
 
             // The bird can hold one item at a time in its inventory
-            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
+            Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
             // The bird will emit a shower of blood when it dies
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)

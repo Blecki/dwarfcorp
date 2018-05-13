@@ -58,13 +58,12 @@ namespace DwarfCorp
 
         public static IEnumerable<Act.Status> FindAndReserve(this Creature agent, string tag, string thing)
         {
-            Body closestItem = agent.Faction.FindNearestItemWithTags(tag, agent.AI.Position, true);
+            Body closestItem = agent.Faction.FindNearestItemWithTags(tag, agent.AI.Position, true, agent.AI);
 
             if (closestItem != null)
             {
                 //PlayState.AnnouncementManager.Announce("Creature " + agent.GlobalID + " reserves " + closestItem.Name + " " + closestItem.GlobalID, "");
                 closestItem.ReservedFor = agent.AI;
-                closestItem.IsReserved = true;
                 agent.AI.Blackboard.Erase(thing);
                 agent.AI.Blackboard.SetData(thing, closestItem);
                 yield return Act.Status.Success;
@@ -81,7 +80,6 @@ namespace DwarfCorp
             if (objectToHit != null && objectToHit.ReservedFor == null && !objectToHit.IsReserved)
             {
                 //PlayState.AnnouncementManager.Announce("Creature " + agent.GlobalID + " reserves " + objectToHit.Name + " " + objectToHit.GlobalID, "");
-                objectToHit.IsReserved = true;
                 objectToHit.ReservedFor = agent.AI;
             }
 
@@ -100,7 +98,6 @@ namespace DwarfCorp
             if (objectToHit != null && objectToHit.ReservedFor == agent.AI)
             {
                 //PlayState.AnnouncementManager.Announce("Creature " + agent.GlobalID + " unreserves " + objectToHit.Name + " " + objectToHit.GlobalID, "");
-                objectToHit.IsReserved = false;
                 objectToHit.ReservedFor = null;
             }
 

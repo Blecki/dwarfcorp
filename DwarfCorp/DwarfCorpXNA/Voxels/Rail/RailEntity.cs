@@ -444,7 +444,10 @@ namespace DwarfCorp.Rail
 
             // Everything that draws should set it's tint, making this pointless.
             Color origTint = effect.VertexColorTint;
-            DoStipple(effect);
+            if (!Active)
+            {
+                DoStipple(effect);
+            }
             effect.VertexColorTint = Tint;
             effect.World = GlobalTransform;
           
@@ -460,7 +463,10 @@ namespace DwarfCorp.Rail
             }
 
             effect.VertexColorTint = origTint;
-            EndDraw(effect);
+            if (!Active)
+            {
+                EndDraw(effect);
+            }
         }
         private string previousEffect = null;
 
