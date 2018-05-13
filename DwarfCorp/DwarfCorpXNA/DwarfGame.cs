@@ -354,21 +354,15 @@ namespace DwarfCorp
 
             // Create console.
             ConsoleGui = new Gui.Root(GuiSkin);
-            var _console = ConsoleGui.RootItem.AddChild(new Gui.Widget
+            ConsoleGui.RootItem.AddChild(new Gui.Widgets.AutoGridPanel
             {
+                Rows = 2,
+                Columns = 4,
                 AutoLayout = AutoLayout.DockFill
             });
 
-            var _logOutput = _console.AddChild(new Gui.Widgets.DwarfConsole
-            {
-                Background = new TileReference("basic", 1),
-                BackgroundColor = new Vector4(1.0f, 1.0f, 1.0f, 0.25f),
-                AutoLayout = AutoLayout.DockLeft,
-                MinimumSize = new Point(GuiSkin.VirtualScreen.Width / 4, 0) // This needs to be handled differently.
-            }) as Gui.Widgets.DwarfConsole;
-
             ConsoleGui.RootItem.Layout();
-            _logwriter.SetConsole(_logOutput);
+            _logwriter.SetConsole(GetConsoleTile("LOG"));
 
             Console.Out.WriteLine("Console created.");
 
@@ -545,6 +539,29 @@ namespace DwarfCorp
         }
 
         public static bool ExitGame = false;
+        
+        public static Gui.Widgets.DwarfConsole GetConsoleTile(String Name)
+        {
+            var display = DwarfGame.ConsolePanel.EnumerateChildren().Where(c =>
+            {
+                if (c.Tag is String tag) return tag == Name;
+                return false;
+            }).FirstOrDefault() as Gui.Widgets.DwarfConsole;
+
+            if (display == null)
+            {
+                display = DwarfGame.ConsolePanel.AddChild(new Gui.Widgets.DwarfConsole
+                {
+                    Background = new TileReference("basic", 1),
+                    BackgroundColor = new Vector4(1.0f, 1.0f, 1.0f, 0.25f),
+                    Tag = Name
+                }) as Gui.Widgets.DwarfConsole;
+
+                DwarfGame.RebuildConsole();
+            }
+
+            return display;
+        }
     }
 
 }

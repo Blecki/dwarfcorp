@@ -270,7 +270,7 @@ namespace DwarfCorp
                 {
                     Text = indicator,
                     Tint = color,
-                    CurrentTime = new Timer(time, true),
+                    CurrentTime = new Timer(time, true, Timer.TimerMode.Real),
                     Image = null,
                     Position = position,
                     Grow = false,

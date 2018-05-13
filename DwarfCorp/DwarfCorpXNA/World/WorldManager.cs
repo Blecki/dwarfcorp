@@ -981,7 +981,7 @@ namespace DwarfCorp
 
         private void ResetGraphics()
         {
-            
+            /*
             if (bloom != null)
             {
                 bloom.sceneRenderTarget = new RenderTarget2D(GraphicsDevice, Game.Graphics.PreferredBackBufferWidth, Game.Graphics.PreferredBackBufferHeight,
@@ -1013,7 +1013,8 @@ namespace DwarfCorp
             DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
             DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
             DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
-            PrimitiveLibrary.Initialize(GraphicsDevice, Content);
+            PrimitiveLibrary.Reinitialize(GraphicsDevice, Content);
+            */
         }
 
         /// <summary>

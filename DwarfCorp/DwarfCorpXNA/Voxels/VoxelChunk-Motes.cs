@@ -61,9 +61,12 @@ namespace DwarfCorp
         public void RenderMotes(GraphicsDevice Device, Shader Effect, Camera Camera)
         {
             for (var i = 0; i < Manager.World.Master.MaxViewingLevel + 1 && i < VoxelConstants.ChunkSizeY; ++i)
-                if (MoteRecords[i] != null)
-                    foreach (var mote in MoteRecords[i])
+            {
+                var motes = MoteRecords[i];
+                if (motes != null)
+                    foreach (var mote in motes)
                         Manager.World.InstanceRenderer.RenderInstance(mote, Device, Effect, Camera, InstanceRenderMode.Normal);
+            }
         }
 
         private static NewInstanceData GenerateGrassMote(WorldManager World, Vector3 Position, Color Color, float Scale, String Name)

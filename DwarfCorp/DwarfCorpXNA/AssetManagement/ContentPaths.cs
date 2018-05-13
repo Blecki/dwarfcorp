@@ -622,6 +622,7 @@ namespace DwarfCorp
                 public static string bedtex = ProgramData.CreatePath("Entities", "Furniture", "bedtex");
                 public static string interior_furniture = ProgramData.CreatePath("Entities", "Furniture", "interior_furniture");
                 public static string bookshelf = ProgramData.CreatePath("Entities", "Furniture", "bookshelf");
+                public static string conveyor = ProgramData.CreatePath("Entities", "Furniture", "conveyor");
             }
             public class Goblin
             {

@@ -105,14 +105,11 @@ namespace DwarfCorp
 
         public static Type GetTypeFromMod(String T, String Assembly)
         {
-            if (Assembly[0] == '$')
-                return Type.GetType(T, true);
-
             foreach (var mod in Assemblies)
                 if (mod.Item1 == Assembly)
                     return mod.Item2.GetType(T);
 
-            return null;
+            return Type.GetType(T, true);
         }
 
         private static bool CheckMethod(MethodInfo Method, Type ReturnType, Type[] ArgumentTypes)

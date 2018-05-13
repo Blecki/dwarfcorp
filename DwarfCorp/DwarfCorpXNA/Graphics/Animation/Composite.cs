@@ -34,7 +34,7 @@ namespace DwarfCorp
                 Target.Dispose();
             }
 
-            Target = new RenderTarget2D(GameState.Game.GraphicsDevice, FrameSize.X * TargetSizeFrames.X, FrameSize.Y * TargetSizeFrames.Y, false, SurfaceFormat.Color, DepthFormat.None);
+            Target = new RenderTarget2D(GameState.Game.GraphicsDevice, FrameSize.X * TargetSizeFrames.X, FrameSize.Y * TargetSizeFrames.Y, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
         }
 
         public Rectangle GetFrameRect(Point Frame)
@@ -44,6 +44,11 @@ namespace DwarfCorp
 
         public Point PushFrame(CompositeFrame frame)
         {
+            if (Target.IsContentLost)
+            {
+                Initialize();
+                CurrentFrames.Clear();
+            }
             if (!CurrentFrames.ContainsKey(frame))
             {
                 foreach (var layer in frame.Cells)

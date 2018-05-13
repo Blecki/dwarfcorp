@@ -68,12 +68,7 @@ namespace DwarfCorp
         }
 
         private void GenerateData(GraphicsDevice device, float sizeX, float sizeY, float resolution)
-        {
-            if (banners.ContainsKey(Logo))
-            {
-                return;
-            }
-
+        { 
             int numCellsX = (int)(sizeX/resolution);
             int numCellsY = (int) (sizeY/resolution);
             int numVerts = (numCellsX + 1)*(numCellsY + 1);
@@ -148,6 +143,11 @@ namespace DwarfCorp
             }
 
             var banner = banners[Logo];
+            if (banner.Mesh.IsDisposed || banner.Mesh.GraphicsDevice.IsDisposed || banner.Texture.IsDisposed || banner.Texture.IsContentLost)
+            {
+                GenerateData(graphicsDevice, 1, 0.5f, 0.25f);
+            }
+
             var oldWind = effect.WindDirection;
             var oldWindForce = effect.WindForce;
             

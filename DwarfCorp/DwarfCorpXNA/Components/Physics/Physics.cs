@@ -212,8 +212,8 @@ namespace DwarfCorp
             CollisionType = CollisionType.Dynamic;
             CollideMode = CollisionMode.All;
             Orientation = orientation;
-            SleepTimer = new Timer(5.0f, true);
-            WakeTimer = new Timer(0.01f, true);
+            SleepTimer = new Timer(5.0f, true, Timer.TimerMode.Real);
+            WakeTimer = new Timer(0.01f, true, Timer.TimerMode.Real);
         }
 
         public void Move(float dt)

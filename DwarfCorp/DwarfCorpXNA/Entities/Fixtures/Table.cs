@@ -100,7 +100,7 @@ namespace DwarfCorp
             public Timer ChargeTimer { get; set; }
             public ManaBattery()
             {
-                ReCreateTimer = new Timer(3.0f, false);
+                ReCreateTimer = new Timer(3.0f, false, Timer.TimerMode.Real);
                 ChargeTimer = new Timer(10.0f, false);
             }
 

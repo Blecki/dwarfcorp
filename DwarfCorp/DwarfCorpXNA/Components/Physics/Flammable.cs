@@ -51,9 +51,9 @@ namespace DwarfCorp
             Heat = 0.0f;
             Flashpoint = 100.0f;
             Damage = 5.0f;
-            CheckLavaTimer = new Timer(1.0f, false);
-            SoundTimer = new Timer(1.0f, false);
-            DamageTimer = new Timer(1.0f, false);
+            CheckLavaTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
+            SoundTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
+            DamageTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
         }
 
 

@@ -87,8 +87,8 @@ namespace DwarfCorp
 
         private bool sliceDownheld = false;
         private bool sliceUpheld = false;
-        private Timer sliceDownTimer = new Timer(0.5f, true);
-        private Timer sliceUpTimer = new Timer(0.5f, true);
+        private Timer sliceDownTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
+        private Timer sliceUpTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
         public int MaxViewingLevel = VoxelConstants.ChunkSizeY;
 
         [OnDeserialized]
@@ -366,8 +366,8 @@ namespace DwarfCorp
 
         }
 
-        private Timer orphanedTaskRateLimiter = new Timer(10.0f, false);
-        private Timer checkFoodTimer = new Timer(60.0f, false);
+        private Timer orphanedTaskRateLimiter = new Timer(10.0f, false, Timer.TimerMode.Real);
+        private Timer checkFoodTimer = new Timer(60.0f, false, Timer.TimerMode.Real);
 
         // This hack exists to find orphaned tasks not assigned to any dwarf, and to then
         // put them on the task list.

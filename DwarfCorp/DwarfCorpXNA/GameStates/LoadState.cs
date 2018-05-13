@@ -42,7 +42,7 @@ namespace DwarfCorp.GameStates
             "Axedwarves are better at chopping trees than miners."
         };
 
-        private Timer TipTimer = new Timer(5, false);
+        private Timer TipTimer = new Timer(5, false, Timer.TimerMode.Real);
         public WorldGenerationSettings Settings { get; set; }
 
         public LoadState(DwarfGame game, GameStateManager stateManager, WorldGenerationSettings settings) :

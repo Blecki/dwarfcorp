@@ -612,7 +612,7 @@
         "NumResources": 4
       }
     ],
-	"AllowRotation": true,
+    "AllowRotation": true,
     "Icon": {
       "Sheet": "furniture",
       "Tile": 3
@@ -745,7 +745,7 @@
         "NumResources": 4
       }
     ],
-	"AllowRotation": true,
+    "AllowRotation": true,
     "Icon": {
       "Sheet": "furniture",
       "Tile": 32
@@ -931,6 +931,44 @@
     "AddToOwnedPool": true,
     "Moveable": true,
     "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Conveyor",
+    "EntityName": "Conveyor",
+    "RequiredResources": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      },
+      {
+        "ResourceType": "Wood",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "conveyor",
+      "Tile": 0
+    },
+    "BaseCraftTime": 10.0,
+    "Description": "This pushes things.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
   }
+
 
 ]

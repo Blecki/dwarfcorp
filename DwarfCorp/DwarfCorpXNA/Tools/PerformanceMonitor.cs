@@ -33,31 +33,6 @@ namespace DwarfCorp
 
         private static Stopwatch FPSWatch = null;
 
-        private static Gui.Widgets.DwarfConsole GetOutputWidget()
-        {
-            var display = DwarfGame.ConsolePanel.EnumerateChildren().Where(c =>
-            {
-                if (c.Tag is String tag) return tag == "PERFORMANCE";
-                return false;
-            }).FirstOrDefault() as Gui.Widgets.DwarfConsole;
-
-            if (display == null)
-            {
-                display = DwarfGame.ConsolePanel.AddChild(new Gui.Widgets.DwarfConsole
-                {
-                    AutoLayout = AutoLayout.DockLeft,
-                    Background = new TileReference("basic", 1),
-                    BackgroundColor = new Vector4(1.0f, 1.0f, 1.0f, 0.25f),
-                    MinimumSize = new Point(200, 0),
-                    Tag = "PERFORMANCE"
-                }) as Gui.Widgets.DwarfConsole;
-
-                DwarfGame.RebuildConsole();
-            }
-
-            return display;
-        }
-        
         public static void BeginFrame()
         {
             if (DwarfGame.IsConsoleVisible)
@@ -74,7 +49,7 @@ namespace DwarfCorp
             {
                 PopFrame();
 
-                var output = GetOutputWidget();
+                var output = DwarfGame.GetConsoleTile("PERFORMANCE");
                 output.Lines.Clear();
 
                 if (FPSWatch == null)
@@ -82,12 +57,12 @@ namespace DwarfCorp
                 else
                 {
                     FPSWatch.Stop();
-                    output.Lines.Add(String.Format("Frame time: {0:000.000} FPS: {1:000}\n", FPSWatch.Elapsed.TotalMilliseconds, 1.0f / FPSWatch.Elapsed.TotalSeconds));
+                    output.Lines.Add(String.Format("Frame time: {0:000.000}", FPSWatch.Elapsed.TotalMilliseconds));
                     FPSWatch = Stopwatch.StartNew();
                 }
 
                 foreach (var function in Functions)
-                    output.Lines.Add(String.Format("{1:0000} {2:000} {3:00000000} {0}\n", function.Value.Name, function.Value.FrameCalls, function.Value.FrameTicks / 1000, function.Value.FrameTicks));
+                    output.Lines.Add(String.Format("{1:0000} {2:000} {0}\n", function.Value.Name, function.Value.FrameCalls, function.Value.FrameTicks / 1000));
 
                 output.Invalidate();
             }

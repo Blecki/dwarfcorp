@@ -99,7 +99,7 @@ namespace DwarfCorp
         public void OnDeserialized(StreamingContext ctx)
         {
             World = ((WorldManager)ctx.Context);
-            HandleThreatsTimer = new Timer(1.0f, false);
+            HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
             if (Threats == null)
             {
                 Threats = new List<Creature>();
@@ -115,12 +115,12 @@ namespace DwarfCorp
 
         public Faction()
         {
-            HandleThreatsTimer = new Timer(1.0f, false);
+            HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
         }
 
         public Faction(WorldManager world)
         {
-            HandleThreatsTimer = new Timer(1.0f, false);
+            HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
             World = world;
             Threats = new List<Creature>();
             Minions = new List<CreatureAI>();
@@ -207,7 +207,8 @@ namespace DwarfCorp
 
             if (HandleThreatsTimer == null)
             {
-                HandleThreatsTimer = new Timer(1.0f, false);
+                HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real
+                    );
             }
 
             HandleThreatsTimer.Update(time);

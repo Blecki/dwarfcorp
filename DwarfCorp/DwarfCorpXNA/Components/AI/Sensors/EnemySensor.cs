@@ -64,7 +64,7 @@ namespace DwarfCorp
         {
             Enemies = new List<CreatureAI>();
             OnEnemySensed += EnemySensor_OnEnemySensed;
-            SenseTimer = new Timer(0.5f, false);
+            SenseTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
             SenseRadius = 15 * 15;
             CollisionType = CollisionType.None;
         }
@@ -75,7 +75,7 @@ namespace DwarfCorp
             Enemies = new List<CreatureAI>();
             OnEnemySensed += EnemySensor_OnEnemySensed;
             Tags.Add("Sensor");
-            SenseTimer = new Timer(0.5f, false);
+            SenseTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
             SenseRadius = 15 * 15;
             CollisionType = CollisionType.None;
         }

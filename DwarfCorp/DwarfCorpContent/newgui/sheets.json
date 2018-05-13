@@ -356,6 +356,12 @@
     "Texture": "newgui/trinkets-sculpt",
     "TileWidth": 32,
     "TileHeight": 32
+  },
+  {
+    "Name": "conveyor",
+    "Texture": "Entities\\Furniture\\conveyor",
+    "TileWidth": 32,
+    "TileHeight": 32
   }
 ]
 

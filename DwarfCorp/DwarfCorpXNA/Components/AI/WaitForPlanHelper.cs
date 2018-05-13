@@ -57,7 +57,7 @@ namespace DwarfCorp
         public WaitForPlanHelper(float timeout, PlanService planService)
         {
             Subscriber = new PlanSubscriber(planService);
-            Timeout = new Timer(timeout, true);
+            Timeout = new Timer(timeout, true, Timer.TimerMode.Real);
         }
 
         public AStarPlanResponse WaitForResponse(AstarPlanRequest request)
