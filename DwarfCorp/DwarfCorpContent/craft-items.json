@@ -950,7 +950,7 @@
       "Sheet": "conveyor",
       "Tile": 0
     },
-    "BaseCraftTime": 10.0,
+    "BaseCraftTime": 1.0,
     "Description": "This pushes things.",
     "Type": "Object",
     "Prerequisites": [

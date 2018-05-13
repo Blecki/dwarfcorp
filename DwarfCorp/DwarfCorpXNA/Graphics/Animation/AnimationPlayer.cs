@@ -174,7 +174,7 @@ namespace DwarfCorp
         public void UpdateInstance(NewInstanceData InstanceData)
         {
             var sheet = CurrentAnimation.SpriteSheet;
-            var frame = CurrentAnimation.Frames[CurrentFrame];
+            var frame = CurrentFrame < CurrentAnimation.Frames.Count ? CurrentAnimation.Frames[CurrentFrame] : Point.Zero;
             InstanceData.SpriteBounds = new Rectangle(sheet.FrameWidth * frame.X, sheet.FrameHeight * frame.Y, sheet.FrameWidth, sheet.FrameHeight);
             InstanceData.TextureAsset = sheet.AssetName;
         }
