@@ -100,6 +100,8 @@ namespace DwarfCorp
 
             foreach(var task in Tasks)
             {
+                if (!creature.Stats.IsTaskAllowed(task.Category))
+                    continue;
                 if (task.AssignedCreatures.Count >= task.MaxAssignable)
                     continue;
                 if (task.IsFeasible(creature.Creature) != Task.Feasibility.Feasible)

@@ -295,6 +295,7 @@ namespace DwarfCorp
 
                     // Restore native factions from deserialized data.
                     Natives = new List<Faction>();
+
                     foreach (Faction faction in Factions.Factions.Values)
                     {
                         if (faction.Race.IsNative && faction.Race.IsIntelligent && !faction.IsRaceFaction)

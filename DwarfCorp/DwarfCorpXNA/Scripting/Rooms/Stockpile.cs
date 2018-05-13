@@ -230,20 +230,12 @@ namespace DwarfCorp
 
         public override void Destroy()
         {
-            BoundingBox box = GetBoundingBox();
-            const int maxPileSize = 64;
-            foreach (ResourceAmount resource in Resources)
+            var box = GetBoundingBox();
+            box.Min += Vector3.Up;
+            box.Max += Vector3.Up;
+            foreach(var resource in EntityFactory.CreateResourcePiles(Resources.Resources.Values, box))
             {
-                for (int numRemaining = resource.NumResources; numRemaining > 0; numRemaining -= maxPileSize)
-                {
-                    Physics body = EntityFactory.CreateEntity<Physics>(resource.ResourceType + " Resource",
-                        Vector3.Up + MathFunctions.RandVector3Box(box), Blackboard.Create<int>("num", Math.Min(numRemaining, maxPileSize))) as Physics;
 
-                    if (body != null)
-                    {
-                        body.Velocity = MathFunctions.RandVector3Cube();
-                    }
-                }
             }
 
             if (Faction != null)

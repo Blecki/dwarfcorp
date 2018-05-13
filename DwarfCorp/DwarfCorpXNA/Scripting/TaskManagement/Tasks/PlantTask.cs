@@ -82,6 +82,9 @@ namespace DwarfCorp
             if (FarmToWork.Finished)
                 return Feasibility.Infeasible;
 
+            if (!agent.Faction.HasResources(RequiredResources))
+                return Feasibility.Infeasible;
+
             return Feasibility.Feasible;
         }
 

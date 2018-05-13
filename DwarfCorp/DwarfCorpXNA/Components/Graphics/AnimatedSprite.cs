@@ -107,7 +107,7 @@ namespace DwarfCorp
             if (InstanceData == null) InstanceData = new NewInstanceData("combined-tiled-instances", Matrix.Identity, Color.White);
             
             InstanceData.Transform = GetWorldMatrix(Camera);
-            InstanceData.VertexColorTint = Tint;
+            InstanceData.VertexColorTint = VertexColorTint;
             InstanceData.SelectionBufferColor = this.GetGlobalIDColor();
 
             AnimPlayer.UpdateInstance(InstanceData);

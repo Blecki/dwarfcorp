@@ -85,13 +85,13 @@ namespace DwarfCorp
             Physics.Orientation = Physics.OrientMode.RotateY;
             CreateSprite(Stats.CurrentClass, Manager);
 
-            Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
+            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
-            AI = Physics.AddChild(new PacingCreatureAI(Manager, "Demon AI", Sensors, PlanService) { Movement = { CanFly = true, CanSwim = false } }) as CreatureAI;
+            Physics.AddChild(new PacingCreatureAI(Manager, "Demon AI", Sensors, PlanService) { Movement = { CanFly = true, CanSwim = false } });
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
-            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
+            Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
             Physics.AddChild(Shadow.Create(0.75f, Manager));
 

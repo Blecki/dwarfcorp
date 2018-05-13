@@ -24,7 +24,7 @@ namespace DwarfCorp.Rail
             CraftLocation = "",
             Name = "Rail",
             Type = CraftItem.CraftType.Object,
-            AddToOwnedPool = false,
+            AddToOwnedPool = true,
             Moveable = false
         };
 
@@ -205,9 +205,10 @@ namespace DwarfCorp.Rail
                     }
 
                     finalEntity.SetFlagRecursive(GameComponent.Flag.Active, true);
-                    finalEntity.SetTintRecursive(Color.White);
+                    finalEntity.SetVertexColorRecursive(Color.White);
                     finalEntity.SetFlagRecursive(GameComponent.Flag.Visible, true);
                     finalEntity.SetFlag(GameComponent.Flag.ShouldSerialize, true);
+                    Player.Faction.OwnedObjects.Add(finalEntity);
                     foreach (var tinter in finalEntity.EnumerateAll().OfType<Tinter>())
                         tinter.Stipple = false;
                 }

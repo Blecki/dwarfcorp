@@ -67,14 +67,13 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            Body closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true);
+            Body closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true, Agent);
             Zone closestZone = Agent.Faction.GetNearestRoom(Agent.Position);
            
             if (Agent.Status.Energy.IsDissatisfied() && closestItem != null)
             {
                 closestItem.ReservedFor = Agent;
                 Creature.AI.Blackboard.SetData("Bed", closestItem);
-                closestItem.IsReserved = true;
                 closestItem.ReservedFor = Agent;
                 Act unreserveAct = new Wrap(() => Creature.Unreserve("Bed"));
                 Tree = 
@@ -141,7 +140,7 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            Body closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true);
+            Body closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true, Agent);
 
 
             if (closestItem != null)

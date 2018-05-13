@@ -62,7 +62,7 @@ namespace DwarfCorp
         public AutoResetEvent NeedsServiceEvent = null;
 
         [JsonIgnore]
-        public Thread ServiceThreadObject = null;
+        public List<Thread> ServiceThreadObject = null;
 
         public bool ExitThreads = false;
 
@@ -105,12 +105,21 @@ namespace DwarfCorp
                 if (ServiceThreadObject != null)
                 {
                     ExitThreads = true;
-                    ServiceThreadObject.Join();
+                    foreach (var thread in ServiceThreadObject)
+                    {
+                        thread.Join();
+                    }
                     ExitThreads = false;
+                    ServiceThreadObject.Clear();
                 }
-                ServiceThreadObject = new Thread(this.ServiceThread) { IsBackground = true } ;
-                ServiceThreadObject.Name = "ServiceThread";
-                ServiceThreadObject.Start();
+                ServiceThreadObject = new List<Thread>();
+                for (int i = 0; i < 2; i++)
+                {
+                    var thread = new Thread(this.ServiceThread) { IsBackground = true }; ;
+                    thread.Name = "Planning worker " + i.ToString();
+                    thread.Start();
+                    ServiceThreadObject.Add(thread);
+                }
             }
             catch (System.AccessViolationException e)
             {
@@ -125,7 +134,10 @@ namespace DwarfCorp
             ExitThreads = true;
 
             if(ServiceThreadObject != null)
-                ServiceThreadObject.Join();
+                foreach (var thread in ServiceThreadObject)
+                {
+                    thread.Join();
+                }
         }
 
         public bool AddRequest(TRequest request, uint subscriberID)
@@ -183,7 +195,7 @@ namespace DwarfCorp
 
                 TResponse response = HandleRequest(req.Value);
                 BroadcastResponse(response, req.Key);
-                Thread.Sleep(10);
+                Thread.Sleep(1);
             }
         }
 

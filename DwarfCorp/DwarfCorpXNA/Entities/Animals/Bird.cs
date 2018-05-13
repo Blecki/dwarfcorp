@@ -74,17 +74,17 @@ namespace DwarfCorp
             CreateSprite(ContentPaths.Entities.Animals.Birds.GetBirdAnimations(SpriteAsset), Manager);
 
             // Used to sense hostile creatures
-            Sensors = Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero)) as EnemySensor;
+             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
             // Controls the behavior of the creature
-            AI = Physics.AddChild(new BirdAI(Manager, "Bird AI", Sensors, PlanService)) as BirdAI;
+            Physics.AddChild(new BirdAI(Manager, "Bird AI", Sensors, PlanService));
             
             // The bird can peck at its enemies (0.1 damage)
             Attacks = new List<Attack> { new Attack("Peck", 0.1f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_bird_attack), ContentPaths.Effects.pierce) { Mode = Attack.AttackMode.Dogfight } };
 
 
             // The bird can hold one item at a time in its inventory
-            Inventory = Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
+            Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
             Physics.AddChild(Shadow.Create(0.25f, Manager));
 

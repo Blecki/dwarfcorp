@@ -46,7 +46,7 @@ namespace DwarfCorp
         public float Rate { get; set; }
         public float Offset { get; set; }
         public float Bob;
-
+        public Vector3 OriginalPos;
         public SimpleBobber(
             ComponentManager Manager,
             String Name,
@@ -61,6 +61,7 @@ namespace DwarfCorp
             Magnitude = mag;
             Rate = rate;
             Offset = offset;
+            OriginalPos = LocalTransform.Translation;
         }
 
         new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
@@ -68,7 +69,7 @@ namespace DwarfCorp
             float x = (float)Math.Sin((gameTime.TotalGameTime.TotalSeconds + Offset) * Rate) * Magnitude;
             var transform = GlobalTransform;
             var originalOffset = transform.Translation;
-            transform.Translation += new Vector3(0, x, 0);
+            transform.Translation += new Vector3(OriginalPos.X, x, OriginalPos.Z);
 
             try
             {

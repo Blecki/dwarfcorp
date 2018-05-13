@@ -56,7 +56,7 @@ namespace DwarfCorp
             Instance = new NewInstanceData(
                 ModelType,
                 GlobalTransform,
-                Tint);
+                LightRamp);
             Instance.SelectionBufferColor = this.GetGlobalIDColor();
         }
 
@@ -71,7 +71,7 @@ namespace DwarfCorp
             PropogateTransforms();
             UpdateBoundingBox();
             ModelType = modelType;
-            Instance = new NewInstanceData(ModelType, GlobalTransform, Tint);
+            Instance = new NewInstanceData(ModelType, GlobalTransform, LightRamp);
             Instance.SelectionBufferColor = this.GetGlobalIDColor();
         }
 
@@ -81,7 +81,7 @@ namespace DwarfCorp
 
             if (IsVisible && !renderingForWater)
             {
-                Instance.Color = Tint;
+                Instance.Color = LightRamp;
                 Instance.Transform = GlobalTransform;
                 Instance.SelectionBufferColor = this.GetGlobalIDColor();
                 Manager.World.InstanceRenderer.RenderInstance(Instance, graphicsDevice, effect, camera, InstanceRenderMode.Normal);
@@ -95,7 +95,7 @@ namespace DwarfCorp
 
             if (IsVisible)
             {
-                Instance.Color = Tint;
+                Instance.Color = LightRamp;
                 Instance.Transform = GlobalTransform;
                 Instance.SelectionBufferColor = this.GetGlobalIDColor();
                 Manager.World.InstanceRenderer.RenderInstance(Instance, graphicsDevice, effect, camera, InstanceRenderMode.SelectionBuffer);

@@ -59,7 +59,7 @@ namespace DwarfCorp
             Item.Finished = true;
             var item = Item.Entity;
             item.SetFlagRecursive(GameComponent.Flag.Active, true);
-            item.SetTintRecursive(Color.White);
+            item.SetVertexColorRecursive(Color.White);
             var tinters = item.EnumerateAll().OfType<Tinter>();
             foreach(var tinter in tinters)
                 tinter.Stipple = false;

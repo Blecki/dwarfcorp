@@ -175,7 +175,7 @@ namespace DwarfCorp
             effect.World = world;
             effect.MainTexture = banner.Texture;
             effect.SelfIlluminationTexture = null;
-            effect.LightRampTint = Tint;
+            effect.LightRampTint = LightRamp;
             effect.VertexColorTint = Color.White;
             foreach (var pass in effect.CurrentTechnique.Passes)
             {

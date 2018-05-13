@@ -179,7 +179,7 @@ namespace DwarfCorp
                         float timeLeft = (float)(DeathTimer.TargetTimeSeconds - DeathTimer.CurrentTimeSeconds);
                         float pulseRate = 15 - 2 * timeLeft;
                         float pulse = (float)Math.Sin(timeLeft * pulseRate);
-                        this.SetTintRecursive(new Color(1.0f, 1.0f - pulse * pulse, 1.0f - pulse * pulse, 1.0f));
+                        this.SetVertexColorRecursive(new Color(1.0f, 1.0f - pulse * pulse, 1.0f - pulse * pulse, 1.0f));
                         if (DeathTimer.HasTriggered)
                         {
                             _state = State.Exploding;

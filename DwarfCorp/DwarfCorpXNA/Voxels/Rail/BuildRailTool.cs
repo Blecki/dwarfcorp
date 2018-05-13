@@ -65,7 +65,7 @@ namespace DwarfCorp.Rail
             CraftLocation = "",
             Name = "Rail",
             Type = CraftItem.CraftType.Object,
-            AddToOwnedPool = false,
+            AddToOwnedPool = true,
             Moveable = false            
         };
 
@@ -132,6 +132,7 @@ namespace DwarfCorp.Rail
             Player.BodySelector.Enabled = false;
             Player.VoxSelector.DrawBox = false;
             Player.VoxSelector.DrawVoxel = false;
+            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
 
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
@@ -165,7 +166,7 @@ namespace DwarfCorp.Rail
                     tint = Color.Red;
         
             foreach (var body in PreviewBodies)
-                body.SetTintRecursive(tint);
+                body.SetVertexColorRecursive(tint);
         }
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
