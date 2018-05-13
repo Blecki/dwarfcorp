@@ -132,6 +132,7 @@ namespace DwarfCorp.Rail
             Player.BodySelector.Enabled = false;
             Player.VoxSelector.DrawBox = false;
             Player.VoxSelector.DrawVoxel = false;
+            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
 
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
