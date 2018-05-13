@@ -285,7 +285,7 @@ namespace DwarfCorp
             RoomBuilder.OnVoxelDestroyed(V);
 
             var toRemove = new List<Stockpile>();
-            foreach (var s in new List<Stockpile>(Stockpiles))
+            foreach (var s in new List<Stockpile>(Stockpiles).Where(stockpile => stockpile.IsBuilt))
             {
                 if (s.ContainsVoxel(V))
                     s.RemoveVoxel(V);
