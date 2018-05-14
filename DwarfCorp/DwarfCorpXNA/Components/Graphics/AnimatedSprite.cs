@@ -107,6 +107,7 @@ namespace DwarfCorp
             if (InstanceData == null) InstanceData = new NewInstanceData("combined-tiled-instances", Matrix.Identity, Color.White);
             
             InstanceData.Transform = GetWorldMatrix(Camera);
+            InstanceData.Color = LightRamp;
             InstanceData.VertexColorTint = VertexColorTint;
             InstanceData.SelectionBufferColor = this.GetGlobalIDColor();
 
@@ -185,11 +186,12 @@ namespace DwarfCorp
             var currDistortion = VertexNoise.GetNoiseVectorFromRepeatingTexture(GlobalTransform.Translation);
             var distortion = currDistortion * 0.1f + prevDistortion * 0.9f;
             prevDistortion = distortion;
+            var frameSize = AnimPlayer.GetCurrentFrameSize();
             switch (OrientationType)
             {
                 case OrientMode.Spherical:
                     {
-                        Matrix bill = Matrix.CreateBillboard(GlobalTransform.Translation, camera.Position, camera.UpVector, null) * Matrix.CreateTranslation(distortion);
+                        Matrix bill = Matrix.CreateScale(frameSize.X, frameSize.Y, 1.0f) * Matrix.CreateBillboard(GlobalTransform.Translation, camera.Position, camera.UpVector, null) * Matrix.CreateTranslation(distortion);
                         //Matrix noTransBill = bill;
                         //noTransBill.Translation = Vector3.Zero;
 
@@ -200,14 +202,14 @@ namespace DwarfCorp
                     }
                 case OrientMode.Fixed:
                     {
-                        Matrix rotation = GlobalTransform;
+                        Matrix rotation = Matrix.CreateScale(frameSize.X, frameSize.Y, 1.0f) * GlobalTransform;
                         rotation.Translation = rotation.Translation + distortion;
                         return rotation;
                         break;
                     }
                 case OrientMode.YAxis:
                     {
-                        Matrix worldRot = Matrix.CreateConstrainedBillboard(GlobalTransform.Translation, camera.Position, Vector3.UnitY, null, null);
+                        Matrix worldRot = Matrix.CreateScale(frameSize.X, frameSize.Y, 1.0f) * Matrix.CreateConstrainedBillboard(GlobalTransform.Translation, camera.Position, Vector3.UnitY, null, null);
                         worldRot.Translation = worldRot.Translation + distortion;
                         return worldRot;
                         break;
