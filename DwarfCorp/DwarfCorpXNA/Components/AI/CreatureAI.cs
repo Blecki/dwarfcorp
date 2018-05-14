@@ -499,14 +499,8 @@ namespace DwarfCorp
 
                     if (Creature.Faction == Manager.World.PlayerFaction)
                     {
-                        Manager.World.MakeAnnouncement(
-                            new Gui.Widgets.QueuedAnnouncement
-                            {
-                                Text = String.Format("{0} ({1}) refuses to work!",
-                                    Stats.FullName, Stats.CurrentClass.Name),
-                                ClickAction = (gui, sender) => ZoomToMe()
-                            });
-
+                        Manager.World.MakeWorldPopup(String.Format("{0} ({1}) refuses to work!",
+                                    Stats.FullName, Stats.CurrentClass.Name), Creature.Physics, -10, 10);
                         Manager.World.Tutorial("happiness");
                         SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.25f);
                     }
@@ -965,6 +959,11 @@ namespace DwarfCorp
             if (Status.IsAsleep)
             {
                 desc += "\n UNCONSCIOUS";
+            }
+
+            if (Creature.IsCloaked)
+            {
+                desc += "\n CLOAKED";
             }
 
             if (Status.IsOnStrike)

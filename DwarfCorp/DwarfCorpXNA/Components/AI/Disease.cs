@@ -27,7 +27,7 @@ namespace DwarfCorp
                     FoodValueUntilHealed = 100,
                     IsContagious = true,
                     LikelihoodOfSpread = 0.001f,
-                    StatDamage = new CreatureStats.StatNums()
+                    StatDamage = new CreatureStats.StatNums(0)
                     {
                         Charisma = -1,
                         Constitution = -1,
@@ -54,7 +54,7 @@ namespace DwarfCorp
                     FoodValueUntilHealed = 100,
                     IsContagious = true,
                     LikelihoodOfSpread = 0.01f,
-                    StatDamage = new CreatureStats.StatNums()
+                    StatDamage = new CreatureStats.StatNums(0)
                     {
                         Charisma = -1,
                         Constitution = -1,
@@ -81,7 +81,7 @@ namespace DwarfCorp
                     FoodValueUntilHealed = 100,
                     IsContagious = true,
                     LikelihoodOfSpread = 0.1f,
-                    StatDamage = new CreatureStats.StatNums()
+                    StatDamage = new CreatureStats.StatNums(0)
                     {
                         Charisma = -1,
                         Constitution = -1,
@@ -108,7 +108,7 @@ namespace DwarfCorp
                     FoodValueUntilHealed = 100,
                     IsContagious = true,
                     LikelihoodOfSpread = 0.1f,
-                    StatDamage = new CreatureStats.StatNums()
+                    StatDamage = new CreatureStats.StatNums(0)
                     {
                         Charisma = -1,
                         Constitution = -1,
@@ -135,7 +135,7 @@ namespace DwarfCorp
                     FoodValueUntilHealed = 100,
                     IsContagious = true,
                     LikelihoodOfSpread = 0.001f,
-                    StatDamage = new CreatureStats.StatNums()
+                    StatDamage = new CreatureStats.StatNums(0)
                     {
                         Charisma = -1,
                         Constitution = -1,
@@ -162,7 +162,7 @@ namespace DwarfCorp
                     FoodValueUntilHealed = 100,
                     IsContagious = false,
                     LikelihoodOfSpread = 0.1f,
-                    StatDamage = new CreatureStats.StatNums()
+                    StatDamage = new CreatureStats.StatNums(0)
                     {
                         Charisma = -1,
                         Constitution = -1,
@@ -188,7 +188,7 @@ namespace DwarfCorp
                     FoodValueUntilHealed = 100,
                     IsContagious = false,
                     LikelihoodOfSpread = 0.1f,
-                    StatDamage = new CreatureStats.StatNums()
+                    StatDamage = new CreatureStats.StatNums(0)
                     {
                         Charisma = -1,
                         Constitution = -1,
@@ -227,10 +227,10 @@ namespace DwarfCorp
                             AcquiredRandomly = false,
                             DamageEveryNSeconds = 99999,
                             Description = "An injury.",
-                            StatDamage = new CreatureStats.StatNums()
+                            StatDamage = new CreatureStats.StatNums(0)
                             {
                                 Dexterity = -1,
-                                Constitution = -1
+                                Constitution = -1,
                             },
                             EffectTime = new Timer(240, false),
                             Type = Disease.HealType.Time,
@@ -255,16 +255,13 @@ namespace DwarfCorp
 
         public static void SpreadRandomDiseases(IEnumerable<CreatureAI> creatures)
         {
-            foreach (Disease disease in Diseases.Where(disease => disease.AcquiredRandomly))
-            {
-                foreach (var creature in creatures)
-                {
-                    if (MathFunctions.RandEvent(disease.ChanceofRandomAcquisitionPerDay))
-                    {
-                        creature.Creature.AcquireDisease(disease.Name);
-                    }
-                }
-            }
+            var disease = Datastructures.SelectRandom(Diseases.Where(d => d.AcquiredRandomly));
+            if (disease == null)
+                return;
+            var creature = Datastructures.SelectRandom(creatures);
+            if (creature == null)
+                return;
+            creature.Creature.AcquireDisease(disease.Name);
         }
     }
     /// <summary>
@@ -306,12 +303,7 @@ namespace DwarfCorp
             creature.Faction.World.Tutorial("disease");
             if (creature.Faction == creature.Faction.World.PlayerFaction)
             {
-                creature.Faction.World.MakeAnnouncement(
-                    new Gui.Widgets.QueuedAnnouncement
-                    {
-                        Text = creature.Stats.FullName + " got " + Name + "!",
-                        ClickAction = (gui, sender) => creature.AI.ZoomToMe()
-                    });
+                creature.Faction.World.MakeWorldPopup(creature.Stats.FullName + " got " + Name + "!", creature.Physics, -10, 10);
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
             }
             creature.Stats.StatBuffs += StatDamage;
@@ -324,13 +316,7 @@ namespace DwarfCorp
 
             if (creature.Faction == creature.Faction.World.PlayerFaction)
             {
-                creature.Faction.World.MakeAnnouncement(
-                    new Gui.Widgets.QueuedAnnouncement
-                    {
-                        Text = creature.Stats.FullName + " recovered from  " + Name + "!",
-                        ClickAction = (gui, sender) => creature.AI.ZoomToMe()
-                    });
-
+                creature.Faction.World.MakeWorldPopup(creature.Stats.FullName + " recovered from  " + Name + "!", creature.Physics, -10, 10);
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
             }
             base.OnEnd(creature);

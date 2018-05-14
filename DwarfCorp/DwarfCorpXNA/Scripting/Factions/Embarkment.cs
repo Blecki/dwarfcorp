@@ -38,6 +38,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = false)]
     public class Embarkment
     {
+        public int Difficulty;
         public List<string> Party;
         public Dictionary<ResourceType, int> Resources;
         public DwarfBux Money;

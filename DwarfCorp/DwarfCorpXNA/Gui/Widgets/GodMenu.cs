@@ -264,7 +264,23 @@ namespace DwarfCorp.Gui.Widgets
                             }),
                     }
                 },
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "EVENT",
+                    ExpansionChild = new HorizontalMenuTray.Tray
+                    {
 
+                            ItemSource = Master.World.GoalManager.EventScheduler.Events.Events.Select(e =>
+                            {
+                                return new HorizontalMenuTray.MenuItem
+                                {
+                                    Text = e.Name,
+                                    OnClick = (sender, args) => Master.World.GoalManager.EventScheduler.ActivateEvent(Master.World, e)
+                                };
+
+                            }),
+                    }
+                },
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "WAR PARTY",

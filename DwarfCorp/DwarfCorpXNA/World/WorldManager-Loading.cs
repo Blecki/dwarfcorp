@@ -418,7 +418,10 @@ namespace DwarfCorp
                         Master.TaskManager = gameFile.PlayData.Tasks;
                         Master.TaskManager.Faction = Master.Faction;
                     }
-
+                    if (gameFile.PlayData.InitialEmbark != null)
+                    {
+                        InitialEmbark = gameFile.PlayData.InitialEmbark;
+                    }
                     ChunkManager.World.Master.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
                     ? gameFile.Metadata.Slice
                     : ChunkManager.World.Master.MaxViewingLevel);

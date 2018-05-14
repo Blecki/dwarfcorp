@@ -158,6 +158,8 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
+            Creature.IsCloaked = false;
+
             if (CurrentAttack == null)
             {
                 yield return Status.Fail;

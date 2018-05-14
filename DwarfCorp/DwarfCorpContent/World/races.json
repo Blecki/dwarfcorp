@@ -35,7 +35,8 @@
 			"OffensiveTrades" : ["The deal is off! This is outrageously offensive!"],
             "WarDeclarations" :  ["Consider this war!", "We will lay waste to your rebellious colony!", "Prepare to be arrested by representatives of the king!", "This is a dark day for the dwarven empire."],
             "PeaceDeclarations" :  ["We wish to make peace.", "The king has grown tired of your rebellion. Make peace.", "War of this kind is not profitable."],
-            "Language" : 
+            "DemandsForTribute" : ["We are here to collect taxes for the King.", "The Dwarven Kingdom demands tax.", "The King needs revenue for his army.", "There is a new corporate income tax. Pony up!"],
+			"Language" : 
             {
                 "Syllables":  
                 [
@@ -113,7 +114,8 @@
 			"OffensiveTrades" : ["Ew! Gross!", "Bad. This is a forbidden thing!", "I will not take stinky bad things."],
             "WarDeclarations" :  ["You bring big storm!", "We will smoke you out!", "The tribe will lay waste to you!", "You offend. We break you."],
             "PeaceDeclarations" :  ["You strong. We weak. End war.", "No more blood.", "We wish peace.", "You live. Peace now."],
-            "Language" : 
+            "DemandsForTribute" : ["You have gold? We want.", "Goblins strong. Dwarfs weak. Give us goodies now.", "You in Goblin lands. You pay Goblin tax."],
+			"Language" : 
             {
                 "Syllables":  
                 [
@@ -179,7 +181,8 @@
 			"OffensiveTrades" : ["<The moleman throws dirt in your face>", "<The moleman exhales slowly, enraged>", "<the moleman is clearly offended>"],    
 			"WarDeclarations" :  ["<The moleman extends his claws>", "<The moleman sweats profusely>", "<It is clear the moleman is now angry.>"],
             "PeaceDeclarations" :  ["<The moleman sheds a tear>", "<The moleman kneels>", "<The moleman removes his helmet>"],
-            "Language" : 
+            "DemandsForTribute" : ["<The moleman holds out his coin pouch>", "<The moleman points at the Treasury>"],
+			"Language" : 
             {
                 "Syllables":  
                 [
@@ -255,7 +258,8 @@
             "OffensiveTrades" : ["Is this a joke? If so its not very funny.", "You should be more considerate. This is offensive.", "Research our culture. We are offended by this stuff.", "Sorry but that is just gross. No way."],
 			"WarDeclarations" :  ["You're a danger to us all.", "Get out of our forests, troublemakers.", "You dunder-headed Dwarves are no good!", "You're not so cute to us anymore.", "Well, time to carve some more bows.", "Naughty Dwarves!"],
             "PeaceDeclarations" :  ["Let's just call it even, okay?", "You guys drive a hard bargain. Care to stop the war?", "Our hearts aren't in it anymore.", "This war has got us down.", "Peace would be better for everyone."],
-            "Language" : 
+            "DemandsForTribute" : ["If you want to live here, you will need to pay a tax.", "Will you support our lollipop fund?", "You are in Elvish lands. The council demands tribute."],
+			"Language" : 
             {
                 "Syllables":  
                 [
@@ -327,7 +331,8 @@
             "OffensiveTrades" : ["This is outrageous. We hate such trinkets.", "I HATE these items. No thank you.", "So offensive!", "How could we accept something so ... alive?"],
 			"WarDeclarations" :  ["We will enjoy adding you to our ranks.", "You will pay for your crimes.", "We will burn your puny colony to the ground.", "Try not to sleep. We're coming.", "We will rise against you."],
             "PeaceDeclarations" :  ["This war bores us. Shall we normalize relations?", "We have to give you credit for ingenuity. Shall we make peace?", "On second thought, we have made a glaring error. End the war?"],
-            "Language" : 
+            "DemandsForTribute" : ["You have encroached on the lands of the Undead. Simply pay us, or leave.", "We have heard rumors that the Dwarves have unlimited wealth. Will you show us some?", "Either pay us, or prepare to join our ranks."],
+			"Language" : 
             {
                 "Syllables":  
                 [

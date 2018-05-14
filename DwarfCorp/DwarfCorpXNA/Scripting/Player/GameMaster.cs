@@ -320,7 +320,7 @@ namespace DwarfCorp
             }
 
             World.MakeAnnouncement(String.Format("We paid our employees {0} today.",
-                total), null);
+                total));
             SoundManager.PlaySound(ContentPaths.Audio.change, 0.15f);
             World.Tutorial("pay");
         }
@@ -476,7 +476,7 @@ namespace DwarfCorp
                 var food = Faction.CountResourcesWithTag(Resource.ResourceTags.Edible);
                 if (food == 0)
                 {
-                    Faction.World.MakeAnnouncement("We're out of food!");
+                    Faction.World.MakeAnnouncement("We're out of food!", null, () => { return Faction.CountResourcesWithTag(Resource.ResourceTags.Edible) == 0; });
                 }
             }
         }
