@@ -101,6 +101,8 @@ namespace DwarfCorp
                 if (CurrentFrame >= Animation.GetFrameCount())
                     CurrentFrame = Animation.GetFrameCount() - 1;
             }
+
+            OnAnimationChanged();
         }
 
         public void Play(Animation Animation)
@@ -110,6 +112,7 @@ namespace DwarfCorp
                 CurrentFrame = Animation.GetFrameCount() - 1;
             IsPlaying = true;
             IsLooping = Animation.Loops;
+            OnAnimationChanged();
         }
 
         public void Play()
@@ -169,6 +172,18 @@ namespace DwarfCorp
             }
             else
                 InstancingPossible = true;
+        }
+
+        private void OnAnimationChanged()
+        {
+            if (InstancingPossible && !CurrentAnimation.CanUseInstancing)
+            {
+                if (Primitive == null)
+                    Primitive = new BillboardPrimitive();
+                if (CurrentAnimation != null)
+                    CurrentAnimation.UpdatePrimitive(Primitive, CurrentFrame);
+                InstancingPossible = false;
+            }
         }
 
         public void UpdateInstance(NewInstanceData InstanceData)
