@@ -281,7 +281,6 @@ namespace DwarfCorp
         {
             if (!V.IsValid)
                 return;
-
             RoomBuilder.OnVoxelDestroyed(V);
 
             var toRemove = new List<Stockpile>();

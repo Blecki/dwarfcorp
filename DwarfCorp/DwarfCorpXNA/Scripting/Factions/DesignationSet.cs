@@ -46,9 +46,10 @@ namespace DwarfCorp
     {
         [JsonIgnore]
         public TriangleCache TriangleCache = new TriangleCache();
-
+        public bool RecomputeVisibility = false;
         public class VoxelDesignation
         {
+            public bool Visible = true;
             public VoxelHandle Voxel;
             public DesignationType Type;
             public Object Tag;
@@ -102,6 +103,7 @@ namespace DwarfCorp
 
         public AddDesignationResult AddVoxelDesignation(VoxelHandle Voxel, DesignationType Type, Object Tag, Task Task)
         {
+            RecomputeVisibility = true;
             var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
 
             List<VoxelDesignation> list = null;
@@ -135,6 +137,7 @@ namespace DwarfCorp
 
         public RemoveDesignationResult RemoveVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
         {
+            RecomputeVisibility = true;
             var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
             if (!VoxelDesignations.ContainsKey(key)) return RemoveDesignationResult.DidntExist;
             var list = VoxelDesignations[key];

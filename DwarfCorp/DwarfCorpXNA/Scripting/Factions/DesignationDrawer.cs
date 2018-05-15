@@ -151,15 +151,22 @@ namespace DwarfCorp
                         props = DesignationProperties[voxel.Type];
 
                     var v = voxel.Voxel.Coordinate.ToVector3();
-                    if (props.Icon != null)
+                    bool shouldDraw = voxel.Visible;
+                    if (Set.RecomputeVisibility)
+                    {
+                        shouldDraw = !(v.Y > voxel.Voxel.Chunk.Manager.World.Master.MaxViewingLevel
+                                           || !VoxelHelpers.DoesVoxelHaveVisibleSurface(voxel.Voxel.Chunk.Manager.ChunkData, voxel.Voxel));
+                        voxel.Visible = shouldDraw;
+                    }
+                    if (shouldDraw && props.Icon != null)
                     {
                         Drawer2D.DrawSprite(props.Icon, v + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
                     }
 
 
-                    if (voxel.Type == DesignationType.Put) // Hate this.
+                    if (shouldDraw && voxel.Type == DesignationType.Put) // Hate this.
                         DrawPhantomCallback(v, VoxelLibrary.GetVoxelType(voxel.Tag.ToString()));
-                    else if (voxel._drawing == 0)
+                    else if (shouldDraw && voxel._drawing == 0)
                     {
                         switch (props.DrawType)
                         {
@@ -171,6 +178,11 @@ namespace DwarfCorp
                                 break;
                         }
 
+                    }
+                    else if (!shouldDraw && voxel._drawing != 0)
+                    {
+                        removals.Add(voxel._drawing);
+                        voxel._drawing = 0;
                     }
                     // Todo: Move the triangle cache out of the designation set.
                 }
@@ -212,6 +224,7 @@ namespace DwarfCorp
                 else if (entity.Type == DesignationType.Craft) // Make the ghost object invisible if these designations are turned off.
                     entity.Body.SetFlagRecursive(GameComponent.Flag.Visible, false);
             }
+            Set.RecomputeVisibility = false;
         }
     }
 }
