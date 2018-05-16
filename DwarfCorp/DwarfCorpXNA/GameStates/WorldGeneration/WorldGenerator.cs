@@ -142,12 +142,11 @@ namespace DwarfCorp.GameStates
             } while (inWater);
         }
 
-        public string GetSpawnStats()
+        public IEnumerable<KeyValuePair<string, Color>> GetSpawnStats()
         {
             var factions = GetFactionsInSpawn();
             var biomes = new HashSet<byte>();
             Rectangle spawnRect = GetSpawnRectangle();
-            StringBuilder stats = new StringBuilder();
             for (int x = spawnRect.X; x < spawnRect.X + spawnRect.Width; x++)
             {
                 for (int y = spawnRect.Y; y < spawnRect.Y + spawnRect.Height; y++)
@@ -159,33 +158,35 @@ namespace DwarfCorp.GameStates
 
             if (factions.Count == 0)
             {
-                stats.AppendLine("Unclaimed land.");
+                yield return new KeyValuePair<string, Color>("Unclaimed land.", Color.White);
             }
             else
             {
-                stats.Append("Claimed by:\n");
+                yield return new KeyValuePair<string, Color>("Claimed by:", Color.White);
             }
             
             foreach (var faction in factions)
             {
                 int goodwill = (int)(faction.GoodWill * 100);
                 string dsc = "Neutral";
+                Color color = Color.White;
                 if (goodwill < -80)
                 {
+                    color = Color.Red;
                     dsc = "Enemies";
                 }
                 else if (goodwill > 80)
                 {
+                    color = Color.Green;
                     dsc = "Friendly";
                 }
-                stats.AppendLine(faction.Name + "(" + faction.Race.Name + ") --" + dsc);
+                yield return new KeyValuePair<string, Color>("    " + faction.Name + " (" + faction.Race.Name + ") --" + dsc, color);
             }
-            stats.AppendLine("Biomes: ");
+            yield return new KeyValuePair<string, Color>("Biomes: ", Color.White);
             foreach (var biome in biomes)
             {
-                stats.AppendLine(BiomeLibrary.Biomes[biome].Name);
+                yield return new KeyValuePair<string, Color>("    " + BiomeLibrary.Biomes[biome].Name, BiomeLibrary.Biomes[biome].MapColor);
             }
-            return stats.ToString();
         }
 
         public List<Faction> GetFactionsInSpawn()

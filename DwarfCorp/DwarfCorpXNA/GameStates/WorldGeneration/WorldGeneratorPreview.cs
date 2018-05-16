@@ -14,7 +14,7 @@ namespace DwarfCorp.GameStates
         private WorldGenerator Generator;
         private GraphicsDevice Device;
         public Gui.Widget PreviewPanel;
-        private string previewText = "";
+        private IEnumerable<KeyValuePair<string, Color>> previewText = null;
         private bool UpdatePreview = false;
 
         public Texture2D PreviewTexture { get; private set; }
@@ -452,13 +452,18 @@ namespace DwarfCorp.GameStates
                         .Colorize(color.Value.ToVector4()));
                     y += bounds.Height;
                 }
-                if (previewText == "")
+                if (previewText == null)
                 {
                     previewText = Generator.GetSpawnStats();
                 }
-                Rectangle previewBounds;
-                var previewMesh = Gui.Mesh.CreateStringMesh(previewText, font, new Vector2(1, 1), out previewBounds);
-                stringMeshes.Add(previewMesh.Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16));
+                int dy = 0;
+                foreach (var line in previewText)
+                {
+                    Rectangle previewBounds;
+                    var previewMesh = Gui.Mesh.CreateStringMesh(line.Key, font, new Vector2(1, 1), out previewBounds);
+                    stringMeshes.Add(previewMesh.Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(line.Value.ToVector4()));
+                    dy += previewBounds.Height;
+                }
 
                 KeyMesh = Gui.Mesh.Merge(stringMeshes.ToArray());
                 var thinBorder = Root.GetTileSheet("border-thin");
