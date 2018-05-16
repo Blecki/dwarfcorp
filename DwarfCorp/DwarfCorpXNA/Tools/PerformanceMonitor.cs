@@ -51,6 +51,7 @@ namespace DwarfCorp
 
                 var output = DwarfGame.GetConsoleTile("PERFORMANCE");
                 output.Lines.Clear();
+                var FPS = 0;
 
                 if (FPSWatch == null)
                     FPSWatch = Stopwatch.StartNew();
@@ -58,6 +59,7 @@ namespace DwarfCorp
                 {
                     FPSWatch.Stop();
                     output.Lines.Add(String.Format("Frame time: {0:000.000}", FPSWatch.Elapsed.TotalMilliseconds));
+                    FPS = (int)Math.Floor(1.0f / (float)FPSWatch.Elapsed.TotalSeconds);
                     FPSWatch = Stopwatch.StartNew();
                 }
 
@@ -65,6 +67,26 @@ namespace DwarfCorp
                     output.Lines.Add(String.Format("{1:0000} {2:000} {0}\n", function.Value.Name, function.Value.FrameCalls, function.Value.FrameTicks / 1000));
 
                 output.Invalidate();
+
+                var fps = DwarfGame.GetConsoleTile("FPS");
+                if (fps.Children[0] is Gui.Widgets.TextGrid)
+                {
+                    fps.RemoveChild(fps.Children[0]);
+                    fps.AddChild(new Gui.Widgets.Graph()
+                    {
+                        AutoLayout = AutoLayout.DockFill,
+                    });
+
+                    fps.Layout();
+                }
+
+                var graph = fps.Children[0] as Gui.Widgets.Graph;
+                graph.Values.Add((float)FPSWatch.Elapsed.TotalMilliseconds);
+                while (graph.Values.Count > graph.GraphWidth)
+                    graph.Values.RemoveAt(0);
+                graph.MinLabelString = String.Format("** FPS: {0:000} **", FPS);
+
+                graph.Invalidate();
             }
         }
 
