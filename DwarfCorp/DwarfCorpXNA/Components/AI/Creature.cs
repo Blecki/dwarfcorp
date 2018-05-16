@@ -91,7 +91,8 @@ namespace DwarfCorp
         public string Species = "";
         public string BabyType = "";
         public ResourceType BaseMeatResource = ResourceType.Meat;
-
+        private bool _lastIsCloaked = false;
+        public bool IsCloaked = false;
         public Pregnancy CurrentPregnancy = null;
 
         public Creature()
@@ -365,6 +366,25 @@ namespace DwarfCorp
             }
 
             if (!Active) return;
+
+            if (IsCloaked != _lastIsCloaked)
+            {
+                foreach (var tinter in Physics.EnumerateAll().OfType<Tinter>())
+                {
+                    tinter.Stipple = IsCloaked;
+                }
+                _lastIsCloaked = IsCloaked;
+            }
+
+            if (IsCloaked)
+            {
+                Sensors.Active = false;
+            }
+            else
+            {
+                Sensors.Active = true;
+            }
+
             DrawLifeTimer.Update(gameTime);
 
             if (!DrawLifeTimer.HasTriggered)
@@ -796,6 +816,7 @@ namespace DwarfCorp
         /// </summary>
         public override float Damage(float amount, DamageType type = DamageType.Normal)
         {
+            IsCloaked = false;
             float damage = base.Damage(amount, type);
 
             string prefix = damage > 0 ? "-" : "+";

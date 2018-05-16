@@ -62,6 +62,7 @@ namespace DwarfCorp
         public DesignationDrawer Designations;
         public SpellTree Spells;
         public TaskManager Tasks;
+        public Embarkment InitialEmbark;
 
         public static PlayData CreateFromWorld(WorldManager World)
         {
@@ -76,7 +77,8 @@ namespace DwarfCorp
                 Resources = ResourceLibrary.Resources,
                 Designations = World.DesignationDrawer,
                 Spells = World.Master.Spells,
-                Tasks = World.Master.TaskManager
+                Tasks = World.Master.TaskManager,
+                InitialEmbark = World.InitialEmbark
             };
         }
 

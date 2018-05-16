@@ -54,6 +54,21 @@ namespace DwarfCorp
         public BillboardPrimitive Primitive = null;
         public bool InstancingPossible { get; private set; }
 
+        public Animation GetCurrentAnimation()
+        {
+            return CurrentAnimation;
+        }
+
+        public Vector2 GetCurrentFrameSize()
+        {
+            if (CurrentAnimation == null || CurrentAnimation.SpriteSheet == null || CurrentAnimation.SpriteSheet.FrameWidth == 0)
+            {
+                return Vector2.One;
+            }
+
+            return new Vector2(CurrentAnimation.SpriteSheet.FrameWidth / 32.0f, CurrentAnimation.SpriteSheet.FrameHeight / 32.0f);
+        }
+
         public AnimationPlayer() { }
 
         public AnimationPlayer(Animation Animation)
@@ -188,6 +203,8 @@ namespace DwarfCorp
 
         public void UpdateInstance(NewInstanceData InstanceData)
         {
+            if (CurrentAnimation == null || CurrentAnimation.Frames.Count <= CurrentFrame)
+                return;
             var sheet = CurrentAnimation.SpriteSheet;
             var frame = CurrentFrame < CurrentAnimation.Frames.Count ? CurrentAnimation.Frames[CurrentFrame] : Point.Zero;
             InstanceData.SpriteBounds = new Rectangle(sheet.FrameWidth * frame.X, sheet.FrameHeight * frame.Y, sheet.FrameWidth, sheet.FrameHeight);

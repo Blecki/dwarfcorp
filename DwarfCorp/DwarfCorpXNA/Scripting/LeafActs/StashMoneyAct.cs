@@ -90,6 +90,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
+            Creature.IsCloaked = false;
             if (Zone == null)
             {
                 yield return Act.Status.Fail;

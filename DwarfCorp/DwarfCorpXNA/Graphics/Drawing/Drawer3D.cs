@@ -43,6 +43,7 @@ namespace DwarfCorp
     // This is a cached alternative to Drawer3D for drawings that are expects to remain around for a long time.
     public class TriangleCache : IDisposable
     {
+        public const int MaxVertexSpace = 4096 * 16;
         public int MaxTriangles = 2048;
         public int VertexCount = 0;
         private ThickLineVertex[] Verticies;
@@ -128,6 +129,11 @@ namespace DwarfCorp
 
         private uint AddSegment(int count)
         {
+            if (VertexCount >= MaxVertexSpace)
+            {
+                return 0;
+            }
+
             TriangleSegment newSegment = new TriangleSegment
             {
                 ID = MaxSegment,
@@ -148,7 +154,13 @@ namespace DwarfCorp
         // Adds a bounding box to the vertex cache, and returns the index of the segment it belongs to.
         public uint AddTopBox(BoundingBox box, Color color, float thickness, bool warp)
         {
-            if (VertexCount + (int)Drawer3D.PrimitiveVertexCounts.TopBox >= MaxTriangles * 3)
+            if (VertexCount >= MaxVertexSpace)
+            {
+                return 0;
+            }
+
+            int numVertex = VertexCount + (int)Drawer3D.PrimitiveVertexCounts.TopBox;
+            if (numVertex >= MaxTriangles * 3)
             {
                 Grow();
             }
@@ -159,6 +171,11 @@ namespace DwarfCorp
 
         public uint AddBox(BoundingBox box, Color color, float thickness, bool warp)
         {
+            if (VertexCount >= MaxVertexSpace)
+            {
+                return 0;
+            }
+
             if (VertexCount + (int)Drawer3D.PrimitiveVertexCounts.Box >= MaxTriangles * 3)
             {
                 Grow();

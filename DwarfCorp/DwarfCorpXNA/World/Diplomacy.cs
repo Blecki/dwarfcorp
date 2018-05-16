@@ -59,8 +59,6 @@ namespace DwarfCorp
             public bool HasMet { get; set; }
             public bool WasAtWar { get; set; }
             public TimeSpan DistanceToCapital { get; set; }
-            public DateTimer WarPartyTimer { get; set; }
-            public DateTimer TradePartyTimer { get; set; }
 
             public Politics()
             {
@@ -72,31 +70,6 @@ namespace DwarfCorp
                 DistanceToCapital = distanceToCapital;
                 WasAtWar = false;
                 HasMet = false;
-                WarPartyTimer = new DateTimer(currentDate, DistanceToCapital)
-                {
-                    TriggerOnce = true
-                };
-
-                TradePartyTimer = new DateTimer(currentDate, DistanceToCapital)
-                {
-                    TriggerOnce = true
-                };
-            }
-
-            public void DispatchNewTradeEnvoy(DateTime currentDate)
-            {
-                TradePartyTimer = new DateTimer(currentDate, DistanceToCapital)
-                {
-                    TriggerOnce = true
-                };
-            }
-
-            public void DispatchNewWarParty(DateTime currentDate)
-            {
-                WarPartyTimer = new DateTimer(currentDate, DistanceToCapital)
-                {
-                    TriggerOnce = true
-                };
             }
 
             public Relationship GetCurrentRelationship()
@@ -153,11 +126,6 @@ namespace DwarfCorp
             World = ((WorldManager)ctx.Context);
         }
 
-        private TradeEnvoy CurrentTradeEnvoy = null;
-        private WarParty CurrentWarParty = null;
-        public DateTime TimeOfLastTrade = new DateTime();
-        public string LastTradeEmpire = "";
-
         public Diplomacy()
         {
             
@@ -167,7 +135,6 @@ namespace DwarfCorp
         {
             World = world;
             FactionPolitics = new PoliticsDictionary();
-            TimeOfLastTrade = world.Time.CurrentDate;
         }
 
         public Politics GetPolitics(Faction factionA, Faction factionB)
@@ -218,8 +185,6 @@ namespace DwarfCorp
                         HasMet = false,
                         RecentEvents = new List<PoliticalEvent>(),
                     };
-
-                    politics.DispatchNewTradeEnvoy(Now);
 
                     if (faction.Value.Race == New.Race)
                     {
@@ -375,16 +340,9 @@ namespace DwarfCorp
                     if (envoy.Creatures.Count > 0)
                     {
                         envoy.Creatures.First().ZoomToMe();
+                        World.MakeWorldPopup(String.Format("Traders from {0} ({1}) have entered our territory. They will try to get to our balloon port to trade with us.", natives.Name, natives.Race.Name),
+                            envoy.Creatures.First().Physics, -10);
                     }
-                    gui.ShowModalPopup(gui.ConstructWidget(new Gui.Widgets.Popup
-                    {
-                        Text = String.Format("Traders from {0} ({1}) have entered our territory. They will try to get to our balloon port to trade with us.", natives.Name, natives.Race.Name),
-                        OkayText = "Okay!",
-                        OnClose = (widget) =>
-                        {
-                            sender.Keep = false;
-                        }
-                    }));
                 },
                 ShouldKeep = () =>
                 {
@@ -404,12 +362,11 @@ namespace DwarfCorp
 
         public WarParty SendWarParty(Faction natives)
         {
-           
             natives.World.Tutorial("war");
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
             Politics politics = GetPolitics(natives, natives.World.PlayerFaction);
             politics.WasAtWar = true;
-            List<CreatureAI> creatures = natives.World.MonsterSpawner.Spawn(natives.World.MonsterSpawner.GenerateSpawnEvent(natives, natives.World.PlayerFaction, MathFunctions.Random.Next(5) + 1, false));
+            List<CreatureAI> creatures = natives.World.MonsterSpawner.Spawn(natives.World.MonsterSpawner.GenerateSpawnEvent(natives, natives.World.PlayerFaction, MathFunctions.Random.Next(World.InitialEmbark.Difficulty) + 1, false));
             var party = new WarParty(natives.World.Time.CurrentDate)
             {
                 Creatures = creatures,
@@ -427,16 +384,8 @@ namespace DwarfCorp
                     if (party.Creatures.Count > 0)
                     {
                         party.Creatures.First().ZoomToMe();
+                        World.MakeWorldPopup(String.Format("Warriors from {0} ({1}) have entered our territory. They will prepare for a while and then attack us.", natives.Name, natives.Race.Name), party.Creatures.First().Physics, -10);
                     }
-                    gui.ShowModalPopup(gui.ConstructWidget(new Gui.Widgets.Popup
-                    {
-                        Text = String.Format("Warriors from {0} ({1}) have entered our territory. They will prepare for a while and then attack us.", natives.Name, natives.Race.Name),
-                        OkayText = "OK.",
-                        OnClose = (widget) =>
-                        {
-                            sender.Keep = false;
-                        }
-                    }));
                 },
                 ShouldKeep = () =>
                 {
@@ -464,88 +413,20 @@ namespace DwarfCorp
 #if UPTIME_TEST
             return;
 #endif
-            var timeSinceLastTrade = world.Time.CurrentDate  - TimeOfLastTrade;
+
+            foreach (var faction in Factions.Factions)
+            {
+                UpdateTradeEnvoys(faction.Value);
+                UpdateWarParties(faction.Value);
+            }
+
             foreach (var mypolitics in FactionPolitics)
             {
                 Pair<string> pair = mypolitics.Key;
                 if (!pair.IsSelfPair() && pair.Contains(world.PlayerFaction.Name))
                 {
-                   
-                    Faction otherFaction = null;
-
-                    otherFaction = pair.First.Equals(world.PlayerFaction.Name) ? Factions.Factions[pair.Second] : Factions.Factions[pair.First];
-                    UpdateTradeEnvoys(otherFaction);
-                    UpdateWarParties(otherFaction);
-                    Politics relation = mypolitics.Value;
-
-                    bool needsNewTradeEnvoy = true;
-
-                    if (CurrentTradeEnvoy != null)
-                    {
-                        needsNewTradeEnvoy = CurrentTradeEnvoy.Creatures.Count == 0 || 
-                            CurrentTradeEnvoy.Creatures.All(creature => creature.IsDead);
-                    }
-
-                    if (needsNewTradeEnvoy)
-                    {
-                        CurrentTradeEnvoy = null;
-                    }
-
-                    bool needsNewWarparty = true;
-
-                    if (CurrentWarParty != null)
-                    {
-                        needsNewWarparty = CurrentWarParty.Creatures.Count == 0 ||
-                            CurrentWarParty.Creatures.All(creature => creature.IsDead);
-                    }
-
-                    if (needsNewWarparty)
-                    {
-                        CurrentWarParty = null;
-                    }
-                   
-
-                    if (needsNewTradeEnvoy && otherFaction.Race.IsIntelligent  && !otherFaction.IsRaceFaction && 
-                        relation.GetCurrentRelationship() != Relationship.Hateful)
-                    {
-                        if (otherFaction.TradeEnvoys.Count == 0)
-                        {
-                            relation.TradePartyTimer.Update(currentDate);
-
-                            if (relation.TradePartyTimer.HasTriggered && timeSinceLastTrade.TotalDays > 1.0 && LastTradeEmpire != otherFaction.Name)
-                            {
-                                relation.TradePartyTimer.Reset(World.Time.CurrentDate);
-                                CurrentTradeEnvoy = SendTradeEnvoy(otherFaction, world);
-                                TimeOfLastTrade = world.Time.CurrentDate;
-                                LastTradeEmpire = otherFaction.Name;
-                            }
-                        }
-                        else if (otherFaction.TradeEnvoys.Count == 0)
-                        {
-                            relation.DispatchNewTradeEnvoy(world.Time.CurrentDate);
-                        }
-
-                    }
-                    else if (needsNewWarparty &&
-                             otherFaction.Race.IsIntelligent && !otherFaction.IsRaceFaction &&
-                             relation.GetCurrentRelationship() == Relationship.Hateful)
-                    {
-                        if (otherFaction.WarParties.Count == 0 && !relation.WarPartyTimer.HasTriggered)
-                        {
-                            relation.WarPartyTimer.Update(currentDate);
-
-                            if (relation.WarPartyTimer.HasTriggered)
-                            {
-                                CurrentWarParty = SendWarParty(otherFaction);
-                            }
-                        }
-                        else if (otherFaction.WarParties.Count == 0)
-                        {
-                            relation.DispatchNewWarParty(world.Time.CurrentDate);
-                        }
-                    }
+                    mypolitics.Value.UpdateEvents(currentDate);
                 }
-                mypolitics.Value.UpdateEvents(currentDate);
             }
         }
 
@@ -648,7 +529,10 @@ namespace DwarfCorp
 
                         if (tradePort == null)
                         {
-                            World.MakeAnnouncement("We need a balloon trade port to trade.");
+                            World.MakeAnnouncement("We need a balloon trade port to trade.", null, () =>
+                            {
+                                return envoy.OtherFaction.GetNearestRoomOfType(BalloonPort.BalloonPortName, creature.Position) == null;
+                            });
                             World.Tutorial("trade");
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                             RecallEnvoy(envoy);
@@ -663,25 +547,10 @@ namespace DwarfCorp
 
                         if (!tradePort.IsRestingOnZone(creature.Position)) continue;
 
-                        if (envoy.ExpiditionState != Expedition.State.Trading)
+                        if (envoy.ExpiditionState != Expedition.State.Trading ||
+                            !envoy.IsTradeWidgetValid())
                         {
-                            var traders = envoy;
-                            World.MakeAnnouncement(new DwarfCorp.Gui.Widgets.QueuedAnnouncement
-                            {
-                                Text = String.Format("Click here to trade with the {0}!", envoy.OwnerFaction.Race.Name),
-                                ClickAction = (gui, sender) =>
-                                {
-                                    World.Paused = true;
-                                    GameState.Game.StateManager.PushState(new Dialogue.DialogueState(
-                                        GameState.Game,
-                                        GameState.Game.StateManager,
-                                        envoy,
-                                        World.PlayerFaction,
-                                        World));
-                                },
-                                ShouldKeep = () => { return traders.ExpiditionState == Expedition.State.Trading && !traders.ShouldRemove; }
-                            });
-                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
+                            envoy.MakeTradeWidget(World);
                         }
                         envoy.ExpiditionState = Expedition.State.Trading;
                         break;
@@ -707,7 +576,13 @@ namespace DwarfCorp
                         }
                     }
                 }
-
+                else
+                {
+                    if (!envoy.IsTradeWidgetValid())
+                    {
+                        envoy.MakeTradeWidget(World);
+                    }
+                }
                 if (envoy.Creatures.All(creature => creature.IsDead))
                 {
                     envoy.ShouldRemove = true;

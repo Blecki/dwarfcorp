@@ -11,6 +11,7 @@ namespace DwarfCorp.Goals
         private List<Goal> ActiveGoals = new List<Goal>();
         private List<GameEvent> Events = new List<GameEvent>();
         private List<Goal> NewlyActivatedGoals = new List<Goal>();
+        public EventScheduler EventScheduler = new EventScheduler();
 
         public int NewAvailableGoals { get; private set; }
         public int NewCompletedGoals { get; private set; }
@@ -92,6 +93,7 @@ namespace DwarfCorp.Goals
             ActiveGoals.RemoveAll(g => g.State != GoalState.Active);
             ActiveGoals.AddRange(NewlyActivatedGoals);
             NewlyActivatedGoals.Clear();
+            EventScheduler.Update(World, World.Time.CurrentDate);
         }
                
         public Goal.ActivationResult TryActivateGoal(WorldManager World, Goal Goal)

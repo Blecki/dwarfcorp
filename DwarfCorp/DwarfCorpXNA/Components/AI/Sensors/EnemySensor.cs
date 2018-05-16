@@ -109,7 +109,8 @@ namespace DwarfCorp
                     Relationship.Hateful) continue;
 
                 if (!minion.Active) continue;
-
+                // TODO add small chance of detecting a cloaked creature.
+                if (minion.Creature.IsCloaked) continue;
 
                 float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
                 

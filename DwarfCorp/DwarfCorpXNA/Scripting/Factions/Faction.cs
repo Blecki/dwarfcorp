@@ -281,7 +281,6 @@ namespace DwarfCorp
         {
             if (!V.IsValid)
                 return;
-
             RoomBuilder.OnVoxelDestroyed(V);
 
             var toRemove = new List<Stockpile>();
@@ -895,7 +894,15 @@ namespace DwarfCorp
             }
             if (amountRemaining > 0 && RoomBuilder.DesignatedRooms.Count > 0)
             {
-                World.MakeAnnouncement("We need more treasuries!");
+                World.MakeAnnouncement("We need more treasuries!", null, () => 
+                {
+                    DwarfBux remainingSpace = 0;
+                    foreach(var treasury in Treasurys)
+                    {
+                        remainingSpace += treasury.Money - treasury.Voxels.Count * Treasury.MoneyPerPile;
+                    }
+                    return remainingSpace > 0;
+                });
                 // Generate a number of coin piles.
                 for (DwarfBux total = 0m; total < amountRemaining; total += 1024m)
                 {

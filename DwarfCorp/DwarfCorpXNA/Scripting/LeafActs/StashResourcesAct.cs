@@ -59,6 +59,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
+            Creature.IsCloaked = false;
             if (Faction == null)
             {
                 Faction = Agent.Faction;

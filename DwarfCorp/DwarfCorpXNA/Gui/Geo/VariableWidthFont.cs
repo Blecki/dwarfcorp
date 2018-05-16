@@ -120,6 +120,11 @@ namespace DwarfCorp.Gui
             return Index >= 0 && Index < Glyphs.Count;
         }
 
+        public Point MeasureString(String S, float maxWidth)
+        {
+            return MeasureString(WordWrapString(S, 1.0f, maxWidth));
+        }
+
         public Point MeasureString(String S)
         {
             var size = new Point(0, TileHeight);

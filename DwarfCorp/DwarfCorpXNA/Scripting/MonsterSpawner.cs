@@ -143,11 +143,11 @@ namespace DwarfCorp
             }
         }
 
-        public SpawnEvent GenerateSpawnEvent(Faction spawnFaction, Faction targetFaction, int num, bool attack=true)
+        public static Vector3 GetRandomWorldEdge(WorldManager world)
         {
             float padding = 2.0f;
             int side = MathFunctions.Random.Next(4);
-            BoundingBox bounds = World.ChunkManager.Bounds;
+            BoundingBox bounds = world.ChunkManager.Bounds;
             Vector3 pos = Vector3.Zero;
             switch (side)
             {
@@ -164,7 +164,12 @@ namespace DwarfCorp
                     pos = new Vector3(MathFunctions.Rand(bounds.Min.X + padding, bounds.Max.X - padding), bounds.Max.Y - padding, bounds.Max.Z - padding);
                     break;
             }
+            return pos;
+        }
 
+        public SpawnEvent GenerateSpawnEvent(Faction spawnFaction, Faction targetFaction, int num, bool attack=true)
+        {
+            Vector3 pos = GetRandomWorldEdge(World);
             return new SpawnEvent()
             {
                 NumCreatures = num,
