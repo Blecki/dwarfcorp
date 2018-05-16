@@ -163,7 +163,7 @@ namespace DwarfCorp.GameStates
             }
             else
             {
-                stats.Append("Claimed by: ");
+                stats.Append("Claimed by:\n");
             }
             
             foreach (var faction in factions)
@@ -183,8 +183,7 @@ namespace DwarfCorp.GameStates
             stats.AppendLine("Biomes: ");
             foreach (var biome in biomes)
             {
-                stats.Append(BiomeLibrary.Biomes[biome].Name);
-                stats.Append(" ");
+                stats.AppendLine(BiomeLibrary.Biomes[biome].Name);
             }
             return stats.ToString();
         }

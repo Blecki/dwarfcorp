@@ -14,7 +14,7 @@ namespace DwarfCorp.GameStates
         private WorldGenerator Generator;
         private GraphicsDevice Device;
         public Gui.Widget PreviewPanel;
-
+        private string previewText = "";
         private bool UpdatePreview = false;
 
         public Texture2D PreviewTexture { get; private set; }
@@ -160,7 +160,7 @@ namespace DwarfCorp.GameStates
             }) as Gui.Widgets.ComboBox;
 
             PreviewSelector.SelectedIndex = 0;
-
+            
             PreviewPanel = AddChild(new Gui.Widget
             {
                 AutoLayout = Gui.AutoLayout.DockFill,
@@ -176,6 +176,8 @@ namespace DwarfCorp.GameStates
                         var worldSize = Generator.Settings.ColonySize.ToVector3() * chunkSize / Generator.Settings.WorldScale;
                         var clickPoint = ScreenToWorld(new Vector2(args.X, args.Y));
                         Generator.Settings.WorldGenerationOrigin = Generator.GetOrigin(clickPoint, worldSize);
+                        previewText = Generator.GetSpawnStats();
+                        UpdatePreview = true;
                     }
                 },
                 OnMouseMove = (sender, args) =>
@@ -450,7 +452,13 @@ namespace DwarfCorp.GameStates
                         .Colorize(color.Value.ToVector4()));
                     y += bounds.Height;
                 }
-
+                if (previewText == "")
+                {
+                    previewText = Generator.GetSpawnStats();
+                }
+                Rectangle previewBounds;
+                var previewMesh = Gui.Mesh.CreateStringMesh(previewText, font, new Vector2(1, 1), out previewBounds);
+                stringMeshes.Add(previewMesh.Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16));
 
                 KeyMesh = Gui.Mesh.Merge(stringMeshes.ToArray());
                 var thinBorder = Root.GetTileSheet("border-thin");
