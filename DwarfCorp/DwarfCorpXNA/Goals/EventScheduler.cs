@@ -60,6 +60,7 @@ namespace DwarfCorp.Goals
 
     public class ScheduledEvent
     {
+        public int Likelihood = 1;
         public string Name;
         public float Difficulty = 0.0f;
         public enum TimeRestriction
@@ -69,16 +70,36 @@ namespace DwarfCorp.Goals
             OnlyNightTime,
         }
         public TimeRestriction AllowedTime = TimeRestriction.All;
-        public enum FactionFilter
+        public enum FactionHostilityFilter
         {
-            None,
-            RandomHostile,
-            RandomAlly,
-            RandomNeutral,
-            Random,
-            RandomNonHostile,
+            Any,
+            Hostile,
+            Neutral,
+            Ally,
+            NotHostile,
+            NotAlly
+        }
+
+        public enum FactionClaimFilter
+        {
+            Any,
+            ClaimsTerritory,
+            DoesNotClaimTerritory
+        }
+
+        public enum FactionSpecification
+        {
             Specific,
-            Player
+            Random,
+            Player,
+            Motherland,
+        }
+
+        public struct FactionFilter
+        {
+            public FactionHostilityFilter Hostility;
+            public FactionSpecification Specification;
+            public FactionClaimFilter Claim;
         }
 
         public enum EntitySpawnLocation
@@ -141,43 +162,82 @@ namespace DwarfCorp.Goals
             }
         }
 
+
+        private bool CanSpawnFaction(WorldManager world, Faction faction, string EntityFaction, FactionFilter filter)
+        {
+            switch (filter.Specification)
+            {
+                case FactionSpecification.Motherland:
+                    return faction.IsMotherland;
+
+                case FactionSpecification.Player:
+                    return faction == world.PlayerFaction;
+
+                case FactionSpecification.Random:
+                    switch (filter.Claim)
+                    {
+                        case FactionClaimFilter.ClaimsTerritory:
+                            if (!faction.ClaimsColony)
+                            {
+                                return false;
+                            }
+                            break;
+                        case FactionClaimFilter.DoesNotClaimTerritory:
+                            if (faction.ClaimsColony)
+                            {
+                                return false;
+                            }
+                            break;
+                        case FactionClaimFilter.Any:
+                            break;
+                    }
+                    var relationship = world.Diplomacy.GetPolitics(faction, world.PlayerFaction).GetCurrentRelationship();
+                    switch (filter.Hostility)
+                    {
+                        case FactionHostilityFilter.Ally:
+                            return relationship == Relationship.Loving;
+                        case FactionHostilityFilter.Neutral:
+                            return relationship == Relationship.Indifferent;
+                        case FactionHostilityFilter.Hostile:
+                            return relationship == Relationship.Hateful;
+                        case FactionHostilityFilter.NotHostile:
+                            return relationship != Relationship.Hateful;
+                        case FactionHostilityFilter.NotAlly:
+                            return relationship != Relationship.Loving;
+                        case FactionHostilityFilter.Any:
+                            return true;
+                    }
+                    return true;
+
+                case FactionSpecification.Specific:
+                    return faction.Name == EntityFaction;
+            }
+            return false;
+        }
+
         public string GetFaction(WorldManager world, string EntityFaction, FactionFilter EntityFactionFilter)
         {
-            string faction = EntityFaction;
-            switch (EntityFactionFilter)
-            {
-                case FactionFilter.None:
-                case FactionFilter.Specific:
-                    break;
-                case FactionFilter.Random:
-                    faction = Datastructures.SelectRandom(world.Factions.Factions.Where(f => f.Value.Race.IsIntelligent && !f.Value.IsRaceFaction && f.Value != world.PlayerFaction)).Value.Name;
-                    break;
-                case FactionFilter.RandomAlly:
-                    faction = Datastructures.SelectRandom(world.Factions.Factions.Where(f => f.Value.Race.IsIntelligent &&
-                        f.Value != world.PlayerFaction &&
-                        world.Diplomacy.GetPolitics(f.Value, world.PlayerFaction).GetCurrentRelationship() == Relationship.Loving)).Value.Name;
-                    break;
-                case FactionFilter.RandomHostile:
-                    faction = Datastructures.SelectRandom(world.Factions.Factions.Where(f => f.Value.Race.IsIntelligent && !f.Value.IsRaceFaction &&
-                                                                                        f.Value != world.PlayerFaction &&
-                                                                                        world.Diplomacy.GetPolitics(f.Value, world.PlayerFaction).GetCurrentRelationship() == Relationship.Hateful)).Value.Name;
-                    break;
-                case FactionFilter.RandomNeutral:
-                    faction = Datastructures.SelectRandom(world.Factions.Factions.Where(f => f.Value.Race.IsIntelligent && !f.Value.IsRaceFaction &&
-                                                                f.Value != world.PlayerFaction &&
-                                                                world.Diplomacy.GetPolitics(f.Value, world.PlayerFaction).GetCurrentRelationship() == Relationship.Indifferent)).Value.Name;
-                    break;
+            var factions = world.Factions.Factions.Where(f => f.Value.Race.IsIntelligent && !f.Value.IsRaceFaction &&
+                CanSpawnFaction(world, f.Value, EntityFaction, EntityFactionFilter)).Select(f => f.Value).ToList();
+            factions.Sort((f1, f2) => f1.DistanceToCapital.CompareTo(f2.DistanceToCapital));
 
-                case FactionFilter.RandomNonHostile:
-                    faction = Datastructures.SelectRandom(world.Factions.Factions.Where(f => f.Value.Race.IsIntelligent && !f.Value.IsRaceFaction &&
-                                                                f.Value != world.PlayerFaction &&
-                                                                world.Diplomacy.GetPolitics(f.Value, world.PlayerFaction).GetCurrentRelationship() != Relationship.Hateful)).Value.Name;
-                    break;
-                case FactionFilter.Player:
-                    return world.PlayerFaction.Name;
+            if (factions.Count == 0)
+                return EntityFaction;
+
+            float sumDistance = factions.Sum(f => 1.0f / (f.DistanceToCapital + 1.0f));
+            float randPick = MathFunctions.Rand(0, sumDistance);
+
+            float dist = 0;
+            foreach(var faction in factions)
+            {
+                dist += 1.0f / (1.0f + faction.DistanceToCapital);
+                if (randPick < dist)
+                {
+                    return faction.Name;
+                }
             }
 
-            return faction;
+            return EntityFaction;
         }
 
         public Microsoft.Xna.Framework.Vector3 GetSpawnLocation(WorldManager world, EntitySpawnLocation SpawnLocation)
@@ -378,7 +438,12 @@ namespace DwarfCorp.Goals
                 {
                     Name = "Send Trade Envoy",
                     Difficulty = -10,
-                    PartyFactionFilter = ScheduledEvent.FactionFilter.RandomNonHostile,
+                    Likelihood = 5,
+                    PartyFactionFilter = new ScheduledEvent.FactionFilter()
+                    {
+                        Specification = ScheduledEvent.FactionSpecification.Random,
+                        Hostility = ScheduledEvent.FactionHostilityFilter.NotHostile
+                    },
                     CooldownHours = 8,
                     AllowedTime = ScheduledEvent.TimeRestriction.OnlyDayTime
                 },
@@ -386,8 +451,14 @@ namespace DwarfCorp.Goals
                 {
                     Name = "Demand Tribute",
                     Difficulty = 5,
+                    Likelihood = 3,
                     TributeDemanded = 100,
-                    PartyFactionFilter = ScheduledEvent.FactionFilter.RandomNeutral,
+                    PartyFactionFilter = new ScheduledEvent.FactionFilter()
+                    {
+                        Specification = ScheduledEvent.FactionSpecification.Random,
+                        Hostility = ScheduledEvent.FactionHostilityFilter.Neutral,
+                        Claim = ScheduledEvent.FactionClaimFilter.ClaimsTerritory
+                    },
                     CooldownHours = 8,
                     AllowedTime = ScheduledEvent.TimeRestriction.OnlyDayTime
                 },
@@ -395,7 +466,12 @@ namespace DwarfCorp.Goals
                 {
                     Name = "Send War Party",
                     Difficulty = 10,
-                    PartyFactionFilter = ScheduledEvent.FactionFilter.RandomHostile,
+                    Likelihood = 4,
+                    PartyFactionFilter = new ScheduledEvent.FactionFilter()
+                    {
+                        Specification = ScheduledEvent.FactionSpecification.Random,
+                        Hostility = ScheduledEvent.FactionHostilityFilter.Hostile
+                    },
                     CooldownHours = 8
                 },
                 new PlagueEvent()
@@ -491,16 +567,26 @@ namespace DwarfCorp.Goals
             bool foundEvent = false;
             var randomEvent = new ScheduledEvent();
             int iters = 0;
-            var filteredEvents = Forecast.Count == 0 ? Events.Events : Events.Events.Where(e => e.Name != Forecast.Last().Event.Name);
+            var filteredEvents = Forecast.Count == 0 ? Events.Events : Events.Events.Where(e => e.Name != Forecast.Last().Event.Name).ToList();
             while (!foundEvent && iters < 100)
             {
                 iters++;
-                randomEvent = Datastructures.SelectRandom(filteredEvents);
-                if (forecast + randomEvent.Difficulty > TargetDifficulty || forecast + randomEvent.Difficulty < 0)
+                float sumLikelihood = filteredEvents.Sum(ev => ev.Likelihood);
+                float randLikelihood = MathFunctions.Rand(0, sumLikelihood);
+                float p = 0;
+                foreach (var ev in filteredEvents)
                 {
-                    continue;
+                    if (forecast + ev.Difficulty > TargetDifficulty || forecast + ev.Difficulty < 0)
+                    {
+                        continue;
+                    }
+                    p += ev.Likelihood;
+                    if (randLikelihood < p)
+                    {
+                        randomEvent = ev;
+                        foundEvent = true;
+                    }
                 }
-                foundEvent = true;
             }
 
             if (!foundEvent)

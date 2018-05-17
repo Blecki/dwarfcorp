@@ -82,7 +82,8 @@ namespace DwarfCorp
                     Name = "The Motherland",
                     Race = RaceLibrary.FindRace("Dwarf"),
                     IsRaceFaction = false,
-                    TradeMoney = 10000
+                    TradeMoney = 10000,
+                    IsMotherland = true
                 };
             }
 
@@ -164,7 +165,9 @@ namespace DwarfCorp
                 Factions["Player"] = new Faction(world)
                 {
                     Name = "Player",
-                    Race = RaceLibrary.FindRace("Dwarf")
+                    Race = RaceLibrary.FindRace("Dwarf"),
+                    DistanceToCapital = 0,
+                    ClaimsColony = true
                 };
 
                 Factions["The Motherland"] = new Faction(world)
@@ -172,7 +175,10 @@ namespace DwarfCorp
                     Name = "The Motherland",
                     Race = RaceLibrary.FindRace("Dwarf"),
                     IsRaceFaction = false,
-                    TradeMoney = 10000
+                    TradeMoney = 10000,
+                    IsMotherland = true,
+                    DistanceToCapital = 500,
+                    ClaimsColony = true
                 };
 
                 Factions["Herbivore"] = new Faction(world)

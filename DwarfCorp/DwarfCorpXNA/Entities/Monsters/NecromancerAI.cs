@@ -198,8 +198,8 @@ namespace DwarfCorp
                     yield return Act.Status.Success;
                 }
                 SummonTimer.Update(DwarfTime.LastTime);
-                Creature.CurrentCharacterMode = CharacterMode.Attacking;
-                Creature.OverrideCharacterMode = true;
+                Creature.CurrentCharacterMode = CharacterMode.Idle;
+                Creature.OverrideCharacterMode = false;
                 if (WanderTimer.HasTriggered)
                 {
                     foreach (Act.Status status in wander.Run())

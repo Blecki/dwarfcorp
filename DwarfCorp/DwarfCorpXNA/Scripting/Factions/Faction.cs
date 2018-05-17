@@ -64,7 +64,10 @@ namespace DwarfCorp
         public Timer HandleThreatsTimer { get; set; }
         public DesignationSet Designations = new DesignationSet();
         public Dictionary<ulong, VoxelHandle> GuardedVoxels = new Dictionary<ulong, VoxelHandle>();
-        
+        public bool ClaimsColony = false;
+        public bool IsMotherland = false;
+        public float DistanceToCapital = 0.0f;
+
         // Todo: When converting to new save system, it can take care of this.
         [JsonProperty]
         private string _race;
