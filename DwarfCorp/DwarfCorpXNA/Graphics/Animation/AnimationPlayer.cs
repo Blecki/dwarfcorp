@@ -116,6 +116,8 @@ namespace DwarfCorp
                 if (CurrentFrame >= Animation.GetFrameCount())
                     CurrentFrame = Animation.GetFrameCount() - 1;
             }
+
+            OnAnimationChanged();
         }
 
         public void Play(Animation Animation)
@@ -125,6 +127,7 @@ namespace DwarfCorp
                 CurrentFrame = Animation.GetFrameCount() - 1;
             IsPlaying = true;
             IsLooping = Animation.Loops;
+            OnAnimationChanged();
         }
 
         public void Play()
@@ -186,12 +189,24 @@ namespace DwarfCorp
                 InstancingPossible = true;
         }
 
+        private void OnAnimationChanged()
+        {
+            if (InstancingPossible && !CurrentAnimation.CanUseInstancing)
+            {
+                if (Primitive == null)
+                    Primitive = new BillboardPrimitive();
+                if (CurrentAnimation != null)
+                    CurrentAnimation.UpdatePrimitive(Primitive, CurrentFrame);
+                InstancingPossible = false;
+            }
+        }
+
         public void UpdateInstance(NewInstanceData InstanceData)
         {
             if (CurrentAnimation == null || CurrentAnimation.Frames.Count <= CurrentFrame)
                 return;
             var sheet = CurrentAnimation.SpriteSheet;
-            var frame = CurrentAnimation.Frames[CurrentFrame];
+            var frame = CurrentFrame < CurrentAnimation.Frames.Count ? CurrentAnimation.Frames[CurrentFrame] : Point.Zero;
             InstanceData.SpriteBounds = new Rectangle(sheet.FrameWidth * frame.X, sheet.FrameHeight * frame.Y, sheet.FrameWidth, sheet.FrameHeight);
             InstanceData.TextureAsset = sheet.AssetName;
         }
