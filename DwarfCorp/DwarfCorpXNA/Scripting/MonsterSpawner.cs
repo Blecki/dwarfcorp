@@ -55,7 +55,7 @@ namespace DwarfCorp
         public List<Faction> SpawnFactions = new List<Faction>();
  
         public WorldManager World { get; set; }
-        public Timer MigrationTimer = new Timer(1200, false);
+        public Timer MigrationTimer = new Timer(120, false);
 
         public MonsterSpawner(WorldManager world)
         {
