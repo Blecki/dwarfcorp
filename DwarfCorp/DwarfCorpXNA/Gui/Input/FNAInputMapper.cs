@@ -20,10 +20,16 @@ namespace DwarfCorp.Gui.Input
         public List<QueuedInput> Queued = new List<QueuedInput>();
         private MouseState OldMouseState = Mouse.GetState();
         private KeyboardState OldKeyboardState = Keyboard.GetState();
-        
+
+        private bool ConsoleTogglePressed = false;
+
         public bool WasConsoleTogglePressed()
         {
-            // TODO
+            if (ConsoleTogglePressed)
+            {
+                ConsoleTogglePressed = false;
+                return true;
+            }
             return false;
         }
 
@@ -153,17 +159,23 @@ namespace DwarfCorp.Gui.Input
 
             foreach (var key in OldKeyboardState.GetPressedKeys())
                 if (!newKeyboardState.IsKeyDown(key))
+                {
                     r.Add(new QueuedInput
+                    {
+                        Message = InputEvents.KeyUp,
+                        Args = new InputEventArgs
                         {
-                            Message = InputEvents.KeyUp,
-                            Args = new InputEventArgs
-                            {
-                                KeyValue = (int)key,
-                                Alt = newKeyboardState.IsKeyDown(Keys.LeftAlt) || newKeyboardState.IsKeyDown(Keys.RightAlt),
-                                Shift = newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift),
-                                Control = newKeyboardState.IsKeyDown(Keys.LeftControl) || newKeyboardState.IsKeyDown(Keys.RightControl)
-                            }
-                        });
+                            KeyValue = (int)key,
+                            Alt = newKeyboardState.IsKeyDown(Keys.LeftAlt) || newKeyboardState.IsKeyDown(Keys.RightAlt),
+                            Shift = newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift),
+                            Control = newKeyboardState.IsKeyDown(Keys.LeftControl) || newKeyboardState.IsKeyDown(Keys.RightControl)
+                        }
+                    });
+                    if (key == Keys.OemTilde)
+                    {
+                        ConsoleTogglePressed = true;
+                    }
+                }
 
             OldKeyboardState = newKeyboardState;
             
