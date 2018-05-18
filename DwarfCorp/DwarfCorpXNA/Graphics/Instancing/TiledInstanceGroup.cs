@@ -106,7 +106,7 @@ namespace DwarfCorp
         {
             if (InstanceCount == 0) return;
 
-            if (NeedsRendered || (AtlasTexture != null && AtlasTexture.IsDisposed))
+            if (NeedsRendered || (AtlasTexture != null && (AtlasTexture.IsDisposed || AtlasTexture.GraphicsDevice.IsDisposed)))
             {
                 if (RawAtlas == null || RawAtlas.Textures.Count == 0)
                 {
@@ -147,7 +147,9 @@ namespace DwarfCorp
             Effect.EnableLighting = true;
             Effect.VertexColorTint = Color.White;
 
-            if (RenderData.Model.VertexBuffer == null || RenderData.Model.IndexBuffer == null)
+            if (RenderData.Model.VertexBuffer == null || RenderData.Model.IndexBuffer == null || 
+                (RenderData.Model.VertexBuffer != null && RenderData.Model.VertexBuffer.IsContentLost) ||
+                (RenderData.Model.IndexBuffer != null && RenderData.Model.IndexBuffer.IsContentLost))
                 RenderData.Model.ResetBuffer(Device);
 
             Device.Indices = RenderData.Model.IndexBuffer;

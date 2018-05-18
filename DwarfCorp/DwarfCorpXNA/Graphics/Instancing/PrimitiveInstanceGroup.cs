@@ -61,7 +61,9 @@ namespace DwarfCorp
             Effect.EnableLighting = true;
             Effect.VertexColorTint = Color.White;
 
-            if (RenderData.Model.VertexBuffer == null || RenderData.Model.IndexBuffer == null)
+            if (RenderData.Model.VertexBuffer == null || RenderData.Model.IndexBuffer == null ||
+                (RenderData.Model.VertexBuffer != null && RenderData.Model.VertexBuffer.IsContentLost) ||
+                (RenderData.Model.IndexBuffer != null && RenderData.Model.IndexBuffer.IsContentLost))
                 RenderData.Model.ResetBuffer(Device);
 
             bool hasIndex = RenderData.Model.IndexBuffer != null;

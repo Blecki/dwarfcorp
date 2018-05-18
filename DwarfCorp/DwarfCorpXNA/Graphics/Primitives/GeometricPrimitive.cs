@@ -134,14 +134,14 @@ namespace DwarfCorp
                 if (VertexBuffer != null && !VertexBuffer.IsDisposed)
                 {
                     VertexBuffer.Dispose();
-                    VertexBuffer = null;
                 }
+                VertexBuffer = null;
 
                 if (IndexBuffer != null && !IndexBuffer.IsDisposed)
                 {
                     IndexBuffer.Dispose();
-                    IndexBuffer = null;
                 }
+                IndexBuffer = null;
 
                 if (IndexCount <= 0 && Indexes != null)
                 {
