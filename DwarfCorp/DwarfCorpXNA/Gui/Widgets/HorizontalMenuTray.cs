@@ -14,6 +14,7 @@ namespace DwarfCorp.Gui.Widgets
             public Point ItemSize = new Point(90, 20);
             public Point SizeToGrid = new Point(1, 1);
             public int Columns = 1;
+            public bool AutoSizeColumns = false;
 
             public IEnumerable<Widget> ItemSource;
 
@@ -21,6 +22,12 @@ namespace DwarfCorp.Gui.Widgets
 
             public override void Construct()
             {
+                if (AutoSizeColumns)
+                {
+                    var numItems = ItemSource.Count();
+                    Columns = (int)(Math.Ceiling(((float)numItems * ItemSize.Y) / Root.RenderData.VirtualScreen.Height));
+                }
+
                 if (ItemSource != null)
                 {
                     SizeToGrid = new Point(Columns, (int)System.Math.Ceiling((float)ItemSource.Count() / (float)Columns));

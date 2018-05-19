@@ -19,6 +19,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
+            AutoSizeColumns = true;
             IsRootTray = true;
 
             ItemSource = new Gui.Widget[]
