@@ -169,6 +169,7 @@
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
+    <Compile Include="ConsoleCommandHandlerAttribute.cs" />
     <Compile Include="Entities\Fixtures\Conveyor.cs" />
     <Compile Include="Entities\Monsters\KoboldAI.cs" />
     <Compile Include="Entities\Monsters\GremlinAI.cs" />
@@ -240,6 +241,8 @@
     <Compile Include="Gui\Widgets\CancelToolOptions.cs" />
     <Compile Include="Gui\Widgets\DwarfConsole.cs" />
     <Compile Include="Gui\Widgets\AutoGridPanel.cs" />
+    <Compile Include="Gui\Widgets\CommandEntry.cs" />
+    <Compile Include="Gui\Widgets\Graph.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />

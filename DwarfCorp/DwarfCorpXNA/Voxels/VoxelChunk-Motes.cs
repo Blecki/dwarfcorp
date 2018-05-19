@@ -84,7 +84,7 @@ namespace DwarfCorp
 
         public void RebuildMoteLayer(int Y)
         {
-            MoteRecords[Y] = new List<NewInstanceData>();
+            var moteList = new List<NewInstanceData>();
             
             // Enumerate voxels.
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
@@ -141,10 +141,12 @@ namespace DwarfCorp
                             s,
                             moteDetail.Name);
 
-                        MoteRecords[Y].Add(mote);
+                        moteList.Add(mote);
                     }
                 }
             }
+
+            MoteRecords[Y] = moteList;
         }
     }
 }

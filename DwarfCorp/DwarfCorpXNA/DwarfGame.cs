@@ -428,15 +428,22 @@ namespace DwarfCorp
             {
 #endif
             if (GumInputMapper.WasConsoleTogglePressed())
+            {
                 ConsoleVisible = !ConsoleVisible;
+
+                if (ConsoleVisible)
+                {
+                    var commandPanel = GetConsoleTile("COMMAND");
+                    commandPanel.AddCommandEntry();
+                    ConsoleGui.SetFocus(commandPanel.Children[0]);
+                }
+            }
 
             if (ConsoleVisible)
             {
-                // Todo: Need some kind of global flag to turn off keyboard events when typing into a field.
-                //DwarfGame.GumInput.FireActions(ConsoleGui, (@event, args) =>
-                //{
-                //});
                 ConsoleGui.Update(time);
+                if (ConsoleGui.FocusItem != null)
+                    DwarfGame.GumInput.FireKeyboardActionsOnly(ConsoleGui);
             }
 
             PerformanceMonitor.BeginFrame();

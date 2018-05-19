@@ -161,5 +161,26 @@ namespace DwarfCorp
             }
             
         }
+
+        [ConsoleCommandHandler("SHOW")]
+        public static string ShowSetting(String Name)
+        {
+            var member = typeof(Settings).GetFields().FirstOrDefault(f => f.Name == Name);
+            if (member == null)
+                return "No such setting.";
+            var value = member.GetValue(Default);
+            if (value == null)
+                return "NULL";
+            return value.ToString();
+        }
+
+        [ConsoleCommandHandler("LIST")]
+        public static string ListSettings(String Name)
+        {
+            var builder = new StringBuilder();
+            foreach (var member in typeof(Settings).GetFields())
+                builder.AppendLine(member.Name);
+            return builder.ToString();
+        }
     }
 }

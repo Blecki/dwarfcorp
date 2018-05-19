@@ -88,5 +88,38 @@ namespace DwarfCorp
             }
             return r;
         }
+
+        private static Dictionary<String, Func<String, String>> CommandHandlers = null;
+
+        public static String HandleConsoleCommand(String Command)
+        {
+            if (CommandHandlers == null)
+            {
+                CommandHandlers = new Dictionary<string, Func<string, string>>();
+                foreach (var hook in AssetManager.EnumerateModHooks(typeof(ConsoleCommandHandlerAttribute), typeof(String), new Type[] { typeof(String) }))
+                {
+                    var lambdaCopy = hook;
+                    var attribute = hook.GetCustomAttributes(false).FirstOrDefault(a => a is ConsoleCommandHandlerAttribute) as ConsoleCommandHandlerAttribute;
+                    if (attribute == null) continue;
+                    CommandHandlers[attribute.Name.ToUpperInvariant()] = (s) => lambdaCopy.Invoke(null, new Object[] { s }) as String;
+                }
+            }
+
+            var commandWord = "";
+            var commandArgs = "";
+            var space = Command.IndexOf(' ');
+            if (space == -1)
+                commandWord = Command;
+            else
+            {
+                commandWord = Command.Substring(0, space);
+                commandArgs = Command.Substring(space + 1);
+            }
+
+            if (CommandHandlers.ContainsKey(commandWord.ToUpperInvariant()))
+                return CommandHandlers[commandWord.ToUpperInvariant()](commandArgs);
+            else
+                return "Unknown command.";
+        }
     }
 }

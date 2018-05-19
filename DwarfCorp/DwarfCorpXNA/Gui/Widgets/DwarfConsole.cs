@@ -19,8 +19,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             get
             {
-                var font = Root.GetTileSheet(Font);
-                return Rect.Height / (font.TileHeight * TextSize);
+                return TextGrid.TextHeight;
             }
         }
 
@@ -80,6 +79,9 @@ namespace DwarfCorp.Gui.Widgets
 
         protected override Gui.Mesh Redraw()
         {
+            if (TextGrid == null)
+                return base.Redraw();
+
             MessageLock.WaitOne();
             var i = 0;
             var y = 0;
@@ -110,6 +112,24 @@ namespace DwarfCorp.Gui.Widgets
             TextGrid.Invalidate();
 
             return base.Redraw();
+        }
+
+        public void AddCommandEntry()
+        {
+            if (Children.Count == 1)
+            {
+                var input = AddChild(new Gui.Widgets.CommandEntry
+                {
+                    AutoLayout = AutoLayout.DockBottom,
+                    MinimumSize = new Point(0, 32),
+                    Text = "",
+                    Border = "",
+                    TextSize = 2,
+                    Font = "monofont"
+                });
+                SendToBack(input);
+                Layout();
+            }
         }
     }
 }
