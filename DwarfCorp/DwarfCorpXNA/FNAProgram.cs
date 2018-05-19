@@ -68,8 +68,7 @@ namespace DwarfCorp
             {
                 var cwd = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
                 Directory.SetCurrentDirectory(new Uri(cwd).LocalPath);
-                using (Stream stream = System.Reflection.Assembly.GetExecutingAssembly()
-                        .GetManifestResourceStream("DwarfCorp.version.txt"))
+                using (Stream stream = new FileStream("version.txt", FileMode.Open))
                 using (StreamReader reader = new StreamReader(stream))
                     Commit = reader.ReadToEnd();
             }

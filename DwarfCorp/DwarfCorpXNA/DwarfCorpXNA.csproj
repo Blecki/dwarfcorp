@@ -235,8 +235,8 @@
     <Compile Include="Graphics\Instancing\PrimitiveInstanceGroup.cs" />
     <Compile Include="Graphics\Instancing\InstanceRenderMode.cs" />
     <Compile Include="Graphics\Instancing\TiledInstancedVertex.cs" />
-   <Compile Include="Goals\EventScheduler.cs" />
-   <Compile Include="Gui\TextureGeneratorAttribute.cs" />
+    <Compile Include="Goals\EventScheduler.cs" />
+    <Compile Include="Gui\TextureGeneratorAttribute.cs" />
     <Compile Include="Gui\Widgets\CancelToolOptions.cs" />
     <Compile Include="Gui\Widgets\DwarfConsole.cs" />
     <Compile Include="Gui\Widgets\AutoGridPanel.cs" />
@@ -867,7 +867,9 @@
     <PreBuildEvent>"C:\Program Files\Git\bin\git.exe" rev-parse --short HEAD &gt; "$(ProjectDir)\version.txt" &amp;&amp; ( (call )) || ( "C:\Program Files (x86)\Git\bin\git.exe" rev-parse --short HEAD &gt; "$(ProjectDir)\version.txt" )</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>MKDIR "$(SolutionDir)DwarfCorpFNA\bin\$(ConfigurationName)\Content" &amp; XCOPY "$(ProjectDir)$(OutDir)Content" "$(SolutionDir)DwarfCorpFNA\bin\$(ConfigurationName)\Content" /Y /E</PostBuildEvent>
+    <PostBuildEvent>MKDIR "$(SolutionDir)DwarfCorpFNA\bin\$(ConfigurationName)\Content" &amp; XCOPY "$(ProjectDir)$(OutDir)Content" "$(SolutionDir)DwarfCorpFNA\bin\$(ConfigurationName)\Content" /Y /E
+
+XCOPY "$(ProjectDir)version.txt" "$(SolutionDir)DwarfCorpFNA\bin\$(ConfigurationName)" /Y /E</PostBuildEvent>
   </PropertyGroup>
   <!--
       To modify your build process, add your task inside one of the targets below and uncomment it. 
