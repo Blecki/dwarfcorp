@@ -11,6 +11,15 @@ namespace DwarfCorp.Gui.Widgets
     {
         private int CursorPosition = 0;
 
+        private enum State
+        {
+            AcceptingInput,
+            Paginating
+        }
+
+        private State CurrentState = State.AcceptingInput;
+        private List<String> PendingOutput = new List<string>();
+
         public override void Construct()
         {
             OnClick += (sender, args) =>
@@ -70,19 +79,42 @@ namespace DwarfCorp.Gui.Widgets
             OnKeyPress += (sender, args) =>
                 {
                     if (args.KeyValue == '`') return;
-                    if (args.KeyValue == '\r')
+
+                    if (CurrentState == State.Paginating)
                     {
-                        var console = Parent as DwarfConsole;
-                        console.AddMessage(Debugger.HandleConsoleCommand(Text) + "\n");
-                        Text = "";
-                        Invalidate();
-                        args.Handled = true;
+                        ShowNextPage(Parent as DwarfConsole);
+
+                        if (PendingOutput.Count > 0)
+                            CurrentState = State.Paginating;
+                        else
+                            CurrentState = State.AcceptingInput;
                     }
                     else
                     {
-                        Text = TextFieldLogic.Process(Text, CursorPosition, args.KeyValue, out CursorPosition);
-                        Invalidate();
-                        args.Handled = true;
+                        if (args.KeyValue == '\r')
+                        {
+                            var console = Parent as DwarfConsole;
+                            var output = Debugger.HandleConsoleCommand(Text);
+                            var lines = output.Split('\n');
+                            PendingOutput.Add("> " + Text);
+                            PendingOutput.AddRange(lines);
+                            ShowNextPage(console);
+
+                            if (PendingOutput.Count > 0)
+                                CurrentState = State.Paginating;
+                            else
+                                CurrentState = State.AcceptingInput;
+
+                            Text = "";
+                            Invalidate();
+                            args.Handled = true;
+                        }
+                        else
+                        {
+                            Text = TextFieldLogic.Process(Text, CursorPosition, args.KeyValue, out CursorPosition);
+                            Invalidate();
+                            args.Handled = true;
+                        }
                     }
                 };
 
@@ -96,6 +128,20 @@ namespace DwarfCorp.Gui.Widgets
                     Invalidate();
                     args.Handled = true;
                 };
+        }
+
+        private void ShowNextPage(DwarfConsole Console)
+        {
+            int linesShown = 0;
+            while (linesShown < Console.VisibleLines - 2 && PendingOutput.Count > 0)
+            {
+                Console.AddMessage(PendingOutput[0] + "\n");
+                PendingOutput.RemoveAt(0);
+                linesShown += 1;
+            }
+
+            if (PendingOutput.Count > 0)
+                Console.AddMessage("** Press any key for more\n");
         }
 
         protected override Mesh Redraw()

@@ -19,8 +19,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             get
             {
-                var font = Root.GetTileSheet(Font);
-                return Rect.Height / (font.TileHeight * TextSize);
+                return TextGrid.TextHeight;
             }
         }
 
