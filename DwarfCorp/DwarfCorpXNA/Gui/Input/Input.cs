@@ -117,5 +117,25 @@ namespace DwarfCorp.Gui.Input
                 if (binding.Value.Keys.Count(k => kbState.IsKeyDown(k)) > 0 && binding.Value.Handler != null)
                     binding.Value.Handler();
         }
+
+        public void FireKeyboardActionsOnly(Gui.Root Gui)
+        {
+            if (!GameState.Game.IsActive)
+                return;
+
+            var queue = Mapper.GetInputQueue();
+            foreach (var @event in queue)
+            {
+                if (@event.Message == InputEvents.KeyDown || @event.Message == InputEvents.KeyPress || @event.Message == InputEvents.KeyUp)
+                    Gui.HandleInput(@event.Message, @event.Args);
+                if (!@event.Args.Handled)
+                {
+                    Mapper.QueueLock.WaitOne();
+                    Mapper.Queued.Add(@event);
+                    Mapper.QueueLock.ReleaseMutex();
+                }
+
+            }
+        }
     }
 }

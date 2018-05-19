@@ -1,0 +1,200 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+
+namespace DwarfCorp.Gui.Widgets
+{
+    public class CommandEntry : Widget
+    {
+        private int CursorPosition = 0;
+
+        public override void Construct()
+        {
+            // Note: Cursor won't draw properly if these are changed. Click events may also break.
+            // Widget should probably be able to handle different alignments.
+            TextVerticalAlign = VerticalAlign.Center;
+            TextHorizontalAlign = HorizontalAlign.Left;
+
+            OnClick += (sender, args) =>
+                {
+                    if (IsAnyParentHidden() || IsAnyParentTransparent())
+                    {
+                        return;
+                    }
+                    if (Object.ReferenceEquals(this, Root.FocusItem))
+                    {
+                        // This widget already has focus - move cursor to click position.
+
+                        var clickIndex = 0;
+                        var clickX = args.X - this.GetDrawableInterior().X;
+                        var searchIndex = 0;
+                        var font = Root.GetTileSheet(Font);
+                        
+                        while (true)
+                        {
+                            if (searchIndex == Text.Length)
+                            {
+                                clickIndex = Text.Length;
+                                break;
+                            }
+
+                            var glyphSize = font.GlyphSize(Text[searchIndex] - ' ');
+                            if (clickX < glyphSize.X)
+                            {
+                                clickIndex = searchIndex;
+                                if (clickX > (glyphSize.X / 2)) clickIndex += 1;
+                                break;
+                            }
+
+                            clickX -= glyphSize.X;
+                            searchIndex += 1;
+                        }
+
+                        CursorPosition = clickIndex;
+                        Invalidate();
+                        args.Handled = true;
+                    }
+                    else
+                    {
+                        // Take focus and move cursor to end of text.
+                        Root.SetFocus(this);
+                        CursorPosition = Text.Length;
+                        Invalidate();
+                        args.Handled = true;
+                    }
+                };
+
+            OnGainFocus += (sender) => this.Invalidate();
+            OnLoseFocus += (sender) => this.Invalidate();
+            OnUpdateWhileFocus += (sender) => this.Invalidate();
+
+            OnKeyUp += (sender, args) =>
+            {
+                args.Handled = true;
+            };
+
+            OnKeyPress += (sender, args) =>
+                {
+                    if (args.KeyValue == '`') return;
+                    if (args.KeyValue == '\r')
+                    {
+                        Text = "";
+                        Invalidate();
+                        args.Handled = true;
+                    }
+                    else
+                    {
+                        Text = TextFieldLogic.Process(Text, CursorPosition, args.KeyValue, out CursorPosition);
+                        Invalidate();
+                        args.Handled = true;
+                    }
+                };
+
+            OnKeyDown += (sender, args) =>
+                {
+                    if (IsAnyParentHidden() || IsAnyParentTransparent())
+                    {
+                        return;
+                    }
+
+                    Invalidate();
+                    args.Handled = true;
+                };
+        }
+
+        protected override Mesh Redraw()
+        {
+            var result = new List<Mesh>();
+
+            if (Object.ReferenceEquals(this, Root.FocusItem))
+            {
+                if (CursorPosition > Text.Length || CursorPosition < 0)
+                    CursorPosition = Text.Length;
+
+                var cursorTime = (int)(Math.Floor(Root.RunTime / Root.CursorBlinkTime));
+                if ((cursorTime % 2) == 0)
+                {
+                    var font = Root.GetTileSheet(Font);
+                    var drawableArea = this.GetDrawableInterior();
+
+                    var pipeGlyph = font.GlyphSize('|');
+                    var cursorMesh = Mesh.Quad()
+                        .Scale(pipeGlyph.X * TextSize, pipeGlyph.Y * TextSize)
+                        .Translate(drawableArea.X 
+                            + font.MeasureString(Text.Substring(0, CursorPosition)).X * TextSize 
+                            - ((pipeGlyph.X * TextSize) / 2),
+                            drawableArea.Y + ((drawableArea.Height - (pipeGlyph.Y * TextSize)) / 2))
+                        .Texture(font.TileMatrix((int)('|' )))
+                        .Colorize(new Vector4(1, 0, 0, 1));
+                    result.Add(cursorMesh);
+                }
+            }
+
+            // Add text label
+            if (!String.IsNullOrEmpty(Text))
+            {
+                var _text = ModString(Text);
+                var drawableArea = GetDrawableInterior();
+                var stringMeshSize = new Rectangle();
+                var font = Root.GetTileSheet(Font);
+                var text = (font is VariableWidthFont && WrapText)
+                    ? (font as VariableWidthFont).WordWrapString(_text, TextSize, drawableArea.Width)
+                    : _text;
+                var stringMesh = Mesh.CreateStringMesh(
+                    text,
+                    font,
+                    new Vector2(TextSize, TextSize),
+                    out stringMeshSize)
+                    .Colorize(TextColor);
+
+
+                var textDrawPos = Vector2.Zero;
+
+                switch (TextHorizontalAlign)
+                {
+                    case HorizontalAlign.Left:
+                        textDrawPos.X = drawableArea.X;
+                        break;
+                    case HorizontalAlign.Right:
+                        textDrawPos.X = drawableArea.X + drawableArea.Width - stringMeshSize.Width;
+                        break;
+                    case HorizontalAlign.Center:
+                        textDrawPos.X = drawableArea.X + ((drawableArea.Width - stringMeshSize.Width) / 2);
+                        break;
+                }
+
+                switch (TextVerticalAlign)
+                {
+                    case VerticalAlign.Top:
+                        textDrawPos.Y = drawableArea.Y;
+                        break;
+                    case VerticalAlign.Bottom:
+                        textDrawPos.Y = drawableArea.Y + drawableArea.Height - stringMeshSize.Height;
+                        break;
+                    case VerticalAlign.Below:
+                        textDrawPos.Y = drawableArea.Y + drawableArea.Height;
+                        break;
+                    case VerticalAlign.Center:
+                        textDrawPos.Y = drawableArea.Y + ((drawableArea.Height - stringMeshSize.Height) / 2);
+                        break;
+                }
+
+                stringMesh.Translate(textDrawPos.X, textDrawPos.Y);
+                result.Add(stringMesh);
+            }
+
+            return Mesh.Merge(result.ToArray());
+        }
+
+        private String ModString(String S)
+        {
+            var r = new StringBuilder();
+            foreach (var C in S)
+                r.Append((char)(C + ' '));
+            return r.ToString();
+        }
+    }
+}

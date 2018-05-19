@@ -235,11 +235,12 @@
     <Compile Include="Graphics\Instancing\PrimitiveInstanceGroup.cs" />
     <Compile Include="Graphics\Instancing\InstanceRenderMode.cs" />
     <Compile Include="Graphics\Instancing\TiledInstancedVertex.cs" />
-   <Compile Include="Goals\EventScheduler.cs" />
-   <Compile Include="Gui\TextureGeneratorAttribute.cs" />
+    <Compile Include="Goals\EventScheduler.cs" />
+    <Compile Include="Gui\TextureGeneratorAttribute.cs" />
     <Compile Include="Gui\Widgets\CancelToolOptions.cs" />
     <Compile Include="Gui\Widgets\DwarfConsole.cs" />
     <Compile Include="Gui\Widgets\AutoGridPanel.cs" />
+    <Compile Include="Gui\Widgets\CommandEntry.cs" />
     <Compile Include="Gui\Widgets\Graph.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
