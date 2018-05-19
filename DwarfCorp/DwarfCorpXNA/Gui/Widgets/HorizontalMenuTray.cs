@@ -111,6 +111,7 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         ExpansionChild.Hidden = false;
                         Root.SafeCall(ExpansionChild.OnShown, ExpansionChild);
+                        ExpansionChild.BringToFront();
                         ExpansionChild.Invalidate();
                     }
                 };
