@@ -21,7 +21,7 @@ int xEnableLighting;
 int xEnableShadows;
 int xEnableWind;
 
-Texture xWaterBumpMap;
+Texture2D xWaterBumpMap;
 
 float xWaveLength;
 float xWaveHeight;
@@ -86,8 +86,8 @@ float4 GetFlagWind(float4 pos, float2 uv, float4 bounds)
 
 
 //------- Texture Samplers --------
-Texture xTexture;
-Texture xIllumination;
+Texture2D xTexture;
+Texture2D xIllumination;
 
 sampler IllumSampler = sampler_state { texture = <xIllumination> ;  magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = clamp; AddressV = clamp;};
 
@@ -97,19 +97,19 @@ sampler ColorscaleSampler = sampler_state { texture = <xTexture>; magfilter = PO
 
 sampler WrappedTextureSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = LINEAR; mipfilter = Linear; AddressU = wrap; AddressV = wrap; };
 
-Texture xReflectionMap;
+Texture2D xReflectionMap;
 float xWaterReflective;
 
-Texture xSunGradient;
-Texture xAmbientGradient;
-Texture xTorchGradient;
+Texture2D xSunGradient;
+Texture2D xAmbientGradient;
+Texture2D xTorchGradient;
 
-Texture xShoreGradient;
-Texture xLightmap;
+Texture2D xShoreGradient;
+Texture2D xLightmap;
 // Light ramp tint
-float4 xTint;
+float4 xLightRamp;
 // Multiplicative output color.
-float4 xColorTint;
+float4 xVertexColorMultiplier;
 
 sampler LightmapSampler = sampler_state { texture = <xLightmap>; magfilter = POINT; minfilter = LINEAR; mipfilter = POINT; AddressU = clamp; AddressV = clamp; };
 
@@ -125,7 +125,7 @@ sampler ReflectionSampler = sampler_state { texture = <xReflectionMap> ; magfilt
 
 sampler WaterBumpMapSampler = sampler_state { texture = <xWaterBumpMap> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = wrap; AddressV = wrap;};
 
-Texture xShadowMap;
+Texture2D xShadowMap;
 sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = LINEAR; minfilter = LINEAR; mipfilter = LINEAR; AddressU = clamp; AddressV = clamp; };
 
 
@@ -150,7 +150,7 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 		float4x4 preWorldViewProjection = mul (xWorld, preViewProjection);
 
 		Output.Position = mul(inPos, preWorldViewProjection);
-		Output.Color = inColor * xTint;
+		Output.Color = inColor * xLightRamp;
 
 		Output.ClipDistance = Clipping * dot(mul(xWorld,inPos), ClipPlane0); //MSS - Water Refactor added
 
@@ -167,7 +167,7 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 		float4x4 preWorldViewProjection = mul (xWorld, preViewProjection);
 
 		Output.Position = mul(inPos, preWorldViewProjection);
-		Output.Color = inColor * xTint + float4(.2, .2, .2, 0) * pow(sin(xTime * 2 + 0.1 * inPos.x + 0.2 * inPos.z), 2);
+		Output.Color = inColor * xLightRamp + float4(.2, .2, .2, 0) * pow(sin(xTime * 2 + 0.1 * inPos.x + 0.2 * inPos.z), 2);
 
 		Output.ClipDistance = Clipping * dot(mul(xWorld,inPos), ClipPlane0); //MSS - Water Refactor added
 
@@ -286,13 +286,13 @@ technique ShadowInstanced
 struct TVertexToPixel
 {
 	float4 Position      : SV_Position;
-	float4 Color         : COLOR0;
+	float4 LightRamp         : COLOR0;
 	float4 WorldPosition : TEXCOORD0;
 	float2 TextureCoords : TEXCOORD1;
 	float4 ClipDistance : TEXCOORD2;
 	float Fog            : TEXCOORD3;	
 	float4 TextureBounds : TEXCOORD4;
-	float3 ColorTint     : COLOR1;
+	float3 VertexColor     : COLOR1;
 };
 
 struct SelectionBufferToPixel
@@ -357,7 +357,7 @@ float4 Lighting1Light(float4 worldPosition, float4 color)
 
 TVertexToPixel TexturedVS_Flag(float4 inPos : POSITION, 
 							float2 inTexCoords : TEXCOORD0, 
-							float4 inColor : COLOR0, 
+							float4 inLightRamp : COLOR0, 
 							float4 inTexSource : TEXCOORD1, 
 							float3 vertColor : COLOR1,
 							uniform int max_lights)
@@ -375,11 +375,11 @@ TVertexToPixel TexturedVS_Flag(float4 inPos : POSITION,
 
 	Output.TextureCoords = inTexCoords;
 	Output.ClipDistance = dot(worldPosition, ClipPlane0);
-	Output.Color = inColor * xTint;
-	Output.Color.a = xTint.a;
-	Output.ColorTint.rgb = vertColor * xColorTint.rgb;
-	Output.Color.a *= xColorTint.a;
-	Output.Color = Lighting(max_lights, worldPosition, Output.Color);
+	Output.LightRamp = inLightRamp * xLightRamp;
+    Output.LightRamp.a = xLightRamp.a;
+	Output.VertexColor.rgb = vertColor * xVertexColorMultiplier.rgb;
+    Output.LightRamp.a *= xVertexColorMultiplier.a;
+    Output.LightRamp = Lighting(max_lights, worldPosition, Output.LightRamp);
 
 	Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
 
@@ -389,10 +389,10 @@ TVertexToPixel TexturedVS_Flag(float4 inPos : POSITION,
 
 TVertexToPixel TexturedVS(float4 inPos : POSITION,  
 						   float2 inTexCoords: TEXCOORD0, 
-						   float4 inColor : COLOR0, 
+						   float4 inLightRamp : COLOR0, 
 						   float4 inTexSource : TEXCOORD1, 
 						   float4x4 world : BLENDWEIGHT, 
-						   float4 lightTint : COLOR1, 
+						   float4 lightRampMultiplier : COLOR1, 
 						   float3 tint,
 						   uniform int max_lights)
 {
@@ -409,11 +409,11 @@ TVertexToPixel TexturedVS(float4 inPos : POSITION,
     
 	Output.TextureCoords = inTexCoords;
     Output.ClipDistance = dot(worldPosition, ClipPlane0);
-	Output.Color = inColor * lightTint;
-	Output.Color.a = lightTint.a;
-	Output.ColorTint.rgb = tint.rgb * xColorTint.rgb;
-	Output.Color.a *= xColorTint.a;
-	Output.Color = Lighting(max_lights, worldPosition, Output.Color);
+    Output.LightRamp = inLightRamp * lightRampMultiplier;
+    Output.LightRamp.a = lightRampMultiplier.a;
+	Output.VertexColor.rgb = tint.rgb * xVertexColorMultiplier.rgb;
+    Output.LightRamp.a *= xVertexColorMultiplier.a;
+    Output.LightRamp = Lighting(max_lights, worldPosition, Output.LightRamp);
 	Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
 	
 	Output.TextureBounds = inTexSource;
@@ -422,7 +422,7 @@ TVertexToPixel TexturedVS(float4 inPos : POSITION,
 
 TVertexToPixel TexturedVS_1Light(float4 inPos : POSITION,
 	float2 inTexCoords : TEXCOORD0,
-	float4 inColor : COLOR0,
+	float4 inLightRamp : COLOR0,
 	float4 inTexSource : TEXCOORD1,
 	float4x4 world : BLENDWEIGHT,
 	float4 lightTint : COLOR1,
@@ -432,20 +432,20 @@ TVertexToPixel TexturedVS_1Light(float4 inPos : POSITION,
 
 	float4 worldPosition = mul(inPos, world);
 
-		worldPosition += xEnableWind * GetWind(worldPosition, inTexCoords, inTexSource);
+	worldPosition += xEnableWind * GetWind(worldPosition, inTexCoords, inTexSource);
 
 	Output.WorldPosition = worldPosition;
 
 	float4 viewPosition = mul(worldPosition, xView);
-		Output.Position = mul(viewPosition, xProjection);
+    Output.Position = mul(viewPosition, xProjection);
 
 	Output.TextureCoords = inTexCoords;
 	Output.ClipDistance = dot(worldPosition, ClipPlane0);
-	Output.Color = inColor * lightTint;
-	Output.Color.a = lightTint.a;
-	Output.ColorTint.rgb = tint.rgb * xColorTint.rgb;
-	Output.Color.a *= xColorTint.a;
-	Output.Color = Lighting1Light(worldPosition, Output.Color);
+    Output.LightRamp = inLightRamp * lightTint;
+    Output.LightRamp.a = lightTint.a;
+	Output.VertexColor.rgb = tint.rgb * xVertexColorMultiplier.rgb;
+    Output.LightRamp.a *= xVertexColorMultiplier.a;
+    Output.LightRamp = Lighting1Light(worldPosition, Output.LightRamp);
 	Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
 
 	Output.TextureBounds = inTexSource;
@@ -466,9 +466,9 @@ TVertexToPixel TexturedVS_To_Lightmap(float4 inPos : POSITION,
 	Output.WorldPosition = worldPosition;
 	Output.Position = float4(2 * inLightmapCoords.x - 1.0 - pixelSize.x * 0.5, -(2 * inLightmapCoords.y - 1.0 - pixelSize.y * 0.5), 0.0, 1);
 	Output.TextureCoords = inTexCoords;
-	Output.Color = inColor * lightTint;
-	Output.Color.a = lightTint.a;
-	Output.ColorTint.rgb = xTint.rgb;
+    Output.LightRamp = inColor * lightTint;
+    Output.LightRamp.a = lightTint.a;
+	Output.VertexColor.rgb = xLightRamp.rgb;
 
 	for (int i = 0; i < max_lights; i++)
 	{
@@ -476,10 +476,10 @@ TVertexToPixel TexturedVS_To_Lightmap(float4 inPos : POSITION,
 		float dy = worldPosition.y - xLightPositions[i].y;
 		float dz = worldPosition.z - xLightPositions[i].z;
 		float dist = pow(dx, 2) + pow(dy, 2) + pow(dz, 2) + 0.001f;
-		Output.Color = saturate(Output.Color + xEnableLighting * LIGHT_COLOR / dist);
-	}
+        Output.LightRamp = saturate(Output.LightRamp + xEnableLighting * LIGHT_COLOR / dist);
+    }
 
-	Output.Color = saturate(Output.Color + (1.0 - xEnableLighting) * LIGHT_COLOR / 999.0f);
+    Output.LightRamp = saturate(Output.LightRamp + (1.0 - xEnableLighting) * LIGHT_COLOR / 999.0f);
 	Output.TextureBounds = inTexSource;
 	return Output;
 }
@@ -542,10 +542,10 @@ TPixelToFrame TexturedPS_To_Lightmap(TVertexToPixel PSIn)
 	}
 	*/
 
-	Output.Color = tex2D(SunSampler, float2(PSIn.Color.r, (xTimeOfDay)));
-	Output.Color.a *= PSIn.Color.a;
-	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b, 0.5f)).rgb;
-	Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f)).rgb;
+    Output.Color = tex2D(SunSampler, float2(PSIn.LightRamp.r, (xTimeOfDay)));
+    Output.Color.a *= PSIn.LightRamp.a;
+    Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.LightRamp.b, 0.5f)).rgb;
+    Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.LightRamp.g, 0.5f)).rgb;
 	
 	saturate(Output.Color.rgb);
 	float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
@@ -553,7 +553,7 @@ TPixelToFrame TexturedPS_To_Lightmap(TVertexToPixel PSIn)
 	float4 illumColor = tex2D(IllumSampler, textureCoords);
 
 	Output.Color.rgba *= texColor;
-	Output.Color.rgb *= PSIn.ColorTint;
+	Output.Color.rgb *= PSIn.VertexColor;
 
 	Output.Color.rgba = lerp(Output.Color.rgba, texColor, SelfIllumination * illumColor.r);
 	return Output;
@@ -562,12 +562,12 @@ TPixelToFrame TexturedPS_To_Lightmap(TVertexToPixel PSIn)
 
 TVertexToPixel TexturedVSNonInstanced( float4 inPos : POSITION,  
 									   float2 inTexCoords: TEXCOORD0, 
-									   float4 inColor : COLOR0, 
+									   float4 lightRamp : COLOR0, 
 									   float4 inTexSource : TEXCOORD1, 
 									   float3 vertColor : COLOR1,
 									   uniform int max_lights)
 {
-	return TexturedVS(inPos, inTexCoords, inColor, inTexSource, xWorld, xTint, vertColor, max_lights);
+    return TexturedVS(inPos, inTexCoords, lightRamp, inTexSource, xWorld, xLightRamp, vertColor, max_lights);
 }
 
 TVertexToPixel TexturedVSNonInstanced_1Light(float4 inPos : POSITION,
@@ -576,63 +576,63 @@ TVertexToPixel TexturedVSNonInstanced_1Light(float4 inPos : POSITION,
 	float4 inTexSource : TEXCOORD1,
 	float3 vertColor : COLOR1)
 {
-	return TexturedVS_1Light(inPos, inTexCoords, inColor, inTexSource, xWorld, xTint, vertColor);
+	return TexturedVS_1Light(inPos, inTexCoords, inColor, inTexSource, xWorld, xLightRamp, vertColor);
 }
 
 TVertexToPixel TexturedVSInstanced( float4 inPos : POSITION,  
 								    float2 inTexCoords: TEXCOORD0, 
-									float4 inColor : COLOR0, 
+									float4 inLightRamp : COLOR3, 
 									float4 inTexSource : TEXCOORD1, 
-									float4 tint : COLOR1, 
+									float4 id : COLOR4, 
 									float4x4 transform : BLENDWEIGHT, 
-									float4 instanceColor : COLOR2,
+									float4 tint : COLOR5,
 									uniform int max_lights)
 {
-	return TexturedVS(inPos, inTexCoords, inColor, inTexSource, transpose(transform), 
-		              instanceColor, float3(1, 1, 1), max_lights);
+    return TexturedVS(inPos, inTexCoords, inLightRamp, inTexSource, transpose(transform),
+		              float4(1, 1, 1, tint.a), tint.rgb, max_lights);
 }
 
 TVertexToPixel TexturedVSTiledInstanced(float4 inPos : POSITION,
 	float2 inTexCoords : TEXCOORD0,
-	float4 inColor : COLOR0,
+	float4 inLightRamp : COLOR3,
 	float4 inTexSource : TEXCOORD1,
-	float4 tint : COLOR1,
+	float4 id : COLOR4,
 	float4x4 transform : BLENDWEIGHT,
-	float4 instanceColor : COLOR2,
+	float4 vertexColor : COLOR5,
 	float4 tileTexSource : TEXCOORD5,
 	uniform int max_lights)
 {
 	float2 newTexCoord = inTexCoords * float2(tileTexSource.z - tileTexSource.x, tileTexSource.w - tileTexSource.y);
 	newTexCoord += float2(tileTexSource.x, tileTexSource.y);
-	return TexturedVS(inPos, newTexCoord, inColor, inTexSource, transpose(transform),
-		instanceColor, float3(1, 1, 1), max_lights);
+    return TexturedVS(inPos, newTexCoord, inLightRamp, inTexSource, transpose(transform),
+		float4(1, 1, 1, vertexColor.a), vertexColor.rgb, max_lights);
 }
 
 TVertexToPixel TexturedVSInstanced_1Light(float4 inPos : POSITION,
 	float2 inTexCoords : TEXCOORD0,
-	float4 inColor : COLOR0,
+	float4 lightRamp : COLOR3,
 	float4 inTexSource : TEXCOORD1,
-	float4 tint : COLOR1,
+	float4 id : COLOR4,
 	float4x4 transform : BLENDWEIGHT,
-	float4 instanceColor : COLOR2)
+	float4 vertexColor : COLOR5)
 {
-	return TexturedVS_1Light(inPos, inTexCoords, inColor, inTexSource, transpose(transform),
-		instanceColor, float3(1, 1, 1));
+    return TexturedVS_1Light(inPos, inTexCoords, lightRamp, inTexSource, transpose(transform),
+		float4(1, 1, 1, vertexColor.a), vertexColor.rgb);
 }
 
 TVertexToPixel TexturedVSTiledInstanced_1Light(float4 inPos : POSITION,
 	float2 inTexCoords : TEXCOORD0,
-	float4 inColor : COLOR0,
+	float4 lightRamp : COLOR3,
 	float4 inTexSource : TEXCOORD1,
-	float4 tint : COLOR1,
+	float4 id : COLOR4,
 	float4x4 transform : BLENDWEIGHT,
-	float4 instanceColor : COLOR2,
+	float4 vertexColor : COLOR5,
 	float4 tileTexSource : TEXCOORD5)
 {
 	float2 newTexCoord = inTexCoords * float2(tileTexSource.z - tileTexSource.x, tileTexSource.w - tileTexSource.y);
 	newTexCoord += float2(tileTexSource.x, tileTexSource.y);
-	return TexturedVS_1Light(inPos, newTexCoord, inColor, inTexSource, transpose(transform),
-		instanceColor, float3(1, 1, 1));
+    return TexturedVS_1Light(inPos, newTexCoord, lightRamp, inTexSource, transpose(transform),
+		float4(1, 1, 1, vertexColor.a), vertexColor.rgb);
 }
 
 SelectionBufferToPixel SelectionVSNonInstanced(float4 inPos : POSITION, float2 inTexCoords : TEXCOORD0)
@@ -643,7 +643,7 @@ SelectionBufferToPixel SelectionVSNonInstanced(float4 inPos : POSITION, float2 i
 SelectionBufferToPixel SelectionVSInstanced(float4 inPos : POSITION,
 	float2 inTexCoords : TEXCOORD0,
 	float4x4 transform : BLENDWEIGHT,
-	float4 id : COLOR3)
+	float4 id : COLOR4)
 {
 	return SelectionVS(inPos, inTexCoords, transpose(transform) , id);
 }
@@ -651,7 +651,7 @@ SelectionBufferToPixel SelectionVSInstanced(float4 inPos : POSITION,
 SelectionBufferToPixel SelectionVSTiledInstanced(float4 inPos : POSITION,
 	float2 inTexCoords : TEXCOORD0,
 	float4x4 transform : BLENDWEIGHT,
-	float4 id : COLOR3,
+	float4 id : COLOR4,
 	float4 tileTexSource : TEXCOORD5)
 {
 	float2 newTexCoord = inTexCoords * float2(tileTexSource.z - tileTexSource.x, tileTexSource.w - tileTexSource.y);
@@ -665,7 +665,7 @@ TPixelToFrame TexturedPS_Colorscale(TVertexToPixel PSIn)
 	TPixelToFrame Output = (TPixelToFrame)0;
 
 	Output.Color = tex2D(ColorscaleSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
-	Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f)).rgb;
+    Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.LightRamp.g, 0.5f)).rgb;
 	clip(Output.Color.a - 0.5);
 	clip(PSIn.ClipDistance.w);
 	return Output;
@@ -691,7 +691,7 @@ TPixelToFrame SilhouettePS(TVertexToPixel PSIn)
 	float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
 	float4 texColor = tex2D(TextureSampler, textureCoords);
 	clip((texColor.a - 0.5));
-	Output.Color.rgb = PSIn.ColorTint;
+	Output.Color.rgb = PSIn.VertexColor;
 	Output.Color.a = 0.2;
 	return Output;
 }
@@ -742,17 +742,17 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 		}
 	}
 	*/
-	Output.Color = tex2D(SunSampler, float2(PSIn.Color.r, (xTimeOfDay)));
-	Output.Color.a *= PSIn.Color.a;
-	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b,  0.5f)).rgb;
-	Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f)).rgb;
+    Output.Color = tex2D(SunSampler, float2(PSIn.LightRamp.r, (xTimeOfDay)));
+    Output.Color.a *= PSIn.LightRamp.a;
+    Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.LightRamp.b, 0.5f)).rgb;
+    Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.LightRamp.g, 0.5f)).rgb;
 	
 	//saturate(Output.Color.rgb);
 
 	float4 illumColor = tex2D(IllumSampler, textureCoords);
 
 	Output.Color.rgba *= texColor;
-	Output.Color.rgb *= PSIn.ColorTint;
+	Output.Color.rgb *= PSIn.VertexColor;
 
 	Output.Color.rgba = lerp(Output.Color.rgba, texColor, SelfIllumination * illumColor.r);
 	
@@ -810,19 +810,19 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 		}
 	}
 	*/
-	Output.Color = tex2D(SunSampler, float2(PSIn.Color.r, (xTimeOfDay)));
-	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b, 0.5f)).rgb;
+    Output.Color = tex2D(SunSampler, float2(PSIn.LightRamp.r, (xTimeOfDay)));
+    Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.LightRamp.b, 0.5f)).rgb;
 	saturate(Output.Color.rgb);
 
-	Output.Color.rgb *=  tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f)).rgb;
-	Output.Color.rgb *= PSIn.ColorTint;
+    Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.LightRamp.g, 0.5f)).rgb;
+	Output.Color.rgb *= PSIn.VertexColor;
 	float4 texColor = tex2D(TextureSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
 	float4 illumColor = tex2D(IllumSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
 
 	Output.Color.rgba *= texColor;
 	Output.Color.rgba = lerp(Output.Color.rgba, texColor, SelfIllumination * illumColor.r);
 	
-	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog), Output.Color.a * PSIn.Color.a);
+    Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog), Output.Color.a * PSIn.LightRamp.a);
 
 	if (PSIn.ClipDistance.w < 0.0f)
  	{

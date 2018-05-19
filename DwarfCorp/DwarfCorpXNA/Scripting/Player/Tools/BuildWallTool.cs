@@ -142,7 +142,7 @@ namespace DwarfCorp
             float t = (float)time.TotalGameTime.TotalSeconds;
             float st = (float)Math.Sin(t * 4) * 0.5f + 0.5f;
             Effect.MainTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
-            Effect.LightRampTint = Color.White;
+            Effect.LightRamp = Color.White;
             Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.5f * st + 0.45f);
             Effect.SetTexturedTechnique();
             
@@ -172,7 +172,7 @@ namespace DwarfCorp
                 }
             }
 
-            Effect.LightRampTint = Color.White;
+            Effect.LightRamp = Color.White;
             Effect.VertexColorTint = Color.White;
             Effect.World = Matrix.Identity;
             graphics.DepthStencilState = state;

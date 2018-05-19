@@ -467,7 +467,7 @@ namespace DwarfCorp.Rail
                 DoStipple(effect);
             }
             effect.VertexColorTint = VertexColor;
-            effect.LightRampTint = LightRamp;
+            effect.LightRamp = LightRamp;
             effect.World = GlobalTransform;
           
             effect.MainTexture = Sheet.GetTexture();

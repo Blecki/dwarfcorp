@@ -81,7 +81,7 @@ namespace DwarfCorp
 
             if (IsVisible && !renderingForWater)
             {
-                Instance.Color = LightRamp;
+                Instance.LightRamp = LightRamp;
                 Instance.Transform = GlobalTransform;
                 Instance.SelectionBufferColor = this.GetGlobalIDColor();
                 Manager.World.InstanceRenderer.RenderInstance(Instance, graphicsDevice, effect, camera, InstanceRenderMode.Normal);
@@ -95,7 +95,7 @@ namespace DwarfCorp
 
             if (IsVisible)
             {
-                Instance.Color = LightRamp;
+                Instance.LightRamp = LightRamp;
                 Instance.Transform = GlobalTransform;
                 Instance.SelectionBufferColor = this.GetGlobalIDColor();
                 Manager.World.InstanceRenderer.RenderInstance(Instance, graphicsDevice, effect, camera, InstanceRenderMode.SelectionBuffer);

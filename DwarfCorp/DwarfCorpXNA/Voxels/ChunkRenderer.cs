@@ -69,7 +69,7 @@ namespace DwarfCorp
             effect.SunlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient);
             effect.AmbientOcclusionGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.ambientgradient);
             effect.TorchlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.torchgradient);
-            effect.LightRampTint = Color.White;
+            effect.LightRamp = Color.White;
             effect.VertexColorTint = Color.White;
             effect.SelfIlluminationEnabled = true;
             effect.EnableShadows = false;
@@ -122,7 +122,7 @@ namespace DwarfCorp
                     effect.SunlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient);
                     effect.AmbientOcclusionGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.ambientgradient);
                     effect.TorchlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.torchgradient);
-                    effect.LightRampTint = Color.White;
+                    effect.LightRamp = Color.White;
                     effect.VertexColorTint = Color.White;
                     effect.SelfIlluminationEnabled = true;
                     effect.World = Matrix.Identity;

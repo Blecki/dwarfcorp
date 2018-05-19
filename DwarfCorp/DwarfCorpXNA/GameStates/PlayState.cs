@@ -177,12 +177,26 @@ namespace DwarfCorp.GameStates
 
                 World.SetMouseOverlay += (mouse, frame) => GuiRoot.MouseOverlaySheet = new TileReference(mouse, frame);
 
-                
-                World.ShowToolPopup += text => GuiRoot.ShowTooltip(new Point(GuiRoot.MousePosition.X + 4, GuiRoot.MousePosition.Y - 16),
-                    new Gui.Widgets.ToolPopup
+
+                World.ShowToolPopup += text =>
                 {
-                    Text = text,
-                });
+                    if (String.IsNullOrEmpty(text))
+                    {
+                        if (GuiRoot.TooltipItem != null)
+                        {
+                            GuiRoot.DestroyWidget(GuiRoot.TooltipItem);
+                        }
+                        GuiRoot.TooltipItem = null;
+                    }
+                    else
+                    {
+                        GuiRoot.ShowTooltip(new Point(GuiRoot.MousePosition.X + 4, GuiRoot.MousePosition.Y - 16),
+                          new Gui.Widgets.ToolPopup
+                          {
+                              Text = text,
+                          });
+                    }
+                };
                  
 
                 World.gameState = this;

@@ -257,16 +257,16 @@ namespace DwarfCorp
             set {  Parameters["xLightmap"].SetValue(value);}
         }
 
-        public Color LightRampTint
+        public Color LightRamp
         {
-            get {  return new Color(Parameters["xTint"].GetValueVector4());}
-            set {  Parameters["xTint"].SetValue(value.ToVector4());}
+            get {  return new Color(Parameters["xLightRamp"].GetValueVector4());}
+            set {  Parameters["xLightRamp"].SetValue(value.ToVector4());}
         }
 
         public Color VertexColorTint
         {
-            get {  return new Color(Parameters["xColorTint"].GetValueVector4());}
-            set {  Parameters["xColorTint"].SetValue(value.ToVector4());}
+            get {  return new Color(Parameters["xVertexColorMultiplier"].GetValueVector4());}
+            set {  Parameters["xVertexColorMultiplier"].SetValue(value.ToVector4());}
         }
 
         public Texture2D ShadowMap

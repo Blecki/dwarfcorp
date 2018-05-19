@@ -184,7 +184,8 @@ namespace DwarfCorp
                     if (t.ShouldDraw && t.Transform.Translation.Y < maxViewingLevel)
                     {
                         instanceVertexes[j].Transform = t.Transform;
-                        instanceVertexes[j].Color = t.Color;
+                        instanceVertexes[j].LightRamp = t.LightRamp;
+                        instanceVertexes[j].VertexColorTint = t.VertexColorTint;
                         instanceVertexes[j].SelectionBufferColor = t.SelectionBufferColor;
                         j++;
                     }
@@ -222,7 +223,7 @@ namespace DwarfCorp
                 if (!instance.ShouldDraw || i > numActiveInstances) continue;
                 i++;
                 effect.World = instance.Transform;
-                effect.LightRampTint = instance.Color;
+                effect.LightRamp = instance.LightRamp;
                 effect.SelectionBufferColor = instance.SelectionBufferColor.ToVector4();
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
@@ -276,7 +277,7 @@ namespace DwarfCorp
                 graphics.BlendState = BlendMode;
 
                 effect.MainTexture = Texture;
-                effect.LightRampTint = Color.White;
+                effect.LightRamp = Color.White;
 
                 if (HardwareInstancingSupported)
                 {
@@ -322,7 +323,7 @@ namespace DwarfCorp
             }
 
             effect.MainTexture = Texture;
-            effect.LightRampTint = Color.White;
+            effect.LightRamp = Color.White;
             effect.VertexColorTint = Color.White;
             graphics.Indices = Model.IndexBuffer;
 

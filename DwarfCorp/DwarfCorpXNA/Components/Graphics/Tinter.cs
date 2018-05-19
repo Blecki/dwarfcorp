@@ -118,7 +118,7 @@ namespace DwarfCorp
         public void ApplyTintingToEffect(Shader effect)
         {
             previousColor = effect.VertexColorTint;
-            effect.LightRampTint = LightRamp;
+            effect.LightRamp = LightRamp;
             var tintVec = VertexColorTint.ToVector4();
             var oneShotvec = OneShotTint.ToVector4();
             tintVec.X *= oneShotvec.X;

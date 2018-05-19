@@ -194,7 +194,7 @@ namespace DwarfCorp
             shader.ClippingEnabled = false;
             shader.CameraPosition = new Vector3(-0.5f, 0.5f, 0.5f);
             shader.VertexColorTint = Color.White;
-            shader.LightRampTint = Color.White;
+            shader.LightRamp = Color.White;
             shader.SunlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient);
             shader.AmbientOcclusionGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.ambientgradient);
             shader.TorchlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.torchgradient);

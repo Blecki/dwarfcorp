@@ -70,11 +70,15 @@ namespace DwarfCorp
             if (InstanceData == null) InstanceData = new NewInstanceData("combined-tiled-instances", Matrix.Identity, Color.White);
 
             InstanceData.Transform = GetWorldMatrix(Camera);
-            InstanceData.Color = LightRamp;
+            InstanceData.LightRamp = LightRamp;
             InstanceData.SpriteBounds = new Rectangle(Sheet.FrameWidth * Frame.X, Sheet.FrameHeight * Frame.Y, Sheet.FrameWidth, Sheet.FrameHeight);
             InstanceData.TextureAsset = Sheet.AssetName; // Todo: Cache the raw texture info so the renderer doesn't need to look it up all the time.
             InstanceData.SelectionBufferColor = this.GetGlobalIDColor();
             InstanceData.VertexColorTint = VertexColorTint;
+            if (Stipple)
+            {
+                InstanceData.VertexColorTint.A = 256 / 2;
+            }
         }
 
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,

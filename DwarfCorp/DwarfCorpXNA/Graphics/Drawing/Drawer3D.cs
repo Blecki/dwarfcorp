@@ -549,7 +549,7 @@ namespace DwarfCorp
                     (pos, type) =>
                     {
                         Effect.MainTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
-                        Effect.LightRampTint = Color.White;
+                        Effect.LightRamp = Color.White;
                         // Todo: Alpha pulse
                         Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 1.0f);
                         var prevTechnique = Effect.CurrentTechnique;
@@ -563,7 +563,7 @@ namespace DwarfCorp
                             VoxelLibrary.GetPrimitive(type).Render(Device);
                         }
 
-                        Effect.LightRampTint = Color.White;
+                        Effect.LightRamp = Color.White;
                         Effect.VertexColorTint = Color.White;
                         Effect.World = Matrix.Identity;
                         Effect.CurrentTechnique = prevTechnique;

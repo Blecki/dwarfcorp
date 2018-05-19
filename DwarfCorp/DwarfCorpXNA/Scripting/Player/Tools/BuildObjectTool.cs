@@ -62,7 +62,7 @@ namespace DwarfCorp
             var previewBody = EntityFactory.CreateEntity<Body>(
                 CraftType.EntityName, 
                 Player.VoxSelector.VoxelUnderMouse.WorldPosition,
-                Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources));
+                SelectedResources.Count > 0 ? Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources) : null);
             previewBody.SetFlagRecursive(GameComponent.Flag.Active, false);
             previewBody.SetVertexColorRecursive(Color.White);
             previewBody.SetFlagRecursive(GameComponent.Flag.ShouldSerialize, false);
@@ -285,9 +285,15 @@ namespace DwarfCorp
                     World.ShowToolPopup("Can't build here: intersects wall.");
                 }
 
-                return (intersectsAnyOther == null && !intersectsBuildObjects &&
+                bool valid =  (intersectsAnyOther == null && !intersectsBuildObjects &&
                        (!intersectsWall || CraftType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall)));
+                if (valid)
+                {
+                    World.ShowToolPopup("");
+                }
+                return valid;
             }
+            World.ShowToolPopup("");
             return true;
         }
 

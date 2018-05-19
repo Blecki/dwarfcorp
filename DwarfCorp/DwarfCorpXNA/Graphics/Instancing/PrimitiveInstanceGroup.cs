@@ -36,8 +36,9 @@ namespace DwarfCorp
             Instances[InstanceCount] = new InstancedVertex
             {
                 Transform = Instance.Transform,
-                Color = Instance.Color,
-                SelectionBufferColor = Instance.SelectionBufferColor
+                LightRamp = Instance.LightRamp,
+                SelectionBufferColor = Instance.SelectionBufferColor,
+                VertexColorTint = Instance.VertexColorTint
             };
 
             InstanceCount += 1;
@@ -73,7 +74,7 @@ namespace DwarfCorp
             Device.BlendState = Mode == InstanceRenderMode.Normal ? BlendState.NonPremultiplied : BlendState.Opaque;
 
             Effect.MainTexture = RenderData.Model.Texture;
-            Effect.LightRampTint = Color.White;
+            Effect.LightRamp = Color.White;
 
             InstanceBuffer.SetData(Instances, 0, InstanceCount, SetDataOptions.Discard);
             Device.SetVertexBuffers(RenderData.Model.VertexBuffer, new VertexBufferBinding(InstanceBuffer, 0, 1));

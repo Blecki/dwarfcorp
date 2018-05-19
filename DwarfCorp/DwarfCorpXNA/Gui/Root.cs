@@ -24,7 +24,7 @@ namespace DwarfCorp.Gui
         public Widget FocusItem { get; private set; }
 
         public Widget RootItem { get; private set; }
-        public Widget TooltipItem { get; private set; }
+        public Widget TooltipItem { get; set; }
         private List<Widget> UpdateItems = new List<Widget>();
         public Widget MouseDownItem { get; private set; }
 

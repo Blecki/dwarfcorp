@@ -49,7 +49,7 @@ namespace DwarfCorp
         public float Angle;
         public float AngularVelocity;
         public float LifeRemaining;
-        public Color Tint;
+        public Color LightRamp;
         public InstanceData InstanceData;
         public float TimeAlive;
         public int Frame;
@@ -255,11 +255,11 @@ namespace DwarfCorp
                 Angle = Rand(Data.MinAngle, Data.MaxAngle),
                 AngularVelocity = Rand(Data.MinAngular, Data.MaxAngular),
                 LifeRemaining = 1.0f,
-                Tint = tint,
+                LightRamp = tint,
                 Position = pos,
                 TimeAlive = 0.0f
             };
-            toAdd.InstanceData = new InstanceData(Matrix.Identity, toAdd.Tint, true);
+            toAdd.InstanceData = new InstanceData(Matrix.Identity, toAdd.LightRamp, true);
 
             Particles.Add(toAdd);
 
@@ -338,11 +338,11 @@ namespace DwarfCorp
                 if (Data.HasLighting)
                 {
                     if (v.IsValid && v.IsEmpty)
-                        p.Tint = new Color(v.SunColor, 255, 0);
+                        p.LightRamp = new Color(v.SunColor, 255, 0);
                 }
                 else
                 {
-                    p.Tint = new Color(255, 255, 0);
+                    p.LightRamp = new Color(255, 255, 0);
                 }
 
                 if(Data.CollidesWorld && particlePhysics && vel > 0.2f)
@@ -393,7 +393,7 @@ namespace DwarfCorp
                     }
                     p.InstanceData.ShouldDraw = true;
                     p.InstanceData.Transform = MatrixFromParticle(p);
-                    p.InstanceData.Color = p.Tint;
+                    p.InstanceData.LightRamp = p.LightRamp;
                 }
             }
 

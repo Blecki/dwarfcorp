@@ -13,7 +13,7 @@ namespace DwarfCorp
         public Rectangle SpriteBounds;
         public string TextureAsset;
         public Matrix Transform;
-        public Color Color;
+        public Color LightRamp;
         public Color SelectionBufferColor;
         public Color VertexColorTint;
 
@@ -24,11 +24,11 @@ namespace DwarfCorp
         public NewInstanceData(
             string Type,
             Matrix Transform,
-            Color Color)
+            Color LightRamp)
         {
             this.Type = Type;
             this.Transform = Transform;
-            this.Color = Color;
+            this.LightRamp = LightRamp;
             VertexColorTint = Color.White;
             SelectionBufferColor = Color.Black;
         }
