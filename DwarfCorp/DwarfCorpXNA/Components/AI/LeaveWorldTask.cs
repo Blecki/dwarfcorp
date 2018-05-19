@@ -53,53 +53,59 @@ namespace DwarfCorp
             while (true)
             {
                 var creatureVoxel = agent.Physics.CurrentVoxel;
-
-                if (edgeGoal.IsInGoalRegion(creatureVoxel))
+                List<MoveAction> path = new List<MoveAction>();
+                for (int i = 0; i < 10; i++)
                 {
-                    foreach (var status in Die(agent))
-                        continue;
-                    yield return Act.Status.Success;
+                    if (edgeGoal.IsInGoalRegion(creatureVoxel))
+                    {
+                        foreach (var status in Die(agent))
+                            continue;
+                        yield return Act.Status.Success;
+                        yield break;
+                    }
+
+                    var actions = agent.AI.Movement.GetMoveActions(new MoveState { Voxel = creatureVoxel }, agent.World.OctTree);
+
+                    float minCost = float.MaxValue;
+                    var minAction = new MoveAction();
+                    bool hasMinAction = false;
+                    foreach (var action in actions)
+                    {
+                        var vox = action.DestinationVoxel;
+
+                        float cost = edgeGoal.Heuristic(vox) * 10 + MathFunctions.Rand(0.0f, 0.1f) + agent.AI.Movement.Cost(action.MoveType);
+
+                        if (cost < minCost)
+                        {
+                            minAction = action;
+                            minCost = cost;
+                            hasMinAction = true;
+                        }
+                    }
+
+                    if (hasMinAction)
+                    {
+                        path.Add(minAction);
+                        creatureVoxel = minAction.DestinationVoxel;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (path.Count == 0)
+                {
+                    yield return Act.Status.Fail;
                     yield break;
                 }
+                agent.AI.Blackboard.SetData("GreedyPath", path);
+                var pathAct = new FollowPathAct(agent.AI, "GreedyPath");
+                pathAct.Initialize();
 
-                var actions = agent.AI.Movement.GetMoveActions(new MoveState { Voxel = creatureVoxel }, agent.World.OctTree);
-
-                float minCost = float.MaxValue;
-                var minAction = new MoveAction();
-                bool hasMinAction = false;
-                foreach (var action in actions)
+                foreach (Act.Status status in pathAct.Run())
                 {
-                    var vox = action.DestinationVoxel;
-
-                    float cost = edgeGoal.Heuristic(vox) + MathFunctions.Rand(0.0f, 0.1f);
-
-                    if (cost < minCost)
-                    {
-                        minAction = action;
-                        minCost = cost;
-                        hasMinAction = true;
-                    }
+                    yield return Act.Status.Running;
                 }
-
-                if (hasMinAction)
-                {
-                    var nullAction = new MoveAction
-                    {
-                        Diff = minAction.Diff,
-                        MoveType = MoveType.Walk,
-                        DestinationVoxel = creatureVoxel
-                    };
-
-                    agent.AI.Blackboard.SetData("GreedyPath", new List<MoveAction> { nullAction, minAction });
-                    var pathAct = new FollowPathAct(agent.AI, "GreedyPath");
-                    pathAct.Initialize();
-
-                    foreach (Act.Status status in pathAct.Run())
-                    {
-                        yield return Act.Status.Running;
-                    }
-                }
-
                 yield return Act.Status.Running;
             }
         }
@@ -114,8 +120,11 @@ namespace DwarfCorp
         {
             return new Select(
                 new Sequence(new SetBlackboardData<VoxelHandle>(agent.AI, "EdgeVoxel", VoxelHandle.InvalidHandle),
-                             new PlanAct(agent.AI, "PathToVoxel", "EdgeVoxel", PlanAct.PlanType.Edge),
-                             new FollowPathAct(agent.AI, "PathToVoxel"),
+                             new Repeat(
+                                 new Sequence(
+                                    new PlanAct(agent.AI, "PathToVoxel", "EdgeVoxel", PlanAct.PlanType.Edge) { MaxTimeouts = 1 },
+                                    new FollowPathAct(agent.AI, "PathToVoxel"))
+                                    , 4, true),
                              new Wrap(() => Die(agent)) { Name = "Die" }
                              ),
                 new Wrap(() => GreedyFallbackBehavior(agent)) { Name = "Go to edge of world." }

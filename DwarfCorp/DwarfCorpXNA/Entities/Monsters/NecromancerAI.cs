@@ -99,6 +99,20 @@ namespace DwarfCorp
             skeleton.Sprite.AnimationQueue.Add(new EaseMotion(1.0f, animatePosition, skeleton.Sprite.LocalTransform.Translation));
             Manager.World.ParticleManager.Trigger("green_flame", pos, Color.White, 10);
             Manager.World.ParticleManager.Trigger("dirt_particle", pos, Color.White, 10);
+
+            var myEnvoy = Faction.TradeEnvoys.Where(envoy => envoy.Creatures.Contains(this)).FirstOrDefault();
+            
+            if (myEnvoy != null)
+            {
+                myEnvoy.Creatures.Add(skeleton.AI);
+            }
+
+            var myWarParty = Faction.WarParties.Where(party => party.Creatures.Contains(this)).FirstOrDefault();
+            
+            if (myWarParty != null)
+            {
+                myWarParty.Creatures.Add(skeleton.AI);
+            }
         }
 
         public IEnumerable<Act.Status> SummonSkeleton(Body grave)

@@ -299,8 +299,9 @@ namespace DwarfCorp
 
                             statusResult = Status.Success;
                         }
-                        else if (Timeouts < MaxTimeouts)
+                        else if (Timeouts <= MaxTimeouts)
                         {
+                            Timeouts++;
                             yield return Status.Running;
                         }
                         else

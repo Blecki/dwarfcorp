@@ -133,6 +133,10 @@ namespace DwarfCorp
                     diff = (nextAction.SourceVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half));
                     diffNorm = diff.Length();
                 }
+                else
+                {
+                    throw new InvalidOperationException("Something is bad.");
+                }
             }
             else
             {

@@ -64,8 +64,8 @@ namespace DwarfCorp
             {
                 var motes = MoteRecords[i];
                 if (motes != null)
-                    foreach (var mote in motes)
-                        Manager.World.InstanceRenderer.RenderInstance(mote, Device, Effect, Camera, InstanceRenderMode.Normal);
+                    for (int k = 0; k < motes.Count; k++)
+                        Manager.World.InstanceRenderer.RenderInstance(motes[k], Device, Effect, Camera, InstanceRenderMode.Normal);
             }
         }
 
