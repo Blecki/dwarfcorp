@@ -88,5 +88,12 @@ namespace DwarfCorp
             }
             return r;
         }
+
+        public static String HandleConsoleCommand(String Command)
+        {
+
+
+            return Command;
+        }
     }
 }

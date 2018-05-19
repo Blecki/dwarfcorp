@@ -13,7 +13,7 @@ namespace DwarfCorp.Gui.Widgets
         private bool NeedsInvalidated = false;
 
         public Vector4 TextBackgroundColor = new Vector4(0.0f, 0.0f, 0.0f, 0.25f);
-        private TextGrid TextGrid { get { return Children[0] as TextGrid; } }
+        private TextGrid TextGrid;
 
         public int VisibleLines
         {
@@ -39,12 +39,12 @@ namespace DwarfCorp.Gui.Widgets
 
             Lines.Add("");
 
-            AddChild(new TextGrid
+            TextGrid = AddChild(new TextGrid
             {
                 AutoLayout = AutoLayout.DockFill,
                 Font = "monofont",
                 TextSize = 2,
-            });
+            }) as TextGrid;
         }
 
         public void Append(char C)
@@ -113,6 +113,24 @@ namespace DwarfCorp.Gui.Widgets
             TextGrid.Invalidate();
 
             return base.Redraw();
+        }
+
+        public void AddCommandEntry()
+        {
+            if (Children.Count == 1)
+            {
+                var input = AddChild(new Gui.Widgets.CommandEntry
+                {
+                    AutoLayout = AutoLayout.DockBottom,
+                    MinimumSize = new Point(0, 32),
+                    Text = "",
+                    Border = "",
+                    TextSize = 2,
+                    Font = "monofont"
+                });
+                SendToBack(input);
+                Layout();
+            }
         }
     }
 }

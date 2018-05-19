@@ -13,17 +13,8 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
-            // Note: Cursor won't draw properly if these are changed. Click events may also break.
-            // Widget should probably be able to handle different alignments.
-            TextVerticalAlign = VerticalAlign.Center;
-            TextHorizontalAlign = HorizontalAlign.Left;
-
             OnClick += (sender, args) =>
                 {
-                    if (IsAnyParentHidden() || IsAnyParentTransparent())
-                    {
-                        return;
-                    }
                     if (Object.ReferenceEquals(this, Root.FocusItem))
                     {
                         // This widget already has focus - move cursor to click position.
@@ -81,6 +72,8 @@ namespace DwarfCorp.Gui.Widgets
                     if (args.KeyValue == '`') return;
                     if (args.KeyValue == '\r')
                     {
+                        var console = Parent as DwarfConsole;
+                        console.AddMessage(Debugger.HandleConsoleCommand(Text) + "\n");
                         Text = "";
                         Invalidate();
                         args.Handled = true;
@@ -152,35 +145,8 @@ namespace DwarfCorp.Gui.Widgets
 
 
                 var textDrawPos = Vector2.Zero;
-
-                switch (TextHorizontalAlign)
-                {
-                    case HorizontalAlign.Left:
-                        textDrawPos.X = drawableArea.X;
-                        break;
-                    case HorizontalAlign.Right:
-                        textDrawPos.X = drawableArea.X + drawableArea.Width - stringMeshSize.Width;
-                        break;
-                    case HorizontalAlign.Center:
-                        textDrawPos.X = drawableArea.X + ((drawableArea.Width - stringMeshSize.Width) / 2);
-                        break;
-                }
-
-                switch (TextVerticalAlign)
-                {
-                    case VerticalAlign.Top:
-                        textDrawPos.Y = drawableArea.Y;
-                        break;
-                    case VerticalAlign.Bottom:
-                        textDrawPos.Y = drawableArea.Y + drawableArea.Height - stringMeshSize.Height;
-                        break;
-                    case VerticalAlign.Below:
-                        textDrawPos.Y = drawableArea.Y + drawableArea.Height;
-                        break;
-                    case VerticalAlign.Center:
-                        textDrawPos.Y = drawableArea.Y + ((drawableArea.Height - stringMeshSize.Height) / 2);
-                        break;
-                }
+                textDrawPos.X = drawableArea.X;
+                textDrawPos.Y = drawableArea.Y + ((drawableArea.Height - stringMeshSize.Height) / 2);
 
                 stringMesh.Translate(textDrawPos.X, textDrawPos.Y);
                 result.Add(stringMesh);
