@@ -89,6 +89,7 @@ namespace DwarfCorp
             public List<String> EnabledMods = new List<string>();
             public int MaxSaves = 15;
             public bool EnableSlowMotion = false;
+            public int ConsoleTextSize = 1;
 
             public Settings Clone()
             {
@@ -181,6 +182,43 @@ namespace DwarfCorp
             foreach (var member in typeof(Settings).GetFields())
                 builder.AppendLine(member.Name);
             return builder.ToString();
+        }
+
+        [ConsoleCommandHandler("SAVESETTINGS")]
+        public static string SaveSettings(String Name)
+        {
+            GameSettings.Save();
+            return "Saved.";
+        }
+
+        [ConsoleCommandHandler("SET")]
+        public static string Set(String Name)
+        {
+            var setting = "";
+            var value = "";
+            var space = Name.IndexOf(' ');
+            if (space != -1)
+            {
+                setting = Name.Substring(0, space);
+                value = Name.Substring(space + 1);
+            }
+            else
+                setting = Name;
+
+            var member = typeof(Settings).GetFields().FirstOrDefault(f => f.Name == setting);
+            if (member == null)
+                return "No such setting.";
+
+            try
+            {
+                member.SetValue(GameSettings.Default, Convert.ChangeType(value, member.FieldType));
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+            return "Set.";
         }
     }
 }
