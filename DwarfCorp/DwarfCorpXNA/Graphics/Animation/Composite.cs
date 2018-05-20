@@ -21,6 +21,39 @@ namespace DwarfCorp
             public Point TargetSizeFrames { get; set; }
             public bool HasChanged = true;
             public bool HasRendered = false;
+            private Point NextFreeCell = new Point(-1, 0);
+
+            public Point GetNextFreeCell()
+            {
+                if (InsertCell())
+                {
+                    return NextFreeCell;
+                }
+                else
+                {
+                    return new Point(-1, -1);
+                }
+            }
+
+            private bool InsertCell()
+            {
+                NextFreeCell.X += 1;
+                if (NextFreeCell.X >= TargetSizeFrames.X)
+                {
+                    NextFreeCell.X = 0;
+                    NextFreeCell.Y += 1;
+                }
+                if (NextFreeCell.Y >= TargetSizeFrames.Y)
+                {
+                    return false;
+                }
+                return true;
+            }
+
+            public void ResetCell()
+            {
+                NextFreeCell = new Point(-1, 0);
+            }
 
             public void Initialize()
             {
@@ -30,6 +63,7 @@ namespace DwarfCorp
                 }
 
                 Target = new RenderTarget2D(GameState.Game.GraphicsDevice, FrameSize.X * TargetSizeFrames.X, FrameSize.Y * TargetSizeFrames.Y, false, SurfaceFormat.Color, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
+                HasChanged = true;
             }
 
             public Rectangle GetFrameRect(Point Frame)
@@ -51,6 +85,7 @@ namespace DwarfCorp
                 TargetSizeFrames = new Point(TargetSizeFrames.X * 2, TargetSizeFrames.Y * 2);
                 HasRendered = false;
                 HasChanged = true;
+                ResetCell();
                 return true;
             }
 
@@ -113,12 +148,10 @@ namespace DwarfCorp
         }
         public List<Page> Pages = new List<Page>();
         private Dictionary<CompositeFrame, FrameID> CurrentFrames { get; set; }
-        private FrameID CurrentOffset;
 
         public Composite()
         {
             CurrentFrames = new Dictionary<CompositeFrame, FrameID>();
-            CurrentOffset = new FrameID(0, 0, 0);
         }
 
         public void Init(Point frameSize, Point targetSize)
@@ -132,30 +165,70 @@ namespace DwarfCorp
             Pages[0].Initialize();
         }
 
+        private void EraseFrames(int page)
+        {
+            List<CompositeFrame> invalidFrames = new List<CompositeFrame>();
+            foreach (var dirtyFrame in CurrentFrames.Where(f => f.Value.Page == page))
+            {
+                invalidFrames.Add(dirtyFrame.Key);
+            }
+            foreach (var dirtyFrame in invalidFrames)
+            {
+                CurrentFrames.Remove(dirtyFrame);
+            }
+            Pages[page].HasChanged = true;
+            Pages[page].ResetCell();
+        }
 
         public FrameID PushFrame(CompositeFrame frame)
         {
-            var page = Pages[CurrentOffset.Page];
-            if (page.Target.IsContentLost)
+            foreach(var page in Pages.Where(p => p.Target.IsContentLost))
             {
                 page.Initialize();
-                CurrentFrames.Clear();
             }
+
             if (!CurrentFrames.ContainsKey(frame))
             {
-                Point newFrameSize = page.FrameSize;
-                foreach (var layer in frame.Cells)
+                Point nextFreeCell = new Point(-1, -1);
+                Page page = null;
+                int k = -1;
+                foreach (var pages in Pages)
                 {
-                    if (layer.Sheet.FrameWidth > page.FrameSize.X || 
-                        layer.Sheet.FrameHeight > page.FrameSize.Y)
+                    k++;
+                    nextFreeCell = pages.GetNextFreeCell();
+                    if (nextFreeCell.X >= 0)
                     {
-                        newFrameSize = new Point(Math.Max(layer.Sheet.FrameWidth, page.FrameSize.X),
-                            Math.Max(layer.Sheet.FrameHeight, page.FrameSize.Y));
+                        page = pages;
+                        break;
                     }
                 }
 
-                if (newFrameSize != page.FrameSize)
+
+                Point newFrameSize = new Point(1, 1);
+                foreach (var layer in frame.Cells)
                 {
+                    newFrameSize = new Point(Math.Max(layer.Sheet.FrameWidth, newFrameSize.X),
+                        Math.Max(layer.Sheet.FrameHeight, newFrameSize.Y));
+                }
+
+                if (page == null)
+                {
+                    page = new Page()
+                    {
+                        TargetSizeFrames = new Point(4, 4),
+                        FrameSize = newFrameSize
+                    };
+                    page.Initialize();
+                    Pages.Add(page);
+                    nextFreeCell = page.GetNextFreeCell();
+                    k = Pages.Count - 1;
+                }
+
+
+                if (page.FrameSize.X < newFrameSize.X || page.FrameSize.Y < newFrameSize.Y)
+                {
+                    EraseFrames(k);
+
                     if (page.ValidateFrameSizeChange(newFrameSize))
                     {
                         page.FrameSize = newFrameSize;
@@ -175,41 +248,17 @@ namespace DwarfCorp
                             newPage.Initialize();
                             Pages.Add(newPage);
                             page = newPage;
-                            CurrentOffset.Page++;
-                            CurrentOffset.Offset.X = 0;
-                            CurrentOffset.Offset.Y = 0;
+                            nextFreeCell = newPage.GetNextFreeCell();
+                            k++;
+                        }
+                        else
+                        {
+                            nextFreeCell = page.GetNextFreeCell();
                         }
                     }
                 }
 
-                FrameID toReturn = CurrentOffset;
-                CurrentOffset.Offset.X += 1;
-                if (CurrentOffset.Offset.X >= page.TargetSizeFrames.X)
-                {
-                    CurrentOffset.Offset.X = 0;
-                    CurrentOffset.Offset.Y += 1;
-                }
-
-                if (CurrentOffset.Offset.Y >= page.TargetSizeFrames.Y)
-                {
-                    if (!page.Grow())
-                    {
-                        var newPage = new Page()
-                        {
-                            TargetSizeFrames = new Point(4, 4),
-                            FrameSize = page.FrameSize
-                        };
-                        newPage.Initialize();
-                        Pages.Add(newPage);
-                        page = newPage;
-                        CurrentOffset.Page++;
-                        CurrentOffset.Offset.X = 0;
-                        CurrentOffset.Offset.Y = 0;
-                        toReturn = CurrentOffset;
-                    }
-                    return PushFrame(frame);
-                }
-
+                FrameID toReturn = new FrameID(k, nextFreeCell.X, nextFreeCell.Y);
                 CurrentFrames[frame] = toReturn;
                 page.HasChanged = true;
                 return toReturn;
@@ -222,10 +271,18 @@ namespace DwarfCorp
         {
             batch.Begin();
             Vector2 offset = Vector2.Zero;
+            int k = 0;
             foreach (var page in Pages)
             {
-                Drawer2D.DrawRect(batch, new Rectangle(x + (int)offset.X, y + (int)offset.Y, page.Target.Width, page.Target.Height), Color.White, 1);
+                Color pageColor = new HSLColor(255 * ((float)k / Pages.Count), 255, 255);
+                Color cellColor = new HSLColor(255 * ((float)k / Pages.Count), 255, 128);
+                Drawer2D.DrawRect(batch, new Rectangle(x + (int)offset.X, y + (int)offset.Y, page.Target.Width, page.Target.Height), pageColor, 1);
                 batch.Draw(page.Target, offset + new Vector2(x, y), Color.White);
+                foreach(var frame in CurrentFrames.Where(f => f.Value.Page == k))
+                {
+                    Drawer2D.DrawRect(batch, new Rectangle(x + (int)offset.X + frame.Value.Offset.X * page.FrameSize.X, y + (int)offset.Y + frame.Value.Offset.Y * page.FrameSize.Y, page.FrameSize.X, page.FrameSize.Y), cellColor, 1);
+                }
+                k++;
                 offset.X += page.TargetSizeFrames.X * page.FrameSize.X;
             }
             batch.End();
