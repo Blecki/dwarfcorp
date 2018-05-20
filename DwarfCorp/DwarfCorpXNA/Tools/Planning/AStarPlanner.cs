@@ -47,7 +47,7 @@ namespace DwarfCorp
     ///     A Movement could be something like "walk", "jump" or "fly". The planner finds the shortest list of
     ///     Movements that go from a start DestinationVoxel to a goal DestinationVoxel.
     /// </summary>
-    internal class AStarPlanner
+    public class AStarPlanner
     {
         /// <summary>
         ///     Gets the DestinationVoxel that has minimum expansion score. Expands this voxel.
@@ -668,7 +668,7 @@ namespace DwarfCorp
         /// <param name="continueFunc"></param>
         /// <returns>The path of movements the creature must take to reach the goal. Returns null if no such path exists.</returns>
         public static List<MoveAction> FindPath(CreatureMovement mover, VoxelHandle start, GoalRegion goal,
-            ChunkManager chunks, int maxExpansions, float weight, int numPlans, Func<bool> continueFunc)
+            ChunkManager chunks, int maxExpansions, float weight, int numPlans, Func<bool> continueFunc, out PlanResultCode resultCode)
         {
             var p = new List<MoveAction>();
             bool use_inverse = goal.IsReversible() && OpennessHeuristic(goal.GetVoxel()) < OpennessHeuristic(start);
@@ -677,6 +677,7 @@ namespace DwarfCorp
             var result = use_inverse ? InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc)
                 : Path(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc);
 
+            resultCode = result.Result;
             var length = (start.WorldPosition - goal.GetVoxel().WorldPosition).Length();
             if (result.Result == PlanResultCode.Success)
             {
@@ -697,6 +698,7 @@ namespace DwarfCorp
 
             result = use_inverse ? Path(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc)
                 : InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc);
+            resultCode = result.Result;
             return result.Result == PlanResultCode.Success ? p : null;
         }
 

@@ -207,6 +207,25 @@ namespace DwarfCorp
         /// </summary>
         public List<Task> Tasks { get; set; }
 
+        private struct FailedTask
+        {
+            public Task TaskFailure;
+            public DateTime FailedTime;
+        }
+
+        private List<FailedTask> FailedTasks = new List<FailedTask>();
+
+        public bool WasTaskFailed(Task task)
+        {
+            return FailedTasks.Any(t => t.TaskFailure.Equals(task));
+        }
+
+        private void UpdateFailedTasks(DateTime now)
+        {
+            FailedTasks.RemoveAll(task => (now - task.FailedTime).Hours >= 1);
+        }
+
+
         /// <summary>
         /// If true, whent he creature dies its friends will mourn its death, generating unhappy Thoughts
         /// </summary>
@@ -271,7 +290,8 @@ namespace DwarfCorp
             {
                 float cost = task.ComputeCost(Creature);
 
-                if (task.IsFeasible(Creature) == Task.Feasibility.Feasible && task.Priority >= bestPriority && cost < bestCost)
+                if (task.IsFeasible(Creature) == Task.Feasibility.Feasible && task.Priority >= bestPriority && cost < bestCost &&
+                    !WasTaskFailed(task))
                 {
                     bestCost = cost;
                     bestTask = task;
@@ -320,6 +340,7 @@ namespace DwarfCorp
         /// <summary> remove any impossible or already completed tasks </summary>
         public void DeleteBadTasks()
         {
+            UpdateFailedTasks(World.Time.CurrentDate);
             var badTasks = Tasks.Where(task => task.ShouldDelete(Creature)).ToList();
             foreach(var task in badTasks)
             {
@@ -444,6 +465,10 @@ namespace DwarfCorp
             if (Status.Hunger.IsDissatisfied() && Faction.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
             {
                 Task toReturn = new SatisfyHungerTask();
+                if (Status.Hunger.IsCritical())
+                {
+                    toReturn.Priority = Task.PriorityType.Urgent;
+                }
                 if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
                     AssignTask(toReturn);
             }
@@ -464,6 +489,10 @@ namespace DwarfCorp
                 if (status == Act.Status.Fail)
                 {
                     LastFailedAct = CurrentAct.Name;
+                    if (!FailedTasks.Any(task => task.TaskFailure.Equals(CurrentTask)))
+                    {
+                        FailedTasks.Add(new FailedTask() { TaskFailure = CurrentTask, FailedTime = World.Time.CurrentDate });
+                    }
 
                     if (CurrentTask.ShouldRetry(Creature))
                     {

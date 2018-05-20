@@ -36,20 +36,15 @@ namespace DwarfCorp
         public string CompositeName;
         public List<CompositeFrame> CompositeFrames = new List<CompositeFrame>();
 
-        private bool _pushed = false;
 
         [JsonIgnore]
         public Composite.FrameID CurrentOffset { get; set; }
 
         public void PushFrames()
         {
-            if (!_pushed)
+            foreach (var frame in CompositeFrames)
             {
-                foreach (var frame in CompositeFrames)
-                {
-                    Composite.PushFrame(frame);
-                }
-                _pushed = true;
+                Composite.PushFrame(frame);
             }
         }
 
@@ -58,6 +53,7 @@ namespace DwarfCorp
             SpriteSheet = new SpriteSheet(Composite.GetTarget(CurrentOffset));
             if (CurrentFrame >= CompositeFrames.Count)
                 return;
+            PushFrames();
             CurrentOffset = Composite.PushFrame(CompositeFrames[CurrentFrame]);
             var rect = Composite.GetFrameRect(CurrentOffset);
             Primitive.SetFrame(SpriteSheet, rect, rect.Width / 32.0f, rect.Height / 32.0f, Color.White, Color.White, Flipped);

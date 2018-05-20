@@ -13,7 +13,7 @@ namespace DwarfCorp
 {
     public class Composite : IDisposable
     {
-        public static int MaxPageSize = 1024;
+        public static int MaxPageSize = 2048;
         public class Page
         {
             public RenderTarget2D Target { get; set; }
@@ -23,19 +23,22 @@ namespace DwarfCorp
             public bool HasRendered = false;
             private Point NextFreeCell = new Point(-1, 0);
 
-            public Point GetNextFreeCell()
+            public enum AddCellResult
             {
-                if (InsertCell())
-                {
-                    return NextFreeCell;
-                }
-                else
-                {
-                    return new Point(-1, -1);
-                }
+                PageFull,
+                PageGrown,
+                CellChanged
             }
 
-            private bool InsertCell()
+
+            public AddCellResult GetNextFreeCell(out Point freeCell)
+            {
+                var result = InsertCell();
+                freeCell = NextFreeCell;
+                return result;
+            }
+
+            private AddCellResult InsertCell()
             {
                 NextFreeCell.X += 1;
                 if (NextFreeCell.X >= TargetSizeFrames.X)
@@ -45,9 +48,16 @@ namespace DwarfCorp
                 }
                 if (NextFreeCell.Y >= TargetSizeFrames.Y)
                 {
-                    return false;
+                    if(Grow())
+                    {
+                        return AddCellResult.PageGrown;
+                    }
+                    else
+                    {
+                        return AddCellResult.PageFull;
+                    }
                 }
-                return true;
+                return AddCellResult.CellChanged;
             }
 
             public void ResetCell()
@@ -86,6 +96,7 @@ namespace DwarfCorp
                 HasRendered = false;
                 HasChanged = true;
                 ResetCell();
+                Initialize();
                 return true;
             }
 
@@ -195,10 +206,14 @@ namespace DwarfCorp
                 foreach (var pages in Pages)
                 {
                     k++;
-                    nextFreeCell = pages.GetNextFreeCell();
-                    if (nextFreeCell.X >= 0)
+                    var result = pages.GetNextFreeCell(out nextFreeCell);
+                    if (result != Page.AddCellResult.PageFull)
                     {
                         page = pages;
+                        if (result == Page.AddCellResult.PageGrown)
+                        {
+                            EraseFrames(k);
+                        }
                         break;
                     }
                 }
@@ -220,10 +235,9 @@ namespace DwarfCorp
                     };
                     page.Initialize();
                     Pages.Add(page);
-                    nextFreeCell = page.GetNextFreeCell();
+                    page.GetNextFreeCell(out nextFreeCell);
                     k = Pages.Count - 1;
                 }
-
 
                 if (page.FrameSize.X < newFrameSize.X || page.FrameSize.Y < newFrameSize.Y)
                 {
@@ -248,12 +262,13 @@ namespace DwarfCorp
                             newPage.Initialize();
                             Pages.Add(newPage);
                             page = newPage;
-                            nextFreeCell = newPage.GetNextFreeCell();
+                            newPage.GetNextFreeCell(out nextFreeCell);
                             k++;
                         }
                         else
                         {
-                            nextFreeCell = page.GetNextFreeCell();
+                            page.GetNextFreeCell(out nextFreeCell);
+                            EraseFrames(k);
                         }
                     }
                 }

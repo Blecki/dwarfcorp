@@ -57,6 +57,7 @@ namespace DwarfCorp
         public bool Success;
         public List<MoveAction> Path;
         public AstarPlanRequest Request;
+        public AStarPlanner.PlanResultCode Result;
     }
 
     /// <summary>
@@ -73,18 +74,21 @@ namespace DwarfCorp
                 {
                     Path = null,
                     Success = false,
-                    Request = req
+                    Request = req,
+                    Result = AStarPlanner.PlanResultCode.Cancelled
                 };
                
             }
+            AStarPlanner.PlanResultCode result;
             List<MoveAction> path = AStarPlanner.FindPath(req.Sender.Movement, req.Start, req.GoalRegion, req.Sender.Manager.World.ChunkManager, 
-                req.MaxExpansions, req.HeuristicWeight, Requests.Count, () => { return Subscribers.Find(s => s.ID == req.Subscriber.ID) != null; } );
+                req.MaxExpansions, req.HeuristicWeight, Requests.Count, () => { return Subscribers.Find(s => s.ID == req.Subscriber.ID) != null; }, out result);
 
             AStarPlanResponse res = new AStarPlanResponse
             {
                 Path = path,
                 Success = (path != null),
-                Request = req
+                Request = req,
+                Result = result
             };
 
             return res;
