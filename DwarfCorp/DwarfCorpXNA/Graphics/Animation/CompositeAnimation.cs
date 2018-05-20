@@ -39,7 +39,7 @@ namespace DwarfCorp
         private bool _pushed = false;
 
         [JsonIgnore]
-        public Point CurrentOffset { get; set; }
+        public Composite.FrameID CurrentOffset { get; set; }
 
         public void PushFrames()
         {
@@ -55,7 +55,7 @@ namespace DwarfCorp
 
         public override void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
         {
-            SpriteSheet = new SpriteSheet((Texture2D)Composite.Target);
+            SpriteSheet = new SpriteSheet(Composite.GetTarget(CurrentOffset));
             if (CurrentFrame >= CompositeFrames.Count)
                 return;
             CurrentOffset = Composite.PushFrame(CompositeFrames[CurrentFrame]);
@@ -65,12 +65,12 @@ namespace DwarfCorp
 
         public override ImageFrame GetAsImageFrame(int CurrentFrame)
         {
-            return new ImageFrame(Composite.Target, Composite.GetFrameRect(CurrentOffset));
+            return new ImageFrame(Composite.GetTarget(CurrentOffset), Composite.GetFrameRect(CurrentOffset));
         }
 
         public override Texture2D GetTexture()
         {
-            return Composite.Target;
+            return Composite.GetTarget(CurrentOffset);
         }
 
         public override int GetFrameCount()

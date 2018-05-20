@@ -986,9 +986,10 @@ namespace DwarfCorp
             };
 
 
-            //if (CompositeLibrary.Composites.ContainsKey("resources"))
-            //    CompositeLibrary.Composites["resources"].DebugDraw(DwarfGame.SpriteBatch, 0, 0);
-            //SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
+            if (Debugger.Switches.DrawSelectionBuffer)
+            {
+                SelectionBuffer.DebugDraw(GraphicsDevice.Viewport.Bounds);
+            }
             try
             {
                 DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
@@ -1008,14 +1009,15 @@ namespace DwarfCorp
                 DwarfGame.SpriteBatch.End();
             }
 
-            /*
-            int px = 0;
-            foreach (var composite in CompositeLibrary.Composites)
+            if (Debugger.Switches.DrawComposites)
             {
-                composite.Value.DebugDraw(DwarfGame.SpriteBatch, px, 0);
-                px += composite.Value.Target.Width;
+                Vector2 offset = Vector2.Zero;
+                foreach (var composite in CompositeLibrary.Composites)
+                {
+                    offset = composite.Value.DebugDraw(DwarfGame.SpriteBatch, (int)offset.X, (int)offset.Y);
+                }
             }
-            */
+            
 
             Master.Render(Game, gameTime, GraphicsDevice);
 

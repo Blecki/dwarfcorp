@@ -20,20 +20,10 @@ namespace DwarfCorp
             Composite r = null;
             if (Composites.TryGetValue(Name, out r))
             {
-                if (r.FrameSize.X != FrameSize.X || r.FrameSize.Y != FrameSize.Y)
-                {
-                    r.FrameSize = new Point(Math.Max(r.FrameSize.X, FrameSize.X), Math.Max(r.FrameSize.Y, FrameSize.Y));
-                    r.Initialize();
-
-                }
                 return r;
             }
-            r = new Composite()
-            {
-                FrameSize = FrameSize,
-                TargetSizeFrames = new Point(16, 16)
-            };
-            r.Initialize();
+            r = new Composite();
+            r.Init(FrameSize, new Point(16, 16));
             Composites.Add(Name, r);
             return r;
         }
