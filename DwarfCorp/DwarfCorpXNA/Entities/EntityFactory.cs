@@ -90,6 +90,11 @@ namespace DwarfCorp
             EntityFuncs[id] = function;
         }
 
+        public static bool HasEntity(string id)
+        {
+            return EntityFuncs.ContainsKey(id);
+        }
+
         public static T CreateEntity<T>(string id, Vector3 location, Blackboard data = null) where T : GameComponent
         {
             if (data == null) data = new Blackboard();

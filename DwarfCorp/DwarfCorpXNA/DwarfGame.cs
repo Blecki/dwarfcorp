@@ -309,11 +309,13 @@ namespace DwarfCorp
 
         public void TriggerRavenEvent(string message, string details)
         {
+#if SHARP_RAVEN && !DEBUG
             if (ravenClient == null)
                 return;
             var exception = new Exception(message);
             exception.Data["Details"] = details;
             ravenClient.Capture(new SentryEvent(exception));
+#endif
         }
 
         protected override void Initialize()

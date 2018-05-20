@@ -969,7 +969,7 @@ namespace DwarfCorp
 
                 if (UseFXAA)
                 {
-                    fxaa.Begin(DwarfTime.LastTime;
+                    fxaa.Begin(DwarfTime.LastTime);
                 }
                 bloom.Draw(gameTime.ToRealTime());
                 if (UseFXAA)
