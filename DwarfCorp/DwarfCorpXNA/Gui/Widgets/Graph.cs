@@ -15,7 +15,7 @@ namespace DwarfCorp.Gui.Widgets
         public string MinLabelString = "0";
 
         public List<float> Values = new List<float>();
-
+        public float MaxValueSeen = 0.0f;
         public int GraphWidth { get { return Children[2].Rect.Width; } }
 
         public override void Construct()
@@ -61,7 +61,10 @@ namespace DwarfCorp.Gui.Widgets
                 return base.Redraw();
 
             var tileMatrix = Root.GetTileSheet("basic").TileMatrix(1);
-            var maxValue = (float)Values.Max();
+            float alpha = 0.995f;
+            float currentMax = Values.Max();
+            MaxValueSeen = Math.Max(alpha * MaxValueSeen +  (1.0f - alpha) * currentMax, currentMax);
+            var maxValue = MaxValueSeen;
             var yScale = (float)GraphBox.Rect.Width / maxValue;
             var columns = Gui.Mesh.Merge(EnumerateRange(0, Values.Count).Select(x =>
             {

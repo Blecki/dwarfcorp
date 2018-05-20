@@ -42,7 +42,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 AutoLayout = AutoLayout.DockFill,
                 Font = "monofont",
-                TextSize = 1,
+                TextSize = 2,
             }) as TextGrid;
         }
 
