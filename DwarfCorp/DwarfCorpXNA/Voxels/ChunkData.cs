@@ -94,6 +94,10 @@ namespace DwarfCorp
 
         public void LoadFromFile(ChunkManager Manager, SaveGame gameFile, Action<String> SetLoadingMessage)
         {
+            if (gameFile.ChunkData.Count == 0)
+            {
+                throw new Exception("Game file corrupt. It has no chunk files.");
+            }
             var maxChunkX = gameFile.ChunkData.Max(c => c.ID.X) + 1;
             var maxChunkZ = gameFile.ChunkData.Max(c => c.ID.Z) + 1;
             ChunkMapMinX = gameFile.ChunkData.Min(c => c.ID.X);
