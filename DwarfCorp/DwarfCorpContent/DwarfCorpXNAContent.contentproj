@@ -2473,7 +2473,7 @@
       <Name>resource-items</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="tutorial.txt">
+    <None Include="tutorial.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>tutorial</Name>
     </None>

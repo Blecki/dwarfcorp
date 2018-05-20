@@ -24,13 +24,12 @@ namespace DwarfCorp.Tutorial
         private bool TutorialVisible = false;
         private Widget HighlightWidget = null;
 
-        public TutorialManager(String TutorialFile)
+        public TutorialManager()
         {
-            var entries = Newtonsoft.Json.JsonConvert.DeserializeObject<JsonTutorialSet>(
-                System.IO.File.ReadAllText(TutorialFile));
+            var entries = FileUtils.LoadJsonListFromMultipleSources<JsonTutorialEntry>(ContentPaths.tutorials, null, t => t.Name);
 
             Entries = new Dictionary<string, TutorialEntry>();
-            foreach (var entry in entries.Tutorials)
+            foreach (var entry in entries)
                 Entries.Add(entry.Name, new TutorialEntry
                 {
                     Text = entry.Text,

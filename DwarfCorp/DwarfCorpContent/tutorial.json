@@ -1,5 +1,4 @@
-{
-	"Tutorials": [
+[
 		{ 
 			"Name": "new game start",
 			"Title": "Tutorial",
@@ -256,4 +255,3 @@
 			"Text" : "TODO"
 		},
 	]
-}
