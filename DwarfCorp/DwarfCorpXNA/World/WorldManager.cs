@@ -969,15 +969,15 @@ namespace DwarfCorp
 
                 if (UseFXAA)
                 {
-                    fxaa.Begin(DwarfTime.LastTime, fxaa.RenderTarget);
+                    fxaa.Begin(DwarfTime.LastTime;
                 }
                 bloom.Draw(gameTime.ToRealTime());
                 if (UseFXAA)
-                    fxaa.End(DwarfTime.LastTime, fxaa.RenderTarget);
+                    fxaa.End(DwarfTime.LastTime);
             }
             else if (UseFXAA)
             {
-                fxaa.End(DwarfTime.LastTime, fxaa.RenderTarget);
+                fxaa.End(DwarfTime.LastTime);
             }
 
             RasterizerState rasterizerState = new RasterizerState()

@@ -307,6 +307,15 @@ namespace DwarfCorp
             }
         }
 
+        public void TriggerRavenEvent(string message, string details)
+        {
+            if (ravenClient == null)
+                return;
+            var exception = new Exception(message);
+            exception.Data["Details"] = details;
+            ravenClient.Capture(new SentryEvent(exception));
+        }
+
         protected override void Initialize()
         {
 #if SHARP_RAVEN && !DEBUG
