@@ -24,7 +24,8 @@ namespace DwarfCorp
             public long Ticks;
             public PerformanceFunction Function;
         }
-
+        private static float[] FPSBuffer = new float[100];
+        private static int k = 0;
         [ThreadStatic]
         private static PerformanceFrame CurrentFrame;
 
@@ -84,7 +85,10 @@ namespace DwarfCorp
                 graph.Values.Add((float)FPSWatch.Elapsed.TotalMilliseconds);
                 while (graph.Values.Count > graph.GraphWidth)
                     graph.Values.RemoveAt(0);
-                graph.MinLabelString = String.Format("** FPS: {0:000} **", FPS);
+                FPSBuffer[k % 100] = FPS;
+                k++;
+
+                graph.MinLabelString = String.Format("FPS: {0:000} (avg: {1})", FPS, (int)FPSBuffer.Average());
 
                 graph.Invalidate();
             }

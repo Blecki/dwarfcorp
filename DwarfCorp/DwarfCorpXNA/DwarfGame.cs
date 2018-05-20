@@ -362,7 +362,8 @@ namespace DwarfCorp
             });
 
             ConsoleGui.RootItem.Layout();
-            _logwriter.SetConsole(GetConsoleTile("LOG"));
+            if (_logwriter != null)
+                _logwriter.SetConsole(GetConsoleTile("LOG"));
 
             Console.Out.WriteLine("Console created.");
 
