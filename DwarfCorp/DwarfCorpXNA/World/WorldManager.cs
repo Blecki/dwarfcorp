@@ -539,9 +539,11 @@ namespace DwarfCorp
                     LastWorldPopup.Remove(removal);
                 }
             }
+
             if (Paused)
             {
                 ComponentManager.UpdatePaused();
+                TutorialManager.Update(Gui);
             }
             // If not paused, we want to just update the rest of the game.
             else

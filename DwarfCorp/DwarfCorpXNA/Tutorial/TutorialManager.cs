@@ -128,7 +128,7 @@ namespace DwarfCorp.Tutorial
                 }
             }
 
-            if (HighlightWidget != null && HighlightWidget.IsAnyParentHidden() && TutorialVisible && ExistingTutorial != null)
+            if ((HighlightWidget != null) && HighlightWidget.IsAnyParentHidden() && TutorialVisible && (ExistingTutorial != null))
             {
                 Gui.SpecialHiliteRegion = null;
                 ExistingTutorial.Close();
