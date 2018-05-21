@@ -185,7 +185,11 @@ namespace DwarfCorp.GameStates
             yield return new KeyValuePair<string, Color>("Biomes: ", Color.White);
             foreach (var biome in biomes)
             {
-                yield return new KeyValuePair<string, Color>("    " + BiomeLibrary.Biomes[biome].Name, BiomeLibrary.Biomes[biome].MapColor);
+                var biomeColor = BiomeLibrary.Biomes[biome].MapColor;
+                biomeColor.R = (byte)Math.Min(255, biomeColor.R + 80);
+                biomeColor.G = (byte)Math.Min(255, biomeColor.G + 80);
+                biomeColor.B = (byte)Math.Min(255, biomeColor.B + 80);
+                yield return new KeyValuePair<string, Color>("    " + BiomeLibrary.Biomes[biome].Name, biomeColor);
             }
         }
 
@@ -199,7 +203,7 @@ namespace DwarfCorp.GameStates
                 {
                     byte factionIdx = Overworld.Map[x, y].Faction;
 
-                    if (factionIdx > 0)
+                    if (factionIdx > 0 && factionIdx < NativeCivilizations.Count - 1)
                     {
                         Faction faction = NativeCivilizations[factionIdx - 1];
 
