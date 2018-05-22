@@ -422,10 +422,17 @@ namespace DwarfCorp.GameStates
                 statsDisplay.Invalidate();
 
                 // Todo: Employee AI debug display
+
+                var scheduleDisplay = DwarfGame.GetConsoleTile("SCHEDULE");
+                scheduleDisplay.Lines.Clear();
+                foreach (var scheduledEvent in World.GoalManager.EventScheduler.Forecast)
+                    scheduleDisplay.Lines.Add(String.Format("{0} : {1}, {2}", scheduledEvent.Event.Name, (scheduledEvent.Date - World.Time.CurrentDate).ToString(@"hh\:mm"), scheduledEvent.Event.Difficulty));
+
+                scheduleDisplay.Lines.Add(String.Format("Difficulty: {0} Forecast {1}", World.GoalManager.EventScheduler.CurrentDifficulty, World.GoalManager.EventScheduler.ForecastDifficulty(World.Time.CurrentDate)));
+
+                scheduleDisplay.Invalidate();
             }
         }
-
-        private Widget eventScheduleWidget = null;
 
         /// <summary>
         /// Called when a frame is to be drawn to the screen
@@ -457,42 +464,6 @@ namespace DwarfCorp.GameStates
                     if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
                         MinimapRenderer.Render(new Rectangle(MinimapFrame.Rect.X, MinimapFrame.Rect.Bottom - 192, 192, 192), GuiRoot);
                     GuiRoot.Draw();
-                }
-
-                if (Debugger.Switches.DrawEventSchedule)
-                {
-                    StringBuilder eventString = new StringBuilder();
-                    foreach (var scheduledEvent in World.GoalManager.EventScheduler.Forecast)
-                    {
-                        eventString.AppendLine(String.Format("{0} : {1}, {2}", scheduledEvent.Event.Name, (scheduledEvent.Date - World.Time.CurrentDate).ToString(@"hh\:mm"), scheduledEvent.Event.Difficulty));
-                    }
-                    eventString.AppendLine(String.Format("Difficulty: {0} Forecast {1}", World.GoalManager.EventScheduler.CurrentDifficulty, World.GoalManager.EventScheduler.ForecastDifficulty(World.Time.CurrentDate)));
-
-                    if (eventScheduleWidget == null)
-                    {
-                        eventScheduleWidget = new Widget()
-                        {
-                            Text = eventString.ToString(),
-                            AutoLayout = AutoLayout.FloatTopRight,
-                            TextColor = Color.White.ToVector4(),
-                            MinimumSize = new Point(256, 512),
-                            Rect = new Rectangle(256, 128, 256, 512)
-                        };
-
-                        World.Gui.RootItem.AddChild(eventScheduleWidget);
-                    }
-                    else
-                    {
-                        if (eventScheduleWidget.Text != eventString.ToString())
-                        {
-                            eventScheduleWidget.Text = eventString.ToString();
-                            eventScheduleWidget.Invalidate();
-                        }
-                    }
-                }
-                else if (eventScheduleWidget != null)
-                {
-                    eventScheduleWidget.Hidden = true;
                 }
             }
 
