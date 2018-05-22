@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DwarfCorp.Goals.Events
 {
-    public class DigBlock : GameEvent
+    public class DigBlock : TriggerEvent
     {
         public VoxelType VoxelType;
         public Creature Miner;

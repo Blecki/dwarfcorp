@@ -14,7 +14,7 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.Achievement;
         }
 
-        public override void OnGameEvent(WorldManager World, GameEvent Event)
+        public override void OnGameEvent(WorldManager World, TriggerEvent Event)
         {
             var builtRoomEvent = Event as Events.BuiltRoom;
             if (builtRoomEvent != null && builtRoomEvent.RoomType.StartsWith("Stockpile"))
@@ -35,7 +35,7 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.Achievement;
         }
 
-        public override void OnGameEvent(WorldManager World, GameEvent Event)
+        public override void OnGameEvent(WorldManager World, TriggerEvent Event)
         {
             var builtRoomEvent = Event as Events.BuiltRoom;
             if (builtRoomEvent != null && builtRoomEvent.RoomType.StartsWith("BalloonPort"))
@@ -56,7 +56,7 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.Achievement;
         }
 
-        public override void OnGameEvent(WorldManager World, GameEvent Event)
+        public override void OnGameEvent(WorldManager World, TriggerEvent Event)
         {
             var builtRoomEvent = Event as Events.BuiltRoom;
             if (builtRoomEvent != null && builtRoomEvent.RoomType.StartsWith("BedRoom"))
@@ -77,7 +77,7 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.Achievement;
         }
 
-        public override void OnGameEvent(WorldManager World, GameEvent Event)
+        public override void OnGameEvent(WorldManager World, TriggerEvent Event)
         {
             var builtRoomEvent = Event as Events.BuiltRoom;
             if (builtRoomEvent != null && builtRoomEvent.RoomType.StartsWith("CommonRoom"))

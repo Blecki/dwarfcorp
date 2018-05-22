@@ -5,13 +5,6 @@ using System.Text;
 
 namespace DwarfCorp.Goals
 {
-    public enum GoalTypes
-    {
-        Achievement,
-        UnavailableAtStartup,
-        AvailableAtStartup
-    }
-
     public enum GoalState
     {
         Unavailable,

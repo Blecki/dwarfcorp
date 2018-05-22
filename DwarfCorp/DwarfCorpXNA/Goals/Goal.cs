@@ -39,7 +39,7 @@ namespace DwarfCorp.Goals
         /// </summary>
         /// <param name="World"></param>
         /// <param name="Event"></param>
-        public virtual void OnGameEvent(WorldManager World, GameEvent Event) { }
+        public virtual void OnGameEvent(WorldManager World, TriggerEvent Event) { }
 
         /// <summary>
         /// Called to create a custom GUI for the goal.

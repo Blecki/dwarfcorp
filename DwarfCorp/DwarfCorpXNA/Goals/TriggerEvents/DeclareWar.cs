@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DwarfCorp.Goals.Events
 {
-    public class DeclareWar : GameEvent
+    public class DeclareWar : TriggerEvent
     {
         public Faction PlayerFaction;
         public Faction OtherFaction;

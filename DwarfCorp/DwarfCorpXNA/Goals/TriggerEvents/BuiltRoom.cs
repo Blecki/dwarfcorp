@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DwarfCorp.Goals.Events
 {
-    public class BuiltRoom : GameEvent
+    public class BuiltRoom : TriggerEvent
     {
         public String RoomType;
 

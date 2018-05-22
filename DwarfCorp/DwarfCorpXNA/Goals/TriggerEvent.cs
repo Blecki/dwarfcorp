@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DwarfCorp.Goals
 {
-    public class GameEvent
+    public class TriggerEvent
     {
     }
 }

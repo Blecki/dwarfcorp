@@ -36,7 +36,7 @@ namespace DwarfCorp.Goals.Goals
             World.Diplomacy.SendTradeEnvoy(felFaction, World);
         }
 
-        public override void OnGameEvent(WorldManager World, GameEvent Event)
+        public override void OnGameEvent(WorldManager World, TriggerEvent Event)
         {
             var tradeEnvoyKilled = Event as Events.TradeEnvoyKilled;
             if (tradeEnvoyKilled != null && tradeEnvoyKilled.OtherFaction.Name == "Fel'al'fe")

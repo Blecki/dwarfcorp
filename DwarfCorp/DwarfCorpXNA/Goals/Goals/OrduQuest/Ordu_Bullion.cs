@@ -26,7 +26,7 @@ namespace DwarfCorp.Goals.Goals
                         String.Format("{0}/500", Gold));
         }
 
-        public override void OnGameEvent(WorldManager World, GameEvent Event)
+        public override void OnGameEvent(WorldManager World, TriggerEvent Event)
         {
             if (State == GoalState.Complete) return;
             var trade = Event as Events.Trade;
