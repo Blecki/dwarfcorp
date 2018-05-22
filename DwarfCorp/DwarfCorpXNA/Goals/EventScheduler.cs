@@ -165,6 +165,11 @@ namespace DwarfCorp.Goals
 
         private bool CanSpawnFaction(WorldManager world, Faction faction, string EntityFaction, FactionFilter filter)
         {
+            if (filter.Specification != FactionSpecification.Player && faction == world.PlayerFaction)
+            {
+                return false;
+            }
+
             switch (filter.Specification)
             {
                 case FactionSpecification.Motherland:

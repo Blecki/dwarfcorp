@@ -847,6 +847,9 @@ namespace DwarfCorp
                 case VoxelVertex.BackTopLeft:
                 case VoxelVertex.BackTopRight:
                     return 0.25f;
+                case VoxelVertex.BackBottomRight:
+                case VoxelVertex.FrontBottomRight:
+                    return 0.15f;
                 default:
                     return 0.0f;
             }
