@@ -53,6 +53,8 @@ namespace DwarfCorp
             public static bool DrawToolDebugInfo = false;
             public static bool HideTerrain = false;
             public static bool ABTestSwitch = false;
+            public static bool DrawComposites = false;
+            public static bool DrawSelectionBuffer = false;
         }
 
         public class Switch

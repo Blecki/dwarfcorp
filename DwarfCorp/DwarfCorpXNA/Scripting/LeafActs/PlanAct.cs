@@ -76,6 +76,8 @@ namespace DwarfCorp
             Edge
         }
 
+        public AStarPlanner.PlanResultCode LastResult;
+
 
         public PlanType Type { get; set; }
 
@@ -291,6 +293,7 @@ namespace DwarfCorp
                             yield return Status.Running;
                             continue;
                         }
+                        LastResult = response.Result;
 
                         if (response.Success)
                         {
@@ -298,6 +301,14 @@ namespace DwarfCorp
                             WaitingOnResponse = false;
 
                             statusResult = Status.Success;
+                        }
+                        else if (response.Result == AStarPlanner.PlanResultCode.Invalid || response.Result == AStarPlanner.PlanResultCode.NoSolution
+                            || response.Result == AStarPlanner.PlanResultCode.Cancelled || response.Result == AStarPlanner.PlanResultCode.Invalid)
+                        {
+                            Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                            statusResult = Status.Fail;
+                            PlanSubscriber.Service.RemoveSubscriber(PlanSubscriber);
+                            yield return Status.Fail;
                         }
                         else if (Timeouts <= MaxTimeouts)
                         {
@@ -364,7 +375,7 @@ namespace DwarfCorp
                     yield return Act.Status.Running;
                 }
 
-                if (!planSucceeded)
+                if (!planSucceeded && planAct.LastResult == AStarPlanner.PlanResultCode.MaxExpansionsReached)
                 {
                     yield return Act.Status.Running;
                     Creature.CurrentCharacterMode = CharacterMode.Idle;
@@ -413,6 +424,11 @@ namespace DwarfCorp
                         planTimeout.Update(DwarfTime.LastTime);
                     }
                     continue;
+                }
+                else if (!planSucceeded)
+                {
+                    yield return Act.Status.Fail;
+                    yield break;
                 }
                 yield return Act.Status.Success;
                 yield break;

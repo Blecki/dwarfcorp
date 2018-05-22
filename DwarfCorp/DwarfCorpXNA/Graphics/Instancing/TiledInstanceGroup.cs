@@ -38,10 +38,16 @@ namespace DwarfCorp
                 return Instance.AtlasCache.MapRectangleToUVBounds(Instance.SpriteBounds);
 
             Gui.TileSheet sheet = null;
-
-            if (!Atlas.TryGetValue(Instance.TextureAsset, out sheet))
+            Texture2D tex = null;
+            if (Instance.TextureAsset == null)
             {
-                var tex = AssetManager.GetContentTexture(Instance.TextureAsset);
+                tex = AssetManager.GetContentTexture("Error");
+            }
+            bool exists = false;
+            exists = Atlas.TryGetValue(Instance.TextureAsset, out sheet);
+            if (!exists)
+            {
+                tex = AssetManager.GetContentTexture(Instance.TextureAsset);
                 if (tex == null) return Vector4.Zero; // Actually should never happen.
 
                 sheet = new Gui.TileSheet(tex.Width, tex.Height, new Rectangle(0, 0, tex.Width, tex.Height), tex.Width, tex.Height, false);
@@ -50,7 +56,6 @@ namespace DwarfCorp
                 RebuildAtlas();
                 NeedsRendered = true;
             }
-
             Instance.AtlasCache = sheet;
             return sheet.MapRectangleToUVBounds(Instance.SpriteBounds);
         }

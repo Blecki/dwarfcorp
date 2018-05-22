@@ -172,6 +172,7 @@ namespace DwarfCorp
                 if (!planSucceeded)
                 {
                     yield return Act.Status.Fail;
+                    yield break;
                 }
 
                 FollowPathAct followPath = new FollowPathAct(Creature.AI, "PathToEntity")

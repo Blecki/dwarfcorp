@@ -418,7 +418,7 @@ namespace DwarfCorp.GameStates
                 statsDisplay.Lines.Add("** STATISTICS **");
                 statsDisplay.Lines.Add(String.Format("{0} ENTITIES", World.ComponentManager.RootComponent.Children.Count));
                 statsDisplay.Lines.Add(String.Format("{0} INSTANCES DRAWN", World.InstanceRenderer.InstancesDrawn));
-                statsDisplay.Lines.Add(String.Format("{0} MEMORY", System.GC.GetTotalMemory(false)));
+                statsDisplay.Lines.Add(String.Format("{0} MEMORY", BytesToString(System.GC.GetTotalMemory(false))));
                 statsDisplay.Invalidate();
 
                 // Todo: Employee AI debug display
@@ -432,6 +432,17 @@ namespace DwarfCorp.GameStates
 
                 scheduleDisplay.Invalidate();
             }
+        }
+
+        static String BytesToString(long byteCount)
+        {
+            string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB
+            if (byteCount == 0)
+                return "0" + suf[0];
+            long bytes = Math.Abs(byteCount);
+            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
+            return String.Format("{0:000}, {1}", Math.Sign(byteCount) * num, suf[place]);
         }
 
         /// <summary>

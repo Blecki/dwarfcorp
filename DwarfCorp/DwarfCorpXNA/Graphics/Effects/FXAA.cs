@@ -92,7 +92,7 @@ namespace DwarfCorp
             int height = Math.Min(pp.BackBufferHeight, 4096);
 
             if (RenderTarget == null || RenderTarget.Width != width ||
-                RenderTarget.Height != height)
+                RenderTarget.Height != height || RenderTarget.IsDisposed || RenderTarget.IsContentLost)
             {
                 if (pp.BackBufferWidth > 4096 || pp.BackBufferHeight > 4096)
                 {
@@ -139,19 +139,20 @@ namespace DwarfCorp
             }
         }
 
-        public void Begin(DwarfTime lastTime, RenderTarget2D renderTarget)
+        public void Begin(DwarfTime lastTime)
         {
-           ValidateBuffer();
-           GameState.Game.GraphicsDevice.SetRenderTarget(renderTarget);
+               ValidateBuffer();
+               GameState.Game.GraphicsDevice.SetRenderTarget(RenderTarget);
         }
 
-        public void End(DwarfTime lastTime, RenderTarget2D renderTarget)
+        public void End(DwarfTime lastTime)
         {
+            ValidateBuffer();
             GameState.Game.GraphicsDevice.SetRenderTarget(null);
             try
             {
                 DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.Opaque, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullNone, Shader, Matrix.Identity);
-                DwarfGame.SpriteBatch.Draw(renderTarget, GameState.Game.GraphicsDevice.Viewport.Bounds, Color.White);
+                DwarfGame.SpriteBatch.Draw(RenderTarget, GameState.Game.GraphicsDevice.Viewport.Bounds, Color.White);
             }
             finally
             {

@@ -174,6 +174,7 @@ namespace DwarfCorp
                 new Vector2((float)Rect.X / texture.Width, (float)Rect.Bottom / texture.Height),
                 tileBounds);
 
+            GameState.Game.GraphicsDevice.SetVertexBuffer(null);
             if (VertexBuffer == null)
                 ResetBuffer(GameState.Game.GraphicsDevice);
             else

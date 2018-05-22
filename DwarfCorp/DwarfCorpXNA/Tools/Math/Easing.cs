@@ -374,6 +374,11 @@ namespace DwarfCorp
         {
             return c * (t /= d) * t * t + b;
         }
+        // Equations for each of the segments
+        // The first segment is a quadratic which levels off at velocity 1 when t = t_1.
+        private static Func<float, float, float> f1 = ((float t, float t_1) => (float)(1.0f / (2 * t_1) * Math.Pow(t, 2.0f)));
+        private static Func<float, float, float> f2 = ((float t, float t_1) => t + f1(t_1, t_1) - t_1);
+        private static Func<float, float, float, float, float, float > f3 = ((float t, float t_1, float t_2, float t_3, float t_max) => (float)(f2(t_1 + t_2, t_1) - (1.0f / (2.0f * t_3)) * (Math.Pow(t_max - t, 2.0f)) + 0.5 * t_3));
 
         public static float LinearQuadBlends(float time, float maxTime, float blendTime)
         {
@@ -383,14 +388,6 @@ namespace DwarfCorp
             float t_max = maxTime;
             float t_2 = t_max - (t_1 + t_3);
 
-
-            // Equations for each of the segments
-            // The first segment is a quadratic which levels off at velocity 1 when t = t_1.
-            Func<float, float> f1 = ((float t) => (float)(1.0f/(2*t_1)*Math.Pow(t, 2.0f)));
-            Func<float, float> f2 = ((float t) =>  t + f1(t_1) - t_1);
-            Func<float, float> f3 =
-                ((float t) => (float)(f2(t_1 + t_2) - (1.0f/(2.0f*t_3))*(Math.Pow(t_max - t, 2.0f)) + 0.5*t_3));
-
             // This is a correction that forces the easing function to end at 
             // 1.0. The whole function is multiplied by this.
             float correction = (t_max / (t_max - t_1));
@@ -398,15 +395,15 @@ namespace DwarfCorp
             // Piecewise elements
             if (time < t_1)
             {
-                return correction * f1(time);
+                return correction * f1(time, t_1);
             }
             else if (time < t_1 + t_2)
             {
-                return correction * f2(time);
+                return correction * f2(time, t_1);
             }
             else if (time < t_max)
             {
-                return correction * f3(time);
+                return correction * f3(time, t_1, t_2, t_3, t_max);
             }
             else
             {

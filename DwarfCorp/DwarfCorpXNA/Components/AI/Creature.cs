@@ -367,24 +367,21 @@ namespace DwarfCorp
 
             if (!Active) return;
 
-            if (IsCloaked != _lastIsCloaked)
-            {
-                foreach (var tinter in Physics.EnumerateAll().OfType<Tinter>())
-                {
-                    tinter.Stipple = IsCloaked;
-                }
-                _lastIsCloaked = IsCloaked;
-            }
+            UpdateCloak();
+            UpdateHealthBar(gameTime);
+            CheckNeighborhood(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
+            UpdateAnimation(gameTime, chunks, camera);
+            Status.Update(this, gameTime, chunks, camera);
+            JumpTimer.Update(gameTime);
+            HandleBuffs(gameTime);
+            UpdateMigration(gameTime);
+            UpdateEggs(gameTime);
+            UpdatePregnancy();
+            MakeNoises();
+        }
 
-            if (IsCloaked)
-            {
-                Sensors.Active = false;
-            }
-            else
-            {
-                Sensors.Active = true;
-            }
-
+        private void UpdateHealthBar(DwarfTime gameTime)
+        {
             DrawLifeTimer.Update(gameTime);
 
             if (!DrawLifeTimer.HasTriggered)
@@ -393,26 +390,34 @@ namespace DwarfCorp
                 Color color = val < 0.75f ? (val < 0.5f ? Color.Red : Color.Orange) : Color.LightGreen;
                 Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position - Vector3.Up * 0.5f, color, Color.Black, 32, 2, Hp / MaxHealth);
             }
+        }
 
-            CheckNeighborhood(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
-            UpdateAnimation(gameTime, chunks, camera);
-            Status.Update(this, gameTime, chunks, camera);
-            JumpTimer.Update(gameTime);
-            HandleBuffs(gameTime);
-
-            if (Stats.IsMigratory && !AI.IsPositionConstrained())
+        private void MakeNoises()
+        {
+            if (MathFunctions.RandEvent(0.0001f))
             {
-                if (MigrationTimer == null)
-                {
-                    MigrationTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
-                }
-                MigrationTimer.Update(gameTime);
-                if (MigrationTimer.HasTriggered)
-                {
-                    AI.LeaveWorld();
-                }
+                NoiseMaker.MakeNoise("Chirp", AI.Position, true, 0.25f);
             }
+        }
 
+        private void UpdatePregnancy()
+        {
+            if (IsPregnant && World.Time.CurrentDate > CurrentPregnancy.EndDate)
+            {
+                if (!_speciesCounts.ContainsKey(Species) || _speciesCounts[Species] < _maxPerSpecies)
+                {
+                    if (EntityFactory.HasEntity(BabyType))
+                    {
+                        var baby = EntityFactory.CreateEntity<GameComponent>(BabyType, Physics.Position);
+                        baby.GetRoot().GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint;
+                    }
+                }
+                CurrentPregnancy = null;
+            }
+        }
+
+        private void UpdateEggs(DwarfTime gameTime)
+        {
             if (Stats.LaysEggs)
             {
                 if (EggTimer == null)
@@ -430,20 +435,42 @@ namespace DwarfCorp
                     }
                 }
             }
+        }
 
-            if (IsPregnant && World.Time.CurrentDate > CurrentPregnancy.EndDate)
+        private void UpdateMigration(DwarfTime gameTime)
+        {
+            if (Stats.IsMigratory && !AI.IsPositionConstrained())
             {
-                if (!_speciesCounts.ContainsKey(Species) || _speciesCounts[Species] < _maxPerSpecies)
+                if (MigrationTimer == null)
                 {
-                    var baby = EntityFactory.CreateEntity<GameComponent>(BabyType, Physics.Position);
-                    baby.GetRoot().GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint;
+                    MigrationTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
                 }
-                CurrentPregnancy = null;
+                MigrationTimer.Update(gameTime);
+                if (MigrationTimer.HasTriggered)
+                {
+                    AI.LeaveWorld();
+                }
+            }
+        }
+
+        private void UpdateCloak()
+        {
+            if (IsCloaked != _lastIsCloaked)
+            {
+                foreach (var tinter in Physics.EnumerateAll().OfType<Tinter>())
+                {
+                    tinter.Stipple = IsCloaked;
+                }
+                _lastIsCloaked = IsCloaked;
             }
 
-            if (MathFunctions.RandEvent(0.0001f))
+            if (IsCloaked)
             {
-                NoiseMaker.MakeNoise("Chirp", AI.Position, true, 0.25f);
+                Sensors.Active = false;
+            }
+            else
+            {
+                Sensors.Active = true;
             }
         }
 

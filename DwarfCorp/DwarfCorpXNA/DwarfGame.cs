@@ -307,6 +307,17 @@ namespace DwarfCorp
             }
         }
 
+        public void TriggerRavenEvent(string message, string details)
+        {
+#if SHARP_RAVEN && !DEBUG
+            if (ravenClient == null)
+                return;
+            var exception = new Exception(message);
+            exception.Data["Details"] = details;
+            ravenClient.Capture(new SentryEvent(exception));
+#endif
+        }
+
         protected override void Initialize()
         {
 #if SHARP_RAVEN && !DEBUG
@@ -362,7 +373,8 @@ namespace DwarfCorp
             });
 
             ConsoleGui.RootItem.Layout();
-            _logwriter.SetConsole(GetConsoleTile("LOG"));
+            if (_logwriter != null)
+                _logwriter.SetConsole(GetConsoleTile("LOG"));
 
             Console.Out.WriteLine("Console created.");
 

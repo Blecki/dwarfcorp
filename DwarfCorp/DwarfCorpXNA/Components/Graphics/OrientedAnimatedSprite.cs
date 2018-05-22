@@ -47,7 +47,7 @@ namespace DwarfCorp
     /// of the camera.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class OrientedAnimatedSprite : AnimatedSprite, IUpdateableComponent
+    public class OrientedAnimatedSprite : AnimatedSprite, IRenderableComponent
     {
         public enum Orientation
         {
@@ -93,16 +93,18 @@ namespace DwarfCorp
         {
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
+            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
             CalculateCurrentOrientation(camera);
 
 
             var s = currentMode + OrientationStrings[(int)CurrentOrientation];
             if (Animations.ContainsKey(s))
+            {
                 AnimPlayer.ChangeAnimation(Animations[s], AnimationPlayer.ChangeAnimationOptions.Play);
-
-            base.Update(gameTime, chunks, camera);
+                AnimPlayer.Update(gameTime, true);
+            }
         }
 
         public void CalculateCurrentOrientation(Camera camera)

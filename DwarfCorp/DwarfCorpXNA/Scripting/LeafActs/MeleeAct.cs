@@ -242,12 +242,13 @@ namespace DwarfCorp
                 bool intersectsbounds = Creature.Physics.BoundingBox.Intersects(Target.BoundingBox);
 
                 // If we are really far from the target, something must have gone wrong.
-                if (!intersectsbounds && diff.Length() > CurrentAttack.Range * 8)
+                if (!intersectsbounds && diff.Length() > CurrentAttack.Range * 4)
                 {
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = defaultCharachterMode;
                     yield return Status.Fail;
+                    yield break;
                 }
 
                 // If we're out of attack range, run toward the target.
