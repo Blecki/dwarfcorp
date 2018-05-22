@@ -9,7 +9,7 @@ namespace DwarfCorp.Goals
     {
         private List<Goal> AllGoals = new List<Goal>();
         private List<Goal> ActiveGoals = new List<Goal>();
-        private List<TriggerEvent> Events = new List<TriggerEvent>();
+        private List<Trigger> Events = new List<Trigger>();
         private List<Goal> NewlyActivatedGoals = new List<Goal>();
         public EventScheduler EventScheduler = new EventScheduler();
 
@@ -72,7 +72,7 @@ namespace DwarfCorp.Goals
             }
         }
 
-        public void OnGameEvent(TriggerEvent Event)
+        public void OnGameEvent(Trigger Event)
         {
             Events.Add(Event);
         }
@@ -80,7 +80,7 @@ namespace DwarfCorp.Goals
         public void Update(WorldManager World)
         {
             var events = Events;
-            Events = new List<TriggerEvent>();
+            Events = new List<Trigger>();
 
             foreach (var goal in ActiveGoals)
                 foreach (var @event in events)
