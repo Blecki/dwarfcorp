@@ -174,11 +174,18 @@ namespace DwarfCorp
                 new Vector2((float)Rect.X / texture.Width, (float)Rect.Bottom / texture.Height),
                 tileBounds);
 
-            GameState.Game.GraphicsDevice.SetVertexBuffer(null);
+            //GameState.Game.GraphicsDevice.SetVertexBuffer(null);
             if (VertexBuffer == null)
                 ResetBuffer(GameState.Game.GraphicsDevice);
             else
+            {
+                var buffers = GameState.Game.GraphicsDevice.GetVertexBuffers();
+                if (buffers.Any(buffer => buffer.VertexBuffer == VertexBuffer))
+                {
+                    GameState.Game.GraphicsDevice.SetVertexBuffer(null);
+                }
                 VertexBuffer.SetData(Vertices);
+            }
 
         }
     }

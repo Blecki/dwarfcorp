@@ -837,7 +837,22 @@ namespace DwarfCorp
                 VoxelVertex.BackTopLeft,
                 VoxelVertex.BackTopRight
             };
-        
+
+        private static float GetAmbienceBoost(VoxelVertex vertex)
+        {
+            switch (vertex)
+            {
+                case VoxelVertex.FrontTopLeft:
+                case VoxelVertex.FrontTopRight:
+                case VoxelVertex.BackTopLeft:
+                case VoxelVertex.BackTopRight:
+                    return 0.25f;
+                default:
+                    return 0.0f;
+            }
+
+        }
+
         private static void UpdateVoxelRamps(VoxelHandle V)
         {
             if (V.IsEmpty || !V.IsVisible || !V.Type.CanRamp)
@@ -965,9 +980,10 @@ namespace DwarfCorp
                     neighborsChecked += 1;
             }
 
+            var boost = GetAmbienceBoost(Vertex);
             float proportionHit = (float)neighborsEmpty / (float)neighborsChecked;
             color.AmbientColor = (int)Math.Min((1.0f - proportionHit) * 255.0f, 255);
-            color.SunColor = (int)Math.Min((float)color.SunColor / (float)neighborsChecked, 255);
+            color.SunColor = (int)Math.Min((float)color.SunColor / (float)neighborsChecked + boost * 255.0f, 255);
 
             return color;
         }
