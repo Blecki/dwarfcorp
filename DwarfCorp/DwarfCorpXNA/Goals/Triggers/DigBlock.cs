@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DwarfCorp.Goals.Events
+namespace DwarfCorp.Goals.Triggers
 {
-    public class DigBlock : TriggerEvent
+    public class DigBlock : Trigger
     {
         public VoxelType VoxelType;
         public Creature Miner;

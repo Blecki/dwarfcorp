@@ -24,9 +24,9 @@ namespace DwarfCorp.Goals.Goals
             World.Diplomacy.SendTradeEnvoy(orduFaction, World);
         }
 
-        public override void OnGameEvent(WorldManager World, TriggerEvent Event)
+        public override void OnGameEvent(WorldManager World, Trigger Event)
         {
-            var tradeEnvoyKilled = Event as Events.TradeEnvoyKilled;
+            var tradeEnvoyKilled = Event as Triggers.TradeEnvoyKilled;
             if (tradeEnvoyKilled != null && tradeEnvoyKilled.OtherFaction.Name == "Ordu")
             {
                 State = GoalState.Complete;

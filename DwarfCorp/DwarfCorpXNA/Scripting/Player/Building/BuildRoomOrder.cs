@@ -153,7 +153,7 @@ namespace DwarfCorp
             {
                 World.MakeAnnouncement(String.Format("{0} was built", ToBuild.RoomData.Name), null);
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
-                World.GoalManager.OnGameEvent(new Goals.Events.BuiltRoom(ToBuild.ID));
+                World.GoalManager.OnGameEvent(new Goals.Triggers.BuiltRoom(ToBuild.ID));
             }
 
             foreach (GameComponent fence in WorkObjects)

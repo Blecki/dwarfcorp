@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DwarfCorp.Goals.Events
+namespace DwarfCorp.Goals.Triggers
 {
-    public class Trade : TriggerEvent
+    public class Trade : Trigger
     {
         public Faction PlayerFaction;
         public DwarfBux PlayerGold;
