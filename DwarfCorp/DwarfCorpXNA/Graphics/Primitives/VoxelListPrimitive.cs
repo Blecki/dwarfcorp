@@ -119,6 +119,7 @@ namespace DwarfCorp
                     && neighbor.RampType != RampType.None
                     && IsSideFace(face)
                     && ShouldDrawFace(face, neighbor.RampType, voxel.RampType)
+                    && neighbor.IsExplored
                 );
         }
 
@@ -465,24 +466,27 @@ namespace DwarfCorp
             }
             else
             {
-                var indexOffset = Into.VertexCount;
-
-                for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
+                if (!Debugger.Switches.HideSliceTop)
                 {
-                    Into.AddVertex(new ExtendedVertex(
-                        vertexPositions[faceVertex] + VertexNoise.GetNoiseVectorFromRepeatingTexture(vertexPositions[faceVertex]),
-                        new Color(0, 0, 0, 255),
-                        new Color(0, 0, 0, 255),
-                        new Vector2(12.5f / 16.0f, 0.5f / 16.0f),
-                        new Vector4(12.0f / 16.0f, 0.0f, 13.0f / 16.0f, 1.0f / 16.0f)));
-                }
+                    var indexOffset = Into.VertexCount;
 
-                for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
-                    faceDescriptor.IndexOffset; idx++)
-                {
-                    ushort offset = Primitive.Indexes[idx];
-                    ushort offset0 = Primitive.Indexes[faceDescriptor.IndexOffset];
-                    Into.AddIndex((short)(indexOffset + offset - offset0));
+                    for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
+                    {
+                        Into.AddVertex(new ExtendedVertex(
+                            vertexPositions[faceVertex] + VertexNoise.GetNoiseVectorFromRepeatingTexture(vertexPositions[faceVertex]),
+                            new Color(0, 0, 0, 255),
+                            new Color(0, 0, 0, 255),
+                            new Vector2(12.5f / 16.0f, 0.5f / 16.0f),
+                            new Vector4(12.0f / 16.0f, 0.0f, 13.0f / 16.0f, 1.0f / 16.0f)));
+                    }
+
+                    for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
+                        faceDescriptor.IndexOffset; idx++)
+                    {
+                        ushort offset = Primitive.Indexes[idx];
+                        ushort offset0 = Primitive.Indexes[faceDescriptor.IndexOffset];
+                        Into.AddIndex((short)(indexOffset + offset - offset0));
+                    }
                 }
             }
         }

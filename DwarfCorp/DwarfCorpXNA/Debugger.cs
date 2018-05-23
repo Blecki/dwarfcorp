@@ -55,6 +55,7 @@ namespace DwarfCorp
             public static bool ABTestSwitch = false;
             public static bool DrawComposites = false;
             public static bool DrawSelectionBuffer = false;
+            public static bool HideSliceTop = false;
         }
 
         public class Switch
