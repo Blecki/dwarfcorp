@@ -232,9 +232,9 @@
     <Compile Include="Entities\TimedExplosion.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
     <Compile Include="Goals\ScheduledEvent.cs" />
-    <Compile Include="Goals\SpawnEntityEvent.cs" />
-    <Compile Include="Goals\SpawnWarPartyEvent.cs" />
-    <Compile Include="Goals\SpawnTradeEnvoyEvent.cs" />
+    <Compile Include="Goals\Events\SpawnEntityEvent.cs" />
+    <Compile Include="Goals\Events\SpawnWarPartyEvent.cs" />
+    <Compile Include="Goals\Events\SpawnTradeEnvoyEvent.cs" />
     <Compile Include="Goals\PlagueEvent.cs" />
     <Compile Include="Goals\EventLibrary.cs" />
     <Compile Include="Goals\TimedIndicatorWidget.cs" />

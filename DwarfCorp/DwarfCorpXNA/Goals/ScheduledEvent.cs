@@ -12,13 +12,16 @@ namespace DwarfCorp.Goals
         public int Likelihood = 1;
         public string Name;
         public float Difficulty = 0.0f;
+
         public enum TimeRestriction
         {
             All,
             OnlyDayTime,
             OnlyNightTime,
         }
+
         public TimeRestriction AllowedTime = TimeRestriction.All;
+
         public enum FactionHostilityFilter
         {
             Any,
