@@ -44,9 +44,9 @@ namespace DwarfCorp.Goals.Goals
             World.Diplomacy.SendTradeEnvoy(orduFaction, World);
         }
 
-        public override void OnGameEvent(WorldManager World, GameEvent Event)
+        public override void OnGameEvent(WorldManager World, Trigger Event)
         {
-            var trade = Event as Events.Trade;
+            var trade = Event as Triggers.Trade;
             if (trade != null)
             {
                 if (trade.OtherFaction.Name == "Ordu")

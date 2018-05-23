@@ -34,10 +34,10 @@ namespace DwarfCorp.Goals.Goals
                 World.Diplomacy.SendWarParty(orduFaction);
         }
 
-        public override void OnGameEvent(WorldManager World, GameEvent Event)
+        public override void OnGameEvent(WorldManager World, Trigger Event)
         {
             // If all war parties are killed
-            var warPartyKilled = Event as Events.WarPartyDefeated;
+            var warPartyKilled = Event as Triggers.WarPartyDefeated;
             if (warPartyKilled != null && warPartyKilled.OtherFaction.Name == "Ordu")
                 WarPartiesKilled += 1;
 

@@ -53,7 +53,6 @@ namespace DwarfCorp
             public static bool DrawToolDebugInfo = false;
             public static bool HideTerrain = false;
             public static bool ABTestSwitch = false;
-            public static bool DrawEventSchedule = false;
             public static bool DrawComposites = false;
             public static bool DrawSelectionBuffer = false;
         }
@@ -122,6 +121,20 @@ namespace DwarfCorp
                 return CommandHandlers[commandWord.ToUpperInvariant()](commandArgs);
             else
                 return "Unknown command.";
+        }
+
+        [ConsoleCommandHandler("HELP")]
+        public static string ListSettings(String Name)
+        {
+            var builder = new StringBuilder();
+            foreach (var hook in AssetManager.EnumerateModHooks(typeof(ConsoleCommandHandlerAttribute), typeof(String), new Type[] { typeof(String) }))
+            {
+                var lambdaCopy = hook;
+                var attribute = hook.GetCustomAttributes(false).FirstOrDefault(a => a is ConsoleCommandHandlerAttribute) as ConsoleCommandHandlerAttribute;
+                if (attribute == null) continue;
+                builder.AppendLine(attribute.Name.ToUpperInvariant());
+            }
+            return builder.ToString();
         }
     }
 }

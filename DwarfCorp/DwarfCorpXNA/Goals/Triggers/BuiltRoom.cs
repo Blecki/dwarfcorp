@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DwarfCorp.Goals.Events
+namespace DwarfCorp.Goals.Triggers
 {
-    public class BuiltRoom : GameEvent
+    public class BuiltRoom : Trigger
     {
         public String RoomType;
 

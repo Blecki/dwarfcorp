@@ -14,9 +14,9 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.Achievement;
         }
 
-        public override void OnGameEvent(WorldManager World, GameEvent Event)
+        public override void OnGameEvent(WorldManager World, Trigger Event)
         {
-            var builtRoomEvent = Event as Events.BuiltRoom;
+            var builtRoomEvent = Event as Triggers.BuiltRoom;
             if (builtRoomEvent != null && builtRoomEvent.RoomType.StartsWith("Stockpile"))
             {
                 World.PlayerFaction.AddMoney(20m);
@@ -35,9 +35,9 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.Achievement;
         }
 
-        public override void OnGameEvent(WorldManager World, GameEvent Event)
+        public override void OnGameEvent(WorldManager World, Trigger Event)
         {
-            var builtRoomEvent = Event as Events.BuiltRoom;
+            var builtRoomEvent = Event as Triggers.BuiltRoom;
             if (builtRoomEvent != null && builtRoomEvent.RoomType.StartsWith("BalloonPort"))
             {
                 World.PlayerFaction.AddMoney(20m);
@@ -56,9 +56,9 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.Achievement;
         }
 
-        public override void OnGameEvent(WorldManager World, GameEvent Event)
+        public override void OnGameEvent(WorldManager World, Trigger Event)
         {
-            var builtRoomEvent = Event as Events.BuiltRoom;
+            var builtRoomEvent = Event as Triggers.BuiltRoom;
             if (builtRoomEvent != null && builtRoomEvent.RoomType.StartsWith("BedRoom"))
             {
                 World.PlayerFaction.AddMoney(20m);
@@ -77,9 +77,9 @@ namespace DwarfCorp.Goals.Goals
             GoalType = GoalTypes.Achievement;
         }
 
-        public override void OnGameEvent(WorldManager World, GameEvent Event)
+        public override void OnGameEvent(WorldManager World, Trigger Event)
         {
-            var builtRoomEvent = Event as Events.BuiltRoom;
+            var builtRoomEvent = Event as Triggers.BuiltRoom;
             if (builtRoomEvent != null && builtRoomEvent.RoomType.StartsWith("CommonRoom"))
             {
                 World.PlayerFaction.AddMoney(20m);

@@ -189,7 +189,7 @@ namespace DwarfCorp.Dialogue
                 GameState.Game.StateManager.PopState();
             });
 
-            Context.World.GoalManager.OnGameEvent(new Goals.Events.DeclareWar
+            Context.World.GoalManager.OnGameEvent(new Goals.Triggers.DeclareWar
             {
                 PlayerFaction = Context.PlayerFaction,
                 OtherFaction = Context.Envoy.OwnerFaction
@@ -284,7 +284,7 @@ namespace DwarfCorp.Dialogue
                     Context.TradePanel.Transaction.Apply(Context.World);
                     Context.Transition(RootWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.GoodTrades)));
 
-                    Context.World.GoalManager.OnGameEvent(new Goals.Events.Trade
+                    Context.World.GoalManager.OnGameEvent(new Goals.Triggers.Trade
                     {
                         PlayerFaction = Context.PlayerFaction,
                         PlayerGold = Context.TradePanel.Transaction.PlayerMoney,

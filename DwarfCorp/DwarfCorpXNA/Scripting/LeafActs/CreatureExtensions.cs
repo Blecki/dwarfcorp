@@ -236,7 +236,7 @@ namespace DwarfCorp
                         agent.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
                     }
                     agent.Stats.NumBlocksDestroyed++;
-                    agent.World.GoalManager.OnGameEvent(new Goals.Events.DigBlock(voxelType, agent));
+                    agent.World.GoalManager.OnGameEvent(new Goals.Triggers.DigBlock(voxelType, agent));
 
                     var items = agent.World.ChunkManager.KillVoxel(vox);
 

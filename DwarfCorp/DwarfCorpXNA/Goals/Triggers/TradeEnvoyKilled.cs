@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DwarfCorp.Goals.Events
+namespace DwarfCorp.Goals.Triggers
 {
-    public class WarPartyDefeated : GameEvent
+    public class TradeEnvoyKilled : Trigger
     {
         public Faction PlayerFaction;
         public Faction OtherFaction;

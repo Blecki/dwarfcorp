@@ -5,7 +5,11 @@ using System.Text;
 
 namespace DwarfCorp.Goals
 {
-    public class GameEvent
+    public enum GoalState
     {
+        Unavailable,
+        Available,
+        Active,
+        Complete
     }
 }

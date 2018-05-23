@@ -587,7 +587,7 @@ namespace DwarfCorp
                 {
                     envoy.ShouldRemove = true;
 
-                    World.GoalManager.OnGameEvent(new Goals.Events.TradeEnvoyKilled
+                    World.GoalManager.OnGameEvent(new Goals.Triggers.TradeEnvoyKilled
                     {
                         PlayerFaction = envoy.OtherFaction,
                         OtherFaction = envoy.OwnerFaction
@@ -630,7 +630,7 @@ namespace DwarfCorp
                     party.ShouldRemove = true;
 
                     // Killed entire war party. Wonderful!
-                    World.GoalManager.OnGameEvent(new Goals.Events.WarPartyDefeated
+                    World.GoalManager.OnGameEvent(new Goals.Triggers.WarPartyDefeated
                     {
                         PlayerFaction = party.OtherFaction,
                         OtherFaction = party.OwnerFaction

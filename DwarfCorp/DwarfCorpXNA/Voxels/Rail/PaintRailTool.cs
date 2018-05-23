@@ -86,6 +86,7 @@ namespace DwarfCorp.Rail
 
         public override void OnBegin()
         {
+            Faction.World.Tutorial("paint rail");
             System.Diagnostics.Debug.Assert(SelectedResources != null);
             GodModeSwitch = false;
             Dragging = false;

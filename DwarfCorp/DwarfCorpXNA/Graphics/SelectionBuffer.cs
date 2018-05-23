@@ -128,11 +128,11 @@ namespace DwarfCorp
         public IEnumerable<uint> GetIDsSelected(Rectangle screenRectangle)
         {
             ValidateBuffer(GameStates.GameState.Game.GraphicsDevice);
-
+            HashSet<uint> selected = new HashSet<uint>();
 
             lock (ColorBufferMutex)
             {
-                if (colorBuffer == null) yield break;
+                if (colorBuffer == null) return selected;
 
                 int width = Buffer.Width;
                 int height = Buffer.Height;
@@ -141,22 +141,19 @@ namespace DwarfCorp
                 int startY = MathFunctions.Clamp(screenRectangle.Y / Scale, 0, height - 1);
                 int endX = MathFunctions.Clamp(screenRectangle.Right / Scale, 0, width - 1);
                 int endY = MathFunctions.Clamp(screenRectangle.Bottom / Scale, 0, height - 1);
-                HashSet<uint> selected = new HashSet<uint>();
+                
                 for (int x = startX; x <= endX; x++)
                 {
                     for (int y = startY; y <= endY; y++)
                     {
                         uint id = GameComponentExtensions.GlobalIDFromColor(colorBuffer[x + y * width]);
                         if (id == 0) continue;
-                        if (selected.Contains(id))
-                        {
-                            continue;
-                        }
                         selected.Add(id);
-                        yield return id;
                     }
                 }
             }
+
+            return selected;
         }
 
         public void DebugDraw(Rectangle rect)

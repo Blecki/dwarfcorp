@@ -11,12 +11,4 @@ namespace DwarfCorp.Goals
         UnavailableAtStartup,
         AvailableAtStartup
     }
-
-    public enum GoalState
-    {
-        Unavailable,
-        Available,
-        Active,
-        Complete
-    }
 }

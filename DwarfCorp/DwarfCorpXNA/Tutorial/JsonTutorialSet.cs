@@ -13,9 +13,4 @@ namespace DwarfCorp.Tutorial
         public String GuiHilite;
         public bool Popup = false;
     }
-
-    public class JsonTutorialSet
-    {
-        public List<JsonTutorialEntry> Tutorials;
-    }
 }

@@ -15,9 +15,9 @@ namespace DwarfCorp.Goals.Goals
             Description = "Uzzikal, king of the Necromancers of Ordu, has noticed your trading activity and sent a letter.";
         }
 
-        public override void OnGameEvent(WorldManager World, GameEvent Event)
+        public override void OnGameEvent(WorldManager World, Trigger Event)
         {
-            if (Event is Events.Trade)
+            if (Event is Triggers.Trade)
             {
                 State = GoalState.Complete;
                 World.GoalManager.UnlockGoal(typeof(Ordu_Start));
