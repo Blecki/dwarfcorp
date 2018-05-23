@@ -33,6 +33,8 @@ namespace DwarfCorp
         private static Dictionary<String, PerformanceFunction> Functions = new Dictionary<string, PerformanceFunction>();
 
         private static Stopwatch FPSWatch = null;
+        private static Stopwatch FPSFaultTimer = null;
+        private static bool SentPerfReport = false;
 
         public static void BeginFrame()
         {
@@ -46,23 +48,50 @@ namespace DwarfCorp
 
         public static void Render()
         {
+            var FPS = 0;
+
+            if (FPSWatch == null)
+                FPSWatch = Stopwatch.StartNew();
+            else
+            {
+                FPSWatch.Stop();
+                FPS = (int)Math.Floor(1.0f / (float)FPSWatch.Elapsed.TotalSeconds);
+                FPSWatch = Stopwatch.StartNew();
+            }
+
+            FPSBuffer[k % 100] = FPS;
+            k++;
+
+            var avgFPS = (int)FPSBuffer.Average();
+            if (!SentPerfReport && GameSettings.Default.AllowReporting && avgFPS < 20)
+            {
+                if (FPSFaultTimer != null && FPSFaultTimer.Elapsed.TotalSeconds > 5)
+                {
+                    var settings = FileUtils.SerializeBasicJSON<GameSettings.Settings>(GameSettings.Default);
+                    var adapter = GameStates.GameState.Game.GraphicsDevice.Adapter;
+                    var deviceDetails = String.Format("Num Cores: {4}\nDevice:\nName: {0}\n ID: {1}\n Description: {2}\n Vendor: {3}", adapter.DeviceName, adapter.DeviceId, adapter.Description, adapter.VendorId, Environment.ProcessorCount);
+                    var memory = GameStates.PlayState.BytesToString(System.GC.GetTotalMemory(false));
+                    (GameStates.GameState.Game as DwarfGame).TriggerRavenEvent("Low performance detected", String.Format("Average FPS: {0}\nSettings:\n{1}\n{2}\nRAM: {3} {4}", avgFPS, settings, deviceDetails, memory, GameStates.PlayState.BytesToString(Environment.WorkingSet)));
+                    SentPerfReport = true;
+                }
+                else if (FPSFaultTimer == null)
+                {
+                    FPSFaultTimer = Stopwatch.StartNew();
+                }
+            }
+            else if (!SentPerfReport && GameSettings.Default.AllowReporting)
+            {
+
+                FPSFaultTimer = null;
+            }
+
             if (DwarfGame.IsConsoleVisible)
             {
                 PopFrame();
 
                 var output = DwarfGame.GetConsoleTile("PERFORMANCE");
                 output.Lines.Clear();
-                var FPS = 0;
-
-                if (FPSWatch == null)
-                    FPSWatch = Stopwatch.StartNew();
-                else
-                {
-                    FPSWatch.Stop();
-                    output.Lines.Add(String.Format("Frame time: {0:000.000}", FPSWatch.Elapsed.TotalMilliseconds));
-                    FPS = (int)Math.Floor(1.0f / (float)FPSWatch.Elapsed.TotalSeconds);
-                    FPSWatch = Stopwatch.StartNew();
-                }
+                output.Lines.Add(String.Format("Frame time: {0:000.000}", FPSWatch.Elapsed.TotalMilliseconds));
 
                 foreach (var function in Functions)
                     output.Lines.Add(String.Format("{1:0000} {2:000} {0}\n", function.Value.Name, function.Value.FrameCalls, function.Value.FrameTicks / 1000));
@@ -85,10 +114,8 @@ namespace DwarfCorp
                 graph.Values.Add((float)FPSWatch.Elapsed.TotalMilliseconds);
                 while (graph.Values.Count > graph.GraphWidth)
                     graph.Values.RemoveAt(0);
-                FPSBuffer[k % 100] = FPS;
-                k++;
 
-                graph.MinLabelString = String.Format("FPS: {0:000} (avg: {1})", FPS, (int)FPSBuffer.Average());
+                graph.MinLabelString = String.Format("FPS: {0:000} (avg: {1})", FPS, avgFPS);
 
                 graph.Invalidate();
             }

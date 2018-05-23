@@ -435,7 +435,7 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        static String BytesToString(long byteCount)
+        public static String BytesToString(long byteCount)
         {
             string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB
             if (byteCount == 0)
@@ -443,7 +443,7 @@ namespace DwarfCorp.GameStates
             long bytes = Math.Abs(byteCount);
             int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
             double num = Math.Round(bytes / Math.Pow(1024, place), 1);
-            return String.Format("{0:000}, {1}", Math.Sign(byteCount) * num, suf[place]);
+            return String.Format("{0:000} {1}", Math.Sign(byteCount) * num, suf[place]);
         }
 
         /// <summary>
