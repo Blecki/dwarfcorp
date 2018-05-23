@@ -385,8 +385,9 @@ namespace DwarfCorp.GameStates
                 AutoSave();   
             }
 
-#region select employee
-           
+            #region select employee
+
+            Master.SelectedMinions.RemoveAll(minion => minion.IsDead);
             if (Master.SelectedMinions.Count == 1)
             {
                 // Lol this is evil just trying to reduce the update rate for speed
@@ -705,6 +706,10 @@ namespace DwarfCorp.GameStates
                                     return;
                                 }
                                 var selectedEmployee = (sender as EmployeeInfo).Employee;
+                                if (selectedEmployee.IsDead)
+                                {
+                                    return;
+                                }
                                 selectedEmployee.GetRoot().GetComponent<Inventory>().Die();
                                 World.MakeAnnouncement(string.Format("{0} was fired.", selectedEmployee.Stats.FullName));
                                 selectedEmployee.GetRoot().Delete();

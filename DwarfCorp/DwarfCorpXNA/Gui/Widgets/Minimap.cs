@@ -217,6 +217,17 @@ namespace DwarfCorp.Gui.Widgets
 
                     if (RenderTarget.Bounds.Contains((int)screenPos.X, (int)screenPos.Y))
                     {
+                        
+                        Body parentBody = icon.Parent as Body;
+                        if (parentBody != null)
+                        {
+                            if (parentBody.Position.Y > World.Master.MaxViewingLevel + 1)
+                                continue;
+                            var firstVisible = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager.ChunkData, parentBody.Position, parentBody.Position + Vector3.Up * VoxelConstants.ChunkSizeY);
+                            if (firstVisible.IsValid)
+                                continue;
+                        }
+                       
                         DwarfGame.SpriteBatch.Draw(icon.Icon.Image, new Vector2(screenPos.X, screenPos.Y), icon.Icon.SourceRect, Color.White, 0.0f, new Vector2(icon.Icon.SourceRect.Width / 2.0f, icon.Icon.SourceRect.Height / 2.0f), icon.IconScale, SpriteEffects.None, 0);
                     }
                 }

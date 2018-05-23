@@ -392,7 +392,7 @@ namespace DwarfCorp.Gui.Widgets
         protected override Gui.Mesh Redraw()
         {
             // Set values from CreatureAI
-            if (Employee != null)
+            if (Employee != null && !Employee.IsDead)
             {
                 InteriorPanel.Hidden = false;
 

@@ -46,6 +46,11 @@ namespace DwarfCorp
     /// <summary> Task telling the creature to exit the world. </summary>
     public class LeaveWorldTask : Task
     {
+        public LeaveWorldTask()
+        {
+            ReassignOnDeath = false;
+        }
+
         public IEnumerable<Act.Status> GreedyFallbackBehavior(Creature agent)
         {
             var edgeGoal = new EdgeGoalRegion();
