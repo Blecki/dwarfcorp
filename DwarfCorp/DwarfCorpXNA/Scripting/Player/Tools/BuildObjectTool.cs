@@ -255,14 +255,20 @@ namespace DwarfCorp
             {
                 // Just check for any intersecting body in octtree.
 
-                var intersectsAnyOther = Player.Faction.OwnedObjects.FirstOrDefault(o => 
-                    o != null 
-                    && o != PreviewBody 
-                    && o.GetRotatedBoundingBox().Intersects(PreviewBody.GetRotatedBoundingBox().Expand(-0.1f)));
+                var sensorBox = PreviewBody.GetRotatedBoundingBox();
+                var sensor = PreviewBody.GetComponent<GenericVoxelListener>();
+                if (sensor != null)
+                    sensorBox = sensor.GetRotatedBoundingBox();
+                if (Debugger.Switches.DrawToolDebugInfo)
+                    Drawer3D.DrawBox(sensorBox, Color.Yellow, 0.1f, false);
 
-                var intersectsBuildObjects = Player.Faction.Designations.EnumerateEntityDesignations(DesignationType.Craft)
-                    .Any(d => d.Body != PreviewBody && d.Body.GetRotatedBoundingBox().Intersects(
-                        PreviewBody.GetRotatedBoundingBox().Expand(-0.1f)));
+                var intersectingObject = World.EnumerateIntersectingObjects(sensorBox, CollisionType.Static).Where(o => !Object.ReferenceEquals(o, sensor)).OfType<GenericVoxelListener>().FirstOrDefault();
+                if (intersectingObject != null)
+                {
+                    var objectRoot = intersectingObject.GetRoot();
+                    World.ShowToolPopup("Can't build here: intersects " + objectRoot.Name);
+                    return false;
+                }
 
                 bool intersectsWall = VoxelHelpers.EnumerateCoordinatesInBoundingBox
                     (PreviewBody.GetRotatedBoundingBox().Expand(-0.1f)).Any(
@@ -272,26 +278,12 @@ namespace DwarfCorp
                         return tvh.IsValid && !tvh.IsEmpty;
                     });
 
-                if (intersectsAnyOther != null)
-                {
-                    World.ShowToolPopup("Can't build here: intersects " + intersectsAnyOther.Name);
-                }
-                else if (intersectsBuildObjects)
-                {
-                    World.ShowToolPopup("Can't build here: intersects something else being built");
-                }
-                else if (intersectsWall && !CraftType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall))
+                if (intersectsWall && !CraftType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall))
                 {
                     World.ShowToolPopup("Can't build here: intersects wall.");
+                    return false;
                 }
 
-                bool valid =  (intersectsAnyOther == null && !intersectsBuildObjects &&
-                       (!intersectsWall || CraftType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall)));
-                if (valid)
-                {
-                    World.ShowToolPopup("");
-                }
-                return valid;
             }
             World.ShowToolPopup("");
             return true;

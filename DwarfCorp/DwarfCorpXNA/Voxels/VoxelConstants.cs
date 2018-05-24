@@ -8,16 +8,16 @@ namespace DwarfCorp
     public class VoxelConstants
     {
         public const Int32 ChunkSizeX = 16;
-        public const Int32 ChunkSizeY = 128;
+        public const Int32 ChunkSizeY = 64;
         public const Int32 ChunkSizeZ = 16;
-        public const Int32 ChunkVoxelCount = 16 * 128 * 16;
+        public const Int32 ChunkVoxelCount = ChunkSizeX * ChunkSizeY * ChunkSizeZ;
 
         public const Int32 XDivShift = 4;
-        public const Int32 YDivShift = 7;
+        public const Int32 YDivShift = 6;
         public const Int32 ZDivShift = 4;
 
         public const Int32 XModMask = 0x0000000F;
-        public const Int32 YModMask = 0x0000007F;
+        public const Int32 YModMask = 0x0000003F;
         public const Int32 ZModMask = 0x0000000F;
 
         public static Int32 DataIndexOf(LocalVoxelCoordinate C)
