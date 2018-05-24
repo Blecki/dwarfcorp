@@ -238,6 +238,9 @@ namespace DwarfCorp.GameStates
             base.OnExit();
         }
 
+        private float timeOnLastClick = 0.0f;
+        private float doubleClickThreshold = 0.25f;
+
         /// <summary>
         /// Called every frame
         /// </summary>
@@ -273,6 +276,17 @@ namespace DwarfCorp.GameStates
                     {
                         ContextMenu.Close();
                         ContextMenu = null;
+                    }
+
+                    // double click logic.
+                    if (args.MouseButton == 0)
+                    {
+                        float now = (float)gameTime.TotalRealTime.TotalSeconds;
+                        if (now - timeOnLastClick < doubleClickThreshold)
+                        {
+                            World.Camera.ZoomTo(World.CursorLightPos);
+                        }
+                        timeOnLastClick = now;
                     }
 
                     if (args.MouseButton == 1) // Right mouse click.

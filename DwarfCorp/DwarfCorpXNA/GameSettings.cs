@@ -89,7 +89,7 @@ namespace DwarfCorp
             public List<String> EnabledMods = new List<string>();
             public int MaxSaves = 15;
             public bool EnableSlowMotion = false;
-            public int ConsoleTextSize = 1;
+            public int ConsoleTextSize = 2;
 
             public Settings Clone()
             {
