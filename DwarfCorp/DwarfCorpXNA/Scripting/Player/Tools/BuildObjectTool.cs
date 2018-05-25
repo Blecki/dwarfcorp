@@ -75,7 +75,7 @@ namespace DwarfCorp
             {
                 case (InputManager.MouseButton.Left):
                     {
-                        if (IsValid(Player.VoxSelector.VoxelUnderMouse))
+                        if (IsValid(Player.VoxSelector.VoxelUnderMouse, CraftType, Player, PreviewBody))
                         {
                             PreviewBody.SetFlag(GameComponent.Flag.ShouldSerialize, true);
 
@@ -186,7 +186,7 @@ namespace DwarfCorp
             else
                 PreviewBody.OrientToWalls();
 
-            PreviewBody.SetVertexColorRecursive(IsValid(Player.VoxSelector.VoxelUnderMouse) ? Color.Green : Color.Red);
+            PreviewBody.SetVertexColorRecursive(IsValid(Player.VoxSelector.VoxelUnderMouse, CraftType, Player, PreviewBody) ? Color.Green : Color.Red);
 
             if (CraftType.AllowRotation)
                 World.ShowTooltip("Click to build. Press R/T to rotate.");
@@ -210,12 +210,12 @@ namespace DwarfCorp
 
         }
 
-        public bool IsValid(VoxelHandle Location)
+        public static bool IsValid(VoxelHandle Location, CraftItem CraftType, GameMaster Player, Body PreviewBody)
         {            
             if (!String.IsNullOrEmpty(CraftType.CraftLocation) 
                 && Player.Faction.FindNearestItemWithTags(CraftType.CraftLocation, Location.WorldPosition, false, null) == null)
             {
-                World.ShowToolPopup("Can't build, need " + CraftType.CraftLocation);
+                Player.World.ShowToolPopup("Can't build, need " + CraftType.CraftLocation);
                 return false;
             }
 
@@ -226,12 +226,12 @@ namespace DwarfCorp
                     case CraftItem.CraftPrereq.NearWall:
                         {
                             var neighborFound = VoxelHelpers.EnumerateManhattanNeighbors2D(Location.Coordinate)
-                                    .Select(c => new VoxelHandle(World.ChunkManager.ChunkData, c))
+                                    .Select(c => new VoxelHandle(Player.World.ChunkManager.ChunkData, c))
                                     .Any(v => v.IsValid && !v.IsEmpty);
 
                             if (!neighborFound)
                             {
-                                World.ShowToolPopup("Must be built next to wall!");
+                                Player.World.ShowToolPopup("Must be built next to wall!");
                                 return false;
                             }
 
@@ -243,7 +243,7 @@ namespace DwarfCorp
 
                             if (!below.IsValid || below.IsEmpty)
                             {
-                                World.ShowToolPopup("Must be built on solid ground!");
+                                Player.World.ShowToolPopup("Must be built on solid ground!");
                                 return false;
                             }
                             break;
@@ -255,37 +255,42 @@ namespace DwarfCorp
             {
                 // Just check for any intersecting body in octtree.
 
-                var sensorBox = PreviewBody.GetRotatedBoundingBox();
+                var previewBox = PreviewBody.GetRotatedBoundingBox();
+                var sensorBox = previewBox;
                 var sensor = PreviewBody.GetComponent<GenericVoxelListener>();
                 if (sensor != null)
                     sensorBox = sensor.GetRotatedBoundingBox();
                 if (Debugger.Switches.DrawToolDebugInfo)
                     Drawer3D.DrawBox(sensorBox, Color.Yellow, 0.1f, false);
 
-                var intersectingObject = World.EnumerateIntersectingObjects(sensorBox, CollisionType.Static).Where(o => !Object.ReferenceEquals(o, sensor)).OfType<GenericVoxelListener>().FirstOrDefault();
-                if (intersectingObject != null)
+                foreach (var intersectingObject in Player.World.EnumerateIntersectingObjects(sensorBox, CollisionType.Static))
                 {
-                    var objectRoot = intersectingObject.GetRoot();
-                    World.ShowToolPopup("Can't build here: intersects " + objectRoot.Name);
-                    return false;
+                    if (Object.ReferenceEquals(intersectingObject, sensor)) continue;
+                    var objectRoot = intersectingObject.GetRoot() as Body;
+                    if (objectRoot is WorkPile) continue;
+                    if (objectRoot != null && objectRoot.GetRotatedBoundingBox().Intersects(previewBox))
+                    {
+                        Player.World.ShowToolPopup("Can't build here: intersects " + objectRoot.Name);
+                        return false;
+                    }
                 }
 
                 bool intersectsWall = VoxelHelpers.EnumerateCoordinatesInBoundingBox
                     (PreviewBody.GetRotatedBoundingBox().Expand(-0.1f)).Any(
                     v =>
                     {
-                        var tvh = new VoxelHandle(World.ChunkManager.ChunkData, v);
+                        var tvh = new VoxelHandle(Player.World.ChunkManager.ChunkData, v);
                         return tvh.IsValid && !tvh.IsEmpty;
                     });
 
                 if (intersectsWall && !CraftType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall))
                 {
-                    World.ShowToolPopup("Can't build here: intersects wall.");
+                    Player.World.ShowToolPopup("Can't build here: intersects wall.");
                     return false;
                 }
 
             }
-            World.ShowToolPopup("");
+            Player.World.ShowToolPopup("");
             return true;
         }
 

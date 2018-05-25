@@ -160,6 +160,7 @@ namespace DwarfCorp
             {
                 return;
             }
+
             Player.VoxSelector.Enabled = false;
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
             Player.BodySelector.Enabled = SelectedBody == null;
@@ -170,7 +171,8 @@ namespace DwarfCorp
             else
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 9));
 
-            
+            MouseState mouse = Mouse.GetState();
+
             if (SelectedBody != null)
             {
                 var craftDetails = SelectedBody.GetRoot().GetComponent<CraftDetails>();
@@ -182,10 +184,11 @@ namespace DwarfCorp
                         0.1f);
 
                     var offset = Vector3.Zero;
+                    CraftItem craftItem = null;
 
                     if (craftDetails != null)
                     {
-                        var craftItem = CraftLibrary.GetCraftable(craftDetails.CraftType);
+                        craftItem = CraftLibrary.GetCraftable(craftDetails.CraftType);
                         if (craftItem != null)
                             offset = craftItem.SpawnOffset;
                     }
@@ -199,58 +202,40 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        SelectedBody.OrientToWalls();   
+                        SelectedBody.OrientToWalls();
                     }
                     SelectedBody.UpdateBoundingBox();
                     SelectedBody.UpdateTransform();
                     SelectedBody.PropogateTransforms();
                     SelectedBody.UpdateBoundingBox();
-                }
 
-                var intersectsAnyOther =
-                    Player.Faction.OwnedObjects.FirstOrDefault(
-                        o => o != SelectedBody && o.Tags.Contains("Moveable") && o.GetRotatedBoundingBox().Intersects(SelectedBody.GetRotatedBoundingBox().Expand(-0.5f)));
-                Drawer3D.DrawBox(SelectedBody.GetRotatedBoundingBox(), Color.White, 0.05f, false);
+                    var validPlacement = BuildObjectTool.IsValid(voxelUnderMouse, craftItem, Player, SelectedBody);
 
-                bool intersectsWall = VoxelHelpers.EnumerateCoordinatesInBoundingBox(
-                    SelectedBody.GetRotatedBoundingBox().Expand(-0.25f)).Any(
-                        v =>
-                        {
-                            var tvh = new VoxelHandle(Player.VoxSelector.Chunks.ChunkData, v);
-                            return tvh.IsValid && !tvh.IsEmpty;
-                        });
-                var tinter = SelectedBody.GetRoot().GetComponent<Tinter>();
-                if (tinter != null)
-                {
-                    tinter.VertexColorTint = intersectsAnyOther == null && !intersectsWall ? Color.Green : Color.Red;
-                    tinter.Stipple = true;
-                }
-                MouseState mouse = Mouse.GetState();
-                if (mouse.LeftButton == ButtonState.Released && mouseDown)
-                {
-                    mouseDown = false;
-                    if (intersectsAnyOther == null && !intersectsWall)
+                    var tinter = SelectedBody.GetRoot().GetComponent<Tinter>();
+                    if (tinter != null)
                     {
-                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, SelectedBody.Position, 0.5f);
-                        SelectedBody.UpdateTransform();
-                        SelectedBody.PropogateTransforms();
-                        SelectedBody.UpdateBoundingBox();
-                        SelectedBody = null;
-                        OverrideOrientation = false;
-                        CurrentOrientation = 0;
-                        if (tinter != null)
+                        tinter.VertexColorTint = validPlacement ? Color.Green : Color.Red;
+                        tinter.Stipple = true;
+                    }
+
+                    if (mouse.LeftButton == ButtonState.Released && mouseDown)
+                    {
+                        mouseDown = false;
+                        if (validPlacement)
                         {
-                            tinter.VertexColorTint = Color.White;
-                            tinter.Stipple = false;
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, SelectedBody.Position, 0.5f);
+                            SelectedBody.UpdateTransform();
+                            SelectedBody.PropogateTransforms();
+                            SelectedBody.UpdateBoundingBox();
+                            SelectedBody = null;
+                            OverrideOrientation = false;
+                            CurrentOrientation = 0;
+                            if (tinter != null)
+                            {
+                                tinter.VertexColorTint = Color.White;
+                                tinter.Stipple = false;
+                            }
                         }
-                    }
-                    else if (!intersectsWall)
-                    {
-                        Player.World.ShowToolPopup("Can't move here: intersects " + intersectsAnyOther.Name);
-                    }
-                    else
-                    {
-                        Player.World.ShowToolPopup("Can't move here: intersects wall.");
                     }
                 }
                 else if (mouse.LeftButton == ButtonState.Pressed)
@@ -315,105 +300,4 @@ namespace DwarfCorp
 
         }
     }
-
-
-    public class DeconstructObjectTool : PlayerTool
-    {
-        public DeconstructObjectTool()
-        {
-        }
-
-        public override void OnBegin()
-        {
-
-        }
-
-        public override void OnEnd()
-        {
-            Player.VoxSelector.Clear();
-        }
-
-
-        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
-        {
-            if (bodies.Count == 0)
-                return;
-
-            foreach (var body in bodies)
-            {
-                if (body.Tags.Any(tag => tag == "Deconstructable"))
-                {
-                    if (body.IsReserved)
-                    {
-                        Player.World.ShowToolPopup(string.Format("Can't destroy this {0}. It is being used.", body.Name));
-                        continue;
-                    }
-                    body.Die();
-                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, body.Position,
-                    0.5f);
-                }
-            }
-            
-        }
-
-        private List<Body> selectedBodies = new List<Body>();
-
-        public override void OnMouseOver(IEnumerable<Body> bodies)
-        {
-            DefaultOnMouseOver(bodies);
-
-            foreach (var body in bodies)
-            {
-                if (body.Tags.Contains("Deconstructable"))
-                {
-                    if (body.IsReserved)
-                    {
-                        Player.World.ShowTooltip("Can't destroy this this " + body.Name + "\nIt is being used.");
-                        continue;
-                    }
-                    Player.World.ShowTooltip("Left click to destroy this " + body.Name);
-                    body.SetVertexColorRecursive(Color.Red);
-                }
-            }
-
-            foreach(var body in selectedBodies)
-            {
-                if (!bodies.Contains(body))
-                {
-                    body.SetVertexColorRecursive(Color.White);
-                }
-            }
-
-            selectedBodies = bodies.ToList();
-        }
-
-        public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
-        {
-
-        }
-
-        public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
-        {
-
-        }
-
-        public override void Update(DwarfGame game, DwarfTime time)
-        {
-            if (Player.World.IsMouseOverGui)
-                Player.World.SetMouse(Player.World.MousePointer);
-            else
-                Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 9));
-
-            Player.VoxSelector.Enabled = false;
-            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-            Player.BodySelector.Enabled = true;
-            Player.BodySelector.AllowRightClickSelection = true;
-        }
-
-        public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
-        {
-
-        }
-    }
-
 }
