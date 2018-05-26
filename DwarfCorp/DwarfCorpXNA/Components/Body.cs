@@ -115,6 +115,7 @@ namespace DwarfCorp
                 var t = localTransform;
                 t.Translation = value;
                 LocalTransform = t;
+                HasMoved = true;
             }
         }
 
