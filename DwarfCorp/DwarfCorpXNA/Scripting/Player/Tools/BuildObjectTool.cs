@@ -75,7 +75,7 @@ namespace DwarfCorp
             {
                 case (InputManager.MouseButton.Left):
                     {
-                        if (IsValid(Player.VoxSelector.VoxelUnderMouse, CraftType, Player, PreviewBody))
+                        if (ObjectHelper.IsValidPlacement(Player.VoxSelector.VoxelUnderMouse, CraftType, Player, PreviewBody, "build", "built"))
                         {
                             PreviewBody.SetFlag(GameComponent.Flag.ShouldSerialize, true);
 
@@ -83,7 +83,7 @@ namespace DwarfCorp
                             Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
                          
                            CraftDesignation newDesignation = new CraftDesignation()
-                            {
+                           {
                                 ItemType = CraftType,
                                 Location = Player.VoxSelector.VoxelUnderMouse,
                                 Orientation = Orientation,
@@ -92,7 +92,7 @@ namespace DwarfCorp
                                 Entity = PreviewBody,
                                 SelectedResources = SelectedResources,
                                 WorkPile = new WorkPile(World.ComponentManager, startPos)
-                            };
+                           };
 
                             World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
                             newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), pos));
@@ -186,9 +186,10 @@ namespace DwarfCorp
             else
                 PreviewBody.OrientToWalls();
 
-            PreviewBody.SetVertexColorRecursive(IsValid(Player.VoxSelector.VoxelUnderMouse, CraftType, Player, PreviewBody) ? Color.Green : Color.Red);
+            var valid = ObjectHelper.IsValidPlacement(Player.VoxSelector.VoxelUnderMouse, CraftType, Player, PreviewBody, "build", "built");
+            PreviewBody.SetVertexColorRecursive(valid ? Color.Green : Color.Red);
 
-            if (CraftType.AllowRotation)
+            if (valid && CraftType.AllowRotation)
                 World.ShowTooltip("Click to build. Press R/T to rotate.");
         }
 
@@ -208,90 +209,6 @@ namespace DwarfCorp
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
 
-        }
-
-        public static bool IsValid(VoxelHandle Location, CraftItem CraftType, GameMaster Player, Body PreviewBody)
-        {            
-            if (!String.IsNullOrEmpty(CraftType.CraftLocation) 
-                && Player.Faction.FindNearestItemWithTags(CraftType.CraftLocation, Location.WorldPosition, false, null) == null)
-            {
-                Player.World.ShowToolPopup("Can't build, need " + CraftType.CraftLocation);
-                return false;
-            }
-
-            foreach (var req in CraftType.Prerequisites)
-            {
-                switch (req)
-                {
-                    case CraftItem.CraftPrereq.NearWall:
-                        {
-                            var neighborFound = VoxelHelpers.EnumerateManhattanNeighbors2D(Location.Coordinate)
-                                    .Select(c => new VoxelHandle(Player.World.ChunkManager.ChunkData, c))
-                                    .Any(v => v.IsValid && !v.IsEmpty);
-
-                            if (!neighborFound)
-                            {
-                                Player.World.ShowToolPopup("Must be built next to wall!");
-                                return false;
-                            }
-
-                            break;
-                        }
-                    case CraftItem.CraftPrereq.OnGround:
-                        {
-                            var below = VoxelHelpers.GetNeighbor(Location, new GlobalVoxelOffset(0, -1, 0));
-
-                            if (!below.IsValid || below.IsEmpty)
-                            {
-                                Player.World.ShowToolPopup("Must be built on solid ground!");
-                                return false;
-                            }
-                            break;
-                        }
-                }
-            }
-
-            if (PreviewBody != null)
-            {
-                // Just check for any intersecting body in octtree.
-
-                var previewBox = PreviewBody.GetRotatedBoundingBox();
-                var sensorBox = previewBox;
-                var sensor = PreviewBody.GetComponent<GenericVoxelListener>();
-                if (sensor != null)
-                    sensorBox = sensor.GetRotatedBoundingBox();
-                if (Debugger.Switches.DrawToolDebugInfo)
-                    Drawer3D.DrawBox(sensorBox, Color.Yellow, 0.1f, false);
-
-                foreach (var intersectingObject in Player.World.EnumerateIntersectingObjects(sensorBox, CollisionType.Static))
-                {
-                    if (Object.ReferenceEquals(intersectingObject, sensor)) continue;
-                    var objectRoot = intersectingObject.GetRoot() as Body;
-                    if (objectRoot is WorkPile) continue;
-                    if (objectRoot != null && objectRoot.GetRotatedBoundingBox().Intersects(previewBox))
-                    {
-                        Player.World.ShowToolPopup("Can't build here: intersects " + objectRoot.Name);
-                        return false;
-                    }
-                }
-
-                bool intersectsWall = VoxelHelpers.EnumerateCoordinatesInBoundingBox
-                    (PreviewBody.GetRotatedBoundingBox().Expand(-0.1f)).Any(
-                    v =>
-                    {
-                        var tvh = new VoxelHandle(Player.World.ChunkManager.ChunkData, v);
-                        return tvh.IsValid && !tvh.IsEmpty;
-                    });
-
-                if (intersectsWall && !CraftType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall))
-                {
-                    Player.World.ShowToolPopup("Can't build here: intersects wall.");
-                    return false;
-                }
-
-            }
-            Player.World.ShowToolPopup("");
-            return true;
         }
 
         private void HandleOrientation()

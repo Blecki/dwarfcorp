@@ -196,7 +196,7 @@ namespace DwarfCorp
 
                     SelectedBody.PropogateTransforms();
 
-                    var validPlacement = BuildObjectTool.IsValid(voxelUnderMouse, craftItem, Player, SelectedBody);
+                    var validPlacement = ObjectHelper.IsValidPlacement(voxelUnderMouse, craftItem, Player, SelectedBody, "move", "moved");
 
                     // Todo: Enumerate ALL tinters
                     var tinter = SelectedBody.GetRoot().GetComponent<Tinter>();

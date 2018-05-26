@@ -99,6 +99,11 @@ namespace DwarfCorp
 
             GetComponent<SimpleSprite>().OrientationType = SimpleSprite.OrientMode.Fixed;
             GetComponent<SimpleSprite>().LocalTransform = Matrix.CreateTranslation(new Vector3(0, 0, 0.45f)) * Matrix.CreateRotationY(0.0f);
+
+            var sensor = GetComponent<GenericVoxelListener>();
+            sensor.LocalBoundingBoxOffset = new Vector3(0.0f, 0.0f, 1.0f);
+            sensor.SetFlag(Flag.RotateBoundingBox, true);
+            sensor.PropogateTransforms();
         }
     }
 
