@@ -92,6 +92,11 @@ namespace DwarfCorp
             return new Condition(() => condition);
         }
 
+        public static implicit operator Act(Act.Status status)
+        {
+            return new Always(status);
+        }
+
         public static Act operator &(Act b1, Act b2)
         {
             return new Sequence(b1, b2);
@@ -155,6 +160,21 @@ namespace DwarfCorp
                 {
                     child.OnCanceled();
                 }
+        }
+    }
+
+    public class Always : Act
+    {
+        public Act.Status AlwaysStatus = Act.Status.Success;
+        public Always(Act.Status status)
+        {
+            AlwaysStatus = status;
+        }
+
+        public override IEnumerable<Status> Run()
+        {
+            yield return AlwaysStatus;
+            yield break;
         }
     }
 

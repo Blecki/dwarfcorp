@@ -92,7 +92,12 @@ namespace DwarfCorp
         {
             if (!Item.HasResources && Item.ResourcesReservedFor == Agent)
             {
-                Creature.Inventory.RemoveAndCreateWithToss(Item.SelectedResources, pos(), Inventory.RestockType.None);
+                if (!Creature.Inventory.RemoveAndCreateWithToss(Item.SelectedResources, pos(), Inventory.RestockType.None))
+                {
+                    yield return Act.Status.Fail;
+                    yield break;
+                }
+                
                 Item.HasResources = true;
             }
             yield return Status.Success;
@@ -220,6 +225,22 @@ namespace DwarfCorp
             return Item.HasResources || Item.ResourcesReservedFor != null;
         }
 
+        public IEnumerable<Act.Status> SetSelectedResources()
+        {
+            Item.SelectedResources.Clear();
+            foreach (var resource in Item.ItemType.RequiredResources)
+            {
+                if (Creature.Inventory.HasResource(resource))
+                {
+                    Item.SelectedResources.AddRange(Creature.Inventory.GetResources(resource, Inventory.RestockType.Any));
+                }
+                else
+                {
+                    yield return Act.Status.Fail;
+                }
+            }
+            yield return Act.Status.Success;
+        }
 
         public override void Initialize()
         {
@@ -229,8 +250,15 @@ namespace DwarfCorp
             if (Item.SelectedResources == null || Item.SelectedResources.Count == 0)
             {
                 getResources = new Select(new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
-                                          new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
-                                                     new Sequence(new Wrap(ReserveResources), new GetResourcesAct(Agent, Item.ItemType.RequiredResources))),
+                                          new Domain(() => !Item.HasResources &&
+                                                           (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
+                                                     new Select(
+                                                            new Sequence(new Wrap(ReserveResources), 
+                                                                         new GetResourcesAct(Agent, Item.ItemType.RequiredResources), 
+                                                                         new Wrap(SetSelectedResources)),
+                                                            new Sequence(new Wrap(UnReserve), Act.Status.Fail)
+                                                            )
+                                                    ),
                                           new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true));
             }
             else

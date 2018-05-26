@@ -199,8 +199,9 @@ namespace DwarfCorp
             return true;
         }
 
-        public void RemoveAndCreateWithToss(List<ResourceAmount> resources, Vector3 pos, RestockType type)
+        public bool RemoveAndCreateWithToss(List<ResourceAmount> resources, Vector3 pos, RestockType type)
         {
+            bool createdAny = false;
             foreach (var resource in resources)
             {
                 List<Body> things = RemoveAndCreate(resource, type);
@@ -210,8 +211,10 @@ namespace DwarfCorp
                     body.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                     body.AnimationQueue.Add(toss);
                     toss.OnComplete += body.Delete;
+                    createdAny = true;
                 }
             }
+            return createdAny;
         }
 
         public List<Body> RemoveAndCreate(ResourceAmount resources, RestockType type)

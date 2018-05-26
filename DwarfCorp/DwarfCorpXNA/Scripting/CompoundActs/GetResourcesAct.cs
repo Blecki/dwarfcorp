@@ -89,7 +89,7 @@ namespace DwarfCorp
             if (ResourcesToStash != null)
                 return Faction.HasResources(ResourcesToStash);
             if (Resources != null)
-                return Faction.HasResources(Resources);
+                return Faction.HasResources(Resources, AllowHeterogenous);
             return true;
         }
 
@@ -148,7 +148,7 @@ namespace DwarfCorp
                 else
                 {
                     Tree = new Sequence(new Domain(() => HasResources(Agent), new GoToZoneAct(Agent, nearestStockpile)),
-                                        new StashResourcesAct(Agent, ResourcesToStash) { Faction = Faction },
+                                        new Sequence(new Condition(() => HasResources(Agent)), new StashResourcesAct(Agent, ResourcesToStash) { Faction = Faction }),
                                         new SetBlackboardData<List<ResourceAmount>>(Agent, "ResourcesStashed", ResourcesToStash)
                                         );
                 }

@@ -585,11 +585,11 @@ namespace DwarfCorp
             return new List<ResourceAmount>();
         }
 
-        public bool HasResources(IEnumerable<Quantitiy<Resource.ResourceTags>> resources)
+        public bool HasResources(IEnumerable<Quantitiy<Resource.ResourceTags>> resources, bool allowHeterogenous = false)
         {
             foreach (Quantitiy<Resource.ResourceTags> resource in resources)
             {
-                int count = Stockpiles.Sum(stock => stock.Resources.GetResourceCount(resource.ResourceType));
+                int count = Stockpiles.Sum(stock => stock.Resources.GetResourceCount(resource.ResourceType, allowHeterogenous));
 
                 if (count < resource.NumResources)
                 {

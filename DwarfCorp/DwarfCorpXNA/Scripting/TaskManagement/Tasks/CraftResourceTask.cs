@@ -114,7 +114,9 @@ namespace DwarfCorp
             if (Item.HasResources)
                 return true;
 
-            return agent.Faction.HasResources(Item.SelectedResources);
+            if (Item.SelectedResources.Count != 0)
+                return agent.Faction.HasResources(Item.SelectedResources);
+            return agent.Faction.HasResources(Item.ItemType.RequiredResources);
         }
 
         private bool HasLocation(Creature agent)
