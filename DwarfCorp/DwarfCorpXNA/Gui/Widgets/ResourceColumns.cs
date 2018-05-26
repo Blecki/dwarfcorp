@@ -48,10 +48,8 @@ namespace DwarfCorp.Gui.Widgets
                                 int tradeMoney)
         {
             Clear();
-            SourceResources = new List<ResourceAmount>();
-            SourceResources.AddRange(sourceResource);
-            SelectedResources = new List<ResourceAmount>();
-            SelectedResources.AddRange(selectedResources);
+            SourceResources = Clone(sourceResource.ToList());
+            SelectedResources = Clone(selectedResources.ToList());
 
             var leftPanel = AddChild(new Widget());
 
@@ -117,10 +115,10 @@ namespace DwarfCorp.Gui.Widgets
             SetupList(leftList, rightList, SelectedResources, SourceResources);
         }
 
-        private void SetupList(WidgetListView rightList, WidgetListView leftList, List<ResourceAmount> sourceResources, 
-            List<ResourceAmount> selectedResources)
+        private void SetupList(WidgetListView listA, WidgetListView listB, List<ResourceAmount> resourcesA, 
+            List<ResourceAmount> resourcesB)
         {
-            foreach (var resource in sourceResources)
+            foreach (var resource in resourcesA)
             {
                 var lineItem = CreateLineItem(resource);
 
@@ -137,14 +135,14 @@ namespace DwarfCorp.Gui.Widgets
                         return;
                     lambdaResource.NumResources -= toMove;
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, MathFunctions.Rand() * 0.25f);
-                    var existingEntry = selectedResources.FirstOrDefault(r => r.ResourceType == lambdaResource.ResourceType);
+                    var existingEntry = resourcesB.FirstOrDefault(r => r.ResourceType == lambdaResource.ResourceType);
                     if (existingEntry == null)
                     {
                         existingEntry = new ResourceAmount(lambdaResource.ResourceType, 0);
-                        selectedResources.Add(existingEntry);
+                        resourcesB.Add(existingEntry);
                         var rightLineItem = CreateLineItem(existingEntry);
                         rightLineItem.EnableHoverClick();
-                        rightList.AddItem(rightLineItem);
+                        listA.AddItem(rightLineItem);
 
                         rightLineItem.TriggerOnChildClick = true;
                         rightLineItem.OnClick = (_sender, _args) =>
@@ -158,18 +156,18 @@ namespace DwarfCorp.Gui.Widgets
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, MathFunctions.Rand() * 0.25f);
                             if (existingEntry.NumResources == 0)
                             {
-                                var index = selectedResources.IndexOf(existingEntry);
-                                selectedResources.RemoveAt(index);
-                                rightList.RemoveChild(rightList.GetChild(index + 1));
+                                var index = resourcesB.IndexOf(existingEntry);
+                                resourcesB.RemoveAt(index);
+                                listA.RemoveChild(listA.GetChild(index + 1));
                             }
 
-                            UpdateColumn(rightList, selectedResources);
+                            UpdateColumn(listA, resourcesB);
 
-                            var sourceEntry = sourceResources.FirstOrDefault(
+                            var sourceEntry = resourcesA.FirstOrDefault(
                                 r => r.ResourceType == existingEntry.ResourceType);
                             sourceEntry.NumResources += _toMove;
                             UpdateLineItemText(
-                                leftList.GetChild(sourceResources.IndexOf(sourceEntry) + 1),
+                                listB.GetChild(resourcesA.IndexOf(sourceEntry) + 1),
                                 sourceEntry);
 
                             Root.SafeCall(OnTotalSelectedChanged, this);
@@ -177,13 +175,13 @@ namespace DwarfCorp.Gui.Widgets
                     }
                     existingEntry.NumResources += toMove;
 
-                    UpdateColumn(rightList, selectedResources);
+                    UpdateColumn(listA, resourcesB);
                     UpdateLineItemText(lineItem, lambdaResource);
 
                     Root.SafeCall(OnTotalSelectedChanged, this);
                 };
 
-                leftList.AddItem(lineItem);
+                listB.AddItem(lineItem);
             }
         }
 

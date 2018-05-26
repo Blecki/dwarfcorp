@@ -32,8 +32,28 @@ namespace DwarfCorp.Trade
         public int AvailableSpace { get { return 0; } }
         public DwarfBux Money { get { return SourceEnvoy.TradeMoney; } }
         public List<ResourceAmount> Resources { get { return SourceEnvoy.TradeGoods; } }
-        public void AddMoney(DwarfBux Money) { }
-        public void AddResources(List<ResourceAmount> Resources) { }
+        public void AddMoney(DwarfBux Money) { SourceEnvoy.TradeMoney += Money; }
+        public void AddResources(List<ResourceAmount> Resources)
+        {
+            foreach(var resource in Resources)
+            {
+                bool found = false;
+                foreach (var existingResource in SourceEnvoy.TradeGoods)
+                {
+                    if (existingResource.ResourceType == resource.ResourceType)
+                    {
+                        existingResource.NumResources += resource.NumResources;
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    SourceEnvoy.TradeGoods.Add(resource);
+                }
+            }
+        }
         public Race TraderRace { get { return SourceEnvoy.OwnerFaction.Race; } }
         public Faction TraderFaction { get { return SourceEnvoy.OwnerFaction; } }
 

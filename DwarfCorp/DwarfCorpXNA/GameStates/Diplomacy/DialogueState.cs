@@ -53,14 +53,6 @@ namespace DwarfCorp.Dialogue
             int bgx = x - 258;
             int bgy = y - 128;
 
-            DialogueContext.SpeechBubble = GuiRoot.RootItem.AddChild(new Gui.Widget
-            {
-                Rect = new Rectangle(bgx + 258, bgy, w + 50, 128),
-                Border = "speech-bubble-reverse",
-                Font = "font16",
-                TextColor = Color.Black.ToVector4()
-            });
-
             var bg = GuiRoot.RootItem.AddChild(new Widget()
             {
                 Border = "border-dark",
@@ -77,8 +69,18 @@ namespace DwarfCorp.Dialogue
 
             SpeakerAnimation = AnimationLibrary.CreateAnimation(DialogueContext.Envoy.OwnerFaction.Race.TalkAnimation);
             SpeakerAnimationPlayer = new AnimationPlayer(SpeakerAnimation);
-            DialogueContext.SpeakerAnimation = SpeakerAnimationPlayer;
-
+            DialogueContext.Speaker = new Dialogue.SpeakerWidget()
+            {
+                SpeakerAnimation = SpeakerAnimationPlayer,
+                Race = DialogueContext.Envoy.OwnerFaction.Race,
+            };
+            DialogueContext.Speaker.SpeechBubble = GuiRoot.RootItem.AddChild(new Gui.Widget
+            {
+                Rect = new Rectangle(bgx + 258, bgy, w + 50, 128),
+                Border = "speech-bubble-reverse",
+                Font = "font16",
+                TextColor = Color.Black.ToVector4()
+            });
 
             SpeakerWidget = bg.AddChild(new Widget()
             {

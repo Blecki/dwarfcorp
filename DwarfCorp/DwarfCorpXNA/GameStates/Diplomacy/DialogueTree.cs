@@ -19,6 +19,14 @@ namespace DwarfCorp.Dialogue
                         Context.Envoy.OwnerFaction.Name))(Context);
         }
 
+        public static Action<DialogueContext> TradeWithPrompt(String Prompt)
+        {
+            return (Context) =>
+            {
+                Trade(Context, Prompt);
+            };
+        }
+
         public static Action<DialogueContext> RootWithPrompt(String Prompt)
         {
             return (Context) =>
@@ -40,7 +48,7 @@ namespace DwarfCorp.Dialogue
                 {
                     Context.Say(Prompt);
                     Context.ClearOptions();
-                    Context.AddOption("Trade", Trade);
+                    Context.AddOption("Trade", (c) => Trade(c));
                     Context.AddOption("What is your opinion of us?", (context) =>
                     {
                         var prompt = "";
@@ -156,7 +164,7 @@ namespace DwarfCorp.Dialogue
                         Time = Context.World.Time.CurrentDate
                     });
                 }
-                Context.Transition(RootWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.GoodTrades)));
+                Context.Transition(TradeWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.GoodTrades)));
                 Context.Envoy.TributeDemanded = 0m;
             }
             else
@@ -210,18 +218,29 @@ namespace DwarfCorp.Dialogue
             };
         }
 
-        public static void Trade(DialogueContext Context)
+        public static void Trade(DialogueContext Context, string prompt = null)
         {
-            Context.TradePanel = Context.ChoicePanel.Root.ConstructWidget(new Gui.Widgets.TradePanel
+            if (Context.TradePanel == null || Context.TradePanel.Hidden)
             {
-                Rect = Context.ChoicePanel.Root.RenderData.VirtualScreen,
-                Envoy = new Trade.EnvoyTradeEntity(Context.Envoy),
-                Player = new Trade.PlayerTradeEntity(Context.PlayerFaction)
-            }) as Gui.Widgets.TradePanel;
-
+                Context.TradePanel = Context.ChoicePanel.Root.ConstructWidget(new Gui.Widgets.TradePanel
+                {
+                    Rect = Context.ChoicePanel.Root.RenderData.VirtualScreen,
+                    Envoy = new Trade.EnvoyTradeEntity(Context.Envoy),
+                    Player = new Trade.PlayerTradeEntity(Context.PlayerFaction),
+                    Speaker = new SpeakerWidget()
+                    {
+                        Race = Context.Speaker.Race,
+                        SpeakerAnimation = Context.Speaker.SpeakerAnimation
+                    }
+                }) as Gui.Widgets.TradePanel;
+            }
+            Context.TradePanel.Reset();
             Context.TradePanel.Layout();
             Context.ChoicePanel.Root.ShowDialog(Context.TradePanel);
-
+            if (prompt != null)
+            {
+                Context.TradePanel.Say(prompt);
+            }
             Context.Transition(WaitForTradeToFinish);
         }
 
@@ -251,7 +270,13 @@ namespace DwarfCorp.Dialogue
                     Context.Envoy.OwnerFaction.Race.Speech.Language.SayBoo();
                     Context.NumOffensiveTrades++;
                     var phrase = Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.OffensiveTrades);
-                    var action = Context.NumOffensiveTrades >= 3 ? GoodbyeWithPrompt(phrase) : RootWithPrompt(phrase); 
+                    var action = Context.NumOffensiveTrades >= 3 ? GoodbyeWithPrompt(phrase) : TradeWithPrompt(phrase);
+                    if (Context.NumOffensiveTrades >= 3)
+                    {
+                        Context.TradePanel.Close();
+                        Context.TradePanel.Hidden = true;
+                        Context.TradePanel = null;
+                    }
                     Context.Transition(action);
                     
                     if (!Context.Politics.HasEvent("you tried to give us something offensive"))
@@ -282,7 +307,7 @@ namespace DwarfCorp.Dialogue
                     }
 
                     Context.TradePanel.Transaction.Apply(Context.World);
-                    Context.Transition(RootWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.GoodTrades)));
+                    Context.Transition(TradeWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.GoodTrades)));
 
                     Context.World.GoalManager.OnGameEvent(new Goals.Triggers.Trade
                     {
@@ -311,7 +336,7 @@ namespace DwarfCorp.Dialogue
                 Context.TradePanel.Result == Gui.Widgets.TradeDialogResult.RejectProfit)
             {
                 Context.Envoy.OwnerFaction.Race.Speech.Language.SayBoo();
-                Context.Transition(RootWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.BadTrades)));
+                Context.Transition(TradeWithPrompt(Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.BadTrades)));
             }
             else
             {

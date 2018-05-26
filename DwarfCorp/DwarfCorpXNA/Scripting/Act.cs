@@ -97,6 +97,33 @@ namespace DwarfCorp
             return new Always(status);
         }
 
+        public static implicit operator Act(Act[] acts)
+        {
+            return new Sequence(acts);
+        }
+
+        public static implicit operator Act(List<Act> acts)
+        {
+            return new Sequence(acts.ToArray());
+        }
+
+        public static Act operator+(Func<bool> domain, Act act)
+        {
+            return new Domain(domain, act);
+        }
+
+        public static Act operator+(Sequence seq, Act act)
+        {
+            seq.Children.Add(act);
+            return seq;
+        }
+
+        public static Act operator +(Select select, Act act)
+        {
+            select.Children.Add(act);
+            return select;
+        }
+
         public static Act operator &(Act b1, Act b2)
         {
             return new Sequence(b1, b2);

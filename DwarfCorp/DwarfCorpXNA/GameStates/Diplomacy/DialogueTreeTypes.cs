@@ -10,13 +10,60 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp.Dialogue
 {
+
+    public class SpeakerWidget
+    {
+        public Gui.Widget SpeechBubble;
+        public AnimationPlayer SpeakerAnimation;
+        private IEnumerator<Utterance> speech;
+        private string sentence;
+        public Race Race;
+
+        public void Say(string Text)
+        {
+            sentence = Text;
+            SpeechBubble.Text = "";
+            SpeechBubble.Invalidate();
+
+            speech = Race.Speech.Language.Say(Text).GetEnumerator();
+        }
+
+        public bool IsDone()
+        {
+            return speech == null || (speech.Current.SubSentence != null && speech.Current.SubSentence.Length == sentence.Length + 1);
+        }
+
+        public void Update(DwarfTime Time)
+        {
+            if (speech != null)
+            {
+                Utterance utter = speech.Current;
+                if (utter.SubSentence != null && utter.SubSentence != SpeechBubble.Text)
+                {
+                    if (SpeakerAnimation.IsDone())
+                        SpeakerAnimation.Reset();
+                    SpeakerAnimation.Play();
+                    SpeechBubble.Text = utter.SubSentence;
+                    SpeechBubble.Invalidate();
+                }
+                speech.MoveNext();
+            }
+            SpeakerAnimation.Update(Time, false, Timer.TimerMode.Real);
+        }
+
+        public void Skip()
+        {
+            speech = null;
+            SpeechBubble.Text = sentence;
+            SpeakerAnimation.Stop();
+        }
+    }
+
     public class DialogueContext
     {
         private Action<DialogueContext> NextAction = null;
         public Gui.Widget ChoicePanel;
-        public Gui.Widget SpeechBubble;
         public Gui.Widgets.TradePanel TradePanel;
-        public AnimationPlayer SpeakerAnimation;
 
         public TradeEnvoy Envoy;
         public int NumOffensiveTrades = 0;
@@ -27,16 +74,11 @@ namespace DwarfCorp.Dialogue
         public Diplomacy.Politics Politics;
         public WorldManager World;
 
-        private IEnumerator<Utterance> speech;
-        private string sentence;
+        public SpeakerWidget Speaker;
 
         public void Say(String Text)
         {
-            sentence = Text;
-            SpeechBubble.Text = "";
-            SpeechBubble.Invalidate();
-
-            speech = Envoy.OwnerFaction.Race.Speech.Language.Say(Text).GetEnumerator();
+            Speaker.Say(Text);
         }
 
         public void ClearOptions()
@@ -67,33 +109,23 @@ namespace DwarfCorp.Dialogue
 
         public void Update(DwarfTime Time)
         {
-            if (speech != null)
-            {
-                Utterance utter = speech.Current;
-                if (utter.SubSentence != null && utter.SubSentence != SpeechBubble.Text)
-                {
-                    if (SpeakerAnimation.IsDone())
-                        SpeakerAnimation.Reset();
-                    SpeakerAnimation.Play();
-                    SpeechBubble.Text = utter.SubSentence;
-                    SpeechBubble.Invalidate();
-                }
-                speech.MoveNext();
-            }
-            SpeakerAnimation.Update(Time, false, Timer.TimerMode.Real);
+            Speaker.Update(Time);
 
             var next = NextAction;
             NextAction = null;
 
             if (next != null)
                 next(this);
+
+            if (TradePanel != null && !TradePanel.Hidden && TradePanel.Speaker != null)
+            {
+                TradePanel.UpdateSpeakerAnimation(Time);
+            }
         }
 
         public void Skip()
         {
-            speech = null;
-            SpeechBubble.Text = sentence;
-            SpeakerAnimation.Stop();
+            Speaker.Skip();
         }
     }    
 }
