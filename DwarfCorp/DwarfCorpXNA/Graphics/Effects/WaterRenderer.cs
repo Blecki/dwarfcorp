@@ -241,7 +241,6 @@ namespace DwarfCorp
                 {
                     effect.FlatWaterColor = new Color(asset.Value.FlatColor);
 
-
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
                         pass.Apply();

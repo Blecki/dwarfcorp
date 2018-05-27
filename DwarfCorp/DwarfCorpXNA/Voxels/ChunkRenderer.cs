@@ -73,17 +73,12 @@ namespace DwarfCorp
             effect.VertexColorTint = Color.White;
             effect.SelfIlluminationEnabled = true;
             effect.EnableShadows = false;
-
-			BoundingFrustum cameraFrustrum = renderCamera.GetFrustum();
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
                 foreach (var chunk in ChunkData.GetChunkEnumerator())
                 {
-                    if (cameraFrustrum.Intersects(chunk.GetBoundingBox()))
-                    {
-                        chunk.Render(GameState.Game.GraphicsDevice);
-                    }
+                    chunk.Render(GameState.Game.GraphicsDevice);
                 }
             }
             effect.SelfIlluminationEnabled = false;

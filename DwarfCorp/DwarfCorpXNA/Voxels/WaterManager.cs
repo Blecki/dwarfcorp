@@ -81,6 +81,7 @@ namespace DwarfCorp
         private Mutex SplashLock = new Mutex();
         private LinkedList<LiquidTransfer> Transfers = new LinkedList<LiquidTransfer>();
         private Mutex TransferLock = new Mutex();
+        public bool NeedsMinimapUpdate = true;
 
         public IEnumerable<LiquidSplash> GetSplashQueue()
         {
@@ -227,7 +228,7 @@ namespace DwarfCorp
                             Type = LiquidType.None,
                             WaterLevel = 0
                         };
-
+                        NeedsMinimapUpdate = true;
                         continue;
                     }
 
@@ -246,6 +247,7 @@ namespace DwarfCorp
                             voxBelow.WaterCell = water;
                             currentVoxel.WaterCell = WaterCell.Empty;
                             HandleLiquidInteraction(voxBelow, water, belowWater);
+                            NeedsMinimapUpdate = true;
                             continue;
                         }
 
@@ -258,6 +260,7 @@ namespace DwarfCorp
                             voxBelow.WaterCell = belowWater;
                             currentVoxel.WaterCell = WaterCell.Empty;
                             HandleLiquidInteraction(voxBelow, water, belowWater);
+                            NeedsMinimapUpdate = true;
                             continue;
                         }
 
@@ -269,6 +272,7 @@ namespace DwarfCorp
                             voxBelow.WaterCell = belowWater;
                             currentVoxel.WaterCell = water;
                             HandleLiquidInteraction(voxBelow, water, belowWater);
+                            NeedsMinimapUpdate = true;
                             continue;
                         }
                     }
@@ -309,6 +313,7 @@ namespace DwarfCorp
                                 };
 
                                 HandleLiquidInteraction(neighborVoxel, water, neighborWater);
+                                NeedsMinimapUpdate = true;
                                 break; 
                             }
 

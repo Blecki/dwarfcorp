@@ -58,6 +58,7 @@ namespace DwarfCorp
         private Queue<VoxelChunk> RebuildQueue = new Queue<VoxelChunk>();
         private Mutex RebuildQueueLock = new Mutex();
         private AutoResetEvent RebuildEvent = new AutoResetEvent(true);
+        public bool NeedsMinimapUpdate = true;
 
         public void InvalidateChunk(VoxelChunk Chunk)
         {
@@ -182,7 +183,10 @@ namespace DwarfCorp
                     {
                         chunk = PopInvalidChunk();
                         if (chunk != null)
+                        {
                             chunk.Rebuild(GameState.Game.GraphicsDevice);
+                            NeedsMinimapUpdate = true;
+                        }
                     }
                     while (chunk != null);
                     
@@ -285,6 +289,7 @@ namespace DwarfCorp
             SetLoadingMessage("Generating Ores...");
 
             GenerateOres();
+            NeedsMinimapUpdate = true;
         }
 
         private void RecalculateBounds()

@@ -89,12 +89,13 @@ namespace DwarfCorp.Gui.Widgets
         public Vector3 HomePosition { get; set; }
         protected bool HomeSet = false;
         public RenderTarget2D RenderTarget = null;
+        public RenderTarget2D TerrainTexture = null;
         public string ColorMap { get; set; }
         public int RenderWidth = 196;
         public int RenderHeight = 196;
         public OrbitCamera Camera { get; set; }
         public WorldManager World { get; set; }
-
+        private BasicEffect DrawShader = null;
         public MinimapRenderer(int width, int height, WorldManager world, string colormap)
         {
             ColorMap = colormap;
@@ -103,7 +104,7 @@ namespace DwarfCorp.Gui.Widgets
             RenderHeight = height;
             RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, RenderWidth, RenderHeight, false, SurfaceFormat.Color, DepthFormat.Depth24);
             World = world;
-
+            DrawShader = new BasicEffect(World.GraphicsDevice);
             Camera = new OrbitCamera(World, new Vector3(0, 0, 0), new Vector3(0, 0, 0), 2.5f, 1.0f, 0.1f, 1000.0f)
             {
                 Projection = global::DwarfCorp.Camera.ProjectionMode.Orthographic
@@ -152,17 +153,56 @@ namespace DwarfCorp.Gui.Widgets
         {
             Gui.DrawQuad(Where, RenderTarget);
         }
-
-        private Timer _renderTimer = new Timer(0.05f, false, Timer.TimerMode.Real);
-        public void PreRender(DwarfTime time, SpriteBatch sprites)
+        private int _iters = 0;
+        public void ReDrawChunks(DwarfTime time)
         {
-            if (RenderTarget.IsDisposed)
-            {
-                RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, RenderWidth, RenderHeight, false, SurfaceFormat.Color, DepthFormat.Depth24);
-            }
             _renderTimer.Update(time);
             if (!_renderTimer.HasTriggered)
                 return;
+            _iters++;
+            if (_iters > 5 && !(World.ChunkManager.NeedsMinimapUpdate || World.ChunkManager.Water.NeedsMinimapUpdate))
+                return;
+            World.ChunkManager.NeedsMinimapUpdate = false;
+            World.ChunkManager.Water.NeedsMinimapUpdate = false;
+
+            var bounds = World.ChunkManager.Bounds;
+            float scale = 2.0f;
+            int numPixelsX = (int)((bounds.Max.X - bounds.Min.X) * scale);
+            int numPixelsZ = (int)((bounds.Max.Z - bounds.Min.Z) * scale);
+
+            if (TerrainTexture == null || TerrainTexture.IsDisposed || TerrainTexture.IsContentLost)
+            {
+                TerrainTexture = new RenderTarget2D(GameState.Game.GraphicsDevice, numPixelsX, numPixelsZ, false, SurfaceFormat.Color, DepthFormat.Depth24);
+            }
+
+            World.GraphicsDevice.SetRenderTarget(TerrainTexture);
+
+            World.GraphicsDevice.Clear(ClearOptions.Target, Color.Black, 0, 0);
+            World.DefaultShader.View = Matrix.CreateLookAt(bounds.Center() + Vector3.Up * 128, bounds.Center(), -Vector3.UnitZ);
+            World.DefaultShader.EnbleFog = false;
+
+            World.DefaultShader.Projection = Matrix.CreateOrthographic((float)numPixelsX / scale, (float)numPixelsZ / scale, 1.0f, 512);
+            World.DefaultShader.CurrentTechnique = World.DefaultShader.Techniques[Shader.Technique.TexturedWithColorScale];
+
+            World.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+            World.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
+            World.ChunkRenderer.RenderForMinimap(Camera, time, World.GraphicsDevice, World.DefaultShader, Matrix.Identity, AssetManager.GetContentTexture(ColorMap));
+
+            World.GraphicsDevice.Textures[0] = null;
+            World.GraphicsDevice.Indices = null;
+            World.GraphicsDevice.SetVertexBuffer(null);
+            World.WaterRenderer.DrawWaterFlat(World.GraphicsDevice, World.DefaultShader.View, World.DefaultShader.Projection, World.DefaultShader, World.ChunkManager);
+        }
+
+        private Timer _renderTimer = new Timer(0.15f, false, Timer.TimerMode.Real);
+        private VertexPositionTexture[] quad = null;
+        public void PreRender(DwarfTime time, SpriteBatch sprites)
+        {
+            if (RenderTarget.IsDisposed || RenderTarget.IsContentLost)
+            {
+                RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, RenderWidth, RenderHeight, false, SurfaceFormat.Color, DepthFormat.Depth24);
+            }
 
             if (!HomeSet)
             {
@@ -172,35 +212,46 @@ namespace DwarfCorp.Gui.Widgets
                 }
                 HomeSet = true;
             }
-
-            //Camera.Update(time, World.ChunkManager);
+            ReDrawChunks(time);
+            World.GraphicsDevice.SetRenderTarget(RenderTarget);
+            World.GraphicsDevice.Clear(Color.Black);
             Camera.Target = World.Camera.Target;
             Vector3 cameraToTarget = World.Camera.Target - World.Camera.Position;
             cameraToTarget.Normalize();
-            Camera.Position = World.Camera.Target + Vector3.Up*50 - cameraToTarget * 4;
+            Camera.Position = World.Camera.Target + Vector3.Up * 50 - cameraToTarget * 4;
             Camera.UpdateViewMatrix();
             Camera.UpdateProjectionMatrix();
-
-            World.GraphicsDevice.SetRenderTarget(RenderTarget);
-
-            World.GraphicsDevice.Clear(ClearOptions.Target, Color.Black, 0, 0);
             World.DefaultShader.View = Camera.ViewMatrix;
-            World.DefaultShader.EnbleFog = false;
-
             World.DefaultShader.Projection = Camera.ProjectionMatrix;
-            World.DefaultShader.CurrentTechnique = World.DefaultShader.Techniques[Shader.Technique.TexturedWithColorScale];
+            var bounds = World.ChunkManager.Bounds;
+            DrawShader.Texture = TerrainTexture;
+            DrawShader.TextureEnabled = true;
+            DrawShader.LightingEnabled = false;
+            DrawShader.Projection = Camera.ProjectionMatrix;
+            DrawShader.View = Camera.ViewMatrix;
+            DrawShader.World = Matrix.Identity;
+            DrawShader.VertexColorEnabled = false;
+            DrawShader.Alpha = 1.0f;
 
-            World.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-            World.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            if (quad == null)
+            {
+                quad = new VertexPositionTexture[]
+                {
+                                new VertexPositionTexture(new Vector3(bounds.Min.X, 0, bounds.Min.Z), new Vector2(0, 0)),
+                                new VertexPositionTexture(new Vector3(bounds.Max.X, 0, bounds.Min.Z), new Vector2(1, 0)),
+                                new VertexPositionTexture(new Vector3(bounds.Max.X, 0, bounds.Max.Z), new Vector2(1, 1)),
+                                new VertexPositionTexture(new Vector3(bounds.Max.X, 0, bounds.Max.Z), new Vector2(1, 1)),
+                                new VertexPositionTexture(new Vector3(bounds.Min.X, 0, bounds.Max.Z), new Vector2(0, 1)),
+                                new VertexPositionTexture(new Vector3(bounds.Min.X, 0, bounds.Min.Z), new Vector2(0, 0)),
+                };
+            }
+            foreach (var pass in DrawShader.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                World.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, quad, 0, 2);
+            }
             
-            World.ChunkRenderer.RenderForMinimap(Camera, time, World.GraphicsDevice, World.DefaultShader, Matrix.Identity, AssetManager.GetContentTexture(ColorMap));
-            World.WaterRenderer.DrawWaterFlat(World.GraphicsDevice, Camera.ViewMatrix, Camera.ProjectionMatrix, World.DefaultShader, World.ChunkManager);
-            World.GraphicsDevice.Textures[0] = null;
-            World.GraphicsDevice.Indices = null;
-            World.GraphicsDevice.SetVertexBuffer(null);
-
             World.DefaultShader.EnbleFog = true;
-
             try
             {
                 DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred,
