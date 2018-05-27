@@ -85,6 +85,26 @@ namespace DwarfCorp
                 Item.ResourcesReservedFor = null;
             Agent.Physics.Active = true;
             Agent.Physics.IsSleeping = false;
+
+            if (Agent.Blackboard.GetData<bool>("NoPath", false))
+            {
+                if (Item.Entity != null && !Item.Entity.IsDead)
+                {
+                    var designation = Agent.Faction.Designations.GetEntityDesignation(Item.Entity, DesignationType.Craft);
+                    if (designation != null)
+                    {
+                        Agent.Faction.Designations.RemoveEntityDesignation(Item.Entity, DesignationType.Craft);
+                        if (Agent.Faction == Agent.World.PlayerFaction)
+                        {
+                            Agent.World.MakeAnnouncement(String.Format("{0} cancelled crafting {1} because it is unreachable", Agent.Stats.FullName, Item.Entity.Name));
+                            Agent.World.Master.TaskManager.CancelTask(designation.Task);
+                        }
+                        Item.Entity.Delete();
+                        Item.WorkPile.Delete();
+                    }
+                }
+            }
+
             yield return Act.Status.Success;
         }
 

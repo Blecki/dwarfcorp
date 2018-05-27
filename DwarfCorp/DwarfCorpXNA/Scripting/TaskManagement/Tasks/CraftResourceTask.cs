@@ -137,12 +137,25 @@ namespace DwarfCorp
             return HasResources(agent) && HasLocation(agent) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
+        public IEnumerable<Act.Status> Cleanup(CreatureAI creature)
+        {
+            if (creature.Blackboard.GetData<bool>("NoPath", false))
+            {
+                if (creature.Faction == creature.World.PlayerFaction)
+                {
+                    creature.World.MakeAnnouncement(String.Format("{0} cancelled crafting {1} because crafting station was unreachable.", creature.Stats.FullName, Item.ItemType.Name));
+                    creature.World.Master.TaskManager.CancelTask(this);
+                }
+            }
+            yield return Act.Status.Success;
+        }
+
         public override Act CreateScript(Creature creature)
         {
             return new Sequence(new CraftItemAct(creature.AI, Item)
             {
                 Noise = noise
-            }, new Wrap(() => Repeat(creature)));
+            }, new Wrap(() => Repeat(creature))) | new Wrap(() => Cleanup(creature.AI));
         }
     }
 }
