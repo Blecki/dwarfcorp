@@ -63,6 +63,15 @@ namespace DwarfCorp
             PlanType = planType;
         }
 
+        public IEnumerable<Act.Status> CheckPath()
+        {
+            if (Agent.Blackboard.GetData<bool>("NoPath", false))
+            {
+                yield return Act.Status.Fail;
+            }
+            yield return Act.Status.Success;
+        }
+
         public override void Initialize()
         {
             if (Voxel.IsValid)
@@ -71,6 +80,7 @@ namespace DwarfCorp
                       new SetBlackboardData<VoxelHandle>(Agent, "ActionVoxel", Voxel),
                       new Repeat(
                           new Sequence(
+                              new Wrap(CheckPath) { Name = "Check path"},
                               new PlanWithGreedyFallbackAct() { Agent = Agent, PathName = "PathToVoxel", VoxelName = "ActionVoxel", PlanType = PlanType, Radius = Radius },
                               new FollowPathAct(Agent, "PathToVoxel")
                               ), 10, true), 

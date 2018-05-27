@@ -427,6 +427,7 @@ namespace DwarfCorp
                 }
                 else if (!planSucceeded)
                 {
+                    Agent.Blackboard.SetData<bool>("NoPath", true);
                     yield return Act.Status.Fail;
                     yield break;
                 }

@@ -439,6 +439,19 @@ namespace DwarfCorp
             }
         }
 
+        private bool SelectionValid(ref VoxelHandle voxel)
+        {
+            if (!voxel.IsValid)
+                return false;
+
+            if (SelectionType == VoxelSelectionType.SelectFilled)
+            {
+                return !voxel.IsEmpty || !voxel.IsExplored || World.PlayerFaction.Designations.IsVoxelDesignation(voxel, DesignationType.Put);
+            }
+
+            return voxel.IsEmpty && voxel.IsExplored;
+        }
+
         public IEnumerable<VoxelHandle> Select(BoundingBox buffer, Vector3 start, Vector3 end)
         {
             switch (Brush)
@@ -446,15 +459,15 @@ namespace DwarfCorp
                 case VoxelBrush.Box:
                     return VoxelHelpers.EnumerateCoordinatesInBoundingBox(buffer)
                         .Select(c => new VoxelHandle(Chunks.ChunkData, c))
-                        .Where(v => v.IsValid);
+                        .Where(v => SelectionValid(ref v));
                 case VoxelBrush.Shell:
                     return EnumerateShell(buffer)
                             .Select(c => new VoxelHandle(Chunks.ChunkData, c))
-                            .Where(v => v.IsValid);
+                            .Where(v => SelectionValid(ref v));
                 case VoxelBrush.Stairs:
                     return EnumerateStairVoxels(buffer, start, end, SelectionType == VoxelSelectionType.SelectFilled)
                         .Select(c => new VoxelHandle(Chunks.ChunkData, c))
-                        .Where(v => v.IsValid);
+                        .Where(v => SelectionValid(ref v));
                 default:
                     throw new InvalidOperationException("VoxelBrush has invalid value");
             }
@@ -684,7 +697,7 @@ namespace DwarfCorp
             switch (SelectionType)
             {
                 case VoxelSelectionType.SelectFilled:
-                    if (!v.IsEmpty)
+                    if (!v.IsEmpty || World.PlayerFaction.Designations.IsVoxelDesignation(v, DesignationType.Put))
                         return v;
                     return VoxelHandle.InvalidHandle;
                 case VoxelSelectionType.SelectEmpty:

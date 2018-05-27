@@ -717,12 +717,22 @@ TPixelToFrame TexturedPS_Icon(TVertexToPixel PSIn)
     return Output;
 }
 
+
+float4x4 stippleMatrix =
+{
+    1.0 / 17.0, 9.0 / 17.0, 3.0 / 17.0, 11.0 / 17.0,
+    13.0 / 17.0, 5.0 / 17.0, 15.0 / 17.0, 7.0 / 17.0,
+    4.0 / 17.0, 12.0 / 17.0, 2.0 / 17.0, 10.0 / 17.0,
+    16.0 / 17.0, 8.0 / 17.0, 14.0 / 17.0, 6.0 / 17.0
+};
+
 TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
 {
     TPixelToFrame Output = (TPixelToFrame)0;
 	float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
 	float4 texColor = tex2D(TextureSampler, textureCoords);
-	clip((texColor.a - 0.5));
+
+    clip((texColor.a - 0.5));
 	/*
 	if (xEnableShadows)
 	{
@@ -763,6 +773,8 @@ TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
  
  		clip(GhostMode * (Output.Color.a) - 0.1f);
  	}
+    clip(Output.Color.a - stippleMatrix[PSIn.Position.x % 4][PSIn.Position.y % 4]);
+    Output.Color.a = 1.0;
     return Output;
 }
 
@@ -771,6 +783,7 @@ int transparencytable[4] =
 0, 255,
 255, 0
 };
+
 
 int xTextureWidth;
 int xTextureHeight;
@@ -1029,8 +1042,8 @@ technique Textured_Flag
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_2_0 TexturedVS_Flag(MAX_LIGHTS);
-		PixelShader = compile ps_2_0 TexturedPS_Alphatest();
+		VertexShader = compile vs_3_0 TexturedVS_Flag(MAX_LIGHTS);
+		PixelShader = compile ps_3_0 TexturedPS_Alphatest();
 	}
 }
 

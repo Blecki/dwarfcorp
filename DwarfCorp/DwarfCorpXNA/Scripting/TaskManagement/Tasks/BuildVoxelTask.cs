@@ -73,6 +73,11 @@ namespace DwarfCorp
             if (agent.AI.Status.IsAsleep)
                 return Feasibility.Infeasible;
 
+            if (!agent.AI.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put))
+            {
+                return Feasibility.Infeasible;
+            }
+
             Dictionary<ResourceType, int> numResources = new Dictionary<ResourceType, int>();
             int numFeasibleVoxels = 0;
             var factionResources = agent.Faction.ListResources();
@@ -99,12 +104,12 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !Voxel.IsValid;
+            return !Voxel.IsValid || !agent.AI.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put);
         }
 
         public override bool ShouldRetry(Creature agent)
         {
-            return Voxel.IsValid;
+            return Voxel.IsValid && agent.AI.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put);
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
@@ -114,6 +119,21 @@ namespace DwarfCorp
 
         public bool Validate(CreatureAI creature, VoxelHandle voxel, ResourceAmount resources)
         {
+            if (creature.Blackboard.GetData<bool>("NoPath", false))
+            {
+                var designation = creature.Faction.Designations.GetVoxelDesignation(Voxel, DesignationType.Put);
+                if (designation != null)
+                {
+                    creature.World.MakeAnnouncement(String.Format("{0} cancelled build task because it is unreachable", creature.Stats.FullName));
+                    creature.Faction.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Put);
+                    if (creature.Faction == creature.World.PlayerFaction)
+                    {
+                        creature.World.Master.TaskManager.CancelTask(this);
+                    }
+                }
+                return false;
+            }
+
             return creature.Creature.Inventory.HasResource(resources);
         }
 

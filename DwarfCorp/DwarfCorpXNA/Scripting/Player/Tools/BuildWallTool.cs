@@ -143,7 +143,7 @@ namespace DwarfCorp
             float st = (float)Math.Sin(t * 4) * 0.5f + 0.5f;
             Effect.MainTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
             Effect.LightRamp = Color.White;
-            Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.5f * st + 0.45f);
+            Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.25f * st + 0.4f);
             Effect.SetTexturedTechnique();
             
             if (Selected == null)
@@ -156,7 +156,7 @@ namespace DwarfCorp
                 Selected.Clear();
             }
 
-            Effect.VertexColorTint = new Color(0.0f, 1.0f, 0.0f, 0.5f * st + 0.45f);
+            Effect.VertexColorTint = new Color(0.0f, 1.0f, 0.0f, 0.25f * st + 0.4f);
             Vector3 offset = Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
 
             if (Mouse.GetState().LeftButton == ButtonState.Pressed)
@@ -196,7 +196,9 @@ namespace DwarfCorp
             Selected.Clear();
 
             foreach (var voxel in voxels)
+            {
                 Selected.Add(voxel);
+            }
         }
     }
 }

@@ -155,7 +155,7 @@ namespace DwarfCorp
                     if (Set.RecomputeVisibility)
                     {
                         shouldDraw = !(v.Y > voxel.Voxel.Chunk.Manager.World.Master.MaxViewingLevel
-                                           || !VoxelHelpers.DoesVoxelHaveVisibleSurface(voxel.Voxel.Chunk.Manager.ChunkData, voxel.Voxel));
+                                           || !VoxelHelpers.DoesVoxelHaveVisibleSurface(voxel.Voxel.Chunk.Manager.ChunkData, voxel.Voxel)) || voxel.Voxel.IsEmpty;
                         voxel.Visible = shouldDraw;
                     }
                     if (shouldDraw && props.Icon != null)

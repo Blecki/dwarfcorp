@@ -402,6 +402,7 @@ namespace DwarfCorp
 
         private void ChangeAct(Act NewAct)
         {
+            Blackboard.Clear();
             if (CurrentAct != null)
                 CurrentAct.OnCanceled();
             CurrentAct = NewAct;
