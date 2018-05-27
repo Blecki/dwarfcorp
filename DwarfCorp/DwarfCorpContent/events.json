@@ -1,0 +1,133 @@
+[
+  {
+    "$id": "1",
+    "$type": "DwarfCorp.Goals.SpawnEntityEvent, BaseContent",
+    "EntityToSpawn": "Kobold",
+    "EntityFaction": "Carnivore",
+    "ZoomToEntity": true,
+    "SpawnLocation": "WorldEdge",
+    "EntityFactionFilter": {
+      "$id": "2",
+      "Hostility": "Any",
+      "Specification": "Specific",
+      "Claim": "Any"
+    },
+    "MinEntityLevel": 1,
+    "MaxEntityLevel": 1,
+    "Likelihood": 1,
+    "Name": "Spawn Kobold",
+    "Difficulty": 5.0,
+    "AllowedTime": "OnlyNightTime",
+    "CooldownHours": 2,
+    "AnnouncementText": "A Kobold has come!",
+    "AnnouncementDetails": "A Kobold has snuck into our colony. It will try to steal from us. Be on alert!",
+    "AnnouncementSound": "Audio\\oscar\\sfx_gui_negative_generic",
+    "PauseOnAnnouncementDetails": true
+  },
+  {
+    "$id": "3",
+    "$type": "DwarfCorp.Goals.SpawnEntityEvent, BaseContent",
+    "EntityToSpawn": "Gremlin",
+    "EntityFaction": "Carnivore",
+    "ZoomToEntity": true,
+    "SpawnLocation": "WorldEdge",
+    "EntityFactionFilter": {
+      "$id": "4",
+      "Hostility": "Any",
+      "Specification": "Specific",
+      "Claim": "Any"
+    },
+    "MinEntityLevel": 1,
+    "MaxEntityLevel": 1,
+    "Likelihood": 1,
+    "Name": "Spawn Gremlin",
+    "Difficulty": 20.0,
+    "AllowedTime": "All",
+    "CooldownHours": 2,
+    "AnnouncementText": "A Gremlin has come!",
+    "AnnouncementDetails": "A Gremlin has snuck into our colony. It will try to sabotage us. Be on alert!",
+    "AnnouncementSound": "Audio\\oscar\\sfx_gui_negative_generic",
+    "PauseOnAnnouncementDetails": true
+  },
+  {
+    "$id": "5",
+    "$type": "DwarfCorp.Goals.SpawnTradeEnvoyEvent, BaseContent",
+    "PartyFaction": null,
+    "PartyFactionFilter": {
+      "$id": "6",
+      "Hostility": "NotHostile",
+      "Specification": "Random",
+      "Claim": "Any"
+    },
+    "TributeDemanded": {
+      "$id": "7",
+      "Value": 0.0
+    },
+    "Likelihood": 5,
+    "Name": "Send Trade Envoy",
+    "Difficulty": -10.0,
+    "AllowedTime": "OnlyDayTime",
+    "CooldownHours": 8,
+    "AnnouncementText": null,
+    "AnnouncementDetails": null,
+    "AnnouncementSound": null,
+    "PauseOnAnnouncementDetails": false
+  },
+  {
+    "$id": "8",
+    "$type": "DwarfCorp.Goals.SpawnTradeEnvoyEvent, BaseContent",
+    "PartyFaction": null,
+    "PartyFactionFilter": {
+      "$id": "9",
+      "Hostility": "Neutral",
+      "Specification": "Random",
+      "Claim": "ClaimsTerritory"
+    },
+    "TributeDemanded": {
+      "$id": "10",
+      "Value": 100.0
+    },
+    "Likelihood": 3,
+    "Name": "Demand Tribute",
+    "Difficulty": 5.0,
+    "AllowedTime": "OnlyDayTime",
+    "CooldownHours": 8,
+    "AnnouncementText": null,
+    "AnnouncementDetails": null,
+    "AnnouncementSound": null,
+    "PauseOnAnnouncementDetails": false
+  },
+  {
+    "$id": "11",
+    "$type": "DwarfCorp.Goals.SpawnWarPartyEvent, BaseContent",
+    "PartyFaction": null,
+    "PartyFactionFilter": {
+      "$id": "12",
+      "Hostility": "Hostile",
+      "Specification": "Random",
+      "Claim": "Any"
+    },
+    "Likelihood": 4,
+    "Name": "Send War Party",
+    "Difficulty": 10.0,
+    "AllowedTime": "All",
+    "CooldownHours": 8,
+    "AnnouncementText": null,
+    "AnnouncementDetails": null,
+    "AnnouncementSound": null,
+    "PauseOnAnnouncementDetails": false
+  },
+  {
+    "$id": "13",
+    "$type": "DwarfCorp.Goals.PlagueEvent, BaseContent",
+    "Likelihood": 1,
+    "Name": "Plague",
+    "Difficulty": 20.0,
+    "AllowedTime": "All",
+    "CooldownHours": 2,
+    "AnnouncementText": null,
+    "AnnouncementDetails": null,
+    "AnnouncementSound": null,
+    "PauseOnAnnouncementDetails": false
+  }
+]

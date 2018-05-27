@@ -52,6 +52,8 @@ namespace DwarfCorp.Rail
 
         public static bool CanPlace(GameMaster Player, RailEntity PreviewEntity)
         {
+            // Todo: Make sure this uses BuildObjectTool.IsValidPlacement to enforce building rules.
+
             var junctionPiece = PreviewEntity.GetPiece();
             var actualPosition = PreviewEntity.GetContainingVoxel();
             if (!actualPosition.IsValid) return false;
