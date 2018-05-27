@@ -36,6 +36,7 @@ namespace DwarfCorp.Gui.Widgets
                         Renderer.OnClicked(localX, localY);
                 };
 
+
             var buttonRow = AddChild(new Gui.Widget
             {
                 Transparent = true,
@@ -73,6 +74,12 @@ namespace DwarfCorp.Gui.Widgets
                 OnClick = (sender, args) => Renderer.ZoomHome(),
                 Tooltip = "Zoom to home base"
             });
+
+            OnScroll = (sender, args) =>
+            {
+                float multiplier = GameSettings.Default.InvertZoom ? 0.001f : -0.001f;
+                Renderer.Zoom(args.ScrollValue * multiplier);
+            };
 
             base.Construct();
         }
@@ -117,8 +124,8 @@ namespace DwarfCorp.Gui.Widgets
             Vector3 forward = (World.Camera.Target - World.Camera.Position);
             forward.Normalize();
 
-            Vector3 pos = viewPort.Unproject(new Vector3(X, Y, 0), Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity) - forward * 10;
-            Vector3 target = new Vector3(pos.X, World.Camera.Target.Y, pos.Z);
+            Vector3 pos = viewPort.Unproject(new Vector3(X, Y, 0), Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity);
+            Vector3 target = new Vector3(pos.X, World.Camera.Position.Y, pos.Z);
             var height = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(target)))
                 .Coordinate.Y + 1;
@@ -128,16 +135,20 @@ namespace DwarfCorp.Gui.Widgets
             World.Camera.ZoomTargets.Add(target);
         }
 
+        public void Zoom(float f)
+        {
+            Camera.FOV = Math.Max(Math.Min(Camera.FOV + f, (float)Math.PI), 0.1f);
+            Camera.UpdateProjectionMatrix();
+        }
+
         public void ZoomOut()
         {
-            Camera.FOV = Math.Min(Camera.FOV * 1.1f, (float)Math.PI);
-            Camera.UpdateProjectionMatrix();
+            Zoom(0.5f);
         }
 
         public void ZoomIn()
         {
-            Camera.FOV = Math.Max(Camera.FOV * 0.9f, 0.1f);
-            Camera.UpdateProjectionMatrix();
+            Zoom(-0.5f);
         }
 
         public void ZoomHome()
