@@ -18,8 +18,7 @@ namespace DwarfCorp
         public byte[] Types;
         public byte[] SunColors;
 
-        public byte[] GrassType;
-        public byte[] GrassDecay;
+        public byte[] Grass;
 
         public byte[] Decals;
 
@@ -38,8 +37,7 @@ namespace DwarfCorp
                 IsExplored = new bool[VoxelConstants.ChunkVoxelCount],
                 SunColors = new byte[VoxelConstants.ChunkVoxelCount],
                 Types = new byte[VoxelConstants.ChunkVoxelCount],
-                GrassType = new byte[VoxelConstants.ChunkVoxelCount],
-                GrassDecay = new byte[VoxelConstants.ChunkVoxelCount],
+                Grass = new byte[VoxelConstants.ChunkVoxelCount],
                 Decals = new byte[VoxelConstants.ChunkVoxelCount],
                 Water = new WaterCell[VoxelConstants.ChunkVoxelCount],
                 RampTypes = new RampType[VoxelConstants.ChunkVoxelCount],

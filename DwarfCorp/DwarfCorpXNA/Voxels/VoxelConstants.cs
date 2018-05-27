@@ -24,5 +24,10 @@ namespace DwarfCorp
         {
             return (C.Y * ChunkSizeX * ChunkSizeZ) + (C.Z * ChunkSizeX) + C.X;
         }
+
+        public const Int32 MaximumGrassTypes = 16;
+        public const Int32 GrassTypeShift = 4;
+        public const Int32 MaximumGrassDecay = 16;
+        public const Int32 GrassDecayMask = 0x0F;
     }
 }
