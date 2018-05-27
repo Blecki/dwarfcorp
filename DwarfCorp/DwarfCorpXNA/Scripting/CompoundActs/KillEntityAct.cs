@@ -51,13 +51,28 @@ namespace DwarfCorp
             PathExists = false;
         }
 
-        public bool Verify()
+        public bool Verify(CreatureAI creature)
         {
+            if (creature.Blackboard.GetData<bool>("NoPath", false))
+            {
+                var designation = creature.Faction.Designations.GetEntityDesignation(Entity, DesignationType.Attack);
+                if (designation != null)
+                {
+                    if (creature.Faction == creature.World.PlayerFaction)
+                    {
+                        creature.World.MakeAnnouncement(String.Format("{0} stopped trying to kill {1} because it is unreachable.", creature.Stats.FullName, Entity.Name));
+                        creature.Faction.Designations.RemoveEntityDesignation(Entity, DesignationType.Attack);
+                        creature.World.Master.TaskManager.CancelTask(designation.Task);
+                    }
+                }
+                return false;
+            }
             return Entity != null && !Entity.IsDead;
         }
 
         public IEnumerable<Act.Status> OnAttackEnd(CreatureAI creature)
         {
+            Verify(creature);
             creature.Creature.OverrideCharacterMode = false;
             creature.Creature.CurrentCharacterMode = CharacterMode.Idle;
             yield return Act.Status.Success;
@@ -78,7 +93,7 @@ namespace DwarfCorp
             if (creature.Movement.IsSessile)
             {
                 Tree =
-                    new Domain(Verify,
+                    new Domain(Verify(creature),
                         new Sequence
                         (
                             new MeleeAct(Agent, entity)
@@ -88,7 +103,7 @@ namespace DwarfCorp
             else
             {
                 Tree =
-                    new Domain(Verify, new Sequence
+                    new Domain(Verify(creature), new Sequence
                         (
                         new GoToEntityAct(entity, creature)
                         {

@@ -72,6 +72,7 @@ namespace DwarfCorp
             Category = TaskCategory.Attack;
         }
 
+
         public override Act CreateScript(Creature creature)
         {
             if (creature.IsDead || creature.AI.IsDead)

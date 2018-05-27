@@ -217,8 +217,7 @@ namespace DwarfCorp
 
         public bool WasTaskFailed(Task task)
         {
-            return false;
-            //return FailedTasks.Any(t => t.TaskFailure.Equals(task));
+            return FailedTasks.Any(t => t.TaskFailure.Equals(task));
         }
 
         private void UpdateFailedTasks(DateTime now)
@@ -485,22 +484,24 @@ namespace DwarfCorp
             if (CurrentTask != null && CurrentAct != null)
             {
                 var status = CurrentAct.Tick();
-
                 bool retried = false;
-                if (status == Act.Status.Fail)
+                if (CurrentAct != null && CurrentTask != null)
                 {
-                    LastFailedAct = CurrentAct.Name;
-                    if (!FailedTasks.Any(task => task.TaskFailure.Equals(CurrentTask)))
+                    if (status == Act.Status.Fail)
                     {
-                        FailedTasks.Add(new FailedTask() { TaskFailure = CurrentTask, FailedTime = World.Time.CurrentDate });
-                    }
-
-                    if (CurrentTask.ShouldRetry(Creature))
-                    {
-                        if (!Tasks.Contains(CurrentTask))
+                        LastFailedAct = CurrentAct.Name;
+                        if (!FailedTasks.Any(task => task.TaskFailure.Equals(CurrentTask)))
                         {
-                            ReassignCurrentTask();
-                            retried = true;
+                            FailedTasks.Add(new FailedTask() { TaskFailure = CurrentTask, FailedTime = World.Time.CurrentDate });
+                        }
+
+                        if (CurrentTask.ShouldRetry(Creature))
+                        {
+                            if (!Tasks.Contains(CurrentTask))
+                            {
+                                ReassignCurrentTask();
+                                retried = true;
+                            }
                         }
                     }
                 }
@@ -1118,7 +1119,7 @@ namespace DwarfCorp
 
         public void ChangeTask(Task task)
         {
-            Blackboard.Clear();
+            Blackboard.Erase("NoPath");
             if (CurrentTask != null)
                 CurrentTask.OnUnAssign(this);
             CurrentTask = task;

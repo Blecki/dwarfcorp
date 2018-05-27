@@ -57,8 +57,23 @@ namespace DwarfCorp
             yield return Status.Success;
         }
 
-        public IEnumerable<Status> Finally()
+        public IEnumerable<Status> Finally(CreatureAI creature)
         {
+            if (creature.Blackboard.GetData<bool>("NoPath", false))
+            {
+                var designation = creature.Faction.Designations.GetEntityDesignation(ItemToGather, DesignationType.Gather);
+                if (designation != null)
+                {
+                    creature.World.MakeAnnouncement(String.Format("{0} cancelled gather task because it is unreachable", creature.Stats.FullName));
+                    creature.Faction.Designations.RemoveEntityDesignation(ItemToGather, DesignationType.Gather);
+                    if (creature.Faction == creature.World.PlayerFaction)
+                    {
+                        creature.World.Master.TaskManager.CancelTask(designation.Task);
+                    }
+                }
+                yield return Act.Status.Fail;
+            }
+
             yield return Status.Fail;
         }
 
@@ -142,7 +157,7 @@ namespace DwarfCorp
                         new Wrap(RemoveItemFromGatherManager),
                         new Wrap(AddStockOrder)
                         ) 
-                        | (new Wrap(RemoveItemFromGatherManager) & new Wrap(Finally) & false);
+                        | (new Wrap(RemoveItemFromGatherManager) & new Wrap(() => Finally(Agent)) & false);
 
                     Tree.Initialize();
                 }

@@ -124,10 +124,10 @@ namespace DwarfCorp
                 var designation = creature.Faction.Designations.GetVoxelDesignation(Voxel, DesignationType.Put);
                 if (designation != null)
                 {
-                    creature.World.MakeAnnouncement(String.Format("{0} cancelled build task because it is unreachable", creature.Stats.FullName));
                     creature.Faction.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Put);
                     if (creature.Faction == creature.World.PlayerFaction)
                     {
+                        creature.World.MakeAnnouncement(String.Format("{0} cancelled build task because it is unreachable", creature.Stats.FullName));
                         creature.World.Master.TaskManager.CancelTask(this);
                     }
                 }

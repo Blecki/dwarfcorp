@@ -74,8 +74,22 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public IEnumerable<Act.Status> ReleaseAnimal(CreatureAI animal)
+        public IEnumerable<Act.Status> ReleaseAnimal(CreatureAI animal, CreatureAI creature)
         {
+            if (creature.Blackboard.GetData<bool>("NoPath", false))
+            {
+                var designation = creature.Faction.Designations.GetEntityDesignation(animal.GetRoot().GetComponent<Physics>(), DesignationType.Wrangle);
+                if (designation != null)
+                {
+                    if (creature.Faction == creature.World.PlayerFaction)
+                    {
+                        creature.World.MakeAnnouncement(String.Format("{0} stopped trying to catch {1} because it is unreachable.", creature.Stats.FullName, animal.Stats.FullName));
+                        creature.Faction.Designations.RemoveEntityDesignation(animal.GetRoot().GetComponent<Physics>(), DesignationType.Wrangle);
+                        creature.World.Master.TaskManager.CancelTask(designation.Task);
+                    }
+                }
+            }
+
             animal.ResetPositionConstraint();
             yield return Act.Status.Success;
         }
@@ -129,7 +143,7 @@ namespace DwarfCorp
                 new Domain(() => IsFeasible(agent) == Feasibility.Feasible, new Parallel(new Repeat(new Wrap(() => WrangleAnimal(agent.AI, Animal.AI)), -1, false),
                 new GoToZoneAct(agent.AI, closestPen)) { ReturnOnAllSucces = false}),
                 new Domain(() => IsFeasible(agent) == Feasibility.Feasible, new Wrap(() => PenAnimal(agent.AI, Animal.AI, closestPen)))), 
-                new Wrap(() => ReleaseAnimal(Animal.AI)));
+                new Wrap(() => ReleaseAnimal(Animal.AI, agent.AI)));
         }
 
         public override Feasibility IsFeasible(Creature agent)

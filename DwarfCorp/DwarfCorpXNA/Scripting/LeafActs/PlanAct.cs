@@ -347,7 +347,7 @@ namespace DwarfCorp
             while (true)
             {
                 Creature.AI.Blackboard.Erase(PathName);
-
+                Agent.Blackboard.SetData<bool>("NoPath", false);
                 PlanAct planAct = new PlanAct(Creature.AI, PathName, VoxelName, PlanType) { Radius = Radius, MaxTimeouts = MaxTimeouts };
                 planAct.Initialize();
 

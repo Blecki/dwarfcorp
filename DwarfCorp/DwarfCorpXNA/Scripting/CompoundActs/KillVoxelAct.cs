@@ -63,6 +63,24 @@ namespace DwarfCorp
             return false;
         }
 
+        public IEnumerable<Act.Status> Cleanup(CreatureAI creature)
+        {
+            if (creature.Blackboard.GetData<bool>("NoPath", false))
+            {
+                var designation = creature.Faction.Designations.GetVoxelDesignation(Voxel, DesignationType.Dig);
+                if (designation != null)
+                {
+                    creature.Faction.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Dig);
+                    if (creature.Faction == creature.World.PlayerFaction)
+                    {
+                        creature.World.MakeAnnouncement(String.Format("{0} cancelled dig task because it is unreachable", creature.Stats.FullName));
+                        creature.World.Master.TaskManager.CancelTask(designation.Task);
+                    }
+                }
+            }
+            yield return Act.Status.Success;
+        }
+
         public KillVoxelAct(VoxelHandle voxel, CreatureAI creature) :
             base(creature)
         {
@@ -74,7 +92,7 @@ namespace DwarfCorp
                 new Sequence(
                     new GoToVoxelAct(voxel, PlanAct.PlanType.Radius, creature) { Radius = 2.0f },
                     new DigAct(Agent, "DigVoxel"),
-                    new ClearBlackboardData(creature, "DigVoxel"))));
+                    new ClearBlackboardData(creature, "DigVoxel")))) | new Wrap(() => Cleanup(creature));
         }
     }
 
