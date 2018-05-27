@@ -51,9 +51,9 @@ namespace DwarfCorp
         public ChopEntityTask(Body entity)
         {
             MaxAssignable = 3;
-            Name = "Kill Entity: " + entity.Name + " " + entity.GlobalID;
+            Name = "Harvest Plant: " + entity.Name + " " + entity.GlobalID;
             EntityToKill = entity;
-            Priority = PriorityType.Urgent;
+            Priority = PriorityType.Low;
             AutoRetry = true;
             Category = TaskCategory.Chop;
         }
@@ -62,17 +62,6 @@ namespace DwarfCorp
         {
             if (creature.IsDead || creature.AI.IsDead)
                 return null;
-
-            var otherCreature = EntityToKill.GetRoot().GetComponent<Creature>();
-            if (otherCreature != null && otherCreature.IsDead)
-                return null;
-
-            if (otherCreature != null && !creature.AI.FightOrFlight(otherCreature.AI))
-            {
-                Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
-                IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
-                return new FleeEntityAct(creature.AI) {Entity = EntityToKill, PathLength = 5};
-            }
 
             // Todo: Ugh - need to seperate the acts as well
             return new ChopEntityAct(EntityToKill, creature.AI);
@@ -87,13 +76,19 @@ namespace DwarfCorp
 
         public override bool ShouldRetry(Creature agent)
         {
-            return EntityToKill != null && !EntityToKill.IsDead;
+            return EntityToKill != null && !EntityToKill.IsDead && agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Chop);
         }
 
         public override bool ShouldDelete(Creature agent)
         {
             if (EntityToKill == null || EntityToKill.IsDead || (EntityToKill.Position - agent.AI.Position).Length() > 100)
                 return true;
+
+            if (!agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Chop))
+            {
+                return true;
+            }
+
             return false;
         }
 
@@ -103,10 +98,14 @@ namespace DwarfCorp
                 return Feasibility.Infeasible;
             else
             {
-                var ai = EntityToKill.EnumerateAll().OfType<Creature>().FirstOrDefault();
 
-                        if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Chop))
-                            return Feasibility.Infeasible;
+                if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Chop))
+                    return Feasibility.Infeasible;
+
+                if (!agent.Faction.Designations.IsDesignation(EntityToKill, DesignationType.Chop))
+                {
+                    return Feasibility.Infeasible;
+                }
 
                 return Feasibility.Feasible;
             }

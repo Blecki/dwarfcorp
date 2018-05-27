@@ -47,13 +47,29 @@ namespace DwarfCorp
             PathExists = false;
         }
 
-        public bool Verify()
+        public bool Verify(CreatureAI creature)
         {
+            if (creature.Blackboard.GetData<bool>("NoPath", false))
+            {
+                var designation = creature.Faction.Designations.GetEntityDesignation(Entity, DesignationType.Chop);
+                if (designation != null)
+                {
+                    creature.World.MakeAnnouncement(String.Format("{0} cancelled harvest task because it is unreachable", creature.Stats.FullName));
+                    creature.Faction.Designations.RemoveEntityDesignation(Entity, DesignationType.Chop);
+                    if (creature.Faction == creature.World.PlayerFaction)
+                    {
+                        creature.World.Master.TaskManager.CancelTask(designation.Task);
+                    }
+                }
+                return false;
+            }
+
             return Entity != null && !Entity.IsDead;
         }
 
         public IEnumerable<Act.Status> OnAttackEnd(CreatureAI creature)
         {
+            Verify(creature);
             creature.Creature.OverrideCharacterMode = false;
             creature.Creature.CurrentCharacterMode = CharacterMode.Idle;
             yield return Act.Status.Success;
@@ -63,7 +79,7 @@ namespace DwarfCorp
             base(creature)
         {
             Entity = entity;
-            Name = "Kill Entity";
+            Name = "Harvest Plant";
             PlanAct.PlanType planType = PlanAct.PlanType.Adjacent;
             float radius = 0.0f;
             if (creature.Creature.Attacks[0].Mode == Attack.AttackMode.Ranged)
@@ -74,17 +90,18 @@ namespace DwarfCorp
             if (creature.Movement.IsSessile)
             {
                 Tree =
-                    new Domain(Verify,
+                    new Domain(Verify(Agent),
                         new Sequence
                         (
                             new MeleeAct(Agent, entity)
-                        ) | new Wrap(() => OnAttackEnd(creature))
+                        ) | new Wrap(() => OnAttackEnd(creature)) | Verify(Agent)
                         );
             }
             else
             {
                 Tree =
-                    new Domain(Verify, new Sequence
+                    new Domain(Verify(Agent), 
+                    new Sequence
                         (
                         new GoToEntityAct(entity, creature)
                         {
@@ -93,7 +110,7 @@ namespace DwarfCorp
                             Radius = radius
                         } | new Wrap(() => OnAttackEnd(creature)),
                         new MeleeAct(Agent, entity)
-                        ));
+                        ) | Verify(Agent));
 
             }
         }

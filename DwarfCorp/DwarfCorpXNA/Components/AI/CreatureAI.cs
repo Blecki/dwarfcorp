@@ -217,7 +217,8 @@ namespace DwarfCorp
 
         public bool WasTaskFailed(Task task)
         {
-            return FailedTasks.Any(t => t.TaskFailure.Equals(task));
+            return false;
+            //return FailedTasks.Any(t => t.TaskFailure.Equals(task));
         }
 
         private void UpdateFailedTasks(DateTime now)
@@ -402,7 +403,6 @@ namespace DwarfCorp
 
         private void ChangeAct(Act NewAct)
         {
-            Blackboard.Clear();
             if (CurrentAct != null)
                 CurrentAct.OnCanceled();
             CurrentAct = NewAct;
@@ -1118,6 +1118,7 @@ namespace DwarfCorp
 
         public void ChangeTask(Task task)
         {
+            Blackboard.Clear();
             if (CurrentTask != null)
                 CurrentTask.OnUnAssign(this);
             CurrentTask = task;

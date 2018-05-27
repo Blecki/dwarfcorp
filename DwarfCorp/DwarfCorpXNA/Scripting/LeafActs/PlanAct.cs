@@ -375,6 +375,11 @@ namespace DwarfCorp
                     yield return Act.Status.Running;
                 }
 
+                if (!planSucceeded)
+                {
+                    Agent.Blackboard.SetData<bool>("NoPath", true);
+                }
+
                 if (!planSucceeded && planAct.LastResult == AStarPlanner.PlanResultCode.MaxExpansionsReached)
                 {
                     yield return Act.Status.Running;
@@ -427,7 +432,6 @@ namespace DwarfCorp
                 }
                 else if (!planSucceeded)
                 {
-                    Agent.Blackboard.SetData<bool>("NoPath", true);
                     yield return Act.Status.Fail;
                     yield break;
                 }
