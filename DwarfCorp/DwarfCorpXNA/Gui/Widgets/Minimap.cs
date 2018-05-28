@@ -280,7 +280,7 @@ namespace DwarfCorp.Gui.Widgets
 
                     if (RenderTarget.Bounds.Contains((int)screenPos.X, (int)screenPos.Y))
                     {
-                        
+
                         Body parentBody = icon.Parent as Body;
                         if (parentBody != null)
                         {
@@ -290,11 +290,12 @@ namespace DwarfCorp.Gui.Widgets
                             if (firstVisible.IsValid)
                                 continue;
                         }
-                       
+
                         DwarfGame.SpriteBatch.Draw(icon.Icon.Image, new Vector2(screenPos.X, screenPos.Y), icon.Icon.SourceRect, Color.White, 0.0f, new Vector2(icon.Icon.SourceRect.Width / 2.0f, icon.Icon.SourceRect.Height / 2.0f), icon.IconScale, SpriteEffects.None, 0);
                     }
                 }
             }
+
             finally
             {
                 DwarfGame.SpriteBatch.End();

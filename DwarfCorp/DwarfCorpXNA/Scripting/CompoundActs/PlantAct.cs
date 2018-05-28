@@ -138,6 +138,7 @@ namespace DwarfCorp
 
         private IEnumerable<Act.Status> Cleanup()
         {
+
             OnCanceled();
             yield return Act.Status.Success;
         }

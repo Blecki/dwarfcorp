@@ -24,6 +24,23 @@ namespace DwarfCorp
             MaxAssignable = 10;
         }
 
+
+        private IEnumerable<Act.Status> Cleanup(CreatureAI creature)
+        {
+            if (creature.Blackboard.GetData<bool>("NoPath", false))
+            {
+                if (creature.Faction == creature.World.PlayerFaction)
+                {
+                    creature.World.MakeAnnouncement(String.Format("{0} cancelled research task because research station was unreachable.", creature.Stats.FullName));
+                    creature.World.Master.TaskManager.CancelTask(this);
+                }
+                yield return Act.Status.Fail;
+                yield break;
+            }
+            yield return Act.Status.Success;
+        }
+
+
         public override Feasibility IsFeasible(Creature agent)
         {
             if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Research))
@@ -39,7 +56,7 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature agent)
         {
-            return new GoResearchSpellAct(agent.AI, agent.World.Master.Spells.GetSpell(Spell));
+            return ((new GoResearchSpellAct(agent.AI, agent.World.Master.Spells.GetSpell(Spell))) | new Wrap(() => Cleanup(agent.AI)) & new Wrap(() => Cleanup(agent.AI)));
         }
 
         public override bool IsComplete(Faction faction)

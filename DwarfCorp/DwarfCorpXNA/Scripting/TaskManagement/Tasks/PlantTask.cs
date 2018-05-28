@@ -97,9 +97,29 @@ namespace DwarfCorp
             return false;
         }
 
+        private IEnumerable<Act.Status> Cleanup(CreatureAI creature)
+        {
+            if (creature.Blackboard.GetData<bool>("NoPath", false))
+            {
+                if (creature.Faction == creature.World.PlayerFaction)
+                {
+                    creature.World.MakeAnnouncement(String.Format("{0} cancelled farming task because it is unreachable", creature.Stats.FullName));
+                    var designation = creature.Faction.Designations.GetVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant);
+                    if (designation != null)
+                    {
+                        creature.Faction.Designations.RemoveVoxelDesignation(FarmToWork.Voxel, DesignationType.Plant);
+                    }
+                    creature.World.Master.TaskManager.CancelTask(this);
+                }
+                yield return Act.Status.Fail;
+                yield break;
+            }
+            yield return Act.Status.Success;
+        }
+
         public override Act CreateScript(Creature agent)
         {
-            return new PlantAct(agent.AI) { Resources = RequiredResources, FarmToWork = FarmToWork, Name = "Work " + FarmToWork.Voxel.Coordinate };
+            return (new PlantAct(agent.AI) { Resources = RequiredResources, FarmToWork = FarmToWork, Name = "Work " + FarmToWork.Voxel.Coordinate } | new Wrap(() => Cleanup(agent.AI))) & new Wrap(() => Cleanup(agent.AI));
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
