@@ -46,35 +46,28 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class KillVoxelAct : CompoundCreatureAct
     {
-        public VoxelHandle Voxel { get; set; }
-
         public KillVoxelAct()
         {
 
         }
 
-        public bool CheckIsDigDesignation(CreatureAI creature, string designation)
+        public bool CheckIsDigDesignation(CreatureAI creature, KillVoxelTask OwnerTask)
         {
-            VoxelHandle vref = creature.Blackboard.GetData<VoxelHandle>(designation);
-
-            if (vref.IsValid)
-                return creature.Faction.Designations.IsVoxelDesignation(vref, DesignationType.Dig);
+            if (OwnerTask.Voxel.IsValid)
+                return creature.Faction.Designations.IsVoxelDesignation(OwnerTask.Voxel, DesignationType.Dig);
 
             return false;
         }
 
-        public KillVoxelAct(VoxelHandle voxel, CreatureAI creature) :
+        public KillVoxelAct(CreatureAI creature, KillVoxelTask OwnerTask) :
             base(creature)
         {
-            Voxel = voxel;
-            Name = "Kill DestinationVoxel " + voxel.WorldPosition;
-            Tree = new Sequence(
-                new SetBlackboardData<VoxelHandle>(creature, "DigVoxel", voxel),
-                new Domain(() => CheckIsDigDesignation(creature, "DigVoxel"),
+            Name = "Kill DestinationVoxel " + OwnerTask.Voxel.WorldPosition;
+            Tree = 
+                new Domain(() => CheckIsDigDesignation(creature, OwnerTask),
                 new Sequence(
-                    new GoToVoxelAct(voxel, PlanAct.PlanType.Radius, creature) { Radius = 2.0f },
-                    new DigAct(Agent, "DigVoxel"),
-                    new ClearBlackboardData(creature, "DigVoxel"))));
+                    new GoToVoxelAct(OwnerTask.Voxel, PlanAct.PlanType.Radius, creature) { Radius = 2.0f },
+                    new DigAct(Agent, OwnerTask)));
         }
     }
 

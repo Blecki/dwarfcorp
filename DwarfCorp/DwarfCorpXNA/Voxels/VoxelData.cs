@@ -13,8 +13,7 @@ namespace DwarfCorp
     {
         // C# Needs a "Friend" mechanism similar to C++. Only the classes ChunkFile and VoxelHandle
         //  should ever access this data.
-        public byte[] Health;               // Storage per-voxel
-        public byte[] Types;
+        public byte[] Types;                // Storage per-voxel
         public byte[] Grass;
         public byte[] Decals;
         public WaterCell[] Water;
@@ -28,7 +27,6 @@ namespace DwarfCorp
         {
             VoxelData toReturn = new VoxelData()
             {
-                Health = new byte[VoxelConstants.ChunkVoxelCount],
                 Types = new byte[VoxelConstants.ChunkVoxelCount],
                 Grass = new byte[VoxelConstants.ChunkVoxelCount],
                 Decals = new byte[VoxelConstants.ChunkVoxelCount],

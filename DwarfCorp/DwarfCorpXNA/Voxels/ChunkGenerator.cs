@@ -511,7 +511,6 @@ namespace DwarfCorp
                         if (y == 0)
                         {
                             voxel.RawSetType(VoxelLibrary.GetVoxelType("Bedrock"));
-                            voxel.Health = 255; // ? 
                             continue;
                         }
 

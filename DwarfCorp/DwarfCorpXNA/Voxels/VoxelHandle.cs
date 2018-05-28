@@ -272,19 +272,7 @@ namespace DwarfCorp
                 _cache_Chunk.Data.Water[_cache_Index] = value;
             }
         }
-
-        [JsonIgnore]
-        public float Health
-        {
-            get { return (float)_cache_Chunk.Data.Health[_cache_Index]; }
-            set
-            {
-                // Todo: Bad spot for this. Ideally is checked by whatever is trying to damage the voxel.
-                if (Type.IsInvincible) return;
-                _cache_Chunk.Data.Health[_cache_Index] = (byte)(Math.Max(Math.Min(value, 255.0f), 0.0f));
-            }
-        }
-
+        
         #endregion
 
         #region Chunk Invalidation
@@ -310,7 +298,6 @@ namespace DwarfCorp
 
             // Change actual data
             _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
-            _cache_Chunk.Data.Health[_cache_Index] = (byte)NewType.StartingHealth;
 
             // Changing the voxel type clears grass.
             _cache_Chunk.Data.Grass[_cache_Index] = 0;
@@ -342,7 +329,6 @@ namespace DwarfCorp
 
             // Change actual data
             _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
-            _cache_Chunk.Data.Health[_cache_Index] = (byte)NewType.StartingHealth;
 
             // Changing the voxel type clears grass.
             _cache_Chunk.Data.Grass[_cache_Index] = 0;

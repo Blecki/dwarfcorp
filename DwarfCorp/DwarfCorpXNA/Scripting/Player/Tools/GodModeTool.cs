@@ -186,7 +186,6 @@ namespace DwarfCorp
                         var v = vox;
                         v.Type = VoxelLibrary.GetVoxelType(type);
                         v.WaterCell = new WaterCell();
-                        v.Health = vox.Type.StartingHealth;
 
                         if (type == "Magic")
                         {

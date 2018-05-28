@@ -142,7 +142,6 @@ namespace DwarfCorp
         {
             Vox.Type = Type;
             Vox.WaterCell = new WaterCell();
-            Vox.Health = Type.StartingHealth;
 
             for (int i = 0; i < 4; i++)
                 World.ParticleManager.Trigger("puff", MathFunctions.RandVector3Box(Vox.GetBoundingBox().Expand(0.25f)), Color.White, 5);

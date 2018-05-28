@@ -138,13 +138,14 @@ namespace DwarfCorp
             HitParticles = "";
             ProjectileType = "";
             AnimationAsset = animation;
-            HitAnimation = AnimationLibrary.CreateSimpleAnimation(AnimationAsset);        }
+            HitAnimation = AnimationLibrary.CreateSimpleAnimation(AnimationAsset);
+        }
 
-        public IEnumerable<Act.Status> Perform(Creature performer, Vector3 pos, VoxelHandle other, DwarfTime time, float bonus, string faction)
+        public IEnumerable<Act.Status> PerformOnVoxel(Creature performer, Vector3 pos, KillVoxelTask DigAct, DwarfTime time, float bonus, string faction)
         {
             while (true)
             {
-                if (!other.IsValid)
+                if (!DigAct.Voxel.IsValid)
                 {
                     yield return Act.Status.Fail;
                     yield break;
@@ -176,25 +177,24 @@ namespace DwarfCorp
                 {
                     case AttackMode.Melee:
                     {
-                        other.Health -= DamageAmount + bonus;
-                        other.Type.HitSound.Play(other.WorldPosition);
-                        //PlayNoise(other.Position);
+                            DigAct.VoxelHealth -= (DamageAmount + bonus);
+
+                        DigAct.Voxel.Type.HitSound.Play(DigAct.Voxel.WorldPosition);
+
                         if (HitParticles != "")
-                        {
-                            performer.Manager.World.ParticleManager.Trigger(HitParticles, other.WorldPosition, Color.White, 5);
-                        }
+                            performer.Manager.World.ParticleManager.Trigger(HitParticles, DigAct.Voxel.WorldPosition, Color.White, 5);
 
                         if (HitAnimation != null)
-                        {
-                            IndicatorManager.DrawIndicator(HitAnimation, other.WorldPosition + Vector3.One*0.5f,
+                            IndicatorManager.DrawIndicator(HitAnimation, DigAct.Voxel.WorldPosition + Vector3.One*0.5f,
                                 10.0f, 1.0f, MathFunctions.RandVector2Circle()*10, HitColor, MathFunctions.Rand() > 0.5f);
-                        }
+
                         break;
                     }
                     case AttackMode.Ranged:
                     {
-                        LaunchProjectile(pos, other.WorldPosition, null);
-                        break;
+                            throw new InvalidOperationException("Ranged attacks should never be used for digging.");
+                        //LaunchProjectile(pos, DigAct.GetTargetVoxel().WorldPosition, null);
+                        //break;
                     }
 
                 }
