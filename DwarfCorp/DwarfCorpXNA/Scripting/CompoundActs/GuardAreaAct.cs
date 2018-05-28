@@ -50,6 +50,10 @@ namespace DwarfCorp
 
         public bool LoopCondition()
         {
+            foreach(var status in CheckPath())
+            {
+              //
+            }
             return GuardDesignationExists() && !EnemiesNearby() && !Creature.Status.Energy.IsDissatisfied() && !Creature.Status.Hunger.IsDissatisfied();
         }
 
@@ -72,6 +76,35 @@ namespace DwarfCorp
         public bool EnemiesNearby()
         {
             return (Agent.Sensor.Enemies.Count > 0);
+        }
+
+        public IEnumerable<Act.Status> CheckPath()
+        {
+
+            if (Agent.Blackboard.GetData<bool>("NoPath", false))
+            {
+                var voxel = Agent.Blackboard.GetData<VoxelHandle>("GuardVoxel", VoxelHandle.InvalidHandle);
+
+                if (voxel.IsValid && Agent.Faction == Agent.World.PlayerFaction)
+                {
+                    Agent.World.MakeAnnouncement(String.Format("{0} cancelled guard task because it is unreachable", Agent.Stats.FullName));
+                    var designation = Agent.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Guard);
+                    if (designation != null)
+                    {
+                        Agent.Faction.Designations.RemoveVoxelDesignation(voxel, DesignationType.Guard);
+                    }
+                    var keys = Agent.Faction.GuardedVoxels.Where(pair => pair.Value == voxel).ToList();
+                    foreach(var key in keys)
+                    {
+                        Agent.Faction.GuardedVoxels.Remove(key.Key);
+                    }
+                }
+                Agent.Blackboard.SetData<bool>("NoPath", false);
+                yield return Act.Status.Fail;
+                yield break;
+            }
+            yield return Act.Status.Success;
+
         }
 
         public IEnumerable<Act.Status> GetRandomGuardDesignation(CreatureAI agent)
@@ -116,7 +149,7 @@ namespace DwarfCorp
                     new Domain(LoopCondition, new GoToNamedVoxelAct("GuardVoxel", PlanAct.PlanType.Adjacent, agent)),
                     new StopAct(Agent),
                     new Domain(LoopCondition, new WanderAct(Agent, 10.0f, 5.0f, 1.0f))
-                ), new Condition(LoopCondition));
+                ) | new Wrap(CheckPath), new Condition(LoopCondition));
         }
     }
 
