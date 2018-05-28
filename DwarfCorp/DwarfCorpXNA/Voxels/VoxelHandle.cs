@@ -142,17 +142,17 @@ namespace DwarfCorp
         [JsonIgnore]
         public RampType RampType
         {
-            get { return _cache_Chunk.Data.RampTypes[_cache_Index]; }
+            get { return (RampType)(_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.RampTypeMask); }
             set {
-                if (value != _cache_Chunk.Data.RampTypes[_cache_Index])
+                if (value != (RampType)(_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.RampTypeMask))
                     _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
                     {
                         Type = VoxelChangeEventType.RampsChanged,
                         Voxel = this,
-                        OldRamps = _cache_Chunk.Data.RampTypes[_cache_Index],
+                        OldRamps = (RampType)(_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.RampTypeMask),
                         NewRamps = value
                     });
-                _cache_Chunk.Data.RampTypes[_cache_Index] = value;
+                _cache_Chunk.Data.RampsSunlightExplored[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.InverseRampTypeMask) | ((byte)value & VoxelConstants.RampTypeMask));
             }
         }
 
@@ -161,7 +161,6 @@ namespace DwarfCorp
         {
             get { return TypeID == 0; }
         }
-
 
         [JsonIgnore]
         public byte TypeID
@@ -198,31 +197,34 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public int SunColor
+        public bool Sunlight
         {
-            get { return _cache_Chunk.Data.SunColors[_cache_Index]; }
-            set { _cache_Chunk.Data.SunColors[_cache_Index] = (byte)value; }
+            get { return (_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.SunlightMask) != 0; }
+            set
+            {
+                _cache_Chunk.Data.RampsSunlightExplored[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.InverseSunlightMask) |
+                  (value ? VoxelConstants.SunlightMask : 0x0));
+            }
         }
 
         [JsonIgnore]
         public bool IsExplored
         {
-            get { return !GameSettings.Default.FogofWar || _cache_Chunk.Data.IsExplored[_cache_Index]; }
+            get { return !GameSettings.Default.FogofWar || (_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.ExploredMask) != 0; }
             set
             {
-                var existingValue = _cache_Chunk.Data.IsExplored[_cache_Index];
-                if (existingValue != value)
+                // This only ever changes from false to true, so we can take advantage of that fact.
+                if (value && (_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.ExploredMask) == 0)
                 {
-                    _cache_Chunk.Data.IsExplored[_cache_Index] = value;
+                    _cache_Chunk.Data.RampsSunlightExplored[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.InverseExploredMask) | VoxelConstants.ExploredMask);
                     InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
-                }
 
-                if (value && !existingValue)
                     _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
                     {
                         Type = VoxelChangeEventType.Explored,
                         Voxel = this
                     });
+                }
             }
         }
 
@@ -243,7 +245,7 @@ namespace DwarfCorp
             get { return (byte)(_cache_Chunk.Data.Grass[_cache_Index] >> VoxelConstants.GrassTypeShift); }
             set
             {
-                _cache_Chunk.Data.Grass[_cache_Index] = (byte)(value << VoxelConstants.GrassTypeShift);
+                _cache_Chunk.Data.Grass[_cache_Index] = (byte)((_cache_Chunk.Data.Grass[_cache_Index] & VoxelConstants.GrassDecayMask) | (value << VoxelConstants.GrassTypeShift));
                InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
             }
         }
@@ -252,7 +254,7 @@ namespace DwarfCorp
         public byte GrassDecay
         {
             get { return (byte)(_cache_Chunk.Data.Grass[_cache_Index] & VoxelConstants.GrassDecayMask); }
-            set { _cache_Chunk.Data.Grass[_cache_Index] = (byte)(value & VoxelConstants.GrassDecayMask); }
+            set { _cache_Chunk.Data.Grass[_cache_Index] = (byte)((_cache_Chunk.Data.Grass[_cache_Index] & VoxelConstants.GrassTypeMask) | (value & VoxelConstants.GrassDecayMask)); }
         }
 
         [JsonIgnore]
@@ -292,9 +294,9 @@ namespace DwarfCorp
         /// Should only be used by ChunkGenerator as it can break geometry building.
         /// </summary>
         /// <param name="Value"></param>
-        public void RawSetIsExplored(bool Value)
+        public void RawSetIsExplored()
         {
-            _cache_Chunk.Data.IsExplored[_cache_Index] = Value;
+            _cache_Chunk.Data.RampsSunlightExplored[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.InverseExploredMask) | VoxelConstants.ExploredMask);
         }
 
         /// <summary>
@@ -363,14 +365,14 @@ namespace DwarfCorp
             {
                 var localCoordinate = Coordinate.GetLocalVoxelCoordinate();
                 var Y = localCoordinate.Y - 1;
-                var sunColor = (NewType.ID == 0 || NewType.IsTransparent) ? this.SunColor : 0;
+                var sunColor = (NewType.ID == 0 || NewType.IsTransparent) ? this.Sunlight : false;
                 var below = VoxelHandle.InvalidHandle;
 
                 while (Y >= 0)
                 {
                     below = new VoxelHandle(Chunk, new LocalVoxelCoordinate(localCoordinate.X, Y,
                         localCoordinate.Z));
-                    below.SunColor = sunColor;
+                    below.Sunlight = sunColor;
                     InvalidateVoxel(Chunk, new GlobalVoxelCoordinate(Coordinate.X, Y, Coordinate.Z), Y);
                     if (!below.IsEmpty && !below.Type.IsTransparent)
                         break;

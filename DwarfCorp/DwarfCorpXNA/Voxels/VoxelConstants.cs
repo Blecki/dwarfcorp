@@ -27,7 +27,18 @@ namespace DwarfCorp
 
         public const Int32 MaximumGrassTypes = 16;
         public const Int32 GrassTypeShift = 4;
+        public const Int32 GrassTypeMask = 0xF0;
         public const Int32 MaximumGrassDecay = 16;
         public const Int32 GrassDecayMask = 0x0F;
+
+        public const Int32 RampTypeShift = 0x0;
+        public const Int32 RampTypeMask = 0x1F;
+        public const Int32 InverseRampTypeMask = 0xE0;
+        public const Int32 SunlightShift = 5;
+        public const Int32 SunlightMask = 0x20;
+        public const Int32 InverseSunlightMask = 0xDF;
+        public const Int32 ExploredShift = 6;
+        public const Int32 ExploredMask = 0x40;
+        public const Int32 InverseExploredMask = 0xBF;
     }
 }

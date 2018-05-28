@@ -13,19 +13,14 @@ namespace DwarfCorp
     {
         // C# Needs a "Friend" mechanism similar to C++. Only the classes ChunkFile and VoxelHandle
         //  should ever access this data.
-        public bool[] IsExplored;
-        public byte[] Health;
+        public byte[] Health;               // Storage per-voxel
         public byte[] Types;
-        public byte[] SunColors;
-
         public byte[] Grass;
-
         public byte[] Decals;
-
         public WaterCell[] Water;
-        public RampType[] RampTypes;
+        public byte[] RampsSunlightExplored;
 
-        public int[] LiquidPresent;
+        public int[] LiquidPresent;         // Storage per-slice
         public int[] VoxelsPresentInSlice;
         public RawPrimitive[] SliceCache;
         
@@ -34,13 +29,11 @@ namespace DwarfCorp
             VoxelData toReturn = new VoxelData()
             {
                 Health = new byte[VoxelConstants.ChunkVoxelCount],
-                IsExplored = new bool[VoxelConstants.ChunkVoxelCount],
-                SunColors = new byte[VoxelConstants.ChunkVoxelCount],
                 Types = new byte[VoxelConstants.ChunkVoxelCount],
                 Grass = new byte[VoxelConstants.ChunkVoxelCount],
                 Decals = new byte[VoxelConstants.ChunkVoxelCount],
                 Water = new WaterCell[VoxelConstants.ChunkVoxelCount],
-                RampTypes = new RampType[VoxelConstants.ChunkVoxelCount],
+                RampsSunlightExplored = new byte[VoxelConstants.ChunkVoxelCount],
 
                 LiquidPresent = new int[VoxelConstants.ChunkSizeY],
                 VoxelsPresentInSlice = new int[VoxelConstants.ChunkSizeY],
@@ -55,13 +48,5 @@ namespace DwarfCorp
 
             return toReturn;
         }
-
-        public void ResetSunlight(byte sunColor)
-        {
-            for (int i = 0; i < VoxelConstants.ChunkVoxelCount; i++)
-                SunColors[i] = sunColor;
-        }
-
     }
-
 }

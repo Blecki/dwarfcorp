@@ -57,12 +57,12 @@ namespace DwarfCorp
         public GlobalChunkCoordinate ID;
         public Vector3 Origin;
 
-        public bool[] Explored;
         public byte[] Liquid;
         public byte[] LiquidTypes;
         public byte[] Types;
         public byte[] GrassType;
         public byte[] Decals;
+        public byte[] RampsSunlightExplored;
         
         public ChunkFile()
         {
@@ -74,9 +74,9 @@ namespace DwarfCorp
             Types = new byte[VoxelConstants.ChunkVoxelCount];
             LiquidTypes = new byte[VoxelConstants.ChunkVoxelCount];
             Liquid = new byte[VoxelConstants.ChunkVoxelCount];
-            Explored = new bool[VoxelConstants.ChunkVoxelCount];
             GrassType = new byte[VoxelConstants.ChunkVoxelCount];
             Decals = new byte[VoxelConstants.ChunkVoxelCount];
+            RampsSunlightExplored = new byte[VoxelConstants.ChunkVoxelCount];
             Origin = chunk.Origin;
             FillDataFromChunk(chunk);
         }
@@ -101,9 +101,9 @@ namespace DwarfCorp
             LiquidTypes = chunkFile.LiquidTypes;
             Origin = chunkFile.Origin;
             Types = chunkFile.Types;
-            Explored = chunkFile.Explored;
             GrassType = chunkFile.GrassType;
             Decals = chunkFile.Decals;
+            RampsSunlightExplored = chunkFile.RampsSunlightExplored;
         }
 
         public bool WriteFile(string filePath, bool binary)
@@ -130,8 +130,6 @@ namespace DwarfCorp
                 }                
             }
 
-            if (Explored != null)
-                Explored.CopyTo(c.Data.IsExplored, 0);
             // Separate loop for cache effeciency
             for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
             {
@@ -143,6 +141,8 @@ namespace DwarfCorp
                     c.Data.LiquidPresent[(i >> VoxelConstants.ZDivShift) >> VoxelConstants.XDivShift] += 1;
             }
 
+            if (RampsSunlightExplored != null)
+                RampsSunlightExplored.CopyTo(c.Data.RampsSunlightExplored, 0);
             if (GrassType != null)
                 GrassType.CopyTo(c.Data.Grass, 0);
             if (Decals != null)
@@ -155,9 +155,9 @@ namespace DwarfCorp
         public void FillDataFromChunk(VoxelChunk chunk)
         {
             chunk.Data.Types.CopyTo(Types, 0);
-            chunk.Data.IsExplored.CopyTo(Explored, 0);
             chunk.Data.Grass.CopyTo(GrassType, 0);
             chunk.Data.Decals.CopyTo(Decals, 0);
+            chunk.Data.RampsSunlightExplored.CopyTo(RampsSunlightExplored, 0);
 
             for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
             {

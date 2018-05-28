@@ -1221,7 +1221,7 @@ namespace DwarfCorp
 
                     var above = VoxelHelpers.GetVoxelAbove(vox);
                     // Underground, do the cave test.
-                    if (above.IsValid && above.IsEmpty && above.SunColor == 0)
+                    if (above.IsValid && above.IsEmpty && above.Sunlight == false)
                     {
                         PlaySpecialAmbient("sfx_amb_cave");
                         return;

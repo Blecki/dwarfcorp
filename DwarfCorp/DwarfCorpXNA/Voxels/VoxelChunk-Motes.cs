@@ -137,7 +137,7 @@ namespace DwarfCorp
                         var mote = GenerateGrassMote(
                             Manager.World,
                             v.WorldPosition + new Vector3(0.5f, 1.0f + s * 0.5f + vOffset, 0.5f) + smallNoise,
-                            new Color(v.SunColor, 128, 0),
+                            new Color(v.Sunlight ? 255 : 0, 128, 0),
                             s,
                             moteDetail.Name);
 

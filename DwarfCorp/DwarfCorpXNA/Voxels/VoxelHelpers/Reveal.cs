@@ -42,13 +42,13 @@ namespace DwarfCorp
                         Type = VoxelChangeEventType.Explored,
                         Voxel = neighbor
                     });
-                    neighbor.RawSetIsExplored(true);
+                    neighbor.RawSetIsExplored();
 
                     if (neighbor.IsEmpty)
                         queue.Enqueue(neighbor);
                 }
 
-                v.RawSetIsExplored(true);
+                v.RawSetIsExplored();
             }
 
             GameSettings.Default.FogofWar = fogOfWar;

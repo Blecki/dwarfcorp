@@ -338,7 +338,7 @@ namespace DwarfCorp
                 if (Data.HasLighting)
                 {
                     if (v.IsValid && v.IsEmpty)
-                        p.LightRamp = new Color(v.SunColor, 255, 0);
+                        p.LightRamp = new Color(v.Sunlight ? 255 : 0, 255, 0);
                 }
                 else
                 {

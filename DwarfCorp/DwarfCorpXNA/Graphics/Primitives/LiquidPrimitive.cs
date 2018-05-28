@@ -192,8 +192,7 @@ namespace DwarfCorp
                     for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                     {
                         var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
-                        int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
-                        if (fogOfWar && !chunk.Data.IsExplored[index]) continue;
+                        if (fogOfWar && !voxel.IsExplored) continue;
 
                         if (voxel.WaterCell.WaterLevel > 0)
                         {

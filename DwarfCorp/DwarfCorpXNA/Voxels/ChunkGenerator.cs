@@ -358,7 +358,7 @@ namespace DwarfCorp
                             foreach (var coord in VoxelHelpers.EnumerateAllNeighbors(voxel.Coordinate))
                             {
                                 VoxelHandle v = new VoxelHandle(Manager.ChunkData, coord);
-                                if (v.IsValid && (v.WaterCell.WaterLevel > 0 || v.SunColor > 0))
+                                if (v.IsValid && (v.WaterCell.WaterLevel > 0 || v.Sunlight))
                                 {
                                     invalidCave = true;
                                     break;
@@ -576,11 +576,11 @@ namespace DwarfCorp
             GenerateWater(c);
             GenerateLava(c);
 
-            UpdateSunlight(c, 255);
+            UpdateSunlight(c);
             return c;
         }
 
-        private static void UpdateSunlight(VoxelChunk Chunk, byte sunColor)
+        private static void UpdateSunlight(VoxelChunk Chunk)
         {
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
@@ -591,7 +591,7 @@ namespace DwarfCorp
                     for (; y >= 0; y--)
                     {
                         var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(x, y, z));
-                        v.SunColor = sunColor;
+                        v.Sunlight = true;
                         if (v.Type.ID != 0 && !v.Type.IsTransparent)
                             break;
                     }
@@ -599,7 +599,7 @@ namespace DwarfCorp
                     for (y -= 1; y >= 0; y--)
                     {
                         var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(x, y, z));
-                        v.SunColor = 0;
+                        v.Sunlight = false;
                     }
                 }
             }
