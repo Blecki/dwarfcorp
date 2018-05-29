@@ -340,7 +340,14 @@ namespace DwarfCorp.Dialogue
             }
             else
             {
-                Context.Transition(RootWithPrompt("Changed your mind?"));
+                Context.TradePanel.Close();
+                Context.TradePanel.Hidden = true;
+                Context.TradePanel = null;
+
+                Context.Transition(RootWithPrompt(String.Format("{0} I am {1} of {2}.",
+                        Datastructures.SelectRandom(Context.Envoy.OwnerFaction.Race.Speech.Greetings),
+                        Context.EnvoyName,
+                        Context.Envoy.OwnerFaction.Name)));
                
             }
         }

@@ -230,7 +230,37 @@ namespace DwarfCorp
 
         public Action<QueuedAnnouncement> OnAnnouncement;
 
-        public void MakeAnnouncement(String Message, Action<Gui.Root, QueuedAnnouncement> ClickAction = null, Func<bool> Keep = null)
+        public EventLog EventLog = new EventLog();
+
+        public void LogEvent(EventLog.LogEntry entry)
+        {
+            EventLog.AddEntry(entry);
+        }
+
+        public void LogEvent(String Message, String Details = "")
+        {
+            LogEvent(Message, Color.Black, Details);
+        }
+
+
+        public void LogEvent(String Message, Color textColor, String Details = "")
+        {
+            LogEvent(new EventLog.LogEntry()
+            {
+                TextColor = textColor,
+                Text = Message,
+                Details = Details,
+                Date = Time.CurrentDate
+            });
+        }
+
+
+        public void MakeAnnouncement(String Message, Action<Gui.Root, QueuedAnnouncement> ClickAction = null, Func<bool> Keep = null, bool logEvent = true, String eventDetails = "")
+        {
+            MakeAnnouncement(Message, Color.Black, ClickAction, Keep, logEvent, eventDetails);
+        }
+
+        public void MakeAnnouncement(String Message, Color eventColor, Action<Gui.Root, QueuedAnnouncement> ClickAction = null, Func<bool> Keep = null, bool logEvent = true, String eventDetails = "")
         {
             if (OnAnnouncement != null)
                 OnAnnouncement(new QueuedAnnouncement
@@ -239,6 +269,11 @@ namespace DwarfCorp
                     ClickAction = ClickAction,
                     ShouldKeep = Keep
                 });
+
+            if (logEvent)
+            {
+                LogEvent(Message, eventColor, eventDetails);
+            }
         }
 
         public void MakeAnnouncement(QueuedAnnouncement Announcement)

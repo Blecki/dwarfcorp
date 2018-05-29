@@ -658,6 +658,31 @@ namespace DwarfCorp.Gui
             DrawMouse();
         }
 
+        private void UpdateHighlightRegion(Widget widget)
+        {
+            if (SpecialHiliteRegion == widget.Rect)
+            {
+                return;
+            }
+
+            SpecialHiliteRegion = widget.Rect;
+            SpecialHighligtedWidget = widget;
+
+            if (widget.Rect.Right < RenderData.VirtualScreen.Width / 2 ||
+                widget.Rect.Left < 64)
+            {
+                SpecialIndicatorPosition = new Microsoft.Xna.Framework.Point(
+                    widget.Rect.Right, widget.Rect.Center.Y - 16);
+                SpecialIndicator = new Gui.MousePointer("hand", 1, 10);
+            }
+            else
+            {
+                SpecialIndicatorPosition = new Microsoft.Xna.Framework.Point(
+                    widget.Rect.Left - 32, widget.Rect.Center.Y - 16);
+                SpecialIndicator = new Gui.MousePointer("hand", 4, 14);
+            }
+        }
+
         public void RedrawPopups()
         {
             RenderData.Device.DepthStencilState = DepthStencilState.None;
@@ -706,6 +731,10 @@ namespace DwarfCorp.Gui
             {
                 if (SpecialHighligtedWidget == null || !SpecialHighligtedWidget.Hidden)
                 {
+                    if (SpecialHighligtedWidget != null)
+                    {
+                        UpdateHighlightRegion(SpecialHighligtedWidget);
+                    }
                     var sheet = GetTileSheet(SpecialHiliteSheet);
                     var area = SpecialHiliteRegion.Value.Interior(-sheet.TileWidth, -sheet.TileHeight,
                         -sheet.TileWidth, -sheet.TileHeight);
@@ -718,6 +747,11 @@ namespace DwarfCorp.Gui
             {
                 if (SpecialHighligtedWidget == null || !SpecialHighligtedWidget.Hidden)
                 {
+                    if (SpecialHighligtedWidget != null)
+                    {
+                        UpdateHighlightRegion(SpecialHighligtedWidget);
+                    }
+
                     var tileSheet = GetTileSheet(SpecialIndicator.Sheet);
                     var mouseMesh = Mesh.Quad()
                         .Scale(tileSheet.TileWidth, tileSheet.TileHeight)

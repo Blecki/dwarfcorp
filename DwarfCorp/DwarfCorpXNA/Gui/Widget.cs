@@ -410,7 +410,7 @@ namespace DwarfCorp.Gui
         {
             if (Hidden) throw new InvalidOperationException();
 
-            if (Transparent)
+            if (Transparent || Root== null)
                 return Mesh.EmptyMesh();
 
             var result = new List<Mesh>();

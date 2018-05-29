@@ -110,7 +110,7 @@ namespace DwarfCorp
             data.Mesh.SetData(data.Verts);
             data.Indices.SetData(data.Idx);
             device.SetRenderTarget(data.Texture);
-            device.Viewport = new Viewport(0, 0, width, height); // Must set viewport after target bound.
+            //device.Viewport = new Viewport(0, 0, width, height); // Must set viewport after target bound.
             device.Clear(new Color(Logo.LogoBackgroundColor * 0.5f + Logo.LogoSymbolColor * 0.5f));
             Texture2D logoBg = AssetManager.GetContentTexture("newgui/logo-bg");
             Texture2D logoFg = AssetManager.GetContentTexture("newgui/logo-fg");
@@ -129,7 +129,7 @@ namespace DwarfCorp
             device.SetRenderTarget(null);
             device.Indices = null;
             device.SetVertexBuffer(null);
-            device.Viewport = oldView;
+            //device.Viewport = oldView;
         }
 
         new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,

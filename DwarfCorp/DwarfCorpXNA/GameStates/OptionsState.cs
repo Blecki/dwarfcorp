@@ -96,6 +96,8 @@ namespace DwarfCorp.GameStates
             base.OnEnter();
         }
 
+        private Widget CloseButton = null;
+
         private void RebuildGui()
         {
             BuildingGUI = true;
@@ -118,7 +120,7 @@ namespace DwarfCorp.GameStates
                     Font = "font10"
                 });
 
-            MainPanel.AddChild(new Gui.Widgets.Button
+            CloseButton = MainPanel.AddChild(new Gui.Widgets.Button
             {
                 Text = "Close",
                 Font = "font16",
@@ -147,8 +149,11 @@ namespace DwarfCorp.GameStates
                     }
                     else
                     {
-                        if (OnClosed != null) OnClosed();
-                        StateManager.PopState();
+                        if (StateManager.CurrentState == this)
+                        {
+                            if (OnClosed != null) OnClosed();
+                            StateManager.PopState();
+                        }
                     }
                 },
                 AutoLayout = AutoLayout.FloatBottomRight
@@ -1068,6 +1073,10 @@ namespace DwarfCorp.GameStates
                 if (!@event.Args.Handled)
                 {
                     // Pass event to game...
+                    if (@event.Message == InputEvents.KeyUp && @event.Args.KeyValue == (int)Microsoft.Xna.Framework.Input.Keys.Escape)
+                    {
+                        CloseButton.OnClick(CloseButton, new InputEventArgs());
+                    }
                 }
             }
 

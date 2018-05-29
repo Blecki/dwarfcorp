@@ -352,7 +352,7 @@ namespace DwarfCorp.Gui.Widgets
                 Font = "font10",
                 Border = "border-button",
                 TextColor = new Vector4(0, 0, 0, 1),
-                Text = "Cancel",
+                Text = "Stop trading",
                 AutoLayout = AutoLayout.DockRight,
                 OnLayout = (sender) => sender.Rect.X -= 16,
                 OnClick = (sender, args) =>
