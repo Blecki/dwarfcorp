@@ -150,7 +150,7 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 		float4x4 preWorldViewProjection = mul (xWorld, preViewProjection);
 
 		Output.Position = mul(inPos, preWorldViewProjection);
-		Output.Color = inColor * xLightRamp;
+		Output.Color = inColor * xVertexColorMultiplier;
 
 		Output.ClipDistance = Clipping * dot(mul(xWorld,inPos), ClipPlane0); //MSS - Water Refactor added
 
@@ -167,7 +167,7 @@ sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = L
 		float4x4 preWorldViewProjection = mul (xWorld, preViewProjection);
 
 		Output.Position = mul(inPos, preWorldViewProjection);
-		Output.Color = inColor * xLightRamp + float4(.2, .2, .2, 0) * pow(sin(xTime * 2 + 0.1 * inPos.x + 0.2 * inPos.z), 2);
+		Output.Color = inColor * xVertexColorMultiplier + float4(.2, .2, .2, 0) * pow(sin(xTime * 2 + 0.1 * inPos.x + 0.2 * inPos.z), 2);
 
 		Output.ClipDistance = Clipping * dot(mul(xWorld,inPos), ClipPlane0); //MSS - Water Refactor added
 

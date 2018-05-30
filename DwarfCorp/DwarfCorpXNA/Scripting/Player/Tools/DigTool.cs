@@ -71,14 +71,14 @@ namespace DwarfCorp
                     if (!v.IsValid || (v.IsEmpty && v.IsExplored) || v.Type.IsInvincible)
                         continue;
 
-                    var boundingBox = v.GetBoundingBox();
+                    var boundingBox = v.GetBoundingBox().Expand(-0.1f);
                     var entities = Player.World.EnumerateIntersectingObjects(boundingBox, CollisionType.Static);
                     if (entities.OfType<IVoxelListener>().Any())
                     {
                         continue;
                     }
 
-                    if (!Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !Player.Faction.RoomBuilder.IsInRoom(v))
+                    if (!Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !(Player.Faction.RoomBuilder.IsInRoom(v) || Player.Faction.RoomBuilder.IsBuildDesignation(v)))
                     {
                         var task = new KillVoxelTask(v);
                         Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Dig, null, task);

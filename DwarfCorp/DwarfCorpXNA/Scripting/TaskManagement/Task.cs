@@ -98,6 +98,10 @@ namespace DwarfCorp
 
         protected bool Equals(Task other)
         {
+            if (System.Object.ReferenceEquals(other, null))
+            {
+                return false;
+            }
             return string.Equals(Name, other.Name);
         }
 
@@ -115,7 +119,7 @@ namespace DwarfCorp
 
         public override bool Equals(object obj)
         {
-            return obj != null && obj is Task && Name.Equals(((Task) (obj)).Name);
+            return !System.Object.ReferenceEquals(obj, null) && obj is Task && string.Equals(Name, ((Task) (obj)).Name);
         }
 
         public virtual Act CreateScript(Creature agent)

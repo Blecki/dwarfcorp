@@ -194,13 +194,13 @@ namespace DwarfCorp
 
             RasterizerState oldState = Device.RasterizerState;
             Device.RasterizerState = RasterizerState.CullNone;
-          
             Effect.CurrentTechnique = Effect.Techniques[Shader.Technique.Untextured_Pulse];
             Effect.View = Camera.ViewMatrix;
             Effect.Projection = Camera.ProjectionMatrix;
             Effect.World = Matrix.Identity;
             Device.Indices = null;
             Device.SetVertexBuffer(Buffer);
+            Effect.VertexColorTint = Color.White;
             foreach (var pass in Effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
