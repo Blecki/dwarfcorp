@@ -117,7 +117,7 @@ namespace DwarfCorp.Dialogue
             if (next != null)
                 next(this);
 
-            if (TradePanel != null && !TradePanel.Hidden && TradePanel.Speaker != null)
+            if (TradePanel != null && !TradePanel.Hidden && TradePanel.Speaker != null && TradePanel.Root != null)
             {
                 TradePanel.UpdateSpeakerAnimation(Time);
             }
