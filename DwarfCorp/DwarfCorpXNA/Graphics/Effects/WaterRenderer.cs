@@ -151,8 +151,8 @@ namespace DwarfCorp
             {
                 var v = new VoxelHandle(vox.Chunk, new LocalVoxelCoordinate(
                     localVoxelCoordinate.X, y, localVoxelCoordinate.Z));
-                tot += v.WaterCell.WaterLevel / (float)WaterManager.maxWaterLevel;
-                if (y > vox.Coordinate.Y && v.WaterCell.WaterLevel == 0)
+                tot += v.LiquidLevel / (float)WaterManager.maxWaterLevel;
+                if (y > vox.Coordinate.Y && v.LiquidLevel == 0)
                     return tot;
             }
 

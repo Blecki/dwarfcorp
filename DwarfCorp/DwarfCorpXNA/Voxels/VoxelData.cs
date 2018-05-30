@@ -16,7 +16,7 @@ namespace DwarfCorp
         public byte[] Types;                // Storage per-voxel
         public byte[] Grass;
         public byte[] Decals;
-        public WaterCell[] Water;
+        public byte[] _Water;
         public byte[] RampsSunlightExplored;
 
         public int[] LiquidPresent;         // Storage per-slice
@@ -25,26 +25,18 @@ namespace DwarfCorp
         
         public static VoxelData Allocate()
         {
-            VoxelData toReturn = new VoxelData()
+            return new VoxelData()
             {
                 Types = new byte[VoxelConstants.ChunkVoxelCount],
                 Grass = new byte[VoxelConstants.ChunkVoxelCount],
                 Decals = new byte[VoxelConstants.ChunkVoxelCount],
-                Water = new WaterCell[VoxelConstants.ChunkVoxelCount],
+                _Water = new byte[VoxelConstants.ChunkVoxelCount],
                 RampsSunlightExplored = new byte[VoxelConstants.ChunkVoxelCount],
 
                 LiquidPresent = new int[VoxelConstants.ChunkSizeY],
                 VoxelsPresentInSlice = new int[VoxelConstants.ChunkSizeY],
                 SliceCache = new RawPrimitive[VoxelConstants.ChunkSizeY]
             };
-
-            // Todo: This might be unecessary.
-            for (int i = 0; i < VoxelConstants.ChunkVoxelCount; i++)
-            {
-                toReturn.Water[i] = new WaterCell();
-            }
-
-            return toReturn;
         }
     }
 }

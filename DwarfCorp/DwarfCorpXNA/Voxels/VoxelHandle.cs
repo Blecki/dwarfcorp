@@ -258,19 +258,46 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public WaterCell WaterCell
+        public LiquidType LiquidType
         {
-            get { return _cache_Chunk.Data.Water[_cache_Index]; }
+            get { return (LiquidType)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift); }
             set
             {
-                var existingLiquid = _cache_Chunk.Data.Water[_cache_Index];
-                if (existingLiquid.Type != LiquidType.None && value.Type == LiquidType.None)
+                var existingLiquid = (LiquidType)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift);
+                if (existingLiquid != LiquidType.None && value == LiquidType.None)
                     _cache_Chunk.Data.LiquidPresent[Coordinate.Y] -= 1;
-                if (existingLiquid.Type == LiquidType.None && value.Type != LiquidType.None)
+                if (existingLiquid == LiquidType.None && value != LiquidType.None)
                     _cache_Chunk.Data.LiquidPresent[Coordinate.Y] += 1;
 
-                _cache_Chunk.Data.Water[_cache_Index] = value;
+                _cache_Chunk.Data._Water[_cache_Index] = (byte)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.InverseLiquidTypeMask) 
+                    | ((byte)value << VoxelConstants.LiquidTypeShift));
             }
+        }
+
+        [JsonIgnore]
+        public byte LiquidLevel
+        {
+            get { return (byte)(_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.LiquidLevelMask); }
+            set {
+                _cache_Chunk.Data._Water[_cache_Index] = (byte)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.InverseLiquidLevelMask) 
+                    | (value & VoxelConstants.LiquidLevelMask));
+            }
+        }
+
+        /// <summary>
+        /// Use when setting both type and level at once. Slightly faster.
+        /// </summary>
+        /// <param name="Type"></param>
+        /// <param name="Level"></param>
+        public void QuickSetLiquid(LiquidType Type, byte Level)
+        {
+            var existingLiquid = (LiquidType)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift);
+            if (existingLiquid != LiquidType.None && Type == LiquidType.None)
+                _cache_Chunk.Data.LiquidPresent[Coordinate.Y] -= 1;
+            if (existingLiquid == LiquidType.None && Type != LiquidType.None)
+                _cache_Chunk.Data.LiquidPresent[Coordinate.Y] += 1;
+
+            _cache_Chunk.Data._Water[_cache_Index] = (byte)(((byte)Type << VoxelConstants.LiquidTypeShift) | (Level & VoxelConstants.LiquidLevelMask));
         }
         
         #endregion

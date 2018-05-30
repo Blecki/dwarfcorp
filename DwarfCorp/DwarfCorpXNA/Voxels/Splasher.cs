@@ -38,14 +38,6 @@ using System.Collections.Concurrent;
 
 namespace DwarfCorp
 {
-    public struct LiquidTransfer
-    {
-        public WaterCell cellFrom;
-        public WaterCell cellTo;
-        public byte amount;
-        public VoxelHandle Location;
-    }
-
     public struct LiquidSplash
     {
         public string name;
@@ -65,28 +57,6 @@ namespace DwarfCorp
 
             splashNoiseLimiter["splash2"] = new Timer(0.1f, false);
             splashNoiseLimiter["flame"] = new Timer(0.1f, false);
-        }
-
-        public void HandleTransfers(DwarfTime time, IEnumerable<LiquidTransfer> Transfers)
-        {
-            foreach (var transfer in Transfers)
-            { 
-                if((transfer.cellFrom.Type == LiquidType.Lava && transfer.cellTo.Type == LiquidType.Water) 
-                    || (transfer.cellFrom.Type == LiquidType.Water && transfer.cellTo.Type == LiquidType.Lava))
-                {
-                    var v = transfer.Location;
-
-                    if(v.IsValid)
-                    {
-                        v.Type = VoxelLibrary.GetVoxelType("Stone");
-                        v.WaterCell = new WaterCell
-                        {
-                            Type = LiquidType.None,
-                            WaterLevel = 0
-                        };
-                    }
-                }
-            }
         }
 
         public void Splash(DwarfTime time, IEnumerable<LiquidSplash> Splashes)

@@ -206,17 +206,9 @@ namespace DwarfCorp
                         if (vox.IsEmpty && y > topVoxel.Coordinate.Y)
                         {
                             if (biome.WaterSurfaceIce && y == waterHeight)
-                            {
                                 vox.RawSetType(iceID);
-                            }
                             else
-                            {
-                                vox.WaterCell = new WaterCell
-                                {
-                                    Type = LiquidType.Water,
-                                    WaterLevel = WaterManager.maxWaterLevel
-                                };
-                            }
+                                vox.QuickSetLiquid(LiquidType.Water, WaterManager.maxWaterLevel);
                         }
                     }
 
@@ -231,13 +223,7 @@ namespace DwarfCorp
                             localCoord.X, localCoord.Y + 1, localCoord.Z));
 
                         if (topVoxel.IsEmpty)
-                        {
-                            topVoxel.WaterCell = new WaterCell
-                            {
-                                Type = LiquidType.Lava,
-                                WaterLevel = WaterManager.maxWaterLevel
-                            };
-                        }
+                            topVoxel.QuickSetLiquid(LiquidType.Lava, WaterManager.maxWaterLevel);
                     }
                 }
             }
@@ -254,12 +240,8 @@ namespace DwarfCorp
                     for (var y = 0; y < lavaHeight; ++y)
                     {
                         var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
-                        if (voxel.IsEmpty && voxel.WaterCell.WaterLevel == 0)
-                            voxel.WaterCell = new WaterCell
-                            {
-                                Type = LiquidType.Lava,
-                                WaterLevel = WaterManager.maxWaterLevel
-                            };
+                        if (voxel.IsEmpty && voxel.LiquidLevel == 0)
+                            voxel.QuickSetLiquid(LiquidType.Lava, WaterManager.maxWaterLevel);
                     }
                 }
             }
@@ -282,7 +264,7 @@ namespace DwarfCorp
                         || topVoxel.Coordinate.Y >= 60) // Lift to some kind of generator settings?
                         continue;
                     var above = VoxelHelpers.GetVoxelAbove(topVoxel);
-                    if (above.IsValid && above.WaterCell.WaterLevel != 0)
+                    if (above.IsValid && above.LiquidLevel != 0)
                         continue;
                     foreach (var animal in biomeData.Fauna)
                     {
@@ -358,7 +340,7 @@ namespace DwarfCorp
                             foreach (var coord in VoxelHelpers.EnumerateAllNeighbors(voxel.Coordinate))
                             {
                                 VoxelHandle v = new VoxelHandle(Manager.ChunkData, coord);
-                                if (v.IsValid && (v.WaterCell.WaterLevel > 0 || v.Sunlight))
+                                if (v.IsValid && (v.LiquidLevel > 0 || v.Sunlight))
                                 {
                                     invalidCave = true;
                                     break;

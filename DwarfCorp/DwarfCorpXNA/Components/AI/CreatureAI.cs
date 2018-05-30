@@ -574,7 +574,7 @@ namespace DwarfCorp
             if (MathFunctions.RandEvent(0.01f))
             {
                 var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel);
-                bool shouldDrown = above.IsValid && (!above.IsEmpty || above.WaterCell.WaterLevel > 0);
+                bool shouldDrown = above.IsValid && (!above.IsEmpty || above.LiquidLevel > 0);
                 if (Physics.IsInLiquid && (!Movement.CanSwim || shouldDrown))
                 {
                     Creature.Damage(1.0f, Health.DamageType.Normal);

@@ -58,7 +58,6 @@ namespace DwarfCorp
         public Vector3 Origin;
 
         public byte[] Liquid;
-        public byte[] LiquidTypes;
         public byte[] Types;
         public byte[] GrassType;
         public byte[] Decals;
@@ -72,7 +71,6 @@ namespace DwarfCorp
         {
             ID = chunk.ID;
             Types = new byte[VoxelConstants.ChunkVoxelCount];
-            LiquidTypes = new byte[VoxelConstants.ChunkVoxelCount];
             Liquid = new byte[VoxelConstants.ChunkVoxelCount];
             GrassType = new byte[VoxelConstants.ChunkVoxelCount];
             Decals = new byte[VoxelConstants.ChunkVoxelCount];
@@ -98,7 +96,6 @@ namespace DwarfCorp
         {
             ID = chunkFile.ID;
             Liquid = chunkFile.Liquid;
-            LiquidTypes = chunkFile.LiquidTypes;
             Origin = chunkFile.Origin;
             Types = chunkFile.Types;
             GrassType = chunkFile.GrassType;
@@ -128,17 +125,8 @@ namespace DwarfCorp
                 }                
             }
 
-            // Separate loop for cache effeciency
-            for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
-            {
-                c.Data.Water[i].WaterLevel = Liquid[i];
-                c.Data.Water[i].Type = (LiquidType)LiquidTypes[i];
-
-                // Rebuild the LiquidPresent counters
-                if ((LiquidType)LiquidTypes[i] != LiquidType.None)
-                    c.Data.LiquidPresent[(i >> VoxelConstants.ZDivShift) >> VoxelConstants.XDivShift] += 1;
-            }
-
+            if (Liquid != null)
+                Liquid.CopyTo(c.Data._Water, 0);
             if (RampsSunlightExplored != null)
                 RampsSunlightExplored.CopyTo(c.Data.RampsSunlightExplored, 0);
             if (GrassType != null)
@@ -156,21 +144,7 @@ namespace DwarfCorp
             chunk.Data.Grass.CopyTo(GrassType, 0);
             chunk.Data.Decals.CopyTo(Decals, 0);
             chunk.Data.RampsSunlightExplored.CopyTo(RampsSunlightExplored, 0);
-
-            for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
-            {
-                var water = chunk.Data.Water[i];
-                if (water.WaterLevel > 0)
-                {
-                    Liquid[i] = water.WaterLevel;
-                    LiquidTypes[i] = (byte)water.Type;
-                }
-                else
-                {
-                    Liquid[i] = 0;
-                    LiquidTypes[i] = 0;
-                }
-            }
+            chunk.Data._Water.CopyTo(Liquid, 0);
         }
     }
 }

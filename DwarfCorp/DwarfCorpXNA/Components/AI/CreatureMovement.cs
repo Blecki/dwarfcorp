@@ -295,7 +295,7 @@ namespace DwarfCorp
                 yield break;
 
             var neighborHood = GetNeighborhood(voxel);
-            bool inWater = (neighborHood[1, 1, 1].IsValid && neighborHood[1, 1, 1].WaterCell.WaterLevel > WaterManager.inWaterThreshold);
+            bool inWater = (neighborHood[1, 1, 1].IsValid && neighborHood[1, 1, 1].LiquidLevel > WaterManager.inWaterThreshold);
             bool standingOnGround = (neighborHood[1, 0, 1].IsValid && !neighborHood[1, 0, 1].IsEmpty);
             bool topCovered = (neighborHood[1, 2, 1].IsValid && !neighborHood[1, 2, 1].IsEmpty);
             bool hasNeighbors = HasNeighbors(neighborHood);
@@ -309,7 +309,7 @@ namespace DwarfCorp
             foreach (MoveAction v in successors)
             {
                 var n = v.DestinationVoxel.IsValid ? v.DestinationVoxel : neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
-                if (n.IsValid && (isRiding || n.IsEmpty || n.WaterCell.WaterLevel > 0))
+                if (n.IsValid && (isRiding || n.IsEmpty || n.LiquidLevel > 0))
                 {
                     // Do one final check to see if there is an object blocking the motion.
                     bool blockedByObject = false;
@@ -347,7 +347,7 @@ namespace DwarfCorp
                     }
 
                     // If no object blocked us, we can move freely as normal.
-                    if (!blockedByObject && n.WaterCell.Type != LiquidType.Lava)
+                    if (!blockedByObject && n.LiquidType != LiquidType.Lava)
                     {
                         MoveAction newAction = v;
                         newAction.SourceState = state;

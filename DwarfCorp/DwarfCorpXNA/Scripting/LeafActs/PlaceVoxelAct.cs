@@ -141,7 +141,7 @@ namespace DwarfCorp
         private void PlaceVoxel(VoxelHandle Vox, VoxelType Type, WorldManager World)
         {
             Vox.Type = Type;
-            Vox.WaterCell = new WaterCell();
+            Vox.QuickSetLiquid(LiquidType.None, 0);
 
             for (int i = 0; i < 4; i++)
                 World.ParticleManager.Trigger("puff", MathFunctions.RandVector3Box(Vox.GetBoundingBox().Expand(0.25f)), Color.White, 5);

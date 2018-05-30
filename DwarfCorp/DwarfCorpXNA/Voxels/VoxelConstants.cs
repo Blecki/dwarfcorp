@@ -25,6 +25,7 @@ namespace DwarfCorp
             return (C.Y * ChunkSizeX * ChunkSizeZ) + (C.Z * ChunkSizeX) + C.X;
         }
 
+        //  Todo: Use inverse mask naming pattern here.
         public const Int32 MaximumGrassTypes = 16;
         public const Int32 GrassTypeShift = 4;
         public const Int32 GrassTypeMask = 0xF0;
@@ -40,5 +41,14 @@ namespace DwarfCorp
         public const Int32 ExploredShift = 6;
         public const Int32 ExploredMask = 0x40;
         public const Int32 InverseExploredMask = 0xBF;
+        public const Int32 PathingObjectPresentShift = 7;
+        public const Int32 PathingObjectPresentMask = 0x80;
+        public const Int32 InversePathingObjectPresentMask = 0x7F;
+
+        public const Int32 LiquidTypeShift = 6;
+        public const Int32 LiquidTypeMask = 0xC0;
+        public const Int32 InverseLiquidTypeMask = 0x3F;
+        public const Int32 LiquidLevelMask = 0x3F;
+        public const Int32 InverseLiquidLevelMask = 0xC0;
     }
 }
