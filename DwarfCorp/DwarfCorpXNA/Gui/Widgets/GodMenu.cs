@@ -340,8 +340,60 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         // Copy is required because spawning some types results in the creation of new types. EG, snakes create snake meat.
                         var keys = EntityFactory.EnumerateEntityTypes().ToList();
-                        foreach(var key in keys)
-                            EntityFactory.CreateEntity<GameComponent>(key, Master.World.CursorLightPos);
+                        int num = keys.Count();
+                        float gridSize = (float)Math.Ceiling(Math.Sqrt((double)num));
+                        Vector3 gridCenter = Master.World.CursorLightPos;
+                        int i = 0;
+                        for (float dx = -gridSize/2; dx <= gridSize/2; dx++)
+                        {
+                            for (float dz = -gridSize/2; dz <= gridSize/2; dz++)
+                            {
+                                if (i >= num)
+                                {
+                                    continue;
+                                }
+
+                                Vector3 pos = MathFunctions.Clamp(gridCenter + new Vector3(dx, VoxelConstants.ChunkSizeY, dz), Master.World.ChunkManager.Bounds);
+                                VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(Master.World.ChunkManager.ChunkData, pos, pos + Vector3.Down * 100);
+                                if (handle.IsValid)
+                                {
+                                    EntityFactory.CreateEntity<GameComponent>(keys[i], handle.WorldPosition + Vector3.Up);
+                                }
+                                i++;
+                            }
+                        }
+                    }
+                },
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "SPAWN CRAFTS",
+                    OnClick = (sender, args) =>
+                    {
+                        // Copy is required because spawning some types results in the creation of new types. EG, snakes create snake meat.
+                        var keys = CraftLibrary.EnumerateCraftables().Where(craft => craft.Type == CraftItem.CraftType.Object).ToList();
+                        int num = keys.Count();
+                        float gridSize = (float)Math.Ceiling(Math.Sqrt((double)num));
+                        Vector3 gridCenter = Master.World.CursorLightPos;
+                        int i = 0;
+                        for (float dx = -gridSize/2; dx <= gridSize/2; dx++)
+                        {
+                            for (float dz = -gridSize/2; dz <= gridSize/2; dz++)
+                            {
+                                if (i >= num)
+                                {
+                                    continue;
+                                }
+
+                                Vector3 pos = MathFunctions.Clamp(gridCenter + new Vector3(dx, VoxelConstants.ChunkSizeY, dz), Master.World.ChunkManager.Bounds);
+                                VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(Master.World.ChunkManager.ChunkData, pos, pos + Vector3.Down * 100);
+                                if (handle.IsValid)
+                                {
+                                    EntityFactory.CreateEntity<GameComponent>(keys[i].EntityName, handle.WorldPosition + Vector3.Up + keys[i].SpawnOffset);
+                                }
+                                i++;
+                            }
+                        }
+                        
                     }
                 },
                 new HorizontalMenuTray.MenuItem

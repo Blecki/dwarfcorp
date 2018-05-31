@@ -39,22 +39,30 @@ namespace DwarfCorp
 
             Gui.TileSheet sheet = null;
             Texture2D tex = null;
+            bool exists = false;
             if (Instance.TextureAsset == null)
             {
                 tex = AssetManager.GetContentTexture("Error");
-            }
-            bool exists = false;
-            exists = Atlas.TryGetValue(Instance.TextureAsset, out sheet);
-            if (!exists)
-            {
-                tex = AssetManager.GetContentTexture(Instance.TextureAsset);
-                if (tex == null) return Vector4.Zero; // Actually should never happen.
-
                 sheet = new Gui.TileSheet(tex.Width, tex.Height, new Rectangle(0, 0, tex.Width, tex.Height), tex.Width, tex.Height, false);
                 Atlas.Add(Instance.TextureAsset, sheet);
 
                 RebuildAtlas();
                 NeedsRendered = true;
+            }
+            else
+            {
+                exists = Atlas.TryGetValue(Instance.TextureAsset, out sheet);
+                if (!exists)
+                {
+                    tex = AssetManager.GetContentTexture(Instance.TextureAsset);
+                    if (tex == null) return Vector4.Zero; // Actually should never happen.
+
+                    sheet = new Gui.TileSheet(tex.Width, tex.Height, new Rectangle(0, 0, tex.Width, tex.Height), tex.Width, tex.Height, false);
+                    Atlas.Add(Instance.TextureAsset, sheet);
+
+                    RebuildAtlas();
+                    NeedsRendered = true;
+                }
             }
             Instance.AtlasCache = sheet;
             return sheet.MapRectangleToUVBounds(Instance.SpriteBounds);
