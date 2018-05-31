@@ -604,6 +604,7 @@ namespace DwarfCorp
 
         public void AddEntry(LogEntry entry)
         {
+            Console.Out.WriteLine(entry.Text);
             Entries.Add(entry);
             Entries.RemoveAll(e => (entry.Date - e.Date) > MaxDuration);
         }
