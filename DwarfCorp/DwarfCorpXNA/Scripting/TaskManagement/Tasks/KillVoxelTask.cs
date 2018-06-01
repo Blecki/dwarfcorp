@@ -125,6 +125,11 @@ namespace DwarfCorp
             return Voxel.IsEmpty;
         }
 
+        public override void OnEnqueued(Faction Faction)
+        {
+            Faction.Designations.AddVoxelDesignation(Voxel, DesignationType.Dig, null, this);
+        }
+
         public override void OnDequeued(Faction Faction)
         {
             Faction.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Dig);
