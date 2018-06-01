@@ -162,13 +162,13 @@ namespace DwarfCorp
                     return false;
                 }
 
-                if (!CanBuildAboveGround && voxel.SunColor >= 5)
+                if (!CanBuildAboveGround && voxel.Sunlight)
                 {
                     World.ShowToolPopup("Room can't be built aboveground!");
                     return false;
                 }
 
-                if (!CanBuildBelowGround && voxel.SunColor < 5)
+                if (!CanBuildBelowGround && !voxel.Sunlight)
                 {
                     World.ShowToolPopup("Room can't be built belowground!");
                     return false;

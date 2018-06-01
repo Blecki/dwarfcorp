@@ -505,7 +505,7 @@ namespace DwarfCorp
         public bool IsCameraUnderwater()
         {
             var handle = new VoxelHandle(ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Camera.Position));
-            return handle.IsValid && handle.WaterCell.WaterLevel > 0;
+            return handle.IsValid && handle.LiquidLevel > 0;
         }
 
         /// <summary>
@@ -625,7 +625,6 @@ namespace DwarfCorp
             // These things are updated even when the game is paused
 
             Splasher.Splash(gameTime, ChunkManager.Water.GetSplashQueue());
-            Splasher.HandleTransfers(gameTime, ChunkManager.Water.GetTransferQueue());
 
             ChunkManager.Update(gameTime, Camera, GraphicsDevice);
             ChunkRenderer.Update(gameTime, Camera, GraphicsDevice);
@@ -1256,7 +1255,7 @@ namespace DwarfCorp
 
                     var above = VoxelHelpers.GetVoxelAbove(vox);
                     // Underground, do the cave test.
-                    if (above.IsValid && above.IsEmpty && above.SunColor == 0)
+                    if (above.IsValid && above.IsEmpty && above.Sunlight == false)
                     {
                         PlaySpecialAmbient("sfx_amb_cave");
                         return;

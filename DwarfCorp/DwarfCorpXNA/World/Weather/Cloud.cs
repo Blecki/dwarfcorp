@@ -137,7 +137,7 @@ namespace DwarfCorp
 
                 var test = new VoxelHandle(chunks.ChunkData,
                     GlobalVoxelCoordinate.FromVector3(RainDrops[i].Pos));
-                if (!test.IsValid || test.IsEmpty || test.WaterCell.WaterLevel > 0) continue;
+                if (!test.IsValid || test.IsEmpty || test.LiquidLevel > 0) continue;
 
                 RainDrops[i].IsAlive = false;
                 hitEmitter.Trigger(1, RainDrops[i].Pos + Vector3.UnitY * 0.5f, Color.White);
@@ -148,15 +148,12 @@ namespace DwarfCorp
 
                 if (!above.IsValid || !above.IsEmpty) continue;
                 if (TypeofStorm == StormType.RainStorm &&
-                    (above.WaterCell.WaterLevel < WaterManager.maxWaterLevel && (above.WaterCell.Type == LiquidType.Water)))
+                    (above.LiquidLevel < WaterManager.maxWaterLevel && (above.LiquidType == LiquidType.Water)))
                 {
-                    WaterCell water = above.WaterCell;
-                    water.WaterLevel = (byte)Math.Min(WaterManager.maxWaterLevel, water.WaterLevel + WaterManager.rainFallAmount);
-                    water.Type = stormProperties.LiquidToCreate;
-
-                    above.WaterCell = water;
+                    above.LiquidLevel = (byte)Math.Min(WaterManager.maxWaterLevel, above.LiquidLevel + WaterManager.rainFallAmount);
+                    above.LiquidType = stormProperties.LiquidToCreate;
                 }
-                else if (TypeofStorm == StormType.SnowStorm && above.IsEmpty && above.WaterCell.WaterLevel == 0)
+                else if (TypeofStorm == StormType.SnowStorm && above.IsEmpty && above.LiquidLevel == 0)
                 {
                     if (test.GrassType == 0)
                         test.GrassType = GrassLibrary.GetGrassType("snow").ID;

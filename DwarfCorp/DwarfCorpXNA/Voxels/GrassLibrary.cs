@@ -94,6 +94,17 @@ namespace DwarfCorp
 
                 if (type.FringeTiles != null)
                     type.FringeTransitionUVs = CreateFringeUVs(type.FringeTiles);
+
+                if (type.InitialDecayValue > VoxelConstants.MaximumGrassDecay)
+                {
+                    type.InitialDecayValue = VoxelConstants.MaximumGrassDecay;
+                    Console.WriteLine("Grass type " + type.Name + " with invalid InitialDecayValue");
+                }
+            }
+
+            if (ID > 16)
+            {
+                Console.WriteLine("Allowed number of grass types exceeded. Limit is " + VoxelConstants.MaximumGrassTypes);
             }
         }
 

@@ -79,8 +79,6 @@ namespace DwarfCorp
                 
         private LinkedList<LiquidSplash> Splashes = new LinkedList<LiquidSplash>();
         private Mutex SplashLock = new Mutex();
-        private LinkedList<LiquidTransfer> Transfers = new LinkedList<LiquidTransfer>();
-        private Mutex TransferLock = new Mutex();
         public bool NeedsMinimapUpdate = true;
 
         public IEnumerable<LiquidSplash> GetSplashQueue()
@@ -89,16 +87,6 @@ namespace DwarfCorp
             var r = Splashes;
             Splashes = new LinkedList<LiquidSplash>();
             SplashLock.ReleaseMutex();
-            return r;
-        }
-
-        // Todo: Delete after verifying that creating stone on the water thread is okay.
-        public IEnumerable<LiquidTransfer> GetTransferQueue()
-        {
-            TransferLock.WaitOne();
-            var r = Transfers;
-            Transfers = new LinkedList<LiquidTransfer>();
-            TransferLock.ReleaseMutex();
             return r;
         }
 
@@ -120,13 +108,13 @@ namespace DwarfCorp
             }
         }
 
-        public void HandleLiquidInteraction(VoxelHandle Vox, WaterCell From, WaterCell To)
+        public void HandleLiquidInteraction(VoxelHandle Vox, LiquidType From, LiquidType To)
         {
-            if ((From.Type == LiquidType.Lava && To.Type == LiquidType.Water)
-                || (From.Type == LiquidType.Water && To.Type == LiquidType.Lava))
+            if ((From == LiquidType.Lava && To == LiquidType.Water)
+                || (From == LiquidType.Water && To == LiquidType.Lava))
             {
                 Vox.Type = VoxelLibrary.GetVoxelType("Stone");
-                Vox.WaterCell = WaterCell.Empty;
+                Vox.QuickSetLiquid(LiquidType.None, 0);
             }            
         }
 
@@ -212,23 +200,17 @@ namespace DwarfCorp
                     if (currentVoxel.TypeID != 0)
                         continue;
 
-                    var water = currentVoxel.WaterCell;
-
-                    if (water.WaterLevel < 1 || water.Type == LiquidType.None)
+                    if (currentVoxel.LiquidType == LiquidType.None || currentVoxel.LiquidLevel < 1)
                         continue;
 
                     // Evaporate.
-                    if (water.WaterLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
+                    if (currentVoxel.LiquidLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
                     {
-                        if (water.Type == LiquidType.Lava)
+                        if (currentVoxel.LiquidType == LiquidType.Lava)
                             currentVoxel.Type = VoxelLibrary.GetVoxelType("Stone");
 
-                        currentVoxel.WaterCell = new WaterCell
-                        {
-                            Type = LiquidType.None,
-                            WaterLevel = 0
-                        };
                         NeedsMinimapUpdate = true;
+                        currentVoxel.QuickSetLiquid(LiquidType.None, 0);
                         continue;
                     }
 
@@ -238,46 +220,42 @@ namespace DwarfCorp
                     {
                         // Fall into the voxel below.
 
-                        var belowWater = voxBelow.WaterCell;
-
                         // Special case: No liquid below, just drop down.
-                        if (belowWater.WaterLevel == 0)
+                        if (voxBelow.LiquidType == LiquidType.None)
                         {
-                            CreateSplash(currentVoxel.Coordinate.ToVector3(), water.Type);
-                            voxBelow.WaterCell = water;
-                            currentVoxel.WaterCell = WaterCell.Empty;
-                            HandleLiquidInteraction(voxBelow, water, belowWater);
                             NeedsMinimapUpdate = true;
+                            CreateSplash(currentVoxel.Coordinate.ToVector3(), currentVoxel.LiquidType);
+                            voxBelow.QuickSetLiquid(currentVoxel.LiquidType, currentVoxel.LiquidLevel);
+                            currentVoxel.QuickSetLiquid(LiquidType.None, 0);
                             continue;
                         }
 
-                        var spaceLeftBelow = maxWaterLevel - belowWater.WaterLevel;
+                        var belowType = voxBelow.LiquidType;
+                        var aboveType = currentVoxel.LiquidType;
+                        var spaceLeftBelow = maxWaterLevel - voxBelow.LiquidLevel;
 
-                        if (spaceLeftBelow >= water.WaterLevel)
+                        if (spaceLeftBelow >= currentVoxel.LiquidLevel)
                         {
-                            CreateSplash(currentVoxel.Coordinate.ToVector3(), water.Type);
-                            belowWater.WaterLevel += water.WaterLevel;
-                            voxBelow.WaterCell = belowWater;
-                            currentVoxel.WaterCell = WaterCell.Empty;
-                            HandleLiquidInteraction(voxBelow, water, belowWater);
                             NeedsMinimapUpdate = true;
+                            CreateSplash(currentVoxel.Coordinate.ToVector3(), aboveType);
+                            voxBelow.LiquidLevel += currentVoxel.LiquidLevel;
+                            currentVoxel.QuickSetLiquid(LiquidType.None, 0);
+                            HandleLiquidInteraction(voxBelow, aboveType, belowType);
                             continue;
                         }
 
                         if (spaceLeftBelow > 0)
                         {
-                            CreateSplash(currentVoxel.Coordinate.ToVector3(), water.Type);
-                            water.WaterLevel = (byte)(water.WaterLevel - maxWaterLevel + belowWater.WaterLevel);
-                            belowWater.WaterLevel = maxWaterLevel;
-                            voxBelow.WaterCell = belowWater;
-                            currentVoxel.WaterCell = water;
-                            HandleLiquidInteraction(voxBelow, water, belowWater);
                             NeedsMinimapUpdate = true;
+                            CreateSplash(currentVoxel.Coordinate.ToVector3(), aboveType);
+                            currentVoxel.LiquidLevel = (byte)(currentVoxel.LiquidLevel - maxWaterLevel + voxBelow.LiquidLevel);
+                            voxBelow.LiquidLevel = maxWaterLevel;
+                            HandleLiquidInteraction(voxBelow, aboveType, belowType);
                             continue;
                         }
                     }
 
-                    if (water.WaterLevel <= 1) continue;
+                    if (currentVoxel.LiquidLevel <= 1) continue;
 
                     // Nothing left to do but spread.
 
@@ -291,29 +269,19 @@ namespace DwarfCorp
 
                         if (neighborVoxel.IsValid && neighborVoxel.IsEmpty)
                         {
-                            var neighborWater = neighborVoxel.WaterCell;
-
-                            if (neighborWater.WaterLevel < water.WaterLevel)
+                            if (neighborVoxel.LiquidLevel < currentVoxel.LiquidLevel)
                             {
-                                var amountToMove = (int)(water.WaterLevel * GetSpreadRate(water.Type));
-                                if (neighborWater.WaterLevel + amountToMove > maxWaterLevel)
-                                    amountToMove = maxWaterLevel - neighborWater.WaterLevel;
-                                var newWater = water.WaterLevel - amountToMove;
-
-                                currentVoxel.WaterCell = new WaterCell
-                                {
-                                    Type = newWater == 0 ? LiquidType.None : water.Type,
-                                    WaterLevel = (byte)(water.WaterLevel - amountToMove)
-                                };
-
-                                neighborVoxel.WaterCell = new WaterCell
-                                {
-                                    Type = neighborWater.Type == LiquidType.None ? water.Type : neighborWater.Type,
-                                    WaterLevel = (byte)(neighborWater.WaterLevel + amountToMove)
-                                };
-
-                                HandleLiquidInteraction(neighborVoxel, water, neighborWater);
                                 NeedsMinimapUpdate = true;
+                                var amountToMove = (int)(currentVoxel.LiquidLevel * GetSpreadRate(currentVoxel.LiquidType));
+                                if (neighborVoxel.LiquidLevel + amountToMove > maxWaterLevel)
+                                    amountToMove = maxWaterLevel - neighborVoxel.LiquidLevel;
+                                var newWater = currentVoxel.LiquidLevel - amountToMove;
+
+                                var sourceType = currentVoxel.LiquidType;
+                                var destType = neighborVoxel.LiquidType;
+                                currentVoxel.QuickSetLiquid(newWater == 0 ? LiquidType.None : sourceType, (byte)newWater);
+                                neighborVoxel.QuickSetLiquid(destType == LiquidType.None ? sourceType : destType, (byte)(neighborVoxel.LiquidLevel + amountToMove));
+                                HandleLiquidInteraction(neighborVoxel, sourceType, destType);
                                 break; 
                             }
 

@@ -201,21 +201,18 @@ namespace DwarfCorp
                         //Matrix worldRot = noTransBill;
                         //worldRot.Translation = bill.Translation;// + VertexNoise.GetNoiseVectorFromRepeatingTexture(bill.Translation);
                         return bill;
-                        break;
                     }
                 case OrientMode.Fixed:
                     {
                         Matrix rotation = Matrix.CreateScale(frameSize.X, frameSize.Y, 1.0f) * GlobalTransform;
                         rotation.Translation = rotation.Translation + distortion;
                         return rotation;
-                        break;
                     }
                 case OrientMode.YAxis:
                     {
                         Matrix worldRot = Matrix.CreateScale(frameSize.X, frameSize.Y, 1.0f) * Matrix.CreateConstrainedBillboard(GlobalTransform.Translation, camera.Position, Vector3.UnitY, null, null);
                         worldRot.Translation = worldRot.Translation + distortion;
                         return worldRot;
-                        break;
                     }
                 default:
                     throw new InvalidProgramException();

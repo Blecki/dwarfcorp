@@ -61,7 +61,7 @@ namespace DwarfCorp
 
             if (ResourceLibrary.Resources[PlantType].Tags.Contains(Resource.ResourceTags.AboveGroundPlant))
             {
-                if (voxel.SunColor == 0)
+                if (voxel.Sunlight == false)
                 {
                     Player.World.ShowToolPopup("Can only plant " + PlantType + " above ground.");
                     return false;
@@ -69,7 +69,7 @@ namespace DwarfCorp
             }
             else if (ResourceLibrary.Resources[PlantType].Tags.Contains(Resource.ResourceTags.BelowGroundPlant))
             {
-                if (voxel.SunColor > 0)
+                if (voxel.Sunlight)
                 {
                     Player.World.ShowToolPopup("Can only plant " + PlantType + " below ground.");
                     return false;

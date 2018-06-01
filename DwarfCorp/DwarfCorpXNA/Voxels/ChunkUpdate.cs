@@ -76,7 +76,7 @@ namespace DwarfCorp
                         {
                             var decal = GrassLibrary.GetGrassType(voxel.GrassType);
 
-                            if (decal.NeedsSunlight && voxel.SunColor < 255)
+                            if (decal.NeedsSunlight && !voxel.Sunlight)
                                 voxel.GrassType = 0;
                             else if (decal.Decay)
                             {
@@ -122,7 +122,7 @@ namespace DwarfCorp
             {
                 var l = v.Item1;
                 var grassType = GrassLibrary.GetGrassType(v.Item2);
-                if (grassType.NeedsSunlight && l.SunColor != 255)
+                if (grassType.NeedsSunlight && !l.Sunlight)
                     continue;
                 l.GrassType = v.Item2;
             }

@@ -104,7 +104,7 @@ namespace DwarfCorp
 
                 if (under.IsValid)
                 {
-                    Color color = new Color(Math.Min(under.SunColor + 80, 255), 255, 0);
+                    Color color = new Color(under.Sunlight ? 255 : 80, 255, 0);
 
                     LightRamp = color;
                 }

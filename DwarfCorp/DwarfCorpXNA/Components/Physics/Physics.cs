@@ -432,7 +432,7 @@ namespace DwarfCorp
             CurrentVoxel = new VoxelHandle(chunks.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(GlobalTransform.Translation + Vector3.Up * 0.5f));
 
-            if (CurrentVoxel.IsValid && CurrentVoxel.WaterCell.WaterLevel > WaterManager.inWaterThreshold)
+            if (CurrentVoxel.IsValid && CurrentVoxel.LiquidLevel > WaterManager.inWaterThreshold)
             {
                 ApplyForce(new Vector3(0, 25, 0), dt);
                 Velocity = new Vector3(Velocity.X * 0.9f, Velocity.Y * 0.5f, Velocity.Z * 0.9f);

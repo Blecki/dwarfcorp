@@ -455,7 +455,7 @@ namespace DwarfCorp.Rail
 
                 if (under.IsValid)
                 {
-                    Color color = new Color(under.SunColor, 255, 0);
+                    Color color = new Color(under.Sunlight ? 255 : 0, 255, 0);
                     LightRamp = color;
                 }            
             else

@@ -62,7 +62,7 @@ namespace DwarfCorp
                 coord =>
                 {
                     var v = new VoxelHandle(Data, coord);
-                    if (!v.IsValid || !v.IsEmpty || v.WaterCell.WaterLevel > 0) return false;
+                    if (!v.IsValid || !v.IsEmpty || v.LiquidLevel > 0) return false;
                     var below = new VoxelHandle(Data,
                         new GlobalVoxelCoordinate(coord.X, coord.Y - 1, coord.Z));
                     return below.IsValid && !below.IsEmpty;
@@ -95,7 +95,7 @@ namespace DwarfCorp
         public override Act CreateScript(Creature creature)
         {
             var above = VoxelHelpers.GetVoxelAbove(creature.Physics.CurrentVoxel);
-            if ((above.IsValid && above.WaterCell.WaterLevel > 0 ) || creature.AI.Movement.CanFly)
+            if ((above.IsValid && above.LiquidLevel > 0 ) || creature.AI.Movement.CanFly)
             {
                 return new Wrap(() => SwimUp(creature)) { Name = "Swim up"};
             }

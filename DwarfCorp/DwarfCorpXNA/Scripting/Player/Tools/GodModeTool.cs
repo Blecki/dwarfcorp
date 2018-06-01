@@ -185,8 +185,7 @@ namespace DwarfCorp
                         string type = Command.Substring(6);
                         var v = vox;
                         v.Type = VoxelLibrary.GetVoxelType(type);
-                        v.WaterCell = new WaterCell();
-                        v.Health = vox.Type.StartingHealth;
+                        v.QuickSetLiquid(LiquidType.None, 0);
 
                         if (type == "Magic")
                         {
@@ -204,7 +203,7 @@ namespace DwarfCorp
                                     var v = vox;
                                     Player.World.Master.Faction.OnVoxelDestroyed(vox);
                                     v.Type = VoxelLibrary.emptyType;
-                                    v.WaterCell = new WaterCell();
+                                    v.QuickSetLiquid(LiquidType.None, 0);
                                 }
                                 break;
                             case "Kill Block":
@@ -219,11 +218,7 @@ namespace DwarfCorp
                                     if (vox.IsEmpty)
                                     {
                                         var v = vox;
-                                        v.WaterCell = new WaterCell
-                                        {
-                                            Type = LiquidType.Water,
-                                            WaterLevel = WaterManager.maxWaterLevel
-                                        };
+                                        v.QuickSetLiquid(LiquidType.Water, WaterManager.maxWaterLevel);
                                     }
                                 }
                                 break;
@@ -232,11 +227,7 @@ namespace DwarfCorp
                                     if (vox.IsEmpty)
                                     {
                                         var v = vox;
-                                        v.WaterCell = new WaterCell
-                                        {
-                                            Type = LiquidType.Lava,
-                                            WaterLevel = WaterManager.maxWaterLevel
-                                        };
+                                        v.QuickSetLiquid(LiquidType.Lava, WaterManager.maxWaterLevel);
                                     }
                                 }
                                 break;
