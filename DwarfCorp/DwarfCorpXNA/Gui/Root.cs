@@ -698,7 +698,7 @@ namespace DwarfCorp.Gui
             var scale = RenderData.RealScreen.Width / RenderData.VirtualScreen.Width;
 
             // Need to offset by the subpixel portion to avoid screen artifacts.
-            // Remove this offset is porting to Monogame, monogame does it correctly.
+            // Remove this offset if porting to Monogame, monogame does it correctly.
             RenderData.Effect.Parameters["World"].SetValue(
                 Matrix.CreateTranslation(RenderData.RealScreen.X, RenderData.RealScreen.Y, 1.0f)
                 * Matrix.CreateScale(scale)
@@ -732,9 +732,8 @@ namespace DwarfCorp.Gui
                 if (SpecialHighligtedWidget == null || !SpecialHighligtedWidget.Hidden)
                 {
                     if (SpecialHighligtedWidget != null)
-                    {
                         UpdateHighlightRegion(SpecialHighligtedWidget);
-                    }
+
                     var sheet = GetTileSheet(SpecialHiliteSheet);
                     var area = SpecialHiliteRegion.Value.Interior(-sheet.TileWidth, -sheet.TileHeight,
                         -sheet.TileWidth, -sheet.TileHeight);
@@ -748,9 +747,7 @@ namespace DwarfCorp.Gui
                 if (SpecialHighligtedWidget == null || !SpecialHighligtedWidget.Hidden)
                 {
                     if (SpecialHighligtedWidget != null)
-                    {
                         UpdateHighlightRegion(SpecialHighligtedWidget);
-                    }
 
                     var tileSheet = GetTileSheet(SpecialIndicator.Sheet);
                     var mouseMesh = Mesh.Quad()

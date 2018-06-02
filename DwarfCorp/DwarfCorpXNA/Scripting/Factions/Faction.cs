@@ -846,19 +846,6 @@ namespace DwarfCorp
         public void AddMinion(CreatureAI minion)
         {
             Minions.Add(minion);
-            Inventory targetInventory = minion.GetRoot().GetComponent<Inventory>();
-
-            if (targetInventory != null)
-            {
-                targetInventory.OnDeath += resources =>
-                {
-                    if (resources == null) return;
-
-                    var tasks = new List<Task>();
-                    foreach (var item in resources)
-                        World.Master.TaskManager.AddTask(new GatherItemTask(item));
-                };
-            }
         }
 
         public void AddMoney(DwarfBux money)
