@@ -276,7 +276,7 @@ namespace DwarfCorp
         {
             foreach (var tail in Tail)
             {
-                tail.Sprite.Delete();
+                tail.Sprite.GetRoot().Delete();
             }
             base.Delete();
         

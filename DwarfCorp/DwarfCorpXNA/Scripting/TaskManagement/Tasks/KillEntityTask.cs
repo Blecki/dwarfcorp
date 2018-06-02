@@ -79,7 +79,7 @@ namespace DwarfCorp
                 return null;
 
             var otherCreature = EntityToKill.GetRoot().GetComponent<Creature>();
-            if (otherCreature != null && otherCreature.IsDead)
+            if (otherCreature == null || (otherCreature != null && otherCreature.IsDead) || otherCreature.AI == null)
                 return null;
 
             if (otherCreature != null && !creature.AI.FightOrFlight(otherCreature.AI))

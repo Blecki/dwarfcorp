@@ -139,7 +139,7 @@ namespace DwarfCorp
 
             if (PreviewBody != null)
             {
-                PreviewBody.Delete();
+                PreviewBody.GetRoot().Delete();
                 PreviewBody = null;
             }
 

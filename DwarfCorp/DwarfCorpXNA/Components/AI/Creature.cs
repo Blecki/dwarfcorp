@@ -365,6 +365,14 @@ namespace DwarfCorp
                 addToSpeciesCount();
             }
 
+            if (AI == null)
+            {
+                Console.Out.WriteLine("Error: creature {0} {1} has no AI. Deleting it.", Name, GlobalID);
+                GetRoot().Delete();
+                return;
+            }
+
+
             if (!Active) return;
 
             UpdateCloak();
@@ -394,6 +402,9 @@ namespace DwarfCorp
 
         private void MakeNoises()
         {
+            if (AI == null)
+                return;
+
             if (MathFunctions.RandEvent(0.0001f))
             {
                 NoiseMaker.MakeNoise("Chirp", AI.Position, true, 0.25f);

@@ -78,7 +78,7 @@ namespace DwarfCorp
             {
                 foreach (var body in displayObjects)
                 {
-                    body.Delete();
+                    body.GetRoot().Delete();
                 }
                 displayObjects.Clear();
             }
@@ -113,7 +113,7 @@ namespace DwarfCorp
             {
                 foreach (var thing in displayObjects)
                 {
-                    thing.Delete();
+                    thing.GetRoot().Delete();
                 }
             }
         }
@@ -391,7 +391,7 @@ namespace DwarfCorp
             {
                 foreach (var thing in displayObjects)
                 {
-                    thing.Delete();
+                    thing.GetRoot().Delete();
                 }
             }
 
@@ -511,7 +511,7 @@ namespace DwarfCorp
             {
                 foreach (var thing in displayObjects)
                 {
-                    thing.Delete();
+                    thing.GetRoot().Delete();
                 }
             }
 

@@ -264,9 +264,13 @@ namespace DwarfCorp
         /// <summary> Called whenever a list of enemies has been sensed by the creature </summary>
         private void Sensor_OnEnemySensed(List<CreatureAI> enemies)
         {
+            if (Creature == null)
+                return;
+
             if (enemies.Count > 0)
             {
-                foreach (CreatureAI threat in enemies.Where(threat => !Faction.Threats.Contains(threat.Creature)))
+                enemies.RemoveAll(threat => threat == null || threat.Creature == null);
+                foreach (CreatureAI threat in enemies.Where(threat => threat != null && threat.Creature != null && !Faction.Threats.Contains(threat.Creature)))
                 {
                     Faction.Threats.Add(threat.Creature);
                 }

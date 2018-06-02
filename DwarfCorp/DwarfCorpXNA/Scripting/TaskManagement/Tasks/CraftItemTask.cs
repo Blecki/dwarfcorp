@@ -73,14 +73,14 @@ namespace DwarfCorp
         {
             if (!CraftDesignation.Finished)
             {
-                if (CraftDesignation.WorkPile != null) CraftDesignation.WorkPile.Delete();
+                if (CraftDesignation.WorkPile != null) CraftDesignation.WorkPile.GetRoot().Delete();
                 if (CraftDesignation.HasResources)
                     foreach (var resource in CraftDesignation.SelectedResources)
                     {
                         var resourceEntity = new ResourceEntity(Faction.World.ComponentManager, resource, CraftDesignation.Entity.GlobalTransform.Translation);
                         Faction.World.ComponentManager.RootComponent.AddChild(resourceEntity);
                     }
-                CraftDesignation.Entity.Delete();
+                CraftDesignation.Entity.GetRoot().Delete();
             }
 
             Faction.Designations.RemoveEntityDesignation(CraftDesignation.Entity, DesignationType.Craft);

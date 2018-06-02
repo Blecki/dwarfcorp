@@ -85,7 +85,7 @@ namespace DwarfCorp
                 if (OnCast(tree))
                 {
                     CreateEntity(body.Position);
-                    body.Delete();
+                    body.GetRoot().Delete();
                 }
             }
 

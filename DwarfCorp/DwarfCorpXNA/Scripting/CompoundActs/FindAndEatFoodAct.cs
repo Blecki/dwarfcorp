@@ -156,7 +156,7 @@ namespace DwarfCorp
 
                         Agent.Creature.Status.Hunger.CurrentValue += resource.FoodContent;
                         Agent.Creature.AddThought(Thought.ThoughtType.AteFood);
-                        FoodBody.Delete();
+                        FoodBody.GetRoot().Delete();
                         yield return Act.Status.Success;
                     }
                     yield break;

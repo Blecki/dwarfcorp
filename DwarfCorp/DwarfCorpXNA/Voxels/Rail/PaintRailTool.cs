@@ -75,7 +75,7 @@ namespace DwarfCorp.Rail
                         RailHelper.Place(Player, PreviewBodies, GodModeSwitch);
                     else
                         foreach (var piece in PreviewBodies)
-                            piece.Delete();
+                            piece.GetRoot().Delete();
 
                     PreviewBodies.Clear();
                     PathVoxels.Clear();
@@ -96,7 +96,7 @@ namespace DwarfCorp.Rail
         public override void OnEnd()
         {
             foreach (var body in PreviewBodies)
-                body.Delete();
+                body.GetRoot().Delete();
             PreviewBodies.Clear();
             PathVoxels.Clear();
             SelectedResources = null;
@@ -344,7 +344,7 @@ namespace DwarfCorp.Rail
 
                     while (bodyCounter < PreviewBodies.Count)
                     {
-                        PreviewBodies[bodyCounter].Delete();
+                        PreviewBodies[bodyCounter].GetRoot().Delete();
                         bodyCounter += 1;
                     }
 

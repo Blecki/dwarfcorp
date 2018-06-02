@@ -97,7 +97,7 @@ namespace DwarfCorp.Rail
         public override void OnEnd()
         {
             foreach (var body in PreviewBodies)
-                body.Delete();
+                body.GetRoot().Delete();
             PreviewBodies.Clear();
             Pattern = null;
             Player.VoxSelector.DrawVoxel = true;
@@ -112,7 +112,7 @@ namespace DwarfCorp.Rail
         private void CreatePreviewBodies(ComponentManager ComponentManager, VoxelHandle Location)
         {
             foreach (var body in PreviewBodies)
-                body.Delete();
+                body.GetRoot().Delete();
 
             PreviewBodies.Clear();
             foreach (var piece in Pattern.Pieces)

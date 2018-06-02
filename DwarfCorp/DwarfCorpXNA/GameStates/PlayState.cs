@@ -1403,7 +1403,7 @@ namespace DwarfCorp.GameStates
                                 // Todo: This should never be true.
                                 if (tool.PreviewBody != null)
                                 {
-                                    tool.PreviewBody.Delete();
+                                    tool.PreviewBody.GetRoot().Delete();
                                     tool.PreviewBody = null;
                                 }
 

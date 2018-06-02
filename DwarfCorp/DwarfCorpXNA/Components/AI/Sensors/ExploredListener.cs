@@ -64,7 +64,7 @@ namespace DwarfCorp
         {
             if (V.Type == VoxelChangeEventType.Explored)
             {
-                Delete();
+                GetRoot().Delete();
                 EntityFactory.CreateEntity<GameComponent>(EntityToSpawn, SpawnLocation, BlackboardData);
             }
         }

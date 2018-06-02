@@ -214,7 +214,7 @@ namespace DwarfCorp
 
                             if (ExplosionProgress >= OrderedExplosionList.Count)
                             {
-                                Delete();
+                                GetRoot().Delete();
                                 _state = State.Done;
                                 break;
                             }

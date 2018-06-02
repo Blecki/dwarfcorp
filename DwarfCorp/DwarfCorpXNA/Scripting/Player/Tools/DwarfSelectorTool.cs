@@ -217,7 +217,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    sb.Append(bodyList[i].Name);
+                    sb.Append(bodyList[i].GetDescription());
                 }
             }
             Player.World.ShowTooltip(sb.ToString());

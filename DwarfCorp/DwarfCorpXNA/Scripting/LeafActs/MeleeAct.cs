@@ -315,9 +315,16 @@ namespace DwarfCorp
                     Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
                     Creature.CurrentCharacterMode = CharacterMode.Attacking;
                     Creature.OverrideCharacterMode = true;
+                    Timer timeout = new Timer(10.0f, true);
                     while (!CurrentAttack.Perform(Creature, Target, DwarfTime.LastTime, Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz,
                             Creature.AI.Position, Creature.Faction.Name))
                     {
+                        timeout.Update(DwarfTime.LastTime);
+                        if (timeout.HasTriggered)
+                        {
+                            break;
+                        }
+
                         Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
                         if (Creature.AI.Movement.CanFly)
                         {
@@ -326,8 +333,14 @@ namespace DwarfCorp
                         yield return Status.Running;
                     }
 
+                    timeout.Reset();
                     while (!Agent.Creature.Sprite.AnimPlayer.IsDone())
                     {
+                        timeout.Update(DwarfTime.LastTime);
+                        if (timeout.HasTriggered)
+                        {
+                            break;
+                        }
                         if (Creature.AI.Movement.CanFly)
                         {
                             Creature.Physics.ApplyForce(-Creature.Physics.Gravity * 0.1f, DwarfTime.Dt);

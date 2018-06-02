@@ -152,13 +152,13 @@ namespace DwarfCorp.Rail
                     {
                         (entity as RailEntity).UpdatePiece(piece, actualPosition);
                         (existingDesignation.Tag as CraftDesignation).Progress = 0.0f;
-                        body.Delete();
+                        body.GetRoot().Delete();
                         addNewDesignation = false;
                         finalEntity = entity as RailEntity;
                     }
                     else
                     {
-                        (entity as RailEntity).Delete();
+                        (entity as RailEntity).GetRoot().Delete();
                         hasResources = true;
                     }
 
@@ -202,7 +202,7 @@ namespace DwarfCorp.Rail
                     {
                         var designation = existingDesignation.Tag as CraftDesignation;
                         if (designation != null && designation.WorkPile != null)
-                            designation.WorkPile.Delete();
+                            designation.WorkPile.GetRoot().Delete();
                         Player.Faction.Designations.RemoveEntityDesignation(finalEntity, DesignationType.Craft);
                     }
 
