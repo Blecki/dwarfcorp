@@ -159,7 +159,7 @@ namespace DwarfCorp
                     {
                         first = false;
                     }
-                    description +=  selected.Type.Name + " at " + selected.Coordinate.GetLocalVoxelCoordinate() + ". Health: " + selected.Health;
+                    description +=  selected.Type.Name + " at " + selected.Coordinate.GetLocalVoxelCoordinate() + ".";
                 }
             }
 

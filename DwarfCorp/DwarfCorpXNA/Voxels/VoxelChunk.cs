@@ -190,7 +190,7 @@ namespace DwarfCorp
                     for (int y = VoxelConstants.ChunkSizeY - 1; y >= 0; y--)
                     {
                         LocalVoxelCoordinate coord = new LocalVoxelCoordinate(x, y, z);
-                        VoxelHandle voxel = new VoxelHandle(this, coord) {SunColor = 255};
+                        VoxelHandle voxel = new VoxelHandle(this, coord) { Sunlight = true };
                         if (!voxel.IsEmpty && !voxel.Type.IsTransparent) break;
                     }
                 }

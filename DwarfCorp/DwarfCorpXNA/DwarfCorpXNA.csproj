@@ -801,7 +801,6 @@
     <Compile Include="Voxels\VoxelChunk.cs" />
     <Compile Include="Voxels\VoxelLibrary.cs" />
     <Compile Include="Voxels\VoxelType.cs" />
-    <Compile Include="Voxels\WaterCell.cs" />
     <Compile Include="Voxels\WaterManager.cs" />
     <Compile Include="Graphics\Effects\WaterRenderer.cs" />
     <Compile Include="World\BiomeData.cs" />

@@ -95,7 +95,7 @@ namespace DwarfCorp
                     if (Y < VoxelConstants.ChunkSizeY - 1)
                     {
                         var voxelAbove = new VoxelHandle(this, new LocalVoxelCoordinate(x, Y + 1, z));
-                        if (!voxelAbove.IsEmpty || voxelAbove.WaterCell.WaterLevel != 0)
+                        if (!voxelAbove.IsEmpty || voxelAbove.LiquidLevel != 0)
                             continue;
                     }
 
@@ -137,7 +137,7 @@ namespace DwarfCorp
                         var mote = GenerateGrassMote(
                             Manager.World,
                             v.WorldPosition + new Vector3(0.5f, 1.0f + s * 0.5f + vOffset, 0.5f) + smallNoise,
-                            new Color(v.SunColor, 128, 0),
+                            new Color(v.Sunlight ? 255 : 0, 128, 0),
                             s,
                             moteDetail.Name);
 

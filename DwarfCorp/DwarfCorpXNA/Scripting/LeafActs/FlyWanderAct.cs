@@ -211,7 +211,7 @@ namespace DwarfCorp
                             yield return Act.Status.Running;
                             continue;
                         }
-                        if (vox.IsValid && vox.WaterCell.WaterLevel > 0)
+                        if (vox.IsValid && vox.LiquidLevel > 0)
                         {
                             yield return Act.Status.Running;
                             continue;
@@ -223,7 +223,7 @@ namespace DwarfCorp
                             var below = new VoxelHandle(Creature.World.ChunkManager.ChunkData,
                                 vox.Coordinate + new GlobalVoxelOffset(0, -1, 0));
 
-                            if (below.IsValid && !below.IsEmpty && below.WaterCell.WaterLevel == 0)
+                            if (below.IsValid && !below.IsEmpty && below.LiquidLevel == 0)
                             {
                                 State = FlyState.Perching;
                                 continue;

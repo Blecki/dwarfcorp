@@ -65,7 +65,6 @@ namespace DwarfCorp
                 if (designation != null)
                 {
                     creature.World.MakeAnnouncement(String.Format("{0} cancelled gather task because it is unreachable", creature.Stats.FullName));
-                    creature.Faction.Designations.RemoveEntityDesignation(ItemToGather, DesignationType.Gather);
                     if (creature.Faction == creature.World.PlayerFaction)
                     {
                         creature.World.Master.TaskManager.CancelTask(designation.Task);

@@ -81,13 +81,11 @@ namespace DwarfCorp
                     if (!Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !(Player.Faction.RoomBuilder.IsInRoom(v) || Player.Faction.RoomBuilder.IsBuildDesignation(v)))
                     {
                         var task = new KillVoxelTask(v);
-                        Player.Faction.Designations.AddVoxelDesignation(v, DesignationType.Dig, null, task);
                         assignments.Add(task);
                     }
 
                 }
 
-                // Todo: Create tasks, but make tasks create designations. Still needs to handle duplicates.
                 Player.TaskManager.AddTasks(assignments);
                 List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.SelectedMinions, Task.TaskCategory.Dig);
                 OnConfirm(minions);

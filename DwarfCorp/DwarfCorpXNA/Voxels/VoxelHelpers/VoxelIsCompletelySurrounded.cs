@@ -32,7 +32,7 @@ namespace DwarfCorp
             {
                 var voxelHandle = new VoxelHandle(V.Chunk.Manager.ChunkData, neighborCoordinate);
                 if (!voxelHandle.IsValid) return false;
-                if (voxelHandle.IsEmpty && voxelHandle.WaterCell.WaterLevel < 4) return false;
+                if (voxelHandle.IsEmpty && voxelHandle.LiquidLevel < 4) return false;
             }
 
             return true;

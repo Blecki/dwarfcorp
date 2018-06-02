@@ -121,15 +121,10 @@ namespace DwarfCorp
         {
             if (creature.Blackboard.GetData<bool>("NoPath", false))
             {
-                var designation = creature.Faction.Designations.GetVoxelDesignation(Voxel, DesignationType.Put);
-                if (designation != null)
+                if (creature.Faction == creature.World.PlayerFaction)
                 {
-                    creature.Faction.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Put);
-                    if (creature.Faction == creature.World.PlayerFaction)
-                    {
-                        creature.World.MakeAnnouncement(String.Format("{0} cancelled build task because it is unreachable", creature.Stats.FullName));
-                        creature.World.Master.TaskManager.CancelTask(this);
-                    }
+                    creature.World.MakeAnnouncement(String.Format("{0} cancelled build task because it is unreachable", creature.Stats.FullName));
+                    creature.World.Master.TaskManager.CancelTask(this);
                 }
                 return false;
             }

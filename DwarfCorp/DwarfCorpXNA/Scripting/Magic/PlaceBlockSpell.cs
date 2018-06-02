@@ -97,7 +97,7 @@ namespace DwarfCorp
                     World.ParticleManager.Trigger("star_particle", p, Color.White, 4);
                     var lSelected = selected;
                     lSelected.Type = VoxelLibrary.GetVoxelType(VoxelType);
-                    lSelected.WaterCell = new WaterCell();
+                    lSelected.QuickSetLiquid(LiquidType.None, 0);
 
                     if (VoxelType == "Magic")
                     {

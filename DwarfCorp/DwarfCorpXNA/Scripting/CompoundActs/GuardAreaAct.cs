@@ -89,15 +89,7 @@ namespace DwarfCorp
                 {
                     Agent.World.MakeAnnouncement(String.Format("{0} cancelled guard task because it is unreachable", Agent.Stats.FullName));
                     var designation = Agent.Faction.Designations.GetVoxelDesignation(voxel, DesignationType.Guard);
-                    if (designation != null)
-                    {
-                        Agent.Faction.Designations.RemoveVoxelDesignation(voxel, DesignationType.Guard);
-                    }
-                    var keys = Agent.Faction.GuardedVoxels.Where(pair => pair.Value == voxel).ToList();
-                    foreach(var key in keys)
-                    {
-                        Agent.Faction.GuardedVoxels.Remove(key.Key);
-                    }
+                    Agent.World.Master.TaskManager.CancelTask(designation.Task);
                 }
                 Agent.Blackboard.SetData<bool>("NoPath", false);
                 yield return Act.Status.Fail;

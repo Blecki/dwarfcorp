@@ -192,12 +192,11 @@ namespace DwarfCorp
                     for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                     {
                         var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
-                        int index = VoxelConstants.DataIndexOf(new LocalVoxelCoordinate(x, y, z));
-                        if (fogOfWar && !chunk.Data.IsExplored[index]) continue;
+                        if (fogOfWar && !voxel.IsExplored) continue;
 
-                        if (voxel.WaterCell.WaterLevel > 0)
+                        if (voxel.LiquidLevel > 0)
                         {
-                            var liqType = voxel.WaterCell.Type;
+                            var liqType = voxel.LiquidType;
 
                             // We need to see if we changed types and should change the data we are writing to.
                             if (liqType != curLiqType)
@@ -235,7 +234,7 @@ namespace DwarfCorp
                                 {
                                     if (face == BoxFace.Top)
                                     {
-                                        if (!(vox.WaterCell.WaterLevel == 0 || y == (int)chunk.Manager.World.Master.MaxViewingLevel))
+                                        if (!(vox.LiquidLevel == 0 || y == (int)chunk.Manager.World.Master.MaxViewingLevel))
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;
@@ -243,7 +242,7 @@ namespace DwarfCorp
                                     }
                                     else
                                     {
-                                        if (vox.WaterCell.WaterLevel != 0 || !vox.IsEmpty)
+                                        if (vox.LiquidLevel != 0 || !vox.IsEmpty)
                                         {
                                             cache.drawFace[(int)face] = false;
                                             continue;
@@ -387,7 +386,7 @@ namespace DwarfCorp
 
             // These are reused for every face.
             var origin = voxel.WorldPosition;
-            float centerWaterlevel = voxel.WaterCell.WaterLevel;
+            float centerWaterlevel = voxel.LiquidLevel;
 
             float[] foaminess = new float[4];
 
@@ -432,8 +431,8 @@ namespace DwarfCorp
 
                             // Now actually do the math.
                             count++;
-                            if (neighborVoxel.WaterCell.WaterLevel < 1) emptyNeighbors++;
-                            if (neighborVoxel.WaterCell.Type == LiquidType.None && !neighborVoxel.IsEmpty) shoreLine = true;
+                            if (neighborVoxel.LiquidLevel < 1) emptyNeighbors++;
+                            if (neighborVoxel.LiquidType == LiquidType.None && !neighborVoxel.IsEmpty) shoreLine = true;
                         }
 
                         foaminess[vertOffset] = emptyNeighbors / count;
@@ -456,7 +455,7 @@ namespace DwarfCorp
                             var neighbors = VoxelHelpers.EnumerateVertexNeighbors2D(voxel.Coordinate, currentVertex)
                                 .Select(c => new VoxelHandle(chunk.Manager.ChunkData, c))
                                 .Where(h => h.IsValid)
-                                .Select(h => (float)h.WaterCell.WaterLevel / 8.0f);
+                                .Select(h => (float)h.LiquidLevel / 8.0f);
 
                             if (neighbors.Count() > 0)
                                 pos.Y *= neighbors.Average();

@@ -43,9 +43,10 @@ namespace DwarfCorp
     /// Tells a creature that it should destroy a voxel via digging.
     /// </summary>
     [Newtonsoft.Json.JsonObject(IsReference = true)]
-    internal class KillVoxelTask : Task
+    public class KillVoxelTask : Task
     {
-        public VoxelHandle VoxelToKill = VoxelHandle.InvalidHandle;
+        public VoxelHandle Voxel = VoxelHandle.InvalidHandle;
+        public float VoxelHealth { get; set; }
 
         public KillVoxelTask()
         {
@@ -58,19 +59,20 @@ namespace DwarfCorp
         {
             MaxAssignable = 3;
             Name = "Mine Block " + vox.Coordinate;
-            VoxelToKill = vox;
+            Voxel = vox;
             Priority = PriorityType.Low;
             Category = TaskCategory.Dig;
+            VoxelHealth = Voxel.Type.StartingHealth;
         }
 
         public override Act CreateScript(Creature creature)
         {
-            return new KillVoxelAct(VoxelToKill, creature.AI);
+            return new KillVoxelAct(creature.AI, this);
         }
 
         public override bool ShouldRetry(Creature agent)
         {
-            return !VoxelToKill.IsEmpty;
+            return !Voxel.IsEmpty;
         }
 
         public override Feasibility IsFeasible(Creature agent)
@@ -78,13 +80,13 @@ namespace DwarfCorp
             if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Dig))
                 return Feasibility.Infeasible;
 
-            if (!VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0)
+            if (!Voxel.IsValid || Voxel.IsEmpty)
                 return Feasibility.Infeasible;
 
             if (agent.AI.Status.IsAsleep)
                 return Feasibility.Infeasible;
 
-            if (VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill) || VoxelHelpers.VoxelIsSurroundedByWater(VoxelToKill))
+            if (VoxelHelpers.VoxelIsCompletelySurrounded(Voxel) || VoxelHelpers.VoxelIsSurroundedByWater(Voxel))
                 return Feasibility.Infeasible;
 
             return Feasibility.Feasible;
@@ -92,40 +94,45 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return !VoxelToKill.IsValid || VoxelToKill.IsEmpty || VoxelToKill.Health <= 0;
+            return !Voxel.IsValid || Voxel.IsEmpty;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            if (!VoxelToKill.IsValid)
+            if (!Voxel.IsValid)
                 return 1000;
 
             int surroundedValue = 0;
             float freeTopValue = 0;
             if (!alreadyCheckedFeasible)
             {
-                if (VoxelHelpers.VoxelIsCompletelySurrounded(VoxelToKill))
+                if (VoxelHelpers.VoxelIsCompletelySurrounded(Voxel))
                     surroundedValue = 10000;
 
-                var above = VoxelHelpers.GetVoxelAbove(VoxelToKill);
+                var above = VoxelHelpers.GetVoxelAbove(Voxel);
                 if (above.IsValid && !above.IsEmpty)
                 {
                     freeTopValue = 100;
                 }
             }
 
-            return (agent.AI.Position - VoxelToKill.WorldPosition).LengthSquared() + 10 * Math.Abs(VoxelConstants.ChunkSizeY - VoxelToKill.Coordinate.Y) + surroundedValue + freeTopValue;
+            return (agent.AI.Position - Voxel.WorldPosition).LengthSquared() + 10 * Math.Abs(VoxelConstants.ChunkSizeY - Voxel.Coordinate.Y) + surroundedValue + freeTopValue;
         }
 
         public override bool IsComplete(Faction faction)
         {
-            if (!VoxelToKill.IsValid) return false;
-            return VoxelToKill.IsEmpty;
+            if (!Voxel.IsValid) return false;
+            return Voxel.IsEmpty;
+        }
+
+        public override void OnEnqueued(Faction Faction)
+        {
+            Faction.Designations.AddVoxelDesignation(Voxel, DesignationType.Dig, null, this);
         }
 
         public override void OnDequeued(Faction Faction)
         {
-            Faction.Designations.RemoveVoxelDesignation(VoxelToKill, DesignationType.Dig);
+            Faction.Designations.RemoveVoxelDesignation(Voxel, DesignationType.Dig);
         }
         
     }

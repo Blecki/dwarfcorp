@@ -179,10 +179,12 @@ namespace DwarfCorp
                 }
             }
 
-            Inventory targetInventory = Target.GetRoot().GetComponent<Inventory>();
-
-            if (targetInventory != null)
-                targetInventory.OnDeath += targetInventory_OnDeath;
+            if (Agent.Faction.Race.IsIntelligent)
+            {
+                var targetInventory = Target.GetRoot().GetComponent<Inventory>();
+                if (targetInventory != null)
+                    targetInventory.SetLastAttacker(Agent);
+            }
 
             CharacterMode defaultCharachterMode = Creature.AI.Movement.CanFly
                 ? CharacterMode.Flying
@@ -364,10 +366,9 @@ namespace DwarfCorp
 
                     Creature.CurrentCharacterMode = defaultCharachterMode;
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
+
                     if (Target.IsDead)
                     {
-                        Creature.Faction.Designations.RemoveEntityDesignation(Target, DesignationType.Attack);
-                                                
                         Target = null;
                         Agent.AddXP(10);
                         Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);
@@ -384,16 +385,6 @@ namespace DwarfCorp
 
                 yield return Status.Running;
             }
-        }
-
-        void targetInventory_OnDeath(List<Body> items)
-        {
-            if (items == null) return;
-            if (!Agent.Faction.Race.IsIntelligent)
-                return;
-
-            foreach (Body item in items)
-                Agent.Creature.Gather(item);
         }
     }
 

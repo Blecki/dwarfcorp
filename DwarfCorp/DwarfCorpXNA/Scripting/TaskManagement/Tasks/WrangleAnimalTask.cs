@@ -84,7 +84,6 @@ namespace DwarfCorp
                     if (creature.Faction == creature.World.PlayerFaction)
                     {
                         creature.World.MakeAnnouncement(String.Format("{0} stopped trying to catch {1} because it is unreachable.", creature.Stats.FullName, animal.Stats.FullName));
-                        creature.Faction.Designations.RemoveEntityDesignation(animal.GetRoot().GetComponent<Physics>(), DesignationType.Wrangle);
                         creature.World.Master.TaskManager.CancelTask(designation.Task);
                     }
                 }

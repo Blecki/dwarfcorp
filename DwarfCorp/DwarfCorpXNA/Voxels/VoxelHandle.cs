@@ -142,17 +142,17 @@ namespace DwarfCorp
         [JsonIgnore]
         public RampType RampType
         {
-            get { return _cache_Chunk.Data.RampTypes[_cache_Index]; }
+            get { return (RampType)(_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.RampTypeMask); }
             set {
-                if (value != _cache_Chunk.Data.RampTypes[_cache_Index])
+                if (value != (RampType)(_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.RampTypeMask))
                     _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
                     {
                         Type = VoxelChangeEventType.RampsChanged,
                         Voxel = this,
-                        OldRamps = _cache_Chunk.Data.RampTypes[_cache_Index],
+                        OldRamps = (RampType)(_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.RampTypeMask),
                         NewRamps = value
                     });
-                _cache_Chunk.Data.RampTypes[_cache_Index] = value;
+                _cache_Chunk.Data.RampsSunlightExplored[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.InverseRampTypeMask) | ((byte)value & VoxelConstants.RampTypeMask));
             }
         }
 
@@ -161,7 +161,6 @@ namespace DwarfCorp
         {
             get { return TypeID == 0; }
         }
-
 
         [JsonIgnore]
         public byte TypeID
@@ -198,31 +197,34 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public int SunColor
+        public bool Sunlight
         {
-            get { return _cache_Chunk.Data.SunColors[_cache_Index]; }
-            set { _cache_Chunk.Data.SunColors[_cache_Index] = (byte)value; }
+            get { return (_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.SunlightMask) != 0; }
+            set
+            {
+                _cache_Chunk.Data.RampsSunlightExplored[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.InverseSunlightMask) |
+                  (value ? VoxelConstants.SunlightMask : 0x0));
+            }
         }
 
         [JsonIgnore]
         public bool IsExplored
         {
-            get { return !GameSettings.Default.FogofWar || _cache_Chunk.Data.IsExplored[_cache_Index]; }
+            get { return !GameSettings.Default.FogofWar || (_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.ExploredMask) != 0; }
             set
             {
-                var existingValue = _cache_Chunk.Data.IsExplored[_cache_Index];
-                if (existingValue != value)
+                // This only ever changes from false to true, so we can take advantage of that fact.
+                if (value && (_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.ExploredMask) == 0)
                 {
-                    _cache_Chunk.Data.IsExplored[_cache_Index] = value;
+                    _cache_Chunk.Data.RampsSunlightExplored[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.InverseExploredMask) | VoxelConstants.ExploredMask);
                     InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
-                }
 
-                if (value && !existingValue)
                     _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
                     {
                         Type = VoxelChangeEventType.Explored,
                         Voxel = this
                     });
+                }
             }
         }
 
@@ -240,10 +242,10 @@ namespace DwarfCorp
         [JsonIgnore]
         public byte GrassType
         {
-            get { return _cache_Chunk.Data.GrassType[_cache_Index]; }
+            get { return (byte)(_cache_Chunk.Data.Grass[_cache_Index] >> VoxelConstants.GrassTypeShift); }
             set
             {
-                _cache_Chunk.Data.GrassType[_cache_Index] = value;
+                _cache_Chunk.Data.Grass[_cache_Index] = (byte)((_cache_Chunk.Data.Grass[_cache_Index] & VoxelConstants.GrassDecayMask) | (value << VoxelConstants.GrassTypeShift));
                InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
             }
         }
@@ -251,38 +253,53 @@ namespace DwarfCorp
         [JsonIgnore]
         public byte GrassDecay
         {
-            get { return _cache_Chunk.Data.GrassDecay[_cache_Index]; }
-            set { _cache_Chunk.Data.GrassDecay[_cache_Index] = value; }
+            get { return (byte)(_cache_Chunk.Data.Grass[_cache_Index] & VoxelConstants.GrassDecayMask); }
+            set { _cache_Chunk.Data.Grass[_cache_Index] = (byte)((_cache_Chunk.Data.Grass[_cache_Index] & VoxelConstants.GrassTypeMask) | (value & VoxelConstants.GrassDecayMask)); }
         }
 
         [JsonIgnore]
-        public WaterCell WaterCell
+        public LiquidType LiquidType
         {
-            get { return _cache_Chunk.Data.Water[_cache_Index]; }
+            get { return (LiquidType)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift); }
             set
             {
-                var existingLiquid = _cache_Chunk.Data.Water[_cache_Index];
-                if (existingLiquid.Type != LiquidType.None && value.Type == LiquidType.None)
+                var existingLiquid = (LiquidType)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift);
+                if (existingLiquid != LiquidType.None && value == LiquidType.None)
                     _cache_Chunk.Data.LiquidPresent[Coordinate.Y] -= 1;
-                if (existingLiquid.Type == LiquidType.None && value.Type != LiquidType.None)
+                if (existingLiquid == LiquidType.None && value != LiquidType.None)
                     _cache_Chunk.Data.LiquidPresent[Coordinate.Y] += 1;
 
-                _cache_Chunk.Data.Water[_cache_Index] = value;
+                _cache_Chunk.Data._Water[_cache_Index] = (byte)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.InverseLiquidTypeMask) 
+                    | ((byte)value << VoxelConstants.LiquidTypeShift));
             }
         }
 
         [JsonIgnore]
-        public float Health
+        public byte LiquidLevel
         {
-            get { return (float)_cache_Chunk.Data.Health[_cache_Index]; }
-            set
-            {
-                // Todo: Bad spot for this. Ideally is checked by whatever is trying to damage the voxel.
-                if (Type.IsInvincible) return;
-                _cache_Chunk.Data.Health[_cache_Index] = (byte)(Math.Max(Math.Min(value, 255.0f), 0.0f));
+            get { return (byte)(_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.LiquidLevelMask); }
+            set {
+                _cache_Chunk.Data._Water[_cache_Index] = (byte)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.InverseLiquidLevelMask) 
+                    | (value & VoxelConstants.LiquidLevelMask));
             }
         }
 
+        /// <summary>
+        /// Use when setting both type and level at once. Slightly faster.
+        /// </summary>
+        /// <param name="Type"></param>
+        /// <param name="Level"></param>
+        public void QuickSetLiquid(LiquidType Type, byte Level)
+        {
+            var existingLiquid = (LiquidType)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift);
+            if (existingLiquid != LiquidType.None && Type == LiquidType.None)
+                _cache_Chunk.Data.LiquidPresent[Coordinate.Y] -= 1;
+            if (existingLiquid == LiquidType.None && Type != LiquidType.None)
+                _cache_Chunk.Data.LiquidPresent[Coordinate.Y] += 1;
+
+            _cache_Chunk.Data._Water[_cache_Index] = (byte)(((byte)Type << VoxelConstants.LiquidTypeShift) | (Level & VoxelConstants.LiquidLevelMask));
+        }
+        
         #endregion
 
         #region Chunk Invalidation
@@ -292,9 +309,9 @@ namespace DwarfCorp
         /// Should only be used by ChunkGenerator as it can break geometry building.
         /// </summary>
         /// <param name="Value"></param>
-        public void RawSetIsExplored(bool Value)
+        public void RawSetIsExplored()
         {
-            _cache_Chunk.Data.IsExplored[_cache_Index] = Value;
+            _cache_Chunk.Data.RampsSunlightExplored[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.InverseExploredMask) | VoxelConstants.ExploredMask);
         }
 
         /// <summary>
@@ -308,10 +325,9 @@ namespace DwarfCorp
 
             // Change actual data
             _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
-            _cache_Chunk.Data.Health[_cache_Index] = (byte)NewType.StartingHealth;
 
             // Changing the voxel type clears grass.
-            _cache_Chunk.Data.GrassType[_cache_Index] = 0;
+            _cache_Chunk.Data.Grass[_cache_Index] = 0;
 
             // Did we go from empty to filled or vice versa? Update filled counter.
             if (previous == 0 && NewType.ID != 0)
@@ -327,8 +343,7 @@ namespace DwarfCorp
         /// <param name="Type"></param>
         public void RawSetGrass(byte Type)
         {
-            _cache_Chunk.Data.GrassType[_cache_Index] = Type;
-            _cache_Chunk.Data.GrassDecay[_cache_Index] = GrassLibrary.GetGrassType(Type).InitialDataValue;
+            _cache_Chunk.Data.Grass[_cache_Index] = (byte)((Type << VoxelConstants.GrassTypeShift) + (GrassLibrary.GetGrassType(Type).InitialDecayValue & VoxelConstants.GrassDecayMask));
         }
 
         private void OnTypeSet(VoxelType NewType)
@@ -341,10 +356,9 @@ namespace DwarfCorp
 
             // Change actual data
             _cache_Chunk.Data.Types[_cache_Index] = (byte)NewType.ID;
-            _cache_Chunk.Data.Health[_cache_Index] = (byte)NewType.StartingHealth;
 
             // Changing the voxel type clears grass.
-            _cache_Chunk.Data.GrassType[_cache_Index] = 0;
+            _cache_Chunk.Data.Grass[_cache_Index] = 0;
 
             // Did we go from empty to filled or vice versa? Update filled counter.
             if (previous == 0 && NewType.ID != 0)
@@ -364,14 +378,14 @@ namespace DwarfCorp
             {
                 var localCoordinate = Coordinate.GetLocalVoxelCoordinate();
                 var Y = localCoordinate.Y - 1;
-                var sunColor = (NewType.ID == 0 || NewType.IsTransparent) ? this.SunColor : 0;
+                var sunColor = (NewType.ID == 0 || NewType.IsTransparent) ? this.Sunlight : false;
                 var below = VoxelHandle.InvalidHandle;
 
                 while (Y >= 0)
                 {
                     below = new VoxelHandle(Chunk, new LocalVoxelCoordinate(localCoordinate.X, Y,
                         localCoordinate.Z));
-                    below.SunColor = sunColor;
+                    below.Sunlight = sunColor;
                     InvalidateVoxel(Chunk, new GlobalVoxelCoordinate(Coordinate.X, Y, Coordinate.Z), Y);
                     if (!below.IsEmpty && !below.Type.IsTransparent)
                         break;

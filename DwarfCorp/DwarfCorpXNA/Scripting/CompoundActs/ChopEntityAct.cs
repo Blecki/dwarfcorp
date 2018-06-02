@@ -55,7 +55,6 @@ namespace DwarfCorp
                 if (designation != null)
                 {
                     creature.World.MakeAnnouncement(String.Format("{0} cancelled harvest task because it is unreachable", creature.Stats.FullName));
-                    creature.Faction.Designations.RemoveEntityDesignation(Entity, DesignationType.Chop);
                     if (creature.Faction == creature.World.PlayerFaction)
                     {
                         creature.World.Master.TaskManager.CancelTask(designation.Task);

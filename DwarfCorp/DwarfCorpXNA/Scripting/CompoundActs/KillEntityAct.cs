@@ -61,7 +61,6 @@ namespace DwarfCorp
                     if (creature.Faction == creature.World.PlayerFaction)
                     {
                         creature.World.MakeAnnouncement(String.Format("{0} stopped trying to kill {1} because it is unreachable.", creature.Stats.FullName, Entity.Name));
-                        creature.Faction.Designations.RemoveEntityDesignation(Entity, DesignationType.Attack);
                         creature.World.Master.TaskManager.CancelTask(designation.Task);
                     }
                 }

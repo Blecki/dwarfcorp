@@ -62,14 +62,12 @@ namespace DwarfCorp
         public List<InventoryItem> Resources { get; set; } 
         public float DropRate { get; set; }
 
-        public delegate void DieDelegate(List<Body> items);
+        [JsonIgnore]
+        private CreatureAI Attacker = null;
 
-        public event DieDelegate OnDeath;
-
-        protected virtual void OnOnDeath(List<Body> items)
+        public void SetLastAttacker(CreatureAI Creature)
         {
-            DieDelegate handler = OnDeath;
-            if (handler != null) handler(items);
+            Attacker = Creature;
         }
 
         public Inventory()
@@ -255,29 +253,29 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            if (!Active)
+            if (Active)
             {
-                base.Die();
-            }
-
-            Dictionary<ResourceType, int> resourceCounts = new Dictionary<ResourceType, int>();
-            foreach (var resource in Resources)
-            {
-                if (!resourceCounts.ContainsKey(resource.Resource))
+                var resourceCounts = new Dictionary<ResourceType, int>();
+                foreach (var resource in Resources)
                 {
-                    resourceCounts[resource.Resource] = 0;
+                    if (!resourceCounts.ContainsKey(resource.Resource))
+                    {
+                        resourceCounts[resource.Resource] = 0;
+                    }
+                    resourceCounts[resource.Resource]++;
                 }
-                resourceCounts[resource.Resource]++;
+
+                var aggregatedResources = resourceCounts.Select(c => new ResourceAmount(c.Key, c.Value));
+                var piles = EntityFactory.CreateResourcePiles(aggregatedResources, GetBoundingBox());
+
+                if (Attacker != null && !Attacker.IsDead)
+                    foreach (var item in piles)
+                        Attacker.Creature.Gather(item);
+                //else
+                //    foreach (var item in piles)
+                //        World.Master.TaskManager.AddTask(new GatherItemTask(item));
             }
 
-            List<ResourceAmount> aggregatedResources = new List<ResourceAmount>();
-            foreach(var resource in resourceCounts)
-            {
-                aggregatedResources.Add(new ResourceAmount(resource.Key, resource.Value));
-            }
-
-
-            OnOnDeath(EntityFactory.CreateResourcePiles(aggregatedResources, GetBoundingBox()).ToList());
             base.Die();
         }
 

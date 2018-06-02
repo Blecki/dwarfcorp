@@ -32,7 +32,7 @@ namespace DwarfCorp
             for (int y = p.Y; y >= 0; --y)
             {
                 var vox = new VoxelHandle(V.Chunk, new LocalVoxelCoordinate(p.X, y, p.Z));
-                if (vox.IsValid && (!vox.IsEmpty || vox.WaterCell.WaterLevel > 0))
+                if (vox.IsValid && (!vox.IsEmpty || vox.LiquidLevel > 0))
                     return vox;
             }
 

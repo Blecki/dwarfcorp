@@ -181,11 +181,7 @@ namespace DwarfCorp
                         var v = new VoxelHandle(baseVoxel.Chunk,
                             new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));
                         v.RawSetType(VoxelLibrary.GetVoxelType(0));
-                        v.WaterCell = new WaterCell
-                        {
-                            Type = LiquidType.None,
-                            WaterLevel = 0
-                        };
+                        v.QuickSetLiquid(LiquidType.None, 0);
                     }
 
                     if (averageHeight < h)
@@ -227,11 +223,7 @@ namespace DwarfCorp
                         var v = new VoxelHandle(baseVoxel.Chunk, 
                             new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));
                         v.RawSetType(VoxelLibrary.GetVoxelType("Scaffold"));
-                        v.WaterCell = new WaterCell
-                        {
-                            Type = LiquidType.None,
-                            WaterLevel = 0
-                        };
+                        v.QuickSetLiquid(LiquidType.None, 0);
 
                         if (y == averageHeight - 1)
                         {
