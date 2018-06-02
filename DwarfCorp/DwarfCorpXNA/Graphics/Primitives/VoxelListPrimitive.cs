@@ -976,7 +976,7 @@ namespace DwarfCorp
                 var v = new VoxelHandle(chunks.ChunkData, c);
                 if (!v.IsValid) continue;
 
-                color.SunColor = v.Sunlight ? 255 : 0;
+                color.SunColor += v.Sunlight ? 255 : 0;
                 if (!v.IsEmpty || !v.IsExplored)
                 {
                     if (v.Type.EmitsLight) color.DynamicColor = 255;

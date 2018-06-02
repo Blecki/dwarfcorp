@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class Cloud : Fixture, IUpdateableComponent
+    public class Cloud : SimpleSprite, IUpdateableComponent
     {
         [EntityFactory("Snow Cloud")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
@@ -55,7 +55,7 @@ namespace DwarfCorp
         }
 
         public Cloud(ComponentManager manager, float raininess, int maxRain, float height, Vector3 pos) :
-            base(manager, pos, new SpriteSheet(MathFunctions.RandEvent(0.5f) ? ContentPaths.Particles.cloud1 : ContentPaths.Particles.cloud2), new Point(0, 0))
+            base(manager, "Cloud", Matrix.CreateTranslation(pos), new SpriteSheet(MathFunctions.RandEvent(0.5f) ? ContentPaths.Particles.cloud1 : ContentPaths.Particles.cloud2), new Point(0, 0))
         {
             Matrix tf = LocalTransform;
             tf.Translation = new Vector3(pos.X, height, pos.Z);
