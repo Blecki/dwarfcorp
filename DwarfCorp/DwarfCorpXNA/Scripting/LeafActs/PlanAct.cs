@@ -56,8 +56,6 @@ namespace DwarfCorp
         public List<MoveAction> Path { get { return GetPath(); } set {  SetPath(value);} }
         public VoxelHandle Target { get { return GetTarget(); } set {  SetTarget(value);} }
 
-        public PlanSubscriber PlanSubscriber { get; set; }
-
         public int MaxTimeouts { get; set; }
 
         public int Timeouts { get; set; }
@@ -95,7 +93,6 @@ namespace DwarfCorp
             MaxExpansions = 10000;
             PathOut = pathOut;
             TargetName = target;
-            PlanSubscriber = new PlanSubscriber(agent.Manager.World.PlanService);
             WaitingOnResponse = false;
             MaxTimeouts = 4;
             Timeouts = 0;
@@ -105,8 +102,6 @@ namespace DwarfCorp
 
         public override void OnCanceled()
         {
-            if (PlanSubscriber != null)
-                PlanSubscriber.Service.RemoveSubscriber(PlanSubscriber);
             base.OnCanceled();
         }
 
@@ -257,7 +252,7 @@ namespace DwarfCorp
                     Path = null;
                     AstarPlanRequest aspr = new AstarPlanRequest
                     {
-                        Subscriber = PlanSubscriber,
+                        Subscriber = Agent.PlanSubscriber,
                         Start = voxUnder,
                         MaxExpansions = MaxExpansions,
                         Sender = Agent,
@@ -267,7 +262,7 @@ namespace DwarfCorp
 
                     aspr.GoalRegion = GetGoal();
 
-                    if(!PlanSubscriber.SendRequest(aspr))
+                    if(!Agent.PlanSubscriber.SendRequest(aspr))
                     {
                         yield return Status.Fail;
                         yield break;
@@ -285,10 +280,10 @@ namespace DwarfCorp
                     //    Drawer3D.DrawLine(Creature.AI.Position, Target.WorldPosition, Color.Blue, 0.25f);
                     Status statusResult = Status.Running;
 
-                    while (PlanSubscriber.Responses.Count > 0)
+                    while (Agent.PlanSubscriber.Responses.Count > 0)
                     {
                         AStarPlanResponse response;
-                        if(!PlanSubscriber.Responses.TryDequeue(out response))
+                        if(!Agent.PlanSubscriber.Responses.TryDequeue(out response))
                         {
                             yield return Status.Running;
                             continue;
@@ -307,7 +302,6 @@ namespace DwarfCorp
                         {
                             Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                             statusResult = Status.Fail;
-                            PlanSubscriber.Service.RemoveSubscriber(PlanSubscriber);
                             yield return Status.Fail;
                         }
                         else if (Timeouts <= MaxTimeouts)
@@ -319,7 +313,6 @@ namespace DwarfCorp
                         {
                             Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                             statusResult = Status.Fail;
-                            PlanSubscriber.Service.RemoveSubscriber(PlanSubscriber);
                         }
                     }
                     yield return statusResult;

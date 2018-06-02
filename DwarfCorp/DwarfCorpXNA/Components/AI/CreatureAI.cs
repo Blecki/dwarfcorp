@@ -1158,6 +1158,10 @@ namespace DwarfCorp
                     World.Master.TaskManager.AddTask(CurrentTask);
                 ChangeTask(null);
             }
+            if (PlanSubscriber != null)
+            {
+                PlanSubscriber.Service.RemoveSubscriber(PlanSubscriber);
+            }
             base.Die();
         }
 
@@ -1168,6 +1172,10 @@ namespace DwarfCorp
                 if (CurrentTask.ReassignOnDeath && Faction == World.PlayerFaction)
                     World.Master.TaskManager.AddTask(CurrentTask);
                 ChangeTask(null);
+            }
+            if (PlanSubscriber != null)
+            {
+                PlanSubscriber.Service.RemoveSubscriber(PlanSubscriber);
             }
             base.Delete();
         }
