@@ -75,17 +75,18 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            if (State == ToolState.Dragging)
+            if (SelectedBody != null)
             {
-
-                SelectedBody.LocalTransform = OrigTransform;
-                SelectedBody.UpdateTransform();
-
-                var tinter = SelectedBody.GetRoot().GetComponent<Tinter>();
-                if (tinter != null)
+                foreach (var tinter in SelectedBody.GetRoot().EnumerateAll().OfType<Tinter>())
                 {
                     tinter.VertexColorTint = Color.White;
                     tinter.Stipple = false;
+                }
+
+                if (State == ToolState.Dragging)
+                {
+                    SelectedBody.LocalTransform = OrigTransform;
+                    SelectedBody.PropogateTransforms();
                 }
             }
         }
@@ -129,15 +130,12 @@ namespace DwarfCorp
             if (State == ToolState.Selecting)
             {
                 if (SelectedBody != null)
-                {
-                    var tinter = SelectedBody.GetRoot().GetComponent<Tinter>();
-                    if (tinter != null)
+                    foreach (var tinter in SelectedBody.GetRoot().EnumerateAll().OfType<Tinter>())
                     {
                         tinter.VertexColorTint = Color.White;
                         tinter.Stipple = false;
                     }
-                }
-
+                
                 SelectedBody = Player.World.ComponentManager.SelectRootBodiesOnScreen(new Rectangle(mouse.X, mouse.Y, 1, 1), Player.World.Camera)
                     .Where(body => body.Tags.Contains("Moveable"))
                     .FirstOrDefault();
@@ -149,7 +147,11 @@ namespace DwarfCorp
                     else
                     {
                         Player.World.ShowTooltip("Left click and drag to move this " + SelectedBody.Name);
-                        SelectedBody.SetVertexColorRecursive(Color.Blue);
+                        foreach (var tinter in SelectedBody.GetRoot().EnumerateAll().OfType<Tinter>())
+                        {
+                            tinter.VertexColorTint = Color.Blue;
+                            tinter.Stipple = false;
+                        }
                     }
 
                     if (mouse.LeftButton == ButtonState.Pressed)
@@ -198,9 +200,7 @@ namespace DwarfCorp
 
                     var validPlacement = ObjectHelper.IsValidPlacement(voxelUnderMouse, craftItem, Player, SelectedBody, "move", "moved");
 
-                    // Todo: Enumerate ALL tinters
-                    var tinter = SelectedBody.GetRoot().GetComponent<Tinter>();
-                    if (tinter != null)
+                    foreach (var tinter in SelectedBody.GetRoot().EnumerateAll().OfType<Tinter>())
                     {
                         tinter.VertexColorTint = validPlacement ? Color.Green : Color.Red;
                         tinter.Stipple = true;
@@ -215,10 +215,10 @@ namespace DwarfCorp
                         else
                         {
                             SelectedBody.LocalTransform = OrigTransform;
-                            SelectedBody.UpdateTransform();
+                            SelectedBody.PropogateTransforms();
                         }
 
-                        if (tinter != null)
+                        foreach (var tinter in SelectedBody.GetRoot().EnumerateAll().OfType<Tinter>())
                         {
                             tinter.VertexColorTint = Color.White;
                             tinter.Stipple = false;
