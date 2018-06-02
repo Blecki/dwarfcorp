@@ -2223,14 +2223,14 @@ namespace DwarfCorp.GameStates
             BottomToolBar.SwitchTray(MainMenu);
             ChangeTool(GameMaster.ToolMode.SelectUnits);
 
-#endregion
+            #endregion
 
-#region GOD MODE
+            #region GOD MODE
 
             GodMenu = GuiRoot.RootItem.AddChild(new Gui.Widgets.GodMenu
             {
                 Master = Master,
-                AutoLayout = AutoLayout.FloatLeft
+                AutoLayout = AutoLayout.FloatTopLeft
             }) as Gui.Widgets.GodMenu;
 
             GodMenu.Hidden = true;
@@ -2241,6 +2241,7 @@ namespace DwarfCorp.GameStates
 
             // Now that it's laid out, bring the second bar to the front so commands draw over other shit.
             secondBar.BringToFront();
+            GodMenu.BringToFront();
         }
 
         /// <summary>

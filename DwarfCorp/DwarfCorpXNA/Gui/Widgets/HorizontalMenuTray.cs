@@ -52,7 +52,16 @@ namespace DwarfCorp.Gui.Widgets
             {
                 Root.SafeCall(OnLayout, this);
                 var rect = GetDrawableInterior();
-
+                if (AutoSizeColumns)
+                {
+                    var numItems = ItemSource.Count();
+                    var cols = (int)(Math.Ceiling(((float)numItems * ItemSize.Y) / Root.RenderData.VirtualScreen.Height));
+                    if (Columns != cols)
+                    {
+                        Clear();
+                        Construct();
+                    }
+                }
                 var pos = new Point(rect.X, rect.Y);
                 foreach (var child in EnumerateChildren())
                 {
@@ -90,8 +99,8 @@ namespace DwarfCorp.Gui.Widgets
             public MenuItem()
             {
                 Background = new TileReference("basic", 0);
-                TextColor = new Vector4(0, 0, 0, 1);
                 ChangeColorOnHover = true;
+                TextColor = Color.Black.ToVector4();
                 TextHorizontalAlign = HorizontalAlign.Center;
                 TextVerticalAlign = VerticalAlign.Center;
 
@@ -192,7 +201,6 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     Text = this.Text,
                     Background = new TileReference("basic", 0),
-                    TextColor = new Vector4(0, 0, 0, 1),
                     ChangeColorOnHover = true,
                     TextHorizontalAlign = HorizontalAlign.Center,
                     TextVerticalAlign = VerticalAlign.Center,

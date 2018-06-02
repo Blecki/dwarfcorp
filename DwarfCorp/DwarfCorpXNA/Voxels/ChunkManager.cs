@@ -94,6 +94,7 @@ namespace DwarfCorp
         public ChunkGenerator ChunkGen { get; set; }
 
         private Thread RebuildThread { get; set; }
+        private Thread ChunkUpdateThread { get; set; }
         private AutoScaleThread WaterUpdateThread;
 
         public BoundingBox Bounds { get; set; }
@@ -107,7 +108,7 @@ namespace DwarfCorp
 
         public WaterManager Water { get; set; }
 
-        public Timer ChunkUpdateTimer = new Timer(10.0f, false, Timer.TimerMode.Real);
+        public Timer ChunkUpdateTimer = new Timer(0.1f, false, Timer.TimerMode.Real);
 
         // Todo: Move this.
         public bool IsAboveCullPlane(BoundingBox Box)
@@ -138,6 +139,7 @@ namespace DwarfCorp
             RebuildThread.Name = "RebuildVoxels";
 
             WaterUpdateThread = new AutoScaleThread(this, (f) => Water.UpdateWater());
+            this.ChunkUpdateThread = new Thread(UpdateChunks) { IsBackground = true, Name = "Update Chunks" };
 
             chunkGen.Manager = this;
 
@@ -164,6 +166,7 @@ namespace DwarfCorp
         {
             RebuildThread.Start();
             WaterUpdateThread.Start();
+            ChunkUpdateThread.Start();
         }
 
         public void RebuildVoxelsThread()
@@ -311,19 +314,26 @@ namespace DwarfCorp
                     }
         }
 
+        public void UpdateChunks()
+        {
+            while(true)
+            {
+                if (!DwarfTime.LastTime.IsPaused)
+                {
+                    ChunkUpdateTimer.Update(DwarfTime.LastTime);
+                    if (ChunkUpdateTimer.HasTriggered)
+                    {
+                        ChunkUpdate.RunUpdate(this);
+                    }
+                }
+                Thread.Sleep(100);
+            }
+        }
+
         public void Update(DwarfTime gameTime, Camera camera, GraphicsDevice g)
         {
             foreach (var chunk in ChunkData.GetChunkEnumerator())
                 chunk.RecieveNewPrimitive(gameTime);
-
-            if (!gameTime.IsPaused)
-            {
-                ChunkUpdateTimer.Update(gameTime);
-                if (ChunkUpdateTimer.HasTriggered)
-                {
-                    ChunkUpdate.RunUpdate(this);
-                }
-            }
 
             List<VoxelChangeEvent> localList = null;
             lock (ChangedVoxels)
@@ -368,6 +378,7 @@ namespace DwarfCorp
             ExitThreads = true;
             RebuildThread.Abort();
             WaterUpdateThread.Join();
+            ChunkUpdateThread.Abort();
         }
 
         public List<Body> KillVoxel(VoxelHandle Voxel)
