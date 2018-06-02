@@ -17,8 +17,8 @@ namespace DwarfCorp
         }
 
         public Attack Weapon { get; set; }
-        public Fixture BaseSprite { get; set; }
-        public Fixture TurretSprite { get; set; }
+        public SimpleSprite BaseSprite { get; set; }
+        public SimpleSprite TurretSprite { get; set; }
         public Faction Allies { get; set; }
         public EnemySensor Sensor { get; set; }
         private CreatureAI closestCreature = null;
@@ -64,9 +64,10 @@ namespace DwarfCorp
             }) as EnemySensor;
 
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
-            BaseSprite = AddChild(new Fixture(Manager, Vector3.Zero, spriteSheet, new Point(2, 7))) as Fixture;
-            BaseSprite.OrientMode = SimpleSprite.OrientMode.YAxis;
-            TurretSprite = AddChild(new Fixture(Manager, Vector3.Up * 0.25f, spriteSheet, new Point(1, 7), SimpleSprite.OrientMode.Fixed)) as Fixture;
+            BaseSprite = AddChild(new SimpleSprite(Manager, "Turret", Matrix.Identity, spriteSheet, new Point(2, 7))) as SimpleSprite;
+            BaseSprite.OrientationType = SimpleSprite.OrientMode.YAxis;
+            TurretSprite = AddChild(new SimpleSprite(Manager, "Turret", Matrix.CreateTranslation(Vector3.Up * 0.25f), spriteSheet, new Point(1, 7))) as SimpleSprite;
+            TurretSprite.OrientationType = SimpleSprite.OrientMode.Fixed;
             SetTurretAngle(0.0f);
             CreateCosmeticChildren(manager);
         }

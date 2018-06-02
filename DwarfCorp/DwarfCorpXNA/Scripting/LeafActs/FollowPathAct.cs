@@ -322,7 +322,7 @@ namespace DwarfCorp
                 case MoveType.RideVehicle:
                     if (Agent.Cart == null)
                     {
-                        Agent.Cart = EntityFactory.CreateEntity<Fixture>("Minecart", action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f, Blackboard.Create("Animations", Creature.Stats.CurrentClass.MinecartAnimations));
+                        Agent.Cart = EntityFactory.CreateEntity<SimpleSprite>("Minecart", action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f, Blackboard.Create("Animations", Creature.Stats.CurrentClass.MinecartAnimations));
                     }
                     Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
                     Creature.OverrideCharacterMode = true;
