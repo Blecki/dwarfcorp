@@ -2271,6 +2271,17 @@ namespace DwarfCorp.GameStates
                     return true;
                 }
             }
+            else if (key == Keys.OemPipe)
+            {
+                Paused = true;
+                this.GuiRoot.ShowModalPopup(new EventLogViewer()
+                {
+                    Log = World.EventLog,
+                    AutoLayout = AutoLayout.DockFill,
+                    Border = "border-fancy",
+                    Rect = GuiRoot.RenderData.VirtualScreen
+                });
+            }
             else if (key == Keys.Escape)
             {
                 if (PausePanel == null || PausePanel.Hidden)

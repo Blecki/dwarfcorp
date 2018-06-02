@@ -278,6 +278,7 @@ namespace DwarfCorp
 
         public void MakeAnnouncement(QueuedAnnouncement Announcement)
         {
+            LogEvent(Announcement.Text);
             if (OnAnnouncement != null)
                 OnAnnouncement(Announcement);
         }

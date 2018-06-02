@@ -584,6 +584,29 @@ namespace DwarfCorp
         }
     }
 
+    public class EventLogViewer : Gui.Widget
+    {
+        public EventLog Log { get; set; }
+
+        public override void Construct()
+        {
+            Gui.Widgets.WidgetListView listView = AddChild(new Gui.Widgets.WidgetListView()
+            {
+                AutoLayout = AutoLayout.DockFill
+            }) as Gui.Widgets.WidgetListView;
+            foreach (var logged in Log.GetEntries())
+            {
+                listView.AddItem(new Widget()
+                {
+                    Text = logged.Text,
+                    Tooltip = logged.Details,
+                    TextColor = logged.TextColor.ToVector4()
+                });
+            }
+            base.Construct();
+        }
+    }
+
     public class EventLog
     {
         public struct LogEntry
