@@ -364,10 +364,9 @@ namespace DwarfCorp
 
                     Creature.CurrentCharacterMode = defaultCharachterMode;
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
+
                     if (Target.IsDead)
                     {
-                        Creature.Faction.Designations.RemoveEntityDesignation(Target, DesignationType.Attack);
-                                                
                         Target = null;
                         Agent.AddXP(10);
                         Creature.Physics.Face(Creature.Physics.Velocity + Creature.Physics.GlobalTransform.Translation);
