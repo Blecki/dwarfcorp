@@ -52,6 +52,31 @@ namespace DwarfCorp
         public static Dictionary<string, TextAtom> TextAtoms { get; set; }
         private static bool staticsInitialized = false;
 
+        public static string AgeToString(TimeSpan age)
+        {
+            if (age.Days > 365)
+            {
+                return String.Format("{0} year{1} ago.", age.Days / 365, age.Days / 365 > 1 ? "s" : "");
+            }
+            if (age.Days > 30)
+            {
+                return String.Format("{0} month{1} ago.", age.Days / 30, age.Days / 30 > 1 ? "s" : "");
+            }
+            if (age.Days > 0)
+            {
+                return String.Format("{0} day{1} ago.", age.Days, age.Days > 1 ? "s" : "");
+            }
+            if (age.Hours > 0)
+            {
+                return String.Format("{0} hour{1} ago.", age.Hours, age.Hours > 1 ? "s" : "");
+            }
+            if (age.Minutes > 0)
+            {
+                return String.Format("{0} minute{1} ago.", age.Minutes, age.Minutes > 1 ? "s" : "");
+            }
+            return "Moments ago.";
+        }
+
         public static string[] Literals =
         {
             " ",

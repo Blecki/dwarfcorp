@@ -218,14 +218,13 @@ namespace DwarfCorp.GameStates
                     SoundManager.PlayMusic("main_theme_night");
                 };
 
+                World.UnpauseThreads();
+                AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Real);
+
+                ContextCommands = new List<DwarfCorp.ContextCommands.ContextCommand>();
+                ContextCommands.Add(new ContextCommands.ChopCommand());
+                World.LogEvent(String.Format("We have arrived at {0}", Overworld.Name));
             }
-
-            World.UnpauseThreads();
-            AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Real);
-
-            ContextCommands = new List<DwarfCorp.ContextCommands.ContextCommand>();
-            ContextCommands.Add(new ContextCommands.ChopCommand());
-
             base.OnEnter();
         }
 
@@ -935,9 +934,20 @@ namespace DwarfCorp.GameStates
                 Corners = 0,//Gui.Scale9Corners.Top,
                 Transparent = true,
                 AutoLayout = Gui.AutoLayout.DockRight,
-                SizeToGrid = new Point(2, 1),
+                SizeToGrid = new Point(3, 1),
                 ItemSource = new Gui.Widget[] 
                         {
+                            new Gui.Widgets.FramedIcon()
+                            {
+                                 Icon = new Gui.TileReference("tool-icons", 21),
+                                OnClick = (sender, args) =>
+                                {
+                                    StateManager.PushState(new EventLogState(Game, StateManager, World.EventLog, World.Time.CurrentDate));
+                                },
+                                Text = "Events",
+                                TextVerticalAlign = VerticalAlign.Below,
+                                Tooltip = "View Event Log"
+                            },
                             EconomyIcon,
                                                                    
                             new Gui.Widgets.FramedIcon
@@ -2271,17 +2281,6 @@ namespace DwarfCorp.GameStates
                        .Hotkey(key);
                     return true;
                 }
-            }
-            else if (key == Keys.OemPipe)
-            {
-                Paused = true;
-                this.GuiRoot.ShowModalPopup(new EventLogViewer()
-                {
-                    Log = World.EventLog,
-                    AutoLayout = AutoLayout.DockFill,
-                    Border = "border-fancy",
-                    Rect = GuiRoot.RenderData.VirtualScreen
-                });
             }
             else if (key == Keys.Escape)
             {

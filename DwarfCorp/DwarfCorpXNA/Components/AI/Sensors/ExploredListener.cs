@@ -58,13 +58,14 @@ namespace DwarfCorp
             base(Manager, "ExplorationSpawner", Matrix.CreateTranslation(Voxel.GetBoundingBox().Center()), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero, true)
         {
             this.Voxel = Voxel;
+            this.CollisionType = CollisionType.Static;
         }
 
         public void OnVoxelChanged(VoxelChangeEvent V)
         {
             if (V.Type == VoxelChangeEventType.Explored)
             {
-                GetRoot().Delete();
+                Delete();
                 EntityFactory.CreateEntity<GameComponent>(EntityToSpawn, SpawnLocation, BlackboardData);
             }
         }

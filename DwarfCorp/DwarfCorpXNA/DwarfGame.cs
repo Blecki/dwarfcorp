@@ -584,25 +584,147 @@ namespace DwarfCorp
         }
     }
 
+    public class EventLogState : GameStates.GameState
+    {
+        public EventLog Log { get; set; }
+        public DateTime Now { get; set; }
+        public Gui.Root GuiRoot { get; set; }
+        public EventLogViewer Viewer { get; set; }
+
+        public EventLogState(DwarfGame game, GameStateManager manager, EventLog log, DateTime now) :
+            base(game, "EventLog", manager)
+        {
+            Log = log;
+            Now = now;
+        }
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public override void OnEnter()
+        {
+            GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
+            GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
+            Viewer = GuiRoot.RootItem.AddChild(new EventLogViewer()
+            {
+                Log = Log,
+                Now = Now,
+                Rect = GuiRoot.RenderData.VirtualScreen,
+                AutoLayout = AutoLayout.DockFill,
+                InteriorMargin = new Margin(32, 32, 16, 16)
+            }) as EventLogViewer;
+            Viewer.CloseButton.OnClick = (sender, args) =>
+            {
+                StateManager.PopState();
+            };
+            // Must be true or Render will not be called.
+            IsInitialized = true;
+            GuiRoot.RootItem.Layout();
+            base.OnEnter();
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+        }
+
+        public override void OnPopped()
+        {
+            base.OnPopped();
+        }
+
+        public override void Render(DwarfTime gameTime)
+        {
+            GuiRoot.Draw();
+            base.Render(gameTime);
+        }
+
+        public override void RenderUnitialized(DwarfTime gameTime)
+        {
+            base.RenderUnitialized(gameTime);
+        }
+
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+
+        public override void Update(DwarfTime gameTime)
+        {
+            foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
+            {
+                GuiRoot.HandleInput(@event.Message, @event.Args);
+                if (!@event.Args.Handled)
+                {
+                    // Pass event to game...
+                    if (@event.Message == InputEvents.KeyUp && @event.Args.KeyValue == (int)Microsoft.Xna.Framework.Input.Keys.Escape)
+                    {
+                        StateManager.PopState();
+                    }
+                }
+            }
+
+            GuiRoot.Update(gameTime.ToGameTime());
+            SoundManager.Update(gameTime, null, null);
+            base.Update(gameTime);
+        }
+    }
+
+
     public class EventLogViewer : Gui.Widget
     {
         public EventLog Log { get; set; }
-
+        public DateTime Now { get; set; }
+        public Widget CloseButton { get; set; }
         public override void Construct()
         {
+            Border = "border-fancy";
+            AddChild(new Gui.Widget()
+            {
+                Text = "Events",
+                Font = "font16",
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(256, 32)
+            });
             Gui.Widgets.WidgetListView listView = AddChild(new Gui.Widgets.WidgetListView()
             {
-                AutoLayout = AutoLayout.DockFill
+                AutoLayout = AutoLayout.DockTop,
+                SelectedItemForegroundColor = Color.Black.ToVector4(),
+                SelectedItemBackgroundColor = new Vector4(0, 0, 0, 0),
+                ItemBackgroundColor2 = new Vector4(0, 0, 0, 0.1f),
+                ItemBackgroundColor1 = new Vector4(0, 0, 0, 0),
+                ItemHeight = 32,
+                MinimumSize = new Point(0, 3 * Root.RenderData.VirtualScreen.Height / 4)
             }) as Gui.Widgets.WidgetListView;
-            foreach (var logged in Log.GetEntries())
+            foreach (var logged in Log.GetEntries().Reverse())
             {
-                listView.AddItem(new Widget()
+                listView.AddItem(Root.ConstructWidget(new Widget()
                 {
-                    Text = logged.Text,
+                    Background = new TileReference("basic", 0),
+                    Text = TextGenerator.AgeToString(Now - logged.Date) + " " + logged.Text,
                     Tooltip = logged.Details,
-                    TextColor = logged.TextColor.ToVector4()
-                });
+                    TextColor = logged.TextColor.ToVector4(),
+                    Font = "font10",
+                    MinimumSize = new Point(640, 32),
+                    Padding = new Margin(0, 0, 4, 4),
+                    TextVerticalAlign = VerticalAlign.Center
+                }));
             }
+            CloseButton = AddChild(new Gui.Widgets.Button()
+            {
+                Text = "Close",
+                Font = "font10",
+                Border = "border-button",
+                MinimumSize = new Point(128, 32),
+                AutoLayout = AutoLayout.FloatBottomRight
+            });
+            Layout();
             base.Construct();
         }
     }

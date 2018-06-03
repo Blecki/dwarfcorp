@@ -42,7 +42,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
-            Hidden = true;
+            Hidden = false;
             Font = "font10";
             OnUpdate += (sender, time) =>
                 {
@@ -104,8 +104,7 @@ namespace DwarfCorp.Gui.Widgets
                     }
 
                     Children = Announcements.Select(a => a.Widget).ToList();
-
-                    Hidden = (Announcements.Count == 0);
+                    Hidden = Announcements.Count == 0;
                     Invalidate();
                 };
 
@@ -147,9 +146,13 @@ namespace DwarfCorp.Gui.Widgets
                 childPos += announcement.Widget.Rect.Height + 2;
             }
 
-            var bubbleRect = new Rectangle(Rect.Left, Rect.Top,
-                Rect.Width - speakerTiles.TileWidth, Rect.Height - (speakerTiles.TileHeight / 2));
-            meshes.Add(Gui.Mesh.CreateScale9Background(bubbleRect, Root.GetTileSheet("speech-bubble")));
+            if (Announcements.Count > 0)
+            {
+                var bubbleRect = new Rectangle(Rect.Left, Rect.Top,
+                    Rect.Width - speakerTiles.TileWidth, Rect.Height - (speakerTiles.TileHeight / 2));
+
+                meshes.Add(Gui.Mesh.CreateScale9Background(bubbleRect, Root.GetTileSheet("speech-bubble")));
+            }
 
             return Gui.Mesh.Merge(meshes.ToArray());
         }

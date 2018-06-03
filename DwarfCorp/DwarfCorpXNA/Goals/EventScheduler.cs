@@ -105,6 +105,7 @@ namespace DwarfCorp.Goals
                     {
                         randomEvent = ev;
                         foundEvent = true;
+                        break;
                     }
                 }
             }
