@@ -8,6 +8,7 @@ using System.Diagnostics;
 
 namespace ABTest
 {
+#if DO_ABTEST
     class Program
     {
         static void Main(string[] args)
@@ -115,4 +116,5 @@ namespace ABTest
             return (x << 16) + (y << 8) + z;
         }
     }
+#endif
 }
