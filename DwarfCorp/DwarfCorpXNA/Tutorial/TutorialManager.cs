@@ -92,43 +92,12 @@ namespace DwarfCorp.Tutorial
                 ExistingTutorial = popup;
                 PendingTutorial = null;
 
-                if (!String.IsNullOrEmpty(entry.GuiHilite))
-                {
-                    var widget = Gui.RootItem.EnumerateTree().FirstOrDefault(w => w.Tag is String && (w.Tag as String) == entry.GuiHilite);
-                    HighlightWidget = widget;
-
-                    if (widget != null)
-                    {
-                        Gui.SpecialHiliteRegion = widget.Rect;
-                        Gui.SpecialHighligtedWidget = widget;
-                        Gui.SpecialHiliteSheet = "border-hilite";
-
-                        if (widget.Rect.Right < Gui.RenderData.VirtualScreen.Width / 2 || widget.Rect.Left < 64)
-                        {
-                            Gui.SpecialIndicatorPosition = new Microsoft.Xna.Framework.Point(widget.Rect.Right, widget.Rect.Center.Y- 16);
-                            Gui.SpecialIndicator = new Gui.MousePointer("hand", 1, 10);
-                        }
-                        else
-                        {
-                            Gui.SpecialIndicatorPosition = new Microsoft.Xna.Framework.Point(widget.Rect.Left - 32, widget.Rect.Center.Y - 16);
-                            Gui.SpecialIndicator = new Gui.MousePointer("hand", 4, 14);
-                        }
-
-                        widget.OnClick += (sender, args) =>
-                        {
-                            popup.Close();
-                        };
-                    }
-                    else
-                    {
-                        Console.Error.WriteLine("GUI highlight {0} does not exist.", entry.GuiHilite);
-                    }
-                }
+                Gui.SpecialHiliteWidgetName = entry.GuiHilite;
             }
 
             if ((HighlightWidget != null) && HighlightWidget.IsAnyParentHidden() && TutorialVisible && (ExistingTutorial != null))
             {
-                Gui.SpecialHiliteRegion = null;
+                Gui.ClearSpecials();
                 ExistingTutorial.Close();
             }
         }
