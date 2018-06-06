@@ -705,30 +705,31 @@ namespace DwarfCorp.Gui
                     var area = widget.Rect.Interior(-sheet.TileWidth, -sheet.TileHeight, -sheet.TileWidth, -sheet.TileHeight);
                     var mesh = Mesh.CreateScale9Background(area, sheet);
                     mesh.Render(RenderData.Device);
-                }
 
-                var specialIndicatorPosition = Point.Zero;
 
-                if (widget.Rect.Right < RenderData.VirtualScreen.Width / 2 || widget.Rect.Left < 64)
-                {
-                    specialIndicatorPosition = new Microsoft.Xna.Framework.Point(widget.Rect.Right, widget.Rect.Center.Y - 16);
-                    SpecialIndicator = new Gui.MousePointer("hand", 1, 10);
-                }
-                else
-                {
-                    specialIndicatorPosition = new Microsoft.Xna.Framework.Point(widget.Rect.Left - 32, widget.Rect.Center.Y - 16);
-                    SpecialIndicator = new Gui.MousePointer("hand", 4, 14);
-                }
+                    var specialIndicatorPosition = Point.Zero;
 
-                var tileSheet = GetTileSheet(SpecialIndicator.Sheet);
-                var mouseMesh = Mesh.Quad()
-                    .Scale(tileSheet.TileWidth, tileSheet.TileHeight)
-                    .Translate(
-                        specialIndicatorPosition.X +
-                        (float)Math.Sin(DwarfTime.LastTime.TotalRealTime.TotalSeconds * 4.0) * 8.0f,
-                        specialIndicatorPosition.Y)
-                    .Texture(tileSheet.TileMatrix(SpecialIndicator.AnimationFrame));
-                mouseMesh.Render(RenderData.Device);
+                    if (widget.Rect.Right < RenderData.VirtualScreen.Width / 2 || widget.Rect.Left < 64)
+                    {
+                        specialIndicatorPosition = new Microsoft.Xna.Framework.Point(widget.Rect.Right, widget.Rect.Center.Y - 16);
+                        SpecialIndicator = new Gui.MousePointer("hand", 1, 10);
+                    }
+                    else
+                    {
+                        specialIndicatorPosition = new Microsoft.Xna.Framework.Point(widget.Rect.Left - 32, widget.Rect.Center.Y - 16);
+                        SpecialIndicator = new Gui.MousePointer("hand", 4, 14);
+                    }
+
+                    var tileSheet = GetTileSheet(SpecialIndicator.Sheet);
+                    var mouseMesh = Mesh.Quad()
+                        .Scale(tileSheet.TileWidth, tileSheet.TileHeight)
+                        .Translate(
+                            specialIndicatorPosition.X +
+                            (float)Math.Sin(DwarfTime.LastTime.TotalRealTime.TotalSeconds * 4.0) * 8.0f,
+                            specialIndicatorPosition.Y)
+                        .Texture(tileSheet.TileMatrix(SpecialIndicator.AnimationFrame));
+                    mouseMesh.Render(RenderData.Device);
+                }
             }
 
             if (MouseVisible && MousePointer != null)

@@ -158,7 +158,7 @@ namespace DwarfCorp
         {
             foreach (var key in VoxelDesignations)
                 foreach (var d in key.Value)
-                        yield return d;
+                    yield return d;
         }
 
         public IEnumerable<VoxelDesignation> EnumerateDesignations(VoxelHandle Voxel)

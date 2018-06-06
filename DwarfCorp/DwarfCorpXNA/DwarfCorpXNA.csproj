@@ -240,6 +240,7 @@
     <Compile Include="Goals\EventLibrary.cs" />
     <Compile Include="Goals\TimedIndicatorWidget.cs" />
     <Compile Include="Goals\GoalTypes.cs" />
+    <Compile Include="Graphics\Drawing\TriangleCache.cs" />
     <Compile Include="Graphics\Instancing\InstanceGroup.cs" />
     <Compile Include="Graphics\Instancing\TiledInstanceGroup.cs" />
     <Compile Include="Graphics\Instancing\PrimitiveInstanceGroup.cs" />
