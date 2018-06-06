@@ -7,19 +7,19 @@ namespace DwarfCorp
 {
     public partial class VoxelHelpers
     {
-        public static bool DoesVoxelHaveVisibleSurface(ChunkData Data, VoxelHandle V)
+        public static bool DoesVoxelHaveVisibleSurface(WorldManager World, VoxelHandle V)
         {
-            if (!V.IsValid)
-                return false;
+            if (!V.IsValid) return false;
+            if (V.Coordinate.Y >= World.Master.MaxViewingLevel) return false;
+            if (V.IsEmpty) return false;
+            if (V.Coordinate.Y == World.Master.MaxViewingLevel - 1) return true;
+            if (V.Coordinate.Y == VoxelConstants.ChunkSizeY - 1) return true;
 
-            if (!V.IsVisible || V.IsEmpty) return false;
-
-            foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors(V.Coordinate))
+            foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate))
             {
-                var neighbor = new VoxelHandle(Data, neighborCoordinate);
+                var neighbor = new VoxelHandle(World.ChunkManager.ChunkData, neighborCoordinate);
                 if (!neighbor.IsValid) return true;
                 if (neighbor.IsEmpty && neighbor.IsExplored) return true;
-                if (!neighbor.IsVisible) return true;
             }
 
             return false;

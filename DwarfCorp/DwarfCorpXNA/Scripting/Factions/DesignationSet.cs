@@ -46,7 +46,9 @@ namespace DwarfCorp
     {
         [JsonIgnore]
         public TriangleCache TriangleCache = new TriangleCache();
+
         public bool RecomputeVisibility = false;
+
         public class VoxelDesignation
         {
             public bool Visible = true;
@@ -54,8 +56,9 @@ namespace DwarfCorp
             public DesignationType Type;
             public Object Tag;
             public Task Task;
+
             [JsonIgnore]
-            public uint _drawing = 0;
+            public uint TriangleCacheIndex = 0;
 
             [OnDeserialized]
             public void OnDeserialized(StreamingContext ctx)
@@ -143,11 +146,10 @@ namespace DwarfCorp
             var list = VoxelDesignations[key];
             foreach (var designation in list)
             {
-                if (designation._drawing > 0)
-                {
-                    TriangleCache.EraseSegment(designation._drawing);
-                }
+                if (designation.TriangleCacheIndex > 0)
+                    TriangleCache.EraseSegment(designation.TriangleCacheIndex);
             }
+
             var r = list.RemoveAll(d => TypeSet(d.Type, Type)) == 0 ? RemoveDesignationResult.DidntExist : RemoveDesignationResult.Removed;
             if (list.Count == 0)
                 VoxelDesignations.Remove(key);

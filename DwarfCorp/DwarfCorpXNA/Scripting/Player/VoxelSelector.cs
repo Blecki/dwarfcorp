@@ -361,8 +361,7 @@ namespace DwarfCorp
                                 SelectionBuffer.RemoveAll(v =>
                                 {
                                     if (v.Equals(underMouse)) return false;
-                                    return !VoxelHelpers.DoesVoxelHaveVisibleSurface(
-                                        Chunks.ChunkData, v);
+                                    return !VoxelHelpers.DoesVoxelHaveVisibleSurface(World, v);
                                 });
                         }
 
