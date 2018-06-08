@@ -58,11 +58,21 @@ namespace DwarfCorp
             EntityToGather = entity.CloneResource();
             Name = "Stock Entity: " + entity.ResourceType + " " + entity.NumResources;
             Priority = PriorityType.Low;
+            ReassignOnDeath = false;
         }
 
         public override Act CreateScript(Creature creature)
         {
             return new StockResourceAct(creature.AI, EntityToGather);
+        }
+
+        public override bool ShouldDelete(Creature agent)
+        {
+            if (!agent.Inventory.HasResource(EntityToGather))
+            {
+                return true;
+            }
+            return false;
         }
 
         public override Feasibility IsFeasible(Creature agent)

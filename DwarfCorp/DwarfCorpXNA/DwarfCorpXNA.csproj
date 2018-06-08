@@ -254,6 +254,9 @@
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
+    <Compile Include="Scripting\NewMagic\AttackSpell.cs" />
+    <Compile Include="Scripting\NewMagic\BuffSpell.cs" />
+    <Compile Include="Scripting\NewMagic\Spell.cs" />
     <Compile Include="Scripting\Player\Economy\Quantity.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceType.cs" />
     <Compile Include="Scripting\Player\Tools\ObjectHelper.cs" />
