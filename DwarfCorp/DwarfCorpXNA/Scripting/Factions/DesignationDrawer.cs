@@ -142,7 +142,9 @@ namespace DwarfCorp
                     255);
             }
 
+            // Kill this list. Just remove, then call rebuild segments on the cache at the end.
             var removals = new List<uint>();
+
             foreach (var voxel in Set.EnumerateDesignations())
             {
                 if ((voxel.Type & VisibleTypes) == voxel.Type)
@@ -152,33 +154,37 @@ namespace DwarfCorp
                         props = DesignationProperties[voxel.Type];
 
                     var v = voxel.Voxel.Coordinate.ToVector3();
-                    bool shouldDraw = voxel.Visible;
+
                     if (Set.RecomputeVisibility)
                     {
-                        shouldDraw = !(v.Y > World.Master.MaxViewingLevel
-                                           || !VoxelHelpers.DoesVoxelHaveVisibleSurface(World, voxel.Voxel)) || voxel.Voxel.IsEmpty;
-                        voxel.Visible = shouldDraw;
+                        if (voxel.Type == DesignationType.Put)
+                            voxel.Visible = voxel.Voxel.Coordinate.Y < World.Master.MaxViewingLevel;
+                        else
+                            voxel.Visible = VoxelHelpers.DoesVoxelHaveVisibleSurface(World, voxel.Voxel);
                     }
 
-                    if (shouldDraw && props.Icon != null)
-                        Drawer2D.DrawSprite(props.Icon, v + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
-
-                    if (shouldDraw && voxel.Type == DesignationType.Put) // Hate this.
-                        DrawPhantomCallback(v, VoxelLibrary.GetVoxelType(voxel.Tag.ToString()));
-                    else if (shouldDraw && voxel.TriangleCacheIndex == 0)
+                    if (voxel.Visible)
                     {
-                        switch (props.DrawType)
-                        {
-                            case DesignationTypeProperties.DrawBoxType.TopBox:
-                                voxel.TriangleCacheIndex = Set.TriangleCache.AddTopBox(voxel.Voxel.GetBoundingBox(), props.Color, props.LineWidth, true);
-                                break;
-                            case DesignationTypeProperties.DrawBoxType.FullBox:
-                                voxel.TriangleCacheIndex = Set.TriangleCache.AddBox(voxel.Voxel.GetBoundingBox(), props.Color, props.LineWidth, true);
-                                break;
-                        }
+                        if (props.Icon != null)
+                            Drawer2D.DrawSprite(props.Icon, v + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
 
+                        if (voxel.Type == DesignationType.Put) // Hate this.
+                            DrawPhantomCallback(v, VoxelLibrary.GetVoxelType(voxel.Tag.ToString()));
+                        else if (voxel.TriangleCacheIndex == 0)
+                        {
+                            switch (props.DrawType)
+                            {
+                                case DesignationTypeProperties.DrawBoxType.TopBox:
+                                    voxel.TriangleCacheIndex = Set.TriangleCache.AddTopBox(voxel.Voxel.GetBoundingBox(), props.Color, props.LineWidth, true);
+                                    break;
+                                case DesignationTypeProperties.DrawBoxType.FullBox:
+                                    voxel.TriangleCacheIndex = Set.TriangleCache.AddBox(voxel.Voxel.GetBoundingBox(), props.Color, props.LineWidth, true);
+                                    break;
+                            }
+
+                        }
                     }
-                    else if (!shouldDraw && voxel.TriangleCacheIndex != 0)
+                    else if (voxel.TriangleCacheIndex != 0)
                     {
                         removals.Add(voxel.TriangleCacheIndex);
                         voxel.TriangleCacheIndex = 0;
@@ -191,6 +197,7 @@ namespace DwarfCorp
                     voxel.TriangleCacheIndex = 0;
                 }
             }
+
             Set.TriangleCache.EraseSegments(removals);
 
             foreach (var entity in Set.EnumerateEntityDesignations())
