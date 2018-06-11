@@ -380,7 +380,7 @@ namespace DwarfCorp
                         Effect.World = Matrix.Identity;
                         Effect.CurrentTechnique = prevTechnique;
                     });
-                Designations.TriangleCache.Draw(Effect, Camera);
+
                 foreach (var box in Boxes)
                     _addBox(box.RealBox.Min, box.RealBox.Max - box.RealBox.Min, box.Color, box.Thickness, box.Warp);
 

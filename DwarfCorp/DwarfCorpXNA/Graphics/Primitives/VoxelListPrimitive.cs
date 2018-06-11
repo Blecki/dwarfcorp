@@ -43,6 +43,8 @@ namespace DwarfCorp
             new Vector2(0.5f, 1.0f)
         };
 
+        private static Matrix DesignationTransform = Matrix.CreateTranslation(-0.5f, -0.5f, -0.5f) * Matrix.CreateScale(1.2f) * Matrix.CreateTranslation(0.5f, 0.5f, 0.5f);
+
         protected void InitializeStatics()
         {
             if (FaceDeltas == null)
@@ -140,7 +142,7 @@ namespace DwarfCorp
             }
         }
 
-        public void InitializeFromChunk(VoxelChunk chunk)
+        public void InitializeFromChunk(VoxelChunk chunk, DesignationSet DesignationSet, DesignationDrawer DesignationDrawer, WorldManager World)
         {
             if (chunk == null)
                 return;
@@ -156,17 +158,16 @@ namespace DwarfCorp
                 lock (chunk.Data.SliceCache)
                 {
                     var cachedSlice = chunk.Data.SliceCache[y];
+                    
 
-                    if (chunk.Data.VoxelsPresentInSlice[y] == 0)
-                    {
-                        cache.Clear();
+                    //if (chunk.Data.VoxelsPresentInSlice[y] == 0)
+                    //{
+                    //    cache.Clear();
 
-                        if (cachedSlice != null)
-                        {
-                            chunk.Data.SliceCache[y] = null;
-                        }
-                        continue;
-                    }
+                    //    if (cachedSlice != null)
+                    //        chunk.Data.SliceCache[y] = null;
+                    //    continue;
+                    //}
 
                     if (cachedSlice != null)
                     {
@@ -198,7 +199,7 @@ namespace DwarfCorp
                 if (GameSettings.Default.GrassMotes)
                     chunk.RebuildMoteLayer(y);
 
-                BuildSliceGeometry(chunk, bedrockModel, cache, y, sliceGeometry);
+                BuildSliceGeometry(chunk, bedrockModel, cache, y, sliceGeometry, DesignationSet, DesignationDrawer, World);
 
                 sliceStack.Add(sliceGeometry);
             }
@@ -221,16 +222,14 @@ namespace DwarfCorp
             BoxPrimitive bedrockModel, 
             Cache Cache,
             int y, 
-            RawPrimitive sliceGeometry)
+            RawPrimitive sliceGeometry,
+            DesignationSet DesignationSet,
+            DesignationDrawer DesignationDrawer,
+            WorldManager World)
         {
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
-            {
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
-                {
-                    BuildVoxelGeometry(sliceGeometry,
-                        x, y, z, chunk, bedrockModel, Cache);
-                }
-            }
+                    BuildVoxelGeometry(sliceGeometry, x, y, z, chunk, bedrockModel, Cache, DesignationSet, DesignationDrawer, World);
         }
 
         private static GlobalVoxelCoordinate GetCacheKey(VoxelHandle Handle, VoxelVertex Vertex)
@@ -256,9 +255,52 @@ namespace DwarfCorp
             int Z,
             VoxelChunk Chunk,
             BoxPrimitive BedrockModel,
-            Cache Cache)
+            Cache Cache,
+            DesignationSet Designations,
+            DesignationDrawer DesignationDrawer,
+            WorldManager World)
         {
             var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(X, Y, Z));
+            if (!v.IsVisible) return; // How did this even get called then??
+
+            foreach (var designation in Designations.EnumerateDesignations(v))
+            {
+                if ((designation.Type & DesignationDrawer.VisibleTypes) == designation.Type)
+                {
+                    var props = DesignationDrawer.DefaultProperties;
+                    if (DesignationDrawer.DesignationProperties.ContainsKey(designation.Type))
+                        props = DesignationDrawer.DesignationProperties[designation.Type];
+
+                    var designationVisible = false;
+
+                    if (designation.Type == DesignationType.Put)
+                        designationVisible = v.Coordinate.Y < World.Master.MaxViewingLevel;
+                    else
+                        designationVisible = VoxelHelpers.DoesVoxelHaveVisibleSurface(World, v);
+
+                    if (designationVisible)
+                    {
+                        var desPrim = VoxelLibrary.GetPrimitive(VoxelLibrary.DesignationType);
+                        switch (props.DrawType)
+                        {
+                            case DesignationDrawer.DesignationTypeProperties.DrawBoxType.FullBox:
+                                for (int i = 0; i < 6; i++)
+                                    BuildVoxelFaceGeometry(Into, Chunk, Cache, desPrim, v, props.Color, desPrim.UVs, DesignationTransform, i);
+                                break;
+                            case DesignationDrawer.DesignationTypeProperties.DrawBoxType.TopBox:
+                                BuildVoxelFaceGeometry(Into, Chunk, Cache, desPrim, v, props.Color, desPrim.UVs, DesignationTransform, 0);
+                                break;
+                            case DesignationDrawer.DesignationTypeProperties.DrawBoxType.PreviewVoxel:
+                                {
+                                    var previewPrim = VoxelLibrary.GetPrimitive(VoxelLibrary.GetVoxelType(designation.Tag.ToString()));
+                                    for (int i = 0; i < 6; i++)
+                                        BuildVoxelFaceGeometry(Into, Chunk, Cache, previewPrim, v, props.Color, previewPrim.UVs, Matrix.Identity, i);
+                                }
+                                break;
+                        }
+                    }
+                }
+            }            
 
             if ((v.IsExplored && v.IsEmpty) || !v.IsVisible) return;
 
@@ -274,11 +316,9 @@ namespace DwarfCorp
             if (v.Type.HasTransitionTextures && v.IsExplored)
                 uvs = ComputeTransitionTexture(new VoxelHandle(v.Chunk.Manager.ChunkData, v.Coordinate));
 
-            BuildVoxelTopFaceGeometry(Into,
-                Chunk, Cache, primitive, v, uvs, 0);
+            BuildVoxelTopFaceGeometry(Into, Chunk, Cache, primitive, v, uvs, 0);
             for (int i = 1; i < 6; i++)
-                BuildVoxelFaceGeometry(Into, Chunk,
-                    Cache, primitive, v, tint, uvs, i);
+                BuildVoxelFaceGeometry(Into, Chunk, Cache, primitive, v, tint, uvs, Matrix.Identity, i);
         }
 
         private static void BuildVoxelFaceGeometry(
@@ -289,6 +329,7 @@ namespace DwarfCorp
             VoxelHandle V,
             Color Tint,
             BoxPrimitive.BoxTextureCoords UVs,
+            Matrix VertexTransform,
             int i)
         {
             var face = (BoxFace)i;
@@ -323,8 +364,9 @@ namespace DwarfCorp
                 if (V.Type.CanRamp && ShouldRamp(voxelVertex, V.RampType))
                     rampOffset = new Vector3(0, -V.Type.RampSize, 0);
 
+                var localPosition = Vector3.Transform(vertex.Position + rampOffset, VertexTransform);
 
-                var worldPosition = V.WorldPosition + vertex.Position + rampOffset;
+                var worldPosition = V.WorldPosition + localPosition;
 
                 Into.AddVertex(new ExtendedVertex(
                     worldPosition + VertexNoise.GetNoiseVectorFromRepeatingTexture(worldPosition),

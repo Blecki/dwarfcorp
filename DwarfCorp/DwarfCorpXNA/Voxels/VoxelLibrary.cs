@@ -49,6 +49,7 @@ namespace DwarfCorp
     {
         public static Dictionary<VoxelType, BoxPrimitive> PrimitiveMap = new Dictionary<VoxelType, BoxPrimitive>();
         public static VoxelType emptyType = null;
+        public static VoxelType DesignationType = null;
 
         public static Dictionary<string, VoxelType> Types = new Dictionary<string, VoxelType>();
         public static List<VoxelType> TypeList = null;
@@ -111,6 +112,7 @@ namespace DwarfCorp
             var cubeTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
             TypeList = FileUtils.LoadJsonListFromMultipleSources<VoxelType>(ContentPaths.voxel_types, null, v => v.Name);
             emptyType = TypeList[0];
+            DesignationType = TypeList[1];
 
             short ID = 0;
             foreach (VoxelType type in TypeList)

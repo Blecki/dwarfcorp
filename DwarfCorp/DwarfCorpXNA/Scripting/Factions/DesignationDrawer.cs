@@ -55,15 +55,15 @@ namespace DwarfCorp
             {
                 FullBox,
                 TopBox,
+                PreviewVoxel,
             }
             public DrawBoxType DrawType;
-
         }
 
         [JsonIgnore]
         public static Dictionary<DesignationType, DesignationTypeProperties> DesignationProperties = new Dictionary<DesignationType, DesignationTypeProperties>();
 
-        private static DesignationTypeProperties DefaultProperties = new DesignationTypeProperties
+        public static DesignationTypeProperties DefaultProperties = new DesignationTypeProperties
         {
             Color = Color.Gray,
             Icon = null,
@@ -124,6 +124,12 @@ namespace DwarfCorp
                 Color = Color.AntiqueWhite,
                 Icon = new NamedImageFrame("newgui/pointers", 32, 4, 0)
             });
+
+            DesignationProperties.Add(DesignationType.Put, new DesignationTypeProperties
+            {
+                Color = new Color(1.0f, 0.0f, 0.0f, 1.0f),
+                DrawType = DesignationTypeProperties.DrawBoxType.PreviewVoxel
+            });
         }
 
         public void DrawHilites(
@@ -142,63 +148,6 @@ namespace DwarfCorp
                     255);
             }
 
-            // Kill this list. Just remove, then call rebuild segments on the cache at the end.
-            var removals = new List<uint>();
-
-            foreach (var voxel in Set.EnumerateDesignations())
-            {
-                if ((voxel.Type & VisibleTypes) == voxel.Type)
-                {
-                    var props = DefaultProperties;
-                    if (DesignationProperties.ContainsKey(voxel.Type))
-                        props = DesignationProperties[voxel.Type];
-
-                    var v = voxel.Voxel.Coordinate.ToVector3();
-
-                    if (Set.RecomputeVisibility)
-                    {
-                        if (voxel.Type == DesignationType.Put)
-                            voxel.Visible = voxel.Voxel.Coordinate.Y < World.Master.MaxViewingLevel;
-                        else
-                            voxel.Visible = VoxelHelpers.DoesVoxelHaveVisibleSurface(World, voxel.Voxel);
-                    }
-
-                    if (voxel.Visible)
-                    {
-                        if (props.Icon != null)
-                            Drawer2D.DrawSprite(props.Icon, v + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
-
-                        if (voxel.Type == DesignationType.Put) // Hate this.
-                            DrawPhantomCallback(v, VoxelLibrary.GetVoxelType(voxel.Tag.ToString()));
-                        else if (voxel.TriangleCacheIndex == 0)
-                        {
-                            switch (props.DrawType)
-                            {
-                                case DesignationTypeProperties.DrawBoxType.TopBox:
-                                    voxel.TriangleCacheIndex = Set.TriangleCache.AddTopBox(voxel.Voxel.GetBoundingBox(), props.Color, props.LineWidth, true);
-                                    break;
-                                case DesignationTypeProperties.DrawBoxType.FullBox:
-                                    voxel.TriangleCacheIndex = Set.TriangleCache.AddBox(voxel.Voxel.GetBoundingBox(), props.Color, props.LineWidth, true);
-                                    break;
-                            }
-
-                        }
-                    }
-                    else if (voxel.TriangleCacheIndex != 0)
-                    {
-                        removals.Add(voxel.TriangleCacheIndex);
-                        voxel.TriangleCacheIndex = 0;
-                    }
-                    // Todo: Move the triangle cache out of the designation set.
-                }
-                else if (voxel.TriangleCacheIndex > 0)
-                {
-                    removals.Add(voxel.TriangleCacheIndex);
-                    voxel.TriangleCacheIndex = 0;
-                }
-            }
-
-            Set.TriangleCache.EraseSegments(removals);
 
             foreach (var entity in Set.EnumerateEntityDesignations())
             {
@@ -221,14 +170,10 @@ namespace DwarfCorp
                         DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, props.LineWidth, false);
                         entity.Body.SetVertexColorRecursive(props.ModulatedColor);
                     }
-
-                    if (props.Icon != null)
-                        Drawer2D.DrawSprite(props.Icon, entity.Body.Position + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
                 }
                 else if (entity.Type == DesignationType.Craft) // Make the ghost object invisible if these designations are turned off.
                     entity.Body.SetFlagRecursive(GameComponent.Flag.Visible, false);
             }
-            Set.RecomputeVisibility = false;
         }
     }
 }
