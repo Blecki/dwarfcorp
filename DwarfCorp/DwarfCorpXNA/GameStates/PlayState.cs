@@ -738,6 +738,7 @@ namespace DwarfCorp.GameStates
             var markerFilter = GuiRoot.RootItem.AddChild(new DesignationFilter
             {
                 DesignationDrawer = World.DesignationDrawer,
+                DesignationSet = World.PlayerFaction.Designations,
                 Hidden = true,
                 Border = "border-fancy",
                 AutoLayout = AutoLayout.FloatBottomLeft,
