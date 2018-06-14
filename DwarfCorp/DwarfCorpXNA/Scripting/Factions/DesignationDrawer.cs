@@ -43,8 +43,10 @@ namespace DwarfCorp
 {
     public class DesignationDrawer
     {
+        // Todo: Does this belong here?
         public DesignationType VisibleTypes = DesignationType._All;
 
+        // Todo: Move into "designation library" and let it be moddable data?
         public class DesignationTypeProperties
         {
             public Color Color;
@@ -148,6 +150,8 @@ namespace DwarfCorp
                     255);
             }
 
+            // Todo: Can this be drawn by the entity, allowing it to be properly frustrum culled?
+            // - Need to add a 'gestating' entity state to the alive/dead/active mess.
 
             foreach (var entity in Set.EnumerateEntityDesignations())
             {
