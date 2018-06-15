@@ -266,7 +266,7 @@ namespace DwarfCorp
                 }
 
                 var aggregatedResources = resourceCounts.Select(c => new ResourceAmount(c.Key, c.Value));
-                var piles = EntityFactory.CreateResourcePiles(aggregatedResources, GetBoundingBox());
+                var piles = EntityFactory.CreateResourcePiles(aggregatedResources, GetBoundingBox()).ToList();
 
                 if (Attacker != null && !Attacker.IsDead)
                     foreach (var item in piles)

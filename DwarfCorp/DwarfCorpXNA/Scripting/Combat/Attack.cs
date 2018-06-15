@@ -255,6 +255,69 @@ namespace DwarfCorp
             return true;
         }
 
+        public void DoDamage(Creature performer, Body other, float bonus)
+        {
+
+            if (!String.IsNullOrEmpty(DiseaseToSpread))
+            {
+                var otherCreature = other.GetRoot().GetComponent<Creature>();
+                if (otherCreature != null)
+                {
+                    var disease = DiseaseLibrary.GetDisease(DiseaseToSpread);
+                    if (MathFunctions.RandEvent(disease.LikelihoodOfSpread))
+                        otherCreature.AcquireDisease(DiseaseToSpread);
+                }
+            }
+
+            var health = other.GetRoot().EnumerateAll().OfType<Health>().FirstOrDefault();
+            if (health != null)
+            {
+                health.Damage(DamageAmount + bonus);
+                var injury = DiseaseLibrary.GetRandomInjury();
+
+                if (MathFunctions.RandEvent(injury.LikelihoodOfSpread))
+                {
+                    var creature = other.GetRoot().GetComponent<Creature>();
+                    if (creature != null)
+                        creature.AcquireDisease(injury.Name);
+                }
+
+                Vector3 knock = other.Position - performer.Physics.Position;
+                knock.Normalize();
+                knock *= 0.2f;
+                if (other.AnimationQueue.Count == 0)
+                    other.AnimationQueue.Add(new KnockbackAnimation(0.15f, other.LocalTransform, knock));
+            }
+            else
+            {
+                other.GetRoot().Die();
+            }
+
+            PlayNoise(other.GlobalTransform.Translation);
+            if (HitParticles != "")
+            {
+                performer.Manager.World.ParticleManager.Trigger(HitParticles, other.LocalTransform.Translation, Color.White, 5);
+            }
+
+            if (HitAnimation != null)
+            {
+                IndicatorManager.DrawIndicator(HitAnimation, other.BoundingBox.Center(), 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
+            }
+
+            Physics physics = other as Physics;
+
+            if (physics != null)
+            {
+                Vector3 force = other.Position - performer.AI.Position;
+
+                if (force.LengthSquared() > 0.01f)
+                {
+                    force.Normalize();
+                    physics.ApplyForce(force * Knockback, 1.0f);
+                }
+            }
+        }
+
         public bool Perform(Creature performer, Body other, DwarfTime time, float bonus, Vector3 pos, string faction)
         {
 
@@ -289,66 +352,35 @@ namespace DwarfCorp
                 case AttackMode.Melee:
                 case AttackMode.Dogfight:
                 {
-                        if (!String.IsNullOrEmpty(DiseaseToSpread))
+                        DoDamage(performer, other, bonus);
+                        break;
+                }
+                case AttackMode.Area:
+                {
+                        BoundingBox box = new BoundingBox(performer.AI.Position - Vector3.One * Range, performer.AI.Position + Vector3.One * Range);
+                        foreach(var body in performer.World.EnumerateIntersectingObjects(box, CollisionType.Both))
                         {
-                            var otherCreature = other.GetRoot().GetComponent<Creature>();
-                            if (otherCreature != null)
+                            var creature = body.GetRoot().GetComponent<CreatureAI>();
+                            if (creature == null)
                             {
-                                var disease = DiseaseLibrary.GetDisease(DiseaseToSpread);
-                                if (MathFunctions.RandEvent(disease.LikelihoodOfSpread))
-                                    otherCreature.AcquireDisease(DiseaseToSpread);
+                                var health = body.GetRoot().GetComponent<Health>();
+                                if (health != null)
+                                {
+                                    DoDamage(performer, body, bonus);
+                                }
+                                continue;
                             }
+                            if (creature.Faction == performer.Faction)
+                                continue;
+                            var alliance = performer.World.Diplomacy.GetPolitics(creature.Faction, performer.Faction).GetCurrentRelationship() != Relationship.Hateful;
+                            if (alliance)
+                            {
+                                continue;
+                            }
+
+                            DoDamage(performer, body, bonus);
                         }
-
-                    var health = other.GetRoot().EnumerateAll().OfType<Health>().FirstOrDefault();
-                    if (health != null)
-                    {
-                        health.Damage(DamageAmount + bonus);
-                        var injury = DiseaseLibrary.GetRandomInjury();
-
-                        if (MathFunctions.RandEvent(injury.LikelihoodOfSpread))
-                        {
-                            var creature = other.GetRoot().GetComponent<Creature>();
-                            if (creature != null)
-                                creature.AcquireDisease(injury.Name);
-                        }
-
-                        Vector3 knock = other.Position - performer.Physics.Position;
-                        knock.Normalize();
-                        knock *= 0.2f;
-                        if (other.AnimationQueue.Count == 0)
-                            other.AnimationQueue.Add(new KnockbackAnimation(0.15f, other.LocalTransform, knock));
-                    }
-                    else
-                    {
-                        other.GetRoot().Die();
-                    }
-
-                    PlayNoise(other.GlobalTransform.Translation);
-                    if (HitParticles != "")
-                    {
-                        performer.Manager.World.ParticleManager.Trigger(HitParticles, other.LocalTransform.Translation, Color.White, 5);
-                    }
-
-                    if (HitAnimation != null)
-                    {
-                            IndicatorManager.DrawIndicator(HitAnimation, other.BoundingBox.Center(), 10.0f, 1.0f, MathFunctions.RandVector2Circle(), Color.White, MathFunctions.Rand() > 0.5f);
-                    }
-
-                    Physics physics = other as Physics;
-
-                    if (physics != null)
-                    {
-                        Vector3 force = other.Position - pos;
-
-                        if (force.LengthSquared() > 0.01f)
-                        {
-                            force.Normalize();
-                            physics.ApplyForce(force*Knockback, 1.0f);
-                        }
-                    }
-
-                    break;
+                        break;
                 }
                 case AttackMode.Ranged:
                 {
