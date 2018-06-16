@@ -143,6 +143,11 @@ namespace DwarfCorp.GameStates
                 {
                     StateManager.PushState(new GuiDebugState(GameState.Game, StateManager));
                 });
+
+            MakeMenuItem(frame, "Yarn test", "", (sender, args) =>
+            {
+                StateManager.PushState(new YarnState(GameState.Game, StateManager, null, null, null));
+            });
 #endif
 
             MakeMenuItem(frame, "Quit", "Goodbye.", (sender, args) => Game.Exit());

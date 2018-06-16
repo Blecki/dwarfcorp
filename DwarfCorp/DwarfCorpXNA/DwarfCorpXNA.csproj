@@ -231,6 +231,7 @@
     <Compile Include="Entities\Plants\PlantFactories.cs" />
     <Compile Include="Entities\TimedExplosion.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
+    <Compile Include="GameStates\YarnSpinner\YarnState.cs" />
     <Compile Include="Goals\ScheduledEvent.cs" />
     <Compile Include="Goals\Events\SpawnEntityEvent.cs" />
     <Compile Include="Goals\Events\SpawnWarPartyEvent.cs" />
@@ -252,6 +253,7 @@
     <Compile Include="Gui\Widgets\AutoGridPanel.cs" />
     <Compile Include="Gui\Widgets\CommandEntry.cs" />
     <Compile Include="Gui\Widgets\Graph.cs" />
+    <Compile Include="Gui\Widgets\TextBox.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
@@ -857,6 +859,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\YarnSpinner\YarnSpinner.csproj">
+      <Project>{6c3b03d2-2e89-4ec3-a022-e84053a7b17f}</Project>
+      <Name>YarnSpinner</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DwarfCorpContent\DwarfCorpXNAContent.contentproj">
       <Project>{D48F9E36-1F42-4633-B745-8C659D9550D4}</Project>
       <Name>DwarfCorpXNAContent</Name>
