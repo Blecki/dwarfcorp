@@ -139,6 +139,7 @@ namespace DwarfCorp
                     throw new InvalidOperationException(String.Format("Game file is from version {0}. Compatible versions are {1}.", gameFile.Metadata.Version, 
                         TextGenerator.GetListString(Program.CompatibleVersions)));
                 }
+
                 Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
                 Time = gameFile.Metadata.Time;
                 WorldOrigin = gameFile.Metadata.WorldOrigin;
@@ -284,6 +285,8 @@ namespace DwarfCorp
                             throw new InvalidOperationException("Component exists in save data but not in manager.");
                         }
                     }
+
+                ConversationMemory = gameFile.PlayData.ConversationMemory;
 
                     Factions = gameFile.PlayData.Factions;
                     ComponentManager.World = this;

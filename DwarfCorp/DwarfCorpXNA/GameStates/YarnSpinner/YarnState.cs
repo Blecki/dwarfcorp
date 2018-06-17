@@ -12,6 +12,9 @@ namespace DwarfCorp
 {
     public class YarnState : GameState
     {
+        private WorldManager World;
+
+
         private enum States
         {
             Running,
@@ -36,6 +39,7 @@ namespace DwarfCorp
             WorldManager World) :
             base(Game, "YarnState", StateManager)
         {
+            this.World = World;
         }
 
         public override void OnEnter()
@@ -65,8 +69,7 @@ namespace DwarfCorp
                 AutoLayout = AutoLayout.DockFill
             });
 
-            var memory = new Yarn.MemoryVariableStore();
-            Dialogue = CreateDialogue(memory, ConversationFile);
+            Dialogue = CreateDialogue(World == null ? new Yarn.MemoryVariableStore() : World.ConversationMemory, ConversationFile);
             Runner = Dialogue.Run(StartNode).GetEnumerator();
 
             IsInitialized = true;
@@ -160,13 +163,8 @@ namespace DwarfCorp
             // Load nodes
             var dialogue = new Yarn.Dialogue(Memory);
 
-            dialogue.LogDebugMessage = delegate (string message) { };
-
-            dialogue.LogErrorMessage = delegate (string message)
-            {
-                Console.WriteLine("Yarn Error: " + message);
-            };
-
+            dialogue.LogDebugMessage = delegate (string message) { Console.WriteLine(message); };
+            dialogue.LogErrorMessage = delegate (string message) { Console.WriteLine("Yarn Error: " + message); };
 
             try
             {
