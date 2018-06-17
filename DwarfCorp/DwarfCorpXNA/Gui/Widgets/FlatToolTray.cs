@@ -29,6 +29,11 @@ namespace DwarfCorp.Gui.Widgets
 
             public void SwitchTray(Widget NewTray)
             {
+                if (NewTray != null && !Children.Contains(NewTray))
+                {
+                    AddChild(NewTray);
+                    Layout();
+                }
                 foreach (var child in Children)
                     child.Hidden = true;
                 NewTray.Hidden = false;

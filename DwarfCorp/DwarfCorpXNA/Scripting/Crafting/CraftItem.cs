@@ -85,5 +85,6 @@ namespace DwarfCorp
         public bool Deconstructable = true;
         public CraftActBehaviors CraftActBehavior = CraftActBehaviors.Normal;
         public bool AllowRotation = false;
+        public string Category = "";
     }
 }

@@ -97,13 +97,13 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-
   {
-    "Name": "Ladder",
+    "Name": "Wooden Ladder",
     "EntityName": "Ladder",
+	"Category" : "Ladders",
     "RequiredResources": [
       {
-        "ResourceType": "HardMaterial",
+        "ResourceType": "Wood",
         "NumResources": 1
       }
     ],
@@ -130,13 +130,79 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-
   {
-    "Name": "Door",
-    "EntityName": "Door",
+    "Name": "Metal Ladder",
+    "EntityName": "Ladder",
+	"Category" : "Ladders",
     "RequiredResources": [
       {
-        "ResourceType": "HardMaterial",
+        "ResourceType": "Metal",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 67
+    },
+    "BaseCraftTime": 10.0,
+    "Description": "Allows dwarves to climb up and down",
+    "Type": "Object",
+    "Prerequisites": [
+      "NearWall"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+  {
+    "Name": "Stone Ladder",
+    "EntityName": "Ladder",
+	"Category" : "Ladders",
+    "RequiredResources": [
+      {
+        "ResourceType": "Stone",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 66
+    },
+    "BaseCraftTime": 10.0,
+    "Description": "Allows dwarves to climb up and down",
+    "Type": "Object",
+    "Prerequisites": [
+      "NearWall"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+  {
+    "Name": "Wooden Door",
+    "EntityName": "Door",
+	"Category" : "Doors",
+    "RequiredResources": [
+      {
+        "ResourceType": "Wood",
         "NumResources": 1
       }
     ],
@@ -163,7 +229,72 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-
+  {
+    "Name": "Metal Door",
+    "EntityName": "Door",
+	"Category" : "Doors",
+    "RequiredResources": [
+      {
+        "ResourceType": "Metal",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 65
+    },
+    "BaseCraftTime": 30.0,
+    "Description": "Keep monsters out, and dwarves in.",
+    "Type": "Object",
+    "Prerequisites": [
+      "NearWall"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+  {
+    "Name": "Stone Door",
+    "EntityName": "Door",
+	"Category" : "Doors",
+    "RequiredResources": [
+      {
+        "ResourceType": "Stone",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 64
+    },
+    "BaseCraftTime": 30.0,
+    "Description": "Keep monsters out, and dwarves in.",
+    "Type": "Object",
+    "Prerequisites": [
+      "NearWall"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
   {
     "Name": "Trinket",
     "EntityName": "Trinket",
@@ -673,6 +804,7 @@
   {
     "Name": "Potions",
     "EntityName": "Potions",
+	"Category" : "Magic",
     "RequiredResources": [
       {
         "ResourceType": "Magical",
@@ -706,6 +838,7 @@
   {
     "Name": "Books",
     "EntityName": "Books",
+    "Category" : "Magic",
     "RequiredResources": [
       {
         "ResourceType": "Magical",
@@ -739,6 +872,7 @@
   {
     "Name": "Bookshelf",
     "EntityName": "Bookshelf",
+	"Category" : "Magic",
     "RequiredResources": [
       {
         "ResourceType": "Magical",
@@ -936,6 +1070,7 @@
   {
     "Name": "Conveyor",
     "EntityName": "Conveyor",
+	"Category" : "Magic",
     "RequiredResources": [
       {
         "ResourceType": "Magical",
