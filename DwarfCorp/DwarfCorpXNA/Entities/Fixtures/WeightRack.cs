@@ -43,6 +43,13 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class WeightRack : CraftedFixture
     {
+        [EntityFactory("Weights")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new WeightRack(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+        }
+
+
         public WeightRack()
         {
 

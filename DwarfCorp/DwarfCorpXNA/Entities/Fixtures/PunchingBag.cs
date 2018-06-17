@@ -43,6 +43,13 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class PunchingBag : CraftedFixture
     {
+        [EntityFactory("PunchingBag")]
+        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new PunchingBag(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
+        }
+
+
         public PunchingBag()
         {
 

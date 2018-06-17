@@ -771,6 +771,7 @@
   {
     "Name": "Strawman",
     "EntityName": "Strawman",
+	"Category" : "Train",
     "RequiredResources": [
       {
         "ResourceType": "Grain",
@@ -800,7 +801,105 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-
+    {
+    "Name": "Weights",
+    "EntityName": "Weights",
+	"Category" : "Train",
+    "RequiredResources": [
+      {
+        "ResourceType": "Metal",
+        "NumResources": 4
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 43
+    },
+    "BaseCraftTime": 10.0,
+    "Description": "Dwarves can train by hitting the weights.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+  {
+    "Name": "Target",
+    "EntityName": "Target",
+	"Category" : "Train",
+    "RequiredResources": [
+      {
+        "ResourceType": "Wood",
+        "NumResources": 4
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 40
+    },
+    "BaseCraftTime": 10.0,
+    "Description": "Dwarves can train by hitting the Target.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+  {
+    "Name": "Punching Bag",
+    "EntityName": "Punching Bag",
+	"Category" : "Train",
+    "RequiredResources": [
+      {
+        "ResourceType": "Grain",
+        "NumResources": 4
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 42
+    },
+    "BaseCraftTime": 10.0,
+    "Description": "Dwarves can train by hitting the Punching Bag.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
   {
     "Name": "Potions",
     "EntityName": "Potions",
