@@ -84,13 +84,15 @@
     "Goblins": {
         "Name": "Goblins",
         "CreatureTypes": [
-            "Goblin"
+            "Goblin",
+			"Troll"
         ],
         "TradeEnvoys": 
         [["Goblin", "Goblin", "Goblin"]],
         "WarParties": 
         [["Goblin", "Goblin", "Goblin"],
-         ["Goblin", "Goblin", "Goblin", "Goblin"]
+         ["Goblin", "Goblin", "Goblin", "Troll"],
+		 ["Goblin", "Goblin", "Troll", "Troll"]
         ],
         "NaturalEnemies" :  ["Demon", "Elf", "Undead", "Carnivore"],
         "IsIntelligent": true,

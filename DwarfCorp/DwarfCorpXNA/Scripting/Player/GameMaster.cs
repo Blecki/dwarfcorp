@@ -16,8 +16,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class GameMaster
     {
-
-
         public enum ToolMode
         {
             SelectUnits,
@@ -40,8 +38,7 @@ namespace DwarfCorp
             God,
             CancelTasks
         }
-
-
+        
         public OrbitCamera CameraController { get; set; }
 
         [JsonIgnore]

@@ -110,19 +110,19 @@ namespace DwarfCorp
             try
             {
 #endif
-                bool fileExists = !string.IsNullOrEmpty(ExistingFile);
+            bool fileExists = !string.IsNullOrEmpty(ExistingFile);
 
-                SetLoadingMessage("Creating Sky...");
+            SetLoadingMessage("Creating Sky...");
 
-                Sky = new SkyRenderer(
-                    AssetManager.GetContentTexture(ContentPaths.Sky.moon),
-                    AssetManager.GetContentTexture(ContentPaths.Sky.sun),
-                    Content.Load<TextureCube>(AssetManager.ResolveContentPath(ContentPaths.Sky.day_sky)),
-                    Content.Load<TextureCube>(AssetManager.ResolveContentPath(ContentPaths.Sky.night_sky)),
-                    AssetManager.GetContentTexture(ContentPaths.Gradients.skygradient),
-                    Content.Load<Model>(AssetManager.ResolveContentPath(ContentPaths.Models.sphereLowPoly)),
-                    Content.Load<Effect>(ContentPaths.Shaders.SkySphere),
-                    Content.Load<Effect>(ContentPaths.Shaders.Background));
+            Sky = new SkyRenderer(
+                AssetManager.GetContentTexture(ContentPaths.Sky.moon),
+                AssetManager.GetContentTexture(ContentPaths.Sky.sun),
+                Content.Load<TextureCube>(AssetManager.ResolveContentPath(ContentPaths.Sky.day_sky)),
+                Content.Load<TextureCube>(AssetManager.ResolveContentPath(ContentPaths.Sky.night_sky)),
+                AssetManager.GetContentTexture(ContentPaths.Gradients.skygradient),
+                Content.Load<Model>(AssetManager.ResolveContentPath(ContentPaths.Models.sphereLowPoly)),
+                Content.Load<Effect>(ContentPaths.Shaders.SkySphere),
+                Content.Load<Effect>(ContentPaths.Shaders.Background));
 
             #region Reading game file
 
@@ -136,7 +136,7 @@ namespace DwarfCorp
                 // Todo: REMOVE THIS WHEN THE NEW SAVE SYSTEM IS COMPLETE.
                 if (gameFile.Metadata.Version != Program.Version && !Program.CompatibleVersions.Contains(gameFile.Metadata.Version))
                 {
-                    throw new InvalidOperationException(String.Format("Game file is from version {0}. Compatible versions are {1}.", gameFile.Metadata.Version, 
+                    throw new InvalidOperationException(String.Format("Game file is from version {0}. Compatible versions are {1}.", gameFile.Metadata.Version,
                         TextGenerator.GetListString(Program.CompatibleVersions)));
                 }
 
@@ -172,7 +172,7 @@ namespace DwarfCorp
             {
                 Vector3 origin = new Vector3(0, 0, 0);
                 Vector3 extents = new Vector3(1500, 1500, 1500);
-                    OctTree = new OctTreeNode<Body>(origin - extents, origin + extents);
+                OctTree = new OctTreeNode<Body>(origin - extents, origin + extents);
 
                 PrimitiveLibrary.Initialize(GraphicsDevice, Content);
 
@@ -212,251 +212,251 @@ namespace DwarfCorp
                 EntityFactory.Initialize(this);
             }
 
-#endregion
+            #endregion
 
 
-                SetLoadingMessage("Creating Planner ...");
-                PlanService = new PlanService();
+            SetLoadingMessage("Creating Planner ...");
+            PlanService = new PlanService();
 
-                SetLoadingMessage("Creating Shadows...");
-                Shadows = new ShadowRenderer(GraphicsDevice, 1024, 1024);
+            SetLoadingMessage("Creating Shadows...");
+            Shadows = new ShadowRenderer(GraphicsDevice, 1024, 1024);
 
-                SetLoadingMessage("Creating Liquids ...");
+            SetLoadingMessage("Creating Liquids ...");
 
-#region liquids
+            #region liquids
 
-                WaterRenderer = new WaterRenderer(GraphicsDevice);
+            WaterRenderer = new WaterRenderer(GraphicsDevice);
 
-#endregion
+            #endregion
 
-                SetLoadingMessage("Generating Initial Terrain Chunks ...");
+            SetLoadingMessage("Generating Initial Terrain Chunks ...");
 
-                if (!fileExists)
-                    GameID = MathFunctions.Random.Next(0, 1024);
+            if (!fileExists)
+                GameID = MathFunctions.Random.Next(0, 1024);
 
-                ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f)
-                {
-                    SeaLevel = SeaLevel
-                };
+            ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f)
+            {
+                SeaLevel = SeaLevel
+            };
 
 
-#region Load Components
+            #region Load Components
 
-                if (fileExists)
-                {
+            if (fileExists)
+            {
 
-                    ChunkManager = new ChunkManager(Content, this,
-                        ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+                ChunkManager = new ChunkManager(Content, this,
+                    ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
                 Splasher = new Splasher(ChunkManager);
 
 
                 ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
-                    
-                    SetLoadingMessage("Loading Terrain...");
-                    gameFile.ReadChunks(ExistingFile);
-                    ChunkManager.ChunkData.LoadFromFile(ChunkManager, gameFile, SetLoadingMessage);
-                    
-                    SetLoadingMessage("Loading Entities...");
-                    gameFile.LoadPlayData(ExistingFile, this);
-                    Camera = gameFile.PlayData.Camera;
-                    DesignationDrawer = gameFile.PlayData.Designations;
 
-                    Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
-                    Vector3 extents = new Vector3(1500, 1500, 1500);
+                SetLoadingMessage("Loading Terrain...");
+                gameFile.ReadChunks(ExistingFile);
+                ChunkManager.ChunkData.LoadFromFile(ChunkManager, gameFile, SetLoadingMessage);
 
-                    if (gameFile.PlayData.Resources != null)
+                SetLoadingMessage("Loading Entities...");
+                gameFile.LoadPlayData(ExistingFile, this);
+                Camera = gameFile.PlayData.Camera;
+                DesignationDrawer = gameFile.PlayData.Designations;
+
+                Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
+                Vector3 extents = new Vector3(1500, 1500, 1500);
+
+                if (gameFile.PlayData.Resources != null)
+                {
+                    foreach (var resource in gameFile.PlayData.Resources)
                     {
-                        foreach (var resource in gameFile.PlayData.Resources)
+                        if (!ResourceLibrary.Resources.ContainsKey(resource.Key))
                         {
-                            if (!ResourceLibrary.Resources.ContainsKey(resource.Key))
-                            {
-                                ResourceLibrary.Add(resource.Value);
-                            }
+                            ResourceLibrary.Add(resource.Value);
                         }
                     }
-                    ComponentManager = new ComponentManager(gameFile.PlayData.Components, this);
+                }
+                ComponentManager = new ComponentManager(gameFile.PlayData.Components, this);
 
-                    foreach (var component in gameFile.PlayData.Components.SaveableComponents)
+                foreach (var component in gameFile.PlayData.Components.SaveableComponents)
+                {
+                    if (!ComponentManager.HasComponent(component.GlobalID) &&
+                        ComponentManager.HasComponent(component.Parent.GlobalID))
                     {
-                        if (!ComponentManager.HasComponent(component.GlobalID) &&
-                            ComponentManager.HasComponent(component.Parent.GlobalID))
-                        {
-                            // Logically impossible.
-                            throw new InvalidOperationException("Component exists in save data but not in manager.");
-                        }
+                        // Logically impossible.
+                        throw new InvalidOperationException("Component exists in save data but not in manager.");
                     }
+                }
 
                 ConversationMemory = gameFile.PlayData.ConversationMemory;
 
-                    Factions = gameFile.PlayData.Factions;
-                    ComponentManager.World = this;
+                Factions = gameFile.PlayData.Factions;
+                ComponentManager.World = this;
 
-                    Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
-                    Time = gameFile.Metadata.Time;
-                    WorldOrigin = gameFile.Metadata.WorldOrigin;
-                    WorldScale = gameFile.Metadata.WorldScale;
+                Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
+                Time = gameFile.Metadata.Time;
+                WorldOrigin = gameFile.Metadata.WorldOrigin;
+                WorldScale = gameFile.Metadata.WorldScale;
 
-                    // Restore native factions from deserialized data.
-                    Natives = new List<Faction>();
+                // Restore native factions from deserialized data.
+                Natives = new List<Faction>();
 
-                    foreach (Faction faction in Factions.Factions.Values)
-                    {
-                        if (faction.Race.IsNative && faction.Race.IsIntelligent && !faction.IsRaceFaction)
-                        {
-                            Natives.Add(faction);
-                        }
-                    }
-
-                    Diplomacy = gameFile.PlayData.Diplomacy;
-
-                    GoalManager = new Goals.GoalManager();
-                    GoalManager.Initialize(gameFile.PlayData.Goals);
-
-                    TutorialManager = new Tutorial.TutorialManager();
-                    TutorialManager.SetFromSaveData(gameFile.PlayData.TutorialSaveData);
-                }
-                else
+                foreach (Faction faction in Factions.Factions.Values)
                 {
-                    Time = new WorldTime();
+                    if (faction.Race.IsNative && faction.Race.IsIntelligent && !faction.IsRaceFaction)
+                    {
+                        Natives.Add(faction);
+                    }
+                }
 
-                    Camera = new OrbitCamera(this,
-                        new Vector3(VoxelConstants.ChunkSizeX,
-                            VoxelConstants.ChunkSizeY - 1.0f,
-                            VoxelConstants.ChunkSizeZ),
-                        new Vector3(VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeY - 1.0f,
-                            VoxelConstants.ChunkSizeZ) +
-                        Vector3.Up*10.0f + Vector3.Backward*10,
-                        MathHelper.PiOver4, AspectRatio, 0.1f,
-                        GameSettings.Default.VertexCullDistance);
+                Diplomacy = gameFile.PlayData.Diplomacy;
 
-                    ChunkManager = new ChunkManager(Content, this, 
-                        ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+                GoalManager = new Goals.GoalManager();
+                GoalManager.Initialize(gameFile.PlayData.Goals);
+
+                TutorialManager = new Tutorial.TutorialManager();
+                TutorialManager.SetFromSaveData(gameFile.PlayData.TutorialSaveData);
+            }
+            else
+            {
+                Time = new WorldTime();
+
+                Camera = new OrbitCamera(this,
+                    new Vector3(VoxelConstants.ChunkSizeX,
+                        VoxelConstants.ChunkSizeY - 1.0f,
+                        VoxelConstants.ChunkSizeZ),
+                    new Vector3(VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeY - 1.0f,
+                        VoxelConstants.ChunkSizeZ) +
+                    Vector3.Up * 10.0f + Vector3.Backward * 10,
+                    MathHelper.PiOver4, AspectRatio, 0.1f,
+                    GameSettings.Default.VertexCullDistance);
+
+                ChunkManager = new ChunkManager(Content, this,
+                    ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
                 Splasher = new Splasher(ChunkManager);
 
 
                 ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
 
-                    Camera.Position = new Vector3(0, 10, 0) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
-                    Camera.Target = new Vector3(0, 10, 1) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
+                Camera.Position = new Vector3(0, 10, 0) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
+                Camera.Target = new Vector3(0, 10, 1) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
 
-                    // If there's no file, we have to initialize the first chunk coordinate
-                    if (gameFile == null)
-                    {
-                        ChunkManager.GenerateInitialChunks(
-                            new GlobalChunkCoordinate(0, 0, 0),
-                            SetLoadingMessage);
-                    }
-
-                    ComponentManager = new ComponentManager(this);
-                    ComponentManager.SetRootComponent(new Body(ComponentManager, "root", Matrix.Identity,
-                        Vector3.Zero, Vector3.Zero, false));
-
-                    if (Natives == null) // Todo: Always true??
-                    {
-                        FactionLibrary library = new FactionLibrary();
-                        library.Initialize(this, CompanyMakerState.CompanyInformation);
-                        Natives = new List<Faction>();
-                        for (int i = 0; i < 10; i++)
-                        {
-                            Natives.Add(library.GenerateFaction(this, i, 10));
-                        }
-
-                    }
-
-#region Prepare Factions
-
-                    foreach (Faction faction in Natives)
-                    {
-                        faction.World = this;
-
-                        if (faction.RoomBuilder == null)
-                            faction.RoomBuilder = new RoomBuilder(faction, this);
-                    }
-
-                    Factions = new FactionLibrary();
-                    if (Natives != null && Natives.Count > 0)
-                    {
-                        Factions.AddFactions(this, Natives);
-                    }
-
-                    Factions.Initialize(this, CompanyMakerState.CompanyInformation);
-                    Point playerOrigin = new Point((int) (WorldOrigin.X), (int) (WorldOrigin.Y));
-
-                    Factions.Factions["Player"].Center = playerOrigin;
-                    Factions.Factions["The Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
-
-#endregion
-
-                    Diplomacy = new Diplomacy(this);
-                    Diplomacy.Initialize(Time.CurrentDate);
-
-                    // Initialize goal manager here.
-                    GoalManager = new Goals.GoalManager();
-                    GoalManager.Initialize(new List<Goals.Goal>());
-
-                    TutorialManager = new Tutorial.TutorialManager();
-                    TutorialManager.TutorialEnabled = !GameSettings.Default.TutorialDisabledGlobally;
-                    Tutorial("new game start");
-                }
-
-                Camera.World = this;
-                //Drawer3D.Camera = Camera;
-
-
-#endregion
-
-                SetLoadingMessage("Creating Particles ...");
-                ParticleManager = new ParticleManager(GraphicsDevice, ComponentManager);
-
-                SetLoadingMessage("Creating GameMaster ...");
-                Master = new GameMaster(Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
-                    Camera, GraphicsDevice);
-
-                if (gameFile != null)
+                // If there's no file, we have to initialize the first chunk coordinate
+                if (gameFile == null)
                 {
-                    if (gameFile.PlayData.Spells != null)
-                        Master.Spells = gameFile.PlayData.Spells;
-                    if (gameFile.PlayData.Tasks != null)
-                    {
-                        Master.TaskManager = gameFile.PlayData.Tasks;
-                        Master.TaskManager.Faction = Master.Faction;
-                    }
-                    if (gameFile.PlayData.InitialEmbark != null)
-                    {
-                        InitialEmbark = gameFile.PlayData.InitialEmbark;
-                    }
-                    ChunkManager.World.Master.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
-                    ? gameFile.Metadata.Slice
-                    : ChunkManager.World.Master.MaxViewingLevel);
+                    ChunkManager.GenerateInitialChunks(
+                        new GlobalChunkCoordinate(0, 0, 0),
+                        SetLoadingMessage);
                 }
 
-                if (Master.Faction.Economy.Company.Information == null)
-                    Master.Faction.Economy.Company.Information = new CompanyInformation();
+                ComponentManager = new ComponentManager(this);
+                ComponentManager.SetRootComponent(new Body(ComponentManager, "root", Matrix.Identity,
+                    Vector3.Zero, Vector3.Zero, false));
 
-                CreateInitialEmbarkment();
-                foreach(var chunk in ChunkManager.ChunkData.ChunkMap)
+                if (Natives == null) // Todo: Always true??
                 {
-                    chunk.CalculateInitialSunlight();
+                    FactionLibrary library = new FactionLibrary();
+                    library.Initialize(this, CompanyMakerState.CompanyInformation);
+                    Natives = new List<Faction>();
+                    for (int i = 0; i < 10; i++)
+                    {
+                        Natives.Add(library.GenerateFaction(this, i, 10));
+                    }
+
                 }
-                VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, new VoxelHandle(
-                ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
 
-                foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
-                    ChunkManager.InvalidateChunk(chunk);
+                #region Prepare Factions
 
-                ChunkManager.StartThreads();
-                SetLoadingMessage("Presimulating ...");
-                ShowingWorld = false;
-                OnLoadedEvent();
+                foreach (Faction faction in Natives)
+                {
+                    faction.World = this;
 
-                Thread.Sleep(1000);
-                ShowingWorld = true;
+                    if (faction.RoomBuilder == null)
+                        faction.RoomBuilder = new RoomBuilder(faction, this);
+                }
 
-                SetLoadingMessage("Complete.");
+                Factions = new FactionLibrary();
+                if (Natives != null && Natives.Count > 0)
+                {
+                    Factions.AddFactions(this, Natives);
+                }
 
-                // GameFile is no longer needed.
-                gameFile = null;
-                LoadStatus = LoadingStatus.Success;
+                Factions.Initialize(this, CompanyMakerState.CompanyInformation);
+                Point playerOrigin = new Point((int)(WorldOrigin.X), (int)(WorldOrigin.Y));
+
+                Factions.Factions["Player"].Center = playerOrigin;
+                Factions.Factions["The Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
+
+                #endregion
+
+                Diplomacy = new Diplomacy(this);
+                Diplomacy.Initialize(Time.CurrentDate);
+
+                // Initialize goal manager here.
+                GoalManager = new Goals.GoalManager();
+                GoalManager.Initialize(new List<Goals.Goal>());
+
+                TutorialManager = new Tutorial.TutorialManager();
+                TutorialManager.TutorialEnabled = !GameSettings.Default.TutorialDisabledGlobally;
+                Tutorial("new game start");
+            }
+
+            Camera.World = this;
+            //Drawer3D.Camera = Camera;
+
+
+            #endregion
+
+            SetLoadingMessage("Creating Particles ...");
+            ParticleManager = new ParticleManager(GraphicsDevice, ComponentManager);
+
+            SetLoadingMessage("Creating GameMaster ...");
+            Master = new GameMaster(Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
+                Camera, GraphicsDevice);
+
+            if (gameFile != null)
+            {
+                if (gameFile.PlayData.Spells != null)
+                    Master.Spells = gameFile.PlayData.Spells;
+                if (gameFile.PlayData.Tasks != null)
+                {
+                    Master.TaskManager = gameFile.PlayData.Tasks;
+                    Master.TaskManager.Faction = Master.Faction;
+                }
+                if (gameFile.PlayData.InitialEmbark != null)
+                {
+                    InitialEmbark = gameFile.PlayData.InitialEmbark;
+                }
+                ChunkManager.World.Master.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
+                ? gameFile.Metadata.Slice
+                : ChunkManager.World.Master.MaxViewingLevel);
+            }
+
+            if (Master.Faction.Economy.Company.Information == null)
+                Master.Faction.Economy.Company.Information = new CompanyInformation();
+
+            CreateInitialEmbarkment();
+            foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
+            {
+                chunk.CalculateInitialSunlight();
+            }
+            VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, new VoxelHandle(
+            ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
+
+            foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
+                ChunkManager.InvalidateChunk(chunk);
+
+            ChunkManager.StartThreads();
+            SetLoadingMessage("Presimulating ...");
+            ShowingWorld = false;
+            OnLoadedEvent();
+
+            Thread.Sleep(1000);
+            ShowingWorld = true;
+
+            SetLoadingMessage("Complete.");
+
+            // GameFile is no longer needed.
+            gameFile = null;
+            LoadStatus = LoadingStatus.Success;
 #if !DEBUG
         }
             catch (Exception exception)

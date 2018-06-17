@@ -190,11 +190,14 @@ namespace DwarfCorp
             var distortion = currDistortion * 0.1f + prevDistortion * 0.9f;
             prevDistortion = distortion;
             var frameSize = AnimPlayer.GetCurrentFrameSize();
+            var offsets = AnimPlayer.GetCurrentAnimation().YOffset;
+            float verticalOffset = offsets == null || offsets.Count == 0 ? 0.0f : offsets[Math.Min(AnimPlayer.CurrentFrame, offsets.Count - 1)] * 1.0f / 32.0f;
+            var pos = GlobalTransform.Translation + Vector3.Up * verticalOffset;
             switch (OrientationType)
             {
                 case OrientMode.Spherical:
                     {
-                        Matrix bill = Matrix.CreateScale(frameSize.X, frameSize.Y, 1.0f) * Matrix.CreateBillboard(GlobalTransform.Translation, camera.Position, camera.UpVector, null) * Matrix.CreateTranslation(distortion);
+                        Matrix bill = Matrix.CreateScale(frameSize.X, frameSize.Y, 1.0f) * Matrix.CreateBillboard(pos, camera.Position, camera.UpVector, null) * Matrix.CreateTranslation(distortion);
                         //Matrix noTransBill = bill;
                         //noTransBill.Translation = Vector3.Zero;
 
@@ -205,12 +208,12 @@ namespace DwarfCorp
                 case OrientMode.Fixed:
                     {
                         Matrix rotation = Matrix.CreateScale(frameSize.X, frameSize.Y, 1.0f) * GlobalTransform;
-                        rotation.Translation = rotation.Translation + distortion;
+                        rotation.Translation = pos + distortion;
                         return rotation;
                     }
                 case OrientMode.YAxis:
                     {
-                        Matrix worldRot = Matrix.CreateScale(frameSize.X, frameSize.Y, 1.0f) * Matrix.CreateConstrainedBillboard(GlobalTransform.Translation, camera.Position, Vector3.UnitY, null, null);
+                        Matrix worldRot = Matrix.CreateScale(frameSize.X, frameSize.Y, 1.0f) * Matrix.CreateConstrainedBillboard(pos, camera.Position, Vector3.UnitY, null, null);
                         worldRot.Translation = worldRot.Translation + distortion;
                         return worldRot;
                     }

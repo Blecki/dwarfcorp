@@ -20,6 +20,7 @@ namespace DwarfCorp
             public string Name;
             public List<List<int>> Frames;
             public List<float> Speed;
+            public List<float> YOffset;
             public bool PlayOnce;
         }
 

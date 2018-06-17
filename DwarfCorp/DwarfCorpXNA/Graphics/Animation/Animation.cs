@@ -23,6 +23,7 @@ namespace DwarfCorp
         public Color Tint { get; set; }
         public float FrameHZ { get; set; }
         public List<float> Speeds { get; set; } 
+        public List<float> YOffset { get; set; }
         public bool Flipped { get; set; }
         public float SpeedMultiplier { get; set; }
         public bool Loops = false;
@@ -44,6 +45,7 @@ namespace DwarfCorp
             public int Height;
             public List<int> Frames;
             public float Speed;
+            public float YOffset;
         }
 
         public Animation()
@@ -51,6 +53,7 @@ namespace DwarfCorp
             SpriteSheet = null;
             Frames = new List<Point>();
             Speeds = new List<float>();
+            YOffset = new List<float>();
             SpeedMultiplier = 1.0f;
             Tint = Color.White;
         }

@@ -1374,60 +1374,119 @@ namespace DwarfCorp.GameStates
                 }
             };
 
+            Func<CraftItem, FlatToolTray.Icon> createCraftIcon = (data) => new FlatToolTray.Icon
+            {
+                Icon = data.Icon,
+                Tooltip = "Craft " + data.Name,
+                KeepChildVisible = true, // So the player can interact with the popup.
+                ExpandChildWhenDisabled = true,
+                Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
+                Text = TextGenerator.Shorten(data.Name, 5),
+                TextVerticalAlign = VerticalAlign.Below,
+                TextColor = Color.White.ToVector4(),
+                PopupChild = new BuildCraftInfo
+                {
+                    Data = data,
+                    AllowWildcard = false,
+                    Rect = new Rectangle(0, 0, 350, 150),
+                    Master = Master,
+                    World = World,
+                    OnShown = (sender) =>
+                    {
+                    },
+                    BuildAction = (sender, args) =>
+                    {
+                        var buildInfo = sender.Parent as BuildCraftInfo;
+                        if (buildInfo == null)
+                            return;
+                        sender.Parent.Hidden = true;
+                        var tool = Master.Tools[GameMaster.ToolMode.BuildObject] as BuildObjectTool;
+                        tool.SelectedResources = buildInfo.GetSelectedResources();
+                        Master.Faction.RoomBuilder.CurrentRoomData = null;
+                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                        tool.CraftType = data;
+
+                        // Todo: This should never be true.
+                        if (tool.PreviewBody != null)
+                        {
+                            tool.PreviewBody.GetRoot().Delete();
+                            tool.PreviewBody = null;
+                        }
+
+                        ChangeTool(GameMaster.ToolMode.BuildObject);
+                        World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
+                    },
+                },
+                OnConstruct = (sender) =>
+                {
+                    AddToolbarIcon(sender, () => true);
+                },
+            };
+
+            Dictionary<string, bool> categoryExists = new Dictionary<string, bool>();
+
+            var category_return_button = new FlatToolTray.Icon
+            {
+                Icon = new TileReference("tool-icons", 11),
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                },
+                //TODO
+                ReplacementMenu = null
+            };
+
+            Func<string, Widget> createCraftCategory = category =>
+            {
+                var menu_category = new FlatToolTray.Tray
+                {
+                    ItemSource = (new Widget[] { category_return_button }).Concat(
+                    CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.Category == category)
+                    .Select(data => createCraftIcon(data)))
+                };
+                var firstItem = CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.Category == category).First();
+                var category_icon = new FlatToolTray.Icon
+                {
+                    Icon = firstItem.Icon,
+                    Tooltip = "Craft " + category,
+                    Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                    ReplacementMenu = menu_category,
+                    Text = TextGenerator.Shorten(category, 5),
+                    TextVerticalAlign = VerticalAlign.Below,
+                    TextColor = Color.White.ToVector4(),
+                };
+                return category_icon;
+            };
+            List<CraftItem> rootObjects = new List<CraftItem>();
+            foreach (var item in CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object))
+            {
+                if (string.IsNullOrEmpty(item.Category) || !categoryExists.ContainsKey(item.Category))
+                {
+                    rootObjects.Add(item);
+                    if (!string.IsNullOrEmpty(item.Category))
+                    {
+                        categoryExists[item.Category] = true;
+                    }
+                }
+            };
+
             var menu_CraftTypes = new FlatToolTray.Tray
             {
                 Tag = "craft item",
                 ItemSource = (new Widget[]{ icon_menu_CraftTypes_Return }).Concat(
-                    CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object)
-                    .Select(data => new FlatToolTray.Icon
+                    rootObjects.Select(data =>
                     {
-                        Icon = data.Icon,
-                        Tooltip = "Craft " + data.Name,
-                        KeepChildVisible = true, // So the player can interact with the popup.
-                        ExpandChildWhenDisabled = true,
-                        Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
-                        Text = TextGenerator.Shorten(data.Name, 5),
-                        TextVerticalAlign = VerticalAlign.Below,
-                        TextColor = Color.White.ToVector4(),
-                        PopupChild = new BuildCraftInfo
+                        if (string.IsNullOrEmpty(data.Category))
                         {
-                            Data = data,
-                            AllowWildcard = false,
-                            Rect = new Rectangle(0, 0, 350, 150),
-                            Master = Master,
-                            World = World,
-                            OnShown = (sender) =>
-                            {
-                            },
-                            BuildAction = (sender, args) =>
-                            {
-                                var buildInfo = sender.Parent as BuildCraftInfo;
-                                if (buildInfo == null)
-                                    return;
-                                sender.Parent.Hidden = true;
-                                var tool = Master.Tools[GameMaster.ToolMode.BuildObject] as BuildObjectTool;
-                                tool.SelectedResources = buildInfo.GetSelectedResources();
-                                Master.Faction.RoomBuilder.CurrentRoomData = null;
-                                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                tool.CraftType = data;
-
-                                // Todo: This should never be true.
-                                if (tool.PreviewBody != null)
-                                {
-                                    tool.PreviewBody.GetRoot().Delete();
-                                    tool.PreviewBody = null;
-                                }
-
-                                ChangeTool(GameMaster.ToolMode.BuildObject);
-                                World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
-                            },
-                        },
-                        OnConstruct = (sender) =>
-                        {
-                            AddToolbarIcon(sender, () => true);
-                        },
+                            return createCraftIcon(data);
+                        }
+                        return createCraftCategory(data.Category);
                     }))
             };
+
+            category_return_button.ReplacementMenu = menu_CraftTypes;
 
             var icon_BuildCraft = new FlatToolTray.Icon
             {
@@ -2221,7 +2280,7 @@ namespace DwarfCorp.GameStates
                     menu_RoomTypes,
                     menu_WallTypes,
                     menu_Floortypes,
-                    menu_Rail
+                    menu_Rail,
                 },
                 /*OnLayout = (sender) =>
                 {
