@@ -85,12 +85,20 @@ namespace DwarfCorp
                 OnClick = (gui, sender) =>
                 {
                     World.Paused = true;
-                    GameState.Game.StateManager.PushState(new Dialogue.DialogueState(
-                        GameState.Game,
-                        GameState.Game.StateManager,
-                        this,
-                        World.PlayerFaction,
-                        World));
+                    if (String.IsNullOrEmpty(this.OwnerFaction.Race.DiplomacyConversation))
+                        GameState.Game.StateManager.PushState(new Dialogue.DialogueState(
+                            GameState.Game,
+                            GameState.Game.StateManager,
+                            this,
+                            World.PlayerFaction,
+                            World));
+                    else
+                        GameState.Game.StateManager.PushState(new YarnState(
+                            GameState.Game,
+                            GameState.Game.StateManager,
+                            this,
+                            World.PlayerFaction,
+                            World));
                 },
                 ShouldKeep = () => { return this.ExpiditionState == Expedition.State.Trading && !this.ShouldRemove; }
             }, liveCreatures.First().Physics, new Vector2(0, -10));

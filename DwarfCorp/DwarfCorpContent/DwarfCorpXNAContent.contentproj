@@ -2788,6 +2788,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>embarkments</Name>
     </None>
+    <None Include="World\dwarf.conv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>dwarf</Name>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Text\adjective.txt">

@@ -38,6 +38,7 @@ namespace DwarfCorp
 {
     public class RaceLibrary
     {
+        // Todo: Make moddable
         private static Dictionary<string, Race> Races = null;
 
         public static Race FindRace(String Name)

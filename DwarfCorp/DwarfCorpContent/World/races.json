@@ -15,7 +15,8 @@
         "IsIntelligent": true,
         "IsNative": false,
         "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
-        "NameFile": "Text\\Templates\\names_dwarf.txt",
+      "NameFile": "Text\\Templates\\names_dwarf.txt",
+      "DiplomacyConversation": "World\\dwarf.conv",
         "TalkAnimation" : {
             "AssetName" : "GUI\\diplo-dorf",
             "Width" : 64,

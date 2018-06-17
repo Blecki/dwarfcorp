@@ -71,6 +71,7 @@ namespace DwarfCorp
         public bool IsNative { get; set; }
         public string FactionNameFile { get; set; }
         public string NameFile { get; set; }
+        public string DiplomacyConversation = "";
         public Animation.SimpleDescriptor TalkAnimation { get; set; }
         public RaceSpeech Speech  { get; set; }
         [JsonIgnore]
