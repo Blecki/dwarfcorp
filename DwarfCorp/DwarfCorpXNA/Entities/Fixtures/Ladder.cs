@@ -47,7 +47,8 @@ namespace DwarfCorp
             return new Ladder(
                 Manager,
                 Position,
-                Data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceType.Wood) }));
+                Data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceType.Wood) }),
+                Data.GetData<string>("CraftType", "Wooden Ladder"));
         }
 
         protected static Dictionary<Resource.ResourceTags, Point> Sprites = new Dictionary<Resource.ResourceTags, Point>()
@@ -74,13 +75,13 @@ namespace DwarfCorp
 
         }
 
-        public Ladder(ComponentManager manager, Vector3 position, List<ResourceAmount> resourceType) :
+        public Ladder(ComponentManager manager, Vector3 position, List<ResourceAmount> resourceType, string craftType) :
             base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new FixtureCraftDetails(manager)
             {
                 Resources = resourceType.ConvertAll(p => new ResourceAmount(p)),
                 Sprites = Ladder.Sprites,
                 DefaultSpriteFrame = Ladder.DefaultSprite,
-                CraftType = "Ladder"
+                CraftType = craftType
             }, SimpleSprite.OrientMode.Fixed)
         {
             this.LocalBoundingBoxOffset = new Vector3(0, 0, 0.45f);

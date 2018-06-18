@@ -118,6 +118,34 @@ namespace DwarfCorp
         }
     }
 
+    public class SpriteSheetReference
+    {
+        public string Asset;
+        public int TileWidth;
+        public int TileHeight;
+        public int Tile;
+
+        public NamedImageFrame ToImageFrame()
+        {
+            Microsoft.Xna.Framework.Graphics.Texture2D realTexture = AssetManager.GetContentTexture(Asset);
+            int numTilesX = realTexture.Width / TileWidth;
+            int y = Tile / numTilesX;
+            int x = Tile % numTilesX;
+            return new NamedImageFrame(Asset, new Rectangle(x, y, TileWidth, TileHeight));
+        }
+
+        public KeyValuePair<SpriteSheet, Point> ToSpriteSheet()
+        {
+            Microsoft.Xna.Framework.Graphics.Texture2D realTexture = AssetManager.GetContentTexture(Asset);
+            int numTilesX = realTexture.Width / TileWidth;
+            int y = Tile / numTilesX;
+            int x = Tile % numTilesX;
+            return new KeyValuePair<SpriteSheet, Point>(new SpriteSheet(Asset, TileWidth, TileHeight), new Point(x, y));
+        }
+    }
+    
+
+
     [JsonObject(IsReference = true)]
     public class NamedImageFrame : ImageFrame
     {
