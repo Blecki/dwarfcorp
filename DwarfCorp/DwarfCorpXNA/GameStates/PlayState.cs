@@ -1386,7 +1386,7 @@ namespace DwarfCorp.GameStates
                 PopupChild = new BuildCraftInfo
                 {
                     Data = data,
-                    AllowWildcard = false,
+                    AllowWildcard = true,
                     Rect = new Rectangle(0, 0, 350, 150),
                     Master = Master,
                     World = World,

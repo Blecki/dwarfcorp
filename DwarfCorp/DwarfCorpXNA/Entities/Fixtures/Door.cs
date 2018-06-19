@@ -45,9 +45,28 @@ namespace DwarfCorp
         [EntityFactory("Door")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Door(Manager, Position, Manager.World.PlayerFaction, 
-                Data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceType.Wood) }),
-                Data.GetData<string>("CraftType", "Wooden Door"));
+            var resources = Data.GetData<List<ResourceAmount>>("Resources", null);
+            var craftType = Data.GetData<string>("CraftType", null);
+            if (resources == null && craftType != null)
+            {
+                resources = new List<ResourceAmount>();
+                var craftItem = CraftLibrary.GetCraftable(craftType);
+                foreach(var resource in craftItem.RequiredResources)
+                {
+                    var genericResource = ResourceLibrary.GetResourcesByTag(resource.ResourceType).FirstOrDefault();
+                    resources.Add(new ResourceAmount(genericResource, resource.NumResources));
+                }
+            }
+            else if (resources == null && craftType == null)
+            {
+                craftType = "Wooden Door";
+                resources = new List<ResourceAmount>() { new ResourceAmount(ResourceType.Wood) };
+            }
+            else if (craftType == null)
+            {
+                craftType = "Wooden Door";
+            }
+            return new Door(Manager, Position, Manager.World.PlayerFaction, resources, craftType);
         }
 
 
