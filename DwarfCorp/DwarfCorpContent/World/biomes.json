@@ -76,9 +76,25 @@
     },
     "SubsurfaceLayers": [
       {
-        "VoxelType": "Stone",
-        "Depth": 128
-      }
+        "VoxelType": "Shale",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Slate",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Granite",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Marble",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Granite",
+        "Depth": 8
+      },
     ],
     "GrassDecal": "grass",
     "ShoreVoxel": "Sand",
@@ -165,9 +181,25 @@
     },
     "SubsurfaceLayers": [
       {
-        "VoxelType": "Stone",
-        "Depth": 128
-      }
+        "VoxelType": "Shale",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Slate",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Granite",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Marble",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Granite",
+        "Depth": 8
+      },
     ],
     "GrassDecal": "grass",
     "ShoreVoxel": "Sand",
@@ -272,9 +304,25 @@
     },
     "SubsurfaceLayers": [
       {
-        "VoxelType": "Stone",
-        "Depth": 128
-      }
+        "VoxelType": "Shale",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Slate",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Granite",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Marble",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Granite",
+        "Depth": 8
+      },
     ],
     "GrassDecal": "grass",
     "ShoreVoxel": "Sand",
@@ -328,9 +376,25 @@
     },
     "SubsurfaceLayers": [
       {
-        "VoxelType": "Stone",
-        "Depth": 128
-      }
+        "VoxelType": "Ice",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Slate",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Granite",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Marble",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Granite",
+        "Depth": 8
+      },
     ],
     "GrassDecal": "permafrost-grass",
     "ClumpGrass": false,
@@ -362,9 +426,25 @@
     },
     "SubsurfaceLayers": [
       {
-        "VoxelType": "Stone",
-        "Depth": 128
-      }
+        "VoxelType": "Shale",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Slate",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Granite",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Marble",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Granite",
+        "Depth": 8
+      },
     ],
     "ShoreVoxel": "Sand",
     "ClumpGrass": false,
@@ -448,9 +528,25 @@
     },
     "SubsurfaceLayers": [
       {
-        "VoxelType": "Stone",
-        "Depth": 128
-      }
+        "VoxelType": "Sandstone",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Slate",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Granite",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Marble",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Granite",
+        "Depth": 8
+      },
     ],
     "GrassDecal": "desert-grass",
     "ShoreVoxel": "Sand",
@@ -529,9 +625,25 @@
     },
     "SubsurfaceLayers": [
       {
-        "VoxelType": "Stone",
-        "Depth": 128
-      }
+        "VoxelType": "Shale",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Slate",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Granite",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Marble",
+        "Depth": 8
+      },
+	  {
+        "VoxelType": "Granite",
+        "Depth": 8
+      },
     ],
     "GrassDecal": "grass",
     "ShoreVoxel": "Sand",
@@ -566,12 +678,12 @@
       }
     ],
     "SoilLayer": {
-      "VoxelType": "Stone",
+      "VoxelType": "Obsidian",
       "Depth": 5
     },
     "SubsurfaceLayers": [
       {
-        "VoxelType": "Stone",
+        "VoxelType": "Obsidian",
         "Depth": 128
       }
     ],

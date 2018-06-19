@@ -33,7 +33,6 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
-using System;
 
 namespace DwarfCorp
 {
