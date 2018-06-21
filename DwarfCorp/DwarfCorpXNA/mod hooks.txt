@@ -1,0 +1,30 @@
+﻿Mod Hook: A function called by the engine which can be defined in a mod.
+Call AssetManager.EnumerateModHooks to find all hooks of a specific type. This function is expensive, so the results must be cached if they are needed later.
+
+Entity creation -
+	Attribute type: EntityFactoryAttribute
+	Signature: GameComponent *(ComponentManager, Vector3 position, Blackboard spawndata)
+
+	Used by the Entity factory to spawn entities.
+
+
+GUI texture generation -
+	Attribute type: TextureGeneratorAttribute
+	Signature: Texture2D *(GraphicsDevice, ContentManager, JsonTileSheet)
+
+	Used by the GUI when a tile sheet entry has the type 'generated'. The tile sheet entry is passed to the generator.
+
+
+Console Commands -
+	Attribute type: ConsoleCommandHandlerAttribute
+	Signature: String *(String)
+
+	Implements console commands. Any arguments given to the command are passed in unchanged.
+
+
+Yarn commands -
+	Attribute type: YarnCommandAttribute
+	Signature void *(Ancora.AstNode, Yarn.MemoryVariableStore)
+
+	Implements Yarn conversation system commands.
+

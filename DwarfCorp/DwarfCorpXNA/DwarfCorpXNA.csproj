@@ -150,6 +150,30 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ancora\AstNode.cs" />
+    <Compile Include="Ancora\Failure.cs" />
+    <Compile Include="Ancora\Grammar.cs" />
+    <Compile Include="Ancora\OperatorTable.cs" />
+    <Compile Include="Ancora\Parser.cs" />
+    <Compile Include="Ancora\ParseResult.cs" />
+    <Compile Include="Ancora\Parsers\Alternative.cs" />
+    <Compile Include="Ancora\Parsers\Character.cs" />
+    <Compile Include="Ancora\Parsers\Debug.cs" />
+    <Compile Include="Ancora\Parsers\Expression.cs" />
+    <Compile Include="Ancora\Parsers\HardError.cs" />
+    <Compile Include="Ancora\Parsers\Identifier.cs" />
+    <Compile Include="Ancora\Parsers\KeyWord.cs" />
+    <Compile Include="Ancora\Parsers\LateBound.cs" />
+    <Compile Include="Ancora\Parsers\Maybe.cs" />
+    <Compile Include="Ancora\Parsers\NoneOrMany.cs" />
+    <Compile Include="Ancora\Parsers\OneOrMany.cs" />
+    <Compile Include="Ancora\Parsers\Operator.cs" />
+    <Compile Include="Ancora\Parsers\Sequence.cs" />
+    <Compile Include="Ancora\Parsers\StringLiteral.cs" />
+    <Compile Include="Ancora\Parsers\AllInput.cs" />
+    <Compile Include="Ancora\Parsers\Token.cs" />
+    <Compile Include="Ancora\StringIterator.cs" />
+    <Compile Include="Ancora\TestGrammar.cs" />
     <Compile Include="AssetManagement\ContentPathGenerator.cs" />
     <Compile Include="AssetManagement\ContentPaths.cs" />
     <Compile Include="AssetManagement\GameSave\ChunkFile.cs" />
@@ -232,6 +256,8 @@
     <Compile Include="Entities\Plants\PlantFactories.cs" />
     <Compile Include="Entities\TimedExplosion.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
+    <Compile Include="GameStates\YarnSpinner\YarnCommandGrammar.cs" />
+    <Compile Include="GameStates\YarnSpinner\YarnCommandAttribute.cs" />
     <Compile Include="GameStates\YarnSpinner\YarnState.cs" />
     <Compile Include="Goals\ScheduledEvent.cs" />
     <Compile Include="Goals\Events\SpawnEntityEvent.cs" />
@@ -831,6 +857,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
+    <None Include="mod hooks.txt" />
     <EmbeddedResource Include="version.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>

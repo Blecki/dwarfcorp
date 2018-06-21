@@ -31,6 +31,10 @@ namespace DwarfCorp
         public String ConversationFile = "test.conv";
         public String StartNode = "Start";
 
+        private Dictionary<String, Action<Ancora.AstNode, Yarn.MemoryVariableStore>> CommandHandlers = new Dictionary<string, Action<Ancora.AstNode, Yarn.MemoryVariableStore>>();
+        private Ancora.Grammar CommandGrammar;
+
+        // Todo: Pass in the memory instead of the world, etc, etc - assume that trade envoy set up the memory object properly.
         public YarnState(
             DwarfGame Game,
             GameStateManager StateManager,
@@ -40,6 +44,17 @@ namespace DwarfCorp
             base(Game, "YarnState", StateManager)
         {
             this.World = World;
+
+            CommandGrammar = new YarnCommandGrammar();
+
+            foreach (var command in AssetManager.EnumerateModHooks(typeof(YarnCommandAttribute), typeof(void), new Type[]
+            {
+                typeof(Ancora.AstNode),
+                typeof(Yarn.MemoryVariableStore)
+            }))
+            {
+                CommandHandlers[command.Name] = (args, mem) => command.Invoke(null, new Object[] { args, mem });
+            }
         }
 
         public override void OnEnter()
@@ -139,11 +154,18 @@ namespace DwarfCorp
                         }
                         else if (step is Yarn.Dialogue.CommandResult command)
                         {
-
+                            var result = CommandGrammar.ParseString(command.command.text);
+                            if (result.ResultType != Ancora.ResultType.Success)
+                                Output.AppendText("Invalid command: " + command.command.text + "\nError: " + result.FailReason + "\n");
+                            if (!CommandHandlers.ContainsKey(result.Node.Children[0].Value.ToString()))
+                                Output.AppendText("Unknown command: " + command.command.text + "\n");
+                            else
+                                CommandHandlers[result.Node.Children[0].Value.ToString()](result.Node, World.ConversationMemory);
                         }
                     }
                     else
                     {
+                        
                         //Output.AppendText("End of conversation.");
                     }
                     break;
@@ -165,6 +187,7 @@ namespace DwarfCorp
 
             dialogue.LogDebugMessage = delegate (string message) { Console.WriteLine(message); };
             dialogue.LogErrorMessage = delegate (string message) { Console.WriteLine("Yarn Error: " + message); };
+
 
             try
             {
