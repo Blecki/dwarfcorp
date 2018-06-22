@@ -16,7 +16,8 @@ namespace DwarfCorp
         {
             Running,
             ShowingChoices,
-            QueuingLines
+            QueuingLines,
+            Paused
         }
 
         private Gui.Root GuiRoot;
@@ -75,6 +76,20 @@ namespace DwarfCorp
         {
             if (_Output != null)
                 _Output.AppendText(S);
+        }
+
+        public void Pause()
+        {
+            if (State != States.Running)
+                throw new InvalidOperationException();
+            State = States.Paused;
+        }
+
+        public void Unpause()
+        {
+            if (State != States.Paused)
+                throw new InvalidOperationException();
+            State = States.Running;
         }
 
         public void EnterQueueingAction(Action<List<String>> QueueEndAction)
@@ -206,6 +221,8 @@ namespace DwarfCorp
                     }
                     break;
                 case States.ShowingChoices:
+                    break;
+                case States.Paused:
                     break;
             }
         }

@@ -70,6 +70,14 @@ namespace Yarn
             }
         }
 
+        public Object AsObject
+        {
+            get
+            {
+                return backingValue;
+            }
+        }
+
         // Create a null value
         public Value () : this(null) { }
 
