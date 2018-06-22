@@ -1,6 +1,11 @@
 
 Mae: What did you say to her?
 <<test command "with a string" 5 -4.2>>
+<<pick>>
+	a
+	b
+	c
+<<end>>
 -> Nothing.
     Mae: Oh, man. Maybe you should have.
 -> That she was an idiot.

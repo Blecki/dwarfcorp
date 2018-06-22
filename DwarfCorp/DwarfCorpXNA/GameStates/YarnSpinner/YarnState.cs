@@ -20,15 +20,17 @@ namespace DwarfCorp
         }
 
         private Gui.Root GuiRoot;
-        private Gui.Widgets.TextBox Output;
+        private Gui.Widgets.TextBox _Output;
         private Widget ChoicePanel;
 
         private Yarn.Dialogue Dialogue;
         private States State = States.Running;
         private IEnumerator<Yarn.Dialogue.RunnerResult> Runner;
         private Yarn.MemoryVariableStore Memory;
-        private Dictionary<String, Action<Ancora.AstNode, Yarn.MemoryVariableStore>> CommandHandlers = new Dictionary<string, Action<Ancora.AstNode, Yarn.MemoryVariableStore>>();
+        private Dictionary<String, Action<YarnState, Ancora.AstNode, Yarn.MemoryVariableStore>> CommandHandlers = new Dictionary<string, Action<YarnState, Ancora.AstNode, Yarn.MemoryVariableStore>>();
         private Ancora.Grammar CommandGrammar;
+        private List<String> QueuedLines = new List<string>();
+        private Action<List<String>> QueueEndAction = null;
 
         public YarnState(
             String ConversationFile,
@@ -40,14 +42,16 @@ namespace DwarfCorp
 
             CommandGrammar = new YarnCommandGrammar();
 
-            foreach (var command in AssetManager.EnumerateModHooks(typeof(YarnCommandAttribute), typeof(void), new Type[]
+            foreach (var method in AssetManager.EnumerateModHooks(typeof(YarnCommandAttribute), typeof(void), new Type[]
             {
                 typeof(YarnState),
                 typeof(Ancora.AstNode),
                 typeof(Yarn.MemoryVariableStore)
             }))
             {
-                CommandHandlers[command.Name] = (args, mem) => command.Invoke(null, new Object[] { args, mem });
+                var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a is YarnCommandAttribute) as YarnCommandAttribute;
+                if (attribute == null) continue;
+                CommandHandlers[attribute.CommandName] = (state, args, mem) => method.Invoke(null, new Object[] { state, args, mem });
             }
 
             Dialogue = new Yarn.Dialogue(Memory);
@@ -67,6 +71,18 @@ namespace DwarfCorp
             Runner = Dialogue.Run(StartNode).GetEnumerator();
         }
 
+        public void Output(String S)
+        {
+            if (_Output != null)
+                _Output.AppendText(S);
+        }
+
+        public void EnterQueueingAction(Action<List<String>> QueueEndAction)
+        {
+            State = States.QueuingLines;
+            this.QueueEndAction = QueueEndAction;
+        }
+
         public override void OnEnter()
         {
             DwarfGame.GumInputMapper.GetInputQueue();
@@ -80,7 +96,7 @@ namespace DwarfCorp
             int x = GuiRoot.RenderData.VirtualScreen.Width / 2 - w / 2;
             int y = System.Math.Max(GuiRoot.RenderData.VirtualScreen.Height / 2 - h / 2, 280);
 
-            Output = GuiRoot.RootItem.AddChild(new Gui.Widgets.TextBox
+            _Output = GuiRoot.RootItem.AddChild(new Gui.Widgets.TextBox
             {
                 Border = "border-fancy",
                 Rect = new Rectangle(x, y - 258, w, 258)
@@ -114,7 +130,7 @@ namespace DwarfCorp
 
                         if (step is Yarn.Dialogue.LineResult line)
                         {
-                            Output.AppendText(line.line.text + "\n");
+                            Output(line.line.text + "\n");
                         }
                         else if (step is Yarn.Dialogue.OptionSetResult options)
                         {
@@ -131,7 +147,7 @@ namespace DwarfCorp
                                     ChangeColorOnHover = true,
                                     OnClick = (sender, args) =>
                                     {
-                                        Output.AppendText("> " + sender.Text + "\n");
+                                        Output("> " + sender.Text + "\n");
                                         options.setSelectedOptionDelegate(indexLambda);
                                         ChoicePanel.Clear();
                                         ChoicePanel.Invalidate();
@@ -147,11 +163,11 @@ namespace DwarfCorp
                         {
                             var result = CommandGrammar.ParseString(command.command.text);
                             if (result.ResultType != Ancora.ResultType.Success)
-                                Output.AppendText("Invalid command: " + command.command.text + "\nError: " + result.FailReason + "\n");
+                                Output("Invalid command: " + command.command.text + "\nError: " + result.FailReason + "\n");
                             if (!CommandHandlers.ContainsKey(result.Node.Children[0].Value.ToString()))
-                                Output.AppendText("Unknown command: " + command.command.text + "\n");
+                                Output("Unknown command: " + command.command.text + "\n");
                             else
-                                CommandHandlers[result.Node.Children[0].Value.ToString()](result.Node, Memory);
+                                CommandHandlers[result.Node.Children[0].Value.ToString()](this, result.Node, Memory);
                         }
                     }
                     else
@@ -168,12 +184,19 @@ namespace DwarfCorp
                         var step = Runner.Current;
 
                         if (step is Yarn.Dialogue.LineResult line)
+                            QueuedLines.Add(line.line.text);
+                        else if (step is Yarn.Dialogue.OptionSetResult options)
+                            Output("Option encountered while queuing lines.\n");
+                        else if (step is Yarn.Dialogue.CommandResult command)
                         {
-                            Output.AppendText(line.line.text + "\n");
-                        }
-                        else
-                        {
-                            Output.AppendText("Encountered choice or command during pick.\n");
+                            if (command.command.text == "end")
+                            {
+                                QueueEndAction?.Invoke(QueuedLines);
+                                QueuedLines.Clear();
+                                State = States.Running;
+                            }
+                            else
+                                Output("Encountered command while queuing lines: " + command.command.text + " (only end is valid in this context)\n");
                         }
                     }
                     else
