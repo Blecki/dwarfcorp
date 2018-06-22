@@ -490,25 +490,25 @@ namespace Yarn
 
             switch (value.value.type) {
             case Value.Type.Number:
-                Emit (node, ByteCode.PushNumber, value.value.numberValue);
+                Emit (node, ByteCode.PushNumber, value.value.AsNumber);
                 break;
             case Value.Type.String:
                 // TODO: we use 'null' as the line ID here because strings used in expressions
                 // don't have a #line: tag we can use
-                var id = program.RegisterString (value.value.stringValue, node.name, null, value.lineNumber, false);
+                var id = program.RegisterString (value.value.AsString, node.name, null, value.lineNumber, false);
                 Emit (node, ByteCode.PushString, id);
                 break;
             case Value.Type.Bool:
-                Emit (node, ByteCode.PushBool, value.value.boolValue);
+                Emit (node, ByteCode.PushBool, value.value.AsBool);
                 break;
             case Value.Type.Variable:
-                Emit (node, ByteCode.PushVariable, value.value.variableName);
+                Emit (node, ByteCode.PushVariable, value.value.AsString);
                 break;
             case Value.Type.Null:
                 Emit (node, ByteCode.PushNull);
                 break;
             default:
-                throw new ArgumentOutOfRangeException ();
+                throw new ArgumentOutOfRangeException (); // Since the language can't actually produce an object, this is okay.
             }
         }
 

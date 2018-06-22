@@ -12,48 +12,32 @@ namespace Yarn
             String,  // a string
             Bool,    // a boolean value
             Variable, // the name of a variable; will be expanded at runtime
+            Object, // We can't tell what it is, but the client code wants us to store it.
             Null,    // the null value
         }
 
         public Value.Type type { get; internal set; }
 
-        // The underlying values for this object
-        internal float numberValue {get; private set;}
-        internal string variableName {get; set;}
-        internal string stringValue {get; private set;}
-        internal bool boolValue {get; private set;}
-
-        private object backingValue {
-            get {
-                switch( this.type ) {
-                    case Type.Null: return null;
-                    case Type.String: return this.stringValue;
-                    case Type.Number: return this.numberValue;
-                    case Type.Bool: return this.boolValue;
-                }
-                throw new InvalidOperationException(
-                    string.Format("Can't get good backing type for {0}", this.type)
-                );
-            }
-        }
+        private Object backingValue;
 
         public float AsNumber {
             get {
                 switch (type) {
-                case Type.Number:
-                    return numberValue;
-                case Type.String:
-                    try {
-                        return float.Parse (stringValue);
-                    }  catch (FormatException) {
+                    case Type.Number:
+                        return (backingValue as float?).Value;
+                    case Type.String:
+                        try {
+                            return float.Parse (backingValue.ToString());
+                        }  catch (FormatException) {
+                            return 0.0f;
+                        }
+                    case Type.Bool:
+                        return (backingValue as bool?).Value ? 1.0f : 0.0f;
+                    case Type.Null:
+                    case Type.Object:
                         return 0.0f;
-                    }
-                case Type.Bool:
-                    return boolValue ? 1.0f : 0.0f;
-                case Type.Null:
-                    return 0.0f;
-                default:
-                    throw new InvalidOperationException ("Cannot cast to number from " + type.ToString());
+                    default:
+                        throw new InvalidOperationException ("Cannot cast to number from " + type.ToString());
                 }
             }
         }
@@ -61,37 +45,28 @@ namespace Yarn
         public bool AsBool {
             get {
                 switch (type) {
-                case Type.Number:
-                    return !float.IsNaN(numberValue) && numberValue != 0.0f;
-                case Type.String:
-                    return !String.IsNullOrEmpty(stringValue);
-                case Type.Bool:
-                    return boolValue;
-                case Type.Null:
-                    return false;
-                default:
-                    throw new InvalidOperationException ("Cannot cast to bool from " + type.ToString());
+                    case Type.Number:
+                        var v = (backingValue as float?).Value;
+                        return !float.IsNaN(v) && v != 0.0f;
+                    case Type.String:
+                        return !String.IsNullOrEmpty(backingValue.ToString()); // What??
+                    case Type.Bool:
+                        return (backingValue as bool?).Value;
+                    case Type.Null:
+                        return false;
+                    case Type.Object:
+                        return true;
+                    default:
+                        throw new InvalidOperationException ("Cannot cast to bool from " + type.ToString());
                 }
             }
         }
 
         public string AsString {
             get {
-                switch (type) {
-                case Type.Number:
-                    if (float.IsNaN(numberValue) ) {
-                        return "NaN";
-                    }
-                    return numberValue.ToString ();
-                case Type.String:
-                    return stringValue;
-                case Type.Bool:
-                    return boolValue.ToString ();
-                case Type.Null:
+                if (backingValue == null)
                     return "null";
-                default:
-                    throw new ArgumentOutOfRangeException ();
-                }
+                return backingValue.ToString();
             }
         }
 
@@ -99,57 +74,33 @@ namespace Yarn
         public Value () : this(null) { }
 
         // Create a value with a C# object
-        public Value (object value)
+        public Value(object value)
         {
             // Copy an existing value
-            if (typeof(Value).IsInstanceOfType(value)) {
+            if (typeof(Value).IsInstanceOfType(value))
+            {
                 var otherValue = value as Value;
                 type = otherValue.type;
-                switch (type) {
-                case Type.Number:
-                    numberValue = otherValue.numberValue;
-                    break;
-                case Type.String:
-                    stringValue = otherValue.stringValue;
-                    break;
-                case Type.Bool:
-                    boolValue = otherValue.boolValue;
-                    break;
-                case Type.Variable:
-                    variableName = otherValue.variableName;
-                    break;
-                case Type.Null:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException ();
-                }
-                return;
+                backingValue = otherValue.backingValue;
             }
-            if (value == null) {
-                type = Type.Null;
-                return;
-            }
-            if (value.GetType() == typeof(string) ) {
-                type = Type.String;
-                stringValue = System.Convert.ToString(value);
-                return;
-            }
-            if (value.GetType() == typeof(int) ||
-                value.GetType() == typeof(float) ||
-                value.GetType() == typeof(double)) {
-                type = Type.Number;
-                numberValue = System.Convert.ToSingle(value);
 
-                return;
+            backingValue = value;
+
+            if (value == null)
+                type = Type.Null;
+            else if (value.GetType() == typeof(string))
+                type = Type.String;
+            else if (value.GetType() == typeof(int) ||
+                value.GetType() == typeof(float) ||
+                value.GetType() == typeof(double))
+            {
+                type = Type.Number;
+                backingValue = System.Convert.ToSingle(value);
             }
-            if (value.GetType() == typeof(bool) ) {
+            else if (value.GetType() == typeof(bool))
                 type = Type.Bool;
-                boolValue = System.Convert.ToBoolean(value);
-                return;
-            }
-            var error = string.Format("Attempted to create a Value using a {0}; currently, " +
-                "Values can only be numbers, strings, bools or null.", value.GetType().Name);
-            throw new YarnException(error);
+            else
+                type = Type.Object;
         }
 
         public virtual int CompareTo(object obj) {
@@ -170,16 +121,20 @@ namespace Yarn
                 return 1;
             }
 
-            if (other.type == this.type) {
-                switch (this.type) {
-                case Type.Null:
-                    return 0;
-                case Type.String:
-                    return this.stringValue.CompareTo (other.stringValue);
-                case Type.Number:
-                    return this.numberValue.CompareTo (other.numberValue);
-                case Type.Bool:
-                    return this.boolValue.CompareTo (other.boolValue);
+            if (other.type == this.type)
+            {
+                switch (this.type)
+                {
+                    case Type.Null:
+                        return 0;
+                    case Type.String:
+                        return this.AsString.CompareTo(other.AsString);
+                    case Type.Number:
+                        return this.AsNumber.CompareTo(other.AsNumber);
+                    case Type.Bool:
+                        return this.AsBool.CompareTo(other.AsBool);
+                    default:
+                        break; // Let the string test do it.
                 }
             }
 
@@ -203,7 +158,9 @@ namespace Yarn
             case Type.Bool:
                 return this.AsBool == other.AsBool;
             case Type.Null:
-                return other.type == Type.Null || other.AsNumber == 0 || other.AsBool == false;
+                return other.type == Type.Null || other.AsNumber == 0 || other.AsBool == false; // Why does null = 0 or false?
+                case Type.Object:
+                    return Object.ReferenceEquals(this.backingValue, other.backingValue);
             default:
                 throw new ArgumentOutOfRangeException ();
             }
@@ -213,11 +170,10 @@ namespace Yarn
         // override object.GetHashCode
         public override int GetHashCode()
         {
-            var backing = this.backingValue;
-
             // TODO: yeah hay maybe fix this
-            if( backing != null ) {
-                return backing.GetHashCode();
+            //  - Just use 'this' as the hash.
+            if(backingValue != null ) {
+                return backingValue.GetHashCode();
             }
 
             return 0;

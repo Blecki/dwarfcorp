@@ -146,7 +146,7 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(frame, "Yarn test", "", (sender, args) =>
             {
-                StateManager.PushState(new YarnState(GameState.Game, StateManager, null, null, null));
+                StateManager.PushState(new YarnState("test.conv", new Yarn.MemoryVariableStore()));
             });
 #endif
 

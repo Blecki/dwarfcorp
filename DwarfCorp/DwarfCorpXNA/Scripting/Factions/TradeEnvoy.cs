@@ -93,12 +93,14 @@ namespace DwarfCorp
                             World.PlayerFaction,
                             World));
                     else
-                        GameState.Game.StateManager.PushState(new YarnState(
-                            GameState.Game,
-                            GameState.Game.StateManager,
-                            this,
-                            World.PlayerFaction,
-                            World));
+                    {
+                        // Prepare conversation memory for an envoy conversation.
+                        var cMem = World.ConversationMemory;
+                        cMem.SetValue("$world", new Yarn.Value(World));
+                        cMem.SetValue("$envoy", new Yarn.Value(this));
+
+                        GameState.Game.StateManager.PushState(new YarnState(OwnerFaction.Race.DiplomacyConversation, cMem));
+                    }
                 },
                 ShouldKeep = () => { return this.ExpiditionState == Expedition.State.Trading && !this.ShouldRemove; }
             }, liveCreatures.First().Physics, new Vector2(0, -10));

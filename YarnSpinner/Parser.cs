@@ -697,9 +697,8 @@ namespace Yarn {
 
                     break;
                 case TokenType.Variable:
-                    value = new Value ();
-                    value.type = Value.Type.Variable;
-                    value.variableName = t.value as String;
+                        value = new Value(t.value);
+                        value.type = Value.Type.Variable;
                     break;
                 case TokenType.Null:
                     value = Value.NULL;
@@ -722,21 +721,11 @@ namespace Yarn {
                 UseToken(t);
             }
 
-            internal override string PrintTree (int indentLevel)
+            internal override string PrintTree(int indentLevel)
             {
-                switch (value.type) {
-                case Value.Type.Number:
-                    return Tab (indentLevel, value.numberValue.ToString());
-                case Value.Type.String:
-                    return Tab(indentLevel, String.Format("\"{0}\"", value.stringValue));
-                case Value.Type.Bool:
-                    return Tab (indentLevel, value.boolValue.ToString());
-                case Value.Type.Variable:
-                    return Tab (indentLevel, value.variableName);
-                case Value.Type.Null:
-                    return Tab (indentLevel, "(null)");
-                }
-                throw new ArgumentException ();
+                if (value.type == Value.Type.String)
+                    return Tab(indentLevel, String.Format("\"{0}\"", value.AsString));
+                return Tab(indentLevel, value.AsString);
             }
         }
 

@@ -12,7 +12,7 @@ namespace DwarfCorp
 {
     public class YarnState : GameState
     {
-        private WorldManager World;
+        private Yarn.MemoryVariableStore Memory;
 
 
         private enum States
@@ -28,7 +28,7 @@ namespace DwarfCorp
         private States State = States.Running;
         private IEnumerator<Yarn.Dialogue.RunnerResult> Runner;
 
-        public String ConversationFile = "test.conv";
+        public String ConversationFile = "error";
         public String StartNode = "Start";
 
         private Dictionary<String, Action<Ancora.AstNode, Yarn.MemoryVariableStore>> CommandHandlers = new Dictionary<string, Action<Ancora.AstNode, Yarn.MemoryVariableStore>>();
@@ -36,14 +36,12 @@ namespace DwarfCorp
 
         // Todo: Pass in the memory instead of the world, etc, etc - assume that trade envoy set up the memory object properly.
         public YarnState(
-            DwarfGame Game,
-            GameStateManager StateManager,
-            TradeEnvoy Envoy,
-            Faction PlayerFaction,
-            WorldManager World) :
-            base(Game, "YarnState", StateManager)
+            String ConversationFile,
+            Yarn.MemoryVariableStore Memory) :
+            base(Game, "YarnState", GameState.Game.StateManager)
         {
-            this.World = World;
+            this.Memory = Memory;
+            this.ConversationFile = ConversationFile;
 
             CommandGrammar = new YarnCommandGrammar();
 
@@ -84,7 +82,7 @@ namespace DwarfCorp
                 AutoLayout = AutoLayout.DockFill
             });
 
-            Dialogue = CreateDialogue(World == null ? new Yarn.MemoryVariableStore() : World.ConversationMemory, ConversationFile);
+            Dialogue = CreateDialogue(Memory, ConversationFile);
             Runner = Dialogue.Run(StartNode).GetEnumerator();
 
             IsInitialized = true;
@@ -160,7 +158,7 @@ namespace DwarfCorp
                             if (!CommandHandlers.ContainsKey(result.Node.Children[0].Value.ToString()))
                                 Output.AppendText("Unknown command: " + command.command.text + "\n");
                             else
-                                CommandHandlers[result.Node.Children[0].Value.ToString()](result.Node, World.ConversationMemory);
+                                CommandHandlers[result.Node.Children[0].Value.ToString()](result.Node, Memory);
                         }
                     }
                     else
