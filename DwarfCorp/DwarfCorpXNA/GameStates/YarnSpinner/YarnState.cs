@@ -12,52 +12,63 @@ namespace DwarfCorp
 {
     public class YarnState : GameState
     {
-        private Yarn.MemoryVariableStore Memory;
-
-
         private enum States
         {
             Running,
-            ShowingChoices
+            ShowingChoices,
+            QueuingLines
         }
 
         private Gui.Root GuiRoot;
         private Gui.Widgets.TextBox Output;
         private Widget ChoicePanel;
+
         private Yarn.Dialogue Dialogue;
         private States State = States.Running;
         private IEnumerator<Yarn.Dialogue.RunnerResult> Runner;
-
-        public String ConversationFile = "error";
-        public String StartNode = "Start";
-
+        private Yarn.MemoryVariableStore Memory;
         private Dictionary<String, Action<Ancora.AstNode, Yarn.MemoryVariableStore>> CommandHandlers = new Dictionary<string, Action<Ancora.AstNode, Yarn.MemoryVariableStore>>();
         private Ancora.Grammar CommandGrammar;
 
-        // Todo: Pass in the memory instead of the world, etc, etc - assume that trade envoy set up the memory object properly.
         public YarnState(
             String ConversationFile,
+            String StartNode,
             Yarn.MemoryVariableStore Memory) :
             base(Game, "YarnState", GameState.Game.StateManager)
         {
             this.Memory = Memory;
-            this.ConversationFile = ConversationFile;
 
             CommandGrammar = new YarnCommandGrammar();
 
             foreach (var command in AssetManager.EnumerateModHooks(typeof(YarnCommandAttribute), typeof(void), new Type[]
             {
+                typeof(YarnState),
                 typeof(Ancora.AstNode),
                 typeof(Yarn.MemoryVariableStore)
             }))
             {
                 CommandHandlers[command.Name] = (args, mem) => command.Invoke(null, new Object[] { args, mem });
             }
+
+            Dialogue = new Yarn.Dialogue(Memory);
+
+            Dialogue.LogDebugMessage = delegate (string message) { Console.WriteLine(message); };
+            Dialogue.LogErrorMessage = delegate (string message) { Console.WriteLine("Yarn Error: " + message); };
+            
+            try
+            {
+                Dialogue.LoadFile(AssetManager.ResolveContentPath(ConversationFile), false, false, null);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+            Runner = Dialogue.Run(StartNode).GetEnumerator();
         }
 
         public override void OnEnter()
         {
-            // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();
 
             GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
@@ -82,32 +93,14 @@ namespace DwarfCorp
                 AutoLayout = AutoLayout.DockFill
             });
 
-            Dialogue = CreateDialogue(Memory, ConversationFile);
-            Runner = Dialogue.Run(StartNode).GetEnumerator();
-
             IsInitialized = true;
             base.OnEnter();
-        }
-
-        public override void OnExit()
-        {
-            base.OnExit();
         }
 
         public override void Update(DwarfTime gameTime)
         {
             foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
-            {
                 GuiRoot.HandleInput(@event.Message, @event.Args);
-                if (!@event.Args.Handled)
-                {
-                    if (@event.Args.KeyValue > 0)
-                    {
-                        //DialogueContext.Skip();
-                    }
-                    // Pass event to game...
-                }
-            }
 
             GuiRoot.Update(gameTime.ToRealTime());
 
@@ -167,6 +160,28 @@ namespace DwarfCorp
                         //Output.AppendText("End of conversation.");
                     }
                     break;
+
+                case States.QueuingLines:
+
+                    if (Runner.MoveNext())
+                    {
+                        var step = Runner.Current;
+
+                        if (step is Yarn.Dialogue.LineResult line)
+                        {
+                            Output.AppendText(line.line.text + "\n");
+                        }
+                        else
+                        {
+                            Output.AppendText("Encountered choice or command during pick.\n");
+                        }
+                    }
+                    else
+                    {
+
+                        //Output.AppendText("End of conversation.");
+                    }
+                    break;
                 case States.ShowingChoices:
                     break;
             }
@@ -176,27 +191,6 @@ namespace DwarfCorp
         {
             GuiRoot.Draw();
             base.Render(gameTime);
-        }
-
-        static internal Yarn.Dialogue CreateDialogue(Yarn.MemoryVariableStore Memory, String ConversationFile)
-        {
-            // Load nodes
-            var dialogue = new Yarn.Dialogue(Memory);
-
-            dialogue.LogDebugMessage = delegate (string message) { Console.WriteLine(message); };
-            dialogue.LogErrorMessage = delegate (string message) { Console.WriteLine("Yarn Error: " + message); };
-
-
-            try
-            {
-                dialogue.LoadFile(AssetManager.ResolveContentPath(ConversationFile), false, false, null);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-
-            return dialogue;
         }
     }
 }

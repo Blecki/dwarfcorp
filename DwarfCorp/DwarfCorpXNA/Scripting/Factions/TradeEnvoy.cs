@@ -98,8 +98,12 @@ namespace DwarfCorp
                         var cMem = World.ConversationMemory;
                         cMem.SetValue("$world", new Yarn.Value(World));
                         cMem.SetValue("$envoy", new Yarn.Value(this));
+                        cMem.SetValue("$envoy-demands-tribute", new Yarn.Value(this.TributeDemanded != 0));
+                        cMem.SetValue("$envoy-tribute-demanded", new Yarn.Value((float)this.TributeDemanded.Value));
+                        cMem.SetValue("$envoy-name", new Yarn.Value(TextGenerator.GenerateRandom(Datastructures.SelectRandom(OwnerFaction.Race.NameTemplates).ToArray())));
+                        cMem.SetValue("$envoy-faction", new Yarn.Value(OwnerFaction.Name));
 
-                        GameState.Game.StateManager.PushState(new YarnState(OwnerFaction.Race.DiplomacyConversation, cMem));
+                        GameState.Game.StateManager.PushState(new YarnState(OwnerFaction.Race.DiplomacyConversation, "Start", cMem));
                     }
                 },
                 ShouldKeep = () => { return this.ExpiditionState == Expedition.State.Trading && !this.ShouldRemove; }

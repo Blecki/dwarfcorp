@@ -13,7 +13,7 @@ title: Main
 		$envoy-name: The Dwarven Kingdom demands tax!
 		$envoy-name: The King needs revenue for his army.
 		$envoy-name: You have not paid your corporate income tax - pay me or be auditted!
-	<<end>>
+	<<endpick>>
 	[[Pay a tribute of $envoy-tribute-demanded|PayTribute]]
 	[[Refuse to pay. (WAR)|DeclareWar]]
 <<elseif $faction-was-at-war>>
@@ -27,7 +27,7 @@ title: Main
 		$envoy-name: Greetings!
 		$envoy-name: Salutations!
 		$envoy-name: Good to see you, fellow dwarf!
-	<<end>>
+	<<endpick>>
 	[[Trade.|Trade]]
 	[[What is your opinion of us?|Opinion]]
 	[[What is something you have many of?|Many]]
@@ -60,7 +60,7 @@ title: Trade
 		$envoy-name: I should not have come all this way. Not. Profitable.
 		$envoy-name: I thought we could trust one another. Instead you're wasting my time.
 		$envoy-name: Do you think I have space to carry such worthless goods?
-	<<end>>
+	<<endpick>>
 <<else>>
 	<<if $trade-result == "liked">>
 		<<political-event "you gave us something we liked" 0.25 4>>
@@ -72,7 +72,7 @@ title: Trade
 		$envoy-name: We will both be rich at this rate.
 		$envoy-name: Ha! The baloon can barely stay in the air now!
 		$envoy-name: Thank Seleprak for inventing mercantilism!
-	<<end>>
+	<<endpick>>
 <<endif>>
 [[Main]]
 ===
@@ -92,7 +92,7 @@ title: Many
 	$envoy-name: The markets are flooded with metal of all kinds. Do not give us more!
 	$envoy-name: The mushroom crop has done exceptionally. We have more than we need, honestly.
 	$envoy-name: Ha, Ale, of course! Don't even try and compete with the local craft breweries!
-<<end>>
+<<endpick>>
 [[Main]]
 ===
 
@@ -105,7 +105,7 @@ title: Few
 	$envoy-name: Well, you know, you can't go wrong with gems.
 	$envoy-name: Precious things. Gold. That's usually good, we can always use more gold.
 	$envoy-name: Trinkets are good for reselling. All kinds.
-<<end>>
+<<endpick>>
 [[Main]]
 ===
 
@@ -124,7 +124,7 @@ title: Like
 	$envoy-name: Gold - yeah. Gold. Lots of gold.
 	$envoy-name: Shiny transparent rocks. Rubies. Diamonds. Emeralds. All of them.
 	$envoy-name: I like things that show true artisinal talent. The kinds of things a craftsdwarf pours his soul into you.
-<<end>>
+<<endpick>>
 [[Main]]
 ===
 
@@ -143,7 +143,7 @@ title: DeclareWar
 	$envoy-name: This is a dark day for the dwarven empire.
 	$envoy-name: In the name of the king, we shall strike you down!
 	$envoy-name: Your rebellious corporation ends now.
-<<end>>
+<<endpick>>
 <<political-event "you declared war on us" -2.0 4>>
 <<declare-war>> // This is what actually turns them hostile. Also generates the events for the achievement system.
 [[Be gone.|End]]
@@ -178,7 +178,7 @@ title: Goodbye
 	$envoy-name: Seleprak be with you!
 	$envoy-name: May your mines be deep and profitable.
 	$envoy-name: Remember the motherland.
-<<end>>
+<<endpick>>
 [[So long!|End]]
 ===
 
