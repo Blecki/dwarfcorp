@@ -103,6 +103,7 @@ namespace DwarfCorp
                         cMem.SetValue("$envoy-name", new Yarn.Value(TextGenerator.GenerateRandom(Datastructures.SelectRandom(OwnerFaction.Race.NameTemplates).ToArray())));
                         cMem.SetValue("$envoy-faction", new Yarn.Value(OwnerFaction.Name));
                         cMem.SetValue("$player-faction", new Yarn.Value(this.OtherFaction));
+                        cMem.SetValue("$offensive-trades", new Yarn.Value(0.0f));
 
                         GameState.Game.StateManager.PushState(new YarnState(OwnerFaction.Race.DiplomacyConversation, "Start", cMem));
                     }
