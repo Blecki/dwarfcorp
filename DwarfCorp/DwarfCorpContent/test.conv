@@ -1,13 +1,12 @@
-
+title: Start
+---
+<<set_portrait "GUI\diplo-dorf" 5.0 0 1 0>>
+<<show_portrait>>
 Mae: What did you say to her?
-<<test command "with a string" 5 -4.2>>
-<<pick>>
-	a
-	b
-	c
-<<end>>
 -> Nothing.
     Mae: Oh, man. Maybe you should have.
 -> That she was an idiot.
     Mae: Hah! I bet that pissed her off.
 Mae: Anyway, I'd better get going.
+<<end_conversation>>
+===

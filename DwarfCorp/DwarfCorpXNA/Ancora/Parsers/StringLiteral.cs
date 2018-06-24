@@ -34,12 +34,9 @@ namespace Ancora.Parsers
             {
                 if (InputStream.Next == '\\')
                 {
-                    if (InputStream.Peek(2)[1] == Quote)
-                    {
-                        text += Quote;
-                        InputStream = InputStream.Advance(2);
-                        continue;
-                    }
+                    text += InputStream.Peek(2);
+                    InputStream = InputStream.Advance(2);
+                    continue;
                 }
 
                 text += InputStream.Next;

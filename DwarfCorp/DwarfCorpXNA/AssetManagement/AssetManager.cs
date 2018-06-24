@@ -203,7 +203,7 @@ namespace DwarfCorp
             {
                 var existing = TextureCache[asset];
                 if (!existing.IsDisposed)
-                    return TextureCache[asset];
+                    return existing;
             }
 
             try

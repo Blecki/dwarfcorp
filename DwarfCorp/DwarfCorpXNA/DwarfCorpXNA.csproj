@@ -257,6 +257,9 @@
     <Compile Include="Entities\TimedExplosion.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
     <Compile Include="GameStates\YarnSpinner\EndConversation.cs" />
+    <Compile Include="GameStates\YarnSpinner\HidePortrait.cs" />
+    <Compile Include="GameStates\YarnSpinner\ShowPortrait.cs" />
+    <Compile Include="GameStates\YarnSpinner\SetPortrait.cs" />
     <Compile Include="GameStates\YarnSpinner\Pick.cs" />
     <Compile Include="GameStates\YarnSpinner\YarnCommandGrammar.cs" />
     <Compile Include="GameStates\YarnSpinner\YarnCommandAttribute.cs" />
@@ -355,8 +358,8 @@
     <Compile Include="GameStates\Diplomacy\DialogueTree.cs" />
     <Compile Include="GameStates\Diplomacy\DialogueTreeTypes.cs" />
     <Compile Include="GameStates\Diplomacy\DialogueState.cs" />
-    <Compile Include="GameStates\Diplomacy\ITradeEntity.cs" />
-    <Compile Include="GameStates\Diplomacy\TradeTransaction.cs" />
+    <Compile Include="Scripting\Factions\Trading\ITradeEntity.cs" />
+    <Compile Include="Scripting\Factions\Trading\TradeTransaction.cs" />
     <Compile Include="DwarfGame.cs" />
     <Compile Include="Entities\Animals\Bat.cs" />
     <Compile Include="Entities\Animals\Bird.cs" />

@@ -41,6 +41,11 @@ namespace DwarfCorp
         private List<String> QueuedLines = new List<string>();
         private Action<List<String>> QueueEndAction = null;
 
+        private AnimationPlayer SpeakerAnimationPlayer;
+        private Animation SpeakerAnimation;
+        private Gui.Widget SpeakerWidget;
+        private Timer SpeakerAnimationTimer = new Timer(0, true);
+
         public YarnState(
             String ConversationFile,
             String StartNode,
@@ -115,6 +120,36 @@ namespace DwarfCorp
             this.QueueEndAction = QueueEndAction;
         }
 
+        public void SetPortrait(String Gfx, float Speed, List<int> Frames)
+        {
+            SpeakerAnimation = AnimationLibrary.CreateAnimation(new Animation.SimpleDescriptor
+            {
+                AssetName = Gfx,
+                Speed = Speed,
+                Frames = Frames,
+            });
+
+            SpeakerAnimation.Loops = true;
+
+            SpeakerAnimationPlayer = new AnimationPlayer(SpeakerAnimation);
+            SpeakerAnimationPlayer.Play();
+        }
+
+        public void ShowPortrait()
+        {
+            SpeakerWidget.Hidden = false;
+        }
+
+        public void HidePortrait()
+        {
+            SpeakerWidget.Hidden = true;
+        }
+
+        public void PlayPortraitAnimation(float Time)
+        {
+            SpeakerAnimationTimer.Reset(Time);
+        }
+
         public override void OnEnter()
         {
             DwarfGame.GumInputMapper.GetInputQueue();
@@ -138,7 +173,13 @@ namespace DwarfCorp
             {
                 Rect = new Rectangle(x, y, w, h),
                 Border = "border-fancy",
-                AutoLayout = AutoLayout.DockFill
+            });
+
+            SpeakerWidget = GuiRoot.RootItem.AddChild(new Widget()
+            {
+                MinimumSize = new Point(256, 256),
+                Rect = new Rectangle(32, 32 - 5, 256, 256),
+                Hidden = true
             });
 
             IsInitialized = true;
@@ -149,6 +190,24 @@ namespace DwarfCorp
         {
             foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
                 GuiRoot.HandleInput(@event.Message, @event.Args);
+
+            if (SpeakerAnimationPlayer != null)
+            {
+                SpeakerAnimationTimer.Update(gameTime);
+
+                if (SpeakerAnimationTimer.HasTriggered)
+                {
+                    SpeakerAnimationPlayer.Stop();
+                    SpeakerWidget.Background = new TileReference(SpeakerAnimation.SpriteSheet.AssetName, SpeakerAnimation.Frames[0].X);
+                }
+                else
+                {
+                    SpeakerAnimationPlayer.Update(gameTime, false);
+                    SpeakerWidget.Background = new TileReference(SpeakerAnimation.SpriteSheet.AssetName, SpeakerAnimation.Frames[SpeakerAnimationPlayer.CurrentFrame].X);
+                }
+
+                SpeakerWidget.Invalidate();
+            }
 
             GuiRoot.Update(gameTime.ToRealTime());
 
@@ -163,6 +222,9 @@ namespace DwarfCorp
                         if (step is Yarn.Dialogue.LineResult line)
                         {
                             Output(line.line.text + "\n");
+                            SpeakerAnimationTimer.Reset(line.line.text.Length / 10);
+                            if (SpeakerAnimationPlayer != null)
+                                SpeakerAnimationPlayer.Play();
                         }
                         else if (step is Yarn.Dialogue.OptionSetResult options)
                         {
@@ -204,20 +266,25 @@ namespace DwarfCorp
                                 result.Node.Children.RemoveAt(0);
                                 var errorFound = false;
 
-                                if (handler.Settings.EnforceArgumentTypes)
+                                if (handler.Settings.ArgumentTypeBehavior != YarnCommandAttribute.ArgumentTypeBehaviors.Unchecked)
                                 {
-                                    if (handler.Settings.ArgumentTypes.Count != result.Node.Children.Count)
+                                    if (handler.Settings.ArgumentTypeBehavior == YarnCommandAttribute.ArgumentTypeBehaviors.Strict &&
+                                        handler.Settings.ArgumentTypes.Count != result.Node.Children.Count)
                                     {
                                         Output(String.Format("Passed {0} arguments to {1}; expected {2}\n", result.Node.Children.Count, handler.Settings.CommandName, handler.Settings.ArgumentTypes.Count));
                                         errorFound = true;
                                     }
 
                                     for (var i = 0; !errorFound && i < result.Node.Children.Count; ++i)
-                                        if (result.Node.Children[i].NodeType != handler.Settings.ArgumentTypes[i])
+                                    {
+                                        var expectedType = i >= handler.Settings.ArgumentTypes.Count ? handler.Settings.ArgumentTypes.Last() : handler.Settings.ArgumentTypes[i];
+
+                                        if (result.Node.Children[i].NodeType != expectedType)
                                         {
-                                            Output(String.Format("Wrong argument type passed to {0}. Expected {1}, got {2}.\n", handler.Settings.CommandName, handler.Settings.ArgumentTypes[i], result.Node.Children[i].NodeType));
+                                            Output(String.Format("Wrong argument type passed to {0}. Expected {1}, got {2}.\n", handler.Settings.CommandName, expectedType, result.Node.Children[i].NodeType));
                                             errorFound = true;
                                         }
+                                    }
                                 }
 
                                 if (!errorFound)

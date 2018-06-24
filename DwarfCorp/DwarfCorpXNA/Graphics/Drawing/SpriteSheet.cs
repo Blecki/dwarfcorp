@@ -83,10 +83,14 @@ namespace DwarfCorp
         {
             AssetName = name;
             Texture2D tex = AssetManager.GetContentTexture(name);
-            FrameWidth = tex.Width;
-            FrameHeight = tex.Height;
-            Width = tex.Width;
-            Height = tex.Height;
+
+            if (tex != null)
+            {
+                FrameWidth = tex.Width;
+                FrameHeight = tex.Height;
+                Width = tex.Width;
+                Height = tex.Height;
+            }
         }
 
         public SpriteSheet(string name, int frameWidth, int frameHeight)

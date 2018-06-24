@@ -38,6 +38,42 @@ namespace Ancora
             };
         }
 
+        public static string CollapseEscapeSequences(string value)
+        {
+            var r = "";
+            var itr = new StringIterator(value);
+
+            bool escaping = false;
+            while (!itr.AtEnd)
+            {
+                if (escaping)
+                {
+                    if (itr.Next == 'n')
+                        r += '\n';
+                    else if (itr.Next == 'r')
+                        r += '\r';
+                    else if (itr.Next == 't')
+                        r += '\t';
+                    else
+                        r += itr.Next;
+                    itr = itr.Advance();
+                    escaping = false;
+                }
+                else if (itr.Next == '\\')
+                {
+                    escaping = true;
+                    itr = itr.Advance();
+                }
+                else
+                {
+                    r += itr.Next;
+                    itr = itr.Advance();
+                }
+            }
+
+            return r;
+        }
+
         protected ParseResult Fail(String Message) { return Fail(Message, ResultType.Failure); }
         protected ParseResult Fail(String Message, Failure SubFailure) { return Fail(Message, ResultType.Failure, SubFailure); }
         protected ParseResult Error(String Message) { return Fail(Message, ResultType.HardError); }

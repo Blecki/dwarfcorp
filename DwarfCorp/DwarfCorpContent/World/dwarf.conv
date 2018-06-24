@@ -1,5 +1,14 @@
 title: Start
 ---
+<<set_portrait "GUI\\diplo-dorf" 5.0 0 1 0>>
+<<show_portrait>>
+<<pick>>
+	Dwarf: Hello!
+	Dwarf: Well met.
+	Dwarf: Greetings!
+	Dwarf: Salutations!
+	Dwarf: Good to see you, fellow dwarf!
+<<end>>
 Dwarf: I am $envoy_name of $envoy_faction.
 [[Main]]
 ===
@@ -21,13 +30,6 @@ title: Main
 	[[Make peace.|MakePeace]]
 	[[Continue the war.|DeclareWar]]
 <<else>>
-	<<pick>>
-		$envoy_name: Hello!
-		$envoy_name: Well met.
-		$envoy_name: Greetings!
-		$envoy_name: Salutations!
-		$envoy_name: Good to see you, fellow dwarf!
-	<<end>>
 	[[Trade.|Trade]]
 	[[What is your opinion of us?|Opinion]]
 	[[What is something you have many of?|Many]]

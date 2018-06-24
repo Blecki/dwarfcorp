@@ -10,7 +10,15 @@ namespace DwarfCorp
     {
         public string CommandName;
         public List<String> ArgumentTypes;
-        public bool EnforceArgumentTypes = true;
+
+        public enum ArgumentTypeBehaviors
+        {
+            Unchecked,
+            Strict,
+            LastIsVaridic
+        }
+
+        public ArgumentTypeBehaviors ArgumentTypeBehavior = ArgumentTypeBehaviors.Strict;
 
         public YarnCommandAttribute(String CommandName, params String[] ArgumentTypes)
         {

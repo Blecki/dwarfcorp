@@ -107,7 +107,8 @@ namespace DwarfCorp
 
                         var politics = World.Diplomacy.GetPolitics(OtherFaction, OwnerFaction);
                         cMem.SetValue("$faction_was_at_war", new Yarn.Value(politics.WasAtWar));
-
+                        cMem.SetValue("$envoy_relationship", new Yarn.Value(politics.GetCurrentRelationship().ToString()));
+                        
                         GameState.Game.StateManager.PushState(new YarnState(OwnerFaction.Race.DiplomacyConversation, "Start", cMem));
                     }
                 },
