@@ -570,19 +570,25 @@ namespace DwarfCorp
                 return amounts.Values.ToList();
             }
 
-            ResourceAmount maxAmount = null;
-            foreach (var pair in amounts)
+            List<ResourceAmount> toReturn = new List<ResourceAmount>();
+
+            foreach (var requirement in tagsRequired)
             {
-                if (maxAmount == null || pair.Value.NumResources > maxAmount.NumResources)
+                ResourceAmount maxAmount = null;
+                foreach (var pair in amounts)
                 {
-                    maxAmount = pair.Value;
+                    if (!ResourceLibrary.GetResourceByName(pair.Key).Tags.Contains(requirement.Key)) continue;
+                    if (maxAmount == null || pair.Value.NumResources > maxAmount.NumResources)
+                    {
+                        maxAmount = pair.Value;
+                    }
+                }
+                if (maxAmount != null)
+                {
+                    toReturn.Add(maxAmount);
                 }
             }
-            if (maxAmount != null)
-            {
-                return new List<ResourceAmount>() { maxAmount };
-            }
-            return new List<ResourceAmount>();
+            return toReturn;
         }
 
         public bool HasResources(IEnumerable<Quantitiy<Resource.ResourceTags>> resources, bool allowHeterogenous = false)

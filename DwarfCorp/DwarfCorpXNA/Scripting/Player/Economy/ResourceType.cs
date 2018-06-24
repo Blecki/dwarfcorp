@@ -86,13 +86,16 @@ namespace DwarfCorp
         {
             if (value == null)
             {
-                return null;
+                return new ResourceType { _value = null };
             }
             return new ResourceType { _value = new string(value.ToCharArray()) };
         }
 
         public static implicit operator string(ResourceType value)
         {
+            if (value == null)
+                return null;
+
             return value._value;
         }
 
@@ -133,6 +136,10 @@ namespace DwarfCorp
 
         public override int GetHashCode()
         {
+            if (_value == null)
+            {
+                return 0;
+            }
             return _value.GetHashCode();
         }
     }

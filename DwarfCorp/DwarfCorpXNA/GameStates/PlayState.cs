@@ -741,7 +741,7 @@ namespace DwarfCorp.GameStates
                 Hidden = true,
                 Border = "border-fancy",
                 AutoLayout = AutoLayout.FloatBottomLeft,
-                MinimumSize = new Point(300, 180)
+                MinimumSize = new Point(300, 200)
             });
 
             var taskList = GuiRoot.RootItem.AddChild(new TaskListPanel
@@ -1383,38 +1383,103 @@ namespace DwarfCorp.GameStates
                 Text = TextGenerator.Shorten(data.Name, 5),
                 TextVerticalAlign = VerticalAlign.Below,
                 TextColor = Color.White.ToVector4(),
-                PopupChild = new BuildCraftInfo
+                PopupChild = new TabPanel
                 {
-                    Data = data,
-                    AllowWildcard = true,
-                    Rect = new Rectangle(0, 0, 350, 150),
-                    Master = Master,
-                    World = World,
-                    OnShown = (sender) =>
+                    Rect = new Rectangle(0, 0, 450, 250),
+                    TextColor = Color.Black.ToVector4(),
+                    HoverTextColor = Color.DarkRed.ToVector4(),
+                    ButtonFont = "font10",
+                    OnSelectedTabChanged = (widget) =>
                     {
+                        this.GuiRoot.SafeCall(widget.OnShown, widget);
                     },
-                    BuildAction = (sender, args) =>
+                    TabSource = new string[]{"Single", "Mutiple"}.Select((title) =>
                     {
-                        var buildInfo = sender.Parent as BuildCraftInfo;
-                        if (buildInfo == null)
-                            return;
-                        sender.Parent.Hidden = true;
-                        var tool = Master.Tools[GameMaster.ToolMode.BuildObject] as BuildObjectTool;
-                        tool.SelectedResources = buildInfo.GetSelectedResources();
-                        Master.Faction.RoomBuilder.CurrentRoomData = null;
-                        Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                        tool.CraftType = data;
+                        if (title == "Single")
+                            return new KeyValuePair<string, Widget>("Single",
+                            new BuildCraftInfo
+                            {
+                                Data = data,
+                                AllowWildcard = true,
+                                Rect = new Rectangle(0, 0, 450, 200),
+                                Master = Master,
+                                World = World,
+                                Transparent = true,
+                                OnShown = (sender) =>
+                                {
+                                },
+                                BuildAction = (sender, args) =>
+                                {
+                                    var buildInfo = sender as BuildCraftInfo;
+                                    if (buildInfo == null)
+                                        return;
+                                    sender.Parent.Parent.Hidden = true;
+                                    var tool = Master.Tools[GameMaster.ToolMode.BuildObject] as BuildObjectTool;
+                                    tool.SelectedResources = buildInfo.GetSelectedResources();
+                                    Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                    Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                                    tool.CraftType = data;
+                                    tool.Mode = BuildObjectTool.PlacementMode.BuildNew;
 
-                        // Todo: This should never be true.
-                        if (tool.PreviewBody != null)
-                        {
-                            tool.PreviewBody.GetRoot().Delete();
-                            tool.PreviewBody = null;
-                        }
+                                // Todo: This should never be true.
+                                if (tool.PreviewBody != null)
+                                    {
+                                        tool.PreviewBody.GetRoot().Delete();
+                                        tool.PreviewBody = null;
+                                    }
 
-                        ChangeTool(GameMaster.ToolMode.BuildObject);
-                        World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
-                    },
+                                    ChangeTool(GameMaster.ToolMode.BuildObject);
+                                    World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
+                                },
+                                PlaceAction = (sender, args) =>
+                                {
+                                    var buildInfo = sender as BuildCraftInfo;
+                                    if (buildInfo == null)
+                                        return;
+                                    sender.Parent.Parent.Hidden = true;
+                                    var tool = Master.Tools[GameMaster.ToolMode.BuildObject] as BuildObjectTool;
+                                    tool.SelectedResources = null;
+                                    Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                    Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                                    tool.CraftType = data;
+                                    tool.Mode = BuildObjectTool.PlacementMode.PlaceExisting;
+
+                                // Todo: This should never be true.
+                                if (tool.PreviewBody != null)
+                                    {
+                                        tool.PreviewBody.GetRoot().Delete();
+                                        tool.PreviewBody = null;
+                                    }
+
+                                    ChangeTool(GameMaster.ToolMode.BuildObject);
+                                    World.ShowToolPopup("Click to place " + data.Name);
+                                }
+                            });
+                        else return
+                            new KeyValuePair<string, Widget>("Multi", new BuildCraftInfo
+                            {
+                                Data = data.ObjectAsCraftableResource(),
+                                Rect = new Rectangle(0, 0, 450, 200),
+                                Master = Master,
+                                World = World,
+                                Transparent = true,
+                                BuildAction = (sender, args) =>
+                                {
+                                    var buildInfo = (sender as Gui.Widgets.BuildCraftInfo);
+                                    if (buildInfo == null)
+                                        return;
+                                    sender.Parent.Parent.Hidden = true;
+                                    var assignments = new List<Task>();
+                                    for (int i = 0; i < buildInfo.GetNumRepeats(); i++)
+                                    {
+                                        assignments.Add(new CraftResourceTask(data.ObjectAsCraftableResource(), 1, buildInfo.GetSelectedResources()));
+                                    }
+                                    World.Master.TaskManager.AddTasks(assignments);
+                                    World.ShowToolPopup(data.CurrentVerb + " " + buildInfo.GetNumRepeats() + " " + data.Name);
+                                    World.Tutorial("build crafts");
+                                },
+                            });
+                    })
                 },
                 OnConstruct = (sender) =>
                 {
@@ -1459,7 +1524,7 @@ namespace DwarfCorp.GameStates
                 return category_icon;
             };
             List<CraftItem> rootObjects = new List<CraftItem>();
-            foreach (var item in CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object))
+            foreach (var item in CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.AllowUserCrafting))
             {
                 if (string.IsNullOrEmpty(item.Category) || !categoryExists.ContainsKey(item.Category))
                 {
@@ -1518,6 +1583,7 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Craft resource",
                 ItemSource = (new Widget[] { icon_menu_ResourceTypes_Return }).Concat(
                     CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
+                    && item.AllowUserCrafting
                     && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) &&
                     !ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
                     .Select(data => new FlatToolTray.Icon
@@ -1533,15 +1599,15 @@ namespace DwarfCorp.GameStates
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
-                            Rect = new Rectangle(0, 0, 350, 200),
+                            Rect = new Rectangle(0, 0, 450, 200),
                             Master = Master,
                             World = World,
                             BuildAction = (sender, args) =>
                             {
-                                var buildInfo = (sender.Parent as Gui.Widgets.BuildCraftInfo);
+                                var buildInfo = (sender as Gui.Widgets.BuildCraftInfo);
                                 if (buildInfo == null)
                                     return;
-                                sender.Parent.Hidden = true;
+                                sender.Hidden = true;
                                 var assignments = new List<Task>();
                                 for (int i = 0; i < buildInfo.GetNumRepeats(); i++)
                                 {
@@ -1729,6 +1795,7 @@ namespace DwarfCorp.GameStates
             {
                 ItemSource = (new Widget[] { icon_menu_Edibles_Return }).Concat(
                     CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
+                    && item.AllowUserCrafting
                     && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated)
                     && ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
                     .Select(data => new FlatToolTray.Icon
@@ -1740,13 +1807,13 @@ namespace DwarfCorp.GameStates
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
-                            Rect = new Rectangle(0, 0, 350, 200),
+                            Rect = new Rectangle(0, 0, 450, 200),
                             Master = Master,
                             World = World,
                             BuildAction = (sender, args) =>
                             {
-                                var buildInfo = sender.Parent as Gui.Widgets.BuildCraftInfo;
-                                sender.Parent.Hidden = true;
+                                var buildInfo = sender as Gui.Widgets.BuildCraftInfo;
+                                sender.Hidden = true;
                                 List<Task> assignments = new List<Task> { new CraftResourceTask(data, buildInfo.GetNumRepeats(), buildInfo.GetSelectedResources()) };
                                 World.Master.TaskManager.AddTasks(assignments);
                                 World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);

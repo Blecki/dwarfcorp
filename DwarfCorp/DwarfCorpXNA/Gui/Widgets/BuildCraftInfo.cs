@@ -18,28 +18,39 @@ namespace DwarfCorp.Gui.Widgets
         private List<Gui.Widgets.ComboBox> ResourceCombos = new List<Gui.Widgets.ComboBox>();
         private Gui.Widgets.ComboBox NumCombo = new ComboBox();
         public Action<Gui.Widget, Gui.InputEventArgs> BuildAction = null;
+        public Action<Gui.Widget, Gui.InputEventArgs> PlaceAction = null;
         public bool AllowWildcard = true;
 
         public override void Construct()
         {
-            Border = "border-fancy";
-            Font = "font8";
+            Border = "border-one";
+            Font = "font10";
             TextColor = new Vector4(0, 0, 0, 1);
             OnShown += (sender) =>
             {
                 Clear();
                 ResourceCombos.Clear();
                 //Parent.OnClick = null;
-
-                var builder = new StringBuilder();
-                builder.AppendLine("-" + Data.Name + "-");
-                builder.AppendLine(Data.Description);
-                builder.AppendLine("Required:");
-
+                var title = AddChild(new Gui.Widget
+                {
+                    Text = Data.Name,
+                    Font = "font16",
+                    AutoLayout = Gui.AutoLayout.DockTop,
+                    TextVerticalAlign = VerticalAlign.Center,
+                    MinimumSize = new Point(0, 34),
+                });
+                title.AddChild(new Gui.Widget
+                {
+                    MinimumSize = new Point(32, 32),
+                    MaximumSize = new Point(32, 32),
+                    Background = Data.Icon,
+                    AutoLayout = Gui.AutoLayout.DockRight,
+                });
                 AddChild(new Gui.Widget
                 {
-                    Text = builder.ToString(),
-                    AutoLayout = Gui.AutoLayout.DockTop
+                    Text = Data.Description + "\n",
+                    AutoLayout = Gui.AutoLayout.DockTop,
+                    AutoResizeToTextHeight = true
                 });
 
                 var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false, null);
@@ -77,7 +88,8 @@ namespace DwarfCorp.Gui.Widgets
                             Font = "font8",
                             Items = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Where(r => r.NumResources >= resourceAmount.NumResources).Select(r => r.ResourceType.ToString()).OrderBy(p => p).ToList(),
                             AutoLayout = AutoLayout.DockLeft,
-                            MinimumSize = new Point(200, 18)
+                            MinimumSize = new Point(200, 18),
+                            Tooltip = String.Format("Type of {0} to use.", resourceAmount.ResourceType)
                         }) as Gui.Widgets.ComboBox;
 
                         if (AllowWildcard)
@@ -118,25 +130,53 @@ namespace DwarfCorp.Gui.Widgets
                                 },
                             AutoLayout = AutoLayout.DockLeft,
                             MinimumSize = new Point(64, 18),
-                            MaximumSize = new Point(64, 18)
+                            MaximumSize = new Point(64, 18),
+                            Tooltip = "Craft this many objects."
                         }) as Gui.Widgets.ComboBox;
                         NumCombo.SelectedIndex = 0;
                     }
 
+                    var bottomBar = AddChild(new Widget()
+                    {
+                        AutoLayout = AutoLayout.DockTop,
+                        MinimumSize = new Point(256, 32)
+                    });
+
+                    bool hasExisting = false;
                     if (BuildAction != null)
                     {
-                        var buildButton = AddChild(new Button()
+                        if (Data.Type == CraftItem.CraftType.Object && PlaceAction != null)
                         {
-                            Text = "Craft",
+                            hasExisting = true;
+                            var resources = Master.Faction.ListResources();
+                            if (resources.Any(resource => ResourceLibrary.GetResourceByName(resource.Key).CraftInfo.CraftItemType == Data.Name))
+                            {
+                                bottomBar.AddChild(new Button()
+                                {
+                                    Text = "Place Existing",
+                                    OnClick = (widget, args) =>
+                                    {
+                                        PlaceAction(this, args);
+                                    },
+                                    AutoLayout = AutoLayout.DockLeftCentered,
+                                    MinimumSize = new Point(64, 28),
+                                    Tooltip = String.Format("Place an existing {0} from our stockpiles.", Data.Name)
+                                });
+                            }
+                        }
+
+                        var buildButton = bottomBar.AddChild(new Button()
+                        {
+                            Text = hasExisting ? "Craft New": "Craft",
                             OnClick = (widget, args) => 
                             {
-                                BuildAction(widget, args);
+                                BuildAction(this, args);
                                 //sender.Hidden = true;
                                 //sender.Invalidate();
                             },
-                            AutoLayout = AutoLayout.DockTop,
-                            MinimumSize = new Point(64, 24),
-                            MaximumSize = new Point(64, 24)
+                            AutoLayout = AutoLayout.DockLeftCentered,
+                            MinimumSize = new Point(64, 28),
+                            Tooltip = String.Format("Craft a new {0} using the selected resources.", Data.Name)
                         });
 
                         //Parent.OnClick = (parent, args) => buildButton.OnClick(buildButton, args);
@@ -206,4 +246,5 @@ namespace DwarfCorp.Gui.Widgets
             return r;
         }
 }
+
 }

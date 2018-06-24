@@ -35,7 +35,15 @@ namespace DwarfCorp.Gui.Widgets
                     Layout();
                 }
                 foreach (var child in Children)
+                {
                     child.Hidden = true;
+                    foreach (var subchild in child.EnumerateChildren().Where(c => c is FramedIcon)
+                                .SelectMany(c => c.EnumerateChildren()))
+                    {
+                        subchild.Hidden = true;
+                        subchild.Invalidate();
+                    }
+                }
                 NewTray.Hidden = false;
                 Root.SafeCall(NewTray.OnShown, NewTray);
                 Invalidate();
