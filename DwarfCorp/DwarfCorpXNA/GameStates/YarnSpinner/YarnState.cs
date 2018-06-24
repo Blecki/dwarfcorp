@@ -17,7 +17,8 @@ namespace DwarfCorp
             Running,
             ShowingChoices,
             QueuingLines,
-            Paused
+            Paused,
+            ConversationOver
         }
 
         private Gui.Root GuiRoot;
@@ -28,7 +29,14 @@ namespace DwarfCorp
         private States State = States.Running;
         private IEnumerator<Yarn.Dialogue.RunnerResult> Runner;
         private Yarn.MemoryVariableStore Memory;
-        private Dictionary<String, Action<YarnState, Ancora.AstNode, Yarn.MemoryVariableStore>> CommandHandlers = new Dictionary<string, Action<YarnState, Ancora.AstNode, Yarn.MemoryVariableStore>>();
+
+        private class CommandHandler
+        {
+            public Action<YarnState, Ancora.AstNode, Yarn.MemoryVariableStore> Action;
+            public YarnCommandAttribute Settings;
+        }
+
+        private Dictionary<String, CommandHandler> CommandHandlers = new Dictionary<string, CommandHandler>();
         private Ancora.Grammar CommandGrammar;
         private List<String> QueuedLines = new List<string>();
         private Action<List<String>> QueueEndAction = null;
@@ -52,7 +60,11 @@ namespace DwarfCorp
             {
                 var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a is YarnCommandAttribute) as YarnCommandAttribute;
                 if (attribute == null) continue;
-                CommandHandlers[attribute.CommandName] = (state, args, mem) => method.Invoke(null, new Object[] { state, args, mem });
+                CommandHandlers[attribute.CommandName] = new CommandHandler
+                {
+                    Action = (state, args, mem) => method.Invoke(null, new Object[] { state, args, mem }),
+                    Settings = attribute
+                };
             }
 
             Dialogue = new Yarn.Dialogue(Memory);
@@ -90,6 +102,11 @@ namespace DwarfCorp
             if (State != States.Paused)
                 throw new InvalidOperationException();
             State = States.Running;
+        }
+
+        public void EndConversation()
+        {
+            State = States.ConversationOver;
         }
 
         public void EnterQueueingAction(Action<List<String>> QueueEndAction)
@@ -182,13 +199,35 @@ namespace DwarfCorp
                             if (!CommandHandlers.ContainsKey(result.Node.Children[0].Value.ToString()))
                                 Output("Unknown command: " + command.command.text + "\n");
                             else
-                                CommandHandlers[result.Node.Children[0].Value.ToString()](this, result.Node, Memory);
+                            {
+                                var handler = CommandHandlers[result.Node.Children[0].Value.ToString()];
+                                result.Node.Children.RemoveAt(0);
+                                var errorFound = false;
+
+                                if (handler.Settings.EnforceArgumentTypes)
+                                {
+                                    if (handler.Settings.ArgumentTypes.Count != result.Node.Children.Count)
+                                    {
+                                        Output(String.Format("Passed {0} arguments to {1}; expected {2}\n", result.Node.Children.Count, handler.Settings.CommandName, handler.Settings.ArgumentTypes.Count));
+                                        errorFound = true;
+                                    }
+
+                                    for (var i = 0; !errorFound && i < result.Node.Children.Count; ++i)
+                                        if (result.Node.Children[i].NodeType != handler.Settings.ArgumentTypes[i])
+                                        {
+                                            Output(String.Format("Wrong argument type passed to {0}. Expected {1}, got {2}.\n", handler.Settings.CommandName, handler.Settings.ArgumentTypes[i], result.Node.Children[i].NodeType));
+                                            errorFound = true;
+                                        }
+                                }
+
+                                if (!errorFound)
+                                    handler.Action(this, result.Node, Memory);
+                            }
                         }
                     }
                     else
                     {
-                        
-                        //Output.AppendText("End of conversation.");
+                        State = States.ConversationOver;
                     }
                     break;
 
@@ -216,13 +255,29 @@ namespace DwarfCorp
                     }
                     else
                     {
-
-                        //Output.AppendText("End of conversation.");
+                        State = States.ConversationOver;
                     }
                     break;
                 case States.ShowingChoices:
                     break;
                 case States.Paused:
+                    break;
+                case States.ConversationOver:
+                    ChoicePanel.Clear();
+                    ChoicePanel.AddChild(new Widget
+                    {
+                        Text = "End conversation.",
+                        MinimumSize = new Point(0, 20),
+                        AutoLayout = AutoLayout.DockTop,
+                        ChangeColorOnHover = true,
+                        OnClick = (sender, args) =>
+                        {
+                            StateManager.PopState();
+                        }
+                    });
+
+                    ChoicePanel.Layout();
+                    State = States.ShowingChoices;
                     break;
             }
         }

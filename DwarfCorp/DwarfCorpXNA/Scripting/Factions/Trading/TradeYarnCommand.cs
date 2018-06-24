@@ -11,7 +11,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
         private static void _trade(YarnState State, Ancora.AstNode Arguments, Yarn.MemoryVariableStore Memory)
         {
             var envoy = Memory.GetValue("$envoy").AsObject as TradeEnvoy;
-            var playerFaction = Memory.GetValue("$player-faction").AsObject as Faction;
+            var playerFaction = Memory.GetValue("$player_faction").AsObject as Faction;
             var world = Memory.GetValue("$world").AsObject as WorldManager;
 
             if (envoy == null || playerFaction == null || world == null)
@@ -33,21 +33,21 @@ namespace DwarfCorp.Scripting.Factions.Trading
                 var transaction = tradeState.TradePanel.Transaction;
 
                 if (tradeState.TradePanel.Result == Gui.Widgets.TradeDialogResult.Cancel)
-                    Memory.SetValue("$trade-result", new Yarn.Value("cancelled"));
+                    Memory.SetValue("$trade_result", new Yarn.Value("cancelled"));
                 else if (tradeState.TradePanel.Result == Gui.Widgets.TradeDialogResult.RejectProfit)
-                    Memory.SetValue("$trade-result", new Yarn.Value("unprofitable"));
+                    Memory.SetValue("$trade_result", new Yarn.Value("unprofitable"));
                 else if (transaction.PlayerItems.Select(i => ResourceLibrary.GetResourceByName(i.ResourceType))
                     .SelectMany(i => i.Tags)
                     .Any(tag => envoy.OwnerFaction.Race.HatedResources.Contains(tag)))
-                    Memory.SetValue("$trade-result", new Yarn.Value("hated"));
+                    Memory.SetValue("$trade_result", new Yarn.Value("hated"));
                 else if (transaction.PlayerItems.Select(i => ResourceLibrary.GetResourceByName(i.ResourceType))
                     .SelectMany(i => i.Tags)
                     .Any(tag => envoy.OwnerFaction.Race.LikedResources.Contains(tag)))
-                    Memory.SetValue("$trade-result", new Yarn.Value("liked"));
+                    Memory.SetValue("$trade_result", new Yarn.Value("liked"));
                 else
-                    Memory.SetValue("$trade-result", new Yarn.Value("acceptable"));
+                    Memory.SetValue("$trade_result", new Yarn.Value("acceptable"));
 
-                Memory.SetValue("$trade-transaction", new Yarn.Value(transaction));
+                Memory.SetValue("$trade_transaction", new Yarn.Value(transaction));
                 State.Unpause();
             };
 
@@ -55,17 +55,17 @@ namespace DwarfCorp.Scripting.Factions.Trading
             State.StateManager.PushState(tradeState);
         }
 
-        [YarnCommand("finalize-trade")]
+        [YarnCommand("finalize_trade")]
         private static void _finalize_trade(YarnState State, Ancora.AstNode Arguments, Yarn.MemoryVariableStore Memory)
         {
-            var transaction = Memory.GetValue("$trade-transaction").AsObject as Trade.TradeTransaction;
+            var transaction = Memory.GetValue("$trade_transaction").AsObject as Trade.TradeTransaction;
             var envoy = Memory.GetValue("$envoy").AsObject as TradeEnvoy;
-            var playerFaction = Memory.GetValue("$player-faction").AsObject as Faction;
+            var playerFaction = Memory.GetValue("$player_faction").AsObject as Faction;
             var world = Memory.GetValue("$world").AsObject as WorldManager;
 
             if (transaction == null || envoy == null || playerFaction == null || world == null)
             {
-                State.Output("Command 'finalize-trade' can only be called from a TradeEnvoy initiated conversation.");
+                State.Output("Command 'finalize_trade' can only be called from a TradeEnvoy initiated conversation.");
                 return;
             }
 

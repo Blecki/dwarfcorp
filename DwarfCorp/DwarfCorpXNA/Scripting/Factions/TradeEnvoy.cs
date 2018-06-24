@@ -98,12 +98,15 @@ namespace DwarfCorp
                         var cMem = World.ConversationMemory;
                         cMem.SetValue("$world", new Yarn.Value(World));
                         cMem.SetValue("$envoy", new Yarn.Value(this));
-                        cMem.SetValue("$envoy-demands-tribute", new Yarn.Value(this.TributeDemanded != 0));
-                        cMem.SetValue("$envoy-tribute-demanded", new Yarn.Value((float)this.TributeDemanded.Value));
-                        cMem.SetValue("$envoy-name", new Yarn.Value(TextGenerator.GenerateRandom(Datastructures.SelectRandom(OwnerFaction.Race.NameTemplates).ToArray())));
-                        cMem.SetValue("$envoy-faction", new Yarn.Value(OwnerFaction.Name));
-                        cMem.SetValue("$player-faction", new Yarn.Value(this.OtherFaction));
-                        cMem.SetValue("$offensive-trades", new Yarn.Value(0.0f));
+                        cMem.SetValue("$envoy_demands_tribute", new Yarn.Value(this.TributeDemanded != 0));
+                        cMem.SetValue("$envoy_tribute_demanded", new Yarn.Value((float)this.TributeDemanded.Value));
+                        cMem.SetValue("$envoy_name", new Yarn.Value(TextGenerator.GenerateRandom(Datastructures.SelectRandom(OwnerFaction.Race.NameTemplates).ToArray())));
+                        cMem.SetValue("$envoy_faction", new Yarn.Value(OwnerFaction.Name));
+                        cMem.SetValue("$player_faction", new Yarn.Value(this.OtherFaction));
+                        cMem.SetValue("$offensive_trades", new Yarn.Value(0.0f));
+
+                        var politics = World.Diplomacy.GetPolitics(OtherFaction, OwnerFaction);
+                        cMem.SetValue("$faction_was_at_war", new Yarn.Value(politics.WasAtWar));
 
                         GameState.Game.StateManager.PushState(new YarnState(OwnerFaction.Race.DiplomacyConversation, "Start", cMem));
                     }

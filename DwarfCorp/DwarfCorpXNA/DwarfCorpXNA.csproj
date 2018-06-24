@@ -256,6 +256,7 @@
     <Compile Include="Entities\Plants\PlantFactories.cs" />
     <Compile Include="Entities\TimedExplosion.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
+    <Compile Include="GameStates\YarnSpinner\EndConversation.cs" />
     <Compile Include="GameStates\YarnSpinner\Pick.cs" />
     <Compile Include="GameStates\YarnSpinner\YarnCommandGrammar.cs" />
     <Compile Include="GameStates\YarnSpinner\YarnCommandAttribute.cs" />
@@ -285,7 +286,11 @@
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
+    <Compile Include="Scripting\Factions\Trading\DeclareWarYarnCommand.cs" />
+    <Compile Include="Scripting\Factions\Trading\PayTributeYarnCommand.cs" />
+    <Compile Include="Scripting\Factions\Trading\RecallEnvoyYarnCommand.cs" />
     <Compile Include="Scripting\Factions\Trading\TradeGameState.cs" />
+    <Compile Include="Scripting\Factions\Trading\PoliticalEventYarnCommand.cs" />
     <Compile Include="Scripting\Factions\Trading\TradeYarnCommand.cs" />
     <Compile Include="Scripting\NewMagic\AttackSpell.cs" />
     <Compile Include="Scripting\NewMagic\BuffSpell.cs" />

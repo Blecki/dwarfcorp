@@ -1,32 +1,32 @@
 title: Start
 ---
-Dwarf: I am $envoy-name of $envoy-faction.
+Dwarf: I am $envoy_name of $envoy_faction.
 [[Main]]
 ===
 
 
 title: Main
 ---
-<<if $envoy-demands-tribute>>
+<<if $envoy_demands_tribute>>
 	<<pick>>
-		$envoy-name: We have come to collect taxes for the King.
-		$envoy-name: The Dwarven Kingdom demands tax!
-		$envoy-name: The King needs revenue for his army.
-		$envoy-name: You have not paid your corporate income tax - pay me or be auditted!
+		$envoy_name: We have come to collect taxes for the King.
+		$envoy_name: The Dwarven Kingdom demands tax!
+		$envoy_name: The King needs revenue for his army.
+		$envoy_name: You have not paid your corporate income tax - pay me or be auditted!
 	<<end>>
-	[[Pay a tribute of $envoy-tribute-demanded|PayTribute]]
+	[[Pay a tribute of $envoy_tribute_demanded|PayTribute]]
 	[[Refuse to pay. (WAR)|DeclareWar]]
-<<elseif $faction-was-at-war>>
+<<elseif $faction_was_at_war>>
 	We are at war.
 	[[Make peace.|MakePeace]]
 	[[Continue the war.|DeclareWar]]
 <<else>>
 	<<pick>>
-		$envoy-name: Hello!
-		$envoy-name: Well met.
-		$envoy-name: Greetings!
-		$envoy-name: Salutations!
-		$envoy-name: Good to see you, fellow dwarf!
+		$envoy_name: Hello!
+		$envoy_name: Well met.
+		$envoy_name: Greetings!
+		$envoy_name: Salutations!
+		$envoy_name: Good to see you, fellow dwarf!
 	<<end>>
 	[[Trade.|Trade]]
 	[[What is your opinion of us?|Opinion]]
@@ -43,35 +43,35 @@ title: Main
 title: Trade
 ---
 <<trade>> // Pauses conversation until trade is complete.
-<<if $trade-result == "cancelled">>
-	$envoy-name: Not sure what you think I'm here for.
+<<if $trade_result == "cancelled">>
+	$envoy_name: Not sure what you think I'm here for.
 	[[Main]]
-<<elseif $trade-result == "hated">>
-	$envoy-name: What is this? The deal is off! This is outrageous!
-	<<increment $offensive-trades>>
-	<<political-event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
-	<<if $offensive-trades == 3>>
+<<elseif $trade_result == "hated">>
+	$envoy_name: What is this? The deal is off! This is outrageous!
+	<<increment $offensive_trades>>
+	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
+	<<if $offensive_trades == 3>>
 		[[Goodbye]]
 	<<endif>>
 	[[Main]]
-<<elseif $trade-result == "unprofitable">>
+<<elseif $trade_result == "unprofitable">>
 	<<pick>>
-		$envoy-name: Do you take me for a fool? Where is the profit?
-		$envoy-name: I should not have come all this way. Not. Profitable.
-		$envoy-name: I thought we could trust one another. Instead you're wasting my time.
-		$envoy-name: Do you think I have space to carry such worthless goods?
+		$envoy_name: Do you take me for a fool? Where is the profit?
+		$envoy_name: I should not have come all this way. Not. Profitable.
+		$envoy_name: I thought we could trust one another. Instead you're wasting my time.
+		$envoy_name: Do you think I have space to carry such worthless goods?
 	<<end>>
 <<else>>
-	<<if $trade-result == "liked">>
-		<<political-event "you gave us something we liked" 0.25 4>>
+	<<if $trade_result == "liked">>
+		<<political_event "you gave us something we liked" 0.25 4>>
 	<<endif>>
-	<<finalize-trade>> // Applys the trade and creates the events the achievement engine needs.
-	<<political-event "we had profitable trade" 0.25 2>>
+	<<finalize_trade>> // Applys the trade and creates the events the achievement engine needs.
+	<<political_event "we had profitable trade" 0.25 2>>
 	<<pick>>
-		$envoy-name: Yes, this is profitable.
-		$envoy-name: We will both be rich at this rate.
-		$envoy-name: Ha! The baloon can barely stay in the air now!
-		$envoy-name: Thank Seleprak for inventing mercantilism!
+		$envoy_name: Yes, this is profitable.
+		$envoy_name: We will both be rich at this rate.
+		$envoy_name: Ha! The baloon can barely stay in the air now!
+		$envoy_name: Thank Seleprak for inventing mercantilism!
 	<<end>>
 <<endif>>
 [[Main]]
@@ -80,7 +80,7 @@ title: Trade
 
 title: Opinion
 ---
-$envoy-name: So far, our relationship has been $envoy-relationship.
+$envoy_name: So far, our relationship has been $envoy_relationship.
 [[Main]]
 ===
 
@@ -88,10 +88,10 @@ $envoy-name: So far, our relationship has been $envoy-relationship.
 title: Many
 ---
 <<pick>>
-	$envoy-name: We have a great deal of stone. Transporting more would not be profitable.
-	$envoy-name: The markets are flooded with metal of all kinds. Do not give us more!
-	$envoy-name: The mushroom crop has done exceptionally. We have more than we need, honestly.
-	$envoy-name: Ha, Ale, of course! Don't even try and compete with the local craft breweries!
+	$envoy_name: We have a great deal of stone. Transporting more would not be profitable.
+	$envoy_name: The markets are flooded with metal of all kinds. Do not give us more!
+	$envoy_name: The mushroom crop has done exceptionally. We have more than we need, honestly.
+	$envoy_name: Ha, Ale, of course! Don't even try and compete with the local craft breweries!
 <<end>>
 [[Main]]
 ===
@@ -100,11 +100,11 @@ title: Many
 title: Few
 ---
 <<pick>>
-	$envoy-name: There never seems to be enough magical items. Is there just not enough mana?
-	$envoy-name: Trees don't grow well underground. That's a hint.
-	$envoy-name: Well, you know, you can't go wrong with gems.
-	$envoy-name: Precious things. Gold. That's usually good, we can always use more gold.
-	$envoy-name: Trinkets are good for reselling. All kinds.
+	$envoy_name: There never seems to be enough magical items. Is there just not enough mana?
+	$envoy_name: Trees don't grow well underground. That's a hint.
+	$envoy_name: Well, you know, you can't go wrong with gems.
+	$envoy_name: Precious things. Gold. That's usually good, we can always use more gold.
+	$envoy_name: Trinkets are good for reselling. All kinds.
 <<end>>
 [[Main]]
 ===
@@ -112,7 +112,7 @@ title: Few
 
 title: Hate
 ---
-$envoy-name: Anything can be profitable if you know who to sell it to. Don't worry about selling us distasteful items, I guarantee there's a buyer for everything.
+$envoy_name: Anything can be profitable if you know who to sell it to. Don't worry about selling us distasteful items, I guarantee there's a buyer for everything.
 [[Main]]
 ===
 
@@ -120,10 +120,10 @@ $envoy-name: Anything can be profitable if you know who to sell it to. Don't wor
 title: Like
 ---
 <<pick>>
-	$envoy-name: Metal. It's just amazing, isn't it?
-	$envoy-name: Gold - yeah. Gold. Lots of gold.
-	$envoy-name: Shiny transparent rocks. Rubies. Diamonds. Emeralds. All of them.
-	$envoy-name: I like things that show true artisinal talent. The kinds of things a craftsdwarf pours his soul into you.
+	$envoy_name: Metal. It's just amazing, isn't it?
+	$envoy_name: Gold - yeah. Gold. Lots of gold.
+	$envoy_name: Shiny transparent rocks. Rubies. Diamonds. Emeralds. All of them.
+	$envoy_name: I like things that show true artisinal talent. The kinds of things a craftsdwarf pours his soul into you.
 <<end>>
 [[Main]]
 ===
@@ -131,7 +131,7 @@ title: Like
 
 title: ConfirmWar
 ---
-$envoy-name: Seleprak! Must we make war?
+$envoy_name: Seleprak! Must we make war?
 [[Yes!|DeclareWar]]
 [[No.|Main]]
 ===
@@ -140,33 +140,33 @@ $envoy-name: Seleprak! Must we make war?
 title: DeclareWar
 ---
 <<pick>>
-	$envoy-name: This is a dark day for the dwarven empire.
-	$envoy-name: In the name of the king, we shall strike you down!
-	$envoy-name: Your rebellious corporation ends now.
+	$envoy_name: This is a dark day for the dwarven empire.
+	$envoy_name: In the name of the king, we shall strike you down!
+	$envoy_name: Your rebellious corporation ends now.
 <<end>>
-<<political-event "you declared war on us" -2.0 4>>
-<<declare-war>> // This is what actually turns them hostile. Also generates the events for the achievement system.
+<<political_event "you declared war on us" -2.0 4>>
+<<declare_war>> // This is what actually turns them hostile. Also generates the events for the achievement system.
 [[Be gone.|End]]
 ===
 
 
 title: MakePeace
 ---
-$envoy-name: War of this kind is not profitable.
-<<political-event "you made peace with us" 0.4 4>>
+$envoy_name: War of this kind is not profitable.
+<<political_event "you made peace with us" 0.4 4>>
 [[Main]]
 ===
 
 
 title: PayTribute
 ---
-<<if $player-money < $envoy-tribute-demanded>>
-	$envoy-name: Ha! You can't even afford this paltry amount? We'll come back when you get your finances in order.
+<<if $player_money < $envoy_tribute_demanded>>
+	$envoy_name: Ha! You can't even afford this paltry amount? We'll come back when you get your finances in order.
 	[[Fine.|End]]
 <<else>>
-	<<pay-tribute>>
-	<<political-event "you paid us tribute" 0.5 4>>
-	$envoy-name: A wonderfully straightforward transaction.
+	<<pay_tribute>>
+	<<political_event "you paid us tribute" 0.5 4>>
+	$envoy_name: A wonderfully straightforward transaction.
 	[[Main]]
 <<endif>>
 ===
@@ -175,9 +175,9 @@ title: PayTribute
 title: Goodbye
 ---
 <<pick>>
-	$envoy-name: Seleprak be with you!
-	$envoy-name: May your mines be deep and profitable.
-	$envoy-name: Remember the motherland.
+	$envoy_name: Seleprak be with you!
+	$envoy_name: May your mines be deep and profitable.
+	$envoy_name: Remember the motherland.
 <<end>>
 [[So long!|End]]
 ===
@@ -185,7 +185,6 @@ title: Goodbye
 
 title: End
 ---
-<<recall-envoy>>
-<<end-conversation>>
-===
-        
+<<recall_envoy>>
+<<end_conversation>>
+===        

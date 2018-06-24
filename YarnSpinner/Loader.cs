@@ -470,7 +470,7 @@ namespace Yarn {
                                 lineNumber++;
 
                                 // skip empty lines
-                                if (line.Length == 0)
+                                if (line == null || line.Length == 0)
                                 {
                                     continue;
                                 }

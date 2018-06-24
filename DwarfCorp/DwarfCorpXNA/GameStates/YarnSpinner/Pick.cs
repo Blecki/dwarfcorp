@@ -15,7 +15,7 @@ namespace DwarfCorp.GameStates.YarnSpinner
             State.EnterQueueingAction((list) =>
             {
                 if (list.Count > 0)
-                    State.Output(list[Random.Next(list.Count)]);
+                    State.Output(list[Random.Next(list.Count)] + "\n");
             });
         }
     }
