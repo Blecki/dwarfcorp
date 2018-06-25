@@ -64,6 +64,26 @@ namespace DwarfCorp
             return anim;
         }
 
+        //public static Animation CreateDialogueAnimation(String AssetName, int FrameWidth, int FrameHeight, List<Point> Frames)
+        //{
+        //    // Can't cache these guys, unfortunately. Thankfully, they
+        //    //  are only used by the dialogue screen.
+        //    var anim = new Animation()
+        //    {
+        //        SpriteSheet = new SpriteSheet(AssetName, FrameWidth, FrameHeight),
+        //        Frames = Descriptor.Frames.Select(s => new Point(s, 0)).ToList(),
+        //        SpeedMultiplier = Descriptor.Speed,
+        //        Speeds = new List<float>(),
+        //        YOffset = new List<float>() { Descriptor.YOffset }
+        //    };
+
+        //    foreach (var frame in anim.Frames)
+        //    {
+        //        anim.Speeds.Add(anim.SpeedMultiplier);
+        //    }
+        //    return anim;
+        //}
+
         public static Animation CreateSimpleAnimation(String TextureAsset, bool loop = false)
         {
             if (!Animations.ContainsKey(TextureAsset))

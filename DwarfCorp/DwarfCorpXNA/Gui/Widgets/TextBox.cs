@@ -22,12 +22,12 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             Lines.Add("");
-            WrapText = false;
         }
 
         public void AppendText(String Message)
         {
             var newLines = Lines[Lines.Count - 1] + Message;
+            Lines[Lines.Count - 1] = "";
             var font = Root.GetTileSheet(Font);
             var text = (font is VariableWidthFont && WrapText) ? (font as VariableWidthFont).WordWrapString(newLines, TextSize, GetDrawableInterior().Width) : newLines;
             foreach (var c in text)

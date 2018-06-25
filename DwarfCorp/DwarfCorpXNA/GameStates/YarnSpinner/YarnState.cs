@@ -166,13 +166,15 @@ namespace DwarfCorp
             _Output = GuiRoot.RootItem.AddChild(new Gui.Widgets.TextBox
             {
                 Border = "border-fancy",
-                Rect = new Rectangle(x, y - 258, w, 258)
+                Rect = new Rectangle(x, y - 260, w, 260),
+                TextSize = 2
             }) as Gui.Widgets.TextBox;
 
             ChoicePanel = GuiRoot.RootItem.AddChild(new Widget
             {
                 Rect = new Rectangle(x, y, w, h),
                 Border = "border-fancy",
+
             });
 
             SpeakerWidget = GuiRoot.RootItem.AddChild(new Widget()
@@ -236,9 +238,11 @@ namespace DwarfCorp
                                 ChoicePanel.AddChild(new Widget
                                 {
                                     Text = option,
+                                    TextSize = 2,
                                     MinimumSize = new Point(0, 20),
                                     AutoLayout = AutoLayout.DockTop,
                                     ChangeColorOnHover = true,
+                                    WrapText = true,
                                     OnClick = (sender, args) =>
                                     {
                                         Output("> " + sender.Text + "\n");
@@ -335,6 +339,7 @@ namespace DwarfCorp
                     {
                         Text = "End conversation.",
                         MinimumSize = new Point(0, 20),
+                        TextSize = 2,
                         AutoLayout = AutoLayout.DockTop,
                         ChangeColorOnHover = true,
                         OnClick = (sender, args) =>

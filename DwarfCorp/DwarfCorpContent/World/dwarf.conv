@@ -1,6 +1,6 @@
 title: Start
 ---
-<<set_portrait "GUI\\diplo-dorf" 5.0 0 1 0>>
+<<set_portrait "GUI\diplo-dorf" 5.0 0 1 0>>
 <<show_portrait>>
 <<pick>>
 	Dwarf: Hello!
@@ -53,7 +53,9 @@ title: Trade
 	<<increment $offensive_trades>>
 	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
 	<<if $offensive_trades == 3>>
-		[[Goodbye]]
+		$envoy_name: There is obviously nothing here I want. Goodbye.
+		<<recall_envoy>>
+		<<end_conversation>>
 	<<endif>>
 	[[Main]]
 <<elseif $trade_result == "unprofitable">>
@@ -148,7 +150,8 @@ title: DeclareWar
 <<end>>
 <<political_event "you declared war on us" -2.0 4>>
 <<declare_war>> // This is what actually turns them hostile. Also generates the events for the achievement system.
-[[Be gone.|End]]
+<<recall_envoy>>
+<<end_conversation>>
 ===
 
 
@@ -164,7 +167,8 @@ title: PayTribute
 ---
 <<if $player_money < $envoy_tribute_demanded>>
 	$envoy_name: Ha! You can't even afford this paltry amount? We'll come back when you get your finances in order.
-	[[Fine.|End]]
+	<<recall_envoy>>
+	<<end_conversation>>
 <<else>>
 	<<pay_tribute>>
 	<<political_event "you paid us tribute" 0.5 4>>
@@ -181,12 +185,6 @@ title: Goodbye
 	$envoy_name: May your mines be deep and profitable.
 	$envoy_name: Remember the motherland.
 <<end>>
-[[So long!|End]]
-===
-
-
-title: End
----
 <<recall_envoy>>
 <<end_conversation>>
-===        
+===  
