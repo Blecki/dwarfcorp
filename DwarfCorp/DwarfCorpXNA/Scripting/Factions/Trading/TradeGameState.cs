@@ -47,6 +47,8 @@ namespace DwarfCorp.Scripting.Factions.Trading
                 Player = new Trade.PlayerTradeEntity(PlayerFaction),
             }) as Gui.Widgets.TradePanel;
 
+            TradePanel.Layout();
+
             GuiRoot.ShowDialog(TradePanel);
 
             IsInitialized = true;

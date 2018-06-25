@@ -8,7 +8,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
     static class PoliticalEventYarnCommand
     {
         [YarnCommand("political_event", "STRING", "NUMBER", "NUMBER")]
-        private static void _political_event(YarnState State, Ancora.AstNode Arguments, Yarn.MemoryVariableStore Memory)
+        private static void _political_event(YarnState State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
             var envoy = Memory.GetValue("$envoy").AsObject as TradeEnvoy;
             var playerFaction = Memory.GetValue("$player_faction").AsObject as Faction;
@@ -23,9 +23,9 @@ namespace DwarfCorp.Scripting.Factions.Trading
             var politics = world.Diplomacy.GetPolitics(playerFaction, envoy.OwnerFaction);
             politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
             {
-                Change = (float)Arguments.Children[1].Value,
-                Description = (string)Arguments.Children[0].Value,
-                Duration = new TimeSpan((int)((float)Arguments.Children[2].Value), 0, 0, 0),
+                Description = (string)Arguments[0].Value,
+                Change = (float)Arguments[1].Value,
+                Duration = new TimeSpan((int)((float)Arguments[2].Value), 0, 0, 0),
                 Time = world.Time.CurrentDate
             });
         }

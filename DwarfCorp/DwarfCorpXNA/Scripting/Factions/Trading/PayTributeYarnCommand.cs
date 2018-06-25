@@ -8,7 +8,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
     static class PayTributeYarnCommand
     {
         [YarnCommand("pay_tribute")]
-        private static void _pay_tribute(YarnState State, Ancora.AstNode Arguments, Yarn.MemoryVariableStore Memory)
+        private static void _pay_tribute(YarnState State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
             var envoy = Memory.GetValue("$envoy").AsObject as TradeEnvoy;
             var playerFaction = Memory.GetValue("$player_faction").AsObject as Faction;

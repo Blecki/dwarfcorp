@@ -10,7 +10,7 @@ namespace DwarfCorp.GameStates.YarnSpinner
         private static Random Random = new Random();
 
         [YarnCommand("pick")]
-        private static void _pick(YarnState State, Ancora.AstNode Arguments, Yarn.MemoryVariableStore Memory)
+        private static void _pick(YarnState State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
             State.EnterQueueingAction((list) =>
             {

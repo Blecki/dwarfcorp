@@ -44,13 +44,14 @@ namespace DwarfCorp
     {
         private static Dictionary<String, List<Animation>> Animations = new Dictionary<String, List<Animation>>();
 
+        // Kill this already.
         public static Animation CreateAnimation(Animation.SimpleDescriptor Descriptor)
         {
             // Can't cache these guys, unfortunately. Thankfully, they
             //  are only used by the dialogue screen.
             var anim = new Animation()
             {
-                SpriteSheet = new SpriteSheet(Descriptor.AssetName),
+                SpriteSheet = new SpriteSheet(Descriptor.AssetName, Descriptor.Width, Descriptor.Height),
                 Frames = Descriptor.Frames.Select(s => new Point(s, 0)).ToList(),
                 SpeedMultiplier = Descriptor.Speed,
                 Speeds = new List<float>(),
@@ -63,26 +64,6 @@ namespace DwarfCorp
             }
             return anim;
         }
-
-        //public static Animation CreateDialogueAnimation(String AssetName, int FrameWidth, int FrameHeight, List<Point> Frames)
-        //{
-        //    // Can't cache these guys, unfortunately. Thankfully, they
-        //    //  are only used by the dialogue screen.
-        //    var anim = new Animation()
-        //    {
-        //        SpriteSheet = new SpriteSheet(AssetName, FrameWidth, FrameHeight),
-        //        Frames = Descriptor.Frames.Select(s => new Point(s, 0)).ToList(),
-        //        SpeedMultiplier = Descriptor.Speed,
-        //        Speeds = new List<float>(),
-        //        YOffset = new List<float>() { Descriptor.YOffset }
-        //    };
-
-        //    foreach (var frame in anim.Frames)
-        //    {
-        //        anim.Speeds.Add(anim.SpeedMultiplier);
-        //    }
-        //    return anim;
-        //}
 
         public static Animation CreateSimpleAnimation(String TextureAsset, bool loop = false)
         {

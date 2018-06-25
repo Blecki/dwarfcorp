@@ -24,7 +24,7 @@ Console Commands -
 
 Yarn commands -
 	Attribute type: YarnCommandAttribute
-	Signature void *(YarnState, Ancora.AstNode, Yarn.MemoryVariableStore)
+	Signature void *(YarnState, List<Ancora.AstNode>, Yarn.MemoryVariableStore)
 
 	Implements Yarn conversation system commands.
 

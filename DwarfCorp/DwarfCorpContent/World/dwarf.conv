@@ -1,6 +1,6 @@
 title: Start
 ---
-<<set_portrait "GUI\diplo-dorf" 5.0 0 1 0>>
+<<set_portrait "GUI\diplo-dorf" 64 64 5.0 0 1 0>>
 <<show_portrait>>
 <<pick>>
 	Dwarf: Hello!

@@ -32,5 +32,18 @@ namespace DwarfCorp.Gui
             result.indicies = new short[] { 0, 1, 2, 3, 0, 2 };
             return result;
         }
+
+        /// <summary>
+        /// Sets a quad's texture coordinates back to the default values. Sure hope the mesh is actually a quad!
+        /// </summary>
+        public void ResetQuadTexture()
+        {
+            // Better be a fucking quad!
+
+            verticies[0].TextureCoordinate = new Vector2(0.0f, 0.0f);
+            verticies[1].TextureCoordinate = new Vector2(1.0f, 0.0f);
+            verticies[2].TextureCoordinate = new Vector2(1.0f, 1.0f);
+            verticies[3].TextureCoordinate = new Vector2(0.0f, 1.0f);
+        }
     }
 }

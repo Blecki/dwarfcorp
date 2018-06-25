@@ -8,7 +8,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
     static class TradeYarnCommand
     {
         [YarnCommand("trade")]
-        private static void _trade(YarnState State, Ancora.AstNode Arguments, Yarn.MemoryVariableStore Memory)
+        private static void _trade(YarnState State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
             var envoy = Memory.GetValue("$envoy").AsObject as TradeEnvoy;
             var playerFaction = Memory.GetValue("$player_faction").AsObject as Faction;

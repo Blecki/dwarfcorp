@@ -7,13 +7,13 @@ namespace DwarfCorp.GameStates.YarnSpinner
 {
     static class SetPortrait
     {
-        [YarnCommand("set_portrait", "STRING", "NUMBER", "NUMBER", ArgumentTypeBehavior = YarnCommandAttribute.ArgumentTypeBehaviors.LastIsVaridic)]
-        private static void _set_portrait(YarnState State, Ancora.AstNode Arguments, Yarn.MemoryVariableStore Memory)
+        [YarnCommand("set_portrait", "STRING", "NUMBER", "NUMBER", "NUMBER", "NUMBER", ArgumentTypeBehavior = YarnCommandAttribute.ArgumentTypeBehaviors.LastIsVaridic)]
+        private static void _set_portrait(YarnState State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
             var frames = new List<int>();
-            for (var i = 2; i < Arguments.Children.Count; ++i)
-                frames.Add((int)((float)Arguments.Children[i].Value));
-            State.SetPortrait((string)Arguments.Children[0].Value, (float)Arguments.Children[1].Value, frames);
+            for (var i = 4; i < Arguments.Count; ++i)
+                frames.Add((int)((float)Arguments[i].Value));
+            State.SetPortrait((string)Arguments[0].Value, (int)((float)Arguments[1].Value), (int)((float)Arguments[2].Value), (float)Arguments[3].Value, frames);
         }
     }
 }

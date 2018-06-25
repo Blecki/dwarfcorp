@@ -8,7 +8,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
     static class DeclareWarYarnCommand
     {
         [YarnCommand("declare_war")]
-        private static void _declare_war(YarnState State, Ancora.AstNode Arguments, Yarn.MemoryVariableStore Memory)
+        private static void _declare_war(YarnState State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
             var envoy = Memory.GetValue("$envoy").AsObject as TradeEnvoy;
             var playerFaction = Memory.GetValue("$player_faction").AsObject as Faction;

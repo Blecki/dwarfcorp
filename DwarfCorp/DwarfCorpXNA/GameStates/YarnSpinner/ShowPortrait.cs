@@ -8,7 +8,7 @@ namespace DwarfCorp.GameStates.YarnSpinner
     static class ShowPortrait
     {
         [YarnCommand("show_portrait")]
-        private static void _show_portrait(YarnState State, Ancora.AstNode Arguments, Yarn.MemoryVariableStore Memory)
+        private static void _show_portrait(YarnState State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
             State.ShowPortrait();
         }

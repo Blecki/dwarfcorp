@@ -32,7 +32,7 @@ namespace DwarfCorp
 
         private class CommandHandler
         {
-            public Action<YarnState, Ancora.AstNode, Yarn.MemoryVariableStore> Action;
+            public Action<YarnState, List<Ancora.AstNode>, Yarn.MemoryVariableStore> Action;
             public YarnCommandAttribute Settings;
         }
 
@@ -43,8 +43,9 @@ namespace DwarfCorp
 
         private AnimationPlayer SpeakerAnimationPlayer;
         private Animation SpeakerAnimation;
-        private Gui.Widget SpeakerWidget;
+        private bool SpeakerVisible = false;
         private Timer SpeakerAnimationTimer = new Timer(0, true);
+        private Gui.Mesh SpeakerRectangle = Gui.Mesh.Quad().Scale(256, 256).Translate(32, 32);
 
         public YarnState(
             String ConversationFile,
@@ -59,7 +60,7 @@ namespace DwarfCorp
             foreach (var method in AssetManager.EnumerateModHooks(typeof(YarnCommandAttribute), typeof(void), new Type[]
             {
                 typeof(YarnState),
-                typeof(Ancora.AstNode),
+                typeof(List<Ancora.AstNode>),
                 typeof(Yarn.MemoryVariableStore)
             }))
             {
@@ -120,13 +121,15 @@ namespace DwarfCorp
             this.QueueEndAction = QueueEndAction;
         }
 
-        public void SetPortrait(String Gfx, float Speed, List<int> Frames)
+        public void SetPortrait(String Gfx, int FrameWidth, int FrameHeight, float Speed, List<int> Frames)
         {
             SpeakerAnimation = AnimationLibrary.CreateAnimation(new Animation.SimpleDescriptor
             {
                 AssetName = Gfx,
                 Speed = Speed,
                 Frames = Frames,
+                Width = FrameWidth,
+                Height = FrameHeight
             });
 
             SpeakerAnimation.Loops = true;
@@ -137,12 +140,12 @@ namespace DwarfCorp
 
         public void ShowPortrait()
         {
-            SpeakerWidget.Hidden = false;
+            SpeakerVisible = true;
         }
 
         public void HidePortrait()
         {
-            SpeakerWidget.Hidden = true;
+            SpeakerVisible = false;
         }
 
         public void PlayPortraitAnimation(float Time)
@@ -152,6 +155,8 @@ namespace DwarfCorp
 
         public override void OnEnter()
         {
+            // Geez - do we really want to rebuild the GUI each time the state is entered? It deletes the queue!
+
             DwarfGame.GumInputMapper.GetInputQueue();
 
             GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
@@ -177,13 +182,6 @@ namespace DwarfCorp
 
             });
 
-            SpeakerWidget = GuiRoot.RootItem.AddChild(new Widget()
-            {
-                MinimumSize = new Point(256, 256),
-                Rect = new Rectangle(32, 32 - 5, 256, 256),
-                Hidden = true
-            });
-
             IsInitialized = true;
             base.OnEnter();
         }
@@ -198,17 +196,9 @@ namespace DwarfCorp
                 SpeakerAnimationTimer.Update(gameTime);
 
                 if (SpeakerAnimationTimer.HasTriggered)
-                {
                     SpeakerAnimationPlayer.Stop();
-                    SpeakerWidget.Background = new TileReference(SpeakerAnimation.SpriteSheet.AssetName, SpeakerAnimation.Frames[0].X);
-                }
                 else
-                {
                     SpeakerAnimationPlayer.Update(gameTime, false);
-                    SpeakerWidget.Background = new TileReference(SpeakerAnimation.SpriteSheet.AssetName, SpeakerAnimation.Frames[SpeakerAnimationPlayer.CurrentFrame].X);
-                }
-
-                SpeakerWidget.Invalidate();
             }
 
             GuiRoot.Update(gameTime.ToRealTime());
@@ -292,7 +282,7 @@ namespace DwarfCorp
                                 }
 
                                 if (!errorFound)
-                                    handler.Action(this, result.Node, Memory);
+                                    handler.Action(this, result.Node.Children, Memory);
                             }
                         }
                     }
@@ -357,6 +347,16 @@ namespace DwarfCorp
         public override void Render(DwarfTime gameTime)
         {
             GuiRoot.Draw();
+
+            if (SpeakerVisible && SpeakerAnimationPlayer != null)
+            {
+                var sheet = SpeakerAnimationPlayer.GetCurrentAnimation().SpriteSheet;
+                var frame = SpeakerAnimationPlayer.GetCurrentAnimation().Frames[SpeakerAnimationPlayer.CurrentFrame];
+                SpeakerRectangle.ResetQuadTexture();
+                SpeakerRectangle.Texture(sheet.TileMatrix(frame.X, frame.Y));
+                GuiRoot.DrawMesh(SpeakerRectangle, sheet.GetTexture());
+            }
+
             base.Render(gameTime);
         }
     }

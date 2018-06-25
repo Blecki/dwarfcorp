@@ -8,7 +8,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
     static class RecallEnvoyYarnCommand
     {
         [YarnCommand("recall_envoy")]
-        private static void _recall_envoy(YarnState State, Ancora.AstNode Arguments, Yarn.MemoryVariableStore Memory)
+        private static void _recall_envoy(YarnState State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
             var envoy = Memory.GetValue("$envoy").AsObject as TradeEnvoy;
 
