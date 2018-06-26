@@ -2,6 +2,7 @@ title: Start
 ---
 <<set_portrait "GUI\diplo-dorf" 64 64 5.0 0 1 0>>
 <<show_portrait>>
+<<set_language "Dwarf">>
 This is a long line that should wordwrap so that it fits inside the output box.
 Mae: What did you say to her?
 -> Nothing.

@@ -258,6 +258,7 @@
     <Compile Include="GameStates\ManageModsState.cs" />
     <Compile Include="GameStates\YarnSpinner\EndConversation.cs" />
     <Compile Include="GameStates\YarnSpinner\HidePortrait.cs" />
+    <Compile Include="GameStates\YarnSpinner\SetLanguage.cs" />
     <Compile Include="GameStates\YarnSpinner\ShowPortrait.cs" />
     <Compile Include="GameStates\YarnSpinner\SetPortrait.cs" />
     <Compile Include="GameStates\YarnSpinner\Pick.cs" />

@@ -14,7 +14,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
 
             if (envoy == null)
             {
-                State.Output("Command 'recall_envoy' can only be called from a TradeEnvoy initiated conversation.");
+                State.Output("Command 'recall_envoy' can only be called from a TradeEnvoy initiated conversation.", false);
                 return;
             }
 

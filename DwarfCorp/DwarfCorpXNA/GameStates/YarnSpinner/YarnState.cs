@@ -18,7 +18,8 @@ namespace DwarfCorp
             ShowingChoices,
             QueuingLines,
             Paused,
-            ConversationOver
+            ConversationOver,
+            Speaking,
         }
 
         private Gui.Root GuiRoot;
@@ -44,8 +45,10 @@ namespace DwarfCorp
         private AnimationPlayer SpeakerAnimationPlayer;
         private Animation SpeakerAnimation;
         private bool SpeakerVisible = false;
-        private Timer SpeakerAnimationTimer = new Timer(0, true);
+        private Timer SpeakerAnimationTimer = new Timer(0, true, Timer.TimerMode.Real);
         private Gui.Mesh SpeakerRectangle = Gui.Mesh.Quad().Scale(256, 256).Translate(32, 32);
+        private Language Language;
+        private IEnumerator<Utterance> CurrentSpeach;
 
         public YarnState(
             String ConversationFile,
@@ -90,10 +93,27 @@ namespace DwarfCorp
             Runner = Dialogue.Run(StartNode).GetEnumerator();
         }
 
-        public void Output(String S)
+        public void Output(String S, bool Speak)
         {
             if (_Output != null)
                 _Output.AppendText(S);
+            if (Speak)
+            {
+                SpeakerAnimationTimer.Reset(S.Length / 10);
+                if (SpeakerAnimationPlayer != null)
+                    SpeakerAnimationPlayer.Play();
+                // Instead of using a timer, use the utterance.
+                if (Language != null)
+                {
+                    CurrentSpeach = Language.Say(S).GetEnumerator();
+                    State = States.Speaking;
+                }
+            }
+        }
+
+        public void SetLanguage(Language Language)
+        {
+            this.Language = Language;
         }
 
         public void Pause()
@@ -188,6 +208,8 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime gameTime)
         {
+            SoundManager.Update(gameTime, null, null);
+
             foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
                 GuiRoot.HandleInput(@event.Message, @event.Args);
 
@@ -198,7 +220,7 @@ namespace DwarfCorp
                 if (SpeakerAnimationTimer.HasTriggered)
                     SpeakerAnimationPlayer.Stop();
                 else
-                    SpeakerAnimationPlayer.Update(gameTime, false);
+                    SpeakerAnimationPlayer.Update(gameTime, false, Timer.TimerMode.Real);
             }
 
             GuiRoot.Update(gameTime.ToRealTime());
@@ -213,10 +235,7 @@ namespace DwarfCorp
 
                         if (step is Yarn.Dialogue.LineResult line)
                         {
-                            Output(line.line.text + "\n");
-                            SpeakerAnimationTimer.Reset(line.line.text.Length / 10);
-                            if (SpeakerAnimationPlayer != null)
-                                SpeakerAnimationPlayer.Play();
+                            Output(line.line.text + "\n", true);
                         }
                         else if (step is Yarn.Dialogue.OptionSetResult options)
                         {
@@ -235,7 +254,7 @@ namespace DwarfCorp
                                     WrapText = true,
                                     OnClick = (sender, args) =>
                                     {
-                                        Output("> " + sender.Text + "\n");
+                                        Output("> " + sender.Text + "\n", false);
                                         options.setSelectedOptionDelegate(indexLambda);
                                         ChoicePanel.Clear();
                                         ChoicePanel.Invalidate();
@@ -251,9 +270,9 @@ namespace DwarfCorp
                         {
                             var result = CommandGrammar.ParseString(command.command.text);
                             if (result.ResultType != Ancora.ResultType.Success)
-                                Output("Invalid command: " + command.command.text + "\nError: " + result.FailReason + "\n");
+                                Output("Invalid command: " + command.command.text + "\nError: " + result.FailReason + "\n", false);
                             if (!CommandHandlers.ContainsKey(result.Node.Children[0].Value.ToString()))
-                                Output("Unknown command: " + command.command.text + "\n");
+                                Output("Unknown command: " + command.command.text + "\n", false);
                             else
                             {
                                 var handler = CommandHandlers[result.Node.Children[0].Value.ToString()];
@@ -265,7 +284,7 @@ namespace DwarfCorp
                                     if (handler.Settings.ArgumentTypeBehavior == YarnCommandAttribute.ArgumentTypeBehaviors.Strict &&
                                         handler.Settings.ArgumentTypes.Count != result.Node.Children.Count)
                                     {
-                                        Output(String.Format("Passed {0} arguments to {1}; expected {2}\n", result.Node.Children.Count, handler.Settings.CommandName, handler.Settings.ArgumentTypes.Count));
+                                        Output(String.Format("Passed {0} arguments to {1}; expected {2}\n", result.Node.Children.Count, handler.Settings.CommandName, handler.Settings.ArgumentTypes.Count), false);
                                         errorFound = true;
                                     }
 
@@ -275,7 +294,7 @@ namespace DwarfCorp
 
                                         if (result.Node.Children[i].NodeType != expectedType)
                                         {
-                                            Output(String.Format("Wrong argument type passed to {0}. Expected {1}, got {2}.\n", handler.Settings.CommandName, expectedType, result.Node.Children[i].NodeType));
+                                            Output(String.Format("Wrong argument type passed to {0}. Expected {1}, got {2}.\n", handler.Settings.CommandName, expectedType, result.Node.Children[i].NodeType), false);
                                             errorFound = true;
                                         }
                                     }
@@ -301,7 +320,7 @@ namespace DwarfCorp
                         if (step is Yarn.Dialogue.LineResult line)
                             QueuedLines.Add(line.line.text);
                         else if (step is Yarn.Dialogue.OptionSetResult options)
-                            Output("Option encountered while queuing lines.\n");
+                            Output("Option encountered while queuing lines.\n", false);
                         else if (step is Yarn.Dialogue.CommandResult command)
                         {
                             if (command.command.text == "end")
@@ -311,12 +330,25 @@ namespace DwarfCorp
                                 State = States.Running;
                             }
                             else
-                                Output("Encountered command while queuing lines: " + command.command.text + " (only end is valid in this context)\n");
+                                Output("Encountered command while queuing lines: " + command.command.text + " (only end is valid in this context)\n", false);
+                            // Todo: Allow commands in pick - runs one at random.
                         }
                     }
                     else
                     {
                         State = States.ConversationOver;
+                    }
+                    break;
+                case States.Speaking:
+                    if (CurrentSpeach.MoveNext())
+                    {
+                        var utterance = CurrentSpeach.Current;
+                        if (utterance.Type == UtteranceType.Syllable)
+                            _Output.AppendText(utterance.SubSentence);
+                    }
+                    else
+                    {
+                        State = States.Running;
                     }
                     break;
                 case States.ShowingChoices:

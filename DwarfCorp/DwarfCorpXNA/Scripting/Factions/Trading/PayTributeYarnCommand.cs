@@ -16,7 +16,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
 
             if (envoy == null || playerFaction == null || world == null)
             {
-                State.Output("Command 'pay_tribute' can only be called from a TradeEnvoy initiated conversation.");
+                State.Output("Command 'pay_tribute' can only be called from a TradeEnvoy initiated conversation.", false);
                 return;
             }
 
