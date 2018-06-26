@@ -59,10 +59,17 @@ namespace DwarfCorp
 
         private Body CreatePreviewBody()
         {
+            Blackboard blackboard = new Blackboard();
+            if (SelectedResources.Count > 0)
+            {
+                blackboard.SetData<List<ResourceAmount>>("Resources", SelectedResources);
+            }
+            blackboard.SetData<string>("CraftType", CraftType.Name);
+
             var previewBody = EntityFactory.CreateEntity<Body>(
                 CraftType.EntityName, 
                 Player.VoxSelector.VoxelUnderMouse.WorldPosition,
-                SelectedResources.Count > 0 ? Blackboard.Create<List<ResourceAmount>>("Resources", SelectedResources) : null);
+                blackboard);
             previewBody.SetFlagRecursive(GameComponent.Flag.Active, false);
             previewBody.SetVertexColorRecursive(Color.White);
             previewBody.SetFlagRecursive(GameComponent.Flag.ShouldSerialize, false);

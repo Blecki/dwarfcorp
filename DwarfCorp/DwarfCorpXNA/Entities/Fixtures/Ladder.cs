@@ -44,10 +44,32 @@ namespace DwarfCorp
         [EntityFactory("Ladder")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
+            var resources = Data.GetData<List<ResourceAmount>>("Resources", null);
+            var craftType = Data.GetData<string>("CraftType", null);
+            if (resources == null && craftType != null)
+            {
+                resources = new List<ResourceAmount>();
+                var craftItem = CraftLibrary.GetCraftable(craftType);
+                foreach (var resource in craftItem.RequiredResources)
+                {
+                    var genericResource = ResourceLibrary.GetResourcesByTag(resource.ResourceType).FirstOrDefault();
+                    resources.Add(new ResourceAmount(genericResource, resource.NumResources));
+                }
+            }
+            else if (resources == null && craftType == null)
+            {
+                craftType = "Wooden Ladder";
+                resources = new List<ResourceAmount>() { new ResourceAmount(ResourceType.Wood) };
+            }
+            else if (craftType == null)
+            {
+                craftType = "Wooden Ladder";
+            }
+
             return new Ladder(
                 Manager,
                 Position,
-                Data.GetData<List<ResourceAmount>>("Resources", new List<ResourceAmount>() { new ResourceAmount(ResourceType.Wood) }));
+                resources, craftType);
         }
 
         protected static Dictionary<Resource.ResourceTags, Point> Sprites = new Dictionary<Resource.ResourceTags, Point>()
@@ -74,13 +96,13 @@ namespace DwarfCorp
 
         }
 
-        public Ladder(ComponentManager manager, Vector3 position, List<ResourceAmount> resourceType) :
+        public Ladder(ComponentManager manager, Vector3 position, List<ResourceAmount> resourceType, string craftType) :
             base(manager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new FixtureCraftDetails(manager)
             {
                 Resources = resourceType.ConvertAll(p => new ResourceAmount(p)),
                 Sprites = Ladder.Sprites,
                 DefaultSpriteFrame = Ladder.DefaultSprite,
-                CraftType = "Ladder"
+                CraftType = craftType
             }, SimpleSprite.OrientMode.Fixed)
         {
             this.LocalBoundingBoxOffset = new Vector3(0, 0, 0.45f);

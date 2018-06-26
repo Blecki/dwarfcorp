@@ -52,7 +52,7 @@ namespace DwarfCorp
     public static class ResourceLibrary
     {
         public static Dictionary<ResourceType, Resource> Resources = new Dictionary<ResourceType, Resource>();
-
+        public static bool IsInitialized = false;
 
         public static IEnumerable<Resource> GetResourcesByTag(Resource.ResourceTags tag)
         {
@@ -106,6 +106,11 @@ namespace DwarfCorp
 
         public static void Initialize()
         {
+            if (IsInitialized)
+            {
+                return;
+            }
+
             string tileSheet = ContentPaths.Entities.Resources.resources;
             Resources = new Dictionary<ResourceType, Resource>();
 
@@ -113,6 +118,7 @@ namespace DwarfCorp
 
             foreach (var resource in resourceList)
                 Add(resource);
+            IsInitialized = true;
         }
         
         public static Resource CreateAle(ResourceType type)

@@ -88,6 +88,11 @@ namespace DwarfCorp
                 if (Item.SelectedResources.Count > 0)
                     item.Name = Item.SelectedResources.FirstOrDefault().ResourceType + " " + item.Name;
             }
+            else
+            {
+                details.CraftType = Item.ItemType.Name;
+                details.Resources = Item.SelectedResources.ConvertAll(p => new ResourceAmount(p));
+            }
 
             if (Item.ItemType.AddToOwnedPool)
                 Creature.Faction.OwnedObjects.Add(item);
