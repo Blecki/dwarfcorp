@@ -47,8 +47,8 @@ namespace DwarfCorp
         private bool SpeakerVisible = false;
         private Timer SpeakerAnimationTimer = new Timer(0, true, Timer.TimerMode.Real);
         private Gui.Mesh SpeakerRectangle = Gui.Mesh.Quad().Scale(256, 256).Translate(32, 32);
-        private Language Language;
-        private IEnumerator<Utterance> CurrentSpeach;
+        private SpeechSynthesizer Language;
+        private IEnumerator<String> CurrentSpeach;
 
         public YarnState(
             String ConversationFile,
@@ -113,7 +113,8 @@ namespace DwarfCorp
 
         public void SetLanguage(Language Language)
         {
-            this.Language = Language;
+            // Todo: Remove the reference to Language entirely
+            this.Language = new SpeechSynthesizer(Language);
         }
 
         public void Pause()
@@ -342,9 +343,7 @@ namespace DwarfCorp
                 case States.Speaking:
                     if (CurrentSpeach.MoveNext())
                     {
-                        var utterance = CurrentSpeach.Current;
-                        if (utterance.Type == UtteranceType.Syllable)
-                            _Output.AppendText(utterance.SubSentence);
+                        _Output.AppendText(CurrentSpeach.Current);
                     }
                     else
                     {

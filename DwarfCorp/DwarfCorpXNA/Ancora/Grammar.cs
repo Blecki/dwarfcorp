@@ -12,6 +12,11 @@ namespace Ancora
 
         public ParseResult ParseString(String S)
         {
+            return ParseString(Root, S);
+        }
+
+        public static ParseResult ParseString(Parser Root, String S)
+        {
             var iter = new StringIterator(S);
             return Root.Parse(iter);
         }
