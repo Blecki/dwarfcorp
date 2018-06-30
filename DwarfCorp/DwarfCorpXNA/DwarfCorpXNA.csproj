@@ -193,6 +193,7 @@
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
+    <Compile Include="Components\Graphics\LayeredCharacterSprite.cs" />
     <Compile Include="ConsoleCommandHandlerAttribute.cs" />
     <Compile Include="Entities\Fixtures\Conveyor.cs" />
     <Compile Include="Entities\Monsters\KoboldAI.cs" />
