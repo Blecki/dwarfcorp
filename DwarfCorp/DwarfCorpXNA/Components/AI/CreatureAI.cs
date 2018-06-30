@@ -705,6 +705,9 @@ namespace DwarfCorp
             if (!IsPosessed && Creature.Physics.IsInLiquid)
                 return new FindLandTask();
 
+            if (GetRoot().GetComponent<Flammable>().IsOnFire)
+                return new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 }.AsTask();
+
             if (Faction == World.PlayerFaction && !Status.IsOnStrike)
             {
                 var candidate = World.Master.TaskManager.GetBestTask(this);
@@ -784,7 +787,7 @@ namespace DwarfCorp
                 }
 
                 // Otherwise, try to find a chair to sit in
-                if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.25f))
+                if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.25f) && Faction == World.PlayerFaction)
                 {
                     return new ActWrapperTask(new GoToChairAndSitAct(this))
                     {

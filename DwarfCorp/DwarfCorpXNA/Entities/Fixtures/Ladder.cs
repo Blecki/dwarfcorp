@@ -104,6 +104,8 @@ namespace DwarfCorp
             sensor.LocalBoundingBoxOffset = new Vector3(0.0f, 0.0f, 1.0f);
             sensor.SetFlag(Flag.RotateBoundingBox, true);
             sensor.PropogateTransforms();
+
+            AddChild(new Flammable(manager, "Flammable"));
         }
     }
 
