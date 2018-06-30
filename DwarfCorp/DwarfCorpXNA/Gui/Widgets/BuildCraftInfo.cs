@@ -31,21 +31,28 @@ namespace DwarfCorp.Gui.Widgets
                 Clear();
                 ResourceCombos.Clear();
                 //Parent.OnClick = null;
-                var title = AddChild(new Gui.Widget
+                var titleBar = AddChild(new Gui.Widget()
                 {
-                    Text = Data.Name,
-                    Font = "font16",
                     AutoLayout = Gui.AutoLayout.DockTop,
-                    TextVerticalAlign = VerticalAlign.Center,
                     MinimumSize = new Point(0, 34),
                 });
-                title.AddChild(new Gui.Widget
+                titleBar.AddChild(new Gui.Widget
                 {
                     MinimumSize = new Point(32, 32),
                     MaximumSize = new Point(32, 32),
                     Background = Data.Icon,
-                    AutoLayout = Gui.AutoLayout.DockRight,
+                    AutoLayout = Gui.AutoLayout.DockLeft,
                 });
+                titleBar.AddChild(new Gui.Widget
+                {
+                    Text = " " + Data.Name,
+                    Font = "font16",
+                    AutoLayout = Gui.AutoLayout.DockLeft,
+                    TextVerticalAlign = VerticalAlign.Center,
+                    MinimumSize = new Point(0, 34),
+                    Padding = new Margin(0, 0, 16, 0)
+                });
+
                 AddChild(new Gui.Widget
                 {
                     Text = Data.Description + "\n",

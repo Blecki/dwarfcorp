@@ -496,8 +496,9 @@
   },
 
   {
-    "Name": "Chair",
-    "EntityName": "Chair",
+    "Name": "Wooden Chair",
+    "EntityName": "Wooden Chair",
+	"Category": "Chairs",
     "RequiredResources": [
       {
         "ResourceType": "Wood",
@@ -506,7 +507,7 @@
     ],
     "Icon": {
       "Sheet": "furniture",
-      "Tile": 50
+      "Tile": 45
     },
     "BaseCraftTime": 9.0,
     "Description": "Dwarves sit here and relax. Place next to tables for eating.",
@@ -528,9 +529,80 @@
     "CraftActBehavior": "Normal"
   },
 
+  
   {
-    "Name": "Table",
-    "EntityName": "Table",
+    "Name": "Stone Chair",
+    "EntityName": "Stone Chair",
+	"Category" : "Chairs",
+    "RequiredResources": [
+      {
+        "ResourceType": "Stone",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 46
+    },
+    "BaseCraftTime": 9.0,
+    "Description": "Dwarves sit here and relax. Place next to tables for eating.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+   {
+    "Name": "Metal Chair",
+    "EntityName": "Metal Chair",
+	"Category" : "Chairs",
+    "RequiredResources": [
+      {
+        "ResourceType": "Metal",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 47
+    },
+    "BaseCraftTime": 9.0,
+    "Description": "Dwarves sit here and relax. Place next to tables for eating.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+
+  {
+    "Name": "Wooden Table",
+    "EntityName": "Wooden Table",
+	"Category": "Tables",
     "RequiredResources": [
       {
         "ResourceType": "Wood",
@@ -539,7 +611,75 @@
     ],
     "Icon": {
       "Sheet": "furniture",
-      "Tile": 48
+      "Tile": 68
+    },
+    "BaseCraftTime": 20.0,
+    "Description": "Dwarves gather around tables to eat. Build chairs next to the table.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+   {
+    "Name": "Stone Table",
+    "EntityName": "Stone Table",
+	"Category": "Tables",
+    "RequiredResources": [
+      {
+        "ResourceType": "Stone",
+        "NumResources": 4
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 70
+    },
+    "BaseCraftTime": 20.0,
+    "Description": "Dwarves gather around tables to eat. Build chairs next to the table.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal"
+  },
+
+  {
+    "Name": "Metal Table",
+    "EntityName": "Metal Table",
+	"Category" : "Tables",
+    "RequiredResources": [
+      {
+        "ResourceType": "Metal",
+        "NumResources": 4
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 69
     },
     "BaseCraftTime": 20.0,
     "Description": "Dwarves gather around tables to eat. Build chairs next to the table.",

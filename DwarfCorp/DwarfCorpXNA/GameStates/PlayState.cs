@@ -1393,10 +1393,10 @@ namespace DwarfCorp.GameStates
                     {
                         this.GuiRoot.SafeCall(widget.OnShown, widget);
                     },
-                    TabSource = new string[]{"Single", "Mutiple"}.Select((title) =>
+                    TabSource = new string[]{"Place", "Stockpile"}.Select((title) =>
                     {
-                        if (title == "Single")
-                            return new KeyValuePair<string, Widget>("Single",
+                        if (title == "Place")
+                            return new KeyValuePair<string, Widget>("Place",
                             new BuildCraftInfo
                             {
                                 Data = data,
@@ -1456,7 +1456,7 @@ namespace DwarfCorp.GameStates
                                 }
                             });
                         else return
-                            new KeyValuePair<string, Widget>("Multi", new BuildCraftInfo
+                            new KeyValuePair<string, Widget>("Stockpile", new BuildCraftInfo
                             {
                                 Data = data.ObjectAsCraftableResource(),
                                 Rect = new Rectangle(0, 0, 450, 200),
