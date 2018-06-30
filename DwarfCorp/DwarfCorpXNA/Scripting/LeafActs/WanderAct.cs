@@ -95,8 +95,36 @@ namespace DwarfCorp
                 }
                 if(TurnTime.Update(DwarfTime.LastTime) || TurnTime.HasTriggered || firstIter)
                 {
-                    Vector2 randTarget = MathFunctions.RandVector2Circle()*Radius;
-                    LocalTarget = new Vector3(randTarget.X, 0, randTarget.Y) + oldPosition;
+                    int iters = 0;
+
+                    while (iters < 100)
+                    {
+                        iters++;
+                        Vector2 randTarget = MathFunctions.RandVector2Circle() * Radius;
+                        LocalTarget = new Vector3(randTarget.X, 0, randTarget.Y) + oldPosition;
+                        VoxelHandle voxel = new VoxelHandle(Agent.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(LocalTarget));
+                        bool foundLava = false;
+                        foreach (VoxelHandle neighbor in VoxelHelpers.EnumerateAllNeighbors(voxel.Coordinate).Select(coord => new VoxelHandle(Agent.World.ChunkManager.ChunkData, coord)))
+                        {
+                            if (neighbor.IsValid && neighbor.Chunk != null)
+                            {
+                                if (neighbor.LiquidType == LiquidType.Lava)
+                                {
+                                    foundLava = true;
+                                }
+                            }
+                        }
+                        if (!foundLava)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (iters == 100)
+                    {
+                        yield return Act.Status.Fail;
+                        yield break;
+                    }
                     firstIter = false;
                     TurnTime.Reset(TurnTime.TargetTimeSeconds + MathFunctions.Rand(-0.1f, 0.1f));
                 }
