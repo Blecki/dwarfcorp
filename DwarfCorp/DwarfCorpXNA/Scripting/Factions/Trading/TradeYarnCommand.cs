@@ -16,7 +16,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
 
             if (envoy == null || playerFaction == null || world == null)
             {
-                State.Output("Command 'trade' can only be called from a TradeEnvoy initiated conversation.", false);
+                State.Output("Command 'trade' can only be called from a TradeEnvoy initiated conversation.");
                 return;
             }
 
@@ -65,7 +65,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
 
             if (transaction == null || envoy == null || playerFaction == null || world == null)
             {
-                State.Output("Command 'finalize_trade' can only be called from a TradeEnvoy initiated conversation.", false);
+                State.Output("Command 'finalize_trade' can only be called from a TradeEnvoy initiated conversation.");
                 return;
             }
 

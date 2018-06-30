@@ -96,7 +96,7 @@ namespace DwarfCorp
                     SubSentence = word,
                 };
 
-                if (word.Contains(".") || word.Contains(","))
+                if (word.Any(c => ".,!?:;".Contains(c)))
                 {
                     yield return new Utterance
                     {
