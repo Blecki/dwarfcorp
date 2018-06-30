@@ -181,6 +181,7 @@ namespace DwarfCorp
 
         protected void CreateDwarfSprite(EmployeeClass employeeClass, ComponentManager manager)
         {
+#if DEBUG
             if (Physics == null)
             {
                 Physics = GetRoot().GetComponent<Physics>();
@@ -195,6 +196,9 @@ namespace DwarfCorp
 
             sprite.SetCurrentAnimation(Sprite.Animations.First().Value);
             sprite.SetFlag(Flag.ShouldSerialize, false);
+#else
+            base.CreateSprite(employeeClass, manager);
+#endif
         }
     }
 

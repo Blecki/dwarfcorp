@@ -107,6 +107,10 @@ namespace DwarfCorp
                 CurrentSpeach = Language.Say(S).GetEnumerator();
                 State = States.Speaking;
             }
+            else
+            {
+                _Output?.AppendText(S);
+            }
         }
 
         public void SetLanguage(Language Language)
@@ -310,9 +314,9 @@ namespace DwarfCorp
                         {
                             if (command.command.text == "end")
                             {
+                                State = States.Running;
                                 QueueEndAction?.Invoke(QueuedLines);
                                 QueuedLines.Clear();
-                                State = States.Running;
                             }
                             else
                                 Output("Encountered command while queuing lines: " + command.command.text + " (only end is valid in this context)\n");
