@@ -276,7 +276,7 @@ namespace DwarfCorp
                     if (designation.Type == DesignationType.Put)
                         designationVisible = v.Coordinate.Y < World.Master.MaxViewingLevel;
                     else
-                        designationVisible = VoxelHelpers.DoesVoxelHaveVisibleSurface(World, v);
+                        designationVisible = VoxelHelpers.DoesVoxelHaveVisibleSurface(World.ChunkManager.ChunkData, v);
 
                     if (designationVisible)
                     {
