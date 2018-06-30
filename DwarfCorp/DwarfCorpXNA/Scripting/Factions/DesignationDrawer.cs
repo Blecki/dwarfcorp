@@ -129,7 +129,7 @@ namespace DwarfCorp
 
             DesignationProperties.Add(DesignationType.Put, new DesignationTypeProperties
             {
-                Color = new Color(1.0f, 0.0f, 0.0f, 1.0f),
+                Color = new Color(0.5f, 1.0f, 0.5f, 0.5f),
                 DrawType = DesignationTypeProperties.DrawBoxType.PreviewVoxel
             });
         }

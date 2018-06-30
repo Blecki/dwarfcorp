@@ -216,6 +216,7 @@ namespace DwarfCorp
 
                     var voxBelow = (y > 0) ? new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z)) : VoxelHandle.InvalidHandle;
 
+
                     if (voxBelow.IsValid && voxBelow.IsEmpty)
                     {
                         // Fall into the voxel below.
@@ -253,6 +254,10 @@ namespace DwarfCorp
                             HandleLiquidInteraction(voxBelow, aboveType, belowType);
                             continue;
                         }
+                    }
+                    else if (currentVoxel.LiquidType == LiquidType.Lava && !voxBelow.IsEmpty && voxBelow.GrassType > 0)
+                    {
+                        voxBelow.GrassType = 0;
                     }
 
                     if (currentVoxel.LiquidLevel <= 1) continue;
