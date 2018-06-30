@@ -41,8 +41,54 @@ using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
-    public class LayeredCharacterSprite : CharacterSprite, IRenderableComponent
+    public class LayeredCharacterSprite : CharacterSprite, IRenderableComponent, IUpdateableComponent
     {
+        private class LayeredAnimationProxy : Animation
+        {
+            private LayeredCharacterSprite Owner = null;
+
+            public LayeredAnimationProxy(LayeredCharacterSprite Owner)
+            {
+                this.Owner = Owner;
+            }
+
+            public override Texture2D GetTexture()
+            {
+                return Owner.GetProxyTexture();
+            }
+
+            public override void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
+            {
+                // Obviously shouldn't be hard coded.
+                SpriteSheet = new SpriteSheet(Owner.GetProxyTexture(), 32, 40);
+                base.UpdatePrimitive(Primitive, CurrentFrame);
+            }
+
+            public override bool CanUseInstancing { get => false; }
+        }
+
+        public Texture2D GetProxyTexture()
+        {
+            return Layers[0];
+        }
+
+        public override void AddAnimation(Animation animation)
+        {
+            var comp = animation as CompositeAnimation;
+            var proxyAnim = new LayeredAnimationProxy(this)
+            {
+                Frames = comp == null ? animation.Frames : comp.CompositeFrames.Select(c => c.Cells[0].Tile).ToList(),
+                Name = animation.Name,
+                FrameHZ = 0.5f,
+                Speeds = animation.Speeds,
+                Tint = animation.Tint,
+                Loops = animation.Loops
+            };
+            base.AddAnimation(proxyAnim);
+        }
+
+        public List<Texture2D> Layers = new List<Texture2D>();
+
         public LayeredCharacterSprite()
         {
             
@@ -53,11 +99,18 @@ namespace DwarfCorp
         {
         }
 
+        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            base.Update(gameTime, chunks, camera);
+        }
+
         new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             //If layers have changed, re-create the texture.
 
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);            
         }
+
+        
     }
 }

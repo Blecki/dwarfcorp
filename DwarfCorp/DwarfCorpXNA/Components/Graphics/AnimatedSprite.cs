@@ -52,7 +52,7 @@ namespace DwarfCorp
         {
         }
 
-        public void AddAnimation(Animation animation)
+        public virtual void AddAnimation(Animation animation)
         {
             AnimPlayer.Play(animation);
             Animations[animation.Name] = animation;

@@ -76,7 +76,7 @@ namespace DwarfCorp
         {
             Gender = Mating.RandomGender();
             Physics.Orientation = Physics.OrientMode.RotateY;
-            CreateSprite(dwarfClass, Manager);
+            CreateDwarfSprite(dwarfClass, Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
@@ -172,11 +172,29 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(Stats.CurrentClass, manager);
+            CreateDwarfSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new VoxelRevealer(manager, Physics, 5)).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);
+        }
+
+        protected void CreateDwarfSprite(EmployeeClass employeeClass, ComponentManager manager)
+        {
+            if (Physics == null)
+            {
+                Physics = GetRoot().GetComponent<Physics>();
+                if (Physics == null) return;
+            }
+
+            var sprite = Physics.AddChild(new LayeredCharacterSprite(manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as LayeredCharacterSprite;
+            sprite.Layers.Add(AssetManager.GetContentTexture(ContentPaths.Entities.Dwarf.Sprites.crafter));
+
+            foreach (Animation animation in employeeClass.Animations)
+                sprite.AddAnimation(animation);
+
+            sprite.SetCurrentAnimation(Sprite.Animations.First().Value);
+            sprite.SetFlag(Flag.ShouldSerialize, false);
         }
     }
 

@@ -79,6 +79,15 @@ namespace DwarfCorp
             FixedTexture = texture;
         }
 
+        public SpriteSheet(Texture2D texture, int frameWidth, int frameHeight)
+        {
+            FixedTexture = texture;
+            FrameWidth = frameWidth;
+            FrameHeight = frameHeight;
+            Width = texture.Width;
+            Height = texture.Height;
+        }
+
         public SpriteSheet(string name)
         {
             AssetName = name;
