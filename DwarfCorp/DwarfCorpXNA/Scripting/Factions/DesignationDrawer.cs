@@ -127,7 +127,7 @@ namespace DwarfCorp
 
             DesignationProperties.Add(DesignationType.Put, new DesignationTypeProperties
             {
-                Color = new Color(1.0f, 0.0f, 0.0f, 1.0f),
+                Color = new Color(0.5f, 1.0f, 0.5f, 0.5f),
                 DrawType = DesignationTypeProperties.DrawBoxType.PreviewVoxel
             });
         }
@@ -147,57 +147,6 @@ namespace DwarfCorp
                     (byte)(MathFunctions.Clamp((float)(properties.Value.Color.B * colorModulation + 50), 0.0f, 255.0f)),
                     255);
             }
-
-            var removals = new List<uint>();
-            foreach (var voxel in Set.EnumerateDesignations())
-            {
-                if ((voxel.Type & VisibleTypes) == voxel.Type)
-                {
-                    var props = DefaultProperties;
-                    if (DesignationProperties.ContainsKey(voxel.Type))
-                        props = DesignationProperties[voxel.Type];
-
-                    var v = voxel.Voxel.Coordinate.ToVector3();
-                    bool shouldDraw = voxel.Visible;
-                    if (Set.RecomputeVisibility)
-                    {
-                        shouldDraw = !(v.Y > World.Master.MaxViewingLevel
-                                           || !VoxelHelpers.DoesVoxelHaveVisibleSurface(World, voxel.Voxel)) || voxel.Voxel.IsEmpty;
-                        voxel.Visible = shouldDraw;
-                    }
-
-                    if (shouldDraw && props.Icon != null)
-                        Drawer2D.DrawSprite(props.Icon, v + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
-
-                    if (shouldDraw && voxel.Type == DesignationType.Put) // Hate this.
-                        DrawPhantomCallback(v, VoxelLibrary.GetVoxelType(voxel.Tag.ToString()));
-                    else if (shouldDraw && voxel.TriangleCacheIndex == 0)
-                    {
-                        switch (props.DrawType)
-                        {
-                            case DesignationTypeProperties.DrawBoxType.TopBox:
-                                voxel.TriangleCacheIndex = Set.TriangleCache.AddTopBox(voxel.Voxel.GetBoundingBox(), props.Color, props.LineWidth, true);
-                                break;
-                            case DesignationTypeProperties.DrawBoxType.FullBox:
-                                voxel.TriangleCacheIndex = Set.TriangleCache.AddBox(voxel.Voxel.GetBoundingBox(), props.Color, props.LineWidth, true);
-                                break;
-                        }
-
-                    }
-                    else if (!shouldDraw && voxel.TriangleCacheIndex != 0)
-                    {
-                        removals.Add(voxel.TriangleCacheIndex);
-                        voxel.TriangleCacheIndex = 0;
-                    }
-                    // Todo: Move the triangle cache out of the designation set.
-                }
-                else if (voxel.TriangleCacheIndex > 0)
-                {
-                    removals.Add(voxel.TriangleCacheIndex);
-                    voxel.TriangleCacheIndex = 0;
-                }
-            }
-            Set.TriangleCache.EraseSegments(removals);
 
             foreach (var entity in Set.EnumerateEntityDesignations())
             {

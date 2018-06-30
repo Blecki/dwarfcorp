@@ -15,7 +15,7 @@ namespace DwarfCorp
             if (V.Coordinate.Y == World.Master.MaxViewingLevel - 1) return true;
             if (V.Coordinate.Y == VoxelConstants.ChunkSizeY - 1) return true;
 
-            foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors2D(V.Coordinate))
+            foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors(V.Coordinate))
             {
                 var neighbor = new VoxelHandle(World.ChunkManager.ChunkData, neighborCoordinate);
                 if (!neighbor.IsValid) return true;
