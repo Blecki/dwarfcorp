@@ -223,6 +223,15 @@ namespace DwarfCorp.GameStates
 
                 ContextCommands = new List<DwarfCorp.ContextCommands.ContextCommand>();
                 ContextCommands.Add(new ContextCommands.ChopCommand());
+                ContextCommands.Add(new ContextCommands.AttackCommand());
+                ContextCommands.Add(new ContextCommands.WrangleCommand());
+                ContextCommands.Add(new ContextCommands.GoToCommand());
+                ContextCommands.Add(new ContextCommands.CancelCommand());
+                ContextCommands.Add(new ContextCommands.GatherCommand());
+                ContextCommands.Add(new ContextCommands.DestroyCommand());
+                ContextCommands.Add(new ContextCommands.MoveCommand());
+                ContextCommands.Add(new ContextCommands.FireCommand());
+                ContextCommands.Add(new ContextCommands.PromoteCommand());
                 World.LogEvent(String.Format("We have arrived at {0}", Overworld.Name));
             }
             base.OnEnter();
@@ -309,6 +318,7 @@ namespace DwarfCorp.GameStates
                                 });
                                 
                                 GuiRoot.ShowDialog(ContextMenu);
+                                args.Handled = true;
                             }
                         }
                     }
