@@ -182,6 +182,8 @@ namespace DwarfCorp
         protected void CreateDwarfSprite(EmployeeClass employeeClass, ComponentManager manager)
         {
 #if DEBUG
+            var random = new Random();
+
             if (Physics == null)
             {
                 Physics = GetRoot().GetComponent<Physics>();
@@ -189,7 +191,19 @@ namespace DwarfCorp
             }
 
             var sprite = Physics.AddChild(new LayeredCharacterSprite(manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as LayeredCharacterSprite;
-            sprite.Layers.Add(AssetManager.GetContentTexture(ContentPaths.Entities.Dwarf.Sprites.crafter));
+
+            sprite.Layers.Add(AssetManager.GetContentTexture("Entities/Dwarf/Layer Test/workerbodysheet"));
+
+            if (random.NextDouble() > 0.5f)
+                sprite.Layers.Add(AssetManager.GetContentTexture("Entities/Dwarf/Layer Test/MaleDwarfFaceSheet"));
+            else
+                sprite.Layers.Add(AssetManager.GetContentTexture("Entities/Dwarf/Layer Test/FemaleDwarfFaceSheet"));
+
+            sprite.Layers.Add(AssetManager.GetContentTexture("Entities/Dwarf/Layer Test/NormalNoseSheet"));
+            sprite.Layers.Add(AssetManager.GetContentTexture("Entities/Dwarf/Layer Test/TheRingHairSheet"));
+
+            if (random.NextDouble() > 0.5f)
+                sprite.Layers.Add(AssetManager.GetContentTexture("Entities/Dwarf/Layer Test/JowelBeardSheet"));
 
             foreach (Animation animation in employeeClass.Animations)
                 sprite.AddAnimation(animation);

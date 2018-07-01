@@ -60,7 +60,10 @@ namespace DwarfCorp
             public override void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
             {
                 // Obviously shouldn't be hard coded.
-                SpriteSheet = new SpriteSheet(Owner.GetProxyTexture(), 32, 40);
+                var composite = Owner.GetProxyTexture();
+                if (composite == null) return;
+
+                SpriteSheet = new SpriteSheet(composite, 32, 40);
                 base.UpdatePrimitive(Primitive, CurrentFrame);
             }
 
@@ -69,7 +72,7 @@ namespace DwarfCorp
 
         public Texture2D GetProxyTexture()
         {
-            return Layers[0];
+            return Composite;
         }
 
         public override void AddAnimation(Animation animation)
@@ -88,6 +91,7 @@ namespace DwarfCorp
         }
 
         public List<Texture2D> Layers = new List<Texture2D>();
+        private RenderTarget2D Composite;
 
         public LayeredCharacterSprite()
         {
@@ -102,6 +106,48 @@ namespace DwarfCorp
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
+
+            // Render the composite texture
+            var maxSize = new Point(0, 0);
+            foreach (var layer in Layers)
+            {
+                maxSize.X = Math.Max(layer.Width, maxSize.X);
+                maxSize.Y = Math.Max(layer.Height, maxSize.Y);
+            }
+
+            if (maxSize.X == 0 || maxSize.Y == 0) return;
+
+            var graphics = chunks.World.GraphicsDevice;
+
+            if (Composite == null || Composite.Width != maxSize.X || Composite.Height != maxSize.Y)
+                Composite = new RenderTarget2D(graphics, maxSize.X, maxSize.Y);
+
+            graphics.SetRenderTarget(Composite);
+            graphics.Clear(Color.Transparent);
+
+            var effect = DwarfGame.GuiSkin.Effect;
+            graphics.DepthStencilState = DepthStencilState.None;
+            effect.CurrentTechnique = effect.Techniques[0];
+            effect.Parameters["View"].SetValue(Matrix.Identity);
+            effect.Parameters["Projection"].SetValue(Matrix.CreateOrthographicOffCenter(0, maxSize.X, maxSize.Y, 0, -32, 32));
+
+            // Need to offset by the subpixel portion to avoid screen artifacts.
+            // Remove this offset if porting to Monogame, monogame does it correctly.
+#if GEMXNA
+            effect.Parameters["World"].SetValue(Matrix.CreateTranslation(-0.5f, -0.5f, 0.0f));
+#else
+            effect.Parameters["World"].SetValue(Matrix.Identity);
+#endif
+
+            foreach (var layer in Layers)
+            {
+                effect.Parameters["Texture"].SetValue(layer);
+                effect.CurrentTechnique.Passes[0].Apply();
+                var mesh = Gui.Mesh.Quad().Scale(layer.Width, layer.Height);
+                mesh.Render(graphics);
+            }
+
+            graphics.SetRenderTarget(null);
         }
 
         new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)

@@ -28,7 +28,7 @@
     "FringePrecedence": 255,
     "Decay": true,
     "BecomeWhenDecays": "grass",
-    "InitialDecayValue": 16
+    "InitialDecayValue": 8
   },
 
 
@@ -55,7 +55,7 @@
     "FringePrecedence": 255,
     "Decay": true,
     "BecomeWhenDecays": "desert-grass",
-    "InitialDecayValue": 16
+    "InitialDecayValue": 8
   },
 
   {
@@ -81,7 +81,7 @@
     "FringePrecedence": 255,
     "Decay": true,
     "BecomeWhenDecays": "haunted-grass",
-    "InitialDecayValue": 16
+    "InitialDecayValue": 8
   },
 
   {
@@ -98,14 +98,14 @@
   {
     "Name": "snow",
     "Decay": true,
-    "InitialDecayValue": 16,
+    "InitialDecayValue": 8,
     "Tile": "14, 2",
     "FringeTiles": [
       "10, 2",
       "11, 2",
       "12, 2"
     ],
-    "FringePrecedence": 251
+    "BecomeWhenDecays": "empty"
   },
 
   {
