@@ -58,7 +58,7 @@ namespace DwarfCorp
             TopSprite = topSprite;
             LegsSprite = legsSprite;
             var matrix = Matrix.CreateRotationY((float)Math.PI * 0.5f);
-            matrix.Translation = position - new Vector3(0, 0.22f, 0);
+            matrix.Translation = position;
             LocalTransform = matrix;
 
             Initialize(Manager);
