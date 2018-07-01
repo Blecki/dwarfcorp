@@ -289,7 +289,7 @@ namespace DwarfCorp
                 OtherFaction = world.PlayerFaction,
                 ShouldRemove = false,
                 OwnerFaction = natives,
-                TradeGoods = natives.Race.GenerateResources(),
+                TradeGoods = natives.Race.GenerateResources(world),
                 TradeMoney = natives.TradeMoney
             };
 

@@ -59,6 +59,12 @@ namespace DwarfCorp
             public Point Frame;
         }
 
+        public struct CraftItemInfo
+        {
+            public string CraftItemType;
+            public List<ResourceAmount> Resources;
+        }
+
         public ResourceType Name;
         public DwarfBux MoneyValue;
         public string Description;
@@ -77,6 +83,8 @@ namespace DwarfCorp
 
         public Color Tint { get; set; }
         public string AleName { get; set; }
+
+        public CraftItemInfo CraftInfo { get; set; }
 
         // Todo: Replace this with strings so mods can extend it.
         public enum ResourceTags
@@ -119,7 +127,8 @@ namespace DwarfCorp
             Evil,
             Jolly,
             Rail,
-            Explosive
+            Explosive,
+            CraftItem
         }
 
         public Resource()
@@ -144,6 +153,7 @@ namespace DwarfCorp
             CanCraft = other.CanCraft;
             CraftPrerequisites = new List<Quantitiy<Resource.ResourceTags>>();
             CraftPrerequisites.AddRange(other.CraftPrerequisites);
+            CraftInfo = other.CraftInfo;
 
             if (other.CompositeLayers != null)
             {

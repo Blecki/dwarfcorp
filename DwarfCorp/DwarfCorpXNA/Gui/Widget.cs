@@ -114,6 +114,7 @@ namespace DwarfCorp.Gui
         public Vector4 HoverTextColor = new Vector4(0.9f,0.1f,0.1f,1);
         public bool ChangeColorOnHover = false;
         public bool WrapText = true;
+        public bool AutoResizeToTextHeight = false;
 
         private class HoverClickHelper
         {
@@ -492,6 +493,12 @@ namespace DwarfCorp.Gui
                 out stringMeshSize)
                 .Colorize(TextColor);
 
+            if (AutoResizeToTextHeight && stringMeshSize.Height > Rect.Height)
+            {
+                Rect = new Rectangle(Rect.X, Rect.Y, Rect.Width, stringMeshSize.Height);
+                MinimumSize.Y = stringMeshSize.Height;
+                Parent.Layout();
+            }
 
             var textDrawPos = Vector2.Zero;
 
