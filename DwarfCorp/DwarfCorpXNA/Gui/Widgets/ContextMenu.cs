@@ -60,8 +60,8 @@ namespace DwarfCorp.Gui.Widgets
                         else
                         {
                             lambdaCommand.Apply(Body, World);
-                            sender.Parent.Close();
                         }
+                        sender.Parent.Close();
                     },
                     ChangeColorOnHover = true,
                     HoverTextColor = Color.DarkRed.ToVector4()

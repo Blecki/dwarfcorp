@@ -68,29 +68,6 @@ namespace DwarfCorp.ContextCommands
         }
     }
 
-
-    public class GoToCommand : ContextCommand
-    {
-        public GoToCommand()
-        {
-            Name = "Go Here";
-            Icon = new Gui.TileReference("tool-icons", 1);
-        }
-
-        public override bool CanBeAppliedTo(Body Entity, WorldManager World)
-        {
-            return World.Master.SelectedMinions.Count > 0;
-        }
-
-        public override void Apply(Body Entity, WorldManager World)
-        {
-           foreach(var minion in World.Master.SelectedMinions)
-            {
-                minion.AssignTask(new GoToEntityAct(Entity, minion).AsTask());
-            }
-        }
-    }
-
     public class CancelCommand : ContextCommand
     {
         public CancelCommand()

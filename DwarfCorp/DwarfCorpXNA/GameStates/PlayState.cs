@@ -226,7 +226,6 @@ namespace DwarfCorp.GameStates
                 ContextCommands.Add(new ContextCommands.ChopCommand());
                 ContextCommands.Add(new ContextCommands.AttackCommand());
                 ContextCommands.Add(new ContextCommands.WrangleCommand());
-                ContextCommands.Add(new ContextCommands.GoToCommand());
                 ContextCommands.Add(new ContextCommands.CancelCommand());
                 ContextCommands.Add(new ContextCommands.GatherCommand());
                 ContextCommands.Add(new ContextCommands.DestroyCommand());
@@ -2417,6 +2416,7 @@ namespace DwarfCorp.GameStates
                         MultiBody = bodiesClicked,
                         World = World
                     });
+                    MultiContextMenu.OnClose = (sender) => BodySelector_LeftReleased();
 
                     MultiContextMenu.Rect = new Rectangle(MinimapFrame.Rect.Right + 2, MinimapFrame.Rect.Bottom - MultiContextMenu.Rect.Height, MultiContextMenu.Rect.Width, MultiContextMenu.Rect.Height);
                     MultiContextMenu.Layout();
