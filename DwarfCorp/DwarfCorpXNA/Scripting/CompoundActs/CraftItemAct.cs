@@ -109,7 +109,15 @@ namespace DwarfCorp
         {
             if (!Item.HasResources && Item.ResourcesReservedFor == Agent)
             {
-                if (!Creature.Inventory.RemoveAndCreateWithToss(Item.SelectedResources, pos(), Inventory.RestockType.None))
+                if (Item.ExistingResource != null)
+                {
+                    if (!Creature.Inventory.RemoveAndCreateWithToss(new List<ResourceAmount>() { new ResourceAmount(Item.ExistingResource) }, pos(), Inventory.RestockType.None))
+                    {
+                        yield return Act.Status.Fail;
+                        yield break;
+                    }
+                }
+                else if (!Creature.Inventory.RemoveAndCreateWithToss(Item.SelectedResources, pos(), Inventory.RestockType.None))
                 {
                     yield return Act.Status.Fail;
                     yield break;
@@ -158,6 +166,12 @@ namespace DwarfCorp
 
             switch (Item.ItemType.CraftActBehavior)
             {
+                case CraftItem.CraftActBehaviors.Object:
+                    {
+                        Resource craft = Item.ItemType.ToResource(Creature.World, stashed);
+                        ResourceCreated = craft.Name;
+                    }
+                    break;
                 case CraftItem.CraftActBehaviors.Trinket:
                     {
                         Resource craft = ResourceLibrary.GenerateTrinket(stashed.ElementAt(0).ResourceType,
@@ -244,6 +258,11 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> SetSelectedResources()
         {
+            if (Item.ExistingResource != null)
+            {
+                yield return Act.Status.Success;
+                yield break;
+            }
             Item.SelectedResources.Clear();
             foreach (var resource in Item.ItemType.RequiredResources)
             {
@@ -264,7 +283,21 @@ namespace DwarfCorp
             Act unreserveAct = new Wrap(UnReserve);
             float time = 3 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt);
             Act getResources = null;
-            if (Item.SelectedResources == null || Item.SelectedResources.Count == 0)
+            if (Item.ExistingResource != null)
+            {
+                getResources = new Select(new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
+                                          new Domain(() => !Item.HasResources &&
+                                                           (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
+                                                     new Select(
+                                                            new Sequence(new Wrap(ReserveResources),
+                                                                         new GetResourcesAct(Agent, new List<ResourceAmount>() { new ResourceAmount(Item.ExistingResource) } ),
+                                                                         new Wrap(SetSelectedResources)),
+                                                            new Sequence(new Wrap(UnReserve), Act.Status.Fail)
+                                                            )
+                                                    ),
+                                          new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true));
+            }
+            else if (Item.SelectedResources == null || Item.SelectedResources.Count == 0)
             {
                 getResources = new Select(new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
                                           new Domain(() => !Item.HasResources &&
@@ -288,51 +321,35 @@ namespace DwarfCorp
 
             if (Item.ItemType.Type == CraftItem.CraftType.Object)
             {
-                if (!String.IsNullOrEmpty(Item.ItemType.CraftLocation))
+                Act buildAct = null;
+
+                if (Item.ExistingResource != null)
                 {
-                    Tree = new Domain(IsNotCancelled, new Sequence(
-                        new Wrap(() => Creature.FindAndReserve(Item.ItemType.CraftLocation, Item.ItemType.CraftLocation)),
-                        new ClearBlackboardData(Agent, "ResourcesStashed"),
-                        getResources,
-                        new Domain(ResourceStateValid, new Sequence
-                            (
-                            new GoToTaggedObjectAct(Agent)
-                            {
-                                Tag = Item.ItemType.CraftLocation,
-                                Teleport = true,
-                                TeleportOffset = new Vector3(0.5f, 0.0f, 0),
-                                ObjectName = Item.ItemType.CraftLocation,
-                                CheckForOcclusion = true
-                            },
-                            new Wrap(() => DestroyResources(() => Item.Location.WorldPosition)),
-                            new Wrap(WaitForResources) { Name = "Wait for resources."},
-                            new Wrap(() => Creature.HitAndWait(true, () => 1.0f, 
-                            () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
-                            () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft", null, true)),
-                            new CreateCraftItemAct(Voxel, Creature.AI, Item))),
-                            unreserveAct
-                            ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
-                        ) | new Sequence(unreserveAct, false);
+                    buildAct = new Always(Status.Success);
                 }
                 else
                 {
-                    Tree = new Domain(IsNotCancelled, new Sequence(
-                        new ClearBlackboardData(Agent, "ResourcesStashed"),
-                        getResources,
-                        new Sequence(new Domain(ResourceStateValid, 
-                            new Sequence(
-                                new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
-                                new Wrap(() => DestroyResources(() => Item.Location.WorldPosition)),
-                                new Wrap(WaitForResources) { Name = "Wait for resources." },
-                                new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
-                                         () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
-                                         () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft")) { Name = "Construct object." },
-                                new CreateCraftItemAct(Voxel, Creature.AI, Item)
-                            )
-                        ))
-                     )) |
-                       new Sequence(new Wrap(Creature.RestockAll), unreserveAct, false);
+                    buildAct = new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
+                                        () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
+                                        () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft"))
+                                                { Name = "Construct object." };
                 }
+
+                Tree = new Domain(IsNotCancelled, new Sequence(
+                    new ClearBlackboardData(Agent, "ResourcesStashed"),
+                    getResources,
+                    new Sequence(new Domain(ResourceStateValid, 
+                        new Sequence(
+                            new GoToVoxelAct(Voxel, PlanAct.PlanType.Adjacent, Agent),
+                            new Wrap(() => DestroyResources(() => Item.Location.WorldPosition)),
+                            new Wrap(WaitForResources) { Name = "Wait for resources." },
+                            buildAct,
+                            new CreateCraftItemAct(Voxel, Creature.AI, Item)
+                        )
+                    ))
+                    )) |
+                    new Sequence(new Wrap(Creature.RestockAll), unreserveAct, false);
+                
             }
             else
             {

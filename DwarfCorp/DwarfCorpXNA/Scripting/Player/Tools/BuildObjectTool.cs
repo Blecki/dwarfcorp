@@ -54,13 +54,22 @@ namespace DwarfCorp
         private bool RightPressed = false;
         private bool LeftPressed = false;
 
+        public enum PlacementMode
+        {
+            BuildNew,
+            PlaceExisting
+        }
+
+        public PlacementMode Mode;
+        public ResourceType ExistingPlacement;
+
         [JsonIgnore]
         public WorldManager World { get; set; }
 
         private Body CreatePreviewBody()
         {
             Blackboard blackboard = new Blackboard();
-            if (SelectedResources.Count > 0)
+            if (SelectedResources != null && SelectedResources.Count > 0)
             {
                 blackboard.SetData<List<ResourceAmount>>("Resources", SelectedResources);
             }
@@ -88,9 +97,9 @@ namespace DwarfCorp
 
                             Vector3 pos = Player.VoxSelector.VoxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + CraftType.SpawnOffset;
                             Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f);
-                         
-                           CraftDesignation newDesignation = new CraftDesignation()
-                           {
+
+                            CraftDesignation newDesignation = new CraftDesignation()
+                            {
                                 ItemType = CraftType,
                                 Location = Player.VoxSelector.VoxelUnderMouse,
                                 Orientation = Orientation,
@@ -99,13 +108,25 @@ namespace DwarfCorp
                                 Entity = PreviewBody,
                                 SelectedResources = SelectedResources,
                                 WorkPile = new WorkPile(World.ComponentManager, startPos)
-                           };
+                            };
+
+                            if (Mode == PlacementMode.PlaceExisting)
+                            {
+                                newDesignation.ExistingResource = ExistingPlacement;
+                            }
 
                             World.ComponentManager.RootComponent.AddChild(newDesignation.WorkPile);
                             newDesignation.WorkPile.AnimationQueue.Add(new EaseMotion(1.1f, Matrix.CreateTranslation(startPos), pos));
                             World.ParticleManager.Trigger("puff", pos, Color.White, 10);
 
                             World.Master.TaskManager.AddTask(new CraftItemTask(newDesignation));
+
+
+                            if (Mode == PlacementMode.PlaceExisting && !HandlePlaceExistingUpdate())
+                            {
+                                World.ShowToolPopup("Unable to place any more.");
+                                Mode = PlacementMode.BuildNew;
+                            }
 
                             PreviewBody = CreatePreviewBody();
                         }
@@ -126,6 +147,48 @@ namespace DwarfCorp
             }
         }
 
+        private bool HandlePlaceExistingUpdate()
+        {
+            var resources = World.Master.Faction.ListResources().Where(r => ResourceLibrary.GetResourceByName(r.Value.ResourceType).CraftInfo.CraftItemType == CraftType.Name).ToList();
+
+            var toPlace = World.Master.Faction.Designations.EnumerateEntityDesignations().Where(designation => designation.Type == DesignationType.Craft &&
+                ((CraftDesignation)designation.Tag).ItemType.Name == CraftType.Name).ToList();
+
+            if (resources.Sum(r => r.Value.NumResources) <= toPlace.Count)
+            {
+                ExistingPlacement = null;
+                SelectedResources = new List<ResourceAmount>();
+                return false;
+            }
+
+            ResourceType resourceType = null;
+            int i = 0;
+            int j = 0;
+            while (i <= toPlace.Count && j < resources.Count)
+            {
+                i += resources[j].Value.NumResources;
+                resourceType = resources[j].Key;
+                j++;
+            }
+            ExistingPlacement = resourceType;
+            SelectedResources = new List<ResourceAmount>();
+            SelectedResources.AddRange(ResourceLibrary.GetResourceByName(ExistingPlacement).CraftInfo.Resources);
+            return true;
+
+            /*
+            var resource = World.Master.Faction.ListResources().First(r => ResourceLibrary.GetResourceByName(r.Value.ResourceType).CraftItnfo.CraftItemType == CraftType.Name);
+            if (resource.Value != null)
+            {
+                ExistingPlacement = resource.Key;
+                SelectedResources = ResourceLibrary.GetResourceByName(ExistingPlacement).CraftItnfo.Resources;
+                return true;
+            }
+            ExistingPlacement = null;
+            SelectedResources = null;
+            return false;
+            */
+        }
+
         public override void OnBegin()
         {
             Player.VoxSelector.DrawBox = false;
@@ -133,6 +196,15 @@ namespace DwarfCorp
 
             if (CraftType == null)
                 throw new InvalidOperationException();
+
+            if (Mode == PlacementMode.PlaceExisting)
+            {
+                if (!HandlePlaceExistingUpdate())
+                {
+                    Mode = PlacementMode.BuildNew;
+                    World.ShowToolPopup("Unable to place any more.");
+                }
+            }
 
             PreviewBody = CreatePreviewBody();
             Orientation = 0.0f;

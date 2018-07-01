@@ -43,7 +43,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class PunchingBag : CraftedFixture
     {
-        [EntityFactory("PunchingBag")]
+        [EntityFactory("Punching Bag")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new PunchingBag(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
@@ -56,10 +56,10 @@ namespace DwarfCorp
         }
 
         public PunchingBag(ComponentManager componentManager, Vector3 position, List<ResourceAmount> resources) :
-            base(componentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 5), new CraftDetails(componentManager, "Strawman", resources))
+            base(componentManager, position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32), new Point(2, 5), new CraftDetails(componentManager, "Punching Bag", resources))
         {
-            Name = "PunchingBag";
-            Tags.Add("PunchingBag");
+            Name = "Punching Bag";
+            Tags.Add("Punching  Bag");
             Tags.Add("Train");
             GetRoot().GetComponent<Health>().MaxHealth = 500;
             GetRoot().GetComponent<Health>().Hp = 500;

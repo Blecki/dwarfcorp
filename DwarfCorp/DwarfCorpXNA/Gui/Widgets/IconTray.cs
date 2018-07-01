@@ -98,7 +98,8 @@ namespace DwarfCorp.Gui.Widgets
                 EnabledTextColor = Vector4.One,
             });
 
-            foreach (var item in ItemSource)
+            var items = ItemSource.ToList();
+            foreach (var item in items)
                 AddChild(item);
         }
 

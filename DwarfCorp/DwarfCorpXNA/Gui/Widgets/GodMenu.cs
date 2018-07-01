@@ -388,7 +388,17 @@ namespace DwarfCorp.Gui.Widgets
                                 VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(Master.World.ChunkManager.ChunkData, pos, pos + Vector3.Down * 100);
                                 if (handle.IsValid)
                                 {
-                                    EntityFactory.CreateEntity<GameComponent>(keys[i].EntityName, handle.WorldPosition + Vector3.Up + keys[i].SpawnOffset);
+                                    if (keys[i].Name == "Primed Keg")
+                                        continue;
+
+                                    Blackboard blackboard = new Blackboard();
+                                    List<ResourceAmount> resources = keys[i].RequiredResources.Select(r => new ResourceAmount(ResourceLibrary.GetResourcesByTag(r.ResourceType).First(), r.NumResources)).ToList();
+                                    blackboard.SetData<List<ResourceAmount>>("Resources", resources);
+                                    blackboard.SetData<string>("CraftType", keys[i].Name);
+                                    var entity = EntityFactory.CreateEntity<GameComponent>(keys[i].EntityName, handle.WorldPosition + Vector3.Up + keys[i].SpawnOffset, blackboard);
+                                    Master.Faction.OwnedObjects.Add(entity as Body);
+                                    entity.Tags.Add("Moveable");
+                                    entity.Tags.Add("Deconstructable");
                                 }
                                 i++;
                             }

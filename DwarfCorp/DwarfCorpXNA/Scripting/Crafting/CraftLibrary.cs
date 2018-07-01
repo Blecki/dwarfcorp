@@ -56,6 +56,11 @@ namespace DwarfCorp
             return null;
         }
 
+        public static void Add(CraftItem craft)
+        {
+            CraftItems[craft.Name] = craft;
+        }
+
         public static void InitializeDefaultLibrary()
         {
             if (CraftItems != null) return;

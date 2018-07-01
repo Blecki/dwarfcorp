@@ -51,6 +51,26 @@ namespace DwarfCorp
 
         }
 
+        public bool CanCatch(Body animal, bool print=false)
+        {
+            var pens = Player.Faction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt &&
+                            (pen.Species == "" || pen.Species == animal.GetRoot().GetComponent<Creature>().Species));
+
+            if (pens.Any())
+            {
+                if (print)
+                    Player.World.ShowToolPopup("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Species);
+                return true;
+            }
+            else
+            {
+                if (print)
+                    Player.World.ShowToolPopup("Can't wrangle this " + animal.GetRoot().GetComponent<Creature>().Species + " : need more animal pens.");
+            }
+
+            return false;
+        }
+
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
             List<Task> tasks = new List<Task>();
@@ -61,18 +81,10 @@ namespace DwarfCorp
                 {
                     case InputManager.MouseButton.Left:
                         {
-                            var pens = Player.Faction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt &&
-                            (pen.Species == "" || pen.Species == animal.GetRoot().GetComponent<Creature>().Species));
-
-                            if (pens.Any())
+                            if (CanCatch(animal, true))
                             {
                                 var task = new WrangleAnimalTask(animal.GetRoot().GetComponent<Creature>()) { Priority = Task.PriorityType.Medium };
                                 tasks.Add(task);
-                                Player.World.ShowToolPopup("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Species);
-                            }
-                            else
-                            {
-                                Player.World.ShowToolPopup("Can't wrangle this " + animal.GetRoot().GetComponent<Creature>().Species + " : need more animal pens.");
                             }
                         }
                         break;

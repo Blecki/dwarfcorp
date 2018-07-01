@@ -91,6 +91,8 @@ namespace DwarfCorp
 
         public Dictionary<String, String> Biomes = new Dictionary<string, string>();
         public int Icon { get; set; }
+        public string Posessive = "";
+        public int NumFurniture = 0;
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
@@ -99,7 +101,7 @@ namespace DwarfCorp
             NameTemplates = TextGenerator.GetAtoms(NameFile);
         }
 
-        public List<ResourceAmount> GenerateResources()
+        public List<ResourceAmount> GenerateResources(WorldManager world)
         {
             Dictionary<ResourceType, ResourceAmount> toReturn =
                 new Dictionary<ResourceType, ResourceAmount>();
@@ -149,6 +151,29 @@ namespace DwarfCorp
                     {
                         toReturn[randResource.Name].NumResources += 1;
                     }
+                }
+            }
+
+            for (int i = 0; i < NumFurniture; i++)
+            {
+                var randomObject = Datastructures.SelectRandom(CraftLibrary.EnumerateCraftables().Where(type => type.Type == CraftItem.CraftType.Object && type.RequiredResources.All((tags) =>
+                    TradeGoods.Any(good => good.Key == tags.ResourceType))));
+                if (randomObject == null)
+                    continue;
+                List<ResourceAmount> selectedResources = new List<ResourceAmount>();
+                foreach(var requirement in randomObject.RequiredResources)
+                {
+                    IEnumerable<Resource> resources = ResourceLibrary.GetResourcesByTag(requirement.ResourceType);
+                    selectedResources.Add(new ResourceAmount(Datastructures.SelectRandom(resources), requirement.NumResources));
+                }
+                var randResource = randomObject.ToResource(world, selectedResources, Posessive + " ");
+                if (!toReturn.ContainsKey(randResource.Name))
+                {
+                    toReturn[randResource.Name] = new ResourceAmount(randResource.Name, 1);
+                }
+                else
+                {
+                    toReturn[randResource.Name].NumResources += 1;
                 }
             }
 

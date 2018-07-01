@@ -262,7 +262,7 @@ namespace BloomPostprocess
             }
             catch (InvalidOperationException operationException)
             {
-                Console.Error.WriteLine(operationException.Message);
+                Console.Error.WriteLine(operationException.ToString());
             }
             finally
             {

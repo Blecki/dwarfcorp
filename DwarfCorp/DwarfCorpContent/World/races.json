@@ -1,6 +1,8 @@
 [
   {
     "Name": "Dwarf",
+    "Posessive": "Dwarvish",
+    "DiplomacyConversation": "World/dwarf.conv",
     "CreatureTypes": [
       "Dwarf",
       "AxeDwarf"
@@ -14,7 +16,6 @@
     "IsNative": false,
     "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
     "NameFile": "Text\\Templates\\names_dwarf.txt",
-    "DiplomacyConversation": "World\\dwarf.conv",
     "TalkAnimation": {
       "AssetName": "GUI\\diplo-dorf",
       "Width": 64,
@@ -52,7 +53,7 @@
         "Boos": [
           "Audio/oscar/sfx_ic_dwarf_tantrum_1",
           "Audio/oscar/sfx_ic_dwarf_tantrum_2",
-          "Audio/oscar/sfx_ic_dwarf_tantrum_3",
+          "Audio/oscar/sfx_ic_dwarf_tantrum_3"
         ]
       }
     },
@@ -73,12 +74,15 @@
       "Sand": 16,
       "Glass": 8
     },
+    "NumFurniture": 4,
     "Crafts": [ "Metal" ],
     "Encrustings": [ "Gem" ],
     "Icon": 1
   },
   {
     "Name": "Goblins",
+    "Posessive": "Goblish",
+    "NumFurniture": 2,
     "CreatureTypes": [
       "Goblin",
       "Troll"
@@ -145,10 +149,12 @@
     "Crafts": [ "Bone" ],
     "Encrustings": [],
     "Icon": 3,
-    "TradeMusic": "goblin",
+    "TradeMusic": "goblin"
   },
   {
     "Name": "Molemen",
+    "Posessive": "Molemish",
+    "NumFurniture": 2,
     "CreatureTypes": [
       "Moleman"
     ],
@@ -215,6 +221,8 @@
   },
   {
     "Name": "Elf",
+    "Posessive": "Elvish",
+    "NumFurniture": 2,
     "CreatureTypes": [
       "Elf"
     ],
@@ -236,14 +244,14 @@
     },
     "Biomes": {
       "Tundra": "Jolly Forest",
-      "Taiga": "Jolly Forest",
+      "Taiga": "Jolly Forest"
     },
     "NaturalEnemies": [ "Demon", "Undead", "Goblins", "Carnivore" ],
     "Speech": {
       "Greetings": [ "Falalala!", "Ooh, hi!", "Joyus jumping jellybeans!", "Teehee, you look like sugarplums.", "Well, fiddle-dee-dee!", "Look, garden gnomes!", "We've frolicked here to meet you!", "We come bearing tasty treats!" ],
       "Farewells": [ "Until we meet again.", "I tip my hat to you!", "Happy trails!", "Buhbye!", "Bye!", "<The elf frolicks away>" ],
       "GoodTrades": [ "Wondrous!", "Magical!", "Delightful!", "Tehehee!", "Dwarf-made goodies are my favorite.", "For me? You shouldn't have!", "This will look great in the garden.", "Yes! Very nice!" ],
-      "BadTrades": [ "Fiddlesticks. We need a bit more than that!", "Aw, that just isn\'t enough for us.", "Hmm. Can\'t you do better than that?" ],
+      "BadTrades": [ "Fiddlesticks. We need a bit more than that!", "Aw, that just isn\\'t enough for us.", "Hmm. Can\\'t you do better than that?" ],
       "OffensiveTrades": [ "Is this a joke? If so its not very funny.", "You should be more considerate. This is offensive.", "Research our culture. We are offended by this stuff.", "Sorry but that is just gross. No way." ],
       "WarDeclarations": [ "You're a danger to us all.", "Get out of our forests, troublemakers.", "You dunder-headed Dwarves are no good!", "You're not so cute to us anymore.", "Well, time to carve some more bows.", "Naughty Dwarves!" ],
       "PeaceDeclarations": [ "Let's just call it even, okay?", "You guys drive a hard bargain. Care to stop the war?", "Our hearts aren't in it anymore.", "This war has got us down.", "Peace would be better for everyone." ],
@@ -283,6 +291,8 @@
   },
   {
     "Name": "Undead",
+    "Posessive": "Undead",
+    "NumFurniture": 2,
     "CreatureTypes": [
       "Necromancer",
       "Skeleton"
@@ -349,7 +359,7 @@
       "Evil": 4
     },
     "Biomes": {
-      "Boreal Forest": "Haunted Forest",
+      "Boreal Forest": "Haunted Forest"
     },
     "Crafts": [ "Bone" ],
     "Encrustings": [ "Gem" ],
@@ -358,6 +368,8 @@
   },
   {
     "Name": "Demon",
+    "Posessive": "Demonic",
+    "NumFurniture": 2,
     "CreatureTypes": [
       "Demon"
     ],
@@ -389,7 +401,7 @@
     "LikedResources": [ "AnimalProduct", "Magical" ],
     "HatedResources": [ "AboveGroundPlant", "BelowGroundPlant" ],
     "CommonResources": [ "Bone", "Magical" ],
-    "RareResources": [ "RawFood", "AnimalProduct", "Metal", "Gem" ],
+    "RareResources": [ "RawFood", "AnimalProduct", "Metal", "Gem" ]
   },
   {
     "Name": "Herbivore",

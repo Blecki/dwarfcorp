@@ -59,6 +59,11 @@ namespace DwarfCorp
         }
 
 
+        public bool CanDestroy(Body body)
+        {
+            return body.Tags.Any(tag => tag == "Deconstructable") && !body.IsReserved;
+        }
+
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
             if (bodies.Count == 0)

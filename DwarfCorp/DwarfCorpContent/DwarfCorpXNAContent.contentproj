@@ -2005,6 +2005,10 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
+    <None Include="dwarf-layers.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>dwarf-layers</Name>
+    </None>
     <None Include="Audio\XACT\Win\SoundBank.xsb">
       <Name>SoundBank</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2322,33 +2326,43 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Dwarf\Layer Test\FemaleDwarfFaceSheet.png">
+    <Compile Include="Entities\Dwarf\Layers\FemaleDwarfFaceSheet.png">
       <Name>FemaleDwarfFaceSheet</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Dwarf\Layer Test\JowelBeardSheet.png">
+    <Compile Include="Entities\Dwarf\Layers\JowelBeardSheet.png">
       <Name>JowelBeardSheet</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Dwarf\Layer Test\MaleDwarfFaceSheet.png">
+    <Compile Include="Entities\Dwarf\Layers\MaleDwarfFaceSheet.png">
       <Name>MaleDwarfFaceSheet</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Dwarf\Layer Test\NormalNoseSheet.png">
+    <Compile Include="Entities\Dwarf\Layers\NormalNoseSheet.png">
       <Name>NormalNoseSheet</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Dwarf\Layer Test\TheRingHairSheet.png">
+    <Compile Include="Entities\Dwarf\Layers\TheRingHairSheet.png">
       <Name>TheRingHairSheet</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Dwarf\Layer Test\workerbodysheet.png">
+    <Compile Include="Entities\Dwarf\Layers\workerbodysheet.png">
       <Name>workerbodysheet</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\crafter-hammer.png">
+      <Name>crafter-hammer</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\blank.png">
+      <Name>blank</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

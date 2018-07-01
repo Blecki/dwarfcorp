@@ -1,0 +1,16 @@
+; LAYER-TYPE PRECEDENCE ASSET
+
+body 0 "Entities/Dwarf/Layers/workerbodysheet"
+
+face 1 "Entities/Dwarf/Layers/FemaleDwarfFaceSheet"
+face 1 "Entities/Dwarf/Layers/MaleDwarfFaceSheet"
+
+nose 2 "Entities/Dwarf/Layers/NormalNoseSheet"
+
+beard 3 "Entities/Dwarf/Layers/JowelBeardSheet"
+beard 3 "Entities/Dwarf/Layers/blank"
+
+hair 4 "Entities/Dwarf/Layers/TheRingHairSheet"
+hair 4 "Entities/Dwarf/Layers/blank"
+
+tool 5 "Entities/Dwarf/Layers/crafter-hammer"

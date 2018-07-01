@@ -44,34 +44,7 @@ namespace DwarfCorp
 {
     public class TimedExplosion : CraftedBody, IUpdateableComponent
     {
-        [EntityFactory("Explosion Large")]
-        private static GameComponent __factory00(ComponentManager Manager, Vector3 Position, Blackboard Data)
-        {
-            return new TimedExplosion(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null))
-            {
-                VoxelRadius = 10
-            };
-        }
-
-        [EntityFactory("Explosion Med")]
-        private static GameComponent __factory01(ComponentManager Manager, Vector3 Position, Blackboard Data)
-        {
-            return new TimedExplosion(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null))
-            {
-                VoxelRadius = 5
-            };
-        }
-
-        [EntityFactory("Explosion small")]
-        private static GameComponent __factory02(ComponentManager Manager, Vector3 Position, Blackboard Data)
-        {
-            return new TimedExplosion(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null))
-            {
-                VoxelRadius = 2
-            };
-        }
-
-        [EntityFactory("Primed Keg")]
+        [EntityFactory("Explosive")]
         private static GameComponent __factory03(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new TimedExplosion(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null))
@@ -115,7 +88,7 @@ namespace DwarfCorp
         public TimedExplosion(ComponentManager manager, Vector3 pos, List<ResourceAmount> resources) :
             base(manager,
             "Explosion", Matrix.CreateTranslation(pos),
-            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, "Primed Keg", resources))
+            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, "Explosive", resources))
         {
             DeathTimer = new Timer(FuseTime, true);
             DamageAmount = 200;

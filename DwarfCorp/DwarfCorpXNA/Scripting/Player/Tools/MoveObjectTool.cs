@@ -111,6 +111,21 @@ namespace DwarfCorp
 
         }
 
+        public bool CanMove(Body entity)
+        {
+            return entity.Tags.Contains("Moveable") && !entity.IsReserved;
+        }
+
+        public void StartDragging(Body entity)
+        {
+            SelectedBody = entity;
+            OrigTransform = SelectedBody.LocalTransform;
+            State = ToolState.Dragging;
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, SelectedBody.Position, 0.1f);
+            OverrideOrientation = false;
+            CurrentOrientation = 0.0f;
+        }
+
         public override void Update(DwarfGame game, DwarfTime time)
         {
             if (Player.IsCameraRotationModeActive())
@@ -156,11 +171,7 @@ namespace DwarfCorp
 
                     if (mouse.LeftButton == ButtonState.Pressed)
                     {
-                        OrigTransform = SelectedBody.LocalTransform;
-                        State = ToolState.Dragging;
-                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, SelectedBody.Position, 0.1f);
-                        OverrideOrientation = false;
-                        CurrentOrientation = 0.0f;
+                        StartDragging(SelectedBody);
                     }
                 }
             }
