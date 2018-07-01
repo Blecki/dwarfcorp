@@ -61,6 +61,16 @@ namespace DwarfCorp
             SetFlagRecursive(Flag.Visible, false);
         }
 
+        public void FitToParent()
+        {
+            var shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
+            var bbox = (Parent as Body).GetBoundingBox();
+            shadowTransform.Translation = new Vector3(0.0f, -0.5f * (bbox.Max.Y - bbox.Min.Y), 0.0f);
+            float scale = bbox.Max.X - bbox.Min.X;
+            shadowTransform = shadowTransform * Matrix.CreateScale(scale);
+            LocalTransform = shadowTransform;
+        }
+
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
             AddChild(new SimpleSprite(Manager, "Sprite", Matrix.Identity, new SpriteSheet(ContentPaths.Effects.selection_circle), Point.Zero)

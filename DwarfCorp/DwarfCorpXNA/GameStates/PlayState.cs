@@ -58,6 +58,7 @@ namespace DwarfCorp.GameStates
         private Timer AutoSaveTimer;
         private EmployeeInfo SelectedEmployeeInfo;
         private Widget ContextMenu;
+        private Widget MultiContextMenu;
         private Widget BottomBar;
         private Widget MinimapIcon;
         private ProgressBar ManaBar;
@@ -2389,6 +2390,45 @@ namespace DwarfCorp.GameStates
             // Now that it's laid out, bring the second bar to the front so commands draw over other shit.
             secondBar.BringToFront();
             GodMenu.BringToFront();
+
+            Master.BodySelector.LeftReleased += BodySelector_LeftReleased;
+        }
+
+        private List<Body> BodySelector_LeftReleased()
+        {
+            if (MultiContextMenu != null)
+            {
+                MultiContextMenu.Close();
+                MultiContextMenu = null;
+            }
+
+            var bodiesClicked = Master.SelectedObjects;
+
+            if (bodiesClicked.Count > 0)
+            {
+                var availableCommands = ContextCommands.Where(c => bodiesClicked.Any(b => c.CanBeAppliedTo(b, World)));
+
+                if (availableCommands.Count() > 0)
+                {
+                    // Show context menu.
+                    MultiContextMenu = GuiRoot.ConstructWidget(new ContextMenu
+                    {
+                        Commands = availableCommands.ToList(),
+                        MultiBody = bodiesClicked,
+                        World = World
+                    });
+
+                    MultiContextMenu.Rect = new Rectangle(MinimapFrame.Rect.Right + 2, MinimapFrame.Rect.Bottom - MultiContextMenu.Rect.Height, MultiContextMenu.Rect.Width, MultiContextMenu.Rect.Height);
+                    MultiContextMenu.Layout();
+                    GuiRoot.ShowDialog(MultiContextMenu);
+                }
+            }
+            else if (MultiContextMenu != null)
+            {
+                MultiContextMenu.Close();
+                MultiContextMenu = null;
+            }
+            return null;
         }
 
         /// <summary>
