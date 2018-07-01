@@ -10,6 +10,7 @@ namespace DwarfCorp.ContextCommands
         public ChopCommand()
         {
             Name = "Harvest";
+            Description = "Click to harvest the selected plant(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -31,6 +32,7 @@ namespace DwarfCorp.ContextCommands
         public AttackCommand()
         {
             Name = "Attack";
+            Description = "Click to attack the selected creature(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -52,6 +54,7 @@ namespace DwarfCorp.ContextCommands
         public WrangleCommand()
         {
             Name = "Catch";
+            Description = "Click to catch the selected creature(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -73,6 +76,7 @@ namespace DwarfCorp.ContextCommands
         public CancelCommand()
         {
             Name = "Cancel";
+            Description = "Click to cancel the selected command(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -94,6 +98,7 @@ namespace DwarfCorp.ContextCommands
         public GatherCommand()
         {
             Name = "Gather";
+            Description = "Click to gather the selected object(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -113,6 +118,7 @@ namespace DwarfCorp.ContextCommands
         public DestroyCommand()
         {
             Name = "Destroy";
+            Description = "Click to destroy the selected object(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -132,6 +138,7 @@ namespace DwarfCorp.ContextCommands
         public MoveCommand()
         {
             Name = "Move";
+            Description = "Click to move the selected object";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -143,7 +150,6 @@ namespace DwarfCorp.ContextCommands
         public override void Apply(Body Entity, WorldManager World)
         {
             World.Master.ChangeTool(GameMaster.ToolMode.MoveObjects);
-            (World.Master.Tools[GameMaster.ToolMode.MoveObjects] as MoveObjectTool).StartDragging(Entity);
         }
     }
 
@@ -152,6 +158,7 @@ namespace DwarfCorp.ContextCommands
         public FireCommand()
         {
             Name = "Fire";
+            Description = "Click to fire the selected dwarf(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -178,6 +185,7 @@ namespace DwarfCorp.ContextCommands
         public PromoteCommand()
         {
             Name = "Promote";
+            Description = "Click to promote the selected dwarf(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 

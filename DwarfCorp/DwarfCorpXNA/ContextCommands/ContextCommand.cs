@@ -8,6 +8,7 @@ namespace DwarfCorp.ContextCommands
     public class ContextCommand
     {
         public string Name;
+        public string Description = "";
         public Gui.TileReference Icon;
 
         public virtual bool CanBeAppliedTo(Body Entity, WorldManager World)

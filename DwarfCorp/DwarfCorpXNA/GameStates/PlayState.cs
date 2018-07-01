@@ -2410,7 +2410,7 @@ namespace DwarfCorp.GameStates
                 if (availableCommands.Count() > 0)
                 {
                     // Show context menu.
-                    MultiContextMenu = GuiRoot.ConstructWidget(new ContextMenu
+                    MultiContextMenu = GuiRoot.ConstructWidget(new HorizontalContextMenu
                     {
                         Commands = availableCommands.ToList(),
                         MultiBody = bodiesClicked,
