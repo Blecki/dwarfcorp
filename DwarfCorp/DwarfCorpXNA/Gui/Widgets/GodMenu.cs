@@ -87,7 +87,8 @@ namespace DwarfCorp.Gui.Widgets
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
                         Columns = 5,
-                        ItemSource = EntityFactory.EnumerateEntityTypes().OrderBy(s => s).Select(s =>
+                        ItemSource = EntityFactory.EnumerateEntityTypes().Where(s => !s.Contains("Resource") || 
+                        !ResourceLibrary.GetResourceByName(s.Substring(0, s.Length - " Resource".Length)).Generated).OrderBy(s => s).Select(s =>
                             new HorizontalMenuTray.MenuItem
                             {
                                 Text = s,

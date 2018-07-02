@@ -73,7 +73,7 @@ namespace DwarfCorp
         public float FoodContent;
         public List<CompositeLayer> CompositeLayers;
         public TrinketInfo TrinketData;
-
+        public bool Generated = true;
         public string ShortName;
 
         public string PlantToGenerate { get; set; }
@@ -154,7 +154,7 @@ namespace DwarfCorp
             CraftPrerequisites = new List<Quantitiy<Resource.ResourceTags>>();
             CraftPrerequisites.AddRange(other.CraftPrerequisites);
             CraftInfo = other.CraftInfo;
-
+            Generated = true;
             if (other.CompositeLayers != null)
             {
                 CompositeLayers = new List<CompositeLayer>();

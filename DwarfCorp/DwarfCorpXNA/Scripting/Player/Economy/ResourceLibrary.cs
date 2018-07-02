@@ -76,6 +76,11 @@ namespace DwarfCorp
 
         public static Resource GetResourceByName(string name)
         {
+            if (!ResourceLibrary.IsInitialized)
+            {
+                ResourceLibrary.Initialize();
+            }
+
             return Resources.ContainsKey((ResourceType) name) ? Resources[name] : null;
         }
 
@@ -117,7 +122,10 @@ namespace DwarfCorp
             var resourceList = FileUtils.LoadJsonListFromMultipleSources<Resource>(ContentPaths.resource_items, null, r => r.Name);
 
             foreach (var resource in resourceList)
+            {
+                resource.Generated = false;
                 Add(resource);
+            }
             IsInitialized = true;
         }
         
