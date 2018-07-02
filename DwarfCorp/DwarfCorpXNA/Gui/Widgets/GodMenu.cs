@@ -388,7 +388,7 @@ namespace DwarfCorp.Gui.Widgets
                                 VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(Master.World.ChunkManager.ChunkData, pos, pos + Vector3.Down * 100);
                                 if (handle.IsValid)
                                 {
-                                    if (keys[i].Name == "Primed Keg")
+                                    if (keys[i].Name == "Explosive")
                                         continue;
 
                                     Blackboard blackboard = new Blackboard();

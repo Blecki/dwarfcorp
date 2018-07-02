@@ -237,7 +237,7 @@ namespace DwarfCorp
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             (AI as GremlinAI).DestroyPlayerObjectProbability = 0.5f;
-            (AI as GremlinAI).PlantBomb = "Primed Keg";
+            (AI as GremlinAI).PlantBomb = "Explosive";
             Species = "Gremlin";
         }
 
