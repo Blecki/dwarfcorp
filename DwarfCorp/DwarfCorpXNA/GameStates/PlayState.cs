@@ -2410,6 +2410,7 @@ namespace DwarfCorp.GameStates
             if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
                 return null;
 
+            Master.SelectedObjects.RemoveAll(b => !ContextCommands.Any(c => c.CanBeAppliedTo(b, World)));
             var bodiesClicked = Master.SelectedObjects;
 
             if (bodiesClicked.Count > 0)

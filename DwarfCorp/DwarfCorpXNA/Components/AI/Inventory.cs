@@ -282,6 +282,7 @@ namespace DwarfCorp
             //else
             //    foreach (var item in piles)
             //        World.Master.TaskManager.AddTask(new GatherItemTask(item));
+            Resources.Clear();
         }
 
         public bool HasResource(ResourceAmount itemToStock)
