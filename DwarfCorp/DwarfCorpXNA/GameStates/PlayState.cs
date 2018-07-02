@@ -95,6 +95,11 @@ namespace DwarfCorp.GameStates
 
         private void ChangeTool(GameMaster.ToolMode Mode)
         {
+            if (MultiContextMenu != null)
+            {
+                MultiContextMenu.Close();
+                MultiContextMenu = null;
+            }
             ManaBar.Hidden = Mode != GameMaster.ToolMode.Magic;
             Master.ChangeTool(Mode);
             foreach (var icon in ToolHiliteItems)
@@ -230,6 +235,7 @@ namespace DwarfCorp.GameStates
                 ContextCommands.Add(new ContextCommands.GatherCommand());
                 ContextCommands.Add(new ContextCommands.DestroyCommand());
                 ContextCommands.Add(new ContextCommands.MoveCommand());
+                ContextCommands.Add(new DwarfCorp.ContextCommands.EmptyBackpackCommand());
                 ContextCommands.Add(new ContextCommands.FireCommand());
                 ContextCommands.Add(new ContextCommands.PromoteCommand());
                 World.LogEvent(String.Format("We have arrived at {0}", Overworld.Name));
@@ -1150,7 +1156,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -1197,7 +1203,7 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     World.ShowToolPopup("Left click objects to move them.\nRight click to destroy them.");
-                    Master.ChangeTool(GameMaster.ToolMode.MoveObjects);
+                    ChangeTool(GameMaster.ToolMode.MoveObjects);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
@@ -1211,7 +1217,7 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     World.ShowToolPopup("Left click objects to destroy them.");
-                    Master.ChangeTool(GameMaster.ToolMode.DeconstructObjects);
+                    ChangeTool(GameMaster.ToolMode.DeconstructObjects);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
@@ -1240,7 +1246,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -1380,7 +1386,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -1507,7 +1513,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 },
                 //TODO
                 ReplacementMenu = null
@@ -1660,7 +1666,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -1680,7 +1686,7 @@ namespace DwarfCorp.GameStates
                                     {
                                         new ResourceAmount("Rail", 1)
                                     };
-                    Master.ChangeTool(GameMaster.ToolMode.PaintRail);
+                    ChangeTool(GameMaster.ToolMode.PaintRail);
                 }
             };
 
@@ -1743,7 +1749,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -1798,7 +1804,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -1977,7 +1983,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -1991,7 +1997,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -2116,7 +2122,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -2180,7 +2186,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -2250,7 +2256,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -2298,7 +2304,7 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("round-buttons", 5),
                 OnClick = (sender, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.CancelTasks);
+                    ChangeTool(GameMaster.ToolMode.CancelTasks);
                     (Master.Tools[GameMaster.ToolMode.CancelTasks] as CancelTasksTool).Options = (sender as FlatToolTray.Icon).PopupChild as CancelToolOptions;
                 },
                 Behavior = FlatToolTray.IconBehavior.ShowClickPopupAndLeafIcon,
@@ -2401,6 +2407,9 @@ namespace DwarfCorp.GameStates
                 MultiContextMenu = null;
             }
 
+            if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
+                return null;
+
             var bodiesClicked = Master.SelectedObjects;
 
             if (bodiesClicked.Count > 0)
@@ -2469,7 +2478,7 @@ namespace DwarfCorp.GameStates
                 if (MainMenu.Hidden && PausePanel == null)
                     (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);
                 else if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits && PausePanel == null)
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 else if (PausePanel != null)
                 {
                     PausePanel.Close();
@@ -2536,7 +2545,7 @@ namespace DwarfCorp.GameStates
                 {
                     if (!GodMenu.Hidden)
                     {
-                        Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                        ChangeTool(GameMaster.ToolMode.SelectUnits);
                     }
                     GodMenu.Hidden = !GodMenu.Hidden;
                     GodMenu.Invalidate();

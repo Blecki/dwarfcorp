@@ -64,6 +64,11 @@ namespace DwarfCorp
 
         public void ChangeTool(ToolMode NewTool)
         {
+            if (NewTool != ToolMode.SelectUnits)
+            {
+                SelectedObjects = new List<Body>();
+            }
+
             // Todo: Should probably clean up existing tool even if they are the same tool.
             Tools[NewTool].OnBegin();
             if (CurrentToolMode != NewTool)
@@ -249,7 +254,8 @@ namespace DwarfCorp
         public void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
             CurrentTool.OnBodiesSelected(bodies, button);
-            SelectedObjects = bodies;
+            if (CurrentToolMode == ToolMode.SelectUnits)
+                SelectedObjects = bodies;
         }
 
         public void OnDrag(List<VoxelHandle> voxels, InputManager.MouseButton button)
