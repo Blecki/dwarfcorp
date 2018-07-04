@@ -73,7 +73,8 @@ namespace DwarfCorp
         public static string instance_groups = ProgramData.CreatePath("instance-groups.json");
         public static string tutorials = ProgramData.CreatePath("tutorial.json");
         public static string events = ProgramData.CreatePath("events.json");
-        public static string dwarf_layers = ProgramData.CreatePath("dwarf-layers.txt");
+        public static string dwarf_layers = ProgramData.CreatePath("dwarf-layers.json");
+        public static string dwarf_animations = ProgramData.CreatePath("Entities", "Dwarf", "Layers", "dwarf-animations.json");
 
         public class Audio
     {

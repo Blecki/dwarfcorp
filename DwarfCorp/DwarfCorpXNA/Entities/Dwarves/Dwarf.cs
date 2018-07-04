@@ -148,7 +148,7 @@ namespace DwarfCorp
             Stats.Size = 5;
             Stats.CanSleep = true;
             Stats.CanEat = true;
-            AI.Movement.CanClimbWalls = true;
+            AI.Movement.CanClimbWalls = true; // Why isn't this a flag like the below?
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             AI.Movement.SetCan(MoveType.EnterVehicle, true);
@@ -190,22 +190,16 @@ namespace DwarfCorp
                 if (Physics == null) return;
             }
 
-            var sprite = Physics.AddChild(new LayeredCharacterSprite(manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as LayeredCharacterSprite;
+            var sprite = Physics.AddChild(new LayeredSprites.LayeredCharacterSprite(manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as LayeredSprites.LayeredCharacterSprite;
 
-            sprite.Layers.Add(AssetManager.GetContentTexture("Entities/Dwarf/Layer Test/workerbodysheet"));
+            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("body").Where(l => l.PassesFilter(this)).SelectRandom());
+            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("face").Where(l => l.PassesFilter(this)).SelectRandom());
+            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("nose").Where(l => l.PassesFilter(this)).SelectRandom());
+            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("beard").Where(l => l.PassesFilter(this)).SelectRandom());
+            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("hair").Where(l => l.PassesFilter(this)).SelectRandom());
+            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("tool").Where(l => l.PassesFilter(this)).SelectRandom());
 
-            if (random.NextDouble() > 0.5f)
-                sprite.Layers.Add(AssetManager.GetContentTexture("Entities/Dwarf/Layer Test/MaleDwarfFaceSheet"));
-            else
-                sprite.Layers.Add(AssetManager.GetContentTexture("Entities/Dwarf/Layer Test/FemaleDwarfFaceSheet"));
-
-            sprite.Layers.Add(AssetManager.GetContentTexture("Entities/Dwarf/Layer Test/NormalNoseSheet"));
-            sprite.Layers.Add(AssetManager.GetContentTexture("Entities/Dwarf/Layer Test/TheRingHairSheet"));
-
-            if (random.NextDouble() > 0.5f)
-                sprite.Layers.Add(AssetManager.GetContentTexture("Entities/Dwarf/Layer Test/JowelBeardSheet"));
-
-            foreach (Animation animation in employeeClass.Animations)
+            foreach (Animation animation in AnimationLibrary.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations))
                 sprite.AddAnimation(animation);
 
             sprite.SetCurrentAnimation(Sprite.Animations.First().Value);

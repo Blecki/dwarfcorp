@@ -41,25 +41,31 @@ using System.Runtime.Serialization;
 
 namespace DwarfCorp.LayeredSprites
 {
-    public class LayerLibrary
+    public class LayeredAnimationProxy : Animation
     {
-        private static List<Layer> Layers;
+        private LayeredCharacterSprite Owner = null;
 
-        private static void Initialize()
+        public LayeredAnimationProxy(LayeredCharacterSprite Owner)
         {
-            if (Layers != null) return;
-            Layers = FileUtils.LoadJsonListFromMultipleSources<Layer>(ContentPaths.dwarf_layers, null, l => l.Type + "&" + l.Asset);
+            this.Owner = Owner;
         }
 
-        public static IEnumerable<Layer> EnumerateLayers(String LayerType)
+        public override Texture2D GetTexture()
         {
-            Initialize();
-            return Layers.Where(l => l.Type == LayerType);
+            return Owner.GetProxyTexture();
         }
 
-        public static void SortLayerList(List<Layer> Layers)
+        public override void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
         {
-            Layers.Sort((a, b) => a.Precedence - b.Precedence);
+            // Obviously shouldn't be hard coded.
+            var composite = Owner.GetProxyTexture();
+            if (composite == null) return;
+
+            SpriteSheet = new SpriteSheet(composite, 32, 40);
+            base.UpdatePrimitive(Primitive, CurrentFrame);
         }
+
+        public override bool CanUseInstancing { get => false; }
     }
+
 }

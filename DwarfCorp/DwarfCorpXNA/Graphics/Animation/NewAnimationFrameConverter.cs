@@ -1,4 +1,4 @@
-// OrientedAnimation.cs
+﻿// RectangleConverter.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -31,35 +31,53 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Runtime.Serialization.Formatters;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using System.Runtime.Serialization;
+using Newtonsoft.Json.Linq;
 
-namespace DwarfCorp.LayeredSprites
+namespace DwarfCorp
 {
-    public class LayerLibrary
+    public class NewAnimationFrameConverter : JsonConverter
     {
-        private static List<Layer> Layers;
-
-        private static void Initialize()
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            if (Layers != null) return;
-            Layers = FileUtils.LoadJsonListFromMultipleSources<Layer>(ContentPaths.dwarf_layers, null, l => l.Type + "&" + l.Asset);
+            throw new NotImplementedException();
         }
 
-        public static IEnumerable<Layer> EnumerateLayers(String LayerType)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            Initialize();
-            return Layers.Where(l => l.Type == LayerType);
+            var jObject = serializer.Deserialize<JValue>(reader);
+            var jsonString = jObject.Value.ToString();
+
+            var tokens = jsonString.Split(' ');
+            if (tokens.Length != 3)
+                throw new JsonSerializationException();
+
+            var speed = 0.0f;
+            var row = 0;
+            var column = 0;
+
+            if (!float.TryParse(tokens[0], out speed) || !int.TryParse(tokens[1], out column) || !int.TryParse(tokens[2], out row))
+                throw new JsonSerializationException();
+
+            return new NewAnimationDescriptor.Frame
+            {
+                Speed = speed,
+                Row = row,
+                Column = column
+            };
         }
 
-        public static void SortLayerList(List<Layer> Layers)
+        public override bool CanWrite
         {
-            Layers.Sort((a, b) => a.Precedence - b.Precedence);
+            get { return false; }
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(NewAnimationDescriptor.Frame);
         }
     }
+
 }

@@ -39,37 +39,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace DwarfCorp
+namespace DwarfCorp.LayeredSprites
 {
     public class LayeredCharacterSprite : CharacterSprite, IRenderableComponent, IUpdateableComponent
     {
-        private class LayeredAnimationProxy : Animation
-        {
-            private LayeredCharacterSprite Owner = null;
-
-            public LayeredAnimationProxy(LayeredCharacterSprite Owner)
-            {
-                this.Owner = Owner;
-            }
-
-            public override Texture2D GetTexture()
-            {
-                return Owner.GetProxyTexture();
-            }
-
-            public override void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
-            {
-                // Obviously shouldn't be hard coded.
-                var composite = Owner.GetProxyTexture();
-                if (composite == null) return;
-
-                SpriteSheet = new SpriteSheet(composite, 32, 40);
-                base.UpdatePrimitive(Primitive, CurrentFrame);
-            }
-
-            public override bool CanUseInstancing { get => false; }
-        }
-
         public Texture2D GetProxyTexture()
         {
             return Composite;
@@ -90,15 +63,22 @@ namespace DwarfCorp
             base.AddAnimation(proxyAnim);
         }
 
-        public List<Texture2D> Layers = new List<Texture2D>();
+        private List<Layer> Layers = new List<Layer>();
+        private bool CompositeValid = false;
         private RenderTarget2D Composite;
+
+        public void AddLayer(Layer Layer)
+        {
+            Layers.RemoveAll(l => l.Type == Layer.Type);
+            Layers.Add(Layer);
+            CompositeValid = false;
+        }
 
         public LayeredCharacterSprite()
         {
-            
         }
 
-        public LayeredCharacterSprite(ComponentManager manager, string name,  Matrix localTransform) :
+        public LayeredCharacterSprite(ComponentManager manager, string name, Matrix localTransform) :
                 base(manager, name, localTransform)
         {
         }
@@ -107,56 +87,61 @@ namespace DwarfCorp
         {
             base.Update(gameTime, chunks, camera);
 
-            // Render the composite texture
-            var maxSize = new Point(0, 0);
-            foreach (var layer in Layers)
+            if (!CompositeValid)
             {
-                maxSize.X = Math.Max(layer.Width, maxSize.X);
-                maxSize.Y = Math.Max(layer.Height, maxSize.Y);
-            }
+                CompositeValid = true;
+                LayerLibrary.SortLayerList(Layers);
 
-            if (maxSize.X == 0 || maxSize.Y == 0) return;
+                // Render the composite texture
+                var maxSize = new Point(0, 0);
+                foreach (var layer in Layers)
+                {
+                    if (layer.Texture == null)
+                        layer.Texture = AssetManager.GetContentTexture(layer.Asset);
 
-            var graphics = chunks.World.GraphicsDevice;
+                    maxSize.X = Math.Max(layer.Texture.Width, maxSize.X);
+                    maxSize.Y = Math.Max(layer.Texture.Height, maxSize.Y);
+                }
 
-            if (Composite == null || Composite.Width != maxSize.X || Composite.Height != maxSize.Y)
-                Composite = new RenderTarget2D(graphics, maxSize.X, maxSize.Y);
+                if (maxSize.X == 0 || maxSize.Y == 0) return;
 
-            graphics.SetRenderTarget(Composite);
-            graphics.Clear(Color.Transparent);
+                var graphics = chunks.World.GraphicsDevice;
 
-            var effect = DwarfGame.GuiSkin.Effect;
-            graphics.DepthStencilState = DepthStencilState.None;
-            effect.CurrentTechnique = effect.Techniques[0];
-            effect.Parameters["View"].SetValue(Matrix.Identity);
-            effect.Parameters["Projection"].SetValue(Matrix.CreateOrthographicOffCenter(0, maxSize.X, maxSize.Y, 0, -32, 32));
+                if (Composite == null || Composite.Width != maxSize.X || Composite.Height != maxSize.Y)
+                    Composite = new RenderTarget2D(graphics, maxSize.X, maxSize.Y);
 
-            // Need to offset by the subpixel portion to avoid screen artifacts.
-            // Remove this offset if porting to Monogame, monogame does it correctly.
+                graphics.SetRenderTarget(Composite);
+                graphics.Clear(Color.Transparent);
+
+                var effect = DwarfGame.GuiSkin.Effect;
+                graphics.DepthStencilState = DepthStencilState.None;
+                effect.CurrentTechnique = effect.Techniques[0];
+                effect.Parameters["View"].SetValue(Matrix.Identity);
+                effect.Parameters["Projection"].SetValue(Matrix.CreateOrthographicOffCenter(0, maxSize.X, maxSize.Y, 0, -32, 32));
+
+                // Need to offset by the subpixel portion to avoid screen artifacts.
+                // Remove this offset if porting to Monogame, monogame does it correctly.
 #if GEMXNA
-            effect.Parameters["World"].SetValue(Matrix.CreateTranslation(-0.5f, -0.5f, 0.0f));
+                effect.Parameters["World"].SetValue(Matrix.CreateTranslation(-0.5f, -0.5f, 0.0f));
 #else
             effect.Parameters["World"].SetValue(Matrix.Identity);
 #endif
 
-            foreach (var layer in Layers)
-            {
-                effect.Parameters["Texture"].SetValue(layer);
-                effect.CurrentTechnique.Passes[0].Apply();
-                var mesh = Gui.Mesh.Quad().Scale(layer.Width, layer.Height);
-                mesh.Render(graphics);
-            }
+                foreach (var layer in Layers)
+                {
+                    effect.Parameters["Texture"].SetValue(layer.Texture);
+                    effect.CurrentTechnique.Passes[0].Apply();
+                    var mesh = Gui.Mesh.Quad().Scale(layer.Texture.Width, layer.Texture.Height);
+                    mesh.Render(graphics);
+                }
 
-            graphics.SetRenderTarget(null);
+                graphics.SetRenderTarget(null);
+            }
         }
 
         new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
-            //If layers have changed, re-create the texture.
-
-            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);            
+            base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
         }
-
-        
     }
 }

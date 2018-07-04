@@ -193,6 +193,8 @@
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\Layer.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\LayeredAnimationProxy.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\LayerLibrary.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\LayeredCharacterSprite.cs" />
     <Compile Include="ConsoleCommandHandlerAttribute.cs" />
@@ -276,6 +278,8 @@
     <Compile Include="Goals\EventLibrary.cs" />
     <Compile Include="Goals\TimedIndicatorWidget.cs" />
     <Compile Include="Goals\GoalTypes.cs" />
+    <Compile Include="Graphics\Animation\NewAnimationDescriptor.cs" />
+    <Compile Include="Graphics\Animation\NewAnimationFrameConverter.cs" />
     <Compile Include="Graphics\Drawing\TriangleCache.cs" />
     <Compile Include="Graphics\Instancing\InstanceGroup.cs" />
     <Compile Include="Graphics\Instancing\TiledInstanceGroup.cs" />

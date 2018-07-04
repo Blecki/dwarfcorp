@@ -41,25 +41,37 @@ using System.Runtime.Serialization;
 
 namespace DwarfCorp.LayeredSprites
 {
-    public class LayerLibrary
+    public class Layer
     {
-        private static List<Layer> Layers;
+        [JsonIgnore]
+        public Texture2D Texture = null;
 
-        private static void Initialize()
+        public String Type;
+        public String Asset;
+        public int Precedence;
+
+        public enum Restrictions
         {
-            if (Layers != null) return;
-            Layers = FileUtils.LoadJsonListFromMultipleSources<Layer>(ContentPaths.dwarf_layers, null, l => l.Type + "&" + l.Asset);
+            None,
+            Class,
+            Gender,
         }
 
-        public static IEnumerable<Layer> EnumerateLayers(String LayerType)
-        {
-            Initialize();
-            return Layers.Where(l => l.Type == LayerType);
-        }
+        public Restrictions RestrictionType = Restrictions.None;
+        public String RestrictionValue = "";
 
-        public static void SortLayerList(List<Layer> Layers)
+        public bool PassesFilter(Dwarf Dwarf)
         {
-            Layers.Sort((a, b) => a.Precedence - b.Precedence);
+            switch (RestrictionType)
+            {
+                case Restrictions.Class:
+                    return Dwarf.Stats.CurrentClass.Name == RestrictionValue;
+                case Restrictions.Gender:
+                    return true; // Where the hell is Gender stored??
+                case Restrictions.None:
+                default:
+                    return true;
+            }
         }
     }
 }

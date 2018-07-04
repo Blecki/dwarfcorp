@@ -118,6 +118,37 @@ namespace DwarfCorp
             return Animations[UniqueName][0];
         }
 
+        public static List<Animation> LoadNewLayeredAnimationFormat(String Path)
+        {
+            if (!Animations.ContainsKey(Path))
+            {
+                try
+                {
+                    var anims = FileUtils.LoadJsonListFromMultipleSources<NewAnimationDescriptor>(Path, null, a => a.Name)
+                        .Select(a => a.CreateAnimation()).ToList();
+                    Animations.Add(Path, anims);
+
+                }
+                catch
+                {
+                    var errorAnimations = new List<Animation>();
+
+                    errorAnimations.Add(
+                        new Animation()
+                        {
+                            SpriteSheet = new SpriteSheet(ContentPaths.Error, 32),
+                            Frames = new List<Point> { Point.Zero },
+                            Name = "ERROR"
+                        });
+
+
+                    Animations.Add(Path, errorAnimations);
+                }
+            }
+
+            return Animations[Path];
+        }
+
         public static List<Animation> LoadCompositeAnimationSet(String Path, String CompositeName)
         {
             if (!Animations.ContainsKey(Path))

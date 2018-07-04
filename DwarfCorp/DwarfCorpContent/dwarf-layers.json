@@ -1,0 +1,64 @@
+[
+  {
+    "Type": "body",
+    "Precedence": 0,
+    "Asset": "Entities/Dwarf/Layers/workerbodysheet",
+    "RestrictionType": "Class",
+    "RestrictionValue": "Craftdwarf"
+  },
+  {
+    "Type": "body",
+    "Precedence": 0,
+    "Asset": "Entities/Dwarf/Layers/blank"
+  },
+
+
+  {
+    "Type": "face",
+    "Precedence": 1,
+    "Asset": "Entities/Dwarf/Layers/FemaleDwarfFaceSheet"
+  },
+  {
+    "Type": "face",
+    "Precedence": 1,
+    "Asset": "Entities/Dwarf/Layers/MaleDwarfFaceSheet"
+  },
+
+
+  {
+    "Type": "nose",
+    "Precedence": 2,
+    "Asset": "Entities/Dwarf/Layers/NormalNoseSheet"
+  },
+
+
+  {
+    "Type": "beard",
+    "Precedence": 3,
+    "Asset": "Entities/Dwarf/Layers/JowelBeardSheet"
+  },
+  {
+    "Type": "beard",
+    "Precedence": 3,
+    "Asset": "Entities/Dwarf/Layers/blank"
+  },
+
+
+  {
+    "Type": "hair",
+    "Precedence": 4,
+    "Asset": "Entities/Dwarf/Layers/TheRingHairSheet"
+  },
+  {
+    "Type": "hair",
+    "Precedence": 4,
+    "Asset": "Entities/Dwarf/Layers/blank"
+  },
+
+
+  {
+    "Type": "tool",
+    "Precedence": 5,
+    "Asset": "Entities/Dwarf/Layers/crafter-hammer"
+  }
+]

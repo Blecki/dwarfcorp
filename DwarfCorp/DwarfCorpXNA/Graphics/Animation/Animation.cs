@@ -69,7 +69,9 @@ namespace DwarfCorp
             if (CurrentFrame >= Frames.Count)
                 return;
             var rect = GetFrameRect(CurrentFrame);
-            Primitive.SetFrame(SpriteSheet, rect, rect.Width / 32.0f, rect.Height / 32.0f, Color.White, Tint, Flipped);
+
+            // Don't scale here - sprite will be scaled by the world matrix.
+            Primitive.SetFrame(SpriteSheet, rect, 1.0f, 1.0f, /*rect.Width / 32.0f, rect.Height / 32.0f,*/ Color.White, Tint, Flipped);
         }
 
         public virtual ImageFrame GetAsImageFrame(int CurrentFrame)

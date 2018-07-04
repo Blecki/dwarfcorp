@@ -2005,7 +2005,7 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
-    <None Include="dwarf-layers.txt">
+    <None Include="dwarf-layers.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>dwarf-layers</Name>
     </None>
@@ -2370,6 +2370,10 @@
       <Name>troll_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Entities\Dwarf\Layers\dwarf-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>dwarf-animations</Name>
+    </None>
     <None Include="events.json">
       <Name>events</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
