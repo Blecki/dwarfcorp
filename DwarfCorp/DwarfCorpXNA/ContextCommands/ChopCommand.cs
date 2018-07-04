@@ -10,6 +10,7 @@ namespace DwarfCorp.ContextCommands
         public ChopCommand()
         {
             Name = "Harvest";
+            Description = "Click to harvest the selected plant(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -31,6 +32,7 @@ namespace DwarfCorp.ContextCommands
         public AttackCommand()
         {
             Name = "Attack";
+            Description = "Click to attack the selected creature(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -52,6 +54,7 @@ namespace DwarfCorp.ContextCommands
         public WrangleCommand()
         {
             Name = "Catch";
+            Description = "Click to catch the selected creature(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -68,34 +71,12 @@ namespace DwarfCorp.ContextCommands
         }
     }
 
-
-    public class GoToCommand : ContextCommand
-    {
-        public GoToCommand()
-        {
-            Name = "Go Here";
-            Icon = new Gui.TileReference("tool-icons", 1);
-        }
-
-        public override bool CanBeAppliedTo(Body Entity, WorldManager World)
-        {
-            return World.Master.SelectedMinions.Count > 0;
-        }
-
-        public override void Apply(Body Entity, WorldManager World)
-        {
-           foreach(var minion in World.Master.SelectedMinions)
-            {
-                minion.AssignTask(new GoToEntityAct(Entity, minion).AsTask());
-            }
-        }
-    }
-
     public class CancelCommand : ContextCommand
     {
         public CancelCommand()
         {
             Name = "Cancel";
+            Description = "Click to cancel the selected command(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -117,6 +98,7 @@ namespace DwarfCorp.ContextCommands
         public GatherCommand()
         {
             Name = "Gather";
+            Description = "Click to gather the selected object(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -136,6 +118,7 @@ namespace DwarfCorp.ContextCommands
         public DestroyCommand()
         {
             Name = "Destroy";
+            Description = "Click to destroy the selected object(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -155,6 +138,7 @@ namespace DwarfCorp.ContextCommands
         public MoveCommand()
         {
             Name = "Move";
+            Description = "Click to move the selected object";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -166,7 +150,6 @@ namespace DwarfCorp.ContextCommands
         public override void Apply(Body Entity, WorldManager World)
         {
             World.Master.ChangeTool(GameMaster.ToolMode.MoveObjects);
-            (World.Master.Tools[GameMaster.ToolMode.MoveObjects] as MoveObjectTool).StartDragging(Entity);
         }
     }
 
@@ -175,6 +158,7 @@ namespace DwarfCorp.ContextCommands
         public FireCommand()
         {
             Name = "Fire";
+            Description = "Click to fire the selected dwarf(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -201,6 +185,7 @@ namespace DwarfCorp.ContextCommands
         public PromoteCommand()
         {
             Name = "Promote";
+            Description = "Click to promote the selected dwarf(s)";
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
@@ -218,6 +203,33 @@ namespace DwarfCorp.ContextCommands
             Employee.Stats.LevelUp();
             SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
             Employee.Creature.AddThought(Thought.ThoughtType.GotPromoted);
+        }
+    }
+
+    public class EmptyBackpackCommand  : ContextCommand
+    {
+        public EmptyBackpackCommand()
+        {
+            Name = "Empty backpack";
+            Description = "Click to force the selected dwarf(s) to empty their backpacks.";
+            Icon = new Gui.TileReference("tool-icons", 1);
+        }
+
+        public override bool CanBeAppliedTo(Body Entity, WorldManager World)
+        {
+            var creature = Entity.GetComponent<CreatureAI>();
+            if (creature == null)
+                return false;
+            return World.Master.Faction.Minions.Contains(creature) && creature.Creature.Inventory.Resources.Any();
+        }
+
+        public override void Apply(Body Entity, WorldManager World)
+        {
+            var creature = Entity.GetComponent<CreatureAI>();
+            if (creature == null)
+                return;
+
+            creature.Creature.Inventory.DropAll();
         }
     }
 }

@@ -19,7 +19,10 @@ namespace DwarfCorp.Goals
             if (!String.IsNullOrEmpty(faction) && world.Factions.Factions.ContainsKey(faction))
             {
                 var envoy = world.Diplomacy.SendTradeEnvoy(world.Factions.Factions[faction], world);
-                envoy.TributeDemanded = (int)(TributeDemanded * world.InitialEmbark.Difficulty * MathFunctions.Rand(0.9f, 1.5f));
+                if (envoy != null)
+                {
+                    envoy.TributeDemanded = (int)(TributeDemanded * world.InitialEmbark.Difficulty * MathFunctions.Rand(0.9f, 1.5f));
+                }
             }
             base.Trigger(world);
         }

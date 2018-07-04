@@ -268,8 +268,7 @@ namespace DwarfCorp
             DwarfGame.SpriteBatch.Begin();
 
             foreach (var body in Player.BodySelector.CurrentBodies)
-                if (IsDwarf(body))
-                    Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, Player.World.Camera), Color.White, 1.0f);
+                Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, Player.World.Camera), Color.White, 1.0f);
 
             DwarfGame.SpriteBatch.End();
         }

@@ -108,8 +108,8 @@
       }
     ],
     "TrinketData": {
-      "BaseAsset": null,
-      "EncrustingAsset": null,
+      "BaseAsset": "newgui\\trinkets-sculpt",
+      "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
       "SpriteRow": 0,
       "SpriteColumn": 0
     },

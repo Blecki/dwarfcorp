@@ -130,17 +130,14 @@ namespace DwarfCorp
                 type.HitSound = SoundSource.Create(type.HitSoundResources);
                 if (type.ReleasesResource)
                 {
-                    if (!ResourceLibrary.IsInitialized)
-                    {
-                        ResourceLibrary.Initialize();
-                    }
                     if (ResourceLibrary.GetResourceByName(type.Name) == null)
                     {
                         var resource = new Resource(ResourceLibrary.GetResourceByName(type.ResourceToRelease))
                         {
                             Name = type.Name,
                             ShortName = type.Name,
-                            Tint = type.Tint
+                            Tint = type.Tint,
+                            Generated = false
                         };
                         ResourceLibrary.Add(resource);
                         type.ResourceToRelease = resource.Name;
