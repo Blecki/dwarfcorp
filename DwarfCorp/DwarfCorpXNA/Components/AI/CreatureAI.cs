@@ -206,6 +206,7 @@ namespace DwarfCorp
         /// Queue of tasks that the creature is currently performing.
         /// </summary>
         public List<Task> Tasks { get; set; }
+        
 
         private struct FailedTask
         {
@@ -591,6 +592,11 @@ namespace DwarfCorp
             {
                 Physics.LocalPosition = MathFunctions.Clamp(Physics.Position, PositionConstraint);
                 Physics.PropogateTransforms();
+            }
+
+            if (Cart != null && Cart.IsDead)
+            {
+                Cart = null;
             }
         }
 
