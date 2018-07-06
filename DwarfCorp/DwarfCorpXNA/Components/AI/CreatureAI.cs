@@ -412,9 +412,21 @@ namespace DwarfCorp
             CurrentAct = NewAct;
         }
 
-        public void CancelCurrentTask()
+        public void SetCurrentTaskNull()
         {
             ChangeTask(null);
+        }
+
+        public void CancelCurrentTask()
+        {
+            if (CurrentTask != null && Faction == World.PlayerFaction)
+            {
+                World.Master.TaskManager.CancelTask(CurrentTask);
+            }
+            else
+            {
+                SetCurrentTaskNull();
+            }
         }
 
         /// <summary> Update this creature </summary>
@@ -1125,7 +1137,7 @@ namespace DwarfCorp
         public void RemoveTask(Task task)
         {
             if (Object.ReferenceEquals(CurrentTask, task))
-                CancelCurrentTask();
+                SetCurrentTaskNull();
             Tasks.Remove(task);
             task.OnUnAssign(this);
         }

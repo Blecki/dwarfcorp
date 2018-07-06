@@ -232,4 +232,31 @@ namespace DwarfCorp.ContextCommands
             creature.Creature.RestockAllImmediately();
         }
     }
+
+    public class CancelDwarfCommand : ContextCommand
+    {
+        public CancelDwarfCommand()
+        {
+            Name = "Cancel Task";
+            Description = "Click to force the selected dwarf(s) to cancel their current task.";
+            Icon = new Gui.TileReference("tool-icons", 1);
+        }
+
+        public override bool CanBeAppliedTo(Body Entity, WorldManager World)
+        {
+            var creature = Entity.GetComponent<CreatureAI>();
+            if (creature == null)
+                return false;
+            return World.Master.Faction.Minions.Contains(creature) && creature.CurrentTask != null;
+        }
+
+        public override void Apply(Body Entity, WorldManager World)
+        {
+            var creature = Entity.GetComponent<CreatureAI>();
+            if (creature == null)
+                return;
+
+            creature.CancelCurrentTask();
+        }
+    }
 }

@@ -103,6 +103,15 @@ namespace DwarfCorp
         {
             return Zone == null || Zone.IsBuilt || !IsRoomBuildOrder(faction, Zone);
         }
+
+        public override void OnDequeued(Faction Faction)
+        {
+            if (!Zone.IsBuilt)
+            {
+                Zone.Destroy();
+            }
+            base.OnDequeued(Faction);
+        }
     }
 
 }

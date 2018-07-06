@@ -236,6 +236,7 @@ namespace DwarfCorp.GameStates
                 ContextCommands.Add(new ContextCommands.DestroyCommand());
                 ContextCommands.Add(new ContextCommands.MoveCommand());
                 ContextCommands.Add(new DwarfCorp.ContextCommands.EmptyBackpackCommand());
+                ContextCommands.Add(new DwarfCorp.ContextCommands.CancelDwarfCommand());
                 ContextCommands.Add(new ContextCommands.FireCommand());
                 ContextCommands.Add(new ContextCommands.PromoteCommand());
                 World.LogEvent(String.Format("We have arrived at {0}", Overworld.Name));
@@ -2426,7 +2427,6 @@ namespace DwarfCorp.GameStates
                         MultiBody = bodiesClicked,
                         World = World
                     });
-                    MultiContextMenu.OnClose = (sender) => BodySelector_LeftReleased();
 
                     MultiContextMenu.Rect = new Rectangle(MinimapFrame.Rect.Right + 2, MinimapFrame.Rect.Bottom - MultiContextMenu.Rect.Height, MultiContextMenu.Rect.Width, MultiContextMenu.Rect.Height);
                     MultiContextMenu.Layout();
