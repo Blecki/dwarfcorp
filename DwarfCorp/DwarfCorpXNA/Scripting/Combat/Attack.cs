@@ -151,6 +151,8 @@ namespace DwarfCorp
                     yield break;
                 }
 
+                Drawer2D.DrawLoadBar(performer.World.Camera, DigAct.Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, Color.Black, 32, 1, (float)DigAct.VoxelHealth / DigAct.Voxel.Type.StartingHealth);
+
                 switch (TriggerMode)
                 {
                     case AttackTrigger.Timer:
@@ -163,7 +165,7 @@ namespace DwarfCorp
                         break;
                     case AttackTrigger.Animation:
                         if (!performer.Sprite.AnimPlayer.HasValidAnimation() ||
-                            performer.Sprite.AnimPlayer.CurrentFrame != TriggerFrame)
+                            performer.Sprite.AnimPlayer.CurrentFrame < TriggerFrame)
                         {
                             if (performer.Sprite.AnimPlayer.HasValidAnimation())
                                 performer.Sprite.AnimPlayer.Play();
@@ -177,10 +179,9 @@ namespace DwarfCorp
                 {
                     case AttackMode.Melee:
                     {
-                            DigAct.VoxelHealth -= (DamageAmount + bonus);
+                        DigAct.VoxelHealth -= (DamageAmount + bonus);
 
                         DigAct.Voxel.Type.HitSound.Play(DigAct.Voxel.WorldPosition);
-
                         if (HitParticles != "")
                             performer.Manager.World.ParticleManager.Trigger(HitParticles, DigAct.Voxel.WorldPosition, Color.White, 5);
 
