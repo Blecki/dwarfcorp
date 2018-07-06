@@ -174,6 +174,11 @@
     <Compile Include="Ancora\Parsers\Token.cs" />
     <Compile Include="Ancora\StringIterator.cs" />
     <Compile Include="Ancora\TestGrammar.cs" />
+    <Compile Include="AssetManagement\IndexedTexture.cs" />
+    <Compile Include="AssetManagement\IndexedDecomposition.cs" />
+    <Compile Include="AssetManagement\TextureTool.cs" />
+    <Compile Include="AssetManagement\Palette.cs" />
+    <Compile Include="AssetManagement\MemoryTexture.cs" />
     <Compile Include="AssetManagement\ContentPathGenerator.cs" />
     <Compile Include="AssetManagement\ContentPaths.cs" />
     <Compile Include="AssetManagement\GameSave\ChunkFile.cs" />

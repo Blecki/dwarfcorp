@@ -355,6 +355,10 @@ namespace DwarfCorp
 #endif
             AssetManager.Initialize(Content, GraphicsDevice, GameSettings.Default);
 
+            //var palette = TextureTool.ExtractPaletteFromDirectoryRecursive("Entities/Dwarf");
+            //var paletteTexture = TextureTool.Texture2DFromMemoryTexture(GraphicsDevice, TextureTool.MemoryTextureFromPalette(palette));
+            //paletteTexture.SaveAsPng(System.IO.File.OpenWrite("palette.png"), paletteTexture.Width, paletteTexture.Height);
+
             // Prepare GemGui
             GumInputMapper = new Gui.Input.GumInputMapper(Window.Handle);
                 GumInput = new Gui.Input.Input(GumInputMapper);
