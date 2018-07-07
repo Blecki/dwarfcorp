@@ -2005,7 +2005,11 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
-    <None Include="dwarf-layers.json">
+    <None Include="Entities\Dwarf\Layers\dwarf-palettes.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>dwarf-palettes</Name>
+    </None>
+    <None Include="Entities\Dwarf\Layers\dwarf-layers.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>dwarf-layers</Name>
     </None>
@@ -2363,6 +2367,16 @@
     </Compile>
     <Compile Include="Entities\Dwarf\Layers\blank.png">
       <Name>blank</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\base-palette.png">
+      <Name>base-palette</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\inverted-palette.png">
+      <Name>inverted-palette</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

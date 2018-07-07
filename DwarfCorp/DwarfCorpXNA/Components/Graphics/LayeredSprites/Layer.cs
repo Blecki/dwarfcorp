@@ -44,7 +44,7 @@ namespace DwarfCorp.LayeredSprites
     public class Layer
     {
         [JsonIgnore]
-        public Texture2D Texture = null;
+        public IndexedTexture CachedTexture = null;
 
         public String Type;
         public String Asset;

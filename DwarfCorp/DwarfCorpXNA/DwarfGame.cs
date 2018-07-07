@@ -137,6 +137,15 @@ namespace DwarfCorp
 
         private static int MainThreadID;
 
+        [ConsoleCommandHandler("PALETTE")]
+        private static String DumpPalette(String Path)
+        {
+            var palette = TextureTool.ExtractPaletteFromDirectoryRecursive(Path);
+            var paletteTexture = TextureTool.Texture2DFromMemoryTexture(DwarfGame.GuiSkin.Device, TextureTool.MemoryTextureFromPalette(palette));
+            paletteTexture.SaveAsPng(System.IO.File.OpenWrite("palette.png"), paletteTexture.Width, paletteTexture.Height);
+            return "Dumped.";
+        }
+
 #if SHARP_RAVEN && !DEBUG
         private RavenClient ravenClient;
 #endif

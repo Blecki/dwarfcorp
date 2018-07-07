@@ -1,4 +1,4 @@
-// OrientedAnimation.cs
+// TextureManager.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -30,42 +30,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
-using System.Runtime.Serialization;
+using System.Reflection;
+using System.Security;
+using System.Security.Policy;
+using System.Security.Permissions;
+using Microsoft.Xna.Framework;
 
-namespace DwarfCorp.LayeredSprites
+namespace DwarfCorp
 {
-    public class LayeredAnimationProxy : Animation
+    public struct IndexedDecomposition
     {
-        private LayerStack Owner = null;
-
-        public LayeredAnimationProxy(LayerStack Owner)
-        {
-            this.Owner = Owner;
-        }
-
-        public override Texture2D GetTexture()
-        {
-            return Owner.GetCompositeTexture();
-        }
-
-        public override void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
-        {
-            // Obviously shouldn't be hard coded.
-            var composite = Owner.GetCompositeTexture();
-            if (composite == null) return;
-
-            SpriteSheet = new SpriteSheet(composite, 32, 40);
-            base.UpdatePrimitive(Primitive, CurrentFrame);
-        }
-
-        public override bool CanUseInstancing { get => false; }
+        public Palette Palette;
+        public IndexedTexture IndexedTexture;
     }
-
 }

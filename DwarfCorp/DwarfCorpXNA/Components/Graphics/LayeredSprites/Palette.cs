@@ -41,31 +41,11 @@ using System.Runtime.Serialization;
 
 namespace DwarfCorp.LayeredSprites
 {
-    public class LayeredAnimationProxy : Animation
+    public class Palette
     {
-        private LayerStack Owner = null;
+        [JsonIgnore]
+        public DwarfCorp.Palette CachedPalette = null;
 
-        public LayeredAnimationProxy(LayerStack Owner)
-        {
-            this.Owner = Owner;
-        }
-
-        public override Texture2D GetTexture()
-        {
-            return Owner.GetCompositeTexture();
-        }
-
-        public override void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
-        {
-            // Obviously shouldn't be hard coded.
-            var composite = Owner.GetCompositeTexture();
-            if (composite == null) return;
-
-            SpriteSheet = new SpriteSheet(composite, 32, 40);
-            base.UpdatePrimitive(Primitive, CurrentFrame);
-        }
-
-        public override bool CanUseInstancing { get => false; }
+        public String Asset;
     }
-
 }

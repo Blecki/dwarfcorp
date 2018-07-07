@@ -1,4 +1,4 @@
-// OrientedAnimation.cs
+// TextureManager.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -30,42 +30,22 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
-using System.Runtime.Serialization;
+using System.Collections.Generic;
 
-namespace DwarfCorp.LayeredSprites
+namespace DwarfCorp
 {
-    public class LayeredAnimationProxy : Animation
+    public class Palette : List<Color>
     {
-        private LayerStack Owner = null;
-
-        public LayeredAnimationProxy(LayerStack Owner)
+        public Palette()
         {
-            this.Owner = Owner;
+
         }
 
-        public override Texture2D GetTexture()
+        public Palette(IEnumerable<Color> Data) : base(Data)
         {
-            return Owner.GetCompositeTexture();
+
         }
-
-        public override void UpdatePrimitive(BillboardPrimitive Primitive, int CurrentFrame)
-        {
-            // Obviously shouldn't be hard coded.
-            var composite = Owner.GetCompositeTexture();
-            if (composite == null) return;
-
-            SpriteSheet = new SpriteSheet(composite, 32, 40);
-            base.UpdatePrimitive(Primitive, CurrentFrame);
-        }
-
-        public override bool CanUseInstancing { get => false; }
     }
-
 }

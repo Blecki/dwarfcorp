@@ -4,7 +4,7 @@
     "Precedence": 0,
     "Asset": "Entities/Dwarf/Layers/workerbodysheet",
     "RestrictionType": "Class",
-    "RestrictionValue": "Craftdwarf"
+    "RestrictionValue": "CraftDwarf"
   },
   {
     "Type": "body",

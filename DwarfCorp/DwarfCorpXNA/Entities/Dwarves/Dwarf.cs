@@ -192,12 +192,12 @@ namespace DwarfCorp
 
             var sprite = Physics.AddChild(new LayeredSprites.LayeredCharacterSprite(manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as LayeredSprites.LayeredCharacterSprite;
 
-            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("body").Where(l => l.PassesFilter(this)).SelectRandom());
-            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("face").Where(l => l.PassesFilter(this)).SelectRandom());
-            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("nose").Where(l => l.PassesFilter(this)).SelectRandom());
-            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("beard").Where(l => l.PassesFilter(this)).SelectRandom());
-            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("hair").Where(l => l.PassesFilter(this)).SelectRandom());
-            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("tool").Where(l => l.PassesFilter(this)).SelectRandom());
+            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("body").Where(l => l.PassesFilter(this)).SelectRandom(), null);
+            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("face").Where(l => l.PassesFilter(this)).SelectRandom(), null);
+            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("nose").Where(l => l.PassesFilter(this)).SelectRandom(), null);
+            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("beard").Where(l => l.PassesFilter(this)).SelectRandom(), null);
+            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("hair").Where(l => l.PassesFilter(this)).SelectRandom(), null);
+            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("tool").Where(l => l.PassesFilter(this)).SelectRandom(), null);
 
             foreach (Animation animation in AnimationLibrary.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations))
                 sprite.AddAnimation(animation);

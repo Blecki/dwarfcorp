@@ -127,7 +127,6 @@ namespace DwarfCorp
                     var anims = FileUtils.LoadJsonListFromMultipleSources<NewAnimationDescriptor>(Path, null, a => a.Name)
                         .Select(a => a.CreateAnimation()).ToList();
                     Animations.Add(Path, anims);
-
                 }
                 catch
                 {

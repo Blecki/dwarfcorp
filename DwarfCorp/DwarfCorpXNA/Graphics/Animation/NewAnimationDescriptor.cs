@@ -29,9 +29,10 @@ namespace DwarfCorp
             return new Animation
             {
                 Frames = Frames.Select(f => new Point(f.Column, f.Row)).ToList(),
-                Speeds = Frames.Select(f => f.Speed).Reverse().ToList(),
+                Speeds = Frames.Select(f => f.Speed).ToList(),
                 Loops = Loops,
-                Name = Name
+                Name = Name,
+                FrameHZ = 5.0f,
             };
         }
     }

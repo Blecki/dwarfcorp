@@ -43,35 +43,16 @@ namespace DwarfCorp.LayeredSprites
 {
     public class LayeredCharacterSprite : CharacterSprite, IRenderableComponent, IUpdateableComponent
     {
-        public Texture2D GetProxyTexture()
-        {
-            return Composite;
-        }
-
         public override void AddAnimation(Animation animation)
         {
-            var comp = animation as CompositeAnimation;
-            var proxyAnim = new LayeredAnimationProxy(this)
-            {
-                Frames = comp == null ? animation.Frames : comp.CompositeFrames.Select(c => c.Cells[0].Tile).ToList(),
-                Name = animation.Name,
-                FrameHZ = 0.5f,
-                Speeds = animation.Speeds,
-                Tint = animation.Tint,
-                Loops = animation.Loops
-            };
-            base.AddAnimation(proxyAnim);
+            base.AddAnimation(Layers.ProxyAnimation(animation));
         }
 
-        private List<Layer> Layers = new List<Layer>();
-        private bool CompositeValid = false;
-        private RenderTarget2D Composite;
+        private LayerStack Layers = new LayerStack();
 
-        public void AddLayer(Layer Layer)
+        public void AddLayer(Layer Layer, Palette Palette)
         {
-            Layers.RemoveAll(l => l.Type == Layer.Type);
-            Layers.Add(Layer);
-            CompositeValid = false;
+            Layers.AddLayer(Layer, Palette);
         }
 
         public LayeredCharacterSprite()
@@ -86,57 +67,7 @@ namespace DwarfCorp.LayeredSprites
         new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
-
-            if (!CompositeValid)
-            {
-                CompositeValid = true;
-                LayerLibrary.SortLayerList(Layers);
-
-                // Render the composite texture
-                var maxSize = new Point(0, 0);
-                foreach (var layer in Layers)
-                {
-                    if (layer.Texture == null)
-                        layer.Texture = AssetManager.GetContentTexture(layer.Asset);
-
-                    maxSize.X = Math.Max(layer.Texture.Width, maxSize.X);
-                    maxSize.Y = Math.Max(layer.Texture.Height, maxSize.Y);
-                }
-
-                if (maxSize.X == 0 || maxSize.Y == 0) return;
-
-                var graphics = chunks.World.GraphicsDevice;
-
-                if (Composite == null || Composite.Width != maxSize.X || Composite.Height != maxSize.Y)
-                    Composite = new RenderTarget2D(graphics, maxSize.X, maxSize.Y);
-
-                graphics.SetRenderTarget(Composite);
-                graphics.Clear(Color.Transparent);
-
-                var effect = DwarfGame.GuiSkin.Effect;
-                graphics.DepthStencilState = DepthStencilState.None;
-                effect.CurrentTechnique = effect.Techniques[0];
-                effect.Parameters["View"].SetValue(Matrix.Identity);
-                effect.Parameters["Projection"].SetValue(Matrix.CreateOrthographicOffCenter(0, maxSize.X, maxSize.Y, 0, -32, 32));
-
-                // Need to offset by the subpixel portion to avoid screen artifacts.
-                // Remove this offset if porting to Monogame, monogame does it correctly.
-#if GEMXNA
-                effect.Parameters["World"].SetValue(Matrix.CreateTranslation(-0.5f, -0.5f, 0.0f));
-#else
-            effect.Parameters["World"].SetValue(Matrix.Identity);
-#endif
-
-                foreach (var layer in Layers)
-                {
-                    effect.Parameters["Texture"].SetValue(layer.Texture);
-                    effect.CurrentTechnique.Passes[0].Apply();
-                    var mesh = Gui.Mesh.Quad().Scale(layer.Texture.Width, layer.Texture.Height);
-                    mesh.Render(graphics);
-                }
-
-                graphics.SetRenderTarget(null);
-            }
+            Layers.Update(chunks.World.GraphicsDevice);
         }
 
         new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
