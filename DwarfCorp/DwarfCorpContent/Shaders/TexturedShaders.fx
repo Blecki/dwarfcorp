@@ -666,6 +666,7 @@ TPixelToFrame TexturedPS_Colorscale(TVertexToPixel PSIn)
 
 	Output.Color = tex2D(ColorscaleSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
     Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.LightRamp.g, 0.5f)).rgb;
+    Output.Color.rgb *= PSIn.VertexColor.rgb;
 	clip(Output.Color.a - 0.5);
 	clip(PSIn.ClipDistance.w);
 	return Output;
