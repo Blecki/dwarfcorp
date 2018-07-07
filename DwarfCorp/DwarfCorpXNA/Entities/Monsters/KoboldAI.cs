@@ -45,6 +45,7 @@ namespace DwarfCorp
     public class KoboldAI : CreatureAI
     {
         public float StealFromPlayerProbability = -1.0f;
+        public Timer LeaveWorldTimer = new Timer(200, true);
 
         public KoboldAI()
         {
@@ -73,6 +74,14 @@ namespace DwarfCorp
                         }
                     }
                 }
+            }
+
+            LeaveWorldTimer.Update(DwarfTime.LastTime);
+
+            if (LeaveWorldTimer.HasTriggered)
+            {
+                LeaveWorld();
+                LeaveWorldTimer.Reset();
             }
 
             return base.ActOnIdle();
