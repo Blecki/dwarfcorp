@@ -94,6 +94,16 @@ namespace DwarfCorp
                 },
                 ShouldKeep = () => { return this.ExpiditionState == Expedition.State.Trading && !this.ShouldRemove; }
             }, liveCreatures.First().Physics, new Vector2(0, -10));
+            World.MakeAnnouncement(String.Format("Click here to trade with the {0}!", OwnerFaction.Race.Name), (gui, sender) =>
+            {
+                World.Paused = true;
+                GameState.Game.StateManager.PushState(new Dialogue.DialogueState(
+                    GameState.Game,
+                    GameState.Game.StateManager,
+                    this,
+                    World.PlayerFaction,
+                    World));
+            }, () => { return this.ExpiditionState == Expedition.State.Trading && !this.ShouldRemove; }, false);
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
         }
 

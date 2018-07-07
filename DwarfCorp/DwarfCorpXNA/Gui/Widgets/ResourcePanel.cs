@@ -27,7 +27,8 @@ namespace DwarfCorp.Gui.Widgets
                         MaximumSize = new Point(32, 32),
                         MinimumSize = new Point(32,32),
                         TextHorizontalAlign = this.TextHorizontalAlign,
-                        TextVerticalAlign = this.TextVerticalAlign
+                        TextVerticalAlign = this.TextVerticalAlign,
+                        BackgroundColor = this.BackgroundColor
                     });
                 }
             }

@@ -105,12 +105,12 @@ namespace DwarfCorp
             yield break;
         }
 
-        public static void RestockAllImmediately(this Creature agent)
+        public static void RestockAllImmediately(this Creature agent, bool allowMarkedForUse=false)
         {
             Dictionary<string, ResourceAmount> aggregatedResources = new Dictionary<string, ResourceAmount>();
             foreach (var resource in agent.Inventory.Resources)
             {
-                if (!resource.MarkedForUse)
+                if (allowMarkedForUse || !resource.MarkedForUse)
                 {
                     resource.MarkedForRestock = true;
 

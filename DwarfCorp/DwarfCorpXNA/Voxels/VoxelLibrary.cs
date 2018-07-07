@@ -247,6 +247,7 @@ namespace DwarfCorp
                     shader.View = viewMatrix;
                     shader.Projection = projectionMatrix;
                     shader.World = Matrix.CreateTranslation(-half);
+                    shader.VertexColorTint = type.Tint;
                     pass.Apply();
                     primitive.Render(device);
                 }

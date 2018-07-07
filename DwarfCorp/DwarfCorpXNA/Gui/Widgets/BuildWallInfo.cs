@@ -21,7 +21,7 @@ namespace DwarfCorp.Gui.Widgets
             var builder = new StringBuilder();
             builder.AppendLine(String.Format("Place {0}", Data.Name));
             builder.AppendLine(String.Format("Strength: {0}", Data.StartingHealth));
-            builder.AppendLine(String.Format("Requires: {0}", ResourceLibrary.Resources[Data.ResourceToRelease].Name));
+            builder.AppendLine(String.Format("Requires: {0}", Data.GetBuildRequirementsString()));
             builder.Append("Click to build.");
             
             Font = "font8";
@@ -31,9 +31,8 @@ namespace DwarfCorp.Gui.Widgets
 
         public bool CanBuild()
         {
-            var requirment = ResourceLibrary.Resources[Data.ResourceToRelease];
-            foreach (var resource in Master.Faction.ListResourcesInStockpilesPlusMinions())
-                if (resource.Value.First.ResourceType == requirment.Name && resource.Value.First.NumResources > 0 || resource.Value.Second.NumResources > 0)
+            foreach (var resource in Master.Faction.ListResourcesInStockpilesPlusMinions().Where(r => Data.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))))
+                if (resource.Value.First.NumResources > 0 || resource.Value.Second.NumResources > 0)
                     return true;
             return false;
         }

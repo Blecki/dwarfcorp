@@ -136,6 +136,7 @@
     "ResourceToRelease": {
       "_value": "Stone"
     },
+	"BuildRequirements" : ["Stone"],
     "StartingHealth": 20.0,
     "ProbabilityOfRelease": 0.0,
     "CanRamp": false,
@@ -178,6 +179,7 @@
     "ResourceToRelease": {
       "_value": "Stone"
     },
+	"BuildRequirements" : ["Stone"],
     "StartingHealth": 20.0,
     "ProbabilityOfRelease": 0.0,
     "CanRamp": false,
@@ -224,6 +226,7 @@
     "ResourceToRelease": {
       "_value": "Stone"
     },
+	"BuildRequirements" : ["Stone"],
     "StartingHealth": 20.0,
     "ProbabilityOfRelease": 0.0,
     "CanRamp": false,
@@ -270,6 +273,7 @@
     "ResourceToRelease": {
       "_value": "Stone"
     },
+	"BuildRequirements" : ["Wood"],
     "StartingHealth": 20.0,
     "ProbabilityOfRelease": 0.0,
     "CanRamp": false,
@@ -316,6 +320,7 @@
     "ResourceToRelease": {
       "_value": "Wood"
     },
+	"BuildRequirements" : ["Wood"],
     "StartingHealth": 20.0,
     "ProbabilityOfRelease": 1.0,
     "CanRamp": true,
@@ -358,7 +363,7 @@
       "15, 10",
       "15, 10"
     ],
-    "ReleasesResource": true,
+    "ReleasesResource": false,
     "ResourceToRelease": {
       "_value": "Mana"
     },
@@ -402,6 +407,7 @@
     "ResourceToRelease": {
       "_value": "Wood"
     },
+	"BuildRequirements" : ["Wood"],
     "StartingHealth": 20.0,
     "ProbabilityOfRelease": 1.0,
     "CanRamp": false,

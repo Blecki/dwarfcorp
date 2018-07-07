@@ -229,7 +229,7 @@ namespace DwarfCorp.ContextCommands
             if (creature == null)
                 return;
 
-            creature.Creature.RestockAllImmediately();
+            creature.Creature.RestockAllImmediately(true);
         }
     }
 

@@ -715,6 +715,7 @@ TPixelToFrame TexturedPS_Icon(TVertexToPixel PSIn)
 	float4 illumColor = tex2D(IllumSampler, textureCoords);
 	Output.Color.rgb *= (diffuse1 + diffuse2 + float3(0.4, 0.42, 0.45));
 	Output.Color.rgba = lerp(Output.Color.rgba, texColor, SelfIllumination * illumColor.r);	
+    Output.Color.rgb *= xVertexColorMultiplier;
     return Output;
 }
 

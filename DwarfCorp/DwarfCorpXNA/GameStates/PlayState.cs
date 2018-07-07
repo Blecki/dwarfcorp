@@ -523,27 +523,28 @@ namespace DwarfCorp.GameStates
             base.RenderUnitialized(gameTime);
         }
 
+        private bool BuildRequirementsEqual(VoxelType voxA, VoxelType voxB)
+        {
+            return voxA == voxB || !(voxA.BuildRequirements.Count != voxB.BuildRequirements.Count || voxA.BuildRequirements.Any(r => !voxB.BuildRequirements.Contains(r)));
+        }
+
         void UpdateBlockWidget(Gui.Widget sender, VoxelType data)
         {
+
             int numResources;
             if (!int.TryParse(sender.Text, out numResources))
             {
                 sender.Text = "";
                 sender.Invalidate();
-                return;
-            }
-            var factionResources = Master.Faction.ListResourcesInStockpilesPlusMinions();
-            if (!factionResources.ContainsKey(data.ResourceToRelease))
-            {
-                sender.Text = "";
-                sender.Invalidate();
-                return;
+                numResources = 0;
             }
 
-            // Todo: Is this really needed?
-            int newNum = Math.Max(factionResources[data.ResourceToRelease].First.NumResources -
+            var resourceCount = Master.Faction.ListResourcesInStockpilesPlusMinions()
+                .Where(r => data.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))).Sum(r => r.Value.First.NumResources + r.Value.Second.NumResources);
+
+            int newNum = Math.Max(resourceCount -
                 World.PlayerFaction.Designations.EnumerateDesignations(DesignationType.Put).Count(d =>
-                    VoxelLibrary.GetVoxelType(d.Tag.ToString()).ResourceToRelease == data.ResourceToRelease), 0);
+                    BuildRequirementsEqual(VoxelLibrary.GetVoxelType(d.Tag.ToString()), data)), 0);
 
             if (newNum != numResources)
             {
@@ -1262,14 +1263,14 @@ namespace DwarfCorp.GameStates
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_WallTypes_Return }).Concat(
                         VoxelLibrary.GetTypes()
-                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.HasResources(voxel.ResourceToRelease))
+                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.ListResources().Any(r =>voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.ResourceType))))
                         .Select(data => new FlatToolTray.Icon
                         {
                             Tooltip = "Build " + data.Name,
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].First.NumResources.ToString(),
+                            Text = "",
                             EnabledTextColor = Color.White.ToVector4(),
                             Font = "font10-outline-numsonly",
                             PopupChild = new BuildWallInfo
@@ -1311,14 +1312,14 @@ namespace DwarfCorp.GameStates
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_WallTypes_Return }).Concat(
                         VoxelLibrary.GetTypes()
-                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.HasResources(voxel.ResourceToRelease))
+                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.ListResources().Any(r => voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.ResourceType))))
                         .Select(data => new FlatToolTray.Icon
                         {
                             Tooltip = "Build " + data.Name,
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].First.NumResources.ToString(),
+                            Text = "",
                             EnabledTextColor = Color.White.ToVector4(),
                             Font = "font10-outline-numsonly",
                             PopupChild = new BuildWallInfo
