@@ -141,7 +141,7 @@ namespace DwarfCorp
             if (Spells == null)
                 Spells = SpellLibrary.CreateSpellTree(components.World);
             CreateTools();
-
+            
             //InputManager.KeyReleasedCallback += OnKeyReleased;
             //InputManager.KeyPressedCallback += OnKeyPressed;
         }

@@ -92,26 +92,28 @@ namespace DwarfCorp
             Task.OnDequeued(Faction);
         }
 
-        public Task GetBestTask(CreatureAI creature, int minPriority=-1)
+        public Task GetBestTask(CreatureAI creatureAI, int minPriority=-1)
         {
             Task best = null;
             float bestCost = float.MaxValue;
             Task.PriorityType bestPriority = Task.PriorityType.Eventually;
-
+            var creature = creatureAI.Creature;
             foreach(var task in Tasks)
             {
                 if (!creature.Stats.IsTaskAllowed(task.Category))
                     continue;
                 if (task.AssignedCreatures.Count >= task.MaxAssignable)
                     continue;
-                if (task.IsFeasible(creature.Creature) != Task.Feasibility.Feasible)
+                if (task.IsComplete(creature.Faction))
+                    continue;
+                if (task.IsFeasible(creature) != Task.Feasibility.Feasible)
                     continue;
                 if (task.Priority < bestPriority)
                     continue;
                 if ((int)task.Priority <= minPriority)
                     continue;
 
-                var cost = task.ComputeCost(creature.Creature) * (1 + task.AssignedCreatures.Count);
+                var cost = task.ComputeCost(creature) * (1 + task.AssignedCreatures.Count);
 
                 if (cost < bestCost || task.Priority > bestPriority)
                 {
@@ -128,23 +130,35 @@ namespace DwarfCorp
             return null;
         }
 
+        public void OnVoxelChanged(VoxelChangeEvent e)
+        {
+            foreach(var task in Tasks)
+            {
+                task.OnVoxelChange(e);
+            }
+        }
+
+        private int updateIdx = 0;
+        private int workGroupSize = 2048;
         public void Update(List<CreatureAI> creatures)
         {
-            foreach (var t in Tasks.Where(t => t.IsComplete(Faction)))
-                t.OnDequeued(Faction);
-
-            Tasks.RemoveAll(t => t.IsComplete(Faction));
-            /*
-            UpdateTimer.Update(DwarfTime.LastTime);
-
-            if (UpdateTimer.HasTriggered)
+            for (int k = 0; k < workGroupSize; k++)
             {
-                Tasks = AssignTasksGreedy(Tasks, creatures, MaxDwarfTasks, NumAssignPerIteration);
-                Tasks.RemoveAll(task => creatures.All(c => task.ShouldDelete(c.Creature)));
-            }
-            */
+                int j = updateIdx + k;
+                if (j >= Tasks.Count)
+                {
+                    updateIdx = 0;
+                    return;
+                }
 
-            //Tasks.RemoveAll(t => t.IsFeasible(null) == Task.Feasibility.Infeasible);
+                if (Tasks[j].IsComplete(Faction))
+                {
+                    Tasks[j].OnDequeued(Faction);
+                    Tasks.RemoveAt(j);
+                    k = Math.Max(k - 1, 0);
+                }
+            }
+            updateIdx += workGroupSize;
         }
 
         public int GetMaxColumnValue(int[,] matrix, int column, int numRows, int numColumns)

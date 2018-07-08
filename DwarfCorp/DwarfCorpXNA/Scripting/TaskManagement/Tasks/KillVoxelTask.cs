@@ -47,6 +47,8 @@ namespace DwarfCorp
     {
         public VoxelHandle Voxel = VoxelHandle.InvalidHandle;
         public float VoxelHealth { get; set; }
+        private Feasibility CachedIsFeasible = Feasibility.Feasible;
+        private bool CacheDirty = true;
 
         public KillVoxelTask()
         {
@@ -75,21 +77,39 @@ namespace DwarfCorp
             return !Voxel.IsEmpty;
         }
 
-        public override Feasibility IsFeasible(Creature agent)
+        private Feasibility ComputeFeasible()
         {
-            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Dig))
-                return Feasibility.Infeasible;
-
             if (!Voxel.IsValid || Voxel.IsEmpty)
-                return Feasibility.Infeasible;
-
-            if (agent.AI.Status.IsAsleep)
                 return Feasibility.Infeasible;
 
             if (VoxelHelpers.VoxelIsCompletelySurrounded(Voxel) || VoxelHelpers.VoxelIsSurroundedByWater(Voxel))
                 return Feasibility.Infeasible;
 
             return Feasibility.Feasible;
+        }
+
+
+        public override void OnVoxelChange(VoxelChangeEvent changeEvent)
+        {
+            CacheDirty = true;
+        }
+
+        public override Feasibility IsFeasible(Creature agent)
+        {
+            if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Dig))
+                return Feasibility.Infeasible;
+
+            if (agent.AI.Status.IsAsleep)
+                return Feasibility.Infeasible;
+
+            if (!CacheDirty)
+            {
+                return CachedIsFeasible;
+            }
+
+            CachedIsFeasible = ComputeFeasible();
+            CacheDirty = false;
+            return CachedIsFeasible;
         }
 
         public override bool ShouldDelete(Creature agent)
@@ -99,24 +119,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            if (!Voxel.IsValid)
-                return 1000;
-
-            int surroundedValue = 0;
-            float freeTopValue = 0;
-            if (!alreadyCheckedFeasible)
-            {
-                if (VoxelHelpers.VoxelIsCompletelySurrounded(Voxel))
-                    surroundedValue = 10000;
-
-                var above = VoxelHelpers.GetVoxelAbove(Voxel);
-                if (above.IsValid && !above.IsEmpty)
-                {
-                    freeTopValue = 100;
-                }
-            }
-
-            return (agent.AI.Position - Voxel.WorldPosition).LengthSquared() + 10 * Math.Abs(VoxelConstants.ChunkSizeY - Voxel.Coordinate.Y) + surroundedValue + freeTopValue;
+            return (agent.AI.Position - Voxel.WorldPosition).LengthSquared() + 10 * Math.Abs(VoxelConstants.ChunkSizeY - Voxel.Coordinate.Y);
         }
 
         public override bool IsComplete(Faction faction)
