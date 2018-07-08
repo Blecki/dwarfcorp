@@ -1,5 +1,47 @@
 [
   {
     "Asset": "Entities/Dwarf/Layers/inverted-palette"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair01"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair02"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair03"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair04"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair05"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair06"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair07"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair08"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-skin01"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-skin02"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-skin03"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-skin04"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-skin05"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-skin06"
   }
 ]

@@ -2380,6 +2380,76 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair01.png">
+      <Name>palette-hair01</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair02.png">
+      <Name>palette-hair02</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair03.png">
+      <Name>palette-hair03</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair04.png">
+      <Name>palette-hair04</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair05.png">
+      <Name>palette-hair05</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair06.png">
+      <Name>palette-hair06</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair07.png">
+      <Name>palette-hair07</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair08.png">
+      <Name>palette-hair08</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-skin01.png">
+      <Name>palette-skin01</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-skin02.png">
+      <Name>palette-skin02</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-skin03.png">
+      <Name>palette-skin03</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-skin04.png">
+      <Name>palette-skin04</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-skin05.png">
+      <Name>palette-skin05</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-skin06.png">
+      <Name>palette-skin06</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Entities\Troll\troll_animation.json">
       <Name>troll_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
