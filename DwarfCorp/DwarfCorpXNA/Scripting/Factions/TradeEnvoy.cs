@@ -85,16 +85,13 @@ namespace DwarfCorp
                 OnClick = (gui, sender) =>
                 {
                     World.Paused = true;
-#if DEBUG
                     if (String.IsNullOrEmpty(this.OwnerFaction.Race.DiplomacyConversation))
-#endif
                         GameState.Game.StateManager.PushState(new Dialogue.DialogueState(
                             GameState.Game,
                             GameState.Game.StateManager,
                             this,
                             World.PlayerFaction,
                             World));
-#if DEBUG
                     else
                     {
                         // Prepare conversation memory for an envoy conversation.
@@ -114,7 +111,6 @@ namespace DwarfCorp
                         
                         GameState.Game.StateManager.PushState(new YarnState(OwnerFaction.Race.DiplomacyConversation, "Start", cMem));
                     }
-#endif
                 },
                 ShouldKeep = () => { return this.ExpiditionState == Expedition.State.Trading && !this.ShouldRemove; }
             }, liveCreatures.First().Physics, new Vector2(0, -10));

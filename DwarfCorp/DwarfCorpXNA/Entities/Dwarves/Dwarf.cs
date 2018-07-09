@@ -181,7 +181,6 @@ namespace DwarfCorp
 
         protected void CreateDwarfSprite(EmployeeClass employeeClass, ComponentManager manager)
         {
-#if DEBUG
             var random = new Random();
 
             if (Physics == null)
@@ -204,9 +203,6 @@ namespace DwarfCorp
 
             sprite.SetCurrentAnimation(Sprite.Animations.First().Value);
             sprite.SetFlag(Flag.ShouldSerialize, false);
-#else
-            base.CreateSprite(employeeClass, manager);
-#endif
         }
     }
 

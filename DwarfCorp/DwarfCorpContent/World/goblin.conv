@@ -1,0 +1,183 @@
+title: Start
+---
+<<set_portrait "GUI\diplo-goblin" 64 64 5.0 0 1 0>>
+<<show_portrait>>
+<<set_language "Goblin">>
+<<pick>>
+	Goblin: Hi, strange beard-goblins.
+	Goblin: Bringers of shines!
+	Goblin: Hi stink beasts.
+	Goblin: We here now.
+	Goblin: You more hairy than me imagined.
+<<end>>
+Goblin: Me $envoy_name from $envoy_faction.
+[[Main]]
+===
+
+
+title: Main
+---
+<<if $envoy_demands_tribute>>
+	<<pick>>
+		$envoy_name: You have gold? Me want.
+		$envoy_name: Goblins strong. Beards weak. Give us goodies now!
+		$envoy_name: This land Goblin land. You pay Goblin King Goblin Tax.
+	<<end>>
+	[[Pay a tribute of $envoy_tribute_demanded|PayTribute]]
+	[[Refuse to pay. (WAR)|DeclareWar]]
+<<elseif $faction_was_at_war>>
+	We fight war.
+	[[Make peace.|MakePeace]]
+	[[Continue the war.|DeclareWar]]
+<<else>>
+	[[Trade.|Trade]]
+	[[What is your opinion of us?|Opinion]]
+	[[What is something you have many of?|Many]]
+	[[What is something you have few of?|Few]]
+	[[What is something you hate?|Hate]]
+	[[What is something you like?|Like]]
+	[[Declare war!|ConfirmWar]]
+	[[Goodbye.|Goodbye]]
+<<endif>>
+===
+
+
+title: Trade
+---
+<<trade>> // Pauses conversation until trade is complete.
+<<if $trade_result == "cancelled">>
+	$envoy_name: Why no goodies? Why?
+	[[Main]]
+<<elseif $trade_result == "hated">>
+	<<pick>>
+		$envoy_name: Ew! Gross!
+		$envoy_name: Bad. Forbidden thing.
+		$envoy_name: Me will not take stinky bad things.
+	<<increment $offensive_trades>>
+	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
+	<<if $offensive_trades == 3>>
+		$envoy_name: Me will trade somewhere else with someone not bad like you.
+		<<recall_envoy>>
+		<<end_conversation>>
+	<<endif>>
+	[[Main]]
+<<elseif $trade_result == "unprofitable">>
+	<<pick>>
+		$envoy_name: Me ask for shines, not dirts. More money or me go home!
+		$envoy_name: Ugh, what? Need more for me.
+		$envoy_name: Me no take. Not enough.
+	<<end>>
+<<else>>
+	<<if $trade_result == "liked">>
+		<<political_event "you gave us something we liked" 0.25 4>>
+	<<endif>>
+	<<finalize_trade>> // Applys the trade and creates the events the achievement engine needs.
+	<<political_event "we had profitable trade" 0.25 2>>
+	<<pick>>
+		$envoy_name: Shines bring I joy.
+		$envoy_name: Is good. Me take.
+	<<end>>
+<<endif>>
+[[Main]]
+===
+
+
+title: Opinion
+---
+$envoy_name: So far, me-you relation-ship been $envoy_relationship.
+[[Main]]
+===
+
+
+title: Many
+---
+<<pick>>
+	$envoy_name: We got meat. Don't need more.
+<<end>>
+[[Main]]
+===
+
+
+title: Few
+---
+<<pick>>
+	$envoy_name: Shiney!
+	$envoy_name: Metal good. Shiney stone better. Unless metal gold.
+	$envoy_name: Me like drunk.
+<<end>>
+[[Main]]
+===
+
+
+title: Hate
+---
+<<pick>>
+	$envoy_name: No like dirt. Like shiney!
+	$envoy_name: Magic scary. No magic.
+	$envoy_name: You make things. No want.
+[[Main]]
+===
+
+
+title: Like
+---
+<<pick>>
+	$envoy_name: Metal. Metal!
+	$envoy_name: Things for the drunk!
+	$envoy_name: Shiney shiney shiney. Me say it enough?
+<<end>>
+[[Main]]
+===
+
+
+title: ConfirmWar
+---
+$envoy_name: You bring storm. Tribe big big, you sure?
+[[Yes!|DeclareWar]]
+[[No.|Main]]
+===
+
+
+title: DeclareWar
+---
+$envoy_name: We break you.
+<<political_event "you declared war on us" -2.0 4>>
+<<declare_war>> // This is what actually turns them hostile. Also generates the events for the achievement system.
+<<recall_envoy>>
+<<end_conversation>>
+===
+
+
+title: MakePeace
+---
+$envoy_name: Time of blood ends.
+<<political_event "you made peace with us" 0.4 4>>
+[[Main]]
+===
+
+
+title: PayTribute
+---
+<<if $player_money < $envoy_tribute_demanded>>
+	$envoy_name: Where your shiney? Me come back when you have more.
+	<<recall_envoy>>
+	<<end_conversation>>
+<<else>>
+	<<pay_tribute>>
+	<<political_event "you paid us tribute" 0.5 4>>
+	$envoy_name: Hehehe, me strong you weak, you pay.
+	[[Main]]
+<<endif>>
+===
+
+
+title: Goodbye
+---
+<<pick>>
+	$envoy_name: Talking time done.
+	$envoy_name: See you later, stink beasts.
+	$envoy_name: Me take home many tales of strange beard-goblins.
+<<end>>
+<<recall_envoy>>
+<<end_conversation>>
+===  
