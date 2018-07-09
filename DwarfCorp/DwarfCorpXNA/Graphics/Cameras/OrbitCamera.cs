@@ -160,7 +160,7 @@ namespace DwarfCorp
                 {
                     Vector3 newTarget = 0.8f * Target + 0.2f * currTarget;
                     Vector3 d = newTarget - Target;
-                    if (bounds.Contains(Position + d) != ContainmentType.Contains)
+                    if (bounds.Contains(Target + d) != ContainmentType.Contains)
                     {
                         ZoomTargets.RemoveAt(0);
                     }

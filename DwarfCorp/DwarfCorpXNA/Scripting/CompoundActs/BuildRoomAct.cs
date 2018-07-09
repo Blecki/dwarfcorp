@@ -152,6 +152,9 @@ namespace DwarfCorp
             {
 
             }
+            Agent.Creature.OverrideCharacterMode = false;
+            Agent.Creature.CurrentCharacterMode = CharacterMode.Idle;
+            Agent.Physics.Active = true;
             yield return Act.Status.Success;
         }
 

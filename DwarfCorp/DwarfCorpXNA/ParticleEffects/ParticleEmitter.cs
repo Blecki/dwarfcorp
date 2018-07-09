@@ -327,6 +327,10 @@ namespace DwarfCorp
                 {
                     p.LifeRemaining -= Data.ParticleDecay*(float) gameTime.ElapsedGameTime.TotalSeconds;
                 }
+                else if (p.TimeAlive > 60)
+                {
+                    p.LifeRemaining = 0;
+                }
 
                 p.Scale += Data.GrowthSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 

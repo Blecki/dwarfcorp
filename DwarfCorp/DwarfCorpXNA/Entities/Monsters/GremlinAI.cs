@@ -46,6 +46,7 @@ namespace DwarfCorp
     {
         public float DestroyPlayerObjectProbability = -1.0f;
         public string PlantBomb = null;
+        public Timer LeaveWorldTimer = new Timer(200, true);
 
         public GremlinAI()
         {
@@ -78,6 +79,14 @@ namespace DwarfCorp
                         AssignTask(new ActWrapperTask(new Sequence(new GoToEntityAct(thing, this), new Do(() => { EntityFactory.CreateEntity<Body>(PlantBomb, Position); return true; }))) { Priority = Task.PriorityType.High });
                     }
                 }
+            }
+
+            LeaveWorldTimer.Update(DwarfTime.LastTime);
+
+            if (LeaveWorldTimer.HasTriggered)
+            {
+                LeaveWorld();
+                LeaveWorldTimer.Reset();
             }
 
             return base.ActOnIdle();

@@ -92,6 +92,7 @@ namespace DwarfCorp
 
         public string ExplosionSoundResource = ContentPaths.Audio.gravel;
         public string[] HitSoundResources = new string[] { ContentPaths.Audio.pick };
+        public List<Resource.ResourceTags> BuildRequirements = new List<Resource.ResourceTags>();
 
         [JsonIgnore] public SoundSource ExplosionSound;
         [JsonIgnore] public SoundSource HitSound;
@@ -99,6 +100,21 @@ namespace DwarfCorp
         public VoxelType()
         {
             
+        }
+
+        public bool CanBuildWith(Resource resource)
+        {
+            return IsBuildable && ((BuildRequirements.Count == 0 && resource.Name == ResourceToRelease) || 
+                (BuildRequirements.Count > 0 && BuildRequirements.TrueForAll(requirement => resource.Tags.Contains(requirement))));
+        }
+
+        public string GetBuildRequirementsString()
+        {
+            if (BuildRequirements.Count == 0)
+            {
+                return ResourceToRelease;
+            }
+            return BuildRequirements[0].ToString();
         }
 
         public static bool operator ==(VoxelType obj1, VoxelType obj2)

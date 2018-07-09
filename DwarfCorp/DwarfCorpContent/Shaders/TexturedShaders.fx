@@ -666,6 +666,7 @@ TPixelToFrame TexturedPS_Colorscale(TVertexToPixel PSIn)
 
 	Output.Color = tex2D(ColorscaleSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
     Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.LightRamp.g, 0.5f)).rgb;
+    Output.Color.rgb *= PSIn.VertexColor.rgb;
 	clip(Output.Color.a - 0.5);
 	clip(PSIn.ClipDistance.w);
 	return Output;
@@ -714,6 +715,7 @@ TPixelToFrame TexturedPS_Icon(TVertexToPixel PSIn)
 	float4 illumColor = tex2D(IllumSampler, textureCoords);
 	Output.Color.rgb *= (diffuse1 + diffuse2 + float3(0.4, 0.42, 0.45));
 	Output.Color.rgba = lerp(Output.Color.rgba, texColor, SelfIllumination * illumColor.r);	
+    Output.Color.rgb *= xVertexColorMultiplier;
     return Output;
 }
 

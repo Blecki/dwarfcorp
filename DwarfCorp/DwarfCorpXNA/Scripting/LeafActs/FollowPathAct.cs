@@ -580,7 +580,7 @@ namespace DwarfCorp
         {
             if (Agent.Cart != null)
             {
-                Agent.Cart.Die();
+                Agent.Cart.GetRoot().Delete();
                 Agent.Cart = null;
                 Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
             }

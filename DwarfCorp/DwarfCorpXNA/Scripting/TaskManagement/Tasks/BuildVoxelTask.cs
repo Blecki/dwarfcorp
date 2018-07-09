@@ -80,24 +80,13 @@ namespace DwarfCorp
 
             Dictionary<ResourceType, int> numResources = new Dictionary<ResourceType, int>();
             int numFeasibleVoxels = 0;
-            var factionResources = agent.Faction.ListResources();
 
             var voxtype = VoxelLibrary.GetVoxelType(VoxType);
-            if (!numResources.ContainsKey(voxtype.ResourceToRelease))
-            {
-                numResources.Add(voxtype.ResourceToRelease, 0);
-            }
-            int num = numResources[voxtype.ResourceToRelease] + 1;
-            if (!factionResources.ContainsKey(voxtype.ResourceToRelease))
+            int count = agent.Faction.ListResources().Where(r => voxtype.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))).Sum(r => r.Value.NumResources);
+            if (count == 0)
             {
                 return Feasibility.Infeasible;
             }
-            var numInStocks = factionResources[voxtype.ResourceToRelease];
-            if (numInStocks.NumResources < num)
-            {
-                return Feasibility.Infeasible;
-            }
-            numResources[voxtype.ResourceToRelease]++;
             numFeasibleVoxels++;
             return numFeasibleVoxels > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
         }
@@ -134,7 +123,15 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
-            var resources = new ResourceAmount(VoxelLibrary.GetVoxelType(VoxType).ResourceToRelease, 1);
+            var voxtype = VoxelLibrary.GetVoxelType(VoxType);
+            var resource = creature.Faction.ListResources().Where(r => voxtype.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))).FirstOrDefault();
+            
+            if (resource.Key == null)
+            {
+                return null;
+            }
+
+            var resources = new ResourceAmount(resource.Value.ResourceType, 1);
 
             return new Select(
                 new Sequence(

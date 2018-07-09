@@ -136,6 +136,7 @@
     "ResourceToRelease": {
       "_value": "Stone"
     },
+	"BuildRequirements" : ["Stone"],
     "StartingHealth": 20.0,
     "ProbabilityOfRelease": 0.0,
     "CanRamp": false,
@@ -178,6 +179,7 @@
     "ResourceToRelease": {
       "_value": "Stone"
     },
+	"BuildRequirements" : ["Stone"],
     "StartingHealth": 20.0,
     "ProbabilityOfRelease": 0.0,
     "CanRamp": false,
@@ -224,6 +226,7 @@
     "ResourceToRelease": {
       "_value": "Stone"
     },
+	"BuildRequirements" : ["Stone"],
     "StartingHealth": 20.0,
     "ProbabilityOfRelease": 0.0,
     "CanRamp": false,
@@ -270,6 +273,7 @@
     "ResourceToRelease": {
       "_value": "Stone"
     },
+	"BuildRequirements" : ["Wood"],
     "StartingHealth": 20.0,
     "ProbabilityOfRelease": 0.0,
     "CanRamp": false,
@@ -316,6 +320,7 @@
     "ResourceToRelease": {
       "_value": "Wood"
     },
+	"BuildRequirements" : ["Wood"],
     "StartingHealth": 20.0,
     "ProbabilityOfRelease": 1.0,
     "CanRamp": true,
@@ -358,7 +363,7 @@
       "15, 10",
       "15, 10"
     ],
-    "ReleasesResource": true,
+    "ReleasesResource": false,
     "ResourceToRelease": {
       "_value": "Mana"
     },
@@ -402,6 +407,7 @@
     "ResourceToRelease": {
       "_value": "Wood"
     },
+	"BuildRequirements" : ["Wood"],
     "StartingHealth": 20.0,
     "ProbabilityOfRelease": 1.0,
     "CanRamp": false,
@@ -1307,7 +1313,7 @@
     "IsSoil": false,
     "IsSurface": false,
     "IsInvincible": false,
-    "Tint": "200, 200, 200, 255",
+    "Tint": "255, 255, 255, 255",
     "SpawnOnSurface": false,
     "IsTransparent": false,
     "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
@@ -1321,9 +1327,9 @@
     "$id": "36",
     "ID": 0,
     "Name": "Slate",
-    "Top": "3, 1",
-    "Bottom": "1, 0",
-    "Sides": "1, 0",
+    "Top": "7, 7",
+    "Bottom": "6, 7",
+    "Sides": "6, 7",
     "Transitions": 1,
     "HasTransitionTextures": false,
     "TransitionTiles": null,
@@ -1331,7 +1337,7 @@
     "ResourceToRelease": {
       "_value": "Stone"
     },
-    "StartingHealth": 60.0,
+    "StartingHealth": 160.0,
     "ProbabilityOfRelease": 1.0,
     "CanRamp": false,
     "RampSize": 0.0,
@@ -1349,7 +1355,7 @@
     "IsSoil": false,
     "IsSurface": false,
     "IsInvincible": false,
-    "Tint": "150, 150, 150, 255",
+    "Tint": "60, 110, 150, 255",
     "SpawnOnSurface": false,
     "IsTransparent": false,
     "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
@@ -1363,9 +1369,9 @@
     "$id": "37",
     "ID": 0,
     "Name": "Granite",
-    "Top": "3, 1",
-    "Bottom": "1, 0",
-    "Sides": "1, 0",
+    "Top": "7, 7",
+    "Bottom": "6, 7",
+    "Sides": "6, 7",
     "Transitions": 1,
     "HasTransitionTextures": false,
     "TransitionTiles": null,
@@ -1373,7 +1379,7 @@
     "ResourceToRelease": {
       "_value": "Stone"
     },
-    "StartingHealth": 100.0,
+    "StartingHealth": 300.0,
     "ProbabilityOfRelease": 1.0,
     "CanRamp": false,
     "RampSize": 0.0,
@@ -1391,7 +1397,7 @@
     "IsSoil": false,
     "IsSurface": false,
     "IsInvincible": false,
-    "Tint": "255, 200, 190, 255",
+    "Tint": "250, 100, 90, 255",
     "SpawnOnSurface": false,
     "IsTransparent": false,
     "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
@@ -1405,9 +1411,9 @@
     "$id": "38",
     "ID": 0,
     "Name": "Marble",
-    "Top": "3, 1",
-    "Bottom": "1, 0",
-    "Sides": "1, 0",
+    "Top": "7, 7",
+    "Bottom": "6, 7",
+    "Sides": "6, 7",
     "Transitions": 1,
     "HasTransitionTextures": false,
     "TransitionTiles": null,
@@ -1415,7 +1421,7 @@
     "ResourceToRelease": {
       "_value": "Stone"
     },
-    "StartingHealth": 200.0,
+    "StartingHealth": 400.0,
     "ProbabilityOfRelease": 1.0,
     "CanRamp": false,
     "RampSize": 0.0,
@@ -1433,7 +1439,7 @@
     "IsSoil": false,
     "IsSurface": false,
     "IsInvincible": false,
-    "Tint": "255, 100, 100, 255",
+    "Tint": "255, 255, 255, 255",
     "SpawnOnSurface": false,
     "IsTransparent": false,
     "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
@@ -1447,9 +1453,9 @@
     "$id": "39",
     "ID": 0,
     "Name": "Sandstone",
-    "Top": "3, 1",
-    "Bottom": "1, 0",
-    "Sides": "1, 0",
+    "Top": "7, 7",
+    "Bottom": "6, 7",
+    "Sides": "6, 7",
     "Transitions": 1,
     "HasTransitionTextures": false,
     "TransitionTiles": null,
@@ -1475,7 +1481,7 @@
     "IsSoil": false,
     "IsSurface": false,
     "IsInvincible": false,
-    "Tint": "255, 255, 50, 255",
+    "Tint": "220, 200, 50, 255",
     "SpawnOnSurface": false,
     "IsTransparent": false,
     "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
@@ -1489,9 +1495,9 @@
     "$id": "40",
     "ID": 0,
     "Name": "Obsidian",
-    "Top": "3, 1",
-    "Bottom": "1, 0",
-    "Sides": "1, 0",
+    "Top": "7, 7",
+    "Bottom": "6, 7",
+    "Sides": "6, 7",
     "Transitions": 1,
     "HasTransitionTextures": false,
     "TransitionTiles": null,
@@ -1499,7 +1505,7 @@
     "ResourceToRelease": {
       "_value": "Stone"
     },
-    "StartingHealth": 160.0,
+    "StartingHealth": 600.0,
     "ProbabilityOfRelease": 1.0,
     "CanRamp": false,
     "RampSize": 0.0,
