@@ -1,16 +1,13 @@
 title: Start
 ---
-<<set_portrait "GUI\diplo-goblin" 64 64 5.0 0 1 0>>
+<<set_portrait "GUI\diplo-moleman" 64 64 5.0 0 1 0>>
 <<show_portrait>>
-<<set_language "Goblin">>
+<<set_language "Moleman">> //Don't set the language - on account of molemen don't speak...? Or do I need a way to do 'speech' without the sound effects?
 <<pick>>
-	Goblin: Hi, strange beard-goblins.
-	Goblin: Bringers of shines!
-	Goblin: Hi stink beasts.
-	Goblin: We here now.
-	Goblin: You more hairy than me imagined.
+	The moleman lifts one claw.
+	The moleman grunts.
+	Moleman: <incomprehensible chittering>
 <<end>>
-Goblin: Me $envoy_name from $envoy_faction.
 [[Main]]
 ===
 
@@ -19,14 +16,12 @@ title: Main
 ---
 <<if $envoy_demands_tribute>>
 	<<pick>>
-		$envoy_name: You have gold? Me want.
-		$envoy_name: Goblins strong. Beards weak. Give us goodies now!
-		$envoy_name: This land Goblin land. You pay Goblin King Goblin Tax.
+		The moleman holds out his coin purse and points into it. He seems to want payment.
 	<<end>>
 	[[Pay a tribute of $envoy_tribute_demanded|PayTribute]]
 	[[Refuse to pay. (WAR)|DeclareWar]]
 <<elseif $faction_was_at_war>>
-	We fight war.
+	The moleman brandishes his pick. You remember that you are at war with his people. Is he threatening you?
 	[[Make peace.|MakePeace]]
 	[[Continue the war.|DeclareWar]]
 <<else>>
@@ -46,26 +41,23 @@ title: Trade
 ---
 <<trade>> // Pauses conversation until trade is complete.
 <<if $trade_result == "cancelled">>
-	$envoy_name: Why no goodies? Why?
+	Moleman: <annoyed chittering>
 	[[Main]]
 <<elseif $trade_result == "hated">>
 	<<pick>>
-		$envoy_name: Ew! Gross!
-		$envoy_name: Bad. Forbidden thing.
-		$envoy_name: Me will not take stinky bad things.
+		The moleman has become angry and begun yelling at his subordinates in their incomprehensible language.
+		The moleman throws your offer at your feet. Maybe he didn't like it?
 	<<increment $offensive_trades>>
 	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
 	<<if $offensive_trades == 3>>
-		$envoy_name: Me will trade somewhere else with someone not bad like you.
+		The moleman throws his helmet at one of his subordinates. This seems to be the signal for them to leave.
 		<<recall_envoy>>
 		<<end_conversation>>
 	<<endif>>
 	[[Main]]
 <<elseif $trade_result == "unprofitable">>
 	<<pick>>
-		$envoy_name: Me ask for shines, not dirts. More money or me go home!
-		$envoy_name: Ugh, what? Need more for me.
-		$envoy_name: Me no take. Not enough.
+		The moleman refuses. He shakes his coin purse.
 	<<end>>
 <<else>>
 	<<if $trade_result == "liked">>
@@ -74,8 +66,8 @@ title: Trade
 	<<finalize_trade>> // Applys the trade and creates the events the achievement engine needs.
 	<<political_event "we had profitable trade" 0.25 2>>
 	<<pick>>
-		$envoy_name: Shines bring I joy.
-		$envoy_name: Is good. Me take.
+		Moleman: <excited chittering>
+		The moleman smiles, showing gold teeth.
 	<<end>>
 <<endif>>
 [[Main]]
@@ -84,56 +76,42 @@ title: Trade
 
 title: Opinion
 ---
-$envoy_name: So far, me-you relation-ship been $envoy_relationship.
+The moleman shrugs. Your advisor reminds you of recent events, and you surmise that your current relationship with the molemen is $envoy_relationship.
 [[Main]]
 ===
 
 
 title: Many
 ---
-<<pick>>
-	$envoy_name: We got meat. Don't need more.
-<<end>>
+The moleman points at the ground. They live underground - dwarves have a lot in common with them, invluding an abundance of soil, stone, and gems.
 [[Main]]
 ===
 
 
 title: Few
 ---
-<<pick>>
-	$envoy_name: Shiney!
-	$envoy_name: Metal good. Shiney stone better. Unless metal gold.
-	$envoy_name: Me like drunk.
-<<end>>
+The moleman points at items in your stockpile. Wood. Magic. Metal. Those are all things he wants, apparently.
 [[Main]]
 ===
 
 
 title: Hate
 ---
-<<pick>>
-	$envoy_name: No like dirt. Like shiney!
-	$envoy_name: Magic scary. No magic.
-	$envoy_name: You make things. No want.
-<<end>>
+The moleman squints, shielding his eyes with one hand. Just being on the surface is difficult for them - anything related to the surface is distasteful for them.
 [[Main]]
 ===
 
 
 title: Like
 ---
-<<pick>>
-	$envoy_name: Metal. Metal!
-	$envoy_name: Things for the drunk!
-	$envoy_name: Shiney shiney shiney. Me say it enough?
-<<end>>
+The moleman removes his helmet and knocks on it. Yes, metal, of course. 
 [[Main]]
 ===
 
 
 title: ConfirmWar
 ---
-$envoy_name: You bring storm. Tribe big big, you sure?
+Moleman: <chittering>
 [[Yes!|DeclareWar]]
 [[No.|Main]]
 ===
@@ -141,7 +119,7 @@ $envoy_name: You bring storm. Tribe big big, you sure?
 
 title: DeclareWar
 ---
-$envoy_name: We break you.
+The moleman extends a claw toward you, then motions as if he is slitting his own throat.
 <<political_event "you declared war on us" -2.0 4>>
 <<declare_war>> // This is what actually turns them hostile. Also generates the events for the achievement system.
 <<recall_envoy>>
@@ -151,7 +129,7 @@ $envoy_name: We break you.
 
 title: MakePeace
 ---
-$envoy_name: Time of blood ends.
+The moleman shrugs.
 <<political_event "you made peace with us" 0.4 4>>
 [[Main]]
 ===
@@ -160,13 +138,13 @@ $envoy_name: Time of blood ends.
 title: PayTribute
 ---
 <<if $player_money < $envoy_tribute_demanded>>
-	$envoy_name: Where your shiney? Me come back when you have more.
+	Moleman: <annoyed chittering>
 	<<recall_envoy>>
 	<<end_conversation>>
 <<else>>
 	<<pay_tribute>>
 	<<political_event "you paid us tribute" 0.5 4>>
-	$envoy_name: Hehehe, me strong you weak, you pay.
+	The moleman smiles, showing gold teeth.
 	[[Main]]
 <<endif>>
 ===
@@ -174,11 +152,7 @@ title: PayTribute
 
 title: Goodbye
 ---
-<<pick>>
-	$envoy_name: Talking time done.
-	$envoy_name: See you later, stink beasts.
-	$envoy_name: Me take home many tales of strange beard-goblins.
-<<end>>
+The moleman bows and leaves.
 <<recall_envoy>>
 <<end_conversation>>
 ===  

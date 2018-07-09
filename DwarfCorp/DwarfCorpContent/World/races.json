@@ -82,6 +82,7 @@
   {
     "Name": "Goblins",
     "Posessive": "Goblish",
+    "DiplomacyConversation": "World/goblin.conv",
     "NumFurniture": 2,
     "CreatureTypes": [
       "Goblin",
@@ -141,7 +142,7 @@
     "LikedResources": [ "Metal", "Precious", "Gem", "Alcohol" ],
     "HatedResources": [ "Craft", "Soil", "Magical" ],
     "CommonResources": [ "AnimalProduct" ],
-    "RareResources": [ "Metal", "Gem", "Precious", "Craft", "Alcohol" ],
+    "RareResources": [ "Metal", "Gem", "Precious", "Alcohol" ],
     "TradeGoods": {
       "AnimalProduct": 32,
       "Craft": 3
@@ -154,6 +155,7 @@
   {
     "Name": "Molemen",
     "Posessive": "Molemish",
+    "DiplomacyConversation": "World/moleman.conv",
     "NumFurniture": 2,
     "CreatureTypes": [
       "Moleman"
@@ -204,7 +206,7 @@
     "LikedResources": [ "Soil", "Stone", "Precious", "Gem", "Metal" ],
     "HatedResources": [ "AnimalProduct", "AboveGroundPlant", "Alcohol" ],
     "CommonResources": [ "Gem", "Fungus", "Soil", "Stone" ],
-    "RareResources": [ "Alcohol", "Craft", "Magical", "Wood", "Metal" ],
+    "RareResources": [ "Craft", "Magical", "Wood", "Metal" ],
     "TradeGoods": {
       "Gem": 64,
       "Stone": 64,
