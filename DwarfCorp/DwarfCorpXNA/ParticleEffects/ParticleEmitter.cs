@@ -53,6 +53,7 @@ namespace DwarfCorp
         public InstanceData InstanceData;
         public float TimeAlive;
         public int Frame;
+        public Vector3 Direction;
     }
 
     [JsonObject(IsReference = true)]
@@ -89,6 +90,8 @@ namespace DwarfCorp
         public bool HasLighting = true;
         public bool RotatesWithVelocity = false;
         public ParticleBlend Blend = ParticleBlend.NonPremultiplied;
+        public string SpatterType = null;
+        public bool FixedRotation = false;
 
         [JsonIgnore]
         public BlendState BlendMode
@@ -145,16 +148,26 @@ namespace DwarfCorp
         public Timer TriggerTimer { get; set; }
         private static Camera _camera = null;
 
-        public static Matrix MatrixFromParticle(Particle particle)
+        public static Matrix MatrixFromParticle(EmitterData data, Particle particle)
         {
-            Matrix rot = Matrix.CreateRotationZ(particle.Angle);
-            Matrix bill = Matrix.CreateBillboard(particle.Position, _camera.Position, _camera.UpVector, null);
-            Matrix noTransBill = bill;
-            noTransBill.Translation = Vector3.Zero;
+            if (!data.FixedRotation)
+            {
+                Matrix rot = Matrix.CreateRotationZ(particle.Angle);
+                Matrix bill = Matrix.CreateBillboard(particle.Position, _camera.Position, _camera.UpVector, null);
+                Matrix noTransBill = bill;
+                noTransBill.Translation = Vector3.Zero;
 
-            Matrix worldRot = Matrix.CreateScale(particle.Scale) * rot * noTransBill;
-            worldRot.Translation = bill.Translation;
-            return worldRot;
+                Matrix worldRot = Matrix.CreateScale(particle.Scale) * rot * noTransBill;
+                worldRot.Translation = bill.Translation;
+                return worldRot;
+            }
+            else
+            {
+                Vector3 up = Math.Abs(Vector3.Dot(particle.Direction, Vector3.Up)) > 0.9 ? Vector3.UnitZ : Vector3.Up;
+                Matrix toReturn = Matrix.CreateLookAt(Vector3.Zero, particle.Direction, up);
+                toReturn.Translation = particle.Position;
+                return toReturn;
+            }
         }
 
         public ParticleEmitter(GraphicsDevice Device, ComponentManager manager, string name, Matrix localTransform, EmitterData emitterData) 
@@ -246,7 +259,8 @@ namespace DwarfCorp
             }
         }
 
-        public Particle CreateParticle(Vector3 pos, Vector3 velocity, Color tint)
+
+        public Particle CreateParticle(Vector3 pos, Vector3 velocity, Color tint, Vector3 direction)
         {
             Particle toAdd = new Particle
             {
@@ -257,7 +271,8 @@ namespace DwarfCorp
                 LifeRemaining = 1.0f,
                 LightRamp = tint,
                 Position = pos,
-                TimeAlive = 0.0f
+                TimeAlive = 0.0f,
+                Direction = direction
             };
             toAdd.InstanceData = new InstanceData(Matrix.Identity, toAdd.LightRamp, true);
 
@@ -270,12 +285,17 @@ namespace DwarfCorp
             return toAdd;
         }
 
+        public Particle CreateParticle(Vector3 pos, Vector3 velocity, Color tint)
+        {
+            return CreateParticle(pos, velocity, tint, velocity);
+        }
+
         public void RemoveParticle(Particle p)
         {
             p.LifeRemaining = -1;
         }
 
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        public void Update(ParticleManager manager, DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             ParticleEmitter._camera = camera;
 
@@ -341,7 +361,7 @@ namespace DwarfCorp
 
                 if (Data.HasLighting)
                 {
-                    if (v.IsValid && v.IsEmpty)
+                    if (v.IsValid)
                         p.LightRamp = new Color(v.Sunlight ? 255 : 0, 255, 0);
                 }
                 else
@@ -351,16 +371,35 @@ namespace DwarfCorp
 
                 if(Data.CollidesWorld && particlePhysics && vel > 0.2f)
                 {
-                    BoundingBox b = new BoundingBox(p.Position - Vector3.One * p.Scale * 0.5f, p.Position + Vector3.One * p.Scale * 0.5f);
                     if(v.IsValid && !v.IsEmpty)
                     {
+                        BoundingBox b = new BoundingBox(p.Position - Vector3.One * p.Scale * 0.5f, p.Position + Vector3.One * p.Scale * 0.5f);
+                        BoundingBox vBox = v.GetBoundingBox();
                         Physics.Contact contact = new Physics.Contact();
-                        if(Physics.TestStaticAABBAABB(b, v.GetBoundingBox(), ref contact))
+                        if(Physics.TestStaticAABBAABB(b, vBox, ref contact))
                         {
                             p.Position += contact.NEnter * contact.Penetration;
                             Vector3 newVelocity = Vector3.Reflect(p.Velocity, -contact.NEnter);
                             p.Velocity = newVelocity * Data.Damping;
                             p.AngularVelocity *= 0.5f;
+
+                            if (!String.IsNullOrEmpty(Data.SpatterType))
+                            {
+                                var above = VoxelHelpers.GetVoxelAbove(v);
+                                if (!above.IsValid || above.IsEmpty)
+                                {
+                                    float x = MathFunctions.Clamp(p.Position.X, vBox.Min.X + 0.1f, vBox.Max.X - 0.1f);
+                                    float z = MathFunctions.Clamp(p.Position.Z, vBox.Min.Z + 0.1f, vBox.Max.Z - 0.1f);
+                                    manager.Create(Data.SpatterType,
+                                        VertexNoise.Warp(new Vector3(x, v.RampType == RampType.None ? v.WorldPosition.Y + 1.02f : v.WorldPosition.Y + 0.6f, z)), Vector3.Zero, Color.White, Vector3.Up);
+                                }
+                                else
+                                {
+                                    manager.Create(Data.SpatterType, p.Position - contact.NEnter * contact.Penetration * 0.95f, Vector3.Zero, Color.White, contact.NEnter);
+                                }
+                                p.LifeRemaining = -1.0f;
+                            }
+
                         }
                     }
                 }
@@ -396,7 +435,7 @@ namespace DwarfCorp
                         }
                     }
                     p.InstanceData.ShouldDraw = true;
-                    p.InstanceData.Transform = MatrixFromParticle(p);
+                    p.InstanceData.Transform = MatrixFromParticle(Data, p);
                     p.InstanceData.LightRamp = p.LightRamp;
                 }
             }
