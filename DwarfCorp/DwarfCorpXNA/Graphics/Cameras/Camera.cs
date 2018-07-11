@@ -153,4 +153,16 @@ namespace DwarfCorp
         }
     }
 
+    public class FPSCamera : Camera
+    {
+        public override void Update(DwarfTime time, ChunkManager chunks)
+        {
+            base.Update(time, chunks);
+        }
+
+        public override void UpdateViewMatrix()
+        {
+            ViewMatrix = Matrix.CreateLookAt(Position, Target, Vector3.UnitY);
+        }
+    }
 }
