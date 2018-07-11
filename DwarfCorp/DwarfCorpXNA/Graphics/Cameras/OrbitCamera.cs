@@ -134,7 +134,7 @@ namespace DwarfCorp
         }
 
         private Point mousePrerotate = new Point(0, 0);
-
+        private bool crouched = false;
         public Vector3 Gravity = Vector3.Down * 20;
 
         public void WalkUpdate(DwarfTime time, ChunkManager chunks)
@@ -275,12 +275,18 @@ namespace DwarfCorp
 
             float subSteps = 10.0f;
             float subStepLength = 1.0f / subSteps;
-           
+
+            crouched = false;
             for (int i = 0; i < subSteps; i++)
             {
                 VoxelHandle currentVoxel = new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position));
 
                 var below = VoxelHelpers.GetNeighbor(currentVoxel, new GlobalVoxelOffset(0, -1, 0));
+                var above = VoxelHelpers.GetNeighbor(currentVoxel, new GlobalVoxelOffset(0, 1, 0));
+                if (above.IsValid && !above.IsEmpty)
+                {
+                    crouched = true;
+                }
                 if (!below.IsValid || below.IsEmpty)
                 {
                     Velocity += dt * Gravity * subStepLength;
@@ -622,13 +628,16 @@ namespace DwarfCorp
             // Does nothing in this camera...
         }
         private Vector3 Noise = Vector3.Zero;
+        private float HeightOffset = 0.0f;
         public override void UpdateViewMatrix()
         {
-            var undistorted = Position + Vector3.UnitY * 0.5f;
+            float heightOffset = crouched ? 0.0f : 0.5f;
+            HeightOffset = heightOffset * 0.1f + HeightOffset * 0.9f;
+            var undistorted = Position + Vector3.UnitY * heightOffset;
             var distorted = VertexNoise.Warp(undistorted);
             var noise = distorted - undistorted;
             Noise = noise * 0.1f + Noise * 0.9f;
-            ViewMatrix = Matrix.CreateLookAt(Position + Vector3.UnitY * 0.5f + Noise, FollowAutoTarget ? (AutoTarget * 0.5f + Target * 0.5f) : Target + Vector3.UnitY * 0.5f + Noise, Vector3.UnitY);
+            ViewMatrix = Matrix.CreateLookAt(Position + Vector3.UnitY * HeightOffset + Noise, FollowAutoTarget ? (AutoTarget * 0.5f + Target * 0.5f) : Target + Vector3.UnitY * HeightOffset + Noise, Vector3.UnitY);
         }
 
         private bool IsNeighborOccupied(VoxelHandle voxel, int x, int y, int z)
