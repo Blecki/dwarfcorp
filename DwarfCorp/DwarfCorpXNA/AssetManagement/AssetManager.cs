@@ -189,6 +189,31 @@ namespace DwarfCorp
                     yield return resolvedAssetPath;
             }
         }
+
+        private static IEnumerable<String> EnumerateDirectory(String Path)
+        {
+            foreach (var file in Directory.EnumerateFiles(Path))
+                yield return file;
+            foreach (var directory in Directory.EnumerateDirectories(Path))
+                foreach (var file in EnumerateDirectory(directory))
+                    yield return file;
+        }
+
+        public static IEnumerable<String> EnumerateAllFiles(String BasePath)
+        {
+            string basePath = FileUtils.NormalizePath(BasePath);
+            var searchList = GameSettings.Default.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
+            searchList.Reverse();
+            searchList.Add("Content");
+
+            foreach (var mod in searchList)
+            {
+                var directoryPath = mod + ProgramData.DirChar + basePath;
+                if (!Directory.Exists(directoryPath)) continue;
+                foreach (var file in EnumerateDirectory(directoryPath))
+                    yield return file;
+            }
+        }
         
         public static Texture2D GetContentTexture(string _asset)
         {
@@ -203,7 +228,7 @@ namespace DwarfCorp
             {
                 var existing = TextureCache[asset];
                 if (!existing.IsDisposed)
-                    return TextureCache[asset];
+                    return existing;
             }
 
             try
@@ -229,7 +254,21 @@ namespace DwarfCorp
                 TextureCache[asset] = r;
                 return r;
             }
+        }
 
+        public static Texture2D RawLoadTexture(string filename)
+        {
+            try
+            {
+                if (Path.GetExtension(filename) == ".xnb")
+                    return Content.Load<Texture2D>(filename.Substring(0, filename.Length - 4));
+                else
+                    return LoadUnbuiltTextureFromAbsolutePath(filename);
+            }
+            catch (ContentLoadException)
+            {
+                return null;
+            }
         }
 
         public static Texture2D LoadUnbuiltTextureFromAbsolutePath(string _file)

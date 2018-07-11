@@ -40,16 +40,24 @@ namespace DwarfCorp
     {
         private static Dictionary<string, Race> Races = null;
 
+        private static void LoadRaces()
+        {
+            if (Races != null) return;
+
+            Races = new Dictionary<string, Race>();
+            foreach (var race in FileUtils.LoadJsonListFromMultipleSources<Race>(ContentPaths.World.races, null, r => r.Name))
+                Races.Add(race.Name, race);
+        }
+
         public static Race FindRace(String Name)
         {
-            //Todo: Better modding - load list with names rather than dict.
-            if (Races == null)
-                Races = FileUtils.LoadJsonFromResolvedPath<Dictionary<string, Race>>(ContentPaths.World.races);
+            LoadRaces();
             return Races[Name];
         }
 
         public static Race RandomIntelligentRace()
         {
+            LoadRaces();
             return Datastructures.SelectRandom(Races.Values.Where(r => r.IsIntelligent && r.IsNative));
         }
     }

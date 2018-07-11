@@ -150,6 +150,35 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Ancora\AstNode.cs" />
+    <Compile Include="Ancora\Failure.cs" />
+    <Compile Include="Ancora\Grammar.cs" />
+    <Compile Include="Ancora\OperatorTable.cs" />
+    <Compile Include="Ancora\Parser.cs" />
+    <Compile Include="Ancora\ParseResult.cs" />
+    <Compile Include="Ancora\Parsers\Alternative.cs" />
+    <Compile Include="Ancora\Parsers\Character.cs" />
+    <Compile Include="Ancora\Parsers\Debug.cs" />
+    <Compile Include="Ancora\Parsers\Expression.cs" />
+    <Compile Include="Ancora\Parsers\HardError.cs" />
+    <Compile Include="Ancora\Parsers\Identifier.cs" />
+    <Compile Include="Ancora\Parsers\KeyWord.cs" />
+    <Compile Include="Ancora\Parsers\LateBound.cs" />
+    <Compile Include="Ancora\Parsers\Maybe.cs" />
+    <Compile Include="Ancora\Parsers\NoneOrMany.cs" />
+    <Compile Include="Ancora\Parsers\OneOrMany.cs" />
+    <Compile Include="Ancora\Parsers\Operator.cs" />
+    <Compile Include="Ancora\Parsers\Sequence.cs" />
+    <Compile Include="Ancora\Parsers\StringLiteral.cs" />
+    <Compile Include="Ancora\Parsers\AllInput.cs" />
+    <Compile Include="Ancora\Parsers\Token.cs" />
+    <Compile Include="Ancora\StringIterator.cs" />
+    <Compile Include="Ancora\TestGrammar.cs" />
+    <Compile Include="AssetManagement\IndexedTexture.cs" />
+    <Compile Include="AssetManagement\IndexedDecomposition.cs" />
+    <Compile Include="AssetManagement\TextureTool.cs" />
+    <Compile Include="AssetManagement\Palette.cs" />
+    <Compile Include="AssetManagement\MemoryTexture.cs" />
     <Compile Include="AssetManagement\ContentPathGenerator.cs" />
     <Compile Include="AssetManagement\ContentPaths.cs" />
     <Compile Include="AssetManagement\GameSave\ChunkFile.cs" />
@@ -169,6 +198,12 @@
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\Palette.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\Layer.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\LayeredAnimationProxy.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\LayerStack.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\LayerLibrary.cs" />
+    <Compile Include="Components\Graphics\LayeredSprites\LayeredCharacterSprite.cs" />
     <Compile Include="ConsoleCommandHandlerAttribute.cs" />
     <Compile Include="Entities\Fixtures\Conveyor.cs" />
     <Compile Include="Entities\Monsters\KoboldAI.cs" />
@@ -231,7 +266,18 @@
     <Compile Include="Entities\Monsters\Troll.cs" />
     <Compile Include="Entities\Plants\PlantFactories.cs" />
     <Compile Include="Entities\TimedExplosion.cs" />
+    <Compile Include="GameStates\DwarfDesignerState.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
+    <Compile Include="GameStates\YarnSpinner\EndConversation.cs" />
+    <Compile Include="GameStates\YarnSpinner\HidePortrait.cs" />
+    <Compile Include="GameStates\YarnSpinner\SpeechSynthesizer.cs" />
+    <Compile Include="GameStates\YarnSpinner\SetLanguage.cs" />
+    <Compile Include="GameStates\YarnSpinner\ShowPortrait.cs" />
+    <Compile Include="GameStates\YarnSpinner\SetPortrait.cs" />
+    <Compile Include="GameStates\YarnSpinner\Pick.cs" />
+    <Compile Include="GameStates\YarnSpinner\YarnCommandGrammar.cs" />
+    <Compile Include="GameStates\YarnSpinner\YarnCommandAttribute.cs" />
+    <Compile Include="GameStates\YarnSpinner\YarnState.cs" />
     <Compile Include="Goals\ScheduledEvent.cs" />
     <Compile Include="Goals\Events\SpawnEntityEvent.cs" />
     <Compile Include="Goals\Events\SpawnWarPartyEvent.cs" />
@@ -240,6 +286,8 @@
     <Compile Include="Goals\EventLibrary.cs" />
     <Compile Include="Goals\TimedIndicatorWidget.cs" />
     <Compile Include="Goals\GoalTypes.cs" />
+    <Compile Include="Graphics\Animation\NewAnimationDescriptor.cs" />
+    <Compile Include="Graphics\Animation\NewAnimationFrameConverter.cs" />
     <Compile Include="Graphics\Drawing\TriangleCache.cs" />
     <Compile Include="Graphics\Instancing\InstanceGroup.cs" />
     <Compile Include="Graphics\Instancing\TiledInstanceGroup.cs" />
@@ -253,9 +301,16 @@
     <Compile Include="Gui\Widgets\AutoGridPanel.cs" />
     <Compile Include="Gui\Widgets\CommandEntry.cs" />
     <Compile Include="Gui\Widgets\Graph.cs" />
+    <Compile Include="Gui\Widgets\TextBox.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
+    <Compile Include="Scripting\Factions\Trading\DeclareWarYarnCommand.cs" />
+    <Compile Include="Scripting\Factions\Trading\PayTributeYarnCommand.cs" />
+    <Compile Include="Scripting\Factions\Trading\RecallEnvoyYarnCommand.cs" />
+    <Compile Include="Scripting\Factions\Trading\TradeGameState.cs" />
+    <Compile Include="Scripting\Factions\Trading\PoliticalEventYarnCommand.cs" />
+    <Compile Include="Scripting\Factions\Trading\TradeYarnCommand.cs" />
     <Compile Include="Scripting\NewMagic\AttackSpell.cs" />
     <Compile Include="Scripting\NewMagic\BuffSpell.cs" />
     <Compile Include="Scripting\NewMagic\Spell.cs" />
@@ -316,11 +371,9 @@
     <Compile Include="Components\IUpdateableComponent.cs" />
     <Compile Include="ControlSettings.cs" />
     <Compile Include="DeProfiler.cs" />
-    <Compile Include="GameStates\Diplomacy\DialogueTree.cs" />
     <Compile Include="GameStates\Diplomacy\DialogueTreeTypes.cs" />
-    <Compile Include="GameStates\Diplomacy\DialogueState.cs" />
-    <Compile Include="GameStates\Diplomacy\ITradeEntity.cs" />
-    <Compile Include="GameStates\Diplomacy\TradeTransaction.cs" />
+    <Compile Include="Scripting\Factions\Trading\ITradeEntity.cs" />
+    <Compile Include="Scripting\Factions\Trading\TradeTransaction.cs" />
     <Compile Include="DwarfGame.cs" />
     <Compile Include="Entities\Animals\Bat.cs" />
     <Compile Include="Entities\Animals\Bird.cs" />
@@ -829,6 +882,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
+    <None Include="mod hooks.txt" />
     <EmbeddedResource Include="version.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -861,6 +915,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\YarnSpinner\YarnSpinner.csproj">
+      <Project>{6c3b03d2-2e89-4ec3-a022-e84053a7b17f}</Project>
+      <Name>YarnSpinner</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DwarfCorpContent\DwarfCorpXNAContent.contentproj">
       <Project>{D48F9E36-1F42-4633-B745-8C659D9550D4}</Project>
       <Name>DwarfCorpXNAContent</Name>

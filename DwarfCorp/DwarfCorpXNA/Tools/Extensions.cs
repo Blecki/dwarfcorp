@@ -45,6 +45,12 @@ namespace DwarfCorp
     /// </summary>
     public static class Extensions
     {
+        public static T SelectRandom<T>(this IEnumerable<T> list)
+        {
+            var enumerable = list as IList<T> ?? list.ToList();
+            return enumerable.Count > 0 ? enumerable.ElementAt(MathFunctions.Random.Next(enumerable.Count())) : default(T);
+        }
+
         public static T[] SubArray<T>(this T[] data, int index, int length)
         {
             T[] result = new T[length];

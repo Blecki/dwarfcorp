@@ -1,0 +1,191 @@
+title: Start
+---
+<<set_portrait "GUI\diplo-dorf" 64 64 5.0 0 1 0>>
+<<show_portrait>>
+<<set_language "Dwarf">>
+<<pick>>
+	Dwarf: Hello!
+	Dwarf: Well met.
+	Dwarf: Greetings!
+	Dwarf: Salutations!
+	Dwarf: Good to see you, fellow dwarf!
+<<end>>
+Dwarf: I am $envoy_name of $envoy_faction.
+[[Main]]
+===
+
+
+title: Main
+---
+<<if $envoy_demands_tribute>>
+	<<pick>>
+		$envoy_name: We have come to collect taxes for the King.
+		$envoy_name: The Dwarven Kingdom demands tax!
+		$envoy_name: The King needs revenue for his army.
+		$envoy_name: You have not paid your corporate income tax - pay me or be auditted!
+	<<end>>
+	[[Pay a tribute of $envoy_tribute_demanded|PayTribute]]
+	[[Refuse to pay. (WAR)|DeclareWar]]
+<<elseif $faction_was_at_war>>
+	We are at war.
+	[[Make peace.|MakePeace]]
+	[[Continue the war.|DeclareWar]]
+<<else>>
+	[[Trade.|Trade]]
+	[[What is your opinion of us?|Opinion]]
+	[[What is something you have many of?|Many]]
+	[[What is something you have few of?|Few]]
+	[[What is something you hate?|Hate]]
+	[[What is something you like?|Like]]
+	[[Declare war!|ConfirmWar]]
+	[[Goodbye.|Goodbye]]
+<<endif>>
+===
+
+
+title: Trade
+---
+<<trade>> // Pauses conversation until trade is complete.
+<<if $trade_result == "cancelled">>
+	$envoy_name: Not sure what you think I'm here for.
+	[[Main]]
+<<elseif $trade_result == "hated">>
+	$envoy_name: What is this? The deal is off! This is outrageous!
+	<<increment $offensive_trades>>
+	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
+	<<if $offensive_trades == 3>>
+		$envoy_name: There is obviously nothing here I want. Goodbye.
+		<<recall_envoy>>
+		<<end_conversation>>
+	<<endif>>
+	[[Main]]
+<<elseif $trade_result == "unprofitable">>
+	<<pick>>
+		$envoy_name: Do you take me for a fool? Where is the profit?
+		$envoy_name: I should not have come all this way. Not. Profitable.
+		$envoy_name: I thought we could trust one another. Instead you're wasting my time.
+		$envoy_name: Do you think I have space to carry such worthless goods?
+	<<end>>
+<<else>>
+	<<if $trade_result == "liked">>
+		<<political_event "you gave us something we liked" 0.25 4>>
+	<<endif>>
+	<<finalize_trade>> // Applys the trade and creates the events the achievement engine needs.
+	<<political_event "we had profitable trade" 0.25 2>>
+	<<pick>>
+		$envoy_name: Yes, this is profitable.
+		$envoy_name: We will both be rich at this rate.
+		$envoy_name: Ha! The baloon can barely stay in the air now!
+		$envoy_name: Thank Seleprak for inventing mercantilism!
+	<<end>>
+<<endif>>
+[[Main]]
+===
+
+
+title: Opinion
+---
+$envoy_name: So far, our relationship has been $envoy_relationship.
+[[Main]]
+===
+
+
+title: Many
+---
+<<pick>>
+	$envoy_name: We have a great deal of stone. Transporting more would not be profitable.
+	$envoy_name: The markets are flooded with metal of all kinds. Do not give us more!
+	$envoy_name: The mushroom crop has done exceptionally. We have more than we need, honestly.
+	$envoy_name: Ha, Ale, of course! Don't even try and compete with the local craft breweries!
+<<end>>
+[[Main]]
+===
+
+
+title: Few
+---
+<<pick>>
+	$envoy_name: There never seems to be enough magical items. Is there just not enough mana?
+	$envoy_name: Trees don't grow well underground. That's a hint.
+	$envoy_name: Well, you know, you can't go wrong with gems.
+	$envoy_name: Precious things. Gold. That's usually good, we can always use more gold.
+	$envoy_name: Trinkets are good for reselling. All kinds.
+<<end>>
+[[Main]]
+===
+
+
+title: Hate
+---
+$envoy_name: Anything can be profitable if you know who to sell it to. Don't worry about selling us distasteful items, I guarantee there's a buyer for everything.
+[[Main]]
+===
+
+
+title: Like
+---
+<<pick>>
+	$envoy_name: Metal. It's just amazing, isn't it?
+	$envoy_name: Gold - yeah. Gold. Lots of gold.
+	$envoy_name: Shiny transparent rocks. Rubies. Diamonds. Emeralds. All of them.
+	$envoy_name: I like things that show true artisinal talent. The kinds of things a craftsdwarf pours his soul into you.
+<<end>>
+[[Main]]
+===
+
+
+title: ConfirmWar
+---
+$envoy_name: Seleprak! Must we make war?
+[[Yes!|DeclareWar]]
+[[No.|Main]]
+===
+
+
+title: DeclareWar
+---
+<<pick>>
+	$envoy_name: This is a dark day for the dwarven empire.
+	$envoy_name: In the name of the king, we shall strike you down!
+	$envoy_name: Your rebellious corporation ends now.
+<<end>>
+<<political_event "you declared war on us" -2.0 4>>
+<<declare_war>> // This is what actually turns them hostile. Also generates the events for the achievement system.
+<<recall_envoy>>
+<<end_conversation>>
+===
+
+
+title: MakePeace
+---
+$envoy_name: War of this kind is not profitable.
+<<political_event "you made peace with us" 0.4 4>>
+[[Main]]
+===
+
+
+title: PayTribute
+---
+<<if $player_money < $envoy_tribute_demanded>>
+	$envoy_name: Ha! You can't even afford this paltry amount? We'll come back when you get your finances in order.
+	<<recall_envoy>>
+	<<end_conversation>>
+<<else>>
+	<<pay_tribute>>
+	<<political_event "you paid us tribute" 0.5 4>>
+	$envoy_name: A wonderfully straightforward transaction.
+	[[Main]]
+<<endif>>
+===
+
+
+title: Goodbye
+---
+<<pick>>
+	$envoy_name: Seleprak be with you!
+	$envoy_name: May your mines be deep and profitable.
+	$envoy_name: Remember the motherland.
+<<end>>
+<<recall_envoy>>
+<<end_conversation>>
+===  

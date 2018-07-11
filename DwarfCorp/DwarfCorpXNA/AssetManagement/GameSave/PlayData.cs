@@ -63,6 +63,7 @@ namespace DwarfCorp
         public SpellTree Spells;
         public TaskManager Tasks;
         public Embarkment InitialEmbark;
+        public Yarn.MemoryVariableStore ConversationMemory;
 
         public static PlayData CreateFromWorld(WorldManager World)
         {
@@ -78,7 +79,8 @@ namespace DwarfCorp
                 Designations = World.DesignationDrawer,
                 Spells = World.Master.Spells,
                 Tasks = World.Master.TaskManager,
-                InitialEmbark = World.InitialEmbark
+                InitialEmbark = World.InitialEmbark,
+                ConversationMemory = World.ConversationMemory
             };
         }
 

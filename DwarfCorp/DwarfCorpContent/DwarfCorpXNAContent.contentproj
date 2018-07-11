@@ -2005,6 +2005,14 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
+    <None Include="Entities\Dwarf\Layers\dwarf-palettes.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>dwarf-palettes</Name>
+    </None>
+    <None Include="Entities\Dwarf\Layers\dwarf-layers.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>dwarf-layers</Name>
+    </None>
     <None Include="Audio\XACT\Win\SoundBank.xsb">
       <Name>SoundBank</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2322,10 +2330,134 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Dwarf\Layers\FemaleDwarfFaceSheet.png">
+      <Name>FemaleDwarfFaceSheet</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\JowelBeardSheet.png">
+      <Name>JowelBeardSheet</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\MaleDwarfFaceSheet.png">
+      <Name>MaleDwarfFaceSheet</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\NormalNoseSheet.png">
+      <Name>NormalNoseSheet</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\TheRingHairSheet.png">
+      <Name>TheRingHairSheet</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\workerbodysheet.png">
+      <Name>workerbodysheet</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\crafter-hammer.png">
+      <Name>crafter-hammer</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\blank.png">
+      <Name>blank</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\base-palette.png">
+      <Name>base-palette</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\inverted-palette.png">
+      <Name>inverted-palette</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair01.png">
+      <Name>palette-hair01</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair02.png">
+      <Name>palette-hair02</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair03.png">
+      <Name>palette-hair03</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair04.png">
+      <Name>palette-hair04</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair05.png">
+      <Name>palette-hair05</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair06.png">
+      <Name>palette-hair06</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair07.png">
+      <Name>palette-hair07</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-hair08.png">
+      <Name>palette-hair08</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-skin01.png">
+      <Name>palette-skin01</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-skin02.png">
+      <Name>palette-skin02</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-skin03.png">
+      <Name>palette-skin03</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-skin04.png">
+      <Name>palette-skin04</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-skin05.png">
+      <Name>palette-skin05</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Dwarf\Layers\palette-skin06.png">
+      <Name>palette-skin06</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Entities\Troll\troll_animation.json">
       <Name>troll_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Entities\Dwarf\Layers\dwarf-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>dwarf-animations</Name>
+    </None>
     <None Include="events.json">
       <Name>events</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2780,6 +2912,22 @@
       <Name>voxel-types</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="World\goblin.conv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>goblin</Name>
+    </None>
+    <None Include="World\moleman.conv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>moleman</Name>
+    </None>
+    <None Include="World\elf.conv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>elf</Name>
+    </None>
+    <None Include="World\undead.conv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>undead</Name>
+    </None>
     <None Include="World\races.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>races</Name>
@@ -2787,6 +2935,14 @@
     <None Include="World\embarkments.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>embarkments</Name>
+    </None>
+    <None Include="World\dwarf.conv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>dwarf</Name>
+    </None>
+    <None Include="World\default.conv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>default</Name>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -3346,6 +3502,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="test.conv">
+      <Name>test</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Compile Include="Entities\Troll\troll.png">
       <Name>troll</Name>
       <Importer>TextureImporter</Importer>
