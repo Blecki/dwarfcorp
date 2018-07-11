@@ -58,6 +58,7 @@ namespace DwarfCorp.GameStates
         private Timer AutoSaveTimer;
         private EmployeeInfo SelectedEmployeeInfo;
         private Widget ContextMenu;
+        private Widget MultiContextMenu;
         private Widget BottomBar;
         private Widget MinimapIcon;
         private ProgressBar ManaBar;
@@ -94,6 +95,11 @@ namespace DwarfCorp.GameStates
 
         private void ChangeTool(GameMaster.ToolMode Mode)
         {
+            if (MultiContextMenu != null)
+            {
+                MultiContextMenu.Close();
+                MultiContextMenu = null;
+            }
             ManaBar.Hidden = Mode != GameMaster.ToolMode.Magic;
             Master.ChangeTool(Mode);
             foreach (var icon in ToolHiliteItems)
@@ -223,6 +229,16 @@ namespace DwarfCorp.GameStates
 
                 ContextCommands = new List<DwarfCorp.ContextCommands.ContextCommand>();
                 ContextCommands.Add(new ContextCommands.ChopCommand());
+                ContextCommands.Add(new ContextCommands.AttackCommand());
+                ContextCommands.Add(new ContextCommands.WrangleCommand());
+                ContextCommands.Add(new ContextCommands.CancelCommand());
+                ContextCommands.Add(new ContextCommands.GatherCommand());
+                ContextCommands.Add(new ContextCommands.DestroyCommand());
+                ContextCommands.Add(new ContextCommands.MoveCommand());
+                ContextCommands.Add(new DwarfCorp.ContextCommands.EmptyBackpackCommand());
+                ContextCommands.Add(new DwarfCorp.ContextCommands.CancelDwarfCommand());
+                ContextCommands.Add(new ContextCommands.FireCommand());
+                ContextCommands.Add(new ContextCommands.PromoteCommand());
                 World.LogEvent(String.Format("We have arrived at {0}", Overworld.Name));
             }
             base.OnEnter();
@@ -309,6 +325,7 @@ namespace DwarfCorp.GameStates
                                 });
                                 
                                 GuiRoot.ShowDialog(ContextMenu);
+                                args.Handled = true;
                             }
                         }
                     }
@@ -506,27 +523,28 @@ namespace DwarfCorp.GameStates
             base.RenderUnitialized(gameTime);
         }
 
+        private bool BuildRequirementsEqual(VoxelType voxA, VoxelType voxB)
+        {
+            return voxA == voxB || !(voxA.BuildRequirements.Count != voxB.BuildRequirements.Count || voxA.BuildRequirements.Any(r => !voxB.BuildRequirements.Contains(r)));
+        }
+
         void UpdateBlockWidget(Gui.Widget sender, VoxelType data)
         {
+
             int numResources;
             if (!int.TryParse(sender.Text, out numResources))
             {
                 sender.Text = "";
                 sender.Invalidate();
-                return;
-            }
-            var factionResources = Master.Faction.ListResourcesInStockpilesPlusMinions();
-            if (!factionResources.ContainsKey(data.ResourceToRelease))
-            {
-                sender.Text = "";
-                sender.Invalidate();
-                return;
+                numResources = 0;
             }
 
-            // Todo: Is this really needed?
-            int newNum = Math.Max(factionResources[data.ResourceToRelease].First.NumResources -
+            var resourceCount = Master.Faction.ListResourcesInStockpilesPlusMinions()
+                .Where(r => data.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))).Sum(r => r.Value.First.NumResources + r.Value.Second.NumResources);
+
+            int newNum = Math.Max(resourceCount -
                 World.PlayerFaction.Designations.EnumerateDesignations(DesignationType.Put).Count(d =>
-                    VoxelLibrary.GetVoxelType(d.Tag.ToString()).ResourceToRelease == data.ResourceToRelease), 0);
+                    BuildRequirementsEqual(VoxelLibrary.GetVoxelType(d.Tag.ToString()), data)), 0);
 
             if (newNum != numResources)
             {
@@ -738,10 +756,11 @@ namespace DwarfCorp.GameStates
             var markerFilter = GuiRoot.RootItem.AddChild(new DesignationFilter
             {
                 DesignationDrawer = World.DesignationDrawer,
+                DesignationSet = World.PlayerFaction.Designations,
                 Hidden = true,
                 Border = "border-fancy",
                 AutoLayout = AutoLayout.FloatBottomLeft,
-                MinimumSize = new Point(300, 180)
+                MinimumSize = new Point(300, 200)
             });
 
             var taskList = GuiRoot.RootItem.AddChild(new TaskListPanel
@@ -1139,7 +1158,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -1186,7 +1205,7 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     World.ShowToolPopup("Left click objects to move them.\nRight click to destroy them.");
-                    Master.ChangeTool(GameMaster.ToolMode.MoveObjects);
+                    ChangeTool(GameMaster.ToolMode.MoveObjects);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
@@ -1200,7 +1219,7 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     World.ShowToolPopup("Left click objects to destroy them.");
-                    Master.ChangeTool(GameMaster.ToolMode.DeconstructObjects);
+                    ChangeTool(GameMaster.ToolMode.DeconstructObjects);
                 },
                 Behavior = FlatToolTray.IconBehavior.LeafIcon
             };
@@ -1229,7 +1248,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -1244,14 +1263,14 @@ namespace DwarfCorp.GameStates
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_WallTypes_Return }).Concat(
                         VoxelLibrary.GetTypes()
-                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.HasResources(voxel.ResourceToRelease))
+                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.ListResources().Any(r =>voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.ResourceType))))
                         .Select(data => new FlatToolTray.Icon
                         {
                             Tooltip = "Build " + data.Name,
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].First.NumResources.ToString(),
+                            Text = "",
                             EnabledTextColor = Color.White.ToVector4(),
                             Font = "font10-outline-numsonly",
                             PopupChild = new BuildWallInfo
@@ -1293,14 +1312,14 @@ namespace DwarfCorp.GameStates
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_WallTypes_Return }).Concat(
                         VoxelLibrary.GetTypes()
-                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.HasResources(voxel.ResourceToRelease))
+                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.ListResources().Any(r => voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.ResourceType))))
                         .Select(data => new FlatToolTray.Icon
                         {
                             Tooltip = "Build " + data.Name,
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = Master.Faction.ListResourcesInStockpilesPlusMinions()[data.ResourceToRelease].First.NumResources.ToString(),
+                            Text = "",
                             EnabledTextColor = Color.White.ToVector4(),
                             Font = "font10-outline-numsonly",
                             PopupChild = new BuildWallInfo
@@ -1369,7 +1388,170 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
+            };
+
+            Func<CraftItem, FlatToolTray.Icon> createCraftIcon = (data) => new FlatToolTray.Icon
+            {
+                Icon = data.Icon,
+                Tooltip = "Craft " + data.Name,
+                KeepChildVisible = true, // So the player can interact with the popup.
+                ExpandChildWhenDisabled = true,
+                Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
+                Text = TextGenerator.Shorten(data.Name, 5),
+                TextVerticalAlign = VerticalAlign.Below,
+                TextColor = Color.White.ToVector4(),
+                PopupChild = new TabPanel
+                {
+                    Rect = new Rectangle(0, 0, 450, 250),
+                    TextColor = Color.Black.ToVector4(),
+                    HoverTextColor = Color.DarkRed.ToVector4(),
+                    ButtonFont = "font10",
+                    OnSelectedTabChanged = (widget) =>
+                    {
+                        this.GuiRoot.SafeCall(widget.OnShown, widget);
+                    },
+                    TabSource = new string[]{"Place", "Stockpile"}.Select((title) =>
+                    {
+                        if (title == "Place")
+                            return new KeyValuePair<string, Widget>("Place",
+                            new BuildCraftInfo
+                            {
+                                Data = data,
+                                AllowWildcard = true,
+                                Rect = new Rectangle(0, 0, 450, 200),
+                                Master = Master,
+                                World = World,
+                                Transparent = true,
+                                OnShown = (sender) =>
+                                {
+                                },
+                                BuildAction = (sender, args) =>
+                                {
+                                    var buildInfo = sender as BuildCraftInfo;
+                                    if (buildInfo == null)
+                                        return;
+                                    sender.Parent.Parent.Hidden = true;
+                                    var tool = Master.Tools[GameMaster.ToolMode.BuildObject] as BuildObjectTool;
+                                    tool.SelectedResources = buildInfo.GetSelectedResources();
+                                    Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                    Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                                    tool.CraftType = data;
+                                    tool.Mode = BuildObjectTool.PlacementMode.BuildNew;
+
+                                // Todo: This should never be true.
+                                if (tool.PreviewBody != null)
+                                    {
+                                        tool.PreviewBody.GetRoot().Delete();
+                                        tool.PreviewBody = null;
+                                    }
+
+                                    ChangeTool(GameMaster.ToolMode.BuildObject);
+                                    World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
+                                },
+                                PlaceAction = (sender, args) =>
+                                {
+                                    var buildInfo = sender as BuildCraftInfo;
+                                    if (buildInfo == null)
+                                        return;
+                                    sender.Parent.Parent.Hidden = true;
+                                    var tool = Master.Tools[GameMaster.ToolMode.BuildObject] as BuildObjectTool;
+                                    tool.SelectedResources = null;
+                                    Master.Faction.RoomBuilder.CurrentRoomData = null;
+                                    Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                                    tool.CraftType = data;
+                                    tool.Mode = BuildObjectTool.PlacementMode.PlaceExisting;
+
+                                // Todo: This should never be true.
+                                if (tool.PreviewBody != null)
+                                    {
+                                        tool.PreviewBody.GetRoot().Delete();
+                                        tool.PreviewBody = null;
+                                    }
+
+                                    ChangeTool(GameMaster.ToolMode.BuildObject);
+                                    World.ShowToolPopup("Click to place " + data.Name);
+                                }
+                            });
+                        else return
+                            new KeyValuePair<string, Widget>("Stockpile", new BuildCraftInfo
+                            {
+                                Data = data.ObjectAsCraftableResource(),
+                                Rect = new Rectangle(0, 0, 450, 200),
+                                Master = Master,
+                                World = World,
+                                Transparent = true,
+                                BuildAction = (sender, args) =>
+                                {
+                                    var buildInfo = (sender as Gui.Widgets.BuildCraftInfo);
+                                    if (buildInfo == null)
+                                        return;
+                                    sender.Parent.Parent.Hidden = true;
+                                    var assignments = new List<Task>();
+                                    for (int i = 0; i < buildInfo.GetNumRepeats(); i++)
+                                    {
+                                        assignments.Add(new CraftResourceTask(data.ObjectAsCraftableResource(), 1, buildInfo.GetSelectedResources()));
+                                    }
+                                    World.Master.TaskManager.AddTasks(assignments);
+                                    World.ShowToolPopup(data.CurrentVerb + " " + buildInfo.GetNumRepeats() + " " + data.Name);
+                                    World.Tutorial("build crafts");
+                                },
+                            });
+                    })
+                },
+                OnConstruct = (sender) =>
+                {
+                    AddToolbarIcon(sender, () => true);
+                },
+            };
+
+            Dictionary<string, bool> categoryExists = new Dictionary<string, bool>();
+
+            var category_return_button = new FlatToolTray.Icon
+            {
+                Icon = new TileReference("tool-icons", 11),
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
+                },
+                //TODO
+                ReplacementMenu = null
+            };
+
+            Func<string, Widget> createCraftCategory = category =>
+            {
+                var menu_category = new FlatToolTray.Tray
+                {
+                    ItemSource = (new Widget[] { category_return_button }).Concat(
+                    CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.Category == category)
+                    .Select(data => createCraftIcon(data)))
+                };
+                var firstItem = CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.Category == category).First();
+                var category_icon = new FlatToolTray.Icon
+                {
+                    Icon = firstItem.Icon,
+                    Tooltip = "Craft " + category,
+                    Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                    ReplacementMenu = menu_category,
+                    Text = TextGenerator.Shorten(category, 5),
+                    TextVerticalAlign = VerticalAlign.Below,
+                    TextColor = Color.White.ToVector4(),
+                };
+                return category_icon;
+            };
+            List<CraftItem> rootObjects = new List<CraftItem>();
+            foreach (var item in CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.AllowUserCrafting))
+            {
+                if (string.IsNullOrEmpty(item.Category) || !categoryExists.ContainsKey(item.Category))
+                {
+                    rootObjects.Add(item);
+                    if (!string.IsNullOrEmpty(item.Category))
+                    {
+                        categoryExists[item.Category] = true;
+                    }
                 }
             };
 
@@ -1377,56 +1559,17 @@ namespace DwarfCorp.GameStates
             {
                 Tag = "craft item",
                 ItemSource = (new Widget[]{ icon_menu_CraftTypes_Return }).Concat(
-                    CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object)
-                    .Select(data => new FlatToolTray.Icon
+                    rootObjects.Select(data =>
                     {
-                        Icon = data.Icon,
-                        Tooltip = "Craft " + data.Name,
-                        KeepChildVisible = true, // So the player can interact with the popup.
-                        ExpandChildWhenDisabled = true,
-                        Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
-                        Text = TextGenerator.Shorten(data.Name, 5),
-                        TextVerticalAlign = VerticalAlign.Below,
-                        TextColor = Color.White.ToVector4(),
-                        PopupChild = new BuildCraftInfo
+                        if (string.IsNullOrEmpty(data.Category))
                         {
-                            Data = data,
-                            AllowWildcard = false,
-                            Rect = new Rectangle(0, 0, 350, 150),
-                            Master = Master,
-                            World = World,
-                            OnShown = (sender) =>
-                            {
-                            },
-                            BuildAction = (sender, args) =>
-                            {
-                                var buildInfo = sender.Parent as BuildCraftInfo;
-                                if (buildInfo == null)
-                                    return;
-                                sender.Parent.Hidden = true;
-                                var tool = Master.Tools[GameMaster.ToolMode.BuildObject] as BuildObjectTool;
-                                tool.SelectedResources = buildInfo.GetSelectedResources();
-                                Master.Faction.RoomBuilder.CurrentRoomData = null;
-                                Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
-                                tool.CraftType = data;
-
-                                // Todo: This should never be true.
-                                if (tool.PreviewBody != null)
-                                {
-                                    tool.PreviewBody.GetRoot().Delete();
-                                    tool.PreviewBody = null;
-                                }
-
-                                ChangeTool(GameMaster.ToolMode.BuildObject);
-                                World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
-                            },
-                        },
-                        OnConstruct = (sender) =>
-                        {
-                            AddToolbarIcon(sender, () => true);
-                        },
+                            return createCraftIcon(data);
+                        }
+                        return createCraftCategory(data.Category);
                     }))
             };
+
+            category_return_button.ReplacementMenu = menu_CraftTypes;
 
             var icon_BuildCraft = new FlatToolTray.Icon
             {
@@ -1459,6 +1602,7 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Craft resource",
                 ItemSource = (new Widget[] { icon_menu_ResourceTypes_Return }).Concat(
                     CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
+                    && item.AllowUserCrafting
                     && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) &&
                     !ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
                     .Select(data => new FlatToolTray.Icon
@@ -1474,15 +1618,15 @@ namespace DwarfCorp.GameStates
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
-                            Rect = new Rectangle(0, 0, 350, 200),
+                            Rect = new Rectangle(0, 0, 450, 200),
                             Master = Master,
                             World = World,
                             BuildAction = (sender, args) =>
                             {
-                                var buildInfo = (sender.Parent as Gui.Widgets.BuildCraftInfo);
+                                var buildInfo = (sender as Gui.Widgets.BuildCraftInfo);
                                 if (buildInfo == null)
                                     return;
-                                sender.Parent.Hidden = true;
+                                sender.Hidden = true;
                                 var assignments = new List<Task>();
                                 for (int i = 0; i < buildInfo.GetNumRepeats(); i++)
                                 {
@@ -1524,7 +1668,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -1544,7 +1688,7 @@ namespace DwarfCorp.GameStates
                                     {
                                         new ResourceAmount("Rail", 1)
                                     };
-                    Master.ChangeTool(GameMaster.ToolMode.PaintRail);
+                    ChangeTool(GameMaster.ToolMode.PaintRail);
                 }
             };
 
@@ -1607,7 +1751,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -1662,7 +1806,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -1670,6 +1814,7 @@ namespace DwarfCorp.GameStates
             {
                 ItemSource = (new Widget[] { icon_menu_Edibles_Return }).Concat(
                     CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
+                    && item.AllowUserCrafting
                     && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated)
                     && ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
                     .Select(data => new FlatToolTray.Icon
@@ -1681,13 +1826,13 @@ namespace DwarfCorp.GameStates
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
-                            Rect = new Rectangle(0, 0, 350, 200),
+                            Rect = new Rectangle(0, 0, 450, 200),
                             Master = Master,
                             World = World,
                             BuildAction = (sender, args) =>
                             {
-                                var buildInfo = sender.Parent as Gui.Widgets.BuildCraftInfo;
-                                sender.Parent.Hidden = true;
+                                var buildInfo = sender as Gui.Widgets.BuildCraftInfo;
+                                sender.Hidden = true;
                                 List<Task> assignments = new List<Task> { new CraftResourceTask(data, buildInfo.GetNumRepeats(), buildInfo.GetSelectedResources()) };
                                 World.Master.TaskManager.AddTasks(assignments);
                                 World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
@@ -1840,7 +1985,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -1854,7 +1999,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -1979,7 +2124,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -2043,7 +2188,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -2113,7 +2258,7 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                 OnClick = (widget, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 }
             };
 
@@ -2161,7 +2306,7 @@ namespace DwarfCorp.GameStates
                 Icon = new TileReference("round-buttons", 5),
                 OnClick = (sender, args) =>
                 {
-                    Master.ChangeTool(GameMaster.ToolMode.CancelTasks);
+                    ChangeTool(GameMaster.ToolMode.CancelTasks);
                     (Master.Tools[GameMaster.ToolMode.CancelTasks] as CancelTasksTool).Options = (sender as FlatToolTray.Icon).PopupChild as CancelToolOptions;
                 },
                 Behavior = FlatToolTray.IconBehavior.ShowClickPopupAndLeafIcon,
@@ -2220,7 +2365,7 @@ namespace DwarfCorp.GameStates
                     menu_RoomTypes,
                     menu_WallTypes,
                     menu_Floortypes,
-                    menu_Rail
+                    menu_Rail,
                 },
                 /*OnLayout = (sender) =>
                 {
@@ -2252,6 +2397,49 @@ namespace DwarfCorp.GameStates
             // Now that it's laid out, bring the second bar to the front so commands draw over other shit.
             secondBar.BringToFront();
             GodMenu.BringToFront();
+
+            Master.BodySelector.LeftReleased += BodySelector_LeftReleased;
+        }
+
+        private List<Body> BodySelector_LeftReleased()
+        {
+            if (MultiContextMenu != null)
+            {
+                MultiContextMenu.Close();
+                MultiContextMenu = null;
+            }
+
+            if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits)
+                return null;
+
+            Master.SelectedObjects.RemoveAll(b => !ContextCommands.Any(c => c.CanBeAppliedTo(b, World)));
+            var bodiesClicked = Master.SelectedObjects;
+
+            if (bodiesClicked.Count > 0)
+            {
+                var availableCommands = ContextCommands.Where(c => bodiesClicked.Any(b => c.CanBeAppliedTo(b, World)));
+
+                if (availableCommands.Count() > 0)
+                {
+                    // Show context menu.
+                    MultiContextMenu = GuiRoot.ConstructWidget(new HorizontalContextMenu
+                    {
+                        Commands = availableCommands.ToList(),
+                        MultiBody = bodiesClicked,
+                        World = World
+                    });
+
+                    MultiContextMenu.Rect = new Rectangle(MinimapFrame.Rect.Right + 2, MinimapFrame.Rect.Bottom - MultiContextMenu.Rect.Height, MultiContextMenu.Rect.Width, MultiContextMenu.Rect.Height);
+                    MultiContextMenu.Layout();
+                    GuiRoot.ShowDialog(MultiContextMenu);
+                }
+            }
+            else if (MultiContextMenu != null)
+            {
+                MultiContextMenu.Close();
+                MultiContextMenu = null;
+            }
+            return null;
         }
 
         /// <summary>
@@ -2292,7 +2480,7 @@ namespace DwarfCorp.GameStates
                 if (MainMenu.Hidden && PausePanel == null)
                     (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);
                 else if (Master.CurrentToolMode != GameMaster.ToolMode.SelectUnits && PausePanel == null)
-                    Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
                 else if (PausePanel != null)
                 {
                     PausePanel.Close();
@@ -2359,7 +2547,7 @@ namespace DwarfCorp.GameStates
                 {
                     if (!GodMenu.Hidden)
                     {
-                        Master.ChangeTool(GameMaster.ToolMode.SelectUnits);
+                        ChangeTool(GameMaster.ToolMode.SelectUnits);
                     }
                     GodMenu.Hidden = !GodMenu.Hidden;
                     GodMenu.Invalidate();

@@ -67,6 +67,22 @@ namespace DwarfCorp
             
         }
 
+        public bool CanAttack(Body other)
+        {
+            var creature = other.EnumerateAll().OfType<Creature>().FirstOrDefault();
+            if (creature == null)
+            {
+                return false;
+            }
+
+            if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() ==
+                Relationship.Loving)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public override void OnMouseOver(IEnumerable<Body> bodies)
         {
             bool shown = false;

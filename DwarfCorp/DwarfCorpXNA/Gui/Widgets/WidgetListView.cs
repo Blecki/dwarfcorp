@@ -106,7 +106,7 @@ namespace DwarfCorp.Gui.Widgets
                 int h = Math.Max(ItemHeight, child.MinimumSize.Y);
                 sumHeight += h;
                 heights.Add(h);
-                if (sumHeight < drawableInterior.Height)
+                if (sumHeight <= drawableInterior.Height)
                 {
                     itemsThatFit++;
                 }
@@ -116,7 +116,7 @@ namespace DwarfCorp.Gui.Widgets
                 }
             }
             // Update scrollbar scroll area.
-            if (itemsThatFit > Children.Count - 1)
+            if (itemsThatFit >= Children.Count - 1)
             {
                 ScrollBar.ScrollArea = 0;
                 ScrollBar.Hidden = true;

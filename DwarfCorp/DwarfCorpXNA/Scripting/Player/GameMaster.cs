@@ -64,6 +64,11 @@ namespace DwarfCorp
 
         public void ChangeTool(ToolMode NewTool)
         {
+            if (NewTool != ToolMode.SelectUnits)
+            {
+                SelectedObjects = new List<Body>();
+            }
+
             // Todo: Should probably clean up existing tool even if they are the same tool.
             Tools[NewTool].OnBegin();
             if (CurrentToolMode != NewTool)
@@ -78,6 +83,9 @@ namespace DwarfCorp
         public List<CreatureAI> SelectedMinions { get { return Faction.SelectedMinions; } set { Faction.SelectedMinions = value; } }
 
         [JsonIgnore]
+        public List<Body> SelectedObjects = new List<Body>();
+
+        [JsonIgnore]
         public SpellTree Spells { get; set; }
 
         [JsonIgnore]
@@ -90,6 +98,7 @@ namespace DwarfCorp
         private Timer sliceDownTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
         private Timer sliceUpTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
         public int MaxViewingLevel = VoxelConstants.ChunkSizeY;
+
 
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
@@ -132,7 +141,7 @@ namespace DwarfCorp
             if (Spells == null)
                 Spells = SpellLibrary.CreateSpellTree(components.World);
             CreateTools();
-
+            
             //InputManager.KeyReleasedCallback += OnKeyReleased;
             //InputManager.KeyPressedCallback += OnKeyPressed;
         }
@@ -245,6 +254,8 @@ namespace DwarfCorp
         public void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
             CurrentTool.OnBodiesSelected(bodies, button);
+            if (CurrentToolMode == ToolMode.SelectUnits)
+                SelectedObjects = bodies;
         }
 
         public void OnDrag(List<VoxelHandle> voxels, InputManager.MouseButton button)
@@ -359,6 +370,14 @@ namespace DwarfCorp
             DwarfGame.SpriteBatch.Begin();
             BodySelector.Render(DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.End();
+
+            foreach (var obj in SelectedObjects)
+            {
+                if (obj.IsVisible && !obj.IsDead)
+                {
+                    Drawer3D.DrawBox(obj.GetBoundingBox(), Color.White, 0.01f, true);
+                }
+            }
         }
 
         public void UpdateRooms()

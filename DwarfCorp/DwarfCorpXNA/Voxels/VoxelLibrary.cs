@@ -49,6 +49,7 @@ namespace DwarfCorp
     {
         public static Dictionary<VoxelType, BoxPrimitive> PrimitiveMap = new Dictionary<VoxelType, BoxPrimitive>();
         public static VoxelType emptyType = null;
+        public static VoxelType DesignationType = null;
 
         public static Dictionary<string, VoxelType> Types = new Dictionary<string, VoxelType>();
         public static List<VoxelType> TypeList = null;
@@ -111,6 +112,7 @@ namespace DwarfCorp
             var cubeTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
             TypeList = FileUtils.LoadJsonListFromMultipleSources<VoxelType>(ContentPaths.voxel_types, null, v => v.Name);
             emptyType = TypeList[0];
+            DesignationType = TypeList[1];
 
             short ID = 0;
             foreach (VoxelType type in TypeList)
@@ -126,6 +128,21 @@ namespace DwarfCorp
 
                 type.ExplosionSound = SoundSource.Create(type.ExplosionSoundResource);
                 type.HitSound = SoundSource.Create(type.HitSoundResources);
+                if (type.ReleasesResource)
+                {
+                    if (ResourceLibrary.GetResourceByName(type.Name) == null)
+                    {
+                        var resource = new Resource(ResourceLibrary.GetResourceByName(type.ResourceToRelease))
+                        {
+                            Name = type.Name,
+                            ShortName = type.Name,
+                            Tint = type.Tint,
+                            Generated = false
+                        };
+                        ResourceLibrary.Add(resource);
+                        type.ResourceToRelease = resource.Name;
+                    }
+                }
             }
         }
 
@@ -230,6 +247,7 @@ namespace DwarfCorp
                     shader.View = viewMatrix;
                     shader.Projection = projectionMatrix;
                     shader.World = Matrix.CreateTranslation(-half);
+                    shader.VertexColorTint = type.Tint;
                     pass.Apply();
                     primitive.Render(device);
                 }

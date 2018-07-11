@@ -126,7 +126,16 @@ namespace DwarfCorp
             }
 
             if (Liquid != null)
+            {
                 Liquid.CopyTo(c.Data._Water, 0);
+                for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
+                    for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
+                        for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
+                        {
+                            VoxelHandle handle = new VoxelHandle(c, new LocalVoxelCoordinate(x, y, z));
+                            c.Data.LiquidPresent[y] += handle.LiquidLevel;
+                        }
+            }
             if (RampsSunlightExplored != null)
                 RampsSunlightExplored.CopyTo(c.Data.RampsSunlightExplored, 0);
             if (GrassType != null)

@@ -554,6 +554,12 @@ namespace DwarfCorp
                 }
             }
 
+            public class Troll
+            {
+                public static string troll_animation = ProgramData.CreatePath("Entities", "Troll", "troll_animation.json");
+            }
+
+
             public class Dwarf
             {
                 public static string dwarf_classes = ProgramData.CreatePath("Entities", "Dwarf", "dwarf_classes.json");

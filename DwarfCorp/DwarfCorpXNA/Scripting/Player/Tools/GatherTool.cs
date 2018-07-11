@@ -63,15 +63,19 @@ namespace DwarfCorp
         }
 
 
+        public bool CanGather(Body c)
+        {
+            return c.Tags.Contains("Resource") &&
+                c.Active &&
+                c.IsVisible &&
+                c.Parent == Player.World.ComponentManager.RootComponent;
+        }
+
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {
             List<Task> assignments = new List<Task>();
 
-            foreach (var resource in bodies.Where(c => 
-                c.Tags.Contains("Resource") && 
-                c.Active && 
-                c.IsVisible && 
-                c.Parent == Player.World.ComponentManager.RootComponent))
+            foreach (var resource in bodies.Where(body => CanGather(body)))
             {
                 if (Player.World.ChunkManager.IsAboveCullPlane(resource.BoundingBox)) continue;
 

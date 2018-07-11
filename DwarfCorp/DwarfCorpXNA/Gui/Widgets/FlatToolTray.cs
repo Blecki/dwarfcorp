@@ -29,8 +29,21 @@ namespace DwarfCorp.Gui.Widgets
 
             public void SwitchTray(Widget NewTray)
             {
+                if (NewTray != null && !Children.Contains(NewTray))
+                {
+                    AddChild(NewTray);
+                    Layout();
+                }
                 foreach (var child in Children)
+                {
                     child.Hidden = true;
+                    foreach (var subchild in child.EnumerateChildren().Where(c => c is FramedIcon)
+                                .SelectMany(c => c.EnumerateChildren()))
+                    {
+                        subchild.Hidden = true;
+                        subchild.Invalidate();
+                    }
+                }
                 NewTray.Hidden = false;
                 Root.SafeCall(NewTray.OnShown, NewTray);
                 Invalidate();

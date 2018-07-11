@@ -105,24 +105,20 @@ namespace DwarfCorp
             yield break;
         }
 
-        public static void RestockAllImmediately(this Creature agent)
+        public static void RestockAllImmediately(this Creature agent, bool allowMarkedForUse=false)
         {
             Dictionary<string, ResourceAmount> aggregatedResources = new Dictionary<string, ResourceAmount>();
             foreach (var resource in agent.Inventory.Resources)
             {
-                if (!resource.MarkedForRestock || agent.AI.GatherManager.StockOrders.Count == 0)
+                if (allowMarkedForUse || !resource.MarkedForUse)
                 {
-                    if (!resource.MarkedForUse)
+                    resource.MarkedForRestock = true;
+
+                    if (!aggregatedResources.ContainsKey(resource.Resource))
                     {
-                        resource.MarkedForRestock = true;
-
-                        if (!aggregatedResources.ContainsKey(resource.Resource))
-                        {
-                            aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
-                        }
-                        aggregatedResources[resource.Resource].NumResources++;
+                        aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
                     }
-
+                    aggregatedResources[resource.Resource].NumResources++;
                 }
             }
 
@@ -145,6 +141,10 @@ namespace DwarfCorp
             Dictionary<string, ResourceAmount> aggregatedResources = new Dictionary<string, ResourceAmount>();
             foreach (var resource in agent.Inventory.Resources)
             {
+                if (resource.MarkedForUse)
+                {
+                    continue;
+                }
                 resource.MarkedForRestock = true;
 
                 if (!aggregatedResources.ContainsKey(resource.Resource))
@@ -156,7 +156,11 @@ namespace DwarfCorp
 
             foreach (var resource in aggregatedResources)
             {
-                var task = new StockResourceTask(resource.Value.CloneResource());
+                var task = new StockResourceTask(resource.Value.CloneResource())
+                {
+                    Priority = Task.PriorityType.Low
+                };
+
                 if (task.IsFeasible(agent) == Task.Feasibility.Feasible && !agent.AI.Tasks.Contains(task))
                 {
                     agent.AI.AssignTask(task);

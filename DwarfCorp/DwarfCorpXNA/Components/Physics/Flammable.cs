@@ -32,6 +32,15 @@ namespace DwarfCorp
             }
         }
 
+        [JsonIgnore]
+        public bool IsOnFire
+        {
+            get
+            {
+                return Heat >= Flashpoint;
+            }
+        }
+
         public float Heat { get; set; }
         public float Flashpoint { get; set; }
         public float Damage { get; set; }

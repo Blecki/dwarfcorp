@@ -89,14 +89,19 @@ namespace DwarfCorp
             if (body != null)
             {
                 var bounds = body.GetBoundingBox();
+                /*
                 foreach(var resource in Resources)
-                {
+                { 
                     for (int i = 0; i < resource.NumResources; i++)
                     {
                         Vector3 pos = MathFunctions.RandVector3Box(bounds);
                         EntityFactory.CreateEntity<Body>(resource.ResourceType + " Resource", pos);
                     }
                 }
+                */
+                Resource resource = CraftLibrary.GetCraftable(this.CraftType).ToResource(World, Resources);
+                Vector3 pos = MathFunctions.RandVector3Box(bounds);
+                EntityFactory.CreateEntity<Body>(resource.Name + " Resource", pos);
             }
             base.Die();
         }

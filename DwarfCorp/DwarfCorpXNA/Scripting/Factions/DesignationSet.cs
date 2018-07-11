@@ -44,9 +44,6 @@ namespace DwarfCorp
 {
     public class DesignationSet
     {
-        [JsonIgnore]
-        public TriangleCache TriangleCache = new TriangleCache();
-        public bool RecomputeVisibility = false;
         public class VoxelDesignation
         {
             public bool Visible = true;
@@ -54,20 +51,6 @@ namespace DwarfCorp
             public DesignationType Type;
             public Object Tag;
             public Task Task;
-            [JsonIgnore]
-            public uint _drawing = 0;
-
-            [OnDeserialized]
-            public void OnDeserialized(StreamingContext ctx)
-            {
-                // TODO: mklingen. This is a horrible hack caused by the fact that Newtonsoft.Json does not understand
-                // that this is a numeric type with a width of 16. I have to downconvert it from 64 to 16.
-                // Update: blecki. This should be unecessary now. Put designations store a string now.
-                if (Tag is Int64)
-                {
-                    Tag = (short)(long)(Tag);
-                }
-            }
         }
 
         public class EntityDesignation
@@ -103,7 +86,6 @@ namespace DwarfCorp
 
         public AddDesignationResult AddVoxelDesignation(VoxelHandle Voxel, DesignationType Type, Object Tag, Task Task)
         {
-            RecomputeVisibility = true;
             var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
 
             List<VoxelDesignation> list = null;
@@ -131,26 +113,20 @@ namespace DwarfCorp
                     Tag = Tag,
                     Task = Task
                 });
+                Voxel.Invalidate();
                 return AddDesignationResult.Added;
             }
         }
 
         public RemoveDesignationResult RemoveVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
         {
-            RecomputeVisibility = true;
             var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
             if (!VoxelDesignations.ContainsKey(key)) return RemoveDesignationResult.DidntExist;
             var list = VoxelDesignations[key];
-            foreach (var designation in list)
-            {
-                if (designation._drawing > 0)
-                {
-                    TriangleCache.EraseSegment(designation._drawing);
-                }
-            }
             var r = list.RemoveAll(d => TypeSet(d.Type, Type)) == 0 ? RemoveDesignationResult.DidntExist : RemoveDesignationResult.Removed;
             if (list.Count == 0)
                 VoxelDesignations.Remove(key);
+            Voxel.Invalidate();
             return r;
         }
 
@@ -182,7 +158,7 @@ namespace DwarfCorp
         {
             foreach (var key in VoxelDesignations)
                 foreach (var d in key.Value)
-                        yield return d;
+                    yield return d;
         }
 
         public IEnumerable<VoxelDesignation> EnumerateDesignations(VoxelHandle Voxel)
@@ -192,17 +168,6 @@ namespace DwarfCorp
                 foreach (var des in VoxelDesignations[key])
                     yield return des;
         }
-
-        private void RemoveVoxelDesignation(VoxelDesignation D)
-        {
-            var key = VoxelHelpers.GetVoxelQuickCompare(D.Voxel);
-            if (!VoxelDesignations.ContainsKey(key)) return;
-            var list = VoxelDesignations[key];
-            list.Remove(D);
-            if (list.Count == 0)
-                VoxelDesignations.Remove(key);
-        }
-
 
         // Todo: Probably a more effecient way to do this.
         public void CleanupDesignations()

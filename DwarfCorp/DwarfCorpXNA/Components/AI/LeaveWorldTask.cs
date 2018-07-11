@@ -46,6 +46,8 @@ namespace DwarfCorp
     /// <summary> Task telling the creature to exit the world. </summary>
     public class LeaveWorldTask : Task
     {
+        public Timer DieTimer = new Timer(60, true);
+
         public LeaveWorldTask()
         {
             ReassignOnDeath = false;
@@ -57,6 +59,15 @@ namespace DwarfCorp
 
             while (true)
             {
+                DieTimer.Update(DwarfTime.LastTime);
+                if (DieTimer.HasTriggered)
+                {
+                    foreach(var status in Die(agent))
+                    {
+                        continue;
+                    }
+                    yield break;
+                }
                 var creatureVoxel = agent.Physics.CurrentVoxel;
                 List<MoveAction> path = new List<MoveAction>();
                 for (int i = 0; i < 10; i++)
@@ -95,12 +106,17 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        break;
+                        foreach (var status in Die(agent))
+                            continue;
+                        yield return Act.Status.Success;
+                        yield break;
                     }
                 }
                 if (path.Count == 0)
                 {
-                    yield return Act.Status.Fail;
+                    foreach (var status in Die(agent))
+                        continue;
+                    yield return Act.Status.Success;
                     yield break;
                 }
                 agent.AI.Blackboard.SetData("GreedyPath", path);

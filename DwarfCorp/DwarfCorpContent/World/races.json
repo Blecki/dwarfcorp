@@ -1,6 +1,7 @@
 {
     "Dwarf": {
         "Name": "Dwarf",
+		"Posessive": "Dwarvish",
         "CreatureTypes": 
         [
             "Dwarf",
@@ -77,20 +78,25 @@
             "Sand" :  16,
             "Glass" :  8
         },
+		"NumFurniture": 4,
         "Crafts" :  ["Metal"],
         "Encrustings":  ["Gem"],
         "Icon":  1
     },
     "Goblins": {
         "Name": "Goblins",
+		"Posessive": "Goblish",
+		"NumFurniture": 2,
         "CreatureTypes": [
-            "Goblin"
+            "Goblin",
+			"Troll"
         ],
         "TradeEnvoys": 
         [["Goblin", "Goblin", "Goblin"]],
         "WarParties": 
         [["Goblin", "Goblin", "Goblin"],
-         ["Goblin", "Goblin", "Goblin", "Goblin"]
+         ["Goblin", "Goblin", "Goblin", "Troll"],
+		 ["Goblin", "Goblin", "Troll", "Troll"]
         ],
         "NaturalEnemies" :  ["Demon", "Elf", "Undead", "Carnivore"],
         "IsIntelligent": true,
@@ -152,6 +158,8 @@
     },
     "Molemen": {
         "Name": "Molemen",
+		"Posessive": "Molemish",
+		"NumFurniture": 2,
         "CreatureTypes": [
             "Moleman"
         ],
@@ -224,6 +232,8 @@
     },
     "Elf": {
         "Name": "Elf",
+		"Posessive": "Elvish",
+		"NumFurniture": 2,
         "CreatureTypes": [
             "Elf"
         ],
@@ -299,6 +309,8 @@
     },
     "Undead": {
         "Name": "Undead",
+		"Posessive": "Undead",
+		"NumFurniture": 2,
         "CreatureTypes": [
             "Necromancer",
             "Skeleton"
@@ -376,6 +388,8 @@
     },
     "Demon": {
         "Name": "Demon",
+		"Posessive": "Demonic",
+		"NumFurniture": 2,
         "CreatureTypes": [
             "Demon"
         ],

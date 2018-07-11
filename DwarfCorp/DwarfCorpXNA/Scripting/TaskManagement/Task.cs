@@ -171,6 +171,12 @@ namespace DwarfCorp
         {
 
         }
+
+        public virtual void OnVoxelChange(VoxelChangeEvent changeEvent)
+        {
+
+        }
+
     }
 
     public class ActWrapperTask : Task

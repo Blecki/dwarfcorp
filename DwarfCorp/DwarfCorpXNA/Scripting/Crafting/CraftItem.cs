@@ -61,11 +61,23 @@ namespace DwarfCorp
             Meal,
             Ale,
             Bread,
-            GemTrinket
+            GemTrinket,
+            Object
         }
 
+        /// <summary>
+        /// Unique ID of the craft item.
+        /// </summary>
         public string Name = "";
+        /// <summary>
+        /// Entity factory handle that generates an object from this craft item.
+        /// </summary>
         public string EntityName = "";
+        /// <summary>
+        /// When converting between object and resource representations of the craft item, this is the object corresponding to 
+        /// an individual resource.
+        /// </summary>
+        public string ObjectName = "";
         public List<Quantitiy<Resource.ResourceTags>> RequiredResources = new List<Quantitiy<Resource.ResourceTags>>();
         public Gui.TileReference Icon = null;
         public float BaseCraftTime = 0.0f;
@@ -85,5 +97,88 @@ namespace DwarfCorp
         public bool Deconstructable = true;
         public CraftActBehaviors CraftActBehavior = CraftActBehaviors.Normal;
         public bool AllowRotation = false;
+        public string Category = "";
+        /// <summary>
+        /// If true, this will be displayed in the list of resources that the player can craft.
+        /// </summary>
+        public bool AllowUserCrafting = true;
+
+        private IEnumerable<ResourceAmount> MergeResources(IEnumerable<ResourceAmount> resources)
+        {
+            Dictionary<ResourceType, int> counts = new Dictionary<ResourceType, int>();
+            foreach(var resource in resources)
+            {
+                if(!counts.ContainsKey(resource.ResourceType))
+                {
+                    counts.Add(resource.ResourceType, 0);
+                }
+                counts[resource.ResourceType] += resource.NumResources;
+            }
+
+            foreach(var count in counts)
+            {
+                yield return new ResourceAmount(count.Key, count.Value);
+            }
+        }
+
+        public Resource ToResource(WorldManager world, List<ResourceAmount> selectedResources, string prefix = "")
+        {
+            var objectName = String.IsNullOrEmpty(ObjectName) ? Name : ObjectName;
+            string resourceName = prefix + objectName + " (" + TextGenerator.GetListString(MergeResources(selectedResources).Select(r => (string)r.ResourceType)) + ")";
+
+            Resource toReturn = ResourceLibrary.GetResourceByName(resourceName);
+
+            if (toReturn ==  null)
+            {
+                var sheet = world.Gui.RenderData.SourceSheets[Icon.Sheet];
+
+                var tex = AssetManager.GetContentTexture(sheet.Texture);
+                var numTilesX = tex.Width / sheet.TileWidth;
+                var numTilesY = tex.Height / sheet.TileHeight;
+                var point = new Point(Icon.Tile % numTilesX, Icon.Tile / numTilesX);
+                toReturn = new Resource()
+                {
+                    Name = resourceName,
+                    Tags = new List<Resource.ResourceTags>()
+                    {
+                        Resource.ResourceTags.CraftItem,
+                        Resource.ResourceTags.Craft
+                    },
+                    MoneyValue = selectedResources.Sum(r => ResourceLibrary.GetResourceByName(r.ResourceType).MoneyValue) * 2.0m,
+                    CraftInfo = new Resource.CraftItemInfo
+                    {
+                        Resources = selectedResources,
+                        CraftItemType = Name
+                    },
+                    ShortName = Name,
+                    Description = Description,
+                    GuiLayers = new List<Gui.TileReference>() {  Icon },
+                    CompositeLayers = new List<Resource.CompositeLayer>() { new Resource.CompositeLayer() { Asset = sheet.Texture, Frame = point, FrameSize = new Point(sheet.TileWidth, sheet.TileHeight)} },
+                    Tint = Color.White,
+                };
+                ResourceLibrary.Add(toReturn);
+            }
+
+            return toReturn;
+        }
+
+        public CraftItem ObjectAsCraftableResource()
+        {
+            string resourceName = Name + "...";
+            CraftItem toReturn = CraftLibrary.GetCraftable(resourceName);
+            if (toReturn == null)
+            {
+                toReturn = this.MemberwiseClone() as CraftItem;
+                toReturn.Name = resourceName;
+                toReturn.Type = CraftType.Resource;
+                toReturn.CraftActBehavior = CraftActBehaviors.Object;
+                toReturn.ResourceCreated = "Object";
+                toReturn.CraftLocation = "Anvil";
+                toReturn.ObjectName = Name;
+                toReturn.AllowUserCrafting = false;
+                CraftLibrary.Add(toReturn);
+            }
+            return toReturn;
+        }
     }
 }

@@ -30,6 +30,7 @@ namespace DwarfCorp.Gui
         public Effect Effect { get; private set; }
         public Texture2D Texture { get; private set; }
         public Dictionary<String, ITileSheet> TileSheets { get; private set; }
+        public Dictionary<String, JsonTileSheet> SourceSheets { get; private set; }
         public Rectangle VirtualScreen { get; private set; }
         public Rectangle RealScreen { get; private set; }
         public int ScaleRatio { get { return CalculateScale(); } }
@@ -88,6 +89,12 @@ namespace DwarfCorp.Gui
                         RealTexture = realTexture
                     };
                 }).ToList());
+
+            SourceSheets = new Dictionary<string, JsonTileSheet>();
+            foreach(var sheet in sheets)
+            {
+                SourceSheets[sheet.Name] = sheet;
+            }
 
             // Create the atlas texture
             Texture = new Texture2D(Device, atlas.Dimensions.Width, atlas.Dimensions.Height);

@@ -53,7 +53,8 @@ namespace DwarfCorp
                 SpriteSheet = new SpriteSheet(Descriptor.AssetName),
                 Frames = Descriptor.Frames.Select(s => new Point(s, 0)).ToList(),
                 SpeedMultiplier = Descriptor.Speed,
-                Speeds = new List<float>()
+                Speeds = new List<float>(),
+                YOffset = new List<float>() { Descriptor.YOffset }
             };
 
             foreach(var frame in anim.Frames)
@@ -152,6 +153,7 @@ namespace DwarfCorp
                                 SpriteSheet = sheet,
                                 Name = a.Name,
                                 Speeds = a.Speeds,
+                                YOffset = a.YOffset,
                                 Loops = a.Loops,
                                 FrameHZ = a.FrameHZ,
                                 SpeedMultiplier = a.SpeedMultiplier,
@@ -198,6 +200,7 @@ namespace DwarfCorp
                     Name = descriptor.Name,
                     Speeds = descriptor.Speed.Select(s => 1.0f / s).ToList(),
                     Loops = !descriptor.PlayOnce,
+                    YOffset = descriptor.YOffset
                 }).ToList();
         }
 

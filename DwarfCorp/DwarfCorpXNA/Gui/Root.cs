@@ -40,17 +40,13 @@ namespace DwarfCorp.Gui
         internal double RunTime = 0.0f;
         private List<Widget> PopupStack = new List<Widget>();
 
-        public MousePointer SpecialIndicator = null;
-        public Point SpecialIndicatorPosition = new Point(0, 0);
-        public Rectangle? SpecialHiliteRegion = null;
-        public Widget SpecialHighligtedWidget = null;
-        public String SpecialHiliteSheet = null;
+        private MousePointer SpecialIndicator = null;
+        public String SpecialHiliteWidgetName = "";
 
         public void ClearSpecials()
         {
             SpecialIndicator = null;
-            SpecialHiliteRegion = null;
-            SpecialHiliteSheet = null;
+            SpecialHiliteWidgetName = "";
         }
 
         public Root(RenderData RenderData)
@@ -658,31 +654,6 @@ namespace DwarfCorp.Gui
             DrawMouse();
         }
 
-        private void UpdateHighlightRegion(Widget widget)
-        {
-            if (SpecialHiliteRegion == widget.Rect)
-            {
-                return;
-            }
-
-            SpecialHiliteRegion = widget.Rect;
-            SpecialHighligtedWidget = widget;
-
-            if (widget.Rect.Right < RenderData.VirtualScreen.Width / 2 ||
-                widget.Rect.Left < 64)
-            {
-                SpecialIndicatorPosition = new Microsoft.Xna.Framework.Point(
-                    widget.Rect.Right, widget.Rect.Center.Y - 16);
-                SpecialIndicator = new Gui.MousePointer("hand", 1, 10);
-            }
-            else
-            {
-                SpecialIndicatorPosition = new Microsoft.Xna.Framework.Point(
-                    widget.Rect.Left - 32, widget.Rect.Center.Y - 16);
-                SpecialIndicator = new Gui.MousePointer("hand", 4, 14);
-            }
-        }
-
         public void RedrawPopups()
         {
             RenderData.Device.DepthStencilState = DepthStencilState.None;
@@ -720,42 +691,42 @@ namespace DwarfCorp.Gui
         public void DrawMouse()
         {
             if (RootItem.Hidden)
-            {
                 return;
-            }
 
             RenderData.Effect.Parameters["Texture"].SetValue(RenderData.Texture);
             RenderData.Effect.CurrentTechnique.Passes[0].Apply();
 
-            if (SpecialHiliteRegion.HasValue && !String.IsNullOrEmpty(SpecialHiliteSheet))
+            if (!String.IsNullOrEmpty(SpecialHiliteWidgetName))
             {
-                if (SpecialHighligtedWidget == null || !SpecialHighligtedWidget.Hidden)
+                var widget = RootItem.EnumerateTree().FirstOrDefault(w => w.Tag is String && (w.Tag as String) == SpecialHiliteWidgetName);
+                if (widget != null)
                 {
-                    if (SpecialHighligtedWidget != null)
-                        UpdateHighlightRegion(SpecialHighligtedWidget);
-
-                    var sheet = GetTileSheet(SpecialHiliteSheet);
-                    var area = SpecialHiliteRegion.Value.Interior(-sheet.TileWidth, -sheet.TileHeight,
-                        -sheet.TileWidth, -sheet.TileHeight);
+                    var sheet = GetTileSheet("border-hilite");
+                    var area = widget.Rect.Interior(-sheet.TileWidth, -sheet.TileHeight, -sheet.TileWidth, -sheet.TileHeight);
                     var mesh = Mesh.CreateScale9Background(area, sheet);
                     mesh.Render(RenderData.Device);
-                }
-            }
 
-            if (SpecialIndicator != null)
-            {
-                if (SpecialHighligtedWidget == null || !SpecialHighligtedWidget.Hidden)
-                {
-                    if (SpecialHighligtedWidget != null)
-                        UpdateHighlightRegion(SpecialHighligtedWidget);
+
+                    var specialIndicatorPosition = Point.Zero;
+
+                    if (widget.Rect.Right < RenderData.VirtualScreen.Width / 2 || widget.Rect.Left < 64)
+                    {
+                        specialIndicatorPosition = new Microsoft.Xna.Framework.Point(widget.Rect.Right, widget.Rect.Center.Y - 16);
+                        SpecialIndicator = new Gui.MousePointer("hand", 1, 10);
+                    }
+                    else
+                    {
+                        specialIndicatorPosition = new Microsoft.Xna.Framework.Point(widget.Rect.Left - 32, widget.Rect.Center.Y - 16);
+                        SpecialIndicator = new Gui.MousePointer("hand", 4, 14);
+                    }
 
                     var tileSheet = GetTileSheet(SpecialIndicator.Sheet);
                     var mouseMesh = Mesh.Quad()
                         .Scale(tileSheet.TileWidth, tileSheet.TileHeight)
                         .Translate(
-                            SpecialIndicatorPosition.X +
-                            (float) Math.Sin(DwarfTime.LastTime.TotalRealTime.TotalSeconds*4.0)*8.0f,
-                            SpecialIndicatorPosition.Y)
+                            specialIndicatorPosition.X +
+                            (float)Math.Sin(DwarfTime.LastTime.TotalRealTime.TotalSeconds * 4.0) * 8.0f,
+                            specialIndicatorPosition.Y)
                         .Texture(tileSheet.TileMatrix(SpecialIndicator.AnimationFrame));
                     mouseMesh.Render(RenderData.Device);
                 }

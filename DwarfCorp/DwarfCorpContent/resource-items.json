@@ -108,8 +108,8 @@
       }
     ],
     "TrinketData": {
-      "BaseAsset": null,
-      "EncrustingAsset": null,
+      "BaseAsset": "newgui\\trinkets-sculpt",
+      "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
       "SpriteRow": 0,
       "SpriteColumn": 0
     },
@@ -1456,6 +1456,44 @@
       "SpriteColumn": 0
     },
     "ShortName": "Trinket",
+    "PlantToGenerate": null,
+    "CanCraft": false,
+    "CraftPrerequisites": [],
+    "Tint": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "AleName": ""
+  },
+  {
+    "Name": "Object",
+    "MoneyValue": 100.0,
+    "Description": "ERROR. This thing should not exist. It is only a placeholder.",
+    "GuiLayers": [
+      {
+        "Sheet": "resources",
+        "Tile": 0
+      }
+    ],
+    "Tags": [
+    ],
+    "FoodContent": 0.0,
+    "CompositeLayers": [
+      {
+        "Asset": "newgui\\crafts",
+        "FrameSize": "32, 32",
+        "Frame": "0, 0"
+      }
+    ],
+    "TrinketData": {
+      "BaseAsset": null,
+      "EncrustingAsset": null,
+      "SpriteRow": 0,
+      "SpriteColumn": 0
+    },
+    "ShortName": "Object",
     "PlantToGenerate": null,
     "CanCraft": false,
     "CraftPrerequisites": [],

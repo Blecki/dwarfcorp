@@ -206,6 +206,7 @@ namespace DwarfCorp
         /// Queue of tasks that the creature is currently performing.
         /// </summary>
         public List<Task> Tasks { get; set; }
+        
 
         private struct FailedTask
         {
@@ -411,9 +412,21 @@ namespace DwarfCorp
             CurrentAct = NewAct;
         }
 
-        public void CancelCurrentTask()
+        public void SetCurrentTaskNull()
         {
             ChangeTask(null);
+        }
+
+        public void CancelCurrentTask()
+        {
+            if (CurrentTask != null && Faction == World.PlayerFaction)
+            {
+                World.Master.TaskManager.CancelTask(CurrentTask);
+            }
+            else
+            {
+                SetCurrentTaskNull();
+            }
         }
 
         /// <summary> Update this creature </summary>
@@ -478,7 +491,7 @@ namespace DwarfCorp
             }
 
             restockTimer.Update(DwarfTime.LastTime);
-            if (restockTimer.HasTriggered && Creature.Inventory.Resources.Count > 64)
+            if (restockTimer.HasTriggered && Creature.Inventory.Resources.Count > 10)
             {
                 if (Faction == World.PlayerFaction)
                     Creature.RestockAllImmediately();
@@ -592,6 +605,11 @@ namespace DwarfCorp
                 Physics.LocalPosition = MathFunctions.Clamp(Physics.Position, PositionConstraint);
                 Physics.PropogateTransforms();
             }
+
+            if (Cart != null && Cart.IsDead)
+            {
+                Cart = null;
+            }
         }
 
         private int lastXPAnnouncement = 0;
@@ -704,6 +722,9 @@ namespace DwarfCorp
 
             if (!IsPosessed && Creature.Physics.IsInLiquid)
                 return new FindLandTask();
+            var flames = GetRoot().GetComponent<Flammable>();
+            if (flames != null && flames.IsOnFire)
+                return new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 }.AsTask();
 
             if (Faction == World.PlayerFaction && !Status.IsOnStrike)
             {
@@ -784,7 +805,7 @@ namespace DwarfCorp
                 }
 
                 // Otherwise, try to find a chair to sit in
-                if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.25f))
+                if (IdleTimer.HasTriggered && MathFunctions.RandEvent(0.25f) && Faction == World.PlayerFaction)
                 {
                     return new ActWrapperTask(new GoToChairAndSitAct(this))
                     {
@@ -1116,7 +1137,7 @@ namespace DwarfCorp
         public void RemoveTask(Task task)
         {
             if (Object.ReferenceEquals(CurrentTask, task))
-                CancelCurrentTask();
+                SetCurrentTaskNull();
             Tasks.Remove(task);
             task.OnUnAssign(this);
         }

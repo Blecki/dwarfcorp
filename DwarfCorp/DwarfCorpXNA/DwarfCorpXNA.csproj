@@ -228,6 +228,7 @@
     <Compile Include="Entities\Fixtures\Fence.cs" />
     <Compile Include="Entities\Monsters\Gremlin.cs" />
     <Compile Include="Entities\Monsters\Kobold.cs" />
+    <Compile Include="Entities\Monsters\Troll.cs" />
     <Compile Include="Entities\Plants\PlantFactories.cs" />
     <Compile Include="Entities\TimedExplosion.cs" />
     <Compile Include="GameStates\ManageModsState.cs" />
@@ -239,6 +240,7 @@
     <Compile Include="Goals\EventLibrary.cs" />
     <Compile Include="Goals\TimedIndicatorWidget.cs" />
     <Compile Include="Goals\GoalTypes.cs" />
+    <Compile Include="Graphics\Drawing\TriangleCache.cs" />
     <Compile Include="Graphics\Instancing\InstanceGroup.cs" />
     <Compile Include="Graphics\Instancing\TiledInstanceGroup.cs" />
     <Compile Include="Graphics\Instancing\PrimitiveInstanceGroup.cs" />
@@ -254,6 +256,9 @@
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
+    <Compile Include="Scripting\NewMagic\AttackSpell.cs" />
+    <Compile Include="Scripting\NewMagic\BuffSpell.cs" />
+    <Compile Include="Scripting\NewMagic\Spell.cs" />
     <Compile Include="Scripting\Player\Economy\Quantity.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceType.cs" />
     <Compile Include="Scripting\Player\Tools\ObjectHelper.cs" />

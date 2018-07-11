@@ -11,6 +11,8 @@ namespace DwarfCorp.Gui.Widgets
     /// </summary>
     public class TabPanel : Widget
     {
+        public string ButtonFont = "font16";
+
         public class TabButton : Widget
         {
             private bool _drawIndicator = false;
@@ -35,11 +37,6 @@ namespace DwarfCorp.Gui.Widgets
                 }
             }
 
-            public override void Construct()
-            {
-                Font = "font16";
-                base.Construct();
-            }
 
             protected override Mesh Redraw()
             {
@@ -119,6 +116,7 @@ namespace DwarfCorp.Gui.Widgets
 
         private List<Widget> TabPanels = new List<Widget>();
         private List<Widget> TabButtons = new List<Widget>();
+        public IEnumerable<KeyValuePair<string, Widget>> TabSource = null;
         public int TabPadding = 4;
 
         internal TabButton GetTabButton(int Index)
@@ -154,6 +152,15 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             if (String.IsNullOrEmpty(Graphics)) Graphics = "border-one";
+
+            if (TabSource != null)
+            {
+                foreach (var tab in TabSource)
+                {
+                    AddTab(tab.Key, tab.Value);
+                }
+                SelectedTab = 0;
+            }
         }
 
         /// <summary>
@@ -193,6 +200,7 @@ namespace DwarfCorp.Gui.Widgets
             var tabIndex = TabButtons.Count;
             var tabButton = AddChild(new TabButton
             {
+                Font = ButtonFont,
                 Text = Name,
                 Graphics = Graphics,
                 OnClick = (sender, args) => SelectedTab = tabIndex,

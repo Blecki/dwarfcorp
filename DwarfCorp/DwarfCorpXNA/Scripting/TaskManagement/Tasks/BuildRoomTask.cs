@@ -63,9 +63,15 @@ namespace DwarfCorp
             Priority = PriorityType.High;
         }
 
+        private bool IsRoomBuildOrder(Faction faction, BuildRoomOrder buildRooom)
+        {
+            return faction.RoomBuilder.BuildDesignations.Contains(buildRooom);
+        }
+
+
         public override Feasibility IsFeasible(Creature agent)
         {
-            return Zone != null && !Zone.IsBuilt && 
+            return Zone != null && !Zone.IsBuilt && IsRoomBuildOrder(agent.Faction, Zone) &&
                 agent.Stats.IsTaskAllowed(Task.TaskCategory.BuildZone) &&
                 agent.Faction.HasResources(Zone.ListRequiredResources()) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
@@ -85,7 +91,7 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return Zone == null || Zone.IsBuilt || Zone.IsDestroyed;
+            return Zone == null || Zone.IsBuilt || Zone.IsDestroyed || !IsRoomBuildOrder(agent.Faction, Zone);
         }
 
         public override bool ShouldRetry(Creature agent)
@@ -95,7 +101,16 @@ namespace DwarfCorp
 
         public override bool IsComplete(Faction faction)
         {
-            return Zone == null || Zone.IsBuilt;
+            return Zone == null || Zone.IsBuilt || !IsRoomBuildOrder(faction, Zone);
+        }
+
+        public override void OnDequeued(Faction Faction)
+        {
+            if (!Zone.IsBuilt)
+            {
+                Zone.Destroy();
+            }
+            base.OnDequeued(Faction);
         }
     }
 

@@ -40,195 +40,6 @@ using System.Collections.Concurrent;
 
 namespace DwarfCorp
 {
-    // This is a cached alternative to Drawer3D for drawings that are expects to remain around for a long time.
-    public class TriangleCache : IDisposable
-    {
-        public const int MaxVertexSpace = 4096 * 16;
-        public int MaxTriangles = 2048;
-        public int VertexCount = 0;
-        private ThickLineVertex[] Verticies;
-        private ThickLineVertex[] VertexScratch;
-        private DynamicVertexBuffer Buffer; 
-        private static GraphicsDevice Device { get { return GameStates.GameState.Game.GraphicsDevice; } }
-        private uint MaxSegment = 1;
-
-        private struct TriangleSegment
-        {
-            public uint ID;
-            public int StartIndex;
-            public int EndIndex;
-        }
-
-        private Dictionary<uint, TriangleSegment> Segments = new Dictionary<uint, TriangleSegment>();
-
-        public TriangleCache()
-        {
-            Verticies = new ThickLineVertex[MaxTriangles * 3];
-            VertexScratch = new ThickLineVertex[MaxTriangles * 3];
-            VertexCount = 0;
-        }
-
-        private void Grow()
-        {
-            MaxTriangles *= 2;
-            var newVerts = new ThickLineVertex[MaxTriangles * 3];
-            Verticies.CopyTo(newVerts, 0);
-            VertexScratch = new ThickLineVertex[MaxTriangles * 3];
-            Verticies = newVerts;
-            if (Buffer != null)
-            {
-                Buffer.Dispose();
-            }
-
-            Buffer = new DynamicVertexBuffer(Device, ThickLineVertex.VertexDeclaration, MaxTriangles * 3, BufferUsage.None);
-            Buffer.SetData(Verticies);
-        }
-
-        private void RebuildSegments()
-        {
-            VertexCount = 0;
-            Dictionary<uint, TriangleSegment> newSegments = new Dictionary<uint, TriangleSegment>();
-            foreach(var segment in Segments)
-            {
-                TriangleSegment newSegment = new TriangleSegment
-                {
-                    ID = segment.Key,
-                    StartIndex = VertexCount
-                };
-
-                for (int i = segment.Value.StartIndex; i < segment.Value.EndIndex; i++)
-                {
-                    VertexScratch[VertexCount] = Verticies[i];
-                    VertexCount++;
-                }
-                newSegment.EndIndex = VertexCount;
-                newSegments[newSegment.ID] = newSegment;
-            }
-            Datastructures.Swap(ref Segments, ref newSegments);
-            Datastructures.Swap(ref Verticies, ref VertexScratch);
-            Buffer.SetData(Verticies);
-        }
-
-        public void EraseSegment(uint segment)
-        {
-            Segments.Remove(segment);
-            RebuildSegments();
-        }
-
-        public void EraseSegments(IEnumerable<uint> segments)
-        {
-            bool removed = false;
-            foreach (var seg in segments)
-            {
-                removed = true;
-                Segments.Remove(seg);
-            }
-            if (removed)
-                RebuildSegments();
-        }
-
-        private uint AddSegment(int count)
-        {
-            if (VertexCount >= MaxVertexSpace)
-            {
-                return 0;
-            }
-
-            TriangleSegment newSegment = new TriangleSegment
-            {
-                ID = MaxSegment,
-                StartIndex = VertexCount,
-                EndIndex = VertexCount + count
-            };
-            MaxSegment++;
-            VertexCount += count;
-            Segments.Add(newSegment.ID, newSegment);
-            if (Buffer == null)
-            {
-                Buffer = new DynamicVertexBuffer(Device, ThickLineVertex.VertexDeclaration, MaxTriangles * 3, BufferUsage.None);
-            }
-            Buffer.SetData(Verticies);
-            return newSegment.ID;
-        }
-
-        // Adds a bounding box to the vertex cache, and returns the index of the segment it belongs to.
-        public uint AddTopBox(BoundingBox box, Color color, float thickness, bool warp)
-        {
-            if (VertexCount >= MaxVertexSpace)
-            {
-                return 0;
-            }
-
-            int numVertex = VertexCount + (int)Drawer3D.PrimitiveVertexCounts.TopBox;
-            if (numVertex >= MaxTriangles * 3)
-            {
-                Grow();
-            }
-
-            Drawer3D.WriteTopBox(box.Min, box.Max - box.Min, color, thickness, warp, VertexCount, Verticies);
-            return AddSegment((int)Drawer3D.PrimitiveVertexCounts.TopBox);
-        }
-
-        public uint AddBox(BoundingBox box, Color color, float thickness, bool warp)
-        {
-            if (VertexCount >= MaxVertexSpace)
-            {
-                return 0;
-            }
-
-            if (VertexCount + (int)Drawer3D.PrimitiveVertexCounts.Box >= MaxTriangles * 3)
-            {
-                Grow();
-            }
-
-            Drawer3D.WriteBox(box.Min, box.Max - box.Min, color, thickness, warp, VertexCount, Verticies);
-            return AddSegment((int)Drawer3D.PrimitiveVertexCounts.Box);
-        }
-
-        public void Draw(Shader Effect, Camera Camera)
-        {
-            if (VertexCount == 0)
-                return;
-            BlendState origBlen = Device.BlendState;
-            Device.BlendState = BlendState.NonPremultiplied;
-
-            RasterizerState oldState = Device.RasterizerState;
-            Device.RasterizerState = RasterizerState.CullNone;
-            Effect.CurrentTechnique = Effect.Techniques[Shader.Technique.Untextured_Pulse];
-            Effect.View = Camera.ViewMatrix;
-            Effect.Projection = Camera.ProjectionMatrix;
-            Effect.World = Matrix.Identity;
-            Device.Indices = null;
-            Device.SetVertexBuffer(Buffer);
-            Effect.VertexColorTint = Color.White;
-            foreach (var pass in Effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                Device.DrawPrimitives(PrimitiveType.TriangleList, 0, VertexCount / 3);
-            }
-
-            Effect.SetTexturedTechnique();
-
-            if (oldState != null)
-            {
-                Device.RasterizerState = oldState;
-            }
-
-            if (origBlen != null)
-            {
-                Device.BlendState = origBlen;
-            }
-        }
-
-        public void Dispose()
-        {
-            if (Buffer != null)
-            {
-                Buffer.Dispose();
-            }
-        }
-    }
-
     /// <summary>
     /// This is a convenience class for drawing lines, boxes, etc. to the screen.
     /// </summary>
@@ -544,6 +355,7 @@ namespace DwarfCorp
                 var colorModulation = Math.Abs(Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds*2.0f));
 
                 DesignationDrawer.DrawHilites(
+                    World,
                     Designations,
                     _addBox,
                     (pos, type) =>
@@ -568,7 +380,7 @@ namespace DwarfCorp
                         Effect.World = Matrix.Identity;
                         Effect.CurrentTechnique = prevTechnique;
                     });
-                Designations.TriangleCache.Draw(Effect, Camera);
+
                 foreach (var box in Boxes)
                     _addBox(box.RealBox.Min, box.RealBox.Max - box.RealBox.Min, box.Color, box.Thickness, box.Warp);
 

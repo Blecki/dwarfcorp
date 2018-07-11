@@ -99,6 +99,7 @@
     "Name": "snow",
     "Decay": true,
     "InitialDecayValue": 16,
+	"BecomeWhenDecays": "empty",
     "Tile": "14, 2",
     "FringeTiles": [
       "10, 2",

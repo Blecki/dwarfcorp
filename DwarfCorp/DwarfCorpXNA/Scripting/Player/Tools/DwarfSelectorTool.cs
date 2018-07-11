@@ -106,7 +106,8 @@ namespace DwarfCorp
             }
             OnConfirm(Player.SelectedMinions);
 
-            IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.DownArrow, vox.WorldPosition + Vector3.One * 0.5f, 0.5f, 2.0f, new Vector2(0, -50), Color.LightGreen);
+            if (Player.SelectedMinions.Count > 0)
+                IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.DownArrow, vox.WorldPosition + Vector3.One * 0.5f, 0.5f, 2.0f, new Vector2(0, -50), Color.LightGreen);
         }
 
 
@@ -189,7 +190,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void DefaultOnMouseOver(IEnumerable<Body> bodies)
+        public static string GetMouseOverText(IEnumerable<Body> bodies)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -204,7 +205,7 @@ namespace DwarfCorp
                     {
                         sb.Append(" UNCONSCIOUS ");
                     }
-                    
+
                     if (dwarf.Status.IsOnStrike)
                     {
                         sb.Append(" ON STRIKE");
@@ -220,7 +221,12 @@ namespace DwarfCorp
                     sb.Append(bodyList[i].GetDescription());
                 }
             }
-            Player.World.ShowTooltip(sb.ToString());
+            return sb.ToString();
+        }
+
+        public override void DefaultOnMouseOver(IEnumerable<Body> bodies)
+        {
+            Player.World.ShowTooltip(GetMouseOverText(bodies));
         }
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
@@ -262,8 +268,7 @@ namespace DwarfCorp
             DwarfGame.SpriteBatch.Begin();
 
             foreach (var body in Player.BodySelector.CurrentBodies)
-                if (IsDwarf(body))
-                    Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, Player.World.Camera), Color.White, 1.0f);
+                Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, Player.World.Camera), Color.White, 1.0f);
 
             DwarfGame.SpriteBatch.End();
         }

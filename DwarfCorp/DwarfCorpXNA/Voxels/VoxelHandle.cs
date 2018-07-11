@@ -409,6 +409,11 @@ namespace DwarfCorp
             });
         }
 
+        public void Invalidate()
+        {
+            InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
+        }
+
         private static void InvalidateVoxel(
             VoxelChunk Chunk,
             GlobalVoxelCoordinate Coordinate,

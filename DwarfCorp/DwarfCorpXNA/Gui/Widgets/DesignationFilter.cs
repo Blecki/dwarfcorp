@@ -11,6 +11,7 @@ namespace DwarfCorp.Gui.Widgets
     public class DesignationFilter : Widget
     {
         public DesignationDrawer DesignationDrawer;
+        public DesignationSet DesignationSet;
         public int ColumnCount = 2;
 
         private List<CheckBox> Designations = new List<CheckBox>();
@@ -70,6 +71,8 @@ namespace DwarfCorp.Gui.Widgets
             foreach (var box in Designations)
                 if (box.CheckState) visibleTypes |= (DesignationType)box.Tag;
             DesignationDrawer.VisibleTypes = visibleTypes;
+            foreach (var designation in DesignationSet.EnumerateDesignations())
+                designation.Voxel.Invalidate();
         }
     }
 }

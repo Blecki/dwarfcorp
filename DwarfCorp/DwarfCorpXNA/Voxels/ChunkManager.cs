@@ -363,6 +363,8 @@ namespace DwarfCorp
                     if (listener != null)
                         listener.OnVoxelChanged(voxel);
                 }
+
+                World.Master.TaskManager.OnVoxelChanged(voxel);
             }
         }
 

@@ -255,28 +255,34 @@ namespace DwarfCorp
         {
             if (Active)
             {
-                var resourceCounts = new Dictionary<ResourceType, int>();
-                foreach (var resource in Resources)
-                {
-                    if (!resourceCounts.ContainsKey(resource.Resource))
-                    {
-                        resourceCounts[resource.Resource] = 0;
-                    }
-                    resourceCounts[resource.Resource]++;
-                }
-
-                var aggregatedResources = resourceCounts.Select(c => new ResourceAmount(c.Key, c.Value));
-                var piles = EntityFactory.CreateResourcePiles(aggregatedResources, GetBoundingBox());
-
-                if (Attacker != null && !Attacker.IsDead)
-                    foreach (var item in piles)
-                        Attacker.Creature.Gather(item);
-                //else
-                //    foreach (var item in piles)
-                //        World.Master.TaskManager.AddTask(new GatherItemTask(item));
+                DropAll();
             }
 
             base.Die();
+        }
+
+        public void DropAll()
+        {
+            var resourceCounts = new Dictionary<ResourceType, int>();
+            foreach (var resource in Resources)
+            {
+                if (!resourceCounts.ContainsKey(resource.Resource))
+                {
+                    resourceCounts[resource.Resource] = 0;
+                }
+                resourceCounts[resource.Resource]++;
+            }
+
+            var aggregatedResources = resourceCounts.Select(c => new ResourceAmount(c.Key, c.Value));
+            var piles = EntityFactory.CreateResourcePiles(aggregatedResources, GetBoundingBox()).ToList();
+
+            if (Attacker != null && !Attacker.IsDead)
+                foreach (var item in piles)
+                    Attacker.Creature.Gather(item);
+            //else
+            //    foreach (var item in piles)
+            //        World.Master.TaskManager.AddTask(new GatherItemTask(item));
+            Resources.Clear();
         }
 
         public bool HasResource(ResourceAmount itemToStock)
