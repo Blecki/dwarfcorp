@@ -371,9 +371,7 @@
     <Compile Include="Components\IUpdateableComponent.cs" />
     <Compile Include="ControlSettings.cs" />
     <Compile Include="DeProfiler.cs" />
-    <Compile Include="GameStates\Diplomacy\DialogueTree.cs" />
     <Compile Include="GameStates\Diplomacy\DialogueTreeTypes.cs" />
-    <Compile Include="GameStates\Diplomacy\DialogueState.cs" />
     <Compile Include="Scripting\Factions\Trading\ITradeEntity.cs" />
     <Compile Include="Scripting\Factions\Trading\TradeTransaction.cs" />
     <Compile Include="DwarfGame.cs" />

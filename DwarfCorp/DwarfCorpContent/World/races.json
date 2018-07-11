@@ -224,6 +224,7 @@
   {
     "Name": "Elf",
     "Posessive": "Elvish",
+    "DiplomacyConversation": "World/elf.conv",
     "NumFurniture": 2,
     "CreatureTypes": [
       "Elf"
@@ -294,6 +295,7 @@
   {
     "Name": "Undead",
     "Posessive": "Undead",
+    "DiplomacyConversation": "World/undead.conv",
     "NumFurniture": 2,
     "CreatureTypes": [
       "Necromancer",

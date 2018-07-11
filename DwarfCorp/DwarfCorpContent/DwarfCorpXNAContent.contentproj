@@ -2912,6 +2912,22 @@
       <Name>voxel-types</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="World\goblin.conv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>goblin</Name>
+    </None>
+    <None Include="World\moleman.conv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>moleman</Name>
+    </None>
+    <None Include="World\elf.conv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>elf</Name>
+    </None>
+    <None Include="World\undead.conv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>undead</Name>
+    </None>
     <None Include="World\races.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>races</Name>
@@ -2923,6 +2939,10 @@
     <None Include="World\dwarf.conv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>dwarf</Name>
+    </None>
+    <None Include="World\default.conv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>default</Name>
     </None>
   </ItemGroup>
   <ItemGroup>
