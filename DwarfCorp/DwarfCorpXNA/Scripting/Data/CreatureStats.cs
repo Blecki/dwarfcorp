@@ -192,6 +192,8 @@ namespace DwarfCorp
 
         public int Age { get; set; }
 
+        public int RandomSeed;
+
         /// <summary>
         /// If true, the creature will occasionally lay eggs.
         /// </summary>
@@ -218,6 +220,7 @@ namespace DwarfCorp
                 Wisdom = 0
             };
             Age = (int)Math.Max(MathFunctions.RandNormalDist(30, 15), 10);
+            RandomSeed = MathFunctions.RandInt(int.MinValue, int.MaxValue);
         }
 
         public CreatureStats(EmployeeClass creatureClass, int level)
@@ -246,6 +249,7 @@ namespace DwarfCorp
                 Wisdom = 0
             };
             Age = (int)Math.Max(MathFunctions.RandNormalDist(30, 15), 10);
+            RandomSeed = MathFunctions.RandInt(int.MinValue, int.MaxValue);
         }
 
         public void ResetBuffs()

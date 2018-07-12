@@ -4,12 +4,13 @@
     "Precedence": 0,
     "Asset": "Entities/Dwarf/Layers/workerbodysheet",
     "RestrictionType": "Class",
-    "RestrictionValue": "CraftDwarf"
+    "RestrictionValue": "Craftdwarf"
   },
   {
     "Type": "body",
     "Precedence": 0,
-    "Asset": "Entities/Dwarf/Layers/blank"
+    "Asset": "Entities/Dwarf/Layers/blank",
+    "DefaultLayer": true
   },
 
 

@@ -60,12 +60,12 @@ namespace DwarfCorp.LayeredSprites
         public Restrictions RestrictionType = Restrictions.None;
         public String RestrictionValue = "";
 
-        public bool PassesFilter(Dwarf Dwarf)
+        public bool PassesFilter(CreatureStats Dwarf)
         {
             switch (RestrictionType)
             {
                 case Restrictions.Class:
-                    return Dwarf.Stats.CurrentClass.Name == RestrictionValue;
+                    return Dwarf.CurrentClass.Name == RestrictionValue;
                 case Restrictions.Gender:
                     return true; // Where the hell is Gender stored??
                 case Restrictions.None:
@@ -73,5 +73,7 @@ namespace DwarfCorp.LayeredSprites
                     return true;
             }
         }
+
+        public bool DefaultLayer = false;
     }
 }

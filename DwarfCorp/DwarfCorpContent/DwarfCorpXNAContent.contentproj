@@ -2375,11 +2375,6 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Dwarf\Layers\inverted-palette.png">
-      <Name>inverted-palette</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="Entities\Dwarf\Layers\palette-hair01.png">
       <Name>palette-hair01</Name>
       <Importer>TextureImporter</Importer>
