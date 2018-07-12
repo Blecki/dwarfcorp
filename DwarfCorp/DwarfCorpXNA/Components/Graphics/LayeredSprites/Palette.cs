@@ -47,5 +47,6 @@ namespace DwarfCorp.LayeredSprites
         public DwarfCorp.Palette CachedPalette = null;
 
         public String Asset;
+        public String Layer;
     }
 }

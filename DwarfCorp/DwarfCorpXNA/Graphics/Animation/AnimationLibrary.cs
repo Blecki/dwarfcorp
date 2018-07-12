@@ -229,7 +229,7 @@ namespace DwarfCorp
                     CompositeName = Composite,
                     CompositeFrames = CreateFrames(Set.Layers, Set.Tints, descriptor.Frames),
                     Name = descriptor.Name,
-                    Speeds = descriptor.Speed.Select(s => 1.0f / s).ToList(),
+                    Speeds = descriptor.Speed,
                     Loops = !descriptor.PlayOnce,
                     YOffset = descriptor.YOffset
                 }).ToList();

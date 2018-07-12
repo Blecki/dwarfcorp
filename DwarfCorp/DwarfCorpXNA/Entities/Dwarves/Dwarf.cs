@@ -181,8 +181,6 @@ namespace DwarfCorp
 
         protected void CreateDwarfSprite(EmployeeClass employeeClass, ComponentManager manager)
         {
-            var random = new Random();
-
             if (Physics == null)
             {
                 Physics = GetRoot().GetComponent<Physics>();
@@ -191,18 +189,37 @@ namespace DwarfCorp
 
             var sprite = Physics.AddChild(new LayeredSprites.LayeredCharacterSprite(manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as LayeredSprites.LayeredCharacterSprite;
 
-            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("body").Where(l => l.PassesFilter(this)).SelectRandom(), null);
-            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("face").Where(l => l.PassesFilter(this)).SelectRandom(), null);
-            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("nose").Where(l => l.PassesFilter(this)).SelectRandom(), null);
-            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("beard").Where(l => l.PassesFilter(this)).SelectRandom(), null);
-            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("hair").Where(l => l.PassesFilter(this)).SelectRandom(), null);
-            sprite.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("tool").Where(l => l.PassesFilter(this)).SelectRandom(), null);
+            var random = new Random(Stats.RandomSeed);
+
+            var hairPalette = LayeredSprites.LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("hair")).SelectRandom(random);
+            var skinPalette = LayeredSprites.LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("face")).SelectRandom(random);
+            AddLayerOrDefault(sprite, random, "body");
+            AddLayerOrDefault(sprite, random, "face", skinPalette);
+            AddLayerOrDefault(sprite, random, "nose", skinPalette);
+            AddLayerOrDefault(sprite, random, "beard", hairPalette);
+            AddLayerOrDefault(sprite, random, "hair", hairPalette);
+            AddLayerOrDefault(sprite, random, "tool");
 
             foreach (Animation animation in AnimationLibrary.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations))
                 sprite.AddAnimation(animation);
 
             sprite.SetCurrentAnimation(Sprite.Animations.First().Value);
             sprite.SetFlag(Flag.ShouldSerialize, false);
+
+            
+        }
+
+        private void AddLayerOrDefault(LayeredSprites.LayeredCharacterSprite Sprite, Random Random, String Layer, LayeredSprites.Palette Palette = null)
+        {
+            var layers = LayeredSprites.LayerLibrary.EnumerateLayers(Layer).Where(l => !l.DefaultLayer && l.PassesFilter(this.Stats));
+            if (layers.Count() > 0)
+                Sprite.AddLayer(layers.SelectRandom(Random), Palette);
+            else
+            {
+                var defaultLayer = LayeredSprites.LayerLibrary.EnumerateLayers(Layer).Where(l => l.DefaultLayer).FirstOrDefault();
+                if (defaultLayer != null)
+                    Sprite.AddLayer(defaultLayer, Palette);
+            }
         }
     }
 

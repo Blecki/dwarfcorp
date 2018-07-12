@@ -94,6 +94,7 @@ namespace DwarfCorp.LayeredSprites
 
         public static IEnumerable<Palette> EnumeratePalettes()
         {
+            Initialize();
             return Palettes;
         }
     }
