@@ -67,7 +67,7 @@ namespace DwarfCorp.LayeredSprites
                 case Restrictions.Class:
                     return Dwarf.CurrentClass.Name == RestrictionValue;
                 case Restrictions.Gender:
-                    return true; // Where the hell is Gender stored??
+                    return Dwarf.Gender.ToString() == RestrictionValue;
                 case Restrictions.None:
                 default:
                     return true;

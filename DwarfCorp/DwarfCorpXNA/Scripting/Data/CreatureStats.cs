@@ -194,6 +194,8 @@ namespace DwarfCorp
 
         public int RandomSeed;
 
+        public Gender Gender { get; set; }
+
         /// <summary>
         /// If true, the creature will occasionally lay eggs.
         /// </summary>

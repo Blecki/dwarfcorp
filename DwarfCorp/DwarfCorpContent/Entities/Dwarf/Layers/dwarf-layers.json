@@ -17,12 +17,16 @@
   {
     "Type": "face",
     "Precedence": 1,
-    "Asset": "Entities/Dwarf/Layers/FemaleDwarfFaceSheet"
+    "Asset": "Entities/Dwarf/Layers/FemaleDwarfFaceSheet",
+    "RestrictionType": "Gender",
+    "RestrictionValue": "Female"
   },
   {
     "Type": "face",
     "Precedence": 1,
-    "Asset": "Entities/Dwarf/Layers/MaleDwarfFaceSheet"
+    "Asset": "Entities/Dwarf/Layers/MaleDwarfFaceSheet",
+    "RestrictionType": "Gender",
+    "RestrictionValue": "Male"
   },
 
 

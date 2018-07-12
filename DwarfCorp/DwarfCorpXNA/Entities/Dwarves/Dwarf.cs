@@ -74,7 +74,7 @@ namespace DwarfCorp
 
         public void Initialize(EmployeeClass dwarfClass)
         {
-            Gender = Mating.RandomGender();
+            Stats.Gender = Mating.RandomGender();
             Physics.Orientation = Physics.OrientMode.RotateY;
             CreateDwarfSprite(dwarfClass, Manager);
 
@@ -161,7 +161,7 @@ namespace DwarfCorp
             AI.Movement.SetSpeed(MoveType.EnterVehicle, 1.0f);
             AI.Movement.SetSpeed(MoveType.ExitVehicle, 1.0f);
             AI.TriggersMourning = true;
-            AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Gender);
+            AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Stats.Gender);
             Species = "Dwarf";
 
 

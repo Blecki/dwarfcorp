@@ -63,9 +63,6 @@ namespace DwarfCorp
         /// <summary> This is what the character is currently doing (used for animation) </summary>
         protected CharacterMode currentCharacterMode = CharacterMode.Idle;
 
-
-        public Gender Gender { get; set; }
-
         public bool CanReproduce = false;
 
         private static int _maxPerSpecies = 50;
@@ -105,7 +102,6 @@ namespace DwarfCorp
             HasBones = true;
             HasCorpse = false;
             DrawLifeTimer.HasTriggered = true;
-            Gender = Mating.RandomGender();
         }
 
         public Creature(
@@ -117,14 +113,14 @@ namespace DwarfCorp
             string name) :
             base(Manager, name, stats.MaxHealth, 0.0f, stats.MaxHealth)
         {
-            Gender = Mating.RandomGender();
+            Stats = stats;
+            Stats.Gender = Mating.RandomGender();
             DrawLifeTimer.HasTriggered = true;
             HasMeat = true;
             HasBones = true;
             HasCorpse = false;
             Buffs = new List<Buff>();
             IsOnGround = true;
-            Stats = stats;
             Faction = faction;
             PlanService = planService;
             Allies = allies;

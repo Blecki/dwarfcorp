@@ -9,8 +9,8 @@ namespace DwarfCorp
     {   
         public static bool CanMate(Creature A, Creature B)
         {
-            return A.Gender != Gender.Nonbinary 
-                && A.Gender != B.Gender 
+            return A.Stats.Gender != Gender.Nonbinary 
+                && A.Stats.Gender != B.Stats.Gender 
                 && A.CanReproduce
                 && !A.IsPregnant 
                 && B.CanReproduce 
@@ -21,9 +21,9 @@ namespace DwarfCorp
         public static void Mate(Creature A, Creature B, WorldTime time)
         {
             if (A.IsPregnant || B.IsPregnant) return;
-            if (A.Gender == Gender.Nonbinary) return;
+            if (A.Stats.Gender == Gender.Nonbinary) return;
             // Can this be simplified? Is it even called if CanMate fails?
-            if (A.Gender == Gender.Male) // Make sure A is the female.
+            if (A.Stats.Gender == Gender.Male) // Make sure A is the female.
             {
                 var t = A;
                 A = B;
