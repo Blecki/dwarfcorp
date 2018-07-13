@@ -1078,7 +1078,7 @@ namespace DwarfCorp.GameStates
                 Tag = "brushes",
                 AutoLayout = AutoLayout.DockLeftCentered,
                 SizeToGrid = new Point(3, 1),
-                ItemSize = new Point(20, 20),
+                ItemSize = new Point(32, 32),
                 InteriorMargin = new Margin(2,2,2,2),
                 ItemSource = new Gui.Widget[]
                
@@ -1129,6 +1129,7 @@ namespace DwarfCorp.GameStates
                 SizeToGrid = new Point(2, 1),
                 ItemSize = new Point(32, 32),
                 InteriorMargin = new Margin(2, 2, 2, 2),
+                ToggledTint = Color.Yellow.ToVector4(),
                 ItemSource = new Gui.Widget[]
 
                   {
@@ -1136,11 +1137,13 @@ namespace DwarfCorp.GameStates
                             {
                                 Text = "Orbit",
                                 DrawFrame = true,
-                                Tooltip = "Orbit Camera",
+                                Tooltip = "Topdown orbit camera mode.",
                                 TextVerticalAlign = VerticalAlign.Center,
                                 TextHorizontalAlign = HorizontalAlign.Center,
                                 ChangeColorOnHover = true,
                                 HoverTextColor = Color.Yellow.ToVector4(),
+                                TextColor = Color.Yellow.ToVector4(),
+                                ChangeTextColorOnEnable = false,
                                 OnClick = (widget, args) =>
                                 {
                                     World.ChangeCameraMode(OrbitCamera.ControlType.Overhead);
@@ -1150,11 +1153,12 @@ namespace DwarfCorp.GameStates
                             {
                                 Text = "Walk",
                                 DrawFrame = true,
-                                Tooltip = "Walk Camera",
+                                Tooltip = "Walk camera mode.",
                                 ChangeColorOnHover = true,
                                 TextVerticalAlign = VerticalAlign.Center,
                                 TextHorizontalAlign = HorizontalAlign.Center,
                                 HoverTextColor = Color.Yellow.ToVector4(),
+                                ChangeTextColorOnEnable = false,
                                 OnClick = (widget, args) =>
                                 {
                                     World.ChangeCameraMode(OrbitCamera.ControlType.Walk);
@@ -1163,6 +1167,14 @@ namespace DwarfCorp.GameStates
                   }
             }) as Gui.Widgets.ToggleTray;
 
+            if (World.Camera.Control == OrbitCamera.ControlType.Overhead)
+            {
+                camTray.Select(0);
+            }
+            else
+            {
+                camTray.Select(1);
+            }
 
             #endregion
 

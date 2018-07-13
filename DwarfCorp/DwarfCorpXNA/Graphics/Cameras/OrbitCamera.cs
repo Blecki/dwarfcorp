@@ -77,7 +77,7 @@ namespace DwarfCorp
         private readonly Timer moveTimer = new Timer(0.25f, true, Timer.TimerMode.Real);
         private bool shiftPressed = false;
         public Vector3 PushVelocity = Vector3.Zero;
-        public ControlType Control = ControlType.Walk;
+        public ControlType Control = ControlType.Overhead;
         private Point mouseOnRotate = new Point(0, 0);
         public List<Vector3> ZoomTargets { get; set; }
 
