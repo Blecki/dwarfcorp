@@ -295,7 +295,19 @@ namespace DwarfCorp
                 {
                     Velocity += -dt * Gravity * subStepLength * 4;
                 }
-                if (!CollidesWithChunks(World.ChunkManager, Position, true, 0.4f, 0.9f))
+
+                if (currentVoxel.IsValid && currentVoxel.LiquidLevel > 0)
+                {
+                    Velocity += -dt * Gravity * subStepLength * 0.999f;
+
+                    if (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl))
+                    {
+                        Velocity += -dt * Gravity * subStepLength * 0.5f;
+                    }
+                    Velocity *= 0.99f;
+                }
+
+                if (!CollidesWithChunks(World.ChunkManager, Position, true, true, 0.4f, 0.9f))
                 {
                     MoveTarget(Velocity * dt * subStepLength);
                     PushVelocity = Vector3.Zero;
@@ -589,7 +601,7 @@ namespace DwarfCorp
 
             LastWheel = mouse.ScrollWheelValue;
 
-            if (!CollidesWithChunks(World.ChunkManager, Position + Velocity, false, 0.5f, 1.0f))
+            if (!CollidesWithChunks(World.ChunkManager, Position + Velocity, false, true, 0.5f, 1.0f))
             {
                 MoveTarget(Velocity);
                 PushVelocity = Vector3.Zero;
@@ -631,13 +643,20 @@ namespace DwarfCorp
         private float HeightOffset = 0.0f;
         public override void UpdateViewMatrix()
         {
-            float heightOffset = crouched ? 0.0f : 0.5f;
-            HeightOffset = heightOffset * 0.1f + HeightOffset * 0.9f;
-            var undistorted = Position + Vector3.UnitY * heightOffset;
-            var distorted = VertexNoise.Warp(undistorted);
-            var noise = distorted - undistorted;
-            Noise = noise * 0.1f + Noise * 0.9f;
-            ViewMatrix = Matrix.CreateLookAt(Position + Vector3.UnitY * HeightOffset + Noise, FollowAutoTarget ? (AutoTarget * 0.5f + Target * 0.5f) : Target + Vector3.UnitY * HeightOffset + Noise, Vector3.UnitY);
+            if (this.Control == ControlType.Walk)
+            {
+                float heightOffset = crouched ? 0.0f : 0.5f;
+                HeightOffset = heightOffset * 0.1f + HeightOffset * 0.9f;
+                var undistorted = Position + Vector3.UnitY * heightOffset;
+                var distorted = VertexNoise.Warp(undistorted);
+                var noise = distorted - undistorted;
+                Noise = noise * 0.1f + Noise * 0.9f;
+                ViewMatrix = Matrix.CreateLookAt(Position + Vector3.UnitY * HeightOffset + Noise, FollowAutoTarget ? (AutoTarget * 0.5f + Target * 0.5f) : Target + Vector3.UnitY * HeightOffset + Noise, Vector3.UnitY);
+            }
+            else
+            {
+                ViewMatrix = Matrix.CreateLookAt(Position, FollowAutoTarget ? (AutoTarget * 0.5f + Target * 0.5f) : Target, Vector3.UnitY);
+            }
         }
 
         private bool IsNeighborOccupied(VoxelHandle voxel, int x, int y, int z)
@@ -682,7 +701,7 @@ namespace DwarfCorp
             Target += dTarget + dPosition;
         }
 
-        public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos, bool applyForce, float size=0.5f, float height=2.0f)
+        public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos, bool applyForce, bool allowInvisible, float size=0.5f, float height=2.0f)
         {
             var box = new BoundingBox(pos - new Vector3(size, height * 0.5f, size), pos + new Vector3(size, height * 0.5f, size));
             bool gotCollision = false;
@@ -692,7 +711,7 @@ namespace DwarfCorp
             {
                 if (!v.IsValid) continue;
                 if (v.IsEmpty) continue;
-                if (!v.IsVisible) continue;
+                if (!allowInvisible && !v.IsVisible) continue;
 
                 var voxAABB = v.GetBoundingBox();
                 if (box.Intersects(voxAABB))

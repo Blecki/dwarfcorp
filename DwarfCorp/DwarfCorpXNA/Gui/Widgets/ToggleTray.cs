@@ -40,11 +40,13 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     SelectedChild = i1;
                     (widget as FramedIcon).Tint = ToggledTint;
+                    widget.TextColor = ToggledTint;
 
                     for (int j = 0; j < Children.Count; j++)
                     {
                         if (i1 == j) continue;
                         (Children[j] as FramedIcon).Tint = OffTint;
+                        Children[j].TextColor = OffTint;
                         Children[j].Invalidate();
                     }
                 };

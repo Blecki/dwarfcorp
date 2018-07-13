@@ -178,13 +178,17 @@ namespace DwarfCorp
         }
         private Timer reflectionTimer = new Timer(0.1f, false, Timer.TimerMode.Real);
         private Vector3 prevCameraPos = Vector3.Zero;
+        private Vector3 prevCameraTarget = Vector3.Zero;
         public void DrawReflectionMap(IEnumerable<IRenderableComponent> Renderables, DwarfTime gameTime, WorldManager game, float waterHeight, Matrix reflectionViewMatrix, Shader effect, GraphicsDevice device)
         {
             if (!DrawReflections) return;
             reflectionTimer.Update(gameTime);
-            if (!reflectionTimer.HasTriggered && (prevCameraPos - game.Camera.Position).LengthSquared() < 0.001)
+            if (!reflectionTimer.HasTriggered && (prevCameraPos - game.Camera.Position).LengthSquared() < 0.001 && (prevCameraTarget - game.Camera.Target).LengthSquared() < 0.001)
                 return;
+
             prevCameraPos = game.Camera.Position;
+            prevCameraTarget = game.Camera.Target;
+
             Plane reflectionPlane = CreatePlane(waterHeight, new Vector3(0, -1, 0), reflectionViewMatrix, true);
 
             effect.ClipPlane = new Vector4(reflectionPlane.Normal, reflectionPlane.D);

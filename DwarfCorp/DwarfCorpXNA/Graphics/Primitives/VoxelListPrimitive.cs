@@ -248,6 +248,21 @@ namespace DwarfCorp
             return coord;
         }
 
+
+        public override void Render(GraphicsDevice device)
+        {
+            device.RasterizerState = new RasterizerState()
+            {
+                CullMode = CullMode.CullCounterClockwiseFace
+            };
+
+            base.Render(device);
+            device.RasterizerState = new RasterizerState()
+            {
+                CullMode = CullMode.None
+            };
+        }
+
         private static void BuildVoxelGeometry(
             RawPrimitive Into,
             int X,
