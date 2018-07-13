@@ -2399,6 +2399,7 @@ namespace DwarfCorp.GameStates
             GodMenu.BringToFront();
 
             Master.BodySelector.LeftReleased += BodySelector_LeftReleased;
+            (Master.Tools[GameMaster.ToolMode.SelectUnits] as DwarfSelectorTool).DrawSelectionRect = b => ContextCommands.Any(c => c.CanBeAppliedTo(b, World));
         }
 
         private List<Body> BodySelector_LeftReleased()
@@ -2432,6 +2433,7 @@ namespace DwarfCorp.GameStates
                     MultiContextMenu.Rect = new Rectangle(MinimapFrame.Rect.Right + 2, MinimapFrame.Rect.Bottom - MultiContextMenu.Rect.Height, MultiContextMenu.Rect.Width, MultiContextMenu.Rect.Height);
                     MultiContextMenu.Layout();
                     GuiRoot.ShowDialog(MultiContextMenu);
+                    GuiRoot.RootItem.SendToBack(MultiContextMenu);
                 }
             }
             else if (MultiContextMenu != null)

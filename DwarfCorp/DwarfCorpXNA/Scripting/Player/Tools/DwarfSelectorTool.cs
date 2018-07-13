@@ -47,6 +47,7 @@ namespace DwarfCorp
     public class DwarfSelectorTool : PlayerTool
     {
 
+        public Func<Body, bool> DrawSelectionRect = (b) => true;
         public DwarfSelectorTool(GameMaster master)
         {
            
@@ -224,9 +225,12 @@ namespace DwarfCorp
             return sb.ToString();
         }
 
+        private List<Body> underMouse = null;
+
         public override void DefaultOnMouseOver(IEnumerable<Body> bodies)
         {
             Player.World.ShowTooltip(GetMouseOverText(bodies));
+            underMouse = bodies.ToList();
         }
 
         public override void OnMouseOver(IEnumerable<Body> bodies)
@@ -267,8 +271,13 @@ namespace DwarfCorp
         {
             DwarfGame.SpriteBatch.Begin();
 
-            foreach (var body in Player.BodySelector.CurrentBodies)
+            foreach (var body in Player.BodySelector.CurrentBodies.Where(DrawSelectionRect))
+            {
                 Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, Player.World.Camera), Color.White, 1.0f);
+            }
+            if (underMouse != null)
+                foreach (var body in underMouse.Where(DrawSelectionRect))
+                    Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, Player.World.Camera), Color.White, 1.0f);
 
             DwarfGame.SpriteBatch.End();
         }
