@@ -243,6 +243,9 @@ namespace DwarfCorp
 
         #endregion
 
+        public virtual void ThreadableUpdate()
+        { }
+
         public virtual void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera,
             SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)
         {

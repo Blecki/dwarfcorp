@@ -202,16 +202,21 @@ namespace DwarfCorp
                 if (anim.IsDone())
                     AnimationQueue.RemoveAt(0);
             }
+        }
 
-            if (HasMoved)
+        public override void ThreadableUpdate()
+        {
+            //if (HasMoved)
             {
                 UpdateTransform();
                 for (var i = 0; i < Children.Count; ++i)
-                    if (Children[i] is Body child) child.hasMoved = true;
+                    if (Children[i] is Body child)
+                    {
+                        child.hasMoved = true;
+                        child.ThreadableUpdate();
+                    }
             }
         }
-
-
         
         public virtual string GetMouseOverText()
         {

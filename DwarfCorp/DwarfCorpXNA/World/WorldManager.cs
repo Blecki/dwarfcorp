@@ -459,9 +459,8 @@ namespace DwarfCorp
                         SurfaceFormat.Color, DepthFormat.Depth24))
                 {
                     var frustum = Camera.GetDrawFrustum();
-                    var renderables = ComponentManager.GetRenderables()
-                        .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()))
-                        .Where(r => frustum.Intersects(r.GetBoundingBox()));
+                    var renderables = EnumerateIntersectingObjects(frustum)
+                        .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()));
                     //var renderables = EnumerateIntersectingObjects(Camera.GetDrawFrustum())
                     //    .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()))
                     //    .Where(c => Object.ReferenceEquals(c.Parent, ComponentManager.RootComponent) && c.IsVisible)
@@ -845,9 +844,8 @@ namespace DwarfCorp
                 return;
 
             var frustum = Camera.GetDrawFrustum();
-            var renderables = ComponentManager.GetRenderables()
-                .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()))
-                .Where(r => frustum.Intersects(r.GetBoundingBox()));
+            var renderables = EnumerateIntersectingObjects(frustum)
+                .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()));
             //var renderables = EnumerateIntersectingObjects(Camera.GetDrawFrustum())
             //    .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()))
             //    .Where(c => Object.ReferenceEquals(c.Parent, ComponentManager.RootComponent) && c.IsVisible)
