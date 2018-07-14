@@ -210,6 +210,8 @@ namespace DwarfCorp
                     if (Children[i] is Body child) child.hasMoved = true;
             }
         }
+
+
         
         public virtual string GetMouseOverText()
         {
@@ -233,13 +235,13 @@ namespace DwarfCorp
 
             if (CachedOcttreeNode == null || MaxDiff(lastBounds, BoundingBox) > 0.1f)
             {
-                if (CollisionType != CollisionType.None)
+                //if (CollisionType != CollisionType.None)
                 {
                     if (CachedOcttreeNode == null || CachedOcttreeNode.Bounds.Contains(BoundingBox) != ContainmentType.Contains)
                     {
-                        Manager.World.OctTree.RemoveItem(this, lastBounds);
+                        Manager.World.RemoveItemFromOctTree(this, lastBounds);
                         if (!IsDead)
-                            CachedOcttreeNode = Manager.World.OctTree.AddToTreeEx(Tuple.Create(this, BoundingBox));
+                            CachedOcttreeNode = Manager.World.AddItemToOctTree(this, BoundingBox);
                     }
                     else
                     {
@@ -295,18 +297,14 @@ namespace DwarfCorp
 
         public override void Delete()
         {
-            if (CollisionType != CollisionType.None)
-                Manager.World.OctTree.RemoveItem(this, lastBounds);
+            Manager.World.RemoveItemFromOctTree(this, lastBounds);
             base.Delete();
         }
 
         public override void Die()
         {
-            if (Manager != null && CollisionType != CollisionType.None)
-                Manager.World.OctTree.RemoveItem(this, lastBounds);
-
+            Manager.World.RemoveItemFromOctTree(this, lastBounds);
             if (OnDestroyed != null) OnDestroyed();
-
             base.Die();
         }
 

@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
@@ -38,6 +39,8 @@ namespace DwarfCorp
 {
     public partial class WorldManager
     {
+        private OctTreeNode<Body> OctTree = null;
+
         public IEnumerable<Body> EnumerateIntersectingObjects(BoundingBox box, CollisionType queryType)
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects");
@@ -54,6 +57,16 @@ namespace DwarfCorp
             OctTree.EnumerateItems(Frustum, hash);
             PerformanceMonitor.PopFrame();
             return hash;
+        }
+
+        public void RemoveItemFromOctTree(Body Body, BoundingBox Bounds)
+        {
+            OctTree.RemoveItem(Body, Bounds);
+        }
+
+        public OctTreeNode<Body> AddItemToOctTree(Body Body, BoundingBox Bounds)
+        {
+            return OctTree.AddToTreeEx(Tuple.Create(Body, Bounds));
         }
     }
 }

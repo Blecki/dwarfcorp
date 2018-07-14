@@ -354,13 +354,16 @@ namespace DwarfCorp
             }
         }
 
-        public IEnumerable<Tuple<int, BoundingBox>> EnumerateBounds(int Depth = 0)
+        public IEnumerable<Tuple<int, BoundingBox>> EnumerateBounds(BoundingFrustum Frustum, int Depth = 0)
         {
-            yield return Tuple.Create(Depth, Bounds);
-            if (Children != null)
-                for (var i = 0; i < 8; ++i)
-                    foreach (var r in Children[i].EnumerateBounds(Depth + 1))
-                        yield return r;
+            if (Frustum.Intersects(Bounds))
+            {
+                yield return Tuple.Create(Depth, Bounds);
+                if (Children != null)
+                    for (var i = 0; i < 8; ++i)
+                        foreach (var r in Children[i].EnumerateBounds(Frustum, Depth + 1))
+                            yield return r;
+            }
         }
     }
 }

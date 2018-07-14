@@ -168,13 +168,6 @@ namespace DwarfCorp
         private static PlanResult Path(CreatureMovement mover, VoxelHandle startVoxel, GoalRegion goal, ChunkManager chunks,
             int maxExpansions, ref List<MoveAction> toReturn, float weight, Func<bool> continueFunc)
         {
-            // Create a local clone of the octree, using only the objects belonging to the player.
-            OctTreeNode<Body> octree = new OctTreeNode<Body>(mover.Creature.World.ChunkManager.Bounds.Min, mover.Creature.World.ChunkManager.Bounds.Max);
-            List<Body> playerObjects = new List<Body>(mover.Creature.World.PlayerFaction.OwnedObjects);
-            foreach(var obj in playerObjects)
-            {
-                octree.AddItem(obj, obj.GetBoundingBox());
-            }
             var start = new MoveState()
             {
                 Voxel = startVoxel
@@ -286,7 +279,7 @@ namespace DwarfCorp
                 IEnumerable<MoveAction> neighbors = null;
 
                 // Get the voxels that can be moved to from the current voxel.
-                neighbors = mover.GetMoveActions(current, octree).ToList();
+                neighbors = mover.GetMoveActions(current).ToList();
                 //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
 
 
@@ -364,20 +357,11 @@ namespace DwarfCorp
 
         }
 
-        private static FileStream _planLog = null;
-
         // Find a path from the start to the goal by computing an inverse path from goal to the start. Should only be used
         // if the forward path fails.
         private static PlanResult InversePath(CreatureMovement mover, VoxelHandle startVoxel, GoalRegion goal, ChunkManager chunks,
                 int maxExpansions, ref List<MoveAction> toReturn, float weight, Func<bool> continueFunc)
         {
-            // Create a local clone of the octree, using only the objects belonging to the player.
-            OctTreeNode<Body> octree = new OctTreeNode<Body>(mover.Creature.World.ChunkManager.Bounds.Min, mover.Creature.World.ChunkManager.Bounds.Max);
-            List<Body> playerObjects = new List<Body>(mover.Creature.World.PlayerFaction.OwnedObjects);
-            foreach (var obj in playerObjects)
-            {
-                octree.AddItem(obj, obj.GetBoundingBox());
-            }
             MoveState start = new MoveState()
             {
                 Voxel = startVoxel
@@ -509,7 +493,7 @@ namespace DwarfCorp
                 IEnumerable<MoveAction> neighbors = null;
 
                 // Get the voxels that can be moved to from the current voxel.
-                neighbors = mover.GetInverseMoveActions(current, octree);
+                neighbors = mover.GetInverseMoveActions(current);
 
                 // Otherwise, consider all of the neighbors of the current voxel that can be moved to,
                 // and determine how to add them to the list of expansions.

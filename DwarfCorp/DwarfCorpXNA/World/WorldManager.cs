@@ -126,8 +126,6 @@ namespace DwarfCorp
 
         public FactionLibrary Factions = null;
 
-        [JsonIgnore]
-        public OctTreeNode<Body> OctTree = null;
         public ParticleManager ParticleManager = null;
 
         // Handles interfacing with the player and sending commands to dwarves
@@ -963,7 +961,7 @@ namespace DwarfCorp
             DefaultShader.ClippingEnabled = true;
 
             if (Debugger.Switches.DrawOcttree)
-                foreach (var box in OctTree.EnumerateBounds())
+                foreach (var box in OctTree.EnumerateBounds(frustum))
                     Drawer3D.DrawBox(box.Item2, Color.Yellow, 1.0f / (float)(box.Item1 + 1), false);
 
             // Render simple geometry (boxes, etc.)

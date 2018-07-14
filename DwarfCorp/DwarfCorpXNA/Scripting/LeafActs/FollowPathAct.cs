@@ -103,7 +103,7 @@ namespace DwarfCorp
                 {
                     return false;
                 }
-                var neighbors = Agent.Movement.GetMoveActions(path[i].SourceState, Agent.World.OctTree);
+                var neighbors = Agent.Movement.GetMoveActions(path[i].SourceState);
                 if (!neighbors.Any(n => n.DestinationState == path[i + 1].SourceState))
                 {
                     return false;
