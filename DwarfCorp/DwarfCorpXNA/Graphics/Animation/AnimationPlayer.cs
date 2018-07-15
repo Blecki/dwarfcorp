@@ -165,7 +165,7 @@ namespace DwarfCorp
                 float dt = mode == Timer.TimerMode.Game ? (float)gameTime.ElapsedGameTime.TotalSeconds : (float)gameTime.ElapsedRealTime.TotalSeconds;
                 FrameTimer += dt;
 
-                float time = CurrentAnimation.FrameHZ;
+                float time = 1.0f / CurrentAnimation.FrameHZ;
 
                 if (CurrentAnimation.Speeds.Count > 0)
                     time = CurrentAnimation.Speeds[Math.Min(CurrentFrame, CurrentAnimation.Speeds.Count - 1)];
