@@ -136,7 +136,8 @@ namespace DwarfCorp
         private Point mousePrerotate = new Point(0, 0);
         private bool crouched = false;
         public Vector3 Gravity = Vector3.Down * 20;
-
+        private bool flying = false;
+        private bool flyKeyPressed = false;
         public void WalkUpdate(DwarfTime time, ChunkManager chunks)
         {
             // Don't attempt any camera control if the user is trying to type intoa focus item.
@@ -262,16 +263,37 @@ namespace DwarfCorp
                 }
             }
 
-            if (velocityToSet.LengthSquared() > 0)
+            if (keys.IsKeyDown(ControlSettings.Mappings.Fly))
             {
-                float y = Velocity.Y;
-                Velocity = Velocity * 0.5f + 0.5f * velocityToSet;
-                Velocity = new Vector3(Velocity.X, y, Velocity.Z);
+                flyKeyPressed = true;
+            }
+            else
+            {
+                if (flyKeyPressed)
+                {
+                    flying = !flying;
+                }
+                flyKeyPressed = false;
             }
 
-            LastWheel = mouse.ScrollWheelValue;
+            if (velocityToSet.LengthSquared() > 0)
+            {
+                if (!flying)
+                {
+                    float y = Velocity.Y;
+                    Velocity = Velocity * 0.5f + 0.5f * velocityToSet;
+                    Velocity = new Vector3(Velocity.X, y, Velocity.Z);
+                }
+                else
+                {
+                    Velocity = Velocity * 0.5f + 0.5f * velocityToSet;
+                }
+            }
 
-            Velocity = new Vector3(Velocity.X * 0.9f, Velocity.Y, Velocity.Z * 0.9f);
+
+            LastWheel = mouse.ScrollWheelValue;
+            float ymult = flying ? 0.9f : 1.0f;
+            Velocity = new Vector3(Velocity.X * 0.9f, Velocity.Y * ymult, Velocity.Z * 0.9f);
 
             float subSteps = 10.0f;
             float subStepLength = 1.0f / subSteps;
@@ -287,24 +309,28 @@ namespace DwarfCorp
                 {
                     crouched = true;
                 }
-                if (!below.IsValid || below.IsEmpty)
-                {
-                    Velocity += dt * Gravity * subStepLength;
-                }
-                else if (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl))
-                {
-                    Velocity += -dt * Gravity * subStepLength * 4;
-                }
 
-                if (currentVoxel.IsValid && currentVoxel.LiquidLevel > 0)
+                if (!flying)
                 {
-                    Velocity += -dt * Gravity * subStepLength * 0.999f;
-
-                    if (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl))
+                    if (!below.IsValid || below.IsEmpty)
                     {
-                        Velocity += -dt * Gravity * subStepLength * 0.5f;
+                        Velocity += dt * Gravity * subStepLength;
                     }
-                    Velocity *= 0.99f;
+                    else if (keys.IsKeyDown(ControlSettings.Mappings.Jump))
+                    {
+                        Velocity += -dt * Gravity * subStepLength * 4;
+                    }
+
+                    if (currentVoxel.IsValid && currentVoxel.LiquidLevel > 0)
+                    {
+                        Velocity += -dt * Gravity * subStepLength * 0.999f;
+
+                        if (keys.IsKeyDown(ControlSettings.Mappings.Jump))
+                        {
+                            Velocity += -dt * Gravity * subStepLength * 0.5f;
+                        }
+                        Velocity *= 0.99f;
+                    }
                 }
 
                 if (!CollidesWithChunks(World.ChunkManager, Position, true, true, 0.4f, 0.9f))
@@ -601,7 +627,7 @@ namespace DwarfCorp
 
             LastWheel = mouse.ScrollWheelValue;
 
-            if (!CollidesWithChunks(World.ChunkManager, Position + Velocity, false, true, 0.5f, 1.0f))
+            if (!CollidesWithChunks(World.ChunkManager, Position + Velocity, false, false, 0.5f, 1.0f))
             {
                 MoveTarget(Velocity);
                 PushVelocity = Vector3.Zero;
@@ -728,6 +754,8 @@ namespace DwarfCorp
 
             return gotCollision;
         }
+
+
 
         public Vector3 GetForwardVector()
         {
