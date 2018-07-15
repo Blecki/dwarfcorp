@@ -43,8 +43,10 @@ namespace DwarfCorp
 {
     public class DesignationDrawer
     {
+        // Todo: Does this belong here?
         public DesignationType VisibleTypes = DesignationType._All;
 
+        // Todo: Move into "designation library" and let it be moddable data?
         public class DesignationTypeProperties
         {
             public Color Color;
@@ -148,6 +150,9 @@ namespace DwarfCorp
                     255);
             }
 
+            // Todo: Can this be drawn by the entity, allowing it to be properly frustrum culled?
+            // - Need to add a 'gestating' entity state to the alive/dead/active mess.
+
             foreach (var entity in Set.EnumerateEntityDesignations())
             {
                 if ((entity.Type & VisibleTypes) == entity.Type)
@@ -169,9 +174,6 @@ namespace DwarfCorp
                         DrawBoxCallback(box.Min, box.Max - box.Min, props.ModulatedColor, props.LineWidth, false);
                         entity.Body.SetVertexColorRecursive(props.ModulatedColor);
                     }
-
-                    if (props.Icon != null)
-                        Drawer2D.DrawSprite(props.Icon, entity.Body.Position + Vector3.One * 0.5f, Vector2.One * 0.5f, Vector2.Zero, new Color(255, 255, 255, 100));
                 }
                 else if (entity.Type == DesignationType.Craft) // Make the ghost object invisible if these designations are turned off.
                     entity.Body.SetFlagRecursive(GameComponent.Flag.Visible, false);

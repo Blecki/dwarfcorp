@@ -93,8 +93,7 @@ namespace DwarfCorp
             currentMode = "Idle";
         }
 
-        public CharacterSprite(GraphicsDevice graphics, ComponentManager manager, string name, 
-            Matrix localTransform) :
+        public CharacterSprite(ComponentManager manager, string name, Matrix localTransform) :
                 base(manager, name, localTransform)
         {
             currentMode = "Idle";

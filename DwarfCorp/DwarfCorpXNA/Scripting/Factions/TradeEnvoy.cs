@@ -81,30 +81,39 @@ namespace DwarfCorp
 
             TradeWidget = World.MakeWorldPopup(new Goals.TimedIndicatorWidget()
             {
-                Text = String.Format("Click here to trade with the {0}!", OwnerFaction.Race.Name),
+                Text = string.Format("Click here to trade with the {0}!", OwnerFaction.Race.Name),
                 OnClick = (gui, sender) =>
                 {
-                    World.Paused = true;
-                    GameState.Game.StateManager.PushState(new Dialogue.DialogueState(
-                        GameState.Game,
-                        GameState.Game.StateManager,
-                        this,
-                        World.PlayerFaction,
-                        World));
+                    OpenDiplomacyConversation(World);
                 },
                 ShouldKeep = () => { return this.ExpiditionState == Expedition.State.Trading && !this.ShouldRemove; }
             }, liveCreatures.First().Physics, new Vector2(0, -10));
             World.MakeAnnouncement(String.Format("Click here to trade with the {0}!", OwnerFaction.Race.Name), (gui, sender) =>
             {
-                World.Paused = true;
-                GameState.Game.StateManager.PushState(new Dialogue.DialogueState(
-                    GameState.Game,
-                    GameState.Game.StateManager,
-                    this,
-                    World.PlayerFaction,
-                    World));
+                OpenDiplomacyConversation(World);
             }, () => { return this.ExpiditionState == Expedition.State.Trading && !this.ShouldRemove; }, false);
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
+        }
+
+        private void OpenDiplomacyConversation(WorldManager World)
+        {
+            World.Paused = true;
+            // Prepare conversation memory for an envoy conversation.
+            var cMem = World.ConversationMemory;
+            cMem.SetValue("$world", new Yarn.Value(World));
+            cMem.SetValue("$envoy", new Yarn.Value(this));
+            cMem.SetValue("$envoy_demands_tribute", new Yarn.Value(this.TributeDemanded != 0));
+            cMem.SetValue("$envoy_tribute_demanded", new Yarn.Value((float)this.TributeDemanded.Value));
+            cMem.SetValue("$envoy_name", new Yarn.Value(TextGenerator.GenerateRandom(Datastructures.SelectRandom(OwnerFaction.Race.NameTemplates).ToArray())));
+            cMem.SetValue("$envoy_faction", new Yarn.Value(OwnerFaction.Name));
+            cMem.SetValue("$player_faction", new Yarn.Value(this.OtherFaction));
+            cMem.SetValue("$offensive_trades", new Yarn.Value(0.0f));
+
+            var politics = World.Diplomacy.GetPolitics(OtherFaction, OwnerFaction);
+            cMem.SetValue("$faction_was_at_war", new Yarn.Value(politics.WasAtWar));
+            cMem.SetValue("$envoy_relationship", new Yarn.Value(politics.GetCurrentRelationship().ToString()));
+
+            GameState.Game.StateManager.PushState(new YarnState(OwnerFaction.Race.DiplomacyConversation, "Start", cMem));
         }
 
         public bool UpdateWaitTimer(DateTime now)

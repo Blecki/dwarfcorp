@@ -76,7 +76,7 @@ namespace DwarfCorp
         {
             Gender = Mating.RandomGender();
             Physics.Orientation = Physics.OrientMode.RotateY;
-            CreateSprite(dwarfClass, Manager);
+            CreateDwarfSprite(dwarfClass, Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
@@ -148,7 +148,7 @@ namespace DwarfCorp
             Stats.Size = 5;
             Stats.CanSleep = true;
             Stats.CanEat = true;
-            AI.Movement.CanClimbWalls = true;
+            AI.Movement.CanClimbWalls = true; // Why isn't this a flag like the below?
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             AI.Movement.SetCan(MoveType.EnterVehicle, true);
@@ -172,11 +172,54 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(Stats.CurrentClass, manager);
+            CreateDwarfSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new VoxelRevealer(manager, Physics, 5)).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);
+        }
+
+        protected void CreateDwarfSprite(EmployeeClass employeeClass, ComponentManager manager)
+        {
+            if (Physics == null)
+            {
+                Physics = GetRoot().GetComponent<Physics>();
+                if (Physics == null) return;
+            }
+
+            var sprite = Physics.AddChild(new LayeredSprites.LayeredCharacterSprite(manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, 0.15f, 0)))) as LayeredSprites.LayeredCharacterSprite;
+
+            var random = new Random(Stats.RandomSeed);
+
+            var hairPalette = LayeredSprites.LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("hair")).SelectRandom(random);
+            var skinPalette = LayeredSprites.LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("face")).SelectRandom(random);
+            AddLayerOrDefault(sprite, random, "body");
+            AddLayerOrDefault(sprite, random, "face", skinPalette);
+            AddLayerOrDefault(sprite, random, "nose", skinPalette);
+            AddLayerOrDefault(sprite, random, "beard", hairPalette);
+            AddLayerOrDefault(sprite, random, "hair", hairPalette);
+            AddLayerOrDefault(sprite, random, "tool");
+
+            foreach (Animation animation in AnimationLibrary.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations))
+                sprite.AddAnimation(animation);
+
+            sprite.SetCurrentAnimation(Sprite.Animations.First().Value);
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+
+            
+        }
+
+        private void AddLayerOrDefault(LayeredSprites.LayeredCharacterSprite Sprite, Random Random, String Layer, LayeredSprites.Palette Palette = null)
+        {
+            var layers = LayeredSprites.LayerLibrary.EnumerateLayers(Layer).Where(l => !l.DefaultLayer && l.PassesFilter(this.Stats));
+            if (layers.Count() > 0)
+                Sprite.AddLayer(layers.SelectRandom(Random), Palette);
+            else
+            {
+                var defaultLayer = LayeredSprites.LayerLibrary.EnumerateLayers(Layer).Where(l => l.DefaultLayer).FirstOrDefault();
+                if (defaultLayer != null)
+                    Sprite.AddLayer(defaultLayer, Palette);
+            }
         }
     }
 

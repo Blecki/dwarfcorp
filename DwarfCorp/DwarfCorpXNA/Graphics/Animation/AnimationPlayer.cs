@@ -170,10 +170,12 @@ namespace DwarfCorp
                 if (CurrentAnimation.Speeds.Count > 0)
                     time = CurrentAnimation.Speeds[Math.Min(CurrentFrame, CurrentAnimation.Speeds.Count - 1)];
 
-                if (FrameTimer * CurrentAnimation.SpeedMultiplier >= 1.0f / time)
+                time /= CurrentAnimation.SpeedMultiplier;
+
+                if (FrameTimer >= time)
                 {
                     NextFrame();
-                    FrameTimer = 0.0f;
+                    FrameTimer = 0;
                 }
             }
 

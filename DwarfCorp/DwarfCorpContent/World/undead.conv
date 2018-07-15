@@ -1,0 +1,164 @@
+title: Start
+---
+<<set_portrait "GUI\diplo-necro" 64 64 5.0 0 1 0>>
+<<show_portrait>>
+<<set_language "Undead">> 
+<<pick>>
+	Necromancer: Do not be alarmed. Underneath your vile flesh, you are no different from us.
+	Necromancer: We are interested in your goods.
+	Necromancer: We have been watching you, fleshy dwarves.
+<<end>>
+Elf: I am $envoy_name of $faction_name.
+[[Main]]
+===
+
+
+title: Main
+---
+<<if $envoy_demands_tribute>>
+	<<pick>>
+		$envoy_name: You have encroached on our lands. You may pay us for the priveledge of living, or, not.
+		$envoy_name: We require gold, or your death. You may choose.
+	<<end>>
+	[[Pay a tribute of $envoy_tribute_demanded|PayTribute]]
+	[[Refuse to pay. (WAR)|DeclareWar]]
+<<elseif $faction_was_at_war>>
+	$envoy_name: Our struggle continues, but in the end, we will always win.
+	[[Make peace.|MakePeace]]
+	[[Continue the war.|DeclareWar]]
+<<else>>
+	[[Trade.|Trade]]
+	[[What is your opinion of us?|Opinion]]
+	[[What is something you have many of?|Many]]
+	[[What is something you have few of?|Few]]
+	[[What is something you hate?|Hate]]
+	[[What is something you like?|Like]]
+	[[Declare war!|ConfirmWar]]
+	[[Goodbye.|Goodbye]]
+<<endif>>
+===
+
+
+title: Trade
+---
+<<trade>> // Pauses conversation until trade is complete.
+<<if $trade_result == "cancelled">>
+	$envoy_name: Do not toy with me, dwarf.
+	[[Main]]
+<<elseif $trade_result == "hated">>
+	<<pick>>
+		$envoy_name: No. We will not take such trinkets.
+		$envoy_name: How could we accept something so alive?
+	<<end>>
+	<<increment $offensive_trades>>
+	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
+	<<if $offensive_trades == 3>>
+		$envoy_name: A complete waste of my time. At least I am still immortal so you are nothing but an annoyance. Goodbye!
+		<<recall_envoy>>
+		<<end_conversation>>
+	<<endif>>
+	[[Main]]
+<<elseif $trade_result == "unprofitable">>
+	<<pick>>
+		$envoy_name: Perhaps you do not understand. We want profitable trades. Yes?
+		$envoy_name: Idiots. Why would I accept such a low offer?
+		$envoy_name: Ridiculous. Try again. This time, more profit?
+	<<end>>
+<<else>>
+	<<if $trade_result == "liked">>
+		<<political_event "you gave us something we liked" 0.25 4>>
+	<<endif>>
+	<<finalize_trade>> // Applys the trade and creates the events the achievement engine needs.
+	<<political_event "we had profitable trade" 0.25 2>>
+	<<pick>>
+		$envoy_name: Agreeable.
+		$envoy_name: Hmm, yes. This will do.
+	<<end>>
+<<endif>>
+[[Main]]
+===
+
+
+title: Opinion
+---
+$envoy_name: Our relationship is $envoy_relationship. Why do you insist on this pointless chatter?
+[[Main]]
+===
+
+
+title: Many
+---
+$envoy_name: Bone. Magic. Evil. Obviously.
+[[Main]]
+===
+
+
+title: Few
+---
+$envoy_name: Flesh.
+[[Main]]
+===
+
+
+title: Hate
+---
+$envoy_name: Food. Vegetation. They disgust us. Especially your food and your vegetation.
+[[Main]]
+===
+
+
+title: Like
+---
+$envoy_name: ...
+[[Main]]
+===
+
+
+title: ConfirmWar
+---
+$envoy_name: Do you think that is wise?
+[[Yes!|DeclareWar]]
+[[No.|Main]]
+===
+
+
+title: DeclareWar
+---
+<<pick>>
+	$envoy_name: More warriors for my army, then.
+	$envoy_name: Each dwarf that falls will be another soldier in my ranks.
+<<end>>
+<<political_event "you declared war on us" -2.0 4>>
+<<declare_war>> // This is what actually turns them hostile. Also generates the events for the achievement system.
+<<recall_envoy>>
+<<end_conversation>>
+===
+
+
+title: MakePeace
+---
+$envoy_name: Nations that once fought often become the strongest of allies.
+<<political_event "you made peace with us" 0.4 4>>
+[[Main]]
+===
+
+
+title: PayTribute
+---
+<<if $player_money < $envoy_tribute_demanded>>
+	$envoy_name: I will return when your puny colony is able to pay us.
+	<<recall_envoy>>
+	<<end_conversation>>
+<<else>>
+	<<pay_tribute>>
+	<<political_event "you paid us tribute" 0.5 4>>
+	$envoy_name: A wise decision.
+<<endif>>
+===
+
+title: Goodbye
+---
+$envoy_name: I see you are afraid. I will see you again in your nightmares.
+<<recall_envoy>>
+<<end_conversation>>
+===  

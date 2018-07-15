@@ -108,7 +108,7 @@ namespace DwarfCorp
 
         public WaterManager Water { get; set; }
 
-        public Timer ChunkUpdateTimer = new Timer(0.1f, false, Timer.TimerMode.Real);
+        public Timer ChunkUpdateTimer = new Timer(0.1f, false, Timer.TimerMode.Game);
 
         // Todo: Move this.
         public bool IsAboveCullPlane(BoundingBox Box)

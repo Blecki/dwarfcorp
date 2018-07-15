@@ -79,14 +79,27 @@ namespace DwarfCorp
             FixedTexture = texture;
         }
 
+        public SpriteSheet(Texture2D texture, int frameWidth, int frameHeight)
+        {
+            FixedTexture = texture;
+            FrameWidth = frameWidth;
+            FrameHeight = frameHeight;
+            Width = texture.Width;
+            Height = texture.Height;
+        }
+
         public SpriteSheet(string name)
         {
             AssetName = name;
             Texture2D tex = AssetManager.GetContentTexture(name);
-            FrameWidth = tex.Width;
-            FrameHeight = tex.Height;
-            Width = tex.Width;
-            Height = tex.Height;
+
+            if (tex != null)
+            {
+                FrameWidth = tex.Width;
+                FrameHeight = tex.Height;
+                Width = tex.Width;
+                Height = tex.Height;
+            }
         }
 
         public SpriteSheet(string name, int frameWidth, int frameHeight)
@@ -168,6 +181,30 @@ namespace DwarfCorp
                 uvs[vert] = new Vector2(normalizedCoords.X + uvs[vert].X * normalizeX, normalizedCoords.Y + uvs[vert].Y * normalizeY);
 
             return uvs;
+        }
+
+        public int Columns { get { return Width / FrameWidth; } }
+        public int Rows { get { return Height / FrameHeight; } }
+        public int Row(int TileIndex) { return TileIndex / Columns; }
+        public int Column(int TileIndex) { return TileIndex % Columns; }
+        public float TileUStep { get { return 1.0f / Columns; } }
+        public float TileVStep { get { return 1.0f / Rows; } }
+        public float ColumnU(int Column) { return (TileUStep * Column); }
+        public float RowV(int Row) { return (TileVStep * Row); }
+        public float TileU(int TileIndex) { return ColumnU(Column(TileIndex)); }
+        public float TileV(int TileIndex) { return RowV(Row(TileIndex)); }
+        public Matrix ScaleMatrix { get { return Matrix.CreateScale(TileUStep, TileVStep, 1.0f); } }
+        public Matrix TranslationMatrix(int Column, int Row) { return Matrix.CreateTranslation(ColumnU(Column), RowV(Row), 0.0f); }
+        public Matrix TileMatrix(int Column, int Row) { return ScaleMatrix * TranslationMatrix(Column % Columns, Row % Rows); }
+        public Matrix TileMatrix(int TileIndex) { return TileMatrix(Column(TileIndex), Row(TileIndex)); }
+        public Matrix TileMatrix(int TileIndex, int ColumnSpan, int RowSpan)
+        {
+            return Matrix.CreateScale(ColumnSpan, RowSpan, 1.0f) * TileMatrix(TileIndex);
+        }
+
+        public Matrix TileMatrix(int Column, int Row, int ColumnSpan, int RowSpan)
+        {
+            return Matrix.CreateScale(ColumnSpan, RowSpan, 1.0f) * TileMatrix(Column, Row);
         }
     }
 }

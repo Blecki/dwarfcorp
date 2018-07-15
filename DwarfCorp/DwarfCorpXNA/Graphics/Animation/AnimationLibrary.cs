@@ -44,13 +44,14 @@ namespace DwarfCorp
     {
         private static Dictionary<String, List<Animation>> Animations = new Dictionary<String, List<Animation>>();
 
+        // Kill this already.
         public static Animation CreateAnimation(Animation.SimpleDescriptor Descriptor)
         {
             // Can't cache these guys, unfortunately. Thankfully, they
             //  are only used by the dialogue screen.
             var anim = new Animation()
             {
-                SpriteSheet = new SpriteSheet(Descriptor.AssetName),
+                SpriteSheet = new SpriteSheet(Descriptor.AssetName, Descriptor.Width, Descriptor.Height),
                 Frames = Descriptor.Frames.Select(s => new Point(s, 0)).ToList(),
                 SpeedMultiplier = Descriptor.Speed,
                 Speeds = new List<float>(),
@@ -115,6 +116,36 @@ namespace DwarfCorp
             }
 
             return Animations[UniqueName][0];
+        }
+
+        public static List<Animation> LoadNewLayeredAnimationFormat(String Path)
+        {
+            if (!Animations.ContainsKey(Path))
+            {
+                try
+                {
+                    var anims = FileUtils.LoadJsonListFromMultipleSources<NewAnimationDescriptor>(Path, null, a => a.Name)
+                        .Select(a => a.CreateAnimation()).ToList();
+                    Animations.Add(Path, anims);
+                }
+                catch
+                {
+                    var errorAnimations = new List<Animation>();
+
+                    errorAnimations.Add(
+                        new Animation()
+                        {
+                            SpriteSheet = new SpriteSheet(ContentPaths.Error, 32),
+                            Frames = new List<Point> { Point.Zero },
+                            Name = "ERROR"
+                        });
+
+
+                    Animations.Add(Path, errorAnimations);
+                }
+            }
+
+            return Animations[Path];
         }
 
         public static List<Animation> LoadCompositeAnimationSet(String Path, String CompositeName)
@@ -198,7 +229,7 @@ namespace DwarfCorp
                     CompositeName = Composite,
                     CompositeFrames = CreateFrames(Set.Layers, Set.Tints, descriptor.Frames),
                     Name = descriptor.Name,
-                    Speeds = descriptor.Speed.Select(s => 1.0f / s).ToList(),
+                    Speeds = descriptor.Speed,
                     Loops = !descriptor.PlayOnce,
                     YOffset = descriptor.YOffset
                 }).ToList();

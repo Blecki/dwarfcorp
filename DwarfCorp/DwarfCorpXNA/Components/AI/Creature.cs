@@ -907,7 +907,7 @@ namespace DwarfCorp
                 return;
             }
 
-            var sprite = Physics.AddChild(new CharacterSprite(manager.World.GraphicsDevice, manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, heightOffset, 0)))) as CharacterSprite;
+            var sprite = Physics.AddChild(new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, heightOffset, 0)))) as CharacterSprite;
             // Todo: Share the list of animations too?
             foreach (Animation animation in employeeClass.Animations)
                 sprite.AddAnimation(animation);
@@ -917,15 +917,9 @@ namespace DwarfCorp
             sprite.SetFlag(Flag.ShouldSerialize, false);
         }
 
-        protected CharacterSprite CreateSprite(string animations, ComponentManager manager,
-            float VerticalOffset = 0.5f, bool AddToPhysics = true)
+        protected CharacterSprite CreateSprite(string animations, ComponentManager manager, float VerticalOffset = 0.5f, bool AddToPhysics = true)
         {
-            var sprite = new CharacterSprite
-                                  (manager.World.GraphicsDevice,
-                                  manager,
-                                  "Sprite",
-                                  Matrix.CreateTranslation(0, VerticalOffset, 0)
-                                  );
+            var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, VerticalOffset, 0));
 
             if (AddToPhysics)
                 Physics.AddChild(sprite);

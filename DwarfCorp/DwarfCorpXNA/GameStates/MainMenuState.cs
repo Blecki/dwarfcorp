@@ -143,6 +143,17 @@ namespace DwarfCorp.GameStates
                 {
                     StateManager.PushState(new GuiDebugState(GameState.Game, StateManager));
                 });
+
+            MakeMenuItem(frame, "Dwarf Designer", "Open the dwarf designer.",
+                (sender, args) =>
+                {
+                    StateManager.PushState(new DwarfDesignerState(GameState.Game, StateManager));
+                });
+
+            MakeMenuItem(frame, "Yarn test", "", (sender, args) =>
+            {
+                StateManager.PushState(new YarnState("test.conv", "Start", new Yarn.MemoryVariableStore()));
+            });
 #endif
 
             MakeMenuItem(frame, "Quit", "Goodbye.", (sender, args) => Game.Exit());

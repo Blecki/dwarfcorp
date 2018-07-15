@@ -1,474 +1,457 @@
-{
-    "Dwarf": {
-        "Name": "Dwarf",
-		"Posessive": "Dwarvish",
-        "CreatureTypes": 
-        [
-            "Dwarf",
-            "AxeDwarf"
-        ],
-        "TradeEnvoys": 
-        [["CraftDwarf", "AxeDwarf", "AxeDwarf"]],
-        "WarParties": 
-        [["AxeDwarf", "AxeDwarf", "AxeDwarf"],
-         ["AxeDwarf", "AxeDwarf", "AxeDwarf", "AxeDwarf"]
-        ],
-        "IsIntelligent": true,
-        "IsNative": false,
-        "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
-        "NameFile": "Text\\Templates\\names_dwarf.txt",
-        "TalkAnimation" : {
-            "AssetName" : "GUI\\diplo-dorf",
-            "Width" : 64,
-            "Height" : 64,
-            "Frames" :  [0, 1, 0],
-            "Speed" : 5.0
-        },
-        "NaturalEnemies" :  ["Demon", "Carnivore"],
-        "Speech" : 
-        {
-            "Greetings" :  ["Hello!", "Well met.", "Greetings!", "Salutations!", "Good to see you, fellow Dwarf!"],
-            "Farewells" :  ["Goodbye!", "Deep mining!", "Seleprak be with you!", "For the motherland!", "King and colony!"],
-            "GoodTrades" :  ["This is profitable.", "The Dwarfbux rain down on us today!", "The balloon is weighed down with riches.", "Incredible work!", "Thank Seleprak for mercantilism."],
-            "BadTrades" :  ["Do you take me for a fool? This is not profitable enough.", 
-			"I should not have come all this way. Not. Profitable.", 
-			"I thought we could trust one another. Give me a better deal!", "I don't have the space for such unprofitable trinkets."],
-			"OffensiveTrades" : ["The deal is off! This is outrageously offensive!"],
-            "WarDeclarations" :  ["Consider this war!", "We will lay waste to your rebellious colony!", "Prepare to be arrested by representatives of the king!", "This is a dark day for the dwarven empire."],
-            "PeaceDeclarations" :  ["We wish to make peace.", "The king has grown tired of your rebellion. Make peace.", "War of this kind is not profitable."],
-            "DemandsForTribute" : ["We are here to collect taxes for the King.", "The Dwarven Kingdom demands tax.", "The King needs revenue for his army.", "There is a new corporate income tax. Pony up!"],
-			"Language" : 
-            {
-                "Syllables":  
-                [
-                    "Audio/oscar/sfx_ic_dwarf_mumble_1", 
-                    "Audio/oscar/sfx_ic_dwarf_mumble_2",
-                    "Audio/oscar/sfx_ic_dwarf_mumble_3",
-                    "Audio/oscar/sfx_ic_dwarf_mumble_4",
-                    "Audio/oscar/sfx_ic_dwarf_mumble_5",
-                    "Audio/oscar/sfx_ic_dwarf_mumble_6"
-                ],
-                "Yays": 
-                [
-                    "Audio/oscar/sfx_ic_dwarf_pleased"
-                ],
-                "Boos": 
-                [
-                    "Audio/oscar/sfx_ic_dwarf_tantrum_1",
-                    "Audio/oscar/sfx_ic_dwarf_tantrum_2",
-                    "Audio/oscar/sfx_ic_dwarf_tantrum_3",
-                ]
-            }
-        },
-        "LikedResources" :  ["Metal", "Precious", "Gem", "Craft"],
-        "CommonResources" :  ["Stone", "Metal", "Fungus", "Alcohol"],
-        "RareResources" :  ["Magical", "Wood", "Gem", "Precious", "Craft"],
-        "HatedResources" :  [],
-        "TradeGoods" : 
-        {
-            "Alcohol" :  20,
-            "Craft" :  5,
-            "Fuel" :  10,
-            "Encrustable" :  3,
-            "Wood" :  10,
-            "Precious" :  4,
-            "Fungus" :  32,
-            "Stone" :  64,
-            "Metal" :  64,
-            "Sand" :  16,
-            "Glass" :  8
-        },
-		"NumFurniture": 4,
-        "Crafts" :  ["Metal"],
-        "Encrustings":  ["Gem"],
-        "Icon":  1
+[
+  {
+    "Name": "Dwarf",
+    "Posessive": "Dwarvish",
+    "DiplomacyConversation": "World/dwarf.conv",
+    "CreatureTypes": [
+      "Dwarf",
+      "AxeDwarf"
+    ],
+    "TradeEnvoys": [ [ "CraftDwarf", "AxeDwarf", "AxeDwarf" ] ],
+    "WarParties": [
+      [ "AxeDwarf", "AxeDwarf", "AxeDwarf" ],
+      [ "AxeDwarf", "AxeDwarf", "AxeDwarf", "AxeDwarf" ]
+    ],
+    "IsIntelligent": true,
+    "IsNative": false,
+    "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
+    "NameFile": "Text\\Templates\\names_dwarf.txt",
+    "TalkAnimation": {
+      "AssetName": "GUI\\diplo-dorf",
+      "Width": 64,
+      "Height": 64,
+      "Frames": [ 0, 1, 0 ],
+      "Speed": 5.0
     },
-    "Goblins": {
-        "Name": "Goblins",
-		"Posessive": "Goblish",
-		"NumFurniture": 2,
-        "CreatureTypes": [
-            "Goblin",
-			"Troll"
+    "NaturalEnemies": [ "Demon", "Carnivore" ],
+    "Speech": {
+      "Greetings": [ "Hello!", "Well met.", "Greetings!", "Salutations!", "Good to see you, fellow Dwarf!" ],
+      "Farewells": [ "Goodbye!", "Deep mining!", "Seleprak be with you!", "For the motherland!", "King and colony!" ],
+      "GoodTrades": [ "This is profitable.", "The Dwarfbux rain down on us today!", "The balloon is weighed down with riches.", "Incredible work!", "Thank Seleprak for mercantilism." ],
+      "BadTrades": [
+        "Do you take me for a fool? This is not profitable enough.",
+        "I should not have come all this way. Not. Profitable.",
+        "I thought we could trust one another. Give me a better deal!",
+        "I don't have the space for such unprofitable trinkets."
+      ],
+      "OffensiveTrades": [ "The deal is off! This is outrageously offensive!" ],
+      "WarDeclarations": [ "Consider this war!", "We will lay waste to your rebellious colony!", "Prepare to be arrested by representatives of the king!", "This is a dark day for the dwarven empire." ],
+      "PeaceDeclarations": [ "We wish to make peace.", "The king has grown tired of your rebellion. Make peace.", "War of this kind is not profitable." ],
+      "DemandsForTribute": [ "We are here to collect taxes for the King.", "The Dwarven Kingdom demands tax.", "The King needs revenue for his army.", "There is a new corporate income tax. Pony up!" ],
+      "Language": {
+        "Syllables": [
+          "Audio/oscar/sfx_ic_dwarf_mumble_1",
+          "Audio/oscar/sfx_ic_dwarf_mumble_2",
+          "Audio/oscar/sfx_ic_dwarf_mumble_3",
+          "Audio/oscar/sfx_ic_dwarf_mumble_4",
+          "Audio/oscar/sfx_ic_dwarf_mumble_5",
+          "Audio/oscar/sfx_ic_dwarf_mumble_6"
         ],
-        "TradeEnvoys": 
-        [["Goblin", "Goblin", "Goblin"]],
-        "WarParties": 
-        [["Goblin", "Goblin", "Goblin"],
-         ["Goblin", "Goblin", "Goblin", "Troll"],
-		 ["Goblin", "Goblin", "Troll", "Troll"]
+        "Yays": [
+          "Audio/oscar/sfx_ic_dwarf_pleased"
         ],
-        "NaturalEnemies" :  ["Demon", "Elf", "Undead", "Carnivore"],
-        "IsIntelligent": true,
-        "IsNative": true,
-        "FactionNameFile": "Text\\Templates\\nations_goblin.txt",
-        "NameFile": "Text\\Templates\\names_goblin.txt",
-        "TalkAnimation" : {
-            "AssetName" : "GUI\\diplo-goblin",
-            "Width" : 64,
-            "Height" : 64,
-            "Frames" :  [0, 1, 0],
-            "Speed" : 5.0
-        },
-        "Speech" : {
-            "Greetings" :  ["Hi, strange beard goblins.", "Heya, bringers of shines!", "Hi stink beasts." ,"We here now.", "You more hairy than we imagined."],
-            "Farewells" :  ["We leave now.", "We are gone.", "We go away.", "Talking is done."],
-            "GoodTrades" :  ["Yes! Shines bring us joy.", "Yes. Keep them coming.", "We take this.", "It's good. We take.", "Such quality."],
-            "BadTrades" :  ["We ask for shines, not dirts. More money or we go home!", 
-			"Ugh, what? Needs more for ME.", "Stink. Give more than this!", "... Need more.", "No. Need more.", 
-			"We ... do not take. It is not enough."],
-			"OffensiveTrades" : ["Ew! Gross!", "Bad. This is a forbidden thing!", "I will not take stinky bad things."],
-            "WarDeclarations" :  ["You bring big storm!", "We will smoke you out!", "The tribe will lay waste to you!", "You offend. We break you."],
-            "PeaceDeclarations" :  ["You strong. We weak. End war.", "No more blood.", "We wish peace.", "You live. Peace now."],
-            "DemandsForTribute" : ["You have gold? We want.", "Goblins strong. Dwarfs weak. Give us goodies now.", "You in Goblin lands. You pay Goblin tax."],
-			"Language" : 
-            {
-                "Syllables":  
-                [
-                    "Audio/oscar/sfx_ic_goblin_mumble_1", 
-                    "Audio/oscar/sfx_ic_goblin_mumble_2",
-                    "Audio/oscar/sfx_ic_goblin_mumble_3",
-                    "Audio/oscar/sfx_ic_goblin_mumble_4",
-                    "Audio/oscar/sfx_ic_goblin_mumble_5",
-                    "Audio/oscar/sfx_ic_goblin_mumble_6"
-                ],
-                "Yays": 
-                [
-                    "Audio/oscar/sfx_ic_goblin_pleased"
-                ],
-                "Boos": 
-                [
-                    "Audio/oscar/sfx_ic_goblin_angered"
-                ]
-            }
-      },
-        "LikedResources" :  ["Metal", "Precious", "Gem", "Alcohol"],
-        "HatedResources" :  ["Craft", "Soil", "Magical"],
-        "CommonResources" :  ["AnimalProduct"],
-        "RareResources" :  ["Metal", "Gem", "Precious", "Craft", "Alcohol"],
-        "TradeGoods" : 
-        {
-            "AnimalProduct" :  32,
-            "Craft" :  3
-        },
-        "Crafts" :  ["Bone"],
-        "Encrustings":  [],
-        "Icon":  3,
-        "TradeMusic" :  "goblin",
+        "Boos": [
+          "Audio/oscar/sfx_ic_dwarf_tantrum_1",
+          "Audio/oscar/sfx_ic_dwarf_tantrum_2",
+          "Audio/oscar/sfx_ic_dwarf_tantrum_3"
+        ]
+      }
     },
-    "Molemen": {
-        "Name": "Molemen",
-		"Posessive": "Molemish",
-		"NumFurniture": 2,
-        "CreatureTypes": [
-            "Moleman"
-        ],
-        "TradeEnvoys": 
-        [["Moleman", "Moleman", "Moleman"]],
-        "WarParties": 
-        [["Moleman", "Moleman", "Moleman"],
-         ["Moleman", "Moleman", "Moleman", "Moleman"]
-        ],
-        "NaturalEnemies" :  ["Demon", "Carnivore"],
-        "IsIntelligent": true,
-        "IsNative": true,
-        "FactionNameFile": "Text\\Templates\\nations_molemen.txt",
-        "NameFile": "Text\\Templates\\names_moleman.txt",
-        "TalkAnimation" : {
-            "AssetName" : "GUI\\diplo-moleman",
-            "Width" : 64,
-            "Height" : 64,
-            "Frames" :  [0, 1, 0],
-            "Speed" : 5.0
-        },
-       "Speech" : {
-            "Greetings" :  ["<The moleman lifts one claw.>", "<The moleman grunts>", "<The moleman chitters>", "<The moleman oinks>", "<The moleman stares with beady eyes>"],
-            "Farewells" :  ["<The moleman leaves>"],
-            "GoodTrades" :  ["<The moleman shrieks in delight>", "<The moleman nods violently>", "<The moleman is ecstatic>", "<The moleman dances with joy>"],
-            "BadTrades" :  ["... <the moleman points at his coin pouch>"],
-			"OffensiveTrades" : ["<The moleman throws dirt in your face>", "<The moleman exhales slowly, enraged>", "<the moleman is clearly offended>"],    
-			"WarDeclarations" :  ["<The moleman extends his claws>", "<The moleman sweats profusely>", "<It is clear the moleman is now angry.>"],
-            "PeaceDeclarations" :  ["<The moleman sheds a tear>", "<The moleman kneels>", "<The moleman removes his helmet>"],
-            "DemandsForTribute" : ["<The moleman holds out his coin pouch>", "<The moleman points at the Treasury>"],
-			"Language" : 
-            {
-                "Syllables":  
-                [
-                    "Audio/oscar/sfx_ic_moleman_mumble_1", 
-                    "Audio/oscar/sfx_ic_moleman_mumble_2",
-                    "Audio/oscar/sfx_ic_moleman_mumble_3",
-                    "Audio/oscar/sfx_ic_moleman_mumble_4",
-                    "Audio/oscar/sfx_ic_moleman_mumble_5",
-                    "Audio/oscar/sfx_ic_moleman_mumble_6"
-                ],
-                "Yays": 
-                [
-                    "Audio/oscar/sfx_ic_moleman_pleased"
-                ],
-                "Boos": 
-                [
-                    "Audio/oscar/sfx_ic_moleman_angered"
-                ]
-            }
-       },
-        "LikedResources" :  ["Soil", "Stone", "Precious", "Gem", "Metal"],
-        "HatedResources" :  ["AnimalProduct", "AboveGroundPlant", "Alcohol"],
-        "CommonResources" :  ["Gem", "Fungus", "Soil", "Stone"],
-        "RareResources" :  ["Alcohol", "Craft", "Magical", "Wood", "Metal"],
-        "TradeGoods" : 
-        {
-            "Gem" :  64,
-            "Stone" :  64,
-            "Fungus" :  32,
-            "Soil" :  64,
-            "Craft" :  2,
-            "Sand" :  16,
-            "Glass" :  8
-        },
-        "Crafts" :  ["Stone"],
-        "Encrustings":  ["Gem"],
-        "TradeMusic" :  "molemen",
-        "Icon":  4
+    "LikedResources": [ "Metal", "Precious", "Gem", "Craft" ],
+    "CommonResources": [ "Stone", "Metal", "Fungus", "Alcohol" ],
+    "RareResources": [ "Magical", "Wood", "Gem", "Precious", "Craft" ],
+    "HatedResources": [],
+    "TradeGoods": {
+      "Alcohol": 20,
+      "Craft": 5,
+      "Fuel": 10,
+      "Encrustable": 3,
+      "Wood": 10,
+      "Precious": 4,
+      "Fungus": 32,
+      "Stone": 64,
+      "Metal": 64,
+      "Sand": 16,
+      "Glass": 8
     },
-    "Elf": {
-        "Name": "Elf",
-		"Posessive": "Elvish",
-		"NumFurniture": 2,
-        "CreatureTypes": [
-            "Elf"
-        ],
-        "TradeEnvoys": 
-        [["Elf", "Elf", "Elf"]],
-        "WarParties": 
-        [["Elf", "Elf", "Elf"],
-         ["Elf", "Elf", "Elf", "Elf"]
-        ],
-        "IsIntelligent": true,
-        "IsNative": true,
-        "FactionNameFile": "Text\\Templates\\nations_elf.txt",
-        "NameFile": "Text\\Templates\\names_elf.txt",
-        "TalkAnimation" : {
-            "AssetName" : "GUI\\diplo-elf",
-            "Width" : 64,
-            "Height" : 64,
-            "Frames" :  [0, 1, 0],
-            "Speed" : 5.0
-        },
-		"Biomes" : 
-        {
-            "Tundra" :  "Jolly Forest",
-            "Taiga" :  "Jolly Forest",
-        },
-        "NaturalEnemies" :  ["Demon", "Undead", "Goblins", "Carnivore"],
-        "Speech" : {
-            "Greetings" :  ["Falalala!", "Ooh, hi!", "Joyus jumping jellybeans!", "Teehee, you look like sugarplums.", "Well, fiddle-dee-dee!", "Look, garden gnomes!", "We've frolicked here to meet you!", "We come bearing tasty treats!"],
-            "Farewells" :  ["Until we meet again.", "I tip my hat to you!", "Happy trails!", "Buhbye!", "Bye!", "<The elf frolicks away>"],
-            "GoodTrades" :  ["Wondrous!", "Magical!", "Delightful!", "Tehehee!", "Dwarf-made goodies are my favorite.", "For me? You shouldn't have!", "This will look great in the garden.", "Yes! Very nice!"],
-            "BadTrades" :  ["Fiddlesticks. We need a bit more than that!", "Aw, that just isn\'t enough for us.", "Hmm. Can\'t you do better than that?"],
-            "OffensiveTrades" : ["Is this a joke? If so its not very funny.", "You should be more considerate. This is offensive.", "Research our culture. We are offended by this stuff.", "Sorry but that is just gross. No way."],
-			"WarDeclarations" :  ["You're a danger to us all.", "Get out of our forests, troublemakers.", "You dunder-headed Dwarves are no good!", "You're not so cute to us anymore.", "Well, time to carve some more bows.", "Naughty Dwarves!"],
-            "PeaceDeclarations" :  ["Let's just call it even, okay?", "You guys drive a hard bargain. Care to stop the war?", "Our hearts aren't in it anymore.", "This war has got us down.", "Peace would be better for everyone."],
-            "DemandsForTribute" : ["If you want to live here, you will need to pay a tax.", "Will you support our lollipop fund?", "You are in Elvish lands. The council demands tribute."],
-			"Language" : 
-            {
-                "Syllables":  
-                [
-                    "Audio/oscar/sfx_ic_elf_mumble_1", 
-                    "Audio/oscar/sfx_ic_elf_mumble_2",
-                    "Audio/oscar/sfx_ic_elf_mumble_3",
-                    "Audio/oscar/sfx_ic_elf_mumble_4",
-                    "Audio/oscar/sfx_ic_elf_mumble_5",
-                    "Audio/oscar/sfx_ic_elf_mumble_6"
-                ],
-                "Yays": 
-                [
-                    "Audio/oscar/sfx_ic_elf_pleased"
-                ],
-                "Boos": 
-                [
-                    "Audio/oscar/sfx_ic_elf_angered"
-                ]
-            }
-       },
-        "LikedResources" :  ["Magical", "Craft", "Fruit", "Gourd"],
-        "HatedResources" :  ["AnimalProduct", "Wood", "Alcohol", "PreparedFood", "Evil"],
-        "CommonResources" :  ["Wood", "Craft", "Fruit",  "Magical"],
-        "RareResources" :  ["Metal", "Gem", "Precious"],
-        "TradeGoods" : 
-        {
-            "AboveGroundPlant" :  64,
-            "BelowGroundPlant" :  16,
-            "Magical" :  8,
-            "Precious" :  5,
-            "Craft" :  16
-        },
-        "Crafts" :  ["Wood"],
-        "Encrustings":  ["Gem"],
-        "TradeMusic" :  "elf",
-        "Icon":  "5"
+    "NumFurniture": 4,
+    "Crafts": [ "Metal" ],
+    "Encrustings": [ "Gem" ],
+    "Icon": 1
+  },
+  {
+    "Name": "Goblins",
+    "Posessive": "Goblish",
+    "DiplomacyConversation": "World/goblin.conv",
+    "NumFurniture": 2,
+    "CreatureTypes": [
+      "Goblin",
+      "Troll"
+    ],
+    "TradeEnvoys": [ [ "Goblin", "Goblin", "Goblin" ] ],
+    "WarParties": [
+      [ "Goblin", "Goblin", "Goblin" ],
+      [ "Goblin", "Goblin", "Goblin", "Troll" ],
+      [ "Goblin", "Goblin", "Troll", "Troll" ]
+    ],
+    "NaturalEnemies": [ "Demon", "Elf", "Undead", "Carnivore" ],
+    "IsIntelligent": true,
+    "IsNative": true,
+    "FactionNameFile": "Text\\Templates\\nations_goblin.txt",
+    "NameFile": "Text\\Templates\\names_goblin.txt",
+    "TalkAnimation": {
+      "AssetName": "GUI\\diplo-goblin",
+      "Width": 64,
+      "Height": 64,
+      "Frames": [ 0, 1, 0 ],
+      "Speed": 5.0
     },
-    "Undead": {
-        "Name": "Undead",
-		"Posessive": "Undead",
-		"NumFurniture": 2,
-        "CreatureTypes": [
-            "Necromancer",
-            "Skeleton"
+    "Speech": {
+      "Greetings": [ "Hi, strange beard goblins.", "Heya, bringers of shines!", "Hi stink beasts.", "We here now.", "You more hairy than we imagined." ],
+      "Farewells": [ "We leave now.", "We are gone.", "We go away.", "Talking is done." ],
+      "GoodTrades": [ "Yes! Shines bring us joy.", "Yes. Keep them coming.", "We take this.", "It's good. We take.", "Such quality." ],
+      "BadTrades": [
+        "We ask for shines, not dirts. More money or we go home!",
+        "Ugh, what? Needs more for ME.",
+        "Stink. Give more than this!",
+        "... Need more.",
+        "No. Need more.",
+        "We ... do not take. It is not enough."
+      ],
+      "OffensiveTrades": [ "Ew! Gross!", "Bad. This is a forbidden thing!", "I will not take stinky bad things." ],
+      "WarDeclarations": [ "You bring big storm!", "We will smoke you out!", "The tribe will lay waste to you!", "You offend. We break you." ],
+      "PeaceDeclarations": [ "You strong. We weak. End war.", "No more blood.", "We wish peace.", "You live. Peace now." ],
+      "DemandsForTribute": [ "You have gold? We want.", "Goblins strong. Dwarfs weak. Give us goodies now.", "You in Goblin lands. You pay Goblin tax." ],
+      "Language": {
+        "Syllables": [
+          "Audio/oscar/sfx_ic_goblin_mumble_1",
+          "Audio/oscar/sfx_ic_goblin_mumble_2",
+          "Audio/oscar/sfx_ic_goblin_mumble_3",
+          "Audio/oscar/sfx_ic_goblin_mumble_4",
+          "Audio/oscar/sfx_ic_goblin_mumble_5",
+          "Audio/oscar/sfx_ic_goblin_mumble_6"
         ],
-        "TradeEnvoys": 
-        [["Necromancer", "Skeleton", "Skeleton"]],
-        "WarParties": 
-        [["Necromancer", "Skeleton", "Skeleton"],
-         ["Skeleton", "Skeleton", "Skeleton", "Skeleton"]
+        "Yays": [
+          "Audio/oscar/sfx_ic_goblin_pleased"
         ],
-        "IsIntelligent": true,
-        "IsNative": true,
-        "FactionNameFile": "Text\\Templates\\nations_undead.txt",
-        "NameFile": "Text\\Templates\\names_undead.txt",
-        "TalkAnimation" : {
-            "AssetName" : "GUI\\diplo-necro",
-            "Width" : 64,
-            "Height" : 64,
-            "Frames" :  [0, 1, 0],
-            "Speed" : 5.0
-        },
-        "NaturalEnemies" :  ["Demon", "Elf", "Goblins", "Carnivore"],
-        "Speech" : {
-            "Greetings" :  ["We have been watching you.", "Don't be alarmed. Inside, we're all the same.", "Good day. We are interested in your crafts.", "Your reputation precedes you, fleshy Dwarves.", "We hear whispers from the grave."],
-            "Farewells" :  ["Remember. While you sleep, we wait.", "We grow stronger night by night.", "I see you are afraid. We will not bother you any longer.", "Another time, then.", "See you next century."],
-            "GoodTrades" :  ["Intriguing.", "Hmm, yes. Yes.", "Agreeable.", "Acceptable.", "Fair.", "Of course.", "Good. Anything more?", "Interesting.", "We shall use this."],
-            "BadTrades" :  ["Perhaps you do not understand. We want 'profitable' trades. Yes?", 
-			"Laughable. We require more gold.", "Idiots. Do you dare try to lowball us?", 
-			"I consulted with my underlings. That deal is not good enough.", "No. Not enough.", "Ridiculous. Try again. This time, more profit?"],
-            "OffensiveTrades" : ["This is outrageous. We hate such trinkets.", "I HATE these items. No thank you.", "So offensive!", "How could we accept something so ... alive?"],
-			"WarDeclarations" :  ["We will enjoy adding you to our ranks.", "You will pay for your crimes.", "We will burn your puny colony to the ground.", "Try not to sleep. We're coming.", "We will rise against you."],
-            "PeaceDeclarations" :  ["This war bores us. Shall we normalize relations?", "We have to give you credit for ingenuity. Shall we make peace?", "On second thought, we have made a glaring error. End the war?"],
-            "DemandsForTribute" : ["You have encroached on the lands of the Undead. Simply pay us, or leave.", "We have heard rumors that the Dwarves have unlimited wealth. Will you show us some?", "Either pay us, or prepare to join our ranks."],
-			"Language" : 
-            {
-                "Syllables":  
-                [
-                    "Audio/oscar/sfx_ic_necromancer_mumble_1", 
-                    "Audio/oscar/sfx_ic_necromancer_mumble_2",
-                    "Audio/oscar/sfx_ic_necromancer_mumble_3",
-                    "Audio/oscar/sfx_ic_necromancer_mumble_4",
-                    "Audio/oscar/sfx_ic_necromancer_mumble_5",
-                    "Audio/oscar/sfx_ic_necromancer_mumble_6"
-                ],
-                "Yays": 
-                [
-                    "Audio/oscar/sfx_ic_necromancer_pleased"
-                ],
-                "Boos": 
-                [
-                    "Audio/oscar/sfx_ic_necromancer_angered"
-                ]
-            }
-       },
-       "LikedResources" :  ["AnimalProduct", "Magical", "Evil"],
-        "HatedResources" :  ["AboveGroundPlant", "BelowGroundPlant", "PreparedFood"],
-        "CommonResources" :  ["Bone", "Magical", "Evil"],
-        "RareResources" :  ["RawFood", "AnimalProduct", "Metal", "Gem"],
-        "TradeGoods" : 
-        {
-            "Bone" :  128,
-            "Magical" :  64,
-            "Precious" :  5,
-            "Craft" :  16,
-			"Evil" : 4
-        },
-		"Biomes" : 
-        {
-            "Boreal Forest" :  "Haunted Forest",
-        },
-        "Crafts" :  ["Bone"],
-        "Encrustings":  ["Gem"],
-        "TradeMusic":  "undead",
-        "Icon":  6
+        "Boos": [
+          "Audio/oscar/sfx_ic_goblin_angered"
+        ]
+      }
     },
-    "Demon": {
-        "Name": "Demon",
-		"Posessive": "Demonic",
-		"NumFurniture": 2,
-        "CreatureTypes": [
-            "Demon"
-        ],
-        "TradeEnvoys": 
-        [["Demon", "Demon", "Demon"]],
-        "WarParties": 
-        [["Demon", "Demon", "Demon"],
-         ["Demon", "Demon", "Demon", "Demon"]
-        ],
-        "IsIntelligent": false,
-        "IsNative": true,
-        "FactionNameFile": "Text\\Templates\\nations_undead.txt",
-        "NameFile": "Text\\Templates\\names_undead.txt",
-        "TalkAnimation" : {
-            "AssetName" : "GUI\\diplo-necro",
-            "Width" : 64,
-            "Height" : 64,
-            "Frames" :  [0, 1, 0],
-            "Speed" : 5.0
-        },
-        "NaturalEnemies" :  ["Undead", "Player", "Herbivore", "Elf", "Goblins", "Carnivore", "Dwarf"],
-        "Speech" : {
-            "Greetings" :  ["We have been watching you.", "Don't be alarmed. Inside, we're all the same.", "Good day. We are interested in your crafts.", "Your reputation precedes you, fleshy Dwarves.", "We hear whispers from the grave."],
-            "Farewells" :  ["Remember. While you sleep, we wait.", "We grow stronger night by night.", "I see you are afraid. We will not bother you any longer.", "Another time, then.", "See you next century."],
-            "GoodTrades" :  ["Intriguing.", "Hmm, yes. Yes.", "Agreeable.", "Acceptable.", "Fair.", "Of course.", "Good. Anything more?", "Interesting.", "We shall use this."],
-            "BadTrades" :  ["Perhaps you do not understand. We want 'good' trades. Yes?", "Laughable.", "I am surrounded by idiots.", "I consulted with my underlings. Answer is NO.", "No.", "Ridiculous."],
-            "WarDeclarations" :  ["We will enjoy adding you to our ranks.", "You will pay for your crimes.", "We will burn your puny colony to the ground.", "Try not to sleep. We're coming.", "We will rise against you."],
-            "PeaceDeclarations" :  ["This war bores us. Shall we normalize relations?", "We have to give you credit for ingenuity. Shall we make peace?", "On second thought, we have made a glaring error. End the war?"]
-       },
-       "LikedResources" :  ["AnimalProduct", "Magical"],
-       "HatedResources" :  ["AboveGroundPlant", "BelowGroundPlant"],
-       "CommonResources" :  ["Bone", "Magical"],
-       "RareResources" :  ["RawFood", "AnimalProduct", "Metal", "Gem"],
+    "LikedResources": [ "Metal", "Precious", "Gem", "Alcohol" ],
+    "HatedResources": [ "Craft", "Soil", "Magical" ],
+    "CommonResources": [ "AnimalProduct" ],
+    "RareResources": [ "Metal", "Gem", "Precious", "Alcohol" ],
+    "TradeGoods": {
+      "AnimalProduct": 32,
+      "Craft": 3
     },
-    "Herbivore": {
-        "Name": "Herbivore",
-        "CreatureTypes": [
-            "Bird",
-            "Deer",
-            "Brown Rabbit",
-            "White Rabbit",
-            "Frog",
-            "Tree Frog"
-        ],
-        "NaturalEnemies" :  ["Demon", "Carnivore"],
-        "IsIntelligent": false,
-        "IsNative": true,
-        "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
-        "NameFile": "Text\\Templates\\names_dwarf.txt",
-        "Speech" : {
-            "Greetings" :  [""],
-            "Farewells" :  [""],
-            "GoodTrades" :  [""],
-            "BadTrades" :  [""],
-            "WarDeclarations" :  [""],
-            "PeaceDeclarations" :  [""]
-       },
-        "LikedResources" :  [],
-        "HatedResources" :  []
+    "Crafts": [ "Bone" ],
+    "Encrustings": [],
+    "Icon": 3,
+    "TradeMusic": "goblin"
+  },
+  {
+    "Name": "Molemen",
+    "Posessive": "Molemish",
+    "DiplomacyConversation": "World/moleman.conv",
+    "NumFurniture": 2,
+    "CreatureTypes": [
+      "Moleman"
+    ],
+    "TradeEnvoys": [ [ "Moleman", "Moleman", "Moleman" ] ],
+    "WarParties": [
+      [ "Moleman", "Moleman", "Moleman" ],
+      [ "Moleman", "Moleman", "Moleman", "Moleman" ]
+    ],
+    "NaturalEnemies": [ "Demon", "Carnivore" ],
+    "IsIntelligent": true,
+    "IsNative": true,
+    "FactionNameFile": "Text\\Templates\\nations_molemen.txt",
+    "NameFile": "Text\\Templates\\names_moleman.txt",
+    "TalkAnimation": {
+      "AssetName": "GUI\\diplo-moleman",
+      "Width": 64,
+      "Height": 64,
+      "Frames": [ 0, 1, 0 ],
+      "Speed": 5.0
     },
-    "Carnivore": {
-        "Name": "Carnivore",
-        "CreatureTypes": [
-            "Scorpion"
+    "Speech": {
+      "Greetings": [ "<The moleman lifts one claw.>", "<The moleman grunts>", "<The moleman chitters>", "<The moleman oinks>", "<The moleman stares with beady eyes>" ],
+      "Farewells": [ "<The moleman leaves>" ],
+      "GoodTrades": [ "<The moleman shrieks in delight>", "<The moleman nods violently>", "<The moleman is ecstatic>", "<The moleman dances with joy>" ],
+      "BadTrades": [ "... <the moleman points at his coin pouch>" ],
+      "OffensiveTrades": [ "<The moleman throws dirt in your face>", "<The moleman exhales slowly, enraged>", "<the moleman is clearly offended>" ],
+      "WarDeclarations": [ "<The moleman extends his claws>", "<The moleman sweats profusely>", "<It is clear the moleman is now angry.>" ],
+      "PeaceDeclarations": [ "<The moleman sheds a tear>", "<The moleman kneels>", "<The moleman removes his helmet>" ],
+      "DemandsForTribute": [ "<The moleman holds out his coin pouch>", "<The moleman points at the Treasury>" ],
+      "Language": {
+        "Syllables": [
+          "Audio/oscar/sfx_ic_moleman_mumble_1",
+          "Audio/oscar/sfx_ic_moleman_mumble_2",
+          "Audio/oscar/sfx_ic_moleman_mumble_3",
+          "Audio/oscar/sfx_ic_moleman_mumble_4",
+          "Audio/oscar/sfx_ic_moleman_mumble_5",
+          "Audio/oscar/sfx_ic_moleman_mumble_6"
         ],
-        "NaturalEnemies" :  ["Demon", "Herbivore", "Dwarf", "Goblin", "Elf", "Molemen", "Undead"],
-        "IsIntelligent": false,
-        "IsNative": true,
-        "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
-        "NameFile": "Text\\Templates\\names_dwarf.txt",
-        "Speech" : {
-            "Greetings" :  [""],
-            "Farewells" :  [""],
-            "GoodTrades" :  [""],
-            "BadTrades" :  [""],
-            "WarDeclarations" :  [""],
-            "PeaceDeclarations" :  [""]
-       },
-        "LikedResources" :  [],
-        "HatedResources" :  []
-    }
-}
+        "Yays": [
+          "Audio/oscar/sfx_ic_moleman_pleased"
+        ],
+        "Boos": [
+          "Audio/oscar/sfx_ic_moleman_angered"
+        ]
+      }
+    },
+    "LikedResources": [ "Soil", "Stone", "Precious", "Gem", "Metal" ],
+    "HatedResources": [ "AnimalProduct", "AboveGroundPlant", "Alcohol" ],
+    "CommonResources": [ "Gem", "Fungus", "Soil", "Stone" ],
+    "RareResources": [ "Craft", "Magical", "Wood", "Metal" ],
+    "TradeGoods": {
+      "Gem": 64,
+      "Stone": 64,
+      "Fungus": 32,
+      "Soil": 64,
+      "Craft": 2,
+      "Sand": 16,
+      "Glass": 8
+    },
+    "Crafts": [ "Stone" ],
+    "Encrustings": [ "Gem" ],
+    "TradeMusic": "molemen",
+    "Icon": 4
+  },
+  {
+    "Name": "Elf",
+    "Posessive": "Elvish",
+    "DiplomacyConversation": "World/elf.conv",
+    "NumFurniture": 2,
+    "CreatureTypes": [
+      "Elf"
+    ],
+    "TradeEnvoys": [ [ "Elf", "Elf", "Elf" ] ],
+    "WarParties": [
+      [ "Elf", "Elf", "Elf" ],
+      [ "Elf", "Elf", "Elf", "Elf" ]
+    ],
+    "IsIntelligent": true,
+    "IsNative": true,
+    "FactionNameFile": "Text\\Templates\\nations_elf.txt",
+    "NameFile": "Text\\Templates\\names_elf.txt",
+    "TalkAnimation": {
+      "AssetName": "GUI\\diplo-elf",
+      "Width": 64,
+      "Height": 64,
+      "Frames": [ 0, 1, 0 ],
+      "Speed": 5.0
+    },
+    "Biomes": {
+      "Tundra": "Jolly Forest",
+      "Taiga": "Jolly Forest"
+    },
+    "NaturalEnemies": [ "Demon", "Undead", "Goblins", "Carnivore" ],
+    "Speech": {
+      "Greetings": [ "Falalala!", "Ooh, hi!", "Joyus jumping jellybeans!", "Teehee, you look like sugarplums.", "Well, fiddle-dee-dee!", "Look, garden gnomes!", "We've frolicked here to meet you!", "We come bearing tasty treats!" ],
+      "Farewells": [ "Until we meet again.", "I tip my hat to you!", "Happy trails!", "Buhbye!", "Bye!", "<The elf frolicks away>" ],
+      "GoodTrades": [ "Wondrous!", "Magical!", "Delightful!", "Tehehee!", "Dwarf-made goodies are my favorite.", "For me? You shouldn't have!", "This will look great in the garden.", "Yes! Very nice!" ],
+      "BadTrades": [ "Fiddlesticks. We need a bit more than that!", "Aw, that just isn\\'t enough for us.", "Hmm. Can\\'t you do better than that?" ],
+      "OffensiveTrades": [ "Is this a joke? If so its not very funny.", "You should be more considerate. This is offensive.", "Research our culture. We are offended by this stuff.", "Sorry but that is just gross. No way." ],
+      "WarDeclarations": [ "You're a danger to us all.", "Get out of our forests, troublemakers.", "You dunder-headed Dwarves are no good!", "You're not so cute to us anymore.", "Well, time to carve some more bows.", "Naughty Dwarves!" ],
+      "PeaceDeclarations": [ "Let's just call it even, okay?", "You guys drive a hard bargain. Care to stop the war?", "Our hearts aren't in it anymore.", "This war has got us down.", "Peace would be better for everyone." ],
+      "DemandsForTribute": [ "If you want to live here, you will need to pay a tax.", "Will you support our lollipop fund?", "You are in Elvish lands. The council demands tribute." ],
+      "Language": {
+        "Syllables": [
+          "Audio/oscar/sfx_ic_elf_mumble_1",
+          "Audio/oscar/sfx_ic_elf_mumble_2",
+          "Audio/oscar/sfx_ic_elf_mumble_3",
+          "Audio/oscar/sfx_ic_elf_mumble_4",
+          "Audio/oscar/sfx_ic_elf_mumble_5",
+          "Audio/oscar/sfx_ic_elf_mumble_6"
+        ],
+        "Yays": [
+          "Audio/oscar/sfx_ic_elf_pleased"
+        ],
+        "Boos": [
+          "Audio/oscar/sfx_ic_elf_angered"
+        ]
+      }
+    },
+    "LikedResources": [ "Magical", "Craft", "Fruit", "Gourd" ],
+    "HatedResources": [ "AnimalProduct", "Wood", "Alcohol", "PreparedFood", "Evil" ],
+    "CommonResources": [ "Wood", "Craft", "Fruit", "Magical" ],
+    "RareResources": [ "Metal", "Gem", "Precious" ],
+    "TradeGoods": {
+      "AboveGroundPlant": 64,
+      "BelowGroundPlant": 16,
+      "Magical": 8,
+      "Precious": 5,
+      "Craft": 16
+    },
+    "Crafts": [ "Wood" ],
+    "Encrustings": [ "Gem" ],
+    "TradeMusic": "elf",
+    "Icon": "5"
+  },
+  {
+    "Name": "Undead",
+    "Posessive": "Undead",
+    "DiplomacyConversation": "World/undead.conv",
+    "NumFurniture": 2,
+    "CreatureTypes": [
+      "Necromancer",
+      "Skeleton"
+    ],
+    "TradeEnvoys": [ [ "Necromancer", "Skeleton", "Skeleton" ] ],
+    "WarParties": [
+      [ "Necromancer", "Skeleton", "Skeleton" ],
+      [ "Skeleton", "Skeleton", "Skeleton", "Skeleton" ]
+    ],
+    "IsIntelligent": true,
+    "IsNative": true,
+    "FactionNameFile": "Text\\Templates\\nations_undead.txt",
+    "NameFile": "Text\\Templates\\names_undead.txt",
+    "TalkAnimation": {
+      "AssetName": "GUI\\diplo-necro",
+      "Width": 64,
+      "Height": 64,
+      "Frames": [ 0, 1, 0 ],
+      "Speed": 5.0
+    },
+    "NaturalEnemies": [ "Demon", "Elf", "Goblins", "Carnivore" ],
+    "Speech": {
+      "Greetings": [ "We have been watching you.", "Don't be alarmed. Inside, we're all the same.", "Good day. We are interested in your crafts.", "Your reputation precedes you, fleshy Dwarves.", "We hear whispers from the grave." ],
+      "Farewells": [ "Remember. While you sleep, we wait.", "We grow stronger night by night.", "I see you are afraid. We will not bother you any longer.", "Another time, then.", "See you next century." ],
+      "GoodTrades": [ "Intriguing.", "Hmm, yes. Yes.", "Agreeable.", "Acceptable.", "Fair.", "Of course.", "Good. Anything more?", "Interesting.", "We shall use this." ],
+      "BadTrades": [
+        "Perhaps you do not understand. We want 'profitable' trades. Yes?",
+        "Laughable. We require more gold.",
+        "Idiots. Do you dare try to lowball us?",
+        "I consulted with my underlings. That deal is not good enough.",
+        "No. Not enough.",
+        "Ridiculous. Try again. This time, more profit?"
+      ],
+      "OffensiveTrades": [ "This is outrageous. We hate such trinkets.", "I HATE these items. No thank you.", "So offensive!", "How could we accept something so ... alive?" ],
+      "WarDeclarations": [ "We will enjoy adding you to our ranks.", "You will pay for your crimes.", "We will burn your puny colony to the ground.", "Try not to sleep. We're coming.", "We will rise against you." ],
+      "PeaceDeclarations": [ "This war bores us. Shall we normalize relations?", "We have to give you credit for ingenuity. Shall we make peace?", "On second thought, we have made a glaring error. End the war?" ],
+      "DemandsForTribute": [ "You have encroached on the lands of the Undead. Simply pay us, or leave.", "We have heard rumors that the Dwarves have unlimited wealth. Will you show us some?", "Either pay us, or prepare to join our ranks." ],
+      "Language": {
+        "Syllables": [
+          "Audio/oscar/sfx_ic_necromancer_mumble_1",
+          "Audio/oscar/sfx_ic_necromancer_mumble_2",
+          "Audio/oscar/sfx_ic_necromancer_mumble_3",
+          "Audio/oscar/sfx_ic_necromancer_mumble_4",
+          "Audio/oscar/sfx_ic_necromancer_mumble_5",
+          "Audio/oscar/sfx_ic_necromancer_mumble_6"
+        ],
+        "Yays": [
+          "Audio/oscar/sfx_ic_necromancer_pleased"
+        ],
+        "Boos": [
+          "Audio/oscar/sfx_ic_necromancer_angered"
+        ]
+      }
+    },
+    "LikedResources": [ "AnimalProduct", "Magical", "Evil" ],
+    "HatedResources": [ "AboveGroundPlant", "BelowGroundPlant", "PreparedFood" ],
+    "CommonResources": [ "Bone", "Magical", "Evil" ],
+    "RareResources": [ "RawFood", "AnimalProduct", "Metal", "Gem" ],
+    "TradeGoods": {
+      "Bone": 128,
+      "Magical": 64,
+      "Precious": 5,
+      "Craft": 16,
+      "Evil": 4
+    },
+    "Biomes": {
+      "Boreal Forest": "Haunted Forest"
+    },
+    "Crafts": [ "Bone" ],
+    "Encrustings": [ "Gem" ],
+    "TradeMusic": "undead",
+    "Icon": 6
+  },
+  {
+    "Name": "Demon",
+    "Posessive": "Demonic",
+    "NumFurniture": 2,
+    "CreatureTypes": [
+      "Demon"
+    ],
+    "TradeEnvoys": [ [ "Demon", "Demon", "Demon" ] ],
+    "WarParties": [
+      [ "Demon", "Demon", "Demon" ],
+      [ "Demon", "Demon", "Demon", "Demon" ]
+    ],
+    "IsIntelligent": false,
+    "IsNative": true,
+    "FactionNameFile": "Text\\Templates\\nations_undead.txt",
+    "NameFile": "Text\\Templates\\names_undead.txt",
+    "TalkAnimation": {
+      "AssetName": "GUI\\diplo-necro",
+      "Width": 64,
+      "Height": 64,
+      "Frames": [ 0, 1, 0 ],
+      "Speed": 5.0
+    },
+    "NaturalEnemies": [ "Undead", "Player", "Herbivore", "Elf", "Goblins", "Carnivore", "Dwarf" ],
+    "Speech": {
+      "Greetings": [ "We have been watching you.", "Don't be alarmed. Inside, we're all the same.", "Good day. We are interested in your crafts.", "Your reputation precedes you, fleshy Dwarves.", "We hear whispers from the grave." ],
+      "Farewells": [ "Remember. While you sleep, we wait.", "We grow stronger night by night.", "I see you are afraid. We will not bother you any longer.", "Another time, then.", "See you next century." ],
+      "GoodTrades": [ "Intriguing.", "Hmm, yes. Yes.", "Agreeable.", "Acceptable.", "Fair.", "Of course.", "Good. Anything more?", "Interesting.", "We shall use this." ],
+      "BadTrades": [ "Perhaps you do not understand. We want 'good' trades. Yes?", "Laughable.", "I am surrounded by idiots.", "I consulted with my underlings. Answer is NO.", "No.", "Ridiculous." ],
+      "WarDeclarations": [ "We will enjoy adding you to our ranks.", "You will pay for your crimes.", "We will burn your puny colony to the ground.", "Try not to sleep. We're coming.", "We will rise against you." ],
+      "PeaceDeclarations": [ "This war bores us. Shall we normalize relations?", "We have to give you credit for ingenuity. Shall we make peace?", "On second thought, we have made a glaring error. End the war?" ]
+    },
+    "LikedResources": [ "AnimalProduct", "Magical" ],
+    "HatedResources": [ "AboveGroundPlant", "BelowGroundPlant" ],
+    "CommonResources": [ "Bone", "Magical" ],
+    "RareResources": [ "RawFood", "AnimalProduct", "Metal", "Gem" ]
+  },
+  {
+    "Name": "Herbivore",
+    "CreatureTypes": [
+      "Bird",
+      "Deer",
+      "Brown Rabbit",
+      "White Rabbit",
+      "Frog",
+      "Tree Frog"
+    ],
+    "NaturalEnemies": [ "Demon", "Carnivore" ],
+    "IsIntelligent": false,
+    "IsNative": true,
+    "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
+    "NameFile": "Text\\Templates\\names_dwarf.txt",
+    "Speech": {
+      "Greetings": [ "" ],
+      "Farewells": [ "" ],
+      "GoodTrades": [ "" ],
+      "BadTrades": [ "" ],
+      "WarDeclarations": [ "" ],
+      "PeaceDeclarations": [ "" ]
+    },
+    "LikedResources": [],
+    "HatedResources": []
+  },
+  {
+    "Name": "Carnivore",
+    "CreatureTypes": [
+      "Scorpion"
+    ],
+    "NaturalEnemies": [ "Demon", "Herbivore", "Dwarf", "Goblin", "Elf", "Molemen", "Undead" ],
+    "IsIntelligent": false,
+    "IsNative": true,
+    "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
+    "NameFile": "Text\\Templates\\names_dwarf.txt",
+    "Speech": {
+      "Greetings": [ "" ],
+      "Farewells": [ "" ],
+      "GoodTrades": [ "" ],
+      "BadTrades": [ "" ],
+      "WarDeclarations": [ "" ],
+      "PeaceDeclarations": [ "" ]
+    },
+    "LikedResources": [],
+    "HatedResources": []
+  }
+]

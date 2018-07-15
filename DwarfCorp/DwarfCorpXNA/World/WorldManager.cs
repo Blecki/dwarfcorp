@@ -122,6 +122,8 @@ namespace DwarfCorp
         // Responsible for managing game entities
         public ComponentManager ComponentManager = null;
 
+        public Yarn.MemoryVariableStore ConversationMemory = new Yarn.MemoryVariableStore();
+
         public FactionLibrary Factions = null;
 
         [JsonIgnore]

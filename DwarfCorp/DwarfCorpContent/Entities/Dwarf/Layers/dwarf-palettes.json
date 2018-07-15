@@ -1,0 +1,58 @@
+[
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair01",
+    "Layer": "hair beard"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair02",
+    "Layer": "hair beard"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair03",
+    "Layer": "hair beard"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair04",
+    "Layer": "hair beard"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair05",
+    "Layer": "hair beard"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair06",
+    "Layer": "hair beard"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair07",
+    "Layer": "hair beard"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-hair08",
+    "Layer": "hair beard"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-skin01",
+    "Layer": "face nose"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-skin02",
+    "Layer": "face nose"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-skin03",
+    "Layer": "face nose"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-skin04",
+    "Layer": "face nose"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-skin05",
+    "Layer": "face nose"
+  },
+  {
+    "Asset": "Entities/Dwarf/Layers/palette-skin06",
+    "Layer": "face nose"
+  }
+]
