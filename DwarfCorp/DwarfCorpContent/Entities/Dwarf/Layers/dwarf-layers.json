@@ -28,6 +28,12 @@
     "RestrictionType": "Gender",
     "RestrictionValue": "Male"
   },
+  {
+    "Type": "face",
+    "Precedence": 1,
+    "Asset": "Entities/Dwarf/Layers/MaleDwarfFaceSheet",
+    "DefaultLayer": true
+  },
 
 
   {

@@ -126,8 +126,6 @@ namespace DwarfCorp
 
         public FactionLibrary Factions = null;
 
-        [JsonIgnore]
-        public OctTreeNode<Body> OctTree = null;
         public ParticleManager ParticleManager = null;
 
         // Handles interfacing with the player and sending commands to dwarves
@@ -461,15 +459,8 @@ namespace DwarfCorp
                         SurfaceFormat.Color, DepthFormat.Depth24))
                 {
                     var frustum = Camera.GetDrawFrustum();
-                    var renderables = ComponentManager.GetRenderables()
-                        .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()))
-                        .Where(r => frustum.Intersects(r.GetBoundingBox()));
-                    //var renderables = EnumerateIntersectingObjects(Camera.GetDrawFrustum())
-                    //    .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()))
-                    //    .Where(c => Object.ReferenceEquals(c.Parent, ComponentManager.RootComponent) && c.IsVisible)
-                    //    .SelectMany(c => c.EnumerateAll())
-                    //    .OfType<IRenderableComponent>();
-
+                    var renderables = EnumerateIntersectingObjects(frustum)
+                        .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()));
 
                     var oldProjection = Camera.ProjectionMatrix;
                     Matrix projectionMatrix = Matrix.CreatePerspectiveFieldOfView(Camera.FOV, ((float)resolution.X) / resolution.Y, Camera.NearPlane, Camera.FarPlane);
@@ -847,14 +838,8 @@ namespace DwarfCorp
                 return;
 
             var frustum = Camera.GetDrawFrustum();
-            var renderables = ComponentManager.GetRenderables()
-                .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()))
-                .Where(r => frustum.Intersects(r.GetBoundingBox()));
-            //var renderables = EnumerateIntersectingObjects(Camera.GetDrawFrustum())
-            //    .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()))
-            //    .Where(c => Object.ReferenceEquals(c.Parent, ComponentManager.RootComponent) && c.IsVisible)
-            //    .SelectMany(c => c.EnumerateAll())
-            //    .OfType<IRenderableComponent>();
+            var renderables = EnumerateIntersectingObjects(frustum)
+                .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()));
 
             // Controls the sky fog
             float x = (1.0f - Sky.TimeOfDay);
@@ -963,7 +948,7 @@ namespace DwarfCorp
             DefaultShader.ClippingEnabled = true;
 
             if (Debugger.Switches.DrawOcttree)
-                foreach (var box in OctTree.EnumerateBounds())
+                foreach (var box in OctTree.EnumerateBounds(frustum))
                     Drawer3D.DrawBox(box.Item2, Color.Yellow, 1.0f / (float)(box.Item1 + 1), false);
 
             // Render simple geometry (boxes, etc.)

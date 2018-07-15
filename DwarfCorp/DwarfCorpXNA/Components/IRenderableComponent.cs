@@ -12,7 +12,5 @@ namespace DwarfCorp
         bool IsVisible { get; }
 
         Matrix GlobalTransform { get; }
-
-        bool FrustumCull { get; }
     }
 }

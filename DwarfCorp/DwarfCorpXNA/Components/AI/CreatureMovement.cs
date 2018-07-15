@@ -278,7 +278,7 @@ namespace DwarfCorp
         }
 
         /// <summary> gets a list of actions that the creature can take from the given position </summary>
-        public IEnumerable<MoveAction> GetMoveActions(Vector3 Pos, OctTreeNode<Body> octree)
+        public IEnumerable<MoveAction> GetMoveActions(Vector3 Pos, OctTreeNode octree)
         {
             var vox = new VoxelHandle(Creature.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(Pos));
@@ -288,7 +288,7 @@ namespace DwarfCorp
 
 
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
-        public IEnumerable<MoveAction> GetMoveActions(MoveState state, OctTreeNode<Body> octree)
+        public IEnumerable<MoveAction> GetMoveActions(MoveState state, OctTreeNode OctTree)
         {
             var voxel = state.Voxel;
             if (!voxel.IsValid || !voxel.IsEmpty)
@@ -302,7 +302,8 @@ namespace DwarfCorp
             bool isRiding = state.VehicleState.IsRidingVehicle;
 
             var neighborHoodBounds = new BoundingBox(neighborHood[0, 0, 0].GetBoundingBox().Min, neighborHood[2, 2, 2].GetBoundingBox().Max);
-            var neighborObjects = octree.EnumerateItems(neighborHoodBounds).ToList();
+            var neighborObjects = new HashSet<Body>();
+            OctTree.EnumerateItems(neighborHoodBounds, neighborObjects);
             var successors = EnumerateSuccessors(state, voxel, neighborHood, inWater, standingOnGround, topCovered, hasNeighbors, isRiding, neighborObjects);
 
             // Now, validate each move action that the creature might take.
@@ -358,7 +359,7 @@ namespace DwarfCorp
             }
         }
 
-        private IEnumerable<MoveAction> EnumerateSuccessors(MoveState state, VoxelHandle voxel, VoxelHandle[,,] neighborHood, bool inWater, bool standingOnGround, bool topCovered, bool hasNeighbors, bool isRiding, List<Body> neighborObjects)
+        private IEnumerable<MoveAction> EnumerateSuccessors(MoveState state, VoxelHandle voxel, VoxelHandle[,,] neighborHood, bool inWater, bool standingOnGround, bool topCovered, bool hasNeighbors, bool isRiding, HashSet<Body> neighborObjects)
         {
             bool isClimbing = false;
             if (CanClimb || Can(MoveType.RideVehicle))
@@ -677,14 +678,14 @@ namespace DwarfCorp
 
         // Inverts GetMoveActions. So, returns the list of move actions whose target is the current voxel.
         // Very, very slow.
-        public IEnumerable<MoveAction> GetInverseMoveActions(MoveState currentstate, OctTreeNode<Body> octree)
+        public IEnumerable<MoveAction> GetInverseMoveActions(MoveState currentstate, OctTreeNode OctTree)
         {
             var current = currentstate.Voxel;
             foreach (var v in VoxelHelpers.EnumerateCube(current.Coordinate)
                 .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
                 .Where(h => h.IsValid && h.IsEmpty))
             {
-                foreach (var a in GetMoveActions(new MoveState() { Voxel = v}, octree).Where(a => a.DestinationState == currentstate))
+                foreach (var a in GetMoveActions(new MoveState() { Voxel = v}, OctTree).Where(a => a.DestinationState == currentstate))
                     yield return a;
 
                 if (!Can(MoveType.RideVehicle))
@@ -693,7 +694,8 @@ namespace DwarfCorp
                 // iterate through all rails intersecting every neighbor and see if we can find a connection from that rail to this one.
                 // Further, we must iterate through the entire rail network and enumerate all possible directions in and out of that rail.
                 // Yay!
-                var bodies = octree.EnumerateItems(v.GetBoundingBox()).ToList();
+                var bodies = new HashSet<Body>();
+                OctTree.EnumerateItems(v.GetBoundingBox(), bodies);
                 var rails = bodies.OfType<Rail.RailEntity>().Where(r => r.Active);
                 foreach (var rail in rails)
                 {
@@ -712,7 +714,7 @@ namespace DwarfCorp
                     foreach (var neighborRail in rail.NeighborRails.Select(neighbor => Creature.Manager.FindComponent(neighbor.NeighborID) as Rail.RailEntity))
                     {
                         var actions = GetMoveActions(new MoveState() {
-                            Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = neighborRail } }, octree);
+                            Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = neighborRail } }, OctTree);
                         foreach (var a in actions.Where(a => a.DestinationState == currentstate))
                         {
                             yield return a;
@@ -729,7 +731,7 @@ namespace DwarfCorp
                         }
                     }
 
-                    foreach (var a in GetMoveActions(new MoveState() { Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = null } }, octree).Where(a => a.DestinationState == currentstate))
+                    foreach (var a in GetMoveActions(new MoveState() { Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = null } }, OctTree).Where(a => a.DestinationState == currentstate))
                         yield return a;
                 }
             }

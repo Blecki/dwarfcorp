@@ -144,8 +144,6 @@ namespace DwarfCorp
             Active = 2,
             Dead = 4,
             ShouldSerialize = 8,
-            FrustumCull = 16,
-            AddToCollisionManager = 32,
             RotateBoundingBox = 64,
         }
 

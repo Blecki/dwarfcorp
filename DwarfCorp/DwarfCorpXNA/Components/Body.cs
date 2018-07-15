@@ -53,7 +53,6 @@ namespace DwarfCorp
             }
         }
 
-        public bool FrustumCull { get { return IsFlagSet(Flag.FrustumCull); } }
         public CollisionType CollisionType = CollisionType.None;
         public Vector3 BoundingBoxSize = Vector3.One;
         public Vector3 LocalBoundingBoxOffset = Vector3.Zero;
@@ -66,8 +65,8 @@ namespace DwarfCorp
         }
         [JsonIgnore]
         public GameComponent ReservedFor = null;
-        private BoundingBox lastBounds = new BoundingBox();
-        private OctTreeNode<Body> CachedOcttreeNode = null;
+        private BoundingBox LastBounds = new BoundingBox();
+        private OctTreeNode CachedOcttreeNode = null;
         [JsonIgnore]
         public Matrix GlobalTransform
         {
@@ -158,8 +157,6 @@ namespace DwarfCorp
 
             LocalTransform = localTransform;
             globalTransform = localTransform;
-
-            SetFlag(Flag.FrustumCull, true);
         }
 
         public virtual void OrientToWalls()
@@ -231,25 +228,25 @@ namespace DwarfCorp
 
             UpdateBoundingBox();
 
-            if (CachedOcttreeNode == null || MaxDiff(lastBounds, BoundingBox) > 0.1f)
+            if (CachedOcttreeNode == null || MaxDiff(LastBounds, BoundingBox) > 0.1f)
             {
-                if (CollisionType != CollisionType.None)
+                //if (CollisionType != CollisionType.None)
                 {
-                    if (CachedOcttreeNode == null || CachedOcttreeNode.Bounds.Contains(BoundingBox) != ContainmentType.Contains)
+                    if (CachedOcttreeNode == null || CachedOcttreeNode.Contains(BoundingBox) != ContainmentType.Contains)
                     {
-                        Manager.World.OctTree.RemoveItem(this, lastBounds);
+                        RemoveFromOctTree();
                         if (!IsDead)
-                            CachedOcttreeNode = Manager.World.OctTree.AddToTreeEx(Tuple.Create(this, BoundingBox));
+                            CachedOcttreeNode = Manager.World.OctTree.Add(this, BoundingBox);
                     }
                     else
                     {
-                        CachedOcttreeNode.RemoveItem(this, lastBounds);
+                        CachedOcttreeNode.Remove(this, LastBounds);
                         if (!IsDead)
-                            CachedOcttreeNode = CachedOcttreeNode.AddToTreeEx(Tuple.Create(this, BoundingBox));
+                            CachedOcttreeNode = CachedOcttreeNode.Add(this, BoundingBox);
                     }
                 }
 
-                lastBounds = BoundingBox;
+                LastBounds = BoundingBox;
             }
 
             hasMoved = false;
@@ -295,16 +292,13 @@ namespace DwarfCorp
 
         public override void Delete()
         {
-            if (CollisionType != CollisionType.None)
-                Manager.World.OctTree.RemoveItem(this, lastBounds);
+            RemoveFromOctTree();
             base.Delete();
         }
 
         public override void Die()
         {
-            if (Manager != null && CollisionType != CollisionType.None)
-                Manager.World.OctTree.RemoveItem(this, lastBounds);
-
+            RemoveFromOctTree();
             if (OnDestroyed != null) OnDestroyed();
 
             base.Die();
@@ -322,6 +316,13 @@ namespace DwarfCorp
             Matrix newTransform = Matrix.CreateRotationY((float)Math.Atan2(diff.X, -diff.Z));
             newTransform.Translation = LocalTransform.Translation;
             LocalTransform = newTransform;
+        }
+
+        private void RemoveFromOctTree()
+        {
+            if (Manager != null)
+                Manager.World.OctTree.Remove(this, LastBounds);
+            CachedOcttreeNode = null;
         }
     }
 }

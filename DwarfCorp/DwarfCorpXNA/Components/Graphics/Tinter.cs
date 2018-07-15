@@ -77,7 +77,6 @@ namespace DwarfCorp
             TintChangeRate = 1.0f;
             VertexColorTint = Color.White;
             Stipple = false;
-            SetFlag(Flag.FrustumCull, true);
         }
 
 

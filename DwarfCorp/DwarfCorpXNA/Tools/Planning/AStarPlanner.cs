@@ -169,12 +169,11 @@ namespace DwarfCorp
             int maxExpansions, ref List<MoveAction> toReturn, float weight, Func<bool> continueFunc)
         {
             // Create a local clone of the octree, using only the objects belonging to the player.
-            OctTreeNode<Body> octree = new OctTreeNode<Body>(mover.Creature.World.ChunkManager.Bounds.Min, mover.Creature.World.ChunkManager.Bounds.Max);
+            var octree = new OctTreeNode(mover.Creature.World.ChunkManager.Bounds.Min, mover.Creature.World.ChunkManager.Bounds.Max);
             List<Body> playerObjects = new List<Body>(mover.Creature.World.PlayerFaction.OwnedObjects);
             foreach(var obj in playerObjects)
-            {
-                octree.AddItem(obj, obj.GetBoundingBox());
-            }
+                octree.Add(obj, obj.GetBoundingBox());
+
             var start = new MoveState()
             {
                 Voxel = startVoxel
@@ -372,12 +371,11 @@ namespace DwarfCorp
                 int maxExpansions, ref List<MoveAction> toReturn, float weight, Func<bool> continueFunc)
         {
             // Create a local clone of the octree, using only the objects belonging to the player.
-            OctTreeNode<Body> octree = new OctTreeNode<Body>(mover.Creature.World.ChunkManager.Bounds.Min, mover.Creature.World.ChunkManager.Bounds.Max);
+            var octree = new OctTreeNode(mover.Creature.World.ChunkManager.Bounds.Min, mover.Creature.World.ChunkManager.Bounds.Max);
             List<Body> playerObjects = new List<Body>(mover.Creature.World.PlayerFaction.OwnedObjects);
             foreach (var obj in playerObjects)
-            {
-                octree.AddItem(obj, obj.GetBoundingBox());
-            }
+                octree.Add(obj, obj.GetBoundingBox());
+
             MoveState start = new MoveState()
             {
                 Voxel = startVoxel
