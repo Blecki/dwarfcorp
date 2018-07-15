@@ -444,8 +444,7 @@ namespace DwarfCorp
         }
 
         public override void UpdateViewMatrix()
-        {
-            ViewMatrix = Matrix.CreateLookAt(Position, FollowAutoTarget ? (AutoTarget * 0.5f + Target * 0.5f) : Target, Vector3.UnitY);
+        {            ViewMatrix = Matrix.CreateLookAt(Position, FollowAutoTarget ? (AutoTarget * 0.5f + Target * 0.5f) : Target, Vector3.UnitY);
         }
 
         public bool Collide(BoundingBox myBox, BoundingBox box)
