@@ -5,16 +5,61 @@ using Microsoft.Xna.Framework.Graphics;
 using DwarfCorp.Gui;
 using System.Linq;
 
+namespace DwarfCorp.Gui.Widgets
+{
+    public class EmployeePortrait : Widget
+    {
+        private Gui.Mesh SpriteMesh;
+        public DwarfCorp.LayeredSprites.LayerStack Sprite;
+        public AnimationPlayer AnimationPlayer;
+
+        public override void Layout()
+        {
+            base.Layout();
+            int x = 32;
+            int y = 40;
+            float ratio = Math.Max((float)Rect.Height / y, 1.0f);
+
+            SpriteMesh = Gui.Mesh.Quad()
+                .Scale((ratio * x), (ratio * y))
+                .Translate(Rect.X, Rect.Y);
+        }
+
+        public override void PostDraw(GraphicsDevice device)
+        {
+            if (Hidden || Transparent)
+                return;
+
+            if (IsAnyParentHidden())
+                return;
+
+            if (Sprite == null)
+            {
+                return;
+            }
+            var texture = Sprite.GetCompositeTexture();
+            if (texture != null)
+            {
+                var sheet = new SpriteSheet(texture, 32, 40);
+                SpriteMesh.ResetQuadTexture();
+                var frame = AnimationPlayer.GetCurrentAnimation().Frames[AnimationPlayer.CurrentFrame];
+                SpriteMesh.Texture(sheet.TileMatrix(frame.X, frame.Y));
+                Root.DrawMesh(SpriteMesh, texture);
+            }
+
+            base.PostDraw(device);
+        }
+    }
+
+}
+
 namespace DwarfCorp.GameStates
 {
     public class DwarfDesignerState : GameState
     {
         private Gui.Root GuiRoot;
-        private LayeredSprites.LayerStack Sprite;
-        private Gui.Widget SpriteFrame;
+        private DwarfCorp.Gui.Widgets.EmployeePortrait SpriteFrame;
         private List<LayeredSprites.LayeredAnimationProxy> Animations = new List<LayeredSprites.LayeredAnimationProxy>();
-        private AnimationPlayer AnimationPlayer;
-        private Gui.Mesh SpriteMesh;
 
         public DwarfDesignerState(DwarfGame game, GameStateManager stateManager) :
             base(game, "GuiDebugState", stateManager)
@@ -75,7 +120,7 @@ namespace DwarfCorp.GameStates
                 var layer = (panel.Children[1] as Gui.Widgets.ComboBox).SelectedItem;
                 var palette = (panel.Children[2] as Gui.Widgets.ComboBox).SelectedItem;
 
-                Sprite.AddLayer(GetLayer(LayerType, layer), GetPalette(palette));
+                SpriteFrame.Sprite.AddLayer(GetLayer(LayerType, layer), GetPalette(palette));
             };
 
             paletteCombo.OnSelectedIndexChanged = (sender) =>
@@ -83,7 +128,7 @@ namespace DwarfCorp.GameStates
                 var layer = (panel.Children[1] as Gui.Widgets.ComboBox).SelectedItem;
                 var palette = (panel.Children[2] as Gui.Widgets.ComboBox).SelectedItem;
 
-                Sprite.AddLayer(GetLayer(LayerType, layer), GetPalette(palette));
+                SpriteFrame.Sprite.AddLayer(GetLayer(LayerType, layer), GetPalette(palette));
             };
 
             layerCombo.SelectedIndex = 0;
@@ -93,16 +138,7 @@ namespace DwarfCorp.GameStates
         public override void OnEnter()
         {
             DwarfGame.GumInputMapper.GetInputQueue();
-            Sprite = new LayeredSprites.LayerStack();
-            foreach (Animation animation in AnimationLibrary.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations))
-            {
-                var proxyAnim = Sprite.ProxyAnimation(animation);
-                proxyAnim.Loops = true;
-                Animations.Add(proxyAnim);
-            }
-
-            AnimationPlayer = new AnimationPlayer();
-            AnimationPlayer.ChangeAnimation(Animations[0], AnimationPlayer.ChangeAnimationOptions.ResetAndPlay);
+   
 
             GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
@@ -122,12 +158,23 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) => StateManager.PopState()
             });
 
-            SpriteFrame = panel.AddChild(new Widget
+            SpriteFrame = panel.AddChild(new DwarfCorp.Gui.Widgets.EmployeePortrait
             {
                 MinimumSize = new Point(256, 320),
                 MaximumSize = new Point(256, 320),
                 AutoLayout = AutoLayout.DockLeft
-            });
+            }) as DwarfCorp.Gui.Widgets.EmployeePortrait;
+
+            SpriteFrame.Sprite = new LayeredSprites.LayerStack();
+            foreach (Animation animation in AnimationLibrary.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations))
+            {
+                var proxyAnim = SpriteFrame.Sprite.ProxyAnimation(animation);
+                proxyAnim.Loops = true;
+                Animations.Add(proxyAnim);
+            }
+
+            SpriteFrame.AnimationPlayer = new AnimationPlayer();
+            SpriteFrame.AnimationPlayer.ChangeAnimation(Animations[0], AnimationPlayer.ChangeAnimationOptions.ResetAndPlay);
 
             AddSelector(panel, "body");
             AddSelector(panel, "face");
@@ -157,17 +204,14 @@ namespace DwarfCorp.GameStates
                 Items = Animations.Select(a => a.Name).ToList(),
                 Border = "border-thin",
                 AutoLayout = AutoLayout.DockTop,
-                OnSelectedIndexChanged = (sender) => AnimationPlayer.ChangeAnimation(Animations.First(a => a.Name == (sender as Gui.Widgets.ComboBox).SelectedItem), AnimationPlayer.ChangeAnimationOptions.ResetAndPlay),
+                OnSelectedIndexChanged = (sender) => SpriteFrame.AnimationPlayer.ChangeAnimation(Animations.First(a => a.Name == (sender as Gui.Widgets.ComboBox).SelectedItem),
+                AnimationPlayer.ChangeAnimationOptions.ResetAndPlay),
                 ItemsVisibleInPopup = 12,
             }) as Gui.Widgets.ComboBox;
 
             animCombo.SelectedIndex = animCombo.Items.IndexOf("WalkingFORWARD");
 
-            GuiRoot.RootItem.Layout();            
-
-            SpriteMesh = Gui.Mesh.Quad()
-                .Scale(SpriteFrame.Rect.Width, SpriteFrame.Rect.Height)
-                .Translate(SpriteFrame.Rect.X, SpriteFrame.Rect.Y);
+            GuiRoot.RootItem.Layout();
 
             IsInitialized = true;
 
@@ -185,8 +229,8 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-            AnimationPlayer.Update(gameTime, false, Timer.TimerMode.Real);
-            Sprite.Update(StateManager.Game.GraphicsDevice);
+            SpriteFrame.AnimationPlayer.Update(gameTime, false, Timer.TimerMode.Real);
+            SpriteFrame.Sprite.Update(StateManager.Game.GraphicsDevice);
             GuiRoot.Update(gameTime.ToGameTime());
 
             base.Update(gameTime);
@@ -195,17 +239,6 @@ namespace DwarfCorp.GameStates
         public override void Render(DwarfTime gameTime)
         {
             GuiRoot.Draw();
-
-            var texture = Sprite.GetCompositeTexture();
-            if (texture != null)
-            {
-                var sheet = new SpriteSheet(texture, 32, 40);
-                SpriteMesh.ResetQuadTexture();
-                var frame = AnimationPlayer.GetCurrentAnimation().Frames[AnimationPlayer.CurrentFrame];
-                SpriteMesh.Texture(sheet.TileMatrix(frame.X, frame.Y));
-                GuiRoot.DrawMesh(SpriteMesh, texture);
-            }
-
             base.Render(gameTime);
         }
     }

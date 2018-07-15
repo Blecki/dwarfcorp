@@ -440,6 +440,11 @@ namespace DwarfCorp.Gui
             return Mesh.Merge(result.ToArray());
         }
 
+        public virtual void PostDraw(GraphicsDevice device)
+        {
+
+        }
+
         public bool IsAnyParentHidden()
         {
             if (Hidden)

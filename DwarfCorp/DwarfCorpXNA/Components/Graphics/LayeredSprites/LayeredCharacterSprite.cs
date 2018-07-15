@@ -50,6 +50,11 @@ namespace DwarfCorp.LayeredSprites
 
         private LayerStack Layers = new LayerStack();
 
+        public LayerStack GetLayers()
+        {
+            return Layers;
+        }
+
         public void AddLayer(Layer Layer, Palette Palette)
         {
             Layers.AddLayer(Layer, Palette);
