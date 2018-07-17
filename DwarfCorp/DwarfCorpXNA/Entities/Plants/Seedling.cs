@@ -42,7 +42,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Seedling : Plant, IUpdateableComponent
+    public class Seedling : Plant
     {
         public DateTime FullyGrownDay { get; set; }
         public String AdultName;

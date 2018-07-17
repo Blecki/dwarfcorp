@@ -45,7 +45,7 @@ namespace DwarfCorp
     ///     related to creatures (such as dwarves and goblins).
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class Creature : Health, IUpdateableComponent
+    public class Creature : Health
     {
         /// <summary> 
         /// Creatures can draw indicators showing the user what they're thinking.
@@ -350,8 +350,10 @@ namespace DwarfCorp
         }
 
         /// <summary> Updates the creature </summary>
-        public virtual void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             if (FirstUpdate)
             {
                 FirstUpdate = false;

@@ -44,7 +44,7 @@ namespace DwarfCorp
     /// This is a sensor for traps that damages HealthComponents that collide with the sensor
     /// </summary>
     [JsonObject(IsReference = true)]
-    class TrapSensor : Sensor, IUpdateableComponent
+    class TrapSensor : Sensor
     {
 
         public TrapSensor()
@@ -71,7 +71,7 @@ namespace DwarfCorp
             }
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             Drawer3D.DrawBox(BoundingBox, Color.White, 0.02f, false);
 

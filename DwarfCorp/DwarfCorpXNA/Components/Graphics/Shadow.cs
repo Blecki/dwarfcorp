@@ -43,7 +43,7 @@ namespace DwarfCorp
     /// <summary>
     /// This component projects a billboard shadow to the ground below an entity.
     /// </summary>
-    public class Shadow : SimpleSprite, IUpdateableComponent
+    public class Shadow : SimpleSprite
     {
         public float GlobalScale { get; set; }
         public Timer UpdateTimer { get; set; }

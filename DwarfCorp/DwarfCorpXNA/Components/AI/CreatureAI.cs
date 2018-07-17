@@ -46,7 +46,7 @@ namespace DwarfCorp
     ///     Component which manages the AI, scripting, and status of a particular creature (such as a Dwarf or Goblin)
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class CreatureAI : GameComponent, IUpdateableComponent
+    public class CreatureAI : GameComponent
     {
         // Evil hack to keep track of the creature's minecart to ensure there's only one if the creature is riding it.
         [JsonIgnore]
@@ -430,8 +430,10 @@ namespace DwarfCorp
         }
 
         /// <summary> Update this creature </summary>
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            base.Update(gameTime, chunks, camera);
+
             if (!Active)
                 return;
 
@@ -1125,7 +1127,8 @@ namespace DwarfCorp
 
         public void AssignTask(Task task)
         {
-            if (task == null) return; // Todo: Hunt down instances of this and kill. It's not the correct way to cancel the task.
+            if (task == null)
+                throw new InvalidOperationException();
 
             if (!Tasks.Contains(task))
             {

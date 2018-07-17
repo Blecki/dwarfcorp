@@ -45,7 +45,7 @@ namespace DwarfCorp
     /// <summary>
     /// This component follows its parent at a specified radius;
     /// </summary>
-    public class Follower : Body, IUpdateableComponent
+    public class Follower : Body
     {
         public float FollowRadius { get; set;  }
         public Vector3 TargetPos { get; set; }

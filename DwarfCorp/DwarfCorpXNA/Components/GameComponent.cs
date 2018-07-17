@@ -55,58 +55,6 @@ namespace DwarfCorp
         public ComponentManager Manager { get { return World.ComponentManager; } }
 
 
-        /*
-        public class SaveNugget : Saving.Nugget
-        {
-            public uint GlobalID;
-            public string Name;
-            public Flag Flags;
-            public List<String> Tags;
-            public Saving.Nugget Parent;
-            public List<Saving.Nugget> Children;            
-        }
-
-        protected virtual Saving.Nugget PrepareSaveNugget(Saving.Saver SaveSystem)
-        {
-            return new SaveNugget
-            {
-                AssociatedType = typeof(GameComponent), // Have to explicitely set since the save system
-                Version = 0,                            // isn't being invoked to create nugget.
-                GlobalID = GlobalID,
-                Name = Name,
-                Flags = Flags,
-                Tags = Tags,
-                Parent = SaveSystem.SaveObject(Parent),
-                Children = SerializableChildren.Select(c => SaveSystem.SaveObject(c)).ToList()
-            };
-        }
-
-        protected virtual void LoadFromSaveNugget(Saving.Loader SaveSystem, Saving.Nugget From)
-        {
-            var n = SaveSystem.UpgradeNugget(From, 0) as SaveNugget; // Need to explicitly invoke since save
-                // system was not involved for base type nugget.
-
-            GlobalID = n.GlobalID;
-            Name = n.Name;
-            Flags = n.Flags;
-            Tags = n.Tags;
-
-            Parent = SaveSystem.LoadObject(n.Parent) as GameComponent;
-            SerializableChildren = n.Children.Select(c => SaveSystem.LoadObject(c) as GameComponent).ToList();
-        }
-
-        Saving.Nugget Saving.ISaveableObject.SaveToNugget(Saving.Saver SaveSystem)
-        {
-            return PrepareSaveNugget(SaveSystem);
-        }
-
-        void Saving.ISaveableObject.LoadFromNugget(Saving.Loader SaveSystem, Saving.Nugget From)
-        {
-            LoadFromSaveNugget(SaveSystem, From);
-        }
-        */
-
-
         #region Serialization
 
         public void PrepareForSerialization()
@@ -240,6 +188,9 @@ namespace DwarfCorp
         }
 
         #endregion
+
+        public virtual void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
+        { }
 
         public virtual void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera,
             SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)

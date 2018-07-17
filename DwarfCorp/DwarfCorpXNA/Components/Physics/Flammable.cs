@@ -14,7 +14,7 @@ namespace DwarfCorp
     /// when the heat is above a "flashpoint" they get damaged until they are destroyed, and emit flames.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class Flammable : GameComponent, IUpdateableComponent
+    public class Flammable : GameComponent
     {
         private Health _health = null;
         [JsonIgnore]
@@ -88,7 +88,7 @@ namespace DwarfCorp
                         3);
         }
 
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (!Active) return;
 

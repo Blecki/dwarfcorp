@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class TurretTrap : CraftedBody, IUpdateableComponent
+    public class TurretTrap : CraftedBody
     {
         [EntityFactory("Turret")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)

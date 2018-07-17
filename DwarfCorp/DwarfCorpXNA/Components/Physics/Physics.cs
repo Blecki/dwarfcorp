@@ -47,7 +47,7 @@ namespace DwarfCorp
     /// All objects are just axis-aligned boxes that are treated as point masses.
     /// </summary>
     [Saving.SaveableObject(0)]
-    public class Physics : Body, IUpdateableComponent
+    public class Physics : Body
     {
         public Vector3 AngularVelocity { get; set; }
         public Vector3 Velocity { get; set; }

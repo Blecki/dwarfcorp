@@ -40,7 +40,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    public class Body : GameComponent, IBoundedObject, IRenderableComponent, IUpdateableComponent
+    public class Body : GameComponent, IBoundedObject, IRenderableComponent
     {
         public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
@@ -187,7 +187,7 @@ namespace DwarfCorp
             PropogateTransforms();
         }
 
-        public void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
+        override public void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         {
             if (AnimationQueue.Count > 0)
             {

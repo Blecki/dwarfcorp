@@ -43,7 +43,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class ResourceEntity : Physics, IUpdateableComponent
+    public class ResourceEntity : Physics
     {
         public ResourceAmount Resource { get; set; }
         public Timer LifeTimer = new Timer(3600, true);

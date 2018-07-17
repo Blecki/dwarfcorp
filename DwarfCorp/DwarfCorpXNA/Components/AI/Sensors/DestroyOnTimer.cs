@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class DestroyOnTimer : Body, IUpdateableComponent, IVoxelListener
+    public class DestroyOnTimer : Body, IVoxelListener
     {
         public VoxelHandle Voxel;
         public Timer DestroyTimer;

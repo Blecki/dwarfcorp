@@ -50,7 +50,7 @@ namespace DwarfCorp
     /// <summary>
     /// This component has a color tint which can change over time.
     /// </summary>
-    public class Tinter : Body, IUpdateableComponent, ITintable
+    public class Tinter : Body, ITintable
     {
         public bool LightsWithVoxels { get; set; }
         public Color LightRamp { get; set; }

@@ -42,7 +42,7 @@ using System.Threading;
 
 namespace DwarfCorp
 {
-    public class TimedExplosion : CraftedBody, IUpdateableComponent
+    public class TimedExplosion : CraftedBody
     {
         [EntityFactory("Explosive")]
         private static GameComponent __factory03(ComponentManager Manager, Vector3 Position, Blackboard Data)

@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class BearTrap : CraftedBody, IUpdateableComponent
+    public class BearTrap : CraftedBody
     {
         [EntityFactory("Bear Trap")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)

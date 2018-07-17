@@ -43,7 +43,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class DwarfThoughts : GameComponent, IUpdateableComponent
+    public class DwarfThoughts : GameComponent
     {
         public int MaxMessages = 10;
         public List<string> MessageBuffer = new List<string>();
@@ -152,7 +152,7 @@ namespace DwarfCorp
                 Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 1.0f, textColor);
         }
 
-        public void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
+        override public void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         {
 
             Thoughts.RemoveAll(thought => thought.IsOver(Manager.World.Time.CurrentDate));

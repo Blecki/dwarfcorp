@@ -41,7 +41,7 @@ using System.Runtime.Serialization;
 
 namespace DwarfCorp.LayeredSprites
 {
-    public class LayeredCharacterSprite : CharacterSprite, IRenderableComponent, IUpdateableComponent
+    public class LayeredCharacterSprite : CharacterSprite, IRenderableComponent
     {
         public override void AddAnimation(Animation animation)
         {

@@ -44,7 +44,7 @@ namespace DwarfCorp
     /// <summary>
     /// This component causes its parent to move up and down in a sinusoid pattern.
     /// </summary>
-    public class Bobber : GameComponent, IUpdateableComponent
+    public class Bobber : GameComponent
     {
         public float Magnitude { get; set; }
         public float Rate { get; set; }
@@ -65,7 +65,7 @@ namespace DwarfCorp
             this.OrigY = OrigY;
         }
 
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             var body = Parent as Body;
             System.Diagnostics.Debug.Assert(body != null);

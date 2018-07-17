@@ -40,7 +40,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Door : CraftedFixture, IUpdateableComponent
+    public class Door : CraftedFixture
     {
         [EntityFactory("Door")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)

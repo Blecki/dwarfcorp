@@ -42,7 +42,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    public class Snake : Creature, IUpdateableComponent
+    public class Snake : Creature
     {
         [EntityFactory("Snake")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)

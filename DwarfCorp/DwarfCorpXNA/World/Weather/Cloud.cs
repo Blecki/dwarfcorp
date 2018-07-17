@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class Cloud : SimpleSprite, IUpdateableComponent
+    public class Cloud : SimpleSprite
     {
         [EntityFactory("Snow Cloud")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)

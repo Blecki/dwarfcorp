@@ -2445,10 +2445,10 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Content Include="Entities\Troll\troll_animation.json">
+    <None Include="Entities\Troll\troll_animation.json">
       <Name>troll_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
     <None Include="Entities\Dwarf\Layers\dwarf-animations.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>dwarf-animations</Name>

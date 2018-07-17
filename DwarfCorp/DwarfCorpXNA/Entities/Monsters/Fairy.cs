@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Fairy : Creature, IUpdateableComponent
+    public class Fairy : Creature
     {
         [EntityFactory("Fairy")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)

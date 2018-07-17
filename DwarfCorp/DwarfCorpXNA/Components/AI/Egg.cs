@@ -44,7 +44,7 @@ using System.Linq;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class Egg : GameComponent, IUpdateableComponent
+    public class Egg : GameComponent
     {
         public string Adult { get; set; }
         public DateTime Birthday { get; set; }
@@ -75,7 +75,7 @@ namespace DwarfCorp
             ParentBody.AddChild(this);
         }
 
-        public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             if (Manager.World.Time.CurrentDate > Birthday)
             {

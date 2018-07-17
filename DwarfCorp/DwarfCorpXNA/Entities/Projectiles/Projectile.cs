@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Projectile : Physics, IUpdateableComponent
+    public class Projectile : Physics
     {
         public Tinter Sprite { get; set; }
         public Tinter Sprite2 { get; set; }
