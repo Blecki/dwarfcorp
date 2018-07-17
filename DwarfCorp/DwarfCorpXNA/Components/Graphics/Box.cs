@@ -43,7 +43,7 @@ namespace DwarfCorp
     /// <summary>
     /// This component draws a simple textured rectangular box.
     /// </summary>
-    public class Box : Tinter, IRenderableComponent
+    public class Box : Tinter
     {
         public string Primitive { get; set; }
         public Texture2D Texture { get; set; }

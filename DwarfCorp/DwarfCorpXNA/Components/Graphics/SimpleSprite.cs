@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class SimpleSprite : Tinter, IRenderableComponent
+    public class SimpleSprite : Tinter
     {
         public enum OrientMode
         {

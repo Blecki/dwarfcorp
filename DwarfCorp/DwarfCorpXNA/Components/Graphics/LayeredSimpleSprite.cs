@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class LayeredSimpleSprite : Tinter, IRenderableComponent
+    public class LayeredSimpleSprite : Tinter
     {
         public enum OrientMode
         {

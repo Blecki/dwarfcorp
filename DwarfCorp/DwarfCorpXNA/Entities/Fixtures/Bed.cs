@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Bed : CraftedBody, IRenderableComponent
+    public class Bed : CraftedBody
     {
         [EntityFactory("Bed")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)

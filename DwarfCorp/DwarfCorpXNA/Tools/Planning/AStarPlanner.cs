@@ -363,8 +363,6 @@ namespace DwarfCorp
 
         }
 
-        private static FileStream _planLog = null;
-
         // Find a path from the start to the goal by computing an inverse path from goal to the start. Should only be used
         // if the forward path fails.
         private static PlanResult InversePath(CreatureMovement mover, VoxelHandle startVoxel, GoalRegion goal, ChunkManager chunks,

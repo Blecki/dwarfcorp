@@ -47,7 +47,7 @@ namespace DwarfCorp
     /// of the camera.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class OrientedAnimatedSprite : AnimatedSprite, IRenderableComponent
+    public class OrientedAnimatedSprite : AnimatedSprite
     {
         public enum Orientation
         {

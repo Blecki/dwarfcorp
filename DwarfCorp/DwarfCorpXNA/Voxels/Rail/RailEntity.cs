@@ -39,7 +39,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.Rail
 {
-    public class RailEntity : CraftedBody, IRenderableComponent, ITintable
+    public class RailEntity : CraftedBody, ITintable
     {
         public class NeighborConnection
         {

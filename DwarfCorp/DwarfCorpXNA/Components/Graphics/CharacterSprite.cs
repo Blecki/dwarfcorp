@@ -48,7 +48,7 @@ namespace DwarfCorp
     /// certain effects such as blinking.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class CharacterSprite : OrientedAnimatedSprite, IRenderableComponent
+    public class CharacterSprite : OrientedAnimatedSprite
     {
         [JsonIgnore]
         public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }

@@ -178,7 +178,7 @@ namespace DwarfCorp
         }
         private Timer reflectionTimer = new Timer(0.1f, false, Timer.TimerMode.Real);
         private Vector3 prevCameraPos = Vector3.Zero;
-        public void DrawReflectionMap(IEnumerable<IRenderableComponent> Renderables, DwarfTime gameTime, WorldManager game, float waterHeight, Matrix reflectionViewMatrix, Shader effect, GraphicsDevice device)
+        public void DrawReflectionMap(IEnumerable<Body> Renderables, DwarfTime gameTime, WorldManager game, float waterHeight, Matrix reflectionViewMatrix, Shader effect, GraphicsDevice device)
         {
             if (!DrawReflections) return;
             reflectionTimer.Update(gameTime);

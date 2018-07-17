@@ -14,8 +14,7 @@ namespace DwarfCorp
     /// This is an animated "billboard". Essentially, a simple rectangle is drawn with a texture on it.
     /// The rectangle is drawn in such a way that it is always more or less facing the camera.
     /// </summary>
-    [JsonObject(IsReference = true)]
-    public class AnimatedSprite : Tinter, IRenderableComponent
+    public class AnimatedSprite : Tinter
     {
         public Dictionary<string, Animation> Animations { get; set; }
 

@@ -39,7 +39,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Banner : Tinter, IRenderableComponent
+    public class Banner : Tinter
     {
         public CompanyInformation Logo;
         private Vector3 prevWindDirection;

@@ -40,7 +40,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    public class SimpleBobber : SimpleSprite, IRenderableComponent
+    public class SimpleBobber : SimpleSprite
     {
         public float Magnitude { get; set; }
         public float Rate { get; set; }
@@ -84,7 +84,7 @@ namespace DwarfCorp
         }
     }
 
-    public class LayeredBobber : LayeredSimpleSprite, IRenderableComponent
+    public class LayeredBobber : LayeredSimpleSprite
     {
         public float Magnitude { get; set; }
         public float Rate { get; set; }

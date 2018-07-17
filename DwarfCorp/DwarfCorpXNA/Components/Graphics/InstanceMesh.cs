@@ -43,7 +43,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class InstanceMesh : Tinter, IRenderableComponent
+    public class InstanceMesh : Tinter
     {
         public string ModelType { get; set; }
 

@@ -21,7 +21,7 @@ namespace DwarfCorp
         }
 
         public static void RenderSelectionBuffer(
-            IEnumerable<IRenderableComponent> Renderables,
+            IEnumerable<Body> Renderables,
             DwarfTime time,
             ChunkManager chunks,
             Camera camera,
@@ -35,7 +35,7 @@ namespace DwarfCorp
         }
 
         public static void Render(
-            IEnumerable<IRenderableComponent> Renderables,
+            IEnumerable<Body> Renderables,
             DwarfTime gameTime,
             ChunkManager chunks,
             Camera Camera,

@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    //[Saving.SaveableObject(0)]
-    public class GameComponent // : Saving.ISaveableObject
+    public class GameComponent
     {
         public string Name { get; set; }
         public uint GlobalID { get; set; }
@@ -66,14 +65,15 @@ namespace DwarfCorp
         public void PostSerialization(ComponentManager Manager)
         {
             Children = SerializableChildren.Select(id => Manager.FindComponent(id)).ToList();
-            /*
-            if (Children.Any(c => c == null))
-            {
-                throw new InvalidOperationException(String.Format("Serialized a null child of component {0}, which has {1} children.", Name, Children.Count));
-            }
-            */
             Children.RemoveAll(c => c == this || c == null);
             SerializableChildren = null;
+        }
+
+        [OnDeserialized]
+        void OnDeserializing(StreamingContext context)
+        {
+            // Assume the context passed in is a WorldManager
+            World = ((WorldManager)context.Context);
         }
 
         public virtual void CreateCosmeticChildren(ComponentManager Manager)
@@ -150,13 +150,6 @@ namespace DwarfCorp
             {
                 child.ReceiveMessageRecursive(messageToReceive);
             }
-        }
-
-        [OnDeserialized]
-        void OnDeserializing(StreamingContext context)
-        {
-            // Assume the context passed in is a WorldManager
-            World = ((WorldManager) context.Context);
         }
 
         #region Constructors
