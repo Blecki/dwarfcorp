@@ -84,7 +84,7 @@ namespace DwarfCorp
             OriginalTransform = LocalTransform;
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             UpdateTimer.Update(gameTime);
             if(UpdateTimer.HasTriggered)

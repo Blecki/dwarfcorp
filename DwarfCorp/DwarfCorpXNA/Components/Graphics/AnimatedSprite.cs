@@ -86,7 +86,7 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             AnimPlayer.Update(gameTime, !DrawSilhouette); // Can't use instancing if we want the silhouette.
             base.Update(gameTime, chunks, camera);
@@ -116,7 +116,7 @@ namespace DwarfCorp
             AnimPlayer.UpdateInstance(InstanceData);
         }
 
-        new public void Render(DwarfTime gameTime,
+        override public void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,

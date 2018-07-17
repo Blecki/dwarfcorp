@@ -205,7 +205,7 @@ namespace DwarfCorp
 
         }
 
-        new public void Update(DwarfTime time, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime time, ChunkManager chunks, Camera camera)
         {
             base.Update(time, chunks, camera);
 

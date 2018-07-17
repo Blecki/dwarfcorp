@@ -67,7 +67,7 @@ namespace DwarfCorp
             Velocity = new Vector3(1, 0, 0);
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
 

@@ -64,7 +64,7 @@ namespace DwarfCorp
             })).SetFlag(Flag.ShouldSerialize, false);
         }
 
-        new public void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
+        override public void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         {
             base.Update(Time, Chunks, Camera);
 
