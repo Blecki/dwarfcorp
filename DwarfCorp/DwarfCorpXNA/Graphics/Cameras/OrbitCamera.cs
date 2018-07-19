@@ -109,6 +109,7 @@ namespace DwarfCorp
                     break;
 
                 case ControlType.Walk:
+                    WalkUpdate(time, chunks);
                     break;
             }
             base.Update(time, chunks);
@@ -133,6 +134,228 @@ namespace DwarfCorp
         }
 
         private Point mousePrerotate = new Point(0, 0);
+        private bool crouched = false;
+        public Vector3 Gravity = Vector3.Down * 20;
+        private bool flying = false;
+        private bool flyKeyPressed = false;
+        public void WalkUpdate(DwarfTime time, ChunkManager chunks)
+        {
+            // Don't attempt any camera control if the user is trying to type intoa focus item.
+            if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
+            {
+                return;
+            }
+            float diffPhi = 0;
+            float diffTheta = 0;
+            float diffRadius = 0;
+            Vector3 forward = (Target - Position);
+            forward.Normalize();
+            Vector3 right = Vector3.Cross(forward, UpVector);
+            Vector3 up = Vector3.Cross(right, forward);
+            right.Normalize();
+            up.Normalize();
+            MouseState mouse = Mouse.GetState();
+            KeyboardState keys = Keyboard.GetState();
+            var bounds = new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20);
+
+            ZoomTargets.Clear();
+
+            Target = MathFunctions.Clamp(Target, bounds);
+
+            int edgePadding = -10000;
+
+            if (GameSettings.Default.EnableEdgeScroll)
+            {
+                edgePadding = 100;
+            }
+
+            float diffX, diffY = 0;
+            float dt = (float)time.ElapsedRealTime.TotalSeconds;
+            SnapToBounds(new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
+            if (KeyManager.RotationEnabled())
+            {
+                World.Gui.MouseVisible = false;
+                if (!shiftPressed)
+                {
+                    shiftPressed = true;
+                    mouseOnRotate = new Point(mouse.X, mouse.Y);
+                    mousePrerotate = new Point(mouse.X, mouse.Y);
+                }
+
+                if (!isLeftPressed && mouse.LeftButton == ButtonState.Pressed)
+                {
+                    isLeftPressed = true;
+                }
+                else if (mouse.LeftButton == ButtonState.Released)
+                {
+                    isLeftPressed = false;
+                }
+
+                if (!isRightPressed && mouse.RightButton == ButtonState.Pressed)
+                {
+                    isRightPressed = true;
+                }
+                else if (mouse.RightButton == ButtonState.Released)
+                {
+                    isRightPressed = false;
+                }
+
+                Mouse.SetPosition(mouseOnRotate.X, mouseOnRotate.Y);
+
+                diffX = mouse.X - mouseOnRotate.X;
+                diffY = mouse.Y - mouseOnRotate.Y;
+
+
+                if (!isRightPressed)
+                {
+
+                    float filterDiffX = (float)(diffX * dt);
+                    float filterDiffY = (float)(diffY * dt);
+
+                    diffTheta = (filterDiffX);
+                    diffPhi = -(filterDiffY);
+                }
+                KeyManager.TrueMousePos = mousePrerotate;
+            }
+            else
+            {
+                if (shiftPressed)
+                {
+                    Mouse.SetPosition(mousePrerotate.X, mousePrerotate.Y);
+                    KeyManager.TrueMousePos = new Point(mousePrerotate.X, mousePrerotate.Y);
+                }
+                else
+                {
+                    KeyManager.TrueMousePos = new Point(mouse.X, mouse.Y);
+                }
+                shiftPressed = false;
+                World.Gui.MouseVisible = true;
+            }
+
+            Vector3 velocityToSet = Vector3.Zero;
+
+            if (EnableControl)
+            {
+                if (keys.IsKeyDown(ControlSettings.Mappings.Forward) || keys.IsKeyDown(Keys.Up))
+                {
+                    Vector3 mov = forward;
+                    mov.Normalize();
+                    velocityToSet += mov * CameraMoveSpeed;
+                }
+                else if (keys.IsKeyDown(ControlSettings.Mappings.Back) || keys.IsKeyDown(Keys.Down))
+                {
+                    Vector3 mov = forward;
+                    mov.Normalize();
+                    velocityToSet += -mov * CameraMoveSpeed;
+                }
+
+                if (keys.IsKeyDown(ControlSettings.Mappings.Left) || keys.IsKeyDown(Keys.Left))
+                {
+                    Vector3 mov = right;
+                    mov.Normalize();
+                    velocityToSet += -mov * CameraMoveSpeed;
+                }
+                else if (keys.IsKeyDown(ControlSettings.Mappings.Right) || keys.IsKeyDown(Keys.Right))
+                {
+                    Vector3 mov = right;
+                    mov.Normalize();
+                    velocityToSet += mov * CameraMoveSpeed;
+                }
+            }
+
+            if (keys.IsKeyDown(ControlSettings.Mappings.Fly))
+            {
+                flyKeyPressed = true;
+            }
+            else
+            {
+                if (flyKeyPressed)
+                {
+                    flying = !flying;
+                }
+                flyKeyPressed = false;
+            }
+
+            if (velocityToSet.LengthSquared() > 0)
+            {
+                if (!flying)
+                {
+                    float y = Velocity.Y;
+                    Velocity = Velocity * 0.5f + 0.5f * velocityToSet;
+                    Velocity = new Vector3(Velocity.X, y, Velocity.Z);
+                }
+                else
+                {
+                    Velocity = Velocity * 0.5f + 0.5f * velocityToSet;
+                }
+            }
+
+
+            LastWheel = mouse.ScrollWheelValue;
+            float ymult = flying ? 0.9f : 1.0f;
+            Velocity = new Vector3(Velocity.X * 0.9f, Velocity.Y * ymult, Velocity.Z * 0.9f);
+
+            float subSteps = 10.0f;
+            float subStepLength = 1.0f / subSteps;
+
+            crouched = false;
+            for (int i = 0; i < subSteps; i++)
+            {
+                VoxelHandle currentVoxel = new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position));
+
+                var below = VoxelHelpers.GetNeighbor(currentVoxel, new GlobalVoxelOffset(0, -1, 0));
+                var above = VoxelHelpers.GetNeighbor(currentVoxel, new GlobalVoxelOffset(0, 1, 0));
+                if (above.IsValid && !above.IsEmpty)
+                {
+                    crouched = true;
+                }
+
+                if (!flying)
+                {
+                    if (!below.IsValid || below.IsEmpty)
+                    {
+                        Velocity += dt * Gravity * subStepLength;
+                    }
+                    else if (keys.IsKeyDown(ControlSettings.Mappings.Jump))
+                    {
+                        Velocity += -dt * Gravity * subStepLength * 4;
+                    }
+
+                    if (currentVoxel.IsValid && currentVoxel.LiquidLevel > 0)
+                    {
+                        Velocity += -dt * Gravity * subStepLength * 0.999f;
+
+                        if (keys.IsKeyDown(ControlSettings.Mappings.Jump))
+                        {
+                            Velocity += -dt * Gravity * subStepLength * 0.5f;
+                        }
+                        Velocity *= 0.99f;
+                    }
+                }
+
+                if (!CollidesWithChunks(World.ChunkManager, Position, true, true, 0.4f, 0.9f))
+                {
+                    MoveTarget(Velocity * dt * subStepLength);
+                    PushVelocity = Vector3.Zero;
+                }
+                else
+                {
+                    MoveTarget(Velocity * dt * subStepLength);
+                }
+            }
+
+
+            Target += right * diffTheta * 0.1f;
+            Target += up * diffPhi * 0.1f;
+            var diffTarget = Target - Position;
+            diffTarget.Normalize();
+            Target = Position + diffTarget * 1.0f;
+
+
+            UpdateBasisVectors();
+            
+            UpdateViewMatrix();
+        }
 
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
@@ -404,7 +627,7 @@ namespace DwarfCorp
 
             LastWheel = mouse.ScrollWheelValue;
 
-            if (!CollidesWithChunks(World.ChunkManager, Position + Velocity, false))
+            if (!CollidesWithChunks(World.ChunkManager, Position + Velocity, false, false, 0.5f, 1.0f))
             {
                 MoveTarget(Velocity);
                 PushVelocity = Vector3.Zero;
@@ -442,12 +665,33 @@ namespace DwarfCorp
         {
             // Does nothing in this camera...
         }
-
+        private Vector3 Noise = Vector3.Zero;
+        private float HeightOffset = 0.0f;
         public override void UpdateViewMatrix()
-        {            ViewMatrix = Matrix.CreateLookAt(Position, FollowAutoTarget ? (AutoTarget * 0.5f + Target * 0.5f) : Target, Vector3.UnitY);
+        {
+            if (this.Control == ControlType.Walk)
+            {
+                float heightOffset = crouched ? 0.0f : 0.5f;
+                HeightOffset = heightOffset * 0.1f + HeightOffset * 0.9f;
+                var undistorted = Position + Vector3.UnitY * heightOffset;
+                var distorted = VertexNoise.Warp(undistorted);
+                var noise = distorted - undistorted;
+                Noise = noise * 0.1f + Noise * 0.9f;
+                ViewMatrix = Matrix.CreateLookAt(Position + Vector3.UnitY * HeightOffset + Noise, FollowAutoTarget ? (AutoTarget * 0.5f + Target * 0.5f) : Target + Vector3.UnitY * HeightOffset + Noise, Vector3.UnitY);
+            }
+            else
+            {
+                ViewMatrix = Matrix.CreateLookAt(Position, FollowAutoTarget ? (AutoTarget * 0.5f + Target * 0.5f) : Target, Vector3.UnitY);
+            }
         }
 
-        public bool Collide(BoundingBox myBox, BoundingBox box)
+        private bool IsNeighborOccupied(VoxelHandle voxel, int x, int y, int z)
+        {
+            VoxelHandle neighbor = VoxelHelpers.GetNeighbor(voxel, new GlobalVoxelOffset(x, y, z));
+            return (neighbor.IsValid && !(neighbor.IsEmpty || !neighbor.IsVisible));
+        }
+
+        public bool Collide(VoxelHandle voxel, BoundingBox myBox, BoundingBox box)
         {
             if (!myBox.Intersects(box))
             {
@@ -456,18 +700,19 @@ namespace DwarfCorp
 
             Physics.Contact contact = new Physics.Contact();
 
-            if (!Physics.TestStaticAABBAABB(box, box, ref contact))
+            bool testX = !IsNeighborOccupied(voxel, -1, 0, 0) || !IsNeighborOccupied(voxel, 1, 0, 0);
+            bool testY = !IsNeighborOccupied(voxel, 0, -1, 0) || !IsNeighborOccupied(voxel, 0, 1, 0);
+            bool testZ = !IsNeighborOccupied(voxel, 0, 0, -1) || !IsNeighborOccupied(voxel, 0, 0, 1);
+            if (!Physics.TestStaticAABBAABB(myBox, box, ref contact, testX, testY, testZ))
             {
                 return false;
             }
 
             Vector3 p = Target;
             p += contact.NEnter * contact.Penetration;
-
-            Vector3 newVelocity = (contact.NEnter * Vector3.Dot(Velocity, contact.NEnter));
-            Velocity = (Velocity - newVelocity);
-
+            Velocity = Velocity - Vector3.Dot(Velocity, contact.NEnter) * contact.NEnter;
             Target = p;
+            Position = Position + contact.NEnter * contact.Penetration;
 
             return true;
         }
@@ -482,24 +727,26 @@ namespace DwarfCorp
             Target += dTarget + dPosition;
         }
 
-        public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos, bool applyForce)
+        public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos, bool applyForce, bool allowInvisible, float size=0.5f, float height=2.0f)
         {
-            var box = new BoundingBox(pos - new Vector3(0.5f, 0.5f, 0.5f), pos + new Vector3(0.5f, 0.5f, 0.5f));
+            var box = new BoundingBox(pos - new Vector3(size, height * 0.5f, size), pos + new Vector3(size, height * 0.5f, size));
             bool gotCollision = false;
-
+            
             foreach (var v in VoxelHelpers.EnumerateCube(GlobalVoxelCoordinate.FromVector3(pos))
                 .Select(n => new VoxelHandle(chunks.ChunkData, n)))                
             {
                 if (!v.IsValid) continue;
                 if (v.IsEmpty) continue;
-                if (!v.IsVisible) continue;
+                if (!allowInvisible && !v.IsVisible) continue;
 
                 var voxAABB = v.GetBoundingBox();
                 if (box.Intersects(voxAABB))
                 {
                     gotCollision = true;
                     if (applyForce)
-                        Collide(box, voxAABB);
+                    {
+                        Collide(v, box, voxAABB);
+                    }
                     else
                         return true;
                 }
@@ -507,6 +754,8 @@ namespace DwarfCorp
 
             return gotCollision;
         }
+
+
 
         public Vector3 GetForwardVector()
         {

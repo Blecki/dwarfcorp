@@ -15,7 +15,7 @@ namespace DwarfCorp.Gui.Widgets
         public Vector4 Tint = Vector4.One;
         public Vector4 EnabledTextColor = new Vector4(1, 1, 1, 1);
         public Vector4 DisabledTextColor = new Vector4(0.15f, 0.15f, 0.15f, 1);
-        
+        public bool ChangeTextColorOnEnable = true;
         public TileReference Icon = null;
         private bool _enabled = true;
         public bool Enabled
@@ -179,8 +179,8 @@ namespace DwarfCorp.Gui.Widgets
 
             if (!string.IsNullOrEmpty(Text))
             {
-                if (Enabled) TextColor = EnabledTextColor;
-                else TextColor = DisabledTextColor;
+                if (Enabled && ChangeTextColorOnEnable) TextColor = EnabledTextColor;
+                else if (!Enabled && ChangeTextColorOnEnable) TextColor = DisabledTextColor;
                 base.GetTextMesh(meshes);
             }
 

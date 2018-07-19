@@ -507,7 +507,7 @@ namespace DwarfCorp
 
         public bool IsCameraUnderwater()
         {
-            var handle = new VoxelHandle(ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Camera.Position));
+            var handle = new VoxelHandle(ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Camera.Position + Vector3.Up));
             return handle.IsValid && handle.LiquidLevel > 0;
         }
 
@@ -644,6 +644,17 @@ namespace DwarfCorp
 
         public bool FastForwardToDay { get; set; }
         public Embarkment InitialEmbark { get; set; }
+
+        public void ChangeCameraMode(OrbitCamera.ControlType type)
+        {
+            Camera.Control = type;
+            if (type == OrbitCamera.ControlType.Walk)
+            {
+                Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY + 1);
+                var below = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(new Vector3(Camera.Position.X, VoxelConstants.ChunkSizeY - 1, Camera.Position.Z))));
+                Camera.Position = below.WorldPosition + Vector3.One * 0.5f + Vector3.Up;
+            }
+        }
 
         public void Quit()
         {
