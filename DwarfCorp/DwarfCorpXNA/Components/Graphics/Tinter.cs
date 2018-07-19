@@ -69,8 +69,8 @@ namespace DwarfCorp
             Stipple = false;
         }
 
-        public Tinter(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool collisionManager) :
-            base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos, collisionManager)
+        public Tinter(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
+            base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             LightsWithVoxels = true;
             LightRamp = new Color(255, 255, 0);

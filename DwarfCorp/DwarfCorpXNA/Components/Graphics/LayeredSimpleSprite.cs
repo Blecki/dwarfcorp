@@ -40,9 +40,8 @@ namespace DwarfCorp
             ComponentManager Manager,
             String Name,
             Matrix LocalTransform,
-            bool AddToCollisionManager,
             List<Layer> Layers)
-            : base(Manager, Name, LocalTransform, Vector3.Zero, Vector3.Zero, AddToCollisionManager)
+            : base(Manager, Name, LocalTransform, Vector3.Zero, Vector3.Zero)
         {
             this.Layers = Layers;
         }

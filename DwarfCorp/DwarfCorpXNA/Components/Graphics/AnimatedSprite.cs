@@ -37,8 +37,8 @@ namespace DwarfCorp
 
         public bool EnableWind { get; set; }
 
-        public AnimatedSprite(ComponentManager Manager, string name, Matrix localTransform, bool addToCollisionManager) :
-            base(Manager, name, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
+        public AnimatedSprite(ComponentManager Manager, string name, Matrix localTransform) :
+            base(Manager, name, localTransform, Vector3.Zero, Vector3.Zero)
         {
             Animations = new Dictionary<string, Animation>();
             OrientationType = OrientMode.Spherical;

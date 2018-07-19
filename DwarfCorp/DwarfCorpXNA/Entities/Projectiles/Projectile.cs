@@ -59,7 +59,7 @@ namespace DwarfCorp
         }
 
         public Projectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Health.DamageAmount damage, float size, string asset, string hitParticles, string hitNoise, Body target, bool animated = false, bool singleSprite = false) :
-            base(manager, "Projectile", Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0), OrientMode.Fixed, false)
+            base(manager, "Projectile", Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0), OrientMode.Fixed)
         {
             this.AllowPhysicsSleep = false; 
             Target = target;
@@ -78,8 +78,7 @@ namespace DwarfCorp
 
             if (animated)
             {
-                Sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f),
-                    false)
+                Sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f))
                 {
                     OrientationType = AnimatedSprite.OrientMode.Fixed
                 }) as AnimatedSprite;
@@ -108,8 +107,7 @@ namespace DwarfCorp
                 if (animated)
                 {
                     Sprite2 = Sprite.AddChild(new AnimatedSprite(Manager, "Sprite2",
-                        Matrix.CreateRotationY((float)Math.PI * 0.5f) * Matrix.CreateRotationZ((float)Math.PI * 0.5f),
-                        false)
+                        Matrix.CreateRotationY((float)Math.PI * 0.5f) * Matrix.CreateRotationZ((float)Math.PI * 0.5f))
                     {
                         OrientationType = AnimatedSprite.OrientMode.Fixed
                     }) as AnimatedSprite;

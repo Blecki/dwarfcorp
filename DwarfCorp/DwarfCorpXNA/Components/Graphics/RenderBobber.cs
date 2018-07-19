@@ -99,7 +99,7 @@ namespace DwarfCorp
             float mag,
             float rate,
             float offset)
-            : base(Manager, Name, LocalTransform, true, Layers)
+            : base(Manager, Name, LocalTransform, Layers)
         {
             Magnitude = mag;
             Rate = rate;

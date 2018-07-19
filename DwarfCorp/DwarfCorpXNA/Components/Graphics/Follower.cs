@@ -57,7 +57,7 @@ namespace DwarfCorp
         }
 
         public Follower(ComponentManager Manager) :
-            base(Manager, "Follower", Matrix.Identity, Vector3.One, Vector3.Zero, false)
+            base(Manager, "Follower", Matrix.Identity, Vector3.One, Vector3.Zero)
         {
             FollowRadius = 1.5f;
             FollowRate = 0.1f;

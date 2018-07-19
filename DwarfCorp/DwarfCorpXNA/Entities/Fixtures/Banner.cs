@@ -62,7 +62,7 @@ namespace DwarfCorp
         }
 
         public Banner(ComponentManager Manager) :
-            base(Manager, "Banner", Matrix.Identity, new Vector3(1, 1, 1), Vector3.Zero, false)
+            base(Manager, "Banner", Matrix.Identity, new Vector3(1, 1, 1), Vector3.Zero)
         {
             
         }

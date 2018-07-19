@@ -48,7 +48,7 @@ namespace DwarfCorp
             var forgeAnimation = AnimationLibrary.CreateAnimation(spriteSheet, frames, "ConveyorAnimation");
             forgeAnimation.Loops = true;
 
-            var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateTranslation(0.0f, -0.4f, 0.0f), false)
+            var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateTranslation(0.0f, -0.4f, 0.0f))
             {
                 OrientationType = AnimatedSprite.OrientMode.Fixed
             }) as AnimatedSprite;

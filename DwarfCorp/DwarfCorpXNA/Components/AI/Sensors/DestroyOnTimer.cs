@@ -47,7 +47,7 @@ namespace DwarfCorp
         public Timer DestroyTimer;
 
         public DestroyOnTimer(ComponentManager Manager, ChunkManager chunkManager, VoxelHandle Voxel) :
-            base(Manager, "DestroyTimer", Matrix.CreateTranslation(Voxel.GetBoundingBox().Center()), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero, true)
+            base(Manager, "DestroyTimer", Matrix.CreateTranslation(Voxel.GetBoundingBox().Center()), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
         {
             this.Voxel = Voxel;
         }

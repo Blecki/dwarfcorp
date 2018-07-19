@@ -36,7 +36,7 @@ namespace DwarfCorp
             Matrix LocalTransform,
             SpriteSheet Sheet,
             Point Frame)
-            : base(Manager, Name, LocalTransform, Vector3.Zero, Vector3.Zero, true)
+            : base(Manager, Name, LocalTransform, Vector3.Zero, Vector3.Zero)
         {
             this.Sheet = Sheet;
             this.Frame = Frame;

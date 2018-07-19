@@ -61,7 +61,7 @@ namespace DwarfCorp
             Vector3 BoundingBoxExtents,
             Vector3 BoundingBoxOffset,
             Action<VoxelChangeEvent> Handler) :
-            base(Manager, "New Voxel Listener", Transform, BoundingBoxExtents, BoundingBoxOffset, true)
+            base(Manager, "New Voxel Listener", Transform, BoundingBoxExtents, BoundingBoxOffset)
         {
             CollisionType = CollisionType.Static;
             this.Handler = Handler;

@@ -81,7 +81,7 @@ namespace DwarfCorp
             var forgeAnimation = AnimationLibrary.CreateAnimation(spriteSheet, frames, "ForgeLightAnimation");
             forgeAnimation.Loops = true;
 
-            var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.Identity, false)
+            var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.Identity)
             {
                 LightsWithVoxels = false
             }) as AnimatedSprite;

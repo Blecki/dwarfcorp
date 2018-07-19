@@ -193,8 +193,8 @@ namespace DwarfCorp
 
         }
 
-        public Physics(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float mass, float i, float linearDamping, float angularDamping, Vector3 gravity, OrientMode orientation = OrientMode.Fixed, bool AddToCollisionManager = true) :
-            base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos, AddToCollisionManager)
+        public Physics(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float mass, float i, float linearDamping, float angularDamping, Vector3 gravity, OrientMode orientation = OrientMode.Fixed) :
+            base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             Mass = mass;
             Velocity = Vector3.Zero;

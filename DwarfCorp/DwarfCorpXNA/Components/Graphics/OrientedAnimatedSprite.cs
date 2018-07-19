@@ -87,9 +87,8 @@ namespace DwarfCorp
             
         }
 
-        public OrientedAnimatedSprite(ComponentManager manager, string name,
-            Matrix localTransform) :
-                base(manager, name, localTransform, false)
+        public OrientedAnimatedSprite(ComponentManager manager, string name, Matrix localTransform) :
+                base(manager, name, localTransform)
         {
         }
 

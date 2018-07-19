@@ -143,13 +143,8 @@ namespace DwarfCorp
         {
         }
 
-        public Body(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            this(manager, name, localTransform, boundingBoxExtents, boundingBoxPos, true)
-        {
-        }
-
         // Todo: Remove unused argument addToCollisionManager
-        public Body(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool addToCollisionManager) :
+        public Body(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             base(name, manager)
         {
             BoundingBoxSize = boundingBoxExtents;
