@@ -403,8 +403,11 @@ namespace DwarfCorp.Gui.Widgets
                 //Icon.Invalidate();
                 //Icon.Sprite = Employee.Creature.Sprite.Animations[0];
                 var sprite = Employee.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>();
-                Icon.Sprite = sprite.GetLayers();
-                Icon.AnimationPlayer = sprite.AnimPlayer;
+                if (sprite != null)
+                {
+                    Icon.Sprite = sprite.GetLayers();
+                    Icon.AnimationPlayer = sprite.AnimPlayer;
+                }
 
                 NameLabel.Text = "\n" + Employee.Stats.FullName;
                 StatDexterity.Text = String.Format("Dex: {0}", Employee.Stats.BuffedDex);
