@@ -408,6 +408,11 @@ namespace DwarfCorp.Gui.Widgets
                     Icon.Sprite = sprite.GetLayers();
                     Icon.AnimationPlayer = sprite.AnimPlayer;
                 }
+                else
+                {
+                    Icon.Sprite = null;
+                    Icon.AnimationPlayer = null;
+                }
 
                 NameLabel.Text = "\n" + Employee.Stats.FullName;
                 StatDexterity.Text = String.Format("Dex: {0}", Employee.Stats.BuffedDex);
