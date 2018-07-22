@@ -234,6 +234,7 @@ namespace DwarfCorp
             InitializeAnimations();
             InitializeWeapons();
             InitializeActions();
+            AttackMode = CharacterMode.Attacking01;
             base.InitializeStatics();
         }
         public WizardClass()

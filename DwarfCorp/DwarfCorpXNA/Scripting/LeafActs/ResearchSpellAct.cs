@@ -72,9 +72,9 @@ namespace DwarfCorp
             Sound3D sound = null;
             while (!Spell.IsResearched)
             {
-                Creature.CurrentCharacterMode = CharacterMode.Attacking;
+                Creature.CurrentCharacterMode = Creature.AttackMode;
                 Creature.OverrideCharacterMode = true;
-                Creature.Sprite.ReloopAnimations(CharacterMode.Attacking);
+                Creature.Sprite.ReloopAnimations(Creature.AttackMode);
                 float research = Creature.Stats.BuffedInt * 0.25f * DwarfTime.Dt;
                 Spell.ResearchProgress += research;
                 totalResearch += research;

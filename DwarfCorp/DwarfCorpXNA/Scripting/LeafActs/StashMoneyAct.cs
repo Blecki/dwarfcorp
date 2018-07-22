@@ -108,10 +108,10 @@ namespace DwarfCorp
             {
                 Agent.AddMoney(Money);
                 Money -= moneyRemoved;
-                Agent.Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
+                Agent.Creature.Sprite.ResetAnimations(Creature.AttackMode);
                 while (!waitTimer.HasTriggered)
                 {
-                    Agent.Creature.CurrentCharacterMode = CharacterMode.Attacking;
+                    Agent.Creature.CurrentCharacterMode = Creature.AttackMode;
                     waitTimer.Update(DwarfTime.LastTime);
                     yield return Status.Running;
                 }

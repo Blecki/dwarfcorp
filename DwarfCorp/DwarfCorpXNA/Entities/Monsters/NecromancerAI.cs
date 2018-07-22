@@ -196,9 +196,9 @@ namespace DwarfCorp
                 Skeletons.RemoveAll(skeleton => skeleton.IsDead);
                 if (SummonTimer.HasTriggered && Skeletons.Count < MaxSkeletons)
                 {
-                    Creature.CurrentCharacterMode = CharacterMode.Attacking;
+                    Creature.CurrentCharacterMode = Creature.AttackMode;
                     Creature.OverrideCharacterMode = true;
-                    Creature.Sprite.ReloopAnimations(CharacterMode.Attacking);
+                    Creature.Sprite.ReloopAnimations(Creature.AttackMode);
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_necromancer_summon, Position, true);
                     SummonTimer.Reset(SummonTimer.TargetTimeSeconds);
                     for (int i = Skeletons.Count; i < MaxSkeletons; i+=2)

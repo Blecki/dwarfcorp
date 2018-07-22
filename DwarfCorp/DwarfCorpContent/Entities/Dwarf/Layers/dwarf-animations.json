@@ -51,23 +51,65 @@
   },
 
   {
-    "Name": "AttackingFORWARD",
+    "Name": "Attacking00FORWARD",
     "Frames": [ "0.15 0 8", "0.15 1 8", "0.15 2 8", "0.15 3 8", "0.15 0 8" ],
     "Loops": false
   },
   {
-    "Name": "AttackingLEFT",
+    "Name": "Attacking00LEFT",
     "Frames": [ "0.15 0 9", "0.15 1 9", "0.15 2 9", "0.15 3 9", "0.15 0 9" ],
     "Loops": false
   },
   {
-    "Name": "AttackingRIGHT",
+    "Name": "Attacking00RIGHT",
     "Frames": [ "0.15 0 10", "0.15 1 10", "0.15 2 10", "0.15 3 10", "0.15 0 10" ],
     "Loops": false
   },
   {
-    "Name": "AttackingBACKWARD",
+    "Name": "Attacking00BACKWARD",
     "Frames": [ "0.15 0 11", "0.15 1 11", "0.15 2 11", "0.15 3 11", "0.15 0 11" ],
+    "Loops": false
+  },
+
+  {
+    "Name": "Attacking01FORWARD",
+    "Frames": [ "0.15 4 8", "0.15 5 8", "0.15 6 8", "0.15 7 8", "0.15 4 8" ],
+    "Loops": false
+  },
+  {
+    "Name": "Attacking01LEFT",
+    "Frames": [ "0.15 4 9", "0.15 5 9", "0.15 6 9", "0.15 7 9", "0.15 4 9" ],
+    "Loops": false
+  },
+  {
+    "Name": "Attacking01RIGHT",
+    "Frames": [ "0.15 4 10", "0.15 5 10", "0.15 6 10", "0.15 7 10", "0.15 4 10" ],
+    "Loops": false
+  },
+  {
+    "Name": "Attacking01BACKWARD",
+    "Frames": [ "0.15 4 11", "0.15 5 11", "0.15 6 11", "0.15 7 11", "0.15 4 11" ],
+    "Loops": false
+  },
+
+  {
+    "Name": "Attacking02FORWARD",
+    "Frames": [ "0.15 8 8", "0.15 9 8", "0.15 10 8", "0.15 11 8", "0.15 8 8" ],
+    "Loops": false
+  },
+  {
+    "Name": "Attacking02LEFT",
+    "Frames": [ "0.15 8 9", "0.15 9 9", "0.15 10 9", "0.15 11 9", "0.15 8 9" ],
+    "Loops": false
+  },
+  {
+    "Name": "Attacking02RIGHT",
+    "Frames": [ "0.15 8 10", "0.15 9 10", "0.15 10 10", "0.15 11 10", "0.15 8 10" ],
+    "Loops": false
+  },
+  {
+    "Name": "Attacking02BACKWARD",
+    "Frames": [ "0.15 8 11", "0.15 9 11", "0.15 10 11", "0.15 11 11", "0.15 8 11" ],
     "Loops": false
   },
 

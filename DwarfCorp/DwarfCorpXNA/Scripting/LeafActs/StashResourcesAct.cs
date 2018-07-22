@@ -79,9 +79,9 @@ namespace DwarfCorp
                         {
                             Creature.NoiseMaker.MakeNoise("Stockpile", Creature.AI.Position);
                             Creature.Stats.NumItemsGathered++;
-                            Creature.CurrentCharacterMode = CharacterMode.Attacking;
-                            Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
-                            Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
+                            Creature.CurrentCharacterMode = Creature.AttackMode;
+                            Creature.Sprite.ResetAnimations(Creature.AttackMode);
+                            Creature.Sprite.PlayAnimations(Creature.AttackMode);
 
                             while (!Creature.Sprite.AnimPlayer.IsDone())
                             {
@@ -107,10 +107,10 @@ namespace DwarfCorp
                 {
                     Agent.Creature.Inventory.AddResource(resource.CloneResource(), Inventory.RestockType.None);   
                 }
-                Agent.Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
+                Agent.Creature.Sprite.ResetAnimations(Creature.AttackMode);
                 while (!waitTimer.HasTriggered)
                 {
-                    Agent.Creature.CurrentCharacterMode = CharacterMode.Attacking;
+                    Agent.Creature.CurrentCharacterMode = Creature.AttackMode;
                     waitTimer.Update(DwarfTime.LastTime);
                     yield return Status.Running;
                 }

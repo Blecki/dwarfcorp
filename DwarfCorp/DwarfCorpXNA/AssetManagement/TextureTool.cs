@@ -93,8 +93,10 @@ namespace DwarfCorp
             for (var i = 0; i < Source.Data.Length; ++i)
             {
                 var index = Palette.IndexOf(Source.Data[i]);
-                if (index < 0) throw new InvalidOperationException("Palette does not contain color found in image");
-                r.Data[i] = (byte)index;
+                if (index >= 0)
+                    r.Data[i] = (byte)index;
+                else
+                    r.Data[i] = 0;
             }
             return r;
         }

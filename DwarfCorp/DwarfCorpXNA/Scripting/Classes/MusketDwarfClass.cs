@@ -239,6 +239,7 @@ namespace DwarfCorp
             InitializeAnimations();
             InitializeWeapons();
             InitializeActions();
+            AttackMode = CharacterMode.Attacking02;
             base.InitializeStatics();
         }
     }

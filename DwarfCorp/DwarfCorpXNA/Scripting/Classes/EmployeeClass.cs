@@ -45,7 +45,8 @@ namespace DwarfCorp
         public string Animations { get; set; }
         public List<EmployeeClass.Level> Levels { get; set; }
         public List<Attack> Attacks { get; set; }
-        public List<string> Actions { get; set; } 
+        public List<string> Actions { get; set; }
+        public CharacterMode AttackMode = CharacterMode.Attacking00;
     }
 
     [JsonObject(IsReference = true)]
@@ -65,6 +66,9 @@ namespace DwarfCorp
         public List<Level> Levels { get; set; }
         public string Name { get; set; }
         public Task.TaskCategory Actions = Task.TaskCategory.None;
+        public CharacterMode AttackMode;
+
+        // Todo: Should just include name of attack animation. Kinda what the AttackMode is.
 
         public bool IsTaskAllowed(Task.TaskCategory TaskCategory)
         {
@@ -98,6 +102,7 @@ namespace DwarfCorp
 
             Animations = AnimationLibrary.LoadCompositeAnimationSet(definition.Animations, Name);
             Attacks = definition.Attacks;
+            AttackMode = definition.AttackMode;
         }
 
         public static void AddClasses(string file)

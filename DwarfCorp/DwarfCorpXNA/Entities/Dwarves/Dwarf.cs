@@ -199,6 +199,9 @@ namespace DwarfCorp
             AddLayerOrDefault(sprite, random, "beard", hairPalette);
             AddLayerOrDefault(sprite, random, "hair", hairPalette);
             AddLayerOrDefault(sprite, random, "tool");
+            AddLayerOrDefault(sprite, random, "hat");
+
+            AttackMode = Stats.CurrentClass.AttackMode;
 
             foreach (Animation animation in AnimationLibrary.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations))
                 sprite.AddAnimation(animation);

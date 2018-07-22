@@ -250,6 +250,8 @@ namespace DwarfCorp
 
         public bool FirstUpdate = true;
 
+        public CharacterMode AttackMode = CharacterMode.Attacking00;
+
         /// <summary>
         /// Gets or sets the current character mode for animations.
         /// </summary>
@@ -707,7 +709,7 @@ namespace DwarfCorp
         /// </summary>
         public void UpdateAnimation(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (CurrentCharacterMode == CharacterMode.Attacking)
+            if (CurrentCharacterMode == AttackMode)
             {
                 return;
             }
@@ -723,11 +725,9 @@ namespace DwarfCorp
         {
             var waitTimer = new Timer(f, true);
 
-            CurrentCharacterMode = CharacterMode.Attacking;
-            Sprite.ResetAnimations(CharacterMode.Attacking);
-            Sprite.PlayAnimations(CharacterMode.Attacking);
-
-            CurrentCharacterMode = CharacterMode.Attacking;
+            CurrentCharacterMode = AttackMode;
+            Sprite.ResetAnimations(CurrentCharacterMode);
+            Sprite.PlayAnimations(CurrentCharacterMode);
 
             while (!waitTimer.HasTriggered)
             {
@@ -746,7 +746,7 @@ namespace DwarfCorp
 
                 Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos());
                 Physics.Velocity = Vector3.Zero;
-                Sprite.ReloopAnimations(CharacterMode.Attacking);
+                Sprite.ReloopAnimations(AttackMode);
 
                 if (!String.IsNullOrEmpty(playSound))
                 {
@@ -755,7 +755,7 @@ namespace DwarfCorp
 
                 yield return Act.Status.Running;
             }
-            Sprite.PauseAnimations(CharacterMode.Attacking);
+            Sprite.PauseAnimations(AttackMode);
             CurrentCharacterMode = CharacterMode.Idle;
             Physics.Active = true;
             yield return Act.Status.Success;
@@ -767,11 +767,10 @@ namespace DwarfCorp
             Func<Vector3> pos, string playSound = "", Func<bool> continueHitting = null, bool maintainPos = true)
         {
             Vector3 currentPos = Physics.LocalTransform.Translation;
-            CurrentCharacterMode = CharacterMode.Attacking;
-            Sprite.ResetAnimations(CharacterMode.Attacking);
-            Sprite.PlayAnimations(CharacterMode.Attacking);
+            CurrentCharacterMode = AttackMode;
+            Sprite.ResetAnimations(CurrentCharacterMode);
+            Sprite.PlayAnimations(CurrentCharacterMode);
 
-            CurrentCharacterMode = CharacterMode.Attacking;
             Timer incrementTimer = new Timer(1.0f, false);
             while (progress() < maxProgress())
             {
@@ -788,7 +787,7 @@ namespace DwarfCorp
                 Physics.Active = false;
                 Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos());
                 Physics.Velocity = Vector3.Zero;
-                Sprite.ReloopAnimations(CharacterMode.Attacking);
+                Sprite.ReloopAnimations(AttackMode);
 
                 if (!String.IsNullOrEmpty(playSound))
                 {
@@ -810,7 +809,7 @@ namespace DwarfCorp
 
                 yield return Act.Status.Running;
             }
-            Sprite.PauseAnimations(CharacterMode.Attacking);
+            Sprite.PauseAnimations(AttackMode);
             CurrentCharacterMode = CharacterMode.Idle;
             Physics.Active = true;
             yield return Act.Status.Success;
