@@ -205,7 +205,6 @@
     <Compile Include="Components\Graphics\LayeredSprites\LayerLibrary.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\LayeredCharacterSprite.cs" />
     <Compile Include="ConsoleCommandHandlerAttribute.cs" />
-    <Compile Include="Entities\Minecart.cs" />
     <Compile Include="Entities\Fixtures\Conveyor.cs" />
     <Compile Include="Entities\Monsters\KoboldAI.cs" />
     <Compile Include="Entities\Monsters\GremlinAI.cs" />

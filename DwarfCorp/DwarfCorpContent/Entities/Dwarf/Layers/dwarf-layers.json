@@ -175,6 +175,18 @@
     "Precedence": 5,
     "Asset": "Entities/Dwarf/Layers/blank",
     "DefaultLayer": true
+  },
+
+  {
+    "Type": "minecart",
+    "Precedence": 10,
+    "Asset": "Entities/Dwarf/Layers/minecart"
+  },
+  {
+    "Type": "minecart",
+    "Precedence": 10,
+    "Asset": "Entities/Dwarf/Layers/blank",
+    "DefaultLayer": true
   }
 
 ]

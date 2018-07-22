@@ -20,6 +20,7 @@ namespace DwarfCorp
         Swimming,
         Flying,
         Sitting,
-        Climbing
+        Climbing,
+        Minecart
     }
 }

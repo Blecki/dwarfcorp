@@ -48,9 +48,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CreatureAI : GameComponent
     {
-        // Evil hack to keep track of the creature's minecart to ensure there's only one if the creature is riding it.
-        [JsonIgnore]
-        public Body Cart = null;
         public CreatureAI()
         {
         }
@@ -606,11 +603,6 @@ namespace DwarfCorp
             {
                 Physics.LocalPosition = MathFunctions.Clamp(Physics.Position, PositionConstraint);
                 Physics.PropogateTransforms();
-            }
-
-            if (Cart != null && Cart.IsDead)
-            {
-                Cart = null;
             }
         }
 

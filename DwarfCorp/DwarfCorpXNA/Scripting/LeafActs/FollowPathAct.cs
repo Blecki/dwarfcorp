@@ -253,7 +253,7 @@ namespace DwarfCorp
             int currentIndex = 0;
             if (!GetCurrentAction(ref action, ref t, ref currentIndex))
             {
-                CleanupCart();
+                CleanupMinecart();
                 yield break;
             }
             Trace.Assert(t >= 0);
@@ -306,27 +306,16 @@ namespace DwarfCorp
                         transform.Translation = currPosition;
                     }
                     if (t > 0.9f)
-                    {
-                        if (Agent.Cart == null)
-                        {
-                            Agent.Cart = EntityFactory.CreateEntity<Body>("Minecart", nextPosition + Vector3.Up * 0.5f, Blackboard.Create("Animations", Creature.Stats.CurrentClass.MinecartAnimations));
-                        }
-                        Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
-                    }
+                        SetupMinecart();
+
                     break;
                 case MoveType.ExitVehicle:
-                    CleanupCart();
-                    Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
+                    CleanupMinecart();
                     transform.Translation = currPosition;
                     break;
                 case MoveType.RideVehicle:
-                    if (Agent.Cart == null)
-                    {
-                        Agent.Cart = EntityFactory.CreateEntity<SimpleSprite>("Minecart", action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f, Blackboard.Create("Animations", Creature.Stats.CurrentClass.MinecartAnimations));
-                    }
-                    Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
-                    Creature.OverrideCharacterMode = true;
-                    Creature.CurrentCharacterMode = CharacterMode.Sitting;
+                    SetupMinecart();
+                    Creature.CurrentCharacterMode = CharacterMode.Minecart;
                     var rail = action.SourceState.VehicleState.Rail;
                     if (rail == null)
                     {
@@ -334,14 +323,10 @@ namespace DwarfCorp
                         {
                             transform.Translation = diff * t + currPosition;
                             Agent.Physics.Velocity = diff;
-                            Agent.Cart.LocalTransform = Matrix.CreateTranslation(diff * t + currPosition + Vector3.Up * 0.25f);
-                            Agent.Cart.Face(diff * t + currPosition + diff);
                         }
                         else
                         {
                             transform.Translation = currPosition;
-                            Agent.Cart.LocalTransform = Matrix.CreateTranslation(currPosition + Vector3.Up * 0.25f);
-                            Agent.Cart.Face(currPosition + diff);
                         }
                     }
                     else
@@ -350,15 +335,10 @@ namespace DwarfCorp
                         var pos = rail.InterpolateSpline(t, action.SourceVoxel.WorldPosition + Vector3.One * 0.5f, action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
                         transform.Translation = pos + Vector3.Up * 0.5f;
                         Agent.Physics.Velocity = diff;
-                        if (Agent.Cart != null)
-                        {
-                            Agent.Cart.LocalTransform = Matrix.CreateTranslation(pos + Vector3.Up * 0.5f);
-                            Agent.Cart.Face(pos + Vector3.Up * 0.5f + diff);
-                        }
                     }
                     break;
                 case MoveType.Walk:
-                    CleanupCart();
+                    CleanupMinecart();
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Walking;
                     if (hasNextAction)
@@ -372,7 +352,7 @@ namespace DwarfCorp
                     }
                     break;
                 case MoveType.Swim:
-                    CleanupCart();
+                    CleanupMinecart();
                     Creature.NoiseMaker.MakeNoise("Swim", Agent.Position, true);
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Swimming;
@@ -387,7 +367,7 @@ namespace DwarfCorp
                     }
                     break;
                 case MoveType.Jump:
-                    CleanupCart();
+                    CleanupMinecart();
                     if (t < 0.5f)
                     { 
                         Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
@@ -412,7 +392,7 @@ namespace DwarfCorp
                     }
                     break;
                 case MoveType.Fall:
-                    CleanupCart();
+                    CleanupMinecart();
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Falling;
                     if (hasNextAction)
@@ -427,7 +407,7 @@ namespace DwarfCorp
                     break;
                 case MoveType.Climb:
                 case MoveType.ClimbWalls:
-                    CleanupCart();
+                    CleanupMinecart();
                     if (((int) ((t + 1)*100))%50 == 0)
                     {
                         Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
@@ -456,7 +436,7 @@ namespace DwarfCorp
                     }
                     break;
                 case MoveType.Fly:
-                    CleanupCart();
+                    CleanupMinecart();
                     if (((int)((t + 1) * 100)) % 2 == 0)
                     {
                         Creature.NoiseMaker.MakeNoise("Flap", Agent.Position, false);
@@ -475,7 +455,7 @@ namespace DwarfCorp
                     }
                     break;
                 case MoveType.DestroyObject:
-                    CleanupCart();
+                    CleanupMinecart();
                     var melee = new MeleeAct(Creature.AI, (Body) action.InteractObject);
                     melee.Initialize();
                     foreach (var status in melee.Run())
@@ -489,6 +469,23 @@ namespace DwarfCorp
             }
 
             Agent.Physics.LocalTransform = transform;
+        }
+
+        private void SetupMinecart()
+        {
+            var layers = Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>();
+            if (layers != null)
+            {
+                if (layers.GetLayers().GetLayer("minecart") == null)
+                    layers.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("minecart").FirstOrDefault(), LayeredSprites.LayerLibrary.BaseDwarfPalette);
+            }
+        }
+
+        private void CleanupMinecart()
+        {
+            var layers = Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>();
+            if (layers != null && layers.GetLayers().GetLayer("minecart") != null)
+                layers.RemoveLayer("minecart");
         }
 
         public override IEnumerable<Status> Run()
@@ -505,7 +502,7 @@ namespace DwarfCorp
                 {
                     if (status == Status.Fail)
                     {
-                        CleanupCart();
+                        CleanupMinecart();
                         yield return Status.Fail;
                     }
                     else if (status == Status.Success)
@@ -563,7 +560,7 @@ namespace DwarfCorp
                     {
                         Creature.OverrideCharacterMode = false;
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                        CleanupCart();
+                        CleanupMinecart();
                         yield return Status.Fail;
                     }
                  }
@@ -572,25 +569,14 @@ namespace DwarfCorp
             }
             Creature.OverrideCharacterMode = false;
             SetPath(null);
-            CleanupCart();
+            CleanupMinecart();
             yield return Status.Success;
         }
-
-        public void CleanupCart()
-        {
-            if (Agent.Cart != null)
-            {
-                Agent.Cart.GetRoot().Delete();
-                Agent.Cart = null;
-                Creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
-            }
-        }
-
 
         public override void OnCanceled()
         {
             Creature.OverrideCharacterMode = false;
-            CleanupCart();
+            CleanupMinecart();
             SetPath(null);
             base.OnCanceled();
         }

@@ -91,6 +91,13 @@ namespace DwarfCorp.LayeredSprites
                 existing.Layer = Layer;
                 existing.Palette = Palette;
             }
+
+            CompositeValid = false;
+        }
+
+        public void RemoveLayer(String Type)
+        {
+            Layers.RemoveAll(l => l.Layer.Type == Type);
             CompositeValid = false;
         }
 
@@ -121,6 +128,11 @@ namespace DwarfCorp.LayeredSprites
 
                 Composite = TextureTool.Texture2DFromMemoryTexture(Device, MemoryComposite);
             }
+        }
+
+        internal object GetLayer(string v)
+        {
+            return Layers.Where(l => l.Layer.Type == v).FirstOrDefault();
         }
     }
 }

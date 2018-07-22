@@ -60,6 +60,11 @@ namespace DwarfCorp.LayeredSprites
             Layers.AddLayer(Layer, Palette);
         }
 
+        public void RemoveLayer(String Type)
+        {
+            Layers.RemoveLayer(Type);
+        }
+
         public LayeredCharacterSprite()
         {
         }

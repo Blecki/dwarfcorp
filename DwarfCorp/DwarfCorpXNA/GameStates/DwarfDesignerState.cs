@@ -183,6 +183,7 @@ namespace DwarfCorp.GameStates
             AddSelector(panel, "hair");
             AddSelector(panel, "tool");
             AddSelector(panel, "hat");
+            AddSelector(panel, "minecart");
 
             var anim = panel.AddChild(new Widget
             {

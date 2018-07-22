@@ -196,5 +196,22 @@
   {
     "Name": "ClimbingBACKWARD",
     "Frames": [ "0.15 4 7", "0.15 5 7", "0.15 6 7", "0.15 5 7" ]
+  },
+
+  {
+    "Name": "MinecartFORWARD",
+    "Frames": [ "1 0 0" ]
+  },
+  {
+    "Name": "MinecartLEFT",
+    "Frames": [ "1 0 1" ]
+  },
+  {
+    "Name": "MinecartRIGHT",
+    "Frames": [ "1 0 2" ]
+  },
+  {
+    "Name": "MinecartBACKWARD",
+    "Frames": [ "1 0 3" ]
   }
 ]
