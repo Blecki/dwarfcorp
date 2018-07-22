@@ -16,7 +16,7 @@ namespace DwarfCorp.Gui.Widgets
         public override void Layout()
         {
             base.Layout();
-            int x = 32;
+            int x = 48;
             int y = 40;
             float ratio = Math.Max((float)Rect.Height / y, 1.0f);
 
@@ -40,7 +40,7 @@ namespace DwarfCorp.Gui.Widgets
             var texture = Sprite.GetCompositeTexture();
             if (texture != null)
             {
-                var sheet = new SpriteSheet(texture, 32, 40);
+                var sheet = new SpriteSheet(texture, 48, 40);
                 SpriteMesh.ResetQuadTexture();
                 var frame = AnimationPlayer.GetCurrentAnimation().Frames[AnimationPlayer.CurrentFrame];
                 SpriteMesh.Texture(sheet.TileMatrix(frame.X, frame.Y));

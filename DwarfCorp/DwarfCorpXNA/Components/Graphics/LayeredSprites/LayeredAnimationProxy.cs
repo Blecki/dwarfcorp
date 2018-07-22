@@ -61,7 +61,7 @@ namespace DwarfCorp.LayeredSprites
             var composite = Owner.GetCompositeTexture();
             if (composite == null) return;
 
-            SpriteSheet = new SpriteSheet(composite, 32, 40);
+            SpriteSheet = new SpriteSheet(composite, 48, 40);
             base.UpdatePrimitive(Primitive, CurrentFrame);
         }
 
