@@ -30,21 +30,18 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.AccessControl;
-using System.Text;
-using DwarfCorp.GameStates;
+
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
+using System;
 
 namespace DwarfCorp
 {
     public class Seedling : Plant
     {
-        public DateTime FullyGrownDay { get; set; }
+        public double GrowthTime = 0.0f;
+        public double FullyGrownAfter = 0.0f;
+        public float MaxSize = 20.0f;
+        public float MinSize = 1.0f;
         public String AdultName;
 
         public Seedling()
@@ -55,7 +52,8 @@ namespace DwarfCorp
         public Seedling(ComponentManager Manager, String AdultName, Vector3 position, String Asset, int GrowthHours) :
             base(Manager, "seedling", position, 0.0f, Vector3.One, Asset, 1.0f)
         {
-            FullyGrownDay = Manager.World.Time.CurrentDate.AddHours(GrowthHours);
+            FullyGrownAfter = GrowthHours;
+
             IsGrown = false;
             Name = AdultName + " seedling";
             this.AdultName = AdultName;
@@ -68,10 +66,19 @@ namespace DwarfCorp
         {
             base.Update(gameTime, chunks, camera);
 
-            if (Manager.World.Time.CurrentDate >= FullyGrownDay)
+            GrowthTime += gameTime.ElapsedGameTime.TotalMinutes;
+
+            var mesh = GetComponent<InstanceMesh>();
+            if (mesh != null)
             {
-                CreateAdult();
+                var scale = (float)(MinSize + (MaxSize - MinSize) * (GrowthTime / FullyGrownAfter));
+                BoundingBoxSize = new Vector3(1.0f, scale, 1.0f);
+                UpdateBoundingBox();
+                mesh.LocalTransform = Matrix.CreateScale(scale, scale, scale) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position);
             }
+            
+            if (GrowthTime >= FullyGrownAfter)
+                CreateAdult();
         }
 
         public void CreateAdult()
