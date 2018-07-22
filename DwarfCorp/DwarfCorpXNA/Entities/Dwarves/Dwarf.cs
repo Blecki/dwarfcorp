@@ -199,7 +199,7 @@ namespace DwarfCorp
             AddLayerOrDefault(sprite, random, "beard", hairPalette);
             AddLayerOrDefault(sprite, random, "hair", hairPalette);
             AddLayerOrDefault(sprite, random, "tool");
-            AddLayerOrDefault(sprite, random, "hat");
+            AddLayerOrDefault(sprite, random, "hat", hairPalette);
 
             AttackMode = Stats.CurrentClass.AttackMode;
 

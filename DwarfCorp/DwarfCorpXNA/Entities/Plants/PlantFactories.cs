@@ -38,7 +38,8 @@ namespace DwarfCorp
     {
         private static int GetPlantGrowthTime()
         {
-            return 2;// MathFunctions.RandInt(12, 48);
+            // In order to make the mechanics affecting plant growth useful to the player, this can't be random.
+            return 12; // MathFunctions.RandInt(12, 48);
         }
 
         [EntityFactory("Haunted Tree")]
