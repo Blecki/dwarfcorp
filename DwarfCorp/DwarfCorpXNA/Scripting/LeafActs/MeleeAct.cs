@@ -354,7 +354,7 @@ namespace DwarfCorp
                         yield return Act.Status.Fail;
                         yield break;
                     }
-                    Creature.CurrentCharacterMode = CharacterMode.Attacking00;
+                    Creature.CurrentCharacterMode = CharacterMode.Attacking;
 
                     Vector3 dogfightTarget = Vector3.Zero;
                     while (!CurrentAttack.RechargeTimer.HasTriggered && !Target.IsDead)

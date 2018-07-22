@@ -238,7 +238,7 @@ namespace DwarfCorp
             InitializeAnimations();
             InitializeWeapons();
             InitializeActions();
-            AttackMode = CharacterMode.Attacking00;
+            AttackMode = CharacterMode.Attacking;
             base.InitializeStatics();
         }
         public CraftDwarfClass()

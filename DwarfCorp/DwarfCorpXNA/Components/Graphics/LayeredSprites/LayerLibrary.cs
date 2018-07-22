@@ -64,12 +64,68 @@ namespace DwarfCorp.LayeredSprites
             }
         }
 
+        private static void ResizeLayerLibrary()
+        {
+            int currentFrameSizeX = 32;
+            int currentFrameSizeY = 40;
+            int newFrameSizeX = 48;
+            int newFrameSizeY = 40;
+            
+            foreach (var layer in Layers)
+            {
+                var rawTexture = AssetManager.GetContentTexture(layer.Asset);
+                var memTexture = TextureTool.MemoryTextureFromTexture2D(rawTexture);
+                int num_frames_x = memTexture.Width / currentFrameSizeX;
+                int num_frames_y = memTexture.Height / currentFrameSizeY;
+                int currentWidth = memTexture.Width;
+                int currentHeight = memTexture.Height;
+                Color[] newColor = new Color[(num_frames_x * newFrameSizeX) * (num_frames_y * newFrameSizeY)];
+                int newWidth = (num_frames_x * newFrameSizeX);
+                int newHeight = (num_frames_y * newFrameSizeY);
+                for (int frameX = 0; frameX < num_frames_x; frameX++)
+                {
+                    for (int frameY = 0; frameY < num_frames_y; frameY++)
+                    {
+                        int currentFrameStartX = frameX * currentFrameSizeX;
+                        int currentFrameStartY = frameY * currentFrameSizeY;
+                        int newFrameStartX = frameX * newFrameSizeX;
+                        int newFrameStartY = frameY * newFrameSizeY;
+                        for (int px = 0; px < currentFrameSizeX; px++)
+                        {
+                            for (int py = 0; py < currentFrameSizeY; py++)
+                            {
+                                int newPX = newFrameSizeX / 2 - currentFrameSizeX / 2 + px;
+                                int newPY = newFrameSizeY / 2 - currentFrameSizeY / 2 + py;
+
+                                int currentPixelX = px + currentFrameStartX;
+                                int currentPixelY = py + currentFrameStartY;
+                                int newPixelX = newPX + newFrameStartX;
+                                int newPixelY = newPY + newFrameStartY;
+                                newColor[newPixelX + newPixelY * newWidth] = memTexture.Data[currentPixelX + currentPixelY * currentWidth];
+                            }
+                        }
+                    }
+                }
+
+                Texture2D newTexture = new Texture2D(GameStates.GameState.Game.GraphicsDevice, newWidth, newHeight);
+                newTexture.SetData(newColor);
+
+                using (System.IO.FileStream fs = new System.IO.FileStream(System.IO.Path.GetFileName(layer.Asset) + "_resized.png", System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.Write))
+                {
+                    newTexture.SaveAsPng(fs, newWidth, newHeight);
+                }
+            }
+
+            System.Environment.Exit(0);
+
+        }
+
         private static void Initialize()
         {
             if (Layers != null) return;
 
             Layers = FileUtils.LoadJsonListFromMultipleSources<Layer>(ContentPaths.dwarf_layers, null, l => l.Type + "&" + l.Asset);
-
+            //ResizeLayerLibrary();
             foreach (var layer in Layers)
             {
                 var rawTexture = AssetManager.GetContentTexture(layer.Asset);

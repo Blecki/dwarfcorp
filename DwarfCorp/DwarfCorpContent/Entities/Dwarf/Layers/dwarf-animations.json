@@ -51,22 +51,22 @@
   },
 
   {
-    "Name": "Attacking00FORWARD",
+    "Name": "AttackingFORWARD",
     "Frames": [ "0.15 0 8", "0.15 1 8", "0.15 2 8", "0.15 3 8", "0.15 0 8" ],
     "Loops": false
   },
   {
-    "Name": "Attacking00LEFT",
+    "Name": "AttackingLEFT",
     "Frames": [ "0.15 0 9", "0.15 1 9", "0.15 2 9", "0.15 3 9", "0.15 0 9" ],
     "Loops": false
   },
   {
-    "Name": "Attacking00RIGHT",
+    "Name": "AttackingRIGHT",
     "Frames": [ "0.15 0 10", "0.15 1 10", "0.15 2 10", "0.15 3 10", "0.15 0 10" ],
     "Loops": false
   },
   {
-    "Name": "Attacking00BACKWARD",
+    "Name": "AttackingBACKWARD",
     "Frames": [ "0.15 0 11", "0.15 1 11", "0.15 2 11", "0.15 3 11", "0.15 0 11" ],
     "Loops": false
   },
