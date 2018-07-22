@@ -163,7 +163,7 @@ namespace DwarfCorp.GameStates
                 TextVerticalAlign = Gui.VerticalAlign.Center,
                 Font = "font18-outline",
                 TextColor = Color.White.ToVector4(),
-                HoverTextColor = Color.Red.ToVector4()
+                HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4()
             });
         }
 

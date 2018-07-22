@@ -354,9 +354,9 @@ namespace DwarfCorp.Rail
 
             CanPlace = RailHelper.CanPlace(Player, PreviewBodies);
             if (CanPlace)
-                tint = Color.Green;
+                tint = GameSettings.Default.Colors.GetColor("Positive", Color.Green);
             else
-                tint = Color.Red;
+                tint = GameSettings.Default.Colors.GetColor("Negative", Color.Red);
 
             foreach (var body in PreviewBodies)
                 body.SetVertexColorRecursive(tint);

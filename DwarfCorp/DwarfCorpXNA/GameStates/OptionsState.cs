@@ -9,6 +9,123 @@ using System;
 
 namespace DwarfCorp.GameStates
 {
+
+    public class ColorOptionsEditor : Widget
+    {
+        private GameSettings.Settings _settings = null;
+        public GameSettings.Settings Settings
+        {
+            get
+            {
+                return _settings;
+            }
+            set
+            {
+                _settings = value;
+                Invalidate();
+            }
+        }
+
+
+        private IEnumerable<Color> EnumerateDefaultColors()
+        {
+            for (int h = 0; h < 255; h += 16)
+                for (int v = 64; v < 255; v += 64)
+                    for (int s = 128; s < 255; s += 32)
+                        yield return new HSLColor((float)h, (float)s, (float)v);
+        }
+
+        public override void Construct()
+        {
+            ResetState();
+            Padding = new Margin(2, 2, 2, 2);
+            base.Construct();
+        }
+
+        public void ResetState()
+        {
+            Clear();
+            var list = AddChild(new WidgetListView()
+            {
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(550, 400),
+            }) as WidgetListView;
+
+            foreach(var color in _settings.Colors.Colors)
+            {
+                var row = list.AddChild(new Widget()
+                {
+                    Background = new TileReference("basic", 1),
+                    MinimumSize = new Point(640, 32)
+                });
+                var tile = row.AddChild(new Widget
+                {
+                    Background = new TileReference("basic", 1),
+                    BackgroundColor = color.Value.ToVector4(),
+                    MinimumSize = new Point(30, 30),
+                    MaximumSize = new Point(30, 30),
+                    AutoLayout = AutoLayout.DockLeftCentered,
+                });
+                var label = row.AddChild(new Widget()
+                {
+                    Text = " " + color.Key,
+                    AutoLayout = AutoLayout.DockLeft,
+                    TextVerticalAlign = VerticalAlign.Center,
+                });
+
+                row.OnClick = (sender, args) =>
+                {
+                    var chooser = new Gui.Widgets.GridChooser
+                    {
+                        ItemSize = new Point(16, 16),
+                        ItemSpacing = new Point(4, 4),
+                        ItemSource = EnumerateDefaultColors()
+                            .Select(c => new Widget
+                            {
+                                Background = new TileReference("basic", 1),
+                                BackgroundColor = new Vector4(c.ToVector3(), 1),
+                            }),
+                        OnClose = (s2) =>
+                        {
+                            var gc = s2 as Gui.Widgets.GridChooser;
+                            if (gc.DialogResult == Gui.Widgets.GridChooser.Result.OKAY &&
+                                gc.SelectedItem != null)
+                            {
+                                tile.BackgroundColor = gc.SelectedItem.BackgroundColor;
+                                tile.Invalidate();
+                                _settings.Colors.SetColor(color.Key, new Microsoft.Xna.Framework.Color(gc.SelectedItem.BackgroundColor));
+                            }
+                        },
+                        PopupDestructionType = PopupDestructionType.DestroyOnOffClick
+                    };
+                    Root.ShowModalPopup(chooser);
+                };
+
+                label.OnClick = row.OnClick;
+                tile.OnClick = row.OnClick;
+
+            }
+
+            var buttonRow = AddChild(new Widget()
+            {
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(550, 32)
+            });
+
+            var okButton = buttonRow.AddChild(new Button()
+            {
+                AutoLayout = AutoLayout.DockRight,
+                Text = "OK",
+                OnClick = (sender, args) =>
+                {
+                    Close();
+                }
+            });
+
+            Layout();
+        }
+    }
+
     public class OptionsState : GameState
     {
         private Gui.Root GuiRoot;
@@ -63,6 +180,8 @@ namespace DwarfCorp.GameStates
         private CheckBox EnableTutorial;
         private CheckBox DisableTutorialForAllGames;
         private EditableTextField SaveLocation;
+
+        private ColorOptionsEditor ColorOptions;
 
         public OptionsState(DwarfGame Game, GameStateManager StateManager) :
             base(Game, "NewOptionsState", StateManager)
@@ -219,7 +338,7 @@ namespace DwarfCorp.GameStates
             r.AddChild(Widget);
             Widget.OnMouseEnter += (sender, args) =>
             {
-                label.TextColor = Color.DarkRed.ToVector4();
+                label.TextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
                 label.Invalidate();
             };
 
@@ -421,6 +540,23 @@ namespace DwarfCorp.GameStates
                 Text = "",
                 OnTextChange = this.OnItemChanged
             })).GetChild(1) as EditableTextField;
+
+            panel.AddChild(LabelAndDockWidget("Colors", new Button()
+            {
+                Text = "Edit Colors...",
+                OnClick = (sender, args) =>
+                {
+                    GuiRoot.ShowModalPopup(new ColorOptionsEditor()
+                    {
+                        Settings = GameSettings.Default,
+                        Border = "border-fancy",
+                        AutoLayout = AutoLayout.DockFill,
+                        MinimumSize = new Point(640, 480),
+                        Font = "font10",
+                        Rect = new Rectangle(GuiRoot.RenderData.VirtualScreen.Width / 2 - 320, GuiRoot.RenderData.VirtualScreen.Height / 2 - 320, 640, 480)
+                    });
+                }
+            }));
         }
 
         private void CreateAudioTab()
@@ -436,7 +572,7 @@ namespace DwarfCorp.GameStates
                 panel.AddChild(new Widget()
                 {
                     Text = String.Format("ERROR. SOUND IS DISABLED: {0}", SoundManager.AudioError),
-                    TextColor = Color.DarkRed.ToVector4(),
+                    TextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
                     Font = "font16",
                     AutoLayout = AutoLayout.DockTop
                 });

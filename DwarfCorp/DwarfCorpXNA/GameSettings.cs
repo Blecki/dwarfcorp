@@ -39,6 +39,81 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    public class ColorSettings
+    {
+        public Dictionary<string, Microsoft.Xna.Framework.Color> Colors = new Dictionary<string, Microsoft.Xna.Framework.Color>()
+        {
+            {
+                "Dig",
+                Microsoft.Xna.Framework.Color.Red
+            },
+            {
+                "Farm",
+                Microsoft.Xna.Framework.Color.LimeGreen
+            },
+            {
+                "Guard",
+                Microsoft.Xna.Framework.Color.Blue
+            },
+            {
+                "Attack",
+                Microsoft.Xna.Framework.Color.Red
+            },
+            {
+                "Harvest",
+                Microsoft.Xna.Framework.Color.LightGreen
+            },
+            {
+                "Highlight",
+                Microsoft.Xna.Framework.Color.DarkRed
+            },
+            {
+                "Positive",
+                Microsoft.Xna.Framework.Color.Green
+            },
+            {
+                "Negative",
+                Microsoft.Xna.Framework.Color.Red
+            },
+            {
+                "Low Health",
+                Microsoft.Xna.Framework.Color.Red
+            },
+            {
+                "Medium Health",
+                Microsoft.Xna.Framework.Color.Orange
+            },
+            {
+                "High Health",
+                Microsoft.Xna.Framework.Color.LightGreen
+            },
+            {
+                "Catch",
+                Microsoft.Xna.Framework.Color.Tomato
+            },
+            {
+                "Gather",
+                Microsoft.Xna.Framework.Color.OrangeRed
+            }
+
+        };
+
+
+        public Microsoft.Xna.Framework.Color GetColor(string color, Microsoft.Xna.Framework.Color def)
+        {
+            Microsoft.Xna.Framework.Color outColor;
+            if(Colors.TryGetValue(color, out outColor))
+            {
+                return outColor;
+            }
+            return def;
+        }
+
+        public void SetColor(string color, Microsoft.Xna.Framework.Color value)
+        {
+            Colors[color] = value;
+        }
+    }
     public class GameSettings
     {
         public class Settings
@@ -90,6 +165,7 @@ namespace DwarfCorp
             public int MaxSaves = 15;
             public bool EnableSlowMotion = false;
             public int ConsoleTextSize = 2;
+            public ColorSettings Colors = new ColorSettings();
 
             public Settings Clone()
             {

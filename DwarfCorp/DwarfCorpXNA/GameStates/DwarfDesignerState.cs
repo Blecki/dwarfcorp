@@ -18,7 +18,7 @@ namespace DwarfCorp.Gui.Widgets
             base.Layout();
             int x = 48;
             int y = 40;
-            float ratio = Math.Max((float)Rect.Height / y, 1.0f);
+            float ratio = Math.Max((float)Rect.Width / x, 1.0f);
 
             SpriteMesh = Gui.Mesh.Quad()
                 .Scale((ratio * x), (ratio * y))

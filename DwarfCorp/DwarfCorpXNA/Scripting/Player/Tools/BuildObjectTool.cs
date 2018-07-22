@@ -266,7 +266,7 @@ namespace DwarfCorp
                 PreviewBody.OrientToWalls();
 
             var valid = ObjectHelper.IsValidPlacement(Player.VoxSelector.VoxelUnderMouse, CraftType, Player, PreviewBody, "build", "built");
-            PreviewBody.SetVertexColorRecursive(valid ? Color.Green : Color.Red);
+            PreviewBody.SetVertexColorRecursive(valid ? GameSettings.Default.Colors.GetColor("Positive", Color.Green) : GameSettings.Default.Colors.GetColor("Negative", Color.Red));
 
             if (valid && CraftType.AllowRotation)
                 World.ShowTooltip("Click to build. Press R/T to rotate.");

@@ -162,9 +162,9 @@ namespace DwarfCorp.Rail
                 PreviewBodies[i].UpdatePiece(Pattern.Pieces[i], Player.VoxSelector.VoxelUnderMouse);
 
             if (RailHelper.CanPlace(Player, PreviewBodies))
-                    tint = Color.Green;
+                    tint = GameSettings.Default.Colors.GetColor("Positive", Color.Green);
                 else
-                    tint = Color.Red;
+                    tint = GameSettings.Default.Colors.GetColor("Negative", Color.Red);
         
             foreach (var body in PreviewBodies)
                 body.SetVertexColorRecursive(tint);

@@ -74,7 +74,7 @@ namespace DwarfCorp
                     if (OnCast(tree))
                     {
                         Vector3 p = selected.WorldPosition + Vector3.One * 0.5f;
-                        IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, Color.Red);
+                        IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, GameSettings.Default.Colors.GetColor("Negative", Color.Red));
                         World.ParticleManager.Trigger("star_particle", p,
                             Color.White, 4);
                         World.ChunkManager.KillVoxel(selected);

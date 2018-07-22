@@ -446,12 +446,12 @@ namespace DwarfCorp
                     {
                         thing.SetFlagRecursive(GameComponent.Flag.ShouldSerialize, false);
                         thing.SetFlagRecursive(GameComponent.Flag.Active, false);
-                        SetDisplayColor(thing, Color.Green);
+                        SetDisplayColor(thing, GameSettings.Default.Colors.GetColor("Positive", Color.Green));
                     }
                 }
                 else
                 {
-                    World.Master.VoxSelector.SelectionColor = Color.Red;
+                    World.Master.VoxSelector.SelectionColor = GameSettings.Default.Colors.GetColor("Negative", Color.Red);
                 }
             }
             else
@@ -468,11 +468,11 @@ namespace DwarfCorp
                         }
                         if (!order.Order.IsBuilt)
                         {
-                            order.Order.SetTint(Color.Red);
+                            order.Order.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
                         }
                         else
                         {
-                            order.ToBuild.SetTint(Color.Red);
+                            order.ToBuild.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
                         }
                         break;
                     }
@@ -483,7 +483,7 @@ namespace DwarfCorp
                         {
                             continue;
                         }
-                        existingRoom.SetTint(Color.Red);
+                        existingRoom.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
                         break;
                     }
                 }

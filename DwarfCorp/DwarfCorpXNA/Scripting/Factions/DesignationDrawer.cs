@@ -78,45 +78,45 @@ namespace DwarfCorp
 
             DesignationProperties.Add(DesignationType.Dig, new DesignationTypeProperties
             {
-                Color = Color.Red,
+                Color = GameSettings.Default.Colors.GetColor("Dig", Color.Red),
                 Icon = new NamedImageFrame("newgui/pointers", 32, 1, 0)
             });
 
             DesignationProperties.Add(DesignationType.Guard, new DesignationTypeProperties
             {
-                Color = new Color(10, 10, 205),
+                Color = GameSettings.Default.Colors.GetColor("Guard", Color.Blue),
                 Icon = new NamedImageFrame("newgui/pointers", 32, 3, 0),
                 DrawType = DesignationTypeProperties.DrawBoxType.TopBox
             });
 
             DesignationProperties.Add(DesignationType.Chop, new DesignationTypeProperties
             {
-                Color = Color.LightGreen,
+                Color = GameSettings.Default.Colors.GetColor("Harvest", Color.LightGreen),
                 Icon = new NamedImageFrame("newgui/pointers", 32, 5, 0)
             });
 
             DesignationProperties.Add(DesignationType.Gather, new DesignationTypeProperties
             {
-                Color = Color.Orange,
+                Color = GameSettings.Default.Colors.GetColor("Gather", Color.Orange),
                 Icon = new NamedImageFrame("newgui/pointers", 32, 6, 0),
                 LineWidth = 0.02f,
             });
 
             DesignationProperties.Add(DesignationType.Attack, new DesignationTypeProperties
             {
-                Color = Color.Red,
+                Color = GameSettings.Default.Colors.GetColor("Hunt", Color.Red),
                 Icon = new NamedImageFrame("newgui/pointers", 32, 2, 0)
             });
 
             DesignationProperties.Add(DesignationType.Wrangle, new DesignationTypeProperties
             {
-                Color = Color.Tomato,
+                Color = GameSettings.Default.Colors.GetColor("Catch", Color.Tomato),
                 Icon = new NamedImageFrame("newgui/pointers", 32, 4, 1)
             });
 
             DesignationProperties.Add(DesignationType.Plant, new DesignationTypeProperties
             {
-                Color = Color.LimeGreen,
+                Color = GameSettings.Default.Colors.GetColor("Farm", Color.LimeGreen),
                 Icon = new NamedImageFrame("newgui/pointers", 32, 4, 1),
                 DrawType = DesignationTypeProperties.DrawBoxType.TopBox
             });
@@ -129,7 +129,7 @@ namespace DwarfCorp
 
             DesignationProperties.Add(DesignationType.Put, new DesignationTypeProperties
             {
-                Color = new Color(0.5f, 1.0f, 0.5f, 0.5f),
+                Color = GameSettings.Default.Colors.GetColor("Build", Color.LightGreen),
                 DrawType = DesignationTypeProperties.DrawBoxType.PreviewVoxel
             });
         }

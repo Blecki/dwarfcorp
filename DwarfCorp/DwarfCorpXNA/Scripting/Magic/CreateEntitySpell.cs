@@ -73,7 +73,7 @@ namespace DwarfCorp
             EntityFactory.CreateEntity<Body>(Entity, position);
             World.ParticleManager.Trigger("star_particle", position, Color.White, 4);
             Vector3 p = position + Vector3.Up;
-            IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, Color.Red);
+            IndicatorManager.DrawIndicator("-" + ManaCost + " M", p, 1.0f, GameSettings.Default.Colors.GetColor("Negative", Color.Red));
         }
 
         public override void OnEntitiesSelected(SpellTree tree, List<Body> entities)

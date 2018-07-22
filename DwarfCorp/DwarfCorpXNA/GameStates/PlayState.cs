@@ -1459,7 +1459,7 @@ namespace DwarfCorp.GameStates
                 {
                     Rect = new Rectangle(0, 0, 450, 250),
                     TextColor = Color.Black.ToVector4(),
-                    HoverTextColor = Color.DarkRed.ToVector4(),
+                    HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
                     ButtonFont = "font10",
                     OnSelectedTabChanged = (widget) =>
                     {
@@ -2625,7 +2625,7 @@ namespace DwarfCorp.GameStates
                 Tooltip = Tooltip,
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 TextVerticalAlign = Gui.VerticalAlign.Center,
-                HoverTextColor = Color.DarkRed.ToVector4(),
+                HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
                 ChangeColorOnHover = true
             });
         }

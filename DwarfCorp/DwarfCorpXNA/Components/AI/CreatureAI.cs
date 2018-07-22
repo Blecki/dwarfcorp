@@ -624,7 +624,7 @@ namespace DwarfCorp
                 string sign = xp > 0 ? "+" : "";
 
                 IndicatorManager.DrawIndicator(sign + xp + " XP",
-                    Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, xp > 0 ? Color.Green : Color.Red);
+                    Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, xp > 0 ? GameSettings.Default.Colors.GetColor("Positive", Color.Green) : GameSettings.Default.Colors.GetColor("Negative", Color.Red));
                 if (Stats.IsOverQualified && lastXPAnnouncement != Stats.LevelIndex && Faction == Manager.World.PlayerFaction)
                 {
                     lastXPAnnouncement = Stats.LevelIndex;
@@ -953,7 +953,7 @@ namespace DwarfCorp
         {
             Status.Money += pay;
             bool good = pay > 0;
-            Color textColor = good ? Color.Green : Color.Red;
+            Color textColor = good ? GameSettings.Default.Colors.GetColor("Positive", Color.Green) : GameSettings.Default.Colors.GetColor("Negative", Color.Red);
             string prefix = good ? "+" : "";
             IndicatorManager.DrawIndicator(prefix + pay,
                 Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 1.0f, textColor);

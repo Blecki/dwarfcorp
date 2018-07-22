@@ -242,7 +242,7 @@ namespace DwarfCorp.Gui.Widgets
                 MinimumSize = new Point(128, 0),
                 TextColor = Resource.NumResources > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                 TextVerticalAlign = VerticalAlign.Center,
-                HoverTextColor = Color.DarkRed.ToVector4(),
+                HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
                 Font = "font10",
                 ChangeColorOnHover = true,
                 WrapText = true
@@ -256,7 +256,7 @@ namespace DwarfCorp.Gui.Widgets
                 //TextColor = new Vector4(1,1,1,1),
                 TextColor = Resource.NumResources > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                 TextVerticalAlign = VerticalAlign.Center,
-                HoverTextColor = Color.DarkRed.ToVector4(),
+                HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
                 Font = "font10",
                 ChangeColorOnHover = true,
             });

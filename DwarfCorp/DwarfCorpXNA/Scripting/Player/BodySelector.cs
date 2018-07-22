@@ -70,7 +70,7 @@ namespace DwarfCorp
             MouseOver = bodies => { };
             Selected += SelectedCallback;
             Enabled = true;
-            DeleteColor = Color.Red;
+            DeleteColor = GameSettings.Default.Colors.GetColor("Negative", Color.Red);
             SelectionRectangle = new Rectangle(0, 0, 0, 0);
             MouseOverTimer = new Timer(1.0f / 30.0f, false, Timer.TimerMode.Real);
         }

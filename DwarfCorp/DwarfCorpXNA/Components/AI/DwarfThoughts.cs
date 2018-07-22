@@ -145,7 +145,7 @@ namespace DwarfCorp
                 Thoughts.Add(thought);
             }
             bool good = thought.HappinessModifier > 0;
-            Color textColor = good ? Color.Yellow : Color.Red;
+            Color textColor = good ? GameSettings.Default.Colors.GetColor("Positive", Color.Green) : GameSettings.Default.Colors.GetColor("Negative", Color.Red);
             string prefix = good ? "+" : "";
             string postfix = good ? ":)" : ":(";
             IndicatorManager.DrawIndicator(prefix + thought.HappinessModifier + " " + postfix,

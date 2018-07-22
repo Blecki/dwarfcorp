@@ -428,7 +428,7 @@ namespace DwarfCorp.Gui.Widgets
             if (net >= tradeTarget)
                 TotalDisplay.TextColor = new Vector4(0, 0, 0, 1);
             else
-                TotalDisplay.TextColor = Color.DarkRed.ToVector4();
+                TotalDisplay.TextColor = GameSettings.Default.Colors.GetColor("Highlight", GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed)).ToVector4();
 
             TotalDisplay.Invalidate();
 
@@ -438,7 +438,7 @@ namespace DwarfCorp.Gui.Widgets
 
             if (EnvoyColumns.TotalSelectedItems - PlayerColumns.TotalSelectedItems > Player.AvailableSpace)
             {
-                SpaceDisplay.TextColor = Color.DarkRed.ToVector4();
+                SpaceDisplay.TextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
             }
             else
             {

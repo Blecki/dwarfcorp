@@ -72,7 +72,7 @@ namespace DwarfCorp.Gui.Widgets
                 },
                 OnMouseEnter = (sender, args) =>
                 {
-                    sender.BackgroundColor = Color.DarkRed.ToVector4();
+                    sender.BackgroundColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
                     sender.Invalidate();
                 },
                 OnMouseLeave = (sender, args) =>
@@ -95,7 +95,7 @@ namespace DwarfCorp.Gui.Widgets
                 },
                 OnMouseEnter = (sender, args) =>
                 {
-                    sender.BackgroundColor = Color.DarkRed.ToVector4();
+                    sender.BackgroundColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
                     sender.Invalidate();
                 },
                 OnMouseLeave = (sender, args) =>
