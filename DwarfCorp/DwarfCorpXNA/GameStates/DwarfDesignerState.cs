@@ -18,7 +18,7 @@ namespace DwarfCorp.Gui.Widgets
             base.Layout();
             int x = 48;
             int y = 40;
-            float ratio = Math.Max((float)Rect.Height / y, 1.0f);
+            float ratio = Math.Max((float)Rect.Height / x, 1.0f);
 
             SpriteMesh = Gui.Mesh.Quad()
                 .Scale((ratio * x), (ratio * y))
@@ -160,8 +160,8 @@ namespace DwarfCorp.GameStates
 
             SpriteFrame = panel.AddChild(new DwarfCorp.Gui.Widgets.EmployeePortrait
             {
-                MinimumSize = new Point(256, 320),
-                MaximumSize = new Point(256, 320),
+                MinimumSize = new Point(48 * 6, 40 * 6),
+                MaximumSize = new Point(48 * 6, 40 * 6),
                 AutoLayout = AutoLayout.DockLeft
             }) as DwarfCorp.Gui.Widgets.EmployeePortrait;
 
@@ -182,6 +182,7 @@ namespace DwarfCorp.GameStates
             AddSelector(panel, "beard");
             AddSelector(panel, "hair");
             AddSelector(panel, "tool");
+            AddSelector(panel, "hat");
 
             var anim = panel.AddChild(new Widget
             {

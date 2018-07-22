@@ -198,7 +198,6 @@
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
-    <Compile Include="Components\Graphics\LayeredSprites\Class1.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\Palette.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\Layer.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\LayeredAnimationProxy.cs" />
