@@ -40,8 +40,8 @@ namespace DwarfCorp
     {
         public double GrowthTime = 0.0f;
         public double FullyGrownAfter = 0.0f;
-        public float MaxSize = 20.0f;
-        public float MinSize = 1.0f;
+        public float MaxSize = 2.0f;
+        public float MinSize = 0.2f;
         public String AdultName;
 
         public Seedling()
@@ -68,14 +68,8 @@ namespace DwarfCorp
 
             GrowthTime += gameTime.ElapsedGameTime.TotalMinutes;
 
-            var mesh = GetComponent<InstanceMesh>();
-            if (mesh != null)
-            {
-                var scale = (float)(MinSize + (MaxSize - MinSize) * (GrowthTime / FullyGrownAfter));
-                BoundingBoxSize = new Vector3(1.0f, scale, 1.0f);
-                UpdateBoundingBox();
-                mesh.LocalTransform = Matrix.CreateScale(scale, scale, scale) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position);
-            }
+            var scale = (float)(MinSize + (MaxSize - MinSize) * (GrowthTime / FullyGrownAfter));
+            ReScale(scale);
             
             if (GrowthTime >= FullyGrownAfter)
                 CreateAdult();
