@@ -30,6 +30,13 @@
   {
     "Type": "body",
     "Precedence": 0,
+    "Asset": "Entities/Dwarf/Layers/worker-body",
+    "RestrictionType": "Class",
+    "RestrictionValue": "Miner"
+  },
+  {
+    "Type": "body",
+    "Precedence": 0,
     "Asset": "Entities/Dwarf/Layers/blank",
     "DefaultLayer": true
   },
@@ -69,7 +76,7 @@
     "Precedence": 3,
     "Asset": "Entities/Dwarf/Layers/jowel_beard"
   },
-    {
+  {
     "Type": "beard",
     "Precedence": 3,
     "Asset": "Entities/Dwarf/Layers/mutten_chop_beard"
@@ -155,6 +162,13 @@
     "Asset": "Entities/Dwarf/Layers/wizard-hat-new",
     "RestrictionType": "Class",
     "RestrictionValue": "Wizard"
+  },
+  {
+    "Type": "hat",
+    "Precedence": 5,
+    "Asset": "Entities/Dwarf/Layers/worker-hat",
+    "RestrictionType": "Class",
+    "RestrictionValue": "Miner"
   },
   {
     "Type": "hat",
