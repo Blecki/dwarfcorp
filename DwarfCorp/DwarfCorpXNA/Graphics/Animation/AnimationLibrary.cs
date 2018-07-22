@@ -85,7 +85,7 @@ namespace DwarfCorp
                         SpriteSheet = spriteSheet,
                         Frames = frames,
                         Name = TextureAsset,
-                        FrameHZ = 1.0f / 15.0f,
+                        FrameHZ = 15.0f,
                         Loops = loop
                     }
                 });

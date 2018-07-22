@@ -46,7 +46,7 @@ namespace DwarfCorp
         public List<EmployeeClass.Level> Levels { get; set; }
         public List<Attack> Attacks { get; set; }
         public List<string> Actions { get; set; }
-        public CharacterMode AttackMode = CharacterMode.Attacking00;
+        public CharacterMode AttackMode = CharacterMode.Attacking;
     }
 
     [JsonObject(IsReference = true)]

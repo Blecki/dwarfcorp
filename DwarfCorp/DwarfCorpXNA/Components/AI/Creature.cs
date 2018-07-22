@@ -250,7 +250,7 @@ namespace DwarfCorp
 
         public bool FirstUpdate = true;
 
-        public CharacterMode AttackMode = CharacterMode.Attacking00;
+        public CharacterMode AttackMode = CharacterMode.Attacking;
 
         /// <summary>
         /// Gets or sets the current character mode for animations.

@@ -12,7 +12,7 @@ namespace DwarfCorp
         Idle,
         Falling,
         Jumping,
-        Attacking00,
+        Attacking,
         Attacking01,
         Attacking02,
         Hurt,

@@ -69,6 +69,11 @@
     "Precedence": 3,
     "Asset": "Entities/Dwarf/Layers/jowel_beard"
   },
+    {
+    "Type": "beard",
+    "Precedence": 3,
+    "Asset": "Entities/Dwarf/Layers/mutten_chop_beard"
+  },
   {
     "Type": "beard",
     "Precedence": 3,
