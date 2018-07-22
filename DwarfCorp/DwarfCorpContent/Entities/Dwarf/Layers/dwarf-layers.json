@@ -40,14 +40,14 @@
     "Precedence": 1,
     "Asset": "Entities/Dwarf/Layers/woman_face",
     "RestrictionType": "Gender",
-    "RestrictionValue": "Female"
+    "RestrictionValue": "Female Nonbinary"
   },
   {
     "Type": "face",
     "Precedence": 1,
     "Asset": "Entities/Dwarf/Layers/man_face",
     "RestrictionType": "Gender",
-    "RestrictionValue": "Male"
+    "RestrictionValue": "Male Nonbinary"
   },
   {
     "Type": "face",

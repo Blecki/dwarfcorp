@@ -65,9 +65,9 @@ namespace DwarfCorp.LayeredSprites
             switch (RestrictionType)
             {
                 case Restrictions.Class:
-                    return Dwarf.CurrentClass.Name == RestrictionValue;
+                    return RestrictionValue.Contains(Dwarf.CurrentClass.Name);
                 case Restrictions.Gender:
-                    return Dwarf.Gender.ToString() == RestrictionValue;
+                    return RestrictionValue.Contains(Dwarf.Gender.ToString());
                 case Restrictions.None:
                 default:
                     return true;
