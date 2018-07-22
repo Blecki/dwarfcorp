@@ -348,8 +348,7 @@ namespace DwarfCorp
                 }
 
                 ComponentManager = new ComponentManager(this);
-                ComponentManager.SetRootComponent(new Body(ComponentManager, "root", Matrix.Identity,
-                    Vector3.Zero, Vector3.Zero));
+                ComponentManager.SetRootComponent(new Body(ComponentManager, "root", Matrix.Identity, Vector3.Zero, Vector3.Zero));
 
                 if (Natives == null) // Todo: Always true??
                 {
