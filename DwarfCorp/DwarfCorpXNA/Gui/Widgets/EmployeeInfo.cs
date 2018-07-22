@@ -5,9 +5,11 @@ using System.Text;
 using DwarfCorp.Gui;
 using DwarfCorp.Gui.Widgets;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp.Gui.Widgets
 {
+
     public class EmployeeInfo : Widget
     {
         public bool EnablePosession = false;
@@ -20,7 +22,7 @@ namespace DwarfCorp.Gui.Widgets
 
         private Widget InteriorPanel;
 
-        private Widget Icon;
+        private DwarfCorp.Gui.Widgets.EmployeePortrait Icon;
         private Widget NameLabel;
 
         private Widget StatDexterity;
@@ -67,11 +69,11 @@ namespace DwarfCorp.Gui.Widgets
                 MinimumSize = new Point(0, 96)
             });
 
-            Icon = top.AddChild(new Widget
+            Icon = top.AddChild(new DwarfCorp.Gui.Widgets.EmployeePortrait
             {
                 AutoLayout = AutoLayout.DockLeft,
                 MinimumSize = new Point(64, 96),
-            });        
+            }) as EmployeePortrait;        
 
             NameLabel = top.AddChild(new Gui.Widget
             {
@@ -167,7 +169,7 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 24)
             });
-
+            
             AgeLabel = InteriorPanel.AddChild(new Widget() {
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 24)
@@ -397,8 +399,20 @@ namespace DwarfCorp.Gui.Widgets
                 InteriorPanel.Hidden = false;
 
                 var idx = EmployeePanel.GetIconIndex(Employee.Stats.CurrentClass.Name);
-                Icon.Background = idx >= 0 ? new TileReference("dwarves", idx) : null;
-                Icon.Invalidate();
+                //Icon.Background = idx >= 0 ? new TileReference("dwarves", idx) : null;
+                //Icon.Invalidate();
+                //Icon.Sprite = Employee.Creature.Sprite.Animations[0];
+                var sprite = Employee.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>();
+                if (sprite != null)
+                {
+                    Icon.Sprite = sprite.GetLayers();
+                    Icon.AnimationPlayer = sprite.AnimPlayer;
+                }
+                else
+                {
+                    Icon.Sprite = null;
+                    Icon.AnimationPlayer = null;
+                }
 
                 NameLabel.Text = "\n" + Employee.Stats.FullName;
                 StatDexterity.Text = String.Format("Dex: {0}", Employee.Stats.BuffedDex);

@@ -59,6 +59,7 @@ namespace DwarfCorp
             public Keys Unslice = Keys.E;
             public Keys ToggleGUI = Keys.B;
             public Keys Jump = Keys.C;
+            public Keys Fly = Keys.K;
             public Keys SelectAllDwarves = Keys.F;
 
             // Toggles a variable in GamePerformance that can be used with if-blocks to quickly change between old and new code for comparison purposes.
@@ -88,6 +89,7 @@ namespace DwarfCorp
                 yield return Unslice;
                 yield return ToggleGUI;
                 yield return Jump;
+                yield return Fly;
                 yield return SelectAllDwarves;
                 yield return DebugToggle1;
                 yield return DebugToggle2;

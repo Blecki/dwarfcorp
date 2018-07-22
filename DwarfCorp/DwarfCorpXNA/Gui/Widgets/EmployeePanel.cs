@@ -23,14 +23,18 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     Background = new TileReference("basic", 0)
                 });
-                var idx = GetIconIndex(employee.Stats.CurrentClass.Name);
-                bar.AddChild(new Widget
-                {
-                    AutoLayout = AutoLayout.DockLeft,
-                    MinimumSize = new Point(32, 48),
-                    MaximumSize = new Point(32, 48),
-                    Background = idx >= 0 ? new TileReference("dwarves", idx) : null
-                });
+                var employeeSprite = employee.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>();
+               
+
+                if (employeeSprite != null)
+                    bar.AddChild(new EmployeePortrait
+                    {
+                        AutoLayout = AutoLayout.DockLeft,
+                        MinimumSize = new Point(32, 48),
+                        MaximumSize = new Point(32, 48),
+                        Sprite = employeeSprite.GetLayers(),
+                        AnimationPlayer = employeeSprite.AnimPlayer
+                    });
 
                 bar.AddChild(new Widget
                 {

@@ -245,7 +245,7 @@ namespace DwarfCorp
         /// Returns a 3 x 3 x 3 voxel grid corresponding to the immediate neighborhood
         /// around the given voxel..
         /// </summary>
-        private VoxelHandle[, ,] GetNeighborhood(VoxelHandle Voxel)
+        private VoxelHandle[, ,] GetNeighborhood(ChunkData chunks, VoxelHandle Voxel)
         {
             var neighborhood = new VoxelHandle[3, 3, 3];
 
@@ -253,7 +253,7 @@ namespace DwarfCorp
                 for (var dy = -1; dy <= 1; ++dy)
                     for (var dz = -1; dz <= 1; ++dz)
                     {
-                        var v = new VoxelHandle(Creature.World.ChunkManager.ChunkData,
+                        var v = new VoxelHandle(chunks,
                             Voxel.Coordinate + new GlobalVoxelOffset(dx, dy, dz));
                         neighborhood[dx + 1, dy + 1, dz + 1] = v;
                     }
@@ -290,11 +290,18 @@ namespace DwarfCorp
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
         public IEnumerable<MoveAction> GetMoveActions(MoveState state, OctTreeNode OctTree)
         {
+            if (Parent == null)
+                yield break;
+
             var voxel = state.Voxel;
             if (!voxel.IsValid || !voxel.IsEmpty)
                 yield break;
+            var creature = Creature;
 
-            var neighborHood = GetNeighborhood(voxel);
+            if (creature == null)
+                yield break;
+
+            var neighborHood = GetNeighborhood(voxel.Chunk.Manager.ChunkData, voxel);
             bool inWater = (neighborHood[1, 1, 1].IsValid && neighborHood[1, 1, 1].LiquidLevel > WaterManager.inWaterThreshold);
             bool standingOnGround = (neighborHood[1, 0, 1].IsValid && !neighborHood[1, 0, 1].IsEmpty);
             bool topCovered = (neighborHood[1, 2, 1].IsValid && !neighborHood[1, 2, 1].IsEmpty);
@@ -328,7 +335,7 @@ namespace DwarfCorp
                             if (door != null)
                             {
                                 if (
-                                    Creature.World.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
+                                    creature.World.Diplomacy.GetPolitics(door.TeamFaction, creature.Faction)
                                         .GetCurrentRelationship() ==
                                     Relationship.Hateful)
                                 {
@@ -680,6 +687,14 @@ namespace DwarfCorp
         // Very, very slow.
         public IEnumerable<MoveAction> GetInverseMoveActions(MoveState currentstate, OctTreeNode OctTree)
         {
+            if (Parent == null)
+                yield break;
+
+            var creature = Creature;
+            if (creature == null)
+            {
+                yield break;
+            }
             var current = currentstate.Voxel;
             foreach (var v in VoxelHelpers.EnumerateCube(current.Coordinate)
                 .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
@@ -711,7 +726,7 @@ namespace DwarfCorp
                         }
                     }
                     */
-                    foreach (var neighborRail in rail.NeighborRails.Select(neighbor => Creature.Manager.FindComponent(neighbor.NeighborID) as Rail.RailEntity))
+                    foreach (var neighborRail in rail.NeighborRails.Select(neighbor => creature.Manager.FindComponent(neighbor.NeighborID) as Rail.RailEntity))
                     {
                         var actions = GetMoveActions(new MoveState() {
                             Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = neighborRail } }, OctTree);

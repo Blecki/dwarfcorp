@@ -1078,7 +1078,7 @@ namespace DwarfCorp.GameStates
                 Tag = "brushes",
                 AutoLayout = AutoLayout.DockLeftCentered,
                 SizeToGrid = new Point(3, 1),
-                ItemSize = new Point(20, 20),
+                ItemSize = new Point(32, 32),
                 InteriorMargin = new Margin(2,2,2,2),
                 ItemSource = new Gui.Widget[]
                
@@ -1122,6 +1122,59 @@ namespace DwarfCorp.GameStates
                         }
             }) as Gui.Widgets.ToggleTray;
 
+            var camTray = BottomBar.AddChild(new Gui.Widgets.ToggleTray
+            {
+                Tag = "camera_modes",
+                AutoLayout = AutoLayout.DockLeftCentered,
+                SizeToGrid = new Point(2, 1),
+                ItemSize = new Point(32, 32),
+                InteriorMargin = new Margin(2, 2, 2, 2),
+                ToggledTint = Color.Yellow.ToVector4(),
+                ItemSource = new Gui.Widget[]
+
+                  {
+                            new Gui.Widgets.FramedIcon
+                            {
+                                Text = "Orbit",
+                                DrawFrame = true,
+                                Tooltip = "Topdown orbit camera mode.",
+                                TextVerticalAlign = VerticalAlign.Center,
+                                TextHorizontalAlign = HorizontalAlign.Center,
+                                ChangeColorOnHover = true,
+                                HoverTextColor = Color.Yellow.ToVector4(),
+                                TextColor = Color.Yellow.ToVector4(),
+                                ChangeTextColorOnEnable = false,
+                                OnClick = (widget, args) =>
+                                {
+                                    World.ChangeCameraMode(OrbitCamera.ControlType.Overhead);
+                                }
+                            },
+                            new Gui.Widgets.FramedIcon
+                            {
+                                Text = "Walk",
+                                DrawFrame = true,
+                                Tooltip = "Walk camera mode.",
+                                ChangeColorOnHover = true,
+                                TextVerticalAlign = VerticalAlign.Center,
+                                TextHorizontalAlign = HorizontalAlign.Center,
+                                HoverTextColor = Color.Yellow.ToVector4(),
+                                ChangeTextColorOnEnable = false,
+                                OnClick = (widget, args) =>
+                                {
+                                    World.ChangeCameraMode(OrbitCamera.ControlType.Walk);
+                                }
+                            }
+                  }
+            }) as Gui.Widgets.ToggleTray;
+
+            if (World.Camera.Control == OrbitCamera.ControlType.Overhead)
+            {
+                camTray.Select(0);
+            }
+            else
+            {
+                camTray.Select(1);
+            }
 
             #endregion
 
@@ -2399,6 +2452,7 @@ namespace DwarfCorp.GameStates
             GodMenu.BringToFront();
 
             Master.BodySelector.LeftReleased += BodySelector_LeftReleased;
+            (Master.Tools[GameMaster.ToolMode.SelectUnits] as DwarfSelectorTool).DrawSelectionRect = b => ContextCommands.Any(c => c.CanBeAppliedTo(b, World));
         }
 
         private List<Body> BodySelector_LeftReleased()
@@ -2432,6 +2486,7 @@ namespace DwarfCorp.GameStates
                     MultiContextMenu.Rect = new Rectangle(MinimapFrame.Rect.Right + 2, MinimapFrame.Rect.Bottom - MultiContextMenu.Rect.Height, MultiContextMenu.Rect.Width, MultiContextMenu.Rect.Height);
                     MultiContextMenu.Layout();
                     GuiRoot.ShowDialog(MultiContextMenu);
+                    GuiRoot.RootItem.SendToBack(MultiContextMenu);
                 }
             }
             else if (MultiContextMenu != null)

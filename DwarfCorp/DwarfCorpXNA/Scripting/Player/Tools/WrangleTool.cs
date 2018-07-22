@@ -53,8 +53,13 @@ namespace DwarfCorp
 
         public bool CanCatch(Body animal, bool print=false)
         {
+            var creature = animal.GetRoot().GetComponent<Creature>();
+            if (creature == null)
+            {
+                return false;
+            }
             var pens = Player.Faction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt &&
-                            (pen.Species == "" || pen.Species == animal.GetRoot().GetComponent<Creature>().Species));
+                            (pen.Species == "" || pen.Species == creature.Species));
 
             if (pens.Any())
             {

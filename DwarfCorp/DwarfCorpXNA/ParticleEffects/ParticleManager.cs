@@ -26,7 +26,17 @@ namespace DwarfCorp
             {
                 Emitters[MathFunctions.Random.Next(Emitters.Count)].Trigger(1, position, tint);
             }
-        }        
+        }
+
+        public void Create(Vector3 position, Vector3 velocity, Color tint)
+        {
+            Emitters[MathFunctions.Random.Next(Emitters.Count)].CreateParticle(position, velocity, tint);
+        }
+
+        public void Create(Vector3 position, Vector3 velocity, Color tint, Vector3 direction)
+        {
+            Emitters[MathFunctions.Random.Next(Emitters.Count)].CreateParticle(position, velocity, tint, direction);
+        }
     }
 
     /// <summary>
@@ -64,6 +74,17 @@ namespace DwarfCorp
             Effects[emitter].Trigger(num, position, tint);
         }
 
+        public void Create(string emitter, Vector3 position, Vector3 velocity, Color tint)
+        {
+            Effects[emitter].Create(position, velocity, tint);
+        }
+
+        public void Create(string emitter, Vector3 position, Vector3 velocity, Color tint, Vector3 direction)
+        {
+            Effects[emitter].Create(position, velocity, tint, direction);
+        }
+
+
         public void RegisterEffect(GraphicsDevice Device, ComponentManager Components, string name, params EmitterData[] data)
         {
             List<ParticleEmitter> emitters = new List<ParticleEmitter>();
@@ -84,7 +105,7 @@ namespace DwarfCorp
             {
                 foreach(var emitter in effect.Value.Emitters)
                 {
-                    emitter.Update(time, world.ChunkManager, world.Camera);
+                    emitter.Update(this, time, world.ChunkManager, world.Camera);
                 }
             }
         }

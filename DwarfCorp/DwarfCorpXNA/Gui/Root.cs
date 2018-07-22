@@ -651,6 +651,11 @@ namespace DwarfCorp.Gui
             var mesh = RootItem.GetRenderMesh();
             mesh.Render(RenderData.Device);
 
+            foreach(var widget in RootItem.EnumerateTree())
+            {
+                widget.PostDraw(GameStates.GameState.Game.GraphicsDevice);
+            }
+
             DrawMouse();
         }
 

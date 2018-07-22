@@ -548,6 +548,7 @@ namespace DwarfCorp
                             World.Gui.DestroyWidget(vox.Order.DisplayWidget);
                         }
                         BuildDesignations.Remove(vox.Order);
+                        DesignatedRooms.Remove(vox.Order.ToBuild);
                     }
                 }
                 else if(IsInRoom(v))

@@ -127,18 +127,11 @@ namespace DwarfCorp
             return new Vector3((float) x + (float) gx, (float) y + (float) gy, (float) z + (float) gz);
         }
 
-        public static Vector3[] WarpPoints(Vector3[] points, Vector3 scale, Vector3 translation)
+        public static Vector3 Warp(Vector3 point)
         {
-            Vector3[] toReturn = new Vector3[points.Length];
-
-            for(int i = 0; i < points.Length; i++)
-            {
-                Vector3 scaled = new Vector3(points[i].X * scale.X + translation.X, points[i].Y * scale.Y + translation.Y, points[i].Z * scale.Z + translation.Z);
-                toReturn[i] = points[i] + GetNoiseVectorFromRepeatingTexture(scaled);
-            }
-
-            return toReturn;
+            return point + GetNoiseVectorFromRepeatingTexture(point);
         }
+
     }
 
 }

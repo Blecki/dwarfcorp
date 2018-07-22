@@ -27,12 +27,14 @@ namespace DwarfCorp.Gui.Widgets
                 Children[i].OnMouseEnter += (widget, args) =>
                 {
                     (widget as FramedIcon).Tint = HoverTint;
+                    widget.TextColor = HoverTint;
                     widget.Invalidate();
                 };
 
                 Children[i].OnMouseLeave += (widget, args) =>
                 {
                     (widget as FramedIcon).Tint = i1 == SelectedChild ? ToggledTint : OffTint;
+                    (widget as FramedIcon).TextColor = i1 == SelectedChild ? ToggledTint : OffTint;
                     widget.Invalidate();
                 };
 
@@ -40,11 +42,14 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     SelectedChild = i1;
                     (widget as FramedIcon).Tint = ToggledTint;
+                    widget.TextColor = ToggledTint;
+                    widget.Invalidate();
 
                     for (int j = 0; j < Children.Count; j++)
                     {
                         if (i1 == j) continue;
                         (Children[j] as FramedIcon).Tint = OffTint;
+                        Children[j].TextColor = OffTint;
                         Children[j].Invalidate();
                     }
                 };

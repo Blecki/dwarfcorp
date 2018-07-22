@@ -184,6 +184,7 @@ namespace DwarfCorp
                         LocalTarget = new Vector3(randomX + oldPosition.X, randomY, randomZ + oldPosition.Z);
                     }
 
+                  
                     // Set the current distance to the target so we know when to go to a new target.
                     currentDistance = (Agent.Position - LocalTarget).Length();
 
@@ -194,7 +195,7 @@ namespace DwarfCorp
 
                     // We apply a linear combination of the force controller and the 
                     // feed forward force to the bird to make it lazily turn around and fly.
-                    Creature.Physics.ApplyForce(output*Damping*GravityCompensation,
+                    Creature.Physics.ApplyForce(output*Damping + Vector3.Up * GravityCompensation,
                         (float) DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
 
 
@@ -205,6 +206,7 @@ namespace DwarfCorp
 
                     if (State == FlyState.SearchingForPerch)
                     {
+                        oldPosition = Agent.Position;
                         var vox = Creature.Physics.CurrentVoxel;
                         if (!vox.IsValid)
                         {
@@ -213,13 +215,14 @@ namespace DwarfCorp
                         }
                         if (vox.IsValid && vox.LiquidLevel > 0)
                         {
+                            LocalTarget += Vector3.Up * 0.1f;
                             yield return Act.Status.Running;
                             continue;
                         }
 
                         if (CanPerchOnGround)
                         {
-                            Creature.Physics.ApplyForce(OriginalGravity, (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
+                            Creature.Physics.ApplyForce(OriginalGravity * 2, (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
                             var below = new VoxelHandle(Creature.World.ChunkManager.ChunkData,
                                 vox.Coordinate + new GlobalVoxelOffset(0, -1, 0));
 
