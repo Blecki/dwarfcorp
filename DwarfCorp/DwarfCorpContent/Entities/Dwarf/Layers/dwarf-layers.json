@@ -11,7 +11,7 @@
     "Precedence": 0,
     "Asset": "Entities/Dwarf/Layers/musket-body",
     "RestrictionType": "Class",
-    "RestrictionValue": "MusketDwarf"
+    "RestrictionValue": "Musket"
   },
   {
     "Type": "body",
@@ -100,7 +100,7 @@
     "Precedence": 6,
     "Asset": "Entities/Dwarf/Layers/musket-musket",
     "RestrictionType": "Class",
-    "RestrictionValue": "MusketDwarf"
+    "RestrictionValue": "Musket"
   },
   {
     "Type": "tool",
@@ -135,7 +135,7 @@
     "Precedence": 5,
     "Asset": "Entities/Dwarf/Layers/musket-hat",
     "RestrictionType": "Class",
-    "RestrictionValue": "MusketDwarf"
+    "RestrictionValue": "Musket"
   },
   {
     "Type": "hat",

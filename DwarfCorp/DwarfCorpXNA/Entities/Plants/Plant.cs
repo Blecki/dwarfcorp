@@ -138,5 +138,16 @@ namespace DwarfCorp
             }
             base.Die();
         }
+
+        public void ReScale(float Scale)
+        {
+            BoundingBoxSize = new Vector3(1.0f, Scale, 1.0f);
+            LocalBoundingBoxOffset = new Vector3(0.0f, Scale / 2.0f, 0.0f);
+            UpdateBoundingBox();
+
+            var mesh = GetComponent<InstanceMesh>();
+            if (mesh != null)
+                mesh.LocalTransform = Matrix.CreateScale(1.0f, Scale, 1.0f) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position);
+        }
     }
 }
