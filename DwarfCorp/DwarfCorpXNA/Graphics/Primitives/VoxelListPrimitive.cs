@@ -277,8 +277,8 @@ namespace DwarfCorp
         {
             var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(X, Y, Z));
             if (!v.IsVisible) return; // How did this even get called then??
-
-            foreach (var designation in Designations.EnumerateDesignations(v))
+            var designations = Designations.EnumerateDesignations(v).ToList();
+            foreach (var designation in designations)
             {
                 if ((designation.Type & DesignationDrawer.VisibleTypes) == designation.Type)
                 {

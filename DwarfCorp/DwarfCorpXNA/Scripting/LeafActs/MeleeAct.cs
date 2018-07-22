@@ -438,6 +438,11 @@ namespace DwarfCorp
 
                 foreach (MoveAction action in actions)
                 {
+                    // Prevents a stack overflow due to "DestroyObject" task creating a FollowPathAct!
+                    if (action.MoveType == MoveType.DestroyObject)
+                    {
+                        continue;
+                    }
                     float dist = (action.DestinationVoxel.WorldPosition - target).LengthSquared();
 
                     if (dist < bestDist)
