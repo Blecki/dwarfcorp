@@ -193,7 +193,7 @@ namespace DwarfCorp
 
             var hairPalette = LayeredSprites.LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("hair")).SelectRandom(random);
             var skinPalette = LayeredSprites.LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("face")).SelectRandom(random);
-            AddLayerOrDefault(sprite, random, "body");
+            AddLayerOrDefault(sprite, random, "body", skinPalette);
             AddLayerOrDefault(sprite, random, "face", skinPalette);
             AddLayerOrDefault(sprite, random, "nose", skinPalette);
             AddLayerOrDefault(sprite, random, "beard", hairPalette);
