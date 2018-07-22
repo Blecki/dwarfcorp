@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class Cloud : SimpleSprite, IUpdateableComponent
+    public class Cloud : SimpleSprite
     {
         [EntityFactory("Snow Cloud")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
@@ -67,7 +67,7 @@ namespace DwarfCorp
             Velocity = new Vector3(1, 0, 0);
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
 

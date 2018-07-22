@@ -74,7 +74,7 @@ namespace DwarfCorp
 
         public void Initialize(EmployeeClass dwarfClass)
         {
-            Gender = Mating.RandomGender();
+            Stats.Gender = Mating.RandomGender();
             Physics.Orientation = Physics.OrientMode.RotateY;
             CreateDwarfSprite(dwarfClass, Manager);
 
@@ -161,7 +161,7 @@ namespace DwarfCorp
             AI.Movement.SetSpeed(MoveType.EnterVehicle, 1.0f);
             AI.Movement.SetSpeed(MoveType.ExitVehicle, 1.0f);
             AI.TriggersMourning = true;
-            AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Gender);
+            AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Stats.Gender);
             Species = "Dwarf";
 
 
@@ -199,6 +199,9 @@ namespace DwarfCorp
             AddLayerOrDefault(sprite, random, "beard", hairPalette);
             AddLayerOrDefault(sprite, random, "hair", hairPalette);
             AddLayerOrDefault(sprite, random, "tool");
+            AddLayerOrDefault(sprite, random, "hat");
+
+            AttackMode = Stats.CurrentClass.AttackMode;
 
             foreach (Animation animation in AnimationLibrary.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations))
                 sprite.AddAnimation(animation);

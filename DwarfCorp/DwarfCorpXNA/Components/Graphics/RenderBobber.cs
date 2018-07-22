@@ -40,7 +40,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    public class SimpleBobber : SimpleSprite, IRenderableComponent
+    public class SimpleBobber : SimpleSprite
     {
         public float Magnitude { get; set; }
         public float Rate { get; set; }
@@ -64,7 +64,7 @@ namespace DwarfCorp
             OriginalPos = LocalTransform.Translation;
         }
 
-        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             float x = (float)Math.Sin((gameTime.TotalGameTime.TotalSeconds + Offset) * Rate) * Magnitude;
             var transform = GlobalTransform;
@@ -84,7 +84,7 @@ namespace DwarfCorp
         }
     }
 
-    public class LayeredBobber : LayeredSimpleSprite, IRenderableComponent
+    public class LayeredBobber : LayeredSimpleSprite
     {
         public float Magnitude { get; set; }
         public float Rate { get; set; }
@@ -99,14 +99,14 @@ namespace DwarfCorp
             float mag,
             float rate,
             float offset)
-            : base(Manager, Name, LocalTransform, true, Layers)
+            : base(Manager, Name, LocalTransform, Layers)
         {
             Magnitude = mag;
             Rate = rate;
             Offset = offset;
         }
 
-        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             float x = (float)Math.Sin((gameTime.TotalGameTime.TotalSeconds + Offset) * Rate) * Magnitude;
             var transform = GlobalTransform;

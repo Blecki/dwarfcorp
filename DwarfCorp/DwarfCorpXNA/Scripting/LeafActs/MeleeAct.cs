@@ -311,9 +311,9 @@ namespace DwarfCorp
                     Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
                     CurrentAttack.RechargeTimer.Reset(CurrentAttack.RechargeRate);
 
-                    Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
-                    Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
-                    Creature.CurrentCharacterMode = CharacterMode.Attacking;
+                    Creature.Sprite.ResetAnimations(Creature.AttackMode);
+                    Creature.Sprite.PlayAnimations(Creature.AttackMode);
+                    Creature.CurrentCharacterMode = Creature.AttackMode;
                     Creature.OverrideCharacterMode = true;
                     Timer timeout = new Timer(10.0f, true);
                     while (!CurrentAttack.Perform(Creature, Target, DwarfTime.LastTime, Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz,
@@ -354,7 +354,7 @@ namespace DwarfCorp
                         yield return Act.Status.Fail;
                         yield break;
                     }
-                    Creature.CurrentCharacterMode = CharacterMode.Attacking;
+                    Creature.CurrentCharacterMode = CharacterMode.Attacking00;
 
                     Vector3 dogfightTarget = Vector3.Zero;
                     while (!CurrentAttack.RechargeTimer.HasTriggered && !Target.IsDead)

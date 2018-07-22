@@ -362,13 +362,11 @@
     <Compile Include="Components\Graphics\AnimatedSprite.cs" />
     <Compile Include="Components\Graphics\Tinter.cs" />
     <Compile Include="Components\GUI\MinimapIcon.cs" />
-    <Compile Include="Components\IRenderableComponent.cs" />
     <Compile Include="Components\Physics\Flammable.cs" />
     <Compile Include="Components\Physics\Physics.cs" />
     <Compile Include="Components\Systems\ComponentRenderer.cs" />
     <Compile Include="Components\Systems\ComponentManager.cs" />
     <Compile Include="Components\Systems\Message.cs" />
-    <Compile Include="Components\IUpdateableComponent.cs" />
     <Compile Include="ControlSettings.cs" />
     <Compile Include="DeProfiler.cs" />
     <Compile Include="GameStates\Diplomacy\DialogueTreeTypes.cs" />
@@ -831,7 +829,6 @@
     <Compile Include="Sound\SoundManager.cs" />
     <Compile Include="World\CollisionType.cs" />
     <Compile Include="Tools\Datastructures\Datastructures.cs" />
-    <Compile Include="Tools\Datastructures\IBoundedObject.cs" />
     <Compile Include="Tools\Datastructures\IntegerOctTree.cs" />
     <Compile Include="Tools\Datastructures\MinBag.cs" />
     <Compile Include="Tools\Datastructures\PriorityQueue.cs" />

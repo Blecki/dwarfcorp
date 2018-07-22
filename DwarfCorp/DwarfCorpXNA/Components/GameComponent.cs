@@ -13,8 +13,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    //[Saving.SaveableObject(0)]
-    public class GameComponent // : Saving.ISaveableObject
+    public class GameComponent
     {
         public string Name { get; set; }
         public uint GlobalID { get; set; }
@@ -55,58 +54,6 @@ namespace DwarfCorp
         public ComponentManager Manager { get { return World.ComponentManager; } }
 
 
-        /*
-        public class SaveNugget : Saving.Nugget
-        {
-            public uint GlobalID;
-            public string Name;
-            public Flag Flags;
-            public List<String> Tags;
-            public Saving.Nugget Parent;
-            public List<Saving.Nugget> Children;            
-        }
-
-        protected virtual Saving.Nugget PrepareSaveNugget(Saving.Saver SaveSystem)
-        {
-            return new SaveNugget
-            {
-                AssociatedType = typeof(GameComponent), // Have to explicitely set since the save system
-                Version = 0,                            // isn't being invoked to create nugget.
-                GlobalID = GlobalID,
-                Name = Name,
-                Flags = Flags,
-                Tags = Tags,
-                Parent = SaveSystem.SaveObject(Parent),
-                Children = SerializableChildren.Select(c => SaveSystem.SaveObject(c)).ToList()
-            };
-        }
-
-        protected virtual void LoadFromSaveNugget(Saving.Loader SaveSystem, Saving.Nugget From)
-        {
-            var n = SaveSystem.UpgradeNugget(From, 0) as SaveNugget; // Need to explicitly invoke since save
-                // system was not involved for base type nugget.
-
-            GlobalID = n.GlobalID;
-            Name = n.Name;
-            Flags = n.Flags;
-            Tags = n.Tags;
-
-            Parent = SaveSystem.LoadObject(n.Parent) as GameComponent;
-            SerializableChildren = n.Children.Select(c => SaveSystem.LoadObject(c) as GameComponent).ToList();
-        }
-
-        Saving.Nugget Saving.ISaveableObject.SaveToNugget(Saving.Saver SaveSystem)
-        {
-            return PrepareSaveNugget(SaveSystem);
-        }
-
-        void Saving.ISaveableObject.LoadFromNugget(Saving.Loader SaveSystem, Saving.Nugget From)
-        {
-            LoadFromSaveNugget(SaveSystem, From);
-        }
-        */
-
-
         #region Serialization
 
         public void PrepareForSerialization()
@@ -118,14 +65,15 @@ namespace DwarfCorp
         public void PostSerialization(ComponentManager Manager)
         {
             Children = SerializableChildren.Select(id => Manager.FindComponent(id)).ToList();
-            /*
-            if (Children.Any(c => c == null))
-            {
-                throw new InvalidOperationException(String.Format("Serialized a null child of component {0}, which has {1} children.", Name, Children.Count));
-            }
-            */
             Children.RemoveAll(c => c == this || c == null);
             SerializableChildren = null;
+        }
+
+        [OnDeserialized]
+        void OnDeserializing(StreamingContext context)
+        {
+            // Assume the context passed in is a WorldManager
+            World = ((WorldManager)context.Context);
         }
 
         public virtual void CreateCosmeticChildren(ComponentManager Manager)
@@ -144,8 +92,6 @@ namespace DwarfCorp
             Active = 2,
             Dead = 4,
             ShouldSerialize = 8,
-            FrustumCull = 16,
-            AddToCollisionManager = 32,
             RotateBoundingBox = 64,
         }
 
@@ -206,13 +152,6 @@ namespace DwarfCorp
             }
         }
 
-        [OnDeserialized]
-        void OnDeserializing(StreamingContext context)
-        {
-            // Assume the context passed in is a WorldManager
-            World = ((WorldManager) context.Context);
-        }
-
         #region Constructors
 
         public GameComponent()
@@ -242,6 +181,9 @@ namespace DwarfCorp
         }
 
         #endregion
+
+        public virtual void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
+        { }
 
         public virtual void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera,
             SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)

@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Table : CraftedBody, IUpdateableComponent
+    public class Table : CraftedBody
     {
         private static Point DefaultTopFrame = new Point(0, 6);
         private static Point DefaultLegsFrame = new Point(1, 6);
@@ -205,7 +205,7 @@ namespace DwarfCorp
 
         }
 
-        new public void Update(DwarfTime time, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime time, ChunkManager chunks, Camera camera)
         {
             base.Update(time, chunks, camera);
 

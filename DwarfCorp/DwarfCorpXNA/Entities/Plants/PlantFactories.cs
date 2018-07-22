@@ -38,8 +38,9 @@ namespace DwarfCorp
     {
         private static int GetPlantGrowthTime()
         {
-            return MathFunctions.RandInt(12, 48);
+            return 2;// MathFunctions.RandInt(12, 48);
         }
+
         [EntityFactory("Haunted Tree")]
         private static GameComponent __factory00(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {

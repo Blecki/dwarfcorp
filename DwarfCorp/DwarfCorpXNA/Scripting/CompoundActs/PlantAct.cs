@@ -68,9 +68,9 @@ namespace DwarfCorp
             }
             else
             {
-                Creature.CurrentCharacterMode = CharacterMode.Attacking;
-                Creature.Sprite.ResetAnimations(CharacterMode.Attacking);
-                Creature.Sprite.PlayAnimations(CharacterMode.Attacking);
+                Creature.CurrentCharacterMode = Creature.AttackMode;
+                Creature.Sprite.ResetAnimations(Creature.AttackMode);
+                Creature.Sprite.PlayAnimations(Creature.AttackMode);
                 while (FarmToWork.Progress < FarmToWork.TargetProgress && !FarmToWork.Finished)
                 {
                     Creature.Physics.Velocity *= 0.1f;
@@ -108,12 +108,12 @@ namespace DwarfCorp
                     if (MathFunctions.RandEvent(0.01f))
                         Creature.Manager.World.ParticleManager.Trigger("dirt_particle", Creature.AI.Position, Color.White, 1);
                     yield return Status.Running;
-                    Creature.Sprite.ReloopAnimations(CharacterMode.Attacking);
+                    Creature.Sprite.ReloopAnimations(Creature.AttackMode);
                 }
                 Creature.CurrentCharacterMode = CharacterMode.Idle;
                 Creature.AddThought(Thought.ThoughtType.Farmed);
                 Creature.AI.AddXP(1);
-                Creature.Sprite.PauseAnimations(CharacterMode.Attacking);
+                Creature.Sprite.PauseAnimations(Creature.AttackMode);
                 yield return Status.Success;
             }
         }

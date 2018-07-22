@@ -40,7 +40,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Door : CraftedFixture, IUpdateableComponent
+    public class Door : CraftedFixture
     {
         [EntityFactory("Door")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
@@ -194,7 +194,7 @@ namespace DwarfCorp
             IsOpen = false;
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
 

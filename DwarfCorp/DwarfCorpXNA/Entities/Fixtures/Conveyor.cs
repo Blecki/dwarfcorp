@@ -11,7 +11,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace DwarfCorp
 {
-    public class Conveyor : CraftedBody, IUpdateableComponent
+    public class Conveyor : CraftedBody
     {
         [EntityFactory("Conveyor")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
@@ -48,7 +48,7 @@ namespace DwarfCorp
             var forgeAnimation = AnimationLibrary.CreateAnimation(spriteSheet, frames, "ConveyorAnimation");
             forgeAnimation.Loops = true;
 
-            var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateTranslation(0.0f, -0.4f, 0.0f), false)
+            var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.CreateRotationX((float)Math.PI * 0.5f) * Matrix.CreateTranslation(0.0f, -0.4f, 0.0f))
             {
                 OrientationType = AnimatedSprite.OrientMode.Fixed
             }) as AnimatedSprite;
@@ -64,7 +64,7 @@ namespace DwarfCorp
             })).SetFlag(Flag.ShouldSerialize, false);
         }
 
-        new public void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
+        override public void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         {
             base.Update(Time, Chunks, Camera);
 

@@ -43,7 +43,7 @@ namespace ManaLampMod
             var lampAnimation = AnimationLibrary.CreateAnimation(spriteSheet, frames, "ManaLampAnimation");
             lampAnimation.Loops = true;
 
-            var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.Identity, false)
+            var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.Identity)
             {
                 LightsWithVoxels = false,
                 OrientationType = AnimatedSprite.OrientMode.YAxis,

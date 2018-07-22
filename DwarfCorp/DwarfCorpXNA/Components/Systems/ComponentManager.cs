@@ -20,50 +20,18 @@ namespace DwarfCorp
     /// </summary>
     public class ComponentManager
     {
-        //[Saving.SaveableObject(0)]
         public class ComponentSaveData //: Saving.ISaveableObject
         {
-            /*public class ComponentSaveNugget : Saving.Nugget
-            {
-                public List<Saving.Nugget> SaveableComponents;
-                public uint RootComponent;
-            }*/
-
             public List<GameComponent> SaveableComponents;
             public uint RootComponent;
-
-            /*Saving.Nugget Saving.ISaveableObject.SaveToNugget(Saving.Saver SaveSystem)
-            {
-                return new ComponentSaveNugget
-                {
-                    SaveableComponents = SaveableComponents.Select(o => SaveSystem.SaveObject(o)).ToList(),
-                    RootComponent = RootComponent
-                };
-            }
-
-            void Saving.ISaveableObject.LoadFromNugget(Saving.Loader SaveSystem, Saving.Nugget From)
-            {
-                var n = From as ComponentSaveNugget;
-                SaveableComponents = n.SaveableComponents.Select(o => SaveSystem.LoadObject(o) as GameComponent).ToList();
-                RootComponent = n.RootComponent;
-            }*/
         }
 
         private Dictionary<uint, GameComponent> Components;
         private uint MaxGlobalID = 0;
         public const int InvalidID = 0;
-        //private Dictionary<System.Type, List<IUpdateableComponent>> UpdateableComponents =
-        //    new Dictionary<Type, List<IUpdateableComponent>>();
-        private List<IUpdateableComponent> UpdateableComponents = new List<IUpdateableComponent>();
-        private List<IRenderableComponent> Renderables = new List<IRenderableComponent>();
         private List<MinimapIcon> MinimapIcons = new List<MinimapIcon>();
         private List<GameComponent> Removals = new List<GameComponent>();
         private List<GameComponent> Additions = new List<GameComponent>();
-
-        public List<IRenderableComponent> GetRenderables()
-        {
-            return Renderables;
-        }
 
         public Body RootComponent { get; private set; }
 
@@ -120,18 +88,6 @@ namespace DwarfCorp
 
             foreach (var component in Components)
             {
-                if (component.Value is IUpdateableComponent)
-                {
-                    //var type = component.Value.GetType();
-                    //if (!UpdateableComponents.ContainsKey(type))
-                    //    UpdateableComponents.Add(type, new List<IUpdateableComponent>());
-                    //UpdateableComponents[type].Add(component.Value as IUpdateableComponent);
-                    UpdateableComponents.Add(component.Value as IUpdateableComponent);
-                }
-
-                if (component.Value is IRenderableComponent)
-                    Renderables.Add(component.Value as IRenderableComponent);
-
                 if (component.Value is MinimapIcon)
                     MinimapIcons.Add(component.Value as MinimapIcon);
             }
@@ -223,17 +179,6 @@ namespace DwarfCorp
 
             Components.Remove(component.GlobalID);
 
-            if (component is IUpdateableComponent)
-            {
-                //var type = component.GetType();
-                //if (UpdateableComponents.ContainsKey(type))
-                //    UpdateableComponents[type].Remove(component as IUpdateableComponent);
-                UpdateableComponents.Remove(component as IUpdateableComponent);
-            }
-
-            if (component is IRenderableComponent)
-                Renderables.Remove(component as IRenderableComponent);
-
             if (component is MinimapIcon)
                 MinimapIcons.Remove(component as MinimapIcon);
 
@@ -251,18 +196,6 @@ namespace DwarfCorp
 
             Components[component.GlobalID] = component;
 
-            if (component is IUpdateableComponent)
-            {
-                //var type = component.GetType();
-                //if (!UpdateableComponents.ContainsKey(type))
-                //    UpdateableComponents.Add(type, new List<IUpdateableComponent>());
-                //UpdateableComponents[type].Add(component as IUpdateableComponent);
-                UpdateableComponents.Add(component as IUpdateableComponent);
-            }
-
-            if (component is IRenderableComponent)
-                Renderables.Add(component as IRenderableComponent);
-
             if (component is MinimapIcon)
                 MinimapIcons.Add(component as MinimapIcon);
         }
@@ -271,7 +204,7 @@ namespace DwarfCorp
         {
             PerformanceMonitor.PushFrame("Component Update");
 
-            foreach (var component in UpdateableComponents)
+            foreach (var component in Components.Values)
                 component.Update(gameTime, chunks, camera);
 
             PerformanceMonitor.PopFrame();

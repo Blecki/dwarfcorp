@@ -50,7 +50,7 @@ namespace DwarfCorp
     /// <summary>
     /// This component has a color tint which can change over time.
     /// </summary>
-    public class Tinter : Body, IUpdateableComponent, ITintable
+    public class Tinter : Body, ITintable
     {
         public bool LightsWithVoxels { get; set; }
         public Color LightRamp { get; set; }
@@ -69,15 +69,14 @@ namespace DwarfCorp
             Stipple = false;
         }
 
-        public Tinter(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, bool collisionManager) :
-            base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos, collisionManager)
+        public Tinter(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
+            base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             LightsWithVoxels = true;
             LightRamp = new Color(255, 255, 0);
             TintChangeRate = 1.0f;
             VertexColorTint = Color.White;
             Stipple = false;
-            SetFlag(Flag.FrustumCull, true);
         }
 
 
@@ -90,7 +89,7 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
 

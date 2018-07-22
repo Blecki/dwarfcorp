@@ -43,7 +43,7 @@ namespace DwarfCorp
     /// <summary>
     /// This component draws a simple textured rectangular box.
     /// </summary>
-    public class Box : Tinter, IRenderableComponent
+    public class Box : Tinter
     {
         public string Primitive { get; set; }
         public Texture2D Texture { get; set; }
@@ -54,13 +54,13 @@ namespace DwarfCorp
         }
 
         public Box(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, string primitive, Texture2D tex) :
-            base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos, false)
+            base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             Primitive = primitive;
             Texture = tex;
         }
 
-        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             ApplyTintingToEffect(effect);
             effect.MainTexture = Texture;

@@ -171,10 +171,15 @@
           "LaunchSpeed": 0.0
       }
   ],
-  "Actions":
-  [
-    "Chop", "Gather", "Guard", "Attack", "Dig", "Farm"
-  ]
+  "Actions": [
+    "Chop",
+    "Gather",
+    "Guard",
+    "Attack",
+    "Dig",
+    "Farm"
+  ],
+  "AttackMode": "Attacking00"
 },
 {
   "Name": "Craftsdwarf",
@@ -354,10 +359,14 @@
           "LaunchSpeed": 0.0
       }
   ],
-  "Actions":
-  [
-    "Gather", "Guard", "Attack", "Farm", "Craft"
-  ]
+  "Actions": [
+    "Gather",
+    "Guard",
+    "Attack",
+    "Farm",
+    "Craft"
+  ],
+  "AttackMode": "Attacking00"
 },
 {
   "Name": "Wizard",
@@ -527,10 +536,13 @@
           "LaunchSpeed": 0.0
       }
   ],
-  "Actions":
-  [
-    "Gather", "Guard", "Attack", "Magic"
-  ]
+  "Actions": [
+    "Gather",
+    "Guard",
+    "Attack",
+    "Magic"
+  ],
+  "AttackMode": "Attacking01"
 },
 {
   "Name": "Axe Dwarf",
@@ -705,9 +717,12 @@
           "LaunchSpeed": 0.0
       }
   ],
-  "Actions":
-  [
-    "Chop", "Gather", "Guard", "Attack"
-  ]
+  "Actions": [
+    "Chop",
+    "Gather",
+    "Guard",
+    "Attack"
+  ],
+  "AttackMode": "Attacking00"
 }
 ]

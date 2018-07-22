@@ -32,6 +32,11 @@
     "Layer": "hair beard"
   },
   {
+    "Asset": "Entities/Dwarf/Layers/palette-hair09",
+    "Layer": "hair beard"
+  },
+
+  {
     "Asset": "Entities/Dwarf/Layers/palette-skin01",
     "Layer": "face nose"
   },

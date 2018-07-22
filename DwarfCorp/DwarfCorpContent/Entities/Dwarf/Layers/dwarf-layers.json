@@ -2,9 +2,30 @@
   {
     "Type": "body",
     "Precedence": 0,
-    "Asset": "Entities/Dwarf/Layers/workerbodysheet",
+    "Asset": "Entities/Dwarf/Layers/crafter-body",
     "RestrictionType": "Class",
     "RestrictionValue": "Craftdwarf"
+  },
+  {
+    "Type": "body",
+    "Precedence": 0,
+    "Asset": "Entities/Dwarf/Layers/musket-body",
+    "RestrictionType": "Class",
+    "RestrictionValue": "MusketDwarf"
+  },
+  {
+    "Type": "body",
+    "Precedence": 0,
+    "Asset": "Entities/Dwarf/Layers/soldier-body",
+    "RestrictionType": "Class",
+    "RestrictionValue": "AxeDwarf"
+  },
+  {
+    "Type": "body",
+    "Precedence": 0,
+    "Asset": "Entities/Dwarf/Layers/wizard-body",
+    "RestrictionType": "Class",
+    "RestrictionValue": "Wizard"
   },
   {
     "Type": "body",
@@ -17,26 +38,36 @@
   {
     "Type": "face",
     "Precedence": 1,
-    "Asset": "Entities/Dwarf/Layers/FemaleDwarfFaceSheet"
+    "Asset": "Entities/Dwarf/Layers/woman_face",
+    "RestrictionType": "Gender",
+    "RestrictionValue": "Female"
   },
   {
     "Type": "face",
     "Precedence": 1,
-    "Asset": "Entities/Dwarf/Layers/MaleDwarfFaceSheet"
+    "Asset": "Entities/Dwarf/Layers/man_face",
+    "RestrictionType": "Gender",
+    "RestrictionValue": "Male"
+  },
+  {
+    "Type": "face",
+    "Precedence": 1,
+    "Asset": "Entities/Dwarf/Layers/man_face",
+    "DefaultLayer": true
   },
 
 
   {
     "Type": "nose",
     "Precedence": 2,
-    "Asset": "Entities/Dwarf/Layers/NormalNoseSheet"
+    "Asset": "Entities/Dwarf/Layers/normal-nose"
   },
 
 
   {
     "Type": "beard",
     "Precedence": 3,
-    "Asset": "Entities/Dwarf/Layers/JowelBeardSheet"
+    "Asset": "Entities/Dwarf/Layers/jowel_beard"
   },
   {
     "Type": "beard",
@@ -48,7 +79,7 @@
   {
     "Type": "hair",
     "Precedence": 4,
-    "Asset": "Entities/Dwarf/Layers/TheRingHairSheet"
+    "Asset": "Entities/Dwarf/Layers/balding_hair"
   },
   {
     "Type": "hair",
@@ -59,7 +90,72 @@
 
   {
     "Type": "tool",
+    "Precedence": 6,
+    "Asset": "Entities/Dwarf/Layers/crafter-hammer",
+    "RestrictionType": "Class",
+    "RestrictionValue": "Craftdwarf"
+  },
+  {
+    "Type": "tool",
+    "Precedence": 6,
+    "Asset": "Entities/Dwarf/Layers/musket-musket",
+    "RestrictionType": "Class",
+    "RestrictionValue": "MusketDwarf"
+  },
+  {
+    "Type": "tool",
+    "Precedence": 6,
+    "Asset": "Entities/Dwarf/Layers/soldier-axe",
+    "RestrictionType": "Class",
+    "RestrictionValue": "AxeDwarf"
+  },
+  {
+    "Type": "tool",
+    "Precedence": 6,
+    "Asset": "Entities/Dwarf/Layers/wizard-staff",
+    "RestrictionType": "Class",
+    "RestrictionValue": "Wizard"
+  },
+  {
+    "Type": "tool",
+    "Precedence": 6,
+    "Asset": "Entities/Dwarf/Layers/worker-pick",
+    "RestrictionType": "Class",
+    "RestrictionValue": "Miner"
+  },
+  {
+    "Type": "tool",
+    "Precedence": 6,
+    "Asset": "Entities/Dwarf/Layers/blank",
+    "DefaultLayer": true
+  },
+
+  {
+    "Type": "hat",
     "Precedence": 5,
-    "Asset": "Entities/Dwarf/Layers/crafter-hammer"
+    "Asset": "Entities/Dwarf/Layers/musket-hat",
+    "RestrictionType": "Class",
+    "RestrictionValue": "MusketDwarf"
+  },
+  {
+    "Type": "hat",
+    "Precedence": 5,
+    "Asset": "Entities/Dwarf/Layers/soldier-helmet-new",
+    "RestrictionType": "Class",
+    "RestrictionValue": "AxeDwarf"
+  },
+  {
+    "Type": "hat",
+    "Precedence": 5,
+    "Asset": "Entities/Dwarf/Layers/wizard-hat-new",
+    "RestrictionType": "Class",
+    "RestrictionValue": "Wizard"
+  },
+  {
+    "Type": "hat",
+    "Precedence": 5,
+    "Asset": "Entities/Dwarf/Layers/blank",
+    "DefaultLayer": true
   }
+
 ]

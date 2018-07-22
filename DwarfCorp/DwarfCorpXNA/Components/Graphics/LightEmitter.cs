@@ -45,7 +45,7 @@ namespace DwarfCorp
     /// This component dynamically lights up voxels around it with torch light.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class LightEmitter : Body, IUpdateableComponent
+    public class LightEmitter : Body
     {
         public DynamicLight Light { get; set; }
 
@@ -61,7 +61,7 @@ namespace DwarfCorp
             Light = new DynamicLight(intensity, range);
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
 

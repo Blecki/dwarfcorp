@@ -60,7 +60,7 @@ namespace DwarfCorp
 
         public Plant(ComponentManager Manager, string name, Vector3 Position, float RandomAngle, Vector3 bboxSize,
            string meshAsset, float meshScale) :
-            base(Manager, name, Matrix.Identity, bboxSize, new Vector3(0.0f, bboxSize.Y / 2, 0.0f), true)
+            base(Manager, name, Matrix.Identity, bboxSize, new Vector3(0.0f, bboxSize.Y / 2, 0.0f))
         {
             MeshAsset = meshAsset;
             MeshScale = meshScale;
@@ -82,7 +82,8 @@ namespace DwarfCorp
         private void impl_CreateCosmeticChildren(ComponentManager Manager)
         {
             PropogateTransforms();
-            var mesh = AddChild(new InstanceMesh(Manager, "Model", Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position), MeshAsset, false));
+            var mesh = AddChild(new InstanceMesh(Manager, "Model", 
+                Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position), MeshAsset));
             mesh.SetFlag(Flag.ShouldSerialize, false);
 
             AddChild(new GenericVoxelListener(Manager,

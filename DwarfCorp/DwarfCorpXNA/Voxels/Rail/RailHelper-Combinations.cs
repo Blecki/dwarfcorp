@@ -99,7 +99,7 @@ namespace DwarfCorp.Rail
             return true;
         }
 
-        public static CombinationTable.Combination FindPossibleCombination(Rail.JunctionPiece Piece, IBoundedObject Entity)
+        public static CombinationTable.Combination FindPossibleCombination(Rail.JunctionPiece Piece, Body Entity)
         {
             if (Entity is RailEntity)
             {

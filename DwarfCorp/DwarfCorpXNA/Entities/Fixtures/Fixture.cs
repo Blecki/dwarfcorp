@@ -62,7 +62,7 @@ namespace DwarfCorp
                 "Fixture", 
                 Matrix.CreateTranslation(position), 
                 new Vector3(asset.FrameWidth / 32.0f, asset.FrameHeight / 32.0f, asset.FrameWidth / 32.0f) * 0.9f, 
-                Vector3.Zero, true)
+                Vector3.Zero)
         {
             Asset = asset;
             Frame = frame;

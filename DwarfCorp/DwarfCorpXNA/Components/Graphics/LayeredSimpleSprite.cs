@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class LayeredSimpleSprite : Tinter, IRenderableComponent
+    public class LayeredSimpleSprite : Tinter
     {
         public enum OrientMode
         {
@@ -40,9 +40,8 @@ namespace DwarfCorp
             ComponentManager Manager,
             String Name,
             Matrix LocalTransform,
-            bool AddToCollisionManager,
             List<Layer> Layers)
-            : base(Manager, Name, LocalTransform, Vector3.Zero, Vector3.Zero, AddToCollisionManager)
+            : base(Manager, Name, LocalTransform, Vector3.Zero, Vector3.Zero)
         {
             this.Layers = Layers;
         }
@@ -75,7 +74,7 @@ namespace DwarfCorp
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
-        new public void Render(DwarfTime gameTime,
+        override public void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,

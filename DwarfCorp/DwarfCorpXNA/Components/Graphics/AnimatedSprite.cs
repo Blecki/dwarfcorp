@@ -14,8 +14,7 @@ namespace DwarfCorp
     /// This is an animated "billboard". Essentially, a simple rectangle is drawn with a texture on it.
     /// The rectangle is drawn in such a way that it is always more or less facing the camera.
     /// </summary>
-    [JsonObject(IsReference = true)]
-    public class AnimatedSprite : Tinter, IUpdateableComponent, IRenderableComponent
+    public class AnimatedSprite : Tinter
     {
         public Dictionary<string, Animation> Animations { get; set; }
 
@@ -38,8 +37,8 @@ namespace DwarfCorp
 
         public bool EnableWind { get; set; }
 
-        public AnimatedSprite(ComponentManager Manager, string name, Matrix localTransform, bool addToCollisionManager) :
-            base(Manager, name, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
+        public AnimatedSprite(ComponentManager Manager, string name, Matrix localTransform) :
+            base(Manager, name, localTransform, Vector3.Zero, Vector3.Zero)
         {
             Animations = new Dictionary<string, Animation>();
             OrientationType = OrientMode.Spherical;
@@ -87,7 +86,7 @@ namespace DwarfCorp
             base.ReceiveMessageRecursive(messageToReceive);
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             AnimPlayer.Update(gameTime, !DrawSilhouette); // Can't use instancing if we want the silhouette.
             base.Update(gameTime, chunks, camera);
@@ -117,7 +116,7 @@ namespace DwarfCorp
             AnimPlayer.UpdateInstance(InstanceData);
         }
 
-        new public void Render(DwarfTime gameTime,
+        override public void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,

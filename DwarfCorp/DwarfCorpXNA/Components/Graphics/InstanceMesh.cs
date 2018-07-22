@@ -43,7 +43,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class InstanceMesh : Tinter, IUpdateableComponent, IRenderableComponent
+    public class InstanceMesh : Tinter
     {
         public string ModelType { get; set; }
 
@@ -65,8 +65,8 @@ namespace DwarfCorp
 
         }
 
-        public InstanceMesh(ComponentManager Manager, string name, Matrix localTransform, string modelType, bool addToCollisionManager) :
-            base(Manager, name, localTransform, Vector3.Zero, Vector3.Zero, addToCollisionManager)
+        public InstanceMesh(ComponentManager Manager, string name, Matrix localTransform, string modelType) :
+            base(Manager, name, localTransform, Vector3.Zero, Vector3.Zero)
         {
             PropogateTransforms();
             UpdateBoundingBox();
@@ -75,7 +75,7 @@ namespace DwarfCorp
             Instance.SelectionBufferColor = this.GetGlobalIDColor();
         }
 
-        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
+        override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
 

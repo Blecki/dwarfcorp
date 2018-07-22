@@ -59,7 +59,7 @@ namespace DwarfCorp
         }
 
         public ParticleTrigger(string emitter, ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            base(manager, name, localTransform, boundingBoxExtents, boundingBoxPos, false)
+            base(manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             SoundToPlay = ContentPaths.Audio.explode;
             EmitterName = emitter;

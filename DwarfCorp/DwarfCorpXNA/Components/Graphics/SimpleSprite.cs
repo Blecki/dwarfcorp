@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class SimpleSprite : Tinter, IRenderableComponent
+    public class SimpleSprite : Tinter
     {
         public enum OrientMode
         {
@@ -36,7 +36,7 @@ namespace DwarfCorp
             Matrix LocalTransform,
             SpriteSheet Sheet,
             Point Frame)
-            : base(Manager, Name, LocalTransform, Vector3.Zero, Vector3.Zero, true)
+            : base(Manager, Name, LocalTransform, Vector3.Zero, Vector3.Zero)
         {
             this.Sheet = Sheet;
             this.Frame = Frame;
@@ -101,7 +101,7 @@ namespace DwarfCorp
             WorldHeight = Sheet.FrameHeight / 32.0f;
         }
 
-        new public void Render(DwarfTime gameTime,
+        override public void Render(DwarfTime gameTime,
             ChunkManager chunks,
             Camera camera,
             SpriteBatch spriteBatch,

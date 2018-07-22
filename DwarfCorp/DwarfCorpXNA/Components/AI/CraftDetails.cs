@@ -224,9 +224,8 @@ namespace DwarfCorp
             Matrix localTransform,
             Vector3 bboxExtents,
             Vector3 bboxPos,
-            CraftDetails details,
-            bool addToCollisionManager=true) :
-            base(Manager, name, localTransform, bboxExtents, bboxPos, addToCollisionManager)
+            CraftDetails details) :
+            base(Manager, name, localTransform, bboxExtents, bboxPos)
         {
             this.SetFlag(Flag.ShouldSerialize, true);
             AddChild(details);

@@ -33,11 +33,15 @@
 
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
     public partial class WorldManager
     {
+        [JsonIgnore]
+        public OctTreeNode OctTree = null;
+
         public IEnumerable<Body> EnumerateIntersectingObjects(BoundingBox box, CollisionType queryType)
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects");

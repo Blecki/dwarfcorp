@@ -431,7 +431,7 @@ namespace DwarfCorp.Gui.Widgets
                     Employee.Stats.LevelIndex,
                     Employee.Stats.CurrentClass.Name,
                     Employee.Stats.XP,
-                    Employee.Creature.Gender);
+                    Employee.Creature.Stats.Gender);
 
                 Bio.Text = Employee.Biography;
 

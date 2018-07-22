@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class VoxelRevealer : GameComponent, IUpdateableComponent
+    public class VoxelRevealer : GameComponent
     {
         private Body Body;
         private int Radius;
@@ -61,7 +61,7 @@ namespace DwarfCorp
             OwnerCoordinate = new GlobalVoxelCoordinate(int.MaxValue, int.MaxValue, int.MaxValue);
         }
 
-        void IUpdateableComponent.Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             var currentCoordinate = GlobalVoxelCoordinate.FromVector3(Body.Position);
             if (currentCoordinate != OwnerCoordinate)

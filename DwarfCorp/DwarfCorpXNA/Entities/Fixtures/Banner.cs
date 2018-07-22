@@ -39,7 +39,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Banner : Tinter, IRenderableComponent
+    public class Banner : Tinter
     {
         public CompanyInformation Logo;
         private Vector3 prevWindDirection;
@@ -62,7 +62,7 @@ namespace DwarfCorp
         }
 
         public Banner(ComponentManager Manager) :
-            base(Manager, "Banner", Matrix.Identity, new Vector3(1, 1, 1), Vector3.Zero, false)
+            base(Manager, "Banner", Matrix.Identity, new Vector3(1, 1, 1), Vector3.Zero)
         {
             
         }
@@ -132,7 +132,7 @@ namespace DwarfCorp
             //device.Viewport = oldView;
         }
 
-        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+        override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);

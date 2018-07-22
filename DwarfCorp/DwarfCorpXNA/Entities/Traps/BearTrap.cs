@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class BearTrap : CraftedBody, IUpdateableComponent
+    public class BearTrap : CraftedBody
     {
         [EntityFactory("Bear Trap")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
@@ -79,7 +79,7 @@ namespace DwarfCorp
 
             var spriteSheet = new SpriteSheet(ContentPaths.Entities.DwarfObjects.beartrap, 32);
 
-            var sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.Identity, false)) as AnimatedSprite;
+            var sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.Identity)) as AnimatedSprite;
 
             sprite.AddAnimation(AnimationLibrary.CreateAnimation(spriteSheet, new List<Point> { Point.Zero }, "BearTrapIdle"));
 
@@ -146,7 +146,7 @@ namespace DwarfCorp
             }
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
 

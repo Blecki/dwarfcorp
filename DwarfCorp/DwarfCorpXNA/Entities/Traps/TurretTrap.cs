@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    public class TurretTrap : CraftedBody, IUpdateableComponent
+    public class TurretTrap : CraftedBody
     {
         [EntityFactory("Turret")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
@@ -38,7 +38,7 @@ namespace DwarfCorp
 
         public TurretTrap(ComponentManager manager, Vector3 position, Faction faction, List<ResourceAmount> resources) :
             base(manager, "TurretTrap", Matrix.CreateTranslation(position),
-            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, "Turret", resources), true)
+            new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new CraftDetails(manager, "Turret", resources))
         {
             Allies = faction;
             SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32);
@@ -112,7 +112,7 @@ namespace DwarfCorp
             PropogateTransforms();
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
 

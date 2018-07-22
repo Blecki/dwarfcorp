@@ -41,13 +41,13 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class DestroyOnTimer : Body, IUpdateableComponent, IVoxelListener
+    public class DestroyOnTimer : Body, IVoxelListener
     {
         public VoxelHandle Voxel;
         public Timer DestroyTimer;
 
         public DestroyOnTimer(ComponentManager Manager, ChunkManager chunkManager, VoxelHandle Voxel) :
-            base(Manager, "DestroyTimer", Matrix.CreateTranslation(Voxel.GetBoundingBox().Center()), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero, true)
+            base(Manager, "DestroyTimer", Matrix.CreateTranslation(Voxel.GetBoundingBox().Center()), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
         {
             this.Voxel = Voxel;
         }
@@ -58,7 +58,7 @@ namespace DwarfCorp
                 Die();
         }
 
-        new public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
 

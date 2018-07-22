@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Bed : CraftedBody, IRenderableComponent
+    public class Bed : CraftedBody
     {
         [EntityFactory("Bed")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
@@ -44,7 +44,7 @@ namespace DwarfCorp
             GetComponent<Box>().Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
-        new public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
+        override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
