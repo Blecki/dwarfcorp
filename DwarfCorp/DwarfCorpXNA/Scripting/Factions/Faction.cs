@@ -718,7 +718,7 @@ namespace DwarfCorp
 
             var dwarfPhysics = DwarfFactory.GenerateDwarf(
                     rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15,
-                    World.ComponentManager, "Player", currentApplicant.Class, currentApplicant.Level.Index);
+                    World.ComponentManager, "Player", currentApplicant.Class, currentApplicant.Level.Index, currentApplicant.Gender, currentApplicant.RandomSeed);
             World.ComponentManager.RootComponent.AddChild(dwarfPhysics);
             var newMinion = dwarfPhysics.EnumerateAll().OfType<Dwarf>().FirstOrDefault();
             System.Diagnostics.Debug.Assert(newMinion != null);
