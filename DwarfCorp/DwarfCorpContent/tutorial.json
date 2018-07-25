@@ -1,4 +1,4 @@
-[
+﻿[
 	{
 		"Name": "new game start",
 		"Title": "Tutorial",
@@ -16,12 +16,12 @@
 		"Title": "Following Dwarves",
 		"Text": "You are following a dwarf. Press W, A, S, D to move the dwarf, and C to jump! Deselect the dwarf to cancel following."
 	},
-	{
-		"Name": "mine",
-		"Title": "Mining",
-		"Text": "Left click and drag to tell dwarves to mine blocks. Mining sometimes produces resources for trading and building. Tip: hold ALT and use the mouse wheel to dig pits. Right click and drag to cancel mine designations. When your employee collects resources, the dwarf will take them to a stockpile to store them.",
-		"GuiHilite": "dig"
-	},
+  {
+    "Name": "mine",
+    "Title": "Mining",
+    "Text": "Left click and drag to tell dwarves to mine blocks. Mining sometimes produces resources for trading and building. Tip: hold ALT and use the mouse wheel to dig pits. Right click and drag to cancel mine designations. When your employee collects resources, the dwarf will take them to a stockpile to store them.",
+    "GuiHilite": "dig"
+  },
 	{
 		"Name": "wrangle",
 		"Title": "Wrangling",
