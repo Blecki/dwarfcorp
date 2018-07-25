@@ -39,21 +39,23 @@ namespace DwarfCorp
     public class Seedling : Plant
     {
         public double GrowthTime = 0.0f;
-        public double FullyGrownAfter = 0.0f;
+        public double GrowthHours = 0.0f;
         public float MaxSize = 2.0f;
         public float MinSize = 0.2f;
         public String AdultName;
+
+        public String GoodBiomes = "";
+        public String BadBiomes = "";
+        private String CachedBiome = null;
 
         public Seedling()
         {
             IsGrown = false;
         }
 
-        public Seedling(ComponentManager Manager, String AdultName, Vector3 position, String Asset, int GrowthHours) :
+        public Seedling(ComponentManager Manager, String AdultName, Vector3 position, String Asset) :
             base(Manager, "seedling", position, 0.0f, Vector3.One, Asset, 1.0f)
         {
-            FullyGrownAfter = GrowthHours;
-
             IsGrown = false;
             Name = AdultName + " seedling";
             this.AdultName = AdultName;
@@ -66,12 +68,25 @@ namespace DwarfCorp
         {
             base.Update(gameTime, chunks, camera);
 
-            GrowthTime += gameTime.ElapsedGameTime.TotalMinutes;
+            if (CachedBiome == null)
+            {
+                var biome = Overworld.GetBiomeAt(LocalPosition, chunks.World.WorldScale, chunks.World.WorldOrigin);
+                CachedBiome = biome.Name;
+            }
 
-            var scale = (float)(MinSize + (MaxSize - MinSize) * (GrowthTime / FullyGrownAfter));
+            var factor = 1.0f;
+
+            if (GoodBiomes.Contains(CachedBiome))
+                factor = 1.5f;
+            if (BadBiomes.Contains(CachedBiome))
+                factor = 0.5f;
+
+            GrowthTime += gameTime.ElapsedGameTime.TotalMinutes * factor;
+
+            var scale = (float)(MinSize + (MaxSize - MinSize) * (GrowthTime / GrowthHours));
             ReScale(scale);
             
-            if (GrowthTime >= FullyGrownAfter)
+            if (GrowthTime >= GrowthHours)
                 CreateAdult();
         }
 

@@ -36,12 +36,7 @@ namespace DwarfCorp
 {
     public static class PlantFactories
     {
-        private static int GetPlantGrowthTime()
-        {
-            // In order to make the mechanics affecting plant growth useful to the player, this can't be random.
-            return 12; // MathFunctions.RandInt(12, 48);
-        }
-
+        #region Haunted Tree
         [EntityFactory("Haunted Tree")]
         private static GameComponent __factory00(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -51,10 +46,17 @@ namespace DwarfCorp
         [EntityFactory("Haunted Tree Sprout")]
         private static GameComponent __factory01(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Haunted Tree", Position, "eviltreesprout", GetPlantGrowthTime());
+            return new Seedling(Manager, "Haunted Tree", Position, "eviltreesprout")
+            {
+                GrowthHours = 24.0f,
+                MaxSize = 2.0f,
+                GoodBiomes = "Haunted Forest Waste",
+                BadBiomes = "Tiaga Tundra Desert"
+            };
         }
+        #endregion
 
-
+        #region Pine Tree
         [EntityFactory("Pine Tree")]
         private static GameComponent __factory02(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -64,10 +66,17 @@ namespace DwarfCorp
         [EntityFactory("Pine Tree Sprout")]
         private static GameComponent __factory03(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Pine Tree", Position, "pinesprout", GetPlantGrowthTime());
+            return new Seedling(Manager, "Pine Tree", Position, "pinesprout")
+            {
+                GrowthHours = 24.0f,
+                MaxSize = 2.0f,
+                GoodBiomes = "Tiaga Boreal Forest Deciduous Forest Jolly Forest",
+                BadBiomes = "Tundra Desert Waste"
+            };
         }
+        #endregion
 
-
+        #region Snow Pine Tree
         [EntityFactory("Snow Pine Tree")]
         private static GameComponent __factory04(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -77,10 +86,17 @@ namespace DwarfCorp
         [EntityFactory("Snow Pine Tree Sprout")]
         private static GameComponent __factory05(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Snow Pine Tree", Position, "pinesprout", GetPlantGrowthTime());
+            return new Seedling(Manager, "Snow Pine Tree", Position, "pinesprout")
+            {
+                GrowthHours = 24.0f,
+                MaxSize = 2.0f,
+                GoodBiomes = "Tiaga Boreal Forest",
+                BadBiomes = "Desert Tundra Waste Jungle"
+            };
         }
+        #endregion
 
-
+        #region Candycane
         [EntityFactory("Candycane")]
         private static GameComponent __factory06(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -90,10 +106,17 @@ namespace DwarfCorp
         [EntityFactory("Candycane Sprout")]
         private static GameComponent __factory07(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Candycane", Position, "candycanesprout", GetPlantGrowthTime());
+            return new Seedling(Manager, "Candycane", Position, "candycanesprout")
+            {
+                GrowthHours = 24.0f,
+                MaxSize = 2.0f,
+                GoodBiomes = "Tiaga Jolly Forest",
+                BadBiomes = "Desert Tundra Waste Haunted Forest"
+            };
         }
+        #endregion
 
-
+        #region Palm Tree
         [EntityFactory("Palm Tree")]
         private static GameComponent __factory08(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -103,10 +126,17 @@ namespace DwarfCorp
         [EntityFactory("Palm Tree Sprout")]
         private static GameComponent __factory09(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Palm Tree", Position, "palmsprout", GetPlantGrowthTime());
+            return new Seedling(Manager, "Palm Tree", Position, "palmsprout")
+            {
+                GrowthHours = 24.0f,
+                MaxSize = 2.0f,
+                GoodBiomes = "Jungle Desert",
+                BadBiomes = "Tiaga Tundra Waste Jolly Forest"
+            };
         }
+        #endregion
 
-
+        #region Apple Tree
         [EntityFactory("Apple Tree")]
         private static GameComponent __factory0A(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -116,10 +146,17 @@ namespace DwarfCorp
         [EntityFactory("Apple Tree Sprout")]
         private static GameComponent __factory0B(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Apple Tree", Position, "appletreesprout", GetPlantGrowthTime());
+            return new Seedling(Manager, "Apple Tree", Position, "appletreesprout")
+            {
+                GrowthHours = 24.0f,
+                MaxSize = 2.0f,
+                GoodBiomes = "Grassland Deciduous Forest",
+                BadBiomes = "Desert Tundra Tiaga Jolly Forest Waste"
+            };
         }
+        #endregion
 
-
+        #region Cactus
         [EntityFactory("Cactus")]
         private static GameComponent __factory0C(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -129,10 +166,17 @@ namespace DwarfCorp
         [EntityFactory("Cactus Sprout")]
         private static GameComponent __factory0D(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Cactus", Position, "cactussprout", GetPlantGrowthTime());
+            return new Seedling(Manager, "Cactus", Position, "cactussprout")
+            {
+                GrowthHours = 12.0f,
+                MaxSize = 0.75f,
+                GoodBiomes = "Desert",
+                BadBiomes = "Boreal Forest Deciduous Forest Tiaga Tundra Jungle Waste Haunted Forest Jolly Forest"
+            };
         }
+        #endregion
 
-
+        #region Pumpkin
         [EntityFactory("Pumpkin")]
         private static GameComponent __factory0E(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -142,10 +186,17 @@ namespace DwarfCorp
         [EntityFactory("Pumpkin Sprout")]
         private static GameComponent __factory0F(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Pumpkin", Position, "pumpkinvinesprout", GetPlantGrowthTime());
+            return new Seedling(Manager, "Pumpkin", Position, "pumpkinvinesprout")
+            {
+                GrowthHours = 6.0f,
+                MaxSize = 0.5f,
+                GoodBiomes = "Grassland Deciduous Forest Boreal Forest Haunted Forest",
+                BadBiomes = "Desert Waste"
+            };
         }
+        #endregion
 
-
+        #region Berry Bush
         [EntityFactory("Berry Bush")]
         private static GameComponent __factory10(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -155,10 +206,17 @@ namespace DwarfCorp
         [EntityFactory("Berry Bush Sprout")]
         private static GameComponent __factory11(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Berry Bush", Position, "berrybushsprout", GetPlantGrowthTime());
+            return new Seedling(Manager, "Berry Bush", Position, "berrybushsprout")
+            {
+                GrowthHours = 24.0f,
+                MaxSize = 1.0f,
+                GoodBiomes = "GrassLand Deciduous Forest Jolly Forest",
+                BadBiomes = "Desert Tiaga Tundra Waste"
+            };
         }
+        #endregion
 
-
+        #region Mushroom
         [EntityFactory("Mushroom")]
         private static GameComponent __factory12(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -168,10 +226,15 @@ namespace DwarfCorp
         [EntityFactory("Mushroom Sprout")]
         private static GameComponent __factory13(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Mushroom", Position, "mushroomsprout", GetPlantGrowthTime());
+            return new Seedling(Manager, "Mushroom", Position, "mushroomsprout")
+            {
+                GrowthHours = 6.0f,
+                MaxSize = 0.25f
+            };
         }
+        #endregion
 
-
+        #region Cave Mushroom
         [EntityFactory("Cave Mushroom")]
         private static GameComponent __factory14(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -181,10 +244,15 @@ namespace DwarfCorp
         [EntityFactory("Cave Mushroom Sprout")]
         private static GameComponent __factory15(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Cave Mushroom", Position, "caveshroomsprout", GetPlantGrowthTime());
+            return new Seedling(Manager, "Cave Mushroom", Position, "caveshroomsprout")
+            {
+                GrowthHours = 6.0f,
+                MaxSize = 0.25f
+            };
         }
+        #endregion
 
-
+        #region Wheat
         [EntityFactory("Wheat")]
         private static GameComponent __factory16(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -194,7 +262,14 @@ namespace DwarfCorp
         [EntityFactory("Wheat Sprout")]
         private static GameComponent __factory17(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Seedling(Manager, "Wheat", Position, "wheatsprout", GetPlantGrowthTime());
+            return new Seedling(Manager, "Wheat", Position, "wheatsprout")
+            {
+                GrowthHours = 12.0f,
+                MaxSize = 1.0f,
+                GoodBiomes = "Grassland",
+                BadBiomes = "Desert Tiaga Tundra Waste Haunted Forest Jolly Forest"
+            };
         }
+        #endregion
     }
 }
