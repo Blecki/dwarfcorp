@@ -165,6 +165,7 @@ namespace DwarfCorp
             public int MaxSaves = 15;
             public bool EnableSlowMotion = false;
             public int ConsoleTextSize = 2;
+            public float HoursUnhappyBeforeQuitting = 8.0f;
             public ColorSettings Colors = new ColorSettings();
 
             public Settings Clone()

@@ -226,11 +226,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "KILL THINGS",
                     OnClick = (sender, args) => ActivateGodTool("Kill Things")
                 },
-                new HorizontalMenuTray.MenuItem
-                {
-                    Text = "DISEASE",
-                    OnClick = (sender, args) => ActivateGodTool("Disease")
-                },
+               
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "FILL WATER",
@@ -307,33 +303,72 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "DWARF BUX",
                     OnClick = (sender, args) => Master.Faction.AddMoney(100m)
                 },
+
                 new HorizontalMenuTray.MenuItem
                 {
-                    Text = "PAY",
-                    OnClick = (sender, args) => Master.PayEmployees()
-                },
-                new HorizontalMenuTray.MenuItem
-                {
-                    Text = "STARVE",
-                    OnClick = (sender, args) =>
+                    Text = "MINIONS",
+                    ExpansionChild = new HorizontalMenuTray.Tray
                     {
-                        foreach(var minion in Master.Faction.Minions)
+                        ItemSource = new HorizontalMenuTray.MenuItem[]
                         {
-                            minion.Status.Hunger.CurrentValue = 0;
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "PAY",
+                                OnClick = (sender, args) => Master.PayEmployees()
+                            },
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "STARVE",
+                                OnClick = (sender, args) =>
+                                {
+                                    foreach(var minion in Master.Faction.Minions)
+                                        minion.Status.Hunger.CurrentValue = 0;
+                                }
+                            },                
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "XP",
+                                OnClick = (sender, args) =>
+                                {
+                                    foreach(var minion in Master.Faction.Minions)
+                                        minion.AddXP(100);
+                                } 
+                            },
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "DISEASE",
+                                OnClick = (sender, args) => ActivateGodTool("Disease")
+                            },
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "HAPPY",
+                                OnClick = (sender, args) =>
+                                {
+                                    foreach (var minion in Master.Faction.Minions)
+                                    {
+                                        var thoughts = minion.GetRoot().GetComponent<DwarfThoughts>();
+                                        if (thoughts != null)
+                                            thoughts.AddThought(Thought.ThoughtType.CheatedHappy);
+                                    }
+                                }
+                            },
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "PISSED",
+                                OnClick = (sender, args) =>
+                                {
+                                    foreach (var minion in Master.Faction.Minions)
+                                    {
+                                        var thoughts = minion.GetRoot().GetComponent<DwarfThoughts>();
+                                        if (thoughts != null)
+                                            thoughts.AddThought(Thought.ThoughtType.CheatedPissed);
+                                    }
+                                }
+                            }
                         }
                     }
                 },
-                 new HorizontalMenuTray.MenuItem
-                {
-                    Text = "XP",
-                    OnClick = (sender, args) =>
-                    {
-                        foreach(var minion in Master.Faction.Minions)
-                        {
-                            minion.AddXP(100);
-                        }
-                    }
-                },
+                 
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "SPAWN TEST",
