@@ -84,6 +84,11 @@
   {
     "Type": "beard",
     "Precedence": 3,
+    "Asset": "Entities/Dwarf/Layers/goatee_beard"
+  },
+  {
+    "Type": "beard",
+    "Precedence": 3,
     "Asset": "Entities/Dwarf/Layers/blank"
   },
 
