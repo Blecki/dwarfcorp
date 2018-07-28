@@ -504,17 +504,24 @@ namespace DwarfCorp
                         UnhappinessTime += gameTime.ElapsedGameTime.TotalMinutes;
                         if (UnhappinessTime > GameSettings.Default.HoursUnhappyBeforeQuitting) // If we've been unhappy long enough, quit.
                         {
-                            //Manager.World.MakeWorldPopup(String.Format("{0} ({1}) has quit!",
-                            //    Stats.FullName, Stats.CurrentClass.Name), Creature.Physics, -10, 10);
+                            var thoughts = GetRoot().GetComponent<DwarfThoughts>();
                             Manager.World.MakeAnnouncement( // Can't use a popup because the dwarf will soon not exist. Also - this is a serious event!
-                                Message: String.Format("{0} has quit!", Stats.FullName),
+                                Message: String.Format("{0} has quit!{1}", 
+                                    Stats.FullName, 
+                                    (thoughts == null ? "" : (" The last straw: " + thoughts.Thoughts.Last(t => t.HappinessModifier < 0.0f).Description))),
                                 ClickAction: null,
                                 logEvent: true,
-                                eventDetails: "INSERT LIST OF UNHAPPY THOUGHTS HERE"
+                                eventDetails: (thoughts == null ? "So sick of this place!" : String.Join("\n", thoughts.Thoughts.Where(t => t.HappinessModifier < 0.0f).Select(t => t.Description)))
                                 );
 
+                            LeaveWorld();
+
                             GetRoot().GetComponent<Inventory>().Die();
-                            GetRoot().Delete();
+                            GetRoot().GetComponent<SelectionCircle>().Die();
+                            if (thoughts != null)
+                                thoughts.Thoughts.Clear();
+                            //GetRoot().GetComponent<Inventory>().Die();
+                            //GetRoot().Delete();
 
                             Faction.Minions.Remove(this);
                             Faction.SelectedMinions.Remove(this);
