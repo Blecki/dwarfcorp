@@ -487,7 +487,7 @@ namespace DwarfCorp
 
             if (!Active)
                 return;
-
+            Creature.NoiseMaker.BasePitch = Stats.VoicePitch;
             if (Debugger.Switches.DrawPaths)
             {
                 StringBuilder taskString = new StringBuilder();

@@ -129,6 +129,7 @@ namespace DwarfCorp
             Status = new CreatureStatus();
             IsHeadClear = true;
             NoiseMaker = new NoiseMaker();
+            NoiseMaker.BasePitch = stats.VoicePitch;
             OverrideCharacterMode = false;
         }
 

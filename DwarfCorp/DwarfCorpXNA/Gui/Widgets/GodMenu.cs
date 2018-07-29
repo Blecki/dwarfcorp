@@ -258,6 +258,21 @@ namespace DwarfCorp.Gui.Widgets
 
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "PASS OUT",
+                    OnClick = (sender, args) =>
+                    {
+                        var employee = Datastructures.SelectRandom(Master.Faction.Minions);
+                        if (employee != null)
+                        {
+                            employee.Creature.Heal(-employee.Status.Health.CurrentValue * employee.Creature.MaxHealth + 1);
+                        }
+
+                    }
+                },
+
+
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "TRADE ENVOY",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {

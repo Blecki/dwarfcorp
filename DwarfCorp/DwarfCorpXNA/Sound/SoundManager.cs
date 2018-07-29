@@ -474,6 +474,10 @@ namespace DwarfCorp
                 {
                     sound.EffectInstance.Pitch = MathFunctions.Clamp((float)(MathFunctions.Random.NextDouble() * 1.0f - 0.5f) * levels.RandomPitch + pitch, -1.0f, 1.0f);
                 }
+                else
+                {
+                    sound.EffectInstance.Pitch = pitch;
+                }
                 ActiveSounds.Add(sound);
 
                 return sound;

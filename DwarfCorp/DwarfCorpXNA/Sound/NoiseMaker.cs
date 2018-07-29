@@ -47,7 +47,7 @@ namespace DwarfCorp
     public class NoiseMaker
     {
         public Sound3D CurrentSound { get; set; }
-
+        public float BasePitch = 0.0f;
         public Dictionary<string, List<string>> Noises { get; set; }
 
         public NoiseMaker()
@@ -114,7 +114,7 @@ namespace DwarfCorp
             {
                 List<string> availableNoises = Noises[noise];
                 int index = MathFunctions.Random.Next(availableNoises.Count);
-                CurrentSound = SoundManager.PlaySound(availableNoises[index], position, randomPitch, volume);
+                CurrentSound = SoundManager.PlaySound(availableNoises[index], position, randomPitch, volume, BasePitch);
                
             }
 
