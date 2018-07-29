@@ -37,6 +37,7 @@ namespace DwarfCorp.Gui.Widgets
         private Gui.Widgets.TextProgressBar Energy;
         private Gui.Widgets.TextProgressBar Happiness;
         private Gui.Widgets.TextProgressBar Health;
+        private Gui.Widgets.TextProgressBar Boredom;
 
         private Widget LevelLabel;
         private Widget PayLabel;
@@ -162,6 +163,7 @@ namespace DwarfCorp.Gui.Widgets
             Energy = CreateStatusBar(right, "Energy", "Exhausted", "Tired", "Okay", "Energetic");
             Happiness = CreateStatusBar(right, "Happiness", "Miserable", "Unhappy", "So So", "Happy", "Euphoric");
             Health = CreateStatusBar(right, "Health", "Near Death", "Critical", "Hurt", "Uncomfortable", "Fine", "Perfect");
+            Boredom = CreateStatusBar(right, "Boredom", "Desperate", "Overworked", "Bored", "Meh", "Fine", "Excited");
             #endregion           
 
             PayLabel = InteriorPanel.AddChild(new Widget
@@ -426,6 +428,7 @@ namespace DwarfCorp.Gui.Widgets
                 SetStatusBar(Energy, Employee.Status.Energy);
                 SetStatusBar(Happiness, Employee.Status.Happiness);
                 SetStatusBar(Health, Employee.Status.Health);
+                SetStatusBar(Boredom, Employee.Status.Boredom);
 
                 LevelLabel.Text = String.Format("\n{0}: Level {1} {2} ({3} xp). {4}", Employee.Stats.CurrentLevel.Name,
                     Employee.Stats.LevelIndex,

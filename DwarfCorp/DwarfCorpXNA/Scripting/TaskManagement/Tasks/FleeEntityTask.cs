@@ -56,6 +56,7 @@ namespace DwarfCorp
             AutoRetry = true;
                 Category = TaskCategory.Other;
             this.Distance = Distance;
+            BoredomIncrease = -0.5f;
         }
 
         public override Act CreateScript(Creature creature)

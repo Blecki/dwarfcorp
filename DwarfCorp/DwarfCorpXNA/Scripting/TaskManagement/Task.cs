@@ -112,6 +112,8 @@ namespace DwarfCorp
 
         public string Name { get; set; }
 
+        public float BoredomIncrease = 0.0f;
+
         public virtual void Render(DwarfTime time)
         {
             

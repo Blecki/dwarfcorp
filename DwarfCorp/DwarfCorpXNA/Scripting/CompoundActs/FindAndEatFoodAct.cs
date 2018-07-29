@@ -148,14 +148,17 @@ namespace DwarfCorp
                             Agent.Creature.CurrentCharacterMode = CharacterMode.Sitting;
                             if (MathFunctions.RandEvent(0.05f))
                             {
-                                Agent.Creature.World.ParticleManager.Trigger("crumbs", foodPosition, Color.White,
-                                    3);
+                                Agent.Creature.World.ParticleManager.Trigger("crumbs", foodPosition, Color.White, 3);
                             }
                             yield return Act.Status.Running;
                         }
 
                         Agent.Creature.Status.Hunger.CurrentValue += resource.FoodContent;
                         Agent.Creature.AddThought(Thought.ThoughtType.AteFood);
+                        if (resource.Tags.Contains(Resource.ResourceTags.Alcohol))
+                        {
+                            Agent.Creature.AddThought(Thought.ThoughtType.HadAle);
+                        }
                         FoodBody.GetRoot().Delete();
                         yield return Act.Status.Success;
                     }

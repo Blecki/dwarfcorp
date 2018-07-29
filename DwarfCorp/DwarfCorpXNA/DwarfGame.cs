@@ -762,6 +762,10 @@ namespace DwarfCorp
 
         public void AddEntry(LogEntry entry)
         {
+            // Deduplication of entries.
+            if (Entries.Any(e => e.Text == entry.Text && (entry.Date - e.Date) < new TimeSpan(0, 1, 0, 0, 0)))
+                return;
+
             Console.Out.WriteLine(entry.Text);
             Entries.Add(entry);
             Entries.RemoveAll(e => (entry.Date - e.Date) > MaxDuration);

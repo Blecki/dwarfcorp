@@ -426,6 +426,60 @@ namespace DwarfCorp
             }
         }
 
+        private Task SatisfyBoredom()
+        {
+            if (World.Master.GamblingState.State == Scripting.Gambling.Status.Gaming ||
+                World.Master.GamblingState.State == Scripting.Gambling.Status.WaitingForPlayers && World.Master.GamblingState.Participants.Count > 0)
+            {
+                var task = new Scripting.GambleTask() { Priority = Task.PriorityType.High };
+                if (task.IsFeasible(Creature) == Task.Feasibility.Feasible)
+                {
+                    return task;
+                }
+            }
+            int rand = MathFunctions.RandInt(0, 5);
+            switch (rand)
+            {
+
+                case 0:
+                {
+                    return new ActWrapperTask(new LongWanderAct(this) { PathLength = 50, Radius = 30, Name = "Go on a walk", Is2D = true }) { Name = "Go on a walk.", Priority = Task.PriorityType.High, BoredomIncrease = -1.0f };
+                }
+                case 1:
+                {
+                    if (Faction.ListResourcesWithTag(Resource.ResourceTags.Alcohol).Count > 0)
+                    {
+                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol}, 3, false) { Name = "Binge drink." }) { Name = "Binge drink.", Priority = Task.PriorityType.High, BoredomIncrease = -1.5f };
+                    }
+                    if (!Status.Hunger.IsSatisfied())
+                    {
+                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this), 3, false) { Name = "Binge eat." }) { Name = "Binge eat.", Priority = Task.PriorityType.High, BoredomIncrease = -1.0f };
+                    }
+                        return ActOnIdle();
+                }
+                case 2:
+                {
+                    return new ActWrapperTask(new GoToChairAndSitAct(this) { SitTime = 60, Name = "Relax." }) { Name = "Relax.", Priority = Task.PriorityType.High, BoredomIncrease = -0.25f };
+                }
+                case 3:
+                {
+                        var task = new Scripting.GambleTask() { Priority = Task.PriorityType.High };
+                        if (task.IsFeasible(Creature) == Task.Feasibility.Feasible)
+                        {
+                            return task;
+                        }
+                        break;
+                }
+                case 4:
+                {
+                        return ActOnIdle();
+                }
+            }
+
+            return ActOnIdle();
+
+        }
+
         /// <summary> Update this creature </summary>
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
@@ -461,6 +515,17 @@ namespace DwarfCorp
             HandleReproduction();
             
 
+            if (CurrentTask != null && Stats.CanGetBored)
+            {
+                float randomness = MathFunctions.Rand() * CurrentTask.BoredomIncrease * 0.25f;
+                Status.Boredom.SetValue(Status.Boredom.CurrentValue - (float)((CurrentTask.BoredomIncrease + randomness) * gameTime.ElapsedGameTime.TotalSeconds));
+
+                if (Status.Boredom.IsCritical())
+                {
+                    Creature.AddThought(Thought.ThoughtType.FeltBored);
+                }
+            }
+
             // Heal thyself
             if (Status.Health.IsDissatisfied() && Stats.CanSleep)
             {
@@ -487,6 +552,15 @@ namespace DwarfCorp
                 }
                 if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
                     AssignTask(toReturn);
+            }
+
+            if (Stats.CanGetBored && Status.Boredom.IsDissatisfied())
+            {
+                Task toReturn = SatisfyBoredom();
+                if (toReturn != null && !Tasks.Contains(toReturn) && CurrentTask != toReturn)
+                {
+                    AssignTask(toReturn);
+                }
             }
 
             restockTimer.Update(DwarfTime.LastTime);
@@ -719,6 +793,19 @@ namespace DwarfCorp
             var flames = GetRoot().GetComponent<Flammable>();
             if (flames != null && flames.IsOnFire)
                 return new LongWanderAct(this) { Name = "Freak out!", PathLength = 2, Radius = 5 }.AsTask();
+
+            if (Stats.CanGetBored)
+            {
+                if (World.Master.GamblingState.State == Scripting.Gambling.Status.Gaming ||
+                    World.Master.GamblingState.State == Scripting.Gambling.Status.WaitingForPlayers && World.Master.GamblingState.Participants.Count > 0)
+                {
+                    var task = new Scripting.GambleTask() { Priority = Task.PriorityType.High };
+                    if (task.IsFeasible(Creature) == Task.Feasibility.Feasible)
+                    {
+                        return task;
+                    }
+                }
+            }
 
             if (Faction == World.PlayerFaction && !Status.IsOnStrike)
             {
@@ -1114,7 +1201,12 @@ namespace DwarfCorp
             }
 
             fear = Math.Min(fear, 0.99f);
-            return MathFunctions.RandEvent(1.0f - fear);
+            var fighting = MathFunctions.RandEvent(1.0f - fear);
+            if (!fighting)
+            {
+                Creature.AddThought(Thought.ThoughtType.Frightened);
+            }
+            return fighting;
         }
 
         public void AssignTask(Task task)

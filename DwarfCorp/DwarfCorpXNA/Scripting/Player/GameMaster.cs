@@ -96,6 +96,7 @@ namespace DwarfCorp
         private Timer sliceUpTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
         public int MaxViewingLevel = VoxelConstants.ChunkSizeY;
 
+        public Scripting.Gambling GamblingState = new Scripting.Gambling();
 
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
@@ -428,6 +429,7 @@ namespace DwarfCorp
 
         public void Update(DwarfGame game, DwarfTime time)
         {
+            GamblingState.Update(time);
             TaskManager.Update(Faction.Minions);
             CurrentTool.Update(game, time);
             Faction.RoomBuilder.Update();

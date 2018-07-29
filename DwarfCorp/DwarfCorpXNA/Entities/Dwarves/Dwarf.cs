@@ -148,6 +148,7 @@ namespace DwarfCorp
             Stats.Size = 5;
             Stats.CanSleep = true;
             Stats.CanEat = true;
+            Stats.CanGetBored = true;
             AI.Movement.CanClimbWalls = true; // Why isn't this a flag like the below?
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
@@ -163,8 +164,8 @@ namespace DwarfCorp
             AI.TriggersMourning = true;
             AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Stats.Gender);
             Species = "Dwarf";
-
-
+            Status.Money = (decimal)MathFunctions.Rand(0, 150);
+            
             Physics.AddChild(new VoxelRevealer(Manager, Physics, 5)).SetFlag(Flag.ShouldSerialize, false);
 
             Physics.AddChild(new DwarfThoughts(Manager, "Thoughts"));

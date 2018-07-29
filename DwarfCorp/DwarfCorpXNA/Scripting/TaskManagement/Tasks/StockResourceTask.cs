@@ -50,6 +50,7 @@ namespace DwarfCorp
         {
             Category = TaskCategory.Gather;
             Priority = PriorityType.Low;
+            BoredomIncrease = 0.1f;
         }
 
         public StockResourceTask(ResourceAmount entity)
@@ -59,6 +60,7 @@ namespace DwarfCorp
             Name = "Stock Entity: " + entity.ResourceType + " " + entity.NumResources;
             Priority = PriorityType.Low;
             ReassignOnDeath = false;
+            BoredomIncrease = 0.1f;
         }
 
         public override Act CreateScript(Creature creature)

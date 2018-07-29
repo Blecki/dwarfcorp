@@ -47,6 +47,7 @@ namespace DwarfCorp
         {
             Priority = PriorityType.Low;
             Category = TaskCategory.Plant;
+            BoredomIncrease = 0.2f;
         }
 
         public PlantTask(Farm farmToWork)
@@ -56,6 +57,7 @@ namespace DwarfCorp
             Priority = PriorityType.Low;
             AutoRetry = true;
             Category = TaskCategory.Plant;
+            BoredomIncrease = 0.2f;
         }
 
         public override bool ShouldRetry(Creature agent)

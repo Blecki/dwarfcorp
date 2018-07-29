@@ -533,7 +533,7 @@ namespace DwarfCorp
                     Time.Speed = 1000;
                 }
             }
-            //ParticleManager.Trigger("spatter", CursorLightPos + Vector3.Up, Color.White, 1);
+            //ParticleManager.Trigger("dice", CursorLightPos + Vector3.Up, Color.White, 1);
 
             FillClosestLights(gameTime);
             IndicatorManager.Update(gameTime);

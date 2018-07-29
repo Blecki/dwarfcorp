@@ -78,6 +78,7 @@ namespace DwarfCorp
             {
                 Tree = new Sequence(
                       new SetBlackboardData<VoxelHandle>(Agent, "ActionVoxel", Voxel),
+                      new SetBlackboardData<bool>(Agent, "NoPath", false),
                       new Repeat(
                           new Sequence(
                               new Wrap(CheckPath) { Name = "Check path"},

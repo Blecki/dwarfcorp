@@ -58,6 +58,8 @@ namespace DwarfCorp
         public Status Happiness { get { return Statuses["Happiness"]; } set { Statuses["Happiness"] = value; } }
         [JsonIgnore]
         public Status Health { get { return Statuses["Health"]; } set { Statuses["Health"] = value; } }
+        [JsonIgnore]
+        public Status Boredom { get { return Statuses["Boredom"]; } set { Statuses["Boredom"] = value; } }
         public DwarfBux Money { get; set; }
         private float HungerDamageRate = 10.0f;
         private DateTime LastHungerDamageTime = DateTime.Now;
@@ -96,6 +98,16 @@ namespace DwarfCorp
                 SatisfiedThreshold = 49.0f,
                 DissatisfiedThreshold = 20.0f,
                 CurrentValue = 50.0f
+            };
+
+            Boredom = new Status
+            {
+                MaxValue = 35.0f,
+                MinValue = 0.0f,
+                Name = "Boredom",
+                SatisfiedThreshold = 20.0f,
+                DissatisfiedThreshold = 15.0f,
+                CurrentValue = 30.0f
             };
 
             Health = new Status

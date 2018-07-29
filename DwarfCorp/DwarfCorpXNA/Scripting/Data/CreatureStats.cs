@@ -151,7 +151,7 @@ namespace DwarfCorp
         public float HungerResistance { get { return BuffedCon; } }
 
         public bool CanSleep { get; set; }
-
+        public bool CanGetBored { get; set; }
         public string FullName { get; set; }
         public int NumBlocksDestroyed { get; set; }
         public int NumItemsGathered { get; set; }
@@ -205,6 +205,7 @@ namespace DwarfCorp
         {
             CanSleep = false;
             CanEat = false;
+            CanGetBored = false;
             FullName = "";
             CurrentClass = new WorkerClass();
             AllowedTasks = CurrentClass.Actions;
@@ -229,6 +230,7 @@ namespace DwarfCorp
         {
             CanSleep = false;
             CanEat = false;
+            CanGetBored = false;
             FullName = "";
             CurrentClass = creatureClass;
             AllowedTasks = CurrentClass.Actions;
