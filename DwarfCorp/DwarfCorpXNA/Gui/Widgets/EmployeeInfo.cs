@@ -313,6 +313,17 @@ namespace DwarfCorp.Gui.Widgets
                 }
             });
 
+            bottomBar.AddChild(new Button()
+            {
+                Text = "Chat...",
+                Tooltip = "Have a talk with your employee.",
+                AutoLayout = AutoLayout.DockRight,
+                OnClick = (sender, args) =>
+                {
+                    Employee.World.Game.StateManager.PushState(new YarnState(ContentPaths.employee_conversation, "Start", Employee.World.ConversationMemory));
+                }
+            });
+
 
             LevelButton = bottomBar.AddChild(new Button()
             {
