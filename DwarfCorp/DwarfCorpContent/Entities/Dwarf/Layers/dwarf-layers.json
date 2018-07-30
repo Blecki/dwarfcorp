@@ -84,6 +84,11 @@
   {
     "Type": "beard",
     "Precedence": 3,
+    "Asset": "Entities/Dwarf/Layers/goatee_beard"
+  },
+  {
+    "Type": "beard",
+    "Precedence": 3,
     "Asset": "Entities/Dwarf/Layers/blank"
   },
 
@@ -91,7 +96,14 @@
   {
     "Type": "hair",
     "Precedence": 4,
-    "Asset": "Entities/Dwarf/Layers/balding_hair"
+    "Asset": "Entities/Dwarf/Layers/balding_hair",
+	"RestrictionType": "Gender",
+    "RestrictionValue": "Male Nonbinary"
+  },
+    {
+    "Type": "hair",
+    "Precedence": 4,
+    "Asset": "Entities/Dwarf/Layers/short_hair"
   },
   {
     "Type": "hair",
@@ -173,8 +185,7 @@
   {
     "Type": "hat",
     "Precedence": 5,
-    "Asset": "Entities/Dwarf/Layers/blank",
-    "DefaultLayer": true
+    "Asset": "Entities/Dwarf/Layers/blank"
   },
 
   {

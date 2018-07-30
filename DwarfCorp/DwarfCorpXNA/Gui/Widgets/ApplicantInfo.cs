@@ -24,7 +24,7 @@ namespace DwarfCorp.Gui.Widgets
         private Widget LastJobLabel;
         private Widget LastJobLocation;
         private Widget Biography;
-        private Widget Portrait;
+        private EmployeePortrait Portrait;
 
         public override void Construct()
         {
@@ -33,11 +33,11 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 48)
             });
-            Portrait = topWidget.AddChild(new Widget()
+            Portrait = topWidget.AddChild(new EmployeePortrait()
             {
-                MinimumSize = new Point(32, 48),
+                MinimumSize = new Point(48, 40),
                 AutoLayout = AutoLayout.DockLeft
-            });
+            }) as EmployeePortrait;
             NameLabel = topWidget.AddChild(new Gui.Widget
             {
                 AutoLayout = AutoLayout.DockTop,
@@ -106,9 +106,12 @@ namespace DwarfCorp.Gui.Widgets
                 LastJobLocation.Text = String.Format("Home town - {0}", Applicant.HomeTown);
                 Biography.Text = Applicant.Biography;
                 Resume.Text = Applicant.CoverLetter;
-                var idx = EmployeePanel.GetIconIndex(Applicant.Class.Name);
-                Portrait.Background = idx >= 0 ? new TileReference("dwarves", idx) : null;
+                //var idx = EmployeePanel.GetIconIndex(Applicant.Class.Name);
+                //Portrait.Background = idx >= 0 ? new TileReference("dwarves", idx) : null;
+                Portrait.Sprite = Applicant.GetLayers();
+                Portrait.AnimationPlayer = Applicant.GetAnimationPlayer(Portrait.Sprite);
                 Portrait.Invalidate();
+                Portrait.Sprite.Update(GameStates.GameState.Game.GraphicsDevice);
 
             }
 

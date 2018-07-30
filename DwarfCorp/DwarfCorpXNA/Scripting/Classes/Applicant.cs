@@ -50,9 +50,10 @@ namespace DwarfCorp
         public string HomeTown { get; set; }
         public string Biography { get; set; }
         public Gender Gender { get; set; }
+        public int RandomSeed { get; set; }
         public Applicant()
         {
-            
+            RandomSeed = MathFunctions.Random.Next();
         }
 
         public static string GenerateBiography(string Name, Gender Gender)
@@ -106,6 +107,50 @@ namespace DwarfCorp
                  templates[MathFunctions.Random.Next(templates.Count)].ToArray());
 
             Biography = GenerateBiography(Name, Gender);
+        }
+
+        public LayeredSprites.LayerStack GetLayers()
+        {
+            var random = new Random(RandomSeed);
+
+            var hairPalette = LayeredSprites.LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("hair")).SelectRandom(random);
+            var skinPalette = LayeredSprites.LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("face")).SelectRandom(random);
+            LayeredSprites.LayerStack sprite = new LayeredSprites.LayerStack();
+            CreatureStats stats = new CreatureStats(Class, Level.Index)
+            {
+                Gender = this.Gender
+            };
+            
+            AddLayerOrDefault(sprite, random, "body", stats, skinPalette);
+            AddLayerOrDefault(sprite, random, "face", stats, skinPalette);
+            AddLayerOrDefault(sprite, random, "nose", stats, skinPalette);
+            AddLayerOrDefault(sprite, random, "beard", stats, hairPalette);
+            AddLayerOrDefault(sprite, random, "hair", stats, hairPalette);
+            AddLayerOrDefault(sprite, random, "tool", stats);
+            AddLayerOrDefault(sprite, random, "hat", stats, hairPalette);
+            return sprite;
+        }
+
+        public AnimationPlayer GetAnimationPlayer(LayeredSprites.LayerStack stack)
+        {
+            foreach (Animation animation in AnimationLibrary.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations))
+                if (animation.Name == "IdleFORWARD")
+                    return new AnimationPlayer(stack.ProxyAnimation(animation));
+            return null;
+        }
+
+
+        private void AddLayerOrDefault(LayeredSprites.LayerStack stack, Random Random, String Layer, CreatureStats stats, LayeredSprites.Palette Palette = null)
+        {
+            var layers = LayeredSprites.LayerLibrary.EnumerateLayers(Layer).Where(l => !l.DefaultLayer && l.PassesFilter(stats));
+            if (layers.Count() > 0)
+                stack.AddLayer(layers.SelectRandom(Random), Palette);
+            else
+            {
+                var defaultLayer = LayeredSprites.LayerLibrary.EnumerateLayers(Layer).Where(l => l.DefaultLayer).FirstOrDefault();
+                if (defaultLayer != null)
+                    stack.AddLayer(defaultLayer, Palette);
+            }
         }
     }
 }

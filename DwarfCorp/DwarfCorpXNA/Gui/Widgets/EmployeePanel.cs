@@ -30,8 +30,8 @@ namespace DwarfCorp.Gui.Widgets
                     bar.AddChild(new EmployeePortrait
                     {
                         AutoLayout = AutoLayout.DockLeft,
-                        MinimumSize = new Point(32, 48),
-                        MaximumSize = new Point(32, 48),
+                        MinimumSize = new Point(48, 40),
+                        MaximumSize = new Point(48, 40),
                         Sprite = employeeSprite.GetLayers(),
                         AnimationPlayer = employeeSprite.AnimPlayer
                     });

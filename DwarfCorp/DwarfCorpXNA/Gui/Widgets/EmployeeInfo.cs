@@ -72,7 +72,7 @@ namespace DwarfCorp.Gui.Widgets
             Icon = top.AddChild(new DwarfCorp.Gui.Widgets.EmployeePortrait
             {
                 AutoLayout = AutoLayout.DockLeft,
-                MinimumSize = new Point(64, 96),
+                MinimumSize = new Point(48, 40),
             }) as EmployeePortrait;        
 
             NameLabel = top.AddChild(new Gui.Widget
