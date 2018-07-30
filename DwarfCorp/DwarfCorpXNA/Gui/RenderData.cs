@@ -75,6 +75,7 @@ namespace DwarfCorp.Gui
                     {
                         case JsonTileSheetType.TileSheet:
                         case JsonTileSheetType.VariableWidthFont:
+                        case JsonTileSheetType.JsonFont:
                             realTexture = AssetManager.GetContentTexture(s.Texture);
                             break;
                         case JsonTileSheetType.Generated:
@@ -120,6 +121,10 @@ namespace DwarfCorp.Gui
 
                     TileSheets.Upsert(texture.Sheet.Name, new VariableWidthFont(realTexture, Texture.Width,
                         Texture.Height, texture.Rect));
+                }
+                else if (texture.Sheet.Type == JsonTileSheetType.JsonFont)
+                {
+                    TileSheets.Upsert(texture.Sheet.Name, new JsonFont(texture.Sheet.Texture, atlas.Dimensions, texture.Rect));
                 }
                 else
                 {

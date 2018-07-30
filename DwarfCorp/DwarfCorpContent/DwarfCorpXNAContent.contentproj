@@ -2436,6 +2436,10 @@
       <Name>instance-groups</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="newgui\arial10_def.json">
+      <Name>arial10_def</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Particles\particles.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <Name>particles</Name>
@@ -3628,6 +3632,13 @@
   <ItemGroup>
     <Compile Include="Entities\Dwarf\Layers\minecart.png">
       <Name>minecart</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\arial10.bmp">
+      <Name>arial10</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

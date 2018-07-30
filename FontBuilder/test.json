@@ -1,0 +1,11 @@
+﻿{
+  "SearchForCharacters": true,
+  "SearchExtensions": [ ".json", ".txt" ],
+  "SearchPath": "data",
+  "Targets": [
+    {
+      "FontSize": 10,
+      "OutputName": "arial10"
+    }
+  ]
+}

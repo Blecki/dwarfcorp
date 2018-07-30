@@ -17,5 +17,6 @@ namespace DwarfCorp.Gui
         bool RepeatWhenUsedAsBorder { get; }
         bool HasGlyph(int TileID);
         Vector4 MapRectangleToUVBounds(Rectangle R);
+        String WordWrapString(String S, float GlyphWidthScale, float Width);
     }
 }

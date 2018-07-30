@@ -1,10 +1,10 @@
 ﻿[
-	{
-		"Name": "new game start",
-		"Title": "Tutorial",
-		"Text": "Welcome to DwarfCorp! You can turn this tutorial off at any time and I won't bother you again. Why don't you try selecting a dwarf? The selector tool is at the left end of the tray at the bottom.",
-		"GuiHilite": "select"
-	},
+  {
+    "Name": "new game start",
+    "Title": "Tutorial",
+    "Text": "Welcome to DwarfCorp! You can turn this tutorial off at any time and I won't bother you again. Why don't you try selecting a dwarf? The selector tool is at the left end of the tray at the bottom.",
+    "GuiHilite": "select"
+  },
 	{
 		"Name": "dwarf selected",
 		"Title": "Selecting Dwarves",
