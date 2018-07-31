@@ -3,16 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace FontBuilder
 {
     class Program
     {
+        public static System.Drawing.Bitmap LoadImage(string Path)
+        {
+            var image = System.Drawing.Image.FromFile(Path);
+            return new System.Drawing.Bitmap(image);
+        }
+
         static void Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
 
             var options = Newtonsoft.Json.JsonConvert.DeserializeObject<Options>(System.IO.File.ReadAllText(args[0]));
+            // Todo: Make all file operations relative path to options file.
 
             var characters = new List<char>();
             foreach (var range in options.Ranges)
@@ -20,7 +28,7 @@ namespace FontBuilder
                     characters.Add((char)i);
 
             if (options.SearchForCharacters)
-                RecursivelySearchForCharacters(Environment.CurrentDirectory + "\\" + options.SearchPath, options, characters);
+                RecursivelySearchForCharacters(options.SearchPath, options, characters);
             characters = characters.Distinct().ToList();
 
             var bitmap = new System.Drawing.Bitmap(1, 1);
@@ -28,10 +36,42 @@ namespace FontBuilder
 
             foreach (var target in options.Targets)
             {
-                var font = new System.Drawing.Font(options.FontName, target.FontSize);
                 var glyphs = new List<Glyph>();
+                Dictionary<char, System.Drawing.Bitmap> baseFontGlyphs;
+
+                if (!String.IsNullOrEmpty(target.BaseFont))
+                {
+                    try
+                    {
+                        var baseFontImage = System.Drawing.Image.FromFile(target.BaseFont);
+                        baseFontGlyphs = VariableWidthBitmapFont.DecodeVariableWidthBitmapFont(new System.Drawing.Bitmap(baseFontImage));
+                        foreach (var glyph in baseFontGlyphs)
+                            glyphs.Add(new Glyph
+                            {
+                                Code = glyph.Key,
+                                X = 0,
+                                Y = 0,
+                                Width = glyph.Value.Width,
+                                Height = glyph.Value.Height,
+                                Bitmap = glyph.Value
+                            });
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Error loading basefont: {0}", e.Message);
+                        baseFontGlyphs = new Dictionary<char, System.Drawing.Bitmap>();
+                    }
+                }
+                else
+                    baseFontGlyphs = new Dictionary<char, System.Drawing.Bitmap>();
+
+                var font = new System.Drawing.Font(options.FontName, target.FontSize);
+
+
                 foreach (var c in characters)
                 {
+                    if (baseFontGlyphs.ContainsKey(c)) continue;
+
                     try
                     {
                         var stringSize = graphics.MeasureString(new string(c, 1), font);
@@ -39,20 +79,22 @@ namespace FontBuilder
                         g.Bitmap = new System.Drawing.Bitmap(g.Width, g.Height);
 
                         var glyphGraphics = System.Drawing.Graphics.FromImage(g.Bitmap);
-                        glyphGraphics.DrawString(new string(c, 1), font, System.Drawing.Brushes.Red, 0, 0);
+                        glyphGraphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
+                        glyphGraphics.DrawString(new string(c, 1), font, System.Drawing.Brushes.White, 0, 0);
                         glyphGraphics.Flush();
                         glyphGraphics.Dispose();
                         glyphs.Add(g);
                     }
                     catch (Exception e)
-                    { }
+                    {
+                        Console.WriteLine("Exception: {0}", e.Message);
+                    }
                 }
 
                 font.Dispose();
 
                 if (glyphs.Count > 0)
                 {
-
                     var atlas = AtlasCompiler.Compile(glyphs);
 
                     bitmap = new System.Drawing.Bitmap(atlas.Dimensions.Width, atlas.Dimensions.Height);
@@ -70,6 +112,8 @@ namespace FontBuilder
 
 
                     composeGraphics.Dispose();
+
+                    Console.WriteLine("Generated target {0}", imagePath);
                 }
                 else
                     Console.WriteLine("Target generated no glyphs.");
@@ -83,8 +127,6 @@ namespace FontBuilder
         {
             if (!System.IO.Directory.Exists(Path)) return;
 
-            Console.WriteLine("Searching " + Path);
-            
             foreach (var file in System.IO.Directory.EnumerateFiles(Path))
             {
                 var extension = System.IO.Path.GetExtension(file);
