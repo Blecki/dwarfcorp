@@ -633,6 +633,22 @@ namespace DwarfCorp
                         }
                     }
                 }
+                else
+                {
+                    var goal = GetEasiestTask(Tasks);
+
+                    if (goal != null)
+                    {
+                        IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
+                        ChangeTask(goal);
+                    }
+                    else
+                    {
+                        var newTask = ActOnIdle();
+                        if (newTask != null)
+                            ChangeTask(newTask);
+                    }
+                }
             }
             else
             {

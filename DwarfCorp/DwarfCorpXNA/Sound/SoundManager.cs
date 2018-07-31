@@ -476,7 +476,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    sound.EffectInstance.Pitch = pitch;
+                    sound.EffectInstance.Pitch = MathFunctions.Clamp(pitch, -1.0f, 1.0f);
                 }
                 ActiveSounds.Add(sound);
 
