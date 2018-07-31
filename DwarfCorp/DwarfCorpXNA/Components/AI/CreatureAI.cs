@@ -129,6 +129,8 @@ namespace DwarfCorp
         /// <summary> This defines how the creature can move from voxel to voxel. </summary>
         public CreatureMovement Movement { get; set; }
 
+        public double UnhappinessTime = 0.0f;
+
         /// <summary>
         /// Gets or sets a value indicating whether this instance is posessed. If a creature is posessed,
         /// it is being controlled by the player, so it shouldn't attempt to move unless it has to.
@@ -327,9 +329,7 @@ namespace DwarfCorp
             }
 
             if (_preEmptTimer.HasTriggered && newTask == null && Faction == World.PlayerFaction && !Status.IsOnStrike)
-            {
                 newTask = World.Master.TaskManager.GetBestTask(this, (int)CurrentTask.Priority);
-            }
 
             if (newTask != null)
             {
@@ -500,11 +500,9 @@ namespace DwarfCorp
                 }
                 Drawer2D.DrawText(taskString.ToString(), Position, Color.White, Color.Black);
             }
-            
+
             if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))
-            {
                 Faction = Manager.World.Factions.Factions[Creature.Allies];
-            }
 
             IdleTimer.Update(gameTime);
             SpeakTimer.Update(gameTime);
@@ -513,7 +511,6 @@ namespace DwarfCorp
             DeleteBadTasks();
             PreEmptTasks();
             HandleReproduction();
-            
 
             if (CurrentTask != null && Stats.CanGetBored)
             {
@@ -547,9 +544,7 @@ namespace DwarfCorp
             {
                 Task toReturn = new SatisfyHungerTask();
                 if (Status.Hunger.IsCritical())
-                {
                     toReturn.Priority = Task.PriorityType.Urgent;
-                }
                 if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
                     AssignTask(toReturn);
             }
@@ -564,101 +559,125 @@ namespace DwarfCorp
             }
 
             restockTimer.Update(DwarfTime.LastTime);
-            if (restockTimer.HasTriggered && Creature.Inventory.Resources.Count > 10)
-            {
-                if (Faction == World.PlayerFaction)
-                    Creature.RestockAllImmediately();
-            }
-            
-            // Update the current task.
-            if (CurrentTask != null && CurrentAct != null)
-            {
-                var status = CurrentAct.Tick();
-                bool retried = false;
-                if (CurrentAct != null && CurrentTask != null)
-                {
-                    if (status == Act.Status.Fail)
-                    {
-                        LastFailedAct = CurrentAct.Name;
-                        if (!FailedTasks.Any(task => task.TaskFailure.Equals(CurrentTask)))
-                        {
-                            FailedTasks.Add(new FailedTask() { TaskFailure = CurrentTask, FailedTime = World.Time.CurrentDate });
-                        }
+            if (Object.ReferenceEquals(Creature.Faction, Manager.World.PlayerFaction) && restockTimer.HasTriggered && Creature.Inventory.Resources.Count > 10)
+                Creature.RestockAllImmediately();
 
-                        if (CurrentTask.ShouldRetry(Creature))
+
+            if (CurrentTask == null) // We need something to do.
+            {
+                if (Object.ReferenceEquals(Creature.Faction, Manager.World.PlayerFaction))
+                {
+                    if (Status.Happiness.IsSatisfied()) // We're happy, so make sure we aren't on strike.
+                    {
+                        Status.IsOnStrike = false;
+                        UnhappinessTime = 0.0f;
+                    }
+
+                    if (Status.IsOnStrike) // We're on strike, so track how long this job has sucked.
+                    {
+                        UnhappinessTime += gameTime.ElapsedGameTime.TotalMinutes;
+                        if (UnhappinessTime > GameSettings.Default.HoursUnhappyBeforeQuitting) // If we've been unhappy long enough, quit.
                         {
-                            if (!Tasks.Contains(CurrentTask))
+                            var thoughts = GetRoot().GetComponent<DwarfThoughts>();
+                            Manager.World.MakeAnnouncement( // Can't use a popup because the dwarf will soon not exist. Also - this is a serious event!
+                                Message: String.Format("{0} has quit!{1}", 
+                                    Stats.FullName, 
+                                    (thoughts == null ? "" : (" The last straw: " + thoughts.Thoughts.Last(t => t.HappinessModifier < 0.0f).Description))),
+                                ClickAction: null,
+                                logEvent: true,
+                                eventDetails: (thoughts == null ? "So sick of this place!" : String.Join("\n", thoughts.Thoughts.Where(t => t.HappinessModifier < 0.0f).Select(t => t.Description)))
+                                );
+
+                            LeaveWorld();
+
+                            GetRoot().GetComponent<Inventory>().Die();
+                            GetRoot().GetComponent<SelectionCircle>().Die();
+                            if (thoughts != null)
+                                thoughts.Thoughts.Clear();
+                            //GetRoot().GetComponent<Inventory>().Die();
+                            //GetRoot().Delete();
+
+                            Faction.Minions.Remove(this);
+                            Faction.SelectedMinions.Remove(this);
+
+                            return;
+                        }
+                    }
+                    else if (Status.Happiness.IsDissatisfied()) // We aren't on strike, but we hate this place.
+                    {
+                        if (MathFunctions.Rand(0, 1) < 0.25f) // We hate it so much that we might just go on strike! This can probably be tweaked. As it stands,
+                            // dorfs go on strike almost immediately every time.
+                        {
+                            Manager.World.MakeWorldPopup(String.Format("{0} ({1}) refuses to work!",
+                                   Stats.FullName, Stats.CurrentClass.Name), Creature.Physics, -10, 10);
+                            Manager.World.Tutorial("happiness");
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.25f);
+                            Status.IsOnStrike = true;
+                        }
+                    }
+
+                    if (!Status.IsOnStrike) // We aren't on strike, so find a new task.
+                    {
+                        var goal = GetEasiestTask(Tasks);
+
+                        if (goal != null)
+                        {
+                            IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
+                            ChangeTask(goal);
+                        }
+                        else
+                        {
+                            var newTask = ActOnIdle();
+                            if (newTask != null)
+                                ChangeTask(newTask);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (CurrentAct == null) // Should be impossible to have a current task and no current act.
+                {
+                    // Try and recover the correct act.
+                    // <blecki> I always run with a breakpoint set here... just in case.
+                    ChangeAct(CurrentTask.CreateScript(Creature));
+
+                    // This is a bad situation!
+                    if (CurrentAct == null)
+                        ChangeTask(null);
+                }
+
+                if (CurrentAct != null)
+                {
+                    var status = CurrentAct.Tick();
+                    bool retried = false;
+                    if (CurrentAct != null && CurrentTask != null)
+                    {
+                        if (status == Act.Status.Fail)
+                        {
+                            LastFailedAct = CurrentAct.Name;
+
+                            if (!FailedTasks.Any(task => task.TaskFailure.Equals(CurrentTask)))
+                                FailedTasks.Add(new FailedTask() { TaskFailure = CurrentTask, FailedTime = World.Time.CurrentDate });
+
+                            if (CurrentTask.ShouldRetry(Creature))
                             {
-                                ReassignCurrentTask();
-                                retried = true;
+                                if (!Tasks.Contains(CurrentTask))
+                                {
+                                    ReassignCurrentTask();
+                                    retried = true;
+                                }
                             }
                         }
                     }
-                }
-                //else if (status == Act.Status.Success)
-                //{
-                //    if (CurrentTask != null) // How? Some Act must be changing the current task!
-                //        CurrentTask.IsComplete = true;
-                //}
 
-                if (CurrentTask != null && CurrentTask.IsComplete(Faction))
-                    ChangeTask(null);
-                else if (status != Act.Status.Running && !retried)
-                    ChangeTask(null);
-            }
-            // Otherwise, we don't have any tasks at the moment.
-            else if (CurrentTask == null)
-            {
-                // Throw a tantrum if we're unhappy.
-                bool tantrum = false;
-                if (Status.Happiness.IsDissatisfied())
-                    tantrum = MathFunctions.Rand(0, 1) < 0.25f;
-
-                if (tantrum && !Status.IsOnStrike)
-                {
-                    Creature.DrawIndicator(IndicatorManager.StandardIndicators.Sad);
-
-                    if (Creature.Faction == Manager.World.PlayerFaction)
-                    {
-                        Manager.World.MakeWorldPopup(String.Format("{0} ({1}) refuses to work!",
-                                    Stats.FullName, Stats.CurrentClass.Name), Creature.Physics, -10, 10);
-                        Manager.World.Tutorial("happiness");
-                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.25f);
-                    }
-                    Status.IsOnStrike = true;
-                }
-                else if (!Status.Happiness.IsDissatisfied())
-                {
-                    Status.IsOnStrike = false;
-                }
-
-                // Otherwise, find a new task to perform.
-                var goal = GetEasiestTask(Tasks);
-
-                if (goal != null)
-                {
-                    IdleTimer.Reset(IdleTimer.TargetTimeSeconds);
-                    ChangeTask(goal);
-                }
-                else
-                {
-                    var newTask = ActOnIdle();
-                    if (newTask != null)
-                        ChangeTask(newTask);
+                    if (CurrentTask != null && CurrentTask.IsComplete(Faction))
+                        ChangeTask(null);
+                    else if (status != Act.Status.Running && !retried)
+                        ChangeTask(null);
                 }
             }
-            else if (CurrentTask != null)
-            {
-                // Should be impossible to have a current task and no current act.
-                ChangeAct(CurrentTask.CreateScript(Creature));
 
-                // This is a bad situation!
-                if (CurrentAct == null)
-                {
-                    ChangeTask(null);
-                }
-            }
-            
             PlannerTimer.Update(gameTime);
             UpdateXP();
 

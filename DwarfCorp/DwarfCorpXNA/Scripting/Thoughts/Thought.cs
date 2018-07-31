@@ -48,6 +48,7 @@ namespace DwarfCorp
         public TimeSpan TimeLimit { get; set; }
         public ThoughtType Type { get; set; }
 
+        // Todo: Kill this. Go with something more generic and moddable.
         public enum ThoughtType
         {
             Slept,
@@ -74,6 +75,8 @@ namespace DwarfCorp
             Researched,
             Magic,
             BuriedDead,
+            CheatedHappy,
+            CheatedPissed,
             FeltBored,
             WonGambling
         }
@@ -216,6 +219,17 @@ namespace DwarfCorp
                     {
                         Type = type
                     };
+                case ThoughtType.CheatedHappy:
+                    description = "You used the god menu to make me happy.";
+                    happiness = 100.0f;
+                    limit = new TimeSpan(0, 8, 0, 0);
+                    break;
+                case ThoughtType.CheatedPissed:
+                    description = "You used the god menu to piss me off.";
+                    happiness = -100.0f;
+                    limit = new TimeSpan(0, 8, 0, 0);
+                    break;
+
             }
 
             return new Thought()

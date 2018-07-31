@@ -30,15 +30,16 @@ namespace DwarfCorp.Gui
                 else if (c < 32) continue;
                 else
                 {
-                    if (FontSheet.HasGlyph(c - ' '))
-                    {
-                        var glyphSize = FontSheet.GlyphSize(c - ' ');
-                        glyphMeshes.Add(Mesh.Quad()
-                            .Texture(FontSheet.TileMatrix(c - ' '))
-                            .Scale(glyphSize.X * GlyphScale.X, glyphSize.Y * GlyphScale.Y)
-                            .Translate(pos.X, pos.Y));
-                        pos.X += glyphSize.X * GlyphScale.X;
-                    }
+                    var x = c;
+                    if (!FontSheet.HasGlyph(c - ' '))
+                        x = '*';
+
+                    var glyphSize = FontSheet.GlyphSize(x - ' ');
+                    glyphMeshes.Add(Mesh.Quad()
+                        .Texture(FontSheet.TileMatrix(x - ' '))
+                        .Scale(glyphSize.X * GlyphScale.X, glyphSize.Y * GlyphScale.Y)
+                        .Translate(pos.X, pos.Y));
+                    pos.X += glyphSize.X * GlyphScale.X;
                 }
             }
 

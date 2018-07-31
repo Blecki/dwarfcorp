@@ -69,6 +69,31 @@
     "Precedence": 2,
     "Asset": "Entities/Dwarf/Layers/normal-nose"
   },
+  {
+    "Type": "nose",
+    "Precedence": 2,
+    "Asset": "Entities/Dwarf/Layers/aqualine-nose"
+  },
+  {
+    "Type": "nose",
+    "Precedence": 2,
+    "Asset": "Entities/Dwarf/Layers/beak-nose"
+  },
+  {
+    "Type": "nose",
+    "Precedence": 2,
+    "Asset": "Entities/Dwarf/Layers/button-nose"
+  },
+  {
+    "Type": "nose",
+    "Precedence": 2,
+    "Asset": "Entities/Dwarf/Layers/dignified-nose"
+  },
+  {
+    "Type": "nose",
+    "Precedence": 2,
+    "Asset": "Entities/Dwarf/Layers/piggy-nose"
+  },
 
 
   {
@@ -89,6 +114,16 @@
   {
     "Type": "beard",
     "Precedence": 3,
+    "Asset": "Entities/Dwarf/Layers/bushy-beard"
+  },
+  {
+    "Type": "beard",
+    "Precedence": 3,
+    "Asset": "Entities/Dwarf/Layers/handlebar-mustache"
+  },
+  {
+    "Type": "beard",
+    "Precedence": 3,
     "Asset": "Entities/Dwarf/Layers/blank"
   },
 
@@ -97,13 +132,18 @@
     "Type": "hair",
     "Precedence": 4,
     "Asset": "Entities/Dwarf/Layers/balding_hair",
-	"RestrictionType": "Gender",
+    "RestrictionType": "Gender",
     "RestrictionValue": "Male Nonbinary"
   },
-    {
+  {
     "Type": "hair",
     "Precedence": 4,
     "Asset": "Entities/Dwarf/Layers/short_hair"
+  },
+  {
+    "Type": "hair",
+    "Precedence": 4,
+    "Asset": "Entities/Dwarf/Layers/boyish-hair"
   },
   {
     "Type": "hair",

@@ -44,7 +44,6 @@ namespace DwarfCorp
 {
     public class Plant : Body
     {
-        public int GrowthHours { get; set; }
         public bool IsGrown { get; set; }
         public string MeshAsset { get; set; }
         public float MeshScale { get; set; }
@@ -54,7 +53,6 @@ namespace DwarfCorp
 
         public Plant()
         {
-            GrowthHours = 12;
             IsGrown = false;
         }
 
@@ -64,7 +62,6 @@ namespace DwarfCorp
         {
             MeshAsset = meshAsset;
             MeshScale = meshScale;
-            GrowthHours = 12;
             IsGrown = false;
             BasePosition = Position;
             this.RandomAngle = RandomAngle;

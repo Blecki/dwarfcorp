@@ -10,7 +10,8 @@ namespace DwarfCorp.Gui
     {
         VariableWidthFont,
         TileSheet,
-        Generated
+        Generated,
+        JsonFont
     }
 
     public class JsonTileSheet
