@@ -270,7 +270,7 @@ namespace DwarfCorp.Gui.Widgets
         private void UpdateLineItemText(Widget LineItem, ResourceAmount Resource)
         {
             var resourceInfo = ResourceLibrary.GetResourceByName(Resource.ResourceType);
-            var font = LineItem.Root.GetTileSheet("font10") as VariableWidthFont;
+            var font = LineItem.Root.GetTileSheet("font10");
             var label = resourceInfo.ShortName ?? resourceInfo.Name; 
             if (font != null)
             {

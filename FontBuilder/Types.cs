@@ -26,7 +26,7 @@ namespace FontBuilder
         public String SearchPath = "";
         public List<String> SearchExtensions = new List<string>();
         public String FontName = "Arial";
-        public List<Range> Ranges = new List<Range> { new Range { Low = ' ', High = 128 } };
+        public List<Range> Ranges = new List<Range>();
         public List<Target> Targets;
     }
 

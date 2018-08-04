@@ -47,7 +47,7 @@ namespace DwarfCorp.Gui
         {
             Sheet = new TileSheet(AtlasTexture.Width, AtlasTexture.Height, Source, 1, 1, false);
 
-            var atlas = FileUtils.LoadJsonFromResolvedPath<Atlas>(AssetPath + "_def.json");
+            var atlas = FileUtils.LoadJsonFromResolvedPath<Atlas>(AssetPath + "_def.font");
             foreach (var glyph in atlas.Glyphs)
                 Glyphs.Add(glyph.Code, glyph);
         }
@@ -97,7 +97,7 @@ namespace DwarfCorp.Gui
                 else if (c < 32) continue;
                 else
                 {
-                    lineWidth += HasGlyph(c) ? GlyphSize(c).X : 0;
+                    lineWidth += HasGlyph((int)(c - ' ')) ? GlyphSize((int)(c - ' ')).X : 0;
                     if (lineWidth > size.X) size.X = lineWidth;
                 }
             }

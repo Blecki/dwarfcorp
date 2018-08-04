@@ -2436,8 +2436,20 @@
       <Name>instance-groups</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="newgui\arial10_def.json">
-      <Name>arial10_def</Name>
+    <None Include="newgui\fonts\font10_def.font">
+      <Name>font10_def</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="newgui\fonts\font16_def.font">
+      <Name>font16_def</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="newgui\fonts\font18-outline_def.font">
+      <Name>font18-outline_def</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="newgui\fonts\font8_def.font">
+      <Name>font8_def</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Particles\particles.json">
@@ -3641,13 +3653,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="newgui\arial10.bmp">
-      <Name>arial10</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Entities\Dwarf\Layers\goatee_beard.png">
       <Name>goatee_beard</Name>
       <Importer>TextureImporter</Importer>
@@ -3713,6 +3718,28 @@
   <ItemGroup>
     <Compile Include="Entities\Dwarf\Layers\boyish-hair.png">
       <Name>boyish-hair</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="newgui\fonts\font10.bmp">
+      <Name>font10</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\fonts\font16.bmp">
+      <Name>font16</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\fonts\font18-outline.bmp">
+      <Name>font18-outline</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\fonts\font8.bmp">
+      <Name>font8</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

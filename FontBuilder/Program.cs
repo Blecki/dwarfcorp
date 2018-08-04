@@ -19,8 +19,8 @@ namespace FontBuilder
         {
             Console.OutputEncoding = Encoding.UTF8;
 
-            var options = Newtonsoft.Json.JsonConvert.DeserializeObject<Options>(System.IO.File.ReadAllText(args[0]));
-            // Todo: Make all file operations relative path to options file.
+            var options = Newtonsoft.Json.JsonConvert.DeserializeObject<Options>(File.ReadAllText(args[0]));
+            var workingDirectory = args[1];
 
             var characters = new List<char>();
             foreach (var range in options.Ranges)
@@ -28,12 +28,9 @@ namespace FontBuilder
                     characters.Add((char)i);
 
             if (options.SearchForCharacters)
-                RecursivelySearchForCharacters(options.SearchPath, options, characters);
+                RecursivelySearchForCharacters(Path.Combine(workingDirectory, options.SearchPath), options, characters);
             characters = characters.Distinct().ToList();
-
-            var bitmap = new System.Drawing.Bitmap(1, 1);
-            var graphics = System.Drawing.Graphics.FromImage(bitmap);
-
+           
             foreach (var target in options.Targets)
             {
                 var glyphs = new List<Glyph>();
@@ -43,7 +40,7 @@ namespace FontBuilder
                 {
                     try
                     {
-                        var baseFontImage = System.Drawing.Image.FromFile(target.BaseFont);
+                        var baseFontImage = System.Drawing.Image.FromFile(Path.Combine(workingDirectory, target.BaseFont));
                         baseFontGlyphs = VariableWidthBitmapFont.DecodeVariableWidthBitmapFont(new System.Drawing.Bitmap(baseFontImage));
                         foreach (var glyph in baseFontGlyphs)
                             glyphs.Add(new Glyph
@@ -66,6 +63,8 @@ namespace FontBuilder
                     baseFontGlyphs = new Dictionary<char, System.Drawing.Bitmap>();
 
                 var font = new System.Drawing.Font(options.FontName, target.FontSize);
+                var bitmap = new System.Drawing.Bitmap(1, 1);
+                var graphics = System.Drawing.Graphics.FromImage(bitmap);
 
 
                 foreach (var c in characters)
@@ -84,14 +83,21 @@ namespace FontBuilder
                         glyphGraphics.Flush();
                         glyphGraphics.Dispose();
                         glyphs.Add(g);
+
+                        Console.Write(c);
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("Exception: {0}", e.Message);
+                        Console.WriteLine("{2} {3} Exception: {0} {1}", e.Message, e.StackTrace, target.FontSize, c);
+                        break;
                     }
                 }
 
-                font.Dispose();
+                Console.WriteLine();
+
+                //font.Dispose();
+
+                var imagePath = String.IsNullOrEmpty(target.OutputName) ? String.Format("__{0}.bmp", options.FontName) : target.OutputName + ".bmp";
 
                 if (glyphs.Count > 0)
                 {
@@ -103,12 +109,12 @@ namespace FontBuilder
                         composeGraphics.DrawImageUnscaled(glyph.Bitmap, new System.Drawing.Point(glyph.X, glyph.Y));
                     composeGraphics.Flush();
 
-                    var imagePath = String.IsNullOrEmpty(target.OutputName) ? String.Format("__{0}.bmp", options.FontName) : target.OutputName + ".bmp";
-                    bitmap.Save(imagePath);
+                    
+                    bitmap.Save(Path.Combine(workingDirectory, imagePath));
 
-                    var jsonPath = String.IsNullOrEmpty(target.OutputName) ? String.Format("__{0}_def.json", options.FontName) : target.OutputName + "_def.json";
+                    var jsonPath = String.IsNullOrEmpty(target.OutputName) ? String.Format("__{0}_def.font", options.FontName) : target.OutputName + "_def.font";
                     var json = Newtonsoft.Json.JsonConvert.SerializeObject(atlas);
-                    System.IO.File.WriteAllText(jsonPath, json);
+                    File.WriteAllText(Path.Combine(workingDirectory, jsonPath), json);
 
 
                     composeGraphics.Dispose();
@@ -116,7 +122,7 @@ namespace FontBuilder
                     Console.WriteLine("Generated target {0}", imagePath);
                 }
                 else
-                    Console.WriteLine("Target generated no glyphs.");
+                    Console.WriteLine("Target {0} generated no glyphs.", imagePath);
 
                 graphics.Dispose();
 
@@ -125,13 +131,28 @@ namespace FontBuilder
 
         static void RecursivelySearchForCharacters(String Path, Options Options, List<char> Into)
         {
-            if (!System.IO.Directory.Exists(Path)) return;
+            Console.WriteLine("Directory: {0}", Path);
+
+            if (!System.IO.Directory.Exists(Path))
+            {
+                Console.WriteLine("Attempted to search directory that does not exist.");
+                return;
+            }
 
             foreach (var file in System.IO.Directory.EnumerateFiles(Path))
             {
                 var extension = System.IO.Path.GetExtension(file);
                 if (Options.SearchExtensions.Contains(extension))
-                    Into.AddRange(System.IO.File.ReadAllText(file).Distinct());
+                {
+                    Console.WriteLine("File: {0}", file);
+                    var chars = File.ReadAllText(file).Distinct();
+                    foreach (var c in chars)
+                    {
+                        if (Into.Contains(c)) continue;
+                        Into.Add(c);
+                        Console.WriteLine("Found {0}", c);
+                    }
+                }
             }
 
             foreach (var directory in System.IO.Directory.EnumerateDirectories(Path))

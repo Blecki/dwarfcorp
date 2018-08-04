@@ -179,8 +179,8 @@ namespace DwarfCorp.Gui.Widgets
                 var drawableArea = GetDrawableInterior();
                 var stringMeshSize = new Rectangle();
                 var font = Root.GetTileSheet(Font);
-                var text = (font is VariableWidthFont && WrapText)
-                    ? (font as VariableWidthFont).WordWrapString(_text, TextSize, drawableArea.Width)
+                var text = (WrapText)
+                    ? font.WordWrapString(_text, TextSize, drawableArea.Width)
                     : _text;
                 var stringMesh = Mesh.CreateStringMesh(
                     text,
