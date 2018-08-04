@@ -122,6 +122,8 @@ namespace DwarfCorp.Gui.Widgets
             {
                 if (SelectorPopup != null) SelectorPopup.Close();
             };
+            _selectedIndex = 0;
+            Text = SelectedItem;
         }
 
         public override Point GetBestSize()
