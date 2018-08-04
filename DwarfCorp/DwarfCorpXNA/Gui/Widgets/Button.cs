@@ -31,7 +31,7 @@ namespace DwarfCorp.Gui.Widgets
             OnMouseEnter += (widget, action) =>
             {
                 previousTextColor = TextColor;
-                widget.TextColor = new Vector4(0.5f, 0, 0, 1.0f);
+                widget.TextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
                 widget.Invalidate();
             };
 
@@ -50,7 +50,7 @@ namespace DwarfCorp.Gui.Widgets
             var color = BackgroundColor;
             OnMouseEnter += (widget, action) =>
             {
-                widget.BackgroundColor = new Vector4(0.5f, 0, 0, 1.0f);
+                widget.BackgroundColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
                 widget.Invalidate();
             };
 

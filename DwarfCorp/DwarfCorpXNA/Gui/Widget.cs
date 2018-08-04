@@ -111,7 +111,7 @@ namespace DwarfCorp.Gui
             }
         }
 
-        public Vector4 HoverTextColor = new Vector4(0.9f,0.1f,0.1f,1);
+        public Vector4 HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
         public bool ChangeColorOnHover = false;
         public bool WrapText = true;
         public bool AutoResizeToTextHeight = false;

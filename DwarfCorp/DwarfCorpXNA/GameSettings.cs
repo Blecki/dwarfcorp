@@ -132,7 +132,7 @@ namespace DwarfCorp
                         },
                         {
                             "Highlight",
-                            Microsoft.Xna.Framework.Color.Yellow
+                            Microsoft.Xna.Framework.Color.Blue
                         },
                         {
                             "Positive",

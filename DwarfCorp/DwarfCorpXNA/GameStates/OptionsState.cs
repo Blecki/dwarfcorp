@@ -351,8 +351,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop,
                 Padding = new Margin(0,0,4,4),
                 ChangeColorOnHover = true,
-                HoverTextColor = new Vector4(0.5f, 0, 0, 1.0f)
-            });
+                HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4()
+        });
 
             var label = new Widget
             {
