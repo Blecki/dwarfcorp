@@ -104,6 +104,21 @@ namespace DwarfCorp.Gui
             return r;
         }
 
+        public static Mesh Clip(Mesh other, Rectangle rect)
+        {
+            var result = new Mesh();
+            result.indicies = new short[other.indicies.Length];
+            result.verticies = new Vertex[other.verticies.Length];
+            other.indicies.CopyTo(result.indicies, 0);
+            other.verticies.CopyTo(result.verticies, 0);
+
+            for (int i = 0; i < other.verticies.Length; i++)
+            {
+                result.verticies[i].Position = MathFunctions.Clamp(result.verticies[i].Position, rect);
+            }
+            return result;
+        }
+
         public static Mesh Merge(params Mesh[] parts)
         {
             var result = new Mesh();

@@ -153,6 +153,7 @@ namespace DwarfCorp
         public bool CanSleep { get; set; }
         public bool CanGetBored { get; set; }
         public string FullName { get; set; }
+        public string Title { get; set; }
         public int NumBlocksDestroyed { get; set; }
         public int NumItemsGathered { get; set; }
         public int NumRoomsBuilt { get; set; }

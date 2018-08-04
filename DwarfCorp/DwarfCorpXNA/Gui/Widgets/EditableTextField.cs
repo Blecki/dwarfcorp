@@ -35,7 +35,7 @@ namespace DwarfCorp.Gui.Widgets
 
             OnClick += (sender, args) =>
                 {
-                    if (IsAnyParentHidden() || IsAnyParentTransparent())
+                    if (IsAnyParentHidden())
                     {
                         return;
                     }
@@ -87,7 +87,7 @@ namespace DwarfCorp.Gui.Widgets
             OnUpdateWhileFocus += (sender) => this.Invalidate();
             OnKeyUp += (sender, args) =>
             {
-                if (IsAnyParentHidden() || IsAnyParentTransparent())
+                if (IsAnyParentHidden())
                 {
                     return;
                 }
@@ -96,7 +96,10 @@ namespace DwarfCorp.Gui.Widgets
             };
             OnKeyPress += (sender, args) =>
                 {
-                    if (IsAnyParentHidden() || IsAnyParentTransparent())
+                    var font = Root.GetTileSheet(Font);
+                    var glyphSize = font.GlyphSize(' ');
+                    int numChars = 2 * (Rect.Width / glyphSize.X);
+                    if (IsAnyParentHidden())
                     {
                         return;
                     }
@@ -110,7 +113,8 @@ namespace DwarfCorp.Gui.Widgets
                     Root.SafeCall(BeforeTextChange, this, beforeEventArgs);
                     if (beforeEventArgs.Cancelled == false)
                     {
-                        Text = beforeEventArgs.NewText;
+                        Text = beforeEventArgs.NewText.Substring(0, Math.Min(numChars, beforeEventArgs.NewText.Length));
+                        //Text = beforeEventArgs.NewText;
                         Root.SafeCall(OnTextChange, this);
                         Invalidate();
                         args.Handled = true;
@@ -119,7 +123,7 @@ namespace DwarfCorp.Gui.Widgets
 
             OnKeyDown += (sender, args) =>
                 {
-                    if (IsAnyParentHidden() || IsAnyParentTransparent())
+                    if (IsAnyParentHidden())
                     {
                         return;
                     }
@@ -177,6 +181,44 @@ namespace DwarfCorp.Gui.Widgets
             }
         }
 
+        protected Mesh GetBackgroundMesh()
+        {
+            if (Hidden) throw new InvalidOperationException();
+
+            if (Transparent || Root == null)
+                return Mesh.EmptyMesh();
+
+            var result = new List<Mesh>();
+
+            if (Background != null)
+                result.Add(Mesh.Quad()
+                    .Scale(Rect.Width, Rect.Height)
+                    .Translate(Rect.X, Rect.Y)
+                    .Colorize(BackgroundColor)
+                    .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile)));
+
+            if (!String.IsNullOrEmpty(Border))
+            {
+                //Create a 'scale 9' background 
+                result.Add(
+                    Mesh.CreateScale9Background(Rect, Root.GetTileSheet(Border))
+                    .Colorize(BackgroundColor));
+            }
+            return Mesh.Merge(result.ToArray());
+        }
+
+        protected Mesh GetTextMesh()
+        {
+            var result = new List<Mesh>();
+
+            // Add text label
+            if (!String.IsNullOrEmpty(Text))
+            {
+                GetTextMesh(result);
+            }
+            return Mesh.Merge(result.ToArray());
+        }
+
         protected override Mesh Redraw()
         {
             if (Object.ReferenceEquals(this, Root.FocusItem))
@@ -201,11 +243,11 @@ namespace DwarfCorp.Gui.Widgets
                             drawableArea.Y + ((drawableArea.Height - (pipeGlyph.Y * TextSize)) / 2))
                         .Texture(font.TileMatrix((int)('|' - ' ')))
                         .Colorize(new Vector4(1, 0, 0, 1));
-                    return Mesh.Merge(base.Redraw(), cursorMesh);
+                    return Mesh.Merge(GetBackgroundMesh(), Mesh.Clip(Mesh.Merge(GetTextMesh(), cursorMesh), GetDrawableInterior()));
                 }
             }
             
-            return base.Redraw();
+            return Mesh.Merge(GetBackgroundMesh(), Mesh.Clip(GetTextMesh(), GetDrawableInterior()));
         }
     }
 }

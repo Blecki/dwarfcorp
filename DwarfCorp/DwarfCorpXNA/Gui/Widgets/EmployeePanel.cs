@@ -36,12 +36,13 @@ namespace DwarfCorp.Gui.Widgets
                         AnimationPlayer = employeeSprite.AnimPlayer
                     });
 
+                var title = employee.Stats.Title ?? employee.Stats.CurrentLevel.Name;
                 bar.AddChild(new Widget
                 {
                     AutoLayout = AutoLayout.DockFill,
                     TextVerticalAlign = VerticalAlign.Center,
                     MinimumSize = new Point(128, 64),
-                    Text = employee.Stats.IsOverQualified ? employee.Stats.FullName + "*" : employee.Stats.FullName
+                    Text = (employee.Stats.IsOverQualified ? employee.Stats.FullName + "*" : employee.Stats.FullName) + " (" + title + ")"
                 });
 
                 EmployeeList.AddItem(bar);
@@ -135,7 +136,7 @@ namespace DwarfCorp.Gui.Widgets
             EmployeeList = left.AddChild(new Gui.Widgets.WidgetListView
             {
                 AutoLayout = AutoLayout.DockFill,
-                Font = "font16",
+                Font = "font10",
                 ItemHeight = 64,
                 OnSelectedIndexChanged = (sender) =>
                 {

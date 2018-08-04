@@ -475,7 +475,7 @@ namespace DwarfCorp
                         return ActOnIdle();
                 }
             }
-
+            
             return ActOnIdle();
 
         }

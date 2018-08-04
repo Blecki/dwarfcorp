@@ -39,6 +39,7 @@ namespace DwarfCorp.Gui.Widgets
         private Gui.Widgets.TextProgressBar Health;
         private Gui.Widgets.TextProgressBar Boredom;
 
+        private Widget TitleEditor;
         private Widget LevelLabel;
         private Widget PayLabel;
         private Widget LevelButton;
@@ -79,14 +80,29 @@ namespace DwarfCorp.Gui.Widgets
             NameLabel = top.AddChild(new Gui.Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 32),
+                MinimumSize = new Point(0, 48),
                 Font = "font16"
             });
 
-            LevelLabel = top.AddChild(new Widget
+            var levelHolder = top.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 24)
+                MinimumSize = new Point(256, 24)
+            });
+            TitleEditor = levelHolder.AddChild(new Gui.Widgets.EditableTextField()
+            {
+                AutoLayout = AutoLayout.DockLeft,
+                MinimumSize = new Point(128, 24),
+                OnTextChange = (sender) =>
+                {
+                    Employee.Stats.Title = sender.Text;
+                },
+            });
+
+            LevelLabel = levelHolder.AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockLeft,
+                MinimumSize = new Point(128, 24)
             });
 
             var columns = InteriorPanel.AddChild(new Gui.Widgets.Columns
@@ -411,7 +427,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 InteriorPanel.Hidden = false;
 
-                var idx = EmployeePanel.GetIconIndex(Employee.Stats.CurrentClass.Name);
+                //var idx = EmployeePanel.GetIconIndex(Employee.Stats.CurrentClass.Name);
                 //Icon.Background = idx >= 0 ? new TileReference("dwarves", idx) : null;
                 //Icon.Invalidate();
                 //Icon.Sprite = Employee.Creature.Sprite.Animations[0];
@@ -440,8 +456,8 @@ namespace DwarfCorp.Gui.Widgets
                 SetStatusBar(Happiness, Employee.Status.Happiness);
                 SetStatusBar(Health, Employee.Status.Health);
                 SetStatusBar(Boredom, Employee.Status.Boredom);
-
-                LevelLabel.Text = String.Format("\n{0}: Level {1} {2} ({3} xp). {4}", Employee.Stats.CurrentLevel.Name,
+                TitleEditor.Text = Employee.Stats.Title ?? Employee.Stats.CurrentClass.Name;
+                LevelLabel.Text = String.Format("Level {0} {1}\n({2} xp). {3}",
                     Employee.Stats.LevelIndex,
                     Employee.Stats.CurrentClass.Name,
                     Employee.Stats.XP,
