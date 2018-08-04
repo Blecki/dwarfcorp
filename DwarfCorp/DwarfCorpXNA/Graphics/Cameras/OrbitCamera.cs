@@ -172,7 +172,7 @@ namespace DwarfCorp
             float diffX, diffY = 0;
             float dt = (float)time.ElapsedRealTime.TotalSeconds;
             SnapToBounds(new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
-            if (KeyManager.RotationEnabled())
+            if (KeyManager.RotationEnabled(this))
             {
                 World.Gui.MouseVisible = false;
                 if (!shiftPressed)
@@ -411,7 +411,7 @@ namespace DwarfCorp
             float diffX, diffY = 0;
             float dt = (float)time.ElapsedRealTime.TotalSeconds;
             SnapToBounds(new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
-            if (KeyManager.RotationEnabled())
+            if (KeyManager.RotationEnabled(this))
             {
                 World.Gui.MouseVisible = false;
                 if (!shiftPressed)
@@ -521,7 +521,7 @@ namespace DwarfCorp
             }
 
 
-            if (!KeyManager.RotationEnabled())
+            if (!KeyManager.RotationEnabled(this))
             {
                 if (!World.IsMouseOverGui)
                 {
@@ -581,7 +581,7 @@ namespace DwarfCorp
 
             int scroll = mouse.ScrollWheelValue;
 
-            if (isRightPressed && KeyManager.RotationEnabled())
+            if (isRightPressed && KeyManager.RotationEnabled(this))
             {
                 scroll = (int)(diffY * 10) + LastWheel;
             }

@@ -606,14 +606,14 @@ namespace DwarfCorp
 
         public bool IsCameraRotationModeActive()
         {
-            return KeyManager.RotationEnabled();
+            return KeyManager.RotationEnabled(World.Camera);
 
         }
 
 
         public void UpdateMouse(MouseState mouseState, KeyboardState keyState, DwarfGame game, DwarfTime time)
         {
-            if (KeyManager.RotationEnabled())
+            if (KeyManager.RotationEnabled(World.Camera))
             {
                 World.SetMouse(null);
             }

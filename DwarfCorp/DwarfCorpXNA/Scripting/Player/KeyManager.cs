@@ -94,10 +94,20 @@ namespace DwarfCorp
             set { Buttons[key] = value; }
         }
 
-        public static bool RotationEnabled()
+        public static bool RotationEnabled(OrbitCamera camera)
         {
             KeyboardState keys = Keyboard.GetState();
-            return keys.IsKeyDown(ControlSettings.Mappings.CameraMode) || keys.IsKeyDown(Keys.RightShift) || Mouse.GetState().MiddleButton == ButtonState.Pressed;
+            bool shiftPressed = keys.IsKeyDown(ControlSettings.Mappings.CameraMode) || 
+                                       keys.IsKeyDown(Keys.RightShift) || Mouse.GetState().MiddleButton == ButtonState.Pressed;
+
+            if (camera.Control == OrbitCamera.ControlType.Walk)
+            {
+                return !shiftPressed;
+            }
+            else
+            {
+                return shiftPressed;
+            }
         }
 
         public bool IsMapped(Keys keys)

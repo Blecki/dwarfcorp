@@ -331,6 +331,7 @@ namespace DwarfCorp.Gui.Widgets
                 }
             });
 
+#if ENABLE_CHAT
             bottomBar.AddChild(new Button()
             {
                 Text = "Chat...",
@@ -341,6 +342,7 @@ namespace DwarfCorp.Gui.Widgets
                     Employee.World.Game.StateManager.PushState(new YarnState(ContentPaths.employee_conversation, "Start", Employee.World.ConversationMemory));
                 }
             });
+#endif
 
 
             LevelButton = bottomBar.AddChild(new Button()
