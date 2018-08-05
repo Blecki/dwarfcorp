@@ -44,9 +44,16 @@ title: Main
 
 title: Trade
 ---
-<<trade>> // Pauses conversation until trade is complete.
+<<begin_trade>>
+[[Trade2]]
+===
+
+title: Trade2
+---
+<<wait_for_trade>>
 <<if $trade_result == "cancelled">>
 	$envoy_name: Why no goodies? Why?
+	<<end_trade>>
 	[[Main]]
 <<elseif $trade_result == "hated">>
 	<<pick>>
@@ -57,16 +64,18 @@ title: Trade
 	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
 	<<if $offensive_trades >= 3>>
 		$envoy_name: Me will trade somewhere else with someone not bad like you.
+		<<end_trade>>
 		<<recall_envoy>>
 		<<end_conversation>>
 	<<endif>>
-	[[Main]]
+	[[Trade2]]
 <<elseif $trade_result == "unprofitable">>
 	<<pick>>
 		$envoy_name: Me ask for shines, not dirts. More money or me go home!
 		$envoy_name: Ugh, what? Need more for me.
 		$envoy_name: Me no take. Not enough.
 	<<end>>
+	[[Trade2]]
 <<else>>
 	<<if $trade_result == "liked">>
 		<<political_event "you gave us something we liked" 0.25 4>>
@@ -77,7 +86,9 @@ title: Trade
 		$envoy_name: Shines bring I joy.
 		$envoy_name: Is good. Me take.
 	<<end>>
+	[[Trade2]]
 <<endif>>
+<<end_trade>>
 [[Main]]
 ===
 
@@ -179,6 +190,5 @@ title: Goodbye
 	$envoy_name: See you later, stink beasts.
 	$envoy_name: Me take home many tales of strange beard-goblins.
 <<end>>
-<<recall_envoy>>
 <<end_conversation>>
 ===  

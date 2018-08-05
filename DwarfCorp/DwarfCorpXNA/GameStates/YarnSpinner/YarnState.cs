@@ -46,12 +46,26 @@ namespace DwarfCorp
 
         public void Speak(String S)
         {
-            SpeakerAnimationPlayer?.Play();
-
-            if (Language != null)
+            var colon = S.IndexOf(":");
+            if (colon != -1)
             {
-                CurrentSpeach = Language.Say(S).GetEnumerator();
-                YarnEngine.EnterSpeakState();
+                var name = S.Substring(0, colon + 1);
+                S = S.Substring(colon + 1);
+                _Output?.AppendText(name);
+                TimeSinceOutput = 0.0f;
+
+                SpeakerAnimationPlayer?.Play();
+
+                if (Language != null)
+                {
+                    CurrentSpeach = Language.Say(S).GetEnumerator();
+                    YarnEngine.EnterSpeakState();
+                }
+                else
+                {
+                    _Output?.AppendText(S);
+                    TimeSinceOutput = 0.0f;
+                }
             }
             else
             {
@@ -283,7 +297,7 @@ namespace DwarfCorp
             AutoHideBubble = true;
 
             SpeakerBorder.Rect = new Rectangle(16, GuiRoot.RenderData.VirtualScreen.Height - (256 - 16), 256 - 32, 256 - 32);
-            SpeakerRectangle = Gui.Mesh.Quad().Scale(256, 256).Translate(0, SpeakerBorder.Rect.Y);
+            SpeakerRectangle = Gui.Mesh.Quad().Scale(256, 256).Translate(0, GuiRoot.RenderData.VirtualScreen.Height - 256);
             _Output.Rect = new Rectangle(256, GuiRoot.RenderData.VirtualScreen.Height - 260, System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 256, 550), 260);
 
             SpeakerBorder.Invalidate();
