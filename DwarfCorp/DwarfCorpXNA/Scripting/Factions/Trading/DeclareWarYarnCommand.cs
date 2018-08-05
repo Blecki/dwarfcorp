@@ -8,7 +8,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
     static class DeclareWarYarnCommand
     {
         [YarnCommand("declare_war")]
-        private static void _declare_war(YarnState State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
+        private static void _declare_war(YarnEngine State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
             var envoy = Memory.GetValue("$envoy").AsObject as TradeEnvoy;
             var playerFaction = Memory.GetValue("$player_faction").AsObject as Faction;
@@ -16,7 +16,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
 
             if (envoy == null || playerFaction == null || world == null)
             {
-                State.Output("Command 'declare_war' can only be called from a TradeEnvoy initiated conversation.");
+                State.PlayerInterface.Output("Command 'declare_war' can only be called from a TradeEnvoy initiated conversation.");
                 return;
             }
 

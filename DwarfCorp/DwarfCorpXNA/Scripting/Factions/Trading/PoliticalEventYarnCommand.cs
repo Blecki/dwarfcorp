@@ -8,7 +8,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
     static class PoliticalEventYarnCommand
     {
         [YarnCommand("political_event", "STRING", "NUMBER", "NUMBER")]
-        private static void _political_event(YarnState State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
+        private static void _political_event(YarnEngine State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
             var envoy = Memory.GetValue("$envoy").AsObject as TradeEnvoy;
             var playerFaction = Memory.GetValue("$player_faction").AsObject as Faction;
@@ -16,7 +16,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
 
             if (envoy == null || playerFaction == null || world == null)
             {
-                State.Output("Command 'political_event' can only be called from a TradeEnvoy initiated conversation.");
+                State.PlayerInterface.Output("Command 'political_event' can only be called from a TradeEnvoy initiated conversation.");
                 return;
             }
 

@@ -29,7 +29,7 @@ namespace DwarfCorp
 
         private class CommandHandler
         {
-            public Action<YarnState, List<Ancora.AstNode>, Yarn.MemoryVariableStore> Action;
+            public Action<YarnEngine, List<Ancora.AstNode>, Yarn.MemoryVariableStore> Action;
             public YarnCommandAttribute Settings;
         }
 
@@ -55,7 +55,7 @@ namespace DwarfCorp
 
             foreach (var method in AssetManager.EnumerateModHooks(typeof(YarnCommandAttribute), typeof(void), new Type[]
             {
-                typeof(YarnState),
+                typeof(YarnEngine),
                 typeof(List<Ancora.AstNode>),
                 typeof(Yarn.MemoryVariableStore)
             }))

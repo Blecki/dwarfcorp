@@ -13,8 +13,8 @@ namespace DwarfCorp.Goals
         public Func<bool> ShouldKeep = null;
         public override void Construct()
         {
-            var font = Root.GetTileSheet("font10") as Gui.VariableWidthFont;
-            var size = font.MeasureString(Text, 256);
+            var font = Root.GetTileSheet("font10");
+            var size = font.MeasureString(Text);
             // TODO (mklingensmith) why do I need this padding?
             size.X = (int)(size.X * 1.25f);
             size.Y = (int)(size.Y * 1.75f);

@@ -8,21 +8,23 @@ namespace DwarfCorp.Scripting.Factions.Trading
     static class TradeYarnCommand
     {
         [YarnCommand("trade")]
-        private static void _trade(YarnState State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
+        private static void _trade(YarnEngine State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
+            var realState = State.PlayerInterface as YarnState; // THIS IS A HACK.
+
             var envoy = Memory.GetValue("$envoy").AsObject as TradeEnvoy;
             var playerFaction = Memory.GetValue("$player_faction").AsObject as Faction;
             var world = Memory.GetValue("$world").AsObject as WorldManager;
 
             if (envoy == null || playerFaction == null || world == null)
             {
-                State.Output("Command 'trade' can only be called from a TradeEnvoy initiated conversation.");
+                State.PlayerInterface.Output("Command 'trade' can only be called from a TradeEnvoy initiated conversation.");
                 return;
             }
 
             var tradeState = new TradeGameState(
-                State.StateManager.Game,
-                State.StateManager,
+                realState.StateManager.Game,
+                realState.StateManager,
                 envoy,
                 playerFaction,
                 world);
@@ -52,11 +54,11 @@ namespace DwarfCorp.Scripting.Factions.Trading
             };
 
             State.Pause();
-            State.StateManager.PushState(tradeState);
+            realState.StateManager.PushState(tradeState);
         }
 
         [YarnCommand("finalize_trade")]
-        private static void _finalize_trade(YarnState State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
+        private static void _finalize_trade(YarnEngine State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
             var transaction = Memory.GetValue("$trade_transaction").AsObject as Trade.TradeTransaction;
             var envoy = Memory.GetValue("$envoy").AsObject as TradeEnvoy;
@@ -65,7 +67,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
 
             if (transaction == null || envoy == null || playerFaction == null || world == null)
             {
-                State.Output("Command 'finalize_trade' can only be called from a TradeEnvoy initiated conversation.");
+                State.PlayerInterface.Output("Command 'finalize_trade' can only be called from a TradeEnvoy initiated conversation.");
                 return;
             }
 

@@ -279,7 +279,6 @@
     <Compile Include="GameStates\YarnSpinner\YarnCommandAttribute.cs" />
     <Compile Include="GameStates\YarnSpinner\YarnEngine.cs" />
     <Compile Include="GameStates\YarnSpinner\IYarnPlayerInterface.cs" />
-    <Compile Include="GameStates\YarnSpinner\NewYarnState.cs" />
     <Compile Include="GameStates\YarnSpinner\YarnState.cs" />
     <Compile Include="Goals\ScheduledEvent.cs" />
     <Compile Include="Goals\Events\SpawnEntityEvent.cs" />

@@ -8,7 +8,7 @@ namespace DwarfCorp.GameStates.YarnSpinner
     static class EndConversation
     {
         [YarnCommand("end_conversation")]
-        private static void _end_conversation(YarnState State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
+        private static void _end_conversation(YarnEngine State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
             State.EndConversation();
         }

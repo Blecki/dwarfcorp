@@ -387,7 +387,7 @@ namespace DwarfCorp
                     return;
                 }
 
-                Vector2 projectedCenter = new Vector2(projectedPosition.X, projectedPosition.Y) + ScreenOffset - new Vector2(0, Widget.Rect.Height);
+                Vector2 projectedCenter = new Vector2(projectedPosition.X / DwarfGame.GuiSkin.CalculateScale(), projectedPosition.Y / DwarfGame.GuiSkin.CalculateScale()) + ScreenOffset - new Vector2(0, Widget.Rect.Height);
                 if ((new Vector2(Widget.Rect.Center.X, Widget.Rect.Center.Y) - projectedCenter).Length() < 0.1f)
                 {
                     return;
