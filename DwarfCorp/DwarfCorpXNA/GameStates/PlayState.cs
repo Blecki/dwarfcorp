@@ -455,6 +455,7 @@ namespace DwarfCorp.GameStates
                 // Todo: Employee AI debug display
 
                 var scheduleDisplay = DwarfGame.GetConsoleTile("SCHEDULE");
+                scheduleDisplay.TextSize = 1;
                 scheduleDisplay.Lines.Clear();
                 foreach (var scheduledEvent in World.GoalManager.EventScheduler.Forecast)
                     scheduleDisplay.Lines.Add(String.Format("{0} : {1}, {2}", scheduledEvent.Event.Name, (scheduledEvent.Date - World.Time.CurrentDate).ToString(@"hh\:mm"), scheduledEvent.Event.Difficulty));

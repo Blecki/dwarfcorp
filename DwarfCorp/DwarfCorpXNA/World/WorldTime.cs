@@ -36,6 +36,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -46,10 +47,19 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class WorldTime
     {
+        private bool wasBeforeMidnight = false;
+        private bool wasDay = false;
         public delegate void DayPassed(DateTime time);
         public event DayPassed NewDay;
         public event DayPassed NewNight;
         public event DayPassed Dawn;
+
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext ctx)
+        {
+            wasDay = IsDay();
+            wasBeforeMidnight = CurrentDate.Hour > 0;
+        }
 
         protected virtual void OnDawn(DateTime time)
         {
@@ -79,6 +89,8 @@ namespace DwarfCorp
         {
             CurrentDate = new DateTime(1432, 4, 1, 8, 0, 0);
             Speed = 100.0f;
+            wasDay = IsDay();
+            wasBeforeMidnight = CurrentDate.Hour > 0;
         }
 
         public void Update(DwarfTime t)
@@ -88,14 +100,14 @@ namespace DwarfCorp
                 return;
             }
 
-            bool beforeMidnight = CurrentDate.Hour > 0;
-            bool wasDay = IsDay();
             CurrentDate = CurrentDate.Add(new TimeSpan(0, 0, 0, 0, (int)(t.ElapsedGameTime.Milliseconds * Speed)));
 
-            if (CurrentDate.Hour == 0 && beforeMidnight)
+            /*
+            if (CurrentDate.Hour == 0 && wasBeforeMidnight)
             {
                 OnNewDay(CurrentDate);
             }
+            */
 
             if (wasDay && IsNight())
             {
@@ -105,7 +117,10 @@ namespace DwarfCorp
             if (!wasDay && IsDay())
             {
                 OnDawn(CurrentDate);
+                OnNewDay(CurrentDate);
             }
+            wasDay = IsDay();
+            wasBeforeMidnight = CurrentDate.Hour > 0;
         }
 
         public float GetTotalSeconds()

@@ -1,13 +1,11 @@
 [
   {
-    "$id": "1",
     "$type": "DwarfCorp.Goals.SpawnEntityEvent, BaseContent",
     "EntityToSpawn": "Kobold",
     "EntityFaction": "Carnivore",
     "ZoomToEntity": true,
     "SpawnLocation": "WorldEdge",
     "EntityFactionFilter": {
-      "$id": "2",
       "Hostility": "Any",
       "Specification": "Specific",
       "Claim": "Any"
@@ -25,7 +23,6 @@
     "PauseOnAnnouncementDetails": true
   },
   {
-    "$id": "3",
     "$type": "DwarfCorp.Goals.SpawnEntityEvent, BaseContent",
     "EntityToSpawn": "Gremlin",
     "EntityFaction": "Carnivore",
@@ -50,41 +47,56 @@
     "PauseOnAnnouncementDetails": true
   },
   {
-    "$id": "5",
     "$type": "DwarfCorp.Goals.SpawnTradeEnvoyEvent, BaseContent",
     "PartyFaction": null,
     "PartyFactionFilter": {
-      "$id": "6",
       "Hostility": "NotHostile",
       "Specification": "Random",
       "Claim": "Any"
     },
     "TributeDemanded": {
-      "$id": "7",
       "Value": 0.0
     },
     "Likelihood": 5,
     "Name": "Send Trade Envoy",
     "Difficulty": -10.0,
     "AllowedTime": "OnlyDayTime",
-    "CooldownHours": 8,
+    "CooldownHours": 4,
+    "AnnouncementText": null,
+    "AnnouncementDetails": null,
+    "AnnouncementSound": null,
+    "PauseOnAnnouncementDetails": false
+  },
+    {
+    "$type": "DwarfCorp.Goals.SpawnTradeEnvoyEvent, BaseContent",
+    "PartyFaction": "Motherland",
+    "PartyFactionFilter": {
+      "Hostility": "NotHostile",
+      "Specification": "Motherland",
+      "Claim": "Any"
+    },
+    "TributeDemanded": {
+      "Value": 0.0
+    },
+    "Likelihood": 8,
+    "Name": "Motherland Trade Envoy",
+    "Difficulty": -10.0,
+    "AllowedTime": "OnlyDayTime",
+    "CooldownHours": 4,
     "AnnouncementText": null,
     "AnnouncementDetails": null,
     "AnnouncementSound": null,
     "PauseOnAnnouncementDetails": false
   },
   {
-    "$id": "8",
     "$type": "DwarfCorp.Goals.SpawnTradeEnvoyEvent, BaseContent",
     "PartyFaction": null,
     "PartyFactionFilter": {
-      "$id": "9",
       "Hostility": "Neutral",
       "Specification": "Random",
       "Claim": "ClaimsTerritory"
     },
     "TributeDemanded": {
-      "$id": "10",
       "Value": 100.0
     },
     "Likelihood": 3,
@@ -98,11 +110,9 @@
     "PauseOnAnnouncementDetails": false
   },
   {
-    "$id": "11",
     "$type": "DwarfCorp.Goals.SpawnWarPartyEvent, BaseContent",
     "PartyFaction": null,
     "PartyFactionFilter": {
-      "$id": "12",
       "Hostility": "Hostile",
       "Specification": "Random",
       "Claim": "Any"
@@ -118,7 +128,6 @@
     "PauseOnAnnouncementDetails": false
   },
   {
-    "$id": "13",
     "$type": "DwarfCorp.Goals.PlagueEvent, BaseContent",
     "Likelihood": 1,
     "Name": "Plague",
