@@ -2,7 +2,7 @@ title: Start
 ---
 <<set_portrait "GUI\diplo-goblin" 64 64 5.0 0 1 0>>
 <<show_portrait>>
-<<set_language "Goblin">>
+<<set_language "Goblins">>
 <<pick>>
 	Goblin: Hi, strange beard-goblins.
 	Goblin: Bringers of shines!
