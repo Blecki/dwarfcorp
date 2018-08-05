@@ -56,7 +56,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
         }
 
         [YarnCommand("finalize_trade")]
-        private static void _finalize_trade(YarnState State, Ancora.AstNode Arguments, Yarn.MemoryVariableStore Memory)
+        private static void _finalize_trade(YarnState State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
             var transaction = Memory.GetValue("$trade_transaction").AsObject as Trade.TradeTransaction;
             var envoy = Memory.GetValue("$envoy").AsObject as TradeEnvoy;

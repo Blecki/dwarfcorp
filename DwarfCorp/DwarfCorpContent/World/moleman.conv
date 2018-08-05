@@ -48,7 +48,7 @@ title: Trade
 		The moleman has become angry and begun yelling at his subordinates in their incomprehensible language.
 		The moleman throws your offer at your feet. Maybe he didn't like it?
 	<<end>>
-	<<increment $offensive_trades>>
+	<<set $offensive_trades = $offensive_trades + 1>>
 	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
 	<<if $offensive_trades == 3>>
 		The moleman throws his helmet at one of his subordinates. This seems to be the signal for them to leave.
