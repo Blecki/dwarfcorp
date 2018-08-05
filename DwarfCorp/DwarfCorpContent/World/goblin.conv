@@ -55,7 +55,7 @@ title: Trade
 		$envoy_name: Me will not take stinky bad things.
 	<<set $offensive_trades = $offensive_trades + 1>>
 	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
-	<<if $offensive_trades == 3>>
+	<<if $offensive_trades >= 3>>
 		$envoy_name: Me will trade somewhere else with someone not bad like you.
 		<<recall_envoy>>
 		<<end_conversation>>

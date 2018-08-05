@@ -53,7 +53,7 @@ title: Trade
 	$envoy_name: What is this? The deal is off! This is outrageous!
 	<<set $offensive_trades = $offensive_trades + 1>>
 	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
-	<<if $offensive_trades == 3>>
+	<<if $offensive_trades >= 3>>
 		$envoy_name: There is obviously nothing here I want. Goodbye.
 		<<recall_envoy>>
 		<<end_conversation>>
