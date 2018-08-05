@@ -97,15 +97,17 @@ namespace DwarfCorp
     {
         public string Text { get; set; }
         public SpriteFont Font { get; set; }
+        public float Speed { get; set; }
 
         public TextIndicator(SpriteFont font)
         {
             Font = font;
+            Speed = MathFunctions.Rand(0.45f, 2.45f);
         }
 
         public override void Update(DwarfTime time)
         {
-            Position += Vector3.Up * (float)time.ElapsedGameTime.TotalSeconds;
+            Position += Speed * Vector3.Up * (float)time.ElapsedGameTime.TotalSeconds;
             Tint = new Color(Tint.R, Tint.G, Tint.B, (byte)(255*(1.0f - CurrentTime.CurrentTimeSeconds/CurrentTime.TargetTimeSeconds)));
             CurrentTime.Update(time);
         }

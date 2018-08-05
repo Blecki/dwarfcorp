@@ -183,12 +183,12 @@ namespace DwarfCorp
             return uvs;
         }
 
-        public int Columns { get { return Width / FrameWidth; } }
-        public int Rows { get { return Height / FrameHeight; } }
-        public int Row(int TileIndex) { return TileIndex / Columns; }
+        public int Columns { get { return FrameWidth > 0 ? Width / FrameWidth : 0; } }
+        public int Rows { get { return FrameHeight > 0 ? Height / FrameHeight : 0; } }
+        public int Row(int TileIndex) { return Columns > 0 ? TileIndex / Columns : 0; }
         public int Column(int TileIndex) { return TileIndex % Columns; }
-        public float TileUStep { get { return 1.0f / Columns; } }
-        public float TileVStep { get { return 1.0f / Rows; } }
+        public float TileUStep { get { return Columns > 0 ? 1.0f / Columns : 0; } }
+        public float TileVStep { get { return Rows > 0 ? 1.0f / Rows : 0; } }
         public float ColumnU(int Column) { return (TileUStep * Column); }
         public float RowV(int Row) { return (TileVStep * Row); }
         public float TileU(int TileIndex) { return ColumnU(Column(TileIndex)); }

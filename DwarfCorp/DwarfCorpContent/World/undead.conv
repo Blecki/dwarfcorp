@@ -8,7 +8,7 @@ title: Start
 	Necromancer: We are interested in your goods.
 	Necromancer: We have been watching you, fleshy dwarves.
 <<end>>
-Elf: I am $envoy_name of $faction_name.
+Elf: I am $envoy_name of $envoy_faction.
 [[Main]]
 ===
 
@@ -50,9 +50,9 @@ title: Trade
 		$envoy_name: No. We will not take such trinkets.
 		$envoy_name: How could we accept something so alive?
 	<<end>>
-	<<increment $offensive_trades>>
+	<<set $offensive_trades = $offensive_trades + 1>>
 	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
-	<<if $offensive_trades == 3>>
+	<<if $offensive_trades >= 3>>
 		$envoy_name: A complete waste of my time. At least I am still immortal so you are nothing but an annoyance. Goodbye!
 		<<recall_envoy>>
 		<<end_conversation>>

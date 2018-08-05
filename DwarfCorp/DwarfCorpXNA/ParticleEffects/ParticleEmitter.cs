@@ -313,34 +313,28 @@ namespace DwarfCorp
             foreach (Particle p in Particles)
             {
                 float vel = p.Velocity.LengthSquared();
-                if(!Data.Sleeps || vel > 0.2f)
+                if (Data.EmitsLight && p.Scale > 0.1f)
                 {
-                    if (Data.EmitsLight && p.Scale > 0.1f)
-                    {
-                        DynamicLight.TempLights.Add(new DynamicLight(10.0f, 255.0f, false) { Position = p.Position});
-                    }
-                    p.Position += p.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    DynamicLight.TempLights.Add(new DynamicLight(10.0f, 255.0f, false) { Position = p.Position });
+                }
+                p.Position += p.Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                    if (Data.RotatesWithVelocity)
-                    {
-                        Vector3 cameraVel = camera.Project(p.Velocity + camera.Position);
-                        float projectionX = cameraVel.X;
-                        float projectionY = cameraVel.Y;
-                      
-                        p.Angle = (float)Math.Atan2(projectionY, projectionX);
-                    }
-                    else
-                    {
-                        p.Angle += (float)(p.AngularVelocity * gameTime.ElapsedGameTime.TotalSeconds);   
-                    }
-                    p.Velocity += Data.ConstantAccel * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    p.Velocity *= Data.LinearDamping;
-                    p.AngularVelocity *= Data.AngularDamping;
-                }
-                else if (Data.Sleeps && vel < 0.2f)
+                if (Data.RotatesWithVelocity)
                 {
-                    p.Velocity = Vector3.Zero;
+                    Vector3 cameraVel = camera.Project(p.Velocity + camera.Position);
+                    float projectionX = cameraVel.X;
+                    float projectionY = cameraVel.Y;
+
+                    p.Angle = (float)Math.Atan2(projectionY, projectionX);
                 }
+                else
+                {
+                    p.Angle += (float)(p.AngularVelocity * gameTime.ElapsedGameTime.TotalSeconds);
+                }
+                if (!Data.Sleeps || vel > 0.01f) 
+                    p.Velocity += Data.ConstantAccel * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                p.Velocity *= Data.LinearDamping;
+                p.AngularVelocity *= Data.AngularDamping;
 
 
                 if (!Data.UseManualControl)
@@ -382,7 +376,12 @@ namespace DwarfCorp
                             Vector3 newVelocity = Vector3.Reflect(p.Velocity, -contact.NEnter);
                             p.Velocity = newVelocity * Data.Damping;
                             p.AngularVelocity *= 0.5f;
-
+                            if (Data.Sleeps)
+                            {
+                                p.Velocity = Vector3.Zero;
+                                p.AngularVelocity = 0.0f;
+                                vel = 0.0f;
+                            }
                             if (!String.IsNullOrEmpty(Data.SpatterType))
                             {
                                 var above = VoxelHelpers.GetVoxelAbove(v);
@@ -421,6 +420,10 @@ namespace DwarfCorp
                     p.TimeAlive += (float)gameTime.ElapsedGameTime.TotalSeconds + MathFunctions.Rand() * 0.01f;
                     int prevFrame = p.Frame;
                     int newFrame = AnimPlayer.GetFrame(p.TimeAlive);
+                    if (vel < 0.2f)
+                    {
+                        newFrame = prevFrame;
+                    }
                     if (newFrame != prevFrame)
                     {
                         p.Frame = newFrame;

@@ -71,6 +71,7 @@ namespace DwarfCorp
             Name = "Guard Area";
             Priority = PriorityType.Eventually;
             MaxAssignable = Int32.MaxValue;
+            BoredomIncrease = 0.5f;
         }
 
         public override Act CreateScript(Creature agent)

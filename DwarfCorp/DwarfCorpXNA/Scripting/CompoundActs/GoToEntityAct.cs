@@ -45,7 +45,8 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GoToEntityAct : CompoundCreatureAct
     {
-        public Body Entity { get { return Agent.Blackboard.GetData<Body>(EntityName);  } set {Agent.Blackboard.SetData(EntityName, value);} }
+        private Body _entity = null;
+        public Body Entity { get { return Agent.Blackboard.GetData<Body>(EntityName);  } set { _entity = value; Agent.Blackboard.SetData(EntityName, value);} }
         public bool MovingTarget { get; set; }
         public string EntityName { get; set; }
         public PlanAct.PlanType PlanType { get; set; }
@@ -122,6 +123,11 @@ namespace DwarfCorp
         {
             while (true)
             {
+                // This is to support the case of going from one entity to another.
+                if (_entity != null)
+                {
+                    Entity = _entity;
+                }
                 Creature.AI.Blackboard.Erase("EntityVoxel");
                 Act.Status status = SetTargetVoxelFromEntityAct.SetTarget("EntityVoxel", EntityName, Creature);
                 Body entity = Agent.Blackboard.GetData<Body>(EntityName);
@@ -262,7 +268,7 @@ namespace DwarfCorp
                 new StopAct(Agent)
                 );
 
-        Tree.Initialize();
+            Tree.Initialize();
             base.Initialize();
         }
 

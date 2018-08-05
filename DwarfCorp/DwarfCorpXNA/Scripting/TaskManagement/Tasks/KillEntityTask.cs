@@ -59,6 +59,7 @@ namespace DwarfCorp
         public KillEntityTask()
         {
             MaxAssignable = 3;
+            BoredomIncrease = -0.1f;
         }
 
         public KillEntityTask(Body entity, KillType type)
@@ -70,6 +71,7 @@ namespace DwarfCorp
             Priority = PriorityType.Urgent;
             AutoRetry = true;
             Category = TaskCategory.Attack;
+            BoredomIncrease = -0.1f;
         }
 
 
@@ -86,7 +88,7 @@ namespace DwarfCorp
             {
                 Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
                 IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
-                return new FleeEntityAct(creature.AI) {Entity = EntityToKill, PathLength = 5};
+                return new FleeEntityAct(creature.AI) {Entity = EntityToKill, PathLength = 20};
             }
 
             return new KillEntityAct(EntityToKill, creature.AI);

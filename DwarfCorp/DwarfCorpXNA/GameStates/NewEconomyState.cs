@@ -59,6 +59,7 @@ namespace DwarfCorp.GameStates
 
             var employeePanel = TabPanel.AddTab("Employees", new Gui.Widgets.EmployeePanel
             {
+                Font = "font10",
                 Border = "border-thin",
                 Padding = new Margin(4, 4, 0, 0),
                 Faction = World.PlayerFaction,

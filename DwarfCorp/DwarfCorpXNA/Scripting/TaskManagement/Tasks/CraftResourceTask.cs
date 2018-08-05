@@ -51,6 +51,7 @@ namespace DwarfCorp
         public CraftResourceTask()
         {
             Category = TaskCategory.CraftItem;
+            BoredomIncrease = 0.2f;
         }
 
         public CraftResourceTask(CraftItem selectedResource, int NumRepeats, List<ResourceAmount> SelectedResources, int id = -1)
@@ -74,6 +75,7 @@ namespace DwarfCorp
                 ? "Cook"
                 : "Craft";
             AutoRetry = true;
+            BoredomIncrease = 0.2f;
         }
 
         public IEnumerable<Act.Status> Repeat(Creature creature)

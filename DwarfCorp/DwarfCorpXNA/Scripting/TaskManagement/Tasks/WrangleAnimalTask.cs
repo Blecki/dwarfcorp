@@ -49,7 +49,8 @@ namespace DwarfCorp
 
         public WrangleAnimalTask()
         {
-            Category = TaskCategory.Wrangle;    
+            Category = TaskCategory.Wrangle;
+            BoredomIncrease = 0.1f;
         }
 
         public WrangleAnimalTask(Creature animal)
@@ -58,6 +59,7 @@ namespace DwarfCorp
             Animal = animal;
             Name = "Wrangle animal" + animal.GlobalID;
             AutoRetry = true;
+            BoredomIncrease = 0.1f;
         }
 
         public IEnumerable<Act.Status> PenAnimal(CreatureAI agent, CreatureAI creature, AnimalPen animalPen)

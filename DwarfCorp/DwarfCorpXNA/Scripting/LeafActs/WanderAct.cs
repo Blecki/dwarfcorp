@@ -192,6 +192,10 @@ namespace DwarfCorp
                 float bestDist = float.MaxValue;
                 foreach (MoveAction action in actions)
                 {
+                    if (Is2D && (action.MoveType == MoveType.Climb || action.MoveType == MoveType.ClimbWalls))
+                    {
+                        continue;
+                    }
                     float dist = (action.DestinationVoxel.WorldPosition - target).LengthSquared();
 
                     if (dist < bestDist)

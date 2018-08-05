@@ -3740,6 +3740,9 @@
     </Compile>
     <Compile Include="newgui\fonts\font8.bmp">
       <Name>font8</Name>
+    </Compile>
+    <Compile Include="Particles\dice.png">
+      <Name>dice</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

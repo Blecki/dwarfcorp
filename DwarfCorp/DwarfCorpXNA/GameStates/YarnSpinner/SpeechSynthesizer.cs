@@ -48,6 +48,7 @@ namespace DwarfCorp
         private List<string> Syllables { get; set; }
         private List<string> Yays { get; set; }
         private List<string> Boos { get; set; }
+        public bool IsSkipping = false;
  
         public SpeechSynthesizer(Language Language)
         {
@@ -114,7 +115,7 @@ namespace DwarfCorp
                 {
                     Timer pauseTimer = new Timer(0.25f, true, Timer.TimerMode.Real);
 
-                    while (!pauseTimer.HasTriggered)
+                    while (!pauseTimer.HasTriggered && !IsSkipping)
                     {
                         pauseTimer.Update(DwarfTime.LastTime);
                         yield return "";
@@ -122,14 +123,18 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    SoundEffectInstance inst = SoundManager.PlaySound(utter.Syllable, 0.2f, MathFunctions.Rand(-0.4f, 0.4f));// MathFunctions.Rand(1e-2f, 2e-2f));
+                    SoundEffectInstance inst = null;
+                    if (!IsSkipping)
+                        inst = SoundManager.PlaySound(utter.Syllable, 0.2f, MathFunctions.Rand(-0.4f, 0.4f));// MathFunctions.Rand(1e-2f, 2e-2f));
 
                     yield return utter.SubSentence;
 
-                    while (inst != null && inst.State == SoundState.Playing)
+                    
+                    while (!IsSkipping && inst != null && inst.State == SoundState.Playing)
                         yield return "";
                 }
             }
+            IsSkipping = false;
         }
     }
 

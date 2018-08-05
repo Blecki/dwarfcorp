@@ -49,6 +49,7 @@ namespace DwarfCorp
             MaxAssignable = 3;
             Priority = PriorityType.Low;
             AutoRetry = true;
+            BoredomIncrease = 0.2f;
         }
 
         public CraftItemTask(CraftDesignation CraftDesignation)
@@ -62,6 +63,7 @@ namespace DwarfCorp
 
             foreach (var tinter in CraftDesignation.Entity.EnumerateAll().OfType<Tinter>())
                 tinter.Stipple = true;
+            BoredomIncrease = 0.2f;
         }
 
         public override void OnEnqueued(Faction Faction)

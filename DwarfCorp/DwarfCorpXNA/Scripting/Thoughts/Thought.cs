@@ -76,7 +76,9 @@ namespace DwarfCorp
             Magic,
             BuriedDead,
             CheatedHappy,
-            CheatedPissed
+            CheatedPissed,
+            FeltBored,
+            WonGambling
         }
 
         // Todo: Data drive this.
@@ -119,6 +121,11 @@ namespace DwarfCorp
                     break;
                 case ThoughtType.FeltHot:
                     description = "I felt very hot recently.";
+                    happiness = -2.0f;
+                    limit = new TimeSpan(0, 4, 0, 0);
+                    break;
+                case ThoughtType.FeltBored:
+                    description = "I have been overworked recently.";
                     happiness = -2.0f;
                     limit = new TimeSpan(0, 4, 0, 0);
                     break;
@@ -171,6 +178,11 @@ namespace DwarfCorp
                     description = "I got promoted recently.";
                     happiness = 20.0f;
                     limit = new TimeSpan(3, 0, 0, 0);
+                    break;
+                case ThoughtType.WonGambling:
+                    description = "I won a game of dice!";
+                    happiness = 10.0f;
+                    limit = new TimeSpan(1, 0, 0, 0);
                     break;
                 case ThoughtType.JustArrived:
                     description = "I just arrived to this new land.";

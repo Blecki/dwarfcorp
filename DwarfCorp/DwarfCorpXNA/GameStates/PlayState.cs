@@ -1161,6 +1161,7 @@ namespace DwarfCorp.GameStates
                                 ChangeTextColorOnEnable = false,
                                 OnClick = (widget, args) =>
                                 {
+                                    World.Tutorial("walk_camera");
                                     World.ChangeCameraMode(OrbitCamera.ControlType.Walk);
                                 }
                             }

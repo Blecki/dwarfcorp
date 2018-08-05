@@ -73,7 +73,7 @@ namespace DwarfCorp
 
         void InputManager_MouseClickedCallback(InputManager.MouseButton button)
         {
-            if(button != InputManager.MouseButton.Right || Player.CurrentTool != this || KeyManager.RotationEnabled())
+            if(button != InputManager.MouseButton.Right || Player.CurrentTool != this || KeyManager.RotationEnabled(Player.World.Camera))
             {
                 return;
             }
@@ -201,7 +201,7 @@ namespace DwarfCorp
                 Creature dwarf = bodyList[i].GetComponent<Creature>();
                 if (dwarf != null)
                 {
-                    sb.Append(dwarf.Stats.FullName + " (" + dwarf.Stats.CurrentClass.Name + ")");
+                    sb.Append(dwarf.Stats.FullName + " (" + (dwarf.Stats.Title ?? dwarf.Stats.CurrentClass.Name) + ")");
                     if (dwarf.IsAsleep)
                     {
                         sb.Append(" UNCONSCIOUS ");

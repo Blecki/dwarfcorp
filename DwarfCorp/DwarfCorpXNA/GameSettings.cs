@@ -98,6 +98,85 @@ namespace DwarfCorp
 
         };
 
+        public static Dictionary<string, ColorSettings> Profiles = new Dictionary<string, ColorSettings>()
+        {
+            {
+                "Default",
+                new ColorSettings()
+            },
+            {
+                "Colorblind",
+                new ColorSettings()
+                {
+                    Colors = new Dictionary<string, Microsoft.Xna.Framework.Color>()
+                    {
+                        {
+                            "Dig",
+                            Microsoft.Xna.Framework.Color.White
+                        },
+                        {
+                            "Farm",
+                            Microsoft.Xna.Framework.Color.Aqua
+                        },
+                        {
+                            "Guard",
+                            Microsoft.Xna.Framework.Color.Orange
+                        },
+                        {
+                            "Attack",
+                            Microsoft.Xna.Framework.Color.Tomato
+                        },
+                        {
+                            "Harvest",
+                            Microsoft.Xna.Framework.Color.Aqua
+                        },
+                        {
+                            "Highlight",
+                            Microsoft.Xna.Framework.Color.Blue
+                        },
+                        {
+                            "Positive",
+                            Microsoft.Xna.Framework.Color.Aqua
+                        },
+                        {
+                            "Negative",
+                            Microsoft.Xna.Framework.Color.Yellow
+                        },
+                        {
+                            "Low Health",
+                            Microsoft.Xna.Framework.Color.Yellow
+                        },
+                        {
+                            "Medium Health",
+                            Microsoft.Xna.Framework.Color.Orange
+                        },
+                        {
+                            "High Health",
+                            Microsoft.Xna.Framework.Color.Aqua
+                        },
+                        {
+                            "Catch",
+                            Microsoft.Xna.Framework.Color.Purple
+                        },
+                        {
+                            "Gather",
+                            Microsoft.Xna.Framework.Color.Pink
+                        }
+                    }
+                }
+            }
+        };
+
+        public ColorSettings Clone()
+        {
+            var colorSettings = new ColorSettings();
+            colorSettings.Colors.Clear();
+            foreach(var setting in Colors)
+            {
+                colorSettings.Colors.Add(setting.Key, setting.Value);
+            }
+            return colorSettings;
+        }
 
         public Microsoft.Xna.Framework.Color GetColor(string color, Microsoft.Xna.Framework.Color def)
         {

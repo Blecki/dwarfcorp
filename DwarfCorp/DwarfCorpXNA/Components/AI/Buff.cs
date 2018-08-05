@@ -49,7 +49,7 @@ namespace DwarfCorp
         {
             if (!string.IsNullOrEmpty(SoundOnStart))
             {
-                SoundManager.PlaySound(SoundOnStart, creature.Physics.Position, true, 1.0f);
+                SoundManager.PlaySound(SoundOnStart, creature.Physics.Position, true, 0.0f);
             }
         }
 

@@ -12,6 +12,7 @@ namespace DwarfCorp.GameStates
 
     public class ColorOptionsEditor : Widget
     {
+        private string _colorProfile = "Default";
         private GameSettings.Settings _settings = null;
         public GameSettings.Settings Settings
         {
@@ -114,6 +115,7 @@ namespace DwarfCorp.GameStates
 
             var okButton = buttonRow.AddChild(new Button()
             {
+                Font = "font10",
                 AutoLayout = AutoLayout.DockRight,
                 Text = "OK",
                 OnClick = (sender, args) =>
@@ -121,6 +123,32 @@ namespace DwarfCorp.GameStates
                     Close();
                 }
             });
+
+            buttonRow.AddChild(new Widget()
+            {
+                Text = "Profile:",
+                Font = "font10",
+                AutoLayout = AutoLayout.DockLeft,
+                MinimumSize = new Point(64, 32)
+            });
+
+            var profiles = buttonRow.AddChild(new ComboBox()
+            {
+                TextColor = new Vector4(0, 0, 0, 1),
+                AutoLayout = AutoLayout.DockLeft,
+                Font = "font10",
+                MinimumSize = new Point(128, 32),
+                Items = ColorSettings.Profiles.Keys.ToList(),
+                OnSelectedIndexChanged = (sender) =>
+                {
+                    Settings.Colors = ColorSettings.Profiles[(sender as ComboBox).SelectedItem].Clone();
+                    _colorProfile = (sender as ComboBox).SelectedItem;
+                    ResetState();
+                }
+
+            }) as ComboBox;
+
+            profiles.Text = _colorProfile;
 
             Layout();
         }
@@ -323,8 +351,8 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop,
                 Padding = new Margin(0,0,4,4),
                 ChangeColorOnHover = true,
-                HoverTextColor = new Vector4(0.5f, 0, 0, 1.0f)
-            });
+                HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4()
+        });
 
             var label = new Widget
             {

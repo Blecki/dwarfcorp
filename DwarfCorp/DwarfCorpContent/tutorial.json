@@ -221,10 +221,16 @@
 		"Text": "Move the camera using the arrow keys, movement keys (by default, W.A.S.D) or by hovering the mouse at the side of the screen. Zoom the camera in and out using the mouse wheel or by right clicking and dragging while the shift key is pressed. Hold shift or middle mouse button and drag the mouse to rotate the camera. The camera can be re-centered on your balloon port by clicking on the Home button on the minimap (bottom left corner).",
 		"GuiHilite": "minimap"
 	},
+		{
+		"Name": "walk_camera",
+		"Title": "Walk Camera",
+		"Text": "You are now in a special camera mode called Walk. Walk around with the movement keys (arrows or WASD). Jump with the jump key (default C). Toggle flying with the fly key (default k). Hold shift or middle mouse buttons to enable the mouse. To go back, click the Orbit button.",
+		"GuiHilite": "camera_modes"
+	},
 	{
 		"Name": "brush",
 		"Title": "Brushes",
-		"Text": "By clicking one of the brush buttons on the right of the screen, you activated a brush. The available brushes are Block, Shell and Stair brushes. The block brush selects a rectangular region of the world as you click and drag. The shell brush selects a single-block shell around a rectangular region. The stair brush selects stairs down into the earth when mining, or stairs up into the air when building.",
+		"Text": "By clicking one of the brush buttons on the bottom of the screen, you activated a brush. The available brushes are Block, Shell and Stair brushes. The block brush selects a rectangular region of the world as you click and drag. The shell brush selects a single-block shell around a rectangular region. The stair brush selects stairs down into the earth when mining, or stairs up into the air when building.",
 		"GuiHilite": "brushes"
 	},
 	{

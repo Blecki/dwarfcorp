@@ -151,8 +151,9 @@ namespace DwarfCorp
         public float HungerResistance { get { return BuffedCon; } }
 
         public bool CanSleep { get; set; }
-
+        public bool CanGetBored { get; set; }
         public string FullName { get; set; }
+        public string Title { get; set; }
         public int NumBlocksDestroyed { get; set; }
         public int NumItemsGathered { get; set; }
         public int NumRoomsBuilt { get; set; }
@@ -193,7 +194,7 @@ namespace DwarfCorp
         public int Age { get; set; }
 
         public int RandomSeed;
-
+        public float VoicePitch { get; set; }
         public Gender Gender { get; set; }
 
         /// <summary>
@@ -205,6 +206,7 @@ namespace DwarfCorp
         {
             CanSleep = false;
             CanEat = false;
+            CanGetBored = false;
             FullName = "";
             CurrentClass = new WorkerClass();
             AllowedTasks = CurrentClass.Actions;
@@ -223,12 +225,14 @@ namespace DwarfCorp
             };
             Age = (int)Math.Max(MathFunctions.RandNormalDist(30, 15), 10);
             RandomSeed = MathFunctions.RandInt(int.MinValue, int.MaxValue);
+            VoicePitch = 1.0f;
         }
 
         public CreatureStats(EmployeeClass creatureClass, int level)
         {
             CanSleep = false;
             CanEat = false;
+            CanGetBored = false;
             FullName = "";
             CurrentClass = creatureClass;
             AllowedTasks = CurrentClass.Actions;
@@ -275,6 +279,20 @@ namespace DwarfCorp
             Wisdom = Math.Max(Wisdom, CurrentLevel.BaseStats.Wisdom);
             Charisma = Math.Max(Charisma, CurrentLevel.BaseStats.Charisma);
             Intelligence = Math.Max(Intelligence, CurrentLevel.BaseStats.Intelligence);
+        }
+
+        public static float GetRandomVoicePitch(Gender gender)
+        {
+            switch (gender)
+            {
+                case Gender.Female:
+                    return MathFunctions.Rand(0.2f, 1.0f);
+                case Gender.Male:
+                    return MathFunctions.Rand(-1.0f, 0.3f);
+                case Gender.Nonbinary:
+                    return MathFunctions.Rand(-1.0f, 1.0f);
+            }
+            return 1.0f;
         }
     }
 

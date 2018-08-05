@@ -53,14 +53,13 @@ namespace DwarfCorp
             {
                 SpriteSheet = new SpriteSheet(Descriptor.AssetName, Descriptor.Width, Descriptor.Height),
                 Frames = Descriptor.Frames.Select(s => new Point(s, 0)).ToList(),
-                SpeedMultiplier = Descriptor.Speed,
                 Speeds = new List<float>(),
                 YOffset = new List<float>() { Descriptor.YOffset }
             };
 
             foreach(var frame in anim.Frames)
             {
-                anim.Speeds.Add(anim.SpeedMultiplier);
+                anim.Speeds.Add(Descriptor.Speed);
             }
             return anim;
         }

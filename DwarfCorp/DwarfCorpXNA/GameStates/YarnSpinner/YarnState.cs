@@ -45,9 +45,10 @@ namespace DwarfCorp
         private AnimationPlayer SpeakerAnimationPlayer;
         private Animation SpeakerAnimation;
         private bool SpeakerVisible = false;
-        private Gui.Mesh SpeakerRectangle = Gui.Mesh.Quad().Scale(256, 256).Translate(32, 32);
+        private Gui.Mesh SpeakerRectangle = null;
         private SpeechSynthesizer Language;
         private IEnumerator<String> CurrentSpeach;
+        public bool SkipNextLine = false;
 
         public YarnState(
             String ConversationFile,
@@ -97,7 +98,6 @@ namespace DwarfCorp
             if (_Output != null)
                 _Output.AppendText(S);
         }
-
         public void Speak(String S)
         {
             SpeakerAnimationPlayer?.Play();
@@ -149,7 +149,7 @@ namespace DwarfCorp
             SpeakerAnimation = AnimationLibrary.CreateAnimation(new Animation.SimpleDescriptor
             {
                 AssetName = Gfx,
-                Speed = Speed,
+                Speed = 1.0f/Speed,
                 Frames = Frames,
                 Width = FrameWidth,
                 Height = FrameHeight
@@ -188,16 +188,24 @@ namespace DwarfCorp
 
                 _Output = GuiRoot.RootItem.AddChild(new Gui.Widgets.TextBox
                 {
-                    Border = "border-fancy",
+                    Border = "speech-bubble-reverse",
                     Rect = new Rectangle(x, y - 260, w, 260),
-                    TextSize = 2
+                    TextSize = 1,
+                    Font = "font10"
                 }) as Gui.Widgets.TextBox;
-
+                SpeakerRectangle = Gui.Mesh.Quad().Scale(256, 256).Translate(x - w/2, y - 260);
                 ChoicePanel = GuiRoot.RootItem.AddChild(new Widget
                 {
                     Rect = new Rectangle(x, y, w, h),
-                    Border = "border-fancy",
-
+                    Border = null,
+                    TextSize = 1,
+                    Font = "font16"
+                });
+                int inset = 32;
+                var border = GuiRoot.RootItem.AddChild(new Widget
+                {
+                    Border = "border-dark",
+                    Rect = new Rectangle(x - w / 2 + inset/2, y - 260 + inset, 256 - inset, 256 - inset)
                 });
             }
 
@@ -209,8 +217,15 @@ namespace DwarfCorp
         {
             SoundManager.Update(gameTime, null, null);
 
+            SkipNextLine = false;
             foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
+            {
                 GuiRoot.HandleInput(@event.Message, @event.Args);
+                if (@event.Message == InputEvents.KeyUp || @event.Message == InputEvents.MouseClick)
+                {
+                    SkipNextLine = true;
+                }
+            }
 
             GuiRoot.Update(gameTime.ToRealTime());
 
@@ -233,10 +248,9 @@ namespace DwarfCorp
                             foreach (var option in options.options.options)
                             {
                                 var indexLambda = index;
-                                ChoicePanel.AddChild(new Widget
+                                ChoicePanel.AddChild(new Gui.Widgets.Button()
                                 {
                                     Text = option,
-                                    TextSize = 2,
                                     MinimumSize = new Point(0, 20),
                                     AutoLayout = AutoLayout.DockTop,
                                     ChangeColorOnHover = true,
@@ -329,15 +343,29 @@ namespace DwarfCorp
                     }
                     break;
                 case States.Speaking:
-                    if (CurrentSpeach.MoveNext())
+                    if (!SkipNextLine)
                     {
-                        SpeakerAnimationPlayer?.Update(gameTime, false, Timer.TimerMode.Real);
-                        Output(CurrentSpeach.Current);
+                        if (CurrentSpeach.MoveNext())
+                        {
+                            SpeakerAnimationPlayer?.Update(gameTime, false, Timer.TimerMode.Real);
+                            Output(CurrentSpeach.Current);
+                        }
+                        else
+                        {
+                            State = States.Running;
+                            SpeakerAnimationPlayer?.Stop();
+                        }
                     }
                     else
                     {
+                        Language.IsSkipping = true;
+                        while(CurrentSpeach.MoveNext())
+                        {
+                            Output(CurrentSpeach.Current);
+                        }
                         State = States.Running;
                         SpeakerAnimationPlayer?.Stop();
+                        SkipNextLine = false;
                     }
                     break;
                 case States.ShowingChoices:
@@ -346,11 +374,10 @@ namespace DwarfCorp
                     break;
                 case States.ConversationOver:
                     ChoicePanel.Clear();
-                    ChoicePanel.AddChild(new Widget
+                    ChoicePanel.AddChild(new Gui.Widgets.Button()
                     {
                         Text = "End conversation.",
                         MinimumSize = new Point(0, 20),
-                        TextSize = 2,
                         AutoLayout = AutoLayout.DockTop,
                         ChangeColorOnHover = true,
                         OnClick = (sender, args) =>

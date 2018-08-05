@@ -52,6 +52,7 @@ namespace DwarfCorp
             Category = TaskCategory.BuildZone;
             Priority = PriorityType.High;
             MaxAssignable = 3;
+            BoredomIncrease = 0.1f;
         }
 
         public BuildRoomTask(BuildRoomOrder zone)
@@ -61,6 +62,7 @@ namespace DwarfCorp
             Name = "Build Room " + zone.ToBuild.RoomData.Name + zone.ToBuild.ID;
             Zone = zone;
             Priority = PriorityType.High;
+            BoredomIncrease = 0.1f;
         }
 
         private bool IsRoomBuildOrder(Faction faction, BuildRoomOrder buildRooom)

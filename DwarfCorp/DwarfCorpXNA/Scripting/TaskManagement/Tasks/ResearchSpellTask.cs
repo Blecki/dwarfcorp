@@ -14,6 +14,7 @@ namespace DwarfCorp
         {
             Category = TaskCategory.Research;
             MaxAssignable = 10;
+            BoredomIncrease = 0.1f;
         }
 
         public ResearchSpellTask(string spell)
@@ -22,6 +23,7 @@ namespace DwarfCorp
             Spell = spell;
             Name = "Research " + Spell;
             MaxAssignable = 10;
+            BoredomIncrease = 0.1f;
         }
 
 

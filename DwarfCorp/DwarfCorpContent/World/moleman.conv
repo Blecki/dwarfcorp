@@ -2,7 +2,7 @@ title: Start
 ---
 <<set_portrait "GUI\diplo-moleman" 64 64 5.0 0 1 0>>
 <<show_portrait>>
-<<set_language "Moleman">> //Don't set the language - on account of molemen don't speak...? Or do I need a way to do 'speech' without the sound effects?
+<<set_language "Molemen">> //Don't set the language - on account of molemen don't speak...? Or do I need a way to do 'speech' without the sound effects?
 <<pick>>
 	The moleman lifts one claw.
 	The moleman grunts.
@@ -48,7 +48,7 @@ title: Trade
 		The moleman has become angry and begun yelling at his subordinates in their incomprehensible language.
 		The moleman throws your offer at your feet. Maybe he didn't like it?
 	<<end>>
-	<<increment $offensive_trades>>
+	<<set $offensive_trades = $offensive_trades + 1>>
 	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
 	<<if $offensive_trades == 3>>
 		The moleman throws his helmet at one of his subordinates. This seems to be the signal for them to leave.

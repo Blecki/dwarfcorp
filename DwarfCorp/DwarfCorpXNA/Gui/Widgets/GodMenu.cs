@@ -241,9 +241,31 @@ namespace DwarfCorp.Gui.Widgets
 
                 new HorizontalMenuTray.MenuItem
                 {
-                    Text = "FIRE",
-                    OnClick = (sender, args) => ActivateGodTool("Fire")
+                    Text = "GAMBLE",
+                    OnClick = (sender, args) =>
+                    {
+                        foreach(var employee in Master.Faction.Minions)
+                        {
+                            employee.AssignTask(new Scripting.GambleTask() { Priority = Task.PriorityType.High });
+                        }
+
+                    }
                 },
+
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "PASS OUT",
+                    OnClick = (sender, args) =>
+                    {
+                        var employee = Datastructures.SelectRandom(Master.Faction.Minions);
+                        if (employee != null)
+                        {
+                            employee.Creature.Heal(-employee.Status.Health.CurrentValue * employee.Creature.MaxHealth + 1);
+                        }
+
+                    }
+                },
+
 
                 new HorizontalMenuTray.MenuItem
                 {
