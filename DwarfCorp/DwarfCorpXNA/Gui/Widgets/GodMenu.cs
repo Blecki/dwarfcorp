@@ -470,6 +470,7 @@ namespace DwarfCorp.Gui.Widgets
                     OnClick = (sender, args) =>
                     {
                         Master.World.Time.CurrentDate += new TimeSpan(1, 0, 0);
+                        
                     }
                 },
                 new HorizontalMenuTray.MenuItem

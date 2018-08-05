@@ -305,7 +305,7 @@ namespace DwarfCorp
                 {
                     DwarfBux pay = creature.Stats.CurrentLevel.Pay;
                     total += pay;
-                    creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, pay)) { AutoRetry = true, Name = "Get paid." });
+                    creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, pay)) { AutoRetry = true, Name = "Get paid.", Priority = Task.PriorityType.High });
                 }
                 else
                 {
@@ -316,7 +316,7 @@ namespace DwarfCorp
                 {
                     if (!noMoney)
                     {
-                        World.MakeAnnouncement("If we don't make a profit by tomorrow, our stock will crash!");
+                        World.MakeAnnouncement("We have no money!");
                         World.Tutorial("money");
                         SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
                     }

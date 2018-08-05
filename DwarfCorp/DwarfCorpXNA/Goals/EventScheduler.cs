@@ -10,9 +10,10 @@ namespace DwarfCorp.Goals
     public class EventScheduler
     {
         public float CurrentDifficulty = 5;
-        public float TargetDifficulty = 30;
+        public float TargetDifficulty = 5;
+        public float MaxDifficulty = 30;
         public float DifficultyDecayPerHour = 0.5f;
-        public int MaxForecast = 10;
+        public int MaxForecast = 2;
         public int MinSpacingHours = 1;
         public int MaxSpacingHours = 4;
         public int MinimumStartTime = 8;
@@ -96,7 +97,7 @@ namespace DwarfCorp.Goals
                 float p = 0;
                 foreach (var ev in filteredEvents)
                 {
-                    if (forecast + ev.Difficulty > TargetDifficulty || forecast + ev.Difficulty < 0)
+                    if (forecast + ev.Difficulty > TargetDifficulty)
                     {
                         continue;
                     }
@@ -164,6 +165,7 @@ namespace DwarfCorp.Goals
             ActiveEvents.RemoveAll(e => !e.ShouldKeep(world));
             if (hour == previousHour)
              return;
+            TargetDifficulty = MaxDifficulty * 0.1f + TargetDifficulty * 0.9f;
             previousHour = hour;
             CurrentDifficulty = Math.Max(CurrentDifficulty - DifficultyDecayPerHour, 0);
 
