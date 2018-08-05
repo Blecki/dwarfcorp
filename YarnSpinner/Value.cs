@@ -91,24 +91,26 @@ namespace Yarn
                 type = otherValue.type;
                 backingValue = otherValue.backingValue;
             }
-
-            backingValue = value;
-
-            if (value == null)
-                type = Type.Null;
-            else if (value.GetType() == typeof(string))
-                type = Type.String;
-            else if (value.GetType() == typeof(int) ||
-                value.GetType() == typeof(float) ||
-                value.GetType() == typeof(double))
-            {
-                type = Type.Number;
-                backingValue = System.Convert.ToSingle(value);
-            }
-            else if (value.GetType() == typeof(bool))
-                type = Type.Bool;
             else
-                type = Type.Object;
+            {
+                backingValue = value;
+
+                if (value == null)
+                    type = Type.Null;
+                else if (value.GetType() == typeof(string))
+                    type = Type.String;
+                else if (value.GetType() == typeof(int) ||
+                    value.GetType() == typeof(float) ||
+                    value.GetType() == typeof(double))
+                {
+                    type = Type.Number;
+                    backingValue = System.Convert.ToSingle(value);
+                }
+                else if (value.GetType() == typeof(bool))
+                    type = Type.Bool;
+                else
+                    type = Type.Object;
+            }
         }
 
         public virtual int CompareTo(object obj) {

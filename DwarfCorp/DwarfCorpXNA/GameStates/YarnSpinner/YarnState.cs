@@ -52,7 +52,7 @@ namespace DwarfCorp
             {
                 var name = S.Substring(0, colon + 1);
                 S = S.Substring(colon + 1);
-                _Output?.AppendText(name);
+                _Output?.AppendText(name+"\n");
                 TimeSinceOutput = 0.0f;
 
                 SpeakerAnimationPlayer?.Play();
@@ -159,7 +159,7 @@ namespace DwarfCorp
                 {
                     Border = "speech-bubble-reverse",
                     TextSize = 1,
-                    Font = "font10"
+                    Font = "font16"
                 }) as Gui.Widgets.TextBox;
 
 

@@ -8,7 +8,7 @@ title: Start
 	Necromancer: We are interested in your goods.
 	Necromancer: We have been watching you, fleshy dwarves.
 <<end>>
-Elf: I am $envoy_name of $envoy_faction.
+Necromancer: I am $envoy_name of $envoy_faction.
 [[Main]]
 ===
 

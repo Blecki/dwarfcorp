@@ -85,8 +85,7 @@ namespace DwarfCorp
 
         private IEnumerable<Utterance> ConvertSentence(string sentence)
         {
-            var words = sentence.Split(' ').Select(w => w + " ");
-            var syls = words.SelectMany(w => ChunkWord(w, 5));
+            var syls = ChunkWord(sentence, 10);
 
             foreach (var word in syls)
             {
@@ -127,7 +126,8 @@ namespace DwarfCorp
                     if (!IsSkipping)
                         inst = SoundManager.PlaySound(utter.Syllable, 0.2f, MathFunctions.Rand(-0.4f, 0.4f));// MathFunctions.Rand(1e-2f, 2e-2f));
 
-                    yield return utter.SubSentence;
+                    foreach (char c in utter.SubSentence)
+                        yield return "" + c;
 
                     
                     while (!IsSkipping && inst != null && inst.State == SoundState.Playing)

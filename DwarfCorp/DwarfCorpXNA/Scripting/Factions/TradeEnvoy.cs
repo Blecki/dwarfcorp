@@ -107,7 +107,7 @@ namespace DwarfCorp
             cMem.SetValue("$envoy_name", new Yarn.Value(TextGenerator.GenerateRandom(Datastructures.SelectRandom(OwnerFaction.Race.NameTemplates).ToArray())));
             cMem.SetValue("$envoy_faction", new Yarn.Value(OwnerFaction.Name));
             cMem.SetValue("$player_faction", new Yarn.Value(this.OtherFaction));
-            cMem.SetValue("$offensive_trades", new Yarn.Value(0.0f));
+            cMem.SetValue("$offensive_trades", new Yarn.Value(0));
 
             var politics = World.Diplomacy.GetPolitics(OtherFaction, OwnerFaction);
             cMem.SetValue("$faction_was_at_war", new Yarn.Value(politics.WasAtWar));
