@@ -40,6 +40,12 @@ namespace DwarfCorp.Gui.Widgets
             this.Invalidate();
         }
 
+        public void ClearText()
+        {
+            Lines.Clear();
+            this.Invalidate();
+        }
+
         protected override Mesh Redraw()
         {
             Text = String.Join("\n", Lines.Skip(Math.Max(0, Lines.Count - VisibleLines)));

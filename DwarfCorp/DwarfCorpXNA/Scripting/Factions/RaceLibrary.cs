@@ -52,7 +52,10 @@ namespace DwarfCorp
         public static Race FindRace(String Name)
         {
             LoadRaces();
-            return Races[Name];
+            Race result = null;
+            if (Races.TryGetValue(Name, out result))
+                return result;
+            return null;
         }
 
         public static Race RandomIntelligentRace()

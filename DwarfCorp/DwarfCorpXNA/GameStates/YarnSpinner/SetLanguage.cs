@@ -10,7 +10,11 @@ namespace DwarfCorp.GameStates.YarnSpinner
         [YarnCommand("set_language", "STRING")]
         private static void _set_language(YarnState State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
-            State.SetLanguage(RaceLibrary.FindRace(Arguments[0].Value.ToString()).Speech.Language);
+            var race = RaceLibrary.FindRace(Arguments[0].Value.ToString());
+            if (race != null)
+                State.SetLanguage(race.Speech.Language);
+            else
+                State.Output("ERROR setting language: Race not found.");
         }
     }
 }
