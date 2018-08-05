@@ -26,6 +26,8 @@ namespace DwarfCorp.Gui.Widgets
 
         public void AppendText(String Message)
         {
+            if (Lines.Count == 0) Lines.Add("");
+
             var newLines = Lines[Lines.Count - 1] + Message;
             Lines[Lines.Count - 1] = "";
             var font = Root.GetTileSheet(Font);
@@ -43,6 +45,7 @@ namespace DwarfCorp.Gui.Widgets
         public void ClearText()
         {
             Lines.Clear();
+            Lines.Add("");
             this.Invalidate();
         }
 

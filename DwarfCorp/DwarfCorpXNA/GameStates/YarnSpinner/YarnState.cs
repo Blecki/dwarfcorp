@@ -46,6 +46,7 @@ namespace DwarfCorp
 
         public void Speak(String S)
         {
+            _Output?.ClearText();
             var colon = S.IndexOf(":");
             if (colon != -1)
             {
@@ -266,7 +267,7 @@ namespace DwarfCorp
                 WrapText = true,
                 OnClick = (sender, args) =>
                 {
-                    Output("> " + sender.Text + "\n");
+                    //Output("> " + sender.Text + "\n");
                     ChoicePanel.Clear();
                     ChoicePanel.Invalidate();
 
