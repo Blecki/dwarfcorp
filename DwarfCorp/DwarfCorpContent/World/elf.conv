@@ -10,7 +10,7 @@ title: Start
 	Elf: Teehee, you look like sugarplums.
 	Elf: Well, fiddle-dee-dee!
 <<end>>
-Elf: I am $envoy_name of $faction_name.
+Elf: I am $envoy_name of $envoy_faction.
 [[Main]]
 ===
 
