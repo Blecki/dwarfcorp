@@ -26,76 +26,19 @@ namespace DwarfCorp.Gui.Widgets
         private ResourceColumns EnvoyColumns;
         private Widget TotalDisplay;
         private Widget SpaceDisplay;
+        public Action<Widget> OnPlayerAction;
 
         public TradeDialogResult Result { get; private set; }
         public TradeTransaction Transaction { get; private set; }
 
-        public Dialogue.SpeakerWidget Speaker;
-        private Gui.Widget SpeakerWidget;
-        private Gui.Widget SpeechBubble;
-        private float speakerAnimationEasing = 0.0f;
-        private float waitTillEndEasing = 0.0f;
-
         public void Reset()
         {
-            speakerAnimationEasing = 0;
-            waitTillEndEasing = 0.0f;
-            SpeakerWidget.Hidden = true;
-            SpeechBubble.Hidden = true;
             Result = TradeDialogResult.Pending;
             Transaction = null;
             EnvoyColumns.Reconstruct(Envoy.Resources, new List<ResourceAmount>(), (int)Envoy.Money);
             PlayerColumns.Reconstruct(Player.Resources, new List<ResourceAmount>(), (int)Player.Money);
             UpdateBottomDisplays();
-        }
-
-        public void Say(string text)
-        {
-            speakerAnimationEasing = 0;
-            waitTillEndEasing = 0.0f;
-            SpeakerWidget.Hidden = false;
-            SpeechBubble.Hidden = false;
-            SpeechBubble.Invalidate();
-            Speaker.Say(text);
-        }
-
-        public void UpdateSpeakerAnimation(DwarfTime time)
-        {
-            if (SpeakerWidget != null && !SpeakerWidget.Hidden)
-            {
-                float maxY = Root.RenderData.VirtualScreen.Height - 128;
-                float minY = Root.RenderData.VirtualScreen.Height;
-                Speaker.Update(time);
-                if (!Speaker.IsDone())
-                {
-                    speakerAnimationEasing += (float)time.ElapsedRealTime.TotalSeconds;
-                    speakerAnimationEasing = MathFunctions.Clamp(speakerAnimationEasing, 0.0f, 0.5f);
-                    float y = Easing.CubicEaseIn(0.5f - speakerAnimationEasing, maxY, minY, 0.5f);
-                    var rect = new Rectangle(0, (int)y, 128, 128);
-                    SpeakerWidget.Rect = rect;
-                    SpeakerWidget.Background = new TileReference(Speaker.SpeakerAnimation.GetCurrentAnimation().SpriteSheet.AssetName,
-                        Speaker.SpeakerAnimation.GetCurrentAnimation().Frames[Speaker.SpeakerAnimation.CurrentFrame].X);
-                    SpeakerWidget.Invalidate();
-                }
-                else
-                {
-                    if (waitTillEndEasing > 1.5f)
-                    {
-                        SpeakerWidget.Hidden = true;
-                        SpeechBubble.Hidden = true;
-                    }
-                    else
-                    {
-                        waitTillEndEasing += (float)time.ElapsedRealTime.TotalSeconds;
-                        waitTillEndEasing = MathFunctions.Clamp(waitTillEndEasing, 0.0f, 1.6f);
-                        float y = Easing.CubicEaseIn(MathFunctions.Clamp(waitTillEndEasing - 1.0f, 0.0f, 0.6f), maxY, minY, 0.5f);
-                        var rect = new Rectangle(0, (int)y, 128, 128);
-                        SpeakerWidget.Rect = rect;
-                        SpeakerWidget.Invalidate();
-                    }
-                }
-
-            }
+            Layout();
         }
 
         private DwarfBux ComputeNetValue(List<ResourceAmount> playerResources, DwarfBux playerTradeMoney,
@@ -292,8 +235,7 @@ namespace DwarfCorp.Gui.Widgets
                         if (PlayerColumns.SelectedResources.Count == 0 && EnvoyColumns.SelectedResources.Count == 0
                             && EnvoyColumns.TradeMoney == 0 && PlayerColumns.TradeMoney == 0)
                         {
-                            Result = TradeDialogResult.Cancel;
-                            this.Close();
+                            Root.ShowTooltip(Root.MousePosition, "You've selected nothing to trade.");
                         }
                         else if (net >= tradeTarget)
                         {
@@ -307,10 +249,12 @@ namespace DwarfCorp.Gui.Widgets
                                 PlayerItems = PlayerColumns.SelectedResources,
                                 PlayerMoney = PlayerColumns.TradeMoney
                             };
+                            Root.SafeCall(OnPlayerAction, this);
                         }
                         else
                         {
                             Result = TradeDialogResult.RejectProfit;
+                            Root.SafeCall(OnPlayerAction, this);
                         }
                     }
                     else
@@ -358,7 +302,8 @@ namespace DwarfCorp.Gui.Widgets
                 OnClick = (sender, args) =>
                 {
                     Result = TradeDialogResult.Cancel;
-                    this.Close();
+                    Root.SafeCall(OnPlayerAction, this);
+                    //this.Close();
                 }                    
             });
 
@@ -391,27 +336,6 @@ namespace DwarfCorp.Gui.Widgets
             }) as ResourceColumns;
 
             UpdateBottomDisplays();
-
-            if (Speaker != null)
-            {
-                SpeakerWidget = AddChild(new Widget()
-                {
-                    Background = new TileReference(Speaker.SpeakerAnimation.GetCurrentAnimation().SpriteSheet.AssetName, 0),
-                    MinimumSize = new Point(128, 128),
-                    Rect = new Rectangle(0, Root.RenderData.VirtualScreen.Height + 10, 128, 128)
-                });
-
-                Speaker.SpeechBubble = AddChild(new Gui.Widget
-                {
-                    Rect = new Rectangle(129, Root.RenderData.VirtualScreen.Height - 128, 512, 128),
-                    Border = "speech-bubble-reverse",
-                    Font = "font16",
-                    TextColor = Color.Black.ToVector4()
-                });
-                SpeechBubble = Speaker.SpeechBubble;
-                SpeakerWidget.Hidden = true;
-                SpeechBubble.Hidden = true;
-            }
         }        
 
         private void UpdateBottomDisplays()

@@ -45,9 +45,16 @@ title: Main
 
 title: Trade
 ---
-<<trade>> // Pauses conversation until trade is complete.
+<<begin_trade>>
+[[Trade2]]
+===
+
+title: Trade2
+---
+<<wait_for_trade>>
 <<if $trade_result == "cancelled">>
 	$envoy_name: Not sure what you think I'm here for.
+	<<end_trade>>
 	[[Main]]
 <<elseif $trade_result == "hated">>
 	$envoy_name: What is this? The deal is off! This is outrageous!
@@ -55,10 +62,11 @@ title: Trade
 	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
 	<<if $offensive_trades >= 3>>
 		$envoy_name: There is obviously nothing here I want. Goodbye.
+		<<end_trade>>
 		<<recall_envoy>>
 		<<end_conversation>>
 	<<endif>>
-	[[Main]]
+	[[Trade2]]
 <<elseif $trade_result == "unprofitable">>
 	<<pick>>
 		$envoy_name: Do you take me for a fool? Where is the profit?
@@ -66,6 +74,7 @@ title: Trade
 		$envoy_name: I thought we could trust one another. Instead you're wasting my time.
 		$envoy_name: Do you think I have space to carry such worthless goods?
 	<<end>>
+	[[Trade2]]
 <<else>>
 	<<if $trade_result == "liked">>
 		<<political_event "you gave us something we liked" 0.25 4>>
@@ -78,7 +87,9 @@ title: Trade
 		$envoy_name: Ha! The baloon can barely stay in the air now!
 		$envoy_name: Thank Seleprak for inventing mercantilism!
 	<<end>>
+	[[Trade2]]
 <<endif>>
+<<end_trade>>
 [[Main]]
 ===
 
@@ -186,6 +197,5 @@ title: Goodbye
 	$envoy_name: May your mines be deep and profitable.
 	$envoy_name: Remember the motherland.
 <<end>>
-<<recall_envoy>>
 <<end_conversation>>
 ===  

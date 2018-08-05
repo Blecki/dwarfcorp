@@ -20,9 +20,13 @@ namespace DwarfCorp
         private Animation SpeakerAnimation;
         private bool SpeakerVisible = false;
         private Gui.Mesh SpeakerRectangle = null;
+        private Widget SpeakerBorder = null;
         private SpeechSynthesizer Language;
         private IEnumerator<String> CurrentSpeach;
         public bool SkipNextLine = false;
+        private Gui.Widgets.TradePanel TradePanel;
+        private bool AutoHideBubble = false;
+        private float TimeSinceOutput = 0.0f;
 
         public YarnState(
             String ConversationFile,
@@ -37,6 +41,7 @@ namespace DwarfCorp
         {
             if (_Output != null)
                 _Output.AppendText(S);
+            TimeSinceOutput = 0.0f;
         }
 
         public void Speak(String S)
@@ -51,6 +56,7 @@ namespace DwarfCorp
             else
             {
                 _Output?.AppendText(S);
+                TimeSinceOutput = 0.0f;
             }
         }
 
@@ -134,50 +140,78 @@ namespace DwarfCorp
                 GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
                 GuiRoot.RootItem.Font = "font8";
 
-                int w = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 256, 550);
-                int h = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Height - 256, 300);
-                int x = GuiRoot.RenderData.VirtualScreen.Width / 2 - w / 2;
-                int y = System.Math.Max(GuiRoot.RenderData.VirtualScreen.Height / 2 - h / 2, 280);
-
                 _Output = GuiRoot.RootItem.AddChild(new Gui.Widgets.TextBox
                 {
                     Border = "speech-bubble-reverse",
-                    Rect = new Rectangle(x, y - 260, w, 260),
                     TextSize = 1,
                     Font = "font10"
                 }) as Gui.Widgets.TextBox;
-                SpeakerRectangle = Gui.Mesh.Quad().Scale(256, 256).Translate(x - w/2, y - 260);
+
+
                 ChoicePanel = GuiRoot.RootItem.AddChild(new Widget
                 {
-                    Rect = new Rectangle(x, y, w, h),
                     Border = null,
                     TextSize = 1,
                     Font = "font16"
                 });
-                int inset = 32;
-                var border = GuiRoot.RootItem.AddChild(new Widget
+
+                SpeakerBorder = GuiRoot.RootItem.AddChild(new Widget
                 {
                     Border = "border-dark",
-                    Rect = new Rectangle(x - w / 2 + inset/2, y - 260 + inset, 256 - inset, 256 - inset)
                 });
+
+                PositionItems();
             }
 
             IsInitialized = true;
             base.OnEnter();
         }
 
+        private void PositionItems()
+        {
+            int w = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 256, 550);
+            int h = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Height - 256, 300);
+            int x = GuiRoot.RenderData.VirtualScreen.Width / 2 - w / 2;
+            int y = System.Math.Max(GuiRoot.RenderData.VirtualScreen.Height / 2 - h / 2, 280);
+
+            _Output.Rect = new Rectangle(x, y - 260, w, 260);
+            ChoicePanel.Rect = new Rectangle(x, y, w, h);
+
+                int inset = 32;
+            SpeakerBorder.Rect = new Rectangle(x - w / 2 + inset / 2, y - 260 + inset, 256 - inset, 256 - inset);
+            SpeakerRectangle = Gui.Mesh.Quad().Scale(256, 256).Translate(x - w / 2, y - 260);
+
+            _Output.Invalidate();
+            SpeakerBorder.Invalidate();
+        }
+
         public override void Update(DwarfTime gameTime)
         {
+            TimeSinceOutput += (float)gameTime.ElapsedRealTime.TotalSeconds;
+
             SoundManager.Update(gameTime, null, null);
 
             SkipNextLine = false;
             foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
             {
                 GuiRoot.HandleInput(@event.Message, @event.Args);
-                if (@event.Message == InputEvents.KeyUp || @event.Message == InputEvents.MouseClick)
+                if (!@event.Args.Handled && (@event.Message == InputEvents.KeyUp || @event.Message == InputEvents.MouseClick))
                 {
                     SkipNextLine = true;
                 }
+            }
+
+            if (AutoHideBubble)
+            {
+                _Output.Hidden = TimeSinceOutput > 2.0f;
+                SpeakerBorder.Hidden = TimeSinceOutput > 2.0f;
+                GuiRoot.RootItem.Invalidate();
+            }
+            else
+            {
+                _Output.Hidden = false;
+                SpeakerBorder.Hidden = false;
+                GuiRoot.RootItem.Invalidate();
             }
 
             GuiRoot.Update(gameTime.ToRealTime());
@@ -189,7 +223,7 @@ namespace DwarfCorp
         {
             GuiRoot.Draw();
 
-            if (SpeakerVisible && SpeakerAnimationPlayer != null)
+            if (SpeakerVisible && SpeakerAnimationPlayer != null && !_Output.Hidden)
             {
                 var sheet = SpeakerAnimationPlayer.GetCurrentAnimation().SpriteSheet;
                 var frame = SpeakerAnimationPlayer.GetCurrentAnimation().Frames[SpeakerAnimationPlayer.CurrentFrame];
@@ -230,6 +264,45 @@ namespace DwarfCorp
         public void DoneAddingChoices()
         {
             ChoicePanel.Layout();
+        }
+
+        public void BeginTrade(TradeEnvoy Envoy, Faction PlayerFaction)
+        {
+            TradePanel = GuiRoot.ConstructWidget(new Gui.Widgets.TradePanel
+            {
+                Rect = GuiRoot.RenderData.VirtualScreen,
+                Envoy = new Trade.EnvoyTradeEntity(Envoy),
+                Player = new Trade.PlayerTradeEntity(PlayerFaction),
+            }) as Gui.Widgets.TradePanel;
+
+            TradePanel.Layout();
+
+            GuiRoot.ShowDialog(TradePanel);
+            GuiRoot.RootItem.SendToBack(TradePanel);
+
+            AutoHideBubble = true;
+
+            SpeakerBorder.Rect = new Rectangle(16, GuiRoot.RenderData.VirtualScreen.Height - (256 - 16), 256 - 32, 256 - 32);
+            SpeakerRectangle = Gui.Mesh.Quad().Scale(256, 256).Translate(0, SpeakerBorder.Rect.Y);
+            _Output.Rect = new Rectangle(256, GuiRoot.RenderData.VirtualScreen.Height - 260, System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 256, 550), 260);
+
+            SpeakerBorder.Invalidate();
+            _Output.Invalidate();
+            GuiRoot.RootItem.Invalidate();
+        }
+
+        public void EndTrade()
+        {
+            TradePanel.Close();
+            TradePanel = null;
+            AutoHideBubble = false;
+            PositionItems();
+        }
+
+        public void WaitForTrade(Action<Gui.Widgets.TradeDialogResult, Trade.TradeTransaction> Callback)
+        {
+            TradePanel.Reset();
+            TradePanel.OnPlayerAction = (sender) => Callback(TradePanel.Result, TradePanel.Transaction);
         }
     }
 }

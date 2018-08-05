@@ -7,7 +7,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
 {
     static class TradeYarnCommand
     {
-        [YarnCommand("trade")]
+        [YarnCommand("begin_trade")]
         private static void _trade(YarnEngine State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
         {
             var realState = State.PlayerInterface as YarnState; // THIS IS A HACK.
@@ -22,21 +22,22 @@ namespace DwarfCorp.Scripting.Factions.Trading
                 return;
             }
 
-            var tradeState = new TradeGameState(
-                realState.StateManager.Game,
-                realState.StateManager,
-                envoy,
-                playerFaction,
-                world);
+            State.PlayerInterface.BeginTrade(envoy, playerFaction);
+        }
 
-            tradeState.CallWhenDone = () =>
+        [YarnCommand("wait_for_trade")]
+        private static void _wait_for_trade(YarnEngine State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
+        {
+            var envoy = Memory.GetValue("$envoy").AsObject as TradeEnvoy;
+            var playerFaction = Memory.GetValue("$player_faction").AsObject as Faction;
+            var world = Memory.GetValue("$world").AsObject as WorldManager;
+
+            State.Pause();
+            State.PlayerInterface.WaitForTrade((tradeResult, transaction) =>
             {
-                //Setup memory variables with trade results.
-                var transaction = tradeState.TradePanel.Transaction;
-
-                if (tradeState.TradePanel.Result == Gui.Widgets.TradeDialogResult.Cancel)
+                if (tradeResult == Gui.Widgets.TradeDialogResult.Cancel)
                     Memory.SetValue("$trade_result", new Yarn.Value("cancelled"));
-                else if (tradeState.TradePanel.Result == Gui.Widgets.TradeDialogResult.RejectProfit)
+                else if (tradeResult == Gui.Widgets.TradeDialogResult.RejectProfit)
                     Memory.SetValue("$trade_result", new Yarn.Value("unprofitable"));
                 else if (transaction.PlayerItems.Select(i => ResourceLibrary.GetResourceByName(i.ResourceType))
                     .SelectMany(i => i.Tags)
@@ -51,10 +52,13 @@ namespace DwarfCorp.Scripting.Factions.Trading
 
                 Memory.SetValue("$trade_transaction", new Yarn.Value(transaction));
                 State.Unpause();
-            };
+            });
+        }
 
-            State.Pause();
-            realState.StateManager.PushState(tradeState);
+        [YarnCommand("end_trade")]
+        private static void _end_trade(YarnEngine State, List<Ancora.AstNode> Arguments, Yarn.MemoryVariableStore Memory)
+        {
+            State.PlayerInterface.EndTrade();
         }
 
         [YarnCommand("finalize_trade")]
