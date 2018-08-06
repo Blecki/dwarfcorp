@@ -143,6 +143,10 @@
       <Project>{35253ce1-c864-4cd3-8249-4d1319748e8f}</Project>
       <Name>FNA</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\YarnSpinner\YarnSpinner.csproj">
+      <Project>{6c3b03d2-2e89-4ec3-a022-e84053a7b17f}</Project>
+      <Name>YarnSpinner</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LibNoise\LibNoise.csproj">
       <Project>{031c8cff-f147-44ea-b7e5-0a5644808a7e}</Project>
       <Name>LibNoise</Name>

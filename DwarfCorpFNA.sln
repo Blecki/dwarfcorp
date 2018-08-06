@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FNA", "FNA\FNA.csproj", "{35253CE1-C864-4CD3-8249-4D1319748E8F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DwarfCorpFNA", "DwarfCorp\DwarfCorpXNA\DwarfCorpFNA.csproj", "{76AE20DE-26D9-4841-9F8C-DFE9F5BC2B94}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibNoise", "DwarfCorp\LibNoise\LibNoise.csproj", "{031C8CFF-F147-44EA-B7E5-0A5644808A7E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YarnSpinner", "YarnSpinner\YarnSpinner.csproj", "{6C3B03D2-2E89-4EC3-A022-E84053A7B17F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,8 +49,23 @@ Global
 		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.Release|x64.ActiveCfg = Release|Any CPU
 		{031C8CFF-F147-44EA-B7E5-0A5644808A7E}.Release|x86.ActiveCfg = Release|Any CPU
+		{6C3B03D2-2E89-4EC3-A022-E84053A7B17F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C3B03D2-2E89-4EC3-A022-E84053A7B17F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C3B03D2-2E89-4EC3-A022-E84053A7B17F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6C3B03D2-2E89-4EC3-A022-E84053A7B17F}.Debug|x64.Build.0 = Debug|Any CPU
+		{6C3B03D2-2E89-4EC3-A022-E84053A7B17F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6C3B03D2-2E89-4EC3-A022-E84053A7B17F}.Debug|x86.Build.0 = Debug|Any CPU
+		{6C3B03D2-2E89-4EC3-A022-E84053A7B17F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C3B03D2-2E89-4EC3-A022-E84053A7B17F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C3B03D2-2E89-4EC3-A022-E84053A7B17F}.Release|x64.ActiveCfg = Release|Any CPU
+		{6C3B03D2-2E89-4EC3-A022-E84053A7B17F}.Release|x64.Build.0 = Release|Any CPU
+		{6C3B03D2-2E89-4EC3-A022-E84053A7B17F}.Release|x86.ActiveCfg = Release|Any CPU
+		{6C3B03D2-2E89-4EC3-A022-E84053A7B17F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7FEAC89A-6657-485D-A305-C0282C031899}
 	EndGlobalSection
 EndGlobal
