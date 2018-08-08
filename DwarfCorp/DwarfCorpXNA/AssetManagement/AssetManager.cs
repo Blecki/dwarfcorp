@@ -45,6 +45,13 @@ using System.Security.Permissions;
 
 namespace DwarfCorp
 {
+    public class AssetException : Exception
+    {
+        public AssetException(String Message) : base(Message)
+        {
+
+        }
+    }
 
     /// <summary>
     /// This class exists to provide an abstract interface between asset tags and textures. 
@@ -58,8 +65,9 @@ namespace DwarfCorp
         private static Dictionary<String, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
         private static ContentManager Content { get { return GameState.Game.Content; } }
         private static GraphicsDevice Graphics {  get { return GameState.Game.GraphicsDevice; } }
-        private static List<Tuple<String,Assembly>> Assemblies = new List<Tuple<String,Assembly>>();
-        private static List<String> DirectorySearchList;
+        private static List<Tuple<ModMetaData,Assembly>> Assemblies = new List<Tuple<ModMetaData,Assembly>>();
+        private static List<ModMetaData> DirectorySearchList;
+        private static List<ModMetaData> InstalledMods;
 
         public static void ResetCache()
         {
@@ -68,16 +76,30 @@ namespace DwarfCorp
 
         public static void Initialize(ContentManager Content, GraphicsDevice Graphics, GameSettings.Settings Settings)
         {
-            DirectorySearchList = Settings.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
+            InstalledMods = EnumerateMods(GameSettings.Default.LocalModDirectory, ModSource.LocalDirectory).Concat(
+                EnumerateMods(GameSettings.Default.SteamModDirectory, ModSource.SteamDirectory)).ToList();
+            Settings.EnabledMods = Settings.EnabledMods.Where(m => InstalledMods.Any(item => item.Guid == m)).ToList();
+            DirectorySearchList = Settings.EnabledMods.Select(m => InstalledMods.First(item => item.Guid == m)).ToList();
+            
             DirectorySearchList.Reverse();
-            DirectorySearchList.Add("Content");
+            DirectorySearchList.Add(new ModMetaData
+            {
+                Name = "BaseContent",
+                Directory = "Content",
+                Guid = Guid.Empty
+            });
 
-            Assemblies.Add(Tuple.Create("BaseContent", Assembly.GetExecutingAssembly()));
+            Assemblies.Add(Tuple.Create(new ModMetaData
+            {
+                Name = "BaseContent",
+                Directory = "Content",
+                Guid = Guid.Empty
+            }, Assembly.GetExecutingAssembly()));
 
             foreach (var mod in DirectorySearchList)
-                if (System.IO.Directory.Exists(mod))
+                if (System.IO.Directory.Exists(mod.Directory))
                 {
-                    var csFiles = Directory.EnumerateFiles(mod).Where(s => Path.GetExtension(s) == ".cs");
+                    var csFiles = Directory.EnumerateFiles(mod.Directory).Where(s => Path.GetExtension(s) == ".cs");
                     if (csFiles.Count() > 0)
                     {
                         var assembly = ModCompiler.CompileCode(csFiles);
@@ -87,12 +109,48 @@ namespace DwarfCorp
                 }
         }
 
-        public static IEnumerable<Tuple<String,Assembly>> EnumerateLoadedModAssemblies()
+        private static List<ModMetaData> EnumerateMods(String Path, ModSource Source)
+        {
+            var r = new List<ModMetaData>();
+
+            if (!Directory.Exists(Path))
+                return r;
+
+            foreach (var dir in Directory.EnumerateDirectories(Path))
+            {
+                try
+                {
+                    var metaDataPath = dir + ProgramData.DirChar + "meta.json";
+                    var metaData = FileUtils.LoadJsonFromAbsolutePath<ModMetaData>(metaDataPath);
+                    metaData.Directory = dir;
+                    metaData.Source = Source;
+                    if (metaData.Guid == Guid.Empty)
+                    {
+                        metaData.Guid = Guid.NewGuid();
+                        FileUtils.SaveBasicJson(metaData, metaDataPath);
+                    }
+                    r.Add(metaData);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Invalid mod: {0} {1}", dir, e.Message);
+                }
+            }
+
+            return r;    
+        }
+
+        public static IEnumerable<Tuple<ModMetaData,Assembly>> EnumerateLoadedModAssemblies()
         {
             return Assemblies;
         }
 
-        public static String GetSourceModOfType(Type T)
+        public static IEnumerable<ModMetaData> EnumerateInstalledMods()
+        {
+            return InstalledMods;
+        }
+
+        public static ModMetaData GetSourceModOfType(Type T)
         {
             foreach (var mod in Assemblies)
             {
@@ -100,16 +158,21 @@ namespace DwarfCorp
                     return mod.Item1;
             }
 
-            return "$"; // The type wasn't from one of the loaded mods.
+            return new ModMetaData
+            {
+                Name = "BaseContent",
+                Directory = "Content",
+                Guid = Guid.Empty
+            }; // The type wasn't from one of the loaded mods.
         }
 
-        public static Type GetTypeFromMod(String T, String Assembly)
+        public static Type GetTypeFromMod(String T, Guid Assembly)
         {
             foreach (var mod in Assemblies)
-                if (mod.Item1 == Assembly)
+                if (mod.Item1.Guid == Assembly)
                     return mod.Item2.GetType(T);
 
-            return Type.GetType(T, true);
+            throw new AssetException("Tried to load type from mod that is not installed or enabled");
         }
 
         private static bool CheckMethod(MethodInfo Method, Type ReturnType, Type[] ArgumentTypes)
@@ -162,8 +225,8 @@ namespace DwarfCorp
             {
                 foreach (var extension in extensionList)
                 {
-                    if (File.Exists(mod + ProgramData.DirChar + Asset + extension))
-                        return mod + ProgramData.DirChar + Asset + extension;
+                    if (File.Exists(mod.Directory + ProgramData.DirChar + Asset + extension))
+                        return mod.Directory + ProgramData.DirChar + Asset + extension;
                 }
             }
 

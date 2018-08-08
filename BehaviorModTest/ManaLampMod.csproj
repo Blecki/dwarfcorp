@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="craft-items.json" />
+    <None Include="meta.json" />
     <None Include="sheets.json" />
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +65,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Mod Tutorial.txt" />
+    <Content Include="preview.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

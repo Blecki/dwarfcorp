@@ -112,6 +112,9 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Facepunch.Steamworks">
+      <HintPath>..\..\Facepunch.Steamworks-master\Facepunch.Steamworks\bin\Debug\net45\Facepunch.Steamworks.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -176,6 +179,7 @@
     <Compile Include="Ancora\TestGrammar.cs" />
     <Compile Include="AssetManagement\IndexedTexture.cs" />
     <Compile Include="AssetManagement\IndexedDecomposition.cs" />
+    <Compile Include="AssetManagement\ModMetaData.cs" />
     <Compile Include="AssetManagement\TextureTool.cs" />
     <Compile Include="AssetManagement\Palette.cs" />
     <Compile Include="AssetManagement\MemoryTexture.cs" />
@@ -195,6 +199,7 @@
     <Compile Include="AssetManagement\GameSave\OverworldFile.cs" />
     <Compile Include="AssetManagement\AssetManager.cs" />
     <Compile Include="AssetManagement\ModCompiler.cs" />
+    <Compile Include="AssetManagement\Steam\Steam.cs" />
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
@@ -881,9 +886,15 @@
     <Compile Include="World\WorldTime.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Facepunch.Steamworks.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="favicon.ico" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
+    <Content Include="steam_api.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="mod hooks.txt" />
     <EmbeddedResource Include="version.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

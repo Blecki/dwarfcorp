@@ -5,3 +5,6 @@
 [submodule "gemgui"]
 	path = gemgui
 	url = https://github.com/Blecki/gemgui
+[submodule "DwarfCorp/DwarfCorpXNA/Facepunch.Steamworks"]
+	path = DwarfCorp/DwarfCorpXNA/Facepunch.Steamworks
+	url = https://github.com/Facepunch/Facepunch.Steamworks.git

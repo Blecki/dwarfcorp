@@ -33,11 +33,13 @@ namespace DwarfCorp
             parameters.ReferencedAssemblies.Add(Environment.GetEnvironmentVariable("XNAGSv4") + @"\References\Windows\x86\Microsoft.Xna.Framework.Game.dll");
             parameters.ReferencedAssemblies.Add(Environment.GetEnvironmentVariable("XNAGSv4") + @"\References\Windows\x86\Microsoft.Xna.Framework.Graphics.dll");
 #endif
-            foreach (var file in System.IO.Directory.EnumerateFiles(Environment.CurrentDirectory))
-            {
-                if (System.IO.Path.GetExtension(file) == ".dll")
-                    parameters.ReferencedAssemblies.Add(file);
-            }
+            //foreach (var file in System.IO.Directory.EnumerateFiles(Environment.CurrentDirectory))
+            //{
+            //    if (System.IO.Path.GetExtension(file) == ".dll")
+            //        parameters.ReferencedAssemblies.Add(file);
+            //}
+
+            parameters.ReferencedAssemblies.Add("Newtonsoft.Json.dll");
 
 
             Console.Out.WriteLine("Compiling mod files...");

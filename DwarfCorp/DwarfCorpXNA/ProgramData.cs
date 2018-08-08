@@ -74,7 +74,8 @@ namespace DwarfCorp
         {
             return String.Join(new String(DirChar, 1), args);
         }
-
+        
+        // Todo: KILL
         public static char DirChar = Path.DirectorySeparatorChar;
 
     }
