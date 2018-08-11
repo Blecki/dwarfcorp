@@ -1,3 +1,4 @@
+#define ENABLE_CHAT
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -339,14 +340,7 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockRight,
                 OnClick = (sender, args) =>
                 {
-                    Employee.World.Paused = true;
-                    // Prepare conversation memory for an envoy conversation.
-                    var cMem = Employee.World.ConversationMemory;
-                    cMem.SetValue("$world", new Yarn.Value(Employee.World));
-                    cMem.SetValue("$employee", new Yarn.Value(Employee));
-                    cMem.SetValue("$employee_name", new Yarn.Value(Employee.Stats.FullName));
-
-                    Employee.World.Game.StateManager.PushState(new YarnState(ContentPaths.employee_conversation, "Start", cMem));
+                    Employee.Chat();
                 }
             });
 #endif

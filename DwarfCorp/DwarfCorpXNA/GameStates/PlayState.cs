@@ -237,6 +237,7 @@ namespace DwarfCorp.GameStates
                 ContextCommands.Add(new ContextCommands.MoveCommand());
                 ContextCommands.Add(new DwarfCorp.ContextCommands.EmptyBackpackCommand());
                 ContextCommands.Add(new DwarfCorp.ContextCommands.CancelDwarfCommand());
+                ContextCommands.Add(new ContextCommands.ChatCommand());
                 ContextCommands.Add(new ContextCommands.FireCommand());
                 ContextCommands.Add(new ContextCommands.PromoteCommand());
                 World.LogEvent(String.Format("We have arrived at {0}", Overworld.Name));

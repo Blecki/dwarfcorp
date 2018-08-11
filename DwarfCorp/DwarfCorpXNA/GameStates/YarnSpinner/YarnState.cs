@@ -27,7 +27,9 @@ namespace DwarfCorp
         private Gui.Widgets.TradePanel TradePanel;
         private bool AutoHideBubble = false;
         private float TimeSinceOutput = 0.0f;
-
+        private DwarfCorp.Gui.Widgets.EmployeePortrait Icon = null;
+        private CreatureAI _employee = null;
+        private float _voicePitch = 0.0f;
         public YarnState(
             String ConversationFile,
             String StartNode,
@@ -35,6 +37,47 @@ namespace DwarfCorp
             base(Game, "YarnState", GameState.Game.StateManager)
         {
             YarnEngine = new YarnEngine(ConversationFile, StartNode, Memory, this);
+        }
+
+        public void SetVoicePitch(float pitch)
+        {
+            _voicePitch = pitch;
+        }
+
+        public void AddEmployeePortrait(CreatureAI creature)
+        {
+            _employee = creature;
+        }
+
+        private void setupPortrait()
+        {
+            Icon = GuiRoot.RootItem.AddChild(new Gui.Widgets.EmployeePortrait()
+            {
+                Rect = SpeakerBorder.Rect
+            }) as Gui.Widgets.EmployeePortrait;
+
+            var sprite = _employee.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>();
+            if (sprite != null)
+            {
+                Icon.Sprite = sprite.GetLayers();
+                Icon.AnimationPlayer = new AnimationPlayer(sprite.GetAnimation(_employee.Creature.CurrentCharacterMode.ToString() + "FORWARD"));
+            }
+            else
+            {
+                Icon.Sprite = null;
+                Icon.AnimationPlayer = null;
+            }
+
+            var label = Icon.AddChild(new Widget()
+            {
+                Text = _employee.Stats.FullName + "\n(" + (_employee.Stats.Title ?? _employee.Stats.CurrentClass.Name) + ")",
+                Font = "font10",
+                TextColor = Color.White.ToVector4(),
+                TextVerticalAlign = VerticalAlign.Center,
+                TextHorizontalAlign = HorizontalAlign.Center,
+                AutoLayout = AutoLayout.DockBottom
+            });
+            Icon.Layout();
         }
 
         public void Output(String S)
@@ -111,6 +154,7 @@ namespace DwarfCorp
         {
             // Todo: Remove the reference to Language entirely
             this.Language = new SpeechSynthesizer(Language);
+            this.Language.Pitch = _voicePitch;
         }
 
         public void SetPortrait(String Gfx, int FrameWidth, int FrameHeight, float Speed, List<int> Frames)
@@ -176,6 +220,11 @@ namespace DwarfCorp
                 });
 
                 PositionItems();
+
+                if (_employee != null)
+                {
+                    setupPortrait();
+                }
             }
 
             IsInitialized = true;

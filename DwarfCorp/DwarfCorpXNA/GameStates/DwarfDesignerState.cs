@@ -38,6 +38,12 @@ namespace DwarfCorp.Gui.Widgets
             {
                 return;
             }
+
+            if (SpriteMesh == null)
+            {
+                Layout();
+            }
+
             var texture = Sprite.GetCompositeTexture();
             if (texture != null)
             {

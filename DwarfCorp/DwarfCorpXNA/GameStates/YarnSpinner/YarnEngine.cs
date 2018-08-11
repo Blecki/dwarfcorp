@@ -74,13 +74,13 @@ namespace DwarfCorp
             Dialogue.LogDebugMessage = delegate (string message) { Console.WriteLine(message); };
             Dialogue.LogErrorMessage = delegate (string message) { Console.WriteLine("Yarn Error: " + message); };
             
-            try
+            //try
             {
                 Dialogue.LoadFile(AssetManager.ResolveContentPath(ConversationFile), false, false, null);
             }
-            catch (Exception e)
+            //catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+              //  Console.Error.WriteLine(e.ToString());
             }
 
             Runner = Dialogue.Run(StartNode).GetEnumerator();

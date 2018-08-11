@@ -49,7 +49,8 @@ namespace DwarfCorp
         private List<string> Yays { get; set; }
         private List<string> Boos { get; set; }
         public bool IsSkipping = false;
- 
+        public float Pitch = 0.0f;
+
         public SpeechSynthesizer(Language Language)
         {
             Syllables = Language.Syllables;
@@ -60,13 +61,13 @@ namespace DwarfCorp
         public void SayYay()
         {
             if (Yays != null && Yays.Count > 0)
-                SoundManager.PlaySound(Datastructures.SelectRandom(Yays), 0.15f);
+                SoundManager.PlaySound(Datastructures.SelectRandom(Yays), 0.15f, Pitch);
         }
 
         public void SayBoo()
         {
             if (Boos != null && Boos.Count > 0)
-                SoundManager.PlaySound(Datastructures.SelectRandom(Boos), 0.15f);
+                SoundManager.PlaySound(Datastructures.SelectRandom(Boos), 0.15f, Pitch);
         }
 
         public IEnumerable<String> Say(string sentence)
@@ -124,7 +125,7 @@ namespace DwarfCorp
                 {
                     SoundEffectInstance inst = null;
                     if (!IsSkipping)
-                        inst = SoundManager.PlaySound(utter.Syllable, 0.2f, MathFunctions.Rand(-0.4f, 0.4f));// MathFunctions.Rand(1e-2f, 2e-2f));
+                        inst = SoundManager.PlaySound(utter.Syllable, 0.2f, MathFunctions.Clamp(MathFunctions.Rand(-0.4f, 0.4f) + Pitch, -1.0f, 1.0f));// MathFunctions.Rand(1e-2f, 2e-2f));
 
                     foreach (char c in utter.SubSentence)
                         yield return "" + c;
