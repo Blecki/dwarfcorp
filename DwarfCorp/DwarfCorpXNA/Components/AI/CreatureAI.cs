@@ -1418,6 +1418,7 @@ namespace DwarfCorp
             cMem.SetValue("$employee_pay", new Yarn.Value((float)(decimal)Employee.Stats.CurrentLevel.Pay));
             cMem.SetValue("$employee_bonus", new Yarn.Value(4 * (float)(decimal)Employee.Stats.CurrentLevel.Pay));
             cMem.SetValue("$company_money", new Yarn.Value((float)(decimal)Employee.Faction.Economy.CurrentMoney));
+            cMem.SetValue("$is_on_fire", new Yarn.Value(Employee.Physics.GetComponent<Flammable>().IsOnFire));
 
             var state = new YarnState(ContentPaths.employee_conversation, "Start", cMem);
             state.AddEmployeePortrait(Employee);

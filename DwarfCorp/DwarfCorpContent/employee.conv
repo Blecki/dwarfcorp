@@ -4,6 +4,9 @@ title: Start
 <<if $is_asleep>>
 [[Sleep]]
 <<endif>>
+<<if $is_on_fire>>
+[[OnFire]]
+<<endif>>
 <<if $is_on_strike>>
 [[Strike]]
 <<endif>>
@@ -139,6 +142,16 @@ title: Bye
 title: Sleep
 ---
 $employee_name: zzzzzz...
+<<end_conversation>>
+===
+
+title: OnFire
+---
+<<pick>>
+$employee_name: Ahhh! Fire!
+$employee_name: I'm burning!
+$employee_name: Fire! Fire!
+<<end>>
 <<end_conversation>>
 ===
 
