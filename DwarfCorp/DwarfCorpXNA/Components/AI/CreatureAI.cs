@@ -1412,7 +1412,7 @@ namespace DwarfCorp
             var injuries = TextGenerator.GetListString(Employee.Creature.Buffs.OfType<Disease>().Select(disease => disease.Name));
             if (injuries == "")
             {
-                injuries = "No problems";
+                injuries = "no problems";
             }
             cMem.SetValue("$injuries", new Yarn.Value(injuries));
             cMem.SetValue("$employee_pay", new Yarn.Value((float)(decimal)Employee.Stats.CurrentLevel.Pay));
