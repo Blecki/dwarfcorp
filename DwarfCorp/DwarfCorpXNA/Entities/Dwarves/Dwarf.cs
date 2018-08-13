@@ -224,6 +224,12 @@ namespace DwarfCorp
                 if (defaultLayer != null)
                     Sprite.AddLayer(defaultLayer, Palette);
             }
+
+            // Do not allow hats and hair on the same head.
+            if (Layer == "hat")
+            {
+                Sprite.RemoveLayer("hair");
+            }
         }
     }
 
