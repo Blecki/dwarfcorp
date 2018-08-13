@@ -31,19 +31,19 @@ namespace DwarfCorp.Gui.Widgets
             Widget topWidget = AddChild(new Widget()
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 48)
+                MinimumSize = new Point(48 * 2, 40 * 2)
             });
             Portrait = topWidget.AddChild(new EmployeePortrait()
             {
-                MinimumSize = new Point(48, 40),
+                MinimumSize = new Point(48 * 2, 40 * 2),
                 AutoLayout = AutoLayout.DockLeft
             }) as EmployeePortrait;
             NameLabel = topWidget.AddChild(new Gui.Widget
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 30),
+                MinimumSize = new Point(0, 40 * 2),
                 Font = "font16",
-                TextVerticalAlign = VerticalAlign.Center
+                TextVerticalAlign = VerticalAlign.Bottom
             });
 
             ClassLabel = AddChild(new Gui.Widget
