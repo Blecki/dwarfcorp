@@ -10,6 +10,7 @@ namespace DwarfCorp.Gui.Widgets
     public class Popup : Widget
     {
         public string OkayText = "OKAY";
+        public bool ShowOkayButton = true;
 
         public override void Construct()
         {
@@ -21,6 +22,12 @@ namespace DwarfCorp.Gui.Widgets
 
             Border = "border-fancy";
 
+            if (ShowOkayButton)
+                AddOkayButton();
+        }
+
+        public void AddOkayButton()
+        {
             AddChild(new Widget
             {
                 Text = OkayText,

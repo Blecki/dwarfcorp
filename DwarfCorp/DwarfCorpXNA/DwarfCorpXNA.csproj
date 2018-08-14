@@ -112,9 +112,6 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Facepunch.Steamworks">
-      <HintPath>..\..\Facepunch.Steamworks-master\Facepunch.Steamworks\bin\Debug\net45\Facepunch.Steamworks.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -137,6 +134,10 @@
     </Reference>
     <Reference Include="SharpRaven">
       <HintPath>..\..\packages\SharpRaven.2.2.0\lib\net40\SharpRaven.dll</HintPath>
+    </Reference>
+    <Reference Include="Steamworks.NET, Version=11.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\SteamWorks\Steamworks.NET.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Private>False</Private>
@@ -180,6 +181,7 @@
     <Compile Include="AssetManagement\IndexedTexture.cs" />
     <Compile Include="AssetManagement\IndexedDecomposition.cs" />
     <Compile Include="AssetManagement\ModMetaData.cs" />
+    <Compile Include="AssetManagement\Steam\UGC.cs" />
     <Compile Include="AssetManagement\TextureTool.cs" />
     <Compile Include="AssetManagement\Palette.cs" />
     <Compile Include="AssetManagement\MemoryTexture.cs" />
@@ -886,9 +888,7 @@
     <Compile Include="World\WorldTime.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Facepunch.Steamworks.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Facepunch.Steamworks.dll" />
     <Content Include="favicon.ico" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />

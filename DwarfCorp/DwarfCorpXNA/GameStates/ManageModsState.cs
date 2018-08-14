@@ -49,6 +49,8 @@ namespace DwarfCorp.GameStates
         private Gui.Root GuiRoot;
         private bool HasChanges = false;
         private Steam Steam;
+        private Gui.Widgets.Popup UploadPopup = null;
+        private UGCItemUploader ModUploader = null;
 
         public ManageModsState(DwarfGame game, GameStateManager stateManager) :
             base(game, "ManageModsState", stateManager)
@@ -151,66 +153,7 @@ namespace DwarfCorp.GameStates
 
             foreach (var mod in allMods)
             {
-                var lineItem = GuiRoot.ConstructWidget(new Widget
-                {
-                    MinimumSize = new Point(1, 32),
-                    Background = new TileReference("basic", 0),
-                    TextColor = new Vector4(0,0,0,1),
-                });
-
-                if (mod.MetaData.Source == ModSource.LocalDirectory)
-                {
-                    var upload = lineItem.AddChild(new Button()
-                    {
-                        Text = "UPLOAD",
-                        AutoLayout = AutoLayout.DockRight,
-                        TextColor = new Vector4(0, 0, 0, 1),
-                        OnClick = (sender, args) =>
-                        {
-                            try
-                            {
-                                Steam.CreateMod(mod.MetaData.Directory);
-                                GuiRoot.ShowModalPopup(new Popup()
-                                {
-                                    Text = "Successfully uploaded the mod to Steam."
-                                });
-                            }
-                            catch (Exception exception)
-                            {
-                                GuiRoot.ShowModalPopup(new Popup()
-                                {
-                                    MinimumSize = new Point(512, 256),
-                                    Text = exception.Message
-                                });
-                            }
-
-                        }
-                    });
-                }
-
-                var toggle = lineItem.AddChild(new CheckBox
-                {
-                    MinimumSize = new Point(1, 32),
-                    Text = mod.MetaData.Name,
-                    Padding = new Margin(2,2,2,2),
-                    Background = new TileReference("basic", 0),
-                    InteriorMargin = new Margin(2,2,2,2),
-                    ToggleOnTextClick = false,
-                    AutoLayout = AutoLayout.DockFill,
-                    TextColor = new Vector4(0, 0, 0, 1),
-                }) as CheckBox;
-
-                toggle.SilentSetCheckState(mod.Enabled);
-                toggle.Tag = mod;
-                toggle.OnCheckStateChange += (sender) =>
-                {
-                    (sender.Tag as Mod).Enabled = (sender as CheckBox).CheckState;
-                    HasChanges = true;
-                };
-
-                mod.LineItem = lineItem;
-
-                list.AddItem(lineItem);
+                CreateLineItem(allMods, list, mod);
             }
 
             bottom.AddChild(new Gui.Widgets.Button
@@ -266,11 +209,73 @@ namespace DwarfCorp.GameStates
             base.OnEnter();
         }
 
+        private void CreateLineItem(List<Mod> allMods, WidgetListView list, Mod mod)
+        {
+            var lineItem = GuiRoot.ConstructWidget(new Widget
+            {
+                MinimumSize = new Point(1, 32),
+                Background = new TileReference("basic", 0),
+                TextColor = new Vector4(0, 0, 0, 1),
+            });
+
+            if (mod.MetaData.Source == ModSource.LocalDirectory)
+            {
+                var upload = lineItem.AddChild(new Button()
+                {
+                    Text = mod.MetaData.SteamID == 0 ? "Publish mod to Steam" : "Upload update to Steam",
+                    AutoLayout = AutoLayout.DockRight,
+                    TextColor = new Vector4(0, 0, 0, 1),
+                    OnClick = (sender, args) =>
+                    {
+                        ModUploader = new AssetManagement.Steam.UGCItemUploader(DwarfGame.Steam, mod.MetaData);
+                        UploadPopup = GuiRoot.ConstructWidget(new Popup { ShowOkayButton = false, OnClose = (s) => ModUploader = null }) as Gui.Widgets.Popup;
+                        GuiRoot.ShowModalPopup(UploadPopup);
+
+                        RebuildItems(list, allMods);
+                    }
+                });
+            }
+
+
+
+            var toggle = lineItem.AddChild(new CheckBox
+            {
+                MinimumSize = new Point(128, 32),
+                MaximumSize = new Point(128, 32),
+                Text = mod.MetaData.Name,
+                Padding = new Margin(2, 2, 2, 2),
+                InteriorMargin = new Margin(2, 2, 2, 2),
+                ToggleOnTextClick = false,
+                AutoLayout = AutoLayout.DockLeft,
+                TextColor = new Vector4(0, 0, 0, 1),
+            }) as CheckBox;
+
+            lineItem.AddChild(new Widget
+            {
+                Font = "font8",
+                Text = String.Format("{2} Source: {0}\nDirectory: {1}", mod.MetaData.Source, mod.MetaData.Directory, mod.MetaData.Guid.ToString().Substring(0, 8)),
+                AutoLayout = AutoLayout.DockFill,
+                TextColor = new Vector4(0, 0, 0, 1)
+            });
+
+            toggle.SilentSetCheckState(mod.Enabled);
+            toggle.Tag = mod;
+            toggle.OnCheckStateChange += (sender) =>
+            {
+                (sender.Tag as Mod).Enabled = (sender as CheckBox).CheckState;
+                HasChanges = true;
+            };
+
+            mod.LineItem = lineItem;
+
+            list.AddItem(lineItem);
+        }
+
         private void RebuildItems(WidgetListView View, List<Mod> Mods)
         {
             View.ClearItems();
             foreach (var mod in Mods)
-                View.AddItem(mod.LineItem);
+                CreateLineItem(Mods, View, mod);
         }
 
         private void SaveList(List<Mod> Mods)
@@ -281,6 +286,27 @@ namespace DwarfCorp.GameStates
 
         public override void Update(DwarfTime gameTime)
         {
+
+            if (ModUploader != null)
+            {
+                try
+                {
+                    if (ModUploader.Status == UGCItemUploader.ItemUpdateStatus.Working)
+                        ModUploader.Update();
+                    else
+                        UploadPopup.AddOkayButton();
+
+                    UploadPopup.Text = ModUploader.Message;
+                    UploadPopup.Invalidate();
+                }
+                catch (Exception e)
+                {
+                    UploadPopup.Text = e.Message;
+                    UploadPopup.Invalidate();
+                    ModUploader = null;
+                }
+            }
+
             foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
             {
                 GuiRoot.HandleInput(@event.Message, @event.Args);

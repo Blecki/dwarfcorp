@@ -119,6 +119,7 @@ namespace DwarfCorp
         public GraphicsDeviceManager Graphics;
         public AssetManager TextureManager { get; set; }
         public static SpriteBatch SpriteBatch { get; set; }
+        public static AssetManagement.Steam.Steam Steam { get; private set; }
 
         public static Gui.Input.GumInputMapper GumInputMapper;
         public static Gui.Input.Input GumInput;
@@ -213,6 +214,16 @@ namespace DwarfCorp
                 if (ravenClient != null)
                     ravenClient.Capture(new SentryEvent(exception));
 #endif
+            }
+
+            try
+            {
+                Steam = new AssetManagement.Steam.Steam();
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine("Error initializing steam");
+                Console.Error.WriteLine(e.Message);
             }
         }
 

@@ -222,7 +222,7 @@ namespace Facepunch.Steamworks
                 Publishing = false;
 
                 Error = obj.Result != SteamNative.Result.OK
-                    ? $"Error publishing changes: {obj.Result} ({NeedToAgreeToWorkshopLegal})"
+                    ? $"Error publishing changes: {obj.Result} (Needs legal: {NeedToAgreeToWorkshopLegal})"
                     : null;
 
                 OnChangesSubmitted?.Invoke( (Result) obj.Result );

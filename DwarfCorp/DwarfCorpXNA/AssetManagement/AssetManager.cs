@@ -127,7 +127,7 @@ namespace DwarfCorp
                     if (metaData.Guid == Guid.Empty)
                     {
                         metaData.Guid = Guid.NewGuid();
-                        FileUtils.SaveBasicJson(metaData, metaDataPath);
+                        metaData.Save();
                     }
                     r.Add(metaData);
                 }

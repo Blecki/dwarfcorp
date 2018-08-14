@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Facepunch.Steamworks;
 using Newtonsoft.Json;
 
 namespace DwarfCorp
@@ -28,5 +27,11 @@ namespace DwarfCorp
 
         [JsonIgnore]
         public String Directory;
+
+        public void Save()
+        {
+            var metaDataPath = Directory + ProgramData.DirChar + "meta.json";
+            FileUtils.SaveBasicJson(this, metaDataPath);
+        }
     }
 }

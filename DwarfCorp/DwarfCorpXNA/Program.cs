@@ -39,7 +39,6 @@ using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-
 namespace DwarfCorpCore
 {
     
@@ -78,7 +77,7 @@ namespace DwarfCorp
 
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
-            
+
 #if !DEBUG
             try
 #endif
