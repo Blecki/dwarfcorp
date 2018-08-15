@@ -279,7 +279,7 @@ namespace DwarfCorp
 
             Matrix transform = Agent.Physics.LocalTransform;
             Vector3 diff = (nextPosition - currPosition);
-
+            Agent.GetRoot().SetFlag(GameComponent.Flag.Visible, true);
             switch (action.MoveType)
             {
                 case MoveType.EnterVehicle:
@@ -466,6 +466,11 @@ namespace DwarfCorp
                     }
                     yield return Act.Status.Success;
                     yield break;
+                case MoveType.Teleport:
+                    Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
+                    Agent.World.ParticleManager.Trigger("star_particle", diff * t + currPosition, Color.White, 1);
+                    transform.Translation = action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f;
+                    break;
             }
 
             Agent.Physics.LocalTransform = transform;
@@ -496,6 +501,7 @@ namespace DwarfCorp
             if (TrajectoryTimer == null) yield break;
             while (!TrajectoryTimer.HasTriggered)
             {
+                Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
                 TrajectoryTimer.Update(DwarfTime.LastTime);
                 ValidPathTimer.Update(DwarfTime.LastTime);
                 foreach (Status status in PerformCurrentAction())
@@ -561,6 +567,7 @@ namespace DwarfCorp
                         Creature.OverrideCharacterMode = false;
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
                         CleanupMinecart();
+                        Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
                         yield return Status.Fail;
                     }
                  }
@@ -569,6 +576,7 @@ namespace DwarfCorp
             }
             Creature.OverrideCharacterMode = false;
             SetPath(null);
+            Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
             CleanupMinecart();
             yield return Status.Success;
         }
@@ -578,6 +586,8 @@ namespace DwarfCorp
             Creature.OverrideCharacterMode = false;
             CleanupMinecart();
             SetPath(null);
+            Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
+
             base.OnCanceled();
         }
     }

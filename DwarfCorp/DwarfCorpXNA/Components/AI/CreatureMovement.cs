@@ -53,6 +53,15 @@ namespace DwarfCorp
             Actions = new Dictionary<MoveType, ActionStats>
             {
                 {
+                    MoveType.Teleport,
+                    new ActionStats
+                    {
+                        CanMove = false,
+                        Cost = 1.0f,
+                        Speed = 1.0f
+                    }
+                },
+                {
                     MoveType.EnterVehicle,
                     new ActionStats
                     {
@@ -312,7 +321,26 @@ namespace DwarfCorp
             var neighborObjects = new HashSet<Body>();
             OctTree.EnumerateItems(neighborHoodBounds, neighborObjects);
             var successors = EnumerateSuccessors(state, voxel, neighborHood, inWater, standingOnGround, topCovered, hasNeighbors, isRiding, neighborObjects);
-
+            if (Can(MoveType.Teleport))
+            {
+                var teleportObjects = Parent.Faction.OwnedObjects.Where(obj => obj.Tags.Contains("Teleporter"));
+                foreach (var obj in teleportObjects)
+                {
+                    if ((obj.Position - Parent.Position).LengthSquared() < 100)
+                    {
+                        yield return new MoveAction()
+                        {
+                            InteractObject = obj,
+                            MoveType = MoveType.Teleport,
+                            SourceVoxel = voxel,
+                            DestinationState = new MoveState()
+                            {
+                                Voxel = new VoxelHandle(voxel.Chunk.Manager.ChunkData, GlobalVoxelCoordinate.FromVector3(obj.Position))
+                            }
+                        };
+                    }
+                }
+            }
             // Now, validate each move action that the creature might take.
             foreach (MoveAction v in successors)
             {
