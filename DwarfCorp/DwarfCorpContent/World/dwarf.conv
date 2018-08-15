@@ -19,12 +19,12 @@ title: Main
 ---
 <<if $envoy_demands_tribute>>
 	<<pick>>
-		$envoy_name: We have come to collect taxes for the King.
-		$envoy_name: The Dwarven Kingdom demands tax!
-		$envoy_name: The King needs revenue for his army.
-		$envoy_name: You have not paid your corporate income tax - pay me or be auditted!
+		$envoy_name: We have come to collect taxes for the King of $envoy_tribute_demanded.
+		$envoy_name: The Dwarven Kingdom demands tax of $envoy_tribute_demanded!
+		$envoy_name: The King needs revenue for his army, $envoy_tribute_demanded to be exact.
+		$envoy_name: You have not paid your corporate income tax - pay $envoy_tribute_demanded me or be auditted!
 	<<end>>
-	[[Pay a tribute of $envoy_tribute_demanded|PayTribute]]
+	[[Pay tribute.|PayTribute]]
 	[[Refuse to pay. (WAR)|DeclareWar]]
 <<elseif $faction_was_at_war>>
 	We are at war.
@@ -185,6 +185,7 @@ title: PayTribute
 	<<pay_tribute>>
 	<<political_event "you paid us tribute" 0.5 4>>
 	$envoy_name: A wonderfully straightforward transaction.
+	<<set $envoy_tribute_demanded = 0.0>>
 	[[Main]]
 <<endif>>
 ===

@@ -20,7 +20,7 @@ title: Main
 		$envoy_name: You have encroached on our lands. You may pay us for the priveledge of living, or, not.
 		$envoy_name: We require gold, or your death. You may choose.
 	<<end>>
-	[[Pay a tribute of $envoy_tribute_demanded|PayTribute]]
+	[[Pay a Tribute|PayTribute]]
 	[[Refuse to pay. (WAR)|DeclareWar]]
 <<elseif $faction_was_at_war>>
 	$envoy_name: Our struggle continues, but in the end, we will always win.
@@ -164,6 +164,7 @@ title: PayTribute
 	<<pay_tribute>>
 	<<political_event "you paid us tribute" 0.5 4>>
 	$envoy_name: A wise decision.
+	<<set $envoy_tribute_demanded = 0.0>>
 <<endif>>
 ===
 

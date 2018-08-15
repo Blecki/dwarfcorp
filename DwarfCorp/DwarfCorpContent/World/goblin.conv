@@ -23,7 +23,7 @@ title: Main
 		$envoy_name: Goblins strong. Beards weak. Give us goodies now!
 		$envoy_name: This land Goblin land. You pay Goblin King Goblin Tax.
 	<<end>>
-	[[Pay a tribute of $envoy_tribute_demanded|PayTribute]]
+	[[Pay Tribute|PayTribute]]
 	[[Refuse to pay. (WAR)|DeclareWar]]
 <<elseif $faction_was_at_war>>
 	We fight war.
@@ -178,6 +178,7 @@ title: PayTribute
 	<<pay_tribute>>
 	<<political_event "you paid us tribute" 0.5 4>>
 	$envoy_name: Hehehe, me strong you weak, you pay.
+	<<set $envoy_tribute_demanded = 0.0>>
 	[[Main]]
 <<endif>>
 ===

@@ -18,7 +18,7 @@ title: Main
 	<<pick>>
 		The moleman holds out his coin purse and points into it. He seems to want payment.
 	<<end>>
-	[[Pay a tribute of $envoy_tribute_demanded|PayTribute]]
+	[[Pay Tribute|PayTribute]]
 	[[Refuse to pay. (WAR)|DeclareWar]]
 <<elseif $faction_was_at_war>>
 	The moleman brandishes his pick. You remember that you are at war with his people. Is he threatening you?
@@ -157,6 +157,7 @@ title: PayTribute
 	<<pay_tribute>>
 	<<political_event "you paid us tribute" 0.5 4>>
 	The moleman smiles, showing gold teeth.
+	<<set $envoy_tribute_demanded = 0.0>>
 	[[Main]]
 <<endif>>
 ===
