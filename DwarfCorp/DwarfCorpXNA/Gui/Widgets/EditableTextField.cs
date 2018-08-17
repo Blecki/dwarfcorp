@@ -11,6 +11,7 @@ namespace DwarfCorp.Gui.Widgets
     {
         private int CursorPosition = 0;
         public bool HiliteOnMouseOver = true;
+        public String PromptText = "";
 
         public Action<Widget> OnTextChange = null;
 
@@ -213,9 +214,11 @@ namespace DwarfCorp.Gui.Widgets
 
             // Add text label
             if (!String.IsNullOrEmpty(Text))
-            {
                 GetTextMesh(result);
-            }
+            else
+                GetTextMesh(result, PromptText, new Vector4(0.5f, 0.5f, 0.5f, 1.0f));
+            
+
             return Mesh.Merge(result.ToArray());
         }
 

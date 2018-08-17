@@ -119,7 +119,6 @@ namespace DwarfCorp
         public GraphicsDeviceManager Graphics;
         public AssetManager TextureManager { get; set; }
         public static SpriteBatch SpriteBatch { get; set; }
-        public static AssetManagement.Steam.Steam Steam { get; private set; }
 
         public static Gui.Input.GumInputMapper GumInputMapper;
         public static Gui.Input.Input GumInput;
@@ -207,7 +206,7 @@ namespace DwarfCorp
             {
                 Graphics.ApplyChanges();
             }
-            catch(NoSuitableGraphicsDeviceException exception)
+            catch (NoSuitableGraphicsDeviceException exception)
             {
                 Console.Error.WriteLine(exception.Message);
 #if SHARP_RAVEN && !DEBUG
@@ -216,14 +215,9 @@ namespace DwarfCorp
 #endif
             }
 
-            try
+            if (AssetManagement.Steam.Steam.InitializeSteam() == AssetManagement.Steam.Steam.SteamInitializationResult.QuitImmediately)
             {
-                Steam = new AssetManagement.Steam.Steam();
-            }
-            catch (Exception e)
-            {
-                Console.Error.WriteLine("Error initializing steam");
-                Console.Error.WriteLine(e.Message);
+                Exit();
             }
         }
 

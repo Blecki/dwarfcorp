@@ -9,7 +9,6 @@ namespace DwarfCorp.AssetManagement.Steam
     public class UGCItemUploader
     {
         private ModMetaData Mod;
-        private Steam SteamManager;
         private UGCUpdateHandle_t UpdateHandle;
         private CallResult<CreateItemResult_t> CreateCallResult;
         private CallResult<SubmitItemUpdateResult_t> SubmitCallResult;
@@ -38,10 +37,9 @@ namespace DwarfCorp.AssetManagement.Steam
 
         private States State = States.Creating;
 
-        public UGCItemUploader(Steam SteamManager, ModMetaData Mod)
+        public UGCItemUploader(ModMetaData Mod)
         {
             this.Mod = Mod;
-            this.SteamManager = SteamManager;
             State = States.Creating;
             Status = ItemUpdateStatus.Working;
         }
@@ -76,7 +74,7 @@ namespace DwarfCorp.AssetManagement.Steam
 
                             State = States.Initializing;
                         });
-                        CreateCallResult.Set(SteamUGC.CreateItem(SteamManager.AppID, EWorkshopFileType.k_EWorkshopFileTypeCommunity));
+                        CreateCallResult.Set(SteamUGC.CreateItem(Steam.AppID, EWorkshopFileType.k_EWorkshopFileTypeCommunity));
                         State = States.WaitingForCreation;
                         Message = "Creating new UGC Item";
                     }
@@ -91,7 +89,7 @@ namespace DwarfCorp.AssetManagement.Steam
                     SteamAPI.RunCallbacks();
                     return;
                 case States.Initializing:
-                    UpdateHandle = SteamUGC.StartItemUpdate(SteamManager.AppID, (PublishedFileId_t)Mod.SteamID);
+                    UpdateHandle = SteamUGC.StartItemUpdate(Steam.AppID, (PublishedFileId_t)Mod.SteamID);
                     Message = "Setting title";
                     State = States.SetTitle;
                     return;

@@ -483,7 +483,7 @@ namespace DwarfCorp.Gui
             return Parent.IsAnyParentTransparent();
         }
 
-        public void GetTextMesh(List<Mesh> result)
+        public void GetTextMesh(List<Mesh> result, String Text, Vector4 TextColor)
         {
             var drawableArea = GetDrawableInterior();
             var stringMeshSize = new Rectangle();
@@ -516,7 +516,7 @@ namespace DwarfCorp.Gui
                     textDrawPos.X = drawableArea.X + drawableArea.Width - stringMeshSize.Width;
                     break;
                 case HorizontalAlign.Center:
-                    textDrawPos.X = drawableArea.X + ((drawableArea.Width - stringMeshSize.Width)/2);
+                    textDrawPos.X = drawableArea.X + ((drawableArea.Width - stringMeshSize.Width) / 2);
                     break;
             }
 
@@ -532,12 +532,17 @@ namespace DwarfCorp.Gui
                     textDrawPos.Y = drawableArea.Y + drawableArea.Height;
                     break;
                 case VerticalAlign.Center:
-                    textDrawPos.Y = drawableArea.Y + ((drawableArea.Height - stringMeshSize.Height)/2);
+                    textDrawPos.Y = drawableArea.Y + ((drawableArea.Height - stringMeshSize.Height) / 2);
                     break;
             }
 
             stringMesh.Translate(textDrawPos.X, textDrawPos.Y);
             result.Add(stringMesh);
+        }
+
+        public void GetTextMesh(List<Mesh> result)
+        {
+            GetTextMesh(result, Text, TextColor);
         }
 
         /// <summary>

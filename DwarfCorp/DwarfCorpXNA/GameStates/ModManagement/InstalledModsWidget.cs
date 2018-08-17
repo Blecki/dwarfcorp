@@ -39,74 +39,78 @@ using System.Linq;
 using System;
 using DwarfCorp.AssetManagement.Steam;
 
-namespace DwarfCorp.GameStates
+namespace DwarfCorp.GameStates.ModManagement
 {
-    /// <summary>
-    /// This game state allows the player to design their own dwarf company.
-    /// </summary>
-    public class ManageModsState : GameState
+    public class InstalledModsWidget : Gui.Widget
     {
-        private Gui.Root GuiRoot;
         private bool HasChanges = false;
-        private Steam Steam;
         private Gui.Widgets.Popup UploadPopup = null;
         private UGCItemUploader ModUploader = null;
 
-        public ManageModsState(DwarfGame game, GameStateManager stateManager) :
-            base(game, "ManageModsState", stateManager)
-        {
-            Steam = new Steam();
-        }
+        public Action<Widget> OnOkayPressed = null;
 
-        private class Mod
+        private class ModInfo
         {
             public bool Enabled = false;
             public Widget LineItem;
             public ModMetaData MetaData;
         }
 
-        public override void OnEnter()
+        public override void Construct()
         {
+            base.Construct();
+
             var availableMods = AssetManager.EnumerateInstalledMods().ToList();
-            var allMods = new List<Mod>();
-            allMods.AddRange(availableMods.Where(m => GameSettings.Default.EnabledMods.Contains(m.Guid)).Select(m => new Mod
+            var allMods = new List<ModInfo>();
+
+            // Doing it like this ensures that enabled mods are listed first.
+            // Todo: Are they listed in the correct order??
+            allMods.AddRange(availableMods.Where(m => GameSettings.Default.EnabledMods.Contains(m.Guid)).Select(m => new ModInfo
             {
                 Enabled = true,
                 MetaData = m
             }));
-            allMods.AddRange(availableMods.Where(m => !GameSettings.Default.EnabledMods.Contains(m.Guid)).Select(m => new Mod
+
+            allMods.AddRange(availableMods.Where(m => !GameSettings.Default.EnabledMods.Contains(m.Guid)).Select(m => new ModInfo
             {
                 Enabled = false,
                 MetaData = m
             }));
-            
-            DwarfGame.GumInputMapper.GetInputQueue();
 
-            GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
-            GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
+            this.Padding = new Margin(4, 4, 4, 4);
+            this.Font = "font10";
 
-            var screen = GuiRoot.RenderData.VirtualScreen;
-            float scale = 0.75f;
-            float newWidth = System.Math.Min(System.Math.Max(screen.Width * scale, 640), screen.Width * scale);
-            float newHeight = System.Math.Min(System.Math.Max(screen.Height * scale, 480), screen.Height * scale);
-            Rectangle rect = new Rectangle((int)(screen.Width / 2 - newWidth / 2), (int)(screen.Height / 2 - newHeight / 2), (int)newWidth, (int)newHeight);
+            Root.RegisterForUpdate(this);
 
-            var main = GuiRoot.RootItem.AddChild(new Gui.Widget
+            OnUpdate = (sender, time) =>
             {
-                Rect = rect,
-                Padding = new Margin(4, 4, 4, 4),
-                Transparent = false,
-                Border = "border-fancy",
-                MinimumSize = new Point(640, 480),
-                Font = "font10"
-            });
+                if (ModUploader != null)
+                {
+                    try
+                    {
+                        if (ModUploader.Status == UGCItemUploader.ItemUpdateStatus.Working)
+                            ModUploader.Update();
+                        else
+                            UploadPopup.AddOkayButton();
 
-            var bottom = main.AddChild(new Widget
+                        UploadPopup.Text = ModUploader.Message;
+                        UploadPopup.Invalidate();
+                    }
+                    catch (Exception e)
+                    {
+                        UploadPopup.Text = e.Message;
+                        UploadPopup.Invalidate();
+                        ModUploader = null;
+                    }
+                }
+            };
+
+            var bottom = AddChild(new Widget
             {
                 Transparent = true,
                 MinimumSize = new Point(0, 32),
                 AutoLayout = AutoLayout.DockBottom,
-                Padding = new Margin(2,2,2,2)
+                Padding = new Margin(2, 2, 2, 2)
             });
 
             bottom.AddChild(new Gui.Widgets.Button
@@ -128,27 +132,27 @@ namespace DwarfCorp.GameStates
                             OnClose = (s2) =>
                             {
                                 SaveList(allMods);
-                                StateManager.PopState();
+                                Root.SafeCall(OnOkayPressed, this);
                             }
                         };
-                        GuiRoot.ShowModalPopup(confirm);
+                        Root.ShowModalPopup(confirm);
                     }
                     else
                     {
                         SaveList(allMods);
-                        StateManager.PopState();
+                        Root.SafeCall(OnOkayPressed, this);
                     }
                 },
                 AutoLayout = AutoLayout.DockRight
             });
 
-            var list = main.AddChild(new WidgetListView
+            var list = AddChild(new WidgetListView
             {
                 ItemHeight = 32,
                 AutoLayout = AutoLayout.DockFill,
                 Border = null,
                 SelectedItemBackgroundColor = new Vector4(0.5f, 0.5f, 0.5f, 1.0f),
-                Padding = new Margin(2,2,2,2)
+                Padding = new Margin(2, 2, 2, 2)
             }) as WidgetListView;
 
             foreach (var mod in allMods)
@@ -201,17 +205,11 @@ namespace DwarfCorp.GameStates
                 },
                 AutoLayout = AutoLayout.DockLeft
             });
-
-            GuiRoot.RootItem.Layout();
-
-            IsInitialized = true;
-
-            base.OnEnter();
         }
 
-        private void CreateLineItem(List<Mod> allMods, WidgetListView list, Mod mod)
+        private void CreateLineItem(List<ModInfo> allMods, WidgetListView list, ModInfo mod)
         {
-            var lineItem = GuiRoot.ConstructWidget(new Widget
+            var lineItem = Root.ConstructWidget(new Widget
             {
                 MinimumSize = new Point(1, 32),
                 Background = new TileReference("basic", 0),
@@ -227,16 +225,14 @@ namespace DwarfCorp.GameStates
                     TextColor = new Vector4(0, 0, 0, 1),
                     OnClick = (sender, args) =>
                     {
-                        ModUploader = new AssetManagement.Steam.UGCItemUploader(DwarfGame.Steam, mod.MetaData);
-                        UploadPopup = GuiRoot.ConstructWidget(new Popup { ShowOkayButton = false, OnClose = (s) => ModUploader = null }) as Gui.Widgets.Popup;
-                        GuiRoot.ShowModalPopup(UploadPopup);
+                        ModUploader = new AssetManagement.Steam.UGCItemUploader(mod.MetaData);
+                        UploadPopup = Root.ConstructWidget(new Popup { ShowOkayButton = false, OnClose = (s) => ModUploader = null }) as Gui.Widgets.Popup;
+                        Root.ShowModalPopup(UploadPopup);
 
                         RebuildItems(list, allMods);
                     }
                 });
             }
-
-
 
             var toggle = lineItem.AddChild(new CheckBox
             {
@@ -262,7 +258,7 @@ namespace DwarfCorp.GameStates
             toggle.Tag = mod;
             toggle.OnCheckStateChange += (sender) =>
             {
-                (sender.Tag as Mod).Enabled = (sender as CheckBox).CheckState;
+                (sender.Tag as ModInfo).Enabled = (sender as CheckBox).CheckState;
                 HasChanges = true;
             };
 
@@ -271,60 +267,17 @@ namespace DwarfCorp.GameStates
             list.AddItem(lineItem);
         }
 
-        private void RebuildItems(WidgetListView View, List<Mod> Mods)
+        private void RebuildItems(WidgetListView View, List<ModInfo> Mods)
         {
             View.ClearItems();
             foreach (var mod in Mods)
                 CreateLineItem(Mods, View, mod);
         }
 
-        private void SaveList(List<Mod> Mods)
+        private void SaveList(List<ModInfo> Mods)
         {
             GameSettings.Default.EnabledMods = Mods.Where(m => m.Enabled).Select(m => m.MetaData.Guid).ToList();
             GameSettings.Save();
         }
-
-        public override void Update(DwarfTime gameTime)
-        {
-
-            if (ModUploader != null)
-            {
-                try
-                {
-                    if (ModUploader.Status == UGCItemUploader.ItemUpdateStatus.Working)
-                        ModUploader.Update();
-                    else
-                        UploadPopup.AddOkayButton();
-
-                    UploadPopup.Text = ModUploader.Message;
-                    UploadPopup.Invalidate();
-                }
-                catch (Exception e)
-                {
-                    UploadPopup.Text = e.Message;
-                    UploadPopup.Invalidate();
-                    ModUploader = null;
-                }
-            }
-
-            foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
-            {
-                GuiRoot.HandleInput(@event.Message, @event.Args);
-                if (!@event.Args.Handled)
-                {
-                    // Pass event to game...
-                }
-            }
-
-            GuiRoot.Update(gameTime.ToGameTime());
-            base.Update(gameTime);
-        }
-        
-        public override void Render(DwarfTime gameTime)
-        {
-            GuiRoot.Draw();
-            base.Render(gameTime);
-        }
     }
-
 }

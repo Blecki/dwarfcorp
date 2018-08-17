@@ -180,7 +180,9 @@
     <Compile Include="Ancora\TestGrammar.cs" />
     <Compile Include="AssetManagement\IndexedTexture.cs" />
     <Compile Include="AssetManagement\IndexedDecomposition.cs" />
+    <Compile Include="AssetManagement\SteamUGCMetaData.cs" />
     <Compile Include="AssetManagement\ModMetaData.cs" />
+    <Compile Include="AssetManagement\Steam\UGCQuery.cs" />
     <Compile Include="AssetManagement\Steam\UGC.cs" />
     <Compile Include="AssetManagement\TextureTool.cs" />
     <Compile Include="AssetManagement\Palette.cs" />
@@ -274,7 +276,9 @@
     <Compile Include="Entities\Plants\PlantFactories.cs" />
     <Compile Include="Entities\TimedExplosion.cs" />
     <Compile Include="GameStates\DwarfDesignerState.cs" />
-    <Compile Include="GameStates\ManageModsState.cs" />
+    <Compile Include="GameStates\ModManagement\SearchWidget.cs" />
+    <Compile Include="GameStates\ModManagement\InstalledModsWidget.cs" />
+    <Compile Include="GameStates\ModManagement\ManageModsState.cs" />
     <Compile Include="GameStates\YarnSpinner\EndConversation.cs" />
     <Compile Include="GameStates\YarnSpinner\HidePortrait.cs" />
     <Compile Include="GameStates\YarnSpinner\SpeechSynthesizer.cs" />
