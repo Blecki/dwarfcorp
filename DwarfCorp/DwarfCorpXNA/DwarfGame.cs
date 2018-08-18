@@ -479,6 +479,7 @@ namespace DwarfCorp
 
             PerformanceMonitor.BeginFrame();
             PerformanceMonitor.PushFrame("Update");
+            AssetManagement.Steam.Steam.Update();
                 DwarfTime.LastTime.Update(time);
                 StateManager.Update(DwarfTime.LastTime);
                 base.Update(time);

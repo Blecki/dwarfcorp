@@ -6,7 +6,7 @@ using Steamworks;
 
 namespace DwarfCorp.AssetManagement.Steam
 {
-    public class UGCQuery
+    public class UGCQuery : IUGCTransaction
     {
         public String SearchString = "";
         public List<String> SearchTags = new List<string>();
@@ -15,15 +15,8 @@ namespace DwarfCorp.AssetManagement.Steam
         private CallResult<SteamUGCQueryCompleted_t> QuerySubmitCallResult;
 
         public String Message { get; private set; }
-        public QueryStatus Status { get; private set; }
-        public List<SteamUGCMetaData> Results { get; private set; }
-
-        public enum QueryStatus
-        {
-            Working,
-            Success,
-            Failure
-        }
+        public UGCStatus Status { get; private set; }
+        public List<SteamUGCDetails_t> Results { get; private set; }
 
         private enum States
         {
@@ -37,7 +30,7 @@ namespace DwarfCorp.AssetManagement.Steam
         public UGCQuery()
         {
             State = States.Creating;
-            Status = QueryStatus.Working;
+            Status = UGCStatus.Working;
         }
 
         public void Update()
@@ -57,33 +50,28 @@ namespace DwarfCorp.AssetManagement.Steam
                         {
                             State = States.Done;
                             Message = "There was an error communicating with steam.";
-                            Status = QueryStatus.Failure;
+                            Status = UGCStatus.Failure;
                             return;
                         }
 
                         if (callback.m_eResult != EResult.k_EResultOK)
                         {
                             State = States.Done;
-                            Status = QueryStatus.Failure;
+                            Status = UGCStatus.Failure;
                             Message = String.Format("Query failed: {0}", callback.m_eResult);
                             return;
                         }
 
-                        Results = new List<SteamUGCMetaData>();
+                        Results = new List<SteamUGCDetails_t>();
                         for (uint i = 0; i < callback.m_unNumResultsReturned; ++i)
                         {
                             var details = new SteamUGCDetails_t();
                             SteamUGC.GetQueryUGCResult(QueryHandle, i, out details);
-                            Results.Add(new SteamUGCMetaData
-                            {
-                                Name = details.m_rgchTitle,
-                                Description = details.m_rgchDescription,
-                                SteamID = (ulong)details.m_nPublishedFileId
-                            });
+                            Results.Add(details);
                         }
 
                         State = States.Done;
-                        Status = QueryStatus.Success;
+                        Status = UGCStatus.Success;
 
                         Message = String.Format("Found {0} results.", callback.m_unNumResultsReturned);
                     });
@@ -95,7 +83,6 @@ namespace DwarfCorp.AssetManagement.Steam
                     return;
 
                 case States.Waiting:
-                    SteamAPI.RunCallbacks();
                     return;
                 case States.Done:
                     return;

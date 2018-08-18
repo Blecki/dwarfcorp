@@ -9,7 +9,8 @@ namespace DwarfCorp
     public enum ModSource
     {
         LocalDirectory,
-        SteamDirectory
+        SteamDirectory,
+        SteamSubscribedButNotInstalled,
     }
 
     public class ModMetaData
@@ -20,7 +21,8 @@ namespace DwarfCorp
         public List<string> Tags;
         public string ChangeNote;
         public ulong SteamID;
-        public Guid Guid;
+
+        public bool NeedsUpdateFromSteam = false;
 
         [JsonIgnore]
         public ModSource Source;
@@ -32,6 +34,17 @@ namespace DwarfCorp
         {
             var metaDataPath = Directory + ProgramData.DirChar + "meta.json";
             FileUtils.SaveBasicJson(this, metaDataPath);
+        }
+
+        public String IdentifierString
+        {
+            get
+            {
+                if (Source == ModSource.LocalDirectory)
+                    return "/" + Directory;
+                else
+                    return SteamID.ToString();
+            }
         }
     }
 }

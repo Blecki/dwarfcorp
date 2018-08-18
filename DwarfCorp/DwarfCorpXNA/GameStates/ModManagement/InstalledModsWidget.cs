@@ -43,11 +43,11 @@ namespace DwarfCorp.GameStates.ModManagement
 {
     public class InstalledModsWidget : Gui.Widget
     {
-        private bool HasChanges = false;
-        private Gui.Widgets.Popup UploadPopup = null;
-        private UGCItemUploader ModUploader = null;
+        // Todo: Need to be able to refresh the list.
 
-        public Action<Widget> OnOkayPressed = null;
+        public ManageModsState OwnerState;
+
+        private Gui.Widgets.WidgetListView ModList;
 
         private class ModInfo
         {
@@ -60,107 +60,51 @@ namespace DwarfCorp.GameStates.ModManagement
         {
             base.Construct();
 
+            this.Padding = new Margin(4, 4, 4, 4);
+            this.Font = "font10";
+
+            var top = AddChild(new Widget
+            {
+                Transparent = true,
+                MinimumSize = new Point(0, 32),
+                AutoLayout = AutoLayout.DockTop,
+                Padding = new Margin(2, 2, 2, 2)
+            });
+
             var availableMods = AssetManager.EnumerateInstalledMods().ToList();
             var allMods = new List<ModInfo>();
 
             // Doing it like this ensures that enabled mods are listed first.
-            // Todo: Are they listed in the correct order??
-            allMods.AddRange(availableMods.Where(m => GameSettings.Default.EnabledMods.Contains(m.Guid)).Select(m => new ModInfo
-            {
-                Enabled = true,
-                MetaData = m
-            }));
+            allMods.AddRange(GameSettings.Default.EnabledMods.Select(m => new ModInfo
+                {
+                    Enabled = true,
+                    MetaData = availableMods.First(mod => mod.IdentifierString == m)
+                }));
 
-            allMods.AddRange(availableMods.Where(m => !GameSettings.Default.EnabledMods.Contains(m.Guid)).Select(m => new ModInfo
+            allMods.AddRange(availableMods.Where(mod => !GameSettings.Default.EnabledMods.Contains(mod.IdentifierString)).Select(mod => new ModInfo
             {
                 Enabled = false,
-                MetaData = m
+                MetaData = mod
             }));
 
-            this.Padding = new Margin(4, 4, 4, 4);
-            this.Font = "font10";
+            // Todo: Find subscribed but not installed mods.
+            // - Will require lazy loading of mod details.
 
-            Root.RegisterForUpdate(this);
+            //if (AssetManagement.Steam.Steam.SteamAvailable)
+            //{
+            //    var subscribedCount = Steamworks.SteamUGC.GetNumSubscribedItems();
+            //    var subscribedFileIds = new Steamworks.PublishedFileId_t[subscribedCount];
+            //    Steamworks.SteamUGC.GetSubscribedItems(subscribedFileIds, subscribedCount);
 
-            OnUpdate = (sender, time) =>
-            {
-                if (ModUploader != null)
-                {
-                    try
-                    {
-                        if (ModUploader.Status == UGCItemUploader.ItemUpdateStatus.Working)
-                            ModUploader.Update();
-                        else
-                            UploadPopup.AddOkayButton();
+            //    foreach (var fileId in subscribedFileIds.Where(id => !r.Any(m => m.SteamID == (ulong)id)))
+            //    {
 
-                        UploadPopup.Text = ModUploader.Message;
-                        UploadPopup.Invalidate();
-                    }
-                    catch (Exception e)
-                    {
-                        UploadPopup.Text = e.Message;
-                        UploadPopup.Invalidate();
-                        ModUploader = null;
-                    }
-                }
-            };
+            //    }
+            //}
 
-            var bottom = AddChild(new Widget
-            {
-                Transparent = true,
-                MinimumSize = new Point(0, 32),
-                AutoLayout = AutoLayout.DockBottom,
-                Padding = new Margin(2, 2, 2, 2)
-            });
 
-            bottom.AddChild(new Gui.Widgets.Button
-            {
-                Text = "Close",
-                Font = "font16",
-                TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
-                Border = "border-button",
-                OnClick = (sender, args) =>
-                {
-                    // If changes, prompt before closing.
-                    if (HasChanges)
-                    {
-                        var confirm = new Popup
-                        {
-                            Text = "Dwarf Corp must be restarted for changes to take effect.",
-                            OkayText = "Okay",
-                            OnClose = (s2) =>
-                            {
-                                SaveList(allMods);
-                                Root.SafeCall(OnOkayPressed, this);
-                            }
-                        };
-                        Root.ShowModalPopup(confirm);
-                    }
-                    else
-                    {
-                        SaveList(allMods);
-                        Root.SafeCall(OnOkayPressed, this);
-                    }
-                },
-                AutoLayout = AutoLayout.DockRight
-            });
-
-            var list = AddChild(new WidgetListView
-            {
-                ItemHeight = 32,
-                AutoLayout = AutoLayout.DockFill,
-                Border = null,
-                SelectedItemBackgroundColor = new Vector4(0.5f, 0.5f, 0.5f, 1.0f),
-                Padding = new Margin(2, 2, 2, 2)
-            }) as WidgetListView;
-
-            foreach (var mod in allMods)
-            {
-                CreateLineItem(allMods, list, mod);
-            }
-
-            bottom.AddChild(new Gui.Widgets.Button
+            
+            top.AddChild(new Gui.Widgets.Button
             {
                 Text = "Move Up",
                 Font = "font16",
@@ -169,21 +113,22 @@ namespace DwarfCorp.GameStates.ModManagement
                 Border = "border-button",
                 OnClick = (sender, args) =>
                 {
-                    var select = list.SelectedIndex;
+                    var select = ModList.SelectedIndex;
                     if (select > 0)
                     {
-                        var mod = allMods[list.SelectedIndex];
-                        allMods.RemoveAt(list.SelectedIndex);
-                        allMods.Insert(list.SelectedIndex - 1, mod);
-                        list.SelectedIndex -= 1;
-                        RebuildItems(list, allMods);
-                        HasChanges = true;
+                        var mod = allMods[ModList.SelectedIndex];
+                        allMods.RemoveAt(ModList.SelectedIndex);
+                        allMods.Insert(ModList.SelectedIndex - 1, mod);
+                        ModList.SelectedIndex -= 1;
+                        RebuildItems(allMods);
+                        SaveList(allMods);
+                        OwnerState.MadeChanges();
                     }
                 },
                 AutoLayout = AutoLayout.DockLeft
             });
 
-            bottom.AddChild(new Gui.Widgets.Button
+            top.AddChild(new Gui.Widgets.Button
             {
                 Text = "Move Down",
                 Font = "font16",
@@ -192,53 +137,66 @@ namespace DwarfCorp.GameStates.ModManagement
                 Border = "border-button",
                 OnClick = (sender, args) =>
                 {
-                    var select = list.SelectedIndex;
+                    var select = ModList.SelectedIndex;
                     if (select < allMods.Count - 1)
                     {
-                        var mod = allMods[list.SelectedIndex];
-                        allMods.RemoveAt(list.SelectedIndex);
-                        allMods.Insert(list.SelectedIndex + 1, mod);
-                        list.SelectedIndex += 1;
-                        RebuildItems(list, allMods);
-                        HasChanges = true;
+                        var mod = allMods[ModList.SelectedIndex];
+                        allMods.RemoveAt(ModList.SelectedIndex);
+                        allMods.Insert(ModList.SelectedIndex + 1, mod);
+                        ModList.SelectedIndex += 1;
+                        RebuildItems(allMods);
+                        SaveList(allMods);
+                        OwnerState.MadeChanges();
                     }
                 },
                 AutoLayout = AutoLayout.DockLeft
             });
+
+            ModList = AddChild(new WidgetListView
+            {
+                ItemHeight = 32,
+                AutoLayout = AutoLayout.DockFill,
+                Border = null,
+                SelectedItemBackgroundColor = new Vector4(0.5f, 0.5f, 0.5f, 1.0f),
+                Padding = new Margin(2, 2, 2, 2)
+            }) as WidgetListView;
+
+
+            RebuildItems(allMods);
         }
 
-        private void CreateLineItem(List<ModInfo> allMods, WidgetListView list, ModInfo mod)
+        private void BuildLineItem(Widget LineItem, ModInfo Mod)
         {
-            var lineItem = Root.ConstructWidget(new Widget
+            if (Mod.MetaData.Source == ModSource.LocalDirectory)
             {
-                MinimumSize = new Point(1, 32),
-                Background = new TileReference("basic", 0),
-                TextColor = new Vector4(0, 0, 0, 1),
-            });
-
-            if (mod.MetaData.Source == ModSource.LocalDirectory)
-            {
-                var upload = lineItem.AddChild(new Button()
+                var upload = LineItem.AddChild(new Button()
                 {
-                    Text = mod.MetaData.SteamID == 0 ? "Publish mod to Steam" : "Upload update to Steam",
+                    Text = Mod.MetaData.SteamID == 0 ? "Publish mod to Steam" : "Upload update to Steam",
                     AutoLayout = AutoLayout.DockRight,
                     TextColor = new Vector4(0, 0, 0, 1),
                     OnClick = (sender, args) =>
                     {
-                        ModUploader = new AssetManagement.Steam.UGCItemUploader(mod.MetaData);
-                        UploadPopup = Root.ConstructWidget(new Popup { ShowOkayButton = false, OnClose = (s) => ModUploader = null }) as Gui.Widgets.Popup;
-                        Root.ShowModalPopup(UploadPopup);
+                        sender.OnClick = null;
 
-                        RebuildItems(list, allMods);
-                    }
+                        Steam.AddTransaction(new UGCTransactionProcessor
+                        {
+                            Transaction = new UGCUpload(Mod.MetaData),
+                            StatusMessageDisplay = sender
+                        });
+                    }      
                 });
             }
 
-            var toggle = lineItem.AddChild(new CheckBox
+            // Todo: Download button for subscribed but not installed mods.
+
+            // Todo: Update button for mods that need updated.
+
+            // Todo: Disable toggle if mod is not installed.
+            var toggle = LineItem.AddChild(new CheckBox
             {
                 MinimumSize = new Point(128, 32),
                 MaximumSize = new Point(128, 32),
-                Text = mod.MetaData.Name,
+                Text = Mod.MetaData.Name,
                 Padding = new Margin(2, 2, 2, 2),
                 InteriorMargin = new Margin(2, 2, 2, 2),
                 ToggleOnTextClick = false,
@@ -246,37 +204,50 @@ namespace DwarfCorp.GameStates.ModManagement
                 TextColor = new Vector4(0, 0, 0, 1),
             }) as CheckBox;
 
-            lineItem.AddChild(new Widget
+            LineItem.AddChild(new Widget
             {
                 Font = "font8",
-                Text = String.Format("{2} Source: {0}\nDirectory: {1}", mod.MetaData.Source, mod.MetaData.Directory, mod.MetaData.Guid.ToString().Substring(0, 8)),
+                Text = String.Format("{2} Source: {0}\nDirectory: {1}", Mod.MetaData.Source, Mod.MetaData.Directory, Mod.MetaData.IdentifierString),
                 AutoLayout = AutoLayout.DockFill,
                 TextColor = new Vector4(0, 0, 0, 1)
             });
 
-            toggle.SilentSetCheckState(mod.Enabled);
-            toggle.Tag = mod;
+            toggle.SilentSetCheckState(Mod.Enabled);
+            toggle.Tag = Mod;
             toggle.OnCheckStateChange += (sender) =>
             {
                 (sender.Tag as ModInfo).Enabled = (sender as CheckBox).CheckState;
-                HasChanges = true;
+                OwnerState.MadeChanges();
             };
-
-            mod.LineItem = lineItem;
-
-            list.AddItem(lineItem);
         }
 
-        private void RebuildItems(WidgetListView View, List<ModInfo> Mods)
+        private void CreateLineItem(ModInfo mod)
         {
-            View.ClearItems();
+            if (mod.LineItem == null)
+            {
+                mod.LineItem = Root.ConstructWidget(new Widget
+                {
+                    MinimumSize = new Point(1, 32),
+                    Background = new TileReference("basic", 0),
+                    TextColor = new Vector4(0, 0, 0, 1),
+                });
+
+                BuildLineItem(mod.LineItem, mod);
+            }
+
+            ModList.AddItem(mod.LineItem);
+        }
+
+        private void RebuildItems(List<ModInfo> Mods)
+        {
+            ModList.ClearItems();
             foreach (var mod in Mods)
-                CreateLineItem(Mods, View, mod);
+                CreateLineItem(mod);
         }
 
         private void SaveList(List<ModInfo> Mods)
         {
-            GameSettings.Default.EnabledMods = Mods.Where(m => m.Enabled).Select(m => m.MetaData.Guid).ToList();
+            GameSettings.Default.EnabledMods = Mods.Where(m => m.Enabled).Select(m => m.MetaData.IdentifierString).ToList();
             GameSettings.Save();
         }
     }

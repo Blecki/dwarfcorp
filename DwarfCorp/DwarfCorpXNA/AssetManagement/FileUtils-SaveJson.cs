@@ -77,29 +77,13 @@ namespace DwarfCorp
 
             public override void BindToName(Type serializedType, out string assemblyName, out string typeName)
             {
-                assemblyName = AssetManager.GetSourceModOfType(serializedType).Guid.ToString().Replace('-', '.');
+                assemblyName = AssetManager.GetSourceModOfType(serializedType).IdentifierString;
                 typeName = serializedType.FullName;
             }
 
             public override Type BindToType(string assemblyName, string typeName)
             {
-                Guid guid;
-                if (Guid.TryParse(assemblyName.Replace('.', '-'), out guid))
-                {
-                    if (guid == Guid.Empty)
-                        return Type.GetType(typeName, true);
-                    var r = AssetManager.GetTypeFromMod(typeName, guid);
-                    if (r == null)
-                        throw new Exception("Unresolved tupe");
-                    return r;
-                }
-                else
-                {
-                    var r = Type.GetType(typeName, true);
-                    if (r == null)
-                        throw new Exception("Unresolved tupe");
-                    return r;
-                }
+                return AssetManager.GetTypeFromMod(typeName, assemblyName);
             }
         }
 

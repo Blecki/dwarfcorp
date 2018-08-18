@@ -10,6 +10,8 @@ namespace DwarfCorp.AssetManagement.Steam
     {
         public static AppId_t AppID { get; private set; }
         public static bool SteamAvailable { get; private set; }
+        private static List<UGCTransactionProcessor> PendingTransactions = new List<UGCTransactionProcessor>();
+
 
         public enum SteamInitializationResult
         {
@@ -39,6 +41,25 @@ namespace DwarfCorp.AssetManagement.Steam
             //SteamClient.SetWarningMessageHook(m_SteamAPIWarningMessageHook);
 
             return SteamInitializationResult.Continue;
+        }
+
+        public static void Update()
+        {
+            SteamAPI.RunCallbacks();
+
+            foreach (var transaction in PendingTransactions)
+                transaction.Update();
+            PendingTransactions.RemoveAll(t => t.Complete);
+        }
+
+        public static void AddTransaction(UGCTransactionProcessor Processor)
+        {
+            PendingTransactions.Add(Processor);
+        }
+
+        public static bool HasTransactionOfType<T>()
+        {
+            return PendingTransactions.Any(t => t.Transaction is T);
         }
     }
 }

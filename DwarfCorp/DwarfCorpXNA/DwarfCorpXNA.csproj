@@ -180,10 +180,12 @@
     <Compile Include="Ancora\TestGrammar.cs" />
     <Compile Include="AssetManagement\IndexedTexture.cs" />
     <Compile Include="AssetManagement\IndexedDecomposition.cs" />
-    <Compile Include="AssetManagement\SteamUGCMetaData.cs" />
     <Compile Include="AssetManagement\ModMetaData.cs" />
-    <Compile Include="AssetManagement\Steam\UGCQuery.cs" />
-    <Compile Include="AssetManagement\Steam\UGC.cs" />
+    <Compile Include="GameStates\ModManagement\Steam\UGCStatus.cs" />
+    <Compile Include="GameStates\ModManagement\Steam\IUGCTransaction.cs" />
+    <Compile Include="GameStates\ModManagement\Steam\UGCSubscribe.cs" />
+    <Compile Include="GameStates\ModManagement\Steam\UGCQuery.cs" />
+    <Compile Include="GameStates\ModManagement\Steam\UGCUpload.cs" />
     <Compile Include="AssetManagement\TextureTool.cs" />
     <Compile Include="AssetManagement\Palette.cs" />
     <Compile Include="AssetManagement\MemoryTexture.cs" />
@@ -203,7 +205,7 @@
     <Compile Include="AssetManagement\GameSave\OverworldFile.cs" />
     <Compile Include="AssetManagement\AssetManager.cs" />
     <Compile Include="AssetManagement\ModCompiler.cs" />
-    <Compile Include="AssetManagement\Steam\Steam.cs" />
+    <Compile Include="GameStates\ModManagement\Steam\Steam.cs" />
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
@@ -276,6 +278,7 @@
     <Compile Include="Entities\Plants\PlantFactories.cs" />
     <Compile Include="Entities\TimedExplosion.cs" />
     <Compile Include="GameStates\DwarfDesignerState.cs" />
+    <Compile Include="GameStates\ModManagement\Steam\UGCTransactionProcessor.cs" />
     <Compile Include="GameStates\ModManagement\SearchWidget.cs" />
     <Compile Include="GameStates\ModManagement\InstalledModsWidget.cs" />
     <Compile Include="GameStates\ModManagement\ManageModsState.cs" />

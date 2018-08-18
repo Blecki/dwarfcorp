@@ -44,7 +44,6 @@ namespace DwarfCorp.GameStates.ModManagement
 {
     public class SearchWidget : Gui.Widget
     {
-        private UGCQuery PendingQuery = null;
         private Gui.Widget QueryStatusMessage;
         private Gui.Widgets.WidgetListView List;
 
@@ -54,27 +53,6 @@ namespace DwarfCorp.GameStates.ModManagement
 
             this.Padding = new Margin(4, 4, 4, 4);
             this.Font = "font10";
-
-            Root.RegisterForUpdate(this);
-
-            OnUpdate = (sender, time) =>
-            {
-                if (PendingQuery != null)
-                {
-                    PendingQuery.Update();
-
-                    QueryStatusMessage.Text = PendingQuery.Message;
-                    QueryStatusMessage.Invalidate();
-
-                    if (PendingQuery.Status == UGCQuery.QueryStatus.Success)
-                    {
-                        RefreshList(PendingQuery.Results);
-                        PendingQuery = null;
-                    }
-                    else if (PendingQuery.Status == UGCQuery.QueryStatus.Failure)
-                        PendingQuery = null;
-                }
-            };
 
             var top = AddChild(new Widget
             {
@@ -100,13 +78,16 @@ namespace DwarfCorp.GameStates.ModManagement
                 Border = "border-button",
                 OnClick = (sender, args) =>
                 {
-                    if (PendingQuery == null)
-                    {
-                        PendingQuery = new UGCQuery
+                    if (!Steam.HasTransactionOfType<UGCQuery>())
+                        Steam.AddTransaction(new UGCTransactionProcessor
                         {
-                            SearchString = tags.Text,
-                        };
-                    }
+                            Transaction = new UGCQuery
+                            {
+                                SearchString = tags.Text
+                            },
+                            StatusMessageDisplay = QueryStatusMessage,
+                            OnSuccess = (query) => RefreshList((query.Transaction as UGCQuery).Results)
+                        });
                 },
                 AutoLayout = AutoLayout.DockRight
             });
@@ -124,10 +105,9 @@ namespace DwarfCorp.GameStates.ModManagement
                 SelectedItemBackgroundColor = new Vector4(0.5f, 0.5f, 0.5f, 1.0f),
                 Padding = new Margin(2, 2, 2, 2)
             }) as WidgetListView;
-
         }
 
-        private void CreateLineItem(WidgetListView list, SteamUGCMetaData mod)
+        private void CreateLineItem(WidgetListView list, SteamUGCDetails_t mod)
         {
             var lineItem = Root.ConstructWidget(new Widget
             {
@@ -138,8 +118,23 @@ namespace DwarfCorp.GameStates.ModManagement
 
             lineItem.AddChild(new Widget
             {
+                Font = "font10",
+                Text = "Subscribe",
+                AutoLayout = AutoLayout.DockRight,
+                OnClick = (sender, args) =>
+                {
+                    Steam.AddTransaction(new UGCTransactionProcessor
+                    {
+                        Transaction = new UGCSubscribe(mod.m_nPublishedFileId),
+                        StatusMessageDisplay = sender
+                    });
+                }
+            });
+
+            lineItem.AddChild(new Widget
+            {
                 Font = "font8",
-                Text = String.Format("Name: {0}\nDescription: {1}", mod.Name, mod.Description),
+                Text = String.Format("Name: {0}\nDescription: {1}", mod.m_rgchTitle, mod.m_rgchDescription),
                 AutoLayout = AutoLayout.DockFill,
                 TextColor = new Vector4(0, 0, 0, 1)
             });
@@ -148,7 +143,7 @@ namespace DwarfCorp.GameStates.ModManagement
             list.AddItem(lineItem);
         }
 
-        private void RefreshList(List<SteamUGCMetaData> Mods)
+        private void RefreshList(List<SteamUGCDetails_t> Mods)
         {
             List.ClearItems();
             foreach (var mod in Mods)

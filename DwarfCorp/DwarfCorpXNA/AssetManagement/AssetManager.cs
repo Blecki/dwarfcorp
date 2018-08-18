@@ -78,22 +78,24 @@ namespace DwarfCorp
         {
             InstalledMods = EnumerateMods(GameSettings.Default.LocalModDirectory, ModSource.LocalDirectory).Concat(
                 EnumerateMods(GameSettings.Default.SteamModDirectory, ModSource.SteamDirectory)).ToList();
-            Settings.EnabledMods = Settings.EnabledMods.Where(m => InstalledMods.Any(item => item.Guid == m)).ToList();
-            DirectorySearchList = Settings.EnabledMods.Select(m => InstalledMods.First(item => item.Guid == m)).ToList();
+
+            // Remove any mods that are no longer installed from the enabled mods list.
+            Settings.EnabledMods = Settings.EnabledMods.Where(m => InstalledMods.Any(item => item.IdentifierString == m)).ToList();
+
+            // Select mods in the order they are stored in enabled mods. Once this is set it is not changed.
+            DirectorySearchList = Settings.EnabledMods.Select(m => InstalledMods.First(item => item.IdentifierString == m)).ToList();
             
             DirectorySearchList.Reverse();
             DirectorySearchList.Add(new ModMetaData
             {
                 Name = "BaseContent",
                 Directory = "Content",
-                Guid = Guid.Empty
             });
 
             Assemblies.Add(Tuple.Create(new ModMetaData
             {
                 Name = "BaseContent",
                 Directory = "Content",
-                Guid = Guid.Empty
             }, Assembly.GetExecutingAssembly()));
 
             foreach (var mod in DirectorySearchList)
@@ -124,11 +126,6 @@ namespace DwarfCorp
                     var metaData = FileUtils.LoadJsonFromAbsolutePath<ModMetaData>(metaDataPath);
                     metaData.Directory = dir;
                     metaData.Source = Source;
-                    if (metaData.Guid == Guid.Empty)
-                    {
-                        metaData.Guid = Guid.NewGuid();
-                        metaData.Save();
-                    }
                     r.Add(metaData);
                 }
                 catch (Exception e)
@@ -136,6 +133,7 @@ namespace DwarfCorp
                     Console.WriteLine("Invalid mod: {0} {1}", dir, e.Message);
                 }
             }
+
 
             return r;    
         }
@@ -162,17 +160,21 @@ namespace DwarfCorp
             {
                 Name = "BaseContent",
                 Directory = "Content",
-                Guid = Guid.Empty
             }; // The type wasn't from one of the loaded mods.
         }
 
-        public static Type GetTypeFromMod(String T, Guid Assembly)
+        public static Type GetTypeFromMod(String T, String Assembly)
         {
             foreach (var mod in Assemblies)
-                if (mod.Item1.Guid == Assembly)
+                if (mod.Item1.IdentifierString == Assembly)
                     return mod.Item2.GetType(T);
 
-            throw new AssetException("Tried to load type from mod that is not installed or enabled");
+            var r = Type.GetType(T, true);
+            if (r == null)
+                throw new Exception("Unresolved tupe");
+            return r;
+
+            //throw new AssetException("Tried to load type from mod that is not installed or enabled");
         }
 
         private static bool CheckMethod(MethodInfo Method, Type ReturnType, Type[] ArgumentTypes)

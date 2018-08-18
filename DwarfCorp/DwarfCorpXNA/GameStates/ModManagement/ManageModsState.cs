@@ -47,10 +47,16 @@ namespace DwarfCorp.GameStates.ModManagement
     public class ManageModsState : GameState
     {
         private Gui.Root GuiRoot;
+        private bool HasChanges = false;
 
         public ManageModsState(DwarfGame game, GameStateManager stateManager) :
             base(game, "ManageModsState", stateManager)
         {
+        }
+
+        public void MadeChanges()
+        {
+            HasChanges = true;
         }
 
         public override void OnEnter()
@@ -66,19 +72,58 @@ namespace DwarfCorp.GameStates.ModManagement
             float newHeight = System.Math.Min(System.Math.Max(screen.Height * scale, 480), screen.Height * scale);
             Rectangle rect = new Rectangle((int)(screen.Width / 2 - newWidth / 2), (int)(screen.Height / 2 - newHeight / 2), (int)newWidth, (int)newHeight);
 
-            var main = GuiRoot.RootItem.AddChild(new Gui.Widgets.TabPanel
+            var main = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
-                Rect = rect,
+                Rect = rect
+            });
+
+            var bottom = main.AddChild(new Widget
+            {
+                Transparent = true,
+                MinimumSize = new Point(0, 32),
+                AutoLayout = AutoLayout.DockBottom,
+                Padding = new Margin(2, 2, 2, 2)
+            });
+
+            bottom.AddChild(new Gui.Widgets.Button
+            {
+                Text = "Close",
+                Font = "font16",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                Border = "border-button",
+                OnClick = (sender, args) =>
+                {
+                    // If changes, prompt before closing.
+                    if (HasChanges)
+                    {
+                        var confirm = new Popup
+                        {
+                            Text = "Dwarf Corp must be restarted for changes to take effect.",
+                            OkayText = "Okay",
+                            OnClose = (s2) => StateManager.PopState()
+                        };
+                        GuiRoot.ShowModalPopup(confirm);
+                    }
+                    else
+                        StateManager.PopState();
+                },
+                AutoLayout = AutoLayout.DockRight
+            });
+
+            var tabs = main.AddChild(new Gui.Widgets.TabPanel
+            {
+                AutoLayout = AutoLayout.DockFill,
                 TextSize = 1,
                 SelectedTabColor = new Vector4(1, 0, 0, 1)
             }) as Gui.Widgets.TabPanel;
 
-            main.AddTab("Installed", new InstalledModsWidget
+            tabs.AddTab("Installed", new InstalledModsWidget
             {
-                OnOkayPressed = (sender) => StateManager.PopState()
+                OwnerState = this
             });
 
-            main.AddTab("Search", new SearchWidget());
+            tabs.AddTab("Search", new SearchWidget());
 
             GuiRoot.RootItem.Layout();
 
