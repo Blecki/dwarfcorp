@@ -76,6 +76,10 @@ namespace DwarfCorp
                 : "Craft";
             AutoRetry = true;
             BoredomIncrease = 0.2f;
+            if (selectedResource.IsMagical)
+            {
+                Category = TaskCategory.Research;
+            }
         }
 
         public IEnumerable<Act.Status> Repeat(Creature creature)

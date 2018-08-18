@@ -868,11 +868,10 @@ namespace DwarfCorp
             string prefix = damage > 0 ? "-" : "+";
             Color color = damage > 0 ? GameSettings.Default.Colors.GetColor("Negative", Color.Red) : GameSettings.Default.Colors.GetColor("Positive", Color.Green);
 
-            IndicatorManager.DrawIndicator(prefix + (int)amount + " HP",
-                AI.Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, color);
-
-            if (damage > 0)
+            if (AI != null)
             {
+                IndicatorManager.DrawIndicator(prefix + (int)amount + " HP",
+                AI.Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, color);
                 NoiseMaker.MakeNoise("Hurt", AI.Position);
                 Sprite.Blink(0.5f);
                 AddThought(Thought.ThoughtType.TookDamage);
@@ -883,7 +882,6 @@ namespace DwarfCorp
                     Manager.World.ParticleManager.Trigger(trigger.EmitterName, AI.Position, Color.White, 2);
                 DrawLifeTimer.Reset();
             }
-
 
             return damage;
         }

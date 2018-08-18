@@ -61,6 +61,7 @@ namespace DwarfCorp
             };
         }
 
+        /*
         [EntityFactory("Books")]
         private static GameComponent __factory2(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -73,19 +74,14 @@ namespace DwarfCorp
                     MaxCharge = 100.0f
                 }
             };
-        }
+        }*/
 
-        [EntityFactory("Potions")]
+        [EntityFactory("Apocethary")]
         private static GameComponent __factory3(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Table("Potions", Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4), Data.GetData<List<ResourceAmount>>("Resources", null), DefaultTopFrame, DefaultLegsFrame)
+            return new Table("Apocethary", Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4), Data.GetData<List<ResourceAmount>>("Resources", null), DefaultTopFrame, DefaultLegsFrame)
             {
-                Tags = new List<string>() { "Research" },
-                Battery = new Table.ManaBattery()
-                {
-                    Charge = 0.0f,
-                    MaxCharge = 100.0f
-                }
+                Tags = new List<string>() { "Research", "Apocethary" }
             };
         }
 
@@ -221,7 +217,7 @@ namespace DwarfCorp
         }
 
         public Table(string craftType, ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame, List<ResourceAmount> resources, Point topFrame, Point legsFrame) :
-            base(manager, "Table", Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, craftType, resources))
+            base(manager, craftType, Matrix.Identity, new Vector3(1.0f, 1.0f, 1.0f), Vector3.Zero, new DwarfCorp.CraftDetails(manager, craftType, resources))
         {
             TopFrame = topFrame;
             LegsFrame = legsFrame;
