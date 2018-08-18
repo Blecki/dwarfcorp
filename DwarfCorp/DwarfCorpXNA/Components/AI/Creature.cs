@@ -141,7 +141,7 @@ namespace DwarfCorp
 
         private T _get<T>(ref T cached) where T : GameComponent
         {
-            if (cached == null || cached.IsDead)
+            if (cached == null)
                 cached = Parent.EnumerateAll().OfType<T>().FirstOrDefault();
             System.Diagnostics.Debug.Assert(cached != null, string.Format("No {0} created on creature.", typeof(T).Name));
             return cached;
@@ -172,6 +172,15 @@ namespace DwarfCorp
             }
         }
 
+
+        public void DeleteSelectionCircle()
+        {
+            if (_selectionCircle != null)
+            {
+                _selectionCircle.Delete();
+                _selectionCircle = null;
+            }
+        }
 
         /// <summary> The selection circle is drawn when the character is selected </summary>
         private SelectionCircle _selectionCircle = null;

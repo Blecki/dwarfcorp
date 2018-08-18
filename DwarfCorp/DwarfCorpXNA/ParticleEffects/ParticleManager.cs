@@ -81,7 +81,7 @@ namespace DwarfCorp
             float l = (dest - position).Length();
             for (float t = 0; t < l; t += spacing)
             {
-                Trigger(emitter, position + r * t, Color.White, 1);
+                Create(emitter, position + r * t, r, Color.White);
             }
         }
 

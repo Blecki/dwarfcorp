@@ -190,7 +190,7 @@ namespace DwarfCorp
                 {
                     if (m.Creature.SelectionCircle != null)
                     {
-                        m.Creature.SelectionCircle.Delete();
+                        m.Creature.DeleteSelectionCircle();
                    
                     }
                     m.Creature.Sprite.DrawSilhouette = false;
