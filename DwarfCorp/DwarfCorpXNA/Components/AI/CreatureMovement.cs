@@ -42,6 +42,9 @@ namespace DwarfCorp
     public class CreatureMovement
     {
 
+        private int TeleportDistance = SummoningCircle.TeleportDistance;
+        private int TeleportDistanceSquared = SummoningCircle.TeleportDistance * SummoningCircle.TeleportDistance;
+
         public CreatureMovement()
         {
 
@@ -323,10 +326,10 @@ namespace DwarfCorp
             var successors = EnumerateSuccessors(state, voxel, neighborHood, inWater, standingOnGround, topCovered, hasNeighbors, isRiding, neighborObjects);
             if (Can(MoveType.Teleport))
             {
-                var teleportObjects = Parent.Faction.OwnedObjects.Where(obj => obj.Tags.Contains("Teleporter"));
+                var teleportObjects = Parent.Faction.OwnedObjects.Where(obj => obj.Active && obj.Tags.Contains("Teleporter"));
                 foreach (var obj in teleportObjects)
                 {
-                    if ((obj.Position - Parent.Position).LengthSquared() < 100)
+                    if ((obj.Position - state.Voxel.WorldPosition).LengthSquared() < TeleportDistanceSquared)
                     {
                         yield return new MoveAction()
                         {
@@ -724,6 +727,37 @@ namespace DwarfCorp
                 yield break;
             }
             var current = currentstate.Voxel;
+
+            if (Can(MoveType.Teleport))
+            {
+                var teleportObjects = Parent.Faction.OwnedObjects.Where(obj => obj.Active && obj.Tags.Contains("Teleporter"));
+                foreach (var obj in teleportObjects)
+                {
+                    if ((obj.Position - current.WorldPosition).LengthSquared() > 2)
+                        continue;
+
+                    for (int dx = -TeleportDistance; dx <= TeleportDistance; dx++)
+                        for (int dz = -TeleportDistance; dz <= TeleportDistance; dz++)
+                            for (int dy = -TeleportDistance; dy <= TeleportDistance; dy++)
+                            {
+                                if (dx * dx + dy * dy + dz * dz > TeleportDistanceSquared)
+                                    continue;
+                                VoxelHandle teleportNeighbor = new VoxelHandle(Parent.World.ChunkManager.ChunkData, current.Coordinate + new GlobalVoxelOffset(dx, dy, dz));
+
+                                if (teleportNeighbor.IsValid && teleportNeighbor.IsEmpty && !VoxelHelpers.GetNeighbor(teleportNeighbor, new GlobalVoxelOffset(0, -1, 0)).IsEmpty)
+                                {
+                                    yield return new MoveAction()
+                                    {
+                                        InteractObject = obj,
+                                        Diff = new Vector3(dx, dx, dz),
+                                        SourceVoxel = teleportNeighbor,
+                                        DestinationState = currentstate,
+                                        MoveType = MoveType.Teleport
+                                    };
+                                }
+                            }
+                }
+            }
             foreach (var v in VoxelHelpers.EnumerateCube(current.Coordinate)
                 .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
                 .Where(h => h.IsValid && h.IsEmpty))

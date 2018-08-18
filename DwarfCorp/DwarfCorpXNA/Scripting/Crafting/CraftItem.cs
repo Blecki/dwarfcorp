@@ -98,6 +98,8 @@ namespace DwarfCorp
         public CraftActBehaviors CraftActBehavior = CraftActBehaviors.Normal;
         public bool AllowRotation = false;
         public string Category = "";
+        public bool IsMagical = false;
+
         /// <summary>
         /// If true, this will be displayed in the list of resources that the player can craft.
         /// </summary>
@@ -173,7 +175,7 @@ namespace DwarfCorp
                 toReturn.Type = CraftType.Resource;
                 toReturn.CraftActBehavior = CraftActBehaviors.Object;
                 toReturn.ResourceCreated = "Object";
-                toReturn.CraftLocation = "Anvil";
+                toReturn.CraftLocation = CraftLocation;
                 toReturn.ObjectName = Name;
                 toReturn.AllowUserCrafting = false;
                 CraftLibrary.Add(toReturn);

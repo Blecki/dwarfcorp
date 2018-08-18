@@ -134,8 +134,12 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
+            if (!this.Item.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
                 return Feasibility.Infeasible;
+
+            if (this.Item.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.Research))
+                return Feasibility.Infeasible;
+
             return HasResources(agent) && HasLocation(agent) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 

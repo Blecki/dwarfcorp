@@ -246,8 +246,9 @@ namespace DwarfCorp
             return false;
         }
 
+        private MoveType lastMovement = MoveType.Walk;
         public IEnumerable<Status> PerformCurrentAction()
-        {
+        { 
             MoveAction action = Path.First();
             float t = 0;
             int currentIndex = 0;
@@ -467,13 +468,22 @@ namespace DwarfCorp
                     yield return Act.Status.Success;
                     yield break;
                 case MoveType.Teleport:
+                    if (lastMovement != MoveType.Teleport)
+                    {
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_dwarf_magic_research, currPosition, true, 1.0f);
+                    }
                     Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
                     Agent.World.ParticleManager.Trigger("star_particle", diff * t + currPosition, Color.White, 1);
+                    if (action.InteractObject != null)
+                    {
+                        Agent.World.ParticleManager.Trigger("green_flame", (action.InteractObject as Body).Position, Color.White, 1);
+                    }
                     transform.Translation = action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f;
                     break;
             }
 
             Agent.Physics.LocalTransform = transform;
+            lastMovement = action.MoveType;
         }
 
         private void SetupMinecart()

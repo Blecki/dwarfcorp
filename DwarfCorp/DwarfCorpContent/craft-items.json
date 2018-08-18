@@ -459,43 +459,6 @@
   },
 
   {
-    "Name": "Turret",
-    "EntityName": "Turret",
-    "RequiredResources": [
-      {
-        "ResourceType": "Metal",
-        "NumResources": 2
-      },
-      {
-        "ResourceType": "Magical",
-        "NumResources": 1
-      }
-    ],
-    "Icon": {
-      "Sheet": "furniture",
-      "Tile": 57
-    },
-    "BaseCraftTime": 90.0,
-    "Description": "Crossbow automatically targets enemies with magical power.",
-    "Type": "Object",
-    "Prerequisites": [
-      "OnGround"
-    ],
-    "ResourceCreated": {
-      "_value": ""
-    },
-    "CraftLocation": "",
-    "Verb": "Build",
-    "PastTeseVerb": "Built",
-    "CurrentVerb": "Building",
-    "AllowHeterogenous": false,
-    "SpawnOffset": "0, 0.5, 0",
-    "AddToOwnedPool": true,
-    "Moveable": true,
-    "CraftActBehavior": "Normal"
-  },
-
-  {
     "Name": "Wooden Chair",
     "EntityName": "Wooden Chair",
 	"Category": "Chairs",
@@ -744,7 +707,7 @@
     ],
     "Icon": {
       "Sheet": "furniture",
-      "Tile": 24
+      "Tile": 20
     },
     "BaseCraftTime": 30.0,
     "Description": "Dwarfs can teleport to the summoning circle when in need.",
@@ -763,7 +726,9 @@
     "SpawnOffset": "0, 0.5, 0",
     "AddToOwnedPool": true,
     "Moveable": true,
-    "CraftActBehavior": "Normal"
+    "CraftActBehavior": "Normal",
+	"Category": "Magic",
+	"IsMagical": true
   },
   {
     "Name": "Forge",
@@ -1102,7 +1067,8 @@
     "SpawnOffset": "0, 0.5, 0",
     "AddToOwnedPool": true,
     "Moveable": true,
-    "CraftActBehavior": "Normal"
+    "CraftActBehavior": "Normal",
+	"IsMagical": true
   },
 
   {
@@ -1136,7 +1102,8 @@
     "SpawnOffset": "0, 0.5, 0",
     "AddToOwnedPool": true,
     "Moveable": true,
-    "CraftActBehavior": "Normal"
+    "CraftActBehavior": "Normal",
+	"IsMagical": true
   },
 
   {
@@ -1171,7 +1138,8 @@
     "SpawnOffset": "0, 0, 0",
     "AddToOwnedPool": true,
     "Moveable": true,
-    "CraftActBehavior": "Normal"
+    "CraftActBehavior": "Normal",
+	"IsMagical": true
   },
 
   {
@@ -1303,7 +1271,44 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-
+  {
+    "Name": "Turret",
+    "EntityName": "Turret",
+    "RequiredResources": [
+      {
+        "ResourceType": "Metal",
+        "NumResources": 2
+      },
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 57
+    },
+    "BaseCraftTime": 90.0,
+    "Description": "Crossbow automatically targets enemies with magical power.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal",
+	"Category": "Magic",
+	"IsMagical": true
+  },
   {
     "Name": "Conveyor",
     "EntityName": "Conveyor",
