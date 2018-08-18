@@ -60,9 +60,19 @@ namespace DwarfCorp.Gui.Widgets
                     AutoResizeToTextHeight = true
                 });
 
-                var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false, null);
+                var minion = World.PlayerFaction.Minions.FirstOrDefault(m => Data.IsMagical ? m.Stats.IsTaskAllowed(Task.TaskCategory.Research) : m.Stats.IsTaskAllowed(Task.TaskCategory.BuildObject));
 
-                if (!String.IsNullOrEmpty(Data.CraftLocation) && nearestBuildLocation == null)
+                var nearestBuildLocation = World.PlayerFaction.FindNearestItemWithTags(Data.CraftLocation, Vector3.Zero, false, null);
+                if (minion == null)
+                {
+                    AddChild(new Gui.Widget
+                    {
+                        Text = String.Format("Needs {0} to {1}!", Data.IsMagical ? "Wizard" : "CraftsDwarf", Data.Verb),
+                        TextColor = new Vector4(1, 0, 0, 1),
+                        AutoLayout = Gui.AutoLayout.DockBottom
+                    });
+                }
+                else if (!String.IsNullOrEmpty(Data.CraftLocation) && nearestBuildLocation == null)
                 {
                     AddChild(new Gui.Widget
                     {

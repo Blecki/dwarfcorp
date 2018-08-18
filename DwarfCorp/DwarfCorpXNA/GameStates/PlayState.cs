@@ -1464,9 +1464,15 @@ namespace DwarfCorp.GameStates
                     TextColor = Color.Black.ToVector4(),
                     HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
                     ButtonFont = "font10",
+                    OnShown = (sender) =>
+                    {
+                        var panel = (sender as TabPanel);
+                        panel.SelectedTab = 0;
+                    },
                     OnSelectedTabChanged = (widget) =>
                     {
-                        this.GuiRoot.SafeCall(widget.OnShown, widget);
+                        var panel = (widget as TabPanel);
+                        this.GuiRoot.SafeCall(panel.GetTabButton(panel.SelectedTab).OnShown, panel.GetTabButton(panel.SelectedTab));
                     },
                     TabSource = new string[]{"Place", "Stockpile"}.Select((title) =>
                     {
@@ -1480,9 +1486,6 @@ namespace DwarfCorp.GameStates
                                 Master = Master,
                                 World = World,
                                 Transparent = true,
-                                OnShown = (sender) =>
-                                {
-                                },
                                 BuildAction = (sender, args) =>
                                 {
                                     var buildInfo = sender as BuildCraftInfo;
