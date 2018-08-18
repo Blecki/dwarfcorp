@@ -128,7 +128,8 @@ namespace DwarfCorp
             Jolly,
             Rail,
             Explosive,
-            CraftItem
+            CraftItem,
+            Mana
         }
 
         public Resource()

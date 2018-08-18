@@ -141,7 +141,7 @@ namespace DwarfCorp
 
         private T _get<T>(ref T cached) where T : GameComponent
         {
-            if (cached == null)
+            if (cached == null || cached.IsDead)
                 cached = Parent.EnumerateAll().OfType<T>().FirstOrDefault();
             System.Diagnostics.Debug.Assert(cached != null, string.Format("No {0} created on creature.", typeof(T).Name));
             return cached;
@@ -364,6 +364,16 @@ namespace DwarfCorp
                 Physics.AllowPhysicsSleep = false;
 
                 addToSpeciesCount();
+            }
+
+            if (_selectionCircle != null && 
+                Faction == World.PlayerFaction && World.Master.SelectedMinions.Contains(AI))
+            {
+                _selectionCircle.IsVisible = true;
+            }
+            else if (_selectionCircle != null)
+            {
+                _selectionCircle.IsVisible = false;
             }
 
             if (AI == null)

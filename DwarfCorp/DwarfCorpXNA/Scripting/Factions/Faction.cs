@@ -184,16 +184,27 @@ namespace DwarfCorp
             Minions.RemoveAll(m => m.IsDead);
             SelectedMinions.RemoveAll(m => m.IsDead);
 
-            foreach (var m in Minions)
+            if (this == World.PlayerFaction)
             {
-                m.Creature.SelectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, false);
-                m.Creature.Sprite.DrawSilhouette = false;
-            };
+                foreach (var m in Minions.Where(c => !SelectedMinions.Contains(c)))
+                {
+                    if (m.Creature.SelectionCircle != null)
+                    {
+                        m.Creature.SelectionCircle.Delete();
+                   
+                    }
+                    m.Creature.Sprite.DrawSilhouette = false;
+                };
 
-            foreach (CreatureAI creature in SelectedMinions)
-            {
-                creature.Creature.SelectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, true);
-                creature.Creature.Sprite.DrawSilhouette = true;
+                foreach (CreatureAI creature in SelectedMinions)
+                {
+                    if (creature.Creature.SelectionCircle == null)
+                    {
+                        creature.Creature.Physics.AddChild(new SelectionCircle(creature.Manager));
+                    }
+                    creature.Creature.SelectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                    creature.Creature.Sprite.DrawSilhouette = true;
+                }
             }
 
             foreach (Room zone in GetRooms())
