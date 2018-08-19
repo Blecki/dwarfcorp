@@ -31,6 +31,37 @@ namespace DwarfCorp
         }
     }
 
+    public class GatherPotionsTask : Task
+    {
+        public GatherPotionsTask()
+        {
+            Name = "Gather Potions";
+            ReassignOnDeath = false;
+            AutoRetry = false;
+            Priority = PriorityType.Low;
+        }
+
+        public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
+        {
+            return 1.0f;
+        }
+
+        public override bool ShouldRetry(Creature agent)
+        {
+            return false;
+        }
+
+        public override Feasibility IsFeasible(Creature agent)
+        {
+            return agent.Faction.ListResourcesWithTag(Resource.ResourceTags.Potion).Count > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
+        }
+
+        public override Act CreateScript(Creature agent)
+        {
+            return new GetResourcesAct(agent.AI, new List<Quantitiy<Resource.ResourceTags>>() { new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Potion)});
+        }
+    }
+
     public static class PotionLibrary
     {
         public static Dictionary<string, Potion> Potions = new Dictionary<string, Potion>()
@@ -45,8 +76,8 @@ namespace DwarfCorp
                         new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Edible, 1)
                     },
                     Description = "Dwarfs drink this potion when they take damage.",
-                    Effects = new OngoingHealBuff(1.0f, 120.0f),
-                    Icon = 44
+                    Effects = new OngoingHealBuff(10.0f, 4.0f) { Particles = "star_particle" },
+                    Icon = 44,
                 }
             },
             {
@@ -73,11 +104,7 @@ namespace DwarfCorp
                         new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Alcohol, 1)
                     },
                     Description = "Dwarfs drink this potion when they are feeling down.",
-                    Effects = new ThoughtBuff()
-                    {
-                        ThoughtType = Thought.ThoughtType.Magic,
-                        EffectTime = new Timer(120.0f, true),
-                    },
+                    Effects = new ThoughtBuff(120.0f, Thought.ThoughtType.Magic) {  Particles = "star_particle" },
                     Icon = 45
                 }
             },
@@ -93,10 +120,7 @@ namespace DwarfCorp
                     Description = "Dwarfs drink this potion to get strong.",
                     Effects = new StatBuff(120.0f, new CreatureStats.StatNums() { Strength = 3 })
                     {
-                        Buffs  = new CreatureStats.StatNums()
-                        {
-                            Strength = 3
-                        }
+                        Particles = "star_particle"
                     },
                     Icon = 44
                 }
@@ -111,7 +135,7 @@ namespace DwarfCorp
                         new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fungus, 1)
                     },
                     Description = "Dwarfs drink this potion to get a bit faster.",
-                    Effects = new StatBuff(120.0f, new CreatureStats.StatNums() { Dexterity = 3 }),
+                    Effects = new StatBuff(120.0f, new CreatureStats.StatNums() { Dexterity = 3 }) { Particles = "star_particle" },
                     Icon = 45
                 }
             },
@@ -125,7 +149,7 @@ namespace DwarfCorp
                         new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fruit, 1)
                     },
                     Description = "Dwarfs drink this potion to get a cognitive boost.",
-                    Effects = new StatBuff(120.0f, new CreatureStats.StatNums() { Intelligence = 3 }),
+                    Effects = new StatBuff(120.0f, new CreatureStats.StatNums() { Intelligence = 3 }) { Particles = "star_particle" },
                     Icon = 45
                 }
             },
@@ -157,6 +181,17 @@ namespace DwarfCorp
                     {
                         new Gui.TileReference("resources", potion.Value.Icon)
                     };
+                    resource.CompositeLayers = new List<Resource.CompositeLayer>()
+                    {
+                        new Resource.CompositeLayer()
+                        {
+                            Asset = ContentPaths.Entities.Resources.resources,
+                            Frame = new Microsoft.Xna.Framework.Point(potion.Value.Icon % 8, potion.Value.Icon / 8),
+                            FrameSize = new Microsoft.Xna.Framework.Point(32, 32)
+                        }
+                    };
+                    resource.Tint = Microsoft.Xna.Framework.Color.White;
+
                 };
                 ResourceLibrary.Add(resource);
 
@@ -174,7 +209,8 @@ namespace DwarfCorp
                     CurrentVerb = "Brewing",
                     ResourceCreated = potion.Key,
                     Description = potion.Value.Description,
-                    RequiredResources = potion.Value.Ingredients
+                    RequiredResources = potion.Value.Ingredients,
+                    BaseCraftTime = 10.0f
                 };
                 CraftLibrary.Add(craftItem);
             }

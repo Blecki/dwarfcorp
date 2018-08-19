@@ -1656,7 +1656,8 @@ namespace DwarfCorp.GameStates
                     CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && item.AllowUserCrafting
                     && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) &&
-                    !ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
+                    !ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible) &&
+                    item.CraftLocation != "Apocethary")
                     .Select(data => new FlatToolTray.Icon
                     {
                         Icon = data.Icon,
@@ -1916,6 +1917,82 @@ namespace DwarfCorp.GameStates
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
+            #endregion
+
+            #region icon_PotionTool
+            var icon_menu_potions_return = new FlatToolTray.Icon
+            {
+                Icon = new TileReference("tool-icons", 11),
+                Tooltip = "Go Back",
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
+                OnClick = (widget, args) =>
+                {
+                    ChangeTool(GameMaster.ToolMode.SelectUnits);
+                }
+            };
+
+            Func<string, string> potionNameToLabel = (string name) =>
+            {
+                var replacement = name.Replace("Potion", "").Replace("of", "");
+                return TextGenerator.Shorten(replacement, 6);
+            };
+            var menu_potions = new FlatToolTray.Tray
+            {
+                ItemSource = (new Widget[] { icon_menu_Edibles_Return }).Concat(
+                    CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
+                    && item.AllowUserCrafting
+                    && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated)
+                    && item.CraftLocation == "Apocethary")
+                    .Select(data => new FlatToolTray.Icon
+                    {
+                        Icon = data.Icon,
+                        KeepChildVisible = true, // So the player can interact with the popup.
+                        Tooltip = data.Verb + " " + data.Name,
+                        Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
+                        Text = potionNameToLabel(data.Name),
+                        TextVerticalAlign = VerticalAlign.Below,
+                        TextHorizontalAlign = HorizontalAlign.Center,
+                        TextColor = Color.White.ToVector4(),
+                        PopupChild = new BuildCraftInfo
+                        {
+                            Data = data,
+                            Rect = new Rectangle(0, 0, 450, 200),
+                            Master = Master,
+                            World = World,
+                            BuildAction = (sender, args) =>
+                            {
+                                var buildInfo = sender as Gui.Widgets.BuildCraftInfo;
+                                sender.Hidden = true;
+                                List<Task> assignments = new List<Task> { new CraftResourceTask(data, buildInfo.GetNumRepeats(), buildInfo.GetSelectedResources()) };
+                                World.Master.TaskManager.AddTasks(assignments);
+                                World.ShowToolPopup(data.CurrentVerb + " " + data.Name);
+                                World.Tutorial("potions");
+                            },
+                        },
+                        OnConstruct = (sender) =>
+                        {
+                            AddToolbarIcon(sender, () => ((sender as FlatToolTray.Icon).PopupChild as BuildCraftInfo).CanBuild());
+                        }
+                    }))
+            };
+
+            var icon_Potions = new FlatToolTray.Icon
+            {
+                Tag = "potions",
+                Text = "Potion",
+                TextVerticalAlign = VerticalAlign.Below,
+                Icon = new TileReference("resources", 44),
+                KeepChildVisible = true,
+                Tooltip = "Brew potions",
+                OnConstruct = (sender) =>
+                {
+                    AddToolbarIcon(sender, () =>
+                    Master.Faction.Minions.Any(minion =>
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Research)) && Master.Faction.OwnedObjects.Any(obj => obj.Tags.Contains("Apocethary")));
+                },
+                ReplacementMenu = menu_potions,
+                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
+            };
             #endregion
 
             #region icon_DigTool
@@ -2388,6 +2465,7 @@ namespace DwarfCorp.GameStates
                     icon_AttackTool,
                     icon_Plant,
                     icon_Wrangle,
+                    icon_Potions,
                     //icon_MagicTool,
                     icon_CancelTasks,
                 },

@@ -318,6 +318,20 @@ namespace DwarfCorp
 
             if (_preEmptTimer.HasTriggered)
             {
+                var inventory = Creature.Inventory;
+                if (inventory != null && inventory.Resources.Any(resource => ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(Resource.ResourceTags.Potion)))
+                {
+                    var applicablePotions = inventory.Resources.Where(resource => !resource.MarkedForRestock).
+                        Select(resource => ResourceLibrary.GetResourceByName(resource.Resource)).
+                        Where(resource => resource.Tags.Contains(Resource.ResourceTags.Potion) && PotionLibrary.Potions[resource.PotionType].ShouldDrink(Creature));
+                    var potion = applicablePotions.FirstOrDefault();
+                    if (potion != null)
+                    {
+                        PotionLibrary.Potions[potion.PotionType].Drink(Creature);
+                        inventory.Remove(new ResourceAmount(potion), Inventory.RestockType.Any);
+                    }
+                }
+
                 foreach (Task task in Tasks)
                 {
                     if (task.Priority > CurrentTask.Priority && task.IsFeasible(Creature) == Task.Feasibility.Feasible)
@@ -976,6 +990,12 @@ namespace DwarfCorp
                         Priority = Task.PriorityType.Low
                     };
                 }
+            }
+
+
+            if (MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction && Faction.ListResourcesWithTag(Resource.ResourceTags.Potion).Count > 0)
+            {
+                return new GatherPotionsTask();
             }
             
             return new LookInterestingTask();

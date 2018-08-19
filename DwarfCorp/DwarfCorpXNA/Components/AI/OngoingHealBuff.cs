@@ -22,12 +22,20 @@ namespace DwarfCorp
 
         /// <summary> Amount to heal the creature in HP per second </summary>
         public float DamagePerSecond { get; set; }
-
+        private Timer DamageTimer = new Timer(1.0f, false);
         public override void Update(DwarfTime time, Creature creature)
         {
-            var dt = (float)time.ElapsedGameTime.TotalSeconds;
-            creature.Heal(dt * DamagePerSecond);
+            DamageTimer.Update(time);
 
+            if (DamageTimer.HasTriggered)
+            {
+                creature.Heal(DamagePerSecond);
+                creature.DrawLifeTimer.Reset();
+                IndicatorManager.DrawIndicator((DamagePerSecond).ToString() + " HP",
+                    creature.Physics.Position, 1.0f,
+                     GameSettings.Default.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
+            }
+           
             base.Update(time, creature);
         }
 
