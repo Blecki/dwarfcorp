@@ -849,8 +849,8 @@ namespace DwarfCorp
                 return;
 
             var frustum = Camera.GetDrawFrustum();
-            var renderables = EnumerateIntersectingObjects(frustum)
-                .Where(r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()));
+            var renderables = EnumerateIntersectingObjects(frustum,
+                r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()));
 
             // Controls the sky fog
             float x = (1.0f - Sky.TimeOfDay);
