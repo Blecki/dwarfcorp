@@ -225,7 +225,7 @@ namespace DwarfCorp.GameStates
                 };
 
                 World.UnpauseThreads();
-                AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Real);
+                AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Game);
 
                 ContextCommands = new List<DwarfCorp.ContextCommands.ContextCommand>();
                 ContextCommands.Add(new ContextCommands.ChopCommand());
@@ -409,11 +409,17 @@ namespace DwarfCorp.GameStates
             // Really just handles mouse pointer animation.
             GuiRoot.Update(gameTime.ToRealTime());
 
-            AutoSaveTimer.Update(gameTime);
+            // AutoSaveInterval may have changed
+            AutoSaveTimer.TargetTimeSeconds = GameSettings.Default.AutoSaveTimeMinutes * 60.0f;
 
-            if (GameSettings.Default.AutoSave && AutoSaveTimer.HasTriggered)
+            // Ignore pauses from autosave timer
+            if (!Paused)
             {
-                AutoSave();   
+                AutoSaveTimer.Increment(gameTime);
+                if (GameSettings.Default.AutoSave && AutoSaveTimer.HasTriggered)
+                {
+                    AutoSave();
+                }
             }
 
             #region select employee

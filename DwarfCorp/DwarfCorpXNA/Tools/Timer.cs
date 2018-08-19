@@ -172,8 +172,26 @@ namespace DwarfCorp
     {
         [JsonIgnore]
         public float StartTimeSeconds { get; set; }
-        public float TargetTimeSeconds { get; set; }
-        public float CurrentTimeSeconds { get; set; }
+
+        [JsonIgnore]
+        private float targetTimeSeconds;
+        public float TargetTimeSeconds {
+            get => this.targetTimeSeconds;
+            set {
+                this.targetTimeSeconds = value;
+                CheckTrigger();
+            }
+        }
+
+        [JsonIgnore]
+        private float currentTimeSeconds;
+        public float CurrentTimeSeconds {
+            get => this.currentTimeSeconds;
+            set {
+                this.currentTimeSeconds = value;
+                CheckTrigger();
+            }
+        }
         public bool TriggerOnce { get; set; }
         public bool HasTriggered { get; set; }
 
@@ -206,6 +224,21 @@ namespace DwarfCorp
             Mode = mode;
         }
 
+        private bool CheckTrigger()
+        {
+            if(HasTriggered && TriggerOnce)
+            {
+                return true;
+            }
+            if (CurrentTimeSeconds > TargetTimeSeconds)
+            {
+                HasTriggered = true;
+                CurrentTimeSeconds = TargetTimeSeconds;
+                return true;
+            }
+            return false;
+        }
+
         public bool Update(DwarfTime t)
         {
             if (null == t)
@@ -233,15 +266,27 @@ namespace DwarfCorp
             }
 
             CurrentTimeSeconds = seconds - StartTimeSeconds;
+            return CheckTrigger();
+        }
 
-            if (CurrentTimeSeconds > TargetTimeSeconds)
+        public void Increment(DwarfTime t)
+        {
+            if (null == t) return;
+            float seconds = (float)(Mode == TimerMode.Game ? t.ElapsedGameTime.TotalSeconds : t.ElapsedRealTime.TotalSeconds);
+
+            if (!TriggerOnce && HasTriggered)
             {
-                HasTriggered = true;
-                CurrentTimeSeconds = TargetTimeSeconds;
-                return true;
+                HasTriggered = false;
+                CurrentTimeSeconds = 0.0f;
             }
 
-            return false;
+            if (HasTriggered && TriggerOnce)
+            {
+                return;
+            }
+            
+            CurrentTimeSeconds += seconds;
+            CheckTrigger();
         }
 
         public void Reset()
