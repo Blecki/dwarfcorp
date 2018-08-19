@@ -43,7 +43,7 @@ namespace DwarfCorp
         {
             return Bounds.Contains(Box);
         }
-
+        
         private void Subdivide()
         {
             //lock (Lock) //All calls are from inside already locked functions.
@@ -122,7 +122,7 @@ namespace DwarfCorp
                 }
             }
         }
-
+        
         public void EnumerateItems(HashSet<Body> Into)
         {
             lock (this)
@@ -245,7 +245,7 @@ namespace DwarfCorp
                     case ContainmentType.Contains:
                         if (Children == null)
                             for (var i = 0; i < Items.Count; ++i)
-                                Into.Add(Items[i].Body);
+                                    Into.Add(Items[i].Body);
                         else
                             for (var i = 0; i < 8; ++i)
                                 Children[i].EnumerateItems(Into);
