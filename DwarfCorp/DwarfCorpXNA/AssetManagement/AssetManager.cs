@@ -60,14 +60,17 @@ namespace DwarfCorp
     /// and texture. Additionally, the TextureManager provides an interface to directly load
     /// resources from the disk (rather than going through XNAs content system)
     /// </summary>
-    public class AssetManager
+    public partial class AssetManager
     {
         private static Dictionary<String, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
         private static ContentManager Content { get { return GameState.Game.Content; } }
         private static GraphicsDevice Graphics {  get { return GameState.Game.GraphicsDevice; } }
+
+        /// <summary>
+        /// Assemblies created from loaded mods. Once discovered, this list will not change unless the game is reloaded.
+        /// </summary>
         private static List<Tuple<ModMetaData,Assembly>> Assemblies = new List<Tuple<ModMetaData,Assembly>>();
         private static List<ModMetaData> DirectorySearchList;
-        private static List<ModMetaData> InstalledMods;
 
         public static void ResetCache()
         {
@@ -76,14 +79,13 @@ namespace DwarfCorp
 
         public static void Initialize(ContentManager Content, GraphicsDevice Graphics, GameSettings.Settings Settings)
         {
-            InstalledMods = EnumerateMods(GameSettings.Default.LocalModDirectory, ModSource.LocalDirectory).Concat(
-                EnumerateMods(GameSettings.Default.SteamModDirectory, ModSource.SteamDirectory)).ToList();
+            var installedMods = DiscoverMods();
 
             // Remove any mods that are no longer installed from the enabled mods list.
-            Settings.EnabledMods = Settings.EnabledMods.Where(m => InstalledMods.Any(item => item.IdentifierString == m)).ToList();
+            Settings.EnabledMods = Settings.EnabledMods.Where(m => installedMods.Any(item => item.IdentifierString == m)).ToList();
 
             // Select mods in the order they are stored in enabled mods. Once this is set it is not changed.
-            DirectorySearchList = Settings.EnabledMods.Select(m => InstalledMods.First(item => item.IdentifierString == m)).ToList();
+            DirectorySearchList = Settings.EnabledMods.Select(m => installedMods.First(item => item.IdentifierString == m)).ToList();
             
             DirectorySearchList.Reverse();
             DirectorySearchList.Add(new ModMetaData
@@ -98,6 +100,7 @@ namespace DwarfCorp
                 Directory = "Content",
             }, Assembly.GetExecutingAssembly()));
 
+            // Compile any code files in the enabled mods.
             foreach (var mod in DirectorySearchList)
                 if (System.IO.Directory.Exists(mod.Directory))
                 {
@@ -111,41 +114,9 @@ namespace DwarfCorp
                 }
         }
 
-        private static List<ModMetaData> EnumerateMods(String Path, ModSource Source)
-        {
-            var r = new List<ModMetaData>();
-
-            if (!Directory.Exists(Path))
-                return r;
-
-            foreach (var dir in Directory.EnumerateDirectories(Path))
-            {
-                try
-                {
-                    var metaDataPath = dir + ProgramData.DirChar + "meta.json";
-                    var metaData = FileUtils.LoadJsonFromAbsolutePath<ModMetaData>(metaDataPath);
-                    metaData.Directory = dir;
-                    metaData.Source = Source;
-                    r.Add(metaData);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Invalid mod: {0} {1}", dir, e.Message);
-                }
-            }
-
-
-            return r;    
-        }
-
         public static IEnumerable<Tuple<ModMetaData,Assembly>> EnumerateLoadedModAssemblies()
         {
             return Assemblies;
-        }
-
-        public static IEnumerable<ModMetaData> EnumerateInstalledMods()
-        {
-            return InstalledMods;
         }
 
         public static ModMetaData GetSourceModOfType(Type T)

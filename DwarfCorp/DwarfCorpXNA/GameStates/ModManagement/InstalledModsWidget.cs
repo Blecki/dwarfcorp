@@ -47,18 +47,25 @@ namespace DwarfCorp.GameStates.ModManagement
 
         public ManageModsState OwnerState;
 
-        private Gui.Widgets.WidgetListView ModList;
+        private Gui.Widgets.WidgetListView ModListGUI;
+        private List<LineItem> ModList;
 
-        private class ModInfo
+        private class LineItem
         {
             public bool Enabled = false;
-            public Widget LineItem;
+            public Widget GUI;
             public ModMetaData MetaData;
         }
 
         public override void Construct()
         {
             base.Construct();
+
+            OwnerState.OnSystemChanges += () =>
+            {
+                RefreshModList();
+                RebuildModListGUI();
+            };
 
             this.Padding = new Margin(4, 4, 4, 4);
             this.Font = "font10";
@@ -70,22 +77,6 @@ namespace DwarfCorp.GameStates.ModManagement
                 AutoLayout = AutoLayout.DockTop,
                 Padding = new Margin(2, 2, 2, 2)
             });
-
-            var availableMods = AssetManager.EnumerateInstalledMods().ToList();
-            var allMods = new List<ModInfo>();
-
-            // Doing it like this ensures that enabled mods are listed first.
-            allMods.AddRange(GameSettings.Default.EnabledMods.Select(m => new ModInfo
-                {
-                    Enabled = true,
-                    MetaData = availableMods.First(mod => mod.IdentifierString == m)
-                }));
-
-            allMods.AddRange(availableMods.Where(mod => !GameSettings.Default.EnabledMods.Contains(mod.IdentifierString)).Select(mod => new ModInfo
-            {
-                Enabled = false,
-                MetaData = mod
-            }));
 
             // Todo: Find subscribed but not installed mods.
             // - Will require lazy loading of mod details.
@@ -113,16 +104,15 @@ namespace DwarfCorp.GameStates.ModManagement
                 Border = "border-button",
                 OnClick = (sender, args) =>
                 {
-                    var select = ModList.SelectedIndex;
+                    var select = ModListGUI.SelectedIndex;
                     if (select > 0)
                     {
-                        var mod = allMods[ModList.SelectedIndex];
-                        allMods.RemoveAt(ModList.SelectedIndex);
-                        allMods.Insert(ModList.SelectedIndex - 1, mod);
-                        ModList.SelectedIndex -= 1;
-                        RebuildItems(allMods);
-                        SaveList(allMods);
-                        OwnerState.MadeChanges();
+                        var mod = ModList[ModListGUI.SelectedIndex];
+                        ModList.RemoveAt(ModListGUI.SelectedIndex);
+                        ModList.Insert(ModListGUI.SelectedIndex - 1, mod);
+                        ModListGUI.SelectedIndex -= 1;
+                        SaveEnabledList();
+                        OwnerState.MadeSystemChanges();
                     }
                 },
                 AutoLayout = AutoLayout.DockLeft
@@ -137,22 +127,21 @@ namespace DwarfCorp.GameStates.ModManagement
                 Border = "border-button",
                 OnClick = (sender, args) =>
                 {
-                    var select = ModList.SelectedIndex;
-                    if (select < allMods.Count - 1)
+                    var select = ModListGUI.SelectedIndex;
+                    if (select < ModList.Count - 1)
                     {
-                        var mod = allMods[ModList.SelectedIndex];
-                        allMods.RemoveAt(ModList.SelectedIndex);
-                        allMods.Insert(ModList.SelectedIndex + 1, mod);
-                        ModList.SelectedIndex += 1;
-                        RebuildItems(allMods);
-                        SaveList(allMods);
-                        OwnerState.MadeChanges();
+                        var mod = ModList[ModListGUI.SelectedIndex];
+                        ModList.RemoveAt(ModListGUI.SelectedIndex);
+                        ModList.Insert(ModListGUI.SelectedIndex + 1, mod);
+                        ModListGUI.SelectedIndex += 1;
+                        SaveEnabledList();
+                        OwnerState.MadeSystemChanges();
                     }
                 },
                 AutoLayout = AutoLayout.DockLeft
             });
 
-            ModList = AddChild(new WidgetListView
+            ModListGUI = AddChild(new WidgetListView
             {
                 ItemHeight = 32,
                 AutoLayout = AutoLayout.DockFill,
@@ -161,15 +150,22 @@ namespace DwarfCorp.GameStates.ModManagement
                 Padding = new Margin(2, 2, 2, 2)
             }) as WidgetListView;
 
-
-            RebuildItems(allMods);
+            RefreshModList();
+            RebuildModListGUI();
         }
 
-        private void BuildLineItem(Widget LineItem, ModInfo Mod)
+        private Gui.Widget BuildLineItemGUI(LineItem Mod)
         {
+            var gui = Root.ConstructWidget(new Widget
+            {
+                MinimumSize = new Point(1, 32),
+                Background = new TileReference("basic", 0),
+                TextColor = new Vector4(0, 0, 0, 1),
+            });
+
             if (Mod.MetaData.Source == ModSource.LocalDirectory)
             {
-                var upload = LineItem.AddChild(new Button()
+                var upload = gui.AddChild(new Button()
                 {
                     Text = Mod.MetaData.SteamID == 0 ? "Publish mod to Steam" : "Upload update to Steam",
                     AutoLayout = AutoLayout.DockRight,
@@ -192,7 +188,7 @@ namespace DwarfCorp.GameStates.ModManagement
             // Todo: Update button for mods that need updated.
 
             // Todo: Disable toggle if mod is not installed.
-            var toggle = LineItem.AddChild(new CheckBox
+            var toggle = gui.AddChild(new CheckBox
             {
                 MinimumSize = new Point(128, 32),
                 MaximumSize = new Point(128, 32),
@@ -204,7 +200,7 @@ namespace DwarfCorp.GameStates.ModManagement
                 TextColor = new Vector4(0, 0, 0, 1),
             }) as CheckBox;
 
-            LineItem.AddChild(new Widget
+            gui.AddChild(new Widget
             {
                 Font = "font8",
                 Text = String.Format("{2} Source: {0}\nDirectory: {1}", Mod.MetaData.Source, Mod.MetaData.Directory, Mod.MetaData.IdentifierString),
@@ -216,39 +212,69 @@ namespace DwarfCorp.GameStates.ModManagement
             toggle.Tag = Mod;
             toggle.OnCheckStateChange += (sender) =>
             {
-                (sender.Tag as ModInfo).Enabled = (sender as CheckBox).CheckState;
-                OwnerState.MadeChanges();
+                (sender.Tag as LineItem).Enabled = (sender as CheckBox).CheckState;
+                SaveEnabledList();
+                OwnerState.MadeSystemChanges();
             };
+
+            return gui;
         }
 
-        private void CreateLineItem(ModInfo mod)
+        private void RebuildModListGUI()
         {
-            if (mod.LineItem == null)
+            ModListGUI.ClearItems();
+            foreach (var mod in ModList)
             {
-                mod.LineItem = Root.ConstructWidget(new Widget
-                {
-                    MinimumSize = new Point(1, 32),
-                    Background = new TileReference("basic", 0),
-                    TextColor = new Vector4(0, 0, 0, 1),
-                });
+                if (mod.GUI == null)
+                    mod.GUI = BuildLineItemGUI(mod);
+                ModListGUI.AddItem(mod.GUI);
+            }
+        }
 
-                BuildLineItem(mod.LineItem, mod);
+        private void SaveEnabledList()
+        {
+            GameSettings.Default.EnabledMods = ModList.Where(m => m.Enabled).Select(m => m.MetaData.IdentifierString).ToList();
+            GameSettings.Save();
+        }
+
+        private void RefreshModList()
+        {
+            var availableMods = AssetManager.DiscoverMods().ToList();
+
+            var allMods = new List<LineItem>();
+
+            foreach (var mod_id in GameSettings.Default.EnabledMods)
+            {
+                var metaData = availableMods.FirstOrDefault(mod => mod.IdentifierString == mod_id);
+                if (metaData == null) continue; // It's in the enabled list, but must have been uninstalled.
+
+                allMods.Add(CreateModLineItem(metaData, true));
             }
 
-            ModList.AddItem(mod.LineItem);
+            foreach (var mod in availableMods)
+            {
+                if (allMods.Any(m => m.MetaData.IdentifierString == mod.IdentifierString)) continue; // Avoid duplicating entries from the enabled list.
+
+                allMods.Add(CreateModLineItem(mod, false));
+            }
+
+            ModList = allMods;
         }
 
-        private void RebuildItems(List<ModInfo> Mods)
+        private LineItem CreateModLineItem(ModMetaData MetaData, bool Enabled)
         {
-            ModList.ClearItems();
-            foreach (var mod in Mods)
-                CreateLineItem(mod);
-        }
+            LineItem newEntry = null;
 
-        private void SaveList(List<ModInfo> Mods)
-        {
-            GameSettings.Default.EnabledMods = Mods.Where(m => m.Enabled).Select(m => m.MetaData.IdentifierString).ToList();
-            GameSettings.Save();
+            // Check if this mod already has a line item - if so, we need to recycle the object because there might already be GUI updates happening to it.
+            if (ModList != null)
+                newEntry = ModList.FirstOrDefault(mod => mod.MetaData.IdentifierString == MetaData.IdentifierString);
+            if (newEntry == null)
+                newEntry = new LineItem();
+
+            newEntry.Enabled = Enabled;
+            newEntry.MetaData = MetaData;
+
+            return newEntry;
         }
     }
 }

@@ -49,32 +49,32 @@ namespace DwarfCorp.AssetManagement.Steam
         public Action<UGCTransactionProcessor> OnSuccess = null;
         public Action<UGCTransactionProcessor> OnFailure = null;
         public bool Complete { get { return Transaction.Status != UGCStatus.Working; } }
+        private bool RanCallbacks = false;
 
         public void Update()
         {
             if (Transaction != null)
             {
                 if (Transaction.Status == UGCStatus.Working)
-                {
                     Transaction.Update();
 
-                    if (StatusMessageDisplay != null)
-                    {
-                        StatusMessageDisplay.Text = Transaction.Message;
-                        StatusMessageDisplay.Invalidate();
-                    }
-
-                    if (Transaction.Status == UGCStatus.Success)
-                        OnSuccess?.Invoke(this);
-                    else if (Transaction.Status == UGCStatus.Failure)
-                        OnFailure?.Invoke(this);
-                }
-                else
+                if (StatusMessageDisplay != null)
                 {
-                    if (StatusMessageDisplay != null)
+                    StatusMessageDisplay.Text = Transaction.Message;
+                    StatusMessageDisplay.Invalidate();
+                }
+
+                if (!RanCallbacks)
+                {
+                    if (Transaction.Status == UGCStatus.Success)
                     {
-                        StatusMessageDisplay.Text = Transaction.Message;
-                        StatusMessageDisplay.Invalidate();
+                        RanCallbacks = true;
+                        OnSuccess?.Invoke(this);
+                    }
+                    else if (Transaction.Status == UGCStatus.Failure)
+                    {
+                        RanCallbacks = true;
+                        OnFailure?.Invoke(this);
                     }
                 }
             }

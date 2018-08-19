@@ -47,16 +47,19 @@ namespace DwarfCorp.GameStates.ModManagement
     public class ManageModsState : GameState
     {
         private Gui.Root GuiRoot;
+
         private bool HasChanges = false;
+        public Action OnSystemChanges = null;
 
-        public ManageModsState(DwarfGame game, GameStateManager stateManager) :
-            base(game, "ManageModsState", stateManager)
-        {
-        }
-
-        public void MadeChanges()
+        public void MadeSystemChanges()
         {
             HasChanges = true;
+            OnSystemChanges?.Invoke();
+        }
+
+        public ManageModsState(DwarfGame game, GameStateManager stateManager) :
+    base(game, "ManageModsState", stateManager)
+        {
         }
 
         public override void OnEnter()

@@ -178,6 +178,7 @@
     <Compile Include="Ancora\Parsers\Token.cs" />
     <Compile Include="Ancora\StringIterator.cs" />
     <Compile Include="Ancora\TestGrammar.cs" />
+    <Compile Include="AssetManagement\AssetManager-ModDiscovery.cs" />
     <Compile Include="AssetManagement\IndexedTexture.cs" />
     <Compile Include="AssetManagement\IndexedDecomposition.cs" />
     <Compile Include="AssetManagement\ModMetaData.cs" />
