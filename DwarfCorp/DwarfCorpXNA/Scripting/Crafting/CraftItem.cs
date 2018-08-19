@@ -150,7 +150,7 @@ namespace DwarfCorp
                     CraftInfo = new Resource.CraftItemInfo
                     {
                         Resources = selectedResources,
-                        CraftItemType = Name
+                        CraftItemType = objectName
                     },
                     ShortName = Name,
                     Description = Description,
@@ -175,7 +175,7 @@ namespace DwarfCorp
                 toReturn.Type = CraftType.Resource;
                 toReturn.CraftActBehavior = CraftActBehaviors.Object;
                 toReturn.ResourceCreated = "Object";
-                toReturn.CraftLocation = CraftLocation;
+                toReturn.CraftLocation = String.IsNullOrEmpty(CraftLocation) ? "Anvil" : CraftLocation;
                 toReturn.ObjectName = Name;
                 toReturn.AllowUserCrafting = false;
                 CraftLibrary.Add(toReturn);

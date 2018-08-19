@@ -98,6 +98,40 @@
     "CraftActBehavior": "Normal"
   },
   {
+    "Name": "Summoning Circle",
+    "EntityName": "Summoning Circle",
+    "RequiredResources": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 4
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 20
+    },
+    "BaseCraftTime": 30.0,
+    "Description": "Dwarfs can teleport to the summoning circle when in need.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal",
+	"Category": "Magic",
+	"IsMagical": true
+  },
+  {
     "Name": "Tower of Life",
     "EntityName": "Tower of Life",
 	"Category": "Magic",
@@ -170,6 +204,41 @@
     "SpawnOffset": "0, 0.5, 0",
     "AddToOwnedPool": true,
     "Moveable": true,
+    "CraftActBehavior": "Normal",
+	"IsMagical": true
+  },
+  {
+    "Name": "Magic Helper",
+    "EntityName": "Fairy",
+	"Category": "Magic",
+    "RequiredResources": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 4
+      },
+    ],
+    "Icon": {
+      "Sheet": "tool-icons",
+      "Tile": 20
+    },
+    "BaseCraftTime": 20.0,
+    "Description": "A magical construct that persists for 24 hours.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Summon",
+    "PastTeseVerb": "Summoned",
+    "CurrentVerb": "Summoning",
+	"CraftLocation": "Teleporter",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": false,
+    "Moveable": false,
     "CraftActBehavior": "Normal",
 	"IsMagical": true
   },
@@ -771,40 +840,6 @@
     "AddToOwnedPool": true,
     "Moveable": true,
     "CraftActBehavior": "Normal"
-  },
-   {
-    "Name": "Summoning Circle",
-    "EntityName": "Summoning Circle",
-    "RequiredResources": [
-      {
-        "ResourceType": "Magical",
-        "NumResources": 4
-      }
-    ],
-    "Icon": {
-      "Sheet": "furniture",
-      "Tile": 20
-    },
-    "BaseCraftTime": 30.0,
-    "Description": "Dwarfs can teleport to the summoning circle when in need.",
-    "Type": "Object",
-    "Prerequisites": [
-      "OnGround"
-    ],
-    "ResourceCreated": {
-      "_value": ""
-    },
-    "CraftLocation": "",
-    "Verb": "Build",
-    "PastTeseVerb": "Built",
-    "CurrentVerb": "Building",
-    "AllowHeterogenous": false,
-    "SpawnOffset": "0, 0.5, 0",
-    "AddToOwnedPool": true,
-    "Moveable": true,
-    "CraftActBehavior": "Normal",
-	"Category": "Magic",
-	"IsMagical": true
   },
   {
     "Name": "Forge",

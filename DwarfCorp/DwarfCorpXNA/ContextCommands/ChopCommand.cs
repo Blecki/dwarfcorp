@@ -194,6 +194,9 @@ namespace DwarfCorp.ContextCommands
             var creature = Entity.GetComponent<CreatureAI>();
             if (creature == null)
                 return false;
+            var thoughts = Entity.GetComponent<DwarfThoughts>();
+            if (thoughts == null)
+                return false;
             return World.Master.Faction.Minions.Contains(creature);
         }
 

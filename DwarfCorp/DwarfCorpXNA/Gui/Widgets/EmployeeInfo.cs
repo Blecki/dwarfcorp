@@ -333,16 +333,19 @@ namespace DwarfCorp.Gui.Widgets
             });
 
 #if ENABLE_CHAT
-            bottomBar.AddChild(new Button()
+            if (Employee != null && Employee.GetRoot().GetComponent<DwarfThoughts>() != null)
             {
-                Text = "Chat...",
-                Tooltip = "Have a talk with your employee.",
-                AutoLayout = AutoLayout.DockRight,
-                OnClick = (sender, args) =>
+                bottomBar.AddChild(new Button()
                 {
-                    Employee.Chat();
-                }
-            });
+                    Text = "Chat...",
+                    Tooltip = "Have a talk with your employee.",
+                    AutoLayout = AutoLayout.DockRight,
+                    OnClick = (sender, args) =>
+                    {
+                        Employee.Chat();
+                    }
+                });
+            }
 #endif
 
 

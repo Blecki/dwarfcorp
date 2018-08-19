@@ -19,7 +19,7 @@ namespace DwarfCorp
         }
 
         public Timer ParticleTimer { get; set; }
-        public Timer DeathTimer { get; set; }
+        public DateTimer DeathTimer { get; set; }
         public Fairy()
         {
 
@@ -36,24 +36,26 @@ namespace DwarfCorp
             HasMeat = false;
             HasBones = false;
             ParticleTimer = new Timer(0.2f, false);
-            DeathTimer = new Timer(30.0f, true);
+            DeathTimer = new DateTimer(manager.World.Time.CurrentDate, new TimeSpan(1, 0, 0, 0, 0));
             Initialize(new FairyClass());
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (ParticleTimer.HasTriggered)
+            if (Active)
             {
-                Manager.World.ParticleManager.Trigger("star_particle", Sprite.Position, Color.White, 1);    
-            }
-            DeathTimer.Update(gameTime);
-            ParticleTimer.Update(gameTime);
+                if (ParticleTimer.HasTriggered)
+                {
+                    Manager.World.ParticleManager.Trigger("star_particle", Sprite.Position, Color.White, 1);
+                }
+                DeathTimer.Update(World.Time.CurrentDate);
+                ParticleTimer.Update(gameTime);
 
-            if (DeathTimer.HasTriggered)
-            {
-                Physics.Die();
+                if (DeathTimer.HasTriggered)
+                {
+                    Physics.Die();
+                }
             }
-
             base.Update(gameTime, chunks, camera);
         }
 
