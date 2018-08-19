@@ -1,0 +1,184 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace DwarfCorp
+{
+    public class Potion
+    {
+        public string Description;
+        public Buff Effects;
+        public List<Quantitiy<Resource.ResourceTags>> Ingredients;
+        public int Icon;
+        public Potion()
+        {
+
+        }
+
+        public void Drink(Creature creature)
+        {
+            creature.AddBuff(Effects.Clone());
+        }
+
+        public bool ShouldDrink(Creature creature)
+        {
+            if (Effects == null)
+            {
+                return false;
+            }
+            return Effects.IsRelevant(creature);
+        }
+    }
+
+    public static class PotionLibrary
+    {
+        public static Dictionary<string, Potion> Potions = new Dictionary<string, Potion>()
+        {
+            {
+                "Health Potion",
+                new Potion()
+                {
+                    Ingredients = new List<Quantitiy<Resource.ResourceTags>>()
+                    {
+                        new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical, 1),
+                        new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Edible, 1)
+                    },
+                    Description = "Dwarfs drink this potion when they take damage.",
+                    Effects = new OngoingHealBuff(1.0f, 120.0f),
+                    Icon = 44
+                }
+            },
+            {
+                "Panacea Potion",
+                new Potion()
+                {
+                    Ingredients = new List<Quantitiy<Resource.ResourceTags>>()
+                    {
+                        new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical, 1),
+                        new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.AnimalProduct, 1)
+                    },
+                    Description = "Dwarfs drink this potion to cure all disease.",
+                    Effects = new CureDiseaseBuff(),
+                    Icon = 44
+                }
+            },
+            {
+                "Hapiness Potion",
+                new Potion()
+                {
+                    Ingredients = new List<Quantitiy<Resource.ResourceTags>>()
+                    {
+                        new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical, 1),
+                        new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Alcohol, 1)
+                    },
+                    Description = "Dwarfs drink this potion when they are feeling down.",
+                    Effects = new ThoughtBuff()
+                    {
+                        ThoughtType = Thought.ThoughtType.Magic,
+                        EffectTime = new Timer(120.0f, true),
+                    },
+                    Icon = 45
+                }
+            },
+            {
+                "Potion of Strength",
+                new Potion()
+                {
+                    Ingredients = new List<Quantitiy<Resource.ResourceTags>>()
+                    {
+                        new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical, 1),
+                        new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Bone, 1)
+                    },
+                    Description = "Dwarfs drink this potion to get strong.",
+                    Effects = new StatBuff(120.0f, new CreatureStats.StatNums() { Strength = 3 })
+                    {
+                        Buffs  = new CreatureStats.StatNums()
+                        {
+                            Strength = 3
+                        }
+                    },
+                    Icon = 44
+                }
+            },
+            {
+                "Potion of Speed",
+                new Potion()
+                {
+                    Ingredients = new List<Quantitiy<Resource.ResourceTags>>()
+                    {
+                        new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical, 1),
+                        new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fungus, 1)
+                    },
+                    Description = "Dwarfs drink this potion to get a bit faster.",
+                    Effects = new StatBuff(120.0f, new CreatureStats.StatNums() { Dexterity = 3 }),
+                    Icon = 45
+                }
+            },
+            {
+                "Potion of Smarts",
+                new Potion()
+                {
+                    Ingredients = new List<Quantitiy<Resource.ResourceTags>>()
+                    {
+                        new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Magical, 1),
+                        new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fruit, 1)
+                    },
+                    Description = "Dwarfs drink this potion to get a cognitive boost.",
+                    Effects = new StatBuff(120.0f, new CreatureStats.StatNums() { Intelligence = 3 }),
+                    Icon = 45
+                }
+            },
+        };
+
+        public static void Initialize()
+        {
+            foreach(var potion in Potions)
+            {
+                Resource resource = new Resource();
+
+                {
+                    resource.Name = potion.Key;
+                    resource.PotionType = potion.Key;
+                    resource.CraftPrerequisites = potion.Value.Ingredients;
+                    resource.CraftInfo = new Resource.CraftItemInfo()
+                    {
+                        CraftItemType = potion.Key
+                    };
+                    resource.CanCraft = true;
+                    resource.MoneyValue = 100;
+                    resource.Description = potion.Value.Description;
+                    resource.ShortName = potion.Key;
+                    resource.Tags = new List<Resource.ResourceTags>()
+                    {
+                        Resource.ResourceTags.Potion
+                    };
+                    resource.GuiLayers = new List<Gui.TileReference>()
+                    {
+                        new Gui.TileReference("resources", potion.Value.Icon)
+                    };
+                };
+                ResourceLibrary.Add(resource);
+
+                CraftItem craftItem = new CraftItem()
+                {
+                    CraftLocation = "Apocethary",
+                    Icon = new Gui.TileReference("resources", potion.Value.Icon),
+                    Category = "Potions",
+                    Name = potion.Key,
+                    AllowHeterogenous = true,
+                    IsMagical = true,
+                    Type = CraftItem.CraftType.Resource,
+                    Verb = "Brew",
+                    PastTeseVerb = "Brewed",
+                    CurrentVerb = "Brewing",
+                    ResourceCreated = potion.Key,
+                    Description = potion.Value.Description,
+                    RequiredResources = potion.Value.Ingredients
+                };
+                CraftLibrary.Add(craftItem);
+            }
+        }
+    }
+
+}
