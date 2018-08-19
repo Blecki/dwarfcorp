@@ -548,7 +548,7 @@ namespace DwarfCorp.GameStates
                 OnSliderChanged = (widget) =>
                 {
                     AutoSaveFrequency.GetChild(0).Text = String.Format("Autosave Frequency ({0})",
-                        (widget as HorizontalSlider).ScrollPosition + 1);
+                        (widget as HorizontalSlider).ScrollPosition + 5);
                     this.OnItemChanged(widget);
                 },
                 Tooltip = "Minutes between auto saves"
@@ -1029,7 +1029,7 @@ namespace DwarfCorp.GameStates
             toReturn.MaxSaves = int.Parse(this.MaxSaves.SelectedItem);
             toReturn.AutoSave = this.Autosave.CheckState;
             toReturn.AutoSaveTimeMinutes =
-                (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition + 1.0f;
+                (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition + 5.0f;
             toReturn.SaveLocation = this.SaveLocation.Text;
 
             // Audio settings
@@ -1181,7 +1181,7 @@ namespace DwarfCorp.GameStates
             this.AllowReporting.CheckState = GameSettings.Default.AllowReporting;
             this.Autosave.CheckState = GameSettings.Default.AutoSave;
             (this.AutoSaveFrequency.GetChild(1) as HorizontalSlider).ScrollPosition =
-                (int)(GameSettings.Default.AutoSaveTimeMinutes - 1);
+                (int)(GameSettings.Default.AutoSaveTimeMinutes - 5);
             this.MaxSaves.SelectedIndex = this.MaxSaves.Items.IndexOf(GameSettings.Default.MaxSaves.ToString());
             this.DisableTutorialForAllGames.CheckState = GameSettings.Default.TutorialDisabledGlobally;
             this.SaveLocation.Text = String.IsNullOrEmpty(GameSettings.Default.SaveLocation) ? "" : GameSettings.Default.SaveLocation;
