@@ -14,6 +14,7 @@ namespace DwarfCorp
     {
         void Output(String S);
         void Speak(String S);
+        bool CancelSpeech();
         bool AdvanceSpeech(DwarfTime gameTime); // Returns true if speech must continue.
         void ClearOutput();
         void ClearChoices();

@@ -86,6 +86,12 @@ namespace DwarfCorp
             Runner = Dialogue.Run(StartNode).GetEnumerator();
         }
 
+        public void CancelSpeech()
+        {
+            PlayerInterface.CancelSpeech();
+            State = States.Paused;
+        }
+
         public void Pause()
         {
             if (State != States.Running)

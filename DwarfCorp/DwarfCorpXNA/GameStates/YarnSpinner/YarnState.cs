@@ -118,6 +118,12 @@ namespace DwarfCorp
             }
         }
 
+        public bool CancelSpeech()
+        {
+            CurrentSpeach = null;
+            return true;
+        }
+
         public bool AdvanceSpeech(DwarfTime gameTime)
         {
             if (!SkipNextLine)

@@ -51,6 +51,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
                     Memory.SetValue("$trade_result", new Yarn.Value("acceptable"));
 
                 Memory.SetValue("$trade_transaction", new Yarn.Value(transaction));
+                State.CancelSpeech();
                 State.Unpause();
             });
         }
