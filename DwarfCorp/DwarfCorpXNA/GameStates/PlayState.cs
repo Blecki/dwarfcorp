@@ -100,7 +100,7 @@ namespace DwarfCorp.GameStates
                 MultiContextMenu.Close();
                 MultiContextMenu = null;
             }
-            ManaBar.Hidden = Mode != GameMaster.ToolMode.Magic;
+            //ManaBar.Hidden = Mode != GameMaster.ToolMode.Magic;
             Master.ChangeTool(Mode);
             foreach (var icon in ToolHiliteItems)
                 icon.Value.Hilite = icon.Key == Mode;
@@ -343,13 +343,6 @@ namespace DwarfCorp.GameStates
                 }
             });
 
-            var magic = (int)(100 * Master.Spells.Mana / Master.Spells.MaxMana);
-            if (ManaBar.Percentage != magic)
-            {
-                ManaBar.Percentage = magic;
-                ManaBar.Tooltip = String.Format("{0}/{1} Mana", Master.Spells.Mana, Master.Spells.MaxMana);
-                ManaBar.Text = String.Format("MANA: {0}/{1}", Master.Spells.Mana, Master.Spells.MaxMana);
-            }
             World.Update(gameTime);
             Input.Update();
 
@@ -2160,6 +2153,7 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
+            /*
             #region icon_MagicTool
 
             ManaBar = GuiRoot.RootItem.AddChild(new ProgressBar()
@@ -2354,7 +2348,7 @@ namespace DwarfCorp.GameStates
             };
 
             #endregion
-
+            */
             #region icon_CancelTasks
 
             var icon_CancelTasks = new FlatToolTray.Icon()
@@ -2394,7 +2388,7 @@ namespace DwarfCorp.GameStates
                     icon_AttackTool,
                     icon_Plant,
                     icon_Wrangle,
-                    icon_MagicTool,
+                    //icon_MagicTool,
                     icon_CancelTasks,
                 },
                 OnShown = (sender) => ChangeTool(GameMaster.ToolMode.SelectUnits),
@@ -2404,7 +2398,7 @@ namespace DwarfCorp.GameStates
             icon_menu_BuildTools_Return.ReplacementMenu = MainMenu;
             icon_menu_Edibles_Return.ReplacementMenu = MainMenu;
             icon_menu_Farm_Return.ReplacementMenu = MainMenu;
-            icon_menu_Magic_Return.ReplacementMenu = MainMenu;
+            //icon_menu_Magic_Return.ReplacementMenu = MainMenu;
             icon_menu_Plant_Return.ReplacementMenu = MainMenu;
 
             BottomToolBar = secondBar.AddChild(new FlatToolTray.RootTray
@@ -2413,13 +2407,13 @@ namespace DwarfCorp.GameStates
                 ItemSource = new Widget[]
                 {
                     menu_BuildTools,
-                    menu_CastSpells,
+                    //menu_CastSpells,
                     menu_CraftTypes,
                     menu_Edibles,
-                    menu_Magic,
+                    //menu_Magic,
                     MainMenu,
                     menu_Plant,
-                    menu_ResearchSpells,
+                    //menu_ResearchSpells,
                     menu_ResourceTypes,
                     menu_RoomTypes,
                     menu_WallTypes,

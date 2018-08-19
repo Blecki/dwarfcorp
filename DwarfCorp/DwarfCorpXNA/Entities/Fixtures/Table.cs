@@ -52,7 +52,7 @@ namespace DwarfCorp
             return new Table("Wooden Table", Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), DefaultTopFrame, DefaultLegsFrame);
         }
 
-        [EntityFactory("Kitchen Table")]
+        [EntityFactory("Cutting Board")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Table("Cutting Board", Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 7), Data.GetData<List<ResourceAmount>>("Resources", null), DefaultTopFrame, DefaultLegsFrame)

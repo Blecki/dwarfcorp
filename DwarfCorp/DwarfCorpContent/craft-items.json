@@ -909,7 +909,7 @@
 
   {
     "Name": "Cutting Board",
-    "EntityName": "Kitchen Table",
+    "EntityName": "Cutting Board",
     "RequiredResources": [
       {
         "ResourceType": "Wood",

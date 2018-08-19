@@ -62,6 +62,11 @@ namespace DwarfCorp
             }
         }
 
+        public virtual bool IsRelevant(Creature creature)
+        {
+            return true;
+        }
+
         /// <summary> Updates the Buff </summary>
         public virtual void Update(DwarfTime time, Creature creature)
         {

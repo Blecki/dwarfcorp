@@ -46,5 +46,10 @@ namespace DwarfCorp
                 ThoughtType = ThoughtType
             };
         }
+
+        public override bool IsRelevant(Creature creature)
+        {
+            return creature.Status.Happiness.IsDissatisfied();
+        }
     }
 }

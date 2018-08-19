@@ -45,6 +45,11 @@ namespace DwarfCorp
             creature.Resistances[DamageType] -= Bonus;
             base.OnEnd(creature);
         }
+
+        public override bool IsRelevant(Creature creature)
+        {
+            return creature.Hp < creature.MaxHealth;
+        }
     }
 
 }

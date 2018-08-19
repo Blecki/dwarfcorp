@@ -44,5 +44,30 @@ namespace DwarfCorp
                 DamagePerSecond = DamagePerSecond
             };
         }
+
+        public override bool IsRelevant(Creature creature)
+        {
+            return creature.Hp < creature.MaxHealth;
+        }
     }
+
+    public class CureDiseaseBuff : Buff
+    {
+        public override bool IsRelevant(Creature creature)
+        {
+            return creature.Buffs.Any(buff => buff is Disease);
+        }
+
+        public override void OnApply(Creature creature)
+        {
+            foreach(var disease in creature.Buffs.OfType<Disease>())
+            {
+                disease.OnEnd(creature);
+            }
+
+            creature.Buffs.RemoveAll(buff => buff is Disease);
+            base.OnApply(creature);
+        }
+    }
+
 }

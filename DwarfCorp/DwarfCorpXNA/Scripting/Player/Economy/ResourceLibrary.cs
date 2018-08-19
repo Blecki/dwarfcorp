@@ -74,6 +74,36 @@ namespace DwarfCorp
             return min;
         }
 
+
+        public static Resource GetAverageWithTag(Resource.ResourceTags tag)
+        {
+            List<Resource> applicable = Resources.Values.Where(resource => resource.Tags.Contains(tag)).ToList();
+            applicable.Sort((a, b) =>
+            {
+                if (a == b)
+                {
+                    return 0;
+                }
+
+                if (a.MoneyValue < b.MoneyValue)
+                {
+                    return -1;
+                }
+                if (a.MoneyValue == b.MoneyValue)
+                {
+                    return 0;
+                }
+
+                return 1;
+            });
+            if (applicable.Count == 0)
+            {
+                return null;
+            }
+
+            return applicable[applicable.Count / 2];
+        }
+
         public static Resource GetResourceByName(string name)
         {
             if (!ResourceLibrary.IsInitialized)

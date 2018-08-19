@@ -36,12 +36,64 @@ namespace DwarfCorp.Gui.Widgets
                     AutoLayout = Gui.AutoLayout.DockTop,
                     MinimumSize = new Point(0, 34),
                 });
+                int k = 0;
+                foreach(var ingredient in Data.RequiredResources)
+                {
+                    var resource = ResourceLibrary.GetAverageWithTag(ingredient.ResourceType);
+                    titleBar.AddChild(new Gui.Widget
+                    {
+                        MinimumSize = new Point(32, 32),
+                        MaximumSize = new Point(32, 32),
+                        Background = resource.GuiLayers[0],
+                        AutoLayout = AutoLayout.DockLeft,
+                        Text = ingredient.NumResources.ToString(),
+                        TextHorizontalAlign = HorizontalAlign.Right,
+                        TextVerticalAlign = VerticalAlign.Bottom,
+                        Font = "font10-outline-numsonly",
+                        TextColor = Color.White.ToVector4(),
+                        Tooltip = ingredient.ResourceType.ToString()
+                    });
+                    if (k < Data.RequiredResources.Count - 1)
+                    {
+                        titleBar.AddChild(new Gui.Widget
+                        {
+                            MinimumSize = new Point(16, 32),
+                            MaximumSize = new Point(16, 32),
+                            AutoLayout = AutoLayout.DockLeft,
+                            Text = "+",
+                            TextHorizontalAlign = HorizontalAlign.Center,
+                            TextVerticalAlign = VerticalAlign.Bottom,
+                            Font = "font10"
+                        });
+                    }
+                    else
+                    {
+                        titleBar.AddChild(new Gui.Widget
+                        {
+                            MinimumSize = new Point(16, 32),
+                            MaximumSize = new Point(16, 32),
+                            AutoLayout = AutoLayout.DockLeft,
+                            Text = ">>",
+                            TextHorizontalAlign = HorizontalAlign.Center,
+                            TextVerticalAlign = VerticalAlign.Bottom,
+                            Font = "font10"
+                        });
+                    }
+                    k++;
+                }
+
                 titleBar.AddChild(new Gui.Widget
                 {
                     MinimumSize = new Point(32, 32),
                     MaximumSize = new Point(32, 32),
                     Background = Data.Icon,
                     AutoLayout = Gui.AutoLayout.DockLeft,
+                    Text = Data.CraftedResultsCount.ToString(),
+                    Font = "font10-outline-numsonly",
+                    TextHorizontalAlign = HorizontalAlign.Right,
+                    TextVerticalAlign = VerticalAlign.Bottom,
+                    TextColor = Color.White.ToVector4()
+
                 });
                 titleBar.AddChild(new Gui.Widget
                 {
