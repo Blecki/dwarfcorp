@@ -470,6 +470,12 @@ namespace DwarfCorp
                 case MoveType.Teleport:
                     if (lastMovement != MoveType.Teleport)
                     {
+                        if (action.InteractObject != null)
+                        {
+                            var teleporter = action.InteractObject.GetComponent<MagicalObject>();
+                            if (teleporter != null)
+                                teleporter.CurrentCharges--;
+                        }
                         SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_dwarf_magic_research, currPosition, true, 1.0f);
                     }
                     Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);

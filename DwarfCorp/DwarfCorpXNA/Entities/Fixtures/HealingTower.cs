@@ -26,6 +26,7 @@ namespace DwarfCorp
                 Data.GetData<List<ResourceAmount>>("Resources", null))
         {
             OrientMode = SimpleSprite.OrientMode.YAxis;
+            AddChild(new MagicalObject(Manager));
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
@@ -59,6 +60,11 @@ namespace DwarfCorp
                             World.ParticleManager.Trigger("star_particle", obj.Position, Color.Red, 10);
                             World.ParticleManager.TriggerRay("star_particle", Position, obj.Position);
                             SoundManager.PlaySound(ContentPaths.Audio.tinkle, obj.Position, true, 1.0f);
+                            GetComponent<MagicalObject>().CurrentCharges--;
+                            if (GetComponent<MagicalObject>().CurrentCharges == 0)
+                            {
+                                return;
+                            }
                         }
                     }
                 }

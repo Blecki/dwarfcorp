@@ -310,6 +310,7 @@
     <Compile Include="Gui\Widgets\TextBox.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
+    <Compile Include="Scripting\CompoundActs\RechargeObjectAct.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
     <Compile Include="Scripting\Factions\Trading\DeclareWarYarnCommand.cs" />
     <Compile Include="Scripting\Factions\Trading\PayTributeYarnCommand.cs" />
@@ -329,6 +330,7 @@
     <Compile Include="Scripting\TaskManagement\Tasks\ChopEntityTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\FleeEntityTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\HealAllyTask.cs" />
+    <Compile Include="Scripting\TaskManagement\Tasks\RechargeObjectTask.cs" />
     <Compile Include="Tools\PerformanceMonitor.cs" />
     <Compile Include="Voxels\Rail\PaintRailTool.cs" />
     <Compile Include="Voxels\Rail\OrientationHelper.cs" />

@@ -53,6 +53,7 @@ namespace DwarfCorp
                             World.ParticleManager.Trigger("green_flame", obj.Position, Color.White, 10);
                             World.ParticleManager.TriggerRay("green_flame", Position, obj.Position);
                             SoundManager.PlaySound(ContentPaths.Audio.tinkle, obj.Position, true, 1.0f);
+                            GetComponent<MagicalObject>().CurrentCharges--;
                             break;
                         }
                     }
