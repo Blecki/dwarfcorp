@@ -301,6 +301,7 @@ namespace DwarfCorp
                     bestTask = task;
                     bestPriority = task.Priority;
                 }
+
             }
 
             return bestTask;
