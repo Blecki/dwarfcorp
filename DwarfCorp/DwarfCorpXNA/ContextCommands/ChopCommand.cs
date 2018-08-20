@@ -227,7 +227,17 @@ namespace DwarfCorp.ContextCommands
         public override void Apply(Body Entity, WorldManager World)
         {
             var Employee = Entity.GetComponent<CreatureAI>();
+            var prevLevel = Employee.Stats.CurrentLevel;
             Employee.Stats.LevelUp();
+            if (Employee.Stats.CurrentLevel.HealingPower > prevLevel.HealingPower)
+            {
+                World.MakeAnnouncement(String.Format("{0}'s healing power increased to {1}!", Employee.Stats.FullName, Employee.Stats.CurrentLevel.HealingPower));
+            }
+
+            if (Employee.Stats.CurrentLevel.ExtraAttacks.Count > prevLevel.ExtraAttacks.Count)
+            {
+                World.MakeAnnouncement(String.Format("{0} learned to cast {1}!", Employee.Stats.FullName, Employee.Stats.CurrentLevel.ExtraAttacks.Last().Name));
+            }
             SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
             Employee.Creature.AddThought(Thought.ThoughtType.GotPromoted);
         }

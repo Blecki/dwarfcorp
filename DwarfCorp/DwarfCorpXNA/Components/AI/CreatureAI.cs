@@ -866,6 +866,15 @@ namespace DwarfCorp
                 var candidate = World.Master.TaskManager.GetBestTask(this);
                 if (candidate != null)
                     return candidate;
+
+                if (Stats.CurrentLevel.HealingPower > 0 && Faction.Minions.Any(minion => !minion.Creature.Status.Health.IsSatisfied()))
+                {
+                    var minion = Faction.Minions.FirstOrDefault(m => m != this && !m.Status.Health.IsSatisfied());
+                    if (minion != null)
+                    {
+                        return new MagicHealAllyTask(minion);
+                    }
+                }
             }
 
             if (!IsPosessed && Faction == World.PlayerFaction && Creature.Inventory.Resources.Count > 0)
