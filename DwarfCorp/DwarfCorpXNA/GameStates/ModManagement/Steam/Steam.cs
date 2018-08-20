@@ -61,5 +61,24 @@ namespace DwarfCorp.AssetManagement.Steam
         {
             return PendingTransactions.Any(t => t.Transaction is T);
         }
+
+        public static bool HasTransaction(Func<IUGCTransaction, bool> Predicate)
+        {
+            return PendingTransactions.Any(t => Predicate(t.Transaction));
+        }
+
+        public static List<PublishedFileId_t> GetSubscribedMods()
+        {
+            if (SteamAvailable)
+            {
+                var subscribedCount = SteamUGC.GetNumSubscribedItems();
+                var subscribedFileIds = new PublishedFileId_t[subscribedCount];
+                SteamUGC.GetSubscribedItems(subscribedFileIds, subscribedCount);
+
+                return subscribedFileIds.ToList();
+            }
+            else
+                return new List<PublishedFileId_t>();
+        }
     }
 }

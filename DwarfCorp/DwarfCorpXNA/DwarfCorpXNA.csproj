@@ -184,6 +184,7 @@
     <Compile Include="AssetManagement\ModMetaData.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCStatus.cs" />
     <Compile Include="GameStates\ModManagement\Steam\IUGCTransaction.cs" />
+    <Compile Include="GameStates\ModManagement\Steam\UGCUnsubscribe.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCSubscribe.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCQuery.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCUpload.cs" />

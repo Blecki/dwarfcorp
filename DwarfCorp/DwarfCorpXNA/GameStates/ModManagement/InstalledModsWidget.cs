@@ -165,7 +165,7 @@ namespace DwarfCorp.GameStates.ModManagement
 
             if (Mod.MetaData.Source == ModSource.LocalDirectory)
             {
-                var upload = gui.AddChild(new Button()
+                gui.AddChild(new Button()
                 {
                     Text = Mod.MetaData.SteamID == 0 ? "Publish mod to Steam" : "Upload update to Steam",
                     AutoLayout = AutoLayout.DockRight,
@@ -179,7 +179,26 @@ namespace DwarfCorp.GameStates.ModManagement
                             Transaction = new UGCUpload(Mod.MetaData),
                             StatusMessageDisplay = sender
                         });
-                    }      
+                    }
+                });
+            }
+            else
+            {
+                gui.AddChild(new Button()
+                {
+                    Text = "Unsubscribe",
+                    AutoLayout = AutoLayout.DockRight,
+                    TextColor = new Vector4(0, 0, 0, 1),
+                    OnClick = (sender, args) =>
+                    {
+                        sender.OnClick = null;
+
+                        Steam.AddTransaction(new UGCTransactionProcessor
+                        {
+                            Transaction = new UGCUnsubscribe((Steamworks.PublishedFileId_t)Mod.MetaData.SteamID),
+                            StatusMessageDisplay = sender
+                        });
+                    }
                 });
             }
 

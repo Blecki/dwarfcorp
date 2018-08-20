@@ -46,10 +46,13 @@ namespace DwarfCorp.GameStates.ModManagement
     {
         private Gui.Widget QueryStatusMessage;
         private Gui.Widgets.WidgetListView List;
+        private List<Steamworks.PublishedFileId_t> SubscribedItems;
 
         public override void Construct()
         {
             base.Construct();
+
+            SubscribedItems = Steam.GetSubscribedMods();
 
             this.Padding = new Margin(4, 4, 4, 4);
             this.Font = "font10";
@@ -116,20 +119,34 @@ namespace DwarfCorp.GameStates.ModManagement
                 TextColor = new Vector4(0, 0, 0, 1),
             });
 
-            lineItem.AddChild(new Widget
-            {
-                Font = "font10",
-                Text = "Subscribe",
-                AutoLayout = AutoLayout.DockRight,
-                OnClick = (sender, args) =>
+            if (!SubscribedItems.Contains(mod.m_nPublishedFileId))
+                lineItem.AddChild(new Widget
                 {
-                    Steam.AddTransaction(new UGCTransactionProcessor
+                    Font = "font10",
+                    Text = "Subscribe",
+                    AutoLayout = AutoLayout.DockRight,
+                    OnClick = (sender, args) =>
                     {
-                        Transaction = new UGCSubscribe(mod.m_nPublishedFileId),
-                        StatusMessageDisplay = sender
-                    });
-                }
-            });
+                        if (!Steam.HasTransaction(t =>
+                        {
+                            var subscribe = t as UGCSubscribe;
+                            return subscribe != null && subscribe.FileID == mod.m_nPublishedFileId;
+                        }))
+                            Steam.AddTransaction(new UGCTransactionProcessor
+                            {
+                                Transaction = new UGCSubscribe(mod.m_nPublishedFileId),
+                                StatusMessageDisplay = sender,
+                                OnSuccess = (subscriber) => SubscribedItems.Add(mod.m_nPublishedFileId)
+                            });
+                    }
+                });
+            else
+                lineItem.AddChild(new Widget
+                {
+                    Font = "font10",
+                    Text = "Subscribed!",
+                    AutoLayout = AutoLayout.DockRight
+                });
 
             lineItem.AddChild(new Widget
             {

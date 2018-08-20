@@ -6,10 +6,10 @@ using Steamworks;
 
 namespace DwarfCorp.AssetManagement.Steam
 {
-    public class UGCSubscribe : IUGCTransaction
+    public class UGCUnsubscribe : IUGCTransaction
     {
         public PublishedFileId_t FileID;
-        private CallResult<RemoteStorageSubscribePublishedFileResult_t> SubscribeCallResult;
+        private CallResult<RemoteStorageUnsubscribePublishedFileResult_t> UnsubscribeCallResult;
 
         public String Message { get; private set; }
         public UGCStatus Status { get; private set; }
@@ -23,7 +23,7 @@ namespace DwarfCorp.AssetManagement.Steam
 
         private States State = States.Creating;
 
-        public UGCSubscribe(PublishedFileId_t FileID)
+        public UGCUnsubscribe(PublishedFileId_t FileID)
         {
             State = States.Creating;
             Status = UGCStatus.Working;
@@ -35,7 +35,7 @@ namespace DwarfCorp.AssetManagement.Steam
             switch (State)
             {
                 case States.Creating:
-                    SubscribeCallResult = CallResult<RemoteStorageSubscribePublishedFileResult_t>.Create((callback, IOFailure) =>
+                    UnsubscribeCallResult = CallResult<RemoteStorageUnsubscribePublishedFileResult_t>.Create((callback, IOFailure) =>
                     {
                         if (IOFailure)
                         {
@@ -49,19 +49,19 @@ namespace DwarfCorp.AssetManagement.Steam
                         {
                             State = States.Done;
                             Status = UGCStatus.Failure;
-                            Message = String.Format("Subscribe failed: {0}", callback.m_eResult);
+                            Message = String.Format("Unsubscribe failed: {0}", callback.m_eResult);
                             return;
                         }
 
-                        Message = "Subscribed!";
+                        Message = "Unsubscribed!";
                         Status = UGCStatus.Success;
                         State = States.Done;
                     });
 
-                    SubscribeCallResult.Set(SteamUGC.SubscribeItem(FileID));
+                    UnsubscribeCallResult.Set(SteamUGC.UnsubscribeItem(FileID));
 
                     State = States.Waiting;
-                    Message = "Subscribing...";
+                    Message = "Unsubscribing...";
 
                     return;
 
