@@ -42,6 +42,8 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     internal class GoTrainAct : CompoundCreatureAct
     {
+        public bool Magical { get; set; }
+
         public GoTrainAct()
         {
 
@@ -54,15 +56,36 @@ namespace DwarfCorp
             Name = "Train";
         }
 
+        public IEnumerable<Act.Status> DoMagicResearch()
+        {
+            var obj = Agent.Blackboard.GetData<Body>("Research");
+            if (obj == null)
+            {
+                yield return Act.Status.Fail;
+                yield break;
+            }
+
+            float timer = 0;
+            foreach (var status in Creature.HitAndWait(false, () => { return 10.0f;}, () => { return timer; }, () => { timer++; }, () => { return obj.Position; }, ContentPaths.Audio.Oscar.sfx_ic_dwarf_magic_research))
+            {
+                yield return Act.Status.Running;
+            }
+            Creature.AI.AddXP(10);
+            yield return Act.Status.Success;
+        }
+
         public override void Initialize()
         {
-            Act unreserveAct = new Wrap(() => Creature.Unreserve("Train"));
+            var tag = Magical ? "Research" : "Train";
+            Act trainAct = Magical ? new Wrap(DoMagicResearch) { Name = "Magic research" } as Act :
+                new MeleeAct(Agent, "Train") { Training = true, Timeout = new Timer(10.0f, false) };
+            Act unreserveAct = new Wrap(() => Creature.Unreserve(tag));
             Tree = new Sequence(
-                new Wrap(() => Creature.FindAndReserve("Train", "Train")),
+                new Wrap(() => Creature.FindAndReserve(tag, tag)),
                 new Sequence
                     (
-                        new GoToTaggedObjectAct(Agent) { Tag = "Train", Teleport = false, TeleportOffset = new Vector3(1, 0, 0), ObjectName = "Train" },
-                        new MeleeAct(Agent, "Train") {Training = true, Timeout = new Timer(10.0f, false)},
+                        new GoToTaggedObjectAct(Agent) { Tag = tag, Teleport = false, TeleportOffset = new Vector3(1, 0, 0), ObjectName = tag },
+                        trainAct,
                         unreserveAct
                     ) | new Sequence(unreserveAct, false)
                     ) | new Sequence(unreserveAct, false);
@@ -72,7 +95,8 @@ namespace DwarfCorp
 
         public override void OnCanceled()
         {
-            foreach (var statuses in Creature.Unreserve("Train"))
+            var tag = Magical ? "Research" : "Train";
+            foreach (var statuses in Creature.Unreserve(tag))
             {
                 continue;
             }

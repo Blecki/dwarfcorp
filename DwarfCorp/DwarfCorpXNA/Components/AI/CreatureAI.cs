@@ -929,13 +929,25 @@ namespace DwarfCorp
 
 
                 // Find a room to train in, if applicable.
-                if (Stats.IsTaskAllowed(Task.TaskCategory.Attack) && MathFunctions.RandEvent(0.01f))
+                if (Stats.IsTaskAllowed(Task.TaskCategory.Attack) && MathFunctions.RandEvent(0.05f))
                 {
-                    var closestTraining = Faction.FindNearestItemWithTags("Train", Position, true, this);
-
-                    if (closestTraining != null)
+                    if (!Stats.IsTaskAllowed(Task.TaskCategory.Research))
                     {
-                        return new ActWrapperTask(new GoTrainAct(this));
+                        var closestTraining = Faction.FindNearestItemWithTags("Train", Position, true, this);
+
+                        if (closestTraining != null)
+                        {
+                            return new ActWrapperTask(new GoTrainAct(this)) { Name = "train", ReassignOnDeath = false, Priority = Task.PriorityType.Low };
+                        }
+                    }
+                    else
+                    {
+                        var closestTraining = Faction.FindNearestItemWithTags("Research", Position, true, this);
+
+                        if (closestTraining != null)
+                        {
+                            return new ActWrapperTask(new GoTrainAct(this) { Magical = true }) { Name = "do magic research", ReassignOnDeath = false, Priority = Task.PriorityType.Low };
+                        }
                     }
                 }
 

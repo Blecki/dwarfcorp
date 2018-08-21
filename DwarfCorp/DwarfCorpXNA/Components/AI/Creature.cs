@@ -807,7 +807,6 @@ namespace DwarfCorp
                 Physics.Active = false;
                 Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos());
                 Physics.Velocity = Vector3.Zero;
-                Sprite.ReloopAnimations(AttackMode);
 
                 if (!String.IsNullOrEmpty(playSound))
                 {
@@ -817,6 +816,7 @@ namespace DwarfCorp
                 incrementTimer.Update(DwarfTime.LastTime);
                 if (incrementTimer.HasTriggered)
                 {
+                    Sprite.ReloopAnimations(AttackMode);
                     incrementProgress();
                 }
 
