@@ -283,6 +283,10 @@ namespace Yarn {
                     {
 #endif
 
+                        if (nodeInfo.title == null)
+                        {
+                            throw new InvalidOperationException("Tried to load a node with no title.");
+                        }
                         if (nodes.ContainsKey(nodeInfo.title))
                         {
                             throw new InvalidOperationException("Attempted to load a node called " +

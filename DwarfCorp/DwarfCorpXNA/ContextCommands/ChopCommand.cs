@@ -180,6 +180,30 @@ namespace DwarfCorp.ContextCommands
         }
     }
 
+    public class ChatCommand : ContextCommand
+    {
+        public ChatCommand()
+        {
+            Name = "Chat";
+            Description = "Click to talk to the selected dwarf.";
+            Icon = new Gui.TileReference("tool-icons", 1);
+        }
+
+        public override bool CanBeAppliedTo(Body Entity, WorldManager World)
+        {
+            var creature = Entity.GetComponent<CreatureAI>();
+            if (creature == null)
+                return false;
+            return World.Master.Faction.Minions.Contains(creature);
+        }
+
+        public override void Apply(Body Entity, WorldManager World)
+        {
+            var creature = Entity.GetComponent<CreatureAI>();
+            creature.Chat();
+        }
+    }
+
     public class PromoteCommand : ContextCommand
     {
         public PromoteCommand()

@@ -20,8 +20,11 @@ namespace DwarfCorp.Scripting.Factions.Trading
                 return;
             }
 
-            playerFaction.Economy.CurrentMoney -= Math.Min(world.PlayerFaction.Economy.CurrentMoney,
-                envoy.TributeDemanded);
+            envoy.TributeDemanded = (decimal)0.0f;
+            playerFaction.AddMoney(-Math.Min(world.PlayerFaction.Economy.CurrentMoney,
+                envoy.TributeDemanded));
+            Memory.SetValue("$envoy_tribute_demanded", new Yarn.Value(0.0f));
+            Memory.SetValue("$envoy_demands_tribute", new Yarn.Value(false));
         }
     }
 }

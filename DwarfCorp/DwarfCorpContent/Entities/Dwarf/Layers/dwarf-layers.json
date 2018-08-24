@@ -104,6 +104,18 @@
   {
     "Type": "beard",
     "Precedence": 3,
+    "Asset": "Entities/Dwarf/Layers/braided-beard",
+    "RestrictionType": "Gender",
+	"RestrictionValue": "Female Nonbinary"
+  },
+  {
+    "Type": "beard",
+    "Precedence": 3,
+    "Asset": "Entities/Dwarf/Layers/deepcurl_mustache"
+  },
+  {
+    "Type": "beard",
+    "Precedence": 3,
     "Asset": "Entities/Dwarf/Layers/mutten_chop_beard"
   },
   {
@@ -126,14 +138,24 @@
     "Precedence": 3,
     "Asset": "Entities/Dwarf/Layers/blank"
   },
-
-
   {
     "Type": "hair",
     "Precedence": 4,
     "Asset": "Entities/Dwarf/Layers/balding_hair",
     "RestrictionType": "Gender",
     "RestrictionValue": "Male Nonbinary"
+  },
+  {
+    "Type": "hair",
+    "Precedence": 4,
+    "Asset": "Entities/Dwarf/Layers/buzz-hair",
+  },
+  {
+    "Type": "hair",
+    "Precedence": 4,
+    "Asset": "Entities/Dwarf/Layers/bun-hair",
+    "RestrictionType": "Gender",
+	"RestrictionValue": "Female Nonbinary"
   },
   {
     "Type": "hair",

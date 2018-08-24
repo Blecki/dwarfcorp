@@ -498,9 +498,17 @@ namespace DwarfCorp.Gui
                 out stringMeshSize)
                 .Colorize(TextColor);
 
-            if (AutoResizeToTextHeight && stringMeshSize.Height > Rect.Height)
+            if (AutoResizeToTextHeight && stringMeshSize.Height < Rect.Height)
             {
-                Rect = new Rectangle(Rect.X, Rect.Y, Rect.Width, stringMeshSize.Height);
+                if (!String.IsNullOrEmpty(Border))
+                {
+                    var tileSheet = Root.GetTileSheet(Border);
+                    Rect = new Rectangle(Rect.X, Rect.Y, Rect.Width, stringMeshSize.Height + tileSheet.TileHeight * 2);
+                }
+                else
+                {
+                    Rect = new Rectangle(Rect.X, Rect.Y, Rect.Width, stringMeshSize.Height);
+                }
                 MinimumSize.Y = stringMeshSize.Height;
                 Parent.Layout();
             }

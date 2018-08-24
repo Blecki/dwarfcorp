@@ -23,7 +23,7 @@ title: Main
 		$envoy_name: Will you support our lollipop fund? Come on!
 		$envoy_name: Teedle-dee, teedle-dum, pay us now or get kicked in the bum.
 	<<end>>
-	[[Pay a tribute of $envoy_tribute_demanded|PayTribute]]
+	[[Pay Tribute|PayTribute]]
 	[[Refuse to pay. (WAR)|DeclareWar]]
 <<elseif $faction_was_at_war>>
 	$envoy_name: Oh I forgot, we are at war. How silly!
@@ -162,7 +162,8 @@ title: PayTribute
 	<<pay_tribute>>
 	<<political_event "you paid us tribute" 0.5 4>>
 	$envoy_name: Oh wonderous! Delightful! Exclamation!
-	[[Did you just say 'exclamation'?|Wut]]
+	<<set $envoy_tribute_demanded = 0.0>>
+	[[Did you just say 'exclamation'?|Main]]
 <<endif>>
 ===
 

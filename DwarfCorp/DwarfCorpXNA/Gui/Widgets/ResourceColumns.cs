@@ -138,7 +138,7 @@ namespace DwarfCorp.Gui.Widgets
                     var existingEntry = resourcesB.FirstOrDefault(r => r.ResourceType == lambdaResource.ResourceType);
                     if (existingEntry == null)
                     {
-                        existingEntry = new ResourceAmount(lambdaResource.ResourceType, 0);
+                        existingEntry = new ResourceAmount(lambdaResource.ResourceType, toMove);
                         resourcesB.Add(existingEntry);
                         var rightLineItem = CreateLineItem(existingEntry);
                         rightLineItem.EnableHoverClick();
@@ -173,7 +173,10 @@ namespace DwarfCorp.Gui.Widgets
                             Root.SafeCall(OnTotalSelectedChanged, this);
                         };
                     }
-                    existingEntry.NumResources += toMove;
+                    else
+                    {
+                        existingEntry.NumResources += toMove;
+                    }
 
                     UpdateColumn(listA, resourcesB);
                     UpdateLineItemText(lineItem, lambdaResource);
