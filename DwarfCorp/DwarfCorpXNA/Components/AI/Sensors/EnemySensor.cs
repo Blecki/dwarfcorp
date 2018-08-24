@@ -84,6 +84,9 @@ namespace DwarfCorp
             if (!Active)
                 return;
 
+            if (World.InitialEmbark.Difficulty == 0)
+                return;
+
             if (Allies == null && Creature != null)
             {
                 Allies = Creature.Faction;
@@ -103,6 +106,7 @@ namespace DwarfCorp
                 if (minion == null)
                     continue;
                 Faction faction = minion.Faction;
+                
                 if (World.Diplomacy.GetPolitics(Allies, faction).GetCurrentRelationship() !=
                     Relationship.Hateful) continue;
 
