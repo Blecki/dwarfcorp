@@ -60,7 +60,8 @@ namespace DwarfCorp
             Sensor = AddChild(new EnemySensor(Manager, "sensor", Matrix.Identity, new Vector3(8, 8, 8),
                 Vector3.Zero)
             {
-                Allies = faction
+                Allies = faction,
+                DetectCloaked = true
             }) as EnemySensor;
 
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
