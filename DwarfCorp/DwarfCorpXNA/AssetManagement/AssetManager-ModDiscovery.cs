@@ -45,19 +45,13 @@ using System.Security.Permissions;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// This class exists to provide an abstract interface between asset tags and textures. 
-    /// Technically, the ContentManager already does this for XNA, but ContentManager is missing a
-    /// couple of important functions: modability, and storing the *inverse* lookup between tag
-    /// and texture. Additionally, the TextureManager provides an interface to directly load
-    /// resources from the disk (rather than going through XNAs content system)
-    /// </summary>
     public partial class AssetManager
     {
         public static List<ModMetaData> DiscoverMods()
         {
+            var subscribed = AssetManagement.Steam.Steam.GetSubscribedMods();
             return EnumerateMods(GameSettings.Default.LocalModDirectory, ModSource.LocalDirectory).Concat(
-                EnumerateMods(GameSettings.Default.SteamModDirectory, ModSource.SteamDirectory)).ToList();
+                EnumerateMods(GameSettings.Default.SteamModDirectory, ModSource.SteamDirectory).Where(m => subscribed.Contains((Steamworks.PublishedFileId_t)m.SteamID))).ToList();
         }
 
         private static List<ModMetaData> EnumerateMods(String Path, ModSource Source)
@@ -76,13 +70,15 @@ namespace DwarfCorp
                     metaData.Directory = dir;
                     metaData.Source = Source;
                     r.Add(metaData);
+
+                    if (dir.StartsWith(GameSettings.Default.SteamModDirectory))
+                        metaData.SteamID = ulong.Parse(System.IO.Path.GetFileName(dir));
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("Invalid mod: {0} {1}", dir, e.Message);
                 }
             }
-
 
             return r;    
         }

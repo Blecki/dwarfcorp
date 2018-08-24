@@ -50,6 +50,13 @@ namespace DwarfCorp.AssetManagement.Steam
             foreach (var transaction in PendingTransactions)
                 transaction.Update();
             PendingTransactions.RemoveAll(t => t.Complete);
+
+            var console = DwarfGame.GetConsoleTile("STEAM");
+            console.Lines.Clear();
+            console.Lines.Add("STEAM TRANSACTIONS");
+            foreach (var transaction in PendingTransactions)
+                console.Lines.Add(transaction.Transaction.ToString() + " " + transaction.Transaction.Message + "\n");
+            console.Invalidate();
         }
 
         public static void AddTransaction(UGCTransactionProcessor Processor)

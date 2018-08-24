@@ -28,6 +28,7 @@ namespace DwarfCorp.Gui.Widgets
         public override void Construct()
         {
             if (String.IsNullOrEmpty(Border)) Border = "border-thin";
+            if (Text == null) Text = "";
 
             // Note: Cursor won't draw properly if these are changed. Click events may also break.
             // Widget should probably be able to handle different alignments.
@@ -77,7 +78,7 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         // Take focus and move cursor to end of text.
                         Root.SetFocus(this);
-                        CursorPosition = Text.Length;
+                        CursorPosition = Text == null ? 0 : Text.Length;
                         Invalidate();
                         args.Handled = true;
                     }

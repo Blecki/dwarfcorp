@@ -65,7 +65,7 @@ namespace DwarfCorp.Gui
 
         public int TileHeight
         {
-            get { return Glyphs.First().Value.Height; }
+            get { return Glyphs['I'].Height; }
         }
 
         public Point GlyphSize(int Index)

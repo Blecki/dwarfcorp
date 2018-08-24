@@ -47,6 +47,7 @@ namespace DwarfCorp.GameStates.ModManagement
         private Gui.Widget QueryStatusMessage;
         private Gui.Widgets.WidgetListView List;
         private List<Steamworks.PublishedFileId_t> SubscribedItems;
+        public ManageModsState Owner;
 
         public override void Construct()
         {
@@ -65,7 +66,7 @@ namespace DwarfCorp.GameStates.ModManagement
                 Padding = new Margin(2, 2, 2, 2)
             });
 
-            var tags = top.AddChild(new Gui.Widgets.EditableTextField
+            var searchText = top.AddChild(new Gui.Widgets.EditableTextField
             {
                 PromptText = "Enter text to search for",
                 AutoLayout = AutoLayout.DockLeft,
@@ -86,7 +87,7 @@ namespace DwarfCorp.GameStates.ModManagement
                         {
                             Transaction = new UGCQuery
                             {
-                                SearchString = tags.Text
+                                SearchString = searchText.Text
                             },
                             StatusMessageDisplay = QueryStatusMessage,
                             OnSuccess = (query) => RefreshList((query.Transaction as UGCQuery).Results)
@@ -119,8 +120,14 @@ namespace DwarfCorp.GameStates.ModManagement
                 TextColor = new Vector4(0, 0, 0, 1),
             });
 
+            var statusMessage = Root.ConstructWidget(new Widget
+            {
+                MinimumSize = new Point(128, 0),
+                AutoLayout = AutoLayout.DockRight
+            });
+
             if (!SubscribedItems.Contains(mod.m_nPublishedFileId))
-                lineItem.AddChild(new Widget
+                lineItem.AddChild(new Button()
                 {
                     Font = "font10",
                     Text = "Subscribe",
@@ -132,12 +139,21 @@ namespace DwarfCorp.GameStates.ModManagement
                             var subscribe = t as UGCSubscribe;
                             return subscribe != null && subscribe.FileID == mod.m_nPublishedFileId;
                         }))
+                        {
+                            sender.Hidden = true;
+                            sender.Invalidate();
+
                             Steam.AddTransaction(new UGCTransactionProcessor
                             {
                                 Transaction = new UGCSubscribe(mod.m_nPublishedFileId),
-                                StatusMessageDisplay = sender,
-                                OnSuccess = (subscriber) => SubscribedItems.Add(mod.m_nPublishedFileId)
+                                StatusMessageDisplay = statusMessage,
+                                OnSuccess = (subscriber) =>
+                                {
+                                    SubscribedItems.Add(mod.m_nPublishedFileId);
+                                    Owner.MadeSystemChanges();
+                                }
                             });
+                        }
                     }
                 });
             else
@@ -147,6 +163,8 @@ namespace DwarfCorp.GameStates.ModManagement
                     Text = "Subscribed!",
                     AutoLayout = AutoLayout.DockRight
                 });
+
+            lineItem.AddChild(statusMessage);
 
             lineItem.AddChild(new Widget
             {

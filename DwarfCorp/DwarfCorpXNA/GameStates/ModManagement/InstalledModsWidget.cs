@@ -163,6 +163,12 @@ namespace DwarfCorp.GameStates.ModManagement
                 TextColor = new Vector4(0, 0, 0, 1),
             });
 
+            var statusMessage = Root.ConstructWidget(new Widget
+            {
+                MinimumSize = new Point(128, 0),
+                AutoLayout = AutoLayout.DockRight
+            });
+
             if (Mod.MetaData.Source == ModSource.LocalDirectory)
             {
                 gui.AddChild(new Button()
@@ -177,7 +183,7 @@ namespace DwarfCorp.GameStates.ModManagement
                         Steam.AddTransaction(new UGCTransactionProcessor
                         {
                             Transaction = new UGCUpload(Mod.MetaData),
-                            StatusMessageDisplay = sender
+                            StatusMessageDisplay = statusMessage
                         });
                     }
                 });
@@ -196,17 +202,18 @@ namespace DwarfCorp.GameStates.ModManagement
                         Steam.AddTransaction(new UGCTransactionProcessor
                         {
                             Transaction = new UGCUnsubscribe((Steamworks.PublishedFileId_t)Mod.MetaData.SteamID),
-                            StatusMessageDisplay = sender
+                            StatusMessageDisplay = statusMessage,
+                            OnSuccess = (trans) =>
+                            {
+                                OwnerState.MadeSystemChanges();
+                            }
                         });
                     }
                 });
             }
 
-            // Todo: Download button for subscribed but not installed mods.
+            gui.AddChild(statusMessage);
 
-            // Todo: Update button for mods that need updated.
-
-            // Todo: Disable toggle if mod is not installed.
             var toggle = gui.AddChild(new CheckBox
             {
                 MinimumSize = new Point(128, 32),

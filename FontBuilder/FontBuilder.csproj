@@ -86,7 +86,6 @@
     <Compile Include="VariableWidthBitmapFont.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TextFile1.txt" />
     <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="build-fonts.json">

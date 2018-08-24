@@ -80,6 +80,8 @@ namespace DwarfCorp.AssetManagement.Steam
                 case States.Initializing:
                     UpdateHandle = SteamUGC.StartItemUpdate(Steam.AppID, (PublishedFileId_t)Mod.SteamID);
                     SteamUGC.SetItemTitle(UpdateHandle, Mod.Name);
+                    SteamUGC.SetItemDescription(UpdateHandle, Mod.Description);
+                    SteamUGC.SetItemVisibility(UpdateHandle, ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPublic);
                     SteamUGC.SetItemPreview(UpdateHandle, System.IO.Path.GetFullPath(Mod.Directory) + Program.DirChar + Mod.PreviewURL);
                     SteamUGC.SetItemContent(UpdateHandle, System.IO.Path.GetFullPath(Mod.Directory));
                     State = States.Submitting;

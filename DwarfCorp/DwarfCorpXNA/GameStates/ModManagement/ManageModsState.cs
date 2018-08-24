@@ -41,6 +41,9 @@ using DwarfCorp.AssetManagement.Steam;
 
 namespace DwarfCorp.GameStates.ModManagement
 {
+    // Todo: Dump gui stuff to main screen so steam popups can play over any gamestate.
+
+
     /// <summary>
     /// This game state allows the player to design their own dwarf company.
     /// </summary>
@@ -126,7 +129,10 @@ namespace DwarfCorp.GameStates.ModManagement
                 OwnerState = this
             });
 
-            tabs.AddTab("Search", new SearchWidget());
+            tabs.AddTab("Search", new SearchWidget
+            {
+                Owner = this
+            });
 
             GuiRoot.RootItem.Layout();
 

@@ -88,6 +88,9 @@ namespace DwarfCorp
                     game.Run();
                 }
 
+                while (AssetManagement.Steam.Steam.HasTransaction(a => true))
+                    AssetManagement.Steam.Steam.Update();
+
                 SignalShutdown();
             }
 #if !DEBUG
