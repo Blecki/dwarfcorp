@@ -77,7 +77,7 @@ namespace DwarfCorp
 
             public override void BindToName(Type serializedType, out string assemblyName, out string typeName)
             {
-                assemblyName = AssetManager.GetSourceModOfType(serializedType);
+                assemblyName = AssetManager.GetSourceModOfType(serializedType).IdentifierString;
                 typeName = serializedType.FullName;
             }
 

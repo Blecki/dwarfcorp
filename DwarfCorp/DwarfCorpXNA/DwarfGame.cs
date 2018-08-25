@@ -206,13 +206,18 @@ namespace DwarfCorp
             {
                 Graphics.ApplyChanges();
             }
-            catch(NoSuitableGraphicsDeviceException exception)
+            catch (NoSuitableGraphicsDeviceException exception)
             {
                 Console.Error.WriteLine(exception.Message);
 #if SHARP_RAVEN && !DEBUG
                 if (ravenClient != null)
                     ravenClient.Capture(new SentryEvent(exception));
 #endif
+            }
+
+            if (AssetManagement.Steam.Steam.InitializeSteam() == AssetManagement.Steam.Steam.SteamInitializationResult.QuitImmediately)
+            {
+                Exit();
             }
         }
 
@@ -474,6 +479,7 @@ namespace DwarfCorp
 
             PerformanceMonitor.BeginFrame();
             PerformanceMonitor.PushFrame("Update");
+            AssetManagement.Steam.Steam.Update();
                 DwarfTime.LastTime.Update(time);
                 StateManager.Update(DwarfTime.LastTime);
                 base.Update(time);

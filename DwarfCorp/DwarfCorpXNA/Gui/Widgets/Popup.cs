@@ -10,16 +10,24 @@ namespace DwarfCorp.Gui.Widgets
     public class Popup : Widget
     {
         public string OkayText = "OKAY";
+        public bool ShowOkayButton = true;
 
         public override void Construct()
         {
             //Set size and center on screen.
-            Rect = new Rectangle(0, 0, 256, 128);
-            Rect.X = (Root.RenderData.VirtualScreen.Width / 2) - 128;
-            Rect.Y = (Root.RenderData.VirtualScreen.Height / 2) - 32;
+            Rect = new Rectangle(0, 0, Math.Max(256, MinimumSize.X), Math.Max(128, MinimumSize.Y));
+            Rect.X = (Root.RenderData.VirtualScreen.Width / 2) - Rect.Width / 2;
+            Rect.Y = (Root.RenderData.VirtualScreen.Height / 2) - Rect.Height / 2;
+            WrapText = true;
 
             Border = "border-fancy";
 
+            if (ShowOkayButton)
+                AddOkayButton();
+        }
+
+        public void AddOkayButton()
+        {
             AddChild(new Widget
             {
                 Text = OkayText,

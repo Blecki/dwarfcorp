@@ -1,0 +1,76 @@
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# =========================
+# Operating System Files
+# =========================
+
+# OSX
+# =========================
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+Facepunch.Steamworks.Test/bin/Debug/Facepunch.Steamworks.dll
+*.pdb
+Facepunch.Steamworks.Test/bin/Debug/Facepunch.Steamworks.Test.dll
+*.suo
+Facepunch.Steamworks.Test/bin/Debug/Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+Facepunch.Steamworks.Test/bin/Release/Facepunch.Steamworks.dll
+Facepunch.Steamworks.Test/bin/Release/Facepunch.Steamworks.Test.dll
+Facepunch.Steamworks.Test/bin/Release/Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+*.user
+*.cache
+*.idea
+*.vscode
+TestResults
+obj
+Facepunch.Steamworks/bin/Debug/Facepunch.Steamworks.Api.dll
+Facepunch.Steamworks/bin/Debug/Facepunch.Steamworks.dll
+Facepunch.Steamworks/bin/Release/Facepunch.Steamworks.dll
+Facepunch.Steamworks/bin
+*.opendb
+*.db
+Facepunch.Steamworks.dll
+Facepunch.Steamworks.Test.dll
+*UnitTestFramework.dll
+mscorlib.dll
+*.nlp
+packages
+Generator/bin
+*.XML
+.vs

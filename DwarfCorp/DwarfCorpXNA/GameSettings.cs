@@ -240,7 +240,9 @@ namespace DwarfCorp
             public bool AllowReporting = true;
             public bool ZoomCameraTowardMouse = true;
             public bool CameraFollowSurface = true;
-            public List<String> EnabledMods = new List<string>();
+            public String LocalModDirectory = "Mods";
+            public String SteamModDirectory = "C:/Program Files/Steam/steamapps/workshop/content/252390";
+            public List<String> EnabledMods = new List<String>();
             public int MaxSaves = 15;
             public bool EnableSlowMotion = false;
             public int ConsoleTextSize = 2;

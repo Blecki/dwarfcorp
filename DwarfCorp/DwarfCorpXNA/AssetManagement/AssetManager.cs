@@ -45,6 +45,13 @@ using System.Security.Permissions;
 
 namespace DwarfCorp
 {
+    public class AssetException : Exception
+    {
+        public AssetException(String Message) : base(Message)
+        {
+
+        }
+    }
 
     /// <summary>
     /// This class exists to provide an abstract interface between asset tags and textures. 
@@ -53,13 +60,17 @@ namespace DwarfCorp
     /// and texture. Additionally, the TextureManager provides an interface to directly load
     /// resources from the disk (rather than going through XNAs content system)
     /// </summary>
-    public class AssetManager
+    public partial class AssetManager
     {
         private static Dictionary<String, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
         private static ContentManager Content { get { return GameState.Game.Content; } }
         private static GraphicsDevice Graphics {  get { return GameState.Game.GraphicsDevice; } }
-        private static List<Tuple<String,Assembly>> Assemblies = new List<Tuple<String,Assembly>>();
-        private static List<String> DirectorySearchList;
+
+        /// <summary>
+        /// Assemblies created from loaded mods. Once discovered, this list will not change unless the game is reloaded.
+        /// </summary>
+        private static List<Tuple<ModMetaData,Assembly>> Assemblies = new List<Tuple<ModMetaData,Assembly>>();
+        private static List<ModMetaData> DirectorySearchList;
 
         public static void ResetCache()
         {
@@ -68,16 +79,32 @@ namespace DwarfCorp
 
         public static void Initialize(ContentManager Content, GraphicsDevice Graphics, GameSettings.Settings Settings)
         {
-            DirectorySearchList = Settings.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
+            var installedMods = DiscoverMods();
+
+            // Remove any mods that are no longer installed from the enabled mods list.
+            Settings.EnabledMods = Settings.EnabledMods.Where(m => installedMods.Any(item => item.IdentifierString == m)).ToList();
+
+            // Select mods in the order they are stored in enabled mods. Once this is set it is not changed.
+            DirectorySearchList = Settings.EnabledMods.Select(m => installedMods.First(item => item.IdentifierString == m)).ToList();
+            
             DirectorySearchList.Reverse();
-            DirectorySearchList.Add("Content");
+            DirectorySearchList.Add(new ModMetaData
+            {
+                Name = "BaseContent",
+                Directory = "Content",
+            });
 
-            Assemblies.Add(Tuple.Create("BaseContent", Assembly.GetExecutingAssembly()));
+            Assemblies.Add(Tuple.Create(new ModMetaData
+            {
+                Name = "BaseContent",
+                Directory = "Content",
+            }, Assembly.GetExecutingAssembly()));
 
+            // Compile any code files in the enabled mods.
             foreach (var mod in DirectorySearchList)
-                if (System.IO.Directory.Exists(mod))
+                if (System.IO.Directory.Exists(mod.Directory))
                 {
-                    var csFiles = Directory.EnumerateFiles(mod).Where(s => Path.GetExtension(s) == ".cs");
+                    var csFiles = Directory.EnumerateFiles(mod.Directory).Where(s => Path.GetExtension(s) == ".cs");
                     if (csFiles.Count() > 0)
                     {
                         var assembly = ModCompiler.CompileCode(csFiles);
@@ -87,12 +114,12 @@ namespace DwarfCorp
                 }
         }
 
-        public static IEnumerable<Tuple<String,Assembly>> EnumerateLoadedModAssemblies()
+        public static IEnumerable<Tuple<ModMetaData,Assembly>> EnumerateLoadedModAssemblies()
         {
             return Assemblies;
         }
 
-        public static String GetSourceModOfType(Type T)
+        public static ModMetaData GetSourceModOfType(Type T)
         {
             foreach (var mod in Assemblies)
             {
@@ -100,16 +127,25 @@ namespace DwarfCorp
                     return mod.Item1;
             }
 
-            return "$"; // The type wasn't from one of the loaded mods.
+            return new ModMetaData
+            {
+                Name = "BaseContent",
+                Directory = "Content",
+            }; // The type wasn't from one of the loaded mods.
         }
 
         public static Type GetTypeFromMod(String T, String Assembly)
         {
             foreach (var mod in Assemblies)
-                if (mod.Item1 == Assembly)
+                if (mod.Item1.IdentifierString == Assembly)
                     return mod.Item2.GetType(T);
 
-            return Type.GetType(T, true);
+            var r = Type.GetType(T, true);
+            if (r == null)
+                throw new Exception("Unresolved tupe");
+            return r;
+
+            //throw new AssetException("Tried to load type from mod that is not installed or enabled");
         }
 
         private static bool CheckMethod(MethodInfo Method, Type ReturnType, Type[] ArgumentTypes)
@@ -162,8 +198,8 @@ namespace DwarfCorp
             {
                 foreach (var extension in extensionList)
                 {
-                    if (File.Exists(mod + ProgramData.DirChar + Asset + extension))
-                        return mod + ProgramData.DirChar + Asset + extension;
+                    if (File.Exists(mod.Directory + ProgramData.DirChar + Asset + extension))
+                        return mod.Directory + ProgramData.DirChar + Asset + extension;
                 }
             }
 

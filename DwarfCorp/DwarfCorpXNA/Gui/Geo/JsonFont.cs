@@ -65,7 +65,7 @@ namespace DwarfCorp.Gui
 
         public int TileHeight
         {
-            get { return Glyphs.First().Value.Height; }
+            get { return Glyphs['I'].Height; }
         }
 
         public Point GlyphSize(int Index)
@@ -150,6 +150,13 @@ namespace DwarfCorp.Gui
                 {
                     w.Append(c);
                     wordLength += (HasGlyph(c - ' ') ? GlyphSize(c - ' ').X : 0) * GlyphWidthScale;
+                    if (wordLength > Width)
+                    {
+                        r.Append("\n");
+                        r.Append(w);
+                        w.Clear();
+                        wordLength = 0;
+                    }
                 }
             }
 
