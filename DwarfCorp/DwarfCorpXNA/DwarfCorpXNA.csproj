@@ -903,7 +903,6 @@
     <Compile Include="World\WorldTime.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Facepunch.Steamworks.dll" />
     <Content Include="favicon.ico" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
