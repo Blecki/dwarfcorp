@@ -94,52 +94,6 @@ namespace DwarfCorp.GameStates.ModManagement
             //}
 
 
-            
-            top.AddChild(new Gui.Widgets.Button
-            {
-                Text = "Move Up",
-                Font = "font16",
-                TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
-                Border = "border-button",
-                OnClick = (sender, args) =>
-                {
-                    var select = ModListGUI.SelectedIndex;
-                    if (select > 0)
-                    {
-                        var mod = ModList[ModListGUI.SelectedIndex];
-                        ModList.RemoveAt(ModListGUI.SelectedIndex);
-                        ModList.Insert(ModListGUI.SelectedIndex - 1, mod);
-                        ModListGUI.SelectedIndex -= 1;
-                        SaveEnabledList();
-                        OwnerState.MadeSystemChanges();
-                    }
-                },
-                AutoLayout = AutoLayout.DockLeft
-            });
-
-            top.AddChild(new Gui.Widgets.Button
-            {
-                Text = "Move Down",
-                Font = "font16",
-                TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
-                Border = "border-button",
-                OnClick = (sender, args) =>
-                {
-                    var select = ModListGUI.SelectedIndex;
-                    if (select < ModList.Count - 1)
-                    {
-                        var mod = ModList[ModListGUI.SelectedIndex];
-                        ModList.RemoveAt(ModListGUI.SelectedIndex);
-                        ModList.Insert(ModListGUI.SelectedIndex + 1, mod);
-                        ModListGUI.SelectedIndex += 1;
-                        SaveEnabledList();
-                        OwnerState.MadeSystemChanges();
-                    }
-                },
-                AutoLayout = AutoLayout.DockLeft
-            });
 
             ModListGUI = AddChild(new WidgetListView
             {
@@ -154,7 +108,7 @@ namespace DwarfCorp.GameStates.ModManagement
             RebuildModListGUI();
         }
 
-        private Gui.Widget BuildLineItemGUI(LineItem Mod)
+        private Gui.Widget BuildLineItemGUI(LineItem Mod, int idx)
         {
             var gui = Root.ConstructWidget(new Widget
             {
@@ -230,8 +184,54 @@ namespace DwarfCorp.GameStates.ModManagement
             {
                 Font = "font8",
                 Text = String.Format("{2} Source: {0}\nDirectory: {1}", Mod.MetaData.Source, Mod.MetaData.Directory, Mod.MetaData.IdentifierString),
-                AutoLayout = AutoLayout.DockFill,
+                AutoLayout = AutoLayout.DockLeft,
                 TextColor = new Vector4(0, 0, 0, 1)
+            });
+
+            gui.AddChild(new Gui.Widgets.Button
+            {
+                Text = "Move Up",
+                Font = "font10",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                TextColor = Color.Black.ToVector4(),
+                Border = "border-thin",
+                OnClick = (sender, args) =>
+                {
+                    var select = idx;
+                    if (select > 0)
+                    {
+                        var mod = ModList[select];
+                        ModList.RemoveAt(select);
+                        ModList.Insert(select - 1, mod);
+                        SaveEnabledList();
+                        OwnerState.MadeSystemChanges();
+                    }
+                },
+                AutoLayout = AutoLayout.DockRight
+            });
+
+            gui.AddChild(new Gui.Widgets.Button
+            {
+                Text = "Move Down",
+                Font = "font10",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                TextColor = Color.Black.ToVector4(),
+                Border = "border-thin",
+                OnClick = (sender, args) =>
+                {
+                    var select = idx;
+                    if (select < ModList.Count - 1)
+                    {
+                        var mod = ModList[idx];
+                        ModList.RemoveAt(idx);
+                        ModList.Insert(idx + 1, mod);
+                        SaveEnabledList();
+                        OwnerState.MadeSystemChanges();
+                    }
+                },
+                AutoLayout = AutoLayout.DockRight
             });
 
             toggle.SilentSetCheckState(Mod.Enabled);
@@ -249,11 +249,13 @@ namespace DwarfCorp.GameStates.ModManagement
         private void RebuildModListGUI()
         {
             ModListGUI.ClearItems();
+            int k = 0;
             foreach (var mod in ModList)
             {
                 if (mod.GUI == null)
-                    mod.GUI = BuildLineItemGUI(mod);
+                    mod.GUI = BuildLineItemGUI(mod, k);
                 ModListGUI.AddItem(mod.GUI);
+                k++;
             }
         }
 

@@ -142,7 +142,8 @@ namespace DwarfCorp.GameStates.ModManagement
             var statusMessage = Root.ConstructWidget(new Widget
             {
                 MinimumSize = new Point(128, 0),
-                AutoLayout = AutoLayout.DockRight
+                AutoLayout = AutoLayout.DockRight,
+                TextVerticalAlign = VerticalAlign.Center
             });
 
             if (!SubscribedItems.Contains(mod.m_nPublishedFileId))
@@ -186,12 +187,25 @@ namespace DwarfCorp.GameStates.ModManagement
                 });
 
             lineItem.AddChild(statusMessage);
-            
-            lineItem.AddChild(new Widget
+
+            var modWidget = lineItem.AddChild(new Widget()
+            {
+                AutoLayout = AutoLayout.DockFill,
+                TextColor = new Vector4(0, 0, 0, 1)
+            });
+
+            modWidget.AddChild(new Widget()
+            {
+                Font = "font10",
+                Text = String.Format("{0}", mod.m_rgchTitle),
+                AutoLayout = AutoLayout.DockTop,
+                TextColor = new Vector4(0, 0, 0, 1)
+            });
+            modWidget.AddChild(new Widget()
             {
                 Font = "font8",
-                Text = String.Format("{0} by {1}\n{2}", mod.m_rgchTitle, SteamFriends.GetFriendPersonaName(new CSteamID(mod.m_ulSteamIDOwner)), mod.m_rgchDescription),
-                AutoLayout = AutoLayout.DockFill,
+                Text = String.Format("by {0}. {1}", SteamFriends.GetFriendPersonaName(new CSteamID(mod.m_ulSteamIDOwner)), mod.m_rgchDescription),
+                AutoLayout = AutoLayout.DockTop,
                 TextColor = new Vector4(0, 0, 0, 1)
             });
 
