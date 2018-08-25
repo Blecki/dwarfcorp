@@ -71,17 +71,29 @@ namespace DwarfCorp.GameStates.ModManagement
                 PromptText = "Enter text to search for",
                 AutoLayout = AutoLayout.DockLeft,
                 MinimumSize = new Point(256, 0),
-            });
+            }) as Gui.Widgets.EditableTextField;
 
-            top.AddChild(new Gui.Widgets.Button
+            var button = top.AddChild(new Gui.Widgets.Button
             {
                 Text = "Search",
-                Font = "font16",
+                Font = "font10",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
                 OnClick = (sender, args) =>
                 {
+                    if (!Steam.SteamAvailable)
+                    {
+                        List.ClearItems();
+                        List.AddItem(new Widget()
+                        {
+                            Text = "Error: Can't connect to steam!",
+                            Background = new TileReference("basic", 0),
+                            TextColor = new Vector4(0, 0, 0, 1),
+                        });
+                        return;
+                    }
+
                     if (!Steam.HasTransactionOfType<UGCQuery>())
                         Steam.AddTransaction(new UGCTransactionProcessor
                         {
@@ -95,6 +107,12 @@ namespace DwarfCorp.GameStates.ModManagement
                 },
                 AutoLayout = AutoLayout.DockRight
             });
+
+            searchText.OnEnter = (sender) => 
+            {
+                button.OnClick.Invoke(button, null);
+            };
+
 
             QueryStatusMessage = top.AddChild(new Widget
             {
@@ -118,12 +136,14 @@ namespace DwarfCorp.GameStates.ModManagement
                 MinimumSize = new Point(1, 32),
                 Background = new TileReference("basic", 0),
                 TextColor = new Vector4(0, 0, 0, 1),
+                InteriorMargin = new Margin(5, 5, 10, 10)
             });
 
             var statusMessage = Root.ConstructWidget(new Widget
             {
                 MinimumSize = new Point(128, 0),
-                AutoLayout = AutoLayout.DockRight
+                AutoLayout = AutoLayout.DockRight,
+                TextVerticalAlign = VerticalAlign.Center
             });
 
             if (!SubscribedItems.Contains(mod.m_nPublishedFileId))
@@ -161,16 +181,31 @@ namespace DwarfCorp.GameStates.ModManagement
                 {
                     Font = "font10",
                     Text = "Subscribed!",
-                    AutoLayout = AutoLayout.DockRight
+                    TextColor = Color.Black.ToVector4(),
+                    AutoLayout = AutoLayout.DockRight,
+                    TextVerticalAlign = VerticalAlign.Center
                 });
 
             lineItem.AddChild(statusMessage);
 
-            lineItem.AddChild(new Widget
+            var modWidget = lineItem.AddChild(new Widget()
+            {
+                AutoLayout = AutoLayout.DockFill,
+                TextColor = new Vector4(0, 0, 0, 1)
+            });
+
+            modWidget.AddChild(new Widget()
+            {
+                Font = "font10",
+                Text = String.Format("{0}", mod.m_rgchTitle),
+                AutoLayout = AutoLayout.DockTop,
+                TextColor = new Vector4(0, 0, 0, 1)
+            });
+            modWidget.AddChild(new Widget()
             {
                 Font = "font8",
-                Text = String.Format("Name: {0}\nDescription: {1}", mod.m_rgchTitle, mod.m_rgchDescription),
-                AutoLayout = AutoLayout.DockFill,
+                Text = String.Format("by {0}. {1}", SteamFriends.GetFriendPersonaName(new CSteamID(mod.m_ulSteamIDOwner)), mod.m_rgchDescription),
+                AutoLayout = AutoLayout.DockTop,
                 TextColor = new Vector4(0, 0, 0, 1)
             });
 
