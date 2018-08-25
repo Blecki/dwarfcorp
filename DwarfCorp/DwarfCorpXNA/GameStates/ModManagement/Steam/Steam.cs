@@ -23,6 +23,16 @@ namespace DwarfCorp.AssetManagement.Steam
         {
             AppID = new AppId_t(252390);
 
+            if (!Packsize.Test())
+            {
+                Console.Error.WriteLine("[Steamworks.NET] Packsize Test returned false, the wrong version of Steamworks.NET is being run in this platform.");
+            }
+
+            if (!DllCheck.Test())
+            {
+                Console.Error.WriteLine("[Steamworks.NET] DllCheck Test returned false, One or more of the Steamworks binaries seems to be the wrong version.");
+            }
+
 #if !DEBUG
             // Todo: Don't even try this for non-steam builds.
             if (SteamAPI.RestartAppIfNecessary(AppID))
@@ -82,7 +92,6 @@ namespace DwarfCorp.AssetManagement.Steam
                 var subscribedCount = SteamUGC.GetNumSubscribedItems();
                 var subscribedFileIds = new PublishedFileId_t[subscribedCount];
                 SteamUGC.GetSubscribedItems(subscribedFileIds, subscribedCount);
-
                 return subscribedFileIds.ToList();
             }
             else

@@ -50,8 +50,45 @@ namespace DwarfCorp
         public static List<ModMetaData> DiscoverMods()
         {
             var subscribed = AssetManagement.Steam.Steam.GetSubscribedMods();
-            return EnumerateMods(GameSettings.Default.LocalModDirectory, ModSource.LocalDirectory).Concat(
-                EnumerateMods(GameSettings.Default.SteamModDirectory, ModSource.SteamDirectory).Where(m => subscribed.Contains((Steamworks.PublishedFileId_t)m.SteamID))).ToList();
+            List<ModMetaData> subscribedMods = new List<ModMetaData>();
+            foreach(var m in subscribed)
+            {
+                ulong size;
+                string folder;
+                uint folderSize = 2048;
+                uint timestamp;
+                if (Steamworks.SteamUGC.GetItemInstallInfo((Steamworks.PublishedFileId_t)m.m_PublishedFileId, out size, 
+                    out folder, folderSize, out timestamp))
+                {
+                    var mod = GetMod(folder, ModSource.SteamDirectory);
+                    if (mod != null)
+                    {
+                        subscribedMods.Add(mod);
+                    }
+                };
+
+            }
+            return subscribedMods.Concat(EnumerateMods(GameSettings.Default.LocalModDirectory, ModSource.LocalDirectory)).ToList();
+        }
+
+        private static ModMetaData GetMod(string dir, ModSource Source)
+        {
+            try
+            {
+                var metaDataPath = dir + ProgramData.DirChar + "meta.json";
+                var metaData = FileUtils.LoadJsonFromAbsolutePath<ModMetaData>(metaDataPath);
+                metaData.Directory = dir;
+                metaData.Source = Source;
+
+                if (dir.StartsWith(GameSettings.Default.SteamModDirectory))
+                    metaData.SteamID = ulong.Parse(System.IO.Path.GetFileName(dir));
+                return metaData;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Invalid mod: {0} {1}", dir, e.Message);
+                return null;
+            }
         }
 
         private static List<ModMetaData> EnumerateMods(String Path, ModSource Source)
@@ -63,21 +100,9 @@ namespace DwarfCorp
 
             foreach (var dir in Directory.EnumerateDirectories(Path))
             {
-                try
-                {
-                    var metaDataPath = dir + ProgramData.DirChar + "meta.json";
-                    var metaData = FileUtils.LoadJsonFromAbsolutePath<ModMetaData>(metaDataPath);
-                    metaData.Directory = dir;
-                    metaData.Source = Source;
+                var metaData = GetMod(Path, Source);
+                if (metaData != null)
                     r.Add(metaData);
-
-                    if (dir.StartsWith(GameSettings.Default.SteamModDirectory))
-                        metaData.SteamID = ulong.Parse(System.IO.Path.GetFileName(dir));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Invalid mod: {0} {1}", dir, e.Message);
-                }
             }
 
             return r;    
