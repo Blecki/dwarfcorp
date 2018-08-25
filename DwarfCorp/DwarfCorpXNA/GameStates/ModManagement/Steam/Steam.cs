@@ -23,13 +23,14 @@ namespace DwarfCorp.AssetManagement.Steam
         {
             AppID = new AppId_t(252390);
 
+#if !DEBUG
             // Todo: Don't even try this for non-steam builds.
             if (SteamAPI.RestartAppIfNecessary(AppID))
             {
                 // Todo: Quit if this fails.
                 return SteamInitializationResult.QuitImmediately;
             }
-
+#endif
             SteamAvailable = SteamAPI.Init();
 
             //// Set up our callback to recieve warning messages from Steam.
