@@ -14,6 +14,8 @@ namespace DwarfCorp.Goals
 
         public override void Trigger(WorldManager world)
         {
+            if (world.InitialEmbark.Difficulty == 0) return;
+
             var faction = GetFaction(world, PartyFaction, PartyFactionFilter);
             if (!String.IsNullOrEmpty(faction) && world.Factions.Factions.ContainsKey(faction))
             {

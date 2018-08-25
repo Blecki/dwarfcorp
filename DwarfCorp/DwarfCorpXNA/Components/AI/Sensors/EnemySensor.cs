@@ -59,6 +59,7 @@ namespace DwarfCorp
         public List<CreatureAI> Enemies { get; set; }
         public Timer SenseTimer { get; set; }
         public float SenseRadius { get; set; }
+        public bool DetectCloaked { get; set; }
 
         public EnemySensor() : base()
         {
@@ -84,6 +85,9 @@ namespace DwarfCorp
             if (!Active)
                 return;
 
+            if (World.InitialEmbark.Difficulty == 0)
+                return;
+
             if (Allies == null && Creature != null)
             {
                 Allies = Creature.Faction;
@@ -103,12 +107,16 @@ namespace DwarfCorp
                 if (minion == null)
                     continue;
                 Faction faction = minion.Faction;
+                
                 if (World.Diplomacy.GetPolitics(Allies, faction).GetCurrentRelationship() !=
                     Relationship.Hateful) continue;
 
                 if (!minion.Active) continue;
-                // TODO add small chance of detecting a cloaked creature.
-                if (minion.Creature.IsCloaked) continue;
+
+                if (!DetectCloaked && minion.Creature.IsCloaked)
+                    continue;
+                else if (DetectCloaked && minion.Creature.IsCloaked)
+                    minion.Creature.IsCloaked = false;
 
                 float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
                 

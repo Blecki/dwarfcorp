@@ -74,6 +74,18 @@ namespace DwarfCorp
             Effects[emitter].Trigger(num, position, tint);
         }
 
+        public void TriggerRay(string emitter, Vector3 position, Vector3 dest, float spacing = 0.5f)
+        {
+            var r = (dest - position);
+            r.Normalize();
+            float l = (dest - position).Length();
+            for (float t = 0; t < l; t += spacing)
+            {
+                Create(emitter, position + r * t, r, Color.White);
+            }
+        }
+
+
         public void Create(string emitter, Vector3 position, Vector3 velocity, Color tint)
         {
             Effects[emitter].Create(position, velocity, tint);

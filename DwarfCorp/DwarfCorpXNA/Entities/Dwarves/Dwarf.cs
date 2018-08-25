@@ -150,6 +150,9 @@ namespace DwarfCorp
             Stats.CanEat = true;
             Stats.CanGetBored = true;
             AI.Movement.CanClimbWalls = true; // Why isn't this a flag like the below?
+            AI.Movement.SetCan(MoveType.Teleport, true);
+            AI.Movement.SetCost(MoveType.Teleport, 1.0f);
+            AI.Movement.SetSpeed(MoveType.Teleport, 10.0f);
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             AI.Movement.SetCan(MoveType.EnterVehicle, true);

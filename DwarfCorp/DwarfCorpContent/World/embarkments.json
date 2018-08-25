@@ -1,51 +1,64 @@
 {
-    "Easy": 
-    {
-		"Difficulty" : 1,
-        "Party":  ["Dwarf", "Dwarf", "Dwarf", "Dwarf", "CraftsDwarf", "AxeDwarf", "AxeDwarf"],
-        "Resources": 
-        {
-            "Wood" :  32,
-            "Coal":  16,
-            "Iron" :  16,
-            "Ale" :  16,
-            "Mushroom" :  32,
-            "Gold" :  4,
-            "Mana" :  8
-        },
-        "Money" :  1000
+  "Tranquil": {
+    "Difficulty": 0,
+    "Party": [ "Dwarf", "Dwarf", "Dwarf", "Dwarf", "CraftsDwarf", "AxeDwarf", "AxeDwarf" ],
+    "Resources": {
+      "Wood": 32,
+      "Coal": 16,
+      "Iron": 16,
+      "Ale": 16,
+      "Mushroom": 32,
+      "Gold": 4,
+      "Mana": 8
     },
-    "Normal": 
-    {
-		"Difficulty" : 2,
-        "Party":  ["Dwarf", "Dwarf", "Dwarf", "CraftsDwarf", "AxeDwarf"],
-        "Resources": 
-        {
-            "Wood" :  8,
-            "Iron" :  8,
-            "Ale" :  8,
-            "Mushroom" :  8
-        },
-        "Money":  300
+    "Money": 1000
+  },
+  "Easy": {
+    "Difficulty": 1,
+    "Party": [ "Dwarf", "Dwarf", "Dwarf", "Dwarf", "CraftsDwarf", "AxeDwarf", "AxeDwarf" ],
+    "Resources": {
+      "Wood": 32,
+      "Coal": 16,
+      "Iron": 16,
+      "Ale": 16,
+      "Mushroom": 32,
+      "Gold": 4,
+      "Mana": 8
     },
-    "Hard": 
-    {
-		"Difficulty" : 3,
-        "Party":  ["Dwarf", "Dwarf", "Dwarf", "CraftsDwarf"],
-        "Resources": 
-        {
-            "Wood" :  4,
-            "Iron" :  4,
-            "Ale" :  4,
-            "Mushroom" :  4
-        },
-        "Money" :  100
+    "Money": 1000
+  },
+  "Normal": {
+    "Difficulty": 2,
+    "Party": [ "Dwarf", "Dwarf", "Dwarf", "CraftsDwarf", "AxeDwarf" ],
+    "Resources": {
+      "Wood": 8,
+      "Iron": 8,
+      "Ale": 8,
+      "Mushroom": 8
     },
-    "Extreme": 
-    {
-		"Difficulty" : 4,
-        "Party":  ["Dwarf"],
-        "Resources":  {},
-        "Money" :  0.0
-    }
+    "Money": 300
+  },
+  "Normal Hardcore": {
+    "Difficulty": 2,
+    "Party": [ "Dwarf" ],
+    "Resources": {},
+    "Money": 0.0
+  },
+  "Hard": {
+    "Difficulty": 3,
+    "Party": [ "Dwarf", "Dwarf", "Dwarf", "CraftsDwarf" ],
+    "Resources": {
+      "Wood": 4,
+      "Iron": 4,
+      "Ale": 4,
+      "Mushroom": 4
+    },
+    "Money": 100
+  },
+  "Extreme": {
+    "Difficulty": 4,
+    "Party": [ "Dwarf" ],
+    "Resources": {},
+    "Money": 0.0
+  }
 }
