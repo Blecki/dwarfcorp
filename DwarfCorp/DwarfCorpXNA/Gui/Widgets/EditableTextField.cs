@@ -14,6 +14,7 @@ namespace DwarfCorp.Gui.Widgets
         public String PromptText = "";
 
         public Action<Widget> OnTextChange = null;
+        public Action<Widget> OnEnter = null;
 
         public class BeforeTextChangeEventArgs
         {
@@ -138,6 +139,11 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         Root.SafeCall(ArrowKeyUpDown, this, -1);
                     }
+
+                    if (args.KeyValue == (int)System.Windows.Forms.Keys.Enter)
+                    {
+                        Root.SafeCall(OnEnter, this);
+                    }
 #else
                     if (args.KeyValue == (int)Microsoft.Xna.Framework.Input.Keys.Up)
                     {
@@ -146,6 +152,11 @@ namespace DwarfCorp.Gui.Widgets
                     else if (args.KeyValue == (int)Microsoft.Xna.Framework.Input.Keys.Down)
                     {
                         Root.SafeCall(ArrowKeyUpDown, this, -1);
+                    }
+
+                    if (args.KeyValue == (int)Microsoft.Xna.Framework.Input.KeysEnter)
+                    {
+                        Root.SafeCall(OnEnter, this);
                     }
 #endif
 
