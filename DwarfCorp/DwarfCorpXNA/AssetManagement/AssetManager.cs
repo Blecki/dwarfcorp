@@ -214,14 +214,10 @@ namespace DwarfCorp
         public static IEnumerable<String> EnumerateMatchingPaths(String _AssetPath)
         {
             string AssetPath = FileUtils.NormalizePath(_AssetPath);
-            var searchList = GameSettings.Default.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
-            searchList.AddRange(DirectorySearchList.Where(d => GameSettings.Default.EnabledMods.Contains(d.IdentifierString)).Select(d1 => d1.Directory));
-            searchList.Reverse();
-            searchList.Add("Content");
 
-            foreach (var mod in searchList)
+            foreach (var mod in DirectorySearchList)
             {
-                var resolvedAssetPath = mod + ProgramData.DirChar + AssetPath;
+                var resolvedAssetPath = mod.Directory + ProgramData.DirChar + AssetPath;
                 if (File.Exists(resolvedAssetPath))
                     yield return resolvedAssetPath;
             }
@@ -239,14 +235,10 @@ namespace DwarfCorp
         public static IEnumerable<String> EnumerateAllFiles(String BasePath)
         {
             string basePath = FileUtils.NormalizePath(BasePath);
-            var searchList = GameSettings.Default.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
-            searchList.AddRange(DirectorySearchList.Where(d => GameSettings.Default.EnabledMods.Contains(d.IdentifierString)).Select(d1 => d1.Directory));
-            searchList.Reverse();
-            searchList.Add("Content");
 
-            foreach (var mod in searchList)
+            foreach (var mod in DirectorySearchList)
             {
-                var directoryPath = mod + ProgramData.DirChar + basePath;
+                var directoryPath = mod.Directory + ProgramData.DirChar + basePath;
                 if (!Directory.Exists(directoryPath)) continue;
                 foreach (var file in EnumerateDirectory(directoryPath))
                     yield return file;
