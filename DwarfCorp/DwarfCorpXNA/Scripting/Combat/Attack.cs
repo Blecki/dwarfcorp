@@ -92,6 +92,8 @@ namespace DwarfCorp
 
         public string DiseaseToSpread { get; set; }
 
+        public bool ShootLaser { get; set; }
+
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
@@ -122,6 +124,7 @@ namespace DwarfCorp
             TriggerFrame = other.TriggerFrame;
             HasTriggered = false;
             DiseaseToSpread = other.DiseaseToSpread;
+            ShootLaser = other.ShootLaser;
         }
 
         public Attack(string name, float damage, float time, float range, SoundSource noise, string animation)
@@ -139,6 +142,7 @@ namespace DwarfCorp
             ProjectileType = "";
             AnimationAsset = animation;
             HitAnimation = AnimationLibrary.CreateSimpleAnimation(AnimationAsset);
+            ShootLaser = false;
         }
 
         public IEnumerable<Act.Status> PerformOnVoxel(Creature performer, Vector3 pos, KillVoxelTask DigAct, DwarfTime time, float bonus, string faction)
@@ -298,6 +302,11 @@ namespace DwarfCorp
             if (HitParticles != "")
             {
                 performer.Manager.World.ParticleManager.Trigger(HitParticles, other.LocalTransform.Translation, Color.White, 5);
+
+                if (ShootLaser)
+                {
+                    performer.Manager.World.ParticleManager.TriggerRay(HitParticles, performer.AI.Position, other.LocalTransform.Translation);
+                }
             }
 
             if (HitAnimation != null)

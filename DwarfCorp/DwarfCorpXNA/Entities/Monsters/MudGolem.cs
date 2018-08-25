@@ -87,11 +87,6 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            Physics.AddChild(new SelectionCircle(Manager)
-            {
-                IsVisible = false
-            });
-
             Initialize(blood);
         }
 

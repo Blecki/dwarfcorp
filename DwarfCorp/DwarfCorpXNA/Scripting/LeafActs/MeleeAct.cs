@@ -61,7 +61,13 @@ namespace DwarfCorp
             Name = "Attack!";
             EnergyLoss = 200.0f;
             TargetName = target;
-            CurrentAttack = Datastructures.SelectRandom(agent.Creature.Attacks);
+            List<Attack> attacks = new List<Attack>();
+            attacks.AddRange(agent.Creature.Attacks);
+            if (agent.Creature.Stats.CurrentLevel.ExtraAttacks != null)
+            {
+                attacks.AddRange(agent.Creature.Stats.CurrentLevel.ExtraAttacks);
+            }
+            CurrentAttack = Datastructures.SelectRandom(attacks);
         }
 
         public MeleeAct(CreatureAI agent, Body target) :
@@ -73,7 +79,13 @@ namespace DwarfCorp
             Name = "Attack!";
             EnergyLoss = 200.0f;
             Target = target;
-            CurrentAttack = Datastructures.SelectRandom(agent.Creature.Attacks);
+            List<Attack> attacks = new List<Attack>();
+            attacks.AddRange(agent.Creature.Attacks);
+            if (agent.Creature.Stats.CurrentLevel.ExtraAttacks != null)
+            {
+                attacks.AddRange(agent.Creature.Stats.CurrentLevel.ExtraAttacks);
+            }
+            CurrentAttack = Datastructures.SelectRandom(attacks);
         }
 
         public override void OnCanceled()

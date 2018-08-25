@@ -333,16 +333,19 @@ namespace DwarfCorp.Gui.Widgets
             });
 
 #if ENABLE_CHAT
-            bottomBar.AddChild(new Button()
+            if (Employee != null && Employee.GetRoot().GetComponent<DwarfThoughts>() != null)
             {
-                Text = "Chat...",
-                Tooltip = "Have a talk with your employee.",
-                AutoLayout = AutoLayout.DockRight,
-                OnClick = (sender, args) =>
+                bottomBar.AddChild(new Button()
                 {
-                    Employee.Chat();
-                }
-            });
+                    Text = "Chat...",
+                    Tooltip = "Have a talk with your employee.",
+                    AutoLayout = AutoLayout.DockRight,
+                    OnClick = (sender, args) =>
+                    {
+                        Employee.Chat();
+                    }
+                });
+            }
 #endif
 
 
@@ -354,7 +357,17 @@ namespace DwarfCorp.Gui.Widgets
                 Tooltip = "Click to promote this dwarf.\nPromoting Dwarves raises their pay and makes them\nmore effective workers.",
                 OnClick = (sender, args) =>
                 {
+                    var prevLevel = Employee.Stats.CurrentLevel;
                     Employee.Stats.LevelUp();
+                    if (Employee.Stats.CurrentLevel.HealingPower > prevLevel.HealingPower)
+                    {
+                        Employee.World.MakeAnnouncement(String.Format("{0}'s healing power increased to {1}!", Employee.Stats.FullName, Employee.Stats.CurrentLevel.HealingPower));
+                    }
+
+                    if (Employee.Stats.CurrentLevel.ExtraAttacks.Count > prevLevel.ExtraAttacks.Count)
+                    {
+                        Employee.World.MakeAnnouncement(String.Format("{0} learned to cast {1}!", Employee.Stats.FullName, Employee.Stats.CurrentLevel.ExtraAttacks.Last().Name));
+                    }
                     SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
                     Invalidate();
                     Employee.Creature.AddThought(Thought.ThoughtType.GotPromoted);

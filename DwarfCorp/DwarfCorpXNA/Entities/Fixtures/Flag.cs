@@ -60,7 +60,6 @@ namespace DwarfCorp
             this.Logo = logo;
 
             Tags.Add("Flag");
-
             CollisionType = CollisionType.Static;
             CreateCosmeticChildren(Manager);
         }

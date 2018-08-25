@@ -98,6 +98,151 @@
     "CraftActBehavior": "Normal"
   },
   {
+    "Name": "Summoning Circle",
+    "EntityName": "Summoning Circle",
+    "RequiredResources": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 4
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 20
+    },
+    "BaseCraftTime": 30.0,
+    "Description": "Dwarfs can teleport to the summoning circle when in need.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal",
+	"Category": "Magic",
+	"IsMagical": true
+  },
+  {
+    "Name": "Tower of Life",
+    "EntityName": "Tower of Life",
+	"Category": "Magic",
+    "RequiredResources": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 4
+      },
+	  {
+        "ResourceType": "AboveGroundPlant",
+        "NumResources": 2
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 21
+    },
+    "BaseCraftTime": 20.0,
+    "Description": "Place near farms to watch them grow faster.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal",
+	"IsMagical": true
+  },
+  {
+    "Name": "Tower of Health",
+    "EntityName": "Tower of Health",
+	"Category": "Magic",
+    "RequiredResources": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 4
+      },
+	  {
+        "ResourceType": "Edible",
+        "NumResources": 2
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 22
+    },
+    "BaseCraftTime": 20.0,
+    "Description": "Heals your dwarfs when they are feeling ill.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal",
+	"IsMagical": true
+  },
+  {
+    "Name": "Magic Helper",
+    "EntityName": "Fairy",
+	"Category": "Magic",
+    "RequiredResources": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 4
+      },
+    ],
+    "Icon": {
+      "Sheet": "tool-icons",
+      "Tile": 20
+    },
+    "BaseCraftTime": 20.0,
+    "Description": "A magical construct that persists for 24 hours.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Summon",
+    "PastTeseVerb": "Summoned",
+    "CurrentVerb": "Summoning",
+	"CraftLocation": "Teleporter",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": false,
+    "Moveable": false,
+    "CraftActBehavior": "Normal",
+	"IsMagical": true
+  },
+  {
     "Name": "Wooden Ladder",
     "EntityName": "Ladder",
 	"Category" : "Ladders",
@@ -459,43 +604,6 @@
   },
 
   {
-    "Name": "Turret",
-    "EntityName": "Turret",
-    "RequiredResources": [
-      {
-        "ResourceType": "Metal",
-        "NumResources": 2
-      },
-      {
-        "ResourceType": "Magical",
-        "NumResources": 1
-      }
-    ],
-    "Icon": {
-      "Sheet": "furniture",
-      "Tile": 57
-    },
-    "BaseCraftTime": 90.0,
-    "Description": "Crossbow automatically targets enemies with magical power.",
-    "Type": "Object",
-    "Prerequisites": [
-      "OnGround"
-    ],
-    "ResourceCreated": {
-      "_value": ""
-    },
-    "CraftLocation": "",
-    "Verb": "Build",
-    "PastTeseVerb": "Built",
-    "CurrentVerb": "Building",
-    "AllowHeterogenous": false,
-    "SpawnOffset": "0, 0.5, 0",
-    "AddToOwnedPool": true,
-    "Moveable": true,
-    "CraftActBehavior": "Normal"
-  },
-
-  {
     "Name": "Wooden Chair",
     "EntityName": "Wooden Chair",
 	"Category": "Chairs",
@@ -733,7 +841,6 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-
   {
     "Name": "Forge",
     "EntityName": "Forge",
@@ -802,7 +909,7 @@
 
   {
     "Name": "Cutting Board",
-    "EntityName": "Kitchen Table",
+    "EntityName": "Cutting Board",
     "RequiredResources": [
       {
         "ResourceType": "Wood",
@@ -1041,8 +1148,8 @@
     "CraftActBehavior": "Normal"
   },
   {
-    "Name": "Potions",
-    "EntityName": "Potions",
+    "Name": "Apocethary",
+    "EntityName": "Apocethary",
 	"Category" : "Magic",
     "RequiredResources": [
       {
@@ -1055,7 +1162,7 @@
       "Tile": 33
     },
     "BaseCraftTime": 40.0,
-    "Description": "Dwarves can do magical research here.",
+    "Description": "Wizards can brew potions here.",
     "Type": "Object",
     "Prerequisites": [
       "OnGround"
@@ -1071,43 +1178,9 @@
     "SpawnOffset": "0, 0.5, 0",
     "AddToOwnedPool": true,
     "Moveable": true,
-    "CraftActBehavior": "Normal"
+    "CraftActBehavior": "Normal",
+	"IsMagical": true
   },
-
-  {
-    "Name": "Books",
-    "EntityName": "Books",
-    "Category" : "Magic",
-    "RequiredResources": [
-      {
-        "ResourceType": "Magical",
-        "NumResources": 2
-      }
-    ],
-    "Icon": {
-      "Sheet": "furniture",
-      "Tile": 32
-    },
-    "BaseCraftTime": 40.0,
-    "Description": "Dwarves can do magical research here.",
-    "Type": "Object",
-    "Prerequisites": [
-      "OnGround"
-    ],
-    "ResourceCreated": {
-      "_value": ""
-    },
-    "CraftLocation": "",
-    "Verb": "Build",
-    "PastTeseVerb": "Built",
-    "CurrentVerb": "Building",
-    "AllowHeterogenous": false,
-    "SpawnOffset": "0, 0.5, 0",
-    "AddToOwnedPool": true,
-    "Moveable": true,
-    "CraftActBehavior": "Normal"
-  },
-
   {
     "Name": "Bookshelf",
     "EntityName": "Bookshelf",
@@ -1140,7 +1213,8 @@
     "SpawnOffset": "0, 0, 0",
     "AddToOwnedPool": true,
     "Moveable": true,
-    "CraftActBehavior": "Normal"
+    "CraftActBehavior": "Normal",
+	"IsMagical": true
   },
 
   {
@@ -1204,7 +1278,39 @@
     "Moveable": false,
     "CraftActBehavior": "Normal"
   },
+    {
+    "Name": "Refined Mana",
+    "EntityName": "Refined Mana",
+    "RequiredResources": [
+      {
+        "ResourceType": "Mana",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "resources",
+      "Tile": 43
+    },
+    "BaseCraftTime": 5.0,
+    "Description": "Refine magic to its purest form.",
+    "Type": "Resource",
+    "Prerequisites": [],
+    "ResourceCreated": {
+      "_value": "Refined Mana"
+    },
+    "CraftLocation": "Apocethary",
+    "Verb": "Refine",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": false,
+    "Moveable": false,
+    "CraftActBehavior": "Normal",
+	"CraftedResultsCount" : 8,
+	"IsMagical": true
 
+  },
   {
     "Name": "Rail",
     "EntityName": "Rail",
@@ -1272,7 +1378,44 @@
     "Moveable": true,
     "CraftActBehavior": "Normal"
   },
-
+  {
+    "Name": "Turret",
+    "EntityName": "Turret",
+    "RequiredResources": [
+      {
+        "ResourceType": "Metal",
+        "NumResources": 2
+      },
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      }
+    ],
+    "Icon": {
+      "Sheet": "furniture",
+      "Tile": 57
+    },
+    "BaseCraftTime": 90.0,
+    "Description": "Crossbow automatically targets enemies with magical power. Detects cloaked creatures.",
+    "Type": "Object",
+    "Prerequisites": [
+      "OnGround"
+    ],
+    "ResourceCreated": {
+      "_value": ""
+    },
+    "CraftLocation": "",
+    "Verb": "Build",
+    "PastTeseVerb": "Built",
+    "CurrentVerb": "Building",
+    "AllowHeterogenous": false,
+    "SpawnOffset": "0, 0.5, 0",
+    "AddToOwnedPool": true,
+    "Moveable": true,
+    "CraftActBehavior": "Normal",
+	"Category": "Magic",
+	"IsMagical": true
+  },
   {
     "Name": "Conveyor",
     "EntityName": "Conveyor",

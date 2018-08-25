@@ -1,4 +1,4 @@
-﻿// GoTrainAct.cs
+// KillEntityAct.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -34,75 +34,74 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     [Newtonsoft.Json.JsonObject(IsReference = true)]
-    internal class GoTrainAct : CompoundCreatureAct
+    public class RechargeObjectAct : CompoundCreatureAct
     {
-        public bool Magical { get; set; }
+        public MagicalObject Entity { get; set; }
+        public bool PathExists { get; set; }
 
-        public GoTrainAct()
+        public RechargeObjectAct()
         {
-
+            PathExists = false;
         }
 
-
-        public GoTrainAct(CreatureAI creature) :
-            base(creature)
+        public bool Verify(CreatureAI creature)
         {
-            Name = "Train";
+            return Entity != null && !Entity.IsDead && Entity.CurrentCharges < Entity.MaxCharges;
         }
 
-        public IEnumerable<Act.Status> DoMagicResearch()
+        public IEnumerable<Act.Status> OnRechargeEnd(CreatureAI creature)
         {
-            var obj = Agent.Blackboard.GetData<Body>("Research");
-            if (obj == null)
-            {
-                yield return Act.Status.Fail;
-                yield break;
-            }
-
-            float timer = 0;
-            foreach (var status in Creature.HitAndWait(false, () => { return 10.0f;}, () => { return timer; }, () => { timer++; }, () => { return obj.Position; }, ContentPaths.Audio.Oscar.sfx_ic_dwarf_magic_research))
-            {
-                yield return Act.Status.Running;
-            }
-            Creature.AI.AddXP(10);
+            creature.Creature.OverrideCharacterMode = false;
+            creature.Creature.CurrentCharacterMode = CharacterMode.Idle;
+            creature.Creature.Physics.Orientation = Physics.OrientMode.RotateY;
+            creature.Physics.Active = true;
             yield return Act.Status.Success;
         }
 
-        public override void Initialize()
+        public IEnumerable<Act.Status> Recharge()
         {
-            var tag = Magical ? "Research" : "Train";
-            Act trainAct = Magical ? new Wrap(DoMagicResearch) { Name = "Magic research" } as Act :
-                new MeleeAct(Agent, "Train") { Training = true, Timeout = new Timer(10.0f, false) };
-            Act unreserveAct = new Wrap(() => Creature.Unreserve(tag));
-            Tree = new Sequence(
-                new Wrap(() => Creature.FindAndReserve(tag, tag)),
-                new Sequence
-                    (
-                        new GoToTaggedObjectAct(Agent) { Tag = tag, Teleport = false, TeleportOffset = new Vector3(1, 0, 0), ObjectName = tag },
-                        trainAct,
-                        unreserveAct
-                    ) | new Sequence(unreserveAct, false)
-                    ) | new Sequence(unreserveAct, false);
-            base.Initialize();
+            foreach (var status in Agent.Creature.HitAndWait(true,
+                () => { return Entity.MaxCharges; },
+                () => { return Entity.CurrentCharges; },
+                () => { Entity.CurrentCharges++; }, () => { return (Entity.GetRoot() as Body).Position; }))
+            {
+                yield return Act.Status.Running;
+            }
+            yield return Act.Status.Success;
         }
 
+        public RechargeObjectAct(MagicalObject entity, CreatureAI creature) :
+            base(creature)
+        {
+            Entity = entity;
+            Name = "Recharge Object";
+            PlanAct.PlanType planType = PlanAct.PlanType.Adjacent;
+            Tree =
+                new Domain(Verify(creature), new Sequence
+                    (
+                    new GoToEntityAct(Entity.GetRoot() as Body, creature)
+                    {
+                        MovingTarget = true,
+                        PlanType = planType,
+                        Radius = 2.0f
+                    } | new Wrap(() => OnRechargeEnd(creature)),
+                    new Wrap(Recharge) { Name = "Recharge Object" },
+                    new Wrap(() => OnRechargeEnd(creature))
+                    )) | new Wrap(() => OnRechargeEnd(creature));
+        }
 
         public override void OnCanceled()
         {
-            var tag = Magical ? "Research" : "Train";
-            foreach (var statuses in Creature.Unreserve(tag))
+            foreach(var status in OnRechargeEnd(Creature.AI))
             {
                 continue;
             }
             base.OnCanceled();
         }
-
-
     }
+
 }

@@ -52,7 +52,7 @@ namespace DwarfCorp
                     Name = "Bachelor of Magical Studies",
                     Pay = 25,
                     XP = 0,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new CreatureStats.StatNums(),
                 },
                 new Level
                 {
@@ -77,7 +77,8 @@ namespace DwarfCorp
                         Intelligence = 7,
                         Constitution = 6,
                         Charisma = 6
-                    }
+                    },
+                    HealingPower = 1
                 },
                 new Level
                 {
@@ -91,6 +92,18 @@ namespace DwarfCorp
                         Constitution = 7,
                         Charisma = 6,
                         Dexterity = 6
+                    },
+                    HealingPower = 5,
+                    ExtraAttacks = new List<Attack>()
+                    {
+                        new Attack("Fireball", 5.0f, 3.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_lava_spread), ContentPaths.Effects.explode)
+                        {
+                            Mode = Attack.AttackMode.Area,
+                            TriggerFrame = 2,
+                            TriggerMode = Attack.AttackTrigger.Animation,
+                            HitParticles = "flame",
+                            ShootLaser = true
+                        }
                     }
                 },
                 new Level
@@ -105,6 +118,18 @@ namespace DwarfCorp
                         Constitution = 7,
                         Charisma = 6,
                         Dexterity = 6
+                    },
+                    HealingPower = 10,
+                    ExtraAttacks = new List<Attack>()
+                    {
+                        new Attack("Fireball", 15.0f, 3.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_lava_spread), ContentPaths.Effects.explode)
+                        {
+                            Mode = Attack.AttackMode.Area,
+                            TriggerFrame = 2,
+                            TriggerMode = Attack.AttackTrigger.Animation,
+                            HitParticles = "flame",
+                            ShootLaser = true
+                        }
                     }
                 },
                 new Level
@@ -119,6 +144,18 @@ namespace DwarfCorp
                         Constitution = 8,
                         Charisma = 7,
                         Dexterity = 7
+                    },
+                    HealingPower = 15,
+                    ExtraAttacks = new List<Attack>()
+                    {
+                        new Attack("Fireball", 20.0f, 3.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_lava_spread), ContentPaths.Effects.explode)
+                        {
+                            Mode = Attack.AttackMode.Area,
+                            TriggerFrame = 2,
+                            TriggerMode = Attack.AttackTrigger.Animation,
+                            HitParticles = "flame",
+                            ShootLaser = true
+                        }
                     }
                 },
                 new Level
@@ -133,6 +170,18 @@ namespace DwarfCorp
                         Constitution = 8,
                         Charisma = 8,
                         Dexterity = 8
+                    },
+                    HealingPower = 20,
+                    ExtraAttacks = new List<Attack>()
+                    {
+                        new Attack("Fireball", 40.0f, 3.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_lava_spread), ContentPaths.Effects.explode)
+                        {
+                            Mode = Attack.AttackMode.Area,
+                            TriggerFrame = 2,
+                            TriggerMode = Attack.AttackTrigger.Animation,
+                            HitParticles = "flame",
+                            ShootLaser = true
+                        }
                     }
                 },
                 new Level
@@ -148,6 +197,18 @@ namespace DwarfCorp
                         Charisma = 9,
                         Dexterity = 9,
                         Strength = 6
+                    },
+                    HealingPower = 20,
+                    ExtraAttacks = new List<Attack>()
+                    {
+                        new Attack("Fireball", 40.0f, 3.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_lava_spread), ContentPaths.Effects.explode)
+                        {
+                            Mode = Attack.AttackMode.Area,
+                            TriggerFrame = 2,
+                            TriggerMode = Attack.AttackTrigger.Animation,
+                            HitParticles = "flame",
+                            ShootLaser = true
+                        }
                     }
 
                 },
@@ -164,6 +225,18 @@ namespace DwarfCorp
                         Charisma = 10,
                         Dexterity = 10,
                         Strength = 6
+                    },
+                    HealingPower = 20,
+                    ExtraAttacks = new List<Attack>()
+                    {
+                        new Attack("Fireball", 40.0f, 3.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_lava_spread), ContentPaths.Effects.explode)
+                        {
+                            Mode = Attack.AttackMode.Area,
+                            TriggerFrame = 2,
+                            TriggerMode = Attack.AttackTrigger.Animation,
+                            HitParticles = "flame",
+                            ShootLaser = true
+                        }
                     }
                 },
                 new Level
@@ -179,6 +252,18 @@ namespace DwarfCorp
                         Charisma = 10,
                         Dexterity = 10,
                         Strength = 10
+                    },
+                    HealingPower = 20,
+                    ExtraAttacks = new List<Attack>()
+                    {
+                        new Attack("Fireball", 40.0f, 3.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_lava_spread), ContentPaths.Effects.explode)
+                        {
+                            Mode = Attack.AttackMode.Area,
+                            TriggerFrame = 2,
+                            TriggerMode = Attack.AttackTrigger.Animation,
+                            HitParticles = "flame",
+                            ShootLaser = true
+                        }
                     }
                 },
                 new Level
@@ -194,6 +279,18 @@ namespace DwarfCorp
                         Charisma = 10,
                         Dexterity = 10,
                         Strength = 10
+                    },
+                    HealingPower = 20,
+                    ExtraAttacks = new List<Attack>()
+                    {
+                        new Attack("Fireball", 40.0f, 3.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_env_lava_spread), ContentPaths.Effects.explode)
+                        {
+                            Mode = Attack.AttackMode.Area,
+                            TriggerFrame = 2,
+                            TriggerMode = Attack.AttackTrigger.Animation,
+                            HitParticles = "flame",
+                            ShootLaser = true
+                        }
                     }
                 }
             };
