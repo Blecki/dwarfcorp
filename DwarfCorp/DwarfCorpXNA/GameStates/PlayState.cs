@@ -1034,6 +1034,7 @@ namespace DwarfCorp.GameStates
                 Font = "font18-outline",
                 TextColor = Color.White.ToVector4(),
                 MaximumSize = new Point(0, 0),
+                WrapText = false,
                 Hidden = true,
             });
 
