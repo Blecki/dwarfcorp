@@ -59,6 +59,7 @@ namespace DwarfCorp
         public List<CreatureAI> Enemies { get; set; }
         public Timer SenseTimer { get; set; }
         public float SenseRadius { get; set; }
+        public bool DetectCloaked { get; set; }
 
         public EnemySensor() : base()
         {
@@ -107,8 +108,11 @@ namespace DwarfCorp
                     Relationship.Hateful) continue;
 
                 if (!minion.Active) continue;
-                // TODO add small chance of detecting a cloaked creature.
-                if (minion.Creature.IsCloaked) continue;
+
+                if (!DetectCloaked && minion.Creature.IsCloaked)
+                    continue;
+                else if (DetectCloaked && minion.Creature.IsCloaked)
+                    minion.Creature.IsCloaked = false;
 
                 float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
                 

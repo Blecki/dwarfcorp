@@ -64,6 +64,8 @@ namespace DwarfCorp
             foreach (var tinter in CraftDesignation.Entity.EnumerateAll().OfType<Tinter>())
                 tinter.Stipple = true;
             BoredomIncrease = 0.2f;
+            if (CraftDesignation.ItemType.IsMagical)
+                Category = TaskCategory.Research;
         }
 
         public override void OnEnqueued(Faction Faction)
@@ -116,7 +118,10 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
+            if (!CraftDesignation.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
+                return Feasibility.Infeasible;
+
+            if (CraftDesignation.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.Research))
                 return Feasibility.Infeasible;
 
             if (agent.AI.Status.IsAsleep)

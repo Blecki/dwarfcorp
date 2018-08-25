@@ -52,5 +52,10 @@ namespace DwarfCorp
             creature.Stats.StatBuffs -= Buffs;
             base.OnEnd(creature);
         }
+
+        public override bool IsRelevant(Creature creature)
+        {
+            return creature.Buffs.Count == 0;
+        }
     }
 }

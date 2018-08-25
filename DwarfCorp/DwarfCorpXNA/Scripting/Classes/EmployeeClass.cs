@@ -59,6 +59,8 @@ namespace DwarfCorp
             public DwarfBux Pay;
             public int XP;
             public CreatureStats.StatNums BaseStats;
+            public List<Attack> ExtraAttacks = new List<Attack>();
+            public int HealingPower = 0;
         }
         public List<Animation> Animations { get; set; }
         public string MinecartAnimations { get; set; }

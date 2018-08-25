@@ -60,7 +60,8 @@ namespace DwarfCorp
             Sensor = AddChild(new EnemySensor(Manager, "sensor", Matrix.Identity, new Vector3(8, 8, 8),
                 Vector3.Zero)
             {
-                Allies = faction
+                Allies = faction,
+                DetectCloaked = true
             }) as EnemySensor;
 
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
@@ -70,6 +71,7 @@ namespace DwarfCorp
             TurretSprite.OrientationType = SimpleSprite.OrientMode.Fixed;
             SetTurretAngle(0.0f);
             CreateCosmeticChildren(manager);
+            AddChild(new MagicalObject(Manager));
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
@@ -128,6 +130,7 @@ namespace DwarfCorp
                     Weapon.LaunchProjectile(Position + Vector3.Up * 0.5f, closestCreature.Position, closestCreature.Physics);
                     Weapon.PlayNoise(Position);
                     Weapon.RechargeTimer.Reset();
+                    GetComponent<MagicalObject>().CurrentCharges--;
                 }
             }
             if (Math.Abs(_currentAngle - _targetAngle) > 0.001f)

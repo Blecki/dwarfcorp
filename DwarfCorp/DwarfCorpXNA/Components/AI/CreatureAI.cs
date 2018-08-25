@@ -301,6 +301,7 @@ namespace DwarfCorp
                     bestTask = task;
                     bestPriority = task.Priority;
                 }
+
             }
 
             return bestTask;
@@ -318,6 +319,20 @@ namespace DwarfCorp
 
             if (_preEmptTimer.HasTriggered)
             {
+                var inventory = Creature.Inventory;
+                if (inventory != null && inventory.Resources.Any(resource => ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(Resource.ResourceTags.Potion)))
+                {
+                    var applicablePotions = inventory.Resources.Where(resource => !resource.MarkedForRestock).
+                        Select(resource => ResourceLibrary.GetResourceByName(resource.Resource)).
+                        Where(resource => resource.Tags.Contains(Resource.ResourceTags.Potion) && PotionLibrary.Potions[resource.PotionType].ShouldDrink(Creature));
+                    var potion = applicablePotions.FirstOrDefault();
+                    if (potion != null)
+                    {
+                        PotionLibrary.Potions[potion.PotionType].Drink(Creature);
+                        inventory.Remove(new ResourceAmount(potion), Inventory.RestockType.Any);
+                    }
+                }
+
                 foreach (Task task in Tasks)
                 {
                     if (task.Priority > CurrentTask.Priority && task.IsFeasible(Creature) == Task.Feasibility.Feasible)
@@ -851,6 +866,15 @@ namespace DwarfCorp
                 var candidate = World.Master.TaskManager.GetBestTask(this);
                 if (candidate != null)
                     return candidate;
+
+                if (Stats.CurrentLevel.HealingPower > 0 && Faction.Minions.Any(minion => !minion.Creature.Status.Health.IsSatisfied()))
+                {
+                    var minion = Faction.Minions.FirstOrDefault(m => m != this && !m.Status.Health.IsSatisfied());
+                    if (minion != null)
+                    {
+                        return new MagicHealAllyTask(minion);
+                    }
+                }
             }
 
             if (!IsPosessed && Faction == World.PlayerFaction && Creature.Inventory.Resources.Count > 0)
@@ -905,13 +929,25 @@ namespace DwarfCorp
 
 
                 // Find a room to train in, if applicable.
-                if (Stats.IsTaskAllowed(Task.TaskCategory.Attack) && MathFunctions.RandEvent(0.01f))
+                if (Stats.IsTaskAllowed(Task.TaskCategory.Attack) && MathFunctions.RandEvent(0.05f))
                 {
-                    var closestTraining = Faction.FindNearestItemWithTags("Train", Position, true, this);
-
-                    if (closestTraining != null)
+                    if (!Stats.IsTaskAllowed(Task.TaskCategory.Research))
                     {
-                        return new ActWrapperTask(new GoTrainAct(this));
+                        var closestTraining = Faction.FindNearestItemWithTags("Train", Position, true, this);
+
+                        if (closestTraining != null)
+                        {
+                            return new ActWrapperTask(new GoTrainAct(this)) { Name = "train", ReassignOnDeath = false, Priority = Task.PriorityType.Low };
+                        }
+                    }
+                    else
+                    {
+                        var closestTraining = Faction.FindNearestItemWithTags("Research", Position, true, this);
+
+                        if (closestTraining != null)
+                        {
+                            return new ActWrapperTask(new GoTrainAct(this) { Magical = true }) { Name = "do magic research", ReassignOnDeath = false, Priority = Task.PriorityType.Low };
+                        }
                     }
                 }
 
@@ -976,6 +1012,12 @@ namespace DwarfCorp
                         Priority = Task.PriorityType.Low
                     };
                 }
+            }
+
+
+            if (MathFunctions.RandEvent(0.1f) && Faction == World.PlayerFaction && Faction.ListResourcesWithTag(Resource.ResourceTags.Potion).Count > 0)
+            {
+                return new GatherPotionsTask();
             }
             
             return new LookInterestingTask();

@@ -75,10 +75,10 @@ namespace DwarfCorp
             }
             blackboard.SetData<string>("CraftType", CraftType.Name);
 
-            var previewBody = EntityFactory.CreateEntity<Body>(
+            var previewBody = EntityFactory.CreateEntity<GameComponent>(
                 CraftType.EntityName, 
                 Player.VoxSelector.VoxelUnderMouse.WorldPosition,
-                blackboard);
+                blackboard).GetRoot() as Body;
             previewBody.SetFlagRecursive(GameComponent.Flag.Active, false);
             previewBody.SetVertexColorRecursive(Color.White);
             previewBody.SetFlagRecursive(GameComponent.Flag.ShouldSerialize, false);

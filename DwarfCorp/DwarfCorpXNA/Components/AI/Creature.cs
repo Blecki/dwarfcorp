@@ -173,6 +173,15 @@ namespace DwarfCorp
         }
 
 
+        public void DeleteSelectionCircle()
+        {
+            if (_selectionCircle != null)
+            {
+                _selectionCircle.Delete();
+                _selectionCircle = null;
+            }
+        }
+
         /// <summary> The selection circle is drawn when the character is selected </summary>
         private SelectionCircle _selectionCircle = null;
         [JsonIgnore] public SelectionCircle SelectionCircle
@@ -364,6 +373,16 @@ namespace DwarfCorp
                 Physics.AllowPhysicsSleep = false;
 
                 addToSpeciesCount();
+            }
+
+            if (_selectionCircle != null && 
+                Faction == World.PlayerFaction && World.Master.SelectedMinions.Contains(AI))
+            {
+                _selectionCircle.IsVisible = true;
+            }
+            else if (_selectionCircle != null)
+            {
+                _selectionCircle.IsVisible = false;
             }
 
             if (AI == null)
@@ -788,7 +807,6 @@ namespace DwarfCorp
                 Physics.Active = false;
                 Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos());
                 Physics.Velocity = Vector3.Zero;
-                Sprite.ReloopAnimations(AttackMode);
 
                 if (!String.IsNullOrEmpty(playSound))
                 {
@@ -798,6 +816,7 @@ namespace DwarfCorp
                 incrementTimer.Update(DwarfTime.LastTime);
                 if (incrementTimer.HasTriggered)
                 {
+                    Sprite.ReloopAnimations(AttackMode);
                     incrementProgress();
                 }
 
@@ -858,11 +877,10 @@ namespace DwarfCorp
             string prefix = damage > 0 ? "-" : "+";
             Color color = damage > 0 ? GameSettings.Default.Colors.GetColor("Negative", Color.Red) : GameSettings.Default.Colors.GetColor("Positive", Color.Green);
 
-            IndicatorManager.DrawIndicator(prefix + (int)amount + " HP",
-                AI.Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, color);
-
-            if (damage > 0)
+            if (AI != null)
             {
+                IndicatorManager.DrawIndicator(prefix + (int)amount + " HP",
+                AI.Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, color);
                 NoiseMaker.MakeNoise("Hurt", AI.Position);
                 Sprite.Blink(0.5f);
                 AddThought(Thought.ThoughtType.TookDamage);
@@ -873,7 +891,6 @@ namespace DwarfCorp
                     Manager.World.ParticleManager.Trigger(trigger.EmitterName, AI.Position, Color.White, 2);
                 DrawLifeTimer.Reset();
             }
-
 
             return damage;
         }

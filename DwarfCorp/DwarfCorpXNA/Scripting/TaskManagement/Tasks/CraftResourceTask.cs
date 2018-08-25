@@ -76,6 +76,10 @@ namespace DwarfCorp
                 : "Craft";
             AutoRetry = true;
             BoredomIncrease = 0.2f;
+            if (selectedResource.IsMagical)
+            {
+                Category = TaskCategory.Research;
+            }
         }
 
         public IEnumerable<Act.Status> Repeat(Creature creature)
@@ -134,8 +138,12 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
+            if (!this.Item.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
                 return Feasibility.Infeasible;
+
+            if (this.Item.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.Research))
+                return Feasibility.Infeasible;
+
             return HasResources(agent) && HasLocation(agent) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 

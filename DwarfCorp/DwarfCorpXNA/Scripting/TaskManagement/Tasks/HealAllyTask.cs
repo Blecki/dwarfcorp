@@ -101,6 +101,90 @@ namespace DwarfCorp
         }
     }
 
+    public class MagicHealAllyAct : CompoundCreatureAct
+    {
+        public CreatureAI Ally { get; set; }
+
+        public MagicHealAllyAct()
+        {
+            Name = "Heal a friend";
+        }
+
+        public MagicHealAllyAct(CreatureAI me, CreatureAI other) :
+            base(me)
+        {
+            Ally = other;
+            Name = String.Format("Heal {0}", other.Stats.FullName);
+        }
+
+
+        public IEnumerable<Act.Status> HealAlly()
+        {
+            Timer healTimer = new Timer(1.0f, false);
+            while (!Ally.IsDead && !Ally.Status.Health.IsSatisfied() && (Ally.Position - Agent.Position).Length() < 3)
+            {
+                Agent.Physics.Face(Ally.Position);
+                Agent.Creature.CurrentCharacterMode = Agent.Creature.AttackMode;
+                healTimer.Update(DwarfTime.LastTime);
+                if (healTimer.HasTriggered)
+                {
+                    Agent.Creature.Sprite.ReloopAnimations(Agent.Creature.AttackMode);
+                    int amount = Agent.Stats.CurrentLevel.HealingPower;
+                    Ally.Creature.Heal(amount);
+                    IndicatorManager.DrawIndicator((amount).ToString() + " HP",
+                    Ally.Position, 1.0f,
+                    GameSettings.Default.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
+                    Ally.Creature.DrawLifeTimer.Reset();
+                    Agent.World.ParticleManager.TriggerRay("star_particle", Agent.Position, Ally.Position);
+                    SoundManager.PlaySound(ContentPaths.Audio.tinkle, Agent.Position, true, 1.0f);
+                }
+                yield return Act.Status.Running;
+            }
+            yield return Act.Status.Success;
+        }
+
+        public override void Initialize()
+        {
+            Tree = new Select(new Sequence(
+                    new Domain(() => !Ally.IsDead &&! Ally.Status.Health.IsSatisfied(),
+           new GoToEntityAct(Ally.Physics, Agent)),
+           new Wrap(() => HealAlly()) { Name = "Heal ally." }));
+            base.Initialize();
+        }
+    }
+
+
+    public class MagicHealAllyTask : Task
+    {
+        public CreatureAI Ally;
+        public MagicHealAllyTask()
+        {
+            Name = "Heal Ally Magically";
+            ReassignOnDeath = false;
+        }
+
+        public MagicHealAllyTask(CreatureAI ally)
+        {
+            Ally = ally;
+            Name = String.Format("Heal {0} magically.", ally.Stats.FullName);
+            ReassignOnDeath = false;
+        }
+
+        public override Feasibility IsFeasible(Creature agent)
+        {
+            return agent.AI != Ally && !Ally.IsDead && !Ally.Status.Health.IsSatisfied() && agent.Stats.CurrentLevel.HealingPower > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
+        }
+
+        public override bool IsComplete(Faction faction)
+        {
+            return Ally.IsDead || Ally.Status.Health.IsSatisfied();
+        }
+
+        public override Act CreateScript(Creature agent)
+        {
+            return new MagicHealAllyAct(agent.AI, Ally);
+        }
+    }
     public class HealAllyTask : Task
     {
         public CreatureAI Ally;

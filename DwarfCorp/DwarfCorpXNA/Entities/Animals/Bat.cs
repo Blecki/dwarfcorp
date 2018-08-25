@@ -64,11 +64,6 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            Physics.AddChild(new SelectionCircle(Manager)
-            {
-                IsVisible = false
-            });
-
             // Called from constructor with appropriate sprite asset as a string
             Initialize();
         }

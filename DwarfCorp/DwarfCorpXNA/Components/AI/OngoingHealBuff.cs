@@ -22,12 +22,20 @@ namespace DwarfCorp
 
         /// <summary> Amount to heal the creature in HP per second </summary>
         public float DamagePerSecond { get; set; }
-
+        private Timer DamageTimer = new Timer(1.0f, false);
         public override void Update(DwarfTime time, Creature creature)
         {
-            var dt = (float)time.ElapsedGameTime.TotalSeconds;
-            creature.Heal(dt * DamagePerSecond);
+            DamageTimer.Update(time);
 
+            if (DamageTimer.HasTriggered)
+            {
+                creature.Heal(DamagePerSecond);
+                creature.DrawLifeTimer.Reset();
+                IndicatorManager.DrawIndicator((DamagePerSecond).ToString() + " HP",
+                    creature.Physics.Position, 1.0f,
+                     GameSettings.Default.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
+            }
+           
             base.Update(time, creature);
         }
 
@@ -44,5 +52,30 @@ namespace DwarfCorp
                 DamagePerSecond = DamagePerSecond
             };
         }
+
+        public override bool IsRelevant(Creature creature)
+        {
+            return creature.Hp < creature.MaxHealth;
+        }
     }
+
+    public class CureDiseaseBuff : Buff
+    {
+        public override bool IsRelevant(Creature creature)
+        {
+            return creature.Buffs.Any(buff => buff is Disease);
+        }
+
+        public override void OnApply(Creature creature)
+        {
+            foreach(var disease in creature.Buffs.OfType<Disease>())
+            {
+                disease.OnEnd(creature);
+            }
+
+            creature.Buffs.RemoveAll(buff => buff is Disease);
+            base.OnApply(creature);
+        }
+    }
+
 }

@@ -26,6 +26,7 @@ namespace DwarfCorp
         ClimbWalls,
         EnterVehicle,
         RideVehicle,
-        ExitVehicle
+        ExitVehicle,
+        Teleport
     }
 }

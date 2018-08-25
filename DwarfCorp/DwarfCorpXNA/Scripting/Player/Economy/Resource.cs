@@ -86,6 +86,8 @@ namespace DwarfCorp
 
         public CraftItemInfo CraftInfo { get; set; }
 
+        public string PotionType { get; set; }
+
         // Todo: Replace this with strings so mods can extend it.
         public enum ResourceTags
         {
@@ -128,7 +130,9 @@ namespace DwarfCorp
             Jolly,
             Rail,
             Explosive,
-            CraftItem
+            CraftItem,
+            Mana,
+            Potion
         }
 
         public Resource()

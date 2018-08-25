@@ -84,10 +84,6 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            Physics.AddChild(new SelectionCircle(Manager)
-            {
-                IsVisible = false
-            });
 
             Species = species;
             BaseMeatResource = "Bird Meat";
