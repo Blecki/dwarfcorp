@@ -82,6 +82,18 @@ namespace DwarfCorp.GameStates.ModManagement
                 Border = "border-button",
                 OnClick = (sender, args) =>
                 {
+                    if (!Steam.SteamAvailable)
+                    {
+                        List.ClearItems();
+                        List.AddItem(new Widget()
+                        {
+                            Text = "Error: Can't connect to steam!",
+                            Background = new TileReference("basic", 0),
+                            TextColor = new Vector4(0, 0, 0, 1),
+                        });
+                        return;
+                    }
+
                     if (!Steam.HasTransactionOfType<UGCQuery>())
                         Steam.AddTransaction(new UGCTransactionProcessor
                         {
