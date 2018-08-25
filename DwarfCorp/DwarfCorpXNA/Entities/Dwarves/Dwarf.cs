@@ -220,18 +220,20 @@ namespace DwarfCorp
         {
             var layers = LayeredSprites.LayerLibrary.EnumerateLayers(Layer).Where(l => !l.DefaultLayer && l.PassesFilter(this.Stats));
             if (layers.Count() > 0)
-                Sprite.AddLayer(layers.SelectRandom(Random), Palette);
+            {
+                var newLayer = layers.SelectRandom(Random);
+                Sprite.AddLayer(newLayer, Palette);
+                // Do not allow hats and hair on the same head.
+                if (newLayer.Asset != "Entities/Dwarf/Layers/blank" && Layer == "hat")
+                {
+                    Sprite.RemoveLayer("hair");
+                }
+            }
             else
             {
                 var defaultLayer = LayeredSprites.LayerLibrary.EnumerateLayers(Layer).Where(l => l.DefaultLayer).FirstOrDefault();
                 if (defaultLayer != null)
                     Sprite.AddLayer(defaultLayer, Palette);
-            }
-
-            // Do not allow hats and hair on the same head.
-            if (Layer == "hat")
-            {
-                Sprite.RemoveLayer("hair");
             }
         }
     }

@@ -215,6 +215,7 @@ namespace DwarfCorp
         {
             string AssetPath = FileUtils.NormalizePath(_AssetPath);
             var searchList = GameSettings.Default.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
+            searchList.AddRange(DirectorySearchList.Where(d => GameSettings.Default.EnabledMods.Contains(d.IdentifierString)).Select(d1 => d1.Directory));
             searchList.Reverse();
             searchList.Add("Content");
 
@@ -239,6 +240,7 @@ namespace DwarfCorp
         {
             string basePath = FileUtils.NormalizePath(BasePath);
             var searchList = GameSettings.Default.EnabledMods.Select(m => "Mods" + ProgramData.DirChar + m).ToList();
+            searchList.AddRange(DirectorySearchList.Where(d => GameSettings.Default.EnabledMods.Contains(d.IdentifierString)).Select(d1 => d1.Directory));
             searchList.Reverse();
             searchList.Add("Content");
 

@@ -54,6 +54,11 @@ namespace DwarfCorp
             String Verb,
             String PastParticple)
         {            
+            if (CraftType == null)
+            {
+                return false;
+            }
+
             if (!String.IsNullOrEmpty(CraftType.CraftLocation) 
                 && Player.Faction.FindNearestItemWithTags(CraftType.CraftLocation, Location.WorldPosition, false, null) == null)
             {

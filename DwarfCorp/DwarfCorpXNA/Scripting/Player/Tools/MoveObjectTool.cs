@@ -197,6 +197,14 @@ namespace DwarfCorp
                         craftItem = CraftLibrary.GetCraftable(craftDetails.CraftType);
                         if (craftItem != null)
                             spawnOffset = craftItem.SpawnOffset;
+                        else
+                            Console.Error.WriteLine("{0} had no craft item.", craftDetails.CraftType);
+                    }
+
+                    
+                    if (craftItem == null)
+                    {
+                        return;
                     }
 
                     SelectedBody.LocalPosition = voxelUnderMouse.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + spawnOffset;
