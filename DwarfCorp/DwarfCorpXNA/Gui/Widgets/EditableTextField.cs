@@ -154,7 +154,7 @@ namespace DwarfCorp.Gui.Widgets
                         Root.SafeCall(ArrowKeyUpDown, this, -1);
                     }
 
-                    if (args.KeyValue == (int)Microsoft.Xna.Framework.Input.KeysEnter)
+                    if (args.KeyValue == (int)Microsoft.Xna.Framework.Input.Keys.Enter)
                     {
                         Root.SafeCall(OnEnter, this);
                     }
