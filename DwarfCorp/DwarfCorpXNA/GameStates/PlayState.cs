@@ -2807,11 +2807,16 @@ namespace DwarfCorp.GameStates
 
         public void QuitGame()
         {
+            QuitGame(new MainMenuState(Game, StateManager));
+        }
+
+        public void QuitGame(GameState state)
+        {
             World.Quit();
             StateManager.ClearState();
             Destroy();
 
-            StateManager.PushState(new MainMenuState(Game, StateManager));
+            StateManager.PushState(state);
         }
 
         public void AutoSave()

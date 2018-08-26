@@ -1272,7 +1272,7 @@ namespace DwarfCorp
             var pos = vox.WorldPosition;
             var biome = Overworld.GetBiomeAt(pos, WorldScale, WorldOrigin);
 
-            if (!string.IsNullOrEmpty(biome.DayAmbience))
+            if (biome != null && !string.IsNullOrEmpty(biome.DayAmbience))
             {
                 if (prevAmbience[0] != biome.DayAmbience)
                 {

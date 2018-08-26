@@ -113,7 +113,7 @@ namespace DwarfCorp.GameStates
                     {
                         ExistingFile = latestSave
                     })));
-            }
+            } 
 #endif
             MakeMenuItem(frame, "New Game", "Start a new game of DwarfCorp.", (sender, args) => StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings() {GenerateFromScratch = true})));
 
