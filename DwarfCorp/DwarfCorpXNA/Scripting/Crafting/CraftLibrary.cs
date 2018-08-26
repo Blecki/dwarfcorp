@@ -69,7 +69,11 @@ namespace DwarfCorp
             CraftItems = new Dictionary<string, CraftItem>();
 
             foreach (var type in craftList)
+            {
+                type.InitializeStrings();
                 CraftItems.Add(type.Name, type);
+            }
+                
         }
 
         public static CraftItem GetRandomApplicableCraftItem(Faction faction)

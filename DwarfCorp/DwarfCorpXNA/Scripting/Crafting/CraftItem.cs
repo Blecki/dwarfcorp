@@ -78,6 +78,10 @@ namespace DwarfCorp
         /// an individual resource.
         /// </summary>
         public string ObjectName = "";
+
+        public String DisplayName = null;
+        public String ShortDisplayName = null;
+
         public List<Quantitiy<Resource.ResourceTags>> RequiredResources = new List<Quantitiy<Resource.ResourceTags>>();
         public Gui.TileReference Icon = null;
         public float BaseCraftTime = 0.0f;
@@ -87,9 +91,9 @@ namespace DwarfCorp
         public int CraftedResultsCount = 1;
         public ResourceType ResourceCreated = "";
         public string CraftLocation = "Anvil";
-        public string Verb = "Build";
-        public string PastTeseVerb = "Built";
-        public string CurrentVerb = "Building";
+        public string Verb = null;
+        public string PastTeseVerb = null;
+        public string CurrentVerb = null;
         public bool AllowHeterogenous = false;
         public Vector3 SpawnOffset = new Vector3(0.0f, 0.5f, 0.0f);
         public bool AddToOwnedPool = false;
@@ -104,6 +108,16 @@ namespace DwarfCorp
         /// If true, this will be displayed in the list of resources that the player can craft.
         /// </summary>
         public bool AllowUserCrafting = true;
+
+        public void InitializeStrings()
+        {
+            DisplayName = StringLibrary.TransformDataString(DisplayName, Name);
+            ShortDisplayName = StringLibrary.TransformDataString(ShortDisplayName, TextGenerator.Shorten(DisplayName, 6));
+            Verb = StringLibrary.TransformDataString(Verb, StringLibrary.GetString("build"));
+            PastTeseVerb = StringLibrary.TransformDataString(PastTeseVerb, StringLibrary.GetString("built"));
+            CurrentVerb = StringLibrary.TransformDataString(CurrentVerb, StringLibrary.GetString("building"));
+            Description = StringLibrary.TransformDataString(Description, Description);
+        }
 
         private IEnumerable<ResourceAmount> MergeResources(IEnumerable<ResourceAmount> resources)
         {

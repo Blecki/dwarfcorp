@@ -227,6 +227,7 @@ namespace DwarfCorp.GameStates
                 World.UnpauseThreads();
                 AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Real);
 
+                // Todo: Use mod hooks to discover these.
                 ContextCommands = new List<DwarfCorp.ContextCommands.ContextCommand>();
                 ContextCommands.Add(new ContextCommands.ChopCommand());
                 ContextCommands.Add(new ContextCommands.AttackCommand());
@@ -1444,11 +1445,11 @@ namespace DwarfCorp.GameStates
             Func<CraftItem, FlatToolTray.Icon> createCraftIcon = (data) => new FlatToolTray.Icon
             {
                 Icon = data.Icon,
-                Tooltip = "Craft " + data.Name,
+                Tooltip = StringLibrary.GetString("craft", data.DisplayName),
                 KeepChildVisible = true, // So the player can interact with the popup.
                 ExpandChildWhenDisabled = true,
                 Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
-                Text = TextGenerator.Shorten(data.Name, 5),
+                Text = data.ShortDisplayName,
                 TextVerticalAlign = VerticalAlign.Below,
                 TextColor = Color.White.ToVector4(),
                 PopupChild = new TabPanel
@@ -1467,10 +1468,9 @@ namespace DwarfCorp.GameStates
                         var panel = (widget as TabPanel);
                         this.GuiRoot.SafeCall(panel.GetTabButton(panel.SelectedTab).OnShown, panel.GetTabButton(panel.SelectedTab));
                     },
-                    TabSource = new string[]{"Place", "Stockpile"}.Select((title) =>
-                    {
-                        if (title == "Place")
-                            return new KeyValuePair<string, Widget>("Place",
+                    TabSource = new KeyValuePair<String, Widget>[] {
+                        new KeyValuePair<string, Widget>(
+                            StringLibrary.GetString("place"),
                             new BuildCraftInfo
                             {
                                 Data = data,
@@ -1492,15 +1492,15 @@ namespace DwarfCorp.GameStates
                                     tool.CraftType = data;
                                     tool.Mode = BuildObjectTool.PlacementMode.BuildNew;
 
-                                // Todo: This should never be true.
-                                if (tool.PreviewBody != null)
+                                    // Todo: This should never be true.
+                                    if (tool.PreviewBody != null)
                                     {
                                         tool.PreviewBody.GetRoot().Delete();
                                         tool.PreviewBody = null;
                                     }
 
                                     ChangeTool(GameMaster.ToolMode.BuildObject);
-                                    World.ShowToolPopup("Click and drag to " + data.Verb + " " + data.Name);
+                                    World.ShowToolPopup(StringLibrary.GetString("click-and-drag", data.Verb, data.DisplayName));
                                 },
                                 PlaceAction = (sender, args) =>
                                 {
@@ -1515,19 +1515,20 @@ namespace DwarfCorp.GameStates
                                     tool.CraftType = data;
                                     tool.Mode = BuildObjectTool.PlacementMode.PlaceExisting;
 
-                                // Todo: This should never be true.
-                                if (tool.PreviewBody != null)
+                                    // Todo: This should never be true.
+                                    if (tool.PreviewBody != null)
                                     {
                                         tool.PreviewBody.GetRoot().Delete();
                                         tool.PreviewBody = null;
                                     }
 
                                     ChangeTool(GameMaster.ToolMode.BuildObject);
-                                    World.ShowToolPopup("Click to place " + data.Name);
+                                    World.ShowToolPopup(StringLibrary.GetString("place", data.DisplayName));
                                 }
-                            });
-                        else return
-                            new KeyValuePair<string, Widget>("Stockpile", new BuildCraftInfo
+                            }),
+                        new KeyValuePair<string, Widget>(
+                            StringLibrary.GetString("stockpile"),
+                            new BuildCraftInfo
                             {
                                 Data = data.ObjectAsCraftableResource(),
                                 Rect = new Rectangle(0, 0, 450, 200),
@@ -1549,8 +1550,8 @@ namespace DwarfCorp.GameStates
                                     World.ShowToolPopup(data.CurrentVerb + " " + buildInfo.GetNumRepeats() + " " + data.Name);
                                     World.Tutorial("build crafts");
                                 },
-                            });
-                    })
+                            })
+                    }
                 },
                 OnConstruct = (sender) =>
                 {
@@ -1931,11 +1932,13 @@ namespace DwarfCorp.GameStates
                 }
             };
 
+            // TODO: Translation
             Func<string, string> potionNameToLabel = (string name) =>
             {
                 var replacement = name.Replace("Potion", "").Replace("of", "");
                 return TextGenerator.Shorten(replacement, 6);
             };
+
             var menu_potions = new FlatToolTray.Tray
             {
                 ItemSource = (new Widget[] { icon_menu_Edibles_Return }).Concat(
@@ -1947,9 +1950,9 @@ namespace DwarfCorp.GameStates
                     {
                         Icon = data.Icon,
                         KeepChildVisible = true, // So the player can interact with the popup.
-                        Tooltip = data.Verb + " " + data.Name,
+                        Tooltip = StringLibrary.GetString("verb-noun", data.Verb, data.DisplayName),
                         Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
-                        Text = potionNameToLabel(data.Name),
+                        Text = potionNameToLabel(data.DisplayName),
                         TextVerticalAlign = VerticalAlign.Below,
                         TextHorizontalAlign = HorizontalAlign.Center,
                         TextColor = Color.White.ToVector4(),

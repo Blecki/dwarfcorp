@@ -78,6 +78,7 @@ namespace DwarfCorp
         public static string dwarf_animations = ProgramData.CreatePath("Entities", "Dwarf", "Layers", "dwarf-animations.json");
         public static string dwarf_base_palette = ProgramData.CreatePath("Entities", "Dwarf", "Layers", "base-palette");
         public static string employee_conversation = ProgramData.CreatePath("employee.conv");
+        public static string Strings = ProgramData.CreatePath("strings.txt");
 
         public class Audio
     {

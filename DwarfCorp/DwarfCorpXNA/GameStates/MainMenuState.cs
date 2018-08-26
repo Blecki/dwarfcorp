@@ -101,41 +101,59 @@ namespace DwarfCorp.GameStates
         {
             GuiRoot.RootItem.Clear();
 
-            var frame = MakeMenuFrame("MAIN MENU");
+            var frame = MakeMenuFrame(StringLibrary.GetString("main-menu-title"));
 
 #if !DEMO
             string latestSave = SaveGame.GetLatestSaveFile();
 
             if (latestSave != null)
             {
-                MakeMenuItem(frame, "Continue", "Continue last save " + latestSave, (sender, args) =>
+                MakeMenuItem(frame, 
+                    StringLibrary.GetString("continue"),
+                    StringLibrary.GetString("continue-tooltip", latestSave), 
+                    (sender, args) =>
                     StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings()
                     {
                         ExistingFile = latestSave
                     })));
             }
 #endif
-            MakeMenuItem(frame, "New Game", "Start a new game of DwarfCorp.", (sender, args) => StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings() {GenerateFromScratch = true})));
+            MakeMenuItem(frame, 
+                StringLibrary.GetString("new-game"), 
+                StringLibrary.GetString("new-game-tooltip"), 
+                (sender, args) => StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings() {GenerateFromScratch = true})));
 
-            MakeMenuItem(frame, "New Game (Advanced)", "Start a new game of DwarfCorp.",
+            MakeMenuItem(frame, 
+                StringLibrary.GetString("new-game-advanced"), 
+                StringLibrary.GetString("new-game-advanced-tooltip"),
 #if !DEMO
                 (sender, args) => StateManager.PushState(new CompanyMakerState(Game, Game.StateManager)));
 #else
-            (sender, args) => this.GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = "Advanced world creation not available in demo." }));
+                (sender, args) => this.GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = StringLibrary.GetString("advanced-world-creation-denied") }));
 #endif
-            MakeMenuItem(frame, "Load Game", 
-                "Load DwarfCorp game from a file.",
+            MakeMenuItem(frame, 
+                StringLibrary.GetString("load-game"),
+                StringLibrary.GetString("load-game-tooltip"),
 #if !DEMO
                 (sender, args) => StateManager.PushState(new LoadSaveGameState(Game, StateManager)));
 #else
-                            (sender, args) => this.GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = "Saving/loading not available in demo." }));
+                (sender, args) => this.GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = StringLibrary.GetString("save-load-denied") }));
 #endif
 
-            MakeMenuItem(frame, "Options", "Change game settings.", (sender, args) => StateManager.PushState(new OptionsState(Game, StateManager)));
+            MakeMenuItem(frame, 
+                StringLibrary.GetString("options"),
+                StringLibrary.GetString("options-tooltip"),
+                (sender, args) => StateManager.PushState(new OptionsState(Game, StateManager)));
 
-            MakeMenuItem(frame, "Manage Mods", "Enable or disable mods & adjust load order.", (sender, args) => StateManager.PushState(new ModManagement.ManageModsState(Game, StateManager)));
+            MakeMenuItem(frame,
+                StringLibrary.GetString("manage-mods"),
+                StringLibrary.GetString("manage-mods-tooltip"), 
+                (sender, args) => StateManager.PushState(new ModManagement.ManageModsState(Game, StateManager)));
 
-            MakeMenuItem(frame, "Credits", "View the credits.", (sender, args) => StateManager.PushState(new CreditsState(GameState.Game, StateManager)));
+            MakeMenuItem(frame, 
+                StringLibrary.GetString("credits"),
+                StringLibrary.GetString("credits-tooltip"),
+                (sender, args) => StateManager.PushState(new CreditsState(GameState.Game, StateManager)));
 
 #if DEBUG
             MakeMenuItem(frame, "GUI Debug", "Open the GUI debug screen.",
@@ -156,7 +174,10 @@ namespace DwarfCorp.GameStates
             });
 #endif
 
-            MakeMenuItem(frame, "Quit", "Goodbye.", (sender, args) => Game.Exit());
+            MakeMenuItem(frame, 
+                StringLibrary.GetString("quit"),
+                StringLibrary.GetString("quit-tooltip"),
+                (sender, args) => Game.Exit());
 
             GuiRoot.RootItem.AddChild(new Widget()
             {

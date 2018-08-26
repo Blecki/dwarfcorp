@@ -153,7 +153,8 @@ namespace DwarfCorp
             {
                 if (creature.Faction == creature.World.PlayerFaction)
                 {
-                    creature.World.MakeAnnouncement(String.Format("{0} cancelled crafting {1} because crafting station was unreachable.", creature.Stats.FullName, Item.ItemType.Name));
+                    creature.World.MakeAnnouncement(
+                        StringLibrary.GetString("cancelled-crafting-unreachable", creature.Stats.FullName, Item.ItemType.DisplayName));
                     creature.World.Master.TaskManager.CancelTask(this);
                 }
             }
