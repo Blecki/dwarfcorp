@@ -52,6 +52,7 @@ namespace DwarfCorp.GameStates
         private Widget PausedWidget;
         private Gui.Widgets.InfoTray InfoTray;
         private Gui.Widgets.ToggleTray BrushTray;
+        private Gui.Widgets.ToggleTray CameraTray;
         private Gui.Widgets.GodMenu GodMenu;
         private AnnouncementPopup Announcer;
         private FramedIcon EconomyIcon;
@@ -1118,7 +1119,7 @@ namespace DwarfCorp.GameStates
                         }
             }) as Gui.Widgets.ToggleTray;
 
-            var camTray = BottomBar.AddChild(new Gui.Widgets.ToggleTray
+            CameraTray = BottomBar.AddChild(new Gui.Widgets.ToggleTray
             {
                 Tag = "camera_modes",
                 AutoLayout = AutoLayout.DockLeftCentered,
@@ -1166,11 +1167,11 @@ namespace DwarfCorp.GameStates
 
             if (World.Camera.Control == OrbitCamera.ControlType.Overhead)
             {
-                camTray.Select(0);
+                CameraTray.Select(0);
             }
             else
             {
-                camTray.Select(1);
+                CameraTray.Select(1);
             }
 
             #endregion
@@ -2610,6 +2611,8 @@ namespace DwarfCorp.GameStates
                 {
                     BrushTray.Select(0);
                 }
+
+                CameraTray.Select(0);
 
                 if (MainMenu.Hidden && PausePanel == null)
                     (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);
