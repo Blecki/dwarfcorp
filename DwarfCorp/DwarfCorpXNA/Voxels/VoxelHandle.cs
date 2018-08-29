@@ -142,17 +142,17 @@ namespace DwarfCorp
         [JsonIgnore]
         public RampType RampType
         {
-            get { return (RampType)(_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.RampTypeMask); }
+            get { return (RampType)(_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.RampTypeMask); }
             set {
-                if (value != (RampType)(_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.RampTypeMask))
+                if (value != (RampType)(_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.RampTypeMask))
                     _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
                     {
                         Type = VoxelChangeEventType.RampsChanged,
                         Voxel = this,
-                        OldRamps = (RampType)(_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.RampTypeMask),
+                        OldRamps = (RampType)(_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.RampTypeMask),
                         NewRamps = value
                     });
-                _cache_Chunk.Data.RampsSunlightExplored[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.InverseRampTypeMask) | ((byte)value & VoxelConstants.RampTypeMask));
+                _cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.InverseRampTypeMask) | ((byte)value & VoxelConstants.RampTypeMask));
             }
         }
 
@@ -199,10 +199,10 @@ namespace DwarfCorp
         [JsonIgnore]
         public bool Sunlight
         {
-            get { return (_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.SunlightMask) != 0; }
+            get { return (_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.SunlightMask) != 0; }
             set
             {
-                _cache_Chunk.Data.RampsSunlightExplored[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.InverseSunlightMask) |
+                _cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.InverseSunlightMask) |
                   (value ? VoxelConstants.SunlightMask : 0x0));
             }
         }
@@ -210,13 +210,13 @@ namespace DwarfCorp
         [JsonIgnore]
         public bool IsExplored
         {
-            get { return !GameSettings.Default.FogofWar || (_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.ExploredMask) != 0; }
+            get { return !GameSettings.Default.FogofWar || (_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.ExploredMask) != 0; }
             set
             {
                 // This only ever changes from false to true, so we can take advantage of that fact.
-                if (value && (_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.ExploredMask) == 0)
+                if (value && (_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.ExploredMask) == 0)
                 {
-                    _cache_Chunk.Data.RampsSunlightExplored[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.InverseExploredMask) | VoxelConstants.ExploredMask);
+                    _cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.InverseExploredMask) | VoxelConstants.ExploredMask);
                     InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
 
                     _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
@@ -225,6 +225,17 @@ namespace DwarfCorp
                         Voxel = this
                     });
                 }
+            }
+        }
+
+        [JsonIgnore]
+        public bool IsPlayerBuilt
+        {
+            get { return (_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.PlayerBuiltVoxelMask) != 0; }
+            set
+            {
+                _cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.InversePlayerBuiltVoxelMask) |
+                  (value ? VoxelConstants.PlayerBuiltVoxelMask : 0x0));
             }
         }
 
@@ -311,7 +322,7 @@ namespace DwarfCorp
         /// <param name="Value"></param>
         public void RawSetIsExplored()
         {
-            _cache_Chunk.Data.RampsSunlightExplored[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExplored[_cache_Index] & VoxelConstants.InverseExploredMask) | VoxelConstants.ExploredMask);
+            _cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.InverseExploredMask) | VoxelConstants.ExploredMask);
         }
 
         /// <summary>
@@ -397,6 +408,9 @@ namespace DwarfCorp
             {
                 // Reveal!
                 VoxelHelpers.RadiusReveal(_cache_Chunk.Manager.ChunkData, this, 10);
+
+                // Clear player built flag!
+                IsPlayerBuilt = false;
             }
 
             // Invoke new voxel listener.

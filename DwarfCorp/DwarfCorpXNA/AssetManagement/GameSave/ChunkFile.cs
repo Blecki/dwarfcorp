@@ -137,7 +137,7 @@ namespace DwarfCorp
                         }
             }
             if (RampsSunlightExplored != null)
-                RampsSunlightExplored.CopyTo(c.Data.RampsSunlightExplored, 0);
+                RampsSunlightExplored.CopyTo(c.Data.RampsSunlightExploredPlayerBuilt, 0);
             if (GrassType != null)
                 GrassType.CopyTo(c.Data.Grass, 0);
             if (Decals != null)
@@ -152,7 +152,7 @@ namespace DwarfCorp
             chunk.Data.Types.CopyTo(Types, 0);
             chunk.Data.Grass.CopyTo(GrassType, 0);
             chunk.Data.Decals.CopyTo(Decals, 0);
-            chunk.Data.RampsSunlightExplored.CopyTo(RampsSunlightExplored, 0);
+            chunk.Data.RampsSunlightExploredPlayerBuilt.CopyTo(RampsSunlightExplored, 0);
             chunk.Data._Water.CopyTo(Liquid, 0);
         }
     }
