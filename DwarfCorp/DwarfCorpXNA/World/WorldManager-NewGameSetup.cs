@@ -31,23 +31,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using BloomPostprocess;
-using DwarfCorp.Gui.Widgets;
-using DwarfCorp.Tutorial;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Color = Microsoft.Xna.Framework.Color;
-using Point = Microsoft.Xna.Framework.Point;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using DwarfCorp.GameStates;
+using System;
+using System.Collections.Generic;
 
 namespace DwarfCorp
 {
@@ -60,34 +46,16 @@ namespace DwarfCorp
         /// <summary>
         /// Generates a random set of dwarves in the given chunk.
         /// </summary>
-        public void CreateInitialDwarves()
+        public void CreateInitialDwarves(Vector3 SpawnPos)
         {
             if (InitialEmbark == null)
                 InitialEmbark = EmbarkmentLibrary.DefaultEmbarkment;
 
-            var cameraCoordinate = GlobalVoxelCoordinate.FromVector3(Camera.Position);
-            // Find the height of the world at the camera
-            var cameraVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                ChunkManager.ChunkData, new GlobalVoxelCoordinate(cameraCoordinate.X,
-                VoxelConstants.ChunkSizeY - 1, cameraCoordinate.Z)));
-            var h = (float)(cameraVoxel.Coordinate.Y + 1);
-
-
-            // This is done just to make sure the camera is in the correct place.
-            Camera.UpdateBasisVectors();
-            Camera.UpdateProjectionMatrix();
-            Camera.UpdateViewMatrix();
-
             foreach (string ent in InitialEmbark.Party)
             {
-                Vector3 dorfPos = new Vector3(Camera.Position.X + (float)MathFunctions.Random.NextDouble(), h + 10,
-                    Camera.Position.Z + (float)MathFunctions.Random.NextDouble());
-                Physics creat = (Physics)EntityFactory.CreateEntity<Physics>(ent, dorfPos);
+                Physics creat = (Physics)EntityFactory.CreateEntity<Physics>(ent, SpawnPos);
                 creat.Velocity = new Vector3(1, 0, 0);
             }
-
-            Camera.Target = new Vector3(Camera.Position.X, h, Camera.Position.Z + 10);
-            Camera.Position = new Vector3(Camera.Target.X, Camera.Target.Y + 20, Camera.Position.Z - 10);
         }
 
         /// <summary>
@@ -98,20 +66,20 @@ namespace DwarfCorp
             // If no file exists, we have to create the balloon and balloon port.
             if (!string.IsNullOrEmpty(ExistingFile)) return;
 
-            BalloonPort port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager,
-                Camera.Position.X, Camera.Position.Z, 3);
-            CreateInitialDwarves();
+            var port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager, Camera.Position.X, Camera.Position.Z, 3);
+            CreateInitialDwarves(port.GetBoundingBox().Center() + new Vector3(0, 2.0f, 0));
             PlayerFaction.AddMoney(InitialEmbark.Money);
+            Master.MaxViewingLevel = (int)(port.GetBoundingBox().Max.Y + 1);
 
             foreach (var res in InitialEmbark.Resources)
             {
                 PlayerFaction.AddResources(new ResourceAmount(res.Key, res.Value));
             }
             var portBox = port.GetBoundingBox();
-            ComponentManager.RootComponent.AddChild(Balloon.CreateBalloon(
-                portBox.Center() + new Vector3(0, 100, 0),
-                portBox.Center() + new Vector3(0, 10, 0), ComponentManager, 
-                new ShipmentOrder(0, null), Master.Faction));
+            //ComponentManager.RootComponent.AddChild(Balloon.CreateBalloon(
+            //    portBox.Center() + new Vector3(0, 100, 0),
+            //    portBox.Center() + new Vector3(0, 10, 0), ComponentManager, 
+            //    new ShipmentOrder(0, null), Master.Faction));
 
             Camera.Target = portBox.Center();
             Camera.Position = Camera.Target + new Vector3(0, 15, -15);
@@ -155,8 +123,8 @@ namespace DwarfCorp
                     }
                 }
             }
-            
-            var averageHeight = (int)Math.Round(((float)accumulator / (float)count));
+
+            var averageHeight = Math.Max(10, (int)Math.Round(((float)accumulator / (float)count)) - 10);
 
             // Next, create the balloon port by deciding which voxels to fill.
             var balloonPortDesignations = new List<VoxelHandle>();
@@ -176,11 +144,12 @@ namespace DwarfCorp
                     var h = baseVoxel.Coordinate.Y + 1;
                     var localCoord = baseVoxel.Coordinate.GetLocalVoxelCoordinate();
 
-                    for (int y = averageHeight; y < h; y++)
+                    for (int y = averageHeight; y < averageHeight + 5; y++)
                     {
                         var v = new VoxelHandle(baseVoxel.Chunk,
                             new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));
                         v.RawSetType(VoxelLibrary.GetVoxelType(0));
+                        v.RawSetIsExplored();
                         v.QuickSetLiquid(LiquidType.None, 0);
                     }
 
@@ -222,11 +191,16 @@ namespace DwarfCorp
                     {
                         var v = new VoxelHandle(baseVoxel.Chunk, 
                             new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));
+
+                        // Underground now - replace with stone?
                         v.RawSetType(VoxelLibrary.GetVoxelType("Scaffold"));
+
                         v.QuickSetLiquid(LiquidType.None, 0);
 
                         if (y == averageHeight - 1)
                         {
+                            v.RawSetIsExplored();
+
                             if (dz >= 0)
                             {
                                 balloonPortDesignations.Add(v);
