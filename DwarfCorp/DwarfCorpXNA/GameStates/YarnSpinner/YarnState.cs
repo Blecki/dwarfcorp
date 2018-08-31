@@ -217,7 +217,8 @@ namespace DwarfCorp
                 {
                     Border = null,
                     TextSize = 1,
-                    Font = "font16"
+                    Font = "font16",
+                    Transparent = true
                 });
 
                 SpeakerBorder = GuiRoot.RootItem.AddChild(new Widget

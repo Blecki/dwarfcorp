@@ -588,17 +588,17 @@ namespace DwarfCorp.GameStates
                 MaximumSize = new Point(32, 32),
                 AutoLayout = Gui.AutoLayout.DockLeftCentered,
                 CompanyInformation = World.PlayerCompany.Information,
-                Tooltip = "Company information"
+                Tooltip = World.PlayerCompany.Information.Name
             });
 
-            BottomBar.AddChild(new Widget
-            {
-                Text = World.PlayerCompany.Information.Name,
-                AutoLayout = Gui.AutoLayout.DockLeftCentered,
-                Font = "font10",
-                TextVerticalAlign = VerticalAlign.Center,
-                TextColor = new Vector4(1, 1, 1, 1)
-            });
+            //BottomBar.AddChild(new Widget
+            //{
+            //    Text = World.PlayerCompany.Information.Name,
+            //    AutoLayout = Gui.AutoLayout.DockLeftCentered,
+            //    Font = "font10",
+            //    TextVerticalAlign = VerticalAlign.Center,
+            //    TextColor = new Vector4(1, 1, 1, 1)
+            //});
 
             BottomBar.AddChild(new Gui.Widget
             {
@@ -1595,7 +1595,9 @@ namespace DwarfCorp.GameStates
                 };
                 return category_icon;
             };
+
             List<CraftItem> rootObjects = new List<CraftItem>();
+
             foreach (var item in CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.AllowUserCrafting))
             {
                 if (string.IsNullOrEmpty(item.Category) || !categoryExists.ContainsKey(item.Category))
