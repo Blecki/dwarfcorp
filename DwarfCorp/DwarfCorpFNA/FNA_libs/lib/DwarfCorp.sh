@@ -2,8 +2,10 @@
 # MonoKickstart Shell Script
 # Written by Ethan "flibitijibibo" Lee
 
+SCRIPT=$(readlink -f $0)
+DIR=`dirname "$0"`
 # Move to script's directory
-cd "`dirname "$0"`"
+cd "$DIR"
 
 # Get the system architecture
 UNAME=`uname`
@@ -24,13 +26,15 @@ if [ "$UNAME" == "Darwin" ]; then
 	if [ "$STEAM_DYLD_INSERT_LIBRARIES" != "" ] && [ "$DYLD_INSERT_LIBRARIES" == "" ]; then
 		export DYLD_INSERT_LIBRARIES="$STEAM_DYLD_INSERT_LIBRARIES"
 	fi
-
 	./DwarfCorpFNA.bin.osx $@
 else
-else
+    echo "Local dir is $DIR"
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$DIR
     if [ "$ARCH" == "x86_64" ]; then
-        LD_PRELOAD="/usr/lib/libSDL2-2.0.so.0" ./DwarfCorpFNA.bin.x86_64 $@
+            chmod a+rwx ./DwarfCorpFNA.bin.x86_64
+	    LD_PRELOAD="/usr/lib/libSDL2-2.0.so.0" ./DwarfCorpFNA.bin.x86_64 $@
     else
-        LD_PRELOAD="/usr/lib/libSDL2-2.0.so.0" ./DwarfCorpFNA.bin.x86 $@
+        chmod a+rwx ./DwarfCorpFNA.bin.x86
+	LD_PRELOAD="/usr/lib/libSDL2-2.0.so.0" ./DwarfCorpFNA.bin.x86 $@
     fi
-fifi
+fi

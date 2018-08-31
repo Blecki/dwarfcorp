@@ -957,6 +957,10 @@ namespace DwarfCorp
 
         public static BiomeData GetBiomeAt(Vector3 worldPos, float scale, Vector2 origin)
         {
+            if (Overworld.Map == null)
+            {
+                return null;
+            }
             Vector2 v = WorldToOverworld(worldPos, scale, origin);
             var biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
             return BiomeLibrary.Biomes[biome];

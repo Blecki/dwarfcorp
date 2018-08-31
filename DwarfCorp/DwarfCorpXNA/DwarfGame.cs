@@ -137,6 +137,91 @@ namespace DwarfCorp
 
         private static int MainThreadID;
 
+        public class SaveLoadTester
+        {
+            public enum State
+            {
+                StartingNewGame,
+                WaitingForGameStart,
+                SavingNewGame,
+                LoadingSavedGame,
+                WaitingForLoading,
+                Done
+            }
+
+
+            public State LoadState = State.StartingNewGame;
+
+            public void Update(DwarfGame game)
+            {
+                switch (LoadState)
+                {
+                    case State.StartingNewGame:
+                        Console.Error.WriteLine("Save/load test: starting new game...");
+                        game.StateManager.PushState(new LoadState(game, game.StateManager, new WorldGenerationSettings() { GenerateFromScratch = true }));
+                        LoadState = State.WaitingForGameStart;
+                        break;
+                    case State.WaitingForGameStart:
+                        if (game.StateManager.CurrentState is PlayState)
+                        {
+                            PlayState state = game.StateManager.CurrentState as PlayState;
+                            if (state.IsInitialized)
+                            {
+                                Console.Error.WriteLine("Save/load test: doing autosave...");
+                                state.AutoSave();
+                                LoadState = State.SavingNewGame;
+                            }
+                        }
+                        break;
+                    case State.SavingNewGame:
+                        {
+                            PlayState state = game.StateManager.CurrentState as PlayState;
+                            if (state != null && state.IsInitialized && !state.Paused)
+                            {
+                                Console.Error.WriteLine("Save/load test: loading the saved game...");
+                                LoadState = State.LoadingSavedGame;
+                            }
+                            break;
+                        }
+                    case State.LoadingSavedGame:
+                        {
+                            string latestSave = SaveGame.GetLatestSaveFile();
+
+                            if (latestSave != null)
+                            {
+                                Console.Error.WriteLine("Save/load test: starting to load...");
+                                PlayState state = game.StateManager.CurrentState as PlayState;
+                                if (state != null && state.IsInitialized && !state.Paused)
+                                {
+                                    state.QuitGame(new LoadState(game, game.StateManager, new WorldGenerationSettings()
+                                    {
+                                        ExistingFile = latestSave
+                                    }));
+                                }
+                                LoadState = State.WaitingForLoading;
+                            }
+                            break;
+                        }
+                    case State.WaitingForLoading:
+                        if (game.StateManager.CurrentState is PlayState)
+                        {
+                            PlayState state = game.StateManager.CurrentState as PlayState;
+                            if (state.IsInitialized)
+                            {
+                                Console.Error.WriteLine("Save/load test completed successfully.");
+                                LoadState = State.Done;
+                            }
+                        }
+                        break;
+                    case State.Done:
+                        return;
+                }
+
+            }
+        }
+
+        private SaveLoadTester _tester = null;
+
         [ConsoleCommandHandler("PALETTE")]
         private static String DumpPalette(String Path)
         {
@@ -149,9 +234,14 @@ namespace DwarfCorp
 #if SHARP_RAVEN && !DEBUG
         private RavenClient ravenClient;
 #endif
+
+        public void DoSaveLoadtest()
+        {
+            _tester = new SaveLoadTester();
+        }
+
         public DwarfGame()
         {
-
             //BoundingBox foo = new BoundingBox(new Vector3(0, 0, 0), new Vector3(1, 1, 1));
             //string serialized = FileUtils.SerializeBasicJSON(foo);
             //BoundingBox deserialized = Newtonsoft.Json.JsonConvert.DeserializeObject<BoundingBox>(serialized, new BoxConverter());
@@ -454,6 +544,14 @@ namespace DwarfCorp
                 base.Update(time);
                 return;
             }
+            if (_tester != null)
+            {
+                _tester.Update(this);
+                if (_tester.LoadState == SaveLoadTester.State.Done)
+                {
+                    Environment.Exit(0);
+                }
+            }
 #if SHARP_RAVEN && !DEBUG
             try
             {
@@ -480,9 +578,9 @@ namespace DwarfCorp
             PerformanceMonitor.BeginFrame();
             PerformanceMonitor.PushFrame("Update");
             AssetManagement.Steam.Steam.Update();
-                DwarfTime.LastTime.Update(time);
-                StateManager.Update(DwarfTime.LastTime);
-                base.Update(time);
+            DwarfTime.LastTime.Update(time);
+            StateManager.Update(DwarfTime.LastTime);
+            base.Update(time);
             PerformanceMonitor.PopFrame();
 #if SHARP_RAVEN && !DEBUG
             }

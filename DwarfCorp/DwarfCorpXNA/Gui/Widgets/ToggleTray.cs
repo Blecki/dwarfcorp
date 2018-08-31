@@ -61,7 +61,7 @@ namespace DwarfCorp.Gui.Widgets
         public void Select(int i)
         {
             SelectedChild = i;
-            Root.SafeCall(Children[i].OnClick, Children[i], new InputEventArgs());
+            Root.SafeCall(Children[i + 2].OnClick, Children[i + 2], new InputEventArgs());
         }
     }
 }

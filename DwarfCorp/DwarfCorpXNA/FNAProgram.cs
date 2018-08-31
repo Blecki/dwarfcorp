@@ -87,6 +87,13 @@ namespace DwarfCorp
                 //fbDeprofiler.DeProfiler.Load();
                 using (DwarfGame game = new DwarfGame())
                 {
+                    foreach(var arg in args)
+                    {
+                        if (arg == "--test-save")
+                        {
+                            game.DoSaveLoadtest();
+                        }
+                    }
                     game.Run();
                 }
 

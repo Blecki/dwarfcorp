@@ -116,7 +116,7 @@ namespace DwarfCorp.GameStates
                     {
                         ExistingFile = latestSave
                     })));
-            }
+            } 
 #endif
             MakeMenuItem(frame, 
                 StringLibrary.GetString("new-game"), 

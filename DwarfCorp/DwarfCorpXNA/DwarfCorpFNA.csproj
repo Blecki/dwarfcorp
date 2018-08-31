@@ -48,6 +48,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\SharpRaven.2.2.0\lib\net45\SharpRaven.dll</HintPath>
     </Reference>
+    <Reference Include="Steamworks.NET">
+      <HintPath>..\..\Steamworks\Steamworks.NET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
@@ -137,6 +140,12 @@
     <Content Include="FNA_libs\win32\SDL2_image.dll" />
     <Content Include="FNA_libs\win32\soft_oal.dll" />
     <Content Include="FNA_libs\win32\zlib1.dll" />
+    <Content Include="steam_api.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="steam_appid.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\FNA\FNA.csproj">
@@ -156,39 +165,42 @@
   <PropertyGroup>
     <PostBuildEvent>echo "Building for OSX"
 
+DEL /Q "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS"
 if not exist "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" MD "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS"
 XCOPY "$(ProjectDir)Build_Metadata\osx\*" "$(ProjectDir)build\osx" /Y /E /V
-XCOPY "$(ProjectDir)FNA_libs\osx\*" "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
+XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\osx\*" "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
 
-XCOPY "$(ProjectDir)FNA_libs\mono\*" "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
+XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\mono\*" "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
 
 XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
 
 
 echo "Building for linux 32"
 
+DEL /Q "$(ProjectDir)\build\linux32"
 MD "$(ProjectDir)\build\linux32"
 
-XCOPY "$(ProjectDir)\FNA_libs\lib\*" "$(ProjectDir)\build\linux32" /Y /E /V /D
+XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\lib\*" "$(ProjectDir)\build\linux32" /Y /E /V /D
 
-XCOPY "$(ProjectDir)\FNA_libs\mono\*" "$(ProjectDir)\build\linux32" /Y /E /V /D
+XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\mono\*" "$(ProjectDir)\build\linux32" /Y /E /V /D
 
 XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\linux32" /Y /E /V /D
 
 
 echo "Building for linux 64"
+DEL /Q "$(ProjectDir)\build\linux64"
 MD "$(ProjectDir)\build\linux64"
 
-XCOPY "$(ProjectDir)\FNA_libs\lib64\*" "$(ProjectDir)\build\linux64" /Y /E /V /D
-XCOPY "$(ProjectDir)\FNA_libs\mono\*" "$(ProjectDir)\build\linux64" /Y /E /V /D
+XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\lib64\*" "$(ProjectDir)\build\linux64" /Y /E /V /D
+XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\mono\*" "$(ProjectDir)\build\linux64" /Y /E /V /D
 
 XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\linux64" /Y /E /V /D
 
 
 echo "Building for windows"
-
+DEL /Q "$(ProjectDir)\build\win32"
 if not exist "$(ProjectDir)\build\win32" MD "$(ProjectDir)\build\win32"
-XCOPY "$(ProjectDir)\FNA_libs\win32\*" "$(ProjectDir)\$(OutDir)" /Y /E /V /D
+XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\win32\*" "$(ProjectDir)\$(OutDir)" /Y /E /V /D
 XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)build\win32" /Y /E /V /D</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

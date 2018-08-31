@@ -18,7 +18,7 @@ namespace Yarn
 			var lineNumber = foundToken.lineNumber + 1;
 
 			var expectedTypeNames = new List<String>();
-			foreach (var type in expectedTypes)
+			foreach (var type in expectedTypes) 
 			{
 				expectedTypeNames.Add(type.ToString());
 			}
