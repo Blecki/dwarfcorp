@@ -138,7 +138,10 @@ namespace DwarfCorp
         {
             foreach (var mod in Assemblies)
                 if (mod.Item1.IdentifierString == Assembly)
-                    return mod.Item2.GetType(T);
+                {
+                    var type = mod.Item2.GetType(T);
+                    if (type != null) return type;
+                }
 
             var r = Type.GetType(T, true);
             if (r == null)

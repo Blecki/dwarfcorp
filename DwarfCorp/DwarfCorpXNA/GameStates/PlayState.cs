@@ -1581,7 +1581,7 @@ namespace DwarfCorp.GameStates
                 var menu_category = new FlatToolTray.Tray
                 {
                     ItemSource = (new Widget[] { category_return_button }).Concat(
-                    CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.Category == category)
+                    CraftLibrary.EnumerateCraftables().ToList().Where(item => item.Type == CraftItem.CraftType.Object && item.Category == category)
                     .Select(data => createCraftIcon(data)))
                 };
                 var firstItem = CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.Category == category).First();
