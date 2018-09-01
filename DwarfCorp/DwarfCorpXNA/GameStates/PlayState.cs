@@ -771,11 +771,11 @@ namespace DwarfCorp.GameStates
 
             MinimapIcon = new FramedIcon
             {
-                Icon = null,
+                Icon = new Gui.TileReference("tool-icons", 33),
                 Text = "Map",
                 EnabledTextColor = Vector4.One,
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 OnClick = (sender, args) =>
                 {
                     if (MinimapFrame.Hidden)
@@ -801,11 +801,11 @@ namespace DwarfCorp.GameStates
                             MinimapIcon,
                             new FramedIcon
                             {
-                                Icon = null,
+                                Icon = new Gui.TileReference("tool-icons", 34),
                                 Text = "Emp",
                                 EnabledTextColor = Vector4.One,
                                 TextHorizontalAlign = HorizontalAlign.Center,
-                                TextVerticalAlign = VerticalAlign.Center,
+                                TextVerticalAlign = VerticalAlign.Below,
                                 OnClick = (sender, args) =>
                                {
                                    if (SelectedEmployeeInfo.Hidden)
@@ -843,10 +843,10 @@ namespace DwarfCorp.GameStates
 
                             new FramedIcon
                             {
-                                Icon = null,
+                                Icon = new Gui.TileReference("tool-icons", 35),
                                 Text = "Tasks",
                                 TextHorizontalAlign = HorizontalAlign.Center,
-                                TextVerticalAlign = VerticalAlign.Center,
+                                TextVerticalAlign = VerticalAlign.Below,
                                 EnabledTextColor = Vector4.One,
                                 OnClick = (sender, args) =>
                                 {
@@ -932,7 +932,7 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
-            #region Setup top right tray
+            #region Setup right tray
 
             EconomyIcon = new Gui.Widgets.FramedIcon
             {
