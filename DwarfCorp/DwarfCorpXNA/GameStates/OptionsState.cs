@@ -429,7 +429,22 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Sensitivity of the camera to zooming"
             })).GetChild(1) as HorizontalFloatSlider;
 
-            InvertZoom = panel.AddChild(new CheckBox
+            var split = panel.AddChild(new Gui.Widgets.Columns
+            {
+                AutoLayout = AutoLayout.DockFill
+            }) as Gui.Widgets.Columns;
+
+            var leftPanel = split.AddChild(new Widget
+            {
+                Padding = new Margin(2, 2, 2, 2)
+            });
+
+            var rightPanel = split.AddChild(new Widget
+            {
+                Padding = new Margin(2, 2, 2, 2)
+            });
+
+            InvertZoom = leftPanel.AddChild(new CheckBox
             {
                 Text = "Invert Zoom",
                 Tooltip = "When checked, zooming in/out with the scroll wheel will be inverted",
@@ -437,7 +452,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            ZoomTowardMouse = panel.AddChild(new CheckBox
+            ZoomTowardMouse = leftPanel.AddChild(new CheckBox
             {
                 Text = "Zoom to Mouse",
                 Tooltip = "When checked, when you zoom in, you will zoom toward the mouse.",
@@ -446,7 +461,7 @@ namespace DwarfCorp.GameStates
             }) as CheckBox;
 
 
-            EdgeScrolling = panel.AddChild(new CheckBox
+            EdgeScrolling = leftPanel.AddChild(new CheckBox
             {
                 Text = "Edge Scrolling",
                 Tooltip = "When checked, moving the cursor to the edge of the screen will move the camera.",
@@ -454,7 +469,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            FollowSurface = panel.AddChild(new CheckBox
+            FollowSurface = leftPanel.AddChild(new CheckBox
             {
                 Text = "Camera Follows Surface Height",
                 Tooltip = "When checked, the camera will follow the ground surface height when moving.",
@@ -462,7 +477,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            PlayIntro = panel.AddChild(new CheckBox
+            PlayIntro = rightPanel.AddChild(new CheckBox
             {
                 Text = "Play Intro",
                 Tooltip = "When checked, the intro animation will play at the beginning of the game.",
@@ -470,7 +485,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            AllowReporting = panel.AddChild(new CheckBox
+            AllowReporting = rightPanel.AddChild(new CheckBox
             {
                 Text = "Crash Reporting",
                 Tooltip = "When checked, you have been opted in to automatic crash reporting.",
@@ -479,7 +494,7 @@ namespace DwarfCorp.GameStates
             }) as CheckBox;
 
 
-            FogOfWar = panel.AddChild(new CheckBox
+            FogOfWar = rightPanel.AddChild(new CheckBox
             {
                 Text = "Fog Of War",
                 Tooltip = "When checked, unexplored tiles underground will be invisible.",
@@ -492,11 +507,12 @@ namespace DwarfCorp.GameStates
                 if (i * 480 <= GameSettings.Default.ResolutionY)
                     guiScaleItems.Add(i.ToString());
 
-            GuiScale = panel.AddChild(LabelAndDockWidget("Gui Scale", new ComboBox
+            GuiScale = rightPanel.AddChild(LabelAndDockWidget("Gui Scale", new ComboBox
             {
                 Items = guiScaleItems
             })).GetChild(1) as ComboBox;
-            GuiAutoScale = panel.AddChild(new CheckBox
+
+            GuiAutoScale = rightPanel.AddChild(new CheckBox
             {
                 Text = "Autoscale GUI",
                 Tooltip = "When checked, the GUI will get scaled up on high resolution screens",
@@ -504,7 +520,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            DisableTutorialForAllGames = panel.AddChild(new CheckBox
+            DisableTutorialForAllGames = leftPanel.AddChild(new CheckBox
             {
                 Text = "Disable the tutorial for all new games",
                 Tooltip = "When checked, the tutorial will not open in new games.",
@@ -514,7 +530,7 @@ namespace DwarfCorp.GameStates
 
             if (World != null)
             {
-                EnableTutorial = panel.AddChild(new CheckBox
+                EnableTutorial = leftPanel.AddChild(new CheckBox
                 {
                     Text = "Enable Tutorial",
                     Tooltip = "When checked, tutorial will be displayed.",
@@ -522,7 +538,7 @@ namespace DwarfCorp.GameStates
                     AutoLayout = AutoLayout.DockTop
                 }) as CheckBox;
 
-                panel.AddChild(new Widget
+                leftPanel.AddChild(new Widget
                 {
                     Text = "Reset tutorial",
                     MinimumSize = new Point(0, 20),
@@ -534,7 +550,7 @@ namespace DwarfCorp.GameStates
                 });
             }
 
-            Autosave = panel.AddChild(new CheckBox
+            Autosave = rightPanel.AddChild(new CheckBox
             {
                 Text = "Enable Autosave",
                 Tooltip = "When checked, game will auto save.",
@@ -542,7 +558,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-            AutoSaveFrequency = panel.AddChild(LabelAndDockWidget("Autosave Frequency           ", new HorizontalSlider
+            AutoSaveFrequency = rightPanel.AddChild(LabelAndDockWidget("Autosave Frequency        ", new HorizontalSlider
             {
                 ScrollArea = 115,
                 OnSliderChanged = (widget) =>
@@ -554,7 +570,7 @@ namespace DwarfCorp.GameStates
                 Tooltip = "Minutes between auto saves"
             }));
 
-            MaxSaves = panel.AddChild(LabelAndDockWidget("Max Saves", new Gui.Widgets.ComboBox
+            MaxSaves = rightPanel.AddChild(LabelAndDockWidget("Max Saves", new Gui.Widgets.ComboBox
             {
                 Items = new String[] { "5", "15", "30", "100", "999"}.ToList(),
                 OnSelectedIndexChanged = OnItemChanged,
@@ -562,14 +578,14 @@ namespace DwarfCorp.GameStates
                 Tooltip = "The maximum number of user saves to keep on disc (doesn't count autosaves)."
             })).GetChild(1) as Gui.Widgets.ComboBox;
 
-            SaveLocation = panel.AddChild(LabelAndDockWidget("Save Location", new EditableTextField
+            SaveLocation = rightPanel.AddChild(LabelAndDockWidget("Save Location", new EditableTextField
             {
                 Tooltip = "Where to look for save games. Leave blank to use default location.",
                 Text = "",
                 OnTextChange = this.OnItemChanged
             })).GetChild(1) as EditableTextField;
 
-            panel.AddChild(LabelAndDockWidget("Colors", new Button()
+            leftPanel.AddChild(LabelAndDockWidget("Colors", new Button()
             {
                 Text = "Edit Colors...",
                 OnClick = (sender, args) =>

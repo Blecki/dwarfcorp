@@ -30,6 +30,7 @@ namespace DwarfCorp
         private DwarfCorp.Gui.Widgets.EmployeePortrait Icon = null;
         private CreatureAI _employee = null;
         private float _voicePitch = 0.0f;
+
         public YarnState(
             String ConversationFile,
             String StartNode,
@@ -250,7 +251,14 @@ namespace DwarfCorp
 
                 int inset = 32;
             SpeakerBorder.Rect = new Rectangle(x - w / 2 + inset / 2, y - 260 + inset, 256 - inset, 256 - inset);
-            SpeakerRectangle = Gui.Mesh.Quad().Scale(256, 256).Translate(x - w / 2, y - 260);
+
+            if (SpeakerBorder.Rect.X < 0)
+            {
+                _Output.Rect.X += -SpeakerBorder.Rect.X;
+                SpeakerBorder.Rect.X = 0;
+            }
+
+            SpeakerRectangle = Gui.Mesh.Quad().Scale(SpeakerBorder.Rect.Width, SpeakerBorder.Rect.Height).Translate(SpeakerBorder.Rect.X, SpeakerBorder.Rect.Y);
 
             _Output.Invalidate();
             SpeakerBorder.Invalidate();
