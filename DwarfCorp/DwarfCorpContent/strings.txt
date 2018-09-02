@@ -1,0 +1,42 @@
+main-menu-title: MAIN MENU
+continue: Continue
+continue-tooltip: Continue save game {0}.
+new-game: New Game
+new-game-tooltip: Start a new game of DwarfCorp.
+new-game-advanced: New Game (Advanced)
+new-game-advanced-tooltip: Start a new game of DwarfCorp.
+load-game: Load Game
+load-game-tooltip: Load DwarfCorp game from a file.
+options: Options
+options-tooltip: Change game settings
+manage-mods: Manage Mods
+manage-mods-tooltip: Enable or disable mods, find new mods, and adjust load order.
+credits: Credits
+credits-tooltip: View the credits
+advanced-world-creation-denied: Advanced world creation is not available in the demo.
+save-load-denied: Saving and loading are not available in the demo.
+quit: Quit
+quit-tooltip: Goodbye.
+click-and-drag: Click and drag to {0} {1}.
+place: Click to place {0}.
+verb-noun: {0} {1}
+rail: Rail
+rail-description: Rail.
+cancelled-crafting-unreachable: {0} cancelled crafting {1} because crafting station was unreachable.
+place-existing: Place Existing
+place-existing-tooltip: Place an existing {0} from our stockpiles.
+place-new: {0} New
+place-new-tooltip: {0} a new {1} using the selected resources.
+build: Build
+built: Built
+building: Building
+bear-trap: Bear Trap
+s-bear-trap: br trp
+d-bear-trap: Damages enemies and then explodes.
+craft: Craft {0}
+place: Place
+stockpile: Stockpile
+craft-at: {0} Craft {1} at {2}
+brew: Brew
+brewed: Brewed
+brewing: Brewing

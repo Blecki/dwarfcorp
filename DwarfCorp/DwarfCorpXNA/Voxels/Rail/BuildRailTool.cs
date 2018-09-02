@@ -54,7 +54,7 @@ namespace DwarfCorp.Rail
 
         private static CraftItem RailCraftItem = new CraftItem
         {
-            Description = "Rail.",
+            Description = StringLibrary.GetString("rail-description"),
             RequiredResources = new List<Quantitiy<Resource.ResourceTags>>
                         {
                             new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Rail, 1)
@@ -64,6 +64,8 @@ namespace DwarfCorp.Rail
             Prerequisites = new List<CraftItem.CraftPrereq>() { CraftItem.CraftPrereq.OnGround },
             CraftLocation = "",
             Name = "Rail",
+            DisplayName = StringLibrary.GetString("rail"),
+            ShortDisplayName = StringLibrary.GetString("rail"),
             Type = CraftItem.CraftType.Object,
             AddToOwnedPool = true,
             Moveable = false            

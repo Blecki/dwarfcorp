@@ -17,7 +17,7 @@ namespace DwarfCorp
         public byte[] Grass;
         public byte[] Decals;
         public byte[] _Water;
-        public byte[] RampsSunlightExplored;
+        public byte[] RampsSunlightExploredPlayerBuilt;
 
         public int[] LiquidPresent;         // Storage per-slice
         public int[] VoxelsPresentInSlice;
@@ -31,7 +31,7 @@ namespace DwarfCorp
                 Grass = new byte[VoxelConstants.ChunkVoxelCount],
                 Decals = new byte[VoxelConstants.ChunkVoxelCount],
                 _Water = new byte[VoxelConstants.ChunkVoxelCount],
-                RampsSunlightExplored = new byte[VoxelConstants.ChunkVoxelCount],
+                RampsSunlightExploredPlayerBuilt = new byte[VoxelConstants.ChunkVoxelCount],
 
                 LiquidPresent = new int[VoxelConstants.ChunkSizeY],
                 VoxelsPresentInSlice = new int[VoxelConstants.ChunkSizeY],

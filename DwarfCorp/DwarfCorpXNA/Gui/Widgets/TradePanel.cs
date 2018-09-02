@@ -198,25 +198,6 @@ namespace DwarfCorp.Gui.Widgets
                 MinimumSize = new Point(0, 32)
             });
 
-            TotalDisplay = bottomRow.AddChild(new Widget
-            {
-                MinimumSize = new Point(128, 0),
-                AutoLayout = AutoLayout.DockLeft,
-                Font = "font10",
-                TextColor = new Vector4(0, 0, 0, 1),
-                TextVerticalAlign = VerticalAlign.Center
-            });
-
-            SpaceDisplay = bottomRow.AddChild(new Widget
-            {
-                MinimumSize = new Point(128, 0),
-                AutoLayout = AutoLayout.DockLeft,
-                Font = "font10",
-                TextColor = new Vector4(0, 0, 0, 1),
-                TextVerticalAlign = VerticalAlign.Center
-            });
-
-
             bottomRow.AddChild(new Gui.Widgets.Button
             {
                 Font = "font10",
@@ -269,7 +250,8 @@ namespace DwarfCorp.Gui.Widgets
                 Font = "font10",
                 Border = "border-button",
                 TextColor = new Vector4(0, 0, 0, 1),
-                Text = "What will make this work?",
+                Text = "Auto",
+                Tooltip = "What will make this work?",
                 AutoLayout = AutoLayout.DockRight,
                 OnClick = (sender, args) => EqualizeColumns()
             });
@@ -296,15 +278,34 @@ namespace DwarfCorp.Gui.Widgets
                 Font = "font10",
                 Border = "border-button",
                 TextColor = new Vector4(0, 0, 0, 1),
-                Text = "Stop trading",
+                Text = "Stop",
+                Tooltip = "Stop trading.",
                 AutoLayout = AutoLayout.DockRight,
-                OnLayout = (sender) => sender.Rect.X -= 16,
+                //OnLayout = (sender) => sender.Rect.X -= 16,
                 OnClick = (sender, args) =>
                 {
                     Result = TradeDialogResult.Cancel;
                     Root.SafeCall(OnPlayerAction, this);
                     //this.Close();
                 }                    
+            });
+
+            TotalDisplay = bottomRow.AddChild(new Widget
+            {
+                MinimumSize = new Point(128, 0),
+                AutoLayout = AutoLayout.DockLeft,
+                Font = "font10",
+                TextColor = new Vector4(0, 0, 0, 1),
+                TextVerticalAlign = VerticalAlign.Center
+            });
+
+            SpaceDisplay = bottomRow.AddChild(new Widget
+            {
+                //MinimumSize = new Point(128, 0),
+                AutoLayout = AutoLayout.DockFill,
+                Font = "font10",
+                TextColor = new Vector4(0, 0, 0, 1),
+                TextVerticalAlign = VerticalAlign.Center,
             });
 
             var mainPanel = AddChild(new Columns

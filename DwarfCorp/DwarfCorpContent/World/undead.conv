@@ -49,7 +49,11 @@ title: Trade2
 ---
 <<wait_for_trade>>
 <<if $trade_result == "cancelled">>
-	$envoy_name: Do not toy with me, dwarf.
+	<<if $trades == 0>>
+		$envoy_name: Do not toy with me, dwarf.
+	<<else>>
+		$envoy_name: Shall we continue?
+	<<endif>>
 	<<end_trade>>
 	[[Main]]
 <<elseif $trade_result == "hated">>
@@ -74,6 +78,7 @@ title: Trade2
 	<<end>>
 	[[Trade2]]
 <<else>>
+	<<set $trades = $trades + 1>>
 	<<if $trade_result == "liked">>
 		<<political_event "you gave us something we liked" 0.25 4>>
 	<<endif>>

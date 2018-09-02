@@ -222,21 +222,22 @@ namespace DwarfCorp.Gui.Widgets
                             {
                                 bottomBar.AddChild(new Button()
                                 {
-                                    Text = "Place Existing",
+                                    Text = StringLibrary.GetString("place-existing"),
                                     OnClick = (widget, args) =>
                                     {
                                         PlaceAction(this, args);
                                     },
                                     AutoLayout = AutoLayout.DockLeftCentered,
                                     MinimumSize = new Point(64, 28),
-                                    Tooltip = String.Format("Place an existing {0} from our stockpiles.", Data.Name)
+                                    Tooltip = StringLibrary.GetString("place-existing-tooltip", Data.DisplayName)
                                 });
                             }
                         }
 
                         var buildButton = bottomBar.AddChild(new Button()
                         {
-                            Text = hasExisting ? String.Format("{0} New", Data.Verb): Data.Verb,
+                            Text = StringLibrary.GetString("place-new", Data.Verb),
+                            Tooltip = StringLibrary.GetString("place-new-tooltip", Data.Verb, Data.DisplayName),
                             OnClick = (widget, args) => 
                             {
                                 BuildAction(this, args);
@@ -245,7 +246,6 @@ namespace DwarfCorp.Gui.Widgets
                             },
                             AutoLayout = AutoLayout.DockLeftCentered,
                             MinimumSize = new Point(64, 28),
-                            Tooltip = String.Format("{1} a new {0} using the selected resources.", Data.Name, Data.Verb)
                         });
 
                         //Parent.OnClick = (parent, args) => buildButton.OnClick(buildButton, args);

@@ -2,6 +2,8 @@
   {
     "Name": "Bear Trap",
     "EntityName": "Bear Trap",
+    "DisplayName": "@bear-trap",
+    "ShortDisplayName": "@s-bear-trap",
     "RequiredResources": [
       {
         "ResourceType": "Metal",
@@ -13,7 +15,7 @@
       "Tile": 0
     },
     "BaseCraftTime": 60.0,
-    "Description": "Damages enemies and then explodes.",
+    "Description": "@d-bear-trap",
     "Type": "Object",
     "Prerequisites": [
       "OnGround"
@@ -22,9 +24,6 @@
       "_value": ""
     },
     "CraftLocation": "",
-    "Verb": "Build",
-    "PastTeseVerb": "Built",
-    "CurrentVerb": "Building",
     "AllowHeterogenous": false,
     "SpawnOffset": "0, 0.5, 0",
     "AddToOwnedPool": true,
@@ -55,9 +54,6 @@
       "_value": ""
     },
     "CraftLocation": "",
-    "Verb": "Build",
-    "PastTeseVerb": "Built",
-    "CurrentVerb": "Building",
     "AllowHeterogenous": false,
     "SpawnOffset": "0, 0.5, 0",
     "AddToOwnedPool": true,

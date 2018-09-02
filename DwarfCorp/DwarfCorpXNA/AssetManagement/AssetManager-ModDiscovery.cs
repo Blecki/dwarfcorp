@@ -68,6 +68,7 @@ namespace DwarfCorp
                 };
 
             }
+
             return subscribedMods.Concat(EnumerateMods(GameSettings.Default.LocalModDirectory, ModSource.LocalDirectory)).ToList();
         }
 
@@ -100,7 +101,7 @@ namespace DwarfCorp
 
             foreach (var dir in Directory.EnumerateDirectories(Path))
             {
-                var metaData = GetMod(Path, Source);
+                var metaData = GetMod(dir, Source);
                 if (metaData != null)
                     r.Add(metaData);
             }

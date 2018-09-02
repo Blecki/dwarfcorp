@@ -84,6 +84,222 @@
     ],
     "AleName": ""
   },
+
+  {
+    "Name": "Sandstone",
+    "MoneyValue": 4.0,
+    "Description": "A sedimentary rock made from concreted sand.",
+    "GuiLayers": [
+      {
+        "Sheet": "resources",
+        "Tile": 48
+      }
+    ],
+    "Tags": [
+      "Stone",
+      "Material",
+      "HardMaterial",
+      "Sandstone"
+    ],
+    "FoodContent": 0.0,
+    "CompositeLayers": [
+      {
+        "Asset": "newgui\\resources",
+        "FrameSize": "32, 32",
+        "Frame": "0, 6"
+      }
+    ],
+    "TrinketData": {
+      "BaseAsset": "newgui\\trinkets-sculpt",
+      "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
+      "SpriteRow": 0,
+      "SpriteColumn": 0
+    },
+    "ShortName": "Sandstone",
+    "PlantToGenerate": null,
+    "CanCraft": false,
+    "CraftPrerequisites": [],
+    "Tint": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "AleName": ""
+  },
+
+  {
+    "Name": "Obsidian",
+    "MoneyValue": 4.0,
+    "Description": "Obsidian forms when lava is cooled very quickly.",
+    "GuiLayers": [
+      {
+        "Sheet": "resources",
+        "Tile": 49
+      }
+    ],
+    "Tags": [
+      "Stone",
+      "Material",
+      "HardMaterial",
+      "Obsidian"
+    ],
+    "FoodContent": 0.0,
+    "CompositeLayers": [
+      {
+        "Asset": "newgui\\resources",
+        "FrameSize": "32, 32",
+        "Frame": "1, 6"
+      }
+    ],
+    "TrinketData": {
+      "BaseAsset": "newgui\\trinkets-sculpt",
+      "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
+      "SpriteRow": 0,
+      "SpriteColumn": 0
+    },
+    "ShortName": "Obsidian",
+    "PlantToGenerate": null,
+    "CanCraft": false,
+    "CraftPrerequisites": [],
+    "Tint": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "AleName": ""
+  },
+
+  {
+    "Name": "Slate",
+    "MoneyValue": 4.0,
+    "Description": "A sedimentary rock that forms thin layers.",
+    "GuiLayers": [
+      {
+        "Sheet": "resources",
+        "Tile": 50
+      }
+    ],
+    "Tags": [
+      "Stone",
+      "Material",
+      "HardMaterial",
+      "Slate"
+    ],
+    "FoodContent": 0.0,
+    "CompositeLayers": [
+      {
+        "Asset": "newgui\\resources",
+        "FrameSize": "32, 32",
+        "Frame": "2, 6"
+      }
+    ],
+    "TrinketData": {
+      "BaseAsset": "newgui\\trinkets-sculpt",
+      "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
+      "SpriteRow": 0,
+      "SpriteColumn": 0
+    },
+    "ShortName": "Slate",
+    "PlantToGenerate": null,
+    "CanCraft": false,
+    "CraftPrerequisites": [],
+    "Tint": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "AleName": ""
+  },
+
+  {
+    "Name": "Granite",
+    "MoneyValue": 4.0,
+    "Description": "A metamorphic rock, granite is produced when sandstones and shales are compressed deep under ground.",
+    "GuiLayers": [
+      {
+        "Sheet": "resources",
+        "Tile": 51
+      }
+    ],
+    "Tags": [
+      "Stone",
+      "Material",
+      "HardMaterial",
+      "Granite"
+    ],
+    "FoodContent": 0.0,
+    "CompositeLayers": [
+      {
+        "Asset": "newgui\\resources",
+        "FrameSize": "32, 32",
+        "Frame": "3, 6"
+      }
+    ],
+    "TrinketData": {
+      "BaseAsset": "newgui\\trinkets-sculpt",
+      "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
+      "SpriteRow": 0,
+      "SpriteColumn": 0
+    },
+    "ShortName": "Granite",
+    "PlantToGenerate": null,
+    "CanCraft": false,
+    "CraftPrerequisites": [],
+    "Tint": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "AleName": ""
+  },
+
+  {
+    "Name": "Marble",
+    "MoneyValue": 4.0,
+    "Description": "Marble is created when limestone is compressed deep under ground.",
+    "GuiLayers": [
+      {
+        "Sheet": "resources",
+        "Tile": 52
+      }
+    ],
+    "Tags": [
+      "Stone",
+      "Material",
+      "HardMaterial",
+      "Marble"
+    ],
+    "FoodContent": 0.0,
+    "CompositeLayers": [
+      {
+        "Asset": "newgui\\resources",
+        "FrameSize": "32, 32",
+        "Frame": "4, 6"
+      }
+    ],
+    "TrinketData": {
+      "BaseAsset": "newgui\\trinkets-sculpt",
+      "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
+      "SpriteRow": 0,
+      "SpriteColumn": 0
+    },
+    "ShortName": "Marble",
+    "PlantToGenerate": null,
+    "CanCraft": false,
+    "CraftPrerequisites": [],
+    "Tint": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "AleName": ""
+  },
+
   {
     "Name": "Ice",
     "MoneyValue": 1.0,
@@ -219,7 +435,7 @@
       "Magical",
       "Precious",
       "SelfIlluminating",
-	  "Mana"
+      "Mana"
     ],
     "FoodContent": 0.0,
     "CompositeLayers": [
