@@ -277,7 +277,9 @@ namespace DwarfCorp
         {
             var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(X, Y, Z));
             if (!v.IsVisible) return; // How did this even get called then??
+
             var designations = Designations.EnumerateDesignations(v).ToList();
+
             foreach (var designation in designations)
             {
                 if ((designation.Type & DesignationDrawer.VisibleTypes) == designation.Type)
@@ -385,7 +387,7 @@ namespace DwarfCorp
                 }
 
                 var rampOffset = Vector3.Zero;
-                if (V.Type.CanRamp && ShouldRamp(voxelVertex, V.RampType))
+                if (V.IsExplored && V.Type.CanRamp && ShouldRamp(voxelVertex, V.RampType))
                     rampOffset = new Vector3(0, -V.Type.RampSize, 0);
 
                 var baseWorldPosition = V.WorldPosition + vertex.Position + rampOffset;
@@ -444,7 +446,7 @@ namespace DwarfCorp
                 var voxelVertex = Primitive.Deltas[faceDescriptor.VertexOffset + faceVertex];
 
                 var rampOffset = Vector3.Zero;
-                if (V.Type.CanRamp && ShouldRamp(voxelVertex, V.RampType))
+                if (V.IsExplored && V.Type.CanRamp && ShouldRamp(voxelVertex, V.RampType))
                     rampOffset = new Vector3(0, -V.Type.RampSize, 0);
 
                 var worldPosition = V.WorldPosition + vertex.Position + rampOffset;

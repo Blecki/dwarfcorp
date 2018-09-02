@@ -1,0 +1,33 @@
+{
+  "Name": "Wooden Door",
+  "EntityName": "Door",
+  "Category": "Doors",
+  "RequiredResources": [
+    {
+      "ResourceType": "Wood",
+      "NumResources": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "furniture",
+    "Tile": 11
+  },
+  "BaseCraftTime": 30.0,
+  "Description": "Keep monsters out, and dwarves in.",
+  "Type": "Object",
+  "Prerequisites": [
+    "NearWall"
+  ],
+  "ResourceCreated": {
+    "_value": ""
+  },
+  "CraftLocation": "",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal"
+}

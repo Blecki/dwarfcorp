@@ -112,6 +112,21 @@ namespace DwarfCorp
             return new List<T>(result.Values);
         }
 
+        public static List<T> LoadJsonListFromDirectory<T>(String DirectoryPath, Object Context, Func<T, String> Name)
+        {
+            var result = new Dictionary<String, T>();
+
+            foreach (var resolvedAssetPath in AssetManager.EnumerateAllFiles(DirectoryPath))
+            {
+                var item = LoadJsonFromAbsolutePath<T>(resolvedAssetPath, Context);
+                var name = Name(item);
+                if (!result.ContainsKey(name))
+                    result.Add(name, item);
+            }
+
+            return new List<T>(result.Values);
+        }
+
         public static List<String> LoadConfigurationLinesFromMultipleSources(String AssetPath)
         {
             var result = new List<String>();

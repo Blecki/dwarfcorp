@@ -1,0 +1,30 @@
+{
+  "Name": "Glass",
+  "EntityName": "Glass",
+  "RequiredResources": [
+    {
+      "ResourceType": "Sand",
+      "NumResources": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "resources",
+    "Tile": 4
+  },
+  "BaseCraftTime": 30.0,
+  "Description": "Made from sand. Allows light to pass through.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": {
+    "_value": "Glass"
+  },
+  "CraftLocation": "Forge",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": false,
+  "Moveable": false,
+  "CraftActBehavior": "Normal"
+}

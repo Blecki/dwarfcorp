@@ -1,0 +1,38 @@
+{
+  "Name": "Turret",
+  "EntityName": "Turret",
+  "RequiredResources": [
+    {
+      "ResourceType": "Metal",
+      "NumResources": 2
+    },
+    {
+      "ResourceType": "Magical",
+      "NumResources": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "furniture",
+    "Tile": 57
+  },
+  "BaseCraftTime": 90.0,
+  "Description": "Crossbow automatically targets enemies with magical power. Detects cloaked creatures.",
+  "Type": "Object",
+  "Prerequisites": [
+    "OnGround"
+  ],
+  "ResourceCreated": {
+    "_value": ""
+  },
+  "CraftLocation": "",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal",
+  "Category": "Magic",
+  "IsMagical": true
+}

@@ -1,0 +1,33 @@
+{
+  "Name": "Stone Ladder",
+  "EntityName": "Ladder",
+  "Category": "Ladders",
+  "RequiredResources": [
+    {
+      "ResourceType": "Stone",
+      "NumResources": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "furniture",
+    "Tile": 66
+  },
+  "BaseCraftTime": 10.0,
+  "Description": "Allows dwarves to climb up and down",
+  "Type": "Object",
+  "Prerequisites": [
+    "NearWall"
+  ],
+  "ResourceCreated": {
+    "_value": ""
+  },
+  "CraftLocation": "",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal"
+}

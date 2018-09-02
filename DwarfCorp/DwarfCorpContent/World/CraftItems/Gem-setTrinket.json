@@ -1,0 +1,34 @@
+{
+  "Name": "Gem-set Trinket",
+  "EntityName": "Gem-set Trinket",
+  "RequiredResources": [
+    {
+      "ResourceType": "Encrustable",
+      "NumResources": 1
+    },
+    {
+      "ResourceType": "Gem",
+      "NumResources": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "crafts",
+    "Tile": 1
+  },
+  "BaseCraftTime": 55.0,
+  "Description": "Encrust a work of art with gems.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": {
+    "_value": "Gem-set Trinket"
+  },
+  "CraftLocation": "Anvil",
+  "Verb": "Encrust",
+  "PastTeseVerb": "Encrusted",
+  "CurrentVerb": "Encrusting",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": false,
+  "Moveable": false,
+  "CraftActBehavior": "GemTrinket"
+}

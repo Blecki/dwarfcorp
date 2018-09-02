@@ -1,0 +1,30 @@
+{
+  "Name": "Bread",
+  "EntityName": "Bread",
+  "RequiredResources": [
+    {
+      "ResourceType": "Bakeable",
+      "NumResources": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "resources",
+    "Tile": 22
+  },
+  "BaseCraftTime": 5.0,
+  "Description": "Turn bakeable food into bread.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": {
+    "_value": "Bread"
+  },
+  "CraftLocation": "Stove",
+  "Verb": "Bake",
+  "PastTeseVerb": "Baked",
+  "CurrentVerb": "Baking",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": false,
+  "Moveable": false,
+  "CraftActBehavior": "Bread"
+}

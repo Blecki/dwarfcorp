@@ -1,0 +1,33 @@
+{
+  "Name": "Refined Mana",
+  "EntityName": "Refined Mana",
+  "RequiredResources": [
+    {
+      "ResourceType": "Mana",
+      "NumResources": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "resources",
+    "Tile": 43
+  },
+  "BaseCraftTime": 5.0,
+  "Description": "Refine magic to its purest form.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": {
+    "_value": "Refined Mana"
+  },
+  "CraftLocation": "Apocethary",
+  "Verb": "Refine",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": false,
+  "Moveable": false,
+  "CraftActBehavior": "Normal",
+  "CraftedResultsCount": 8,
+  "IsMagical": true
+
+}

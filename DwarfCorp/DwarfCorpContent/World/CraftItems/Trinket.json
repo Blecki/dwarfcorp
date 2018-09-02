@@ -1,0 +1,30 @@
+{
+  "Name": "Trinket",
+  "EntityName": "Trinket",
+  "RequiredResources": [
+    {
+      "ResourceType": "Material",
+      "NumResources": 3
+    }
+  ],
+  "Icon": {
+    "Sheet": "crafts",
+    "Tile": 0
+  },
+  "BaseCraftTime": 45.0,
+  "Description": "Get creative juices flowing and make a work of art.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": {
+    "_value": "Trinket"
+  },
+  "CraftLocation": "Anvil",
+  "Verb": "Craft",
+  "PastTeseVerb": "Crafted",
+  "CurrentVerb": "Crafting",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": false,
+  "Moveable": false,
+  "CraftActBehavior": "Trinket"
+}
