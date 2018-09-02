@@ -290,7 +290,7 @@
     "Crafts": [ "Wood" ],
     "Encrustings": [ "Gem" ],
     "TradeMusic": "elf",
-    "Icon": "5"
+    "Icon": 5
   },
   {
     "Name": "Undead",
