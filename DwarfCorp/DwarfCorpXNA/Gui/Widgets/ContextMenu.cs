@@ -96,6 +96,7 @@ namespace DwarfCorp.Gui.Widgets
         public List<ContextCommands.ContextCommand> Commands;
         public Body Body;
         public List<Body> MultiBody;
+        public Action ClickAction;
 
         public WorldManager World;
         public int Height;
@@ -138,6 +139,10 @@ namespace DwarfCorp.Gui.Widgets
                         else
                         {
                             lambdaCommand.Apply(Body, World);
+                        }
+                        if (ClickAction != null)
+                        {
+                            ClickAction.Invoke();
                         }
                         sender.Parent.Close();
                     },

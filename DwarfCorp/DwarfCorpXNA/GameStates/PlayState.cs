@@ -197,7 +197,7 @@ namespace DwarfCorp.GameStates
                     }
                     else
                     {
-                        GuiRoot.ShowMinorPopup(
+                        GuiRoot.RootItem.AddChild(
                           new Gui.Widgets.ToolPopup
                           {
                               Text = text,
@@ -235,10 +235,12 @@ namespace DwarfCorp.GameStates
                 ContextCommands.Add(new ContextCommands.AttackCommand());
                 ContextCommands.Add(new ContextCommands.WrangleCommand());
                 ContextCommands.Add(new ContextCommands.CancelCommand());
+                ContextCommands.Add(new ContextCommands.PriorityCommand());
                 ContextCommands.Add(new ContextCommands.GatherCommand());
                 ContextCommands.Add(new ContextCommands.DestroyCommand());
                 ContextCommands.Add(new ContextCommands.MoveCommand());
                 ContextCommands.Add(new DwarfCorp.ContextCommands.EmptyBackpackCommand());
+                ContextCommands.Add(new DwarfCorp.ContextCommands.ViewAllowedTasksCommand());
                 ContextCommands.Add(new DwarfCorp.ContextCommands.CancelDwarfCommand());
                 ContextCommands.Add(new ContextCommands.ChatCommand());
                 ContextCommands.Add(new ContextCommands.FireCommand());
@@ -2579,7 +2581,11 @@ namespace DwarfCorp.GameStates
                     {
                         Commands = availableCommands.ToList(),
                         MultiBody = bodiesClicked,
-                        World = World
+                        World = World,
+                        ClickAction = () =>
+                        {
+                            BodySelector_LeftReleased();
+                        }
                     });
 
                     MultiContextMenu.Rect = new Rectangle(MinimapFrame.Rect.Right + 2, MinimapFrame.Rect.Bottom - MultiContextMenu.Rect.Height, MultiContextMenu.Rect.Width, MultiContextMenu.Rect.Height);

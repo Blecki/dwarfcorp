@@ -97,11 +97,11 @@ namespace DwarfCorp
                 if (Player.World.Diplomacy.GetPolitics(creature.Faction, Player.Faction).GetCurrentRelationship() ==
                     Relationship.Loving)
                 {
-                    Player.Faction.World.ShowToolPopup("We refuse to attack allies.");
+                    Player.Faction.World.ShowTooltip("We refuse to attack allies.");
                     shown = true;
                     continue;
                 }
-                Player.Faction.World.ShowToolPopup("Click to attack this " + creature.Species);
+                Player.Faction.World.ShowTooltip("Click to attack this " + creature.Species);
                 shown = true;
             }
             if (!shown)

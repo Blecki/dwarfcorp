@@ -1,4 +1,7 @@
-﻿using System;
+﻿using DwarfCorp.Gui;
+using DwarfCorp.Gui.Widgets;
+using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -90,6 +93,102 @@ namespace DwarfCorp.ContextCommands
             foreach (var des in World.PlayerFaction.Designations.EnumerateEntityDesignations(Entity).ToList())
                 if (des.Task != null)
                     World.Master.TaskManager.CancelTask(des.Task);
+        }
+    }
+
+    public class PriorityCommand : ContextCommand
+    {
+        public PriorityCommand()
+        {
+            Name = "Priority";
+            Description = "Click to set the priority of the selected command(s)";
+            Icon = new Gui.TileReference("tool-icons", 1);
+        }
+
+        public override bool CanBeAppliedTo(Body Entity, WorldManager World)
+        {
+            return World.Master.Faction.Designations.EnumerateEntityDesignations(Entity).Any();
+        }
+
+        public override void Apply(Body Entity, WorldManager World)
+        {
+            foreach (var des in World.PlayerFaction.Designations.EnumerateEntityDesignations(Entity).ToList())
+                if (des.Task != null)
+                {
+                    CreateTaskPrioritySelector(World, des.Task, des);
+                }
+        }
+
+        public class PrioritySelector : Widget
+        {
+            public Task Task;
+            public Vector3 ScreenPos;
+            public PrioritySelector()
+            {
+
+            }
+
+            public override void Construct()
+            {
+                Rect = new Rectangle((int)ScreenPos.X, (int)ScreenPos.Y, 150, 100);
+                Border = "border-one";
+                AddChild(new Widget()
+                {
+                    Font = "font8",
+                    Text = Task.Name,
+                    AutoLayout = AutoLayout.DockTop,
+                    MinimumSize = new Point(100, 25),
+                });
+
+                var combobox = AddChild(new ComboBox()
+                {
+                    MinimumSize = new Point(90, 20),
+                    Items = Enum.GetValues(typeof(Task.PriorityType)).Cast<Task.PriorityType>().Select(s => s.ToString()).ToList(),
+                    OnSelectedIndexChanged = (sender) =>
+                    {
+                        var type = (Task.PriorityType)((sender as ComboBox).SelectedIndex);
+                        if (type != Task.Priority)
+                        {
+                            Task.Priority = (Task.PriorityType)((sender as ComboBox).SelectedIndex);
+                            sender.Parent.Close();
+                        }
+                    },
+                    SelectedIndex = (int)(Task.Priority),
+                    AutoLayout = AutoLayout.DockTop
+                }) as ComboBox;
+
+                AddChild(new Button()
+                {
+                    Text = "Close",
+                    MaximumSize = new Point(100, 30),
+                    AutoLayout = AutoLayout.DockTop,
+                    OnClick = (sender, args) =>
+                    {
+                        sender.Parent.Close();
+                    }
+                });
+
+                combobox.SelectedIndex = (int)(Task.Priority);
+                Layout();
+                base.Construct();
+            }
+        }
+
+
+        public void CreateTaskPrioritySelector(WorldManager world, Task task, DesignationSet.EntityDesignation des)
+        {
+            Vector3 pos = des.Body.Position;
+            Vector3 screenPos = world.Camera.Project(pos);
+            if (screenPos.Z > 0.999)
+            {
+                return;
+            }
+
+            world.MakeWorldPopup(new PrioritySelector()
+            {
+                Task = task,
+                ScreenPos = screenPos
+            }, des.Body, Vector2.Zero);
         }
     }
 
@@ -242,6 +341,46 @@ namespace DwarfCorp.ContextCommands
             Employee.Creature.AddThought(Thought.ThoughtType.GotPromoted);
         }
     }
+
+    public class ViewAllowedTasksCommand : ContextCommand
+    {
+
+        public ViewAllowedTasksCommand()
+        {
+            Name = "Allowed tasks...";
+            Description = "Click to view the selected dwarfs allowed tasks.";
+            Icon = new Gui.TileReference("tool-icons", 1);
+        }
+
+        public override void Apply(Body Entity, WorldManager World)
+        {
+            var creature = Entity.GetComponent<CreatureAI>();
+            if (creature == null)
+                return;
+
+            var screen = World.Gui.RenderData.VirtualScreen;
+            World.Gui.ShowMinorPopup(new AllowedTaskFilter
+            {
+                Employee = creature,
+                Tag = "selected-employee-allowable-tasks",
+                AutoLayout = AutoLayout.DockFill,
+                MinimumSize = new Point(256, 256),
+                Border = "border-fancy",
+                Rect = new Rectangle(screen.Center.X - 128, screen.Center.Y - 128, 256, 256)
+            });
+
+            base.Apply(Entity, World);
+        }
+
+        public override bool CanBeAppliedTo(Body Entity, WorldManager World)
+        {
+            var creature = Entity.GetComponent<CreatureAI>();
+            if (creature == null)
+                return false;
+            return World.Master.Faction.Minions.Contains(creature);
+        }
+    }
+
 
     public class EmptyBackpackCommand  : ContextCommand
     {

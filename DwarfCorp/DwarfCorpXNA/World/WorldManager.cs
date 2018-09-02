@@ -404,6 +404,7 @@ namespace DwarfCorp
                 {
                     Widget.Hidden = false;
                 }
+                Widget.Layout();
                 Widget.Invalidate();
             }
         }
