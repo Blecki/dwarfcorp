@@ -71,7 +71,7 @@ namespace DwarfCorp
             var treesPicked = bodies.Where(c => c != null && c.Tags.Contains("Vegetation"));
 
             if (treesPicked.Any())
-                Player.World.ShowToolPopup("Click to harvest this plant. Right click to cancel.");
+                Player.World.ShowTooltip("Click to harvest this plant. Right click to cancel.");
             else
                 DefaultOnMouseOver(bodies);   
         }

@@ -435,7 +435,7 @@ namespace DwarfCorp
                         tip += "\n";
                     }
 
-                    World.ShowToolPopup("Release to build here.");
+                    World.ShowTooltip("Release to build here.");
 
                     displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs,
                         World.ComponentManager, 

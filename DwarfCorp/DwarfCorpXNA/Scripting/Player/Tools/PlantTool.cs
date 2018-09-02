@@ -55,7 +55,7 @@ namespace DwarfCorp
         {
             if (!voxel.Type.IsSoil)
             {
-                Player.World.ShowToolPopup("Can only plant on soil!");
+                Player.World.ShowTooltip("Can only plant on soil!");
                 return false;
             }
 
@@ -63,7 +63,7 @@ namespace DwarfCorp
             {
                 if (voxel.Sunlight == false)
                 {
-                    Player.World.ShowToolPopup("Can only plant " + PlantType + " above ground.");
+                    Player.World.ShowTooltip("Can only plant " + PlantType + " above ground.");
                     return false;
                 }
             }
@@ -71,7 +71,7 @@ namespace DwarfCorp
             {
                 if (voxel.Sunlight)
                 {
-                    Player.World.ShowToolPopup("Can only plant " + PlantType + " below ground.");
+                    Player.World.ShowTooltip("Can only plant " + PlantType + " below ground.");
                     return false;
                 }
             }
@@ -80,7 +80,7 @@ namespace DwarfCorp
 
             if (designation != null)
             {
-                Player.World.ShowToolPopup("You're already planting here.");
+                Player.World.ShowTooltip("You're already planting here.");
                 return false;
             }
 
@@ -95,17 +95,17 @@ namespace DwarfCorp
                         Drawer3D.DrawBox((entity as Body).GetBoundingBox(), Color.Yellow, 0.03f, false);
                 }
 
-                Player.World.ShowToolPopup("There's something in the way.");
+                Player.World.ShowTooltip("There's something in the way.");
                 return false;
             }
 
             if (Player.Faction.GetIntersectingRooms(voxel.GetBoundingBox()).Count > 0)
             {
-                Player.World.ShowToolPopup("Can't plant inside zones.");
+                Player.World.ShowTooltip("Can't plant inside zones.");
                 return false;
             }
 
-            Player.World.ShowToolPopup("Click to plant.");
+            Player.World.ShowTooltip("Click to plant.");
 
             return true;
         }
@@ -115,11 +115,18 @@ namespace DwarfCorp
             if (button == InputManager.MouseButton.Left)
             {
                 var goals = new List<PlantTask>();
+                int count = Player.Faction.Designations.EnumerateDesignations(DesignationType.Plant).Count();
 
                 foreach (var voxel in voxels)
                 {
+                    if (count >= 1024)
+                    {
+                        Player.World.ShowToolPopup("Too many planting tasks.");
+                        break;
+                    }
                     if (ValidatePlanting(voxel))
                     {
+                        count++;
                         var farmTile = new Farm
                         {
                             Voxel = voxel,

@@ -197,10 +197,11 @@ namespace DwarfCorp.GameStates
                     }
                     else
                     {
-                        GuiRoot.ShowTooltip(new Point(GuiRoot.MousePosition.X + 4, GuiRoot.MousePosition.Y - 16),
+                        GuiRoot.ShowMinorPopup(
                           new Gui.Widgets.ToolPopup
                           {
                               Text = text,
+                              Rect = new Rectangle(GuiRoot.MousePosition.X - 16, GuiRoot.MousePosition.Y - 16, 128, 64)
                           });
                     }
                 };

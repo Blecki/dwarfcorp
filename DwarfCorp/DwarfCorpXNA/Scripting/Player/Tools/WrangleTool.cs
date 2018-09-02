@@ -64,13 +64,13 @@ namespace DwarfCorp
             if (pens.Any())
             {
                 if (print)
-                    Player.World.ShowToolPopup("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Species);
+                    Player.World.ShowTooltip("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Species);
                 return true;
             }
             else
             {
                 if (print)
-                    Player.World.ShowToolPopup("Can't wrangle this " + animal.GetRoot().GetComponent<Creature>().Species + " : need more animal pens.");
+                    Player.World.ShowTooltip("Can't wrangle this " + animal.GetRoot().GetComponent<Creature>().Species + " : need more animal pens.");
             }
 
             return false;

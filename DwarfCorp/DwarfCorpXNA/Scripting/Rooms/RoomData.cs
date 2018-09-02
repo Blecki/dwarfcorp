@@ -118,7 +118,7 @@ namespace DwarfCorp
 
             if (Faction.GetRooms().Where(room => room.RoomData.Name == this.Name).Count() + 1 > MaxNumRooms)
             {
-                World.ShowToolPopup(String.Format("We can only build {0} {1}. Destroy the existing to build a new one.", MaxNumRooms, Name));
+                World.ShowTooltip(String.Format("We can only build {0} {1}. Destroy the existing to build a new one.", MaxNumRooms, Name));
                 return false;
             }
 
@@ -133,7 +133,7 @@ namespace DwarfCorp
 
             if (maxExtents < MinimumSideLength || minExtents < MinimumSideWidth)
             {
-                World.ShowToolPopup("Room is too small (minimum is " + MinimumSideLength + " x " + MinimumSideWidth + ")!");
+                World.ShowTooltip("Room is too small (minimum is " + MinimumSideLength + " x " + MinimumSideWidth + ")!");
                 return false;
             }
 
@@ -152,32 +152,32 @@ namespace DwarfCorp
 
                 if (height != (int)voxel.Coordinate.Y && !CanBuildOnMultipleLevels)
                 {
-                    World.ShowToolPopup("Room must be on flat ground!");
+                    World.ShowTooltip("Room must be on flat ground!");
                     return false;
                 }
 
                 if (MustBeBuiltOnSoil && !voxel.Type.IsSoil)
                 {
-                    World.ShowToolPopup("Room must be built on soil!");
+                    World.ShowTooltip("Room must be built on soil!");
                     return false;
                 }
 
                 if (!CanBuildAboveGround && voxel.Sunlight)
                 {
-                    World.ShowToolPopup("Room can't be built aboveground!");
+                    World.ShowTooltip("Room can't be built aboveground!");
                     return false;
                 }
 
                 if (!CanBuildBelowGround && !voxel.Sunlight)
                 {
-                    World.ShowToolPopup("Room can't be built belowground!");
+                    World.ShowTooltip("Room can't be built belowground!");
                     return false;
                 }
             }
 
             if (!allEmpty)
             {
-                World.ShowToolPopup("Room must be built in free space.");
+                World.ShowTooltip("Room must be built in free space.");
                 return false;
             }
 

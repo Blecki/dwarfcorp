@@ -189,9 +189,9 @@ namespace DwarfCorp
                 return;
 
             if (Mouse.GetState().LeftButton == ButtonState.Pressed)
-                Player.World.ShowToolPopup("Release to build.");
+                Player.World.ShowTooltip("Release to build.");
             else
-                Player.World.ShowToolPopup("Release to cancel.");
+                Player.World.ShowTooltip("Release to cancel.");
 
             Selected.Clear();
 
