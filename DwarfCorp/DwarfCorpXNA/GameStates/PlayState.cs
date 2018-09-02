@@ -592,15 +592,6 @@ namespace DwarfCorp.GameStates
                 Tooltip = World.PlayerCompany.Information.Name
             });
 
-            //BottomBar.AddChild(new Widget
-            //{
-            //    Text = World.PlayerCompany.Information.Name,
-            //    AutoLayout = Gui.AutoLayout.DockLeftCentered,
-            //    Font = "font10",
-            //    TextVerticalAlign = VerticalAlign.Center,
-            //    TextColor = new Vector4(1, 1, 1, 1)
-            //});
-
             BottomBar.AddChild(new Gui.Widget
             {
                 Background = new Gui.TileReference("resources", 40),
@@ -615,7 +606,7 @@ namespace DwarfCorp.GameStates
                 Font = "font10",
                 TextVerticalAlign = Gui.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1),
-                Tooltip = "Amount of money in our treasury"
+                Tooltip = StringLibrary.GetString("money-amount")
             });
 
             StocksLabel = BottomBar.AddChild(new Gui.Widget
@@ -623,7 +614,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockLeftCentered,
                 Font = "font10",
                 TextVerticalAlign = Gui.VerticalAlign.Center,
-                Tooltip = "Amount of stockpile space remaining. Build more stockpiles to get more space."
+                Tooltip = StringLibrary.GetString("stockpile-tooltip")
             });
 
             BottomBar.AddChild(new Gui.Widget
@@ -632,7 +623,7 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(32, 32),
                 MaximumSize = new Point(32, 32),
                 AutoLayout = Gui.AutoLayout.DockLeftCentered,
-                Tooltip = "Current viewing level."
+                Tooltip = StringLibrary.GetString("slicer-tooltip")
             });
 
             BottomBar.AddChild(new Gui.Widgets.ImageButton
@@ -645,7 +636,7 @@ namespace DwarfCorp.GameStates
                 {
                     Master.SetMaxViewingLevel(Master.MaxViewingLevel - 1);
                 },
-                Tooltip = "Go down one viewing level."
+                Tooltip = StringLibrary.GetString("slicer-down-tooltip")
             });
 
             BottomBar.AddChild(new Gui.Widgets.ImageButton
@@ -658,7 +649,7 @@ namespace DwarfCorp.GameStates
                 {
                     Master.SetMaxViewingLevel(Master.MaxViewingLevel + 1);
                 },
-                Tooltip = "Go up one viewing level."
+                Tooltip = StringLibrary.GetString("slicer-up-tooltip")
             });
 
             LevelLabel = BottomBar.AddChild(new Gui.Widget
@@ -667,7 +658,7 @@ namespace DwarfCorp.GameStates
                 Font = "font10",
                 TextVerticalAlign = Gui.VerticalAlign.Center,
                 TextColor = new Vector4(1, 1, 1, 1),
-                Tooltip = "Current viewing level.",
+                Tooltip = StringLibrary.GetString("slicer-current-tooltip")
             });
             #endregion
 
@@ -687,7 +678,7 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(128, 20),
                 Font = "font10",
                 TextColor = new Vector4(1, 1, 1, 1),
-                Tooltip = "Current time/date."
+                Tooltip = StringLibrary.GetString("time-tooltip")
             });
             #endregion
 
@@ -717,8 +708,8 @@ namespace DwarfCorp.GameStates
                 {
                     GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
                     {
-                        OkayText = "Fire this dwarf!",
-                        CancelText = "Keep this dwarf.",
+                        OkayText = StringLibrary.GetString("fire-dwarf"),
+                        CancelText = StringLibrary.GetString("keep-dwarf"),
                         Padding = new Margin(32, 10, 10, 10),
                         MinimumSize = new Point(512, 128),
                         OnClose = (confirm) =>
@@ -730,7 +721,7 @@ namespace DwarfCorp.GameStates
                                 if (employeeInfo == null)
                                 {
                                     Console.Error.WriteLine("Error firing dwarf. This should not have happened!");
-                                    World.MakeAnnouncement("Error firing dwarf. Try again?");
+                                    World.MakeAnnouncement(StringLibrary.GetString("firing-error"));
                                     return;
                                 }
                                 var selectedEmployee = (sender as EmployeeInfo).Employee;
@@ -739,7 +730,7 @@ namespace DwarfCorp.GameStates
                                     return;
                                 }
                                 selectedEmployee.GetRoot().GetComponent<Inventory>().Die();
-                                World.MakeAnnouncement(string.Format("{0} was fired.", selectedEmployee.Stats.FullName));
+                                World.MakeAnnouncement(StringLibrary.GetString("was-fired", selectedEmployee.Stats.FullName));
                                 selectedEmployee.GetRoot().Delete();
 
                                 Master.Faction.Minions.Remove(selectedEmployee);
@@ -772,7 +763,7 @@ namespace DwarfCorp.GameStates
             MinimapIcon = new FramedIcon
             {
                 Icon = new Gui.TileReference("tool-icons", 33),
-                Text = "Map",
+                Text = StringLibrary.GetString("map-icon-label"),
                 EnabledTextColor = Vector4.One,
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Below,
@@ -802,7 +793,7 @@ namespace DwarfCorp.GameStates
                             new FramedIcon
                             {
                                 Icon = new Gui.TileReference("tool-icons", 34),
-                                Text = "Emp",
+                                Text = StringLibrary.GetString("employee-icon-label"),
                                 EnabledTextColor = Vector4.One,
                                 TextHorizontalAlign = HorizontalAlign.Center,
                                 TextVerticalAlign = VerticalAlign.Below,
@@ -823,7 +814,7 @@ namespace DwarfCorp.GameStates
                             new FramedIcon
                             {
                                Icon = null,
-                               Text = "Marks",
+                               Text = StringLibrary.GetString("marks-icon-label"),
                                TextHorizontalAlign = HorizontalAlign.Center,
                                TextVerticalAlign = VerticalAlign.Center,
                                EnabledTextColor = Vector4.One,
@@ -844,7 +835,7 @@ namespace DwarfCorp.GameStates
                             new FramedIcon
                             {
                                 Icon = new Gui.TileReference("tool-icons", 35),
-                                Text = "Tasks",
+                                Text = StringLibrary.GetString("tasks-icon-label"),
                                 TextHorizontalAlign = HorizontalAlign.Center,
                                 TextVerticalAlign = VerticalAlign.Below,
                                 EnabledTextColor = Vector4.One,
@@ -871,65 +862,6 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(21, 0)
             });
 
-            /*
-            SelectedEmployeeName = new Widget
-            {
-                Tag = "selected-employee-name",
-                Border = "border-thin",
-                Text = "No Employee Selected",
-                TextVerticalAlign = VerticalAlign.Center
-            };
-
-            SidePanel = GuiRoot.RootItem.AddChild(new CollapsableStack
-            {
-                AutoLayout = AutoLayout.FloatBottomLeft,
-                OnLayout = (sender) =>
-                {
-                    (sender as CollapsableStack).AnchorPoint = new Point(0, sender.Rect.Bottom);
-                },
-                CollapsedSize = new Point(208, 16),
-                ItemSource = new CollapsableStack.CollapsableItem[]
-                {
-                    new CollapsableStack.CollapsableItem
-                    {
-                        ExpandedSize = new Point(208, 204),
-                        Expanded = true,
-                        ExpandedContents = MinimapFrame,
-                        CollapsedContents = new Widget
-                        {
-                            Border = "border-thin",
-                            Text = "MINIMAP",
-                            TextVerticalAlign = VerticalAlign.Center
-                        }
-                    },
-                    new CollapsableStack.CollapsableItem
-                    {
-                        ExpandedSize = new Point(400,400),
-                        Expanded = false,
-                        StartHidden = false,
-                        ExpandedContents = SelectedEmployeeInfo,
-                        CollapsedContents = SelectedEmployeeName
-                    },
-                    new CollapsableStack.CollapsableItem
-                    {
-                        ExpandedSize = new Point(208,200),
-                        Expanded = false,
-                        ExpandedContents = new DesignationFilter
-                        {
-                            Border = "border-button",
-                            DesignationDrawer = World.DesignationDrawer
-                        },
-                        CollapsedContents = new Widget
-                        {
-                            Border = "border-thin",
-                            Text = "MARKER FILTER",
-                            TextVerticalAlign = VerticalAlign.Center
-                        }
-                    }
-                }
-            }) as CollapsableStack;
-            */
-
             #endregion
 
             #region Setup right tray
@@ -940,8 +872,8 @@ namespace DwarfCorp.GameStates
                 Icon = new Gui.TileReference("tool-icons", 10),
                 OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World)),
                 DrawIndicator = true,
-                Tooltip = "Click to open the Economy screen",
-                Text = "Econ.",
+                Tooltip = StringLibrary.GetString("economy-tooltip"),
+                Text = StringLibrary.GetString("economy-label"),
                 TextVerticalAlign = VerticalAlign.Below
             };
 
@@ -960,9 +892,9 @@ namespace DwarfCorp.GameStates
                                 {
                                     StateManager.PushState(new EventLogState(Game, StateManager, World.EventLog, World.Time.CurrentDate));
                                 },
-                                Text = "Events",
+                                Text = StringLibrary.GetString("events-label"),
                                 TextVerticalAlign = VerticalAlign.Below,
-                                Tooltip = "View Event Log"
+                                Tooltip = StringLibrary.GetString("events-tooltip")
                             },
                             EconomyIcon,
                                                                    
@@ -970,8 +902,8 @@ namespace DwarfCorp.GameStates
                             {
                                 Icon = new Gui.TileReference("tool-icons", 12),
                                 OnClick = (sender, args) => { OpenPauseMenu(); },
-                                Tooltip = "Click to open the Settings screen.",
-                                Text = "Option",
+                                Tooltip = StringLibrary.GetString("settings-tooltip"),
+                                Text = StringLibrary.GetString("settings-label"),
                                 TextVerticalAlign = VerticalAlign.Below
                             }
                         },

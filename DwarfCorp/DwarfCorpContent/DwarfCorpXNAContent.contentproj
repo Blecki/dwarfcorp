@@ -2495,10 +2495,6 @@
       <Name>penguin_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="craft-items.json">
-      <Name>craft-items</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Entities\Kobold\kobold_animation.json">
       <Name>kobold_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

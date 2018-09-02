@@ -225,6 +225,12 @@ namespace DwarfCorp.Gui
             this.Root = Root;
             if (!Constructed)
             {
+                if (Text != null)
+                    Text = StringLibrary.TransformDataString(Text, Text);
+
+                if (Tooltip != null)
+                    Tooltip = StringLibrary.TransformDataString(Tooltip, Tooltip);
+                
                 Constructed = true;
                 this.Construct();
                 Root.SafeCall(OnConstruct, this);

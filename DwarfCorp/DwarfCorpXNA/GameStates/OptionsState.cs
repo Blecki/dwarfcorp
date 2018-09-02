@@ -117,7 +117,7 @@ namespace DwarfCorp.GameStates
             {
                 Font = "font10",
                 AutoLayout = AutoLayout.DockRight,
-                Text = "OK",
+                Text = StringLibrary.GetString("okay"),
                 OnClick = (sender, args) =>
                 {
                     Close();
@@ -126,7 +126,7 @@ namespace DwarfCorp.GameStates
 
             buttonRow.AddChild(new Widget()
             {
-                Text = "Profile:",
+                Text = StringLibrary.GetString("color-profile"),
                 Font = "font10",
                 AutoLayout = AutoLayout.DockLeft,
                 MinimumSize = new Point(64, 32)
@@ -281,9 +281,9 @@ namespace DwarfCorp.GameStates
                     {
                         var confirm = new Gui.Widgets.Confirm
                             {
-                                Text = "Apply changes?",
-                                OkayText = "Yes",
-                                CancelText = "No",
+                                Text = "@options-apply-check",
+                                OkayText = StringLibrary.GetString("yes"),
+                                CancelText = StringLibrary.GetString("no"),
                                 OnClose = (s2) =>
                                     {
                                         if ((s2 as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
@@ -308,7 +308,7 @@ namespace DwarfCorp.GameStates
 
             MainPanel.AddChild(new Gui.Widgets.Button
             {
-                Text = "Apply",
+                Text = "@options-apply",
                 Font = "font16",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
@@ -352,7 +352,7 @@ namespace DwarfCorp.GameStates
                 Padding = new Margin(0,0,4,4),
                 ChangeColorOnHover = true,
                 HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4()
-        });
+            });
 
             var label = new Widget
             {
@@ -380,7 +380,7 @@ namespace DwarfCorp.GameStates
 
         private void CreateGameplayTab()
         {
-            var panel = TabPanel.AddTab("GAMEPLAY", new Widget
+            var panel = TabPanel.AddTab("@options-gameplay-tab", new Widget
             {
                 Border = "border-thin",
                 Padding = new Margin(4, 4, 0, 0)
@@ -388,7 +388,7 @@ namespace DwarfCorp.GameStates
 
             panel.AddChild(new Widget
             {
-                Text = "Restore default settings",
+                Text = "@options-restore-defaults",
                 MinimumSize = new Point(0, 20),
                 AutoLayout = AutoLayout.DockTop,
                 Padding = new Margin(0, 0, 4, 4),
@@ -398,7 +398,7 @@ namespace DwarfCorp.GameStates
                 {
                     var prompt = GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
                     {
-                        Text = "Set all settings to their default?",
+                        Text = "@options-restore-defaults-check",
                         OnClose = (confirm) =>
                         {
                             if ((confirm as Gui.Widgets.Confirm).DialogResult == Gui.Widgets.Confirm.Result.OKAY)
@@ -415,18 +415,21 @@ namespace DwarfCorp.GameStates
             });
 
             // Todo: Display actual value beside slider.
-            MoveSpeed = panel.AddChild(LabelAndDockWidget("Camera Move Speed", new HorizontalFloatSlider
+            MoveSpeed = panel.AddChild(LabelAndDockWidget(
+                "@options-camera-movement", 
+                new HorizontalFloatSlider
             {
                 ScrollArea = 20,
                 OnSliderChanged = OnItemChanged,
-                Tooltip = "Sensitivity of the camera to the movement keys"
+                Tooltip = "@options-camera-movement-tooltip"
             })).GetChild(1) as HorizontalFloatSlider;
 
-            ZoomSpeed = panel.AddChild(LabelAndDockWidget("Camera Zoom Speed", new HorizontalFloatSlider
+            ZoomSpeed = panel.AddChild(LabelAndDockWidget("@options-camera-zoom",
+                new HorizontalFloatSlider
             {
                 ScrollArea = 2,
                 OnSliderChanged = OnItemChanged,
-                Tooltip = "Sensitivity of the camera to zooming"
+                Tooltip = "@options-camera-zoom-tooltip"
             })).GetChild(1) as HorizontalFloatSlider;
 
             var split = panel.AddChild(new Gui.Widgets.Columns
@@ -446,16 +449,16 @@ namespace DwarfCorp.GameStates
 
             InvertZoom = leftPanel.AddChild(new CheckBox
             {
-                Text = "Invert Zoom",
-                Tooltip = "When checked, zooming in/out with the scroll wheel will be inverted",
+                Text = "@options-invert-zoom",
+                Tooltip = "@options-invert-zoom-tooltip",
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
             ZoomTowardMouse = leftPanel.AddChild(new CheckBox
             {
-                Text = "Zoom to Mouse",
-                Tooltip = "When checked, when you zoom in, you will zoom toward the mouse.",
+                Text = "@options-zoom-to-mouse",
+                Tooltip = "@options-zoom-to-mouse-tooltip",
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
@@ -463,8 +466,8 @@ namespace DwarfCorp.GameStates
 
             EdgeScrolling = leftPanel.AddChild(new CheckBox
             {
-                Text = "Edge Scrolling",
-                Tooltip = "When checked, moving the cursor to the edge of the screen will move the camera.",
+                Text = "@options-edge-scrolling",
+                Tooltip = "@options-edge-scrolling-tooltip",
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;

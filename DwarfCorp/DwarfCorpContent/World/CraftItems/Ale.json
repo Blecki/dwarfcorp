@@ -1,6 +1,8 @@
 {
   "Name": "Ale",
   "EntityName": "Ale",
+  "DisplayName": "@ale",
+  "ShortDisplayName": "@s-ale",
   "RequiredResources": [
     {
       "ResourceType": "Brewable",
@@ -12,16 +14,16 @@
     "Tile": 20
   },
   "BaseCraftTime": 8.0,
-  "Description": "Turn brewable food into alcohol",
+  "Description": "@d-ale",
   "Type": "Resource",
   "Prerequisites": [],
   "ResourceCreated": {
     "_value": "Ale"
   },
   "CraftLocation": "Barrel",
-  "Verb": "Brew",
-  "PastTeseVerb": "Brewed",
-  "CurrentVerb": "Brewing",
+  "Verb": "@brew",
+  "PastTeseVerb": "@brewed",
+  "CurrentVerb": "@brewing",
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,

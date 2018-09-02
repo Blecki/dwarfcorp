@@ -1,3 +1,6 @@
+okay: Okay
+yes: Yes
+no: No
 main-menu-title: MAIN MENU
 continue: Continue
 continue-tooltip: Continue save game {0}.
@@ -40,3 +43,46 @@ craft-at: {0} Craft {1} at {2}
 brew: Brew
 brewed: Brewed
 brewing: Brewing
+ale: Ale
+s-ale: ale
+d-ale: Turn brewable food into alcohol.
+anvil: Anvil
+s-anvil: anvil
+d-anvil: Used to craft more complex items.
+employee-icon-label: emp
+marks-icon-label: marks
+tasks-icon-label: tasks
+map-icon-label: map
+fire-dwarf: Fire this dwarf!
+keep-dwarf: Keep this dwarf.
+firing-error: Error firing dwarf. Try again?
+was-fired: {0} was fired.
+money-amount: Amount of money in our treasury
+stockpile-tooltip: Amount of stockpile space remaining. Build more stockpiles to get more space.
+slicer-tooltip: Current viewing level.
+slicer-down-tooltip: Go down one viewing level.
+slicer-up-tooltip: Go up one viewing level.
+slicer-current-tooltip: Current viewing level.
+time-tooltip: Current time/date.
+economy-tooltip: Click to open the Eceonomy screen.
+economy-label: Econ.
+events-tooltip: View Event Log
+events-label: Events
+settings-tooltip: Click to open the Settings screen.
+settings-label: Option
+color-profile: Profile:
+options-apply-check: Apply changes?
+options-apply: Apply
+options-restore-defaults: Restore default settings
+options-restore-defaults-check: Set all settings to their default?
+options-camera-movement: Camera Move Speed
+options-camera-movement-tooltip: Sensitivity of the camera to the movement keys
+options-camera-zoom: Camera Zoom Speed
+options-camera-zoom-tooltip: Sensitivity of the camera to zooming
+options-gameplay-tab: GAMEPLAY
+options-invert-zoom: Invert Zoom
+options-invert-zoom-tooltip: When checked, zooming in/out with the scroll wheel will be inverted
+options-zoom-to-mouse: Zoom to Mouse
+options-zoom-to-mouse-tooltip: When checked, when you zoom in, you will zoom toward the mouse
+options-edge-scrolling: Edge Scrolling
+options-edge-scrolling-tooltip: When checked, moving the cursor to the edge of the screen will move the camera.
