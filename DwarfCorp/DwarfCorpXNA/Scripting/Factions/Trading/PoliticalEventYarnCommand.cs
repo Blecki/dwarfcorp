@@ -21,13 +21,16 @@ namespace DwarfCorp.Scripting.Factions.Trading
             }
 
             var politics = world.Diplomacy.GetPolitics(playerFaction, envoy.OwnerFaction);
-            politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+            if (!politics.RecentEvents.Any(ev => ev.Description == (string)Arguments[0].Value))
             {
-                Description = (string)Arguments[0].Value,
-                Change = (float)Arguments[1].Value,
-                Duration = new TimeSpan((int)((float)Arguments[2].Value), 0, 0, 0),
-                Time = world.Time.CurrentDate
-            });
+                politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                {
+                    Description = (string)Arguments[0].Value,
+                    Change = (float)Arguments[1].Value,
+                    Duration = new TimeSpan((int)((float)Arguments[2].Value), 0, 0, 0),
+                    Time = world.Time.CurrentDate
+                });
+            }
         }
     }
 }

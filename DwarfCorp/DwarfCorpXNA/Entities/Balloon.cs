@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    class Balloon : Body
+    public class Balloon : Body
     {
         [EntityFactory("Balloon")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)

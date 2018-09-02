@@ -118,6 +118,8 @@ namespace DwarfCorp
 
         public PoliticsDictionary FactionPolitics { get; set; }
 
+        public List<DwarfCorp.Scripting.Adventure.Adventure> Adventures = new List<Scripting.Adventure.Adventure>();
+
         [JsonIgnore]
         public WorldManager World { get; set; }
 
@@ -227,16 +229,40 @@ namespace DwarfCorp
                                     Duration = forever,
                                     Time = Now
                                 });
+                                politics.WasAtWar = true;
+                            }
+                            if (!politics.HasEvent("you stole our land"))
+                            {
+                                politics.RecentEvents.Add(new PoliticalEvent()
+                                {
+                                    Change = -1.0f,
+                                    Description = "you stole our land",
+                                    Duration = forever,
+                                    Time = Now
+                                });
                             }
                         }
                         else if (trustingness > 0.8f)
                         {
-                            if (!politics.HasEvent("we trust you"))
+                            if (!politics.HasEvent("we just trust you"))
                             {
                                 politics.RecentEvents.Add(new PoliticalEvent()
                                 {
                                     Change = 10.0f,
-                                    Description = "we trust you",
+                                    Description = "we just trust you",
+                                    Duration = forever,
+                                    Time = Now
+                                });
+                            }
+                        }
+                        else if (faction.Value.ClaimsColony && !faction.Value.IsMotherland)
+                        {
+                            if (!politics.HasEvent("you stole our land"))
+                            {
+                                politics.RecentEvents.Add(new PoliticalEvent()
+                                {
+                                    Change = -0.1f,
+                                    Description = "you stole our land",
                                     Duration = forever,
                                     Time = Now
                                 });
@@ -430,6 +456,18 @@ namespace DwarfCorp
                     mypolitics.Value.UpdateEvents(currentDate);
                 }
             }
+
+            foreach (var adventure in Adventures)
+            {
+                var prevEvent = adventure.LastEvent;
+                adventure.Update(world, time);
+                if (adventure.LastEvent != prevEvent)
+                {
+                    world.MakeAnnouncement(adventure.LastEvent);
+                }
+            }
+
+            Adventures.RemoveAll(adv => adv.AdventureState == Scripting.Adventure.Adventure.State.Done);
         }
 
         [JsonObject(IsReference = true)]

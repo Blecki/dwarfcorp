@@ -949,7 +949,7 @@ namespace DwarfCorp.GameStates
                 Corners = 0,//Gui.Scale9Corners.Top,
                 Transparent = true,
                 AutoLayout = Gui.AutoLayout.DockRight,
-                SizeToGrid = new Point(3, 1),
+                SizeToGrid = new Point(4, 1),
                 ItemSource = new Gui.Widget[] 
                         {
                             new Gui.Widgets.FramedIcon()
@@ -962,6 +962,17 @@ namespace DwarfCorp.GameStates
                                 Text = "Events",
                                 TextVerticalAlign = VerticalAlign.Below,
                                 Tooltip = "View Event Log"
+                            },
+                            new Gui.Widgets.FramedIcon()
+                            {
+                                 Icon = new Gui.TileReference("tool-icons", 21),
+                                OnClick = (sender, args) =>
+                                {
+                                    StateManager.PushState(new FactionViewState(GameState.Game, GameState.Game.StateManager, World));
+                                },
+                                Text = "Diplo.",
+                                TextVerticalAlign = VerticalAlign.Below,
+                                Tooltip = "View diplomacy with other factions."
                             },
                             EconomyIcon,
                                                                    

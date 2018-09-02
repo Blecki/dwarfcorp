@@ -288,6 +288,7 @@
     <Compile Include="GameStates\ModManagement\SearchWidget.cs" />
     <Compile Include="GameStates\ModManagement\InstalledModsWidget.cs" />
     <Compile Include="GameStates\ModManagement\ManageModsState.cs" />
+    <Compile Include="GameStates\FactionViewState.cs" />
     <Compile Include="GameStates\YarnSpinner\EndConversation.cs" />
     <Compile Include="GameStates\YarnSpinner\HidePortrait.cs" />
     <Compile Include="GameStates\YarnSpinner\SpeechSynthesizer.cs" />
@@ -326,6 +327,7 @@
     <Compile Include="Gui\Widgets\Graph.cs" />
     <Compile Include="Gui\Widgets\TextBox.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
+    <Compile Include="Scripting\Adventure\Adventure.cs" />
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
     <Compile Include="Scripting\CompoundActs\RechargeObjectAct.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />

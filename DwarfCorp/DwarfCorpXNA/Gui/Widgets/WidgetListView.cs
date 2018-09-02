@@ -72,10 +72,10 @@ namespace DwarfCorp.Gui.Widgets
             TriggerOnChildClick = true;
         }
 
-        public void AddItem(Widget Item)
+        public Widget AddItem(Widget Item)
         {
             Item.AutoLayout = Gui.AutoLayout.None;
-            AddChild(Item);
+            return AddChild(Item);
         }
 
         public void ClearItems()

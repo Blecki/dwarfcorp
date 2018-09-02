@@ -50,6 +50,7 @@ namespace DwarfCorp
     {
         public CreatureAI()
         {
+            Blackboard = new Blackboard();
         }
 
         public CreatureAI(
@@ -199,6 +200,7 @@ namespace DwarfCorp
         }
 
         /// <summary> Blackboard used for Acts. </summary>
+        [JsonIgnore]
         public Blackboard Blackboard { get; set; }
 
         /// <summary>
