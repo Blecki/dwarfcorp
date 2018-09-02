@@ -203,7 +203,7 @@ namespace DwarfCorp.GameStates
                 {
                     byte factionIdx = Overworld.Map[x, y].Faction;
 
-                    if (factionIdx > 0 && factionIdx < NativeCivilizations.Count - 1)
+                    if (factionIdx > 0 && factionIdx <= NativeCivilizations.Count)
                     {
                         Faction faction = NativeCivilizations[factionIdx - 1];
 
