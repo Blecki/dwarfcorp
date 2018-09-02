@@ -58,7 +58,7 @@ namespace DwarfCorp
                 Manager.World.Factions.Factions["Carnivore"],
                 Manager,
                 "Mud Golem",
-                Position);
+                Position, 2, 3);
         }
 
         [EntityFactory("SnowGolem")]
@@ -72,7 +72,7 @@ namespace DwarfCorp
                 Manager.World.Factions.Factions["Carnivore"],
                 Manager,
                 "Snow Golem",
-                Position);
+                Position, 3, 3);
         }
 
         public MudGolem()
@@ -80,17 +80,17 @@ namespace DwarfCorp
             
         }
 
-        public MudGolem(CreatureStats stats, string blood, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
+        public MudGolem(CreatureStats stats, string blood, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position, int iconX, int iconY) :
             base(manager, stats, allies, planService, faction, name)
         {
             Physics = new Physics(Manager, name, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             Physics.AddChild(this);
 
-            Initialize(blood);
+            Initialize(blood, iconX, iconY);
         }
 
-        public void Initialize(string blood)
+        public void Initialize(string blood, int iconX, int iconY)
         {
             HasMeat = false;
             HasBones = false;
@@ -134,7 +134,7 @@ namespace DwarfCorp
             };
 
 
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1)));
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, iconX, iconY)));
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");

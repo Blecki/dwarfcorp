@@ -201,6 +201,7 @@ namespace DwarfCorp
                     Icon = new Gui.TileReference("resources", potion.Value.Icon),
                     Category = "Potions",
                     Name = potion.Key,
+                    DisplayName = potion.Key,
                     AllowHeterogenous = true,
                     IsMagical = true,
                     Type = CraftItem.CraftType.Resource,

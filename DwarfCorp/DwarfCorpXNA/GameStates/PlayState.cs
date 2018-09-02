@@ -964,6 +964,7 @@ namespace DwarfCorp.GameStates
                                 TextVerticalAlign = VerticalAlign.Below,
                                 Tooltip = "View Event Log"
                             },
+#if DEBUG
                             new Gui.Widgets.FramedIcon()
                             {
                                  Icon = new Gui.TileReference("tool-icons", 21),
@@ -975,6 +976,7 @@ namespace DwarfCorp.GameStates
                                 TextVerticalAlign = VerticalAlign.Below,
                                 Tooltip = "View diplomacy with other factions."
                             },
+#endif
                             EconomyIcon,
                                                                    
                             new Gui.Widgets.FramedIcon
