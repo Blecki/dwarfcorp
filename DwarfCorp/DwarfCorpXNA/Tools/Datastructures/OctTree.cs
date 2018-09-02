@@ -254,6 +254,45 @@ namespace DwarfCorp
             }
         }
 
+        public void EnumerateItems(BoundingFrustum SearchBounds, HashSet<Body> Into, Func<Body, bool> Filter)
+        {
+            lock (this)
+            {
+                switch (SearchBounds.Contains(Bounds))
+                {
+                    case ContainmentType.Disjoint:
+                        return;
+                    case ContainmentType.Intersects:
+                        if (Children == null)
+                        {
+                            for (var i = 0; i < Items.Count; ++i)
+                            {
+                                if (Filter(Items[i].Body) && FastIntersects(SearchBounds, Items[i].BoundingBox))
+                                    Into.Add(Items[i].Body);
+                            }
+                        }
+                        else
+                        {
+                            for (var i = 0; i < 8; ++i)
+                                Children[i].EnumerateItems(SearchBounds, Into, Filter);
+                        }
+                        break;
+                    case ContainmentType.Contains:
+                        if (Children == null)
+                        {
+                            foreach (var item in Items)
+                                if (Filter(item.Body))
+                                    Into.Add(item.Body);
+                        }
+                        else
+                            for (var i = 0; i < 8; ++i)
+                                Children[i].EnumerateItems(Into, Filter);
+
+                        break;
+                }
+            }
+        }
+
         public IEnumerable<Tuple<int, BoundingBox>> EnumerateBounds(BoundingFrustum Frustum, int Depth = 0)
         {
             if (Frustum.Intersects(Bounds))
@@ -264,6 +303,32 @@ namespace DwarfCorp
                         foreach (var r in Children[i].EnumerateBounds(Frustum, Depth + 1))
                             yield return r;
             }
+        }
+
+        //inspired by http://old.cescg.org/CESCG-2002/DSykoraJJelinek/
+        private bool FastIntersectsPlane(Plane plane, BoundingBox box)
+        {
+            //Pick the corner furthest from the plane along the normal.
+            Vector3 vmin = new Vector3(
+                plane.Normal.X >= 0.0f ? box.Min.X : box.Max.X,
+                plane.Normal.Y >= 0.0f ? box.Min.Y : box.Max.Y,
+                plane.Normal.Z >= 0.0f ? box.Min.Z : box.Max.Z
+            );
+            //Project this point to the plane normal and see which side of the plane it lies.
+            if (plane.DotNormal(vmin) > -plane.D)
+                return false; //outside
+            return true; //inside or //intersect
+        }
+
+        private bool FastIntersects(BoundingFrustum frustum, BoundingBox box)
+        {
+            if (!FastIntersectsPlane(frustum.Top, box)) return false; //outside
+            if (!FastIntersectsPlane(frustum.Bottom, box)) return false; //outside
+            if (!FastIntersectsPlane(frustum.Left, box)) return false; //outside
+            if (!FastIntersectsPlane(frustum.Right, box)) return false; //outside
+            if (!FastIntersectsPlane(frustum.Near, box)) return false; //outside
+            if (!FastIntersectsPlane(frustum.Far, box)) return false; //outside
+            return true; //inside or intersect
         }
     }
 }

@@ -31,6 +31,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
@@ -51,11 +52,14 @@ namespace DwarfCorp
             return hash;
         }
 
-        public IEnumerable<Body> EnumerateIntersectingObjects(BoundingFrustum Frustum)
+        public IEnumerable<Body> EnumerateIntersectingObjects(BoundingFrustum Frustum, Func<Body, bool> Filter = null)
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateFrustum");
             var hash = new HashSet<Body>();
-            OctTree.EnumerateItems(Frustum, hash);
+            if (Filter == null)
+                OctTree.EnumerateItems(Frustum, hash);
+            else
+                OctTree.EnumerateItems(Frustum, hash, Filter);
             PerformanceMonitor.PopFrame();
             return hash;
         }
