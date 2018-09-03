@@ -141,33 +141,51 @@ namespace DwarfCorp.GameStates
                     AutoLayout = AutoLayout.DockLeft
                 });
 
-                titlebar.AddChild(new Button()
-                {
-                    Text = "Send Trade Party",
-                    TextHorizontalAlign = HorizontalAlign.Center,
-                    TextVerticalAlign = VerticalAlign.Center,
-                    Font = "font10",
-                    AutoLayout = AutoLayout.DockRight,
-                    OnClick = (sender, args) =>
-                    {
-                        List<ResourceAmount> resources = new List<ResourceAmount>();
-                        foreach(var resource in World.PlayerFaction.ListResources())
-                        {
-                            resources.Add(new ResourceAmount(resource.Value.ResourceType, 1));
-                        }
+                var currentAdventure = World.Diplomacy.Adventures.Where(a => a.DestinationFaction == faction.Key).FirstOrDefault();
 
-                        World.Diplomacy.Adventures.Add(new Scripting.Adventure.TradeAdventure()
+                if (currentAdventure == null)
+                {
+                    titlebar.AddChild(new Button()
+                    {
+                        Text = "Send Expedition...",
+                        TextHorizontalAlign = HorizontalAlign.Center,
+                        TextVerticalAlign = VerticalAlign.Center,
+                        Font = "font10",
+                        AutoLayout = AutoLayout.DockRight,
+                        OnClick = (sender, args) =>
                         {
-                            Party = Datastructures.SelectRandom(World.Master.Faction.Minions, 3).ToList(),
-                            Money = (decimal)MathFunctions.Rand(1, (float)(decimal)World.PlayerEconomy.CurrentMoney),
-                            DestinationFaction = faction.Key,
-                            OwnerFaction = World.PlayerFaction.Name,
-                            Position = World.WorldOrigin, 
-                            Start = World.WorldOrigin,
-                            Resources = resources
-                        });
-                    }
-                });
+                            List<ResourceAmount> resources = new List<ResourceAmount>();
+                            foreach (var resource in World.PlayerFaction.ListResources())
+                            {
+                                resources.Add(new ResourceAmount(resource.Value.ResourceType, 1));
+                            }
+
+                            World.Diplomacy.Adventures.Add(new Scripting.Adventure.TradeAdventure()
+                            {
+                                Party = Datastructures.SelectRandom(World.Master.Faction.Minions, 3).ToList(),
+                                Money = (decimal)MathFunctions.Rand(1, (float)(decimal)World.PlayerEconomy.CurrentMoney),
+                                DestinationFaction = faction.Key,
+                                OwnerFaction = World.PlayerFaction.Name,
+                                Position = World.WorldOrigin,
+                                Start = World.WorldOrigin,
+                                Resources = resources
+                            });
+                            OnEnter();
+                        }
+                    });
+                }
+                else
+                {
+                    var eta = currentAdventure.GetETA(World);
+                    titlebar.AddChild(new Widget()
+                    {
+                        Text = string.Format("Expedition underway ...\n {0}", eta.ToString("c")),
+                        TextHorizontalAlign = HorizontalAlign.Center,
+                        TextVerticalAlign = VerticalAlign.Center,
+                        Font = "font10",
+                        AutoLayout = AutoLayout.DockRight,
+                    });
+                }
 
 
                 var relation = diplomacy.GetCurrentRelationship();
