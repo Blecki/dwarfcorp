@@ -65,7 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Mod Tutorial.txt" />
-    <Content Include="Manalamp Tutorial.txt" />
+    <None Include="Manalamp Tutorial.md" />
     <Content Include="preview.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
