@@ -2495,10 +2495,6 @@
       <Name>penguin_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="craft-items.json">
-      <Name>craft-items</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Entities\Kobold\kobold_animation.json">
       <Name>kobold_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2901,6 +2897,178 @@
     <None Include="voxel-types.json">
       <Name>voxel-types</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\CraftItems\Conveyor.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Conveyor</Name>
+    </None>
+    <None Include="World\CraftItems\BearTrap.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>BearTrap</Name>
+    </None>
+    <None Include="World\CraftItems\Flag.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Flag</Name>
+    </None>
+    <None Include="World\CraftItems\Lamp.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Lamp</Name>
+    </None>
+    <None Include="World\CraftItems\SummoningCircle.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SummoningCircle</Name>
+    </None>
+    <None Include="World\CraftItems\TowerOfLife.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>TowerOfLife</Name>
+    </None>
+    <None Include="World\CraftItems\TowerOfHealth.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>TowerOfHealth</Name>
+    </None>
+    <None Include="World\CraftItems\MagicHelper.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>MagicHelper</Name>
+    </None>
+    <None Include="World\CraftItems\WoodenLadder.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WoodenLadder</Name>
+    </None>
+    <None Include="World\CraftItems\MetalLadder.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>MetalLadder</Name>
+    </None>
+    <None Include="World\CraftItems\StoneLadder.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StoneLadder</Name>
+    </None>
+    <None Include="World\CraftItems\WoodenDoor.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WoodenDoor</Name>
+    </None>
+    <None Include="World\CraftItems\MetalDoor.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>MetalDoor</Name>
+    </None>
+    <None Include="World\CraftItems\StoneDoor.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StoneDoor</Name>
+    </None>
+    <None Include="World\CraftItems\Trinket.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Trinket</Name>
+    </None>
+    <None Include="World\CraftItems\Gem-setTrinket.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Gem-setTrinket</Name>
+    </None>
+    <None Include="World\CraftItems\Meal.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Meal</Name>
+    </None>
+    <None Include="World\CraftItems\Bread.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Bread</Name>
+    </None>
+    <None Include="World\CraftItems\Ale.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Ale</Name>
+    </None>
+    <None Include="World\CraftItems\WoodenChair.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WoodenChair</Name>
+    </None>
+    <None Include="World\CraftItems\StoneChair.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StoneChair</Name>
+    </None>
+    <None Include="World\CraftItems\MetalChair.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>MetalChair</Name>
+    </None>
+    <None Include="World\CraftItems\WoodenTable.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WoodenTable</Name>
+    </None>
+    <None Include="World\CraftItems\StoneTable.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StoneTable</Name>
+    </None>
+    <None Include="World\CraftItems\MetalTable.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>MetalTable</Name>
+    </None>
+    <None Include="World\CraftItems\Anvil.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Anvil</Name>
+    </None>
+    <None Include="World\CraftItems\Forge.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Forge</Name>
+    </None>
+    <None Include="World\CraftItems\Stove.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Stove</Name>
+    </None>
+    <None Include="World\CraftItems\CuttingBoard.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CuttingBoard</Name>
+    </None>
+    <None Include="World\CraftItems\Barrel.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Barrel</Name>
+    </None>
+    <None Include="World\CraftItems\Bed.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Bed</Name>
+    </None>
+    <None Include="World\CraftItems\Strawman.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Strawman</Name>
+    </None>
+    <None Include="World\CraftItems\Weights.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Weights</Name>
+    </None>
+    <None Include="World\CraftItems\Target.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Target</Name>
+    </None>
+    <None Include="World\CraftItems\PunchingBag.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PunchingBag</Name>
+    </None>
+    <None Include="World\CraftItems\Apocethary.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Apocethary</Name>
+    </None>
+    <None Include="World\CraftItems\Bookshelf.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Bookshelf</Name>
+    </None>
+    <None Include="World\CraftItems\Glass.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Glass</Name>
+    </None>
+    <None Include="World\CraftItems\Brick.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Brick</Name>
+    </None>
+    <None Include="World\CraftItems\RefinedMana.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>RefinedMana</Name>
+    </None>
+    <None Include="World\CraftItems\Rail.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Rail</Name>
+    </None>
+    <None Include="World\CraftItems\Explosive.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Explosive</Name>
+    </None>
+    <None Include="World\CraftItems\Turret.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Turret</Name>
     </None>
     <None Include="World\goblin.conv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

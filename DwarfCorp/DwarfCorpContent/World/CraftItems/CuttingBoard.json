@@ -1,0 +1,36 @@
+{
+  "Name": "Cutting Board",
+  "EntityName": "Cutting Board",
+  "RequiredResources": [
+    {
+      "ResourceType": "Wood",
+      "NumResources": 2
+    },
+    {
+      "ResourceType": "Metal",
+      "NumResources": 2
+    }
+  ],
+  "Icon": {
+    "Sheet": "furniture",
+    "Tile": 56
+  },
+  "BaseCraftTime": 30.0,
+  "Description": "Dwarves use the cutting board to cook meals.",
+  "Type": "Object",
+  "Prerequisites": [
+    "OnGround"
+  ],
+  "ResourceCreated": {
+    "_value": ""
+  },
+  "CraftLocation": "",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal"
+}

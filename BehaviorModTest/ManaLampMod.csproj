@@ -56,9 +56,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="craft-items.json" />
+    <None Include="World\CraftItems\ManaLamp.json" />
     <None Include="meta.json" />
-    <None Include="sheets.json" />
+    <None Include="newgui\sheets.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mana-lamp.png" />

@@ -56,5 +56,14 @@ namespace DwarfCorp
         public const Int32 InverseLiquidTypeMask = 0x3F;
         public const Int32 LiquidLevelMask = 0x3F;
         public const Int32 InverseLiquidLevelMask = 0xC0;
+
+        public const UInt32 SelectionIDBit = 0x80000000;
+        public const UInt32 SelectionIDYMask = 0x7F;
+        public const Int32 SelectionIDYShift = 24;
+        public const UInt32 SelectionIDXMask = 0xFFF;
+        public const Int32 SelectionIDXShift = 12;
+        public const UInt32 SelectionIDZMask = 0xFFF;
+        public const Int32 SelectionIDZShift = 0;
+
     }
 }

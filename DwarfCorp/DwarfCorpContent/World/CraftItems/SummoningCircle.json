@@ -1,0 +1,34 @@
+{
+  "Name": "Summoning Circle",
+  "EntityName": "Summoning Circle",
+  "RequiredResources": [
+    {
+      "ResourceType": "Magical",
+      "NumResources": 4
+    }
+  ],
+  "Icon": {
+    "Sheet": "furniture",
+    "Tile": 20
+  },
+  "BaseCraftTime": 30.0,
+  "Description": "Dwarfs can teleport to the summoning circle when in need.",
+  "Type": "Object",
+  "Prerequisites": [
+    "OnGround"
+  ],
+  "ResourceCreated": {
+    "_value": ""
+  },
+  "CraftLocation": "",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal",
+  "Category": "Magic",
+  "IsMagical": true
+}

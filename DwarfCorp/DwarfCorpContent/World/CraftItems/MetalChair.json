@@ -1,0 +1,33 @@
+{
+  "Name": "Metal Chair",
+  "EntityName": "Metal Chair",
+  "Category": "Chairs",
+  "RequiredResources": [
+    {
+      "ResourceType": "Metal",
+      "NumResources": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "furniture",
+    "Tile": 47
+  },
+  "BaseCraftTime": 9.0,
+  "Description": "Dwarves sit here and relax. Place next to tables for eating.",
+  "Type": "Object",
+  "Prerequisites": [
+    "OnGround"
+  ],
+  "ResourceCreated": {
+    "_value": ""
+  },
+  "CraftLocation": "",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.45, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal"
+}

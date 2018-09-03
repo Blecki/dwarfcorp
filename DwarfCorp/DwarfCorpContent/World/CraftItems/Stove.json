@@ -1,0 +1,32 @@
+{
+  "Name": "Stove",
+  "EntityName": "Stove",
+  "RequiredResources": [
+    {
+      "ResourceType": "Fuel",
+      "NumResources": 2
+    }
+  ],
+  "Icon": {
+    "Sheet": "furniture",
+    "Tile": 35
+  },
+  "BaseCraftTime": 30.0,
+  "Description": "Dwarves use the stove to cook meals.",
+  "Type": "Object",
+  "Prerequisites": [
+    "OnGround"
+  ],
+  "ResourceCreated": {
+    "_value": ""
+  },
+  "CraftLocation": "",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal"
+}

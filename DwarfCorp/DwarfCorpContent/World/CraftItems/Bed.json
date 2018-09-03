@@ -1,0 +1,33 @@
+{
+  "Name": "Bed",
+  "EntityName": "Bed",
+  "RequiredResources": [
+    {
+      "ResourceType": "Wood",
+      "NumResources": 4
+    }
+  ],
+  "AllowRotation": true,
+  "Icon": {
+    "Sheet": "furniture",
+    "Tile": 3
+  },
+  "BaseCraftTime": 30.0,
+  "Description": "Dwarves use the bed to sleep.",
+  "Type": "Object",
+  "Prerequisites": [
+    "OnGround"
+  ],
+  "ResourceCreated": {
+    "_value": ""
+  },
+  "CraftLocation": "",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal"
+}

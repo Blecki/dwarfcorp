@@ -1,0 +1,35 @@
+{
+  "Name": "Bookshelf",
+  "EntityName": "Bookshelf",
+  "Category": "Magic",
+  "RequiredResources": [
+    {
+      "ResourceType": "Magical",
+      "NumResources": 4
+    }
+  ],
+  "AllowRotation": true,
+  "Icon": {
+    "Sheet": "furniture",
+    "Tile": 32
+  },
+  "BaseCraftTime": 50.0,
+  "Description": "Dwarves can do magical research here.",
+  "Type": "Object",
+  "Prerequisites": [
+    "OnGround"
+  ],
+  "ResourceCreated": {
+    "_value": ""
+  },
+  "CraftLocation": "",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal",
+  "IsMagical": true
+}

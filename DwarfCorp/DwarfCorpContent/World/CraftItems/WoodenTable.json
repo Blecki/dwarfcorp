@@ -1,0 +1,33 @@
+{
+  "Name": "Wooden Table",
+  "EntityName": "Wooden Table",
+  "Category": "Tables",
+  "RequiredResources": [
+    {
+      "ResourceType": "Wood",
+      "NumResources": 4
+    }
+  ],
+  "Icon": {
+    "Sheet": "furniture",
+    "Tile": 68
+  },
+  "BaseCraftTime": 20.0,
+  "Description": "Dwarves gather around tables to eat. Build chairs next to the table.",
+  "Type": "Object",
+  "Prerequisites": [
+    "OnGround"
+  ],
+  "ResourceCreated": {
+    "_value": ""
+  },
+  "CraftLocation": "",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal"
+}

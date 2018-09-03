@@ -1,0 +1,31 @@
+{
+  "Name": "Bear Trap",
+  "EntityName": "Bear Trap",
+  "DisplayName": "@bear-trap",
+  "ShortDisplayName": "@s-bear-trap",
+  "RequiredResources": [
+    {
+      "ResourceType": "Metal",
+      "NumResources": 4
+    }
+  ],
+  "Icon": {
+    "Sheet": "beartrap",
+    "Tile": 0
+  },
+  "BaseCraftTime": 60.0,
+  "Description": "@d-bear-trap",
+  "Type": "Object",
+  "Prerequisites": [
+    "OnGround"
+  ],
+  "ResourceCreated": {
+    "_value": ""
+  },
+  "CraftLocation": "",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal"
+}

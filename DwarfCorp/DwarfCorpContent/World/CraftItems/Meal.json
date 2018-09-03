@@ -1,0 +1,34 @@
+{
+  "Name": "Meal",
+  "EntityName": "Meal",
+  "RequiredResources": [
+    {
+      "ResourceType": "RawFood",
+      "NumResources": 1
+    },
+    {
+      "ResourceType": "RawFood",
+      "NumResources": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "resources",
+    "Tile": 21
+  },
+  "BaseCraftTime": 15.0,
+  "Description": "Take raw food and cook something",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": {
+    "_value": "Meal"
+  },
+  "CraftLocation": "Cutting Board",
+  "Verb": "Cook",
+  "PastTeseVerb": "Cooked",
+  "CurrentVerb": "Cooking",
+  "AllowHeterogenous": true,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": false,
+  "Moveable": false,
+  "CraftActBehavior": "Meal"
+}

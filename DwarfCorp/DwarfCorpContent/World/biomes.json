@@ -79,22 +79,22 @@
         "VoxelType": "Shale",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Slate",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Granite",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Marble",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Obsidian",
         "Depth": 4
-      },
+      }
     ],
     "GrassDecal": "grass",
     "ShoreVoxel": "Sand",
@@ -104,7 +104,7 @@
     "MapColor": [ 0, 255, 0, 255 ],
     "Height": 0.35,
     "Temp": 0.45,
-    "Rain": 0.35,
+    "Rain": 0.35
   },
 
   {
@@ -173,7 +173,7 @@
       {
         "Name": "Spider",
         "SpawnProbability": 0.00005
-      },
+      }
     ],
     "SoilLayer": {
       "VoxelType": "Dirt",
@@ -184,22 +184,22 @@
         "VoxelType": "Shale",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Slate",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Granite",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Marble",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Obsidian",
         "Depth": 4
-      },
+      }
     ],
     "GrassDecal": "grass",
     "ShoreVoxel": "Sand",
@@ -209,7 +209,7 @@
     "MapColor": [ 24, 129, 24, 255 ],
     "Height": 0.36,
     "Temp": 0.39,
-    "Rain": 0.5,
+    "Rain": 0.5
   },
 
   {
@@ -296,7 +296,7 @@
       {
         "Name": "Spider",
         "SpawnProbability": 0.00005
-      },
+      }
     ],
     "SoilLayer": {
       "VoxelType": "Dirt",
@@ -307,22 +307,22 @@
         "VoxelType": "Shale",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Slate",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Granite",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Marble",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Obsidian",
         "Depth": 4
-      },
+      }
     ],
     "GrassDecal": "grass",
     "ShoreVoxel": "Sand",
@@ -332,7 +332,7 @@
     "MapColor": [ 0, 100, 0, 255 ],
     "Height": 0.3,
     "Temp": 0.4,
-    "Rain": 0.5,
+    "Rain": 0.5
   },
 
   {
@@ -379,22 +379,22 @@
         "VoxelType": "Ice",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Slate",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Granite",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Marble",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Obsidian",
         "Depth": 4
-      },
+      }
     ],
     "GrassDecal": "permafrost-grass",
     "ClumpGrass": false,
@@ -403,7 +403,7 @@
     "MapColor": [ 211, 230, 211, 255 ],
     "Height": 0.5,
     "Temp": 0.2,
-    "Rain": 0.3,
+    "Rain": 0.3
   },
 
   {
@@ -429,22 +429,22 @@
         "VoxelType": "Shale",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Slate",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Granite",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Marble",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Obsidian",
         "Depth": 4
-      },
+      }
     ],
     "ShoreVoxel": "Sand",
     "ClumpGrass": false,
@@ -453,7 +453,7 @@
     "MapColor": [ 255, 255, 255, 255 ],
     "Height": 0.0,
     "Temp": 0.1,
-    "Rain": 0.1,
+    "Rain": 0.1
   },
 
   {
@@ -520,7 +520,7 @@
       {
         "Name": "Scorpion",
         "SpawnProbability": 0.00001
-      },
+      }
     ],
     "SoilLayer": {
       "VoxelType": "Sand",
@@ -531,22 +531,22 @@
         "VoxelType": "Sandstone",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Slate",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Granite",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Marble",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Obsidian",
         "Depth": 4
-      },
+      }
     ],
     "GrassDecal": "desert-grass",
     "ShoreVoxel": "Sand",
@@ -556,7 +556,7 @@
     "MapColor": [ 160, 140, 100, 255 ],
     "Height": 0.2,
     "Temp": 0.65,
-    "Rain": 0.05,
+    "Rain": 0.05
   },
 
   {
@@ -617,7 +617,7 @@
       {
         "Name": "Chicken",
         "SpawnProbability": 0.0001
-      },
+      }
     ],
     "SoilLayer": {
       "VoxelType": "Dirt",
@@ -628,22 +628,22 @@
         "VoxelType": "Shale",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Slate",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Granite",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Marble",
         "Depth": 4
       },
-	  {
+      {
         "VoxelType": "Obsidian",
         "Depth": 4
-      },
+      }
     ],
     "GrassDecal": "grass",
     "ShoreVoxel": "Sand",
@@ -653,7 +653,7 @@
     "MapColor": [ 0, 30, 0, 255 ],
     "Height": 0.5,
     "Temp": 0.8,
-    "Rain": 0.75,
+    "Rain": 0.75
   },
 
   {
@@ -756,10 +756,10 @@
     "ClumpGrass": false,
     "ClumpSize": 30.0,
     "ClumpTreshold": 0.75,
-    "MapColor": [ 10, 10, 01, 255 ],
+    "MapColor": [ 10, 10, "01", 255 ],
     "Height": 1.5,
     "Temp": 1.5,
-    "Rain": 0.0,
+    "Rain": 0.0
   },
 
   {
@@ -815,7 +815,7 @@
       {
         "Name": "Necrosnake",
         "SpawnProbability": 0.00005
-      },
+      }
     ],
     "SoilLayer": {
       "VoxelType": "DarkDirt",
