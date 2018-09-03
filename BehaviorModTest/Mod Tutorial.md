@@ -35,9 +35,9 @@ If you are creating a new mod, remove the 'SteamID' line, or set it equal to zer
 
 ## Uploading to steam
 
-In order to upload your mod, it must be in the /Mods/ folder where DwarfCorp is installed. The game will assume any mod in the steam folder was downloaded from steam and will not allow you to upload it. If your mod does not already have a steam id, one will be assigned to it and will be saved in meta.json.
+In order to upload your mod, it must be in the `/Mods/` folder where DwarfCorp is installed. The game will assume any mod in the steam folder was downloaded from steam and will not allow you to upload it. If your mod does not already have a steam id, one will be assigned to it and will be saved in meta.json.
 
-To upload, start DwarfCorp and navigate to the manage mods screen. On the 'installed' tab, any mod located in the /Mods/ folder will have an 'upload' or 'update' button.
+To upload, start DwarfCorp and navigate to the manage mods screen. On the 'installed' tab, any mod located in the `/Mods/` folder will have an 'upload' or 'update' button.
 
 ## Subscribing
 

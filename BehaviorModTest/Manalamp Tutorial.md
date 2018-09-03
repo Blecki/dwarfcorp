@@ -193,9 +193,3 @@ DwarfCorp/ Mods/ ManaLamp/ newgui/           sheets.json
 ```
 
 Fire up the game, and you should find the mod in the mod manager off the main menu.
-
-Now, what if you want to upload this mod to steamworks?
-
-/// Preview
-/// Metadata
-/// Uploading
