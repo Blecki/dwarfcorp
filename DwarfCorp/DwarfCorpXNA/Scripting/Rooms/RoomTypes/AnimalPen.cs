@@ -48,6 +48,8 @@ namespace DwarfCorp
         [JsonIgnore]
         public static RoomData AnimalPenData { get { return RoomLibrary.GetData(AnimalPenName); } }
 
+        public List<Body> Animals = new List<Body>();
+
         public static RoomData InitializeData()
         {
             Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> resources =
@@ -84,6 +86,11 @@ namespace DwarfCorp
         }
         public override void OnBuilt()
         {
+            foreach(var body in ZoneBodies)
+            {
+                body.GetRoot().Delete();
+            }
+            ZoneBodies.Clear();
             foreach (
                 var fence in
                     Fence.CreateFences(World.ComponentManager, ContentPaths.Entities.DwarfObjects.fence, Designations,
@@ -96,7 +103,7 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> AddAnimal(Body animal, Faction faction)
         {
-            AddBody(animal);
+            Animals.Add(animal);
             BoundingBox animalBounds = GetBoundingBox();
             animalBounds = animalBounds.Expand(-0.25f);
             animalBounds.Max.Y += 2;
@@ -109,25 +116,59 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> RemoveAnimal(Body animal)
         {
-            if (!ZoneBodies.Contains(animal))
+            if (!Animals.Contains(animal))
             {
                 yield return Act.Status.Fail;
                 yield break;
             }
-            ZoneBodies.Remove(animal);
+            Animals.Remove(animal);
             animal.GetComponent<CreatureAI>().ResetPositionConstraint();
             Species = animal.GetComponent<Creature>().Species;
             yield return Act.Status.Success;
         }
 
+        private void ClampBody(Body body)
+        {
+            bool inZone = Voxels.Any(v => VoxelHelpers.GetVoxelAbove(v).GetBoundingBox().Contains(body.Position) == ContainmentType.Contains);
+            if (!inZone)
+            {
+                float minDist = float.MaxValue;
+                VoxelHandle minVoxel = VoxelHandle.InvalidHandle;
+                foreach(var voxel in Voxels)
+                {
+                    float dist = (voxel.GetBoundingBox().Center() - body.Position).LengthSquared();
+                    if (dist < minDist)
+                    {
+                        minDist = dist;
+                        minVoxel = voxel;
+                    }
+                }
+
+                if (minDist < float.MaxValue)
+                {
+                    body.LocalPosition = body.LocalPosition * 0.5f + (minVoxel.WorldPosition + Vector3.Up + Vector3.One) * 0.5f;
+                    var creature = body.GetRoot().GetComponent<CreatureAI>();
+                    if (creature != null)
+                    {
+                        creature.CancelCurrentTask();
+                    }
+                }
+            }
+        }
+
         public override void Update()
         {
-            if (ZoneBodies.Count > 0)
+            if (Animals.Count > 0)
             {
-                ZoneBodies.RemoveAll(body => body.IsDead);
-                if (ZoneBodies.Count == 0)
+                Animals.RemoveAll(body => body.IsDead);
+                if (Animals.Count == 0)
                 {
                     Species = "";
+                }
+
+                foreach (var body in Animals)
+                {
+                    ClampBody(body);
                 }
             }
             base.Update();

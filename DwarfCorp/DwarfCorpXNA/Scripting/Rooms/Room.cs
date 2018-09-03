@@ -107,7 +107,6 @@ namespace DwarfCorp
             ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
         }
 
-
         public virtual void OnBuilt()
         {
             

@@ -181,6 +181,30 @@ namespace DwarfCorp
                 return false;
             }
 
+            Queue<GlobalVoxelCoordinate> voxels = new Queue<GlobalVoxelCoordinate>();
+            voxels.Enqueue(Voxels.First().Coordinate);
+            HashSet<GlobalVoxelCoordinate> visited = new HashSet<GlobalVoxelCoordinate>();
+            while (voxels.Count > 0)
+            {
+                GlobalVoxelCoordinate curr = voxels.Dequeue();
+                visited.Add(curr);
+                foreach (var coord in VoxelHelpers.EnumerateManhattanNeighbors2D(curr))
+                {
+                    if (!visited.Contains(coord) && Voxels.Any(o => o.Coordinate == coord))
+                    {
+                        voxels.Enqueue(coord);
+                    }
+                }
+            }
+
+            foreach (var voxel in Voxels)
+            {
+                if (!visited.Contains(voxel.Coordinate))
+                {
+                    World.ShowTooltip("Room must be fully connected.");
+                    return false;
+                }
+            }
             return true;
         }
     }
