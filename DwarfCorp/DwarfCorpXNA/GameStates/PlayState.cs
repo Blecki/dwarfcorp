@@ -776,6 +776,7 @@ namespace DwarfCorp.GameStates
             {
                 Icon = new Gui.TileReference("tool-icons", 33),
                 Text = "Map",
+                Tooltip = "Minimap",
                 EnabledTextColor = Vector4.One,
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Below,
@@ -806,6 +807,7 @@ namespace DwarfCorp.GameStates
                             {
                                 Icon = new Gui.TileReference("tool-icons", 34),
                                 Text = "Emp",
+                                Tooltip = "Selected employee menu",
                                 EnabledTextColor = Vector4.One,
                                 TextHorizontalAlign = HorizontalAlign.Center,
                                 TextVerticalAlign = VerticalAlign.Below,
@@ -827,6 +829,7 @@ namespace DwarfCorp.GameStates
                             {
                                Icon = null,
                                Text = "Marks",
+                               Tooltip = "Active Markers",
                                TextHorizontalAlign = HorizontalAlign.Center,
                                TextVerticalAlign = VerticalAlign.Center,
                                EnabledTextColor = Vector4.One,
@@ -848,6 +851,7 @@ namespace DwarfCorp.GameStates
                             {
                                 Icon = new Gui.TileReference("tool-icons", 35),
                                 Text = "Tasks",
+                                Tooltip = "Task List",
                                 TextHorizontalAlign = HorizontalAlign.Center,
                                 TextVerticalAlign = VerticalAlign.Below,
                                 EnabledTextColor = Vector4.One,
@@ -2484,7 +2488,7 @@ namespace DwarfCorp.GameStates
                     icon_DigTool,
                     icon_GatherTool,
                     icon_ChopTool,
-                    icon_GuardTool,
+                    //icon_GuardTool,
                     icon_AttackTool,
                     icon_Plant,
                     icon_Wrangle,
