@@ -183,6 +183,7 @@
     <Compile Include="AssetManagement\IndexedDecomposition.cs" />
     <Compile Include="AssetManagement\ModMetaData.cs" />
     <Compile Include="AssetManagement\StringLibrary.cs" />
+    <Compile Include="Components\AI\PacingCreatureAI.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCStatus.cs" />
     <Compile Include="GameStates\ModManagement\Steam\IUGCTransaction.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCUnsubscribe.cs" />
