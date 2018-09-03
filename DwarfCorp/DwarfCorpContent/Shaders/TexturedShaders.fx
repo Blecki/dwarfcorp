@@ -42,6 +42,12 @@ float4 xFlatColor;
 float2 pixelSize;
 float4 xID;
 
+int xTextureWidth;
+int xTextureHeight;
+int xScreenWidth;
+int xScreenHeight;
+
+
 //------- Technique: Clipping Plane Fix --------
 
 int Clipping;
@@ -92,6 +98,15 @@ Texture2D xIllumination;
 sampler IllumSampler = sampler_state { texture = <xIllumination> ;  magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = clamp; AddressV = clamp;};
 
 sampler TextureSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = LINEAR; mipfilter = Linear; AddressU = clamp; AddressV = clamp; };
+sampler LinearSampler = sampler_state
+{
+    texture = <xTexture>;
+    magfilter = LINEAR;
+    minfilter = LINEAR;
+    mipfilter = Linear;
+    AddressU = clamp;
+    AddressV = clamp;
+};
 
 sampler ColorscaleSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = LINEAR; mipfilter = Linear; AddressU = clamp; AddressV = clamp; };
 
@@ -129,63 +144,275 @@ Texture2D xShadowMap;
 sampler ShadowMapSampler = sampler_state { texture = <xShadowMap>; magfilter = LINEAR; minfilter = LINEAR; mipfilter = LINEAR; AddressU = clamp; AddressV = clamp; };
 
 
+struct BandlimitedPixelInfo
+{
+    float2 uv0;
+    float2 uv1;
+    float2 uv2;
+    float2 uv3;
+    float4 weights;
+    float l;
+};
+
+// The cosine filter convolved with rect has a support of 0.5 + d pixels.
+// We can sample 4x4 regions, so we can deal with 2.0 pixel range in our filter,
+// and the maximum extent value we can have is 1.5.
+    const float maximum_support_extent = 1.5;
+
+// Our Taylor approximation is not exact, normalize so the peak is 1.
+const float taylor_pi_half = 1.00452485553;
+const float taylor_normalization = 0.99549552656;
+const float PI = 3.14159265359;
+const float PI_half = 1.57079632679;
+
+// Smaller value sharpens (more aliasing),
+// larger value blurs more (more blurry).
+    const float extent_mod = 0.5;
+
+float taylor_sin(float p)
+{
+    float p2 = p * p;
+    float p3 = p * p2;
+    float p5 = p2 * p3;
+    return clamp(taylor_normalization * (p - p3 * (1.0 / 6.0) + p5 * (1.0 / 120.0)), -1.0, 1.0);
+}
+
+float2 taylor_sin(float2 p)
+{
+    float2 p2 = p * p;
+    float2 p3 = p * p2;
+    float2 p5 = p2 * p3;
+    return clamp(taylor_normalization * (p - p3 * (1.0 / 6.0) + p5 * (1.0 / 120.0)), -1.0, 1.0);
+}
+
+float3 taylor_sin(float3 p)
+{
+    float3 p2 = p * p;
+    float3 p3 = p * p2;
+    float3 p5 = p2 * p3;
+    return clamp(taylor_normalization * (p - p3 * (1.0 / 6.0) + p5 * (1.0 / 120.0)), -1.0, 1.0);
+}
+
+float3 compute_uv_phase_weight(float2 weights_u, float2 weights_v)
+{
+	// The sum of a bilinear sample has combined weight of 1, we will need to adjust the resulting sample
+	// to match our actual weight sum.
+    float w = dot(weights_u.xyxy, weights_v.xxyy);
+    float x = weights_u.y / max(weights_u.x + weights_u.y, 0.001);
+    float y = weights_v.y / max(weights_v.x + weights_v.y, 0.001);
+	return float3(x, y, w);
+}
+
+
+float4 taylor_sin(float4 p)
+{
+    float4 p2 = p * p;
+    float4 p3 = p * p2;
+    float4 p5 = p2 * p3;
+    return clamp(taylor_normalization * (p - p3 * (1.0 / 6.0) + p5 * (1.0 / 120.0)), -1.0, 1.0);
+}
+#define BANDLIMITED_PIXEL_FAST_MODE
+
+float2 greaterThan(float2 x, float2 v)
+{
+    return float2(x.x > v.x, x.y > v.y);
+}
+
+BandlimitedPixelInfo compute_pixel_weights(
+    float2 uv, float2 size, float2 inv_size)
+{
+	// Get derivatives in texel space.
+	// Need a non-zero derivative.
+    float2 extent = max(extent_mod * fwidth(uv) * size, float2(1.0 / 256.0, 1.0 / 256.0));
+
+	// Get base pixel and phase, range [0, 1).
+        float2 pixel = uv * size - 0.5;
+        float2 base_pixel = floor(pixel);
+        float2 phase = pixel - base_pixel;
+
+        BandlimitedPixelInfo info;
+#ifdef BANDLIMITED_PIXEL_FAST_MODE
+        if (any(greaterThan(extent, float2(1.0, 1.0))))
+        {
+		    // We need to just do regular minimization filtering.
+            info.uv0 = float2(0.0, 0.0);
+            info.uv1 = float2(0.0, 0.0);
+            info.uv2 = float2(0.0, 0.0);
+            info.uv3 = float2(0.0, 0.0);
+            info.weights = float4(0.0, 0.5, 0.5, 1.0);
+            info.l = 0.0;
+        }
+        else
+        {
+		// We can resolve the filter by just sampling a single 2x2 block.
+		// Lerp between normal sampling at LOD 0, and bandlimited pixel filter at LOD -1.
+            float2 shift = 0.5 + 0.5 * taylor_sin(PI_half * clamp((phase - 0.5) / min(extent, float2(0.5, 0.5)), -1.0, 1.0));
+            float max_extent = max(extent.x, extent.y);
+            float l = clamp(2.0 - 2.0 * max_extent, 0.0, 1.0); // max_extent = 1 -> l = 0, max_extent = 0.5 -> l = 1.
+            info.uv0 = (base_pixel + 0.5 + shift) * inv_size;
+            info.uv1 = float2(0.0, 0.0);
+            info.uv2 = float2(0.0, 0.0);
+            info.uv3 = float2(0.0, 0.0);
+            info.weights = float4(1.0, 0.5, 0.5, 1.0);
+            info.l = l;
+        }
+#else
+     float2
+    inv_extent = 1.0 / extent;
+    if (any(greaterThan(extent, float2(maximum_support_extent))))
+    {
+		// We need to just do regular minimization filtering.
+        info = BandlimitedPixelInfo(float2(0.0), float2(0.0), float2(0.0), float2(0.0),
+		                            vec4(0.0, 0.0, 0.0, 0.0), 0.0
+#ifdef BANDLIMITED_PIXEL_DEBUG
+			, vec4(1.0, 0.5, 0.5, 1.0)
+#endif
+		);
+    }
+    else if (all(lessThanEqual(extent, float2(0.5))))
+    {
+		// We can resolve the filter by just sampling a single 2x2 block.
+         float2
+        shift = 0.5 + 0.5 * taylor_sin(PI_half * clamp(inv_extent * (phase - 0.5), -1.0, 1.0));
+        info = BandlimitedPixelInfo((base_pixel + 0.5 + shift) * inv_size, float2(0.0), float2(0.0), float2(0.0),
+		                            vec4(1.0, 0.0, 0.0, 0.0), 1.0
+#ifdef BANDLIMITED_PIXEL_DEBUG
+				, vec4(0.5, 1.0, 0.5, 1.0)
+#endif
+		);
+    }
+    else
+    {
+		// Full 4x4 sampling.
+
+		// Fade between bandlimited and normal sampling.
+		// Fully use bandlimited filter at LOD 0, normal filtering at approx. LOD -0.5.
+        
+        float max_extent = max(extent.x, extent.y);
+        
+        float l = clamp(1.0 - (max_extent - 1.0) / (maximum_support_extent - 1.0), 0.0, 1.0);
+
+         vec4
+        sine_phases_x = PI_half * clamp(inv_extent.x * (phase.x + vec4(1.5, 0.5, -0.5, -1.5)), -1.0, 1.0);
+         vec4
+        sines_x = taylor_sin(sine_phases_x);
+
+         vec4
+        sine_phases_y = PI_half * clamp(inv_extent.y * (phase.y + vec4(1.5, 0.5, -0.5, -1.5)), -1.0, 1.0);
+         vec4
+        sines_y = taylor_sin(sine_phases_y);
+
+         float2
+        sine_phases_end = PI_half * clamp(inv_extent * (phase - 2.5), -1.0, 1.0);
+         float2
+        sines_end = taylor_sin(sine_phases_end);
+
+         vec4
+        weights_x = 0.5 * (sines_x - vec4(sines_x.yzw, sines_end.x));
+         vec4
+        weights_y = 0.5 * (sines_y - vec4(sines_y.yzw, sines_end.y));
+
+         vec3
+        w0 = compute_uv_phase_weight(weights_x.xy, weights_y.xy);
+         vec3
+        w1 = compute_uv_phase_weight(weights_x.zw, weights_y.xy);
+         vec3
+        w2 = compute_uv_phase_weight(weights_x.xy, weights_y.zw);
+         vec3
+        w3 = compute_uv_phase_weight(weights_x.zw, weights_y.zw);
+
+        info = BandlimitedPixelInfo((base_pixel - 0.5 + w0.xy) * inv_size,
+									(base_pixel + float2(1.5, -0.5) + w1.xy) * inv_size,
+									(base_pixel + float2(-0.5, 1.5) + w2.xy) * inv_size,
+									(base_pixel + 1.5 + w3.xy) * inv_size,
+									vec4(w0.z, w1.z, w2.z, w3.z), l
+#ifdef BANDLIMITED_PIXEL_DEBUG
+				, vec4(0.5, 0.5, 1.0, 1.0)
+#endif
+		);
+    }
+#endif
+
+        return info;
+ }
+
+float4 sample_bandlimited_pixel(sampler2D samp, float2 uv, BandlimitedPixelInfo info, float lod)
+{
+    float4 color0 = tex2D(samp, uv);
+    float4 bandlimited = info.weights.x * tex2Dlod(samp, float4(info.uv0.x, info.uv0.y, 0.0, lod));
+    if (info.weights.x < 1.0)
+    {
+        bandlimited += info.weights.y * tex2Dlod(samp, float4(info.uv1.x, info.uv1.y, 0.0, lod));
+        bandlimited += info.weights.z * tex2Dlod(samp, float4(info.uv2.x, info.uv2.y, 0.0, lod));
+        bandlimited += info.weights.w * tex2Dlod(samp, float4(info.uv3.x, info.uv3.y, 0.0, lod));
+    }
+    float4 color = lerp(color0, bandlimited, info.l);
+    return color;
+}
+
+float4 tex2DSampled(sampler2D samp, float2 uv, float2 size, float2 inv_size)
+{
+    BandlimitedPixelInfo info = compute_pixel_weights(uv, size, inv_size);
+    return sample_bandlimited_pixel(samp, uv, info, 0.0);
+}
+
 ///////////// Technique untextured
-	struct UTVertexToPixel
-	{
-	float4 Position     : POSITION0;
-	float4 Color        : COLOR0;
-	float4 ClipDistance     : TEXCOORD5;
-	};
+    struct UTVertexToPixel
+    {
+        float4 Position : POSITION0;
+        float4 Color : COLOR0;
+        float4 ClipDistance : TEXCOORD5;
+    };
 
-	struct UTPixelToFrame
-	{
-	float4 Color : COLOR0;
-	};
+    struct UTPixelToFrame
+    {
+        float4 Color : COLOR0;
+    };
 
-	UTVertexToPixel UTexturedVS( float4 inPos_ : POSITION,  float4 inColor : COLOR0)
-	{
-		UTVertexToPixel Output = (UTVertexToPixel)0;
-		float4 inPos = inPos_; // +GetNoise(inPos_);
-		float4x4 preViewProjection = mul (xView, xProjection);
-		float4x4 preWorldViewProjection = mul (xWorld, preViewProjection);
+    UTVertexToPixel UTexturedVS(float4 inPos_ : POSITION, float4 inColor : COLOR0)
+    {
+        UTVertexToPixel Output = (UTVertexToPixel) 0;
+        float4 inPos = inPos_; // +GetNoise(inPos_);
+        float4x4 preViewProjection = mul(xView, xProjection);
+        float4x4 preWorldViewProjection = mul(xWorld, preViewProjection);
 
-		Output.Position = mul(inPos, preWorldViewProjection);
-		Output.Color = inColor * xVertexColorMultiplier;
+        Output.Position = mul(inPos, preWorldViewProjection);
+        Output.Color = inColor * xVertexColorMultiplier;
 
-		Output.ClipDistance = Clipping * dot(mul(xWorld,inPos), ClipPlane0); //MSS - Water Refactor added
+        Output.ClipDistance = Clipping * dot(mul(xWorld, inPos), ClipPlane0); //MSS - Water Refactor added
 
-		return Output;
-	}
+        return Output;
+    }
 
-    UTVertexToPixel UTexturedVS_Pulse( float4 inPos_ : POSITION,  float3 dir : NORMAL, float4 inColor : COLOR0)
-	{
-		UTVertexToPixel Output = (UTVertexToPixel)0;
-		float3 backward = -float3(xView[0][2], xView[1][2], xView[2][2]);
-		float3 offset = normalize(cross(dir, backward)) * inPos_.w;
-		float4 inPos = float4(inPos_.xyz + offset * 0.5, 1);
-		float4x4 preViewProjection = mul (xView, xProjection);
-		float4x4 preWorldViewProjection = mul (xWorld, preViewProjection);
+    UTVertexToPixel UTexturedVS_Pulse(float4 inPos_ : POSITION, float3 dir : NORMAL, float4 inColor : COLOR0)
+    {
+        UTVertexToPixel Output = (UTVertexToPixel) 0;
+        float3 backward = -float3(xView[0][2], xView[1][2], xView[2][2]);
+        float3 offset = normalize(cross(dir, backward)) * inPos_.w;
+        float4 inPos = float4(inPos_.xyz + offset * 0.5, 1);
+        float4x4 preViewProjection = mul(xView, xProjection);
+        float4x4 preWorldViewProjection = mul(xWorld, preViewProjection);
 
-		Output.Position = mul(inPos, preWorldViewProjection);
-		Output.Color = inColor * xVertexColorMultiplier + float4(.2, .2, .2, 0) * pow(sin(xTime * 2 + 0.1 * inPos.x + 0.2 * inPos.z), 2);
+        Output.Position = mul(inPos, preWorldViewProjection);
+        Output.Color = inColor * xVertexColorMultiplier + float4(.2, .2, .2, 0) * pow(sin(xTime * 2 + 0.1 * inPos.x + 0.2 * inPos.z), 2);
 
-		Output.ClipDistance = Clipping * dot(mul(xWorld,inPos), ClipPlane0); //MSS - Water Refactor added
+        Output.ClipDistance = Clipping * dot(mul(xWorld, inPos), ClipPlane0); //MSS - Water Refactor added
 
-		return Output;
-	}
+        return Output;
+    }
 
-	UTPixelToFrame UTexturedPS(UTVertexToPixel PSIn)
-	{	
-	    UTPixelToFrame Output = (UTPixelToFrame)0;
-		Output.Color = PSIn.Color;
-		if (PSIn.ClipDistance.w < 0.0f)
- 		{
- 			Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f, 0, 1.0f);
+    UTPixelToFrame UTexturedPS(UTVertexToPixel PSIn)
+    {
+        UTPixelToFrame Output = (UTPixelToFrame) 0;
+        Output.Color = PSIn.Color;
+        if (PSIn.ClipDistance.w < 0.0f)
+        {
+            Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f, 0, 1.0f);
  
- 			clip(GhostMode * (Output.Color.a) - 0.1f);
- 		}
-		return Output;
-	}
+            clip(GhostMode * (Output.Color.a) - 0.1f);
+        }
+        return Output;
+    }
 
 
 	technique Untextured
@@ -663,8 +890,8 @@ SelectionBufferToPixel SelectionVSTiledInstanced(float4 inPos : POSITION,
 TPixelToFrame TexturedPS_Colorscale(TVertexToPixel PSIn)
 {
 	TPixelToFrame Output = (TPixelToFrame)0;
-
-	Output.Color = tex2D(ColorscaleSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
+    
+    Output.Color = tex2DSampled(ColorscaleSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds), float2(xTextureWidth, xTextureHeight), float2(1.0 / xTextureWidth, 1.0 / xTextureHeight));
     Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.LightRamp.g, 0.5f)).rgb;
     Output.Color.rgb *= PSIn.VertexColor.rgb;
 	clip(Output.Color.a - 0.5);
@@ -732,10 +959,11 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 {
     TPixelToFrame Output = (TPixelToFrame) 0;
     float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
-    float4 texColor = tex2D(TextureSampler, textureCoords);
-
-    clip((texColor.a - 0.5));
-	/*
+    float4 color0 = tex2D(TextureSampler, textureCoords);
+    clip((color0.a - 0.5));
+    float4 texColor = tex2DSampled(LinearSampler, textureCoords, float2(xTextureWidth, xTextureHeight), float2(1.0 / xTextureWidth, 1.0 / xTextureHeight));
+    clip((color0.a - texColor.a));
+    /*
 	if (xEnableShadows)
 	{
 		float4 shadowPos = GetPositionFromLight(PSIn.WorldPosition);
@@ -791,12 +1019,6 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
         0, 255,
 255, 0
     };
-
-
-    int xTextureWidth;
-    int xTextureHeight;
-    int xScreenWidth;
-    int xScreenHeight;
 
     TPixelToFrame TexturedPS_Alphatest_Stipple(TVertexToPixel PSIn)
     {
@@ -1050,8 +1272,8 @@ technique Textured_Flag
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_2_0 TexturedVS_Flag(MAX_LIGHTS);
-		PixelShader = compile ps_2_0 TexturedPS();
+		VertexShader = compile vs_3_0 TexturedVS_Flag(MAX_LIGHTS);
+		PixelShader = compile ps_3_0 TexturedPS();
 	}
 }
 
