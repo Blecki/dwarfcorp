@@ -74,6 +74,24 @@ namespace DwarfCorp
             return (((Z << VoxelConstants.ZDivShift) + Y) << VoxelConstants.YDivShift) + X;
         }
 
+        public static UInt32 GetSelectionIDFromVoxel(GlobalVoxelCoordinate C)
+        {
+            return VoxelConstants.SelectionIDBit
+                | ((UInt32)(C.Y & VoxelConstants.SelectionIDYMask) << VoxelConstants.SelectionIDYShift)
+                | ((UInt32)(C.X & VoxelConstants.SelectionIDXMask) << VoxelConstants.SelectionIDXShift)
+                | ((UInt32)(C.Z & VoxelConstants.SelectionIDZMask) << VoxelConstants.SelectionIDZShift);
+        }
+
+        public static bool TryGetVoxelFromSelectionID(UInt32 ID, out GlobalVoxelCoordinate C)
+        {
+            C = new GlobalVoxelCoordinate(
+                (int)((ID >> VoxelConstants.SelectionIDXShift) & VoxelConstants.SelectionIDXMask),
+                (int)((ID >> VoxelConstants.SelectionIDYShift) & VoxelConstants.SelectionIDYMask),
+                (int)((ID >> VoxelConstants.SelectionIDZShift) & VoxelConstants.SelectionIDZMask));
+
+            return (ID & VoxelConstants.SelectionIDBit) == VoxelConstants.SelectionIDBit;
+        }
+        
         /// <summary>
         /// Get a long hash of a coordinate. As long as the world is never larger than 2^16 on any dimension,
         /// this will give unique values for every voxel.

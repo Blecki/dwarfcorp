@@ -1,0 +1,33 @@
+{
+  "Name": "Mana Lamp",
+  "EntityName": "Mana Lamp",
+  "Category": "Magic",
+  "RequiredResources": [
+    {
+      "ResourceType": "Magical",
+      "NumResources": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "mana-lamp",
+    "Tile": 0
+  },
+  "BaseCraftTime": 10.0,
+  "Description": "Dwarves need to see sometimes too!",
+  "Type": "Object",
+  "Prerequisites": [
+    "OnGround"
+  ],
+  "ResourceCreated": {
+    "_value": ""
+  },
+  "CraftLocation": "",
+  "Verb": "Build",
+  "PastTeseVerb": "Built",
+  "CurrentVerb": "Building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal"
+}

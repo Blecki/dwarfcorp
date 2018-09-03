@@ -1,7 +1,15 @@
-﻿{
-	"Name" : "Mana Lamp",
-	"Description" : "Adds a new entity called the Mana Lamp. This is a test.",
-	"PreviewURL" : "preview.png",
-	"Tags" : ["Mod", "Entity", "Test"],
-	"ChangeNote" : "First change"
+{
+  "$id": "1",
+  "Name": "Mana Lamp",
+  "Description": "Adds a new entity called the Mana Lamp.",
+  "PreviewURL": "preview.png",
+  "Tags": [
+    "Mod",
+    "Entity",
+    "Test"
+  ],
+  "ChangeNote": "First change",
+  "SteamID": 1502613350,
+  "NeedsUpdateFromSteam": false,
+  "IdentifierString": "/Mods\\ManaLampMod"
 }
