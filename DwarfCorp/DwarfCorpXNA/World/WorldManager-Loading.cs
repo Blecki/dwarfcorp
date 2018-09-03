@@ -339,11 +339,11 @@ namespace DwarfCorp
 
                 Camera.Position = new Vector3(0, 10, 0) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
                 Camera.Target = new Vector3(0, 10, 1) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
-
+             
                 // If there's no file, we have to initialize the first chunk coordinate
                 if (gameFile == null)
                 {
-                    ChunkManager.GenerateInitialChunks(
+                    ChunkManager.GenerateInitialChunks(SpawnRect,
                         new GlobalChunkCoordinate(0, 0, 0),
                         SetLoadingMessage);
                 }

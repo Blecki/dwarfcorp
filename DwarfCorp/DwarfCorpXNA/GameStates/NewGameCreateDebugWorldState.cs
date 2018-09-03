@@ -94,7 +94,10 @@ namespace DwarfCorp.GameStates
                         ColonySize = new Point3(8, 1, 8),
                         WorldScale =  2.0f,
                         WorldOrigin = new Vector2(Overworld.Map.GetLength(0)/2.0f,
-                            Overworld.Map.GetLength(1)/2.0f)*0.5f
+                            Overworld.Map.GetLength(1)/2.0f)*0.5f,
+                        SpawnRect = new Rectangle((int)(Overworld.Map.GetLength(0) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
+                            (int)(Overworld.Map.GetLength(1) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
+                            8 * VoxelConstants.ChunkSizeX, 8 * VoxelConstants.ChunkSizeX)
                     };
                     StateManager.PushState(new LoadState(Game, StateManager, settings));
                 });
@@ -109,7 +112,10 @@ namespace DwarfCorp.GameStates
                         ColonySize = new Point3(8, 1, 8),
                         WorldScale = 2.0f,
                         WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / 2.0f,
-                            Overworld.Map.GetLength(1) / 2.0f) * 0.5f
+                            Overworld.Map.GetLength(1) / 2.0f) * 0.5f,
+                        SpawnRect = new Rectangle((int)(Overworld.Map.GetLength(0) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
+                            (int)(Overworld.Map.GetLength(1) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
+                            8 * VoxelConstants.ChunkSizeX, 8 * VoxelConstants.ChunkSizeX)
                     };
                     StateManager.PushState(new LoadState(Game, StateManager, settings));
                 });
@@ -124,7 +130,10 @@ namespace DwarfCorp.GameStates
                         ColonySize = new Point3(8, 1, 8),
                         WorldScale = 2.0f,
                         WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / 2.0f,
-                            Overworld.Map.GetLength(1) / 2.0f) * 0.5f
+                            Overworld.Map.GetLength(1) / 2.0f) * 0.5f,
+                        SpawnRect = new Rectangle((int)(Overworld.Map.GetLength(0) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
+                            (int)(Overworld.Map.GetLength(1) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
+                            8 * VoxelConstants.ChunkSizeX, 8 * VoxelConstants.ChunkSizeX)
                     };
                     StateManager.PushState(new LoadState(Game, StateManager, settings));
                 });
@@ -139,7 +148,10 @@ namespace DwarfCorp.GameStates
                         ColonySize = new Point3(8, 1, 8),
                         WorldScale = 2.0f,
                         WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / 2.0f,
-                            Overworld.Map.GetLength(1) / 2.0f) * 0.5f
+                            Overworld.Map.GetLength(1) / 2.0f) * 0.5f,
+                        SpawnRect = new Rectangle((int)(Overworld.Map.GetLength(0) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
+                            (int)(Overworld.Map.GetLength(1) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
+                            8 * VoxelConstants.ChunkSizeX, 8 * VoxelConstants.ChunkSizeX)
                     };
                     StateManager.PushState(new LoadState(Game, StateManager, settings));
                 });

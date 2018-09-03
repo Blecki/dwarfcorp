@@ -514,6 +514,22 @@ namespace DwarfCorp
 
         #endregion
 
+        // Normalize the height such that the maximum height within the spawnrectangle is a little bit below (10%)
+        // the highest possible value.
+        public static float GetMaxHeight(Rectangle spawnRect)
+        {
+            float maxHeight = 0.0f;
+            for (int x = spawnRect.X; x < spawnRect.Right; x++)
+            {
+                for (int y = spawnRect.Y; y < spawnRect.Bottom; y++)
+                {
+                    maxHeight = Math.Max(maxHeight, Map[x, y].Height);
+                }
+            }
+            return maxHeight;
+
+        }
+
         public static float LinearInterpolate(Vector2 position, MapData[,] map, ScalarFieldType fieldType)
         {
             float x = position.X;

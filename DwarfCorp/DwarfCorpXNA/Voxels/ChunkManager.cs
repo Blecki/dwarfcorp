@@ -254,7 +254,7 @@ namespace DwarfCorp
         }
 
         // Todo: Move to ChunkGenerator
-        public void GenerateInitialChunks(GlobalChunkCoordinate origin, Action<String> SetLoadingMessage)
+        public void GenerateInitialChunks(Rectangle spawnRect, GlobalChunkCoordinate origin, Action<String> SetLoadingMessage)
         {
             var initialChunkCoordinates = new List<GlobalChunkCoordinate>();
 
@@ -263,14 +263,14 @@ namespace DwarfCorp
                     initialChunkCoordinates.Add(new GlobalChunkCoordinate(dx, 0, dz));
                     
             SetLoadingMessage("Generating Chunks...");
-
+            float maxHeight = Overworld.GetMaxHeight(spawnRect);
             foreach (var box in initialChunkCoordinates)
             {
                 Vector3 worldPos = new Vector3(
                     box.X * VoxelConstants.ChunkSizeX,
                     box.Y * VoxelConstants.ChunkSizeY,
                     box.Z * VoxelConstants.ChunkSizeZ);
-                VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World);
+                VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World, maxHeight);
                 ChunkData.AddChunk(chunk);
             }
 
