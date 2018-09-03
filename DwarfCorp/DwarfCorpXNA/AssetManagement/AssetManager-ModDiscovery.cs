@@ -76,7 +76,7 @@ namespace DwarfCorp
         {
             try
             {
-                var metaDataPath = dir + ProgramData.DirChar + "meta.json";
+                var metaDataPath = dir + Path.DirectorySeparatorChar + "meta.json";
                 var metaData = FileUtils.LoadJsonFromAbsolutePath<ModMetaData>(metaDataPath);
                 metaData.Directory = dir;
                 metaData.Source = Source;

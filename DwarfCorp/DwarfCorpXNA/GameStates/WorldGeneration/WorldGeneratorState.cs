@@ -106,10 +106,10 @@ namespace DwarfCorp.GameStates
                         GuiRoot.ShowTooltip(GuiRoot.MousePosition, "Generator is not finished.");
                     else
                     {
-                        System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + ProgramData.DirChar + Settings.Name);
+                        System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + System.IO.Path.DirectorySeparatorChar + Settings.Name);
                         NewOverworldFile file = new NewOverworldFile(Game.GraphicsDevice, Overworld.Map, Settings.Name, Settings.SeaLevel);
                         file.WriteFile(worldDirectory.FullName);
-                        file.SaveScreenshot(worldDirectory.FullName + ProgramData.DirChar + "screenshot.png");
+                        file.SaveScreenshot(worldDirectory.FullName + System.IO.Path.DirectorySeparatorChar + "screenshot.png");
                         GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new Gui.Widgets.Popup
                         {
                             Text = "File saved."

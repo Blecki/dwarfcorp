@@ -30,19 +30,10 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    //Todo: Split file
-    [JsonObject(IsReference = true)]
     public class Bush : Plant
     {
         public Bush() { }
@@ -53,8 +44,7 @@ namespace DwarfCorp
             AddChild(new Health(componentManager, "HP", 30 * bushSize, 0.0f, 30 * bushSize));
             AddChild(new Flammable(componentManager, "Flames"));
 
-            var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",
-    Matrix.Identity, LocalBoundingBoxOffset, GetBoundingBox().Extents())
+            var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter", Matrix.Identity, LocalBoundingBoxOffset, GetBoundingBox().Extents())
             {
                 SoundToPlay = ContentPaths.Audio.Oscar.sfx_env_bush_harvest_1
             }) as ParticleTrigger;
@@ -62,6 +52,7 @@ namespace DwarfCorp
             Tags.Add("Vegetation");
             Tags.Add("Bush");
             Tags.Add("EmitsFood");
+
             Inventory inventory = AddChild(new Inventory(componentManager, "Inventory", BoundingBox.Extents(), LocalBoundingBoxOffset)) as Inventory;
 
             inventory.AddResource(new ResourceAmount()

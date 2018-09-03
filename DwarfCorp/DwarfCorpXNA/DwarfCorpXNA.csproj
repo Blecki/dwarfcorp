@@ -327,6 +327,7 @@
     <Compile Include="Gui\Widgets\AutoGridPanel.cs" />
     <Compile Include="Gui\Widgets\CommandEntry.cs" />
     <Compile Include="Gui\Widgets\Graph.cs" />
+    <Compile Include="Gui\Widgets\ColorOptionsEditor.cs" />
     <Compile Include="Gui\Widgets\TextBox.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\Adventure\Adventure.cs" />
@@ -617,6 +618,7 @@
     <Compile Include="Voxels\Splasher.cs" />
     <Compile Include="Voxels\GrassLibrary.cs" />
     <Compile Include="Voxels\ChunkUpdate.cs" />
+    <Compile Include="World\CompanyInformation.cs" />
     <Compile Include="World\IndicatorManager.cs" />
     <Compile Include="Gui\Enums.cs" />
     <Compile Include="Gui\Geo\Basics.cs" />

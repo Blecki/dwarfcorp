@@ -37,41 +37,6 @@ using DwarfCorp.Gui;
 using DwarfCorp.Gui.Widgets;
 using System.Linq;
 
-namespace DwarfCorp
-{
-    public class CompanyInformation
-    {
-        public TileReference LogoBackground = new TileReference("company-logo-background", 0);
-        public Vector4 LogoBackgroundColor = Vector4.One;
-        public TileReference LogoSymbol = new TileReference("company-logo-symbol", 0);
-        public Vector4 LogoSymbolColor = Vector4.One;
-        public string Name = "Graybeard & Sons";
-        public string Motto = "My beard is in the work!";
-
-        public CompanyInformation()
-        {
-            Name = GenerateRandomName();
-            Motto = GenerateRandomMotto();
-            LogoSymbolColor = new Vector4(MathFunctions.Rand(0, 1), MathFunctions.Rand(0, 1), MathFunctions.Rand(0, 1), 1);
-            LogoBackgroundColor = new Vector4(MathFunctions.Rand(0, 1), MathFunctions.Rand(0, 1), MathFunctions.Rand(0, 1), 1);
-            LogoBackground.Tile = MathFunctions.RandInt(0, 16);
-            LogoSymbol.Tile = MathFunctions.RandInt(0, 9);
-        }
-
-        public static string GenerateRandomMotto()
-        {
-            var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.mottos);
-            return TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
-        }
-
-        public static string GenerateRandomName()
-        {
-            var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.company_exploration);
-            return TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
-        }
-    }
-}
-
 namespace DwarfCorp.GameStates
 {
     /// <summary>
@@ -84,15 +49,7 @@ namespace DwarfCorp.GameStates
         private Gui.Widgets.EditableTextField MottoField;
         private Gui.Widgets.CompanyLogo CompanyLogoDisplay;
 
-        // Todo: This should be passed to the next screen when create is clicked, and so on. Instead
-        //  of being static... there should be a state object that is slowly built by each screen until
-        //  it finally gets passed to the game.
-        // Todo: Also need to save this when the game is saved.
         public static CompanyInformation CompanyInformation { get; set; }
-
-        // Does not actually set these.
-        //public static NamedImageFrame CompanyLogo { get; set; }
-        //public static Color CompanyColor { get; set; }
 
         public CompanyMakerState(DwarfGame game, GameStateManager stateManager) :
             base(game, "CompanyMakerState", stateManager)
@@ -110,7 +67,6 @@ namespace DwarfCorp.GameStates
 
             Rectangle rect = GuiRoot.RenderData.VirtualScreen;
             rect.Inflate(-rect.Width / 3, -rect.Height / 3);
-            // CONSTRUCT GUI HERE...
             var mainPanel = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
                 Rect = rect,
@@ -201,7 +157,6 @@ namespace DwarfCorp.GameStates
                     AutoLayout = AutoLayout.DockFill
                 }) as EditableTextField;
             #endregion
-
 
             #region Motto
             var mottoRow = mainPanel.AddChild(new Widget
@@ -416,7 +371,6 @@ namespace DwarfCorp.GameStates
 
             GuiRoot.RootItem.Layout();
 
-            // Must be true or Render will not be called.
             IsInitialized = true;
 
             base.OnEnter();

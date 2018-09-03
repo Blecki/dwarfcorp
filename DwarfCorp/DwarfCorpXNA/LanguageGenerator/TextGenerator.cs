@@ -141,7 +141,7 @@ namespace DwarfCorp
         public static List<List<string>> GetAtoms(string type)
         {
             string text = "";
-            using (var stream = TitleContainer.OpenStream("Content" + ProgramData.DirChar + type))
+            using (var stream = TitleContainer.OpenStream("Content" + Path.DirectorySeparatorChar + type))
             {
                 using (var reader = new StreamReader(stream))
                 {
@@ -199,7 +199,7 @@ namespace DwarfCorp
         public static string[] GetDefaultStrings(string type)
         {
             string text = "";
-            using (var stream = TitleContainer.OpenStream("Content" + ProgramData.DirChar + type))
+            using (var stream = TitleContainer.OpenStream("Content" + Path.DirectorySeparatorChar + type))
             {
                 using (var reader = new StreamReader(stream))
                 {
@@ -218,7 +218,7 @@ namespace DwarfCorp
 
         public static void LoadAtoms()
         {
-            string dirname = "." + ProgramData.DirChar + "Content" + ProgramData.DirChar + "Text";
+            string dirname = "." + Path.DirectorySeparatorChar + "Content" + Path.DirectorySeparatorChar + "Text";
             System.IO.DirectoryInfo directoryInfo = new DirectoryInfo(dirname);
 
             if (!directoryInfo.Exists) throw new FileNotFoundException("Unable to find text directory : " + dirname);
@@ -230,7 +230,7 @@ namespace DwarfCorp
                 if (match.Success)
                 {
                     AddAtom(new TextAtom("$" + match.Groups[1].Value,
-                        GetDefaultStrings("Text" + ProgramData.DirChar + info.Name)));
+                        GetDefaultStrings("Text" + Path.DirectorySeparatorChar + info.Name)));
                 }
             }
         }

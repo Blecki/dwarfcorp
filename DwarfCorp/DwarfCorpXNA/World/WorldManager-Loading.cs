@@ -153,7 +153,7 @@ namespace DwarfCorp
                     Overworld.Name = gameFile.Metadata.OverworldFile;
                     DirectoryInfo worldDirectory =
                         Directory.CreateDirectory(DwarfGame.GetWorldDirectory() +
-                                                  ProgramData.DirChar + Overworld.Name);
+                                                  Path.DirectorySeparatorChar + Overworld.Name);
                     var overWorldFile = new NewOverworldFile(worldDirectory.FullName);
                     Overworld.Map = overWorldFile.Data.Data;
                     Overworld.Name = overWorldFile.Data.Name;
