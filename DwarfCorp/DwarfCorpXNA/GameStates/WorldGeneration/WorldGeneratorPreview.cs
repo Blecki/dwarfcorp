@@ -419,6 +419,7 @@ namespace DwarfCorp.GameStates
 
             if (PreviewTexture == null || UpdatePreview)
             {
+                var bkg = Root.GetTileSheet("basic");
                 UpdatePreview = false;
                 InitializePreviewRenderTypes();
 
@@ -461,6 +462,7 @@ namespace DwarfCorp.GameStates
                 {
                     Rectangle previewBounds;
                     var previewMesh = Gui.Mesh.CreateStringMesh(line.Key, font, new Vector2(1, 1), out previewBounds);
+                    stringMeshes.Add(Gui.Mesh.FittedSprite(previewBounds, bkg, 0).Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(new Vector4(0.0f, 0.0f, 0.0f, 0.7f)));
                     stringMeshes.Add(previewMesh.Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(line.Value.ToVector4()));
                     dy += previewBounds.Height;
                 }
@@ -507,7 +509,10 @@ namespace DwarfCorp.GameStates
                         var h = Overworld.Map[x, y].Height;
                         if (!(h > Generator.Settings.SeaLevel)) continue;
                         var biome = BiomeLibrary.Biomes[Overworld.Map[x, y].Biome];
-                        Trees.Add(new Point3(x, y, biome.Icon));
+                        if (biome.Icon > 0)
+                        {
+                            Trees.Add(new Point3(x, y, biome.Icon));
+                        }
                     }
                 }
             }

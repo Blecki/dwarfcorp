@@ -95,7 +95,7 @@ namespace DwarfCorp
             else
             {
                 SoundManager.PlaySound(ContentPaths.Audio.wurp, World.CursorLightPos, true, 0.25f);
-                World.ShowToolPopup("Not enough mana. Need " + (int)ManaCost + " but only have " + (int)tree.Mana);
+                World.ShowTooltip("Not enough mana. Need " + (int)ManaCost + " but only have " + (int)tree.Mana);
             }
             return canCast;
         }
@@ -112,7 +112,7 @@ namespace DwarfCorp
 
         public virtual void OnButtonTriggered()
         {
-            World.ShowToolPopup(Hint);
+            World.ShowTooltip(Hint);
         }
 
         public virtual void OnContinuousUpdate(DwarfTime time)

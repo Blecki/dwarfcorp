@@ -91,7 +91,7 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> PutResources()
         {
-            if (BuildRoom.HasResources)
+            if (BuildRoom.MeetsBuildRequirements())
             {
                 yield return Act.Status.Success;
             }
@@ -99,7 +99,8 @@ namespace DwarfCorp
             if (BuildRoom.ResourcesReservedFor == Agent)
             {
                 Agent.Creature.Inventory.Remove(Resources, Inventory.RestockType.None);
-                BuildRoom.HasResources = true;
+                BuildRoom.AddResources(Resources);
+                BuildRoom.ResourcesReservedFor = null;
             }
             yield return Act.Status.Success;
         }
@@ -111,7 +112,7 @@ namespace DwarfCorp
                 yield break;
             }
 
-            while (!BuildRoom.HasResources)
+            while (!BuildRoom.MeetsBuildRequirements())
             {
                 if (BuildRoom.ResourcesReservedFor == null || BuildRoom.ResourcesReservedFor.IsDead)
                 {
@@ -137,7 +138,7 @@ namespace DwarfCorp
 
         private bool ValidResourceState()
         {
-            return BuildRoom.HasResources || (BuildRoom.ResourcesReservedFor != null);
+            return BuildRoom.MeetsBuildRequirements() || (BuildRoom.ResourcesReservedFor != null);
         }
 
 
@@ -180,9 +181,9 @@ namespace DwarfCorp
                 BuildRoom.ResourcesReservedFor = null;
             }
 
-            Tree = new Sequence(new Select(new Domain(buildRoom.HasResources || buildRoom.ResourcesReservedFor != null, true), 
-                                           new Domain(!buildRoom.HasResources && (buildRoom.ResourcesReservedFor == null || buildRoom.ResourcesReservedFor == Agent), new Sequence(new Wrap(Reserve), new GetResourcesAct(Agent, Resources))),
-                                           new Domain(buildRoom.HasResources || buildRoom.ResourcesReservedFor != null, true)),
+            Tree = new Sequence(new Select(new Domain(buildRoom.MeetsBuildRequirements() || buildRoom.ResourcesReservedFor != null, true), 
+                                           new Domain(!buildRoom.MeetsBuildRequirements() && (buildRoom.ResourcesReservedFor == null || buildRoom.ResourcesReservedFor == Agent), new Sequence(new Wrap(Reserve), new GetResourcesAct(Agent, Resources))),
+                                           new Domain(buildRoom.MeetsBuildRequirements() || buildRoom.ResourcesReservedFor != null, true)),
                 new Domain(() => IsRoomBuildOrder(buildRoom) && !buildRoom.IsBuilt && !buildRoom.IsDestroyed && ValidResourceState(), 
                 new Sequence(
                     SetTargetVoxelFromRoomAct(buildRoom, "ActionVoxel"),

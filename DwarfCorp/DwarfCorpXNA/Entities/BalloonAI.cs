@@ -55,7 +55,7 @@ namespace DwarfCorp
         public BalloonState State { get; set; }
         public ShipmentOrder Shipment { get; set; }
         public Faction Faction { get; set; }
-
+        public Timer WaitTimer { get; set; }
         public List<ResourceAmount> CurrentResources { get; set; }
 
         private bool shipmentGiven = false;
@@ -83,6 +83,7 @@ namespace DwarfCorp
             Shipment = shipment;
             Faction = faction;
             CurrentResources = new List<ResourceAmount>();
+            WaitTimer = new Timer(5.0f, true);
         }
 
         public override void Die()
@@ -142,7 +143,7 @@ namespace DwarfCorp
                 case BalloonState.Leaving:
                     TargetPosition = Vector3.UnitY * 100 + body.GlobalTransform.Translation;
 
-                    if(body.GlobalTransform.Translation.Y > 65)
+                    if(body.GlobalTransform.Translation.Y > VoxelConstants.ChunkSizeY + 2)
                     {
                         Die();
                     }
@@ -150,10 +151,22 @@ namespace DwarfCorp
                     break;
                 case BalloonState.Waiting:
                     TargetPosition = body.GlobalTransform.Translation;
+                    if (!WaitTimer.HasTriggered)
+                    {
+                        var voxel = new VoxelHandle(chunks.ChunkData, GlobalVoxelCoordinate.FromVector3(body.GlobalTransform.Translation));
 
+                        if (voxel.IsValid)
+                        {
+                            var surfaceVoxel = VoxelHelpers.FindFirstVoxelBelow(voxel);
+                            var height = surfaceVoxel.Coordinate.Y + 6;
+
+                            TargetPosition = new Vector3(body.GlobalTransform.Translation.X, height + 0.5f * (float)Math.Sin(DwarfTime.LastTime.TotalGameTime.TotalSeconds), body.GlobalTransform.Translation.Z);
+                        }
+                        WaitTimer.Update(DwarfTime.LastTime);
+                        break;
+                    }
                     if(!shipmentGiven)
                     {
-                        
                         shipmentGiven = true;
                     }
                     else

@@ -197,10 +197,11 @@ namespace DwarfCorp.GameStates
                     }
                     else
                     {
-                        GuiRoot.ShowTooltip(new Point(GuiRoot.MousePosition.X + 4, GuiRoot.MousePosition.Y - 16),
+                        GuiRoot.RootItem.AddChild(
                           new Gui.Widgets.ToolPopup
                           {
                               Text = text,
+                              Rect = new Rectangle(GuiRoot.MousePosition.X - 16, GuiRoot.MousePosition.Y - 16, 128, 64)
                           });
                     }
                 };
@@ -234,10 +235,12 @@ namespace DwarfCorp.GameStates
                 ContextCommands.Add(new ContextCommands.AttackCommand());
                 ContextCommands.Add(new ContextCommands.WrangleCommand());
                 ContextCommands.Add(new ContextCommands.CancelCommand());
+                ContextCommands.Add(new ContextCommands.PriorityCommand());
                 ContextCommands.Add(new ContextCommands.GatherCommand());
                 ContextCommands.Add(new ContextCommands.DestroyCommand());
                 ContextCommands.Add(new ContextCommands.MoveCommand());
                 ContextCommands.Add(new DwarfCorp.ContextCommands.EmptyBackpackCommand());
+                ContextCommands.Add(new DwarfCorp.ContextCommands.ViewAllowedTasksCommand());
                 ContextCommands.Add(new DwarfCorp.ContextCommands.CancelDwarfCommand());
                 ContextCommands.Add(new ContextCommands.ChatCommand());
                 ContextCommands.Add(new ContextCommands.FireCommand());
@@ -763,7 +766,8 @@ namespace DwarfCorp.GameStates
             MinimapIcon = new FramedIcon
             {
                 Icon = new Gui.TileReference("tool-icons", 33),
-                Text = StringLibrary.GetString("map-icon-label"),
+                Text = "@play-map-icon-label",
+                Tooltip = "@play-map-icon-tooltip",
                 EnabledTextColor = Vector4.One,
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Below,
@@ -793,7 +797,8 @@ namespace DwarfCorp.GameStates
                             new FramedIcon
                             {
                                 Icon = new Gui.TileReference("tool-icons", 34),
-                                Text = StringLibrary.GetString("employee-icon-label"),
+                                Text = "@play-employee-icon-label",
+                                Tooltip = "@play-employee-icon-tooltip",
                                 EnabledTextColor = Vector4.One,
                                 TextHorizontalAlign = HorizontalAlign.Center,
                                 TextVerticalAlign = VerticalAlign.Below,
@@ -814,7 +819,8 @@ namespace DwarfCorp.GameStates
                             new FramedIcon
                             {
                                Icon = null,
-                               Text = StringLibrary.GetString("marks-icon-label"),
+                               Text = "@play-marks-icon-label",
+                               Tooltip = "@play-marks-icon-tooltip",
                                TextHorizontalAlign = HorizontalAlign.Center,
                                TextVerticalAlign = VerticalAlign.Center,
                                EnabledTextColor = Vector4.One,
@@ -835,7 +841,8 @@ namespace DwarfCorp.GameStates
                             new FramedIcon
                             {
                                 Icon = new Gui.TileReference("tool-icons", 35),
-                                Text = StringLibrary.GetString("tasks-icon-label"),
+                                Text = "@play-tasks-icon-label",
+                                Tooltip = "@play-tasks-icon-tooltip",
                                 TextHorizontalAlign = HorizontalAlign.Center,
                                 TextVerticalAlign = VerticalAlign.Below,
                                 EnabledTextColor = Vector4.One,
@@ -882,7 +889,7 @@ namespace DwarfCorp.GameStates
                 Corners = 0,//Gui.Scale9Corners.Top,
                 Transparent = true,
                 AutoLayout = Gui.AutoLayout.DockRight,
-                SizeToGrid = new Point(3, 1),
+                SizeToGrid = new Point(4, 1),
                 ItemSource = new Gui.Widget[] 
                         {
                             new Gui.Widgets.FramedIcon()
@@ -896,6 +903,19 @@ namespace DwarfCorp.GameStates
                                 TextVerticalAlign = VerticalAlign.Below,
                                 Tooltip = StringLibrary.GetString("events-tooltip")
                             },
+#if DEBUG
+                            new Gui.Widgets.FramedIcon()
+                            {
+                                 Icon = new Gui.TileReference("tool-icons", 21),
+                                OnClick = (sender, args) =>
+                                {
+                                    StateManager.PushState(new FactionViewState(GameState.Game, GameState.Game.StateManager, World));
+                                },
+                                Text = "Diplo.",
+                                TextVerticalAlign = VerticalAlign.Below,
+                                Tooltip = "View diplomacy with other factions."
+                            },
+#endif
                             EconomyIcon,
                                                                    
                             new Gui.Widgets.FramedIcon
@@ -2400,7 +2420,7 @@ namespace DwarfCorp.GameStates
                     icon_DigTool,
                     icon_GatherTool,
                     icon_ChopTool,
-                    icon_GuardTool,
+                    //icon_GuardTool,
                     icon_AttackTool,
                     icon_Plant,
                     icon_Wrangle,
@@ -2497,7 +2517,11 @@ namespace DwarfCorp.GameStates
                     {
                         Commands = availableCommands.ToList(),
                         MultiBody = bodiesClicked,
-                        World = World
+                        World = World,
+                        ClickAction = () =>
+                        {
+                            BodySelector_LeftReleased();
+                        }
                     });
 
                     MultiContextMenu.Rect = new Rectangle(MinimapFrame.Rect.Right + 2, MinimapFrame.Rect.Bottom - MultiContextMenu.Rect.Height, MultiContextMenu.Rect.Width, MultiContextMenu.Rect.Height);

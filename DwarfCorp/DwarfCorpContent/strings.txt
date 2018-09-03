@@ -49,10 +49,14 @@ d-ale: Turn brewable food into alcohol.
 anvil: Anvil
 s-anvil: anvil
 d-anvil: Used to craft more complex items.
-employee-icon-label: emp
-marks-icon-label: marks
-tasks-icon-label: tasks
-map-icon-label: map
+play-employee-icon-label: emp
+play-employee-icon-tooltip: Selected employee menu
+play-marks-icon-label: marks
+play-marks-icon-tooltip: Active Markers
+play-tasks-icon-label: tasks
+play-tasks-icon-tooltip: Task List
+play-map-icon-label: map
+play-map-icon-tooltip: Minimap
 fire-dwarf: Fire this dwarf!
 keep-dwarf: Keep this dwarf.
 firing-error: Error firing dwarf. Try again?

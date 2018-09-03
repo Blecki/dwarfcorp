@@ -15,6 +15,9 @@ namespace DwarfCorp.Gui
         /// </summary>
         public virtual void Layout()
         {
+            if (Root == null)
+                return;
+
             Root.SafeCall(this.OnLayout, this);
             var inside = GetDrawableInterior().Interior(InteriorMargin);
             foreach (var child in Children)

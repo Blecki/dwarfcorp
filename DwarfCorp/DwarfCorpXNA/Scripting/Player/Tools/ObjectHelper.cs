@@ -62,7 +62,7 @@ namespace DwarfCorp
             if (!String.IsNullOrEmpty(CraftType.CraftLocation) 
                 && Player.Faction.FindNearestItemWithTags(CraftType.CraftLocation, Location.WorldPosition, false, null) == null)
             {
-                Player.World.ShowToolPopup("Can't " + Verb + ", need " + CraftType.CraftLocation);
+                Player.World.ShowTooltip("Can't " + Verb + ", need " + CraftType.CraftLocation);
                 return false;
             }
 
@@ -78,7 +78,7 @@ namespace DwarfCorp
 
                             if (!neighborFound)
                             {
-                                Player.World.ShowToolPopup("Must be " + PastParticple + " next to wall!");
+                                Player.World.ShowTooltip("Must be " + PastParticple + " next to wall!");
                                 return false;
                             }
 
@@ -90,7 +90,7 @@ namespace DwarfCorp
 
                             if (!below.IsValid || below.IsEmpty)
                             {
-                                Player.World.ShowToolPopup("Must be " + PastParticple + " on solid ground!");
+                                Player.World.ShowTooltip("Must be " + PastParticple + " on solid ground!");
                                 return false;
                             }
                             break;
@@ -117,7 +117,7 @@ namespace DwarfCorp
                     if (objectRoot is WorkPile) continue;
                     if (objectRoot != null && objectRoot.GetRotatedBoundingBox().Intersects(previewBox))
                     {
-                        Player.World.ShowToolPopup("Can't " + Verb + " here: intersects " + objectRoot.Name);
+                        Player.World.ShowTooltip("Can't " + Verb + " here: intersects " + objectRoot.Name);
                         return false;
                     }
                 }
@@ -132,12 +132,12 @@ namespace DwarfCorp
 
                 if (intersectsWall && !CraftType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall))
                 {
-                    Player.World.ShowToolPopup("Can't " + Verb + " here: intersects wall.");
+                    Player.World.ShowTooltip("Can't " + Verb + " here: intersects wall.");
                     return false;
                 }
 
             }
-            Player.World.ShowToolPopup("");
+            Player.World.ShowTooltip("");
             return true;
         }
     }

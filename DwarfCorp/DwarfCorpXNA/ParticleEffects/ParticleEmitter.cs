@@ -420,7 +420,7 @@ namespace DwarfCorp
                     p.TimeAlive += (float)gameTime.ElapsedGameTime.TotalSeconds + MathFunctions.Rand() * 0.01f;
                     int prevFrame = p.Frame;
                     int newFrame = AnimPlayer.GetFrame(p.TimeAlive);
-                    if (vel < 0.2f)
+                    if (vel < 0.2f && Data.Sleeps)
                     {
                         newFrame = prevFrame;
                     }

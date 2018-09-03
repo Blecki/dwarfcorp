@@ -174,6 +174,17 @@ namespace DwarfCorp
             return enumerable.Count > 0 ? enumerable.ElementAt(MathFunctions.Random.Next(enumerable.Count())) : default(T);
         }
 
+        public static IEnumerable<T> SelectRandom<T>(IEnumerable<T> list, int num)
+        {
+            var enumerable = new List<T>();
+            enumerable.AddRange(list);
+            enumerable.Shuffle();
+            for (int i = 0; i < Math.Min(num, enumerable.Count); i++)
+            {
+                yield return enumerable[i];
+            }
+        }
+
         public static T[,] RotateClockwise<T>(T[,] A)
         {
             int nr = A.GetLength(0);

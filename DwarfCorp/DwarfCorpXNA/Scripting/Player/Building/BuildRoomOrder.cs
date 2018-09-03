@@ -57,7 +57,6 @@ namespace DwarfCorp
         [JsonIgnore]
         private WorldManager World { get; set; }
         public bool IsDestroyed { get; set; }
-        public bool HasResources { get; set; }
         public CreatureAI ResourcesReservedFor = null;
         [JsonIgnore]
         public Gui.Widget DisplayWidget = null;
@@ -104,11 +103,6 @@ namespace DwarfCorp
 
                     PutResources[resource.ResourceType] = amount;
                 }
-            }
-
-            if(MeetsBuildRequirements())
-            {
-                Build();
             }
         }
 

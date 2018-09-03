@@ -298,21 +298,22 @@ namespace DwarfCorp
         private void BuildNewVoxels(IEnumerable<VoxelHandle> designations)
         {
             BuildRoomOrder order = null;
-            foreach(var v in designations.Where(v => v.IsValid && !v.IsEmpty))
+            foreach (var v in designations.Where(v => v.IsValid && !v.IsEmpty))
+            {
+                if (IsBuildDesignation(v))
+                    continue;
+                order = GetMostLikelyDesignation(v);
+                if (order != null && !order.IsBuilt && order.ToBuild.RoomData == CurrentRoomData)
+                    break;
+            }
+
+            bool newOrder = order == null;
+            foreach (var v in designations.Where(v => v.IsValid && !v.IsEmpty))
             {
                 if(IsBuildDesignation(v) || IsInRoom(v))
                     continue;
 
-                // This check should be rendered pointless by the call to Verify made just
-                // before calling this function.
-                var above = VoxelHelpers.GetVoxelAbove(v);
-                if (above.IsValid && !above.IsEmpty)
-                    continue;
-
-                if(order == null)
-                    order = GetMostLikelyDesignation(v);
-
-                if (order != null && order.ToBuild.RoomData == CurrentRoomData && !order.IsBuilt)
+                if (order != null)
                 {
                     order.VoxelOrders.Add(new BuildVoxelOrder(order, order.ToBuild, v));
                 }
@@ -321,37 +322,38 @@ namespace DwarfCorp
                     if (CurrentRoomData == RoomLibrary.GetData("Stockpile"))
                     {
                         Stockpile toBuild = new Stockpile(Faction, World);
-                        DesignatedRooms.Add(toBuild);
                         order = new BuildStockpileOrder(toBuild, this.Faction);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
                         BuildDesignations.Add(order);
+                        DesignatedRooms.Add(toBuild);
                     }
                     else if (CurrentRoomData == RoomLibrary.GetData("Treasury"))
                     {
                         Treasury toBuild = new Treasury(Faction, World);
-                        DesignatedRooms.Add(toBuild);
                         order = new BuildRoomOrder(toBuild, this.Faction, Faction.World);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
                         BuildDesignations.Add(order);
+                        DesignatedRooms.Add(toBuild);
                     }
                     else
                     {
                         Room toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, designations.ToList(), true, World);
-                        DesignatedRooms.Add(toBuild);
                         order = new BuildRoomOrder(toBuild, Faction, Faction.World);
                         order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
                         BuildDesignations.Add(order);
+                        DesignatedRooms.Add(toBuild);
                     }
-                }
-
-                if (order != null && (order.ToBuild.RoomData != CurrentRoomData || order.IsBuilt))
-                {
-                    order = null;
                 }
             }
 
             if (order != null)
             {
+                foreach(var fence in order.WorkObjects)
+                {
+                    fence.GetRoot().Delete();
+                }
+
+                order.WorkObjects.Clear();
                 order.WorkObjects.AddRange(Fence.CreateFences(World.ComponentManager,
                     ContentPaths.Entities.DwarfObjects.constructiontape,
                     order.VoxelOrders.Select(o => o.Voxel),
@@ -360,7 +362,9 @@ namespace DwarfCorp
                 {
                     obj.Manager.RootComponent.AddChild(obj);
                 }
-                World.Master.TaskManager.AddTask(new BuildRoomTask(order));
+                
+                if (newOrder)
+                    World.Master.TaskManager.AddTask(new BuildRoomTask(order));
                 /*
                 TaskManager.AssignTasks(new List<Task>()
                 {
@@ -435,7 +439,7 @@ namespace DwarfCorp
                         tip += "\n";
                     }
 
-                    World.ShowToolPopup("Release to build here.");
+                    World.ShowTooltip("Release to build here.");
 
                     displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs,
                         World.ComponentManager, 

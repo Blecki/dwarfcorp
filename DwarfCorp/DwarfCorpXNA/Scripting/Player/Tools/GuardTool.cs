@@ -114,7 +114,7 @@ namespace DwarfCorp
             Player.BodySelector.Enabled = false;
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
 
-            Player.World.ShowToolPopup("Click to guard. Rick click to cancel.");
+            Player.World.ShowTooltip("Click to guard. Rick click to cancel.");
 
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);

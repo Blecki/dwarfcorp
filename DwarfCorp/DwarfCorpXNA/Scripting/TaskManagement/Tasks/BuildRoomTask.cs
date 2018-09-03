@@ -38,6 +38,35 @@ using System.Text;
 
 namespace DwarfCorp
 {
+
+    public class GoToZoneTask : Task
+    {
+        public Zone Zone;
+        public bool Wait;
+
+        public GoToZoneTask()
+        {
+
+        }
+
+        public GoToZoneTask(Zone zone)
+        {
+            Zone = zone;
+            Category = TaskCategory.Other;
+            Priority = PriorityType.High;
+            ReassignOnDeath = false;
+            Name = "Go to " + Zone.ID;
+        }
+
+        public override Act CreateScript(Creature agent)
+        {
+            if (!Wait)
+                return new GoToZoneAct(agent.AI, Zone);
+
+            return new GoToZoneAct(agent.AI, Zone) & new Wait(999) { Name = "Wait." };
+        }
+    }
+
     /// <summary>
     /// Tells a creature that it should find an item with the specified
     /// tags and put it in a given zone.

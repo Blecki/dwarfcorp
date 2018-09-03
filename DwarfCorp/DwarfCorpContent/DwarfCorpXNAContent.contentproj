@@ -3945,6 +3945,13 @@
       <Name>strings</Name>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Particles\raindrop_splash.png">
+      <Name>raindrop_splash</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <PropertyGroup>
     <PostBuildEvent>

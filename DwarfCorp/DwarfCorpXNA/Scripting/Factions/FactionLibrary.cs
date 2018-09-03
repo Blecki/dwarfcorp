@@ -85,7 +85,9 @@ namespace DwarfCorp
                     Race = RaceLibrary.FindRace("Dwarf"),
                     IsRaceFaction = false,
                     TradeMoney = 10000,
-                    IsMotherland = true
+                    TerritorySize = 9999,
+                    DistanceToCapital = 3000,
+                    IsMotherland = true,
                 };
             }
 
@@ -179,7 +181,8 @@ namespace DwarfCorp
                     IsRaceFaction = false,
                     TradeMoney = 10000,
                     IsMotherland = true,
-                    DistanceToCapital = 500,
+                    TerritorySize = 9999,
+                    DistanceToCapital = 3000,
                     ClaimsColony = true
                 };
 

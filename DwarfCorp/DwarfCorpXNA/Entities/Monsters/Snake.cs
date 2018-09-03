@@ -47,7 +47,9 @@ namespace DwarfCorp
         [EntityFactory("Snake")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Snake(false, Position, Manager, "Snake").Physics;
+            var r =  new Snake(false, Position, Manager, "Snake").Physics;
+            r.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 4)));
+            return r;
         }
 
         [EntityFactory("Necrosnake")]
@@ -55,6 +57,7 @@ namespace DwarfCorp
         {
             var r = new Snake(true, Position, Manager, "Snake");
             r.Attacks[0].DiseaseToSpread = "Necrorot";
+            r.Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 4)));
             return r.Physics;
         }
         

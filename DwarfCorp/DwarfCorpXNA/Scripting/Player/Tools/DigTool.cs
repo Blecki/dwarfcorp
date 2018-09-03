@@ -64,6 +64,8 @@ namespace DwarfCorp
 
             if (button == InputManager.MouseButton.Left)
             {
+                int count = Player.Faction.Designations.EnumerateDesignations(DesignationType.Dig).Count();
+
                 Player.World.Tutorial("slice");
                 List<Task> assignments = new List<Task>();
                 foreach (var v in refs)
@@ -78,10 +80,17 @@ namespace DwarfCorp
                         continue;
                     }
 
+                    if (count >= 1024)
+                    {
+                        Player.World.ShowToolPopup("Too many dig designations!");
+                        break;
+                    }
+
                     if (!Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !(Player.Faction.RoomBuilder.IsInRoom(v) || Player.Faction.RoomBuilder.IsBuildDesignation(v)))
                     {
                         var task = new KillVoxelTask(v);
                         assignments.Add(task);
+                        count++;
                     }
 
                 }
