@@ -16,6 +16,7 @@ namespace DwarfCorp.GameStates
         private Gui.Widget ZoomedPreview;
         private WorldGeneratorPreview Preview;
         private Gui.Widget StartButton;
+        private Gui.Widgets.CheckBox StartUnderground;
         private WorldGenerator Generator;
         private WorldGenerationSettings Settings;
         private bool AutoGenerate;
@@ -172,6 +173,8 @@ namespace DwarfCorp.GameStates
                         Settings.WorldOrigin = Settings.WorldGenerationOrigin;
                         if (Settings.Natives == null || Settings.Natives.Count == 0)
                             Settings.Natives = Generator.NativeCivilizations;
+                        Settings.StartUnderground = StartUnderground.CheckState;
+
                         foreach (var faction in Settings.Natives)
                         {
                             Vector2 center = new Vector2(faction.Center.X, faction.Center.Y);
@@ -179,10 +182,10 @@ namespace DwarfCorp.GameStates
                             faction.DistanceToCapital = (center - spawn).Length();
                             faction.ClaimsColony = false;
                         }
+
                         foreach (var faction in Generator.GetFactionsInSpawn())
-                        {
                             faction.ClaimsColony = true;
-                        }
+
                         StateManager.ClearState();
                         StateManager.PushState(new LoadState(Game, StateManager, Settings));
                     }
@@ -244,18 +247,25 @@ namespace DwarfCorp.GameStates
                 }
             }) as Gui.Widgets.ComboBox;
 
+            StartUnderground = rightPanel.AddChild(new Gui.Widgets.CheckBox
+            {
+                AutoLayout = Gui.AutoLayout.DockTop,
+                Font = "font8",
+                Text = "@world-generation-start-underground"
+            }) as Gui.Widgets.CheckBox;
+
             ZoomedPreview = rightPanel.AddChild(new Gui.Widget
             {
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnLayout = (sender) =>
                 {
                     var space = System.Math.Min(
-                        difficultySelectorCombo.Rect.Width, StartButton.Rect.Top - difficultySelectorCombo.Rect.Bottom - 4);
+                        StartUnderground.Rect.Width, StartButton.Rect.Top - StartUnderground.Rect.Bottom - 4);
                     sender.Rect.Height = space;
                     sender.Rect.Width = space;
-                    sender.Rect.Y = difficultySelectorCombo.Rect.Bottom + 2;
-                    sender.Rect.X = difficultySelectorCombo.Rect.X + 
-                        ((difficultySelectorCombo.Rect.Width - space) / 2);
+                    sender.Rect.Y = StartUnderground.Rect.Bottom + 2;
+                    sender.Rect.X = StartUnderground.Rect.X + 
+                        ((StartUnderground.Rect.Width - space) / 2);
                     
                 }
             });

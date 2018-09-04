@@ -32,6 +32,7 @@ namespace DwarfCorp.GameStates
         public List<Faction> Natives { get; set; }
         public bool GenerateFromScratch { get; set; }
         public int Seed { get; set; }
+        public bool StartUnderground = false;
 
         public static string GetRandomWorldName()
         {

@@ -67,19 +67,26 @@ namespace DwarfCorp
             if (!string.IsNullOrEmpty(ExistingFile)) return;
 
             var port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager, Camera.Position.X, Camera.Position.Z, 3);
-            CreateInitialDwarves(port.GetBoundingBox().Center() + new Vector3(0, 10.0f, 0));
             PlayerFaction.AddMoney(InitialEmbark.Money);
-            //Master.MaxViewingLevel = (int)(port.GetBoundingBox().Max.Y + 1);
 
             foreach (var res in InitialEmbark.Resources)
-            {
                 PlayerFaction.AddResources(new ResourceAmount(res.Key, res.Value));
-            }
+
             var portBox = port.GetBoundingBox();
-            ComponentManager.RootComponent.AddChild(Balloon.CreateBalloon(
-                portBox.Center() + new Vector3(0, 100, 0),
-                portBox.Center() + new Vector3(0, 10, 0), ComponentManager, 
-                new ShipmentOrder(0, null), Master.Faction));
+
+            if (StartUnderground)
+            {
+                Master.MaxViewingLevel = (int)(port.GetBoundingBox().Max.Y + 1);
+                CreateInitialDwarves(port.GetBoundingBox().Center() + new Vector3(0, 2.0f, 0));
+            }
+            else
+            {
+                ComponentManager.RootComponent.AddChild(Balloon.CreateBalloon(
+                    portBox.Center() + new Vector3(0, 100, 0),
+                    portBox.Center() + new Vector3(0, 10, 0), ComponentManager,
+                    new ShipmentOrder(0, null), Master.Faction));
+                CreateInitialDwarves(port.GetBoundingBox().Center() + new Vector3(0, 10.0f, 0));
+            }
 
             Camera.Target = portBox.Center();
             Camera.Position = Camera.Target + new Vector3(0, 15, -15);
@@ -126,6 +133,8 @@ namespace DwarfCorp
 
             var averageHeight = (int)Math.Round(((float)accumulator / (float)count));
 
+            if (StartUnderground) averageHeight -= 5;
+
             // Next, create the balloon port by deciding which voxels to fill.
             var balloonPortDesignations = new List<VoxelHandle>();
             var treasuryDesignations = new List<VoxelHandle>();
@@ -144,7 +153,7 @@ namespace DwarfCorp
                     var h = baseVoxel.Coordinate.Y + 1;
                     var localCoord = baseVoxel.Coordinate.GetLocalVoxelCoordinate();
 
-                    for (int y = averageHeight; y < h; y++)
+                    for (int y = averageHeight; y < (StartUnderground ? averageHeight + 2 : h); y++)
                     {
                         var v = new VoxelHandle(baseVoxel.Chunk,
                             new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));
