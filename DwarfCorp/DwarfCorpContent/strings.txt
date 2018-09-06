@@ -91,3 +91,4 @@ options-zoom-to-mouse-tooltip: When checked, when you zoom in, you will zoom tow
 options-edge-scrolling: Edge Scrolling
 options-edge-scrolling-tooltip: When checked, moving the cursor to the edge of the screen will move the camera.
 world-generation-start-underground: Start Underground
+world-generation-reveal-surface: Reveal Surface

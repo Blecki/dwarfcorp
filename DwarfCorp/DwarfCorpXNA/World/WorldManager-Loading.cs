@@ -438,8 +438,10 @@ namespace DwarfCorp
             {
                 chunk.CalculateInitialSunlight();
             }
-            VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, new VoxelHandle(
-            ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
+
+            if (RevealSurface)
+                VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, new VoxelHandle(
+                    ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
 
             foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
                 ChunkManager.InvalidateChunk(chunk);

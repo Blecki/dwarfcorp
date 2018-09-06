@@ -109,7 +109,8 @@ namespace DwarfCorp.GameStates
                 ExistingFile = Settings.ExistingFile,
                 SeaLevel = Settings.SeaLevel,
                 Natives = Settings.Natives,
-                StartUnderground = Settings.StartUnderground
+                StartUnderground = Settings.StartUnderground,
+                RevealSurface = Settings.RevealSurface
             };
 
             World.WorldScale = Settings.WorldScale;

@@ -33,6 +33,7 @@ namespace DwarfCorp.GameStates
         public bool GenerateFromScratch { get; set; }
         public int Seed { get; set; }
         public bool StartUnderground = false;
+        public bool RevealSurface = true;
 
         public static string GetRandomWorldName()
         {

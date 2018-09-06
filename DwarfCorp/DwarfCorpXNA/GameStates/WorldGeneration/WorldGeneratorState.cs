@@ -17,6 +17,7 @@ namespace DwarfCorp.GameStates
         private WorldGeneratorPreview Preview;
         private Gui.Widget StartButton;
         private Gui.Widgets.CheckBox StartUnderground;
+        private Gui.Widgets.CheckBox RevealSurface;
         private WorldGenerator Generator;
         private WorldGenerationSettings Settings;
         private bool AutoGenerate;
@@ -174,6 +175,7 @@ namespace DwarfCorp.GameStates
                         if (Settings.Natives == null || Settings.Natives.Count == 0)
                             Settings.Natives = Generator.NativeCivilizations;
                         Settings.StartUnderground = StartUnderground.CheckState;
+                        Settings.RevealSurface = RevealSurface.CheckState;
 
                         foreach (var faction in Settings.Natives)
                         {
@@ -254,18 +256,26 @@ namespace DwarfCorp.GameStates
                 Text = "@world-generation-start-underground"
             }) as Gui.Widgets.CheckBox;
 
+            RevealSurface = rightPanel.AddChild(new Gui.Widgets.CheckBox
+            {
+                AutoLayout = Gui.AutoLayout.DockTop,
+                Font = "font8",
+                Text = "@world-generation-reveal-surface",
+                CheckState = true
+            }) as Gui.Widgets.CheckBox;
+
             ZoomedPreview = rightPanel.AddChild(new Gui.Widget
             {
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnLayout = (sender) =>
                 {
                     var space = System.Math.Min(
-                        StartUnderground.Rect.Width, StartButton.Rect.Top - StartUnderground.Rect.Bottom - 4);
+                        RevealSurface.Rect.Width, StartButton.Rect.Top - RevealSurface.Rect.Bottom - 4);
                     sender.Rect.Height = space;
                     sender.Rect.Width = space;
-                    sender.Rect.Y = StartUnderground.Rect.Bottom + 2;
-                    sender.Rect.X = StartUnderground.Rect.X + 
-                        ((StartUnderground.Rect.Width - space) / 2);
+                    sender.Rect.Y = RevealSurface.Rect.Bottom + 2;
+                    sender.Rect.X = RevealSurface.Rect.X + 
+                        ((RevealSurface.Rect.Width - space) / 2);
                     
                 }
             });
