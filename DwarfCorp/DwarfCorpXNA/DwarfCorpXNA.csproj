@@ -307,7 +307,7 @@
     <Compile Include="Goals\Events\SpawnEntityEvent.cs" />
     <Compile Include="Goals\Events\SpawnWarPartyEvent.cs" />
     <Compile Include="Goals\Events\SpawnTradeEnvoyEvent.cs" />
-    <Compile Include="Goals\PlagueEvent.cs" />
+    <Compile Include="Goals\Events\PlagueEvent.cs" />
     <Compile Include="Goals\EventLibrary.cs" />
     <Compile Include="Goals\TimedIndicatorWidget.cs" />
     <Compile Include="Goals\GoalTypes.cs" />
@@ -465,7 +465,7 @@
     <Compile Include="GameStates\WorldLoaderState.cs" />
     <Compile Include="GameStates\PaginatedChooserState.cs" />
     <Compile Include="GameStates\LoadSaveGameState.cs" />
-    <Compile Include="GameStates\NewEconomyState.cs" />
+    <Compile Include="GameStates\EconomyState.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorPreview.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorState.cs" />
     <Compile Include="GameStates\IntroState.cs" />

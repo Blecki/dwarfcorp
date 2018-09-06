@@ -758,7 +758,7 @@ namespace DwarfCorp
                                 Stats.FullName, Stats.CurrentClass.Name),
                             ClickAction = (gui, sender) =>
                             {
-                                Manager.World.Game.StateManager.PushState(new NewEconomyState(Manager.World.Game, Manager.World.Game.StateManager, Manager.World));
+                                Manager.World.Game.StateManager.PushState(new EconomyState(Manager.World.Game, Manager.World.Game.StateManager, Manager.World));
                             }
                         });
 

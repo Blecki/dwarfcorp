@@ -8,13 +8,13 @@ using DwarfCorp.Gui;
 
 namespace DwarfCorp.GameStates
 {
-    public class NewEconomyState : GameState
+    public class EconomyState : GameState
     {
         private Gui.Root GuiRoot;
         private WorldManager World;
         private Gui.Widgets.TabPanel TabPanel;
 
-        public NewEconomyState(DwarfGame Game, GameStateManager StateManager, WorldManager World) :
+        public EconomyState(DwarfGame Game, GameStateManager StateManager, WorldManager World) :
             base(Game, "GuiStateTemplate", StateManager)
         {
             this.World = World;
@@ -72,6 +72,7 @@ namespace DwarfCorp.GameStates
             //    Economy = World.PlayerEconomy
             //});
 
+            /*
             TabPanel.AddTab("Available Goals", new Gui.Widgets.GoalPanel
             {
                 GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
@@ -95,6 +96,7 @@ namespace DwarfCorp.GameStates
 
             TabPanel.GetTabButton(1).DrawIndicator = true;
             TabPanel.GetTabButton(3).DrawIndicator = true;
+            */
 
             TabPanel.SelectedTab = 0;
             
@@ -119,8 +121,8 @@ namespace DwarfCorp.GameStates
             SoundManager.Update(gameTime, World.Camera, World.Time);
             World.TutorialManager.Update(GuiRoot);
 
-            TabPanel.GetTabButton(1).IndicatorValue = World.GoalManager.NewAvailableGoals;
-            TabPanel.GetTabButton(3).IndicatorValue = World.GoalManager.NewCompletedGoals;
+            //TabPanel.GetTabButton(1).IndicatorValue = World.GoalManager.NewAvailableGoals;
+            //TabPanel.GetTabButton(3).IndicatorValue = World.GoalManager.NewCompletedGoals;
 
             GuiRoot.Update(gameTime.ToRealTime());
             base.Update(gameTime);
