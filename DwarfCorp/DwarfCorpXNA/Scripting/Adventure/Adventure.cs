@@ -37,21 +37,68 @@ namespace DwarfCorp.Scripting.Adventure
 
         }
 
+        public float GetProgress(WorldManager world)
+        {
+            if (AdventureState == State.TravelingtoDestination)
+            {
+                var target = GetTarget(world);
+                var diff = (target - Position);
+                var total = (target - Start);
+                return 1.0f - diff.Length() / total.Length();
+            }
+            else if (AdventureState == State.ComingBack)
+            {
+                var target = Start;
+                var diff = (target - Position);
+                var total = (target - Start);
+                return 1.0f - diff.Length() / total.Length();
+            }
+            else if (AdventureState == State.PerformingAction)
+            {
+                return (ActionTimer.CurrentTimeSeconds - ActionTimer.StartTimeSeconds) / ActionTimer.TargetTimeSeconds;
+            }
+            else
+            {
+                return 0.0f;
+            }
+        }
+
+        public string GetStatusString(WorldManager world)
+        {
+            TimeSpan eta = GetETA(world);
+            switch (AdventureState)
+            {
+                case State.ComingBack:
+                    return String.Format("Returning home in {0}.", TextGenerator.TimeToString(eta));
+                case State.Done:
+                    return "Done";
+                case State.None:
+                case State.Starting:
+                    return "Preparing.";
+                case State.PerformingAction:
+                    return "At destination.";
+                case State.TravelingtoDestination:
+                    return String.Format("Arriving in {0}.", TextGenerator.TimeToString(eta));
+                default:
+                    return "";
+            }
+        }
+
         public TimeSpan GetETA(WorldManager world)
         {
             if (AdventureState == State.TravelingtoDestination)
             {
                 var target = GetTarget(world);
                 var vel = (target - Position);
-                float time =  vel.Length() / GetSpeedPerMinute();
-                return new TimeSpan(0, (int)(vel.Length() / GetSpeedPerMinute()), 0);
+                float time =  100 * (vel.Length() / GetSpeedPerMinute());
+                return new TimeSpan(0, (int)(time), (int)(60 * (time - (int)(time))));
             }
             else if (AdventureState == State.ComingBack)
             {
                 var target = Start;
                 var vel = (target - Position);
-                float time = vel.Length() / GetSpeedPerMinute();
-                return new TimeSpan(0, (int)(vel.Length() / GetSpeedPerMinute()), 0);
+                float time = 100 * (vel.Length() / GetSpeedPerMinute());
+                return new TimeSpan(0, (int)(time), (int)(60 * (time - (int)(time))));
             }
             return new TimeSpan(0, 0, 0);
         }

@@ -190,7 +190,7 @@ namespace DwarfCorp
 
         public void GenerateWater(VoxelChunk chunk, float maxHeight)
         {
-            float waterHeight = NormalizeHeight(SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight);
+            int waterHeight = Math.Min((int)(VoxelConstants.ChunkSizeY * NormalizeHeight(SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight)), VoxelConstants.ChunkSizeY - 1);
             var iceID = VoxelLibrary.GetVoxelType("Ice");
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
             {
@@ -249,7 +249,7 @@ namespace DwarfCorp
 
         public void GenerateSurfaceLife(VoxelChunk Chunk, float maxHeight)
         {
-            float waterHeight = NormalizeHeight(SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight);
+            //int waterHeight = (int)(VoxelConstants.ChunkSizeY * NormalizeHeight(SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight));
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
             {
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)

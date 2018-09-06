@@ -263,7 +263,7 @@ namespace DwarfCorp
                     initialChunkCoordinates.Add(new GlobalChunkCoordinate(dx, 0, dz));
                     
             SetLoadingMessage("Generating Chunks...");
-            float maxHeight = Overworld.GetMaxHeight(spawnRect);
+            float maxHeight = Math.Max(Overworld.GetMaxHeight(spawnRect), 0.17f);
             foreach (var box in initialChunkCoordinates)
             {
                 Vector3 worldPos = new Vector3(

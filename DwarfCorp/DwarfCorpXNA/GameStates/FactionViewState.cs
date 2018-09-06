@@ -40,6 +40,62 @@ using System.Text;
 
 namespace DwarfCorp.GameStates
 {
+    public class SelectEmployeesDialog : Widget
+    {
+        public WorldManager World;
+        public Faction Faction;
+        public Faction DestinationFaction;
+
+        public SelectEmployeesDialog()
+        {
+        
+        }
+
+        public override void Construct()
+        {
+            WidgetListView leftColumns = AddChild(new WidgetListView()
+            {
+                ItemHeight = 32,
+                AutoLayout = AutoLayout.DockLeft,
+                MinimumSize = new Point(256, 720)
+            }) as WidgetListView;
+
+            foreach(var employee in Faction.Minions)
+            {
+                var bar = Root.ConstructWidget(new Widget
+                {
+                    Background = new TileReference("basic", 0)
+                });
+                var employeeSprite = employee.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>();
+
+
+                if (employeeSprite != null)
+                    bar.AddChild(new EmployeePortrait
+                    {
+                        AutoLayout = AutoLayout.DockLeft,
+                        MinimumSize = new Point(48, 40),
+                        MaximumSize = new Point(48, 40),
+                        Sprite = employeeSprite.GetLayers(),
+                        AnimationPlayer = employeeSprite.AnimPlayer
+                    });
+
+                var title = employee.Stats.Title ?? employee.Stats.CurrentLevel.Name;
+                bar.AddChild(new Widget
+                {
+                    AutoLayout = AutoLayout.DockFill,
+                    TextVerticalAlign = VerticalAlign.Center,
+                    MinimumSize = new Point(128, 64),
+                    Text = (employee.Stats.IsOverQualified ? employee.Stats.FullName + "*" : employee.Stats.FullName) + " (" + title + ")"
+                });
+
+                leftColumns.AddItem(bar);
+            }
+            Layout();
+            base.Construct();
+        }
+    }
+
+
     public class FactionViewState : GameState
     {
         private Gui.Root GuiRoot;
@@ -154,6 +210,13 @@ namespace DwarfCorp.GameStates
                         AutoLayout = AutoLayout.DockRight,
                         OnClick = (sender, args) =>
                         {
+                            GuiRoot.ShowModalPopup(new SelectEmployeesDialog()
+                            {
+                                Faction = World.PlayerFaction,
+                                DestinationFaction = faction.Value,
+                                World = World,
+                                Rect = GuiRoot.RenderData.VirtualScreen.Interior(32, 32, 32, 32)
+                            });
                             List<ResourceAmount> resources = new List<ResourceAmount>();
                             foreach (var resource in World.PlayerFaction.ListResources())
                             {
@@ -176,10 +239,17 @@ namespace DwarfCorp.GameStates
                 }
                 else
                 {
-                    var eta = currentAdventure.GetETA(World);
+                    var eta = currentAdventure.GetStatusString(World);
+                    titlebar.AddChild(new TextProgressBar()
+                    {
+                        MinimumSize = new Point(128, 32),
+                        Percentage = currentAdventure.GetProgress(World),
+                        SegmentCount = 10,
+                        AutoLayout = AutoLayout.DockRight
+                    });
                     titlebar.AddChild(new Widget()
                     {
-                        Text = string.Format("Expedition underway ...\n {0}", eta.ToString("c")),
+                        Text = string.Format("Expedition underway ...\n {0}", eta),
                         TextHorizontalAlign = HorizontalAlign.Center,
                         TextVerticalAlign = VerticalAlign.Center,
                         Font = "font10",
