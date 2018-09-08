@@ -163,7 +163,10 @@ namespace DwarfCorp
                 {
                     var v = vox;
                     if (!vox.IsEmpty)
+                    {
                         v.GrassType = type.ID;
+                        v.GrassDecay = type.InitialDecayValue;
+                    }
                 }
             }
             else if (Command.Contains("Decal/"))

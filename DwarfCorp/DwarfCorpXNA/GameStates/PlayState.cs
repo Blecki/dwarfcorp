@@ -62,7 +62,6 @@ namespace DwarfCorp.GameStates
         private Widget MultiContextMenu;
         private Widget BottomBar;
         private Widget MinimapIcon;
-        private ProgressBar ManaBar;
 
         private class ToolbarItem
         {

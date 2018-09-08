@@ -23,7 +23,6 @@ namespace DwarfCorp
             BuildZone,
             BuildWall,
             BuildObject,
-            Magic,
             Gather,
             Chop,
             Guard,
@@ -83,9 +82,6 @@ namespace DwarfCorp
         public List<Body> SelectedObjects = new List<Body>();
 
         [JsonIgnore]
-        public SpellTree Spells { get; set; }
-
-        [JsonIgnore]
         public WorldManager World { get; set; }
 
         public TaskManager TaskManager { get; set; }
@@ -136,8 +132,6 @@ namespace DwarfCorp
             BodySelector = new BodySelector(CameraController, GameState.Game.GraphicsDevice, components);
             SelectedMinions = new List<CreatureAI>();
 
-            if (Spells == null)
-                Spells = SpellLibrary.CreateSpellTree(components.World);
             CreateTools();
             
             //InputManager.KeyReleasedCallback += OnKeyReleased;
@@ -218,8 +212,6 @@ namespace DwarfCorp
                 Player = this,
                 World = World
             };
-
-            Tools[ToolMode.Magic] = new MagicTool(this);
 
             Tools[ToolMode.MoveObjects] = new MoveObjectTool()
             {

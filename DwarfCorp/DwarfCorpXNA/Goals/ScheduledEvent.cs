@@ -12,6 +12,7 @@ namespace DwarfCorp.Goals
         public int Likelihood = 1;
         public string Name;
         public float Difficulty = 0.0f;
+        public bool SpawnOnTranquil = true;
 
         public enum TimeRestriction
         {

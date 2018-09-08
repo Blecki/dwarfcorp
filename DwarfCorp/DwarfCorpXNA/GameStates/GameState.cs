@@ -53,7 +53,7 @@ namespace DwarfCorp.GameStates
         }
 
         public static DwarfGame Game { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } // Todo: No longer used.
         public GameStateManager StateManager { get; set; }
         public bool IsInitialized { get; set; }
         public bool RenderUnderneath { get; set; }

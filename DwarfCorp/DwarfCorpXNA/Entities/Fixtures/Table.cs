@@ -61,21 +61,6 @@ namespace DwarfCorp
             };
         }
 
-        /*
-        [EntityFactory("Books")]
-        private static GameComponent __factory2(ComponentManager Manager, Vector3 Position, Blackboard Data)
-        {
-            return new Table("Books", Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(0, 4), Data.GetData<List<ResourceAmount>>("Resources", null), DefaultTopFrame, DefaultLegsFrame)
-            {
-                Tags = new List<string>() { "Research" },
-                Battery = new Table.ManaBattery()
-                {
-                    Charge = 0.0f,
-                    MaxCharge = 100.0f
-                }
-            };
-        }*/
-
         [EntityFactory("Apocethary")]
         private static GameComponent __factory3(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -105,81 +90,8 @@ namespace DwarfCorp
             return new Table("Metal Table", Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null), new Point(4, 7), new Point(5, 7));
         }
 
-
-        public ManaBattery Battery { get; set; }
         public SpriteSheet fixtureAsset;
         public Point fixtureFrame;
-
-        public class ManaBattery
-        {
-            public ResourceEntity ManaSprite { get; set; }
-            public float Charge { get; set; }
-            public float MaxCharge { get; set; }
-            public static float ChargeRate = 5.0f;
-            public Timer ReCreateTimer { get; set; }
-            public Timer ChargeTimer { get; set; }
-            public ManaBattery()
-            {
-                ReCreateTimer = new Timer(3.0f, false, Timer.TimerMode.Real);
-                ChargeTimer = new Timer(10.0f, false);
-            }
-
-            public void Update(DwarfTime time, WorldManager world)
-            {
-                ChargeTimer.Update(time);
-                if (ManaSprite != null && Charge > 0.0f && world.Master.Spells.Mana < world.Master.Spells.MaxMana)
-                {
-                    if (ChargeTimer.HasTriggered)
-                    {
-                        SoundManager.PlaySound(ContentPaths.Audio.tinkle, ManaSprite.Position);
-                        IndicatorManager.DrawIndicator("+" + (int)ChargeRate + " M", ManaSprite.Position, 1.0f, Color.Green);
-                        world.ParticleManager.Trigger("star_particle", ManaSprite.Position, Color.White, 1);
-                        Charge -= ChargeRate;
-                        world.Master.Spells.Recharge(ChargeRate);
-                    }
-
-                }
-                else if (Charge <= 0.01f)
-                {
-                    ReCreateTimer.Update(time);
-                }
-            }
-
-            public bool CreateNewManaSprite(Faction faction, Vector3 position, WorldManager world)
-            {
-                if (ManaSprite != null)
-                {
-                    ManaSprite.Die();  
-                    world.ParticleManager.Trigger("star_particle", position, Color.White, 5);
-                    SoundManager.PlaySound(ContentPaths.Audio.wurp, position, true);
-                    ManaSprite = null;
-                    ReCreateTimer.Reset();
-                }
-                if (ReCreateTimer.HasTriggered)
-                {
-                    if (faction.RemoveResources(
-                        new List<ResourceAmount>() {new ResourceAmount(ResourceType.Mana)}, position + Vector3.Up * 0.5f))
-                    {
-                        ManaSprite = EntityFactory.CreateEntity<ResourceEntity>("Mana Resource", position);
-                        ManaSprite.Gravity = Vector3.Zero;
-                        ManaSprite.CollideMode = Physics.CollisionMode.None;
-                        
-                        ManaSprite.Tags.Clear();
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            public void Reset(Faction faction, Vector3 position, WorldManager world)
-            {
-                if (CreateNewManaSprite(faction, position, world))
-                {
-                    Charge = MaxCharge;
-                }
-            }
-        }
 
         public Point TopFrame = new Point(0, 6);
         public Point LegsFrame = new Point(1, 6);
@@ -199,21 +111,6 @@ namespace DwarfCorp
             this(craftType, manager, position, new SpriteSheet(asset), Point.Zero, resources, topFrame, legsFrame)
         {
 
-        }
-
-        override public void Update(DwarfTime time, ChunkManager chunks, Camera camera)
-        {
-            base.Update(time, chunks, camera);
-
-            if (Active && Battery != null)
-            {
-                Battery.Update(time, Manager.World);
-
-                if(Battery.Charge <= 0)
-                {
-                    Battery.Reset(Manager.World.PlayerFaction, Position + Vector3.Up, Manager.World);
-                }
-            }
         }
 
         public Table(string craftType, ComponentManager manager, Vector3 position, SpriteSheet fixtureAsset, Point fixtureFrame, List<ResourceAmount> resources, Point topFrame, Point legsFrame) :

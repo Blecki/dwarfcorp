@@ -15,7 +15,7 @@ namespace DwarfCorp.GameStates
         private Gui.Widgets.TabPanel TabPanel;
 
         public EconomyState(DwarfGame Game, GameStateManager StateManager, WorldManager World) :
-            base(Game, "GuiStateTemplate", StateManager)
+            base(Game, "EconomyState", StateManager)
         {
             this.World = World;
         }

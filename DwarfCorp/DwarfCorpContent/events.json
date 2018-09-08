@@ -10,6 +10,7 @@
       "Specification": "Specific",
       "Claim": "Any"
     },
+    "SpawnOnTranquil": false,
     "MinEntityLevel": 1,
     "MaxEntityLevel": 1,
     "Likelihood": 1,
@@ -34,6 +35,7 @@
       "Specification": "Specific",
       "Claim": "Any"
     },
+    "SpawnOnTranquil": false,
     "MinEntityLevel": 1,
     "MaxEntityLevel": 1,
     "Likelihood": 1,
@@ -117,6 +119,7 @@
       "Specification": "Random",
       "Claim": "Any"
     },
+    "SpawnOnTranquil": false,
     "Likelihood": 4,
     "Name": "Send War Party",
     "Difficulty": 10.0,
@@ -131,6 +134,7 @@
     "$type": "DwarfCorp.Goals.PlagueEvent, BaseContent",
     "Likelihood": 1,
     "Name": "Plague",
+    "SpawnOnTranquil": false,
     "Difficulty": 20.0,
     "AllowedTime": "All",
     "CooldownHours": 2,

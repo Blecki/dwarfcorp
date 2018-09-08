@@ -17,6 +17,27 @@ namespace DwarfCorp.Gui.Widgets
         {
             EmployeeList.ClearItems();
 
+            EmployeeList.AddItem(new Widget
+            {
+                Text = "+ Hire New Employee",
+                MinimumSize = new Point(128, 64),
+                OnClick = (sender, args) =>
+                {
+                    // Show hire dialog.
+                    var dialog = Root.ConstructWidget(
+                        new HireEmployeeDialog(Faction.World.PlayerCompany.Information)
+                        {
+                            Faction = Faction,
+                            OnClose = (_s) =>
+                            {
+                                RebuildEmployeeList();
+                            }
+                        });
+                    Root.ShowModalPopup(dialog);
+                    Faction.World.Tutorial("hire");
+                }
+            });
+
             foreach (var employee in Faction.Minions)
             {
                 var bar = Root.ConstructWidget(new Widget
@@ -25,7 +46,6 @@ namespace DwarfCorp.Gui.Widgets
                 });
                 var employeeSprite = employee.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>();
                
-
                 if (employeeSprite != null)
                     bar.AddChild(new EmployeePortrait
                     {
@@ -48,28 +68,7 @@ namespace DwarfCorp.Gui.Widgets
                 EmployeeList.AddItem(bar);
             }
 
-            EmployeeList.AddItem(new Widget
-            {
-                Text = "+ Hire New Employee",
-                MinimumSize = new Point(128, 64),
-                OnClick = (sender, args) =>
-                {
-                    // Show hire dialog.
-                    var dialog = Root.ConstructWidget(
-                        new HireEmployeeDialog(Faction.World.PlayerCompany.Information)
-                        {
-                            Faction = Faction,
-                            OnClose = (_s) =>
-                            {
-                                RebuildEmployeeList();
-                            }
-                        });
-                    Root.ShowModalPopup(dialog);
-                    Faction.World.Tutorial("hire");
-                }
-            });
-
-            EmployeeList.SelectedIndex = 0;
+            EmployeeList.SelectedIndex = 1;
         }
 
         public static int GetIconIndex(String Class)
@@ -140,11 +139,11 @@ namespace DwarfCorp.Gui.Widgets
                 ItemHeight = 64,
                 OnSelectedIndexChanged = (sender) =>
                 {
-                    if ((sender as Gui.Widgets.WidgetListView).SelectedIndex >= 0 &&
-                        (sender as Gui.Widgets.WidgetListView).SelectedIndex < Faction.Minions.Count)
+                    if ((sender as Gui.Widgets.WidgetListView).SelectedIndex > 0 &&
+                        (sender as Gui.Widgets.WidgetListView).SelectedIndex <= Faction.Minions.Count)
                     {
                         right.Hidden = false;
-                        right.Employee = Faction.Minions[(sender as Gui.Widgets.WidgetListView).SelectedIndex];
+                        right.Employee = Faction.Minions[(sender as Gui.Widgets.WidgetListView).SelectedIndex - 1];
                     }
                     else
                         right.Hidden = true;

@@ -60,7 +60,6 @@ namespace DwarfCorp
         public FactionLibrary Factions;
         public Dictionary<ResourceType, Resource> Resources;
         public DesignationDrawer Designations;
-        public SpellTree Spells;
         public TaskManager Tasks;
         public Embarkment InitialEmbark;
         public Yarn.MemoryVariableStore ConversationMemory;
@@ -77,7 +76,6 @@ namespace DwarfCorp
                 Factions = World.Factions,
                 Resources = ResourceLibrary.Resources,
                 Designations = World.DesignationDrawer,
-                Spells = World.Master.Spells,
                 Tasks = World.Master.TaskManager,
                 InitialEmbark = World.InitialEmbark,
                 ConversationMemory = World.ConversationMemory

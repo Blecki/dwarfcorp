@@ -98,14 +98,15 @@
   {
     "Name": "snow",
     "Decay": true,
-    "InitialDecayValue": 16,
-  	"BecomeWhenDecays": "empty",
+    "InitialDecayValue": 8,
+    "BecomeWhenDecays": "empty",
+    "Spreads": false,
     "Tile": "14, 2",
     "FringeTiles": [
       "10, 2",
       "11, 2",
       "12, 2"
-    ],
+    ]
   },
 
   {
