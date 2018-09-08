@@ -50,7 +50,7 @@ namespace DwarfCorp
         {
             Category = TaskCategory.Gather;
             Priority = PriorityType.Low;
-            BoredomIncrease = 0.1f;
+            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
         public StockResourceTask(ResourceAmount entity)
@@ -60,7 +60,7 @@ namespace DwarfCorp
             Name = "Stock Entity: " + entity.ResourceType + " " + entity.NumResources;
             Priority = PriorityType.Low;
             ReassignOnDeath = false;
-            BoredomIncrease = 0.1f;
+            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
         public override Act CreateScript(Creature creature)

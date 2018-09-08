@@ -21,6 +21,14 @@ namespace DwarfCorp.Gui.Widgets
             "Very High"
         };
 
+        public enum DialogResult
+        {
+            Okay,
+            Cancel
+        }
+
+        public DialogResult Result = DialogResult.Okay;
+
         private Widget CreateCombo<T>(String Name, String Tooltip, T[] Values, Action<T> Setter, Func<T> Getter)
         {
             System.Diagnostics.Debug.Assert(Values.Length == LevelStrings.Length);
@@ -72,14 +80,33 @@ namespace DwarfCorp.Gui.Widgets
 
             Border = "border-fancy";
 
-            AddChild(new Gui.Widgets.Button
+            var okayButton = AddChild(new Gui.Widgets.Button
             {
                 Text = "Okay",
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Center,
                 Border = "border-button",
-                OnClick = (sender, args) => this.Close(),
+                OnClick = (sender, args) =>
+                {
+                    Result = DialogResult.Okay;
+                    this.Close();
+                },
                 AutoLayout = AutoLayout.FloatBottomRight
+            });
+
+            AddChild(new Button
+            {
+                Text = "Cancel",
+                TextHorizontalAlign = HorizontalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Center,
+                Border = "border-button",
+                OnClick = (sender, args) =>
+                {
+                    Result = DialogResult.Cancel;
+                    this.Close();
+                },
+                AutoLayout = AutoLayout.FloatBottomRight,
+                OnLayout = (sender) => sender.Rect.X -= okayButton.Rect.Width + 4
             });
 
             var topRow = AddChild(new Widget

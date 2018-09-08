@@ -50,7 +50,7 @@ namespace DwarfCorp
         {
             Priority = PriorityType.Low;
             Category = TaskCategory.Gather;
-            BoredomIncrease = 0.2f;
+            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
         public GatherItemTask(Body entity)
@@ -59,7 +59,7 @@ namespace DwarfCorp
             Name = "Gather Entity: " + entity.Name + " " + entity.GlobalID;
             Priority = PriorityType.Low;
             Category = TaskCategory.Gather;
-            BoredomIncrease = 0.2f;
+            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
         public override Act CreateScript(Creature creature)

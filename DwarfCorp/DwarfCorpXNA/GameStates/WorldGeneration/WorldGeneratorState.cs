@@ -133,7 +133,11 @@ namespace DwarfCorp.GameStates
                     var advancedSettingsEditor = GuiRoot.ConstructWidget(new Gui.Widgets.WorldGenerationSettingsDialog
                     {
                         Settings = Settings,
-                        OnClose = (s) => RestartGeneration()
+                        OnClose = (s) =>
+                        {
+                            if ((s as Gui.Widgets.WorldGenerationSettingsDialog).Result == Gui.Widgets.WorldGenerationSettingsDialog.DialogResult.Okay)
+                                RestartGeneration();
+                        }
                     });
 
                     GuiRoot.ShowModalPopup(advancedSettingsEditor);

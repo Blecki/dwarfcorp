@@ -454,29 +454,41 @@ namespace DwarfCorp
                     return task;
                 }
             }
+
             int rand = MathFunctions.RandInt(0, 5);
             switch (rand)
             {
 
                 case 0:
                 {
-                    return new ActWrapperTask(new LongWanderAct(this) { PathLength = 50, Radius = 30, Name = "Go on a walk", Is2D = true }) { Name = "Go on a walk.", Priority = Task.PriorityType.High, BoredomIncrease = -1.0f };
+                    return new ActWrapperTask(new LongWanderAct(this)
+                        {
+                            PathLength = 50,
+                            Radius = 30,
+                            Name = "Go on a walk",
+                            Is2D = true
+                        })
+                    {
+                        Name = "Go on a walk.",
+                        Priority = Task.PriorityType.High,
+                        BoredomIncrease = GameSettings.Default.Boredom_Walk
+                    };
                 }
                 case 1:
                 {
                     if (Faction.ListResourcesWithTag(Resource.ResourceTags.Alcohol).Count > 0)
                     {
-                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol}, 3, false) { Name = "Binge drink." }) { Name = "Binge drink.", Priority = Task.PriorityType.High, BoredomIncrease = -1.5f };
+                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol}, 3, false) { Name = "Binge drink." }) { Name = "Binge drink.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
                     }
                     if (!Status.Hunger.IsSatisfied())
                     {
-                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this), 3, false) { Name = "Binge eat." }) { Name = "Binge eat.", Priority = Task.PriorityType.High, BoredomIncrease = -1.0f };
+                        return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this), 3, false) { Name = "Binge eat." }) { Name = "Binge eat.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
                     }
                         return ActOnIdle();
                 }
                 case 2:
                 {
-                    return new ActWrapperTask(new GoToChairAndSitAct(this) { SitTime = 60, Name = "Relax." }) { Name = "Relax.", Priority = Task.PriorityType.High, BoredomIncrease = -0.25f };
+                    return new ActWrapperTask(new GoToChairAndSitAct(this) { SitTime = 60, Name = "Relax." }) { Name = "Relax.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Sleep };
                 }
                 case 3:
                 {

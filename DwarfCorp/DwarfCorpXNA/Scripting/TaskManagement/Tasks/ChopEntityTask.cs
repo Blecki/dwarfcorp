@@ -46,7 +46,7 @@ namespace DwarfCorp
         public ChopEntityTask()
         {
             MaxAssignable = 3;
-            BoredomIncrease = 0.1f;
+            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
         public ChopEntityTask(Body entity)
@@ -57,7 +57,7 @@ namespace DwarfCorp
             Priority = PriorityType.Low;
             AutoRetry = true;
             Category = TaskCategory.Chop;
-            BoredomIncrease = 0.1f;
+            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
         public override Act CreateScript(Creature creature)

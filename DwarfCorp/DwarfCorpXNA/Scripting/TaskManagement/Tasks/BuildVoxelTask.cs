@@ -54,7 +54,7 @@ namespace DwarfCorp
         {
             Category = TaskCategory.BuildBlock;
             Priority = PriorityType.Medium;
-            BoredomIncrease = 0.1f;
+            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
         public BuildVoxelTask(VoxelHandle voxel, string type)
@@ -64,7 +64,7 @@ namespace DwarfCorp
             Voxel = voxel;
             VoxType = type;
             Priority = PriorityType.Medium;
-            BoredomIncrease = 0.1f;
+            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
         public override Feasibility IsFeasible(Creature agent)
