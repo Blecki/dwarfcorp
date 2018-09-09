@@ -22,7 +22,8 @@ namespace DwarfCorp
         {
             if (In == null)
             {
-                In = new T[Size + 1];
+                In = new T[Size + 1
+                    ];
                 return;
             }
 
