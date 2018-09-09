@@ -53,6 +53,17 @@ namespace DwarfCorp
         private static OrbitCamera Camera;
         private static object renderLock = new object();
 
+        public static void Cleanup()
+        {
+            Verticies = new VertexPositionColor[MaxTriangles * 3];
+            VertexCount = 0;
+            Effect = null;
+            Camera = null;
+            Boxes.Clear();
+            Segments.Clear();
+
+        }
+
         private struct Box
         {
             public BoundingBox RealBox;

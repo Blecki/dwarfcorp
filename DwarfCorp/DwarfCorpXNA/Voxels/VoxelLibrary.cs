@@ -54,6 +54,15 @@ namespace DwarfCorp
         public static Dictionary<string, VoxelType> Types = new Dictionary<string, VoxelType>();
         public static List<VoxelType> TypeList = null;
 
+        public static void Cleanup()
+        {
+            PrimitiveMap = new Dictionary<VoxelType, BoxPrimitive>();
+            emptyType = null;
+            DesignationType = null;
+            Types = new Dictionary<string, VoxelType>();
+            TypeList = null;
+        }
+
         public VoxelLibrary()
         {
         }

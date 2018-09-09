@@ -255,7 +255,15 @@ namespace DwarfCorp
 
         }
 
-     
+        public static void Cleanup()
+        {
+            NativeFactions = null;
+            Map = null;
+            Volcanoes = null;
+            Name = null;
+        }
+
+
         #region image_processing
 
         public static Vector2 GetMinNeighbor(float[,] heightMap, Vector2 pos)

@@ -82,8 +82,6 @@ namespace DwarfCorp
                 Console.Error.WriteLine(exception.Message);
             }
 
-            Game.Graphics.PreparingDeviceSettings += GraphicsPreparingDeviceSettings;
-            Game.Graphics.DeviceReset += GraphicsDeviceReset;
             LoadingThread = new Thread(LoadThreaded) { IsBackground = true };
             LoadingThread.Name = "Load";
             LoadingThread.Start();

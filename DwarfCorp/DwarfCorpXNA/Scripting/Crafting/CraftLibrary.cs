@@ -44,6 +44,11 @@ namespace DwarfCorp
     {
         private static Dictionary<string, CraftItem> CraftItems = null;
 
+        public static void Cleanup()
+        {
+            CraftItems = null;
+        }
+
         public static IEnumerable<CraftItem> EnumerateCraftables()
         {
             return CraftItems.Values;

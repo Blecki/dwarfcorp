@@ -148,6 +148,11 @@ namespace DwarfCorp
         public Timer TriggerTimer { get; set; }
         private static Camera _camera = null;
 
+        public static void Cleanup()
+        {
+            _camera = null;
+        }
+
         public static Matrix MatrixFromParticle(EmitterData data, Particle particle)
         {
             if (!data.FixedRotation)

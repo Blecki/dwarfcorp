@@ -183,8 +183,8 @@ namespace DwarfCorp
 
                     sliceGeometry = new RawPrimitive
                     {
-                        Vertices = new ExtendedVertex[128],
-                        Indexes = new short[128]
+                        Vertices = null,
+                        Indexes = null
                     };
 
                     chunk.Data.SliceCache[y] = sliceGeometry;

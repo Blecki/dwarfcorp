@@ -20,6 +20,12 @@ namespace DwarfCorp
 
         private static void EnsureSpace<T>(ref T[] In, int Size)
         {
+            if (In == null)
+            {
+                In = new T[Size + 1];
+                return;
+            }
+
             if (Size >= In.Length)
             {
                 var r = new T[In.Length * 2];

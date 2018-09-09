@@ -54,6 +54,12 @@ namespace DwarfCorp
         public static Dictionary<ResourceType, Resource> Resources = new Dictionary<ResourceType, Resource>();
         public static bool IsInitialized = false;
 
+        public static void Cleanup()
+        {
+            IsInitialized = false;
+            Resources = new Dictionary<ResourceType, Resource>();
+        }
+
         public static IEnumerable<Resource> GetResourcesByTag(Resource.ResourceTags tag)
         {
             return Resources.Values.Where(resource => resource.Tags.Contains(tag));
@@ -124,6 +130,11 @@ namespace DwarfCorp
 
         public static void Add(Resource resource)
         {
+            if (!ResourceLibrary.IsInitialized)
+            {
+                ResourceLibrary.Initialize();
+            }
+
             Resources[resource.Name] = resource;
 
             if (resource.Tags.Contains(Resource.ResourceTags.Money))
@@ -145,7 +156,7 @@ namespace DwarfCorp
             {
                 return;
             }
-
+            IsInitialized = true;
             string tileSheet = ContentPaths.Entities.Resources.resources;
             Resources = new Dictionary<ResourceType, Resource>();
 
@@ -156,7 +167,6 @@ namespace DwarfCorp
                 resource.Generated = false;
                 Add(resource);
             }
-            IsInitialized = true;
         }
         
         public static Resource CreateAle(ResourceType type)

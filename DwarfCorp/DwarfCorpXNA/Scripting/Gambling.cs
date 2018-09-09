@@ -145,9 +145,16 @@ namespace DwarfCorp.Scripting
         public void PushParticipants()
         {
             var time = DwarfTime.LastTime;
+            List<Creature> removals = new List<Creature>();
             for (int i = 0; i < Participants.Count; i++)
             {
                 var p_i = Participants[i];
+                if (!VoxelHelpers.GetNeighbor(p_i.Physics.CurrentVoxel, new GlobalVoxelOffset(0, -1, 0)).IsEmpty)
+                {
+                    removals.Add(p_i);
+                    continue;
+                }
+
                 for (int j = i + 1; j < Participants.Count; j++)
                 {
                     var p_j = Participants[j];
@@ -166,6 +173,10 @@ namespace DwarfCorp.Scripting
                     var diff = (p_i.AI.Position - Location) + Microsoft.Xna.Framework.Vector3.Right * 0.1f;
                     p_i.Physics.ApplyForce(-distToCenter * diff * 10.0f, (float)time.ElapsedGameTime.TotalSeconds);
                 }
+            }
+            foreach(var participant in removals)
+            {
+                Participants.Remove(participant);
             }
         }
 
