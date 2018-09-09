@@ -497,6 +497,15 @@ namespace DwarfCorp
                     Faction.World.MakeAnnouncement("We're out of food!", null, () => { return Faction.CountResourcesWithTag(Resource.ResourceTags.Edible) == 0; });
                 }
             }
+
+            foreach(var minion in Faction.Minions)
+            {
+                if (minion.Status.IsAsleep)
+                    continue;
+                if (minion.CurrentTask == null)
+                    continue;
+                minion.ResetPositionConstraint();
+            }
         }
 
 

@@ -58,6 +58,10 @@ namespace DwarfCorp
             {
                 return false;
             }
+            if (!creature.Tags.Contains("DomesticAnimal"))
+            {
+                return false;
+            }
             var pens = Player.Faction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt &&
                             (pen.Species == "" || pen.Species == creature.Species));
 

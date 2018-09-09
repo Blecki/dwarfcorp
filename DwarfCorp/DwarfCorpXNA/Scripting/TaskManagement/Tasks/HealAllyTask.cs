@@ -23,6 +23,13 @@ namespace DwarfCorp
             Name = String.Format("Heal {0}", other.Stats.FullName);
         }
 
+        public override void OnCanceled()
+        {
+            if (Ally != null)
+                Ally.ResetPositionConstraint();
+            base.OnCanceled();
+        }
+
         public IEnumerable<Act.Status> PlaceOnBed(Body bed)
         {
             Ally.ResetPositionConstraint();
