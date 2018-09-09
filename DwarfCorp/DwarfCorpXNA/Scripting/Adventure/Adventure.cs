@@ -8,6 +8,8 @@ namespace DwarfCorp.Scripting.Adventure
 {
     public class Adventure
     {
+        public string Name;
+        public string Description;
         public string OwnerFaction;
         public string DestinationFaction;
         public List<CreatureAI> Party;
@@ -18,6 +20,11 @@ namespace DwarfCorp.Scripting.Adventure
         public float ActionTimeMinutes;
         public Timer ActionTimer = null;
         public Balloon Vehicle = null;
+        public bool RequiresPeace = false;
+        public bool RequiresWar = false;
+
+        public TimeSpan TotalTravelTime = new TimeSpan(0, 0, 0, 0);
+        public TimeSpan RemainingTravelTime = new TimeSpan(0, 0, 0, 0);
 
         public enum State
         {
@@ -31,6 +38,7 @@ namespace DwarfCorp.Scripting.Adventure
 
         public State AdventureState;
         public string LastEvent;
+        public int HourOfLastEating = 0;
 
         public Adventure()
         {
@@ -39,19 +47,16 @@ namespace DwarfCorp.Scripting.Adventure
 
         public float GetProgress(WorldManager world)
         {
+            int totalMinutes = (int)TotalTravelTime.TotalMinutes;
+            int remainingMinutes = (int)RemainingTravelTime.TotalMinutes;
+
             if (AdventureState == State.TravelingtoDestination)
             {
-                var target = GetTarget(world);
-                var diff = (target - Position);
-                var total = (target - Start);
-                return 1.0f - diff.Length() / total.Length();
+                return 1.0f - (float)remainingMinutes / (float)totalMinutes;
             }
             else if (AdventureState == State.ComingBack)
             {
-                var target = Start;
-                var diff = (target - Position);
-                var total = (target - Start);
-                return 1.0f - diff.Length() / total.Length();
+                return 1.0f - (float)remainingMinutes / (float)totalMinutes;
             }
             else if (AdventureState == State.PerformingAction)
             {
@@ -65,7 +70,12 @@ namespace DwarfCorp.Scripting.Adventure
 
         public string GetStatusString(WorldManager world)
         {
-            TimeSpan eta = GetETA(world);
+            return String.Format("Food supply {0}, {1}", Resources.Sum(r => ResourceLibrary.GetResourceByName(r.ResourceType).Tags.Contains(Resource.ResourceTags.Edible) ? r.NumResources : 0), GetETAString(world));
+        }
+
+        public string GetETAString(WorldManager world)
+        {
+            TimeSpan eta = RemainingTravelTime;
             switch (AdventureState)
             {
                 case State.ComingBack:
@@ -84,28 +94,30 @@ namespace DwarfCorp.Scripting.Adventure
             }
         }
 
+        public static TimeSpan GetETA(List<CreatureAI> party, float dist)
+        {
+            float speed = party.Average(c => c.Stats.BuffedDex);
+            float time = 100 * (dist / speed);
+            return new TimeSpan(0, (int)(time), (int)(60 * (time - (int)(time))));
+        }
+
         public TimeSpan GetETA(WorldManager world)
         {
             if (AdventureState == State.TravelingtoDestination)
             {
-                var target = GetTarget(world);
-                var vel = (target - Position);
-                float time =  100 * (vel.Length() / GetSpeedPerMinute());
-                return new TimeSpan(0, (int)(time), (int)(60 * (time - (int)(time))));
+                return GetETA(Party, world.Factions.Factions[DestinationFaction].DistanceToCapital);
             }
             else if (AdventureState == State.ComingBack)
             {
                 var target = Start;
-                var vel = (target - Position);
-                float time = 100 * (vel.Length() / GetSpeedPerMinute());
-                return new TimeSpan(0, (int)(time), (int)(60 * (time - (int)(time))));
+                return GetETA(Party, world.Factions.Factions[DestinationFaction].DistanceToCapital);
             }
             return new TimeSpan(0, 0, 0);
         }
 
         public float GetSpeedPerMinute()
         {
-            return Party.Average(c => c.Stats.BuffedDex) * 100;
+            return Party.Average(c => c.Stats.BuffedDex) * 10;
         }
 
         public Vector2 GetTarget(WorldManager world)
@@ -152,9 +164,9 @@ namespace DwarfCorp.Scripting.Adventure
             {
                 DestroyCreature(creature);
             }
-
-            owner.RemoveResources(Resources, Vector3.Zero, false);
-            owner.AddMoney(-Money);
+            AdventureState = State.TravelingtoDestination;
+            TotalTravelTime = GetETA(world);
+            RemainingTravelTime = new TimeSpan(TotalTravelTime.Days, TotalTravelTime.Hours, TotalTravelTime.Minutes, TotalTravelTime.Seconds);
         }
 
         private void ReturnCreature(CreatureAI creature)
@@ -183,8 +195,76 @@ namespace DwarfCorp.Scripting.Adventure
             creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
         }
 
+        public void Eat(DateTime time)
+        {
+            bool outOfFood = false;
+            foreach(var creature in Party)
+            {
+                var resource = Resources.FirstOrDefault(r => r.NumResources > 0 && ResourceLibrary.GetResourceByName(r.ResourceType).Tags.Contains(Resource.ResourceTags.Edible));
+                if (resource != null)
+                {
+                    resource.NumResources--;
+                }
+                else if (MathFunctions.RandEvent(0.5f))
+                {
+                    creature.Creature.Hp -= MathFunctions.Rand(1, 10);
+                    var thoughts = creature.Creature.GetComponent<DwarfThoughts>();
+                    if (thoughts != null)
+                    {
+                        thoughts.AddThought(Thought.ThoughtType.FeltHungry);
+                    }
+                }
+            }
+            var numDied = Party.Count(p => p.Creature.Hp <= 0);
+
+            foreach(var creature in Party.Where(p => p.Creature.Hp <= 0))
+            {
+                creature.Delete();
+            }
+            
+            if (outOfFood)
+            {
+                if (numDied == 0)
+                    LastEvent = "The adventuring party ran out of food!";
+                else
+                    LastEvent = String.Format("The adventuring party ran out of food! {0} starved to death.", numDied);
+            }
+            Party.RemoveAll(p => p.Creature.Hp <= 0);
+
+            if (Party.Count == 0)
+            {
+                AdventureState = State.Done;
+                LastEvent = "All of the members of the adventuring party starved to death.";
+                Resources.Clear();
+                Money = 0;
+            }
+            HourOfLastEating = time.Hour;
+        }
+
+        private int TimeDiff(int hour1, int hour2)
+        {
+            int diff = hour1 - hour2;
+            if (diff >= 0)
+            {
+                return diff;
+            }
+            return 24 + diff;
+        }
+        private int _prevHour = -1;
+
         public void Update(WorldManager world, DwarfTime time)
-        { 
+        {
+            int hour = world.Time.CurrentDate.Hour;
+            bool shouldEat = TimeDiff(hour, HourOfLastEating) > 12;
+            if (_prevHour < 0)
+            {
+                _prevHour = hour;
+            }
+            int timeDiff = TimeDiff(hour, _prevHour);
+            if (timeDiff > 0)
+            {
+                _prevHour = hour;
+            }
             switch (AdventureState)
             {
                 case State.None:
@@ -269,22 +349,24 @@ namespace DwarfCorp.Scripting.Adventure
                     }
                 case State.TravelingtoDestination:
                     {
-                        var target = GetTarget(world);
-                        var vel = (target - Position);
-                        if (vel.Length() < 1.0f)
+                        RemainingTravelTime -= new TimeSpan(0, timeDiff, 0, 0, 0);
+                        if (shouldEat)
+                        {
+                            Eat(world.Time.CurrentDate);
+                            if (AdventureState == State.Done)
+                            {
+                                break;
+                            }
+                        }
+                
+                        if (RemainingTravelTime.Hours < 1)
                         {
                             this.LastEvent = String.Format("The adventuring party has arrived at {0}", DestinationFaction);
                             AdventureState = State.PerformingAction;
                             ActionTimer = new Timer(ActionTimeMinutes * 60.0f, true);
                             OnArrival(world);
                         }
-                        else
-                        {
-                            vel.Normalize();
-                            vel *= GetSpeedPerMinute();
-                            float elapsedMinutes = (float)time.ElapsedGameTime.TotalMinutes;
-                            Position += elapsedMinutes * vel;
-                        }
+                        
                         break;
                     }
                 case State.PerformingAction:
@@ -294,14 +376,22 @@ namespace DwarfCorp.Scripting.Adventure
                         {
                             OnAction(world);
                             AdventureState = State.ComingBack;
+                            RemainingTravelTime = GetETA(world);
                         }
                         break;
                     }
                 case State.ComingBack:
                     {
-                        var target = Start;
-                        var vel = (target - Position);
-                        if (vel.Length() < 1.0f)
+                        RemainingTravelTime -= new TimeSpan(0, timeDiff, 0, 0, 0);
+                        if (shouldEat)
+                        {
+                            Eat(world.Time.CurrentDate);
+                            if (AdventureState == State.Done)
+                            {
+                                break;
+                            }
+                        }
+                        if (RemainingTravelTime.Hours < 1)
                         {
                             var balloonPorts = world.PlayerFaction.GetRooms().OfType<BalloonPort>().ToList();
                             Vector3 location = world.Camera.Position;
@@ -318,13 +408,6 @@ namespace DwarfCorp.Scripting.Adventure
                             OnReturn(world);
                             AdventureState = State.Done;
                         }
-                        else
-                        {
-                            vel.Normalize();
-                            vel *= GetSpeedPerMinute();
-                            float elapsedMinutes = (float)time.ElapsedGameTime.TotalMinutes;
-                            Position += elapsedMinutes * vel;
-                        }
                         break;
                     }
                 case State.Done:
@@ -339,10 +422,187 @@ namespace DwarfCorp.Scripting.Adventure
         }
     }
 
+    public class RaidAdventure : Adventure
+    {
+        public RaidAdventure()
+        {
+            Name = "Raiding Party";
+            Description = "Send your employees to pillage the natives (WAR).";
+            ActionTimeMinutes = 0.1f;
+        }
+
+        public override void OnAction(WorldManager world)
+        {
+            var owner = world.Factions.Factions[OwnerFaction];
+            var dest = world.Factions.Factions[DestinationFaction];
+            var strength = Party.Sum(p => p.Stats.BuffedStr);
+            var politics = world.Diplomacy.GetPolitics(owner, dest);
+            List<ResourceAmount> destGoods = dest.Race.GenerateResources(world);
+
+            int turns = MathFunctions.RandInt(1, (int)strength);
+            List<ResourceAmount> stolenGoods = new List<ResourceAmount>();
+            DwarfBux stolenMoney = 0.0m;
+            int numDead = 0;
+            for (int turn = 0; turn < turns; turn++)
+            {
+                numDead += Party.Count(p => p.Creature.Hp <= 0);
+                Party.RemoveAll(p => p.Creature.Hp <= 0);
+                if (Party.Count == 0)
+                    break;
+                var randomCritter = Datastructures.SelectRandom(Party);
+                var con = randomCritter.Stats.BuffedCon;
+                var enemyAttack = MathFunctions.RandInt(1, 20);
+                if (enemyAttack - con > 10 || enemyAttack == 20)
+                {
+                    randomCritter.Creature.Hp-= MathFunctions.RandInt(5, 100);
+                    if (randomCritter.Creature.Hp <= 0)
+                    {
+                        randomCritter.GetRoot().Delete();
+                    }
+                    var thoughts = randomCritter.Creature.GetComponent<DwarfThoughts>();
+                    if (thoughts != null)
+                    {
+                        thoughts.AddThought(Thought.ThoughtType.TookDamage);
+                    }
+                }
+                else
+                {
+                    stolenGoods.Add(new ResourceAmount(Datastructures.SelectRandom(destGoods).ResourceType, MathFunctions.RandInt(1, 5)));
+                    stolenMoney += (decimal)MathFunctions.RandInt(1, 100);
+                }
+            }
+
+            politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+            {
+                Change = -5,
+                Description = "You attacked us!",
+                Duration = new TimeSpan(5, 0, 0, 0, 0),
+                Time = world.Time.CurrentDate
+            });
+
+            politics.WasAtWar = true;
+            politics.HasMet = true;
+
+            if (Party.Count == 0)
+            {
+                LastEvent = "All of the raiding party members died!";
+                Resources.Clear();
+                Money = 0.0m;
+                AdventureState = State.Done;
+                return;
+            }
+
+            Resources.AddRange(stolenGoods);
+            Money += stolenMoney;
+            
+            if (numDead == 0)
+            {
+                LastEvent = String.Format("The raiding party is returning home unscathed! They stole {0} goods and {1}.", stolenGoods.Sum(g => g.NumResources), stolenMoney);
+                AdventureState = State.ComingBack;
+            }
+            else
+            {
+                LastEvent = String.Format("The raiding party is returning home. They stole {0} goods and {1}, but {2} member(s) died.", stolenGoods.Sum(g => g.NumResources), stolenMoney, numDead);
+                AdventureState = State.ComingBack;
+            }
+
+            foreach(var creature in Party)
+            {
+                var thoughts = creature.Creature.GetComponent<DwarfThoughts>();
+                if (thoughts != null)
+                {
+                    thoughts.AddThought(Thought.ThoughtType.KilledThing);
+                }
+            }
+            base.OnAction(world);
+        }
+    }
+
+
+    public class PeaceAdventure : Adventure
+    {
+        public PeaceAdventure()
+        {
+            Name = "Peace Mission";
+            Description = "Send your employees to make peace with the natives. Resources/money will be given as gifts.";
+            ActionTimeMinutes = 0.1f;
+            RequiresWar = true;
+        }
+
+
+        public DwarfBux GetValue(Resource resource, Faction faction)
+        {
+            bool common = resource.Tags.Any(t => faction.Race.CommonResources.Contains(t));
+            bool rare = resource.Tags.Any(t => faction.Race.RareResources.Contains(t));
+            var resourceValue = resource.MoneyValue;
+            if (common)
+            {
+                resourceValue *= 0.75;
+            }
+            else if (rare)
+            {
+                resourceValue *= 1.25;
+            }
+            return resourceValue;
+        }
+
+
+        public override void OnAction(WorldManager world)
+        {
+            var owner = world.Factions.Factions[OwnerFaction];
+            var des = world.Factions.Factions[DestinationFaction];
+            var charisma = Party.Max(p => p.Stats.BuffedChar);
+            float tradeGoodness = charisma - MathFunctions.Rand(0, 10.0f);
+            var politics = world.Diplomacy.GetPolitics(owner, des);
+            if (Resources.Any(r => ResourceLibrary.GetResourceByName(r.ResourceType).Tags.Any(t => des.Race.HatedResources.Contains(t))))
+            {
+                politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                {
+                    Description = "You gave us something we hate!",
+                    Change = -5,
+                    Duration = new TimeSpan(4, 0, 0, 0),
+                    Time = world.Time.CurrentDate
+                });
+                LastEvent = String.Format("The {0} of {1} were offended by our peace offering. They captured the envoy.", des.Race.Plural, des.Name);
+                Party.Clear();
+                Resources.Clear();
+                Money = 0;
+                AdventureState = State.Done;
+                return;
+            }
+
+            decimal tradeValue = (Resources.Sum(r => GetValue(ResourceLibrary.GetResourceByName(r.ResourceType), des) * r.NumResources) + Money) * charisma;
+
+            if (MathFunctions.Rand(0, 500) < (float)tradeValue)
+            {
+
+                politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                {
+                    Description = "You sent a peace envoy.",
+                    Change = 10,
+                    Duration = new TimeSpan(8, 0, 0, 0),
+                    Time = world.Time.CurrentDate
+                });
+                politics.HasMet = true;
+                politics.WasAtWar = false;
+                LastEvent = String.Format("The adventuring party made peace with the {0} of {1}!", des.Race.Plural, des.Name);
+                Money = 0;
+                Resources.Clear();
+                AdventureState = State.ComingBack;
+            }
+
+
+            base.OnAction(world);
+        }
+    }
+
+
     public class TradeAdventure : Adventure
     {
         public TradeAdventure()
         {
+            Name = "Trade Expedition";
+            Description = "Send your employees to trade goods and money with the natives.";
             ActionTimeMinutes = 0.1f;
         }
 

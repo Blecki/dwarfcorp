@@ -46,6 +46,8 @@ namespace DwarfCorp.Gui.Widgets
         private VerticalScrollBar ScrollBar;
         public int ItemHeight = 32;
 
+        public bool ChangeColorOnSelected = true;
+
         public override void Construct()
         {
             if (String.IsNullOrEmpty(Border)) Border = "border-one";
@@ -56,12 +58,15 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockRight
             };
 
+
             AddChild(ScrollBar);
 
             OnClick += (sender, args) =>
                 {
                     if (ScrollBar.Hidden || args.X < ScrollBar.Rect.Left)
+                    {
                         SelectedIndex = ScrollBar.ScrollPosition + ((args.Y - GetDrawableInterior().Y) / ItemHeight);
+                    }
                 };
 
             OnScroll = (sender, args) =>
@@ -157,7 +162,7 @@ namespace DwarfCorp.Gui.Widgets
             }
 
 
-            if (SelectedItem != null)
+            if (SelectedItem != null && ChangeColorOnSelected)
             {
                 if (SelectedItemBackgroundColor.W > 1e-2)
                 {
