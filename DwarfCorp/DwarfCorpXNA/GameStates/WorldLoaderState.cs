@@ -39,7 +39,7 @@ namespace DwarfCorp.GameStates
             {
                 try
                 {
-                    return AssetManager.LoadUnbuiltTextureFromAbsolutePath(path + ProgramData.DirChar + "screenshot.png");
+                    return AssetManager.LoadUnbuiltTextureFromAbsolutePath(path + System.IO.Path.DirectorySeparatorChar + "screenshot.png");
                 }
                 catch (Exception exception)
                 {

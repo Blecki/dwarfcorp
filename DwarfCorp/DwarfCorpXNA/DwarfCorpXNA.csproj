@@ -183,6 +183,7 @@
     <Compile Include="AssetManagement\IndexedDecomposition.cs" />
     <Compile Include="AssetManagement\ModMetaData.cs" />
     <Compile Include="AssetManagement\StringLibrary.cs" />
+    <Compile Include="Components\AI\PacingCreatureAI.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCStatus.cs" />
     <Compile Include="GameStates\ModManagement\Steam\IUGCTransaction.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCUnsubscribe.cs" />
@@ -306,7 +307,7 @@
     <Compile Include="Goals\Events\SpawnEntityEvent.cs" />
     <Compile Include="Goals\Events\SpawnWarPartyEvent.cs" />
     <Compile Include="Goals\Events\SpawnTradeEnvoyEvent.cs" />
-    <Compile Include="Goals\PlagueEvent.cs" />
+    <Compile Include="Goals\Events\PlagueEvent.cs" />
     <Compile Include="Goals\EventLibrary.cs" />
     <Compile Include="Goals\TimedIndicatorWidget.cs" />
     <Compile Include="Goals\GoalTypes.cs" />
@@ -326,6 +327,7 @@
     <Compile Include="Gui\Widgets\AutoGridPanel.cs" />
     <Compile Include="Gui\Widgets\CommandEntry.cs" />
     <Compile Include="Gui\Widgets\Graph.cs" />
+    <Compile Include="Gui\Widgets\ColorOptionsEditor.cs" />
     <Compile Include="Gui\Widgets\TextBox.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\Adventure\Adventure.cs" />
@@ -339,9 +341,6 @@
     <Compile Include="Scripting\Factions\Trading\PoliticalEventYarnCommand.cs" />
     <Compile Include="Scripting\Factions\Trading\TradeYarnCommand.cs" />
     <Compile Include="Scripting\Gambling.cs" />
-    <Compile Include="Scripting\NewMagic\AttackSpell.cs" />
-    <Compile Include="Scripting\NewMagic\BuffSpell.cs" />
-    <Compile Include="Scripting\NewMagic\Spell.cs" />
     <Compile Include="Scripting\Player\Economy\Quantity.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceType.cs" />
     <Compile Include="Scripting\Player\Tools\ObjectHelper.cs" />
@@ -463,7 +462,7 @@
     <Compile Include="GameStates\WorldLoaderState.cs" />
     <Compile Include="GameStates\PaginatedChooserState.cs" />
     <Compile Include="GameStates\LoadSaveGameState.cs" />
-    <Compile Include="GameStates\NewEconomyState.cs" />
+    <Compile Include="GameStates\EconomyState.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorPreview.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorState.cs" />
     <Compile Include="GameStates\IntroState.cs" />
@@ -569,7 +568,6 @@
     <Compile Include="Scripting\Factions\Race.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\Treasury.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\FindLandTask.cs" />
-    <Compile Include="Scripting\TaskManagement\Tasks\ResearchSpellTask.cs" />
     <Compile Include="Tools\Datastructures\OctTree.cs" />
     <Compile Include="Tools\Math\FastVoxelTraversal.cs" />
     <Compile Include="Tools\Planning\GoalRegion.cs" />
@@ -616,6 +614,7 @@
     <Compile Include="Voxels\Splasher.cs" />
     <Compile Include="Voxels\GrassLibrary.cs" />
     <Compile Include="Voxels\ChunkUpdate.cs" />
+    <Compile Include="World\CompanyInformation.cs" />
     <Compile Include="World\IndicatorManager.cs" />
     <Compile Include="Gui\Enums.cs" />
     <Compile Include="Gui\Geo\Basics.cs" />
@@ -676,7 +675,6 @@
     <Compile Include="Gui\Widgets\FramedIcon.cs" />
     <Compile Include="Gui\Widgets\CompanyLogo.cs" />
     <Compile Include="Gui\Widgets\PlantInfo.cs" />
-    <Compile Include="Gui\Widgets\SpellInfo.cs" />
     <Compile Include="Gui\Widgets\ToggleTray.cs" />
     <Compile Include="Gui\Widgets\MoneyEditor.cs" />
     <Compile Include="Gui\Widgets\KeyEditor.cs" />
@@ -728,7 +726,6 @@
     <Compile Include="Scripting\CompoundActs\FindBedAndSleepAct.cs" />
     <Compile Include="Scripting\CompoundActs\GatherItemAct.cs" />
     <Compile Include="Scripting\CompoundActs\GetResourcesAct.cs" />
-    <Compile Include="Scripting\CompoundActs\GoResearchSpellAct.cs" />
     <Compile Include="Scripting\CompoundActs\GoToChairAndSitAct.cs" />
     <Compile Include="Scripting\CompoundActs\GoToEntityAct.cs" />
     <Compile Include="Scripting\CompoundActs\GoToNamedVoxelAct.cs" />
@@ -771,7 +768,6 @@
     <Compile Include="Scripting\LeafActs\PlaceVoxelAct.cs" />
     <Compile Include="Scripting\LeafActs\PlanAct.cs" />
     <Compile Include="Scripting\LeafActs\PutResourceInZoneAct.cs" />
-    <Compile Include="Scripting\LeafActs\ResearchSpellAct.cs" />
     <Compile Include="Scripting\LeafActs\SearchFreeStockpileAct.cs" />
     <Compile Include="Scripting\LeafActs\SetBlackboardData.cs" />
     <Compile Include="Scripting\LeafActs\SetTargetVoxelAct.cs" />
@@ -782,14 +778,6 @@
     <Compile Include="Scripting\LeafActs\StopAct.cs" />
     <Compile Include="Scripting\LeafActs\TeleportAct.cs" />
     <Compile Include="Scripting\LeafActs\WanderAct.cs" />
-    <Compile Include="Scripting\Magic\BuffSpell.cs" />
-    <Compile Include="Scripting\Magic\CreateEntitySpell.cs" />
-    <Compile Include="Scripting\Magic\DestroyBlockSpell.cs" />
-    <Compile Include="Scripting\Magic\InspectSpell.cs" />
-    <Compile Include="Scripting\Magic\PlaceBlockSpell.cs" />
-    <Compile Include="Scripting\Magic\Spell.cs" />
-    <Compile Include="Scripting\Magic\SpellLibrary.cs" />
-    <Compile Include="Scripting\Magic\SpellTree.cs" />
     <Compile Include="Scripting\MonsterSpawner.cs" />
     <Compile Include="Scripting\Player\BodySelector.cs" />
     <Compile Include="Scripting\Player\Building\BuildRoomOrder.cs" />
@@ -818,7 +806,6 @@
     <Compile Include="Scripting\Player\Tools\GatherTool.cs" />
     <Compile Include="Scripting\Player\Tools\GodModeTool.cs" />
     <Compile Include="Scripting\Player\Tools\GuardTool.cs" />
-    <Compile Include="Scripting\Player\Tools\MagicTool.cs" />
     <Compile Include="Scripting\Player\Tools\PlayerTool.cs" />
     <Compile Include="Scripting\Player\VoxelSelector.cs" />
     <Compile Include="Scripting\Rooms\Room.cs" />

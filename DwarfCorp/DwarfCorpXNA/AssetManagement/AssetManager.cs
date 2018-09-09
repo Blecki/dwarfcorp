@@ -201,12 +201,12 @@ namespace DwarfCorp
             {
                 foreach (var extension in extensionList)
                 {
-                    if (File.Exists(mod.Directory + ProgramData.DirChar + Asset + extension))
-                        return mod.Directory + ProgramData.DirChar + Asset + extension;
+                    if (File.Exists(mod.Directory + Path.DirectorySeparatorChar + Asset + extension))
+                        return mod.Directory + Path.DirectorySeparatorChar + Asset + extension;
                 }
             }
 
-            return "Content" + ProgramData.DirChar + Asset;
+            return "Content" + Path.DirectorySeparatorChar + Asset;
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace DwarfCorp
 
             foreach (var mod in DirectorySearchList)
             {
-                var resolvedAssetPath = mod.Directory + ProgramData.DirChar + AssetPath;
+                var resolvedAssetPath = mod.Directory + Path.DirectorySeparatorChar + AssetPath;
                 if (File.Exists(resolvedAssetPath))
                     yield return resolvedAssetPath;
             }
@@ -241,7 +241,7 @@ namespace DwarfCorp
 
             foreach (var mod in DirectorySearchList)
             {
-                var directoryPath = mod.Directory + ProgramData.DirChar + basePath;
+                var directoryPath = mod.Directory + Path.DirectorySeparatorChar + basePath;
                 if (!Directory.Exists(directoryPath)) continue;
                 foreach (var file in EnumerateDirectory(directoryPath))
                     yield return file;

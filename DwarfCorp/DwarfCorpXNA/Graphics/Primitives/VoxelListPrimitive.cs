@@ -334,6 +334,7 @@ namespace DwarfCorp
                 uvs = ComputeTransitionTexture(new VoxelHandle(v.Chunk.Manager.ChunkData, v.Coordinate));
 
             BuildVoxelTopFaceGeometry(Into, Chunk, Cache, primitive, v, uvs, 0);
+            
             for (int i = 1; i < 6; i++)
                 BuildVoxelFaceGeometry(Into, Chunk, Cache, primitive, v, tint, uvs, Matrix.Identity, i, true);
         }

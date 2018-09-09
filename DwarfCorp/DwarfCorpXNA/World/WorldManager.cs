@@ -80,6 +80,9 @@ namespace DwarfCorp
         // The origin of the overworld in pixels [(0, 0, 0) in world space.]
         public Vector2 WorldOrigin { get; set; }
 
+        public bool StartUnderground = false;
+        public bool RevealSurface = true;
+
         // The current coordinate of the cursor light
         public Vector3 CursorLightPos = Vector3.Zero;
 

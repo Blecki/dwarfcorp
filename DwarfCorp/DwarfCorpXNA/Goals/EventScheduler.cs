@@ -28,16 +28,6 @@ namespace DwarfCorp.Goals
         public EventLibrary Events = new EventLibrary();
         private int previousHour = -1;
 
-        [JsonIgnore]
-        public WorldManager World;
-
-        [OnDeserialized]
-        void OnDeserializing(StreamingContext context)
-        {
-            // Assume the context passed in is a WorldManager
-            World = ((WorldManager)context.Context);
-        }
-
         public EventScheduler()
         {
 
@@ -82,16 +72,23 @@ namespace DwarfCorp.Goals
             return time.Hour < 6 || time.Hour > 20;
         }
 
-        public void AddRandomEvent(DateTime now)
+        public void AddRandomEvent(WorldManager World, DateTime now)
         {
             float forecast = ForecastDifficulty(now);
             bool foundEvent = false;
             var randomEvent = new ScheduledEvent();
             int iters = 0;
             var filteredEvents = Forecast.Count == 0 ? Events.Events : Events.Events.Where(e => e.Name != Forecast.Last().Event.Name).ToList();
+
+            if (World.InitialEmbark.Difficulty == 0)
+                filteredEvents = filteredEvents.Where(e => e.SpawnOnTranquil).ToList();
+
             while (!foundEvent && iters < 100)
             {
                 iters++;
+
+                
+
                 float sumLikelihood = filteredEvents.Sum(ev => ev.Likelihood);
                 float randLikelihood = MathFunctions.Rand(0, sumLikelihood);
                 float p = 0;
@@ -178,7 +175,7 @@ namespace DwarfCorp.Goals
             while (Forecast.Count < MaxForecast && iters < MaxForecast * 2)
             {
                 iters++;
-                AddRandomEvent(now);
+                AddRandomEvent(world, now);
             }
         }
     }

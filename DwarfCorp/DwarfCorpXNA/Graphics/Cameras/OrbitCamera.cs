@@ -147,7 +147,6 @@ namespace DwarfCorp
             }
             float diffPhi = 0;
             float diffTheta = 0;
-            float diffRadius = 0;
             Vector3 forward = (Target - Position);
             forward.Normalize();
             Vector3 right = Vector3.Cross(forward, UpVector);
@@ -161,13 +160,6 @@ namespace DwarfCorp
             ZoomTargets.Clear();
 
             Target = MathFunctions.Clamp(Target, bounds);
-
-            int edgePadding = -10000;
-
-            if (GameSettings.Default.EnableEdgeScroll)
-            {
-                edgePadding = 100;
-            }
 
             float diffX, diffY = 0;
             float dt = (float)time.ElapsedRealTime.TotalSeconds;

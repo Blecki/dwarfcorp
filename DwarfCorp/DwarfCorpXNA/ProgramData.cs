@@ -72,12 +72,8 @@ namespace DwarfCorp
 
         public static string CreatePath(params string[] args)
         {
-            return String.Join(new String(DirChar, 1), args);
+            return String.Join(new String(Path.DirectorySeparatorChar, 1), args);
         }
-        
-        // Todo: KILL
-        public static char DirChar = Path.DirectorySeparatorChar;
-
     }
 
 #endif

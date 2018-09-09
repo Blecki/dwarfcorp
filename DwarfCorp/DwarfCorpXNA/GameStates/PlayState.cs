@@ -62,7 +62,6 @@ namespace DwarfCorp.GameStates
         private Widget MultiContextMenu;
         private Widget BottomBar;
         private Widget MinimapIcon;
-        private ProgressBar ManaBar;
 
         private class ToolbarItem
         {
@@ -877,7 +876,7 @@ namespace DwarfCorp.GameStates
             {
                 Tag = "economy",
                 Icon = new Gui.TileReference("tool-icons", 10),
-                OnClick = (sender, args) => StateManager.PushState(new NewEconomyState(Game, StateManager, World)),
+                OnClick = (sender, args) => StateManager.PushState(new EconomyState(Game, StateManager, World)),
                 DrawIndicator = true,
                 Tooltip = StringLibrary.GetString("economy-tooltip"),
                 Text = StringLibrary.GetString("economy-label"),

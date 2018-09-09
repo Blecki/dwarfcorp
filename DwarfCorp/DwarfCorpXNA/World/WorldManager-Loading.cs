@@ -151,7 +151,7 @@ namespace DwarfCorp
                     Overworld.Name = gameFile.Metadata.OverworldFile;
                     DirectoryInfo worldDirectory =
                         Directory.CreateDirectory(DwarfGame.GetWorldDirectory() +
-                                                  ProgramData.DirChar + Overworld.Name);
+                                                  Path.DirectorySeparatorChar + Overworld.Name);
                     var overWorldFile = new NewOverworldFile(worldDirectory.FullName);
                     Overworld.Map = overWorldFile.Data.Data;
                     Overworld.Name = overWorldFile.Data.Name;
@@ -412,8 +412,6 @@ namespace DwarfCorp
 
             if (gameFile != null)
             {
-                if (gameFile.PlayData.Spells != null)
-                    Master.Spells = gameFile.PlayData.Spells;
                 if (gameFile.PlayData.Tasks != null)
                 {
                     Master.TaskManager = gameFile.PlayData.Tasks;
@@ -436,8 +434,10 @@ namespace DwarfCorp
             {
                 chunk.CalculateInitialSunlight();
             }
-            VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, new VoxelHandle(
-            ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
+
+            if (RevealSurface)
+                VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, new VoxelHandle(
+                    ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
 
             foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
                 ChunkManager.InvalidateChunk(chunk);

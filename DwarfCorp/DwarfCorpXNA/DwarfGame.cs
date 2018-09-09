@@ -357,7 +357,7 @@ namespace DwarfCorp
 #if XNA_BUILD
         public static string GetGameDirectory()
         {
-            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + ProgramData.DirChar + GameName;
+            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + Path.DirectorySeparatorChar + GameName;
         }
 #endif
 

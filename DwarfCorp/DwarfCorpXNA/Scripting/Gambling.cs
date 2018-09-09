@@ -11,7 +11,7 @@ namespace DwarfCorp.Scripting
         {
             Name = "Gamble";
             ReassignOnDeath = false;
-            BoredomIncrease = -5.0f;
+            BoredomIncrease = GameSettings.Default.Boredom_Gamble;
         }
 
         public override Feasibility IsFeasible(Creature agent)

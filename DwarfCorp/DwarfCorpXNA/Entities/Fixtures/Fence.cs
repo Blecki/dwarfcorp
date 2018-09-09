@@ -52,6 +52,7 @@ namespace DwarfCorp
         public Fence(ComponentManager componentManager, Vector3 position, float orientation, string asset) :
             base(componentManager, position, new SpriteSheet(asset, 32, 32), new Point(0, 0))
         {
+            this.Name = "Fence";
             this.LocalBoundingBoxOffset = new Vector3(0, -0.25f, 0);
             this.BoundingBoxSize = new Vector3(1.0f, 0.5f, 0.1f);
             this.SetFlag(Flag.RotateBoundingBox, true);

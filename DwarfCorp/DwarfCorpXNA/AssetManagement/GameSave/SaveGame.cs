@@ -50,15 +50,15 @@ namespace DwarfCorp
         public void WriteFile(string directory)
         {
             System.IO.Directory.CreateDirectory(directory);
-            System.IO.Directory.CreateDirectory(directory + ProgramData.DirChar + "Chunks");
+            System.IO.Directory.CreateDirectory(directory + Path.DirectorySeparatorChar + "Chunks");
 
             foreach (ChunkFile chunk in ChunkData)
             {
-                chunk.WriteFile(directory + ProgramData.DirChar + "Chunks" + ProgramData.DirChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + "." + (DwarfGame.COMPRESSED_BINARY_SAVES ? ChunkFile.CompressedExtension : ChunkFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES);
+                chunk.WriteFile(directory + Path.DirectorySeparatorChar + "Chunks" + Path.DirectorySeparatorChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + "." + (DwarfGame.COMPRESSED_BINARY_SAVES ? ChunkFile.CompressedExtension : ChunkFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES);
             }
 
-            FileUtils.SaveJSon(this.Metadata, directory + ProgramData.DirChar + "Metadata." + MetaData.Extension, false);
-            FileUtils.SaveJSon(this.PlayData, directory + ProgramData.DirChar + "World." + PlayData.Extension, DwarfGame.COMPRESSED_BINARY_SAVES);
+            FileUtils.SaveJSon(this.Metadata, directory + Path.DirectorySeparatorChar + "Metadata." + MetaData.Extension, false);
+            FileUtils.SaveJSon(this.PlayData, directory + Path.DirectorySeparatorChar + "World." + PlayData.Extension, DwarfGame.COMPRESSED_BINARY_SAVES);
         }
 
         public static void DeleteOldestSave(string subdir, int maxToKeep, string blacklist)

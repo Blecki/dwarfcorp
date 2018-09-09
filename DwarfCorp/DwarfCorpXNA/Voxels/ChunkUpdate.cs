@@ -79,8 +79,7 @@ namespace DwarfCorp
                             if (decal.NeedsSunlight && !voxel.Sunlight)
                                 voxel.GrassType = 0;
                             else if (decal.Decay)
-                            {
-                                voxel.GrassDecay -= 1;
+                            {                                
                                 if (voxel.GrassDecay == 0)
                                 {
                                     var newDecal = GrassLibrary.GetGrassType(decal.BecomeWhenDecays);
@@ -89,6 +88,8 @@ namespace DwarfCorp
                                     else
                                         voxel.GrassType = 0;
                                 }
+                                else
+                                    voxel.GrassDecay -= 1;
                             } 
                         }
 //#if false
@@ -107,6 +108,7 @@ namespace DwarfCorp
                             var grassyNeighbors = VoxelHelpers.EnumerateManhattanNeighbors2D(voxel.Coordinate)
                                 .Select(c => new VoxelHandle(voxel.Chunk.Manager.ChunkData, c))
                                 .Where(v => v.IsValid && v.GrassType != 0)
+                                .Where(v => GrassLibrary.GetGrassType(v.GrassType).Spreads)
                                 .Where(v => biome == Overworld.GetBiomeAt(v.Coordinate.ToVector3(), chunk.Manager.World.WorldScale, chunk.Manager.World.WorldOrigin))
                                 .ToList();
 

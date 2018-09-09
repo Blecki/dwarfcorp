@@ -47,7 +47,7 @@ namespace DwarfCorp
             ReassignOnDeath = false;
             Name = "Go to sleep";
             Priority = PriorityType.Medium;
-            BoredomIncrease = -0.1f;
+            BoredomIncrease = GameSettings.Default.Boredom_Sleep;
         }
 
         public override Act CreateScript(Creature agent)

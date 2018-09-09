@@ -211,12 +211,10 @@ namespace DwarfCorp.Gui.Widgets
                         MinimumSize = new Point(256, 32)
                     });
 
-                    bool hasExisting = false;
                     if (BuildAction != null)
                     {
                         if (Data.Type == CraftItem.CraftType.Object && PlaceAction != null)
                         {
-                            hasExisting = true;
                             var resources = Master.Faction.ListResources();
                             if (resources.Any(resource => ResourceLibrary.GetResourceByName(resource.Key).CraftInfo.CraftItemType == Data.Name))
                             {

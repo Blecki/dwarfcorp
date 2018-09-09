@@ -38,5 +38,7 @@ namespace DwarfCorp
         public bool Decay = false;
         public byte InitialDecayValue = 0;
         public bool NeedsSunlight = true;
+
+        public bool Spreads = true;
     }
 }

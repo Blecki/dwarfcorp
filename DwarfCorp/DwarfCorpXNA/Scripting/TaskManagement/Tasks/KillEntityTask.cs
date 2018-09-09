@@ -59,7 +59,7 @@ namespace DwarfCorp
         public KillEntityTask()
         {
             MaxAssignable = 3;
-            BoredomIncrease = -0.1f;
+            BoredomIncrease = GameSettings.Default.Boredom_ExcitingTask;
         }
 
         public KillEntityTask(Body entity, KillType type)
@@ -71,7 +71,7 @@ namespace DwarfCorp
             Priority = PriorityType.Urgent;
             AutoRetry = true;
             Category = TaskCategory.Attack;
-            BoredomIncrease = -0.1f;
+            BoredomIncrease = GameSettings.Default.Boredom_ExcitingTask;
         }
 
 

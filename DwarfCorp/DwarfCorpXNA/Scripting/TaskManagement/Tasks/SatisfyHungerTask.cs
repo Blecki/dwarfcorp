@@ -47,7 +47,7 @@ namespace DwarfCorp
             ReassignOnDeath = false;
             Name = "Satisfy Hunger";
             Priority = PriorityType.High;
-            BoredomIncrease = -0.1f;
+            BoredomIncrease = GameSettings.Default.Boredom_Eat;
         }
 
         public override Act CreateScript(Creature agent)

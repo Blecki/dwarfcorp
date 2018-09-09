@@ -101,13 +101,16 @@ namespace DwarfCorp.GameStates
         {
             World = new WorldManager(Game)
             {
+                // Todo: Just keep a reference to the settings OMG.
                 WorldOrigin = Settings.WorldOrigin,
                 WorldScale = Settings.WorldScale,
                 WorldSize = Settings.ColonySize,
                 InitialEmbark = Settings.InitalEmbarkment,
                 ExistingFile = Settings.ExistingFile,
                 SeaLevel = Settings.SeaLevel,
-                Natives = Settings.Natives
+                Natives = Settings.Natives,
+                StartUnderground = Settings.StartUnderground,
+                RevealSurface = Settings.RevealSurface
             };
 
             World.WorldScale = Settings.WorldScale;

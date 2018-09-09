@@ -249,6 +249,14 @@ namespace DwarfCorp
             public float HoursUnhappyBeforeQuitting = 4.0f;
             public ColorSettings Colors = new ColorSettings();
 
+            public float Boredom_Gamble = -10.0f;
+            public float Boredom_NormalTask = 0.1f;
+            public float Boredom_Sleep = -0.1f;
+            public float Boredom_ExcitingTask = -0.1f;
+            public float Boredom_BoringTask = 0.5f;
+            public float Boredom_Eat = -0.1f;
+            public float Boredom_Walk = -0.2f;
+
             public Settings Clone()
             {
                 return MemberwiseClone() as Settings;

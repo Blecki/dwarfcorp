@@ -50,7 +50,7 @@ namespace DwarfCorp
         public WrangleAnimalTask()
         {
             Category = TaskCategory.Wrangle;
-            BoredomIncrease = 0.1f;
+            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
         public WrangleAnimalTask(Creature animal)
@@ -59,7 +59,7 @@ namespace DwarfCorp
             Animal = animal;
             Name = "Wrangle animal" + animal.GlobalID;
             AutoRetry = true;
-            BoredomIncrease = 0.1f;
+            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
         public IEnumerable<Act.Status> PenAnimal(CreatureAI agent, CreatureAI creature, AnimalPen animalPen)

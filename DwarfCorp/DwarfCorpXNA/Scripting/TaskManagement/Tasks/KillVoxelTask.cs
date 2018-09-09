@@ -55,7 +55,7 @@ namespace DwarfCorp
             MaxAssignable = 3;
             Priority = PriorityType.Medium;
             Category = TaskCategory.Dig;
-            BoredomIncrease = 0.2f;
+            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
         public KillVoxelTask(VoxelHandle vox)
@@ -66,7 +66,7 @@ namespace DwarfCorp
             Priority = PriorityType.Low;
             Category = TaskCategory.Dig;
             VoxelHealth = Voxel.Type.StartingHealth;
-            BoredomIncrease = 0.2f;
+            BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
         public override Act CreateScript(Creature creature)
