@@ -63,6 +63,7 @@ namespace DwarfCorp
 
 
         public string Name { get; set; }
+        public string Plural { get; set; }
         public List<string> CreatureTypes { get; set; }
         public List<List<string>> WarParties { get; set; }
         public List<List<string>> TradeEnvoys { get; set; } 

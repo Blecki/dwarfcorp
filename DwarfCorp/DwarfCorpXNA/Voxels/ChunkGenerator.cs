@@ -188,9 +188,9 @@ namespace DwarfCorp
             }
         }
 
-        public void GenerateWater(VoxelChunk chunk)
+        public void GenerateWater(VoxelChunk chunk, float maxHeight)
         {
-            int waterHeight = (int)(SeaLevel * VoxelConstants.ChunkSizeY) + 1;
+            int waterHeight = Math.Min((int)(VoxelConstants.ChunkSizeY * NormalizeHeight(SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight)), VoxelConstants.ChunkSizeY - 1);
             var iceID = VoxelLibrary.GetVoxelType("Ice");
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
             {
@@ -247,10 +247,9 @@ namespace DwarfCorp
             }
         }
 
-        public void GenerateSurfaceLife(VoxelChunk Chunk)
+        public void GenerateSurfaceLife(VoxelChunk Chunk, float maxHeight)
         {
-            var waterHeight = (int)(SeaLevel * VoxelConstants.ChunkSizeY);
-
+            //int waterHeight = (int)(VoxelConstants.ChunkSizeY * NormalizeHeight(SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight));
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
             {
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
@@ -464,9 +463,14 @@ namespace DwarfCorp
             }
         }
 
-        public VoxelChunk GenerateChunk(Vector3 origin, WorldManager World)
+        public static float NormalizeHeight(float height, float maxHeight, float upperBound = 0.9f)
         {
-            float waterHeight = SeaLevel + 1.0f / VoxelConstants.ChunkSizeY;
+            return height + (upperBound - maxHeight);
+        }
+
+        public VoxelChunk GenerateChunk(Vector3 origin, WorldManager World, float maxHeight)
+        {
+            float waterHeight = NormalizeHeight(SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight);
             VoxelChunk c = new VoxelChunk(Manager, origin, GlobalVoxelCoordinate.FromVector3(origin).GetGlobalChunkCoordinate());
 
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
@@ -480,7 +484,7 @@ namespace DwarfCorp
                     BiomeData biomeData = BiomeLibrary.Biomes[biome];
 
                     Vector2 pos = Overworld.WorldToOverworld(new Vector2(x + origin.X, z + origin.Z), World.WorldScale, World.WorldOrigin);
-                    float hNorm = Overworld.LinearInterpolate(pos, Overworld.Map, Overworld.ScalarFieldType.Height);
+                    float hNorm = NormalizeHeight(Overworld.LinearInterpolate(pos, Overworld.Map, Overworld.ScalarFieldType.Height), maxHeight);
                     float h = MathFunctions.Clamp(hNorm * VoxelConstants.ChunkSizeY, 0.0f, VoxelConstants.ChunkSizeY - 2);
                     int stoneHeight = (int)(MathFunctions.Clamp((int)(h - (biomeData.SoilLayer.Depth + (Math.Sin(v.X) + Math.Cos(v.Y)))), 1, h));
 
@@ -554,7 +558,7 @@ namespace DwarfCorp
                 }
             }
 
-            GenerateWater(c);
+            GenerateWater(c, maxHeight);
             GenerateLava(c);
 
             UpdateSunlight(c);

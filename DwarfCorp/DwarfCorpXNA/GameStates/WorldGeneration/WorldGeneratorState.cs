@@ -176,6 +176,7 @@ namespace DwarfCorp.GameStates
                         Overworld.Name = Settings.Name;
                         Settings.ExistingFile = null;
                         Settings.WorldOrigin = Settings.WorldGenerationOrigin;
+                        Settings.SpawnRect = Generator.GetSpawnRectangle();
                         if (Settings.Natives == null || Settings.Natives.Count == 0)
                             Settings.Natives = Generator.NativeCivilizations;
                         Settings.StartUnderground = StartUnderground.CheckState;

@@ -35,7 +35,7 @@ namespace DwarfCorp.GameStates
         private Point PreviousMousePosition;
         private Vector2 lastSpawnWorld = Vector2.Zero;
         private List<Point3> Trees { get; set; }
-        private const float TreeProbability = 0.001f;
+        private float TreeProbability = 0.001f;
         private SamplerState previewSampler = null;
 
         public Matrix ZoomedPreviewMatrix
@@ -499,6 +499,8 @@ namespace DwarfCorp.GameStates
                 Trees = new List<Point3>();
                 int width = Overworld.Map.GetLength(0);
                 int height = Overworld.Map.GetLength(1);
+
+                TreeProbability = 100.0f / (width * height);
                 const int resolution = 1;
 
                 for (int x = 0; x < width; x += resolution)

@@ -133,6 +133,7 @@ namespace DwarfCorp.GameStates
                 Rectangle rect = GetSpawnRectangle();
                 var center = rect.Center;
                 inWater = Overworld.Map[center.X, center.Y].Height < Settings.SeaLevel;
+                Settings.SpawnRect = rect;
                 if (inWater)
                 {
                     Settings.WorldGenerationOrigin = 

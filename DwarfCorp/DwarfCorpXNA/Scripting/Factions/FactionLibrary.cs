@@ -86,7 +86,7 @@ namespace DwarfCorp
                     IsRaceFaction = false,
                     TradeMoney = 10000,
                     TerritorySize = 9999,
-                    DistanceToCapital = 3000,
+                    DistanceToCapital = 600,
                     IsMotherland = true,
                 };
             }
@@ -182,7 +182,7 @@ namespace DwarfCorp
                     TradeMoney = 10000,
                     IsMotherland = true,
                     TerritorySize = 9999,
-                    DistanceToCapital = 3000,
+                    DistanceToCapital = 600,
                     ClaimsColony = true
                 };
 

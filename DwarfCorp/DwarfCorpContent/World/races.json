@@ -1,6 +1,7 @@
 [
   {
     "Name": "Dwarf",
+	"Plural": "Dwarfs",
     "Posessive": "Dwarvish",
     "DiplomacyConversation": "World/dwarf.conv",
     "CreatureTypes": [
@@ -81,6 +82,7 @@
   },
   {
     "Name": "Goblins",
+	"Plural": "Goblins",
     "Posessive": "Goblish",
     "DiplomacyConversation": "World/goblin.conv",
     "NumFurniture": 2,
@@ -154,6 +156,7 @@
   },
   {
     "Name": "Molemen",
+	"Plural": "Molemen",
     "Posessive": "Molemish",
     "DiplomacyConversation": "World/moleman.conv",
     "NumFurniture": 2,
@@ -223,6 +226,7 @@
   },
   {
     "Name": "Elf",
+	"Plural": "Elves",
     "Posessive": "Elvish",
     "DiplomacyConversation": "World/elf.conv",
     "NumFurniture": 2,
@@ -294,6 +298,7 @@
   },
   {
     "Name": "Undead",
+	"Plural" : "Undead",
     "Posessive": "Undead",
     "DiplomacyConversation": "World/undead.conv",
     "NumFurniture": 2,
@@ -372,6 +377,7 @@
   },
   {
     "Name": "Demon",
+	"Plural": "Demons",
     "Posessive": "Demonic",
     "NumFurniture": 2,
     "CreatureTypes": [
@@ -409,6 +415,7 @@
   },
   {
     "Name": "Herbivore",
+	"Plural": "Herbivores",
     "CreatureTypes": [
       "Bird",
       "Deer",
@@ -435,6 +442,7 @@
   },
   {
     "Name": "Carnivore",
+	"Plural": "Carnivores",
     "CreatureTypes": [
       "Scorpion"
     ],

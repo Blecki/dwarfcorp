@@ -115,7 +115,7 @@ namespace DwarfCorp.GameStates
 
             World.WorldScale = Settings.WorldScale;
             World.WorldGenerationOrigin = Settings.WorldGenerationOrigin;
-
+            World.SpawnRect = Settings.SpawnRect;
             World.OnLoadedEvent += () => DoneLoading = true;
 
             World.Setup();

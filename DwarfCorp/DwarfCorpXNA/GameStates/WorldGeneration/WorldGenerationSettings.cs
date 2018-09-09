@@ -34,6 +34,7 @@ namespace DwarfCorp.GameStates
         public int Seed { get; set; }
         public bool StartUnderground = false;
         public bool RevealSurface = true;
+        public Rectangle SpawnRect;
 
         public static string GetRandomWorldName()
         {

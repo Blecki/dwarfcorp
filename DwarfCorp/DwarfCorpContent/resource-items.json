@@ -87,7 +87,7 @@
 
   {
     "Name": "Sandstone",
-    "MoneyValue": 4.0,
+    "MoneyValue": 3.0,
     "Description": "A sedimentary rock made from concreted sand.",
     "GuiLayers": [
       {
@@ -130,7 +130,7 @@
 
   {
     "Name": "Obsidian",
-    "MoneyValue": 4.0,
+    "MoneyValue": 10.0,
     "Description": "Obsidian forms when lava is cooled very quickly.",
     "GuiLayers": [
       {
@@ -173,7 +173,7 @@
 
   {
     "Name": "Slate",
-    "MoneyValue": 4.0,
+    "MoneyValue": 5.0,
     "Description": "A sedimentary rock that forms thin layers.",
     "GuiLayers": [
       {
@@ -216,7 +216,7 @@
 
   {
     "Name": "Granite",
-    "MoneyValue": 4.0,
+    "MoneyValue": 6.0,
     "Description": "A metamorphic rock, granite is produced when sandstones and shales are compressed deep under ground.",
     "GuiLayers": [
       {
@@ -259,7 +259,7 @@
 
   {
     "Name": "Marble",
-    "MoneyValue": 4.0,
+    "MoneyValue": 8.0,
     "Description": "Marble is created when limestone is compressed deep under ground.",
     "GuiLayers": [
       {

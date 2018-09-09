@@ -344,7 +344,7 @@ namespace DwarfCorp
         public Action<Gui.MousePointer> SetMouse = null;
         public Action<String, int> SetMouseOverlay = null;
         public Gui.MousePointer MousePointer = new Gui.MousePointer("mouse", 1, 0);
-        
+        public Rectangle SpawnRect;
         public bool IsMouseOverGui
         {
             get

@@ -883,6 +883,7 @@ namespace DwarfCorp
                     DwarfBux amountToTake = System.Math.Min(treasury.Money, amountLeft);
                     treasury.Money -= amountToTake;
                     amountLeft -= amountToTake;
+                    Economy.CurrentMoney -= amountToTake;
                 }
                 return;
             }
