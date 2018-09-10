@@ -35,7 +35,8 @@ namespace DwarfCorp
             BuildRail,
             PaintRail,
             God,
-            CancelTasks
+            CancelTasks,
+            DestroyZone
         }
         
         public OrbitCamera CameraController { get; set; }
@@ -226,6 +227,11 @@ namespace DwarfCorp
             Tools[ToolMode.BuildRail] = new Rail.BuildRailTool(this);
             Tools[ToolMode.PaintRail] = new Rail.PaintRailTool(this);
             Tools[ToolMode.CancelTasks] = new CancelTasksTool()
+            {
+                Player = this
+            };
+
+            Tools[ToolMode.DestroyZone] = new DestroyZoneTool
             {
                 Player = this
             };

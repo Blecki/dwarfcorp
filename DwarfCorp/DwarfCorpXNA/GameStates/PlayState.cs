@@ -1165,10 +1165,25 @@ namespace DwarfCorp.GameStates
                 }
             };
 
+            var icon_destroy_room = new FlatToolTray.Icon
+            {
+                Text = "Destroy",
+                TextVerticalAlign = VerticalAlign.Below,
+                Tooltip = "Deconstruct objects",
+                Icon = new TileReference("round-buttons", 5),
+                OnClick = (sender, args) =>
+                {
+                    World.ShowToolPopup("Left click zones to destroy them.");
+                    ChangeTool(GameMaster.ToolMode.DestroyZone);
+                },
+                Behavior = FlatToolTray.IconBehavior.LeafIcon
+            };
+
             var menu_RoomTypes = new FlatToolTray.Tray
             {
                 ItemSource = (new Widget[] {
-                    icon_menu_RoomTypes_Return
+                    icon_menu_RoomTypes_Return,
+                    icon_destroy_room
                 }).Concat(RoomLibrary.GetRoomTypes().Select(RoomLibrary.GetData)
                     .Select(data => new FlatToolTray.Icon
                     {
