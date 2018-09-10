@@ -734,7 +734,6 @@
     <Compile Include="Scripting\CompoundActs\GoToVoxelAct.cs" />
     <Compile Include="Scripting\CompoundActs\GoToZoneAct.cs" />
     <Compile Include="Scripting\CompoundActs\GoTrainAct.cs" />
-    <Compile Include="Scripting\CompoundActs\GuardAreaAct.cs" />
     <Compile Include="Scripting\CompoundActs\KillEntityAct.cs" />
     <Compile Include="Scripting\CompoundActs\KillVoxelAct.cs" />
     <Compile Include="Scripting\CompoundActs\StockResourceAct.cs" />
@@ -806,7 +805,6 @@
     <Compile Include="Scripting\Player\Tools\DwarfSelectorTool.cs" />
     <Compile Include="Scripting\Player\Tools\GatherTool.cs" />
     <Compile Include="Scripting\Player\Tools\GodModeTool.cs" />
-    <Compile Include="Scripting\Player\Tools\GuardTool.cs" />
     <Compile Include="Scripting\Player\Tools\PlayerTool.cs" />
     <Compile Include="Scripting\Player\VoxelSelector.cs" />
     <Compile Include="Scripting\Rooms\Room.cs" />
@@ -831,7 +829,6 @@
     <Compile Include="Scripting\TaskManagement\Tasks\PlantTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\GatherItemTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\GetItemWithTagsTask.cs" />
-    <Compile Include="Scripting\TaskManagement\Tasks\GuardAreaTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\KillEntityTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\KillVoxelTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\LookInterestingTask.cs" />

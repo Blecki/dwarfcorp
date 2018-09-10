@@ -2034,28 +2034,6 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
-            #region icon_GuardTool
-
-            var icon_GuardTool = new FlatToolTray.Icon
-            {
-                Tag = "guard",
-                Text = "Guard",
-                TextVerticalAlign = VerticalAlign.Below,
-                Icon = new TileReference("tool-icons", 4),
-                Tooltip = "Guard",
-                OnClick = (sender, args) => { ChangeTool(GameMaster.ToolMode.Guard); World.Tutorial("guard"); },
-                OnConstruct = (sender) =>
-                {
-                    AddToolbarIcon(sender, () =>
-                    Master.Faction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Guard)));
-                    AddToolSelectIcon(GameMaster.ToolMode.Guard, sender);
-                },
-                Behavior = FlatToolTray.IconBehavior.LeafIcon
-            };
-
-            #endregion
-
             #region icon_AttackTool
 
             var icon_AttackTool = new FlatToolTray.Icon
@@ -2203,202 +2181,6 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
-            /*
-            #region icon_MagicTool
-
-            ManaBar = GuiRoot.RootItem.AddChild(new ProgressBar()
-            {
-                AutoLayout = AutoLayout.FloatTopRight,
-                Hidden = true,
-                MinimumSize = new Point(256, 32),
-                TextVerticalAlign = VerticalAlign.Center,
-                TextHorizontalAlign = HorizontalAlign.Center,
-                FillColor = new Color(0, 255, 255, 255).ToVector4(),
-                Percentage = 0,
-                TextColor = Color.Black.ToVector4()
-            }) as ProgressBar;
-
-
-            #region icon_Cast
-            var icon_menu_CastSpells_Return = new FlatToolTray.Icon
-            {
-                Icon = new TileReference("tool-icons", 11),
-                Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
-                OnClick = (widget, args) =>
-                {
-                    ChangeTool(GameMaster.ToolMode.SelectUnits);
-                }
-            };
-
-            var menu_CastSpells = new FlatToolTray.Tray()
-            {
-                OnShown = (widget) =>
-                {
-                    widget.Clear();
-                    (widget as FlatToolTray.Tray).ItemSource =
-                        (new Widget[] { icon_menu_CastSpells_Return }).Concat(
-                        Master.Spells.Enumerate()
-                            .Where(spell => spell.IsResearched)
-                            .Select(spell => new FlatToolTray.Icon
-                            {
-                                Icon = new TileReference("tool-icons", spell.Spell.TileRef),
-                                Tooltip = "Cast " + spell.Spell.Name,
-                                PopupChild = new SpellInfo()
-                                {
-                                    Spell = spell,
-                                    Rect = new Rectangle(0, 0, 256, 128),
-                                    Master = Master
-                                },
-                                OnClick = (widget2, args2) =>
-                                {
-#if !DEMO
-                                    ChangeTool(GameMaster.ToolMode.Magic);
-                                    ((MagicTool)Master.Tools[GameMaster.ToolMode.Magic])
-                                        .CurrentSpell =
-                                        spell.Spell;
-                                    World.Tutorial("cast spells");
-#else
-                                    GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = "Magic not available in demo." });
-#endif
-                                },
-                                Behavior = FlatToolTray.IconBehavior.ShowHoverPopup
-                            }));
-                    widget.Construct();
-                    widget.Hidden = false;
-                    widget.Layout();
-                }
-            };
-
-            var icon_Cast = new FlatToolTray.Icon
-            {
-                Text = "Cast",
-                TextVerticalAlign = VerticalAlign.Below,
-                Icon = new TileReference("tool-icons", 14),
-                Tooltip = "Cast",
-                KeepChildVisible = true,
-                ReplacementMenu = menu_CastSpells,
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
-            };
-#endregion
-
-#region icon_Research
-
-            var icon_menu_ResearchSpells_Return = new FlatToolTray.Icon
-            {
-                Icon = new TileReference("tool-icons", 11),
-                Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
-                OnClick = (widget, args) =>
-                {
-                    ChangeTool(GameMaster.ToolMode.SelectUnits);
-                }
-            };
-
-            var menu_ResearchSpells = new FlatToolTray.Tray()
-            {
-                OnShown = (widget) =>
-                {
-                    widget.Clear();
-                    (widget as FlatToolTray.Tray).ItemSource =
-                    (new Widget[] { icon_menu_ResearchSpells_Return }).Concat(
-                        Master.Spells.EnumerateSubtrees
-                        (spell => !spell.IsResearched,
-                            spell =>
-                                spell.IsResearched)
-                        .Select(spell =>
-                            new FlatToolTray.Icon
-                            {
-                                Icon = new TileReference("tool-icons", spell.Spell.TileRef),
-                                Tooltip = "Research " + spell.Spell.Name,
-                                PopupChild = new SpellInfo()
-                                {
-                                    Spell = spell,
-                                    Rect = new Rectangle(0, 0, 256, 128),
-                                    Master = Master
-                                },
-                                OnClick = (button, args2) =>
-                                {
-#if !DEMO
-                                    if (Master.Faction.OwnedObjects.Any(obj => obj.Tags.Contains("Magic")))
-                                    {
-                                        World.ShowToolPopup("Can't research. Need an object which the dwarf can do magical research with.");
-                                        return;
-                                    }
-                                    ChangeTool(GameMaster.ToolMode.Magic);
-                                    ((MagicTool)Master.Tools[GameMaster.ToolMode.Magic])
-                                        .Research(spell);
-                                    World.Tutorial("research spells");
-                                    World.MakeAnnouncement(String.Format("Researching {0}", spell.Spell.Name));
-#else
-                                    GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = "Magic not available in demo." });
-#endif
-                                },
-                                Behavior = FlatToolTray.IconBehavior.ShowHoverPopup
-                            }));
-                    widget.Construct();
-                    widget.Hidden = false;
-                    widget.Layout();
-                }
-            };
-
-            var icon_Research = new FlatToolTray.Icon
-            {
-                Text = "Research",
-                TextVerticalAlign = VerticalAlign.Below,
-                Icon = new TileReference("tool-icons", 14),
-                Tooltip = "Research",
-                KeepChildVisible = true,
-                ReplacementMenu = menu_ResearchSpells,
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
-            };
-#endregion
-
-            var icon_menu_Magic_Return = new FlatToolTray.Icon
-            {
-                Icon = new TileReference("tool-icons", 11),
-                Tooltip = "Go Back",
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
-                OnClick = (widget, args) =>
-                {
-                    ChangeTool(GameMaster.ToolMode.SelectUnits);
-                }
-            };
-
-            var menu_Magic = new FlatToolTray.Tray
-            {
-                ItemSource = new FlatToolTray.Icon[]
-                {
-                    icon_menu_Magic_Return,
-                    icon_Cast,
-                    icon_Research
-                }
-            };
-
-            icon_menu_CastSpells_Return.ReplacementMenu = menu_Magic;
-            icon_menu_ResearchSpells_Return.ReplacementMenu = menu_Magic;
-
-            var icon_MagicTool = new FlatToolTray.Icon
-            {
-                Text = "Magic",
-                TextVerticalAlign = VerticalAlign.Below,
-                Icon = new TileReference("tool-icons", 14),
-                Tooltip = "Magic",
-                //OnClick = (sender, args) => ChangeTool(GameMaster.ToolMode.Magic),
-                OnConstruct = (sender) =>
-                {
-                    AddToolbarIcon(sender, () =>
-                        Master.Faction.Minions.Any(minion =>
-                            minion.Stats.IsTaskAllowed(Task.TaskCategory.Research)));
-                    AddToolSelectIcon(GameMaster.ToolMode.Magic, sender);
-                },
-                KeepChildVisible = true,
-                ReplacementMenu = menu_Magic,
-                Behavior = FlatToolTray.IconBehavior.ShowSubMenu
-            };
-
-            #endregion
-            */
             #region icon_CancelTasks
 
             var icon_CancelTasks = new FlatToolTray.Icon()
@@ -2434,12 +2216,10 @@ namespace DwarfCorp.GameStates
                     icon_DigTool,
                     icon_GatherTool,
                     icon_ChopTool,
-                    //icon_GuardTool,
                     icon_AttackTool,
                     icon_Plant,
                     icon_Wrangle,
                     icon_Potions,
-                    //icon_MagicTool,
                     icon_CancelTasks,
                 },
                 OnShown = (sender) => ChangeTool(GameMaster.ToolMode.SelectUnits),

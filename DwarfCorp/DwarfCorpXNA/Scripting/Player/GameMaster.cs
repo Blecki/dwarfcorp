@@ -25,7 +25,6 @@ namespace DwarfCorp
             BuildObject,
             Gather,
             Chop,
-            Guard,
             Attack,
             Plant,
             Wrangle,
@@ -179,11 +178,6 @@ namespace DwarfCorp
             };
 
             Tools[ToolMode.Gather] = new GatherTool
-            {
-                Player = this,
-            };
-
-            Tools[ToolMode.Guard] = new GuardTool
             {
                 Player = this,
             };

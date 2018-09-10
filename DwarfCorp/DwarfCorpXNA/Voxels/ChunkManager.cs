@@ -344,16 +344,6 @@ namespace DwarfCorp
 
             foreach (var voxel in localList)
             {
-                // Todo: Can this be a more generic mechanism?
-                if (voxel.Type == VoxelChangeEventType.VoxelTypeChanged && voxel.NewVoxelType == VoxelLibrary.emptyType.ID)
-                {
-                    var guardDesignation = World.PlayerFaction.Designations.GetVoxelDesignation(voxel.Voxel, DesignationType.Guard);
-                    if (guardDesignation != null)
-                        World.Master.TaskManager.CancelTask(guardDesignation.Task);
-                }
-                
-                // Todo: Design generic voxel hooks and run here.
-                
                 var box = voxel.Voxel.GetBoundingBox();
                 var hashmap = World.EnumerateIntersectingObjects(box, CollisionType.Both);
 
