@@ -9,77 +9,40 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class FinancePanel : Gui.Widget
     {
-        public Economy Economy;
-        StockTicker Ticker;
-        Gui.Widgets.CheckBox ExplorationBox;
-        Gui.Widgets.CheckBox MilitaryBox;
-        Gui.Widgets.CheckBox ManufacturingBox;
-        Gui.Widgets.CheckBox MagicBox;
-        Gui.Widgets.CheckBox FinanceBox;
+        public Faction Faction;
 
-        private void SetTickerSector()
+        public FinancePanel()
         {
-            var sector = (ExplorationBox.CheckState ? Company.Sector.Exploration : Company.Sector.None)
-                | (MilitaryBox.CheckState ? Company.Sector.Military : Company.Sector.None)
-                | (ManufacturingBox.CheckState ? Company.Sector.Manufacturing : Company.Sector.None)
-                | (MagicBox.CheckState ? Company.Sector.Magic : Company.Sector.None)
-                | (FinanceBox.CheckState ? Company.Sector.Finance : Company.Sector.None);
-            Ticker.SelectedSectors = sector;
-            Ticker.Invalidate();
         }
-        
+
         public override void Construct()
         {
-            Border = "border-thin";
-
-            var selectorPanel = AddChild(new Widget
+            Font = "font16";
+            
+            OnUpdate = (sender, time) =>
             {
-                AutoLayout = AutoLayout.DockLeft,
-                MinimumSize = new Point(128, 0)
-            });
+                var builder = new StringBuilder();
+                builder.AppendFormat("Liquid assets: ${0}\n", Faction.Treasurys.Select(t => t.Money.Value).Sum());
 
-            ExplorationBox = selectorPanel.AddChild(new Gui.Widgets.CheckBox
-            {
-                AutoLayout = AutoLayout.DockTop,
-                Text = "Exploration",
-                OnCheckStateChange = (sender) => SetTickerSector()
-            }) as Gui.Widgets.CheckBox;
+                var resources = Faction.ListResourcesInStockpilesPlusMinions();
 
-            MilitaryBox = selectorPanel.AddChild(new Gui.Widgets.CheckBox
-            {
-                AutoLayout = AutoLayout.DockTop,
-                Text = "Military",
-                OnCheckStateChange = (sender) => SetTickerSector()
-            }) as Gui.Widgets.CheckBox;
+                builder.AppendFormat("Material assets: {0} resources valued at ${1}\n", resources.Values.Select(r => r.First.NumResources + r.Second.NumResources).Sum(),
+                    resources.Values.Select(r =>
+                    {
+                        var value = ResourceLibrary.GetResourceByName(r.First.ResourceType).MoneyValue.Value;
+                        return (r.First.NumResources * value) + (r.Second.NumResources * value);
+                    }).Sum());
 
-            ManufacturingBox = selectorPanel.AddChild(new Gui.Widgets.CheckBox
-            {
-                AutoLayout = AutoLayout.DockTop,
-                Text = "Manufacturing",
-                OnCheckStateChange = (sender) => SetTickerSector()
-            }) as Gui.Widgets.CheckBox;
+                builder.AppendFormat("{0} at ${1} per day.\n", Faction.Minions.Count, Faction.Minions.Select(m => m.Stats.CurrentLevel.Pay.Value).Sum());
 
-            MagicBox = selectorPanel.AddChild(new Gui.Widgets.CheckBox
-            {
-                AutoLayout = AutoLayout.DockTop,
-                Text = "Magic",
-                OnCheckStateChange = (sender) => SetTickerSector()
-            }) as Gui.Widgets.CheckBox;
+                var freeStockPile = Faction.ComputeRemainingStockpileSpace();
+                var totalStockPile = Faction.ComputeTotalStockpileSpace();
+                builder.AppendFormat("Stockpile space: {0} used of {1} ({2:00.00}%)\n", totalStockPile - freeStockPile, totalStockPile, (float)(totalStockPile - freeStockPile) / (float)totalStockPile * 100.0f);
 
-            FinanceBox = selectorPanel.AddChild(new Gui.Widgets.CheckBox
-            {
-                AutoLayout = AutoLayout.DockTop,
-                Text = "Finance",
-                OnCheckStateChange = (sender) => SetTickerSector()
-            }) as Gui.Widgets.CheckBox;
+                Text = builder.ToString();
+            };
 
-            Ticker = AddChild(new StockTicker
-            {
-                AutoLayout = AutoLayout.DockFill,
-                Economy = Economy,
-                SelectedSectors = Company.Sector.None
-            }) as StockTicker;
+            Root.RegisterForUpdate(this);
         }
-
     }
 }
