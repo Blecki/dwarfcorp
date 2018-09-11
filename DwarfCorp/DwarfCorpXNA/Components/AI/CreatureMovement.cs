@@ -101,6 +101,15 @@ namespace DwarfCorp
                     }
                 },
                 {
+                    MoveType.Dig,
+                    new ActionStats
+                    {
+                        CanMove = false,
+                        Cost = 1000.0f,
+                        Speed = 1.0f
+                    }
+                },
+                {
                     MoveType.Walk,
                     new ActionStats
                     {
@@ -204,6 +213,14 @@ namespace DwarfCorp
             set { SetCan(MoveType.ClimbWalls, value); }
         }
 
+        [JsonIgnore]
+        public bool CanDig
+        {
+            get { return Can(MoveType.Dig); }
+            set { SetCan(MoveType.Dig, value); }
+        }
+
+
         /// <summary> wrapper around creature's walk movement </summary>
         [JsonIgnore]
         public bool CanWalk
@@ -306,7 +323,7 @@ namespace DwarfCorp
                 yield break;
 
             var voxel = state.Voxel;
-            if (!voxel.IsValid || !voxel.IsEmpty)
+            if (!voxel.IsValid)
                 yield break;
             var creature = Creature;
 
@@ -348,7 +365,7 @@ namespace DwarfCorp
             foreach (MoveAction v in successors)
             {
                 var n = v.DestinationVoxel.IsValid ? v.DestinationVoxel : neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
-                if (n.IsValid && (isRiding || n.IsEmpty || n.LiquidLevel > 0))
+                if (n.IsValid && (v.MoveType == MoveType.Dig || isRiding || n.IsEmpty || n.LiquidLevel > 0))
                 {
                     // Do one final check to see if there is an object blocking the motion.
                     bool blockedByObject = false;
@@ -508,6 +525,93 @@ namespace DwarfCorp
                 }
             }
 
+            if (!isRiding && CanDig)
+            {
+                int dx = -1;
+                int dy = 0;
+                int dz = 0;
+                var neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                if (neighbor.IsValid && !neighbor.IsEmpty)
+                {
+                    yield return (new MoveAction
+                    {
+                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        MoveType = MoveType.Dig,
+                        DestinationVoxel = neighbor,
+                    });
+                }
+
+                dx = 1;
+                dy = 0;
+                dz = 0;
+                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                if (neighbor.IsValid && !neighbor.IsEmpty)
+                {
+                    yield return (new MoveAction
+                    {
+                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        MoveType = MoveType.Dig,
+                        DestinationVoxel = neighbor,
+                    });
+                }
+
+                dx = 0;
+                dy = 0;
+                dz = 1;
+                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                if (neighbor.IsValid && !neighbor.IsEmpty)
+                {
+                    yield return (new MoveAction
+                    {
+                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        MoveType = MoveType.Dig,
+                        DestinationVoxel = neighbor,
+                    });
+                }
+
+                dx = 0;
+                dy = 0;
+                dz = -1;
+                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                if (neighbor.IsValid && !neighbor.IsEmpty)
+                {
+                    yield return (new MoveAction
+                    {
+                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        MoveType = MoveType.Dig,
+                        DestinationVoxel = neighbor,
+                    });
+                }
+
+                dx = 0;
+                dy = 1;
+                dz = 0;
+                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                if (neighbor.IsValid && !neighbor.IsEmpty)
+                {
+                    yield return (new MoveAction
+                    {
+                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        MoveType = MoveType.Dig,
+                        DestinationVoxel = neighbor,
+                    });
+                }
+
+                dx = 0;
+                dy = -1;
+                dz = 0;
+                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                if (neighbor.IsValid && !neighbor.IsEmpty)
+                {
+                    yield return (new MoveAction
+                    {
+                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        MoveType = MoveType.Dig,
+                        DestinationVoxel = neighbor,
+                    });
+                }
+            }
+
             // If the creature can climb walls and is not blocked by a voxl above.
             if (!isRiding && CanClimbWalls && !topCovered)
             {
@@ -662,7 +766,6 @@ namespace DwarfCorp
                 }
             }
 
-
             // If the creature is not in water and is not standing on ground,
             // it can fall one voxel downward in free space.
             if (!isRiding && !inWater && !standingOnGround)
@@ -760,7 +863,7 @@ namespace DwarfCorp
             }
             foreach (var v in VoxelHelpers.EnumerateCube(current.Coordinate)
                 .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
-                .Where(h => h.IsValid && h.IsEmpty))
+                .Where(h => h.IsValid))
             {
                 foreach (var a in GetMoveActions(new MoveState() { Voxel = v}, OctTree).Where(a => a.DestinationState == currentstate))
                     yield return a;

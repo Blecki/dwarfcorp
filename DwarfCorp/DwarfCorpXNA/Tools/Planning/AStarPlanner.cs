@@ -259,10 +259,7 @@ namespace DwarfCorp
                     current = start;
                     numExpansions++;
                 }
-                if (current.VehicleState.IsRidingVehicle)
-                {
-                    Console.Out.WriteLine("Yes");
-                }
+
                 numExpansions++;
 
                 // If we've reached the goal already, reconstruct the path from the start to the 

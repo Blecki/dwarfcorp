@@ -27,6 +27,7 @@ namespace DwarfCorp
         EnterVehicle,
         RideVehicle,
         ExitVehicle,
-        Teleport
+        Teleport,
+        Dig
     }
 }
