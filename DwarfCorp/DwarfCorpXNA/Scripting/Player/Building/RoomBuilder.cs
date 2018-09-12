@@ -57,7 +57,7 @@ namespace DwarfCorp
         public List<BuildRoomOrder> BuildDesignations { get; set; }
         public RoomData CurrentRoomData { get; set; }
         public Faction Faction { get; set; }
-        private List<Body> displayObjects = null;
+
         [JsonIgnore]
         private WorldManager World { get; set; }
 
@@ -75,14 +75,6 @@ namespace DwarfCorp
         public void End()
         {
             CurrentRoomData = null;
-            if (displayObjects != null)
-            {
-                foreach (var body in displayObjects)
-                {
-                    body.GetRoot().Delete();
-                }
-                displayObjects.Clear();
-            }
         }
 
         public RoomBuilder()
@@ -110,13 +102,6 @@ namespace DwarfCorp
 
         public void OnExit()
         {
-            if (displayObjects != null)
-            {
-                foreach (var thing in displayObjects)
-                {
-                    thing.GetRoot().Delete();
-                }
-            }
         }
 
 
@@ -397,14 +382,6 @@ namespace DwarfCorp
                 Faction = World.PlayerFaction;
             }
 
-            if (displayObjects != null)
-            {
-                foreach (var thing in displayObjects)
-                {
-                    thing.GetRoot().Delete();
-                }
-            }
-
             foreach (BuildRoomOrder order in BuildDesignations)
             {
                 order.SetTint(Color.White);
@@ -446,18 +423,6 @@ namespace DwarfCorp
                     }
 
                     World.ShowTooltip("Release to build here.");
-
-                    displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs,
-                        World.ComponentManager, 
-                        World.ChunkManager.Content,
-                        GameState.Game.GraphicsDevice);
-
-                    foreach(Body thing in displayObjects)
-                    {
-                        thing.SetFlagRecursive(GameComponent.Flag.ShouldSerialize, false);
-                        thing.SetFlagRecursive(GameComponent.Flag.Active, false);
-                        SetDisplayColor(thing, GameSettings.Default.Colors.GetColor("Positive", Color.Green));
-                    }
                 }
                 else
                 {
@@ -481,14 +446,6 @@ namespace DwarfCorp
             if(CurrentRoomData == null)
             {
                 return;
-            }
-
-            if (displayObjects != null)
-            {
-                foreach (var thing in displayObjects)
-                {
-                    thing.GetRoot().Delete();
-                }
             }
 
             if(button == InputManager.MouseButton.Left)
