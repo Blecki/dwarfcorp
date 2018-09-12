@@ -527,11 +527,13 @@ namespace DwarfCorp
 
             if (!isRiding && CanDig)
             {
+                // This loop is unrolled for speed. It gets the manhattan neighbors and tells the creature that it can mine
+                // the surrounding rock to get through.
                 int dx = -1;
                 int dy = 0;
                 int dz = 0;
-                var neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty)
+                VoxelHandle neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                if (neighbor.IsValid && !neighbor.IsEmpty && !this.Creature.Faction.GetRooms().Any(r => r.ContainsVoxel(neighbor)))
                 {
                     yield return (new MoveAction
                     {
@@ -545,7 +547,7 @@ namespace DwarfCorp
                 dy = 0;
                 dz = 0;
                 neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty)
+                if (neighbor.IsValid && !neighbor.IsEmpty && !this.Creature.Faction.GetRooms().Any(r => r.ContainsVoxel(neighbor)))
                 {
                     yield return (new MoveAction
                     {
@@ -559,7 +561,7 @@ namespace DwarfCorp
                 dy = 0;
                 dz = 1;
                 neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty)
+                if (neighbor.IsValid && !neighbor.IsEmpty && !this.Creature.Faction.GetRooms().Any(r => r.ContainsVoxel(neighbor)))
                 {
                     yield return (new MoveAction
                     {
@@ -573,7 +575,7 @@ namespace DwarfCorp
                 dy = 0;
                 dz = -1;
                 neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty)
+                if (neighbor.IsValid && !neighbor.IsEmpty && !this.Creature.Faction.GetRooms().Any(r => r.ContainsVoxel(neighbor)))
                 {
                     yield return (new MoveAction
                     {
@@ -587,7 +589,7 @@ namespace DwarfCorp
                 dy = 1;
                 dz = 0;
                 neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty)
+                if (neighbor.IsValid && !neighbor.IsEmpty && !this.Creature.Faction.GetRooms().Any(r => r.ContainsVoxel(neighbor)))
                 {
                     yield return (new MoveAction
                     {
@@ -601,7 +603,7 @@ namespace DwarfCorp
                 dy = -1;
                 dz = 0;
                 neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty)
+                if (neighbor.IsValid && !neighbor.IsEmpty && !this.Creature.Faction.GetRooms().Any(r => r.ContainsVoxel(neighbor)))
                 {
                     yield return (new MoveAction
                     {
