@@ -53,44 +53,30 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<VoxelHandle> Voxels, InputManager.MouseButton button)
         {
-            if (Voxels == null)
-            {
-                return;
-            }
+            var v = Player.VoxSelector.VoxelUnderMouse;
 
-            foreach (var v in Voxels.Where(v => v.IsValid && !v.IsEmpty))
+            if (Faction.RoomBuilder.IsBuildDesignation(v))
             {
-                if (Faction.RoomBuilder.IsBuildDesignation(v))
+                BuildVoxelOrder vox = Faction.RoomBuilder.GetBuildDesignation(v);
+                if (vox != null && vox.Order != null)
                 {
-                    BuildVoxelOrder vox = Faction.RoomBuilder.GetBuildDesignation(v);
-                    if (vox != null && vox.Order != null)
-                    {
-                        vox.Order.Destroy();
-                        if (vox.Order.DisplayWidget != null)
-                        {
-                            World.Gui.DestroyWidget(vox.Order.DisplayWidget);
-                        }
-                        Faction.RoomBuilder.BuildDesignations.Remove(vox.Order);
-                        Faction.RoomBuilder.DesignatedRooms.Remove(vox.Order.ToBuild);
-                    }
+                    vox.Order.Destroy();
+                    if (vox.Order.DisplayWidget != null)
+                        World.Gui.DestroyWidget(vox.Order.DisplayWidget);
+                    Faction.RoomBuilder.BuildDesignations.Remove(vox.Order);
+                    Faction.RoomBuilder.DesignatedRooms.Remove(vox.Order.ToBuild);
                 }
-                else if (Faction.RoomBuilder.IsInRoom(v))
-                {
-                    Room existingRoom = Faction.RoomBuilder.GetMostLikelyRoom(v);
+            }
+            else if (Faction.RoomBuilder.IsInRoom(v))
+            {
+                Room existingRoom = Faction.RoomBuilder.GetMostLikelyRoom(v);
 
-                    if (existingRoom == null)
-                    {
-                        continue;
-                    }
-
+                if (existingRoom != null)
                     World.Gui.ShowModalPopup(new Gui.Widgets.Confirm
                     {
                         Text = "Do you want to destroy this " + existingRoom.RoomData.Name + "?",
                         OnClose = (sender) => destroyDialog_OnClosed((sender as Gui.Widgets.Confirm).DialogResult, existingRoom)
                     });
-
-                    break;
-                }
             }
         }
 
@@ -123,9 +109,6 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            //if (BuildPanel != null && BuildPanel.Root != null)
-            //    BuildPanel.Close();
-            //BuildPanel = null;
             Player.VoxSelector.Clear();
         }
 
@@ -146,6 +129,10 @@ namespace DwarfCorp
 
             Player.VoxSelector.Enabled = true;
             Player.BodySelector.Enabled = false;
+            Player.VoxSelector.DrawVoxel = true;
+            Player.VoxSelector.DrawBox = false;
+            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+            
 
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
@@ -156,6 +143,13 @@ namespace DwarfCorp
         // Todo: Why is the graphics device passed in when we have a perfectly good global we're using instead?
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
+            var v = Player.VoxSelector.VoxelUnderMouse;
+            if (v.IsValid && !v.IsEmpty)
+            {
+                var room = Faction.RoomBuilder.GetRoomThatContainsVoxel(v);
+                if (room != null)
+                    Drawer3D.DrawBox(room.GetBoundingBox(), GameSettings.Default.Colors.GetColor("Positive", Color.Green), 0.2f, true);
+            }
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
@@ -165,36 +159,24 @@ namespace DwarfCorp
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            foreach (var v in voxels.Where(v => v.IsValid && !v.IsEmpty))
+            var v = Player.VoxSelector.VoxelUnderMouse;
+
+            if (Faction.RoomBuilder.IsBuildDesignation(v))
             {
-                if (Faction.RoomBuilder.IsBuildDesignation(v))
-                {
-                    var order = Faction.RoomBuilder.GetBuildDesignation(v);
-                    if (order == null || order.Order == null)
-                    {
-                        // TODO(mklingen): Don't know how this could happen, but we got a crash here...
-                        continue;
-                    }
-                    if (!order.Order.IsBuilt)
-                    {
-                        order.Order.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
-                    }
-                    else
-                    {
-                        order.ToBuild.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
-                    }
-                    break;
-                }
-                else if (Faction.RoomBuilder.IsInRoom(v))
-                {
-                    Room existingRoom = Faction.RoomBuilder.GetMostLikelyRoom(v);
-                    if (existingRoom == null)
-                    {
-                        continue;
-                    }
+                var order = Faction.RoomBuilder.GetBuildDesignation(v);
+                if (order == null || order.Order == null)
+                    return;
+
+                if (!order.Order.IsBuilt)
+                    order.Order.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
+                else
+                    order.ToBuild.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
+            }
+            else if (Faction.RoomBuilder.IsInRoom(v))
+            {
+                Room existingRoom = Faction.RoomBuilder.GetMostLikelyRoom(v);
+                if (existingRoom != null)
                     existingRoom.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
-                    break;
-                }
             }
         }
 

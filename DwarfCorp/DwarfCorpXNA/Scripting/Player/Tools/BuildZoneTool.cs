@@ -85,6 +85,8 @@ namespace DwarfCorp
 
                 Player.VoxSelector.Enabled = true;
                 Player.BodySelector.Enabled = false;
+            Player.VoxSelector.DrawBox = true;
+            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
 
                 if (Player.World.IsMouseOverGui)
                     Player.World.SetMouse(Player.World.MousePointer);
