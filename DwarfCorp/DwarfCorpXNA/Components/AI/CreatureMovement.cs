@@ -525,95 +525,6 @@ namespace DwarfCorp
                 }
             }
 
-            if (!isRiding && CanDig)
-            {
-                // This loop is unrolled for speed. It gets the manhattan neighbors and tells the creature that it can mine
-                // the surrounding rock to get through.
-                int dx = -1;
-                int dy = 0;
-                int dz = 0;
-                VoxelHandle neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty && !this.Creature.Faction.GetRooms().Any(r => r.ContainsVoxel(neighbor)))
-                {
-                    yield return (new MoveAction
-                    {
-                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
-                        MoveType = MoveType.Dig,
-                        DestinationVoxel = neighbor,
-                    });
-                }
-
-                dx = 1;
-                dy = 0;
-                dz = 0;
-                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty && !this.Creature.Faction.GetRooms().Any(r => r.ContainsVoxel(neighbor)))
-                {
-                    yield return (new MoveAction
-                    {
-                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
-                        MoveType = MoveType.Dig,
-                        DestinationVoxel = neighbor,
-                    });
-                }
-
-                dx = 0;
-                dy = 0;
-                dz = 1;
-                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty && !this.Creature.Faction.GetRooms().Any(r => r.ContainsVoxel(neighbor)))
-                {
-                    yield return (new MoveAction
-                    {
-                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
-                        MoveType = MoveType.Dig,
-                        DestinationVoxel = neighbor,
-                    });
-                }
-
-                dx = 0;
-                dy = 0;
-                dz = -1;
-                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty && !this.Creature.Faction.GetRooms().Any(r => r.ContainsVoxel(neighbor)))
-                {
-                    yield return (new MoveAction
-                    {
-                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
-                        MoveType = MoveType.Dig,
-                        DestinationVoxel = neighbor,
-                    });
-                }
-
-                dx = 0;
-                dy = 1;
-                dz = 0;
-                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty && !this.Creature.Faction.GetRooms().Any(r => r.ContainsVoxel(neighbor)))
-                {
-                    yield return (new MoveAction
-                    {
-                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
-                        MoveType = MoveType.Dig,
-                        DestinationVoxel = neighbor,
-                    });
-                }
-
-                dx = 0;
-                dy = -1;
-                dz = 0;
-                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty && !this.Creature.Faction.GetRooms().Any(r => r.ContainsVoxel(neighbor)))
-                {
-                    yield return (new MoveAction
-                    {
-                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
-                        MoveType = MoveType.Dig,
-                        DestinationVoxel = neighbor,
-                    });
-                }
-            }
-
             // If the creature can climb walls and is not blocked by a voxl above.
             if (!isRiding && CanClimbWalls && !topCovered)
             {
@@ -803,6 +714,95 @@ namespace DwarfCorp
                     }
                 }
             }
+            if (!isRiding && CanDig)
+            {
+                // This loop is unrolled for speed. It gets the manhattan neighbors and tells the creature that it can mine
+                // the surrounding rock to get through.
+                int dx = -1;
+                int dy = 0;
+                int dz = 0;
+                VoxelHandle neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                if (neighbor.IsValid && !neighbor.IsEmpty && !neighbor.IsPlayerBuilt)
+                {
+                    yield return (new MoveAction
+                    {
+                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        MoveType = MoveType.Dig,
+                        DestinationVoxel = neighbor,
+                    });
+                }
+
+                dx = 1;
+                dy = 0;
+                dz = 0;
+                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                if (neighbor.IsValid && !neighbor.IsEmpty && !neighbor.IsPlayerBuilt)
+                {
+                    yield return (new MoveAction
+                    {
+                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        MoveType = MoveType.Dig,
+                        DestinationVoxel = neighbor,
+                    });
+                }
+
+                dx = 0;
+                dy = 0;
+                dz = 1;
+                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                if (neighbor.IsValid && !neighbor.IsEmpty && !neighbor.IsPlayerBuilt)
+                {
+                    yield return (new MoveAction
+                    {
+                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        MoveType = MoveType.Dig,
+                        DestinationVoxel = neighbor,
+                    });
+                }
+
+                dx = 0;
+                dy = 0;
+                dz = -1;
+                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                if (neighbor.IsValid && !neighbor.IsEmpty && !neighbor.IsPlayerBuilt)
+                {
+                    yield return (new MoveAction
+                    {
+                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        MoveType = MoveType.Dig,
+                        DestinationVoxel = neighbor,
+                    });
+                }
+
+                dx = 0;
+                dy = 1;
+                dz = 0;
+                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                if (neighbor.IsValid && !neighbor.IsEmpty && !neighbor.IsPlayerBuilt)
+                {
+                    yield return (new MoveAction
+                    {
+                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        MoveType = MoveType.Dig,
+                        DestinationVoxel = neighbor,
+                    });
+                }
+
+                dx = 0;
+                dy = -1;
+                dz = 0;
+                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                if (neighbor.IsValid && !neighbor.IsEmpty && !neighbor.IsPlayerBuilt)
+                {
+                    yield return (new MoveAction
+                    {
+                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        MoveType = MoveType.Dig,
+                        DestinationVoxel = neighbor,
+                    });
+                }
+            }
+
         }
 
         /// <summary> Each action has a cost, a speed, and a validity check </summary>

@@ -125,8 +125,8 @@ namespace DwarfCorp
                 {
                     if (a.Equals(b)) return 0;
 
-                    float da = (a.DestinationVoxel.WorldPosition - Target.Position).LengthSquared();
-                    float db = (b.DestinationVoxel.WorldPosition - Target.Position).LengthSquared();
+                    float da = (a.DestinationVoxel.WorldPosition - Target.Position).LengthSquared() * Agent.Movement.Cost(a.MoveType);
+                    float db = (b.DestinationVoxel.WorldPosition - Target.Position).LengthSquared() * Agent.Movement.Cost(a.MoveType);
 
                     return da.CompareTo(db);
                 });
