@@ -138,10 +138,7 @@ namespace DwarfCorp
         public override void OnDequeued(Faction Faction)
         {
             if (!Zone.IsBuilt)
-            {
                 Zone.Destroy();
-            }
-            base.OnDequeued(Faction);
         }
     }
 

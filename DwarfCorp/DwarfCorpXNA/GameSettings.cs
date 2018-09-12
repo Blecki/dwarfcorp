@@ -257,6 +257,8 @@ namespace DwarfCorp
             public float Boredom_Eat = -0.1f;
             public float Boredom_Walk = -0.2f;
 
+            public int MaxVoxelDesignations = 1024;
+
             public Settings Clone()
             {
                 return MemberwiseClone() as Settings;

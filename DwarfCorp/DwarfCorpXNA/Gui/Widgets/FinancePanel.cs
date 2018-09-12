@@ -33,7 +33,7 @@ namespace DwarfCorp.Gui.Widgets
                         return (r.First.NumResources * value) + (r.Second.NumResources * value);
                     }).Sum());
 
-                builder.AppendFormat("{0} at ${1} per day.\n", Faction.Minions.Count, Faction.Minions.Select(m => m.Stats.CurrentLevel.Pay.Value).Sum());
+                builder.AppendFormat("{0} employees at ${1} per day.\n", Faction.Minions.Count, Faction.Minions.Select(m => m.Stats.CurrentLevel.Pay.Value).Sum());
 
                 var freeStockPile = Faction.ComputeRemainingStockpileSpace();
                 var totalStockPile = Faction.ComputeTotalStockpileSpace();

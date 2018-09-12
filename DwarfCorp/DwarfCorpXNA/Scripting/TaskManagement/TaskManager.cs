@@ -90,6 +90,7 @@ namespace DwarfCorp
                 actor.RemoveTask(Task);
             Tasks.RemoveAll(t => Object.ReferenceEquals(t, Task));
             Task.OnDequeued(Faction);
+            Task.OnCancelled(this, Faction);
         }
 
         public Task GetBestTask(CreatureAI creatureAI, int minPriority=-1)
@@ -140,6 +141,7 @@ namespace DwarfCorp
 
         private int updateIdx = 0;
         private int workGroupSize = 2048;
+
         public void Update(List<CreatureAI> creatures)
         {
             for (int k = 0; k < workGroupSize; k++)
@@ -157,7 +159,10 @@ namespace DwarfCorp
                     Tasks.RemoveAt(j);
                     k = Math.Max(k - 1, 0);
                 }
+                else
+                    Tasks[j].OnUpdate();
             }
+
             updateIdx += workGroupSize;
         }
 

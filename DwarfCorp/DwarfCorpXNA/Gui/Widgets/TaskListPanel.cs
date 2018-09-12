@@ -45,21 +45,22 @@ namespace DwarfCorp.Gui.Widgets
             {
                 if (sender.Hidden) return;
 
-                //sender.Text = String.Join("\n", World.PlayerFaction.Minions.Select(m => String.Format("{0}: {1}, {2}", m.Name, m.Tasks.Count, (m.CurrentTask == null ? "NULL" : m.CurrentTask.Name))));
-                //sender.Text += "\n\n";
-                //sender.Text += String.Join("\n", World.Master.TaskManager.EnumerateTasks().Select(t => t.Name));
-                //sender.Invalidate();
-
+                var tasksToDisplay = World.Master.TaskManager.EnumerateTasks()
+                    .Where(t => !t.Hidden)
+                    .Where(t => String.IsNullOrEmpty(FilterBox.Text) ? true : t.Name.Contains(FilterBox.Text));
 
                 ListView.ClearItems();
-                foreach (var task in World.Master.TaskManager.EnumerateTasks().Where(t => String.IsNullOrEmpty(FilterBox.Text) ? true : t.Name.Contains(FilterBox.Text)))
+                foreach (var task in tasksToDisplay)
                 {
                     var tag = task.GuiTag as Widget;
                     var lambdaCopy = task;
+
                     if (tag != null)
                         ListView.AddItem(tag);
                     else
                     {
+                        #region Create gui row
+
                         tag = Root.ConstructWidget(new Widget
                         {
                             Text = task.Name,
@@ -139,9 +140,13 @@ namespace DwarfCorp.Gui.Widgets
                             }
                         });
 
+                        #endregion
+
                         task.GuiTag = tag;
                         ListView.AddItem(tag);
                     }
+
+                    tag.Text = task.Name;
                 }
 
                 ListView.Invalidate();

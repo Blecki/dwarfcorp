@@ -76,19 +76,19 @@ namespace DwarfCorp
                     var boundingBox = v.GetBoundingBox().Expand(-0.1f);
                     var entities = Player.World.EnumerateIntersectingObjects(boundingBox, CollisionType.Static);
                     if (entities.OfType<IVoxelListener>().Any())
-                    {
                         continue;
-                    }
 
-                    if (count >= 1024)
+                    if (count >= GameSettings.Default.MaxVoxelDesignations)
                     {
                         Player.World.ShowToolPopup("Too many dig designations!");
                         break;
                     }
 
+                    // Todo: Should this be removed from the existing compound task and put in the new one?
                     if (!Player.Faction.Designations.IsVoxelDesignation(v, DesignationType.Dig) && !(Player.Faction.RoomBuilder.IsInRoom(v) || Player.Faction.RoomBuilder.IsBuildDesignation(v)))
                     {
                         var task = new KillVoxelTask(v);
+                        task.Hidden = true;
                         assignments.Add(task);
                         count++;
                     }
@@ -96,6 +96,11 @@ namespace DwarfCorp
                 }
 
                 Player.TaskManager.AddTasks(assignments);
+
+                var compoundTask = new CompoundTask("DIG A HOLE", Task.TaskCategory.Dig, Task.PriorityType.Medium);
+                compoundTask.AddSubTasks(assignments);
+                Player.TaskManager.AddTask(compoundTask);
+
                 List<CreatureAI> minions = Faction.FilterMinionsWithCapability(Player.SelectedMinions, Task.TaskCategory.Dig);
                 OnConfirm(minions);
             }
