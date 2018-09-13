@@ -866,6 +866,12 @@ namespace DwarfCorp
             }
 
             GameState.Game.GraphicsDevice.Textures[0] = null;
+
+            if (worldMap.IsDisposed || worldMap.GraphicsDevice.IsDisposed)
+            {
+                worldMap = new Texture2D(GameState.Game.GraphicsDevice, width, height);
+            }
+
             worldMap.SetData(worldData);
 
             if(imageMutex != null)
