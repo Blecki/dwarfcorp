@@ -293,6 +293,7 @@
     <Compile Include="GameStates\FactionViewState.cs" />
     <Compile Include="GameStates\YarnSpinner\EndConversation.cs" />
     <Compile Include="GameStates\YarnSpinner\HidePortrait.cs" />
+    <Compile Include="GameStates\YarnSpinner\EmployeeCommands.cs" />
     <Compile Include="GameStates\YarnSpinner\SpeechSynthesizer.cs" />
     <Compile Include="GameStates\YarnSpinner\SetLanguage.cs" />
     <Compile Include="GameStates\YarnSpinner\ShowPortrait.cs" />

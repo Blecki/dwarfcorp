@@ -259,6 +259,9 @@ namespace DwarfCorp
             {
                 return;
             }
+
+            if (SelectionType == VoxelSelectionType.SelectEmpty && underMouse.Coordinate.Y == VoxelConstants.ChunkSizeY - 1)
+                return;
                         
             VoxelUnderMouse = underMouse;
 
