@@ -207,6 +207,7 @@ namespace DwarfCorp.Scripting.Adventure
                 }
                 else if (MathFunctions.RandEvent(0.5f))
                 {
+                    outOfFood = true;
                     creature.Creature.Hp -= MathFunctions.Rand(1, 10);
                     var thoughts = creature.Creature.GetComponent<DwarfThoughts>();
                     if (thoughts != null)
@@ -261,7 +262,7 @@ namespace DwarfCorp.Scripting.Adventure
                 return false;
             }
 
-            if (!MathFunctions.RandEvent(0.1f))
+            if (!MathFunctions.RandEvent(0.01f))
             {
                 return false;
             }
@@ -285,7 +286,7 @@ namespace DwarfCorp.Scripting.Adventure
 
         public bool MaybeStorm(WorldManager world)
         {
-            if (!MathFunctions.RandEvent(0.05f))
+            if (!MathFunctions.RandEvent(0.01f))
             {
                 return false;
             }
@@ -413,7 +414,7 @@ namespace DwarfCorp.Scripting.Adventure
                             }
                         }
                 
-                        if (RemainingTravelTime.Hours < 1)
+                        if (RemainingTravelTime.TotalHours < 1)
                         {
                             this.LastEvent = String.Format("The adventuring party has arrived at {0}", DestinationFaction);
                             AdventureState = State.PerformingAction;
@@ -445,7 +446,7 @@ namespace DwarfCorp.Scripting.Adventure
                                 break;
                             }
                         }
-                        if (RemainingTravelTime.Hours < 1)
+                        if (RemainingTravelTime.TotalHours < 1)
                         {
                             var balloonPorts = world.PlayerFaction.GetRooms().OfType<BalloonPort>().ToList();
                             Vector3 location = world.Camera.Position;
