@@ -59,6 +59,12 @@ namespace DwarfCorp
 
         private static Dictionary<string, Func<Vector3, Blackboard, GameComponent>> EntityFuncs { get; set; }
 
+        public static void Cleanup()
+        {
+            World = null;
+            EntityFuncs = null;
+        }
+
         public static IEnumerable<String> EnumerateEntityTypes()
         {
             return EntityFuncs.Keys;

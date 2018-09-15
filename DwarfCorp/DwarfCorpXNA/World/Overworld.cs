@@ -255,7 +255,15 @@ namespace DwarfCorp
 
         }
 
-     
+        public static void Cleanup()
+        {
+            NativeFactions = null;
+            Map = null;
+            Volcanoes = null;
+            Name = null;
+        }
+
+
         #region image_processing
 
         public static Vector2 GetMinNeighbor(float[,] heightMap, Vector2 pos)
@@ -858,6 +866,12 @@ namespace DwarfCorp
             }
 
             GameState.Game.GraphicsDevice.Textures[0] = null;
+
+            if (worldMap.IsDisposed || worldMap.GraphicsDevice.IsDisposed)
+            {
+                worldMap = new Texture2D(GameState.Game.GraphicsDevice, width, height);
+            }
+
             worldMap.SetData(worldData);
 
             if(imageMutex != null)

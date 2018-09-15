@@ -196,6 +196,18 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
+            // Make sure that this memory gets cleaned up!!
+            EntityFactory.Cleanup();
+            Drawer3D.Cleanup();
+            ParticleEmitter.Cleanup();
+            Overworld.Cleanup();
+            ResourceLibrary.Cleanup();
+            CraftLibrary.Cleanup();
+            VoxelLibrary.Cleanup();
+            PlayState.Input = null;
+            InputManager.Cleanup();
+            LayeredSprites.LayerLibrary.Cleanup();
+            
             LogoTexture = AssetManager.GetContentTexture("newgui/gamelogo");
             // Clear the input queue... cause other states aren't using it and it's been filling up.
             DwarfGame.GumInputMapper.GetInputQueue();

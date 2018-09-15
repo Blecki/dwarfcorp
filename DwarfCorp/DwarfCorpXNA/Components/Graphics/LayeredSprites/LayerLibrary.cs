@@ -47,6 +47,13 @@ namespace DwarfCorp.LayeredSprites
         private static List<Palette> Palettes;
         private static Palette _BaseDwarfPalette = null;
 
+        public static void Cleanup()
+        {
+            Layers = null;
+            Palettes = null;
+            _BaseDwarfPalette = null;
+        }
+
         public static Palette BaseDwarfPalette
         {
             get

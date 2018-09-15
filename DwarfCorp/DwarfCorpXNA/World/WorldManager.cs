@@ -98,7 +98,7 @@ namespace DwarfCorp
         public OrbitCamera Camera;
 
         // Gives the number of antialiasing multisamples. 0 means no AA. 
-        public int MultiSamples
+        public static int MultiSamples
         {
             get { return GameSettings.Default.AntiAliasing; }
             set { GameSettings.Default.AntiAliasing = value; }
@@ -653,8 +653,6 @@ namespace DwarfCorp
 
         public void Quit()
         {
-            Game.Graphics.PreparingDeviceSettings -= GraphicsPreparingDeviceSettings;
-
             ChunkManager.Destroy();
             ComponentManager = null;
 
@@ -1078,55 +1076,14 @@ namespace DwarfCorp
         }
 
 
-        private void GraphicsDeviceReset(object sender, EventArgs e)
-        {
-            ResetGraphics();
-        }
 
-        private void ResetGraphics()
-        {
-            /*
-            if (bloom != null)
-            {
-                bloom.sceneRenderTarget = new RenderTarget2D(GraphicsDevice, Game.Graphics.PreferredBackBufferWidth, Game.Graphics.PreferredBackBufferHeight,
-                    false, Game.Graphics.PreferredBackBufferFormat, Game.Graphics.PreferredDepthStencilFormat, MultiSamples,
-                    RenderTargetUsage.DiscardContents);
-            }
-
-            foreach (var composite in CompositeLibrary.Composites)
-            {
-                composite.Value.Initialize();
-                composite.Value.HasChanged = true;
-            }
-
-            if (WaterRenderer != null)
-            {
-                WaterRenderer = new WaterRenderer(GraphicsDevice);
-            }
-            
-            AssetManager.ResetCache();
-            DwarfGame.SpriteBatch = new SpriteBatch(Game.GraphicsDevice);
-
-            Color[] white = new Color[1];
-            white[0] = Color.White;
-            pixel = new Texture2D(GraphicsDevice, 1, 1);
-            pixel.SetData(white);
-
-            Tilesheet = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
-            AspectRatio = GraphicsDevice.Viewport.AspectRatio;
-            DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
-            DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
-            DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
-            PrimitiveLibrary.Reinitialize(GraphicsDevice, Content);
-            */
-        }
 
         /// <summary>
         /// Called when the GPU is getting new settings
         /// </summary>
         /// <param name="sender">The object requesting new device settings</param>
         /// <param name="e">The device settings that are getting set</param>
-        private void GraphicsPreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+        public static void GraphicsPreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
             if (e == null)
             {
@@ -1169,11 +1126,6 @@ namespace DwarfCorp
             else if (MultiSamples <= 0 && MultiSamples != pp.MultiSampleCount)
             {
                 pp.MultiSampleCount = 0;
-            }
-
-            if (GraphicsDevice != null)
-            {
-                ResetGraphics();
             }
         }
 

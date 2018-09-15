@@ -129,7 +129,7 @@ namespace DwarfCorp.GameStates
                 // Todo: Decouple gui/input from world.
                 // Copy important bits to PlayState - This is a hack; decouple world from gui and input instead.
                 PlayState.Input = Input;
-                StateManager.PopState();
+                StateManager.PopState(false);
                 StateManager.PushState(new PlayState(Game, StateManager, World));
 
                 World.OnSetLoadingMessage = null;

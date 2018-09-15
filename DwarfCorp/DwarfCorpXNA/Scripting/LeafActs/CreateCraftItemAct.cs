@@ -79,6 +79,13 @@ namespace DwarfCorp
             
             if (details == null)
             {
+                float strength = Item.SelectedResources.Average(r => ResourceLibrary.GetResourceByName(r.ResourceType).MaterialStrength);
+                var health = item.GetRoot().GetComponent<Health>();
+                if (health != null)
+                {
+                    health.MaxHealth = strength;
+                    health.Hp = strength;
+                }
                 item.AddChild(new CraftDetails(Creature.Manager)
                 {
                     Resources = Item.SelectedResources.ConvertAll(p => new ResourceAmount(p)),

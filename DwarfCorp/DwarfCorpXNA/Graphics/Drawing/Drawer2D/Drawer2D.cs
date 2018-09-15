@@ -88,26 +88,40 @@ namespace DwarfCorp
             DrawCommands.Enqueue(new TextBoxDrawCommand(text, DefaultFont, position, Color.White, new Color(0, 0, 0, 200), new Color(50, 50, 50, 100), new Color(0, 0, 0, 200), 2.0f));
         }
 
-        public static void DrawLoadBar(Camera camera, Vector3 worldPos, Color backgroundColor, Color strokeColor, int width, int height, float progress)
+        public static void DrawLoadBar(Camera camera, Vector3 worldPos, Color backgroundColor, Color strokeColor, int width, int height, float progress, float timeout = 0)
         {
             if (!DwarfGame.HasRendered) return;
-            Drawer2D.DrawRect(camera, worldPos, new Rectangle(0, 0, width, height), strokeColor, strokeColor, 1);
-            Drawer2D.DrawRect(camera, worldPos, new Rectangle((int)(width * (progress))/2 - width /2, 0, (int)(width * (progress)), height), backgroundColor, Color.Transparent, 1);
+            var cmd1 = Drawer2D.DrawRect(camera, worldPos, new Rectangle(0, 0, width, height), strokeColor, strokeColor, 1);
+            var cmd2 = Drawer2D.DrawRect(camera, worldPos, new Rectangle((int)(width * (progress))/2 - width /2, 0, (int)(width * (progress)), height), backgroundColor, Color.Transparent, 1);
+            if (timeout > 0)
+            {
+                float endTime = (float)(timeout + DwarfTime.LastTime.TotalGameTime.TotalSeconds);
+                if (cmd1 != null)
+                {
+                    cmd1.EndTime = endTime;
+                }
+
+                if (cmd2 != null)
+                {
+                    cmd2.EndTime = endTime;
+                }
+            }
         }
 
-        public static void DrawRect(Camera camera, Vector3 worldPos, Rectangle screenRect, Color backgroundColor, Color strokeColor, float strokewidth)
+        public static RectDrawCommand DrawRect(Camera camera, Vector3 worldPos, Rectangle screenRect, Color backgroundColor, Color strokeColor, float strokewidth)
         {
-            if (!DwarfGame.HasRendered) return;
+            if (!DwarfGame.HasRendered) return null;
             Vector3 screenPos = GameState.Game.GraphicsDevice.Viewport.Project(worldPos, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
 
             if (screenPos.Z < 0.999f)
             {
                 Rectangle rect = new Rectangle((int) (screenPos.X - screenRect.Width/2) + screenRect.X,
                     (int) (screenPos.Y - screenRect.Height/2) + screenRect.Y, screenRect.Width, screenRect.Height);
-
-                DrawCommands.Enqueue(new RectDrawCommand(backgroundColor, strokeColor, strokewidth, rect));
+                var cmd = new RectDrawCommand(backgroundColor, strokeColor, strokewidth, rect);
+                DrawCommands.Enqueue(cmd);
+                return cmd;
             }
-
+            return null;
         }
 
         public static void DrawPolygon(List<Vector2> points, Color color, int width, bool closed)
@@ -154,15 +168,24 @@ namespace DwarfCorp
 
         public static void Render(SpriteBatch batch, Camera camera, Viewport viewport)
         {
-            foreach(DrawCommand2D draw in DrawCommands)
+            List<DrawCommand2D> extraDraws = new List<DrawCommand2D>();
+            foreach (DrawCommand2D draw in DrawCommands)
             {
                 draw.Render(batch, camera, viewport);
+                if (draw.EndTime > 0 && DwarfTime.LastTime.TotalGameTime.TotalSeconds < draw.EndTime)
+                {
+                    extraDraws.Add(draw);
+                }
             }
 
             while(DrawCommands.Count > 0)
             {
                 DrawCommand2D draw = null;
                 DrawCommands.TryDequeue(out draw);
+            }
+            foreach(var draw in extraDraws)
+            {
+                DrawCommands.Enqueue(draw);
             }
         }
 

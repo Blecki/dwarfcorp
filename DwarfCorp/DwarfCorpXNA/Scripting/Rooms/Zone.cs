@@ -224,6 +224,7 @@ namespace DwarfCorp
                     return true;
 
                 Voxels.Remove(toRemove);
+                toRemove.IsPlayerBuilt = false;
                 removed = true;
                 if (ReplaceVoxelTypes)
                 {
@@ -262,7 +263,7 @@ namespace DwarfCorp
         {
             if(ContainsVoxel(Voxel))
                 return;
-
+            Voxel.IsPlayerBuilt = true;
             Voxels.Add(Voxel);
             if (ReplaceVoxelTypes)
             {

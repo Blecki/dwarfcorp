@@ -65,14 +65,14 @@ namespace DwarfCorp.GameStates
             return StateStack.OfType<T>().FirstOrDefault();
         }
 
-        public void PopState()
+        public void PopState(bool enterNext = true)
         {
             if(StateStack.Count > 0)
             {
                 StateStack.RemoveAt(0);
             }
             
-            if (StateStack.Count > 0)
+            if (StateStack.Count > 0 && enterNext)
             {
                 var state = StateStack.ElementAt(0);
                 NextState = state;

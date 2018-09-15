@@ -116,7 +116,7 @@ namespace DwarfCorp
             AI.Movement.SetSpeed(MoveType.Fly, 1.0f);
             AI.Movement.SetCost(MoveType.ClimbWalls, 1.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 1.0f);
-            
+            AI.Movement.SetCan(MoveType.Dig, true);
             Species = "Fairy";
         }
 

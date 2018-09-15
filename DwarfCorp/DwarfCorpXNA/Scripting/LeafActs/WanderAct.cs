@@ -196,7 +196,7 @@ namespace DwarfCorp
                     {
                         continue;
                     }
-                    float dist = (action.DestinationVoxel.WorldPosition - target).LengthSquared();
+                    float dist = (action.DestinationVoxel.WorldPosition - target).LengthSquared() * Creature.AI.Movement.Cost(action.MoveType);
 
                     if (dist < bestDist)
                     {

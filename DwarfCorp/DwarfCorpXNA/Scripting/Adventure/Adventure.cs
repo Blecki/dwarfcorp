@@ -207,6 +207,7 @@ namespace DwarfCorp.Scripting.Adventure
                 }
                 else if (MathFunctions.RandEvent(0.5f))
                 {
+                    outOfFood = true;
                     creature.Creature.Hp -= MathFunctions.Rand(1, 10);
                     var thoughts = creature.Creature.GetComponent<DwarfThoughts>();
                     if (thoughts != null)
@@ -250,6 +251,59 @@ namespace DwarfCorp.Scripting.Adventure
             }
             return 24 + diff;
         }
+
+        public bool MaybeCapture(WorldManager world)
+        {
+            Faction owner = world.Factions.Factions[OwnerFaction];
+            Faction target = world.Factions.Factions[DestinationFaction];
+            var politics = world.Diplomacy.GetPolitics(owner, target);
+            if (politics.GetCurrentRelationship() != Relationship.Hateful)
+            {
+                return false;
+            }
+
+            if (!MathFunctions.RandEvent(0.01f))
+            {
+                return false;
+            }
+
+            float strength = Party.Sum(p => p.Stats.BuffedStr);
+            float enemyStrength = MathFunctions.RandInt(5, 50);
+            if (enemyStrength > strength)
+            {
+                int numCaptured = MathFunctions.RandInt(1, Party.Count);
+                for (int i = 0; i < numCaptured; i++)
+                {
+                    int j = MathFunctions.RandInt(0, Party.Count);
+                    Party[j].Delete();
+                    Party.RemoveAt(j);
+                }
+                LastEvent = String.Format("{0} dwarf(s) in the adventuring party were captured by {1}!", numCaptured, target.Race.Plural);
+                return true;
+            }
+            return false;
+        }
+
+        public bool MaybeStorm(WorldManager world)
+        {
+            if (!MathFunctions.RandEvent(0.01f))
+            {
+                return false;
+            }
+            int randomDelay = MathFunctions.RandInt(1, 12);
+            RemainingTravelTime += new TimeSpan(0, randomDelay, 0, 0, 0);
+            LastEvent = String.Format("A storm has delayed the adventuring party by {0} hours.", randomDelay);
+            return true;
+        }
+
+        public void MaybeDelay(WorldManager world)
+        {
+            if (MaybeCapture(world))
+                return;
+            if (MaybeStorm(world))
+                return;
+        }
+
         private int _prevHour = -1;
 
         public void Update(WorldManager world, DwarfTime time)
@@ -264,6 +318,7 @@ namespace DwarfCorp.Scripting.Adventure
             if (timeDiff > 0)
             {
                 _prevHour = hour;
+                MaybeDelay(world);
             }
             switch (AdventureState)
             {
@@ -359,7 +414,7 @@ namespace DwarfCorp.Scripting.Adventure
                             }
                         }
                 
-                        if (RemainingTravelTime.Hours < 1)
+                        if (RemainingTravelTime.TotalHours < 1)
                         {
                             this.LastEvent = String.Format("The adventuring party has arrived at {0}", DestinationFaction);
                             AdventureState = State.PerformingAction;
@@ -391,7 +446,7 @@ namespace DwarfCorp.Scripting.Adventure
                                 break;
                             }
                         }
-                        if (RemainingTravelTime.Hours < 1)
+                        if (RemainingTravelTime.TotalHours < 1)
                         {
                             var balloonPorts = world.PlayerFaction.GetRooms().OfType<BalloonPort>().ToList();
                             Vector3 location = world.Camera.Position;

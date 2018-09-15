@@ -75,7 +75,7 @@ namespace DwarfCorp
         public TrinketInfo TrinketData;
         public bool Generated = true;
         public string ShortName;
-
+        public float MaterialStrength = 5;
         public string PlantToGenerate { get; set; }
 
         public bool CanCraft { get; set; }
@@ -164,6 +164,7 @@ namespace DwarfCorp
             CraftPrerequisites.AddRange(other.CraftPrerequisites);
             CraftInfo = other.CraftInfo;
             Generated = true;
+            MaterialStrength = other.MaterialStrength;
             if (other.CompositeLayers != null)
             {
                 CompositeLayers = new List<CompositeLayer>();

@@ -123,6 +123,7 @@ namespace DwarfCorp
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
+            AI.Movement.SetCan(MoveType.Dig, true);
             Species = "Goblin";
         }
 

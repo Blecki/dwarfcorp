@@ -63,6 +63,11 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
+            if ((Creature.Physics.GlobalTransform.Translation - Location).LengthSquared() < 0.5f)
+            {
+                yield return Act.Status.Success;
+                yield break;
+            }
             switch (Type)
             {
                 case TeleportType.Jump:

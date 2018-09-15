@@ -592,6 +592,14 @@ namespace DwarfCorp
             return Math.Min(dx, dz);
         }
 
+        public static float Dist2D(Vector3 pos1, Vector3 pos)
+        {
+            Vector3 diff = pos1 - pos;
+            Vector2 diff2d = new Vector2(diff.X, diff.Z);
+            return diff2d.Length();
+        }
+
+
         /// <summary>
         /// Gets the bounding rectangle of a set of rectangles.
         /// </summary>

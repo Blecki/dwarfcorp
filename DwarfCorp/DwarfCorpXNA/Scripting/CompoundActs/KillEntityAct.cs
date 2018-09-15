@@ -45,7 +45,7 @@ namespace DwarfCorp
     {
         public Body Entity { get; set; }
         public bool PathExists { get; set; }
-        
+        public float RadiusDomain { get; set; }
         public KillEntityAct()
         {
             PathExists = false;
@@ -66,14 +66,33 @@ namespace DwarfCorp
                 }
                 return false;
             }
-            return Entity != null && !Entity.IsDead;
+            if(Entity == null && Entity.IsDead)
+            {
+                return false;
+            }
+
+            if (RadiusDomain > 0.0)
+            {
+                if ((creature.Position - Entity.Position).LengthSquared() > RadiusDomain)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
+
+        private Body closestDefensiveStructure = null;
 
         public IEnumerable<Act.Status> OnAttackEnd(CreatureAI creature)
         {
             Verify(creature);
             creature.Creature.OverrideCharacterMode = false;
             creature.Creature.CurrentCharacterMode = CharacterMode.Idle;
+            if (closestDefensiveStructure != null)
+            {
+                closestDefensiveStructure.ReservedFor = null;
+            }
             yield return Act.Status.Success;
         }
 
@@ -82,6 +101,22 @@ namespace DwarfCorp
         {
             Entity = entity;
             Name = "Kill Entity";
+
+            // Get the closest structure that we might defend from.
+            closestDefensiveStructure = creature.Faction.OwnedObjects.Where(b => !b.IsReserved && b.Tags.Contains("Defensive")).OrderBy(b => (b.Position - Entity.Position).LengthSquared()).FirstOrDefault();
+
+            // Do not attempt to defend from faraway structures
+            if (closestDefensiveStructure != null)
+            {
+                float distToStructure = (closestDefensiveStructure.Position - creature.Position).Length();
+                float distToEntity = (Entity.Position - creature.Position).Length();
+
+                if (distToStructure > 1.5f * distToEntity || distToStructure > 20.0f)
+                {
+                    closestDefensiveStructure = null;
+                }
+            }
+
             PlanAct.PlanType planType = PlanAct.PlanType.Adjacent;
             float radius = 0.0f;
             if (creature.Creature.Attacks[0].Mode == Attack.AttackMode.Ranged)
@@ -101,17 +136,36 @@ namespace DwarfCorp
             }
             else
             {
-                Tree =
-                    new Domain(Verify(creature), new Sequence
-                        (
-                        new GoToEntityAct(entity, creature)
-                        {
-                            MovingTarget = true,
-                            PlanType = planType,
-                            Radius = radius
-                        } | new Wrap(() => OnAttackEnd(creature)),
-                        new MeleeAct(Agent, entity)
-                        ));
+                if (closestDefensiveStructure == null || (closestDefensiveStructure.Position - creature.Position).Length() > 20.0f)
+                {
+                    Tree =
+                        new Domain(Verify(creature), new Sequence
+                            (
+                            new GoToEntityAct(entity, creature)
+                            {
+                                MovingTarget = true,
+                                PlanType = planType,
+                                Radius = radius
+                            } | new Wrap(() => OnAttackEnd(creature)),
+                            new MeleeAct(Agent, entity),
+                            new Wrap(() => OnAttackEnd(creature))
+                            ));
+                }
+                else
+                {
+                    closestDefensiveStructure.ReservedFor = creature;
+                    Tree =
+                        new Domain(Verify(creature), new Sequence
+                            (
+                            new GoToEntityAct(closestDefensiveStructure, creature)
+                            {
+                                PlanType = PlanAct.PlanType.Into,
+                            } | new Wrap(() => OnAttackEnd(creature)),
+                            new TeleportAct(Creature.AI) { Location = closestDefensiveStructure.GetRotatedBoundingBox().Center(), Type = TeleportAct.TeleportType.Lerp },
+                            new MeleeAct(Agent, entity) {  DefensiveStructure = closestDefensiveStructure},
+                            new Wrap(() => OnAttackEnd(creature))
+                            ));
+                }
 
             }
         }

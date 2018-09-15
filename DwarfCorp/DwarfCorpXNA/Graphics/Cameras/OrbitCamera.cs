@@ -348,7 +348,7 @@ namespace DwarfCorp
             
             UpdateViewMatrix();
         }
-
+        private float _zoomTime = 0;
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
             // Don't attempt any camera control if the user is trying to type intoa focus item.
@@ -371,28 +371,30 @@ namespace DwarfCorp
             if (ZoomTargets.Count > 0)
             {
                 Vector3 currTarget = MathFunctions.Clamp(ProjectToSurface(ZoomTargets.First()), bounds);
-                if (Vector3.DistanceSquared(Target, currTarget) > 5)
+                if (MathFunctions.Dist2D(Target, currTarget) > 5 && _zoomTime < 3)
                 {
                     Vector3 newTarget = 0.8f * Target + 0.2f * currTarget;
                     Vector3 d = newTarget - Target;
                     if (bounds.Contains(Target + d) != ContainmentType.Contains)
                     {
+                        _zoomTime = 0;
                         ZoomTargets.RemoveAt(0);
                     }
                     else
                     {
                         Target += d;
                         Position += d;
+                        _zoomTime += (float)time.ElapsedRealTime.TotalSeconds;
                     }
                 }
                 else
                 {
+                    _zoomTime = 0;
                     ZoomTargets.RemoveAt(0);
                 }
             }
 
             Target = MathFunctions.Clamp(Target, bounds);
-
             int edgePadding = -10000;
 
             if (GameSettings.Default.EnableEdgeScroll)
@@ -715,8 +717,10 @@ namespace DwarfCorp
             Vector3 clampPosition = MathFunctions.Clamp(Position, bounds.Expand(-2.0f));
             Vector3 dTarget = clampTarget - Target;
             Vector3 dPosition = clampPosition - Position;
-            Position += dTarget + dPosition;
-            Target += dTarget + dPosition;
+            var newTarget = Target + dTarget + dPosition;
+            var newPosition = Position + dTarget + dPosition;
+            Target = 0.95f * Target + 0.05f * newTarget;
+            Position = 0.95f * Position + 0.05f * newPosition;
         }
 
         public bool CollidesWithChunks(ChunkManager chunks, Vector3 pos, bool applyForce, bool allowInvisible, float size=0.5f, float height=2.0f)

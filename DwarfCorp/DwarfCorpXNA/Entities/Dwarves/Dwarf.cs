@@ -164,6 +164,10 @@ namespace DwarfCorp
             AI.Movement.SetSpeed(MoveType.RideVehicle, 3.0f);
             AI.Movement.SetSpeed(MoveType.EnterVehicle, 1.0f);
             AI.Movement.SetSpeed(MoveType.ExitVehicle, 1.0f);
+            if (AI.Stats.IsTaskAllowed(Task.TaskCategory.Dig))
+            {
+                AI.Movement.SetCan(MoveType.Dig, true);
+            }
             AI.TriggersMourning = true;
             AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Stats.Gender);
             Species = "Dwarf";

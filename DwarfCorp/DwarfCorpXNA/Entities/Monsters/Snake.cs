@@ -144,6 +144,7 @@ namespace DwarfCorp
             Physics.Tags.Add("Snake");
             Physics.Tags.Add("Animal");
             AI.Movement.SetCan(MoveType.ClimbWalls, true);
+            AI.Movement.SetCan(MoveType.Dig, true);
             AI.Stats.FullName = "Giant Snake";
             AI.Stats.CurrentClass = new EmployeeClass()
             {

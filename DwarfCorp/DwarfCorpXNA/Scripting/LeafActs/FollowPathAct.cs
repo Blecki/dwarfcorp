@@ -99,10 +99,6 @@ namespace DwarfCorp
                 {
                     continue;
                 }
-                if (!path[i].SourceVoxel.IsEmpty)
-                {
-                    return false;
-                }
                 var neighbors = Agent.Movement.GetMoveActions(path[i].SourceState, Agent.World.OctTree);
                 if (!neighbors.Any(n => n.DestinationState == path[i + 1].SourceState))
                 {
@@ -370,7 +366,7 @@ namespace DwarfCorp
                 case MoveType.Jump:
                     CleanupMinecart();
                     if (t < 0.5f)
-                    { 
+                    {
                         Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
                     }
                     Creature.OverrideCharacterMode = false;
@@ -409,7 +405,7 @@ namespace DwarfCorp
                 case MoveType.Climb:
                 case MoveType.ClimbWalls:
                     CleanupMinecart();
-                    if (((int) ((t + 1)*100))%50 == 0)
+                    if (((int)((t + 1) * 100)) % 50 == 0)
                     {
                         Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
                     }
@@ -421,14 +417,14 @@ namespace DwarfCorp
 
                         if (action.MoveType == MoveType.ClimbWalls && action.ActionVoxel.IsValid)
                         {
-                            Agent.Physics.Velocity = (action.DestinationVoxel.WorldPosition + Vector3.One*0.5f) - currPosition;
+                            Agent.Physics.Velocity = (action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f) - currPosition;
                             transform.Translation = diff * t + currPosition;
                         }
                         else if (action.MoveType == MoveType.Climb && action.InteractObject != null)
                         {
                             var ladderPosition = action.InteractObject.GetRoot().GetComponent<Body>().Position;
                             transform.Translation = diff * t + currPosition;
-                            Agent.Physics.Velocity = ladderPosition- currPosition;
+                            Agent.Physics.Velocity = ladderPosition - currPosition;
                         }
                     }
                     else
@@ -455,6 +451,18 @@ namespace DwarfCorp
                         transform.Translation = currPosition;
                     }
                     break;
+                case MoveType.Dig:
+                    CleanupMinecart();
+                    var destroy = new DigAct(Creature.AI, new KillVoxelTask(action.DestinationVoxel)) { CheckOwnership = false } ;
+                    destroy.Initialize();
+                    foreach (var status in destroy.Run())
+                    {
+                        if (status == Act.Status.Fail)
+                            yield return Act.Status.Fail;
+                        yield return Act.Status.Running;
+                    }
+                    yield return Act.Status.Fail;
+                    yield break;
                 case MoveType.DestroyObject:
                     CleanupMinecart();
                     var melee = new MeleeAct(Creature.AI, (Body) action.InteractObject);

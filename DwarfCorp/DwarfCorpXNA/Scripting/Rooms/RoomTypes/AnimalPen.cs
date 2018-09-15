@@ -173,5 +173,18 @@ namespace DwarfCorp
             }
             base.Update();
         }
+
+        public override void Destroy()
+        {
+            foreach(var animal in Animals)
+            {
+                var creature = animal.GetRoot().GetComponent<CreatureAI>();
+                if (creature != null)
+                {
+                    creature.ResetPositionConstraint();
+                }
+            }
+            base.Destroy();
+        }
     }
 }

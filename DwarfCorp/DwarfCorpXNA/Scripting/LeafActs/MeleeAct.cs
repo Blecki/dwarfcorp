@@ -52,6 +52,8 @@ namespace DwarfCorp
         public Timer Timeout { get; set; }
         public string TargetName { get; set; }
         public Timer FailTimer { get; set; }
+        public Body DefensiveStructure { get; set; }
+
         public MeleeAct(CreatureAI agent, string target) :
             base(agent)
         {
@@ -69,6 +71,8 @@ namespace DwarfCorp
             }
             CurrentAttack = Datastructures.SelectRandom(attacks);
         }
+
+        public float LastHp = 0.0f;
 
         public MeleeAct(CreatureAI agent, Body target) :
             base(agent)
@@ -93,6 +97,10 @@ namespace DwarfCorp
             Creature.Physics.Orientation = Physics.OrientMode.RotateY;
             Creature.OverrideCharacterMode = false;
             Creature.CurrentCharacterMode = CharacterMode.Walking;
+            if (DefensiveStructure != null)
+            {
+                DefensiveStructure.ReservedFor = null;
+            }
             base.OnCanceled();
         }
 
@@ -125,8 +133,8 @@ namespace DwarfCorp
                 {
                     if (a.Equals(b)) return 0;
 
-                    float da = (a.DestinationVoxel.WorldPosition - Target.Position).LengthSquared();
-                    float db = (b.DestinationVoxel.WorldPosition - Target.Position).LengthSquared();
+                    float da = (a.DestinationVoxel.WorldPosition - Target.Position).LengthSquared() * Agent.Movement.Cost(a.MoveType);
+                    float db = (b.DestinationVoxel.WorldPosition - Target.Position).LengthSquared() * Agent.Movement.Cost(a.MoveType);
 
                     return da.CompareTo(db);
                 });
@@ -254,9 +262,9 @@ namespace DwarfCorp
                 Creature.Physics.Face(targetPos);
 
                 bool intersectsbounds = Creature.Physics.BoundingBox.Intersects(Target.BoundingBox);
-
+                float dist = diff.Length();
                 // If we are really far from the target, something must have gone wrong.
-                if (!intersectsbounds && diff.Length() > CurrentAttack.Range * 4)
+                if (DefensiveStructure == null && !intersectsbounds && dist > CurrentAttack.Range * 4)
                 {
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     Creature.OverrideCharacterMode = false;
@@ -265,8 +273,55 @@ namespace DwarfCorp
                     yield break;
                 }
 
+                if (DefensiveStructure != null)
+                {
+                 
+                    if (Creature.Hp < LastHp)
+                    {
+                        float damage = LastHp - Creature.Hp;
+                        Creature.Heal(Math.Min(5.0f, damage));
+                        var health = DefensiveStructure.GetRoot().GetComponent<Health>();
+                        if (health != null)
+                        {
+                            health.Damage(damage);
+                            Drawer2D.DrawLoadBar(health.World.Camera, DefensiveStructure.Position, Color.White, Color.Black, 32, 1, health.Hp / health.MaxHealth, 0.1f);
+                        }
+                        LastHp = Creature.Hp;
+                    }
+
+                    if (dist > CurrentAttack.Range)
+                    {
+                        float sqrDist = dist * dist;
+                        foreach(var threat in Creature.AI.Faction.Threats)
+                        {
+                            float threatDist = (threat.AI.Position - Creature.AI.Position).LengthSquared();
+                            if (threatDist < sqrDist)
+                            {
+                                sqrDist = threatDist;
+                                Target = threat.Physics;
+                                break;
+                            }
+                        }
+                        dist = (float)Math.Sqrt(sqrDist);
+                    }
+
+                    if (dist > CurrentAttack.Range * 4)
+                    {
+                        yield return Status.Fail;
+                        yield break;
+                    }
+
+                    if (DefensiveStructure.IsDead)
+                    {
+                        DefensiveStructure = null;
+                    }
+                }
+
+                LastHp = Creature.Hp;
+
+               
                 // If we're out of attack range, run toward the target.
-                if(!Creature.AI.Movement.IsSessile && !intersectsbounds && diff.Length() > CurrentAttack.Range)
+                if(DefensiveStructure == null && !Creature.AI.Movement.IsSessile && !intersectsbounds && diff.Length() > CurrentAttack.Range)
                 {
                     Creature.CurrentCharacterMode = defaultCharachterMode;
                     /*
@@ -296,8 +351,8 @@ namespace DwarfCorp
                     }
                 }
                 // If we have a ranged weapon, try avoiding the target for a few seconds to get within range.
-                else if (!Creature.AI.Movement.IsSessile && !intersectsbounds && !avoided && (CurrentAttack.Mode == Attack.AttackMode.Ranged &&
-                    diff.Length() < CurrentAttack.Range*0.15f))
+                else if (DefensiveStructure == null && !Creature.AI.Movement.IsSessile && !intersectsbounds && !avoided && (CurrentAttack.Mode == Attack.AttackMode.Ranged &&
+                    dist < CurrentAttack.Range*0.15f))
                 {
                     FailTimer.Reset();
                     foreach (Act.Status stat in AvoidTarget(CurrentAttack.Range, 3.0f))
@@ -307,7 +362,8 @@ namespace DwarfCorp
                     avoided = true;
                 }
                 // Else, stop and attack
-                else
+                else if ((DefensiveStructure == null && dist < CurrentAttack.Range) ||
+                         (DefensiveStructure != null && dist < CurrentAttack.Range * 2.0))
                 {
                     if (CurrentAttack.Mode == Attack.AttackMode.Ranged 
                         && VoxelHelpers.DoesRayHitSolidVoxel(Creature.World.ChunkManager.ChunkData,

@@ -90,6 +90,16 @@ namespace DwarfCorp
             KeyReleasedCallback -= dummykeypressed;
         }
 
+        public static void Cleanup()
+        {
+            MousePressedCallback = null;
+            MouseReleasedCallback = null;
+            MouseClickedCallback = null;
+            MouseScrolledCallback = null;
+            KeyPressedCallback = null;
+            KeyReleasedCallback = null;
+        }
+
         public void Destroy()
         {
             UnregisterEventHandlers();

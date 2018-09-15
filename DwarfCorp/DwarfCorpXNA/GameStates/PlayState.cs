@@ -2556,7 +2556,6 @@ namespace DwarfCorp.GameStates
 
         public void Destroy()
         {
-
             Input.Destroy();
         }
 

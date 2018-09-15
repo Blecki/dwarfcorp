@@ -12,7 +12,7 @@ namespace DwarfCorp.GameStates
     public class WorldGeneratorPreview : Gui.Widget
     {
         private WorldGenerator Generator;
-        private GraphicsDevice Device;
+        private GraphicsDevice Device { get { return GameState.Game.GraphicsDevice; } }
         public Gui.Widget PreviewPanel;
         private IEnumerable<KeyValuePair<string, Color>> previewText = null;
         private bool UpdatePreview = false;
@@ -211,8 +211,6 @@ namespace DwarfCorp.GameStates
             
         public WorldGeneratorPreview(GraphicsDevice Device)
         {
-            this.Device = Device;
-
             PreviewEffect = new BasicEffect(Device);
             PreviewEffect.LightingEnabled = false;
             PreviewEffect.FogEnabled = false;
@@ -414,16 +412,16 @@ namespace DwarfCorp.GameStates
                 return;
             }
 
-            if (PreviewRenderTarget == null)
+            if (PreviewRenderTarget == null || PreviewRenderTarget.IsDisposed || PreviewRenderTarget.GraphicsDevice.IsDisposed)
                 PreviewRenderTarget = new RenderTarget2D(Device, PreviewPanel.Rect.Width, PreviewPanel.Rect.Height);
 
-            if (PreviewTexture == null || UpdatePreview)
+            if (PreviewTexture == null || PreviewTexture.IsDisposed || PreviewTexture.GraphicsDevice.IsDisposed || UpdatePreview)
             {
                 var bkg = Root.GetTileSheet("basic");
                 UpdatePreview = false;
                 InitializePreviewRenderTypes();
 
-                if (PreviewTexture == null || PreviewTexture.Width != Overworld.Map.GetLength(0) ||
+                if (PreviewTexture == null || PreviewTexture.IsDisposed || PreviewTexture.GraphicsDevice.IsDisposed || PreviewTexture.Width != Overworld.Map.GetLength(0) ||
                     PreviewTexture.Height != Overworld.Map.GetLength(1))
                     PreviewTexture = new Texture2D(Device, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
 
@@ -479,6 +477,16 @@ namespace DwarfCorp.GameStates
             Device.BlendState = BlendState.Opaque;
             Device.DepthStencilState = DepthStencilState.Default;
             Device.SetRenderTarget(PreviewRenderTarget);
+            if (PreviewEffect.IsDisposed || PreviewEffect.GraphicsDevice.IsDisposed)
+            {
+                PreviewEffect = new BasicEffect(Device);
+                PreviewEffect.LightingEnabled = false;
+                PreviewEffect.FogEnabled = false;
+                PreviewEffect.Alpha = 1.0f;
+                PreviewEffect.DiffuseColor = new Vector3(1.0f, 1.0f, 1.0f);
+                PreviewEffect.AmbientLightColor = new Vector3(1.0f, 1.0f, 1.0f);
+            }
+
             PreviewEffect.World = Matrix.Identity;
 
             PreviewEffect.View = ViewMatrix;
@@ -488,7 +496,7 @@ namespace DwarfCorp.GameStates
             PreviewEffect.Texture = PreviewTexture;
             PreviewEffect.LightingEnabled = true;
 
-            if (Generator.LandMesh == null)
+            if (Generator.LandMesh == null || Generator.LandMesh.IsDisposed || Generator.LandMesh.GraphicsDevice.IsDisposed)
             {
                 Generator.CreateMesh(Device);
                 UpdatePreview = true;

@@ -61,8 +61,8 @@ namespace DwarfCorp
 
             FPSBuffer[k % 100] = FPS;
             k++;
-
             var avgFPS = (int)FPSBuffer.Average();
+#if XNA_BUILD
             if (!SentPerfReport && GameSettings.Default.AllowReporting && avgFPS < 20)
             {
                 if (FPSFaultTimer != null && FPSFaultTimer.Elapsed.TotalSeconds > 5)
@@ -84,6 +84,7 @@ namespace DwarfCorp
 
                 FPSFaultTimer = null;
             }
+#endif
 
             if (DwarfGame.IsConsoleVisible)
             {
