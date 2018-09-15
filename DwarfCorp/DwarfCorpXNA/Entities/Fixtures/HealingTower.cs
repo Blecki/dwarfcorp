@@ -41,6 +41,10 @@ namespace DwarfCorp
         {
             if (Active)
             {
+                // Prevent towers from healing when they have no charge.
+                var magicalObject = GetComponent<MagicalObject>();
+                if (magicalObject != null && magicalObject.CurrentCharges == 0) return;
+
                 HealTimer.Update(Time);
                 if (HealTimer.HasTriggered)
                 {
@@ -60,10 +64,12 @@ namespace DwarfCorp
                             World.ParticleManager.Trigger("star_particle", obj.Position, Color.Red, 10);
                             World.ParticleManager.TriggerRay("star_particle", Position, obj.Position);
                             SoundManager.PlaySound(ContentPaths.Audio.tinkle, obj.Position, true, 1.0f);
-                            GetComponent<MagicalObject>().CurrentCharges--;
-                            if (GetComponent<MagicalObject>().CurrentCharges == 0)
+
+                            if (magicalObject != null)
                             {
-                                return;
+                                magicalObject.CurrentCharges -= 1;
+                                if (magicalObject.CurrentCharges == 0)
+                                    return;
                             }
                         }
                     }
