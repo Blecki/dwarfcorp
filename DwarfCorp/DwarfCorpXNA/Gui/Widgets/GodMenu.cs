@@ -241,34 +241,6 @@ namespace DwarfCorp.Gui.Widgets
 
                 new HorizontalMenuTray.MenuItem
                 {
-                    Text = "GAMBLE",
-                    OnClick = (sender, args) =>
-                    {
-                        foreach(var employee in Master.Faction.Minions)
-                        {
-                            employee.AssignTask(new Scripting.GambleTask() { Priority = Task.PriorityType.High });
-                        }
-
-                    }
-                },
-
-                new HorizontalMenuTray.MenuItem
-                {
-                    Text = "PASS OUT",
-                    OnClick = (sender, args) =>
-                    {
-                        var employee = Datastructures.SelectRandom(Master.Faction.Minions);
-                        if (employee != null)
-                        {
-                            employee.Creature.Heal(-employee.Status.Health.CurrentValue * employee.Creature.MaxHealth + 1);
-                        }
-
-                    }
-                },
-
-
-                new HorizontalMenuTray.MenuItem
-                {
                     Text = "TRADE ENVOY",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
@@ -289,7 +261,6 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "EVENT",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
-
                             ItemSource = Master.World.GoalManager.EventScheduler.Events.Events.Select(e =>
                             {
                                 return new HorizontalMenuTray.MenuItem
@@ -385,6 +356,25 @@ namespace DwarfCorp.Gui.Widgets
                                         if (thoughts != null)
                                             thoughts.AddThought(Thought.ThoughtType.CheatedPissed);
                                     }
+                                }
+                            },
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "GAMBLE",
+                                OnClick = (sender, args) =>
+                                {
+                                    foreach(var employee in Master.Faction.Minions)
+                                        employee.AssignTask(new Scripting.GambleTask() { Priority = Task.PriorityType.High });
+                                }
+                            },
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "PASS OUT",
+                                OnClick = (sender, args) =>
+                                {
+                                    var employee = Datastructures.SelectRandom(Master.Faction.Minions);
+                                    if (employee != null)
+                                        employee.Creature.Heal(-employee.Status.Health.CurrentValue * employee.Creature.MaxHealth + 1);
                                 }
                             }
                         }
