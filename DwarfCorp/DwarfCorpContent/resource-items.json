@@ -1,6 +1,7 @@
 [
   {
     "Name": "Wood",
+	"MaterialStrength" : 5.0,
     "MoneyValue": 5.0,
     "Description": "Sometimes hard to come by! Comes from trees.",
     "GuiLayers": [
@@ -46,6 +47,7 @@
   {
     "Name": "Stone",
     "MoneyValue": 4.0,
+	"MaterialStrength" : 20.0,
     "Description": "Dwarf's favorite material! Comes from the earth.",
     "GuiLayers": [
       {
@@ -130,6 +132,7 @@
 
   {
     "Name": "Obsidian",
+	"MaterialStrength" : 100.0,
     "MoneyValue": 10.0,
     "Description": "Obsidian forms when lava is cooled very quickly.",
     "GuiLayers": [
@@ -174,6 +177,7 @@
   {
     "Name": "Slate",
     "MoneyValue": 5.0,
+	"MaterialStrength" : 15.0,
     "Description": "A sedimentary rock that forms thin layers.",
     "GuiLayers": [
       {
@@ -216,6 +220,7 @@
 
   {
     "Name": "Granite",
+	"MaterialStrength" : 50.0,
     "MoneyValue": 6.0,
     "Description": "A metamorphic rock, granite is produced when sandstones and shales are compressed deep under ground.",
     "GuiLayers": [
@@ -260,6 +265,7 @@
   {
     "Name": "Marble",
     "MoneyValue": 8.0,
+	"MaterialStrength" : 30.0,
     "Description": "Marble is created when limestone is compressed deep under ground.",
     "GuiLayers": [
       {
@@ -303,6 +309,7 @@
   {
     "Name": "Ice",
     "MoneyValue": 1.0,
+	"MaterialStrength" : 1.0,
     "Description": "A weak building material found in glaciers.",
     "GuiLayers": [
       {
@@ -506,6 +513,7 @@
   },
   {
     "Name": "Gold",
+	"MaterialStrength" : 15.0,
     "MoneyValue": 500.0,
     "Description": "Shiny!",
     "GuiLayers": [
@@ -589,6 +597,7 @@
   {
     "Name": "Iron",
     "MoneyValue": 50.0,
+	"MaterialStrength" : 100.0,
     "Description": "Needed to build things.",
     "GuiLayers": [
       {
@@ -1851,6 +1860,7 @@
   },
   {
     "Name": "Brick",
+	"MaterialStrength" : 10.0,
     "MoneyValue": 4.0,
     "Description": "Made from dirt. Building material.",
     "GuiLayers": [

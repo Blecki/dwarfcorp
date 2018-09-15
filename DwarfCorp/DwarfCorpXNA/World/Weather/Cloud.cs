@@ -84,7 +84,7 @@ namespace DwarfCorp
             }
 
 
-            bool generateRainDrop = MathFunctions.RandEvent(Raininess);
+            bool generateRainDrop = MathFunctions.RandEvent(Raininess * 0.75f);
 
             if (generateRainDrop)
                 for (int i = 0; i < MaxRainDrops; i++)
@@ -92,7 +92,7 @@ namespace DwarfCorp
                     if (!RainDrops[i].IsAlive)
                     {
                         RainDrops[i].IsAlive = true;
-                        RainDrops[i].Pos = MathFunctions.RandVector3Box(BoundingBox);
+                        RainDrops[i].Pos = MathFunctions.RandVector3Box(BoundingBox.Expand(5));
                         RainDrops[i].Pos = new Vector3(RainDrops[i].Pos.X, BoundingBox.Min.Y - 1, RainDrops[i].Pos.Z);
                         RainDrops[i].Vel = Vector3.Down * Storm.Properties[TypeofStorm].RainSpeed + Velocity;
                         break;

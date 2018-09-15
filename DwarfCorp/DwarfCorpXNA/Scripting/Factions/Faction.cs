@@ -186,6 +186,13 @@ namespace DwarfCorp
 
             if (this == World.PlayerFaction)
             {
+                foreach (var body in OwnedObjects)
+                {
+                    if (body.ReservedFor != null && body.ReservedFor.IsDead)
+                    {
+                        body.ReservedFor = null;
+                    }
+                }
                 foreach (var m in Minions.Where(c => !SelectedMinions.Contains(c)))
                 {
                     if (m.Creature.SelectionCircle != null)
@@ -623,7 +630,7 @@ namespace DwarfCorp
             {
                 int count = Stockpiles.Sum(stock => stock.Resources.GetResourceCount(resource.ResourceType));
 
-                if (count < resource.NumResources)
+                if (count < resources.Where(r => r.ResourceType == resource.ResourceType).Sum(r => r.NumResources))
                 {
                     return false;
                 }

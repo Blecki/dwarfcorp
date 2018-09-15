@@ -268,7 +268,20 @@ namespace DwarfCorp
             {
                 if (Creature.Inventory.HasResource(resource))
                 {
-                    Item.SelectedResources.AddRange(Creature.Inventory.GetResources(resource, Inventory.RestockType.Any));
+                    var matchingResources = Creature.Inventory.GetResources(resource, Inventory.RestockType.Any);
+                    for (int i = 0; i < resource.NumResources; i++)
+                    {
+                        foreach(var matching in matchingResources)
+                        {
+                            int numSelected = Math.Min(matching.NumResources, resource.NumResources - i);
+                            Item.SelectedResources.Add(new ResourceAmount(matching.ResourceType, numSelected));
+                            i += numSelected;
+                            if (i >= resource.NumResources)
+                            {
+                                break;
+                            }
+                        }
+                    }
                 }
                 else
                 {
@@ -282,6 +295,7 @@ namespace DwarfCorp
         {
             Act unreserveAct = new Wrap(UnReserve);
             float time = 3 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt);
+            bool factionHasResources = Item.SelectedResources != null && Item.SelectedResources.Count > 0 && Creature.AI.Faction.HasResources(Item.SelectedResources);
             Act getResources = null;
             if (Item.ExistingResource != null)
             {
@@ -297,7 +311,7 @@ namespace DwarfCorp
                                                     ),
                                           new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true));
             }
-            else if (Item.SelectedResources == null || Item.SelectedResources.Count == 0)
+            else if (!factionHasResources)
             {
                 getResources = new Select(new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
                                           new Domain(() => !Item.HasResources &&

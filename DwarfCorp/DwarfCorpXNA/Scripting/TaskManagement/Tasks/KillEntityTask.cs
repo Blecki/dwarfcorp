@@ -88,10 +88,10 @@ namespace DwarfCorp
             {
                 Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
                 IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
-                return new FleeEntityAct(creature.AI) {Entity = EntityToKill, PathLength = 20};
+                return new FleeEntityAct(creature.AI) { Entity = EntityToKill, PathLength = 20 };
             }
-
-            return new KillEntityAct(EntityToKill, creature.AI);
+            float radius = this.Mode == KillType.Auto ? 20.0f : 0.0f;
+            return new KillEntityAct(EntityToKill, creature.AI) { RadiusDomain = radius };
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
@@ -128,6 +128,8 @@ namespace DwarfCorp
                 var ai = EntityToKill.EnumerateAll().OfType<Creature>().FirstOrDefault();
 
                 if (Mode == KillType.Attack && !agent.Stats.IsTaskAllowed(TaskCategory.Attack))
+                    return Feasibility.Infeasible;
+                else if (Mode == KillType.Auto && (agent.AI.Position - EntityToKill.Position).Length() > 30)
                     return Feasibility.Infeasible;
 
                 return Feasibility.Feasible;

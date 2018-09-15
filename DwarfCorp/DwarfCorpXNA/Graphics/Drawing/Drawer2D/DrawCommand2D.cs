@@ -41,6 +41,7 @@ namespace DwarfCorp
     /// </summary>
     public abstract class DrawCommand2D
     {
+        public float EndTime;
         public abstract void Render(SpriteBatch batch, Camera camera, Viewport viewport);
     }
 
