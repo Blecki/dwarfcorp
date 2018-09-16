@@ -96,6 +96,10 @@ namespace DwarfCorp.Scripting.Adventure
 
         public static TimeSpan GetETA(List<CreatureAI> party, float dist)
         {
+            if (party.Count == 0)
+            {
+                return new TimeSpan();
+            }
             float speed = party.Average(c => c.Stats.BuffedDex);
             float time = 100 * (dist / speed);
             return new TimeSpan(0, (int)(time), (int)(60 * (time - (int)(time))));
