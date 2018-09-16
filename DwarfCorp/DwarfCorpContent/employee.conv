@@ -183,6 +183,7 @@ title: Strike
 <<endif>>
 [[What's wrong?|WhyUnhappy]]
 [[What do you want?|DemandPayment]]
+[[Goodbye|Bye]]
 ===
 
 title: WhyUnhappy

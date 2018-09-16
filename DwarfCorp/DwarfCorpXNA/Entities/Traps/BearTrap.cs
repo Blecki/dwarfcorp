@@ -70,6 +70,7 @@ namespace DwarfCorp
 
             DamageAmount = 200;
 
+            this.PropogateTransforms();
             CreateCosmeticChildren(manager);
         }
 

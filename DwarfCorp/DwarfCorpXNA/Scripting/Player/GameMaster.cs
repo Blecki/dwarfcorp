@@ -25,7 +25,6 @@ namespace DwarfCorp
             BuildObject,
             Gather,
             Chop,
-            Guard,
             Attack,
             Plant,
             Wrangle,
@@ -35,7 +34,8 @@ namespace DwarfCorp
             BuildRail,
             PaintRail,
             God,
-            CancelTasks
+            CancelTasks,
+            DestroyZone
         }
         
         public OrbitCamera CameraController { get; set; }
@@ -182,11 +182,6 @@ namespace DwarfCorp
                 Player = this,
             };
 
-            Tools[ToolMode.Guard] = new GuardTool
-            {
-                Player = this,
-            };
-
             Tools[ToolMode.Chop] = new ChopTool
             {
                 Player = this,
@@ -226,6 +221,11 @@ namespace DwarfCorp
             Tools[ToolMode.BuildRail] = new Rail.BuildRailTool(this);
             Tools[ToolMode.PaintRail] = new Rail.PaintRailTool(this);
             Tools[ToolMode.CancelTasks] = new CancelTasksTool()
+            {
+                Player = this
+            };
+
+            Tools[ToolMode.DestroyZone] = new DestroyZoneTool
             {
                 Player = this
             };

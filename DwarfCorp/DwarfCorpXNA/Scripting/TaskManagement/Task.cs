@@ -83,6 +83,7 @@ namespace DwarfCorp
         public int MaxAssignable = 1;
         public bool ReassignOnDeath = true;
         public List<CreatureAI> AssignedCreatures = new List<CreatureAI>();
+        public bool Hidden = false;
 
         [JsonIgnore]
         public object GuiTag = null;
@@ -175,6 +176,16 @@ namespace DwarfCorp
         }
 
         public virtual void OnVoxelChange(VoxelChangeEvent changeEvent)
+        {
+
+        }
+
+        public virtual void OnUpdate()
+        {
+
+        }
+
+        public virtual void OnCancelled(TaskManager Manager, Faction Faction)
         {
 
         }

@@ -90,8 +90,6 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
-            
-
             var left = AddChild(new Widget());
             var right = AddChild(new EmployeeInfo
             {

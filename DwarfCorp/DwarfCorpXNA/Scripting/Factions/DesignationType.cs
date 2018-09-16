@@ -38,15 +38,14 @@ namespace DwarfCorp
         _None   = 0,
 
         Dig     = 1,
-        Guard   = 4,
-        Gather  = 8,
-        Attack  = 16,
-        Wrangle = 32,
-        Chop    = 64,
-        Put     = 128,
-        Plant   = 256, 
-        Craft   = 512,
+        Gather  = 2,
+        Attack  = 4,
+        Wrangle = 8,
+        Chop    = 16,
+        Put     = 32,
+        Plant   = 64, 
+        Craft   = 128,
 
-        _All     = Dig | Guard | Gather | Attack | Wrangle | Chop | Put | Plant | Craft,
+        _All     = Dig | Gather | Attack | Wrangle | Chop | Put | Plant | Craft,
     }
 }

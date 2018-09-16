@@ -45,6 +45,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    // Todo: Move storage into faction and logic into BuildZoneTool.
     /// <summary>
     /// The BuildRoom designator keeps track of voxels selected by the player and turns
     /// them into BuildRoom designations (so that dwarves can build BuildRoom).
@@ -56,7 +57,7 @@ namespace DwarfCorp
         public List<BuildRoomOrder> BuildDesignations { get; set; }
         public RoomData CurrentRoomData { get; set; }
         public Faction Faction { get; set; }
-        private List<Body> displayObjects = null;
+
         [JsonIgnore]
         private WorldManager World { get; set; }
 
@@ -74,14 +75,6 @@ namespace DwarfCorp
         public void End()
         {
             CurrentRoomData = null;
-            if (displayObjects != null)
-            {
-                foreach (var body in displayObjects)
-                {
-                    body.GetRoot().Delete();
-                }
-                displayObjects.Clear();
-            }
         }
 
         public RoomBuilder()
@@ -109,19 +102,17 @@ namespace DwarfCorp
 
         public void OnExit()
         {
-            if (displayObjects != null)
-            {
-                foreach (var thing in displayObjects)
-                {
-                    thing.GetRoot().Delete();
-                }
-            }
         }
 
 
         public bool IsInRoom(VoxelHandle v)
         {
             return DesignatedRooms.Any(r => r.ContainsVoxel(v)) || Faction.IsInStockpile(v);
+        }
+
+        public Room GetRoomThatContainsVoxel(VoxelHandle V)
+        {
+            return DesignatedRooms.FirstOrDefault(r => r.ContainsVoxel(V));
         }
 
         public bool IsBuildDesignation(VoxelHandle v)
@@ -391,14 +382,6 @@ namespace DwarfCorp
                 Faction = World.PlayerFaction;
             }
 
-            if (displayObjects != null)
-            {
-                foreach (var thing in displayObjects)
-                {
-                    thing.GetRoot().Delete();
-                }
-            }
-
             foreach (BuildRoomOrder order in BuildDesignations)
             {
                 order.SetTint(Color.White);
@@ -440,56 +423,10 @@ namespace DwarfCorp
                     }
 
                     World.ShowTooltip("Release to build here.");
-
-                    displayObjects = RoomLibrary.GenerateRoomComponentsTemplate(CurrentRoomData, refs,
-                        World.ComponentManager, 
-                        World.ChunkManager.Content,
-                        GameState.Game.GraphicsDevice);
-
-                    foreach(Body thing in displayObjects)
-                    {
-                        thing.SetFlagRecursive(GameComponent.Flag.ShouldSerialize, false);
-                        thing.SetFlagRecursive(GameComponent.Flag.Active, false);
-                        SetDisplayColor(thing, GameSettings.Default.Colors.GetColor("Positive", Color.Green));
-                    }
                 }
                 else
                 {
                     World.Master.VoxSelector.SelectionColor = GameSettings.Default.Colors.GetColor("Negative", Color.Red);
-                }
-            }
-            else
-            {
-                foreach (var v in refs.Where(v => v.IsValid && !v.IsEmpty))
-                {
-                    if (IsBuildDesignation(v))
-                    {
-                        var order = GetBuildDesignation(v);
-                        if (order == null || order.Order == null)
-                        {
-                            // TODO(mklingen): Don't know how this could happen, but we got a crash here...
-                            continue;
-                        }
-                        if (!order.Order.IsBuilt)
-                        {
-                            order.Order.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
-                        }
-                        else
-                        {
-                            order.ToBuild.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
-                        }
-                        break;
-                    }
-                    else if (IsInRoom(v))
-                    {
-                        Room existingRoom = GetMostLikelyRoom(v);
-                        if (existingRoom == null)
-                        {
-                            continue;
-                        }
-                        existingRoom.SetTint(GameSettings.Default.Colors.GetColor("Negative", Color.Red));
-                        break;
-                    }
                 }
             }
         }
@@ -511,14 +448,6 @@ namespace DwarfCorp
                 return;
             }
 
-            if (displayObjects != null)
-            {
-                foreach (var thing in displayObjects)
-                {
-                    thing.GetRoot().Delete();
-                }
-            }
-
             if(button == InputManager.MouseButton.Left)
             {
                 if (CurrentRoomData.Verify(refs, Faction, World))
@@ -526,77 +455,6 @@ namespace DwarfCorp
                     BuildNewVoxels(refs);    
                 }
             }
-            else
-            {
-                DeleteVoxels(refs);
-            }
-        }
-
-        private void DeleteVoxels(IEnumerable<VoxelHandle> Voxels )
-        {
-            if (Voxels == null)
-            {
-                return;
-            }
-
-            foreach(var v in Voxels.Where(v => v.IsValid && !v.IsEmpty))
-            {
-                if(IsBuildDesignation(v))
-                {
-                    BuildVoxelOrder vox = GetBuildDesignation(v);
-                    if (vox != null && vox.Order != null)
-                    {
-                        vox.Order.Destroy();
-                        if (vox.Order.DisplayWidget != null)
-                        {
-                            World.Gui.DestroyWidget(vox.Order.DisplayWidget);
-                        }
-                        BuildDesignations.Remove(vox.Order);
-                        DesignatedRooms.Remove(vox.Order.ToBuild);
-                    }
-                }
-                else if(IsInRoom(v))
-                {
-                    Room existingRoom = GetMostLikelyRoom(v);
-
-                    if (existingRoom == null)
-                    {
-                        continue;
-                    }
-
-                    World.Gui.ShowModalPopup(new Gui.Widgets.Confirm
-                        {
-                            Text = "Do you want to destroy this " + existingRoom.RoomData.Name + "?",
-                            OnClose = (sender) => destroyDialog_OnClosed((sender as Gui.Widgets.Confirm).DialogResult, existingRoom)
-                        });
-
-                    break;
-                }
-            }
-        }
-
-        void destroyDialog_OnClosed(Gui.Widgets.Confirm.Result status, Room room)
-        {
-            if (status == Gui.Widgets.Confirm.Result.OKAY)
-            {
-                DesignatedRooms.Remove(room);
-
-                List<BuildVoxelOrder> existingDesignations = GetDesignationsAssociatedWithRoom(room);
-                BuildRoomOrder buildRoomDes = null;
-                foreach (BuildVoxelOrder des in existingDesignations)
-                {
-                    des.Order.VoxelOrders.Remove(des);
-                    buildRoomDes = des.Order;
-                }
-                if (buildRoomDes != null && buildRoomDes.DisplayWidget != null)
-                {
-                    World.Gui.DestroyWidget(buildRoomDes.DisplayWidget);
-                }
-                BuildDesignations.Remove(buildRoomDes);
-
-                room.Destroy();
-            }
         }
     }
-
 }

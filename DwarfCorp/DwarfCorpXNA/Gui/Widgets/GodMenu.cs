@@ -241,34 +241,6 @@ namespace DwarfCorp.Gui.Widgets
 
                 new HorizontalMenuTray.MenuItem
                 {
-                    Text = "GAMBLE",
-                    OnClick = (sender, args) =>
-                    {
-                        foreach(var employee in Master.Faction.Minions)
-                        {
-                            employee.AssignTask(new Scripting.GambleTask() { Priority = Task.PriorityType.High });
-                        }
-
-                    }
-                },
-
-                new HorizontalMenuTray.MenuItem
-                {
-                    Text = "PASS OUT",
-                    OnClick = (sender, args) =>
-                    {
-                        var employee = Datastructures.SelectRandom(Master.Faction.Minions);
-                        if (employee != null)
-                        {
-                            employee.Creature.Heal(-employee.Status.Health.CurrentValue * employee.Creature.MaxHealth + 1);
-                        }
-
-                    }
-                },
-
-
-                new HorizontalMenuTray.MenuItem
-                {
                     Text = "TRADE ENVOY",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
@@ -289,7 +261,6 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "EVENT",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
-
                             ItemSource = Master.World.GoalManager.EventScheduler.Events.Events.Select(e =>
                             {
                                 return new HorizontalMenuTray.MenuItem
@@ -386,6 +357,25 @@ namespace DwarfCorp.Gui.Widgets
                                             thoughts.AddThought(Thought.ThoughtType.CheatedPissed);
                                     }
                                 }
+                            },
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "GAMBLE",
+                                OnClick = (sender, args) =>
+                                {
+                                    foreach(var employee in Master.Faction.Minions)
+                                        employee.AssignTask(new Scripting.GambleTask() { Priority = Task.PriorityType.High });
+                                }
+                            },
+                            new HorizontalMenuTray.MenuItem
+                            {
+                                Text = "PASS OUT",
+                                OnClick = (sender, args) =>
+                                {
+                                    var employee = Datastructures.SelectRandom(Master.Faction.Minions);
+                                    if (employee != null)
+                                        employee.Creature.Heal(-employee.Status.Health.CurrentValue * employee.Creature.MaxHealth + 1);
+                                }
                             }
                         }
                     }
@@ -428,35 +418,44 @@ namespace DwarfCorp.Gui.Widgets
                     OnClick = (sender, args) =>
                     {
                         // Copy is required because spawning some types results in the creation of new types. EG, snakes create snake meat.
-                        var keys = CraftLibrary.EnumerateCraftables().Where(craft => craft.Type == CraftItem.CraftType.Object).ToList();
-                        int num = keys.Count();
+                        var itemTypes = CraftLibrary.EnumerateCraftables().Where(craft => craft.Type == CraftItem.CraftType.Object).ToList();
+                        int num = itemTypes.Count();
                         float gridSize = (float)Math.Ceiling(Math.Sqrt((double)num));
                         Vector3 gridCenter = Master.World.CursorLightPos;
+
                         int i = 0;
                         for (float dx = -gridSize/2; dx <= gridSize/2; dx++)
                         {
                             for (float dz = -gridSize/2; dz <= gridSize/2; dz++)
                             {
-                                if (i >= num)
+                                if (i < num)
                                 {
-                                    continue;
-                                }
+                                    var item = itemTypes[i];
+                                    if (item.Name != "Explosive")
+                                    {
+                                        Vector3 pos = MathFunctions.Clamp(gridCenter + new Vector3(dx, VoxelConstants.ChunkSizeY, dz), Master.World.ChunkManager.Bounds);
+                                        VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(Master.World.ChunkManager.ChunkData, pos, pos + Vector3.Down * 100);
 
-                                Vector3 pos = MathFunctions.Clamp(gridCenter + new Vector3(dx, VoxelConstants.ChunkSizeY, dz), Master.World.ChunkManager.Bounds);
-                                VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(Master.World.ChunkManager.ChunkData, pos, pos + Vector3.Down * 100);
-                                if (handle.IsValid)
-                                {
-                                    if (keys[i].Name == "Explosive")
-                                        continue;
+                                        if (handle.IsValid)
+                                        {
 
-                                    Blackboard blackboard = new Blackboard();
-                                    List<ResourceAmount> resources = keys[i].RequiredResources.Select(r => new ResourceAmount(ResourceLibrary.GetResourcesByTag(r.ResourceType).First(), r.NumResources)).ToList();
-                                    blackboard.SetData<List<ResourceAmount>>("Resources", resources);
-                                    blackboard.SetData<string>("CraftType", keys[i].Name);
-                                    var entity = EntityFactory.CreateEntity<GameComponent>(keys[i].EntityName, handle.WorldPosition + Vector3.Up + keys[i].SpawnOffset, blackboard);
-                                    Master.Faction.OwnedObjects.Add(entity as Body);
-                                    entity.Tags.Add("Moveable");
-                                    entity.Tags.Add("Deconstructable");
+                                            var blackboard = new Blackboard();
+                                            List<ResourceAmount> resources = item.RequiredResources.Select(r => new ResourceAmount(ResourceLibrary.GetResourcesByTag(r.ResourceType).First(), r.NumResources)).ToList();
+                                            blackboard.SetData<List<ResourceAmount>>("Resources", resources);
+                                            blackboard.SetData<string>("CraftType", item.Name);
+
+                                            var entity = EntityFactory.CreateEntity<GameComponent>(item.EntityName, handle.WorldPosition + Vector3.Up + item.SpawnOffset, blackboard);
+                                            if (entity != null)
+                                            {
+                                                if (item.AddToOwnedPool)
+                                                    Master.Faction.OwnedObjects.Add(entity as Body);
+                                                if (item.Moveable)
+                                                    entity.Tags.Add("Moveable");
+                                                if (item.Deconstructable)
+                                                    entity.Tags.Add("Deconstructable");
+                                            }
+                                        }
+                                    }
                                 }
                                 i++;
                             }

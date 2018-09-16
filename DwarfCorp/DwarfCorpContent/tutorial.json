@@ -85,12 +85,6 @@
 		"GuiHilite": "gather"
 	},
 	{
-		"Name": "guard",
-		"Title": "Guarding",
-		"Text": "Left click to tell dwarves to guard a block. They will stay around that block until you right click it to cancel the guard designation.",
-		"GuiHilite": "guard"
-	},
-	{
 		"Name": "attack",
 		"Title": "Attacking",
 		"Text": "Left click and drag on creatures to tell dwarves to attack them. Right click and drag to cancel attack designations.",
@@ -242,7 +236,7 @@
 	{
 		"Name": "economy",
 		"Title": "Economy",
-		"Text": "This is the economy screen, where you can view your employees, finances, and active goals. You can also hire new employees, fire employees, and manage employee tasks."
+		"Text": "This is the economy screen, where you can view your employees and finances. You can also hire new employees, fire employees, and manage employee tasks."
 	},
 	{
 		"Name": "goals",

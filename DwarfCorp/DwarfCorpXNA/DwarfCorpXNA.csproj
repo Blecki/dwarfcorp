@@ -294,6 +294,7 @@
     <Compile Include="GameStates\FactionViewState.cs" />
     <Compile Include="GameStates\YarnSpinner\EndConversation.cs" />
     <Compile Include="GameStates\YarnSpinner\HidePortrait.cs" />
+    <Compile Include="GameStates\YarnSpinner\EmployeeCommands.cs" />
     <Compile Include="GameStates\YarnSpinner\SpeechSynthesizer.cs" />
     <Compile Include="GameStates\YarnSpinner\SetLanguage.cs" />
     <Compile Include="GameStates\YarnSpinner\ShowPortrait.cs" />
@@ -344,9 +345,11 @@
     <Compile Include="Scripting\Gambling.cs" />
     <Compile Include="Scripting\Player\Economy\Quantity.cs" />
     <Compile Include="Scripting\Player\Economy\ResourceType.cs" />
+    <Compile Include="Scripting\Player\Tools\DestroyZoneTool.cs" />
     <Compile Include="Scripting\Player\Tools\ObjectHelper.cs" />
     <Compile Include="Scripting\Player\Tools\CancelTasksTool.cs" />
     <Compile Include="Scripting\Player\Tools\DeconstructObjectTool.cs" />
+    <Compile Include="Scripting\TaskManagement\CompoundTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\ChopEntityTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\FleeEntityTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\HealAllyTask.cs" />
@@ -734,7 +737,6 @@
     <Compile Include="Scripting\CompoundActs\GoToVoxelAct.cs" />
     <Compile Include="Scripting\CompoundActs\GoToZoneAct.cs" />
     <Compile Include="Scripting\CompoundActs\GoTrainAct.cs" />
-    <Compile Include="Scripting\CompoundActs\GuardAreaAct.cs" />
     <Compile Include="Scripting\CompoundActs\KillEntityAct.cs" />
     <Compile Include="Scripting\CompoundActs\KillVoxelAct.cs" />
     <Compile Include="Scripting\CompoundActs\StockResourceAct.cs" />
@@ -806,7 +808,6 @@
     <Compile Include="Scripting\Player\Tools\DwarfSelectorTool.cs" />
     <Compile Include="Scripting\Player\Tools\GatherTool.cs" />
     <Compile Include="Scripting\Player\Tools\GodModeTool.cs" />
-    <Compile Include="Scripting\Player\Tools\GuardTool.cs" />
     <Compile Include="Scripting\Player\Tools\PlayerTool.cs" />
     <Compile Include="Scripting\Player\VoxelSelector.cs" />
     <Compile Include="Scripting\Rooms\Room.cs" />
@@ -831,7 +832,6 @@
     <Compile Include="Scripting\TaskManagement\Tasks\PlantTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\GatherItemTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\GetItemWithTagsTask.cs" />
-    <Compile Include="Scripting\TaskManagement\Tasks\GuardAreaTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\KillEntityTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\KillVoxelTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\LookInterestingTask.cs" />

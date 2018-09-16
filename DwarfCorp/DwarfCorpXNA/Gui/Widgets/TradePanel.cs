@@ -245,16 +245,28 @@ namespace DwarfCorp.Gui.Widgets
                 }
             });
 
-            bottomRow.AddChild(new Gui.Widgets.Button
+            var autoButton = bottomRow.AddChild(new Gui.Widgets.Button
             {
                 Font = "font10",
                 Border = "border-button",
                 TextColor = new Vector4(0, 0, 0, 1),
-                Text = "Auto",
+                Text = "Make this work",
                 Tooltip = "What will make this work?",
                 AutoLayout = AutoLayout.DockRight,
-                OnClick = (sender, args) => EqualizeColumns()
+                OnUpdate = (sender, gameTime) =>
+                {
+                    DwarfBux net, tradeTarget;
+                    CalculateTradeAmount(out net, out tradeTarget);
+                    (sender as Gui.Widgets.Button).Enabled = net < tradeTarget;
+                    sender.Invalidate();
+                },
+                OnClick = (sender, args) =>
+                {
+                    if ((sender as Gui.Widgets.Button).Enabled)
+                        EqualizeColumns();
+                }
             });
+            Root.RegisterForUpdate(autoButton);
 
             bottomRow.AddChild(new Gui.Widgets.Button
             {
@@ -341,11 +353,8 @@ namespace DwarfCorp.Gui.Widgets
 
         private void UpdateBottomDisplays()
         {
-            // Todo: Satisfactory trade threshold calculated in two different spots.
-            var net = (Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney)
-                - (Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney);
-            var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
-            var tradeTarget = envoyOut * 0.25;
+            DwarfBux net, tradeTarget;
+            CalculateTradeAmount(out net, out tradeTarget);
             TotalDisplay.Text = String.Format("{0} [{1}]", net, tradeTarget);
             TotalDisplay.Text = String.Format("Their {2} {0}\n[need {1}]", net, tradeTarget, net >= 0 ? "Profit" : "Loss");
             TotalDisplay.Tooltip = String.Format("They are {1} with this trade.\nTheir {0} is " + net + ".\nThey need at least " + tradeTarget + " to be happy.", net >= 0 ? "profit" : "loss",
@@ -372,6 +381,15 @@ namespace DwarfCorp.Gui.Widgets
 
             SpaceDisplay.Tooltip = "We need this much space to make this trade.";
             SpaceDisplay.Invalidate();
+        }
+
+        private void CalculateTradeAmount(out DwarfBux net, out DwarfBux tradeTarget)
+        {
+            // Todo: Satisfactory trade threshold calculated in two different spots.
+            net = (Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney)
+                - (Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney);
+            var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
+            tradeTarget = envoyOut * 0.25;
         }
     }
 }

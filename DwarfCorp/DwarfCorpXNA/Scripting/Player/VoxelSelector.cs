@@ -259,6 +259,9 @@ namespace DwarfCorp
             {
                 return;
             }
+
+            if (SelectionType == VoxelSelectionType.SelectEmpty && underMouse.Coordinate.Y == VoxelConstants.ChunkSizeY - 1)
+                return;
                         
             VoxelUnderMouse = underMouse;
 
@@ -657,21 +660,23 @@ namespace DwarfCorp
             BoundingBox superset = GetSelectionBox(0.1f);
 
             if (DrawBox)
-                Drawer3D.DrawBox(superset, Mouse.GetState().LeftButton == ButtonState.Pressed ? SelectionColor : DeleteColor,
-                SelectionWidth, false);
-
-            var screenRect = new Rectangle(0, 0, 5, 5);
-            Vector3 half = Vector3.One * 0.5f;
-            Color dotColor = Mouse.GetState().LeftButton == ButtonState.Pressed ? SelectionColor : DeleteColor;
-            dotColor.A = 90;
-            foreach (var v in SelectionBuffer)
             {
-                if (!v.IsValid) continue;
-                
-                if (!v.IsExplored || ((SelectionType == VoxelSelectionType.SelectFilled && !v.IsEmpty)
-                    || (SelectionType == VoxelSelectionType.SelectEmpty && v.IsEmpty)))
+                Drawer3D.DrawBox(superset, Mouse.GetState().LeftButton == ButtonState.Pressed ? SelectionColor : DeleteColor,
+              SelectionWidth, false);
+
+                var screenRect = new Rectangle(0, 0, 5, 5);
+                Vector3 half = Vector3.One * 0.5f;
+                Color dotColor = Mouse.GetState().LeftButton == ButtonState.Pressed ? SelectionColor : DeleteColor;
+                dotColor.A = 90;
+                foreach (var v in SelectionBuffer)
                 {
-                    Drawer2D.DrawRect(World.Camera, v.WorldPosition + half, screenRect, dotColor, Color.Transparent, 0.0f);
+                    if (!v.IsValid) continue;
+
+                    if (!v.IsExplored || ((SelectionType == VoxelSelectionType.SelectFilled && !v.IsEmpty)
+                        || (SelectionType == VoxelSelectionType.SelectEmpty && v.IsEmpty)))
+                    {
+                        Drawer2D.DrawRect(World.Camera, v.WorldPosition + half, screenRect, dotColor, Color.Transparent, 0.0f);
+                    }
                 }
             }
         }

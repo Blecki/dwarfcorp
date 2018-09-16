@@ -173,6 +173,12 @@ namespace DwarfCorp
                     World.ShowTooltip("Room can't be built belowground!");
                     return false;
                 }
+
+                if (Faction.RoomBuilder.IsInRoom(voxel) || Faction.RoomBuilder.IsBuildDesignation(voxel))
+                {
+                    World.ShowTooltip("Room's can't overlap!");
+                    return false;
+                }
             }
 
             if (!allEmpty)
