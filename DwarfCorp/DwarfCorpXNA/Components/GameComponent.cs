@@ -185,6 +185,9 @@ namespace DwarfCorp
         public virtual void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         { }
 
+        public virtual void UpdatePaused(DwarfTime Time, ChunkManager Chunks, Camera Camera)
+        { }
+
         public virtual void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera,
             SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)
         {

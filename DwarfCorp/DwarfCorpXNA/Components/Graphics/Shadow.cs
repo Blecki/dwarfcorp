@@ -86,16 +86,22 @@ namespace DwarfCorp
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            UpdateTimer.Update(gameTime);
-            if(UpdateTimer.HasTriggered)
-            {
-                Body p = (Body) Parent;
+            ImplementUpdate(gameTime, chunks);
+            base.Update(gameTime, chunks, camera);
+        }
 
-                var voxelBelow = new VoxelHandle(chunks.ChunkData, 
-                    GlobalVoxelCoordinate.FromVector3(p.GlobalTransform.Translation 
+        private void ImplementUpdate(DwarfTime gameTime, ChunkManager chunks)
+        {
+            UpdateTimer.Update(gameTime);
+            if (UpdateTimer.HasTriggered)
+            {
+                Body p = (Body)Parent;
+
+                var voxelBelow = new VoxelHandle(chunks.ChunkData,
+                    GlobalVoxelCoordinate.FromVector3(p.GlobalTransform.Translation
                         + Vector3.Down * 0.25f));
 
-                if(voxelBelow.IsValid)
+                if (voxelBelow.IsValid)
                 {
                     var shadowTarget = VoxelHelpers.FindFirstVoxelBelow(voxelBelow);
 
@@ -116,9 +122,12 @@ namespace DwarfCorp
                 }
                 UpdateTimer.HasTriggered = false;
             }
+        }
 
-
-            base.Update(gameTime, chunks, camera);
+        public override void UpdatePaused(DwarfTime Time, ChunkManager Chunks, Camera Camera)
+        {
+            ImplementUpdate(Time, Chunks);
+            base.UpdatePaused(Time, Chunks, Camera);
         }
     }
 

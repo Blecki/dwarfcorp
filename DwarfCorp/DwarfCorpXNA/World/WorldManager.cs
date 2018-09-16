@@ -575,7 +575,7 @@ namespace DwarfCorp
 
             if (Paused)
             {
-                ComponentManager.UpdatePaused();
+                ComponentManager.UpdatePaused(gameTime, ChunkManager, Camera);
                 TutorialManager.Update(Gui);
             }
             // If not paused, we want to just update the rest of the game.

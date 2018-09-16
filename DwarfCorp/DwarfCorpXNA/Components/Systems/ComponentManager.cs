@@ -234,8 +234,15 @@ namespace DwarfCorp
             RemovalMutex.ReleaseMutex();
         }
 
-        public void UpdatePaused()
+        public void UpdatePaused(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            PerformanceMonitor.PushFrame("Component Update");
+
+            foreach (var component in Components.Values)
+                component.UpdatePaused(gameTime, chunks, camera);
+
+            PerformanceMonitor.PopFrame();
+
             AddRemove();
         }
 

@@ -81,6 +81,7 @@ namespace DwarfCorp
 
         public String DisplayName = null;
         public String ShortDisplayName = null;
+        public String PluralDisplayName = null;
 
         public List<Quantitiy<Resource.ResourceTags>> RequiredResources = new List<Quantitiy<Resource.ResourceTags>>();
         public Gui.TileReference Icon = null;
@@ -112,6 +113,7 @@ namespace DwarfCorp
         public void InitializeStrings()
         {
             DisplayName = StringLibrary.TransformDataString(DisplayName, Name);
+            PluralDisplayName = StringLibrary.TransformDataString(PluralDisplayName, DisplayName + "s"); // Default to appending an s if the plural name is not specified.
             ShortDisplayName = StringLibrary.TransformDataString(ShortDisplayName, TextGenerator.Shorten(DisplayName, 6));
             Verb = StringLibrary.TransformDataString(Verb, StringLibrary.GetString("build"));
             PastTeseVerb = StringLibrary.TransformDataString(PastTeseVerb, StringLibrary.GetString("built"));

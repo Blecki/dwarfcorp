@@ -2898,10 +2898,10 @@
       <Name>voxel-types</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Content Include="World\CraftItems\Palisade.json">
+    <None Include="World\CraftItems\Palisade.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Palisade</Name>
-    </Content>
+    </None>
     <None Include="World\CraftItems\Conveyor.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Conveyor</Name>
