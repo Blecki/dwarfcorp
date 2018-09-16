@@ -26,6 +26,7 @@ namespace DwarfCorp
                 Data.GetData<List<ResourceAmount>>("Resources", null))
         {
             OrientMode = SimpleSprite.OrientMode.YAxis;
+            AddChild(new MagicalObject(Manager));
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
