@@ -1039,7 +1039,7 @@ namespace DwarfCorp.GameStates
                                 Tooltip = "Block brush",
                                 OnClick = (widget, args) =>
                                 {
-                                    Master.VoxSelector.Brush = VoxelBrush.Box;
+                                    Master.VoxSelector.Brush = VoxelBrushes.BoxBrush;
                                     World.SetMouseOverlay("tool-icons", 29);
                                     World.Tutorial("brush");
                                 }
@@ -1051,7 +1051,7 @@ namespace DwarfCorp.GameStates
                                 Tooltip = "Shell brush",
                                 OnClick = (widget, args) =>
                                 {
-                                    Master.VoxSelector.Brush = VoxelBrush.Shell;
+                                    Master.VoxSelector.Brush = VoxelBrushes.ShellBrush;
                                     World.SetMouseOverlay("tool-icons", 30);
                                     World.Tutorial("brush");
                                 }
@@ -1063,7 +1063,7 @@ namespace DwarfCorp.GameStates
                                 Tooltip = "Stairs brush",
                                 OnClick = (widget, args) =>
                                 {
-                                    Master.VoxSelector.Brush = VoxelBrush.Stairs;
+                                    Master.VoxSelector.Brush = VoxelBrushes.StairBrush;
                                     World.SetMouseOverlay("tool-icons", 31);
                                     World.Tutorial("brush");
                                 }
@@ -1510,12 +1510,11 @@ namespace DwarfCorp.GameStates
                                         return;
                                     sender.Parent.Parent.Hidden = true;
                                     var assignments = new List<Task>();
-                                    for (int i = 0; i < buildInfo.GetNumRepeats(); i++)
-                                    {
+                                    var numRepeats = buildInfo.GetNumRepeats();
+                                    for (int i = 0; i < numRepeats; i++)
                                         assignments.Add(new CraftResourceTask(data.ObjectAsCraftableResource(), 1, buildInfo.GetSelectedResources()));
-                                    }
                                     World.Master.TaskManager.AddTasks(assignments);
-                                    World.ShowToolPopup(data.CurrentVerb + " " + buildInfo.GetNumRepeats() + " " + data.Name);
+                                    World.ShowToolPopup(data.CurrentVerb + " " + numRepeats.ToString() + " " + (numRepeats == 1 ? data.DisplayName : data.PluralDisplayName));
                                     World.Tutorial("build crafts");
                                 },
                             })
@@ -1856,10 +1855,12 @@ namespace DwarfCorp.GameStates
                             BuildAction = (sender, args) =>
                             {
                                 var buildInfo = sender as Gui.Widgets.BuildCraftInfo;
+                                var numRepeats = buildInfo.GetNumRepeats();
+
                                 sender.Hidden = true;
-                                List<Task> assignments = new List<Task> { new CraftResourceTask(data, buildInfo.GetNumRepeats(), buildInfo.GetSelectedResources()) };
+                                List<Task> assignments = new List<Task> { new CraftResourceTask(data, numRepeats, buildInfo.GetSelectedResources()) };
                                 World.Master.TaskManager.AddTasks(assignments);
-                                World.ShowToolPopup(data.CurrentVerb + " one " + data.Name);
+                                World.ShowToolPopup(data.CurrentVerb + " " + numRepeats.ToString() + " " + (numRepeats == 1 ? data.DisplayName : data.PluralDisplayName));
                                 World.Tutorial("cook");
                             },
                         },

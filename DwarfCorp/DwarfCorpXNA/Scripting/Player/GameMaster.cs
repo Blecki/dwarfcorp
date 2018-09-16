@@ -128,7 +128,7 @@ namespace DwarfCorp
             RoomLibrary.InitializeStatics();
 
             CameraController = camera;
-            VoxSelector = new VoxelSelector(World, CameraController, GameState.Game.GraphicsDevice, chunks);
+            VoxSelector = new VoxelSelector(World);
             BodySelector = new BodySelector(CameraController, GameState.Game.GraphicsDevice, components);
             SelectedMinions = new List<CreatureAI>();
 
