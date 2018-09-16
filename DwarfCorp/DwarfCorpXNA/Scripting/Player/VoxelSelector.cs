@@ -1,51 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using DwarfCorp.GameStates;
-using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Math = System.Math;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// The behavior of the voxel selector depends on its type.
-    /// </summary>
-    public enum VoxelSelectionType
-    {
-        /// <summary>
-        /// Selects only filled voxels
-        /// </summary>
-        SelectFilled,
-        /// <summary>
-        /// Selects only empty voxels
-        /// </summary>
-        SelectEmpty
-    }
-
-    /// <summary>
-    /// The voxel selector can be configured to select using a 
-    /// parametric brush.
-    /// </summary>
-    public enum VoxelBrush
-    {
-        /// <summary>
-        /// Default selection type. Selects everything in a bounding box.
-        /// </summary>
-        Box,
-        /// <summary>
-        /// Selects voxels in a shell on the outside of a box.
-        /// </summary>
-        Shell,
-        /// <summary>
-        /// Selects voxels in a stairstep pattern along the longest
-        /// axis.
-        /// </summary>
-        Stairs
-    }
-
     /// <summary>
     /// This class handles selecting and deselecting regions of voxels with the mouse. It is used
     /// in multiple tools.
@@ -113,11 +75,7 @@ namespace DwarfCorp
         /// </summary>
         private bool isRightPressed;
 
-
-        /// <summary>
-        /// The brush to use for selection.
-        /// </summary>
-        public VoxelBrush Brush = VoxelBrush.Box;
+        public IVoxelBrush Brush = VoxelBrushes.BoxBrush;
 
         public SoundSource ClickSound;
         public SoundSource DragSound;
@@ -129,16 +87,15 @@ namespace DwarfCorp
         public bool DrawVoxel = true;
 
         // Todo: Remove unused arguments
-        public VoxelSelector(WorldManager world, Camera camera, GraphicsDevice graphics, ChunkManager chunks)
+        public VoxelSelector(WorldManager World)
         {
-            World = world;
+            this.World = World;
+
             SelectionType = VoxelSelectionType.SelectEmpty;
             SelectionColor = Color.White;
             SelectionWidth = 0.1f;
             CurrentWidth = 0.08f;
             CurrentColor = Color.White;
-            CameraController = camera;
-            Chunks = chunks;
             SelectionBuffer = new List<VoxelHandle>();
             LeftPressed = LeftPressedCallback;
             RightPressed = RightPressedCallback;
@@ -204,9 +161,9 @@ namespace DwarfCorp
         /// Called when voxels are selected.
         /// </summary>
         public OnSelected Selected { get; set; }
-        public Camera CameraController { get; set; }
+        public Camera CameraController { get { return World.Camera; } }
         public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
-        public ChunkManager Chunks { get; set; }
+        public ChunkManager Chunks { get { return World.ChunkManager; } }
         /// <summary>
         /// This is the list of voxels currently selected.
         /// </summary>
@@ -358,7 +315,7 @@ namespace DwarfCorp
 
                         SelectionBuffer = Select(buffer, FirstVoxel.WorldPosition, underMouse.WorldPosition).ToList();
 
-                        if (!altPressed && Brush != VoxelBrush.Stairs)
+                        if (!altPressed && Brush.CullUnseenVoxels)
                         {
                             if (SelectionType == VoxelSelectionType.SelectFilled)
                                 SelectionBuffer.RemoveAll(v =>
@@ -441,182 +398,22 @@ namespace DwarfCorp
             }
         }
 
-        private bool SelectionValid(ref VoxelHandle voxel)
+        private bool SelectionValid(VoxelHandle voxel)
         {
             if (!voxel.IsValid)
                 return false;
 
             if (SelectionType == VoxelSelectionType.SelectFilled)
-            {
                 return !voxel.IsEmpty || !voxel.IsExplored || World.PlayerFaction.Designations.IsVoxelDesignation(voxel, DesignationType.Put);
-            }
 
             return voxel.IsEmpty && voxel.IsExplored;
         }
 
         public IEnumerable<VoxelHandle> Select(BoundingBox buffer, Vector3 start, Vector3 end)
         {
-            switch (Brush)
-            {
-                case VoxelBrush.Box:
-                    return VoxelHelpers.EnumerateCoordinatesInBoundingBox(buffer)
-                        .Select(c => new VoxelHandle(Chunks.ChunkData, c))
-                        .Where(v => SelectionValid(ref v));
-                case VoxelBrush.Shell:
-                    return EnumerateShell(buffer)
-                            .Select(c => new VoxelHandle(Chunks.ChunkData, c))
-                            .Where(v => SelectionValid(ref v));
-                case VoxelBrush.Stairs:
-                    return EnumerateStairVoxels(buffer, start, end, SelectionType == VoxelSelectionType.SelectFilled)
-                        .Select(c => new VoxelHandle(Chunks.ChunkData, c))
-                        .Where(v => SelectionValid(ref v));
-                default:
-                    throw new InvalidOperationException("VoxelBrush has invalid value");
-            }
-        }
-
-        /// <summary>
-        /// Gets a stairstep stretching accross the box.
-        /// </summary>
-        /// <param name="box">The box.</param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <param name="invert"></param>
-        /// <returns>A stairstep starting filled on the bottom row, pointing in the maximum x or z direction</returns>
-        private IEnumerable<GlobalVoxelCoordinate> EnumerateStairVoxels(BoundingBox box,  Vector3 start, Vector3 end, bool invert)
-        {
-            // Todo: Can this be simplified to return voxels above or below the line?
-            int minX = MathFunctions.FloorInt(box.Min.X + 0.5f);
-            int minY = MathFunctions.FloorInt(box.Min.Y + 0.5f);
-            int minZ = MathFunctions.FloorInt(box.Min.Z + 0.5f);
-            int maxX = MathFunctions.FloorInt(box.Max.X - 0.5f);
-            int maxY = MathFunctions.FloorInt(box.Max.Y - 0.5f);
-            int maxZ = MathFunctions.FloorInt(box.Max.Z - 0.5f);
-
-            // If not inverted, selects the Xs
-            // If inverted, selects the Os
-            //max y ----xOOOO
-            //      --- xxOOO
-            //      --- xxxOO
-            //      --- xxxxO
-            //min y --- xxxxx
-            //        minx --- maxx
-            float dx = box.Max.X - box.Min.X;
-            float dz = box.Max.Z - box.Min.Z;
-            Vector3 dir = end - start;
-            bool direction = dx > dz;
-            bool positiveDir = direction ? dir.X < 0 : dir.Z < 0;
-            int step = 0;
-
-            // Always make staircases go exactly to the top or bottom of the selection.
-            if (direction && invert)
-            {
-                minY = maxY - (maxX - minX);
-            }
-            else if (direction)
-            {
-                maxY = minY + (maxX - minX);
-            }
-            else if (invert)
-            {
-                minY = maxY - (maxZ - minZ);
-            }
-            else
-            {
-                maxY = minY + (maxZ - minZ);
-            }
-            int dy = maxY - minY;
-            // Start from the bottom of the stairs up to the top.
-            for (int y = minY; y <= maxY; y++)
-            {
-                int carve = invert ? MathFunctions.Clamp(dy - step, 0, dy) : step;
-                // If stairs are in x direction
-                if (direction)
-                {
-                    if (positiveDir)
-                    {
-                        // Start from min x, and march up to maxY - y
-                        for (int x = minX; x <= MathFunctions.Clamp(maxX - carve, minX, maxX); x++)
-                        {
-                            for (int z = minZ; z <= maxZ; z++)
-                            {
-                                yield return new GlobalVoxelCoordinate(x, y, z);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // Start from min x, and march up to maxY - y
-                        for (int x = maxX; x >= MathFunctions.Clamp(minX + carve, minX, maxX); x--)
-                        {
-                            for (int z = minZ; z <= maxZ; z++)
-                            {
-                                yield return new GlobalVoxelCoordinate(x, y, z);
-                            }
-                        }
-                    }
-                    step++;
-                }
-                // Otherwise, they are in the z direction.
-                else
-                {
-                    if (positiveDir)
-                    {
-                        // Start from min z, and march up to maxY - y
-                        for (int z = minZ; z <= MathFunctions.Clamp(maxZ - carve, minZ, maxZ); z++)
-                        {
-                            for (int x = minX; x <= maxX; x++)
-                            {
-                                yield return new GlobalVoxelCoordinate(x, y, z);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // Start from min z, and march up to maxY - y
-                        for (int z = maxZ; z >= MathFunctions.Clamp(minZ + carve, minZ, maxZ); z--)
-                        {
-                            for (int x = minX; x <= maxX; x++)
-                            {
-                                yield return new GlobalVoxelCoordinate(x, y, z);
-                            }
-                        }
-                    }
-                    step++;
-                }
-            }
-        }
-        
-        /// <summary>
-        /// Gets the 1-voxel shell of a bounding box.
-        /// </summary>
-        /// <param name="box">The box.</param>
-        /// <returns>A list of points on the boundary of the box.</returns>
-        private IEnumerable<GlobalVoxelCoordinate> EnumerateShell(BoundingBox box)
-        {
-            int minX = MathFunctions.FloorInt(box.Min.X + 0.5f);
-            int minY = MathFunctions.FloorInt(box.Min.Y + 0.5f);
-            int minZ = MathFunctions.FloorInt(box.Min.Z + 0.5f);
-            int maxX = MathFunctions.FloorInt(box.Max.X - 0.5f);
-            int maxY = MathFunctions.FloorInt(box.Max.Y - 0.5f);
-            int maxZ = MathFunctions.FloorInt(box.Max.Z - 0.5f);
-            
-            for (var y = minY; y <= maxY; y++)
-            {
-                // yx planes
-                for (var z = minZ; z <= maxZ; z++)
-                {
-                    yield return new GlobalVoxelCoordinate(minX, y, z);
-                    yield return new GlobalVoxelCoordinate(maxX, y, z);
-                }
-                // yz planes
-                for (var x = minX + 1; x < maxX; x++)
-                {
-                    yield return new GlobalVoxelCoordinate(x, y, minZ);
-                    yield return new GlobalVoxelCoordinate(x, y, maxZ);
-                }
-            }
-
+            return Brush.Select(buffer, start, end, SelectionType == VoxelSelectionType.SelectFilled)
+                .Select(c => new VoxelHandle(Chunks.ChunkData, c))
+                .Where(v => SelectionValid(v));
         }
 
         public void DraggedCallback(List<VoxelHandle> voxels, InputManager.MouseButton button)

@@ -1039,7 +1039,7 @@ namespace DwarfCorp.GameStates
                                 Tooltip = "Block brush",
                                 OnClick = (widget, args) =>
                                 {
-                                    Master.VoxSelector.Brush = VoxelBrush.Box;
+                                    Master.VoxSelector.Brush = VoxelBrushes.BoxBrush;
                                     World.SetMouseOverlay("tool-icons", 29);
                                     World.Tutorial("brush");
                                 }
@@ -1051,7 +1051,7 @@ namespace DwarfCorp.GameStates
                                 Tooltip = "Shell brush",
                                 OnClick = (widget, args) =>
                                 {
-                                    Master.VoxSelector.Brush = VoxelBrush.Shell;
+                                    Master.VoxSelector.Brush = VoxelBrushes.ShellBrush;
                                     World.SetMouseOverlay("tool-icons", 30);
                                     World.Tutorial("brush");
                                 }
@@ -1063,7 +1063,7 @@ namespace DwarfCorp.GameStates
                                 Tooltip = "Stairs brush",
                                 OnClick = (widget, args) =>
                                 {
-                                    Master.VoxSelector.Brush = VoxelBrush.Stairs;
+                                    Master.VoxSelector.Brush = VoxelBrushes.StairBrush;
                                     World.SetMouseOverlay("tool-icons", 31);
                                     World.Tutorial("brush");
                                 }
