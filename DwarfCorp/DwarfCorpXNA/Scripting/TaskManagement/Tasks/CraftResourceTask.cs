@@ -58,7 +58,6 @@ namespace DwarfCorp
         {
             this.NumRepeats = NumRepeats;
 
-            Category = TaskCategory.CraftItem;
             TaskID = id < 0 ? MaxID : id;
             MaxID++;
             Item = new CraftDesignation()
@@ -71,15 +70,19 @@ namespace DwarfCorp
             Name = String.Format("Craft order {0}", TaskID);
             Priority = PriorityType.Low;
 
-            noise = ResourceLibrary.GetResourceByName(Item.ItemType.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible)
-                ? "Cook"
-                : "Craft";
+            if (ResourceLibrary.GetResourceByName(Item.ItemType.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible))
+            {
+                noise = "Cook";
+                Category = TaskCategory.Cook;
+            }
+            else
+            {
+                noise = "Craft";
+                Category = selectedResource.IsMagical ? TaskCategory.Research : TaskCategory.CraftItem;
+            }
+
             AutoRetry = true;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
-            if (selectedResource.IsMagical)
-            {
-                Category = TaskCategory.Research;
-            }
         }
 
         public IEnumerable<Act.Status> Repeat(Creature creature)
@@ -138,10 +141,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (!this.Item.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
-                return Feasibility.Infeasible;
-
-            if (this.Item.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.Research))
+            if (!agent.Stats.IsTaskAllowed(Category))
                 return Feasibility.Infeasible;
 
             return HasResources(agent) && HasLocation(agent) ? Feasibility.Feasible : Feasibility.Infeasible;
