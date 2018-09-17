@@ -22,39 +22,19 @@
   },
   {
     "Name": "Matthew Klingensmith",
-    "Role": "Project Manager",
-    "Color": [255, 255, 255, 255],
-    "RandomFlash": false,
-    "Divider": false
-  },
-  {
-    "Name": "Matthew Klingensmith",
-    "Role": "Lead Programmer",
-    "Color": [255, 255, 255, 255],
-    "RandomFlash": false,
-    "Divider": false
-  },
-  {
-    "Name": "Matthew Klingensmith",
-    "Role": "Design + Sound",
+    "Role": "Project Lead",
     "Color": [255, 255, 255, 255],
     "RandomFlash": false,
     "Divider": false
   },
   {
     "Name": "Wilson Pei",
-    "Role": "Lead Artist",
+    "Role": "Lead Artist + Design",
     "Color": [255, 255, 255, 255],
     "RandomFlash": false,
     "Divider": false
   },
   {
-    "Name": "Wilson Pei",
-    "Role": "Design",
-    "Color": [255, 255, 255, 255],
-    "RandomFlash": false,
-    "Divider": false
-  },
   {
     "Name": "Emily So",
     "Role": "Concept Art",
@@ -96,6 +76,20 @@
     "Color": [255, 255, 255, 255],
     "RandomFlash": false,
     "Divider": false
+  },
+  {
+  	  "Name": "Joseph Hannah",
+	  "Role" : "Art Contractor",
+      "Color": [255, 255, 255, 255],
+      "RandomFlash": false,
+      "Divider": false
+  },
+  {
+  	  "Name": "David Tiegen",
+	  "Role" : "QA + Design Contractor",
+      "Color": [255, 255, 255, 255],
+      "RandomFlash": false,
+      "Divider": false
   },
   {
     "Name": null,

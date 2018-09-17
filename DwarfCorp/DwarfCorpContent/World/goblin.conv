@@ -64,6 +64,7 @@ title: Trade2
 		$envoy_name: Ew! Gross!
 		$envoy_name: Bad. Forbidden thing.
 		$envoy_name: Me will not take stinky bad things.
+	<<end>>
 	<<set $offensive_trades = $offensive_trades + 1>>
 	<<political_event "you tried to give us something offensive" -0.25 4>> // Description, change, duration (days)
 	<<if $offensive_trades >= 3>>
