@@ -144,6 +144,9 @@ namespace DwarfCorp
             if (!agent.Stats.IsTaskAllowed(Category))
                 return Feasibility.Infeasible;
 
+            if (agent.AI.Status.IsAsleep)
+                return Feasibility.Infeasible;
+
             return HasResources(agent) && HasLocation(agent) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
