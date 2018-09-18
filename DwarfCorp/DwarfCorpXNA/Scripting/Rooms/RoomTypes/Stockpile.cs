@@ -75,48 +75,18 @@ namespace DwarfCorp
         }
 
         public Stockpile()
-        {
-            Boxes = new List<Body>();
-            ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
-            Faction = null;
-            BlacklistResources = new List<Resource.ResourceTags>()
-            {
-                Resource.ResourceTags.Corpse
-            };
-        }
-
+        { }
 
         public Stockpile(Faction faction, WorldManager world) :
-            base(false, new List<VoxelHandle>(), RoomLibrary.GetData(StockpileName), world, faction)
+            this(faction, RoomLibrary.GetData(StockpileName), world)
+        { }
+
+        public Stockpile(Faction faction, RoomData data, WorldManager world) :
+            base(data, world, faction)
         {
             Boxes = new List<Body>();
+            faction.Stockpiles.Add(this);
             ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
-            faction.Stockpiles.Add(this);
-            Faction = faction;
-            BlacklistResources = new List<Resource.ResourceTags>()
-            {
-                Resource.ResourceTags.Corpse
-            };
-        }
-
-        public Stockpile(Faction faction, IEnumerable<VoxelHandle> voxels, RoomData data, WorldManager world) :
-            base(voxels, data, world, faction)
-        {
-            Boxes = new List<Body>();
-            faction.Stockpiles.Add(this);
-            Faction = faction;
-            BlacklistResources = new List<Resource.ResourceTags>()
-            {
-                Resource.ResourceTags.Corpse,
-                Resource.ResourceTags.Money
-            };
-        }
-
-        public Stockpile(Faction faction, bool designation, IEnumerable<VoxelHandle> designations, RoomData data, WorldManager world) :
-            base(designation, designations, data, world, faction)
-        {
-            Boxes = new List<Body>();
-            faction.Stockpiles.Add(this);
             Faction = faction;
             BlacklistResources = new List<Resource.ResourceTags>()
             {

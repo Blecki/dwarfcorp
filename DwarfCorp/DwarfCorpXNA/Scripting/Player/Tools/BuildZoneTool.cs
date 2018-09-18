@@ -60,9 +60,6 @@ namespace DwarfCorp
 
         public override void OnEnd()
         {
-            //if (BuildPanel != null && BuildPanel.Root != null)
-            //    BuildPanel.Close();
-            //BuildPanel = null;
             Player.Faction.RoomBuilder.End();
             Player.VoxSelector.Clear();
             Player.Faction.RoomBuilder.OnExit();

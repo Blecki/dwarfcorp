@@ -74,16 +74,11 @@ namespace DwarfCorp
 
         }
         
-        public AnimalPen(bool designation, IEnumerable<VoxelHandle> designations, WorldManager world, Faction faction) :
-            base(designation, designations, AnimalPenData, world, faction)
+        public AnimalPen(WorldManager world, Faction faction) :
+            base(AnimalPenData, world, faction)
         {
         }
 
-        public AnimalPen(IEnumerable<VoxelHandle> voxels, WorldManager world, Faction faction) :
-            base(voxels, AnimalPenData, world, faction)
-        {
-            OnBuilt();
-        }
         public override void OnBuilt()
         {
             foreach(var body in ZoneBodies)
@@ -93,7 +88,7 @@ namespace DwarfCorp
             ZoneBodies.Clear();
             foreach (
                 var fence in
-                    Fence.CreateFences(World.ComponentManager, ContentPaths.Entities.DwarfObjects.fence, Designations,
+                    Fence.CreateFences(World.ComponentManager, ContentPaths.Entities.DwarfObjects.fence, Voxels,
                         false))
             {
                 AddBody(fence);

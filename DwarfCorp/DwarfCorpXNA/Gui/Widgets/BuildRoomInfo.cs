@@ -26,8 +26,6 @@ namespace DwarfCorp.Gui.Widgets
                     builder.AppendLine("* Must be built below ground.");
                 if (!Data.CanBuildBelowGround)
                     builder.AppendLine("* Must be built above ground.");
-                if (Data.MustBeBuiltOnSoil)
-                    builder.AppendLine("* Must be built on soil.");
                 builder.AppendLine("Required per 4 tiles:");
                 foreach (var requirement in Data.RequiredResources)
                 {

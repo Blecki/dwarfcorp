@@ -40,24 +40,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A BuildRoom data has a Name, alters the apperance of voxels, requires resources to build,
-    /// and has item templates.
-    /// </summary>
     public class RoomData
     {
         public string Name { get; set; }
         public uint ID { get; set; }
         public string FloorType { get; set; }
         public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
-        public List<RoomTemplate> Templates { get; set; }
-        //public ImageFrame Icon { get; set; }
         public Gui.TileReference NewIcon { get; private set; }
         public string Description { get; set; }
         public bool CanBuildAboveGround = true;
         public bool CanBuildBelowGround = true;
-        public bool CanBuildOnMultipleLevels = false;
-        public bool MustBeBuiltOnSoil = false;
         public int MinimumSideLength = 3;
         public int MinimumSideWidth = 3;
         public int MaxNumRooms = int.MaxValue;
@@ -68,7 +60,6 @@ namespace DwarfCorp
             ID = id;
             FloorType = floorTexture;
             RequiredResources = requiredResources;
-            Templates = templates;
             NewIcon = icon;
             Description = "";
         }
@@ -122,7 +113,6 @@ namespace DwarfCorp
                 return false;
             }
 
-            // Todo: Lift into helper function that uses better algorithm.
             List<BoundingBox> boxes = Voxels.Select(voxel => voxel.GetBoundingBox()).ToList();
             BoundingBox box = MathFunctions.GetBoundingBox(boxes);
 
@@ -138,30 +128,31 @@ namespace DwarfCorp
             }
 
             int height = Voxels[0].Coordinate.Y;
-            bool allEmpty = true;
 
             foreach (var voxel in Voxels)
             {
                 if (voxel.IsEmpty)
-                    continue;
+                {
+                    World.ShowTooltip("Room must be built on solid ground.");
+                    return false;
+                }
 
                 var above = VoxelHelpers.GetVoxelAbove(voxel);
-                allEmpty &= (above.IsValid && above.IsEmpty);
+
+                if (above.IsValid && !above.IsEmpty)
+                {
+                    World.ShowTooltip("Room must be built in free space.");
+                    return false;
+                }
 
                 if (voxel.Type.IsInvincible) continue;
 
-                if (height != (int)voxel.Coordinate.Y && !CanBuildOnMultipleLevels)
+                if (height != (int)voxel.Coordinate.Y)
                 {
                     World.ShowTooltip("Room must be on flat ground!");
                     return false;
                 }
-
-                if (MustBeBuiltOnSoil && !voxel.Type.IsSoil)
-                {
-                    World.ShowTooltip("Room must be built on soil!");
-                    return false;
-                }
-
+                
                 if (!CanBuildAboveGround && voxel.Sunlight)
                 {
                     World.ShowTooltip("Room can't be built aboveground!");
@@ -181,36 +172,6 @@ namespace DwarfCorp
                 }
             }
 
-            if (!allEmpty)
-            {
-                World.ShowTooltip("Room must be built in free space.");
-                return false;
-            }
-
-            Queue<GlobalVoxelCoordinate> voxels = new Queue<GlobalVoxelCoordinate>();
-            voxels.Enqueue(Voxels.First().Coordinate);
-            HashSet<GlobalVoxelCoordinate> visited = new HashSet<GlobalVoxelCoordinate>();
-            while (voxels.Count > 0)
-            {
-                GlobalVoxelCoordinate curr = voxels.Dequeue();
-                visited.Add(curr);
-                foreach (var coord in VoxelHelpers.EnumerateManhattanNeighbors2D(curr))
-                {
-                    if (!visited.Contains(coord) && Voxels.Any(o => o.Coordinate == coord))
-                    {
-                        voxels.Enqueue(coord);
-                    }
-                }
-            }
-
-            foreach (var voxel in Voxels)
-            {
-                if (!visited.Contains(voxel.Coordinate))
-                {
-                    World.ShowTooltip("Room must be fully connected.");
-                    return false;
-                }
-            }
             return true;
         }
     }

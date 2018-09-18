@@ -57,8 +57,7 @@ namespace DwarfCorp
                 ResourceType = Resource.ResourceTags.Soil,
                 NumResources = 4
             };
-
-
+            
             return new RoomData(GraveyardName, 11, "Dirt", resources, new List<RoomTemplate>(), new Gui.TileReference("rooms", 12))
             {
                 Description = "Dwarves bury the dead here."
@@ -67,33 +66,15 @@ namespace DwarfCorp
 
         public Graveyard()
         {
+            ReplacementType = VoxelLibrary.GetVoxelType("Dirt");
+        }
+
+        public Graveyard(Faction faction, WorldManager world) :
+            base(faction, GraveyardData, world)
+        {
             Resources = new ResourceContainer();
-            WhitelistResources = new List<Resource.ResourceTags>()
-            {
-                Resource.ResourceTags.Corpse
-            };
-            BlacklistResources = new List<Resource.ResourceTags>();
-            BoxType = "Grave";
-            BoxOffset = new Vector3(0.5f, 0.6f, 0.5f);
-            ResourcesPerVoxel = 1;
-        }
+            ReplacementType = VoxelLibrary.GetVoxelType("Dirt");
 
-        public Graveyard(Faction faction, bool designation, IEnumerable<VoxelHandle> designations, WorldManager world) :
-            base(faction, designation, designations, GraveyardData, world)
-        {
-            WhitelistResources = new List<Resource.ResourceTags>()
-            {
-                Resource.ResourceTags.Corpse
-            };
-            BlacklistResources = new List<Resource.ResourceTags>();
-            BoxType = "Grave";
-            BoxOffset = new Vector3(0.5f, 0.6f, 0.5f);
-            ResourcesPerVoxel = 1;
-        }
-
-        public Graveyard(Faction faction, IEnumerable<VoxelHandle> voxels, WorldManager world) :
-            base(faction, voxels, GraveyardData, world)
-        {
             WhitelistResources = new List<Resource.ResourceTags>()
             {
                 Resource.ResourceTags.Corpse
@@ -107,7 +88,7 @@ namespace DwarfCorp
         public override void OnBuilt()
         {
             foreach (var fence in  Fence.CreateFences(World.ComponentManager,
-                ContentPaths.Entities.DwarfObjects.fence, Designations, false))
+                ContentPaths.Entities.DwarfObjects.fence, Voxels, false))
             {
                 AddBody(fence, false);
                 fence.Manager.RootComponent.AddChild(fence);

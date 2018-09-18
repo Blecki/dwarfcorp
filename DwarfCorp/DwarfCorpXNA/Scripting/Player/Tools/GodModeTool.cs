@@ -98,11 +98,9 @@ namespace DwarfCorp
             if(Command.Contains("Build/"))
             {
                 string type = Command.Substring(6);
-                BuildRoomOrder des = new BuildRoomOrder(RoomLibrary.CreateRoom(Player.Faction, type, refs, false, Player.World), Player.Faction, Player.World);
-                des.ToBuild.Designations = refs;
-                Player.Faction.RoomBuilder.BuildDesignations.Add(des);
-                Player.Faction.RoomBuilder.DesignatedRooms.Add(des.ToBuild);
-                des.Build();
+                var room = RoomLibrary.CreateRoom(Player.Faction, type, Player.World);
+                Player.Faction.RoomBuilder.DesignatedRooms.Add(room);
+                RoomLibrary.CompleteRoomImmediately(room, refs);
             }
             if (Command.Contains("Spawn/"))
             {

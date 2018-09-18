@@ -288,122 +288,47 @@ namespace DwarfCorp
 
         private void BuildNewVoxels(IEnumerable<VoxelHandle> designations)
         {
-            BuildRoomOrder order = null;
+            Room toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, World);
+            var order = new BuildRoomOrder(toBuild, Faction, Faction.World);
+            BuildDesignations.Add(order);
+            DesignatedRooms.Add(toBuild);
+
             foreach (var v in designations.Where(v => v.IsValid && !v.IsEmpty))
-            {
-                if (IsBuildDesignation(v))
-                    continue;
-                order = GetMostLikelyDesignation(v);
-                if (order != null && !order.IsBuilt && order.ToBuild.RoomData == CurrentRoomData)
-                    break;
-            }
+                order.VoxelOrders.Add(new BuildVoxelOrder(order, order.ToBuild, v));
 
-            bool newOrder = order == null;
-            foreach (var v in designations.Where(v => v.IsValid && !v.IsEmpty))
-            {
-                if(IsBuildDesignation(v) || IsInRoom(v))
-                    continue;
+            order.WorkObjects.AddRange(Fence.CreateFences(World.ComponentManager,
+                ContentPaths.Entities.DwarfObjects.constructiontape,
+                order.VoxelOrders.Select(o => o.Voxel),
+                true));
+            foreach (var obj in order.WorkObjects)
+                obj.Manager.RootComponent.AddChild(obj);
 
-                if (order != null)
-                {
-                    order.VoxelOrders.Add(new BuildVoxelOrder(order, order.ToBuild, v));
-                }
-                else
-                {
-                    if (CurrentRoomData == RoomLibrary.GetData("Stockpile"))
-                    {
-                        Stockpile toBuild = new Stockpile(Faction, World);
-                        order = new BuildStockpileOrder(toBuild, this.Faction);
-                        order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
-                        BuildDesignations.Add(order);
-                        DesignatedRooms.Add(toBuild);
-                    }
-                    else if (CurrentRoomData == RoomLibrary.GetData("Treasury"))
-                    {
-                        Treasury toBuild = new Treasury(Faction, World);
-                        order = new BuildRoomOrder(toBuild, this.Faction, Faction.World);
-                        order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
-                        BuildDesignations.Add(order);
-                        DesignatedRooms.Add(toBuild);
-                    }
-                    else
-                    {
-                        Room toBuild = RoomLibrary.CreateRoom(Faction, CurrentRoomData.Name, designations.ToList(), true, World);
-                        order = new BuildRoomOrder(toBuild, Faction, Faction.World);
-                        order.VoxelOrders.Add(new BuildVoxelOrder(order, toBuild, v));
-                        BuildDesignations.Add(order);
-                        DesignatedRooms.Add(toBuild);
-                    }
-                }
-            }
-
-            if (order != null)
-            {
-                foreach(var fence in order.WorkObjects)
-                {
-                    fence.GetRoot().Delete();
-                }
-
-                order.WorkObjects.Clear();
-                order.WorkObjects.AddRange(Fence.CreateFences(World.ComponentManager,
-                    ContentPaths.Entities.DwarfObjects.constructiontape,
-                    order.VoxelOrders.Select(o => o.Voxel),
-                    true));
-                foreach (var obj in order.WorkObjects)
-                {
-                    obj.Manager.RootComponent.AddChild(obj);
-                }
-                
-                if (newOrder)
-                    World.Master.TaskManager.AddTask(new BuildRoomTask(order));
-                /*
-                TaskManager.AssignTasks(new List<Task>()
-                {
-                    new BuildRoomTask(order)
-                }, Faction.FilterMinionsWithCapability(World.Master.SelectedMinions, GameMaster.ToolMode.BuildZone));
-                */
-            }
-        }
-
-        private void SetDisplayColor(Body body, Color color)
-        {
-            foreach (var sprite in body.EnumerateAll().OfType<Tinter>())
-            {
-                sprite.VertexColorTint = color;
-                sprite.Stipple = true;
-            }
+            World.Master.TaskManager.AddTask(new BuildRoomTask(order));
         }
 
         public void OnVoxelsDragged(List<VoxelHandle> refs, InputManager.MouseButton button)
         {
             World.Master.VoxSelector.SelectionColor = Color.White;
+
             if (Faction == null)
-            {
                 Faction = World.PlayerFaction;
-            }
-
+            
             foreach (BuildRoomOrder order in BuildDesignations)
-            {
                 order.SetTint(Color.White);
-            }
-
+            
             foreach (Room room in Faction.GetRooms())
-            {
                 room.SetTint(Color.White);
-            }
-
+            
             if (CurrentRoomData == null)
-            {
                 return;
-            }
-
+            
             if (button == InputManager.MouseButton.Left)
             {
                 World.Tutorial("build " + CurrentRoomData.Name);
+
                 if (CurrentRoomData.Verify(refs, Faction, World))
                 {
-                    List<Quantitiy<Resource.ResourceTags>> requirements =
-                        CurrentRoomData.GetRequiredResources(refs.Count, Faction);
+                    List<Quantitiy<Resource.ResourceTags>> requirements = CurrentRoomData.GetRequiredResources(refs.Count, Faction);
 
                     string tip = "Needs ";
 

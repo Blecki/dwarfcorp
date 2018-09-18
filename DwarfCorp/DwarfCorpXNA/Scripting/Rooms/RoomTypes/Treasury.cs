@@ -87,32 +87,14 @@ namespace DwarfCorp
             Faction = null;
         }
 
-
         public Treasury(Faction faction, WorldManager world) :
-            base(false, new List<VoxelHandle>(), RoomLibrary.GetData(TreasuryName), world, faction)
+            base(RoomLibrary.GetData(TreasuryName), world, faction)
         {
             Coins = new List<Body>();
             ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
             faction.Treasurys.Add(this);
             Faction = faction;
-        }
-
-        public Treasury(Faction faction, IEnumerable<VoxelHandle> voxels, WorldManager world) :
-            base(voxels, RoomLibrary.GetData(TreasuryName), world, faction)
-        {
-            Coins = new List<Body>();
-            ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
-            faction.Treasurys.Add(this);
-            Faction = faction;
-        }
-
-        public Treasury(Faction faction, bool designation, IEnumerable<VoxelHandle> designations, RoomData data, WorldManager world) :
-            base(designation, designations, data, world, faction)
-        {
-            Coins = new List<Body>();
             Money = 0;
-            faction.Treasurys.Add(this);
-            Faction = faction;
         }
 
         public void KillCoins(Body component)
