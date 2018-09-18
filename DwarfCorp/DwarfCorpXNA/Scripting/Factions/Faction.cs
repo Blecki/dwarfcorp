@@ -919,7 +919,7 @@ namespace DwarfCorp
                     return remainingSpace > 0;
                 });
                 // Generate a number of coin piles.
-                for (DwarfBux total = 0m; total < amountRemaining; total += 1024m)
+                for (DwarfBux total = 0m; total < amountRemaining; total += (DwarfBux)1024m)
                 {
                     Zone randomZone = Datastructures.SelectRandom(RoomBuilder.DesignatedRooms);
                     Vector3 point = MathFunctions.RandVector3Box(randomZone.GetBoundingBox()) +
