@@ -125,8 +125,6 @@ namespace DwarfCorp
 
         public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
         {
-            RoomLibrary.InitializeStatics();
-
             CameraController = camera;
             VoxSelector = new VoxelSelector(World);
             BodySelector = new BodySelector(CameraController, GameState.Game.GraphicsDevice, components);

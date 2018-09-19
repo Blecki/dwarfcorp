@@ -70,7 +70,7 @@ namespace DwarfCorp
         {
         }
 
-        public static void InitializeStatics()
+        private static void InitializeStatics()
         {
             if (RoomTypes != null) return;
 
@@ -92,11 +92,13 @@ namespace DwarfCorp
 
         public static RoomData GetData(string Name)
         {
+            InitializeStatics();
             return RoomTypes.Where(r => r.Name == Name).FirstOrDefault();
         }
       
         public static Room CreateRoom(Faction faction, string name, WorldManager world)
         {
+            InitializeStatics();
             if (RoomFuncs.ContainsKey(name))
                 return RoomFuncs[name](GetData(name), faction, world);
             return null;

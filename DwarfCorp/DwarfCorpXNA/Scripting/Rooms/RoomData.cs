@@ -46,7 +46,7 @@ namespace DwarfCorp
         public uint ID { get; set; }
         public string FloorType { get; set; }
         public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
-        public Gui.TileReference NewIcon { get; private set; }
+        public Gui.TileReference NewIcon;
         public string Description { get; set; }
         public bool CanBuildAboveGround = true;
         public bool CanBuildBelowGround = true;
