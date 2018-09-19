@@ -11,6 +11,8 @@ float4x4 xLightView;
 float4x4 xLightProj;
 float4x4 xReflectionView;
 
+float xCaveView;
+
 float xWaterOpacity;
 
 float xWaterMinOpacity;
@@ -285,7 +287,7 @@ technique ShadowInstanced
 //------- Technique: Textured --------
 struct TVertexToPixel
 {
-	float4 Position      : SV_Position;
+    float4 Position : SV_POSITION;
 	float4 LightRamp         : COLOR0;
 	float4 WorldPosition : TEXCOORD0;
 	float2 TextureCoords : TEXCOORD1;
@@ -728,55 +730,49 @@ float4x4 stippleMatrix =
     16.0 / 17.0, 8.0 / 17.0, 14.0 / 17.0, 6.0 / 17.0
 };
 
+
+int xTextureWidth;
+int xTextureHeight;
+int xScreenWidth;
+int xScreenHeight;
+
 TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 {
-    TPixelToFrame Output = (TPixelToFrame) 0;
-    float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
-    float4 texColor = tex2D(TextureSampler, textureCoords);
+        TPixelToFrame Output = (TPixelToFrame) 0;
+        float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
+        float4 texColor = tex2D(TextureSampler, textureCoords);
 
-    clip((texColor.a - 0.5));
-	/*
-	if (xEnableShadows)
-	{
-		float4 shadowPos = GetPositionFromLight(PSIn.WorldPosition);
-		float2 shadowUV = 0.5 * shadowPos.xy / shadowPos.w + float2(0.5, 0.5);
-		shadowUV.y = 1.0f - shadowUV.y;
-		if (shadowUV.x < 1.0 && shadowUV.y < 1.0 && shadowUV.x > 0 && shadowUV.y > 0)
-		{
-			float shadowdepth = tex2D(ShadowMapSampler, shadowUV).r;
+        clip((texColor.a - 0.5));
 
-			// Check our value against the depth value
-			float ourdepth = 1 - (shadowPos.z / shadowPos.w) + 0.05;
+        Output.Color = tex2D(SunSampler, float2(PSIn.LightRamp.r, (xTimeOfDay)));
+        Output.Color.a *= PSIn.LightRamp.a;
+        
+        float alpha = smoothstep(0.0f, 1.0f, (1.0 - PSIn.LightRamp.r) * 1.25);
+        float screenWidth = lerp(0, 1.0 - saturate(length(PSIn.Position.xy - float2(xScreenWidth * 0.5, xScreenHeight * 0.5)) / 700), xCaveView);
+        Output.Color.a = lerp(Output.Color.a, alpha, screenWidth);
+        Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.LightRamp.b, 0.5f)).rgb;
+        Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.LightRamp.g, 0.5f)).rgb;
 
-			// Check the shadowdepth against the depth of this pixel
-			// a fudge factor is added to account for floating-point error
-			PSIn.Color.r *= (exp(200 * (ourdepth - shadowdepth)) + 0.25f);
-		}
-	}
-	*/
-    Output.Color = tex2D(SunSampler, float2(PSIn.LightRamp.r, (xTimeOfDay)));
-    Output.Color.a *= PSIn.LightRamp.a;
-    Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.LightRamp.b, 0.5f)).rgb;
-    Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.LightRamp.g, 0.5f)).rgb;
+        float4 illumColor = tex2D(IllumSampler, textureCoords);
+
+        Output.Color.rgba *= texColor;
+        Output.Color.rgb *= PSIn.VertexColor;
+
+        Output.Color.rgba = lerp(Output.Color.rgba, texColor, SelfIllumination * illumColor.r);
 	
-	//saturate(Output.Color.rgb);
-
-    float4 illumColor = tex2D(IllumSampler, textureCoords);
-
-    Output.Color.rgba *= texColor;
-    Output.Color.rgb *= PSIn.VertexColor;
-
-    Output.Color.rgba = lerp(Output.Color.rgba, texColor, SelfIllumination * illumColor.r);
-	
-    Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
-    if (PSIn.ClipDistance.w < 0.0f)
-    {
-        Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f, 0, 1);
+        Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
+        if (PSIn.ClipDistance.w - 0.5f * xCaveView < 0.0f)
+        {
+            Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f, 0, 1);
  
-        clip(GhostMode * (Output.Color.a) - 0.1f);
+            clip(GhostMode * (Output.Color.a) - 0.1f);
+        }
+        if (xCaveView * PSIn.LightRamp.r > 0.5)
+        {
+            Output.Color.rgb = float3(Output.Color.r, Output.Color.r, Output.Color.r);
+        }
+        return Output;
     }
-    return Output;
-}
 
     TPixelToFrame TexturedPS_Alphatest(TVertexToPixel PSIn)
     {
@@ -792,11 +788,6 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 255, 0
     };
 
-
-    int xTextureWidth;
-    int xTextureHeight;
-    int xScreenWidth;
-    int xScreenHeight;
 
     TPixelToFrame TexturedPS_Alphatest_Stipple(TVertexToPixel PSIn)
     {
@@ -1050,8 +1041,8 @@ technique Textured_Flag
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_2_0 TexturedVS_Flag(MAX_LIGHTS);
-		PixelShader = compile ps_2_0 TexturedPS();
+		VertexShader = compile vs_3_0 TexturedVS_Flag(MAX_LIGHTS);
+		PixelShader = compile ps_3_0 TexturedPS();
 	}
 }
 

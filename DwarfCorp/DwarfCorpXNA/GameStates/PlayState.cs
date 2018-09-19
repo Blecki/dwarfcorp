@@ -53,6 +53,7 @@ namespace DwarfCorp.GameStates
         private Gui.Widgets.InfoTray InfoTray;
         private Gui.Widgets.ToggleTray BrushTray;
         private Gui.Widgets.ToggleTray CameraTray;
+        private Gui.Widgets.CheckBox Xray;
         private Gui.Widgets.GodMenu GodMenu;
         private AnnouncementPopup Announcer;
         private FramedIcon EconomyIcon;
@@ -1116,6 +1117,20 @@ namespace DwarfCorp.GameStates
                             }
                   }
             }) as Gui.Widgets.ToggleTray;
+
+            Xray = BottomBar.AddChild(new Gui.Widgets.CheckBox()
+            {
+                Text = "X-ray",
+                Tooltip = "When checked, enables XRAY view.",
+                MaximumSize = new Point(32, 16),
+                TextColor = Color.White.ToVector4(),
+                OnCheckStateChange = (sender) =>
+                {
+                    bool isChecked = (sender as CheckBox).CheckState;
+                    World.TargetCaveView = isChecked ? 1.0f : 0.0f;
+                },
+                AutoLayout = AutoLayout.DockLeftCentered
+            }) as CheckBox;
 
             if (World.Camera.Control == OrbitCamera.ControlType.Overhead)
             {
@@ -2432,6 +2447,10 @@ namespace DwarfCorp.GameStates
                     });
                     return true;
                 }
+            }
+            else if (key == ControlSettings.Mappings.Xray)
+            {
+                Xray.CheckState = !Xray.CheckState;
             }
 #if !DEMO
             else if (key == ControlSettings.Mappings.GodMode)

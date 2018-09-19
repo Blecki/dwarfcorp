@@ -168,7 +168,7 @@ namespace DwarfCorp
 
         public override bool IsComplete(Faction faction)
         {
-            return Animal == null || Animal.IsDead || (LastPen != null && LastPen.ZoneBodies.Contains(Animal.Physics));
+            return Animal == null || Animal.IsDead || (LastPen != null && LastPen.Animals.Contains(Animal.Physics));
         }
 
         public override void OnEnqueued(Faction Faction)

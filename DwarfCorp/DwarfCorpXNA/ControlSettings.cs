@@ -71,6 +71,8 @@ namespace DwarfCorp
             public Keys RotateObjectLeft = Keys.R;
             public Keys RotateObjectRight = Keys.T;
 
+            public Keys Xray = Keys.Tab;
+
             public IEnumerable<Keys> GetKeys()
             {
                 yield return SliceSelected;
@@ -96,6 +98,7 @@ namespace DwarfCorp
                 yield return TogglePerformanceOverlay;
                 yield return RotateObjectLeft;
                 yield return RotateObjectRight;
+                yield return Xray;
             }
 
             public bool Contains(Keys key)

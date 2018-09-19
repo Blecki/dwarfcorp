@@ -58,7 +58,7 @@ namespace DwarfCorp
             {
                 return false;
             }
-            if (!creature.Tags.Contains("DomesticAnimal"))
+            if (!animal.GetRoot().Tags.Contains("DomesticAnimal"))
             {
                 return false;
             }

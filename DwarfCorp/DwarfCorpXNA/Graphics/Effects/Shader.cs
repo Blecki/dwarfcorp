@@ -64,6 +64,12 @@ namespace DwarfCorp
             set { Parameters["xWaterMinOpacity"].SetValue(value);}
         }
 
+        public float CaveView
+        {
+            get { return Parameters["xCaveView"].GetValueSingle(); }
+            set { Parameters["xCaveView"].SetValue(value); }
+        }
+
         public bool EnableLighting
         {
             get { return Parameters["xEnableLighting"].GetValueInt32() > 0; }
@@ -433,6 +439,7 @@ namespace DwarfCorp
         {
             FogStart = 40.0f;
             FogEnd = 80.0f;
+            CaveView = 0.0f;
             LightView = Matrix.Identity;
             LightProjection = Matrix.Identity;
             EnableWind = false;
