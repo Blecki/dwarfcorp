@@ -736,6 +736,46 @@ int xTextureHeight;
 int xScreenWidth;
 int xScreenHeight;
 
+
+// ps_2_0 version of the main pixel shader... don't ask why this is needed.
+TPixelToFrame TexturedPS2(TVertexToPixel PSIn)
+{
+    TPixelToFrame Output = (TPixelToFrame) 0;
+    float2 textureCoords = ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds);
+    float4 texColor = tex2D(TextureSampler, textureCoords);
+
+    clip((texColor.a - 0.5));
+
+    Output.Color = tex2D(SunSampler, float2(PSIn.LightRamp.r, (xTimeOfDay)));
+    Output.Color.a *= PSIn.LightRamp.a;
+        
+    float alpha = smoothstep(0.0f, 1.0f, (1.0 - PSIn.LightRamp.r) * 1.25);
+    Output.Color.a = lerp(Output.Color.a, alpha, xCaveView);
+    Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.LightRamp.b, 0.5f)).rgb;
+    Output.Color.rgb *= tex2D(AmbientSampler, float2(PSIn.LightRamp.g, 0.5f)).rgb;
+
+    float4 illumColor = tex2D(IllumSampler, textureCoords);
+
+    Output.Color.rgba *= texColor;
+    Output.Color.rgb *= PSIn.VertexColor;
+
+    Output.Color.rgba = lerp(Output.Color.rgba, texColor, SelfIllumination * illumColor.r);
+	
+    Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
+    if (PSIn.ClipDistance.w - 0.5f * xCaveView < 0.0f)
+    {
+        Output.Color *= clamp(-1.0f / (PSIn.ClipDistance.w * 0.75f) * 0.25f, 0, 1);
+ 
+        clip(GhostMode * (Output.Color.a) - 0.1f);
+    }
+    if (xCaveView * PSIn.LightRamp.r > 0.5)
+    {
+        Output.Color.rgb = float3(Output.Color.r, Output.Color.r, Output.Color.r);
+    }
+    return Output;
+}
+
+
 TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 {
         TPixelToFrame Output = (TPixelToFrame) 0;
@@ -1041,8 +1081,8 @@ technique Textured_Flag
 {
 	pass Pass0
 	{
-		VertexShader = compile vs_3_0 TexturedVS_Flag(MAX_LIGHTS);
-		PixelShader = compile ps_3_0 TexturedPS();
+		VertexShader = compile vs_2_0 TexturedVS_Flag(MAX_LIGHTS);
+		PixelShader = compile ps_2_0 TexturedPS2();
 	}
 }
 
