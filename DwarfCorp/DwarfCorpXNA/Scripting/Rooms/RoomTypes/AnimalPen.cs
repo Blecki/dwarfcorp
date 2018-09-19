@@ -43,29 +43,13 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class AnimalPen : Room
     {
-        [JsonIgnore]
-        public static string AnimalPenName { get { return "Animal Pen"; } }
-        [JsonIgnore]
-        public static RoomData AnimalPenData { get { return RoomLibrary.GetData(AnimalPenName); } }
+        [RoomFactory("Animal Pen")]
+        private static Room _factory(RoomData Data, Faction Faction, WorldManager World)
+        {
+            return new AnimalPen(Data, Faction, World);
+        }
 
         public List<Body> Animals = new List<Body>();
-
-        public static RoomData InitializeData()
-        {
-            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> resources =
-                new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
-            resources[Resource.ResourceTags.Soil] = new Quantitiy<Resource.ResourceTags>()
-            {
-                ResourceType = Resource.ResourceTags.Soil,
-                NumResources = 4
-            };
-
-
-            return new RoomData(AnimalPenName, 12, "Dirt", resources, new List<RoomTemplate>(), new Gui.TileReference("rooms", 13))
-            {
-                Description = "Animals can be wrangled and stored here."
-            };
-        }
 
         public string Species = "";
 
@@ -74,8 +58,8 @@ namespace DwarfCorp
 
         }
         
-        public AnimalPen(WorldManager world, Faction faction) :
-            base(AnimalPenData, world, faction)
+        private AnimalPen(RoomData Data, Faction Faction, WorldManager World) :
+            base(Data, World, Faction)
         {
         }
 

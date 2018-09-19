@@ -41,59 +41,65 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+    public class RoomFactoryAttribute : Attribute
+    {
+        public String Name;
+
+        public RoomFactoryAttribute(String Name)
+        {
+            this.Name = Name;
+        }
+    }
+
     /// <summary>
     /// A static class describing all the kinds of rooms. Can create rooms using templates.
     /// </summary>
     public class RoomLibrary
     {
-        private static Dictionary<string, RoomData> roomTypes = new Dictionary<string, RoomData>();
-        private static bool staticIntialized = false;
+        private static List<RoomData> RoomTypes = null;
+        private static Dictionary<string, Func<RoomData, Faction, WorldManager, Room>> RoomFuncs { get; set; }
 
         public static IEnumerable<string> GetRoomTypes()
         {
-            return roomTypes.Keys;
+            InitializeStatics();
+            return RoomTypes.Select(r => r.Name);
         }
 
         public RoomLibrary()
         {
-            if(!staticIntialized)
-                InitializeStatics();
         }
 
         public static void InitializeStatics()
         {
-            RegisterType(Stockpile.InitializeData());
-            RegisterType(BalloonPort.InitializeData());
-            RegisterType(Graveyard.InitializeData());
-            RegisterType(AnimalPen.InitializeData());
-            RegisterType(Treasury.InitializeData());
-            staticIntialized = true;
+            if (RoomTypes != null) return;
+
+            RoomTypes = FileUtils.LoadJsonListFromDirectory<RoomData>(ContentPaths.room_types, null, d => d.Name);
+            RoomFuncs = new Dictionary<string, Func<RoomData, Faction, WorldManager, Room>>();
+
+            foreach (var method in AssetManager.EnumerateModHooks(typeof(RoomFactoryAttribute), typeof(Room), new Type[]
+            {
+                typeof(RoomData),
+                typeof(Faction),
+                typeof(WorldManager)
+            }))
+            {
+                var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a is RoomFactoryAttribute) as RoomFactoryAttribute;
+                if (attribute == null) continue;
+                RoomFuncs[attribute.Name] = (data, faction, world) => method.Invoke(null, new Object[] { data, faction, world }) as Room;
+            }
         }
 
-        public static void RegisterType(RoomData t)
+        public static RoomData GetData(string Name)
         {
-            roomTypes[t.Name] = t;
-        }
-
-        public static RoomData GetData(string name)
-        {
-            return roomTypes.ContainsKey(name) ? roomTypes[name] : null;
+            return RoomTypes.Where(r => r.Name == Name).FirstOrDefault();
         }
       
         public static Room CreateRoom(Faction faction, string name, WorldManager world)
         {
-            if (name == BalloonPort.BalloonPortName)
-                return new BalloonPort(faction, world);
-            else if (name == Stockpile.StockpileName)
-                return new Stockpile(faction, world);
-            else if (name == Graveyard.GraveyardName)
-                return new Graveyard(faction, world);
-            else if (name == AnimalPen.AnimalPenName)
-                return new AnimalPen(world, faction);
-            else if (name == Treasury.TreasuryName)
-                return new Treasury(faction, world);
-            else
-                return null;
+            if (RoomFuncs.ContainsKey(name))
+                return RoomFuncs[name](GetData(name), faction, world);
+            return null;
         }
 
         public static void CompleteRoomImmediately(Room Room, List<VoxelHandle> Voxels)

@@ -43,25 +43,10 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Graveyard : Stockpile
     {
-        [JsonIgnore]
-        public static string GraveyardName { get { return "Graveyard"; } }
-        [JsonIgnore]
-        public static RoomData GraveyardData { get { return RoomLibrary.GetData(GraveyardName); } }
-
-        public new static RoomData InitializeData()
+        [RoomFactory("Graveyard")]
+        private static Room _factory(RoomData Data, Faction Faction, WorldManager World)
         {
-            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> resources = 
-                new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
-            resources[Resource.ResourceTags.Soil] = new Quantitiy<Resource.ResourceTags>()
-            {
-                ResourceType = Resource.ResourceTags.Soil,
-                NumResources = 4
-            };
-            
-            return new RoomData(GraveyardName, 11, "Dirt", resources, new List<RoomTemplate>(), new Gui.TileReference("rooms", 12))
-            {
-                Description = "Dwarves bury the dead here."
-            };
+            return new Graveyard(Data, Faction, World);
         }
 
         public Graveyard()
@@ -69,8 +54,8 @@ namespace DwarfCorp
             ReplacementType = VoxelLibrary.GetVoxelType("Dirt");
         }
 
-        public Graveyard(Faction faction, WorldManager world) :
-            base(faction, GraveyardData, world)
+        private Graveyard(RoomData Data, Faction Faction, WorldManager World) :
+            base(Data, Faction, World)
         {
             Resources = new ResourceContainer();
             ReplacementType = VoxelLibrary.GetVoxelType("Dirt");
@@ -94,6 +79,5 @@ namespace DwarfCorp
                 fence.Manager.RootComponent.AddChild(fence);
             }
         }
-
     }
 }

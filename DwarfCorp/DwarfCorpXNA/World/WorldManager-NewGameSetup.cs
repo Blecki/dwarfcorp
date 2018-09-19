@@ -240,12 +240,12 @@ namespace DwarfCorp
             }
 
             // Actually create the BuildRoom.
-            var toBuild = RoomLibrary.CreateRoom(PlayerFaction, BalloonPort.BalloonPortName, this);
+            var toBuild = RoomLibrary.CreateRoom(PlayerFaction, "Balloon Port", this);
             roomDes.DesignatedRooms.Add(toBuild);
             RoomLibrary.CompleteRoomImmediately(toBuild, balloonPortDesignations);
 
             // Also add a treasury
-            var treasury = RoomLibrary.CreateRoom(PlayerFaction, Treasury.TreasuryName, this);
+            var treasury = RoomLibrary.CreateRoom(PlayerFaction, "Treasury", this);
             roomDes.DesignatedRooms.Add(treasury);
             RoomLibrary.CompleteRoomImmediately(treasury, treasuryDesignations);
 

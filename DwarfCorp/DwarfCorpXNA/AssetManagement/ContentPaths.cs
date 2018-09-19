@@ -61,6 +61,7 @@ namespace DwarfCorp
         public static string settings = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "settings.json");
         public static string mixer = ProgramData.CreatePath("Audio", "mixer.json");
         public static string voxel_types = ProgramData.CreatePath("voxel-types.json");
+        public static string room_types = ProgramData.CreatePath("World", "Rooms");
         public static string grass_types = ProgramData.CreatePath("grass-types.json");
         public static string decal_types = ProgramData.CreatePath("decal-types.json");
         public static string rail_pieces = ProgramData.CreatePath("rail-pieces.json");

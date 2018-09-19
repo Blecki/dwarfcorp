@@ -1,0 +1,20 @@
+{
+  "CanBuildAboveGround": true,
+  "CanBuildBelowGround": false,
+  "MinimumSideLength": 3,
+  "MinimumSideWidth": 3,
+  "MaxNumRooms": 1,
+  "Name": "Balloon Port",
+  "FloorType": "Stockpile",
+  "RequiredResources": {
+    "Stone": {
+      "ResourceType": "Stone",
+      "NumResources": 4
+    }
+  },
+  "NewIcon": {
+    "Sheet": "rooms",
+    "Tile": 1
+  },
+  "Description": "Balloons pick up / drop off resources here."
+}

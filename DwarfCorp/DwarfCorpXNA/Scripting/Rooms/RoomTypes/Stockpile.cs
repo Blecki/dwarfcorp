@@ -55,6 +55,32 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Stockpile : Room
     {
+        [RoomFactory("Stockpile")]
+        private static Room _factory(RoomData Data, Faction Faction, WorldManager World)
+        {
+            return new Stockpile(Data, Faction, World);
+        }
+
+        public Stockpile()
+        {
+
+        }
+
+        protected Stockpile(RoomData Data, Faction Faction, WorldManager World) :
+            base(Data, World, Faction)
+        {
+            Boxes = new List<Body>();
+            Faction.Stockpiles.Add(this);
+            ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
+            this.Faction = Faction;
+            BlacklistResources = new List<Resource.ResourceTags>()
+            {
+                Resource.ResourceTags.Corpse,
+                Resource.ResourceTags.Money
+            };
+
+        }
+
         private static uint maxID = 0;
         public List<Body> Boxes { get; set; }
         public static string StockpileName = "Stockpile";
@@ -72,27 +98,6 @@ namespace DwarfCorp
         {
             maxID++;
             return maxID;
-        }
-
-        public Stockpile()
-        { }
-
-        public Stockpile(Faction faction, WorldManager world) :
-            this(faction, RoomLibrary.GetData(StockpileName), world)
-        { }
-
-        public Stockpile(Faction faction, RoomData data, WorldManager world) :
-            base(data, world, faction)
-        {
-            Boxes = new List<Body>();
-            faction.Stockpiles.Add(this);
-            ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
-            Faction = faction;
-            BlacklistResources = new List<Resource.ResourceTags>()
-            {
-                Resource.ResourceTags.Corpse,
-                Resource.ResourceTags.Money
-            };
         }
 
         public bool IsAllowed(ResourceType type)
@@ -220,21 +225,6 @@ namespace DwarfCorp
 
             HandleBoxes();
             base.RecalculateMaxResources();
-        }
-
-        public static RoomData InitializeData()
-        {
-           List<RoomTemplate> stockpileTemplates = new List<RoomTemplate>();
-           Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
-            {
-            };
-
-            return new RoomData(StockpileName, 0, "Stockpile", roomResources, stockpileTemplates, 
-                new Gui.TileReference("rooms", 0))
-            {
-                Description = "Dwarves can stock resources here",
-            };
-        }
+        }        
     }
-
 }

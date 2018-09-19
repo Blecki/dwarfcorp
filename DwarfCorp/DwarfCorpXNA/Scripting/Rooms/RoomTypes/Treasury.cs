@@ -54,6 +54,29 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Treasury : Room
     {
+        [RoomFactory("Treasury")]
+        private static Room _factory(RoomData Data, Faction Faction, WorldManager World)
+        {
+            return new Treasury(Data, Faction, World);
+        }
+
+        public Treasury()
+        {
+            Coins = new List<Body>();
+            ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
+            Faction = null;
+        }
+
+        private Treasury(RoomData Data, Faction Faction, WorldManager World) :
+            base(Data, World, Faction)
+        {
+            Coins = new List<Body>();
+            ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
+            Faction.Treasurys.Add(this);
+            this.Faction = Faction;
+            Money = 0;
+        }
+
         private static uint maxID = 0;
         public List<Body> Coins { get; set; }
         public static string TreasuryName = "Treasury";
@@ -78,23 +101,6 @@ namespace DwarfCorp
         {
             maxID++;
             return maxID;
-        }
-
-        public Treasury()
-        {
-            Coins = new List<Body>();
-            ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
-            Faction = null;
-        }
-
-        public Treasury(Faction faction, WorldManager world) :
-            base(RoomLibrary.GetData(TreasuryName), world, faction)
-        {
-            Coins = new List<Body>();
-            ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
-            faction.Treasurys.Add(this);
-            Faction = faction;
-            Money = 0;
         }
 
         public void KillCoins(Body component)

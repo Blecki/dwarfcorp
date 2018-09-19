@@ -1,0 +1,20 @@
+{
+  "CanBuildAboveGround": true,
+  "CanBuildBelowGround": true,
+  "MinimumSideLength": 3,
+  "MinimumSideWidth": 3,
+  "MaxNumRooms": 2147483647,
+  "Name": "Animal Pen",
+  "FloorType": "Dirt",
+  "RequiredResources": {
+    "Soil": {
+      "ResourceType": "Soil",
+      "NumResources": 4
+    }
+  },
+  "NewIcon": {
+    "Sheet": "rooms",
+    "Tile": 13
+  },
+  "Description": "Animals can be wrangled and stored here."
+}
