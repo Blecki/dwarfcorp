@@ -72,6 +72,9 @@ namespace DwarfCorp
             set { GameSettings.Default.WorldScale = value; }
         }
 
+        public float CaveView = 0;
+        public float TargetCaveView = 0;
+
         public float SlicePlane = 0;
 
         // Used to pass WorldOrigin from the WorldGenState into 
@@ -769,6 +772,7 @@ namespace DwarfCorp
             effect.Projection = Camera.ProjectionMatrix;
             effect.SetTexturedTechnique();
             effect.ClippingEnabled = true;
+            effect.CaveView = CaveView;
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
 
                 ChunkRenderer.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
@@ -937,7 +941,7 @@ namespace DwarfCorp
             }
 
             SlicePlane = level;
-
+            CaveView = CaveView * 0.9f + TargetCaveView * 0.1f;
             DefaultShader.WindDirection = Weather.CurrentWind;
             DefaultShader.WindForce = 0.0005f * (1.0f + (float)Math.Sin(Time.GetTotalSeconds()*0.001f));
             // Draw the whole world, and make sure to handle slicing

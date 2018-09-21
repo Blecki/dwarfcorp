@@ -140,6 +140,14 @@ namespace DwarfCorp
         private bool flyKeyPressed = false;
         public void WalkUpdate(DwarfTime time, ChunkManager chunks)
         {
+
+            {
+                var mouseState = Mouse.GetState();
+                if (!GameState.Game.GraphicsDevice.Viewport.Bounds.Contains(mouseState.X, mouseState.Y))
+                {
+                    return;
+                }
+            }
             // Don't attempt any camera control if the user is trying to type intoa focus item.
             if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
             {
@@ -167,11 +175,28 @@ namespace DwarfCorp
             if (KeyManager.RotationEnabled(this))
             {
                 World.Gui.MouseVisible = false;
+                bool switchState = false;
                 if (!shiftPressed)
                 {
                     shiftPressed = true;
-                    mouseOnRotate = new Point(mouse.X, mouse.Y);
+                    mouseOnRotate = GameState.Game.GraphicsDevice.Viewport.Bounds.Center;
                     mousePrerotate = new Point(mouse.X, mouse.Y);
+                    switchState = true;
+                }
+
+
+
+                Mouse.SetPosition(mouseOnRotate.X, mouseOnRotate.Y);
+
+                if (!switchState)
+                {
+                    diffX = mouse.X - mouseOnRotate.X;
+                    diffY = mouse.Y - mouseOnRotate.Y;
+                }
+                else
+                {
+                    diffX = 0;
+                    diffY = 0;
                 }
 
                 if (!isLeftPressed && mouse.LeftButton == ButtonState.Pressed)
@@ -192,10 +217,6 @@ namespace DwarfCorp
                     isRightPressed = false;
                 }
 
-                Mouse.SetPosition(mouseOnRotate.X, mouseOnRotate.Y);
-
-                diffX = mouse.X - mouseOnRotate.X;
-                diffY = mouse.Y - mouseOnRotate.Y;
 
 
                 if (!isRightPressed)
