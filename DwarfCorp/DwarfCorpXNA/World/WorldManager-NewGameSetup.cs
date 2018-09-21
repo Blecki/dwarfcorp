@@ -109,7 +109,7 @@ namespace DwarfCorp
         /// <param name="x">The position of the center of the balloon port</param>
         /// <param name="z">The position of the center of the balloon port</param>
         /// <param name="size">The size of the (square) balloon port in voxels on a side</param>
-        public BalloonPort GenerateInitialBalloonPort(RoomBuilder roomDes, ChunkManager chunkManager, float x, float z,
+        public Room GenerateInitialBalloonPort(RoomBuilder roomDes, ChunkManager chunkManager, float x, float z,
             int size)
         {
             var centerCoordinate = GlobalVoxelCoordinate.FromVector3(new Vector3(x, VoxelConstants.ChunkSizeY - 1, z));
@@ -240,15 +240,14 @@ namespace DwarfCorp
             }
 
             // Actually create the BuildRoom.
-            BalloonPort toBuild = new BalloonPort(PlayerFaction, balloonPortDesignations, this);
-            BuildRoomOrder buildDes = new BuildRoomOrder(toBuild, roomDes.Faction, this);
-            buildDes.Build(true);
+            var toBuild = RoomLibrary.CreateRoom(PlayerFaction, "Balloon Port", this);
             roomDes.DesignatedRooms.Add(toBuild);
+            RoomLibrary.CompleteRoomImmediately(toBuild, balloonPortDesignations);
 
             // Also add a treasury
-            Treasury treasury = new Treasury(PlayerFaction, treasuryDesignations, this);
-            treasury.OnBuilt();
+            var treasury = RoomLibrary.CreateRoom(PlayerFaction, "Treasury", this);
             roomDes.DesignatedRooms.Add(treasury);
+            RoomLibrary.CompleteRoomImmediately(treasury, treasuryDesignations);
 
             return toBuild;
         }

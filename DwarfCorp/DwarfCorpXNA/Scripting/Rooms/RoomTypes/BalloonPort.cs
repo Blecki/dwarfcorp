@@ -36,80 +36,42 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
     public class BalloonPort : Stockpile
     {
-        [JsonIgnore]
-        public static string BalloonPortName { get { return "BalloonPort"; } }
-        [JsonIgnore]
-        public static RoomData BalloonPortData { get { return RoomLibrary.GetData(BalloonPortName); } }
-
-        public new static RoomData InitializeData()
+        [RoomFactory("Balloon Port")]
+        private static Room _factory(RoomData Data, Faction Faction, WorldManager World)
         {
-            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> balloonPortResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
-            balloonPortResources[Resource.ResourceTags.Stone] = new Quantitiy<Resource.ResourceTags>()
-            {
-                ResourceType = Resource.ResourceTags.Stone,
-                NumResources = 4
-            };
-
-            RoomTile[,] flagTemplate =
-            {
-                {
-                    RoomTile.None,
-                    RoomTile.Wall | RoomTile.Edge
-                },
-                {
-                    RoomTile.Wall | RoomTile.Edge,
-                    RoomTile.Flag
-                }
-            };
-
-            RoomTile[,] flagAccesories =
-            {
-                {
-                    RoomTile.None,
-                    RoomTile.None
-                },
-                {
-                    RoomTile.None,
-                    RoomTile.None
-                }
-            };
-
-            RoomTemplate flag = new RoomTemplate(PlacementType.All, flagTemplate, flagAccesories);
-
-
-            List<RoomTemplate> balloonTemplates = new List<RoomTemplate>
-            {
-                flag
-            };
-
-            return new RoomData(BalloonPortName, 0, "Stockpile", balloonPortResources, balloonTemplates, new Gui.TileReference("rooms", 1))
-            {
-                Description = "Balloons pick up / drop off resources here.",
-                CanBuildBelowGround = false,
-                MaxNumRooms = 1
-            };
+            return new BalloonPort(Data, Faction, World);
         }
 
         public BalloonPort()
         {
+
         }
 
-        public BalloonPort(Faction faction, bool designation, IEnumerable<VoxelHandle> designations, WorldManager world) :
-            base(faction, designation, designations, BalloonPortData, world)
+        private BalloonPort(RoomData Data, Faction Faction, WorldManager World) :
+            base(Data, Faction, World)
         {
         }
 
-        public BalloonPort(Faction faction, IEnumerable<VoxelHandle> voxels, WorldManager world) :
-            base(faction, voxels, BalloonPortData, world)
+        private void CreateFlag(Vector3 At)
         {
-            OnBuilt();
+            var flag = new Flag(World.ComponentManager, At + new Vector3(0.5f, 0.5f, 0.5f), World.PlayerCompany.Information);
+            AddBody(flag, true);
         }
 
+        public override void OnBuilt()
+        {
+            var box = GetBoundingBox();
+            CreateFlag(new Vector3(box.Min.X, box.Max.Y, box.Min.Z));
+            CreateFlag(new Vector3(box.Max.X - 1, box.Max.Y, box.Min.Z));
+            CreateFlag(new Vector3(box.Min.X, box.Max.Y, box.Max.Z - 1));
+            CreateFlag(new Vector3(box.Max.X - 1, box.Max.Y, box.Max.Z - 1));
+        }
     }
 }

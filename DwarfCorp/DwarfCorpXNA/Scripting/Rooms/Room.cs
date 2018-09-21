@@ -45,9 +45,11 @@ namespace DwarfCorp
     /// <summary>
     /// A BuildRoom is a kind of zone which can be built by creatures.
     /// </summary>
-    [JsonObject(IsReference = true)]
     public class Room : Zone
     {
+        [JsonIgnore]
+        public Gui.Widget GuiTag;
+
         public List<VoxelHandle> Designations;
         
         public bool IsBuilt;
@@ -56,31 +58,14 @@ namespace DwarfCorp
 
         public bool wasDeserialized = false;
 
+        public virtual String GetDescriptionString() { return StringLibrary.GetString("generic-room-description"); }
+
         public Room() : base()
         {
             
         }
 
-        // Todo: Kill unused parameter? Seems to be to distinquish between two ways of creating
-        // a room where arguments are same types.
         public Room(
-            bool designation,
-            IEnumerable<VoxelHandle> designations, 
-            RoomData data,
-            WorldManager world,
-            Faction faction) :
-            base(data.Name + " " + Counter, world, faction)
-        {
-            RoomData = data;
-            ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
-            Counter++;
-            Designations = designations.ToList();
-            IsBuilt = false;
-        }
-
-
-        public Room(
-            IEnumerable<VoxelHandle> voxels, 
             RoomData data, 
             WorldManager world, 
             Faction faction) :
@@ -88,15 +73,8 @@ namespace DwarfCorp
         {
             RoomData = data;
             ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
-
             Designations = new List<VoxelHandle>();
             Counter++;
-
-            IsBuilt = true;
-            foreach (var voxel in voxels)
-            {
-                AddVoxel(voxel);
-            }
         }
 
 
@@ -110,26 +88,6 @@ namespace DwarfCorp
         public virtual void OnBuilt()
         {
             
-        }
-
-        public int GetClosestDesignationTo(Vector3 worldCoordinate)
-        {
-            float closestDist = 99999;
-            int closestIndex = -1;
-
-            for(int i = 0; i < Designations.Count; i++)
-            {
-                var v = Designations[i];
-                float d = (v.WorldPosition - worldCoordinate).LengthSquared();
-
-                if(d < closestDist)
-                {
-                    closestDist = d;
-                    closestIndex = i;
-                }
-            }
-
-            return closestIndex;
         }
 
         public virtual void Update()

@@ -128,20 +128,10 @@ namespace DwarfCorp
         public virtual void Build(bool silent=false)
         {
             if(IsBuilt)
-            {
                 return;
-            }
-
-            foreach(BuildVoxelOrder vox in VoxelOrders)
-                ToBuild.AddVoxel(vox.Voxel);
-
             IsBuilt = true;
-            ToBuild.IsBuilt = true;
-            List<Body> components = RoomLibrary.GenerateRoomComponentsTemplate(
-                ToBuild.RoomData, ToBuild.Voxels,
-                World.ComponentManager, World.ChunkManager.Content, GameState.Game.GraphicsDevice);
-            RoomLibrary.BuildAllComponents(components, ToBuild, World.ParticleManager);
-            ToBuild.OnBuilt();
+
+            RoomLibrary.CompleteRoomImmediately(ToBuild, VoxelOrders.Select(o => o.Voxel).ToList());
 
             if (!silent)
             {
@@ -151,9 +141,7 @@ namespace DwarfCorp
             }
 
             foreach (GameComponent fence in WorkObjects)
-            {
                 fence.Die();
-            }
         }
 
         public void Destroy()

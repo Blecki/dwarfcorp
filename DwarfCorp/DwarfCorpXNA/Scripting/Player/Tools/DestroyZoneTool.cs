@@ -75,12 +75,12 @@ namespace DwarfCorp
                     World.Gui.ShowModalPopup(new Gui.Widgets.Confirm
                     {
                         Text = "Do you want to destroy this " + existingRoom.RoomData.Name + "?",
-                        OnClose = (sender) => destroyDialog_OnClosed((sender as Gui.Widgets.Confirm).DialogResult, existingRoom)
+                        OnClose = (sender) => DestroyRoom((sender as Gui.Widgets.Confirm).DialogResult, existingRoom, Faction, World)
                     });
             }
         }
 
-        void destroyDialog_OnClosed(Gui.Widgets.Confirm.Result status, Room room)
+        public static void DestroyRoom(Gui.Widgets.Confirm.Result status, Room room, Faction Faction, WorldManager World)
         {
             if (status == Gui.Widgets.Confirm.Result.OKAY)
             {

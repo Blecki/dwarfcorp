@@ -43,57 +43,28 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Graveyard : Stockpile
     {
-        [JsonIgnore]
-        public static string GraveyardName { get { return "Graveyard"; } }
-        [JsonIgnore]
-        public static RoomData GraveyardData { get { return RoomLibrary.GetData(GraveyardName); } }
-
-        public new static RoomData InitializeData()
+        [RoomFactory("Graveyard")]
+        private static Room _factory(RoomData Data, Faction Faction, WorldManager World)
         {
-            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> resources = 
-                new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>();
-            resources[Resource.ResourceTags.Soil] = new Quantitiy<Resource.ResourceTags>()
-            {
-                ResourceType = Resource.ResourceTags.Soil,
-                NumResources = 4
-            };
-
-
-            return new RoomData(GraveyardName, 11, "Dirt", resources, new List<RoomTemplate>(), new Gui.TileReference("rooms", 12))
-            {
-                Description = "Dwarves bury the dead here."
-            };
+            return new Graveyard(Data, Faction, World);
         }
 
         public Graveyard()
         {
+            ReplacementType = VoxelLibrary.GetVoxelType("Dirt");
+        }
+
+        public override string GetDescriptionString()
+        {
+            return "Graveyard " + ID + " - " + Boxes.Count + " of " + Voxels.Count + " plots filled.";
+        }
+
+        private Graveyard(RoomData Data, Faction Faction, WorldManager World) :
+            base(Data, Faction, World)
+        {
             Resources = new ResourceContainer();
-            WhitelistResources = new List<Resource.ResourceTags>()
-            {
-                Resource.ResourceTags.Corpse
-            };
-            BlacklistResources = new List<Resource.ResourceTags>();
-            BoxType = "Grave";
-            BoxOffset = new Vector3(0.5f, 0.6f, 0.5f);
-            ResourcesPerVoxel = 1;
-        }
+            ReplacementType = VoxelLibrary.GetVoxelType("Dirt");
 
-        public Graveyard(Faction faction, bool designation, IEnumerable<VoxelHandle> designations, WorldManager world) :
-            base(faction, designation, designations, GraveyardData, world)
-        {
-            WhitelistResources = new List<Resource.ResourceTags>()
-            {
-                Resource.ResourceTags.Corpse
-            };
-            BlacklistResources = new List<Resource.ResourceTags>();
-            BoxType = "Grave";
-            BoxOffset = new Vector3(0.5f, 0.6f, 0.5f);
-            ResourcesPerVoxel = 1;
-        }
-
-        public Graveyard(Faction faction, IEnumerable<VoxelHandle> voxels, WorldManager world) :
-            base(faction, voxels, GraveyardData, world)
-        {
             WhitelistResources = new List<Resource.ResourceTags>()
             {
                 Resource.ResourceTags.Corpse
@@ -107,12 +78,11 @@ namespace DwarfCorp
         public override void OnBuilt()
         {
             foreach (var fence in  Fence.CreateFences(World.ComponentManager,
-                ContentPaths.Entities.DwarfObjects.fence, Designations, false))
+                ContentPaths.Entities.DwarfObjects.fence, Voxels, false))
             {
                 AddBody(fence, false);
                 fence.Manager.RootComponent.AddChild(fence);
             }
         }
-
     }
 }

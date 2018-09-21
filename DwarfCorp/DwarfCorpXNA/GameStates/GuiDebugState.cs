@@ -244,11 +244,8 @@ namespace DwarfCorp.GameStates
             //    ToolbarItems[GameMaster.ToolMode.Guard] = CreateIcon(4, GameMaster.ToolMode.Guard);
             //    ToolbarItems[GameMaster.ToolMode.Attack] = CreateIcon(3, GameMaster.ToolMode.Attack);
 
-            var roomIcons = GuiRoot.GetTileSheet("rooms") as Gui.TileSheet;
-            RoomLibrary.InitializeStatics();
             var Tilesheet = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
             VoxelLibrary.InitializeDefaultLibrary(Game.GraphicsDevice);
-
 
             var bottomRightTray = GuiRoot.RootItem.AddChild(new Gui.Widgets.ToolTray.Tray
             {

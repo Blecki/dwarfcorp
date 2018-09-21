@@ -54,9 +54,36 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Treasury : Room
     {
+        [RoomFactory("Treasury")]
+        private static Room _factory(RoomData Data, Faction Faction, WorldManager World)
+        {
+            return new Treasury(Data, Faction, World);
+        }
+
+        public Treasury()
+        {
+            Coins = new List<Body>();
+            ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
+            Faction = null;
+        }
+
+        private Treasury(RoomData Data, Faction Faction, WorldManager World) :
+            base(Data, World, Faction)
+        {
+            Coins = new List<Body>();
+            ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
+            Faction.Treasurys.Add(this);
+            this.Faction = Faction;
+            Money = 0;
+        }
+
+        public override string GetDescriptionString()
+        {
+            return ID;
+        }
+
         private static uint maxID = 0;
         public List<Body> Coins { get; set; }
-        public static string TreasuryName = "Treasury";
 
         public static DwarfBux MoneyPerPile = 1024m;
 
@@ -78,41 +105,6 @@ namespace DwarfCorp
         {
             maxID++;
             return maxID;
-        }
-
-        public Treasury()
-        {
-            Coins = new List<Body>();
-            ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
-            Faction = null;
-        }
-
-
-        public Treasury(Faction faction, WorldManager world) :
-            base(false, new List<VoxelHandle>(), RoomLibrary.GetData(TreasuryName), world, faction)
-        {
-            Coins = new List<Body>();
-            ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
-            faction.Treasurys.Add(this);
-            Faction = faction;
-        }
-
-        public Treasury(Faction faction, IEnumerable<VoxelHandle> voxels, WorldManager world) :
-            base(voxels, RoomLibrary.GetData(TreasuryName), world, faction)
-        {
-            Coins = new List<Body>();
-            ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
-            faction.Treasurys.Add(this);
-            Faction = faction;
-        }
-
-        public Treasury(Faction faction, bool designation, IEnumerable<VoxelHandle> designations, RoomData data, WorldManager world) :
-            base(designation, designations, data, world, faction)
-        {
-            Coins = new List<Body>();
-            Money = 0;
-            faction.Treasurys.Add(this);
-            Faction = faction;
         }
 
         public void KillCoins(Body component)
@@ -275,20 +267,6 @@ namespace DwarfCorp
         {
             HandleCoins();
             base.RecalculateMaxResources();
-        }
-
-        public static RoomData InitializeData()
-        {
-            List<RoomTemplate> TreasuryTemplates = new List<RoomTemplate>();
-            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
-            {
-            };
-
-            return new RoomData(TreasuryName, 12, "Blue Tile", roomResources, TreasuryTemplates,
-                new Gui.TileReference("rooms", 14))
-            {
-                Description = "Money is stored here. Can store " + MoneyPerPile + " per tile.",
-            };
         }
 
         public override bool IsFull()

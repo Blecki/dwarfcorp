@@ -330,6 +330,7 @@
     <Compile Include="Gui\Widgets\CommandEntry.cs" />
     <Compile Include="Gui\Widgets\Graph.cs" />
     <Compile Include="Gui\Widgets\ColorOptionsEditor.cs" />
+    <Compile Include="Gui\Widgets\RoomListPanel.cs" />
     <Compile Include="Gui\Widgets\TextBox.cs" />
     <Compile Include="Gui\Widgets\TaskListPanel.cs" />
     <Compile Include="Scripting\Adventure\Adventure.cs" />
@@ -818,15 +819,8 @@
     <Compile Include="Scripting\Rooms\Room.cs" />
     <Compile Include="Scripting\Rooms\RoomData.cs" />
     <Compile Include="Scripting\Rooms\RoomLibrary.cs" />
-    <Compile Include="Scripting\Rooms\RoomTemplate.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\BalloonPort.cs" />
-    <Compile Include="Scripting\Rooms\RoomTypes\BedRoom.cs" />
-    <Compile Include="Scripting\Rooms\RoomTypes\CommonRoom.cs" />
-    <Compile Include="Scripting\Rooms\RoomTypes\Kitchen.cs" />
-    <Compile Include="Scripting\Rooms\RoomTypes\LibraryRoom.cs" />
-    <Compile Include="Scripting\Rooms\RoomTypes\TrainingRoom.cs" />
-    <Compile Include="Scripting\Rooms\RoomTypes\WorkshopRoom.cs" />
-    <Compile Include="Scripting\Rooms\Stockpile.cs" />
+    <Compile Include="Scripting\Rooms\RoomTypes\Stockpile.cs" />
     <Compile Include="Scripting\Rooms\Zone.cs" />
     <Compile Include="Scripting\TaskManagement\GatherManager.cs" />
     <Compile Include="Scripting\TaskManagement\Task.cs" />
