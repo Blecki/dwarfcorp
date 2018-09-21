@@ -137,7 +137,6 @@ namespace DwarfCorp
 
             var spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32);
 
-            // Todo: Should these be instances?
             AddChild(new SimpleSprite(Manager, "chair top", Matrix.CreateRotationX((float)Math.PI * 0.5f),
                 spriteSheet, TopFrame)
             {

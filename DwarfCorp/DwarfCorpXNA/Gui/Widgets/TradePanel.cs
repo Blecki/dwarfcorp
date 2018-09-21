@@ -385,7 +385,6 @@ namespace DwarfCorp.Gui.Widgets
 
         private void CalculateTradeAmount(out DwarfBux net, out DwarfBux tradeTarget)
         {
-            // Todo: Satisfactory trade threshold calculated in two different spots.
             net = (Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney)
                 - (Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney);
             var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;

@@ -133,10 +133,10 @@ namespace DwarfCorp
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
         }
 
-        public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
+        public override void Render(DwarfGame game, DwarfTime time)
         {
-            DepthStencilState state = graphics.DepthStencilState;
-            graphics.DepthStencilState = DepthStencilState.DepthRead;
+            var state = GameState.Game.GraphicsDevice.DepthStencilState;
+            GameState.Game.GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
             Effect = Player.World.DefaultShader;
 
             float t = (float)time.TotalGameTime.TotalSeconds;
@@ -167,7 +167,7 @@ namespace DwarfCorp
                     foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
-                        VoxelLibrary.GetPrimitive(CurrentVoxelType).Render(graphics);
+                        VoxelLibrary.GetPrimitive(CurrentVoxelType).Render(GameState.Game.GraphicsDevice);
                     }
                 }
             }
@@ -175,7 +175,7 @@ namespace DwarfCorp
             Effect.LightRamp = Color.White;
             Effect.VertexColorTint = Color.White;
             Effect.World = Matrix.Identity;
-            graphics.DepthStencilState = state;
+            GameState.Game.GraphicsDevice.DepthStencilState = state;
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)

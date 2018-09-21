@@ -381,7 +381,7 @@ namespace DwarfCorp.Rail
             return bodyCounter;
         }
 
-        public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
+        public override void Render(DwarfGame game, DwarfTime time)
         {
         }
 
