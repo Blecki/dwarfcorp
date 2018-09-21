@@ -42,27 +42,17 @@ namespace DwarfCorp
 {
     public class RoomData
     {
-        public string Name { get; set; }
-        public uint ID { get; set; }
-        public string FloorType { get; set; }
-        public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> RequiredResources { get; set; }
+        public string Name;
+        public uint ID;
+        public string FloorType;
+        public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> RequiredResources;
         public Gui.TileReference NewIcon;
-        public string Description { get; set; }
+        public string Description;
         public bool CanBuildAboveGround = true;
         public bool CanBuildBelowGround = true;
         public int MinimumSideLength = 3;
         public int MinimumSideWidth = 3;
         public int MaxNumRooms = int.MaxValue;
-
-        public RoomData(string name, uint id, string floorTexture, Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> requiredResources, List<RoomTemplate> templates, Gui.TileReference icon)
-        {
-            Name = name;
-            ID = id;
-            FloorType = floorTexture;
-            RequiredResources = requiredResources;
-            NewIcon = icon;
-            Description = "";
-        }
 
         public List<Quantitiy<Resource.ResourceTags> > GetRequiredResources(int numVoxels, Faction faction)
         {

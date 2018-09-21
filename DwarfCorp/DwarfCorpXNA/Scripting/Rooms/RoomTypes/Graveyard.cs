@@ -54,6 +54,11 @@ namespace DwarfCorp
             ReplacementType = VoxelLibrary.GetVoxelType("Dirt");
         }
 
+        public override string GetDescriptionString()
+        {
+            return "Graveyard " + ID + " - " + Boxes.Count + " of " + Voxels.Count + " plots filled.";
+        }
+
         private Graveyard(RoomData Data, Faction Faction, WorldManager World) :
             base(Data, Faction, World)
         {

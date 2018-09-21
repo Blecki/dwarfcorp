@@ -45,9 +45,11 @@ namespace DwarfCorp
     /// <summary>
     /// A BuildRoom is a kind of zone which can be built by creatures.
     /// </summary>
-    [JsonObject(IsReference = true)]
     public class Room : Zone
     {
+        [JsonIgnore]
+        public Gui.Widget GuiTag;
+
         public List<VoxelHandle> Designations;
         
         public bool IsBuilt;
@@ -55,6 +57,8 @@ namespace DwarfCorp
         private static int Counter = 0;
 
         public bool wasDeserialized = false;
+
+        public virtual String GetDescriptionString() { return StringLibrary.GetString("generic-room-description"); }
 
         public Room() : base()
         {

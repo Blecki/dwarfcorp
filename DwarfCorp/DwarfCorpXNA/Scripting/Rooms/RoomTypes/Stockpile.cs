@@ -78,14 +78,17 @@ namespace DwarfCorp
                 Resource.ResourceTags.Corpse,
                 Resource.ResourceTags.Money
             };
-
         }
 
         private static uint maxID = 0;
         public List<Body> Boxes { get; set; }
-        public static string StockpileName = "Stockpile";
         public string BoxType = "Crate";
         public Vector3 BoxOffset = Vector3.Zero;
+
+        public override string GetDescriptionString()
+        {
+            return ID;
+        }
 
         // If this is empty, all resources are allowed if and only if whitelist is empty. Otherwise,
         // all but these resources are allowed.
@@ -178,9 +181,7 @@ namespace DwarfCorp
                 }
             }
         }
-
-       
-
+        
         public override bool AddItem(Body component)
         {
             bool worked =  base.AddItem(component);
@@ -201,7 +202,6 @@ namespace DwarfCorp
 
             return worked;
         }
-
 
         public override void Destroy()
         {

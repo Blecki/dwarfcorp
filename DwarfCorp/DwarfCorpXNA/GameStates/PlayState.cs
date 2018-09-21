@@ -762,6 +762,15 @@ namespace DwarfCorp.GameStates
                 World = this.World
             });
 
+            var roomList = GuiRoot.RootItem.AddChild(new RoomListPanel
+            {
+                Border = "border-thin",
+                AutoLayout = AutoLayout.FloatBottomLeft,
+                MinimumSize = new Point(600, 300),
+                Hidden = true,
+                World = this.World
+            });
+
             MinimapIcon = new FramedIcon
             {
                 Icon = new Gui.TileReference("tool-icons", 33),
@@ -789,7 +798,7 @@ namespace DwarfCorp.GameStates
                 Corners = 0,
                 Transparent = true,
                 AutoLayout = Gui.AutoLayout.DockLeft,
-                SizeToGrid = new Point(4, 1),
+                SizeToGrid = new Point(5, 1),
                 ItemSource = new Gui.Widget[]
                         {
                             MinimapIcon,
@@ -809,6 +818,7 @@ namespace DwarfCorp.GameStates
                                        SelectedEmployeeInfo.Hidden = false;
                                        markerFilter.Hidden = true;
                                        taskList.Hidden = true;
+                                       roomList.Hidden = true;
                                    }
                                    else
                                        SelectedEmployeeInfo.Hidden = true;
@@ -831,6 +841,7 @@ namespace DwarfCorp.GameStates
                                        SelectedEmployeeInfo.Hidden = true;
                                        taskList.Hidden = true;
                                        markerFilter.Hidden = false;
+                                       roomList.Hidden = true;
                                    }
                                    else
                                        markerFilter.Hidden = true;
@@ -853,9 +864,33 @@ namespace DwarfCorp.GameStates
                                         SelectedEmployeeInfo.Hidden = true;
                                         markerFilter.Hidden = true;
                                         taskList.Hidden = false;
+                                        roomList.Hidden = true;
                                     }
                                     else
                                         taskList.Hidden = true;
+                                }
+                            },
+
+                            new FramedIcon
+                            {
+                                Icon = new Gui.TileReference("tool-icons", 35),
+                                Text = "@play-rooms-icon-label",
+                                Tooltip = "@play-rooms-icon-tooltip",
+                                TextHorizontalAlign = HorizontalAlign.Center,
+                                TextVerticalAlign = VerticalAlign.Below,
+                                EnabledTextColor = Vector4.One,
+                                OnClick = (sender, args) =>
+                                {
+                                    if (roomList.Hidden)
+                                    {
+                                        MinimapFrame.Hidden = true;
+                                        SelectedEmployeeInfo.Hidden = true;
+                                        markerFilter.Hidden = true;
+                                        taskList.Hidden = true;
+                                        roomList.Hidden = false;
+                                    }
+                                    else
+                                        roomList.Hidden = true;
                                 }
                             }
                         },

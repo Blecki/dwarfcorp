@@ -77,9 +77,13 @@ namespace DwarfCorp
             Money = 0;
         }
 
+        public override string GetDescriptionString()
+        {
+            return ID;
+        }
+
         private static uint maxID = 0;
         public List<Body> Coins { get; set; }
-        public static string TreasuryName = "Treasury";
 
         public static DwarfBux MoneyPerPile = 1024m;
 
@@ -263,20 +267,6 @@ namespace DwarfCorp
         {
             HandleCoins();
             base.RecalculateMaxResources();
-        }
-
-        public static RoomData InitializeData()
-        {
-            List<RoomTemplate> TreasuryTemplates = new List<RoomTemplate>();
-            Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> roomResources = new Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>>()
-            {
-            };
-
-            return new RoomData(TreasuryName, 12, "Blue Tile", roomResources, TreasuryTemplates,
-                new Gui.TileReference("rooms", 14))
-            {
-                Description = "Money is stored here. Can store " + MoneyPerPile + " per tile.",
-            };
         }
 
         public override bool IsFull()

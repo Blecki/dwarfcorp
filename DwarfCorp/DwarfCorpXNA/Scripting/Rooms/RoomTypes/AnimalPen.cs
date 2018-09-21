@@ -63,6 +63,11 @@ namespace DwarfCorp
         {
         }
 
+        public override string GetDescriptionString()
+        {
+            return "Animal Pen " + ID + " - contains " + Species + " (" + Animals.Count + ").";
+        }
+
         public override void OnBuilt()
         {
             foreach(var body in ZoneBodies)
