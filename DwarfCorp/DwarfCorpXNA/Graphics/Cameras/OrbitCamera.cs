@@ -665,13 +665,13 @@ namespace DwarfCorp
             bool projectTarget = GameSettings.Default.CameraFollowSurface || (!GameSettings.Default.CameraFollowSurface && (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl)));
             Vector3 projectedTarget = projectTarget ? ProjectToSurface(Target) : Target;
             Vector3 diffTarget = projectedTarget - Target;
-            if (diffTarget.LengthSquared() > 1)
+            if (diffTarget.LengthSquared() > 25)
             {
                 diffTarget.Normalize();
+                diffTarget *= 5;
             }
-            diffTarget.Y *= 0.5f;
             Position = (Position + diffTarget) * 0.05f + Position * 0.95f;
-            Target = projectedTarget * 0.05f + Target * 0.95f;
+            Target = (Target + diffTarget) * 0.05f + Target * 0.95f;
             float currRadius = (Position - Target).Length();
             float newRadius = Math.Max(currRadius + diffRadius, 3.0f);
             Position = MathFunctions.ProjectOutOfHalfPlane(MathFunctions.ProjectOutOfCylinder(MathFunctions.ProjectToSphere(Position - right*diffTheta * 2 - up*diffPhi * 2, newRadius, Target), Target, 3.0f), Target, 2.0f);
