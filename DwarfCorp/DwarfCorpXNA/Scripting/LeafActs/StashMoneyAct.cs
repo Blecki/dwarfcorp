@@ -97,7 +97,7 @@ namespace DwarfCorp
                 yield break;
             }
             Timer waitTimer = new Timer(1.0f, true);
-            var moneyRemoved = Math.Min(Money, Zone.Money);
+            DwarfBux moneyRemoved = Math.Min(Money, Zone.Money);
             bool removed = Zone.RemoveMoney(Agent.Position, moneyRemoved);
 
             if(!removed)

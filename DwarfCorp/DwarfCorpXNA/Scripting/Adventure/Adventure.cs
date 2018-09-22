@@ -527,7 +527,7 @@ namespace DwarfCorp.Scripting.Adventure
                 else
                 {
                     stolenGoods.Add(new ResourceAmount(Datastructures.SelectRandom(destGoods).ResourceType, MathFunctions.RandInt(1, 5)));
-                    stolenMoney += (decimal)MathFunctions.RandInt(1, 100);
+                    stolenMoney += (DwarfBux)(decimal)MathFunctions.RandInt(1, 100);
                 }
             }
 
@@ -630,7 +630,7 @@ namespace DwarfCorp.Scripting.Adventure
                 return;
             }
 
-            decimal tradeValue = (Resources.Sum(r => GetValue(ResourceLibrary.GetResourceByName(r.ResourceType), des) * r.NumResources) + Money) * charisma;
+            decimal tradeValue = (Resources.Sum(r => GetValue(ResourceLibrary.GetResourceByName(r.ResourceType), des) * r.NumResources) + (decimal)Money) * (decimal)charisma;
 
             if (MathFunctions.Rand(0, 500) < (float)tradeValue)
             {

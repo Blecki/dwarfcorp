@@ -296,8 +296,8 @@ namespace DwarfCorp.Scripting
                 var money = participant.Status.Money;
 
                 var bet = (decimal)(int)(MathFunctions.Rand(0.1f, 0.25f) * money);
-                Pot += bet;
-                participant.Status.Money -= bet;
+                Pot += (DwarfBux)bet;
+                participant.Status.Money -= (DwarfBux)bet;
 
                 IndicatorManager.DrawIndicator((-(DwarfBux)bet).ToString(),
                     participant.AI.Position + Microsoft.Xna.Framework.Vector3.Up , 4.0f, 
