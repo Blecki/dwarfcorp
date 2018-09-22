@@ -130,7 +130,12 @@ namespace DwarfCorp
                 new Vector3(pos.X, VoxelConstants.ChunkSizeY - 1, pos.Z),
                 new Vector3(pos.X, 0, pos.Z));
             if (!vox.IsValid) return pos;
-            return new Vector3(pos.X, vox.WorldPosition.Y + 0.5f, pos.Z);
+            float diffY = (vox.WorldPosition.Y + 0.5f) - pos.Y;
+            if (Math.Abs(diffY) > 10)
+            {
+                diffY = Math.Sign(diffY) * 10;
+            }
+            return new Vector3(pos.X, pos.Y + diffY, pos.Z);
         }
 
         private Point mousePrerotate = new Point(0, 0);
@@ -656,12 +661,15 @@ namespace DwarfCorp
 
             Velocity *= 0.8f;
             UpdateBasisVectors();
-            Vector3 projectedTarget = GameSettings.Default.CameraFollowSurface ? ProjectToSurface(Target) : Target;
-            if (!GameSettings.Default.CameraFollowSurface && (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl)))
-            {
-                projectedTarget = ProjectToSurface(Target);
-            }
+
+            bool projectTarget = GameSettings.Default.CameraFollowSurface || (!GameSettings.Default.CameraFollowSurface && (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl)));
+            Vector3 projectedTarget = projectTarget ? ProjectToSurface(Target) : Target;
             Vector3 diffTarget = projectedTarget - Target;
+            if (diffTarget.LengthSquared() > 1)
+            {
+                diffTarget.Normalize();
+            }
+            diffTarget.Y *= 0.5f;
             Position = (Position + diffTarget) * 0.05f + Position * 0.95f;
             Target = projectedTarget * 0.05f + Target * 0.95f;
             float currRadius = (Position - Target).Length();
