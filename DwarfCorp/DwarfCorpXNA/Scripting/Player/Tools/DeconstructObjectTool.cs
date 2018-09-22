@@ -119,6 +119,9 @@ namespace DwarfCorp
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
+            if (selectedBodies.Count != 0)
+                return;
+
             var v = Player.VoxSelector.VoxelUnderMouse;
 
             if (Player.Faction.RoomBuilder.IsBuildDesignation(v))
@@ -193,12 +196,15 @@ namespace DwarfCorp
 
         public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
         {
-            var v = Player.VoxSelector.VoxelUnderMouse;
-            if (v.IsValid && !v.IsEmpty)
+            if (selectedBodies.Count == 0)
             {
-                var room = Player.Faction.RoomBuilder.GetRoomThatContainsVoxel(v);
-                if (room != null)
-                    Drawer3D.DrawBox(room.GetBoundingBox(), GameSettings.Default.Colors.GetColor("Positive", Color.Green), 0.2f, true);
+                var v = Player.VoxSelector.VoxelUnderMouse;
+                if (v.IsValid && !v.IsEmpty)
+                {
+                    var room = Player.Faction.RoomBuilder.GetRoomThatContainsVoxel(v);
+                    if (room != null)
+                        Drawer3D.DrawBox(room.GetBoundingBox(), GameSettings.Default.Colors.GetColor("Positive", Color.Green), 0.2f, true);
+                }
             }
         }
     }
