@@ -329,17 +329,9 @@ namespace DwarfCorp
                     });
                 }
 
-                    foreach (CreatureAI creature in envoy.Creatures)
-                    {
-                       creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
-                        if (natives.Economy == null)
-                        {
-                            natives.Economy = new Economy(natives, 1000.0m, World, new CompanyInformation()
-                            {
-                                Name = natives.Name
-                            });
-                        }
-
+                foreach (CreatureAI creature in envoy.Creatures)
+                {
+                    creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
                     creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information));
                 }
             }
@@ -347,11 +339,30 @@ namespace DwarfCorp
             {
                 Body balloon = world.PlayerFaction.DispatchBalloon();
 
-                foreach (CreatureAI creature in creatures)
+                if (balloon != null)
                 {
-                    Matrix tf = creature.Physics.LocalTransform;
-                    tf.Translation = balloon.LocalTransform.Translation;
-                    creature.Physics.LocalTransform = tf;
+                    foreach (CreatureAI creature in creatures)
+                    {
+                        Matrix tf = creature.Physics.LocalTransform;
+                        tf.Translation = balloon.LocalTransform.Translation;
+                        creature.Physics.LocalTransform = tf;
+                    }
+                }
+                else
+                {
+                    if (natives.Economy == null)
+                    {
+                        natives.Economy = new Economy(natives, 1000.0m, World, new CompanyInformation()
+                        {
+                            Name = natives.Name
+                        });
+                    }
+
+                    foreach (CreatureAI creature in envoy.Creatures)
+                    {
+                        creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
+                        creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information));
+                    }
                 }
             }
 

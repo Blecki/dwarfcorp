@@ -40,6 +40,12 @@ namespace DwarfCorp.Tutorial
                 });
         }
 
+
+        public Dictionary<String, TutorialEntry> EnumerateTutorials()
+        {
+            return Entries;
+        }
+
         public void ResetTutorials()
         {
             foreach (var entry in Entries)

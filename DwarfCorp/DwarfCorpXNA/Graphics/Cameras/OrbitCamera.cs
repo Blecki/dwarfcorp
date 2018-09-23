@@ -130,7 +130,12 @@ namespace DwarfCorp
                 new Vector3(pos.X, VoxelConstants.ChunkSizeY - 1, pos.Z),
                 new Vector3(pos.X, 0, pos.Z));
             if (!vox.IsValid) return pos;
-            return new Vector3(pos.X, vox.WorldPosition.Y + 0.5f, pos.Z);
+            float diffY = (vox.WorldPosition.Y + 0.5f) - pos.Y;
+            if (Math.Abs(diffY) > 10)
+            {
+                diffY = Math.Sign(diffY) * 10;
+            }
+            return new Vector3(pos.X, pos.Y + diffY, pos.Z);
         }
 
         private Point mousePrerotate = new Point(0, 0);
@@ -356,10 +361,40 @@ namespace DwarfCorp
                     MoveTarget(Velocity * dt * subStepLength);
                 }
             }
+            VoxelHandle voxelAfterMove = new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position));
+            if (voxelAfterMove.IsValid && !voxelAfterMove.IsEmpty)
+            {
+                float distCenter = (voxelAfterMove.GetBoundingBox().Center() - Position).Length();
+                if (distCenter < 0.5f)
+                {
+                    float closest = float.MaxValue;
+                    VoxelHandle closestVoxel = VoxelHandle.InvalidHandle;
+                    foreach (var voxel in VoxelHelpers.EnumerateAllNeighbors(voxelAfterMove.Coordinate).Select(c => new VoxelHandle(World.ChunkManager.ChunkData, c)).Where(v => v.IsEmpty))
+                    {
+                        float d = (voxel.GetBoundingBox().Center() - Position).Length();
+                        if (d < closest)
+                        {
+                            closest = d;
+                            closestVoxel = voxel;
+                        }
+                    }
 
+                    if (closestVoxel.IsValid)
+                    {
+                        var newPosition = closestVoxel.GetBoundingBox().Center();
+                        var diff = (newPosition - Position);
+                        MoveTarget(diff);
+                    }
+                }
+            }
 
             Target += right * diffTheta * 0.1f;
-            Target += up * diffPhi * 0.1f;
+            var newTarget = up * diffPhi * 0.1f + Target;
+            var newForward = (Target - Position);
+            if (Math.Abs(Vector3.Dot(newForward, UpVector)) < 0.99f)
+            {
+                Target = newTarget;
+            }
             var diffTarget = Target - Position;
             diffTarget.Normalize();
             Target = Position + diffTarget * 1.0f;
@@ -656,14 +691,17 @@ namespace DwarfCorp
 
             Velocity *= 0.8f;
             UpdateBasisVectors();
-            Vector3 projectedTarget = GameSettings.Default.CameraFollowSurface ? ProjectToSurface(Target) : Target;
-            if (!GameSettings.Default.CameraFollowSurface && (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl)))
-            {
-                projectedTarget = ProjectToSurface(Target);
-            }
+
+            bool projectTarget = GameSettings.Default.CameraFollowSurface || (!GameSettings.Default.CameraFollowSurface && (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl)));
+            Vector3 projectedTarget = projectTarget ? ProjectToSurface(Target) : Target;
             Vector3 diffTarget = projectedTarget - Target;
+            if (diffTarget.LengthSquared() > 25)
+            {
+                diffTarget.Normalize();
+                diffTarget *= 5;
+            }
             Position = (Position + diffTarget) * 0.05f + Position * 0.95f;
-            Target = projectedTarget * 0.05f + Target * 0.95f;
+            Target = (Target + diffTarget) * 0.05f + Target * 0.95f;
             float currRadius = (Position - Target).Length();
             float newRadius = Math.Max(currRadius + diffRadius, 3.0f);
             Position = MathFunctions.ProjectOutOfHalfPlane(MathFunctions.ProjectOutOfCylinder(MathFunctions.ProjectToSphere(Position - right*diffTheta * 2 - up*diffPhi * 2, newRadius, Target), Target, 3.0f), Target, 2.0f);

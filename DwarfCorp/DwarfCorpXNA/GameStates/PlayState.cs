@@ -828,11 +828,11 @@ namespace DwarfCorp.GameStates
 
                             new FramedIcon
                             {
-                               Icon = null,
+                               Icon  = new Gui.TileReference("tool-icons", 17),
                                Text = "@play-marks-icon-label",
                                Tooltip = "@play-marks-icon-tooltip",
                                TextHorizontalAlign = HorizontalAlign.Center,
-                               TextVerticalAlign = VerticalAlign.Center,
+                               TextVerticalAlign = VerticalAlign.Below,
                                EnabledTextColor = Vector4.One,
                                OnClick = (sender, args) =>
                                {
@@ -874,7 +874,7 @@ namespace DwarfCorp.GameStates
 
                             new FramedIcon
                             {
-                                Icon = new Gui.TileReference("tool-icons", 35),
+                                Icon = new Gui.TileReference("tool-icons", 37),
                                 Text = "@play-rooms-icon-label",
                                 Tooltip = "@play-rooms-icon-tooltip",
                                 TextHorizontalAlign = HorizontalAlign.Center,
@@ -938,10 +938,9 @@ namespace DwarfCorp.GameStates
                                 TextVerticalAlign = VerticalAlign.Below,
                                 Tooltip = StringLibrary.GetString("events-tooltip")
                             },
-#if DEBUG
                             new Gui.Widgets.FramedIcon()
                             {
-                                 Icon = new Gui.TileReference("tool-icons", 21),
+                                 Icon = new Gui.TileReference("tool-icons", 36),
                                 OnClick = (sender, args) =>
                                 {
                                     StateManager.PushState(new FactionViewState(GameState.Game, GameState.Game.StateManager, World));
@@ -950,7 +949,6 @@ namespace DwarfCorp.GameStates
                                 TextVerticalAlign = VerticalAlign.Below,
                                 Tooltip = "View diplomacy with other factions."
                             },
-#endif
                             EconomyIcon,
                                                                    
                             new Gui.Widgets.FramedIcon
@@ -2581,6 +2579,13 @@ namespace DwarfCorp.GameStates
                     },
                     World = World
                 };
+
+                StateManager.PushState(state);
+            });
+
+            MakeMenuItem(PausePanel, "Help", "", (sender, args) =>
+            {
+                var state = new TutorialViewState(Game, StateManager, World);
 
                 StateManager.PushState(state);
             });

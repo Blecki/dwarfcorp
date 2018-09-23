@@ -247,7 +247,40 @@ namespace DwarfCorp
                     yield return file;
             }
         }
-        
+
+        public static bool DoesTextureExist(string _asset)
+        {
+            string asset = FileUtils.NormalizePath(_asset);
+            if (asset == null)
+            {
+                return false;
+            }
+
+            if (TextureCache.ContainsKey(asset))
+            {
+                return true;
+            }
+
+            try
+            {
+                var filename = ResolveContentPath(asset, ".png");
+                if (Path.GetExtension(filename) == ".xnb")
+                {
+                    var toReturn = Content.Load<Texture2D>(filename.Substring(0, filename.Length - 4));
+                    return true;
+                }
+                else
+                {
+                    var toReturn = LoadUnbuiltTextureFromAbsolutePath(filename);
+                    return toReturn != null;
+                }
+            }
+            catch (Exception exception)
+            {
+                return false;
+            }
+        }
+
         public static Texture2D GetContentTexture(string _asset)
         {
             string asset = FileUtils.NormalizePath(_asset);
