@@ -363,6 +363,7 @@ namespace DwarfCorp
                         creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
                         creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information));
                     }
+                }
             }
 
             foreach (CreatureAI creature in envoy.Creatures)
