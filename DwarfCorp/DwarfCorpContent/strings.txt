@@ -49,13 +49,13 @@ d-ale: Turn brewable food into alcohol.
 anvil: Anvil
 s-anvil: anvil
 d-anvil: Used to craft more complex items.
-play-employee-icon-label: emp
+play-employee-icon-label: Dwarfs
 play-employee-icon-tooltip: Selected employee menu
-play-marks-icon-label: marks
+play-marks-icon-label: Marks
 play-marks-icon-tooltip: Active Markers
-play-tasks-icon-label: tasks
+play-tasks-icon-label: Tasks
 play-tasks-icon-tooltip: Task List
-play-map-icon-label: map
+play-map-icon-label: Map
 play-map-icon-tooltip: Minimap
 fire-dwarf: Fire this dwarf!
 keep-dwarf: Keep this dwarf.
@@ -68,7 +68,7 @@ slicer-down-tooltip: Go down one viewing level.
 slicer-up-tooltip: Go up one viewing level.
 slicer-current-tooltip: Current viewing level.
 time-tooltip: Current time/date.
-economy-tooltip: Click to open the Eceonomy screen.
+economy-tooltip: Click to open the Economy screen.
 economy-label: Econ.
 events-tooltip: View Event Log
 events-label: Events
@@ -92,6 +92,6 @@ options-edge-scrolling: Edge Scrolling
 options-edge-scrolling-tooltip: When checked, moving the cursor to the edge of the screen will move the camera.
 world-generation-start-underground: Start Underground
 world-generation-reveal-surface: Reveal Surface
-play-rooms-icon-label: rooms
-play-rooms-icon-tooltip: Lists all rooms in your colony.
+play-rooms-icon-label: Zones
+play-rooms-icon-tooltip: Lists all zones in your colony.
 generic-room-description: It's rectangular. It's open. It's a room.

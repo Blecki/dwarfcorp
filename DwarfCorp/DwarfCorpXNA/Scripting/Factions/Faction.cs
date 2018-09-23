@@ -725,7 +725,7 @@ namespace DwarfCorp
 
         public void Hire(Applicant currentApplicant)
         {
-            List<Room> rooms = GetRooms().Where(room => room.RoomData.Name == "BalloonPort").ToList();
+            List<Room> rooms = GetRooms().Where(room => room.RoomData.Name == "Balloon Port").ToList();
 
             if (rooms.Count == 0)
             {
@@ -762,7 +762,7 @@ namespace DwarfCorp
 
         public Body DispatchBalloon()
         {
-            List<Room> rooms = GetRooms().Where(room => room.RoomData.Name == "BalloonPort").ToList();
+            List<Room> rooms = GetRooms().Where(room => room.RoomData.Name == "Balloon Port").ToList();
 
             if (rooms.Count == 0)
             {
