@@ -146,8 +146,6 @@ namespace DwarfCorp.GameStates
                     {
                         var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.company_exploration);
                         NameField.Text = TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
-                        // Todo: Doesn't automatically invalidate when text changed??
-                        NameField.Invalidate();
                     }
             });
 

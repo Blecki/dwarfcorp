@@ -1059,7 +1059,7 @@ namespace DwarfCorp
             }
             
 
-            Master.Render(Game, gameTime, GraphicsDevice);
+            Master.Render(Game, gameTime);
 
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle =
                 DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;

@@ -126,7 +126,7 @@ namespace DwarfCorp
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 6));
         }
 
-        public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
+        public override void Render(DwarfGame game, DwarfTime time)
         {
             NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 6, 0);
 

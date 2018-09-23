@@ -325,9 +325,9 @@ namespace DwarfCorp
         }
 
 
-        public void Render(DwarfGame game, DwarfTime time, GraphicsDevice g)
+        public void Render(DwarfGame game, DwarfTime time)
         {
-            CurrentTool.Render(game, g, time);
+            CurrentTool.Render(game, time);
             VoxSelector.Render();
 
             foreach (var m in Faction.Minions)
@@ -350,9 +350,7 @@ namespace DwarfCorp
                 }
 
                 if (creature.CurrentTask != null)
-                {
                     creature.CurrentTask.Render(time);
-                }
             }
 
             DwarfGame.SpriteBatch.Begin();
@@ -360,12 +358,8 @@ namespace DwarfCorp
             DwarfGame.SpriteBatch.End();
 
             foreach (var obj in SelectedObjects)
-            {
                 if (obj.IsVisible && !obj.IsDead)
-                {
                     Drawer3D.DrawBox(obj.GetBoundingBox(), Color.White, 0.01f, true);
-                }
-            }
         }
 
         public void UpdateRooms()

@@ -79,6 +79,15 @@ namespace DwarfCorp
             return true;
         }
 
+        public GlobalChunkCoordinate ConfineToBounds(GlobalChunkCoordinate Coordinate)
+        {
+            var x = (Coordinate.X < ChunkMapMinX) ? ChunkMapMinX :
+                (Coordinate.X >= (ChunkMapMinX + ChunkMapWidth) ? (ChunkMapMinX + ChunkMapWidth - 1) : Coordinate.X);
+            var z = (Coordinate.Z < ChunkMapMinZ) ? ChunkMapMinZ :
+                (Coordinate.Z >= (ChunkMapMinZ + ChunkMapHeight) ? (ChunkMapMinZ + ChunkMapHeight - 1) : Coordinate.Z);
+            return new GlobalChunkCoordinate(x, 0, z);
+        }
+
         public IEnumerable<VoxelChunk> GetChunkEnumerator()
         {
             return ChunkMap;

@@ -194,7 +194,7 @@ namespace DwarfCorp
             Player.BodySelector.AllowRightClickSelection = true;
         }
 
-        public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
+        public override void Render(DwarfGame game, DwarfTime time)
         {
             if (selectedBodies.Count == 0)
             {

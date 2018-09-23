@@ -295,7 +295,7 @@ namespace DwarfCorp
             rightPressed = rightKey;
         }
 
-        public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
+        public override void Render(DwarfGame game, DwarfTime time)
         {
 
         }

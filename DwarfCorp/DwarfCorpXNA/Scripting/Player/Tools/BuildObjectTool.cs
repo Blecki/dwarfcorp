@@ -272,11 +272,12 @@ namespace DwarfCorp
                 World.ShowTooltip("Click to build. Press R/T to rotate.");
         }
 
-        public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
+        public override void Render(DwarfGame game, DwarfTime time)
         {
             if (PreviewBody != null)
             {
-                Drawer2D.DrawPolygon(World.Camera, new List<Vector3>() { PreviewBody.Position, PreviewBody.Position + PreviewBody.GlobalTransform.Right * 0.5f }, Color.White, 1, false, graphics.Viewport);
+                Drawer2D.DrawPolygon(World.Camera, new List<Vector3>() { PreviewBody.Position, PreviewBody.Position + PreviewBody.GlobalTransform.Right * 0.5f },
+                    Color.White, 1, false, GameState.Game.GraphicsDevice.Viewport);
             }
         }
 

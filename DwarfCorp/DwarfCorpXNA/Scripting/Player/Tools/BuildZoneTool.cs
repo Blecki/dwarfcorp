@@ -92,7 +92,7 @@ namespace DwarfCorp
         }
 
         // Todo: Why is the graphics device passed in when we have a perfectly good global we're using instead?
-        public override void Render(DwarfGame game, GraphicsDevice graphics, DwarfTime time)
+        public override void Render(DwarfGame game, DwarfTime time)
         {
             Player.Faction.RoomBuilder.Render(time, GameState.Game.GraphicsDevice);
         }

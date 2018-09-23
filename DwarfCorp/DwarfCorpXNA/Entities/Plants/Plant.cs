@@ -79,8 +79,9 @@ namespace DwarfCorp
         private void impl_CreateCosmeticChildren(ComponentManager Manager)
         {
             PropogateTransforms();
-            var mesh = AddChild(new InstanceMesh(Manager, "Model", 
-                Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position), MeshAsset));
+            var mesh = AddChild(new InstanceMesh(Manager, "Model",
+                Matrix.CreateRotationY((float)(MathFunctions.Random.NextDouble() * Math.PI)) * Matrix.CreateScale(MeshScale, MeshScale, MeshScale) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position), MeshAsset,
+                this.BoundingBoxSize, Vector3.Zero));
             mesh.SetFlag(Flag.ShouldSerialize, false);
 
             AddChild(new GenericVoxelListener(Manager,

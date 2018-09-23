@@ -65,8 +65,8 @@ namespace DwarfCorp
 
         }
 
-        public InstanceMesh(ComponentManager Manager, string name, Matrix localTransform, string modelType) :
-            base(Manager, name, localTransform, Vector3.Zero, Vector3.Zero)
+        public InstanceMesh(ComponentManager Manager, string name, Matrix localTransform, string modelType, Vector3 BoundingBoxExtents, Vector3 BoundingBoxPos) :
+            base(Manager, name, localTransform, BoundingBoxExtents, BoundingBoxPos)
         {
             PropogateTransforms();
             UpdateBoundingBox();

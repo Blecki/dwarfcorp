@@ -143,15 +143,6 @@ namespace DwarfCorp
             CurrentFrame = 0;
         }
 
-        //Todo: What uses this?
-        public void Sychronize(AnimationPlayer Other)
-        {
-            this.CurrentAnimation = Other.CurrentAnimation;
-            this.LastFrame = Other.LastFrame;
-            this.CurrentFrame = Other.CurrentFrame;
-            this.FrameTimer = Other.FrameTimer;
-        }
-
         public virtual void Update(DwarfTime gameTime, bool WillUseInstancingIfPossible, Timer.TimerMode mode = Timer.TimerMode.Game)
         {
             InstancingPossible = false;
