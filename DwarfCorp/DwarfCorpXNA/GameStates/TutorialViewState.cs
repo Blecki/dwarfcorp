@@ -140,7 +140,8 @@ namespace DwarfCorp.GameStates
                     {
                         details.Text = tutorial.Value.Text;
                         title.Text = tutorial.Value.Title;
-                        icon.ImageSource = "newgui\\tutorials\\" + tutorial.Key;
+                        var asset = "newgui\\tutorials\\" + tutorial.Key;
+                        icon.ImageSource = AssetManager.DoesTextureExist(asset) ? asset : null;
                     },
                     TextVerticalAlign = VerticalAlign.Center,
                 });

@@ -41,9 +41,9 @@ namespace DwarfCorp.Tutorial
         }
 
 
-        public IEnumerable<TutorialEntry> EnumerateTutorials()
+        public Dictionary<String, TutorialEntry> EnumerateTutorials()
         {
-            return Entries.Values;
+            return Entries;
         }
 
         public void ResetTutorials()
