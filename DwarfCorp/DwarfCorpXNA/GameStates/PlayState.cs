@@ -2583,6 +2583,13 @@ namespace DwarfCorp.GameStates
                 StateManager.PushState(state);
             });
 
+            MakeMenuItem(PausePanel, "Help", "", (sender, args) =>
+            {
+                var state = new TutorialViewState(Game, StateManager, World);
+
+                StateManager.PushState(state);
+            });
+
 #if !DEMO
             MakeMenuItem(PausePanel, "Save", "",
                 (sender, args) =>

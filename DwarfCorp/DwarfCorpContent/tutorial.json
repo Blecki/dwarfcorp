@@ -11,11 +11,6 @@
 		"Text": "You selected a dwarf! You can tell a dwarf to go somewhere by right clicking. You can order your employees to do something using the tools in the tray at the bottom of the screen. Dwarfs to do not have to be selected to issue orders.",
 		"GuiHilite": "tools"
 	},
-	{
-		"Name": "dwarf follow",
-		"Title": "Following Dwarves",
-		"Text": "You are following a dwarf. Press W, A, S, D to move the dwarf, and C to jump! Deselect the dwarf to cancel following."
-	},
   {
     "Name": "mine",
     "Title": "Mining",
@@ -24,7 +19,7 @@
   },
 	{
 		"Name": "wrangle",
-		"Title": "Wrangling",
+		"Title": "Catching Animals",
 		"Text": "Left click and drag over animals to capture them. Dwarves will bring the animals to an animal pen, where they may breed and lay eggs.",
 		"GuiHilite": "wrangle"
 	},
@@ -60,7 +55,7 @@
 	{
 		"Name": "cook",
 		"Title": "Cooking",
-		"Text": "Dwarves can cook meals, bake bread or brew ale in the kitchen. You can select which food items you want to use for the dwarf to cook with. Meals provide more happiness and relieve hunger more than raw foods. Dwarves must eat to survive and stay happy. Once you select a food, the dwarf will gather the resources from your stockpiles and go cook it in the kitchen. NOTE: a kitchen is required to cook.",
+		"Text": "Dwarves can cook meals, bake bread or brew ale. You can select which food items you want to use for the dwarf to cook with. Meals provide more happiness and relieve hunger more than raw foods. Dwarves must eat to survive and stay happy. Once you select a food, the dwarf will gather the resources from your stockpiles and go cook it. NOTE: You must have a barrell, cutting board, or stove to cook.",
 		"GuiHilite": "cook"
 	},
 	{
@@ -97,55 +92,15 @@
 		"GuiHilite": "chop"
 	},
 	{
-		"Name": "research spells",
-		"Title": "Magical Research",
-		"Text": "Wizards can research magical spells for you to cast in the library. Researching spells unlocks more powerful spells, which can be used to heal your dwarves, convert stone into gold, and more. NOTE: Researching spells requires a library.",
-		"GuiHilite": "magic"
-	},
-	{
-		"Name": "cast spells",
-		"Title": "Casting Spells",
-		"Text": "To cast a spell, select it and then left click on an object or block. Casting spells uses Mana. Mana gets recharged in the library automatically."
-	},
-	{
 		"Name": "build Stockpile",
 		"Title": "Stockpiles",
 		"Text": "Left click and drag a set of blocks to build a stockpile. Stockpiles are free and increase the number of goods your dwarf corporation can have in storage. Dwarves carry resources to stockpiles to store them, and grab resources from stockpiles when they\\'re needed. Stockpiles automatically redistribute goods when necessary. You can see what is in your stockpiles at the top of the screen. The larger the stockpile, the more goods that can be stored there."
 	},
-	{
-		"Name": "build BedRoom",
-		"Title": "Bed Room",
-		"Text": "Left click and drag to build a bed room. Bed rooms must be built underground. Dwarves choose a bed of their own automatically and sleep safely in bed rooms at night. The larger the bed room, the more dwarves can sleep in it."
-	},
-	{
-		"Name": "build CommonRoom",
-		"Title": "Common Room",
-		"Text": "Left click and drag to build a common room. Dwarves eat and drink in common rooms while on break. They make a natural gathering place for your employees. The larger the common room, the more employees can sit there."
-	},
+
 	{
 		"Name": "build Graveyard",
-		"Title": "Common Room",
+		"Title": "Graveyard",
 		"Text": "Left click and drag to build a graveyard. When dwarves die, they produce corpses. Corpses can only be stored in the graveyard. Dwarves will come to the graveyard to mourn the dead."
-	},
-	{
-		"Name": "build Kitchen",
-		"Title": "Kitchen",
-		"Text": "Left click and drag to build a kitchen. Dwarves can cook meals, bake bread and brew alcohol in the kitchen. Prepared foods heal your dwarves and make them happier. The larger the kitchen, the more meals dwarves can cook at once."
-	},
-	{
-		"Name": "build LibraryRoom",
-		"Title": "Library",
-		"Text": "Left click and drag to build a library. Wizard dwarves can research spells in the library, and Mana rocks are stored here to produce Mana Points for casting spells. The larger the library, the more Mana Points that can be recharged there."
-	},
-	{
-		"Name": "build TrainingRoom",
-		"Title": "Training Room",
-		"Text": "Left click and drag to build a training room. Dwarves come to the training room to practice their combat skills and earn experience points for doing so. The larger the training room, the more dwarves can train in it."
-	},
-	{
-		"Name": "build WorkshopRoom",
-		"Title": "Workshop",
-		"Text": "Left click and drag to build a workshop. Dwarves can use the workshop to craft items. The larger the workshop room, the more items that can be crafted at once."
 	},
 	{
 		"Name": "build BalloonPort",
@@ -237,21 +192,6 @@
 		"Name": "economy",
 		"Title": "Economy",
 		"Text": "This is the economy screen, where you can view your employees and finances. You can also hire new employees, fire employees, and manage employee tasks."
-	},
-	{
-		"Name": "goals",
-		"Title": "Goals",
-		"Text": "TODO"
-	},
-	{
-		"Name": "active goals",
-		"Title": "Active Goals",
-		"Text": "TODO"
-	},
-	{
-		"Name": "completed goals",
-		"Title": "Completed Goals",
-		"Text": "TODO"
 	},
 	{
 		"Name": "paint rail",

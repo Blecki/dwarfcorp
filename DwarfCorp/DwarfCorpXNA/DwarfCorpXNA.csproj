@@ -292,6 +292,7 @@
     <Compile Include="GameStates\ModManagement\InstalledModsWidget.cs" />
     <Compile Include="GameStates\ModManagement\ManageModsState.cs" />
     <Compile Include="GameStates\FactionViewState.cs" />
+    <Compile Include="GameStates\TutorialViewState.cs" />
     <Compile Include="GameStates\YarnSpinner\EndConversation.cs" />
     <Compile Include="GameStates\YarnSpinner\HidePortrait.cs" />
     <Compile Include="GameStates\YarnSpinner\EmployeeCommands.cs" />
