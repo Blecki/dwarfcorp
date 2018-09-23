@@ -67,11 +67,12 @@ namespace DwarfCorp.Gui.Widgets
                             TextVerticalAlign = VerticalAlign.Center
                         });
 
-                        tag.AddChild(new Button
+                        tag.AddChild(new Widget
                         {
                             Text = "DESTROY",
                             AutoLayout = AutoLayout.DockRight,
                             MinimumSize = new Point(16, 0),
+                            ChangeColorOnHover = true,
                             TextVerticalAlign = VerticalAlign.Center,
                             OnClick = (_sender, args) =>
                             {
@@ -80,6 +81,22 @@ namespace DwarfCorp.Gui.Widgets
                                     Text = "Do you want to destroy this " + lambdaCopy.RoomData.Name + "?",
                                     OnClose = (_sender2) => DestroyZoneTool.DestroyRoom((_sender2 as Gui.Widgets.Confirm).DialogResult, lambdaCopy, World.PlayerFaction, World)
                                 });
+                            }
+                        });
+
+                        tag.AddChild(new Widget { MinimumSize = new Point(4, 0), AutoLayout = AutoLayout.DockRight });
+
+                        tag.AddChild(new Widget
+                        {
+                            Text = "GO TO",
+                            AutoLayout = AutoLayout.DockRight,
+                            ChangeColorOnHover = true,
+                            MinimumSize = new Point(16, 0),
+                            TextVerticalAlign = VerticalAlign.Center,
+                            OnClick = (_sender, args) =>
+                            {
+                                World.Camera.ZoomTargets.Clear();
+                                World.Camera.ZoomTargets.Add(lambdaCopy.GetBoundingBox().Center());
                             }
                         });
 
