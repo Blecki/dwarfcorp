@@ -361,10 +361,40 @@ namespace DwarfCorp
                     MoveTarget(Velocity * dt * subStepLength);
                 }
             }
+            VoxelHandle voxelAfterMove = new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position));
+            if (voxelAfterMove.IsValid && !voxelAfterMove.IsEmpty)
+            {
+                float distCenter = (voxelAfterMove.GetBoundingBox().Center() - Position).Length();
+                if (distCenter < 0.5f)
+                {
+                    float closest = float.MaxValue;
+                    VoxelHandle closestVoxel = VoxelHandle.InvalidHandle;
+                    foreach (var voxel in VoxelHelpers.EnumerateAllNeighbors(voxelAfterMove.Coordinate).Select(c => new VoxelHandle(World.ChunkManager.ChunkData, c)).Where(v => v.IsEmpty))
+                    {
+                        float d = (voxel.GetBoundingBox().Center() - Position).Length();
+                        if (d < closest)
+                        {
+                            closest = d;
+                            closestVoxel = voxel;
+                        }
+                    }
 
+                    if (closestVoxel.IsValid)
+                    {
+                        var newPosition = closestVoxel.GetBoundingBox().Center();
+                        var diff = (newPosition - Position);
+                        MoveTarget(diff);
+                    }
+                }
+            }
 
             Target += right * diffTheta * 0.1f;
-            Target += up * diffPhi * 0.1f;
+            var newTarget = up * diffPhi * 0.1f + Target;
+            var newForward = (Target - Position);
+            if (Math.Abs(Vector3.Dot(newForward, UpVector)) < 0.99f)
+            {
+                Target = newTarget;
+            }
             var diffTarget = Target - Position;
             diffTarget.Normalize();
             Target = Position + diffTarget * 1.0f;
