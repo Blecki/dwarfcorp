@@ -1,0 +1,49 @@
+{
+  "Name": "Tundra",
+  "Icon": -1,
+  "WaterSurfaceIce": true,
+  "DayAmbience": "sfx_amb_tundra",
+  "Vegetation": [],
+  "Motes": [
+  ],
+  "Fauna": [
+    {
+      "Name": "Penguin",
+      "SpawnProbability": 0.0001
+    }
+  ],
+  "SoilLayer": {
+    "VoxelType": "Ice",
+    "Depth": 5
+  },
+  "SubsurfaceLayers": [
+    {
+      "VoxelType": "Shale",
+      "Depth": 4
+    },
+    {
+      "VoxelType": "Slate",
+      "Depth": 4
+    },
+    {
+      "VoxelType": "Granite",
+      "Depth": 4
+    },
+    {
+      "VoxelType": "Marble",
+      "Depth": 4
+    },
+    {
+      "VoxelType": "Obsidian",
+      "Depth": 4
+    }
+  ],
+  "ShoreVoxel": "Sand",
+  "ClumpGrass": false,
+  "ClumpSize": 30.0,
+  "ClumpTreshold": 0.75,
+  "MapColor": [ 255, 255, 255, 255 ],
+  "Height": 0.0,
+  "Temp": 0.1,
+  "Rain": 0.1
+}

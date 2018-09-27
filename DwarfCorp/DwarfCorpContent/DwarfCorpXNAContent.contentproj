@@ -2898,6 +2898,50 @@
       <Name>voxel-types</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="World\Biomes\Grassland.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Grassland</Name>
+    </None>
+    <None Include="World\Biomes\Boreal Forest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Boreal Forest</Name>
+    </None>
+    <None Include="World\Biomes\Taiga.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Taiga</Name>
+    </None>
+    <None Include="World\Biomes\Deciduous Forest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Deciduous Forest</Name>
+    </None>
+    <None Include="World\Biomes\Hell.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Hell</Name>
+    </None>
+    <None Include="World\Biomes\Waste.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Waste</Name>
+    </None>
+    <None Include="World\Biomes\Tundra.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Tundra</Name>
+    </None>
+    <None Include="World\Biomes\Jungle.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Jungle</Name>
+    </None>
+    <None Include="World\Biomes\Desert.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Desert</Name>
+    </None>
+    <None Include="World\Biomes\Cave.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Cave</Name>
+    </None>
+    <None Include="World\Biomes\Haunted Forest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Haunted Forest</Name>
+    </None>
     <None Include="World\CraftItems\Palisade.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Palisade</Name>
@@ -3278,8 +3322,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>fairy_animation</Name>
     </None>
-    <None Include="World\biomes.json">
-      <Name>biomes</Name>
+    <None Include="World\Biomes\Jolly Forest.json">
+      <Name>Jolly Forest</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -82,6 +82,7 @@ namespace DwarfCorp
         public float CaveSize { get; set; }
         public float AquiferSize { get; set; }
         public float LavaSize { get; set; }
+        public int HellLevel = 10;
 
         public ChunkGenerator(VoxelLibrary voxLibrary, int randomSeed, float noiseScale)
         {
@@ -91,7 +92,7 @@ namespace DwarfCorp
             VoxLibrary = voxLibrary;
             CaveNoiseScale = noiseScale * 10.0f;
             CaveSize = 0.03f;
-            CaveLevels = new List<int>() { 4, 8, 11, 16 };
+            CaveLevels = new List<int>() { 4, 8, 11, 16, 22, 30, 36, 45, 52 };
             CaveFrequencies = new List<float>() { 0.5f, 0.7f, 0.9f, 1.0f };
 
             CaveNoise = new FastRidgedMultifractal(randomSeed)
@@ -306,6 +307,8 @@ namespace DwarfCorp
         {
             Vector3 origin = chunk.Origin;
             BiomeData biome = BiomeLibrary.GetBiome("Cave");
+            var hellBiome = BiomeLibrary.GetBiome("Hell");
+
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
@@ -317,12 +320,16 @@ namespace DwarfCorp
                     {
                         int y = CaveLevels[i];
                         if (y <= 0 || y >= topVoxel.Coordinate.Y) continue;
-                        Vector3 vec = new Vector3(x, y, z) + chunk.Origin;
-                        double caveNoise = CaveNoise.GetValue((x + origin.X) * CaveNoiseScale * CaveFrequencies[i],
-                            (y + origin.Y) * CaveNoiseScale * 3.0f, (z + origin.Z) * CaveNoiseScale * CaveFrequencies[i]);
 
-                        double heightnoise = NoiseGenerator.Noise((x + origin.X) * NoiseScale * CaveFrequencies[i],
-                            (y + origin.Y) * NoiseScale * 3.0f, (z + origin.Z) * NoiseScale * CaveFrequencies[i]);
+                        var frequency = i < CaveFrequencies.Count ? CaveFrequencies[i] : CaveFrequencies[CaveFrequencies.Count - 1];
+                        var caveBiome = (y <= HellLevel) ? hellBiome : biome;
+
+                        Vector3 vec = new Vector3(x, y, z) + chunk.Origin;
+                        double caveNoise = CaveNoise.GetValue((x + origin.X) * CaveNoiseScale * frequency,
+                            (y + origin.Y) * CaveNoiseScale * 3.0f, (z + origin.Z) * CaveNoiseScale * frequency);
+
+                        double heightnoise = NoiseGenerator.Noise((x + origin.X) * NoiseScale * frequency,
+                            (y + origin.Y) * NoiseScale * 3.0f, (z + origin.Z) * NoiseScale * frequency);
 
                         int caveHeight = Math.Min(Math.Max((int)(heightnoise * 5), 1), 3);
 
@@ -356,8 +363,8 @@ namespace DwarfCorp
 
                         if (!invalidCave && caveNoise > CaveSize * 1.8f && y - caveHeight > 0)
                         {
-                            GenerateCaveVegetation(chunk, x, y, z, caveHeight, biome, vec, world, NoiseGenerator);
-                            GenerateCaveFauna(chunk, world, biome, y - caveHeight, x, z);
+                            GenerateCaveVegetation(chunk, x, y, z, caveHeight, caveBiome, vec, world, NoiseGenerator);
+                            GenerateCaveFauna(chunk, world, caveBiome, y - caveHeight, x, z);
                         }
                     }
                 }
@@ -394,7 +401,10 @@ namespace DwarfCorp
 
             wayUnder.RawSetType(VoxelLibrary.GetVoxelType(biome.SoilLayer.VoxelType));
 
-            wayUnder.RawSetGrass(GrassLibrary.GetGrassType(biome.GrassDecal).ID);
+            var grassType = GrassLibrary.GetGrassType(biome.GrassDecal);
+            if (grassType != null)
+                wayUnder.RawSetGrass(grassType.ID);
+
             foreach (VegetationData veg in biome.Vegetation)
             {
                 if (!MathFunctions.RandEvent(veg.SpawnProbability))
