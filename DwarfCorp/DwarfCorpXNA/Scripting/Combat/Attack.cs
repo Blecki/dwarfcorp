@@ -179,10 +179,12 @@ namespace DwarfCorp
                         break;
                 }
 
-                switch (Mode)
-                {
-                    case AttackMode.Melee:
-                    {
+                //switch (Mode)
+                //{
+                    //case AttackMode.Melee:
+                    //{
+
+                // Okay - so the kill voxel act already makes sure the creature is right next to the voxel. Just... pretend the ranged attack isn't?
                         DigAct.VoxelHealth -= (DamageAmount + bonus);
 
                         DigAct.Voxel.Type.HitSound.Play(DigAct.Voxel.WorldPosition);
@@ -193,16 +195,16 @@ namespace DwarfCorp
                             IndicatorManager.DrawIndicator(HitAnimation, DigAct.Voxel.WorldPosition + Vector3.One*0.5f,
                                 10.0f, 1.0f, MathFunctions.RandVector2Circle()*10, HitColor, MathFunctions.Rand() > 0.5f);
 
-                        break;
-                    }
-                    case AttackMode.Ranged:
-                    {
-                            throw new InvalidOperationException("Ranged attacks should never be used for digging.");
-                        //LaunchProjectile(pos, DigAct.GetTargetVoxel().WorldPosition, null);
                         //break;
-                    }
+                //    }
+                //    case AttackMode.Ranged:
+                //    {
+                //        throw new InvalidOperationException("Ranged attacks should never be used for digging.");
+                //        //LaunchProjectile(pos, DigAct.GetTargetVoxel().WorldPosition, null);
+                //        //break;
+                //    }
 
-                }
+                //}
                 yield return Act.Status.Success;
                 yield break;
             }

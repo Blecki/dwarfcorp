@@ -83,6 +83,7 @@ namespace DwarfCorp
         public float AquiferSize { get; set; }
         public float LavaSize { get; set; }
         public int HellLevel = 10;
+        public int LavaLevel = 5;
 
         public ChunkGenerator(VoxelLibrary voxLibrary, int randomSeed, float noiseScale)
         {
@@ -232,7 +233,7 @@ namespace DwarfCorp
 
         public void GenerateLava(VoxelChunk chunk)
         {
-            int lavaHeight = 2;
+            int lavaHeight = LavaLevel;
 
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
             {
@@ -361,10 +362,9 @@ namespace DwarfCorp
                             }
                         }
 
-                        if (!invalidCave && caveNoise > CaveSize * 1.8f && y - caveHeight > 0)
+                        if (!invalidCave && caveNoise > CaveSize * 1.8f && y - caveHeight > 0 && y > LavaLevel)
                         {
                             GenerateCaveVegetation(chunk, x, y, z, caveHeight, caveBiome, vec, world, NoiseGenerator);
-                            GenerateCaveFauna(chunk, world, caveBiome, y - caveHeight, x, z);
                         }
                     }
                 }
@@ -387,11 +387,6 @@ namespace DwarfCorp
                 }
             }
              */
-        }
-
-        private static void GenerateCaveFauna(VoxelChunk chunk, WorldManager world, BiomeData biome, int y, int x, int z)
-        {
-
         }
 
         public static void GenerateCaveVegetation(VoxelChunk chunk, int x, int y, int z, int caveHeight, BiomeData biome, Vector3 vec, WorldManager world, Perlin NoiseGenerator)
@@ -568,6 +563,7 @@ namespace DwarfCorp
                 }
             }
 
+            GenerateCaves(c, World);
             GenerateWater(c, maxHeight);
             GenerateLava(c);
 

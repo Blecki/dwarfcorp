@@ -278,14 +278,8 @@ namespace DwarfCorp
             // and also to ensure no inconsistencies in chunk geometry due to ramps.
             foreach (var chunk in ChunkData.ChunkMap)
             {
-                ChunkGen.GenerateCaves(chunk, World);
                 for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
-                {
-                    // Update corner ramps on all chunks so that they don't have seams when they 
-                    // are initially built.
-                    //VoxelListPrimitive.UpdateCornerRamps(chunk, i);
                     chunk.InvalidateSlice(i);
-                }
 
             }
             RecalculateBounds();
