@@ -618,7 +618,7 @@ namespace DwarfCorp.Gui
         /// <summary>
         /// Draw the GUI using the device provided earlier. Depth testing should be off.
         /// </summary>
-        public void Draw(Point Offset)
+        public void Draw(Point Offset, bool Mouse = true)
         {
             RenderData.Device.DepthStencilState = DepthStencilState.None;
 
@@ -656,7 +656,7 @@ namespace DwarfCorp.Gui
                 widget.PostDraw(GameStates.GameState.Game.GraphicsDevice);
             }
 
-            DrawMouse();
+            if (Mouse) DrawMouse();
         }
 
         public void RedrawPopups()

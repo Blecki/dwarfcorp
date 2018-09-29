@@ -62,6 +62,7 @@ namespace DwarfCorp.GameStates
         private Widget ContextMenu;
         private Widget MultiContextMenu;
         private Widget BottomBar;
+        private Widget BottomBackground;
         private Widget MinimapIcon;
 
         private class ToolbarItem
@@ -504,8 +505,15 @@ namespace DwarfCorp.GameStates
                 if (Game.StateManager.CurrentState == this)
                 {
                     if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
+                    {
+                        GuiRoot.Draw(new Point(0, 0), false);
                         MinimapRenderer.Render(new Rectangle(MinimapFrame.Rect.X, MinimapFrame.Rect.Bottom - 192, 192, 192), GuiRoot);
-                    GuiRoot.Draw();
+                        GuiRoot.DrawMesh(MinimapFrame.GetRenderMesh(), GuiRoot.RenderData.Texture);
+                        GuiRoot.RedrawPopups();
+                        GuiRoot.DrawMouse();
+                    }
+                    else
+                        GuiRoot.Draw();
                 }
             }
 
@@ -558,14 +566,14 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public void CreateGUIComponents()
         {
-            var bottomBackground = GuiRoot.RootItem.AddChild(new TrayBackground
+            BottomBackground = GuiRoot.RootItem.AddChild(new TrayBackground
             {
                 Corners = Scale9Corners.Top,
                 MinimumSize = new Point(0, 102),
                 AutoLayout = AutoLayout.DockBottom
             });
 
-            BottomBar = bottomBackground.AddChild(new Gui.Widget
+            BottomBar = BottomBackground.AddChild(new Gui.Widget
             {
                 Transparent = false,
                 Background = new TileReference("basic", 0),
@@ -575,7 +583,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockBottom
             });
 
-            var secondBar = bottomBackground.AddChild(new Widget
+            var secondBar = BottomBackground.AddChild(new Widget
             {
                 Transparent = true,
                 MinimumSize = new Point(0, 54),
@@ -2370,7 +2378,7 @@ namespace DwarfCorp.GameStates
                     MultiContextMenu.Rect = new Rectangle(MinimapFrame.Rect.Right + 2, MinimapFrame.Rect.Bottom - MultiContextMenu.Rect.Height, MultiContextMenu.Rect.Width, MultiContextMenu.Rect.Height);
                     MultiContextMenu.Layout();
                     GuiRoot.ShowDialog(MultiContextMenu);
-                    GuiRoot.RootItem.SendToBack(MultiContextMenu);
+                    GuiRoot.RootItem.SendToBefore(MultiContextMenu, BottomBackground);
                 }
             }
             else if (MultiContextMenu != null)
