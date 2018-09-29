@@ -361,7 +361,7 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         var net = ComputeNetValue();
                         var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
-                        var tradeTarget = envoyOut * 0.25;
+                        var tradeTarget = 1.0m;
 
                         if (PlayerColumns.SelectedResources.Count == 0 && EnvoyColumns.SelectedResources.Count == 0
                             && EnvoyColumns.TradeMoney == 0 && PlayerColumns.TradeMoney == 0)

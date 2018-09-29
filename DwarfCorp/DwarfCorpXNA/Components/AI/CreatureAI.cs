@@ -519,6 +519,7 @@ namespace DwarfCorp
             Creature.NoiseMaker.BasePitch = Stats.VoicePitch;
             if (Debugger.Switches.DrawPaths)
             {
+                /*
                 StringBuilder taskString = new StringBuilder();
                 foreach (var task in Tasks)
                 {
@@ -528,6 +529,7 @@ namespace DwarfCorp
                     taskString.Append("\n");
                 }
                 Drawer2D.DrawText(taskString.ToString(), Position, Color.White, Color.Black);
+                */
             }
 
             if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))
