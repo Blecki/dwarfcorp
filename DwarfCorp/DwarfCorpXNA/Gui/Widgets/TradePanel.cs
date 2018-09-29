@@ -42,7 +42,8 @@ namespace DwarfCorp.Gui.Widgets
             copy.Sort((a, b) => a.NumResources.CompareTo(b.NumResources));
             for (int i = 0; i < Math.Min(copy.Count, num); i++)
             {
-                yield return copy[i];
+                if (copy[i].NumResources > 0)
+                    yield return copy[i];
             }
         }
 
@@ -235,7 +236,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 var net = ComputeNetValue();
                 var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
-                var tradeTarget = envoyOut*0.25;
+                var tradeTarget = 1.0m;
 
                 if (IsReasonableTrade(envoyOut, net))
                 {
