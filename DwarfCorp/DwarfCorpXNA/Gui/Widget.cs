@@ -94,8 +94,8 @@ namespace DwarfCorp.Gui
             set { _textColor = value; }
         }
 
-        public int TextSize = 1; 
-
+        public int TextSize = 1;
+        public float Rotation = 0.0f;
         public String _tooltip = null;
         public String Tooltip
         {
@@ -423,11 +423,24 @@ namespace DwarfCorp.Gui
             var result = new List<Mesh>();
 
             if (Background != null)
-                result.Add(Mesh.Quad()
-                    .Scale(Rect.Width, Rect.Height)
-                    .Translate(Rect.X, Rect.Y)
-                    .Colorize(BackgroundColor)
-                    .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile)));
+            {
+                if (Rotation != 0.0)
+                {
+                    result.Add(Mesh.Quad()
+                        .Scale(Rect.Width, Rect.Height)
+                        .Transform(Rect.X, Rect.Y, Rect.Width, Rect.Height, Rotation)
+                        .Colorize(BackgroundColor)
+                        .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile)));
+                }
+                else
+                {
+                    result.Add(Mesh.Quad()
+                            .Scale(Rect.Width, Rect.Height)
+                            .Translate(Rect.X, Rect.Y)
+                            .Colorize(BackgroundColor)
+                            .Texture(Root.GetTileSheet(Background.Sheet).TileMatrix(Background.Tile)));
+                }
+            }
 
             if (!String.IsNullOrEmpty(Border))
             {

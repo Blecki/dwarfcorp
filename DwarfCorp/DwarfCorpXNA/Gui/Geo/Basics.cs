@@ -49,6 +49,11 @@ namespace DwarfCorp.Gui
             return Transform(Matrix.CreateTranslation(X, Y, 0.0f));
         }
 
+
+        public Mesh Transform(float X, float Y, float w, float h, float r)
+        {
+            return Transform(Matrix.CreateTranslation(-w * 0.5f, -h * 0.5f, 0) * Matrix.CreateRotationZ(r) * Matrix.CreateTranslation(w * 0.5f, h * 0.5f, 0) * Matrix.CreateTranslation(X, Y, 0));
+        }
         public Mesh Texture(Matrix m)
         {
             for (int i = 0; i < verticies.Length; ++i)

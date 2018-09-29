@@ -18,6 +18,146 @@ namespace DwarfCorp.Gui.Widgets
         RejectOffense
     }
 
+    public class Balance : Widget
+    {
+        private float _balance = 0.0f;
+        public float TradeBalance
+        {
+            get { return _balance; }
+            set { _balance = value; Update(); }
+        }
+
+        public Widget LeftWidget;
+        public Widget RightWidget;
+        public Widget CenterWidget;
+        public Widget Bar;
+        public Widget LeftItems;
+        public Widget RightItems;
+
+        private IEnumerable<ResourceAmount> GetTopResources(List<ResourceAmount> resources, int num = 3)
+        {
+            var copy = new List<ResourceAmount>();
+            copy.AddRange(resources);
+
+            copy.Sort((a, b) => a.NumResources.CompareTo(b.NumResources));
+            for (int i = 0; i < Math.Min(copy.Count, num); i++)
+            {
+                yield return copy[i];
+            }
+        }
+
+        public void SetTradeItems(List<ResourceAmount> leftResources, List<ResourceAmount> rightResources, DwarfBux leftMoney, DwarfBux rightMoney)
+        {
+            Update();
+            LeftItems.Clear();
+            RightItems.Clear();
+            int k = 0;
+            foreach (var resource in GetTopResources(leftResources))
+            {
+                var resourceType = ResourceLibrary.GetResourceByName(resource.ResourceType);
+                LeftItems.AddChild(new ResourceIcon()
+                {
+                    Layers = resourceType.GuiLayers,
+                    MinimumSize = new Point(32, 32),
+                    MaximumSize = new Point(32, 32),
+                    Rect = new Rectangle(LeftWidget.Rect.X + k * 5 - 5, LeftWidget.Rect.Y - 5 + k * 2, 32, 32)
+                });
+                k++;
+            }
+
+            if (leftMoney > 0.0m)
+            {
+                LeftItems.AddChild(new Widget()
+                {
+                    Background = new TileReference("coins", 1),
+                    MinimumSize = new Point(32, 32),
+                    MaximumSize = new Point(32, 32),
+                    Rect = new Rectangle(LeftWidget.Rect.X + k * 5 - 5, LeftWidget.Rect.Y - 5 + k * 2, 32, 32)
+                });
+            }
+
+            k = 0;
+            foreach (var resource in GetTopResources(rightResources))
+            {
+                var resourceType = ResourceLibrary.GetResourceByName(resource.ResourceType);
+                RightItems.AddChild(new ResourceIcon()
+                {
+                    Layers = resourceType.GuiLayers,
+                    MinimumSize = new Point(32, 32),
+                    MaximumSize = new Point(32, 32),
+                    Rect = new Rectangle(RightWidget.Rect.X + k * 5 - 5, RightWidget.Rect.Y - 5 + k * 5, 32, 32)
+                });
+            }
+
+            if (rightMoney > 0.0m)
+            {
+                RightItems.AddChild(new Widget()
+                {
+                    Background = new TileReference("coins", 1),
+                    MinimumSize = new Point(32, 32),
+                    MaximumSize = new Point(32, 32),
+                    Rect = new Rectangle(RightWidget.Rect.X + k * 5 - 5, RightWidget.Rect.Y - 5 + k * 5, 32, 32)
+                });
+            }
+            LeftItems.Invalidate();
+            RightItems.Invalidate();
+        }
+
+        public void Update()
+        {
+            var rect = Rect;
+            CenterWidget.Rect = new Rectangle(rect.Center.X - 16, rect.Top, 32, 32);
+            Bar.Rect = new Rectangle(rect.Center.X - 32, rect.Top - 32, 64, 64);
+            Bar.Rotation = -_balance * 0.5f;
+            Bar.Invalidate();
+            LeftWidget.Rect = new Rectangle(rect.Center.X - 32 - 8, rect.Top + (int)(_balance * 8) + 8, 32, 32);
+            LeftWidget.Invalidate();
+            RightWidget.Rect = new Rectangle(rect.Center.X + 16 - 8, rect.Top - (int)(_balance * 8) + 8, 32, 32);
+            RightWidget.Invalidate();
+            Layout();
+        }
+
+        public override void Construct()
+        {
+            LeftWidget = AddChild(new Widget()
+            {
+                Background = new TileReference("balance", 0),
+                MaximumSize = new Point(32, 32),
+                MinimumSize = new Point(32, 32)
+            });
+            LeftItems = LeftWidget.AddChild(new Widget()
+            {
+                MaximumSize = new Point(32, 32),
+                MinimumSize = new Point(32, 32)
+            });
+            RightWidget = AddChild(new Widget()
+            {
+                Background = new TileReference("balance", 0),
+                MaximumSize = new Point(32, 32),
+                MinimumSize = new Point(32, 32)
+            });
+            RightItems = RightWidget.AddChild(new Widget()
+            {
+                MinimumSize = new Point(32, 32),
+                MaximumSize =  new Point(32, 32)
+            });
+            CenterWidget = AddChild(new Widget()
+            {
+                Background = new TileReference("balance", 1),
+                MaximumSize = new Point(32, 32),
+                MinimumSize = new Point(32, 32)
+            });
+            Bar = AddChild(new Widget()
+            {
+                Background = new TileReference("balance-beam", 0),
+                MaximumSize = new Point(64, 64),
+                MinimumSize = new Point(64, 64)
+            });
+            Update();
+            base.Construct();
+        }
+    }
+    
     public class TradePanel : Widget
     {
         public ITradeEntity Player;
@@ -31,6 +171,8 @@ namespace DwarfCorp.Gui.Widgets
         public TradeDialogResult Result { get; private set; }
         public TradeTransaction Transaction { get; private set; }
 
+        public Balance Balance { get; set; }
+
         public void Reset()
         {
             Result = TradeDialogResult.Pending;
@@ -38,6 +180,7 @@ namespace DwarfCorp.Gui.Widgets
             EnvoyColumns.Reconstruct(Envoy.Resources, new List<ResourceAmount>(), (int)Envoy.Money);
             PlayerColumns.Reconstruct(Player.Resources, new List<ResourceAmount>(), (int)Player.Money);
             UpdateBottomDisplays();
+            Balance.TradeBalance = 0.0f;
             Layout();
         }
 
@@ -192,11 +335,17 @@ namespace DwarfCorp.Gui.Widgets
 
             Border = "border-fancy";
 
+            Balance = AddChild(new Balance()
+            {
+                AutoLayout = AutoLayout.DockBottom,
+                MinimumSize = new Point(32 * 3, 64),
+            })as Balance;
             var bottomRow = AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockBottom,
                 MinimumSize = new Point(0, 32)
             });
+
 
             bottomRow.AddChild(new Gui.Widgets.Button
             {
@@ -302,13 +451,15 @@ namespace DwarfCorp.Gui.Widgets
                 }                    
             });
 
-            TotalDisplay = bottomRow.AddChild(new Widget
+
+            TotalDisplay = Balance.AddChild(new Widget
             {
-                MinimumSize = new Point(128, 0),
-                AutoLayout = AutoLayout.DockLeft,
+                MinimumSize = new Point(128, 64),
+                AutoLayout = AutoLayout.DockBottom,
                 Font = "font10",
                 TextColor = new Vector4(0, 0, 0, 1),
-                TextVerticalAlign = VerticalAlign.Center
+                TextVerticalAlign = VerticalAlign.Bottom,
+                TextHorizontalAlign = HorizontalAlign.Center
             });
 
             SpaceDisplay = bottomRow.AddChild(new Widget
@@ -325,16 +476,6 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockFill
             });
 
-            EnvoyColumns = mainPanel.AddChild(new ResourceColumns
-            {
-                TradeEntity = Envoy,
-                ValueSourceEntity = Envoy,
-                AutoLayout = AutoLayout.DockFill,
-                LeftHeader = "Their Items",
-                RightHeader = "They Offer",
-                MoneyLabel = "Their money",
-                OnTotalSelectedChanged = (s) => UpdateBottomDisplays()
-            }) as ResourceColumns;
 
             PlayerColumns = mainPanel.AddChild(new ResourceColumns
             {
@@ -348,6 +489,17 @@ namespace DwarfCorp.Gui.Widgets
                 OnTotalSelectedChanged = (s) => UpdateBottomDisplays()
             }) as ResourceColumns;
 
+            EnvoyColumns = mainPanel.AddChild(new ResourceColumns
+            {
+                TradeEntity = Envoy,
+                ValueSourceEntity = Envoy,
+                AutoLayout = AutoLayout.DockFill,
+                LeftHeader = "Their Items",
+                RightHeader = "They Offer",
+                MoneyLabel = "Their money",
+                OnTotalSelectedChanged = (s) => UpdateBottomDisplays()
+            }) as ResourceColumns;
+
             UpdateBottomDisplays();
         }        
 
@@ -355,14 +507,22 @@ namespace DwarfCorp.Gui.Widgets
         {
             DwarfBux net, tradeTarget;
             CalculateTradeAmount(out net, out tradeTarget);
-            TotalDisplay.Text = String.Format("{0} [{1}]", net, tradeTarget);
-            TotalDisplay.Text = String.Format("Their {2} {0}\n[need {1}]", net, tradeTarget, net >= 0 ? "Profit" : "Loss");
+            if (net == 0)
+            {
+                Balance.TradeBalance = 0.0f;
+            }
+            else
+            {
+                Balance.TradeBalance = net > 0 ? Math.Min(0.01f * (float)(decimal)net, 1.0f) : Math.Max(0.01f * (float)(decimal)net, -1.0f);
+            }
+            Balance.SetTradeItems(PlayerColumns.SelectedResources, EnvoyColumns.SelectedResources, PlayerColumns.TradeMoney, EnvoyColumns.TradeMoney);
+            TotalDisplay.Text = String.Format("Their {1} {0}", net, net >= 0 ? "Profit" : "Loss");
             TotalDisplay.Tooltip = String.Format("They are {1} with this trade.\nTheir {0} is " + net + ".\nThey need at least " + tradeTarget + " to be happy.", net >= 0 ? "profit" : "loss",
                 net >= 0 ? "happy" : "unhappy");
             if (net >= tradeTarget)
-                TotalDisplay.TextColor = new Vector4(0, 0, 0, 1);
+                TotalDisplay.TextColor = GameSettings.Default.Colors.GetColor("Positive", GameSettings.Default.Colors.GetColor("Positive", Color.Green)).ToVector4();
             else
-                TotalDisplay.TextColor = GameSettings.Default.Colors.GetColor("Highlight", GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed)).ToVector4();
+                TotalDisplay.TextColor = GameSettings.Default.Colors.GetColor("Negative", GameSettings.Default.Colors.GetColor("Negative", Color.Red)).ToVector4();
 
             TotalDisplay.Invalidate();
 
@@ -372,7 +532,7 @@ namespace DwarfCorp.Gui.Widgets
 
             if (EnvoyColumns.TotalSelectedItems - PlayerColumns.TotalSelectedItems > Player.AvailableSpace)
             {
-                SpaceDisplay.TextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
+                SpaceDisplay.TextColor = GameSettings.Default.Colors.GetColor("Negative", Color.Red).ToVector4();
             }
             else
             {
@@ -388,7 +548,7 @@ namespace DwarfCorp.Gui.Widgets
             net = (Envoy.ComputeValue(PlayerColumns.SelectedResources) + PlayerColumns.TradeMoney)
                 - (Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney);
             var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
-            tradeTarget = envoyOut * 0.25;
+            tradeTarget = 1.0m;
         }
     }
 }
