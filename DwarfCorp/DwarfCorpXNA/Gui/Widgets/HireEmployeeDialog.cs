@@ -140,7 +140,7 @@ namespace DwarfCorp.Gui.Widgets
                                 Text = "We can't afford the signing bonus!",
                             }));
                         }
-                        else if (!Faction.GetRooms().Any(r => r.RoomData.Name == "BalloonPort"))
+                        else if (!Faction.GetRooms().Any(r => r.RoomData.Name == "Balloon Port"))
                         {
                             Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Popup
                             {

@@ -93,7 +93,7 @@
 		"Text": "Left click and drag to build a graveyard. When dwarves die, they produce corpses. Corpses can only be stored in the graveyard. Dwarves will come to the graveyard to mourn the dead."
 	},
 	{
-		"Name": "build BalloonPort",
+		"Name": "build Balloon Port",
 		"Title": "Balloon Port",
 		"Text": "Left click and drag to build a balloon port. Balloon ports are necessary for trade. They must be built above ground. They also act as stockpiles. The larger the balloon port, the more it can store in its stockpile."
 	},
