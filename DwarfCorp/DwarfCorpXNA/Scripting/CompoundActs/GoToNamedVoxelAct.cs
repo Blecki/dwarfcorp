@@ -52,7 +52,7 @@ namespace DwarfCorp
 
         }
 
-        public GoToNamedVoxelAct(string voxel, PlanAct.PlanType planType, CreatureAI creature, float radius = 0.0f) :
+        public GoToNamedVoxelAct(string voxel, PlanAct.PlanType planType, CreatureAI creature, float radius = 3.0f) :
             base(creature)
         {
             Radius = radius;
@@ -67,7 +67,8 @@ namespace DwarfCorp
             {
                 Tree = new Sequence(
                     new Repeat(new Sequence(
-                    new PlanWithGreedyFallbackAct() { Agent = Agent, PathName = "PathToVoxel", VoxelName = VoxelName, PlanType = PlanType, Radius = Radius},
+                    //new PlanWithGreedyFallbackAct() { Agent = Agent, PathName = "PathToVoxel", VoxelName = VoxelName, PlanType = PlanType, Radius = Radius},
+                    new PlanAct(Agent, "PathToVoxel", VoxelName, PlanAct.PlanType.Radius) { MaxTimeouts = 1, Radius = Radius },
                     new FollowPathAct(Agent, "PathToVoxel")), 10, true),
                     new StopAct(Agent));
             }

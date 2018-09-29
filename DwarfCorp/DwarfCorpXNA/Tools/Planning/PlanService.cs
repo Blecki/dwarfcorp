@@ -47,6 +47,13 @@ namespace DwarfCorp
         public int MaxExpansions;
         public GoalRegion GoalRegion;
         public float HeuristicWeight = 1;
+        public int ID;
+        public static int MaxId = 0;
+        public AstarPlanRequest()
+        {
+            ID = MaxId;
+            MaxId++;
+        }
     }
 
     /// <summary>
@@ -81,7 +88,7 @@ namespace DwarfCorp
             }
             AStarPlanner.PlanResultCode result;
             List<MoveAction> path = AStarPlanner.FindPath(req.Sender.Movement, req.Start, req.GoalRegion, req.Sender.Manager.World.ChunkManager, 
-                req.MaxExpansions, req.HeuristicWeight, Requests.Count, () => { return Subscribers.Find(s => s.ID == req.Subscriber.ID) != null; }, out result);
+                req.MaxExpansions, req.HeuristicWeight, Requests.Count, () => { return Subscribers.Find(s => s.ID == req.Subscriber.ID && s.CurrentRequestID == req.ID) != null; }, out result);
 
             AStarPlanResponse res = new AStarPlanResponse
             {

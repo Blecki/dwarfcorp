@@ -89,7 +89,7 @@ namespace DwarfCorp
         {
             Type = planType;
             Name = "Plan to " + target;
-            PlannerTimer = new Timer(60.0f, false, Timer.TimerMode.Real);
+            PlannerTimer = new Timer(9999.0f, false, Timer.TimerMode.Real);
             MaxExpansions = 10000;
             PathOut = pathOut;
             TargetName = target;
@@ -97,7 +97,7 @@ namespace DwarfCorp
             MaxTimeouts = 4;
             Timeouts = 0;
             Radius = 0;
-            Weights = new List<float> {5.0f, 10.0f, 20.0f, 30.0f, 40.0f};
+            Weights = new List<float> {1.0f, 5.0f, 10.0f, 20.0f, 30.0f, 40.0f};
         }
 
         public override void OnCanceled()
@@ -212,7 +212,9 @@ namespace DwarfCorp
             Path = null;
             Timeouts = 0;
             PlannerTimer.Reset(PlannerTimer.TargetTimeSeconds);
-
+            var lastId = -1;
+            Vector3 goalPos = Vector3.Zero;
+            Agent.Blackboard.SetData<bool>("NoPath", false);
             while (true)
             {
                 if (Path != null)
@@ -223,10 +225,12 @@ namespace DwarfCorp
 
                 if(Timeouts > MaxTimeouts)
                 {
+                    Agent.Blackboard.SetData<bool>("NoPath", true);
                     yield return Status.Fail;
                     break;
                 }
-
+                if (WaitingOnResponse && Debugger.Switches.DrawPaths)
+                    Drawer3D.DrawLine(Creature.AI.Position, goalPos, Color.Blue, 0.25f);
                 PlannerTimer.Update(DwarfTime.LastTime);
 
                 ChunkManager chunks = Creature.Manager.World.ChunkManager;
@@ -235,6 +239,7 @@ namespace DwarfCorp
                     if (!Target.IsValid && Type != PlanType.Edge)
                     {
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                        Agent.Blackboard.SetData<bool>("NoPath", true);
                         yield return Status.Fail;
                         break;
                     }
@@ -244,7 +249,12 @@ namespace DwarfCorp
 
                     if (!voxUnder.IsValid)
                     {
+                        if (Debugger.Switches.DrawPaths)
+                        {
+                            Creature.World.MakeWorldPopup(String.Format("Invalid request"), Creature.Physics, -10, 1);
+                        }
                         Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                        Agent.Blackboard.SetData<bool>("NoPath", true);
                         yield return Status.Fail;
                         break;
                     }
@@ -259,10 +269,11 @@ namespace DwarfCorp
                         HeuristicWeight = Weights[Timeouts]
                     };
 
-
+                    lastId = aspr.ID;
                     aspr.GoalRegion = GetGoal();
-
-                    if(!Agent.PlanSubscriber.SendRequest(aspr))
+                    goalPos = GetGoal().GetVoxel().GetBoundingBox().Center();
+                    Agent.PlanSubscriber.Clear();
+                    if(!Agent.PlanSubscriber.SendRequest(aspr, aspr.ID))
                     {
                         yield return Status.Fail;
                         yield break;
@@ -276,8 +287,8 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    //if (Target.IsValid && Creature.AI.DrawAIPlan)
-                    //    Drawer3D.DrawLine(Creature.AI.Position, Target.WorldPosition, Color.Blue, 0.25f);
+                    if (Target.IsValid && Creature.AI.DrawAIPlan)
+                       Drawer3D.DrawLine(Creature.AI.Position, Target.WorldPosition, Color.Blue, 0.25f);
                     Status statusResult = Status.Running;
 
                     while (Agent.PlanSubscriber.Responses.Count > 0)
@@ -290,17 +301,30 @@ namespace DwarfCorp
                         }
                         LastResult = response.Result;
 
-                        if (response.Success)
+                        if (response.Success && response.Request.ID == lastId)
                         {
                             Path = response.Path;
                             WaitingOnResponse = false;
 
                             statusResult = Status.Success;
                         }
+                        else if (response.Request.ID != lastId)
+                        {
+                            if (Debugger.Switches.DrawPaths)
+                            {
+                                Creature.World.MakeWorldPopup(String.Format("Old Path Dropped", response.Result), Creature.Physics, -10, 1);
+                            }
+                            continue;
+                        }
                         else if (response.Result == AStarPlanner.PlanResultCode.Invalid || response.Result == AStarPlanner.PlanResultCode.NoSolution
                             || response.Result == AStarPlanner.PlanResultCode.Cancelled || response.Result == AStarPlanner.PlanResultCode.Invalid)
                         {
+                            if (Debugger.Switches.DrawPaths)
+                            {
+                                Creature.World.MakeWorldPopup(String.Format("Path: {0}", response.Result), Creature.Physics, -10, 1);
+                            }
                             Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                            Agent.Blackboard.SetData<bool>("NoPath", true);
                             statusResult = Status.Fail;
                             yield return Status.Fail;
                         }
@@ -311,7 +335,12 @@ namespace DwarfCorp
                         }
                         else
                         {
+                            if (Debugger.Switches.DrawPaths)
+                            {
+                                Creature.World.MakeWorldPopup(String.Format("Max timeouts reached", response.Result), Creature.Physics, -10, 1);
+                            }
                             Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                            Agent.Blackboard.SetData<bool>("NoPath", true);
                             statusResult = Status.Fail;
                         }
                     }
@@ -373,7 +402,7 @@ namespace DwarfCorp
                     yield return Act.Status.Running;
                     Creature.CurrentCharacterMode = CharacterMode.Idle;
                     Creature.Physics.Velocity = Vector3.Zero;
-                    Timer planTimeout = new Timer(MathFunctions.Rand(10.0f, 30.0f), false, Timer.TimerMode.Real);
+                    Timer planTimeout = new Timer(MathFunctions.Rand(30.0f, 120.0f), false, Timer.TimerMode.Real);
                     List<VoxelHandle> exploredVoxels = new List<VoxelHandle>();
                     Color debugColor = new Color(MathFunctions.RandVector3Cube() + Vector3.One * 0.5f);
                     float debugScale = MathFunctions.Rand() * 0.5f + 0.5f;

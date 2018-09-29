@@ -122,6 +122,7 @@ namespace DwarfCorp
         public bool DrawAIPlan { get; set; }
 
         /// <summary> This is a Subscriber which waits for new paths from the A* planner </summary>
+        [JsonIgnore]
         public PlanSubscriber PlanSubscriber { get; set; }
         /// <summary> If true, the AI is waiting on a plan from the PlanSubscriber </summary>
         public bool WaitingOnResponse { get; set; }
@@ -246,6 +247,8 @@ namespace DwarfCorp
             if (Sensor == null)
                 Sensor = GetRoot().GetComponent<EnemySensor>();
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
+            var world = (WorldManager)(ctx.Context);
+            PlanSubscriber = new PlanSubscriber(world.PlanService);
         }
 
         public void ResetPositionConstraint()

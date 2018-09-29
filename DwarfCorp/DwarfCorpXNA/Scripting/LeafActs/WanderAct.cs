@@ -198,7 +198,7 @@ namespace DwarfCorp
                     }
                     float dist = (action.DestinationVoxel.WorldPosition - target).LengthSquared() * Creature.AI.Movement.Cost(action.MoveType);
 
-                    if (dist < bestDist)
+                    if (dist < bestDist && ! path.Any(a => a.DestinationVoxel == action.DestinationVoxel))
                     {
                         bestDist = dist;
                         bestAction = action;
