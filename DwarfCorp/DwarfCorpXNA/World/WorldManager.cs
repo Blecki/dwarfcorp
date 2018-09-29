@@ -506,7 +506,7 @@ namespace DwarfCorp
         public bool IsCameraUnderwater()
         {
             var handle = new VoxelHandle(ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Camera.Position + Vector3.Up));
-            return handle.IsValid && handle.LiquidLevel > 0;
+            return handle.IsValid && handle.LiquidLevel > 0 && handle.Coordinate.Y <= SlicePlane;
         }
 
         /// <summary>

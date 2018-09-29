@@ -134,7 +134,38 @@ namespace DwarfCorp
 
             var averageHeight = (int)Math.Round(((float)accumulator / (float)count));
 
-            if (StartUnderground) averageHeight -= 5;
+            if (StartUnderground)
+            {
+                accumulator = 0;
+                count = 0;
+                List<string> illegalTypes = new List<string>(){ "Sand", "Dirt", "DarkDirt", "Ice" };
+                for (var offsetX = -size; offsetX <= size; ++offsetX)
+                {
+                    for (var offsetY = -size; offsetY <= size; ++offsetY)
+                    {
+                        var topVoxel = VoxelHelpers.FindFirstVoxelBelow(
+                            new VoxelHandle(chunkManager.ChunkData,
+                                centerCoordinate + new GlobalVoxelOffset(offsetX, 0, offsetY)));
+                       
+                        if (topVoxel.Coordinate.Y > 0)
+                        {
+                            var vox = topVoxel;
+                            for (int dy = topVoxel.Coordinate.Y; dy > 0; dy--)
+                            {
+                                vox = new VoxelHandle(chunkManager.ChunkData, new GlobalVoxelCoordinate(topVoxel.Coordinate.X, dy, topVoxel.Coordinate.Z));
+                                if (vox.IsValid && !vox.IsEmpty && !illegalTypes.Contains(vox.Type.Name))
+                                {
+                                    break;
+                                }
+                            }
+                            accumulator += vox.Coordinate.Y + 1;
+                            count += 1;
+                        }
+
+                    }
+                }
+                averageHeight = Math.Max((int)Math.Round(((float)accumulator / (float)count)) - 5, 0);
+            }
 
             // Next, create the balloon port by deciding which voxels to fill.
             var balloonPortDesignations = new List<VoxelHandle>();
