@@ -26,6 +26,20 @@ namespace DwarfCorp.Gui.Widgets
             Font = "font16";
             InteriorMargin = new Margin(20, 0, 0, 0);
 
+            if (!String.IsNullOrEmpty(Message.Name) && AssetManager.DoesTextureExist("newgui\\tutorials\\" + Message.Name))
+            {
+                var asset = "newgui\\tutorials\\" + Message.Name;
+                AddChild(new GameStates.TutorialIcon()
+                {
+                    ImageSource = asset,
+                    MinimumSize = new Point(256, 128),
+                    MaximumSize = new Point(256, 128),
+                    AutoLayout = AutoLayout.DockTop
+                });
+                Rect = new Rectangle(0, 0, 450, 450);
+                InteriorMargin = new Margin(32, 0, 0, 0);
+            }
+
             AddChild(new Button
             {
                 Text = "Dismiss",
@@ -48,10 +62,9 @@ namespace DwarfCorp.Gui.Widgets
 
             AddChild(new Widget
             {
-                Text = Message == null ? "" : Message.Text,
+                Text = Message == null ? "" : "\n" + Message.Text,
                 Font = "font10",
-                AutoLayout = AutoLayout.DockFill,
-                OnLayout = (sender) => sender.Rect.Height -= 30
+                AutoLayout = AutoLayout.DockTop
             });
 
             Layout();

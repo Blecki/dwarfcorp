@@ -15,6 +15,7 @@ namespace DwarfCorp.Tutorial
             public bool Shown;
             public String GuiHilite;
             public bool Popup = false;
+            public String Name;
         }
 
         private Dictionary<String, TutorialEntry> Entries;
@@ -54,7 +55,7 @@ namespace DwarfCorp.Tutorial
 
         public void ShowTutorial(String Name)
         {
-            if (TutorialEnabled && Entries.ContainsKey(Name) && !Entries[Name].Shown)
+            if (TutorialEnabled && !TutorialVisible && Entries.ContainsKey(Name) && !Entries[Name].Shown)
                 PendingTutorial = Name;
         }
 
@@ -70,6 +71,7 @@ namespace DwarfCorp.Tutorial
 
                 var entry = Entries[PendingTutorial];
                 entry.Shown = true;
+                entry.Name = PendingTutorial;
                 TutorialVisible = true;
 
                 var popup = Gui.ConstructWidget(new Gui.Widgets.TutorialPopup
