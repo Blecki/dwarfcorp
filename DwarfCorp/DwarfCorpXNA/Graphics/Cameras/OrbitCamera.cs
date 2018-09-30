@@ -143,6 +143,7 @@ namespace DwarfCorp
         public Vector3 Gravity = Vector3.Down * 20;
         private bool flying = false;
         private bool flyKeyPressed = false;
+        private GlobalVoxelCoordinate _prevVoxelCoord = new GlobalVoxelCoordinate(0, 0, 0);
         public void WalkUpdate(DwarfTime time, ChunkManager chunks)
         {
 
@@ -158,6 +159,17 @@ namespace DwarfCorp
             {
                 return;
             }
+
+            if (GameSettings.Default.FogofWar)
+            {
+                var currentCoordinate = GlobalVoxelCoordinate.FromVector3(Position);
+                if (currentCoordinate != _prevVoxelCoord)
+                {
+                    VoxelHelpers.RadiusReveal(chunks.ChunkData, new VoxelHandle(chunks.ChunkData, currentCoordinate), 10);
+                    _prevVoxelCoord = currentCoordinate;
+                }
+            }
+
             float diffPhi = 0;
             float diffTheta = 0;
             Vector3 forward = (Target - Position);
