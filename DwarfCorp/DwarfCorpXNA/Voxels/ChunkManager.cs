@@ -274,10 +274,12 @@ namespace DwarfCorp
                 ChunkData.AddChunk(chunk);
             }
 
+
             // This is critical at the beginning to allow trees to spawn on ramps correctly,
             // and also to ensure no inconsistencies in chunk geometry due to ramps.
             foreach (var chunk in ChunkData.ChunkMap)
             {
+                ChunkGen.GenerateChunkData(chunk, World, maxHeight);
                 for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
                     chunk.InvalidateSlice(i);
 

@@ -67,7 +67,7 @@ namespace DwarfCorp
 
             SpriteAsset = sprites;
             BaseMeatResource = "Bird Meat";
-            CreateSprite(ContentPaths.Entities.Animals.Birds.GetBirdAnimations(SpriteAsset), Manager);
+            CreateSprite(ContentPaths.Entities.Animals.Birds.GetBirdAnimations(SpriteAsset), Manager, 0.35f);
 
             // Used to sense hostile creatures
              Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
@@ -118,8 +118,8 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(ContentPaths.Entities.Animals.Birds.GetBirdAnimations(SpriteAsset), Manager);
-            Physics.AddChild(Shadow.Create(0.25f, manager));
+            CreateSprite(ContentPaths.Entities.Animals.Birds.GetBirdAnimations(SpriteAsset), Manager, 0.35f);
+            Physics.AddChild(Shadow.Create(0.3f, manager));
 
             base.CreateCosmeticChildren(manager);
         }

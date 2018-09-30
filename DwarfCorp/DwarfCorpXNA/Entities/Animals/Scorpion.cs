@@ -81,9 +81,9 @@ namespace DwarfCorp
             Physics.Orientation = Physics.OrientMode.RotateY;
 
             SpriteAsset = sprites;
-            CreateSprite(sprites, Manager);
+            CreateSprite(sprites, Manager, 0.35f);
 
-            Physics.AddChild(Shadow.Create(0.25f, Manager));
+            Physics.AddChild(Shadow.Create(0.3f, Manager));
 
             // Used to sense hostile creatures
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
@@ -134,8 +134,8 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(SpriteAsset, manager);
-            Physics.AddChild(Shadow.Create(0.25f, manager));
+            CreateSprite(SpriteAsset, manager, 0.35f);
+            Physics.AddChild(Shadow.Create(0.3f, manager));
             base.CreateCosmeticChildren(manager);
         }
     }

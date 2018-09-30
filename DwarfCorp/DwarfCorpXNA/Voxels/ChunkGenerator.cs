@@ -342,7 +342,7 @@ namespace DwarfCorp
                             foreach (var coord in VoxelHelpers.EnumerateAllNeighbors(voxel.Coordinate))
                             {
                                 VoxelHandle v = new VoxelHandle(Manager.ChunkData, coord);
-                                if (v.IsValid && (v.LiquidLevel > 0 || v.Sunlight))
+                                if (!v.IsValid || (v.Sunlight))
                                 {
                                     invalidCave = true;
                                     break;
@@ -469,6 +469,14 @@ namespace DwarfCorp
             return height + (upperBound - maxHeight);
         }
 
+        public void GenerateChunkData(VoxelChunk c, WorldManager world, float maxHeight)
+        {
+            UpdateSunlight(c);
+            GenerateCaves(c, world);
+            GenerateWater(c, maxHeight);
+            GenerateLava(c);
+        }
+
         public VoxelChunk GenerateChunk(Vector3 origin, WorldManager World, float maxHeight)
         {
             float waterHeight = NormalizeHeight(SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight);
@@ -558,11 +566,6 @@ namespace DwarfCorp
                     }
                 }
             }
-
-            UpdateSunlight(c);
-            GenerateCaves(c, World);
-            GenerateWater(c, maxHeight);
-            GenerateLava(c);
 
             return c;
         }

@@ -76,7 +76,7 @@ namespace DwarfCorp
             // When true, causes the bird to face the direction its moving in
             Physics.Orientation = Physics.OrientMode.RotateY;
 
-            CreateSprite(ContentPaths.Entities.Animals.Bat.bat_animations, Manager);
+            CreateSprite(ContentPaths.Entities.Animals.Bat.bat_animations, Manager, 0.0f);
 
             // Used to sense hostile creatures
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
@@ -129,8 +129,8 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(ContentPaths.Entities.Animals.Bat.bat_animations, manager);
-            Physics.AddChild(Shadow.Create(0.25f, manager));
+            CreateSprite(ContentPaths.Entities.Animals.Bat.bat_animations, manager, 0.0f);
+            Physics.AddChild(Shadow.Create(0.3f, manager));
             base.CreateCosmeticChildren(manager);
         }
     }

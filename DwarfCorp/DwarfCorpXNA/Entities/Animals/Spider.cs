@@ -109,8 +109,8 @@ namespace DwarfCorp
 
         private void CreateCosmetics(ComponentManager manager)
         {
-            CreateSprite(ContentPaths.Entities.Animals.Spider.spider_animation, manager);
-            Physics.AddChild(Shadow.Create(0.25f, manager));
+            CreateSprite(ContentPaths.Entities.Animals.Spider.spider_animation, manager, 0.3f);
+            Physics.AddChild(Shadow.Create(0.4f, manager));
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
