@@ -250,13 +250,13 @@ namespace DwarfCorp
             public float HoursUnhappyBeforeQuitting = 4.0f;
             public ColorSettings Colors = new ColorSettings();
 
-            public float Boredom_Gamble = -10.0f;
-            public float Boredom_NormalTask = 0.1f;
-            public float Boredom_Sleep = -0.1f;
-            public float Boredom_ExcitingTask = -0.1f;
-            public float Boredom_BoringTask = 0.5f;
-            public float Boredom_Eat = -0.1f;
-            public float Boredom_Walk = -0.2f;
+            [AutoResetFloat(-10.0f)] public float Boredom_Gamble = -10.0f;
+            [AutoResetFloat(0.1f)] public float Boredom_NormalTask = 0.1f;
+            [AutoResetFloat(-0.1f)] public float Boredom_Sleep = -0.1f;
+            [AutoResetFloat(-0.1f)] public float Boredom_ExcitingTask = -0.1f;
+            [AutoResetFloat(0.5f)] public float Boredom_BoringTask = 0.5f;
+            [AutoResetFloat(-0.1f)] public float Boredom_Eat = -0.1f;
+            [AutoResetFloat(-0.2f)] public float Boredom_Walk = -0.2f;
 
             public int MaxVoxelDesignations = 1024;
 
@@ -272,6 +272,20 @@ namespace DwarfCorp
         }
 
         public static Settings Default { get; set; }
+
+        /// <summary>
+        /// Use this attribute to flag a float setting that can be tweaked during execution, but 
+        /// should never be saved. (It does save, but will be reset everytime it's loaded.)
+        /// </summary>
+        private class AutoResetFloatAttribute : System.Attribute
+        {
+            public float Value;
+
+            public AutoResetFloatAttribute(float Value)
+            {
+                this.Value = Value;
+            }
+        }        
 
         public static void Reset()
         {
@@ -311,7 +325,19 @@ namespace DwarfCorp
             try
             {
                 Default = FileUtils.LoadJsonFromAbsolutePath<Settings>(file);
-                Console.Out.WriteLine("Loaded settings {1} \n {0}", file, Default.ToString());
+
+                foreach (var member in Default.GetType().GetFields())
+                    foreach (var attribute in member.GetCustomAttributes(false))
+                    {
+                        var resetFloat = attribute as AutoResetFloatAttribute;
+                        if (resetFloat != null)
+                        {
+                            member.SetValue(Default, resetFloat.Value);
+                            Console.Out.WriteLine("Auto Reset Float Setting: {0} to {1}", member.Name, resetFloat.Value);
+                        }
+                    }
+
+                Console.Out.WriteLine("Loaded settings {1}", file);
             }
             catch (FileNotFoundException)
             {
