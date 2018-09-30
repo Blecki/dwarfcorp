@@ -337,7 +337,7 @@ namespace DwarfCorp
                         }
                     }
 
-                Console.Out.WriteLine("Loaded settings {1}", file);
+                Console.Out.WriteLine("Loaded settings {0}", file);
             }
             catch (FileNotFoundException)
             {
