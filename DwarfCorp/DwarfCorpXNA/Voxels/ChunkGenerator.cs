@@ -440,9 +440,10 @@ namespace DwarfCorp
                 }
             }
 
+            float spawnLikelihood = (world.InitialEmbark.Difficulty + 0.1f);
             foreach (FaunaData animal in biome.Fauna)
             {
-                if (y <= 0 || !(MathFunctions.Random.NextDouble() < animal.SpawnProbability))
+                if (y <= 0 || !(MathFunctions.Random.NextDouble() < animal.SpawnProbability * spawnLikelihood))
                     continue;
 
                 FaunaData animal1 = animal;
