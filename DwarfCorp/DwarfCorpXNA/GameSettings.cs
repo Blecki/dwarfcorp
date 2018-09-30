@@ -193,6 +193,7 @@ namespace DwarfCorp
             Colors[color] = value;
         }
     }
+
     public class GameSettings
     {
         public class Settings
