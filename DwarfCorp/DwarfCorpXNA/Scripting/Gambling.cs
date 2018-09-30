@@ -149,7 +149,7 @@ namespace DwarfCorp.Scripting
             for (int i = 0; i < Participants.Count; i++)
             {
                 var p_i = Participants[i];
-                if (!VoxelHelpers.GetNeighbor(p_i.Physics.CurrentVoxel, new GlobalVoxelOffset(0, -1, 0)).IsEmpty)
+                if (VoxelHelpers.GetNeighbor(p_i.Physics.CurrentVoxel, new GlobalVoxelOffset(0, -1, 0)).IsEmpty)
                 {
                     removals.Add(p_i);
                     continue;
@@ -182,6 +182,7 @@ namespace DwarfCorp.Scripting
 
         public void Update(DwarfTime time)
         {
+            Participants.RemoveAll(r => r == null || r.IsDead || r.Physics == null || r.AI == null || r.IsAsleep || !r.Active);
             PushParticipants();
             switch (State)
             {
