@@ -29,14 +29,8 @@
   {
     "Name": "balance",
     "Texture": "newgui/balance",
-    "TileWidth": 32,
-    "TileHeight": 32
-  },
-    {
-    "Name": "balance-beam",
-    "Texture": "newgui/balance_beam",
     "TileWidth": 64,
-    "TileHeight": 64
+    "TileHeight": 48
   },
   {
     "Name": "font16",

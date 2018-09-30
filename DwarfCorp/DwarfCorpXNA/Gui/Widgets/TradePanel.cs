@@ -29,7 +29,9 @@ namespace DwarfCorp.Gui.Widgets
 
         public Widget LeftWidget;
         public Widget RightWidget;
-        public Widget CenterWidget;
+        public Widget LeftHook;
+        public Widget RightHook;
+        //public Widget CenterWidget;
         public Widget Bar;
         public Widget LeftItems;
         public Widget RightItems;
@@ -52,8 +54,12 @@ namespace DwarfCorp.Gui.Widgets
             Update();
             LeftItems.Clear();
             RightItems.Clear();
+
+            var left = GetTopResources(leftResources).ToList();
+            int leftCount = left.Count + (leftMoney > 0.0m ? 1 : 0);
+
             int k = 0;
-            foreach (var resource in GetTopResources(leftResources))
+            foreach (var resource in left)
             {
                 var resourceType = ResourceLibrary.GetResourceByName(resource.ResourceType);
                 LeftItems.AddChild(new ResourceIcon()
@@ -61,7 +67,7 @@ namespace DwarfCorp.Gui.Widgets
                     Layers = resourceType.GuiLayers,
                     MinimumSize = new Point(32, 32),
                     MaximumSize = new Point(32, 32),
-                    Rect = new Rectangle(LeftWidget.Rect.X + k * 5 - 5, LeftWidget.Rect.Y - 5 + k * 2, 32, 32)
+                    Rect = new Rectangle(LeftWidget.Rect.X + 16 + k * 4 - leftCount * 2, LeftWidget.Rect.Y + 5, 32, 32)
                 });
                 k++;
             }
@@ -73,10 +79,12 @@ namespace DwarfCorp.Gui.Widgets
                     Background = new TileReference("coins", 1),
                     MinimumSize = new Point(32, 32),
                     MaximumSize = new Point(32, 32),
-                    Rect = new Rectangle(LeftWidget.Rect.X + k * 5 - 5, LeftWidget.Rect.Y - 5 + k * 2, 32, 32)
+                    Rect = new Rectangle(LeftWidget.Rect.X + 16 + k * 4 - leftCount * 2, LeftWidget.Rect.Y + 5, 32, 32)
                 });
             }
 
+            var right = GetTopResources(rightResources).ToList();
+            int rightCount = right.Count + (rightMoney > 0.0m ? 1 : 0);
             k = 0;
             foreach (var resource in GetTopResources(rightResources))
             {
@@ -86,8 +94,9 @@ namespace DwarfCorp.Gui.Widgets
                     Layers = resourceType.GuiLayers,
                     MinimumSize = new Point(32, 32),
                     MaximumSize = new Point(32, 32),
-                    Rect = new Rectangle(RightWidget.Rect.X + k * 5 - 5, RightWidget.Rect.Y - 5 + k * 5, 32, 32)
+                    Rect = new Rectangle(RightWidget.Rect.X + 16 + k * 4 - rightCount * 2, RightWidget.Rect.Y + 5, 32, 32)
                 });
+                k++;
             }
 
             if (rightMoney > 0.0m)
@@ -97,7 +106,7 @@ namespace DwarfCorp.Gui.Widgets
                     Background = new TileReference("coins", 1),
                     MinimumSize = new Point(32, 32),
                     MaximumSize = new Point(32, 32),
-                    Rect = new Rectangle(RightWidget.Rect.X + k * 5 - 5, RightWidget.Rect.Y - 5 + k * 5, 32, 32)
+                    Rect = new Rectangle(RightWidget.Rect.X + 16 + k * 4 - rightCount * 2, RightWidget.Rect.Y + 5, 32, 32)
                 });
             }
             LeftItems.Invalidate();
@@ -107,14 +116,19 @@ namespace DwarfCorp.Gui.Widgets
         public void Update()
         {
             var rect = Rect;
-            CenterWidget.Rect = new Rectangle(rect.Center.X - 16, rect.Top, 32, 32);
-            Bar.Rect = new Rectangle(rect.Center.X - 32, rect.Top - 32, 64, 64);
+            //CenterWidget.Rect = new Rectangle(rect.Center.X - 16, rect.Top, 32, 32);
+            Bar.Rect = new Rectangle(rect.Center.X - 32, rect.Top - 32, 64, 48);
             Bar.Rotation = -_balance * 0.5f;
             Bar.Invalidate();
-            LeftWidget.Rect = new Rectangle(rect.Center.X - 32 - 8, rect.Top + (int)(_balance * 8) + 8, 32, 32);
+            float dy = 32 * (float)Math.Sin(_balance * 0.5f);
+            LeftWidget.Rect = new Rectangle(rect.Center.X - 28 - 32, rect.Top - 12 + (int)dy, 64, 48);
+            LeftHook.Rect = new Rectangle(LeftWidget.Rect.X, LeftWidget.Rect.Y - 3, LeftWidget.Rect.Width, LeftWidget.Rect.Height);
             LeftWidget.Invalidate();
-            RightWidget.Rect = new Rectangle(rect.Center.X + 16 - 8, rect.Top - (int)(_balance * 8) + 8, 32, 32);
+            LeftHook.Invalidate();
+            RightWidget.Rect = new Rectangle(rect.Center.X + 28 - 32, rect.Top - 12 - (int)dy, 64, 48);
+            RightHook.Rect = new Rectangle(RightWidget.Rect.X, RightWidget.Rect.Y - 3, RightWidget.Rect.Width, RightWidget.Rect.Height);
             RightWidget.Invalidate();
+            RightHook.Invalidate();
             Layout();
         }
 
@@ -123,8 +137,14 @@ namespace DwarfCorp.Gui.Widgets
             LeftWidget = AddChild(new Widget()
             {
                 Background = new TileReference("balance", 0),
-                MaximumSize = new Point(32, 32),
-                MinimumSize = new Point(32, 32)
+                MaximumSize = new Point(64, 48),
+                MinimumSize = new Point(64, 48)
+            });
+            LeftHook = LeftWidget.AddChild(new Widget()
+            {
+                Background = new TileReference("balance", 1),
+                MaximumSize = new Point(64, 48),
+                MinimumSize = new Point(64, 48)
             });
             LeftItems = LeftWidget.AddChild(new Widget()
             {
@@ -134,25 +154,32 @@ namespace DwarfCorp.Gui.Widgets
             RightWidget = AddChild(new Widget()
             {
                 Background = new TileReference("balance", 0),
-                MaximumSize = new Point(32, 32),
-                MinimumSize = new Point(32, 32)
+                MaximumSize = new Point(64, 48),
+                MinimumSize = new Point(64, 48)
+            });
+            RightHook = RightWidget.AddChild(new Widget()
+            {
+                Background = new TileReference("balance", 2),
+                MaximumSize = new Point(64, 48),
+                MinimumSize = new Point(64, 48)
             });
             RightItems = RightWidget.AddChild(new Widget()
             {
                 MinimumSize = new Point(32, 32),
                 MaximumSize =  new Point(32, 32)
             });
+            /*
             CenterWidget = AddChild(new Widget()
             {
                 Background = new TileReference("balance", 1),
                 MaximumSize = new Point(32, 32),
                 MinimumSize = new Point(32, 32)
-            });
+            });*/
             Bar = AddChild(new Widget()
             {
-                Background = new TileReference("balance-beam", 0),
-                MaximumSize = new Point(64, 64),
-                MinimumSize = new Point(64, 64)
+                Background = new TileReference("balance", 3),
+                MaximumSize = new Point(64, 48),
+                MinimumSize = new Point(64, 48)
             });
             Update();
             base.Construct();
