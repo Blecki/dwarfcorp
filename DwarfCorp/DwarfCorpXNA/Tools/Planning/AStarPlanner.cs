@@ -256,8 +256,8 @@ namespace DwarfCorp
                 {
                     // If there wasn't a voxel to explore, just try to expand from
                     // the start again.
-                    current = start;
                     numExpansions++;
+                    continue;
                 }
 
                 numExpansions++;
@@ -265,16 +265,21 @@ namespace DwarfCorp
                 // If we've reached the goal already, reconstruct the path from the start to the 
                 // goal.
        
-                /*
-                if (goal.IsInGoalRegion(current) && cameFrom.ContainsKey(current))
+                
+                if (goal.IsInGoalRegion(current.Voxel) && cameFrom.ContainsKey(current))
                 {
-                    toReturn = ReconstructPath(cameFrom, cameFrom[current]);
-                    return true;
+                    toReturn = ReconstructPath(cameFrom, cameFrom[current], start);
+                    return new PlanResult()
+                    {
+                        Result = PlanResultCode.Success,
+                        Expansions = numExpansions,
+                        TimeSeconds = DwarfTime.Tock(startTime)
+                    };
                 }
-                */
 
-              
-                //Drawer3D.DrawBox(current.GetBoundingBox(), Color.Red, 0.1f, true);
+
+                //Drawer3D.DrawLine(start.Voxel.GetBoundingBox().Center(), goal.GetVoxel().GetBoundingBox().Center(), Color.Red, 0.1f);
+                //Drawer3D.DrawBox(current.Voxel.GetBoundingBox(), Color.Red, 0.1f, true);
                 // We've already considered the voxel, so add it to the closed set.
                 openSet.Remove(current);
                 closedSet.Add(current);
@@ -666,7 +671,6 @@ namespace DwarfCorp
             var p = new List<MoveAction>();
             bool use_inverse = goal.IsReversible() && OpennessHeuristic(goal.GetVoxel()) < OpennessHeuristic(start);
             //bool use_inverse = false;
-            //bool use_inverse = true;
             var result = use_inverse ? InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc)
                 : Path(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc);
 

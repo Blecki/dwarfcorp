@@ -51,10 +51,21 @@ namespace DwarfCorp.Gui.Widgets
             SourceResources = Clone(sourceResource.ToList());
             SelectedResources = Clone(selectedResources.ToList());
 
-            var leftPanel = AddChild(new Widget());
+
+            var leftmostPanel = AddChild(new Widget());
+
+            leftmostPanel.AddChild(new Gui.Widget
+            {
+                Text = RightHeader,
+                Font = "font16",
+                TextColor = new Vector4(0, 0, 0, 1),
+                AutoLayout = AutoLayout.DockTop
+            });
+
+            var rightmostPanel = AddChild(new Widget());
 
 
-            leftPanel.AddChild(new Gui.Widget
+            rightmostPanel.AddChild(new Gui.Widget
             {
                 Text = LeftHeader,
                 Font = "font16",
@@ -62,7 +73,7 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockTop
             });
 
-            leftPanel.AddChild(new Gui.Widget
+            rightmostPanel.AddChild(new Gui.Widget
             {
                 MinimumSize = new Point(0, 32),
                 AutoLayout = AutoLayout.DockBottom,
@@ -73,7 +84,7 @@ namespace DwarfCorp.Gui.Widgets
                 TextVerticalAlign = VerticalAlign.Center
             });
 
-            var leftList = leftPanel.AddChild(new Gui.Widgets.WidgetListView
+            var rightmostList = rightmostPanel.AddChild(new Gui.Widgets.WidgetListView
             {
                 ItemHeight = 32,
                 AutoLayout = AutoLayout.DockFill,
@@ -82,17 +93,7 @@ namespace DwarfCorp.Gui.Widgets
                 ItemBackgroundColor1 = new Vector4(0, 0, 0, 0)
             }) as Gui.Widgets.WidgetListView;
 
-            var rightPanel = AddChild(new Widget());
-
-            rightPanel.AddChild(new Gui.Widget
-            {
-                Text = RightHeader,
-                Font = "font16",
-                TextColor = new Vector4(0, 0, 0, 1),
-                AutoLayout = AutoLayout.DockTop
-            });
-
-            MoneyField = rightPanel.AddChild(new MoneyEditor
+            MoneyField = leftmostPanel.AddChild(new MoneyEditor
             {
                 MaximumValue = (int)TradeEntity.Money,
                 MinimumSize = new Point(0, 33),
@@ -101,7 +102,7 @@ namespace DwarfCorp.Gui.Widgets
                 Tooltip = "Money to trade."
             }) as MoneyEditor;
 
-            var rightList = rightPanel.AddChild(new Gui.Widgets.WidgetListView
+            var leftmostList = leftmostPanel.AddChild(new Gui.Widgets.WidgetListView
             {
                 ItemHeight = 32,
                 AutoLayout = AutoLayout.DockFill,
@@ -111,8 +112,8 @@ namespace DwarfCorp.Gui.Widgets
             }) as Gui.Widgets.WidgetListView;
 
             // Lists should have bidirectional properties.
-            SetupList(rightList, leftList, SourceResources, SelectedResources);
-            SetupList(leftList, rightList, SelectedResources, SourceResources);
+            SetupList(leftmostList, rightmostList, SourceResources, SelectedResources);
+            SetupList(rightmostList, leftmostList, SelectedResources, SourceResources);
         }
 
         private void SetupList(WidgetListView listA, WidgetListView listB, List<ResourceAmount> resourcesA, 

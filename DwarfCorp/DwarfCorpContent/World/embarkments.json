@@ -20,8 +20,8 @@
       "Wood": 32,
       "Coal": 16,
       "Iron": 16,
-      "Ale": 16,
-      "Mushroom": 32,
+      "Ale": 64,
+      "Mushroom": 128,
       "Gold": 4,
       "Mana": 8
     },
@@ -33,8 +33,8 @@
     "Resources": {
       "Wood": 8,
       "Iron": 8,
-      "Ale": 8,
-      "Mushroom": 8
+      "Ale": 16,
+      "Mushroom": 32
     },
     "Money": 300
   },
@@ -50,8 +50,8 @@
     "Resources": {
       "Wood": 4,
       "Iron": 4,
-      "Ale": 4,
-      "Mushroom": 4
+      "Ale": 8,
+      "Mushroom": 8
     },
     "Money": 100
   },

@@ -11,12 +11,12 @@
 		"Text": "You selected a dwarf! You can tell a dwarf to go somewhere by right clicking. You can order your employees to do something using the tools in the tray at the bottom of the screen. Dwarfs to do not have to be selected to issue orders.",
 		"GuiHilite": "tools"
 	},
-  {
-    "Name": "mine",
-    "Title": "Mining",
-    "Text": "Left click and drag to tell dwarves to mine blocks. Mining sometimes produces resources for trading and building. Tip: hold ALT and use the mouse wheel to dig pits. Right click and drag to cancel mine designations. When your employee collects resources, the dwarf will take them to a stockpile to store them.",
-    "GuiHilite": "dig"
-  },
+	{
+		"Name": "mine",
+		"Title": "Mining",
+		"Text": "Left click and drag to tell dwarves to mine blocks. Mining sometimes produces resources for trading and building. Tip: hold ALT and use the mouse wheel to dig pits. Right click and drag to cancel mine designations. When your employee collects resources, the dwarf will take them to a stockpile to store them.",
+		"GuiHilite": "dig"
+	},
 	{
 		"Name": "wrangle",
 		"Title": "Catching Animals",
@@ -59,19 +59,9 @@
 		"GuiHilite": "cook"
 	},
 	{
-		"Name": "till",
-		"Title": "Tilling Soil",
-		"Text": "Left click and drag to tell dwarves to till soil or grass. Dwarves cannot till sand, stone or permafrost. Once soil has been tilled, you can plant seeds in the soil. Some seeds only grow underground. Others grow above ground. Right click and drag to cancel soil tilling."
-	},
-	{
 		"Name": "plant",
 		"Title": "Planting Seeds",
-		"Text": "Left click and drag on any tilled soil to plant seeds. Seeds will eventually grow into plants that can be harvested."
-	},
-	{
-		"Name": "harvest",
-		"Title": "Harvesting Plants",
-		"Text": "Left Click and drag over any plant that is growing in tilled soil to harvest it. You can also do this using the Chop tool."
+		"Text": "Left click and drag on any soil to plant seeds. Seeds will eventually grow into plants that can be harvested. Dwarfs auto-harvest plants once grown. Some plants can only be grown underground."
 	},
 	{
 		"Name": "gather",
@@ -82,7 +72,7 @@
 	{
 		"Name": "attack",
 		"Title": "Attacking",
-		"Text": "Left click and drag on creatures to tell dwarves to attack them. Right click and drag to cancel attack designations.",
+		"Text": "Left click and drag on creatures to tell dwarves to attack (or hunt) them. Right click and drag to cancel attack designations.",
 		"GuiHilite": "attack"
 	},
 	{
@@ -103,7 +93,7 @@
 		"Text": "Left click and drag to build a graveyard. When dwarves die, they produce corpses. Corpses can only be stored in the graveyard. Dwarves will come to the graveyard to mourn the dead."
 	},
 	{
-		"Name": "build BalloonPort",
+		"Name": "build Balloon Port",
 		"Title": "Balloon Port",
 		"Text": "Left click and drag to build a balloon port. Balloon ports are necessary for trade. They must be built above ground. They also act as stockpiles. The larger the balloon port, the more it can store in its stockpile."
 	},

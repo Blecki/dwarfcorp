@@ -27,6 +27,18 @@
     "TileHeight": 18
   },
   {
+    "Name": "balance",
+    "Texture": "newgui/balance",
+    "TileWidth": 32,
+    "TileHeight": 32
+  },
+    {
+    "Name": "balance-beam",
+    "Texture": "newgui/balance_beam",
+    "TileWidth": 64,
+    "TileHeight": 64
+  },
+  {
     "Name": "font16",
     "Texture": "newgui/fonts/font16",
     "Type": "JsonFont"

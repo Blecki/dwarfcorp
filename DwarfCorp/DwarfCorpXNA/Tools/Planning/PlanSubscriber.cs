@@ -49,6 +49,11 @@ namespace DwarfCorp
             Service = service;
             Service.AddSubscriber(this);
         }
+
+        public void Clear()
+        {
+            CurrentRequestID = -1; 
+        }
     }
 
 }

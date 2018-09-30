@@ -144,7 +144,15 @@ namespace DwarfCorp
         {
             var layers = LayeredSprites.LayerLibrary.EnumerateLayers(Layer).Where(l => !l.DefaultLayer && l.PassesFilter(stats));
             if (layers.Count() > 0)
-                stack.AddLayer(layers.SelectRandom(Random), Palette);
+            {
+                var newLayer = layers.SelectRandom(Random);
+                stack.AddLayer(newLayer, Palette);
+                // Do not allow hats and hair on the same head.
+                if (newLayer.Asset != "Entities/Dwarf/Layers/blank" && Layer == "hat")
+                {
+                    stack.RemoveLayer("hair");
+                }
+            }
             else
             {
                 var defaultLayer = LayeredSprites.LayerLibrary.EnumerateLayers(Layer).Where(l => l.DefaultLayer).FirstOrDefault();

@@ -122,6 +122,7 @@ namespace DwarfCorp
         public bool DrawAIPlan { get; set; }
 
         /// <summary> This is a Subscriber which waits for new paths from the A* planner </summary>
+        [JsonIgnore]
         public PlanSubscriber PlanSubscriber { get; set; }
         /// <summary> If true, the AI is waiting on a plan from the PlanSubscriber </summary>
         public bool WaitingOnResponse { get; set; }
@@ -246,6 +247,8 @@ namespace DwarfCorp
             if (Sensor == null)
                 Sensor = GetRoot().GetComponent<EnemySensor>();
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
+            var world = (WorldManager)(ctx.Context);
+            PlanSubscriber = new PlanSubscriber(world.PlanService);
         }
 
         public void ResetPositionConstraint()
@@ -519,6 +522,7 @@ namespace DwarfCorp
             Creature.NoiseMaker.BasePitch = Stats.VoicePitch;
             if (Debugger.Switches.DrawPaths)
             {
+                /*
                 StringBuilder taskString = new StringBuilder();
                 foreach (var task in Tasks)
                 {
@@ -528,6 +532,7 @@ namespace DwarfCorp
                     taskString.Append("\n");
                 }
                 Drawer2D.DrawText(taskString.ToString(), Position, Color.White, Color.Black);
+                */
             }
 
             if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))

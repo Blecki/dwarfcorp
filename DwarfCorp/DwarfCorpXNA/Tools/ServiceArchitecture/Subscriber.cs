@@ -47,6 +47,7 @@ namespace DwarfCorp
         [JsonIgnore] 
         public readonly uint ID;
 
+        public int CurrentRequestID = 0;
         private static uint maxID = 0;
 
         [JsonIgnore]
@@ -73,8 +74,9 @@ namespace DwarfCorp
             }
         }
 
-        public bool SendRequest(TRequest request)
+        public bool SendRequest(TRequest request, int id)
         {
+            CurrentRequestID = id;
             if(!Service.AddRequest(request, ID))
             {
                 return false;

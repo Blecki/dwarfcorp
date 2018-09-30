@@ -107,7 +107,7 @@ namespace DwarfCorp
             Timeout.Reset();
             // Otherwise, this is a new request. Push it and return null.
             LastRequest = request;
-            Subscriber.SendRequest(request);
+            Subscriber.SendRequest(request, -1);
             return null;
         }
     }
