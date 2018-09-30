@@ -895,6 +895,11 @@ namespace DwarfCorp
             return damage;
         }
 
+        public void GatherImmediately(Body item, Inventory.RestockType restockType = Inventory.RestockType.None)
+        {
+            Inventory.Pickup(item, restockType);
+        }
+
         public void Gather(Body item)
         {
 

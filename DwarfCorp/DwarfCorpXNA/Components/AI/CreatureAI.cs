@@ -511,6 +511,39 @@ namespace DwarfCorp
             return ActOnIdle();
 
         }
+        private Timer AutoGatherTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
+        public void AutoGather()
+        {
+            HashSet<Body> intersections = new HashSet<Body>();
+            World.OctTree.EnumerateItems(Physics.BoundingBox.Expand(3.0f), intersections);
+            foreach (var body in intersections.OfType<ResourceEntity>())
+            {
+                if (!body.Active || body.AnimationQueue.Count > 0)
+                    continue;
+
+                if (Faction.Designations.IsDesignation(body, DesignationType.Gather))
+                {
+                    Creature.GatherImmediately(body, Inventory.RestockType.RestockResource);
+                    continue;
+                }
+                if (Faction  == World.PlayerFaction)
+                {
+                    Creature.GatherImmediately(body, Inventory.RestockType.RestockResource);
+                    continue;
+                }
+
+                var resource = ResourceLibrary.GetResourceByName(body.Resource.ResourceType);
+                if (resource.Tags.Contains(Resource.ResourceTags.Edible))
+                {
+                    if ((Faction.Race.Name == "Carnivore" && resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)) ||
+                        (Faction.Race.Name == "Herbivore" && !resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)))
+                    {
+                        Creature.GatherImmediately(body);
+                        AssignTask(new ActWrapperTask(new EatFoodAct(this)));
+                    }
+                }
+            }
+        }
 
         /// <summary> Update this creature </summary>
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -538,9 +571,12 @@ namespace DwarfCorp
             if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))
                 Faction = Manager.World.Factions.Factions[Creature.Allies];
 
+            AutoGatherTimer.Update(gameTime);
             IdleTimer.Update(gameTime);
             SpeakTimer.Update(gameTime);
 
+            if (AutoGatherTimer.HasTriggered)
+                AutoGather();
             OrderEnemyAttack();
             DeleteBadTasks();
             PreEmptTasks();
