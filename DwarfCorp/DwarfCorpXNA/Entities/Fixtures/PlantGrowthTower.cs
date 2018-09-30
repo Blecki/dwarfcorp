@@ -20,6 +20,11 @@ namespace DwarfCorp
             return new PlantGrowthTower(Manager, Position, Data);
         }
 
+        public PlantGrowthTower()
+        {
+
+        }
+
         public PlantGrowthTower(ComponentManager Manager, Vector3 Position, Blackboard Data) :
             base("Tower of Life", new String[] { "Tower of Life" },
                 Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(5, 2),

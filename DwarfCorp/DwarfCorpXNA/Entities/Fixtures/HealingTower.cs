@@ -20,6 +20,11 @@ namespace DwarfCorp
             return new HealingTower(Manager, Position, Data);
         }
 
+        public HealingTower()
+        {
+
+        }
+
         public HealingTower(ComponentManager Manager, Vector3 Position, Blackboard Data) :
             base("Tower of Health", new String[] { "Tower of Health" },
                 Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(6, 2),
