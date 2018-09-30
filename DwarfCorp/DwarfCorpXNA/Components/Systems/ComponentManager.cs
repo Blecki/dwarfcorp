@@ -204,14 +204,21 @@ namespace DwarfCorp
             if (component is MinimapIcon)
                 MinimapIcons.Add(component as MinimapIcon);
         }
-
+        public int k = 0;
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             PerformanceMonitor.PushFrame("Component Update");
-
+            var components = Components.Values.ToList();
+            for (int j = 0; j < Math.Min(4096, components.Count); j++)
+            {
+                int c = (k + j) % components.Count;
+                components[c].Update(gameTime, chunks, camera);
+            }
+            k += 4096;
+            /*
             foreach (var component in Components.Values)
                 component.Update(gameTime, chunks, camera);
-
+            */
             PerformanceMonitor.PopFrame();
 
             AddRemove();

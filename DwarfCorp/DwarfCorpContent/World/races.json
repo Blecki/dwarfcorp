@@ -322,7 +322,7 @@
       "Frames": [ 0, 1, 0 ],
       "Speed": 5.0
     },
-    "NaturalEnemies": [ "Demon", "Elf", "Goblins", "Carnivore" ],
+    "NaturalEnemies": [ "Elf", "Goblins", "Carnivore" ],
     "Speech": {
       "Greetings": [ "We have been watching you.", "Don't be alarmed. Inside, we're all the same.", "Good day. We are interested in your crafts.", "Your reputation precedes you, fleshy Dwarves.", "We hear whispers from the grave." ],
       "Farewells": [ "Remember. While you sleep, we wait.", "We grow stronger night by night.", "I see you are afraid. We will not bother you any longer.", "Another time, then.", "See you next century." ],
@@ -399,7 +399,7 @@
       "Frames": [ 0, 1, 0 ],
       "Speed": 5.0
     },
-    "NaturalEnemies": [ "Undead", "Player", "Herbivore", "Elf", "Goblins", "Carnivore", "Dwarf" ],
+    "NaturalEnemies": ["Player", "Herbivore", "Elf", "Goblins",  "Dwarf" ],
     "Speech": {
       "Greetings": [ "We have been watching you.", "Don't be alarmed. Inside, we're all the same.", "Good day. We are interested in your crafts.", "Your reputation precedes you, fleshy Dwarves.", "We hear whispers from the grave." ],
       "Farewells": [ "Remember. While you sleep, we wait.", "We grow stronger night by night.", "I see you are afraid. We will not bother you any longer.", "Another time, then.", "See you next century." ],
@@ -446,7 +446,7 @@
     "CreatureTypes": [
       "Scorpion"
     ],
-    "NaturalEnemies": [ "Demon", "Herbivore", "Dwarf", "Goblin", "Elf", "Molemen", "Undead" ],
+    "NaturalEnemies": [ "Herbivore", "Dwarf", "Goblin", "Elf", "Molemen", "Undead" ],
     "IsIntelligent": false,
     "IsNative": true,
     "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",

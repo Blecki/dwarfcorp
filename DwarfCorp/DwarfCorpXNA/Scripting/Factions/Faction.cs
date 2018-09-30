@@ -290,7 +290,7 @@ namespace DwarfCorp
                 Threats.Remove(threat);
             }
 
-            TaskManager.AssignTasks(tasks, Minions);
+            TaskManager.AssignTasksGreedy(tasks, Minions);
         }
 
         public List<Room> GetRooms()
