@@ -83,7 +83,7 @@ namespace DwarfCorp
 
         private List<int> CaveLevels = null;
 
-    public ChunkGenerator(VoxelLibrary voxLibrary, int randomSeed, float noiseScale)
+        public ChunkGenerator(VoxelLibrary voxLibrary, int randomSeed, float noiseScale)
         {
             NoiseGenerator = new Perlin(randomSeed);
             NoiseScale = noiseScale;
@@ -558,11 +558,11 @@ namespace DwarfCorp
                 }
             }
 
+            UpdateSunlight(c);
             GenerateCaves(c, World);
             GenerateWater(c, maxHeight);
             GenerateLava(c);
 
-            UpdateSunlight(c);
             return c;
         }
 
