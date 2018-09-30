@@ -105,7 +105,7 @@ namespace DwarfCorp
                     new ActionStats
                     {
                         CanMove = false,
-                        Cost = 1000.0f,
+                        Cost = 300.0f,
                         Speed = 1.0f
                     }
                 },

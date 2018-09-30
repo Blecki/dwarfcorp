@@ -122,7 +122,7 @@ namespace DwarfCorp
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             AI.Movement.SetCan(MoveType.Dig, true);
-            AI.Movement.SetCost(MoveType.Dig, 100.0f);
+            AI.Movement.SetCost(MoveType.Dig, 30.0f);
             Species = "Moleman";
         }
 
