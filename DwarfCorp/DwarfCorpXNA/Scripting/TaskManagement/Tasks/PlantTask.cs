@@ -45,7 +45,7 @@ namespace DwarfCorp
 
         public PlantTask()
         {
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
             Category = TaskCategory.Plant;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
@@ -54,7 +54,7 @@ namespace DwarfCorp
         {
             FarmToWork = farmToWork;
             Name = "Plant " + FarmToWork.Voxel.Coordinate;
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
             AutoRetry = true;
             Category = TaskCategory.Plant;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;

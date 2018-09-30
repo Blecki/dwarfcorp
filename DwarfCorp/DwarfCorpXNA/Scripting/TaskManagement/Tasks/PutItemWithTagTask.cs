@@ -50,7 +50,7 @@ namespace DwarfCorp
 
         public PutItemWithTagTask()
         {
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
         }
 
         public PutItemWithTagTask(TagList tags, Zone zone)
@@ -58,7 +58,7 @@ namespace DwarfCorp
             Name = "Put Item with tag: " + tags + " in zone " + zone.ID;
             Tags = tags;
             Zone = zone;
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
         }
 
         public override Act CreateScript(Creature creature)

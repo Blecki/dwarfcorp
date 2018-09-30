@@ -68,7 +68,7 @@ namespace DwarfCorp
                 SelectedResources = SelectedResources
             };
             Name = String.Format("Craft order {0}: {1} {2}s", TaskID, NumRepeats, selectedResource.DisplayName);
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
 
             if (ResourceLibrary.GetResourceByName(Item.ItemType.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible))
             {

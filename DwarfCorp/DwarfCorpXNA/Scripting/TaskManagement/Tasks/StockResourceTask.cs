@@ -49,7 +49,7 @@ namespace DwarfCorp
         public StockResourceTask()
         {
             Category = TaskCategory.Gather;
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
@@ -58,7 +58,7 @@ namespace DwarfCorp
             Category = TaskCategory.Gather;
             EntityToGather = entity.CloneResource();
             Name = "Stock Entity: " + entity.ResourceType + " " + entity.NumResources;
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
             ReassignOnDeath = false;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }

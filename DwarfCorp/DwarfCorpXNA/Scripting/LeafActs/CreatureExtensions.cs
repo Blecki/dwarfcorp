@@ -126,7 +126,7 @@ namespace DwarfCorp
             {
                 var task = new StockResourceTask(resource.Value.CloneResource())
                 {
-                    Priority = Task.PriorityType.High
+                    Priority = Task.PriorityType.Medium
                 };
 
                 if (!agent.AI.Tasks.Contains(task))
@@ -158,7 +158,7 @@ namespace DwarfCorp
             {
                 var task = new StockResourceTask(resource.Value.CloneResource())
                 {
-                    Priority = Task.PriorityType.Low
+                    Priority = Task.PriorityType.Medium
                 };
 
                 if (task.IsFeasible(agent) == Task.Feasibility.Feasible && !agent.AI.Tasks.Contains(task))

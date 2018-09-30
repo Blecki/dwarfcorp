@@ -53,7 +53,7 @@ namespace DwarfCorp
         {
             Zone = zone;
             Category = TaskCategory.Other;
-            Priority = PriorityType.High;
+            Priority = PriorityType.Medium;
             ReassignOnDeath = false;
             Name = "Go to " + Zone.ID;
         }
@@ -79,7 +79,7 @@ namespace DwarfCorp
         public BuildRoomTask()
         {
             Category = TaskCategory.BuildZone;
-            Priority = PriorityType.High;
+            Priority = PriorityType.Medium;
             MaxAssignable = 3;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
@@ -90,7 +90,7 @@ namespace DwarfCorp
             MaxAssignable = 3;
             Name = "Build Room " + zone.ToBuild.RoomData.Name + zone.ToBuild.ID;
             Zone = zone;
-            Priority = PriorityType.High;
+            Priority = PriorityType.Medium;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 

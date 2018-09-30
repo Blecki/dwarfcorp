@@ -63,7 +63,7 @@ namespace DwarfCorp
             MaxAssignable = 3;
             Name = "Mine Block " + vox.Coordinate;
             Voxel = vox;
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
             Category = TaskCategory.Dig;
             VoxelHealth = Voxel.Type.StartingHealth;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;

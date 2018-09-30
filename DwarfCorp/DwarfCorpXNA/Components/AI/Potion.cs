@@ -38,7 +38,7 @@ namespace DwarfCorp
             Name = "Gather Potions";
             ReassignOnDeath = false;
             AutoRetry = false;
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

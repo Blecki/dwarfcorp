@@ -54,7 +54,7 @@ namespace DwarfCorp
             MaxAssignable = 3;
             Name = "Harvest Plant: " + entity.Name + " " + entity.GlobalID;
             EntityToKill = entity;
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
             AutoRetry = true;
             Category = TaskCategory.Chop;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;

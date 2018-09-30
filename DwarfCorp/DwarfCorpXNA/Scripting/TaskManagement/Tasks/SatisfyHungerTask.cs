@@ -46,7 +46,7 @@ namespace DwarfCorp
         {
             ReassignOnDeath = false;
             Name = "Satisfy Hunger";
-            Priority = PriorityType.High;
+            Priority = PriorityType.Medium;
             BoredomIncrease = GameSettings.Default.Boredom_Eat;
         }
 

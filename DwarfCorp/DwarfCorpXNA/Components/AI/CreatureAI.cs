@@ -992,7 +992,7 @@ namespace DwarfCorp
 
                         if (closestTraining != null)
                         {
-                            return new ActWrapperTask(new GoTrainAct(this)) { Name = "train", ReassignOnDeath = false, Priority = Task.PriorityType.Low };
+                            return new ActWrapperTask(new GoTrainAct(this)) { Name = "train", ReassignOnDeath = false, Priority = Task.PriorityType.Medium };
                         }
                     }
                     else
@@ -1001,7 +1001,7 @@ namespace DwarfCorp
 
                         if (closestTraining != null)
                         {
-                            return new ActWrapperTask(new GoTrainAct(this) { Magical = true }) { Name = "do magic research", ReassignOnDeath = false, Priority = Task.PriorityType.Low };
+                            return new ActWrapperTask(new GoTrainAct(this) { Magical = true }) { Name = "do magic research", ReassignOnDeath = false, Priority = Task.PriorityType.Medium };
                         }
                     }
                 }
@@ -1010,7 +1010,7 @@ namespace DwarfCorp
                 {
                     return new ActWrapperTask(new MournGraves(this))
                     {
-                        Priority = Task.PriorityType.Eventually,
+                        Priority = Task.PriorityType.Medium,
                         AutoRetry = false
                     };
                 }
@@ -1047,7 +1047,7 @@ namespace DwarfCorp
                     GatherManager.StockOrders.RemoveAt(0);
                     StockResourceTask task = new StockResourceTask(order.Resource.CloneResource())
                     {
-                        Priority = Task.PriorityType.Low
+                        Priority = Task.PriorityType.Medium
                     };
                     if (task.IsFeasible(this.Creature) != Task.Feasibility.Infeasible)
                     {
@@ -1064,7 +1064,7 @@ namespace DwarfCorp
                     GatherManager.StockMoneyOrders.RemoveAt(0);
                     return new ActWrapperTask(new StockMoneyAct(this, order.Money))
                     {
-                        Priority = Task.PriorityType.Low
+                        Priority = Task.PriorityType.Medium
                     };
                 }
             }

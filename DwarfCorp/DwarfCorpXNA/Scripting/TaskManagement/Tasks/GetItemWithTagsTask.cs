@@ -47,14 +47,14 @@ namespace DwarfCorp
 
         public GetItemWithTagsTask()
         {
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
         }
 
         public GetItemWithTagsTask(TagList tags)
         {
             Tags = tags;
             Name = "Get Item with Tags: " + tags;
-            Priority = PriorityType.Low;
+            Priority = PriorityType.Medium;
         }
 
         public override Act CreateScript(Creature creature)
