@@ -677,7 +677,7 @@
     <Compile Include="Gui\Widgets\ApplicantInfo.cs" />
     <Compile Include="Gui\Widgets\HorizontalMenuTray.cs" />
     <Compile Include="Gui\Widgets\GodMenu.cs" />
-    <Compile Include="Gui\Widgets\WorldGenerationSettingsDialog.cs" />
+    <Compile Include="GameStates\WorldGeneration\WorldGenerationSettingsDialog.cs" />
     <Compile Include="Gui\Widgets\FinancePanel.cs" />
     <Compile Include="Gui\Widgets\StockTicker.cs" />
     <Compile Include="Gui\Widgets\HireEmployeeDialog.cs" />

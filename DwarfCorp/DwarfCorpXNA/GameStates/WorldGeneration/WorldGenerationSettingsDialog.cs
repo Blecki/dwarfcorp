@@ -12,7 +12,7 @@ namespace DwarfCorp.Gui.Widgets
         public GameStates.WorldGenerationSettings Settings;
         private Gui.Widget NameEditBox;
 
-        private string[] LevelStrings = new string[]
+        public static string[] LevelStrings = new string[]
         {
             "Very Low",
             "Low",
@@ -29,7 +29,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public DialogResult Result = DialogResult.Okay;
 
-        private Widget CreateCombo<T>(String Name, String Tooltip, T[] Values, Action<T> Setter, Func<T> Getter)
+        public static Widget CreateCombo<T>(Gui.Root Root, String Name, String Tooltip, T[] Values, Action<T> Setter, Func<T> Getter)
         {
             System.Diagnostics.Debug.Assert(Values.Length == LevelStrings.Length);
 
@@ -147,37 +147,37 @@ namespace DwarfCorp.Gui.Widgets
             });
 
 
-            AddChild(CreateCombo<int>("World Size", "Size of the world to generate",
+            AddChild(CreateCombo<int>(Root, "World Size", "Size of the world to generate",
                 new int[] { 256, 384, 512, 1024, 2048 }, (i) =>
                 {
                     Settings.Width = i;
                     Settings.Height = i;
                 }, () => Settings.Width));
 
-            AddChild(CreateCombo<int>("Natives", "Number of native civilizations",
+            AddChild(CreateCombo<int>(Root, "Natives", "Number of native civilizations",
                 new int[] { 0, 2, 4, 8, 16 }, (i) => Settings.NumCivilizations = i,
                 () => Settings.NumCivilizations));
 
 
-            AddChild(CreateCombo<int>("Faults", "Number of straights, seas, etc.",
+            AddChild(CreateCombo<int>(Root, "Faults", "Number of straights, seas, etc.",
                 new int[] { 0, 1, 3, 5, 10 }, (i) => Settings.NumFaults = i, () => Settings.NumFaults));
 
-            AddChild(CreateCombo<float>("Rainfall", "Amount of moisture in the world.",
+            AddChild(CreateCombo<float>(Root, "Rainfall", "Amount of moisture in the world.",
                 new float[] { 0.0f, 0.5f, 1.0f, 1.5f, 2.0f }, (f) => Settings.RainfallScale = f,
                 () => Settings.RainfallScale));
 
-            AddChild(CreateCombo<int>("Erosion", "How eroded is the landscape.",
+            AddChild(CreateCombo<int>(Root, "Erosion", "How eroded is the landscape.",
                 new int[] { 50, 1000, 8000, 20000, 50000 }, (i) => Settings.NumRains = i,
                 () => Settings.NumRains));
 
-            AddChild(CreateCombo<float>("Sea Level", "Height of the sea.",
+            AddChild(CreateCombo<float>(Root, "Sea Level", "Height of the sea.",
                 new float[] { 0.05f, 0.1f, 0.17f, 0.25f, 0.3f }, (f) => Settings.SeaLevel = f,
                 () => Settings.SeaLevel));
             
-            AddChild(CreateCombo<float>("Temperature", "Average temperature.",
+            AddChild(CreateCombo<float>(Root, "Temperature", "Average temperature.",
                 new float[] { 0.0f, 0.5f, 1.0f, 1.5f, 2.0f }, (f) => Settings.TemperatureScale = f,
                 () => Settings.TemperatureScale));
-            
+
             Layout();
         }
     }

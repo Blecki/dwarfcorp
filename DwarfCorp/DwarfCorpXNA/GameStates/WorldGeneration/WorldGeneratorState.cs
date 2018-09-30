@@ -269,22 +269,48 @@ namespace DwarfCorp.GameStates
                 CheckState = true
             }) as Gui.Widgets.CheckBox;
 
+            rightPanel.AddChild(new Gui.Widget
+            {
+                Text = "Cave Layers",
+                AutoLayout = Gui.AutoLayout.DockTop,
+                Font = "font8",
+                TextColor = new Vector4(0, 0, 0, 1),
+            });
+
+            var layerSetting = rightPanel.AddChild(new Gui.Widgets.ComboBox
+            {
+                AutoLayout = AutoLayout.DockTop,
+                Items = new List<string>(new string[] { "Barely any", "Few", "Normal", "Lots", "Way too many" }),
+                Font = "font8",
+                TextColor = new Vector4(0, 0, 0, 1),
+                OnSelectedIndexChanged = (sender) =>
+                {
+                    switch ((sender as Gui.Widgets.ComboBox).SelectedItem)
+                    {
+                        case "Barely any": Settings.NumCaveLayers = 2; break;
+                        case "Few": Settings.NumCaveLayers = 3; break;
+                        case "Normal": Settings.NumCaveLayers = 4; break;
+                        case "Lots": Settings.NumCaveLayers = 6; break;
+                        case "Way too many": Settings.NumCaveLayers = 9; break;
+                    }
+                }
+            }) as Gui.Widgets.ComboBox;
+
             ZoomedPreview = rightPanel.AddChild(new Gui.Widget
             {
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnLayout = (sender) =>
                 {
                     var space = System.Math.Min(
-                        RevealSurface.Rect.Width, StartButton.Rect.Top - RevealSurface.Rect.Bottom - 4);
+                        layerSetting.Rect.Width, StartButton.Rect.Top - layerSetting.Rect.Bottom - 4);
                     sender.Rect.Height = space;
                     sender.Rect.Width = space;
-                    sender.Rect.Y = RevealSurface.Rect.Bottom + 2;
-                    sender.Rect.X = RevealSurface.Rect.X + 
-                        ((RevealSurface.Rect.Width - space) / 2);
+                    sender.Rect.Y = layerSetting.Rect.Bottom + 2;
+                    sender.Rect.X = layerSetting.Rect.X + 
+                        ((layerSetting.Rect.Width - space) / 2);
                     
                 }
             });
-
 
             GenerationProgress = mainPanel.AddChild(new Gui.Widgets.ProgressBar
             {
@@ -305,6 +331,7 @@ namespace DwarfCorp.GameStates
 
             difficultySelectorCombo.SelectedIndex = difficultySelectorCombo.Items.IndexOf("Normal");
             colonySizeCombo.SelectedIndex = colonySizeCombo.Items.IndexOf("Medium");
+            layerSetting.SelectedIndex = layerSetting.Items.IndexOf("Normal");
 
             IsInitialized = true;
 

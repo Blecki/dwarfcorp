@@ -85,6 +85,7 @@ namespace DwarfCorp
 
         public bool StartUnderground = false;
         public bool RevealSurface = true;
+        public WorldGenerationSettings GenerationSettings = null;
 
         // The current coordinate of the cursor light
         public Vector3 CursorLightPos = Vector3.Zero;

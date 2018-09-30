@@ -73,17 +73,15 @@ namespace DwarfCorp
         public float CaveNoiseScale { get; set; }
         public float SeaLevel { get; set; }
         public LibNoise.FastRidgedMultifractal AquiferNoise { get; set; }
-        public LibNoise.FastRidgedMultifractal LavaNoise { get; set; }
         public ChunkManager Manager { get; set; }
-        public List<int> CaveLevels { get; set; }
         public List<float> CaveFrequencies { get; set; }
         public List<int> AquiverLevels { get; set; }
-        public List<int> LavaLevels { get; set; }
         public float CaveSize { get; set; }
         public float AquiferSize { get; set; }
-        public float LavaSize { get; set; }
         public int HellLevel = 10;
         public int LavaLevel = 5;
+
+        private List<int> CaveLevels = null;
 
         public ChunkGenerator(VoxelLibrary voxLibrary, int randomSeed, float noiseScale)
         {
@@ -93,7 +91,6 @@ namespace DwarfCorp
             VoxLibrary = voxLibrary;
             CaveNoiseScale = noiseScale * 10.0f;
             CaveSize = 0.03f;
-            CaveLevels = new List<int>() { 4, 8, 11, 16, 22, 30, 36, 45, 52 };
             CaveFrequencies = new List<float>() { 0.5f, 0.7f, 0.9f, 1.0f };
 
             CaveNoise = new FastRidgedMultifractal(randomSeed)
@@ -111,17 +108,6 @@ namespace DwarfCorp
             AquiferNoise = new FastRidgedMultifractal(randomSeed + 100)
             {
                 Frequency = 0.25f,
-                Lacunarity = 0.5f,
-                NoiseQuality = NoiseQuality.Standard,
-                OctaveCount = 1,
-                Seed = randomSeed
-            };
-
-            LavaLevels = new List<int>() { 1, 2 };
-            LavaSize = 0.01f;
-            LavaNoise = new FastRidgedMultifractal(randomSeed + 200)
-            {
-                Frequency = 0.15f,
                 Lacunarity = 0.5f,
                 NoiseQuality = NoiseQuality.Standard,
                 OctaveCount = 1,
@@ -306,6 +292,15 @@ namespace DwarfCorp
 
         public void GenerateCaves(VoxelChunk chunk, WorldManager world)
         {
+            if (CaveLevels == null)
+            {
+                CaveLevels = new List<int>();
+                var caveStep = 48 / world.GenerationSettings.NumCaveLayers;
+
+                for (var i = 0; i < world.GenerationSettings.NumCaveLayers; ++i)
+                    CaveLevels.Add(4 + (caveStep * i));
+            }
+
             Vector3 origin = chunk.Origin;
             BiomeData biome = BiomeLibrary.GetBiome("Cave");
             var hellBiome = BiomeLibrary.GetBiome("Hell");
@@ -564,11 +559,11 @@ namespace DwarfCorp
                 }
             }
 
+            UpdateSunlight(c);
             GenerateCaves(c, World);
             GenerateWater(c, maxHeight);
             GenerateLava(c);
 
-            UpdateSunlight(c);
             return c;
         }
 
