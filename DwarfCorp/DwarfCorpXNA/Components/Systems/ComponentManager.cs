@@ -176,7 +176,11 @@ namespace DwarfCorp
         {
             if (!Components.ContainsKey(component.GlobalID))
                 return;
-
+            if (_componentList == null)
+            {
+                _componentList = Components.Values.ToList();
+            }
+            _componentList.Remove(component);
             Components.Remove(component.GlobalID);
 
             if (component is Body)
@@ -200,21 +204,30 @@ namespace DwarfCorp
             }
 
             Components[component.GlobalID] = component;
-
+            if (_componentList == null)
+            {
+                _componentList = Components.Values.ToList();
+            }
+            _componentList.Add(component);
             if (component is MinimapIcon)
                 MinimapIcons.Add(component as MinimapIcon);
         }
         public int k = 0;
+        private List<GameComponent> _componentList = null;
+
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             PerformanceMonitor.PushFrame("Component Update");
-            var components = Components.Values.ToList();
-            for (int j = 0; j < Math.Min(4096, components.Count); j++)
+            if (_componentList == null)
             {
-                int c = (k + j) % components.Count;
-                components[c].Update(gameTime, chunks, camera);
+                _componentList = Components.Values.ToList();
             }
-            k += 4096;
+            for (int j = 0; j < Math.Min(GameSettings.Default.EntityUpdateRate, _componentList.Count); j++)
+            {
+                int c = (k + j) % _componentList.Count;
+                _componentList[c].Update(gameTime, chunks, camera);
+            }
+            k += GameSettings.Default.EntityUpdateRate;
             /*
             foreach (var component in Components.Values)
                 component.Update(gameTime, chunks, camera);
