@@ -1,0 +1,40 @@
+{
+  "Name": "Waste",
+  "Icon": 11,
+  "Vegetation": [],
+  "DayAmbience": "sfx_amb_forest_day",
+  "NightAmbience": "sfx_amb_forest_night",
+  "Motes": [
+    {
+      "Name": "deadbush",
+      "RegionScale": 0.5,
+      "SpawnThreshold": 0.9,
+      "MoteScale": 1.0,
+      "Asset": "Entities\\Plants\\gnarled"
+    }
+  ],
+  "Fauna": [
+    {
+      "Name": "Demon",
+      "SpawnProbability": 0.0005
+    }
+  ],
+  "SoilLayer": {
+    "VoxelType": "Obsidian",
+    "Depth": 5
+  },
+  "SubsurfaceLayers": [
+    {
+      "VoxelType": "Obsidian",
+      "Depth": 128
+    }
+  ],
+  "ShoreVoxel": "Sand",
+  "ClumpGrass": false,
+  "ClumpSize": 30.0,
+  "ClumpTreshold": 0.75,
+  "MapColor": [ 255, 140, 0, 255 ],
+  "Height": 1.5,
+  "Temp": 1.5,
+  "Rain": 0.0
+}

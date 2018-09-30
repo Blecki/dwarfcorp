@@ -303,6 +303,15 @@ namespace DwarfCorp.Gui
             Invalidate();
         }
 
+        public void SendToBefore(Widget Child, Widget Before)
+        {
+            if (!Object.ReferenceEquals(Child.Parent, this)) throw new InvalidOperationException();
+            if (!Object.ReferenceEquals(Before.Parent, this)) throw new InvalidOperationException();
+            Children.Remove(Child);
+            Children.Insert(Children.IndexOf(Before), Child);
+            Invalidate();
+        }
+
         public void BringToFront()
         {
             if (Parent != null)

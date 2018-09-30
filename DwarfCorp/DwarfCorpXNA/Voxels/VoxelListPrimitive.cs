@@ -310,8 +310,11 @@ namespace DwarfCorp
                             case DesignationDrawer.DesignationTypeProperties.DrawBoxType.PreviewVoxel:
                                 {
                                     var previewPrim = VoxelLibrary.GetPrimitive(VoxelLibrary.GetVoxelType(designation.Tag.ToString()));
+                                    var offsetMatrix = Matrix.Identity;
+                                    if (!v.IsEmpty)
+                                        offsetMatrix = Matrix.CreateTranslation(0.0f, 0.1f, 0.0f);
                                     for (int i = 0; i < 6; i++)
-                                        BuildVoxelFaceGeometry(Into, Chunk, Cache, previewPrim, v, props.Color, previewPrim.UVs, Matrix.Identity, i, false);
+                                        BuildVoxelFaceGeometry(Into, Chunk, Cache, previewPrim, v, props.Color, previewPrim.UVs, offsetMatrix, i, false);
                                 }
                                 break;
                         }

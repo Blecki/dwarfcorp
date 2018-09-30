@@ -1,0 +1,55 @@
+{
+  "Name": "Hell",
+  "Icon": 11,
+  "Vegetation": [
+    {
+      "Name": "Cave Mushroom",
+      "ClumpSize": 4.0,
+      "ClumpThreshold": 0.6,
+      "MeanSize": 1.0,
+      "SizeVariance": 1.0,
+      "VerticalOffset": 0.2,
+      "NoiseOffset": 265.476837,
+      "SpawnProbability": 0.4
+    }
+  ],
+  "DayAmbience": "sfx_amb_cave",
+  "Underground": true,
+  "Motes": [
+    {
+      "Name": "deadbush",
+      "RegionScale": 0.5,
+      "SpawnThreshold": 0.9,
+      "MoteScale": 1.0,
+      "Asset": "Entities\\Plants\\gnarled"
+    }
+  ],
+  "Fauna": [
+    {
+      "Name": "Demon",
+      "SpawnProbability": 0.05
+    },
+    {
+      "Name": "Necrosnake",
+      "SpawnProbability": 0.005
+    }
+  ],
+  "SoilLayer": {
+    "VoxelType": "DarkDirt",
+    "Depth": 1
+  },
+  "SubsurfaceLayers": [
+    {
+      "VoxelType": "Obsidian",
+      "Depth": 128
+    }
+  ],
+  "ShoreVoxel": "Sand",
+  "ClumpGrass": false,
+  "ClumpSize": 30.0,
+  "ClumpTreshold": 0.75,
+  "MapColor": [ 255, 140, 0, 255 ],
+  "Height": 1.5,
+  "Temp": 1.5,
+  "Rain": 0.0
+}

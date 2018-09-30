@@ -1268,16 +1268,20 @@ namespace DwarfCorp
         public WorldPopup MakeWorldPopup(Widget widget, Body body, Vector2 ScreenOffset)
         {
             if (LastWorldPopup.ContainsKey(body.GlobalID))
-            {
                 Gui.DestroyWidget(LastWorldPopup[body.GlobalID].Widget);
-            }
+
             Gui.RootItem.AddChild(widget);
+
+            // Todo: Uh - what cleans these up if the body is destroyed?
             LastWorldPopup[body.GlobalID] = new WorldPopup()
             {
                 Widget = widget,
                 BodyToTrack = body,
                 ScreenOffset = ScreenOffset 
             };
+
+            Gui.RootItem.SendToBack(widget);
+
             return LastWorldPopup[body.GlobalID];
         }
     }

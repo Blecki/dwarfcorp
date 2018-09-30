@@ -544,7 +544,7 @@
     <Compile Include="Graphics\Primitives\GeometricPrimitive.cs" />
     <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />
     <Compile Include="Graphics\Primitives\PrimitiveLibrary.cs" />
-    <Compile Include="Graphics\Primitives\VoxelListPrimitive.cs" />
+    <Compile Include="Voxels\VoxelListPrimitive.cs" />
     <Compile Include="Graphics\SelectionBuffer.cs" />
     <Compile Include="Gui\Widgets\AudioMixerWidget.cs" />
     <Compile Include="Gui\Widgets\TextProgressBar.cs" />
