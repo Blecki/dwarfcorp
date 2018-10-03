@@ -87,6 +87,7 @@
         [ 3, 8, 0 ]
       ],
       "Name": "AttackingFORWARD",
+	  "PlayOnce": true,
       "Speed": [ 0.15 ],
 		"YOffset" : [ -2 ]
     },
@@ -98,6 +99,7 @@
         [ 3, 9, 0 ]
       ],
       "Name": "AttackingLEFT",
+	  "PlayOnce": true,
       "Speed": [ 0.15 ],
 		"YOffset" : [ -2 ]
     },
@@ -109,6 +111,7 @@
         [ 3, 10, 0 ]
       ],
       "Name": "AttackingRIGHT",
+	  "PlayOnce": true,
       "Speed": [ 0.15 ],
 		"YOffset" : [ -2 ]
     },
@@ -120,6 +123,7 @@
         [ 3, 11, 0 ]
       ],
       "Name": "AttackingBACKWARD",
+	  "PlayOnce": true,
       "Speed": [ 0.15 ],
 		"YOffset" : [ -2 ]
     },

@@ -54,6 +54,10 @@
       "SpawnProbability": 0.001
     },
     {
+      "Name": "Chimp",
+      "SpawnProbability": 0.003
+    },
+    {
       "Name": "Chicken",
       "SpawnProbability": 0.0001
     }

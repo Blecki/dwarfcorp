@@ -441,7 +441,10 @@ namespace DwarfCorp
 
                 public static string turkey_animations = ProgramData.CreatePath("Entities", "Animals", "turkey_animation.json");
                 public static string penguin_animations = ProgramData.CreatePath("Entities", "Animals", "penguin_animation.json");
-
+                public static class Chimp
+                {
+                    public static string chimp_animations = ProgramData.CreatePath("Entities", "Animals", "Chimp", "chimp_animation.json");
+                }
                 public static Dictionary<string, string> fowl = new Dictionary<string, string>()
                 {
                     {
