@@ -897,7 +897,20 @@ namespace DwarfCorp
 
         public void GatherImmediately(Body item, Inventory.RestockType restockType = Inventory.RestockType.None)
         {
-            Inventory.Pickup(item, restockType);
+            if (item is CoinPile)
+            {
+                var money = (item as CoinPile).Money;
+                AI.AddMoney(money);
+                item.Die();
+
+                AI.GatherManager.StockMoneyOrders.Add(new GatherManager.StockMoneyOrder()
+                {
+                    Destination = null,
+                    Money = money
+                });
+            }
+            else
+                Inventory.Pickup(item, restockType);
         }
 
         public void Gather(Body item)
