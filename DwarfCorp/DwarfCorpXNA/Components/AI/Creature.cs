@@ -136,7 +136,17 @@ namespace DwarfCorp
         public void LayEgg()
         {
             NoiseMaker.MakeNoise("Lay Egg", AI.Position, true, 1.0f);
-            Manager.RootComponent.AddChild(new Egg(this.Species, Manager, Physics.Position, AI.PositionConstraint));
+
+            if (ResourceLibrary.GetResourceByName(Species + " Egg") == null
+                || !EntityFactory.EnumerateEntityTypes().Contains(Species + " Egg Resource"))
+            {
+                Resource newEggResource =
+                    new Resource(ResourceLibrary.GetResourceByName(ResourceType.Egg));
+                newEggResource.Name = Species + " Egg";
+                ResourceLibrary.Add(newEggResource);
+            }
+            var parent = EntityFactory.CreateEntity<Body>(this.Species + " Egg Resource", Physics.Position);
+            parent.AddChild(new Egg(parent, this.Species, Manager, Physics.Position, AI.PositionConstraint));
         }
 
         private T _get<T>(ref T cached) where T : GameComponent
@@ -462,7 +472,7 @@ namespace DwarfCorp
                     if (!_speciesCounts.ContainsKey(Species) || _speciesCounts[Species] < _maxPerSpecies)
                     {
                         LayEgg();
-                        EggTimer = new Timer(1200f + MathFunctions.Rand(-30, 30), false);
+                        EggTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
                     }
                 }
             }
