@@ -16,6 +16,7 @@ namespace DwarfCorp.Tutorial
             public String GuiHilite;
             public bool Popup = false;
             public String Name;
+            public TileReference Icon;
         }
 
         private Dictionary<String, TutorialEntry> Entries;
@@ -41,6 +42,17 @@ namespace DwarfCorp.Tutorial
                 });
         }
 
+        public void AddTutorial(string name, string text, TileReference icon = null)
+        {
+            Entries[name] = new TutorialEntry()
+            {
+                Text = text,
+                Title = name,
+                Shown = false,
+                Popup = true,
+                Icon = icon
+            };
+        }
 
         public Dictionary<String, TutorialEntry> EnumerateTutorials()
         {

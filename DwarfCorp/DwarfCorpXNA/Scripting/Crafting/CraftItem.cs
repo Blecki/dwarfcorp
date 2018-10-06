@@ -104,6 +104,7 @@ namespace DwarfCorp
         public bool AllowRotation = false;
         public string Category = "";
         public bool IsMagical = false;
+        public string Tutorial = "";
 
         /// <summary>
         /// If true, this will be displayed in the list of resources that the player can craft.

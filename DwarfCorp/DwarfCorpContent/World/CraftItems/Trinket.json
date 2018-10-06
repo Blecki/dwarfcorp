@@ -26,5 +26,6 @@
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,
   "Moveable": false,
-  "CraftActBehavior": "Trinket"
+  "CraftActBehavior": "Trinket",
+  "Tutorial": "Trinkets are merely objects that craftsdwarves make for their trade value. Dwarfs cannot use trinkets for any other purpose. Skilled craftsdwarves produce more valuable trinkets. Trinkets made from more valuable goods are also more valuable."
 }

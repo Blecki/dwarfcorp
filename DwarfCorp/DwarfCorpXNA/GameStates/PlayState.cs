@@ -1486,6 +1486,7 @@ namespace DwarfCorp.GameStates
                     {
                         var panel = (sender as TabPanel);
                         panel.SelectedTab = 0;
+                        World.Tutorial(data.Name);
                     },
                     OnSelectedTabChanged = (widget) =>
                     {

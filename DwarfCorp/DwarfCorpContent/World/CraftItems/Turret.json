@@ -34,5 +34,6 @@
   "Moveable": true,
   "CraftActBehavior": "Normal",
   "Category": "Magic",
-  "IsMagical": true
+  "IsMagical": true,
+  "Turret": "Wizards can build turrets to ward off enemies. Turrets automatically target and kill enemies. They must be recharged by a wizard."
 }

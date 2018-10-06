@@ -2950,10 +2950,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Palisade</Name>
     </None>
-    <None Include="World\CraftItems\Conveyor.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Conveyor</Name>
-    </None>
     <None Include="World\CraftItems\BearTrap.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>BearTrap</Name>

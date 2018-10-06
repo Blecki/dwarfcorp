@@ -29,5 +29,6 @@
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,
   "Moveable": true,
-  "CraftActBehavior": "Normal"
+  "CraftActBehavior": "Normal",
+  "Tutorial": "Dwarfs prefer to eat on chairs near tables, and will gamble there as well."
 }

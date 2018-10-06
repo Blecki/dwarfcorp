@@ -44,7 +44,7 @@
 	{
 		"Name": "build items",
 		"Title": "Building Items",
-		"Text": "Left click and drag to tell dwarves to build items. You can only build items you have resources for. When there aren't enough resources, the item will turn red. Once you click, a work pile will be created. The dwarf will gather the resources and build the item at the work pile. NOTE: A workshop is required to build items.",
+		"Text": "Left click to tell dwarfs to build items. Once you click, a blueprint will be created. The dwarf will gather the resources and build the item at the work pile. The dwarf will ignore the blueprint until enough resources are available.",
 		"GuiHilite": "craft item"
 	},
 	{
