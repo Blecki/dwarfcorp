@@ -159,7 +159,7 @@ namespace DwarfCorp.Rail
             var rowCount = (int)Math.Ceiling((float)Patterns.Count / (float)fitHorizontal);
             var height = MathFunctions.NearestPowerOf2(rowCount * Sheet.TileHeight);
 
-            RenderTarget2D toReturn = new RenderTarget2D(device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth16, 16, RenderTargetUsage.PreserveContents);
+            RenderTarget2D toReturn = new RenderTarget2D(device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth16, 0, RenderTargetUsage.PreserveContents);
             var tileSheet = new SpriteSheet(ContentPaths.rail_tiles, 32);
 
             device.SetRenderTarget(toReturn);

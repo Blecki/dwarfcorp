@@ -126,7 +126,7 @@ namespace DwarfCorp
                 nextAction = Path[nextID];
                 if (nextAction.SourceVoxel.IsValid)
                 {
-                    diff = (nextAction.SourceVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half));
+                    diff = (nextAction.SourceVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half)) + Vector3.One * 1e-5f;
                     diffNorm = diff.Length();
                 }
                 else
@@ -136,7 +136,7 @@ namespace DwarfCorp
             }
             else
             {
-                diff = (action.DestinationVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half));
+                diff = (action.DestinationVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half)) + Vector3.One * 1e-5f;
                 diffNorm = diff.Length();
                 hasNextAction = true;
             }
@@ -176,8 +176,7 @@ namespace DwarfCorp
                 foreach (MoveAction action in Path)
                 {
                     RandomPositionOffsets.Add(MathFunctions.RandVector3Box(-0.1f, 0.1f, 0.0f, 0.0f, -0.1f, 0.1f));
-                    dt = GetActionTime(action, i);
-                    Trace.Assert(dt > 0);
+                    dt = Math.Max(GetActionTime(action, i), 1e-3f);
                     ActionTimes.Add(dt);
                     time += dt;
                     i++;
@@ -253,7 +252,7 @@ namespace DwarfCorp
                 CleanupMinecart();
                 yield break;
             }
-            Trace.Assert(t >= 0);
+            //Trace.Assert(t >= 0);
             Trace.Assert(action.SourceVoxel.IsValid);
             int nextID = currentIndex + 1;
             bool hasNextAction = false;

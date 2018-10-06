@@ -143,7 +143,7 @@ namespace DwarfCorp
         {
             if (cached == null)
                 cached = Parent.EnumerateAll().OfType<T>().FirstOrDefault();
-            System.Diagnostics.Debug.Assert(cached != null, string.Format("No {0} created on creature.", typeof(T).Name));
+            //System.Diagnostics.Debug.Assert(cached != null, string.Format("No {0} created on creature.", typeof(T).Name));
             return cached;
         }
 

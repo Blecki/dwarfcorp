@@ -96,14 +96,14 @@ namespace DwarfCorp.Gui
             {
                 SourceSheets[sheet.Name] = sheet;
             }
-
             // Create the atlas texture
-            Texture = new Texture2D(Device, atlas.Dimensions.Width, atlas.Dimensions.Height);
+            Texture = new Texture2D(Device, atlas.Dimensions.Width, atlas.Dimensions.Height, false, SurfaceFormat.Color);
 
             TileSheets = new Dictionary<String, ITileSheet>();
 
             foreach (var texture in atlas.Textures)
             {
+                Console.Out.WriteLine("Loading {0}", texture.Sheet.Name);
                 // Copy source texture into the atlas
                 var realTexture = texture.RealTexture;
                 var textureData = new Color[realTexture.Width * realTexture.Height];
@@ -137,6 +137,7 @@ namespace DwarfCorp.Gui
                 Texture.SetData(0, texture.Rect, textureData, 0, realTexture.Width * realTexture.Height);
 
             }
+            Console.Out.WriteLine("Done with texture atlas.");
         }
 
         public void CalculateScreenSize()

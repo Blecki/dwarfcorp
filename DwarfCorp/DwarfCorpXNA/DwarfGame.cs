@@ -379,6 +379,9 @@ namespace DwarfCorp
 
         public static void InitializeLogger()
         {
+#if DEBUG
+            return;
+#endif
             try
             {
                 Trace.Listeners.Clear();
@@ -662,9 +665,12 @@ namespace DwarfCorp
 
         protected override void OnExiting(object sender, EventArgs args)
         {
-            Console.SetOut(_initialOut);
-            Console.SetError(_initialError);
-            _logwriter.Dispose();
+            if (_initialOut != null)
+                Console.SetOut(_initialOut);
+            if (_initialError != null)
+                Console.SetError(_initialError);
+            if (_logwriter != null)
+                _logwriter.Dispose();
             ExitGame = true;
             Program.SignalShutdown();
             base.OnExiting(sender, args);
