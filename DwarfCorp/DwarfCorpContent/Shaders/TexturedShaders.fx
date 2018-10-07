@@ -606,7 +606,7 @@ TVertexToPixel TexturedVSTiledInstanced(float4 inPos : POSITION,
 {
 	float2 newTexCoord = inTexCoords * float2(tileTexSource.z - tileTexSource.x, tileTexSource.w - tileTexSource.y);
 	newTexCoord += float2(tileTexSource.x, tileTexSource.y);
-    return TexturedVS(inPos, newTexCoord, inLightRamp, inTexSource, transpose(transform),
+    return TexturedVS(inPos, newTexCoord, inLightRamp, tileTexSource, transpose(transform),
 		float4(1, 1, 1, vertexColor.a), vertexColor.rgb, max_lights);
 }
 

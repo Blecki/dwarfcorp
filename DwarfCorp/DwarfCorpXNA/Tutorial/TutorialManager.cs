@@ -49,7 +49,7 @@ namespace DwarfCorp.Tutorial
                 Text = text,
                 Title = name,
                 Shown = false,
-                Popup = true,
+                Popup = false,
                 Icon = icon
             };
         }
