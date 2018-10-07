@@ -714,7 +714,7 @@ namespace DwarfCorp.GameStates
                 EnablePosession = true,
                 Tag = "selected-employee-info",
                 AutoLayout = AutoLayout.FloatBottomLeft,
-                MinimumSize = new Point(400, 500),
+                MinimumSize = new Point(450, 500 - (50 * (GameSettings.Default.GuiScale - 1))),
                 OnFireClicked = (sender) =>
                 {
                     GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm

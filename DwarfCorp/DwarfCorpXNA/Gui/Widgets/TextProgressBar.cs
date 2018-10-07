@@ -31,7 +31,7 @@ namespace DwarfCorp.Gui.Widgets
 
                 if (PercentageLabels != null)
                 {
-                    builder.Append("(");
+                    builder.Append("\n(");
                     var labelIndex = (int)(_percentage * PercentageLabels.Length);
                     if (labelIndex < 0) labelIndex = 0;
                     if (labelIndex >= PercentageLabels.Length) labelIndex = PercentageLabels.Length - 1;
