@@ -1165,10 +1165,12 @@ namespace DwarfCorp.GameStates
                 Tooltip = "When checked, enables XRAY view.",
                 MaximumSize = new Point(32, 16),
                 TextColor = Color.White.ToVector4(),
+                Tag = "xray",
                 OnCheckStateChange = (sender) =>
                 {
                     bool isChecked = (sender as CheckBox).CheckState;
                     World.TargetCaveView = isChecked ? 1.0f : 0.0f;
+                    World.Tutorial("xray");
                 },
                 AutoLayout = AutoLayout.DockLeftCentered
             }) as CheckBox;

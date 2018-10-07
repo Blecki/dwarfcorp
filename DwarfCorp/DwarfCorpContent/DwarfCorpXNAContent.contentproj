@@ -2029,6 +2029,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="newgui\tutorials\xray.png">
+      <Name>xray</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <None Include="Entities\Dwarf\Layers\dwarf-palettes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>dwarf-palettes</Name>
