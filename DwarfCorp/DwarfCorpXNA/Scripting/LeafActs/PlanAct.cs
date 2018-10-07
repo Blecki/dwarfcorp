@@ -97,7 +97,8 @@ namespace DwarfCorp
             MaxTimeouts = 4;
             Timeouts = 0;
             Radius = 0;
-            Weights = new List<float> {3.0f, 5.0f, 10.0f, 20.0f, 30.0f, 40.0f};
+            Weights = new List<float>();
+            Weights.Add(MathFunctions.Rand(1.0f, 3.0f));
         }
 
         public override void OnCanceled()
