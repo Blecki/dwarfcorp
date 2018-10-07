@@ -35,7 +35,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
         public override void OnEnter()
         {
             DwarfGame.GumInputMapper.GetInputQueue();
-
+            World.Tutorial("trade_screen");
             GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             GuiRoot.RootItem.Font = "font8";

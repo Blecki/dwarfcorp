@@ -30,5 +30,13 @@ namespace DwarfCorp
 
             return VoxelHandle.InvalidHandle;
         }
+
+        public static VoxelHandle GetValidVoxelNear(ChunkManager chunks, Microsoft.Xna.Framework.Vector3 pos)
+        {
+            Microsoft.Xna.Framework.BoundingBox bounds = chunks.Bounds;
+            bounds.Max = new Microsoft.Xna.Framework.Vector3(bounds.Max.X, VoxelConstants.ChunkSizeY, bounds.Max.Z);
+            var clampedPos = MathFunctions.Clamp(pos, chunks.Bounds) + Microsoft.Xna.Framework.Vector3.Down * 0.05f;
+            return new VoxelHandle(chunks.ChunkData, GlobalVoxelCoordinate.FromVector3(clampedPos));
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace DwarfCorp.Gui.Widgets
         public List<ResourceAmount> SelectedResources { get; private set; }
         public String LeftHeader;
         public String RightHeader;
-        private MoneyEditor MoneyField;
+        public MoneyEditor MoneyField;
         public String MoneyLabel;
 
         public DwarfBux TradeMoney
