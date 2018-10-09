@@ -52,7 +52,12 @@ namespace DwarfCorp.GameStates
             { 
                 var texture = AssetManager.GetContentTexture(ImageSource);
                 DwarfGame.SpriteBatch.Begin();
-                DwarfGame.SpriteBatch.Draw(texture, GetDrawableInterior(), Color.White);
+                var interior = GetDrawableInterior();
+                interior.X *= GameSettings.Default.GuiScale;
+                interior.Y *= GameSettings.Default.GuiScale;
+                interior.Width *= GameSettings.Default.GuiScale;
+                interior.Height *= GameSettings.Default.GuiScale;
+                DwarfGame.SpriteBatch.Draw(texture, interior, Color.White);
                 DwarfGame.SpriteBatch.End();
             }
             base.PostDraw(device);

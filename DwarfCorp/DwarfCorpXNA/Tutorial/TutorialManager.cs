@@ -17,6 +17,7 @@ namespace DwarfCorp.Tutorial
             public bool Popup = false;
             public String Name;
             public TileReference Icon;
+            public String NextTutorial;
         }
 
         private Dictionary<String, TutorialEntry> Entries;
@@ -38,7 +39,8 @@ namespace DwarfCorp.Tutorial
                     Shown = false,
                     Title = entry.Title,
                     GuiHilite = entry.GuiHilite,
-                    Popup = entry.Popup
+                    Popup = entry.Popup,
+                    NextTutorial = entry.NextTutorial
                 });
         }
 
@@ -49,7 +51,7 @@ namespace DwarfCorp.Tutorial
                 Text = text,
                 Title = name,
                 Shown = false,
-                Popup = true,
+                Popup = false,
                 Icon = icon
             };
         }
@@ -94,6 +96,10 @@ namespace DwarfCorp.Tutorial
                         TutorialEnabled = !(sender as Gui.Widgets.TutorialPopup).DisableChecked;
                         TutorialVisible = false;
                         Gui.ClearSpecials();
+                        if (!String.IsNullOrEmpty(entry.NextTutorial))
+                        {
+                            ShowTutorial(entry.NextTutorial);
+                        }
                     },
                     OnLayout = (sender) =>
                     {

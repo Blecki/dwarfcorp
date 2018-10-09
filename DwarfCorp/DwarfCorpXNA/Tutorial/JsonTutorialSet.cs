@@ -12,5 +12,6 @@ namespace DwarfCorp.Tutorial
         public String Title;
         public String GuiHilite;
         public bool Popup = false;
+        public String NextTutorial;
     }
 }

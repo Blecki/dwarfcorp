@@ -143,7 +143,15 @@ namespace DwarfCorp
         public Vector3 Gravity = Vector3.Down * 20;
         private bool flying = false;
         private bool flyKeyPressed = false;
+        private bool mouseActiveInWalk = true;
+
         private GlobalVoxelCoordinate _prevVoxelCoord = new GlobalVoxelCoordinate(0, 0, 0);
+
+        public bool IsMouseActiveInWalk()
+        {
+            return mouseActiveInWalk;
+        }
+
         public void WalkUpdate(DwarfTime time, ChunkManager chunks)
         {
 
@@ -189,20 +197,37 @@ namespace DwarfCorp
             float diffX, diffY = 0;
             float dt = (float)time.ElapsedRealTime.TotalSeconds;
             SnapToBounds(new BoundingBox(World.ChunkManager.Bounds.Min, World.ChunkManager.Bounds.Max + Vector3.UnitY * 20));
+
+            bool switchState = false;
+
+            bool isAnyRotationKeyActive = keys.IsKeyDown(ControlSettings.Mappings.CameraMode) ||
+                                       keys.IsKeyDown(Keys.RightShift) || Mouse.GetState().MiddleButton == ButtonState.Pressed;
+            if (isAnyRotationKeyActive && !shiftPressed)
+            {
+                shiftPressed = true;
+                mouseOnRotate = GameState.Game.GraphicsDevice.Viewport.Bounds.Center;
+                mousePrerotate = new Point(mouse.X, mouse.Y);
+                switchState = true;
+                mouseActiveInWalk = !mouseActiveInWalk;
+            }
+            else if (!isAnyRotationKeyActive && shiftPressed)
+            {
+                shiftPressed = false;
+            }
+
+            if (shiftPressed)
+            {
+                Mouse.SetPosition(mousePrerotate.X, mousePrerotate.Y);
+                KeyManager.TrueMousePos = new Point(mousePrerotate.X, mousePrerotate.Y);
+            }
+            else
+            {
+                KeyManager.TrueMousePos = new Point(mouse.X, mouse.Y);
+            }
+
             if (KeyManager.RotationEnabled(this))
             {
                 World.Gui.MouseVisible = false;
-                bool switchState = false;
-                if (!shiftPressed)
-                {
-                    shiftPressed = true;
-                    mouseOnRotate = GameState.Game.GraphicsDevice.Viewport.Bounds.Center;
-                    mousePrerotate = new Point(mouse.X, mouse.Y);
-                    switchState = true;
-                }
-
-
-
                 Mouse.SetPosition(mouseOnRotate.X, mouseOnRotate.Y);
 
                 if (!switchState)
@@ -249,16 +274,6 @@ namespace DwarfCorp
             }
             else
             {
-                if (shiftPressed)
-                {
-                    Mouse.SetPosition(mousePrerotate.X, mousePrerotate.Y);
-                    KeyManager.TrueMousePos = new Point(mousePrerotate.X, mousePrerotate.Y);
-                }
-                else
-                {
-                    KeyManager.TrueMousePos = new Point(mouse.X, mouse.Y);
-                }
-                shiftPressed = false;
                 World.Gui.MouseVisible = true;
             }
 

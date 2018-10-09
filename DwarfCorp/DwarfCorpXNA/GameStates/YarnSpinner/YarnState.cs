@@ -30,13 +30,16 @@ namespace DwarfCorp
         private DwarfCorp.Gui.Widgets.EmployeePortrait Icon = null;
         private CreatureAI _employee = null;
         private float _voicePitch = 0.0f;
+        public WorldManager World;
 
         public YarnState(
+            WorldManager world,
             String ConversationFile,
             String StartNode,
             Yarn.MemoryVariableStore Memory) :
             base(Game, "YarnState", GameState.Game.StateManager)
         {
+            World = world;
             YarnEngine = new YarnEngine(ConversationFile, StartNode, Memory, this);
         }
 
@@ -218,7 +221,7 @@ namespace DwarfCorp
                 {
                     Border = null,
                     TextSize = 1,
-                    Font = "font16",
+                    Font = GameSettings.Default.GuiScale == 1 ? "font16" : "font10",
                     Transparent = true
                 });
 
@@ -294,7 +297,8 @@ namespace DwarfCorp
             }
 
             GuiRoot.Update(gameTime.ToRealTime());
-
+            if (World != null)
+                World.TutorialManager.Update(GuiRoot);
             YarnEngine.Update(gameTime);
         }
     
@@ -347,6 +351,7 @@ namespace DwarfCorp
 
         public void BeginTrade(TradeEnvoy Envoy, Faction PlayerFaction)
         {
+            PlayerFaction.World.Tutorial("trade_screen");
             TradePanel = GuiRoot.ConstructWidget(new Gui.Widgets.TradePanel
             {
                 Rect = GuiRoot.RenderData.VirtualScreen,
