@@ -293,6 +293,7 @@ namespace DwarfCorp
             Graphics.SynchronizeWithVerticalRetrace = GameSettings.Default.VSync;
             MathFunctions.Random = new ThreadSafeRandom(new Random().Next());
             Graphics.PreparingDeviceSettings += WorldManager.GraphicsPreparingDeviceSettings;
+            Graphics.PreferMultiSampling = false;
             try
             {
                 Graphics.ApplyChanges();
