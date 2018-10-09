@@ -152,7 +152,8 @@ namespace DwarfCorp.Gui.Widgets
                         {
                             var _toMove = 1;
                             if (_args.Control) _toMove = existingEntry.NumResources;
-                            if (_args.Shift) _toMove = Math.Min(5, existingEntry.NumResources);
+                            if (_args.Shift)
+                                _toMove = Math.Min(5, existingEntry.NumResources);
                             if (existingEntry.NumResources - _toMove < 0)
                                 return;
                             existingEntry.NumResources -= _toMove;

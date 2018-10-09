@@ -41,6 +41,7 @@ namespace DwarfCorp.Gui.Input
             
             // Generate mouse events.
             var newMouseState = Mouse.GetState();
+            var newKeyboardState = Keyboard.GetState();
 
             if (newMouseState.X != OldMouseState.X || newMouseState.Y != OldMouseState.Y)
                 r.Add(new QueuedInput
@@ -49,7 +50,10 @@ namespace DwarfCorp.Gui.Input
                         Args = new InputEventArgs
                         {
                             X = newMouseState.X,
-                            Y = newMouseState.Y
+                            Y = newMouseState.Y,
+                            Alt = newKeyboardState.IsKeyDown(Keys.LeftAlt) || newKeyboardState.IsKeyDown(Keys.RightAlt),
+                            Shift = newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift),
+                            Control = newKeyboardState.IsKeyDown(Keys.LeftControl) || newKeyboardState.IsKeyDown(Keys.RightControl)
                         }
                     });
 
@@ -61,7 +65,10 @@ namespace DwarfCorp.Gui.Input
                     {
                         X = newMouseState.X,
                         Y = newMouseState.Y,
-                        MouseButton = 0
+                        MouseButton = 0,
+                        Alt = newKeyboardState.IsKeyDown(Keys.LeftAlt) || newKeyboardState.IsKeyDown(Keys.RightAlt),
+                        Shift = newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift),
+                        Control = newKeyboardState.IsKeyDown(Keys.LeftControl) || newKeyboardState.IsKeyDown(Keys.RightControl)
                     }
                 });
 
@@ -74,7 +81,10 @@ namespace DwarfCorp.Gui.Input
                     {
                         X = newMouseState.X,
                         Y = newMouseState.Y,
-                        MouseButton = 0
+                        MouseButton = 0,
+                        Alt = newKeyboardState.IsKeyDown(Keys.LeftAlt) || newKeyboardState.IsKeyDown(Keys.RightAlt),
+                        Shift = newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift),
+                        Control = newKeyboardState.IsKeyDown(Keys.LeftControl) || newKeyboardState.IsKeyDown(Keys.RightControl)
                     }
                 });
                 r.Add(new QueuedInput
@@ -84,7 +94,10 @@ namespace DwarfCorp.Gui.Input
                     {
                         X = newMouseState.X,
                         Y = newMouseState.Y,
-                        MouseButton = 0
+                        MouseButton = 0,
+                        Alt = newKeyboardState.IsKeyDown(Keys.LeftAlt) || newKeyboardState.IsKeyDown(Keys.RightAlt),
+                        Shift = newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift),
+                        Control = newKeyboardState.IsKeyDown(Keys.LeftControl) || newKeyboardState.IsKeyDown(Keys.RightControl)
                     }
                 });
             }
@@ -98,7 +111,10 @@ namespace DwarfCorp.Gui.Input
                     {
                         X = newMouseState.X,
                         Y = newMouseState.Y,
-                        MouseButton = 1
+                        MouseButton = 1,
+                        Alt = newKeyboardState.IsKeyDown(Keys.LeftAlt) || newKeyboardState.IsKeyDown(Keys.RightAlt),
+                        Shift = newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift),
+                        Control = newKeyboardState.IsKeyDown(Keys.LeftControl) || newKeyboardState.IsKeyDown(Keys.RightControl)
                     }
                 });
 
@@ -111,7 +127,10 @@ namespace DwarfCorp.Gui.Input
                     {
                         X = newMouseState.X,
                         Y = newMouseState.Y,
-                        MouseButton = 1
+                        MouseButton = 1,
+                        Alt = newKeyboardState.IsKeyDown(Keys.LeftAlt) || newKeyboardState.IsKeyDown(Keys.RightAlt),
+                        Shift = newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift),
+                        Control = newKeyboardState.IsKeyDown(Keys.LeftControl) || newKeyboardState.IsKeyDown(Keys.RightControl)
                     }
                 });
                 r.Add(new QueuedInput
@@ -121,7 +140,10 @@ namespace DwarfCorp.Gui.Input
                     {
                         X = newMouseState.X,
                         Y = newMouseState.Y,
-                        MouseButton = 1
+                        MouseButton = 1,
+                        Alt = newKeyboardState.IsKeyDown(Keys.LeftAlt) || newKeyboardState.IsKeyDown(Keys.RightAlt),
+                        Shift = newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift),
+                        Control = newKeyboardState.IsKeyDown(Keys.LeftControl) || newKeyboardState.IsKeyDown(Keys.RightControl)
                     }
                 });
             }
@@ -133,15 +155,16 @@ namespace DwarfCorp.Gui.Input
                     Message = InputEvents.MouseWheel,
                     Args = new InputEventArgs()
                     {
-                        ScrollValue = (newMouseState.ScrollWheelValue - OldMouseState.ScrollWheelValue)
+                        ScrollValue = (newMouseState.ScrollWheelValue - OldMouseState.ScrollWheelValue),
+                        Alt = newKeyboardState.IsKeyDown(Keys.LeftAlt) || newKeyboardState.IsKeyDown(Keys.RightAlt),
+                        Shift = newKeyboardState.IsKeyDown(Keys.LeftShift) || newKeyboardState.IsKeyDown(Keys.RightShift),
+                        Control = newKeyboardState.IsKeyDown(Keys.LeftControl) || newKeyboardState.IsKeyDown(Keys.RightControl)
                     }
                 });
             }
 
             OldMouseState = newMouseState;
 
-
-            var newKeyboardState = Keyboard.GetState();
 
             foreach (var key in newKeyboardState.GetPressedKeys())
                 if (!OldKeyboardState.IsKeyDown(key))
