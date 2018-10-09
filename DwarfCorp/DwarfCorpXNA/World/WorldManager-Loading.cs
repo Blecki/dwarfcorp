@@ -313,6 +313,7 @@ namespace DwarfCorp
 
                 TutorialManager = new Tutorial.TutorialManager();
                 TutorialManager.SetFromSaveData(gameFile.PlayData.TutorialSaveData);
+
             }
             else
             {
@@ -395,6 +396,14 @@ namespace DwarfCorp
                 TutorialManager = new Tutorial.TutorialManager();
                 TutorialManager.TutorialEnabled = !GameSettings.Default.TutorialDisabledGlobally;
                 Tutorial("new game start");
+
+                foreach(var item in CraftLibrary.EnumerateCraftables())
+                {
+                    if (!String.IsNullOrEmpty(item.Tutorial))
+                    {
+                        TutorialManager.AddTutorial(item.Name, item.Tutorial, item.Icon);
+                    }
+                }
             }
 
             Camera.World = this;

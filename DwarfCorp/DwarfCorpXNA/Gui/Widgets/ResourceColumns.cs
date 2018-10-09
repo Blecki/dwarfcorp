@@ -17,7 +17,7 @@ namespace DwarfCorp.Gui.Widgets
         public List<ResourceAmount> SelectedResources { get; private set; }
         public String LeftHeader;
         public String RightHeader;
-        private MoneyEditor MoneyField;
+        public MoneyEditor MoneyField;
         public String MoneyLabel;
 
         public DwarfBux TradeMoney
@@ -90,7 +90,8 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockFill,
                 SelectedItemBackgroundColor = new Vector4(0, 0, 0, 0),
                 ItemBackgroundColor2 = new Vector4(0, 0, 0, 0.1f),
-                ItemBackgroundColor1 = new Vector4(0, 0, 0, 0)
+                ItemBackgroundColor1 = new Vector4(0, 0, 0, 0),
+                Font = GameSettings.Default.GuiScale == 1 ? "font10" : "font8"
             }) as Gui.Widgets.WidgetListView;
 
             MoneyField = leftmostPanel.AddChild(new MoneyEditor
@@ -108,7 +109,8 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockFill,
                 SelectedItemBackgroundColor = new Vector4(0, 0, 0, 0),
                 ItemBackgroundColor2 = new Vector4(0, 0, 0, 0.1f),
-                ItemBackgroundColor1 = new Vector4(0, 0, 0, 0)
+                ItemBackgroundColor1 = new Vector4(0, 0, 0, 0),
+                Font = GameSettings.Default.GuiScale == 1 ? "font10" : "font8"
             }) as Gui.Widgets.WidgetListView;
 
             // Lists should have bidirectional properties.
@@ -230,8 +232,8 @@ namespace DwarfCorp.Gui.Widgets
 
             var icon = r.AddChild(new ResourceIcon()
             {
-                MinimumSize = new Point(32 + 24, 32 + 16),
-                MaximumSize = new Point(32 + 24, 32 + 16),
+                MinimumSize = new Point(32 + 16, 32 + 16),
+                MaximumSize = new Point(32 + 16, 32 + 16),
                 Layers = resourceInfo.GuiLayers,
                 AutoLayout = AutoLayout.DockLeft,
                 BackgroundColor = Resource.NumResources > 0 ? resourceInfo.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
@@ -243,11 +245,13 @@ namespace DwarfCorp.Gui.Widgets
             r.AddChild(new Gui.Widget
             {
                 AutoLayout = AutoLayout.DockLeft,
-                MinimumSize = new Point(128, 0),
+                MinimumSize = new Point(128 / GameSettings.Default.GuiScale, 0),
+                MaximumSize = new Point(128 / GameSettings.Default.GuiScale, 32),
                 TextColor = Resource.NumResources > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                 TextVerticalAlign = VerticalAlign.Center,
+                TextHorizontalAlign = HorizontalAlign.Left,
                 HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
-                Font = "font10",
+                Font = GameSettings.Default.GuiScale == 1 ? "font10" : "font8",
                 ChangeColorOnHover = true,
                 WrapText = true
             });
@@ -261,9 +265,10 @@ namespace DwarfCorp.Gui.Widgets
                 TextColor = Resource.NumResources > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                 TextVerticalAlign = VerticalAlign.Center,
                 HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
-                Font = "font10",
+                Font = GameSettings.Default.GuiScale == 1 ? "font10" : "font8",
                 ChangeColorOnHover = true,
             });
+            
 
             r.Layout();
             UpdateLineItemText(r, Resource);
@@ -279,8 +284,8 @@ namespace DwarfCorp.Gui.Widgets
             if (font != null)
             {
                 Point measurements = font.MeasureString(resourceInfo.ShortName ?? resourceInfo.Name);
-                label = font.WordWrapString(label, 1.0f, 128);
-                if (128 < measurements.X)
+                label = font.WordWrapString(label, 1.0f, 128 / GameSettings.Default.GuiScale);
+                if (128 / GameSettings.Default.GuiScale < measurements.X)
                 {
                     LineItem.MinimumSize.Y = font.TileHeight * label.Split('\n').Length;
                 }

@@ -52,7 +52,12 @@ namespace DwarfCorp.GameStates
             { 
                 var texture = AssetManager.GetContentTexture(ImageSource);
                 DwarfGame.SpriteBatch.Begin();
-                DwarfGame.SpriteBatch.Draw(texture, GetDrawableInterior(), Color.White);
+                var interior = GetDrawableInterior();
+                interior.X *= GameSettings.Default.GuiScale;
+                interior.Y *= GameSettings.Default.GuiScale;
+                interior.Width *= GameSettings.Default.GuiScale;
+                interior.Height *= GameSettings.Default.GuiScale;
+                DwarfGame.SpriteBatch.Draw(texture, interior, Color.White);
                 DwarfGame.SpriteBatch.End();
             }
             base.PostDraw(device);
@@ -107,6 +112,7 @@ namespace DwarfCorp.GameStates
             });
 
 
+
             var icon = detailsPanel.AddChild(new TutorialIcon()
             {
                 MinimumSize = new Point(256, 128),
@@ -130,6 +136,7 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(256, 256)
             });
 
+
             foreach (var tutorial in World.TutorialManager.EnumerateTutorials())
             {
                 widgetList.AddItem(new Widget()
@@ -142,6 +149,22 @@ namespace DwarfCorp.GameStates
                         title.Text = tutorial.Value.Title;
                         var asset = "newgui\\tutorials\\" + tutorial.Key;
                         icon.ImageSource = AssetManager.DoesTextureExist(asset) ? asset : null;
+
+                        if (icon.ImageSource == null && tutorial.Value.Icon != null)
+                        {
+                            icon.Background = tutorial.Value.Icon;
+                            icon.MinimumSize = new Point(128, 128);
+                            icon.MaximumSize = new Point(128, 128);
+                        }
+                        else
+                        {
+                            icon.MinimumSize = new Point(256, 128);
+                            icon.MaximumSize = new Point(256, 128);
+                            icon.Background = null;
+                        }
+                       
+                        icon.Invalidate();
+                        icon.Parent.Layout();
                     },
                     TextVerticalAlign = VerticalAlign.Center,
                 });

@@ -39,6 +39,18 @@ namespace DwarfCorp.Gui.Widgets
                 Rect = new Rectangle(0, 0, 450, 450);
                 InteriorMargin = new Margin(32, 0, 0, 0);
             }
+            else if (Message.Icon != null)
+            {
+                AddChild(new Widget()
+                {
+                    Background = Message.Icon,
+                    MinimumSize = new Point(128, 128),
+                    MaximumSize = new Point(128, 128),
+                    AutoLayout = AutoLayout.DockTop
+                });
+                Rect = new Rectangle(0, 0, 450, 450);
+                InteriorMargin = new Margin(32, 0, 0, 0);
+            }
 
             AddChild(new Button
             {

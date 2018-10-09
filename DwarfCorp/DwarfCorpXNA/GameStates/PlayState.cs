@@ -714,7 +714,7 @@ namespace DwarfCorp.GameStates
                 EnablePosession = true,
                 Tag = "selected-employee-info",
                 AutoLayout = AutoLayout.FloatBottomLeft,
-                MinimumSize = new Point(400, 500),
+                MinimumSize = new Point(450, 500 - (50 * (GameSettings.Default.GuiScale - 1))),
                 OnFireClicked = (sender) =>
                 {
                     GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
@@ -1165,10 +1165,12 @@ namespace DwarfCorp.GameStates
                 Tooltip = "When checked, enables XRAY view.",
                 MaximumSize = new Point(32, 16),
                 TextColor = Color.White.ToVector4(),
+                Tag = "xray",
                 OnCheckStateChange = (sender) =>
                 {
                     bool isChecked = (sender as CheckBox).CheckState;
                     World.TargetCaveView = isChecked ? 1.0f : 0.0f;
+                    World.Tutorial("xray");
                 },
                 AutoLayout = AutoLayout.DockLeftCentered
             }) as CheckBox;
@@ -1486,6 +1488,7 @@ namespace DwarfCorp.GameStates
                     {
                         var panel = (sender as TabPanel);
                         panel.SelectedTab = 0;
+                        World.Tutorial(data.Name);
                     },
                     OnSelectedTabChanged = (widget) =>
                     {

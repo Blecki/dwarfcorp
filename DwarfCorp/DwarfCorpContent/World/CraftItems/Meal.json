@@ -30,5 +30,6 @@
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,
   "Moveable": false,
-  "CraftActBehavior": "Meal"
+  "CraftActBehavior": "Meal",
+  "Tutorial": "Meals can be created at cutting boards from two raw foods. Meals relieve more hunger than raw foods."
 }

@@ -30,5 +30,6 @@
   "AddToOwnedPool": true,
   "Moveable": true,
   "CraftActBehavior": "Normal",
-  "IsMagical": true
+  "IsMagical": true,
+  "Tutorial": "Use the Apocethary to brew potions. Only one wizard may use an Apocethary at a time. They require magic (mana rocks or refined mana) to build."
 }

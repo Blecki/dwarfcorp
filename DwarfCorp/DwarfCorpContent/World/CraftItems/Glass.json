@@ -26,5 +26,6 @@
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": false,
   "Moveable": false,
-  "CraftActBehavior": "Normal"
+  "CraftActBehavior": "Normal",
+  "Tutorial" : "Convert sand into glass at a Forge. Use glass to build glass blocks or windows."
 }

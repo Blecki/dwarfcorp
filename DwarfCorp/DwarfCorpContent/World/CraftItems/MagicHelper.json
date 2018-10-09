@@ -30,5 +30,6 @@
   "AddToOwnedPool": false,
   "Moveable": false,
   "CraftActBehavior": "Normal",
-  "IsMagical": true
+  "IsMagical": true,
+  "Tutorial": "Wizards can spawn a magic helper using the Summoning Circle. The magic helper is a temporary employee that lasts for 24 hours. The helper has very low health, but is quite fast."
 }

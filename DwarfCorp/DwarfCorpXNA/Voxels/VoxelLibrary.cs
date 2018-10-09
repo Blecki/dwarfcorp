@@ -207,7 +207,7 @@ namespace DwarfCorp
             var width = MathFunctions.NearestPowerOf2(sqrt * Sheet.TileWidth);
             var height = MathFunctions.NearestPowerOf2(sqrt * Sheet.TileWidth);
 
-            RenderTarget2D toReturn = new RenderTarget2D(device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth16, 16, RenderTargetUsage.PreserveContents);
+            RenderTarget2D toReturn = new RenderTarget2D(device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth16, 0, RenderTargetUsage.PreserveContents);
         
             device.SetRenderTarget(toReturn);
             device.Clear(Color.Transparent);

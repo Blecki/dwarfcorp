@@ -71,6 +71,7 @@ namespace DwarfCorp
                 using (Stream stream = new FileStream("version.txt", FileMode.Open))
                 using (StreamReader reader = new StreamReader(stream))
                     Commit = reader.ReadToEnd();
+                Commit = Commit.Trim();
             }
             catch (Exception) { }
             System.Net.ServicePointManager.ServerCertificateValidationCallback = SSLCallback;

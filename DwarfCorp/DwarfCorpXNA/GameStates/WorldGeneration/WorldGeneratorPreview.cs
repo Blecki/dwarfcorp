@@ -286,7 +286,7 @@ namespace DwarfCorp.GameStates
             for (var i = 0; i < 4; ++i)
             {
                 var vec3 = WorldToScreen(Points[i]);  
-                Points[i] = new Vector2(vec3.X, vec3.Y);
+                Points[i] = new Vector2(vec3.X * GameSettings.Default.GuiScale, vec3.Y * GameSettings.Default.GuiScale);
             }
         }
 

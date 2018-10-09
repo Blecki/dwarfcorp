@@ -46,7 +46,7 @@ namespace DwarfCorp
             new VertexElement(4 * SizeOf(Vector4.One), VertexElementFormat.Color, VertexElementUsage.Color, 3),
             new VertexElement(4 * SizeOf(Vector4.One) + SizeOf(Microsoft.Xna.Framework.Color.White), VertexElementFormat.Color, VertexElementUsage.Color, 4),
             new VertexElement(4 * SizeOf(Vector4.One) + 2 * SizeOf(Microsoft.Xna.Framework.Color.White), VertexElementFormat.Color, VertexElementUsage.Color, 5),
-
+            // TILE BOUNDS
             new VertexElement(4 * SizeOf(Vector4.One) + 3 * SizeOf(Color.White), VertexElementFormat.Vector4, VertexElementUsage.TextureCoordinate, 5)
             );
     }
