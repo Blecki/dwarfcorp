@@ -584,6 +584,7 @@ namespace DwarfCorp.GameStates
                         AutoLayout = AutoLayout.DockRight,
                         OnClick = (sender, args) =>
                         {
+                            World.Tutorial("adventures");
                             GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new PrepareExpeditionDialog()
                             {
                                 Faction = World.PlayerFaction,
@@ -711,6 +712,7 @@ namespace DwarfCorp.GameStates
 
         public override void Update(DwarfTime gameTime)
         {
+            World.Tutorial("diplomacy");
             foreach (var @event in DwarfGame.GumInputMapper.GetInputQueue())
             {
                 GuiRoot.HandleInput(@event.Message, @event.Args);
@@ -719,7 +721,7 @@ namespace DwarfCorp.GameStates
                     // Pass event to game...
                 }
             }
-
+            World.TutorialManager.Update(GuiRoot);
             GuiRoot.Update(gameTime.ToGameTime());
             base.Update(gameTime);
         }

@@ -175,6 +175,31 @@
 		"GuiHilite" : "trade_stocks"
 	},
 	{
+		"Name" : "diplomacy",
+		"Title" : "Diplomacy",
+		"Text" : "The diplomacy screen shows you all the factions in your immediate area. Mouse over faction names to see what their relationship with us is like. Having a negative relationship with a faction means that they might go to war with us."
+	},
+	{
+		"Name" : "adventures",
+		"Title" : "Adventures",
+		"Text" : "You can send employees on adventures to foreign lands using the diplomacy screen. You must have a balloon port and food to send employees on an adventure.",
+		"NextTutorial" : "trade_expedition",
+		"Popup" : true
+	},
+	{
+		"Name" : "trade_expedition",
+		"Title" : "Trade Adventures",
+		"Text" : "When you are not at war with a faction, you can send employees on a trade adventure. The employees will bring food for the journey, and trade goods. After arriving, the employees will trade the goods for other items and bring them home.",
+		"NextTutorial" : "peace_expedition",
+		"Popup" : true
+	},
+	{
+		"Name" : "raid_expedition",
+		"Title" : "Raid Adventures",
+		"Text" : "You can send your employees on raiding adventures to foreign lands. They will loot the land for a while and then return. The likelihood of success depends on the strength of the employees you send.",
+		"Popup" : true
+	},
+	{
 		"Name": "time",
 		"Title": "Time",
 		"Text": "You can speed up the time by pressing the >> button using the time controls on the bottom right of the screen. Time can also be sped up or slowed down using the time forward and backward keys (by default X and C). Time can be paused using the pause key (by default, Space). You can still issue commands while time is paused.",
