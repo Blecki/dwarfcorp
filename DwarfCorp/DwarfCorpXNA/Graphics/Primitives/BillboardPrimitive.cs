@@ -175,7 +175,7 @@ namespace DwarfCorp
                 tileBounds);
 
             //GameState.Game.GraphicsDevice.SetVertexBuffer(null);
-            if (VertexBuffer == null)
+            if (VertexBuffer == null || VertexBuffer.IsDisposed || VertexBuffer.IsContentLost || VertexBuffer.GraphicsDevice == null || VertexBuffer.GraphicsDevice.IsDisposed)
                 ResetBuffer(GameState.Game.GraphicsDevice);
             else
             {

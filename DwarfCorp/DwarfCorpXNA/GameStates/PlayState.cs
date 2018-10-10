@@ -140,7 +140,7 @@ namespace DwarfCorp.GameStates
         private void World_OnLoseEvent()
         {
             //Paused = true;
-            //StateManager.PushState("LoseState");a
+            //StateManager.PushState("LoseState");
         }
 
         /// <summary>
