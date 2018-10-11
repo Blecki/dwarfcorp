@@ -461,7 +461,7 @@ namespace DwarfCorp.Scripting.Adventure
 
                             if (Vehicle == null || Vehicle.IsDead)
                             {
-                                Vehicle = EntityFactory.CreateEntity<Balloon>("Balloon", balloonPorts.First().GetBoundingBox().Center() + Vector3.Up * 10);
+                                Vehicle = EntityFactory.CreateEntity<Balloon>("Balloon", location);
                             }
                             Vehicle.GetComponent<BalloonAI>().State = BalloonAI.BalloonState.DeliveringGoods;
                             OnReturn(world);
