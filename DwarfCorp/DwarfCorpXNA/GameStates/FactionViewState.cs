@@ -146,6 +146,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockLeft,
                 MinimumSize = new Point(rect.Width / 2 - 28, rect.Height - 100),
             });
+
             rightSide.AddChild(new Widget()
             {
                 Font= "font16",
@@ -153,6 +154,7 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(0, 32),
                 AutoLayout = AutoLayout.DockTop
             });
+
             RightColumns = rightSide.AddChild(new WidgetListView()
             {
                 Font = "font10",
@@ -163,7 +165,9 @@ namespace DwarfCorp.GameStates
                 ChangeColorOnSelected = false,
                 Tooltip = "Click to leave dwarves at home."
             }) as WidgetListView;
+
             ReconstructColumns();
+
             leftSide.AddChild(new Button()
             {
                 Text = "Back",
@@ -175,6 +179,7 @@ namespace DwarfCorp.GameStates
                     Close();
                 }
             });
+
             rightSide.AddChild(new Button()
             {
                 Text = "Next",
@@ -529,7 +534,17 @@ namespace DwarfCorp.GameStates
                 MinimumSize = new Point(0, 3 * GuiRoot.RenderData.VirtualScreen.Height / 4)
             }) as WidgetListView;
 
-            var factions = World.Factions.Factions.Where(f => !f.Value.IsRaceFaction && f.Value.Race.IsIntelligent && f.Value != World.PlayerFaction).OrderBy(k => k.Value.Race.Name == "Dwarf" ? 0 : k.Value.DistanceToCapital);
+            var factions = World.Factions.Factions.Where(f => !f.Value.IsRaceFaction && f.Value.Race.IsIntelligent && f.Value != World.PlayerFaction).OrderBy(k =>
+            {
+                if (k.Value.Race.Name == "Dwarf")
+                    return 0;
+
+                var currentExpedition = World.Diplomacy.Adventures.Where(a => a.DestinationFaction == k.Key).FirstOrDefault();
+                if (currentExpedition != null)
+                    return k.Value.DistanceToCapital;
+                return k.Value.DistanceToCapital + 100000.0f;
+            });
+
             foreach (var faction in factions)
             {
                 var diplomacy = World.Diplomacy.GetPolitics(faction.Value, World.PlayerFaction);
