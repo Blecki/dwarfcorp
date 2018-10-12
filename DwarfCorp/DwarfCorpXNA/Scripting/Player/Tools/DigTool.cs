@@ -51,6 +51,8 @@ namespace DwarfCorp
         public override void OnBegin()
         {
             Player.VoxSelector.SelectionColor = Color.White;
+            Player.VoxSelector.DrawBox = true;
+            Player.VoxSelector.DrawVoxel = true;
             Player.World.Tutorial("mine");
         }
 

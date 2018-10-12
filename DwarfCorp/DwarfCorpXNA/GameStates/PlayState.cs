@@ -1346,7 +1346,7 @@ namespace DwarfCorp.GameStates
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = "",
+                            Text = data.Name,
                             EnabledTextColor = Color.White.ToVector4(),
                             Font = "font10-outline-numsonly",
                             PopupChild = new BuildWallInfo
@@ -1913,6 +1913,8 @@ namespace DwarfCorp.GameStates
                         KeepChildVisible = true, // So the player can interact with the popup.
                         Tooltip = data.Verb + " " + data.Name,
                         Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
+                        Text = data.Name,
+                        TextVerticalAlign = VerticalAlign.Below,
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
