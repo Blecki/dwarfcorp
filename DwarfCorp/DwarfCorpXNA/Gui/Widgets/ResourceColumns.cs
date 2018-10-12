@@ -285,7 +285,7 @@ namespace DwarfCorp.Gui.Widgets
             if (font != null)
             {
                 Point measurements = font.MeasureString(resourceInfo.ShortName ?? resourceInfo.Name);
-                label = font.WordWrapString(label, 1.0f, 128 / GameSettings.Default.GuiScale);
+                label = font.WordWrapString(label, 1.0f, 128 / GameSettings.Default.GuiScale, LineItem.WrapWithinWords);
                 if (128 / GameSettings.Default.GuiScale < measurements.X)
                 {
                     LineItem.MinimumSize.Y = font.TileHeight * label.Split('\n').Length;

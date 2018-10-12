@@ -5,6 +5,7 @@
   "MinimumSideWidth": 3,
   "MaxNumRooms": 2147483647,
   "Name": "Animal Pen",
+  "DisplayName": "Animal\nPen",
   "FloorType": "Dirt",
   "RequiredResources": {
     "Soil": {

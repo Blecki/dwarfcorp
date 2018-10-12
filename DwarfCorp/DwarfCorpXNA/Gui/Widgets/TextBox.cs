@@ -31,7 +31,7 @@ namespace DwarfCorp.Gui.Widgets
             var newLines = Lines[Lines.Count - 1] + Message;
             Lines[Lines.Count - 1] = "";
             var font = Root.GetTileSheet(Font);
-            var text = WrapText ? font.WordWrapString(newLines, TextSize, GetDrawableInterior().Width) : newLines;
+            var text = WrapText ? font.WordWrapString(newLines, TextSize, GetDrawableInterior().Width, WrapWithinWords) : newLines;
             foreach (var c in text)
             {
                 if (c == '\n')

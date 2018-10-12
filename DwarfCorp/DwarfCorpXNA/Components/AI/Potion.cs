@@ -95,7 +95,7 @@ namespace DwarfCorp
                 }
             },
             {
-                "Hapiness Potion",
+                "Happiness Potion",
                 new Potion()
                 {
                     Ingredients = new List<Quantitiy<Resource.ResourceTags>>()
@@ -211,7 +211,7 @@ namespace DwarfCorp
                     ResourceCreated = potion.Key,
                     Description = potion.Value.Description,
                     RequiredResources = potion.Value.Ingredients,
-                    BaseCraftTime = 10.0f
+                    BaseCraftTime = 10.0f,
                 };
                 CraftLibrary.Add(craftItem);
             }

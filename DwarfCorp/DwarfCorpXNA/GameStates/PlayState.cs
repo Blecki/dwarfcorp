@@ -569,7 +569,7 @@ namespace DwarfCorp.GameStates
             BottomBackground = GuiRoot.RootItem.AddChild(new TrayBackground
             {
                 Corners = Scale9Corners.Top,
-                MinimumSize = new Point(0, 102),
+                MinimumSize = new Point(0, 112),
                 AutoLayout = AutoLayout.DockBottom
             });
 
@@ -586,7 +586,7 @@ namespace DwarfCorp.GameStates
             var secondBar = BottomBackground.AddChild(new Widget
             {
                 Transparent = true,
-                MinimumSize = new Point(0, 54),
+                MinimumSize = new Point(0, 64),
                 AutoLayout = AutoLayout.DockBottom,
                 InteriorMargin = new Margin(2,0,0,0),
                 Padding = new Margin(0,0,2,2)
@@ -1247,7 +1247,7 @@ namespace DwarfCorp.GameStates
                     {
                         Icon = data.NewIcon,
                         ExpandChildWhenDisabled = true,
-                        Text = TextGenerator.Shorten(data.Name, 5),
+                        Text = data.DisplayName,
                         TextVerticalAlign = VerticalAlign.Below,
                         TextColor = Color.White.ToVector4(),
                         PopupChild = new BuildRoomInfo
@@ -1468,6 +1468,14 @@ namespace DwarfCorp.GameStates
                 }
             };
 
+
+            // TODO: Translation
+            Func<string, string> objectNameToLabel = (string name) =>
+            {
+                var replacement = name.Replace("Potion", "").Replace("of", "");
+                return replacement;
+            };
+
             Func<CraftItem, FlatToolTray.Icon> createCraftIcon = (data) => new FlatToolTray.Icon
             {
                 Icon = data.Icon,
@@ -1475,7 +1483,7 @@ namespace DwarfCorp.GameStates
                 KeepChildVisible = true, // So the player can interact with the popup.
                 ExpandChildWhenDisabled = true,
                 Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
-                Text = data.ShortDisplayName,
+                Text = objectNameToLabel(data.ShortDisplayName),
                 TextVerticalAlign = VerticalAlign.Below,
                 TextColor = Color.White.ToVector4(),
                 PopupChild = new TabPanel
@@ -1615,7 +1623,7 @@ namespace DwarfCorp.GameStates
                     Tooltip = "Craft " + category,
                     Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                     ReplacementMenu = menu_category,
-                    Text = TextGenerator.Shorten(category, 5),
+                    Text = category,
                     TextVerticalAlign = VerticalAlign.Below,
                     TextColor = Color.White.ToVector4(),
                 };
@@ -1693,7 +1701,7 @@ namespace DwarfCorp.GameStates
                         Tooltip = data.Verb + " a " + data.Name,
                         KeepChildVisible = true, // So the player can interact with the popup.
                         ExpandChildWhenDisabled = true,
-                        Text = TextGenerator.Shorten(data.Name, 6),
+                        Text = data.Name,
                         TextVerticalAlign = VerticalAlign.Below,
                         TextColor = Color.White.ToVector4(),
                         Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
@@ -1788,7 +1796,7 @@ namespace DwarfCorp.GameStates
                             .Select(data => new FlatToolTray.Icon
                             {
                                 Tooltip = "Build " + data.Name,
-                                Text = TextGenerator.Shorten(data.Name, 6),
+                                Text = data.Name,
                                 TextVerticalAlign = VerticalAlign.Below,
                                 TextColor = Color.White.ToVector4(),
                                 Icon = new TileReference("rail", data.Icon),
@@ -1962,13 +1970,6 @@ namespace DwarfCorp.GameStates
                 }
             };
 
-            // TODO: Translation
-            Func<string, string> potionNameToLabel = (string name) =>
-            {
-                var replacement = name.Replace("Potion", "").Replace("of", "");
-                return TextGenerator.Shorten(replacement, 6);
-            };
-
             var menu_potions = new FlatToolTray.Tray
             {
                 ItemSource = (new Widget[] { icon_menu_Edibles_Return }).Concat(
@@ -1982,7 +1983,7 @@ namespace DwarfCorp.GameStates
                         KeepChildVisible = true, // So the player can interact with the popup.
                         Tooltip = StringLibrary.GetString("verb-noun", data.Verb, data.DisplayName),
                         Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
-                        Text = potionNameToLabel(data.DisplayName),
+                        Text = objectNameToLabel(data.DisplayName),
                         TextVerticalAlign = VerticalAlign.Below,
                         TextHorizontalAlign = HorizontalAlign.Center,
                         TextColor = Color.White.ToVector4(),
@@ -1992,6 +1993,10 @@ namespace DwarfCorp.GameStates
                             Rect = new Rectangle(0, 0, 450, 200),
                             Master = Master,
                             World = World,
+                            OnShown = (sender) =>
+                            {
+                                World.Tutorial("potions");
+                            },
                             BuildAction = (sender, args) =>
                             {
                                 var buildInfo = sender as Gui.Widgets.BuildCraftInfo;
@@ -2158,7 +2163,7 @@ namespace DwarfCorp.GameStates
                                Icon = resource.ResourceType.GetResource().GuiLayers[0],
                                Tooltip = "Plant " + resource.ResourceType,
                                Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
-                               Text = TextGenerator.Shorten(resource.ResourceType, 6),
+                               Text = resource.ResourceType,
                                TextVerticalAlign = VerticalAlign.Below,
                                OnClick = (sender, args) =>
                                {

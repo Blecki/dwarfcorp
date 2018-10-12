@@ -43,11 +43,13 @@ namespace DwarfCorp
     public class RoomData
     {
         public string Name;
+        public string Description;
+        public string DisplayName;
         public uint ID;
         public string FloorType;
         public Dictionary<Resource.ResourceTags, Quantitiy<Resource.ResourceTags>> RequiredResources;
         public Gui.TileReference NewIcon;
-        public string Description;
+        public string Descraiption;
         public bool CanBuildAboveGround = true;
         public bool CanBuildBelowGround = true;
         public int MinimumSideLength = 3;

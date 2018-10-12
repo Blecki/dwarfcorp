@@ -84,7 +84,7 @@ namespace DwarfCorp.Gui
             return true;
         }
 
-        public String WordWrapString(String S, float GlyphWidthScale, float Width)
+        public String WordWrapString(String S, float GlyphWidthScale, float Width, bool wrapWithinWords)
         {
             var r = new StringBuilder();
             var w = new StringBuilder();
@@ -96,7 +96,7 @@ namespace DwarfCorp.Gui
             {
                 if (c == '\r' || c == '\t') continue;
 
-                if (c == ' ' || c == '\n')
+                if (wrapWithinWords || ( c == ' ' || c == '\n'))
                 {
                     if (w.Length == 0)
                     {
@@ -107,7 +107,13 @@ namespace DwarfCorp.Gui
                         if (lineLength + wordLength > Width)
                         {
                             if (r.Length > 0)
+                            {
+                                if (c != ' ' && c != '\n' && c != '-')
+                                {
+                                    r.Append('-');
+                                }
                                 r.Append("\n");
+                            }
                             r.Append(w);
                             lineLength = wordLength + TileWidth * GlyphWidthScale;
                             wordLength = 0;

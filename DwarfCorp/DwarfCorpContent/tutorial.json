@@ -180,6 +180,11 @@
 		"Text" : "The diplomacy screen shows you all the factions in your immediate area. Mouse over faction names to see what their relationship with us is like. Having a negative relationship with a faction means that they might go to war with us."
 	},
 	{
+		"Name" : "potions",
+		"Title" : "Potions",
+		"Text" : "Wizards can brew potions at the Apocethary. Potions can be used to heal dwarfs, or make them stronger, faster or happier. Potions require mana rocks or refined mana to brew."
+	},
+	{
 		"Name" : "adventures",
 		"Title" : "Adventures",
 		"Text" : "You can send employees on adventures to foreign lands using the diplomacy screen. You must have a balloon port and food to send employees on an adventure.",

@@ -114,6 +114,7 @@ namespace DwarfCorp.Gui
         public Vector4 HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4();
         public bool ChangeColorOnHover = false;
         public bool WrapText = true;
+        public bool WrapWithinWords = false;
         public bool AutoResizeToTextHeight = false;
 
         private class HoverClickHelper
@@ -516,8 +517,8 @@ namespace DwarfCorp.Gui
             var drawableArea = GetDrawableInterior();
             var stringMeshSize = new Rectangle();
             var font = Root.GetTileSheet(Font);
-            var text = (WrapText)
-                ? font.WordWrapString(Text, TextSize, drawableArea.Width)
+            var text = (WrapText || WrapWithinWords)
+                ? font.WordWrapString(Text, TextSize, drawableArea.Width, WrapWithinWords)
                 : Text;
             var stringMesh = Mesh.CreateStringMesh(
                 text,

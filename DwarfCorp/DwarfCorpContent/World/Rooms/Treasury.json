@@ -5,6 +5,7 @@
   "MinimumSideWidth": 3,
   "MaxNumRooms": 2147483647,
   "Name": "Treasury",
+  "DisplayName": "Treas\n-ury",
   "FloorType": "Blue Tile",
   "RequiredResources": {
   },

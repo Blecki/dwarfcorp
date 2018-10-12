@@ -127,7 +127,7 @@ namespace DwarfCorp.Gui.Widgets
 
             foreach (var announcement in Announcements)
             {
-                announcement.Widget.Text = font.WordWrapString(announcement.Text, 1.0f, Rect.Width - (speakerTiles.TileWidth * 2));
+                announcement.Widget.Text = font.WordWrapString(announcement.Text, 1.0f, Rect.Width - (speakerTiles.TileWidth * 2), WrapWithinWords);
                 var size = font.MeasureString(announcement.Widget.Text);
                 announcement.Widget.Rect = new Rectangle(0, 0, Rect.Width - (speakerTiles.TileWidth * 2), size.Y);
             }
