@@ -47,7 +47,7 @@ namespace DwarfCorp
         public SelectionCircle()
             : base()
         {
-            UpdateRate = 9999;
+            UpdateRate = 2;
         }
 
         public SelectionCircle(ComponentManager manager) :
@@ -59,7 +59,7 @@ namespace DwarfCorp
             LocalTransform = shadowTransform;
             CreateCosmeticChildren(manager);
             SetFlagRecursive(Flag.Visible, false);
-            UpdateRate = 9999;
+            UpdateRate = 2;
         }
 
         public void FitToParent()
