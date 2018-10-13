@@ -52,12 +52,13 @@ namespace DwarfCorp
         public BoundingBox PositionConstrain { get; set; }
         public Egg()
         {
-            
+            UpdateRate = 100;
         }
 
         public Egg(Body body, string adult, ComponentManager manager, Vector3 position, BoundingBox positionConstraint) :
             base(manager)
         {
+            UpdateRate = 100;
             PositionConstrain = positionConstraint;
             Adult = adult;
             Birthday = Manager.World.Time.CurrentDate + new TimeSpan(0, 12, 0, 0);

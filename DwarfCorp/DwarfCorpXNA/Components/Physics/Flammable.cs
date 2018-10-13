@@ -51,12 +51,13 @@ namespace DwarfCorp
 
         public Flammable()
         {
-            
+            UpdateRate = 100;
         }
 
         public Flammable(ComponentManager manager, string name) :
             base(name, manager)
         {
+            UpdateRate = 100;
             Heat = 0.0f;
             Flashpoint = 100.0f;
             Damage = 5.0f;
@@ -106,6 +107,7 @@ namespace DwarfCorp
 
             if(Heat > Flashpoint)
             {
+                UpdateRate = 1;
                 if(DamageTimer.HasTriggered)
                     Health.Damage(Damage, Health.DamageType.Fire);
 

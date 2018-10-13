@@ -51,12 +51,13 @@ namespace DwarfCorp
 
         public ExploredListener()
         {
-
+            UpdateRate = 100;
         }
 
         public ExploredListener(ComponentManager Manager, VoxelHandle Voxel) :
             base(Manager, "ExplorationSpawner", Matrix.CreateTranslation(Voxel.GetBoundingBox().Center()), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
         {
+            UpdateRate = 100;
             this.Voxel = Voxel;
             this.CollisionType = CollisionType.Static;
         }

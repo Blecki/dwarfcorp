@@ -72,12 +72,14 @@ namespace DwarfCorp
 
         public Inventory()
         {
+            UpdateRate = 100;
             DropRate = 1.0f;
         }
 
         public Inventory(ComponentManager Manager, string name, Vector3 BoundingBoxExtents, Vector3 LocalBoundingBoxOffset) :
             base(Manager, name, Matrix.Identity, BoundingBoxExtents, LocalBoundingBoxOffset)
         {
+            UpdateRate = 100;
             DropRate = 1.0f;
             Resources = new List<InventoryItem>();
         }

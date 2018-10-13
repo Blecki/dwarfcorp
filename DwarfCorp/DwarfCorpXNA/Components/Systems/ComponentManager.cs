@@ -213,10 +213,12 @@ namespace DwarfCorp
                 MinimapIcons.Add(component as MinimapIcon);
         }
         public int k = 0;
+        public long iter = 0;
         private List<GameComponent> _componentList = null;
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
+            iter++;
             PerformanceMonitor.PushFrame("Component Update");
             if (_componentList == null)
             {
@@ -225,7 +227,10 @@ namespace DwarfCorp
             for (int j = 0; j < Math.Min(GameSettings.Default.EntityUpdateRate, _componentList.Count); j++)
             {
                 int c = (k + j) % _componentList.Count;
-                _componentList[c].Update(gameTime, chunks, camera);
+                if (iter % _componentList[c].UpdateRate == 0)
+                {
+                    _componentList[c].Update(gameTime, chunks, camera);
+                }
             }
             k += GameSettings.Default.EntityUpdateRate;
             /*

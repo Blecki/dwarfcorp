@@ -52,18 +52,21 @@ namespace DwarfCorp
 
         public CraftDetails()
         {
+            UpdateRate = 1000;
             this.SetFlag(Flag.ShouldSerialize, true);
         }
 
         public CraftDetails(ComponentManager manager) :
             base(manager)
         {
+            UpdateRate = 1000;
             this.SetFlag(Flag.ShouldSerialize, true);
         }
 
         public CraftDetails(ComponentManager manager, string craftType, List<ResourceAmount> resources = null) :
             this(manager)
         {
+            UpdateRate = 1000;
             CraftType = craftType;
 
             if (resources != null)
@@ -134,12 +137,14 @@ namespace DwarfCorp
 
         public FixtureCraftDetails()
         {
+            UpdateRate = 1000;
             this.SetFlag(Flag.ShouldSerialize, true);
         }
 
         public FixtureCraftDetails(ComponentManager manager) :
             base(manager)
         {
+            UpdateRate = 1000;
             this.SetFlag(Flag.ShouldSerialize, true);
         }
 
