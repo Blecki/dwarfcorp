@@ -62,6 +62,7 @@ namespace DwarfCorp
             Rate = rate;
             Offset = offset;
             OriginalPos = LocalTransform.Translation;
+            UpdateRate = 2;
         }
 
         override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
@@ -101,6 +102,7 @@ namespace DwarfCorp
             float offset)
             : base(Manager, Name, LocalTransform, Layers)
         {
+            UpdateRate = 2;
             Magnitude = mag;
             Rate = rate;
             Offset = offset;
