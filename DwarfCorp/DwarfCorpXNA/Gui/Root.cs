@@ -620,6 +620,10 @@ namespace DwarfCorp.Gui
         /// </summary>
         public void Draw(Point Offset, bool Mouse = true)
         {
+            if (RenderData.Device.IsDisposed || RenderData.Effect.IsDisposed)
+            {
+                RenderData = new RenderData(GameStates.GameState.Game.GraphicsDevice, GameStates.GameState.Game.Content);
+            }
             RenderData.Device.DepthStencilState = DepthStencilState.None;
 
             RenderData.Effect.CurrentTechnique = RenderData.Effect.Techniques[0];

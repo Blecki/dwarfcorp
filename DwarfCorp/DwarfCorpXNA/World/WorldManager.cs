@@ -639,6 +639,21 @@ namespace DwarfCorp
                 gameFile = null;
             }
 
+#if DEBUG
+            KeyboardState k = Keyboard.GetState();
+            if (k.IsKeyDown(Keys.Home))
+            {
+                try
+                {
+                    GameState.Game.GraphicsDevice.Reset();
+                }
+                catch (Exception exception)
+                {
+
+                }
+            }
+#endif
+
         }
 
         public bool FastForwardToDay { get; set; }
