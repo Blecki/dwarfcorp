@@ -26,6 +26,7 @@ namespace DwarfCorp.Tutorial
         private Widget ExistingTutorial = null;
         private bool TutorialVisible = false;
         private Widget HighlightWidget = null;
+        public bool TutorialHidden = false;
 
         public TutorialManager()
         {
@@ -73,9 +74,28 @@ namespace DwarfCorp.Tutorial
                 PendingTutorial = Name;
         }
 
+        public void HideTutorial()
+        {
+            TutorialHidden = true;
+            PendingTutorial = null;
+            if (TutorialVisible && ExistingTutorial != null)
+            {
+                ExistingTutorial.Hidden = true;
+            }
+        }
+
+        public void ShowTutorial()
+        {
+            TutorialHidden = false;
+            if (TutorialVisible && ExistingTutorial != null)
+            {
+                ExistingTutorial.Hidden = false;
+            }
+        }
+
         public void Update(Gui.Root Gui)
         {
-            if (TutorialEnabled && !String.IsNullOrEmpty(PendingTutorial) && Gui != null &&!Entries[PendingTutorial].Shown)
+            if (!TutorialHidden && TutorialEnabled && !String.IsNullOrEmpty(PendingTutorial) && Gui != null &&!Entries[PendingTutorial].Shown)
             {
                 if (TutorialVisible && ExistingTutorial != null)
                 {

@@ -2432,9 +2432,15 @@ namespace DwarfCorp.GameStates
                 if (PausePanel == null || PausePanel.Hidden)
                 {
                     BrushTray.Select(0);
+                    World.TutorialManager.HideTutorial();
+                }
+                else
+                {
+                    World.TutorialManager.ShowTutorial();
                 }
 
                 CameraTray.Select(0);
+
 
                 if (MainMenu.Hidden && PausePanel == null)
                     (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);

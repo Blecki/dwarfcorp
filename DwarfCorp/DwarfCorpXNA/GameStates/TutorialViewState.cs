@@ -48,6 +48,10 @@ namespace DwarfCorp.GameStates
         
         public override void PostDraw(GraphicsDevice device)
         {
+            if (IsAnyParentHidden())
+            {
+                return;
+            }
             if (!String.IsNullOrEmpty(ImageSource) && AssetManager.DoesTextureExist(ImageSource))
             { 
                 var texture = AssetManager.GetContentTexture(ImageSource);
