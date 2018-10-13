@@ -471,6 +471,11 @@ namespace DwarfCorp
             foreach (var adventure in Adventures)
             {
                 var prevEvent = adventure.LastEvent;
+                foreach (var creature in adventure.Party)
+                {
+                    creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Active, false);
+                    creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
+                }
                 adventure.Update(world, time);
                 if (adventure.LastEvent != prevEvent)
                 {
