@@ -299,6 +299,7 @@ namespace DwarfCorp.Gui.Widgets
                 }
             });
 
+            /*
             if (EnablePosession)
             {
                 bottomBar.AddChild(new Button()
@@ -313,6 +314,7 @@ namespace DwarfCorp.Gui.Widgets
                     }
                 });
             }
+            */
 
             bottomBar.AddChild(new Button()
             {
