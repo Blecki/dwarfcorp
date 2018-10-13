@@ -1,6 +1,7 @@
 {
   "Name": "Summoning Circle",
   "EntityName": "Summoning Circle",
+  "DisplayName": "Summon Circle",
   "RequiredResources": [
     {
       "ResourceType": "Magical",

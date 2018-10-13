@@ -1,6 +1,7 @@
 {
   "Name": "Explosive",
   "EntityName": "Explosive",
+  "DisplayName": "Powder Keg",
   "RequiredResources": [
     {
       "ResourceType": "Alcohol",

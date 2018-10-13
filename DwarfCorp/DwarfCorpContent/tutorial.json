@@ -182,7 +182,7 @@
 	{
 		"Name" : "potions",
 		"Title" : "Potions",
-		"Text" : "Wizards can brew potions at the Apocethary. Potions can be used to heal dwarfs, or make them stronger, faster or happier. Potions require mana rocks or refined mana to brew."
+		"Text" : "Wizards can brew potions at the Apothecary. Potions can be used to heal dwarfs, or make them stronger, faster or happier. Potions require mana rocks or refined mana to brew."
 	},
 	{
 		"Name" : "adventures",

@@ -31,8 +31,12 @@ namespace DwarfCorp
                 }
                 if (orig > 0 && _currentCharges == 0)
                 {
+                    if (Active)
+                    {
+                        NotifyRecharge();
+                    }
+
                     Activate(false);
-                    NotifyRecharge();
                 }
                 else if (orig == 0 && _currentCharges > 0)
                 {

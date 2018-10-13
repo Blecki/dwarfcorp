@@ -2,6 +2,7 @@
   "Name": "Bookshelf",
   "EntityName": "Bookshelf",
   "Category": "Magic",
+  "DisplayName": "Book Shelf",
   "RequiredResources": [
     {
       "ResourceType": "Magical",

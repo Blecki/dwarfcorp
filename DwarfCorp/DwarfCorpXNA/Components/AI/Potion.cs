@@ -197,7 +197,7 @@ namespace DwarfCorp
 
                 CraftItem craftItem = new CraftItem()
                 {
-                    CraftLocation = "Apocethary",
+                    CraftLocation = "Apothecary",
                     Icon = new Gui.TileReference("resources", potion.Value.Icon),
                     Category = "Potions",
                     Name = potion.Key,

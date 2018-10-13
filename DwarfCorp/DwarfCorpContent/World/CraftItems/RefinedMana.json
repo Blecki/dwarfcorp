@@ -18,7 +18,7 @@
   "ResourceCreated": {
     "_value": "Refined Mana"
   },
-  "CraftLocation": "Apocethary",
+  "CraftLocation": "Apothecary",
   "Verb": "Refine",
   "PastTeseVerb": "Built",
   "CurrentVerb": "Building",
@@ -29,5 +29,5 @@
   "CraftActBehavior": "Normal",
   "CraftedResultsCount": 8,
   "IsMagical": true,
-  "Tutorial" : "At an Apocethary, dwarfs can turn mana rocks into pure mana, multiplying its magical power by 8. Mana is used to construct magical objects."
+  "Tutorial" : "At an Apothecary, dwarfs can turn mana rocks into pure mana, multiplying its magical power by 8. Mana is used to construct magical objects."
 }

@@ -1694,7 +1694,7 @@ namespace DwarfCorp.GameStates
                     && item.AllowUserCrafting
                     && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) &&
                     !ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible) &&
-                    item.CraftLocation != "Apocethary")
+                    item.CraftLocation != "Apothecary")
                     .Select(data => new FlatToolTray.Icon
                     {
                         Icon = data.Icon,
@@ -1978,7 +1978,7 @@ namespace DwarfCorp.GameStates
                     CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && item.AllowUserCrafting
                     && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated)
-                    && item.CraftLocation == "Apocethary")
+                    && item.CraftLocation == "Apothecary")
                     .Select(data => new FlatToolTray.Icon
                     {
                         Icon = data.Icon,
@@ -2028,7 +2028,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Research)) && Master.Faction.OwnedObjects.Any(obj => obj.Tags.Contains("Apocethary")));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Research)) && Master.Faction.OwnedObjects.Any(obj => obj.Tags.Contains("Apothecary")));
                 },
                 ReplacementMenu = menu_potions,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu

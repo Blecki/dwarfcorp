@@ -113,7 +113,7 @@ namespace DwarfCorp
                 if (!Bounds.Intersects(BoundingBox)) return;
                 if (Children == null)
                 {
-                    Items.RemoveAll(t => Object.ReferenceEquals(t.Body, Body));
+                    Items.RemoveAll(t => t == null || Object.ReferenceEquals(t.Body, Body));
                 }
                 else
                 {
