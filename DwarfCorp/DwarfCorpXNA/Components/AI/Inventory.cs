@@ -219,6 +219,8 @@ namespace DwarfCorp
 
         public List<Body> RemoveAndCreate(ResourceAmount resources, RestockType type)
         {
+            var parentBody = GetRoot() as Body;
+            var pos = parentBody == null ? GlobalTransform.Translation : parentBody.Position;
             List<Body> toReturn = new List<Body>();
 
             if(!Remove(resources.CloneResource(), type))
@@ -229,7 +231,7 @@ namespace DwarfCorp
             for(int i = 0; i < resources.NumResources; i++)
             {
                 Body newEntity = EntityFactory.CreateEntity<Body>(resources.ResourceType + " Resource",
-                    GlobalTransform.Translation + MathFunctions.RandVector3Cube()*0.5f);
+                    pos + MathFunctions.RandVector3Cube()*0.5f);
                 toReturn.Add(newEntity);
             }
 
@@ -274,9 +276,11 @@ namespace DwarfCorp
                 }
                 resourceCounts[resource.Resource]++;
             }
-
+            var parentBody = GetRoot() as Body;
+            var myBox = GetBoundingBox();
+            var box = parentBody == null ? GetBoundingBox() : new BoundingBox(myBox.Min - myBox.Center() + parentBody.Position, myBox.Max - myBox.Center() + parentBody.Position);
             var aggregatedResources = resourceCounts.Select(c => new ResourceAmount(c.Key, c.Value));
-            var piles = EntityFactory.CreateResourcePiles(aggregatedResources, GetBoundingBox()).ToList();
+            var piles = EntityFactory.CreateResourcePiles(aggregatedResources, box).ToList();
 
             if (Attacker != null && !Attacker.IsDead)
                 foreach (var item in piles)
