@@ -429,7 +429,7 @@ namespace DwarfCorp.GameStates
             else
             {
                 bool update = MathFunctions.RandEvent(0.1f);
-                if ((SelectedEmployeeInfo.Employee == null || SelectedEmployeeInfo.Employee.IsDead) && 
+                if ((SelectedEmployeeInfo.Employee == null || SelectedEmployeeInfo.Employee.IsDead || !SelectedEmployeeInfo.Employee.Active) && 
                     Master.Faction.Minions.Count > 0)
                 {
                     SelectedEmployeeInfo.Employee = Master.Faction.Minions[0];
