@@ -183,7 +183,7 @@ namespace DwarfCorp
                 if (craftDetails != null && CraftLibrary.GetCraftable(craftDetails.CraftType).AllowRotation)
                 {
                     HandleOrientation();
-                    Player.World.ShowToolPopup(String.Format("Press {0}/{1} to rotate.", ControlSettings.Mappings.RotateObjectLeft, ControlSettings.Mappings.RotateObjectRight));
+                    Player.World.ShowTooltip(String.Format("Press {0}/{1} to rotate.", ControlSettings.Mappings.RotateObjectLeft, ControlSettings.Mappings.RotateObjectRight));
                 }
 
                 var voxelUnderMouse = Player.VoxSelector.VoxelUnderMouse;
