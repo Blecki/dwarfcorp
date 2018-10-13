@@ -582,7 +582,7 @@ namespace DwarfCorp
                 CurrentCharacterMode = CharacterMode.Idle;
             }
 
-            if (!Status.Energy.IsDissatisfied())
+            if (Status.IsAsleep && Status.Energy.IsSatisfied())
             {
                 Status.IsAsleep = false;
             }
