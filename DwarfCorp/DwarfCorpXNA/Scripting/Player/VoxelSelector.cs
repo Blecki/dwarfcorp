@@ -97,10 +97,6 @@ namespace DwarfCorp
             CurrentWidth = 0.08f;
             CurrentColor = Color.White;
             SelectionBuffer = new List<VoxelHandle>();
-            LeftPressed = LeftPressedCallback;
-            RightPressed = RightPressedCallback;
-            LeftReleased = LeftReleasedCallback;
-            RightReleased = RightReleasedCallback;
             Dragged = DraggedCallback;
             Selected = SelectedCallback;
             Enabled = true;
@@ -197,10 +193,6 @@ namespace DwarfCorp
         /// The last mouse wheel.
         /// </value>
         public int LastMouseWheel { get; set; }
-        public event OnLeftPressed LeftPressed;
-        public event OnRightPressed RightPressed;
-        public event OnLeftReleased LeftReleased;
-        public event OnRightReleased RightReleased;
         public event OnDragged Dragged;
 
         public void Update()
@@ -217,9 +209,10 @@ namespace DwarfCorp
                 return;
             }
 
+            // Prevent selection of top layer for reasons.
             if (SelectionType == VoxelSelectionType.SelectEmpty && underMouse.Coordinate.Y == VoxelConstants.ChunkSizeY - 1)
                 return;
-                        
+
             VoxelUnderMouse = underMouse;
 
             // Update the cursor light.
@@ -247,27 +240,7 @@ namespace DwarfCorp
                 return;
             }
 
-            bool altPressed = false;
-            // If the left or right ALT keys are pressed, we can adjust the height of the selection
-            // for building pits and tall walls using the mouse wheel.
-            if (keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt))
-            {
-                var change = mouse.ScrollWheelValue - LastMouseWheel;
-                BoxYOffset += (change)*0.01f;
-                int offset = (int) BoxYOffset;
-                if (offset != PrevBoxYOffsetInt)
-                {
-                    DragSound.Play(World.CursorLightPos);
-                    newVoxel = true;
-                }
-                PrevBoxYOffsetInt = offset;
-                altPressed = true;
-            }
-            else
-            {
-                PrevBoxYOffsetInt = 0;
-            }
-            LastMouseWheel = mouse.ScrollWheelValue;
+            bool altPressed = HandleAltPressed(ref mouse, keyboard, ref newVoxel);
 
             // Draw a box around the current voxel under the mouse.
             if (underMouse.IsValid && DrawVoxel)
@@ -276,15 +249,28 @@ namespace DwarfCorp
                 Drawer3D.DrawBox(box, CurrentColor, CurrentWidth, true);
             }
 
+            HandleMouseButton(mouse.LeftButton, underMouse, newVoxel, altPressed, ref isLeftPressed, InputManager.MouseButton.Left);
+            HandleMouseButton(mouse.RightButton, underMouse, newVoxel, altPressed, ref isRightPressed, InputManager.MouseButton.Right);
+        }
+
+        private void HandleMouseButton(ButtonState mouse, VoxelHandle underMouse, bool newVoxel, bool altPressed, ref bool ButtonPressed, InputManager.MouseButton Button)
+        {
             // If the left mouse button is pressed, update the slection buffer.
-            if (isLeftPressed)
+            if (ButtonPressed)
             {
                 // On release, select voxels.
-                if (mouse.LeftButton == ButtonState.Released)
+                if (mouse == ButtonState.Released)
                 {
                     ReleaseSound.Play(World.CursorLightPos);
-                    isLeftPressed = false;
-                    LeftReleasedCallback();
+                    ButtonPressed = false;
+
+                    if (SelectionBuffer.Count > 0)
+                    {
+                        var t = new List<VoxelHandle>(SelectionBuffer);
+                        SelectionBuffer.Clear();
+                        Selected.Invoke(t, Button);
+                    }
+
                     BoxYOffset = 0;
                     PrevBoxYOffsetInt = 0;
                 }
@@ -305,115 +291,71 @@ namespace DwarfCorp
 
                         // Update the selection box to account for offsets from mouse wheel.
                         if (BoxYOffset > 0)
-                        {
                             buffer.Max.Y += (int)BoxYOffset;
-                        }
                         else if (BoxYOffset < 0)
-                        {
                             buffer.Min.Y += (int)BoxYOffset;
-                        }
 
                         SelectionBuffer = Select(buffer, FirstVoxel.WorldPosition, underMouse.WorldPosition).ToList();
 
-                        if (!altPressed && Brush.CullUnseenVoxels)
+                        if (!altPressed && Brush.CullUnseenVoxels && SelectionType == VoxelSelectionType.SelectFilled)
                         {
-                            if (SelectionType == VoxelSelectionType.SelectFilled)
-                                SelectionBuffer.RemoveAll(v =>
-                                {
-                                    if (v.Equals(underMouse)) return false;
-                                    return !VoxelHelpers.DoesVoxelHaveVisibleSurface(World, v);
-                                });
+                            SelectionBuffer.RemoveAll(v =>
+                            {
+                                if (v.Equals(underMouse)) return false;
+                                if (World.PlayerFaction.Designations.IsVoxelDesignation(v, DesignationType.Put)) return false; // Treat put designations as solid.
+                                return !VoxelHelpers.DoesVoxelHaveVisibleSurface(World, v);
+                            });
                         }
 
                         if (newVoxel)
                         {
                             DragSound.Play(World.CursorLightPos, SelectionBuffer.Count / 20.0f);
-                            Dragged.Invoke(SelectionBuffer, InputManager.MouseButton.Left);
+                            Dragged.Invoke(SelectionBuffer, Button);
                         }
                     }
                 }
             }
             // If the mouse was not previously pressed, but is now pressed, then notify us of that.
-            else if (mouse.LeftButton == ButtonState.Pressed)
+            else if (mouse == ButtonState.Pressed)
             {
                 ClickSound.Play(World.CursorLightPos); ;
-                isLeftPressed = true;
+                ButtonPressed = true;
                 BoxYOffset = 0;
                 PrevBoxYOffsetInt = 0;
             }
-
-            // Case where the right mouse button is pressed (mirrors left mouse button)
-            // TODO(Break this into a function)
-            if (isRightPressed)
-            {
-                if (mouse.RightButton == ButtonState.Released)
-                {
-                    ReleaseSound.Play(World.CursorLightPos);
-                    isRightPressed = false;
-                    RightReleasedCallback();
-                    BoxYOffset = 0;
-                    PrevBoxYOffsetInt = 0;
-                }
-                else
-                {
-                    if (SelectionBuffer.Count == 0)
-                    {
-                        SelectionBuffer.Add(underMouse);
-                        FirstVoxel = underMouse;
-                    }
-                    else
-                    {
-                        SelectionBuffer.Clear();
-                        SelectionBuffer.Add(FirstVoxel);
-                        SelectionBuffer.Add(underMouse);
-                        BoundingBox buffer = GetSelectionBox();
-                        if (BoxYOffset > 0)
-                        {
-                            buffer.Max.Y += (int)BoxYOffset;
-                        }
-                        else if (BoxYOffset < 0)
-                        {
-                            buffer.Min.Y += (int)BoxYOffset;
-                        }
-
-                        SelectionBuffer = VoxelHelpers.EnumerateCoordinatesInBoundingBox(buffer)
-                            .Select(c => new VoxelHandle(Chunks.ChunkData, c))
-                            .Where(v => v.IsValid)
-                            .ToList();
-
-                        if (newVoxel)
-                        {
-                            DragSound.Play(World.CursorLightPos, SelectionBuffer.Count / 20.0f);
-                            Dragged.Invoke(SelectionBuffer, InputManager.MouseButton.Right);
-                        }
-                    }
-                }
-            }
-            else if (mouse.RightButton == ButtonState.Pressed)
-            {
-                ClickSound.Play(World.CursorLightPos);
-                RightPressedCallback();
-                BoxYOffset = 0;
-                isRightPressed = true;
-            }
         }
 
-        private bool SelectionValid(VoxelHandle voxel)
+        private bool HandleAltPressed(ref MouseState mouse, KeyboardState keyboard, ref bool newVoxel)
         {
-            if (!voxel.IsValid)
-                return false;
-
-            if (SelectionType == VoxelSelectionType.SelectFilled)
-                return !voxel.IsEmpty || !voxel.IsExplored || World.PlayerFaction.Designations.IsVoxelDesignation(voxel, DesignationType.Put);
-
-            return voxel.IsEmpty && voxel.IsExplored;
+            bool altPressed = false;
+            // If the left or right ALT keys are pressed, we can adjust the height of the selection
+            // for building pits and tall walls using the mouse wheel.
+            if (keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt))
+            {
+                var change = mouse.ScrollWheelValue - LastMouseWheel;
+                BoxYOffset += (change) * 0.01f;
+                int offset = (int)BoxYOffset;
+                if (offset != PrevBoxYOffsetInt)
+                {
+                    DragSound.Play(World.CursorLightPos);
+                    newVoxel = true;
+                }
+                PrevBoxYOffsetInt = offset;
+                altPressed = true;
+            }
+            else
+            {
+                PrevBoxYOffsetInt = 0;
+            }
+            LastMouseWheel = mouse.ScrollWheelValue;
+            return altPressed;
         }
 
         public IEnumerable<VoxelHandle> Select(BoundingBox buffer, Vector3 start, Vector3 end)
         {
             return Brush.Select(buffer, start, end, SelectionType == VoxelSelectionType.SelectFilled)
                 .Select(c => new VoxelHandle(Chunks.ChunkData, c))
-                .Where(v => SelectionValid(v));
+                .Where(v => VoxelPassesSelectionCriteria(v));
         }
 
         public void DraggedCallback(List<VoxelHandle> voxels, InputManager.MouseButton button)
@@ -450,30 +392,25 @@ namespace DwarfCorp
         public void Render()
         {
             if (SelectionBuffer.Count <= 0)
-            {
                 return;
-            }
-
+            
             BoundingBox superset = GetSelectionBox(0.1f);
 
             if (DrawBox)
             {
-                Drawer3D.DrawBox(superset, Mouse.GetState().LeftButton == ButtonState.Pressed ? SelectionColor : DeleteColor,
-              SelectionWidth, false);
+                Drawer3D.DrawBox(superset, Mouse.GetState().LeftButton == ButtonState.Pressed ? SelectionColor : DeleteColor,  SelectionWidth, false);
 
                 var screenRect = new Rectangle(0, 0, 5, 5);
                 Vector3 half = Vector3.One * 0.5f;
                 Color dotColor = Mouse.GetState().LeftButton == ButtonState.Pressed ? SelectionColor : DeleteColor;
                 dotColor.A = 90;
+
                 foreach (var v in SelectionBuffer)
                 {
                     if (!v.IsValid) continue;
 
-                    if (!v.IsExplored || ((SelectionType == VoxelSelectionType.SelectFilled && !v.IsEmpty)
-                        || (SelectionType == VoxelSelectionType.SelectEmpty && v.IsEmpty)))
-                    {
+                    if (!v.IsExplored || VoxelPassesSelectionCriteria(v))
                         Drawer2D.DrawRect(World.Camera, v.WorldPosition + half, screenRect, dotColor, Color.Transparent, 0.0f);
-                    }
                 }
             }
         }
@@ -490,55 +427,36 @@ namespace DwarfCorp
                 Graphics.Viewport,
                 150.0f,
                 SelectionType == VoxelSelectionType.SelectEmpty,
-                vox => vox.IsValid && (!vox.IsEmpty || World.PlayerFaction.Designations.IsVoxelDesignation(vox, DesignationType.Put)));
+                VoxelPassesRayFilter);
 
             if (!v.IsValid)
                 return VoxelHandle.InvalidHandle;
 
-            switch (SelectionType)
-            {
-                case VoxelSelectionType.SelectFilled:
-                    if (!v.IsEmpty || World.PlayerFaction.Designations.IsVoxelDesignation(v, DesignationType.Put))
-                        return v;
-                    return VoxelHandle.InvalidHandle;
-                case VoxelSelectionType.SelectEmpty:
-                    return v;
-            }
+            if (VoxelPassesSelectionCriteria(v))
+                return v;
 
             return VoxelHandle.InvalidHandle;
         }
 
-        public VoxelHandle LeftPressedCallback()
+        private bool VoxelPassesSelectionCriteria(VoxelHandle V)
         {
-            SelectionBuffer.Clear();
-            return GetVoxelUnderMouse();
-        }
+            if (!V.IsValid) return false;
 
-        public VoxelHandle RightPressedCallback()
-        {
-            SelectionBuffer.Clear();
-            return GetVoxelUnderMouse();
-        }
-
-        public List<VoxelHandle> LeftReleasedCallback()
-        {
-            var toReturn = new List<VoxelHandle>();
-            if (SelectionBuffer.Count > 0)
+            switch (SelectionType)
             {
-                toReturn.AddRange(SelectionBuffer);
-                SelectionBuffer.Clear();
-                Selected.Invoke(toReturn, InputManager.MouseButton.Left);
+                case VoxelSelectionType.SelectFilled:
+                    return !V.IsEmpty || World.PlayerFaction.Designations.IsVoxelDesignation(V, DesignationType.Put);
+                case VoxelSelectionType.SelectEmpty:
+                    return V.IsEmpty && V.IsExplored;
+                default:
+                    return false;
             }
-            return toReturn;
         }
 
-        public List<VoxelHandle> RightReleasedCallback()
+        private bool VoxelPassesRayFilter(VoxelHandle V)
         {
-            var toReturn = new List<VoxelHandle>();
-            toReturn.AddRange(SelectionBuffer);
-            SelectionBuffer.Clear();
-            Selected.Invoke(toReturn, InputManager.MouseButton.Right);
-            return toReturn;
+            if (!V.IsValid) return false;
+            return !V.IsEmpty || World.PlayerFaction.Designations.IsVoxelDesignation(V, DesignationType.Put);
         }
     }
 }

@@ -35,6 +35,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -45,6 +46,9 @@ namespace DwarfCorp
         public override void OnBegin()
         {
             Player.World.Tutorial("cancel-tasks");
+            Player.VoxSelector.SelectionColor = Color.Red;
+            Player.VoxSelector.DrawBox = true;
+            Player.VoxSelector.DrawVoxel = true;
         }
 
         public override void OnEnd()
@@ -82,14 +86,14 @@ namespace DwarfCorp
             }
 
             Player.VoxSelector.Enabled = Options.Voxels.CheckState;
+            Player.BodySelector.Enabled = Options.Entities.CheckState;
+            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
 
             if (Player.World.IsMouseOverGui)
                 Player.World.SetMouse(Player.World.MousePointer);
             else
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 0, 0));
-        
-            Player.BodySelector.Enabled = Options.Entities.CheckState;
-            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+
         }
 
         public override void Render(DwarfGame game, DwarfTime time)
