@@ -64,6 +64,7 @@ namespace DwarfCorp
         }
         public Shadow() : base()
         {
+
         }
 
         public Shadow(ComponentManager Manager) :

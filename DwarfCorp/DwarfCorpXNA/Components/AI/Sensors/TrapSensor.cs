@@ -49,12 +49,13 @@ namespace DwarfCorp
 
         public TrapSensor()
         {
-            
+            UpdateRate = 10;
         }
 
         public TrapSensor(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             base(manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {
+            UpdateRate = 10;
             OnSensed += TrapSensor_OnSensed;
             Tags.Add("Sensor");
             FireTimer = new Timer(0.5f, false);

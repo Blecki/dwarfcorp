@@ -48,7 +48,7 @@ namespace DwarfCorp
 
         public Sensor()
         {
-            
+            UpdateRate = 10;
         }
 
         public Sensor(
@@ -59,6 +59,7 @@ namespace DwarfCorp
             Vector3 boundingBoxPos) :
             base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {
+            UpdateRate = 10;
             Tags.Add("Sensor");
             FireTimer = new Timer(1.0f, false);
         }

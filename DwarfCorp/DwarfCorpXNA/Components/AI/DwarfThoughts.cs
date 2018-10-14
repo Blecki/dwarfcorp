@@ -50,6 +50,7 @@ namespace DwarfCorp
 
         public DwarfThoughts()
         {
+            UpdateRate = 100;
         }
 
         public DwarfThoughts(
@@ -58,6 +59,7 @@ namespace DwarfCorp
             base(name, Manager)
         {
             Thoughts = new List<Thought>();
+            UpdateRate = 100;
         }
 
         private Creature _cachedCreature = null;

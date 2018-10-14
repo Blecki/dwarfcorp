@@ -39,7 +39,7 @@ namespace DwarfCorp
                 ParentID = value != null ? value.GlobalID : ComponentManager.InvalidID;
             }
         }
-
+        public int UpdateRate = 1;
         public Flag Flags = 0;
         public List<string> Tags { get; set; }
         public List<uint> SerializableChildren;

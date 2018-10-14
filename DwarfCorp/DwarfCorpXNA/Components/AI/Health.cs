@@ -73,6 +73,7 @@ namespace DwarfCorp
 
         public Health()
         {
+            UpdateRate = 100;
             InitializeResistance();
         }
 
@@ -91,6 +92,7 @@ namespace DwarfCorp
         public Health(ComponentManager manager, string name, float maxHealth, float minHealth, float currentHp) :
             base(name, manager)
         {
+            UpdateRate = 100;
             InitializeResistance();
             MaxHealth = maxHealth;
             MinHealth = minHealth;

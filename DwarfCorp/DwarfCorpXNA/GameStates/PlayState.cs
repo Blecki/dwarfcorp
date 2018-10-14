@@ -1302,11 +1302,12 @@ namespace DwarfCorp.GameStates
 
             var icon_BuildRoom = new FlatToolTray.Icon
             {
+                Icon = new TileReference("tool-icons", 37),
                 EnabledTextColor = Vector4.One,
                 Text = "Zone",
-                Tooltip = "Designate zones/areas",
+                Tooltip = "Designate zones/areas.",
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 KeepChildVisible = true,
                 ReplacementMenu = menu_RoomTypes,
                 Tag = "build room",
@@ -1425,12 +1426,12 @@ namespace DwarfCorp.GameStates
 
             var icon_BuildWall = new FlatToolTray.Icon
             {
-                Icon = null,
+                Icon = new TileReference("tool-icons", 24),
                 Font = "font8",
                 KeepChildVisible = true,
                 ExpandChildWhenDisabled = true,
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 Tooltip = "Place blocks",
                 Text = "Block",
                 EnabledTextColor = Color.White.ToVector4(),
@@ -1440,12 +1441,12 @@ namespace DwarfCorp.GameStates
 
             var icon_BuildFloor = new FlatToolTray.Icon
             {
-                Icon = null,
+                Icon = new TileReference("tool-icons", 25),
                 Font = "font8",
                 KeepChildVisible = true,
                 ExpandChildWhenDisabled = true,
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 Tooltip = "Place floor",
                 Text = "Floor",
                 EnabledTextColor = Color.White.ToVector4(),
@@ -1662,12 +1663,12 @@ namespace DwarfCorp.GameStates
 
             var icon_BuildCraft = new FlatToolTray.Icon
             {
-                Icon = null,
-                Text = "Object",
+                Icon = new TileReference("tool-icons", 39),
+                Text = "Objects",
                 EnabledTextColor = Vector4.One,
-                Tooltip = "Craft objects",
+                Tooltip = "Craft objects and furniture.",
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 KeepChildVisible = true,
                 MinimumSize = new Point(128, 32),
                 ReplacementMenu = menu_CraftTypes,
@@ -1737,11 +1738,12 @@ namespace DwarfCorp.GameStates
 
             var icon_BuildResource = new FlatToolTray.Icon
             {
-                Text = "Res.",
-                Tooltip = "Resource",
+                Text = "Goods",
+                Tooltip = "Craft tradeable resources.",
+                Icon = new TileReference("tool-icons", 38),
                 EnabledTextColor = Vector4.One,
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 KeepChildVisible = true,
                 ReplacementMenu = menu_ResourceTypes,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
@@ -1821,9 +1823,10 @@ namespace DwarfCorp.GameStates
             var icon_RailTool = new FlatToolTray.Icon
             {
                 Text = "Rail",
+                Icon = new TileReference("tool-icons", 23),
                 EnabledTextColor = Vector4.One,
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 Tooltip = "Rail",
                 KeepChildVisible = true,
                 ReplacementMenu = menu_Rail,
