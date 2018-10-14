@@ -84,7 +84,7 @@
 	{
 		"Name": "build Stockpile",
 		"Title": "Stockpiles",
-		"Text": "Left click and drag a set of blocks to build a stockpile. Stockpiles are free and increase the number of goods your dwarf corporation can have in storage. Dwarves carry resources to stockpiles to store them, and grab resources from stockpiles when they\\'re needed. Stockpiles automatically redistribute goods when necessary. You can see what is in your stockpiles at the top of the screen. The larger the stockpile, the more goods that can be stored there."
+		"Text": "Left click and drag a set of blocks to build a stockpile. Stockpiles are free and increase the number of goods your dwarf corporation can have in storage. Dwarves carry resources to stockpiles to store them, and grab resources from stockpiles when they\'re needed. Stockpiles automatically redistribute goods when necessary. You can see what is in your stockpiles at the top of the screen. The larger the stockpile, the more goods that can be stored there."
 	},
 
 	{
@@ -131,7 +131,7 @@
 	{
 		"Name": "death",
 		"Title": "Death",
-		"Text": "One of your employees died! That\\'s bad news. When employees die, their coworkers may become depressed. Employee death may also result in your stock crashing."
+		"Text": "One of your employees died! That\'s bad news. When employees die, their coworkers may become depressed. Employee death may also result in your stock crashing."
 	},
 	{
 		"Name": "pay",
