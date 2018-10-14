@@ -22,30 +22,6 @@ namespace DwarfCorp
         /// <param name="button">The button depressed.</param>
         public delegate void OnDragged(List<VoxelHandle> voxels, InputManager.MouseButton button);
 
-        /// <summary>
-        /// Called whenever the left mouse button is pressed
-        /// </summary>
-        /// <returns>The voxel under the mouse</returns>
-        public delegate VoxelHandle OnLeftPressed();
-
-        /// <summary>
-        /// Called whenever the left mouse button is released.
-        /// </summary>
-        /// <returns>A list of voxels that were selected</returns>
-        public delegate List<VoxelHandle> OnLeftReleased();
-
-        /// <summary>
-        /// Called whenever the right mouse button is pressed.
-        /// </summary>
-        /// <returns>The voxel under the mouse</returns>
-        public delegate VoxelHandle OnRightPressed();
-
-        /// <summary>
-        /// Called whenever the right mouse button is released
-        /// </summary>
-        /// <returns>List of voxels selected.</returns>
-        public delegate List<VoxelHandle> OnRightReleased();
-
         public void Clear()
         {
             SelectionBuffer.Clear();
@@ -200,66 +176,61 @@ namespace DwarfCorp
             MouseState mouse = Mouse.GetState();
             KeyboardState keyboard = Keyboard.GetState();
 
-            var underMouse = GetVoxelUnderMouse();
-            // Keep track of whether a new voxel has been selected.
-            bool newVoxel = underMouse.IsValid && underMouse != VoxelUnderMouse;
+            var currentHoverVoxel = GetVoxelUnderMouse();
 
-            if (!underMouse.IsValid)
-            {
-                return;
-            }
-
-            // Prevent selection of top layer for reasons.
-            if (SelectionType == VoxelSelectionType.SelectEmpty && underMouse.Coordinate.Y == VoxelConstants.ChunkSizeY - 1)
+            if (!currentHoverVoxel.IsValid)
                 return;
 
-            VoxelUnderMouse = underMouse;
+            bool isNewVoxelUnderMouse = currentHoverVoxel.IsValid && currentHoverVoxel != VoxelUnderMouse;
+            
+            // Prevent selection of top layer because building here causes graphical glitches.
+            if (SelectionType == VoxelSelectionType.SelectEmpty && currentHoverVoxel.Coordinate.Y == VoxelConstants.ChunkSizeY - 1)
+                return;
 
-            // Update the cursor light.
-            World.CursorLightPos = underMouse.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
+            VoxelUnderMouse = currentHoverVoxel;
+            World.CursorLightPos = currentHoverVoxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
+
+            if (!Enabled)
+                return;
 
             // Get the type of the voxel and display it to the player.
-            if (Enabled && !underMouse.IsEmpty && underMouse.IsExplored)
+            if (Enabled && !currentHoverVoxel.IsEmpty && currentHoverVoxel.IsExplored)
             {
-                string info = underMouse.Type.Name;
+                string info = currentHoverVoxel.Type.Name;
 
                 // If it belongs to a room, display that information.
-                if (World.PlayerFaction.RoomBuilder.IsInRoom(underMouse))
+                if (World.PlayerFaction.RoomBuilder.IsInRoom(currentHoverVoxel))
                 {
-                    Room room = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(underMouse);
+                    Room room = World.PlayerFaction.RoomBuilder.GetMostLikelyRoom(currentHoverVoxel);
 
                     if (room != null)
                         info += " (" + room.ID + ")";
                 }
+
                 World.ShowInfo(info);
             }
 
-            // Do nothing if not enabled.
-            if (!Enabled)
-            {
-                return;
-            }
 
-            bool altPressed = HandleAltPressed(ref mouse, keyboard, ref newVoxel);
+            bool altPressed = HandleAltPressed(mouse, keyboard, ref isNewVoxelUnderMouse);
 
             // Draw a box around the current voxel under the mouse.
-            if (underMouse.IsValid && DrawVoxel)
+            if (currentHoverVoxel.IsValid && DrawVoxel)
             {
-                BoundingBox box = underMouse.GetBoundingBox().Expand(0.05f);
+                BoundingBox box = currentHoverVoxel.GetBoundingBox().Expand(0.05f);
                 Drawer3D.DrawBox(box, CurrentColor, CurrentWidth, true);
             }
 
-            HandleMouseButton(mouse.LeftButton, underMouse, newVoxel, altPressed, ref isLeftPressed, InputManager.MouseButton.Left);
-            HandleMouseButton(mouse.RightButton, underMouse, newVoxel, altPressed, ref isRightPressed, InputManager.MouseButton.Right);
+            HandleMouseButton(mouse.LeftButton, currentHoverVoxel, isNewVoxelUnderMouse, altPressed, ref isLeftPressed, InputManager.MouseButton.Left);
+            HandleMouseButton(mouse.RightButton, currentHoverVoxel, isNewVoxelUnderMouse, altPressed, ref isRightPressed, InputManager.MouseButton.Right);
         }
 
-        private void HandleMouseButton(ButtonState mouse, VoxelHandle underMouse, bool newVoxel, bool altPressed, ref bool ButtonPressed, InputManager.MouseButton Button)
+        private void HandleMouseButton(ButtonState ButtonState, VoxelHandle underMouse, bool newVoxel, bool altPressed, ref bool ButtonPressed, InputManager.MouseButton Button)
         {
             // If the left mouse button is pressed, update the slection buffer.
             if (ButtonPressed)
             {
                 // On release, select voxels.
-                if (mouse == ButtonState.Released)
+                if (ButtonState == ButtonState.Released)
                 {
                     ReleaseSound.Play(World.CursorLightPos);
                     ButtonPressed = false;
@@ -316,7 +287,7 @@ namespace DwarfCorp
                 }
             }
             // If the mouse was not previously pressed, but is now pressed, then notify us of that.
-            else if (mouse == ButtonState.Pressed)
+            else if (ButtonState == ButtonState.Pressed)
             {
                 ClickSound.Play(World.CursorLightPos); ;
                 ButtonPressed = true;
@@ -325,11 +296,11 @@ namespace DwarfCorp
             }
         }
 
-        private bool HandleAltPressed(ref MouseState mouse, KeyboardState keyboard, ref bool newVoxel)
+        private bool HandleAltPressed(MouseState mouse, KeyboardState keyboard, ref bool newVoxel)
         {
             bool altPressed = false;
-            // If the left or right ALT keys are pressed, we can adjust the height of the selection
-            // for building pits and tall walls using the mouse wheel.
+            
+            // If the left or right ALT keys are pressed, we can adjust the height of the selection for building pits and tall walls using the mouse wheel.
             if (keyboard.IsKeyDown(Keys.LeftAlt) || keyboard.IsKeyDown(Keys.RightAlt))
             {
                 var change = mouse.ScrollWheelValue - LastMouseWheel;
@@ -347,7 +318,9 @@ namespace DwarfCorp
             {
                 PrevBoxYOffsetInt = 0;
             }
+
             LastMouseWheel = mouse.ScrollWheelValue;
+
             return altPressed;
         }
 
