@@ -54,7 +54,7 @@ namespace DwarfCorp
 
         public OrbitCamera Camera;
         public ComponentManager.ComponentSaveData Components;
-        public List<Goals.Goal> Goals;
+        //public List<Goals.Goal> Goals;
         public Tutorial.TutorialSaveData TutorialSaveData;
         public Diplomacy Diplomacy;
         public FactionLibrary Factions;
@@ -70,7 +70,7 @@ namespace DwarfCorp
             {
                 Camera = World.Camera,
                 Components = World.ComponentManager.GetSaveData(),
-                Goals = World.GoalManager.EnumerateGoals().ToList(),
+                //Goals = World.GoalManager.EnumerateGoals().ToList(),
                 TutorialSaveData = World.TutorialManager.GetSaveData(),
                 Diplomacy = World.Diplomacy,
                 Factions = World.Factions,

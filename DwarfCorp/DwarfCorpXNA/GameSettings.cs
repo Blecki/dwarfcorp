@@ -259,7 +259,7 @@ namespace DwarfCorp
             [AutoResetFloat(-0.2f)] public float Boredom_Walk = -0.2f;
 
             public int MaxVoxelDesignations = 1024;
-            public int EntityUpdateRate = 4096;
+            public uint EntityUpdateRate = 4096;
             public Settings Clone()
             {
                 return MemberwiseClone() as Settings;

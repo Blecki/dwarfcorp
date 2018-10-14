@@ -131,6 +131,13 @@ namespace DwarfCorp
                 Player.World.SetMouse(Player.World.MousePointer);
             else
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+
+            MouseState mouse = Mouse.GetState();
+            if (mouse.RightButton == ButtonState.Pressed)
+                Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+            else
+                Player.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+
         }
 
         public override void Render(DwarfGame game, DwarfTime time)

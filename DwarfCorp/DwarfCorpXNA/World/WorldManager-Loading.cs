@@ -309,7 +309,7 @@ namespace DwarfCorp
                 Diplomacy = gameFile.PlayData.Diplomacy;
 
                 GoalManager = new Goals.GoalManager();
-                GoalManager.Initialize(gameFile.PlayData.Goals);
+                GoalManager.Initialize(new List<Goals.Goal>());// gameFile.PlayData.Goals);
 
                 TutorialManager = new Tutorial.TutorialManager();
                 TutorialManager.SetFromSaveData(gameFile.PlayData.TutorialSaveData);

@@ -484,10 +484,15 @@ namespace DwarfCorp
 
             foreach(var minion in Faction.Minions)
             {
+                if (minion == null) throw new InvalidProgramException("Null minion?");
+                if (minion.Status == null) throw new InvalidProgramException("Minion has null status?");
+
                 if (minion.Status.IsAsleep)
                     continue;
+
                 if (minion.CurrentTask == null)
                     continue;
+
                 minion.ResetPositionConstraint();
             }
         }

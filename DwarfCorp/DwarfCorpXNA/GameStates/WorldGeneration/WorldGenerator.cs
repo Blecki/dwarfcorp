@@ -198,24 +198,32 @@ namespace DwarfCorp.GameStates
         {
             Rectangle spawnRect = GetSpawnRectangle();
             List<Faction> toReturn = new List<Faction>();
-            for (int x = spawnRect.X; x < spawnRect.X + spawnRect.Width; x++)
+
+            try
             {
-                for (int y = spawnRect.Y; y < spawnRect.Y + spawnRect.Height; y++)
+                for (int x = spawnRect.X; x < spawnRect.X + spawnRect.Width; x++)
                 {
-                    byte factionIdx = Overworld.Map[x, y].Faction;
-
-                    if (factionIdx > 0 && factionIdx <= NativeCivilizations.Count)
+                    for (int y = spawnRect.Y; y < spawnRect.Y + spawnRect.Height; y++)
                     {
-                        Faction faction = NativeCivilizations[factionIdx - 1];
+                        byte factionIdx = Overworld.Map[x, y].Faction;
 
-                        if (!toReturn.Contains(faction))
+                        if (factionIdx > 0 && factionIdx <= NativeCivilizations.Count)
                         {
-                            toReturn.Add(faction);
+                            Faction faction = NativeCivilizations[factionIdx - 1];
+
+                            if (!toReturn.Contains(faction))
+                                toReturn.Add(faction);
+
                         }
-                        
                     }
                 }
             }
+            catch (IndexOutOfRangeException)
+            {
+                // Not sure how this is possible - it almost has to be that the spawnrect is somehow outside the overworld. 
+                // So, we'll just give up. Worst case is the land defaults to 'unclaimed'.
+            }
+
             return toReturn;
         }
                 
