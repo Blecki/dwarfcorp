@@ -39,6 +39,7 @@ using DwarfCorp.Gui.Widgets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
@@ -48,14 +49,22 @@ namespace DwarfCorp
     /// </summary>
     public class BuildZoneTool : PlayerTool
     {
+        private DestroyZoneTool DestroyZoneTool; // I should probably be fired for this.
+
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            Player.Faction.RoomBuilder.VoxelsSelected(voxels, button);
+            if (button == InputManager.MouseButton.Left)
+                Player.Faction.RoomBuilder.VoxelsSelected(voxels, button);
+            else
+                DestroyZoneTool.OnVoxelsSelected(voxels, button);
         }
 
         public override void OnBegin()
         {
             Player.Faction.RoomBuilder.OnEnter();
+
+            if (DestroyZoneTool == null)
+                DestroyZoneTool = new DestroyZoneTool() { Player = this.Player };
         }
 
         public override void OnEnd()
@@ -72,29 +81,41 @@ namespace DwarfCorp
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
-            if (Player.IsCameraRotationModeActive())
+            MouseState mouse = Mouse.GetState();
+            if (mouse.RightButton == ButtonState.Pressed)
+                DestroyZoneTool.Update(game, time);
+            else
             {
-                Player.VoxSelector.Enabled = false;
-                Player.World.SetMouse(null);
-                Player.BodySelector.Enabled = false;
-                return;
-            }
+                if (Player.IsCameraRotationModeActive())
+                {
+                    Player.VoxSelector.Enabled = false;
+                    Player.World.SetMouse(null);
+                    Player.BodySelector.Enabled = false;
+                    return;
+                }
 
                 Player.VoxSelector.Enabled = true;
                 Player.BodySelector.Enabled = false;
-            Player.VoxSelector.DrawBox = true;
-            Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+                Player.VoxSelector.DrawBox = true;
+                Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
 
                 if (Player.World.IsMouseOverGui)
                     Player.World.SetMouse(Player.World.MousePointer);
                 else
                     Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+            }
         }
 
         // Todo: Why is the graphics device passed in when we have a perfectly good global we're using instead?
         public override void Render(DwarfGame game, DwarfTime time)
         {
-            Player.Faction.RoomBuilder.Render(time, GameState.Game.GraphicsDevice);
+            MouseState mouse = Mouse.GetState();
+            if (mouse.RightButton == ButtonState.Pressed)
+                DestroyZoneTool.Render(game, time);
+            else
+            {
+                Player.Faction.RoomBuilder.Render(time, GameState.Game.GraphicsDevice);
+            }
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
@@ -104,7 +125,13 @@ namespace DwarfCorp
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
-            Player.Faction.RoomBuilder.OnVoxelsDragged(voxels, button);
+            MouseState mouse = Mouse.GetState();
+            if (mouse.RightButton == ButtonState.Pressed)
+                DestroyZoneTool.OnVoxelsDragged(voxels, button);
+            else
+            {
+                Player.Faction.RoomBuilder.OnVoxelsDragged(voxels, button);
+            }
         }
     }
 }

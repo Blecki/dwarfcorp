@@ -176,17 +176,15 @@ namespace DwarfCorp
         {
             if (!Components.ContainsKey(component.GlobalID))
                 return;
+
             if (_componentList == null)
-            {
                 _componentList = Components.Values.ToList();
-            }
+
             _componentList.Remove(component);
             Components.Remove(component.GlobalID);
 
             if (component is Body)
-            {
                 World.OctTree.Remove((component as Body), (component as Body).GetBoundingBox());
-            }
 
             if (component is MinimapIcon)
                 MinimapIcons.Remove(component as MinimapIcon);
@@ -204,30 +202,33 @@ namespace DwarfCorp
             }
 
             Components[component.GlobalID] = component;
+
             if (_componentList == null)
-            {
                 _componentList = Components.Values.ToList();
-            }
+
             _componentList.Add(component);
+
             if (component is MinimapIcon)
                 MinimapIcons.Add(component as MinimapIcon);
         }
-        public int k = 0;
-        private List<GameComponent> _componentList = null;
+
+        public uint k = 0;
+        private List<GameComponent> _componentList = null; // Why are we keeping this list twice????
 
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             PerformanceMonitor.PushFrame("Component Update");
             if (_componentList == null)
-            {
                 _componentList = Components.Values.ToList();
-            }
-            for (int j = 0; j < Math.Min(GameSettings.Default.EntityUpdateRate, _componentList.Count); j++)
+
+            for (uint j = 0; j < Math.Min(GameSettings.Default.EntityUpdateRate, _componentList.Count); j++)
             {
-                int c = (k + j) % _componentList.Count;
-                _componentList[c].Update(gameTime, chunks, camera);
+                var c = (k + j) % (uint)_componentList.Count;
+                _componentList[(int)c].Update(gameTime, chunks, camera);
             }
-            k += GameSettings.Default.EntityUpdateRate;
+
+            k += (uint)Math.Min(GameSettings.Default.EntityUpdateRate, _componentList.Count);
+
             /*
             foreach (var component in Components.Values)
                 component.Update(gameTime, chunks, camera);

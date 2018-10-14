@@ -228,10 +228,11 @@ namespace DwarfCorp
                     }
 
                     // Fill from the top height down to the bottom.
-                    for (int y = h - 1; y < averageHeight; y++)
+                    for (int y = Math.Min(0, h - 1); y < averageHeight && y < VoxelConstants.ChunkSizeY; y++)
                     {
                         var v = new VoxelHandle(baseVoxel.Chunk, 
                             new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));
+                        if (!v.IsValid) throw new InvalidProgramException("Voxel was invalid while creating a new game's initial zones. This should not happen.");
 
                         v.RawSetType(VoxelLibrary.GetVoxelType("Scaffold"));
 
