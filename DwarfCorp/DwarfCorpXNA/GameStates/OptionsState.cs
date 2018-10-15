@@ -29,6 +29,8 @@ namespace DwarfCorp.GameStates
         private CheckBox EdgeScrolling;
         private CheckBox FollowSurface;
         private CheckBox FogOfWar;
+        private CheckBox AutoFarming;
+        private CheckBox AutoDigging;
         private CheckBox PlayIntro;
         private CheckBox AllowReporting;
         private ComboBox GuiScale;
@@ -354,6 +356,22 @@ namespace DwarfCorp.GameStates
             {
                 Text = "Fog Of War",
                 Tooltip = "When checked, unexplored tiles underground will be invisible.",
+                OnCheckStateChange = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop
+            }) as CheckBox;
+
+            AutoDigging = rightPanel.AddChild(new CheckBox
+            {
+                Text = "Auto-digging",
+                Tooltip = "When checked, dwarfs will automatically dig to get out of tricky situations.",
+                OnCheckStateChange = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop
+            }) as CheckBox;
+
+            AutoFarming = rightPanel.AddChild(new CheckBox
+            {
+                Text = "Auto-farming",
+                Tooltip = "When checked, dwarfs will automatically harvest plants in farms and plant new seeds.",
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
@@ -894,6 +912,8 @@ namespace DwarfCorp.GameStates
             toReturn.EnableEdgeScroll = this.EdgeScrolling.CheckState;
             toReturn.CameraFollowSurface = this.FollowSurface.CheckState;
             toReturn.FogofWar = this.FogOfWar.CheckState;
+            toReturn.AllowAutoDigging = this.AutoDigging.CheckState;
+            toReturn.AllowAutoFarming = this.AutoFarming.CheckState;
             toReturn.InvertZoom = this.InvertZoom.CheckState;
             toReturn.ZoomCameraTowardMouse = this.ZoomTowardMouse.CheckState;
             toReturn.DisplayIntro = this.PlayIntro.CheckState;
@@ -1046,6 +1066,8 @@ namespace DwarfCorp.GameStates
             this.EdgeScrolling.CheckState = GameSettings.Default.EnableEdgeScroll;
             this.FollowSurface.CheckState = GameSettings.Default.CameraFollowSurface;
             this.FogOfWar.CheckState = GameSettings.Default.FogofWar;
+            this.AutoFarming.CheckState = GameSettings.Default.AllowAutoFarming;
+            this.AutoDigging.CheckState = GameSettings.Default.AllowAutoDigging;
             this.InvertZoom.CheckState = GameSettings.Default.InvertZoom;
             this.ZoomTowardMouse.CheckState = GameSettings.Default.ZoomCameraTowardMouse;
             this.PlayIntro.CheckState = GameSettings.Default.DisplayIntro;
