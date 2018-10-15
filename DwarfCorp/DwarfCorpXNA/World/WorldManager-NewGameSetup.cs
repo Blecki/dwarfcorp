@@ -227,6 +227,7 @@ namespace DwarfCorp
                         }
                     }
 
+                    bool encounteredFilled = false;
                     // Fill from the top height down to the bottom.
                     for (int y = Math.Min(0, h - 1); y < averageHeight && y < VoxelConstants.ChunkSizeY; y++)
                     {
@@ -252,7 +253,7 @@ namespace DwarfCorp
                             }
                         }
 
-                        if (isSide)
+                        if (isSide && !encounteredFilled)
                         {
                             var ladderPos = new Vector3(worldPos.X, y, worldPos.Z) + offset +
                                 Vector3.One * 0.5f;
@@ -264,6 +265,10 @@ namespace DwarfCorp
                                 Master.Faction.OwnedObjects.Add(ladder);
                                 ladder.Tags.Add("Moveable");
                                 ladder.Tags.Add("Deconstructable");
+                            }
+                            else
+                            {
+                                encounteredFilled = true;
                             }
 
                         }

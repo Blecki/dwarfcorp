@@ -197,6 +197,11 @@ namespace DwarfCorp
                 yield break;
             Vector3 target = Path[0].SourceVoxel.WorldPosition + half + RandomPositionOffsets[0];
             Matrix transform = Agent.Physics.LocalTransform;
+            if ((target - Agent.Physics.Position).Length() > 4.0f)
+            {
+                yield return Act.Status.Fail;
+                yield break;
+            }
             do
             {
                 transform.Translation = target * 0.15f + transform.Translation * 0.85f;
