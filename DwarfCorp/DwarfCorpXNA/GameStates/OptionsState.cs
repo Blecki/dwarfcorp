@@ -117,12 +117,18 @@ namespace DwarfCorp.GameStates
                 {
                     Rect = rect,
                     Padding = new Margin(4,4,4,4),
-                    Transparent = true,
                     MinimumSize = new Point(640, 480),
-                    Font = "font10"
-                });
+                    Font = "font10",
+                    Background = new TileReference("basic", 0),
+                    BackgroundColor = new Vector4(0, 0, 0, 0.5f),
+            });
+            var topbar = MainPanel.AddChild(new Widget()
+            {
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(0, 36)
+            });
 
-            CloseButton = MainPanel.AddChild(new Gui.Widgets.Button
+            CloseButton = topbar.AddChild(new Gui.Widgets.Button
             {
                 Text = "Close",
                 Font = "font16",
@@ -158,10 +164,10 @@ namespace DwarfCorp.GameStates
                         }
                     }
                 },
-                AutoLayout = AutoLayout.FloatBottomRight
+                AutoLayout = AutoLayout.FloatTopLeft
             });
 
-            MainPanel.AddChild(new Gui.Widgets.Button
+            topbar.AddChild(new Gui.Widgets.Button
             {
                 Text = "@options-apply",
                 Font = "font16",
@@ -172,8 +178,7 @@ namespace DwarfCorp.GameStates
                 {
                     ConfirmSettings();
                 },
-                AutoLayout = AutoLayout.FloatBottomRight,
-                OnLayout = s => s.Rect.X -= 128 // Hack to keep it from floating over the other button.
+                AutoLayout = AutoLayout.FloatTopRight
             });
 
             TabPanel = MainPanel.AddChild(new Gui.Widgets.TabPanel
