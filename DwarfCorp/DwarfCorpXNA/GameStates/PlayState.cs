@@ -501,6 +501,13 @@ namespace DwarfCorp.GameStates
                     MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
 
                 World.Render(gameTime);
+                if (GuiRoot.RenderData.RealScreen.Width != GuiRoot.RenderData.Device.Viewport.Width || GuiRoot.RenderData.RealScreen.Height != GuiRoot.RenderData.Device.Viewport.Height)
+                {
+                    GuiRoot.RenderData.CalculateScreenSize();
+                    GuiRoot.RootItem.Rect = GuiRoot.RenderData.VirtualScreen;
+                    GuiRoot.ResetGui();
+                    CreateGUIComponents();
+                }
 
                 if (Game.StateManager.CurrentState == this)
                 {

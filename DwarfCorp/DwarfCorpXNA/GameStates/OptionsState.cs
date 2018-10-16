@@ -87,7 +87,7 @@ namespace DwarfCorp.GameStates
 
             DisplayModes = new Dictionary<string, DisplayMode>();
             foreach (var displayMode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Where(dm =>
-                dm.Format == SurfaceFormat.Color && dm.Height >= 720))
+                dm.Format == SurfaceFormat.Color && dm.Width >= 801))
                 DisplayModes.Add(string.Format("{0} x {1}", displayMode.Width, displayMode.Height), displayMode);
 
             RebuildGui();
