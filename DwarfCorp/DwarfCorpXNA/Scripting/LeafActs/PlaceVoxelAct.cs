@@ -140,6 +140,7 @@ namespace DwarfCorp
 
         private void PlaceVoxel(VoxelHandle Vox, VoxelType Type, WorldManager World)
         {
+            Vox.IsPlayerBuilt = true;
             Vox.Type = Type;
             Vox.QuickSetLiquid(LiquidType.None, 0);
 

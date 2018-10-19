@@ -176,7 +176,21 @@ namespace DwarfCorp
         }
 
         public CreatureAI Parent;
-        
+
+        private bool _isDwarf = false;
+        private bool _checkedDwarf = false;
+        public bool IsDwarf
+        {
+            get
+            {
+                if (_checkedDwarf)
+                    return _isDwarf;
+                _isDwarf = Parent.Faction == Parent.World.PlayerFaction;
+                _checkedDwarf = true;
+                return _isDwarf;
+            }
+        }
+
         /// <summary> The creature associated with this AI </summary>
         [JsonIgnore]
         public Creature Creature { get { return Parent.Creature; } }
@@ -722,7 +736,7 @@ namespace DwarfCorp
                 int dy = 0;
                 int dz = 0;
                 VoxelHandle neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty && !neighbor.IsPlayerBuilt)
+                if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
                     {
@@ -736,7 +750,7 @@ namespace DwarfCorp
                 dy = 0;
                 dz = 0;
                 neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty && !neighbor.IsPlayerBuilt)
+                if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
                     {
@@ -750,7 +764,7 @@ namespace DwarfCorp
                 dy = 0;
                 dz = 1;
                 neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty && !neighbor.IsPlayerBuilt)
+                if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
                     {
@@ -764,7 +778,7 @@ namespace DwarfCorp
                 dy = 0;
                 dz = -1;
                 neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty && !neighbor.IsPlayerBuilt)
+                if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
                     {
@@ -778,7 +792,7 @@ namespace DwarfCorp
                 dy = 1;
                 dz = 0;
                 neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty && !neighbor.IsPlayerBuilt)
+                if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
                     {
@@ -792,7 +806,7 @@ namespace DwarfCorp
                 dy = -1;
                 dz = 0;
                 neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
-                if (neighbor.IsValid && !neighbor.IsEmpty && !neighbor.IsPlayerBuilt)
+                if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
                     {
