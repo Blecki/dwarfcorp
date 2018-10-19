@@ -236,7 +236,7 @@ namespace DwarfCorp
                         if (!v.IsValid) throw new InvalidProgramException("Voxel was invalid while creating a new game's initial zones. This should not happen.");
 
                         v.RawSetType(VoxelLibrary.GetVoxelType("Scaffold"));
-
+                        v.IsPlayerBuilt = true;
                         v.QuickSetLiquid(LiquidType.None, 0);
 
                         if (y == averageHeight - 1)
