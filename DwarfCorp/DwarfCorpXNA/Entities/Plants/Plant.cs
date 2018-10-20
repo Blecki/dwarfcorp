@@ -125,13 +125,15 @@ namespace DwarfCorp
                         RequiredResources = Farm.RequiredResources
                     };
 
-                    var task = new PlantTask(farmTile)
+                    if (GameSettings.Default.AllowAutoFarming)
                     {
-                        Plant = Farm.SeedResourceType,
-                        RequiredResources = Farm.RequiredResources
-                    };
-
-                    World.Master.TaskManager.AddTask(task);
+                        var task = new PlantTask(farmTile)
+                        {
+                            Plant = Farm.SeedResourceType,
+                            RequiredResources = Farm.RequiredResources
+                        };
+                        World.Master.TaskManager.AddTask(task);
+                    }
                 }
             }
             base.Die();

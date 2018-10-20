@@ -77,6 +77,13 @@ namespace DwarfCorp
                             if (existingDesignation != null)
                                 Player.TaskManager.CancelTask(existingDesignation.Task);
 
+                            var above = VoxelHelpers.GetVoxelAbove(r);
+
+                            if (above.IsValid && above.LiquidType != LiquidType.None)
+                            {
+                                continue;
+                            }
+
                             assignments.Add(new BuildVoxelTask(r, VoxelLibrary.GetVoxelType(CurrentVoxelType).Name));
                         }
 

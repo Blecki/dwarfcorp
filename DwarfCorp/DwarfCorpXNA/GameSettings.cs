@@ -249,6 +249,8 @@ namespace DwarfCorp
             public int ConsoleTextSize = 2;
             public float HoursUnhappyBeforeQuitting = 4.0f;
             public ColorSettings Colors = new ColorSettings();
+            public bool AllowAutoDigging = true;
+            public bool AllowAutoFarming = true;
 
             [AutoResetFloat(-10.0f)] public float Boredom_Gamble = -10.0f;
             [AutoResetFloat(0.1f)] public float Boredom_NormalTask = 0.1f;

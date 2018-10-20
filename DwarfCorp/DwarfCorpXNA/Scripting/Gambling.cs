@@ -16,7 +16,7 @@ namespace DwarfCorp.Scripting
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (agent.IsDead || agent.Status.Money < 10.0m || agent.World.Master.GamblingState.Participants.Count > 4)
+            if (agent.IsAsleep || agent.IsDead || agent.Status.Money < 10.0m || agent.World.Master.GamblingState.Participants.Count > 4)
             {
                 return Feasibility.Infeasible;
             }

@@ -124,6 +124,7 @@ namespace BloomPostprocess
 
         public void ValidateBuffers()
         {
+            CheckForDisposal();
             // Look up the resolution and format of our main backbuffer.
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
             SurfaceFormat format = pp.BackBufferFormat;
@@ -165,6 +166,17 @@ namespace BloomPostprocess
             if(Visible)
             {
                 GraphicsDevice.SetRenderTarget(sceneRenderTarget);
+            }
+        }
+
+        public void CheckForDisposal()
+        {
+            if (bloomCombineEffect.IsDisposed || bloomCombineEffect.GraphicsDevice.IsDisposed || 
+                bloomExtractEffect.IsDisposed || bloomExtractEffect.GraphicsDevice.IsDisposed || 
+                sceneRenderTarget.IsDisposed || sceneRenderTarget.IsContentLost ||
+                gaussianBlurEffect.IsDisposed || gaussianBlurEffect.GraphicsDevice.IsDisposed)
+            {
+                LoadContent();
             }
         }
 
