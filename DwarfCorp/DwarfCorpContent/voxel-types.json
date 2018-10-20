@@ -92,7 +92,7 @@
     "TransitionTiles": null,
     "ReleasesResource": false,
     "ResourceToRelease": {
-      "_value": "Stone"
+      "_value": "Dirt"
     },
     "StartingHealth": 20.0,
     "ProbabilityOfRelease": 0.0,
@@ -179,7 +179,7 @@
     "ResourceToRelease": {
       "_value": "Stone"
     },
-	"BuildRequirements" : ["Stone"],
+	  "BuildRequirements" : ["Stone"],
     "StartingHealth": 20.0,
     "ProbabilityOfRelease": 0.0,
     "CanRamp": false,
@@ -1256,7 +1256,7 @@
     "ProbabilityOfRelease": 1.0,
     "CanRamp": true,
     "RampSize": 0.5,
-    "IsBuildable": false,
+    "IsBuildable": true,
     "ParticleType": "dirt_particle",
     "EmitsLight": false,
     "MinSpawnHeight": -999.0,

@@ -131,7 +131,10 @@ namespace DwarfCorp
         }
 
         public bool CanBuild(Creature agent)
-        {            
+        {
+            if (CraftDesignation.ExistingResource != null) // This is a placement of an existing item.
+                return true;
+
             if (!String.IsNullOrEmpty(CraftDesignation.ItemType.CraftLocation))
             {
                 var nearestBuildLocation = agent.Faction.FindNearestItemWithTags(CraftDesignation.ItemType.CraftLocation, Vector3.Zero, false, agent.AI);
