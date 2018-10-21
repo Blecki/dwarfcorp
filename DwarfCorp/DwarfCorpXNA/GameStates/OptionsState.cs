@@ -31,6 +31,7 @@ namespace DwarfCorp.GameStates
         //private CheckBox FogOfWar;
         private CheckBox AutoFarming;
         private CheckBox AutoDigging;
+        private ComboBox MaxDwafs;
         private CheckBox PlayIntro;
         private CheckBox AllowReporting;
         private ComboBox GuiScale;
@@ -381,6 +382,13 @@ namespace DwarfCorp.GameStates
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
+            MaxDwafs = rightPanel.AddChild(LabelAndDockWidget("Max Dwarfs", new ComboBox()
+            {
+                Items = new List<string> { "40", "80", "120", "240", "9999" },
+                Tooltip = "You will only be able to hire this many dwarfs.",
+                OnSelectedIndexChanged = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop,
+            })).GetChild(1) as ComboBox;
 
             var guiScaleItems = new List<String>();
             for (int i = 1; i < 10; ++i)
@@ -920,6 +928,7 @@ namespace DwarfCorp.GameStates
             //toReturn.FogofWar = this.FogOfWar.CheckState;
             toReturn.AllowAutoDigging = this.AutoDigging.CheckState;
             toReturn.AllowAutoFarming = this.AutoFarming.CheckState;
+            toReturn.MaxDwarfs = int.Parse(this.MaxDwafs.SelectedItem);
             toReturn.InvertZoom = this.InvertZoom.CheckState;
             toReturn.ZoomCameraTowardMouse = this.ZoomTowardMouse.CheckState;
             toReturn.DisplayIntro = this.PlayIntro.CheckState;
@@ -1074,6 +1083,8 @@ namespace DwarfCorp.GameStates
             //this.FogOfWar.CheckState = GameSettings.Default.FogofWar;
             this.AutoFarming.CheckState = GameSettings.Default.AllowAutoFarming;
             this.AutoDigging.CheckState = GameSettings.Default.AllowAutoDigging;
+            var dorfIndex = this.MaxDwafs.Items.IndexOf(GameSettings.Default.MaxDwarfs.ToString()); ;
+            this.MaxDwafs.SelectedIndex = dorfIndex > 0 ? dorfIndex : 0;
             this.InvertZoom.CheckState = GameSettings.Default.InvertZoom;
             this.ZoomTowardMouse.CheckState = GameSettings.Default.ZoomCameraTowardMouse;
             this.PlayIntro.CheckState = GameSettings.Default.DisplayIntro;
