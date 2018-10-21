@@ -54,7 +54,11 @@ namespace DwarfCorp
 
             foreach (ChunkFile chunk in ChunkData)
             {
-                chunk.WriteFile(directory + Path.DirectorySeparatorChar + "Chunks" + Path.DirectorySeparatorChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + "." + (DwarfGame.COMPRESSED_BINARY_SAVES ? ChunkFile.CompressedExtension : ChunkFile.Extension), DwarfGame.COMPRESSED_BINARY_SAVES);
+                var filename = directory + Path.DirectorySeparatorChar + "Chunks" + Path.DirectorySeparatorChar + chunk.ID.X + "_" + chunk.ID.Y + "_" + chunk.ID.Z + ".";
+                if (DwarfGame.COMPRESSED_BINARY_SAVES)
+                    FileUtils.SaveBinary(chunk, filename + ChunkFile.CompressedExtension);
+                else
+                    FileUtils.SaveJSon(chunk, filename + ChunkFile.Extension, false);
             }
 
             FileUtils.SaveJSon(this.Metadata, directory + Path.DirectorySeparatorChar + "Metadata." + MetaData.Extension, false);
@@ -87,16 +91,20 @@ namespace DwarfCorp
         
         public bool ReadChunks(string filePath)
         {
-            string[] chunkDirs = System.IO.Directory.GetDirectories(filePath, "Chunks");
+            if (Metadata == null) throw new InvalidProgramException("MetaData must be loaded before chunk data.");
 
+            ChunkData = new List<ChunkFile>();
 
+            var chunkDirs = System.IO.Directory.GetDirectories(filePath, "Chunks");
+            
             if (chunkDirs.Length > 0)
             {
-                var chunkFiles = Directory.GetFiles(chunkDirs[0], "*." + (DwarfGame.COMPRESSED_BINARY_SAVES ? ChunkFile.CompressedExtension : ChunkFile.Extension));
-                ChunkData = new List<ChunkFile>();
-                foreach (string chunk in chunkFiles)
+                foreach (string chunk in Directory.GetFiles(chunkDirs[0], "*." + (DwarfGame.COMPRESSED_BINARY_SAVES ? ChunkFile.CompressedExtension : ChunkFile.Extension)))
                 {
-                    ChunkData.Add(new ChunkFile(chunk, DwarfGame.COMPRESSED_BINARY_SAVES));
+                    if (DwarfGame.COMPRESSED_BINARY_SAVES)
+                        ChunkData.Add(FileUtils.LoadBinary<ChunkFile>(chunk));
+                    else
+                        ChunkData.Add(FileUtils.LoadJsonFromAbsolutePath<ChunkFile>(chunk));
                 }
             }
             else
@@ -104,6 +112,38 @@ namespace DwarfCorp
                 Console.Error.WriteLine("Can't load chunks {0}, no chunks found", filePath);
                 return false;
             }
+
+            // Remap the saved voxel ids to the ids of the currently loaded voxels.
+            if (Metadata.VoxelTypeMap != null)
+            {
+                // First build a replacement mapping.
+
+                var newVoxelMap = VoxelLibrary.GetVoxelTypeMap();
+                var newReverseMap = new Dictionary<String, int>();
+                foreach (var mapping in newVoxelMap)
+                    newReverseMap.Add(mapping.Value, mapping.Key);
+
+                var replacementMap = new Dictionary<int, int>();
+                foreach (var mapping in Metadata.VoxelTypeMap)
+                {
+                    if (newReverseMap.ContainsKey(mapping.Value))
+                    {
+                        var newId = newReverseMap[mapping.Value];
+                        if (mapping.Key != newId)
+                            replacementMap.Add(mapping.Key, newId);
+                    }
+                }
+
+                // If there are no changes, skip the expensive iteration.
+                if (replacementMap.Count != 0)
+                {
+                    foreach (var chunk in ChunkData)
+                        for (var i = 0; i < chunk.Types.Length; ++i)
+                            if (replacementMap.ContainsKey(chunk.Types[i]))
+                                chunk.Types[i] = (byte)replacementMap[chunk.Types[i]];
+                }
+            }
+
             return true;
         }
 
@@ -180,29 +220,12 @@ namespace DwarfCorp
 
         public static SaveGame CreateFromWorld(WorldManager World)
         {
-            var r = new SaveGame
+            return new SaveGame
             {
-                Metadata = new MetaData
-                {
-                    OverworldFile = Overworld.Name,
-                    WorldOrigin = World.WorldOrigin,
-                    WorldScale = World.WorldScale,
-                    TimeOfDay = World.Sky.TimeOfDay,
-                    GameID = World.GameID,
-                    Time = World.Time,
-                    Slice = (int)World.Master.MaxViewingLevel,
-                    NumChunks = World.ChunkManager.WorldSize,
-                    Version = Program.Version,
-                    Commit = Program.Commit
-                },
+                Metadata = MetaData.CreateFromWorld(World),
                 PlayData = PlayData.CreateFromWorld(World),
-                ChunkData = new List<ChunkFile>(),
+                ChunkData = World.ChunkManager.ChunkData.GetChunkEnumerator().Select(c => ChunkFile.CreateFromChunk(c)).ToList()
             };
-
-            foreach (ChunkFile file in World.ChunkManager.ChunkData.GetChunkEnumerator().Select(c => new ChunkFile(c)))
-                r.ChunkData.Add(file);
-
-            return r;
         }
 
         public static SaveGame CreateFromDirectory(String Directory)

@@ -1,0 +1,41 @@
+{
+  "ID": 0,
+  "Name": "Emerald",
+  "Top": "7, 11",
+  "Bottom": "7, 12",
+  "Sides": "7, 12",
+  "Transitions": 1,
+  "HasTransitionTextures": false,
+  "TransitionTiles": null,
+  "ReleasesResource": true,
+  "ResourceToRelease": {
+    "_value": "Emerald"
+  },
+  "StartingHealth": 90.0,
+  "ProbabilityOfRelease": 1.0,
+  "CanRamp": false,
+  "RampSize": 0.0,
+  "IsBuildable": true,
+  "ParticleType": "stone_particle",
+  "EmitsLight": false,
+  "MinSpawnHeight": 0.0,
+  "MaxSpawnHeight": 18.0,
+  "SpawnProbability": 0.8,
+  "Rarity": 0.9,
+  "SpawnVeins": false,
+  "SpawnClusters": true,
+  "ClusterSize": 3.0,
+  "VeinLength": 0.0,
+  "IsSoil": false,
+  "IsSurface": false,
+  "IsInvincible": false,
+  "Tint": "255, 255, 255, 255",
+  "SpawnOnSurface": false,
+  "IsTransparent": false,
+  "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_metal_destroy",
+  "HitSoundResources": [
+    "Audio\\oscar\\sfx_ic_dwarf_pick_stone_1",
+    "Audio\\oscar\\sfx_ic_dwarf_pick_stone_2",
+    "Audio\\oscar\\sfx_ic_dwarf_pick_stone_3"
+  ]
+}

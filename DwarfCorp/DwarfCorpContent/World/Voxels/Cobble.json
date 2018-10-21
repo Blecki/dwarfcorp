@@ -1,0 +1,46 @@
+{
+  "ID": 0,
+  "Name": "Cobble",
+  "Top": "4, 1",
+  "Bottom": "9, 0",
+  "Sides": "4, 1",
+  "Transitions": 1,
+  "HasTransitionTextures": true,
+  "TransitionTiles": [
+    "0, 8",
+    "9, 0",
+    "4, 1"
+  ],
+  "ReleasesResource": false,
+  "ResourceToRelease": {
+    "_value": "Stone"
+  },
+  "BuildRequirements": [ "Stone" ],
+  "StartingHealth": 20.0,
+  "ProbabilityOfRelease": 0.0,
+  "CanRamp": false,
+  "RampSize": 0.0,
+  "IsBuildable": true,
+  "ParticleType": "stone_particle",
+  "EmitsLight": false,
+  "MinSpawnHeight": -999.0,
+  "MaxSpawnHeight": 999.0,
+  "SpawnProbability": 1.0,
+  "Rarity": 1.0,
+  "SpawnVeins": false,
+  "SpawnClusters": false,
+  "ClusterSize": 0.0,
+  "VeinLength": 0.0,
+  "IsSoil": false,
+  "IsSurface": false,
+  "IsInvincible": false,
+  "Tint": "255, 255, 255, 255",
+  "SpawnOnSurface": false,
+  "IsTransparent": false,
+  "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
+  "HitSoundResources": [
+    "Audio\\oscar\\sfx_ic_dwarf_pick_stone_1",
+    "Audio\\oscar\\sfx_ic_dwarf_pick_stone_2",
+    "Audio\\oscar\\sfx_ic_dwarf_pick_stone_3"
+  ]
+}
