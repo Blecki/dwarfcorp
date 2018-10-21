@@ -423,6 +423,7 @@ namespace DwarfCorp
             {
                 if (gameFile.PlayData.Tasks != null)
                 {
+                    Master.NewArrivals = gameFile.PlayData.NewArrivals ?? new List<GameMaster.ApplicantArrival>();
                     Master.TaskManager = gameFile.PlayData.Tasks;
                     Master.TaskManager.Faction = Master.Faction;
                 }

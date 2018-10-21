@@ -63,6 +63,7 @@ namespace DwarfCorp
         public TaskManager Tasks;
         public Embarkment InitialEmbark;
         public Yarn.MemoryVariableStore ConversationMemory;
+        public List<GameMaster.ApplicantArrival> NewArrivals;
 
         public static PlayData CreateFromWorld(WorldManager World)
         {
@@ -78,7 +79,8 @@ namespace DwarfCorp
                 Designations = World.DesignationDrawer,
                 Tasks = World.Master.TaskManager,
                 InitialEmbark = World.InitialEmbark,
-                ConversationMemory = World.ConversationMemory
+                ConversationMemory = World.ConversationMemory,
+                NewArrivals = World.Master.NewArrivals
             };
         }
 
