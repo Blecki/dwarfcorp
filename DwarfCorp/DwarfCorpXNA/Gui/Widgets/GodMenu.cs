@@ -247,32 +247,32 @@ namespace DwarfCorp.Gui.Widgets
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "ZOOM -",
-                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Zero, 0.0f, 1.0f),
+                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Zero, 0.0f, 2.5f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "ZOOM +",
-                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Zero, 0.0f, 1.0f),
+                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Zero, 0.0f, -2.5f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "FWD",
-                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Forward * 10, 0.0f, 0.0f),
+                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Forward * 5, 0.0f, 0.0f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "BACK",
-                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Backward * 10, 0.0f, 0.0f),
+                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Backward * 5, 0.0f, 0.0f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "LEFT",
-                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Left * 10, 0.0f, 0.0f),
+                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Left * 5, 0.0f, 0.0f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "RIGHT",
-                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Right * 10, 0.0f, 0.0f),
+                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Right * 5, 0.0f, 0.0f),
                                 },
                         }
 
