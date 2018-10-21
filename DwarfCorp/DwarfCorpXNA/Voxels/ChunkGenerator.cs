@@ -196,22 +196,8 @@ namespace DwarfCorp
                             if (biome.WaterSurfaceIce && y == waterHeight)
                                 vox.RawSetType(iceID);
                             else
-                                vox.QuickSetLiquid(LiquidType.Water, WaterManager.maxWaterLevel);
+                                vox.QuickSetLiquid(biome.WaterIsLava ? LiquidType.Lava : LiquidType.Water, WaterManager.maxWaterLevel);
                         }
-                    }
-
-                    Vector2 vec = Overworld.WorldToOverworld(new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z), chunk.Manager.World.WorldScale, chunk.Manager.World.WorldOrigin);
-
-
-                    if (topVoxel.Coordinate.Y < VoxelConstants.ChunkSizeY - 1
-                        && Overworld.GetWater(Overworld.Map, vec) == Overworld.WaterType.Volcano)
-                    {
-                        var localCoord = topVoxel.Coordinate.GetLocalVoxelCoordinate();
-                        topVoxel = new VoxelHandle(topVoxel.Chunk, new LocalVoxelCoordinate(
-                            localCoord.X, localCoord.Y + 1, localCoord.Z));
-
-                        if (topVoxel.IsEmpty)
-                            topVoxel.QuickSetLiquid(LiquidType.Lava, WaterManager.maxWaterLevel);
                     }
                 }
             }

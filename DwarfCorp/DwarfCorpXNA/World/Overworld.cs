@@ -131,7 +131,6 @@ namespace DwarfCorp
             [JsonProperty] public byte Height_;
             [JsonProperty] private byte Temperature_;
             [JsonProperty] public byte Rainfall_;
-            public WaterType Water;
             public byte Biome;
 
             public float GetValue(ScalarFieldType type)
@@ -347,15 +346,6 @@ namespace DwarfCorp
             return map[x, y].GetValue(value);
         }
 
-        public static WaterType GetWater(MapData[,] map, Vector2 pos)
-        {
-            int x = Math.Max(Math.Min((int) pos.X, map.GetLength(0) - 1), 0);
-            int y = Math.Max(Math.Min((int) pos.Y, map.GetLength(1) - 1), 0);
-
-            return map[x, y].Water;
-        }
-
-
         public static void AddValue(MapData[,] map, Vector2 pos, ScalarFieldType value, float amount)
         {
             int x = Math.Max(Math.Min((int) pos.X, map.GetLength(0) - 1), 0);
@@ -370,13 +360,6 @@ namespace DwarfCorp
             int y = Math.Max(Math.Min((int) pos.Y, heightMap.GetLength(1) - 1), 0);
             float c = heightMap[x, y].GetValue(value);
             heightMap[x, y].SetValue(value, c * height);
-        }
-
-        public static void SetWater(MapData[,] heightMap, Vector2 pos, WaterType waterType)
-        {
-            int x = Math.Max(Math.Min((int) pos.X, heightMap.GetLength(0) - 1), 0);
-            int y = Math.Max(Math.Min((int) pos.Y, heightMap.GetLength(1) - 1), 0);
-            heightMap[x, y].Water = waterType;
         }
 
         public static float noise(float x, float y, float z, float s)

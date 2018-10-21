@@ -301,7 +301,7 @@ namespace DwarfCorp.GameStates
 
                         if(dist <= 2)
                         {
-                            Overworld.Map[x, y].Water = Overworld.WaterType.Volcano;
+                            Overworld.Map[x, y].Height = 0.1f;
                         }
 
                         if(dist < volcanoSize)
