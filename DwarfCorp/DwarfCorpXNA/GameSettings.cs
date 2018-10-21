@@ -252,6 +252,9 @@ namespace DwarfCorp
             public bool AllowAutoDigging = true;
             public bool AllowAutoFarming = true;
             public float FNAONLY_KeyRepeatRate = 0.1f;
+            public int MaxDwarfs = 40;
+            public int DwarfArrivalDelayHours = 4;
+            public float SigningBonus = 100;
 
             [AutoResetFloat(-10.0f)] public float Boredom_Gamble = -10.0f;
             [AutoResetFloat(0.1f)] public float Boredom_NormalTask = 0.1f;
@@ -358,7 +361,8 @@ namespace DwarfCorp
                 Default = new Settings();
                 Save();
             }
-            
+            // mklingen (I have made it impossible to disable fog of war for performance reasons).
+            Default.FogofWar = true;
         }
 
         [ConsoleCommandHandler("SHOW")]

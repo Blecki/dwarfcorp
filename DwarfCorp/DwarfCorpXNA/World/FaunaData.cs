@@ -45,14 +45,15 @@ namespace DwarfCorp
     {
         public string Name { get; set; }
         public float SpawnProbability { get; set; }
-
+        public int MaxPopulation { get; set; }
         public FaunaData()
         {
             
         }
 
-        public FaunaData(string name, float spawnProbability)
+        public FaunaData(string name, float spawnProbability, int population)
         {
+            MaxPopulation = population;
             Name = name;
             SpawnProbability = spawnProbability;
         }

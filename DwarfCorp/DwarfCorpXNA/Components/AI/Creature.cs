@@ -65,7 +65,7 @@ namespace DwarfCorp
 
         public bool CanReproduce = false;
 
-        private static int _maxPerSpecies = 50;
+        protected int _maxPerSpecies = 50;
         private static Dictionary<string, int> _speciesCounts = new Dictionary<string, int>();
         private bool _addedToSpeciesRegister = false;
 

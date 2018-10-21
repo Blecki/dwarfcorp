@@ -44,6 +44,59 @@ using Microsoft.Xna.Framework.Input;
 namespace DwarfCorp
 {
 
+    public class TrailerCameraController
+    {
+        public Vector3 Velocity = Vector3.Zero;
+        public float Spin = 0.0f;
+        public float Zoom = 0.0f;
+        public Timer Duration = new Timer(10.0f, true, Timer.TimerMode.Real);
+        private bool _lightActive = false;
+        public bool Active = true;
+
+        public void Activate(WorldManager world, OrbitCamera camera)
+        {
+            Active = true;
+            _lightActive = GameSettings.Default.CursorLightEnabled;
+            GameSettings.Default.CursorLightEnabled = false;
+            world.Gui.RootItem.Hidden = true;
+            world.Gui.RootItem.Invalidate();
+            
+            camera.Control = OrbitCamera.ControlType.Overhead;
+            camera.EnableControl = false;
+        }
+
+        public void Deactivate(WorldManager world, OrbitCamera camera)
+        {
+            Active = false;
+            GameSettings.Default.CursorLightEnabled = _lightActive;
+            world.Gui.RootItem.Hidden = false;
+            world.Gui.RootItem.Invalidate();
+            camera.Control = OrbitCamera.ControlType.Overhead;
+            camera.EnableControl = true;
+        }
+
+        public void Update(WorldManager world, OrbitCamera camera)
+        {
+            float dt = (float)DwarfTime.LastTime.ElapsedRealTime.TotalSeconds;
+            Duration.Update(DwarfTime.LastTime);
+            Vector3 forward = (camera.Target - camera.Position);
+            forward.Normalize();
+            Vector3 right = Vector3.Cross(forward, camera.UpVector);
+            Vector3 up = Vector3.Cross(right, forward);
+            right.Normalize();
+            up.Normalize();
+            Vector3 vel = Velocity.X * right + Velocity.Y * up - Velocity.Z * forward;
+            camera.Position += vel * dt;
+            camera.Target += vel * dt;
+            camera.OverheadUpdate(DwarfTime.LastTime, world.ChunkManager, 0.0f, Spin * dt, Zoom * dt);
+
+            if (Duration.HasTriggered)
+            {
+                Deactivate(world, camera);
+            }
+        }
+    }
+
     /// <summary>
     /// This is a particular instantiation of the camera class which can rotate and 
     /// translate around with the mouse and keyboard.
@@ -72,6 +125,7 @@ namespace DwarfCorp
             Walk
         }
 
+        public TrailerCameraController TrailerCommand = null;
         private bool isLeftPressed = false;
         private bool isRightPressed = false;
         private readonly Timer moveTimer = new Timer(0.25f, true, Timer.TimerMode.Real);
@@ -80,7 +134,7 @@ namespace DwarfCorp
         public ControlType Control = ControlType.Overhead;
         private Point mouseOnRotate = new Point(0, 0);
         public List<Vector3> ZoomTargets { get; set; }
-
+        
 
         public bool EnableControl { get; set; }
         public Vector3 AutoTarget { get; set; }
@@ -99,9 +153,29 @@ namespace DwarfCorp
          
         }
 
+        public void Trailer(Vector3 velocity, float spin, float zoom)
+        {
+            TrailerCommand = new TrailerCameraController()
+            {
+                Velocity = velocity,
+                Spin = spin,
+                Zoom = zoom
+            };
+
+            TrailerCommand.Activate(World, this);
+        }
 
         public override void Update(DwarfTime time, ChunkManager chunks)
         {
+            if (TrailerCommand != null)
+            {
+                TrailerCommand.Update(World, this);
+                if (!TrailerCommand.Active)
+                {
+                    TrailerCommand = null;
+                }
+            }
+
             switch (Control)
             {
               case ControlType.Overhead:
@@ -434,7 +508,7 @@ namespace DwarfCorp
         private float _zoomTime = 0;
         public void OverheadUpdate(DwarfTime time, ChunkManager chunks)
         {
-            // Don't attempt any camera control if the user is trying to type intoa focus item.
+            // Don't attempt any camera control if the user is trying to type into a focus item.
             if (World.Gui.FocusItem != null && !World.Gui.FocusItem.IsAnyParentTransparent() && !World.Gui.FocusItem.IsAnyParentHidden())
             {
                 return;
@@ -442,6 +516,11 @@ namespace DwarfCorp
             float diffPhi = 0;
             float diffTheta = 0;
             float diffRadius = 0;
+            OverheadUpdate(time, chunks, diffPhi, diffTheta, diffRadius);
+        }
+
+        public void OverheadUpdate(DwarfTime time, ChunkManager chunks, float diffPhi, float diffTheta, float diffRadius)
+        {
             Vector3 forward = (Target - Position);
             forward.Normalize();
             Vector3 right = Vector3.Cross(forward, UpVector);
@@ -525,11 +604,11 @@ namespace DwarfCorp
                 if (!isRightPressed)
                 {
 
-                    float filterDiffX = (float) (diffX*dt);
-                    float filterDiffY = (float) (diffY*dt);
+                    float filterDiffX = (float)(diffX * dt);
+                    float filterDiffY = (float)(diffY * dt);
 
                     diffTheta = (filterDiffX);
-                    diffPhi = - (filterDiffY);
+                    diffPhi = -(filterDiffY);
                 }
                 KeyManager.TrueMousePos = mousePrerotate;
             }
@@ -557,14 +636,14 @@ namespace DwarfCorp
                     Vector3 mov = forward;
                     mov.Y = 0;
                     mov.Normalize();
-                    velocityToSet += mov*CameraMoveSpeed*dt;
+                    velocityToSet += mov * CameraMoveSpeed * dt;
                 }
                 else if (keys.IsKeyDown(ControlSettings.Mappings.Back) || keys.IsKeyDown(Keys.Down))
                 {
                     Vector3 mov = forward;
                     mov.Y = 0;
                     mov.Normalize();
-                    velocityToSet += -mov*CameraMoveSpeed*dt;
+                    velocityToSet += -mov * CameraMoveSpeed * dt;
                 }
 
                 if (keys.IsKeyDown(ControlSettings.Mappings.Left) || keys.IsKeyDown(Keys.Left))
@@ -572,21 +651,21 @@ namespace DwarfCorp
                     Vector3 mov = right;
                     mov.Y = 0;
                     mov.Normalize();
-                    velocityToSet += -mov*CameraMoveSpeed*dt;
+                    velocityToSet += -mov * CameraMoveSpeed * dt;
                 }
                 else if (keys.IsKeyDown(ControlSettings.Mappings.Right) || keys.IsKeyDown(Keys.Right))
                 {
                     Vector3 mov = right;
                     mov.Y = 0;
                     mov.Normalize();
-                    velocityToSet += mov*CameraMoveSpeed*dt;
+                    velocityToSet += mov * CameraMoveSpeed * dt;
                 }
             }
             else if (FollowAutoTarget)
             {
                 Vector3 prevTarget = Target;
                 float damper = MathFunctions.Clamp((Target - AutoTarget).Length() - 5, 0, 1);
-                float smooth = 0.1f*damper;
+                float smooth = 0.1f * damper;
                 Target = AutoTarget * (smooth) + Target * (1.0f - smooth);
                 Position += (Target - prevTarget);
             }
@@ -620,7 +699,7 @@ namespace DwarfCorp
                             }
 
                             dir *= 0.01f;
-                            Vector3 delta = right*CameraMoveSpeed*dir*dt;
+                            Vector3 delta = right * CameraMoveSpeed * dir * dt;
                             delta.Y = 0;
                             Velocity = -delta;
                         }
@@ -644,7 +723,7 @@ namespace DwarfCorp
 
                             dir *= 0.01f;
 
-                            Vector3 delta = up*CameraMoveSpeed*dir*dt;
+                            Vector3 delta = up * CameraMoveSpeed * dir * dt;
                             delta.Y = 0;
                             Velocity = -delta;
                         }
@@ -688,7 +767,7 @@ namespace DwarfCorp
 
                             if (diffxy > 5)
                             {
-                                Vector3 slewTarget = Target*0.9f + World.CursorLightPos*0.1f;
+                                Vector3 slewTarget = Target * 0.9f + World.CursorLightPos * 0.1f;
                                 Vector3 slewDiff = slewTarget - Target;
                                 Target += slewDiff;
                                 Position += slewDiff;
@@ -731,7 +810,7 @@ namespace DwarfCorp
             Target = (Target + diffTarget) * 0.05f + Target * 0.95f;
             float currRadius = (Position - Target).Length();
             float newRadius = Math.Max(currRadius + diffRadius, 3.0f);
-            Position = MathFunctions.ProjectOutOfHalfPlane(MathFunctions.ProjectOutOfCylinder(MathFunctions.ProjectToSphere(Position - right*diffTheta * 2 - up*diffPhi * 2, newRadius, Target), Target, 3.0f), Target, 2.0f);
+            Position = MathFunctions.ProjectOutOfHalfPlane(MathFunctions.ProjectOutOfCylinder(MathFunctions.ProjectToSphere(Position - right * diffTheta * 2 - up * diffPhi * 2, newRadius, Target), Target, 3.0f), Target, 2.0f);
             UpdateViewMatrix();
         }
 

@@ -226,7 +226,60 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "KILL THINGS",
                     OnClick = (sender, args) => ActivateGodTool("Kill Things")
                 },
-               
+
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "TRAILER",
+                    ExpansionChild = new HorizontalMenuTray.Tray
+                    {
+                        ItemSource = new List<HorizontalMenuTray.MenuItem>()
+                        {
+                                new HorizontalMenuTray.MenuItem
+                                {
+                                    Text = "SPIN +",
+                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Zero, 2.0f, 0.0f),
+                                },
+                                new HorizontalMenuTray.MenuItem
+                                {
+                                    Text = "SPIN -",
+                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Zero, -2.0f, 0.0f),
+                                },
+                                new HorizontalMenuTray.MenuItem
+                                {
+                                    Text = "ZOOM -",
+                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Zero, 0.0f, 1.0f),
+                                },
+                                new HorizontalMenuTray.MenuItem
+                                {
+                                    Text = "ZOOM +",
+                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Zero, 0.0f, 1.0f),
+                                },
+                                new HorizontalMenuTray.MenuItem
+                                {
+                                    Text = "FWD",
+                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Forward * 10, 0.0f, 0.0f),
+                                },
+                                new HorizontalMenuTray.MenuItem
+                                {
+                                    Text = "BACK",
+                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Backward * 10, 0.0f, 0.0f),
+                                },
+                                new HorizontalMenuTray.MenuItem
+                                {
+                                    Text = "LEFT",
+                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Left * 10, 0.0f, 0.0f),
+                                },
+                                new HorizontalMenuTray.MenuItem
+                                {
+                                    Text = "RIGHT",
+                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Right * 10, 0.0f, 0.0f),
+                                },
+                        }
+
+                    }
+
+                },
+
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "FILL WATER",

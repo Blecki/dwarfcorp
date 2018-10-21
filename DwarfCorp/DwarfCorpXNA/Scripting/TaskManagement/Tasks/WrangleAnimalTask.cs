@@ -71,6 +71,7 @@ namespace DwarfCorp
                 if (status == Act.Status.Fail)
                 {
                     creature.ResetPositionConstraint();
+                    agent.SetMessage("Failed to pen animal.");
                     yield return Act.Status.Fail;
                     yield break;
                 }

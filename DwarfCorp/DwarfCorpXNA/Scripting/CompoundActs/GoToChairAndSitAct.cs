@@ -139,11 +139,12 @@ namespace DwarfCorp
         {
             Creature.OverrideCharacterMode = false;
            
-            Tree = new Sequence(new ClearBlackboardData(Creature.AI, "Chair"),
+            Tree = new Domain(  () => !Agent.IsDead && !Agent.Creature.IsAsleep,
+                                new Sequence(new ClearBlackboardData(Creature.AI, "Chair"),
                                 new Wrap(() => Creature.FindAndReserve("Chair", "Chair")),
                                 new GoToTaggedObjectAct(Creature.AI) {Tag = "Chair", Teleport = true, TeleportOffset = new Vector3(0, 0.1f, 0), ObjectName = "Chair", CheckForOcclusion = false},
                                 new Wrap(WaitUntilBored),
-                                new Wrap(() => Creature.Unreserve("Chair"))) | new Wrap(() => Creature.Unreserve("Chair"));
+                                new Wrap(() => Creature.Unreserve("Chair")))) | new Wrap(() => Creature.Unreserve("Chair"));
             base.Initialize();
         }
 

@@ -185,7 +185,7 @@ namespace DwarfCorp
             {
                 if (_checkedDwarf)
                     return _isDwarf;
-                _isDwarf = Parent.Faction == Parent.World.PlayerFaction;
+                _isDwarf = (Parent != null) && Parent.Active && (Parent.Creature != null && Parent.Faction == Parent.World.PlayerFaction);
                 _checkedDwarf = true;
                 return _isDwarf;
             }

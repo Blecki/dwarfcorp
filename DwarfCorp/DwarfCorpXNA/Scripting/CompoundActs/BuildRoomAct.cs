@@ -116,6 +116,7 @@ namespace DwarfCorp
             {
                 if (BuildRoom.ResourcesReservedFor == null || BuildRoom.ResourcesReservedFor.IsDead)
                 {
+                    Agent.SetMessage("Failed to wait for resources.");
                     yield return Act.Status.Fail;
                     yield break;
                 }
@@ -133,6 +134,7 @@ namespace DwarfCorp
                 yield return Act.Status.Success;
                 yield break;
             }
+            Agent.SetMessage("Failed to reserve resources for room.");
             yield return Act.Status.Fail;
         }
 

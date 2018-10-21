@@ -4,6 +4,7 @@
   "Vegetation": [],
   "DayAmbience": "sfx_amb_forest_day",
   "NightAmbience": "sfx_amb_forest_night",
+  "WaterIsLava" : true,
   "Motes": [
     {
       "Name": "deadbush",
@@ -16,7 +17,8 @@
   "Fauna": [
     {
       "Name": "Demon",
-      "SpawnProbability": 0.0005
+      "SpawnProbability": 0.0005,
+	  "MaxPopulation" : 100
     }
   ],
   "SoilLayer": {

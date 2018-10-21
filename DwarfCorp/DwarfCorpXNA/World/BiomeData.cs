@@ -75,15 +75,18 @@ namespace DwarfCorp
         public string DayAmbience { get; set; }
         public string NightAmbience { get; set; }
         public bool WaterSurfaceIce { get; set; }
+        public bool WaterIsLava { get; set; }
 
         public BiomeData()
         {
             ShoreVoxel = "Sand";
+            WaterIsLava = false;
         }
 
         // Todo: Move defaults to above and remove this.
         public BiomeData(byte biome)
         {
+            WaterIsLava = false;
             Biome = biome;
             Vegetation = new List<VegetationData>();
             Motes = new List<DetailMoteData>();

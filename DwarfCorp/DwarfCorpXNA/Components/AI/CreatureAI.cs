@@ -132,7 +132,7 @@ namespace DwarfCorp
         public CreatureMovement Movement { get; set; }
 
         public double UnhappinessTime = 0.0f;
-
+        private String LastMesage = "";
         /// <summary>
         /// Gets or sets a value indicating whether this instance is posessed. If a creature is posessed,
         /// it is being controlled by the player, so it shouldn't attempt to move unless it has to.
@@ -1244,7 +1244,17 @@ namespace DwarfCorp
                 desc += "\n ON STRIKE";
             }
 
+            if (!String.IsNullOrEmpty(LastMesage))
+            {
+                desc += "\n" + LastMesage;
+            }
+
             return desc;
+        }
+
+        public void SetMessage(string message)
+        {
+            LastMesage = message;
         }
 
         public void TryMoveVelocity(Vector3 desiredDirection, bool jumpCommand)

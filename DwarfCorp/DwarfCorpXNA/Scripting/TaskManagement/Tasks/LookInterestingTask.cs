@@ -83,12 +83,12 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return !agent.AI.IsPosessed ? Feasibility.Feasible : Feasibility.Infeasible;
+            return !(agent.AI.IsPosessed || agent.IsAsleep) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override Act CreateScript(Creature creature)
         {
-            if (creature.AI.IsPosessed)
+            if (creature.AI.IsPosessed || creature.IsAsleep)
             {
                 return null;
             }

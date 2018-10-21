@@ -151,6 +151,7 @@ namespace DwarfCorp
             {
                 if (!DigAct.Voxel.IsValid)
                 {
+                    performer.AI.SetMessage("Failed to dig. Voxel was not valid.");
                     yield return Act.Status.Fail;
                     yield break;
                 }

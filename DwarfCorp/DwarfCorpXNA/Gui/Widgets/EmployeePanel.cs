@@ -23,18 +23,28 @@ namespace DwarfCorp.Gui.Widgets
                 MinimumSize = new Point(128, 64),
                 OnClick = (sender, args) =>
                 {
-                    // Show hire dialog.
-                    var dialog = Root.ConstructWidget(
-                        new HireEmployeeDialog(Faction.World.PlayerCompany.Information)
-                        {
-                            Faction = Faction,
-                            OnClose = (_s) =>
+                    if (Faction.Minions.Count < GameSettings.Default.MaxDwarfs)
+                    {
+                        // Show hire dialog.
+                        var dialog = Root.ConstructWidget(
+                            new HireEmployeeDialog(Faction.World.PlayerCompany.Information)
                             {
-                                RebuildEmployeeList();
-                            }
-                        });
-                    Root.ShowModalPopup(dialog);
-                    Faction.World.Tutorial("hire");
+                                Faction = Faction,
+                                OnClose = (_s) =>
+                                {
+                                    RebuildEmployeeList();
+                                }
+                            });
+                        Root.ShowModalPopup(dialog);
+                        Faction.World.Tutorial("hire");
+                    }
+                    else
+                    {
+                        Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Popup
+                        {
+                            Text = String.Format("Can't hire any more dwarfs. We can only have {0}.", GameSettings.Default.MaxDwarfs)
+                        }));
+                    }
                 }
             });
 

@@ -69,6 +69,7 @@ namespace DwarfCorp
                 if (!vox.IsValid)
                 {
                     Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                    Agent.SetMessage("Failed to dig. Invalid voxel.");
                     yield return Act.Status.Fail;
                     break;
                 }
