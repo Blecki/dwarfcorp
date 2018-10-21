@@ -235,7 +235,7 @@ namespace DwarfCorp
             }
         }
 
-        public void GenerateSurfaceLife(VoxelChunk Chunk, float maxHeight)
+        public void GenerateSurfaceLife(Dictionary<string, Dictionary<string, int>> creatureCounts, VoxelChunk Chunk, float maxHeight)
         {
             //int waterHeight = (int)(VoxelConstants.ChunkSizeY * NormalizeHeight(SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight));
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
@@ -257,9 +257,20 @@ namespace DwarfCorp
                     {
                         if (MathFunctions.RandEvent(animal.SpawnProbability))
                         {
-                            EntityFactory.CreateEntity<Body>(animal.Name,
-                                topVoxel.WorldPosition + Vector3.Up *1.5f);
-
+                            if (!creatureCounts.ContainsKey(biomeData.Name))
+                            {
+                                creatureCounts[biomeData.Name] = new Dictionary<string, int>();
+                            }
+                            var dict = creatureCounts[biomeData.Name];
+                            if (!dict.ContainsKey(animal.Name))
+                            {
+                                dict[animal.Name] = 0;
+                            }
+                            if (dict[animal.Name] < animal.MaxPopulation)
+                            {
+                                EntityFactory.CreateEntity<Body>(animal.Name,
+                                    topVoxel.WorldPosition + Vector3.Up * 1.5f);
+                            }
                             break;
                         }
                     }

@@ -38,19 +38,23 @@
   "Fauna": [
     {
       "Name": "Scorpion",
-      "SpawnProbability": 0.0005
+      "SpawnProbability": 0.0005,
+	  "MaxPopulation" : 10
     },
     {
       "Name": "Spider",
-      "SpawnProbability": 0.0005
+      "SpawnProbability": 0.0005,
+	  "MaxPopulation" : 10
     },
     {
       "Name": "Bat",
-      "SpawnProbability": 0.0008
+      "SpawnProbability": 0.0008,
+	  "MaxPopulation" : 10
     },
     {
       "Name": "Necrosnake",
-      "SpawnProbability": 0.00005
+      "SpawnProbability": 0.00005,
+	  "MaxPopulation" : 3
     }
   ],
   "SoilLayer": {

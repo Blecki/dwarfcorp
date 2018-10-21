@@ -101,7 +101,7 @@ namespace DwarfCorp
             Bonesnake = Bone;
             HasMeat = !Bone;
             HasBones = true;
-
+            _maxPerSpecies = 4;
             Physics = new Physics
                 (
                     manager,

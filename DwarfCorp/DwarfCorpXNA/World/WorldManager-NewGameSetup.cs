@@ -97,8 +97,9 @@ namespace DwarfCorp
         private void GenerateInitialObjects()
         {
             float maxHeight = Overworld.GetMaxHeight(SpawnRect);
+            Dictionary<string, Dictionary<string, int>> creatures = new Dictionary<string, Dictionary<string, int>>();
             foreach (var chunk in ChunkManager.ChunkData.GetChunkEnumerator())
-                ChunkManager.ChunkGen.GenerateSurfaceLife(chunk, maxHeight);
+                ChunkManager.ChunkGen.GenerateSurfaceLife(creatures, chunk, maxHeight);
         }
 
         /// <summary>

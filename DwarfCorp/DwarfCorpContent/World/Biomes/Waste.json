@@ -16,7 +16,8 @@
   "Fauna": [
     {
       "Name": "Demon",
-      "SpawnProbability": 0.0005
+      "SpawnProbability": 0.0005,
+	  "MaxPopulation" : 100
     }
   ],
   "SoilLayer": {

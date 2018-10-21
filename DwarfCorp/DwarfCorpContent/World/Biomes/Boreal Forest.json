@@ -47,23 +47,28 @@
   "Fauna": [
     {
       "Name": "Bird",
-      "SpawnProbability": 0.0005
+      "SpawnProbability": 0.0005,
+	  "MaxPopulation" : 100
     },
     {
       "Name": "Deer",
-      "SpawnProbability": 0.0005
+      "SpawnProbability": 0.0005,
+	  "MaxPopulation" : 100
     },
     {
       "Name": "Brown Rabbit",
-      "SpawnProbability": 0.0005
+      "SpawnProbability": 0.0005,
+	  "MaxPopulation" : 100
     },
     {
       "Name": "White Rabbit",
-      "SpawnProbability": 0.00005
+      "SpawnProbability": 0.00005,
+	  "MaxPopulation" : 100
     },
     {
       "Name": "Spider",
-      "SpawnProbability": 0.00005
+      "SpawnProbability": 0.00005,
+	  "MaxPopulation" : 100
     }
   ],
   "SoilLayer": {

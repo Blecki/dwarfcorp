@@ -27,19 +27,23 @@
   "Fauna": [
     {
       "Name": "Scorpion",
-      "SpawnProbability": 0.005
+      "SpawnProbability": 0.005,
+	  "MaxPopulation" : 100
     },
     {
       "Name": "Spider",
-      "SpawnProbability": 0.005
+      "SpawnProbability": 0.005,
+	  "MaxPopulation" : 100
     },
     {
       "Name": "Bat",
-      "SpawnProbability": 0.008
+      "SpawnProbability": 0.008,
+	  "MaxPopulation" : 100
     },
     {
       "Name": "MudGolem",
-      "SpawnProbability": 0.001
+      "SpawnProbability": 0.001,
+	  "MaxPopulation" : 20
     }
   ],
   "SoilLayer": {

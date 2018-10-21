@@ -53,15 +53,18 @@
   "Fauna": [
     {
       "Name": "Brown Rabbit",
-      "SpawnProbability": 0.0005
+      "SpawnProbability": 0.0005,
+	  "MaxPopulation" : 100
     },
     {
       "Name": "Snake",
-      "SpawnProbability": 0.00001
+      "SpawnProbability": 0.00001,
+	  "MaxPopulation" : 3
     },
     {
       "Name": "Scorpion",
-      "SpawnProbability": 0.00001
+      "SpawnProbability": 0.00001,
+	  "MaxPopulation" : 10
     }
   ],
   "SoilLayer": {
