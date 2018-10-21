@@ -379,7 +379,7 @@ namespace DwarfCorp
                     if (envoy.Creatures.Count > 0)
                     {
                         envoy.Creatures.First().ZoomToMe();
-                        World.MakeWorldPopup(String.Format("Traders from {0} ({1}) have entered our territory. They will try to get to our balloon port to trade with us.", natives.Name, natives.Race.Name),
+                        World.MakeWorldPopup(String.Format("Traders from {0} ({1}) have entered our territory.\nThey will try to get to our balloon port to trade with us.", natives.Name, natives.Race.Name),
                             envoy.Creatures.First().Physics, -10);
                     }
                 },

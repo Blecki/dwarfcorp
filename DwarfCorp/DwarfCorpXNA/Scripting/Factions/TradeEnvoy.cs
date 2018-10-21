@@ -84,6 +84,29 @@ namespace DwarfCorp
                 return;
             }
 
+            var zones = World.PlayerFaction.RoomBuilder.DesignatedRooms.OfType<BalloonPort>();
+
+            CreatureAI closestCreature = null;
+            float closestDist = float.MaxValue;
+
+            if (zones.Any())
+            {
+                var zoneCenter = zones.First().GetBoundingBox().Center();
+                foreach (var creature in liveCreatures)
+                {
+                    float dist = (creature.Position - zoneCenter).LengthSquared();
+                    if (dist < closestDist)
+                    {
+                        closestDist = dist;
+                        closestCreature = creature;
+                    }
+                }
+            }
+            else
+            {
+                closestCreature = liveCreatures.First();
+            }
+
             TradeWidget = World.MakeWorldPopup(new Goals.TimedIndicatorWidget()
             {
                 Text = string.Format("Click here to trade with the {0}!", OwnerFaction.Race.Name),
@@ -92,7 +115,7 @@ namespace DwarfCorp
                     OpenDiplomacyConversation(World);
                 },
                 ShouldKeep = () => { return this.ExpiditionState == Expedition.State.Trading && !this.ShouldRemove; }
-            }, liveCreatures.First().Physics, new Vector2(0, -10));
+            }, closestCreature.Physics, new Vector2(0, -10));
             World.MakeAnnouncement(String.Format("Click here to trade with the {0}!", OwnerFaction.Race.Name), (gui, sender) =>
             {
                 OpenDiplomacyConversation(World);
