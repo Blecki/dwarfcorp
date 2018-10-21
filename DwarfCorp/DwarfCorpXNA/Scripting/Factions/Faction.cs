@@ -723,19 +723,27 @@ namespace DwarfCorp
 
         }
 
-        public void Hire(Applicant currentApplicant)
+        public void Hire(Applicant currentApplicant, int delay)
+        {
+            World.Master.NewArrivals.Add(new GameMaster.ApplicantArrival()
+            {
+                Applicant = currentApplicant,
+                ArrivalTime = World.Time.CurrentDate + new TimeSpan(0, delay + MathFunctions.RandInt(-2, 2), 0, 0, 0)
+            });
+
+            AddMoney(-(decimal)GameSettings.Default.SigningBonus);
+        }
+
+        public void HireImmediately(Applicant currentApplicant)
         {
             List<Room> rooms = GetRooms().Where(room => room.RoomData.Name == "Balloon Port").ToList();
-
-            if (rooms.Count == 0)
+            Vector3 spawnLoc = World.Camera.Position;
+            if (rooms.Count > 0)
             {
-                return;
+                spawnLoc = rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15;
             }
-
-            AddMoney(-currentApplicant.Level.Pay * 4m);
-
             var dwarfPhysics = DwarfFactory.GenerateDwarf(
-                    rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15,
+                    spawnLoc,
                     World.ComponentManager, "Player", currentApplicant.Class, currentApplicant.Level.Index, currentApplicant.Gender, currentApplicant.RandomSeed);
             World.ComponentManager.RootComponent.AddChild(dwarfPhysics);
             var newMinion = dwarfPhysics.EnumerateAll().OfType<Dwarf>().FirstOrDefault();

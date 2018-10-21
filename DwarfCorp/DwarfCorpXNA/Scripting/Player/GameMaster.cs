@@ -46,6 +46,14 @@ namespace DwarfCorp
         [JsonIgnore]
         public BodySelector BodySelector { get; set; }
 
+        public struct ApplicantArrival
+        {
+            public Applicant Applicant;
+            public DateTime ArrivalTime;
+        }
+
+        public List<ApplicantArrival> NewArrivals = new List<ApplicantArrival>();
+
         public Faction Faction { get; set; }
 
         #region  Player tool management
@@ -500,6 +508,16 @@ namespace DwarfCorp
 
                 minion.ResetPositionConstraint();
             }
+
+            foreach (var applicant in NewArrivals)
+            {
+                if (World.Time.CurrentDate >= applicant.ArrivalTime)
+                {
+                    Faction.HireImmediately(applicant.Applicant);
+                }
+            }
+
+            NewArrivals.RemoveAll(a => World.Time.CurrentDate >= a.ArrivalTime);
         }
 
 

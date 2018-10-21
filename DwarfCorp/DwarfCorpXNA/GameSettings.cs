@@ -251,6 +251,9 @@ namespace DwarfCorp
             public ColorSettings Colors = new ColorSettings();
             public bool AllowAutoDigging = true;
             public bool AllowAutoFarming = true;
+            public int MaxDwarfs = 40;
+            public int DwarfArrivalDelayHours = 4;
+            public float SigningBonus = 100;
 
             [AutoResetFloat(-10.0f)] public float Boredom_Gamble = -10.0f;
             [AutoResetFloat(0.1f)] public float Boredom_NormalTask = 0.1f;
