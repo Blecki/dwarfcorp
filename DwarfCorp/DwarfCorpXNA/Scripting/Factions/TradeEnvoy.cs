@@ -59,6 +59,11 @@ namespace DwarfCorp
             WaitForTradeTimer = new DateTimer(date, new TimeSpan(0, 6, 0, 0, 0));
         }
 
+        public void StartTrading(DateTime date)
+        {
+            WaitForTradeTimer = new DateTimer(date, new TimeSpan(0, 6, 0, 0, 0));
+        }
+
         public DwarfBux TradeMoney { get; set; }
         public List<ResourceAmount> TradeGoods { get; set; }
         public DateTimer WaitForTradeTimer = null;

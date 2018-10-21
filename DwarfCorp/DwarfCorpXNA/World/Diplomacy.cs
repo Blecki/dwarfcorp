@@ -607,6 +607,7 @@ namespace DwarfCorp
                         {
                             envoy.MakeTradeWidget(World);
                         }
+                        envoy.StartTrading(World.Time.CurrentDate);
                         envoy.ExpiditionState = Expedition.State.Trading;
                         break;
                     }
