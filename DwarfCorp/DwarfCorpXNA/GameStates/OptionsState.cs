@@ -28,7 +28,7 @@ namespace DwarfCorp.GameStates
         private CheckBox ZoomTowardMouse;
         private CheckBox EdgeScrolling;
         private CheckBox FollowSurface;
-        private CheckBox FogOfWar;
+        //private CheckBox FogOfWar;
         private CheckBox AutoFarming;
         private CheckBox AutoDigging;
         private CheckBox PlayIntro;
@@ -356,7 +356,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-
+            /*
             FogOfWar = rightPanel.AddChild(new CheckBox
             {
                 Text = "Fog Of War",
@@ -364,6 +364,7 @@ namespace DwarfCorp.GameStates
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
+            */
 
             AutoDigging = rightPanel.AddChild(new CheckBox
             {
@@ -916,7 +917,7 @@ namespace DwarfCorp.GameStates
             toReturn.CameraZoomSpeed = this.ZoomSpeed.ScrollPosition;
             toReturn.EnableEdgeScroll = this.EdgeScrolling.CheckState;
             toReturn.CameraFollowSurface = this.FollowSurface.CheckState;
-            toReturn.FogofWar = this.FogOfWar.CheckState;
+            //toReturn.FogofWar = this.FogOfWar.CheckState;
             toReturn.AllowAutoDigging = this.AutoDigging.CheckState;
             toReturn.AllowAutoFarming = this.AutoFarming.CheckState;
             toReturn.InvertZoom = this.InvertZoom.CheckState;
@@ -1070,7 +1071,7 @@ namespace DwarfCorp.GameStates
             this.ZoomSpeed.ScrollPosition = GameSettings.Default.CameraZoomSpeed;
             this.EdgeScrolling.CheckState = GameSettings.Default.EnableEdgeScroll;
             this.FollowSurface.CheckState = GameSettings.Default.CameraFollowSurface;
-            this.FogOfWar.CheckState = GameSettings.Default.FogofWar;
+            //this.FogOfWar.CheckState = GameSettings.Default.FogofWar;
             this.AutoFarming.CheckState = GameSettings.Default.AllowAutoFarming;
             this.AutoDigging.CheckState = GameSettings.Default.AllowAutoDigging;
             this.InvertZoom.CheckState = GameSettings.Default.InvertZoom;

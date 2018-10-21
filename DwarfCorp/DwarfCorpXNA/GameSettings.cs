@@ -357,7 +357,8 @@ namespace DwarfCorp
                 Default = new Settings();
                 Save();
             }
-            
+            // mklingen (I have made it impossible to disable fog of war for performance reasons).
+            Default.FogofWar = true;
         }
 
         [ConsoleCommandHandler("SHOW")]
