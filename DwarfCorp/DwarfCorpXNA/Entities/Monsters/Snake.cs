@@ -74,7 +74,7 @@ namespace DwarfCorp
         
         public Snake()
         {
-            
+            UpdateRate = 1;
         }
 
         public Snake(bool Bone, Vector3 position, ComponentManager manager, string name):
@@ -97,6 +97,7 @@ namespace DwarfCorp
                 name
             )
         {
+            UpdateRate = 1;
             Bonesnake = Bone;
             HasMeat = !Bone;
             HasBones = true;
@@ -202,13 +203,12 @@ namespace DwarfCorp
 
 
             var sprite = CreateSprite(animFile, Manager, 0.35f);
-
             Tail = new List<TailSegment>();
 
             for (int i = 0; i < 10; ++i)
             {
                 var tailPiece = CreateSprite(tailFile, Manager, 0.25f, false);
-
+                tailPiece.Name = "Snake Tail";
                 Tail.Add(
                     new TailSegment()
                     {

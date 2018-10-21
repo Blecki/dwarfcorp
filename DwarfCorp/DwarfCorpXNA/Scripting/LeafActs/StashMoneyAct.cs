@@ -93,6 +93,7 @@ namespace DwarfCorp
             Creature.IsCloaked = false;
             if (Zone == null)
             {
+                Agent.SetMessage("Failed to stash money. Null zone.");
                 yield return Act.Status.Fail;
                 yield break;
             }
@@ -102,6 +103,7 @@ namespace DwarfCorp
 
             if(!removed)
             {
+                Agent.SetMessage("Failed to remove money from zone.");
                 yield return Status.Fail;
             }
             else

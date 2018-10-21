@@ -199,6 +199,7 @@ namespace DwarfCorp
             Matrix transform = Agent.Physics.LocalTransform;
             if ((target - Agent.Physics.Position).Length() > 4.0f)
             {
+                Agent.SetMessage("Failed to follow path. First voxel too far away.");
                 yield return Act.Status.Fail;
                 yield break;
             }

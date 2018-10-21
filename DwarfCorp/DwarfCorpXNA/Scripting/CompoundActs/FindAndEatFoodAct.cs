@@ -109,7 +109,7 @@ namespace DwarfCorp
 
             if (foods.Count == 0 && Agent.Creature.Faction == Agent.World.PlayerFaction)
             {
-
+                Agent.SetMessage("Failed to eat. No food in inventory.");
                 yield return Act.Status.Fail;
                 yield break;
             }
@@ -127,6 +127,7 @@ namespace DwarfCorp
                     Agent.Creature.NoiseMaker.MakeNoise("Chew", Agent.Creature.AI.Position);
                     if (bodies.Count == 0)
                     {
+                        Agent.SetMessage("Failed to eat. No food in inventory.");
                         yield return Act.Status.Fail;
                     }
                     else

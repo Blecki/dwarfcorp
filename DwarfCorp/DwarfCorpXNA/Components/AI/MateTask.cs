@@ -89,6 +89,7 @@ namespace DwarfCorp
             else
             {
                 AutoRetry = false;
+                me.AI.SetMessage("Failed to mate.");
                 yield return Act.Status.Fail;
             }
 

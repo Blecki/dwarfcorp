@@ -119,6 +119,7 @@ namespace DwarfCorp
         {
             if (grave.IsDead)
             {
+                SetMessage("Failed to summon skeleton: grave is nonexistent.");
                 yield return Act.Status.Fail;
             }
             SummonSkeleton(grave.Position);
