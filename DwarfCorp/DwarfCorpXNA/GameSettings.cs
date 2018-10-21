@@ -251,6 +251,7 @@ namespace DwarfCorp
             public ColorSettings Colors = new ColorSettings();
             public bool AllowAutoDigging = true;
             public bool AllowAutoFarming = true;
+            public float FNAONLY_KeyRepeatRate = 0.1f;
 
             [AutoResetFloat(-10.0f)] public float Boredom_Gamble = -10.0f;
             [AutoResetFloat(0.1f)] public float Boredom_NormalTask = 0.1f;
