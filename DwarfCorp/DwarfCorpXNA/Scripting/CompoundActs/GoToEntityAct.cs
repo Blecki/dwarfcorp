@@ -89,36 +89,6 @@ namespace DwarfCorp
             }
         }
 
-        public IEnumerable<Status> TargetMoved(string pathName)
-        {
-            var path = Agent.Blackboard.GetData<List<VoxelHandle>>(pathName);
-            Body entity = Agent.Blackboard.GetData<Body>(EntityName);
-            if (path == null || entity == null)
-            {
-                yield return Status.Success;
-                yield break;
-            }
-            
-            while (true)
-            {
-                if (path.Count == 0)
-                {
-                    yield return Status.Success;
-                    yield break;
-                }
-
-                var last = path.Last();
-
-                if ((last.WorldPosition - entity.LocalTransform.Translation).Length() > Radius * 2)
-                {
-                    yield return Status.Fail;
-                    yield break;
-                }
-
-                yield return Status.Running;
-            }
-        }
-
         public IEnumerable<Status> TrackMovingTarget()
         {
             while (true)
@@ -214,8 +184,9 @@ namespace DwarfCorp
                             yield return Act.Status.Fail;
                             yield break;
                         }
+                        var under = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(entity.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(entity.Position)));
 
-                        bool targetMoved = (path.Last().DestinationVoxel.WorldPosition - entity.LocalTransform.Translation).Length() > Math.Max(Radius, 2) * 2;
+                        bool targetMoved = under == VoxelHandle.InvalidHandle || (path.Last().DestinationVoxel.WorldPosition - under.WorldPosition).Length() > Math.Max(Radius, 2) * 2;
 
                         if (MovingTarget && (path.Count > 0 && targetMoved))
                         {
