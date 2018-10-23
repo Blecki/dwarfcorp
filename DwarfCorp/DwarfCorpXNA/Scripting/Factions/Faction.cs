@@ -723,15 +723,22 @@ namespace DwarfCorp
 
         }
 
-        public void Hire(Applicant currentApplicant, int delay)
+        public DateTime Hire(Applicant currentApplicant, int delay)
         {
+            DateTime startDate = World.Time.CurrentDate;
+            if (World.Master.NewArrivals.Count > 0)
+            {
+                startDate = World.Master.NewArrivals.Last().ArrivalTime;
+            }
             World.Master.NewArrivals.Add(new GameMaster.ApplicantArrival()
             {
                 Applicant = currentApplicant,
-                ArrivalTime = World.Time.CurrentDate + new TimeSpan(0, delay + MathFunctions.RandInt(-2, 2), 0, 0, 0)
+                ArrivalTime = startDate+ new TimeSpan(0, delay, 0, 0, 0)
             });
 
             AddMoney(-(decimal)GameSettings.Default.SigningBonus);
+            return World.Master.NewArrivals.Last().ArrivalTime;
+
         }
 
         public void HireImmediately(Applicant currentApplicant)
