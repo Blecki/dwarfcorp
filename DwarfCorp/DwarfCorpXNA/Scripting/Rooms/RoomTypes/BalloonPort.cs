@@ -61,7 +61,7 @@ namespace DwarfCorp
 
         private void CreateFlag(Vector3 At)
         {
-            var flag = new Flag(World.ComponentManager, At + new Vector3(0.5f, 0.5f, 0.5f), World.PlayerCompany.Information);
+            var flag = EntityFactory.CreateEntity<Flag>("Flag", At + new Vector3(0.5f, 0.5f, 0.5f));
             AddBody(flag, true);
         }
 
