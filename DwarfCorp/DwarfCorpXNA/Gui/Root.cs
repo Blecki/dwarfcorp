@@ -572,6 +572,15 @@ namespace DwarfCorp.Gui
 
         public void DrawMesh(Mesh Mesh, Texture2D Texture)
         {
+            if (Texture.IsDisposed || Texture.GraphicsDevice.IsDisposed || (Texture is RenderTarget2D && ((RenderTarget2D)(Texture)).IsContentLost))
+            {
+                return;
+            }
+
+            if (RenderData.Device.IsDisposed || RenderData.Effect.IsDisposed)
+            {
+                RenderData = new RenderData(GameStates.GameState.Game.GraphicsDevice, GameStates.GameState.Game.Content);
+            }
             RenderData.Device.DepthStencilState = DepthStencilState.None;
 
             RenderData.Effect.CurrentTechnique = RenderData.Effect.Techniques[0];
