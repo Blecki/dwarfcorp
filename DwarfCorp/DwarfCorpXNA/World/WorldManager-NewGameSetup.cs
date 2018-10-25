@@ -228,7 +228,6 @@ namespace DwarfCorp
                         }
                     }
 
-                    bool encounteredFilled = false;
                     // Fill from the top height down to the bottom.
                     for (int y = Math.Max(0, h - 1); y < averageHeight && y < VoxelConstants.ChunkSizeY; y++)
                     {
