@@ -12,7 +12,7 @@ If you're a developer/programmer and have the technical chops to compile C# code
 If you're a developer on Linux and Mac, it may be possible to build the game without too much fuss using Mono, provided you have a content package that was first built on Windows. [One of our contributors has a solution for this](https://github.com/CompletelyFairGames/dwarfcorp/issues/856).
 
 ## External Dependencies
-To develop DwarfCorp, you need the following libraries. If you just want to play the game, download one of the packages on our releases page.
+To develop DwarfCorp, you need the following libraries.
 
 * [The XNA 4.0](https://www.microsoft.com/en-us/download/details.aspx?id=23714) library (not included)
 * Note: If you are running Windows 8 or higher, you will need to use [MXA](https://github.com/CompletelyFairGames/dwarfcorp/wiki/Installing-MXA-Hacks) instead. This is included in our repository as a convenience. XNA has gotten very old and support was dropped for it long ago, and we must jump through hoops to get it working.
