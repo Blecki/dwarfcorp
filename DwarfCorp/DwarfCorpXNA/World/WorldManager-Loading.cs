@@ -112,15 +112,7 @@ namespace DwarfCorp
 
             SetLoadingMessage("Creating Sky...");
 
-            Sky = new SkyRenderer(
-                AssetManager.GetContentTexture(ContentPaths.Sky.moon),
-                AssetManager.GetContentTexture(ContentPaths.Sky.sun),
-                Content.Load<TextureCube>(AssetManager.ResolveContentPath(ContentPaths.Sky.day_sky)),
-                Content.Load<TextureCube>(AssetManager.ResolveContentPath(ContentPaths.Sky.night_sky)),
-                AssetManager.GetContentTexture(ContentPaths.Gradients.skygradient),
-                Content.Load<Model>(AssetManager.ResolveContentPath(ContentPaths.Models.sphereLowPoly)),
-                Content.Load<Effect>(ContentPaths.Shaders.SkySphere),
-                Content.Load<Effect>(ContentPaths.Shaders.Background));
+            Sky = new SkyRenderer();
 
             #region Reading game file
 
@@ -197,10 +189,6 @@ namespace DwarfCorp
                     Settings = BloomSettings.PresetSettings[5]
                 };
                 bloom.Initialize();
-
-
-                fxaa = new FXAA();
-                fxaa.Initialize();
 
                 SoundManager.Content = Content;
                 if (PlanService != null)
@@ -413,7 +401,7 @@ namespace DwarfCorp
             #endregion
 
             SetLoadingMessage("Creating Particles ...");
-            ParticleManager = new ParticleManager(GraphicsDevice, ComponentManager);
+            ParticleManager = new ParticleManager(ComponentManager);
 
             SetLoadingMessage("Creating GameMaster ...");
             Master = new GameMaster(Factions.Factions["Player"], Game, ComponentManager, ChunkManager,

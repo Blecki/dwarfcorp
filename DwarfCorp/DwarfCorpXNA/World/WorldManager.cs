@@ -516,6 +516,7 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void Update(DwarfTime gameTime)
         {
+            ValidateShader();
             foreach (var func in LazyActions)
             {
                 if (func != null)
@@ -1029,6 +1030,12 @@ namespace DwarfCorp
                 ChunkManager);
             ParticleManager.Render(this, GraphicsDevice);
             DefaultShader.ClippingEnabled = false;
+
+            if (UseFXAA && fxaa == null)
+            {
+                fxaa = new FXAA();
+                fxaa.Initialize();
+            }
 
             if (GameSettings.Default.EnableGlow)
             {

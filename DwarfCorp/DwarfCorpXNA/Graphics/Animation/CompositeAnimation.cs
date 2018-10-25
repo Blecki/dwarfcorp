@@ -59,9 +59,9 @@ namespace DwarfCorp
             Primitive.SetFrame(SpriteSheet, rect, rect.Width / 32.0f, rect.Height / 32.0f, Color.White, Color.White, Flipped);
         }
 
-        public override ImageFrame GetAsImageFrame(int CurrentFrame)
+        public override NamedImageFrame GetAsImageFrame(int CurrentFrame)
         {
-            return new ImageFrame(Composite.GetTarget(CurrentOffset), Composite.GetFrameRect(CurrentOffset));
+            return new NamedImageFrame(Composite.GetTarget(CurrentOffset), Composite.GetFrameRect(CurrentOffset));
         }
 
         public override Texture2D GetTexture()

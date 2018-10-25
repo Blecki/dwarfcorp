@@ -357,7 +357,7 @@ namespace DwarfCorp
             var successors = EnumerateSuccessors(state, voxel, neighborHood, inWater, standingOnGround, topCovered, hasNeighbors, isRiding, neighborObjects);
             if (Can(MoveType.Teleport))
             {
-                var teleportObjects = Parent.Faction.OwnedObjects.Where(obj => obj.Active && obj.Tags.Contains("Teleporter"));
+                var teleportObjects = Parent.Faction.OwnedObjects.Where(obj => obj.Active && obj.Tags.Contains("Teleporter")).ToList();
                 foreach (var obj in teleportObjects)
                 {
                     if ((obj.Position - state.Voxel.WorldPosition).LengthSquared() < TeleportDistanceSquared)

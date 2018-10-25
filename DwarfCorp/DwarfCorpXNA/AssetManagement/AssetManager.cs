@@ -304,7 +304,7 @@ namespace DwarfCorp
                     return toReturn;
                 }
             }
-            catch (ContentLoadException exception)
+            catch (Exception exception)
             {
                 Console.Error.WriteLine(exception.ToString());
                 var r = Content.Load<Texture2D>(ContentPaths.Error);

@@ -175,7 +175,7 @@ namespace DwarfCorp
             }
         }
 
-        public ParticleEmitter(GraphicsDevice Device, ComponentManager manager, string name, Matrix localTransform, EmitterData emitterData) 
+        public ParticleEmitter(ComponentManager manager, string name, Matrix localTransform, EmitterData emitterData) 
         {
             Particles = new List<Particle>();
 

@@ -128,16 +128,15 @@ namespace DwarfCorp
         {
             if (Active)
             {
+                
                 ParticleTimer.Update(Time);
                 if (ParticleTimer.HasTriggered)
                 {
                     float t = (float)Time.TotalGameTime.TotalSeconds * 0.5f;
-                    Vector3 pos = new Vector3((float)Math.Sin(t) * TeleportDistance, 0, (float)Math.Cos(t) * TeleportDistance) + Position;
-                    VoxelHandle voxelBelow = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(pos)));
-
-                    if (voxelBelow.IsValid)
-                        World.ParticleManager.Trigger("green_flame", voxelBelow.WorldPosition + Vector3.Up * 1.5f, Color.White, 1);
+                    Vector3 pos = Position + MathFunctions.RandVector3Cube();
+                    World.ParticleManager.Trigger("green_flame", pos, Color.White, 1);
                 }
+                
             }
             base.Update(Time, Chunks, Camera);
         }
