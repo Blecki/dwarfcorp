@@ -157,10 +157,11 @@ namespace DwarfCorp
             {
                 return toReturn;
             }
+            var bodies = Agent.World.PlayerFaction.OwnedObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
             var currentVoxel = creatureVoxel;
             while (toReturn.Count < maxsteps)
             {
-                var actions = Agent.Movement.GetMoveActions(new MoveState() { Voxel = currentVoxel }, Creature.World.OctTree);
+                var actions = Agent.Movement.GetMoveActions(new MoveState() { Voxel = currentVoxel }, Creature.World.OctTree, bodies);
 
                 float minCost = float.MaxValue;
                 var minAction = new MoveAction();

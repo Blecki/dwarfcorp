@@ -93,13 +93,14 @@ namespace DwarfCorp
             {
                 return false;
             }
+            var bodies = Agent.World.PlayerFaction.OwnedObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
             for (int i = idx; i < path.Count - 1; i++)
             {
                 if (!path[i].SourceVoxel.IsValid)
                 {
                     continue;
                 }
-                var neighbors = Agent.Movement.GetMoveActions(path[i].SourceState, Agent.World.OctTree);
+                var neighbors = Agent.Movement.GetMoveActions(path[i].SourceState, Agent.World.OctTree, bodies);
                 if (!neighbors.Any(n => n.DestinationState == path[i + 1].SourceState))
                 {
                     return false;

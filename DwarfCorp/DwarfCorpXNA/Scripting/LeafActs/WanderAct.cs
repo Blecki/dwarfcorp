@@ -184,9 +184,10 @@ namespace DwarfCorp
             if (Is2D) target.Y = Creature.AI.Position.Y;
             List<MoveAction> path = new List<MoveAction>();
             VoxelHandle curr = Creature.Physics.CurrentVoxel;
+            var bodies = Agent.World.PlayerFaction.OwnedObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
             for (int i = 0; i < PathLength; i++)
             {
-                var actions = Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, Creature.World.OctTree);
+                var actions = Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, Creature.World.OctTree, bodies);
 
                 MoveAction? bestAction = null;
                 float bestDist = float.MaxValue;
