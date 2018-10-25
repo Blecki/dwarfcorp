@@ -4,8 +4,12 @@
 
 [DwarfCorp](www.dwarfcorp.com) from [Completely Fair Games](www.completelyfairgames.com) is a single player tycoon/strategy game for PC. In the game, the player manages a corporate colony of dwarves. The dwarves must mine resources, build structures, and contend with the natives to survive.
 
+![](https://user-images.githubusercontent.com/241184/46921044-8a8f8000-cfc4-11e8-92bf-5431b3e41d3d.gif)
+
 ## BEFORE READING
-If you're a developer/programmer and have the technical chops to compile C# code on Windows, continue reading. Otherwise, if you just want to play the game, buy the game on [Steam](http://store.steampowered.com/app/252390/DwarfCorp/?beta=0) or [itch.io](https://completelyfairgames.itch.io/dwarfcorp). You can also try a build on our releases page (above), but these builds will not be updated after the weekend of September 23rd, 2017.
+If you're a developer/programmer and have the technical chops to compile C# code on Windows, continue reading. Otherwise, if you just want to play the game, buy the game on [Steam](http://store.steampowered.com/app/252390/DwarfCorp/?beta=0) or [itch.io](https://completelyfairgames.itch.io/dwarfcorp). ~You can also try a build on our releases page (above), but these builds will not be updated after the weekend of September 23rd, 2017~.
+
+If you're a developer on Linux and Mac, it may be possible to build the game without too much fuss using Mono, provided you have a content package that was first built on Windows. [One of our contributors has a solution for this](https://github.com/CompletelyFairGames/dwarfcorp/issues/856).
 
 ## External Dependencies
 To develop DwarfCorp, you need the following libraries. If you just want to play the game, download one of the packages on our releases page.
@@ -17,7 +21,9 @@ To develop DwarfCorp, you need the following libraries. If you just want to play
 * [JSON.NET](https://github.com/JamesNK/Newtonsoft.Json) (source code not included. You should get this through nuget.)
 
 ## Cross Platform Development
-It is not possible to develop the game on anything other than a Windows machine at the moment. The game is developed using XNA/FNA using the XNA content project, [which only supports a windows development environment](https://github.com/FNA-XNA/FNA/issues/126). That said, the game can be cross compiled for windows/mac using FNA, but only in windows in a Visual Studio environment.
+We dont' officially support developing the game on anything other than a Windows machine at the moment. The game is developed using XNA/FNA using the XNA content project, [which only supports a windows development environment](https://github.com/FNA-XNA/FNA/issues/126). That said, the game can be cross compiled for windows/mac using FNA, but only in windows in a Visual Studio environment.
+
+If you're a developer on Linux and Mac, it may be possible to build the game without too much fuss using Mono, provided you have a content package that was first built on Windows. [One of our contributors has a solution for this](https://github.com/CompletelyFairGames/dwarfcorp/issues/856).
 
 ## Building
 
