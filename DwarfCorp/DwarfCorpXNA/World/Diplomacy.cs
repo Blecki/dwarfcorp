@@ -294,7 +294,7 @@ namespace DwarfCorp
         {
             if (!world.PlayerFaction.GetRooms().Any(room => room is BalloonPort && room.IsBuilt))
             {
-                world.MakeAnnouncement(String.Format("Trade envoy from {0} left. No balloon port!", natives.Name));
+                world.MakeAnnouncement(String.Format("Trade envoy from {0} left: No balloon port!", natives.Name));
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
                 return null;
             }
@@ -541,7 +541,7 @@ namespace DwarfCorp
                 Diplomacy.Politics politics = faction.World.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
                 if (politics.GetCurrentRelationship() == Relationship.Hateful)
                 {
-                    World.MakeAnnouncement(String.Format("The envoy from {0} is leaving.", envoy.OwnerFaction.Name));
+                    World.MakeAnnouncement(String.Format("The envoy from {0} left: we are at war with them.", envoy.OwnerFaction.Name));
                     RecallEnvoy(envoy);
                 }
                 else
