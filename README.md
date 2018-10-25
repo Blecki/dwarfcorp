@@ -11,6 +11,8 @@ If you're a developer/programmer and have the technical chops to compile C# code
 
 If you're a developer on Linux and Mac, it may be possible to build the game without too much fuss using Mono, provided you have a content package that was first built on Windows. [One of our contributors has a solution for this](https://github.com/CompletelyFairGames/dwarfcorp/issues/856).
 
+The project is financed directly through sales on Steam and itch.io. Since September 2017, all proceeds from sales go directly to our contracted developers.
+
 ## External Dependencies
 To develop DwarfCorp, you need the following libraries.
 
