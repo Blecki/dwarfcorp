@@ -174,7 +174,7 @@ namespace DwarfCorp
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
-#if CREATE_CRASH_LOGS
+#if !DEBUG
             try
 #endif
             {
@@ -195,7 +195,7 @@ namespace DwarfCorp
                     
                 }
             }
-#if CREATE_CRASH_LOGS
+#if !DEBUG
             catch (Exception exception)
             {
                 ProgramData.WriteExceptionLog(exception);

@@ -101,9 +101,6 @@ namespace DwarfCorp
             }
             Thread.Sleep(1000);
 
-#if CREATE_CRASH_LOGS
-            try
-#endif
 #if !DEBUG
             try
             {
@@ -460,16 +457,10 @@ namespace DwarfCorp
                 Game.CaptureException(exception);
                 LoadingException = exception;
                 LoadStatus = LoadingStatus.Failure;
-            }
-#endif
-        }
-        
-
-#if CREATE_CRASH_LOGS
-            catch (Exception exception)
-            {
                 ProgramData.WriteExceptionLog(exception);
             }
 #endif
+        }
+
     }
 }
