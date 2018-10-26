@@ -572,7 +572,7 @@ namespace DwarfCorp.Gui
 
         public void DrawMesh(Mesh Mesh, Texture2D Texture)
         {
-            if (Texture.IsDisposed || Texture.GraphicsDevice.IsDisposed || (Texture is RenderTarget2D && ((RenderTarget2D)(Texture)).IsContentLost))
+            if (Texture == null || Texture.IsDisposed || Texture.GraphicsDevice.IsDisposed || (Texture is RenderTarget2D && ((RenderTarget2D)(Texture)).IsContentLost))
             {
                 return;
             }
