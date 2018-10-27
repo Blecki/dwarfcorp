@@ -321,17 +321,17 @@ namespace DwarfCorp
         }
 
         /// <summary> gets a list of actions that the creature can take from the given position </summary>
-        public IEnumerable<MoveAction> GetMoveActions(Vector3 Pos, OctTreeNode octree)
+        public IEnumerable<MoveAction> GetMoveActions(Vector3 Pos, OctTreeNode octree, List<Body> teleportObjects)
         {
             var vox = new VoxelHandle(Creature.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(Pos));
-            return GetMoveActions(new MoveState() { Voxel = vox }, octree);
+            return GetMoveActions(new MoveState() { Voxel = vox }, octree, teleportObjects);
         }
 
 
 
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
-        public IEnumerable<MoveAction> GetMoveActions(MoveState state, OctTreeNode OctTree)
+        public IEnumerable<MoveAction> GetMoveActions(MoveState state, OctTreeNode OctTree, List<Body> teleportObjects)
         {
             if (Parent == null)
                 yield break;
@@ -357,7 +357,6 @@ namespace DwarfCorp
             var successors = EnumerateSuccessors(state, voxel, neighborHood, inWater, standingOnGround, topCovered, hasNeighbors, isRiding, neighborObjects);
             if (Can(MoveType.Teleport))
             {
-                var teleportObjects = Parent.Faction.OwnedObjects.Where(obj => obj.Active && obj.Tags.Contains("Teleporter"));
                 foreach (var obj in teleportObjects)
                 {
                     if ((obj.Position - state.Voxel.WorldPosition).LengthSquared() < TeleportDistanceSquared)
@@ -835,7 +834,7 @@ namespace DwarfCorp
 
         // Inverts GetMoveActions. So, returns the list of move actions whose target is the current voxel.
         // Very, very slow.
-        public IEnumerable<MoveAction> GetInverseMoveActions(MoveState currentstate, OctTreeNode OctTree)
+        public IEnumerable<MoveAction> GetInverseMoveActions(MoveState currentstate, OctTreeNode OctTree, List<Body> teleportObjects)
         {
             if (Parent == null)
                 yield break;
@@ -849,7 +848,6 @@ namespace DwarfCorp
 
             if (Can(MoveType.Teleport))
             {
-                var teleportObjects = Parent.Faction.OwnedObjects.Where(obj => obj.Active && obj.Tags.Contains("Teleporter"));
                 foreach (var obj in teleportObjects)
                 {
                     if ((obj.Position - current.WorldPosition).LengthSquared() > 2)
@@ -881,7 +879,7 @@ namespace DwarfCorp
                 .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
                 .Where(h => h.IsValid))
             {
-                foreach (var a in GetMoveActions(new MoveState() { Voxel = v}, OctTree).Where(a => a.DestinationState == currentstate))
+                foreach (var a in GetMoveActions(new MoveState() { Voxel = v}, OctTree, teleportObjects).Where(a => a.DestinationState == currentstate))
                     yield return a;
 
                 if (!Can(MoveType.RideVehicle))
@@ -910,7 +908,7 @@ namespace DwarfCorp
                     foreach (var neighborRail in rail.NeighborRails.Select(neighbor => creature.Manager.FindComponent(neighbor.NeighborID) as Rail.RailEntity))
                     {
                         var actions = GetMoveActions(new MoveState() {
-                            Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = neighborRail } }, OctTree);
+                            Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = neighborRail } }, OctTree, teleportObjects);
                         foreach (var a in actions.Where(a => a.DestinationState == currentstate))
                         {
                             yield return a;
@@ -927,7 +925,7 @@ namespace DwarfCorp
                         }
                     }
 
-                    foreach (var a in GetMoveActions(new MoveState() { Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = null } }, OctTree).Where(a => a.DestinationState == currentstate))
+                    foreach (var a in GetMoveActions(new MoveState() { Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = null } }, OctTree, teleportObjects).Where(a => a.DestinationState == currentstate))
                         yield return a;
                 }
             }

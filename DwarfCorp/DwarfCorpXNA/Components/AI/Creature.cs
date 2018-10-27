@@ -670,7 +670,7 @@ namespace DwarfCorp
         /// <summary>
         /// Draws an indicator image over the creature telling us what its thinking.
         /// </summary>
-        public void DrawIndicator(ImageFrame image, Color tint)
+        public void DrawIndicator(NamedImageFrame image, Color tint)
         {
             if (!((DateTime.Now - LastIndicatorTime).TotalSeconds >= IndicatorRateLimit))
             {

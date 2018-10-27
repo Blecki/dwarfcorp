@@ -1,9 +1,9 @@
 {
   "ID": 0,
   "Name": "Glass",
-  "Top": "3, 11",
-  "Bottom": "3, 12",
-  "Sides": "3, 12",
+  "Top": "3, 14",
+  "Bottom": "3, 14",
+  "Sides": "3, 14",
   "Transitions": 2,
   "HasTransitionTextures": true,
   "TransitionTiles": [

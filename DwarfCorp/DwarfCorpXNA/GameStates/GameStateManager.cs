@@ -102,7 +102,22 @@ namespace DwarfCorp.GameStates
 
         public void Update(DwarfTime time)
         {
-            if(ScreenSaver == null)
+#if DEBUG
+            Microsoft.Xna.Framework.Input.KeyboardState k = Microsoft.Xna.Framework.Input.Keyboard.GetState();
+            if (k.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Home))
+            {
+                try
+                {
+                    GameState.Game.GraphicsDevice.Reset();
+                }
+                catch (Exception exception)
+                {
+
+                }
+            }
+#endif
+
+            if (ScreenSaver == null)
                 ScreenSaver = new Terrain2D(Game);
 
             if (NextState != null && NextState.IsInitialized)

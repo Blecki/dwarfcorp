@@ -53,20 +53,20 @@ namespace DwarfCorp
           
         }
 
-        public void Load(GraphicsDevice Device, ComponentManager Components, Dictionary<string, List<EmitterData>> data)
+        public void Load(ComponentManager Components, Dictionary<string, List<EmitterData>> data)
         {
             Effects.Clear();
             foreach (var effect in data)
             {
-                RegisterEffect(Device, Components, effect.Key, effect.Value.ToArray());
+                RegisterEffect(Components, effect.Key, effect.Value.ToArray());
             }
         }
 
-        public ParticleManager(GraphicsDevice Device, ComponentManager Components)
+        public ParticleManager(ComponentManager Components)
         {
             // Todo: Better modding support - make it a list of named emitters.
             Effects = new Dictionary<string, ParticleEffect>();
-            Load(Device, Components, FileUtils.LoadJsonFromResolvedPath<Dictionary<string, List<EmitterData>>>(ContentPaths.Particles.particles));
+            Load(Components, FileUtils.LoadJsonFromResolvedPath<Dictionary<string, List<EmitterData>>>(ContentPaths.Particles.particles));
         }
 
         public void Trigger(string emitter, Vector3 position, Color tint, int num)
@@ -97,13 +97,13 @@ namespace DwarfCorp
         }
 
 
-        public void RegisterEffect(GraphicsDevice Device, ComponentManager Components, string name, params EmitterData[] data)
+        public void RegisterEffect(ComponentManager Components, string name, params EmitterData[] data)
         {
             List<ParticleEmitter> emitters = new List<ParticleEmitter>();
 
             foreach (EmitterData emitter in data)
             {
-                emitters.Add(new ParticleEmitter(Device, Components, name, Matrix.Identity, emitter));
+                emitters.Add(new ParticleEmitter(Components, name, Matrix.Identity, emitter));
             }
             Effects[name] = new ParticleEffect()
             {

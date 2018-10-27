@@ -294,7 +294,7 @@ namespace DwarfCorp
         {
             if (!world.PlayerFaction.GetRooms().Any(room => room is BalloonPort && room.IsBuilt))
             {
-                world.MakeAnnouncement(String.Format("Trade envoy from {0} left. No balloon port!", natives.Name));
+                world.MakeAnnouncement(String.Format("Trade envoy from {0} left: No balloon port!", natives.Name));
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
                 return null;
             }
@@ -379,7 +379,7 @@ namespace DwarfCorp
                     if (envoy.Creatures.Count > 0)
                     {
                         envoy.Creatures.First().ZoomToMe();
-                        World.MakeWorldPopup(String.Format("Traders from {0} ({1}) have entered our territory. They will try to get to our balloon port to trade with us.", natives.Name, natives.Race.Name),
+                        World.MakeWorldPopup(String.Format("Traders from {0} ({1}) have entered our territory.\nThey will try to get to our balloon port to trade with us.", natives.Name, natives.Race.Name),
                             envoy.Creatures.First().Physics, -10);
                     }
                 },
@@ -541,7 +541,7 @@ namespace DwarfCorp
                 Diplomacy.Politics politics = faction.World.Diplomacy.GetPolitics(faction, envoy.OtherFaction);
                 if (politics.GetCurrentRelationship() == Relationship.Hateful)
                 {
-                    World.MakeAnnouncement(String.Format("The envoy from {0} is leaving.", envoy.OwnerFaction.Name));
+                    World.MakeAnnouncement(String.Format("The envoy from {0} left: we are at war with them.", envoy.OwnerFaction.Name));
                     RecallEnvoy(envoy);
                 }
                 else
@@ -607,6 +607,7 @@ namespace DwarfCorp
                         {
                             envoy.MakeTradeWidget(World);
                         }
+                        envoy.StartTrading(World.Time.CurrentDate);
                         envoy.ExpiditionState = Expedition.State.Trading;
                         break;
                     }

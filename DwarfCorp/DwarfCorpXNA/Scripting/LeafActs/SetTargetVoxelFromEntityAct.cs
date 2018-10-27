@@ -70,6 +70,11 @@ namespace DwarfCorp
                     if (!voxelUnder.IsEmpty)
                         voxelUnder = VoxelHelpers.GetVoxelAbove(voxelUnder);
                     creature.AI.Blackboard.SetData(voxelOutName, voxelUnder);
+
+                    if ((voxelUnder.GetBoundingBox().Center() - target.Position).Length() > 10)
+                    {
+                        return Status.Fail;
+                    }
                     return Status.Success;
                 }
                 else

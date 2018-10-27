@@ -157,17 +157,31 @@ namespace DwarfCorp
 
                 if (Vertices != null)
                 {
-                    DynamicVertexBuffer newBuff = new DynamicVertexBuffer(device, ExtendedVertex.VertexDeclaration, Vertices.Length,
-                        BufferUsage.WriteOnly);
-                    newBuff.SetData(Vertices, 0, VertexCount);
-                    VertexBuffer = newBuff;
+                    try
+                    {
+                        DynamicVertexBuffer newBuff = new DynamicVertexBuffer(device, ExtendedVertex.VertexDeclaration, Vertices.Length,
+                            BufferUsage.WriteOnly);
+                        newBuff.SetData(Vertices, 0, VertexCount);
+                        VertexBuffer = newBuff;
+                    }
+                    catch (Exception exception)
+                    {
+                        VertexBuffer = null;
+                    }
                 }
 
                 if (Indexes != null)
                 {
-                    DynamicIndexBuffer newIndexBuff = new DynamicIndexBuffer(device, typeof (ushort), Indexes.Length, BufferUsage.None);
-                    newIndexBuff.SetData(Indexes, 0, IndexCount);
-                    IndexBuffer = newIndexBuff;
+                    try
+                    {
+                        DynamicIndexBuffer newIndexBuff = new DynamicIndexBuffer(device, typeof(ushort), Indexes.Length, BufferUsage.None);
+                        newIndexBuff.SetData(Indexes, 0, IndexCount);
+                        IndexBuffer = newIndexBuff;
+                    }
+                    catch (Exception exception)
+                    {
+                        IndexBuffer = null;
+                    }
                 }
 
             }

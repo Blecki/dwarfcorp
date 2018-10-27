@@ -170,8 +170,10 @@ namespace DwarfCorp
         {
             // Create a local clone of the octree, using only the objects belonging to the player.
             var octree = new OctTreeNode(mover.Creature.World.ChunkManager.Bounds.Min, mover.Creature.World.ChunkManager.Bounds.Max);
+           
             List<Body> playerObjects = new List<Body>(mover.Creature.World.PlayerFaction.OwnedObjects);
-            foreach(var obj in playerObjects)
+            List<Body> teleportObjects = playerObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
+            foreach (var obj in playerObjects)
                 octree.Add(obj, obj.GetBoundingBox());
 
             var start = new MoveState()
@@ -285,9 +287,9 @@ namespace DwarfCorp
                 closedSet.Add(current);
 
                 IEnumerable<MoveAction> neighbors = null;
-
+                
                 // Get the voxels that can be moved to from the current voxel.
-                neighbors = mover.GetMoveActions(current, octree).ToList();
+                neighbors = mover.GetMoveActions(current, octree, teleportObjects).ToList();
                 //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
 
 
@@ -373,6 +375,7 @@ namespace DwarfCorp
             // Create a local clone of the octree, using only the objects belonging to the player.
             var octree = new OctTreeNode(mover.Creature.World.ChunkManager.Bounds.Min, mover.Creature.World.ChunkManager.Bounds.Max);
             List<Body> playerObjects = new List<Body>(mover.Creature.World.PlayerFaction.OwnedObjects);
+            List<Body> teleportObjects = mover.Creature.World.PlayerFaction.OwnedObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
             foreach (var obj in playerObjects)
                 octree.Add(obj, obj.GetBoundingBox());
 
@@ -507,7 +510,7 @@ namespace DwarfCorp
                 IEnumerable<MoveAction> neighbors = null;
 
                 // Get the voxels that can be moved to from the current voxel.
-                neighbors = mover.GetInverseMoveActions(current, octree);
+                neighbors = mover.GetInverseMoveActions(current, octree, teleportObjects);
 
                 // Otherwise, consider all of the neighbors of the current voxel that can be moved to,
                 // and determine how to add them to the list of expansions.

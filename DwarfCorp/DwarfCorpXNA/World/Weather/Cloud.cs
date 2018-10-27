@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -44,8 +46,16 @@ namespace DwarfCorp
             public Particle Particle;
         }
 
+        [JsonIgnore]
         public Rain[] RainDrops { get; set; }
         public StormType TypeofStorm { get; set; }
+
+        [OnDeserialized]
+        public void OnDeserializing(StreamingContext ctx)
+        {
+            RainDrops = new Rain[MaxRainDrops];
+        }
+
 
         public Cloud()
         {

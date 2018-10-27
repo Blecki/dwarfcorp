@@ -87,6 +87,12 @@ namespace DwarfCorp
 
         public WaterRenderer(GraphicsDevice device)
         {
+
+        }
+        
+        public void CreateContent(GraphicsDevice device)
+        {
+            LiquidAssets.Clear();
             PresentationParameters pp = device.PresentationParameters;
 
             int width = Math.Min(pp.BackBufferWidth / 4, 4096);
@@ -183,6 +189,7 @@ namespace DwarfCorp
         public void DrawReflectionMap(IEnumerable<Body> Renderables, DwarfTime gameTime, WorldManager game, float waterHeight, Matrix reflectionViewMatrix, Shader effect, GraphicsDevice device)
         {
             if (!DrawReflections) return;
+            ValidateBuffers();
             reflectionTimer.Update(gameTime);
             if (!reflectionTimer.HasTriggered && (prevCameraPos - game.Camera.Position).LengthSquared() < 0.001 && (prevCameraTarget - game.Camera.Target).LengthSquared() < 0.001)
                 return;
@@ -231,8 +238,18 @@ namespace DwarfCorp
             ReflectionMap = reflectionRenderTarget;
         }
 
+        public void ValidateBuffers()
+        {
+            if (reflectionRenderTarget == null || reflectionRenderTarget.IsContentLost || reflectionRenderTarget.IsContentLost ||
+                ShoreMap == null || ShoreMap.IsDisposed || ShoreMap.GraphicsDevice.IsDisposed)
+            {
+                CreateContent(GameState.Game.GraphicsDevice);
+            }
+        }
+
         public void DrawWaterFlat(GraphicsDevice device, Matrix view, Matrix projection, Shader effect, ChunkManager chunks)
         {
+            ValidateBuffers();
             try // Release day hack fix. Just eat any exceptions in case the fix applied to LiquidPrimitive 
             // doesn't actually work.
             {
@@ -268,6 +285,7 @@ namespace DwarfCorp
             Camera camera,
             ChunkManager chunks)
         {
+            ValidateBuffers();
             if (DrawReflections)
             {
                 effect.CurrentTechnique = effect.Techniques[Shader.Technique.Water];

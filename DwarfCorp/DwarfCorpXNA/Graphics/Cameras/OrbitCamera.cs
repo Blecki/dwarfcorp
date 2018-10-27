@@ -86,6 +86,14 @@ namespace DwarfCorp
             right.Normalize();
             up.Normalize();
             Vector3 vel = Velocity.X * right + Velocity.Y * up - Velocity.Z * forward;
+            float l = vel.Length();
+            vel.Y = 0;
+            
+            if (vel.Length() > 0.001f)
+            {
+                vel.Normalize();
+                vel *= l;
+            }
             camera.Position += vel * dt;
             camera.Target += vel * dt;
             camera.OverheadUpdate(DwarfTime.LastTime, world.ChunkManager, 0.0f, Spin * dt, Zoom * dt);

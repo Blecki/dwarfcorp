@@ -156,16 +156,16 @@ namespace DwarfCorp.Gui.Widgets
                         }
                         else
                         {
-                            Faction.Hire(applicant, GameSettings.Default.DwarfArrivalDelayHours);
+                            var date = Faction.Hire(applicant, 1);
                             SoundManager.PlaySound(ContentPaths.Audio.cash, 0.5f);
                             applicantInfo.Hidden = true;
                             HireButton.Hidden = true;
                             Root.ShowModalPopup(new Gui.Widgets.Popup()
                             {
-                                Text = String.Format("We hired {0}, paying a signing bonus of {1}. They will arrive in about {2} hours.",
+                                Text = String.Format("We hired {0}, paying a signing bonus of {1}. They will arrive in about {2} hour(s).",
                                 applicant.Name,
                                 GameSettings.Default.SigningBonus,
-                                GameSettings.Default.DwarfArrivalDelayHours),
+                                (date - Faction.World.Time.CurrentDate).Hours),
                             });
  
                         }

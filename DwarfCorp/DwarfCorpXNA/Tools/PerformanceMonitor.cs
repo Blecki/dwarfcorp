@@ -67,12 +67,14 @@ namespace DwarfCorp
             {
                 if (FPSFaultTimer != null && FPSFaultTimer.Elapsed.TotalSeconds > 5)
                 {
+                    /*
                     var settings = FileUtils.SerializeBasicJSON<GameSettings.Settings>(GameSettings.Default);
                     var adapter = GameStates.GameState.Game.GraphicsDevice.Adapter;
                     var deviceDetails = String.Format("Num Cores: {4}\nDevice:\nName: {0}\n ID: {1}\n Description: {2}\n Vendor: {3}", adapter.DeviceName, adapter.DeviceId, adapter.Description, adapter.VendorId, Environment.ProcessorCount);
                     var memory = GameStates.PlayState.BytesToString(System.GC.GetTotalMemory(false));
                     (GameStates.GameState.Game as DwarfGame).TriggerRavenEvent("Low performance detected", String.Format("Average FPS: {0}\nSettings:\n{1}\n{2}\nRAM: {3} {4}", avgFPS, settings, deviceDetails, memory, GameStates.PlayState.BytesToString(Environment.WorkingSet)));
                     SentPerfReport = true;
+                    */
                 }
                 else if (FPSFaultTimer == null)
                 {

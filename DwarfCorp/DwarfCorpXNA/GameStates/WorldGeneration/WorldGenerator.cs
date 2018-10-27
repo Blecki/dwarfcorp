@@ -313,7 +313,7 @@ namespace DwarfCorp.GameStates
 
         public void GenerateWorld(int seed, int width, int height)
         {
-#if CREATE_CRASH_LOGS
+#if !DEBUG
            try
 #endif
             {
@@ -480,7 +480,7 @@ namespace DwarfCorp.GameStates
                 LoadingMessage = "";
                 Progress = 1.0f;
             }
-#if CREATE_CRASH_LOGS
+#if !DEBUG
             catch (Exception exception)
             {
                 ProgramData.WriteExceptionLog(exception);

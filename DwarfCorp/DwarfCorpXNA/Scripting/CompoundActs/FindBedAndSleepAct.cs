@@ -70,7 +70,7 @@ namespace DwarfCorp
             Body closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true, Agent);
             Zone closestZone = Agent.Faction.GetNearestRoom(Agent.Position);
            
-            if (Agent.Status.Energy.IsDissatisfied() && closestItem != null)
+            if (!Agent.Status.Energy.IsSatisfied() && closestItem != null)
             {
                 closestItem.ReservedFor = Agent;
                 Creature.AI.Blackboard.SetData("Bed", closestItem);
@@ -85,7 +85,7 @@ namespace DwarfCorp
                         unreserveAct
                     ) | unreserveAct;
             }
-            else if (Agent.Status.Energy.IsDissatisfied() && closestItem == null && closestZone != null)
+            else if (!Agent.Status.Energy.IsSatisfied() && closestItem == null && closestZone != null)
             {
                 Creature.AddThought(Thought.ThoughtType.SleptOnGround);
 
@@ -95,7 +95,7 @@ namespace DwarfCorp
                                         RechargeRate = 1.0f
                                     });
             }
-            else if (Agent.Status.Energy.IsDissatisfied() && closestItem == null && closestZone == null)
+            else if (!Agent.Status.Energy.IsSatisfied() && closestItem == null && closestZone == null)
             {
                 Creature.AddThought(Thought.ThoughtType.SleptOnGround);
 

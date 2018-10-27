@@ -28,24 +28,29 @@ namespace DwarfCorp
         public IndexBuffer BackgroundIndex { get; set; }
         public Effect BackgroundEffect { get; set; }
         public List<Vector3> StarPositions { get; set; }
- 
-        public SkyRenderer(Texture2D moonTexture, Texture2D sunTexture, TextureCube skyTexture, TextureCube nightTexture, Texture2D skyGrad, Model skyMesh, Effect skyEffect, Effect backgroundEffect)
+
+        public SkyRenderer()
         {
-            SkyTexture = skyTexture;
-            NightTexture = nightTexture;
-            SkyMesh = skyMesh;
-            SkyEffect = skyEffect;
-            SkyGrad = skyGrad;
+            CreateContent();
+        }
+
+        public void CreateContent()
+        {
+            SkyTexture = GameState.Game.Content.Load<TextureCube>(AssetManager.ResolveContentPath(ContentPaths.Sky.day_sky));
+            NightTexture = GameState.Game.Content.Load<TextureCube>(AssetManager.ResolveContentPath(ContentPaths.Sky.night_sky));
+            SkyMesh = GameState.Game.Content.Load<Model>(AssetManager.ResolveContentPath(ContentPaths.Models.sphereLowPoly));
+            SkyEffect = GameState.Game.Content.Load<Effect>(ContentPaths.Shaders.SkySphere);
+            SkyGrad = AssetManager.GetContentTexture(ContentPaths.Gradients.skygradient);
             SkyEffect.Parameters["SkyboxTexture"].SetValue(SkyTexture);
             SkyEffect.Parameters["TintTexture"].SetValue(SkyGrad);
-            MoonTexture = moonTexture;
-            SunTexture = sunTexture;
+            MoonTexture = AssetManager.GetContentTexture(ContentPaths.Sky.moon);
+            SunTexture = AssetManager.GetContentTexture(ContentPaths.Sky.sun);
             TimeOfDay = 0.0f;
             CosTime = 0.0f;
-            BackgroundEffect = backgroundEffect;
-            foreach(ModelMesh mesh in SkyMesh.Meshes)
+            BackgroundEffect = GameState.Game.Content.Load<Effect>(ContentPaths.Shaders.Background);
+            foreach (ModelMesh mesh in SkyMesh.Meshes)
             {
-                foreach(ModelMeshPart part in mesh.MeshParts)
+                foreach (ModelMeshPart part in mesh.MeshParts)
                 {
                     part.Effect = SkyEffect;
                 }
@@ -63,6 +68,7 @@ namespace DwarfCorp
 
         public void Render(DwarfTime time, GraphicsDevice device, Camera camera, float scale, Color fogColor, BoundingBox backgroundScale, bool drawBackground=true)
         {
+            ValidateBuffers();
             device.DepthStencilState = DepthStencilState.None;
             RenderNightSky(time, device, camera);
             RenderStars(time, device, camera, device.Viewport);
@@ -110,7 +116,7 @@ namespace DwarfCorp
 
         public void RenderBackgroundMesh(GraphicsDevice device, Camera camera, Color fogColor, BoundingBox scale)
         {
-            if (BackgroundMesh == null)
+            if (BackgroundMesh == null || BackgroundMesh.IsDisposed || BackgroundIndex == null || BackgroundIndex.IsDisposed)
             {
                 CreateBackgroundMesh(device, scale);
             }
@@ -128,6 +134,14 @@ namespace DwarfCorp
             {
                 pass.Apply();
                 device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, BackgroundMesh.VertexCount, 0, BackgroundIndex.IndexCount / 3);
+            }
+        }
+
+        public void ValidateBuffers()
+        {
+            if (SkyEffect.IsDisposed || BackgroundEffect.IsDisposed || (BackgroundMesh != null && BackgroundMesh.IsDisposed) || SunTexture.IsDisposed || MoonTexture.IsDisposed || SkyTexture.IsDisposed)
+            {
+                CreateContent();
             }
         }
 

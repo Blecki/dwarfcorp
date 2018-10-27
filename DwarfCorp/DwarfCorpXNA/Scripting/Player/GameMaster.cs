@@ -344,7 +344,7 @@ namespace DwarfCorp
                     m.Creature.SelectionCircle.IsVisible = false;
                 m.Creature.Sprite.DrawSilhouette = false;
             };
-
+            Faction.SelectedMinions.RemoveAll(m => m.IsDead || !m.Active);
             foreach (CreatureAI creature in Faction.SelectedMinions)
             {
                 if (creature.Creature.SelectionCircle != null)

@@ -58,25 +58,29 @@ namespace DwarfCorp
         {
             Content = content;
             DefaultFont = content.Load<SpriteFont>(AssetManager.ResolveContentPath(ContentPaths.Fonts.Default));
-            Pixel = new Texture2D(graphics, 1, 1);
-            Color[] white = new Color[1];
-            white[0] = Color.White;
-            Pixel = new Texture2D(graphics, 1, 1);
-            Pixel.SetData<Color>(white);
             PointMagLinearMin = new SamplerState();
             PointMagLinearMin.AddressU = TextureAddressMode.Clamp;
             PointMagLinearMin.AddressV = TextureAddressMode.Clamp;
             PointMagLinearMin.Filter = TextureFilter.MinLinearMagPointMipLinear;
             PointMagLinearMin.Name = "PointMagLinearMin";
+            CreatePixel();
         }
 
-        public static void DrawSprite(ImageFrame image, Vector3 worldPosition)
+        public static void CreatePixel()
+        {
+            Color[] white = new Color[1];
+            white[0] = Color.White;
+            Pixel = new Texture2D(GameState.Game.GraphicsDevice, 1, 1);
+            Pixel.SetData<Color>(white);
+        }
+
+        public static void DrawSprite(NamedImageFrame image, Vector3 worldPosition)
         {
             if (!DwarfGame.HasRendered) return;
             DrawCommands.Enqueue(new SpriteDrawCommand(worldPosition, image));
         }
 
-        public static void DrawSprite(ImageFrame image, Vector3 worldPosition, Vector2 scale, Vector2 offset, Color tint, bool flip = false)
+        public static void DrawSprite(NamedImageFrame image, Vector3 worldPosition, Vector2 scale, Vector2 offset, Color tint, bool flip = false)
         {
             if (!DwarfGame.HasRendered) return;
             DrawCommands.Enqueue(new SpriteDrawCommand(worldPosition, image) { Scale = scale, Offset =  offset, Tint = tint, Effects = flip? SpriteEffects.FlipHorizontally : SpriteEffects.None});
@@ -213,6 +217,10 @@ namespace DwarfCorp
         /// <param Name="backgroundColor">The color of the rectangle.</param>
         public static void FillRect(SpriteBatch batch, Rectangle rect, Color backgroundColor)
         {
+            if (Pixel.IsDisposed)
+            {
+                CreatePixel();
+            }
             batch.Draw(Pixel, rect, backgroundColor);
         }
 
@@ -224,6 +232,10 @@ namespace DwarfCorp
         /// <param Name="borderColor">The color of the border of the rectangle.</param>
         public static void DrawRect(SpriteBatch batch, Rectangle rect, Color borderColor, float width)
         {
+            if (Pixel.IsDisposed)
+            {
+                CreatePixel();
+            }
             batch.Draw(Pixel, new Rectangle((int) (rect.Left - width), (int) (rect.Top - width), (int) width, (int) (rect.Height + width)), borderColor);
             batch.Draw(Pixel, new Rectangle((int) (rect.Left - width), (int) (rect.Top - width), rect.Width, (int) width), borderColor);
             batch.Draw(Pixel, new Rectangle((int) (rect.Left - width), (int) (rect.Top + rect.Height), rect.Width, (int) width), borderColor);
@@ -241,6 +253,10 @@ namespace DwarfCorp
         /// <param Name="width">The width, in pixels, of the line.</param>
         public static void DrawLine(SpriteBatch batch, Vector2 point1, Vector2 point2, Color lineColor, int width)
         {
+            if (Pixel.IsDisposed)
+            {
+                CreatePixel();
+            }
             float distance = Vector2.Distance(point1, point2);
             Vector2 normal = (point2 - point1);
             normal.Normalize();
@@ -260,7 +276,11 @@ namespace DwarfCorp
         /// <param Name="points">The points to connect.</param>
         public static void DrawPolygon(SpriteBatch spriteBatch, Color lineColor, int width, List<Vector2> points)
         {
-            for(int i = 0; i < points.Count() - 1; i++)
+            if (Pixel.IsDisposed)
+            {
+                CreatePixel();
+            }
+            for (int i = 0; i < points.Count() - 1; i++)
             {
                 DrawLine(spriteBatch, points[i], points[i + 1], lineColor, width);
             }

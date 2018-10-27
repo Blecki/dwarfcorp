@@ -49,7 +49,7 @@ namespace DwarfCorp
 
     public class Indicator
     {
-        public ImageFrame Image;
+        public NamedImageFrame Image;
         public Vector3 Position;
         public Timer CurrentTime;
         public float MaxScale;
@@ -163,7 +163,7 @@ namespace DwarfCorp
             Dots
         }
 
-        public static Dictionary<StandardIndicators, ImageFrame> StandardFrames = new Dictionary<StandardIndicators, ImageFrame>(); 
+        public static Dictionary<StandardIndicators, NamedImageFrame> StandardFrames = new Dictionary<StandardIndicators, NamedImageFrame>(); 
 
         public static List<Indicator> Indicators = new List<Indicator>();
         private static readonly Object IndicatorLock = new object();
@@ -172,20 +172,19 @@ namespace DwarfCorp
 
         public static void SetupStandards()
         {
-            Texture2D indicators = AssetManager.GetContentTexture(ContentPaths.GUI.indicators);
-            StandardFrames[StandardIndicators.Happy] = new ImageFrame(indicators, 16, 4, 0);
-            StandardFrames[StandardIndicators.Hungry] = new ImageFrame(indicators, 16, 0, 0);
-            StandardFrames[StandardIndicators.Sad] = new ImageFrame(indicators, 16, 5, 0);
-            StandardFrames[StandardIndicators.Sleepy] = new ImageFrame(indicators, 16, 3, 0);
-            StandardFrames[StandardIndicators.Question] = new ImageFrame(indicators, 16, 1, 1);
-            StandardFrames[StandardIndicators.Exclaim] = new ImageFrame(indicators, 16, 0, 1);
-            StandardFrames[StandardIndicators.Heart] = new ImageFrame(indicators, 16, 4, 1);
-            StandardFrames[StandardIndicators.Boom] = new ImageFrame(indicators, 16, 2, 1);
-            StandardFrames[StandardIndicators.Dots] = new ImageFrame(indicators, 16, 3, 1);
-            StandardFrames[StandardIndicators.DownArrow] = new ImageFrame(indicators, 16, 0, 2);
-            StandardFrames[StandardIndicators.UpArrow] = new ImageFrame(indicators, 16, 1, 2);
-            StandardFrames[StandardIndicators.LeftArrow] = new ImageFrame(indicators, 16, 2, 2);
-            StandardFrames[StandardIndicators.RightArrow] = new ImageFrame(indicators, 16, 3, 2);
+            StandardFrames[StandardIndicators.Happy] = new NamedImageFrame(ContentPaths.GUI.indicators, 16, 4, 0);
+            StandardFrames[StandardIndicators.Hungry] = new NamedImageFrame(ContentPaths.GUI.indicators, 16, 0, 0);
+            StandardFrames[StandardIndicators.Sad] = new NamedImageFrame(ContentPaths.GUI.indicators, 16, 5, 0);
+            StandardFrames[StandardIndicators.Sleepy] = new NamedImageFrame(ContentPaths.GUI.indicators, 16, 3, 0);
+            StandardFrames[StandardIndicators.Question] = new NamedImageFrame(ContentPaths.GUI.indicators, 16, 1, 1);
+            StandardFrames[StandardIndicators.Exclaim] = new NamedImageFrame(ContentPaths.GUI.indicators, 16, 0, 1);
+            StandardFrames[StandardIndicators.Heart] = new NamedImageFrame(ContentPaths.GUI.indicators, 16, 4, 1);
+            StandardFrames[StandardIndicators.Boom] = new NamedImageFrame(ContentPaths.GUI.indicators, 16, 2, 1);
+            StandardFrames[StandardIndicators.Dots] = new NamedImageFrame(ContentPaths.GUI.indicators, 16, 3, 1);
+            StandardFrames[StandardIndicators.DownArrow] = new NamedImageFrame(ContentPaths.GUI.indicators, 16, 0, 2);
+            StandardFrames[StandardIndicators.UpArrow] = new NamedImageFrame(ContentPaths.GUI.indicators, 16, 1, 2);
+            StandardFrames[StandardIndicators.LeftArrow] = new NamedImageFrame(ContentPaths.GUI.indicators, 16, 2, 2);
+            StandardFrames[StandardIndicators.RightArrow] = new NamedImageFrame(ContentPaths.GUI.indicators, 16, 3, 2);
         }
 
 
@@ -200,13 +199,13 @@ namespace DwarfCorp
             DrawIndicator(StandardFrames[indicator], position, time,  scale, offset, tint);
         }
 
-        public static void DrawIndicator(ImageFrame image, Vector3 position, float time, float scale, Vector2 offset)
+        public static void DrawIndicator(NamedImageFrame image, Vector3 position, float time, float scale, Vector2 offset)
         {
             DrawIndicator(image, position, time, scale, offset, Color.White);
         }
 
 
-        public static void DrawIndicator(ImageFrame image, Vector3 position, float time, float scale, Vector2 offset, Color tint)
+        public static void DrawIndicator(NamedImageFrame image, Vector3 position, float time, float scale, Vector2 offset, Color tint)
         {
             lock(IndicatorLock)
             {

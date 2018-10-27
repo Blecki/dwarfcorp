@@ -161,19 +161,25 @@ namespace DwarfCorp.Gui.Widgets
                             if (existingEntry.NumResources == 0)
                             {
                                 var index = resourcesB.IndexOf(existingEntry);
-                                resourcesB.RemoveAt(index);
-                                listA.RemoveChild(listA.GetChild(index + 1));
+                                if (index >= 0)
+                                {
+                                    resourcesB.RemoveAt(index);
+                                    listA.RemoveChild(listA.GetChild(index + 1));
+                                }
                             }
 
                             UpdateColumn(listA, resourcesB);
 
                             var sourceEntry = resourcesA.FirstOrDefault(
                                 r => r.ResourceType == existingEntry.ResourceType);
+                            int idx = resourcesA.IndexOf(sourceEntry);
                             sourceEntry.NumResources += _toMove;
-                            UpdateLineItemText(
-                                listB.GetChild(resourcesA.IndexOf(sourceEntry) + 1),
-                                sourceEntry);
-
+                            if (idx >= 0)
+                            {
+                                UpdateLineItemText(
+                                    listB.GetChild(resourcesA.IndexOf(sourceEntry) + 1),
+                                    sourceEntry);
+                            }
                             Root.SafeCall(OnTotalSelectedChanged, this);
                         };
                     }

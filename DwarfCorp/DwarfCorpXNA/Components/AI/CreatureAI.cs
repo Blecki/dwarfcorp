@@ -602,7 +602,7 @@ namespace DwarfCorp
             }
 
             // Try to go to sleep if we are low on energy and it is night time.
-            if (Status.Energy.IsDissatisfied() && Manager.World.Time.IsNight())
+            if (!Status.Energy.IsSatisfied() && Manager.World.Time.IsNight())
             {
                 Task toReturn = new SatisfyTirednessTask();
                 if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
@@ -621,10 +621,13 @@ namespace DwarfCorp
 
             if (Stats.CanGetBored && Status.Boredom.IsDissatisfied())
             {
-                Task toReturn = SatisfyBoredom();
-                if (toReturn != null && !Tasks.Contains(toReturn) && CurrentTask != toReturn)
+                if (!Tasks.Any(task => task.BoredomIncrease < 0))
                 {
-                    AssignTask(toReturn);
+                    Task toReturn = SatisfyBoredom();
+                    if (toReturn != null && !Tasks.Contains(toReturn) && CurrentTask != toReturn)
+                    {
+                        AssignTask(toReturn);
+                    }
                 }
             }
 

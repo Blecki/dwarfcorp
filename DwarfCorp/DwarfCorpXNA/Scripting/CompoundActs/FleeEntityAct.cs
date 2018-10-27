@@ -33,7 +33,7 @@ namespace DwarfCorp
             VoxelHandle curr = Creature.Physics.CurrentVoxel;
             for (int i = 0; i < PathLength; i++)
             {
-                var actions = Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, Creature.World.OctTree);
+                var actions = Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, Creature.World.OctTree, new List<Body>());
 
                 MoveAction? bestAction = null;
                 float bestDist = float.MinValue;

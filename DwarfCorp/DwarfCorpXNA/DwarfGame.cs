@@ -502,15 +502,17 @@ namespace DwarfCorp
 #endif
                 }
 
-                if (GameSettings.Default.DisplayIntro)
+                if (StateManager.StateStack.Count == 0)
                 {
-                    StateManager.PushState(new IntroState(this, StateManager));
+                    if (GameSettings.Default.DisplayIntro)
+                    {
+                        StateManager.PushState(new IntroState(this, StateManager));
+                    }
+                    else
+                    {
+                        StateManager.PushState(new MainMenuState(this, StateManager));
+                    }
                 }
-                else
-                {
-                    StateManager.PushState(new MainMenuState(this, StateManager));
-                }
-
                 BiomeLibrary.InitializeStatics();
                 EmbarkmentLibrary.InitializeDefaultLibrary();
                 VoxelChunk.InitializeStatics();

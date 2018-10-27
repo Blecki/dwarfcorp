@@ -87,6 +87,8 @@ namespace DwarfCorp
         public BloomComponent Bloom { get; set; }
 
         public float MinHeight = 0.45f;
+        
+        public Texture2D Tiles { get; set; }
 
         public Terrain2D(DwarfGame game)
         {
@@ -100,37 +102,43 @@ namespace DwarfCorp
             LavaHeight = 0.6f;
             TileSize = 64;
             Noise = new Perlin(new Random().Next());
-            Texture2D tiles = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
+            Bloom.Initialize();
+            CreateAssets();
+        }
+
+        public void CreateAssets()
+        {
+            Tiles = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
 
             Substrate = new TerrainElement
             {
-                Image = new ImageFrame(tiles, 32, 3, 1),
+                Image = new ImageFrame(Tiles, 32, 3, 1),
                 Name = "Rock"
             };
 
             Soil = new TerrainElement
             {
-                Image = new ImageFrame(tiles, 32, 2, 0),
+                Image = new ImageFrame(Tiles, 32, 2, 0),
                 Name = "Dirt"
             };
 
 
             Grass = new TerrainElement
             {
-                Image = new ImageFrame(tiles, 32, 3, 0),
+                Image = new ImageFrame(Tiles, 32, 3, 0),
                 Name = "Grass"
             };
 
 
             Lava = new TerrainElement
             {
-                Image = new ImageFrame(tiles, 32, 0, 7),
+                Image = new ImageFrame(Tiles, 32, 0, 7),
                 Name = "Lava"
             };
 
             Cave = new TerrainElement
             {
-                Image = new ImageFrame(tiles, 32, 1, 0),
+                Image = new ImageFrame(Tiles, 32, 1, 0),
                 Name = "Rock2"
             };
 
@@ -140,38 +148,39 @@ namespace DwarfCorp
             {
                 new TerrainElement
                 {
-                    Image = new ImageFrame(tiles, 32, 2, 11),
+                    Image = new ImageFrame(Tiles, 32, 2, 11),
                     Name = "Gold",
                     SpawnScale = 0.05f,
                     SpawnThreshold = 0.9f
                 },
                 new TerrainElement
                 {
-                    Image = new ImageFrame(tiles, 32, 3, 11),
+                    Image = new ImageFrame(Tiles, 32, 3, 11),
                     Name = "Mana",
                     SpawnScale = 0.04f,
                     SpawnThreshold = 0.9f
                 }
             };
 
-            Bloom.Initialize();
-
         }
 
         public void Render(GraphicsDevice graphics, DwarfTime time)
         {
-            try
-            {
-                Draw(graphics, time);
-            }
-            catch (InvalidOperationException exception)
-            {
-                Console.Error.Write(exception.ToString());
-            }
+            Draw(graphics, time);
         }
 
         private void Draw(GraphicsDevice graphics, DwarfTime time)
         {
+            if (DwarfGame.SpriteBatch.IsDisposed)
+            {
+                return;
+            }
+
+            if (Tiles.IsDisposed)
+            {
+                CreateAssets();
+            }
+
             Bloom.BeginDraw();
             try
             {
