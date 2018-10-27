@@ -193,6 +193,7 @@ namespace DwarfCorp
             item.SetFlag(Flag.Active, false);
             TossMotion toss = new TossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f),
                 1.0f, item.GlobalTransform, Position);
+            item.UpdateRate = 1;
             item.AnimationQueue.Add(toss);
             toss.OnComplete += () => item.GetRoot().Delete();
 
@@ -208,6 +209,7 @@ namespace DwarfCorp
                 foreach (var body in things)
                 {
                     TossMotion toss = new TossMotion(1.0f, 2.5f, body.LocalTransform, pos);
+                    body.UpdateRate = 1;
                     body.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                     body.AnimationQueue.Add(toss);
                     toss.OnComplete += body.Delete;

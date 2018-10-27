@@ -236,7 +236,7 @@ namespace DwarfCorp
             if (HandleThreatsTimer.HasTriggered)
              HandleThreats();
 
-            OwnedObjects.RemoveAll(obj => obj.IsDead);
+            OwnedObjects.RemoveAll(obj => obj.IsDead || obj.Parent == null || !obj.Manager.HasComponent(obj.GlobalID));
 
         }
 
@@ -707,6 +707,7 @@ namespace DwarfCorp
                             2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
                         newEntity.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                         newEntity.AnimationQueue.Add(toss);
+                        newEntity.UpdateRate = 1;
                         toss.OnComplete += () => toss_OnComplete(newEntity);
 
                     }

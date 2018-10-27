@@ -116,6 +116,11 @@ namespace DwarfCorp
             return creature.AI.ActOnWander();
         }
 
+        public override bool ShouldDelete(Creature agent)
+        {
+            return agent.IsDead || agent.IsAsleep || !agent.Active || agent.AI.IsPosessed;
+        }
+
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
             return 1.0f;
