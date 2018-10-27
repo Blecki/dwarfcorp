@@ -191,8 +191,8 @@ namespace DwarfCorp
             }
 
             item.SetFlag(Flag.Active, false);
-            TossMotion toss = new TossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f),
-                1.0f, item.GlobalTransform, Position);
+            BodyTossMotion toss = new BodyTossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f),
+                1.0f, item.GlobalTransform, Parent as Body);
             item.UpdateRate = 1;
             item.AnimationQueue.Add(toss);
             toss.OnComplete += () => item.GetRoot().Delete();
