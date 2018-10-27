@@ -70,6 +70,7 @@ namespace DwarfCorp
                 }
                 var creatureVoxel = agent.Physics.CurrentVoxel;
                 List<MoveAction> path = new List<MoveAction>();
+                var voxelNeighborhood = new VoxelHandle[3, 3, 3];
                 for (int i = 0; i < 10; i++)
                 {
                     if (edgeGoal.IsInGoalRegion(creatureVoxel))
@@ -80,7 +81,7 @@ namespace DwarfCorp
                         yield break;
                     }
 
-                    var actions = agent.AI.Movement.GetMoveActions(new MoveState { Voxel = creatureVoxel }, agent.World.OctTree, new List<Body>());
+                    var actions = agent.AI.Movement.GetMoveActions(new MoveState { Voxel = creatureVoxel }, agent.World.OctTree, new List<Body>(), voxelNeighborhood);
 
                     float minCost = float.MaxValue;
                     var minAction = new MoveAction();

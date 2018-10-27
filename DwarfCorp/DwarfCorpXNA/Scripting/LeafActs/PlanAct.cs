@@ -149,19 +149,20 @@ namespace DwarfCorp
 
         public List<MoveAction> ComputeGreedyFallback(int maxsteps = 10, List<VoxelHandle> exploredVoxels = null)
         {
-            List<MoveAction> toReturn = new List<MoveAction>();
-            GoalRegion goal = GetGoal();
+            var toReturn = new List<MoveAction>();
+            var goal = GetGoal();
             var creatureVoxel = Agent.Physics.CurrentVoxel;
 
             if (goal.IsInGoalRegion(creatureVoxel))
-            {
                 return toReturn;
-            }
+
+            var voxelNeighborhood = new VoxelHandle[3, 3, 3];
             var bodies = Agent.World.PlayerFaction.OwnedObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
             var currentVoxel = creatureVoxel;
+
             while (toReturn.Count < maxsteps)
             {
-                var actions = Agent.Movement.GetMoveActions(new MoveState() { Voxel = currentVoxel }, Creature.World.OctTree, bodies);
+                var actions = Agent.Movement.GetMoveActions(new MoveState() { Voxel = currentVoxel }, Creature.World.OctTree, bodies, voxelNeighborhood);
 
                 float minCost = float.MaxValue;
                 var minAction = new MoveAction();

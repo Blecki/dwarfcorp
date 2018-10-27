@@ -40,7 +40,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
     /// <summary>
     /// The Service architecutre divides a task into servers (Service) and subscribers (Subscriber).
     /// The server looks at a list of requests, processes them, and then broadcasts the results
@@ -52,32 +51,26 @@ namespace DwarfCorp
     public class Service <TRequest, TResponse> : IDisposable
     {
         [JsonIgnore]
-        public ConcurrentQueue<KeyValuePair<uint, TRequest> > Requests { get; set; }
+        public ConcurrentQueue<KeyValuePair<uint, TRequest>> Requests = new ConcurrentQueue<KeyValuePair<uint, TRequest>>();
 
         private readonly Object subscriberlock = new object();
 
-        protected List<Subscriber<TRequest, TResponse>> Subscribers { get; set; }
+        protected List<Subscriber<TRequest, TResponse>> Subscribers = new List<Subscriber<TRequest, TResponse>>();
 
         [JsonIgnore]
-        public AutoResetEvent NeedsServiceEvent = null;
+        public AutoResetEvent NeedsServiceEvent = new AutoResetEvent(false);
 
-        [JsonIgnore]
-        public List<Thread> ServiceThreadObject = null;
+        private List<Thread> WorkerThreads = new List<Thread>();
 
-        public bool ExitThreads = false;
+        private bool ExitThreads = false;
 
-        public Service()
+        public int ThreadCount;
+        public String ServiceName;
+
+        public Service(String ServiceName, int ThreadCount)
         {
-            Subscribers = new List<Subscriber<TRequest, TResponse>>();
-
-            NeedsServiceEvent = new AutoResetEvent(false);
-            
-            if (Requests == null)
-            {
-                Requests = new ConcurrentQueue<KeyValuePair<uint, TRequest>>();
-            }
-
-
+            this.ServiceName = ServiceName;
+            this.ThreadCount = ThreadCount;
             Restart();
         }
 
@@ -97,28 +90,21 @@ namespace DwarfCorp
             }
         }
 
-
         public void Restart()
         {
             try
             {
-                if (ServiceThreadObject != null)
+                Die();
+                ExitThreads = false;
+                
+                WorkerThreads.Clear();
+
+                for (int i = 0; i < ThreadCount; i++)
                 {
-                    ExitThreads = true;
-                    foreach (var thread in ServiceThreadObject)
-                    {
-                        thread.Join();
-                    }
-                    ExitThreads = false;
-                    ServiceThreadObject.Clear();
-                }
-                ServiceThreadObject = new List<Thread>();
-                for (int i = 0; i < 2; i++)
-                {
-                    var thread = new Thread(this.ServiceThread) { IsBackground = true }; ;
-                    thread.Name = "Planning worker " + i.ToString();
+                    var thread = new Thread(this.ServiceThread);
+                    thread.Name = String.Format("{0} : {1}", ServiceName, i);
                     thread.Start();
-                    ServiceThreadObject.Add(thread);
+                    WorkerThreads.Add(thread);
                 }
             }
             catch (System.AccessViolationException e)
@@ -126,18 +112,14 @@ namespace DwarfCorp
                 Console.Error.WriteLine(e.Message);
             }
         }
-
-
-
+               
         public void Die()
         {
             ExitThreads = true;
 
-            if(ServiceThreadObject != null)
-                foreach (var thread in ServiceThreadObject)
-                {
+            if(WorkerThreads != null)
+                foreach (var thread in WorkerThreads)
                     thread.Join();
-                }
         }
 
         public bool AddRequest(TRequest request, uint subscriberID)
@@ -146,7 +128,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public void ServiceThread()
+        private void ServiceThread()
         {
             EventWaitHandle[] waitHandles =
             {
@@ -159,9 +141,7 @@ namespace DwarfCorp
                 EventWaitHandle wh = Datastructures.WaitFor(waitHandles);
 
                 if (wh == Program.ShutdownEvent)
-                {
                     break;
-                }
 
                 Update();
             }
@@ -183,19 +163,17 @@ namespace DwarfCorp
             }
         }
 
-        public void Update()
+        private void Update()
         {
             while (Requests.Count > 0)
             {
                 KeyValuePair<uint, TRequest> req;
                 if (!Requests.TryDequeue(out req))
-                {
                     break;
-                }
-
+ 
                 TResponse response = HandleRequest(req.Value);
                 BroadcastResponse(response, req.Key);
-                Thread.Sleep(1);
+                Thread.Yield();
             }
         }
 

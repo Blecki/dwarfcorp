@@ -266,6 +266,8 @@ namespace DwarfCorp
 
             public int MaxVoxelDesignations = 1024;
             public uint EntityUpdateRate = 4096;
+            public int NumPathingThreads = 4;
+
             public Settings Clone()
             {
                 return MemberwiseClone() as Settings;
