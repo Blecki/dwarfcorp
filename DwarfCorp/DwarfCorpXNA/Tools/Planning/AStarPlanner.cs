@@ -183,7 +183,7 @@ namespace DwarfCorp
             foreach (var obj in playerObjects)
                 octree.Add(obj, obj.GetBoundingBox());
 
-            var voxelNeighborhood = new VoxelHandle[3, 3, 3];
+            var storage = new MoveActionTempStorage();
 
             var start = new MoveState()
             {
@@ -298,7 +298,7 @@ namespace DwarfCorp
                 IEnumerable<MoveAction> neighbors = null;
                 
                 // Get the voxels that can be moved to from the current voxel.
-                neighbors = mover.GetMoveActions(current, octree, teleportObjects, voxelNeighborhood).ToList();
+                neighbors = mover.GetMoveActions(current, octree, teleportObjects, storage).ToList();
                 //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
 
 

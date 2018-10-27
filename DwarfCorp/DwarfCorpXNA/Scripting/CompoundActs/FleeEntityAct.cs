@@ -31,11 +31,11 @@ namespace DwarfCorp
 
             List<MoveAction> path = new List<MoveAction>();
             VoxelHandle curr = Creature.Physics.CurrentVoxel;
-            var voxelNeighborhood = new VoxelHandle[3, 3, 3];
+            var storage = new MoveActionTempStorage();
 
             for (int i = 0; i < PathLength; i++)
             {
-                var actions = Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, Creature.World.OctTree, new List<Body>(), voxelNeighborhood);
+                var actions = Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, Creature.World.OctTree, new List<Body>(), storage);
 
                 MoveAction? bestAction = null;
                 float bestDist = float.MinValue;

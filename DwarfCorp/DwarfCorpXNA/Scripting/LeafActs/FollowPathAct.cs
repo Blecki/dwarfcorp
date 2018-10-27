@@ -69,7 +69,7 @@ namespace DwarfCorp
         public bool BlendStart { get; set; }
         public bool BlendEnd { get; set; }
 
-        private VoxelHandle[,,] __voxelNeighborhood = new VoxelHandle[3, 3, 3];
+        private MoveActionTempStorage __storage = new MoveActionTempStorage();
 
         // Offset from voxel location to bounding box center.
         public Vector3 GetBoundingBoxOffset()
@@ -102,7 +102,7 @@ namespace DwarfCorp
                 {
                     continue;
                 }
-                var neighbors = Agent.Movement.GetMoveActions(path[i].SourceState, Agent.World.OctTree, bodies, __voxelNeighborhood);
+                var neighbors = Agent.Movement.GetMoveActions(path[i].SourceState, Agent.World.OctTree, bodies, __storage);
                 if (!neighbors.Any(n => n.DestinationState == path[i + 1].SourceState))
                 {
                     return false;
