@@ -72,6 +72,11 @@ namespace DwarfCorp
     /// </summary>
     public class PlanService : Service<AstarPlanRequest, AStarPlanResponse>
     {
+        public PlanService() : base("Path Planner", GameSettings.Default.NumPathingThreads)
+        {
+
+        }
+
         public override AStarPlanResponse HandleRequest(AstarPlanRequest req)
         {
             // If there are no subscribers that want this request, it must be old. So remove it.
@@ -84,8 +89,8 @@ namespace DwarfCorp
                     Request = req,
                     Result = AStarPlanner.PlanResultCode.Cancelled
                 };
-               
             }
+
             AStarPlanner.PlanResultCode result;
             List<MoveAction> path = AStarPlanner.FindPath(req.Sender.Movement, req.Start, req.GoalRegion, req.Sender.Manager.World.ChunkManager, 
                 req.MaxExpansions, req.HeuristicWeight, Requests.Count, () => { return Subscribers.Find(s => s.ID == req.Subscriber.ID && s.CurrentRequestID == req.ID) != null; }, out result);

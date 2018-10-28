@@ -47,7 +47,7 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class VoxelLibrary
     {
-        public static Dictionary<VoxelType, BoxPrimitive> PrimitiveMap = new Dictionary<VoxelType, BoxPrimitive>();
+        public static Dictionary<String, BoxPrimitive> PrimitiveMap = new Dictionary<String, BoxPrimitive>();
         public static VoxelType emptyType = null;
         public static VoxelType DesignationType = null;
 
@@ -56,7 +56,7 @@ namespace DwarfCorp
 
         public static void Cleanup()
         {
-            PrimitiveMap = new Dictionary<VoxelType, BoxPrimitive>();
+            PrimitiveMap = new Dictionary<String, BoxPrimitive>();
             emptyType = null;
             DesignationType = null;
             Types = new Dictionary<string, VoxelType>();
@@ -119,18 +119,36 @@ namespace DwarfCorp
             if (TypeList != null) return;
 
             var cubeTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
-            TypeList = FileUtils.LoadJsonListFromMultipleSources<VoxelType>(ContentPaths.voxel_types, null, v => v.Name);
-            emptyType = TypeList[0];
-            DesignationType = TypeList[1];
+            TypeList = FileUtils.LoadJsonListFromDirectory<VoxelType>(ContentPaths.voxel_types, null, v => v.Name);
 
-            short ID = 0;
+            emptyType = TypeList.FirstOrDefault(v => v.Name == "_empty");
+            DesignationType = TypeList.FirstOrDefault(v => v.Name == "_designation");
+
+            // Todo: Stabalize ids across save games.
+            short id = 2;
             foreach (VoxelType type in TypeList)
             {
-                type.ID = ID;
-                ++ID;
-
                 Types[type.Name] = type;
-                PrimitiveMap[type] = type.ID == 0 ? null : CreatePrimitive(graphics, cubeTexture, 32, 32, type.Top, type.Bottom, type.Sides);
+
+                if (type.Name == "_empty")
+                {
+                    emptyType = type;
+                    type.ID = 0;
+                }
+                else
+                {
+                    PrimitiveMap[type.Name] = CreatePrimitive(graphics, cubeTexture, 32, 32, type.Top, type.Bottom, type.Sides);
+                    if (type.Name == "_designation")
+                    {
+                        DesignationType = type;
+                        type.ID = 1;
+                    }
+                    else
+                    {
+                        type.ID = id;
+                        id += 1;
+                    }
+                }
 
                 if (type.HasTransitionTextures)
                     type.TransitionTextures = CreateTransitionUVs(graphics, cubeTexture, 32, 32, type.TransitionTiles, type.Transitions);
@@ -153,6 +171,11 @@ namespace DwarfCorp
                     }
                 }
             }
+
+            TypeList = TypeList.OrderBy(v => v.ID).ToList();
+
+            if (TypeList.Count > VoxelConstants.MaximumVoxelTypes)
+                throw new InvalidProgramException(String.Format("There can be only {0} voxel types.", VoxelConstants.MaximumVoxelTypes));
         }
 
         public static VoxelType GetVoxelType(short id)
@@ -167,21 +190,14 @@ namespace DwarfCorp
 
         public static BoxPrimitive GetPrimitive(string name)
         {
-            return (from v in PrimitiveMap.Keys
-                where v.Name == name
-                select GetPrimitive(v)).FirstOrDefault();
+            if (PrimitiveMap.ContainsKey(name))
+                return PrimitiveMap[name];
+            return null;
         }
 
         public static BoxPrimitive GetPrimitive(VoxelType type)
         {
-            if(PrimitiveMap.ContainsKey(type))
-            {
-                return PrimitiveMap[type];
-            }
-            else
-            {
-                return null;
-            }
+            return GetPrimitive(type.Name);
         }
 
         public static BoxPrimitive GetPrimitive(short id)
@@ -191,7 +207,15 @@ namespace DwarfCorp
 
         public static List<VoxelType> GetTypes()
         {
-            return PrimitiveMap.Keys.ToList();
+            return TypeList;
+        }
+
+        public static Dictionary<int, String> GetVoxelTypeMap()
+        {
+            var r = new Dictionary<int, String>();
+            for (var i = 0; i < TypeList.Count; ++i)
+                r.Add(i, TypeList[i].Name);
+            return r;
         }
 
         // Do not delete: Used to generate block icon texture for menu.

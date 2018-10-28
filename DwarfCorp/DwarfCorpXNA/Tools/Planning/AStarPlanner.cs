@@ -165,8 +165,15 @@ namespace DwarfCorp
         /// </param>
         /// <param name="continueFunc"></param>
         /// <returns>True if a path could be found, or false otherwise.</returns>
-        private static PlanResult Path(CreatureMovement mover, VoxelHandle startVoxel, GoalRegion goal, ChunkManager chunks,
-            int maxExpansions, ref List<MoveAction> toReturn, float weight, Func<bool> continueFunc)
+        private static PlanResult Path(
+            CreatureMovement mover, 
+            VoxelHandle startVoxel, 
+            GoalRegion goal, 
+            ChunkManager chunks,
+            int maxExpansions, 
+            ref List<MoveAction> toReturn, 
+            float weight, 
+            Func<bool> continueFunc)
         {
             // Create a local clone of the octree, using only the objects belonging to the player.
             var octree = new OctTreeNode(mover.Creature.World.ChunkManager.Bounds.Min, mover.Creature.World.ChunkManager.Bounds.Max);
@@ -175,6 +182,8 @@ namespace DwarfCorp
             List<Body> teleportObjects = playerObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
             foreach (var obj in playerObjects)
                 octree.Add(obj, obj.GetBoundingBox());
+
+            var storage = new MoveActionTempStorage();
 
             var start = new MoveState()
             {
@@ -289,7 +298,7 @@ namespace DwarfCorp
                 IEnumerable<MoveAction> neighbors = null;
                 
                 // Get the voxels that can be moved to from the current voxel.
-                neighbors = mover.GetMoveActions(current, octree, teleportObjects).ToList();
+                neighbors = mover.GetMoveActions(current, octree, teleportObjects, storage).ToList();
                 //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
 
 
@@ -672,8 +681,8 @@ namespace DwarfCorp
             ChunkManager chunks, int maxExpansions, float weight, int numPlans, Func<bool> continueFunc, out PlanResultCode resultCode)
         {
             var p = new List<MoveAction>();
-            bool use_inverse = goal.IsReversible() && OpennessHeuristic(goal.GetVoxel()) < OpennessHeuristic(start);
-            //bool use_inverse = false;
+            //bool use_inverse = goal.IsReversible() && OpennessHeuristic(goal.GetVoxel()) < OpennessHeuristic(start);
+            bool use_inverse = false;
             var result = use_inverse ? InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc)
                 : Path(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc);
 

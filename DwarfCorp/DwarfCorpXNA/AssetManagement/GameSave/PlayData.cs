@@ -47,8 +47,7 @@ using DwarfCorp.Saving;
 
 namespace DwarfCorp
 {
-//    [Saving.SaveableObject(0)]
-    public class PlayData //: Saving.ISaveableObject
+    public class PlayData
     {
         public static string Extension = "save";
 
@@ -83,42 +82,5 @@ namespace DwarfCorp
                 NewArrivals = World.Master.NewArrivals
             };
         }
-
-        /*Nugget ISaveableObject.SaveToNugget(Saver SaveSystem)
-        {
-            return new PlayDataNugget
-            {
-                Camera = SaveSystem.SaveObject(Camera),
-                Components = SaveSystem.SaveObject(Components),
-                Goals = SaveSystem.SaveObject(Goals),
-                Tutorial = SaveSystem.SaveObject(TutorialSaveData),
-                Diplomacy = SaveSystem.SaveObject(Diplomacy),
-                Factions = SaveSystem.SaveObject(Factions),
-                Resources = SaveSystem.SaveObject(Resources),
-                Designations = SaveSystem.SaveObject(Designations),
-                Spells = SaveSystem.SaveObject(Spells)
-            };
-        }
-
-        void ISaveableObject.LoadFromNugget(Loader SaveSystem, Nugget From)
-        {
-            var nug = From as PlayDataNugget;
-            Camera = SaveSystem.LoadObject(nug.Camera) as OrbitCamera;
-            // Etc
-            throw new NotImplementedException();
-        }*/
     }
-
-    /*public class PlayDataNugget : Saving.Nugget
-    {
-        public Nugget Camera;
-        public Nugget Components;
-        public Nugget Goals;
-        public Nugget Tutorial;
-        public Nugget Diplomacy;
-        public Nugget Factions;
-        public Nugget Resources;
-        public Nugget Designations;
-        public Nugget Spells;
-    }*/
 }

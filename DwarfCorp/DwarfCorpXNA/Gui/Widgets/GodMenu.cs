@@ -103,8 +103,8 @@ namespace DwarfCorp.Gui.Widgets
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
                         Columns = 3,
-                        ItemSource = VoxelLibrary.PrimitiveMap.Keys
-                            .Where(t => t.Name != "empty" && t.Name != "water")
+                        ItemSource = VoxelLibrary.GetTypes()
+                            .Where(t => t.Name != "_empty" && t.Name != "water")
                             .OrderBy(s => s.Name)
                             .Select(s =>
                                 new HorizontalMenuTray.MenuItem
@@ -144,22 +144,22 @@ namespace DwarfCorp.Gui.Widgets
                     }
                 },
 
-                new HorizontalMenuTray.MenuItem
-                {
-                    Text = "PLACE DECAL",
-                    ExpansionChild = new HorizontalMenuTray.Tray
-                    {
-                        Columns = 3,
-                        ItemSource = DecalLibrary.TypeList
-                            .OrderBy(s => s.Name)
-                            .Select(s =>
-                                new HorizontalMenuTray.MenuItem
-                                {
-                                    Text = s.Name,
-                                    OnClick = (sender, args) => ActivateGodTool("Decal/" + s.Name)
-                                })
-                    }
-                },
+                //new HorizontalMenuTray.MenuItem
+                //{
+                //    Text = "PLACE DECAL",
+                //    ExpansionChild = new HorizontalMenuTray.Tray
+                //    {
+                //        Columns = 3,
+                //        ItemSource = DecalLibrary.TypeList
+                //            .OrderBy(s => s.Name)
+                //            .Select(s =>
+                //                new HorizontalMenuTray.MenuItem
+                //                {
+                //                    Text = s.Name,
+                //                    OnClick = (sender, args) => ActivateGodTool("Decal/" + s.Name)
+                //                })
+                //    }
+                //},
 
                 new HorizontalMenuTray.MenuItem
                 {

@@ -249,6 +249,7 @@ namespace DwarfCorp
         public Faction Faction { get; set; }
 
         /// <summary> Reference to the planning service for path planning </summary>
+        // Todo: Remove this and stop passing it in as everything uses the same one anyway.
         public PlanService PlanService { get; set; }
 
         /// <summary> DEPRECATED. TODO(mklingen): DELETE </summary>

@@ -251,6 +251,7 @@ namespace DwarfCorp
             public ColorSettings Colors = new ColorSettings();
             public bool AllowAutoDigging = true;
             public bool AllowAutoFarming = true;
+            public float FNAONLY_KeyRepeatRate = 0.1f;
             public int MaxDwarfs = 40;
             public int DwarfArrivalDelayHours = 4;
             public float SigningBonus = 100;
@@ -265,6 +266,8 @@ namespace DwarfCorp
 
             public int MaxVoxelDesignations = 1024;
             public uint EntityUpdateRate = 4096;
+            public int NumPathingThreads = 4;
+
             public Settings Clone()
             {
                 return MemberwiseClone() as Settings;

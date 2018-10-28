@@ -288,20 +288,16 @@ namespace DwarfCorp
         /// Returns a 3 x 3 x 3 voxel grid corresponding to the immediate neighborhood
         /// around the given voxel..
         /// </summary>
-        private VoxelHandle[, ,] GetNeighborhood(ChunkData chunks, VoxelHandle Voxel)
+        private void GetNeighborhood(ChunkData chunks, VoxelHandle Voxel, VoxelHandle[,,] Into)
         {
-            var neighborhood = new VoxelHandle[3, 3, 3];
-
             for (var dx = -1; dx <= 1; ++dx)
                 for (var dy = -1; dy <= 1; ++dy)
                     for (var dz = -1; dz <= 1; ++dz)
                     {
                         var v = new VoxelHandle(chunks,
                             Voxel.Coordinate + new GlobalVoxelOffset(dx, dy, dz));
-                        neighborhood[dx + 1, dy + 1, dz + 1] = v;
+                        Into[dx + 1, dy + 1, dz + 1] = v;
                     }
-
-            return neighborhood;
         }
 
         /// <summary> Determines whether the voxel has any neighbors in X or Z directions </summary>
@@ -325,66 +321,65 @@ namespace DwarfCorp
         {
             var vox = new VoxelHandle(Creature.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(Pos));
-            return GetMoveActions(new MoveState() { Voxel = vox }, octree, teleportObjects);
+            return GetMoveActions(new MoveState() { Voxel = vox }, octree, teleportObjects, null);
         }
 
 
 
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
-        public IEnumerable<MoveAction> GetMoveActions(MoveState state, OctTreeNode OctTree, List<Body> teleportObjects)
+        public IEnumerable<MoveAction> GetMoveActions(MoveState state, OctTreeNode OctTree, List<Body> teleportObjects, MoveActionTempStorage Storage)
         {
             if (Parent == null)
                 yield break;
 
-            var voxel = state.Voxel;
-            if (!voxel.IsValid)
-                yield break;
-            var creature = Creature;
-
-            if (creature == null)
+            if (!state.Voxel.IsValid)
                 yield break;
 
-            var neighborHood = GetNeighborhood(voxel.Chunk.Manager.ChunkData, voxel);
-            bool inWater = (neighborHood[1, 1, 1].IsValid && neighborHood[1, 1, 1].LiquidLevel > WaterManager.inWaterThreshold);
-            bool standingOnGround = (neighborHood[1, 0, 1].IsValid && !neighborHood[1, 0, 1].IsEmpty);
-            bool topCovered = (neighborHood[1, 2, 1].IsValid && !neighborHood[1, 2, 1].IsEmpty);
-            bool hasNeighbors = HasNeighbors(neighborHood);
+            if (Creature == null)
+                yield break;
+
+            if (Storage == null)
+                Storage = new MoveActionTempStorage();
+
+            GetNeighborhood(state.Voxel.Chunk.Manager.ChunkData, state.Voxel, Storage.Neighborhood);
+
+            bool inWater = (Storage.Neighborhood[1, 1, 1].IsValid && Storage.Neighborhood[1, 1, 1].LiquidLevel > WaterManager.inWaterThreshold);
+            bool standingOnGround = (Storage.Neighborhood[1, 0, 1].IsValid && !Storage.Neighborhood[1, 0, 1].IsEmpty);
+            bool topCovered = (Storage.Neighborhood[1, 2, 1].IsValid && !Storage.Neighborhood[1, 2, 1].IsEmpty);
+            bool hasNeighbors = HasNeighbors(Storage.Neighborhood);
             bool isRiding = state.VehicleState.IsRidingVehicle;
 
-            var neighborHoodBounds = new BoundingBox(neighborHood[0, 0, 0].GetBoundingBox().Min, neighborHood[2, 2, 2].GetBoundingBox().Max);
-            var neighborObjects = new HashSet<Body>();
-            OctTree.EnumerateItems(neighborHoodBounds, neighborObjects);
-            var successors = EnumerateSuccessors(state, voxel, neighborHood, inWater, standingOnGround, topCovered, hasNeighbors, isRiding, neighborObjects);
+            var neighborHoodBounds = new BoundingBox(Storage.Neighborhood[0, 0, 0].GetBoundingBox().Min, Storage.Neighborhood[2, 2, 2].GetBoundingBox().Max);
+            Storage.NeighborObjects.Clear();
+            OctTree.EnumerateItems(neighborHoodBounds, Storage.NeighborObjects);
+
             if (Can(MoveType.Teleport))
-            {
                 foreach (var obj in teleportObjects)
-                {
                     if ((obj.Position - state.Voxel.WorldPosition).LengthSquared() < TeleportDistanceSquared)
-                    {
                         yield return new MoveAction()
                         {
                             InteractObject = obj,
                             MoveType = MoveType.Teleport,
-                            SourceVoxel = voxel,
+                            SourceVoxel = state.Voxel,
                             DestinationState = new MoveState()
                             {
-                                Voxel = new VoxelHandle(voxel.Chunk.Manager.ChunkData, GlobalVoxelCoordinate.FromVector3(obj.Position))
+                                Voxel = new VoxelHandle(state.Voxel.Chunk.Manager.ChunkData, GlobalVoxelCoordinate.FromVector3(obj.Position))
                             }
                         };
-                    }
-                }
-            }
+
+            var successors = EnumerateSuccessors(state, state.Voxel, Storage, inWater, standingOnGround, topCovered, hasNeighbors, isRiding);
+
             // Now, validate each move action that the creature might take.
             foreach (MoveAction v in successors)
             {
-                var n = v.DestinationVoxel.IsValid ? v.DestinationVoxel : neighborHood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
+                var n = v.DestinationVoxel.IsValid ? v.DestinationVoxel : Storage.Neighborhood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
                 if (n.IsValid && (v.MoveType == MoveType.Dig || isRiding || n.IsEmpty || n.LiquidLevel > 0))
                 {
                     // Do one final check to see if there is an object blocking the motion.
                     bool blockedByObject = false;
                     if (!isRiding)
                     {
-                        var objectsAtNeighbor = neighborObjects.Where(o => o.GetBoundingBox().Intersects(n.GetBoundingBox()));
+                        var objectsAtNeighbor = Storage.NeighborObjects.Where(o => o.GetBoundingBox().Intersects(n.GetBoundingBox()));
 
                         // If there is an object blocking the motion, determine if it can be passed through.
 
@@ -396,7 +391,7 @@ namespace DwarfCorp
                             if (door != null)
                             {
                                 if (
-                                    creature.World.Diplomacy.GetPolitics(door.TeamFaction, creature.Faction)
+                                    Creature.World.Diplomacy.GetPolitics(door.TeamFaction, Creature.Faction)
                                         .GetCurrentRelationship() ==
                                     Relationship.Hateful)
                                 {
@@ -427,14 +422,14 @@ namespace DwarfCorp
             }
         }
 
-        private IEnumerable<MoveAction> EnumerateSuccessors(MoveState state, VoxelHandle voxel, VoxelHandle[,,] neighborHood, bool inWater, bool standingOnGround, bool topCovered, bool hasNeighbors, bool isRiding, HashSet<Body> neighborObjects)
+        private IEnumerable<MoveAction> EnumerateSuccessors(MoveState state, VoxelHandle voxel, MoveActionTempStorage Storage, bool inWater, bool standingOnGround, bool topCovered, bool hasNeighbors, bool isRiding)
         {
             bool isClimbing = false;
             if (CanClimb || Can(MoveType.RideVehicle))
             {
                 //Climbing ladders.
 
-                var bodies = neighborObjects.Where(o => o.GetBoundingBox().Intersects(voxel.GetBoundingBox()));
+                var bodies = Storage.NeighborObjects.Where(o => o.GetBoundingBox().Intersects(voxel.GetBoundingBox()));
 
                 if (!isRiding)
                 {
@@ -545,28 +540,28 @@ namespace DwarfCorp
                 // This monstrosity is unrolling an inner loop so that we don't have to allocate an array or
                 // enumerators.
                 var wall = VoxelHandle.InvalidHandle;
-                var n211 = neighborHood[2, 1, 1];
+                var n211 = Storage.Neighborhood[2, 1, 1];
                 if (n211.IsValid && !n211.IsEmpty)
                 {
                     wall = n211;
                 }
                 else
                 {
-                    var n011 = neighborHood[0, 1, 1];
+                    var n011 = Storage.Neighborhood[0, 1, 1];
                     if (n011.IsValid && !n011.IsEmpty)
                     {
                         wall = n011;
                     }
                     else
                     {
-                        var n112 = neighborHood[1, 1, 2];
+                        var n112 = Storage.Neighborhood[1, 1, 2];
                         if (n112.IsValid && !n112.IsEmpty)
                         {
                             wall = n112;
                         }
                         else
                         {
-                            var n110 = neighborHood[1, 1, 0];
+                            var n110 = Storage.Neighborhood[1, 1, 0];
                             if (n110.IsValid && !n110.IsEmpty)
                             {
                                 wall = n110;
@@ -603,7 +598,7 @@ namespace DwarfCorp
             {
                 // If the creature is in water, it can swim. Otherwise, it will walk.
                 var moveType = inWater ? MoveType.Swim : MoveType.Walk;
-                if (!neighborHood[0, 1, 1].IsValid || neighborHood[0, 1, 1].IsEmpty)
+                if (!Storage.Neighborhood[0, 1, 1].IsValid || Storage.Neighborhood[0, 1, 1].IsEmpty)
                     // +- x
                     yield return(new MoveAction
                     {
@@ -611,14 +606,14 @@ namespace DwarfCorp
                         MoveType = moveType
                     });
 
-                if (!neighborHood[2, 1, 1].IsValid || neighborHood[2, 1, 1].IsEmpty)
+                if (!Storage.Neighborhood[2, 1, 1].IsValid || Storage.Neighborhood[2, 1, 1].IsEmpty)
                     yield return(new MoveAction
                     {
                         Diff = new Vector3(2, 1, 1),
                         MoveType = moveType
                     });
 
-                if (!neighborHood[1, 1, 0].IsValid || neighborHood[1, 1, 0].IsEmpty)
+                if (!Storage.Neighborhood[1, 1, 0].IsValid || Storage.Neighborhood[1, 1, 0].IsEmpty)
                     // +- z
                     yield return(new MoveAction
                     {
@@ -626,7 +621,7 @@ namespace DwarfCorp
                         MoveType = moveType
                     });
 
-                if (!neighborHood[1, 1, 2].IsValid || neighborHood[1, 1, 2].IsEmpty)
+                if (!Storage.Neighborhood[1, 1, 2].IsValid || Storage.Neighborhood[1, 1, 2].IsEmpty)
                     yield return(new MoveAction
                     {
                         Diff = new Vector3(1, 1, 2),
@@ -637,7 +632,7 @@ namespace DwarfCorp
                 // no full neighbors around the voxel.
                 if (!hasNeighbors)
                 {
-                    if (!neighborHood[2, 1, 2].IsValid || neighborHood[2, 1, 2].IsEmpty)
+                    if (!Storage.Neighborhood[2, 1, 2].IsValid || Storage.Neighborhood[2, 1, 2].IsEmpty)
                         // +x + z
                         yield return(new MoveAction
                         {
@@ -645,14 +640,14 @@ namespace DwarfCorp
                             MoveType = moveType
                         });
 
-                    if (!neighborHood[2, 1, 0].IsValid || neighborHood[2, 1, 0].IsEmpty)
+                    if (!Storage.Neighborhood[2, 1, 0].IsValid || Storage.Neighborhood[2, 1, 0].IsEmpty)
                         yield return(new MoveAction
                         {
                             Diff = new Vector3(2, 1, 0),
                             MoveType = moveType
                         });
 
-                    if (!neighborHood[0, 1, 2].IsValid || neighborHood[0, 1, 2].IsEmpty)
+                    if (!Storage.Neighborhood[0, 1, 2].IsValid || Storage.Neighborhood[0, 1, 2].IsEmpty)
                         // -x -z
                         yield return(new MoveAction
                         {
@@ -660,7 +655,7 @@ namespace DwarfCorp
                             MoveType = moveType
                         });
 
-                    if (!neighborHood[0, 1, 0].IsValid || neighborHood[0, 1, 0].IsEmpty)
+                    if (!Storage.Neighborhood[0, 1, 0].IsValid || Storage.Neighborhood[0, 1, 0].IsEmpty)
                         yield return(new MoveAction
                         {
                             Diff = new Vector3(0, 1, 0),
@@ -680,7 +675,7 @@ namespace DwarfCorp
                     {
                         if (dx == 1 && dz == 1) continue;
 
-                        if (neighborHood[dx, 1, dz].IsValid && !neighborHood[dx, 1, dz].IsEmpty)
+                        if (Storage.Neighborhood[dx, 1, dz].IsValid && !Storage.Neighborhood[dx, 1, dz].IsEmpty)
                         {
                             yield return(new MoveAction
                             {
@@ -715,7 +710,7 @@ namespace DwarfCorp
                         {
                             if (dx == 1 && dz == 1 && dy == 1) continue;
 
-                            if (!neighborHood[dx, 1, dz].IsValid || neighborHood[dx, 1, dz].IsEmpty)
+                            if (!Storage.Neighborhood[dx, 1, dz].IsValid || Storage.Neighborhood[dx, 1, dz].IsEmpty)
                             {
                                 yield return(new MoveAction
                                 {
@@ -734,7 +729,7 @@ namespace DwarfCorp
                 int dx = -1;
                 int dy = 0;
                 int dz = 0;
-                VoxelHandle neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                VoxelHandle neighbor = Storage.Neighborhood[dx + 1, dy + 1, dz + 1];
                 if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
@@ -748,7 +743,7 @@ namespace DwarfCorp
                 dx = 1;
                 dy = 0;
                 dz = 0;
-                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                neighbor = Storage.Neighborhood[dx + 1, dy + 1, dz + 1];
                 if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
@@ -762,7 +757,7 @@ namespace DwarfCorp
                 dx = 0;
                 dy = 0;
                 dz = 1;
-                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                neighbor = Storage.Neighborhood[dx + 1, dy + 1, dz + 1];
                 if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
@@ -776,7 +771,7 @@ namespace DwarfCorp
                 dx = 0;
                 dy = 0;
                 dz = -1;
-                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                neighbor = Storage.Neighborhood[dx + 1, dy + 1, dz + 1];
                 if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
@@ -790,7 +785,7 @@ namespace DwarfCorp
                 dx = 0;
                 dy = 1;
                 dz = 0;
-                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                neighbor = Storage.Neighborhood[dx + 1, dy + 1, dz + 1];
                 if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
@@ -804,7 +799,7 @@ namespace DwarfCorp
                 dx = 0;
                 dy = -1;
                 dz = 0;
-                neighbor = neighborHood[dx + 1, dy + 1, dz + 1];
+                neighbor = Storage.Neighborhood[dx + 1, dy + 1, dz + 1];
                 if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
@@ -839,11 +834,9 @@ namespace DwarfCorp
             if (Parent == null)
                 yield break;
 
-            var creature = Creature;
-            if (creature == null)
-            {
+            if (Creature == null)
                 yield break;
-            }
+
             var current = currentstate.Voxel;
 
             if (Can(MoveType.Teleport))
@@ -875,19 +868,25 @@ namespace DwarfCorp
                             }
                 }
             }
+
+            var storage = new MoveActionTempStorage();
+
             foreach (var v in VoxelHelpers.EnumerateCube(current.Coordinate)
                 .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
                 .Where(h => h.IsValid))
             {
-                foreach (var a in GetMoveActions(new MoveState() { Voxel = v}, OctTree, teleportObjects).Where(a => a.DestinationState == currentstate))
+                foreach (var a in GetMoveActions(new MoveState() { Voxel = v}, OctTree, teleportObjects, storage).Where(a => a.DestinationState == currentstate))
                     yield return a;
 
                 if (!Can(MoveType.RideVehicle))
                     continue;
+
                 // Now that dwarfs can ride vehicles, the inverse of the move actions becomes extremely complicated. We must now
                 // iterate through all rails intersecting every neighbor and see if we can find a connection from that rail to this one.
                 // Further, we must iterate through the entire rail network and enumerate all possible directions in and out of that rail.
                 // Yay!
+
+                // Actually - why not just not bother with rails when inverse pathing, since it should only be invoked when forward pathing fails anyway?
                 var bodies = new HashSet<Body>();
                 OctTree.EnumerateItems(v.GetBoundingBox(), bodies);
                 var rails = bodies.OfType<Rail.RailEntity>().Where(r => r.Active);
@@ -895,37 +894,18 @@ namespace DwarfCorp
                 {
                     if (rail.GetContainingVoxel() != v)
                         continue;
-                    /*
-                    if (!DwarfGame.IsMainThread)
-                    {
-                        for (int i = 0; i < 1; i++)
-                        {
-                            Drawer3D.DrawBox(rail.GetBoundingBox(), Color.Purple, 0.1f, false);
-                            System.Threading.Thread.Sleep(1);
-                        }
-                    }
-                    */
-                    foreach (var neighborRail in rail.NeighborRails.Select(neighbor => creature.Manager.FindComponent(neighbor.NeighborID) as Rail.RailEntity))
+                  
+                    foreach (var neighborRail in rail.NeighborRails.Select(neighbor => Creature.Manager.FindComponent(neighbor.NeighborID) as Rail.RailEntity))
                     {
                         var actions = GetMoveActions(new MoveState() {
-                            Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = neighborRail } }, OctTree, teleportObjects);
+                            Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = neighborRail } }, OctTree, teleportObjects, storage);
                         foreach (var a in actions.Where(a => a.DestinationState == currentstate))
                         {
-                            yield return a;
-                            /*
-                            if (!DwarfGame.IsMainThread && a.MoveType == MoveType.RideVehicle)
-                            {
-                                for (int i = 0; i < 10; i++)
-                                {
-                                    Drawer3D.DrawBox(rail.GetBoundingBox(), Color.Red, 0.1f, false);
-                                    System.Threading.Thread.Sleep(1);
-                                }
-                            }
-                            */
+                            yield return a;                           
                         }
                     }
 
-                    foreach (var a in GetMoveActions(new MoveState() { Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = null } }, OctTree, teleportObjects).Where(a => a.DestinationState == currentstate))
+                    foreach (var a in GetMoveActions(new MoveState() { Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = null } }, OctTree, teleportObjects, storage).Where(a => a.DestinationState == currentstate))
                         yield return a;
                 }
             }

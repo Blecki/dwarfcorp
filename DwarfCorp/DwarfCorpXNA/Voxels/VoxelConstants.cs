@@ -25,6 +25,8 @@ namespace DwarfCorp
             return (C.Y * ChunkSizeX * ChunkSizeZ) + (C.Z * ChunkSizeX) + C.X;
         }
 
+        public const Int32 MaximumVoxelTypes = 256;
+
         //  Todo: Use inverse mask naming pattern here.
         // Byte - [1111 0000] Grass Type
         //        [0000 1111] Grass Decay
