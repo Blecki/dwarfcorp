@@ -168,11 +168,14 @@ namespace DwarfCorp
                 c.ReceiveMessageRecursive(changedMessage);
         }
 
-        public void Destroy(GraphicsDevice device)
+        public void Destroy()
         {
             if (Primitive != null)
             {
-                Primitive.ResetBuffer(device);
+                if (Primitive.VertexBuffer != null)
+                    Primitive.VertexBuffer.Dispose();
+                if (Primitive.IndexBuffer != null)
+                 Primitive.IndexBuffer.Dispose();
             }
         }
 

@@ -367,6 +367,10 @@ namespace DwarfCorp
             RebuildThread.Abort();
             WaterUpdateThread.Join();
             ChunkUpdateThread.Abort();
+            foreach (var item in ChunkData.ChunkMap)
+            {
+                item.Destroy();
+            }
         }
 
         public List<Body> KillVoxel(VoxelHandle Voxel)
