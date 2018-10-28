@@ -81,7 +81,7 @@ namespace DwarfCorp
                 blackboard).GetRoot() as Body;
             previewBody.SetFlagRecursive(GameComponent.Flag.Active, false);
             previewBody.SetVertexColorRecursive(Color.White);
-            previewBody.SetFlagRecursive(GameComponent.Flag.ShouldSerialize, false);
+            previewBody.SetFlag(GameComponent.Flag.ShouldSerialize, false);
             return previewBody;
         }
 
