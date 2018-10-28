@@ -422,22 +422,76 @@ namespace DwarfCorp
             }
         }
 
-        private IEnumerable<MoveAction> EnumerateSuccessors(MoveState state, VoxelHandle voxel, MoveActionTempStorage Storage, bool inWater, bool standingOnGround, bool topCovered, bool hasNeighbors, bool isRiding)
+        private IEnumerable<MoveAction> EnumerateSuccessors(
+            MoveState state, 
+            VoxelHandle voxel, 
+            MoveActionTempStorage Storage, 
+            bool inWater, 
+            bool standingOnGround, 
+            bool topCovered, 
+            bool hasNeighbors, 
+            bool isRiding)
         {
             bool isClimbing = false;
+
+            if (isRiding)
+            {
+                if (Can(MoveType.ExitVehicle)) // Possibly redundant... If they can ride they should be able to exit right?
+                {
+                    yield return (new MoveAction()
+                    {
+                        SourceState = state,
+                        DestinationState = new MoveState()
+                        {
+                            VehicleState = new VehicleState(),
+                            Voxel = state.Voxel
+                        },
+                        MoveType = MoveType.ExitVehicle,
+                        Diff = new Vector3(1, 1, 1)
+                    });
+                }
+
+                if (Can(MoveType.RideVehicle))
+                {
+                    foreach (var neighbor in Rail.RailHelper.EnumerateForwardNetworkConnections(state.VehicleState.PrevRail, state.VehicleState.Rail))
+                    {
+                        var neighborRail = Creature.Manager.FindComponent(neighbor) as Rail.RailEntity;
+                        if (neighborRail == null || !neighborRail.Active)
+                            continue;
+
+                        yield return (new MoveAction()
+                        {
+                            SourceState = state,
+                            DestinationState = new MoveState()
+                            {
+                                Voxel = neighborRail.GetContainingVoxel(),
+                                VehicleState = new VehicleState()
+                                {
+                                    Rail = neighborRail,
+                                    PrevRail = state.VehicleState.Rail
+                                }
+                            },
+                            MoveType = MoveType.RideVehicle,
+                        });
+                    }
+                }
+
+                yield break; // Nothing can be done without exiting the rails first.
+            }
+
             if (CanClimb || Can(MoveType.RideVehicle))
             {
-                //Climbing ladders.
+                //Climbing ladders and riding rails.                
 
                 var bodies = Storage.NeighborObjects.Where(o => o.GetBoundingBox().Intersects(voxel.GetBoundingBox()));
 
-                if (!isRiding)
+                // if the creature can climb objects and a ladder is in this voxel,
+                // then add a climb action.
+                if (CanClimb)
                 {
                     var ladder = bodies.FirstOrDefault(component => component.Tags.Contains("Climbable"));
 
-                    // if the creature can climb objects and a ladder is in this voxel,
-                    // then add a climb action.
-                    if (ladder != null && CanClimb)
+                    if (ladder != null)
                     {
                         yield return new MoveAction
                         {
@@ -459,7 +513,7 @@ namespace DwarfCorp
                     }
                 }
 
-                if (!isRiding)
+                if (Can(MoveType.RideVehicle))
                 {
                     var rails = bodies.OfType<Rail.RailEntity>().Where(r => r.Active);
 
@@ -473,7 +527,7 @@ namespace DwarfCorp
                                     continue;
 
 
-                                yield return(new MoveAction()
+                                yield return (new MoveAction()
                                 {
                                     SourceState = state,
                                     DestinationState = new MoveState()
@@ -491,52 +545,49 @@ namespace DwarfCorp
                         }
                     }
                 }
+            }
 
-                if (Can(MoveType.ExitVehicle) && isRiding)
+            // If the creature can fly and is not underwater, it can fly
+            // to any adjacent empty cell.
+            if (CanFly && !inWater)
+            {
+                for (int dx = 0; dx <= 2; dx++)
                 {
-                    yield return(new MoveAction()
+                    for (int dz = 0; dz <= 2; dz++)
                     {
-                        SourceState = state,
-                        DestinationState = new MoveState()
+                        for (int dy = 0; dy <= 2; dy++)
                         {
-                            VehicleState = new VehicleState(),
-                            Voxel = state.Voxel
-                        },
-                        MoveType = MoveType.ExitVehicle,
-                        Diff = new Vector3(1, 1, 1)
-                    });
-                }
+                            if (dx == 1 && dz == 1 && dy == 1) continue;
 
-                if (Can(MoveType.RideVehicle) && isRiding)
-                {
-                    foreach (var neighbor in Rail.RailHelper.EnumerateForwardNetworkConnections(state.VehicleState.PrevRail, state.VehicleState.Rail))
-                    {
-                        var neighborRail = Creature.Manager.FindComponent(neighbor) as Rail.RailEntity;
-                        if (neighborRail == null || !neighborRail.Active)
-                            continue;
-
-                        yield return(new MoveAction()
-                        {
-                            SourceState = state,
-                            DestinationState = new MoveState()
+                            if (!Storage.Neighborhood[dx, 1, dz].IsValid || Storage.Neighborhood[dx, 1, dz].IsEmpty)
                             {
-                                Voxel = neighborRail.GetContainingVoxel(),
-                                VehicleState = new VehicleState()
+                                yield return (new MoveAction
                                 {
-                                    Rail = neighborRail,
-                                    PrevRail = state.VehicleState.Rail
-                                }
-                            },
-                            MoveType = MoveType.RideVehicle,
-                        });
+                                    Diff = new Vector3(dx, dy, dz),
+                                    MoveType = MoveType.Fly
+                                });
+                            }
+                        }
                     }
                 }
             }
 
-            // If the creature can climb walls and is not blocked by a voxl above.
-            if (!isRiding && CanClimbWalls && !topCovered)
+            // If the creature is not in water and is not standing on ground,
+            // it can fall one voxel downward in free space.
+            if (!inWater && !standingOnGround)
             {
+                yield return (new MoveAction
+                {
+                    Diff = new Vector3(1, 0, 1),
+                    MoveType = MoveType.Fall
+                });
 
+                yield break; // If we are falling and can't fly, all we can do is.. fall..
+            }
+
+            // If the creature can climb walls and is not blocked by a voxl above.
+            if (CanClimbWalls && !topCovered)
+            {
                 // This monstrosity is unrolling an inner loop so that we don't have to allocate an array or
                 // enumerators.
                 var wall = VoxelHandle.InvalidHandle;
@@ -594,7 +645,7 @@ namespace DwarfCorp
 
             // If the creature either can walk or is in water, add the 
             // eight-connected free neighbors around the voxel.
-            if (!isRiding && ((CanWalk && standingOnGround) || (CanSwim && inWater)))
+            if ((CanWalk && standingOnGround) || (CanSwim && inWater))
             {
                 // If the creature is in water, it can swim. Otherwise, it will walk.
                 var moveType = inWater ? MoveType.Swim : MoveType.Walk;
@@ -667,7 +718,7 @@ namespace DwarfCorp
             // If the creature's head is free, and it is standing on ground,
             // or if it is in water, or if it is climbing, it can also jump
             // to voxels that are 1 cell away and 1 cell up.
-            if (!isRiding && (!topCovered && (standingOnGround || (CanSwim && inWater) || isClimbing)))
+            if (!topCovered && (standingOnGround || (CanSwim && inWater) || isClimbing))
             {
                 for (int dx = 0; dx <= 2; dx++)
                 {
@@ -685,126 +736,73 @@ namespace DwarfCorp
                         }
                     }
                 }
-            }
+            }            
 
-            // If the creature is not in water and is not standing on ground,
-            // it can fall one voxel downward in free space.
-            if (!isRiding && !inWater && !standingOnGround)
-            {
-                yield return(new MoveAction
-                {
-                    Diff = new Vector3(1, 0, 1),
-                    MoveType = MoveType.Fall
-                });
-            }
-
-            // If the creature can fly and is not underwater, it can fly
-            // to any adjacent empty cell.
-            if (!isRiding && CanFly && !inWater)
-            {
-                for (int dx = 0; dx <= 2; dx++)
-                {
-                    for (int dz = 0; dz <= 2; dz++)
-                    {
-                        for (int dy = 0; dy <= 2; dy++)
-                        {
-                            if (dx == 1 && dz == 1 && dy == 1) continue;
-
-                            if (!Storage.Neighborhood[dx, 1, dz].IsValid || Storage.Neighborhood[dx, 1, dz].IsEmpty)
-                            {
-                                yield return(new MoveAction
-                                {
-                                    Diff = new Vector3(dx, dy, dz),
-                                    MoveType = MoveType.Fly
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-            if (!isRiding && CanDig)
+            if (CanDig)
             {
                 // This loop is unrolled for speed. It gets the manhattan neighbors and tells the creature that it can mine
                 // the surrounding rock to get through.
-                int dx = -1;
-                int dy = 0;
-                int dz = 0;
-                VoxelHandle neighbor = Storage.Neighborhood[dx + 1, dy + 1, dz + 1];
+                VoxelHandle neighbor = Storage.Neighborhood[0, 1, 1];
                 if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
                     {
-                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        Diff = new Vector3(0, 1, 1),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
                     });
                 }
 
-                dx = 1;
-                dy = 0;
-                dz = 0;
-                neighbor = Storage.Neighborhood[dx + 1, dy + 1, dz + 1];
+                neighbor = Storage.Neighborhood[2, 1, 1];
                 if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
                     {
-                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        Diff = new Vector3(2, 1, 1),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
                     });
                 }
 
-                dx = 0;
-                dy = 0;
-                dz = 1;
-                neighbor = Storage.Neighborhood[dx + 1, dy + 1, dz + 1];
+                neighbor = Storage.Neighborhood[1, 1, 2];
                 if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
                     {
-                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        Diff = new Vector3(1, 1, 2),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
                     });
                 }
 
-                dx = 0;
-                dy = 0;
-                dz = -1;
-                neighbor = Storage.Neighborhood[dx + 1, dy + 1, dz + 1];
+                neighbor = Storage.Neighborhood[1, 1, 0];
                 if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
                     {
-                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        Diff = new Vector3(1, 1, 0),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
                     });
                 }
 
-                dx = 0;
-                dy = 1;
-                dz = 0;
-                neighbor = Storage.Neighborhood[dx + 1, dy + 1, dz + 1];
+                neighbor = Storage.Neighborhood[1, 2, 1];
                 if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
                     {
-                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        Diff = new Vector3(1, 2, 1),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
                     });
                 }
 
-                dx = 0;
-                dy = -1;
-                dz = 0;
-                neighbor = Storage.Neighborhood[dx + 1, dy + 1, dz + 1];
+                neighbor = Storage.Neighborhood[1, 0, 1];
                 if (neighbor.IsValid && !neighbor.IsEmpty && (!IsDwarf || !neighbor.IsPlayerBuilt))
                 {
                     yield return (new MoveAction
                     {
-                        Diff = new Vector3(dx + 1, dy + 1, dz + 1),
+                        Diff = new Vector3(1, 0, 1),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
                     });
@@ -819,12 +817,6 @@ namespace DwarfCorp
             public bool CanMove = false;
             public float Cost = 1.0f;
             public float Speed = 1.0f;
-        }
-
-        private GameComponent GetBodyAt(VoxelHandle voxel, WorldManager World, string tag)
-        {
-            return World.EnumerateIntersectingObjects(voxel.GetBoundingBox(),
-                CollisionType.Static).OfType<GameComponent>().FirstOrDefault(component => component.Tags.Contains(tag));
         }
 
         // Inverts GetMoveActions. So, returns the list of move actions whose target is the current voxel.

@@ -42,7 +42,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class CraftDetails : GameComponent
     {
         // Corresponds to a type in the CraftLibrary

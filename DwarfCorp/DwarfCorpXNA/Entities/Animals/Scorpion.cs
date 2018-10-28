@@ -89,7 +89,7 @@ namespace DwarfCorp
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
             // Controls the behavior of the creature
-            Physics.AddChild(new PacingCreatureAI(Manager, "Scorpion AI", Sensors, PlanService));
+            Physics.AddChild(new PacingCreatureAI(Manager, "Scorpion AI", Sensors));
 
             // The bird can peck at its enemies (0.1 damage)
             Attacks = new List<Attack> { new Attack("Sting", 4.0f, 2.0f, 1.5f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_scorpion_attack_1, ContentPaths.Audio.Oscar.sfx_oc_scorpion_attack_2), ContentPaths.Effects.pierce) { TriggerFrame = 2, TriggerMode = Attack.AttackTrigger.Animation} };

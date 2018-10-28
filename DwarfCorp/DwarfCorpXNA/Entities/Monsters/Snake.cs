@@ -128,7 +128,7 @@ namespace DwarfCorp
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
             // Add AI
-            Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors, PlanService));
+            Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors));
 
 
             Attacks = new List<Attack>()

@@ -53,8 +53,8 @@ namespace DwarfCorp
 
         }
 
-        public GremlinAI(ComponentManager Manager, String Name, EnemySensor Sensor, PlanService PlanService)
-        : base(Manager, Name, Sensor, PlanService) { }
+        public GremlinAI(ComponentManager Manager, String Name, EnemySensor Sensor)
+        : base(Manager, Name, Sensor) { }
 
         public override Task ActOnIdle()
         {
