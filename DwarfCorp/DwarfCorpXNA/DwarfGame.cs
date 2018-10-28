@@ -797,7 +797,7 @@ namespace DwarfCorp
                 }
             }
 
-            GuiRoot.Update(gameTime.ToGameTime());
+            GuiRoot.Update(gameTime.ToRealTime());
             SoundManager.Update(gameTime, null, null);
             base.Update(gameTime);
         }

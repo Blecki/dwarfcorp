@@ -142,7 +142,7 @@ namespace DwarfCorp.GameStates
                         Runner.Jump();
                 }
 
-                GuiRoot.Update(gameTime.ToGameTime());
+                GuiRoot.Update(gameTime.ToRealTime());
                 Runner.Update(gameTime);
               
                 if (World != null && World.LoadStatus == WorldManager.LoadingStatus.Failure && !DisplayException)
