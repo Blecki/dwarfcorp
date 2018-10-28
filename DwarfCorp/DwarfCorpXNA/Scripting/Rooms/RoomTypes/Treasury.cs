@@ -248,6 +248,7 @@ namespace DwarfCorp
         }
 
 
+
         public override void Destroy()
         {
             DwarfBux moneyLeft = Money;

@@ -188,6 +188,9 @@ namespace DwarfCorp
             RotateY
         }
 
+        private VoxelHandle[] neighborHood = new VoxelHandle[7];
+        private VoxelHandle prevVoxel = VoxelHandle.InvalidHandle;
+        private bool queryNeighborhood = true;
         public Physics()
         {
 
@@ -300,13 +303,19 @@ namespace DwarfCorp
                     // Move by a fixed amount.
                     Move(FixedDT / velocityLength);
 
+                    prevVoxel = CurrentVoxel;
                     // Get the current voxel.
                     CurrentVoxel = new VoxelHandle(chunks.ChunkData,
                         GlobalVoxelCoordinate.FromVector3(Position));
 
-                    // Collide with the world.
-                    HandleCollisions(chunks, FixedDT);
+                    if (CurrentVoxel != prevVoxel)
+                    {
+                        queryNeighborhood = true;
+                    }
 
+                    // Collide with the world.
+                    HandleCollisions(queryNeighborhood, neighborHood, chunks, FixedDT);
+                    queryNeighborhood = false;
                     Matrix transform = LocalTransform;
                     // Avoid leaving the world.
                     if (worldBounds.Contains(LocalTransform.Translation + Velocity * dt) != ContainmentType.Contains)
@@ -321,63 +330,6 @@ namespace DwarfCorp
                         worldBounds.Contains(GetBoundingBox()) == ContainmentType.Disjoint)
                     {
                         Die();
-                    }
-
-
-                    // Orientation logic.
-                    if (Orientation == OrientMode.Physics)
-                    {
-                        Matrix dA = Matrix.Identity;
-                        dA *= Matrix.CreateRotationX(AngularVelocity.X * FixedDT);
-                        dA *= Matrix.CreateRotationY(AngularVelocity.Y * FixedDT);
-                        dA *= Matrix.CreateRotationZ(AngularVelocity.Z * FixedDT);
-
-                        transform = dA * transform;
-                    }
-                    else if (Orientation != OrientMode.Fixed)
-                    {
-                        if (Velocity.Length() > 0.4f)
-                        {
-                            if (Orientation == OrientMode.LookAt)
-                            {
-                                if (Math.Abs(Vector3.Dot(Vector3.Down, Velocity)) < 0.99 * Velocity.Length())
-                                {
-                                    Matrix newTransform =
-                                        Matrix.Invert(Matrix.CreateLookAt(LocalPosition, LocalPosition + Velocity, Vector3.Down));
-                                    newTransform.Translation = transform.Translation;
-                                    transform = newTransform;
-                                }
-                                else
-                                {
-                                    {
-                                        Matrix newTransform =
-                                            Matrix.Invert(Matrix.CreateLookAt(LocalPosition, LocalPosition + Velocity, Vector3.Right));
-                                        newTransform.Translation = transform.Translation;
-                                        transform = newTransform;
-                                    }
-                                }
-                            }
-                            else if (Orientation == OrientMode.RotateY)
-                            {
-
-                                Rotation = (float)Math.Atan2(Velocity.X, -Velocity.Z);
-                                Quaternion newRotation =
-                                    Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(Rotation));
-                                Quaternion oldRotation = Quaternion.CreateFromRotationMatrix(LocalTransform);
-                                Quaternion finalRot = Quaternion.Slerp(oldRotation, newRotation, 0.1f);
-                                finalRot.Normalize();
-                                Matrix newTransform = Matrix.CreateFromQuaternion(finalRot);
-                                newTransform.Translation = transform.Translation;
-                                newTransform.Right.Normalize();
-                                newTransform.Up.Normalize();
-                                newTransform.Forward.Normalize();
-                                newTransform.M14 = 0;
-                                newTransform.M24 = 0;
-                                newTransform.M34 = 0;
-                                newTransform.M44 = 1;
-                                transform = newTransform;
-                            }
-                        }
                     }
 
                     // Final check to ensure we're in the world.
@@ -418,6 +370,56 @@ namespace DwarfCorp
 
                         //UpdateTransformsRecursive(Parent as Body);
                     }
+                }
+
+
+
+                if (Orientation != OrientMode.Fixed)
+                {
+                    Matrix transform = LocalTransform;
+                    if (Velocity.Length() > 0.4f)
+                    {
+                        if (Orientation == OrientMode.LookAt)
+                        {
+                            if (Math.Abs(Vector3.Dot(Vector3.Down, Velocity)) < 0.99 * Velocity.Length())
+                            {
+                                Matrix newTransform =
+                                    Matrix.Invert(Matrix.CreateLookAt(LocalPosition, LocalPosition + Velocity, Vector3.Down));
+                                newTransform.Translation = transform.Translation;
+                                transform = newTransform;
+                            }
+                            else
+                            {
+                                {
+                                    Matrix newTransform =
+                                        Matrix.Invert(Matrix.CreateLookAt(LocalPosition, LocalPosition + Velocity, Vector3.Right));
+                                    newTransform.Translation = transform.Translation;
+                                    transform = newTransform;
+                                }
+                            }
+                        }
+                        else if (Orientation == OrientMode.RotateY)
+                        {
+
+                            Rotation = (float)Math.Atan2(Velocity.X, -Velocity.Z);
+                            Quaternion newRotation =
+                                Quaternion.CreateFromRotationMatrix(Matrix.CreateRotationY(Rotation));
+                            Quaternion oldRotation = Quaternion.CreateFromRotationMatrix(LocalTransform);
+                            Quaternion finalRot = Quaternion.Slerp(oldRotation, newRotation, 0.1f);
+                            finalRot.Normalize();
+                            Matrix newTransform = Matrix.CreateFromQuaternion(finalRot);
+                            newTransform.Translation = transform.Translation;
+                            newTransform.Right.Normalize();
+                            newTransform.Up.Normalize();
+                            newTransform.Forward.Normalize();
+                            newTransform.M14 = 0;
+                            newTransform.M24 = 0;
+                            newTransform.M34 = 0;
+                            newTransform.M44 = 1;
+                            transform = newTransform;
+                        }
+                    }
+                    LocalTransform = transform;
                 }
 
             }
@@ -462,7 +464,7 @@ namespace DwarfCorp
                     overrideSleepThisFrame = true;
                     IsSleeping = false;
                     SleepTimer.Reset();
-                    HandleCollisions(World.ChunkManager, DwarfTime.Dt);
+                    HandleCollisions(true, neighborHood, World.ChunkManager, DwarfTime.Dt);
                     break;
             }
 
@@ -498,7 +500,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public virtual void HandleCollisions(ChunkManager chunks, float dt)
+        public virtual void HandleCollisions(bool queryNeighborHood, VoxelHandle[] neighborHood, ChunkManager chunks, float dt)
         {
             if (CollideMode == CollisionMode.None) return;
 
@@ -514,8 +516,17 @@ namespace DwarfCorp
                 }
             }
 
-            foreach (var v in VoxelHelpers.EnumerateManhattanCube(CurrentVoxel.Coordinate)
-                .Select(c => new VoxelHandle(chunks.ChunkData, c)))
+            if (queryNeighborHood)
+            {
+                int i = 0;
+                foreach(var v in VoxelHelpers.EnumerateManhattanCube(CurrentVoxel.Coordinate).Select(c => new VoxelHandle(chunks.ChunkData, c)))
+                {
+                    neighborHood[i] = v;
+                    i++;
+                }
+            }
+
+            foreach (var v in neighborHood)
             {
                 if (!v.IsValid || v.IsEmpty)
                     continue;

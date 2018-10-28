@@ -214,7 +214,7 @@ namespace DwarfCorp
 
         public uint k = 0;
         private List<GameComponent> _componentList = null; // Why are we keeping this list twice????
-        public long iter = 0;
+        public ulong iter = 0;
         
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
@@ -226,7 +226,7 @@ namespace DwarfCorp
             for (uint j = 0; j < Math.Min(GameSettings.Default.EntityUpdateRate, _componentList.Count); j++)
             {
                 var c = (k + j) % (uint)_componentList.Count;
-                if (iter % _componentList[(int)c].UpdateRate == 0)
+                if (iter % (ulong)_componentList[(int)c].UpdateRate == 0)
                     _componentList[(int)c].Update(gameTime, chunks, camera);
             }
 

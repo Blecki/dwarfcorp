@@ -94,7 +94,7 @@ namespace DwarfCorp
 
         public Creature()
         {
-            UpdateRate = 4;
+            UpdateRate = 2;
             CurrentCharacterMode = CharacterMode.Idle;
 
             OverrideCharacterMode = false;
@@ -114,7 +114,7 @@ namespace DwarfCorp
             string name) :
             base(Manager, name, stats.MaxHealth, 0.0f, stats.MaxHealth)
         {
-            UpdateRate = 4;
+            UpdateRate = 2;
             Stats = stats;
             Stats.Gender = Mating.RandomGender();
             DrawLifeTimer.HasTriggered = true;

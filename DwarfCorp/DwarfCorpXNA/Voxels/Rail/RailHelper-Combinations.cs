@@ -64,8 +64,9 @@ namespace DwarfCorp.Rail
             var local = actualPosition.Coordinate.GetLocalVoxelCoordinate();
             var voxelUnder = new VoxelHandle(actualPosition.Chunk, new LocalVoxelCoordinate(local.X, local.Y - 1, local.Z));
             if (voxelUnder.IsEmpty) return false;
+            var box = actualPosition.GetBoundingBox().Expand(-0.2f);
 
-            foreach (var entity in Player.World.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionType.Static))
+            foreach (var entity in Player.Faction.OwnedObjects.Where(e => e.GetBoundingBox().Intersects(box)))
             {
                 if ((entity as GameComponent).IsDead)
                     continue;
@@ -90,9 +91,8 @@ namespace DwarfCorp.Rail
                 if (Debugger.Switches.DrawBoundingBoxes)
                 {
                     Drawer3D.DrawBox(entity.GetBoundingBox(), Color.Yellow, 0.1f, false);
-                    Player.World.ShowTooltip(String.Format("Can't place {0}. Entity in the way: {1}", junctionPiece.RailPiece, entity.ToString()));
                 }
-
+                Player.World.ShowTooltip(String.Format("Can't place {0}. Entity in the way: {1}", junctionPiece.RailPiece, entity.ToString()));
                 return false;
             }
 
