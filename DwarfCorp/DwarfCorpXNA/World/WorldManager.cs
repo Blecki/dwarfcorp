@@ -1039,12 +1039,12 @@ namespace DwarfCorp
 
             if (GameSettings.Default.EnableGlow)
             {
-                bloom.DrawTarget = UseFXAA ? fxaa.RenderTarget : null;
-
                 if (UseFXAA)
                 {
                     fxaa.Begin(DwarfTime.LastTime);
                 }
+                bloom.DrawTarget = UseFXAA ? fxaa.RenderTarget : null;
+
                 bloom.Draw(gameTime.ToRealTime());
                 if (UseFXAA)
                     fxaa.End(DwarfTime.LastTime);
