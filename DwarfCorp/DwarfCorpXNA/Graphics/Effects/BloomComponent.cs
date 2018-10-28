@@ -175,7 +175,7 @@ namespace BloomPostprocess
                 bloomExtractEffect.IsDisposed || bloomExtractEffect.GraphicsDevice.IsDisposed || 
                 sceneRenderTarget.IsDisposed || sceneRenderTarget.IsContentLost ||
                 gaussianBlurEffect.IsDisposed || gaussianBlurEffect.GraphicsDevice.IsDisposed ||
-                DrawTarget.IsDisposed || DrawTarget.IsContentLost)
+                DrawTarget != null && (DrawTarget.IsDisposed || DrawTarget.IsContentLost))
             {
                 LoadContent();
             }
