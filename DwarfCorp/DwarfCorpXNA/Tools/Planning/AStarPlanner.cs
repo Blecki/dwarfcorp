@@ -288,20 +288,13 @@ namespace DwarfCorp
                     };
                 }
 
-
-                //Drawer3D.DrawLine(start.Voxel.GetBoundingBox().Center(), goal.GetVoxel().GetBoundingBox().Center(), Color.Red, 0.1f);
-                //Drawer3D.DrawBox(current.Voxel.GetBoundingBox(), Color.Red, 0.1f, true);
                 // We've already considered the voxel, so add it to the closed set.
                 openSet.Remove(current);
                 closedSet.Add(current);
 
-                IEnumerable<MoveAction> neighbors = null;
-                
                 // Get the voxels that can be moved to from the current voxel.
-                neighbors = mover.GetMoveActions(current, octree, teleportObjects, storage).ToList();
-                //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
-
-
+                var neighbors = mover.GetMoveActions(current, octree, teleportObjects, storage).ToList();
+                
                 var foundGoalAdjacent = neighbors.FirstOrDefault(n => !n.DestinationState.VehicleState.IsRidingVehicle && goal.IsInGoalRegion(n.DestinationState.Voxel));
 
                 // A quick test to see if we're already adjacent to the goal. If we are, assume
@@ -310,8 +303,7 @@ namespace DwarfCorp
                 {
                     if (cameFrom.ContainsKey(current))
                     {
-                        List<MoveAction> subPath = ReconstructPath(cameFrom, foundGoalAdjacent, start);
-                        toReturn = subPath;
+                        toReturn = ReconstructPath(cameFrom, foundGoalAdjacent, start);
                         return new PlanResult()
                         {
                             Result = PlanResultCode.Success,
@@ -319,7 +311,6 @@ namespace DwarfCorp
                             TimeSeconds = DwarfTime.Tock(startTime)
                         };
                     }
-
                 }
 
                 // Otherwise, consider all of the neighbors of the current voxel that can be moved to,

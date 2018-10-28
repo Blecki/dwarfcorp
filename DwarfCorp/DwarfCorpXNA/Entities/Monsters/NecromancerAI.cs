@@ -58,8 +58,8 @@ namespace DwarfCorp
             AttackRange = 10;
         }
 
-        public NecromancerAI(ComponentManager Manager, string name, EnemySensor sensor, PlanService planService) :
-            base(Manager, name, sensor, planService)
+        public NecromancerAI(ComponentManager Manager, string name, EnemySensor sensor) :
+            base(Manager, name, sensor)
         {
             Skeletons = new List<Skeleton>();
             MaxSkeletons = 3;

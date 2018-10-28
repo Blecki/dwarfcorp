@@ -56,19 +56,17 @@ namespace DwarfCorp
         public CreatureAI(
             ComponentManager Manager,
             string name,
-            EnemySensor sensor,
-            PlanService planService) :
+            EnemySensor sensor) :
             base(name, Manager)
         {
             Movement = new CreatureMovement(this);
             GatherManager = new GatherManager(this);
             Blackboard = new Blackboard();
-            PlannerTimer = new Timer(0.1f, false);
             LocalControlTimeout = new Timer(5, false, Timer.TimerMode.Real);
             WanderTimer = new Timer(1, false);
             DrawAIPlan = false;
             WaitingOnResponse = false;
-            PlanSubscriber = new PlanSubscriber(planService);
+            PlanSubscriber = new PlanSubscriber(Manager.World.PlanService);
             ServiceTimeout = new Timer(2, false, Timer.TimerMode.Real);
             Sensor = sensor;
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
@@ -110,8 +108,6 @@ namespace DwarfCorp
         /// <summary> Gets the current Task the creature is trying to perform </summary>
         public Task CurrentTask { get; set; }
 
-        /// <summary> When this timer triggers, the creature will poll the PlanService for replanning paths </summary>
-        public Timer PlannerTimer { get; set; }
         /// <summary> When this timer triggers, the creature will stop trying to reach a local target (if it is blocked by a voxel for instance </summary>
         public Timer LocalControlTimeout { get; set; }
         /// <summary> When this timer triggers, the creature will wander in a new direction when it has nothing to do. </summary>
@@ -771,7 +767,6 @@ namespace DwarfCorp
                 }
             }
 
-            PlannerTimer.Update(gameTime);
             UpdateXP();
 
             // With a small probability, the creature will drown if its under water.

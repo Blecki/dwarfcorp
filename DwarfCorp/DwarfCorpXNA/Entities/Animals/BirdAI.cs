@@ -49,8 +49,8 @@ namespace DwarfCorp
             
         }
 
-        public BirdAI(ComponentManager Manager, string name, EnemySensor sensor, PlanService planService) :
-            base(Manager, name, sensor, planService)
+        public BirdAI(ComponentManager Manager, string name, EnemySensor sensor) :
+            base(Manager, name, sensor)
         {
             
         }
