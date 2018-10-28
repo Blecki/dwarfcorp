@@ -100,6 +100,13 @@ namespace DwarfCorp
             return (Flags & F) == F;
         }
 
+        public void SetUpdateRateRecursive(int rate)
+        {
+            UpdateRate = rate;
+            foreach (var child in Children)
+                child.SetUpdateRateRecursive(rate);
+        }
+
         public GameComponent SetFlag(Flag F, bool Value)
         {
             if (Value)
