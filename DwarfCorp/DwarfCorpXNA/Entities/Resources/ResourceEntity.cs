@@ -77,6 +77,7 @@ namespace DwarfCorp
 
             PropogateTransforms();
             CreateCosmeticChildren(Manager);
+            Orientation = OrientMode.Fixed;
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
