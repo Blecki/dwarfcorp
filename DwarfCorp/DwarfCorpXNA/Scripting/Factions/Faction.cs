@@ -270,9 +270,9 @@ namespace DwarfCorp
                 {
                     if (!Designations.IsDesignation(threat.Physics, DesignationType.Attack))
                     { 
-                        var g = new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto);
-                        Designations.AddEntityDesignation(threat.Physics, DesignationType.Attack, null, g);
-                        tasks.Add(g);
+                        //var g = new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto);
+                        //Designations.AddEntityDesignation(threat.Physics, DesignationType.Attack, null, g);
+                        //tasks.Add(g);
                     }
                     else
                     {
