@@ -922,6 +922,7 @@ namespace DwarfCorp
 
                 amountRemaining -= amountToTake;
                 treasury.Money += amountToTake;
+                Economy.CurrentMoney += amountToTake;
             }
             if (amountRemaining > 0 && RoomBuilder.DesignatedRooms.Count > 0)
             {
