@@ -179,8 +179,9 @@ namespace DwarfCorp.Gui.Widgets
             {
                 Background = new TileReference("balance", 3),
                 MaximumSize = new Point(64, 48),
-                MinimumSize = new Point(64, 48)
-            });
+                MinimumSize = new Point(64, 48),
+                Tag = "trade_balance"
+        });
             Update();
             base.Construct();
         }
@@ -497,6 +498,8 @@ namespace DwarfCorp.Gui.Widgets
                 Font = "font10",
                 TextColor = new Vector4(0, 0, 0, 1),
                 TextVerticalAlign = VerticalAlign.Center,
+                MaximumSize = new Point(256, 32),
+                Tag = "trade_stocks"
             });
 
             var mainPanel = AddChild(new Columns
@@ -514,7 +517,8 @@ namespace DwarfCorp.Gui.Widgets
                 LeftHeader = "Our Items",
                 RightHeader = "We Offer",
                 MoneyLabel = "Our money",
-                OnTotalSelectedChanged = (s) => UpdateBottomDisplays()
+                OnTotalSelectedChanged = (s) => UpdateBottomDisplays(),
+                Tag = "trade_money"
             }) as ResourceColumns;
 
             EnvoyColumns = mainPanel.AddChild(new ResourceColumns

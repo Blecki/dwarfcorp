@@ -70,6 +70,7 @@ namespace DwarfCorp
                         creature.World.Master.TaskManager.CancelTask(designation.Task);
                     }
                 }
+                Agent.SetMessage("Failed to gather. No path.");
                 yield return Act.Status.Fail;
             }
 

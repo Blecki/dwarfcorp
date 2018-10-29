@@ -166,12 +166,24 @@ namespace DwarfCorp
         {
             AssetName = name;
             Image = AssetManager.GetContentTexture(name);
-
             if (Image != null)
             {
                 SourceRect = Image.Bounds;
             }
         }
+
+        public NamedImageFrame(Texture2D tex, int frameSize, int x, int y) :
+            base(tex, frameSize, x, y)
+        {
+            AssetName = ContentPaths.Error;
+        }
+
+        public NamedImageFrame(Texture2D tex, Rectangle sourceRect) :
+                base(tex, sourceRect)
+        {
+            AssetName = ContentPaths.Error;
+        }
+
 
         public NamedImageFrame(string name, int frameSize, int x, int y)
         {

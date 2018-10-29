@@ -46,6 +46,14 @@ namespace DwarfCorp
         [JsonIgnore]
         public BodySelector BodySelector { get; set; }
 
+        public struct ApplicantArrival
+        {
+            public Applicant Applicant;
+            public DateTime ArrivalTime;
+        }
+
+        public List<ApplicantArrival> NewArrivals = new List<ApplicantArrival>();
+
         public Faction Faction { get; set; }
 
         #region  Player tool management
@@ -258,7 +266,7 @@ namespace DwarfCorp
 
         public bool AreAllEmployeesAsleep()
         {
-            return (Faction.Minions.Count > 0) && Faction.Minions.All(minion => (!minion.Stats.CanSleep || minion.Creature.IsAsleep) && !minion.IsDead);
+            return (Faction.Minions.Count > 0) && Faction.Minions.All(minion => !minion.Active || ((!minion.Stats.CanSleep || minion.Creature.IsAsleep) && !minion.IsDead));
         }
 
         // Todo: %KILL% - does not belong here.
@@ -336,7 +344,7 @@ namespace DwarfCorp
                     m.Creature.SelectionCircle.IsVisible = false;
                 m.Creature.Sprite.DrawSilhouette = false;
             };
-
+            Faction.SelectedMinions.RemoveAll(m => m.IsDead || !m.Active);
             foreach (CreatureAI creature in Faction.SelectedMinions)
             {
                 if (creature.Creature.SelectionCircle != null)
@@ -484,12 +492,32 @@ namespace DwarfCorp
 
             foreach(var minion in Faction.Minions)
             {
+                if (minion == null) throw new InvalidProgramException("Null minion?");
+                if (minion.Status == null) throw new InvalidProgramException("Minion has null status?");
+
                 if (minion.Status.IsAsleep)
                     continue;
+
                 if (minion.CurrentTask == null)
                     continue;
+
+                if (minion.Stats.IsTaskAllowed(Task.TaskCategory.Dig))
+                {
+                    minion.Movement.SetCan(MoveType.Dig, GameSettings.Default.AllowAutoDigging);
+                }
+
                 minion.ResetPositionConstraint();
             }
+
+            foreach (var applicant in NewArrivals)
+            {
+                if (World.Time.CurrentDate >= applicant.ArrivalTime)
+                {
+                    Faction.HireImmediately(applicant.Applicant);
+                }
+            }
+
+            NewArrivals.RemoveAll(a => World.Time.CurrentDate >= a.ArrivalTime);
         }
 
 

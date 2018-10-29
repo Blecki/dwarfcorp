@@ -34,7 +34,11 @@ namespace DwarfCorp
 
         public DwarfRunner(DwarfGame game)
         {
-
+            Create(game);
+        }
+    
+        void Create(DwarfGame game)
+        {
             WorldSize = new Point((game.GraphicsDevice.Viewport.Width / TileSize.X) + 4, 10);
             World = new Tile[WorldSize.X, WorldSize.Y];
 
@@ -48,7 +52,7 @@ namespace DwarfCorp
             Texture2D tiles = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
             Balloon = AssetManager.GetContentTexture(ContentPaths.Entities.Balloon.Sprites.balloon);
             Dwarf = AssetManager.GetContentTexture(Datastructures.SelectRandom(sheets));
-            
+
             Soil = new ImageFrame(tiles, 32, 2, 0);
             Grass = new ImageFrame(tiles, 32, 3, 0);
 
@@ -151,6 +155,16 @@ namespace DwarfCorp
 
         public void Render(GraphicsDevice graphics, SpriteBatch sprites, DwarfTime time)
         {
+            if (sprites.IsDisposed || sprites.GraphicsDevice.IsDisposed || graphics.IsDisposed)
+            {
+                return;
+            }
+
+            if (Balloon.IsDisposed || Dwarf.IsDisposed)
+            {
+                Create(GameStates.GameState.Game);
+            }
+
             try
             {
                 sprites.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointClamp,

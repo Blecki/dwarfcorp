@@ -74,9 +74,9 @@ namespace DwarfCorp
             Primitive.SetFrame(SpriteSheet, rect, 1.0f, 1.0f, /*rect.Width / 32.0f, rect.Height / 32.0f,*/ Color.White, Tint, Flipped);
         }
 
-        public virtual ImageFrame GetAsImageFrame(int CurrentFrame)
+        public virtual NamedImageFrame GetAsImageFrame(int CurrentFrame)
         {
-            return new ImageFrame(SpriteSheet.GetTexture(), GetFrameRect(CurrentFrame));
+            return new NamedImageFrame(SpriteSheet.AssetName, GetFrameRect(CurrentFrame));
         }
 
         public virtual Texture2D GetTexture()

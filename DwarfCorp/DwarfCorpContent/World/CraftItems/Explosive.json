@@ -1,6 +1,7 @@
 {
   "Name": "Explosive",
   "EntityName": "Explosive",
+  "DisplayName": "Powder Keg",
   "RequiredResources": [
     {
       "ResourceType": "Alcohol",
@@ -32,5 +33,6 @@
   "SpawnOffset": "0, 0.5, 0",
   "AddToOwnedPool": true,
   "Moveable": true,
-  "CraftActBehavior": "Normal"
+  "CraftActBehavior": "Normal",
+  "Tutorial": "A craftsdwarf can build an explosive keg to assist with mining or defense. Explosives explode automatically, giving dwarfs just enough time to run away."
 }

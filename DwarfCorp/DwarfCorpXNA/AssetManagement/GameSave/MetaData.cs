@@ -52,12 +52,27 @@ namespace DwarfCorp
         public Point3 NumChunks { get; set; }
         public String Version;
         public String Commit;
+        public Dictionary<int, String> VoxelTypeMap = new Dictionary<int, string>();
 
         public static string Extension = "meta";
         public static string CompressedExtension = "zmeta";
 
-        public MetaData()
+        public static MetaData CreateFromWorld(WorldManager World)
         {
+            return new MetaData
+            {
+                OverworldFile = Overworld.Name,
+                WorldOrigin = World.WorldOrigin,
+                WorldScale = World.WorldScale,
+                TimeOfDay = World.Sky.TimeOfDay,
+                GameID = World.GameID,
+                Time = World.Time,
+                Slice = (int)World.Master.MaxViewingLevel,
+                NumChunks = World.ChunkManager.WorldSize,
+                Version = Program.Version,
+                Commit = Program.Commit,
+                VoxelTypeMap = VoxelLibrary.GetVoxelTypeMap()
+            };
         }
     }
 }

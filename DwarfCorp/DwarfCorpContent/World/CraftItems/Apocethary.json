@@ -1,7 +1,8 @@
 {
-  "Name": "Apocethary",
-  "EntityName": "Apocethary",
+  "Name": "Apothecary",
+  "EntityName": "Apothecary",
   "Category": "Magic",
+  "DisplayName" : "Apoth\n-ecary",
   "RequiredResources": [
     {
       "ResourceType": "Magical",
@@ -30,5 +31,6 @@
   "AddToOwnedPool": true,
   "Moveable": true,
   "CraftActBehavior": "Normal",
-  "IsMagical": true
+  "IsMagical": true,
+  "Tutorial": "Use the Apothecary to brew potions. Only one wizard may use an Apothecary at a time. They require magic (mana rocks or refined mana) to build."
 }

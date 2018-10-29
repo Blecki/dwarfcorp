@@ -320,7 +320,7 @@ namespace DwarfCorp.GameStates
             Progress.Percentage = (float)gameTime.TotalGameTime.TotalSeconds / 10.0f;
             Progress.Percentage = Progress.Percentage - (float)Math.Floor(Progress.Percentage);
 
-            GuiRoot.Update(gameTime.ToGameTime());
+            GuiRoot.Update(gameTime.ToRealTime());
 
             base.Update(gameTime);
         }

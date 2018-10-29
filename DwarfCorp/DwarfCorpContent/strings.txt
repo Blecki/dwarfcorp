@@ -34,7 +34,7 @@ build: Build
 built: Built
 building: Building
 bear-trap: Bear Trap
-s-bear-trap: br trp
+s-bear-trap: Bear Trap
 d-bear-trap: Damages enemies and then explodes.
 craft: Craft {0}
 place: Place
@@ -47,7 +47,7 @@ ale: Ale
 s-ale: ale
 d-ale: Turn brewable food into alcohol.
 anvil: Anvil
-s-anvil: anvil
+s-anvil: Anvil
 d-anvil: Used to craft more complex items.
 play-employee-icon-label: Dwarfs
 play-employee-icon-tooltip: Selected employee menu

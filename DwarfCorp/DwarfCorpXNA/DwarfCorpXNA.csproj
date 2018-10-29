@@ -183,7 +183,9 @@
     <Compile Include="AssetManagement\IndexedDecomposition.cs" />
     <Compile Include="AssetManagement\ModMetaData.cs" />
     <Compile Include="AssetManagement\StringLibrary.cs" />
+    <Compile Include="Components\AI\MoveActionsTempStorage.cs" />
     <Compile Include="Components\AI\PacingCreatureAI.cs" />
+    <Compile Include="Entities\Animals\Chimp.cs" />
     <Compile Include="Entities\Fixtures\Palisade.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCStatus.cs" />
     <Compile Include="GameStates\ModManagement\Steam\IUGCTransaction.cs" />

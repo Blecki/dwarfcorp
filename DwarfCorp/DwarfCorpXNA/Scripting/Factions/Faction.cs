@@ -236,7 +236,7 @@ namespace DwarfCorp
             if (HandleThreatsTimer.HasTriggered)
              HandleThreats();
 
-            OwnedObjects.RemoveAll(obj => obj.IsDead);
+            OwnedObjects.RemoveAll(obj => obj.IsDead || obj.Parent == null || !obj.Manager.HasComponent(obj.GlobalID));
 
         }
 
@@ -707,6 +707,7 @@ namespace DwarfCorp
                             2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
                         newEntity.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                         newEntity.AnimationQueue.Add(toss);
+                        newEntity.UpdateRate = 1;
                         toss.OnComplete += () => toss_OnComplete(newEntity);
 
                     }
@@ -723,19 +724,34 @@ namespace DwarfCorp
 
         }
 
-        public void Hire(Applicant currentApplicant)
+        public DateTime Hire(Applicant currentApplicant, int delay)
+        {
+            DateTime startDate = World.Time.CurrentDate;
+            if (World.Master.NewArrivals.Count > 0)
+            {
+                startDate = World.Master.NewArrivals.Last().ArrivalTime;
+            }
+            World.Master.NewArrivals.Add(new GameMaster.ApplicantArrival()
+            {
+                Applicant = currentApplicant,
+                ArrivalTime = startDate+ new TimeSpan(0, delay, 0, 0, 0)
+            });
+
+            AddMoney(-(decimal)GameSettings.Default.SigningBonus);
+            return World.Master.NewArrivals.Last().ArrivalTime;
+
+        }
+
+        public void HireImmediately(Applicant currentApplicant)
         {
             List<Room> rooms = GetRooms().Where(room => room.RoomData.Name == "Balloon Port").ToList();
-
-            if (rooms.Count == 0)
+            Vector3 spawnLoc = World.Camera.Position;
+            if (rooms.Count > 0)
             {
-                return;
+                spawnLoc = rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15;
             }
-
-            AddMoney(-currentApplicant.Level.Pay * 4m);
-
             var dwarfPhysics = DwarfFactory.GenerateDwarf(
-                    rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15,
+                    spawnLoc,
                     World.ComponentManager, "Player", currentApplicant.Class, currentApplicant.Level.Index, currentApplicant.Gender, currentApplicant.RandomSeed);
             World.ComponentManager.RootComponent.AddChild(dwarfPhysics);
             var newMinion = dwarfPhysics.EnumerateAll().OfType<Dwarf>().FirstOrDefault();

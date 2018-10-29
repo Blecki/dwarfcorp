@@ -264,16 +264,7 @@ namespace DwarfCorp
             try
             {
                 var filename = ResolveContentPath(asset, ".png");
-                if (Path.GetExtension(filename) == ".xnb")
-                {
-                    var toReturn = Content.Load<Texture2D>(filename.Substring(0, filename.Length - 4));
-                    return true;
-                }
-                else
-                {
-                    var toReturn = LoadUnbuiltTextureFromAbsolutePath(filename);
-                    return toReturn != null;
-                }
+                return File.Exists(filename);
             }
             catch (Exception exception)
             {
@@ -313,7 +304,7 @@ namespace DwarfCorp
                     return toReturn;
                 }
             }
-            catch (ContentLoadException exception)
+            catch (Exception exception)
             {
                 Console.Error.WriteLine(exception.ToString());
                 var r = Content.Load<Texture2D>(ContentPaths.Error);

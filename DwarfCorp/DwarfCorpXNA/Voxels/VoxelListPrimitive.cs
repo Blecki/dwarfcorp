@@ -531,14 +531,14 @@ namespace DwarfCorp
                     BuildGrassFringeGeometry(Into, Chunk, Cache, Primitive, V, vertexColors,
                         vertexTint, vertexPositions, faceDescriptor, exploredVerts);
 
-                if (V.Decal != 0)
-                {
-                    var decalTypeID = DecalType.DecodeDecalType(V.Decal);
-                    var decalOrientation = DecalType.DecodeDecalOrientation(V.Decal);
-                    var decalType = DecalLibrary.GetGrassType(decalTypeID);
+                //if (V.Decal != 0)
+                //{
+                //    var decalTypeID = DecalType.DecodeDecalType(V.Decal);
+                //    var decalOrientation = DecalType.DecodeDecalOrientation(V.Decal);
+                //    var decalType = DecalLibrary.GetGrassType(decalTypeID);
 
-                    AddDecalGeometry(Into, Cache.AmbientValues, Primitive, V, faceDescriptor, exploredVerts, vertexPositions, vertexColors, vertexTint, decalType, (byte)decalOrientation);
-                }
+                //    AddDecalGeometry(Into, Cache.AmbientValues, Primitive, V, faceDescriptor, exploredVerts, vertexPositions, vertexColors, vertexTint, decalType, (byte)decalOrientation);
+                //}
             }
             else
             {

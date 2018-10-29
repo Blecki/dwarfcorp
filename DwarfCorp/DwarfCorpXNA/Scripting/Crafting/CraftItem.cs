@@ -104,6 +104,7 @@ namespace DwarfCorp
         public bool AllowRotation = false;
         public string Category = "";
         public bool IsMagical = false;
+        public string Tutorial = "";
 
         /// <summary>
         /// If true, this will be displayed in the list of resources that the player can craft.
@@ -114,7 +115,7 @@ namespace DwarfCorp
         {
             DisplayName = StringLibrary.TransformDataString(DisplayName, Name);
             PluralDisplayName = StringLibrary.TransformDataString(PluralDisplayName, DisplayName + "s"); // Default to appending an s if the plural name is not specified.
-            ShortDisplayName = StringLibrary.TransformDataString(ShortDisplayName, TextGenerator.Shorten(DisplayName, 6));
+            ShortDisplayName = StringLibrary.TransformDataString(ShortDisplayName, DisplayName);
             Verb = StringLibrary.TransformDataString(Verb, StringLibrary.GetString("build"));
             PastTeseVerb = StringLibrary.TransformDataString(PastTeseVerb, StringLibrary.GetString("built"));
             CurrentVerb = StringLibrary.TransformDataString(CurrentVerb, StringLibrary.GetString("building"));

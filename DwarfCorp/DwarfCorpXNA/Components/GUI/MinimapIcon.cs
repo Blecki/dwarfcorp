@@ -14,25 +14,16 @@ namespace DwarfCorp
 
         public MinimapIcon()
         {
-
+            UpdateRate = 10;
         }
 
         public MinimapIcon(ComponentManager Manager, NamedImageFrame icon) :
             base(Manager, "Icon", Matrix.Identity, Vector3.One, Vector3.Zero)
         {
+            UpdateRate = 10;
             Icon = icon;
             IconScale = 1.0f;
             IsVisible = false;
-        }
-
-        public override void Delete()
-        {
-            base.Delete();
-        }
-
-        public override void Die()
-        {
-            base.Die();
         }
     }
 }

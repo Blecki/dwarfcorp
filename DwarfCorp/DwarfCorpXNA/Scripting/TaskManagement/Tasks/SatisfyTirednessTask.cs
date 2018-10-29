@@ -46,7 +46,7 @@ namespace DwarfCorp
         {
             ReassignOnDeath = false;
             Name = "Go to sleep";
-            Priority = PriorityType.Medium;
+            Priority = PriorityType.High;
             BoredomIncrease = GameSettings.Default.Boredom_Sleep;
         }
 

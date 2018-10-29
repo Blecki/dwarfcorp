@@ -81,6 +81,7 @@ namespace DwarfCorp
                 }
             }
             Agent.Blackboard.SetData<Treasury>("Treasury", null);
+            Agent.SetMessage("Failed to get money. No treasuries..");
             yield return Act.Status.Fail;
         }
 
@@ -94,6 +95,7 @@ namespace DwarfCorp
         {
             if (!Agent.Blackboard.Has("MoneyNeeded"))
             {
+                Agent.SetMessage("Failed to get money. Internal error.");
                 yield return Act.Status.Fail;
                 yield break;
             }
@@ -107,6 +109,7 @@ namespace DwarfCorp
             if (Faction.Economy.CurrentMoney < needed)
             {
                 Agent.World.MakeAnnouncement(String.Format("Could not pay {0}, not enough money!", Agent.Stats.FullName));
+                Agent.SetMessage("Failed to get money, not enough in treasury.");
                 yield return Act.Status.Fail;
                 yield break;
             }

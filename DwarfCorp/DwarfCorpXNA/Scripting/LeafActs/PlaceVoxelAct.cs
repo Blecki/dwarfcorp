@@ -119,6 +119,7 @@ namespace DwarfCorp
                 }
 
                 TossMotion motion = new TossMotion(1.0f, 2.0f, grabbed.LocalTransform, Location.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f));
+                grabbed.UpdateRate = 1;
                 grabbed.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                 grabbed.AnimationQueue.Add(motion);
 
@@ -140,6 +141,7 @@ namespace DwarfCorp
 
         private void PlaceVoxel(VoxelHandle Vox, VoxelType Type, WorldManager World)
         {
+            Vox.IsPlayerBuilt = true;
             Vox.Type = Type;
             Vox.QuickSetLiquid(LiquidType.None, 0);
 

@@ -99,7 +99,8 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (Player.Faction.GetIntersectingRooms(voxel.GetBoundingBox()).Count > 0)
+            // We have to shrink the bounding box used because for some reason zones overflow their bounds a little during their collision check.
+            if (Player.Faction.GetIntersectingRooms(voxel.GetBoundingBox().Expand(-0.2f)).Count > 0)
             {
                 Player.World.ShowTooltip("Can't plant inside zones.");
                 return false;
@@ -175,7 +176,8 @@ namespace DwarfCorp
 
         public override void OnBegin()
         {
-
+            Player.VoxSelector.DrawBox = true;
+            Player.VoxSelector.DrawVoxel = true;
         }
 
         public override void OnEnd()

@@ -104,7 +104,7 @@ namespace DwarfCorp
 
             if (camera.Control == OrbitCamera.ControlType.Walk)
             {
-                return !shiftPressed;
+                return !camera.IsMouseActiveInWalk();
             }
             else
             {

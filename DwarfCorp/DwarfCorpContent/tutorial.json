@@ -44,7 +44,7 @@
 	{
 		"Name": "build items",
 		"Title": "Building Items",
-		"Text": "Left click and drag to tell dwarves to build items. You can only build items you have resources for. When there aren't enough resources, the item will turn red. Once you click, a work pile will be created. The dwarf will gather the resources and build the item at the work pile. NOTE: A workshop is required to build items.",
+		"Text": "Left click to tell dwarfs to build items. Once you click, a blueprint will be created. The dwarf will gather the resources and build the item at the work pile. The dwarf will ignore the blueprint until enough resources are available.",
 		"GuiHilite": "craft item"
 	},
 	{
@@ -84,7 +84,7 @@
 	{
 		"Name": "build Stockpile",
 		"Title": "Stockpiles",
-		"Text": "Left click and drag a set of blocks to build a stockpile. Stockpiles are free and increase the number of goods your dwarf corporation can have in storage. Dwarves carry resources to stockpiles to store them, and grab resources from stockpiles when they\\'re needed. Stockpiles automatically redistribute goods when necessary. You can see what is in your stockpiles at the top of the screen. The larger the stockpile, the more goods that can be stored there."
+		"Text": "Left click and drag a set of blocks to build a stockpile. Stockpiles are free and increase the number of goods your dwarf corporation can have in storage. Dwarves carry resources to stockpiles to store them, and grab resources from stockpiles when they\'re needed. Stockpiles automatically redistribute goods when necessary. You can see what is in your stockpiles at the top of the screen. The larger the stockpile, the more goods that can be stored there."
 	},
 
 	{
@@ -131,7 +131,7 @@
 	{
 		"Name": "death",
 		"Title": "Death",
-		"Text": "One of your employees died! That\\'s bad news. When employees die, their coworkers may become depressed. Employee death may also result in your stock crashing."
+		"Text": "One of your employees died! That\'s bad news. When employees die, their coworkers may become depressed. Employee death may also result in your stock crashing."
 	},
 	{
 		"Name": "pay",
@@ -149,6 +149,62 @@
 		"Text": "Someone has arrived to trade with us! Native creatures and expeditions from the motherland will occasionally arrive to trade with us. We must have an accessible balloon port to trade with the trade envoy. Each group has a different set of items they find common, rare, offensive or precious. Make sure to ask them about their customs before trading."
 	},
 	{
+		"Name": "trade_screen",
+		"Title": "Trade Screen",
+		"Text" : "The items in our stockpiles are on the left side of the screen. The trader items are on the right side. Click on an item on the left side to offer it to the trader. Click one of their items on the right side to request that item. Shift+click to move 5 items, Ctrl + click to move all items. Click and hold to keep moving items.",
+		"NextTutorial": "trade_balance"
+	},
+	{
+		"Name": "trade_balance",
+		"Title": "Trade Balance",
+		"Text" : "The balance on the bottom of the screen represents the balance of trade. If it is weighted to the left, our goods are more valuable than their goods. If it is weighted to the right, their goods are more valuable. The traders will only trade with us if they get a profit.",
+		"NextTutorial" : "trade_money",
+		"GuiHilite" : "trade_balance"
+	},
+	{
+		"Name" : "trade_money",
+		"Title" : "Trade Money",
+		"Text" : "At the bottom of each trade column there is an entry for how much money to trade. You can type a number on the right side to demand money from the trader, or a number on the left side to offer money.",
+		"NextTutorial" : "trade_stocks",
+		"GuiHilite" : "trade_money"
+	},
+	{
+		"Name" : "trade_stocks",
+		"Title" : "Trade Stockpiles",
+		"Text" : "We can only trade as many goods as will fit in our stockpiles. Build more stockpiles to make more space if necessary.",
+		"GuiHilite" : "trade_stocks"
+	},
+	{
+		"Name" : "diplomacy",
+		"Title" : "Diplomacy",
+		"Text" : "The diplomacy screen shows you all the factions in your immediate area. Mouse over faction names to see what their relationship with us is like. Having a negative relationship with a faction means that they might go to war with us."
+	},
+	{
+		"Name" : "potions",
+		"Title" : "Potions",
+		"Text" : "Wizards can brew potions at the Apothecary. Potions can be used to heal dwarfs, or make them stronger, faster or happier. Potions require mana rocks or refined mana to brew."
+	},
+	{
+		"Name" : "adventures",
+		"Title" : "Adventures",
+		"Text" : "You can send employees on adventures to foreign lands using the diplomacy screen. You must have a balloon port and food to send employees on an adventure.",
+		"NextTutorial" : "trade_expedition",
+		"Popup" : true
+	},
+	{
+		"Name" : "trade_expedition",
+		"Title" : "Trade Adventures",
+		"Text" : "When you are not at war with a faction, you can send employees on a trade adventure. The employees will bring food for the journey, and trade goods. After arriving, the employees will trade the goods for other items and bring them home.",
+		"NextTutorial" : "peace_expedition",
+		"Popup" : true
+	},
+	{
+		"Name" : "raid_expedition",
+		"Title" : "Raid Adventures",
+		"Text" : "You can send your employees on raiding adventures to foreign lands. They will loot the land for a while and then return. The likelihood of success depends on the strength of the employees you send.",
+		"Popup" : true
+	},
+	{
 		"Name": "time",
 		"Title": "Time",
 		"Text": "You can speed up the time by pressing the >> button using the time controls on the bottom right of the screen. Time can also be sped up or slowed down using the time forward and backward keys (by default X and C). Time can be paused using the pause key (by default, Space). You can still issue commands while time is paused.",
@@ -160,11 +216,17 @@
 		"Text": "Move the camera using the arrow keys, movement keys (by default, W.A.S.D) or by hovering the mouse at the side of the screen. Zoom the camera in and out using the mouse wheel or by right clicking and dragging while the shift key is pressed. Hold shift or middle mouse button and drag the mouse to rotate the camera. The camera can be re-centered on your balloon port by clicking on the Home button on the minimap (bottom left corner).",
 		"GuiHilite": "minimap"
 	},
-		{
+	{
 		"Name": "walk_camera",
 		"Title": "Walk Camera",
-		"Text": "You are now in a special camera mode called Walk. Walk around with the movement keys (arrows or WASD). Jump with the jump key (default C). Toggle flying with the fly key (default k). Hold shift or middle mouse buttons to enable the mouse. To go back, click the Orbit button.",
+		"Text": "You are now in a special camera mode called Walk. Walk around with the movement keys (arrows or WASD). Jump with the jump key (default C). Toggle flying with the fly key (default k). Press shift or middle mouse button to toggle the mouse. To go back, click the Orbit button, or press Escape.",
 		"GuiHilite": "camera_modes"
+	},
+	{
+		"Name": "xray",
+		"Title": "X-Ray View",
+		"Text": "X-Ray view allows you to see underground into areas that your dwarfs have explored. Toggle it by pressing Tab, or clicking the button labeled x-ray.",
+		"GuiHilite": "xray"
 	},
 	{
 		"Name": "brush",

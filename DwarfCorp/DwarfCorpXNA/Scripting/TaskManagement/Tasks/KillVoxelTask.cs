@@ -98,6 +98,9 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
+            if (agent.IsAsleep || agent.IsDead || !agent.Active)
+                return Feasibility.Infeasible;
+
             if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Dig))
                 return Feasibility.Infeasible;
 

@@ -65,7 +65,7 @@ namespace DwarfCorp
 
         public bool CanReproduce = false;
 
-        private static int _maxPerSpecies = 50;
+        protected int _maxPerSpecies = 50;
         private static Dictionary<string, int> _speciesCounts = new Dictionary<string, int>();
         private bool _addedToSpeciesRegister = false;
 
@@ -94,6 +94,7 @@ namespace DwarfCorp
 
         public Creature()
         {
+            UpdateRate = 2;
             CurrentCharacterMode = CharacterMode.Idle;
 
             OverrideCharacterMode = false;
@@ -113,6 +114,7 @@ namespace DwarfCorp
             string name) :
             base(Manager, name, stats.MaxHealth, 0.0f, stats.MaxHealth)
         {
+            UpdateRate = 2;
             Stats = stats;
             Stats.Gender = Mating.RandomGender();
             DrawLifeTimer.HasTriggered = true;
@@ -136,14 +138,24 @@ namespace DwarfCorp
         public void LayEgg()
         {
             NoiseMaker.MakeNoise("Lay Egg", AI.Position, true, 1.0f);
-            Manager.RootComponent.AddChild(new Egg(this.Species, Manager, Physics.Position, AI.PositionConstraint));
+
+            if (ResourceLibrary.GetResourceByName(Species + " Egg") == null
+                || !EntityFactory.EnumerateEntityTypes().Contains(Species + " Egg Resource"))
+            {
+                Resource newEggResource =
+                    new Resource(ResourceLibrary.GetResourceByName(ResourceType.Egg));
+                newEggResource.Name = Species + " Egg";
+                ResourceLibrary.Add(newEggResource);
+            }
+            var parent = EntityFactory.CreateEntity<Body>(this.Species + " Egg Resource", Physics.Position);
+            parent.AddChild(new Egg(parent, this.Species, Manager, Physics.Position, AI.PositionConstraint));
         }
 
         private T _get<T>(ref T cached) where T : GameComponent
         {
             if (cached == null)
                 cached = Parent.EnumerateAll().OfType<T>().FirstOrDefault();
-            System.Diagnostics.Debug.Assert(cached != null, string.Format("No {0} created on creature.", typeof(T).Name));
+            //System.Diagnostics.Debug.Assert(cached != null, string.Format("No {0} created on creature.", typeof(T).Name));
             return cached;
         }
 
@@ -237,6 +249,7 @@ namespace DwarfCorp
         public Faction Faction { get; set; }
 
         /// <summary> Reference to the planning service for path planning </summary>
+        // Todo: Remove this and stop passing it in as everything uses the same one anyway.
         public PlanService PlanService { get; set; }
 
         /// <summary> DEPRECATED. TODO(mklingen): DELETE </summary>
@@ -462,7 +475,7 @@ namespace DwarfCorp
                     if (!_speciesCounts.ContainsKey(Species) || _speciesCounts[Species] < _maxPerSpecies)
                     {
                         LayEgg();
-                        EggTimer = new Timer(1200f + MathFunctions.Rand(-30, 30), false);
+                        EggTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
                     }
                 }
             }
@@ -572,7 +585,7 @@ namespace DwarfCorp
                 CurrentCharacterMode = CharacterMode.Idle;
             }
 
-            if (!Status.Energy.IsDissatisfied())
+            if (World.Time.IsDay() && Status.IsAsleep && !Status.Energy.IsDissatisfied() && !Status.Health.IsCritical())
             {
                 Status.IsAsleep = false;
             }
@@ -658,7 +671,7 @@ namespace DwarfCorp
         /// <summary>
         /// Draws an indicator image over the creature telling us what its thinking.
         /// </summary>
-        public void DrawIndicator(ImageFrame image, Color tint)
+        public void DrawIndicator(NamedImageFrame image, Color tint)
         {
             if (!((DateTime.Now - LastIndicatorTime).TotalSeconds >= IndicatorRateLimit))
             {
@@ -790,7 +803,7 @@ namespace DwarfCorp
             CurrentCharacterMode = AttackMode;
             Sprite.ResetAnimations(CurrentCharacterMode);
             Sprite.PlayAnimations(CurrentCharacterMode);
-
+            var p_current = pos();
             Timer incrementTimer = new Timer(1.0f, false);
             while (progress() < maxProgress())
             {
@@ -805,7 +818,11 @@ namespace DwarfCorp
                         progress() / maxProgress());
                 }
                 Physics.Active = false;
-                Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos());
+                Physics.Face(p_current);
+                if(Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, p_current))
+                {
+                    p_current = pos();
+                }
                 Physics.Velocity = Vector3.Zero;
 
                 if (!String.IsNullOrEmpty(playSound))
@@ -897,7 +914,20 @@ namespace DwarfCorp
 
         public void GatherImmediately(Body item, Inventory.RestockType restockType = Inventory.RestockType.None)
         {
-            Inventory.Pickup(item, restockType);
+            if (item is CoinPile)
+            {
+                var money = (item as CoinPile).Money;
+                AI.AddMoney(money);
+                item.Die();
+
+                AI.GatherManager.StockMoneyOrders.Add(new GatherManager.StockMoneyOrder()
+                {
+                    Destination = null,
+                    Money = money
+                });
+            }
+            else
+                Inventory.Pickup(item, restockType);
         }
 
         public void Gather(Body item)

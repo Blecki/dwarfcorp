@@ -1,0 +1,41 @@
+{
+  "ID": 0,
+  "Name": "Obsidian",
+  "Top": "1, 4",
+  "Bottom": "10, 1",
+  "Sides": "10, 1",
+  "Transitions": 1,
+  "HasTransitionTextures": false,
+  "TransitionTiles": null,
+  "ReleasesResource": true,
+  "ResourceToRelease": {
+    "_value": "Obsidian"
+  },
+  "StartingHealth": 600.0,
+  "ProbabilityOfRelease": 1.0,
+  "CanRamp": false,
+  "RampSize": 0.0,
+  "IsBuildable": true,
+  "ParticleType": "stone_particle",
+  "EmitsLight": false,
+  "MinSpawnHeight": -999.0,
+  "MaxSpawnHeight": 999.0,
+  "SpawnProbability": 1.0,
+  "Rarity": 1.0,
+  "SpawnVeins": false,
+  "SpawnClusters": false,
+  "ClusterSize": 0.0,
+  "VeinLength": 0.0,
+  "IsSoil": false,
+  "IsSurface": false,
+  "IsInvincible": false,
+  "Tint": "255, 255, 255, 255",
+  "SpawnOnSurface": false,
+  "IsTransparent": false,
+  "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_stone_destroy",
+  "HitSoundResources": [
+    "Audio\\oscar\\sfx_ic_dwarf_pick_stone_1",
+    "Audio\\oscar\\sfx_ic_dwarf_pick_stone_2",
+    "Audio\\oscar\\sfx_ic_dwarf_pick_stone_3"
+  ]
+}

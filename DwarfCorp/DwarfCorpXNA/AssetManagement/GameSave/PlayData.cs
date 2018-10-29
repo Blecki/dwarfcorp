@@ -47,14 +47,13 @@ using DwarfCorp.Saving;
 
 namespace DwarfCorp
 {
-//    [Saving.SaveableObject(0)]
-    public class PlayData //: Saving.ISaveableObject
+    public class PlayData
     {
         public static string Extension = "save";
 
         public OrbitCamera Camera;
         public ComponentManager.ComponentSaveData Components;
-        public List<Goals.Goal> Goals;
+        //public List<Goals.Goal> Goals;
         public Tutorial.TutorialSaveData TutorialSaveData;
         public Diplomacy Diplomacy;
         public FactionLibrary Factions;
@@ -63,6 +62,7 @@ namespace DwarfCorp
         public TaskManager Tasks;
         public Embarkment InitialEmbark;
         public Yarn.MemoryVariableStore ConversationMemory;
+        public List<GameMaster.ApplicantArrival> NewArrivals;
 
         public static PlayData CreateFromWorld(WorldManager World)
         {
@@ -70,7 +70,7 @@ namespace DwarfCorp
             {
                 Camera = World.Camera,
                 Components = World.ComponentManager.GetSaveData(),
-                Goals = World.GoalManager.EnumerateGoals().ToList(),
+                //Goals = World.GoalManager.EnumerateGoals().ToList(),
                 TutorialSaveData = World.TutorialManager.GetSaveData(),
                 Diplomacy = World.Diplomacy,
                 Factions = World.Factions,
@@ -78,45 +78,9 @@ namespace DwarfCorp
                 Designations = World.DesignationDrawer,
                 Tasks = World.Master.TaskManager,
                 InitialEmbark = World.InitialEmbark,
-                ConversationMemory = World.ConversationMemory
+                ConversationMemory = World.ConversationMemory,
+                NewArrivals = World.Master.NewArrivals
             };
         }
-
-        /*Nugget ISaveableObject.SaveToNugget(Saver SaveSystem)
-        {
-            return new PlayDataNugget
-            {
-                Camera = SaveSystem.SaveObject(Camera),
-                Components = SaveSystem.SaveObject(Components),
-                Goals = SaveSystem.SaveObject(Goals),
-                Tutorial = SaveSystem.SaveObject(TutorialSaveData),
-                Diplomacy = SaveSystem.SaveObject(Diplomacy),
-                Factions = SaveSystem.SaveObject(Factions),
-                Resources = SaveSystem.SaveObject(Resources),
-                Designations = SaveSystem.SaveObject(Designations),
-                Spells = SaveSystem.SaveObject(Spells)
-            };
-        }
-
-        void ISaveableObject.LoadFromNugget(Loader SaveSystem, Nugget From)
-        {
-            var nug = From as PlayDataNugget;
-            Camera = SaveSystem.LoadObject(nug.Camera) as OrbitCamera;
-            // Etc
-            throw new NotImplementedException();
-        }*/
     }
-
-    /*public class PlayDataNugget : Saving.Nugget
-    {
-        public Nugget Camera;
-        public Nugget Components;
-        public Nugget Goals;
-        public Nugget Tutorial;
-        public Nugget Diplomacy;
-        public Nugget Factions;
-        public Nugget Resources;
-        public Nugget Designations;
-        public Nugget Spells;
-    }*/
 }

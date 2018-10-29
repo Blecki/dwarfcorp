@@ -203,6 +203,7 @@ namespace DwarfCorp.Gui.Widgets
 
             public override void Construct()
             {
+                WrapWithinWords = true;
                 OnDisable += (sender) =>
                 {
                     if (PopupChild != null)
@@ -276,6 +277,8 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     Root.RegisterForUpdate(this);
                 }
+
+                WrapText = true;
             }
         }
     }

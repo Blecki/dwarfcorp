@@ -113,6 +113,7 @@ namespace DwarfCorp
             }
 
             Timer avoidTimer = new Timer(time, true, Timer.TimerMode.Game);
+            var bodies = Agent.World.PlayerFaction.OwnedObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
             while (true)
             {
                 avoidTimer.Update(DwarfTime.LastTime);
@@ -128,7 +129,7 @@ namespace DwarfCorp
                     yield break;
                 }
 
-                List<MoveAction> neighbors = Agent.Movement.GetMoveActions(Agent.Position, Creature.World.OctTree).ToList();
+                List<MoveAction> neighbors = Agent.Movement.GetMoveActions(Agent.Position, Creature.World.OctTree, bodies).ToList();
                 neighbors.Sort((a, b) =>
                 {
                     if (a.Equals(b)) return 0;
@@ -496,10 +497,12 @@ namespace DwarfCorp
             if (Is2D) target.Y = Creature.AI.Position.Y;
             List<MoveAction> path = new List<MoveAction>();
             var curr = Creature.Physics.CurrentVoxel;
+            var bodies = Agent.World.PlayerFaction.OwnedObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
+            var storage = new MoveActionTempStorage();
             for (int i = 0; i < PathLength; i++)
             {
                 IEnumerable<MoveAction> actions =
-                    Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, Agent.World.OctTree);
+                    Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, Agent.World.OctTree, bodies, storage);
 
                 MoveAction? bestAction = null;
                 float bestDist = float.MaxValue;

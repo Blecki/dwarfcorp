@@ -82,7 +82,7 @@ namespace DwarfCorp
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
             // Controls the behavior of the creature
-            Physics.AddChild(new BatAI(Manager, "Bat AI", Sensors, PlanService));
+            Physics.AddChild(new BatAI(Manager, "Bat AI", Sensors));
             AI.Movement.CanFly = true;
             AI.Movement.CanSwim = false;
             AI.Movement.CanClimb = false;
@@ -147,8 +147,8 @@ namespace DwarfCorp
 
         }
 
-        public BatAI(ComponentManager Manager, string name, EnemySensor sensor, PlanService planService) :
-            base(Manager, name, sensor, planService)
+        public BatAI(ComponentManager Manager, string name, EnemySensor sensor) :
+            base(Manager, name, sensor)
         {
 
         }

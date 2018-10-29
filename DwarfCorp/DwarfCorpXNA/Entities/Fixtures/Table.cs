@@ -38,6 +38,7 @@ using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -61,12 +62,12 @@ namespace DwarfCorp
             };
         }
 
-        [EntityFactory("Apocethary")]
+        [EntityFactory("Apothecary")]
         private static GameComponent __factory3(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Table("Apocethary", Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4), Data.GetData<List<ResourceAmount>>("Resources", null), DefaultTopFrame, DefaultLegsFrame)
+            return new Table("Apothecary", Manager, Position, new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32), new Point(1, 4), Data.GetData<List<ResourceAmount>>("Resources", null), DefaultTopFrame, DefaultLegsFrame)
             {
-                Tags = new List<string>() { "Research", "Apocethary" }
+                Tags = new List<string>() { "Research", "Apothecary" }
             };
         }
 

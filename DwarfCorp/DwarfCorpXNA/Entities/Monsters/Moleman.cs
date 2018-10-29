@@ -82,7 +82,7 @@ namespace DwarfCorp
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
-            Physics.AddChild(new CreatureAI(Manager, "Moleman AI", Sensors, PlanService));
+            Physics.AddChild(new CreatureAI(Manager, "Moleman AI", Sensors));
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
@@ -122,7 +122,6 @@ namespace DwarfCorp
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             AI.Movement.SetCan(MoveType.Dig, true);
-            AI.Movement.SetCost(MoveType.Dig, 30.0f);
             Species = "Moleman";
         }
 

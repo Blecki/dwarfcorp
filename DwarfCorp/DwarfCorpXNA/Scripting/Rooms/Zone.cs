@@ -304,8 +304,7 @@ namespace DwarfCorp
        
         public bool Intersects(BoundingBox box)
         {
-            BoundingBox larger = new BoundingBox(box.Min - new Vector3(0.1f, 0.1f, 0.1f), box.Max + new Vector3(0.1f, 0.1f, 0.1f));
-
+            BoundingBox larger = box.Expand(0.1f);
             return Voxels.Any(storage => storage.GetBoundingBox().Intersects(larger));
         }
 

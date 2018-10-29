@@ -77,6 +77,13 @@ namespace DwarfCorp
                             if (existingDesignation != null)
                                 Player.TaskManager.CancelTask(existingDesignation.Task);
 
+                            var above = VoxelHelpers.GetVoxelAbove(r);
+
+                            if (above.IsValid && above.LiquidType != LiquidType.None)
+                            {
+                                continue;
+                            }
+
                             assignments.Add(new BuildVoxelTask(r, VoxelLibrary.GetVoxelType(CurrentVoxelType).Name));
                         }
 
@@ -131,6 +138,13 @@ namespace DwarfCorp
                 Player.World.SetMouse(Player.World.MousePointer);
             else
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
+
+            MouseState mouse = Mouse.GetState();
+            if (mouse.RightButton == ButtonState.Pressed)
+                Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
+            else
+                Player.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+
         }
 
         public override void Render(DwarfGame game, DwarfTime time)

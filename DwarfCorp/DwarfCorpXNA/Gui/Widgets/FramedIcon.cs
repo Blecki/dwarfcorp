@@ -110,6 +110,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public override void Construct()
         {
+            TextHorizontalAlign = HorizontalAlign.Center;
             Background = new TileReference("icon-frame", 0);
 
             if (OnClick != null)
@@ -181,7 +182,10 @@ namespace DwarfCorp.Gui.Widgets
             {
                 if (Enabled && ChangeTextColorOnEnable) TextColor = EnabledTextColor;
                 else if (!Enabled && ChangeTextColorOnEnable) TextColor = DisabledTextColor;
+                var prevRect = Rect;
+                Rect = new Rectangle(prevRect.X - 4, prevRect.Y, prevRect.Width + 8, prevRect.Height);
                 base.GetTextMesh(meshes);
+                Rect = prevRect;
             }
 
             if (DrawIndicator && IndicatorValue != 0)

@@ -207,6 +207,7 @@ namespace DwarfCorp
             }
             Body component = EntityFactory.CreateEntity<Body>("Coins", lastCoins.Position);
             TossMotion toss = new TossMotion(1.0f, 2.5f, component.LocalTransform, dwarfPos);
+            component.UpdateRate = 1;
             component.AnimationQueue.Add(toss);
             toss.OnComplete += component.Die;
 
@@ -234,6 +235,7 @@ namespace DwarfCorp
 
             Vector3 targetToss = Coins.Count == 0 ? Voxels[0].WorldPosition + new Vector3(0.5f, 0.5f, 0.5f) : Coins[Coins.Count - 1].LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f);
             Body component = EntityFactory.CreateEntity<Body>("Coins", dwarfPos);
+            component.UpdateRate = 1;
             TossMotion toss = new TossMotion(1.0f, 2.5f, component.LocalTransform,
                targetToss);
             component.AnimationQueue.Add(toss);
@@ -244,6 +246,7 @@ namespace DwarfCorp
             moneyPut = moneyToPut;
             return moneyPut >= money;
         }
+
 
 
         public override void Destroy()

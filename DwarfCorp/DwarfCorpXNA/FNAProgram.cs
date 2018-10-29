@@ -53,8 +53,8 @@ namespace DwarfCorp
 #if WINDOWS || XBOX
     internal static class Program
     {
-        public static string Version = "18.10.01_FNA";
-        public static string[] CompatibleVersions = { "18.10.01_FNA", "18.10.01_XNA", "18.09.23_XNA", "18.09.23_FNA", "18.09.16_FNA", "18.09.03_FNA"};
+        public static string Version = "18.10.17_FNA";
+        public static string[] CompatibleVersions = { "18.10.17_XNA", "18.10.17_FNA", "18.10.01_FNA", "18.10.01_XNA", "18.09.23_XNA", "18.09.23_FNA", "18.09.16_FNA", "18.09.03_FNA"};
         public static string Commit = "UNKNOWN";
         public static char DirChar = Path.DirectorySeparatorChar;
         
@@ -71,6 +71,7 @@ namespace DwarfCorp
                 using (Stream stream = new FileStream("version.txt", FileMode.Open))
                 using (StreamReader reader = new StreamReader(stream))
                     Commit = reader.ReadToEnd();
+                Commit = Commit.Trim();
             }
             catch (Exception) { }
             System.Net.ServicePointManager.ServerCertificateValidationCallback = SSLCallback;

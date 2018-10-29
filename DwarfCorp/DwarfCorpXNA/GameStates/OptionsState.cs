@@ -28,7 +28,10 @@ namespace DwarfCorp.GameStates
         private CheckBox ZoomTowardMouse;
         private CheckBox EdgeScrolling;
         private CheckBox FollowSurface;
-        private CheckBox FogOfWar;
+        //private CheckBox FogOfWar;
+        private CheckBox AutoFarming;
+        private CheckBox AutoDigging;
+        private ComboBox MaxDwafs;
         private CheckBox PlayIntro;
         private CheckBox AllowReporting;
         private ComboBox GuiScale;
@@ -85,7 +88,7 @@ namespace DwarfCorp.GameStates
 
             DisplayModes = new Dictionary<string, DisplayMode>();
             foreach (var displayMode in GraphicsAdapter.DefaultAdapter.SupportedDisplayModes.Where(dm =>
-                dm.Format == SurfaceFormat.Color && dm.Height >= 600))
+                dm.Format == SurfaceFormat.Color && dm.Width >= 801))
                 DisplayModes.Add(string.Format("{0} x {1}", displayMode.Width, displayMode.Height), displayMode);
 
             RebuildGui();
@@ -115,12 +118,18 @@ namespace DwarfCorp.GameStates
                 {
                     Rect = rect,
                     Padding = new Margin(4,4,4,4),
-                    Transparent = true,
                     MinimumSize = new Point(640, 480),
-                    Font = "font10"
-                });
+                    Font = "font10",
+                    Background = new TileReference("basic", 0),
+                    BackgroundColor = new Vector4(0, 0, 0, 0.5f),
+            });
+            var topbar = MainPanel.AddChild(new Widget()
+            {
+                AutoLayout = AutoLayout.DockTop,
+                MinimumSize = new Point(0, 36)
+            });
 
-            CloseButton = MainPanel.AddChild(new Gui.Widgets.Button
+            CloseButton = topbar.AddChild(new Gui.Widgets.Button
             {
                 Text = "Close",
                 Font = "font16",
@@ -156,10 +165,10 @@ namespace DwarfCorp.GameStates
                         }
                     }
                 },
-                AutoLayout = AutoLayout.FloatBottomRight
+                AutoLayout = AutoLayout.FloatTopLeft
             });
 
-            MainPanel.AddChild(new Gui.Widgets.Button
+            topbar.AddChild(new Gui.Widgets.Button
             {
                 Text = "@options-apply",
                 Font = "font16",
@@ -170,8 +179,7 @@ namespace DwarfCorp.GameStates
                 {
                     ConfirmSettings();
                 },
-                AutoLayout = AutoLayout.FloatBottomRight,
-                OnLayout = s => s.Rect.X -= 128 // Hack to keep it from floating over the other button.
+                AutoLayout = AutoLayout.FloatTopRight
             });
 
             TabPanel = MainPanel.AddChild(new Gui.Widgets.TabPanel
@@ -349,7 +357,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
 
-
+            /*
             FogOfWar = rightPanel.AddChild(new CheckBox
             {
                 Text = "Fog Of War",
@@ -357,6 +365,30 @@ namespace DwarfCorp.GameStates
                 OnCheckStateChange = OnItemChanged,
                 AutoLayout = AutoLayout.DockTop
             }) as CheckBox;
+            */
+
+            AutoDigging = rightPanel.AddChild(new CheckBox
+            {
+                Text = "Auto-digging",
+                Tooltip = "When checked, dwarfs will automatically dig to get out of tricky situations.",
+                OnCheckStateChange = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop
+            }) as CheckBox;
+
+            AutoFarming = rightPanel.AddChild(new CheckBox
+            {
+                Text = "Auto-farming",
+                Tooltip = "When checked, dwarfs will automatically harvest plants in farms and plant new seeds.",
+                OnCheckStateChange = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop
+            }) as CheckBox;
+            MaxDwafs = rightPanel.AddChild(LabelAndDockWidget("Max Dwarfs", new ComboBox()
+            {
+                Items = new List<string> { "40", "80", "120", "240", "9999" },
+                Tooltip = "You will only be able to hire this many dwarfs.",
+                OnSelectedIndexChanged = OnItemChanged,
+                AutoLayout = AutoLayout.DockTop,
+            })).GetChild(1) as ComboBox;
 
             var guiScaleItems = new List<String>();
             for (int i = 1; i < 10; ++i)
@@ -893,7 +925,10 @@ namespace DwarfCorp.GameStates
             toReturn.CameraZoomSpeed = this.ZoomSpeed.ScrollPosition;
             toReturn.EnableEdgeScroll = this.EdgeScrolling.CheckState;
             toReturn.CameraFollowSurface = this.FollowSurface.CheckState;
-            toReturn.FogofWar = this.FogOfWar.CheckState;
+            //toReturn.FogofWar = this.FogOfWar.CheckState;
+            toReturn.AllowAutoDigging = this.AutoDigging.CheckState;
+            toReturn.AllowAutoFarming = this.AutoFarming.CheckState;
+            toReturn.MaxDwarfs = int.Parse(this.MaxDwafs.SelectedItem);
             toReturn.InvertZoom = this.InvertZoom.CheckState;
             toReturn.ZoomCameraTowardMouse = this.ZoomTowardMouse.CheckState;
             toReturn.DisplayIntro = this.PlayIntro.CheckState;
@@ -1045,7 +1080,11 @@ namespace DwarfCorp.GameStates
             this.ZoomSpeed.ScrollPosition = GameSettings.Default.CameraZoomSpeed;
             this.EdgeScrolling.CheckState = GameSettings.Default.EnableEdgeScroll;
             this.FollowSurface.CheckState = GameSettings.Default.CameraFollowSurface;
-            this.FogOfWar.CheckState = GameSettings.Default.FogofWar;
+            //this.FogOfWar.CheckState = GameSettings.Default.FogofWar;
+            this.AutoFarming.CheckState = GameSettings.Default.AllowAutoFarming;
+            this.AutoDigging.CheckState = GameSettings.Default.AllowAutoDigging;
+            var dorfIndex = this.MaxDwafs.Items.IndexOf(GameSettings.Default.MaxDwarfs.ToString()); ;
+            this.MaxDwafs.SelectedIndex = dorfIndex > 0 ? dorfIndex : 0;
             this.InvertZoom.CheckState = GameSettings.Default.InvertZoom;
             this.ZoomTowardMouse.CheckState = GameSettings.Default.ZoomCameraTowardMouse;
             this.PlayIntro.CheckState = GameSettings.Default.DisplayIntro;
@@ -1116,7 +1155,7 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-            GuiRoot.Update(gameTime.ToGameTime());
+            GuiRoot.Update(gameTime.ToRealTime());
             SoundManager.Update(gameTime, null, null);
             base.Update(gameTime);
         }

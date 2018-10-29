@@ -165,14 +165,25 @@ namespace DwarfCorp
         /// </param>
         /// <param name="continueFunc"></param>
         /// <returns>True if a path could be found, or false otherwise.</returns>
-        private static PlanResult Path(CreatureMovement mover, VoxelHandle startVoxel, GoalRegion goal, ChunkManager chunks,
-            int maxExpansions, ref List<MoveAction> toReturn, float weight, Func<bool> continueFunc)
+        private static PlanResult Path(
+            CreatureMovement mover, 
+            VoxelHandle startVoxel, 
+            GoalRegion goal, 
+            ChunkManager chunks,
+            int maxExpansions, 
+            ref List<MoveAction> toReturn, 
+            float weight, 
+            Func<bool> continueFunc)
         {
             // Create a local clone of the octree, using only the objects belonging to the player.
             var octree = new OctTreeNode(mover.Creature.World.ChunkManager.Bounds.Min, mover.Creature.World.ChunkManager.Bounds.Max);
+           
             List<Body> playerObjects = new List<Body>(mover.Creature.World.PlayerFaction.OwnedObjects);
-            foreach(var obj in playerObjects)
+            List<Body> teleportObjects = playerObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
+            foreach (var obj in playerObjects)
                 octree.Add(obj, obj.GetBoundingBox());
+
+            var storage = new MoveActionTempStorage();
 
             var start = new MoveState()
             {
@@ -277,20 +288,13 @@ namespace DwarfCorp
                     };
                 }
 
-
-                //Drawer3D.DrawLine(start.Voxel.GetBoundingBox().Center(), goal.GetVoxel().GetBoundingBox().Center(), Color.Red, 0.1f);
-                //Drawer3D.DrawBox(current.Voxel.GetBoundingBox(), Color.Red, 0.1f, true);
                 // We've already considered the voxel, so add it to the closed set.
                 openSet.Remove(current);
                 closedSet.Add(current);
 
-                IEnumerable<MoveAction> neighbors = null;
-
                 // Get the voxels that can be moved to from the current voxel.
-                neighbors = mover.GetMoveActions(current, octree).ToList();
-                //currentChunk.GetNeighborsManhattan(current, manhattanNeighbors);
-
-
+                var neighbors = mover.GetMoveActions(current, octree, teleportObjects, storage).ToList();
+                
                 var foundGoalAdjacent = neighbors.FirstOrDefault(n => !n.DestinationState.VehicleState.IsRidingVehicle && goal.IsInGoalRegion(n.DestinationState.Voxel));
 
                 // A quick test to see if we're already adjacent to the goal. If we are, assume
@@ -299,8 +303,7 @@ namespace DwarfCorp
                 {
                     if (cameFrom.ContainsKey(current))
                     {
-                        List<MoveAction> subPath = ReconstructPath(cameFrom, foundGoalAdjacent, start);
-                        toReturn = subPath;
+                        toReturn = ReconstructPath(cameFrom, foundGoalAdjacent, start);
                         return new PlanResult()
                         {
                             Result = PlanResultCode.Success,
@@ -308,7 +311,6 @@ namespace DwarfCorp
                             TimeSeconds = DwarfTime.Tock(startTime)
                         };
                     }
-
                 }
 
                 // Otherwise, consider all of the neighbors of the current voxel that can be moved to,
@@ -373,6 +375,7 @@ namespace DwarfCorp
             // Create a local clone of the octree, using only the objects belonging to the player.
             var octree = new OctTreeNode(mover.Creature.World.ChunkManager.Bounds.Min, mover.Creature.World.ChunkManager.Bounds.Max);
             List<Body> playerObjects = new List<Body>(mover.Creature.World.PlayerFaction.OwnedObjects);
+            List<Body> teleportObjects = mover.Creature.World.PlayerFaction.OwnedObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
             foreach (var obj in playerObjects)
                 octree.Add(obj, obj.GetBoundingBox());
 
@@ -507,7 +510,7 @@ namespace DwarfCorp
                 IEnumerable<MoveAction> neighbors = null;
 
                 // Get the voxels that can be moved to from the current voxel.
-                neighbors = mover.GetInverseMoveActions(current, octree);
+                neighbors = mover.GetInverseMoveActions(current, octree, teleportObjects);
 
                 // Otherwise, consider all of the neighbors of the current voxel that can be moved to,
                 // and determine how to add them to the list of expansions.
@@ -669,8 +672,8 @@ namespace DwarfCorp
             ChunkManager chunks, int maxExpansions, float weight, int numPlans, Func<bool> continueFunc, out PlanResultCode resultCode)
         {
             var p = new List<MoveAction>();
-            bool use_inverse = goal.IsReversible() && OpennessHeuristic(goal.GetVoxel()) < OpennessHeuristic(start);
-            //bool use_inverse = false;
+            //bool use_inverse = goal.IsReversible() && OpennessHeuristic(goal.GetVoxel()) < OpennessHeuristic(start);
+            bool use_inverse = false;
             var result = use_inverse ? InversePath(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc)
                 : Path(mover, start, goal, chunks, maxExpansions, ref p, weight, continueFunc);
 

@@ -249,6 +249,12 @@ namespace DwarfCorp
             public int ConsoleTextSize = 2;
             public float HoursUnhappyBeforeQuitting = 4.0f;
             public ColorSettings Colors = new ColorSettings();
+            public bool AllowAutoDigging = true;
+            public bool AllowAutoFarming = true;
+            public float FNAONLY_KeyRepeatRate = 0.1f;
+            public int MaxDwarfs = 40;
+            public int DwarfArrivalDelayHours = 4;
+            public float SigningBonus = 100;
 
             [AutoResetFloat(-10.0f)] public float Boredom_Gamble = -10.0f;
             [AutoResetFloat(0.1f)] public float Boredom_NormalTask = 0.1f;
@@ -259,7 +265,9 @@ namespace DwarfCorp
             [AutoResetFloat(-0.2f)] public float Boredom_Walk = -0.2f;
 
             public int MaxVoxelDesignations = 1024;
-            public int EntityUpdateRate = 4096;
+            public uint EntityUpdateRate = 4096;
+            public int NumPathingThreads = 4;
+
             public Settings Clone()
             {
                 return MemberwiseClone() as Settings;
@@ -355,7 +363,8 @@ namespace DwarfCorp
                 Default = new Settings();
                 Save();
             }
-            
+            // mklingen (I have made it impossible to disable fog of war for performance reasons).
+            Default.FogofWar = true;
         }
 
         [ConsoleCommandHandler("SHOW")]

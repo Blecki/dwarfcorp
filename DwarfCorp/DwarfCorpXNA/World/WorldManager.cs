@@ -516,6 +516,7 @@ namespace DwarfCorp
         /// <param name="gameTime">The current time</param>
         public void Update(DwarfTime gameTime)
         {
+            ValidateShader();
             foreach (var func in LazyActions)
             {
                 if (func != null)
@@ -638,6 +639,21 @@ namespace DwarfCorp
                 // Cleanup game file.
                 gameFile = null;
             }
+
+#if DEBUG
+            KeyboardState k = Keyboard.GetState();
+            if (k.IsKeyDown(Keys.Home))
+            {
+                try
+                {
+                    GameState.Game.GraphicsDevice.Reset();
+                }
+                catch (Exception exception)
+                {
+
+                }
+            }
+#endif
 
         }
 
@@ -846,6 +862,16 @@ namespace DwarfCorp
             DynamicLight.TempLights.Clear();
         }
 
+        public void ValidateShader()
+        {
+            if (DefaultShader == null || DefaultShader.IsDisposed || DefaultShader.GraphicsDevice.IsDisposed)
+            {
+                DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
+                DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
+                DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
+            }
+        }
+
         /// <summary>
         /// Called when a frame is to be drawn to the screen
         /// </summary>
@@ -854,7 +880,7 @@ namespace DwarfCorp
         {
             if (!ShowingWorld)
                 return;
-
+            ValidateShader();
             var frustum = Camera.GetDrawFrustum();
             var renderables = EnumerateIntersectingObjects(frustum,
                 r => r.IsVisible && !ChunkManager.IsAboveCullPlane(r.GetBoundingBox()));
@@ -1005,14 +1031,20 @@ namespace DwarfCorp
             ParticleManager.Render(this, GraphicsDevice);
             DefaultShader.ClippingEnabled = false;
 
+            if (UseFXAA && fxaa == null)
+            {
+                fxaa = new FXAA();
+                fxaa.Initialize();
+            }
+
             if (GameSettings.Default.EnableGlow)
             {
-                bloom.DrawTarget = UseFXAA ? fxaa.RenderTarget : null;
-
                 if (UseFXAA)
                 {
                     fxaa.Begin(DwarfTime.LastTime);
                 }
+                bloom.DrawTarget = UseFXAA ? fxaa.RenderTarget : null;
+
                 bloom.Draw(gameTime.ToRealTime());
                 if (UseFXAA)
                     fxaa.End(DwarfTime.LastTime);

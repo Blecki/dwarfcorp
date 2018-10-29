@@ -65,17 +65,18 @@ namespace DwarfCorp
             }) as EnemySensor;
 
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
-            BaseSprite = AddChild(new SimpleSprite(Manager, "Turret", Matrix.Identity, spriteSheet, new Point(2, 7))) as SimpleSprite;
-            BaseSprite.OrientationType = SimpleSprite.OrientMode.YAxis;
-            TurretSprite = AddChild(new SimpleSprite(Manager, "Turret", Matrix.CreateTranslation(Vector3.Up * 0.25f), spriteSheet, new Point(1, 7))) as SimpleSprite;
-            TurretSprite.OrientationType = SimpleSprite.OrientMode.Fixed;
-            SetTurretAngle(0.0f);
             CreateCosmeticChildren(manager);
             AddChild(new MagicalObject(Manager));
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32);
+            BaseSprite = AddChild(new SimpleSprite(Manager, "Turret", Matrix.Identity, spriteSheet, new Point(2, 7))) as SimpleSprite;
+            BaseSprite.OrientationType = SimpleSprite.OrientMode.YAxis;
+            TurretSprite = AddChild(new SimpleSprite(Manager, "Turret", Matrix.CreateTranslation(Vector3.Up * 0.25f), spriteSheet, new Point(1, 7))) as SimpleSprite;
+            TurretSprite.OrientationType = SimpleSprite.OrientMode.Fixed;
+            SetTurretAngle(0.0f);
             AddChild(new Shadow(manager));
 
             AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>

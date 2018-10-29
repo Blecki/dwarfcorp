@@ -69,6 +69,7 @@ namespace DwarfCorp
                 if (!vox.IsValid)
                 {
                     Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                    Agent.SetMessage("Failed to dig. Invalid voxel.");
                     yield return Act.Status.Fail;
                     break;
                 }
@@ -87,6 +88,7 @@ namespace DwarfCorp
 
                 // Play the attack animations.
                 Creature.CurrentCharacterMode = Creature.AttackMode;
+                Creature.OverrideCharacterMode = true;
                 Creature.Sprite.ResetAnimations(Creature.CurrentCharacterMode);
                 Creature.Sprite.PlayAnimations(Creature.CurrentCharacterMode);
 
@@ -109,6 +111,8 @@ namespace DwarfCorp
                         yield return Act.Status.Running;
                     }
                 }
+
+                Creature.OverrideCharacterMode = false;
 
                 // If the voxel has been destroyed by you, gather it.
                 if (OwnerTask.VoxelHealth <= 0.0f)

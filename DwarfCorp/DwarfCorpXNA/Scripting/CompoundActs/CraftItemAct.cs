@@ -113,12 +113,14 @@ namespace DwarfCorp
                 {
                     if (!Creature.Inventory.RemoveAndCreateWithToss(new List<ResourceAmount>() { new ResourceAmount(Item.ExistingResource) }, pos(), Inventory.RestockType.None))
                     {
+                        Agent.SetMessage("Failed to create resources for item (1).");
                         yield return Act.Status.Fail;
                         yield break;
                     }
                 }
                 else if (!Creature.Inventory.RemoveAndCreateWithToss(Item.SelectedResources, pos(), Inventory.RestockType.None))
                 {
+                    Agent.SetMessage("Failed to create resources for item (2).");
                     yield return Act.Status.Fail;
                     yield break;
                 }
@@ -144,6 +146,7 @@ namespace DwarfCorp
                 enumerator.MoveNext();
                 if (Item.ResourcesReservedFor == null || Item.ResourcesReservedFor.IsDead)
                 {
+                    Agent.SetMessage("Waiting for resources failed.");
                     yield return Act.Status.Fail;
                     yield break;
                 }
@@ -157,6 +160,7 @@ namespace DwarfCorp
         {
             if (stashed == null || stashed.Count == 0)
             {
+                Agent.SetMessage("Failed to create resources.");
                 yield return Act.Status.Fail;
                 yield break;
             }
@@ -183,6 +187,7 @@ namespace DwarfCorp
                     {
                         if (stashed.Count < 2)
                         {
+                            Agent.SetMessage("Failed to get resources for meal.");
                             yield return Act.Status.Fail;
                             yield break;
                         }
@@ -218,6 +223,7 @@ namespace DwarfCorp
 
                         if (gem == null || trinket == null)
                         {
+                            Agent.SetMessage("Failed to get resources for trinket.");
                             yield return Status.Fail;
                             yield break;
                         }
@@ -253,7 +259,12 @@ namespace DwarfCorp
 
         public bool ResourceStateValid()
         {
-            return Item.HasResources || Item.ResourcesReservedFor != null;
+            bool valid =  Item.HasResources || Item.ResourcesReservedFor != null;
+            if (!valid)
+            {
+                Agent.SetMessage("Resource state not valid.");
+            }
+            return valid;
         }
 
         public IEnumerable<Act.Status> SetSelectedResources()
@@ -285,6 +296,7 @@ namespace DwarfCorp
                 }
                 else
                 {
+                    Agent.SetMessage("Failed to set selected resources.");
                     yield return Act.Status.Fail;
                 }
             }

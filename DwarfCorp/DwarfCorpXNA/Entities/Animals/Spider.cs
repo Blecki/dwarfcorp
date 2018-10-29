@@ -63,7 +63,7 @@ namespace DwarfCorp
                 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
-            Physics.AddChild(new PacingCreatureAI(Manager, "Spider AI", Sensors, PlanService));
+            Physics.AddChild(new PacingCreatureAI(Manager, "Spider AI", Sensors));
 
             Attacks = new List<Attack> {
                 new Attack("Sting", 0.01f, 1.0f, 3.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_giant_spider_attack_1, ContentPaths.Audio.Oscar.sfx_oc_giant_spider_attack_2), ContentPaths.Effects.bite),

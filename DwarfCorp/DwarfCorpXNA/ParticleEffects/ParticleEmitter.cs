@@ -175,7 +175,7 @@ namespace DwarfCorp
             }
         }
 
-        public ParticleEmitter(GraphicsDevice Device, ComponentManager manager, string name, Matrix localTransform, EmitterData emitterData) 
+        public ParticleEmitter(ComponentManager manager, string name, Matrix localTransform, EmitterData emitterData) 
         {
             Particles = new List<Particle>();
 
@@ -191,7 +191,7 @@ namespace DwarfCorp
                 var primitive = new BillboardPrimitive();
                 Data.Animation.UpdatePrimitive(primitive, t);
                 Sprites.Add(new FixedInstanceArray(name, primitive,
-                    Data.Animation.SpriteSheet.GetTexture(),
+                    Data.Animation.SpriteSheet.AssetName,
                     Data.MaxParticles, Data.BlendMode));
             }
             AnimPlayer.Play(Data.Animation);

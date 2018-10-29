@@ -124,6 +124,7 @@ namespace BloomPostprocess
 
         public void ValidateBuffers()
         {
+            CheckForDisposal();
             // Look up the resolution and format of our main backbuffer.
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
             SurfaceFormat format = pp.BackBufferFormat;
@@ -168,6 +169,18 @@ namespace BloomPostprocess
             }
         }
 
+        public void CheckForDisposal()
+        {
+            if (bloomCombineEffect.IsDisposed || bloomCombineEffect.GraphicsDevice.IsDisposed || 
+                bloomExtractEffect.IsDisposed || bloomExtractEffect.GraphicsDevice.IsDisposed || 
+                sceneRenderTarget.IsDisposed || sceneRenderTarget.IsContentLost ||
+                gaussianBlurEffect.IsDisposed || gaussianBlurEffect.GraphicsDevice.IsDisposed ||
+                DrawTarget != null && (DrawTarget.IsDisposed || DrawTarget.IsContentLost))
+            {
+                LoadContent();
+            }
+        }
+
 
         /// <summary>
         /// This is where it all happens. Grabs a scene that has already been rendered,
@@ -175,6 +188,7 @@ namespace BloomPostprocess
         /// </summary>
         public override void Draw(GameTime dwarfTime)
         {
+            ValidateBuffers();
             GraphicsDevice.SamplerStates[1] = SamplerState.LinearClamp;
 
             // Pass 1: draw the scene into rendertarget 1, using a
@@ -205,7 +219,7 @@ namespace BloomPostprocess
             // Pass 4: draw both rendertarget 1 and the original scene
             // image back into the main backbuffer, using a shader that
             // combines them to produce the final bloomed result.
-            GraphicsDevice.SetRenderTarget(DrawTarget);
+             GraphicsDevice.SetRenderTarget(DrawTarget);
 
             EffectParameterCollection parameters = bloomCombineEffect.Parameters;
 

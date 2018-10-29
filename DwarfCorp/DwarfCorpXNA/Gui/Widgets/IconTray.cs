@@ -10,7 +10,7 @@ namespace DwarfCorp.Gui.Widgets
     public class IconTray : Widget
     {
         public Point ItemSize = new Point(40, 40);
-        public Point ItemSpacing = new Point(2, 2);
+        public Point ItemSpacing = new Point(10, 2);
         public Point SizeToGrid = new Point(1, 1);
         public int WidthLimit = 512;
         public int IconOffset = 0;
@@ -163,7 +163,7 @@ namespace DwarfCorp.Gui.Widgets
                     (child as FramedIcon).DrawHotkey = HotKeys;
                     ++nextHotkey;
 
-                    if (pos.X >= rect.Right - ItemSize.X)
+                    if (pos.X + ItemSize.X + ItemSpacing.X >= rect.Right)
                     {
                         (GetChild(1) as FramedIcon).Enabled = true;
                         break;

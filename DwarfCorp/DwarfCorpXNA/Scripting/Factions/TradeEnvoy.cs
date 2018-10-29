@@ -59,6 +59,11 @@ namespace DwarfCorp
             WaitForTradeTimer = new DateTimer(date, new TimeSpan(0, 6, 0, 0, 0));
         }
 
+        public void StartTrading(DateTime date)
+        {
+            WaitForTradeTimer = new DateTimer(date, new TimeSpan(0, 6, 0, 0, 0));
+        }
+
         public DwarfBux TradeMoney { get; set; }
         public List<ResourceAmount> TradeGoods { get; set; }
         public DateTimer WaitForTradeTimer = null;
@@ -79,6 +84,29 @@ namespace DwarfCorp
                 return;
             }
 
+            var zones = World.PlayerFaction.RoomBuilder.DesignatedRooms.OfType<BalloonPort>();
+
+            CreatureAI closestCreature = null;
+            float closestDist = float.MaxValue;
+
+            if (zones.Any())
+            {
+                var zoneCenter = zones.First().GetBoundingBox().Center();
+                foreach (var creature in liveCreatures)
+                {
+                    float dist = (creature.Position - zoneCenter).LengthSquared();
+                    if (dist < closestDist)
+                    {
+                        closestDist = dist;
+                        closestCreature = creature;
+                    }
+                }
+            }
+            else
+            {
+                closestCreature = liveCreatures.First();
+            }
+
             TradeWidget = World.MakeWorldPopup(new Goals.TimedIndicatorWidget()
             {
                 Text = string.Format("Click here to trade with the {0}!", OwnerFaction.Race.Name),
@@ -87,7 +115,7 @@ namespace DwarfCorp
                     OpenDiplomacyConversation(World);
                 },
                 ShouldKeep = () => { return this.ExpiditionState == Expedition.State.Trading && !this.ShouldRemove; }
-            }, liveCreatures.First().Physics, new Vector2(0, -10));
+            }, closestCreature.Physics, new Vector2(0, -10));
             World.MakeAnnouncement(String.Format("Click here to trade with the {0}!", OwnerFaction.Race.Name), (gui, sender) =>
             {
                 OpenDiplomacyConversation(World);
@@ -114,7 +142,7 @@ namespace DwarfCorp
             cMem.SetValue("$faction_was_at_war", new Yarn.Value(politics.WasAtWar));
             cMem.SetValue("$envoy_relationship", new Yarn.Value(politics.GetCurrentRelationship().ToString()));
 
-            GameState.Game.StateManager.PushState(new YarnState(OwnerFaction.Race.DiplomacyConversation, "Start", cMem));
+            GameState.Game.StateManager.PushState(new YarnState(OwnerFaction.World, OwnerFaction.Race.DiplomacyConversation, "Start", cMem));
         }
 
         public bool UpdateWaitTimer(DateTime now)

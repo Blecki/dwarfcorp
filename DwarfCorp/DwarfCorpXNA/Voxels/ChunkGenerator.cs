@@ -196,22 +196,8 @@ namespace DwarfCorp
                             if (biome.WaterSurfaceIce && y == waterHeight)
                                 vox.RawSetType(iceID);
                             else
-                                vox.QuickSetLiquid(LiquidType.Water, WaterManager.maxWaterLevel);
+                                vox.QuickSetLiquid(biome.WaterIsLava ? LiquidType.Lava : LiquidType.Water, WaterManager.maxWaterLevel);
                         }
-                    }
-
-                    Vector2 vec = Overworld.WorldToOverworld(new Vector2(x + chunk.Origin.X, z + chunk.Origin.Z), chunk.Manager.World.WorldScale, chunk.Manager.World.WorldOrigin);
-
-
-                    if (topVoxel.Coordinate.Y < VoxelConstants.ChunkSizeY - 1
-                        && Overworld.GetWater(Overworld.Map, vec) == Overworld.WaterType.Volcano)
-                    {
-                        var localCoord = topVoxel.Coordinate.GetLocalVoxelCoordinate();
-                        topVoxel = new VoxelHandle(topVoxel.Chunk, new LocalVoxelCoordinate(
-                            localCoord.X, localCoord.Y + 1, localCoord.Z));
-
-                        if (topVoxel.IsEmpty)
-                            topVoxel.QuickSetLiquid(LiquidType.Lava, WaterManager.maxWaterLevel);
                     }
                 }
             }
@@ -235,7 +221,7 @@ namespace DwarfCorp
             }
         }
 
-        public void GenerateSurfaceLife(VoxelChunk Chunk, float maxHeight)
+        public void GenerateSurfaceLife(Dictionary<string, Dictionary<string, int>> creatureCounts, VoxelChunk Chunk, float maxHeight)
         {
             //int waterHeight = (int)(VoxelConstants.ChunkSizeY * NormalizeHeight(SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight));
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
@@ -257,9 +243,20 @@ namespace DwarfCorp
                     {
                         if (MathFunctions.RandEvent(animal.SpawnProbability))
                         {
-                            EntityFactory.CreateEntity<Body>(animal.Name,
-                                topVoxel.WorldPosition + Vector3.Up *1.5f);
-
+                            if (!creatureCounts.ContainsKey(biomeData.Name))
+                            {
+                                creatureCounts[biomeData.Name] = new Dictionary<string, int>();
+                            }
+                            var dict = creatureCounts[biomeData.Name];
+                            if (!dict.ContainsKey(animal.Name))
+                            {
+                                dict[animal.Name] = 0;
+                            }
+                            if (dict[animal.Name] < animal.MaxPopulation)
+                            {
+                                EntityFactory.CreateEntity<Body>(animal.Name,
+                                    topVoxel.WorldPosition + Vector3.Up * 1.5f);
+                            }
                             break;
                         }
                     }

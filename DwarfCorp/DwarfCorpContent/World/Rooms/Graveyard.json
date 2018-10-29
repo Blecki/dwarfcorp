@@ -5,6 +5,7 @@
   "MinimumSideWidth": 3,
   "MaxNumRooms": 2147483647,
   "Name": "Graveyard",
+  "DisplayName" : "Grave\nYard",
   "FloorType": "Dirt",
   "RequiredResources": {
     "Soil": {

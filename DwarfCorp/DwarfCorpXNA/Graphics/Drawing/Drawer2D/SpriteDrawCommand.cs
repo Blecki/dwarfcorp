@@ -46,7 +46,7 @@ namespace DwarfCorp
     {
         public Vector3 WorldPosition { get; set; }
 
-        public ImageFrame Image { get; set; }
+        public NamedImageFrame Image { get; set; }
 
         public Color Tint { get; set; }
 
@@ -67,7 +67,7 @@ namespace DwarfCorp
             Offset = Vector2.Zero;
         }
 
-        public SpriteDrawCommand(Vector3 worldPosition, ImageFrame image) :
+        public SpriteDrawCommand(Vector3 worldPosition, NamedImageFrame image) :
             base()
         {
             WorldPosition = worldPosition;
@@ -81,6 +81,10 @@ namespace DwarfCorp
             if (camera == null || Image == null)
             {
                 return;
+            }
+            if (Image.Image.IsDisposed)
+            {
+                Image.Image = AssetManager.GetContentTexture(Image.AssetName);
             }
             Vector3 screenCoord = viewport.Project(WorldPosition, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
             if (viewport.Bounds.Contains((int)screenCoord.X, (int)screenCoord.Y) && screenCoord.Z < 0.999f)

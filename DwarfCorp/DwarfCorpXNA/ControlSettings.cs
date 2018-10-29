@@ -145,6 +145,11 @@ namespace DwarfCorp
                 Mappings = new KeyMappings();
                 Save();
             }
+            catch (Exception)
+            {
+                Mappings = new KeyMappings();
+                // Don't save in this case because who the fuck knows what went wrong.
+            }
         }
     }
 }

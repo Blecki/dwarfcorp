@@ -86,7 +86,7 @@ namespace DwarfCorp
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
             // Controls the behavior of the creature
-            Physics.AddChild(new PacingCreatureAI(Manager, "Rabbit AI", Sensors, PlanService));
+            Physics.AddChild(new PacingCreatureAI(Manager, "Rabbit AI", Sensors));
 
             // The bird can peck at its enemies (0.1 damage)
             Attacks = new List<Attack> { new Attack("Bite", 0.01f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_rabbit_attack), ContentPaths.Effects.bite) {DiseaseToSpread = "Rabies"} };

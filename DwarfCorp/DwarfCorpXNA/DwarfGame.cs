@@ -293,6 +293,7 @@ namespace DwarfCorp
             Graphics.SynchronizeWithVerticalRetrace = GameSettings.Default.VSync;
             MathFunctions.Random = new ThreadSafeRandom(new Random().Next());
             Graphics.PreparingDeviceSettings += WorldManager.GraphicsPreparingDeviceSettings;
+            Graphics.PreferMultiSampling = false;
             try
             {
                 Graphics.ApplyChanges();
@@ -379,6 +380,9 @@ namespace DwarfCorp
 
         public static void InitializeLogger()
         {
+#if DEBUG
+            return;
+#endif
             try
             {
                 Trace.Listeners.Clear();
@@ -498,15 +502,17 @@ namespace DwarfCorp
 #endif
                 }
 
-                if (GameSettings.Default.DisplayIntro)
+                if (StateManager.StateStack.Count == 0)
                 {
-                    StateManager.PushState(new IntroState(this, StateManager));
+                    if (GameSettings.Default.DisplayIntro)
+                    {
+                        StateManager.PushState(new IntroState(this, StateManager));
+                    }
+                    else
+                    {
+                        StateManager.PushState(new MainMenuState(this, StateManager));
+                    }
                 }
-                else
-                {
-                    StateManager.PushState(new MainMenuState(this, StateManager));
-                }
-
                 BiomeLibrary.InitializeStatics();
                 EmbarkmentLibrary.InitializeDefaultLibrary();
                 VoxelChunk.InitializeStatics();
@@ -662,9 +668,12 @@ namespace DwarfCorp
 
         protected override void OnExiting(object sender, EventArgs args)
         {
-            Console.SetOut(_initialOut);
-            Console.SetError(_initialError);
-            _logwriter.Dispose();
+            if (_initialOut != null)
+                Console.SetOut(_initialOut);
+            if (_initialError != null)
+                Console.SetError(_initialError);
+            if (_logwriter != null)
+                _logwriter.Dispose();
             ExitGame = true;
             Program.SignalShutdown();
             base.OnExiting(sender, args);
@@ -788,7 +797,7 @@ namespace DwarfCorp
                 }
             }
 
-            GuiRoot.Update(gameTime.ToGameTime());
+            GuiRoot.Update(gameTime.ToRealTime());
             SoundManager.Update(gameTime, null, null);
             base.Update(gameTime);
         }

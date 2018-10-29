@@ -97,7 +97,8 @@ namespace DwarfCorp
             MaxTimeouts = 4;
             Timeouts = 0;
             Radius = 0;
-            Weights = new List<float> {3.0f, 5.0f, 10.0f, 20.0f, 30.0f, 40.0f};
+            Weights = new List<float>();
+            Weights.Add(MathFunctions.Rand(1.0f, 3.0f));
         }
 
         public override void OnCanceled()
@@ -148,18 +149,20 @@ namespace DwarfCorp
 
         public List<MoveAction> ComputeGreedyFallback(int maxsteps = 10, List<VoxelHandle> exploredVoxels = null)
         {
-            List<MoveAction> toReturn = new List<MoveAction>();
-            GoalRegion goal = GetGoal();
+            var toReturn = new List<MoveAction>();
+            var goal = GetGoal();
             var creatureVoxel = Agent.Physics.CurrentVoxel;
 
             if (goal.IsInGoalRegion(creatureVoxel))
-            {
                 return toReturn;
-            }
+
+            var storage = new MoveActionTempStorage();
+            var bodies = Agent.World.PlayerFaction.OwnedObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
             var currentVoxel = creatureVoxel;
+
             while (toReturn.Count < maxsteps)
             {
-                var actions = Agent.Movement.GetMoveActions(new MoveState() { Voxel = currentVoxel }, Creature.World.OctTree);
+                var actions = Agent.Movement.GetMoveActions(new MoveState() { Voxel = currentVoxel }, Creature.World.OctTree, bodies, storage);
 
                 float minCost = float.MaxValue;
                 var minAction = new MoveAction();
@@ -244,8 +247,7 @@ namespace DwarfCorp
                         break;
                     }
 
-                    var voxUnder = new VoxelHandle(chunks.ChunkData,
-                        GlobalVoxelCoordinate.FromVector3(Agent.Position));
+                    var voxUnder = VoxelHelpers.GetValidVoxelNear(chunks, Agent.Position);
 
                     if (!voxUnder.IsValid)
                     {

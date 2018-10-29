@@ -66,6 +66,11 @@ namespace DwarfCorp
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
             if (CraftDesignation.ItemType.IsMagical)
                 Category = TaskCategory.Research;
+
+            if (CraftDesignation.ExistingResource != null)
+            {
+                MaxAssignable = 1;
+            }
         }
 
         public override void OnEnqueued(Faction Faction)
@@ -118,6 +123,9 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
+            if (agent.IsAsleep || agent.IsDead || !agent.Active)
+                return Feasibility.Infeasible;
+
             if (!CraftDesignation.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.BuildObject))
                 return Feasibility.Infeasible;
 
@@ -131,7 +139,13 @@ namespace DwarfCorp
         }
 
         public bool CanBuild(Creature agent)
-        {            
+        {
+            if (CraftDesignation.ExistingResource != null) // This is a placement of an existing item.
+            {
+                bool hasResource = agent.Faction.HasResources(CraftDesignation.ExistingResource);
+                return hasResource;
+            }
+
             if (!String.IsNullOrEmpty(CraftDesignation.ItemType.CraftLocation))
             {
                 var nearestBuildLocation = agent.Faction.FindNearestItemWithTags(CraftDesignation.ItemType.CraftLocation, Vector3.Zero, false, agent.AI);
@@ -139,7 +153,7 @@ namespace DwarfCorp
                 if (nearestBuildLocation == null)
                     return false;
             }
-            
+
             foreach (var resourceAmount in CraftDesignation.ItemType.RequiredResources)
             {
                 var resources = agent.Faction.ListResourcesWithTag(resourceAmount.ResourceType, CraftDesignation.ItemType.AllowHeterogenous);

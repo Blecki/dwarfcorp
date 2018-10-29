@@ -60,7 +60,7 @@ namespace DwarfCorp
         public static string controls = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "controls.json");
         public static string settings = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "settings.json");
         public static string mixer = ProgramData.CreatePath("Audio", "mixer.json");
-        public static string voxel_types = ProgramData.CreatePath("voxel-types.json");
+        public static string voxel_types = ProgramData.CreatePath("World", "Voxels");
         public static string room_types = ProgramData.CreatePath("World", "Rooms");
         public static string grass_types = ProgramData.CreatePath("grass-types.json");
         public static string decal_types = ProgramData.CreatePath("decal-types.json");
@@ -441,7 +441,10 @@ namespace DwarfCorp
 
                 public static string turkey_animations = ProgramData.CreatePath("Entities", "Animals", "turkey_animation.json");
                 public static string penguin_animations = ProgramData.CreatePath("Entities", "Animals", "penguin_animation.json");
-
+                public static class Chimp
+                {
+                    public static string chimp_animations = ProgramData.CreatePath("Entities", "Animals", "Chimp", "chimp_animation.json");
+                }
                 public static Dictionary<string, string> fowl = new Dictionary<string, string>()
                 {
                     {

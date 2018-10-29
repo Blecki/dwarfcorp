@@ -5,6 +5,7 @@
   "MinimumSideWidth": 3,
   "MaxNumRooms": 1,
   "Name": "Balloon Port",
+  "DisplayName": "Balloon\nPort",
   "FloorType": "Stockpile",
   "RequiredResources": {
     "Stone": {

@@ -56,19 +56,17 @@ namespace DwarfCorp
         public CreatureAI(
             ComponentManager Manager,
             string name,
-            EnemySensor sensor,
-            PlanService planService) :
+            EnemySensor sensor) :
             base(name, Manager)
         {
             Movement = new CreatureMovement(this);
             GatherManager = new GatherManager(this);
             Blackboard = new Blackboard();
-            PlannerTimer = new Timer(0.1f, false);
             LocalControlTimeout = new Timer(5, false, Timer.TimerMode.Real);
             WanderTimer = new Timer(1, false);
             DrawAIPlan = false;
             WaitingOnResponse = false;
-            PlanSubscriber = new PlanSubscriber(planService);
+            PlanSubscriber = new PlanSubscriber(Manager.World.PlanService);
             ServiceTimeout = new Timer(2, false, Timer.TimerMode.Real);
             Sensor = sensor;
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
@@ -110,8 +108,6 @@ namespace DwarfCorp
         /// <summary> Gets the current Task the creature is trying to perform </summary>
         public Task CurrentTask { get; set; }
 
-        /// <summary> When this timer triggers, the creature will poll the PlanService for replanning paths </summary>
-        public Timer PlannerTimer { get; set; }
         /// <summary> When this timer triggers, the creature will stop trying to reach a local target (if it is blocked by a voxel for instance </summary>
         public Timer LocalControlTimeout { get; set; }
         /// <summary> When this timer triggers, the creature will wander in a new direction when it has nothing to do. </summary>
@@ -132,7 +128,7 @@ namespace DwarfCorp
         public CreatureMovement Movement { get; set; }
 
         public double UnhappinessTime = 0.0f;
-
+        private String LastMesage = "";
         /// <summary>
         /// Gets or sets a value indicating whether this instance is posessed. If a creature is posessed,
         /// it is being controlled by the player, so it shouldn't attempt to move unless it has to.
@@ -602,7 +598,7 @@ namespace DwarfCorp
             }
 
             // Try to go to sleep if we are low on energy and it is night time.
-            if (Status.Energy.IsDissatisfied() && Manager.World.Time.IsNight())
+            if (!Status.Energy.IsSatisfied() && Manager.World.Time.IsNight())
             {
                 Task toReturn = new SatisfyTirednessTask();
                 if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
@@ -621,10 +617,13 @@ namespace DwarfCorp
 
             if (Stats.CanGetBored && Status.Boredom.IsDissatisfied())
             {
-                Task toReturn = SatisfyBoredom();
-                if (toReturn != null && !Tasks.Contains(toReturn) && CurrentTask != toReturn)
+                if (!Tasks.Any(task => task.BoredomIncrease < 0))
                 {
-                    AssignTask(toReturn);
+                    Task toReturn = SatisfyBoredom();
+                    if (toReturn != null && !Tasks.Contains(toReturn) && CurrentTask != toReturn)
+                    {
+                        AssignTask(toReturn);
+                    }
                 }
             }
 
@@ -768,7 +767,6 @@ namespace DwarfCorp
                 }
             }
 
-            PlannerTimer.Update(gameTime);
             UpdateXP();
 
             // With a small probability, the creature will drown if its under water.
@@ -1246,7 +1244,17 @@ namespace DwarfCorp
                 desc += "\n ON STRIKE";
             }
 
+            if (!String.IsNullOrEmpty(LastMesage))
+            {
+                desc += "\n" + LastMesage;
+            }
+
             return desc;
+        }
+
+        public void SetMessage(string message)
+        {
+            LastMesage = message;
         }
 
         public void TryMoveVelocity(Vector3 desiredDirection, bool jumpCommand)
@@ -1519,7 +1527,7 @@ namespace DwarfCorp
             cMem.SetValue("$company_money", new Yarn.Value((float)(decimal)Employee.Faction.Economy.CurrentMoney));
             cMem.SetValue("$is_on_fire", new Yarn.Value(Employee.Physics.GetComponent<Flammable>().IsOnFire));
 
-            var state = new YarnState(ContentPaths.employee_conversation, "Start", cMem);
+            var state = new YarnState(World, ContentPaths.employee_conversation, "Start", cMem);
             state.AddEmployeePortrait(Employee);
             state.SetVoicePitch(Employee.Stats.VoicePitch);
             Employee.World.Game.StateManager.PushState(state);

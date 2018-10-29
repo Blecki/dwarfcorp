@@ -97,8 +97,9 @@ namespace DwarfCorp
         private void GenerateInitialObjects()
         {
             float maxHeight = Overworld.GetMaxHeight(SpawnRect);
+            Dictionary<string, Dictionary<string, int>> creatures = new Dictionary<string, Dictionary<string, int>>();
             foreach (var chunk in ChunkManager.ChunkData.GetChunkEnumerator())
-                ChunkManager.ChunkGen.GenerateSurfaceLife(chunk, maxHeight);
+                ChunkManager.ChunkGen.GenerateSurfaceLife(creatures, chunk, maxHeight);
         }
 
         /// <summary>
@@ -228,13 +229,14 @@ namespace DwarfCorp
                     }
 
                     // Fill from the top height down to the bottom.
-                    for (int y = h - 1; y < averageHeight; y++)
+                    for (int y = Math.Max(0, h - 1); y < averageHeight && y < VoxelConstants.ChunkSizeY; y++)
                     {
                         var v = new VoxelHandle(baseVoxel.Chunk, 
                             new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));
+                        if (!v.IsValid) throw new InvalidProgramException("Voxel was invalid while creating a new game's initial zones. This should not happen.");
 
                         v.RawSetType(VoxelLibrary.GetVoxelType("Scaffold"));
-
+                        v.IsPlayerBuilt = true;
                         v.QuickSetLiquid(LiquidType.None, 0);
 
                         if (y == averageHeight - 1)

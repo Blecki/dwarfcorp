@@ -36,6 +36,10 @@
   <PropertyGroup>
     <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -67,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="app.manifest" />
     <None Include="FNA_libs\lib64\DwarfCorp.sh" />
     <None Include="FNA_libs\lib64\DwarfCorpFNA.bin.x86_64" />
     <None Include="FNA_libs\lib64\libjpeg.so.62" />
@@ -146,6 +151,9 @@
     <Content Include="steam_appid.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="version.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\FNA\FNA.csproj">
@@ -210,7 +218,9 @@ if not exist "$(ProjectDir)$(OutDir)" MD "$(ProjectDir)$(OutDir)"
 if not exist "$(ProjectDir)$(OutDir)Content" MD "$(ProjectDir)$(OutDir)Content"
 ECHO "$(ProjectDir)..\DwarfCorpXNA\bin\x86\$(ConfigurationName)\Content" 
 
-XCOPY "$(ProjectDir)\..\DwarfCorpXNA\bin\x86\$(ConfigurationName)\Content" "$(ProjectDir)$(OutDir)Content" /Y /E /D</PreBuildEvent>
+XCOPY "$(ProjectDir)\..\DwarfCorpXNA\bin\x86\$(ConfigurationName)\Content" "$(ProjectDir)$(OutDir)Content" /Y /E /D
+
+"C:\Program Files\Git\bin\git.exe" rev-parse --short HEAD &gt; "$(ProjectDir)\version.txt" &amp;&amp; ( (call )) || ( "C:\Program Files (x86)\Git\bin\git.exe" rev-parse --short HEAD &gt; "$(ProjectDir)\version.txt" )</PreBuildEvent>
   </PropertyGroup>
   <!--
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

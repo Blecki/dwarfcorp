@@ -29,6 +29,7 @@ namespace DwarfCorp
 
         [JsonIgnore]
         public GeometricPrimitive Model { get; set; }
+        public string TextureAsset { get; set; }
         public Texture2D Texture { get; set; }
         public bool ShouldRebuild { get; set; }
         public string Name { get; set; }
@@ -114,7 +115,7 @@ namespace DwarfCorp
             Removals = new List<InstanceData>();
         }
 
-        public FixedInstanceArray(string name, GeometricPrimitive model, Texture2D texture, int numInstances, BlendState blendMode)
+        public FixedInstanceArray(string name, GeometricPrimitive model, string texture, int numInstances, BlendState blendMode)
         {
             CullDistance = (GameSettings.Default.ChunkDrawDistance * GameSettings.Default.ChunkDrawDistance) - 40;
             Name = name;
@@ -127,7 +128,7 @@ namespace DwarfCorp
             NumInstances = numInstances;
 
             ShouldRebuild = true;
-            Texture = texture;
+            TextureAsset = texture;
             DataLock = new Mutex();
 
             BlendMode = blendMode;
@@ -251,7 +252,7 @@ namespace DwarfCorp
             effect.EnableWind = EnableWind;
             Camera = cam;
 
-            if (HardwareInstancingSupported && instanceBuffer == null)
+            if (HardwareInstancingSupported && (instanceBuffer == null || instanceBuffer.IsContentLost || instanceBuffer.IsDisposed))
             {
                 instanceBuffer = new DynamicVertexBuffer(graphics, InstancedVertex.VertexDeclaration, numInstances,
                     BufferUsage.None);
@@ -265,9 +266,15 @@ namespace DwarfCorp
                 effect.EnableLighting = true;
                 effect.VertexColorTint = Color.White;
 
-                if (Model.VertexBuffer == null || Model.IndexBuffer == null)
+                if (Texture == null || Texture.GraphicsDevice.IsDisposed)
+                {
+                    Texture = AssetManager.GetContentTexture(TextureAsset);
+                }
+
+                if (Model.VertexBuffer == null || Model.IndexBuffer == null || Model.VertexBuffer.IsDisposed || Model.VertexBuffer.IsContentLost)
                 {
                     Model.ResetBuffer(graphics);
+                    Model.Texture = Texture;
                 }
 
                 bool hasIndex = Model.IndexBuffer != null;

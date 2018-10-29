@@ -2005,6 +2005,50 @@
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
+    <Content Include="Entities\Animals\Chimp\chimp_animation.json">
+      <Name>chimp_animation</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Compile Include="newgui\tutorials\trade_balance.png">
+      <Name>trade_balance</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\tutorials\trade_money.png">
+      <Name>trade_money</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\tutorials\trade_screen.png">
+      <Name>trade_screen</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\tutorials\trade_stocks.png">
+      <Name>trade_stocks</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\tutorials\xray.png">
+      <Name>xray</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\tutorials\gather.png">
+      <Name>gather</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\tutorials\build Stockpile.png">
+      <Name>build Stockpile</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="newgui\tutorials\build blocks.png">
+      <Name>build blocks</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <None Include="Entities\Dwarf\Layers\dwarf-palettes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>dwarf-palettes</Name>
@@ -2894,10 +2938,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>grass-types</Name>
     </None>
-    <None Include="voxel-types.json">
-      <Name>voxel-types</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="World\Biomes\Grassland.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Grassland</Name>
@@ -2945,10 +2985,6 @@
     <None Include="World\CraftItems\Palisade.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Palisade</Name>
-    </None>
-    <None Include="World\CraftItems\Conveyor.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Conveyor</Name>
     </None>
     <None Include="World\CraftItems\BearTrap.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3169,6 +3205,150 @@
     <None Include="World\default.conv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>default</Name>
+    </None>
+    <None Include="World\Voxels\Sandstone.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Sandstone</Name>
+    </None>
+    <None Include="World\Voxels\Gold.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Gold</Name>
+    </None>
+    <None Include="World\Voxels\Ruby.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Ruby</Name>
+    </None>
+    <None Include="World\Voxels\Sapphire.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Sapphire</Name>
+    </None>
+    <None Include="World\Voxels\Citrine.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Citrine</Name>
+    </None>
+    <None Include="World\Voxels\Coal.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Coal</Name>
+    </None>
+    <None Include="World\Voxels\Garnet.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Garnet</Name>
+    </None>
+    <None Include="World\Voxels\Sand.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Sand</Name>
+    </None>
+    <None Include="World\Voxels\Brick.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Brick</Name>
+    </None>
+    <None Include="World\Voxels\DarkDirt.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>DarkDirt</Name>
+    </None>
+    <None Include="World\Voxels\Snow.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Snow</Name>
+    </None>
+    <None Include="World\Voxels\Ice.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Ice</Name>
+    </None>
+    <None Include="World\Voxels\Stone.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Stone</Name>
+    </None>
+    <None Include="World\Voxels\Shale.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Shale</Name>
+    </None>
+    <None Include="World\Voxels\Slate.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Slate</Name>
+    </None>
+    <None Include="World\Voxels\_empty.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>_empty</Name>
+    </None>
+    <None Include="World\Voxels\_designation.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>_designation</Name>
+    </None>
+    <None Include="World\Voxels\Plank.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Plank</Name>
+    </None>
+    <None Include="World\Voxels\Magic.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Magic</Name>
+    </None>
+    <None Include="World\Voxels\Scaffold.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Scaffold</Name>
+    </None>
+    <None Include="World\Voxels\Marble.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Marble</Name>
+    </None>
+    <None Include="World\Voxels\Obsidian.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Obsidian</Name>
+    </None>
+    <None Include="World\Voxels\Emerald.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Emerald</Name>
+    </None>
+    <None Include="World\Voxels\Amethyst.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Amethyst</Name>
+    </None>
+    <None Include="World\Voxels\Bedrock.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Bedrock</Name>
+    </None>
+    <None Include="World\Voxels\Water.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Water</Name>
+    </None>
+    <None Include="World\Voxels\Iron.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Iron</Name>
+    </None>
+    <None Include="World\Voxels\Mana.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Mana</Name>
+    </None>
+    <None Include="World\Voxels\Glass.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Glass</Name>
+    </None>
+    <None Include="World\Voxels\Dirt.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Dirt</Name>
+    </None>
+    <None Include="World\Voxels\TilledSoil.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>TilledSoil</Name>
+    </None>
+    <None Include="World\Voxels\Brown Tile.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Brown Tile</Name>
+    </None>
+    <None Include="World\Voxels\Blue Tile.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Blue Tile</Name>
+    </None>
+    <None Include="World\Voxels\Cobble.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Cobble</Name>
+    </None>
+    <None Include="World\Voxels\Stockpile.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Stockpile</Name>
+    </None>
+    <None Include="World\Voxels\Granite.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Granite</Name>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -4135,6 +4315,13 @@
   <ItemGroup>
     <Compile Include="newgui\balance_beam.png">
       <Name>balance_beam</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\Animals\Chimp\chimp.png">
+      <Name>chimp</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

@@ -108,6 +108,7 @@ namespace DwarfCorp
                     creature.World.MakeAnnouncement(String.Format("{0} cancelled farming task because it is unreachable", creature.Stats.FullName));
                     creature.World.Master.TaskManager.CancelTask(this);
                 }
+                creature.SetMessage("Failed to plant. Task was unreachable.");
                 yield return Act.Status.Fail;
                 yield break;
             }

@@ -61,6 +61,7 @@ namespace DwarfCorp
             var obj = Agent.Blackboard.GetData<Body>("Research");
             if (obj == null)
             {
+                Agent.SetMessage("Failed to find magical object for research purposes.");
                 yield return Act.Status.Fail;
                 yield break;
             }

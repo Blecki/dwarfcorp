@@ -129,7 +129,13 @@ namespace DwarfCorp
                         var tvh = new VoxelHandle(Player.World.ChunkManager.ChunkData, v);
                         return tvh.IsValid && !tvh.IsEmpty;
                     });
-
+                var current = new VoxelHandle(Player.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(PreviewBody.Position));
+                bool underwater = current.IsValid && current.LiquidType != LiquidType.None;
+                if (underwater)
+                {
+                    Player.World.ShowTooltip("Can't " + Verb + " here: underwater or in lava.");
+                    return false;
+                }
                 if (intersectsWall && !CraftType.Prerequisites.Contains(CraftItem.CraftPrereq.NearWall))
                 {
                     Player.World.ShowTooltip("Can't " + Verb + " here: intersects wall.");

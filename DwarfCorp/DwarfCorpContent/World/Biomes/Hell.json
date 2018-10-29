@@ -27,11 +27,13 @@
   "Fauna": [
     {
       "Name": "Demon",
-      "SpawnProbability": 0.015
+      "SpawnProbability": 0.015,
+	  "MaxPopulation" : 100
     },
     {
       "Name": "Necrosnake",
-      "SpawnProbability": 0.0015
+      "SpawnProbability": 0.0015,
+	  "MaxPopulation" : 10
     }
   ],
   "SoilLayer": {

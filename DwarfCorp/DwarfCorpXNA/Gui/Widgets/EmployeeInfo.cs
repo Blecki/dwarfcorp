@@ -98,6 +98,7 @@ namespace DwarfCorp.Gui.Widgets
                 {
                     Employee.Stats.Title = sender.Text;
                 },
+                Tooltip = "Employee title. You can customize this."
             });
 
             LevelLabel = levelHolder.AddChild(new Widget
@@ -109,12 +110,13 @@ namespace DwarfCorp.Gui.Widgets
             var columns = InteriorPanel.AddChild(new Gui.Widgets.Columns
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 120)
+                MinimumSize = new Point(0, 100),
+                ColumnCount = 3
             });
             
             var left = columns.AddChild(new Gui.Widget());
             var right = columns.AddChild(new Gui.Widget());
-
+            var evenMoreRight = columns.AddChild(new Gui.Widget());
             #region Stats
             var statParent = left.AddChild(new Gui.Widgets.Columns
             {
@@ -179,8 +181,8 @@ namespace DwarfCorp.Gui.Widgets
             Hunger = CreateStatusBar(right, "Hunger", "Starving", "Hungry", "Peckish", "Okay");
             Energy = CreateStatusBar(right, "Energy", "Exhausted", "Tired", "Okay", "Energetic");
             Happiness = CreateStatusBar(right, "Happiness", "Miserable", "Unhappy", "So So", "Happy", "Euphoric");
-            Health = CreateStatusBar(right, "Health", "Near Death", "Critical", "Hurt", "Uncomfortable", "Fine", "Perfect");
-            Boredom = CreateStatusBar(right, "Boredom", "Desperate", "Overworked", "Bored", "Meh", "Fine", "Excited");
+            Health = CreateStatusBar(evenMoreRight, "Health", "Near Death", "Critical", "Hurt", "Uncomfortable", "Fine", "Perfect");
+            Boredom = CreateStatusBar(evenMoreRight, "Boredom", "Desperate", "Overworked", "Bored", "Meh", "Fine", "Excited");
             #endregion           
 
             PayLabel = InteriorPanel.AddChild(new Widget
@@ -268,7 +270,7 @@ namespace DwarfCorp.Gui.Widgets
             TaskLabel = task.AddChild(new Widget
             {
                 AutoLayout = AutoLayout.DockRight,
-                MinimumSize = new Point(128, 24),
+                MinimumSize = new Point(256, 24),
                 TextVerticalAlign = VerticalAlign.Center,
                 TextHorizontalAlign = HorizontalAlign.Right
             });
@@ -297,6 +299,7 @@ namespace DwarfCorp.Gui.Widgets
                 }
             });
 
+            /*
             if (EnablePosession)
             {
                 bottomBar.AddChild(new Button()
@@ -311,6 +314,7 @@ namespace DwarfCorp.Gui.Widgets
                     }
                 });
             }
+            */
 
             bottomBar.AddChild(new Button()
             {

@@ -78,7 +78,6 @@ namespace DwarfCorp
                 type.InitializeStrings();
                 CraftItems.Add(type.Name, type);
             }
-                
         }
 
         public static CraftItem GetRandomApplicableCraftItem(Faction faction)

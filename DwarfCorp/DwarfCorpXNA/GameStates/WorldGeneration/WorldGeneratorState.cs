@@ -179,8 +179,8 @@ namespace DwarfCorp.GameStates
                         Settings.SpawnRect = Generator.GetSpawnRectangle();
                         if (Settings.Natives == null || Settings.Natives.Count == 0)
                             Settings.Natives = Generator.NativeCivilizations;
-                        Settings.StartUnderground = StartUnderground.CheckState;
-                        Settings.RevealSurface = RevealSurface.CheckState;
+                        //Settings.StartUnderground = StartUnderground.CheckState;
+                        //Settings.RevealSurface = RevealSurface.CheckState;
 
                         foreach (var faction in Settings.Natives)
                         {
@@ -254,6 +254,7 @@ namespace DwarfCorp.GameStates
                 }
             }) as Gui.Widgets.ComboBox;
 
+            /*
             StartUnderground = rightPanel.AddChild(new Gui.Widgets.CheckBox
             {
                 AutoLayout = Gui.AutoLayout.DockTop,
@@ -268,6 +269,7 @@ namespace DwarfCorp.GameStates
                 Text = "@world-generation-reveal-surface",
                 CheckState = true
             }) as Gui.Widgets.CheckBox;
+            */
 
             rightPanel.AddChild(new Gui.Widget
             {
@@ -365,7 +367,7 @@ namespace DwarfCorp.GameStates
 
             // Enable or disable start button based on Generator state.
 
-            GuiRoot.Update(gameTime.ToGameTime());
+            GuiRoot.Update(gameTime.ToRealTime());
             if (Generator.CurrentState == WorldGenerator.GenerationState.Finished)
                 Preview.Update();
             base.Update(gameTime);

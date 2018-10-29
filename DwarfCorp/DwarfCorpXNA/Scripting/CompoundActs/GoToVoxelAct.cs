@@ -67,6 +67,7 @@ namespace DwarfCorp
         {
             if (Agent.Blackboard.GetData<bool>("NoPath", false))
             {
+                Agent.SetMessage("Path plan failed");
                 yield return Act.Status.Fail;
             }
             yield return Act.Status.Success;

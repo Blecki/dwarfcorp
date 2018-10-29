@@ -52,27 +52,17 @@ namespace DwarfCorp
         public BoundingBox PositionConstrain { get; set; }
         public Egg()
         {
-            
+            UpdateRate = 100;
         }
 
-        public Egg(string adult, ComponentManager manager, Vector3 position, BoundingBox positionConstraint) :
+        public Egg(Body body, string adult, ComponentManager manager, Vector3 position, BoundingBox positionConstraint) :
             base(manager)
         {
+            UpdateRate = 100;
             PositionConstrain = positionConstraint;
             Adult = adult;
             Birthday = Manager.World.Time.CurrentDate + new TimeSpan(0, 12, 0, 0);
-
-            if (ResourceLibrary.GetResourceByName(adult + " Egg") == null 
-                || !EntityFactory.EnumerateEntityTypes().Contains(adult + " Egg Resource"))
-            {
-                Resource newEggResource =
-                    new Resource(ResourceLibrary.GetResourceByName(ResourceType.Egg));
-                newEggResource.Name = adult + " Egg";
-                ResourceLibrary.Add(newEggResource);
-            }
-
-            ParentBody = EntityFactory.CreateEntity<Body>(adult + " Egg Resource", position);
-            ParentBody.AddChild(this);
+            ParentBody = body;
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)

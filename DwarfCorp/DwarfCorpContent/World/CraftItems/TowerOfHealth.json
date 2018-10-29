@@ -34,5 +34,6 @@
   "AddToOwnedPool": true,
   "Moveable": true,
   "CraftActBehavior": "Normal",
-  "IsMagical": true
+  "IsMagical": true,
+  "Tutorial" : "The tower of health automatically heals nearby dwarfs. It must be recharged from time to time by wizards."
 }

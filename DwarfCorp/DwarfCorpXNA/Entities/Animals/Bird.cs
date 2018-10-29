@@ -73,7 +73,7 @@ namespace DwarfCorp
              Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
             // Controls the behavior of the creature
-            Physics.AddChild(new BirdAI(Manager, "Bird AI", Sensors, PlanService));
+            Physics.AddChild(new BirdAI(Manager, "Bird AI", Sensors));
             
             // The bird can peck at its enemies (0.1 damage)
             Attacks = new List<Attack> { new Attack("Peck", 0.1f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_bird_attack), ContentPaths.Effects.pierce) { Mode = Attack.AttackMode.Dogfight } };

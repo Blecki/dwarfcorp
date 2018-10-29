@@ -22,27 +22,9 @@ namespace DwarfCorp.GameStates
         private Gui.Widget Tip;
         private InfoTicker LoadTicker;
         private WorldGenerator Generator;
-        // Displays tips when the game is loading.
-        public List<string> LoadingTips = new List<string>()
-        {
-            "Can't get the right angle? Hold SHIFT to move the camera around!",
-            "Need to see tiny dwarves? Use the mousewheel to zoom!",
-            "Press Q to quickly slice the terrain at the height of the cursor.",
-            "Press E to quickly un-slice the terrain.",
-            "The number keys can be used to quickly switch between tools.",
-            "Employees will not work if they are unhappy.",
-            "Monsters got you down? Try hiring some thugs!",
-            "The most lucrative resources are beneath the earth.",
-            "Dwarves can swim!",
-            "Stockpiles are free!",
-            "Payday occurs at midnight. Make sure to sell your goods before then!",
-            "Dwarves prefer to eat in common rooms, but they will eat out of stockpiles if necessary.",
-            "The minimap can be closed and opened.",
-            "Monsters are shown on the minimap.",
-            "Axedwarves are better at chopping trees than miners."
-        };
+        public Tutorial.TutorialManager TutorialManager;
 
-        private Timer TipTimer = new Timer(5, false, Timer.TimerMode.Real);
+        private Timer TipTimer = new Timer(1, false, Timer.TimerMode.Real);
         public WorldGenerationSettings Settings { get; set; }
 
         public LoadState(DwarfGame game, GameStateManager stateManager, WorldGenerationSettings settings) :
@@ -56,6 +38,7 @@ namespace DwarfCorp.GameStates
 
         public override void OnEnter()
         {
+            TutorialManager = new Tutorial.TutorialManager();
             IsInitialized = true;
             DwarfTime.LastTime.Speed = 1.0f;
 
@@ -66,13 +49,16 @@ namespace DwarfCorp.GameStates
 
             Tip = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
-                Font = "font18-outline",
+                Font = "font10",
                 TextColor = new Vector4(1, 1, 1, 1),
-                MinimumSize = new Point(0, 128),
+                MinimumSize = new Point(0, 64),
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 TextVerticalAlign = Gui.VerticalAlign.Center,
                 Text = "Press any key to jump!",
-                AutoLayout = Gui.AutoLayout.DockBottom
+                AutoLayout = Gui.AutoLayout.DockBottom,
+                Background = new Gui.TileReference("basic", 0),
+                BackgroundColor = new Vector4(0, 0, 0, 0.5f),
+                InteriorMargin = new Gui.Margin(0, 0, 15, 15)
             });
 
             LoadTicker = GuiRoot.RootItem.AddChild(new Gui.Widgets.InfoTicker
@@ -156,7 +142,7 @@ namespace DwarfCorp.GameStates
                         Runner.Jump();
                 }
 
-                GuiRoot.Update(gameTime.ToGameTime());
+                GuiRoot.Update(gameTime.ToRealTime());
                 Runner.Update(gameTime);
               
                 if (World != null && World.LoadStatus == WorldManager.LoadingStatus.Failure && !DisplayException)
@@ -200,8 +186,11 @@ namespace DwarfCorp.GameStates
             TipTimer.Update(gameTime);
             if (TipTimer.HasTriggered)
             {
-                Tip.Text = LoadingTips[MathFunctions.Random.Next(LoadingTips.Count)];
+                var entry = Datastructures.SelectRandom(TutorialManager.EnumerateTutorials());
+
+                Tip.Text = entry.Value.Title + "\n" + entry.Value.Text;
                 Tip.Invalidate();
+                TipTimer.Reset(10.0f);
             }
 
             EnableScreensaver = true;

@@ -60,54 +60,33 @@ namespace DwarfCorp
         public byte[] Liquid;
         public byte[] Types;
         public byte[] GrassType;
-        public byte[] Decals;
+        //public byte[] Decals;
         public byte[] RampsSunlightExplored;
         
         public ChunkFile()
         {
         }
 
-        public ChunkFile(VoxelChunk chunk)
+        public static ChunkFile CreateFromChunk(VoxelChunk chunk)
         {
-            ID = chunk.ID;
-            Types = new byte[VoxelConstants.ChunkVoxelCount];
-            Liquid = new byte[VoxelConstants.ChunkVoxelCount];
-            GrassType = new byte[VoxelConstants.ChunkVoxelCount];
-            Decals = new byte[VoxelConstants.ChunkVoxelCount];
-            RampsSunlightExplored = new byte[VoxelConstants.ChunkVoxelCount];
-            Origin = chunk.Origin;
-            FillDataFromChunk(chunk);
-        }
+            var r = new ChunkFile
+            {
+                ID = chunk.ID,
+                Types = new byte[VoxelConstants.ChunkVoxelCount],
+                Liquid = new byte[VoxelConstants.ChunkVoxelCount],
+                GrassType = new byte[VoxelConstants.ChunkVoxelCount],
+                //Decals = new byte[VoxelConstants.ChunkVoxelCount],
+                RampsSunlightExplored = new byte[VoxelConstants.ChunkVoxelCount],
+                Origin = chunk.Origin
+            };
 
-        public ChunkFile(string fileName, bool binary)
-        {
-            ChunkFile chunkFile = null;
+            chunk.Data.Types.CopyTo(r.Types, 0);
+            chunk.Data.Grass.CopyTo(r.GrassType, 0);
+            //chunk.Data.Decals.CopyTo(r.Decals, 0);
+            chunk.Data.RampsSunlightExploredPlayerBuilt.CopyTo(r.RampsSunlightExplored, 0);
+            chunk.Data._Water.CopyTo(r.Liquid, 0);
 
-            if (!binary)
-                chunkFile = FileUtils.LoadJsonFromAbsolutePath<ChunkFile>(fileName);
-            else
-                chunkFile = FileUtils.LoadBinary<ChunkFile>(fileName);
-
-            if (chunkFile != null)
-                CopyFrom(chunkFile);
-        }
-
-        public void CopyFrom(ChunkFile chunkFile)
-        {
-            ID = chunkFile.ID;
-            Liquid = chunkFile.Liquid;
-            Origin = chunkFile.Origin;
-            Types = chunkFile.Types;
-            GrassType = chunkFile.GrassType;
-            Decals = chunkFile.Decals;
-            RampsSunlightExplored = chunkFile.RampsSunlightExplored;
-        }
-
-        public bool WriteFile(string filePath, bool binary)
-        {
-            if (!binary)
-                return FileUtils.SaveJSon(this, filePath, false);
-            return FileUtils.SaveBinary(this, filePath);
+            return r;
         }
 
         public VoxelChunk ToChunk(ChunkManager Manager)
@@ -140,20 +119,11 @@ namespace DwarfCorp
                 RampsSunlightExplored.CopyTo(c.Data.RampsSunlightExploredPlayerBuilt, 0);
             if (GrassType != null)
                 GrassType.CopyTo(c.Data.Grass, 0);
-            if (Decals != null)
-                Decals.CopyTo(c.Data.Decals, 0);
+            //if (Decals != null)
+            //    Decals.CopyTo(c.Data.Decals, 0);
 
             c.CalculateInitialSunlight();
             return c;
-        }
-
-        public void FillDataFromChunk(VoxelChunk chunk)
-        {
-            chunk.Data.Types.CopyTo(Types, 0);
-            chunk.Data.Grass.CopyTo(GrassType, 0);
-            chunk.Data.Decals.CopyTo(Decals, 0);
-            chunk.Data.RampsSunlightExploredPlayerBuilt.CopyTo(RampsSunlightExplored, 0);
-            chunk.Data._Water.CopyTo(Liquid, 0);
         }
     }
 }

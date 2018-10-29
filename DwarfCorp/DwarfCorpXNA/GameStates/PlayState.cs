@@ -140,7 +140,7 @@ namespace DwarfCorp.GameStates
         private void World_OnLoseEvent()
         {
             //Paused = true;
-            //StateManager.PushState("LoseState");a
+            //StateManager.PushState("LoseState");
         }
 
         /// <summary>
@@ -429,7 +429,7 @@ namespace DwarfCorp.GameStates
             else
             {
                 bool update = MathFunctions.RandEvent(0.1f);
-                if ((SelectedEmployeeInfo.Employee == null || SelectedEmployeeInfo.Employee.IsDead) && 
+                if ((SelectedEmployeeInfo.Employee == null || SelectedEmployeeInfo.Employee.IsDead || !SelectedEmployeeInfo.Employee.Active) && 
                     Master.Faction.Minions.Count > 0)
                 {
                     SelectedEmployeeInfo.Employee = Master.Faction.Minions[0];
@@ -501,6 +501,13 @@ namespace DwarfCorp.GameStates
                     MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
 
                 World.Render(gameTime);
+                if (GuiRoot.RenderData.RealScreen.Width != GuiRoot.RenderData.Device.Viewport.Width || GuiRoot.RenderData.RealScreen.Height != GuiRoot.RenderData.Device.Viewport.Height)
+                {
+                    GuiRoot.RenderData.CalculateScreenSize();
+                    GuiRoot.RootItem.Rect = GuiRoot.RenderData.VirtualScreen;
+                    GuiRoot.ResetGui();
+                    CreateGUIComponents();
+                }
 
                 if (Game.StateManager.CurrentState == this)
                 {
@@ -569,7 +576,7 @@ namespace DwarfCorp.GameStates
             BottomBackground = GuiRoot.RootItem.AddChild(new TrayBackground
             {
                 Corners = Scale9Corners.Top,
-                MinimumSize = new Point(0, 102),
+                MinimumSize = new Point(0, 112),
                 AutoLayout = AutoLayout.DockBottom
             });
 
@@ -586,7 +593,7 @@ namespace DwarfCorp.GameStates
             var secondBar = BottomBackground.AddChild(new Widget
             {
                 Transparent = true,
-                MinimumSize = new Point(0, 54),
+                MinimumSize = new Point(0, 64),
                 AutoLayout = AutoLayout.DockBottom,
                 InteriorMargin = new Margin(2,0,0,0),
                 Padding = new Margin(0,0,2,2)
@@ -714,7 +721,7 @@ namespace DwarfCorp.GameStates
                 EnablePosession = true,
                 Tag = "selected-employee-info",
                 AutoLayout = AutoLayout.FloatBottomLeft,
-                MinimumSize = new Point(400, 500),
+                MinimumSize = new Point(450, 500 - (50 * (GameSettings.Default.GuiScale - 1))),
                 OnFireClicked = (sender) =>
                 {
                     GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new Gui.Widgets.Confirm
@@ -1165,10 +1172,12 @@ namespace DwarfCorp.GameStates
                 Tooltip = "When checked, enables XRAY view.",
                 MaximumSize = new Point(32, 16),
                 TextColor = Color.White.ToVector4(),
+                Tag = "xray",
                 OnCheckStateChange = (sender) =>
                 {
                     bool isChecked = (sender as CheckBox).CheckState;
                     World.TargetCaveView = isChecked ? 1.0f : 0.0f;
+                    World.Tutorial("xray");
                 },
                 AutoLayout = AutoLayout.DockLeftCentered
             }) as CheckBox;
@@ -1245,7 +1254,7 @@ namespace DwarfCorp.GameStates
                     {
                         Icon = data.NewIcon,
                         ExpandChildWhenDisabled = true,
-                        Text = TextGenerator.Shorten(data.Name, 5),
+                        Text = data.DisplayName,
                         TextVerticalAlign = VerticalAlign.Below,
                         TextColor = Color.White.ToVector4(),
                         PopupChild = new BuildRoomInfo
@@ -1300,11 +1309,12 @@ namespace DwarfCorp.GameStates
 
             var icon_BuildRoom = new FlatToolTray.Icon
             {
+                Icon = new TileReference("tool-icons", 37),
                 EnabledTextColor = Vector4.One,
                 Text = "Zone",
-                Tooltip = "Designate zones/areas",
+                Tooltip = "Designate zones/areas.",
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 KeepChildVisible = true,
                 ReplacementMenu = menu_RoomTypes,
                 Tag = "build room",
@@ -1344,7 +1354,7 @@ namespace DwarfCorp.GameStates
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = "",
+                            Text = data.Name,
                             EnabledTextColor = Color.White.ToVector4(),
                             Font = "font10-outline-numsonly",
                             PopupChild = new BuildWallInfo
@@ -1423,12 +1433,12 @@ namespace DwarfCorp.GameStates
 
             var icon_BuildWall = new FlatToolTray.Icon
             {
-                Icon = null,
+                Icon = new TileReference("tool-icons", 24),
                 Font = "font8",
                 KeepChildVisible = true,
                 ExpandChildWhenDisabled = true,
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 Tooltip = "Place blocks",
                 Text = "Block",
                 EnabledTextColor = Color.White.ToVector4(),
@@ -1438,12 +1448,12 @@ namespace DwarfCorp.GameStates
 
             var icon_BuildFloor = new FlatToolTray.Icon
             {
-                Icon = null,
+                Icon = new TileReference("tool-icons", 25),
                 Font = "font8",
                 KeepChildVisible = true,
                 ExpandChildWhenDisabled = true,
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 Tooltip = "Place floor",
                 Text = "Floor",
                 EnabledTextColor = Color.White.ToVector4(),
@@ -1466,6 +1476,14 @@ namespace DwarfCorp.GameStates
                 }
             };
 
+
+            // TODO: Translation
+            Func<string, string> objectNameToLabel = (string name) =>
+            {
+                var replacement = name.Replace("Potion", "").Replace("of", "");
+                return replacement;
+            };
+
             Func<CraftItem, FlatToolTray.Icon> createCraftIcon = (data) => new FlatToolTray.Icon
             {
                 Icon = data.Icon,
@@ -1473,7 +1491,7 @@ namespace DwarfCorp.GameStates
                 KeepChildVisible = true, // So the player can interact with the popup.
                 ExpandChildWhenDisabled = true,
                 Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
-                Text = data.ShortDisplayName,
+                Text = objectNameToLabel(data.ShortDisplayName),
                 TextVerticalAlign = VerticalAlign.Below,
                 TextColor = Color.White.ToVector4(),
                 PopupChild = new TabPanel
@@ -1486,6 +1504,7 @@ namespace DwarfCorp.GameStates
                     {
                         var panel = (sender as TabPanel);
                         panel.SelectedTab = 0;
+                        World.Tutorial(data.Name);
                     },
                     OnSelectedTabChanged = (widget) =>
                     {
@@ -1612,7 +1631,7 @@ namespace DwarfCorp.GameStates
                     Tooltip = "Craft " + category,
                     Behavior = FlatToolTray.IconBehavior.ShowSubMenu,
                     ReplacementMenu = menu_category,
-                    Text = TextGenerator.Shorten(category, 5),
+                    Text = category,
                     TextVerticalAlign = VerticalAlign.Below,
                     TextColor = Color.White.ToVector4(),
                 };
@@ -1651,12 +1670,12 @@ namespace DwarfCorp.GameStates
 
             var icon_BuildCraft = new FlatToolTray.Icon
             {
-                Icon = null,
-                Text = "Object",
+                Icon = new TileReference("tool-icons", 39),
+                Text = "Objects",
                 EnabledTextColor = Vector4.One,
-                Tooltip = "Craft objects",
+                Tooltip = "Craft objects and furniture.",
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 KeepChildVisible = true,
                 MinimumSize = new Point(128, 32),
                 ReplacementMenu = menu_CraftTypes,
@@ -1683,14 +1702,14 @@ namespace DwarfCorp.GameStates
                     && item.AllowUserCrafting
                     && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) &&
                     !ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible) &&
-                    item.CraftLocation != "Apocethary")
+                    item.CraftLocation != "Apothecary")
                     .Select(data => new FlatToolTray.Icon
                     {
                         Icon = data.Icon,
                         Tooltip = data.Verb + " a " + data.Name,
                         KeepChildVisible = true, // So the player can interact with the popup.
                         ExpandChildWhenDisabled = true,
-                        Text = TextGenerator.Shorten(data.Name, 6),
+                        Text = data.Name,
                         TextVerticalAlign = VerticalAlign.Below,
                         TextColor = Color.White.ToVector4(),
                         Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
@@ -1726,11 +1745,12 @@ namespace DwarfCorp.GameStates
 
             var icon_BuildResource = new FlatToolTray.Icon
             {
-                Text = "Res.",
-                Tooltip = "Resource",
+                Text = "Goods",
+                Tooltip = "Craft tradeable resources.",
+                Icon = new TileReference("tool-icons", 38),
                 EnabledTextColor = Vector4.One,
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 KeepChildVisible = true,
                 ReplacementMenu = menu_ResourceTypes,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
@@ -1785,7 +1805,7 @@ namespace DwarfCorp.GameStates
                             .Select(data => new FlatToolTray.Icon
                             {
                                 Tooltip = "Build " + data.Name,
-                                Text = TextGenerator.Shorten(data.Name, 6),
+                                Text = data.Name,
                                 TextVerticalAlign = VerticalAlign.Below,
                                 TextColor = Color.White.ToVector4(),
                                 Icon = new TileReference("rail", data.Icon),
@@ -1810,9 +1830,10 @@ namespace DwarfCorp.GameStates
             var icon_RailTool = new FlatToolTray.Icon
             {
                 Text = "Rail",
+                Icon = new TileReference("tool-icons", 23),
                 EnabledTextColor = Vector4.One,
                 TextHorizontalAlign = HorizontalAlign.Center,
-                TextVerticalAlign = VerticalAlign.Center,
+                TextVerticalAlign = VerticalAlign.Below,
                 Tooltip = "Rail",
                 KeepChildVisible = true,
                 ReplacementMenu = menu_Rail,
@@ -1902,6 +1923,8 @@ namespace DwarfCorp.GameStates
                         KeepChildVisible = true, // So the player can interact with the popup.
                         Tooltip = data.Verb + " " + data.Name,
                         Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
+                        Text = data.Name,
+                        TextVerticalAlign = VerticalAlign.Below,
                         PopupChild = new BuildCraftInfo
                         {
                             Data = data,
@@ -1959,27 +1982,20 @@ namespace DwarfCorp.GameStates
                 }
             };
 
-            // TODO: Translation
-            Func<string, string> potionNameToLabel = (string name) =>
-            {
-                var replacement = name.Replace("Potion", "").Replace("of", "");
-                return TextGenerator.Shorten(replacement, 6);
-            };
-
             var menu_potions = new FlatToolTray.Tray
             {
                 ItemSource = (new Widget[] { icon_menu_Edibles_Return }).Concat(
                     CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && item.AllowUserCrafting
                     && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated)
-                    && item.CraftLocation == "Apocethary")
+                    && item.CraftLocation == "Apothecary")
                     .Select(data => new FlatToolTray.Icon
                     {
                         Icon = data.Icon,
                         KeepChildVisible = true, // So the player can interact with the popup.
                         Tooltip = StringLibrary.GetString("verb-noun", data.Verb, data.DisplayName),
                         Behavior = FlatToolTray.IconBehavior.ShowClickPopup,
-                        Text = potionNameToLabel(data.DisplayName),
+                        Text = objectNameToLabel(data.DisplayName),
                         TextVerticalAlign = VerticalAlign.Below,
                         TextHorizontalAlign = HorizontalAlign.Center,
                         TextColor = Color.White.ToVector4(),
@@ -1989,6 +2005,10 @@ namespace DwarfCorp.GameStates
                             Rect = new Rectangle(0, 0, 450, 200),
                             Master = Master,
                             World = World,
+                            OnShown = (sender) =>
+                            {
+                                World.Tutorial("potions");
+                            },
                             BuildAction = (sender, args) =>
                             {
                                 var buildInfo = sender as Gui.Widgets.BuildCraftInfo;
@@ -2018,7 +2038,7 @@ namespace DwarfCorp.GameStates
                 {
                     AddToolbarIcon(sender, () =>
                     Master.Faction.Minions.Any(minion =>
-                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Research)) && Master.Faction.OwnedObjects.Any(obj => obj.Tags.Contains("Apocethary")));
+                        minion.Stats.IsTaskAllowed(Task.TaskCategory.Research)) && Master.Faction.OwnedObjects.Any(obj => obj.Tags.Contains("Apothecary")));
                 },
                 ReplacementMenu = menu_potions,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
@@ -2155,7 +2175,7 @@ namespace DwarfCorp.GameStates
                                Icon = resource.ResourceType.GetResource().GuiLayers[0],
                                Tooltip = "Plant " + resource.ResourceType,
                                Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
-                               Text = TextGenerator.Shorten(resource.ResourceType, 6),
+                               Text = resource.ResourceType,
                                TextVerticalAlign = VerticalAlign.Below,
                                OnClick = (sender, args) =>
                                {
@@ -2422,9 +2442,15 @@ namespace DwarfCorp.GameStates
                 if (PausePanel == null || PausePanel.Hidden)
                 {
                     BrushTray.Select(0);
+                    World.TutorialManager.HideTutorial();
+                }
+                else
+                {
+                    World.TutorialManager.ShowTutorial();
                 }
 
                 CameraTray.Select(0);
+
 
                 if (MainMenu.Hidden && PausePanel == null)
                     (BottomToolBar.Children.First(w => w.Hidden == false) as FlatToolTray.Tray).Hotkey(FlatToolTray.Tray.Hotkeys[0]);

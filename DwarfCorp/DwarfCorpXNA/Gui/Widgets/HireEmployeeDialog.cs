@@ -133,7 +133,7 @@ namespace DwarfCorp.Gui.Widgets
                             return;
                         }
 #endif
-                        if (applicant.Level.Pay * 4 > Faction.Economy.CurrentMoney)
+                        if (GameSettings.Default.SigningBonus > Faction.Economy.CurrentMoney)
                         {
                             Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Popup
                             {
@@ -147,17 +147,25 @@ namespace DwarfCorp.Gui.Widgets
                                 Text = "We need a balloon port to hire someone.",
                             }));
                         }
+                        else if (Faction.Minions.Count + Faction.World.Master.NewArrivals.Count >= GameSettings.Default.MaxDwarfs)
+                        {
+                            Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Popup
+                            {
+                                Text = String.Format("Can't hire any more dwarfs. We can only have {0}.", GameSettings.Default.MaxDwarfs)
+                            }));
+                        }
                         else
                         {
-                            Faction.Hire(applicant);
+                            var date = Faction.Hire(applicant, 1);
                             SoundManager.PlaySound(ContentPaths.Audio.cash, 0.5f);
                             applicantInfo.Hidden = true;
                             HireButton.Hidden = true;
                             Root.ShowModalPopup(new Gui.Widgets.Popup()
                             {
-                                Text = String.Format("We hired {0}, paying a signing bonus of {1}.",
+                                Text = String.Format("We hired {0}, paying a signing bonus of {1}. They will arrive in about {2} hour(s).",
                                 applicant.Name,
-                                applicant.Class.Levels[0].Pay * 4),
+                                GameSettings.Default.SigningBonus,
+                                (date - Faction.World.Time.CurrentDate).Hours),
                             });
  
                         }

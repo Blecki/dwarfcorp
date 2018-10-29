@@ -69,6 +69,8 @@ namespace DwarfCorp
         public bool BlendStart { get; set; }
         public bool BlendEnd { get; set; }
 
+        private MoveActionTempStorage __storage = new MoveActionTempStorage();
+
         // Offset from voxel location to bounding box center.
         public Vector3 GetBoundingBoxOffset()
         {
@@ -93,13 +95,14 @@ namespace DwarfCorp
             {
                 return false;
             }
+            var bodies = Agent.World.PlayerFaction.OwnedObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
             for (int i = idx; i < path.Count - 1; i++)
             {
                 if (!path[i].SourceVoxel.IsValid)
                 {
                     continue;
                 }
-                var neighbors = Agent.Movement.GetMoveActions(path[i].SourceState, Agent.World.OctTree);
+                var neighbors = Agent.Movement.GetMoveActions(path[i].SourceState, Agent.World.OctTree, bodies, __storage);
                 if (!neighbors.Any(n => n.DestinationState == path[i + 1].SourceState))
                 {
                     return false;
@@ -126,7 +129,7 @@ namespace DwarfCorp
                 nextAction = Path[nextID];
                 if (nextAction.SourceVoxel.IsValid)
                 {
-                    diff = (nextAction.SourceVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half));
+                    diff = (nextAction.SourceVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half)) + Vector3.One * 1e-5f;
                     diffNorm = diff.Length();
                 }
                 else
@@ -136,7 +139,7 @@ namespace DwarfCorp
             }
             else
             {
-                diff = (action.DestinationVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half));
+                diff = (action.DestinationVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half)) + Vector3.One * 1e-5f;
                 diffNorm = diff.Length();
                 hasNextAction = true;
             }
@@ -176,8 +179,7 @@ namespace DwarfCorp
                 foreach (MoveAction action in Path)
                 {
                     RandomPositionOffsets.Add(MathFunctions.RandVector3Box(-0.1f, 0.1f, 0.0f, 0.0f, -0.1f, 0.1f));
-                    dt = GetActionTime(action, i);
-                    Trace.Assert(dt > 0);
+                    dt = Math.Max(GetActionTime(action, i), 1e-3f);
                     ActionTimes.Add(dt);
                     time += dt;
                     i++;
@@ -198,6 +200,12 @@ namespace DwarfCorp
                 yield break;
             Vector3 target = Path[0].SourceVoxel.WorldPosition + half + RandomPositionOffsets[0];
             Matrix transform = Agent.Physics.LocalTransform;
+            if ((target - Agent.Physics.Position).Length() > 4.0f)
+            {
+                Agent.SetMessage("Failed to follow path. First voxel too far away.");
+                yield return Act.Status.Fail;
+                yield break;
+            }
             do
             {
                 transform.Translation = target * 0.15f + transform.Translation * 0.85f;
@@ -253,7 +261,7 @@ namespace DwarfCorp
                 CleanupMinecart();
                 yield break;
             }
-            Trace.Assert(t >= 0);
+            //Trace.Assert(t >= 0);
             Trace.Assert(action.SourceVoxel.IsValid);
             int nextID = currentIndex + 1;
             bool hasNextAction = false;

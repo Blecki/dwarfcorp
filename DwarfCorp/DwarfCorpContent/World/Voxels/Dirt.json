@@ -1,0 +1,42 @@
+{
+  "ID": 0,
+  "Name": "Dirt",
+  "Top": "2, 0",
+  "Bottom": "2, 0",
+  "Sides": "2, 0",
+  "Transitions": 1,
+  "HasTransitionTextures": false,
+  "TransitionTiles": null,
+  "ReleasesResource": true,
+  "ResourceToRelease": {
+    "_value": "Dirt"
+  },
+  "StartingHealth": 10.0,
+  "ProbabilityOfRelease": 1.0,
+  "CanRamp": true,
+  "RampSize": 0.5,
+  "IsBuildable": true,
+  "ParticleType": "dirt_particle",
+  "EmitsLight": false,
+  "MinSpawnHeight": -999.0,
+  "MaxSpawnHeight": 999.0,
+  "SpawnProbability": 1.0,
+  "Rarity": 1.0,
+  "SpawnVeins": false,
+  "SpawnClusters": false,
+  "ClusterSize": 0.0,
+  "VeinLength": 0.0,
+  "IsSoil": true,
+  "IsSurface": false,
+  "IsInvincible": false,
+  "Tint": "255, 255, 255, 255",
+  "SpawnOnSurface": false,
+  "IsTransparent": false,
+  "ExplosionSoundResource": "Audio\\oscar\\sfx_env_voxel_dirt_destroy",
+  "HitSoundResources": [
+    "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_1",
+    "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_2",
+    "Audio\\oscar\\sfx_ic_dwarf_pick_dirt_3"
+  ],
+  "GrassSpreadsHere": true
+}

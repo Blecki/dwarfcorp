@@ -59,7 +59,7 @@ namespace DwarfCorp.GameStates
         {
             LogoWidget = GuiRoot.RootItem.AddChild(new Gui.Widget
             {
-                MinimumSize = new Point(600, 348),
+                MinimumSize = new Point(600 / GameSettings.Default.GuiScale, 348 / GameSettings.Default.GuiScale),
                 Transparent = true,
                 AutoLayout = Gui.AutoLayout.FloatTop
             });
@@ -91,7 +91,7 @@ namespace DwarfCorp.GameStates
                 Tooltip = Tooltip,
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 TextVerticalAlign = Gui.VerticalAlign.Center,
-                Font = "font18-outline",
+                Font = GameSettings.Default.GuiScale == 1 ? "font18-outline" : "font10",
                 TextColor = Color.White.ToVector4(),
                 HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4()
         });
@@ -170,7 +170,7 @@ namespace DwarfCorp.GameStates
 
             MakeMenuItem(frame, "Yarn test", "", (sender, args) =>
             {
-                StateManager.PushState(new YarnState("test.conv", "Start", new Yarn.MemoryVariableStore()));
+                StateManager.PushState(new YarnState(null, "test.conv", "Start", new Yarn.MemoryVariableStore()));
             });
 #endif
 
@@ -185,7 +185,7 @@ namespace DwarfCorp.GameStates
                 TextColor = new Vector4(1, 1, 1, 0.5f),
                 AutoLayout = AutoLayout.FloatBottomRight,
 #if DEMO
-                Text = "DwarfCorp " + Program.Version + " (DEMO)"
+                Text = "DwarfCorp " + Program.Version + " (DEMO)  "
 #else
                 Text = "DwarfCorp " + Program.Version + " (" + Program.Commit + ")"
 #endif
@@ -235,7 +235,7 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-            GuiRoot.Update(gameTime.ToGameTime());
+            GuiRoot.Update(gameTime.ToRealTime());
             SoundManager.Update(gameTime, null, null);
             base.Update(gameTime);
         }

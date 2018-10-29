@@ -122,7 +122,7 @@ namespace DwarfCorp.Gui
 
         public Point MeasureString(String S, float maxWidth)
         {
-            return MeasureString(WordWrapString(S, 1.0f, maxWidth));
+            return MeasureString(WordWrapString(S, 1.0f, maxWidth, false));
         }
 
         public Point MeasureString(String S)
@@ -146,7 +146,7 @@ namespace DwarfCorp.Gui
             return size;
         }
 
-        public String WordWrapString(String S, float GlyphWidthScale, float Width)
+        public String WordWrapString(String S, float GlyphWidthScale, float Width, bool wrapWithinWords)
         {
             var r = new StringBuilder();
             var w = new StringBuilder();
@@ -154,11 +154,56 @@ namespace DwarfCorp.Gui
             float lineLength = 0;
             float wordLength = 0;
 
-            foreach(var c in S)
+            Func<bool> wrapWord = () =>
+            {
+                if (lineLength + wordLength > Width)
+                {
+                    if (!wrapWithinWords && r.Length > 0)
+                    {
+                        r.Append("\n");
+                        r.Append(w);
+                    }
+                    else if (wrapWithinWords)
+                    {
+                        if (r.Length > 0)
+                        {
+                            r.Append("\n");
+                            lineLength = 0;
+                        }
+
+                        wordLength = 0;
+                        foreach (var letter in w.ToString())
+                        {
+                            lineLength += (HasGlyph(letter - ' ') ? GlyphSize(letter - ' ').X : 0) * GlyphWidthScale;
+                            if (lineLength > Width)
+                            {
+                                r.Append("\n-");
+                                r.Append(letter);
+                                lineLength = 0;
+                            }
+                            else
+                            {
+                                r.Append(letter);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        r.Append(w);
+                    }
+                }
+                else
+                {
+                    r.Append(w);
+                }
+                return true;
+            };
+
+            foreach (var c in S)
             {
                 if (c == '\r' || c == '\t') continue;
 
-                if (c == ' ' || c == '\n')
+                if (c == ' ' || c == '\n' || c == '-')
                 {
                     if (w.Length == 0)
                     {
@@ -169,8 +214,11 @@ namespace DwarfCorp.Gui
                         if (lineLength + wordLength > Width)
                         {
                             if (r.Length > 0)
+                            {
                                 r.Append("\n");
-                            r.Append(w);
+                                lineLength = 0;
+                            }
+                            wrapWord();
                             lineLength = wordLength + Glyphs[0].Width * GlyphWidthScale;
                             wordLength = 0;
                             w.Clear();
@@ -197,9 +245,7 @@ namespace DwarfCorp.Gui
 
             if (w.Length != 0)
             {
-                if (lineLength + wordLength > Width && r.Length > 0)
-                    r.Append("\n");
-                r.Append(w);
+                wrapWord();
             }
 
             return r.ToString();

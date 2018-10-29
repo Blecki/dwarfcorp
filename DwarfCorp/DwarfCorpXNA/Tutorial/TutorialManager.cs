@@ -16,6 +16,8 @@ namespace DwarfCorp.Tutorial
             public String GuiHilite;
             public bool Popup = false;
             public String Name;
+            public TileReference Icon;
+            public String NextTutorial;
         }
 
         private Dictionary<String, TutorialEntry> Entries;
@@ -24,6 +26,7 @@ namespace DwarfCorp.Tutorial
         private Widget ExistingTutorial = null;
         private bool TutorialVisible = false;
         private Widget HighlightWidget = null;
+        public bool TutorialHidden = false;
 
         public TutorialManager()
         {
@@ -37,10 +40,22 @@ namespace DwarfCorp.Tutorial
                     Shown = false,
                     Title = entry.Title,
                     GuiHilite = entry.GuiHilite,
-                    Popup = entry.Popup
+                    Popup = entry.Popup,
+                    NextTutorial = entry.NextTutorial
                 });
         }
 
+        public void AddTutorial(string name, string text, TileReference icon = null)
+        {
+            Entries[name] = new TutorialEntry()
+            {
+                Text = text,
+                Title = name,
+                Shown = false,
+                Popup = false,
+                Icon = icon
+            };
+        }
 
         public Dictionary<String, TutorialEntry> EnumerateTutorials()
         {
@@ -59,9 +74,28 @@ namespace DwarfCorp.Tutorial
                 PendingTutorial = Name;
         }
 
+        public void HideTutorial()
+        {
+            TutorialHidden = true;
+            PendingTutorial = null;
+            if (TutorialVisible && ExistingTutorial != null)
+            {
+                ExistingTutorial.Hidden = true;
+            }
+        }
+
+        public void ShowTutorial()
+        {
+            TutorialHidden = false;
+            if (TutorialVisible && ExistingTutorial != null)
+            {
+                ExistingTutorial.Hidden = false;
+            }
+        }
+
         public void Update(Gui.Root Gui)
         {
-            if (TutorialEnabled && !String.IsNullOrEmpty(PendingTutorial) && Gui != null &&!Entries[PendingTutorial].Shown)
+            if (!TutorialHidden && TutorialEnabled && !String.IsNullOrEmpty(PendingTutorial) && Gui != null &&!Entries[PendingTutorial].Shown)
             {
                 if (TutorialVisible && ExistingTutorial != null)
                 {
@@ -82,6 +116,10 @@ namespace DwarfCorp.Tutorial
                         TutorialEnabled = !(sender as Gui.Widgets.TutorialPopup).DisableChecked;
                         TutorialVisible = false;
                         Gui.ClearSpecials();
+                        if (!String.IsNullOrEmpty(entry.NextTutorial))
+                        {
+                            ShowTutorial(entry.NextTutorial);
+                        }
                     },
                     OnLayout = (sender) =>
                     {

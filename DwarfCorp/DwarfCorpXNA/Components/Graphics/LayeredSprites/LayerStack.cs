@@ -103,6 +103,11 @@ namespace DwarfCorp.LayeredSprites
 
         public void Update(GraphicsDevice Device)
         {
+            if (Composite == null || Composite.IsDisposed || Composite.GraphicsDevice == null || Composite.GraphicsDevice.IsDisposed)
+            {
+                CompositeValid = false;
+            }
+
             if (!CompositeValid)
             {
                 CompositeValid = true;

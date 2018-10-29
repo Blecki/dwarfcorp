@@ -18,8 +18,8 @@ namespace DwarfCorp
 
         }
 
-        public PacingCreatureAI(ComponentManager Manager, string name, EnemySensor sensors, PlanService planService) :
-            base(Manager, name, sensors, planService)
+        public PacingCreatureAI(ComponentManager Manager, string name, EnemySensor sensors) :
+            base(Manager, name, sensors)
         {
 
         }

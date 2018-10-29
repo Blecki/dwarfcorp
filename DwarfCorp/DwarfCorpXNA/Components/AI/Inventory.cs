@@ -72,12 +72,14 @@ namespace DwarfCorp
 
         public Inventory()
         {
+            UpdateRate = 10;
             DropRate = 1.0f;
         }
 
         public Inventory(ComponentManager Manager, string name, Vector3 BoundingBoxExtents, Vector3 LocalBoundingBoxOffset) :
             base(Manager, name, Matrix.Identity, BoundingBoxExtents, LocalBoundingBoxOffset)
         {
+            UpdateRate = 10;
             DropRate = 1.0f;
             Resources = new List<InventoryItem>();
         }
@@ -189,8 +191,9 @@ namespace DwarfCorp
             }
 
             item.SetFlag(Flag.Active, false);
-            TossMotion toss = new TossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f),
-                1.0f, item.GlobalTransform, Position);
+            BodyTossMotion toss = new BodyTossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f),
+                1.0f, item.GlobalTransform, Parent as Body);
+            item.SetUpdateRateRecursive(1);
             item.AnimationQueue.Add(toss);
             toss.OnComplete += () => item.GetRoot().Delete();
 
@@ -206,6 +209,7 @@ namespace DwarfCorp
                 foreach (var body in things)
                 {
                     TossMotion toss = new TossMotion(1.0f, 2.5f, body.LocalTransform, pos);
+                    body.SetUpdateRateRecursive(1);
                     body.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                     body.AnimationQueue.Add(toss);
                     toss.OnComplete += body.Delete;
@@ -217,6 +221,8 @@ namespace DwarfCorp
 
         public List<Body> RemoveAndCreate(ResourceAmount resources, RestockType type)
         {
+            var parentBody = GetRoot() as Body;
+            var pos = parentBody == null ? GlobalTransform.Translation : parentBody.Position;
             List<Body> toReturn = new List<Body>();
 
             if(!Remove(resources.CloneResource(), type))
@@ -227,7 +233,7 @@ namespace DwarfCorp
             for(int i = 0; i < resources.NumResources; i++)
             {
                 Body newEntity = EntityFactory.CreateEntity<Body>(resources.ResourceType + " Resource",
-                    GlobalTransform.Translation + MathFunctions.RandVector3Cube()*0.5f);
+                    pos + MathFunctions.RandVector3Cube()*0.5f);
                 toReturn.Add(newEntity);
             }
 
@@ -272,9 +278,11 @@ namespace DwarfCorp
                 }
                 resourceCounts[resource.Resource]++;
             }
-
+            var parentBody = GetRoot() as Body;
+            var myBox = GetBoundingBox();
+            var box = parentBody == null ? GetBoundingBox() : new BoundingBox(myBox.Min - myBox.Center() + parentBody.Position, myBox.Max - myBox.Center() + parentBody.Position);
             var aggregatedResources = resourceCounts.Select(c => new ResourceAmount(c.Key, c.Value));
-            var piles = EntityFactory.CreateResourcePiles(aggregatedResources, GetBoundingBox()).ToList();
+            var piles = EntityFactory.CreateResourcePiles(aggregatedResources, box).ToList();
 
             if (Attacker != null && !Attacker.IsDead)
                 foreach (var item in piles)
