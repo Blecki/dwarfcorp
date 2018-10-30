@@ -89,6 +89,7 @@ namespace DwarfCorp
 
         private void LoadThreaded()
         {
+            DwarfGame.ExitGame = false;
             // Ensure we're using the invariant culture.
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;

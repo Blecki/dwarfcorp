@@ -166,6 +166,7 @@ namespace DwarfCorp
                     }
                     catch (Exception exception)
                     {
+                        Console.Out.WriteLine(exception.ToString());
                         VertexBuffer = null;
                     }
                 }
@@ -180,6 +181,7 @@ namespace DwarfCorp
                     }
                     catch (Exception exception)
                     {
+                        Console.Out.WriteLine(exception.ToString());
                         IndexBuffer = null;
                     }
                 }

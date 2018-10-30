@@ -171,6 +171,7 @@ namespace DwarfCorp
 
         public void RebuildVoxelsThread()
         {
+            Console.Out.WriteLine("Starting chunk regeneration thread.");
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
@@ -180,7 +181,14 @@ namespace DwarfCorp
             {
                 while (!DwarfGame.ExitGame && !ExitThreads)
                 {
-                    RebuildEvent.WaitOne();
+                    try
+                    {
+                        RebuildEvent.WaitOne();
+                    }
+                    catch (ThreadAbortException exception)
+                    {
+                        continue;
+                    }
                     VoxelChunk chunk = null;
                     do
                     {
@@ -198,10 +206,12 @@ namespace DwarfCorp
 #if !DEBUG
             catch (Exception exception)
             {
+                Console.Out.WriteLine("Chunk regeneration thread exited due to an exception.");
                 ProgramData.WriteExceptionLog(exception);
                 throw;
             }
-#endif           
+#endif       
+            Console.Out.WriteLine(String.Format("Chunk regeneration thread exited cleanly Exit Game: {0} Exit Thread: {1}.", DwarfGame.ExitGame, ExitThreads));
         }
 
         private readonly ChunkData chunkData;
@@ -312,7 +322,7 @@ namespace DwarfCorp
 
         public void UpdateChunks()
         {
-            while(true)
+            while(!ExitThreads && !DwarfGame.ExitGame)
             {
                 if (!DwarfTime.LastTime.IsPaused)
                 {
@@ -364,9 +374,10 @@ namespace DwarfCorp
         {
             PauseThreads = true;
             ExitThreads = true;
-            RebuildThread.Abort();
+            RebuildEvent.Set();
+            RebuildThread.Join();
             WaterUpdateThread.Join();
-            ChunkUpdateThread.Abort();
+            ChunkUpdateThread.Join();
             foreach (var item in ChunkData.ChunkMap)
             {
                 item.Destroy();

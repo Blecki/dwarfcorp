@@ -63,20 +63,22 @@ namespace DwarfCorp
         {
             private Gui.Widgets.DwarfConsole ConsoleLogOutput = null;
             private System.Text.StringBuilder PreConsoleLogQueue = new System.Text.StringBuilder();
-
+            private TextWriter _mainOut;
             public void SetConsole(Gui.Widgets.DwarfConsole Console)
             {
                 this.ConsoleLogOutput = Console;
                 Console.AddMessage(PreConsoleLogQueue.ToString());
             }
 
-            public LogWriter(FileStream Output) : base(Output)
+            public LogWriter(TextWriter mainOut, FileStream Output) : base(Output)
             {
+                _mainOut = mainOut;
                 AutoFlush = true;
             }
 
             public override void Write(char value)
             {
+                _mainOut.Write(value);
                 if (ConsoleLogOutput != null)
                     ConsoleLogOutput.Append(value);
                 else
@@ -99,6 +101,7 @@ namespace DwarfCorp
 
             public override void Write(char[] buffer, int index, int count)
             {
+                _mainOut.Write(buffer, index, count);
                 if (ConsoleLogOutput != null)
                     for (var x = index; x < index + count; ++x)
                         ConsoleLogOutput.Append(buffer[x]);
@@ -378,6 +381,7 @@ namespace DwarfCorp
                 return GameSettings.Default.SaveLocation + Path.DirectorySeparatorChar + "Worlds";
         }
 
+     
         public static void InitializeLogger()
         {
 #if DEBUG
@@ -404,7 +408,7 @@ namespace DwarfCorp
                     System.IO.File.WriteAllText(path, string.Empty);
                 }
                 FileStream writerOutput = new FileStream(path, FileMode.Append, FileAccess.Write);
-                _logwriter = new LogWriter(writerOutput);
+                _logwriter = new LogWriter(Console.Out, writerOutput);
                 _initialOut = Console.Out;
                 _initialError = Console.Error;
                 Console.SetOut(_logwriter);
