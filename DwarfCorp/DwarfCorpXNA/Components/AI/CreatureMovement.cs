@@ -581,8 +581,6 @@ namespace DwarfCorp
                     Diff = new Vector3(1, 0, 1),
                     MoveType = MoveType.Fall
                 });
-
-                yield break; // If we are falling and can't fly, all we can do is.. fall..
             }
 
             // If the creature can climb walls and is not blocked by a voxl above.
