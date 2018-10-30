@@ -417,7 +417,11 @@ namespace DwarfCorp.Gui.Widgets
                                 OnClick = (sender, args) =>
                                 {
                                     foreach(var employee in Master.Faction.Minions)
+                                    {
+                                        employee.Status.Boredom.SetValue(employee.Status.Boredom.MinValue);
+                                        employee.AddMoney(100);
                                         employee.AssignTask(new Scripting.GambleTask() { Priority = Task.PriorityType.High });
+                                    }
                                 }
                             },
                             new HorizontalMenuTray.MenuItem

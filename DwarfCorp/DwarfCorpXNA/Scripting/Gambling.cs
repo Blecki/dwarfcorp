@@ -183,6 +183,14 @@ namespace DwarfCorp.Scripting
         public void Update(DwarfTime time)
         {
             Participants.RemoveAll(r => r == null || r.IsDead || r.Physics == null || r.AI == null || r.IsAsleep || !r.Active);
+            if (Participants.Count == 0)
+            {
+                if (PotFixture != null)
+                {
+                    PotFixture.Delete();
+                    PotFixture = null;
+                }
+            }
             PushParticipants();
             switch (State)
             {

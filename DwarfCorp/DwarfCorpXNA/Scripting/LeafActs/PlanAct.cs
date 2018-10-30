@@ -312,11 +312,29 @@ namespace DwarfCorp
                         }
                         else if (response.Request.ID != lastId)
                         {
+                            bool obeysGoal = response.Success && (GetGoal().IsInGoalRegion(response.Path.Last().DestinationVoxel));
                             if (Debugger.Switches.DrawPaths)
                             {
-                                Creature.World.MakeWorldPopup(String.Format("Old Path Dropped", response.Result), Creature.Physics, -10, 1);
+                                if (obeysGoal)
+                                {
+                                    Creature.World.MakeWorldPopup(String.Format("Using Old Path", response.Result), Creature.Physics, -10, 1);
+                                }
+                                else
+                                {
+                                    Creature.World.MakeWorldPopup(String.Format("Old Path Dropped", response.Result), Creature.Physics, -10, 1);
+                                }
                             }
-                            continue;
+
+                            if (obeysGoal)
+                            {
+                                Path = response.Path;
+                                WaitingOnResponse = false;
+                                statusResult = Status.Success;
+                            }
+                            else
+                            {
+                                continue;
+                            }
                         }
                         else if (response.Result == AStarPlanner.PlanResultCode.Invalid || response.Result == AStarPlanner.PlanResultCode.NoSolution
                             || response.Result == AStarPlanner.PlanResultCode.Cancelled || response.Result == AStarPlanner.PlanResultCode.Invalid)
