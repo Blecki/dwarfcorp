@@ -118,14 +118,15 @@ namespace DwarfCorp.GameStates
                     })));
             } 
 #endif
+            /*
             MakeMenuItem(frame, 
                 StringLibrary.GetString("new-game"), 
                 StringLibrary.GetString("new-game-tooltip"), 
                 (sender, args) => StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings() {GenerateFromScratch = true})));
-
+            */
             MakeMenuItem(frame, 
-                StringLibrary.GetString("new-game-advanced"), 
-                StringLibrary.GetString("new-game-advanced-tooltip"),
+                StringLibrary.GetString("new-game"), 
+                StringLibrary.GetString("new-game-tooltip"),
 #if !DEMO
                 (sender, args) => StateManager.PushState(new CompanyMakerState(Game, Game.StateManager)));
 #else
