@@ -172,22 +172,30 @@ namespace DwarfCorp
 
         public static void Render(SpriteBatch batch, Camera camera, Viewport viewport)
         {
+
             List<DrawCommand2D> extraDraws = new List<DrawCommand2D>();
             foreach (DrawCommand2D draw in DrawCommands)
             {
-                draw.Render(batch, camera, viewport);
+                try
+                {
+                    draw.Render(batch, camera, viewport);
+                }
+                catch (Exception exception)
+                {
+                    //
+                }
                 if (draw.EndTime > 0 && DwarfTime.LastTime.TotalGameTime.TotalSeconds < draw.EndTime)
                 {
                     extraDraws.Add(draw);
                 }
             }
 
-            while(DrawCommands.Count > 0)
+            while (DrawCommands.Count > 0)
             {
                 DrawCommand2D draw = null;
                 DrawCommands.TryDequeue(out draw);
             }
-            foreach(var draw in extraDraws)
+            foreach (var draw in extraDraws)
             {
                 DrawCommands.Enqueue(draw);
             }
@@ -217,7 +225,7 @@ namespace DwarfCorp
         /// <param Name="backgroundColor">The color of the rectangle.</param>
         public static void FillRect(SpriteBatch batch, Rectangle rect, Color backgroundColor)
         {
-            if (Pixel.IsDisposed)
+            if (Pixel.IsDisposed || Pixel.GraphicsDevice.IsDisposed)
             {
                 CreatePixel();
             }
@@ -232,7 +240,7 @@ namespace DwarfCorp
         /// <param Name="borderColor">The color of the border of the rectangle.</param>
         public static void DrawRect(SpriteBatch batch, Rectangle rect, Color borderColor, float width)
         {
-            if (Pixel.IsDisposed)
+            if (Pixel.IsDisposed || Pixel.GraphicsDevice.IsDisposed)
             {
                 CreatePixel();
             }

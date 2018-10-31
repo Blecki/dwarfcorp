@@ -1079,7 +1079,14 @@ namespace DwarfCorp
             }
             finally
             {
-                DwarfGame.SpriteBatch.End();
+                try
+                {
+                    DwarfGame.SpriteBatch.End();
+                }
+                catch (Exception exception)
+                {
+                    DwarfGame.SpriteBatch = new SpriteBatch(GraphicsDevice);
+                }
             }
 
             if (Debugger.Switches.DrawComposites)
