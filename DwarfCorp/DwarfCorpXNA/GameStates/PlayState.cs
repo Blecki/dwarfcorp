@@ -486,7 +486,6 @@ namespace DwarfCorp.GameStates
             Game.Graphics.GraphicsDevice.SetRenderTarget(null);
             Game.Graphics.GraphicsDevice.Clear(Color.Black);
             EnableScreensaver = !World.ShowingWorld;
-
             if (World.ShowingWorld)
             {
                 /*For regenerating the voxel icon image! Do not delete!*/
@@ -496,7 +495,7 @@ namespace DwarfCorp.GameStates
                 tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
                 Game.Exit();
                  */
-
+                World.ValidateShader();
                 if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
                     MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
 

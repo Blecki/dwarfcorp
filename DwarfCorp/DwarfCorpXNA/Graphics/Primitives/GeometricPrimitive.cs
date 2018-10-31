@@ -22,7 +22,7 @@ namespace DwarfCorp
 
         public float Width { get; set; }
         public float Height { get; set; }
-        public Texture2D Texture { get; set; }
+        public NamedImageFrame Texture { get; set; }
 
         [JsonIgnore]
         public DynamicIndexBuffer IndexBuffer = null;

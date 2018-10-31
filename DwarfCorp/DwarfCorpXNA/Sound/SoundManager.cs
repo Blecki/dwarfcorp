@@ -444,10 +444,13 @@ namespace DwarfCorp
             else
             {
                 effect = EffectLibrary[name];
+
+                if (effect.IsDisposed)
+                {
+                    effect = Content.Load<SoundEffect>(AssetManager.ResolveContentPath(name));
+                    EffectLibrary[name] = effect;
+                }
             }
-
-
-
 
             if (!SoundCounts.ContainsKey(name))
             {

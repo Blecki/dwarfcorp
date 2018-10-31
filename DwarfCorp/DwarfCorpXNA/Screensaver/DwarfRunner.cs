@@ -10,8 +10,8 @@ namespace DwarfCorp
 {
     public class DwarfRunner
     {
-        private ImageFrame Soil;
-        private ImageFrame Grass;
+        private NamedImageFrame Soil;
+        private NamedImageFrame Grass;
         private Texture2D Balloon;
         private Texture2D Dwarf;
         private List<ImageFrame> DwarfFrames;
@@ -22,12 +22,12 @@ namespace DwarfCorp
         private Point TileSize = new Point(64, 64);
         private Random Random = new Random();
         private Point WorldSize = new Point(1, 1);
-        private ImageFrame UpFrame;
-        private ImageFrame DownFrame;
+        private NamedImageFrame UpFrame;
+        private NamedImageFrame DownFrame;
         private class Tile
         {
             public bool Solid = false;
-            public ImageFrame Image = null;
+            public NamedImageFrame Image = null;
         }
 
         private Tile[,] World;
@@ -53,8 +53,8 @@ namespace DwarfCorp
             Balloon = AssetManager.GetContentTexture(ContentPaths.Entities.Balloon.Sprites.balloon);
             Dwarf = AssetManager.GetContentTexture(Datastructures.SelectRandom(sheets));
 
-            Soil = new ImageFrame(tiles, 32, 2, 0);
-            Grass = new ImageFrame(tiles, 32, 3, 0);
+            Soil = new NamedImageFrame(ContentPaths.Terrain.terrain_tiles, 32, 2, 0);
+            Grass = new NamedImageFrame(ContentPaths.Terrain.terrain_tiles, 32, 3, 0);
 
             DwarfFrames = new List<ImageFrame>(new ImageFrame[]
             {
@@ -64,8 +64,8 @@ namespace DwarfCorp
                 new ImageFrame(Dwarf, new Rectangle(96, 80, 32, 40)),
             });
 
-            UpFrame = new ImageFrame(Dwarf, new Rectangle(0, 239, 32, 40));
-            DownFrame = new ImageFrame(Dwarf, new Rectangle(32, 239, 32, 40));
+            UpFrame = new NamedImageFrame(AssetManager.GetContentTexture(Datastructures.SelectRandom(sheets)), new Rectangle(0, 239, 32, 40));
+            DownFrame = new NamedImageFrame(AssetManager.GetContentTexture(Datastructures.SelectRandom(sheets)), new Rectangle(32, 239, 32, 40));
             for (var x = 0; x < WorldSize.X; ++x)
                 World[x, 0] = new Tile
                 {
@@ -174,7 +174,7 @@ namespace DwarfCorp
                 for (var x = 0; x < WorldSize.X; ++x)
                     for (var y = 0; y < WorldSize.Y; ++y)
                         if (World[x, y] != null && World[x, y].Solid)
-                            sprites.Draw(World[x, y].Image.Image,
+                            sprites.Draw(World[x, y].Image.SafeGetImage(),
                                 new Rectangle((int) ((x*TileSize.X) + (HorizontalOffset*TileSize.X)),
                                     graphics.Viewport.Height - ((y + 1)*TileSize.Y), TileSize.X, TileSize.Y),
                                 World[x, y].Image.SourceRect, Color.White);

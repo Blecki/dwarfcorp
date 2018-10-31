@@ -284,7 +284,7 @@ namespace DwarfCorp
             if (TextureCache.ContainsKey(asset))
             {
                 var existing = TextureCache[asset];
-                if (!existing.IsDisposed)
+                if (!existing.IsDisposed && !existing.GraphicsDevice.IsDisposed)
                     return existing;
             }
 
@@ -307,9 +307,16 @@ namespace DwarfCorp
             catch (Exception exception)
             {
                 Console.Error.WriteLine(exception.ToString());
-                var r = Content.Load<Texture2D>(ContentPaths.Error);
-                TextureCache[asset] = r;
-                return r;
+                try
+                {
+                    var r = Content.Load<Texture2D>(ContentPaths.Error);
+                    TextureCache[asset] = r;
+                    return r;
+                }
+                catch (Exception innerException)
+                {
+                    return null;
+                }
             }
         }
 

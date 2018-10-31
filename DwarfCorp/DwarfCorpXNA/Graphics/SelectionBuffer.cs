@@ -64,7 +64,7 @@ namespace DwarfCorp
 
         private SelectionBufferState State = SelectionBufferState.Idle;
 
-        public void ValidateBuffer(GraphicsDevice device)
+        public bool ValidateBuffer(GraphicsDevice device)
         {
             lock (ColorBufferMutex)
             {
@@ -73,11 +73,19 @@ namespace DwarfCorp
                 int width = pp.BackBufferWidth / Scale;
                 int height = pp.BackBufferHeight / Scale;
                 if (Buffer == null || Buffer.Width != width ||
-                    Buffer.Height != height)
+                    Buffer.Height != height || Buffer.IsContentLost || Buffer.IsDisposed)
                 {
-                    Buffer = new RenderTarget2D(device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth16, 0, RenderTargetUsage.PreserveContents);
+                    try
+                    {
+                        Buffer = new RenderTarget2D(device, width, height, false, SurfaceFormat.Color, DepthFormat.Depth16, 0, RenderTargetUsage.PreserveContents);
+                    }
+                    catch (Exception exception)
+                    {
+                        return false;
+                    }
                 }
             }
+            return true;
         }
 
         public void ValidateColorBuffer(GraphicsDevice device)
@@ -92,6 +100,12 @@ namespace DwarfCorp
         {
             lock (ColorBufferMutex)
             {
+                if(!ValidateBuffer(device))
+                {
+                    return false;
+                }
+
+                ValidateColorBuffer(device);
                 switch (State)
                 {
                     case SelectionBufferState.Idle:

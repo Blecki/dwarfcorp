@@ -116,7 +116,7 @@ namespace DwarfCorp
 
         public void RenderBackgroundMesh(GraphicsDevice device, Camera camera, Color fogColor, BoundingBox scale)
         {
-            if (BackgroundMesh == null || BackgroundMesh.IsDisposed || BackgroundIndex == null || BackgroundIndex.IsDisposed)
+            if (BackgroundMesh == null || BackgroundMesh.IsDisposed || BackgroundMesh.GraphicsDevice.IsDisposed || BackgroundIndex == null || BackgroundIndex.IsDisposed || BackgroundIndex.GraphicsDevice.IsDisposed)
             {
                 CreateBackgroundMesh(device, scale);
             }

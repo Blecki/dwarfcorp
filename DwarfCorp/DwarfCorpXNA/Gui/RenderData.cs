@@ -106,6 +106,11 @@ namespace DwarfCorp.Gui
                 Console.Out.WriteLine("Loading {0}", texture.Sheet.Name);
                 // Copy source texture into the atlas
                 var realTexture = texture.RealTexture;
+                if (realTexture == null || realTexture.IsDisposed || realTexture.GraphicsDevice.IsDisposed)
+                {
+                    texture.RealTexture = AssetManager.GetContentTexture(texture.Sheet.Texture);
+                    realTexture = texture.RealTexture;
+                }
                 var textureData = new Color[realTexture.Width * realTexture.Height];
                 realTexture.GetData(textureData);
 

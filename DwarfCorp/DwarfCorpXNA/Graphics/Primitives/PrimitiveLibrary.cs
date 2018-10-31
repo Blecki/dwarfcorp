@@ -43,22 +43,23 @@ namespace DwarfCorp
 
             foreach (var prim in primitives)
             {
-                var spriteSheet = AssetManager.GetContentTexture(prim.Asset);
-
+                var spriteSheet = new NamedImageFrame(prim.Asset);
+                int width = spriteSheet.SafeGetImage().Width;
+                int height = spriteSheet.SafeGetImage().Height;
                 switch (prim.Type)
                 {
                     case PrimitiveType.Box:
                         Primitives[prim.Name] = new OldBoxPrimitive(graphics, prim.BoxSize.X, prim.BoxSize.Y, prim.BoxSize.Z,
-                            new OldBoxPrimitive.BoxTextureCoords(spriteSheet.Width, spriteSheet.Height,
+                            new OldBoxPrimitive.BoxTextureCoords(width, height,
                                 prim.BoxFaceData[0], prim.BoxFaceData[1], prim.BoxFaceData[2], prim.BoxFaceData[3], prim.BoxFaceData[4], prim.BoxFaceData[5])); // WTF
                         break;
                     case PrimitiveType.Cross:
-                        Primitives[prim.Name] = new BatchBillboardPrimitive(graphics, spriteSheet, spriteSheet.Width, spriteSheet.Height,
-                            new Point(0, 0), spriteSheet.Width / 32.0f, spriteSheet.Height / 32.0f, false, treeTransforms, treeTints, treeTints);
+                        Primitives[prim.Name] = new BatchBillboardPrimitive(graphics, spriteSheet, width, height,
+                            new Point(0, 0), width / 32.0f, height / 32.0f, false, treeTransforms, treeTints, treeTints);
                         break;
                     case PrimitiveType.Quad:
-                        Primitives[prim.Name] = new BatchBillboardPrimitive(graphics, spriteSheet, spriteSheet.Width, spriteSheet.Height,
-                            new Point(0, 0), spriteSheet.Width / 32.0f, spriteSheet.Height / 32.0f, false,
+                        Primitives[prim.Name] = new BatchBillboardPrimitive(graphics, spriteSheet, width, height,
+                            new Point(0, 0), width / 32.0f, height / 32.0f, false,
                             new List<Matrix> { treeTransforms[0] },
                             new List<Color> { treeTints[0] },
                             new List<Color> { treeTints[0] });

@@ -113,7 +113,7 @@ namespace DwarfCorp
         {
             for (int i = 0; i < Images.Count; i++)
             {
-                DwarfGame.SpriteBatch.Draw(Images[i].Image, location, Images[i].SourceRect, Tints[i]);
+                DwarfGame.SpriteBatch.Draw(Images[i].SafeGetImage(), location, Images[i].SourceRect, Tints[i]);
             }
         }
     }
@@ -150,6 +150,15 @@ namespace DwarfCorp
     public class NamedImageFrame : ImageFrame
     {
         public string AssetName { get; set; }
+
+        public Texture2D SafeGetImage()
+        {
+            if (Image == null || Image.IsDisposed || Image.GraphicsDevice.IsDisposed)
+            {
+                Image = AssetManager.GetContentTexture(AssetName);
+            }
+            return Image;
+        }
 
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)

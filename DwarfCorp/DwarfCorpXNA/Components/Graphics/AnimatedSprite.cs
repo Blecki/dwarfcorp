@@ -146,7 +146,9 @@ namespace DwarfCorp
                 Color origTint = effect.VertexColorTint;
                 effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
                 effect.World = GetWorldMatrix(camera);
-                effect.MainTexture = AnimPlayer.GetTexture();
+                var tex = AnimPlayer.GetTexture();
+                if (tex != null && !tex.IsDisposed && !tex.GraphicsDevice.IsDisposed)
+                    effect.MainTexture = AnimPlayer.GetTexture();
                 ApplyTintingToEffect(effect);
 
                 if (DrawSilhouette)

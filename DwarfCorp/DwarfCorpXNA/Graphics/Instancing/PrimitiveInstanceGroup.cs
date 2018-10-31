@@ -50,7 +50,7 @@ namespace DwarfCorp
         {
             if (InstanceCount == 0) return;
 
-            if (InstanceBuffer == null)
+            if (InstanceBuffer == null || InstanceBuffer.IsDisposed || InstanceBuffer.IsContentLost || InstanceBuffer.GraphicsDevice.IsDisposed)
                 InstanceBuffer = new DynamicVertexBuffer(Device, InstancedVertex.VertexDeclaration, InstanceQueueSize, BufferUsage.None);
 
             Effect.EnableWind = RenderData.EnableWind;
@@ -73,7 +73,7 @@ namespace DwarfCorp
             BlendState blendState = Device.BlendState;
             Device.BlendState = Mode == InstanceRenderMode.Normal ? BlendState.NonPremultiplied : BlendState.Opaque;
 
-            Effect.MainTexture = RenderData.Model.Texture;
+            Effect.MainTexture = RenderData.Model.Texture.SafeGetImage();
             Effect.LightRamp = Color.White;
 
             InstanceBuffer.SetData(Instances, 0, InstanceCount, SetDataOptions.Discard);

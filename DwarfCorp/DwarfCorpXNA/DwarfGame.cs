@@ -473,9 +473,11 @@ namespace DwarfCorp
             //paletteTexture.SaveAsPng(System.IO.File.OpenWrite("palette.png"), paletteTexture.Width, paletteTexture.Height);
 
             // Prepare GemGui
-            GumInputMapper = new Gui.Input.GumInputMapper(Window.Handle);
+            if (GumInputMapper == null)
+            {
+                GumInputMapper = new Gui.Input.GumInputMapper(Window.Handle);
                 GumInput = new Gui.Input.Input(GumInputMapper);
-
+            }
                 // Register all bindable actions with the input system.
                 //GumInput.AddAction("TEST", Gui.Input.KeyBindingType.Pressed);
 

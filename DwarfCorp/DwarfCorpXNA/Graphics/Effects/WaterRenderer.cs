@@ -285,68 +285,76 @@ namespace DwarfCorp
             Camera camera,
             ChunkManager chunks)
         {
-            ValidateBuffers();
-            if (DrawReflections)
+            try
             {
-                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Water];
-            }
-            else
-            {
-                effect.CurrentTechnique = effect.Techniques[Shader.Technique.WaterTextured];
-            }
-
-            BlendState origState = device.BlendState;
-            DepthStencilState origDepthState = device.DepthStencilState;
-            device.DepthStencilState = DepthStencilState.Default;
-
-            device.BlendState = BlendState.NonPremultiplied;
-           
-
-            Matrix worldMatrix = Matrix.Identity;
-            effect.World = worldMatrix;
-            effect.View = viewMatrix;
-            effect.CameraPosition = camera.Position;
-            if (DrawReflections)
-            {
-                effect.ReflectionView = reflectionViewMatrix;
-            }
-
-            effect.Projection = projectionMatrix;
-
-            if (DrawReflections)
-                effect.WaterReflectionMap = ReflectionMap;
-
-            effect.WaterShoreGradient = ShoreMap;
-            effect.Time = time;
-            effect.WindDirection = windDirection;
-            effect.CameraPosition = camera.Position;
-            
-
-            foreach (KeyValuePair<LiquidType, LiquidAsset> asset in LiquidAssets)
-            {
-                
-                effect.WaveLength = asset.Value.WaveLength;
-                effect.WaveHeight = asset.Value.WaveHeight;
+                ValidateBuffers();
                 if (DrawReflections)
                 {
-                    effect.WaterBumpMap = asset.Value.BumpTexture;
-                    effect.WaterReflectance = asset.Value.Reflection;
+                    effect.CurrentTechnique = effect.Techniques[Shader.Technique.Water];
                 }
-                effect.MainTexture = asset.Value.BaseTexture;
-                effect.WaterOpacity = asset.Value.Opactiy;
-                effect.MinWaterOpacity = asset.Value.MinOpacity; 
-                effect.RippleColor = new Color(asset.Value.RippleColor);
-
-
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                else
                 {
-                    pass.Apply();
-                    foreach (var chunk in chunks.World.ChunkRenderer.RenderList)
-                        chunk.Liquids[asset.Key].Render(device);
+                    effect.CurrentTechnique = effect.Techniques[Shader.Technique.WaterTextured];
                 }
+
+                BlendState origState = device.BlendState;
+                DepthStencilState origDepthState = device.DepthStencilState;
+                device.DepthStencilState = DepthStencilState.Default;
+
+                device.BlendState = BlendState.NonPremultiplied;
+
+
+                Matrix worldMatrix = Matrix.Identity;
+                effect.World = worldMatrix;
+                effect.View = viewMatrix;
+                effect.CameraPosition = camera.Position;
+                if (DrawReflections)
+                {
+                    effect.ReflectionView = reflectionViewMatrix;
+                }
+
+                effect.Projection = projectionMatrix;
+
+                if (DrawReflections)
+                    effect.WaterReflectionMap = ReflectionMap;
+
+                effect.WaterShoreGradient = ShoreMap;
+                effect.Time = time;
+                effect.WindDirection = windDirection;
+                effect.CameraPosition = camera.Position;
+
+
+                foreach (KeyValuePair<LiquidType, LiquidAsset> asset in LiquidAssets)
+                {
+
+                    effect.WaveLength = asset.Value.WaveLength;
+                    effect.WaveHeight = asset.Value.WaveHeight;
+                    if (DrawReflections)
+                    {
+                        effect.WaterBumpMap = asset.Value.BumpTexture;
+                        effect.WaterReflectance = asset.Value.Reflection;
+                    }
+                    effect.MainTexture = asset.Value.BaseTexture;
+                    effect.WaterOpacity = asset.Value.Opactiy;
+                    effect.MinWaterOpacity = asset.Value.MinOpacity;
+                    effect.RippleColor = new Color(asset.Value.RippleColor);
+
+
+                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        foreach (var chunk in chunks.World.ChunkRenderer.RenderList)
+                            chunk.Liquids[asset.Key].Render(device);
+                    }
+                }
+                device.BlendState = origState;
+                device.DepthStencilState = origDepthState;
             }
-            device.BlendState = origState;
-            device.DepthStencilState = origDepthState;
+            catch (Exception exception)
+            {
+                Console.Out.WriteLine(exception);
+                return;
+            }
         }
 
         public void Dispose()

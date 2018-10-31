@@ -242,6 +242,10 @@ namespace DwarfCorp.GameStates
 
         public override void Render(DwarfTime gameTime)
         {
+            if (LogoTexture.IsDisposed)
+            {
+                LogoTexture = AssetManager.GetContentTexture("newgui/gamelogo");
+            }
             GuiRoot.DrawMesh(
                         Gui.Mesh.Quad()
                         .Scale(LogoWidget.Rect.Width, LogoWidget.Rect.Height)
