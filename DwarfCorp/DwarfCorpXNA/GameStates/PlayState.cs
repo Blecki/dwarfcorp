@@ -959,9 +959,9 @@ namespace DwarfCorp.GameStates
                                 {
                                     StateManager.PushState(new FactionViewState(GameState.Game, GameState.Game.StateManager, World));
                                 },
-                                Text = "Diplo.",
+                                Text =  StringLibrary.GetString("diplomacy-label"),
                                 TextVerticalAlign = VerticalAlign.Below,
-                                Tooltip = "View diplomacy with other factions."
+                                Tooltip = StringLibrary.GetString("diplomacy-tooltip")
                             },
                             EconomyIcon,
                                                                    

@@ -110,12 +110,12 @@
 	{
 		"Name": "level up",
 		"Title": "Promoting Dwarves",
-		"Text": "One of your employees has gained enough experience points (XP) to get a promotion! Employees earn XP from working, digging, fighting and training.  Promoting employees makes them work harder, but they also demand higher wages. Go to the economy menu (by pushing the economy button on the bottom right of the screen), select an employee, and promote them. If you choose not to promote your employees, they may become unhappy."
+		"Text": "One of your employees has gained enough experience points (XP) to get a promotion! Employees earn XP from working, digging, fighting and training.  Promoting employees makes them work harder, but they also demand higher wages. Go to the colony menu (by pushing the economy button on the bottom right of the screen), select an employee, and promote them. If you choose not to promote your employees, they may become unhappy."
 	},
 	{
 		"Name": "happiness",
 		"Title": "Happy Thoughts",
-		"Text": "Dwarves get happy or unhappy thoughts depending on the circumstances. You can view their unhappy or happy thoughts by clicking on the economy menu at the bottom right of the screen. Unhappy employees may refuse to work, or might even quit. Make your employees happy by ensuring they are paid fairly, have access to food and ale, and beds to sleep in."
+		"Text": "Dwarves get happy or unhappy thoughts depending on the circumstances. You can view their unhappy or happy thoughts by clicking on the colony menu at the bottom right of the screen. Unhappy employees may refuse to work, or might even quit. Make your employees happy by ensuring they are paid fairly, have access to food and ale, and beds to sleep in."
 	},
 	{
 		"Name": "money",
@@ -242,8 +242,8 @@
 	},
 	{
 		"Name": "economy",
-		"Title": "Economy",
-		"Text": "This is the economy screen, where you can view your employees and finances. You can also hire new employees, fire employees, and manage employee tasks."
+		"Title": "Colony Screen",
+		"Text": "This is the colony screen, where you can view your employees and finances. You can also hire new employees, fire employees, and manage employee tasks."
 	},
 	{
 		"Name": "paint rail",

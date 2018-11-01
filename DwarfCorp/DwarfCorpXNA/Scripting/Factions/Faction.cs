@@ -331,6 +331,16 @@ namespace DwarfCorp
             return Stockpiles.Sum(pile => pile.Resources.MaxResources);
         }
 
+        public decimal ComputeRemainingTreasurySpace()
+        {
+            return Treasurys.Sum(treasury => treasury.Voxels.Count * Treasury.MoneyPerPile - treasury.Money);
+        }
+
+        public decimal ComputeTotalTreasurySpace()
+        {
+            return Stockpiles.Sum(pile => pile.Voxels.Count * Treasury.MoneyPerPile);
+        }
+
         public bool AddResources(ResourceAmount resources)
         {
             ResourceAmount amount = new ResourceAmount(resources.ResourceType, resources.NumResources);
