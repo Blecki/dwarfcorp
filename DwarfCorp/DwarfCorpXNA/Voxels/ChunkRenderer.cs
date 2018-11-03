@@ -49,8 +49,7 @@ namespace DwarfCorp
     {
         public List<VoxelChunk> RenderList = new List<VoxelChunk>();
         private readonly Timer visibilityChunksTimer = new Timer(0.03f, false, Timer.TimerMode.Real);
-        
-       
+
         public ChunkData ChunkData;
 
         public ChunkRenderer(ChunkData Data)
@@ -165,6 +164,6 @@ namespace DwarfCorp
                 GetChunksIntersecting(camera.GetDrawFrustum(), visibleSet);
                 RenderList = visibleSet.ToList();
             }
-            }
+        }
     }
 }

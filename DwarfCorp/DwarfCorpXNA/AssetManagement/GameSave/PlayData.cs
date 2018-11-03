@@ -63,7 +63,7 @@ namespace DwarfCorp
         public Embarkment InitialEmbark;
         public Yarn.MemoryVariableStore ConversationMemory;
         public List<GameMaster.ApplicantArrival> NewArrivals;
-
+        public DwarfCorp.Gui.Widgets.StatsTracker Stats;
         public static PlayData CreateFromWorld(WorldManager World)
         {
             return new PlayData()
@@ -79,7 +79,8 @@ namespace DwarfCorp
                 Tasks = World.Master.TaskManager,
                 InitialEmbark = World.InitialEmbark,
                 ConversationMemory = World.ConversationMemory,
-                NewArrivals = World.Master.NewArrivals
+                NewArrivals = World.Master.NewArrivals,
+                Stats = World.Stats
             };
         }
     }

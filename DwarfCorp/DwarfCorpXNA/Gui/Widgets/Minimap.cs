@@ -239,6 +239,7 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         World.ChunkManager.NeedsMinimapUpdate = true;
                         RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, RenderWidth, RenderHeight, false, SurfaceFormat.Color, DepthFormat.Depth24);
+                        return;
                     }
 
                     if (!HomeSet)

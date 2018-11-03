@@ -239,6 +239,8 @@ namespace DwarfCorp
 
         public EventLog EventLog = new EventLog();
 
+        public StatsTracker Stats = new StatsTracker();
+
         public void LogEvent(EventLog.LogEntry entry)
         {
             EventLog.AddEntry(entry);
@@ -261,6 +263,10 @@ namespace DwarfCorp
             });
         }
 
+        public void LogStat(String stat, float value)
+        {
+            Stats.AddStat(stat, Time.CurrentDate, value);
+        }
 
         public void MakeAnnouncement(String Message, Action<Gui.Root, QueuedAnnouncement> ClickAction = null, Func<bool> Keep = null, bool logEvent = true, String eventDetails = "")
         {
@@ -510,6 +516,26 @@ namespace DwarfCorp
             return handle.IsValid && handle.LiquidLevel > 0 && handle.Coordinate.Y <= SlicePlane;
         }
 
+        private void TrackStats()
+        {
+            LogStat("Money", (float)(decimal)PlayerFaction.Economy.CurrentMoney);
+
+            var resources = PlayerFaction.ListResourcesInStockpilesPlusMinions();
+            LogStat("Resources", resources.Values.Select(r => r.First.NumResources + r.Second.NumResources).Sum());
+            LogStat("Resource Value", (float)resources.Values.Select(r =>
+            {
+                var value = ResourceLibrary.GetResourceByName(r.First.ResourceType).MoneyValue.Value;
+                return (r.First.NumResources * value) + (r.Second.NumResources * value);
+            }).Sum());
+            LogStat("Employees", PlayerFaction.Minions.Count);
+            LogStat("Employee Pay", (float)PlayerFaction.Minions.Select(m => m.Stats.CurrentLevel.Pay.Value).Sum());
+            LogStat("Furniture",  PlayerFaction.OwnedObjects.Count);
+            LogStat("Zones", PlayerFaction.GetRooms().Count);
+            LogStat("Employee Level", PlayerFaction.Minions.Sum(r => r.Stats.CurrentLevel.Index));
+            LogStat("Employee Happiness", (float)PlayerFaction.Minions.Sum(m => m.Status.Happiness.Percentage) / Math.Max(PlayerFaction.Minions.Count, 1));
+        }
+
+        private int _prevHour = 0;
         /// <summary>
         /// Called every frame
         /// </summary>
@@ -555,6 +581,7 @@ namespace DwarfCorp
             Master.Update(Game, gameTime);
             GoalManager.Update(this);
             Time.Update(gameTime);
+
             if (LastWorldPopup != null)
             {
                 List<uint> removals = new List<uint>();
@@ -655,6 +682,11 @@ namespace DwarfCorp
             }
 #endif
 
+            if (Time.CurrentDate.Hour != _prevHour)
+            {
+                TrackStats();
+            }
+            _prevHour = Time.CurrentDate.Hour;
         }
 
         public bool FastForwardToDay { get; set; }
@@ -879,7 +911,9 @@ namespace DwarfCorp
         public void Render(DwarfTime gameTime)
         {
             if (!ShowingWorld)
+            {
                 return;
+            }
             ValidateShader();
             var frustum = Camera.GetDrawFrustum();
             var renderables = EnumerateIntersectingObjects(frustum,

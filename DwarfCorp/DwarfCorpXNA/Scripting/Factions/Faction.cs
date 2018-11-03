@@ -236,7 +236,10 @@ namespace DwarfCorp
             if (HandleThreatsTimer.HasTriggered)
              HandleThreats();
 
-            OwnedObjects.RemoveAll(obj => obj.IsDead || obj.Parent == null || !obj.Manager.HasComponent(obj.GlobalID));
+            if (World.ComponentManager.NumComponents() > 0)
+            {
+                OwnedObjects.RemoveAll(obj => obj.IsDead || obj.Parent == null || !obj.Manager.HasComponent(obj.GlobalID));
+            }
 
         }
 

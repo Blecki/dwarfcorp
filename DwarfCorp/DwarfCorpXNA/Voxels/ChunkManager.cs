@@ -292,13 +292,22 @@ namespace DwarfCorp
                 ChunkGen.GenerateChunkData(chunk, World, maxHeight);
                 for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
                     chunk.InvalidateSlice(i);
-
             }
             RecalculateBounds();
             SetLoadingMessage("Generating Ores...");
 
             GenerateOres();
             NeedsMinimapUpdate = true;
+
+        }
+
+        public void GenerateAllGeometry()
+        {
+            while (RebuildQueue.Count > 0)
+            {
+                var chunk = RebuildQueue.Dequeue();
+                chunk.Rebuild(GameState.Game.GraphicsDevice);
+            }
         }
 
         private void RecalculateBounds()

@@ -7,6 +7,49 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Gui.Widgets
 {
+    public class StatsTracker
+    {
+        public class Stat
+        {
+            private const int MaxStats = 1024;
+
+            public struct Entry
+            {
+                public DateTime Date;
+                public float Value;
+            }
+            public List<Entry> Values = new List<Entry>();
+            public void Add(DateTime now, float value)
+            {
+                if (Values.Count > 0 && (now - Values.Last().Date) < new TimeSpan(0, 1, 0, 0, 0))
+                {
+                    return;
+                }
+                Values.Add(new Entry()
+                {
+                    Date = now,
+                    Value = value
+                });
+
+                if (Values.Count > MaxStats)
+                {
+                    Values.RemoveAt(0);
+                }
+            }
+        }
+
+        public Dictionary<string, Stat> GameStats = new Dictionary<string, Stat>();
+
+        public void AddStat(string name, DateTime time, float value)
+        {
+            if (!GameStats.ContainsKey(name))
+            {
+                GameStats.Add(name, new Stat());
+            }
+            GameStats[name].Add(time, value);
+        }
+
+    }
     public class FinancePanel : Gui.Widget
     {
         public Faction Faction;
@@ -57,7 +100,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 Font = "font10",
                 Text = "",
-                MinimumSize = new Point(640, 800),
+                MinimumSize = new Point(640, 300),
                 AutoLayout = AutoLayout.DockTop
             });
             
@@ -85,6 +128,26 @@ namespace DwarfCorp.Gui.Widgets
                 AddRow("Average dwarf happiness:", String.Format("{0}%", (int)(float)Faction.Minions.Sum(m => m.Status.Happiness.Percentage) / Math.Max(Faction.Minions.Count, 1)));
                 InfoWidget.Layout();
             };
+            var selector = AddChild(new ComboBox()
+            {
+                Items = Faction.World.Stats.GameStats.Keys.ToList(),
+                AutoLayout = AutoLayout.DockTop
+            }) as ComboBox;
+            var graph = AddChild(new Graph() { AutoLayout = AutoLayout.DockFill,  GraphStyle = Graph.Style.LineChart }) as Graph;
+            graph.Values = Faction.World.Stats.GameStats["Money"].Values.Select(v => v.Value).ToList();
+
+            selector.OnSelectedIndexChanged = (sender) =>
+            {
+                var values = Faction.World.Stats.GameStats[selector.SelectedItem].Values;
+                graph.Values = Faction.World.Stats.GameStats[selector.SelectedItem].Values.Select(v => v.Value).ToList();
+                if (values.Count > 0)
+                {
+                    graph.XLabelMin = "\n" + TextGenerator.AgeToString(Faction.World.Time.CurrentDate - values.First().Date);
+                    graph.XLabelMax = "\nNow";
+                }
+                graph.Invalidate();
+            };
+            selector.OnSelectedIndexChanged.Invoke(selector);
             Layout();
             Root.RegisterForUpdate(this);
         }
