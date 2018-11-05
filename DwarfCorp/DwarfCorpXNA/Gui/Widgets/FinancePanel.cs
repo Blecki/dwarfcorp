@@ -134,6 +134,7 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockTop
             }) as ComboBox;
             var graph = AddChild(new Graph() { AutoLayout = AutoLayout.DockFill,  GraphStyle = Graph.Style.LineChart }) as Graph;
+            graph.SetFont("font10");
             graph.Values = Faction.World.Stats.GameStats["Money"].Values.Select(v => v.Value).ToList();
 
             selector.OnSelectedIndexChanged = (sender) =>

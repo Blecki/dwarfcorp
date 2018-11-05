@@ -27,6 +27,15 @@ namespace DwarfCorp.Gui.Widgets
         public float MaxValueSeen = 0.0f;
         public int GraphWidth { get { return Children[2].Rect.Width; } }
         public Color LineColor = Color.Black;
+
+        public void SetFont(string font)
+        {
+            MinLabel.Font = font;
+            MaxLabel.Font = font;
+            XLabelMinWidget.Font = font;
+            XLabelMaxWidget.Font = font;
+        }
+
         public override void Construct()
         {
             MaxLabel = AddChild(new Widget
@@ -34,7 +43,7 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockBottom,
                 MinimumSize = new Point(0, 30),
                 TextSize = 1,
-                Font = "font10",
+                Font = "monofont",
                 TextHorizontalAlign = HorizontalAlign.Left
             });
 
@@ -43,7 +52,7 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(0, 30),
                 TextSize = 1,
-                Font = "font10",
+                Font = "monofont",
                 TextHorizontalAlign = HorizontalAlign.Left
             });
 
@@ -55,7 +64,7 @@ namespace DwarfCorp.Gui.Widgets
 
             XLabelMinWidget = GraphBox.AddChild(new Widget()
             {
-                Font = "font10",
+                Font = "monofont",
                 TextColor = Color.Black.ToVector4(),
                 AutoLayout = AutoLayout.FloatBottomLeft,
                 MinimumSize = new Point(128, 32),
@@ -66,7 +75,7 @@ namespace DwarfCorp.Gui.Widgets
 
             XLabelMaxWidget = GraphBox.AddChild(new Widget()
             {
-                Font = "font10",
+                Font = "monofont",
                 TextColor = Color.Black.ToVector4(),
                 AutoLayout = AutoLayout.FloatBottomRight,
                 MinimumSize = new Point(128, 32),
