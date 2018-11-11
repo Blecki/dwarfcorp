@@ -824,7 +824,7 @@ namespace DwarfCorp
             effect.CaveView = CaveView;
             GraphicsDevice.BlendState = BlendState.NonPremultiplied;
 
-                ChunkRenderer.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
+            ChunkRenderer.Render(Camera, gameTime, GraphicsDevice, effect, Matrix.Identity);
 
             Camera.ViewMatrix = viewMatrix;
             effect.ClippingEnabled = true;

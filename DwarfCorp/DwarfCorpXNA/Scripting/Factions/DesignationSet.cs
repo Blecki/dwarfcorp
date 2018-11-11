@@ -79,6 +79,8 @@ namespace DwarfCorp
         [JsonProperty] // Todo: Replace with more effecient data structure?
         private List<EntityDesignation> EntityDesignations = new List<EntityDesignation>();
 
+        private object designationLock = new object();
+
         private static bool TypeSet(DesignationType DesType, DesignationType FilterType)
         {
             return (FilterType & DesType) != 0;
@@ -86,139 +88,181 @@ namespace DwarfCorp
 
         public AddDesignationResult AddVoxelDesignation(VoxelHandle Voxel, DesignationType Type, Object Tag, Task Task)
         {
-            var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
-
-            List<VoxelDesignation> list = null;
-            if (VoxelDesignations.ContainsKey(key))
-                list = VoxelDesignations[key];
-            else
+            lock (designationLock)
             {
-                list = new List<VoxelDesignation>();
-                VoxelDesignations.Add(key, list);
-            }
+                var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
 
-            var existingEntry = list.FirstOrDefault(d => d.Type == Type);
-
-            if (existingEntry != null)
-            {
-                existingEntry.Tag = Tag;
-                return AddDesignationResult.AlreadyExisted;
-            }
-            else
-            {
-                list.Add(new VoxelDesignation
+                List<VoxelDesignation> list = null;
+                if (VoxelDesignations.ContainsKey(key))
+                    list = VoxelDesignations[key];
+                else
                 {
-                    Voxel = Voxel,
-                    Type = Type,
-                    Tag = Tag,
-                    Task = Task
-                });
-                Voxel.Invalidate();
-                return AddDesignationResult.Added;
+                    list = new List<VoxelDesignation>();
+                    VoxelDesignations.Add(key, list);
+                }
+
+                var existingEntry = list.FirstOrDefault(d => d.Type == Type);
+
+                if (existingEntry != null)
+                {
+                    existingEntry.Tag = Tag;
+                    return AddDesignationResult.AlreadyExisted;
+                }
+                else
+                {
+                    list.Add(new VoxelDesignation
+                    {
+                        Voxel = Voxel,
+                        Type = Type,
+                        Tag = Tag,
+                        Task = Task
+                    });
+                    Voxel.Invalidate();
+                    return AddDesignationResult.Added;
+                }
             }
         }
 
         public RemoveDesignationResult RemoveVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
         {
-            var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
-            if (!VoxelDesignations.ContainsKey(key)) return RemoveDesignationResult.DidntExist;
-            var list = VoxelDesignations[key];
-            var r = list.RemoveAll(d => TypeSet(d.Type, Type)) == 0 ? RemoveDesignationResult.DidntExist : RemoveDesignationResult.Removed;
-            if (list.Count == 0)
-                VoxelDesignations.Remove(key);
-            Voxel.Invalidate();
-            return r;
+            lock (designationLock)
+            {
+                var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
+                if (!VoxelDesignations.ContainsKey(key)) return RemoveDesignationResult.DidntExist;
+                var list = VoxelDesignations[key];
+                var r = list.RemoveAll(d => TypeSet(d.Type, Type)) == 0 ? RemoveDesignationResult.DidntExist : RemoveDesignationResult.Removed;
+                if (list.Count == 0)
+                    VoxelDesignations.Remove(key);
+                Voxel.Invalidate();
+                return r;
+            }
         }
 
         public VoxelDesignation GetVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
         {
-            var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
-            if (!VoxelDesignations.ContainsKey(key)) return null;
-            var r = VoxelDesignations[key].FirstOrDefault(d => TypeSet(d.Type, Type));
-            if (r != null) return r;
-            return null;
+            lock (designationLock)
+            {
+                var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
+                if (!VoxelDesignations.ContainsKey(key)) return null;
+                var r = VoxelDesignations[key].FirstOrDefault(d => TypeSet(d.Type, Type));
+                if (r != null) return r;
+                return null;
+            }
         }
 
         public bool IsVoxelDesignation(VoxelHandle Voxel, DesignationType Type)
         {
-            var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
-            if (!VoxelDesignations.ContainsKey(key)) return false;
-            return VoxelDesignations[key].Any(d => TypeSet(d.Type, Type));
+            lock (designationLock)
+            {
+                var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
+                if (!VoxelDesignations.ContainsKey(key)) return false;
+                return VoxelDesignations[key].Any(d => TypeSet(d.Type, Type));
+            }
         }
 
         public IEnumerable<VoxelDesignation> EnumerateDesignations(DesignationType Type)
         {
-            foreach (var key in VoxelDesignations)
-                foreach (var d in key.Value)
-                    if (TypeSet(d.Type, Type))
-                        yield return d;
+            lock (designationLock)
+            {
+                foreach (var key in VoxelDesignations)
+                    foreach (var d in key.Value)
+                        if (TypeSet(d.Type, Type))
+                            yield return d;
+            }
         }
 
         public IEnumerable<VoxelDesignation> EnumerateDesignations()
         {
-            foreach (var key in VoxelDesignations)
-                foreach (var d in key.Value)
-                    yield return d;
+            lock (designationLock)
+            {
+                foreach (var key in VoxelDesignations)
+                    foreach (var d in key.Value)
+                        yield return d;
+            }
         }
 
         public IEnumerable<VoxelDesignation> EnumerateDesignations(VoxelHandle Voxel)
         {
-            var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
-            if (VoxelDesignations.ContainsKey(key))
-                foreach (var des in VoxelDesignations[key])
-                    yield return des;
+            lock (designationLock)
+            {
+                var key = VoxelHelpers.GetVoxelQuickCompare(Voxel);
+                if (VoxelDesignations.ContainsKey(key))
+                    foreach (var des in VoxelDesignations[key])
+                        yield return des;
+            }
         }
 
         // Todo: Probably a more effecient way to do this.
         public void CleanupDesignations()
         {
-            EntityDesignations.RemoveAll(b => b.Body.IsDead);
+            lock (designationLock)
+            {
+                EntityDesignations.RemoveAll(b => b.Body.IsDead);
+            }
         }
 
         public AddDesignationResult AddEntityDesignation(Body Entity, DesignationType Type, Object Tag, Task Task)
         {
-            if (EntityDesignations.Count(e => Object.ReferenceEquals(e.Body, Entity) && e.Type == Type) == 0)
+            lock (designationLock)
             {
-                EntityDesignations.Add(new EntityDesignation
+                if (EntityDesignations.Count(e => Object.ReferenceEquals(e.Body, Entity) && e.Type == Type) == 0)
                 {
-                    Body = Entity,
-                    Type = Type,
-                    Tag = Tag,
-                    Task = Task
-                });
+                    EntityDesignations.Add(new EntityDesignation
+                    {
+                        Body = Entity,
+                        Type = Type,
+                        Tag = Tag,
+                        Task = Task
+                    });
 
-                return AddDesignationResult.Added;
+                    return AddDesignationResult.Added;
+                }
+
+                return AddDesignationResult.AlreadyExisted;
             }
-
-            return AddDesignationResult.AlreadyExisted;
         }
 
         public RemoveDesignationResult RemoveEntityDesignation(Body Entity, DesignationType Type)
         {
-            if (EntityDesignations.RemoveAll(e => Object.ReferenceEquals(e.Body, Entity) && TypeSet(e.Type, Type)) != 0)
-                return RemoveDesignationResult.Removed;
+            lock (designationLock)
+            {
+                if (EntityDesignations.RemoveAll(e => Object.ReferenceEquals(e.Body, Entity) && TypeSet(e.Type, Type)) != 0)
+                    return RemoveDesignationResult.Removed;
 
-            return RemoveDesignationResult.DidntExist;
+                return RemoveDesignationResult.DidntExist;
+            }
         }
 
         public bool IsDesignation(Body Entity, DesignationType Type)
         {
-            return EntityDesignations.Count(e => Object.ReferenceEquals(e.Body, Entity) && TypeSet(e.Type, Type)) != 0;
+            lock (designationLock)
+            {
+                return EntityDesignations.Count(e => Object.ReferenceEquals(e.Body, Entity) && TypeSet(e.Type, Type)) != 0;
+            }
         }
 
         public IEnumerable<EntityDesignation> EnumerateEntityDesignations(DesignationType Type)
         {
-            return EntityDesignations.Where(e => TypeSet(e.Type, Type));
+            lock (designationLock)
+            {
+                return EntityDesignations.Where(e => TypeSet(e.Type, Type));
+            }
         }
 
         public IEnumerable<EntityDesignation> EnumerateEntityDesignations(Body Entity)
         {
-            return EntityDesignations.Where(e => Object.ReferenceEquals(Entity, e.Body));
+            lock (designationLock)
+            {
+                return EntityDesignations.Where(e => Object.ReferenceEquals(Entity, e.Body));
+            }
         }
 
         public IEnumerable<EntityDesignation> EnumerateEntityDesignations()
         {
-            return EntityDesignations;
+            lock (designationLock)
+            {
+                return EntityDesignations;
+            }
         }
 
         public EntityDesignation GetEntityDesignation(Body Entity, DesignationType Type)

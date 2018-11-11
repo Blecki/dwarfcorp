@@ -39,6 +39,7 @@ using DwarfCorp.GameStates;
 using LibNoise;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace DwarfCorp
 {
@@ -64,6 +65,8 @@ namespace DwarfCorp
         public Timer HandleThreatsTimer { get; set; }
         public DesignationSet Designations = new DesignationSet();
         public Dictionary<ulong, VoxelHandle> GuardedVoxels = new Dictionary<ulong, VoxelHandle>();
+        public Dictionary<Resource.ResourceTags, int> CachedResourceTagCounts = new Dictionary<Resource.ResourceTags, int>();
+        public Dictionary<string, bool> CachedCanBuildVoxel = new Dictionary<string, bool>();
         public bool ClaimsColony = false;
         public bool IsMotherland = false;
         public float DistanceToCapital = 0.0f;
@@ -319,6 +322,20 @@ namespace DwarfCorp
 
             foreach (Stockpile s in toRemove)
             {
+                foreach (var resource in s.Resources)
+                {
+                    var resourceType = ResourceLibrary.GetResourceByName(resource.ResourceType);
+
+                    foreach (var tag in resourceType.Tags)
+                    {
+                        if (CachedResourceTagCounts.ContainsKey(tag))
+                        {
+                            CachedResourceTagCounts[tag] -= resource.NumResources;
+                            Trace.Assert(CachedResourceTagCounts[tag] >= 0);
+                        }
+                    }
+                }
+                RecomputeCachedVoxelstate();
                 Stockpiles.Remove(s);
                 s.Destroy();
             }
@@ -347,6 +364,7 @@ namespace DwarfCorp
         public bool AddResources(ResourceAmount resources)
         {
             ResourceAmount amount = new ResourceAmount(resources.ResourceType, resources.NumResources);
+            var resource = ResourceLibrary.GetResourceByName(amount.ResourceType);
             foreach (Stockpile stockpile in Stockpiles)
             {
                 int space = stockpile.Resources.MaxResources - stockpile.Resources.CurrentResourceCount;
@@ -355,6 +373,15 @@ namespace DwarfCorp
                 {
                     stockpile.Resources.AddResource(amount);
                     stockpile.HandleBoxes();
+                    foreach(var tag in resource.Tags)
+                    {
+                        if (!CachedResourceTagCounts.ContainsKey(tag))
+                        {
+                            CachedResourceTagCounts[tag] = 0;
+                        }
+                        CachedResourceTagCounts[tag] += amount.NumResources;
+                    }
+                    RecomputeCachedVoxelstate();
                     return true;
                 }
                 else
@@ -362,6 +389,15 @@ namespace DwarfCorp
                     stockpile.Resources.AddResource(amount);
                     amount.NumResources -= space;
                     stockpile.HandleBoxes();
+                    foreach (var tag in resource.Tags)
+                    {
+                        if (!CachedResourceTagCounts.ContainsKey(tag))
+                        {
+                            CachedResourceTagCounts[tag] = 0;
+                        }
+                        CachedResourceTagCounts[tag] += space;
+                    }
+                    RecomputeCachedVoxelstate();
                     if (amount.NumResources == 0)
                     {
                         return true;
@@ -622,6 +658,79 @@ namespace DwarfCorp
             return toReturn;
         }
 
+
+        public void RecomputeCachedVoxelstate()
+        {
+            foreach (var type in VoxelLibrary.GetTypes())
+            {
+                bool nospecialRequried = type.BuildRequirements.Count == 0;
+                CachedCanBuildVoxel[type.Name] = type.IsBuildable && ((nospecialRequried && HasResources(type.ResourceToRelease)) ||
+                    (!nospecialRequried && HasResourcesCached(type.BuildRequirements)));
+            }
+        }
+
+        public void RecomputeCachedResourceState()
+        {
+            CachedResourceTagCounts.Clear();
+            foreach (var resource in ListResources())
+            {
+                var type = ResourceLibrary.GetResourceByName(resource.Key);
+               
+                foreach(var tag in type.Tags)
+                {
+                    Trace.Assert(type.Tags.Count(t => t == tag) == 1);
+                    if (!CachedResourceTagCounts.ContainsKey(tag))
+                    {
+                        CachedResourceTagCounts[tag] = resource.Value.NumResources;
+                    }
+                    else
+                    {
+                        CachedResourceTagCounts[tag] += resource.Value.NumResources;
+                    }
+                }
+            }
+            RecomputeCachedVoxelstate();
+        }
+
+        public bool CanBuildVoxel(VoxelType type)
+        {
+            return CachedCanBuildVoxel[type.Name];
+        }
+
+        public bool HasResourcesCached(IEnumerable<Resource.ResourceTags> resources)
+        {
+            foreach (var resource in resources)
+            {
+                if (!CachedResourceTagCounts.ContainsKey(resource))
+                {
+                    return false;
+                }
+
+                if (CachedResourceTagCounts[resource] == 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public bool HasResourcesCached(IEnumerable<Quantitiy<Resource.ResourceTags>> resources)
+        {
+            foreach(var resource in resources)
+            {
+                if (!CachedResourceTagCounts.ContainsKey(resource.ResourceType))
+                {
+                    return false;
+                }
+
+                if (CachedResourceTagCounts[resource.ResourceType] < resource.NumResources)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public bool HasResources(IEnumerable<Quantitiy<Resource.ResourceTags>> resources, bool allowHeterogenous = false)
         {
             foreach (Quantitiy<Resource.ResourceTags> resource in resources)
@@ -687,10 +796,19 @@ namespace DwarfCorp
             {
                 int count = 0;
                 List<Vector3> positions = new List<Vector3>();
+                var resourceType = ResourceLibrary.GetResourceByName(resource.ResourceType);
                 foreach (Stockpile stock in stockpilesCopy)
                 {
                     int num = stock.Resources.RemoveMaxResources(resource, resource.NumResources - count);
                     stock.HandleBoxes();
+                    foreach(var tag in resourceType.Tags)
+                    {
+                        if (CachedResourceTagCounts.ContainsKey(tag))
+                        {
+                            CachedResourceTagCounts[tag] -= num;
+                            Trace.Assert(CachedResourceTagCounts[tag] >= 0);
+                        }
+                    }
                     if (stock.Boxes.Count > 0)
                     {
                         for (int i = 0; i < num; i++)
@@ -727,7 +845,7 @@ namespace DwarfCorp
                 }
 
             }
-
+            RecomputeCachedVoxelstate();
             return true;
         }
 

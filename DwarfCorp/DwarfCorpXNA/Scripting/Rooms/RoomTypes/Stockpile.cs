@@ -200,7 +200,7 @@ namespace DwarfCorp
             {
                 component.Die();
             }
-
+            Faction.RecomputeCachedResourceState();
             return worked;
         }
 

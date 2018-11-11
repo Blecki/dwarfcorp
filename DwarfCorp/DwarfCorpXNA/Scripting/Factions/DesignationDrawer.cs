@@ -122,7 +122,7 @@ namespace DwarfCorp
 
             DesignationProperties.Add(DesignationType.Put, new DesignationTypeProperties
             {
-                Color = GameSettings.Default.Colors.GetColor("Build", Color.LightGreen),
+                Color = new Color(180, 255, 255, 180),
                 DrawType = DesignationTypeProperties.DrawBoxType.PreviewVoxel
             });
         }

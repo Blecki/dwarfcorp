@@ -1367,6 +1367,7 @@ namespace DwarfCorp.GameStates
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                 var tool = Master.Tools[GameMaster.ToolMode.BuildWall] as BuildWallTool;
+                                tool.BuildFloor = false;
                                 tool.CurrentVoxelType = (byte)data.ID;
                                 ChangeTool(GameMaster.ToolMode.BuildWall);
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
@@ -1416,6 +1417,7 @@ namespace DwarfCorp.GameStates
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
                                 var tool = Master.Tools[GameMaster.ToolMode.BuildWall] as BuildWallTool;
+                                tool.BuildFloor = true;
                                 tool.CurrentVoxelType = (byte)data.ID;
                                 ChangeTool(GameMaster.ToolMode.BuildWall); // Wut
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " floor.");
