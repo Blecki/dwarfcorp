@@ -317,7 +317,7 @@ namespace DwarfCorp
         }
 
         /// <summary> gets a list of actions that the creature can take from the given position </summary>
-        public IEnumerable<MoveAction> GetMoveActions(Vector3 Pos, OctTreeNode octree, List<Body> teleportObjects)
+        public IEnumerable<MoveAction> GetMoveActions(Vector3 Pos, OctTreeNode<Body> octree, List<Body> teleportObjects)
         {
             var vox = new VoxelHandle(Creature.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(Pos));
@@ -327,7 +327,7 @@ namespace DwarfCorp
 
 
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
-        public IEnumerable<MoveAction> GetMoveActions(MoveState state, OctTreeNode OctTree, List<Body> teleportObjects, MoveActionTempStorage Storage)
+        public IEnumerable<MoveAction> GetMoveActions(MoveState state, OctTreeNode<Body> OctTree, List<Body> teleportObjects, MoveActionTempStorage Storage)
         {
             if (Parent == null)
                 yield break;
@@ -819,7 +819,7 @@ namespace DwarfCorp
 
         // Inverts GetMoveActions. So, returns the list of move actions whose target is the current voxel.
         // Very, very slow.
-        public IEnumerable<MoveAction> GetInverseMoveActions(MoveState currentstate, OctTreeNode OctTree, List<Body> teleportObjects)
+        public IEnumerable<MoveAction> GetInverseMoveActions(MoveState currentstate, OctTreeNode<Body> OctTree, List<Body> teleportObjects)
         {
             if (Parent == null)
                 yield break;

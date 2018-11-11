@@ -66,7 +66,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public GameComponent ReservedFor = null;
         private BoundingBox LastBounds = new BoundingBox();
-        private OctTreeNode CachedOcttreeNode = null;
+        private OctTreeNode<Body> CachedOcttreeNode = null;
         [JsonIgnore]
         public Matrix GlobalTransform
         {
@@ -227,7 +227,7 @@ namespace DwarfCorp
             {
                 //if (CollisionType != CollisionType.None)
                 {
-                    if (CachedOcttreeNode == null || CachedOcttreeNode.Contains(BoundingBox) != ContainmentType.Contains)
+                    if (CachedOcttreeNode == null || CachedOcttreeNode.Contains(BoundingBox) == ContainmentType.Disjoint)
                     {
                         RemoveFromOctTree();
                         if (!IsDead)

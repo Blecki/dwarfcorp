@@ -176,7 +176,7 @@ namespace DwarfCorp
             Func<bool> continueFunc)
         {
             // Create a local clone of the octree, using only the objects belonging to the player.
-            var octree = new OctTreeNode(mover.Creature.World.ChunkManager.Bounds.Min, mover.Creature.World.ChunkManager.Bounds.Max);
+            var octree = new OctTreeNode<Body>(mover.Creature.World.ChunkManager.Bounds.Min, mover.Creature.World.ChunkManager.Bounds.Max);
            
             List<Body> playerObjects = new List<Body>(mover.Creature.World.PlayerFaction.OwnedObjects);
             List<Body> teleportObjects = playerObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
@@ -373,7 +373,7 @@ namespace DwarfCorp
                 int maxExpansions, ref List<MoveAction> toReturn, float weight, Func<bool> continueFunc)
         {
             // Create a local clone of the octree, using only the objects belonging to the player.
-            var octree = new OctTreeNode(mover.Creature.World.ChunkManager.Bounds.Min, mover.Creature.World.ChunkManager.Bounds.Max);
+            var octree = new OctTreeNode<Body>(mover.Creature.World.ChunkManager.Bounds.Min, mover.Creature.World.ChunkManager.Bounds.Max);
             List<Body> playerObjects = new List<Body>(mover.Creature.World.PlayerFaction.OwnedObjects);
             List<Body> teleportObjects = mover.Creature.World.PlayerFaction.OwnedObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
             foreach (var obj in playerObjects)

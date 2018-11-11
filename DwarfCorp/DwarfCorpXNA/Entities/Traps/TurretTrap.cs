@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
@@ -17,7 +18,9 @@ namespace DwarfCorp
         }
 
         public Attack Weapon { get; set; }
+        [JsonIgnore]
         public SimpleSprite BaseSprite { get; set; }
+        [JsonIgnore]
         public SimpleSprite TurretSprite { get; set; }
         public Faction Allies { get; set; }
         public EnemySensor Sensor { get; set; }
@@ -77,7 +80,10 @@ namespace DwarfCorp
             TurretSprite = AddChild(new SimpleSprite(Manager, "Turret", Matrix.CreateTranslation(Vector3.Up * 0.25f), spriteSheet, new Point(1, 7))) as SimpleSprite;
             TurretSprite.OrientationType = SimpleSprite.OrientMode.Fixed;
             SetTurretAngle(0.0f);
-            AddChild(new Shadow(manager));
+
+            BaseSprite.SetFlag(Flag.ShouldSerialize, false);
+            TurretSprite.SetFlag(Flag.ShouldSerialize, false);
+            AddChild(new Shadow(manager)).SetFlag(Flag.ShouldSerialize, false);
 
             AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
             {
@@ -120,7 +126,14 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
 
             if (Active && closestCreature != null && !closestCreature.IsDead)
-            {                
+            {
+                offset = closestCreature.Position - Position;
+
+                if (offset.Length() > 8)
+                {
+                    closestCreature = null;
+                }
+
                 Weapon.RechargeTimer.Update(gameTime);
 
                 _targetAngle = (float)Math.Atan2(offset.X, offset.Z);
