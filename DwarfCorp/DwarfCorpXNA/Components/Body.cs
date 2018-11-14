@@ -53,7 +53,7 @@ namespace DwarfCorp
             }
         }
 
-        public CollisionType CollisionType = CollisionType.None;
+        public CollisionType CollisionType = CollisionType.Static;
         public Vector3 BoundingBoxSize = Vector3.One;
         public Vector3 LocalBoundingBoxOffset = Vector3.Zero;
         [JsonIgnore]
@@ -223,9 +223,8 @@ namespace DwarfCorp
 
             UpdateBoundingBox();
 
-            if (CachedOcttreeNode == null || MaxDiff(LastBounds, BoundingBox) > 0.1f)
+            if (CollisionType != CollisionType.None && (CachedOcttreeNode == null || MaxDiff(LastBounds, BoundingBox) > 0.1f))
             {
-                //if (CollisionType != CollisionType.None)
                 {
                     if (CachedOcttreeNode == null || CachedOcttreeNode.Contains(BoundingBox) == ContainmentType.Disjoint)
                     {

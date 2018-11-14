@@ -50,6 +50,7 @@ namespace DwarfCorp
         public TrapSensor()
         {
             UpdateRate = 10;
+            CollisionType = CollisionType.None;
         }
 
         public TrapSensor(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :

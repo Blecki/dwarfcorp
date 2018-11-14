@@ -81,6 +81,8 @@ namespace DwarfCorp
         private bool jumpHeld = false;
 
         private Creature _cachedCreature = null;
+        public int NumDaysNotPaid = 0;
+
         [JsonIgnore] public Creature Creature
         {
             get

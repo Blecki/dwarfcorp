@@ -138,7 +138,7 @@ namespace DwarfCorp
                         }
                     }
                     
-                    if (leaf && childItemCounts == 0 && numDeleted > 0)
+                    if (leaf && childItemCounts < SubdivideThreshold && numDeleted > 0)
                     {
                         Merge();
                     }
@@ -150,7 +150,44 @@ namespace DwarfCorp
 
         public void Merge()
         {
+            Items.Clear();
+            foreach (var child in Children)
+            {
+                foreach (var item in child.Items)
+                {
+                    if (!Items.Contains(item))
+                    {
+                        Items.Add(item);
+                    }
+                }
+            }
+
             Children = null;
+        }
+
+
+        public IEnumerable<T> EnumerateItemsNonRecursive()
+        {
+            return Items.Select(i => i.Body);
+        }
+
+
+        public IEnumerable<T> EnumerateItems()
+        {
+            lock (this)
+            {
+                if (Children == null)
+                    for (var i = 0; i < Items.Count; ++i)
+                        yield return Items[i].Body;
+                else
+                    for (var i = 0; i < 8; ++i)
+                    {
+                        foreach (var item in Children[i].EnumerateItems())
+                        {
+                            yield return item;
+                        }
+                    }
+            }
         }
         
         public void EnumerateItems(HashSet<T> Into)
@@ -323,11 +360,11 @@ namespace DwarfCorp
             }
         }
 
-        public IEnumerable<Tuple<int, BoundingBox>> EnumerateBounds(BoundingFrustum Frustum, int Depth = 0)
+        public IEnumerable<Tuple<OctTreeNode<T>, BoundingBox>> EnumerateBounds(BoundingFrustum Frustum, int Depth = 0)
         {
             if (Frustum.Intersects(Bounds))
             {
-                yield return Tuple.Create(Depth, Bounds);
+                yield return Tuple.Create(this, Bounds);
                 if (Children != null)
                     for (var i = 0; i < 8; ++i)
                         foreach (var r in Children[i].EnumerateBounds(Frustum, Depth + 1))

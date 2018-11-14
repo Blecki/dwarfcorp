@@ -48,6 +48,7 @@ namespace DwarfCorp
 
         public Sensor()
         {
+            CollisionType = CollisionType.None;
             UpdateRate = 10;
         }
 
@@ -59,6 +60,7 @@ namespace DwarfCorp
             Vector3 boundingBoxPos) :
             base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {
+            CollisionType = CollisionType.None;
             UpdateRate = 10;
             Tags.Add("Sensor");
             FireTimer = new Timer(1.0f, false);

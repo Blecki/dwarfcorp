@@ -937,12 +937,12 @@ namespace DwarfCorp
             lastWaterHeight = wHeight;
 
             // Draw reflection/refraction images
-            WaterRenderer.DrawReflectionMap(renderables, gameTime, this, wHeight - 0.1f, 
+            WaterRenderer.DrawReflectionMap(renderables, gameTime, this, wHeight - 0.1f,
                 GetReflectedCameraMatrix(wHeight),
                 DefaultShader, GraphicsDevice);
 
 
-#region Draw Selection Buffer.
+            #region Draw Selection Buffer.
 
             if (SelectionBuffer == null)
                 SelectionBuffer = new SelectionBuffer(8, GraphicsDevice);
@@ -980,7 +980,7 @@ namespace DwarfCorp
             }
 
 
-#endregion
+            #endregion
 
 
 
@@ -1004,7 +1004,7 @@ namespace DwarfCorp
             SlicePlane = level;
             CaveView = CaveView * 0.9f + TargetCaveView * 0.1f;
             DefaultShader.WindDirection = Weather.CurrentWind;
-            DefaultShader.WindForce = 0.0005f * (1.0f + (float)Math.Sin(Time.GetTotalSeconds()*0.001f));
+            DefaultShader.WindForce = 0.0005f * (1.0f + (float)Math.Sin(Time.GetTotalSeconds() * 0.001f));
             // Draw the whole world, and make sure to handle slicing
             DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
             DefaultShader.ClippingEnabled = true;
@@ -1026,8 +1026,24 @@ namespace DwarfCorp
             DefaultShader.ClippingEnabled = true;
 
             if (Debugger.Switches.DrawOcttree)
+            {
                 foreach (var box in OctTree.EnumerateBounds(frustum))
-                    Drawer3D.DrawBox(box.Item2, Color.Yellow, 1.0f / (float)(box.Item1 + 1), false);
+                {
+                    if (box.Item1.IsLeaf() && box.Item2.Contains(CursorLightPos) != ContainmentType.Disjoint)
+                    {
+                        Drawer3D.DrawBox(box.Item2, Color.OrangeRed, 0.25f, false);
+
+                        foreach (var item in box.Item1.EnumerateItemsNonRecursive())
+                        {
+                            Drawer3D.DrawBox(item.GetBoundingBox(), Color.LightBlue, 0.1f, false);
+                        }
+                    }
+                    else
+                    {
+                        Drawer3D.DrawBox(box.Item2, Color.Yellow, 0.01f, false);
+                    }
+                }
+            }
 
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer, PlayerFaction.Designations, this);
