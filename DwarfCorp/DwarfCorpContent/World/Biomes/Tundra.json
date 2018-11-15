@@ -3,6 +3,8 @@
   "Icon": -1,
   "WaterSurfaceIce": true,
   "DayAmbience": "sfx_amb_tundra",
+  "RuinFloorType" : "Snow",
+  "RuinWallType" : "Ice",
   "Vegetation": [],
   "Motes": [
   ],

@@ -2,6 +2,8 @@
   "Name": "Desert",
   "Icon": 12,
   "DayAmbience": "sfx_amb_desert",
+  "RuinFloorType" : "Brown Tile",
+  "RuinWallType" : "Sandstone",
   "Vegetation": [
     {
       "Name": "Wheat",

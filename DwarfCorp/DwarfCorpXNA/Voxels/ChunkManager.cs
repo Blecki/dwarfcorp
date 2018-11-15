@@ -285,6 +285,14 @@ namespace DwarfCorp
             }
 
 
+            SetLoadingMessage("Generating Ores...");
+
+            GenerateOres();
+            NeedsMinimapUpdate = true;
+
+            SetLoadingMessage("Generating Ruins...");
+            ChunkGen.GenerateRuins(chunkData, World);
+
             // This is critical at the beginning to allow trees to spawn on ramps correctly,
             // and also to ensure no inconsistencies in chunk geometry due to ramps.
             foreach (var chunk in ChunkData.ChunkMap)
@@ -294,11 +302,6 @@ namespace DwarfCorp
                     chunk.InvalidateSlice(i);
             }
             RecalculateBounds();
-            SetLoadingMessage("Generating Ores...");
-
-            GenerateOres();
-            NeedsMinimapUpdate = true;
-
         }
 
         public void GenerateAllGeometry()
