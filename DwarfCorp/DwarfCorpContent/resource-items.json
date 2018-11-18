@@ -993,6 +993,7 @@
       }
     ],
     "Tags": [
+	  "Seed",
       "Plantable",
       "Flammable",
       "AboveGroundPlant"
@@ -1034,6 +1035,7 @@
       }
     ],
     "Tags": [
+	  "Seed",
       "Plantable",
       "Flammable",
       "Evil"
@@ -1119,6 +1121,7 @@
       }
     ],
     "Tags": [
+	  "Fruit",
       "Plantable",
       "Flammable",
       "AboveGroundPlant",
@@ -1252,6 +1255,7 @@
       }
     ],
     "Tags": [
+	  "Fruit",
       "Plantable",
       "Flammable",
       "AboveGroundPlant",
@@ -1700,8 +1704,8 @@
     "Description": "A crafted item.",
     "GuiLayers": [
       {
-        "Sheet": "resources",
-        "Tile": 0
+        "Sheet": "crafts",
+        "Tile": 1
       }
     ],
     "Tags": [
@@ -1870,7 +1874,6 @@
       }
     ],
     "Tags": [
-      "Stone",
       "Material",
       "HardMaterial",
       "Craft"

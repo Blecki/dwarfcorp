@@ -52,6 +52,18 @@ namespace DwarfCorp
         public static Dictionary<string, TextAtom> TextAtoms { get; set; }
         private static bool staticsInitialized = false;
 
+        public static string SplitCamelCase(string str)
+        {
+            return Regex.Replace(
+                Regex.Replace(
+                    str,
+                    @"(\P{Ll})(\P{Ll}\p{Ll})",
+                    "$1 $2"
+                ),
+                @"(\p{Ll})(\P{Ll})",
+                "$1 $2"
+            );
+        }
 
         public static string TimeToString(TimeSpan age)
         {

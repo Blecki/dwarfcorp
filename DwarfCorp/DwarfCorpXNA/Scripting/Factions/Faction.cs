@@ -63,6 +63,7 @@ namespace DwarfCorp
         public Color PrimaryColor { get; set; }
         public Color SecondaryColor { get; set; }
         public Timer HandleThreatsTimer { get; set; }
+        public Timer HandleStockpilesTimer { get; set; }
         public DesignationSet Designations = new DesignationSet();
         public Dictionary<ulong, VoxelHandle> GuardedVoxels = new Dictionary<ulong, VoxelHandle>();
         public Dictionary<Resource.ResourceTags, int> CachedResourceTagCounts = new Dictionary<Resource.ResourceTags, int>();
@@ -106,6 +107,7 @@ namespace DwarfCorp
         {
             World = ((WorldManager)ctx.Context);
             HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
+            HandleStockpilesTimer = new Timer(5.5f, false, Timer.TimerMode.Real);
             if (Threats == null)
             {
                 Threats = new List<Creature>();
@@ -122,11 +124,13 @@ namespace DwarfCorp
         public Faction()
         {
             HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
+            HandleStockpilesTimer = new Timer(5.5f, false, Timer.TimerMode.Real);
         }
 
         public Faction(WorldManager world)
         {
             HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
+            HandleStockpilesTimer = new Timer(5.5f, false, Timer.TimerMode.Real);
             World = world;
             Threats = new List<Creature>();
             Minions = new List<CreatureAI>();
@@ -201,7 +205,7 @@ namespace DwarfCorp
                     if (m.Creature.SelectionCircle != null)
                     {
                         m.Creature.DeleteSelectionCircle();
-                   
+
                     }
                     m.Creature.Sprite.DrawSilhouette = false;
                 };
@@ -235,9 +239,45 @@ namespace DwarfCorp
                     );
             }
 
+            if (HandleStockpilesTimer == null)
+            {
+                HandleStockpilesTimer = new Timer(5.5f, false, Timer.TimerMode.Real
+                    );
+            }
+
             HandleThreatsTimer.Update(time);
+            HandleStockpilesTimer.Update(time);
             if (HandleThreatsTimer.HasTriggered)
-             HandleThreats();
+            {
+                HandleThreats();
+            }
+
+            if (HandleStockpilesTimer.HasTriggered)
+            {
+                if (this == World.PlayerFaction)
+                {
+                    foreach (var stockpile in Stockpiles)
+                    {
+                        foreach (var blacklist in stockpile.BlacklistResources)
+                        {
+                            foreach (var resourcePair in stockpile.Resources.Resources)
+                            {
+                                if (resourcePair.Value.NumResources == 0)
+                                    continue;
+
+                                var resourceType = ResourceLibrary.GetResourceByName(resourcePair.Key);
+                                if (resourceType.Tags.Any(tag => tag == blacklist))
+                                {
+                                    var transferTask = new TransferResourcesTask(stockpile.ID, resourcePair.Value.CloneResource());
+                                    if (World.Master.TaskManager.HasTask(transferTask))
+                                        continue;
+                                    World.Master.TaskManager.AddTask(transferTask);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             if (World.ComponentManager.NumComponents() > 0)
             {
@@ -275,7 +315,7 @@ namespace DwarfCorp
                 if (threat != null && !threat.IsDead)
                 {
                     if (!Designations.IsDesignation(threat.Physics, DesignationType.Attack))
-                    { 
+                    {
                         //var g = new KillEntityTask(threat.Physics, KillEntityTask.KillType.Auto);
                         //Designations.AddEntityDesignation(threat.Physics, DesignationType.Attack, null, g);
                         //tasks.Add(g);
@@ -373,7 +413,7 @@ namespace DwarfCorp
                 {
                     stockpile.Resources.AddResource(amount);
                     stockpile.HandleBoxes();
-                    foreach(var tag in resource.Tags)
+                    foreach (var tag in resource.Tags)
                     {
                         if (!CachedResourceTagCounts.ContainsKey(tag))
                         {
@@ -588,6 +628,51 @@ namespace DwarfCorp
             return toReturn;
         }
 
+        public IEnumerable<KeyValuePair<Stockpile, ResourceAmount>> GetStockpilesContainingResources(Vector3 biasPos, IEnumerable<ResourceAmount> required)
+        {
+            foreach (var amount in required)
+            {
+                int numGot = 0;
+                ResourceType selectedResourceType = null;
+                foreach (Stockpile stockpile in Stockpiles.OrderBy(s => (s.GetBoundingBox().Center() - biasPos).LengthSquared()))
+                {
+                    if (numGot >= amount.NumResources)
+                        break;
+                    foreach (var resource in stockpile.Resources.Where(sResource => sResource.ResourceType == amount.ResourceType))
+                    {
+                        int amountToRemove = System.Math.Min(resource.NumResources, amount.NumResources - numGot);
+                        if (amountToRemove <= 0) continue;
+                        numGot += amountToRemove;
+                        yield return new KeyValuePair<Stockpile, ResourceAmount>(stockpile, new ResourceAmount(resource.ResourceType, amountToRemove));
+                    }
+                }
+            }
+        }
+
+
+        public IEnumerable<KeyValuePair<Stockpile, ResourceAmount>> GetStockpilesContainingResources(List<Quantitiy<Resource.ResourceTags>> tags, bool allowHeterogenous = false)
+        {
+            foreach (var tag in tags)
+            {
+                int numGot = 0;
+                ResourceType selectedResourceType = null;
+                foreach (Stockpile stockpile in Stockpiles)
+                {
+                    if (numGot >= tag.NumResources)
+                        break;
+                    foreach (var resource in stockpile.Resources.Where(sResource => ResourceLibrary.GetResourceByName(sResource.ResourceType).Tags.Contains(tag.ResourceType)))
+                    {
+                        if (!allowHeterogenous && selectedResourceType != null && selectedResourceType != resource.ResourceType)
+                            continue;
+                        int amountToRemove = System.Math.Min(resource.NumResources, tag.NumResources - numGot);
+                        if (amountToRemove <= 0) continue;
+                        numGot += amountToRemove;
+                        yield return new KeyValuePair<Stockpile, ResourceAmount>(stockpile, new ResourceAmount(resource.ResourceType, amountToRemove));
+                    }
+                }
+            }
+        }
+
         public List<ResourceAmount> GetResourcesWithTags(List<Quantitiy<Resource.ResourceTags>> tags, bool allowHeterogenous = false)
         {
             Dictionary<Resource.ResourceTags, int> tagsRequired = new Dictionary<Resource.ResourceTags, int>();
@@ -764,6 +849,55 @@ namespace DwarfCorp
         public bool HasResources(ResourceType resource)
         {
             return HasResources(new List<ResourceAmount>() { new ResourceAmount(resource) });
+        }
+
+        public bool RemoveResources(ResourceAmount resources, Vector3 position, Stockpile stock, bool createItems = true)
+        {
+            if (!stock.Resources.HasResource(resources))
+            {
+                return false;
+            }
+
+            List<Vector3> positions = new List<Vector3>();
+            var resourceType = ResourceLibrary.GetResourceByName(resources.ResourceType);
+            int num = stock.Resources.RemoveMaxResources(resources, resources.NumResources);
+            stock.HandleBoxes();
+            foreach (var tag in resourceType.Tags)
+            {
+                if (CachedResourceTagCounts.ContainsKey(tag))
+                {
+                    CachedResourceTagCounts[tag] -= num;
+                    Trace.Assert(CachedResourceTagCounts[tag] >= 0);
+                }
+            }
+            if (stock.Boxes.Count > 0)
+            {
+                for (int i = 0; i < num; i++)
+                {
+                    positions.Add(stock.Boxes[stock.Boxes.Count - 1].LocalTransform.Translation);
+                }
+            }
+
+            if (createItems)
+            {
+                foreach (Vector3 vec in positions)
+                {
+                    Body newEntity =
+                        EntityFactory.CreateEntity<Body>(resources.ResourceType + " Resource",
+                            vec + MathFunctions.RandVector3Cube() * 0.5f);
+
+                    TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f),
+                        2.5f + MathFunctions.Rand(-0.5f, 0.5f), newEntity.LocalTransform, position);
+                    newEntity.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
+                    newEntity.AnimationQueue.Add(toss);
+                    newEntity.UpdateRate = 1;
+                    toss.OnComplete += () => toss_OnComplete(newEntity);
+
+                }
+            }
+
+            return true;
+
         }
 
         public bool RemoveResources(List<ResourceAmount> resources, Vector3 position, bool createItems = true)

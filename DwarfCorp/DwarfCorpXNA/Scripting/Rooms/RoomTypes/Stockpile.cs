@@ -227,5 +227,6 @@ namespace DwarfCorp
             HandleBoxes();
             base.RecalculateMaxResources();
         }        
+
     }
 }

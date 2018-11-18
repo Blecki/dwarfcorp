@@ -117,15 +117,15 @@ namespace DwarfCorp
 
         public void GenerateRuins(ChunkData chunks, WorldManager world)
         {
-            int numRuinClusters = Math.Max(MathFunctions.RandInt(-10, 10), 0);
+            int numRuinClusters = Math.Max(MathFunctions.RandInt(-10, 3), 0);
 
             for (int i = 0; i < numRuinClusters; i++)
             {
                 var clusterChunk = Datastructures.SelectRandom(chunks.ChunkMap);
                 var bounds = clusterChunk.GetBoundingBox();
                 var centerLoc = MathFunctions.RandVector3Box(bounds);
-                var clusterDensity = (MathFunctions.Rand() + 1.0f) * 10;
-                int numStructures = MathFunctions.RandInt(1, 10);
+                var clusterDensity = (MathFunctions.Rand() + 1.0f) * 40;
+                int numStructures = MathFunctions.RandInt(1, 5);
 
                 for (int j = 0; j < numStructures; j++)
                 {
