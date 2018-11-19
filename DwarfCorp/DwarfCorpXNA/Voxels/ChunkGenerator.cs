@@ -117,7 +117,7 @@ namespace DwarfCorp
 
         public void GenerateRuins(ChunkData chunks, WorldManager world)
         {
-            int numRuinClusters = Math.Max(MathFunctions.RandInt(-10, 3), 0);
+            int numRuinClusters = Math.Max(MathFunctions.RandInt(-6, 4), 0);
 
             for (int i = 0; i < numRuinClusters; i++)
             {
