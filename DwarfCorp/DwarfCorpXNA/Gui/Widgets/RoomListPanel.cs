@@ -174,6 +174,7 @@ namespace DwarfCorp.Gui.Widgets
                                         Resource.ResourceTags.Sand,
                                         Resource.ResourceTags.Fruit,
                                         Resource.ResourceTags.Gourd,
+                                        Resource.ResourceTags.Grain,
                                         Resource.ResourceTags.Fungus,
                                         Resource.ResourceTags.Fuel,
                                         Resource.ResourceTags.Craft,
