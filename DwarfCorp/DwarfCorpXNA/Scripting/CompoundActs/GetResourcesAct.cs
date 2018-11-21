@@ -106,10 +106,8 @@ namespace DwarfCorp
 
             if (Resources != null)
             {
-
                 foreach (Quantitiy<Resource.ResourceTags> resource in Resources)
                 {
-
                     if (!Creature.Inventory.HasResource(resource, AllowHeterogenous))
                     {
                         hasAllResources = false;
@@ -163,7 +161,24 @@ namespace DwarfCorp
             }
             else
             {
-                Tree = new SetBlackboardData<List<ResourceAmount>>(Agent, "ResourcesStashed", ResourcesToStash.Select(r => r.Value).ToList());
+                if (ResourcesToStash == null && Resources != null)
+                {
+                    // In this case the dwarf already has all the resources. We have to find the resources from the inventory.
+                    List<ResourceAmount> resourcesStashed = new List<ResourceAmount>();
+                    foreach (var tag in Resources)
+                    {
+                        resourcesStashed.AddRange(Creature.Inventory.GetResources(tag, Inventory.RestockType.Any));
+                    }
+                    Tree = new SetBlackboardData<List<ResourceAmount>>(Agent, "ResourcesStashed", resourcesStashed);
+                }
+                else if (ResourcesToStash != null)
+                {
+                    Tree = new SetBlackboardData<List<ResourceAmount>>(Agent, "ResourcesStashed", ResourcesToStash.Select(r => r.Value).ToList());
+                }
+                else
+                {
+                    Tree = null;
+                }
             }
           
             base.Initialize();
