@@ -170,6 +170,11 @@ namespace DwarfCorp.GameStates
                 },
                 OnClick = (sender, args) =>
                 {
+                    if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
+                    {
+                        return;
+                    }
+
                     if (args.MouseButton == 0)
                     {
                         int chunkSize = 16;
@@ -182,6 +187,10 @@ namespace DwarfCorp.GameStates
                 },
                 OnMouseMove = (sender, args) =>
                 {
+                    if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
+                    {
+                        return;
+                    }
                     if (Microsoft.Xna.Framework.Input.Mouse.GetState().RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
                     {
                         var delta = new Vector2(args.X, args.Y) - new Vector2(PreviousMousePosition.X,
@@ -204,6 +213,10 @@ namespace DwarfCorp.GameStates
                 },
                 OnScroll = (sender, args) =>
                 {
+                    if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
+                    {
+                        return;
+                    }
                     zoom = System.Math.Min((float)System.Math.Max(args.ScrollValue > 0 ? zoom - 0.1f : zoom + 0.1f, 0.1f), 1.5f);
                 }
             });
