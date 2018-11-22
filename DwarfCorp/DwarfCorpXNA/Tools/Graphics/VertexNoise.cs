@@ -101,9 +101,9 @@ namespace DwarfCorp
             {
                 RepeatingTexture = GenerateRepeatingTexture(RepeatingTextureSize, RepeatingTextureSize, RepeatingTextureSize);
             }
-            float modX = Math.Abs(position.X) % RepeatingTextureSize;
-            float modY = Math.Abs(position.Y) % RepeatingTextureSize;
-            float modZ = Math.Abs(position.Z) % RepeatingTextureSize;
+            int modX = ((int)Math.Abs(position.X)) % RepeatingTextureSize;
+            int modY = ((int)Math.Abs(position.Y)) % RepeatingTextureSize;
+            int modZ = ((int)Math.Abs(position.Z)) % RepeatingTextureSize;
 
             return new Vector3(0, RepeatingTexture[(int) modX][(int) modY][(int) modZ].Y, 0);
         }
