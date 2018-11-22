@@ -149,6 +149,10 @@ namespace DwarfCorp.Scripting
             for (int i = 0; i < Participants.Count; i++)
             {
                 var p_i = Participants[i];
+                if (p_i.Physics == null || p_i.AI == null)
+                {
+                    continue;
+                }
                 if (VoxelHelpers.GetNeighbor(p_i.Physics.CurrentVoxel, new GlobalVoxelOffset(0, -1, 0)).IsEmpty)
                 {
                     removals.Add(p_i);
@@ -157,7 +161,13 @@ namespace DwarfCorp.Scripting
 
                 for (int j = i + 1; j < Participants.Count; j++)
                 {
+
                     var p_j = Participants[j];
+
+                    if (p_j.Physics == null || p_j.AI == null)
+                    {
+                        continue;
+                    }
 
                     if ((p_i.AI.Position - p_j.AI.Position).Length() < 1)
                     {
@@ -219,6 +229,7 @@ namespace DwarfCorp.Scripting
                                     {
                                         Name = "Gambling pot"
                                     };
+                                    PotFixture.SetFlagRecursive(GameComponent.Flag.ShouldSerialize, false);
                                     PotFixture.SetFullness(0);
                                     Participants[0].Manager.RootComponent.AddChild(PotFixture);
 
