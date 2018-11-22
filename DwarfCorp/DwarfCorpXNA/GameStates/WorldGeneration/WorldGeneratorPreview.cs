@@ -417,101 +417,164 @@ namespace DwarfCorp.GameStates
                 Root.DrawMesh(KeyMesh, Root.RenderData.Texture);
         }
 
+        private void RegneratePreviewTexture()
+        {
+            if (PreviewTexture == null || PreviewTexture.IsDisposed || PreviewTexture.GraphicsDevice.IsDisposed || UpdatePreview)
+            {
+                var bkg = Root.GetTileSheet("basic");
+                UpdatePreview = false;
+                InitializePreviewRenderTypes();
+
+                if (PreviewTexture == null || PreviewTexture.IsDisposed || PreviewTexture.GraphicsDevice.IsDisposed || PreviewTexture.Width != Overworld.Map.GetLength(0) ||
+                    PreviewTexture.Height != Overworld.Map.GetLength(1))
+                    PreviewTexture = new Texture2D(Device, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
+
+                // Check combo box for style of preview to draw.
+                Overworld.NativeFactions = Generator.NativeCivilizations;
+
+                var style = PreviewRenderTypes[PreviewSelector.SelectedItem];
+                Overworld.TextureFromHeightMap(style.DisplayType, Overworld.Map,
+                    style.Scalar, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null,
+                    Generator.worldData, PreviewTexture, Generator.Settings.SeaLevel);
+
+                var colorKeyEntries = style.GetColorKeys(Generator);
+                var font = Root.GetTileSheet("font8");
+                var stringMeshes = new List<Gui.Mesh>();
+                var y = Rect.Y;
+                var maxWidth = 0;
+
+                foreach (var color in colorKeyEntries)
+                {
+                    Rectangle bounds;
+                    var mesh = Gui.Mesh.CreateStringMesh(color.Key, font, new Vector2(1, 1), out bounds);
+                    stringMeshes.Add(mesh.Translate(PreviewPanel.Rect.Right - bounds.Width - (font.TileHeight + 4), y).Colorize(new Vector4(0, 0, 0, 1)));
+                    if (bounds.Width > maxWidth) maxWidth = bounds.Width;
+                    stringMeshes.Add(Gui.Mesh.Quad().Scale(font.TileHeight, font.TileHeight)
+                        .Translate(PreviewPanel.Rect.Right - font.TileHeight + 2, y)
+                        .Texture(Root.GetTileSheet("basic").TileMatrix(1))
+                        .Colorize(color.Value.ToVector4()));
+                    y += bounds.Height;
+                }
+                if (previewText == null)
+                {
+                    previewText = Generator.GetSpawnStats();
+                }
+                int dy = 0;
+                foreach (var line in previewText)
+                {
+                    Rectangle previewBounds;
+                    var previewMesh = Gui.Mesh.CreateStringMesh(line.Key, font, new Vector2(1, 1), out previewBounds);
+                    stringMeshes.Add(Gui.Mesh.FittedSprite(previewBounds, bkg, 0).Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(new Vector4(0.0f, 0.0f, 0.0f, 0.7f)));
+                    stringMeshes.Add(previewMesh.Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(line.Value.ToVector4()));
+                    dy += previewBounds.Height;
+                }
+
+                KeyMesh = Gui.Mesh.Merge(stringMeshes.ToArray());
+                var thinBorder = Root.GetTileSheet("border-thin");
+                var bgMesh = Gui.Mesh.CreateScale9Background(
+                    new Rectangle(Rect.Right - thinBorder.TileWidth - maxWidth - 8 - font.TileHeight,
+                    Rect.Y, maxWidth + thinBorder.TileWidth + 8 + font.TileHeight, y - Rect.Y + thinBorder.TileHeight),
+                    thinBorder, Scale9Corners.Bottom | Scale9Corners.Left);
+                KeyMesh = Gui.Mesh.Merge(bgMesh, KeyMesh);
+            }
+
+        }
+
+        private void UpdateTrees()
+        {
+            Trees = new List<Point3>();
+            int width = Overworld.Map.GetLength(0);
+            int height = Overworld.Map.GetLength(1);
+
+            TreeProbability = 100.0f / (width * height);
+            const int resolution = 1;
+
+            for (int x = 0; x < width; x += resolution)
+            {
+                for (int y = 0; y < height; y += resolution)
+                {
+                    if (!MathFunctions.RandEvent(TreeProbability)) continue;
+                    var h = Overworld.Map[x, y].Height;
+                    if (!(h > Generator.Settings.SeaLevel)) continue;
+                    var biome = BiomeLibrary.Biomes[Overworld.Map[x, y].Biome];
+                    if (biome.Icon > 0)
+                    {
+                        Trees.Add(new Point3(x, y, biome.Icon));
+                    }
+                }
+            }
+        }
+
+        private void SetupPreviewShader()
+        {
+            Device.BlendState = BlendState.Opaque;
+            Device.DepthStencilState = DepthStencilState.Default;
+            if (PreviewRenderTarget == null || PreviewRenderTarget.IsDisposed || PreviewRenderTarget.GraphicsDevice.IsDisposed || PreviewRenderTarget.IsContentLost)
+            {
+                PreviewRenderTarget = new RenderTarget2D(Device, PreviewPanel.Rect.Width, PreviewPanel.Rect.Height);
+                PreviewRenderTarget.ContentLost += PreviewRenderTarget_ContentLost;
+            }
+            Device.SetRenderTarget(PreviewRenderTarget);
+            if (PreviewEffect.IsDisposed || PreviewEffect.GraphicsDevice.IsDisposed)
+            {
+                PreviewEffect = new BasicEffect(Device);
+                PreviewEffect.LightingEnabled = false;
+                PreviewEffect.FogEnabled = false;
+                PreviewEffect.Alpha = 1.0f;
+                PreviewEffect.DiffuseColor = new Vector3(1.0f, 1.0f, 1.0f);
+                PreviewEffect.AmbientLightColor = new Vector3(1.0f, 1.0f, 1.0f);
+            }
+
+            PreviewEffect.World = Matrix.Identity;
+
+            PreviewEffect.View = ViewMatrix;
+            PreviewEffect.Projection = ProjectionMatrix;
+            cameraTarget = newTarget * 0.1f + cameraTarget * 0.9f;
+            PreviewEffect.TextureEnabled = true;
+            PreviewEffect.Texture = PreviewTexture;
+            PreviewEffect.LightingEnabled = true;
+        }
+
+        private void DrawPreviewInternal()
+        {
+            Device.Clear(ClearOptions.Target, Color.Black, 1024.0f, 0);
+            Device.DepthStencilState = DepthStencilState.Default;
+
+            if (previewSampler == null)
+            {
+                previewSampler = new SamplerState
+                {
+                    Filter = TextureFilter.MinLinearMagPointMipPoint
+                };
+            }
+
+            Device.SamplerStates[0] = previewSampler;
+            foreach (EffectPass pass in PreviewEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                Device.SetVertexBuffer(Generator.LandMesh);
+                Device.Indices = Generator.LandIndex;
+                Device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, Generator.LandMesh.VertexCount, 0,
+                        Generator.LandIndex.IndexCount / 3);
+            }
+            Device.SetRenderTarget(null);
+            Device.Textures[0] = null;
+            Device.Indices = null;
+            Device.SetVertexBuffer(null);
+        }
+
         public void PreparePreview(GraphicsDevice device)
         {
             try
             {
-                if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
+                if (Generator == null || Generator.CurrentState != WorldGenerator.GenerationState.Finished)
                 {
                     KeyMesh = null;
                     return;
                 }
 
-                if (PreviewTexture == null || PreviewTexture.IsDisposed || PreviewTexture.GraphicsDevice.IsDisposed || UpdatePreview)
-                {
-                    var bkg = Root.GetTileSheet("basic");
-                    UpdatePreview = false;
-                    InitializePreviewRenderTypes();
-
-                    if (PreviewTexture == null || PreviewTexture.IsDisposed || PreviewTexture.GraphicsDevice.IsDisposed || PreviewTexture.Width != Overworld.Map.GetLength(0) ||
-                        PreviewTexture.Height != Overworld.Map.GetLength(1))
-                        PreviewTexture = new Texture2D(Device, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
-
-                    // Check combo box for style of preview to draw.
-                    Overworld.NativeFactions = Generator.NativeCivilizations;
-
-                    var style = PreviewRenderTypes[PreviewSelector.SelectedItem];
-                    Overworld.TextureFromHeightMap(style.DisplayType, Overworld.Map,
-                        style.Scalar, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null,
-                        Generator.worldData, PreviewTexture, Generator.Settings.SeaLevel);
-
-                    var colorKeyEntries = style.GetColorKeys(Generator);
-                    var font = Root.GetTileSheet("font8");
-                    var stringMeshes = new List<Gui.Mesh>();
-                    var y = Rect.Y;
-                    var maxWidth = 0;
-
-                    foreach (var color in colorKeyEntries)
-                    {
-                        Rectangle bounds;
-                        var mesh = Gui.Mesh.CreateStringMesh(color.Key, font, new Vector2(1, 1), out bounds);
-                        stringMeshes.Add(mesh.Translate(PreviewPanel.Rect.Right - bounds.Width - (font.TileHeight + 4), y).Colorize(new Vector4(0, 0, 0, 1)));
-                        if (bounds.Width > maxWidth) maxWidth = bounds.Width;
-                        stringMeshes.Add(Gui.Mesh.Quad().Scale(font.TileHeight, font.TileHeight)
-                            .Translate(PreviewPanel.Rect.Right - font.TileHeight + 2, y)
-                            .Texture(Root.GetTileSheet("basic").TileMatrix(1))
-                            .Colorize(color.Value.ToVector4()));
-                        y += bounds.Height;
-                    }
-                    if (previewText == null)
-                    {
-                        previewText = Generator.GetSpawnStats();
-                    }
-                    int dy = 0;
-                    foreach (var line in previewText)
-                    {
-                        Rectangle previewBounds;
-                        var previewMesh = Gui.Mesh.CreateStringMesh(line.Key, font, new Vector2(1, 1), out previewBounds);
-                        stringMeshes.Add(Gui.Mesh.FittedSprite(previewBounds, bkg, 0).Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(new Vector4(0.0f, 0.0f, 0.0f, 0.7f)));
-                        stringMeshes.Add(previewMesh.Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(line.Value.ToVector4()));
-                        dy += previewBounds.Height;
-                    }
-
-                    KeyMesh = Gui.Mesh.Merge(stringMeshes.ToArray());
-                    var thinBorder = Root.GetTileSheet("border-thin");
-                    var bgMesh = Gui.Mesh.CreateScale9Background(
-                        new Rectangle(Rect.Right - thinBorder.TileWidth - maxWidth - 8 - font.TileHeight,
-                        Rect.Y, maxWidth + thinBorder.TileWidth + 8 + font.TileHeight, y - Rect.Y + thinBorder.TileHeight),
-                        thinBorder, Scale9Corners.Bottom | Scale9Corners.Left);
-                    KeyMesh = Gui.Mesh.Merge(bgMesh, KeyMesh);
-                }
-
-                Device.BlendState = BlendState.Opaque;
-                Device.DepthStencilState = DepthStencilState.Default;
-                if (PreviewRenderTarget == null || PreviewRenderTarget.IsDisposed || PreviewRenderTarget.GraphicsDevice.IsDisposed || PreviewRenderTarget.IsContentLost)
-                {
-                    PreviewRenderTarget = new RenderTarget2D(Device, PreviewPanel.Rect.Width, PreviewPanel.Rect.Height);
-                    PreviewRenderTarget.ContentLost += PreviewRenderTarget_ContentLost;
-                }
-                Device.SetRenderTarget(PreviewRenderTarget);
-                if (PreviewEffect.IsDisposed || PreviewEffect.GraphicsDevice.IsDisposed)
-                {
-                    PreviewEffect = new BasicEffect(Device);
-                    PreviewEffect.LightingEnabled = false;
-                    PreviewEffect.FogEnabled = false;
-                    PreviewEffect.Alpha = 1.0f;
-                    PreviewEffect.DiffuseColor = new Vector3(1.0f, 1.0f, 1.0f);
-                    PreviewEffect.AmbientLightColor = new Vector3(1.0f, 1.0f, 1.0f);
-                }
-
-                PreviewEffect.World = Matrix.Identity;
-
-                PreviewEffect.View = ViewMatrix;
-                PreviewEffect.Projection = ProjectionMatrix;
-                cameraTarget = newTarget * 0.1f + cameraTarget * 0.9f;
-                PreviewEffect.TextureEnabled = true;
-                PreviewEffect.Texture = PreviewTexture;
-                PreviewEffect.LightingEnabled = true;
+                RegneratePreviewTexture();
+                SetupPreviewShader();
 
                 if (Generator.LandMesh == null || Generator.LandMesh.IsDisposed || Generator.LandMesh.GraphicsDevice.IsDisposed)
                 {
@@ -521,53 +584,9 @@ namespace DwarfCorp.GameStates
 
                 if (UpdatePreview || Trees == null)
                 {
-                    Trees = new List<Point3>();
-                    int width = Overworld.Map.GetLength(0);
-                    int height = Overworld.Map.GetLength(1);
-
-                    TreeProbability = 100.0f / (width * height);
-                    const int resolution = 1;
-
-                    for (int x = 0; x < width; x += resolution)
-                    {
-                        for (int y = 0; y < height; y += resolution)
-                        {
-                            if (!MathFunctions.RandEvent(TreeProbability)) continue;
-                            var h = Overworld.Map[x, y].Height;
-                            if (!(h > Generator.Settings.SeaLevel)) continue;
-                            var biome = BiomeLibrary.Biomes[Overworld.Map[x, y].Biome];
-                            if (biome.Icon > 0)
-                            {
-                                Trees.Add(new Point3(x, y, biome.Icon));
-                            }
-                        }
-                    }
+                    UpdateTrees();
                 }
-
-                Device.Clear(ClearOptions.Target, Color.Black, 1024.0f, 0);
-                Device.DepthStencilState = DepthStencilState.Default;
-
-                if (previewSampler == null)
-                {
-                    previewSampler = new SamplerState
-                    {
-                        Filter = TextureFilter.MinLinearMagPointMipPoint
-                    };
-                }
-
-                Device.SamplerStates[0] = previewSampler;
-                foreach (EffectPass pass in PreviewEffect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    Device.SetVertexBuffer(Generator.LandMesh);
-                    Device.Indices = Generator.LandIndex;
-                    Device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, Generator.LandMesh.VertexCount, 0,
-                            Generator.LandIndex.IndexCount / 3);
-                }
-                Device.SetRenderTarget(null);
-                Device.Textures[0] = null;
-                Device.Indices = null;
-                Device.SetVertexBuffer(null);
+                DrawPreviewInternal();
             }
             catch (InvalidOperationException exception)
             {
