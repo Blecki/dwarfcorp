@@ -150,9 +150,11 @@ namespace DwarfCorp
 
         public Texture2D GetTexture()
         {
-            if (FixedTexture == null)
-                return AssetManager.GetContentTexture(AssetName);
-            else return FixedTexture;
+            if (FixedTexture == null || FixedTexture.IsDisposed || FixedTexture.GraphicsDevice.IsDisposed)
+            {
+                FixedTexture = AssetManager.GetContentTexture(AssetName);
+            }
+            return FixedTexture;
         }
 
         public NamedImageFrame GenerateFrame(Point position)

@@ -69,7 +69,7 @@ namespace DwarfCorp
             RoomData data, 
             WorldManager world, 
             Faction faction) :
-            base(data.Name + " " + Counter, world, faction)
+            base((Counter + 1) + ". " + data.Name, world, faction)
         {
             RoomData = data;
             ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);

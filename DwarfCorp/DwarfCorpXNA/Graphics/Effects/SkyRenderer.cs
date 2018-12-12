@@ -36,6 +36,11 @@ namespace DwarfCorp
 
         public void CreateContent()
         {
+            if (GameState.Game.GraphicsDevice.IsDisposed)
+            {
+                return;
+            }
+
             SkyTexture = GameState.Game.Content.Load<TextureCube>(AssetManager.ResolveContentPath(ContentPaths.Sky.day_sky));
             NightTexture = GameState.Game.Content.Load<TextureCube>(AssetManager.ResolveContentPath(ContentPaths.Sky.night_sky));
             SkyMesh = GameState.Game.Content.Load<Model>(AssetManager.ResolveContentPath(ContentPaths.Models.sphereLowPoly));
@@ -116,7 +121,7 @@ namespace DwarfCorp
 
         public void RenderBackgroundMesh(GraphicsDevice device, Camera camera, Color fogColor, BoundingBox scale)
         {
-            if (BackgroundMesh == null || BackgroundMesh.IsDisposed || BackgroundIndex == null || BackgroundIndex.IsDisposed)
+            if (BackgroundMesh == null || BackgroundMesh.IsDisposed || BackgroundMesh.GraphicsDevice.IsDisposed || BackgroundIndex == null || BackgroundIndex.IsDisposed || BackgroundIndex.GraphicsDevice.IsDisposed)
             {
                 CreateBackgroundMesh(device, scale);
             }

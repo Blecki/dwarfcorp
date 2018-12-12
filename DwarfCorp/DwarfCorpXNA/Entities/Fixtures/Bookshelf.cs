@@ -54,15 +54,13 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(Manager);
 
-            var spriteSheet = AssetManager.GetContentTexture(ContentPaths.Entities.Furniture.bookshelf);
-
             AddChild(new Box(Manager,
                 "model",
                 Matrix.CreateTranslation(new Vector3(-0.25f, 0.0f, 0.35f - 0.15f)),
                 new Vector3(0.5f, 0.5f, 0.5f),
                 new Vector3(0.0f, 0.0f, 0.0f),
                 "bookshelf",
-                spriteSheet)).SetFlag(Flag.ShouldSerialize, false);
+                ContentPaths.Entities.Furniture.bookshelf)).SetFlag(Flag.ShouldSerialize, false);
 
             AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.5f, 0.0f), (changeEvent) =>
             {

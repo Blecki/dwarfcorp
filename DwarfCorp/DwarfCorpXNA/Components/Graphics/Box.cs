@@ -46,22 +46,28 @@ namespace DwarfCorp
     public class Box : Tinter
     {
         public string Primitive { get; set; }
-        public Texture2D Texture { get; set; }
+        public string Asset { get; set; }
+        private Texture2D Texture { get; set; }
 
         public Box()
         {
             
         }
 
-        public Box(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, string primitive, Texture2D tex) :
+        public Box(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, string primitive, string tex) :
             base(Manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             Primitive = primitive;
-            Texture = tex;
+            Asset = tex;
+            Texture = AssetManager.GetContentTexture(Asset);
         }
 
         override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
+            if (Texture.IsDisposed || Texture.GraphicsDevice.IsDisposed)
+            {
+                Texture = AssetManager.GetContentTexture(Asset);
+            }
             ApplyTintingToEffect(effect);
             effect.MainTexture = Texture;
             effect.World = GlobalTransform;

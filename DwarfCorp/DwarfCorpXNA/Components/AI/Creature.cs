@@ -803,7 +803,7 @@ namespace DwarfCorp
             CurrentCharacterMode = AttackMode;
             Sprite.ResetAnimations(CurrentCharacterMode);
             Sprite.PlayAnimations(CurrentCharacterMode);
-
+            var p_current = pos();
             Timer incrementTimer = new Timer(1.0f, false);
             while (progress() < maxProgress())
             {
@@ -818,7 +818,11 @@ namespace DwarfCorp
                         progress() / maxProgress());
                 }
                 Physics.Active = false;
-                Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos());
+                Physics.Face(p_current);
+                if(Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, p_current))
+                {
+                    p_current = pos();
+                }
                 Physics.Velocity = Vector3.Zero;
 
                 if (!String.IsNullOrEmpty(playSound))

@@ -4,6 +4,8 @@
   "Vegetation": [],
   "DayAmbience": "sfx_amb_forest_day",
   "NightAmbience": "sfx_amb_forest_night",
+  "RuinFloorType" : "Blue Tile",
+  "RuinWallType" : "Obsidian",
   "WaterIsLava" : true,
   "Motes": [
     {

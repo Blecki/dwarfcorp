@@ -94,6 +94,17 @@ namespace DwarfCorp
             currentResourceCount = 0;
         }
 
+        public bool HasResources(ResourceAmount resource)
+        {
+            if (resource != null && Resources.ContainsKey(resource.ResourceType))
+            {
+                int toReturn = Resources[resource.ResourceType].NumResources;
+                return toReturn >= resource.NumResources; ;
+            }
+
+            return false;
+        }
+
         public int RemoveMaxResources(ResourceAmount resource, int count)
         {
             if (resource != null && Resources.ContainsKey(resource.ResourceType))

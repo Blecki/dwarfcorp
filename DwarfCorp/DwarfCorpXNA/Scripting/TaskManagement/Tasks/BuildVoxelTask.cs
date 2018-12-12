@@ -80,17 +80,9 @@ namespace DwarfCorp
                 return Feasibility.Infeasible;
             }
 
-            Dictionary<ResourceType, int> numResources = new Dictionary<ResourceType, int>();
-            int numFeasibleVoxels = 0;
 
             var voxtype = VoxelLibrary.GetVoxelType(VoxType);
-            int count = agent.Faction.ListResources().Where(r => voxtype.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))).Sum(r => r.Value.NumResources);
-            if (count == 0)
-            {
-                return Feasibility.Infeasible;
-            }
-            numFeasibleVoxels++;
-            return numFeasibleVoxels > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
+            return agent.Faction.CanBuildVoxel(voxtype) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool ShouldDelete(Creature agent)

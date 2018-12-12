@@ -118,14 +118,15 @@ namespace DwarfCorp.GameStates
                     })));
             } 
 #endif
+            /*
             MakeMenuItem(frame, 
                 StringLibrary.GetString("new-game"), 
                 StringLibrary.GetString("new-game-tooltip"), 
                 (sender, args) => StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings() {GenerateFromScratch = true})));
-
+            */
             MakeMenuItem(frame, 
-                StringLibrary.GetString("new-game-advanced"), 
-                StringLibrary.GetString("new-game-advanced-tooltip"),
+                StringLibrary.GetString("new-game"), 
+                StringLibrary.GetString("new-game-tooltip"),
 #if !DEMO
                 (sender, args) => StateManager.PushState(new CompanyMakerState(Game, Game.StateManager)));
 #else
@@ -235,13 +236,17 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-            GuiRoot.Update(gameTime.ToGameTime());
+            GuiRoot.Update(gameTime.ToRealTime());
             SoundManager.Update(gameTime, null, null);
             base.Update(gameTime);
         }
 
         public override void Render(DwarfTime gameTime)
         {
+            if (LogoTexture.IsDisposed)
+            {
+                LogoTexture = AssetManager.GetContentTexture("newgui/gamelogo");
+            }
             GuiRoot.DrawMesh(
                         Gui.Mesh.Quad()
                         .Scale(LogoWidget.Rect.Width, LogoWidget.Rect.Height)

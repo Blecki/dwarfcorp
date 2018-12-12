@@ -68,6 +68,7 @@ namespace DwarfCorp
             OnEnemySensed += EnemySensor_OnEnemySensed;
             SenseTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
             SenseRadius = 15 * 15;
+            CollisionType = CollisionType.None;
         }
 
         public EnemySensor(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
@@ -79,6 +80,7 @@ namespace DwarfCorp
             Tags.Add("Sensor");
             SenseTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
             SenseRadius = 15 * 15;
+            CollisionType = CollisionType.None;
         }
 
 

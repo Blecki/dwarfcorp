@@ -444,10 +444,13 @@ namespace DwarfCorp
             else
             {
                 effect = EffectLibrary[name];
+
+                if (effect.IsDisposed)
+                {
+                    effect = Content.Load<SoundEffect>(AssetManager.ResolveContentPath(name));
+                    EffectLibrary[name] = effect;
+                }
             }
-
-
-
 
             if (!SoundCounts.ContainsKey(name))
             {
@@ -504,6 +507,11 @@ namespace DwarfCorp
             else
             {
                 effect = EffectLibrary[name];
+                if (effect.IsDisposed)
+                {
+                    effect = Content.Load<SoundEffect>(AssetManager.ResolveContentPath(name));
+                    EffectLibrary[name] = effect;
+                }
             }
             SFXMixer.Levels levels = Mixer.GetOrCreateLevels(name);
             SoundEffectInstance instance = effect.CreateInstance();
@@ -548,7 +556,7 @@ namespace DwarfCorp
 
             foreach(Sound3D instance in ActiveSounds)
             {
-                if(instance.HasStarted && instance.EffectInstance.State == SoundState.Stopped || instance.EffectInstance.State == SoundState.Paused)
+                if(instance.EffectInstance.IsDisposed || (instance.HasStarted && instance.EffectInstance.State == SoundState.Stopped || instance.EffectInstance.State == SoundState.Paused))
                 {
                     if(!instance.EffectInstance.IsDisposed)
                         instance.EffectInstance.Dispose();

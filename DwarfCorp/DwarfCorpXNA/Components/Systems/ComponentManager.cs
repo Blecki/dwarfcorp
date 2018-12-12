@@ -40,6 +40,11 @@ namespace DwarfCorp
             RootComponent = Component;
         }
 
+        public int NumComponents()
+        {
+            return Components.Count;
+        }
+
         private Mutex AdditionMutex = new Mutex();
         private Mutex RemovalMutex = new Mutex();
 
@@ -169,7 +174,7 @@ namespace DwarfCorp
 
         public bool HasComponent(uint id)
         {
-            return Components.ContainsKey(id);
+            return Components.ContainsKey(id) || Additions.Any(a => a.GlobalID == id);
         }
 
         private void RemoveComponentImmediate(GameComponent component)
@@ -266,7 +271,7 @@ namespace DwarfCorp
                 component.UpdatePaused(gameTime, chunks, camera);
 
             PerformanceMonitor.PopFrame();
-
+            
             AddRemove();
         }
 

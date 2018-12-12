@@ -41,7 +41,7 @@ namespace DwarfCorp
     public partial class WorldManager
     {
         [JsonIgnore]
-        public OctTreeNode OctTree = null;
+        public OctTreeNode<Body> OctTree = null;
 
         public IEnumerable<Body> EnumerateIntersectingObjects(BoundingBox box, CollisionType queryType)
         {

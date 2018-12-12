@@ -13,5 +13,12 @@ namespace DwarfCorp
             return new VoxelHandle(V.Chunk.Manager.ChunkData,
                 new GlobalVoxelCoordinate(V.Coordinate.X, V.Coordinate.Y + 1, V.Coordinate.Z));
         }
+
+        public static VoxelHandle GetVoxelBelow(VoxelHandle V)
+        {
+            if (!V.IsValid) return VoxelHandle.InvalidHandle;
+            return new VoxelHandle(V.Chunk.Manager.ChunkData,
+                new GlobalVoxelCoordinate(V.Coordinate.X, V.Coordinate.Y - 1, V.Coordinate.Z));
+        }
     }
 }

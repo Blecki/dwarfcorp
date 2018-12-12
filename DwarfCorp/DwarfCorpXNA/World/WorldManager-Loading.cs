@@ -89,6 +89,7 @@ namespace DwarfCorp
 
         private void LoadThreaded()
         {
+            DwarfGame.ExitGame = false;
             // Ensure we're using the invariant culture.
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
@@ -159,7 +160,7 @@ namespace DwarfCorp
             {
                 Vector3 origin = new Vector3(0, 0, 0);
                 Vector3 extents = new Vector3(1500, 1500, 1500);
-                OctTree = new OctTreeNode(origin - extents, origin + extents);
+                OctTree = new OctTreeNode<Body>(origin - extents, origin + extents);
 
                 PrimitiveLibrary.Initialize(GraphicsDevice, Content);
 
@@ -247,7 +248,10 @@ namespace DwarfCorp
 
                 Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
                 Vector3 extents = new Vector3(1500, 1500, 1500);
-
+                if (gameFile.PlayData.Stats != null)
+                {
+                    Stats = gameFile.PlayData.Stats;
+                }
                 if (gameFile.PlayData.Resources != null)
                 {
                     foreach (var resource in gameFile.PlayData.Resources)
@@ -324,13 +328,6 @@ namespace DwarfCorp
                 Camera.Position = new Vector3(0, 10, 0) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
                 Camera.Target = new Vector3(0, 10, 1) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
              
-                // If there's no file, we have to initialize the first chunk coordinate
-                if (gameFile == null)
-                {
-                    ChunkManager.GenerateInitialChunks(SpawnRect,
-                        new GlobalChunkCoordinate(0, 0, 0),
-                        SetLoadingMessage);
-                }
 
                 ComponentManager = new ComponentManager(this);
                 ComponentManager.SetRootComponent(new Body(ComponentManager, "root", Matrix.Identity, Vector3.Zero, Vector3.Zero));
@@ -404,6 +401,14 @@ namespace DwarfCorp
             Master = new GameMaster(Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
                 Camera, GraphicsDevice);
 
+            // If there's no file, we have to initialize the first chunk coordinate
+            if (gameFile == null)
+            {
+                ChunkManager.GenerateInitialChunks(SpawnRect,
+                    new GlobalChunkCoordinate(0, 0, 0),
+                    SetLoadingMessage);
+            }
+
             if (gameFile != null)
             {
                 if (gameFile.PlayData.Tasks != null)
@@ -437,12 +442,15 @@ namespace DwarfCorp
             foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
                 ChunkManager.InvalidateChunk(chunk);
 
+            SetLoadingMessage("Creating Geometry...");
+            ChunkManager.GenerateAllGeometry();
+
             ChunkManager.StartThreads();
             SetLoadingMessage("Presimulating ...");
             ShowingWorld = false;
             OnLoadedEvent();
-
             Thread.Sleep(1000);
+
             ShowingWorld = true;
 
             SetLoadingMessage("Complete.");

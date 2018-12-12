@@ -83,7 +83,7 @@ namespace DwarfCorp.GameStates
         {
             GuiRoot.RootItem.Clear();
 
-            var frame = MakeMenuFrame("DEBUG WORLDS");
+            var frame = MakeMenuFrame("SPECIAL WORLDS");
             MakeMenuItem(frame, "Hills", "Create a hilly world.", (sender, args) =>
                 {
                     Overworld.CreateHillsLand(Game.GraphicsDevice);
@@ -206,7 +206,7 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-            GuiRoot.Update(gameTime.ToGameTime());
+            GuiRoot.Update(gameTime.ToRealTime());
 
             base.Update(gameTime);
         }

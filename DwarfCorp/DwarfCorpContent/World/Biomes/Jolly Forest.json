@@ -2,6 +2,8 @@
   "Name": "Jolly Forest",
   "Icon": 10,
   "DayAmbience": "sfx_amb_tundra",
+  "RuinFloorType" : "Blue Tile",
+  "RuinWallType" : "Ice",
   "Vegetation": [
     {
       "Name": "Candycane",

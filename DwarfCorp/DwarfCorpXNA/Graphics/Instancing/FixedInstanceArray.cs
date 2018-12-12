@@ -274,7 +274,7 @@ namespace DwarfCorp
                 if (Model.VertexBuffer == null || Model.IndexBuffer == null || Model.VertexBuffer.IsDisposed || Model.VertexBuffer.IsContentLost)
                 {
                     Model.ResetBuffer(graphics);
-                    Model.Texture = Texture;
+                    Model.Texture = new NamedImageFrame(TextureAsset);
                 }
 
                 bool hasIndex = Model.IndexBuffer != null;

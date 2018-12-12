@@ -261,6 +261,11 @@ namespace DwarfCorp
         {
             return this == other;
         }
+
+        public override string ToString()
+        {
+            return String.Format("{0} {1} {2}", X, Y, Z);
+        }
     }
 
     [Serializable]
@@ -302,6 +307,10 @@ namespace DwarfCorp
         public bool Equals(LocalVoxelCoordinate other)
         {
             return this == other;
+        }
+        public override string ToString()
+        {
+            return String.Format("{0} {1} {2}", X, Y, Z);
         }
     }
 }

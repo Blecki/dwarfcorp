@@ -72,6 +72,10 @@ namespace DwarfCorp
             AutoRetry = true;
             Category = TaskCategory.Attack;
             BoredomIncrease = GameSettings.Default.Boredom_ExcitingTask;
+            if (type == KillType.Auto)
+            {
+                ReassignOnDeath = false;
+            }
         }
 
 
@@ -87,6 +91,7 @@ namespace DwarfCorp
             if (otherCreature != null && !creature.AI.FightOrFlight(otherCreature.AI))
             {
                 Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
+                ReassignOnDeath = false;
                 IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
                 return new FleeEntityAct(creature.AI) { Entity = EntityToKill, PathLength = 20 };
             }
@@ -129,7 +134,7 @@ namespace DwarfCorp
 
                 if (Mode == KillType.Attack && !agent.Stats.IsTaskAllowed(TaskCategory.Attack))
                     return Feasibility.Infeasible;
-                else if (Mode == KillType.Auto && (agent.AI.Position - EntityToKill.Position).Length() > 30)
+                else if (Mode == KillType.Auto && (agent.AI.Position - EntityToKill.Position).Length() > 20)
                     return Feasibility.Infeasible;
 
                 return Feasibility.Feasible;

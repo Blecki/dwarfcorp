@@ -486,7 +486,6 @@ namespace DwarfCorp.GameStates
             Game.Graphics.GraphicsDevice.SetRenderTarget(null);
             Game.Graphics.GraphicsDevice.Clear(Color.Black);
             EnableScreensaver = !World.ShowingWorld;
-
             if (World.ShowingWorld)
             {
                 /*For regenerating the voxel icon image! Do not delete!*/
@@ -496,7 +495,7 @@ namespace DwarfCorp.GameStates
                 tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
                 Game.Exit();
                  */
-
+                World.ValidateShader();
                 if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
                     MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
 
@@ -960,9 +959,9 @@ namespace DwarfCorp.GameStates
                                 {
                                     StateManager.PushState(new FactionViewState(GameState.Game, GameState.Game.StateManager, World));
                                 },
-                                Text = "Diplo.",
+                                Text =  StringLibrary.GetString("diplomacy-label"),
                                 TextVerticalAlign = VerticalAlign.Below,
-                                Tooltip = "View diplomacy with other factions."
+                                Tooltip = StringLibrary.GetString("diplomacy-tooltip")
                             },
                             EconomyIcon,
                                                                    
@@ -1368,6 +1367,7 @@ namespace DwarfCorp.GameStates
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
                                 var tool = Master.Tools[GameMaster.ToolMode.BuildWall] as BuildWallTool;
+                                tool.BuildFloor = false;
                                 tool.CurrentVoxelType = (byte)data.ID;
                                 ChangeTool(GameMaster.ToolMode.BuildWall);
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " wall.");
@@ -1417,6 +1417,7 @@ namespace DwarfCorp.GameStates
                                 Master.Faction.RoomBuilder.CurrentRoomData = null;
                                 Master.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
                                 var tool = Master.Tools[GameMaster.ToolMode.BuildWall] as BuildWallTool;
+                                tool.BuildFloor = true;
                                 tool.CurrentVoxelType = (byte)data.ID;
                                 ChangeTool(GameMaster.ToolMode.BuildWall); // Wut
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " floor.");

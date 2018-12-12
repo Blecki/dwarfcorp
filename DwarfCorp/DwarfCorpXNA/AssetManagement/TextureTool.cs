@@ -50,6 +50,10 @@ namespace DwarfCorp
     {
         public static MemoryTexture MemoryTextureFromTexture2D(Texture2D Source)
         {
+            if (Source.IsDisposed || Source.GraphicsDevice.IsDisposed)
+            {
+                return null;
+            }
             var r = new MemoryTexture(Source.Width, Source.Height);
             Source.GetData(r.Data);
             return r;

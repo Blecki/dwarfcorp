@@ -36,15 +36,13 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(Manager);
 
-            var spriteSheet = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
-
             AddChild(new Box(Manager,
                 "Cratebox",
                 Matrix.CreateRotationY(MathFunctions.Rand(-0.25f, 0.25f)),
                 new Vector3(1.0f, 1.0f, 1.0f),
                 new Vector3(0.5f, 0.5f, 0.5f),
                 "crate",
-                spriteSheet)).SetFlag(Flag.ShouldSerialize, false);
+                ContentPaths.Terrain.terrain_tiles)).SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }

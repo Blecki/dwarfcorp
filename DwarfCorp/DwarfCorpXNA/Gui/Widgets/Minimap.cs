@@ -159,7 +159,7 @@ namespace DwarfCorp.Gui.Widgets
             World.Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY);
         }
 
-               
+
         public void Render(Rectangle Where, Gui.Root Gui)
         {
             Gui.DrawQuad(Where, RenderTarget);
@@ -208,104 +208,135 @@ namespace DwarfCorp.Gui.Widgets
 
         private Timer _renderTimer = new Timer(0.15f, false, Timer.TimerMode.Real);
         private VertexPositionTexture[] quad = null;
+
+        public void ValidateShader()
+        {
+            if (DrawShader != null && (DrawShader.IsDisposed || DrawShader.GraphicsDevice.IsDisposed))
+            {
+                DrawShader = new BasicEffect(World.GraphicsDevice);
+            }
+
+            if (TerrainTexture == null || TerrainTexture.IsDisposed || TerrainTexture.IsContentLost)
+            {
+                var bounds = World.ChunkManager.Bounds;
+                float scale = 2.0f;
+                int numPixelsX = (int)((bounds.Max.X - bounds.Min.X) * scale);
+                int numPixelsZ = (int)((bounds.Max.Z - bounds.Min.Z) * scale);
+                TerrainTexture = new RenderTarget2D(GameState.Game.GraphicsDevice, numPixelsX, numPixelsZ, false, SurfaceFormat.Color, DepthFormat.Depth24);
+            }
+        }
+
         public void PreRender(DwarfTime time, SpriteBatch sprites)
         {
-            if (RenderTarget.IsDisposed || RenderTarget.IsContentLost)
-            {
-                World.ChunkManager.NeedsMinimapUpdate = true;
-                RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, RenderWidth, RenderHeight, false, SurfaceFormat.Color, DepthFormat.Depth24);
-            }
-
-            if (!HomeSet)
-            {
-                if (World.PlayerFaction.GetRooms().Count > 0)
+                if (sprites.IsDisposed || sprites.GraphicsDevice.IsDisposed)
                 {
-                    HomePosition = World.PlayerFaction.GetRooms().First().GetBoundingBox().Center();
+                    return;
                 }
-                HomeSet = true;
-            }
-            ReDrawChunks(time);
-            World.GraphicsDevice.SetRenderTarget(RenderTarget);
-            World.GraphicsDevice.Clear(Color.Black);
-            Camera.Target = World.Camera.Target;
-            Vector3 cameraToTarget = World.Camera.Target - World.Camera.Position;
-            cameraToTarget.Normalize();
-            Camera.Position = World.Camera.Target + Vector3.Up * 50 - cameraToTarget * 4;
-            Camera.UpdateViewMatrix();
-            Camera.UpdateProjectionMatrix();
-            World.DefaultShader.View = Camera.ViewMatrix;
-            World.DefaultShader.Projection = Camera.ProjectionMatrix;
-            var bounds = World.ChunkManager.Bounds;
-            DrawShader.Texture = TerrainTexture;
-            DrawShader.TextureEnabled = true;
-            DrawShader.LightingEnabled = false;
-            DrawShader.Projection = Camera.ProjectionMatrix;
-            DrawShader.View = Camera.ViewMatrix;
-            DrawShader.World = Matrix.Identity;
-            DrawShader.VertexColorEnabled = false;
-            DrawShader.Alpha = 1.0f;
-
-            if (quad == null)
-            {
-                quad = new VertexPositionTexture[]
+                try
                 {
-                                new VertexPositionTexture(new Vector3(bounds.Min.X, 0, bounds.Min.Z), new Vector2(0, 0)),
-                                new VertexPositionTexture(new Vector3(bounds.Max.X, 0, bounds.Min.Z), new Vector2(1, 0)),
-                                new VertexPositionTexture(new Vector3(bounds.Max.X, 0, bounds.Max.Z), new Vector2(1, 1)),
-                                new VertexPositionTexture(new Vector3(bounds.Max.X, 0, bounds.Max.Z), new Vector2(1, 1)),
-                                new VertexPositionTexture(new Vector3(bounds.Min.X, 0, bounds.Max.Z), new Vector2(0, 1)),
-                                new VertexPositionTexture(new Vector3(bounds.Min.X, 0, bounds.Min.Z), new Vector2(0, 0)),
-                };
-            }
-            foreach (var pass in DrawShader.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                World.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, quad, 0, 2);
-            }
-            
-            World.DefaultShader.EnbleFog = true;
-            try
-            {
-                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred,
-                    BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin, null, RasterizerState.CullNone, null,
-                    Matrix.Identity);
-                Viewport viewPort = new Viewport(RenderTarget.Bounds);
-
-                foreach (var icon in World.ComponentManager.GetMinimapIcons())
-                {
-                    if (!icon.Parent.IsVisible)
-                        continue;
-
-                    Vector3 screenPos = viewPort.Project(icon.GlobalTransform.Translation, Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity);
-
-                    if (RenderTarget.Bounds.Contains((int)screenPos.X, (int)screenPos.Y))
+                    ValidateShader();
+                    if (RenderTarget.IsDisposed || RenderTarget.IsContentLost)
                     {
-
-                        Body parentBody = icon.Parent as Body;
-                        if (parentBody != null)
-                        {
-                            if (parentBody.Position.Y > World.Master.MaxViewingLevel + 1)
-                                continue;
-                            var firstVisible = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager.ChunkData, parentBody.Position, parentBody.Position + Vector3.Up * VoxelConstants.ChunkSizeY);
-                            if (firstVisible.IsValid)
-                                continue;
-                        }
-
-                        DwarfGame.SpriteBatch.Draw(icon.Icon.Image, new Vector2(screenPos.X, screenPos.Y), icon.Icon.SourceRect, Color.White, 0.0f, new Vector2(icon.Icon.SourceRect.Width / 2.0f, icon.Icon.SourceRect.Height / 2.0f), icon.IconScale, SpriteEffects.None, 0);
+                        World.ChunkManager.NeedsMinimapUpdate = true;
+                        RenderTarget = new RenderTarget2D(GameState.Game.GraphicsDevice, RenderWidth, RenderHeight, false, SurfaceFormat.Color, DepthFormat.Depth24);
+                        return;
                     }
-                }
-            }
 
-            finally
+                    if (!HomeSet)
+                    {
+                        if (World.PlayerFaction.GetRooms().Count > 0)
+                        {
+                            HomePosition = World.PlayerFaction.GetRooms().First().GetBoundingBox().Center();
+                        }
+                        HomeSet = true;
+                    }
+                    ReDrawChunks(time);
+                    World.GraphicsDevice.SetRenderTarget(RenderTarget);
+                    World.GraphicsDevice.Clear(Color.Black);
+                    Camera.Target = World.Camera.Target;
+                    Vector3 cameraToTarget = World.Camera.Target - World.Camera.Position;
+                    cameraToTarget.Normalize();
+                    Camera.Position = World.Camera.Target + Vector3.Up * 50 - cameraToTarget * 4;
+                    Camera.UpdateViewMatrix();
+                    Camera.UpdateProjectionMatrix();
+                    World.DefaultShader.View = Camera.ViewMatrix;
+                    World.DefaultShader.Projection = Camera.ProjectionMatrix;
+                    var bounds = World.ChunkManager.Bounds;
+                    DrawShader.Texture = TerrainTexture;
+                    DrawShader.TextureEnabled = true;
+                    DrawShader.LightingEnabled = false;
+                    DrawShader.Projection = Camera.ProjectionMatrix;
+                    DrawShader.View = Camera.ViewMatrix;
+                    DrawShader.World = Matrix.Identity;
+                    DrawShader.VertexColorEnabled = false;
+                    DrawShader.Alpha = 1.0f;
+
+                    if (quad == null)
+                    {
+                        quad = new VertexPositionTexture[]
+                        {
+                                        new VertexPositionTexture(new Vector3(bounds.Min.X, 0, bounds.Min.Z), new Vector2(0, 0)),
+                                        new VertexPositionTexture(new Vector3(bounds.Max.X, 0, bounds.Min.Z), new Vector2(1, 0)),
+                                        new VertexPositionTexture(new Vector3(bounds.Max.X, 0, bounds.Max.Z), new Vector2(1, 1)),
+                                        new VertexPositionTexture(new Vector3(bounds.Max.X, 0, bounds.Max.Z), new Vector2(1, 1)),
+                                        new VertexPositionTexture(new Vector3(bounds.Min.X, 0, bounds.Max.Z), new Vector2(0, 1)),
+                                        new VertexPositionTexture(new Vector3(bounds.Min.X, 0, bounds.Min.Z), new Vector2(0, 0)),
+                        };
+                    }
+                    foreach (var pass in DrawShader.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        World.GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, quad, 0, 2);
+                    }
+
+                    World.DefaultShader.EnbleFog = true;
+                    try
+                    {
+                        DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred,
+                            BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin, null, RasterizerState.CullNone, null,
+                            Matrix.Identity);
+                        Viewport viewPort = new Viewport(RenderTarget.Bounds);
+
+                        foreach (var icon in World.ComponentManager.GetMinimapIcons())
+                        {
+                            if (!icon.Parent.IsVisible)
+                                continue;
+
+                            Vector3 screenPos = viewPort.Project(icon.GlobalTransform.Translation, Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity);
+
+                            if (RenderTarget.Bounds.Contains((int)screenPos.X, (int)screenPos.Y))
+                            {
+
+                                Body parentBody = icon.Parent as Body;
+                                if (parentBody != null)
+                                {
+                                    if (parentBody.Position.Y > World.Master.MaxViewingLevel + 1)
+                                        continue;
+                                    var firstVisible = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager.ChunkData, parentBody.Position, parentBody.Position + Vector3.Up * VoxelConstants.ChunkSizeY);
+                                    if (firstVisible.IsValid)
+                                        continue;
+                                }
+
+                                DwarfGame.SpriteBatch.Draw(icon.Icon.SafeGetImage(), new Vector2(screenPos.X, screenPos.Y), icon.Icon.SourceRect, Color.White, 0.0f, new Vector2(icon.Icon.SourceRect.Width / 2.0f, icon.Icon.SourceRect.Height / 2.0f), icon.IconScale, SpriteEffects.None, 0);
+                            }
+                        }
+                    }
+
+                    finally
+                    {
+                        sprites.End();
+                    }
+
+                    World.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+                    World.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                    World.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+                    World.GraphicsDevice.SamplerStates[0] = Drawer2D.PointMagLinearMin;
+                    World.GraphicsDevice.SetRenderTarget(null);
+            }
+            catch (Exception exception)
             {
-                DwarfGame.SpriteBatch.End();
+                Console.Out.WriteLine(exception);
             }
-
-            World.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-            World.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            World.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            World.GraphicsDevice.SamplerStates[0] = Drawer2D.PointMagLinearMin;
-            World.GraphicsDevice.SetRenderTarget(null);
         }
 
         public void Dispose()

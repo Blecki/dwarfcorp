@@ -143,10 +143,6 @@ namespace DwarfCorp
             }
 
             var banner = banners[Logo];
-            if (banner.Mesh.IsDisposed || banner.Mesh.GraphicsDevice.IsDisposed || banner.Texture.IsDisposed || banner.Texture.IsContentLost)
-            {
-                GenerateData(graphicsDevice, 1, 0.5f, 0.25f);
-            }
 
             var oldWind = effect.WindDirection;
             var oldWindForce = effect.WindForce;
@@ -166,7 +162,16 @@ namespace DwarfCorp
                 prevWindForce = effect.WindForce;
                 prevWindDirection = effect.WindDirection;
             }
-             
+            if (banner.Mesh.IsDisposed || banner.Mesh.GraphicsDevice.IsDisposed || banner.Texture.IsDisposed || banner.Texture.IsContentLost)
+            {
+                GenerateData(graphicsDevice, 1, 0.5f, 0.25f);
+            }
+            if (banner.Mesh.IsDisposed || banner.Mesh.GraphicsDevice.IsDisposed || banner.Texture.IsDisposed || banner.Texture.IsContentLost)
+            {
+                // Oh well!
+                return;
+            }
+
             graphicsDevice.SetVertexBuffer(banner.Mesh);
             graphicsDevice.Indices = banner.Indices;
             effect.CurrentTechnique = effect.Techniques[Shader.Technique.TexturedFlag];

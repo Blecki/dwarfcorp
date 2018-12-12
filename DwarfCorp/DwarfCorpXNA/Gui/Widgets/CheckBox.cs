@@ -77,8 +77,8 @@ namespace DwarfCorp.Gui.Widgets
             var baseDrawArea = base.GetDrawableInterior();
 
             var checkMesh = Mesh.Quad()
-                .Scale(baseDrawArea.Height - InteriorMargin.Top - InteriorMargin.Bottom, baseDrawArea.Height - InteriorMargin.Top - InteriorMargin.Bottom)
-                .Translate(baseDrawArea.X + InteriorMargin.Left, baseDrawArea.Y + InteriorMargin.Top)
+                .Scale(16, 16)
+                .Translate(baseDrawArea.X + InteriorMargin.Left, baseDrawArea.Y + InteriorMargin.Top + (baseDrawArea.Height / 2 - 8))
                 .Texture(Root.GetTileSheet(Graphics).TileMatrix(CheckState ? 1 : 0));
 
             var r = Mesh.Merge(baseMesh, checkMesh);

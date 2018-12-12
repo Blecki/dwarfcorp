@@ -48,6 +48,7 @@ namespace DwarfCorp
         public Shader Effect;
         public byte CurrentVoxelType { get; set; }
         private List<VoxelHandle> Selected { get; set; }
+        public bool BuildFloor = false;
 
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
@@ -143,38 +144,38 @@ namespace DwarfCorp
             if (mouse.RightButton == ButtonState.Pressed)
                 Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
             else
-                Player.VoxSelector.SelectionType = VoxelSelectionType.SelectEmpty;
+                Player.VoxSelector.SelectionType = BuildFloor ? VoxelSelectionType.SelectFilled : VoxelSelectionType.SelectEmpty;
 
         }
 
         public override void Render(DwarfGame game, DwarfTime time)
         {
-            var state = GameState.Game.GraphicsDevice.DepthStencilState;
-            GameState.Game.GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
-            Effect = Player.World.DefaultShader;
-
-            float t = (float)time.TotalGameTime.TotalSeconds;
-            float st = (float)Math.Sin(t * 4) * 0.5f + 0.5f;
-            Effect.MainTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
-            Effect.LightRamp = Color.White;
-            Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.25f * st + 0.4f);
-            Effect.SetTexturedTechnique();
-            
-            if (Selected == null)
-            {
-                Selected = new List<VoxelHandle>();
-            }
-
-            if (CurrentVoxelType == 0)
-            {
-                Selected.Clear();
-            }
-
-            Effect.VertexColorTint = new Color(0.0f, 1.0f, 0.0f, 0.25f * st + 0.4f);
-            Vector3 offset = Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
-
             if (Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
+                var state = GameState.Game.GraphicsDevice.DepthStencilState;
+                GameState.Game.GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
+                Effect = Player.World.DefaultShader;
+
+                float t = (float)time.TotalGameTime.TotalSeconds;
+                float st = (float)Math.Sin(t * 4) * 0.5f + 0.5f;
+                Effect.MainTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
+                Effect.LightRamp = Color.White;
+                Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.25f * st + 0.4f);
+                Effect.SetTexturedTechnique();
+
+                if (Selected == null)
+                {
+                    Selected = new List<VoxelHandle>();
+                }
+
+                if (CurrentVoxelType == 0)
+                {
+                    Selected.Clear();
+                }
+
+                Effect.VertexColorTint = new Color(0.0f, 1.0f, 0.0f, 0.25f * st + 0.4f);
+                Vector3 offset = Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
+
                 foreach (var voxel in Selected)
                 {
                     Effect.World = Matrix.CreateTranslation(voxel.WorldPosition + offset);
@@ -184,12 +185,12 @@ namespace DwarfCorp
                         VoxelLibrary.GetPrimitive(CurrentVoxelType).Render(GameState.Game.GraphicsDevice);
                     }
                 }
-            }
 
-            Effect.LightRamp = Color.White;
-            Effect.VertexColorTint = Color.White;
-            Effect.World = Matrix.Identity;
-            GameState.Game.GraphicsDevice.DepthStencilState = state;
+                Effect.LightRamp = Color.White;
+                Effect.VertexColorTint = Color.White;
+                Effect.World = Matrix.Identity;
+                GameState.Game.GraphicsDevice.DepthStencilState = state;
+            }
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)

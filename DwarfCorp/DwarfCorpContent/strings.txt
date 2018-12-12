@@ -51,7 +51,7 @@ s-anvil: Anvil
 d-anvil: Used to craft more complex items.
 play-employee-icon-label: Dwarfs
 play-employee-icon-tooltip: Selected employee menu
-play-marks-icon-label: Marks
+play-marks-icon-label: Markers
 play-marks-icon-tooltip: Active Markers
 play-tasks-icon-label: Tasks
 play-tasks-icon-tooltip: Task List
@@ -68,8 +68,8 @@ slicer-down-tooltip: Go down one viewing level.
 slicer-up-tooltip: Go up one viewing level.
 slicer-current-tooltip: Current viewing level.
 time-tooltip: Current time/date.
-economy-tooltip: Click to open the Economy screen.
-economy-label: Econ.
+economy-tooltip: Click to open the Colony Management screen.
+economy-label: Colony
 events-tooltip: View Event Log
 events-label: Events
 settings-tooltip: Click to open the Settings screen.
@@ -95,3 +95,5 @@ world-generation-reveal-surface: Reveal Surface
 play-rooms-icon-label: Zones
 play-rooms-icon-tooltip: Lists all zones in your colony.
 generic-room-description: It's rectangular. It's open. It's a room.
+diplomacy-label: Factions
+diplomacy-tooltip: View diplomatic relations with other factions.

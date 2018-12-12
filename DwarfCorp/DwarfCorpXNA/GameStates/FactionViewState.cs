@@ -737,7 +737,7 @@ namespace DwarfCorp.GameStates
                 }
             }
             World.TutorialManager.Update(GuiRoot);
-            GuiRoot.Update(gameTime.ToGameTime());
+            GuiRoot.Update(gameTime.ToRealTime());
             base.Update(gameTime);
         }
 

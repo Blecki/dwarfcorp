@@ -76,11 +76,14 @@ namespace DwarfCorp
         public string NightAmbience { get; set; }
         public bool WaterSurfaceIce { get; set; }
         public bool WaterIsLava { get; set; }
-
+        public string RuinFloorType { get; set; }
+        public string RuinWallType { get; set; }
         public BiomeData()
         {
             ShoreVoxel = "Sand";
             WaterIsLava = false;
+            RuinFloorType = "Cobble";
+            RuinWallType = "Shale";
         }
 
         // Todo: Move defaults to above and remove this.

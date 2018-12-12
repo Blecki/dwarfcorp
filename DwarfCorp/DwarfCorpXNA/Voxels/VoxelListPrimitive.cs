@@ -150,8 +150,8 @@ namespace DwarfCorp
             BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
             var sliceStack = new List<RawPrimitive>();
             var cache = new Cache();
-
-            for (var y = 0; y < chunk.Manager.World.Master.MaxViewingLevel; ++y)
+            int maxViewingLevel = chunk.Manager.World.Master == null ? VoxelConstants.ChunkSizeY : chunk.Manager.World.Master.MaxViewingLevel;
+            for (var y = 0; y < maxViewingLevel; ++y)
             {
                 RawPrimitive sliceGeometry = null;
 
@@ -278,8 +278,8 @@ namespace DwarfCorp
             var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(X, Y, Z));
             if (!v.IsVisible) return; // How did this even get called then??
 
-            var designations = Designations.EnumerateDesignations(v).ToList();
-
+            var designations = Designations == null ? new List<DesignationSet.VoxelDesignation>() : Designations.EnumerateDesignations(v).ToList();
+            int maxViewingLevel = World.Master == null ? VoxelConstants.ChunkSizeY : World.Master.MaxViewingLevel;
             foreach (var designation in designations)
             {
                 if ((designation.Type & DesignationDrawer.VisibleTypes) == designation.Type)
@@ -291,7 +291,7 @@ namespace DwarfCorp
                     var designationVisible = false;
 
                     if (designation.Type == DesignationType.Put)
-                        designationVisible = v.Coordinate.Y < World.Master.MaxViewingLevel;
+                        designationVisible = v.Coordinate.Y < maxViewingLevel;
                     else
                         designationVisible = VoxelHelpers.DoesVoxelHaveVisibleSurface(World, v);
 

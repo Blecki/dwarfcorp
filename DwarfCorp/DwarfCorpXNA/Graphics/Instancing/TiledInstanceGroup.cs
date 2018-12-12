@@ -130,6 +130,12 @@ namespace DwarfCorp
                 foreach (var texture in RawAtlas.Textures)
                 {
                     var realTexture = texture.RealTexture;
+                    if (realTexture == null || realTexture.IsDisposed || realTexture.GraphicsDevice.IsDisposed)
+                    {
+                        texture.RealTexture = AssetManager.GetContentTexture(texture.Sheet.Texture);
+                        realTexture = texture.RealTexture;
+                    }
+
                     var textureData = new Color[realTexture.Width * realTexture.Height];
                     realTexture.GetData(textureData);
 
@@ -140,7 +146,7 @@ namespace DwarfCorp
                 NeedsRendered = false;
             }
 
-            if (InstanceBuffer == null)
+            if (InstanceBuffer == null || InstanceBuffer.IsDisposed || InstanceBuffer.IsContentLost)
                 InstanceBuffer = new DynamicVertexBuffer(Device, TiledInstancedVertex.VertexDeclaration, InstanceQueueSize, BufferUsage.None);
             
             Device.RasterizerState = new RasterizerState { CullMode = CullMode.None };

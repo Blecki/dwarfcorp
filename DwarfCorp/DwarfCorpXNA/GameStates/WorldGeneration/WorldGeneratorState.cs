@@ -367,7 +367,7 @@ namespace DwarfCorp.GameStates
 
             // Enable or disable start button based on Generator state.
 
-            GuiRoot.Update(gameTime.ToGameTime());
+            GuiRoot.Update(gameTime.ToRealTime());
             if (Generator.CurrentState == WorldGenerator.GenerationState.Finished)
                 Preview.Update();
             base.Update(gameTime);

@@ -43,18 +43,22 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class StashResourcesAct : CreatureAct
     {
-        public List<ResourceAmount> Resources { get; set; }
+        public ResourceAmount Resources { get; set; }
         public Faction Faction = null;
+        public Stockpile Zone = null;
+        public Inventory.RestockType RestockType = Inventory.RestockType.None;
+
         public StashResourcesAct()
         {
 
         }
 
-        public StashResourcesAct(CreatureAI agent, List<ResourceAmount> resources) :
+        public StashResourcesAct(CreatureAI agent, Stockpile zone, ResourceAmount resources) :
             base(agent)
         {
+            Zone = zone;
             Resources = resources;
-            Name = "Stash " + Resources.ToString();
+            Name = "Stash " + Resources.ResourceType.ToString();
         }
 
         public override IEnumerable<Status> Run()
@@ -64,9 +68,7 @@ namespace DwarfCorp
             {
                 Faction = Agent.Faction;
             }
-            Zone zone = Faction.GetNearestStockpile(Agent.Position, (s) => !s.IsFull() && Resources.All(resource => s.IsAllowed(resource.ResourceType)));
-
-            if (zone != null)
+            if (Zone != null)
             {
                 var resourcesToStock = Creature.Inventory.Resources.Where(a => a.MarkedForRestock).ToList();
                 foreach (var resource in resourcesToStock)
@@ -75,7 +77,7 @@ namespace DwarfCorp
 
                     foreach (Body b in createdItems)
                     {
-                        if (zone.AddItem(b))
+                        if (Zone.AddItem(b))
                         {
                             Creature.NoiseMaker.MakeNoise("Stockpile", Creature.AI.Position);
                             Creature.Stats.NumItemsGathered++;
@@ -95,7 +97,7 @@ namespace DwarfCorp
             }
 
             Timer waitTimer = new Timer(1.0f, true);
-            bool removed = Faction.RemoveResources(Resources, Agent.Position);
+            bool removed = Faction.RemoveResources(Resources, Agent.Position, Zone, true);
 
             if(!removed)
             {
@@ -103,10 +105,7 @@ namespace DwarfCorp
             }
             else
             {
-                foreach(ResourceAmount resource in Resources)
-                {
-                    Agent.Creature.Inventory.AddResource(resource.CloneResource(), Inventory.RestockType.None);   
-                }
+                Agent.Creature.Inventory.AddResource(Resources.CloneResource(), RestockType);
                 Agent.Creature.Sprite.ResetAnimations(Creature.AttackMode);
                 while (!waitTimer.HasTriggered)
                 {

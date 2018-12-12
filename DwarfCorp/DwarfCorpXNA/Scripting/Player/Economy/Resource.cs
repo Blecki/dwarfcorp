@@ -137,7 +137,8 @@ namespace DwarfCorp
             Explosive,
             CraftItem,
             Mana,
-            Potion
+            Potion,
+            Seed
         }
 
         public Resource()

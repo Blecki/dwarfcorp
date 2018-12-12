@@ -51,7 +51,7 @@ namespace DwarfCorp
         public struct TerrainElement
         {
             public string Name;
-            public ImageFrame Image;
+            public NamedImageFrame Image;
             public float SpawnScale;
             public float SpawnThreshold;
         }
@@ -112,33 +112,33 @@ namespace DwarfCorp
 
             Substrate = new TerrainElement
             {
-                Image = new ImageFrame(Tiles, 32, 3, 1),
+                Image = new NamedImageFrame(ContentPaths.Terrain.terrain_tiles, 32, 3, 1),
                 Name = "Rock"
             };
 
             Soil = new TerrainElement
             {
-                Image = new ImageFrame(Tiles, 32, 2, 0),
+                Image = new NamedImageFrame(ContentPaths.Terrain.terrain_tiles, 32, 2, 0),
                 Name = "Dirt"
             };
 
 
             Grass = new TerrainElement
             {
-                Image = new ImageFrame(Tiles, 32, 3, 0),
+                Image = new NamedImageFrame(ContentPaths.Terrain.terrain_tiles, 32, 3, 0),
                 Name = "Grass"
             };
 
 
             Lava = new TerrainElement
             {
-                Image = new ImageFrame(Tiles, 32, 0, 7),
+                Image = new NamedImageFrame(ContentPaths.Terrain.terrain_tiles, 32, 0, 7),
                 Name = "Lava"
             };
 
             Cave = new TerrainElement
             {
-                Image = new ImageFrame(Tiles, 32, 1, 0),
+                Image = new NamedImageFrame(ContentPaths.Terrain.terrain_tiles, 32, 1, 0),
                 Name = "Rock2"
             };
 
@@ -148,14 +148,14 @@ namespace DwarfCorp
             {
                 new TerrainElement
                 {
-                    Image = new ImageFrame(Tiles, 32, 2, 11),
+                    Image = new NamedImageFrame(ContentPaths.Terrain.terrain_tiles, 32, 2, 11),
                     Name = "Gold",
                     SpawnScale = 0.05f,
                     SpawnThreshold = 0.9f
                 },
                 new TerrainElement
                 {
-                    Image = new ImageFrame(Tiles, 32, 3, 11),
+                    Image = new NamedImageFrame(ContentPaths.Terrain.terrain_tiles, 32, 3, 11),
                     Name = "Mana",
                     SpawnScale = 0.04f,
                     SpawnThreshold = 0.9f
@@ -316,7 +316,7 @@ namespace DwarfCorp
             float tileX = ix * TileSize - ((x) * TileSize) % TileSize;
             float tileY = iy * TileSize;
 
-            sprites.Draw(element.Image.Image, new Rectangle((int)tileX, (int)tileY, TileSize, TileSize), element.Image.SourceRect, tint);
+            sprites.Draw(element.Image.SafeGetImage(), new Rectangle((int)tileX, (int)tileY, TileSize, TileSize), element.Image.SourceRect, tint);
         }
     }
 }

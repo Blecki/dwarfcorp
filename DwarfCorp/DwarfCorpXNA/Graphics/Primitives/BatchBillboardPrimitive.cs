@@ -22,14 +22,14 @@ namespace DwarfCorp
         public List<Color> VertColors;
 
         public BatchBillboardPrimitive(GraphicsDevice device,
-            Texture2D spriteSheet,
+            NamedImageFrame spriteSheet,
             int frameWidth,
             int frameHeight,
             Point frame,
             float width, float height, bool flipped, List<Matrix> relativeTransforms, List<Color> tints, List<Color> vertColors )
         {
             RelativeTransforms = relativeTransforms;
-            UVs = new BillboardPrimitive.BoardTextureCoords(spriteSheet.Width, spriteSheet.Height, frameWidth, frameHeight, frame, flipped);
+            UVs = new BillboardPrimitive.BoardTextureCoords(spriteSheet.SafeGetImage().Width, spriteSheet.SafeGetImage().Height, frameWidth, frameHeight, frame, flipped);
             Width = width;
             Tints = tints;
             VertColors = vertColors;

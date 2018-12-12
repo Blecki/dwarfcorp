@@ -240,7 +240,7 @@ namespace DwarfCorp.GameStates
 
             SpriteFrame.AnimationPlayer.Update(gameTime, false, Timer.TimerMode.Real);
             SpriteFrame.Sprite.Update(StateManager.Game.GraphicsDevice);
-            GuiRoot.Update(gameTime.ToGameTime());
+            GuiRoot.Update(gameTime.ToRealTime());
 
             base.Update(gameTime);
         }

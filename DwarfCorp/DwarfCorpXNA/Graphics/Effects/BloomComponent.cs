@@ -277,11 +277,9 @@ namespace BloomPostprocess
             catch (InvalidOperationException operationException)
             {
                 Console.Error.WriteLine(operationException.ToString());
+                return;
             }
-            finally
-            {
-                DwarfGame.SpriteBatch.End();
-            }
+            DwarfGame.SpriteBatch.End();
         }
 
 

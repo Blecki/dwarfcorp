@@ -148,9 +148,9 @@ namespace DwarfCorp.GameStates
             var factions = GetFactionsInSpawn();
             var biomes = new HashSet<byte>();
             Rectangle spawnRect = GetSpawnRectangle();
-            for (int x = spawnRect.X; x < spawnRect.X + spawnRect.Width; x++)
+            for (int x = Math.Max(spawnRect.X, 0); x < Math.Min(spawnRect.X + spawnRect.Width, Overworld.Map.GetLength(0) - 1); x++)
             {
-                for (int y = spawnRect.Y; y < spawnRect.Y + spawnRect.Height; y++)
+                for (int y = Math.Max(spawnRect.Y, 0); y < Math.Min(spawnRect.Y + spawnRect.Height, Overworld.Map.GetLength(1) - 1); y++)
                 {
                     biomes.Add(Overworld.Map[x, y].Biome);
                 }
@@ -186,6 +186,9 @@ namespace DwarfCorp.GameStates
             yield return new KeyValuePair<string, Color>("Biomes: ", Color.White);
             foreach (var biome in biomes)
             {
+                if (biome < 0 || biome > BiomeLibrary.Biomes.Count - 1)
+                    continue;
+
                 var biomeColor = BiomeLibrary.Biomes[biome].MapColor;
                 biomeColor.R = (byte)Math.Min(255, biomeColor.R + 80);
                 biomeColor.G = (byte)Math.Min(255, biomeColor.G + 80);

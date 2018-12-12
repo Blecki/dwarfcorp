@@ -161,18 +161,26 @@ namespace DwarfCorp
             if (g == null || g.IsDisposed)
                 return;
             VoxelListPrimitive primitive = new VoxelListPrimitive();
-            primitive.InitializeFromChunk(this, Manager.World.PlayerFaction.Designations, Manager.World.DesignationDrawer, Manager.World);
+            DesignationSet designations = null;
+            if (Manager.World.Master != null)
+            {
+                designations = Manager.World.PlayerFaction.Designations;
+            }
+            primitive.InitializeFromChunk(this, designations, Manager.World.DesignationDrawer, Manager.World);
             // TODO: Move to main thread!
             var changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");
             foreach (var c in Manager.World.EnumerateIntersectingObjects(GetBoundingBox(), CollisionType.Both))
                 c.ReceiveMessageRecursive(changedMessage);
         }
 
-        public void Destroy(GraphicsDevice device)
+        public void Destroy()
         {
             if (Primitive != null)
             {
-                Primitive.ResetBuffer(device);
+                if (Primitive.VertexBuffer != null)
+                    Primitive.VertexBuffer.Dispose();
+                if (Primitive.IndexBuffer != null)
+                 Primitive.IndexBuffer.Dispose();
             }
         }
 

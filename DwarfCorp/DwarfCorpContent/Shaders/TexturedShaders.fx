@@ -294,7 +294,7 @@ struct TVertexToPixel
 	float4 ClipDistance : TEXCOORD2;
 	float Fog            : TEXCOORD3;	
 	float4 TextureBounds : TEXCOORD4;
-	float3 VertexColor     : COLOR1;
+	float4 VertexColor     : COLOR1;
 };
 
 struct SelectionBufferToPixel
@@ -395,7 +395,7 @@ TVertexToPixel TexturedVS(float4 inPos : POSITION,
 						   float4 inTexSource : TEXCOORD1, 
 						   float4x4 world : BLENDWEIGHT, 
 						   float4 lightRampMultiplier : COLOR1, 
-						   float3 tint,
+						   float4 tint,
 						   uniform int max_lights)
 {
     TVertexToPixel Output = (TVertexToPixel)0;
@@ -413,7 +413,7 @@ TVertexToPixel TexturedVS(float4 inPos : POSITION,
     Output.ClipDistance = dot(worldPosition, ClipPlane0);
     Output.LightRamp = inLightRamp * lightRampMultiplier;
     Output.LightRamp.a = lightRampMultiplier.a;
-	Output.VertexColor.rgb = tint.rgb * xVertexColorMultiplier.rgb;
+	Output.VertexColor = tint * xVertexColorMultiplier;
     Output.LightRamp.a *= xVertexColorMultiplier.a;
     Output.LightRamp = Lighting(max_lights, worldPosition, Output.LightRamp);
 	Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
@@ -428,7 +428,7 @@ TVertexToPixel TexturedVS_1Light(float4 inPos : POSITION,
 	float4 inTexSource : TEXCOORD1,
 	float4x4 world : BLENDWEIGHT,
 	float4 lightTint : COLOR1,
-	float3 tint)
+	float4 tint)
 {
 	TVertexToPixel Output = (TVertexToPixel)0;
 
@@ -445,7 +445,7 @@ TVertexToPixel TexturedVS_1Light(float4 inPos : POSITION,
 	Output.ClipDistance = dot(worldPosition, ClipPlane0);
     Output.LightRamp = inLightRamp * lightTint;
     Output.LightRamp.a = lightTint.a;
-	Output.VertexColor.rgb = tint.rgb * xVertexColorMultiplier.rgb;
+	Output.VertexColor = tint * xVertexColorMultiplier;
     Output.LightRamp.a *= xVertexColorMultiplier.a;
     Output.LightRamp = Lighting1Light(worldPosition, Output.LightRamp);
 	Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
@@ -470,7 +470,7 @@ TVertexToPixel TexturedVS_To_Lightmap(float4 inPos : POSITION,
 	Output.TextureCoords = inTexCoords;
     Output.LightRamp = inColor * lightTint;
     Output.LightRamp.a = lightTint.a;
-	Output.VertexColor.rgb = xLightRamp.rgb;
+	Output.VertexColor = xLightRamp;
 
 	for (int i = 0; i < max_lights; i++)
 	{
@@ -566,7 +566,7 @@ TVertexToPixel TexturedVSNonInstanced( float4 inPos : POSITION,
 									   float2 inTexCoords: TEXCOORD0, 
 									   float4 lightRamp : COLOR0, 
 									   float4 inTexSource : TEXCOORD1, 
-									   float3 vertColor : COLOR1,
+									   float4 vertColor : COLOR1,
 									   uniform int max_lights)
 {
     return TexturedVS(inPos, inTexCoords, lightRamp, inTexSource, xWorld, xLightRamp, vertColor, max_lights);
@@ -576,7 +576,7 @@ TVertexToPixel TexturedVSNonInstanced_1Light(float4 inPos : POSITION,
 	float2 inTexCoords : TEXCOORD0,
 	float4 inColor : COLOR0,
 	float4 inTexSource : TEXCOORD1,
-	float3 vertColor : COLOR1)
+	float4 vertColor : COLOR1)
 {
 	return TexturedVS_1Light(inPos, inTexCoords, inColor, inTexSource, xWorld, xLightRamp, vertColor);
 }
@@ -591,7 +591,7 @@ TVertexToPixel TexturedVSInstanced( float4 inPos : POSITION,
 									uniform int max_lights)
 {
     return TexturedVS(inPos, inTexCoords, inLightRamp, inTexSource, transpose(transform),
-		              float4(1, 1, 1, tint.a), tint.rgb, max_lights);
+		              float4(1, 1, 1, tint.a), tint, max_lights);
 }
 
 TVertexToPixel TexturedVSTiledInstanced(float4 inPos : POSITION,
@@ -607,7 +607,7 @@ TVertexToPixel TexturedVSTiledInstanced(float4 inPos : POSITION,
 	float2 newTexCoord = inTexCoords * float2(tileTexSource.z - tileTexSource.x, tileTexSource.w - tileTexSource.y);
 	newTexCoord += float2(tileTexSource.x, tileTexSource.y);
     return TexturedVS(inPos, newTexCoord, inLightRamp, tileTexSource, transpose(transform),
-		float4(1, 1, 1, vertexColor.a), vertexColor.rgb, max_lights);
+		float4(1, 1, 1, vertexColor.a), vertexColor, max_lights);
 }
 
 TVertexToPixel TexturedVSInstanced_1Light(float4 inPos : POSITION,
@@ -619,7 +619,7 @@ TVertexToPixel TexturedVSInstanced_1Light(float4 inPos : POSITION,
 	float4 vertexColor : COLOR5)
 {
     return TexturedVS_1Light(inPos, inTexCoords, lightRamp, inTexSource, transpose(transform),
-		float4(1, 1, 1, vertexColor.a), vertexColor.rgb);
+		float4(1, 1, 1, vertexColor.a), vertexColor);
 }
 
 TVertexToPixel TexturedVSTiledInstanced_1Light(float4 inPos : POSITION,
@@ -634,7 +634,7 @@ TVertexToPixel TexturedVSTiledInstanced_1Light(float4 inPos : POSITION,
 	float2 newTexCoord = inTexCoords * float2(tileTexSource.z - tileTexSource.x, tileTexSource.w - tileTexSource.y);
 	newTexCoord += float2(tileTexSource.x, tileTexSource.y);
     return TexturedVS_1Light(inPos, newTexCoord, lightRamp, inTexSource, transpose(transform),
-		float4(1, 1, 1, vertexColor.a), vertexColor.rgb);
+		float4(1, 1, 1, vertexColor.a), vertexColor);
 }
 
 SelectionBufferToPixel SelectionVSNonInstanced(float4 inPos : POSITION, float2 inTexCoords : TEXCOORD0)
@@ -796,7 +796,7 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
         float4 illumColor = tex2D(IllumSampler, textureCoords);
 
         Output.Color.rgba *= texColor;
-        Output.Color.rgb *= PSIn.VertexColor;
+        Output.Color.rgba *= PSIn.VertexColor.rgba;
 
         Output.Color.rgba = lerp(Output.Color.rgba, texColor, SelfIllumination * illumColor.r);
 	

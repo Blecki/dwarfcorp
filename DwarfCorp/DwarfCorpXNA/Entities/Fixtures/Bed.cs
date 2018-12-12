@@ -53,16 +53,13 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
             base.CreateCosmeticChildren(Manager);
-
-            var spriteSheet = AssetManager.GetContentTexture(ContentPaths.Entities.Furniture.bedtex);
-
             AddChild(new Box(Manager, 
                 "bedbox", 
                 Matrix.CreateTranslation(-0.40f, 0.00f, -0.45f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), 
                 new Vector3(1.0f, 1.0f, 2.0f), 
                 new Vector3(0.0f, 0.0f, 0.0f), 
-                "bed", 
-                spriteSheet)).SetFlag(Flag.ShouldSerialize, false);
+                "bed",
+                ContentPaths.Entities.Furniture.bedtex)).SetFlag(Flag.ShouldSerialize, false);
 
             AddChild(new GenericVoxelListener(Manager,
                 Matrix.Identity,
