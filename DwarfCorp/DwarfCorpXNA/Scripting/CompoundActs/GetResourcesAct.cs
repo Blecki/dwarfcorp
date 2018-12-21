@@ -121,6 +121,7 @@ namespace DwarfCorp
                     if (!Creature.Inventory.HasResource(resource.Value))
                     {
                         hasAllResources = false;
+                        break;
                     }
                 }
             }
