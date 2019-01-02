@@ -120,7 +120,7 @@ namespace DwarfCorp
 
         public void CreateSplash(Vector3 pos, LiquidType liquid)
         {
-            if (MathFunctions.RandEvent(0.9f)) return;
+            if (MathFunctions.RandEvent(0.25f)) return;
 
             LiquidSplash splash;
 
@@ -130,7 +130,7 @@ namespace DwarfCorp
                 {
                     splash = new LiquidSplash
                     {
-                        name = "splash2",
+                        name = "splat",
                         numSplashes = 2,
                         position = pos,
                         sound = ContentPaths.Audio.river
@@ -144,7 +144,8 @@ namespace DwarfCorp
                         name = "flame",
                         numSplashes = 5,
                         position = pos,
-                        sound = ContentPaths.Audio.fire
+                        sound = ContentPaths.Audio.Oscar.sfx_env_lava_spread,
+                        entity =  "Fire"
                     };
                 }
                     break;
@@ -280,6 +281,12 @@ namespace DwarfCorp
                                 var amountToMove = (int)(currentVoxel.LiquidLevel * GetSpreadRate(currentVoxel.LiquidType));
                                 if (neighborVoxel.LiquidLevel + amountToMove > maxWaterLevel)
                                     amountToMove = maxWaterLevel - neighborVoxel.LiquidLevel;
+
+                                if (amountToMove > 2)
+                                {
+                                    CreateSplash(neighborVoxel.Coordinate.ToVector3(), currentVoxel.LiquidType);
+                                }
+
                                 var newWater = currentVoxel.LiquidLevel - amountToMove;
 
                                 var sourceType = currentVoxel.LiquidType;

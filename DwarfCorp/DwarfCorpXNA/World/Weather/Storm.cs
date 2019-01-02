@@ -103,18 +103,22 @@ namespace DwarfCorp
             Vector3 offset = new Vector3(-windNormalized.X * extents.X + center.X, bounds.Max.Y + 5, -windNormalized.Z * extents.Z + center.Z);
             Vector3 perp = new Vector3(-windNormalized.Z, 0, windNormalized.X);
             int numClouds = (int)(MathFunctions.RandInt(10, 100) * Intensity);
+            int numCloudLayers = MathFunctions.RandInt(1, 5);
 
-            for (int i = 0; i < numClouds; i++)
+            for (int layer = 0; layer < numCloudLayers; layer++)
             {
-                Vector3 cloudPos = offset + perp * 5 * (i - numClouds / 2) + MathFunctions.RandVector3Cube() * 10;
-
-                Cloud cloud = new Cloud(World.ComponentManager, Intensity, 5, offset.Y + MathFunctions.Rand(-3.0f, 3.0f), cloudPos)
+                for (int i = 0; i < numClouds; i++)
                 {
-                    Velocity = WindSpeed,
-                    TypeofStorm = TypeofStorm
-                };
-                Clouds.Add(cloud);
-                World.ComponentManager.RootComponent.AddChild(cloud);
+                    Vector3 cloudPos = offset + perp * 5 * (i - numClouds / 2) + MathFunctions.RandVector3Cube() * 10 + windNormalized * 2 * layer;
+
+                    Cloud cloud = new Cloud(World.ComponentManager, Intensity, 5, offset.Y + MathFunctions.Rand(-3.0f, 3.0f), cloudPos, TypeofStorm == StormType.RainStorm ? 0.15f : 0.0f)
+                    {
+                        Velocity = WindSpeed * 0.5f,
+                        TypeofStorm = TypeofStorm
+                    };
+                    Clouds.Add(cloud);
+                    World.ComponentManager.RootComponent.AddChild(cloud);
+                }
             }
             IsInitialized = true;
         }

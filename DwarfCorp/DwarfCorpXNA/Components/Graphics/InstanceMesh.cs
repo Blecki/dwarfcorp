@@ -83,6 +83,7 @@ namespace DwarfCorp
             {
                 Instance.LightRamp = LightRamp;
                 Instance.Transform = GlobalTransform;
+                Instance.VertexColorTint = VertexColorTint;
                 Instance.SelectionBufferColor = this.GetGlobalIDColor();
                 Manager.World.InstanceRenderer.RenderInstance(Instance, graphicsDevice, effect, camera, InstanceRenderMode.Normal);
             }

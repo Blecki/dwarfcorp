@@ -157,7 +157,7 @@ namespace DwarfCorp
                         {
                             _state = State.Exploding;
                             Manager.World.ParticleManager.Effects["explode"].Trigger(10, Position, Color.White);
-                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_trap_destroyed, GlobalTransform.Translation, false);
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_trap_destroyed, 0.5f);
 
                             foreach (Body body in Manager.World.EnumerateIntersectingObjects(
                                 new BoundingBox(LocalPosition - new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f), LocalPosition + new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f)), CollisionType.Both))
@@ -189,6 +189,15 @@ namespace DwarfCorp
                             {
                                 GetRoot().Delete();
                                 _state = State.Done;
+                                foreach (var vox in OrderedExplosionList)
+                                {
+                                    if (!vox.IsValid) continue;
+                                    var under = VoxelHelpers.GetVoxelBelow(vox);
+                                    if (under.IsValid && !under.IsEmpty && MathFunctions.RandEvent(0.5f))
+                                    {
+                                        EntityFactory.CreateEntity<Fire>("Fire", vox.GetBoundingBox().Center());
+                                    }
+                                }
                                 break;
                             }
 

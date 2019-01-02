@@ -74,6 +74,7 @@ namespace DwarfCorp
         {
             UpdateRate = 10;
             DropRate = 1.0f;
+            CollisionType = CollisionType.None;
         }
 
         public Inventory(ComponentManager Manager, string name, Vector3 BoundingBoxExtents, Vector3 LocalBoundingBoxOffset) :
@@ -82,6 +83,7 @@ namespace DwarfCorp
             UpdateRate = 10;
             DropRate = 1.0f;
             Resources = new List<InventoryItem>();
+            CollisionType = CollisionType.None;
         }
 
         public bool Pickup(ResourceAmount resourceAmount, RestockType restock)
@@ -291,6 +293,20 @@ namespace DwarfCorp
             //    foreach (var item in piles)
             //        World.Master.TaskManager.AddTask(new GatherItemTask(item));
             Resources.Clear();
+
+            var flames = GetRoot().GetComponent<Flammable>();
+            if (flames != null && flames.Heat >= flames.Flashpoint)
+            {
+                foreach (var item in piles)
+                {
+                    var itemFlames = item.GetRoot().GetComponent<Flammable>();
+
+                    if (itemFlames != null)
+                    {
+                        itemFlames.Heat = flames.Heat;
+                    }
+                }
+            }
         }
 
         public bool HasResource(ResourceAmount itemToStock)

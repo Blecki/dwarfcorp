@@ -15,6 +15,7 @@
   "StartingHealth": 20.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": false,
+  "IsFlammable": true,
   "RampSize": 0.5,
   "IsBuildable": true,
   "ParticleType": "stone_particle",

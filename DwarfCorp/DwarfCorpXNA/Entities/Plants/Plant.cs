@@ -50,7 +50,7 @@ namespace DwarfCorp
         public Vector3 BasePosition = Vector3.Zero;
         public float RandomAngle = 0.0f;
         public Farm Farm;
-
+        public int LastGrowthHour = 0;
         public Plant()
         {
             IsGrown = false;
@@ -148,6 +148,42 @@ namespace DwarfCorp
             var mesh = GetComponent<InstanceMesh>();
             if (mesh != null)
                 mesh.LocalTransform = Matrix.CreateScale(1.0f, Scale, 1.0f) * Matrix.CreateTranslation(GetBoundingBox().Center() - Position);
+        }
+
+        public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
+        {
+            base.Update(Time, Chunks, Camera);
+
+            if (!Active)
+            {
+                return;
+            }
+
+            var currentHour = World.Time.CurrentDate.Hour;
+            if (currentHour != LastGrowthHour)
+            {
+                LastGrowthHour = currentHour;
+                var isSeedling = GetRoot().GetComponent<Seedling>() != null;
+               
+                if (!isSeedling && MathFunctions.RandEvent(0.01f))
+                {
+                    HashSet<Body> bodies = new HashSet<Body>();
+                    World.OctTree.EnumerateItems(GetBoundingBox().Expand(2), bodies);
+                    int numPlants = bodies.Count(b => b is Plant);
+                    if (numPlants < 10)
+                    {
+                        Vector3 randomPoint = MathFunctions.RandVector3Box(GetBoundingBox().Expand(4));
+                        randomPoint.Y = VoxelConstants.ChunkSizeY - 1;
+               
+                        VoxelHandle under = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(randomPoint)));
+                        if (under.IsValid && under.Type.IsSoil)
+                        {
+                            EntityFactory.CreateEntity<Seedling>(Name + " Sprout", under.GetBoundingBox().Center() + Vector3.Up);
+                        }
+                    }
+                }
+            }
+           
         }
     }
 }

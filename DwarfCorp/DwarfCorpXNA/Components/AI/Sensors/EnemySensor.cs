@@ -107,6 +107,24 @@ namespace DwarfCorp
 
             foreach (var body in Manager.World.EnumerateIntersectingObjects(BoundingBox, CollisionType.Both))
             {
+                Flammable flames = body.GetRoot().GetComponent<Flammable>();
+                if (flames != null && flames.Heat > flames.Flashpoint && body != GetRoot())
+                {
+                    var ai = GetRoot().GetComponent<CreatureAI>();
+                    if (ai != null)
+                    {
+                        var task = new FleeEntityTask(body, 5)
+                        {
+                            Priority = Task.PriorityType.Urgent,
+                            AutoRetry = false,
+                            ReassignOnDeath = false
+                        };
+                        if (!ai.HasTaskWithName(task))
+                        {
+                            ai.AssignTask(task);
+                        }
+                    }
+                }
                 CreatureAI minion = body.GetRoot().GetComponent<CreatureAI>();
                 if (minion == null)
                     continue;

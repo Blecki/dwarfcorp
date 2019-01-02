@@ -286,7 +286,7 @@ namespace DwarfCorp
                         Gains = new Dictionary<string, SFXMixer.Levels>()
                     };
                 }
-                SoundEffect.DistanceScale = 0.1f;
+                SoundEffect.DistanceScale = 0.025f;
                 //SoundEffect.DopplerScale = 0.1f;
                 AudioEngine = new AudioEngine("Content\\Audio\\XACT\\Win\\Sounds.xgs");
                 SoundBank = new SoundBank(AudioEngine, "Content\\Audio\\XACT\\Win\\SoundBank.xsb");
@@ -516,10 +516,11 @@ namespace DwarfCorp
             SFXMixer.Levels levels = Mixer.GetOrCreateLevels(name);
             SoundEffectInstance instance = effect.CreateInstance();
             instance.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.SoundEffectVolume*volume*levels.Volume;
-            instance.Pitch = pitch;
+            instance.Pitch = MathFunctions.Clamp(pitch, -1.0f, 1.0f);
             instance.Play();
+            instance.Pan = MathFunctions.Rand(-0.25f, 0.25f);
             instance.Volume = GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * volume * levels.Volume;
-            instance.Pitch = pitch;
+            instance.Pitch = MathFunctions.Clamp(pitch, -1.0f, 1.0f);
             
             ActiveSounds2D.Add(instance);
             return instance;

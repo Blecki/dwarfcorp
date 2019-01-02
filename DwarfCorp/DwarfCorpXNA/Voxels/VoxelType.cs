@@ -70,7 +70,7 @@ namespace DwarfCorp
         public float RampSize = 0.0f;
         public bool IsBuildable = false;
         public string ParticleType = "puff";
-        
+        public bool IsFlammable = false;
         public bool EmitsLight = false;
         public float MinSpawnHeight = -999;
         public float MaxSpawnHeight = 999;

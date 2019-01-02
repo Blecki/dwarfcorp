@@ -15,6 +15,7 @@
   "ResourceToRelease": {
     "_value": "Wood"
   },
+  "IsFlammable" : true,
   "BuildRequirements": [ "Wood" ],
   "StartingHealth": 20.0,
   "ProbabilityOfRelease": 1.0,

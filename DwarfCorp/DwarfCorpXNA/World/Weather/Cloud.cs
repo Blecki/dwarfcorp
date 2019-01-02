@@ -15,13 +15,13 @@ namespace DwarfCorp
         [EntityFactory("Snow Cloud")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Cloud(Manager, 0.1f, 50, 40, Position) { TypeofStorm = StormType.SnowStorm };
+            return new Cloud(Manager, 0.1f, 50, 40, Position, 0.0f) { TypeofStorm = StormType.SnowStorm };
         }
 
         [EntityFactory("Rain Cloud")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Cloud(Manager, 0.1f, 50, 40, Position) { TypeofStorm = StormType.RainStorm };
+            return new Cloud(Manager, 0.1f, 50, 40, Position, 0.25f) { TypeofStorm = StormType.RainStorm };
         }
 
         [EntityFactory("Storm")]
@@ -30,13 +30,14 @@ namespace DwarfCorp
 
             Weather.CreateForecast(Manager.World.Time.CurrentDate, Manager.World.ChunkManager.Bounds, Manager.World, 3);
             Weather.CreateStorm(MathFunctions.RandVector3Cube() * 10, MathFunctions.Rand(0.05f, 1.0f), Manager.World);
-            return new Cloud(Manager, 0.1f, 50, 40, Position);
+            return new Cloud(Manager, 0.1f, 50, 40, Position, 0.0f);
         }
 
         public float Raininess { get; set; }
         public float Height { get; set; }
         public int MaxRainDrops { get; set; }
         public Vector3 Velocity { get; set; }
+        public float LightningChance { get; set; }
 
         public struct Rain
         {
@@ -59,14 +60,16 @@ namespace DwarfCorp
 
         public Cloud()
         {
+            LightningChance = 0.0f;
             MaxRainDrops = 0;
             RainDrops = null;
             TypeofStorm = StormType.RainStorm;
         }
 
-        public Cloud(ComponentManager manager, float raininess, int maxRain, float height, Vector3 pos) :
+        public Cloud(ComponentManager manager, float raininess, int maxRain, float height, Vector3 pos, float lightning) :
             base(manager, "Cloud", Matrix.CreateTranslation(pos), new SpriteSheet(MathFunctions.RandEvent(0.5f) ? ContentPaths.Particles.cloud1 : ContentPaths.Particles.cloud2), new Point(0, 0))
         {
+            LightningChance = lightning;
             Matrix tf = LocalTransform;
             tf.Translation = new Vector3(pos.X, height, pos.Z);
             LocalTransform = tf;
@@ -109,6 +112,36 @@ namespace DwarfCorp
                     }
                 }
 
+            bool generateLightning = LightningChance > 0.0f && MathFunctions.RandEvent((float)(LightningChance * 0.001f));
+
+            if (generateLightning)
+            {
+                var below = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(new Vector3(Position.X, Math.Min(VoxelConstants.ChunkSizeY - 1, Position.Y), Position.Z))));
+                if (below.IsValid && !below.IsEmpty)
+                {
+                    var above = VoxelHelpers.GetVoxelAbove(below);
+                    if (above.IsValid)
+                    {
+                        EntityFactory.CreateEntity<Fire>("Fire", above.GetBoundingBox().Center());
+                        List<Vector3> lightningStrikes = new List<Vector3>();
+                        List<Color> colors = new List<Color>();
+                        var c = above.GetBoundingBox().Center();
+                        for (float t = 0; t < 1.0f; t += 0.25f)
+                        {
+                            var p = c * t + Position * (1.0f - t);
+                            lightningStrikes.Add(p + MathFunctions.RandVector3Box(-5, 5, 0, 0.1f, -5, 5));
+                            colors.Add(Color.White);
+                        }
+                        lightningStrikes.Add(c);
+                        colors.Add(Color.White);
+                        Drawer3D.DrawLineList(lightningStrikes, colors, 0.3f);
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_rain_storm_alert, MathFunctions.Rand(0.001f, 0.05f), MathFunctions.Rand(0.5f, 1.0f));
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_trap_destroyed, c, false, 1.0f, MathFunctions.Rand(-0.5f, 0.5f));
+                        World.ParticleManager.Trigger("explode", c, Color.White, 10);
+                    }
+                }
+            }
+
             Storm.StormProperties stormProperties = Storm.Properties[TypeofStorm];
             var rainEmitter = World.ParticleManager.Effects[stormProperties.RainEffect];
             var hitEmitter = World.ParticleManager.Effects[stormProperties.HitEffect];
@@ -150,6 +183,27 @@ namespace DwarfCorp
                 if (!test.IsValid || test.IsEmpty || test.LiquidLevel > 0) continue;
 
                 RainDrops[i].IsAlive = false;
+                HashSet<Body> hitBodies = new HashSet<Body>();
+                World.OctTree.EnumerateItems(new BoundingBox(RainDrops[i].Pos - Vector3.One, RainDrops[i].Pos + Vector3.One), hitBodies);
+                foreach (var body in hitBodies)
+                {
+                    var flames = body.GetRoot().GetComponent<Flammable>();
+                    if (flames != null)
+                    {
+                        flames.Heat *= 0.25f;
+                    }
+
+                    var seeds = body.GetRoot().GetComponent<Seedling>();
+                    if (seeds != null)
+                    {
+                        if (TypeofStorm == StormType.RainStorm)
+                            seeds.GrowthTime += MathFunctions.Rand(1.0f, 12.0f);
+                        else if (MathFunctions.RandEvent(0.01f))
+                        {
+                            seeds.GetRoot().Die();
+                        }
+                    }
+                }
                 hitEmitter.Trigger(1, RainDrops[i].Pos + Vector3.UnitY * 0.5f, Color.White);
 
                 //if (!MathFunctions.RandEvent(0.1f)) continue;
@@ -195,6 +249,7 @@ namespace DwarfCorp
                 if (raindrop.Particle != null)
                 {
                     raindrop.Particle.LifeRemaining = -1;
+                    raindrop.Particle.Position = Vector3.One * 9999;
                 }
             }
 
@@ -208,6 +263,7 @@ namespace DwarfCorp
                 if (raindrop.Particle != null)
                 {
                     raindrop.Particle.LifeRemaining = -1;
+                    raindrop.Particle.Position = Vector3.One * 9999;
                 }
             }
 

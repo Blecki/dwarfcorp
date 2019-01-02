@@ -408,7 +408,7 @@ namespace DwarfCorp
                     }
                 }
 
-                if(p.LifeRemaining < 0)
+                if(p.LifeRemaining <= 0)
                 {
                     if(p.InstanceData != null)
                     {
