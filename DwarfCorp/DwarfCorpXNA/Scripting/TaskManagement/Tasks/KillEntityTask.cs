@@ -88,6 +88,17 @@ namespace DwarfCorp
             if (otherCreature == null || (otherCreature != null && otherCreature.IsDead) || otherCreature.AI == null)
                 return null;
 
+            var otherKill = new KillEntityTask(creature.Physics, KillType.Auto)
+            {
+                AutoRetry = true,
+                ReassignOnDeath = false
+            };
+
+            if (!otherCreature.AI.HasTaskWithName(otherKill))
+            {
+                otherCreature.AI.AssignTask(otherKill);
+            }
+
             if (otherCreature != null && !creature.AI.FightOrFlight(otherCreature.AI))
             {
                 Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;

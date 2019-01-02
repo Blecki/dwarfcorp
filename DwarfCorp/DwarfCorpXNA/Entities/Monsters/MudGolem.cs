@@ -53,9 +53,9 @@ namespace DwarfCorp
             return new MudGolem(
                 new CreatureStats(new MudGolemClass(), 0),
                 "dirt_particle",
-                "Carnivore",
+                "Evil",
                 Manager.World.PlanService,
-                Manager.World.Factions.Factions["Carnivore"],
+                Manager.World.Factions.Factions["Evil"],
                 Manager,
                 "Mud Golem",
                 Position, 2, 3);
@@ -67,9 +67,9 @@ namespace DwarfCorp
             return new MudGolem(
                 new CreatureStats(new SnowGolemClass(), 0),
                 "snow_particle",
-                "Carnivore",
+                "Evil",
                 Manager.World.PlanService,
-                Manager.World.Factions.Factions["Carnivore"],
+                Manager.World.Factions.Factions["Evil"],
                 Manager,
                 "Snow Golem",
                 Position, 3, 3);

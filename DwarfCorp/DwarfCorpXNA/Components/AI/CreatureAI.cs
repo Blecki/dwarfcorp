@@ -128,7 +128,7 @@ namespace DwarfCorp
         public EnemySensor Sensor { get; set; }
         /// <summary> This defines how the creature can move from voxel to voxel. </summary>
         public CreatureMovement Movement { get; set; }
-
+        
         public double UnhappinessTime = 0.0f;
         private String LastMesage = "";
         /// <summary>
@@ -533,8 +533,8 @@ namespace DwarfCorp
                 var resource = ResourceLibrary.GetResourceByName(body.Resource.ResourceType);
                 if (resource.Tags.Contains(Resource.ResourceTags.Edible))
                 {
-                    if ((Faction.Race.Name == "Carnivore" && resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)) ||
-                        (Faction.Race.Name == "Herbivore" && !resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)))
+                    if ((Faction.Race.EatsMeat && resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)) ||
+                        (Faction.Race.EatsPlants && !resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)))
                     {
                         Creature.GatherImmediately(body);
                         AssignTask(new ActWrapperTask(new EatFoodAct(this)));
@@ -574,8 +574,23 @@ namespace DwarfCorp
             SpeakTimer.Update(gameTime);
 
             if (AutoGatherTimer.HasTriggered)
+            {
+                if (!String.IsNullOrEmpty(Faction.Race.BecomeWhenEvil) && MathFunctions.RandEvent(0.01f))
+                {
+                    Faction.Minions.Remove(this);
+                    Faction = World.Factions.Factions[Faction.Race.BecomeWhenEvil];
+                    Faction.AddMinion(this);
+                }
+                else if (!String.IsNullOrEmpty(Faction.Race.BecomeWhenNotEvil) && MathFunctions.RandEvent(0.01f))
+                {
+                    Faction.Minions.Remove(this);
+                    Faction = World.Factions.Factions[Faction.Race.BecomeWhenNotEvil];
+                    Faction.AddMinion(this);
+                }
+
                 AutoGather();
-            OrderEnemyAttack();
+                OrderEnemyAttack();
+            }
             DeleteBadTasks();
             PreEmptTasks();
             HandleReproduction();
@@ -1152,10 +1167,8 @@ namespace DwarfCorp
                         Manager.World.MakeAnnouncement(
                             new Gui.Widgets.QueuedAnnouncement
                             {
-                                Text = String.Format("{0} the {1} is fighting {2} ({3})", Stats.FullName,
-                                    Stats.CurrentClass.Name,
-                                    TextGenerator.IndefiniteArticle(enemy.Stats.CurrentClass.Name),
-                                    enemy.Faction.Race.Name),
+                                Text = String.Format("{0} is fighting {1}.", Stats.FullName,
+                                    TextGenerator.IndefiniteArticle(enemy.Stats.CurrentClass.Name)),
                                 ClickAction = (gui, sender) => ZoomToMe()
                             });
 
