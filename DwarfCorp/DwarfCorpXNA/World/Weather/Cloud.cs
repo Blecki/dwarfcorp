@@ -105,6 +105,10 @@ namespace DwarfCorp
                     if (!RainDrops[i].IsAlive)
                     {
                         RainDrops[i].IsAlive = true;
+                        if (RainDrops[i].Particle != null)
+                        {
+                            RainDrops[i].Particle.TimeAlive = 0.0f;
+                        }
                         RainDrops[i].Pos = MathFunctions.RandVector3Box(BoundingBox.Expand(5));
                         RainDrops[i].Pos = new Vector3(RainDrops[i].Pos.X, BoundingBox.Min.Y - 1, RainDrops[i].Pos.Z);
                         RainDrops[i].Vel = Vector3.Down * Storm.Properties[TypeofStorm].RainSpeed + Velocity;
@@ -165,7 +169,6 @@ namespace DwarfCorp
                 if (!RainDrops[i].IsAlive && RainDrops[i].Particle != null)
                 {
                     RainDrops[i].Particle.LifeRemaining = -1;
-                    RainDrops[i].Particle = null;
                 }
                 else if (RainDrops[i].IsAlive && RainDrops[i].Particle == null)
                 {
