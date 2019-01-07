@@ -1000,21 +1000,21 @@ namespace DwarfCorp.GameStates
                         World.Tutorial("time");
                         if ((int) DwarfTime.LastTime.Speed == 0)
                         {
-                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_unpause, 0.2f);
+                            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_unpause, 0.1f);
                         }
                         switch (speed)
                         {
                             case 1:
-                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_1x, 0.2f);
+                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_1x, 0.1f);
                                 break;
                             case 2:
-                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_2x, 0.2f);
+                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_2x, 0.1f);
                                 break;
                             case 3:
-                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_3x, 0.2f);
+                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_3x, 0.1f);
                                 break;
                             case 0:
-                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_pause, 0.2f);
+                                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_speed_pause, 0.1f);
                                 break;
                         }
                         DwarfTime.LastTime.Speed = (float)speed;

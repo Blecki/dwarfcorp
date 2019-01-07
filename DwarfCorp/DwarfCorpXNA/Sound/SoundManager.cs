@@ -286,7 +286,7 @@ namespace DwarfCorp
                         Gains = new Dictionary<string, SFXMixer.Levels>()
                     };
                 }
-                SoundEffect.DistanceScale = 0.025f;
+                SoundEffect.DistanceScale = 0.25f;
                 //SoundEffect.DopplerScale = 0.1f;
                 AudioEngine = new AudioEngine("Content\\Audio\\XACT\\Win\\Sounds.xgs");
                 SoundBank = new SoundBank(AudioEngine, "Content\\Audio\\XACT\\Win\\SoundBank.xsb");
@@ -549,7 +549,7 @@ namespace DwarfCorp
             if (camera != null)
             {
                 Listener.Position = camera.Position;
-                Listener.Up = Vector3.Up;
+                Listener.Up = camera.UpVector;
                 Listener.Velocity = camera.Velocity;
                 Listener.Forward = (camera.Target - camera.Position);
                 Listener.Forward.Normalize();
@@ -573,9 +573,9 @@ namespace DwarfCorp
                         instance.Position = Vector3.Zero;
                     }
                     instance.EffectInstance.Volume *= (GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * instance.VolumeMultiplier);
+                    Emitter.Position = instance.Position;
                     instance.EffectInstance.Apply3D(Listener, Emitter);
                     instance.EffectInstance.Play();
-                    Emitter.Position = instance.Position;
                     //instance.EffectInstance.Apply3D(Listener, Emitter);
 
                     //instance.EffectInstance.Volume = Math.Max(Math.Min(400.0f / (camera.Position - instance.Position).LengthSquared(), 0.999f), 0.001f);
