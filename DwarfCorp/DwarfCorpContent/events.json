@@ -19,7 +19,32 @@
     "AllowedTime": "OnlyNightTime",
     "CooldownHours": 2,
     "AnnouncementText": "A Kobold has come!",
-    "AnnouncementDetails": "A Kobold has snuck into our colony. It will try to steal from us. Be on alert!",
+    "AnnouncementDetails": "A Kobold has snuck into our colony.\nIt will try to steal from us. Be on alert!",
+    "AnnouncementSound": "Audio\\oscar\\sfx_gui_negative_generic",
+    "PauseOnAnnouncementDetails": true
+  },
+    {
+    "$type": "DwarfCorp.Goals.SpawnEntityEvent, BaseContent",
+    "EntityToSpawn": "Dragon",
+    "EntityFaction": "Carnivore",
+    "ZoomToEntity": true,
+    "SpawnLocation": "WorldEdge",
+    "EntityFactionFilter": {
+      "Hostility": "Any",
+      "Specification": "Specific",
+      "Claim": "Any"
+    },
+    "SpawnOnTranquil": false,
+	"MinPlayerMoney" : 5000,
+    "MinEntityLevel": 0,
+    "MaxEntityLevel": 0,
+    "Likelihood": 1,
+    "Name": "Spawn Dragon",
+    "Difficulty": 5.0,
+    "AllowedTime": "All",
+    "CooldownHours": 4,
+    "AnnouncementText": "A Dragon has come!",
+    "AnnouncementDetails": "A Dragon has scented our gold!\nIt knows only avarice and wrath!",
     "AnnouncementSound": "Audio\\oscar\\sfx_gui_negative_generic",
     "PauseOnAnnouncementDetails": true
   },
@@ -44,7 +69,7 @@
     "AllowedTime": "All",
     "CooldownHours": 2,
     "AnnouncementText": "A Gremlin has come!",
-    "AnnouncementDetails": "A Gremlin has snuck into our colony. It will try to sabotage us. Be on alert!",
+    "AnnouncementDetails": "A Gremlin has snuck into our colony.\nIt will try to sabotage us. Be on alert!",
     "AnnouncementSound": "Audio\\oscar\\sfx_gui_negative_generic",
     "PauseOnAnnouncementDetails": true
   },

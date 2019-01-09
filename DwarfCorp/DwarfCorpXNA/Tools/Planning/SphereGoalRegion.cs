@@ -64,7 +64,7 @@ namespace DwarfCorp
                 RadiusSquared = r*r;
             }
         } 
-
+        public bool RayCheck { get; set; }
         private float RadiusSquared { get; set; }
 
         public SphereGoalRegion(VoxelHandle voxel, float radius)
@@ -95,7 +95,7 @@ namespace DwarfCorp
             {
                 return false;
             }
-            return (voxel.WorldPosition - Position).LengthSquared() < RadiusSquared;
+            return ((voxel.WorldPosition - Position).LengthSquared() < RadiusSquared) && (!RayCheck || !VoxelHelpers.DoesRayHitSolidVoxel(voxel.Chunk.Manager.ChunkData, voxel.WorldPosition + Vector3.One * 0.5f, Position));
         }
 
         public override bool IsPossible()

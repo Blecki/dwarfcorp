@@ -559,6 +559,11 @@ namespace DwarfCorp
                         {
                             if (dx == 1 && dz == 1 && dy == 1) continue;
 
+                            if (dy == 1 && standingOnGround)
+                            {
+                                continue;
+                            }
+
                             if (!Storage.Neighborhood[dx, 1, dz].IsValid || Storage.Neighborhood[dx, 1, dz].IsEmpty)
                             {
                                 yield return (new MoveAction

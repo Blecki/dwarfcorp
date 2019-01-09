@@ -64,6 +64,11 @@ namespace DwarfCorp
             {
                 Faction = faction;
             }
+
+            if (agent.Faction != Faction)
+            {
+                Name = "Steal money";
+            }
         }
 
         public IEnumerable<Act.Status> GetNextTreasury()
@@ -108,10 +113,19 @@ namespace DwarfCorp
 
             if (Faction.Economy.CurrentMoney < needed)
             {
-                Agent.World.MakeAnnouncement(String.Format("Could not pay {0}, not enough money!", Agent.Stats.FullName));
-                Agent.SetMessage("Failed to get money, not enough in treasury.");
-                yield return Act.Status.Fail;
-                yield break;
+                if (Faction == Agent.Faction)
+                {
+                    Agent.World.MakeAnnouncement(String.Format("Could not pay {0}, not enough money!", Agent.Stats.FullName));
+                    Agent.SetMessage("Failed to get money, not enough in treasury.");
+                    yield return Act.Status.Fail;
+                    yield break;
+                }
+                else
+                {
+                    Agent.Blackboard.SetData<DwarfBux>("MoneyNeeded", Faction.Economy.CurrentMoney);
+                    yield return Act.Status.Success;
+                    yield break;
+                }
             }
             
             yield return Act.Status.Success;

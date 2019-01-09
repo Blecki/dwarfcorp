@@ -13,6 +13,8 @@ namespace DwarfCorp.Goals
         public string Name;
         public float Difficulty = 0.0f;
         public bool SpawnOnTranquil = true;
+        public float MinPlayerMoney = -1.0f;
+        public float MaxPlayerMoney = -1.0f;
 
         public enum TimeRestriction
         {
@@ -198,9 +200,9 @@ namespace DwarfCorp.Goals
             return EntityFaction;
         }
 
-        public Microsoft.Xna.Framework.Vector3 GetSpawnLocation(WorldManager world, EntitySpawnLocation SpawnLocation)
+        public Microsoft.Xna.Framework.Vector3 GetSpawnLocation(WorldManager world, EntitySpawnLocation SpawnLocation, bool flying = false)
         {
-            Microsoft.Xna.Framework.Vector3 location = location = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(world.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(MonsterSpawner.GetRandomWorldEdge(world)))).WorldPosition + Microsoft.Xna.Framework.Vector3.Up * 1.5f;
+            Microsoft.Xna.Framework.Vector3 location = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(world.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(MonsterSpawner.GetRandomWorldEdge(world)))).WorldPosition + Microsoft.Xna.Framework.Vector3.Up * 1.5f;
             switch (SpawnLocation)
             {
                 case EntitySpawnLocation.BalloonPort:
@@ -226,6 +228,21 @@ namespace DwarfCorp.Goals
                         // already computed
                         break;
                     }
+            }
+
+            if (flying)
+            {
+                float max = (VoxelConstants.ChunkSizeY - location.Y) * 0.5f + location.Y;
+                for (float y = location.Y; y < max; y++)
+                {
+                    location = new Microsoft.Xna.Framework.Vector3(location.X, y, location.Z);
+                    var voxel = new VoxelHandle(world.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(location));
+                    if (voxel.IsValid && !voxel.IsEmpty)
+                    {
+                        location = location - new Microsoft.Xna.Framework.Vector3(0, -1, 0);
+                        break;
+                    }
+                }
             }
 
             return location;

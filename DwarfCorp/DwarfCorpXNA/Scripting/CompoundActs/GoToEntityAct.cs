@@ -51,7 +51,6 @@ namespace DwarfCorp
         public string EntityName { get; set; }
         public PlanAct.PlanType PlanType { get; set; }
         public float Radius { get; set; }
-
         public GoToEntityAct()
         {
             PlanType = PlanAct.PlanType.Adjacent;

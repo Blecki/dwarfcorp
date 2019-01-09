@@ -1,0 +1,117 @@
+{
+  "Animations": [
+    {
+      "Frames": [
+        [ 0, 0, 0 ]
+      ],
+      "Name": "IdleFORWARD",
+      "Speed": [ 5.0 ]
+    },
+    {
+      "Frames": [
+        [ 0, 1, 0 ]
+      ],
+      "Name": "IdleLEFT",
+      "Speed": [ 5.0 ]
+    },
+    {
+      "Frames": [
+        [ 0, 2, 0 ]
+      ],
+      "Name": "IdleRIGHT",
+      "Speed": [ 5.0 ]
+    },
+    {
+      "Frames": [
+        [ 0, 3, 0 ]
+      ],
+      "Name": "IdleBACKWARD",
+      "Speed": [ 5.0 ]
+    },
+	{
+      "Frames": [
+        [ 0, 0, 0 ]
+      ],
+      "Name": "FlyingFORWARD",
+      "Speed": [ 5.0 ]
+    },
+    {
+      "Frames": [
+        [ 0, 1, 0 ]
+      ],
+      "Name": "FlyingLEFT",
+      "Speed": [ 5.0 ]
+    },
+    {
+      "Frames": [
+        [ 0, 2, 0 ]
+      ],
+      "Name": "FlyingRIGHT",
+      "Speed": [ 5.0 ]
+    },
+    {
+      "Frames": [
+        [ 0, 3, 0 ]
+      ],
+      "Name": "FlyingBACKWARD",
+      "Speed": [ 5.0 ]
+    },
+    {
+       "Frames" : [
+          [ 0, 4, 0 ],
+          [ 1, 4, 0 ],
+          [ 2, 4, 0 ],
+          [ 3, 4, 0 ],
+          [ 0, 0, 0 ]
+       ],
+       "Name" : "AttackingFORWARD",
+       "Speed" : [0.15],
+	   "PlayOnce" : true
+    },
+    {
+       "Frames" : [
+          [ 0, 5, 0 ],
+          [ 1, 5, 0 ],
+          [ 2, 5, 0 ],
+          [ 3, 5, 0 ],
+          [ 0, 1, 0 ]
+       ],
+       "Name" : "AttackingLEFT",
+       "Speed" : [0.15],
+	   "PlayOnce" : true
+    },
+    {
+       "Frames" : [
+          [ 0, 6, 0 ],
+          [ 1, 6, 0 ],
+          [ 2, 6, 0 ],
+          [ 3, 6, 0 ],
+          [ 0, 2, 0 ]
+       ],
+       "Name" : "AttackingRIGHT",
+       "Speed" : [0.15],
+	   "PlayOnce" : true
+    },
+    {
+       "Frames" : [
+          [ 0, 7, 0 ],
+          [ 1, 7, 0 ],
+          [ 2, 7, 0 ],
+          [ 3, 7, 0 ],
+          [ 0, 3, 0 ]
+       ],
+       "Name" : "AttackingBACKWARD",
+       "Speed" : [0.15],
+	   "PlayOnce" : true
+    }
+   ],
+   "Layers" : [
+      {
+         "$id" : "1",
+         "AssetName" : "Entities\\Animals\\Snake\\dragon",
+         "FrameHeight" : 48,
+         "FrameWidth" : 40
+      }
+   ],
+   "Tints" : [ "255, 255, 255, 255"]
+}

@@ -98,6 +98,17 @@ namespace DwarfCorp.Goals
                     {
                         continue;
                     }
+                    
+                    if (ev.MinPlayerMoney >= 0.0f && World.PlayerFaction.Economy.CurrentMoney < ev.MinPlayerMoney)
+                    {
+                        continue;
+                    }
+
+                    if (ev.MaxPlayerMoney >= 0.0f && World.PlayerFaction.Economy.CurrentMoney > ev.MaxPlayerMoney)
+                    {
+                        continue;
+                    }
+
                     p += ev.Likelihood;
                     if (randLikelihood < p)
                     {

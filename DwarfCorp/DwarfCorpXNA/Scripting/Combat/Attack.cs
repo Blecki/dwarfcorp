@@ -221,7 +221,11 @@ namespace DwarfCorp
             Blackboard data = new Blackboard();
             data.SetData("Velocity", velocity);
             data.SetData("Target", target);
-            EntityFactory.CreateEntity<Body>(ProjectileType, start, data);
+            var projectile = EntityFactory.CreateEntity<Body>(ProjectileType, start, data).GetRoot().GetComponent<Projectile>();
+            if (projectile != null)
+            {
+                projectile.Damage = new Health.DamageAmount() { DamageType = projectile.Damage.DamageType, Amount = DamageAmount };
+            }
         }
 
         public bool PerformNoDamage(Creature performer, DwarfTime time, Vector3 pos)

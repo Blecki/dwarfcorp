@@ -55,7 +55,7 @@ namespace DwarfCorp
             return InputPath;
         }
 
-        public static string Error = ProgramData.CreatePath("Content", "newgui", "error");
+        public static string Error = ProgramData.CreatePath("newgui", "error");
 
         public static string controls = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "controls.json");
         public static string settings = ProgramData.CreatePath(DwarfGame.GetGameDirectory(), "settings.json");
@@ -540,6 +540,8 @@ namespace DwarfCorp
                     public static string bonesnake_animation = ProgramData.CreatePath("Entities", "Animals", "Snake", "bonesnake_animation.json");
                     public static string bonetail_animation = ProgramData.CreatePath("Entities", "Animals", "Snake", "bonetail_animation.json");
 
+                    public static string dragon = ProgramData.CreatePath("Entities", "Animals", "Snake", "dragon");
+                    public static string dragon_animation = ProgramData.CreatePath("Entities", "Animals", "Snake", "dragon_animation.json");
                 }
             }
 

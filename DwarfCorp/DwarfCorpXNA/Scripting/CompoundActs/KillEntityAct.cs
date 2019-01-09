@@ -121,7 +121,7 @@ namespace DwarfCorp
             float radius = 0.0f;
             if (creature.Creature.Attacks[0].Mode == Attack.AttackMode.Ranged)
             {
-                planType = PlanAct.PlanType.Radius;
+                planType = PlanAct.PlanType.RadiusWithRayCheck;
                 radius = creature.Creature.Attacks[0].Range;
             }
             if (creature.Movement.IsSessile)

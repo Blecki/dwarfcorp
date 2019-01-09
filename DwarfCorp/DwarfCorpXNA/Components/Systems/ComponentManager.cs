@@ -134,6 +134,11 @@ namespace DwarfCorp
             Components = new Dictionary<uint, GameComponent>();
         }
 
+        public IEnumerable<GameComponent> EnumerateComponents()
+        {
+            return Components.Values;
+        }
+
         public List<Body> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
         {
             if (World.SelectionBuffer == null)

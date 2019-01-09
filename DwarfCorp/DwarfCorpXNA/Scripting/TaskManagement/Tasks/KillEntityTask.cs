@@ -85,10 +85,10 @@ namespace DwarfCorp
                 return null;
 
             var otherCreature = EntityToKill.GetRoot().GetComponent<Creature>();
-            if (otherCreature == null || (otherCreature != null && otherCreature.IsDead) || otherCreature.AI == null)
+            if ((otherCreature != null && otherCreature.IsDead))
                 return null;
 
-            if (otherCreature != null && !creature.AI.FightOrFlight(otherCreature.AI))
+            if (otherCreature != null && otherCreature.AI != null && !creature.AI.FightOrFlight(otherCreature.AI))
             {
                 Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
                 ReassignOnDeath = false;

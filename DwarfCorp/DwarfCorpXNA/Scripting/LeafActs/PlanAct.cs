@@ -71,6 +71,7 @@ namespace DwarfCorp
             Adjacent,
             Into,
             Radius,
+            RadiusWithRayCheck,
             Edge
         }
 
@@ -131,6 +132,9 @@ namespace DwarfCorp
             GoalRegion goal = null;
             switch (Type)
             {
+                case PlanType.RadiusWithRayCheck:
+                    goal = new SphereGoalRegion(Target, Radius) { RayCheck = true };
+                    break;
                 case PlanType.Radius:
                     goal = new SphereGoalRegion(Target, Radius);
                     break;

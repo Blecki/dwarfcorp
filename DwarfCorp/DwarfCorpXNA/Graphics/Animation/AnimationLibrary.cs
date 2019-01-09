@@ -198,8 +198,9 @@ namespace DwarfCorp
                         
                         }).ToList());
                 }
-                catch (Exception)
+                catch (Exception exception)
                 {
+                    Console.Error.WriteLine(exception.ToString());
                     var errorAnimations = new List<Animation>();
 
                     errorAnimations.Add(

@@ -36,7 +36,7 @@ namespace DwarfCorp
             Matrix LocalTransform,
             SpriteSheet Sheet,
             Point Frame)
-            : base(Manager, Name, LocalTransform, Vector3.Zero, Vector3.Zero)
+            : base(Manager, Name, LocalTransform, Vector3.One, Vector3.Zero)
         {
             this.Sheet = Sheet;
             this.Frame = Frame;
@@ -99,6 +99,7 @@ namespace DwarfCorp
                 return;
             WorldWidth = Sheet.FrameWidth / 32.0f;
             WorldHeight = Sheet.FrameHeight / 32.0f;
+            BoundingBoxSize = Vector3.One * Math.Max(WorldWidth, WorldHeight);
         }
 
         override public void Render(DwarfTime gameTime,

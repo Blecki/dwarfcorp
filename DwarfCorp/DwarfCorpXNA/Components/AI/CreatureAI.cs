@@ -1196,7 +1196,7 @@ namespace DwarfCorp
             string desc = Stats.FullName + ", level " + Stats.CurrentLevel.Index +
                           " " +
                           Stats.CurrentClass.Name + "\n    " +
-                          "Happiness: " + GetHappinessDescription(Status.Happiness) + ". Health: " + Status.Health.Percentage +
+                          "Happiness: " + GetHappinessDescription(Status.Happiness) + ". Health: " + (int)(Creature.Hp) +
                           ". Hunger: " + (100 - Status.Hunger.Percentage) + ". Energy: " + Status.Energy.Percentage +
                           "\n";
             if (CurrentTask != null)

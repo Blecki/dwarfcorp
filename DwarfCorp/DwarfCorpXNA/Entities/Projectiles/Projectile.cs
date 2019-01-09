@@ -149,6 +149,10 @@ namespace DwarfCorp
                     if (Target.AnimationQueue.Count == 0)
                         Target.AnimationQueue.Add(new KnockbackAnimation(0.15f, Target.LocalTransform, knock));
                 }
+                else
+                {
+                    Target.GetRoot().Die();
+                }
 
                 if (Damage.DamageType == Health.DamageType.Fire)
                 {

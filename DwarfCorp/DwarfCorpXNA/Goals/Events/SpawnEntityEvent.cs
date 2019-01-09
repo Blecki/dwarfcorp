@@ -34,6 +34,17 @@ namespace DwarfCorp.Goals
             if (!String.IsNullOrEmpty(EntityToSpawn))
             {
                 entity = EntityFactory.CreateEntity<Body>(EntityToSpawn, location);
+
+                var creatureAI = entity.GetRoot().GetComponent<CreatureAI>();
+                if (creatureAI != null)
+                {
+                    if (creatureAI.Movement.CanFly)
+                    {
+                        location = GetSpawnLocation(world, SpawnLocation, true);
+                        entity.LocalPosition = location;
+                    }
+                }
+
                 if (validFaction)
                 {
                     var creatures = entity.EnumerateAll().OfType<CreatureAI>();

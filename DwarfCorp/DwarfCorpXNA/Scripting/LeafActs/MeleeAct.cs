@@ -108,6 +108,7 @@ namespace DwarfCorp
         {
             if (Target == null)
             {
+                Agent.SetMessage("Failed to avoid target. Nothing to avoid.");
                 yield return Status.Fail;
                 yield break;
             }
@@ -183,6 +184,7 @@ namespace DwarfCorp
 
             if (CurrentAttack == null)
             {
+                Agent.SetMessage("Failed to attack enemy. No attacks.");
                 yield return Status.Fail;
                 yield break;
             }
@@ -195,6 +197,7 @@ namespace DwarfCorp
 
                 if (Target == null)
                 {
+                    Agent.SetMessage("Failed to attack enemy. No target.");
                     yield return Status.Fail;
                     yield break;
                 }
@@ -221,6 +224,7 @@ namespace DwarfCorp
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = defaultCharachterMode;
+                    Agent.SetMessage("Attack timed out.");
                     yield return Status.Fail;
                     yield break;
                 }
@@ -270,6 +274,7 @@ namespace DwarfCorp
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = defaultCharachterMode;
+                    Agent.SetMessage("Abandoned attack. Enemy got away.");
                     yield return Status.Fail;
                     yield break;
                 }
@@ -308,6 +313,7 @@ namespace DwarfCorp
 
                     if (dist > CurrentAttack.Range * 4)
                     {
+                        Agent.SetMessage("Abandoned attack. Enemy got away.");
                         yield return Status.Fail;
                         yield break;
                     }
@@ -370,6 +376,7 @@ namespace DwarfCorp
                         && VoxelHelpers.DoesRayHitSolidVoxel(Creature.World.ChunkManager.ChunkData,
                             Creature.AI.Position, Target.Position))
                     {
+                        Creature.AI.SetMessage("Failed to target enemy. Something in the way.");
                         yield return Status.Fail;
                         yield break;
                     }

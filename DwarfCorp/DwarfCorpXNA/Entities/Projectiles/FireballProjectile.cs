@@ -64,13 +64,13 @@ namespace DwarfCorp
             Sprite.LightsWithVoxels = false;
             Sprite2.LightsWithVoxels = false;
 
-            HitAnimation = AnimationLibrary.CreateSimpleAnimation(ContentPaths.Effects.pierce);
+            HitAnimation = AnimationLibrary.CreateSimpleAnimation(ContentPaths.Effects.explode);
         }
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
             base.CreateCosmeticChildren(Manager);
-            HitAnimation = AnimationLibrary.CreateSimpleAnimation(ContentPaths.Effects.pierce);
+            HitAnimation = AnimationLibrary.CreateSimpleAnimation(ContentPaths.Effects.explode);
         }
     }
 }
