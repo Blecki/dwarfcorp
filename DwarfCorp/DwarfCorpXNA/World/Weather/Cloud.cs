@@ -107,6 +107,7 @@ namespace DwarfCorp
                         RainDrops[i].IsAlive = true;
                         if (RainDrops[i].Particle != null)
                         {
+                            RainDrops[i].Particle.LifeRemaining = 60.0f;
                             RainDrops[i].Particle.TimeAlive = 0.0f;
                         }
                         RainDrops[i].Pos = MathFunctions.RandVector3Box(BoundingBox.Expand(5));
