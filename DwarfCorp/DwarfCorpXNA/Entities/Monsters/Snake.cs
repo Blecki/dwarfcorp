@@ -406,7 +406,8 @@ namespace DwarfCorp
             // Add AI
             Physics.AddChild(new DragonAI(Manager, "Dragon AI", Sensors) { Movement = { CanFly = true, CanSwim = true, CanDig = true } });
             AI.Movement.SetCost(MoveType.Fly, 1.0f);
-
+            AI.Movement.SetSpeed(MoveType.Fly, 1.5f);
+            AI.Movement.SetCost(MoveType.Walk, 2.0f);
             Attacks = new List<Attack>()
             {
                 new Attack("Fireball", 0.1f, 1.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_demon_fire_spit_1, ContentPaths.Audio.Oscar.sfx_ic_demon_fire_spit_2), ContentPaths.Effects.explode)
