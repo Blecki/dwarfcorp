@@ -153,7 +153,8 @@ namespace DwarfCorp.Scripting
                 {
                     continue;
                 }
-                if (VoxelHelpers.GetNeighbor(p_i.Physics.CurrentVoxel, new GlobalVoxelOffset(0, -1, 0)).IsEmpty)
+                var neighbor = VoxelHelpers.GetNeighbor(p_i.Physics.CurrentVoxel, new GlobalVoxelOffset(0, -1, 0));
+                if (neighbor.IsValid && neighbor.IsEmpty)
                 {
                     removals.Add(p_i);
                     continue;
