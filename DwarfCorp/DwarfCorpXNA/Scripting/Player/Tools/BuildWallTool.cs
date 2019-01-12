@@ -58,6 +58,10 @@ namespace DwarfCorp
             {
                 return;
             }
+            if (Selected == null)
+            {
+                Selected = new List<VoxelHandle>();
+            }
             Selected.Clear();
             switch (button)
             {
