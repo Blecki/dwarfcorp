@@ -77,7 +77,7 @@ namespace DwarfCorp
             InstanceData.VertexColorTint = VertexColorTint;
             if (Stipple)
             {
-                InstanceData.VertexColorTint.A = 256 / 2;
+                InstanceData.VertexColorTint.A = 200;
             }
         }
 

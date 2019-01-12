@@ -1588,7 +1588,7 @@ namespace DwarfCorp.GameStates
                                     var assignments = new List<Task>();
                                     var numRepeats = buildInfo.GetNumRepeats();
                                     for (int i = 0; i < numRepeats; i++)
-                                        assignments.Add(new CraftResourceTask(data.ObjectAsCraftableResource(), 1, buildInfo.GetSelectedResources()));
+                                        assignments.Add(new CraftResourceTask(data.ObjectAsCraftableResource(), i + 1, numRepeats, buildInfo.GetSelectedResources()));
                                     World.Master.TaskManager.AddTasks(assignments);
                                     World.ShowToolPopup(data.CurrentVerb + " " + numRepeats.ToString() + " " + (numRepeats == 1 ? data.DisplayName : data.PluralDisplayName));
                                     World.Tutorial("build crafts");
@@ -1729,7 +1729,7 @@ namespace DwarfCorp.GameStates
                                 var assignments = new List<Task>();
                                 for (int i = 0; i < buildInfo.GetNumRepeats(); i++)
                                 {
-                                    assignments.Add(new CraftResourceTask(data, 1, buildInfo.GetSelectedResources()));
+                                    assignments.Add(new CraftResourceTask(data, i + 1, buildInfo.GetNumRepeats(), buildInfo.GetSelectedResources()));
                                 }
                                 World.Master.TaskManager.AddTasks(assignments);
                                 World.ShowToolPopup(data.CurrentVerb + " " + buildInfo.GetNumRepeats() + " " + data.Name);
@@ -1938,7 +1938,11 @@ namespace DwarfCorp.GameStates
                                 var numRepeats = buildInfo.GetNumRepeats();
 
                                 sender.Hidden = true;
-                                List<Task> assignments = new List<Task> { new CraftResourceTask(data, numRepeats, buildInfo.GetSelectedResources()) };
+                                var assignments = new List<Task>();
+                                for (int i = 0; i < buildInfo.GetNumRepeats(); i++)
+                                {
+                                    assignments.Add(new CraftResourceTask(data, i + 1, buildInfo.GetNumRepeats(), buildInfo.GetSelectedResources()));
+                                }
                                 World.Master.TaskManager.AddTasks(assignments);
                                 World.ShowToolPopup(data.CurrentVerb + " " + numRepeats.ToString() + " " + (numRepeats == 1 ? data.DisplayName : data.PluralDisplayName));
                                 World.Tutorial("cook");
@@ -2014,7 +2018,11 @@ namespace DwarfCorp.GameStates
                             {
                                 var buildInfo = sender as Gui.Widgets.BuildCraftInfo;
                                 sender.Hidden = true;
-                                List<Task> assignments = new List<Task> { new CraftResourceTask(data, buildInfo.GetNumRepeats(), buildInfo.GetSelectedResources()) };
+                                var assignments = new List<Task>();
+                                for (int i = 0; i < buildInfo.GetNumRepeats(); i++)
+                                {
+                                    assignments.Add(new CraftResourceTask(data, i + 1, buildInfo.GetNumRepeats(), buildInfo.GetSelectedResources()));
+                                }
                                 World.Master.TaskManager.AddTasks(assignments);
                                 World.ShowToolPopup(data.CurrentVerb + " " + data.Name);
                                 World.Tutorial("potions");

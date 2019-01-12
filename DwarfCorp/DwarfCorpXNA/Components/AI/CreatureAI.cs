@@ -960,7 +960,7 @@ namespace DwarfCorp
                         }
                         
                         if (resources.Count > 0)
-                            return new CraftResourceTask(item, 1, resources) {IsAutonomous = true, Priority = Task.PriorityType.Low};
+                            return new CraftResourceTask(item, 1, 1, resources) {IsAutonomous = true, Priority = Task.PriorityType.Low};
                     }
                 }
 

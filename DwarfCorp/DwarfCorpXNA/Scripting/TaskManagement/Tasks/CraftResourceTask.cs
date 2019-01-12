@@ -47,6 +47,7 @@ namespace DwarfCorp
         private string noise;
         public bool IsAutonomous { get; set; }
         public int NumRepeats;
+        public int CurrentRepeat;
 
         public CraftResourceTask()
         {
@@ -54,8 +55,9 @@ namespace DwarfCorp
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
-        public CraftResourceTask(CraftItem selectedResource, int NumRepeats, List<ResourceAmount> SelectedResources, int id = -1)
+        public CraftResourceTask(CraftItem selectedResource, int CurrentRepeat, int NumRepeats, List<ResourceAmount> SelectedResources, int id = -1)
         {
+            this.CurrentRepeat = CurrentRepeat;
             this.NumRepeats = NumRepeats;
 
             TaskID = id < 0 ? MaxID : id;
@@ -68,7 +70,7 @@ namespace DwarfCorp
                 SelectedResources = SelectedResources
             };
             string verb = selectedResource.Verb;
-            Name = String.Format("{3} order {0}: {1} {2}s", TaskID, NumRepeats, selectedResource.DisplayName, verb);
+            Name = String.Format("{4} order {0}: {1}/{2} {3}", TaskID, CurrentRepeat, NumRepeats, selectedResource.PluralDisplayName, verb);
             Priority = PriorityType.Medium;
 
             if (ResourceLibrary.GetResourceByName(Item.ItemType.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible))
@@ -86,37 +88,9 @@ namespace DwarfCorp
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
-        public IEnumerable<Act.Status> Repeat(Creature creature)
-        {
-            NumRepeats--;
-            if (NumRepeats >= 1)
-            {
-                Item.Progress = 0;
-                Item.HasResources = false;
-                if (creature.AI.Faction == creature.World.PlayerFaction)
-                {
-                    creature.World.Master.TaskManager.AddTask(new CraftResourceTask(Item.ItemType, NumRepeats, Item.SelectedResources, TaskID));
-                }
-                else
-                {
-                    creature.AI.AssignTask(new CraftResourceTask(Item.ItemType, NumRepeats, Item.SelectedResources, TaskID));
-                }
-            }
-            yield return Act.Status.Success;
-        }
-
-        public override bool ShouldDelete(Creature agent)
-        {
-            if (Item.Progress > 0.999f && NumRepeats <= 0)
-            {
-                return true;
-            }
-            return false;
-        }
-
         public override bool IsComplete(Faction faction)
         {
-            return Item.Progress > 0.999f && NumRepeats <= 0;
+            return Item.Finished;
         }
 
         private bool HasResources(Creature agent)
@@ -170,7 +144,7 @@ namespace DwarfCorp
             return new Sequence(new CraftItemAct(creature.AI, Item)
             {
                 Noise = noise
-            }, new Wrap(() => Repeat(creature))) | new Wrap(() => Cleanup(creature.AI));
+            }) | new Wrap(() => Cleanup(creature.AI));
         }
     }
 }
