@@ -156,12 +156,19 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public IEnumerable<Status> CreateResources(List<ResourceAmount> stashed)
+        public IEnumerable<Status> MaybeCreatePreviewBody(List<ResourceAmount> stashed)
         {
             if (stashed == null || stashed.Count == 0)
             {
                 Agent.SetMessage("Failed to create resources.");
                 yield return Act.Status.Fail;
+                yield break;
+            }
+
+            if (Item.PreviewResource != null)
+            {
+                Item.PreviewResource.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                yield return Act.Status.Success;
                 yield break;
             }
 
@@ -238,8 +245,27 @@ namespace DwarfCorp
             }
 
             Resource resource = ResourceLibrary.Resources[ResourceCreated];
-            Creature.Inventory.AddResource(new ResourceAmount(resource, Item.ItemType.CraftedResultsCount));
+            Item.PreviewResource = EntityFactory.CreateEntity<ResourceEntity>(resource.Name + " Resource", Agent.Position);
+            Item.PreviewResource.SetFlagRecursive(GameComponent.Flag.Active, false);
+            Item.PreviewResource.SetVertexColorRecursive(new Color(200, 200, 255, 200));
+            yield return Status.Success;
+        }
+
+        public IEnumerable<Status> CreateResources(List<ResourceAmount> stashed)
+        {
+            foreach (var status in MaybeCreatePreviewBody(stashed))
+            {
+                if (status == Status.Fail)
+                {
+                    yield return Status.Fail;
+                    yield break;
+                }
+            }
+            Creature.Inventory.AddResource(new ResourceAmount(Item.PreviewResource.Resource.ResourceType, Item.ItemType.CraftedResultsCount));
+            Item.PreviewResource.Delete();
+            Item.PreviewResource = null;
             Creature.AI.AddXP((int)Item.ItemType.BaseCraftTime);
+            Item.Finished = true;
             yield return Status.Success;
         }
 
@@ -330,7 +356,7 @@ namespace DwarfCorp
                                                            (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
                                                      new Select(
                                                             new Sequence(new Wrap(ReserveResources), 
-                                                                         new GetResourcesAct(Agent, Item.ItemType.RequiredResources), 
+                                                                         new GetResourcesAct(Agent, Item.ItemType.RequiredResources) { AllowHeterogenous = false }, 
                                                                          new Wrap(SetSelectedResources)),
                                                             new Sequence(new Wrap(UnReserve), Act.Status.Fail)
                                                             )
@@ -341,7 +367,7 @@ namespace DwarfCorp
             {
                 getResources = new Select(new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true),
                                           new Domain(() => !Item.HasResources && (Item.ResourcesReservedFor == Agent || Item.ResourcesReservedFor == null),
-                                                     new Sequence(new Wrap(ReserveResources), new GetResourcesAct(Agent, Item.SelectedResources)) | (new Wrap(UnReserve)) & false),
+                                                     new Sequence(new Wrap(ReserveResources), new GetResourcesAct(Agent, Item.SelectedResources) { AllowHeterogenous = false }) | (new Wrap(UnReserve)) & false),
                                           new Domain(() => Item.HasResources || Item.ResourcesReservedFor != null, true));
             }
 
@@ -397,9 +423,30 @@ namespace DwarfCorp
                             },
                             new Wrap(() => DestroyResources(() => Agent.Position + MathFunctions.RandVector3Cube() * 0.5f)),
                             new Wrap(WaitForResources) { Name = "Wait for resources." },
+                            new Wrap(() => MaybeCreatePreviewBody(Item.SelectedResources)),
                             new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
-                                () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
-                                () => Agent.Position, Noise)) { Name = "Construct object." },
+                                () => Item.Progress, () => {
+                                    var location = Creature.AI.Blackboard.GetData<Body>(Item.ItemType.CraftLocation);
+                                    if (location != null)
+                                    {
+                                        Creature.Physics.Face(location.Position);
+                                        if (Item.PreviewResource != null)
+                                        {
+                                            Item.PreviewResource.LocalPosition = location.Position + Vector3.Up * 0.25f;
+                                        }
+                                    }
+                                    Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime;
+
+                                },
+                                () =>
+                                {
+                                    var location = Creature.AI.Blackboard.GetData<Body>(Item.ItemType.CraftLocation);
+                                    if (location != null)
+                                    {
+                                        return location.Position;
+                                    }
+                                    return Agent.Position;
+                                }, Noise)) { Name = "Construct object." },
                             unreserveAct,
                             new Wrap(() => CreateResources(Item.SelectedResources)),
                             new Wrap(Creature.RestockAll)
@@ -435,6 +482,11 @@ namespace DwarfCorp
             if (Item.ResourcesReservedFor == Agent)
             {
                 Item.ResourcesReservedFor = null;
+            }
+
+            if (Item.PreviewResource != null)
+            {
+                Item.PreviewResource.SetFlagRecursive(GameComponent.Flag.Visible, false);
             }
             base.OnCanceled();
         }

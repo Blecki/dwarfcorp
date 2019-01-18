@@ -55,7 +55,7 @@ namespace DwarfCorp
 
         public ParticleTrigger()
         {
-            
+            CollisionType = CollisionType.None;
         }
 
         public ParticleTrigger(string emitter, ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
@@ -67,6 +67,7 @@ namespace DwarfCorp
             TriggerAmount = 2;
             BoxTriggerTimes = 10;
             TriggerInBox = true;
+            CollisionType = CollisionType.None;
         }
 
         public void Trigger()

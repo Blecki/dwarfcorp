@@ -152,8 +152,9 @@ namespace DwarfCorp
         
         public virtual void ReceiveMessageRecursive(Message messageToReceive)
         {
+            var children = Children.ToArray();
             // Todo: Possible race condition?
-            foreach(GameComponent child in Children)
+            foreach(GameComponent child in children)
             {
                 child.ReceiveMessageRecursive(messageToReceive);
             }

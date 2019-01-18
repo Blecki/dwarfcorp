@@ -89,7 +89,9 @@ namespace DwarfCorp
             {
                 Die();
             }
-            this.SetVertexColorRecursive(ResourceLibrary.GetResourceByName(this.Resource.ResourceType).Tint);
+            var tint = ResourceLibrary.GetResourceByName(this.Resource.ResourceType).Tint;
+            if (tint != Color.White)
+                this.SetVertexColorRecursive(ResourceLibrary.GetResourceByName(this.Resource.ResourceType).Tint);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)

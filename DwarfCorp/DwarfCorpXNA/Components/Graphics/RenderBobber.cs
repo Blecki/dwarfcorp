@@ -70,7 +70,9 @@ namespace DwarfCorp
             float x = (float)Math.Sin((gameTime.TotalGameTime.TotalSeconds + Offset) * Rate) * Magnitude;
             var transform = GlobalTransform;
             var originalOffset = transform.Translation;
-            transform.Translation += new Vector3(OriginalPos.X, x, OriginalPos.Z);
+
+            if (Active)
+                transform.Translation += new Vector3(OriginalPos.X, x, OriginalPos.Z);
 
             try
             {

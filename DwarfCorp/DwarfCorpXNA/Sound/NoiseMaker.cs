@@ -117,7 +117,7 @@ namespace DwarfCorp
                 CurrentSound = SoundManager.PlaySound(availableNoises[index], position, randomPitch, volume, BasePitch);
                
             }
-
+            
 
         }
     }

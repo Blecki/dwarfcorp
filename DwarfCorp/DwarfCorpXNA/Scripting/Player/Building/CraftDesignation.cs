@@ -36,6 +36,7 @@ namespace DwarfCorp
 {
     public class CraftDesignation
     {
+        public ResourceEntity PreviewResource = null;
         public CraftItem ItemType;
         public VoxelHandle Location;
         public Body WorkPile;

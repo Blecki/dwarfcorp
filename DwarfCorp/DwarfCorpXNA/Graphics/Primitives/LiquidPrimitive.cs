@@ -372,6 +372,24 @@ namespace DwarfCorp
             return (C.X + 1) + (C.Y + 1) * 3 + (C.Z + 1) * 9;
         }
 
+        private static bool IsBottom(VoxelVertex vertex)
+        {
+            switch (vertex)
+            {
+                case VoxelVertex.BackBottomLeft:
+                    return true;
+                case VoxelVertex.BackBottomRight:
+                    return true;
+                case VoxelVertex.FrontBottomLeft:
+                    return true;
+                case VoxelVertex.FrontBottomRight:
+                    return true;
+                default:
+                    return false;
+            }
+            
+        }
+
         private static void CreateWaterFaces(
             VoxelHandle voxel, 
             VoxelChunk chunk,
@@ -387,6 +405,15 @@ namespace DwarfCorp
             // These are reused for every face.
             var origin = voxel.WorldPosition;
             float centerWaterlevel = voxel.LiquidLevel;
+
+            var below = VoxelHelpers.GetVoxelBelow(voxel);
+            bool belowFilled = false;
+            bool belowLiquid = below.IsValid && below.LiquidLevel > 0;
+            bool belowRamps = below.IsValid && below.RampType != RampType.None;
+            if ((below.IsValid && !below.IsEmpty) || belowLiquid)
+            {
+                belowFilled = true;
+            }
 
             float[] foaminess = new float[4];
 
@@ -450,15 +477,19 @@ namespace DwarfCorp
                         pos = primitive.Vertices[vertOffset + faceDescriptor.VertexOffset].Position;
                         if ((currentVertex & VoxelVertex.Top) == VoxelVertex.Top)
                         {
-                            pos.Y -= 0.6f;// Minimum ramp position 
+                            if (belowFilled)
+                                pos.Y -= 0.6f;// Minimum ramp position 
 
                             var neighbors = VoxelHelpers.EnumerateVertexNeighbors2D(voxel.Coordinate, currentVertex)
                                 .Select(c => new VoxelHandle(chunk.Manager.ChunkData, c))
                                 .Where(h => h.IsValid)
-                                .Select(h => (float)h.LiquidLevel / 8.0f);
+                                .Select(h => MathFunctions.Clamp((float)h.LiquidLevel / 8.0f, 0.25f, 1.0f));
 
                             if (neighbors.Count() > 0)
-                                pos.Y *= neighbors.Average();
+                            {
+                                if (belowFilled)
+                                    pos.Y *= neighbors.Average();
+                            }
                         }
                         else
                         {
@@ -466,9 +497,28 @@ namespace DwarfCorp
                         }
 
                         pos += VertexNoise.GetNoiseVectorFromRepeatingTexture(voxel.WorldPosition +
-       primitive.Vertices[vertOffset + faceDescriptor.VertexOffset].Position);
-                        pos += origin + rampOffset;                        
+                            primitive.Vertices[vertOffset + faceDescriptor.VertexOffset].Position);
 
+                        if (!belowFilled)
+                        {
+                            pos = (pos - Vector3.One * 0.5f);
+                            pos.Normalize();
+                            pos *= 0.35f;
+                            pos += Vector3.One * 0.5f;
+                        }
+                        else if ((belowLiquid || belowRamps) && IsBottom(currentVertex))
+                        {
+                            if  (belowRamps)
+                            {
+                                pos -= Vector3.Up * 0.5f;
+                            }
+                            else
+                            {
+                                pos -= Vector3.Up * 0.8f;
+                            }
+                        }
+
+                        pos += origin + rampOffset;
                         // Store the vertex information for future use when we need it again on this or another face.
                         cache.vertexCalculated[(int)currentVertex] = true;
                         cache.vertexFoaminess[(int)currentVertex] = foaminess[vertOffset];

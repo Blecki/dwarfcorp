@@ -220,7 +220,14 @@ namespace DwarfCorp.Gui.Widgets
                         }
                     }
                 },
-
+                new HorizontalMenuTray.MenuItem
+                {
+                    Text = "AUTO SAVE",
+                    OnClick = (sender, args) =>
+                    {
+                        Master.World.gameState.StateManager.StateStack.OfType<GameStates.PlayState>().FirstOrDefault().AutoSave();
+                    }
+                },
                 new HorizontalMenuTray.MenuItem
                 {
                     Text = "KILL THINGS",

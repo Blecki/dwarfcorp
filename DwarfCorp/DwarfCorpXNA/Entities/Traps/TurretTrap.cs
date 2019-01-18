@@ -132,6 +132,7 @@ namespace DwarfCorp
                 if (offset.Length() > 8)
                 {
                     closestCreature = null;
+                    return;
                 }
 
                 Weapon.RechargeTimer.Update(gameTime);

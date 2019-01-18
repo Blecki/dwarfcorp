@@ -286,7 +286,7 @@ namespace DwarfCorp
                         Gains = new Dictionary<string, SFXMixer.Levels>()
                     };
                 }
-                SoundEffect.DistanceScale = 0.1f;
+                SoundEffect.DistanceScale = 0.25f;
                 //SoundEffect.DopplerScale = 0.1f;
                 AudioEngine = new AudioEngine("Content\\Audio\\XACT\\Win\\Sounds.xgs");
                 SoundBank = new SoundBank(AudioEngine, "Content\\Audio\\XACT\\Win\\SoundBank.xsb");
@@ -516,10 +516,11 @@ namespace DwarfCorp
             SFXMixer.Levels levels = Mixer.GetOrCreateLevels(name);
             SoundEffectInstance instance = effect.CreateInstance();
             instance.Volume = GameSettings.Default.MasterVolume*GameSettings.Default.SoundEffectVolume*volume*levels.Volume;
-            instance.Pitch = pitch;
+            instance.Pitch = MathFunctions.Clamp(pitch, -1.0f, 1.0f);
             instance.Play();
+            instance.Pan = MathFunctions.Rand(-0.25f, 0.25f);
             instance.Volume = GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * volume * levels.Volume;
-            instance.Pitch = pitch;
+            instance.Pitch = MathFunctions.Clamp(pitch, -1.0f, 1.0f);
             
             ActiveSounds2D.Add(instance);
             return instance;
@@ -548,7 +549,7 @@ namespace DwarfCorp
             if (camera != null)
             {
                 Listener.Position = camera.Position;
-                Listener.Up = Vector3.Up;
+                Listener.Up = camera.UpVector;
                 Listener.Velocity = camera.Velocity;
                 Listener.Forward = (camera.Target - camera.Position);
                 Listener.Forward.Normalize();
@@ -572,9 +573,9 @@ namespace DwarfCorp
                         instance.Position = Vector3.Zero;
                     }
                     instance.EffectInstance.Volume *= (GameSettings.Default.MasterVolume * GameSettings.Default.SoundEffectVolume * instance.VolumeMultiplier);
+                    Emitter.Position = instance.Position;
                     instance.EffectInstance.Apply3D(Listener, Emitter);
                     instance.EffectInstance.Play();
-                    Emitter.Position = instance.Position;
                     //instance.EffectInstance.Apply3D(Listener, Emitter);
 
                     //instance.EffectInstance.Volume = Math.Max(Math.Min(400.0f / (camera.Position - instance.Position).LengthSquared(), 0.999f), 0.001f);

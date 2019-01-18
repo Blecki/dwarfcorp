@@ -105,7 +105,7 @@ namespace DwarfCorp
             }
             else
             {
-                Agent.Creature.Inventory.AddResource(Resources.CloneResource(), RestockType);
+                Agent.Creature.Inventory.AddResource(Resources.CloneResource(), Inventory.RestockType.None);
                 Agent.Creature.Sprite.ResetAnimations(Creature.AttackMode);
                 while (!waitTimer.HasTriggered)
                 {

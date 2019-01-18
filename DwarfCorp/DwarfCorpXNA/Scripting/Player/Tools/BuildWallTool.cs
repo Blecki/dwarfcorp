@@ -58,6 +58,10 @@ namespace DwarfCorp
             {
                 return;
             }
+            if (Selected == null)
+            {
+                Selected = new List<VoxelHandle>();
+            }
             Selected.Clear();
             switch (button)
             {
@@ -208,6 +212,10 @@ namespace DwarfCorp
             else
                 Player.World.ShowTooltip("Release to cancel.");
 
+            if (Selected == null)
+            {
+                Selected = new List<VoxelHandle>();
+            }
             Selected.Clear();
 
             foreach (var voxel in voxels)
