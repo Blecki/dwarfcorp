@@ -18,6 +18,13 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Animation
     {
+
+        [OnSerializing]
+        internal void OnSerializingMethod(StreamingContext context)
+        {
+            throw new InvalidOperationException();
+        }
+
         public string Name { get; set; }
         public List<Point> Frames { get; set; }
         public Color Tint { get; set; }

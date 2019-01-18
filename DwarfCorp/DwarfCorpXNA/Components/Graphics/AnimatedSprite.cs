@@ -16,6 +16,12 @@ namespace DwarfCorp
     /// </summary>
     public class AnimatedSprite : Tinter
     {
+        [OnSerializing]
+        internal void OnSerializingMethod(StreamingContext context)
+        {
+            throw new InvalidOperationException();
+        }
+
         public Dictionary<string, Animation> Animations { get; set; }
 
         [JsonIgnore]
