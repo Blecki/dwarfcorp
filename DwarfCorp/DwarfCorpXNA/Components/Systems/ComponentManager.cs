@@ -154,6 +154,18 @@ namespace DwarfCorp
             return toReturn.ToList();
         }
 
+        private object _msgLock = new object();
+        private List<KeyValuePair<GameComponent, Message> > _msgList = new List<KeyValuePair<GameComponent, Message> >();
+
+        // Allows components to receive messages recursively while in a thread.
+        public void ReceiveMessageLater(GameComponent component, Message msg)
+        {
+            lock (_msgLock)
+            {
+                _msgList.Add(new KeyValuePair<GameComponent, Message>(component, msg));
+            }
+        }
+
         public void AddComponent(GameComponent component)
         {
             AdditionMutex.WaitOne();
@@ -244,6 +256,19 @@ namespace DwarfCorp
             PerformanceMonitor.PopFrame();
 
             AddRemove();
+            ReceiveMessage();
+        }
+
+        private void ReceiveMessage()
+        {
+            lock (_msgLock)
+            {
+                foreach (var msg in _msgList)
+                {
+                    msg.Key.ReceiveMessageRecursive(msg.Value);
+                }
+                _msgList.Clear();
+            }
         }
 
         private void AddRemove()

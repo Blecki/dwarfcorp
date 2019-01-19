@@ -50,7 +50,7 @@ namespace DwarfCorp
     {
         public static MemoryTexture MemoryTextureFromTexture2D(Texture2D Source)
         {
-            if (Source.IsDisposed || Source.GraphicsDevice.IsDisposed)
+            if (Source == null || Source.IsDisposed || Source.GraphicsDevice.IsDisposed)
             {
                 return null;
             }
@@ -61,6 +61,10 @@ namespace DwarfCorp
 
         public static Texture2D Texture2DFromMemoryTexture(GraphicsDevice Device, MemoryTexture Source)
         {
+            if (Source == null || Device.IsDisposed)
+            {
+                return null;
+            }
             var r = new Texture2D(Device, Source.Width, Source.Height);
             r.SetData(Source.Data);
             return r;
@@ -68,11 +72,19 @@ namespace DwarfCorp
 
         public static Palette OptimizedPaletteFromMemoryTexture(MemoryTexture Source)
         {
+            if (Source == null)
+            {
+                return null;
+            }
             return new Palette(Source.Data.Distinct());
         }
 
         public static Palette RawPaletteFromMemoryTexture(MemoryTexture Source)
         {
+            if (Source == null)
+            {
+                return null;
+            }
             return new Palette(Source.Data);
         }
 
@@ -84,6 +96,10 @@ namespace DwarfCorp
         public static IndexedDecomposition DecomposeTexture(MemoryTexture Source)
         {
             var r = new IndexedDecomposition();
+            if (Source == null)
+            {
+                return r;
+            }
             r.Palette = OptimizedPaletteFromMemoryTexture(Source);
             r.IndexedTexture = new IndexedTexture(Source.Width, Source.Height);
             for (var i = 0; i < Source.Data.Length; ++i)
@@ -93,6 +109,10 @@ namespace DwarfCorp
 
         public static IndexedTexture DecomposeTexture(MemoryTexture Source, Palette Palette)
         {
+            if (Source == null)
+            {
+                return null;
+            }
             var r = new IndexedTexture(Source.Width, Source.Height);
             for (var i = 0; i < Source.Data.Length; ++i)
             {
@@ -107,6 +127,10 @@ namespace DwarfCorp
 
         public static MemoryTexture ComposeTexture(IndexedTexture Source, Palette Palette)
         {
+            if (Source == null)
+            {
+                return null;
+            }
             var r = new MemoryTexture(Source.Width, Source.Height);
             for (var i = 0; i < Source.Data.Length; ++i)
                 r.Data[i] = Palette[Source.Data[i]];
@@ -115,6 +139,10 @@ namespace DwarfCorp
 
         public static MemoryTexture MemoryTextureFromPalette(Palette Palette)
         {
+            if (Palette == null)
+            {
+                return null;
+            }
             var dim = (int)Math.Ceiling(Math.Sqrt(Palette.Count));
             var r = new MemoryTexture(dim, (int)Math.Ceiling((float)Palette.Count / dim));
             Palette.CopyTo(r.Data);
@@ -144,12 +172,21 @@ namespace DwarfCorp
 
         public static void ClearMemoryTexture(MemoryTexture Texture)
         {
+            if (Texture == null)
+            {
+                return;
+            }
+
             for (var i = 0; i < Texture.Data.Length; ++i)
                 Texture.Data[i] = Color.Transparent;
         }
 
         public static void Blit(MemoryTexture Source, MemoryTexture Onto)
         {
+            if (Source == null || Onto == null)
+            {
+                return;
+            }
             var width = Math.Min(Source.Width, Onto.Width);
             var height = Math.Min(Source.Height, Onto.Height);
             for (var y = 0; y < height; ++y)
@@ -169,6 +206,11 @@ namespace DwarfCorp
 
         public static void Blit(IndexedTexture Source, Palette SourcePalette, MemoryTexture Destination)
         {
+            if (Source == null || SourcePalette == null || Destination == null)
+            {
+                return;
+            }
+
             var width = Math.Min(Source.Width, Destination.Width);
             var height = Math.Min(Source.Height, Destination.Height);
 

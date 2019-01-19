@@ -843,8 +843,8 @@ namespace DwarfCorp
                                 if (dx * dx + dy * dy + dz * dz > TeleportDistanceSquared)
                                     continue;
                                 VoxelHandle teleportNeighbor = new VoxelHandle(Parent.World.ChunkManager.ChunkData, current.Coordinate + new GlobalVoxelOffset(dx, dy, dz));
-
-                                if (teleportNeighbor.IsValid && teleportNeighbor.IsEmpty && !VoxelHelpers.GetNeighbor(teleportNeighbor, new GlobalVoxelOffset(0, -1, 0)).IsEmpty)
+                                var adjacent = VoxelHelpers.GetNeighbor(teleportNeighbor, new GlobalVoxelOffset(0, -1, 0));
+                                if (teleportNeighbor.IsValid && teleportNeighbor.IsEmpty && adjacent.IsValid &&  adjacent.IsEmpty)
                                 {
                                     yield return new MoveAction()
                                     {

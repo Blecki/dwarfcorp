@@ -150,6 +150,16 @@ namespace DwarfCorp
             }
         }
         
+        public virtual void ReceiveMessageLater(Message message)
+        {
+            if (Manager == null)
+            {
+                return;
+            }
+
+            Manager.ReceiveMessageLater(this, message);
+        }
+
         public virtual void ReceiveMessageRecursive(Message messageToReceive)
         {
             var children = Children.ToArray();
@@ -190,8 +200,8 @@ namespace DwarfCorp
 
         #endregion
 
-        public virtual void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
-        { }
+        public virtual void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera) {
+        }
 
         public virtual void UpdatePaused(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         { }

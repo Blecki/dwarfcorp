@@ -82,6 +82,10 @@ namespace DwarfCorp.LayeredSprites
             {
                 var rawTexture = AssetManager.GetContentTexture(layer.Asset);
                 var memTexture = TextureTool.MemoryTextureFromTexture2D(rawTexture);
+                if (memTexture == null)
+                {
+                    continue;
+                }
                 int num_frames_x = memTexture.Width / currentFrameSizeX;
                 int num_frames_y = memTexture.Height / currentFrameSizeY;
                 int currentWidth = memTexture.Width;
@@ -137,6 +141,10 @@ namespace DwarfCorp.LayeredSprites
             {
                 var rawTexture = AssetManager.GetContentTexture(layer.Asset);
                 var memTexture = TextureTool.MemoryTextureFromTexture2D(rawTexture);
+                if (memTexture == null)
+                {
+                    continue;
+                }
                 layer.CachedTexture = TextureTool.DecomposeTexture(memTexture, BaseDwarfPalette.CachedPalette);
             }
 
