@@ -51,7 +51,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Elf(
-                new CreatureStats(new ElfClass(), 0),
+                new CreatureStats(new ElfClass(true), 0),
                 "Elf",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Elf"],

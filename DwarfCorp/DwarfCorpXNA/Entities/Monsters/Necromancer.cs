@@ -51,7 +51,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Necromancer(
-                new CreatureStats(new NecromancerClass(), 0),
+                new CreatureStats(new NecromancerClass(true), 0),
                 "Undead",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Undead"],

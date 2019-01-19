@@ -243,9 +243,9 @@ namespace DwarfCorp
         }
 
 
-        public SkeletonClass()
+        public SkeletonClass(bool initialize)
         {
-            if (!staticsInitiailized)
+            if (initialize && !staticsInitiailized)
             {
                 InitializeStatics();
             }

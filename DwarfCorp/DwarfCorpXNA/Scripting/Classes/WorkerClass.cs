@@ -242,9 +242,10 @@ namespace DwarfCorp
             AttackMode = CharacterMode.Attacking;
             base.InitializeStatics();
         }
-        public WorkerClass()
+
+        public WorkerClass(bool initialize)
         {
-            if (!staticsInitiailized)
+            if (initialize && !staticsInitiailized)
             {
                 InitializeStatics();
             }

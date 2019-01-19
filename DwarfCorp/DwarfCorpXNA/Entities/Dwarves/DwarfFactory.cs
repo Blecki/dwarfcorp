@@ -77,7 +77,7 @@ namespace DwarfCorp
         [EntityFactory("PlayerElf")]
         private static GameComponent __factory5(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            var toReturn = new Elf(new CreatureStats(new ElfClass(), 0), Manager.World.PlayerFaction.Name, Manager.World.PlanService, Manager.World.PlayerFaction, Manager, "elf", Position);
+            var toReturn = new Elf(new CreatureStats(new ElfClass(true), 0), Manager.World.PlayerFaction.Name, Manager.World.PlanService, Manager.World.PlayerFaction, Manager, "elf", Position);
             return toReturn.Physics;
         }
 

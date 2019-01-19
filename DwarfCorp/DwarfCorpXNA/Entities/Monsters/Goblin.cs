@@ -51,7 +51,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Goblin(
-                new CreatureStats(new SwordGoblinClass(), 0),
+                new CreatureStats(new SwordGoblinClass(true), 0),
                 "Goblins",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Goblins"],

@@ -51,7 +51,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Moleman(
-                new CreatureStats(new MolemanMinerClass(), 0),
+                new CreatureStats(new MolemanMinerClass(true), 0),
                 "Molemen",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Molemen"],
