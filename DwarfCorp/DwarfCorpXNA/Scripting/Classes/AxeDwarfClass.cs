@@ -243,6 +243,10 @@ namespace DwarfCorp
             base.InitializeStatics();
         }
 
+        public AxeDwarfClass()
+        {
+
+        }
 
         public AxeDwarfClass(bool initialize)
         {

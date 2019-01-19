@@ -243,6 +243,11 @@ namespace DwarfCorp
             base.InitializeStatics();
         }
 
+        public WorkerClass()
+        {
+
+        }
+
         public WorkerClass(bool initialize)
         {
             if (initialize && !staticsInitiailized)

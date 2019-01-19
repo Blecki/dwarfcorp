@@ -240,6 +240,10 @@ namespace DwarfCorp
             base.InitializeStatics();
         }
 
+        public NecromancerClass()
+        {
+
+        }
 
         public NecromancerClass(bool initialize)
         {

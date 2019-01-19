@@ -334,6 +334,12 @@ namespace DwarfCorp
             AttackMode = CharacterMode.Attacking01;
             base.InitializeStatics();
         }
+
+        public WizardClass()
+        {
+
+        }
+
         public WizardClass(bool initialize)
         {
             if (initialize && !staticsInitiailized)
