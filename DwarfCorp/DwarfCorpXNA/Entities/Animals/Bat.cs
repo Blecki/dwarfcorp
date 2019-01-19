@@ -113,11 +113,7 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the bat";
-            Stats.CurrentClass = new EmployeeClass()
-            {
-                Name = "Bat",
-                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Bat" } },
-            };
+            Stats.CurrentClass = SharedClass;
 
 
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bat_hurt_1 };
@@ -129,10 +125,17 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClass;
             CreateSprite(ContentPaths.Entities.Animals.Bat.bat_animations, manager, 0.0f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
             base.CreateCosmeticChildren(manager);
         }
+
+        private static EmployeeClass SharedClass = new EmployeeClass()
+        {
+            Name = "Bat",
+                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Bat" } },
+            };
     }
 
 

@@ -51,7 +51,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Moleman(
-                new CreatureStats(new MolemanMinerClass(), 0),
+                new CreatureStats(SharedClass, 0),
                 "Molemen",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Molemen"],
@@ -59,6 +59,8 @@ namespace DwarfCorp
                 "Moleman",
                 Position).Physics;
         }
+
+        private static MolemanMinerClass SharedClass = new MolemanMinerClass();
         
         public Moleman()
         {
@@ -127,6 +129,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             base.CreateCosmeticChildren(manager);

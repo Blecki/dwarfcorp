@@ -39,6 +39,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -48,6 +49,16 @@ namespace DwarfCorp
     /// </summary>
     public class Dwarf : Creature
     {
+        [JsonProperty]
+        private EmployeeClass SavedDwarfEmployeeClass = null;
+
+        [OnDeserialized]
+        internal void OnDeserializedMethod(StreamingContext context)
+        {
+            if (SavedDwarfEmployeeClass != null)
+                Stats.CurrentClass = SavedDwarfEmployeeClass;
+        }
+
         public Dwarf()
         {
             
@@ -70,6 +81,8 @@ namespace DwarfCorp
             HasBones = false;
             HasCorpse = true;
             Initialize(workerClass);
+
+            SavedDwarfEmployeeClass = workerClass;
         }        
 
         public void Initialize(EmployeeClass dwarfClass)

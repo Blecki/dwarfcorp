@@ -51,7 +51,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Demon(
-                new CreatureStats(new DemonClass(), 0),
+                new CreatureStats(SharedClass, 0),
                 "Demon",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Demon"],
@@ -59,6 +59,8 @@ namespace DwarfCorp
                 "Demon",
                 Position).Physics;
         }
+
+        private static DemonClass SharedClass = new DemonClass();
 
         public Demon()
         {
@@ -147,6 +149,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             base.CreateCosmeticChildren(manager);

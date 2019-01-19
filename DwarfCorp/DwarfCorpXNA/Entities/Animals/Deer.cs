@@ -137,11 +137,7 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname");
-            Stats.CurrentClass = new EmployeeClass()
-            {
-                Name = "Deer",
-                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Deer"} }
-            };
+            Stats.CurrentClass = SharedClass;
             Species = "Deer";
             CanReproduce = true;
             BabyType = "Deer";
@@ -150,10 +146,16 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClass;
             CreateSprite(ContentPaths.Entities.Animals.Deer.animations, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             base.CreateCosmeticChildren(manager);
         }
 
+        private static EmployeeClass SharedClass = new EmployeeClass()
+        {
+            Name = "Deer",
+            Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Deer" } }
+        };
     }
 }

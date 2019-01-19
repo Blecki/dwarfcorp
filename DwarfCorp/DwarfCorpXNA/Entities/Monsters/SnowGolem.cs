@@ -42,33 +42,30 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Convenience class for initializing demons as creatures.
-    /// </summary>
-    public class MudGolem : Creature
+    public class SnowGolem : Creature
     {
-        [EntityFactory("MudGolem")]
-        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        [EntityFactory("SnowGolem")]
+        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new MudGolem(
                 new CreatureStats(SharedClass, 0),
-                "dirt_particle",
+                "snow_particle",
                 "Carnivore",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Carnivore"],
                 Manager,
-                "Mud Golem",
-                Position, 2, 3);
+                "Snow Golem",
+                Position, 3, 3);
         }
 
-        private static MudGolemClass SharedClass = new MudGolemClass();
+        private static SnowGolemClass SharedClass = new SnowGolemClass();
 
-        public MudGolem()
+        public SnowGolem()
         {
             
         }
 
-        public MudGolem(CreatureStats stats, string blood, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position, int iconX, int iconY) :
+        public SnowGolem(CreatureStats stats, string blood, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position, int iconX, int iconY) :
             base(manager, stats, allies, planService, faction, name)
         {
             Physics = new Physics(Manager, name, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
@@ -141,33 +138,9 @@ namespace DwarfCorp
         }
     }
 
-    [JsonObject(IsReference = true)]
-    public class MudGolemAI : CreatureAI
+    public class SnowGolemClass : EmployeeClass
     {
-        public MudGolemAI()
-        {
-            
-        }
-
-        public MudGolemAI(ComponentManager Manager, EnemySensor enemySensor) :
-            base(Manager, "MudGolemAI", enemySensor)
-        {
-            
-        }
-        public override Task ActOnIdle()
-        {
-            return null;
-        }
-
-        public override Act ActOnWander()
-        {
-            return null;
-        }
-    }
-
-    public class MudGolemClass : EmployeeClass
-    {
-        public MudGolemClass()
+        public SnowGolemClass()
         {
             if (!staticClassInitialized)
             {
@@ -186,7 +159,7 @@ namespace DwarfCorp
                 new Level
                 {
                     Index = 0,
-                    Name = "MudGolem",
+                    Name = "Snow Golem",
                     Pay = 25,
                     XP = 0,
                     BaseStats = new CreatureStats.StatNums()
@@ -207,27 +180,26 @@ namespace DwarfCorp
 
         void InitializeAnimations()
         {
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.mudman_animation, "MudGolem");
+            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.snowman_animation, "Snowman");
         }
 
         public void InitializeWeapons()
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Mud", 0.1f, 2.0f, 50.0f, ContentPaths.Audio.demon_attack, ContentPaths.Effects.hit)
+                new Attack("Snowball", 0.1f, 1.0f, 50.0f, ContentPaths.Audio.demon_attack, ContentPaths.Effects.hit)
                 {
                     Mode = Attack.AttackMode.Ranged,
-                    LaunchSpeed = 5.0f,
-                    ProjectileType = "Mud",
-                    TriggerMode = Attack.AttackTrigger.Animation,
-                    TriggerFrame = 1
+                    LaunchSpeed = 10.0f,
+                    ProjectileType = "Snowball",
+                    TriggerMode = Attack.AttackTrigger.Timer
                 }
             };
         }
 
         protected override sealed void InitializeStatics()
         {
-            Name = "Mud Golem";
+            Name = "Snow Golem";
             InitializeLevels();
             InitializeAnimations();
             InitializeWeapons();

@@ -175,6 +175,7 @@ namespace DwarfCorp
             InitializeActions();
             base.InitializeStatics();
         }
+
         public ElfClass()
         {
             if (!staticsInitiailized)

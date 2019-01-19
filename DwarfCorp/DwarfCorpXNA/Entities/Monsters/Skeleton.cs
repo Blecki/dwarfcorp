@@ -51,7 +51,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Skeleton(
-                new CreatureStats(new SkeletonClass(), 0),
+                new CreatureStats(SharedClass, 0),
                 "Undead",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Undead"],
@@ -59,6 +59,8 @@ namespace DwarfCorp
                 "Skeleton",
                 Position).Physics;
         }
+
+        private static SkeletonClass SharedClass = new SkeletonClass();
 
         public Skeleton()
         {
@@ -134,6 +136,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClass;
             Physics.AddChild(Shadow.Create(0.75f, manager));
             base.CreateCosmeticChildren(manager);
         }

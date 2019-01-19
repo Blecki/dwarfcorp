@@ -161,6 +161,8 @@ namespace DwarfCorp
         public int NumBlocksPlaced { get; set; }
 
         public int LevelIndex { get; set; }
+
+        [JsonIgnore]
         public EmployeeClass CurrentClass { get; set; }
         public Task.TaskCategory AllowedTasks = Task.TaskCategory.None;
 

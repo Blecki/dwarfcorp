@@ -104,11 +104,7 @@ namespace DwarfCorp
             NoiseMaker.Noises["Hurt"] =  new List<string>(){ContentPaths.Audio.Oscar.sfx_oc_bird_hurt};
             NoiseMaker.Noises["Lay Egg"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bird_lay_egg };
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the bird";
-            Stats.CurrentClass = new EmployeeClass()
-            {
-                Name = "Bird",
-                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Bird" } }
-            };
+            Stats.CurrentClass = SharedClass;
 
             AI.Movement.CanFly = true;
             AI.Movement.CanWalk = false;
@@ -118,10 +114,16 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClass;
             CreateSprite(ContentPaths.Entities.Animals.Birds.GetBirdAnimations(SpriteAsset), Manager, 0.35f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
-
             base.CreateCosmeticChildren(manager);
         }
+
+        private static EmployeeClass SharedClass = new EmployeeClass()
+        {
+            Name = "Bird",
+            Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Bird" } }
+        };
     }
 }

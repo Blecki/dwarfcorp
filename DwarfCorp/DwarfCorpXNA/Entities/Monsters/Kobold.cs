@@ -153,11 +153,13 @@ namespace DwarfCorp
         }
 
 
+        private static KoboldClass SharedKoboldClass = new KoboldClass();
+
         [EntityFactory("Kobold")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Kobold(
-                new CreatureStats(new KoboldClass(), 0),
+                new CreatureStats(SharedKoboldClass, 0),
                 "Goblins",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Goblins"],
@@ -170,6 +172,7 @@ namespace DwarfCorp
         {
 
         }
+
         public Kobold(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
@@ -238,6 +241,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedKoboldClass;
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             base.CreateCosmeticChildren(manager);

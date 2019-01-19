@@ -122,7 +122,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Troll(
-                new CreatureStats(new TrollClass(), 0),
+                new CreatureStats(SharedClass, 0),
                 "Goblins",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Goblins"],
@@ -130,6 +130,8 @@ namespace DwarfCorp
                 "Troll",
                 Position).Physics;
         }
+
+        private static TrollClass SharedClass = new TrollClass();
 
         public Troll()
         {
@@ -199,6 +201,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             base.CreateCosmeticChildren(manager);

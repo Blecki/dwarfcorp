@@ -86,11 +86,7 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the Spider";
-            Stats.CurrentClass = new EmployeeClass()
-            {
-                Name = "Spider",
-                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Spider" } }
-            };
+            Stats.CurrentClass = SharedClass;
 
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_giant_spider_hurt_1 };
             NoiseMaker.Noises["Chirp"] = new List<string>()
@@ -120,9 +116,15 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClass;
             CreateCosmetics(manager);
             base.CreateCosmeticChildren(manager);
         }
 
+        private static EmployeeClass SharedClass = new EmployeeClass()
+        {
+            Name = "Spider",
+            Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Spider" } }
+        };
     }
 }

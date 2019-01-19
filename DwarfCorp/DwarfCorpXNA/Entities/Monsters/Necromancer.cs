@@ -51,7 +51,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Necromancer(
-                new CreatureStats(new NecromancerClass(), 0),
+                new CreatureStats(SharedClass, 0),
                 "Undead",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Undead"],
@@ -59,6 +59,8 @@ namespace DwarfCorp
                 "Necromancer",
                 Position).Physics;
         }
+
+        private static NecromancerClass SharedClass = new NecromancerClass();
 
         public Necromancer()
         {
@@ -131,6 +133,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             base.CreateCosmeticChildren(manager);

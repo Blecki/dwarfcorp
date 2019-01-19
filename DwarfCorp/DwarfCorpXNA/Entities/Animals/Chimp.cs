@@ -110,12 +110,7 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the Chimp";
-            Stats.CurrentClass = new EmployeeClass()
-            {
-                Name = "Chimp",
-                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Chimp" } }
-            };
-
+            Stats.CurrentClass = SharedClass;
 
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_rabbit_hurt_1, ContentPaths.Audio.Oscar.sfx_oc_rabbit_hurt_2 };
             NoiseMaker.Noises["Chirp"] = new List<string>()
@@ -135,12 +130,18 @@ namespace DwarfCorp
             AI.Movement.SetCan(MoveType.ClimbWalls, true);
         }
 
-
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClass;
             CreateSprite(SpriteAsset, manager, 0.6f);
             Physics.AddChild(Shadow.Create(0.5f, manager));
             base.CreateCosmeticChildren(manager);
         }
+
+        private static EmployeeClass SharedClass = new EmployeeClass()
+        {
+            Name = "Chimp",
+            Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Chimp" } }
+        };
     }
 }

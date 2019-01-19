@@ -187,6 +187,7 @@
     <Compile Include="Components\AI\PacingCreatureAI.cs" />
     <Compile Include="Entities\Animals\Chimp.cs" />
     <Compile Include="Entities\Fixtures\Palisade.cs" />
+    <Compile Include="Entities\Monsters\SnowGolem.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCStatus.cs" />
     <Compile Include="GameStates\ModManagement\Steam\IUGCTransaction.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCUnsubscribe.cs" />
