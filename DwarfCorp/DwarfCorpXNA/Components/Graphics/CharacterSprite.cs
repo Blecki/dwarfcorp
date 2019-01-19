@@ -53,7 +53,7 @@ namespace DwarfCorp
         [OnSerializing]
         new internal void OnSerializingMethod(StreamingContext context)
         {
-            throw new InvalidOperationException();
+            //throw new InvalidOperationException();
         }
 
         [JsonIgnore]

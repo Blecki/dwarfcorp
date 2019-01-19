@@ -76,6 +76,7 @@ namespace DwarfCorp
                 spriteSheet.FrameHeight = spriteSheet.FrameWidth;
             }
 
+            // Todo: Needs the cosmetic children treatement.
             if (animated)
             {
                 Sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.CreateRotationY((float)Math.PI * 0.5f))
@@ -100,7 +101,11 @@ namespace DwarfCorp
                 {
                     (Sprite as SimpleSprite).OrientationType = SimpleSprite.OrientMode.Spherical;
                 }
+
+                
             }
+
+            Sprite.SetFlag(Flag.ShouldSerialize, false);
 
             if (!singleSprite)
             {
@@ -122,7 +127,9 @@ namespace DwarfCorp
                     }) as SimpleSprite;
                     (Sprite2 as SimpleSprite).AutoSetWorldSize();
                 }
+                Sprite2.SetFlag(Flag.ShouldSerialize, false);
             }
+
             Damage = damage;
             HitParticles = AddChild(new ParticleTrigger(hitParticles, manager, "Hit Particles",
                 Matrix.Identity, new Vector3(size * 0.5f, size * 0.5f, size * 0.5f), Vector3.Zero)

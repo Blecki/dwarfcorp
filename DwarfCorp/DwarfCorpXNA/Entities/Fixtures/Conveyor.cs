@@ -55,7 +55,7 @@ namespace DwarfCorp
 
             sprite.AddAnimation(forgeAnimation);
             sprite.AnimPlayer.Play(forgeAnimation);
-
+            sprite.SetFlag(Flag.ShouldSerialize, false);
 
             AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -1.0f, 0.0f), (changeEvent) =>
             {

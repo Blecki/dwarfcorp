@@ -22,7 +22,7 @@ namespace DwarfCorp
         [OnSerializing]
         internal void OnSerializingMethod(StreamingContext context)
         {
-            throw new InvalidOperationException();
+            //throw new InvalidOperationException();
         }
 
         public string Name { get; set; }

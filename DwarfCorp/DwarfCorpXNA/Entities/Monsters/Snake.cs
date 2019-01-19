@@ -119,14 +119,6 @@ namespace DwarfCorp
         {
             Physics.Orientation = Physics.OrientMode.Fixed;
             Species = "Snake";
-            CreateGraphics();
-
-            // Add sensor
-            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
-
-            // Add AI
-            Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors));
-
 
             Attacks = new List<Attack>()
             {
@@ -136,6 +128,17 @@ namespace DwarfCorp
                     TriggerFrame = 2,
                 }
             };
+
+            CreateGraphics();
+
+            // Add sensor
+            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
+
+            // Add AI
+            Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors));
+
+
+            
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 

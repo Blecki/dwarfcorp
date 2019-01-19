@@ -81,35 +81,15 @@ namespace DwarfCorp
         public void Initialize()
         {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            var sprite = Physics.AddChild(new CharacterSprite(Manager, "Skeleton Sprite", Matrix.CreateTranslation(new Vector3(0, 0.1f, 0)))) as CharacterSprite;
-            foreach (Animation animation in Stats.CurrentClass.Animations)
-            {
-                sprite.AddAnimation(animation);
-            }
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
-
             Physics.AddChild(new CreatureAI(Manager, "Skeleton AI", Sensors));
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
-
-            SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
-
-            Physics.AddChild(Shadow.Create(0.75f, Manager));
-
             Physics.Tags.Add("Skeleton");
-
-            Physics.AddChild(new ParticleTrigger("sand_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_1
-            });
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
             
@@ -119,10 +99,7 @@ namespace DwarfCorp
                 ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_2,
             };
 
-
-
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1)));
-
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
@@ -132,12 +109,29 @@ namespace DwarfCorp
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             AI.Movement.SetCan(MoveType.Dig, true);
             Species = "Skeleton";
+
+            CreateCosmeticChildren(Manager);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             Stats.CurrentClass = SharedClass;
             Physics.AddChild(Shadow.Create(0.75f, manager));
+
+            var sprite = Physics.AddChild(new CharacterSprite(Manager, "Skeleton Sprite", Matrix.CreateTranslation(new Vector3(0, 0.1f, 0)))) as CharacterSprite;
+            foreach (Animation animation in Stats.CurrentClass.Animations)
+            {
+                sprite.AddAnimation(animation);
+            }
+            sprite.SetFlag(Flag.ShouldSerialize, false);
+
+            Physics.AddChild(new ParticleTrigger("sand_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 5,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_1
+            }).SetFlag(Flag.ShouldSerialize, false);
+
             base.CreateCosmeticChildren(manager);
         }
     }
