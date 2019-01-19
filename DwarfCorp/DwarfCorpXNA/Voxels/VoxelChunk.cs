@@ -167,10 +167,9 @@ namespace DwarfCorp
                 designations = Manager.World.PlayerFaction.Designations;
             }
             primitive.InitializeFromChunk(this, designations, Manager.World.DesignationDrawer, Manager.World);
-            // TODO: Move to main thread!
             var changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");
             foreach (var c in Manager.World.EnumerateIntersectingObjects(GetBoundingBox(), CollisionType.Both))
-                c.ReceiveMessageRecursive(changedMessage);
+                c.ReceiveMessageLater(changedMessage);
         }
 
         public void Destroy()

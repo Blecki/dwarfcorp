@@ -208,8 +208,8 @@ namespace DwarfCorp
             CanEat = false;
             CanGetBored = false;
             FullName = "";
-            CurrentClass = new WorkerClass();
-            AllowedTasks = CurrentClass.Actions;
+            CurrentClass = null;
+            AllowedTasks = Task.TaskCategory.Attack |  Task.TaskCategory.Gather | Task.TaskCategory.Plant | Task.TaskCategory.Harvest | Task.TaskCategory.Chop | Task.TaskCategory.Wrangle | Task.TaskCategory.TillSoil;
             LevelIndex = 0;
             XP = 0;
             IsMigratory = false;
