@@ -172,6 +172,7 @@ namespace DwarfCorp
         {
 
         }
+
         public Gremlin(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
@@ -181,13 +182,9 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            Initialize();
-        }
-
-        public void Initialize()
-        {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            CreateSprite(Stats.CurrentClass, Manager, 0.25f);
+
+            CreateCosmeticChildren(Manager);
 
             HasMeat = false;
             HasBones = false;
@@ -203,8 +200,6 @@ namespace DwarfCorp
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
 
-            Physics.AddChild(Shadow.Create(0.75f, Manager));
-
             Physics.Tags.Add("Gremlin");
 
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
@@ -215,10 +210,6 @@ namespace DwarfCorp
             });
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
-
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 5)));
-
-
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
@@ -235,11 +226,12 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             Stats.CurrentClass = SharedClass;
+
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
-            NoiseMaker = new NoiseMaker();
-            
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 5))).SetFlag(Flag.ShouldSerialize, false);
 
+            NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
                 ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
@@ -248,5 +240,4 @@ namespace DwarfCorp
             base.CreateCosmeticChildren(manager);
         }
     }
-
 }

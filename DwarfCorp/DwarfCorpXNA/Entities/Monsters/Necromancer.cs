@@ -41,10 +41,6 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// Convenience class for initializing Necromancers as creatures.
-    /// </summary>
     public class Necromancer : Creature
     {
         [EntityFactory("Necromancer")]
@@ -75,13 +71,9 @@ namespace DwarfCorp
             Physics.AddChild(this);
 
             HasMeat = false;
-            Initialize();
-        }
-
-        public void Initialize()
-        {
+           
             Physics.Orientation = Physics.OrientMode.RotateY;
-            CreateSprite(Stats.CurrentClass, Manager);
+            CreateCosmeticChildren(Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
@@ -90,13 +82,6 @@ namespace DwarfCorp
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
-
-            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
-
-            SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
-
-            Physics.AddChild(Shadow.Create(0.75f, Manager));
 
             Physics.Tags.Add("Necromancer");
 
@@ -109,10 +94,7 @@ namespace DwarfCorp
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
             
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1)));
-
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
-            //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
             Stats.Size = 4;
             Stats.CanSleep = false;
             Stats.CanEat = false;
@@ -128,6 +110,8 @@ namespace DwarfCorp
             Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1))).SetFlag(Flag.ShouldSerialize, false);
+
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
@@ -136,9 +120,7 @@ namespace DwarfCorp
                 ContentPaths.Audio.skel2
             };
 
-
             base.CreateCosmeticChildren(manager);
         }
     }
-
 }

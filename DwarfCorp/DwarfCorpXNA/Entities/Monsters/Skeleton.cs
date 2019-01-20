@@ -41,10 +41,6 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// Convenience class for initializing Skeletons as creatures.
-    /// </summary>
     public class Skeleton : Creature
     {
         [EntityFactory("Skeleton")]
@@ -75,11 +71,6 @@ namespace DwarfCorp
             Physics.AddChild(this);
 
             HasMeat = false;
-            Initialize();
-        }
-
-        public void Initialize()
-        {
             Physics.Orientation = Physics.OrientMode.RotateY;
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
@@ -93,10 +84,7 @@ namespace DwarfCorp
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
             
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1)));
-
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
-            //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
             Stats.Size = 3;
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
@@ -126,6 +114,8 @@ namespace DwarfCorp
                 SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_1
             }).SetFlag(Flag.ShouldSerialize, false);
 
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1))).SetFlag(Flag.ShouldSerialize, false);
+
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
@@ -133,9 +123,7 @@ namespace DwarfCorp
                 ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_2,
             };
 
-
             base.CreateCosmeticChildren(manager);
         }
     }
-
 }

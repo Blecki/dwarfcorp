@@ -52,13 +52,12 @@ namespace DwarfCorp
         {
             return new MudGolem(
                 new CreatureStats(SharedClass, 0),
-                "dirt_particle",
                 "Carnivore",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Carnivore"],
                 Manager,
                 "Mud Golem",
-                Position, 2, 3);
+                Position);
         }
 
         private static MudGolemClass SharedClass = new MudGolemClass();
@@ -68,22 +67,17 @@ namespace DwarfCorp
             
         }
 
-        public MudGolem(CreatureStats stats, string blood, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position, int iconX, int iconY) :
+        public MudGolem(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
             Physics = new Physics(Manager, name, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             Physics.AddChild(this);
 
-            Initialize(blood, iconX, iconY);
-        }
-
-        public void Initialize(string blood, int iconX, int iconY)
-        {
             HasMeat = false;
             HasBones = false;
             Physics.Orientation = Physics.OrientMode.RotateY;
-            CreateSprite(Stats.CurrentClass, Manager, 0.5f);
+            CreateCosmeticChildren(Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
@@ -101,25 +95,17 @@ namespace DwarfCorp
                 i += num - 1;
             }
 
-            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
-
-       
             Physics.Tags.Add("MudGolem");
             Physics.Mass = 100;
 
-            Physics.AddChild(new ParticleTrigger(blood, Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
                 SoundToPlay = ContentPaths.Audio.gravel
             });
 
-
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, iconX, iconY)));
-
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
-            //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
             Stats.Size = 4;
             Resistances[DamageType.Fire] = 5;
             Resistances[DamageType.Acid] = 5;
@@ -131,12 +117,15 @@ namespace DwarfCorp
         {
             Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 3))).SetFlag(Flag.ShouldSerialize, false);
+
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
                 ContentPaths.Audio.demon0,
                 ContentPaths.Audio.gravel,
             };
+
             base.CreateCosmeticChildren(manager);
         }
     }

@@ -47,15 +47,13 @@ namespace DwarfCorp
         [EntityFactory("Snake")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            var r =  new Snake(false, Position, Manager, "Snake").Physics;
-            return r;
+            return new Snake(false, Position, Manager, "Snake").Physics;
         }
 
         [EntityFactory("Necrosnake")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            var r = new Snake(true, Position, Manager, "Snake");
-            return r.Physics;
+            return new Snake(true, Position, Manager, "Snake");
         }
         
         public class TailSegment
@@ -111,11 +109,6 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            Initialize();
-        }
-
-        public void Initialize()
-        {
             Physics.Orientation = Physics.OrientMode.Fixed;
             Species = "Snake";
 
@@ -128,16 +121,11 @@ namespace DwarfCorp
                 }
             };
 
-            CreateGraphics();
+            CreateCosmeticChildren(Manager);
 
-            // Add sensor
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
-            // Add AI
             Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors));
-
-
-            
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
@@ -156,7 +144,6 @@ namespace DwarfCorp
                 BoxTriggerTimes = 10,
                 SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_giant_snake_hurt_1,
             });
-
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
         }
@@ -241,6 +228,10 @@ namespace DwarfCorp
         {
             Stats.CurrentClass = SharedClass;
             CreateGraphics();
+
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1))).SetFlag(Flag.ShouldSerialize, false);
+
+
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_giant_snake_hurt_1 };
             NoiseMaker.Noises["Chirp"] = new List<string>()
