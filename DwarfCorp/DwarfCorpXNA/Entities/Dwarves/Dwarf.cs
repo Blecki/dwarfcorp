@@ -52,13 +52,6 @@ namespace DwarfCorp
         [JsonProperty]
         private EmployeeClass SavedDwarfEmployeeClass = null;
 
-        [OnDeserialized]
-        internal void OnDeserializedMethod(StreamingContext context)
-        {
-            if (SavedDwarfEmployeeClass != null)
-                Stats.CurrentClass = SavedDwarfEmployeeClass;
-        }
-
         public Dwarf()
         {
             
@@ -80,16 +73,13 @@ namespace DwarfCorp
             HasMeat = false;
             HasBones = false;
             HasCorpse = true;
-            Initialize(workerClass);
 
             SavedDwarfEmployeeClass = workerClass;
-        }        
 
-        public void Initialize(EmployeeClass dwarfClass)
-        {
             Stats.Gender = Mating.RandomGender();
             Physics.Orientation = Physics.OrientMode.RotateY;
-            CreateDwarfSprite(dwarfClass, Manager);
+
+            CreateCosmeticChildren(Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
@@ -112,7 +102,46 @@ namespace DwarfCorp
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
-            Physics.AddChild(Shadow.Create(0.75f, Manager));
+            Stats.FullName = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
+            Stats.Size = 5;
+            Stats.CanSleep = true;
+            Stats.CanEat = true;
+            Stats.CanGetBored = true;
+            AI.Movement.CanClimbWalls = true; // Why isn't this a flag like the below?
+            AI.Movement.SetCan(MoveType.Teleport, true);
+            AI.Movement.SetCost(MoveType.Teleport, 1.0f);
+            AI.Movement.SetSpeed(MoveType.Teleport, 10.0f);
+            AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
+            AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
+            AI.Movement.SetCan(MoveType.EnterVehicle, true);
+            AI.Movement.SetCan(MoveType.ExitVehicle, true);
+            AI.Movement.SetCan(MoveType.RideVehicle, true);
+            AI.Movement.SetCost(MoveType.EnterVehicle, 1.0f);
+            AI.Movement.SetCost(MoveType.ExitVehicle, 1.0f);
+            AI.Movement.SetCost(MoveType.RideVehicle, 0.01f);
+            AI.Movement.SetSpeed(MoveType.RideVehicle, 3.0f);
+            AI.Movement.SetSpeed(MoveType.EnterVehicle, 1.0f);
+            AI.Movement.SetSpeed(MoveType.ExitVehicle, 1.0f);
+            if (AI.Stats.IsTaskAllowed(Task.TaskCategory.Dig))
+            {
+                AI.Movement.SetCan(MoveType.Dig, true);
+            }
+            AI.TriggersMourning = true;
+            AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Stats.Gender);
+            Species = "Dwarf";
+            Status.Money = (decimal)MathFunctions.Rand(0, 150);
+            
+
+            Physics.AddChild(new DwarfThoughts(Manager, "Thoughts"));
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            Stats.CurrentClass = SavedDwarfEmployeeClass;
+            CreateDwarfSprite(Stats.CurrentClass, manager);
+            Physics.AddChild(Shadow.Create(0.75f, manager));
+            Physics.AddChild(new VoxelRevealer(manager, Physics, 5)).SetFlag(Flag.ShouldSerialize, false);
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0))).SetFlag(Flag.ShouldSerialize, false);
 
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
@@ -154,48 +183,6 @@ namespace DwarfCorp
                 ContentPaths.Audio.Oscar.sfx_ic_dwarf_climb_2,
                 ContentPaths.Audio.Oscar.sfx_ic_dwarf_climb_3
             };
-
-            MinimapIcon minimapIcon = Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0))) as MinimapIcon;
-
-            Stats.FullName = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
-            Stats.Size = 5;
-            Stats.CanSleep = true;
-            Stats.CanEat = true;
-            Stats.CanGetBored = true;
-            AI.Movement.CanClimbWalls = true; // Why isn't this a flag like the below?
-            AI.Movement.SetCan(MoveType.Teleport, true);
-            AI.Movement.SetCost(MoveType.Teleport, 1.0f);
-            AI.Movement.SetSpeed(MoveType.Teleport, 10.0f);
-            AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
-            AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
-            AI.Movement.SetCan(MoveType.EnterVehicle, true);
-            AI.Movement.SetCan(MoveType.ExitVehicle, true);
-            AI.Movement.SetCan(MoveType.RideVehicle, true);
-            AI.Movement.SetCost(MoveType.EnterVehicle, 1.0f);
-            AI.Movement.SetCost(MoveType.ExitVehicle, 1.0f);
-            AI.Movement.SetCost(MoveType.RideVehicle, 0.01f);
-            AI.Movement.SetSpeed(MoveType.RideVehicle, 3.0f);
-            AI.Movement.SetSpeed(MoveType.EnterVehicle, 1.0f);
-            AI.Movement.SetSpeed(MoveType.ExitVehicle, 1.0f);
-            if (AI.Stats.IsTaskAllowed(Task.TaskCategory.Dig))
-            {
-                AI.Movement.SetCan(MoveType.Dig, true);
-            }
-            AI.TriggersMourning = true;
-            AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Stats.Gender);
-            Species = "Dwarf";
-            Status.Money = (decimal)MathFunctions.Rand(0, 150);
-            
-            Physics.AddChild(new VoxelRevealer(Manager, Physics, 5)).SetFlag(Flag.ShouldSerialize, false);
-
-            Physics.AddChild(new DwarfThoughts(Manager, "Thoughts"));
-        }
-
-        public override void CreateCosmeticChildren(ComponentManager manager)
-        {
-            CreateDwarfSprite(Stats.CurrentClass, manager);
-            Physics.AddChild(Shadow.Create(0.75f, manager));
-            Physics.AddChild(new VoxelRevealer(manager, Physics, 5)).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);
         }

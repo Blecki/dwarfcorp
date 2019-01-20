@@ -103,6 +103,7 @@ namespace DwarfCorp
             HasBones = true;
             HasCorpse = false;
             DrawLifeTimer.HasTriggered = true;
+            NoiseMaker = new NoiseMaker();
         }
 
         public Creature(
@@ -223,8 +224,11 @@ namespace DwarfCorp
         /// If true, the creature will generate a corpse.
         /// </summary>
         public bool HasCorpse { get; set; }
+
         /// <summary> Used to make sounds for the creature </summary>
-        public NoiseMaker NoiseMaker { get; set; }
+        [JsonIgnore]
+        public NoiseMaker NoiseMaker { get; private set; }
+        
         /// <summary> The creature can hold objects in its inventory </summary>
         [JsonIgnore]
         public Inventory Inventory
@@ -235,6 +239,7 @@ namespace DwarfCorp
             }
         }
         private Inventory _inventory = null;
+
         public Timer EggTimer { get; set; }
         public Timer MigrationTimer { get; set; }
 

@@ -67,7 +67,8 @@ namespace DwarfCorp
 
             SpriteAsset = sprites;
             BaseMeatResource = "Bird Meat";
-            CreateSprite(ContentPaths.Entities.Animals.Birds.GetBirdAnimations(SpriteAsset), Manager, 0.35f);
+
+            CreateCosmeticChildren(Manager);
 
             // Used to sense hostile creatures
              Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
@@ -81,8 +82,6 @@ namespace DwarfCorp
 
             // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
-
-            Physics.AddChild(Shadow.Create(0.25f, Manager));
 
             // The bird will emit a shower of blood when it dies
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
@@ -100,9 +99,6 @@ namespace DwarfCorp
             Physics.Tags.Add("Bird");
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
-            NoiseMaker.Noises.Add("chirp", new List<string>(){ContentPaths.Audio.Oscar.sfx_oc_bird_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_bird_neutral_2});
-            NoiseMaker.Noises["Hurt"] =  new List<string>(){ContentPaths.Audio.Oscar.sfx_oc_bird_hurt};
-            NoiseMaker.Noises["Lay Egg"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bird_lay_egg };
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the bird";
             Stats.CurrentClass = SharedClass;
 
@@ -117,6 +113,9 @@ namespace DwarfCorp
             Stats.CurrentClass = SharedClass;
             CreateSprite(ContentPaths.Entities.Animals.Birds.GetBirdAnimations(SpriteAsset), Manager, 0.35f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
+            NoiseMaker.Noises.Add("chirp", new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bird_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_bird_neutral_2 });
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bird_hurt };
+            NoiseMaker.Noises["Lay Egg"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bird_lay_egg };
             base.CreateCosmeticChildren(manager);
         }
 

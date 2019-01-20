@@ -67,20 +67,11 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            Initialize(sprites);
-        }
-
-        /// <summary>
-        /// Initialize function creates all the required components for the bird.
-        /// </summary>
-        /// <param name="sprites">The sprite sheet to use for the bird</param>
-        public void Initialize(string sprites)
-        {
             SpriteAsset = sprites;
             // When true, causes the bird to face the direction its moving in
             Physics.Orientation = Physics.OrientMode.RotateY;
 
-            CreateSprite(sprites, Manager, 0.35f);
+            CreateCosmeticChildren(Manager);
 
             // Used to sense hostile creatures
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
@@ -91,11 +82,8 @@ namespace DwarfCorp
             // The bird can peck at its enemies (0.1 damage)
             Attacks = new List<Attack> { new Attack("Bite", 0.01f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_rabbit_attack), ContentPaths.Effects.bite) {DiseaseToSpread = "Rabies"} };
 
-
             // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
-
-            Physics.AddChild(Shadow.Create(0.25f, Manager));
 
             // The bird will emit a shower of blood when it dies
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
@@ -115,12 +103,6 @@ namespace DwarfCorp
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the rabbit";
             Stats.CurrentClass = SharedClass;
 
-            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_rabbit_hurt_1, ContentPaths.Audio.Oscar.sfx_oc_rabbit_hurt_2 };
-            NoiseMaker.Noises["Chirp"] = new List<string>()
-            {
-                ContentPaths.Audio.Oscar.sfx_oc_rabbit_neutral_1,
-                ContentPaths.Audio.Oscar.sfx_oc_rabbit_neutral_2
-            };
             Species = "Rabbit";
             CanReproduce = true;
             BabyType = Name;
@@ -137,6 +119,12 @@ namespace DwarfCorp
             Stats.CurrentClass = SharedClass;
             CreateSprite(SpriteAsset, manager, 0.35f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_rabbit_hurt_1, ContentPaths.Audio.Oscar.sfx_oc_rabbit_hurt_2 };
+            NoiseMaker.Noises["Chirp"] = new List<string>()
+            {
+                ContentPaths.Audio.Oscar.sfx_oc_rabbit_neutral_1,
+                ContentPaths.Audio.Oscar.sfx_oc_rabbit_neutral_2
+            };
             base.CreateCosmeticChildren(manager);
         }
 
