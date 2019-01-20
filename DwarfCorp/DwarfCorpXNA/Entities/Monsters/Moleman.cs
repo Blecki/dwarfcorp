@@ -60,7 +60,7 @@ namespace DwarfCorp
                 Position).Physics;
         }
 
-        private static MolemanMinerClass SharedClass = new MolemanMinerClass();
+        private static MolemanMinerClass SharedClass = new MolemanMinerClass(true);
         
         public Moleman()
         {

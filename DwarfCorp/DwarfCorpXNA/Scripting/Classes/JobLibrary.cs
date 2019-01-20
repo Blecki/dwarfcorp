@@ -53,11 +53,11 @@ namespace DwarfCorp
         public static void Initialize()
         {
             Classes = new Dictionary<JobType, EmployeeClass>();
-            Classes[JobType.Worker] = new WorkerClass();
-            Classes[JobType.AxeDwarf] = new AxeDwarfClass();
-            Classes[JobType.CraftsDwarf] = new CraftDwarfClass();
-            Classes[JobType.Wizard] = new WizardClass();
-            Classes[JobType.MusketDwarf] = new MusketDwarfClass();
+            Classes[JobType.Worker] = new WorkerClass(true);
+            Classes[JobType.AxeDwarf] = new AxeDwarfClass(true);
+            Classes[JobType.CraftsDwarf] = new CraftDwarfClass(true);
+            Classes[JobType.Wizard] = new WizardClass(true);
+            Classes[JobType.MusketDwarf] = new MusketDwarfClass(true);
         }
     }
 }

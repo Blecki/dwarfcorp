@@ -241,9 +241,9 @@ namespace DwarfCorp
         }
 
 
-        public SwordGoblinClass()
+        public SwordGoblinClass(bool initialize)
         {
-            if (!staticsInitiailized)
+            if (initialize && !staticsInitiailized)
             {
                 InitializeStatics();
             }

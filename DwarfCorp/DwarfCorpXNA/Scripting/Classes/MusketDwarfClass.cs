@@ -37,9 +37,9 @@ namespace DwarfCorp
 {
     public class MusketDwarfClass : EmployeeClass
     {
-        public MusketDwarfClass()
+        public MusketDwarfClass(bool initialize)
         {
-            if (!staticsInitiailized)
+            if (initialize && !staticsInitiailized)
             {
                 InitializeStatics();
             }

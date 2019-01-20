@@ -241,9 +241,9 @@ namespace DwarfCorp
         }
 
 
-        public NecromancerClass()
+        public NecromancerClass(bool initialize)
         {
-            if (!staticsInitiailized)
+            if (initialize && !staticsInitiailized)
             {
                 InitializeStatics();
             }

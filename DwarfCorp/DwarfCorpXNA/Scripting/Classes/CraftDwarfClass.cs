@@ -241,9 +241,9 @@ namespace DwarfCorp
             AttackMode = CharacterMode.Attacking;
             base.InitializeStatics();
         }
-        public CraftDwarfClass()
+        public CraftDwarfClass(bool initialize)
         {
-            if (!staticsInitiailized)
+            if (initialize && !staticsInitiailized)
             {
                 InitializeStatics();
             }

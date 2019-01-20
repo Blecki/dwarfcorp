@@ -60,7 +60,7 @@ namespace DwarfCorp
                 Position).Physics;
         }
 
-        private static ElfClass SharedClass = new ElfClass();
+        private static ElfClass SharedClass = new ElfClass(true);
 
         public Elf()
         {

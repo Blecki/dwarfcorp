@@ -176,9 +176,9 @@ namespace DwarfCorp
             base.InitializeStatics();
         }
 
-        public ElfClass()
+        public ElfClass(bool initialize)
         {
-            if (!staticsInitiailized)
+            if (initialize && !staticsInitiailized)
             {
                 InitializeStatics();
             }

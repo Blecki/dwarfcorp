@@ -60,7 +60,7 @@ namespace DwarfCorp
                 Position).Physics;
         }
 
-        private static SkeletonClass SharedClass = new SkeletonClass();
+        private static SkeletonClass SharedClass = new SkeletonClass(true);
 
         public Skeleton()
         {

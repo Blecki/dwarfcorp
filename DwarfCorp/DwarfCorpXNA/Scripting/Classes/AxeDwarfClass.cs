@@ -244,9 +244,9 @@ namespace DwarfCorp
         }
 
 
-        public AxeDwarfClass()
+        public AxeDwarfClass(bool initialize)
         {
-            if (!staticsInitiailized)
+            if (initialize && !staticsInitiailized)
             {
                 InitializeStatics();
             }

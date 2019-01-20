@@ -60,7 +60,7 @@ namespace DwarfCorp
                 Position).Physics;
         }
 
-        private static NecromancerClass SharedClass = new NecromancerClass();
+        private static NecromancerClass SharedClass = new NecromancerClass(true);
 
         public Necromancer()
         {
