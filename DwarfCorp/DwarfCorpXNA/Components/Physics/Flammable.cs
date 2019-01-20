@@ -54,8 +54,6 @@ namespace DwarfCorp
 
         public Flammable()
         {
-            FlameSprites = new List<AnimatedSprite>();
-            UpdateRate = 100;
         }
 
         public Flammable(ComponentManager manager, string name) :

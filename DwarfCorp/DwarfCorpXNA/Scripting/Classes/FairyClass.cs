@@ -128,6 +128,12 @@ namespace DwarfCorp
             InitializeActions();
             base.InitializeStatics();
         }
+
+        public FairyClass()
+        {
+
+        }
+
         public FairyClass(bool initialize)
         {
             if (initialize && !staticsInitiailized)

@@ -115,12 +115,6 @@ namespace DwarfCorp
                 SoundToPlay = ContentPaths.Audio.gravel
             });
 
-            NoiseMaker.Noises["Hurt"] = new List<string>
-            {
-                ContentPaths.Audio.demon0,
-                ContentPaths.Audio.gravel,
-            };
-
 
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, iconX, iconY)));
 
@@ -137,6 +131,12 @@ namespace DwarfCorp
         {
             Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
+            NoiseMaker = new NoiseMaker();
+            NoiseMaker.Noises["Hurt"] = new List<string>
+            {
+                ContentPaths.Audio.demon0,
+                ContentPaths.Audio.gravel,
+            };
             base.CreateCosmeticChildren(manager);
         }
     }

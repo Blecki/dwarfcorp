@@ -223,6 +223,125 @@ namespace DwarfCorp
             }
         }
 
+        public class BloatTester
+        {
+            public enum State
+            {
+                StartingNewGame,
+                WaitingForGameStart,
+                SavingNewGame,
+                LoadingSavedGame,
+                WaitingForLoading,
+                Done
+            }
+
+            public int Iter = 0;
+            public int MaxIters = 50;
+            public List<long> FileSizes = new List<long>();
+            public State LoadState = State.StartingNewGame;
+
+            public void Update(DwarfGame game)
+            {
+                switch (LoadState)
+                {
+                    case State.StartingNewGame:
+                        Console.Error.WriteLine("Save/load test: starting new game...");
+                        game.StateManager.PushState(new LoadState(game, game.StateManager, new WorldGenerationSettings() { GenerateFromScratch = true }));
+                        LoadState = State.WaitingForGameStart;
+                        break;
+                    case State.WaitingForGameStart:
+                        if (game.StateManager.CurrentState is PlayState)
+                        {
+                            PlayState state = game.StateManager.CurrentState as PlayState;
+                            if (state.IsInitialized)
+                            {
+                                Console.Error.WriteLine("Save/load test: doing autosave...");
+                                state.AutoSave((success, filename) =>
+                                {
+                                    if (success)
+                                    {
+                                        FileInfo nfo = new FileInfo(filename + Path.DirectorySeparatorChar + "World." + PlayData.Extension);
+                                        if (nfo.Exists)
+                                        {
+                                            FileSizes.Add(nfo.Length);
+                                            Console.Out.WriteLine(nfo.Length);
+                                        }
+
+                                        if (Iter == 0)
+                                        {
+                                            File.Copy(nfo.FullName, nfo.FullName + ".orig");
+                                        }
+                                    }
+                                    return true;
+                                });
+                                LoadState = State.SavingNewGame;
+                            }
+                        }
+                        break;
+                    case State.SavingNewGame:
+                        {
+                            PlayState state = game.StateManager.CurrentState as PlayState;
+                            if (state != null && state.IsInitialized && !state.Paused)
+                            {
+                                Console.Error.WriteLine("Save/load test: loading the saved game...");
+                                LoadState = State.LoadingSavedGame;
+                            }
+                            break;
+                        }
+                    case State.LoadingSavedGame:
+                        {
+                            string latestSave = SaveGame.GetLatestSaveFile();
+
+                            if (latestSave != null)
+                            {
+                                Console.Error.WriteLine("Save/load test: starting to load...");
+                                PlayState state = game.StateManager.CurrentState as PlayState;
+                                if (state != null && state.IsInitialized && !state.Paused)
+                                {
+                                    state.QuitGame(new LoadState(game, game.StateManager, new WorldGenerationSettings()
+                                    {
+                                        ExistingFile = latestSave
+                                    }));
+                                }
+                                LoadState = State.WaitingForLoading;
+                            }
+                            break;
+                        }
+                    case State.WaitingForLoading:
+                        if (game.StateManager.CurrentState is PlayState)
+                        {
+                            PlayState state = game.StateManager.CurrentState as PlayState;
+                            if (state.IsInitialized)
+                            {
+                                Console.Error.WriteLine("Save/load test completed successfully.");
+                                Iter++;
+                                Console.Error.WriteLine("Iter {0}", Iter);
+                                if (Iter == MaxIters)
+                                {
+                                    Console.Error.WriteLine("Bloat test complete.");
+                                    foreach (var size in FileSizes)
+                                    {
+                                        Console.Out.WriteLine(size);
+                                    }
+                                    LoadState = State.Done;
+                                }
+                                else
+                                {
+                                    LoadState = State.WaitingForGameStart;
+                                }
+                            }
+                        }
+                        break;
+                    case State.Done:
+                        {
+                            return;
+                        }
+                }
+
+            }
+        }
+
+        private BloatTester _bloatTester = null;
         private SaveLoadTester _tester = null;
 
         [ConsoleCommandHandler("PALETTE")]
@@ -237,6 +356,10 @@ namespace DwarfCorp
 #if SHARP_RAVEN && !DEBUG
         private RavenClient ravenClient;
 #endif
+        public void DoBloatTest()
+        {
+            _bloatTester = new BloatTester();
+        }
 
         public void DoSaveLoadtest()
         {
@@ -314,6 +437,8 @@ namespace DwarfCorp
             {
                 Exit();
             }
+
+            DoBloatTest();
         }
 
 #if !XNA_BUILD
@@ -561,6 +686,15 @@ namespace DwarfCorp
             {
                 _tester.Update(this);
                 if (_tester.LoadState == SaveLoadTester.State.Done)
+                {
+                    Environment.Exit(0);
+                }
+            }
+
+            if (_bloatTester != null)
+            {
+                _bloatTester.Update(this);
+                if (_bloatTester.LoadState == BloatTester.State.Done)
                 {
                     Environment.Exit(0);
                 }

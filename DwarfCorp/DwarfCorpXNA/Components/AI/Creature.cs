@@ -94,16 +94,6 @@ namespace DwarfCorp
 
         public Creature()
         {
-            UpdateRate = 2;
-            CurrentCharacterMode = CharacterMode.Idle;
-
-            OverrideCharacterMode = false;
-            Buffs = new List<Buff>();
-            HasMeat = true;
-            HasBones = true;
-            HasCorpse = false;
-            DrawLifeTimer.HasTriggered = true;
-            NoiseMaker = new NoiseMaker();
         }
 
         public Creature(
@@ -227,7 +217,7 @@ namespace DwarfCorp
 
         /// <summary> Used to make sounds for the creature </summary>
         [JsonIgnore]
-        public NoiseMaker NoiseMaker { get; private set; }
+        public NoiseMaker NoiseMaker { get; set; }
         
         /// <summary> The creature can hold objects in its inventory </summary>
         [JsonIgnore]

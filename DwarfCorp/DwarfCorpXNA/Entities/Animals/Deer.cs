@@ -140,6 +140,7 @@ namespace DwarfCorp
             Stats.CurrentClass = SharedClass;
             CreateSprite(ContentPaths.Entities.Animals.Deer.animations, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
+            NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_deer_hurt_1 };
             NoiseMaker.Noises["Chirp"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_deer_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_deer_neutral_2 };
             base.CreateCosmeticChildren(manager);

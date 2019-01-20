@@ -273,13 +273,13 @@ namespace BloomPostprocess
             {
                 DwarfGame.SafeSpriteBatchBegin(0, BlendState.Opaque, null, null, null, effect, Matrix.Identity);
                 DwarfGame.SpriteBatch.Draw(texture, new Rectangle(0, 0, width, height), Color.White);
+                DwarfGame.SpriteBatch.End();
             }
             catch (InvalidOperationException operationException)
             {
                 Console.Error.WriteLine(operationException.ToString());
                 return;
             }
-            DwarfGame.SpriteBatch.End();
         }
 
 

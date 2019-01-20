@@ -72,9 +72,6 @@ namespace DwarfCorp
 
         public Inventory()
         {
-            UpdateRate = 10;
-            DropRate = 1.0f;
-            CollisionType = CollisionType.None;
         }
 
         public Inventory(ComponentManager Manager, string name, Vector3 BoundingBoxExtents, Vector3 LocalBoundingBoxOffset) :

@@ -66,7 +66,6 @@ namespace DwarfCorp
         public Color OneShotTint = Color.White;
         public Tinter()
         {
-            Stipple = false;
         }
 
         public Tinter(ComponentManager Manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :

@@ -242,6 +242,10 @@ namespace DwarfCorp
             base.InitializeStatics();
         }
 
+        public SkeletonClass()
+        {
+
+        }
 
         public SkeletonClass(bool initialize)
         {

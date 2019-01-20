@@ -73,8 +73,6 @@ namespace DwarfCorp
 
         public Health()
         {
-            UpdateRate = 100;
-            InitializeResistance();
         }
 
         public void InitializeResistance()

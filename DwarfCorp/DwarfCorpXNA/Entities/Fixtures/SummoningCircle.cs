@@ -47,8 +47,6 @@ namespace DwarfCorp
 
         public MagicalObject()
         {
-            DrawLoadBarTimer = new Timer(0.5f, true);
-            DrawLoadBarTimer.HasTriggered = true;
         }
 
 

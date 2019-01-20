@@ -47,7 +47,6 @@ namespace DwarfCorp
         public SelectionCircle()
             : base()
         {
-            UpdateRate = 1;
         }
 
         public SelectionCircle(ComponentManager manager) :

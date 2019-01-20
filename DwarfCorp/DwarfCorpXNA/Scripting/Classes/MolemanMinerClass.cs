@@ -239,6 +239,12 @@ namespace DwarfCorp
             InitializeActions();
             base.InitializeStatics();
         }
+
+        public MolemanMinerClass()
+        {
+
+        }
+
         public MolemanMinerClass(bool initialize)
         {
             if (initialize && !staticsInitiailized)

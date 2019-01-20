@@ -71,7 +71,6 @@ namespace DwarfCorp
         
         public Snake()
         {
-            UpdateRate = 1;
         }
 
         public Snake(bool Bone, Vector3 position, ComponentManager manager, string name):
@@ -159,13 +158,6 @@ namespace DwarfCorp
             });
 
 
-            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_giant_snake_hurt_1 };
-            NoiseMaker.Noises["Chirp"] = new List<string>()
-            {
-                ContentPaths.Audio.Oscar.sfx_oc_giant_snake_neutral_1,
-                ContentPaths.Audio.Oscar.sfx_oc_giant_snake_neutral_2
-            };
-
             Physics.AddChild(new Flammable(Manager, "Flames"));
         }
 
@@ -249,6 +241,14 @@ namespace DwarfCorp
         {
             Stats.CurrentClass = SharedClass;
             CreateGraphics();
+            NoiseMaker = new NoiseMaker();
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_giant_snake_hurt_1 };
+            NoiseMaker.Noises["Chirp"] = new List<string>()
+            {
+                ContentPaths.Audio.Oscar.sfx_oc_giant_snake_neutral_1,
+                ContentPaths.Audio.Oscar.sfx_oc_giant_snake_neutral_2
+            };
+
             base.CreateCosmeticChildren(Manager);
         }
 

@@ -107,6 +107,7 @@ namespace DwarfCorp
                 TriggerOnDeath = true,
                 TriggerAmount = 1
             }).SetFlag(Flag.ShouldSerialize, false);
+            NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_giant_spider_hurt_1 };
             NoiseMaker.Noises["Chirp"] = new List<string>()
             {

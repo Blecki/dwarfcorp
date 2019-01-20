@@ -142,7 +142,7 @@ namespace DwarfCorp
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new VoxelRevealer(manager, Physics, 5)).SetFlag(Flag.ShouldSerialize, false);
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0))).SetFlag(Flag.ShouldSerialize, false);
-
+            NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
                 ContentPaths.Audio.Oscar.sfx_ic_dwarf_hurt_1,

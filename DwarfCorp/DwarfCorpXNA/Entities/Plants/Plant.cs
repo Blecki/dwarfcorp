@@ -53,7 +53,6 @@ namespace DwarfCorp
         public int LastGrowthHour = 0;
         public Plant()
         {
-            IsGrown = false;
         }
 
         public Plant(ComponentManager Manager, string name, Vector3 Position, float RandomAngle, Vector3 bboxSize,

@@ -88,22 +88,6 @@ namespace DwarfCorp
                 SoundToPlay = ContentPaths.Audio.wurp,
             });
           
-            NoiseMaker.Noises["Hurt"] = new List<string>
-            {
-                ContentPaths.Audio.tinkle
-            };
-
-
-            NoiseMaker.Noises["Chew"] = new List<string> 
-            {
-                ContentPaths.Audio.tinkle
-            };
-
-            NoiseMaker.Noises["Jump"] = new List<string>
-            {
-                ContentPaths.Audio.tinkle
-            };
-
             MinimapIcon minimapIcon = Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0))) as MinimapIcon;
 
             //new LightEmitter("Light Emitter", Sprite, Matrix.Identity, Vector3.One, Vector3.One, 255, 150);
@@ -132,6 +116,22 @@ namespace DwarfCorp
             Sprite.LightsWithVoxels = false;
 
             Physics.AddChild(Shadow.Create(0.75f, manager));
+            NoiseMaker = new NoiseMaker();
+            NoiseMaker.Noises["Hurt"] = new List<string>
+            {
+                ContentPaths.Audio.tinkle
+            };
+
+
+            NoiseMaker.Noises["Chew"] = new List<string>
+            {
+                ContentPaths.Audio.tinkle
+            };
+
+            NoiseMaker.Noises["Jump"] = new List<string>
+            {
+                ContentPaths.Audio.tinkle
+            };
             base.CreateCosmeticChildren(manager);
         }
     }

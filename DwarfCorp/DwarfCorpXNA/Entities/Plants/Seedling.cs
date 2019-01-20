@@ -50,7 +50,6 @@ namespace DwarfCorp
 
         public Seedling()
         {
-            IsGrown = false;
         }
 
         public Seedling(ComponentManager Manager, String AdultName, Vector3 position, String Asset) :

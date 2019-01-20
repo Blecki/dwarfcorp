@@ -124,6 +124,7 @@ namespace DwarfCorp
             Stats.CurrentClass = SharedClass;
             CreateSprite(SpriteAsset, manager, 0.35f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
+            NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Idle"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_frog_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_frog_neutral_2 };
             NoiseMaker.Noises["Chrip"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_frog_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_frog_neutral_2 };
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_frog_hurt_1, ContentPaths.Audio.Oscar.sfx_oc_frog_hurt_2 };

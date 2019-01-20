@@ -101,7 +101,7 @@ namespace DwarfCorp
             });
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
-            
+
             Stats.FullName = TextGenerator.GenerateRandom("$elfname");
             //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
             Stats.Size = 4;
@@ -117,6 +117,7 @@ namespace DwarfCorp
             Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
+            NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
                 ContentPaths.Audio.Oscar.sfx_ic_elf_hurt_1,

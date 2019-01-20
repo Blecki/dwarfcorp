@@ -216,13 +216,6 @@ namespace DwarfCorp
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
-
-            NoiseMaker.Noises["Hurt"] = new List<string>
-            {
-                ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
-            };
-
-
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 5)));
 
 
@@ -244,6 +237,14 @@ namespace DwarfCorp
             Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
+            NoiseMaker = new NoiseMaker();
+            
+
+            NoiseMaker.Noises["Hurt"] = new List<string>
+            {
+                ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
+            };
+
             base.CreateCosmeticChildren(manager);
         }
     }

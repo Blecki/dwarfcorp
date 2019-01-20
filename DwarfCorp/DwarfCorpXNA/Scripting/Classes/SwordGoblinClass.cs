@@ -240,6 +240,10 @@ namespace DwarfCorp
             base.InitializeStatics();
         }
 
+        public SwordGoblinClass()
+        {
+
+        }
 
         public SwordGoblinClass(bool initialize)
         {

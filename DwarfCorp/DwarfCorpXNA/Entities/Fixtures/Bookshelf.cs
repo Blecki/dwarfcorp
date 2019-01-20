@@ -19,7 +19,6 @@ namespace DwarfCorp
 
         public Bookshelf()
         {
-            Tags.Add("Books");
             CollisionType = CollisionType.Static;
         }
 
