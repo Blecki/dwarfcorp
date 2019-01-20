@@ -31,6 +31,7 @@ namespace DwarfCorp.GameStates
             base(game, "LoadState", stateManager)
         {
             Settings = settings;
+            Overworld.Name = settings.Name;
             EnableScreensaver = true;
 
             Runner = new DwarfRunner(game);

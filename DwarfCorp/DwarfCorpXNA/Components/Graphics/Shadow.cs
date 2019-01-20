@@ -64,7 +64,7 @@ namespace DwarfCorp
         }
         public Shadow() : base()
         {
-
+            SetFlag(Flag.ShouldSerialize, false);
         }
 
         public Shadow(ComponentManager Manager) :
@@ -72,6 +72,7 @@ namespace DwarfCorp
             Matrix.CreateTranslation(Vector3.Down * 0.5f), new SpriteSheet(ContentPaths.Effects.shadowcircle))
         {
             GlobalScale = 1.0f;
+            SetFlag(Flag.ShouldSerialize, false);
         }
 
         public Shadow(ComponentManager manager, string name, Matrix localTransform, SpriteSheet spriteSheet) :
@@ -83,6 +84,7 @@ namespace DwarfCorp
             UpdateTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
             LightRamp = Color.Black;
             OriginalTransform = LocalTransform;
+            SetFlag(Flag.ShouldSerialize, false);
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)

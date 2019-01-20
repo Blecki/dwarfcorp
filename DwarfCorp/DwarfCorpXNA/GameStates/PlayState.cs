@@ -2676,16 +2676,21 @@ namespace DwarfCorp.GameStates
             StateManager.PushState(state);
         }
 
-        public void AutoSave()
+        public void AutoSave(Func<bool, string, bool> callback = null)
         {
 #if !DEMO
             bool paused = World.Paused;
+            var saveName = String.Format("{0}_{1}_{2}", Overworld.Name, World.GameID, "Autosave");
             World.Save(
-                    String.Format("{0}_{1}_{2}", Overworld.Name, World.GameID, "Autosave"),
+                    saveName,
                     (success, exception) =>
                     {
                         World.MakeAnnouncement(success ? "File autosaved." : "Autosave failed - " + exception.Message);
                         World.Paused = paused;
+                        if (callback != null)
+                        {
+                            callback(success, DwarfGame.GetSaveDirectory() + Path.DirectorySeparatorChar + saveName);
+                        }
                     });
 #endif
         }
