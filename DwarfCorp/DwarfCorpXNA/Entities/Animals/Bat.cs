@@ -109,6 +109,7 @@ namespace DwarfCorp
             Stats.CurrentClass = SharedClass;
             CreateSprite(ContentPaths.Entities.Animals.Bat.bat_animations, manager, 0.0f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
+            NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bat_hurt_1 };
             NoiseMaker.Noises["Chirp"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bat_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_bat_neutral_2 };
             base.CreateCosmeticChildren(manager);

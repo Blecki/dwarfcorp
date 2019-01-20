@@ -217,7 +217,7 @@ namespace DwarfCorp
 
         /// <summary> Used to make sounds for the creature </summary>
         [JsonIgnore]
-        public NoiseMaker NoiseMaker { get; private set; }
+        public NoiseMaker NoiseMaker { get; set; }
         
         /// <summary> The creature can hold objects in its inventory </summary>
         [JsonIgnore]
