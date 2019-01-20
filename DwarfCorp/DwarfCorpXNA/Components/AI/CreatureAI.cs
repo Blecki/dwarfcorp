@@ -241,6 +241,7 @@ namespace DwarfCorp
         [OnDeserialized]
         public void OnDeserialize(StreamingContext ctx)
         {
+            Blackboard = new Blackboard();
             if (Sensor == null)
                 Sensor = GetRoot().GetComponent<EnemySensor>();
             Sensor.OnEnemySensed += Sensor_OnEnemySensed;
