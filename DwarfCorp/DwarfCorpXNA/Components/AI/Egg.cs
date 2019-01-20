@@ -52,7 +52,6 @@ namespace DwarfCorp
         public BoundingBox PositionConstrain { get; set; }
         public Egg()
         {
-            UpdateRate = 100;
         }
 
         public Egg(Body body, string adult, ComponentManager manager, Vector3 position, BoundingBox positionConstraint) :

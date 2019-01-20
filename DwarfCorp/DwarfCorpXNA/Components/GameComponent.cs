@@ -174,18 +174,17 @@ namespace DwarfCorp
 
         public GameComponent()
         {
-            World = null;
-            Children = new List<GameComponent>();
-            Tags = new List<string>();
-            Name = "uninitialized";
-
-            Flags = Flag.Active | Flag.Visible | Flag.ShouldSerialize;
         }
 
         public GameComponent(ComponentManager Manager) : this()
         {
             System.Diagnostics.Debug.Assert(Manager != null, "Manager cannot be null");
 
+            Children = new List<GameComponent>();
+            Tags = new List<string>();
+            Name = "uninitialized";
+
+            Flags = Flag.Active | Flag.Visible | Flag.ShouldSerialize;
             World = Manager.World;
             Parent = null;
 

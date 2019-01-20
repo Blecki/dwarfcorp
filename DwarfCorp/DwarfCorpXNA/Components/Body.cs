@@ -118,6 +118,7 @@ namespace DwarfCorp
             }
         }
 
+        [JsonIgnore]
         public BoundingBox BoundingBox = new BoundingBox();
 
         public List<MotionAnimation> AnimationQueue = new List<MotionAnimation>();

@@ -14,7 +14,6 @@ namespace DwarfCorp
 
         public MinimapIcon()
         {
-            UpdateRate = 10;
         }
 
         public MinimapIcon(ComponentManager Manager, NamedImageFrame icon) :

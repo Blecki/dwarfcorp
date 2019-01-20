@@ -19,8 +19,6 @@ namespace DwarfCorp
 
         public Crate()
         {
-            Tags.Add("Crate");
-            CollisionType = CollisionType.Static;
         }
 
         public Crate(ComponentManager manager, Vector3 position) :

@@ -50,7 +50,6 @@ namespace DwarfCorp
 
         public DwarfThoughts()
         {
-            UpdateRate = 100;
         }
 
         public DwarfThoughts(

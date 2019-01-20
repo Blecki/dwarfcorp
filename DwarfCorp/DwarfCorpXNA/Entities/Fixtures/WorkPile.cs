@@ -50,7 +50,6 @@ namespace DwarfCorp
 
         public WorkPile()
         {
-            Name = "Workpile";
         }
 
         public WorkPile(ComponentManager componentManager, Vector3 position) :

@@ -71,7 +71,6 @@ namespace DwarfCorp
         
         public Snake()
         {
-            UpdateRate = 1;
         }
 
         public Snake(bool Bone, Vector3 position, ComponentManager manager, string name):

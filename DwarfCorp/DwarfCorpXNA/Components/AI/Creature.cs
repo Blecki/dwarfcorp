@@ -94,16 +94,6 @@ namespace DwarfCorp
 
         public Creature()
         {
-            UpdateRate = 2;
-            CurrentCharacterMode = CharacterMode.Idle;
-
-            OverrideCharacterMode = false;
-            Buffs = new List<Buff>();
-            HasMeat = true;
-            HasBones = true;
-            HasCorpse = false;
-            DrawLifeTimer.HasTriggered = true;
-            NoiseMaker = new NoiseMaker();
         }
 
         public Creature(

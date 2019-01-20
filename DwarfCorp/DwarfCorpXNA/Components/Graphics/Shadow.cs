@@ -64,7 +64,6 @@ namespace DwarfCorp
         }
         public Shadow() : base()
         {
-            SetFlag(Flag.ShouldSerialize, false);
         }
 
         public Shadow(ComponentManager Manager) :

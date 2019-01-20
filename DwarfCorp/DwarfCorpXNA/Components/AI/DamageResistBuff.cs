@@ -10,8 +10,6 @@ namespace DwarfCorp
     {
         public DamageResistBuff()
         {
-            DamageType = Creature.DamageType.Normal;
-            Bonus = 0.0f;
         }
 
         /// <summary> The kind of damage to ignore </summary>

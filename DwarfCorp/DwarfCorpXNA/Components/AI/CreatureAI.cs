@@ -50,7 +50,6 @@ namespace DwarfCorp
     {
         public CreatureAI()
         {
-            Blackboard = new Blackboard();
         }
 
         public CreatureAI(
