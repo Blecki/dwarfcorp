@@ -13,6 +13,12 @@ namespace DwarfCorp
 {
     public class CompositeAnimation : Animation
     {
+        [OnSerializing]
+        internal void OnSerializingMethod(StreamingContext context)
+        {
+            //throw new InvalidOperationException();
+        }
+
         [JsonIgnore]
         public override bool CanUseInstancing { get { return false; } }
         

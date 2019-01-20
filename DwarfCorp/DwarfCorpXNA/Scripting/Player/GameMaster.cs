@@ -48,6 +48,12 @@ namespace DwarfCorp
 
         public struct ApplicantArrival
         {
+            [OnSerializing]
+            internal void OnSerializingMethod(StreamingContext context)
+            {
+                throw new InvalidOperationException();
+            }
+
             public Applicant Applicant;
             public DateTime ArrivalTime;
         }

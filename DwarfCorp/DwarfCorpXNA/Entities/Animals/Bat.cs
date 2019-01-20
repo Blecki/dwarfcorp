@@ -48,35 +48,20 @@ namespace DwarfCorp
             Physics = new Physics
                 (
                 manager,
-                    // It is called "bird"
                     "bat",
-                    // It is located at a position passed in as an argument
                     Matrix.CreateTranslation(position),
-                    // It has a size of 0.25 blocks
                     new Vector3(0.375f, 0.375f, 0.375f),
-                    // Its bounding box is located in its center
                     new Vector3(0.0f, 0.0f, 0.0f),
-                    //It has a mass of 1, a moment of intertia of 1, and very small friction/restitution
                     1.0f, 1.0f, 0.999f, 0.999f,
-                    // It has a gravity of 10 blocks per second downward
                     new Vector3(0, -10, 0)
                 );
 
             Physics.AddChild(this);
 
-            // Called from constructor with appropriate sprite asset as a string
-            Initialize();
-        }
-
-        /// <summary>
-        /// Initialize function creates all the required components for the bat.
-        /// </summary>
-        public void Initialize()
-        {
             // When true, causes the bird to face the direction its moving in
             Physics.Orientation = Physics.OrientMode.RotateY;
 
-            CreateSprite(ContentPaths.Entities.Animals.Bat.bat_animations, Manager, 0.0f);
+            CreateCosmeticChildren(Manager);
 
             // Used to sense hostile creatures
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
@@ -95,8 +80,6 @@ namespace DwarfCorp
             // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            Physics.AddChild(Shadow.Create(0.25f, Manager));
-
             // The bird will emit a shower of blood when it dies
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
@@ -113,15 +96,9 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the bat";
-            Stats.CurrentClass = new EmployeeClass()
-            {
-                Name = "Bat",
-                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Bat" } },
-            };
+            Stats.CurrentClass = SharedClass;
 
 
-            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bat_hurt_1 };
-            NoiseMaker.Noises["Chirp"] = new List<string>() {ContentPaths.Audio.Oscar.sfx_oc_bat_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_bat_neutral_2};
             Species = "Bat";
             CanReproduce = true;
             BabyType = "Bat";
@@ -129,10 +106,19 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClass;
             CreateSprite(ContentPaths.Entities.Animals.Bat.bat_animations, manager, 0.0f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bat_hurt_1 };
+            NoiseMaker.Noises["Chirp"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bat_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_bat_neutral_2 };
             base.CreateCosmeticChildren(manager);
         }
+
+        private static EmployeeClass SharedClass = new EmployeeClass()
+        {
+            Name = "Bat",
+                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Bat" } },
+            };
     }
 
 

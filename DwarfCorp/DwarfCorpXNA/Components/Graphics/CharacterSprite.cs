@@ -50,6 +50,12 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CharacterSprite : OrientedAnimatedSprite
     {
+        [OnSerializing]
+        new internal void OnSerializingMethod(StreamingContext context)
+        {
+            //throw new InvalidOperationException();
+        }
+
         [JsonIgnore]
         public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
 

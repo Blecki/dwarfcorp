@@ -48,7 +48,6 @@ namespace DwarfCorp
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             var r =  new Snake(false, Position, Manager, "Snake").Physics;
-            r.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 4)));
             return r;
         }
 
@@ -56,8 +55,6 @@ namespace DwarfCorp
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             var r = new Snake(true, Position, Manager, "Snake");
-            r.Attacks[0].DiseaseToSpread = "Necrorot";
-            r.Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 4)));
             return r.Physics;
         }
         
@@ -122,14 +119,6 @@ namespace DwarfCorp
         {
             Physics.Orientation = Physics.OrientMode.Fixed;
             Species = "Snake";
-            CreateGraphics();
-
-            // Add sensor
-            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
-
-            // Add AI
-            Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors));
-
 
             Attacks = new List<Attack>()
             {
@@ -140,6 +129,17 @@ namespace DwarfCorp
                 }
             };
 
+            CreateGraphics();
+
+            // Add sensor
+            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
+
+            // Add AI
+            Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors));
+
+
+            
+
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
             Physics.Tags.Add("Snake");
@@ -147,29 +147,7 @@ namespace DwarfCorp
             AI.Movement.SetCan(MoveType.ClimbWalls, true);
             AI.Movement.SetCan(MoveType.Dig, true);
             AI.Stats.FullName = "Giant Snake";
-            AI.Stats.CurrentClass = new EmployeeClass()
-            {
-                Name = "Giant Snake",
-                Levels = new List<EmployeeClass.Level>()
-                {
-                    new EmployeeClass.Level()
-                    {
-                        BaseStats = new CreatureStats.StatNums()
-                        {
-                            Charisma = AI.Stats.Charisma,
-                            Constitution = AI.Stats.Constitution,
-                            Dexterity = AI.Stats.Dexterity,
-                            Intelligence = AI.Stats.Intelligence,
-                            Size = AI.Stats.Size,
-                            Strength = AI.Stats.Strength,
-                            Wisdom = AI.Stats.Wisdom
-                        },
-                        Name = "Giant Snake",
-                        Index = 0
-                    },
-
-                }
-            };
+            AI.Stats.CurrentClass = SharedClass;
             AI.Stats.LevelIndex = 0;
 
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
@@ -193,6 +171,17 @@ namespace DwarfCorp
 
         private void CreateGraphics()
         {
+  
+            if (Bonesnake)
+            {
+                this.Attacks[0].DiseaseToSpread = "Necrorot";
+                Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 4)));
+            }
+            else
+            {
+                Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 4)));
+            }
+
             Physics.AddChild(new Shadow(Manager));
 
             var animFile = Bonesnake ? ContentPaths.Entities.Animals.Snake.bonesnake_animation :
@@ -258,6 +247,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
+            Stats.CurrentClass = SharedClass;
             CreateGraphics();
             base.CreateCosmeticChildren(Manager);
         }
@@ -313,5 +303,19 @@ namespace DwarfCorp
             }
             base.Update(gameTime, chunks, camera);
         }
+
+        private static EmployeeClass SharedClass = new EmployeeClass()
+        {
+            Name = "Giant Snake",
+                Levels = new List<EmployeeClass.Level>()
+                {
+                    new EmployeeClass.Level()
+                    {
+                        Name = "Giant Snake",
+                        Index = 0
+                    },
+
+                }
+            };
     }
 }

@@ -157,7 +157,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Gremlin(
-                new CreatureStats(new GremlinClass(), 0),
+                new CreatureStats(SharedClass, 0),
                 "Goblins",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Goblins"],
@@ -165,6 +165,8 @@ namespace DwarfCorp
                 "Gremlin",
                 Position).Physics;
         }
+
+        private static GremlinClass SharedClass = new GremlinClass();
 
         public Gremlin()
         {
@@ -239,6 +241,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             base.CreateCosmeticChildren(manager);

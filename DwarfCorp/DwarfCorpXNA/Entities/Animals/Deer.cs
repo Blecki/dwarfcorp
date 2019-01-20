@@ -91,16 +91,12 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            Initialize(new SpriteSheet(sprites));
-        }
-
-
-        public void Initialize(SpriteSheet spriteSheet)
-        {
+            var spriteSheet = new SpriteSheet(sprites);
             Physics.Orientation = Physics.OrientMode.RotateY;
 
             SpriteAssets = spriteSheet;
-            CreateSprite(ContentPaths.Entities.Animals.Deer.animations, Manager);
+
+            CreateCosmeticChildren(Manager);
 
             // Add sensor
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
@@ -112,9 +108,6 @@ namespace DwarfCorp
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            // Shadow
-            Physics.AddChild(Shadow.Create(0.75f, Manager));
-
             // The bird will emit a shower of blood when it dies
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
@@ -125,8 +118,6 @@ namespace DwarfCorp
             });
 
 
-            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_deer_hurt_1 };
-            NoiseMaker.Noises["Chirp"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_deer_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_deer_neutral_2 };
 
             // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));
@@ -137,11 +128,7 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname");
-            Stats.CurrentClass = new EmployeeClass()
-            {
-                Name = "Deer",
-                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Deer"} }
-            };
+            Stats.CurrentClass = SharedClass;
             Species = "Deer";
             CanReproduce = true;
             BabyType = "Deer";
@@ -150,10 +137,18 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClass;
             CreateSprite(ContentPaths.Entities.Animals.Deer.animations, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_deer_hurt_1 };
+            NoiseMaker.Noises["Chirp"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_deer_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_deer_neutral_2 };
             base.CreateCosmeticChildren(manager);
         }
 
+        private static EmployeeClass SharedClass = new EmployeeClass()
+        {
+            Name = "Deer",
+            Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Deer" } }
+        };
     }
 }

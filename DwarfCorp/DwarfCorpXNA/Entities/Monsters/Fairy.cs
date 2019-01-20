@@ -18,6 +18,8 @@ namespace DwarfCorp
             return new Fairy(Manager, "Player", Position);
         }
 
+        private static FairyClass SharedClass = new FairyClass(true);
+
         public Timer ParticleTimer { get; set; }
         public DateTimer DeathTimer { get; set; }
         public Fairy()
@@ -37,7 +39,7 @@ namespace DwarfCorp
             HasBones = false;
             ParticleTimer = new Timer(0.2f, false);
             DeathTimer = new DateTimer(manager.World.Time.CurrentDate, new TimeSpan(1, 0, 0, 0, 0));
-            Initialize(Stats.CurrentClass);
+            Initialize(SharedClass);
         }
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -122,6 +124,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
             var bobber = Sprite.AddChild(new Bobber(Manager, 0.25f, 3.0f, MathFunctions.Rand(), Sprite.LocalTransform.Translation.Y));
             bobber.SetFlag(Flag.ShouldSerialize, false);

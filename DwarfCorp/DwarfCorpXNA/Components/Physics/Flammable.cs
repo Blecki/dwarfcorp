@@ -49,6 +49,7 @@ namespace DwarfCorp
         public Timer SoundTimer { get; set; }
         public Timer DamageTimer { get; set; }
 
+        [JsonIgnore]
         private List<AnimatedSprite> FlameSprites = new List<AnimatedSprite>();
 
         public Flammable()

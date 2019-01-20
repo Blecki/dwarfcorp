@@ -51,7 +51,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Demon(
-                new CreatureStats(new DemonClass(), 0),
+                new CreatureStats(SharedClass, 0),
                 "Demon",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Demon"],
@@ -59,6 +59,8 @@ namespace DwarfCorp
                 "Demon",
                 Position).Physics;
         }
+
+        private static DemonClass SharedClass = new DemonClass();
 
         public Demon()
         {
@@ -72,13 +74,9 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            Initialize();
-        }
-
-        public void Initialize()
-        {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            CreateSprite(Stats.CurrentClass, Manager);
+
+            CreateCosmeticChildren(Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
@@ -87,9 +85,7 @@ namespace DwarfCorp
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
-
-            Physics.AddChild(Shadow.Create(0.75f, Manager));
-
+            
             Physics.Tags.Add("Demon");
 
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
@@ -99,16 +95,25 @@ namespace DwarfCorp
                 SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_demon_death
             });
 
+            Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
+            //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
+            Stats.Size = 4;
+            Species = "Demon";
+        }
+
+        public override void CreateCosmeticChildren(ComponentManager manager)
+        {
+            Stats.CurrentClass = SharedClass;
+            CreateSprite(Stats.CurrentClass, manager);
+            Physics.AddChild(Shadow.Create(0.75f, manager));
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 1))).SetFlag(Flag.ShouldSerialize, false);
+
+
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
                 ContentPaths.Audio.Oscar.sfx_ic_demon_hurt_1,
                 ContentPaths.Audio.Oscar.sfx_ic_demon_hurt_2,
             };
-
-
-            MinimapIcon minimapIcon = Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 1))) as MinimapIcon;
-
-
 
             NoiseMaker.Noises["Chew"] = new List<string>
             {
@@ -139,16 +144,6 @@ namespace DwarfCorp
                 ContentPaths.Audio.Oscar.sfx_ic_demon_pleased,
             };
 
-            Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
-            //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
-            Stats.Size = 4;
-            Species = "Demon";
-        }
-
-        public override void CreateCosmeticChildren(ComponentManager manager)
-        {
-            CreateSprite(Stats.CurrentClass, manager);
-            Physics.AddChild(Shadow.Create(0.75f, manager));
             base.CreateCosmeticChildren(manager);
         }
     }

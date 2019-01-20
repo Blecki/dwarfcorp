@@ -60,6 +60,8 @@ namespace DwarfCorp
             HasBones = false;
 
             Physics.Orientation = Physics.OrientMode.RotateY;
+
+            CreateCosmeticChildren(Manager);
                 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
@@ -86,29 +88,18 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the Spider";
-            Stats.CurrentClass = new EmployeeClass()
-            {
-                Name = "Spider",
-                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Spider" } }
-            };
+            Stats.CurrentClass = SharedClass;
 
-            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_giant_spider_hurt_1 };
-            NoiseMaker.Noises["Chirp"] = new List<string>()
-            {
-                ContentPaths.Audio.Oscar.sfx_oc_giant_spider_neutral_1,
-                ContentPaths.Audio.Oscar.sfx_oc_giant_spider_neutral_2
-            };
             AI.Movement.CanClimbWalls = true;
             AI.Movement.CanSwim = false;
             Species = "Spider";
             CanReproduce = true;
             BabyType = "Spider";
-
-            CreateCosmetics(manager);
         }
 
-        private void CreateCosmetics(ComponentManager manager)
+        public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClass;
             CreateSprite(ContentPaths.Entities.Animals.Spider.spider_animation, manager, 0.3f);
             Physics.AddChild(Shadow.Create(0.4f, manager));
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
@@ -116,13 +107,19 @@ namespace DwarfCorp
                 TriggerOnDeath = true,
                 TriggerAmount = 1
             }).SetFlag(Flag.ShouldSerialize, false);
-        }
-
-        public override void CreateCosmeticChildren(ComponentManager manager)
-        {
-            CreateCosmetics(manager);
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_giant_spider_hurt_1 };
+            NoiseMaker.Noises["Chirp"] = new List<string>()
+            {
+                ContentPaths.Audio.Oscar.sfx_oc_giant_spider_neutral_1,
+                ContentPaths.Audio.Oscar.sfx_oc_giant_spider_neutral_2
+            };
             base.CreateCosmeticChildren(manager);
         }
 
+        private static EmployeeClass SharedClass = new EmployeeClass()
+        {
+            Name = "Spider",
+            Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Spider" } }
+        };
     }
 }

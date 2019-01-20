@@ -30,7 +30,9 @@ namespace DwarfCorp
         {
             return new Chicken(Position, Manager, "Penguin", "Penguin");
         }
-        
+
+        public String ClassName = "Chicken";
+
         public Chicken()
         {
 
@@ -85,23 +87,18 @@ namespace DwarfCorp
             Physics.AddChild(this);
 
 
-            Species = species;
+            ClassName = species;
             BaseMeatResource = "Bird Meat";
-            Initialize(ContentPaths.Entities.Animals.fowl[species], species);
-        }
 
-        /// <summary>
-        /// Initialize function creates all the required components for the bird.
-        /// </summary>
-        /// <param name="sprites">The sprite sheet to use for the bird</param>
-        /// <param name="species"></param>
-        public void Initialize(string sprites, string species)
-        {
+            var sprites = ContentPaths.Entities.Animals.fowl[species];
+
+            Species = species;
+
             // When true, causes the bird to face the direction its moving in
             Physics.Orientation = Physics.OrientMode.RotateY;
 
 
-            CreateSprite(ContentPaths.Entities.Animals.fowl[Species], Manager);
+            CreateCosmeticChildren(Manager);
 
             // Used to sense hostile creatures
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
@@ -120,11 +117,9 @@ namespace DwarfCorp
                 }
             };
 
-
             // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            Physics.AddChild(Shadow.Create(0.5f, Manager));
             // The bird will emit a shower of blood when it dies
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
@@ -147,17 +142,6 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the " + species;
-            Stats.CurrentClass = new EmployeeClass()
-            {
-                Name = species,
-                Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = species} }
-            };
-
-
-            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_chicken_hurt_1, ContentPaths.Audio.Oscar.sfx_oc_chicken_hurt_2 };
-            NoiseMaker.Noises["Chirp"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_chicken_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_chicken_neutral_2};
-            NoiseMaker.Noises["Lay Egg"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_chicken_lay_egg};
-            Species = species;
 
             var deathParticleTrigger = Parent.EnumerateAll().OfType<ParticleTrigger>().FirstOrDefault();
             if (deathParticleTrigger != null)
@@ -169,9 +153,35 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
+            Stats.CurrentClass = SharedClasses[ClassName];
             CreateSprite(ContentPaths.Entities.Animals.fowl[Species], manager);
             Physics.AddChild(Shadow.Create(0.5f, manager));
+            NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_chicken_hurt_1, ContentPaths.Audio.Oscar.sfx_oc_chicken_hurt_2 };
+            NoiseMaker.Noises["Chirp"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_chicken_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_chicken_neutral_2 };
+            NoiseMaker.Noises["Lay Egg"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_chicken_lay_egg };
             base.CreateCosmeticChildren(manager);
         }
+
+        private static Dictionary<String, EmployeeClass> SharedClasses = new Dictionary<string, EmployeeClass>
+        {
+            { "Chicken", new EmployeeClass()
+                {
+                    Name = "Chicken",
+                    Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Chicken" } }
+                }
+            },
+            { "Turkey", new EmployeeClass()
+                {
+                    Name = "Turkey",
+                    Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Turkey" } }
+                }
+            },
+            { "Penguin", new EmployeeClass()
+                {
+                    Name = "Penguin",
+                    Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Penguin" } }
+                }
+            },
+        };
     }
 }
