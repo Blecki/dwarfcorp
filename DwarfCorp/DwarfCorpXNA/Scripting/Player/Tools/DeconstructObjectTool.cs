@@ -194,7 +194,7 @@ namespace DwarfCorp
             Player.BodySelector.AllowRightClickSelection = true;
         }
 
-        public override void Render(DwarfGame game, DwarfTime time)
+        public override void Render3D(DwarfGame game, DwarfTime time)
         {
             if (selectedBodies.Count == 0)
             {
@@ -207,6 +207,12 @@ namespace DwarfCorp
                 }
             }
         }
+
+        public override void Render2D(DwarfGame game, DwarfTime time)
+        {
+        }
+
+
     }
 
 }

@@ -52,7 +52,8 @@ namespace DwarfCorp
         public abstract void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button);
         public abstract void OnMouseOver(IEnumerable<Body> bodies);
         public abstract void Update(DwarfGame game, DwarfTime time);
-        public abstract void Render(DwarfGame game, DwarfTime time);
+        public abstract void Render2D(DwarfGame game, DwarfTime time);
+        public abstract void Render3D(DwarfGame game, DwarfTime time);
         public abstract void OnBegin();
         public abstract void OnEnd();
 

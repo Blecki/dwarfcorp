@@ -294,10 +294,13 @@ namespace DwarfCorp
             leftPressed = leftKey;
             rightPressed = rightKey;
         }
-
-        public override void Render(DwarfGame game, DwarfTime time)
+        public override void Render2D(DwarfGame game, DwarfTime time)
         {
-
         }
+
+        public override void Render3D(DwarfGame game, DwarfTime time)
+        {
+        }
+
     }
 }

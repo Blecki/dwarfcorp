@@ -171,11 +171,14 @@ namespace DwarfCorp.Rail
             foreach (var body in PreviewBodies)
                 body.SetVertexColorRecursive(tint);
         }
-
-        public override void Render(DwarfGame game, DwarfTime time)
+        public override void Render2D(DwarfGame game, DwarfTime time)
         {
-
         }
+
+        public override void Render3D(DwarfGame game, DwarfTime time)
+        {
+        }
+
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {

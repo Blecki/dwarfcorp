@@ -272,7 +272,7 @@ namespace DwarfCorp
                 World.ShowTooltip("Click to build. Press R/T to rotate.");
         }
 
-        public override void Render(DwarfGame game, DwarfTime time)
+        public override void Render2D(DwarfGame game, DwarfTime time)
         {
             if (PreviewBody != null)
             {
@@ -280,6 +280,12 @@ namespace DwarfCorp
                     Color.White, 1, false, GameState.Game.GraphicsDevice.Viewport);
             }
         }
+
+        public override void Render3D(DwarfGame game, DwarfTime time)
+        {
+
+        }
+
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {

@@ -438,7 +438,7 @@ namespace DwarfCorp
                 Exit();
             }
 
-            DoBloatTest();
+            //DoBloatTest();
         }
 
 #if !XNA_BUILD

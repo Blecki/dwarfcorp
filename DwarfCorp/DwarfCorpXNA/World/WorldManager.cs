@@ -1011,6 +1011,7 @@ namespace DwarfCorp
             //Blue ghost effect above the current slice.
             DefaultShader.GhostClippingEnabled = true;
             Draw3DThings(gameTime, DefaultShader, Camera.ViewMatrix);
+            
 
             // Now we want to draw the water on top of everything else
             DefaultShader.ClippingEnabled = true;
@@ -1047,6 +1048,8 @@ namespace DwarfCorp
 
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer, PlayerFaction.Designations, this);
+
+            Master.Render3D(Game, gameTime);
 
             DefaultShader.EnableShadows = false;
 
@@ -1149,7 +1152,7 @@ namespace DwarfCorp
             }
             
 
-            Master.Render(Game, gameTime);
+            Master.Render2D(Game, gameTime);
 
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle =
                 DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;

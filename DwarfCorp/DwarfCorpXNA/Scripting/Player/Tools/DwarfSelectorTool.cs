@@ -267,7 +267,7 @@ namespace DwarfCorp
             return new Rectangle((int)min.X, (int)min.Y, (int)(max.X - min.X), (int)(max.Y - min.Y));
         }
 
-        public override void Render(DwarfGame game, DwarfTime time)
+        public override void Render2D(DwarfGame game, DwarfTime time)
         {
             DwarfGame.SpriteBatch.Begin();
 
@@ -281,6 +281,11 @@ namespace DwarfCorp
 
             DwarfGame.SpriteBatch.End();
         }
+
+        public override void Render3D(DwarfGame game, DwarfTime time)
+        {
+        }
+
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {

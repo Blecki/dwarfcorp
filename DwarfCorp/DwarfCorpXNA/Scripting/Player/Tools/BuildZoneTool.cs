@@ -106,12 +106,18 @@ namespace DwarfCorp
             }
         }
 
+
+        public override void Render2D(DwarfGame game, DwarfTime time)
+        {
+
+        }
+
         // Todo: Why is the graphics device passed in when we have a perfectly good global we're using instead?
-        public override void Render(DwarfGame game, DwarfTime time)
+        public override void Render3D(DwarfGame game, DwarfTime time)
         {
             MouseState mouse = Mouse.GetState();
             if (mouse.RightButton == ButtonState.Pressed)
-                DestroyZoneTool.Render(game, time);
+                DestroyZoneTool.Render3D(game, time);
             else
             {
                 Player.Faction.RoomBuilder.Render(time, GameState.Game.GraphicsDevice);

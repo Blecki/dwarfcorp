@@ -895,7 +895,7 @@ namespace DwarfCorp
 
                 }
             }
-
+            RecomputeCachedVoxelstate();
             return true;
 
         }

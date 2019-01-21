@@ -1403,7 +1403,7 @@ namespace DwarfCorp.GameStates
                             Icon = new Gui.TileReference("voxels", data.ID),
                             TextHorizontalAlign = HorizontalAlign.Right,
                             TextVerticalAlign = VerticalAlign.Bottom,
-                            Text = "",
+                            Text = data.Name,
                             EnabledTextColor = Color.White.ToVector4(),
                             Font = "font10-outline-numsonly",
                             PopupChild = new BuildWallInfo
@@ -1423,6 +1423,7 @@ namespace DwarfCorp.GameStates
                                 World.ShowToolPopup("Click and drag to build " + data.Name + " floor.");
                                 World.Tutorial("build blocks");
                             },
+                            OnUpdate = (sender, args) => UpdateBlockWidget(sender, data),
                             Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
                             Hidden = false
                         }));
