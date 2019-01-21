@@ -144,13 +144,8 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            Initialize();
-        }
-
-        public void Initialize()
-        {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            CreateSprite(Stats.CurrentClass, Manager, 0.25f);
+            CreateCosmeticChildren(Manager);
 
             HasMeat = true;
             HasBones = true;
@@ -163,11 +158,6 @@ namespace DwarfCorp
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
-
-            Physics.AddChild(Shadow.Create(0.75f, Manager));
-
             Physics.Tags.Add("Troll");
 
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
@@ -179,10 +169,7 @@ namespace DwarfCorp
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 3)));
-
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
-            //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
             AI.Movement.CanClimbWalls = true;
             AI.Movement.CanSwim = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
@@ -197,6 +184,7 @@ namespace DwarfCorp
             Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 3))).SetFlag(Flag.ShouldSerialize, false);
 
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
@@ -207,5 +195,4 @@ namespace DwarfCorp
             base.CreateCosmeticChildren(manager);
         }
     }
-
 }

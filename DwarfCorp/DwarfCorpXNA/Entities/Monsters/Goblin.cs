@@ -66,6 +66,7 @@ namespace DwarfCorp
         {
             
         }
+
         public Goblin(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
@@ -73,14 +74,10 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            Initialize();
-        }
-
-        public void Initialize()
-        {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            CreateSprite(Stats.CurrentClass, Manager);
- 
+
+            CreateCosmeticChildren(Manager);
+
             HasMeat = false;
             HasBones = false;
 
@@ -107,12 +104,7 @@ namespace DwarfCorp
             });
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
-
-
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 0)));
-
-
-
+           
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
             Stats.Size = 4;
@@ -128,6 +120,8 @@ namespace DwarfCorp
             Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 0))).SetFlag(Flag.ShouldSerialize, false);
+
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
             {

@@ -66,6 +66,7 @@ namespace DwarfCorp
         {
             
         }
+
         public Elf(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
@@ -77,7 +78,8 @@ namespace DwarfCorp
         public void Initialize()
         {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            CreateSprite(Stats.CurrentClass, Manager);
+            CreateCosmeticChildren(Manager);
+
             HasMeat = false;
             HasBones = false;
 
@@ -89,8 +91,6 @@ namespace DwarfCorp
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            Physics.AddChild(Shadow.Create(0.75f, Manager));
-
             Physics.Tags.Add("Elf");
 
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
@@ -101,9 +101,6 @@ namespace DwarfCorp
             });
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
-
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 1)));
-
 
             Stats.FullName = TextGenerator.GenerateRandom("$elfname");
             //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
@@ -126,7 +123,7 @@ namespace DwarfCorp
                 ContentPaths.Audio.Oscar.sfx_ic_elf_hurt_1,
                 ContentPaths.Audio.Oscar.sfx_ic_elf_hurt_2,
             };
-
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 1))).SetFlag(Flag.ShouldSerialize, false);
             base.CreateCosmeticChildren(manager);
         }
     }

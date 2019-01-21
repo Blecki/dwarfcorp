@@ -41,10 +41,6 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// Convenience class for initializing Necromancers as creatures.
-    /// </summary>
     public class Moleman : Creature
     {
         [EntityFactory("Moleman")]
@@ -74,13 +70,8 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            Initialize();
-        }
-
-        public void Initialize()
-        {
             Physics.Orientation = Physics.OrientMode.RotateY;
-            CreateSprite(Stats.CurrentClass, Manager);
+            CreateCosmeticChildren(Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
@@ -90,11 +81,6 @@ namespace DwarfCorp
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
-
-            SpriteSheet shadowTexture = new SpriteSheet(ContentPaths.Effects.shadowcircle);
-            Physics.AddChild(Shadow.Create(0.75f, Manager));
             Physics.Tags.Add("Necromancer");
 
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
@@ -105,15 +91,6 @@ namespace DwarfCorp
             });
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
-
-
-            NoiseMaker.Noises["Hurt"] = new List<string>
-            {
-                ContentPaths.Audio.Oscar.sfx_ic_moleman_hurt_1,
-                ContentPaths.Audio.Oscar.sfx_ic_moleman_hurt_2
-            };
-
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 1)));
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
@@ -132,8 +109,16 @@ namespace DwarfCorp
             Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 1))).SetFlag(Flag.ShouldSerialize, false);
+
+            NoiseMaker = new NoiseMaker();
+            NoiseMaker.Noises["Hurt"] = new List<string>
+            {
+                ContentPaths.Audio.Oscar.sfx_ic_moleman_hurt_1,
+                ContentPaths.Audio.Oscar.sfx_ic_moleman_hurt_2
+            };
+
             base.CreateCosmeticChildren(manager);
         }
     }
-
 }

@@ -28,7 +28,7 @@ namespace DwarfCorp
         }
 
         public Fairy(ComponentManager manager, string allies, Vector3 position) :
-            base(manager, new CreatureStats(new FairyClass(true), 0), "Player", manager.World.PlanService, manager.World.Factions.Factions[allies], "Fairy")
+            base(manager, new CreatureStats(SharedClass, 0), "Player", manager.World.PlanService, manager.World.Factions.Factions[allies], "Fairy")
         {
             Physics = new Physics(manager, "Fairy", Matrix.CreateTranslation(position),
                       new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
@@ -39,35 +39,10 @@ namespace DwarfCorp
             HasBones = false;
             ParticleTimer = new Timer(0.2f, false);
             DeathTimer = new DateTimer(manager.World.Time.CurrentDate, new TimeSpan(1, 0, 0, 0, 0));
-            Initialize(SharedClass);
-        }
-
-        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
-        {
-            if (Active)
-            {
-                if (ParticleTimer.HasTriggered)
-                {
-                    Manager.World.ParticleManager.Trigger("star_particle", Sprite.Position, Color.White, 1);
-                }
-                DeathTimer.Update(World.Time.CurrentDate);
-                ParticleTimer.Update(gameTime);
-
-                if (DeathTimer.HasTriggered)
-                {
-                    Physics.Die();
-                }
-            }
-            base.Update(gameTime, chunks, camera);
-        }
-
-        
-
-        public void Initialize(EmployeeClass dwarfClass)
-        {
+            
             Physics.Orientation = Physics.OrientMode.RotateY;
-            CreateSprite(Stats.CurrentClass, Manager);
-            Sprite.LightsWithVoxels = false;
+
+            CreateCosmeticChildren(Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
@@ -88,11 +63,7 @@ namespace DwarfCorp
                 SoundToPlay = ContentPaths.Audio.wurp,
             });
           
-            MinimapIcon minimapIcon = Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0))) as MinimapIcon;
-
-            //new LightEmitter("Light Emitter", Sprite, Matrix.Identity, Vector3.One, Vector3.One, 255, 150);
             Stats.FullName = TextGenerator.GenerateRandom("$firstname");
-            //Stats.LastName = "The Fairy";
             
             Stats.CanSleep = false;
             Stats.CanEat = false;
@@ -109,19 +80,19 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             Stats.CurrentClass = SharedClass;
-            CreateSprite(Stats.CurrentClass, manager);
-            var bobber = Sprite.AddChild(new Bobber(Manager, 0.25f, 3.0f, MathFunctions.Rand(), Sprite.LocalTransform.Translation.Y));
-            bobber.SetFlag(Flag.ShouldSerialize, false);
 
+            CreateSprite(Stats.CurrentClass, manager);
+            Sprite.AddChild(new Bobber(Manager, 0.25f, 3.0f, MathFunctions.Rand(), Sprite.LocalTransform.Translation.Y)).SetFlag(Flag.ShouldSerialize, false);
             Sprite.LightsWithVoxels = false;
 
             Physics.AddChild(Shadow.Create(0.75f, manager));
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0))).SetFlag(Flag.ShouldSerialize, false);
+
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
                 ContentPaths.Audio.tinkle
             };
-
 
             NoiseMaker.Noises["Chew"] = new List<string>
             {
@@ -132,8 +103,27 @@ namespace DwarfCorp
             {
                 ContentPaths.Audio.tinkle
             };
+
             base.CreateCosmeticChildren(manager);
         }
-    }
 
+        public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        {
+            if (Active)
+            {
+                if (ParticleTimer.HasTriggered)
+                {
+                    Manager.World.ParticleManager.Trigger("star_particle", Sprite.Position, Color.White, 1);
+                }
+                DeathTimer.Update(World.Time.CurrentDate);
+                ParticleTimer.Update(gameTime);
+
+                if (DeathTimer.HasTriggered)
+                {
+                    Physics.Die();
+                }
+            }
+            base.Update(gameTime, chunks, camera);
+        }
+    }
 }
