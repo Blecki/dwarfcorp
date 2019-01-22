@@ -1,4 +1,4 @@
-// MolemanMinerClass.cs
+// SwordGoblinClass.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -34,13 +34,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using DwarfCorp.GameStates;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    public class MolemanMinerClass : EmployeeClass
+    public class GoblinClass : EmployeeClass
     {
         void InitializeLevels()
         {
@@ -49,30 +47,22 @@ namespace DwarfCorp
                 new Level
                 {
                     Index = 0,
-                    Name = "Mining Intern",
+                    Name = "Gobbo",
                     Pay = 25,
                     XP = 0,
                     BaseStats = new CreatureStats.StatNums()
+                    {
+                        Strength = 3,
+                        Constitution = 3
+                    }
+
                 },
                 new Level
                 {
                     Index = 1,
-                    Name = "Assistant Miner",
+                    Name = "Sneaker",
                     Pay = 50,
                     XP = 100,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 6,
-                        Constitution = 6,
-                        Charisma = 6
-                    }
-                },
-                new Level
-                {
-                    Index = 2,
-                    Name = "Miner",
-                    Pay = 100,
-                    XP = 250,
                     BaseStats = new CreatureStats.StatNums()
                     {
                         Strength = 7,
@@ -82,8 +72,21 @@ namespace DwarfCorp
                 },
                 new Level
                 {
+                    Index = 2,
+                    Name = "Slasher",
+                    Pay = 100,
+                    XP = 250,
+                    BaseStats = new CreatureStats.StatNums()
+                    {
+                        Strength = 7,
+                        Constitution = 7,
+                        Charisma = 6
+                    }
+                },
+                new Level
+                {
                     Index = 3,
-                    Name = "Mine Specialist",
+                    Name = "Piercer",
                     Pay = 200,
                     XP = 500,
                     BaseStats = new CreatureStats.StatNums()
@@ -97,7 +100,7 @@ namespace DwarfCorp
                 new Level
                 {
                     Index = 4,
-                    Name = "Senior Mine Specialist",
+                    Name = "Smasher",
                     Pay = 500,
                     XP = 1000,
                     BaseStats = new CreatureStats.StatNums()
@@ -111,7 +114,7 @@ namespace DwarfCorp
                 new Level
                 {
                     Index = 5,
-                    Name = "Principal Mine Specialist",
+                    Name = "Master Smasher",
                     Pay = 1000,
                     XP = 5000,
                     BaseStats = new CreatureStats.StatNums()
@@ -125,7 +128,7 @@ namespace DwarfCorp
                 new Level
                 {
                     Index = 6,
-                    Name = "Vice President of Mine Operations",
+                    Name = "Super Smasher",
                     Pay = 5000,
                     XP = 10000,
                     BaseStats = new CreatureStats.StatNums()
@@ -139,7 +142,7 @@ namespace DwarfCorp
                 new Level
                 {
                     Index = 7,
-                    Name = "President of Mine Operations",
+                    Name = "Stealer",
                     Pay = 10000,
                     XP = 20000,
                     BaseStats = new CreatureStats.StatNums()
@@ -155,7 +158,7 @@ namespace DwarfCorp
                 new Level
                 {
                     Index = 8,
-                    Name = "Ascended Mine Master",
+                    Name = "Master Stealer",
                     Pay = 50000,
                     XP = 1000000,
                     BaseStats = new CreatureStats.StatNums()
@@ -170,7 +173,7 @@ namespace DwarfCorp
                 new Level
                 {
                     Index = 9,
-                    Name = "High Mine Lord",
+                    Name = "Warlord",
                     Pay = 100000,
                     XP = 2000000,
                     BaseStats = new CreatureStats.StatNums()
@@ -185,7 +188,7 @@ namespace DwarfCorp
                 new Level
                 {
                     Index = 10,
-                    Name = "Father of All Miners",
+                    Name = "King of Goblins",
                     Pay = 100000,
                     XP = 5000000,
                     BaseStats = new CreatureStats.StatNums()
@@ -200,28 +203,25 @@ namespace DwarfCorp
             };
         }
 
+        void InitializeAnimations()
+        {
+            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Goblin.Sprites.goblin_animations, "Goblin");
+        }
+
         void InitializeActions()
         {
             Actions =
                 Task.TaskCategory.Chop |
-                Task.TaskCategory.Dig |
-                Task.TaskCategory.Attack |
                 Task.TaskCategory.Gather |
-                Task.TaskCategory.TillSoil |
-                Task.TaskCategory.Plant |
-                Task.TaskCategory.Wrangle;
-        }
-
-        void InitializeAnimations()
-        {
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Moleman.moleman_animations, "Dwarf");
+                Task.TaskCategory.Guard |
+                Task.TaskCategory.Attack;
         }
 
         public void InitializeWeapons()
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Claws", 1.5f, 0.5f, 2.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_moleman_claw_attack_1, ContentPaths.Audio.Oscar.sfx_ic_moleman_claw_attack_2, ContentPaths.Audio.Oscar.sfx_ic_moleman_claw_attack_3), ContentPaths.Effects.claw)
+                new Attack("Sword", 2.0f, 0.5f, 2.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_1, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_2, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_3), ContentPaths.Effects.slash)
                 {
                     Knockback = 2.5f,
                     TriggerMode = Attack.AttackTrigger.Animation,
@@ -232,7 +232,7 @@ namespace DwarfCorp
 
         protected override sealed void InitializeStatics()
         {
-            Name = "Moleman Miner";
+            Name = "SwordGoblin";
             InitializeLevels();
             InitializeAnimations();
             InitializeWeapons();
@@ -240,12 +240,12 @@ namespace DwarfCorp
             base.InitializeStatics();
         }
 
-        public MolemanMinerClass()
+        public GoblinClass()
         {
 
         }
 
-        public MolemanMinerClass(bool initialize)
+        public GoblinClass(bool initialize)
         {
             if (initialize && !staticsInitiailized)
             {

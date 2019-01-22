@@ -124,7 +124,7 @@ namespace DwarfCorp
         /// <summary> If true, the AI is waiting on a plan from the PlanSubscriber </summary>
         public bool WaitingOnResponse { get; set; }
         /// <summary>The AI uses this sensor to search for nearby enemies </summary>
-        public EnemySensor Sensor { get; set; }
+        public EnemySensor Sensor { get; set; } // Todo: Don't serialize this.
         /// <summary> This defines how the creature can move from voxel to voxel. </summary>
         public CreatureMovement Movement { get; set; }
 

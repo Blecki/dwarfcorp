@@ -56,7 +56,7 @@ namespace DwarfCorp
                 Position).Physics;
         }
 
-        private static SwordGoblinClass SharedClass = new SwordGoblinClass(true);
+        private static GoblinClass SharedClass = new GoblinClass(true);
 
         public Goblin()
         {
