@@ -83,14 +83,6 @@ namespace DwarfCorp
             // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            // The bird will emit a shower of blood when it dies
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 1,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_bird_hurt
-            });
-
             // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
@@ -100,7 +92,6 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the bird";
-            Stats.CurrentClass = SharedClass;
 
             AI.Movement.CanFly = true;
             AI.Movement.CanWalk = false;
@@ -111,12 +102,22 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             Stats.CurrentClass = SharedClass;
+
             CreateSprite(ContentPaths.Entities.Animals.Birds.GetBirdAnimations(SpriteAsset), Manager, 0.35f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
+
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises.Add("chirp", new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bird_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_bird_neutral_2 });
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bird_hurt };
             NoiseMaker.Noises["Lay Egg"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bird_lay_egg };
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 1,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_bird_hurt
+            }).SetFlag(Flag.ShouldSerialize, false);
+
             base.CreateCosmeticChildren(manager);
         }
 

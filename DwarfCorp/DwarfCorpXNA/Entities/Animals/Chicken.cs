@@ -31,8 +31,6 @@ namespace DwarfCorp
             return new Chicken(Position, Manager, "Penguin", "Penguin");
         }
 
-        public String ClassName = "Chicken";
-
         public Chicken()
         {
 
@@ -85,18 +83,9 @@ namespace DwarfCorp
                 );
 
             Physics.AddChild(this);
-
-
-            ClassName = species;
             BaseMeatResource = "Bird Meat";
-
-            var sprites = ContentPaths.Entities.Animals.fowl[species];
-
             Species = species;
-
-            // When true, causes the bird to face the direction its moving in
             Physics.Orientation = Physics.OrientMode.RotateY;
-
 
             CreateCosmeticChildren(Manager);
 
@@ -120,19 +109,6 @@ namespace DwarfCorp
             // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            // The bird will emit a shower of blood when it dies
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 1
-            });
-
-            Physics.AddChild(new ParticleTrigger("feather", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 10
-            });
-
             // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
@@ -142,24 +118,33 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the " + species;
-
-            var deathParticleTrigger = Parent.EnumerateAll().OfType<ParticleTrigger>().FirstOrDefault();
-            if (deathParticleTrigger != null)
-            {
-                deathParticleTrigger.SoundToPlay = NoiseMaker.Noises["Hurt"][0];
-            }
-
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = SharedClasses[ClassName];
+            Stats.CurrentClass = SharedClasses[Species];
+
             CreateSprite(ContentPaths.Entities.Animals.fowl[Species], manager);
             Physics.AddChild(Shadow.Create(0.5f, manager));
+
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_chicken_hurt_1, ContentPaths.Audio.Oscar.sfx_oc_chicken_hurt_2 };
             NoiseMaker.Noises["Chirp"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_chicken_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_chicken_neutral_2 };
             NoiseMaker.Noises["Lay Egg"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_chicken_lay_egg };
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 1,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_chicken_hurt_1
+            }).SetFlag(Flag.ShouldSerialize, false);
+
+            Physics.AddChild(new ParticleTrigger("feather", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 10
+            }).SetFlag(Flag.ShouldSerialize, false);
+
             base.CreateCosmeticChildren(manager);
         }
 

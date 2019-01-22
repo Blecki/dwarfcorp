@@ -43,10 +43,6 @@ using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// Convenience class for initializing Dwarves as Creatures.
-    /// </summary>
     public class Dwarf : Creature
     {
         [JsonProperty]
@@ -89,16 +85,7 @@ namespace DwarfCorp
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-
             Physics.Tags.Add("Dwarf");
-
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 1,
-                BoxTriggerTimes = 10, 
-                SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
-            });
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
@@ -123,14 +110,11 @@ namespace DwarfCorp
             AI.Movement.SetSpeed(MoveType.EnterVehicle, 1.0f);
             AI.Movement.SetSpeed(MoveType.ExitVehicle, 1.0f);
             if (AI.Stats.IsTaskAllowed(Task.TaskCategory.Dig))
-            {
                 AI.Movement.SetCan(MoveType.Dig, true);
-            }
             AI.TriggersMourning = true;
             AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Stats.Gender);
             Species = "Dwarf";
             Status.Money = (decimal)MathFunctions.Rand(0, 150);
-            
 
             Physics.AddChild(new DwarfThoughts(Manager, "Thoughts"));
         }
@@ -142,6 +126,7 @@ namespace DwarfCorp
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new VoxelRevealer(manager, Physics, 5)).SetFlag(Flag.ShouldSerialize, false);
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 0))).SetFlag(Flag.ShouldSerialize, false);
+
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
@@ -184,6 +169,14 @@ namespace DwarfCorp
                 ContentPaths.Audio.Oscar.sfx_ic_dwarf_climb_3
             };
 
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 1,
+                BoxTriggerTimes = 10,
+                SoundToPlay = ContentPaths.Entities.Dwarf.Audio.dwarfhurt1,
+            }).SetFlag(Flag.ShouldSerialize, false);
+
             base.CreateCosmeticChildren(manager);
         }
 
@@ -216,8 +209,6 @@ namespace DwarfCorp
 
             sprite.SetCurrentAnimation(Sprite.Animations.First().Value);
             sprite.SetFlag(Flag.ShouldSerialize, false);
-
-            
         }
 
         private void AddLayerOrDefault(LayeredSprites.LayeredCharacterSprite Sprite, Random Random, String Layer, LayeredSprites.Palette Palette = null)
@@ -241,5 +232,4 @@ namespace DwarfCorp
             }
         }
     }
-
 }

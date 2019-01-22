@@ -47,17 +47,15 @@ namespace DwarfCorp
         [EntityFactory("Deer")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Deer(ContentPaths.Entities.Animals.Deer.deer, Position, Manager, "Deer");
+            return new Deer(Position, Manager, "Deer");
         }
-
-        public SpriteSheet SpriteAssets { get; set; }
 
         public Deer()
         {
             
         }
 
-        public Deer(string sprites, Vector3 position, ComponentManager manager, string name):
+        public Deer(Vector3 position, ComponentManager manager, string name):
             base
             (
                 manager,
@@ -91,10 +89,7 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            var spriteSheet = new SpriteSheet(sprites);
             Physics.Orientation = Physics.OrientMode.RotateY;
-
-            SpriteAssets = spriteSheet;
 
             CreateCosmeticChildren(Manager);
 
@@ -107,17 +102,6 @@ namespace DwarfCorp
             Attacks = new List<Attack>{new Attack("None", 0.0f, 0.0f, 0.0f, ContentPaths.Audio.Oscar.sfx_oc_deer_attack, ContentPaths.Effects.hit)};
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
-
-            // The bird will emit a shower of blood when it dies
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 1,
-                BoxTriggerTimes = 10,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_deer_hurt_1
-            });
-
-
 
             // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));
@@ -134,15 +118,25 @@ namespace DwarfCorp
             BabyType = "Deer";
         }
 
-
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             Stats.CurrentClass = SharedClass;
+
             CreateSprite(ContentPaths.Entities.Animals.Deer.animations, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
+
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_deer_hurt_1 };
             NoiseMaker.Noises["Chirp"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_deer_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_deer_neutral_2 };
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 1,
+                BoxTriggerTimes = 10,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_deer_hurt_1
+            }).SetFlag(Flag.ShouldSerialize, false);
+
             base.CreateCosmeticChildren(manager);
         }
 

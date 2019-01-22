@@ -38,10 +38,6 @@ using DwarfCorp.GameStates;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Extends CreatureAI specifically for
-    /// bird behavior.
-    /// </summary>
     public class BirdAI : CreatureAI
     {
         public BirdAI()
@@ -49,8 +45,8 @@ namespace DwarfCorp
             
         }
 
-        public BirdAI(ComponentManager Manager, string name, EnemySensor sensor) :
-            base(Manager, name, sensor)
+        public BirdAI(ComponentManager Manager, string name, EnemySensor sensor) 
+            :  base(Manager, name, sensor)
         {
             
         }
@@ -58,25 +54,29 @@ namespace DwarfCorp
         IEnumerable<Act.Status> ChirpRandomly()
         {
             Timer chirpTimer = new Timer(MathFunctions.Rand(6f, 10f), false, Timer.TimerMode.Real);
+
             while (true)
             {
                 chirpTimer.Update(DwarfTime.LastTime);
+
                 if (chirpTimer.HasTriggered)
-                {
                     Creature.NoiseMaker.MakeNoise("chirp", Creature.AI.Position, true, 0.5f);
-                }
+
                 yield return Act.Status.Running;
             }
         }
 
-
-        // Overrides the default ActOnIdle so we can
-        // have the bird act in any way we wish.
         public override Task ActOnIdle()
         {
             return new ActWrapperTask(
-                new Parallel(new FlyWanderAct(this, 10.0f + MathFunctions.Rand() * 2.0f, 2.0f + MathFunctions.Rand() * 0.5f, 20.0f, 8.0f, MathFunctions.Rand() * 10.0f)
-                , new Wrap(ChirpRandomly)) {ReturnOnAllSucces = false, Name = "Fly"});
+                new Parallel(
+                    new FlyWanderAct(this, 10.0f + MathFunctions.Rand() * 2.0f, 2.0f + MathFunctions.Rand() * 0.5f, 20.0f, 8.0f, MathFunctions.Rand() * 10.0f), 
+                    new Wrap(ChirpRandomly)
+                )
+                {
+                    ReturnOnAllSucces = false,
+                    Name = "Fly"
+                });
         }
     }
 }

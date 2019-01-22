@@ -88,15 +88,7 @@ namespace DwarfCorp
             
             Physics.Tags.Add("Demon");
 
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_demon_death
-            });
-
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
-            //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
             Stats.Size = 4;
             Species = "Demon";
         }
@@ -132,7 +124,6 @@ namespace DwarfCorp
                 ContentPaths.Audio.Oscar.sfx_ic_demon_flap_wings_3,
             };
 
-
             NoiseMaker.Noises["Chirp"] = new List<string>
             {
                 ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_1,
@@ -143,6 +134,13 @@ namespace DwarfCorp
                 ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_6,
                 ContentPaths.Audio.Oscar.sfx_ic_demon_pleased,
             };
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 5,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_demon_death
+            }).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);
         }
