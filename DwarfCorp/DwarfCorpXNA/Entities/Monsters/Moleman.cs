@@ -83,13 +83,6 @@ namespace DwarfCorp
 
             Physics.Tags.Add("Necromancer");
 
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_moleman_death
-            });
-
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
@@ -117,6 +110,13 @@ namespace DwarfCorp
                 ContentPaths.Audio.Oscar.sfx_ic_moleman_hurt_1,
                 ContentPaths.Audio.Oscar.sfx_ic_moleman_hurt_2
             };
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 5,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_moleman_death
+            }).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);
         }

@@ -43,116 +43,6 @@ namespace DwarfCorp
 {
     public class Gremlin : Creature
     {
-        public class GremlinClass : EmployeeClass
-        {
-            void InitializeLevels()
-            {
-                Levels = new List<Level>
-            {
-                new Level
-                {
-                    Index = 0,
-                    Name = "Tinkerer",
-                    Pay = 25,
-                    XP = 0,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 3,
-                        Constitution = 3
-                    }
-
-                },
-                new Level
-                {
-                    Index = 1,
-                    Name = "Inventor",
-                    Pay = 50,
-                    XP = 100,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 7,
-                        Constitution = 6,
-                        Charisma = 6
-                    }
-                },
-                new Level
-                {
-                    Index = 2,
-                    Name = "Mischief Maker",
-                    Pay = 100,
-                    XP = 250,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 7,
-                        Constitution = 7,
-                        Charisma = 6
-                    }
-                },
-                new Level
-                {
-                    Index = 3,
-                    Name = "Bombadier",
-                    Pay = 200,
-                    XP = 500,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 7,
-                        Constitution = 7,
-                        Charisma = 6,
-                        Dexterity = 6
-                    }
-                },
-            };
-            }
-
-            void InitializeAnimations()
-            {
-                Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Gremlin.gremlin_animations, "Gremlin");
-            }
-
-            void InitializeActions()
-            {
-                Actions =
-                    Task.TaskCategory.Chop |
-                    Task.TaskCategory.Gather |
-                    Task.TaskCategory.Guard |
-                    Task.TaskCategory.Attack;
-            }
-
-            public void InitializeWeapons()
-            {
-                Attacks = new List<Attack>()
-            {
-                new Attack("Wrench", 1.0f, 1.0f, 1.5f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_1, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_2, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_3), ContentPaths.Effects.claw)
-                {
-                    Knockback = 2.5f,
-                    TriggerMode = Attack.AttackTrigger.Animation,
-                    TriggerFrame = 2
-                }
-            };
-            }
-
-            protected override sealed void InitializeStatics()
-            {
-                Name = "Gremlin";
-                InitializeLevels();
-                InitializeAnimations();
-                InitializeWeapons();
-                InitializeActions();
-                base.InitializeStatics();
-            }
-
-
-            public GremlinClass()
-            {
-                if (!staticsInitiailized)
-                {
-                    InitializeStatics();
-                }
-            }
-        }
-
-
         [EntityFactory("Gremlin")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -197,22 +87,11 @@ namespace DwarfCorp
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
-
-            Physics.Tags.Add("Gremlin");
-
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 3,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
-            });
+            Physics.Tags.Add("Gremlin");            
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
-            //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
             Stats.Size = 4;
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
@@ -236,6 +115,13 @@ namespace DwarfCorp
             {
                 ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
             };
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 3,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
+            }).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);
         }

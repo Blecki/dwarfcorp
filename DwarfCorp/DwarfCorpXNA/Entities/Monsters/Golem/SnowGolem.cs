@@ -42,32 +42,29 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Convenience class for initializing demons as creatures.
-    /// </summary>
-    public class MudGolem : Creature
+    public class SnowGolem : Creature
     {
-        [EntityFactory("MudGolem")]
-        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        [EntityFactory("SnowGolem")]
+        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new MudGolem(
+            return new SnowGolem(
                 new CreatureStats(SharedClass, 0),
                 "Carnivore",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Carnivore"],
                 Manager,
-                "Mud Golem",
+                "Snow Golem",
                 Position);
         }
 
-        private static MudGolemClass SharedClass = new MudGolemClass();
+        private static SnowGolemClass SharedClass = new SnowGolemClass();
 
-        public MudGolem()
+        public SnowGolem()
         {
-            
+
         }
 
-        public MudGolem(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
+        public SnowGolem(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
             Physics = new Physics(Manager, name, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
@@ -77,18 +74,19 @@ namespace DwarfCorp
             HasMeat = false;
             HasBones = false;
             Physics.Orientation = Physics.OrientMode.RotateY;
+
             CreateCosmeticChildren(Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
-            Physics.AddChild(new MudGolemAI(Manager, Sensors) { Movement = { IsSessile = true, CanFly = false, CanSwim = false, CanWalk = false, CanClimb = false, CanClimbWalls = false } });
+            Physics.AddChild(new GolemAI(Manager, Sensors) { Movement = { IsSessile = true, CanFly = false, CanSwim = false, CanWalk = false, CanClimb = false, CanClimbWalls = false } });
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
             var gems = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.Gem);
-            for (int i = 0; i < 16;  i++)
+            for (int i = 0; i < 16; i++)
             {
                 int num = MathFunctions.RandInt(1, 32 - i);
                 Inventory.AddResource(new ResourceAmount(Datastructures.SelectRandom(gems), num));
@@ -97,13 +95,6 @@ namespace DwarfCorp
 
             Physics.Tags.Add("MudGolem");
             Physics.Mass = 100;
-
-            Physics.AddChild(new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Audio.gravel
-            });
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             Stats.Size = 4;
@@ -117,7 +108,7 @@ namespace DwarfCorp
         {
             Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 3))).SetFlag(Flag.ShouldSerialize, false);
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 3))).SetFlag(Flag.ShouldSerialize, false);
 
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
@@ -126,102 +117,14 @@ namespace DwarfCorp
                 ContentPaths.Audio.gravel,
             };
 
+            Physics.AddChild(new ParticleTrigger("snow_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 5,
+                SoundToPlay = ContentPaths.Audio.gravel
+            }).SetFlag(Flag.ShouldSerialize, false);
+
             base.CreateCosmeticChildren(manager);
-        }
-    }
-
-    [JsonObject(IsReference = true)]
-    public class MudGolemAI : CreatureAI
-    {
-        public MudGolemAI()
-        {
-            
-        }
-
-        public MudGolemAI(ComponentManager Manager, EnemySensor enemySensor) :
-            base(Manager, "MudGolemAI", enemySensor)
-        {
-            
-        }
-        public override Task ActOnIdle()
-        {
-            return null;
-        }
-
-        public override Act ActOnWander()
-        {
-            return null;
-        }
-    }
-
-    public class MudGolemClass : EmployeeClass
-    {
-        public MudGolemClass()
-        {
-            if (!staticClassInitialized)
-            {
-                InitializeClassStatics();
-            }
-            if (!staticsInitiailized)
-            {
-                InitializeStatics();
-            }
-        }
-
-        void InitializeLevels()
-        {
-            Levels = new List<Level>
-            {
-                new Level
-                {
-                    Index = 0,
-                    Name = "MudGolem",
-                    Pay = 25,
-                    XP = 0,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Constitution = 20.0f
-                    }
-                }
-            };
-        }
-
-        void InitializeActions()
-        {
-            Actions =
-                Task.TaskCategory.Gather |
-                Task.TaskCategory.Guard |
-                Task.TaskCategory.Attack;
-        }
-
-        void InitializeAnimations()
-        {
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.mudman_animation, "MudGolem");
-        }
-
-        public void InitializeWeapons()
-        {
-            Attacks = new List<Attack>()
-            {
-                new Attack("Mud", 0.1f, 2.0f, 50.0f, ContentPaths.Audio.demon_attack, ContentPaths.Effects.hit)
-                {
-                    Mode = Attack.AttackMode.Ranged,
-                    LaunchSpeed = 5.0f,
-                    ProjectileType = "Mud",
-                    TriggerMode = Attack.AttackTrigger.Animation,
-                    TriggerFrame = 1
-                }
-            };
-        }
-
-        protected override sealed void InitializeStatics()
-        {
-            Name = "Mud Golem";
-            InitializeLevels();
-            InitializeAnimations();
-            InitializeWeapons();
-            InitializeActions();
-            base.InitializeStatics();
         }
     }
 }

@@ -43,116 +43,6 @@ namespace DwarfCorp
 {
     public class Kobold : Creature
     {
-        public class KoboldClass : EmployeeClass
-        {
-            void InitializeLevels()
-            {
-                Levels = new List<Level>
-            {
-                new Level
-                {
-                    Index = 0,
-                    Name = "Sneaker",
-                    Pay = 25,
-                    XP = 0,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 3,
-                        Constitution = 3
-                    }
-
-                },
-                new Level
-                {
-                    Index = 1,
-                    Name = "Sneaker",
-                    Pay = 50,
-                    XP = 100,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 7,
-                        Constitution = 6,
-                        Charisma = 6
-                    }
-                },
-                new Level
-                {
-                    Index = 2,
-                    Name = "Stealer",
-                    Pay = 100,
-                    XP = 250,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 7,
-                        Constitution = 7,
-                        Charisma = 6
-                    }
-                },
-                new Level
-                {
-                    Index = 3,
-                    Name = "Thief",
-                    Pay = 200,
-                    XP = 500,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 7,
-                        Constitution = 7,
-                        Charisma = 6,
-                        Dexterity = 6
-                    }
-                },
-            };
-            }
-
-            void InitializeAnimations()
-            {
-                Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Kobold.kobold_animations, "Kobold");
-            }
-
-            void InitializeActions()
-            {
-                Actions =
-                    Task.TaskCategory.Chop |
-                    Task.TaskCategory.Gather |
-                    Task.TaskCategory.Guard |
-                    Task.TaskCategory.Attack;
-            }
-
-            public void InitializeWeapons()
-            {
-                Attacks = new List<Attack>()
-            {
-                new Attack("Claws", 1.0f, 1.0f, 1.5f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_1, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_2, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_3), ContentPaths.Effects.claw)
-                {
-                    Knockback = 2.5f,
-                    TriggerMode = Attack.AttackTrigger.Animation,
-                    TriggerFrame = 2
-                }
-            };
-            }
-
-            protected override sealed void InitializeStatics()
-            {
-                Name = "Kobold";
-                InitializeLevels();
-                InitializeAnimations();
-                InitializeWeapons();
-                InitializeActions();
-                base.InitializeStatics();
-            }
-
-            public KoboldClass()
-            {
-                if (!staticsInitiailized)
-                {
-                    InitializeStatics();
-                }
-            }
-        }
-
-        private static KoboldClass SharedKoboldClass = new KoboldClass();
-
         [EntityFactory("Kobold")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -165,6 +55,8 @@ namespace DwarfCorp
                 "Kobold",
                 Position).Physics;
         }
+
+        private static KoboldClass SharedKoboldClass = new KoboldClass();
 
         public Kobold()
         {
@@ -195,23 +87,14 @@ namespace DwarfCorp
 
             Physics.Tags.Add("Kobold");
 
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 3,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
-            });
-
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
-            //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
             Stats.Size = 4;
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             AI.Movement.SetCan(MoveType.Dig, true);
-            (AI as KoboldAI).StealFromPlayerProbability = 0.5f; // Todo: Should probably just get a default value as they are essentially static.
             Species = "Kobold";
         }
 
@@ -228,6 +111,13 @@ namespace DwarfCorp
             {
                 ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
             };
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 3,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
+            }).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);
         }

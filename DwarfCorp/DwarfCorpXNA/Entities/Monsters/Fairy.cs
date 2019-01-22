@@ -52,16 +52,7 @@ namespace DwarfCorp
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            Physics.AddChild(Shadow.Create(0.75f, Manager));
-
             Physics.Tags.Add("Dwarf");
-
-            Physics.AddChild(new ParticleTrigger("star_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Audio.wurp,
-            });
           
             Stats.FullName = TextGenerator.GenerateRandom("$firstname");
             
@@ -103,6 +94,13 @@ namespace DwarfCorp
             {
                 ContentPaths.Audio.tinkle
             };
+
+            Physics.AddChild(new ParticleTrigger("star_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 5,
+                SoundToPlay = ContentPaths.Audio.wurp,
+            }).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);
         }

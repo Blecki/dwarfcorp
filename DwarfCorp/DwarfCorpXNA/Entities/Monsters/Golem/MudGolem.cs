@@ -42,29 +42,29 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class SnowGolem : Creature
+    public class MudGolem : Creature
     {
-        [EntityFactory("SnowGolem")]
-        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        [EntityFactory("MudGolem")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new SnowGolem(
+            return new MudGolem(
                 new CreatureStats(SharedClass, 0),
                 "Carnivore",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Carnivore"],
                 Manager,
-                "Snow Golem",
+                "Mud Golem",
                 Position);
         }
 
-        private static SnowGolemClass SharedClass = new SnowGolemClass();
+        private static MudGolemClass SharedClass = new MudGolemClass();
 
-        public SnowGolem()
+        public MudGolem()
         {
             
         }
 
-        public SnowGolem(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
+        public MudGolem(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
             Physics = new Physics(Manager, name, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
@@ -74,12 +74,11 @@ namespace DwarfCorp
             HasMeat = false;
             HasBones = false;
             Physics.Orientation = Physics.OrientMode.RotateY;
-
             CreateCosmeticChildren(Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
-            Physics.AddChild(new MudGolemAI(Manager, Sensors) { Movement = { IsSessile = true, CanFly = false, CanSwim = false, CanWalk = false, CanClimb = false, CanClimbWalls = false } });
+            Physics.AddChild(new GolemAI(Manager, Sensors) { Movement = { IsSessile = true, CanFly = false, CanSwim = false, CanWalk = false, CanClimb = false, CanClimbWalls = false } });
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
@@ -96,13 +95,6 @@ namespace DwarfCorp
             Physics.Tags.Add("MudGolem");
             Physics.Mass = 100;
 
-            Physics.AddChild(new ParticleTrigger("snow_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Audio.gravel
-            });            
-
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             Stats.Size = 4;
             Resistances[DamageType.Fire] = 5;
@@ -115,7 +107,7 @@ namespace DwarfCorp
         {
             Stats.CurrentClass = SharedClass;
             CreateSprite(Stats.CurrentClass, manager);
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 3))).SetFlag(Flag.ShouldSerialize, false);
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 3))).SetFlag(Flag.ShouldSerialize, false);
 
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
@@ -124,77 +116,14 @@ namespace DwarfCorp
                 ContentPaths.Audio.gravel,
             };
 
+            Physics.AddChild(new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 5,
+                SoundToPlay = ContentPaths.Audio.gravel
+            }).SetFlag(Flag.ShouldSerialize, false);
+
             base.CreateCosmeticChildren(manager);
-        }
-    }
-
-    public class SnowGolemClass : EmployeeClass
-    {
-        public SnowGolemClass()
-        {
-            if (!staticClassInitialized)
-            {
-                InitializeClassStatics();
-            }
-            if (!staticsInitiailized)
-            {
-                InitializeStatics();
-            }
-        }
-
-        void InitializeLevels()
-        {
-            Levels = new List<Level>
-            {
-                new Level
-                {
-                    Index = 0,
-                    Name = "Snow Golem",
-                    Pay = 25,
-                    XP = 0,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Constitution = 20.0f
-                    }
-                }
-            };
-        }
-
-        void InitializeActions()
-        {
-            Actions =
-                Task.TaskCategory.Gather |
-                Task.TaskCategory.Guard |
-                Task.TaskCategory.Attack;
-        }
-
-        void InitializeAnimations()
-        {
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.snowman_animation, "Snowman");
-        }
-
-        public void InitializeWeapons()
-        {
-            Attacks = new List<Attack>()
-            {
-                new Attack("Snowball", 0.1f, 1.0f, 50.0f, ContentPaths.Audio.demon_attack, ContentPaths.Effects.hit)
-                {
-                    Mode = Attack.AttackMode.Ranged,
-                    LaunchSpeed = 10.0f,
-                    ProjectileType = "Snowball",
-                    TriggerMode = Attack.AttackTrigger.Timer
-                }
-            };
-        }
-
-        protected override sealed void InitializeStatics()
-        {
-            Name = "Snow Golem";
-            InitializeLevels();
-            InitializeAnimations();
-            InitializeWeapons();
-            InitializeActions();
-            base.InitializeStatics();
         }
     }
 }

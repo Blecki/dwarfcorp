@@ -93,17 +93,9 @@ namespace DwarfCorp
 
             Physics.Tags.Add("Elf");
 
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_elf_death
-            });
-
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
             Stats.FullName = TextGenerator.GenerateRandom("$elfname");
-            //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
             Stats.Size = 4;
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
@@ -115,15 +107,25 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             Stats.CurrentClass = SharedClass;
+
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 1))).SetFlag(Flag.ShouldSerialize, false);
+
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
                 ContentPaths.Audio.Oscar.sfx_ic_elf_hurt_1,
                 ContentPaths.Audio.Oscar.sfx_ic_elf_hurt_2,
             };
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 1))).SetFlag(Flag.ShouldSerialize, false);
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 5,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_elf_death
+            }).SetFlag(Flag.ShouldSerialize, false);
+
             base.CreateCosmeticChildren(manager);
         }
     }

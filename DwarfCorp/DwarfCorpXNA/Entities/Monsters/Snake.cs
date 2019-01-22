@@ -136,46 +136,23 @@ namespace DwarfCorp
             AI.Stats.FullName = "Giant Snake";
             AI.Stats.CurrentClass = SharedClass;
             AI.Stats.LevelIndex = 0;
-
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 1,
-                BoxTriggerTimes = 10,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_giant_snake_hurt_1,
-            });
-
+            
             Physics.AddChild(new Flammable(Manager, "Flames"));
         }
 
-        private void CreateGraphics()
+        public override void CreateCosmeticChildren(ComponentManager Manager)
         {
-  
-            if (Bonesnake)
-            {
-                this.Attacks[0].DiseaseToSpread = "Necrorot";
-                Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 4)));
-            }
-            else
-            {
-                Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 4)));
-            }
+            Stats.CurrentClass = SharedClass;
 
-            Physics.AddChild(new Shadow(Manager));
+            CreateSprite(Bonesnake ? ContentPaths.Entities.Animals.Snake.bonesnake_animation : ContentPaths.Entities.Animals.Snake.snake_animation, Manager, 0.35f);
 
-            var animFile = Bonesnake ? ContentPaths.Entities.Animals.Snake.bonesnake_animation :
-                ContentPaths.Entities.Animals.Snake.snake_animation;
+            #region Create Tail Pieces
 
-            var tailFile = Bonesnake ? ContentPaths.Entities.Animals.Snake.bonetail_animation :
-                ContentPaths.Entities.Animals.Snake.tail_animation;
-
-
-            var sprite = CreateSprite(animFile, Manager, 0.35f);
             Tail = new List<TailSegment>();
 
             for (int i = 0; i < 10; ++i)
             {
-                var tailPiece = CreateSprite(tailFile, Manager, 0.25f, false);
+                var tailPiece = CreateSprite(Bonesnake ? ContentPaths.Entities.Animals.Snake.bonetail_animation : ContentPaths.Entities.Animals.Snake.tail_animation, Manager, 0.25f, false);
                 tailPiece.Name = "Snake Tail";
                 Tail.Add(
                     new TailSegment()
@@ -222,15 +199,18 @@ namespace DwarfCorp
                     inventory.AddResource(new ResourceAmount(type, 1));
                 }
             }
-        }
 
-        public override void CreateCosmeticChildren(ComponentManager Manager)
-        {
-            Stats.CurrentClass = SharedClass;
-            CreateGraphics();
+            #endregion
 
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1))).SetFlag(Flag.ShouldSerialize, false);
+            Physics.AddChild(Shadow.Create(0.75f, Manager));
 
+            if (Bonesnake)
+            {
+                this.Attacks[0].DiseaseToSpread = "Necrorot";
+                Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 4))).SetFlag(Flag.ShouldSerialize, false);
+            }
+            else
+                Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 4))).SetFlag(Flag.ShouldSerialize, false);
 
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_giant_snake_hurt_1 };
@@ -239,6 +219,14 @@ namespace DwarfCorp
                 ContentPaths.Audio.Oscar.sfx_oc_giant_snake_neutral_1,
                 ContentPaths.Audio.Oscar.sfx_oc_giant_snake_neutral_2
             };
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 1,
+                BoxTriggerTimes = 10,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_giant_snake_hurt_1,
+            }).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(Manager);
         }
@@ -305,7 +293,6 @@ namespace DwarfCorp
                         Name = "Giant Snake",
                         Index = 0
                     },
-
                 }
             };
     }

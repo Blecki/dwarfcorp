@@ -41,10 +41,6 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// Convenience class for initializing goblins as creatures.
-    /// </summary>
     public class Goblin : Creature
     {
         [EntityFactory("Goblin")]
@@ -88,25 +84,12 @@ namespace DwarfCorp
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
-
-            Matrix shadowTransform = Matrix.CreateRotationX((float) Math.PI * 0.5f);
-            shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
-
-            Physics.AddChild(Shadow.Create(0.75f, Manager));
-            
-            Physics.Tags.Add("Goblin");
-
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 3,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
-            });
+          
+            Physics.Tags.Add("Goblin");            
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
            
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
-            //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
             Stats.Size = 4;
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
@@ -118,6 +101,7 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             Stats.CurrentClass = SharedClass;
+
             CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 0))).SetFlag(Flag.ShouldSerialize, false);
@@ -127,6 +111,13 @@ namespace DwarfCorp
             {
                 ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
             };
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 3,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
+            }).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);
         }

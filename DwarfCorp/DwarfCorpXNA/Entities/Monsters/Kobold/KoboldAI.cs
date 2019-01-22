@@ -1,4 +1,4 @@
-﻿// SnakeAi.cs
+// CreatureAI.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -30,40 +30,61 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class SnakeAI : CreatureAI
+    public class KoboldAI : CreatureAI
     {
-        public SnakeAI()
+        public float StealFromPlayerProbability = 0.5f;
+        public Timer LeaveWorldTimer = new Timer(200, true);
+
+        public KoboldAI()
         {
-            
+
         }
 
-        public SnakeAI(ComponentManager Manager, string name, EnemySensor sensor) :
-            base(Manager, name, sensor)
-        {
-            
-        }
+        public KoboldAI(ComponentManager Manager, String Name, EnemySensor Sensor)
+        : base(Manager, Name, Sensor) { }
 
         public override Task ActOnIdle()
         {
-            return new ActWrapperTask(new Wrap(Gogogo));
-        }
-
-        public IEnumerable<Act.Status> Gogogo()
-        {
-            while (true)
+            if (StealFromPlayerProbability > 0 && MathFunctions.RandEvent(StealFromPlayerProbability))
             {
-               Creature.Physics.ApplyForce(0.1f *(Manager.World.CursorLightPos - this.Creature.AI.Position) - 0.1f * Creature.Physics.Velocity, 1);
-               yield return Act.Status.Running;
+                bool stealMoney = MathFunctions.RandEvent(0.5f);
+                if (World.PlayerFaction.Economy.CurrentMoney > 0 && stealMoney)
+                    AssignTask(new ActWrapperTask(new GetMoneyAct(this, 100m, World.PlayerFaction)) { Name = "Steal money", Priority = Task.PriorityType.High });
+                else
+                {
+                    var resources = World.PlayerFaction.ListResources();
+                    if (resources.Count > 0)
+                    {
+                        var resource = Datastructures.SelectRandom(resources);
+                        if (resource.Value.NumResources > 0)
+                        {
+                            AssignTask(new ActWrapperTask(new GetResourcesAct(this, new List<ResourceAmount>() { new ResourceAmount(resource.Value.ResourceType, 1) }) { Faction = World.PlayerFaction }) { Name = "Steal stuff", Priority = Task.PriorityType.High });
+                        }
+                    }
+                }
             }
+
+            LeaveWorldTimer.Update(DwarfTime.LastTime);
+
+            if (LeaveWorldTimer.HasTriggered)
+            {
+                LeaveWorld();
+                LeaveWorldTimer.Reset();
+            }
+
+            return base.ActOnIdle();
         }
     }
 }

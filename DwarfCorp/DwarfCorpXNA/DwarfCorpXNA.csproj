@@ -187,7 +187,13 @@
     <Compile Include="Components\AI\PacingCreatureAI.cs" />
     <Compile Include="Entities\Animals\Chimp.cs" />
     <Compile Include="Entities\Fixtures\Palisade.cs" />
-    <Compile Include="Entities\Monsters\SnowGolem.cs" />
+    <Compile Include="Entities\Monsters\Golem\GolemAI.cs" />
+    <Compile Include="Entities\Monsters\Golem\MudGolemClass.cs" />
+    <Compile Include="Entities\Monsters\Golem\SnowGolemClass.cs" />
+    <Compile Include="Entities\Monsters\Gremlin\GremlinClass.cs" />
+    <Compile Include="Entities\Monsters\Kobold\KoboldClass.cs" />
+    <Compile Include="Entities\Monsters\Golem\SnowGolem.cs" />
+    <Compile Include="Entities\Monsters\Troll\TrollClass.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCStatus.cs" />
     <Compile Include="GameStates\ModManagement\Steam\IUGCTransaction.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCUnsubscribe.cs" />
@@ -229,8 +235,8 @@
     <Compile Include="Entities\Fixtures\HealingTower.cs" />
     <Compile Include="Entities\Fixtures\PlantGrowthTower.cs" />
     <Compile Include="Entities\Fixtures\SummoningCircle.cs" />
-    <Compile Include="Entities\Monsters\KoboldAI.cs" />
-    <Compile Include="Entities\Monsters\GremlinAI.cs" />
+    <Compile Include="Entities\Monsters\Kobold\KoboldAI.cs" />
+    <Compile Include="Entities\Monsters\Gremlin\GremlinAI.cs" />
     <Compile Include="Components\AI\DwarfThoughts.cs" />
     <Compile Include="Components\AI\WaitForPlanHelper.cs" />
     <Compile Include="Components\AI\LeaveWorldTask.cs" />
@@ -284,9 +290,9 @@
     <Compile Include="Entities\Fixtures\CoinPileFixture.cs" />
     <Compile Include="Entities\Fixtures\Banner.cs" />
     <Compile Include="Entities\Fixtures\Fence.cs" />
-    <Compile Include="Entities\Monsters\Gremlin.cs" />
-    <Compile Include="Entities\Monsters\Kobold.cs" />
-    <Compile Include="Entities\Monsters\Troll.cs" />
+    <Compile Include="Entities\Monsters\Gremlin\Gremlin.cs" />
+    <Compile Include="Entities\Monsters\Kobold\Kobold.cs" />
+    <Compile Include="Entities\Monsters\Troll\Troll.cs" />
     <Compile Include="Entities\Plants\PlantFactories.cs" />
     <Compile Include="Entities\TimedExplosion.cs" />
     <Compile Include="GameStates\DwarfDesignerState.cs" />
@@ -453,7 +459,7 @@
     <Compile Include="Entities\Monsters\Fairy.cs" />
     <Compile Include="Entities\Monsters\Goblin.cs" />
     <Compile Include="Entities\Monsters\Moleman.cs" />
-    <Compile Include="Entities\Monsters\MudGolem.cs" />
+    <Compile Include="Entities\Monsters\Golem\MudGolem.cs" />
     <Compile Include="Entities\Monsters\Necromancer.cs" />
     <Compile Include="Entities\Monsters\NecromancerAI.cs" />
     <Compile Include="Entities\Monsters\Skeleton.cs" />

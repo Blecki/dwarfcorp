@@ -98,22 +98,9 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             Stats.CurrentClass = SharedClass;
+
+            CreateSprite(Stats.CurrentClass, Manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
-
-            var sprite = Physics.AddChild(new CharacterSprite(Manager, "Skeleton Sprite", Matrix.CreateTranslation(new Vector3(0, 0.1f, 0)))) as CharacterSprite;
-            foreach (Animation animation in Stats.CurrentClass.Animations)
-            {
-                sprite.AddAnimation(animation);
-            }
-            sprite.SetFlag(Flag.ShouldSerialize, false);
-
-            Physics.AddChild(new ParticleTrigger("sand_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_1
-            }).SetFlag(Flag.ShouldSerialize, false);
-
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1))).SetFlag(Flag.ShouldSerialize, false);
 
             NoiseMaker = new NoiseMaker();
@@ -122,6 +109,13 @@ namespace DwarfCorp
                 ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_1,
                 ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_2,
             };
+
+            Physics.AddChild(new ParticleTrigger("sand_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 5,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_1
+            }).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);
         }
