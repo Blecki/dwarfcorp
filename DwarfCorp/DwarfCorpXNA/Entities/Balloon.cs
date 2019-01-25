@@ -12,22 +12,20 @@ namespace DwarfCorp
         [EntityFactory("Balloon")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Balloon(Manager, Position, Position + new Vector3(0, 1000, 0), null, Manager.World.PlayerFaction);
+            return new Balloon(Manager, Position, Position + new Vector3(0, 1000, 0), Manager.World.PlayerFaction);
         }
 
         public static Body CreateBalloon(
             Vector3 target, 
             Vector3 position, 
             ComponentManager componentManager, 
-            ShipmentOrder order, 
             Faction master)
         {
-            return new Balloon(componentManager, position, target, order, master);
+            return new Balloon(componentManager, position, target, master);
         }
 
 
         Vector3 Target;
-        ShipmentOrder Order;
         Faction Owner;
 
         public Balloon()
@@ -35,17 +33,16 @@ namespace DwarfCorp
 
         }
 
-        public Balloon(ComponentManager Manager, Vector3 Position, Vector3 Target, ShipmentOrder Order, Faction Owner) :
+        public Balloon(ComponentManager Manager, Vector3 Position, Vector3 Target, Faction Owner) :
             base(Manager, "Balloon", Matrix.CreateTranslation(Position), new Vector3(0.5f, 1, 0.5f), new Vector3(0, -2, 0))
         {
             this.Target = Target;
-            this.Order = Order;
             this.Owner = Owner;
 
             CreateCosmeticChildren(Manager);
             CollisionType = CollisionType.Dynamic;
 
-            AddChild(new BalloonAI(Manager, Target, Order, Owner));
+            AddChild(new BalloonAI(Manager, Target, Owner));
         }
 
         public override void CreateCosmeticChildren(ComponentManager Manager)

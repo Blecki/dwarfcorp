@@ -53,7 +53,6 @@ namespace DwarfCorp
         public float MaxVelocity { get; set; }
         public float MaxForce { get; set; }
         public BalloonState State { get; set; }
-        public ShipmentOrder Shipment { get; set; }
         public Faction Faction { get; set; }
         public Timer WaitTimer { get; set; }
         public List<ResourceAmount> CurrentResources { get; set; }
@@ -72,7 +71,7 @@ namespace DwarfCorp
             
         }
 
-        public BalloonAI(ComponentManager Manager, Vector3 target, ShipmentOrder shipment, Faction faction) :
+        public BalloonAI(ComponentManager Manager, Vector3 target, Faction faction) :
             base("BalloonAI", Manager)
         {
             VelocityController = new PIDController(0.9f, 0.5f, 0.0f);
@@ -80,7 +79,6 @@ namespace DwarfCorp
             MaxForce = 15.0f;
             TargetPosition = target;
             State = BalloonState.DeliveringGoods;
-            Shipment = shipment;
             Faction = faction;
             CurrentResources = new List<ResourceAmount>();
             WaitTimer = new Timer(5.0f, true);
