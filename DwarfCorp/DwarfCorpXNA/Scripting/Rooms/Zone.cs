@@ -308,11 +308,27 @@ namespace DwarfCorp
             return Voxels.Any(storage => storage.GetBoundingBox().Intersects(larger));
         }
 
-        // Todo: Faster algorithm - find min and max voxel extents and create bounding box from that.
         public BoundingBox GetBoundingBox()
         {
-            List<BoundingBox> boxes = Voxels.Select(storage => storage.GetBoundingBox()).ToList();
-            return MathFunctions.GetBoundingBox(boxes);
+            var minX = Int32.MaxValue;
+            var minY = Int32.MaxValue;
+            var minZ = Int32.MaxValue;
+            var maxX = Int32.MinValue;
+            var maxY = Int32.MinValue;
+            var maxZ = Int32.MinValue;
+
+            for (var i = 0; i < Voxels.Count; ++i)
+            {
+                var v = Voxels[i].Coordinate;
+                if (v.X < minX) minX = v.X;
+                if (v.Y < minY) minY = v.Y;
+                if (v.Z < minZ) minZ = v.Z;
+                if (v.X > maxX) maxX = v.X;
+                if (v.Y > maxY) maxY = v.Y;
+                if (v.Z > maxZ) maxZ = v.Z;
+            }
+
+            return new BoundingBox(new Vector3(minX, minY, minZ), new Vector3(maxX + 1, maxY + 1, maxZ + 1));
         }
 
         public bool IsInZone(Vector3 worldCoordinate)

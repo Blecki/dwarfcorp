@@ -40,7 +40,6 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class BalloonPort : Stockpile
     {
         [RoomFactory("Balloon Port")]
