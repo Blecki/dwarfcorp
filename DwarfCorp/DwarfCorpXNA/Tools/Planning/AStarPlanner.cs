@@ -295,6 +295,7 @@ namespace DwarfCorp
                 // Get the voxels that can be moved to from the current voxel.
                 var neighbors = mover.GetMoveActions(current, octree, teleportObjects, storage).ToList();
                 
+
                 var foundGoalAdjacent = neighbors.FirstOrDefault(n => !n.DestinationState.VehicleState.IsRidingVehicle && goal.IsInGoalRegion(n.DestinationState.Voxel));
 
                 // A quick test to see if we're already adjacent to the goal. If we are, assume
