@@ -30,6 +30,8 @@ namespace DwarfCorp.Gui.Widgets
             }
             Border = "border-fancy";
             Font = "font10";
+            TextVerticalAlign = VerticalAlign.Center;
+            TextHorizontalAlign = HorizontalAlign.Center;
             if (!String.IsNullOrEmpty(OkayText))
             {
                 AddChild(new Gui.Widgets.Button
