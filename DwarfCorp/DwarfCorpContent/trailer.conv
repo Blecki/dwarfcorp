@@ -1,0 +1,26 @@
+title: Start
+---
+<<set_portrait "GUI\diplo-dorf" 64 64 5.0 1 2 3 0>>
+<<set_idle "GUI\diplo-dorf" 64 64 5.0 0 0 0 0 0 0 2>>
+<<show_portrait>>
+<<set_language "Dwarf">>
+Dwarf: Join the Greybeard mining colony!
+Dwarf: We are looking for dwarfs of all professions.
+Dwarf: Leave your crowded life in the motherland behind.
+Dwarf: Put your digging, alchemy and farming skills to the test!
+Dwarf: We have onsite dormitories and entertainment facilities.
+Dwarf: Your opportunities are endless with Greybeard Mining!
+Dwarf: Meet Goblins, Elves and other exotic creatures!
+Dwarf: The colony is of course very safe....
+Dwarf: We guarantee that our operation is 100% necromancer free!
+<<set_portrait "GUI\diplo-necro" 64 64 5.0 0 1 0>>
+<<show_portrait>>
+<<set_language "Undead">> 
+Necromancer: Is this where I can buy corpse flesh?
+<<set_portrait "GUI\diplo-dorf" 64 64 5.0 1 2 3 0>>
+<<set_idle "GUI\diplo-dorf" 64 64 5.0 0 0 0 0 0 0 2>>
+<<show_portrait>>
+<<set_language "Dwarf">>
+Dwarf: ...
+Dwarf: At Greybeard Mining Company, riches await!
+===

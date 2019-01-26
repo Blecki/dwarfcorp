@@ -86,7 +86,12 @@ namespace DwarfCorp
 
         private IEnumerable<Utterance> ConvertSentence(string sentence)
         {
-            var syls = ChunkWord(sentence, 10);
+            var substring = sentence;
+            if (substring.LastOrDefault() == '\n')
+            {
+                substring = sentence.Substring(0, sentence.Length - 1);
+            }
+            var syls = ChunkWord(substring, 10);
 
             foreach (var word in syls)
             {
@@ -109,7 +114,13 @@ namespace DwarfCorp
 
         private IEnumerable<String> SayUtterance(IEnumerable<Utterance> utterances)
         {
-            foreach(Utterance utter in utterances)
+            Timer easeTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
+            while (!easeTimer.HasTriggered && !IsSkipping)
+            {
+                easeTimer.Update(DwarfTime.LastTime);
+                yield return "";
+            }
+            foreach (Utterance utter in utterances)
             {
                 if(utter.Type == UtteranceType.Pause)
                 {
@@ -134,6 +145,26 @@ namespace DwarfCorp
                     while (!IsSkipping && inst != null && inst.State == SoundState.Playing)
                         yield return "";
                 }
+            }
+            Timer finalPause = new Timer(1.0f, true, Timer.TimerMode.Real);
+            while (!finalPause.HasTriggered && !IsSkipping)
+            {
+                finalPause.Update(DwarfTime.LastTime);
+                yield return "";
+            }
+
+            finalPause = new Timer(0.5f, true, Timer.TimerMode.Real);
+            while (!finalPause.HasTriggered && !IsSkipping)
+            {
+                finalPause.Update(DwarfTime.LastTime);
+                yield return "#EOL";
+            }
+
+            finalPause = new Timer(0.1f, true, Timer.TimerMode.Real);
+            while (!finalPause.HasTriggered && !IsSkipping)
+            {
+                finalPause.Update(DwarfTime.LastTime);
+                yield return "#DIE";
             }
             IsSkipping = false;
         }

@@ -2519,6 +2519,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>employee</Name>
     </None>
+    <Content Include="trailer.conv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>trailer</Name>
+    </Content>
     <None Include="Text\Templates\names_moleman.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>names_moleman</Name>
@@ -2643,10 +2647,10 @@
       <Name>resource-items</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="tutorial.json">
+    <Content Include="tutorial.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>tutorial</Name>
-    </None>
+    </Content>
     <Compile Include="Sky\cloud1.png">
       <Name>cloud1</Name>
       <Importer>TextureImporter</Importer>

@@ -21,6 +21,7 @@ namespace DwarfCorp
         void AddChoice(String Option, Action Callback);
         void DoneAddingChoices();
         void SetLanguage(Language Language);
+        void SetIdle(String Gfx, int FrameWidth, int FrameHeight, float Speed, List<int> Frames);
         void SetPortrait(String Gfx, int FrameWidth, int FrameHeight, float Speed, List<int> Frames);
         void ShowPortrait();
         void HidePortrait();

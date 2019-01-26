@@ -169,9 +169,16 @@ namespace DwarfCorp.GameStates
                     StateManager.PushState(new DwarfDesignerState(GameState.Game, StateManager));
                 });
 
+            /*
             MakeMenuItem(frame, "Yarn test", "", (sender, args) =>
             {
                 StateManager.PushState(new YarnState(null, "test.conv", "Start", new Yarn.MemoryVariableStore()));
+            });
+            */
+
+            MakeMenuItem(frame, "Trailer script", "", (sender, args) =>
+            {
+                StateManager.PushState(new YarnState(null, "trailer.conv", "Start", new Yarn.MemoryVariableStore()) { TestBackground = Color.Blue });
             });
 #endif
 
