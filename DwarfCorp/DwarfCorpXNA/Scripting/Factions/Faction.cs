@@ -383,12 +383,12 @@ namespace DwarfCorp
 
         public int ComputeRemainingStockpileSpace()
         {
-            return Stockpiles.Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
+            return Stockpiles.Where(pile => !((pile is Graveyard))).Sum(pile => pile.Resources.MaxResources - pile.Resources.CurrentResourceCount);
         }
 
         public int ComputeTotalStockpileSpace()
         {
-            return Stockpiles.Sum(pile => pile.Resources.MaxResources);
+            return Stockpiles.Where(pile => !((pile is Graveyard))).Sum(pile => pile.Resources.MaxResources);
         }
 
         public decimal ComputeRemainingTreasurySpace()
@@ -398,14 +398,14 @@ namespace DwarfCorp
 
         public decimal ComputeTotalTreasurySpace()
         {
-            return Stockpiles.Sum(pile => pile.Voxels.Count * Treasury.MoneyPerPile);
+            return Treasurys.Sum(pile => pile.Voxels.Count * Treasury.MoneyPerPile);
         }
 
         public bool AddResources(ResourceAmount resources)
         {
             ResourceAmount amount = new ResourceAmount(resources.ResourceType, resources.NumResources);
             var resource = ResourceLibrary.GetResourceByName(amount.ResourceType);
-            foreach (Stockpile stockpile in Stockpiles)
+            foreach (Stockpile stockpile in Stockpiles.Where(s => s.IsAllowed(resources.ResourceType)))
             {
                 int space = stockpile.Resources.MaxResources - stockpile.Resources.CurrentResourceCount;
 

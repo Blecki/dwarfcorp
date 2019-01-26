@@ -126,6 +126,11 @@ namespace DwarfCorp
                 {
                     Creature.Stats.NumItemsGathered++;
                 }
+                else
+                {
+                    Creature.Inventory.AddResource(Resource, Inventory.RestockType.RestockResource);
+                    b.Delete();
+                }
             }
 
             Creature.NoiseMaker.MakeNoise("Stockpile", Creature.AI.Position);
