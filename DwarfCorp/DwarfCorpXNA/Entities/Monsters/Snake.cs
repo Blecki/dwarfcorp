@@ -85,9 +85,9 @@ namespace DwarfCorp
                     Intelligence = 3,
                     Size = 3
                 },
-                "Carnivore",
+                "Evil",
                 manager.World.PlanService,
-                manager.World.Factions.Factions["Carnivore"],
+                manager.World.Factions.Factions["Evil"],
                 name
             )
         {
@@ -136,7 +136,6 @@ namespace DwarfCorp
             AI.Stats.FullName = "Giant Snake";
             AI.Stats.CurrentClass = SharedClass;
             AI.Stats.LevelIndex = 0;
-
             Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,

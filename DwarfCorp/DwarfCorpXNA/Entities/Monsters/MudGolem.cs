@@ -52,9 +52,10 @@ namespace DwarfCorp
         {
             return new MudGolem(
                 new CreatureStats(SharedClass, 0),
-                "Carnivore",
+                "dirt_particle",
+                "Evil",
                 Manager.World.PlanService,
-                Manager.World.Factions.Factions["Carnivore"],
+                Manager.World.Factions.Factions["Evil"],
                 Manager,
                 "Mud Golem",
                 Position);

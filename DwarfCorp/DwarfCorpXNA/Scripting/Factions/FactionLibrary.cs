@@ -134,6 +134,13 @@ namespace DwarfCorp
                 IsRaceFaction = true
             };
 
+            Factions["Evil"] = new Faction(state)
+            {
+                Name = "Evil",
+                Race = RaceLibrary.FindRace("Evil"),
+                IsRaceFaction = true
+            };
+
 
             Factions["Molemen"] = new Faction(state)
             {
@@ -197,6 +204,13 @@ namespace DwarfCorp
                 {
                     Name = "Carnivore",
                     Race = RaceLibrary.FindRace("Carnivore"),
+                    IsRaceFaction = true
+                };
+
+                Factions["Evil"] = new Faction(world)
+                {
+                    Name = "Evil",
+                    Race = RaceLibrary.FindRace("Evil"),
                     IsRaceFaction = true
                 };
             }
