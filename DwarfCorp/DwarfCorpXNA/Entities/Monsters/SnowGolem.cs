@@ -49,9 +49,9 @@ namespace DwarfCorp
         {
             return new SnowGolem(
                 new CreatureStats(SharedClass, 0),
-                "Carnivore",
+                "Evil",
                 Manager.World.PlanService,
-                Manager.World.Factions.Factions["Carnivore"],
+                Manager.World.Factions.Factions["Evil"],
                 Manager,
                 "Snow Golem",
                 Position);
@@ -108,7 +108,7 @@ namespace DwarfCorp
             Resistances[DamageType.Fire] = 5;
             Resistances[DamageType.Acid] = 5;
             Resistances[DamageType.Cold] = 5;
-            Species = "Mud Golem";
+            Species = "Snow Golem";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
@@ -177,12 +177,13 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Snowball", 0.1f, 1.0f, 50.0f, ContentPaths.Audio.demon_attack, ContentPaths.Effects.hit)
+                new Attack("Snowball", 0.1f, 2.0f, 50.0f, ContentPaths.Audio.demon_attack, ContentPaths.Effects.hit)
                 {
                     Mode = Attack.AttackMode.Ranged,
-                    LaunchSpeed = 10.0f,
+                    LaunchSpeed = 5.0f,
                     ProjectileType = "Snowball",
-                    TriggerMode = Attack.AttackTrigger.Timer
+                    TriggerMode = Attack.AttackTrigger.Animation,
+                    TriggerFrame = 1
                 }
             };
         }
