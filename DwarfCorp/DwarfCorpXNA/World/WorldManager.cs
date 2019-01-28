@@ -229,7 +229,7 @@ namespace DwarfCorp
         public WorldTime Time = new WorldTime();
 
         // Hack to smooth water reflections TODO: Put into water manager
-        private float lastWaterHeight = 8.0f;
+        private float lastWaterHeight = -1.0f;
 
         private SaveGame gameFile;
 
@@ -931,9 +931,25 @@ namespace DwarfCorp
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
 
+            if (lastWaterHeight < 0)
+            {
+                lastWaterHeight = 0;
+                foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
+                {
+                    for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
+                    {
+                        if (chunk.Data.LiquidPresent[y] > 0)
+                        {
+                            lastWaterHeight = Math.Max(y, lastWaterHeight);
+                        }
+                    }
+                }
+            }
+
             // Computes the water height.
             float wHeight = WaterRenderer.GetVisibleWaterHeight(ChunkManager, Camera, GraphicsDevice.Viewport,
                 lastWaterHeight);
+
             lastWaterHeight = wHeight;
 
             // Draw reflection/refraction images
