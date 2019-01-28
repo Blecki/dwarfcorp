@@ -1,3 +1,6 @@
-<undeadname>
-<undeadfamily>
-<undeadname> <undeadfamily>
+<undead_phoneme><undead_phoneme><undead_phoneme>
+<undead_phoneme><undead_phoneme>
+<undead_phoneme><undead_phoneme>
+<undead_phoneme><undead_phoneme>
+<undead_phoneme><undead_phoneme><undead_phoneme><undead_phoneme>
+<undead_phoneme><undead_phoneme><undead_phoneme><undead_phoneme><undead_phoneme>

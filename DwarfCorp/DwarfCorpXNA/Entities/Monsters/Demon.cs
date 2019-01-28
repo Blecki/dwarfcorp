@@ -95,7 +95,7 @@ namespace DwarfCorp
                 SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_demon_death
             });
 
-            Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
+            Stats.FullName = TextGenerator.ToTitleCase(TextGenerator.GenerateRandom("$names_demon"));
             //Stats.LastName = TextGenerator.GenerateRandom("$elffamily");
             Stats.Size = 4;
             Species = "Demon";

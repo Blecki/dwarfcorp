@@ -1,7 +1,14 @@
-<goblinname> <goblinfamily>
-<goblinname> <goblinfamily>
-<goblinname> <goblinfamily>
-<goblinname> <goblinfamily>
-<goblinname> <goblinfamily>
-<goblinname> of <goblinfamily>
-<goblinname> the <adjective>
+<goblin_phoneme>
+<goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme><goblin_phoneme>
+<goblin_phoneme> <goblin_phoneme>
+<goblin_phoneme><goblin_phoneme> <goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme> <goblin_phoneme><goblin_phoneme><goblin_phoneme>
+<goblin_phoneme><goblin_phoneme><goblin_phoneme><goblin_phoneme> <goblin_phoneme><goblin_phoneme>

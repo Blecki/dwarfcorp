@@ -50,6 +50,7 @@ namespace DwarfCorp
     public class TextGenerator
     {
         public static Dictionary<string, TextAtom> TextAtoms { get; set; }
+        public static Dictionary<string, List<List<string>>> Templates { get; set; }
         private static bool staticsInitialized = false;
 
         public static string SplitCamelCase(string str)
@@ -166,38 +167,40 @@ namespace DwarfCorp
                     text = reader.ReadToEnd();
                 }
             }
+            char[] delimiters = { '!', '\'', ',', '.', '(', ')', ';', '?', '|', ' ', '\t' };
             List<List<string>> toReturn = new List<List<string>>();
             foreach (string line in text.Split('\n', '\r'))
             {
-                List<string> current = new List<string>();
+
                 if (string.IsNullOrEmpty(line) || line == "\n" || line == "\r")
                 {
                     continue;
                 }
 
-                foreach (string word in Regex.Split(line, @"(?<=[\S\n])(?=\s)"))
+                List<string> current = new List<string>();
+                string transformed = line;
+                foreach (char c in delimiters)
                 {
-                    var match = Regex.Match(word, @"(.*)\<(.*)\>(.*)");
+                    var s = "" + c;
+                    transformed = transformed.Replace(s, "~" + c + "~");
+                }
+
+                foreach (string word in transformed.Split('~'))
+                {
+
+                    var match = Regex.Match(word, @"\<(.*?)\>");
 
                     if (match.Success)
                     {
-                        string before = match.Groups[1].Value;
-                        string middle = match.Groups[2].Value;
-                        string after = match.Groups[3].Value;
-
-                        if (!string.IsNullOrEmpty(before))
+                        foreach (var atom in Regex.Split(word, @"(\<[a-zA-Z0-9_]*\>)"))
                         {
-                            current.Add(before);
-                        }
-
-                        if (!string.IsNullOrEmpty(middle))
-                        {
-                            current.Add("$" + middle);
-                        }
-
-                        if (!string.IsNullOrEmpty(after))
-                        {
-                            current.Add(after);
+                            if (atom == "")
+                                continue;
+                            var replacement = Regex.Replace(atom, @"\<([a-zA-Z0-9_]*)\>", "$$$+");
+                            foreach (string word2 in replacement.Split(delimiters, StringSplitOptions.None))
+                            {
+                                current.Add(word2);
+                            }
                         }
                     }
                     else
@@ -230,8 +233,28 @@ namespace DwarfCorp
         public static void CreateDefaults()
         {
             TextAtoms = new Dictionary<string, TextAtom>();
+            Templates = new Dictionary<string, List<List<string>>>();
             LoadAtoms();
+            LoadTemplates();
             staticsInitialized = true;
+        }
+
+        public static void LoadTemplates()
+        {
+            string dirname = "." + Path.DirectorySeparatorChar + "Content" + Path.DirectorySeparatorChar + "Text" + Path.DirectorySeparatorChar + "Templates";
+            System.IO.DirectoryInfo directoryInfo = new DirectoryInfo(dirname);
+
+            if (!directoryInfo.Exists) throw new FileNotFoundException("Unable to find text directory : " + dirname);
+
+            foreach (System.IO.FileInfo info in directoryInfo.EnumerateFiles())
+            {
+                var match = Regex.Match(info.Name, @"(.*)\.txt");
+
+                if (match.Success)
+                {
+                    Templates["$" + match.Groups[1].Value] = GetAtoms(ProgramData.CreatePath("Text", "Templates", match.Groups[1].Value + ".txt"));
+                }
+            }
         }
 
         public static void LoadAtoms()
@@ -241,7 +264,7 @@ namespace DwarfCorp
 
             if (!directoryInfo.Exists) throw new FileNotFoundException("Unable to find text directory : " + dirname);
 
-            foreach (System.IO.FileInfo info in directoryInfo.EnumerateFiles("*.txt"))
+            foreach (System.IO.FileInfo info in directoryInfo.EnumerateFiles())
             {
                 var match = Regex.Match(info.Name, @"(.*)\.txt");
 
@@ -344,6 +367,10 @@ namespace DwarfCorp
                 else if(TextAtoms.ContainsKey(s))
                 {
                     toReturn += ToTitleCase(TextAtoms[s].GetRandom());
+                }
+                else if (Templates.ContainsKey(s))
+                {
+                    toReturn += GenerateRandom(Templates[s]);
                 }
                 else if (Regex.Match(s, @"\${(.*?)}").Success)
                 {
