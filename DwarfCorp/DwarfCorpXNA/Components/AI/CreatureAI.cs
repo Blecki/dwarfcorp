@@ -951,9 +951,9 @@ namespace DwarfCorp
 
             if (Faction == World.PlayerFaction && NumDaysNotPaid > 0)
             {
-                if (Faction.Economy.CurrentMoney >= Stats.CurrentLevel.Pay * NumDaysNotPaid)
+                if (Faction.Economy.CurrentMoney >= Stats.CurrentLevel.Pay)
                 {
-                    var task = new ActWrapperTask(new GetMoneyAct(this, Stats.CurrentLevel.Pay * NumDaysNotPaid)) { AutoRetry = true, Name = "Get paid.", Priority = Task.PriorityType.High };
+                    var task = new ActWrapperTask(new GetMoneyAct(this, Math.Min(Stats.CurrentLevel.Pay * NumDaysNotPaid, Faction.Economy.CurrentMoney))) { AutoRetry = true, Name = "Get paid.", Priority = Task.PriorityType.High };
                     if (!HasTaskWithName(task))
                     {
                         return task;
