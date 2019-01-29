@@ -1993,54 +1993,5 @@
       255
     ],
     "AleName": ""
-  },
-  {
-    "Name": "Explosive Keg",
-    "Type": "Resource",
-    "MoneyValue": 48.0,
-    "Description": "These explode when placed.",
-    "GuiLayers": [
-      {
-        "Sheet": "furniture",
-        "Tile": 44
-      }
-    ],
-    "Tags": [
-      "Explosive"
-    ],
-    "FoodContent": 0.0,
-    "CompositeLayers": [
-      {
-        "Asset": "Entities\\Furniture\\interior_furniture",
-        "FrameSize": "32, 32",
-        "Frame": "4, 5"
-      }
-    ],
-    "TrinketData": {
-      "BaseAsset": null,
-      "EncrustingAsset": null,
-      "SpriteRow": 0,
-      "SpriteColumn": 0
-    },
-    "ShortName": "Explosive Keg",
-    "PlantToGenerate": null,
-    "CanCraft": true,
-    "CraftPrerequisites": [
-      {
-        "ResourceType": "Alcohol",
-        "NumResources": 4
-      },
-      {
-        "ResourceType": "Wood",
-        "NumResources": 1
-      }
-    ],
-    "Tint": [
-      255,
-      255,
-      255,
-      255
-    ],
-    "AleName": ""
   }
 ]
