@@ -1126,7 +1126,7 @@ namespace DwarfCorp
         /// <summary> Tell the creature to kill the given body. </summary>
         public void Kill(Body entity)
         {
-            var killTask = new KillEntityTask(entity, KillEntityTask.KillType.Auto);
+            var killTask = new KillEntityTask(entity, KillEntityTask.KillType.Auto) { ReassignOnDeath = false } ;
             if (!Tasks.Contains(killTask))
                 AssignTask(killTask);
         }
