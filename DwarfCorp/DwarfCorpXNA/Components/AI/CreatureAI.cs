@@ -949,6 +949,18 @@ namespace DwarfCorp
                 }
             }
 
+            if (Faction == World.PlayerFaction && NumDaysNotPaid > 0)
+            {
+                if (Faction.Economy.CurrentMoney >= Stats.CurrentLevel.Pay * NumDaysNotPaid)
+                {
+                    var task = new ActWrapperTask(new GetMoneyAct(this, Stats.CurrentLevel.Pay * NumDaysNotPaid)) { AutoRetry = true, Name = "Get paid.", Priority = Task.PriorityType.High };
+                    if (!HasTaskWithName(task))
+                    {
+                        return task;
+                    }
+                }
+            }
+
             if (!IsPosessed && Faction == World.PlayerFaction && Creature.Inventory.Resources.Count > 0)
                 foreach (var status in Creature.RestockAll())
                     ; // RestockAll generates tasks for the dwarf.           
