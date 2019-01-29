@@ -73,6 +73,17 @@ namespace DwarfCorp
             }
         }
 
+        public bool ValidateSit()
+        {
+            Body chair = Agent.Blackboard.GetData<Body>("Chair");
+            if (chair == null || chair.IsDead || !chair.Active)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public IEnumerable<Status> WaitUntilBored()
         {
             Timer waitTimer = new Timer(SitTime, false);
@@ -142,8 +153,9 @@ namespace DwarfCorp
             Tree = new Domain(  () => !Agent.IsDead && !Agent.Creature.IsAsleep,
                                 new Sequence(new ClearBlackboardData(Creature.AI, "Chair"),
                                 new Wrap(() => Creature.FindAndReserve("Chair", "Chair")),
+                                new Domain(ValidateSit, new Sequence(
                                 new GoToTaggedObjectAct(Creature.AI) {Tag = "Chair", Teleport = true, TeleportOffset = new Vector3(0, 0.1f, 0), ObjectName = "Chair", CheckForOcclusion = false},
-                                new Wrap(WaitUntilBored),
+                                new Wrap(WaitUntilBored))),
                                 new Wrap(() => Creature.Unreserve("Chair")))) | new Wrap(() => Creature.Unreserve("Chair"));
             base.Initialize();
         }
