@@ -19,8 +19,7 @@ namespace DwarfCorp
 
         public Bed()
         {
-            Tags.Add("Bed");
-            CollisionType = CollisionType.Static;
+
         }
 
         public Bed(ComponentManager manager, Vector3 position, List<ResourceAmount> resources) :
