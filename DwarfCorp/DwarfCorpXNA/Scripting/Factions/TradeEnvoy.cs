@@ -126,13 +126,22 @@ namespace DwarfCorp
         private void OpenDiplomacyConversation(WorldManager World)
         {
             World.Paused = true;
+            var name = "";
+            if (Creatures.Count > 0)
+            {
+                name = Creatures.First().Stats.FullName;
+            }
+            else
+            {
+                name = TextGenerator.ToTitleCase(TextGenerator.GenerateRandom(Datastructures.SelectRandom(OwnerFaction.Race.NameTemplates).ToArray()));
+            }
             // Prepare conversation memory for an envoy conversation.
             var cMem = World.ConversationMemory;
             cMem.SetValue("$world", new Yarn.Value(World));
             cMem.SetValue("$envoy", new Yarn.Value(this));
             cMem.SetValue("$envoy_demands_tribute", new Yarn.Value(this.TributeDemanded != 0));
             cMem.SetValue("$envoy_tribute_demanded", new Yarn.Value((float)this.TributeDemanded.Value));
-            cMem.SetValue("$envoy_name", new Yarn.Value(TextGenerator.GenerateRandom(Datastructures.SelectRandom(OwnerFaction.Race.NameTemplates).ToArray())));
+            cMem.SetValue("$envoy_name", new Yarn.Value(name));
             cMem.SetValue("$envoy_faction", new Yarn.Value(OwnerFaction.Name));
             cMem.SetValue("$player_faction", new Yarn.Value(this.OtherFaction));
             cMem.SetValue("$offensive_trades", new Yarn.Value(0));
