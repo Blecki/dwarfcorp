@@ -397,7 +397,7 @@ namespace DwarfCorp
         {
             if (!Creature.CanReproduce) return;
             if (Creature.IsPregnant) return;
-            if (!MathFunctions.RandEvent(0.0001f)) return;
+            if (!MathFunctions.RandEvent(0.0002f)) return;
             if (CurrentTask != null) return;
             IEnumerable<CreatureAI> potentialMates =
                 Faction.Minions.Where(minion => minion != this && Mating.CanMate(minion.Creature, this.Creature));
@@ -1220,7 +1220,7 @@ namespace DwarfCorp
         {
             string desc = Stats.FullName + ", level " + Stats.CurrentLevel.Index +
                           " " +
-                          Stats.CurrentClass.Name + "\n    " +
+                          Stats.CurrentClass.Name + ", " + Stats.Gender.ToString() + "\n    " +
                           "Happiness: " + GetHappinessDescription(Status.Happiness) + ". Health: " + Status.Health.Percentage +
                           ". Hunger: " + (100 - Status.Hunger.Percentage) + ". Energy: " + Status.Energy.Percentage +
                           "\n";
@@ -1259,6 +1259,11 @@ namespace DwarfCorp
             if (Status.IsAsleep)
             {
                 desc += "\n UNCONSCIOUS";
+            }
+
+            if (Creature.IsPregnant)
+            {
+                desc += "\n Pregnant";
             }
 
             if (Creature.IsCloaked)
