@@ -363,12 +363,12 @@ namespace DwarfCorp
                     Creature.CurrentCharacterMode = CharacterMode.Swimming;
                     if (hasNextAction)
                     {
-                        transform.Translation = diff * t + currPosition;
+                        transform.Translation = diff * t + currPosition - 0.5f * Vector3.Up * Agent.Physics.BoundingBox.Extents().Y;
                         Agent.Physics.Velocity = diff;
                     }
                     else
                     {
-                        transform.Translation = currPosition;
+                        transform.Translation = currPosition - 0.5f * Vector3.Up * Agent.Physics.BoundingBox.Extents().Y;
                     }
                     break;
                 case MoveType.Jump:

@@ -37,7 +37,8 @@ namespace DwarfCorp
                     Charisma = 3,
                     Intelligence = 3,
                     Size = 0.25f,
-                    CanSleep = false
+                    CanSleep = false,
+                    CanEat = true
                 },
                 "Carnivore",
                 manager.World.PlanService,

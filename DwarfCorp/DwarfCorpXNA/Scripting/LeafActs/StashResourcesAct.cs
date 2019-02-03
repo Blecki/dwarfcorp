@@ -92,6 +92,11 @@ namespace DwarfCorp
 
                             yield return Status.Running;
                         }
+                        else
+                        {
+                            Creature.Inventory.AddResource(new ResourceAmount(resource.Resource), Inventory.RestockType.RestockResource);
+                            b.Delete();
+                        }
                     }
                 }
             }

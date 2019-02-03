@@ -127,7 +127,7 @@ namespace DwarfCorp
         public EnemySensor Sensor { get; set; } // Todo: Don't serialize this.
         /// <summary> This defines how the creature can move from voxel to voxel. </summary>
         public CreatureMovement Movement { get; set; }
-
+        
         public double UnhappinessTime = 0.0f;
         private String LastMesage = "";
         /// <summary>
@@ -397,7 +397,7 @@ namespace DwarfCorp
         {
             if (!Creature.CanReproduce) return;
             if (Creature.IsPregnant) return;
-            if (!MathFunctions.RandEvent(0.0001f)) return;
+            if (!MathFunctions.RandEvent(0.0002f)) return;
             if (CurrentTask != null) return;
             IEnumerable<CreatureAI> potentialMates =
                 Faction.Minions.Where(minion => minion != this && Mating.CanMate(minion.Creature, this.Creature));
@@ -533,8 +533,8 @@ namespace DwarfCorp
                 var resource = ResourceLibrary.GetResourceByName(body.Resource.ResourceType);
                 if (resource.Tags.Contains(Resource.ResourceTags.Edible))
                 {
-                    if ((Faction.Race.Name == "Carnivore" && resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)) ||
-                        (Faction.Race.Name == "Herbivore" && !resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)))
+                    if ((Faction.Race.EatsMeat && resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)) ||
+                        (Faction.Race.EatsPlants && !resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)))
                     {
                         Creature.GatherImmediately(body);
                         AssignTask(new ActWrapperTask(new EatFoodAct(this)));
@@ -574,8 +574,23 @@ namespace DwarfCorp
             SpeakTimer.Update(gameTime);
 
             if (AutoGatherTimer.HasTriggered)
+            {
+                if (!String.IsNullOrEmpty(Faction.Race.BecomeWhenEvil) && MathFunctions.RandEvent(0.01f))
+                {
+                    Faction.Minions.Remove(this);
+                    Faction = World.Factions.Factions[Faction.Race.BecomeWhenEvil];
+                    Faction.AddMinion(this);
+                }
+                else if (!String.IsNullOrEmpty(Faction.Race.BecomeWhenNotEvil) && MathFunctions.RandEvent(0.01f))
+                {
+                    Faction.Minions.Remove(this);
+                    Faction = World.Factions.Factions[Faction.Race.BecomeWhenNotEvil];
+                    Faction.AddMinion(this);
+                }
+
                 AutoGather();
-            OrderEnemyAttack();
+                OrderEnemyAttack();
+            }
             DeleteBadTasks();
             PreEmptTasks();
             HandleReproduction();
@@ -934,6 +949,18 @@ namespace DwarfCorp
                 }
             }
 
+            if (Faction == World.PlayerFaction && NumDaysNotPaid > 0)
+            {
+                if (Faction.Economy.CurrentMoney >= Stats.CurrentLevel.Pay)
+                {
+                    var task = new ActWrapperTask(new GetMoneyAct(this, Math.Min(Stats.CurrentLevel.Pay * NumDaysNotPaid, Faction.Economy.CurrentMoney))) { AutoRetry = true, Name = "Get paid.", Priority = Task.PriorityType.High };
+                    if (!HasTaskWithName(task))
+                    {
+                        return task;
+                    }
+                }
+            }
+
             if (!IsPosessed && Faction == World.PlayerFaction && Creature.Inventory.Resources.Count > 0)
                 foreach (var status in Creature.RestockAll())
                     ; // RestockAll generates tasks for the dwarf.           
@@ -1099,7 +1126,7 @@ namespace DwarfCorp
         /// <summary> Tell the creature to kill the given body. </summary>
         public void Kill(Body entity)
         {
-            var killTask = new KillEntityTask(entity, KillEntityTask.KillType.Auto);
+            var killTask = new KillEntityTask(entity, KillEntityTask.KillType.Auto) { ReassignOnDeath = false } ;
             if (!Tasks.Contains(killTask))
                 AssignTask(killTask);
         }
@@ -1152,10 +1179,8 @@ namespace DwarfCorp
                         Manager.World.MakeAnnouncement(
                             new Gui.Widgets.QueuedAnnouncement
                             {
-                                Text = String.Format("{0} the {1} is fighting {2} ({3})", Stats.FullName,
-                                    Stats.CurrentClass.Name,
-                                    TextGenerator.IndefiniteArticle(enemy.Stats.CurrentClass.Name),
-                                    enemy.Faction.Race.Name),
+                                Text = String.Format("{0} is fighting {1}.", Stats.FullName,
+                                    TextGenerator.IndefiniteArticle(enemy.Stats.CurrentClass.Name)),
                                 ClickAction = (gui, sender) => ZoomToMe()
                             });
 
@@ -1195,7 +1220,7 @@ namespace DwarfCorp
         {
             string desc = Stats.FullName + ", level " + Stats.CurrentLevel.Index +
                           " " +
-                          Stats.CurrentClass.Name + "\n    " +
+                          Stats.CurrentClass.Name + ", " + Stats.Gender.ToString() + "\n    " +
                           "Happiness: " + GetHappinessDescription(Status.Happiness) + ". Health: " + Status.Health.Percentage +
                           ". Hunger: " + (100 - Status.Hunger.Percentage) + ". Energy: " + Status.Energy.Percentage +
                           "\n";
@@ -1234,6 +1259,11 @@ namespace DwarfCorp
             if (Status.IsAsleep)
             {
                 desc += "\n UNCONSCIOUS";
+            }
+
+            if (Creature.IsPregnant)
+            {
+                desc += "\n Pregnant";
             }
 
             if (Creature.IsCloaked)

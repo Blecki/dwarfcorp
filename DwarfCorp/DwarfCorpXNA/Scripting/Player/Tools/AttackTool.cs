@@ -129,9 +129,14 @@ namespace DwarfCorp
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 2));
         }
 
-        public override void Render(DwarfGame game, DwarfTime time)
+        public override void Render3D(DwarfGame game, DwarfTime time)
         {
             
+        }
+
+        public override void Render2D(DwarfGame game, DwarfTime time)
+        {
+
         }
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)

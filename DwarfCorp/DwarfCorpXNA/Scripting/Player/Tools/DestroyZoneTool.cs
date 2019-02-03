@@ -140,7 +140,7 @@ namespace DwarfCorp
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 4));
         }
 
-        public override void Render(DwarfGame game, DwarfTime time)
+        public override void Render3D(DwarfGame game, DwarfTime time)
         {
             var v = Player.VoxSelector.VoxelUnderMouse;
             if (v.IsValid && !v.IsEmpty)
@@ -150,6 +150,12 @@ namespace DwarfCorp
                     Drawer3D.DrawBox(room.GetBoundingBox(), GameSettings.Default.Colors.GetColor("Positive", Color.Green), 0.2f, true);
             }
         }
+
+        public override void Render2D(DwarfGame game, DwarfTime time)
+        {
+        }
+
+
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {

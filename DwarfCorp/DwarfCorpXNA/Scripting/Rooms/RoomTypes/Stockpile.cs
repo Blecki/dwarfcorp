@@ -184,6 +184,17 @@ namespace DwarfCorp
         
         public override bool AddItem(Body component)
         {
+            if (component.Tags.Count == 0)
+            {
+                return false;
+            }
+
+            var resourceType = component.Tags[0];
+            if (!IsAllowed(resourceType))
+            {
+                return false;
+            }
+
             bool worked =  base.AddItem(component);
             HandleBoxes();
 

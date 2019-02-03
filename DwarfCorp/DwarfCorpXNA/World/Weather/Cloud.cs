@@ -184,9 +184,10 @@ namespace DwarfCorp
 
                 var test = new VoxelHandle(chunks.ChunkData,
                     GlobalVoxelCoordinate.FromVector3(RainDrops[i].Pos));
-                if (!test.IsValid || test.IsEmpty || test.LiquidLevel > 0) continue;
+                if (!test.IsValid || (test.IsEmpty && test.LiquidLevel == 0)) continue;
 
                 RainDrops[i].IsAlive = false;
+
                 HashSet<Body> hitBodies = new HashSet<Body>();
                 World.OctTree.EnumerateItems(new BoundingBox(RainDrops[i].Pos - Vector3.One, RainDrops[i].Pos + Vector3.One), hitBodies);
                 foreach (var body in hitBodies)

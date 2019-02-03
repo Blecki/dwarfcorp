@@ -88,8 +88,9 @@ namespace DwarfCorp
             Physics.Tags.Add("Goblin");            
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
-           
-            Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
+
+            Stats.FullName = TextGenerator.ToTitleCase(TextGenerator.GenerateRandom("$names_goblin"));
+
             Stats.Size = 4;
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);

@@ -72,6 +72,31 @@ namespace DwarfCorp
             return VoxelHandle.InvalidHandle;
         }
          
+        public IEnumerable<VoxelHandle> FindLandNonBlocking(ChunkData Data,
+            GlobalVoxelCoordinate Start,
+            int Radius)
+        {
+            int chunkSize = 64;
+            int k = 0;
+            foreach (var coord in VoxelHelpers.BreadthFirstSearchNonBlocking(Data, Start, Radius,
+                c =>
+                {
+                    var v = new VoxelHandle(Data, c);
+                    if (!v.IsValid || !v.IsEmpty || v.LiquidLevel > 0) return false;
+                    var below = new VoxelHandle(Data,
+                        new GlobalVoxelCoordinate(c.X, c.Y - 1, c.Z));
+                    return below.IsValid && !below.IsEmpty;
+                })) 
+            {
+                var v = new VoxelHandle(Data, coord);
+                if (v.IsValid || k % chunkSize == 0)
+                {
+                    yield return v;
+                }
+                k++;
+            }
+        }
+
         public IEnumerable<Act.Status> SwimUp(Creature creature)
         {
             Timer timer = new Timer(10.0f, false, Timer.TimerMode.Game);
@@ -92,6 +117,23 @@ namespace DwarfCorp
             yield return Act.Status.Fail;
         }
 
+        public IEnumerable<Act.Status> FindLandEnum(Creature creature)
+        {
+            foreach (var handle in FindLandNonBlocking(creature.World.ChunkManager.ChunkData,
+                creature.Physics.CurrentVoxel.Coordinate, 100))
+            {
+               if (handle.IsValid)
+                {
+                    creature.AI.Blackboard.SetData<VoxelHandle>("Land", handle);
+                    yield return Act.Status.Success;
+                    yield break;
+                }
+                yield return Act.Status.Running;
+            }
+            creature.AI.SetMessage("Could not find land.");
+            yield return Act.Status.Fail;
+        }
+
         public override Act CreateScript(Creature creature)
         {
             var above = VoxelHelpers.GetVoxelAbove(creature.Physics.CurrentVoxel);
@@ -100,21 +142,21 @@ namespace DwarfCorp
                 return new Wrap(() => SwimUp(creature)) { Name = "Swim up"};
             }
 
-            var findLand = FindLand(creature.World.ChunkManager.ChunkData,
-                creature.Physics.CurrentVoxel.Coordinate, 3);
-            if (findLand.IsValid)
-                return new GoToVoxelAct(findLand, PlanAct.PlanType.Into, creature.AI);
-            else
-            { 
-                if (creature.Faction.GetRooms().Count == 0)
-                {
-                    return new LongWanderAct(creature.AI) {PathLength = 20, Radius = 30, Is2D = true};
-                }
-                else
-                {
-                    return new GoToZoneAct(creature.AI, Datastructures.SelectRandom(creature.Faction.GetRooms()));
-                }
+            Act fallback = null;
+
+            if (creature.Faction.GetRooms().Count == 0)
+            {
+                fallback = new LongWanderAct(creature.AI) { PathLength = 20, Radius = 30, Is2D = true, Name = "Randomly wander." };
             }
+            else
+            {
+                fallback = new GoToZoneAct(creature.AI, Datastructures.SelectRandom(creature.Faction.GetRooms()));
+            }
+
+            return new Select(new Sequence(new Wrap(() => FindLandEnum(creature)) { Name = "Search for land." },
+                                           new GoToNamedVoxelAct("Land", PlanAct.PlanType.Into, creature.AI)),
+                              fallback)
+            { Name = "Find Land" };
         }
 
         public override float  ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

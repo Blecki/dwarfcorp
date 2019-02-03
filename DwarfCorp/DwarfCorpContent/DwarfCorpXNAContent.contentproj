@@ -2049,6 +2049,30 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Content Include="Text\Templates\names_demon.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>names_demon</Name>
+    </Content>
+    <Content Include="Text\violence.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>violence</Name>
+    </Content>
+    <Content Include="Text\title.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>title</Name>
+    </Content>
+    <Content Include="Text\demon_phoneme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>demon_phoneme</Name>
+    </Content>
+    <Content Include="Text\undead_phoneme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>undead_phoneme</Name>
+    </Content>
+    <Content Include="Text\goblin_phoneme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>goblin_phoneme</Name>
+    </Content>
     <None Include="Entities\Dwarf\Layers\dwarf-palettes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>dwarf-palettes</Name>
@@ -3374,10 +3398,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>intejection</Name>
     </None>
-    <None Include="Text\goblinname.txt">
+    <Content Include="Text\goblinname.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>goblinname</Name>
-    </None>
+    </Content>
     <None Include="Text\goblinfamily.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>goblinfamily</Name>

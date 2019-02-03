@@ -152,48 +152,73 @@ namespace DwarfCorp
 
         }
 
-        public override void Render(DwarfGame game, DwarfTime time)
+        private void DrawVoxels(float alpha, IEnumerable<VoxelHandle> selected)
         {
-            if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+            Effect.VertexColorTint = new Color(0.5f, 1.0f, 0.5f, alpha);
+            Vector3 offset = Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
+
+            foreach (var voxel in selected)
             {
-                var state = GameState.Game.GraphicsDevice.DepthStencilState;
-                GameState.Game.GraphicsDevice.DepthStencilState = DepthStencilState.DepthRead;
-                Effect = Player.World.DefaultShader;
-
-                float t = (float)time.TotalGameTime.TotalSeconds;
-                float st = (float)Math.Sin(t * 4) * 0.5f + 0.5f;
-                Effect.MainTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
-                Effect.LightRamp = Color.White;
-                Effect.VertexColorTint = new Color(0.1f, 0.9f, 1.0f, 0.25f * st + 0.4f);
-                Effect.SetTexturedTechnique();
-
-                if (Selected == null)
+                Effect.World = Matrix.CreateTranslation(voxel.WorldPosition + offset);
+                foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
                 {
-                    Selected = new List<VoxelHandle>();
+                    pass.Apply();
+                    VoxelLibrary.GetPrimitive(CurrentVoxelType).Render(GameState.Game.GraphicsDevice);
                 }
+            }
+        }
 
-                if (CurrentVoxelType == 0)
+        private void DrawVoxels(DwarfTime time, IEnumerable<VoxelHandle> selected)
+        {
+            GameState.Game.GraphicsDevice.DepthStencilState = DepthStencilState.None;
+            Effect = Player.World.DefaultShader;
+
+            float t = (float)time.TotalGameTime.TotalSeconds;
+            float st = (float)Math.Sin(t * 4) * 0.5f + 0.5f;
+            float alpha = 0.25f * st + 0.6f;
+
+            Effect.MainTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
+            Effect.LightRamp = Color.White;
+            Effect.SetTexturedTechnique();
+            DrawVoxels(MathFunctions.Clamp(alpha * 0.5f, 0.25f, 1.0f), selected);
+            GameState.Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            DrawVoxels(MathFunctions.Clamp(alpha, 0.25f, 1.0f), selected);
+            Effect.LightRamp = Color.White;
+            Effect.VertexColorTint = Color.White;
+            Effect.World = Matrix.Identity;
+        }
+
+        public override void Render2D(DwarfGame game, DwarfTime time)
+        {
+
+        }
+
+
+        public override void Render3D(DwarfGame game, DwarfTime time)
+        {
+            var mouse = Mouse.GetState();
+
+            if (Selected == null)
+            {
+                Selected = new List<VoxelHandle>();
+            }
+
+            if (CurrentVoxelType == 0)
+            {
+                Selected.Clear();
+            }
+
+            if (mouse.LeftButton == ButtonState.Pressed)
+            {
+                DrawVoxels(time, Selected);
+            }
+            else if (mouse.RightButton != ButtonState.Pressed)
+            {
+                var underMouse = Player.VoxSelector.VoxelUnderMouse;
+                if (underMouse.IsValid)
                 {
-                    Selected.Clear();
+                    DrawVoxels(time, new List<VoxelHandle>() { Player.VoxSelector.VoxelUnderMouse });
                 }
-
-                Effect.VertexColorTint = new Color(0.0f, 1.0f, 0.0f, 0.25f * st + 0.4f);
-                Vector3 offset = Player.World.Master.VoxSelector.SelectionType == VoxelSelectionType.SelectEmpty ? Vector3.Zero : Vector3.Up * 0.15f;
-
-                foreach (var voxel in Selected)
-                {
-                    Effect.World = Matrix.CreateTranslation(voxel.WorldPosition + offset);
-                    foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
-                    {
-                        pass.Apply();
-                        VoxelLibrary.GetPrimitive(CurrentVoxelType).Render(GameState.Game.GraphicsDevice);
-                    }
-                }
-
-                Effect.LightRamp = Color.White;
-                Effect.VertexColorTint = Color.White;
-                Effect.World = Matrix.Identity;
-                GameState.Game.GraphicsDevice.DepthStencilState = state;
             }
         }
 

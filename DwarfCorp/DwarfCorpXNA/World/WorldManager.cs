@@ -229,7 +229,7 @@ namespace DwarfCorp
         public WorldTime Time = new WorldTime();
 
         // Hack to smooth water reflections TODO: Put into water manager
-        private float lastWaterHeight = 8.0f;
+        private float lastWaterHeight = -1.0f;
 
         private SaveGame gameFile;
 
@@ -931,9 +931,25 @@ namespace DwarfCorp
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
 
+            if (lastWaterHeight < 0)
+            {
+                lastWaterHeight = 0;
+                foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
+                {
+                    for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
+                    {
+                        if (chunk.Data.LiquidPresent[y] > 0)
+                        {
+                            lastWaterHeight = Math.Max(y, lastWaterHeight);
+                        }
+                    }
+                }
+            }
+
             // Computes the water height.
             float wHeight = WaterRenderer.GetVisibleWaterHeight(ChunkManager, Camera, GraphicsDevice.Viewport,
                 lastWaterHeight);
+
             lastWaterHeight = wHeight;
 
             // Draw reflection/refraction images
@@ -1011,6 +1027,7 @@ namespace DwarfCorp
             //Blue ghost effect above the current slice.
             DefaultShader.GhostClippingEnabled = true;
             Draw3DThings(gameTime, DefaultShader, Camera.ViewMatrix);
+            
 
             // Now we want to draw the water on top of everything else
             DefaultShader.ClippingEnabled = true;
@@ -1047,6 +1064,8 @@ namespace DwarfCorp
 
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer, PlayerFaction.Designations, this);
+
+            Master.Render3D(Game, gameTime);
 
             DefaultShader.EnableShadows = false;
 
@@ -1149,7 +1168,7 @@ namespace DwarfCorp
             }
             
 
-            Master.Render(Game, gameTime);
+            Master.Render2D(Game, gameTime);
 
             DwarfGame.SpriteBatch.GraphicsDevice.ScissorRectangle =
                 DwarfGame.SpriteBatch.GraphicsDevice.Viewport.Bounds;

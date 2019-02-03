@@ -157,6 +157,17 @@ namespace DwarfCorp.Gui
             RootItem.AddChild(Dialog);
         }
 
+        public void ShowModalMessage(string message)
+        {
+            ShowModalPopup(new Gui.Widgets.Confirm()
+            {
+                Text = message,
+                OkayText = "OK",
+                CancelText = null
+            });
+            
+        }
+
         /// <summary>
         /// Show a widget as a popup. Replaces any existing popup widget already displayed.
         /// </summary>

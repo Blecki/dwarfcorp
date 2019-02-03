@@ -49,9 +49,9 @@ namespace DwarfCorp
         {
             return new SnowGolem(
                 new CreatureStats(SharedClass, 0),
-                "Carnivore",
+                "Evil",
                 Manager.World.PlanService,
-                Manager.World.Factions.Factions["Carnivore"],
+                Manager.World.Factions.Factions["Evil"],
                 Manager,
                 "Snow Golem",
                 Position);
@@ -101,7 +101,7 @@ namespace DwarfCorp
             Resistances[DamageType.Fire] = 5;
             Resistances[DamageType.Acid] = 5;
             Resistances[DamageType.Cold] = 5;
-            Species = "Mud Golem";
+            Species = "Snow Golem";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)

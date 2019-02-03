@@ -85,15 +85,28 @@ namespace DwarfCorp
                 return null;
 
             var otherCreature = EntityToKill.GetRoot().GetComponent<Creature>();
-            if (otherCreature == null || (otherCreature != null && otherCreature.IsDead) || otherCreature.AI == null)
-                return null;
 
-            if (otherCreature != null && !creature.AI.FightOrFlight(otherCreature.AI))
+            if (otherCreature != null && (!otherCreature.IsDead && otherCreature.AI != null))
             {
-                Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
-                ReassignOnDeath = false;
-                IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
-                return new FleeEntityAct(creature.AI) { Entity = EntityToKill, PathLength = 20 };
+
+                var otherKill = new KillEntityTask(creature.Physics, KillType.Auto)
+                {
+                    AutoRetry = true,
+                    ReassignOnDeath = false
+                };
+
+                if (!otherCreature.AI.HasTaskWithName(otherKill))
+                {
+                    otherCreature.AI.AssignTask(otherKill);
+                }
+
+                if (otherCreature != null && !creature.AI.FightOrFlight(otherCreature.AI))
+                {
+                    Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
+                    ReassignOnDeath = false;
+                    IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
+                    return new FleeEntityAct(creature.AI) { Entity = EntityToKill, PathLength = 20 };
+                }
             }
             float radius = this.Mode == KillType.Auto ? 20.0f : 0.0f;
             return new KillEntityAct(EntityToKill, creature.AI) { RadiusDomain = radius };

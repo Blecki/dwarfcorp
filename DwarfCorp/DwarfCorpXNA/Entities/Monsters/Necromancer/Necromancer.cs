@@ -87,7 +87,7 @@ namespace DwarfCorp
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
             
-            Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
+            Stats.FullName = TextGenerator.GenerateRandom("$title") + " " + TextGenerator.ToTitleCase(TextGenerator.GenerateRandom("$names_undead"));
             Stats.Size = 4;
             Stats.CanSleep = false;
             Stats.CanEat = false;

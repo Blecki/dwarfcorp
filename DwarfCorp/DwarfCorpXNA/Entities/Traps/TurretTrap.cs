@@ -111,6 +111,11 @@ namespace DwarfCorp
                     closestCreature = enemy;
                 }
             }
+
+            if (closestCreature != null)
+            {
+                closestCreature.Kill(this.GetRoot() as Body);
+            }
         }
 
         public void SetTurretAngle(float radians)

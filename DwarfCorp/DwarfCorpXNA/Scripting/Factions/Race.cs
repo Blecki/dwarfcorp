@@ -95,6 +95,11 @@ namespace DwarfCorp
         public string Posessive = "";
         public int NumFurniture = 0;
 
+        public bool EatsPlants { get; set; }
+        public bool EatsMeat { get; set; }
+        public string BecomeWhenEvil { get; set; }
+        public string BecomeWhenNotEvil { get; set; }
+
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {

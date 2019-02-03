@@ -391,10 +391,14 @@ namespace DwarfCorp.Gui.Widgets
                         var envoyOut = Envoy.ComputeValue(EnvoyColumns.SelectedResources) + EnvoyColumns.TradeMoney;
                         var tradeTarget = 1.0m;
 
-                        if (PlayerColumns.SelectedResources.Count == 0 && EnvoyColumns.SelectedResources.Count == 0
+                        if (Player.AvailableSpace - PlayerColumns.SelectedResources.Count < EnvoyColumns.SelectedResources.Count)
+                        {
+                            Root.ShowModalMessage("We do not have enough stockpile space for that.");
+                        }
+                        else if (PlayerColumns.SelectedResources.Count == 0 && EnvoyColumns.SelectedResources.Count == 0
                             && EnvoyColumns.TradeMoney == 0 && PlayerColumns.TradeMoney == 0)
                         {
-                            Root.ShowTooltip(Root.MousePosition, "You've selected nothing to trade.");
+                            Root.ShowModalMessage( "You've selected nothing to trade.");
                         }
                         else if (net >= tradeTarget)
                         {

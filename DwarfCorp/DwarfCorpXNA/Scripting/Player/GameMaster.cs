@@ -362,12 +362,9 @@ namespace DwarfCorp
             World.Tutorial("pay");
         }
 
-
-        public void Render(DwarfGame game, DwarfTime time)
+        public void Render2D(DwarfGame game, DwarfTime time)
         {
-            CurrentTool.Render(game, time);
-            VoxSelector.Render();
-
+            CurrentTool.Render2D(game, time);
             foreach (var m in Faction.Minions)
             {
                 if (m.Creature.SelectionCircle != null)
@@ -394,6 +391,12 @@ namespace DwarfCorp
             DwarfGame.SpriteBatch.Begin();
             BodySelector.Render(DwarfGame.SpriteBatch);
             DwarfGame.SpriteBatch.End();
+        }
+
+        public void Render3D(DwarfGame game, DwarfTime time)
+        {
+            CurrentTool.Render3D(game, time);
+            VoxSelector.Render();
 
             foreach (var obj in SelectedObjects)
                 if (obj.IsVisible && !obj.IsDead)

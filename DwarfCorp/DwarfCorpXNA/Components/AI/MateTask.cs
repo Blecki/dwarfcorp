@@ -85,7 +85,9 @@ namespace DwarfCorp
             }
 
             if (Mating.CanMate(me, Them.Creature))
+            {
                 Mating.Mate(me, Them.Creature, me.World.Time);
+            }
             else
             {
                 AutoRetry = false;

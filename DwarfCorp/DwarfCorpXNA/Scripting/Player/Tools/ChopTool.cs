@@ -98,7 +98,7 @@ namespace DwarfCorp
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 5));
         }
 
-        public override void Render(DwarfGame game, DwarfTime time)
+        public override void Render3D(DwarfGame game, DwarfTime time)
         {
             NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 5, 0);
             foreach (Body tree in Player.BodySelector.CurrentBodies)
@@ -110,6 +110,11 @@ namespace DwarfCorp
                 }
             }
         }
+
+        public override void Render2D(DwarfGame game, DwarfTime time)
+        {
+        }
+
 
         public override void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {

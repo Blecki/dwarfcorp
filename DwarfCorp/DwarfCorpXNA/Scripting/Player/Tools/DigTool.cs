@@ -151,9 +151,14 @@ namespace DwarfCorp
             Player.VoxSelector.SelectionType = VoxelSelectionType.SelectFilled;
         }
 
-        public override void Render(DwarfGame game, DwarfTime time)
+        public override void Render2D(DwarfGame game, DwarfTime time)
         {
         }
+
+        public override void Render3D(DwarfGame game, DwarfTime time)
+        {
+        }
+
 
         public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
         {

@@ -148,11 +148,17 @@ namespace DwarfCorp
                 Player.World.SetMouse(new Gui.MousePointer("mouse", 1, 7));
         }
 
-        public override void Render(DwarfGame game, DwarfTime time)
+        public override void Render3D(DwarfGame game, DwarfTime time)
         {
             foreach (var animal in Player.BodySelector.CurrentBodies)
                 if (animal.Tags.Contains("DomesticAnimal"))
                     Drawer3D.DrawBox(animal.BoundingBox, Color.LightGreen, 0.1f, false);
         }
+
+        public override void Render2D(DwarfGame game, DwarfTime time)
+        {
+        }
+
+
     }
 }
