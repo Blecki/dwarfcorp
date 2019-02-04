@@ -806,7 +806,7 @@ namespace DwarfCorp
             }
         }
 
-        private int lastXPAnnouncement = 0;
+        private int lastXPAnnouncement = -1;
         /// <summary> updates the creature's experience points. </summary>
         public void UpdateXP()
         {
@@ -817,6 +817,7 @@ namespace DwarfCorp
 
                 IndicatorManager.DrawIndicator(sign + xp + " XP",
                     Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, xp > 0 ? GameSettings.Default.Colors.GetColor("Positive", Color.Green) : GameSettings.Default.Colors.GetColor("Negative", Color.Red));
+
                 if (Stats.IsOverQualified && lastXPAnnouncement != Stats.LevelIndex && Faction == Manager.World.PlayerFaction)
                 {
                     lastXPAnnouncement = Stats.LevelIndex;
@@ -836,6 +837,7 @@ namespace DwarfCorp
                     Manager.World.Tutorial("level up");
                 }
             }
+
             XPEvents.Clear();
         }
 
