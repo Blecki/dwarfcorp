@@ -132,36 +132,6 @@ namespace DwarfCorp.Gui.Widgets
                                 TextVerticalAlign = VerticalAlign.Center,
                                 OnClick = (_sender, args) =>
                                 {
-                                    var widget = Root.ConstructWidget(new Widget()
-                                    {
-                                        Border = "border-fancy",
-                                        Font = "font10",
-                                        Rect = Root.RenderData.VirtualScreen.Interior(200, 150, 200, 150)
-                                    });
-
-                                    widget.AddChild(new Widget()
-                                    {
-                                        MinimumSize = new Point(120, 32),
-                                        Text = "Allowed Resources",
-                                        Font = "font16",
-                                        AutoLayout = AutoLayout.DockTop,
-                                    });
-
-                                    var interiorWidget = widget.AddChild(new Widget()
-                                    {
-                                        Rect = Root.RenderData.VirtualScreen.Interior(200, 150, 200, 180),
-                                        AutoLayout = AutoLayout.DockTop
-                                    });
-
-                                    var stockpile = lambdaCopy as Stockpile;
-
-                                    var grid = interiorWidget.AddChild(new GridPanel()
-                                    {
-                                        AutoLayout = AutoLayout.DockFill,
-                                        ItemSize = new Point(200, 32),
-                                        ItemSpacing = new Point(2, 2)
-                                    }) as GridPanel;
-
                                     List<Resource.ResourceTags> blacklistableResources = new List<Resource.ResourceTags>()
                                     {
                                         Resource.ResourceTags.Alcohol,
@@ -185,6 +155,39 @@ namespace DwarfCorp.Gui.Widgets
                                         Resource.ResourceTags.Rail,
                                         Resource.ResourceTags.Seed
                                     }.OrderBy(t => t.ToString()).ToList();
+                                    int sqr = (int)Math.Sqrt(blacklistableResources.Count);
+                                    int minWidth = Math.Min(sqr * 200 + 64, Root.RenderData.VirtualScreen.Width);
+                                    int minHeight = Math.Min(sqr * 32 + 232, Root.RenderData.VirtualScreen.Height);
+                                    var widget = Root.ConstructWidget(new Widget()
+                                    {
+                                        Border = "border-fancy",
+                                        Font = "font10",
+                                        Rect = new Rectangle(Root.RenderData.VirtualScreen.X + (Root.RenderData.VirtualScreen.Width - minWidth)/2, Root.RenderData.VirtualScreen.Y + (Root.RenderData.VirtualScreen.Height - minHeight)/2, minWidth, minHeight)
+                                    });
+
+                                    widget.AddChild(new Widget()
+                                    {
+                                        MinimumSize = new Point(120, 32),
+                                        Text = "Allowed Resources",
+                                        Font = "font16",
+                                        AutoLayout = AutoLayout.DockTop,
+                                    });
+
+                                    var interiorWidget = widget.AddChild(new Widget()
+                                    {
+                                        Rect = new Rectangle(Root.RenderData.VirtualScreen.X + (Root.RenderData.VirtualScreen.Width - minWidth), Root.RenderData.VirtualScreen.Y + (Root.RenderData.VirtualScreen.Height - minHeight), minWidth, minHeight),
+                                        AutoLayout = AutoLayout.DockTop
+                                    });
+
+                                    var stockpile = lambdaCopy as Stockpile;
+
+                                    var grid = interiorWidget.AddChild(new GridPanel()
+                                    {
+                                        AutoLayout = AutoLayout.DockFill,
+                                        ItemSize = new Point(200, 32),
+                                        ItemSpacing = new Point(2, 2)
+                                    }) as GridPanel;
+
                                     List<CheckBox> boxes = new List<CheckBox>();
                                     foreach (Resource.ResourceTags tagType in blacklistableResources)
                                     {

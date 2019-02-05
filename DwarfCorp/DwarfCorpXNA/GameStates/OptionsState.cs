@@ -107,6 +107,7 @@ namespace DwarfCorp.GameStates
 
             // Create and initialize GUI framework.
             GuiRoot = new Gui.Root(DwarfGame.GuiSkin);
+            GuiRoot.RenderData.CalculateScreenSize();
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             var screen = GuiRoot.RenderData.VirtualScreen;
             float scale = 0.95f;
@@ -973,6 +974,7 @@ namespace DwarfCorp.GameStates
         {
             var prevSettings = GameSettings.Default.Clone();
             ApplySettings(GetNewSettings());
+            OnEnter();
             var popup = new SettingsApplier()
             {
                 PreviousSettings = prevSettings,
@@ -992,6 +994,7 @@ namespace DwarfCorp.GameStates
             var preFullscreen = GameSettings.Default.Fullscreen;
             var preGuiScale = GameSettings.Default.GuiScale;
             var preVsync = GameSettings.Default.VSync;
+            var prevAutoScale = GameSettings.Default.AutoSave;
 
             GameSettings.Default = settings.Clone();
 
@@ -1054,7 +1057,8 @@ namespace DwarfCorp.GameStates
 
             if (preResolutionX != GameSettings.Default.ResolutionX ||
                 preResolutionY != GameSettings.Default.ResolutionY ||
-                preGuiScale != GameSettings.Default.GuiScale)
+                preGuiScale != GameSettings.Default.GuiScale ||
+                prevAutoScale != GameSettings.Default.GuiAutoScale)
             {
                 GuiRoot.RenderData.CalculateScreenSize();
                 RebuildGui();
