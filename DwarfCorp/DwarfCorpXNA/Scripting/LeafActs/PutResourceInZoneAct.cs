@@ -128,7 +128,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    Creature.Inventory.AddResource(Resource, Inventory.RestockType.RestockResource);
+                    Creature.Inventory.AddResource(new ResourceAmount(Resource.ResourceType, 1), Inventory.RestockType.RestockResource);
                     b.Delete();
                 }
             }
