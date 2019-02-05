@@ -70,7 +70,7 @@ namespace DwarfCorp
             }
             if (Zone != null)
             {
-                var resourcesToStock = Creature.Inventory.Resources.Where(a => a.MarkedForRestock).ToList();
+                var resourcesToStock = Creature.Inventory.Resources.Where(a => a.MarkedForRestock && Zone.IsAllowed(a.Resource)).ToList();
                 foreach (var resource in resourcesToStock)
                 {
                     List<Body> createdItems = Creature.Inventory.RemoveAndCreate(new ResourceAmount(resource.Resource), Inventory.RestockType.RestockResource);
@@ -94,7 +94,7 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            Creature.Inventory.AddResource(new ResourceAmount(resource.Resource), Inventory.RestockType.RestockResource);
+                            Creature.Inventory.AddResource(new ResourceAmount(resource.Resource, 1), Inventory.RestockType.RestockResource);
                             b.Delete();
                         }
                     }
