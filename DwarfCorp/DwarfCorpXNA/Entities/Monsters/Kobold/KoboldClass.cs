@@ -1,4 +1,4 @@
-// SwordGoblinClass.cs
+﻿// Goblin.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -34,11 +34,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
-    public class SwordGoblinClass : EmployeeClass
+    public class KoboldClass : EmployeeClass
     {
         void InitializeLevels()
         {
@@ -47,7 +50,7 @@ namespace DwarfCorp
                 new Level
                 {
                     Index = 0,
-                    Name = "Gobbo",
+                    Name = "Sneaker",
                     Pay = 25,
                     XP = 0,
                     BaseStats = new CreatureStats.StatNums()
@@ -73,7 +76,7 @@ namespace DwarfCorp
                 new Level
                 {
                     Index = 2,
-                    Name = "Slasher",
+                    Name = "Stealer",
                     Pay = 100,
                     XP = 250,
                     BaseStats = new CreatureStats.StatNums()
@@ -86,7 +89,7 @@ namespace DwarfCorp
                 new Level
                 {
                     Index = 3,
-                    Name = "Piercer",
+                    Name = "Thief",
                     Pay = 200,
                     XP = 500,
                     BaseStats = new CreatureStats.StatNums()
@@ -97,115 +100,12 @@ namespace DwarfCorp
                         Dexterity = 6
                     }
                 },
-                new Level
-                {
-                    Index = 4,
-                    Name = "Smasher",
-                    Pay = 500,
-                    XP = 1000,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 8,
-                        Constitution = 7,
-                        Charisma = 6,
-                        Dexterity = 6
-                    }
-                },
-                new Level
-                {
-                    Index = 5,
-                    Name = "Master Smasher",
-                    Pay = 1000,
-                    XP = 5000,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 9,
-                        Constitution = 8,
-                        Charisma = 7,
-                        Dexterity = 7
-                    }
-                },
-                new Level
-                {
-                    Index = 6,
-                    Name = "Super Smasher",
-                    Pay = 5000,
-                    XP = 10000,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 10,
-                        Constitution = 8,
-                        Charisma = 8,
-                        Dexterity = 8
-                    }
-                },
-                new Level
-                {
-                    Index = 7,
-                    Name = "Stealer",
-                    Pay = 10000,
-                    XP = 20000,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 10,
-                        Constitution = 9,
-                        Charisma = 9,
-                        Dexterity = 9,
-                        Intelligence = 6
-                    }
-
-                },
-                new Level
-                {
-                    Index = 8,
-                    Name = "Master Stealer",
-                    Pay = 50000,
-                    XP = 1000000,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 10,
-                        Constitution = 10,
-                        Charisma = 10,
-                        Dexterity = 10,
-                        Intelligence = 6
-                    }
-                },
-                new Level
-                {
-                    Index = 9,
-                    Name = "Warlord",
-                    Pay = 100000,
-                    XP = 2000000,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 10,
-                        Constitution = 10,
-                        Charisma = 10,
-                        Dexterity = 10,
-                        Intelligence = 10
-                    }
-                },
-                new Level
-                {
-                    Index = 10,
-                    Name = "King of Goblins",
-                    Pay = 100000,
-                    XP = 5000000,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 10,
-                        Constitution = 10,
-                        Charisma = 10,
-                        Dexterity = 10,
-                        Intelligence = 10
-                    }
-                }
             };
         }
 
         void InitializeAnimations()
         {
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Goblin.Sprites.goblin_animations, "Goblin");
+            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Kobold.kobold_animations, "Kobold");
         }
 
         void InitializeActions()
@@ -221,7 +121,7 @@ namespace DwarfCorp
         {
             Attacks = new List<Attack>()
             {
-                new Attack("Sword", 2.0f, 0.5f, 2.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_1, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_2, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_3), ContentPaths.Effects.slash)
+                new Attack("Claws", 1.0f, 1.0f, 1.5f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_1, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_2, ContentPaths.Audio.Oscar.sfx_ic_goblin_attack_3), ContentPaths.Effects.claw)
                 {
                     Knockback = 2.5f,
                     TriggerMode = Attack.AttackTrigger.Animation,
@@ -232,7 +132,7 @@ namespace DwarfCorp
 
         protected override sealed void InitializeStatics()
         {
-            Name = "SwordGoblin";
+            Name = "Kobold";
             InitializeLevels();
             InitializeAnimations();
             InitializeWeapons();
@@ -240,14 +140,9 @@ namespace DwarfCorp
             base.InitializeStatics();
         }
 
-        public SwordGoblinClass()
+        public KoboldClass()
         {
-
-        }
-
-        public SwordGoblinClass(bool initialize)
-        {
-            if (initialize && !staticsInitiailized)
+            if (!staticsInitiailized)
             {
                 InitializeStatics();
             }

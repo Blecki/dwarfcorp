@@ -124,7 +124,7 @@ namespace DwarfCorp
         /// <summary> If true, the AI is waiting on a plan from the PlanSubscriber </summary>
         public bool WaitingOnResponse { get; set; }
         /// <summary>The AI uses this sensor to search for nearby enemies </summary>
-        public EnemySensor Sensor { get; set; }
+        public EnemySensor Sensor { get; set; } // Todo: Don't serialize this.
         /// <summary> This defines how the creature can move from voxel to voxel. </summary>
         public CreatureMovement Movement { get; set; }
         
@@ -806,7 +806,7 @@ namespace DwarfCorp
             }
         }
 
-        private int lastXPAnnouncement = 0;
+        private int lastXPAnnouncement = -1;
         /// <summary> updates the creature's experience points. </summary>
         public void UpdateXP()
         {
@@ -817,6 +817,7 @@ namespace DwarfCorp
 
                 IndicatorManager.DrawIndicator(sign + xp + " XP",
                     Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 0.5f, xp > 0 ? GameSettings.Default.Colors.GetColor("Positive", Color.Green) : GameSettings.Default.Colors.GetColor("Negative", Color.Red));
+
                 if (Stats.IsOverQualified && lastXPAnnouncement != Stats.LevelIndex && Faction == Manager.World.PlayerFaction)
                 {
                     lastXPAnnouncement = Stats.LevelIndex;
@@ -836,6 +837,7 @@ namespace DwarfCorp
                     Manager.World.Tutorial("level up");
                 }
             }
+
             XPEvents.Clear();
         }
 

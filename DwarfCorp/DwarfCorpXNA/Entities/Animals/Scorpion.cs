@@ -16,17 +16,15 @@ namespace DwarfCorp
         [EntityFactory("Scorpion")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            // Todo: Why are we passing in the graphic here?
-            return new Scorpion(ContentPaths.Entities.Animals.Scorpion.scorption_animation, Position, Manager, "Scorpion");
+            return new Scorpion(Position, Manager, "Scorpion");
         }
 
-        public string SpriteAsset { get; set; }
         public Scorpion()
         {
 
         }
 
-        public Scorpion(string sprites, Vector3 position, ComponentManager manager, string name) :
+        public Scorpion(Vector3 position, ComponentManager manager, string name) :
             base
             (
                 manager,
@@ -72,7 +70,6 @@ namespace DwarfCorp
             // When true, causes the bird to face the direction its moving in
             Physics.Orientation = Physics.OrientMode.RotateY;
 
-            SpriteAsset = sprites;
             CreateCosmeticChildren(Manager);
 
             // Used to sense hostile creatures
@@ -87,13 +84,6 @@ namespace DwarfCorp
 
             // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
-
-            // The bird will emit a shower of blood when it dies
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 1
-            });
 
             // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));
@@ -119,11 +109,20 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             Stats.CurrentClass = SharedClass;
-            CreateSprite(SpriteAsset, manager, 0.35f);
+
+            CreateSprite(ContentPaths.Entities.Animals.Scorpion.scorption_animation, manager, 0.35f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
+
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_scorpion_hurt_1 };
             NoiseMaker.Noises["Chirp"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_scorpion_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_scorpion_neutral_2 };
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 1
+            }).SetFlag(Flag.ShouldSerialize, false);
+
             base.CreateCosmeticChildren(manager);
         }
 

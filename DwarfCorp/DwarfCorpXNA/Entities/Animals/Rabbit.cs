@@ -25,7 +25,7 @@ namespace DwarfCorp
             return new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit1_animation, Position, Manager, "White Rabbit");
         }
 
-        public string SpriteAsset { get; set; }
+        public string SpriteAsset;
 
         public Rabbit()
         {
@@ -80,17 +80,10 @@ namespace DwarfCorp
             Physics.AddChild(new PacingCreatureAI(Manager, "Rabbit AI", Sensors));
 
             // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack> { new Attack("Bite", 0.01f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_rabbit_attack), ContentPaths.Effects.bite) {DiseaseToSpread = "Rabies"} };
+            Attacks = new List<Attack> { new Attack("Bite", 0.01f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_rabbit_attack), ContentPaths.Effects.bite) { DiseaseToSpread = "Rabies" } };
 
             // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
-
-            // The bird will emit a shower of blood when it dies
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 1
-            });
 
             // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));
@@ -106,19 +99,15 @@ namespace DwarfCorp
             Species = "Rabbit";
             CanReproduce = true;
             BabyType = Name;
-
-            var deathParticleTrigger = Parent.EnumerateAll().OfType<ParticleTrigger>().FirstOrDefault();
-            if (deathParticleTrigger != null)
-            {
-                deathParticleTrigger.SoundToPlay = NoiseMaker.Noises["Hurt"][0];
-            }
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             Stats.CurrentClass = SharedClass;
+
             CreateSprite(SpriteAsset, manager, 0.35f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
+
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_rabbit_hurt_1, ContentPaths.Audio.Oscar.sfx_oc_rabbit_hurt_2 };
             NoiseMaker.Noises["Chirp"] = new List<string>()
@@ -126,6 +115,14 @@ namespace DwarfCorp
                 ContentPaths.Audio.Oscar.sfx_oc_rabbit_neutral_1,
                 ContentPaths.Audio.Oscar.sfx_oc_rabbit_neutral_2
             };
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 1,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_oc_rabbit_hurt_1
+            }).SetFlag(Flag.ShouldSerialize, false);
+
             base.CreateCosmeticChildren(manager);
         }
 

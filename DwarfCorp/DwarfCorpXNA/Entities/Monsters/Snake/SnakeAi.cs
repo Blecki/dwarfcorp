@@ -1,4 +1,4 @@
-﻿// ShipmentOrder.cs
+﻿// SnakeAi.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -34,32 +34,36 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using DwarfCorp.GameStates;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// Specifies that a number of goods should be bought/sold from corporate HQ.
-    /// </summary>
-    public class ShipmentOrder
+    public class SnakeAI : CreatureAI
     {
-        public List<ResourceAmount> BuyOrder { get; set; }
-        public List<ResourceAmount> SellOrder { get; set; }
-        public float OrderTotal { get; set; }
-        public Timer OrderTimer { get; set; }
-        public Room Destination { get; set; }
-        public bool HasSentResources { get; set; }
-
-        public ShipmentOrder(float time, Room destination)
+        public SnakeAI()
         {
-            BuyOrder = new List<ResourceAmount>();
-            SellOrder = new List<ResourceAmount>();
-            OrderTotal = 0.0f;
-            OrderTimer = new Timer(time, true);
-            Destination = destination;
-            HasSentResources = false;
+            
+        }
+
+        public SnakeAI(ComponentManager Manager, string name, EnemySensor sensor) :
+            base(Manager, name, sensor)
+        {
+            
+        }
+
+        public override Task ActOnIdle()
+        {
+            return new ActWrapperTask(new Wrap(Gogogo));
+        }
+
+        public IEnumerable<Act.Status> Gogogo()
+        {
+            while (true)
+            {
+               Creature.Physics.ApplyForce(0.1f *(Manager.World.CursorLightPos - this.Creature.AI.Position) - 0.1f * Creature.Physics.Velocity, 1);
+               yield return Act.Status.Running;
+            }
         }
     }
-
 }

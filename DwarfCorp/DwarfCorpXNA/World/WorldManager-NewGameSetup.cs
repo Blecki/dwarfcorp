@@ -84,7 +84,7 @@ namespace DwarfCorp
                 ComponentManager.RootComponent.AddChild(Balloon.CreateBalloon(
                     portBox.Center() + new Vector3(0, 100, 0),
                     portBox.Center() + new Vector3(0, 10, 0), ComponentManager,
-                    new ShipmentOrder(0, null), Master.Faction));
+                    Master.Faction));
                 CreateInitialDwarves(port.GetBoundingBox().Center() + new Vector3(0, 10.0f, 0));
             }
 

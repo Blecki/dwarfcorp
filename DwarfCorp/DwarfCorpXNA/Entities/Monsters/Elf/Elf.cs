@@ -1,4 +1,4 @@
-// Skeleton.cs
+// Elf.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -41,89 +41,93 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
-    public class Skeleton : Creature
+
+    /// <summary>
+    /// Convenience class for initializing elfs as creatures.
+    /// </summary>
+    public class Elf : Creature
     {
-        [EntityFactory("Skeleton")]
+        [EntityFactory("Elf")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Skeleton(
+            return new Elf(
                 new CreatureStats(SharedClass, 0),
-                "Undead",
+                "Elf",
                 Manager.World.PlanService,
-                Manager.World.Factions.Factions["Undead"],
+                Manager.World.Factions.Factions["Elf"],
                 Manager,
-                "Skeleton",
+                "Elf",
                 Position).Physics;
         }
 
-        private static SkeletonClass SharedClass = new SkeletonClass(true);
+        private static ElfClass SharedClass = new ElfClass(true);
 
-        public Skeleton()
+        public Elf()
         {
             
         }
 
-        public Skeleton(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
+        public Elf(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
-            Physics = new Physics(manager, "Skeleton", Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
-
+            Physics = new Physics(manager, "Elf", Matrix.CreateTranslation(position), new Vector3(0.5f, 1.0f, 0.5f), new Vector3(0.0f, -0.0f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
             Physics.AddChild(this);
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+            Physics.Orientation = Physics.OrientMode.RotateY;
+            CreateCosmeticChildren(Manager);
 
             HasMeat = false;
-            Physics.Orientation = Physics.OrientMode.RotateY;
+            HasBones = false;
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
-            Physics.AddChild(new CreatureAI(Manager, "Skeleton AI", Sensors));
+
+            Physics.AddChild(new CreatureAI(Manager, "Elf AI", Sensors));
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            Physics.Tags.Add("Skeleton");
+            Physics.Tags.Add("Elf");
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
-            Stats.FullName = TextGenerator.ToTitleCase(TextGenerator.GenerateRandom("$names_undead"));
-            Stats.Size = 3;
+            Stats.FullName = TextGenerator.GenerateRandom("$elfname");
+            Stats.Size = 4;
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             AI.Movement.SetCan(MoveType.Dig, true);
-            Species = "Skeleton";
-
-            CreateCosmeticChildren(Manager);
+            Species = "Elf";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             Stats.CurrentClass = SharedClass;
+
+            CreateSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
-
-            var sprite = Physics.AddChild(new CharacterSprite(Manager, "Skeleton Sprite", Matrix.CreateTranslation(new Vector3(0, 0.1f, 0)))) as CharacterSprite;
-            foreach (Animation animation in Stats.CurrentClass.Animations)
-            {
-                sprite.AddAnimation(animation);
-            }
-            sprite.SetFlag(Flag.ShouldSerialize, false);
-
-            Physics.AddChild(new ParticleTrigger("sand_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_1
-            }).SetFlag(Flag.ShouldSerialize, false);
-
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1))).SetFlag(Flag.ShouldSerialize, false);
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 1))).SetFlag(Flag.ShouldSerialize, false);
 
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
-                ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_1,
-                ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_2,
+                ContentPaths.Audio.Oscar.sfx_ic_elf_hurt_1,
+                ContentPaths.Audio.Oscar.sfx_ic_elf_hurt_2,
             };
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 5,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_elf_death
+            }).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);
         }
     }
+
 }

@@ -1,4 +1,4 @@
-﻿// SnakeAi.cs
+// Elf.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -36,41 +36,32 @@ using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
+using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Extends CreatureAI specifically for
-    /// bird behavior.
-    /// </summary>
-    public class SnakeAI : CreatureAI
+    public class GolemAI : CreatureAI
     {
-        public SnakeAI()
+        public GolemAI()
         {
             
         }
 
-        public SnakeAI(ComponentManager Manager, string name, EnemySensor sensor) :
-            base(Manager, name, sensor)
+        public GolemAI(ComponentManager Manager, EnemySensor enemySensor) :
+            base(Manager, "MudGolemAI", enemySensor)
         {
             
         }
-
-        // Overrides the default ActOnIdle so we can
-        // have the bird act in any way we wish.
         public override Task ActOnIdle()
         {
-            return new ActWrapperTask(new Wrap(Gogogo));
+            return null;
         }
 
-        public IEnumerable<Act.Status> Gogogo()
+        public override Act ActOnWander()
         {
-            while (true)
-            {
-                
-               Creature.Physics.ApplyForce(0.1f *(Manager.World.CursorLightPos - this.Creature.AI.Position) - 0.1f * Creature.Physics.Velocity, 1);
-               yield return Act.Status.Running;
-            }
+            return null;
         }
     }
 }

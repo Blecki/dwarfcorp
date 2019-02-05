@@ -81,13 +81,6 @@ namespace DwarfCorp
             // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            // The bird will emit a shower of blood when it dies
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 1
-            });
-
             // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
@@ -97,8 +90,6 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the bat";
-            Stats.CurrentClass = SharedClass;
-
 
             Species = "Bat";
             CanReproduce = true;
@@ -108,11 +99,20 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             Stats.CurrentClass = SharedClass;
+
             CreateSprite(ContentPaths.Entities.Animals.Bat.bat_animations, manager, 0.0f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
+
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bat_hurt_1 };
             NoiseMaker.Noises["Chirp"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_bat_neutral_1, ContentPaths.Audio.Oscar.sfx_oc_bat_neutral_2 };
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 1
+            }).SetFlag(Flag.ShouldSerialize, false);
+
             base.CreateCosmeticChildren(manager);
         }
 

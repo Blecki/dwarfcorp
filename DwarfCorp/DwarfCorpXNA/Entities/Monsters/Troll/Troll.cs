@@ -43,81 +43,6 @@ namespace DwarfCorp
 {
     public class Troll : Creature
     {
-        public class TrollClass : EmployeeClass
-        {
-            void InitializeLevels()
-            {
-                Levels = new List<Level>
-            {
-                new Level
-                {
-                    Index = 0,
-                    Name = "Troll",
-                    Pay = 25,
-                    XP = 0,
-                    BaseStats = new CreatureStats.StatNums()
-                    {
-                        Strength = 8,
-                        Constitution = 9,
-                        Intelligence = 1,
-                        Size = 10,
-                        Dexterity = 3
-                    }
-
-                }
-            };
-            }
-
-            void InitializeAnimations()
-            {
-                Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Troll.troll_animation, "Troll");
-            }
-
-            void InitializeActions()
-            {
-                Actions =
-                    Task.TaskCategory.Chop |
-                    Task.TaskCategory.Gather |
-                    Task.TaskCategory.Guard |
-                    Task.TaskCategory.Attack;
-            }
-
-            public void InitializeWeapons()
-            {
-                Attacks = new List<Attack>()
-            {
-                new Attack("Slam", 15.0f, 2.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_ic_demon_hurt_1, ContentPaths.Audio.Oscar.sfx_ic_demon_hurt_2, ContentPaths.Audio.Oscar.sfx_ic_demon_mumble_1), ContentPaths.Effects.rings)
-                {
-                    Knockback = 2.5f,
-                    TriggerMode = Attack.AttackTrigger.Animation,
-                    TriggerFrame = 3,
-                    Mode = Attack.AttackMode.Area,
-                    HitParticles = "dirt_particle"
-                }
-            };
-            }
-
-            protected override sealed void InitializeStatics()
-            {
-                Name = "Troll";
-                InitializeLevels();
-                InitializeAnimations();
-                InitializeWeapons();
-                InitializeActions();
-                base.InitializeStatics();
-            }
-
-
-            public TrollClass()
-            {
-                if (!staticsInitiailized)
-                {
-                    InitializeStatics();
-                }
-            }
-        }
-
-
         [EntityFactory("Troll")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -160,13 +85,6 @@ namespace DwarfCorp
 
             Physics.Tags.Add("Troll");
 
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 3,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_demon_hurt_1,
-            });
-
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
@@ -191,6 +109,13 @@ namespace DwarfCorp
             {
                 ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
             };
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 3,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_demon_hurt_1,
+            }).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);
         }

@@ -72,7 +72,6 @@ namespace DwarfCorp
         public bool IsMotherland = false;
         public float DistanceToCapital = 0.0f;
 
-        // Todo: When converting to new save system, it can take care of this.
         [JsonProperty]
         private string _race;
 
@@ -1051,7 +1050,7 @@ namespace DwarfCorp
             }
 
             Vector3 pos = rooms.First().GetBoundingBox().Center();
-            return Balloon.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, World.ComponentManager, new ShipmentOrder(0, null), this);
+            return Balloon.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, World.ComponentManager, this);
         }
 
         public List<Body> GenerateRandomSpawn(int numCreatures, Vector3 position)

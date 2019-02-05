@@ -44,7 +44,7 @@ namespace DwarfCorp
 {
     public class KoboldAI : CreatureAI
     {
-        public float StealFromPlayerProbability = -1.0f;
+        public float StealFromPlayerProbability = 0.5f;
         public Timer LeaveWorldTimer = new Timer(200, true);
 
         public KoboldAI()

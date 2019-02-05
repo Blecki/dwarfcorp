@@ -101,13 +101,10 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             Stats.CurrentClass = SharedClass;
+
             CreateSprite(ContentPaths.Entities.Animals.Spider.spider_animation, manager, 0.3f);
             Physics.AddChild(Shadow.Create(0.4f, manager));
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
-            {
-                TriggerOnDeath = true,
-                TriggerAmount = 1
-            }).SetFlag(Flag.ShouldSerialize, false);
+
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_giant_spider_hurt_1 };
             NoiseMaker.Noises["Chirp"] = new List<string>()
@@ -115,6 +112,13 @@ namespace DwarfCorp
                 ContentPaths.Audio.Oscar.sfx_oc_giant_spider_neutral_1,
                 ContentPaths.Audio.Oscar.sfx_oc_giant_spider_neutral_2
             };
+
+            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            {
+                TriggerOnDeath = true,
+                TriggerAmount = 1
+            }).SetFlag(Flag.ShouldSerialize, false);
+
             base.CreateCosmeticChildren(manager);
         }
 
