@@ -302,9 +302,10 @@ namespace DwarfCorp
 
         public GameComponent FindComponent(uint ID)
         {
-            GameComponent result = null;
-            Components.TryGetValue(ID, out result);
-            return result;
+            if (Components.TryGetValue(ID, out GameComponent result))
+                return result;
+            else
+                return null;
         }
     }
 }
