@@ -64,6 +64,7 @@ namespace DwarfCorp
         public Yarn.MemoryVariableStore ConversationMemory;
         public List<GameMaster.ApplicantArrival> NewArrivals;
         public DwarfCorp.Gui.Widgets.StatsTracker Stats;
+
         public static PlayData CreateFromWorld(WorldManager World)
         {
             return new PlayData()

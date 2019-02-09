@@ -20,17 +20,18 @@ namespace DwarfCorp
 
         [JsonProperty] private uint ParentID = ComponentManager.InvalidID;
         [JsonIgnore] private GameComponent CachedParent = null;
+
         [JsonIgnore]
         public GameComponent Parent
         {
             get
             {
-                if (World == null)
-                {
+                if (World == null || ParentID == ComponentManager.InvalidID)
                     return null;
-                }
+
                 if (CachedParent == null)
                     CachedParent = Manager.FindComponent(ParentID);
+
                 return CachedParent;
             }
             set
@@ -39,6 +40,7 @@ namespace DwarfCorp
                 ParentID = value != null ? value.GlobalID : ComponentManager.InvalidID;
             }
         }
+
         public int UpdateRate = 1;
         public Flag Flags = 0;
         public List<string> Tags { get; set; }
@@ -309,7 +311,7 @@ namespace DwarfCorp
             }
             lock (Children)
             {
-                System.Diagnostics.Debug.Assert(child.Parent == null, "Child was already added to another component.");
+                System.Diagnostics.Debug.Assert(child.Parent == null, "Child was already added to another component. Child is a " + child.GetType().Name);
 
                 Children.Add(child);
 
@@ -319,6 +321,7 @@ namespace DwarfCorp
                     child.IsVisible = IsVisible;
                     child.IsDead = IsDead;
                 }
+
                 child.Parent = this;
             }
 
