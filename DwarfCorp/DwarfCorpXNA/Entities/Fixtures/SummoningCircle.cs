@@ -12,9 +12,13 @@ namespace DwarfCorp
     public class MagicalObject : GameComponent
     {
         public int MaxCharges = 10;
+
+        [JsonProperty]
         private int _currentCharges = 10;
+
         private Timer DrawLoadBarTimer = new Timer(0.5f, true);
 
+        [JsonIgnore]
         public int CurrentCharges
         {
             get

@@ -1,4 +1,7 @@
 ﻿{
+  "SearchForCharacters": true,
+  "SearchExtensions": [ ".json", ".txt" ],
+  "SearchPath": "",
   "FontName": "Arial",
   "Ranges": [
     {
@@ -9,19 +12,23 @@
   "Targets": [
     {
       "FontSize": 8,
-      "OutputName": "newgui/fonts/font8"
+      "OutputName": "newgui/fonts/font8",
+      "BaseFont": "newgui/font-8px.bmp"
     },
     {
       "FontSize": 10,
-      "OutputName": "newgui/fonts/font10"
+      "OutputName": "newgui/fonts/font10",
+      "BaseFont": "newgui/font-10px.bmp"
     },
     {
       "FontSize": 16,
-      "OutputName": "newgui/fonts/font16"
+      "OutputName": "newgui/fonts/font16",
+      "BaseFont": "newgui/font-16px.bmp"
     },
     {
       "FontSize": 18,
-      "OutputName": "newgui/fonts/font18-outline"
+      "OutputName": "newgui/fonts/font18-outline",
+      "BaseFont": "newgui/font-18px-outline.bmp"
     }
   ]
 }
