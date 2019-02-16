@@ -104,6 +104,7 @@ namespace DwarfCorp
             return _value;
         }
 
+        // Todo: Squash this before removing resourcetype
         public Resource GetResource()
         {
             if (_value == null)

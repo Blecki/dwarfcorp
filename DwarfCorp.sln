@@ -6,10 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DwarfCorpXNAContent", "DwarfCorp\DwarfCorpContent\DwarfCorpXNAContent.contentproj", "{D48F9E36-1F42-4633-B745-8C659D9550D4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{81748F63-5EA8-4CF7-B9DA-C47CE33D8620}"
-	ProjectSection(SolutionItems) = preProject
-		..\DwarfCorp180416.vspx = ..\DwarfCorp180416.vspx
-		Performance1.psess = Performance1.psess
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DwarfCorpXNA", "DwarfCorp\DwarfCorpXNA\DwarfCorpXNA.csproj", "{99D7D745-BBE2-458E-8108-8D2E5A8835F3}"
 EndProject
@@ -719,6 +715,12 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {75750319-6839-4D60-A0FB-D5C35B4DCC15}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
