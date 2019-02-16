@@ -155,6 +155,7 @@ namespace DwarfCorp
 
                 type.ExplosionSound = SoundSource.Create(type.ExplosionSoundResource);
                 type.HitSound = SoundSource.Create(type.HitSoundResources);
+
                 if (type.ReleasesResource)
                 {
                     if (ResourceLibrary.GetResourceByName(type.Name) == null)

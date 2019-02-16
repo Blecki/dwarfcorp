@@ -121,7 +121,6 @@ namespace DwarfCorp
                 gameFile = SaveGame.CreateFromDirectory(ExistingFile);
                 if (gameFile == null) throw new InvalidOperationException("Game File does not exist.");
 
-                // Todo: REMOVE THIS WHEN THE NEW SAVE SYSTEM IS COMPLETE.
                 if (gameFile.Metadata.Version != Program.Version && !Program.CompatibleVersions.Contains(gameFile.Metadata.Version))
                 {
                     throw new InvalidOperationException(String.Format("Game file is from version {0}. Compatible versions are {1}.", gameFile.Metadata.Version,

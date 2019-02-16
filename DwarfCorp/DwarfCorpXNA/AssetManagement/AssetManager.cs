@@ -290,7 +290,7 @@ namespace DwarfCorp
 
             try
             {
-                var filename = ResolveContentPath(asset, ".png");
+                var filename = ResolveContentPath(asset, ".png", ".bmp");
                 if (Path.GetExtension(filename) == ".xnb")
                 {
                     var toReturn = Content.Load<Texture2D>(filename.Substring(0, filename.Length - 4));
