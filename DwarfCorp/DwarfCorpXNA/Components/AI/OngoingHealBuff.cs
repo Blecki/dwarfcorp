@@ -43,10 +43,9 @@ namespace DwarfCorp
         {
             return new OngoingHealBuff
             {
-                EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
+                EffectTime = Timer.Clone(EffectTime),
                 Particles = Particles,
-                ParticleTimer =
-                    new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
+                ParticleTimer = Timer.Clone(ParticleTimer),
                 SoundOnEnd = SoundOnEnd,
                 SoundOnStart = SoundOnStart,
                 DamagePerSecond = DamagePerSecond
@@ -61,6 +60,13 @@ namespace DwarfCorp
 
     public class CureDiseaseBuff : Buff
     {
+
+        public CureDiseaseBuff()
+        {
+            EffectTime = new Timer(1.0f, true);
+            ParticleTimer = new Timer(1.0f, true);
+        }
+
         public override bool IsRelevant(Creature creature)
         {
             return creature.Buffs.Any(buff => buff is Disease);

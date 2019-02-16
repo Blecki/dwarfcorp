@@ -37,10 +37,9 @@ namespace DwarfCorp
         {
             return new ThoughtBuff
             {
-                EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
+                EffectTime = Timer.Clone(EffectTime),
                 Particles = Particles,
-                ParticleTimer =
-                    new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
+                ParticleTimer = Timer.Clone(ParticleTimer),
                 SoundOnEnd = SoundOnEnd,
                 SoundOnStart = SoundOnStart,
                 ThoughtType = ThoughtType

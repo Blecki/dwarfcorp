@@ -70,12 +70,17 @@ namespace DwarfCorp
         /// <summary> Updates the Buff </summary>
         public virtual void Update(DwarfTime time, Creature creature)
         {
-            EffectTime.Update(time);
-            ParticleTimer.Update(time);
+            if (EffectTime != null)
+                EffectTime.Update(time);
 
-            if (ParticleTimer.HasTriggered && !string.IsNullOrEmpty(Particles))
+            if (ParticleTimer != null)
             {
-                creature.Manager.World.ParticleManager.Trigger(Particles, creature.Physics.Position, Color.White, 1);
+                ParticleTimer.Update(time);
+
+                if (ParticleTimer.HasTriggered && !string.IsNullOrEmpty(Particles))
+                {
+                    creature.Manager.World.ParticleManager.Trigger(Particles, creature.Physics.Position, Color.White, 1);
+                }
             }
         }
 
@@ -84,10 +89,9 @@ namespace DwarfCorp
         {
             return new Buff
             {
-                EffectTime = new Timer(EffectTime.TargetTimeSeconds, EffectTime.TriggerOnce, EffectTime.Mode),
+                EffectTime = Timer.Clone(EffectTime),
                 Particles = Particles,
-                ParticleTimer =
-                    new Timer(ParticleTimer.TargetTimeSeconds, ParticleTimer.TriggerOnce, ParticleTimer.Mode),
+                ParticleTimer = Timer.Clone(ParticleTimer),
                 SoundOnEnd = SoundOnEnd,
                 SoundOnStart = SoundOnStart
             };

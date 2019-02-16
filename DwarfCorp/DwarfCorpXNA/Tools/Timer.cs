@@ -196,6 +196,15 @@ namespace DwarfCorp
             
         }
 
+        public static Timer Clone(Timer other)
+        {
+            if (other == null)
+            {
+                return null;
+            }
+            return new Timer(other.TargetTimeSeconds, other.TriggerOnce, other.Mode);
+        }
+
         public Timer(float targetTimeSeconds, bool triggerOnce, TimerMode mode = TimerMode.Game)
         {
             TargetTimeSeconds = targetTimeSeconds;
