@@ -45,7 +45,7 @@ namespace DwarfCorp
         [OnSerializing]
         internal void OnSerializingMethod(StreamingContext context)
         {
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("Employee Class Def should not be serialized.");
         }
 
         public string Name { get; set; }

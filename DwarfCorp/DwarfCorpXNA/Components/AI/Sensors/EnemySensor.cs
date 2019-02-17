@@ -113,7 +113,7 @@ namespace DwarfCorp
                     var ai = GetRoot().GetComponent<CreatureAI>();
                     if (ai != null)
                     {
-                        var task = new FleeEntityTask(body, 5)
+                        var task = new FleeEntityTask(body.GetRoot(), 5)
                         {
                             Priority = Task.PriorityType.Urgent,
                             AutoRetry = false,
