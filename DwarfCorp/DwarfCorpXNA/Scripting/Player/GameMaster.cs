@@ -329,31 +329,7 @@ namespace DwarfCorp
                     creature.Creature.AddThought(Thought.ThoughtType.GotPaid);
                 }
 
-                if (!noMoney)
-                {
-                    creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, pay)) { AutoRetry = true, Name = "Get paid.", Priority = Task.PriorityType.High });
-                    creature.NumDaysNotPaid = 0;
-                }
-                else
-                {
-                    creature.NumDaysNotPaid++;
-
-                    if (creature.NumDaysNotPaid < 2)
-                    {
-                        creature.Creature.AddThought(Thought.ThoughtType.NotPaid);
-                    }
-                    else
-                    {
-                        creature.Creature.AddThought(new Thought()
-                        {
-                            Description = String.Format("I have not been paid in {0} days!", creature.NumDaysNotPaid),
-                            HappinessModifier = -25 * creature.NumDaysNotPaid,
-                            TimeLimit = new TimeSpan(1, 0, 0, 0, 0),
-                            TimeStamp = World.Time.CurrentDate,
-                            Type = Thought.ThoughtType.Other
-                        }, false);
-                    }
-                }
+                creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, pay)) { AutoRetry = true, Name = "Get paid.", Priority = Task.PriorityType.High });
             }
 
             World.MakeAnnouncement(String.Format("We paid our employees {0} today.",

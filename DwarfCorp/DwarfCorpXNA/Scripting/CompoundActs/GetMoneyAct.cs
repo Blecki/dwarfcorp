@@ -46,6 +46,8 @@ namespace DwarfCorp
     {
         public DwarfBux Money { get; set; }
         public Faction Faction { get; set; }
+        public bool IncrementDays = true;
+
         public GetMoneyAct()
         {
 
@@ -102,6 +104,7 @@ namespace DwarfCorp
             var needed = Agent.Blackboard.GetData<DwarfBux>("MoneyNeeded");
             if (needed <= 0)
             {
+                Agent.NumDaysNotPaid = 0;
                 yield return Act.Status.Fail;
                 yield break;
             }
@@ -110,7 +113,28 @@ namespace DwarfCorp
             {
                 Agent.World.MakeAnnouncement(String.Format("Could not pay {0}, not enough money!", Agent.Stats.FullName));
                 Agent.SetMessage("Failed to get money, not enough in treasury.");
-                yield return Act.Status.Fail;
+                if (IncrementDays)
+                {
+                    Agent.NumDaysNotPaid++;
+
+                    if (Agent.NumDaysNotPaid < 2)
+                    {
+                        Agent.Creature.AddThought(Thought.ThoughtType.NotPaid);
+                    }
+                    else
+                    {
+                        Agent.Creature.AddThought(new Thought()
+                        {
+                            Description = String.Format("I have not been paid in {0} days!", Agent.NumDaysNotPaid),
+                            HappinessModifier = -25 * Agent.NumDaysNotPaid,
+                            TimeLimit = new TimeSpan(1, 0, 0, 0, 0),
+                            TimeStamp = Agent.World.Time.CurrentDate,
+                            Type = Thought.ThoughtType.Other
+                        }, false);
+                    }
+                }
+
+                    yield return Act.Status.Fail;
                 yield break;
             }
             
@@ -146,5 +170,4 @@ namespace DwarfCorp
             return base.Run();
         }
     }
-
 }
