@@ -19,6 +19,11 @@ namespace DwarfCorp
         private int _frame = -1;
         public void SetFullness(float value)
         {
+            if (Children == null)
+            {
+                return;
+            }
+
             value = MathFunctions.Clamp(value, 0.0f, 1.0f);
             int frame = (int)Math.Round(value * 2);
 
