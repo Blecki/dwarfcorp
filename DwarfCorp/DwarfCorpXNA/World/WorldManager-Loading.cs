@@ -404,6 +404,10 @@ namespace DwarfCorp
             // If there's no file, we have to initialize the first chunk coordinate
             if (gameFile == null)
             {
+                if (Overworld.Map == null)
+                {
+                    throw new InvalidProgramException("Tried to start game with an empty overworld. This should not happen.");
+                }
                 ChunkManager.GenerateInitialChunks(SpawnRect,
                     new GlobalChunkCoordinate(0, 0, 0),
                     SetLoadingMessage);
