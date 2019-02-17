@@ -26,9 +26,9 @@ namespace DwarfCorp
             {
                 Frame = new Point(frame, 0);
 
-                var childrenToKill = Children?.OfType<SimpleSprite>().ToList();
-                foreach (var child in childrenToKill)
-                    child.Delete();
+                //var childrenToKill = Children?.OfType<SimpleSprite>().ToList();
+                //foreach (var child in childrenToKill)
+                //    child.Delete();
 
                 var sprite = GetComponent<SimpleSprite>();
                 if (sprite != null)
