@@ -168,6 +168,7 @@ namespace DwarfCorp
                 {
                     HashSet<Body> bodies = new HashSet<Body>();
                     World.OctTree.EnumerateItems(GetBoundingBox().Expand(2), bodies);
+
                     int numPlants = bodies.Count(b => b is Plant);
                     if (numPlants < 10)
                     {

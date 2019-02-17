@@ -514,6 +514,7 @@ namespace DwarfCorp
         {
             HashSet<Body> intersections = new HashSet<Body>();
             World.OctTree.EnumerateItems(Physics.BoundingBox.Expand(3.0f), intersections);
+
             foreach (var body in intersections.OfType<ResourceEntity>())
             {
                 if (!body.Active || body.AnimationQueue.Count > 0)

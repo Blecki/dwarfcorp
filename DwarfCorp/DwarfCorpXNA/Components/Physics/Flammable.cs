@@ -77,7 +77,7 @@ namespace DwarfCorp
                 HashSet<Body> insideBodies = new HashSet<Body>();
                 World.OctTree.EnumerateItems(Body.GetBoundingBox(), insideBodies);
 
-                foreach (var body in insideBodies.Where(b => b != Parent && b.Active))
+                foreach (var body in insideBodies.Where(b => b != Parent && b.Active && b.Parent == Manager.RootComponent))
                 {
                     var flames = body.GetComponent<Flammable>();
                     if (flames != null)
@@ -103,6 +103,7 @@ namespace DwarfCorp
                         {
                             HashSet<Body> existingItems = new HashSet<Body>();
                             World.OctTree.EnumerateItems(voxel.GetBoundingBox().Expand(-0.1f), existingItems);
+
                             if (!existingItems.Any(e => e is Fire))
                             {
                                 EntityFactory.CreateEntity<Fire>("Fire", voxel.GetBoundingBox().Center());
