@@ -31,19 +31,22 @@ namespace DwarfCorp
             {
                 Frame = new Point(frame, 0);
 
-                var childrenToKill = Children.OfType<SimpleSprite>().ToList();
-                foreach (var child in childrenToKill)
-                    child.Delete();
+                //var childrenToKill = Children?.OfType<SimpleSprite>().ToList();
+                //foreach (var child in childrenToKill)
+                //    child.Delete();
 
-                CreateCosmeticChildren(Manager);
+                var sprite = GetComponent<SimpleSprite>();
+                if (sprite != null)
+                    sprite.SetFrame(Frame);
 
                 _frame = frame;
             }
             
         }
+
         public CoinPileFixture()
         {
-
+            Frame = new Point(0, 0);
         }
 
         public CoinPileFixture(ComponentManager manager, Vector3 position) :

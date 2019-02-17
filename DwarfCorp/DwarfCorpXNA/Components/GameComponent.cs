@@ -122,7 +122,7 @@ namespace DwarfCorp
         public void SetFlagRecursive(Flag F, bool Value)
         {
             SetFlag(F, Value);
-            foreach (var child in Children)
+            foreach (var child in Children ?? Enumerable.Empty<GameComponent>())
                 child.SetFlagRecursive(F, Value);
         }
 
@@ -357,7 +357,7 @@ namespace DwarfCorp
         public IEnumerable<GameComponent> EnumerateAll()
         {
             yield return this;
-            foreach (var child in Children)
+            foreach (var child in Children ?? Enumerable.Empty<GameComponent>())
                 foreach (var grandChild in child.EnumerateAll())
                     yield return grandChild;
         }

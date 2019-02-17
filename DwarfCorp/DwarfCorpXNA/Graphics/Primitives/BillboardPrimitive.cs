@@ -143,6 +143,7 @@ namespace DwarfCorp
             bool Flipped)
         {
             var texture = Sheet.GetTexture();
+            if (texture == null) return;
 
             var tileBounds = new Vector4(
                 ((float)Rect.X / texture.Width) + 0.001f,
