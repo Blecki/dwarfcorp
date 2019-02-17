@@ -138,6 +138,19 @@ namespace DwarfCorp
                 return;
             }
 
+            bool anyDead = Coins.Any(c => c.IsDead);
+
+            if (anyDead)
+            {
+                ZoneBodies.RemoveAll(z => z.IsDead);
+                Coins.RemoveAll(c => c.IsDead);
+
+                for (int i = 0; i < Coins.Count; i++)
+                {
+                    Coins[i].LocalPosition = new Vector3(0.5f, 1.5f, 0.5f) + Voxels[i].WorldPosition + VertexNoise.GetNoiseVectorFromRepeatingTexture(Voxels[i].WorldPosition);
+                }
+            }
+
             if (Voxels.Count == 0)
             {
                 foreach (Body component in Coins)
