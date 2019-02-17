@@ -743,6 +743,7 @@ namespace DwarfCorp.Scripting.Adventure
                     }
                 }
                 var resourceValue = GetValue(resource, dest);
+                if (resourceValue == 0) continue;
 
                 // Now find a resource of equal or greater value and trade for it.
                 int randIter2 = 0;
@@ -757,6 +758,7 @@ namespace DwarfCorp.Scripting.Adventure
 
                     var good = ResourceLibrary.GetResourceByName(randGood.ResourceType);
                     var randGoodValue = GetValue(good, dest);
+                    if (randGoodValue == 0) continue;
 
                     // Trade the most of this resource we possibly can. If we want to 
                     // trade an item of lesser value, try to trade 1 good for as much of it as possible.
