@@ -938,7 +938,9 @@ namespace DwarfCorp
 
         private static void UpdateVoxelRamps(VoxelHandle V)
         {
-            if (V.IsEmpty || !V.IsVisible || !V.Type.CanRamp)
+            if (!V.IsValid) return;
+            
+            if (V.IsEmpty || !V.IsVisible || V.Type == null || !V.Type.CanRamp)
             {
                 V.RampType = RampType.None;
                 return;
