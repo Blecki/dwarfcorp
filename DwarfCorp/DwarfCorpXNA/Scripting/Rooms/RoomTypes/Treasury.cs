@@ -109,7 +109,7 @@ namespace DwarfCorp
 
         public void KillCoins(Body component)
         {
-            ZoneBodieIds.Remove(component.GlobalID);
+            ZoneBodies.Remove(component);
             EaseMotion deathMotion = new EaseMotion(0.8f, component.LocalTransform, component.LocalTransform.Translation + new Vector3(0, -1, 0));
             component.AnimationQueue.Add(deathMotion);
             deathMotion.OnComplete += component.Die;
@@ -142,6 +142,7 @@ namespace DwarfCorp
 
             if (anyDead)
             {
+                ZoneBodies.RemoveAll(z => z.IsDead);
                 Coins.RemoveAll(c => c.IsDead);
 
                 for (int i = 0; i < Coins.Count; i++)

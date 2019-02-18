@@ -774,6 +774,7 @@
     <Compile Include="Scripting\Data\Blackboard.cs" />
     <Compile Include="Scripting\Data\CreatureStats.cs" />
     <Compile Include="Scripting\Data\CreatureStatus.cs" />
+    <Compile Include="Scripting\Items\Item.cs" />
     <Compile Include="Scripting\Items\TagList.cs" />
     <Compile Include="Scripting\LeafActs\ClearBlackboardData.cs" />
     <Compile Include="Scripting\LeafActs\ConsumeItemAct.cs" />

@@ -173,7 +173,7 @@ namespace DwarfCorp
                     Manager.World.Diplomacy.GetPolitics(Creature.Faction, faction.Value)
                         .GetCurrentRelationship() == Relationship.Hateful
                 from zone in faction.Value.GetRooms()
-                from body in zone.ZoneBodieIds.Select(i => World.ComponentManager.FindComponent(i)).OfType<Body>()
+                from body in zone.ZoneBodies
                 where body.Tags.Contains("Grave")
                 select body).ToList();
 

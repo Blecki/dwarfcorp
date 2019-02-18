@@ -221,11 +221,9 @@ namespace DwarfCorp
             }
 
             foreach (Room zone in GetRooms())
-                zone.ZoneBodieIds.RemoveAll(id =>
-                {
-                    var body = World.ComponentManager.FindComponent(id);
-                    return body == null || body.IsDead;
-                });
+            {
+                zone.ZoneBodies.RemoveAll(body => body.IsDead);
+            }
 
             Designations.CleanupDesignations();
 

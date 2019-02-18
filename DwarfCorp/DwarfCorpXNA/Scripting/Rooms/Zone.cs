@@ -52,8 +52,7 @@ namespace DwarfCorp
         // This is a list of voxel type ids that existed before this zone
         // was created. When the zone is destroyed, the voxel types will be restored.
         public List<byte> OriginalVoxelTypes = new List<byte>(); 
-        //public List<Body> ZoneBodies = new List<Body>();
-        public List<uint> ZoneBodieIds = new List<uint>();
+        public List<Body> ZoneBodies = new List<Body>();
         
         [JsonProperty]
         protected int ResPerVoxel = 32;
@@ -83,6 +82,17 @@ namespace DwarfCorp
 
         public Faction Faction { get; set; }
 
+        [OnDeserialized]
+        public void OnDeserialized(StreamingContext ctx)
+        {
+            World = (WorldManager)ctx.Context;
+            foreach (var body in ZoneBodies)
+            {
+                Body body1 = body;
+                body.OnDestroyed += () => body_onDestroyed(body1);
+            }
+        }
+
         public Zone(string id, WorldManager world, Faction faction)
         {
             ID = id;
@@ -106,24 +116,7 @@ namespace DwarfCorp
             Body toReturn = null;
             float nearestDistance = float.MaxValue;
 
-            foreach (var body in ZoneBodieIds.Select(id => World.ComponentManager.FindComponent(id)).OfType<Body>())
-            {
-                float dist = (location - body.GlobalTransform.Translation).LengthSquared();
-                if (dist < nearestDistance)
-                {
-                    toReturn = body;
-                    nearestDistance = dist;
-                }
-            }
-            return toReturn;
-        }
-
-        public Body GetNearestBody(Vector3 location, Func<Body, bool> Filter)
-        {
-            Body toReturn = null;
-            float nearestDistance = float.MaxValue;
-
-            foreach (var body in ZoneBodieIds.Select(id => World.ComponentManager.FindComponent(id)).OfType<Body>().Where(b => Filter(b)))
+            foreach (Body body in ZoneBodies)
             {
                 float dist = (location - body.GlobalTransform.Translation).LengthSquared();
                 if (dist < nearestDistance)
@@ -137,10 +130,10 @@ namespace DwarfCorp
 
         public void SetTint(Color color)
         {
-            //foreach (var obj in ZoneBodies)
-            //{
-            //    SetDisplayColor(obj, color);
-            //}
+            foreach (var obj in ZoneBodies)
+            {
+                SetDisplayColor(obj, color);
+            }
         }
 
         private void SetDisplayColor(GameComponent body, Color color)
@@ -151,21 +144,45 @@ namespace DwarfCorp
 
         public Body GetNearestBodyWithTag(Vector3 location, string tag, bool filterReserved)
         {
-            return GetNearestBody(location, b => b.Tags.Contains(tag) && (!filterReserved || (!b.IsReserved && b.ReservedFor == null)));
+            Body toReturn = null;
+            float nearestDistance = float.MaxValue;
+
+            foreach (Body body in ZoneBodies)
+            {
+                if (!body.Tags.Contains(tag)) continue;
+                if (filterReserved && (body.IsReserved || body.ReservedFor != null)) continue;
+                float dist = (location - body.GlobalTransform.Translation).LengthSquared();
+                if (dist < nearestDistance)
+                {
+                    toReturn = body;
+                    nearestDistance = dist;
+                }
+            }
+            return toReturn;
         }
 
         public void AddBody(Body body, bool addToOwnedObjects = true)
         {
             if (addToOwnedObjects)
                 this.Faction.OwnedObjects.Add(body);
-            ZoneBodieIds.Add(body.GlobalID);
+            ZoneBodies.Add(body);
+            body.OnDestroyed += () => body_onDestroyed(body);
+        }
+
+        public void body_onDestroyed(Body body)
+        {
+            ZoneBodies.Remove(body);
         }
 
         public virtual void Destroy()
         {
-            foreach (var body in ZoneBodieIds.Select(id => World.ComponentManager.FindComponent(id)).OfType<Body>())
+            List<Body> toKill = new List<Body>();
+            toKill.AddRange(ZoneBodies);
+            foreach (Body body in toKill)
+            {
                 body.Die();
-            
+            }
+
             var voxelsToKill = new List<VoxelHandle>();
             voxelsToKill.AddRange(Voxels);
             foreach (var voxel in voxelsToKill)
@@ -174,9 +191,14 @@ namespace DwarfCorp
                 RemoveVoxel(voxel);
             }
 
-            Resources.Clear();
-            ZoneBodieIds.Clear();
+            ClearItems();
             Voxels.Clear();
+        }
+
+        public void ClearItems()
+        {
+            Resources.Clear();
+            ZoneBodies.Clear();
         }
 
         public virtual bool IsFull()

@@ -122,7 +122,7 @@ namespace DwarfCorp
 
         public void KillBox(Body component)
         {
-            ZoneBodieIds.Remove(component.GlobalID);
+            ZoneBodies.Remove(component);
             EaseMotion deathMotion = new EaseMotion(0.8f, component.LocalTransform, component.LocalTransform.Translation + new Vector3(0, -1, 0));
             component.AnimationQueue.Add(deathMotion);
             deathMotion.OnComplete += component.Die;
@@ -154,6 +154,7 @@ namespace DwarfCorp
             bool anyDead = Boxes.Any(b => b.IsDead);
             if (anyDead)
             {
+                ZoneBodies.RemoveAll(z => z.IsDead);
                 Boxes.RemoveAll(c => c.IsDead);
 
                 for (int i = 0; i < Boxes.Count; i++)
