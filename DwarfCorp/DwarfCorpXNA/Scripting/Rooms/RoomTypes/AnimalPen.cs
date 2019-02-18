@@ -70,11 +70,10 @@ namespace DwarfCorp
 
         public override void OnBuilt()
         {
-            foreach(var body in ZoneBodies)
-            {
-                body.GetRoot().Delete();
-            }
-            ZoneBodies.Clear();
+            foreach (var body in ZoneBodieIds.Select(id => World.ComponentManager.FindComponent(id)).OfType<Body>())
+                body.Die();
+            ZoneBodieIds.Clear();
+
             foreach (
                 var fence in
                     Fence.CreateFences(World.ComponentManager, ContentPaths.Entities.DwarfObjects.fence, Voxels,

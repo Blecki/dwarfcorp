@@ -44,7 +44,6 @@ namespace DwarfCorp
     ///     A creature moves along a planned path until the path is completed, or
     ///     it detects failure.
     /// </summary>
-    [JsonObject(IsReference = true)]
     public class FollowPathAct : CreatureAct
     {
         public FollowPathAct(CreatureAI agent, string pathName) :

@@ -104,16 +104,6 @@ namespace DwarfCorp
             return _value;
         }
 
-        // Todo: Squash this before removing resourcetype
-        public Resource GetResource()
-        {
-            if (_value == null)
-            {
-                return null;
-            }
-            return ResourceLibrary.GetResourceByName(_value);
-        }
-
         public static bool operator ==(ResourceType A, ResourceType B)
         {
             return A._value == B._value;

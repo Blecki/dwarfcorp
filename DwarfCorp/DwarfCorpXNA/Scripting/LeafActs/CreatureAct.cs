@@ -42,9 +42,9 @@ namespace DwarfCorp
     /// <summary>
     /// An act which is assumed to belong to a creature.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class CreatureAct : Act
     {
+        //Todo: Save the ID, not the actual component.
         public CreatureAI Agent { get; set; }
         
         [JsonIgnore]
