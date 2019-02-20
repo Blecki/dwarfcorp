@@ -86,62 +86,56 @@ namespace DwarfCorp
 
         public void Sense()
         {
-            if (!Active)
-                return;
+            if (!Active) return;
+            if (World.InitialEmbark.Difficulty == 0) return; // Disable enemy sensors on peaceful difficulty.
 
-            if (World.InitialEmbark.Difficulty == 0)
-                return;
-
-            if (Allies == null && Creature != null)
-            {
+            if (Creature != null)
                 Allies = Creature.Faction;
-            }
 
-            List<CreatureAI> sensed = new List<CreatureAI>();
-
-            VoxelHandle currentVoxel = new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position));
+            // Don't sense enemies if we're inside the ground??
+            var currentVoxel = new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position));
             if (!(currentVoxel.IsValid && currentVoxel.IsEmpty))
-            {
                 return;
-            }
 
-            foreach (var body in Manager.World.EnumerateIntersectingObjects(BoundingBox, CollisionType.Both))
+            var sensed = new List<CreatureAI>();
+
+            var myRoot = GetRoot();
+            var myAI = GetRoot().GetComponent<CreatureAI>();
+            if (myAI == null) return;
+
+            foreach (var body in Manager.World.EnumerateIntersectingObjects(BoundingBox, b => !Object.ReferenceEquals(b, myRoot) && b.IsRoot()))
             {
-                Flammable flames = body.GetRoot().GetComponent<Flammable>();
-                if (flames != null && flames.Heat > flames.Flashpoint && body != GetRoot())
-                {
-                    var ai = GetRoot().GetComponent<CreatureAI>();
-                    if (ai != null)
-                    {
-                        var task = new FleeEntityTask(body, 5)
-                        {
-                            Priority = Task.PriorityType.Urgent,
-                            AutoRetry = false,
-                            ReassignOnDeath = false
-                        };
-                        if (!ai.HasTaskWithName(task))
-                        {
-                            ai.AssignTask(task);
-                        }
-                    }
-                }
-                CreatureAI minion = body.GetRoot().GetComponent<CreatureAI>();
-                if (minion == null)
-                    continue;
-                Faction faction = minion.Faction;
-                
-                if (World.Diplomacy.GetPolitics(Allies, faction).GetCurrentRelationship() !=
-                    Relationship.Hateful) continue;
+                var flames = body.GetComponent<Flammable>();
 
-                if (!minion.Active) continue;
+                if (flames != null && flames.IsOnFire)
+                {
+                    var task = new FleeEntityTask(body, 5)
+                    {
+                        Priority = Task.PriorityType.Urgent,
+                        AutoRetry = false,
+                        ReassignOnDeath = false
+                    };
+
+                    if (!myAI.HasTaskWithName(task))
+                        myAI.AssignTask(task);
+
+                    continue;
+                }
+
+                var minion = body.GetComponent<CreatureAI>();
+                if (minion == null || !minion.Active)
+                    continue;
 
                 if (!DetectCloaked && minion.Creature.IsCloaked)
                     continue;
                 else if (DetectCloaked && minion.Creature.IsCloaked)
                     minion.Creature.IsCloaked = false;
 
+                if (World.Diplomacy.GetPolitics(Allies, minion.Faction).GetCurrentRelationship() != Relationship.Hateful)
+                    continue;
+
                 float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
-                
+
                 if (dist < SenseRadius && !VoxelHelpers.DoesRayHitSolidVoxel(
                     Manager.World.ChunkManager.ChunkData, Position, minion.Position))
                 {
@@ -149,11 +143,8 @@ namespace DwarfCorp
                 }
             }
 
-
             if (sensed.Count > 0)
-            {
                 OnEnemySensed.Invoke(sensed);
-            }
         }
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)

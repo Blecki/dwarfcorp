@@ -159,7 +159,6 @@ namespace DwarfCorp
                 {
                     var cachedSlice = chunk.Data.SliceCache[y];
                     
-
                     //if (chunk.Data.VoxelsPresentInSlice[y] == 0)
                     //{
                     //    cache.Clear();
@@ -247,7 +246,6 @@ namespace DwarfCorp
 
             return coord;
         }
-
 
         public override void Render(GraphicsDevice device)
         {
@@ -933,7 +931,6 @@ namespace DwarfCorp
                 default:
                     return 0.0f;
             }
-
         }
 
         private static void UpdateVoxelRamps(VoxelHandle V)
