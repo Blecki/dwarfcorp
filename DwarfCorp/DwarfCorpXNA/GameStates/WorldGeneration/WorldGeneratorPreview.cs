@@ -417,67 +417,81 @@ namespace DwarfCorp.GameStates
                 Root.DrawMesh(KeyMesh, Root.RenderData.Texture);
         }
 
-        private void RegneratePreviewTexture()
+        private bool PreviewTextureNeedsRegeneration()
         {
-            if (PreviewTexture == null || PreviewTexture.IsDisposed || PreviewTexture.GraphicsDevice.IsDisposed || UpdatePreview)
+            return PreviewTexture == null || PreviewTexture.IsDisposed
+                    || PreviewTexture.GraphicsDevice.IsDisposed
+                    || PreviewTexture.Width != Overworld.Map.GetLength(0) ||
+                    PreviewTexture.Height != Overworld.Map.GetLength(1);
+        }
+
+        private void CreatePreviewGUI()
+        {
+            var bkg = Root.GetTileSheet("basic");
+            var style = PreviewRenderTypes[PreviewSelector.SelectedItem];
+            Overworld.TextureFromHeightMap(style.DisplayType, Overworld.Map,
+                style.Scalar, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null,
+                Generator.worldData, PreviewTexture, Generator.Settings.SeaLevel);
+
+            var colorKeyEntries = style.GetColorKeys(Generator);
+            var font = Root.GetTileSheet("font8");
+            var stringMeshes = new List<Gui.Mesh>();
+            var y = Rect.Y;
+            var maxWidth = 0;
+
+            foreach (var color in colorKeyEntries)
             {
-                var bkg = Root.GetTileSheet("basic");
-                UpdatePreview = false;
-                InitializePreviewRenderTypes();
-
-                if (PreviewTexture == null || PreviewTexture.IsDisposed || PreviewTexture.GraphicsDevice.IsDisposed || PreviewTexture.Width != Overworld.Map.GetLength(0) ||
-                    PreviewTexture.Height != Overworld.Map.GetLength(1))
-                    PreviewTexture = new Texture2D(Device, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
-
-                // Check combo box for style of preview to draw.
-                Overworld.NativeFactions = Generator.NativeCivilizations;
-
-                var style = PreviewRenderTypes[PreviewSelector.SelectedItem];
-                Overworld.TextureFromHeightMap(style.DisplayType, Overworld.Map,
-                    style.Scalar, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null,
-                    Generator.worldData, PreviewTexture, Generator.Settings.SeaLevel);
-
-                var colorKeyEntries = style.GetColorKeys(Generator);
-                var font = Root.GetTileSheet("font8");
-                var stringMeshes = new List<Gui.Mesh>();
-                var y = Rect.Y;
-                var maxWidth = 0;
-
-                foreach (var color in colorKeyEntries)
-                {
-                    Rectangle bounds;
-                    var mesh = Gui.Mesh.CreateStringMesh(color.Key, font, new Vector2(1, 1), out bounds);
-                    stringMeshes.Add(mesh.Translate(PreviewPanel.Rect.Right - bounds.Width - (font.TileHeight + 4), y).Colorize(new Vector4(0, 0, 0, 1)));
-                    if (bounds.Width > maxWidth) maxWidth = bounds.Width;
-                    stringMeshes.Add(Gui.Mesh.Quad().Scale(font.TileHeight, font.TileHeight)
-                        .Translate(PreviewPanel.Rect.Right - font.TileHeight + 2, y)
-                        .Texture(Root.GetTileSheet("basic").TileMatrix(1))
-                        .Colorize(color.Value.ToVector4()));
-                    y += bounds.Height;
-                }
-                if (previewText == null)
-                {
-                    previewText = Generator.GetSpawnStats();
-                }
-                int dy = 0;
-                foreach (var line in previewText)
-                {
-                    Rectangle previewBounds;
-                    var previewMesh = Gui.Mesh.CreateStringMesh(line.Key, font, new Vector2(1, 1), out previewBounds);
-                    stringMeshes.Add(Gui.Mesh.FittedSprite(previewBounds, bkg, 0).Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(new Vector4(0.0f, 0.0f, 0.0f, 0.7f)));
-                    stringMeshes.Add(previewMesh.Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(line.Value.ToVector4()));
-                    dy += previewBounds.Height;
-                }
-
-                KeyMesh = Gui.Mesh.Merge(stringMeshes.ToArray());
-                var thinBorder = Root.GetTileSheet("border-thin");
-                var bgMesh = Gui.Mesh.CreateScale9Background(
-                    new Rectangle(Rect.Right - thinBorder.TileWidth - maxWidth - 8 - font.TileHeight,
-                    Rect.Y, maxWidth + thinBorder.TileWidth + 8 + font.TileHeight, y - Rect.Y + thinBorder.TileHeight),
-                    thinBorder, Scale9Corners.Bottom | Scale9Corners.Left);
-                KeyMesh = Gui.Mesh.Merge(bgMesh, KeyMesh);
+                Rectangle bounds;
+                var mesh = Gui.Mesh.CreateStringMesh(color.Key, font, new Vector2(1, 1), out bounds);
+                stringMeshes.Add(mesh.Translate(PreviewPanel.Rect.Right - bounds.Width - (font.TileHeight + 4), y).Colorize(new Vector4(0, 0, 0, 1)));
+                if (bounds.Width > maxWidth) maxWidth = bounds.Width;
+                stringMeshes.Add(Gui.Mesh.Quad().Scale(font.TileHeight, font.TileHeight)
+                    .Translate(PreviewPanel.Rect.Right - font.TileHeight + 2, y)
+                    .Texture(Root.GetTileSheet("basic").TileMatrix(1))
+                    .Colorize(color.Value.ToVector4()));
+                y += bounds.Height;
+            }
+            if (previewText == null)
+            {
+                previewText = Generator.GetSpawnStats();
+            }
+            int dy = 0;
+            foreach (var line in previewText)
+            {
+                Rectangle previewBounds;
+                var previewMesh = Gui.Mesh.CreateStringMesh(line.Key, font, new Vector2(1, 1), out previewBounds);
+                stringMeshes.Add(Gui.Mesh.FittedSprite(previewBounds, bkg, 0).Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(new Vector4(0.0f, 0.0f, 0.0f, 0.7f)));
+                stringMeshes.Add(previewMesh.Translate(PreviewPanel.Rect.Left + 16, PreviewPanel.Rect.Top + 16 + dy).Colorize(line.Value.ToVector4()));
+                dy += previewBounds.Height;
             }
 
+            KeyMesh = Gui.Mesh.Merge(stringMeshes.ToArray());
+            var thinBorder = Root.GetTileSheet("border-thin");
+            var bgMesh = Gui.Mesh.CreateScale9Background(
+                new Rectangle(Rect.Right - thinBorder.TileWidth - maxWidth - 8 - font.TileHeight,
+                Rect.Y, maxWidth + thinBorder.TileWidth + 8 + font.TileHeight, y - Rect.Y + thinBorder.TileHeight),
+                thinBorder, Scale9Corners.Bottom | Scale9Corners.Left);
+            KeyMesh = Gui.Mesh.Merge(bgMesh, KeyMesh);
+        }
+
+        private void SetNewPreviewTexture()
+        {
+            PreviewTexture = new Texture2D(Device, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
+        }
+
+        private void RegneratePreviewTexture()
+        {
+            if (PreviewTextureNeedsRegeneration())
+            {
+                SetNewPreviewTexture();
+            }
+            if (UpdatePreview)
+            {
+                UpdatePreview = false;
+                InitializePreviewRenderTypes();
+                Overworld.NativeFactions = Generator.NativeCivilizations;
+                CreatePreviewGUI();
+            }
         }
 
         private void UpdateTrees()

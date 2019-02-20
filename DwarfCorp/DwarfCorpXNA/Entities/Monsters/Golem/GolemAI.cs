@@ -42,6 +42,16 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
+
+    // This class only exists for backwards compatibility with versions pre 19.02.07.
+    public class MudGolemAI : GolemAI
+    {
+        public MudGolemAI()
+        {
+
+        }
+    }
+
     public class GolemAI : CreatureAI
     {
         public GolemAI()

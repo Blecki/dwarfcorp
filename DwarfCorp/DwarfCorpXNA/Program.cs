@@ -52,8 +52,8 @@ namespace DwarfCorp
 #if WINDOWS || XBOX
     internal static class Program
     {
-        public static string Version = "19.02.07_XNA";
-        public static string[] CompatibleVersions = { "19.02.07_XNA", "19.02.07_FNA", "19.02.01_XNA", "19.02.01_FNA"};
+        public static string Version = "19.02.18_XNA";
+        public static string[] CompatibleVersions = { "19.02.18_XNA", "19.02.18_FNA", "19.02.07_XNA", "19.02.07_FNA", "19.02.01_XNA", "19.02.01_FNA"};
         public static string Commit = "UNKNOWN";
         public static char DirChar = Path.DirectorySeparatorChar;
         

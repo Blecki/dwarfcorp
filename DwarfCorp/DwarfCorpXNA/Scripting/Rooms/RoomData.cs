@@ -105,6 +105,12 @@ namespace DwarfCorp
                 return false;
             }
 
+            if (Voxels.Any(v => Faction.Designations.GetVoxelDesignation(v, DesignationType._All) != null))
+            {
+                World.ShowTooltip("Something else is designated for this area.");
+                return false;
+            }
+
             List<BoundingBox> boxes = Voxels.Select(voxel => voxel.GetBoundingBox()).ToList();
             BoundingBox box = MathFunctions.GetBoundingBox(boxes);
 

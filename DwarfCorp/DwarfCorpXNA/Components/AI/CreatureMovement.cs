@@ -879,6 +879,7 @@ namespace DwarfCorp
                 // Actually - why not just not bother with rails when inverse pathing, since it should only be invoked when forward pathing fails anyway?
                 var bodies = new HashSet<Body>();
                 OctTree.EnumerateItems(v.GetBoundingBox(), bodies);
+
                 var rails = bodies.OfType<Rail.RailEntity>().Where(r => r.Active);
                 foreach (var rail in rails)
                 {

@@ -190,8 +190,14 @@ namespace DwarfCorp
 
                 HashSet<Body> hitBodies = new HashSet<Body>();
                 World.OctTree.EnumerateItems(new BoundingBox(RainDrops[i].Pos - Vector3.One, RainDrops[i].Pos + Vector3.One), hitBodies);
+
                 foreach (var body in hitBodies)
                 {
+                    if (body.Parent != Manager.RootComponent)
+                    {
+                        continue;
+                    }
+
                     var flames = body.GetRoot().GetComponent<Flammable>();
                     if (flames != null)
                     {
