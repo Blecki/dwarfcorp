@@ -50,6 +50,7 @@ namespace DwarfCorp
             public static bool DrawOcttree = false;
             public static bool DrawPaths = false;
             public static bool DrawRailNetwork = false;
+            public static bool DrawPipeNetwork = false;
             public static bool DrawToolDebugInfo = false;
             public static bool HideTerrain = false;
             public static bool ABTestSwitch = false;
