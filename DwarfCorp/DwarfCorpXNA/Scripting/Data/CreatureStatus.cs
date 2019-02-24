@@ -91,11 +91,9 @@ namespace DwarfCorp
         public void Update(Creature creature, DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             var statAdjustments = creature.Stats.FindAdjustment("status");
+            creature.Stats.RemoveStatAdjustment("status");
             if (statAdjustments == null)
-            {
                 statAdjustments = new StatAdjustment() { Name = "status" };
-                creature.Stats.AddStatAdjustment(statAdjustments);
-            }
             statAdjustments.Reset();
 
             if (!creature.IsAsleep)
@@ -132,6 +130,9 @@ namespace DwarfCorp
                     LastHungerDamageTime = DateTime.Now;
                 }
             }
+
+            if (!statAdjustments.IsAllZero)
+                creature.Stats.AddStatAdjustment(statAdjustments);
         }
     }
 }

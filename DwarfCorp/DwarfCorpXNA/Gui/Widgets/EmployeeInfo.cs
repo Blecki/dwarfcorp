@@ -53,6 +53,37 @@ namespace DwarfCorp.Gui.Widgets
 
         public Action<Widget> OnFireClicked;
 
+        private String SetLength(String S, int L)
+        {
+            if (S.Length > L)
+                return S.Substring(0, L);
+
+            if (S.Length < L)
+                S += new string(' ', L - S.Length);
+
+            return S;
+        }
+
+        private String FormatNumber(float F)
+        {
+            F = (float)Math.Round(F, 1);
+            if (F == 0) return " 0  ";
+            var r = "";
+            if (F < 0) r += "-";
+            if (F > 0) r += "+";
+
+            var front = (int)Math.Floor(Math.Abs(F));
+            var back = (int)((Math.Abs(F) - front) * 10.0f);
+            if (front > 9)
+            {
+                front = 9;
+                back = 9;
+            }
+
+            r += String.Format("{0}.{1}", front, back);
+            return r;
+        }
+
         public override void Construct()
         {
             Text = "You have no employees.";
@@ -123,7 +154,46 @@ namespace DwarfCorp.Gui.Widgets
             var statParent = left.AddChild(new Gui.Widgets.Columns
             {
                 AutoLayout = AutoLayout.DockTop,
-                MinimumSize = new Point(0, 60)
+                MinimumSize = new Point(0, 60),
+                TriggerOnChildClick = true,
+                OnClick = (sender, args) =>
+                {
+                    var employeeInfo = sender.FindParentOfType<EmployeeInfo>();
+                    if (employeeInfo != null && employeeInfo.Employee != null)
+                    {
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.Append("MODIFIERS: CHA  CON  DEX  INT  SIZ  STR  WIS \n");
+                        // Todo: Need to align columns. Current method only works for monospaced fonts.
+
+                        foreach (var modifier in employeeInfo.Employee.Creature.Stats.EnumerateStatAdjustments())
+                        {
+                            stringBuilder.Append(SetLength(modifier.Name, 9));
+                            stringBuilder.Append(": ");
+                            stringBuilder.Append(FormatNumber(modifier.Charisma));
+                            stringBuilder.Append(" ");
+                            stringBuilder.Append(FormatNumber(modifier.Constitution));
+                            stringBuilder.Append(" ");
+                            stringBuilder.Append(FormatNumber(modifier.Dexterity));
+                            stringBuilder.Append(" ");
+                            stringBuilder.Append(FormatNumber(modifier.Intelligence));
+                            stringBuilder.Append(" ");
+                            stringBuilder.Append(FormatNumber(modifier.Size));
+                            stringBuilder.Append(" ");
+                            stringBuilder.Append(FormatNumber(modifier.Strength));
+                            stringBuilder.Append(" ");
+                            stringBuilder.Append(FormatNumber(modifier.Wisdom));
+                            stringBuilder.Append("\n");
+                        }
+
+                            Confirm popup = new Confirm()
+                        {
+                            CancelText = "",
+                            Text = stringBuilder.ToString()
+                        };
+
+                        sender.Root.ShowMinorPopup(popup);
+                    }
+                }
             });
 
             var statsLeft = statParent.AddChild(new Widget());
@@ -396,12 +466,17 @@ namespace DwarfCorp.Gui.Widgets
                 MinimumSize = new Point(16, 24),
                 OnClick = (sender, args) =>
                 {
+                    if (Employee.Faction.Minions.Count == 0)
+                        Employee = null;
+
                     if (Employee == null)
                         return;
                     int idx = Employee.Faction.Minions.IndexOf(Employee);
                     if (idx < 0)
-                        return;
-                    idx--;
+                        idx = 0;
+                    else
+                        idx--;
+                   
                     Employee = Employee.Faction.Minions[Math.Abs(idx) % Employee.Faction.Minions.Count];
                     Employee.World.Master.SelectedMinions = new List<CreatureAI>() { Employee };
                 }
@@ -416,12 +491,17 @@ namespace DwarfCorp.Gui.Widgets
                 MinimumSize = new Point(16, 24),
                 OnClick = (sender, args) =>
                 {
+                    if (Employee.Faction.Minions.Count == 0)
+                        Employee = null;
+
                     if (Employee == null)
                         return;
                     int idx = Employee.Faction.Minions.IndexOf(Employee);
                     if (idx < 0)
-                        return;
-                    idx++;
+                        idx = 0;
+                    else
+                        idx++;
+
                     Employee = Employee.Faction.Minions[idx % Employee.Faction.Minions.Count];
                     Employee.World.Master.SelectedMinions = new List<CreatureAI>() { Employee };
                 }

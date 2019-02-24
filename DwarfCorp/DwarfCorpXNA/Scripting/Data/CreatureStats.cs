@@ -61,6 +61,11 @@ namespace DwarfCorp
             return StatAdjustments.FirstOrDefault(a => a.Name == Name);
         }
 
+        public IEnumerable<StatAdjustment> EnumerateStatAdjustments()
+        {
+            return StatAdjustments;
+        }
+
         public float BaseDexterity { set { FindAdjustment("base stats").Dexterity = value; } }
         public float BaseConstitution { set { FindAdjustment("base stats").Constitution = value; } }
         public float BaseStrength { set { FindAdjustment("base stats").Strength = value; } }

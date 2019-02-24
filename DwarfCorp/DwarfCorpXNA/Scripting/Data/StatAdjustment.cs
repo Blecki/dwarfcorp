@@ -92,5 +92,14 @@ namespace DwarfCorp
             Strength = 0;
             Wisdom = 0;
         }
+
+        [JsonIgnore]
+        public bool IsAllZero
+        {
+            get
+            {
+                return Charisma == 0 && Constitution == 0 && Dexterity == 0 && Intelligence == 0 && Size == 0 && Strength == 0 && Wisdom == 0;
+            }
+        }
     }
 }

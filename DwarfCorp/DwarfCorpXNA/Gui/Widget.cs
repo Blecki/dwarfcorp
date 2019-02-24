@@ -372,6 +372,18 @@ namespace DwarfCorp.Gui
             return false;
         }
 
+        public T FindParentOfType<T>() where T: Widget
+        {
+            var p = Parent;
+            while (p != null)
+            {
+                if (p is T)
+                    return p as T;
+                p = p.Parent;
+            }
+            return null;
+        }
+
         public void Close()
         {
             if (Root != null)
