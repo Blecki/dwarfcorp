@@ -44,13 +44,13 @@ namespace DwarfCorp
                 // Default stats
                 new CreatureStats
                 {
-                    Dexterity = 2,
-                    Constitution = 1,
-                    Strength = 1,
-                    Wisdom = 1,
-                    Charisma = 1,
-                    Intelligence = 1,
-                    Size = 0.25f,
+                    BaseDexterity = 2,
+                    BaseConstitution = 1,
+                    BaseStrength = 1,
+                    BaseWisdom = 1,
+                    BaseCharisma = 1,
+                    BaseIntelligence = 1,
+                    BaseSize = 0.25f,
                     CanSleep = false,
                     LaysEggs = true,
                     IsMigratory = true

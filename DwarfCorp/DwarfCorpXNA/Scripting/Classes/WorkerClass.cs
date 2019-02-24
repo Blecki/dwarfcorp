@@ -52,7 +52,7 @@ namespace DwarfCorp
                     Name = "Mining Intern",
                     Pay = 25,
                     XP = 0,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                 },
                 new Level
                 {
@@ -60,7 +60,7 @@ namespace DwarfCorp
                     Name = "Assistant Miner",
                     Pay = 50,
                     XP = 100,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Strength = 6,
                         Constitution = 6,
@@ -73,7 +73,7 @@ namespace DwarfCorp
                     Name = "Miner",
                     Pay = 100,
                     XP = 250,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Strength = 7,
                         Constitution = 6,
@@ -86,7 +86,7 @@ namespace DwarfCorp
                     Name = "Mine Specialist",
                     Pay = 200,
                     XP = 500,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Strength = 7,
                         Constitution = 7,
@@ -100,7 +100,7 @@ namespace DwarfCorp
                     Name = "Senior Mine Specialist",
                     Pay = 500,
                     XP = 1000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Strength = 8,
                         Constitution = 7,
@@ -114,7 +114,7 @@ namespace DwarfCorp
                     Name = "Principal Mine Specialist",
                     Pay = 1000,
                     XP = 5000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Strength = 9,
                         Constitution = 8,
@@ -128,7 +128,7 @@ namespace DwarfCorp
                     Name = "Vice President of Mine Operations",
                     Pay = 5000,
                     XP = 10000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Strength = 10,
                         Constitution = 8,
@@ -142,7 +142,7 @@ namespace DwarfCorp
                     Name = "President of Mine Operations",
                     Pay = 10000,
                     XP = 20000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Strength = 10,
                         Constitution = 9,
@@ -158,7 +158,7 @@ namespace DwarfCorp
                     Name = "Ascended Mine Master",
                     Pay = 50000,
                     XP = 1000000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Strength = 10,
                         Constitution = 10,
@@ -173,7 +173,7 @@ namespace DwarfCorp
                     Name = "High Mine Lord",
                     Pay = 100000,
                     XP = 2000000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Strength = 10,
                         Constitution = 10,
@@ -188,7 +188,7 @@ namespace DwarfCorp
                     Name = "Father of All Miners",
                     Pay = 100000,
                     XP = 5000000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Strength = 10,
                         Constitution = 10,

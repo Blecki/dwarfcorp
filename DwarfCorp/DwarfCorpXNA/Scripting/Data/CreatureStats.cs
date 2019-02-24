@@ -36,121 +36,76 @@ using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// A set of simple numbers which define how a creature is to behave.
-    /// </summary>
     public class CreatureStats
     {
-        public class StatNums
+        [JsonProperty]
+        private List<StatAdjustment> StatAdjustments = new List<StatAdjustment>();
+
+        public void AddStatAdjustment(StatAdjustment Adjustment)
         {
-            public float Dexterity = 5;
-            public float Constitution = 5;
-            public float Strength = 5;
-            public float Wisdom = 5;
-            public float Charisma = 5;
-            public float Intelligence = 5;
-            public float Size = 5;
-
-            public StatNums()
-            {
-
-            }
-
-            public StatNums(int constant)
-            {
-                Dexterity = constant;
-                Constitution = constant;
-                Strength = constant;
-                Wisdom = constant;
-                Charisma = constant;
-                Intelligence = constant;
-                Size = constant;
-            }
-
-            public static StatNums operator +(StatNums a, StatNums b)
-            {
-                if (a == null || b == null) return null;
-                return new StatNums()
-                {
-                    Charisma = a.Charisma + b.Charisma,
-                    Constitution = a.Charisma + b.Charisma,
-                    Dexterity = a.Dexterity + b.Dexterity,
-                    Intelligence = a.Intelligence + b.Intelligence,
-                    Size = a.Size + b.Size,
-                    Strength = a.Strength + b.Strength,
-                    Wisdom = a.Wisdom + b.Wisdom
-                };
-            }
-
-            public static StatNums operator -(StatNums a, StatNums b)
-            {
-                if (a == null || b == null) return null;
-                return new StatNums()
-                {
-                    Charisma = a.Charisma - b.Charisma,
-                    Constitution = a.Charisma - b.Charisma,
-                    Dexterity = a.Dexterity - b.Dexterity,
-                    Intelligence = a.Intelligence - b.Intelligence,
-                    Size = a.Size - b.Size,
-                    Strength = a.Strength - b.Strength,
-                    Wisdom = a.Wisdom - b.Wisdom
-                };
-            }
+            StatAdjustments.Add(Adjustment);
         }
 
-        public StatNums StatBuffs { get; set; }
+        public void RemoveStatAdjustment(String Name)
+        {
+            StatAdjustments.RemoveAll(a => a.Name == Name);
+        }
 
+        public StatAdjustment FindAdjustment(String Name)
+        {
+            return StatAdjustments.FirstOrDefault(a => a.Name == Name);
+        }
 
-        public float Dexterity { get; set; }
-        public float Constitution { get; set; }
-        public float Strength { get; set; }
-        public float Wisdom { get; set; }
-        public float Charisma { get; set; }
-        public float Intelligence { get; set; }
-        public float Size { get; set; }
+        public float BaseDexterity { set { FindAdjustment("base stats").Dexterity = value; } }
+        public float BaseConstitution { set { FindAdjustment("base stats").Constitution = value; } }
+        public float BaseStrength { set { FindAdjustment("base stats").Strength = value; } }
+        public float BaseWisdom { set { FindAdjustment("base stats").Wisdom = value; } }
+        public float BaseCharisma { set { FindAdjustment("base stats").Charisma = value; } }
+        public float BaseIntelligence { set { FindAdjustment("base stats").Intelligence = value; } }
+        public float BaseSize { set { FindAdjustment("base stats").Size = value; } }
 
-        public float BuffedDex { get { return Math.Max(Dexterity + StatBuffs.Dexterity, 1); } }
-        public float BuffedCon { get { return Math.Max(Constitution + StatBuffs.Constitution, 1); } }
-        public float BuffedStr { get { return Math.Max(Strength + StatBuffs.Strength, 1); } }
-        public float BuffedWis { get { return Math.Max(Wisdom + StatBuffs.Wisdom, 1); }}
-        public float BuffedChar { get { return Math.Max(Charisma + StatBuffs.Charisma, 1); } }
-        public float BuffedInt { get { return Math.Max(Intelligence + StatBuffs.Intelligence, 1); }}
-        public float BuffedSiz { get { return Math.Max(Size + StatBuffs.Size, 1); } }
+        public float Dexterity { get { return Math.Max(1, StatAdjustments.Sum(a => a.Dexterity)); } }
+        public float Constitution { get { return Math.Max(1, StatAdjustments.Sum(a => a.Constitution)); } }
+        public float Strength { get { return Math.Max(1, StatAdjustments.Sum(a => a.Strength)); } }
+        public float Wisdom { get { return Math.Max(1, StatAdjustments.Sum(a => a.Wisdom)); } }
+        public float Charisma { get { return Math.Max(1, StatAdjustments.Sum(a => a.Charisma)); } }
+        public float Intelligence { get { return Math.Max(1, StatAdjustments.Sum(a => a.Intelligence)); } }
+        public float Size { get { return Math.Max(1, StatAdjustments.Sum(a => a.Size)); } }
 
-        public float MaxSpeed { get { return BuffedDex; } }
+        public float MaxSpeed { get { return Dexterity; } }
         public float MaxAcceleration { get { return MaxSpeed * 2.0f; }  }
         public float StoppingForce { get { return MaxAcceleration * 6.0f; } }
-        public float BaseDigSpeed { get { return BuffedStr + BuffedSiz; }}
-        public float BaseChopSpeed { get { return BuffedStr * 3.0f + BuffedDex * 1.0f; } }
+        public float BaseDigSpeed { get { return Strength + Size; }}
+        public float BaseChopSpeed { get { return Strength * 3.0f + Dexterity * 1.0f; } }
         public float JumpForce { get { return 1000.0f; } }
-        public float MaxHealth { get { return (BuffedStr + BuffedCon + BuffedSiz) * 10.0f; }}
+        public float MaxHealth { get { return (Strength + Constitution + Size) * 10.0f; }}
 
-        public float EatSpeed { get { return BuffedSiz + BuffedStr; }}
+        public float EatSpeed { get { return Size + Strength; }}
 
-        public float HungerGrowth { get { return BuffedSiz * 0.025f; } }
+        public float HungerGrowth { get { return Size * 0.025f; } }
 
-        public float BaseFarmSpeed { get { return BuffedInt + BuffedStr; } }
+        public float BaseFarmSpeed { get { return Intelligence + Strength; } }
         public bool CanEat { get; set; }
-        public float BuildSpeed { get { return (BuffedInt + BuffedDex) / 10.0f; } }
+        public float BuildSpeed { get { return (Intelligence + Dexterity) / 10.0f; } }
 
         public int Age { get; set; }
 
         public int RandomSeed;
         public float VoicePitch { get; set; }
         public Gender Gender { get; set; }
-
-
+        
         public float Tiredness
         {
             get
             {
                 if(CanSleep)
                 {
-                    return 1.0f / BuffedCon;
+                    return 1.0f / Constitution;
                 }
                 else
                 {
@@ -159,7 +114,7 @@ namespace DwarfCorp
             }
         } 
 
-        public float HungerResistance { get { return BuffedCon; } }
+        public float HungerResistance { get { return Constitution; } }
 
         public bool CanSleep { get; set; }
         public bool CanGetBored { get; set; }
@@ -223,19 +178,11 @@ namespace DwarfCorp
             LevelIndex = 0;
             XP = 0;
             IsMigratory = false;
-            StatBuffs = new StatNums()
-            {
-                Charisma = 0,
-                Constitution = 0,
-                Dexterity = 0,
-                Intelligence = 0,
-                Size = 0,
-                Strength = 0,
-                Wisdom = 0
-            };
             Age = (int)Math.Max(MathFunctions.RandNormalDist(30, 15), 10);
             RandomSeed = MathFunctions.RandInt(int.MinValue, int.MaxValue);
             VoicePitch = 1.0f;
+
+            AddStatAdjustment(new StatAdjustment { Name = "base stats" });
         }
 
         public CreatureStats(EmployeeClass creatureClass, int level)
@@ -248,47 +195,44 @@ namespace DwarfCorp
             AllowedTasks = CurrentClass.Actions;
             LevelIndex = level;
             XP = creatureClass.Levels[level].XP;
-            Dexterity = Math.Max(Dexterity, CurrentLevel.BaseStats.Dexterity);
-            Constitution = Math.Max(Constitution, CurrentLevel.BaseStats.Constitution);
-            Strength = Math.Max(Strength, CurrentLevel.BaseStats.Strength);
-            Wisdom = Math.Max(Wisdom, CurrentLevel.BaseStats.Wisdom);
-            Charisma = Math.Max(Charisma, CurrentLevel.BaseStats.Charisma);
-            Intelligence = Math.Max(Intelligence, CurrentLevel.BaseStats.Intelligence);
-            StatBuffs = new StatNums()
+
+            StatAdjustments.Add(new StatAdjustment
             {
-                Charisma = 0,
-                Constitution = 0,
-                Dexterity = 0,
-                Intelligence = 0,
-                Size = 0,
-                Strength = 0,
-                Wisdom = 0
-            };
+                Name = "base stats",
+                Dexterity = CurrentLevel.BaseStats.Dexterity,
+                Constitution = CurrentLevel.BaseStats.Constitution,
+                Strength = CurrentLevel.BaseStats.Strength,
+                Wisdom = CurrentLevel.BaseStats.Wisdom,
+                Charisma = CurrentLevel.BaseStats.Charisma,
+                Intelligence = CurrentLevel.BaseStats.Intelligence,
+                Size = 0
+            });
+
             Age = (int)Math.Max(MathFunctions.RandNormalDist(30, 15), 10);
             RandomSeed = MathFunctions.RandInt(int.MinValue, int.MaxValue);
         }
 
         public void ResetBuffs()
         {
-            StatBuffs.Charisma = 0;
-            StatBuffs.Constitution = 0;
-            StatBuffs.Dexterity = 0;
-            StatBuffs.Intelligence = 0;
-            StatBuffs.Size = 0;
-            StatBuffs.Strength = 0;
-            StatBuffs.Wisdom = 0;
+            StatAdjustments.RemoveAll(a => a.Name != "base stats");
         }
 
         public void LevelUp()
         {
             LevelIndex = Math.Min(LevelIndex + 1, CurrentClass.Levels.Count - 1);
 
-            Dexterity = Math.Max(Dexterity, CurrentLevel.BaseStats.Dexterity);
-            Constitution = Math.Max(Constitution, CurrentLevel.BaseStats.Constitution);
-            Strength = Math.Max(Strength, CurrentLevel.BaseStats.Strength);
-            Wisdom = Math.Max(Wisdom, CurrentLevel.BaseStats.Wisdom);
-            Charisma = Math.Max(Charisma, CurrentLevel.BaseStats.Charisma);
-            Intelligence = Math.Max(Intelligence, CurrentLevel.BaseStats.Intelligence);
+            StatAdjustments.RemoveAll(a => a.Name == "base stats");
+
+            StatAdjustments.Add(new StatAdjustment
+            {
+                Name = "base stats",
+                Dexterity = CurrentLevel.BaseStats.Dexterity,
+                Constitution = CurrentLevel.BaseStats.Constitution,
+                Strength = CurrentLevel.BaseStats.Strength,
+                Wisdom = CurrentLevel.BaseStats.Wisdom,
+                Charisma = CurrentLevel.BaseStats.Charisma,
+                Intelligence = CurrentLevel.BaseStats.Intelligence
+            });
         }
 
         public static float GetRandomVoicePitch(Gender gender)

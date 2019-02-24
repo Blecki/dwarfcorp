@@ -30,13 +30,13 @@ namespace DwarfCorp
                 manager,
                 new CreatureStats
                 {
-                    Dexterity = 6,
-                    Constitution = 3,
-                    Strength = 3,
-                    Wisdom = 3,
-                    Charisma = 3,
-                    Intelligence = 3,
-                    Size = 0.25f,
+                    BaseDexterity = 6,
+                    BaseConstitution = 3,
+                    BaseStrength = 3,
+                    BaseWisdom = 3,
+                    BaseCharisma = 3,
+                    BaseIntelligence = 3,
+                    BaseSize = 0.25f,
                     CanSleep = false,
                     CanEat = true
                 },

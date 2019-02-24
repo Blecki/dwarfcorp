@@ -85,7 +85,7 @@ namespace DwarfCorp
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
             Stats.FullName = TextGenerator.ToTitleCase(TextGenerator.GenerateRandom("$names_undead"));
-            Stats.Size = 3;
+            Stats.BaseSize = 3;
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);

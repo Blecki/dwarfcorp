@@ -100,7 +100,7 @@ namespace DwarfCorp.Scripting.Adventure
             {
                 return new TimeSpan();
             }
-            float speed = party.Average(c => c.Stats.BuffedDex);
+            float speed = party.Average(c => c.Stats.Dexterity);
             float time = 100 * (dist / speed);
             return new TimeSpan(0, (int)(time), (int)(60 * (time - (int)(time))));
         }
@@ -121,7 +121,7 @@ namespace DwarfCorp.Scripting.Adventure
 
         public float GetSpeedPerMinute()
         {
-            return Party.Average(c => c.Stats.BuffedDex) * 10;
+            return Party.Average(c => c.Stats.Dexterity) * 10;
         }
 
         public Vector2 GetTarget(WorldManager world)
@@ -271,7 +271,7 @@ namespace DwarfCorp.Scripting.Adventure
                 return false;
             }
 
-            float strength = Party.Sum(p => p.Stats.BuffedStr);
+            float strength = Party.Sum(p => p.Stats.Strength);
             float enemyStrength = MathFunctions.RandInt(5, 50);
             if (enemyStrength > strength)
             {
@@ -494,7 +494,7 @@ namespace DwarfCorp.Scripting.Adventure
         {
             var owner = world.Factions.Factions[OwnerFaction];
             var dest = world.Factions.Factions[DestinationFaction];
-            var strength = Party.Sum(p => p.Stats.BuffedStr);
+            var strength = Party.Sum(p => p.Stats.Strength);
             var politics = world.Diplomacy.GetPolitics(owner, dest);
             List<ResourceAmount> destGoods = dest.Race.GenerateResources(world);
 
@@ -509,7 +509,7 @@ namespace DwarfCorp.Scripting.Adventure
                 if (Party.Count == 0)
                     break;
                 var randomCritter = Datastructures.SelectRandom(Party);
-                var con = randomCritter.Stats.BuffedCon;
+                var con = randomCritter.Stats.Constitution;
                 var enemyAttack = MathFunctions.RandInt(1, 20);
                 if (enemyAttack - con > 10 || enemyAttack == 20)
                 {
@@ -610,7 +610,7 @@ namespace DwarfCorp.Scripting.Adventure
         {
             var owner = world.Factions.Factions[OwnerFaction];
             var des = world.Factions.Factions[DestinationFaction];
-            var charisma = Party.Max(p => p.Stats.BuffedChar);
+            var charisma = Party.Max(p => p.Stats.Charisma);
             float tradeGoodness = charisma - MathFunctions.Rand(0, 10.0f);
             var politics = world.Diplomacy.GetPolitics(owner, des);
             if (Resources.Any(r => ResourceLibrary.GetResourceByName(r.ResourceType).Tags.Any(t => des.Race.HatedResources.Contains(t))))
@@ -691,7 +691,7 @@ namespace DwarfCorp.Scripting.Adventure
 
             var owner = world.Factions.Factions[OwnerFaction];
             var dest = world.Factions.Factions[DestinationFaction];
-            var charisma = Party.Max(p => p.Stats.BuffedChar);
+            var charisma = Party.Max(p => p.Stats.Charisma);
             float tradeGoodness = charisma - MathFunctions.Rand(0, 10.0f);
             var politics = world.Diplomacy.GetPolitics(owner, dest);
             List<ResourceAmount> destGoods = dest.Race.GenerateResources(world);

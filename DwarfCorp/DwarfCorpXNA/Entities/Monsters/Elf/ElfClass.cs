@@ -52,7 +52,7 @@ namespace DwarfCorp
                     Name = "Elvenkind",
                     Pay = 25,
                     XP = 0,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                 },
                 new Level
                 {
@@ -60,7 +60,7 @@ namespace DwarfCorp
                     Name = "Elf",
                     Pay = 50,
                     XP = 100,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 6,
                         Constitution = 6
@@ -72,7 +72,7 @@ namespace DwarfCorp
                     Name = "Happy Elf",
                     Pay = 100,
                     XP = 250,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 7,
                         Constitution = 6,
@@ -85,7 +85,7 @@ namespace DwarfCorp
                     Name = "Jovial Elf",
                     Pay = 200,
                     XP = 500,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 7,
                         Constitution = 7,
@@ -99,7 +99,7 @@ namespace DwarfCorp
                     Name = "Giggle Elf",
                     Pay = 500,
                     XP = 1000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 8,
                         Constitution = 7,
@@ -113,7 +113,7 @@ namespace DwarfCorp
                     Name = "Bubblegum Elf",
                     Pay = 1000,
                     XP = 5000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 9,
                         Constitution = 8,
@@ -127,7 +127,7 @@ namespace DwarfCorp
                     Name = "Lollipop Elf",
                     Pay = 5000,
                     XP = 10000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 10,
                         Constitution = 8,

@@ -90,7 +90,7 @@ namespace DwarfCorp
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
-            Stats.Size = 5;
+            Stats.FindAdjustment("base stats").Size = 5;
             Stats.CanSleep = true;
             Stats.CanEat = true;
             Stats.CanGetBored = true;

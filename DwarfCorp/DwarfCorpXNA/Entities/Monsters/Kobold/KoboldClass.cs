@@ -53,7 +53,7 @@ namespace DwarfCorp
                     Name = "Sneaker",
                     Pay = 25,
                     XP = 0,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Strength = 3,
                         Constitution = 3
@@ -66,7 +66,7 @@ namespace DwarfCorp
                     Name = "Sneaker",
                     Pay = 50,
                     XP = 100,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Strength = 7,
                         Constitution = 6,
@@ -79,7 +79,7 @@ namespace DwarfCorp
                     Name = "Stealer",
                     Pay = 100,
                     XP = 250,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Strength = 7,
                         Constitution = 7,
@@ -92,7 +92,7 @@ namespace DwarfCorp
                     Name = "Thief",
                     Pay = 200,
                     XP = 500,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Strength = 7,
                         Constitution = 7,

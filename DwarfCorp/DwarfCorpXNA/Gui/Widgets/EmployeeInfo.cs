@@ -464,13 +464,13 @@ namespace DwarfCorp.Gui.Widgets
                 }
 
                 NameLabel.Text = "\n" + Employee.Stats.FullName;
-                StatDexterity.Text = String.Format("Dex: {0}", Employee.Stats.BuffedDex);
-                StatStrength.Text = String.Format("Str: {0}", Employee.Stats.BuffedStr);
-                StatWisdom.Text = String.Format("Wis: {0}", Employee.Stats.BuffedWis);
-                StatConstitution.Text = String.Format("Con: {0}", Employee.Stats.BuffedCon);
-                StatIntelligence.Text = String.Format("Int: {0}", Employee.Stats.BuffedInt);
-                StatSize.Text = String.Format("Size: {0}", Employee.Stats.BuffedSiz);
-                StatCharisma.Text = String.Format("Cha: {0}", Employee.Stats.BuffedChar);
+                StatDexterity.Text = String.Format("Dex: {0}", Employee.Stats.Dexterity);
+                StatStrength.Text = String.Format("Str: {0}", Employee.Stats.Strength);
+                StatWisdom.Text = String.Format("Wis: {0}", Employee.Stats.Wisdom);
+                StatConstitution.Text = String.Format("Con: {0}", Employee.Stats.Constitution);
+                StatIntelligence.Text = String.Format("Int: {0}", Employee.Stats.Intelligence);
+                StatSize.Text = String.Format("Size: {0}", Employee.Stats.Size);
+                StatCharisma.Text = String.Format("Cha: {0}", Employee.Stats.Charisma);
                 SetStatusBar(Hunger, Employee.Status.Hunger);
                 SetStatusBar(Energy, Employee.Status.Energy);
                 SetStatusBar(Happiness, Employee.Status.Happiness);

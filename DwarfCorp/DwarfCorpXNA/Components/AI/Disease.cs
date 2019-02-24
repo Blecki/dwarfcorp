@@ -12,6 +12,7 @@ namespace DwarfCorp
     {
         public static List<Disease> Diseases { get; set; }
 
+        // Todo: Jsonify
         static DiseaseLibrary()
         {
             Diseases = new List<Disease>()
@@ -27,8 +28,9 @@ namespace DwarfCorp
                     FoodValueUntilHealed = 100,
                     IsContagious = true,
                     LikelihoodOfSpread = 0.001f,
-                    StatDamage = new CreatureStats.StatNums(0)
+                    StatDamage = new StatAdjustment(0)
                     {
+                        Name = "tuberculosis",
                         Charisma = -1,
                         Constitution = -1,
                         Dexterity = -3,
@@ -54,8 +56,9 @@ namespace DwarfCorp
                     FoodValueUntilHealed = 100,
                     IsContagious = true,
                     LikelihoodOfSpread = 0.01f,
-                    StatDamage = new CreatureStats.StatNums(0)
+                    StatDamage = new StatAdjustment(0)
                     {
+                        Name = "scarlet fever",
                         Charisma = -1,
                         Constitution = -1,
                         Dexterity = -3,
@@ -81,8 +84,9 @@ namespace DwarfCorp
                     FoodValueUntilHealed = 100,
                     IsContagious = true,
                     LikelihoodOfSpread = 0.1f,
-                    StatDamage = new CreatureStats.StatNums(0)
+                    StatDamage = new StatAdjustment(0)
                     {
+                        Name = "yellow fever",
                         Charisma = -1,
                         Constitution = -1,
                         Dexterity = -3,
@@ -108,8 +112,9 @@ namespace DwarfCorp
                     FoodValueUntilHealed = 100,
                     IsContagious = true,
                     LikelihoodOfSpread = 0.1f,
-                    StatDamage = new CreatureStats.StatNums(0)
+                    StatDamage = new StatAdjustment(0)
                     {
+                        Name = "cholera",
                         Charisma = -1,
                         Constitution = -1,
                         Dexterity = -3,
@@ -135,8 +140,9 @@ namespace DwarfCorp
                     FoodValueUntilHealed = 100,
                     IsContagious = true,
                     LikelihoodOfSpread = 0.001f,
-                    StatDamage = new CreatureStats.StatNums(0)
+                    StatDamage = new StatAdjustment(0)
                     {
+                        Name = "dysentery",
                         Charisma = -1,
                         Constitution = -1,
                         Dexterity = -3,
@@ -162,8 +168,9 @@ namespace DwarfCorp
                     FoodValueUntilHealed = 100,
                     IsContagious = false,
                     LikelihoodOfSpread = 0.1f,
-                    StatDamage = new CreatureStats.StatNums(0)
+                    StatDamage = new StatAdjustment(0)
                     {
+                        Name = "rabies",
                         Charisma = -1,
                         Constitution = -1,
                         Dexterity = -3,
@@ -188,8 +195,9 @@ namespace DwarfCorp
                     FoodValueUntilHealed = 100,
                     IsContagious = false,
                     LikelihoodOfSpread = 0.1f,
-                    StatDamage = new CreatureStats.StatNums(0)
+                    StatDamage = new StatAdjustment(0)
                     {
+                        Name = "necrorot",
                         Charisma = -1,
                         Constitution = -1,
                         Dexterity = -3,
@@ -206,14 +214,17 @@ namespace DwarfCorp
             };
 
             var bodyParts = TextGenerator.TextAtoms["$bodypart"];
+
             string[] injuries =
             {
                 "Blunt force trauma to the ", "A deep cut on the ", "A broken ", "A scraped ", "A dislocated ", "An injured ", "A bruised "
             };
+
             string[] locations =
             {
                 "left ", "right "
             };
+
             foreach (var part in bodyParts.Terms)
             {
                 foreach (var injury in injuries)
@@ -227,8 +238,9 @@ namespace DwarfCorp
                             AcquiredRandomly = false,
                             DamageEveryNSeconds = 99999,
                             Description = "An injury.",
-                            StatDamage = new CreatureStats.StatNums(0)
+                            StatDamage = new StatAdjustment(0)
                             {
+                                Name = injury + location + part,
                                 Dexterity = -1,
                                 Constitution = -1,
                             },
@@ -292,27 +304,30 @@ namespace DwarfCorp
         public float SecondsUntilHealed { get; set; }
         public float DamagePerSecond { get; set; }
         public float FoodValueUntilHealed { get; set; }
-        public CreatureStats.StatNums StatDamage { get; set; }
+        public StatAdjustment StatDamage { get; set; }
         private float LastHunger = 0.0f;
         private float TotalDamage = 0.0f;
         public int DamageEveryNSeconds { get; set; }
         public bool IsInjury { get; set; }
         public Timer SpreadTimer = new Timer(1.0f, false);
+
         public override void OnApply(Creature creature)
         {
             creature.Faction.World.Tutorial("disease");
+
             if (creature.Faction == creature.Faction.World.PlayerFaction)
             {
                 creature.Faction.World.MakeWorldPopup(creature.Stats.FullName + " got " + Name + "!", creature.Physics, -10, 10);
                 SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.15f);
             }
-            creature.Stats.StatBuffs += StatDamage;
+
+            creature.Stats.AddStatAdjustment(StatDamage.Clone());
             base.OnApply(creature);
         }
 
         public override void OnEnd(Creature creature)
         {
-            creature.Stats.StatBuffs -= StatDamage;
+            creature.Stats.RemoveStatAdjustment(StatDamage.Name);
 
             if (creature.Faction == creature.Faction.World.PlayerFaction)
             {

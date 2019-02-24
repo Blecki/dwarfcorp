@@ -87,7 +87,7 @@ namespace DwarfCorp
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
             //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
-            Stats.Size = 4;
+            Stats.BaseSize = 4;
             Stats.CanSleep = false;
             Stats.CanEat = false;
             AI.Movement.CanClimbWalls = true;

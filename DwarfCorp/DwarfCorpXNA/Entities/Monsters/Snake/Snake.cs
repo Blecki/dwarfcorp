@@ -77,13 +77,13 @@ namespace DwarfCorp
                 manager,
                 new CreatureStats
                 {
-                    Dexterity = 4,
-                    Constitution = 6,
-                    Strength = 9,
-                    Wisdom = 2,
-                    Charisma = 1,
-                    Intelligence = 3,
-                    Size = 3
+                    BaseDexterity = 4,
+                    BaseConstitution = 6,
+                    BaseStrength = 9,
+                    BaseWisdom = 2,
+                    BaseCharisma = 1,
+                    BaseIntelligence = 3,
+                    BaseSize = 3
                 },
                 "Evil",
                 manager.World.PlanService,

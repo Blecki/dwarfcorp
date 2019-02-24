@@ -97,7 +97,7 @@ namespace DwarfCorp
             Physics.Mass = 100;
 
             Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
-            Stats.Size = 4;
+            Stats.BaseSize = 4;
             Resistances[DamageType.Fire] = 5;
             Resistances[DamageType.Acid] = 5;
             Resistances[DamageType.Cold] = 5;

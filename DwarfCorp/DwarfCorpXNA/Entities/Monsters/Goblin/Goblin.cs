@@ -91,7 +91,7 @@ namespace DwarfCorp
 
             Stats.FullName = TextGenerator.ToTitleCase(TextGenerator.GenerateRandom("$names_goblin"));
 
-            Stats.Size = 4;
+            Stats.BaseSize = 4;
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);

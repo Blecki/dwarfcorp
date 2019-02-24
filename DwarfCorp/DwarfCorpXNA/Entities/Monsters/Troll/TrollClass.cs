@@ -53,7 +53,7 @@ namespace DwarfCorp
                     Name = "Troll",
                     Pay = 25,
                     XP = 0,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Strength = 8,
                         Constitution = 9,

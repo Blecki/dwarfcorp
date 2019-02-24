@@ -5,6 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
+    // Todo: Split file.
     public class Potion
     {
         public string Description;
@@ -64,6 +65,7 @@ namespace DwarfCorp
 
     public static class PotionLibrary
     {
+        // Todo: Jsonify!
         public static Dictionary<string, Potion> Potions = new Dictionary<string, Potion>()
         {
             {
@@ -118,7 +120,7 @@ namespace DwarfCorp
                         new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Bone, 1)
                     },
                     Description = "Dwarfs drink this potion to get strong.",
-                    Effects = new StatBuff(120.0f, new CreatureStats.StatNums() { Strength = 3 })
+                    Effects = new StatBuff(120.0f, new StatAdjustment() { Name = "potion of strength", Strength = 3 })
                     {
                         Particles = "star_particle"
                     },
@@ -135,7 +137,7 @@ namespace DwarfCorp
                         new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fungus, 1)
                     },
                     Description = "Dwarfs drink this potion to get a bit faster.",
-                    Effects = new StatBuff(120.0f, new CreatureStats.StatNums() { Dexterity = 3 }) { Particles = "star_particle" },
+                    Effects = new StatBuff(120.0f, new StatAdjustment() { Name = "potion of speed", Dexterity = 3 }) { Particles = "star_particle" },
                     Icon = 45
                 }
             },
@@ -149,7 +151,7 @@ namespace DwarfCorp
                         new Quantitiy<Resource.ResourceTags>(Resource.ResourceTags.Fruit, 1)
                     },
                     Description = "Dwarfs drink this potion to get a cognitive boost.",
-                    Effects = new StatBuff(120.0f, new CreatureStats.StatNums() { Intelligence = 3 }) { Particles = "star_particle" },
+                    Effects = new StatBuff(120.0f, new StatAdjustment() { Name = "potion of smarts", Intelligence = 3 }) { Particles = "star_particle" },
                     Icon = 45
                 }
             },

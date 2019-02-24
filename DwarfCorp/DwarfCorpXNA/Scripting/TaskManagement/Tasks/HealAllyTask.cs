@@ -62,7 +62,7 @@ namespace DwarfCorp
                 healTimer.Update(DwarfTime.LastTime);
                 if (healTimer.HasTriggered)
                 {
-                    int amount = MathFunctions.RandInt(1, (int)Agent.Stats.BuffedWis);
+                    int amount = MathFunctions.RandInt(1, (int)Agent.Stats.Wisdom);
                     Ally.Creature.Heal(amount);
                     IndicatorManager.DrawIndicator((amount).ToString() + " HP",
                     Ally.Position, 1.0f,

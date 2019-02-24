@@ -61,13 +61,13 @@ namespace DwarfCorp
                 manager,
                 new CreatureStats
                 {
-                    Dexterity = 12,
-                    Constitution = 6,
-                    Strength = 3,
-                    Wisdom = 2,
-                    Charisma = 1,
-                    Intelligence = 3,
-                    Size = 3,
+                    BaseDexterity = 12,
+                    BaseConstitution = 6,
+                    BaseStrength = 3,
+                    BaseWisdom = 2,
+                    BaseCharisma = 1,
+                    BaseIntelligence = 3,
+                    BaseSize = 3,
                     IsMigratory = true
                 },
                 "Herbivore",

@@ -50,7 +50,7 @@ namespace DwarfCorp
                     Name = "Craft Apprentice",
                     Pay = 25,
                     XP = 0,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                 },
                 new Level
                 {
@@ -58,7 +58,7 @@ namespace DwarfCorp
                     Name = "Assistant Craftsdwarf",
                     Pay = 50,
                     XP = 100,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 6,
                         Constitution = 6
@@ -70,7 +70,7 @@ namespace DwarfCorp
                     Name = "Craftsdwarf",
                     Pay = 100,
                     XP = 250,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 7,
                         Constitution = 6,
@@ -83,7 +83,7 @@ namespace DwarfCorp
                     Name = "Craft Engineer",
                     Pay = 200,
                     XP = 500,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 7,
                         Constitution = 7,
@@ -97,7 +97,7 @@ namespace DwarfCorp
                     Name = "Craft Specialist",
                     Pay = 500,
                     XP = 1000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 8,
                         Constitution = 7,
@@ -111,7 +111,7 @@ namespace DwarfCorp
                     Name = "Principal Crafter",
                     Pay = 1000,
                     XP = 5000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 9,
                         Constitution = 8,
@@ -125,7 +125,7 @@ namespace DwarfCorp
                     Name = "VP of Crafting",
                     Pay = 5000,
                     XP = 10000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 10,
                         Constitution = 8,
@@ -139,7 +139,7 @@ namespace DwarfCorp
                     Name = "President of Crafting",
                     Pay = 10000,
                     XP = 20000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 10,
                         Constitution = 9,
@@ -155,7 +155,7 @@ namespace DwarfCorp
                     Name = "Craft Analyst",
                     Pay = 50000,
                     XP = 1000000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 10,
                         Constitution = 10,
@@ -170,7 +170,7 @@ namespace DwarfCorp
                     Name = "Craft Scientist",
                     Pay = 100000,
                     XP = 2000000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 10,
                         Constitution = 10,
@@ -185,7 +185,7 @@ namespace DwarfCorp
                     Name = "Craft Overlord",
                     Pay = 100000,
                     XP = 5000000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 10,
                         Constitution = 10,

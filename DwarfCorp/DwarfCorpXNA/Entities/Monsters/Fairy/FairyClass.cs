@@ -53,7 +53,7 @@ namespace DwarfCorp
                     Pay = 0,
                     XP = 0,
                    
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Constitution = 1.0f,
                         Dexterity = 10,
@@ -71,7 +71,7 @@ namespace DwarfCorp
                     Pay = 0,
                     XP = 9999999,
                    
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Constitution = 1.0f,
                         Dexterity = 10,

@@ -10,17 +10,17 @@ namespace DwarfCorp
     {
         public StatBuff()
         {
-            Buffs = new CreatureStats.StatNums();
+            Buffs = new StatAdjustment();
         }
 
-        public StatBuff(float time, CreatureStats.StatNums buffs) :
+        public StatBuff(float time, StatAdjustment buffs) :
             base(time)
         {
             Buffs = buffs;
         }
 
         /// <summary> The amount to add to the creature's stats </summary>
-        public CreatureStats.StatNums Buffs { get; set; }
+        public StatAdjustment Buffs { get; set; }
 
         public override Buff Clone()
         {
@@ -42,13 +42,13 @@ namespace DwarfCorp
 
         public override void OnApply(Creature creature)
         {
-            creature.Stats.StatBuffs += Buffs;
+            creature.Stats.AddStatAdjustment(Buffs);
             base.OnApply(creature);
         }
 
         public override void OnEnd(Creature creature)
         {
-            creature.Stats.StatBuffs -= Buffs;
+            creature.Stats.RemoveStatAdjustment(Buffs.Name);
             base.OnEnd(creature);
         }
 

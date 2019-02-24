@@ -145,7 +145,7 @@ namespace DwarfCorp
             }
             var speed = Agent.Movement.Speed(action.MoveType);
 
-            float unitTime = (1.25f / (Agent.Stats.BuffedDex + 0.001f) + RandomTimeOffset) /
+            float unitTime = (1.25f / (Agent.Stats.Dexterity + 0.001f) + RandomTimeOffset) /
                              speed;
             
             if (hasNextAction)

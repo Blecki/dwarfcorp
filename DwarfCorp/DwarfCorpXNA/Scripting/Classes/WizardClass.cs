@@ -52,7 +52,7 @@ namespace DwarfCorp
                     Name = "Bachelor of Magical Studies",
                     Pay = 25,
                     XP = 0,
-                    BaseStats = new CreatureStats.StatNums(),
+                    BaseStats = new StatAdjustment(5),
                 },
                 new Level
                 {
@@ -60,7 +60,7 @@ namespace DwarfCorp
                     Name = "Master of Magical Studies",
                     Pay = 50,
                     XP = 100,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 6,
                         Constitution = 6
@@ -72,7 +72,7 @@ namespace DwarfCorp
                     Name = "PhM Candidate",
                     Pay = 100,
                     XP = 250,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 7,
                         Constitution = 6,
@@ -86,7 +86,7 @@ namespace DwarfCorp
                     Name = "Adjunct Wizard",
                     Pay = 200,
                     XP = 500,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 7,
                         Constitution = 7,
@@ -112,7 +112,7 @@ namespace DwarfCorp
                     Name = "Associate Wizard",
                     Pay = 500,
                     XP = 1000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 8,
                         Constitution = 7,
@@ -138,7 +138,7 @@ namespace DwarfCorp
                     Name = "Tenured Wizard",
                     Pay = 1000,
                     XP = 5000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 9,
                         Constitution = 8,
@@ -164,7 +164,7 @@ namespace DwarfCorp
                     Name = "Wizarding Fellow",
                     Pay = 5000,
                     XP = 10000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 10,
                         Constitution = 8,
@@ -190,7 +190,7 @@ namespace DwarfCorp
                     Name = "Dean of Wizarding",
                     Pay = 10000,
                     XP = 20000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 10,
                         Constitution = 9,
@@ -218,7 +218,7 @@ namespace DwarfCorp
                     Name = "Chair of Wizarding",
                     Pay = 50000,
                     XP = 1000000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 10,
                         Constitution = 10,
@@ -245,7 +245,7 @@ namespace DwarfCorp
                     Name = "Magical Provost",
                     Pay = 100000,
                     XP = 2000000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 10,
                         Constitution = 10,
@@ -272,7 +272,7 @@ namespace DwarfCorp
                     Name = "Wizard Emeritus",
                     Pay = 100000,
                     XP = 5000000,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Intelligence = 10,
                         Constitution = 10,

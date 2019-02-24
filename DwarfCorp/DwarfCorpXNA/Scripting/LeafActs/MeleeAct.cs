@@ -385,7 +385,7 @@ namespace DwarfCorp
                     Creature.CurrentCharacterMode = Creature.AttackMode;
                     Creature.OverrideCharacterMode = true;
                     Timer timeout = new Timer(10.0f, true);
-                    while (!CurrentAttack.Perform(Creature, Target, DwarfTime.LastTime, Creature.Stats.BuffedStr + Creature.Stats.BuffedSiz,
+                    while (!CurrentAttack.Perform(Creature, Target, DwarfTime.LastTime, Creature.Stats.Strength + Creature.Stats.Size,
                             Creature.AI.Position, Creature.Faction.Name))
                     {
                         timeout.Update(DwarfTime.LastTime);

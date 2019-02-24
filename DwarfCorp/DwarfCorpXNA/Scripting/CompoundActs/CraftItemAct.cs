@@ -332,7 +332,7 @@ namespace DwarfCorp
         public override void Initialize()
         {
             Act unreserveAct = new Wrap(UnReserve);
-            float time = 3 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.BuffedInt);
+            float time = 3 * (Item.ItemType.BaseCraftTime / Creature.AI.Stats.Intelligence);
             bool factionHasResources = Item.SelectedResources != null && Item.SelectedResources.Count > 0 && Creature.AI.Faction.HasResources(Item.SelectedResources);
             Act getResources = null;
             if (Item.ExistingResource != null)

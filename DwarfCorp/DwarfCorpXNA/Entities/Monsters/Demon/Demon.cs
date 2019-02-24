@@ -85,7 +85,7 @@ namespace DwarfCorp
             Physics.Tags.Add("Demon");
 
             Stats.FullName = TextGenerator.ToTitleCase(TextGenerator.GenerateRandom("$names_demon"));
-            Stats.Size = 4;
+            Stats.BaseSize = 4;
             Species = "Demon";
         }
 

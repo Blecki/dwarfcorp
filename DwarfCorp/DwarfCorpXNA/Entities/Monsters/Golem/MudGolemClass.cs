@@ -66,7 +66,7 @@ namespace DwarfCorp
                     Name = "MudGolem",
                     Pay = 25,
                     XP = 0,
-                    BaseStats = new CreatureStats.StatNums()
+                    BaseStats = new StatAdjustment(5)
                     {
                         Constitution = 20.0f
                     }
