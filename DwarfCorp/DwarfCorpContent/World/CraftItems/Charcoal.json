@@ -1,0 +1,31 @@
+{
+  "Name": "Charcoal",
+  "EntityName": "Charcoal",
+  "RequiredResources": [
+    {
+      "ResourceType": "Wood",
+      "NumResources": 2
+    }
+  ],
+  "Icon": {
+    "Sheet": "resources",
+    "Tile": 18
+  },
+  "BaseCraftTime": 30.0,
+  "Description": "An alternative to coal. Made by burning wood.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "ResourceCreated": {
+    "_value": "Charcoal"
+  },
+  "CraftLocation": "Forge",
+  "Verb": "Burn",
+  "PastTeseVerb": "Burnt",
+  "CurrentVerb": "Burning",
+  "AllowHeterogenous": true,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": false,
+  "Moveable": false,
+  "CraftActBehavior": "Normal",
+  "Tutorial" : "Burn wood in a forge to make charcoal."
+}

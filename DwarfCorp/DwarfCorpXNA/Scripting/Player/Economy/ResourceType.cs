@@ -60,6 +60,7 @@ namespace DwarfCorp
         public static ResourceType Grain = "Grain";
         public static ResourceType Sand = "Sand";
         public static ResourceType Coal = "Coal";
+        public static ResourceType Charcoal = "Charcoal";
         public static ResourceType Meat = "Meat";
         public static ResourceType Bones = "Bone";
         public static ResourceType Gem = "Gem";

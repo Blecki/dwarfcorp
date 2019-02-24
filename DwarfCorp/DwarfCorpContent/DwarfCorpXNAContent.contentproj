@@ -3006,6 +3006,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Haunted Forest</Name>
     </None>
+    <None Include="World\CraftItems\Charcoal.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Charcoal</Name>
+    </None>
     <None Include="World\CraftItems\Palisade.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Palisade</Name>
