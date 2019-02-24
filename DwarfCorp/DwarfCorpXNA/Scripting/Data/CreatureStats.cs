@@ -157,7 +157,7 @@ namespace DwarfCorp
         {
             get
             {
-                return CurrentClass != null ? CurrentClass.Levels.Count > LevelIndex && XP > CurrentClass.Levels[LevelIndex + 1].XP : false;
+                return CurrentClass != null ? CurrentClass.Levels.Count > LevelIndex + 1 && XP > CurrentClass.Levels[LevelIndex + 1].XP : false;
             }
         }
 

@@ -90,6 +90,7 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockTop,
                 MinimumSize = new Point(256, 24)
             });
+
             TitleEditor = levelHolder.AddChild(new Gui.Widgets.EditableTextField()
             {
                 AutoLayout = AutoLayout.DockLeft,
@@ -117,6 +118,7 @@ namespace DwarfCorp.Gui.Widgets
             var left = columns.AddChild(new Gui.Widget());
             var right = columns.AddChild(new Gui.Widget());
             var evenMoreRight = columns.AddChild(new Gui.Widget());
+
             #region Stats
             var statParent = left.AddChild(new Gui.Widgets.Columns
             {

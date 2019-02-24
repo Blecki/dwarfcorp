@@ -113,6 +113,7 @@ namespace DwarfCorp
 
         public string Name { get; set; }
 
+        // Todo: Need to add energy cost per task. Apply it to their energy status the same way as boredom.
         public float BoredomIncrease = 0.0f;
 
         public virtual void Render(DwarfTime time)
