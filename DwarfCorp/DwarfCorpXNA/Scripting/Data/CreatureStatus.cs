@@ -114,17 +114,17 @@ namespace DwarfCorp
             if (Energy.IsDissatisfied())
             {
                 creature.DrawIndicator(IndicatorManager.StandardIndicators.Sleepy);
-                statAdjustments.Strength = -2.0f;
-                statAdjustments.Intelligence = -2.0f;
-                statAdjustments.Dexterity = -2.0f;
+                statAdjustments.Strength += -2.0f;
+                statAdjustments.Intelligence += -2.0f;
+                statAdjustments.Dexterity += -2.0f;
             }
 
             if(creature.Stats.CanEat && Hunger.IsDissatisfied() && !creature.IsAsleep)
             {
                 creature.DrawIndicator(IndicatorManager.StandardIndicators.Hungry);
 
-                statAdjustments.Intelligence = -1.0f;
-                statAdjustments.Dexterity = -1.0f;
+                statAdjustments.Intelligence += -1.0f;
+                statAdjustments.Dexterity += -1.0f;
 
                 if(Hunger.CurrentValue <= 1e-12 && (DateTime.Now - LastHungerDamageTime).TotalSeconds > HungerDamageRate)
                 {
