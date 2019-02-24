@@ -125,6 +125,8 @@ namespace DwarfCorp
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            // Todo: Add debuffs when needs aren't met.
+
             if (!creature.IsAsleep)
             {
                 Hunger.CurrentValue -= dt*creature.Stats.HungerGrowth;

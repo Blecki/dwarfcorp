@@ -133,6 +133,17 @@ namespace DwarfCorp
 
         public float HungerGrowth { get { return BuffedSiz * 0.025f; } }
 
+        public float BaseFarmSpeed { get { return BuffedInt + BuffedStr; } }
+        public bool CanEat { get; set; }
+        public float BuildSpeed { get { return (BuffedInt + BuffedDex) / 10.0f; } }
+
+        public int Age { get; set; }
+
+        public int RandomSeed;
+        public float VoicePitch { get; set; }
+        public Gender Gender { get; set; }
+
+
         public float Tiredness
         {
             get
@@ -191,19 +202,10 @@ namespace DwarfCorp
         {
             get
             {
-                return CurrentClass != null ? CurrentClass.Levels.Count > 1 && XP > CurrentClass.Levels[LevelIndex + 1].XP : false;
+                return CurrentClass != null ? CurrentClass.Levels.Count > LevelIndex && XP > CurrentClass.Levels[LevelIndex + 1].XP : false;
             }
         }
 
-        public float BaseFarmSpeed { get { return BuffedInt + BuffedStr; }}
-        public bool CanEat { get; set; }
-        public float BuildSpeed { get { return (BuffedInt + BuffedDex)/10.0f; }}
-
-        public int Age { get; set; }
-
-        public int RandomSeed;
-        public float VoicePitch { get; set; }
-        public Gender Gender { get; set; }
 
         /// <summary>
         /// If true, the creature will occasionally lay eggs.

@@ -382,7 +382,7 @@ namespace DwarfCorp
                 else
                 {
                     buildAct = new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
-                                        () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime,
+                                        () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime, // Account for creature debuffs, environment buffs
                                         () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft"))
                                                 { Name = "Construct object." };
                 }
@@ -403,7 +403,7 @@ namespace DwarfCorp
                     new Sequence(new Wrap(Creature.RestockAll), unreserveAct, false);
                 
             }
-            else
+            else if (Item.ItemType.Type == CraftItem.CraftType.Resource)
             {
                 if (!String.IsNullOrEmpty(Item.ItemType.CraftLocation))
                 {
@@ -411,47 +411,46 @@ namespace DwarfCorp
                         new Wrap(() => Creature.FindAndReserve(Item.ItemType.CraftLocation, Item.ItemType.CraftLocation)),
                         new ClearBlackboardData(Agent, "ResourcesStashed"),
                         getResources,
-                        new Domain(ResourceStateValid, new Sequence
-                            (
-                            new GoToTaggedObjectAct(Agent)
-                            {
-                                Tag = Item.ItemType.CraftLocation,
-                                Teleport = true,
-                                TeleportOffset = new Vector3(0.5f, 0.0f, 0),
-                                ObjectName = Item.ItemType.CraftLocation,
-                                CheckForOcclusion = true
-                            },
-                            new Wrap(() => DestroyResources(() => Agent.Position + MathFunctions.RandVector3Cube() * 0.5f)),
-                            new Wrap(WaitForResources) { Name = "Wait for resources." },
-                            new Wrap(() => MaybeCreatePreviewBody(Item.SelectedResources)),
-                            new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
-                                () => Item.Progress, () => {
-                                    var location = Creature.AI.Blackboard.GetData<Body>(Item.ItemType.CraftLocation);
-                                    if (location != null)
-                                    {
-                                        Creature.Physics.Face(location.Position);
-                                        if (Item.PreviewResource != null)
-                                        {
-                                            Item.PreviewResource.LocalPosition = location.Position + Vector3.Up * 0.25f;
-                                        }
-                                    }
-                                    Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime;
-
-                                },
-                                () =>
+                        new Domain(ResourceStateValid, 
+                            new Sequence(
+                                new GoToTaggedObjectAct(Agent)
                                 {
-                                    var location = Creature.AI.Blackboard.GetData<Body>(Item.ItemType.CraftLocation);
-                                    if (location != null)
-                                    {
-                                        return location.Position;
-                                    }
-                                    return Agent.Position;
-                                }, Noise)) { Name = "Construct object." },
-                            unreserveAct,
-                            new Wrap(() => CreateResources(Item.SelectedResources)),
-                            new Wrap(Creature.RestockAll)
-                            )) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
-                        ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false);
+                                    Tag = Item.ItemType.CraftLocation,
+                                    Teleport = true,
+                                    TeleportOffset = new Vector3(0.5f, 0.0f, 0),
+                                    ObjectName = Item.ItemType.CraftLocation,
+                                    CheckForOcclusion = true
+                                },
+                                new Wrap(() => DestroyResources(() => Agent.Position + MathFunctions.RandVector3Cube() * 0.5f)),
+                                new Wrap(WaitForResources) { Name = "Wait for resources." },
+                                new Wrap(() => MaybeCreatePreviewBody(Item.SelectedResources)),
+                                new Wrap(() => Creature.HitAndWait(true, 
+                                    () => 1.0f, // Max Progress
+                                    () => Item.Progress, // Current Progress
+                                    () => { // Increment Progress
+                                        var location = Creature.AI.Blackboard.GetData<Body>(Item.ItemType.CraftLocation);
+                                        if (location != null)
+                                        {
+                                            Creature.Physics.Face(location.Position);
+                                            if (Item.PreviewResource != null)
+                                                Item.PreviewResource.LocalPosition = location.Position + Vector3.Up * 0.25f;
+                                        }
+
+                                        // Account for environment buff & 'anvil' buff.
+                                        Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime;
+                                    },
+                                    () => { // Get Position
+                                        var location = Creature.AI.Blackboard.GetData<Body>(Item.ItemType.CraftLocation);
+                                        if (location != null)
+                                            return location.Position;
+                                        return Agent.Position;
+                                    }, 
+                                    Noise)) { Name = "Construct object." },
+                                unreserveAct,
+                                new Wrap(() => CreateResources(Item.SelectedResources)),
+                                new Wrap(Creature.RestockAll)
+                                )) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false)
+                            ) | new Sequence(unreserveAct, new Wrap(Creature.RestockAll), false);
                 }
                 else
                 {
