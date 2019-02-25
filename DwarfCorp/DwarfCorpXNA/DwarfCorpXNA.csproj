@@ -227,7 +227,9 @@
     <Compile Include="Components\AI\Buff.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
-    <Compile Include="Components\AI\Potion.cs" />
+    <Compile Include="Scripting\Potions\GatherPotionsTask.cs" />
+    <Compile Include="Scripting\Potions\PotionLibrary.cs" />
+    <Compile Include="Scripting\Potions\Potion.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\Palette.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\Layer.cs" />
     <Compile Include="Components\Graphics\LayeredSprites\LayeredAnimationProxy.cs" />
