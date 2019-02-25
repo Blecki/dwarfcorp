@@ -249,8 +249,7 @@ namespace DwarfCorp
                                 {
                                     foreach (var creature in Player.World.EnumerateIntersectingObjects(vox.GetBoundingBox(), CollisionType.Both).OfType<Creature>())
                                     {
-                                        var disease = Datastructures.SelectRandom(DiseaseLibrary.Diseases);
-                                        creature.AcquireDisease(disease.Name);
+                                        creature.AcquireDisease(DiseaseLibrary.GetRandomDisease().Name);
                                     }
                                     break;
                                 }

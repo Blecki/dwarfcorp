@@ -2073,6 +2073,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>goblin_phoneme</Name>
     </Content>
+    <None Include="diseases.json">
+      <Name>diseases</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Entities\Dwarf\Layers\dwarf-palettes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>dwarf-palettes</Name>
@@ -2535,6 +2539,10 @@
       <Processor>TextureProcessor</Processor>
       <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
     </Compile>
+    <None Include="potions.json">
+      <Name>potions</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="primitives.json">
       <Name>primitives</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3010,6 +3018,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Charcoal</Name>
     </None>
+    <None Include="World\CraftItems\PotionOfGlee.json">
+      <Name>PotionOfGlee</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\CraftItems\PotionOfHealth.json">
+      <Name>PotionOfHealth</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="World\CraftItems\Palisade.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Palisade</Name>
@@ -3025,6 +3041,22 @@
     <None Include="World\CraftItems\Lamp.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Lamp</Name>
+    </None>
+    <None Include="World\CraftItems\PotionOfCuring.json">
+      <Name>PotionOfCuring</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\CraftItems\PotionOfLearned.json">
+      <Name>PotionOfLearned</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\CraftItems\PotionOfSpeed.json">
+      <Name>PotionOfSpeed</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="World\CraftItems\PotionOfStrength.json">
+      <Name>PotionOfStrength</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="World\CraftItems\SummoningCircle.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

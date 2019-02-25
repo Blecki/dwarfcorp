@@ -1,0 +1,45 @@
+{
+  "Name": "Potion Of Curing",
+  "EntityName": "",
+  "ObjectName": "",
+  "DisplayName": "Potion Of Curing",
+  "ShortDisplayName": null,
+  "PluralDisplayName": null,
+  "RequiredResources": [
+    {
+      "ResourceType": "Magical",
+      "NumResources": 1
+    },
+    {
+      "ResourceType": "AnimalProduct",
+      "NumResources": 1
+    }
+  ],
+  "Icon": {
+    "Sheet": "resources",
+    "Tile": 44
+  },
+  "BaseCraftTime": 10.0,
+  "Description": "Dwarfs drink this potion to cure all disease.",
+  "Type": "Resource",
+  "Prerequisites": [],
+  "CraftedResultsCount": 1,
+  "ResourceCreated": {
+    "_value": "Potion Of Curing"
+  },
+  "CraftLocation": "Apothecary",
+  "Verb": "Brew",
+  "PastTeseVerb": "Brewed",
+  "CurrentVerb": "Brewing",
+  "AllowHeterogenous": true,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": false,
+  "Moveable": false,
+  "Deconstructable": true,
+  "CraftActBehavior": "Normal",
+  "AllowRotation": false,
+  "Category": "Potions",
+  "IsMagical": true,
+  "Tutorial": "",
+  "AllowUserCrafting": true
+}

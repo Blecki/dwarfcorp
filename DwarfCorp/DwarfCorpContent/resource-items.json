@@ -2039,5 +2039,335 @@
       255
     ],
     "AleName": ""
+  },
+  {
+    "Name": "Potion Of Health",
+    "MoneyValue": 100.0,
+    "Description": "Dwarfs drink this potion when they take damage.",
+    "GuiLayers": [
+      {
+        "Sheet": "resources",
+        "Tile": 44
+      }
+    ],
+    "Tags": [
+      "Potion"
+    ],
+    "FoodContent": 0.0,
+    "CompositeLayers": [
+      {
+        "Asset": "newgui\\resources",
+        "FrameSize": "32, 32",
+        "Frame": "4, 5"
+      }
+    ],
+    "TrinketData": {
+      "BaseAsset": null,
+      "EncrustingAsset": null,
+      "SpriteRow": 0,
+      "SpriteColumn": 0
+    },
+    "Generated": true,
+    "ShortName": "Potion Of Health",
+    "MaterialStrength": 5.0,
+    "PlantToGenerate": null,
+    "CanCraft": true,
+    "CraftPrerequisites": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      },
+      {
+        "ResourceType": "Edible",
+        "NumResources": 1
+      }
+    ],
+    "Tint": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "AleName": "",
+    "CraftInfo": {
+      "CraftItemType": "Potion Of Health",
+      "Resources": null
+    },
+    "PotionType": "Potion Of Health"
+  },
+  {
+    "Name": "Potion Of Curing",
+    "MoneyValue": 100.0,
+    "Description": "Dwarfs drink this potion to cure all disease.",
+    "GuiLayers": [
+      {
+        "Sheet": "resources",
+        "Tile": 44
+      }
+    ],
+    "Tags": [
+      "Potion"
+    ],
+    "FoodContent": 0.0,
+    "CompositeLayers": [
+      {
+        "Asset": "newgui\\resources",
+        "FrameSize": "32, 32",
+        "Frame": "4, 5"
+      }
+    ],
+    "TrinketData": {
+      "BaseAsset": null,
+      "EncrustingAsset": null,
+      "SpriteRow": 0,
+      "SpriteColumn": 0
+    },
+    "Generated": true,
+    "ShortName": "Potion Of Curing",
+    "MaterialStrength": 5.0,
+    "PlantToGenerate": null,
+    "CanCraft": true,
+    "CraftPrerequisites": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      },
+      {
+        "ResourceType": "AnimalProduct",
+        "NumResources": 1
+      }
+    ],
+    "Tint": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "AleName": "",
+    "CraftInfo": {
+      "CraftItemType": "Potion Of Curing",
+      "Resources": null
+    },
+    "PotionType": "Potion Of Curing"
+  },
+  {
+    "Name": "Potion Of Glee",
+    "MoneyValue": 100.0,
+    "Description": "Dwarfs drink this potion when they are feeling down.",
+    "GuiLayers": [
+      {
+        "Sheet": "resources",
+        "Tile": 45
+      }
+    ],
+    "Tags": [
+      "Potion"
+    ],
+    "FoodContent": 0.0,
+    "CompositeLayers": [
+      {
+        "Asset": "newgui\\resources",
+        "FrameSize": "32, 32",
+        "Frame": "5, 5"
+      }
+    ],
+    "TrinketData": {
+      "BaseAsset": null,
+      "EncrustingAsset": null,
+      "SpriteRow": 0,
+      "SpriteColumn": 0
+    },
+    "Generated": true,
+    "ShortName": "Potion Of Glee",
+    "MaterialStrength": 5.0,
+    "PlantToGenerate": null,
+    "CanCraft": true,
+    "CraftPrerequisites": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      },
+      {
+        "ResourceType": "Alcohol",
+        "NumResources": 1
+      }
+    ],
+    "Tint": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "AleName": "",
+    "CraftInfo": {
+      "CraftItemType": "Potion Of Glee",
+      "Resources": null
+    },
+    "PotionType": "Potion Of Glee"
+  },
+  {
+    "Name": "Potion Of Strength",
+    "MoneyValue": 100.0,
+    "Description": "Dwarfs drink this potion to get strong.",
+    "GuiLayers": [
+      {
+        "Sheet": "resources",
+        "Tile": 44
+      }
+    ],
+    "Tags": [
+      "Potion"
+    ],
+    "FoodContent": 0.0,
+    "CompositeLayers": [
+      {
+        "Asset": "newgui\\resources",
+        "FrameSize": "32, 32",
+        "Frame": "4, 5"
+      }
+    ],
+    "TrinketData": {
+      "BaseAsset": null,
+      "EncrustingAsset": null,
+      "SpriteRow": 0,
+      "SpriteColumn": 0
+    },
+    "Generated": true,
+    "ShortName": "Potion Of Strength",
+    "MaterialStrength": 5.0,
+    "PlantToGenerate": null,
+    "CanCraft": true,
+    "CraftPrerequisites": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      },
+      {
+        "ResourceType": "Bone",
+        "NumResources": 1
+      }
+    ],
+    "Tint": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "AleName": "",
+    "CraftInfo": {
+      "CraftItemType": "Potion Of Strength",
+      "Resources": null
+    },
+    "PotionType": "Potion Of Strength"
+  },
+  {
+    "Name": "Potion Of Speed",
+    "MoneyValue": 100.0,
+    "Description": "Dwarfs drink this potion to get a bit faster.",
+    "GuiLayers": [
+      {
+        "Sheet": "resources",
+        "Tile": 45
+      }
+    ],
+    "Tags": [
+      "Potion"
+    ],
+    "FoodContent": 0.0,
+    "CompositeLayers": [
+      {
+        "Asset": "newgui\\resources",
+        "FrameSize": "32, 32",
+        "Frame": "5, 5"
+      }
+    ],
+    "TrinketData": {
+      "BaseAsset": null,
+      "EncrustingAsset": null,
+      "SpriteRow": 0,
+      "SpriteColumn": 0
+    },
+    "Generated": true,
+    "ShortName": "Potion Of Speed",
+    "MaterialStrength": 5.0,
+    "PlantToGenerate": null,
+    "CanCraft": true,
+    "CraftPrerequisites": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      },
+      {
+        "ResourceType": "Fungus",
+        "NumResources": 1
+      }
+    ],
+    "Tint": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "AleName": "",
+    "CraftInfo": {
+      "CraftItemType": "Potion Of Speed",
+      "Resources": null
+    },
+    "PotionType": "Potion Of Speed"
+  },
+  {
+    "Name": "Potion Of Learned",
+    "MoneyValue": 100.0,
+    "Description": "Dwarfs drink this potion to get a cognitive boost.",
+    "GuiLayers": [
+      {
+        "Sheet": "resources",
+        "Tile": 45
+      }
+    ],
+    "Tags": [
+      "Potion"
+    ],
+    "FoodContent": 0.0,
+    "CompositeLayers": [
+      {
+        "Asset": "newgui\\resources",
+        "FrameSize": "32, 32",
+        "Frame": "5, 5"
+      }
+    ],
+    "TrinketData": {
+      "BaseAsset": null,
+      "EncrustingAsset": null,
+      "SpriteRow": 0,
+      "SpriteColumn": 0
+    },
+    "Generated": true,
+    "ShortName": "Potion Of Learned",
+    "MaterialStrength": 5.0,
+    "PlantToGenerate": null,
+    "CanCraft": true,
+    "CraftPrerequisites": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      },
+      {
+        "ResourceType": "Fruit",
+        "NumResources": 1
+      }
+    ],
+    "Tint": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "AleName": "",
+    "CraftInfo": {
+      "CraftItemType": "Potion Of Learned",
+      "Resources": null
+    },
+    "PotionType": "Potion Of Learned"
   }
 ]

@@ -1,0 +1,250 @@
+[
+  {
+    "Name": "Potion Of Health",
+    "Description": "Dwarfs drink this potion when they take damage.",
+    "Effects": {
+      "$type": "DwarfCorp.OngoingHealBuff, /Content",
+      "DamagePerSecond": 10.0,
+      "EffectTime": {
+        "TargetTimeSeconds": 4.0,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": true,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "IsInEffect": true,
+      "Particles": "star_particle",
+      "ParticleTimer": {
+        "TargetTimeSeconds": 0.25,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": false,
+        "HasTriggered": false,
+        "Mode": "Real"
+      },
+      "SoundOnStart": null,
+      "SoundOnEnd": null
+    },
+    "Ingredients": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      },
+      {
+        "ResourceType": "Edible",
+        "NumResources": 1
+      }
+    ],
+    "Icon": 44
+  },
+  {
+    "Name": "Potion Of Curing",
+    "Description": "Dwarfs drink this potion to cure all disease.",
+    "Effects": {
+      "$type": "DwarfCorp.CureDiseaseBuff, /Content",
+      "EffectTime": {
+        "TargetTimeSeconds": 1.0,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": true,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "IsInEffect": true,
+      "Particles": null,
+      "ParticleTimer": {
+        "TargetTimeSeconds": 1.0,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": true,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "SoundOnStart": null,
+      "SoundOnEnd": null
+    },
+    "Ingredients": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      },
+      {
+        "ResourceType": "AnimalProduct",
+        "NumResources": 1
+      }
+    ],
+    "Icon": 44
+  },
+  {
+    "Name": "Potion Of Glee",
+    "Description": "Dwarfs drink this potion when they are feeling down.",
+    "Effects": {
+      "$type": "DwarfCorp.ThoughtBuff, /Content",
+      "ThoughtType": "Magic",
+      "EffectTime": {
+        "TargetTimeSeconds": 120.0,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": true,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "IsInEffect": true,
+      "Particles": "star_particle",
+      "ParticleTimer": {
+        "TargetTimeSeconds": 0.25,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": false,
+        "HasTriggered": false,
+        "Mode": "Real"
+      },
+      "SoundOnStart": null,
+      "SoundOnEnd": null
+    },
+    "Ingredients": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      },
+      {
+        "ResourceType": "Alcohol",
+        "NumResources": 1
+      }
+    ],
+    "Icon": 45
+  },
+  {
+    "Name": "Potion Of Strength",
+    "Description": "Dwarfs drink this potion to get strong.",
+    "Effects": {
+      "$type": "DwarfCorp.StatBuff, /Content",
+      "Buffs": {
+        "Name": "Potion Of Strength",
+        "Dexterity": 0.0,
+        "Constitution": 0.0,
+        "Strength": 3.0,
+        "Wisdom": 0.0,
+        "Charisma": 0.0,
+        "Intelligence": 0.0,
+        "Size": 0.0
+      },
+      "EffectTime": {
+        "TargetTimeSeconds": 120.0,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": true,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "IsInEffect": true,
+      "Particles": "star_particle",
+      "ParticleTimer": {
+        "TargetTimeSeconds": 0.25,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": false,
+        "HasTriggered": false,
+        "Mode": "Real"
+      },
+      "SoundOnStart": null,
+      "SoundOnEnd": null
+    },
+    "Ingredients": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      },
+      {
+        "ResourceType": "Bone",
+        "NumResources": 1
+      }
+    ],
+    "Icon": 44
+  },
+  {
+    "Name": "Potion Of Speed",
+    "Description": "Dwarfs drink this potion to get a bit faster.",
+    "Effects": {
+      "$type": "DwarfCorp.StatBuff, /Content",
+      "Buffs": {
+        "Name": "Potion Of Speed",
+        "Dexterity": 3.0,
+        "Constitution": 0.0,
+        "Strength": 0.0,
+        "Wisdom": 0.0,
+        "Charisma": 0.0,
+        "Intelligence": 0.0,
+        "Size": 0.0
+      },
+      "EffectTime": {
+        "TargetTimeSeconds": 120.0,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": true,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "IsInEffect": true,
+      "Particles": "star_particle",
+      "ParticleTimer": {
+        "TargetTimeSeconds": 0.25,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": false,
+        "HasTriggered": false,
+        "Mode": "Real"
+      },
+      "SoundOnStart": null,
+      "SoundOnEnd": null
+    },
+    "Ingredients": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      },
+      {
+        "ResourceType": "Fungus",
+        "NumResources": 1
+      }
+    ],
+    "Icon": 45
+  },
+  {
+    "Name": "Potion Of Learned",
+    "Description": "Dwarfs drink this potion to get a cognitive boost.",
+    "Effects": {
+      "$type": "DwarfCorp.StatBuff, /Content",
+      "Buffs": {
+        "Name": "Potion Of Learned",
+        "Dexterity": 0.0,
+        "Constitution": 0.0,
+        "Strength": 0.0,
+        "Wisdom": 0.0,
+        "Charisma": 0.0,
+        "Intelligence": 3.0,
+        "Size": 0.0
+      },
+      "EffectTime": {
+        "TargetTimeSeconds": 120.0,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": true,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "IsInEffect": true,
+      "Particles": "star_particle",
+      "ParticleTimer": {
+        "TargetTimeSeconds": 0.25,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": false,
+        "HasTriggered": false,
+        "Mode": "Real"
+      },
+      "SoundOnStart": null,
+      "SoundOnEnd": null
+    },
+    "Ingredients": [
+      {
+        "ResourceType": "Magical",
+        "NumResources": 1
+      },
+      {
+        "ResourceType": "Fruit",
+        "NumResources": 1
+      }
+    ],
+    "Icon": 45
+  }
+]
