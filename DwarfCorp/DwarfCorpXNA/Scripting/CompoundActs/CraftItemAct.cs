@@ -177,6 +177,7 @@ namespace DwarfCorp
 
             switch (Item.ItemType.CraftActBehavior)
             {
+                // Todo: This switch sucks.
                 case CraftItem.CraftActBehaviors.Object:
                     {
                         Resource craft = Item.ItemType.ToResource(Creature.World, stashed);
@@ -382,7 +383,7 @@ namespace DwarfCorp
                 else
                 {
                     buildAct = new Wrap(() => Creature.HitAndWait(true, () => 1.0f,
-                                        () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime, // Account for creature debuffs, environment buffs
+                                        () => Item.Progress, () => Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime, // Todo: Account for creature debuffs, environment buffs
                                         () => Item.Location.WorldPosition + Vector3.One * 0.5f, "Craft"))
                                                 { Name = "Construct object." };
                 }
@@ -429,15 +430,20 @@ namespace DwarfCorp
                                     () => Item.Progress, // Current Progress
                                     () => { // Increment Progress
                                         var location = Creature.AI.Blackboard.GetData<Body>(Item.ItemType.CraftLocation);
+                                        float workstationBuff = 1.0f;
                                         if (location != null)
                                         {
                                             Creature.Physics.Face(location.Position);
                                             if (Item.PreviewResource != null)
                                                 Item.PreviewResource.LocalPosition = location.Position + Vector3.Up * 0.25f;
+                                            var buff = location.GetComponent<SteamPipes.BuildBuff>();
+                                            if (buff != null)
+                                                workstationBuff = buff.BuffMultiplier;
                                         }
 
-                                        // Account for environment buff & 'anvil' buff.
-                                        Item.Progress += Creature.Stats.BuildSpeed / Item.ItemType.BaseCraftTime;
+                                        // Todo: Account for environment buff & 'anvil' buff.
+
+                                        Item.Progress += (Creature.Stats.BuildSpeed * workstationBuff) / Item.ItemType.BaseCraftTime;
                                     },
                                     () => { // Get Position
                                         var location = Creature.AI.Blackboard.GetData<Body>(Item.ItemType.CraftLocation);

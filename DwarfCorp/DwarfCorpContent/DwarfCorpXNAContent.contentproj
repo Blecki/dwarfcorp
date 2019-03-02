@@ -3014,6 +3014,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Haunted Forest</Name>
     </None>
+    <None Include="World\CraftItems\PowerAnvil.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PowerAnvil</Name>
+    </None>
     <None Include="World\CraftItems\Charcoal.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Charcoal</Name>

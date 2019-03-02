@@ -4,8 +4,8 @@
   "Category": "Magic",
   "RequiredResources": [
     {
-      "ResourceType": "Magical",
-      "NumResources": 1
+      "Type": "Magical",
+      "Count": 1
     }
   ],
   "Icon": {
@@ -18,9 +18,7 @@
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": {
-    "_value": ""
-  },
+  "ResourceCreated": "",
   "CraftLocation": "",
   "Verb": "Build",
   "PastTeseVerb": "Built",

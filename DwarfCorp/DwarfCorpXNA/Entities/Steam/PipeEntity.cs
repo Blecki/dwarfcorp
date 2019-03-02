@@ -229,6 +229,8 @@ namespace DwarfCorp.SteamPipes
                     else
                         Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.5f, 0.0f), (neighbor as Body).Position + new Vector3(0.0f, 0.5f, 0.0f), Color.Teal, 0.1f);
                 }
+
+                Drawer3D.DrawBox(GetBoundingBox(), Color.Red, 0.01f, false);
             }
 
             if (!IsVisible)
@@ -346,6 +348,9 @@ namespace DwarfCorp.SteamPipes
                 var neighborPipe = entity as PipeEntity;
                 if (neighborPipe == null) continue;
 
+                var distance = (neighborPipe.Position - Position).Length2D();
+                if (distance > 1.1f) continue;
+
                 AttachNeighbor(neighborPipe.GlobalID);
                 neighborPipe.AttachNeighbor(this.GlobalID);
             }
@@ -385,8 +390,8 @@ namespace DwarfCorp.SteamPipes
             if (deathTrigger != null)
                 deathTrigger.LocalTransform = Matrix.Identity;
 
-            AttachToNeighbors();
             PropogateTransforms();
+            AttachToNeighbors();
         }
     }
 }

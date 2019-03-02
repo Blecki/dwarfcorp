@@ -86,13 +86,16 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "SPAWN",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
-                        Columns = 5,
+                        Columns = 6,
+                        AutoSizeColumns = false,
                         ItemSource = EntityFactory.EnumerateEntityTypes().Where(s => !s.Contains("Resource") || 
                         !ResourceLibrary.GetResourceByName(s.Substring(0, s.Length - " Resource".Length)).Generated).OrderBy(s => s).Select(s =>
                             new HorizontalMenuTray.MenuItem
                             {
                                 Text = s,
-                                OnClick = (sender, args) => ActivateGodTool("Spawn/" + s)
+                                OnClick = (sender, args) => ActivateGodTool("Spawn/" + s),
+                                TextHorizontalAlign = HorizontalAlign.Left,
+                                TextVerticalAlign = VerticalAlign.Top
                             })
                     }
                 },

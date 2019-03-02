@@ -52,9 +52,13 @@ namespace DwarfCorp.Gui.Widgets
             {
                 Root.SafeCall(OnLayout, this);
                 var rect = GetDrawableInterior();
+
                 if (AutoSizeColumns)
                 {
+                    Rect.Height = Parent.Rect.Height;
+
                     var numItems = ItemSource.Count();
+
                     var cols = (int)(Math.Ceiling(((float)numItems * ItemSize.Y) / Root.RenderData.VirtualScreen.Height));
                     if (Columns != cols)
                     {
@@ -62,15 +66,16 @@ namespace DwarfCorp.Gui.Widgets
                         Construct();
                     }
                 }
+
                 var pos = new Point(rect.X, rect.Y);
                 foreach (var child in EnumerateChildren())
                 {
                     child.Rect = new Rectangle(pos.X, pos.Y, ItemSize.X, ItemSize.Y);
-                    pos.X += ItemSize.X;
-                    if (pos.X > rect.Right - ItemSize.X)
+                    pos.Y += ItemSize.Y;
+                    if (pos.Y > rect.Bottom - ItemSize.Y)
                     {
-                        pos.X = rect.X;
-                        pos.Y += ItemSize.Y;
+                        pos.Y = rect.Y;
+                        pos.X += ItemSize.X;
                     }
                     child.Layout();
                 }

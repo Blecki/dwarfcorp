@@ -1,0 +1,37 @@
+{
+  "Name": "Power Anvil",
+  "EntityName": "Power Anvil",
+  "DisplayName": "@anvil",
+  "ShortDisplayName": "@s-anvil",
+  "RequiredResources": [
+    {
+      "Type": "Metal",
+      "Count": 4
+    },
+    {
+      "Type": "Magical",
+      "Count":  4
+    }
+  ],
+  "Icon": {
+    "Sheet": "furniture",
+    "Tile": 24
+  },
+  "BaseCraftTime": 30.0,
+  "Description": "@d-anvil",
+  "Type": "Object",
+  "Prerequisites": [
+    "OnGround"
+  ],
+  "ResourceCreated": "",
+  "CraftLocation": "",
+  "Verb": "@build",
+  "PastTeseVerb": "@built",
+  "CurrentVerb": "@building",
+  "AllowHeterogenous": false,
+  "SpawnOffset": "0, 0.5, 0",
+  "AddToOwnedPool": true,
+  "Moveable": true,
+  "CraftActBehavior": "Normal",
+  "Tutorial" : "Build anvils to let your dwarfs to construct other objects and crafts. Only one dwarf can use an anvil at a time."
+}
