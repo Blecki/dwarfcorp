@@ -44,105 +44,40 @@ using System;
 
 namespace DwarfCorp
 {
-    public struct ResourceType : IEquatable<ResourceType>
+    public static class ResourceType
     {
-        [JsonProperty]
-        private string _value;
-
-        public static ResourceType Wood = "Wood";
-        public static ResourceType Stone = "Stone";
-        public static ResourceType Dirt = "Dirt";
-        public static ResourceType Mana = "Mana";
-        public static ResourceType Gold = "Gold";
-        public static ResourceType Iron = "Iron";
-        public static ResourceType Berry = "Berry";
-        public static ResourceType Mushroom = "Mushroom";
-        public static ResourceType Grain = "Grain";
-        public static ResourceType Sand = "Sand";
-        public static ResourceType Coal = "Coal";
-        public static ResourceType Charcoal = "Charcoal";
-        public static ResourceType Meat = "Meat";
-        public static ResourceType Bones = "Bone";
-        public static ResourceType Gem = "Gem";
-        public static ResourceType Meal = "Meal";
-        public static ResourceType Ale = "Ale";
-        public static ResourceType Bread = "Bread";
-        public static ResourceType Trinket = "Trinket";
-        public static ResourceType CaveMushroom = "Cave Mushroom";
-        public static ResourceType GemTrinket = "Gem-set Trinket";
-        public static ResourceType PineCone = "Pine Cone";
-        public static ResourceType Peppermint = "Peppermint";
-        public static ResourceType Coconut = "Coconut";
-        public static ResourceType Pumkin = "Pumpkin";
-        public static ResourceType Cactus = "Cactus";
-        public static ResourceType Egg = "Egg";
-        public static ResourceType Apple = "Apple";
-        public static ResourceType Glass = "Glass";
-        public static ResourceType Brick = "Brick";
-        public static ResourceType Coins = "Coins";
-        public static ResourceType EvilSeed = "Seed of Evil";
-        public static ResourceType Ice = "Ice";
-
-        public static implicit operator ResourceType(string value)
-        {
-            if (value == null)
-            {
-                return new ResourceType { _value = null };
-            }
-            return new ResourceType { _value = new string(value.ToCharArray()) };
-        }
-
-        public static implicit operator string(ResourceType value)
-        {
-            if (value == null)
-                return null;
-
-            return value._value;
-        }
-
-        public override string ToString()
-        {
-            return _value;
-        }
-
-        // Todo: Squash this before removing resourcetype
-        public Resource GetResource()
-        {
-            if (_value == null)
-            {
-                return null;
-            }
-            return ResourceLibrary.GetResourceByName(_value);
-        }
-
-        public static bool operator ==(ResourceType A, ResourceType B)
-        {
-            return A._value == B._value;
-        }
-
-        public static bool operator !=(ResourceType A, ResourceType B)
-        {
-            return A._value != B._value;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (!(obj is ResourceType)) return false;
-            return this == (ResourceType)obj;
-        }
-
-        public bool Equals(ResourceType other)
-        {
-            return this == other;
-        }
-
-        public override int GetHashCode()
-        {
-            if (_value == null)
-            {
-                return 0;
-            }
-            return _value.GetHashCode();
-        }
+        public static String Wood = "Wood";
+        public static String Stone = "Stone";
+        public static String Dirt = "Dirt";
+        public static String Mana = "Mana";
+        public static String Gold = "Gold";
+        public static String Iron = "Iron";
+        public static String Berry = "Berry";
+        public static String Mushroom = "Mushroom";
+        public static String Grain = "Grain";
+        public static String Sand = "Sand";
+        public static String Coal = "Coal";
+        public static String Charcoal = "Charcoal";
+        public static String Meat = "Meat";
+        public static String Bones = "Bone";
+        public static String Gem = "Gem";
+        public static String Meal = "Meal";
+        public static String Ale = "Ale";
+        public static String Bread = "Bread";
+        public static String Trinket = "Trinket";
+        public static String CaveMushroom = "Cave Mushroom";
+        public static String GemTrinket = "Gem-set Trinket";
+        public static String PineCone = "Pine Cone";
+        public static String Peppermint = "Peppermint";
+        public static String Coconut = "Coconut";
+        public static String Pumkin = "Pumpkin";
+        public static String Cactus = "Cactus";
+        public static String Egg = "Egg";
+        public static String Apple = "Apple";
+        public static String Glass = "Glass";
+        public static String Brick = "Brick";
+        public static String Coins = "Coins";
+        public static String EvilSeed = "Seed of Evil";
+        public static String Ice = "Ice";
     }
 }

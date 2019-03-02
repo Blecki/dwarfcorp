@@ -4,11 +4,11 @@
   "Category": "Magic",
   "RequiredResources": [
     {
-      "ResourceType": "Magical",
+      "Type": "Magical",
       "NumResources": 4
     },
     {
-      "ResourceType": "AboveGroundPlant",
+      "Type": "AboveGroundPlant",
       "NumResources": 2
     }
   ],
@@ -22,9 +22,7 @@
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": {
-    "_value": ""
-  },
+  "ResourceCreated": "",
   "CraftLocation": "",
   "Verb": "Build",
   "PastTeseVerb": "Built",

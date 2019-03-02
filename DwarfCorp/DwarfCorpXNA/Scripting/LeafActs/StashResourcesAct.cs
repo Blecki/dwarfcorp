@@ -58,7 +58,7 @@ namespace DwarfCorp
         {
             Zone = zone;
             Resources = resources;
-            Name = "Stash " + Resources.ResourceType.ToString();
+            Name = "Stash " + Resources.Type;
         }
 
         public override IEnumerable<Status> Run()

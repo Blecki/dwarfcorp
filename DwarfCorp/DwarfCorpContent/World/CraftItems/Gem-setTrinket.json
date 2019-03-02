@@ -3,11 +3,11 @@
   "EntityName": "Gem-set Trinket",
   "RequiredResources": [
     {
-      "ResourceType": "Encrustable",
+      "Type": "Encrustable",
       "NumResources": 1
     },
     {
-      "ResourceType": "Gem",
+      "Type": "Gem",
       "NumResources": 1
     }
   ],
@@ -19,9 +19,7 @@
   "Description": "Encrust a work of art with gems.",
   "Type": "Resource",
   "Prerequisites": [],
-  "ResourceCreated": {
-    "_value": "Gem-set Trinket"
-  },
+  "ResourceCreated": "Gem-set Trinket",
   "CraftLocation": "Anvil",
   "Verb": "Encrust",
   "PastTeseVerb": "Encrusted",

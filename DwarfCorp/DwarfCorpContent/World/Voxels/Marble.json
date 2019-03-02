@@ -8,9 +8,7 @@
   "HasTransitionTextures": false,
   "TransitionTiles": null,
   "ReleasesResource": true,
-  "ResourceToRelease": {
-    "_value": "Marble"
-  },
+  "ResourceToRelease": "Marble",
   "StartingHealth": 400.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": false,

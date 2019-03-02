@@ -26,11 +26,11 @@
     },
     "Ingredients": [
       {
-        "ResourceType": "Magical",
+        "Type": "Magical",
         "NumResources": 1
       },
       {
-        "ResourceType": "Edible",
+        "Type": "Edible",
         "NumResources": 1
       }
     ],
@@ -62,11 +62,11 @@
     },
     "Ingredients": [
       {
-        "ResourceType": "Magical",
+        "Type": "Magical",
         "NumResources": 1
       },
       {
-        "ResourceType": "AnimalProduct",
+        "Type": "AnimalProduct",
         "NumResources": 1
       }
     ],
@@ -99,11 +99,11 @@
     },
     "Ingredients": [
       {
-        "ResourceType": "Magical",
+        "Type": "Magical",
         "NumResources": 1
       },
       {
-        "ResourceType": "Alcohol",
+        "Type": "Alcohol",
         "NumResources": 1
       }
     ],
@@ -145,11 +145,11 @@
     },
     "Ingredients": [
       {
-        "ResourceType": "Magical",
+        "Type": "Magical",
         "NumResources": 1
       },
       {
-        "ResourceType": "Bone",
+        "Type": "Bone",
         "NumResources": 1
       }
     ],
@@ -191,11 +191,11 @@
     },
     "Ingredients": [
       {
-        "ResourceType": "Magical",
+        "Type": "Magical",
         "NumResources": 1
       },
       {
-        "ResourceType": "Fungus",
+        "Type": "Fungus",
         "NumResources": 1
       }
     ],
@@ -237,11 +237,11 @@
     },
     "Ingredients": [
       {
-        "ResourceType": "Magical",
+        "Type": "Magical",
         "NumResources": 1
       },
       {
-        "ResourceType": "Fruit",
+        "Type": "Fruit",
         "NumResources": 1
       }
     ],

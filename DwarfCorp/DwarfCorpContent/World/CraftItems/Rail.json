@@ -3,7 +3,7 @@
   "EntityName": "Rail",
   "RequiredResources": [
     {
-      "ResourceType": "Metal",
+      "Type": "Metal",
       "NumResources": 1
     }
   ],
@@ -15,9 +15,7 @@
   "Description": "Made from metal. Allows fast travel, but must be laid.",
   "Type": "Resource",
   "Prerequisites": [],
-  "ResourceCreated": {
-    "_value": "Rail"
-  },
+  "ResourceCreated": "Rail",
   "CraftLocation": "Anvil",
   "Verb": "Build",
   "PastTeseVerb": "Built",

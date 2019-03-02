@@ -39,19 +39,19 @@ namespace DwarfCorp.Gui.Widgets
                 int k = 0;
                 foreach(var ingredient in Data.RequiredResources)
                 {
-                    var resource = ResourceLibrary.GetAverageWithTag(ingredient.ResourceType);
+                    var resource = ResourceLibrary.GetAverageWithTag(ingredient.Type);
                     titleBar.AddChild(new Gui.Widget
                     {
                         MinimumSize = new Point(32, 32),
                         MaximumSize = new Point(32, 32),
                         Background = resource.GuiLayers[0],
                         AutoLayout = AutoLayout.DockLeft,
-                        Text = ingredient.NumResources.ToString(),
+                        Text = ingredient.Count.ToString(),
                         TextHorizontalAlign = HorizontalAlign.Right,
                         TextVerticalAlign = VerticalAlign.Bottom,
                         Font = "font10-outline-numsonly",
                         TextColor = Color.White.ToVector4(),
-                        Tooltip = ingredient.ResourceType.ToString()
+                        Tooltip = ingredient.Type.ToString()
                     });
                     if (k < Data.RequiredResources.Count - 1)
                     {
@@ -147,7 +147,7 @@ namespace DwarfCorp.Gui.Widgets
                         child.AddChild(new Gui.Widget()
                         {
                             Font = "font8",
-                            Text = String.Format("{0} {1}: ",resourceAmount.NumResources, resourceAmount.ResourceType),
+                            Text = String.Format("{0} {1}: ",resourceAmount.Count, resourceAmount.Type),
                             AutoLayout = AutoLayout.DockLeft
                         });
                         child.Layout();
@@ -155,10 +155,10 @@ namespace DwarfCorp.Gui.Widgets
                         var resourceSelector = child.AddChild(new Gui.Widgets.ComboBox
                         {
                             Font = "font8",
-                            Items = Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Where(r => r.NumResources >= resourceAmount.NumResources).Select(r => r.ResourceType.ToString()).OrderBy(p => p).ToList(),
+                            Items = Master.Faction.ListResourcesWithTag(resourceAmount.Type).Where(r => r.Count >= resourceAmount.Count).Select(r => r.Type).OrderBy(p => p).ToList(),
                             AutoLayout = AutoLayout.DockLeft,
                             MinimumSize = new Point(200, 18),
-                            Tooltip = String.Format("Type of {0} to use.", resourceAmount.ResourceType)
+                            Tooltip = String.Format("Type of {0} to use.", resourceAmount.Type)
                         }) as Gui.Widgets.ComboBox;
 
                         if (AllowWildcard)
@@ -290,7 +290,7 @@ namespace DwarfCorp.Gui.Widgets
             if (!AllowWildcard)
             {
                 foreach (var resourceAmount in Data.RequiredResources)
-                    if (Master.Faction.ListResourcesWithTag(resourceAmount.ResourceType).Count == 0)
+                    if (Master.Faction.ListResourcesWithTag(resourceAmount.Type).Count == 0)
                     {
                         return false;
                     }
@@ -308,7 +308,7 @@ namespace DwarfCorp.Gui.Widgets
                 if (ResourceCombos[i].SelectedItem == "<Not enough!>") continue;
                 if (ResourceCombos[i].SelectedItem == "Any") continue;
                 r.Add(new ResourceAmount(ResourceCombos[i].SelectedItem,
-                    Data.RequiredResources[i].NumResources));
+                    Data.RequiredResources[i].Count));
             }
             return r;
         }

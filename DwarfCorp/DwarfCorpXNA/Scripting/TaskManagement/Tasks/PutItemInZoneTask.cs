@@ -54,7 +54,7 @@ namespace DwarfCorp
 
         public PutItemInZoneTask(ResourceAmount item, Zone zone)
         {
-            Name = "Put Item: " + item.ResourceType + " in zone " + zone.ID;
+            Name = "Put Item: " + item.String + " in zone " + zone.ID;
             Item = item;
             Zone = zone;
             Priority = PriorityType.Low;

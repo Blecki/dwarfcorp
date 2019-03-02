@@ -531,7 +531,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-                var resource = ResourceLibrary.GetResourceByName(body.Resource.ResourceType);
+                var resource = ResourceLibrary.GetResourceByName(body.Resource.Type);
                 if (resource.Tags.Contains(Resource.ResourceTags.Edible))
                 {
                     if ((Faction.Race.EatsMeat && resource.Tags.Contains(Resource.ResourceTags.AnimalProduct)) ||
@@ -1003,7 +1003,7 @@ namespace DwarfCorp
                         aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
                     }
 
-                    aggregatedResources[resource.Resource].NumResources += 1;
+                    aggregatedResources[resource.Resource].Count += 1;
                 }
 
                 foreach (var resource in aggregatedResources)

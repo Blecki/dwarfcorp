@@ -627,7 +627,7 @@
     "CanCraft": true,
     "CraftPrerequisites": [
       {
-        "ResourceType": "Wood",
+        "Type": "Wood",
         "NumResources": 2
       }
     ],
@@ -1896,7 +1896,7 @@
     "CanCraft": true,
     "CraftPrerequisites": [
       {
-        "ResourceType": "Sand",
+        "Type": "Sand",
         "NumResources": 1
       }
     ],
@@ -1943,7 +1943,7 @@
     "CanCraft": true,
     "CraftPrerequisites": [
       {
-        "ResourceType": "Soil",
+        "Type": "Soil",
         "NumResources": 1
       }
     ],
@@ -2028,7 +2028,7 @@
     "CanCraft": true,
     "CraftPrerequisites": [
       {
-        "ResourceType": "Metal",
+        "Type": "Metal",
         "NumResources": 1
       }
     ],
@@ -2074,11 +2074,11 @@
     "CanCraft": true,
     "CraftPrerequisites": [
       {
-        "ResourceType": "Magical",
+        "Type": "Magical",
         "NumResources": 1
       },
       {
-        "ResourceType": "Edible",
+        "Type": "Edible",
         "NumResources": 1
       }
     ],
@@ -2129,11 +2129,11 @@
     "CanCraft": true,
     "CraftPrerequisites": [
       {
-        "ResourceType": "Magical",
+        "Type": "Magical",
         "NumResources": 1
       },
       {
-        "ResourceType": "AnimalProduct",
+        "Type": "AnimalProduct",
         "NumResources": 1
       }
     ],
@@ -2184,11 +2184,11 @@
     "CanCraft": true,
     "CraftPrerequisites": [
       {
-        "ResourceType": "Magical",
+        "Type": "Magical",
         "NumResources": 1
       },
       {
-        "ResourceType": "Alcohol",
+        "Type": "Alcohol",
         "NumResources": 1
       }
     ],
@@ -2239,11 +2239,11 @@
     "CanCraft": true,
     "CraftPrerequisites": [
       {
-        "ResourceType": "Magical",
+        "Type": "Magical",
         "NumResources": 1
       },
       {
-        "ResourceType": "Bone",
+        "Type": "Bone",
         "NumResources": 1
       }
     ],
@@ -2294,11 +2294,11 @@
     "CanCraft": true,
     "CraftPrerequisites": [
       {
-        "ResourceType": "Magical",
+        "Type": "Magical",
         "NumResources": 1
       },
       {
-        "ResourceType": "Fungus",
+        "Type": "Fungus",
         "NumResources": 1
       }
     ],
@@ -2349,11 +2349,11 @@
     "CanCraft": true,
     "CraftPrerequisites": [
       {
-        "ResourceType": "Magical",
+        "Type": "Magical",
         "NumResources": 1
       },
       {
-        "ResourceType": "Fruit",
+        "Type": "Fruit",
         "NumResources": 1
       }
     ],

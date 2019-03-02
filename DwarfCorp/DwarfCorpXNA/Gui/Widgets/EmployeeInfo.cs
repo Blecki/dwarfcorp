@@ -294,7 +294,7 @@ namespace DwarfCorp.Gui.Widgets
                         Dictionary<string, ResourceAmount> aggregateResources = employeeInfo.Employee.Creature.Inventory.Aggregate();
                         foreach (var resource in aggregateResources)
                         {
-                            stringBuilder.Append(String.Format("{0}x {1}\n", resource.Value.NumResources, resource.Key));
+                            stringBuilder.Append(String.Format("{0}x {1}\n", resource.Value.Count, resource.Key));
                         }
                         if (aggregateResources.Count == 0)
                         {

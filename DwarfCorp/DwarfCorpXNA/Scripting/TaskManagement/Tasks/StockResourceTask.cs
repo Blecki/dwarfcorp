@@ -57,7 +57,7 @@ namespace DwarfCorp
         {
             Category = TaskCategory.Gather;
             EntityToGather = entity.CloneResource();
-            Name = "Stock Entity: " + entity.ResourceType + " " + entity.NumResources;
+            Name = "Stock Entity: " + entity.Type + " " + entity.Count;
             Priority = PriorityType.Medium;
             ReassignOnDeath = false;
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;

@@ -145,7 +145,7 @@ namespace DwarfCorp
 
             List<Zone> sortedPiles;
 
-            if (ResourceLibrary.GetResourceByName(this.Item.ResourceType).Tags.Contains(Resource.ResourceTags.Money))
+            if (ResourceLibrary.GetResourceByName(this.Item.Type).Tags.Contains(Resource.ResourceTags.Money))
             {
                 sortedPiles = new List<Zone>(Creature.Faction.Treasurys);
                 sortedPiles.Sort(CompareTreasurys);
@@ -153,7 +153,7 @@ namespace DwarfCorp
             else
             {
                 sortedPiles =
-                    new List<Zone>(Creature.Faction.Stockpiles.Where(pile => pile.IsAllowed(Item.ResourceType)));
+                    new List<Zone>(Creature.Faction.Stockpiles.Where(pile => pile.IsAllowed(Item.Type)));
                 sortedPiles.Sort(CompareStockpiles);
             }
 

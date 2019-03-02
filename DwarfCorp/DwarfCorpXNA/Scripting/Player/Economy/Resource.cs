@@ -65,7 +65,7 @@ namespace DwarfCorp
             public List<ResourceAmount> Resources;
         }
 
-        public ResourceType Name;
+        public string Name;
         public DwarfBux MoneyValue;
         public string Description;
         public List<TileReference> GuiLayers;

@@ -8,9 +8,7 @@
   "HasTransitionTextures": false,
   "TransitionTiles": null,
   "ReleasesResource": true,
-  "ResourceToRelease": {
-    "_value": "Garnet"
-  },
+  "ResourceToRelease": "Garnet",
   "StartingHealth": 90.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": false,

@@ -4,11 +4,11 @@
   "Category": "Magic",
   "RequiredResources": [
     {
-      "ResourceType": "Magical",
+      "Type": "Magical",
       "NumResources": 4
     },
     {
-      "ResourceType": "Edible",
+      "Type": "Edible",
       "NumResources": 2
     }
   ],
@@ -22,9 +22,7 @@
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": {
-    "_value": ""
-  },
+  "ResourceCreated": "",
   "CraftLocation": "",
   "Verb": "Build",
   "PastTeseVerb": "Built",
@@ -35,5 +33,5 @@
   "Moveable": true,
   "CraftActBehavior": "Normal",
   "IsMagical": true,
-  "Tutorial" : "The tower of health automatically heals nearby dwarfs. It must be recharged from time to time by wizards."
+  "Tutorial": "The tower of health automatically heals nearby dwarfs. It must be recharged from time to time by wizards."
 }

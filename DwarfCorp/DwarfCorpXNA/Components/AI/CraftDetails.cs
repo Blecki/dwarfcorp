@@ -79,7 +79,7 @@ namespace DwarfCorp
                 {
                     foreach (var requirement in libraryType.RequiredResources)
                     {
-                        Resources.Add(new ResourceAmount(ResourceLibrary.GetLeastValuableWithTag(requirement.ResourceType), requirement.NumResources));
+                        Resources.Add(new ResourceAmount(ResourceLibrary.GetLeastValuableWithTag(requirement.Type), requirement.Count));
                     }
                 }
             }
@@ -97,7 +97,7 @@ namespace DwarfCorp
                     for (int i = 0; i < resource.NumResources; i++)
                     {
                         Vector3 pos = MathFunctions.RandVector3Box(bounds);
-                        EntityFactory.CreateEntity<Body>(resource.ResourceType + " Resource", pos);
+                        EntityFactory.CreateEntity<Body>(resource.String + " Resource", pos);
                     }
                 }
                 */
@@ -120,7 +120,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public Point DefaultSpriteFrame;
 
-        public Point GetSpritesheetFrame(ResourceType resourceType)
+        public Point GetSpritesheetFrame(String resourceType)
         {
             var resource = ResourceLibrary.GetResourceByName(resourceType);
             foreach (var tag in resource.Tags)
@@ -190,7 +190,7 @@ namespace DwarfCorp
             SpriteSheet asset,
             FixtureCraftDetails details,
             SimpleSprite.OrientMode OrientMode = SimpleSprite.OrientMode.Spherical) :
-            base(Manager, position, asset, details.GetSpritesheetFrame(details.Resources[0].ResourceType), OrientMode)
+            base(Manager, position, asset, details.GetSpritesheetFrame(details.Resources[0].Type), OrientMode)
         {
             this.SetFlag(Flag.ShouldSerialize, true);
             AddChild(details);

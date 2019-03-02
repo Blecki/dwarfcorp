@@ -173,7 +173,7 @@ namespace DwarfCorp
             }
 
             Item.SelectedResources = stashed;
-            ResourceType ResourceCreated = Item.ItemType.ResourceCreated;
+            String ResourceCreated = Item.ItemType.ResourceCreated;
 
             switch (Item.ItemType.CraftActBehavior)
             {
@@ -185,7 +185,7 @@ namespace DwarfCorp
                     break;
                 case CraftItem.CraftActBehaviors.Trinket:
                     {
-                        Resource craft = ResourceLibrary.GenerateTrinket(stashed.ElementAt(0).ResourceType,
+                        Resource craft = ResourceLibrary.GenerateTrinket(stashed.ElementAt(0).Type,
                             (Agent.Stats.Dexterity + Agent.Stats.Intelligence) / 15.0f * MathFunctions.Rand(0.5f, 1.75f));
                         ResourceCreated = craft.Name;
                     }
@@ -198,19 +198,19 @@ namespace DwarfCorp
                             yield return Act.Status.Fail;
                             yield break;
                         }
-                        Resource craft = ResourceLibrary.CreateMeal(stashed.ElementAt(0).ResourceType, stashed.ElementAt(1).ResourceType);
+                        Resource craft = ResourceLibrary.CreateMeal(stashed.ElementAt(0).Type, stashed.ElementAt(1).Type);
                         ResourceCreated = craft.Name;
                     }
                     break;
                 case CraftItem.CraftActBehaviors.Ale:
                     {
-                        Resource craft = ResourceLibrary.CreateAle(stashed.ElementAt(0).ResourceType);
+                        Resource craft = ResourceLibrary.CreateAle(stashed.ElementAt(0).Type);
                         ResourceCreated = craft.Name;
                     }
                     break;
                 case CraftItem.CraftActBehaviors.Bread:
                     {
-                        Resource craft = ResourceLibrary.CreateBread(stashed.ElementAt(0).ResourceType);
+                        Resource craft = ResourceLibrary.CreateBread(stashed.ElementAt(0).Type);
                         ResourceCreated = craft.Name;
                     }
                     break;
@@ -220,11 +220,11 @@ namespace DwarfCorp
                         Resource trinket = null;
                         foreach (ResourceAmount stashedResource in stashed)
                         {
-                            if (ResourceLibrary.GetResourceByName(stashedResource.ResourceType).Tags.Contains(Resource.ResourceTags.Craft))
-                                trinket = ResourceLibrary.GetResourceByName(stashedResource.ResourceType);
+                            if (ResourceLibrary.GetResourceByName(stashedResource.Type).Tags.Contains(Resource.ResourceTags.Craft))
+                                trinket = ResourceLibrary.GetResourceByName(stashedResource.Type);
 
-                            if (ResourceLibrary.GetResourceByName(stashedResource.ResourceType).Tags.Contains(Resource.ResourceTags.Gem))
-                                gem = ResourceLibrary.GetResourceByName(stashedResource.ResourceType);
+                            if (ResourceLibrary.GetResourceByName(stashedResource.Type).Tags.Contains(Resource.ResourceTags.Gem))
+                                gem = ResourceLibrary.GetResourceByName(stashedResource.Type);
                         }
 
 
@@ -261,7 +261,7 @@ namespace DwarfCorp
                     yield break;
                 }
             }
-            Creature.Inventory.AddResource(new ResourceAmount(Item.PreviewResource.Resource.ResourceType, Item.ItemType.CraftedResultsCount));
+            Creature.Inventory.AddResource(new ResourceAmount(Item.PreviewResource.Resource.Type, Item.ItemType.CraftedResultsCount));
             Item.PreviewResource.Delete();
             Item.PreviewResource = null;
             Creature.AI.AddXP((int)Item.ItemType.BaseCraftTime);
@@ -306,14 +306,14 @@ namespace DwarfCorp
                 if (Creature.Inventory.HasResource(resource))
                 {
                     var matchingResources = Creature.Inventory.GetResources(resource, Inventory.RestockType.Any);
-                    for (int i = 0; i < resource.NumResources; i++)
+                    for (int i = 0; i < resource.Count; i++)
                     {
                         foreach(var matching in matchingResources)
                         {
-                            int numSelected = Math.Min(matching.NumResources, resource.NumResources - i);
-                            Item.SelectedResources.Add(new ResourceAmount(matching.ResourceType, numSelected));
+                            int numSelected = Math.Min(matching.Count, resource.Count - i);
+                            Item.SelectedResources.Add(new ResourceAmount(matching.Type, numSelected));
                             i += numSelected;
-                            if (i >= resource.NumResources)
+                            if (i >= resource.Count)
                             {
                                 break;
                             }

@@ -9,7 +9,7 @@
   "FloorType": "Dirt",
   "RequiredResources": {
     "Soil": {
-      "ResourceType": "Soil",
+      "Type": "Soil",
       "NumResources": 4
     }
   },

@@ -12,9 +12,7 @@
     "4, 1"
   ],
   "ReleasesResource": false,
-  "ResourceToRelease": {
-    "_value": "Stone"
-  },
+  "ResourceToRelease": "Stone",
   "BuildRequirements": [ "Stone" ],
   "StartingHealth": 20.0,
   "ProbabilityOfRelease": 0.0,

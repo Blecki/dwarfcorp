@@ -7,11 +7,11 @@
   "PluralDisplayName": null,
   "RequiredResources": [
     {
-      "ResourceType": "Magical",
+      "Type": "Magical",
       "NumResources": 1
     },
     {
-      "ResourceType": "Alcohol",
+      "Type": "Alcohol",
       "NumResources": 1
     }
   ],
@@ -24,9 +24,7 @@
   "Type": "Resource",
   "Prerequisites": [],
   "CraftedResultsCount": 1,
-  "ResourceCreated": {
-    "_value": "Potion Of Glee"
-  },
+  "ResourceCreated": "Potion Of Glee",
   "CraftLocation": "Apothecary",
   "Verb": "Brew",
   "PastTeseVerb": "Brewed",

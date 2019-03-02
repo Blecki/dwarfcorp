@@ -115,12 +115,12 @@ namespace DwarfCorp
         {
             if (Farm != null && !(this is Seedling))
             {
-                if (Farm.Voxel.IsValid && Farm.Voxel.Type.Name == "TilledSoil" && !String.IsNullOrEmpty(Farm.SeedResourceType))
+                if (Farm.Voxel.IsValid && Farm.Voxel.Type.Name == "TilledSoil" && !String.IsNullOrEmpty(Farm.SeedString))
                 {
                     var farmTile = new Farm
                     {
                         Voxel = Farm.Voxel,
-                        SeedResourceType = Farm.SeedResourceType,
+                        SeedString = Farm.SeedString,
                         RequiredResources = Farm.RequiredResources
                     };
 
@@ -128,7 +128,7 @@ namespace DwarfCorp
                     {
                         var task = new PlantTask(farmTile)
                         {
-                            Plant = Farm.SeedResourceType,
+                            Plant = Farm.SeedString,
                             RequiredResources = Farm.RequiredResources
                         };
                         World.Master.TaskManager.AddTask(task);

@@ -9,7 +9,7 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class PlantInfo : Widget
     {
-        public ResourceType Type;
+        public String Type;
         public GameMaster Master;
 
         public override void Construct()
@@ -18,7 +18,7 @@ namespace DwarfCorp.Gui.Widgets
 
             var builder = new StringBuilder();
             builder.AppendLine("Plant " + Type);
-            var res = Type.GetResource();
+            var res = ResourceLibrary.GetResourceByName(Type);
             builder.AppendLine(res.Description);
             if (res.Tags.Contains(Resource.ResourceTags.AboveGroundPlant))
                 builder.AppendLine("* Grows above ground");

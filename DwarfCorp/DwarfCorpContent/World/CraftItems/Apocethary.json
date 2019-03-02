@@ -5,7 +5,7 @@
   "DisplayName" : "Apoth\n-ecary",
   "RequiredResources": [
     {
-      "ResourceType": "Magical",
+      "Type": "Magical",
       "NumResources": 2
     }
   ],
@@ -19,9 +19,7 @@
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": {
-    "_value": ""
-  },
+  "ResourceCreated": "",
   "CraftLocation": "",
   "Verb": "Build",
   "PastTeseVerb": "Built",

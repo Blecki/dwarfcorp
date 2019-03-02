@@ -44,7 +44,7 @@ namespace DwarfCorp
     {
         protected bool Equals(Quantitiy<T> other)
         {
-            return Equals(ResourceType, other.ResourceType) && NumResources == other.NumResources;
+            return Equals(Type, other.Type) && Count == other.Count;
         }
 
         public override bool Equals(object obj)
@@ -68,13 +68,13 @@ namespace DwarfCorp
         {
             unchecked
             {
-                return (ResourceType.GetHashCode() * 397) ^ NumResources;
+                return (Type.GetHashCode() * 397) ^ Count;
             }
         }
 
         public virtual object Clone()
         {
-            return new Quantitiy<T>(ResourceType, NumResources);
+            return new Quantitiy<T>(Type, Count);
         }
 
         public virtual Quantitiy<T> CloneQuantity()
@@ -82,8 +82,8 @@ namespace DwarfCorp
             return Clone() as Quantitiy<T>;
         }
 
-        public T ResourceType { get; set; }
-        public int NumResources { get; set; }
+        public T Type { get; set; }
+        public int Count { get; set; }
 
 
         public Quantitiy()
@@ -93,20 +93,20 @@ namespace DwarfCorp
 
         public Quantitiy(T type)
         {
-            ResourceType = type;
-            NumResources = 1;
+            Type = type;
+            Count = 1;
         }
 
         public Quantitiy(Quantitiy<T> other)
         {
-            ResourceType = other.ResourceType;
-            NumResources = other.NumResources;
+            Type = other.Type;
+            Count = other.Count;
         }
 
         public Quantitiy(T resourceType, int numResources)
         {
-            ResourceType = resourceType;
-            NumResources = numResources;
+            Type = resourceType;
+            Count = numResources;
         }
 
 
@@ -114,8 +114,8 @@ namespace DwarfCorp
         {
             return new Quantitiy<T>()
             {
-                ResourceType = b.ResourceType,
-                NumResources = b.NumResources + a
+                Type = b.Type,
+                Count = b.Count + a
             };
         }
 
@@ -123,8 +123,8 @@ namespace DwarfCorp
         {
             return new Quantitiy<T>()
             {
-                ResourceType = a.ResourceType,
-                NumResources = a.NumResources - b
+                Type = a.Type,
+                Count = a.Count - b
             };
         }
 
@@ -132,8 +132,8 @@ namespace DwarfCorp
         {
             return new Quantitiy<T>()
             {
-                ResourceType = a.ResourceType,
-                NumResources = a.NumResources + b
+                Type = a.Type,
+                Count = a.Count + b
             };
         }
 
@@ -141,8 +141,8 @@ namespace DwarfCorp
         {
             return new Quantitiy<T>()
             {
-                ResourceType = a.ResourceType,
-                NumResources = a.NumResources - b
+                Type = a.Type,
+                Count = a.Count - b
             };
         }
 
@@ -163,7 +163,7 @@ namespace DwarfCorp
                 return true;
             }
 
-            return a.ResourceType.Equals(b.ResourceType) && (a.NumResources == b.NumResources);
+            return a.Type.Equals(b.Type) && (a.Count == b.Count);
         }
 
         public static bool operator !=(Quantitiy<T> a, Quantitiy<T> b)
@@ -173,12 +173,12 @@ namespace DwarfCorp
 
         public static bool operator <(Quantitiy<T> a, Quantitiy<T> b)
         {
-            return (a.ResourceType.Equals(b.ResourceType)) && (a.NumResources < b.NumResources);
+            return (a.Type.Equals(b.Type)) && (a.Count < b.Count);
         }
 
         public static bool operator >(Quantitiy<T> a, Quantitiy<T> b)
         {
-            return (a.ResourceType.Equals(b.ResourceType)) && (a.NumResources > b.NumResources);
+            return (a.Type.Equals(b.Type)) && (a.Count > b.Count);
         }
     }
 }

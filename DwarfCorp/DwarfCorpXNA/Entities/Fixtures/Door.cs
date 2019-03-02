@@ -53,8 +53,8 @@ namespace DwarfCorp
                 var craftItem = CraftLibrary.GetCraftable(craftType);
                 foreach(var resource in craftItem.RequiredResources)
                 {
-                    var genericResource = ResourceLibrary.GetResourcesByTag(resource.ResourceType).FirstOrDefault();
-                    resources.Add(new ResourceAmount(genericResource, resource.NumResources));
+                    var genericResource = ResourceLibrary.GetResourcesByTag(resource.Type).FirstOrDefault();
+                    resources.Add(new ResourceAmount(genericResource, resource.Count));
                 }
             }
             else if (resources == null && craftType == null)
@@ -112,7 +112,7 @@ namespace DwarfCorp
         protected static float DefaultHealth = 30.0f;
         protected static Point DefaultSprite = new Point(0, 8);
 
-        protected static float GetHealth(ResourceType type)
+        protected static float GetHealth(String type)
         {
             var resource = ResourceLibrary.GetResourceByName(type);
             foreach(var tag in resource.Tags)
@@ -143,13 +143,13 @@ namespace DwarfCorp
             IsOpen = false;
             OpenTimer = new Timer(0.5f, false);
             TeamFaction = team;
-            Name = resourceType.FirstOrDefault().ResourceType + " Door";
+            Name = resourceType.FirstOrDefault().Type + " Door";
             Tags.Add("Door");
 
             OrientToWalls();
             ClosedTransform = LocalTransform;
             CollisionType = CollisionType.Static;
-            var hp = GetHealth(resourceType.FirstOrDefault().ResourceType);
+            var hp = GetHealth(resourceType.FirstOrDefault().Type);
             AddChild(new Health(manager, "Health", hp, 0.0f, hp));
         }
 

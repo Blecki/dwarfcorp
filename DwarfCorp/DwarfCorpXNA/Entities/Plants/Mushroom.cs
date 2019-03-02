@@ -52,7 +52,7 @@ namespace DwarfCorp
         public Mushroom(ComponentManager Manager,
                         Vector3 position, 
                         string asset, 
-                        ResourceType resource, 
+                        String resource, 
                         int numRelease, bool selfIlluminate) :
             base(Manager, "Mushroom", position, MathFunctions.Rand(-0.1f, 0.1f), new Vector3(1.0f, 1.0f, 1.0f), 
                 System.IO.Path.GetFileName(asset), 1.0f)

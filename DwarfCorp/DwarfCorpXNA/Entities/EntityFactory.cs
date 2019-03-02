@@ -125,7 +125,7 @@ namespace DwarfCorp
             const int maxPileSize = 64;
             foreach (ResourceAmount resource in resources)
             {
-                for (int numRemaining = resource.NumResources; numRemaining > 0; numRemaining -= maxPileSize)
+                for (int numRemaining = resource.Count; numRemaining > 0; numRemaining -= maxPileSize)
                 {
                     const int maxIters = 10;
 
@@ -139,7 +139,7 @@ namespace DwarfCorp
                             continue;
                         }
 
-                        Physics body = EntityFactory.CreateEntity<Physics>(resource.ResourceType + " Resource",
+                        Physics body = EntityFactory.CreateEntity<Physics>(resource.Type + " Resource",
                         pos, Blackboard.Create<int>("num", Math.Min(numRemaining, maxPileSize))) as Physics;
 
 

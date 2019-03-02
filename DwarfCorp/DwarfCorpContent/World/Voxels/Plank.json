@@ -12,9 +12,7 @@
     "4, 0"
   ],
   "ReleasesResource": false,
-  "ResourceToRelease": {
-    "_value": "Wood"
-  },
+  "ResourceToRelease": "Wood",
   "IsFlammable" : true,
   "BuildRequirements": [ "Wood" ],
   "StartingHealth": 20.0,

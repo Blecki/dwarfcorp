@@ -261,7 +261,7 @@ namespace DwarfCorp
                         {
                             foreach (var resourcePair in stockpile.Resources.Resources)
                             {
-                                if (resourcePair.Value.NumResources == 0)
+                                if (resourcePair.Value.Count == 0)
                                     continue;
 
                                 var resourceType = ResourceLibrary.GetResourceByName(resourcePair.Key);
@@ -363,13 +363,13 @@ namespace DwarfCorp
             {
                 foreach (var resource in s.Resources)
                 {
-                    var resourceType = ResourceLibrary.GetResourceByName(resource.ResourceType);
+                    var resourceType = ResourceLibrary.GetResourceByName(resource.Type);
 
                     foreach (var tag in resourceType.Tags)
                     {
                         if (CachedResourceTagCounts.ContainsKey(tag))
                         {
-                            CachedResourceTagCounts[tag] -= resource.NumResources;
+                            CachedResourceTagCounts[tag] -= resource.Count;
                             Trace.Assert(CachedResourceTagCounts[tag] >= 0);
                         }
                     }
@@ -402,13 +402,13 @@ namespace DwarfCorp
 
         public bool AddResources(ResourceAmount resources)
         {
-            ResourceAmount amount = new ResourceAmount(resources.ResourceType, resources.NumResources);
-            var resource = ResourceLibrary.GetResourceByName(amount.ResourceType);
-            foreach (Stockpile stockpile in Stockpiles.Where(s => s.IsAllowed(resources.ResourceType)))
+            ResourceAmount amount = new ResourceAmount(resources.Type, resources.Count);
+            var resource = ResourceLibrary.GetResourceByName(amount.Type);
+            foreach (Stockpile stockpile in Stockpiles.Where(s => s.IsAllowed(resources.Type)))
             {
                 int space = stockpile.Resources.MaxResources - stockpile.Resources.CurrentResourceCount;
 
-                if (space >= amount.NumResources)
+                if (space >= amount.Count)
                 {
                     stockpile.Resources.AddResource(amount);
                     stockpile.HandleBoxes();
@@ -418,7 +418,7 @@ namespace DwarfCorp
                         {
                             CachedResourceTagCounts[tag] = 0;
                         }
-                        CachedResourceTagCounts[tag] += amount.NumResources;
+                        CachedResourceTagCounts[tag] += amount.Count;
                     }
                     RecomputeCachedVoxelstate();
                     return true;
@@ -426,7 +426,7 @@ namespace DwarfCorp
                 else
                 {
                     stockpile.Resources.AddResource(amount);
-                    amount.NumResources -= space;
+                    amount.Count -= space;
                     stockpile.HandleBoxes();
                     foreach (var tag in resource.Tags)
                     {
@@ -437,7 +437,7 @@ namespace DwarfCorp
                         CachedResourceTagCounts[tag] += space;
                     }
                     RecomputeCachedVoxelstate();
-                    if (amount.NumResources == 0)
+                    if (amount.Count == 0)
                     {
                         return true;
                     }
@@ -526,7 +526,7 @@ namespace DwarfCorp
 
         public bool HasFreeStockpile(ResourceAmount toPut)
         {
-            return Stockpiles.Any(s => s.IsBuilt && !s.IsFull() && s.IsAllowed(toPut.ResourceType));
+            return Stockpiles.Any(s => s.IsBuilt && !s.IsFull() && s.IsAllowed(toPut.Type));
         }
 
         public bool HasFreeTreasury(DwarfBux toPut)
@@ -580,7 +580,7 @@ namespace DwarfCorp
             Dictionary<string, Pair<ResourceAmount>> toReturn = new Dictionary<string, Pair<ResourceAmount>>();
             foreach (var pair in stocks)
             {
-                toReturn[pair.Key] = new Pair<ResourceAmount>(pair.Value, new ResourceAmount(pair.Value.ResourceType, 0));
+                toReturn[pair.Key] = new Pair<ResourceAmount>(pair.Value, new ResourceAmount(pair.Value.Type, 0));
             }
             foreach (var creature in Minions)
             {
@@ -590,7 +590,7 @@ namespace DwarfCorp
                     var resource = i.Resource;
                     if (toReturn.ContainsKey(resource))
                     {
-                        toReturn[resource].Second.NumResources += 1;
+                        toReturn[resource].Second.Count += 1;
                     }
                     else
                     {
@@ -609,18 +609,18 @@ namespace DwarfCorp
             {
                 foreach (ResourceAmount resource in stockpile.Resources)
                 {
-                    if (resource.NumResources == 0)
+                    if (resource.Count == 0)
                     {
                         continue;
                     }
 
-                    if (toReturn.ContainsKey(resource.ResourceType))
+                    if (toReturn.ContainsKey(resource.Type))
                     {
-                        toReturn[resource.ResourceType].NumResources += resource.NumResources;
+                        toReturn[resource.Type].Count += resource.Count;
                     }
                     else
                     {
-                        toReturn[resource.ResourceType] = new ResourceAmount(resource);
+                        toReturn[resource.Type] = new ResourceAmount(resource);
                     }
                 }
             }
@@ -632,17 +632,17 @@ namespace DwarfCorp
             foreach (var amount in required)
             {
                 int numGot = 0;
-                ResourceType selectedResourceType = null;
+                String selectedString = null;
                 foreach (Stockpile stockpile in Stockpiles.OrderBy(s => (s.GetBoundingBox().Center() - biasPos).LengthSquared()))
                 {
-                    if (numGot >= amount.NumResources)
+                    if (numGot >= amount.Count)
                         break;
-                    foreach (var resource in stockpile.Resources.Where(sResource => sResource.ResourceType == amount.ResourceType))
+                    foreach (var resource in stockpile.Resources.Where(sResource => sResource.Type == amount.Type))
                     {
-                        int amountToRemove = System.Math.Min(resource.NumResources, amount.NumResources - numGot);
+                        int amountToRemove = System.Math.Min(resource.Count, amount.Count - numGot);
                         if (amountToRemove <= 0) continue;
                         numGot += amountToRemove;
-                        yield return new KeyValuePair<Stockpile, ResourceAmount>(stockpile, new ResourceAmount(resource.ResourceType, amountToRemove));
+                        yield return new KeyValuePair<Stockpile, ResourceAmount>(stockpile, new ResourceAmount(resource.Type, amountToRemove));
                     }
                 }
             }
@@ -654,19 +654,19 @@ namespace DwarfCorp
             foreach (var tag in tags)
             {
                 int numGot = 0;
-                ResourceType selectedResourceType = null;
+                String selectedString = null;
                 foreach (Stockpile stockpile in Stockpiles)
                 {
-                    if (numGot >= tag.NumResources)
+                    if (numGot >= tag.Count)
                         break;
-                    foreach (var resource in stockpile.Resources.Where(sResource => ResourceLibrary.GetResourceByName(sResource.ResourceType).Tags.Contains(tag.ResourceType)))
+                    foreach (var resource in stockpile.Resources.Where(sResource => ResourceLibrary.GetResourceByName(sResource.Type).Tags.Contains(tag.Type)))
                     {
-                        if (!allowHeterogenous && selectedResourceType != null && selectedResourceType != resource.ResourceType)
+                        if (!allowHeterogenous && selectedString != null && selectedString != resource.Type)
                             continue;
-                        int amountToRemove = System.Math.Min(resource.NumResources, tag.NumResources - numGot);
+                        int amountToRemove = System.Math.Min(resource.Count, tag.Count - numGot);
                         if (amountToRemove <= 0) continue;
                         numGot += amountToRemove;
-                        yield return new KeyValuePair<Stockpile, ResourceAmount>(stockpile, new ResourceAmount(resource.ResourceType, amountToRemove));
+                        yield return new KeyValuePair<Stockpile, ResourceAmount>(stockpile, new ResourceAmount(resource.Type, amountToRemove));
                     }
                 }
             }
@@ -676,12 +676,12 @@ namespace DwarfCorp
         {
             Dictionary<Resource.ResourceTags, int> tagsRequired = new Dictionary<Resource.ResourceTags, int>();
             Dictionary<Resource.ResourceTags, int> tagsGot = new Dictionary<Resource.ResourceTags, int>();
-            Dictionary<ResourceType, ResourceAmount> amounts = new Dictionary<ResourceType, ResourceAmount>();
+            Dictionary<String, ResourceAmount> amounts = new Dictionary<String, ResourceAmount>();
 
             foreach (Quantitiy<Resource.ResourceTags> quantity in tags)
             {
-                tagsRequired[quantity.ResourceType] = quantity.NumResources;
-                tagsGot[quantity.ResourceType] = 0;
+                tagsRequired[quantity.Type] = quantity.Count;
+                tagsGot[quantity.Type] = 0;
             }
 
             Random r = new Random();
@@ -696,21 +696,21 @@ namespace DwarfCorp
 
                         if (requirement.Value <= got) continue;
 
-                        if (!ResourceLibrary.GetResourceByName(resource.ResourceType).Tags.Contains(requirement.Key)) continue;
+                        if (!ResourceLibrary.GetResourceByName(resource.Type).Tags.Contains(requirement.Key)) continue;
 
-                        int amountToRemove = System.Math.Min(resource.NumResources, requirement.Value - got);
+                        int amountToRemove = System.Math.Min(resource.Count, requirement.Value - got);
 
                         if (amountToRemove <= 0) continue;
 
                         tagsGot[requirement.Key] += amountToRemove;
 
-                        if (amounts.ContainsKey(resource.ResourceType))
+                        if (amounts.ContainsKey(resource.Type))
                         {
-                            amounts[resource.ResourceType].NumResources += amountToRemove;
+                            amounts[resource.Type].Count += amountToRemove;
                         }
                         else
                         {
-                            amounts[resource.ResourceType] = new ResourceAmount(resource.ResourceType, amountToRemove);
+                            amounts[resource.Type] = new ResourceAmount(resource.Type, amountToRemove);
                         }
                     }
                 }
@@ -729,7 +729,7 @@ namespace DwarfCorp
                 foreach (var pair in amounts)
                 {
                     if (!ResourceLibrary.GetResourceByName(pair.Key).Tags.Contains(requirement.Key)) continue;
-                    if (maxAmount == null || pair.Value.NumResources > maxAmount.NumResources)
+                    if (maxAmount == null || pair.Value.Count > maxAmount.Count)
                     {
                         maxAmount = pair.Value;
                     }
@@ -765,11 +765,11 @@ namespace DwarfCorp
                     Trace.Assert(type.Tags.Count(t => t == tag) == 1);
                     if (!CachedResourceTagCounts.ContainsKey(tag))
                     {
-                        CachedResourceTagCounts[tag] = resource.Value.NumResources;
+                        CachedResourceTagCounts[tag] = resource.Value.Count;
                     }
                     else
                     {
-                        CachedResourceTagCounts[tag] += resource.Value.NumResources;
+                        CachedResourceTagCounts[tag] += resource.Value.Count;
                     }
                 }
             }
@@ -802,12 +802,12 @@ namespace DwarfCorp
         {
             foreach(var resource in resources)
             {
-                if (!CachedResourceTagCounts.ContainsKey(resource.ResourceType))
+                if (!CachedResourceTagCounts.ContainsKey(resource.Type))
                 {
                     return false;
                 }
 
-                if (CachedResourceTagCounts[resource.ResourceType] < resource.NumResources)
+                if (CachedResourceTagCounts[resource.Type] < resource.Count)
                 {
                     return false;
                 }
@@ -819,9 +819,9 @@ namespace DwarfCorp
         {
             foreach (Quantitiy<Resource.ResourceTags> resource in resources)
             {
-                int count = Stockpiles.Sum(stock => stock.Resources.GetResourceCount(resource.ResourceType, allowHeterogenous));
+                int count = Stockpiles.Sum(stock => stock.Resources.GetResourceCount(resource.Type, allowHeterogenous));
 
-                if (count < resource.NumResources)
+                if (count < resource.Count)
                 {
                     return false;
                 }
@@ -834,9 +834,9 @@ namespace DwarfCorp
         {
             foreach (ResourceAmount resource in resources)
             {
-                int count = Stockpiles.Sum(stock => stock.Resources.GetResourceCount(resource.ResourceType));
+                int count = Stockpiles.Sum(stock => stock.Resources.GetResourceCount(resource.Type));
 
-                if (count < resources.Where(r => r.ResourceType == resource.ResourceType).Sum(r => r.NumResources))
+                if (count < resources.Where(r => r.Type == resource.Type).Sum(r => r.Count))
                 {
                     return false;
                 }
@@ -845,7 +845,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public bool HasResources(ResourceType resource)
+        public bool HasResources(String resource)
         {
             return HasResources(new List<ResourceAmount>() { new ResourceAmount(resource) });
         }
@@ -858,8 +858,8 @@ namespace DwarfCorp
             }
 
             List<Vector3> positions = new List<Vector3>();
-            var resourceType = ResourceLibrary.GetResourceByName(resources.ResourceType);
-            int num = stock.Resources.RemoveMaxResources(resources, resources.NumResources);
+            var resourceType = ResourceLibrary.GetResourceByName(resources.Type);
+            int num = stock.Resources.RemoveMaxResources(resources, resources.Count);
             stock.HandleBoxes();
             foreach (var tag in resourceType.Tags)
             {
@@ -882,7 +882,7 @@ namespace DwarfCorp
                 foreach (Vector3 vec in positions)
                 {
                     Body newEntity =
-                        EntityFactory.CreateEntity<Body>(resources.ResourceType + " Resource",
+                        EntityFactory.CreateEntity<Body>(resources.Type + " Resource",
                             vec + MathFunctions.RandVector3Cube() * 0.5f);
 
                     TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f),
@@ -901,17 +901,17 @@ namespace DwarfCorp
 
         public bool RemoveResources(List<ResourceAmount> resources, Vector3 position, bool createItems = true)
         {
-            Dictionary<ResourceType, ResourceAmount> amounts = new Dictionary<ResourceType, ResourceAmount>();
+            Dictionary<String, ResourceAmount> amounts = new Dictionary<String, ResourceAmount>();
 
             foreach (ResourceAmount resource in resources)
             {
-                if (!amounts.ContainsKey(resource.ResourceType))
+                if (!amounts.ContainsKey(resource.Type))
                 {
-                    amounts.Add(resource.ResourceType, new ResourceAmount(resource));
+                    amounts.Add(resource.Type, new ResourceAmount(resource));
                 }
                 else
                 {
-                    amounts[resource.ResourceType].NumResources += resource.NumResources;
+                    amounts[resource.Type].Count += resource.Count;
                 }
             }
 
@@ -921,7 +921,7 @@ namespace DwarfCorp
             }
 
 
-            List<Stockpile> stockpilesCopy = new List<Stockpile>(Stockpiles.Where(s => resources.All(r => s.IsAllowed(r.ResourceType))));
+            List<Stockpile> stockpilesCopy = new List<Stockpile>(Stockpiles.Where(s => resources.All(r => s.IsAllowed(r.Type))));
             stockpilesCopy.Sort((a, b) => CompareZones(a, b, position));
 
 
@@ -929,10 +929,10 @@ namespace DwarfCorp
             {
                 int count = 0;
                 List<Vector3> positions = new List<Vector3>();
-                var resourceType = ResourceLibrary.GetResourceByName(resource.ResourceType);
+                var resourceType = ResourceLibrary.GetResourceByName(resource.Type);
                 foreach (Stockpile stock in stockpilesCopy)
                 {
-                    int num = stock.Resources.RemoveMaxResources(resource, resource.NumResources - count);
+                    int num = stock.Resources.RemoveMaxResources(resource, resource.Count - count);
                     stock.HandleBoxes();
                     foreach(var tag in resourceType.Tags)
                     {
@@ -952,7 +952,7 @@ namespace DwarfCorp
 
                     count += num;
 
-                    if (count >= resource.NumResources)
+                    if (count >= resource.Count)
                     {
                         break;
                     }
@@ -964,7 +964,7 @@ namespace DwarfCorp
                     foreach (Vector3 vec in positions)
                     {
                         Body newEntity =
-                            EntityFactory.CreateEntity<Body>(resource.ResourceType + " Resource",
+                            EntityFactory.CreateEntity<Body>(resource.Type + " Resource",
                                 vec + MathFunctions.RandVector3Cube() * 0.5f);
 
                         TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f),
@@ -1096,7 +1096,7 @@ namespace DwarfCorp
 
             foreach (ResourceAmount amount in resources)
             {
-                amounts += amount.NumResources;
+                amounts += amount.Count;
             }
 
             return amounts;
@@ -1108,15 +1108,15 @@ namespace DwarfCorp
             if (allowHeterogenous)
             {
                 return (from pair in resources
-                        where ResourceLibrary.GetResourceByName(pair.Value.ResourceType).Tags.Contains(tag)
+                        where ResourceLibrary.GetResourceByName(pair.Value.Type).Tags.Contains(tag)
                         select pair.Value).ToList();
             }
             ResourceAmount maxAmount = null;
             foreach (var pair in resources)
             {
-                var resource = ResourceLibrary.GetResourceByName(pair.Value.ResourceType);
+                var resource = ResourceLibrary.GetResourceByName(pair.Value.Type);
                 if (!resource.Tags.Contains(tag)) continue;
-                if (maxAmount == null || pair.Value.NumResources > maxAmount.NumResources)
+                if (maxAmount == null || pair.Value.Count > maxAmount.Count)
                 {
                     maxAmount = pair.Value;
                 }

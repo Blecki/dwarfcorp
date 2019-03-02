@@ -63,7 +63,7 @@ namespace DwarfCorp
             {
                 Quantitiy<Resource.ResourceTags> required = new Quantitiy<Resource.ResourceTags>(resources.Value)
                 {
-                    NumResources = (int)(numVoxels * resources.Value.NumResources * 0.25f)
+                    Count = (int)(numVoxels * resources.Value.Count * 0.25f)
                 };
 
                 toReturn.Add(required);
@@ -78,7 +78,7 @@ namespace DwarfCorp
             {
                 Quantitiy<Resource.ResourceTags> required = new Quantitiy<Resource.ResourceTags>(resources.Value)
                 {
-                    NumResources = (int) (numVoxels*resources.Value.NumResources*0.25f)
+                    Count = (int) (numVoxels*resources.Value.Count*0.25f)
                 };
 
                 if (!faction.HasResources(new List<Quantitiy<Resource.ResourceTags>>() { required }))

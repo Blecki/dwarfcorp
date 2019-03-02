@@ -119,7 +119,7 @@ namespace DwarfCorp
                     {
                         aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
                     }
-                    aggregatedResources[resource.Resource].NumResources++;
+                    aggregatedResources[resource.Resource].Count++;
                 }
             }
 
@@ -152,7 +152,7 @@ namespace DwarfCorp
                 {
                     aggregatedResources[resource.Resource] = new ResourceAmount(resource.Resource, 0);
                 }
-                aggregatedResources[resource.Resource].NumResources++;
+                aggregatedResources[resource.Resource].Count++;
             }
 
             foreach (var resource in aggregatedResources)

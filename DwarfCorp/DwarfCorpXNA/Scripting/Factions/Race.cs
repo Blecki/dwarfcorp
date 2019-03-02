@@ -109,8 +109,8 @@ namespace DwarfCorp
 
         public List<ResourceAmount> GenerateResources(WorldManager world)
         {
-            Dictionary<ResourceType, ResourceAmount> toReturn =
-                new Dictionary<ResourceType, ResourceAmount>();
+            Dictionary<String, ResourceAmount> toReturn =
+                new Dictionary<String, ResourceAmount>();
             Resource.ResourceTags[] blacklistTags = { Resource.ResourceTags.Money, Resource.ResourceTags.Corpse };
             foreach (var tags in TradeGoods)
             {
@@ -155,7 +155,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        toReturn[randResource.Name].NumResources += 1;
+                        toReturn[randResource.Name].Count += 1;
                     }
                 }
             }
@@ -163,14 +163,14 @@ namespace DwarfCorp
             for (int i = 0; i < NumFurniture; i++)
             {
                 var randomObject = Datastructures.SelectRandom(CraftLibrary.EnumerateCraftables().Where(type => type.Type == CraftItem.CraftType.Object && type.RequiredResources.All((tags) =>
-                    TradeGoods.Any(good => good.Key == tags.ResourceType))));
+                    TradeGoods.Any(good => good.Key == tags.Type))));
                 if (randomObject == null)
                     continue;
                 List<ResourceAmount> selectedResources = new List<ResourceAmount>();
                 foreach(var requirement in randomObject.RequiredResources)
                 {
-                    IEnumerable<Resource> resources = ResourceLibrary.GetResourcesByTag(requirement.ResourceType);
-                    selectedResources.Add(new ResourceAmount(Datastructures.SelectRandom(resources), requirement.NumResources));
+                    IEnumerable<Resource> resources = ResourceLibrary.GetResourcesByTag(requirement.Type);
+                    selectedResources.Add(new ResourceAmount(Datastructures.SelectRandom(resources), requirement.Count));
                 }
                 var randResource = randomObject.ToResource(world, selectedResources, Posessive + " ");
                 if (!toReturn.ContainsKey(randResource.Name))
@@ -179,7 +179,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    toReturn[randResource.Name].NumResources += 1;
+                    toReturn[randResource.Name].Count += 1;
                 }
             }
 

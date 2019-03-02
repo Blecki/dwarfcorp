@@ -3,9 +3,9 @@
   "EntityName": "Palisade",
   "RequiredResources": [
     {
-      "ResourceType": "HardMaterial",
+      "Type": "HardMaterial",
       "NumResources": 1
-    },
+    }
   ],
   "Icon": {
     "Sheet": "furniture",
@@ -17,9 +17,7 @@
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": {
-    "_value": ""
-  },
+  "ResourceCreated": "",
   "CraftLocation": "",
   "Verb": "Build",
   "PastTeseVerb": "Built",
@@ -29,6 +27,6 @@
   "AddToOwnedPool": true,
   "Moveable": true,
   "CraftActBehavior": "Normal",
-  "AllowRotation" : true,
+  "AllowRotation": true,
   "Tutorial": "The palisade is a defensive structure that your dwarfs can hide behind while fighting. When near a palisade, a dwarf resists damage and their attack range is increased."
 }

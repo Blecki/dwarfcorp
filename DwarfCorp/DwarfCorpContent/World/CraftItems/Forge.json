@@ -3,7 +3,7 @@
   "EntityName": "Forge",
   "RequiredResources": [
     {
-      "ResourceType": "Fuel",
+      "Type": "Fuel",
       "NumResources": 4
     }
   ],
@@ -17,9 +17,7 @@
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": {
-    "_value": ""
-  },
+  "ResourceCreated": "",
   "CraftLocation": "",
   "Verb": "Build",
   "PastTeseVerb": "Built",

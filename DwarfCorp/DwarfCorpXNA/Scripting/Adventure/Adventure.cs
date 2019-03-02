@@ -70,7 +70,7 @@ namespace DwarfCorp.Scripting.Adventure
 
         public string GetStatusString(WorldManager world)
         {
-            return String.Format("Food supply {0}, {1}", Resources.Sum(r => ResourceLibrary.GetResourceByName(r.ResourceType).Tags.Contains(Resource.ResourceTags.Edible) ? r.NumResources : 0), GetETAString(world));
+            return String.Format("Food supply {0}, {1}", Resources.Sum(r => ResourceLibrary.GetResourceByName(r.Type).Tags.Contains(Resource.ResourceTags.Edible) ? r.Count : 0), GetETAString(world));
         }
 
         public string GetETAString(WorldManager world)
@@ -204,10 +204,10 @@ namespace DwarfCorp.Scripting.Adventure
             bool outOfFood = false;
             foreach(var creature in Party)
             {
-                var resource = Resources.FirstOrDefault(r => r.NumResources > 0 && ResourceLibrary.GetResourceByName(r.ResourceType).Tags.Contains(Resource.ResourceTags.Edible));
+                var resource = Resources.FirstOrDefault(r => r.Count > 0 && ResourceLibrary.GetResourceByName(r.Type).Tags.Contains(Resource.ResourceTags.Edible));
                 if (resource != null)
                 {
-                    resource.NumResources--;
+                    resource.Count--;
                 }
                 else if (MathFunctions.RandEvent(0.5f))
                 {
@@ -526,7 +526,7 @@ namespace DwarfCorp.Scripting.Adventure
                 }
                 else
                 {
-                    stolenGoods.Add(new ResourceAmount(Datastructures.SelectRandom(destGoods).ResourceType, MathFunctions.RandInt(1, 5)));
+                    stolenGoods.Add(new ResourceAmount(Datastructures.SelectRandom(destGoods).Type, MathFunctions.RandInt(1, 5)));
                     stolenMoney += (DwarfBux)(decimal)MathFunctions.RandInt(1, 100);
                 }
             }
@@ -556,12 +556,12 @@ namespace DwarfCorp.Scripting.Adventure
             
             if (numDead == 0)
             {
-                LastEvent = String.Format("The raiding party is returning home unscathed! They stole {0} goods and {1}.", stolenGoods.Sum(g => g.NumResources), stolenMoney);
+                LastEvent = String.Format("The raiding party is returning home unscathed! They stole {0} goods and {1}.", stolenGoods.Sum(g => g.Count), stolenMoney);
                 AdventureState = State.ComingBack;
             }
             else
             {
-                LastEvent = String.Format("The raiding party is returning home. They stole {0} goods and {1}, but {2} member(s) died.", stolenGoods.Sum(g => g.NumResources), stolenMoney, numDead);
+                LastEvent = String.Format("The raiding party is returning home. They stole {0} goods and {1}, but {2} member(s) died.", stolenGoods.Sum(g => g.Count), stolenMoney, numDead);
                 AdventureState = State.ComingBack;
             }
 
@@ -613,7 +613,7 @@ namespace DwarfCorp.Scripting.Adventure
             var charisma = Party.Max(p => p.Stats.Charisma);
             float tradeGoodness = charisma - MathFunctions.Rand(0, 10.0f);
             var politics = world.Diplomacy.GetPolitics(owner, des);
-            if (Resources.Any(r => ResourceLibrary.GetResourceByName(r.ResourceType).Tags.Any(t => des.Race.HatedResources.Contains(t))))
+            if (Resources.Any(r => ResourceLibrary.GetResourceByName(r.Type).Tags.Any(t => des.Race.HatedResources.Contains(t))))
             {
                 politics.AddEvent(new Diplomacy.PoliticalEvent()
                 {
@@ -630,7 +630,7 @@ namespace DwarfCorp.Scripting.Adventure
                 return;
             }
 
-            decimal tradeValue = (Resources.Sum(r => GetValue(ResourceLibrary.GetResourceByName(r.ResourceType), des) * r.NumResources) + (decimal)Money) * (decimal)charisma;
+            decimal tradeValue = (Resources.Sum(r => GetValue(ResourceLibrary.GetResourceByName(r.Type), des) * r.Count) + (decimal)Money) * (decimal)charisma;
 
             if (MathFunctions.Rand(0, 500) < (float)tradeValue)
             {
@@ -701,11 +701,11 @@ namespace DwarfCorp.Scripting.Adventure
             for (int iter = 0; iter < randIters; iter++)
             {
                 var resourceType = Datastructures.SelectRandom(Resources);
-                if (resourceType.NumResources == 0)
+                if (resourceType.Count == 0)
                 {
                     continue;
                 }
-                var resource = ResourceLibrary.GetResourceByName(resourceType.ResourceType);
+                var resource = ResourceLibrary.GetResourceByName(resourceType.Type);
                 bool liked = resource.Tags.Any(t => dest.Race.LikedResources.Contains(t));
                 bool hated = resource.Tags.Any(t => dest.Race.HatedResources.Contains(t));
 
@@ -713,7 +713,7 @@ namespace DwarfCorp.Scripting.Adventure
                 {
                     LastEvent = String.Format("{0} gave the {1} {2}, which made them very angry!", 
                                                Datastructures.SelectRandom(Party).Stats.FullName,
-                                               dest.Race.Name, resourceType.ResourceType);
+                                               dest.Race.Name, resourceType.Type);
                     string badTrade = "You gave us something we hate.";
                     if (!politics.HasEvent(badTrade))
                     {
@@ -750,13 +750,13 @@ namespace DwarfCorp.Scripting.Adventure
                 while (randIter2 < 100)
                 {
                     var randGood = Datastructures.SelectRandom(destGoods);
-                    if (randGood.NumResources == 0)
+                    if (randGood.Count == 0)
                     {
                         randIter2++;
                         continue;
                     }
 
-                    var good = ResourceLibrary.GetResourceByName(randGood.ResourceType);
+                    var good = ResourceLibrary.GetResourceByName(randGood.Type);
                     var randGoodValue = GetValue(good, dest);
                     if (randGoodValue == 0) continue;
 
@@ -764,11 +764,11 @@ namespace DwarfCorp.Scripting.Adventure
                     // trade an item of lesser value, try to trade 1 good for as much of it as possible.
                     if (randGoodValue <= resourceValue)
                     {
-                        int numToTrade = Math.Min((int)(resourceValue / randGoodValue), randGood.NumResources);
+                        int numToTrade = Math.Min((int)(resourceValue / randGoodValue), randGood.Count);
                         if (numToTrade * randGoodValue >= 0.75f * resourceValue)
                         {
-                            randGood.NumResources -= numToTrade;
-                            resourceType.NumResources--;
+                            randGood.Count -= numToTrade;
+                            resourceType.Count--;
                             tradeGoods.Add(new ResourceAmount(good, numToTrade));
                             break;
                         }
@@ -776,11 +776,11 @@ namespace DwarfCorp.Scripting.Adventure
                     // If we're trading upwards, try trading as much of our resource as possible for the valuable item.
                     else
                     {
-                        int numToTrade = Math.Min((int)(randGoodValue / resourceValue), resourceType.NumResources);
+                        int numToTrade = Math.Min((int)(randGoodValue / resourceValue), resourceType.Count);
                         if (numToTrade * resourceValue >= 0.75f * randGoodValue)
                         {
-                            randGood.NumResources --;
-                            resourceType.NumResources-=numToTrade;
+                            randGood.Count --;
+                            resourceType.Count-=numToTrade;
                             tradeGoods.Add(new ResourceAmount(good, 1));
                             break;
                         }
@@ -792,7 +792,7 @@ namespace DwarfCorp.Scripting.Adventure
                 // We failed to find a good of equal value, so let's just trade money.
                 if (randIter2 == 100)
                 {
-                    resourceType.NumResources--;
+                    resourceType.Count--;
                     Money += resourceValue;
                 }
             }
@@ -801,7 +801,7 @@ namespace DwarfCorp.Scripting.Adventure
             Resources.AddRange(tradeGoods);
             if (!wasBadTrade)
             {
-                LastEvent = String.Format("The trade party is returning home with {0} goods, and {1}.", Resources.Sum(r => r.NumResources), Money);
+                LastEvent = String.Format("The trade party is returning home with {0} goods, and {1}.", Resources.Sum(r => r.Count), Money);
             }
 
             base.OnAction(world);

@@ -9,8 +9,8 @@
   "FloorType": "Dirt",
   "RequiredResources": {
     "Soil": {
-      "ResourceType": "Soil",
-      "NumResources": 4
+      "Type": "Soil",
+      "Count": 4
     }
   },
   "NewIcon": {

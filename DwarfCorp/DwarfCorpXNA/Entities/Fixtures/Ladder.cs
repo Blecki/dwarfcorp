@@ -52,8 +52,8 @@ namespace DwarfCorp
                 var craftItem = CraftLibrary.GetCraftable(craftType);
                 foreach (var resource in craftItem.RequiredResources)
                 {
-                    var genericResource = ResourceLibrary.GetResourcesByTag(resource.ResourceType).FirstOrDefault();
-                    resources.Add(new ResourceAmount(genericResource, resource.NumResources));
+                    var genericResource = ResourceLibrary.GetResourcesByTag(resource.Type).FirstOrDefault();
+                    resources.Add(new ResourceAmount(genericResource, resource.Count));
                 }
             }
             else if (resources == null && craftType == null)
@@ -109,7 +109,7 @@ namespace DwarfCorp
             this.BoundingBoxSize = new Vector3(0.7f, 1, 0.1f);
             this.SetFlag(Flag.RotateBoundingBox, true);
 
-            Name = resourceType[0].ResourceType + " Ladder";
+            Name = resourceType[0].Type + " Ladder";
             Tags.Add("Climbable");
             OrientToWalls();
             CollisionType = CollisionType.Static;

@@ -8,9 +8,7 @@
   "HasTransitionTextures": false,
   "TransitionTiles": null,
   "ReleasesResource": true,
-  "ResourceToRelease": {
-    "_value": "Sand"
-  },
+  "ResourceToRelease": "Sand",
   "StartingHealth": 15.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": true,

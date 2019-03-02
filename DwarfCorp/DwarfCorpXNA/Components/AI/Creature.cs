@@ -87,7 +87,7 @@ namespace DwarfCorp
         public int PregnancyLengthHours = 24;
         public string Species = "";
         public string BabyType = "";
-        public ResourceType BaseMeatResource = ResourceType.Meat;
+        public String BaseMeatResource = ResourceType.Meat;
         private bool _lastIsCloaked = false;
         public bool IsCloaked = false;
         public Pregnancy CurrentPregnancy = null;
@@ -615,7 +615,7 @@ namespace DwarfCorp
         {
             if (HasMeat)
             {
-                ResourceType type = Species + " " + ResourceType.Meat;
+                String type = Species + " " + ResourceType.Meat;
 
                 if (!ResourceLibrary.Resources.ContainsKey(type))
                 {
@@ -631,7 +631,7 @@ namespace DwarfCorp
 
             if (HasBones)
             {
-                ResourceType type = Species + " " + ResourceType.Bones;
+                String type = Species + " " + ResourceType.Bones;
 
                 if (!ResourceLibrary.Resources.ContainsKey(type))
                 {
@@ -647,7 +647,7 @@ namespace DwarfCorp
 
             if (HasCorpse)
             {
-                ResourceType type = AI.Stats.FullName + "'s " + "Corpse";
+                String type = AI.Stats.FullName + "'s " + "Corpse";
 
                 if (!ResourceLibrary.Resources.ContainsKey(type))
                 {

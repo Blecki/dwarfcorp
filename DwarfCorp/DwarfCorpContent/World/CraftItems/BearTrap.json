@@ -5,7 +5,7 @@
   "ShortDisplayName": "@s-bear-trap",
   "RequiredResources": [
     {
-      "ResourceType": "Metal",
+      "Type": "Metal",
       "NumResources": 4
     }
   ],
@@ -19,9 +19,7 @@
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": {
-    "_value": ""
-  },
+  "ResourceCreated": "",
   "CraftLocation": "",
   "AllowHeterogenous": false,
   "SpawnOffset": "0, 0.5, 0",

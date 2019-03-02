@@ -50,25 +50,25 @@ namespace DwarfCorp
         private int currentResourceCount = 0;
         public  int CurrentResourceCount { get { return currentResourceCount; } }
         [JsonProperty]
-        public Dictionary<ResourceType, ResourceAmount> Resources { get; set; }
+        public Dictionary<String, ResourceAmount> Resources { get; set; }
 
         private void InitializeResources()
         {
-            Resources = new Dictionary<ResourceType, ResourceAmount>();
+            Resources = new Dictionary<String, ResourceAmount>();
             
             /*
             foreach(var pair in ResourceLibrary.Resources)
             {
                 if (Resources == null)
                 {
-                    Resources = new Dictionary<ResourceLibrary.ResourceType, ResourceAmount>();
+                    Resources = new Dictionary<ResourceLibrary.String, ResourceAmount>();
                 }
                 if (!Resources.ContainsKey(pair.Key) || Resources[pair.Key] == null)
                 {
                     Resources[pair.Key] = new ResourceAmount
                     {
                         NumResources = 0,
-                        ResourceType = pair.Key
+                        String = pair.Key
                     };
                 }
             }
@@ -96,10 +96,10 @@ namespace DwarfCorp
 
         public bool HasResources(ResourceAmount resource)
         {
-            if (resource != null && Resources.ContainsKey(resource.ResourceType))
+            if (resource != null && Resources.ContainsKey(resource.Type))
             {
-                int toReturn = Resources[resource.ResourceType].NumResources;
-                return toReturn >= resource.NumResources; ;
+                int toReturn = Resources[resource.Type].Count;
+                return toReturn >= resource.Count; ;
             }
 
             return false;
@@ -107,11 +107,11 @@ namespace DwarfCorp
 
         public int RemoveMaxResources(ResourceAmount resource, int count)
         {
-            if (resource != null && Resources.ContainsKey(resource.ResourceType))
+            if (resource != null && Resources.ContainsKey(resource.Type))
             {
-                int toReturn = Math.Min(count, Resources[resource.ResourceType].NumResources);
+                int toReturn = Math.Min(count, Resources[resource.Type].Count);
 
-                Resources[resource.ResourceType].NumResources -= toReturn;
+                Resources[resource.Type].Count -= toReturn;
                 currentResourceCount -= toReturn;
 
                 return toReturn;   
@@ -125,9 +125,9 @@ namespace DwarfCorp
             int toReturn = 0;
             foreach (ResourceAmount resource in Resources.Values)
             {
-                if (ResourceLibrary.GetResourceByName(resource.ResourceType).Tags.Contains(tag))
+                if (ResourceLibrary.GetResourceByName(resource.Type).Tags.Contains(tag))
                 {
-                    toReturn += resource.NumResources;
+                    toReturn += resource.Count;
                 }
             }
 
@@ -136,16 +136,16 @@ namespace DwarfCorp
 
         public bool RemoveResourceImmediate(Quantitiy<Resource.ResourceTags> tags )
         {
-            int numLeft = tags.NumResources;
+            int numLeft = tags.Count;
 
             foreach (ResourceAmount resource in Resources.Values)
             {
                 if (numLeft == 0) return true;
 
-                if (ResourceLibrary.GetResourceByName(resource.ResourceType).Tags.Contains(tags.ResourceType))
+                if (ResourceLibrary.GetResourceByName(resource.Type).Tags.Contains(tags.Type))
                 {
-                    int rm = Math.Min(resource.NumResources, numLeft);
-                    resource.NumResources -= rm;
+                    int rm = Math.Min(resource.Count, numLeft);
+                    resource.Count -= rm;
                     numLeft -= rm;
                     currentResourceCount -= rm;
                 }
@@ -161,7 +161,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (resource.NumResources > CountResourcesWithTags(resource.ResourceType))
+            if (resource.Count > CountResourcesWithTags(resource.Type))
             {
                 return false;
             }
@@ -176,15 +176,15 @@ namespace DwarfCorp
                 return false;
             }
 
-            if(resource.NumResources > Resources[resource.ResourceType].NumResources)
+            if(resource.Count > Resources[resource.Type].Count)
             {
                 return false;
             }
 
-            if (!Resources.ContainsKey(resource.ResourceType)) return false;
+            if (!Resources.ContainsKey(resource.Type)) return false;
 
-            Resources[resource.ResourceType].NumResources -= resource.NumResources;
-            currentResourceCount -= resource.NumResources;
+            Resources[resource.Type].Count -= resource.Count;
+            currentResourceCount -= resource.Count;
             return true;
         }
 
@@ -195,18 +195,18 @@ namespace DwarfCorp
                 return false;
             }
 
-            if(resource.NumResources + CurrentResourceCount > MaxResources)
+            if(resource.Count + CurrentResourceCount > MaxResources)
             {
                 return false;
             }
 
-            if (!Resources.ContainsKey(resource.ResourceType))
+            if (!Resources.ContainsKey(resource.Type))
             {
-                Resources[resource.ResourceType] = new ResourceAmount(resource.ResourceType, 0);
+                Resources[resource.Type] = new ResourceAmount(resource.Type, 0);
             }
 
-            Resources[resource.ResourceType].NumResources += resource.NumResources;
-            currentResourceCount += resource.NumResources;
+            Resources[resource.Type].Count += resource.Count;
+            currentResourceCount += resource.Count;
             return true;
         }
 
@@ -241,11 +241,11 @@ namespace DwarfCorp
 
         public void RemoveAnyResource()
         {
-            foreach(KeyValuePair<ResourceType, ResourceAmount> resource in Resources)
+            foreach(KeyValuePair<String, ResourceAmount> resource in Resources)
             {
-                if(resource.Value.NumResources > 0)
+                if(resource.Value.Count > 0)
                 {
-                    resource.Value.NumResources = Math.Max(resource.Value.NumResources - 1, 0);
+                    resource.Value.Count = Math.Max(resource.Value.Count - 1, 0);
                     currentResourceCount -= 1;
                     return;
                 }
@@ -255,7 +255,7 @@ namespace DwarfCorp
         public List<ResourceAmount> GetResources(Quantitiy<Resource.ResourceTags> tags)
         {
             List<ResourceAmount> toReturn = new List<ResourceAmount>();
-            int amountLeft = tags.NumResources;
+            int amountLeft = tags.Count;
             foreach (ResourceAmount resourceAmount in Resources.Values)
             {
                 if (amountLeft <= 0)
@@ -263,18 +263,18 @@ namespace DwarfCorp
                     break;
                 }
 
-                if (resourceAmount.NumResources == 0)
+                if (resourceAmount.Count == 0)
                 {
                     continue;
                 }
 
-                if (ResourceLibrary.GetResourceByName(resourceAmount.ResourceType).Tags.Contains(tags.ResourceType))
+                if (ResourceLibrary.GetResourceByName(resourceAmount.Type).Tags.Contains(tags.Type))
                 {
-                    int amountToRemove = Math.Min(tags.NumResources, amountLeft);
+                    int amountToRemove = Math.Min(tags.Count, amountLeft);
 
                     if (amountToRemove > 0)
                     {
-                        toReturn.Add(new ResourceAmount(resourceAmount.ResourceType, amountToRemove));
+                        toReturn.Add(new ResourceAmount(resourceAmount.Type, amountToRemove));
                         amountLeft -= amountToRemove;
                     }
                 }
@@ -286,13 +286,13 @@ namespace DwarfCorp
         public int GetResourceCount(Resource.ResourceTags resourceType, bool allowHeterogenous = false)
         {
             if (allowHeterogenous)
-                return Resources.Values.Where(resource => ResourceLibrary.GetResourceByName(resource.ResourceType).Tags.Contains(resourceType)).Sum(resource => resource.NumResources);
+                return Resources.Values.Where(resource => ResourceLibrary.GetResourceByName(resource.Type).Tags.Contains(resourceType)).Sum(resource => resource.Count);
             else
             {
                 int count = 0;
-                foreach(var resource in Resources.Values.Where(resource => ResourceLibrary.GetResourceByName(resource.ResourceType).Tags.Contains(resourceType)))
+                foreach(var resource in Resources.Values.Where(resource => ResourceLibrary.GetResourceByName(resource.Type).Tags.Contains(resourceType)))
                 {
-                    count = Math.Max(count, resource.NumResources);
+                    count = Math.Max(count, resource.Count);
                 }
                 return count;
             }
@@ -300,12 +300,12 @@ namespace DwarfCorp
 
         public bool HasResource(Resource.ResourceTags resourceType)
         {
-            return Resources.Values.Any(resource => ResourceLibrary.GetResourceByName(resource.ResourceType).Tags.Contains(resourceType));
+            return Resources.Values.Any(resource => ResourceLibrary.GetResourceByName(resource.Type).Tags.Contains(resourceType));
         }
 
         public bool HasResource(Quantitiy<Resource.ResourceTags > resourceType)
         {
-            return GetResourceCount(resourceType.ResourceType) >= resourceType.NumResources;
+            return GetResourceCount(resourceType.Type) >= resourceType.Count;
         }
 
         public int GetResourceCount(Resource resourceType)
@@ -313,15 +313,15 @@ namespace DwarfCorp
             return GetResourceCount(resourceType.Name);
         }
 
-        public int GetResourceCount(ResourceType resourceType)
+        public int GetResourceCount(String resourceType)
         {
-            return !Resources.ContainsKey(resourceType) ? 0 : Resources[resourceType].NumResources;
+            return !Resources.ContainsKey(resourceType) ? 0 : Resources[resourceType].Count;
         }
 
 
         public bool HasResource(ResourceAmount resourceType)
         {
-            return GetResourceCount(resourceType.ResourceType) >= resourceType.NumResources;
+            return GetResourceCount(resourceType.Type) >= resourceType.Count;
         }
     }
 }

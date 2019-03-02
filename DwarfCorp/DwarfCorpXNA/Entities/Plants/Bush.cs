@@ -57,8 +57,8 @@ namespace DwarfCorp
 
             inventory.AddResource(new ResourceAmount()
             {
-                NumResources = 3,
-                ResourceType = ResourceType.Berry
+                Count = 3,
+                Type = ResourceType.Berry
             });
 
             CollisionType = CollisionType.Static;

@@ -8,9 +8,7 @@
   "HasTransitionTextures": false,
   "TransitionTiles": null,
   "ReleasesResource": false,
-  "ResourceToRelease": {
-    "_value": "Wood"
-  },
+  "ResourceToRelease": "Wood",
   "BuildRequirements": [ "Wood" ],
   "StartingHealth": 20.0,
   "ProbabilityOfRelease": 1.0,

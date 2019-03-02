@@ -3,7 +3,7 @@
   "EntityName": "Trinket",
   "RequiredResources": [
     {
-      "ResourceType": "Material",
+      "Type": "Material",
       "NumResources": 3
     }
   ],
@@ -15,9 +15,7 @@
   "Description": "Get creative juices flowing and make a work of art.",
   "Type": "Resource",
   "Prerequisites": [],
-  "ResourceCreated": {
-    "_value": "Trinket"
-  },
+  "ResourceCreated": "Trinket",
   "CraftLocation": "Anvil",
   "Verb": "Craft",
   "PastTeseVerb": "Crafted",

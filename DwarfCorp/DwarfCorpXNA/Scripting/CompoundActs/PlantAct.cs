@@ -87,7 +87,7 @@ namespace DwarfCorp
                     if (FarmToWork.Progress >= FarmToWork.TargetProgress && !FarmToWork.Finished)
                     {
                         var plant = EntityFactory.CreateEntity<Plant>(
-                            ResourceLibrary.Resources[FarmToWork.SeedResourceType].PlantToGenerate, 
+                            ResourceLibrary.Resources[FarmToWork.SeedString].PlantToGenerate, 
                             FarmToWork.Voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f));
 
                         plant.Farm = FarmToWork;

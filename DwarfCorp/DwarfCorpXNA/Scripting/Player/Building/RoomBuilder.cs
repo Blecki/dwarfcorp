@@ -239,9 +239,9 @@ namespace DwarfCorp
                             StringBuilder resourceList = new StringBuilder();
                             foreach (var resource in requiredResources)
                             {
-                                resourceList.Append(resource.NumResources);
+                                resourceList.Append(resource.Count);
                                 resourceList.Append(" ");
-                                resourceList.Append(resource.ResourceType);
+                                resourceList.Append(resource.Type);
                             }
                             var order = buildOrder;
                             buildOrder.DisplayWidget = World.Gui.RootItem.AddChild(new Gui.Widget()
@@ -341,9 +341,9 @@ namespace DwarfCorp
                     foreach (var requirement in requirements)
                     {
                         i++;
-                        tip += requirement.NumResources.ToString();
+                        tip += requirement.Count.ToString();
                         tip += " ";
-                        tip += requirement.ResourceType;
+                        tip += requirement.Type;
                         tip += "\n";
                     }
 

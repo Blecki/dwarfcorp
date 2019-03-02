@@ -8,9 +8,7 @@
   "HasTransitionTextures": false,
   "TransitionTiles": null,
   "ReleasesResource": true,
-  "ResourceToRelease": {
-    "_value": "Obsidian"
-  },
+  "ResourceToRelease": "Obsidian",
   "StartingHealth": 600.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": false,

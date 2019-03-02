@@ -57,7 +57,7 @@ namespace DwarfCorp
         public Tutorial.TutorialSaveData TutorialSaveData;
         public Diplomacy Diplomacy;
         public FactionLibrary Factions;
-        public Dictionary<ResourceType, Resource> Resources;
+        public Dictionary<String, Resource> Resources;
         public DesignationDrawer Designations;
         public TaskManager Tasks;
         public Embarkment InitialEmbark;

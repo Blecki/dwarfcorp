@@ -504,7 +504,7 @@ namespace DwarfCorp.Gui.Widgets
                                         {
 
                                             var blackboard = new Blackboard();
-                                            List<ResourceAmount> resources = item.RequiredResources.Select(r => new ResourceAmount(ResourceLibrary.GetResourcesByTag(r.ResourceType).First(), r.NumResources)).ToList();
+                                            List<ResourceAmount> resources = item.RequiredResources.Select(r => new ResourceAmount(ResourceLibrary.GetResourcesByTag(r.Type).First(), r.Count)).ToList();
                                             blackboard.SetData<List<ResourceAmount>>("Resources", resources);
                                             blackboard.SetData<string>("CraftType", item.Name);
 

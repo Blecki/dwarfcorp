@@ -3,7 +3,7 @@
   "EntityName": "Brick",
   "RequiredResources": [
     {
-      "ResourceType": "Soil",
+      "Type": "Soil",
       "NumResources": 1
     }
   ],
@@ -15,9 +15,7 @@
   "Description": "Made from dirt. Building material.",
   "Type": "Resource",
   "Prerequisites": [],
-  "ResourceCreated": {
-    "_value": "Brick"
-  },
+  "ResourceCreated": "Brick",
   "CraftLocation": "Forge",
   "Verb": "Build",
   "PastTeseVerb": "Built",

@@ -41,10 +41,10 @@ namespace DwarfCorp.Gui.Widgets
             var copy = new List<ResourceAmount>();
             copy.AddRange(resources);
 
-            copy.Sort((a, b) => a.NumResources.CompareTo(b.NumResources));
+            copy.Sort((a, b) => a.Count.CompareTo(b.Count));
             for (int i = 0; i < Math.Min(copy.Count, num); i++)
             {
-                if (copy[i].NumResources > 0)
+                if (copy[i].Count > 0)
                     yield return copy[i];
             }
         }
@@ -61,7 +61,7 @@ namespace DwarfCorp.Gui.Widgets
             int k = 0;
             foreach (var resource in left)
             {
-                var resourceType = ResourceLibrary.GetResourceByName(resource.ResourceType);
+                var resourceType = ResourceLibrary.GetResourceByName(resource.Type);
                 LeftItems.AddChild(new ResourceIcon()
                 {
                     Layers = resourceType.GuiLayers,
@@ -88,7 +88,7 @@ namespace DwarfCorp.Gui.Widgets
             k = 0;
             foreach (var resource in GetTopResources(rightResources))
             {
-                var resourceType = ResourceLibrary.GetResourceByName(resource.ResourceType);
+                var resourceType = ResourceLibrary.GetResourceByName(resource.Type);
                 RightItems.AddChild(new ResourceIcon()
                 {
                     Layers = resourceType.GuiLayers,
@@ -230,23 +230,23 @@ namespace DwarfCorp.Gui.Widgets
         {
             foreach (var amount in source)
             {
-                Resource r = ResourceLibrary.GetResourceByName(amount.ResourceType);
+                Resource r = ResourceLibrary.GetResourceByName(amount.Type);
                 if (trader.TraderRace.HatedResources.Any(tag => r.Tags.Contains(tag)))
                 {
                     continue;
                 }
-                if (amount.NumResources == 0) continue;
+                if (amount.Count == 0) continue;
                 ResourceAmount destAmount =
-                    destination.FirstOrDefault(resource => resource.ResourceType == amount.ResourceType);
+                    destination.FirstOrDefault(resource => resource.Type == amount.Type);
                 if (destAmount == null)
                 {
-                    destAmount = new ResourceAmount(amount.ResourceType, 0);
+                    destAmount = new ResourceAmount(amount.Type, 0);
                     destination.Add(destAmount);
                 }
 
-                int numToMove = MathFunctions.RandInt(1, amount.NumResources + 1);
-                amount.NumResources -= numToMove;
-                destAmount.NumResources += numToMove;
+                int numToMove = MathFunctions.RandInt(1, amount.Count + 1);
+                amount.Count -= numToMove;
+                destAmount.Count += numToMove;
                 break;
             }
         }

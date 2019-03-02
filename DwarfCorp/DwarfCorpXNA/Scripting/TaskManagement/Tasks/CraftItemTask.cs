@@ -156,8 +156,8 @@ namespace DwarfCorp
 
             foreach (var resourceAmount in CraftDesignation.ItemType.RequiredResources)
             {
-                var resources = agent.Faction.ListResourcesWithTag(resourceAmount.ResourceType, CraftDesignation.ItemType.AllowHeterogenous);
-                if (resources.Count == 0 || !resources.Any(r => r.NumResources >= resourceAmount.NumResources))
+                var resources = agent.Faction.ListResourcesWithTag(resourceAmount.Type, CraftDesignation.ItemType.AllowHeterogenous);
+                if (resources.Count == 0 || !resources.Any(r => r.Count >= resourceAmount.Count))
                 {
                     return false;
                 }

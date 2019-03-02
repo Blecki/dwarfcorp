@@ -3,7 +3,7 @@
   "EntityName": "Bread",
   "RequiredResources": [
     {
-      "ResourceType": "Bakeable",
+      "Type": "Bakeable",
       "NumResources": 1
     }
   ],
@@ -15,9 +15,7 @@
   "Description": "Turn bakeable food into bread.",
   "Type": "Resource",
   "Prerequisites": [],
-  "ResourceCreated": {
-    "_value": "Bread"
-  },
+  "ResourceCreated": "Bread",
   "CraftLocation": "Stove",
   "Verb": "Bake",
   "PastTeseVerb": "Baked",

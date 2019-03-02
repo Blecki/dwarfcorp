@@ -103,7 +103,7 @@ namespace DwarfCorp
             return maxID;
         }
 
-        public bool IsAllowed(ResourceType type)
+        public bool IsAllowed(String type)
         {
             Resource resource = ResourceLibrary.GetResourceByName(type);
             if (WhitelistResources.Count == 0)

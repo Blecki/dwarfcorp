@@ -258,10 +258,10 @@ namespace DwarfCorp.GameStates
             {
                 foreach(var resource in Resources)
                 {
-                    var existing = AvailableResources.FirstOrDefault(r => r.ResourceType == resource.ResourceType);
+                    var existing = AvailableResources.FirstOrDefault(r => r.Type == resource.Type);
                     if (existing != null)
                     {
-                        existing.NumResources += resource.NumResources;
+                        existing.Count += resource.Count;
                     }
                     else
                     {
@@ -272,10 +272,10 @@ namespace DwarfCorp.GameStates
 
             public DwarfBux ComputeValue(List<ResourceAmount> Resources)
             {
-                return Resources.Sum(r => ComputeValue(r.ResourceType) * r.NumResources);
+                return Resources.Sum(r => ComputeValue(r.Type) * r.Count);
             }
 
-            public DwarfBux ComputeValue(ResourceType Resource)
+            public DwarfBux ComputeValue(String Resource)
             {
                 return ResourceLibrary.GetResourceByName(Resource).MoneyValue;
             }
@@ -284,10 +284,10 @@ namespace DwarfCorp.GameStates
             {
                 foreach (var resource in Resources)
                 {
-                    var existing = AvailableResources.FirstOrDefault(r => r.ResourceType == resource.ResourceType);
+                    var existing = AvailableResources.FirstOrDefault(r => r.Type == resource.Type);
                     if (existing != null)
                     {
-                        existing.NumResources -= resource.NumResources;
+                        existing.Count -= resource.Count;
                     }
                     else
                     {

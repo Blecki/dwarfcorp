@@ -119,11 +119,11 @@ namespace DwarfCorp
 
             foreach (ResourceAmount resourceAmount in foods)
             {
-                if (resourceAmount.NumResources > 0)
+                if (resourceAmount.Count > 0)
                 {
-                    List<Body> bodies = Agent.Creature.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.ResourceType, 1), 
+                    List<Body> bodies = Agent.Creature.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.Type, 1), 
                         Inventory.RestockType.Any);
-                    var resource = ResourceLibrary.GetResourceByName(resourceAmount.ResourceType);
+                    var resource = ResourceLibrary.GetResourceByName(resourceAmount.Type);
                     Agent.Creature.NoiseMaker.MakeNoise("Chew", Agent.Creature.AI.Position);
                     if (bodies.Count == 0)
                     {

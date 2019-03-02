@@ -203,7 +203,7 @@ namespace DwarfCorp
             Priority = PriorityType.Medium;
             StockpileFrom = stockpile;
             Resources = resources;
-            Name = String.Format("Transfer {0} {1} from {2}", Resources.NumResources, Resources.ResourceType, stockpile);
+            Name = String.Format("Transfer {0} {1} from {2}", Resources.Count, Resources.Type, stockpile);
             AutoRetry = true;
             ReassignOnDeath = true;
         }

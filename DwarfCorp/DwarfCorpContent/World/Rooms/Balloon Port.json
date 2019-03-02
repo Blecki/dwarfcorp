@@ -9,7 +9,7 @@
   "FloorType": "Stockpile",
   "RequiredResources": {
     "Stone": {
-      "ResourceType": "Stone",
+      "Type": "Stone",
       "NumResources": 4
     }
   },

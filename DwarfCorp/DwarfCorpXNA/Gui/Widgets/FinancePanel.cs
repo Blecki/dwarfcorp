@@ -110,11 +110,11 @@ namespace DwarfCorp.Gui.Widgets
                 InfoWidget.Clear();
                 AddRow("Liquid assets:", Faction.Economy.CurrentMoney.ToString());
                 var resources = Faction.ListResourcesInStockpilesPlusMinions();
-                AddRow("Material assets:", String.Format("{0} goods valued at ${1}", resources.Values.Select(r => r.First.NumResources + r.Second.NumResources).Sum(),
+                AddRow("Material assets:", String.Format("{0} goods valued at ${1}", resources.Values.Select(r => r.First.Count + r.Second.Count).Sum(),
                     resources.Values.Select(r =>
                     {
-                        var value = ResourceLibrary.GetResourceByName(r.First.ResourceType).MoneyValue.Value;
-                        return (r.First.NumResources * value) + (r.Second.NumResources * value);
+                        var value = ResourceLibrary.GetResourceByName(r.First.Type).MoneyValue.Value;
+                        return (r.First.Count * value) + (r.Second.Count * value);
                     }).Sum()));
                 var payPerDay = (DwarfBux)Faction.Minions.Select(m => m.Stats.CurrentLevel.Pay.Value).Sum();
                 AddRow("Employees:", String.Format("{0} at {1} per day.", Faction.Minions.Count, payPerDay));

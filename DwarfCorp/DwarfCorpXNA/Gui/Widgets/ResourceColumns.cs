@@ -31,7 +31,7 @@ namespace DwarfCorp.Gui.Widgets
         {
             get
             {
-                return SelectedResources.Sum(r => r.NumResources);
+                return SelectedResources.Sum(r => r.Count);
             }
         }
 
@@ -130,18 +130,18 @@ namespace DwarfCorp.Gui.Widgets
                 lineItem.EnableHoverClick();
                 lineItem.OnClick = (sender, args) =>
                 {
-                    if (lambdaResource.NumResources <= 0) return;
+                    if (lambdaResource.Count <= 0) return;
                     var toMove = 1;
-                    if (args.Control) toMove = lambdaResource.NumResources;
-                    if (args.Shift) toMove = Math.Min(5, lambdaResource.NumResources);
-                    if (lambdaResource.NumResources - toMove < 0)
+                    if (args.Control) toMove = lambdaResource.Count;
+                    if (args.Shift) toMove = Math.Min(5, lambdaResource.Count);
+                    if (lambdaResource.Count - toMove < 0)
                         return;
-                    lambdaResource.NumResources -= toMove;
+                    lambdaResource.Count -= toMove;
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, MathFunctions.Rand() * 0.25f);
-                    var existingEntry = resourcesB.FirstOrDefault(r => r.ResourceType == lambdaResource.ResourceType);
+                    var existingEntry = resourcesB.FirstOrDefault(r => r.Type == lambdaResource.Type);
                     if (existingEntry == null)
                     {
-                        existingEntry = new ResourceAmount(lambdaResource.ResourceType, toMove);
+                        existingEntry = new ResourceAmount(lambdaResource.Type, toMove);
                         resourcesB.Add(existingEntry);
                         var rightLineItem = CreateLineItem(existingEntry);
                         rightLineItem.EnableHoverClick();
@@ -151,14 +151,14 @@ namespace DwarfCorp.Gui.Widgets
                         rightLineItem.OnClick = (_sender, _args) =>
                         {
                             var _toMove = 1;
-                            if (_args.Control) _toMove = existingEntry.NumResources;
+                            if (_args.Control) _toMove = existingEntry.Count;
                             if (_args.Shift)
-                                _toMove = Math.Min(5, existingEntry.NumResources);
-                            if (existingEntry.NumResources - _toMove < 0)
+                                _toMove = Math.Min(5, existingEntry.Count);
+                            if (existingEntry.Count - _toMove < 0)
                                 return;
-                            existingEntry.NumResources -= _toMove;
+                            existingEntry.Count -= _toMove;
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_change_selection, 0.1f, MathFunctions.Rand() * 0.25f);
-                            if (existingEntry.NumResources == 0)
+                            if (existingEntry.Count == 0)
                             {
                                 var index = resourcesB.IndexOf(existingEntry);
                                 if (index >= 0)
@@ -171,9 +171,9 @@ namespace DwarfCorp.Gui.Widgets
                             UpdateColumn(listA, resourcesB);
 
                             var sourceEntry = resourcesA.FirstOrDefault(
-                                r => r.ResourceType == existingEntry.ResourceType);
+                                r => r.Type == existingEntry.Type);
                             int idx = resourcesA.IndexOf(sourceEntry);
-                            sourceEntry.NumResources += _toMove;
+                            sourceEntry.Count += _toMove;
                             if (idx >= 0)
                             {
                                 UpdateLineItemText(
@@ -185,7 +185,7 @@ namespace DwarfCorp.Gui.Widgets
                     }
                     else
                     {
-                        existingEntry.NumResources += toMove;
+                        existingEntry.Count += toMove;
                     }
 
                     UpdateColumn(listA, resourcesB);
@@ -235,7 +235,7 @@ namespace DwarfCorp.Gui.Widgets
                 Background = new TileReference("basic", 0)
             });
 
-            var resourceInfo = ResourceLibrary.GetResourceByName(Resource.ResourceType);
+            var resourceInfo = ResourceLibrary.GetResourceByName(Resource.Type);
 
             var icon = r.AddChild(new ResourceIcon()
             {
@@ -243,7 +243,7 @@ namespace DwarfCorp.Gui.Widgets
                 MaximumSize = new Point(32 + 16, 32 + 16),
                 Layers = resourceInfo.GuiLayers,
                 AutoLayout = AutoLayout.DockLeft,
-                BackgroundColor = Resource.NumResources > 0 ? resourceInfo.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
+                BackgroundColor = Resource.Count > 0 ? resourceInfo.Tint.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                 TextColor = Color.White.ToVector4(),
                 TextHorizontalAlign = HorizontalAlign.Right,
                 TextVerticalAlign = VerticalAlign.Bottom
@@ -254,7 +254,7 @@ namespace DwarfCorp.Gui.Widgets
                 AutoLayout = AutoLayout.DockLeft,
                 MinimumSize = new Point(128 / GameSettings.Default.GuiScale, 0),
                 MaximumSize = new Point(128 / GameSettings.Default.GuiScale, 32),
-                TextColor = Resource.NumResources > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
+                TextColor = Resource.Count > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                 TextVerticalAlign = VerticalAlign.Center,
                 TextHorizontalAlign = HorizontalAlign.Left,
                 HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
@@ -269,7 +269,7 @@ namespace DwarfCorp.Gui.Widgets
                 //Text = String.Format("{0} at ${1}e", Resource.NumResources, resourceInfo.MoneyValue),
                 //Font = "font18-outline",
                 //TextColor = new Vector4(1,1,1,1),
-                TextColor = Resource.NumResources > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
+                TextColor = Resource.Count > 0 ? Color.Black.ToVector4() : new Vector4(0.5f, 0.5f, 0.5f, 0.5f),
                 TextVerticalAlign = VerticalAlign.Center,
                 HoverTextColor = GameSettings.Default.Colors.GetColor("Highlight", Color.DarkRed).ToVector4(),
                 Font = GameSettings.Default.GuiScale == 1 ? "font10" : "font8",
@@ -285,7 +285,7 @@ namespace DwarfCorp.Gui.Widgets
 
         private void UpdateLineItemText(Widget LineItem, ResourceAmount Resource)
         {
-            var resourceInfo = ResourceLibrary.GetResourceByName(Resource.ResourceType);
+            var resourceInfo = ResourceLibrary.GetResourceByName(Resource.Type);
             var font = LineItem.Root.GetTileSheet("font10");
             var label = resourceInfo.ShortName ?? resourceInfo.Name; 
             if (font != null)
@@ -300,9 +300,9 @@ namespace DwarfCorp.Gui.Widgets
             LineItem.GetChild(1).Text = label;
             LineItem.GetChild(1).Invalidate();
             LineItem.GetChild(2).Text = String.Format("{0}",
-                ValueSourceEntity.ComputeValue(Resource.ResourceType));
+                ValueSourceEntity.ComputeValue(Resource.Type));
             var counter = LineItem.GetChild(0).Children.Last();
-            counter.Text = Resource.NumResources.ToString();
+            counter.Text = Resource.Count.ToString();
             counter.Invalidate();
             LineItem.GetChild(0).Invalidate();
             LineItem.Tooltip = resourceInfo.Name + "\n" + resourceInfo.Description;
@@ -310,11 +310,11 @@ namespace DwarfCorp.Gui.Widgets
             {
                 if (i > 0)
                 {
-                    LineItem.GetChild(i).TextColor = Resource.NumResources > 0
+                    LineItem.GetChild(i).TextColor = Resource.Count > 0
                         ? Color.Black.ToVector4()
                         : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
                 }
-                LineItem.GetChild(i).BackgroundColor = Resource.NumResources > 0
+                LineItem.GetChild(i).BackgroundColor = Resource.Count > 0
                     ? resourceInfo.Tint.ToVector4()
                     : new Vector4(0.5f, 0.5f, 0.5f, 0.5f);
                 LineItem.GetChild(i).Tooltip = resourceInfo.Name + "\n" + resourceInfo.Description;

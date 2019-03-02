@@ -90,7 +90,7 @@ namespace DwarfCorp
         public CraftType Type = CraftType.Object;
         public List<CraftPrereq> Prerequisites = new List<CraftPrereq>();
         public int CraftedResultsCount = 1;
-        public ResourceType ResourceCreated = "";
+        public String ResourceCreated = "";
         public string CraftLocation = "Anvil";
         public string Verb = null;
         public string PastTeseVerb = null;
@@ -124,14 +124,14 @@ namespace DwarfCorp
 
         private IEnumerable<ResourceAmount> MergeResources(IEnumerable<ResourceAmount> resources)
         {
-            Dictionary<ResourceType, int> counts = new Dictionary<ResourceType, int>();
+            Dictionary<String, int> counts = new Dictionary<String, int>();
             foreach(var resource in resources)
             {
-                if(!counts.ContainsKey(resource.ResourceType))
+                if(!counts.ContainsKey(resource.Type))
                 {
-                    counts.Add(resource.ResourceType, 0);
+                    counts.Add(resource.Type, 0);
                 }
-                counts[resource.ResourceType] += resource.NumResources;
+                counts[resource.Type] += resource.Count;
             }
 
             foreach(var count in counts)
@@ -143,7 +143,7 @@ namespace DwarfCorp
         public Resource ToResource(WorldManager world, List<ResourceAmount> selectedResources, string prefix = "")
         {
             var objectName = String.IsNullOrEmpty(ObjectName) ? Name : ObjectName;
-            string resourceName = prefix + objectName + " (" + TextGenerator.GetListString(MergeResources(selectedResources).Select(r => (string)r.ResourceType)) + ")";
+            string resourceName = prefix + objectName + " (" + TextGenerator.GetListString(MergeResources(selectedResources).Select(r => (string)r.Type)) + ")";
 
             Resource toReturn = ResourceLibrary.GetResourceByName(resourceName);
 
@@ -163,7 +163,7 @@ namespace DwarfCorp
                         Resource.ResourceTags.CraftItem,
                         Resource.ResourceTags.Craft
                     },
-                    MoneyValue = selectedResources.Sum(r => ResourceLibrary.GetResourceByName(r.ResourceType).MoneyValue) * 2.0m,
+                    MoneyValue = selectedResources.Sum(r => ResourceLibrary.GetResourceByName(r.Type).MoneyValue) * 2.0m,
                     CraftInfo = new Resource.CraftItemInfo
                     {
                         Resources = selectedResources,

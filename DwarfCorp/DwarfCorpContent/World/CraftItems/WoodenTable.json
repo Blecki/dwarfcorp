@@ -4,7 +4,7 @@
   "Category": "Tables",
   "RequiredResources": [
     {
-      "ResourceType": "Wood",
+      "Type": "Wood",
       "NumResources": 4
     }
   ],
@@ -18,9 +18,7 @@
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": {
-    "_value": ""
-  },
+  "ResourceCreated": "",
   "CraftLocation": "",
   "Verb": "Build",
   "PastTeseVerb": "Built",

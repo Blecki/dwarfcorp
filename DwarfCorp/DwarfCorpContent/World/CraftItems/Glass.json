@@ -3,7 +3,7 @@
   "EntityName": "Glass",
   "RequiredResources": [
     {
-      "ResourceType": "Sand",
+      "Type": "Sand",
       "NumResources": 1
     }
   ],
@@ -15,9 +15,7 @@
   "Description": "Made from sand. Allows light to pass through.",
   "Type": "Resource",
   "Prerequisites": [],
-  "ResourceCreated": {
-    "_value": "Glass"
-  },
+  "ResourceCreated": "Glass",
   "CraftLocation": "Forge",
   "Verb": "Build",
   "PastTeseVerb": "Built",

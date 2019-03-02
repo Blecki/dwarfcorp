@@ -5,7 +5,7 @@
   "ShortDisplayName": "@s-ale",
   "RequiredResources": [
     {
-      "ResourceType": "Brewable",
+      "Type": "Brewable",
       "NumResources": 1
     }
   ],
@@ -17,9 +17,7 @@
   "Description": "@d-ale",
   "Type": "Resource",
   "Prerequisites": [],
-  "ResourceCreated": {
-    "_value": "Ale"
-  },
+  "ResourceCreated": "Ale",
   "CraftLocation": "Barrel",
   "Verb": "@brew",
   "PastTeseVerb": "@brewed",

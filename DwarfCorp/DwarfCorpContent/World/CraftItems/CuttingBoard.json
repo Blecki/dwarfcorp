@@ -3,11 +3,11 @@
   "EntityName": "Cutting Board",
   "RequiredResources": [
     {
-      "ResourceType": "Wood",
+      "Type": "Wood",
       "NumResources": 2
     },
     {
-      "ResourceType": "Metal",
+      "Type": "Metal",
       "NumResources": 2
     }
   ],
@@ -21,9 +21,7 @@
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": {
-    "_value": ""
-  },
+  "ResourceCreated": "",
   "CraftLocation": "",
   "Verb": "Build",
   "PastTeseVerb": "Built",

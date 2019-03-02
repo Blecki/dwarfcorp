@@ -7,11 +7,11 @@
   "PluralDisplayName": null,
   "RequiredResources": [
     {
-      "ResourceType": "Magical",
+      "Type": "Magical",
       "NumResources": 1
     },
     {
-      "ResourceType": "Bone",
+      "Type": "Bone",
       "NumResources": 1
     }
   ],
@@ -24,9 +24,7 @@
   "Type": "Resource",
   "Prerequisites": [],
   "CraftedResultsCount": 1,
-  "ResourceCreated": {
-    "_value": "Potion Of Strength"
-  },
+  "ResourceCreated": "Potion Of Strength",
   "CraftLocation": "Apothecary",
   "Verb": "Brew",
   "PastTeseVerb": "Brewed",

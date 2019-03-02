@@ -3,11 +3,11 @@
   "EntityName": "Turret",
   "RequiredResources": [
     {
-      "ResourceType": "Metal",
+      "Type": "Metal",
       "NumResources": 2
     },
     {
-      "ResourceType": "Magical",
+      "Type": "Magical",
       "NumResources": 1
     }
   ],
@@ -21,9 +21,7 @@
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": {
-    "_value": ""
-  },
+  "ResourceCreated": "",
   "CraftLocation": "",
   "Verb": "Build",
   "PastTeseVerb": "Built",

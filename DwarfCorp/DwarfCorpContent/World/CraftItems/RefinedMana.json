@@ -3,7 +3,7 @@
   "EntityName": "Refined Mana",
   "RequiredResources": [
     {
-      "ResourceType": "Mana",
+      "Type": "Mana",
       "NumResources": 1
     }
   ],
@@ -15,9 +15,7 @@
   "Description": "Refine magic to its purest form.",
   "Type": "Resource",
   "Prerequisites": [],
-  "ResourceCreated": {
-    "_value": "Refined Mana"
-  },
+  "ResourceCreated": "Refined Mana",
   "CraftLocation": "Apothecary",
   "Verb": "Refine",
   "PastTeseVerb": "Built",

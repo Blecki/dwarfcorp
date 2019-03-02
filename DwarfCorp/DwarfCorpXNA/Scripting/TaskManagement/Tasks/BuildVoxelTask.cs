@@ -125,7 +125,7 @@ namespace DwarfCorp
                 return null;
             }
 
-            var resources = new ResourceAmount(resource.Value.ResourceType, 1);
+            var resources = new ResourceAmount(resource.Value.Type, 1);
 
             return new Select(
                 new Sequence(

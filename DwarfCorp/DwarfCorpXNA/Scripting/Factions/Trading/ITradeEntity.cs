@@ -12,7 +12,7 @@ namespace DwarfCorp.Trade
         DwarfBux Money { get; }
         int AvailableSpace { get; }
         DwarfBux ComputeValue(List<ResourceAmount> Resources);
-        DwarfBux ComputeValue(ResourceType Resource);
+        DwarfBux ComputeValue(String Resource);
         Race TraderRace { get; }
         Faction TraderFaction { get; }
         void RemoveResources(List<ResourceAmount> Resources);
@@ -40,9 +40,9 @@ namespace DwarfCorp.Trade
                 bool found = false;
                 foreach (var existingResource in SourceEnvoy.TradeGoods)
                 {
-                    if (existingResource.ResourceType == resource.ResourceType)
+                    if (existingResource.Type == resource.Type)
                     {
-                        existingResource.NumResources += resource.NumResources;
+                        existingResource.Count += resource.Count;
                         found = true;
                         break;
                     }
@@ -57,7 +57,7 @@ namespace DwarfCorp.Trade
         public Race TraderRace { get { return SourceEnvoy.OwnerFaction.Race; } }
         public Faction TraderFaction { get { return SourceEnvoy.OwnerFaction; } }
 
-        public DwarfBux ComputeValue(ResourceType Resource)
+        public DwarfBux ComputeValue(String Resource)
         {
             var resource = ResourceLibrary.GetResourceByName(Resource);
             if (SourceEnvoy.OwnerFaction.Race.CommonResources.Any(r => resource.Tags.Contains(r)))
@@ -69,7 +69,7 @@ namespace DwarfCorp.Trade
 
         public DwarfBux ComputeValue(List<ResourceAmount> Resources)
         {
-            return Resources.Sum(r => ComputeValue(r.ResourceType) * (decimal)r.NumResources);
+            return Resources.Sum(r => ComputeValue(r.Type) * (decimal)r.Count);
         }
 
         public void RemoveResources(List<ResourceAmount> Resources)
@@ -78,9 +78,9 @@ namespace DwarfCorp.Trade
             {
                 foreach(var r2 in SourceEnvoy.TradeGoods)
                 {
-                    if (r.ResourceType == r2.ResourceType)
+                    if (r.Type == r2.Type)
                     {
-                        r2.NumResources -= r.NumResources;
+                        r2.Count -= r.Count;
                     }
                 }
             }
@@ -101,7 +101,7 @@ namespace DwarfCorp.Trade
         public int AvailableSpace { get { return Faction.ComputeRemainingStockpileSpace(); } }
         public DwarfBux Money { get { return Faction.Economy.CurrentMoney; } }
         public List<ResourceAmount> Resources { get { return Faction.ListResources().Where(r => 
-            ResourceLibrary.GetResourceByName(r.Value.ResourceType).MoneyValue > 0).Select(r => r.Value).ToList(); } }
+            ResourceLibrary.GetResourceByName(r.Value.Type).MoneyValue > 0).Select(r => r.Value).ToList(); } }
 
         public void AddMoney(DwarfBux Money)
         {
@@ -114,14 +114,14 @@ namespace DwarfCorp.Trade
                 Faction.AddResources(resource);
         }
 
-        public DwarfBux ComputeValue(ResourceType Resource)
+        public DwarfBux ComputeValue(String Resource)
         {
             return ResourceLibrary.GetResourceByName(Resource).MoneyValue;
         }
 
         public DwarfBux ComputeValue(List<ResourceAmount> Resources)
         {
-            return Resources.Sum(r => ComputeValue(r.ResourceType) * (decimal)r.NumResources);
+            return Resources.Sum(r => ComputeValue(r.Type) * (decimal)r.Count);
         }
 
         public void RemoveResources(List<ResourceAmount> Resources)

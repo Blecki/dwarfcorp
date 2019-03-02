@@ -47,7 +47,7 @@ namespace DwarfCorp
         public float Progress = 0.0f;
         public bool Finished = false;
         public bool HasResources = false;
-        public ResourceType ExistingResource = null;
+        public string ExistingResource = null;
         public CreatureAI ResourcesReservedFor = null;
         public List<ResourceAmount> SelectedResources = new List<ResourceAmount>();
     }

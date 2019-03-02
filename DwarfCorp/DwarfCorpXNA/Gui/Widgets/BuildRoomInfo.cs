@@ -30,7 +30,7 @@ namespace DwarfCorp.Gui.Widgets
                 foreach (var requirement in Data.RequiredResources)
                 {
                     builder.AppendLine(String.Format("{0}: {1}",
-                        requirement.Key, requirement.Value.NumResources));
+                        requirement.Key, requirement.Value.Count));
                 }
                 if (Data.RequiredResources.Count == 0)
                     builder.AppendLine("Nothing!");
@@ -44,8 +44,8 @@ namespace DwarfCorp.Gui.Widgets
         {
             foreach (var requirment in Data.RequiredResources)
             {
-                var inventory = Master.Faction.ListResourcesWithTag(requirment.Value.ResourceType);
-                if (inventory.Sum(r => r.NumResources) < requirment.Value.NumResources) return false;
+                var inventory = Master.Faction.ListResourcesWithTag(requirment.Value.Type);
+                if (inventory.Sum(r => r.Count) < requirment.Value.Count) return false;
             }
 
             return true;

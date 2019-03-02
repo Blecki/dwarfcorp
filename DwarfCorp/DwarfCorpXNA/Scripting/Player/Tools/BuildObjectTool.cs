@@ -61,7 +61,7 @@ namespace DwarfCorp
         }
 
         public PlacementMode Mode;
-        public ResourceType ExistingPlacement;
+        public String ExistingPlacement;
 
         [JsonIgnore]
         public WorldManager World { get; set; }
@@ -149,24 +149,24 @@ namespace DwarfCorp
 
         private bool HandlePlaceExistingUpdate()
         {
-            var resources = World.Master.Faction.ListResources().Where(r => ResourceLibrary.GetResourceByName(r.Value.ResourceType).CraftInfo.CraftItemType == CraftType.Name).ToList();
+            var resources = World.Master.Faction.ListResources().Where(r => ResourceLibrary.GetResourceByName(r.Value.Type).CraftInfo.CraftItemType == CraftType.Name).ToList();
 
             var toPlace = World.Master.Faction.Designations.EnumerateEntityDesignations().Where(designation => designation.Type == DesignationType.Craft &&
                 ((CraftDesignation)designation.Tag).ItemType.Name == CraftType.Name).ToList();
 
-            if (resources.Sum(r => r.Value.NumResources) <= toPlace.Count)
+            if (resources.Sum(r => r.Value.Count) <= toPlace.Count)
             {
                 ExistingPlacement = null;
                 SelectedResources = new List<ResourceAmount>();
                 return false;
             }
 
-            ResourceType resourceType = null;
+            String resourceType = null;
             int i = 0;
             int j = 0;
             while (i <= toPlace.Count && j < resources.Count)
             {
-                i += resources[j].Value.NumResources;
+                i += resources[j].Value.Count;
                 resourceType = resources[j].Key;
                 j++;
             }
@@ -176,7 +176,7 @@ namespace DwarfCorp
             return true;
 
             /*
-            var resource = World.Master.Faction.ListResources().First(r => ResourceLibrary.GetResourceByName(r.Value.ResourceType).CraftItnfo.CraftItemType == CraftType.Name);
+            var resource = World.Master.Faction.ListResources().First(r => ResourceLibrary.GetResourceByName(r.Value.String).CraftItnfo.CraftItemType == CraftType.Name);
             if (resource.Value != null)
             {
                 ExistingPlacement = resource.Key;

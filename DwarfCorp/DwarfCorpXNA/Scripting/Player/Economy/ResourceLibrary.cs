@@ -51,13 +51,13 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public static class ResourceLibrary
     {
-        public static Dictionary<ResourceType, Resource> Resources = new Dictionary<ResourceType, Resource>();
+        public static Dictionary<String, Resource> Resources = new Dictionary<String, Resource>();
         public static bool IsInitialized = false;
 
         public static void Cleanup()
         {
             IsInitialized = false;
-            Resources = new Dictionary<ResourceType, Resource>();
+            Resources = new Dictionary<String, Resource>();
         }
 
         public static IEnumerable<Resource> GetResourcesByTag(Resource.ResourceTags tag)
@@ -113,13 +113,10 @@ namespace DwarfCorp
         public static Resource GetResourceByName(string name)
         {
             if (!ResourceLibrary.IsInitialized)
-            {
                 ResourceLibrary.Initialize();
-            }
 
-            return Resources.ContainsKey((ResourceType) name) ? Resources[name] : null;
+            return Resources.ContainsKey((String) name) ? Resources[name] : null;
         }
-
 
         private static Rectangle GetRect(int x, int y)
         {
@@ -158,7 +155,7 @@ namespace DwarfCorp
             }
             IsInitialized = true;
             string tileSheet = ContentPaths.Entities.Resources.resources;
-            Resources = new Dictionary<ResourceType, Resource>();
+            Resources = new Dictionary<String, Resource>();
 
             var resourceList = FileUtils.LoadJsonListFromMultipleSources<Resource>(ContentPaths.resource_items, null, r => r.Name);
 
@@ -169,7 +166,7 @@ namespace DwarfCorp
             }
         }
         
-        public static Resource CreateAle(ResourceType type)
+        public static Resource CreateAle(String type)
         {
             var baseResource = Resources[type];
             var aleName = String.IsNullOrEmpty(baseResource.AleName) ? type + " Ale" : baseResource.AleName;
@@ -185,7 +182,7 @@ namespace DwarfCorp
             return Resources[aleName];
         }
 
-        public static Resource CreateMeal(ResourceType typeA, ResourceType typeB)
+        public static Resource CreateMeal(String typeA, String typeB)
         {
             Resource componentA = Resources[typeA];
             Resource componentB = Resources[typeB];
@@ -204,7 +201,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public static Resource EncrustTrinket(ResourceType resourcetype, ResourceType gemType)
+        public static Resource EncrustTrinket(String resourcetype, String gemType)
         {
             Resource toReturn = new Resource(Resources[resourcetype]);
             toReturn.Name = gemType + "-encrusted " + toReturn.Name;
@@ -234,7 +231,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public static Resource GenerateTrinket(ResourceType baseMaterial, float quality)
+        public static Resource GenerateTrinket(String baseMaterial, float quality)
         {
             Resource toReturn = new Resource(Resources[ResourceType.Trinket]);
 
@@ -333,7 +330,7 @@ namespace DwarfCorp
             return toReturn;
         }
         
-        public static Resource CreateBread(ResourceType component)
+        public static Resource CreateBread(String component)
         {
             Resource toReturn = new Resource(Resources[ResourceType.Bread])
             {

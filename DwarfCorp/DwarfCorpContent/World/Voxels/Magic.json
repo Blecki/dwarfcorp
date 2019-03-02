@@ -12,9 +12,7 @@
     "15, 10"
   ],
   "ReleasesResource": false,
-  "ResourceToRelease": {
-    "_value": "Mana"
-  },
+  "ResourceToRelease": "Mana",
   "StartingHealth": 1.0,
   "ProbabilityOfRelease": 0.0,
   "CanRamp": false,

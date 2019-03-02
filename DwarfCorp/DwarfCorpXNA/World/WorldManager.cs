@@ -521,11 +521,11 @@ namespace DwarfCorp
             LogStat("Money", (float)(decimal)PlayerFaction.Economy.CurrentMoney);
 
             var resources = PlayerFaction.ListResourcesInStockpilesPlusMinions();
-            LogStat("Resources", resources.Values.Select(r => r.First.NumResources + r.Second.NumResources).Sum());
+            LogStat("Resources", resources.Values.Select(r => r.First.Count + r.Second.Count).Sum());
             LogStat("Resource Value", (float)resources.Values.Select(r =>
             {
-                var value = ResourceLibrary.GetResourceByName(r.First.ResourceType).MoneyValue.Value;
-                return (r.First.NumResources * value) + (r.Second.NumResources * value);
+                var value = ResourceLibrary.GetResourceByName(r.First.Type).MoneyValue.Value;
+                return (r.First.Count * value) + (r.Second.Count * value);
             }).Sum());
             LogStat("Employees", PlayerFaction.Minions.Count);
             LogStat("Employee Pay", (float)PlayerFaction.Minions.Select(m => m.Stats.CurrentLevel.Pay.Value).Sum());

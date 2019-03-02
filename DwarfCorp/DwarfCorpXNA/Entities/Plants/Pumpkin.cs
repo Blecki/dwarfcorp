@@ -59,8 +59,8 @@ namespace DwarfCorp
 
             inventory.AddResource(new ResourceAmount()
             {
-                NumResources = 2,
-                ResourceType = ResourceType.Pumkin
+                Count = 2,
+                Type = ResourceType.Pumkin
             });
 
             var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",

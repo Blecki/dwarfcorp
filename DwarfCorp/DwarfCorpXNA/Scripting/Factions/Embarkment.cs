@@ -40,7 +40,7 @@ namespace DwarfCorp
     {
         public int Difficulty;
         public List<string> Party;
-        public Dictionary<ResourceType, int> Resources;
+        public Dictionary<string, int> Resources;
         public DwarfBux Money;
     }
 }

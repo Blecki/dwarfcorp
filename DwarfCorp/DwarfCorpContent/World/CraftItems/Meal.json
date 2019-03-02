@@ -3,11 +3,11 @@
   "EntityName": "Meal",
   "RequiredResources": [
     {
-      "ResourceType": "RawFood",
+      "Type": "RawFood",
       "NumResources": 1
     },
     {
-      "ResourceType": "RawFood",
+      "Type": "RawFood",
       "NumResources": 1
     }
   ],
@@ -19,9 +19,7 @@
   "Description": "Take raw food and cook something",
   "Type": "Resource",
   "Prerequisites": [],
-  "ResourceCreated": {
-    "_value": "Meal"
-  },
+  "ResourceCreated": "Meal",
   "CraftLocation": "Cutting Board",
   "Verb": "Cook",
   "PastTeseVerb": "Cooked",

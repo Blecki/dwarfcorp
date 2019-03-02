@@ -8,9 +8,7 @@
   "HasTransitionTextures": false,
   "TransitionTiles": null,
   "ReleasesResource": true,
-  "ResourceToRelease": {
-    "_value": "Brick"
-  },
+  "ResourceToRelease": "Brick",
   "StartingHealth": 30.0,
   "ProbabilityOfRelease": 1.0,
   "CanRamp": false,

@@ -4,11 +4,11 @@
   "DisplayName": "Powder Keg",
   "RequiredResources": [
     {
-      "ResourceType": "Alcohol",
+      "Type": "Alcohol",
       "NumResources": 4
     },
     {
-      "ResourceType": "Wood",
+      "Type": "Wood",
       "NumResources": 1
     }
   ],
@@ -22,9 +22,7 @@
   "Prerequisites": [
     "OnGround"
   ],
-  "ResourceCreated": {
-    "_value": ""
-  },
+  "ResourceCreated": "",
   "CraftLocation": "",
   "Verb": "Build",
   "PastTeseVerb": "Built",

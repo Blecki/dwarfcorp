@@ -1,35 +1,3 @@
-// ResourceEntity.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +10,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class ResourceEntity : Physics
     {
         public ResourceAmount Resource { get; set; }
@@ -54,17 +21,17 @@ namespace DwarfCorp
         }
 
         public ResourceEntity(ComponentManager manager, ResourceAmount resourceType, Vector3 position) :
-            base(manager, ResourceLibrary.Resources[resourceType.ResourceType].Name, 
+            base(manager, ResourceLibrary.Resources[resourceType.Type].Name, 
                 Matrix.CreateTranslation(position), new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
         {
             Resource = resourceType;
-            if (Resource.NumResources > 1)
+            if (Resource.Count > 1)
             {
-                Name = String.Format("Pile of {0} {1}s", Resource.NumResources, Resource.ResourceType);
+                Name = String.Format("Pile of {0} {1}s", Resource.Count, Resource.Type);
             }
             Restitution = 0.1f;
             Friction = 0.1f;
-            Resource type = ResourceLibrary.Resources[resourceType.ResourceType];
+            Resource type = ResourceLibrary.Resources[resourceType.Type];
             
             Tags.Add(type.Name);
             Tags.Add("Resource");
@@ -89,20 +56,20 @@ namespace DwarfCorp
             {
                 Die();
             }
-            var tint = ResourceLibrary.GetResourceByName(this.Resource.ResourceType).Tint;
+            var tint = ResourceLibrary.GetResourceByName(this.Resource.Type).Tint;
             if (tint != Color.White)
-                this.SetVertexColorRecursive(ResourceLibrary.GetResourceByName(this.Resource.ResourceType).Tint);
+                this.SetVertexColorRecursive(ResourceLibrary.GetResourceByName(this.Resource.Type).Tint);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             base.CreateCosmeticChildren(manager);
 
-            var type = ResourceLibrary.GetResourceByName(Resource.ResourceType);
+            var type = ResourceLibrary.GetResourceByName(Resource.Type);
 
             Tinter sprite = null;
 
-            int numSprites = Math.Min(Resource.NumResources, 3);
+            int numSprites = Math.Min(Resource.Count, 3);
             for (int i = 0; i < numSprites; i++)
             {
                 // Minor optimization for single layer resources.

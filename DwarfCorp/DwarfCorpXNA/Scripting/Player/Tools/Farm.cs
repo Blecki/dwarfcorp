@@ -44,7 +44,7 @@ namespace DwarfCorp
         public VoxelHandle Voxel = VoxelHandle.InvalidHandle;
         public float Progress = 0.0f;
         public float TargetProgress = 100.0f;
-        public string SeedResourceType = null;
+        public string SeedString = null;
         public List<ResourceAmount> RequiredResources = null;
         public bool Finished = false;
     }

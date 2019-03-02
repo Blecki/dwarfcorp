@@ -8,9 +8,7 @@
   "HasTransitionTextures": false,
   "TransitionTiles": null,
   "ReleasesResource": false,
-  "ResourceToRelease": {
-    "_value": "Stone"
-  },
+  "ResourceToRelease": "Stone",
   "StartingHealth": 255.0,
   "ProbabilityOfRelease": 0.0,
   "CanRamp": false,

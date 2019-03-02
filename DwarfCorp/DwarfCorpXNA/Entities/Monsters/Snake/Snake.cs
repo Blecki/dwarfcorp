@@ -169,7 +169,7 @@ namespace DwarfCorp
 
                 if (HasMeat)
                 {
-                    ResourceType type = Species + " " + ResourceType.Meat;
+                    String type = Species + " " + ResourceType.Meat;
 
                     if (!ResourceLibrary.Resources.ContainsKey(type))
                     {
@@ -185,7 +185,7 @@ namespace DwarfCorp
 
                 if (HasBones)
                 {
-                    ResourceType type = Name + " " + ResourceType.Bones;
+                    String type = Name + " " + ResourceType.Bones;
 
                     if (!ResourceLibrary.Resources.ContainsKey(type))
                     {

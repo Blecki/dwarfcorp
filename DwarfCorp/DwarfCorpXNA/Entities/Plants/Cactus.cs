@@ -58,8 +58,8 @@ namespace DwarfCorp
 
             inventory.AddResource(new ResourceAmount()
             {
-                NumResources = 2,
-                ResourceType = ResourceType.Cactus
+                Count = 2,
+                Type = ResourceType.Cactus
             });
 
             var particles = AddChild(new ParticleTrigger("Leaves", Manager, "LeafEmitter",

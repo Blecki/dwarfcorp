@@ -554,7 +554,7 @@ namespace DwarfCorp.GameStates
             }
 
             var resourceCount = Master.Faction.ListResourcesInStockpilesPlusMinions()
-                .Where(r => data.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))).Sum(r => r.Value.First.NumResources + r.Value.Second.NumResources);
+                .Where(r => data.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))).Sum(r => r.Value.First.Count + r.Value.Second.Count);
 
             int newNum = Math.Max(resourceCount -
                 World.PlayerFaction.Designations.EnumerateDesignations(DesignationType.Put).Count(d =>
@@ -1346,7 +1346,7 @@ namespace DwarfCorp.GameStates
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_WallTypes_Return }).Concat(
                         VoxelLibrary.GetTypes()
-                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.ListResources().Any(r =>voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.ResourceType))))
+                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.ListResources().Any(r =>voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.Type))))
                         .Select(data => new FlatToolTray.Icon
                         {
                             Tooltip = "Build " + data.Name,
@@ -1396,7 +1396,7 @@ namespace DwarfCorp.GameStates
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_WallTypes_Return }).Concat(
                         VoxelLibrary.GetTypes()
-                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.ListResources().Any(r => voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.ResourceType))))
+                        .Where(voxel => voxel.IsBuildable && World.PlayerFaction.ListResources().Any(r => voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.Type))))
                         .Select(data => new FlatToolTray.Icon
                         {
                             Tooltip = "Build " + data.Name,
@@ -1688,18 +1688,18 @@ namespace DwarfCorp.GameStates
 
             #region icon_BuildResource
 
-            var icon_menu_ResourceTypes_Return = new FlatToolTray.Icon
+            var icon_menu_Strings_Return = new FlatToolTray.Icon
             {
                 Icon = new TileReference("tool-icons", 11),
                 Tooltip = "Go Back",
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
-            var menu_ResourceTypes = new FlatToolTray.Tray
+            var menu_Strings = new FlatToolTray.Tray
             {
                 Tag = "craft resource",
                 Tooltip = "Craft resource",
-                ItemSource = (new Widget[] { icon_menu_ResourceTypes_Return }).Concat(
+                ItemSource = (new Widget[] { icon_menu_Strings_Return }).Concat(
                     CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && item.AllowUserCrafting
                     && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) &&
@@ -1754,7 +1754,7 @@ namespace DwarfCorp.GameStates
                 TextHorizontalAlign = HorizontalAlign.Center,
                 TextVerticalAlign = VerticalAlign.Below,
                 KeepChildVisible = true,
-                ReplacementMenu = menu_ResourceTypes,
+                ReplacementMenu = menu_Strings,
                 Behavior = FlatToolTray.IconBehavior.ShowSubMenu
             };
 
@@ -1874,7 +1874,7 @@ namespace DwarfCorp.GameStates
             };
 
             icon_menu_CraftTypes_Return.ReplacementMenu = menu_BuildTools;
-            icon_menu_ResourceTypes_Return.ReplacementMenu = menu_BuildTools;
+            icon_menu_Strings_Return.ReplacementMenu = menu_BuildTools;
             icon_menu_RoomTypes_Return.ReplacementMenu = menu_BuildTools;
             icon_menu_WallTypes_Return.ReplacementMenu = menu_BuildTools;
             icon_menu_Rail_Return.ReplacementMenu = menu_BuildTools;
@@ -2182,26 +2182,26 @@ namespace DwarfCorp.GameStates
                          Master.Faction.ListResourcesWithTag(Resource.ResourceTags.Plantable)
                         .Select(resource => new FlatToolTray.Icon
                            {
-                               Icon = resource.ResourceType.GetResource().GuiLayers[0],
-                               Tooltip = "Plant " + resource.ResourceType,
+                                Icon = ResourceLibrary.GetResourceByName(resource.Type)?.GuiLayers[0],
+                                Tooltip = "Plant " + resource.Type,
                                Behavior = FlatToolTray.IconBehavior.ShowHoverPopup,
-                               Text = resource.ResourceType,
+                               Text = resource.Type,
                                TextVerticalAlign = VerticalAlign.Below,
                                OnClick = (sender, args) =>
                                {
-                                   World.ShowToolPopup("Click and drag to plant " + resource.ResourceType + ".");
+                                   World.ShowToolPopup("Click and drag to plant " + resource.Type + ".");
                                    ChangeTool(GameMaster.ToolMode.Plant);
                                    var plantTool = Master.Tools[GameMaster.ToolMode.Plant] as PlantTool;
-                                   plantTool.PlantType = resource.ResourceType;
+                                   plantTool.PlantType = resource.Type;
                                    plantTool.RequiredResources = new List<ResourceAmount>()
                                        {
-                                          new ResourceAmount(resource.ResourceType)
+                                          new ResourceAmount(resource.Type)
                                        };
                                    World.Tutorial("plant");
                                },
                                PopupChild = new PlantInfo()
                                {
-                                   Type = resource.ResourceType,
+                                   Type = resource.Type,
                                    Rect = new Rectangle(0, 0, 256, 128),
                                    Master = Master,
                                    TextColor = Color.Black.ToVector4()
@@ -2332,7 +2332,7 @@ namespace DwarfCorp.GameStates
                     MainMenu,
                     menu_Plant,
                     //menu_ResearchSpells,
-                    menu_ResourceTypes,
+                    menu_Strings,
                     menu_RoomTypes,
                     menu_WallTypes,
                     menu_Floortypes,

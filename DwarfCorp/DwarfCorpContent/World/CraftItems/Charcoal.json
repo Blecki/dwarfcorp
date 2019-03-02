@@ -3,7 +3,7 @@
   "EntityName": "Charcoal",
   "RequiredResources": [
     {
-      "ResourceType": "Wood",
+      "Type": "Wood",
       "NumResources": 2
     }
   ],
@@ -15,9 +15,7 @@
   "Description": "An alternative to coal. Made by burning wood.",
   "Type": "Resource",
   "Prerequisites": [],
-  "ResourceCreated": {
-    "_value": "Charcoal"
-  },
+  "ResourceCreated": "Charcoal",
   "CraftLocation": "Forge",
   "Verb": "Burn",
   "PastTeseVerb": "Burnt",

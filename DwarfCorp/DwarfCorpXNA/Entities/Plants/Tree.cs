@@ -48,7 +48,7 @@ namespace DwarfCorp
 
         public Tree() { }
 
-        public Tree(string name, ComponentManager manager, Vector3 position, string asset, ResourceType seed, float treeSize, bool emitWood = true) :
+        public Tree(string name, ComponentManager manager, Vector3 position, string asset, String seed, float treeSize, bool emitWood = true) :
             base(manager, name, position, MathFunctions.Rand(-0.1f, 0.1f),
                 new Vector3(
                     PrimitiveLibrary.Primitives[asset].Width * 0.75f * treeSize,

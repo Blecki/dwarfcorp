@@ -48,7 +48,7 @@ namespace DwarfCorp
         //public ResourceContainer Resources { get; set; }
         public class InventoryItem
         {
-            public ResourceType Resource;
+            public String Resource;
             public bool MarkedForRestock = false;
             public bool MarkedForUse = false;
         }
@@ -85,11 +85,11 @@ namespace DwarfCorp
 
         public bool Pickup(ResourceAmount resourceAmount, RestockType restock)
         {
-            for (int i = 0; i < resourceAmount.NumResources; i++)
+            for (int i = 0; i < resourceAmount.Count; i++)
             {
                 Resources.Add(new InventoryItem()
                 {
-                    Resource = resourceAmount.ResourceType,
+                    Resource = resourceAmount.Type,
                     MarkedForRestock = restock == RestockType.RestockResource,
                     MarkedForUse = restock != RestockType.RestockResource
                 });
@@ -101,7 +101,7 @@ namespace DwarfCorp
         {
             foreach (var quantity in amount)
             {
-                for (int i = 0; i < quantity.NumResources; i++)
+                for (int i = 0; i < quantity.Count; i++)
                 {
                     int kRemove = -1;
                     for (int k = 0; k < Resources.Count; k++)
@@ -112,7 +112,7 @@ namespace DwarfCorp
                             continue;
 
                         if (!ResourceLibrary.GetResourceByName(Resources[k].Resource)
-                            .Tags.Contains(quantity.ResourceType)) continue;
+                            .Tags.Contains(quantity.Type)) continue;
                         kRemove = k;
                         break;
                     }
@@ -130,7 +130,7 @@ namespace DwarfCorp
         {
             foreach (var quantity in resourceAmount)
             {
-                for (int i = 0; i < quantity.NumResources; i++)
+                for (int i = 0; i < quantity.Count; i++)
                 {
                     int kRemove = -1;
                     for (int k = 0; k < Resources.Count; k++)
@@ -139,7 +139,7 @@ namespace DwarfCorp
                             continue;
                         else if (type == RestockType.RestockResource && !Resources[k].MarkedForRestock)
                             continue;
-                        if (Resources[k].Resource != quantity.ResourceType) continue;
+                        if (Resources[k].Resource != quantity.Type) continue;
                         kRemove = k;
                         break;
                     }
@@ -169,13 +169,13 @@ namespace DwarfCorp
             if (item is ResourceEntity)
             {
                 ResourceEntity entity = item as ResourceEntity;
-                for (int i = 0; i < entity.Resource.NumResources; i++)
+                for (int i = 0; i < entity.Resource.Count; i++)
                 {
                     Resources.Add(new InventoryItem()
                     {
                         MarkedForRestock = restockType == RestockType.RestockResource,
                         MarkedForUse = restockType != RestockType.RestockResource,
-                        Resource = entity.Resource.ResourceType
+                        Resource = entity.Resource.Type
                     });
                 }
             }
@@ -229,9 +229,9 @@ namespace DwarfCorp
                 return toReturn;
             }
 
-            for(int i = 0; i < resources.NumResources; i++)
+            for(int i = 0; i < resources.Count; i++)
             {
-                Body newEntity = EntityFactory.CreateEntity<Body>(resources.ResourceType + " Resource",
+                Body newEntity = EntityFactory.CreateEntity<Body>(resources.Type + " Resource",
                     pos + MathFunctions.RandVector3Cube()*0.5f);
                 toReturn.Add(newEntity);
             }
@@ -246,7 +246,7 @@ namespace DwarfCorp
             {
                 if (toReturn.ContainsKey(resource.Resource))
                 {
-                    toReturn[resource.Resource].NumResources++;
+                    toReturn[resource.Resource].Count++;
                 }
                 else
                 {
@@ -268,7 +268,7 @@ namespace DwarfCorp
 
         public void DropAll()
         {
-            var resourceCounts = new Dictionary<ResourceType, int>();
+            var resourceCounts = new Dictionary<String, int>();
             foreach (var resource in Resources)
             {
                 if (!resourceCounts.ContainsKey(resource.Resource))
@@ -308,19 +308,19 @@ namespace DwarfCorp
 
         public bool HasResource(ResourceAmount itemToStock)
         {
-            return Resources.Count(resource => resource.Resource == itemToStock.ResourceType) >= itemToStock.NumResources;
+            return Resources.Count(resource => resource.Resource == itemToStock.Type) >= itemToStock.Count;
         }
 
         public bool HasResource(Quantitiy<Resource.ResourceTags> itemToStock, bool allowHeterogenous = false)
         {
             if (allowHeterogenous)
-                return Resources.Count(resource => ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(itemToStock.ResourceType)) >= itemToStock.NumResources;
+                return Resources.Count(resource => ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(itemToStock.Type)) >= itemToStock.Count;
             else
             {
-                Dictionary<ResourceType, int> resourceCounts = new Dictionary<ResourceType, int>();
+                Dictionary<String, int> resourceCounts = new Dictionary<String, int>();
                 foreach (var resource in Resources)
                 {
-                    if (ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(itemToStock.ResourceType))
+                    if (ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(itemToStock.Type))
                     {
                         if (!resourceCounts.ContainsKey(resource.Resource))
                         {
@@ -330,14 +330,14 @@ namespace DwarfCorp
                     }
                 }
 
-                return resourceCounts.Count > 0 && resourceCounts.Max(r => r.Value >= itemToStock.NumResources);
+                return resourceCounts.Count > 0 && resourceCounts.Max(r => r.Value >= itemToStock.Count);
             }
         }
 
         public List<ResourceAmount> GetResources(Quantitiy<Resource.ResourceTags> quantitiy, RestockType type = RestockType.RestockResource)
         {
             return (from resource in Resources where
-                    ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(quantitiy.ResourceType) && ((type == RestockType.RestockResource 
+                    ResourceLibrary.GetResourceByName(resource.Resource).Tags.Contains(quantitiy.Type) && ((type == RestockType.RestockResource 
                     && resource.MarkedForRestock) || (type == RestockType.None && !resource.MarkedForRestock) || (type == RestockType.Any))
                     select new ResourceAmount(resource.Resource)).ToList();
         }

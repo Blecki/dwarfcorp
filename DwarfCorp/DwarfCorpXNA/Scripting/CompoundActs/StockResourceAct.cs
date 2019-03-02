@@ -76,7 +76,7 @@ namespace DwarfCorp
 
         public IEnumerable<Status> OnFail()
         {
-            if (ItemToStock != null && ItemToStock.NumResources >= 0 && Agent.Creature.Inventory.HasResource(ItemToStock))
+            if (ItemToStock != null && ItemToStock.Count >= 0 && Agent.Creature.Inventory.HasResource(ItemToStock))
             {
                 Agent.GatherManager.StockOrders.Add(new GatherManager.StockOrder()
                 {

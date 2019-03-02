@@ -132,7 +132,7 @@ namespace DwarfCorp
                         {
                             Voxel = voxel,
                             RequiredResources = RequiredResources,
-                            SeedResourceType = PlantType
+                            SeedString = PlantType
                         };
 
                         var task = new PlantTask(farmTile)

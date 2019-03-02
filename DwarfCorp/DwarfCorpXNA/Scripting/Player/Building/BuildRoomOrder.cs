@@ -90,18 +90,18 @@ namespace DwarfCorp
         {
             foreach (Quantitiy<Resource.ResourceTags> resource in resources)
             {
-                if(PutResources.ContainsKey(resource.ResourceType))
+                if(PutResources.ContainsKey(resource.Type))
                 {
-                    Quantitiy<Resource.ResourceTags> amount = PutResources[resource.ResourceType];
-                    amount.NumResources += resource.NumResources;
+                    Quantitiy<Resource.ResourceTags> amount = PutResources[resource.Type];
+                    amount.Count += resource.Count;
                 }
                 else
                 {
                     Quantitiy<Resource.ResourceTags> amount = new Quantitiy<Resource.ResourceTags>();
-                    amount.NumResources += resource.NumResources;
-                    amount.ResourceType = resource.ResourceType;
+                    amount.Count += resource.Count;
+                    amount.Type = resource.Type;
 
-                    PutResources[resource.ResourceType] = amount;
+                    PutResources[resource.Type] = amount;
                 }
             }
         }
@@ -118,7 +118,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    toReturn = toReturn && (PutResources[s].NumResources >= Math.Max((int)(ToBuild.RoomData.RequiredResources[s].NumResources * VoxelOrders.Count * 0.25f), 1));
+                    toReturn = toReturn && (PutResources[s].Count >= Math.Max((int)(ToBuild.RoomData.RequiredResources[s].Count * VoxelOrders.Count * 0.25f), 1));
                 }
             }
 
@@ -182,7 +182,7 @@ namespace DwarfCorp
 
             if(PutResources.ContainsKey(name))
             {
-                current = (int) PutResources[name].NumResources;
+                current = (int) PutResources[name].Count;
             }
 
             return current >= required;
@@ -192,7 +192,7 @@ namespace DwarfCorp
         {
             if(ToBuild.RoomData.RequiredResources.ContainsKey(name))
             {
-                return Math.Max((int) (ToBuild.RoomData.RequiredResources[name].NumResources * VoxelOrders.Count * 0.25f), 1);
+                return Math.Max((int) (ToBuild.RoomData.RequiredResources[name].Count * VoxelOrders.Count * 0.25f), 1);
             }
             else
             {
@@ -208,11 +208,11 @@ namespace DwarfCorp
             {
                 toReturn += "\n";
                 int numResource = 0;
-                if(PutResources.ContainsKey(amount.ResourceType))
+                if(PutResources.ContainsKey(amount.Type))
                 {
-                    numResource = (int) (PutResources[amount.ResourceType].NumResources);
+                    numResource = (int) (PutResources[amount.Type].Count);
                 }
-                toReturn += amount.ResourceType.ToString() + " : " + numResource + "/" + Math.Max((int) (amount.NumResources * VoxelOrders.Count * 0.25f), 1);
+                toReturn += amount.Type.ToString() + " : " + numResource + "/" + Math.Max((int) (amount.Count * VoxelOrders.Count * 0.25f), 1);
             }
 
             return toReturn;
@@ -223,12 +223,12 @@ namespace DwarfCorp
             List<Quantitiy<Resource.ResourceTags>> toReturn = new List<Quantitiy<Resource.ResourceTags>>();
             foreach (Resource.ResourceTags s in ToBuild.RoomData.RequiredResources.Keys)
             {
-                int needed = Math.Max((int) (ToBuild.RoomData.RequiredResources[s].NumResources * VoxelOrders.Count * 0.25f), 1);
+                int needed = Math.Max((int) (ToBuild.RoomData.RequiredResources[s].Count * VoxelOrders.Count * 0.25f), 1);
                 int currentResources = 0;
 
                 if(PutResources.ContainsKey(s))
                 {
-                    currentResources = PutResources[s].NumResources;
+                    currentResources = PutResources[s].Count;
                 }
 
                 if(currentResources >= needed)

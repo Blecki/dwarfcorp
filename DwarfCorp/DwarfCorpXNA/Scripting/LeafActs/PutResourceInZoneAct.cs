@@ -108,7 +108,7 @@ namespace DwarfCorp
                 yield break;
             }
 
-            if (Resource.NumResources <= 0)
+            if (Resource.Count <= 0)
             {
                 yield return Status.Success;
                 yield break;
@@ -128,7 +128,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    Creature.Inventory.AddResource(new ResourceAmount(Resource.ResourceType, 1), Inventory.RestockType.RestockResource);
+                    Creature.Inventory.AddResource(new ResourceAmount(Resource.Type, 1), Inventory.RestockType.RestockResource);
                     b.Delete();
                 }
             }
@@ -142,7 +142,7 @@ namespace DwarfCorp
                 yield return Status.Running;
             }
 
-            var resource = ResourceLibrary.GetResourceByName(Resource.ResourceType);
+            var resource = ResourceLibrary.GetResourceByName(Resource.Type);
             if (resource.Tags.Contains(DwarfCorp.Resource.ResourceTags.Corpse))
             {
                 Creature.AddThought(Thought.ThoughtType.BuriedDead);
