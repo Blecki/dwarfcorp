@@ -27,11 +27,11 @@
     "Ingredients": [
       {
         "Type": "Magical",
-        "NumResources": 1
+        "Count": 1
       },
       {
         "Type": "Edible",
-        "NumResources": 1
+        "Count": 1
       }
     ],
     "Icon": 44
@@ -63,11 +63,11 @@
     "Ingredients": [
       {
         "Type": "Magical",
-        "NumResources": 1
+        "Count": 1
       },
       {
         "Type": "AnimalProduct",
-        "NumResources": 1
+        "Count": 1
       }
     ],
     "Icon": 44
@@ -100,11 +100,11 @@
     "Ingredients": [
       {
         "Type": "Magical",
-        "NumResources": 1
+        "Count": 1
       },
       {
         "Type": "Alcohol",
-        "NumResources": 1
+        "Count": 1
       }
     ],
     "Icon": 45
@@ -146,11 +146,11 @@
     "Ingredients": [
       {
         "Type": "Magical",
-        "NumResources": 1
+        "Count": 1
       },
       {
         "Type": "Bone",
-        "NumResources": 1
+        "Count": 1
       }
     ],
     "Icon": 44
@@ -192,11 +192,11 @@
     "Ingredients": [
       {
         "Type": "Magical",
-        "NumResources": 1
+        "Count": 1
       },
       {
         "Type": "Fungus",
-        "NumResources": 1
+        "Count": 1
       }
     ],
     "Icon": 45
@@ -238,11 +238,11 @@
     "Ingredients": [
       {
         "Type": "Magical",
-        "NumResources": 1
+        "Count": 1
       },
       {
         "Type": "Fruit",
-        "NumResources": 1
+        "Count": 1
       }
     ],
     "Icon": 45

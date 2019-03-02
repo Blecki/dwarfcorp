@@ -4,11 +4,11 @@
   "RequiredResources": [
     {
       "Type": "Wood",
-      "NumResources": 2
+      "Count": 2
     },
     {
       "Type": "Metal",
-      "NumResources": 2
+      "Count": 2
     }
   ],
   "Icon": {

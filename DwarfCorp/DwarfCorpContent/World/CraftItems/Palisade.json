@@ -4,7 +4,7 @@
   "RequiredResources": [
     {
       "Type": "HardMaterial",
-      "NumResources": 1
+      "Count": 1
     }
   ],
   "Icon": {

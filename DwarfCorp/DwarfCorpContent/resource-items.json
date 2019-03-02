@@ -628,7 +628,7 @@
     "CraftPrerequisites": [
       {
         "Type": "Wood",
-        "NumResources": 2
+        "Count": 2
       }
     ],
     "Tint": [
@@ -1897,7 +1897,7 @@
     "CraftPrerequisites": [
       {
         "Type": "Sand",
-        "NumResources": 1
+        "Count": 1
       }
     ],
     "Tint": [
@@ -1944,7 +1944,7 @@
     "CraftPrerequisites": [
       {
         "Type": "Soil",
-        "NumResources": 1
+        "Count": 1
       }
     ],
     "Tint": [
@@ -2029,7 +2029,7 @@
     "CraftPrerequisites": [
       {
         "Type": "Metal",
-        "NumResources": 1
+        "Count": 1
       }
     ],
     "Tint": [
@@ -2075,11 +2075,11 @@
     "CraftPrerequisites": [
       {
         "Type": "Magical",
-        "NumResources": 1
+        "Count": 1
       },
       {
         "Type": "Edible",
-        "NumResources": 1
+        "Count": 1
       }
     ],
     "Tint": [
@@ -2130,11 +2130,11 @@
     "CraftPrerequisites": [
       {
         "Type": "Magical",
-        "NumResources": 1
+        "Count": 1
       },
       {
         "Type": "AnimalProduct",
-        "NumResources": 1
+        "Count": 1
       }
     ],
     "Tint": [
@@ -2185,11 +2185,11 @@
     "CraftPrerequisites": [
       {
         "Type": "Magical",
-        "NumResources": 1
+        "Count": 1
       },
       {
         "Type": "Alcohol",
-        "NumResources": 1
+        "Count": 1
       }
     ],
     "Tint": [
@@ -2240,11 +2240,11 @@
     "CraftPrerequisites": [
       {
         "Type": "Magical",
-        "NumResources": 1
+        "Count": 1
       },
       {
         "Type": "Bone",
-        "NumResources": 1
+        "Count": 1
       }
     ],
     "Tint": [
@@ -2295,11 +2295,11 @@
     "CraftPrerequisites": [
       {
         "Type": "Magical",
-        "NumResources": 1
+        "Count": 1
       },
       {
         "Type": "Fungus",
-        "NumResources": 1
+        "Count": 1
       }
     ],
     "Tint": [
@@ -2350,11 +2350,11 @@
     "CraftPrerequisites": [
       {
         "Type": "Magical",
-        "NumResources": 1
+        "Count": 1
       },
       {
         "Type": "Fruit",
-        "NumResources": 1
+        "Count": 1
       }
     ],
     "Tint": [

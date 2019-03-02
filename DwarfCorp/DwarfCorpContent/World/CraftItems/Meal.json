@@ -4,11 +4,11 @@
   "RequiredResources": [
     {
       "Type": "RawFood",
-      "NumResources": 1
+      "Count": 1
     },
     {
       "Type": "RawFood",
-      "NumResources": 1
+      "Count": 1
     }
   ],
   "Icon": {

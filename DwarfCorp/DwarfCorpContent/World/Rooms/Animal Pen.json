@@ -10,7 +10,7 @@
   "RequiredResources": {
     "Soil": {
       "Type": "Soil",
-      "NumResources": 4
+      "Count": 4
     }
   },
   "NewIcon": {

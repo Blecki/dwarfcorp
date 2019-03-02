@@ -6,7 +6,7 @@
   "RequiredResources": [
     {
       "Type": "Brewable",
-      "NumResources": 1
+      "Count": 1
     }
   ],
   "Icon": {

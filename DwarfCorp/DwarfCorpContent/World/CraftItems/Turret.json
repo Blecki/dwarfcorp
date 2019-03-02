@@ -4,11 +4,11 @@
   "RequiredResources": [
     {
       "Type": "Metal",
-      "NumResources": 2
+      "Count": 2
     },
     {
       "Type": "Magical",
-      "NumResources": 1
+      "Count": 1
     }
   ],
   "Icon": {

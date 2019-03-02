@@ -6,7 +6,7 @@
   "RequiredResources": [
     {
       "Type": "Magical",
-      "NumResources": 2
+      "Count": 2
     }
   ],
   "Icon": {

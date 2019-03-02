@@ -5,11 +5,11 @@
   "RequiredResources": [
     {
       "Type": "Alcohol",
-      "NumResources": 4
+      "Count": 4
     },
     {
       "Type": "Wood",
-      "NumResources": 1
+      "Count": 1
     }
   ],
   "Icon": {

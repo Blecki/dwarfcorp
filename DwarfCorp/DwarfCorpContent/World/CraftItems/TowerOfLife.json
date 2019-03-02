@@ -5,11 +5,11 @@
   "RequiredResources": [
     {
       "Type": "Magical",
-      "NumResources": 4
+      "Count": 4
     },
     {
       "Type": "AboveGroundPlant",
-      "NumResources": 2
+      "Count": 2
     }
   ],
   "Icon": {

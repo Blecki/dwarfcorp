@@ -8,11 +8,11 @@
   "RequiredResources": [
     {
       "Type": "Magical",
-      "NumResources": 1
+      "Count": 1
     },
     {
       "Type": "Edible",
-      "NumResources": 1
+      "Count": 1
     }
   ],
   "Icon": {

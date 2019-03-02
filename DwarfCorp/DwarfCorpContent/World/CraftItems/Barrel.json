@@ -4,11 +4,11 @@
   "RequiredResources": [
     {
       "Type": "Wood",
-      "NumResources": 2
+      "Count": 2
     },
     {
       "Type": "Brewable",
-      "NumResources": 4
+      "Count": 4
     }
   ],
   "Icon": {

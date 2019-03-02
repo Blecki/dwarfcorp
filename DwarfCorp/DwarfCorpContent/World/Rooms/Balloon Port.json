@@ -10,7 +10,7 @@
   "RequiredResources": {
     "Stone": {
       "Type": "Stone",
-      "NumResources": 4
+      "Count": 4
     }
   },
   "NewIcon": {

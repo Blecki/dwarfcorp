@@ -5,7 +5,7 @@
   "RequiredResources": [
     {
       "Type": "Metal",
-      "NumResources": 1
+      "Count": 1
     }
   ],
   "Icon": {

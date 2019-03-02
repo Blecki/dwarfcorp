@@ -4,7 +4,7 @@
   "RequiredResources": [
     {
       "Type": "Wood",
-      "NumResources": 2
+      "Count": 2
     }
   ],
   "Icon": {

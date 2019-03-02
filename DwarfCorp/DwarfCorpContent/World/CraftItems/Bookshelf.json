@@ -6,7 +6,7 @@
   "RequiredResources": [
     {
       "Type": "Magical",
-      "NumResources": 4
+      "Count": 4
     }
   ],
   "AllowRotation": true,
