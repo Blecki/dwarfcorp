@@ -111,7 +111,7 @@ namespace DwarfCorp
 
         protected static bool IsFaceVisible(VoxelHandle voxel, VoxelHandle neighbor, BoxFace face)
         {
-            if (!neighbor.IsValid)
+            if (!voxel.IsValid || !neighbor.IsValid)
             {
                 return false;
             }
