@@ -340,10 +340,7 @@ namespace DwarfCorp
 
         public static float GetValue(MapData[,] map, Vector2 pos, ScalarFieldType value)
         {
-            if (map == null)
-            {
-                throw new InvalidProgramException("Tried to get overworld data but no overworld exists.");
-            }
+            DebugHelper.AssertNotNull(map);
             int x = Math.Max(Math.Min((int) pos.X, map.GetLength(0) - 1), 0);
             int y = Math.Max(Math.Min((int) pos.Y, map.GetLength(1) - 1), 0);
 
@@ -352,10 +349,7 @@ namespace DwarfCorp
 
         public static void AddValue(MapData[,] map, Vector2 pos, ScalarFieldType value, float amount)
         {
-            if (map == null)
-            {
-                throw new InvalidProgramException("Tried to set overworld data but no overworld exists.");
-            }
+            DebugHelper.AssertNotNull(map);
             int x = Math.Max(Math.Min((int) pos.X, map.GetLength(0) - 1), 0);
             int y = Math.Max(Math.Min((int) pos.Y, map.GetLength(1) - 1), 0);
 
@@ -364,10 +358,7 @@ namespace DwarfCorp
 
         public static void MultValue(MapData[,] heightMap, Vector2 pos, ScalarFieldType value, float height)
         {
-            if (heightMap == null)
-            {
-                throw new InvalidProgramException("Tried to set overworld data but no overworld exists.");
-            }
+            DebugHelper.AssertNotNull(map);
             int x = Math.Max(Math.Min((int) pos.X, heightMap.GetLength(0) - 1), 0);
             int y = Math.Max(Math.Min((int) pos.Y, heightMap.GetLength(1) - 1), 0);
             float c = heightMap[x, y].GetValue(value);
@@ -982,10 +973,7 @@ namespace DwarfCorp
 
         public static BiomeData GetBiomeAt(Vector3 worldPos, float scale, Vector2 origin)
         {
-            if (Overworld.Map == null)
-            {
-                throw new InvalidProgramException("Tried to get biome data but no overworld exists.");
-            }
+            DebugHelper.AssertNotNull(Overworld.Map);
             Vector2 v = WorldToOverworld(worldPos, scale, origin);
             var biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
             return BiomeLibrary.Biomes[biome];

@@ -144,10 +144,10 @@ namespace DwarfCorp
 
         public void InitializeFromChunk(VoxelChunk chunk, DesignationSet DesignationSet, DesignationDrawer DesignationDrawer, WorldManager World)
         {
-            if (chunk == null)
-            {
-                throw new InvalidProgramException("Tried generating geometry from a null chunk.");
-            }
+            DebugHelper.AssertNotNull(chunk);
+            DebugHelper.AssertNotNull(DesignationSet);
+            DebugHelper.AssertNotNull(DesignationDrawer);
+            DebugHelper.AssertNotNull(World);
 
             BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
             var sliceStack = new List<RawPrimitive>();
@@ -200,6 +200,8 @@ namespace DwarfCorp
                 if (GameSettings.Default.GrassMotes)
                     chunk.RebuildMoteLayer(y);
 
+
+                DebugHelper.AssertNotNull(sliceGeometry);
                 BuildSliceGeometry(chunk, bedrockModel, cache, y, sliceGeometry, DesignationSet, DesignationDrawer, World);
 
                 sliceStack.Add(sliceGeometry);
@@ -228,35 +230,6 @@ namespace DwarfCorp
             DesignationDrawer DesignationDrawer,
             WorldManager World)
         {
-            if (chunk == null)
-            {
-                throw new ArgumentNullException("Tried generating geometry from a null chunk.");
-            }
-
-            if (sliceGeometry == null)
-            {
-                throw new ArgumentNullException("Tried generating geometry for a null raw buffer.");
-            }
-
-            if (DesignationSet == null)
-            {
-                throw new ArgumentNullException("Tried generating geometry with a null designation set.");
-            }
-
-            if (DesignationDrawer == null)
-            {
-                throw new ArgumentNullException("Tried generating geometry with a null designation drawer.");
-            }
-
-            if (Cache == null)
-            {
-                throw new ArgumentNullException("Tried generating geometry with a null cache.");
-            }
-
-            if (World == null)
-            {
-                throw new ArgumentNullException("Tried generating geometry with a null world.");
-            }
 
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
