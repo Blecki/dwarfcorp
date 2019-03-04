@@ -557,6 +557,16 @@ namespace DwarfCorp
 #endif
         }
 
+        public void LogSentryBreadcrumb(string category, string message, BreadcrumbLevel level = BreadcrumbLevel.Info)
+        {
+#if SHARP_RAVEN && !DEBUG
+            if (ravenClient != null)
+            {
+                ravenClient.AddTrail(new Breadcrumb(category) { Message = message, Type = BreadcrumbType.Navigation });
+            }
+#endif
+        }
+
         protected override void Initialize()
         {
 #if SHARP_RAVEN && !DEBUG

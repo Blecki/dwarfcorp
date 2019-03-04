@@ -868,6 +868,7 @@ namespace DwarfCorp
 
         public static void CreateHillsLand(GraphicsDevice graphics)
         {
+            GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created a hills world.");
             int size = 512;
             Map = new MapData[size, size];
 
@@ -893,6 +894,7 @@ namespace DwarfCorp
 
         public static void CreateCliffsLand(GraphicsDevice graphicsDevice)
         {
+            GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created a cliffs world.");
             int size = 512;
             Map = new MapData[size, size];
 
@@ -919,6 +921,7 @@ namespace DwarfCorp
 
         public static void CreateUniformLand(GraphicsDevice graphics)
         {
+            GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created a flat world.");
             int size = 512;
             Map = new MapData[size, size];
 
@@ -941,6 +944,7 @@ namespace DwarfCorp
 
         public static void CreateOceanLand(GraphicsDevice graphicsDevice, float seaLevel)
         {
+            GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created an ocean world.");
             int size = 512;
             Map = new MapData[size, size];
 
