@@ -284,8 +284,12 @@ namespace DwarfCorp
             if (TextureCache.ContainsKey(asset))
             {
                 var existing = TextureCache[asset];
-                if (!existing.IsDisposed && !existing.GraphicsDevice.IsDisposed)
+                if (existing != null && !existing.IsDisposed && existing.GraphicsDevice != null && !existing.GraphicsDevice.IsDisposed)
                     return existing;
+                else
+                {
+                    TextureCache.Remove(asset);
+                }
             }
 
             try
