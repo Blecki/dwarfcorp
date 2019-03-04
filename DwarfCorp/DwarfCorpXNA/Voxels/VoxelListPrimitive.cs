@@ -145,7 +145,9 @@ namespace DwarfCorp
         public void InitializeFromChunk(VoxelChunk chunk, DesignationSet DesignationSet, DesignationDrawer DesignationDrawer, WorldManager World)
         {
             if (chunk == null)
-                return;
+            {
+                throw new InvalidProgramException("Tried generating geometry from a null chunk.");
+            }
 
             BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
             var sliceStack = new List<RawPrimitive>();
@@ -228,8 +230,34 @@ namespace DwarfCorp
         {
             if (chunk == null)
             {
-                throw new InvalidProgramException("Tried generating geometry from a null chunk.");
+                throw new ArgumentNullException("Tried generating geometry from a null chunk.");
             }
+
+            if (sliceGeometry == null)
+            {
+                throw new ArgumentNullException("Tried generating geometry for a null raw buffer.");
+            }
+
+            if (DesignationSet == null)
+            {
+                throw new ArgumentNullException("Tried generating geometry with a null designation set.");
+            }
+
+            if (DesignationDrawer == null)
+            {
+                throw new ArgumentNullException("Tried generating geometry with a null designation drawer.");
+            }
+
+            if (Cache == null)
+            {
+                throw new ArgumentNullException("Tried generating geometry with a null cache.");
+            }
+
+            if (World == null)
+            {
+                throw new ArgumentNullException("Tried generating geometry with a null world.");
+            }
+
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                     BuildVoxelGeometry(sliceGeometry, x, y, z, chunk, bedrockModel, Cache, DesignationSet, DesignationDrawer, World);
@@ -509,7 +537,7 @@ namespace DwarfCorp
                 {
                     bool anyNeighborExplored = true;
                     if (!Cache.ExploredCache.TryGetValue(cacheKey, out anyNeighborExplored))
-                        throw new InvalidProgramException();
+                        throw new InvalidProgramException("Failed cache lookup");
 
                     if (!anyNeighborExplored) vertexTint[faceVertex] = new Color(0.0f, 0.0f, 0.0f, 1.0f);
                 }
