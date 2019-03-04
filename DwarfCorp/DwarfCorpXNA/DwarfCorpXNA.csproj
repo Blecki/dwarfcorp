@@ -197,9 +197,11 @@
     <Compile Include="Entities\Monsters\Kobold\KoboldClass.cs" />
     <Compile Include="Entities\Monsters\Golem\SnowGolem.cs" />
     <Compile Include="Entities\Monsters\Troll\TrollClass.cs" />
+    <Compile Include="Entities\Steam\SteamGenerator.cs" />
+    <Compile Include="Entities\Steam\SteamPoweredObject.cs" />
     <Compile Include="Entities\Steam\PowerAnvil.cs" />
     <Compile Include="Entities\Steam\BuildBuff.cs" />
-    <Compile Include="Entities\Steam\PipeEntity.cs" />
+    <Compile Include="Entities\Steam\SteamPipe.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCStatus.cs" />
     <Compile Include="GameStates\ModManagement\Steam\IUGCTransaction.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCUnsubscribe.cs" />

@@ -48,8 +48,7 @@ namespace DwarfCorp
         public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         {
             if (Active)
-            {
-                
+            {                
                 ParticleTimer.Update(Time);
                 if (ParticleTimer.HasTriggered)
                 {

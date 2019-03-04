@@ -3014,6 +3014,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Haunted Forest</Name>
     </None>
+    <None Include="World\CraftItems\SteamGenerator.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SteamGenerator</Name>
+    </None>
+    <None Include="World\CraftItems\SteamPipe.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SteamPipe</Name>
+    </None>
     <None Include="World\CraftItems\PowerAnvil.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>PowerAnvil</Name>
