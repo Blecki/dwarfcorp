@@ -972,7 +972,7 @@ namespace DwarfCorp
         {
             if (Overworld.Map == null)
             {
-                return null;
+                throw new InvalidProgramException("Tried to get biome data but no overworld exists.");
             }
             Vector2 v = WorldToOverworld(worldPos, scale, origin);
             var biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;

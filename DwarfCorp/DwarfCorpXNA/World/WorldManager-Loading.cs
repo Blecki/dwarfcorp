@@ -81,6 +81,12 @@ namespace DwarfCorp
             {
                 Console.Error.WriteLine(exception.Message);
             }
+            // This can occur when the user is plugging in a secondary monitor just as we enter this state.
+            // ugh.
+            catch (ArgumentException exception)
+            {
+                Console.Error.WriteLine(exception.Message);
+            }
 
             LoadingThread = new Thread(LoadThreaded) { IsBackground = true };
             LoadingThread.Name = "Load";

@@ -70,15 +70,21 @@ namespace DwarfCorp
             if (CachedBiome == null)
             {
                 var biome = Overworld.GetBiomeAt(LocalPosition, chunks.World.WorldScale, chunks.World.WorldOrigin);
-                CachedBiome = biome.Name;
+                if (biome != null)
+                {
+                    CachedBiome = biome.Name;
+                }
             }
 
             var factor = 1.0f;
 
-            if (GoodBiomes.Contains(CachedBiome))
-                factor = 1.5f;
-            if (BadBiomes.Contains(CachedBiome))
-                factor = 0.5f;
+            if (CachedBiome != null)
+            {
+                if (GoodBiomes.Contains(CachedBiome))
+                    factor = 1.5f;
+                if (BadBiomes.Contains(CachedBiome))
+                    factor = 0.5f;
+            }
 
             GrowthTime += gameTime.ElapsedGameTime.TotalMinutes * factor;
 
