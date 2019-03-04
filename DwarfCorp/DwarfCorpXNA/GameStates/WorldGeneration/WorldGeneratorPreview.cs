@@ -479,6 +479,7 @@ namespace DwarfCorp.GameStates
             var graphicsDevice = Device;
             if (graphicsDevice == null || graphicsDevice.IsDisposed || Overworld.Map == null)
             {
+                PreviewTexture = null;
                 return;
             }
 
@@ -491,7 +492,7 @@ namespace DwarfCorp.GameStates
             {
                 SetNewPreviewTexture();
             }
-            if (UpdatePreview)
+            if (PreviewTexture != null && UpdatePreview)
             {
                 UpdatePreview = false;
                 InitializePreviewRenderTypes();
