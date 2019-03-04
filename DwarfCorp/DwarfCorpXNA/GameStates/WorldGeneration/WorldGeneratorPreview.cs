@@ -476,12 +476,13 @@ namespace DwarfCorp.GameStates
 
         private void SetNewPreviewTexture()
         {
-            if (Device == null || Device.IsDisposed || Overworld.Map == null)
+            var graphicsDevice = Device;
+            if (graphicsDevice == null || graphicsDevice.IsDisposed || Overworld.Map == null)
             {
                 return;
             }
 
-            PreviewTexture = new Texture2D(Device, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
+            PreviewTexture = new Texture2D(graphicsDevice, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
         }
 
         private void RegneratePreviewTexture()
