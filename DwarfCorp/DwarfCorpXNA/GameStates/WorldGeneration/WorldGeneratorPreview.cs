@@ -476,7 +476,7 @@ namespace DwarfCorp.GameStates
 
         private void SetNewPreviewTexture()
         {
-            if (Device == null || Overworld.Map == null)
+            if (Device == null || Device.IsDisposed || Overworld.Map == null)
             {
                 return;
             }
