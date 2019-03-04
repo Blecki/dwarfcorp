@@ -199,10 +199,15 @@ namespace DwarfCorp.Scripting.Adventure
             creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
         }
 
+        private bool IsCreatureDead(CreatureAI p)
+        {
+            return p == null || p.IsDead || p.Creature.Hp <= 0;
+        }
+
         public void Eat(DateTime time)
         {
             bool outOfFood = false;
-            foreach(var creature in Party)
+            foreach(var creature in Party.Where(p => !IsCreatureDead(p)))
             {
                 var resource = Resources.FirstOrDefault(r => r.NumResources > 0 && ResourceLibrary.GetResourceByName(r.ResourceType).Tags.Contains(Resource.ResourceTags.Edible));
                 if (resource != null)
@@ -220,11 +225,14 @@ namespace DwarfCorp.Scripting.Adventure
                     }
                 }
             }
-            var numDied = Party.Count(p => p.Creature.Hp <= 0);
+            var numDied = Party.Count(p => IsCreatureDead(p));
 
-            foreach(var creature in Party.Where(p => p.Creature.Hp <= 0))
+            foreach(var creature in Party.Where(p => IsCreatureDead(p)))
             {
-                creature.Delete();
+                if (creature != null)
+                {
+                    creature.Delete();
+                }
             }
             
             if (outOfFood)
@@ -234,7 +242,7 @@ namespace DwarfCorp.Scripting.Adventure
                 else
                     LastEvent = String.Format("The adventuring party ran out of food! {0} starved to death.", numDied);
             }
-            Party.RemoveAll(p => p.Creature.Hp <= 0);
+            Party.RemoveAll(p => IsCreatureDead(p));
 
             if (Party.Count == 0)
             {
