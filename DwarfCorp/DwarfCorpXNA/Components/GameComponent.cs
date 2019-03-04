@@ -348,10 +348,15 @@ namespace DwarfCorp
         {
             var p = this;
 
-            while(p.Parent != null && !Object.ReferenceEquals(p.Parent, Manager.RootComponent))
+            while(!p.IsRoot())
                 p = p.Parent;
 
             return p;
+        }
+
+        public bool IsRoot()
+        {
+            return Parent == null || Object.ReferenceEquals(Parent, Manager.RootComponent);
         }
 
         public IEnumerable<GameComponent> EnumerateAll()

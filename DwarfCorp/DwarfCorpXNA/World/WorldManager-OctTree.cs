@@ -63,5 +63,17 @@ namespace DwarfCorp
             PerformanceMonitor.PopFrame();
             return hash;
         }
+
+        public IEnumerable<Body> EnumerateIntersectingObjects(BoundingBox box, Func<Body, bool> Filter = null)
+        {
+            PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects w/ Filter");
+            var hash = new HashSet<Body>();
+            if (Filter == null)
+                OctTree.EnumerateItems(box, hash);
+            else
+                OctTree.EnumerateItems(box, hash, Filter);
+            PerformanceMonitor.PopFrame();
+            return hash;
+        }
     }
 }

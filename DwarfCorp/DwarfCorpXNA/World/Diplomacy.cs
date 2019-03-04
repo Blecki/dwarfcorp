@@ -52,17 +52,32 @@ namespace DwarfCorp
             public DateTime Time { get; set; }
         }
 
+        // Todo: Move out of this class. Can't without breaking save games.
         public class Politics
         {
             public Faction Faction { get; set; }
-            public List<PoliticalEvent> RecentEvents { get; set; }
+
+            [JsonProperty]
+            private List<PoliticalEvent> RecentEvents { get; set; }
+
+            public IEnumerable<PoliticalEvent> GetEvents() { return RecentEvents; }
+
             public bool HasMet { get; set; }
             public bool WasAtWar { get; set; }
             public TimeSpan DistanceToCapital { get; set; }
 
+            [JsonProperty]
+            private float? _cachedFeeling = null;
+
+            public void AddEvent(PoliticalEvent E)
+            {
+                RecentEvents.Add(E);
+                _cachedFeeling = null;
+            }
+
             public Politics()
             {
-                
+                RecentEvents = new List<PoliticalEvent>();
             }
 
             public Politics(DateTime currentDate, TimeSpan distanceToCapital)
@@ -70,6 +85,7 @@ namespace DwarfCorp
                 DistanceToCapital = distanceToCapital;
                 WasAtWar = false;
                 HasMet = false;
+                RecentEvents = new List<PoliticalEvent>();
             }
 
             public Relationship GetCurrentRelationship()
@@ -97,12 +113,17 @@ namespace DwarfCorp
 
             public float GetCurrentFeeling()
             {
-                return RecentEvents.Sum(e => e.Change);
+                // Todo: Cache this value so it's not constantly recalculated.
+                if (!_cachedFeeling.HasValue)
+                    _cachedFeeling = RecentEvents.Sum(e => e.Change);
+                return _cachedFeeling.Value;
+                //return RecentEvents.Sum(e => e.Change);
             }
 
             public void UpdateEvents(DateTime currentDate)
             {
                 RecentEvents.RemoveAll((e) => currentDate - e.Time > e.Duration);
+                _cachedFeeling = null;
             }
         }
 
@@ -157,21 +178,21 @@ namespace DwarfCorp
 
                 if (faction.Key == New.Name)
                 {
-                    FactionPolitics[pair] = new Politics(Now, new TimeSpan(0, 0, 0))
+                    var politics = new Politics(Now, new TimeSpan(0, 0, 0))
                     {
                         Faction = faction.Value,
-                        HasMet = true,
-                        RecentEvents = new List<PoliticalEvent>()
-                            {
-                                new PoliticalEvent()
-                                {
-                                    Change = 1.0f,
-                                    Description = "we are of the same faction",
-                                    Duration = forever,
-                                    Time = Now
-                                }
-                            }
+                        HasMet = true
                     };
+
+                    politics.AddEvent(new PoliticalEvent()
+                    {
+                        Change = 1.0f,
+                        Description = "we are of the same faction",
+                        Duration = forever,
+                        Time = Now
+                    });
+
+                    FactionPolitics[pair] = politics;
                 }
                 else
                 {
@@ -185,12 +206,11 @@ namespace DwarfCorp
                     {
                         Faction = New,
                         HasMet = false,
-                        RecentEvents = new List<PoliticalEvent>(),
                     };
 
                     if (faction.Value.Race == New.Race)
                     {
-                        politics.RecentEvents.Add(new PoliticalEvent()
+                        politics.AddEvent(new PoliticalEvent()
                         {
                             Change = 0.5f,
                             Description = "we are of the same people",
@@ -204,7 +224,7 @@ namespace DwarfCorp
                     {
                         if (!politics.HasEvent("we are taught to hate your kind"))
                         {
-                            politics.RecentEvents.Add(new PoliticalEvent()
+                            politics.AddEvent(new PoliticalEvent()
                             {
                                 Change = -10.0f, // Make this negative and we get an instant war party rush.
                                 Description = "we are taught to hate your kind",
@@ -222,7 +242,7 @@ namespace DwarfCorp
                         {
                             if (!politics.HasEvent("we just don't trust you"))
                             {
-                                politics.RecentEvents.Add(new PoliticalEvent()
+                                politics.AddEvent(new PoliticalEvent()
                                 {
                                     Change = -10.0f, // Make this negative and we get an instant war party rush.
                                     Description = "we just don't trust you",
@@ -233,7 +253,7 @@ namespace DwarfCorp
                             }
                             if (!politics.HasEvent("you stole our land"))
                             {
-                                politics.RecentEvents.Add(new PoliticalEvent()
+                                politics.AddEvent(new PoliticalEvent()
                                 {
                                     Change = -1.0f,
                                     Description = "you stole our land",
@@ -246,7 +266,7 @@ namespace DwarfCorp
                         {
                             if (!politics.HasEvent("we just trust you"))
                             {
-                                politics.RecentEvents.Add(new PoliticalEvent()
+                                politics.AddEvent(new PoliticalEvent()
                                 {
                                     Change = 10.0f,
                                     Description = "we just trust you",
@@ -259,7 +279,7 @@ namespace DwarfCorp
                         {
                             if (!politics.HasEvent("you stole our land"))
                             {
-                                politics.RecentEvents.Add(new PoliticalEvent()
+                                politics.AddEvent(new PoliticalEvent()
                                 {
                                     Change = -0.1f,
                                     Description = "you stole our land",
@@ -274,7 +294,7 @@ namespace DwarfCorp
 
             }
 
-            FactionPolitics[new Pair<string>("Undead", "Player")].RecentEvents.Add(new PoliticalEvent()
+            FactionPolitics[new Pair<string>("Undead", "Player")].AddEvent(new PoliticalEvent()
             {
                 Change = -10.0f,
                 Description = "Test hate",
@@ -554,7 +574,7 @@ namespace DwarfCorp
 
                         if (!politics.HasEvent("You attacked our trade delegates"))
                         {
-                            politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                            politics.AddEvent(new Diplomacy.PoliticalEvent()
                             {
                                 Change = -1.0f,
                                 Description = "You attacked our trade delegates",
@@ -564,7 +584,7 @@ namespace DwarfCorp
                         }
                         else
                         {
-                            politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                            politics.AddEvent(new Diplomacy.PoliticalEvent()
                             {
                                 Change = -2.0f,
                                 Description = "You attacked our trade delegates more than once",
