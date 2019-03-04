@@ -531,7 +531,7 @@ namespace DwarfCorp.Scripting.Adventure
                 }
             }
 
-            politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+            politics.AddEvent(new Diplomacy.PoliticalEvent()
             {
                 Change = -5,
                 Description = "You attacked us!",
@@ -615,7 +615,7 @@ namespace DwarfCorp.Scripting.Adventure
             var politics = world.Diplomacy.GetPolitics(owner, des);
             if (Resources.Any(r => ResourceLibrary.GetResourceByName(r.ResourceType).Tags.Any(t => des.Race.HatedResources.Contains(t))))
             {
-                politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                politics.AddEvent(new Diplomacy.PoliticalEvent()
                 {
                     Description = "You gave us something we hate!",
                     Change = -5,
@@ -635,7 +635,7 @@ namespace DwarfCorp.Scripting.Adventure
             if (MathFunctions.Rand(0, 500) < (float)tradeValue)
             {
 
-                politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                politics.AddEvent(new Diplomacy.PoliticalEvent()
                 {
                     Description = "You sent a peace envoy.",
                     Change = 10,
@@ -715,9 +715,9 @@ namespace DwarfCorp.Scripting.Adventure
                                                Datastructures.SelectRandom(Party).Stats.FullName,
                                                dest.Race.Name, resourceType.ResourceType);
                     string badTrade = "You gave us something we hate.";
-                    if (!politics.RecentEvents.Any(ev => ev.Description == badTrade))
+                    if (!politics.HasEvent(badTrade))
                     {
-                        politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                        politics.AddEvent(new Diplomacy.PoliticalEvent()
                         {
                             Description = badTrade,
                             Change = -5,
@@ -731,9 +731,9 @@ namespace DwarfCorp.Scripting.Adventure
                 else if (tradeGoodness > 0 && liked)
                 {
                     string goodTrade = "You gave us something we like.";
-                    if (!politics.RecentEvents.Any(ev => ev.Description == goodTrade))
+                    if (!politics.HasEvent(goodTrade))
                     {
-                        politics.RecentEvents.Add(new Diplomacy.PoliticalEvent()
+                        politics.AddEvent(new Diplomacy.PoliticalEvent()
                         {
                             Description = goodTrade,
                             Change = 5,
