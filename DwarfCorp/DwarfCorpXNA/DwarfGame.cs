@@ -559,6 +559,7 @@ namespace DwarfCorp
 
         public void LogSentryBreadcrumb(string category, string message, BreadcrumbLevel level = BreadcrumbLevel.Info)
         {
+            Console.Out.WriteLine(String.Format("{0} : {1}", category, message));
 #if SHARP_RAVEN && !DEBUG
             if (ravenClient != null)
             {

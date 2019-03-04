@@ -262,9 +262,9 @@ namespace DwarfCorp
 
                         // Update the selection box to account for offsets from mouse wheel.
                         if (BoxYOffset > 0)
-                            buffer.Max.Y += (int)BoxYOffset;
+                            buffer.Max.Y = MathFunctions.Clamp(buffer.Max.Y + (int)BoxYOffset, 0, VoxelConstants.ChunkSizeY - 1);
                         else if (BoxYOffset < 0)
-                            buffer.Min.Y += (int)BoxYOffset;
+                            buffer.Min.Y = MathFunctions.Clamp(buffer.Min.Y - (int)BoxYOffset, 0, VoxelConstants.ChunkSizeY - 1);
 
                         SelectionBuffer = Select(buffer, FirstVoxel.WorldPosition, underMouse.WorldPosition).ToList();
 
