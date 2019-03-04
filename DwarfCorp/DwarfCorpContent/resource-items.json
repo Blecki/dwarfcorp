@@ -389,6 +389,43 @@
     "AleName": ""
   },
   {
+    "Name": "Invalid",
+    "MoneyValue": 1.0,
+    "Description": "This is an invalid resource. Something must have gone wrong with DwarfCorp.",
+    "GuiLayers": [
+      {
+        "Sheet": "resources",
+        "Tile": 8
+      }
+    ],
+    "FoodContent": 0.0,
+    "CompositeLayers": [
+      {
+        "Asset": "newgui\\resources",
+        "FrameSize": "32, 32",
+        "Frame": "0, 1"
+      }
+    ],
+	"Tags" : [],
+    "TrinketData": {
+      "BaseAsset": "newgui\\trinkets-sculpt",
+      "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
+      "SpriteRow": 1,
+      "SpriteColumn": 0
+    },
+    "ShortName": "Invalid",
+    "PlantToGenerate": null,
+    "CanCraft": false,
+    "CraftPrerequisites": [],
+    "Tint": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "AleName": ""
+  },
+  {
     "Name": "Sand",
     "MoneyValue": 2.0,
     "Description": "Can be used to make glass.",

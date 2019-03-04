@@ -358,7 +358,7 @@ namespace DwarfCorp
 
         public static void MultValue(MapData[,] heightMap, Vector2 pos, ScalarFieldType value, float height)
         {
-            DebugHelper.AssertNotNull(map);
+            DebugHelper.AssertNotNull(heightMap);
             int x = Math.Max(Math.Min((int) pos.X, heightMap.GetLength(0) - 1), 0);
             int y = Math.Max(Math.Min((int) pos.Y, heightMap.GetLength(1) - 1), 0);
             float c = heightMap[x, y].GetValue(value);

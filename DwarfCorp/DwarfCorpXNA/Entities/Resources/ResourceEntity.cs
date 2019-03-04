@@ -100,6 +100,20 @@ namespace DwarfCorp
 
             var type = ResourceLibrary.GetResourceByName(Resource.ResourceType);
 
+            if (type == null)
+            {
+                var invalidResource = ResourceLibrary.GetResourceByName("Invalid");
+                if (!ResourceLibrary.IsInitialized)
+                {
+                    throw new InvalidOperationException("Tried to create a resource entity before the resource library was initialized.");
+                }
+                else if (invalidResource == null)
+                {
+                    throw new InvalidOperationException("Tried to create a resource entity that is invalid.");
+                }
+                type = invalidResource;
+            }
+
             Tinter sprite = null;
 
             int numSprites = Math.Min(Resource.NumResources, 3);
