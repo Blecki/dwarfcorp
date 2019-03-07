@@ -340,6 +340,7 @@ namespace DwarfCorp
 
         public static float GetValue(MapData[,] map, Vector2 pos, ScalarFieldType value)
         {
+            DebugHelper.AssertNotNull(map);
             int x = Math.Max(Math.Min((int) pos.X, map.GetLength(0) - 1), 0);
             int y = Math.Max(Math.Min((int) pos.Y, map.GetLength(1) - 1), 0);
 
@@ -348,6 +349,7 @@ namespace DwarfCorp
 
         public static void AddValue(MapData[,] map, Vector2 pos, ScalarFieldType value, float amount)
         {
+            DebugHelper.AssertNotNull(map);
             int x = Math.Max(Math.Min((int) pos.X, map.GetLength(0) - 1), 0);
             int y = Math.Max(Math.Min((int) pos.Y, map.GetLength(1) - 1), 0);
 
@@ -356,6 +358,7 @@ namespace DwarfCorp
 
         public static void MultValue(MapData[,] heightMap, Vector2 pos, ScalarFieldType value, float height)
         {
+            DebugHelper.AssertNotNull(heightMap);
             int x = Math.Max(Math.Min((int) pos.X, heightMap.GetLength(0) - 1), 0);
             int y = Math.Max(Math.Min((int) pos.Y, heightMap.GetLength(1) - 1), 0);
             float c = heightMap[x, y].GetValue(value);
@@ -865,6 +868,7 @@ namespace DwarfCorp
 
         public static void CreateHillsLand(GraphicsDevice graphics)
         {
+            GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created a hills world.");
             int size = 512;
             Map = new MapData[size, size];
 
@@ -890,6 +894,7 @@ namespace DwarfCorp
 
         public static void CreateCliffsLand(GraphicsDevice graphicsDevice)
         {
+            GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created a cliffs world.");
             int size = 512;
             Map = new MapData[size, size];
 
@@ -916,6 +921,7 @@ namespace DwarfCorp
 
         public static void CreateUniformLand(GraphicsDevice graphics)
         {
+            GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created a flat world.");
             int size = 512;
             Map = new MapData[size, size];
 
@@ -938,6 +944,7 @@ namespace DwarfCorp
 
         public static void CreateOceanLand(GraphicsDevice graphicsDevice, float seaLevel)
         {
+            GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created an ocean world.");
             int size = 512;
             Map = new MapData[size, size];
 
@@ -970,10 +977,7 @@ namespace DwarfCorp
 
         public static BiomeData GetBiomeAt(Vector3 worldPos, float scale, Vector2 origin)
         {
-            if (Overworld.Map == null)
-            {
-                return null;
-            }
+            DebugHelper.AssertNotNull(Overworld.Map);
             Vector2 v = WorldToOverworld(worldPos, scale, origin);
             var biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
             return BiomeLibrary.Biomes[biome];

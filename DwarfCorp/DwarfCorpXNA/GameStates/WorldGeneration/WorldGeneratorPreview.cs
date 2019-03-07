@@ -476,7 +476,14 @@ namespace DwarfCorp.GameStates
 
         private void SetNewPreviewTexture()
         {
-            PreviewTexture = new Texture2D(Device, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
+            var graphicsDevice = Device;
+            if (graphicsDevice == null || graphicsDevice.IsDisposed || Overworld.Map == null)
+            {
+                PreviewTexture = null;
+                return;
+            }
+
+            PreviewTexture = new Texture2D(graphicsDevice, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1));
         }
 
         private void RegneratePreviewTexture()
@@ -485,7 +492,7 @@ namespace DwarfCorp.GameStates
             {
                 SetNewPreviewTexture();
             }
-            if (UpdatePreview)
+            if (PreviewTexture != null && UpdatePreview)
             {
                 UpdatePreview = false;
                 InitializePreviewRenderTypes();

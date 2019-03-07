@@ -111,7 +111,7 @@ namespace DwarfCorp
 
         protected static bool IsFaceVisible(VoxelHandle voxel, VoxelHandle neighbor, BoxFace face)
         {
-            if (!neighbor.IsValid)
+            if (!voxel.IsValid || !neighbor.IsValid)
             {
                 return false;
             }
@@ -144,8 +144,10 @@ namespace DwarfCorp
 
         public void InitializeFromChunk(VoxelChunk chunk, DesignationSet DesignationSet, DesignationDrawer DesignationDrawer, WorldManager World)
         {
-            if (chunk == null)
-                return;
+            DebugHelper.AssertNotNull(chunk);
+            DebugHelper.AssertNotNull(DesignationSet);
+            DebugHelper.AssertNotNull(DesignationDrawer);
+            DebugHelper.AssertNotNull(World);
 
             BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
             var sliceStack = new List<RawPrimitive>();
@@ -198,6 +200,8 @@ namespace DwarfCorp
                 if (GameSettings.Default.GrassMotes)
                     chunk.RebuildMoteLayer(y);
 
+
+                DebugHelper.AssertNotNull(sliceGeometry);
                 BuildSliceGeometry(chunk, bedrockModel, cache, y, sliceGeometry, DesignationSet, DesignationDrawer, World);
 
                 sliceStack.Add(sliceGeometry);
@@ -226,6 +230,7 @@ namespace DwarfCorp
             DesignationDrawer DesignationDrawer,
             WorldManager World)
         {
+
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                     BuildVoxelGeometry(sliceGeometry, x, y, z, chunk, bedrockModel, Cache, DesignationSet, DesignationDrawer, World);
@@ -274,8 +279,31 @@ namespace DwarfCorp
             WorldManager World)
         {
             var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(X, Y, Z));
-            if (!v.IsVisible) return; // How did this even get called then??
+            if (!v.IsValid || !v.IsVisible) return; // How did this even get called then??
+            BuildDesignationGeometry(Into, Chunk, Cache, Designations, DesignationDrawer, World, v);
 
+            if ((v.IsExplored && v.IsEmpty)) return;
+
+            var primitive = VoxelLibrary.GetPrimitive(v.Type);
+            if (v.IsExplored && primitive == null) return;
+
+            if (primitive == null) primitive = BedrockModel;
+
+            var tint = v.Type.Tint;
+
+            var uvs = primitive.UVs;
+
+            if (v.Type.HasTransitionTextures && v.IsExplored)
+                uvs = ComputeTransitionTexture(new VoxelHandle(v.Chunk.Manager.ChunkData, v.Coordinate));
+
+            BuildVoxelTopFaceGeometry(Into, Chunk, Cache, primitive, v, uvs, 0);
+
+            for (int i = 1; i < 6; i++)
+                BuildVoxelFaceGeometry(Into, Chunk, Cache, primitive, v, tint, uvs, Matrix.Identity, i, true);
+        }
+
+        private static void BuildDesignationGeometry(RawPrimitive Into, VoxelChunk Chunk, Cache Cache, DesignationSet Designations, DesignationDrawer DesignationDrawer, WorldManager World, VoxelHandle v)
+        {
             var designations = Designations == null ? new List<DesignationSet.VoxelDesignation>() : Designations.EnumerateDesignations(v).ToList();
             int maxViewingLevel = World.Master == null ? VoxelConstants.ChunkSizeY : World.Master.MaxViewingLevel;
             foreach (var designation in designations)
@@ -318,26 +346,7 @@ namespace DwarfCorp
                         }
                     }
                 }
-            }            
-
-            if ((v.IsExplored && v.IsEmpty) || !v.IsVisible) return;
-
-            var primitive = VoxelLibrary.GetPrimitive(v.Type);
-            if (v.IsExplored && primitive == null) return;
-
-            if (primitive == null) primitive = BedrockModel;
-
-            var tint = v.Type.Tint;
-
-            var uvs = primitive.UVs;
-
-            if (v.Type.HasTransitionTextures && v.IsExplored)
-                uvs = ComputeTransitionTexture(new VoxelHandle(v.Chunk.Manager.ChunkData, v.Coordinate));
-
-            BuildVoxelTopFaceGeometry(Into, Chunk, Cache, primitive, v, uvs, 0);
-            
-            for (int i = 1; i < 6; i++)
-                BuildVoxelFaceGeometry(Into, Chunk, Cache, primitive, v, tint, uvs, Matrix.Identity, i, true);
+            }
         }
 
         private static void BuildVoxelFaceGeometry(
@@ -501,7 +510,7 @@ namespace DwarfCorp
                 {
                     bool anyNeighborExplored = true;
                     if (!Cache.ExploredCache.TryGetValue(cacheKey, out anyNeighborExplored))
-                        throw new InvalidProgramException();
+                        throw new InvalidProgramException("Failed cache lookup");
 
                     if (!anyNeighborExplored) vertexTint[faceVertex] = new Color(0.0f, 0.0f, 0.0f, 1.0f);
                 }

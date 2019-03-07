@@ -74,6 +74,7 @@ namespace DwarfCorp.GameStates
         public virtual void OnEnter()
         {
             IsActiveState = true;
+            Game.LogSentryBreadcrumb("GameState", Name);
         }
 
         public virtual void OnExit()

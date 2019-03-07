@@ -72,8 +72,10 @@ namespace DwarfCorp.GameStates
             MakeMenuItem(frame, "New World", "Create a new world from scratch.", (sender, args) =>
                 StateManager.PushState(new WorldGeneratorState(Game, StateManager, null, true)));
 
-            MakeMenuItem(frame, "Random World", "Just start a game on a completely random world.", (sender, args) =>
-                    StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings() { GenerateFromScratch = true })));
+            MakeMenuItem(frame, "Random World", "Just start a game on a completely random world.", (sender, args) => {
+                GameStates.GameState.Game.LogSentryBreadcrumb("Menu", "User generating a random world.");
+                StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings() { GenerateFromScratch = true }));
+            });
 
 
             MakeMenuItem(frame, "Load World", "Load a continent from an existing file.", (sender, args) =>

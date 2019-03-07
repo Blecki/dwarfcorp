@@ -103,6 +103,10 @@ namespace DwarfCorp
 
         public static T CreateEntity<T>(string id, Vector3 location, Blackboard data = null) where T : GameComponent
         {
+            if (EntityFuncs == null)
+            {
+                throw new NullReferenceException(String.Format("Can't create entity {0}. Entity library was not initialized.", id));
+            }
             if (data == null) data = new Blackboard();
             if (EntityFuncs.ContainsKey(id))
             {

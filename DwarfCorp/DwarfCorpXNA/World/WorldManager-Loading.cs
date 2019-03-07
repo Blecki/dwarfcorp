@@ -81,6 +81,12 @@ namespace DwarfCorp
             {
                 Console.Error.WriteLine(exception.Message);
             }
+            // This can occur when the user is plugging in a secondary monitor just as we enter this state.
+            // ugh.
+            catch (ArgumentException exception)
+            {
+                Console.Error.WriteLine(exception.Message);
+            }
 
             LoadingThread = new Thread(LoadThreaded) { IsBackground = true };
             LoadingThread.Name = "Load";
@@ -403,6 +409,7 @@ namespace DwarfCorp
             // If there's no file, we have to initialize the first chunk coordinate
             if (gameFile == null)
             {
+                    Game.LogSentryBreadcrumb("Loading", "Started new game without an existing file.");
                 if (Overworld.Map == null)
                 {
                     throw new InvalidProgramException("Tried to start game with an empty overworld. This should not happen.");
@@ -414,6 +421,7 @@ namespace DwarfCorp
 
             if (gameFile != null)
             {
+                    Game.LogSentryBreadcrumb("Loading", "Started new game with an existing file.");
                 if (gameFile.PlayData.Tasks != null)
                 {
                     Master.NewArrivals = gameFile.PlayData.NewArrivals ?? new List<GameMaster.ApplicantArrival>();

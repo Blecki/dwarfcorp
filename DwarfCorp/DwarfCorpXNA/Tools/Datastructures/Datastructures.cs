@@ -44,6 +44,16 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
 
+    static class DebugHelper
+    {
+        public static void AssertNotNull<T>(T item)
+        {
+            if (item == null)
+            {
+                throw new ArgumentNullException("{0} is null.", typeof(T).Name);
+            }
+        }
+    }
 
     /// <summary>
     /// Honestly, this is just a helper class where a bunch of other miscellanious
@@ -52,6 +62,7 @@ namespace DwarfCorp
     /// </summary>
     internal class Datastructures
     {
+
         public static Vector2 SafeMeasure(SpriteFont font, string text)
         {
             Vector2 extents = Vector2.One;

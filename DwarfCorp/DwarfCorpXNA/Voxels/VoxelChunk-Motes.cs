@@ -95,11 +95,14 @@ namespace DwarfCorp
                     if (Y < VoxelConstants.ChunkSizeY - 1)
                     {
                         var voxelAbove = new VoxelHandle(this, new LocalVoxelCoordinate(x, Y + 1, z));
-                        if (!voxelAbove.IsEmpty || voxelAbove.LiquidLevel != 0)
+                        if (voxelAbove.IsValid && !voxelAbove.IsEmpty || voxelAbove.LiquidLevel != 0)
                             continue;
                     }
 
                     var v = new VoxelHandle(this, new LocalVoxelCoordinate(x, Y, z));
+
+                    if (!v.IsValid)
+                        continue;
 
                     // Don't generate in empty voxels.
                     if (v.IsEmpty)

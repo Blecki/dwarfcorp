@@ -108,14 +108,18 @@ namespace DwarfCorp.GameStates
 
             if (latestSave != null)
             {
-                MakeMenuItem(frame, 
+                MakeMenuItem(frame,
                     StringLibrary.GetString("continue"),
-                    StringLibrary.GetString("continue-tooltip", latestSave), 
-                    (sender, args) =>
-                    StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings()
-                    {
-                        ExistingFile = latestSave
-                    })));
+                    StringLibrary.GetString("continue-tooltip", latestSave),
+                    (sender, args) => {
+                        GameStates.GameState.Game.LogSentryBreadcrumb("Menu", "User is continuing from a save file.");
+                        StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings()
+                        {
+                            ExistingFile = latestSave
+                        }));
+                    }
+                    );
+                     
             } 
 #endif
             /*

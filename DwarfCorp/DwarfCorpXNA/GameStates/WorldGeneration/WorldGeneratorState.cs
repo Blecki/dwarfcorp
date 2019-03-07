@@ -91,7 +91,11 @@ namespace DwarfCorp.GameStates
                 TextColor = new Vector4(0, 0, 0, 1),
                 Font = "font16",
                 AutoLayout = Gui.AutoLayout.DockTop,
-                OnClick = (sender, args) => { Settings = new WorldGenerationSettings();  RestartGeneration(); }
+                OnClick = (sender, args) => {
+                    GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", "User is regeneating the world.");
+                    Settings = new WorldGenerationSettings();
+                    RestartGeneration();
+                }
             });
 
             rightPanel.AddChild(new Gui.Widget
@@ -104,6 +108,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
+                    GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", "User is saving the world.");
                     if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
                         GuiRoot.ShowTooltip(GuiRoot.MousePosition, "Generator is not finished.");
                     else
@@ -130,6 +135,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) =>
                 {
+                    GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", "User is modifying advanced settings.");
                     var advancedSettingsEditor = GuiRoot.ConstructWidget(new Gui.Widgets.WorldGenerationSettingsDialog
                     {
                         Settings = Settings,
@@ -169,6 +175,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnClick = (sender, args) =>
                 {
+                    GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", string.Format("User is starting a game with a {0} x {1} world.", Settings.Width, Settings.Height));
                     if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
                         GuiRoot.ShowTooltip(GuiRoot.MousePosition, "World generation is not finished.");
                     else
@@ -221,7 +228,7 @@ namespace DwarfCorp.GameStates
                         case "Medium": Settings.ColonySize = new Point3(8, 1, 8); break;
                         case "Large": Settings.ColonySize = new Point3(10, 1, 10); break;
                     }
-
+                    GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", string.Format("User selected colony size of {0}", (sender as Gui.Widgets.ComboBox).SelectedItem));
                     var worldSize = Settings.ColonySize.ToVector3() * VoxelConstants.ChunkSizeX / Settings.WorldScale;
 
                     float w = worldSize.X;
