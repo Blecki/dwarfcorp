@@ -38,7 +38,7 @@ namespace DwarfCorp.GameStates
             set { World.Paused = value; }
         }
 
-        private List<ContextCommands.ContextCommand> ContextCommands;
+        private List<ContextCommands.ContextCommand> ContextCommands = new List<ContextCommands.ContextCommand>();
 
         private Gui.Widget MoneyLabel;
         private Gui.Widget LevelLabel;
@@ -231,8 +231,10 @@ namespace DwarfCorp.GameStates
                 World.UnpauseThreads();
                 AutoSaveTimer = new Timer(GameSettings.Default.AutoSaveTimeMinutes * 60.0f, false, Timer.TimerMode.Real);
 
+                foreach (var contextCommandFactory in AssetManager.EnumerateModHooks(typeof(ContextCommandAttribute), typeof(ContextCommands.ContextCommand), new Type[] { }))
+                    ContextCommands.Add(contextCommandFactory.Invoke(null, new Object[] { }) as ContextCommands.ContextCommand);
+
                 // Todo: Use mod hooks to discover these.
-                ContextCommands = new List<DwarfCorp.ContextCommands.ContextCommand>();
                 ContextCommands.Add(new ContextCommands.ChopCommand());
                 ContextCommands.Add(new ContextCommands.AttackCommand());
                 ContextCommands.Add(new ContextCommands.WrangleCommand());
@@ -241,9 +243,9 @@ namespace DwarfCorp.GameStates
                 ContextCommands.Add(new ContextCommands.GatherCommand());
                 ContextCommands.Add(new ContextCommands.DestroyCommand());
                 ContextCommands.Add(new ContextCommands.MoveCommand());
-                ContextCommands.Add(new DwarfCorp.ContextCommands.EmptyBackpackCommand());
-                ContextCommands.Add(new DwarfCorp.ContextCommands.ViewAllowedTasksCommand());
-                ContextCommands.Add(new DwarfCorp.ContextCommands.CancelDwarfCommand());
+                ContextCommands.Add(new ContextCommands.EmptyBackpackCommand());
+                ContextCommands.Add(new ContextCommands.ViewAllowedTasksCommand());
+                ContextCommands.Add(new ContextCommands.CancelDwarfCommand());
                 ContextCommands.Add(new ContextCommands.ChatCommand());
                 ContextCommands.Add(new ContextCommands.FireCommand());
                 ContextCommands.Add(new ContextCommands.PromoteCommand());
