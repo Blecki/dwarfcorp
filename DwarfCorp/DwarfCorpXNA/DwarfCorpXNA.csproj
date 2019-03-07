@@ -900,6 +900,7 @@
     <Compile Include="World\Diplomacy.cs" />
     <Compile Include="World\FaunaData.cs" />
     <Compile Include="World\Overworld.cs" />
+    <Compile Include="World\UpdateFunctionAttribute.cs" />
     <Compile Include="World\VegetationData.cs" />
     <Compile Include="World\Weather\Cloud.cs" />
     <Compile Include="World\Weather\Storm.cs" />
