@@ -186,6 +186,8 @@
     <Compile Include="Components\AI\DiseaseLibrary.cs" />
     <Compile Include="Components\AI\MoveActionsTempStorage.cs" />
     <Compile Include="Components\AI\PacingCreatureAI.cs" />
+    <Compile Include="Components\AI\RadiusBuffer.cs" />
+    <Compile Include="Components\AI\Sensors\RadiusSensor.cs" />
     <Compile Include="ContextCommands\AttackCommand.cs" />
     <Compile Include="ContextCommands\CancelCommand.cs" />
     <Compile Include="ContextCommands\ChatCommand.cs" />
@@ -661,7 +663,7 @@
     <Compile Include="Voxels\Splasher.cs" />
     <Compile Include="Voxels\GrassLibrary.cs" />
     <Compile Include="Voxels\ChunkUpdate.cs" />
-    <Compile Include="World\System.cs" />
+    <Compile Include="World\EngineModule.cs" />
     <Compile Include="World\CompanyInformation.cs" />
     <Compile Include="World\IndicatorManager.cs" />
     <Compile Include="Gui\Enums.cs" />

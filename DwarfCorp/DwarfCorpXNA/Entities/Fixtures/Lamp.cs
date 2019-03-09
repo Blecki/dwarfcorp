@@ -175,6 +175,11 @@ namespace DwarfCorp
                 if (changeEvent.Type == VoxelChangeEventType.VoxelTypeChanged && changeEvent.NewVoxelType == 0)
                     Die();
             })).SetFlag(Flag.ShouldSerialize, false);
+
+            AddChild(new RadiusBuffer(Manager, "light buff", Matrix.Identity, new Vector3(8, 8, 8), Vector3.Zero)
+            {
+                Buff = new StatBuff(1.0f, new StatAdjustment(1) { Name = "LAMP" })
+            }).SetFlag(Flag.ShouldSerialize, false);
         }
 
         public override void Orient(float angle)

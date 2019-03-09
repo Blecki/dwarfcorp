@@ -12,10 +12,10 @@ namespace DwarfCorp
 {
     public class RadiusSensor : Body
     {
-        public List<CreatureAI> Creatures = new List<CreatureAI>();
+        public List<Creature> Creatures = new List<Creature>();
         private Timer SenseTimer = new Timer(0.5f, false, Timer.TimerMode.Real);
         public float SenseRadius = 15 * 15;
-        public bool DetectCloaked = false;
+        public bool CheckLineOfSight = true;
 
         public RadiusSensor() : base()
         {
@@ -26,6 +26,7 @@ namespace DwarfCorp
         public RadiusSensor(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
             base(manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {
+            // Todo: Calculate bounding box from radius.
             UpdateRate = 10;
             Tags.Add("Sensor");
             CollisionType = CollisionType.None;
@@ -45,22 +46,21 @@ namespace DwarfCorp
 
                 var myRoot = GetRoot();
 
-                foreach (var body in Manager.World.EnumerateIntersectingObjects(BoundingBox, b => !Object.ReferenceEquals(b, myRoot) && b.IsRoot()))
+                foreach (var body in Manager.World.EnumerateIntersectingObjects(BoundingBox, b => b.Active && !Object.ReferenceEquals(b, myRoot) && b.IsRoot()))
                 {
-                    var minion = body.GetComponent<CreatureAI>();
-                    if (minion == null || !minion.Active)
+                    var minion = body.GetComponent<Creature>();
+                    if (minion == null)
                         continue;
 
-                    if (!DetectCloaked && minion.Creature.IsCloaked)
+                    float dist = (body.Position - GlobalTransform.Translation).LengthSquared();
+
+                    if (dist > SenseRadius)
                         continue;
 
-                    float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
+                    if (CheckLineOfSight && VoxelHelpers.DoesRayHitSolidVoxel(Manager.World.ChunkManager.ChunkData, Position, body.Position))
+                        continue;
 
-                    if (dist < SenseRadius && !VoxelHelpers.DoesRayHitSolidVoxel(
-                        Manager.World.ChunkManager.ChunkData, Position, minion.Position))
-                    {
-                        Creatures.Add(minion);
-                    }
+                    Creatures.Add(minion);
                 }
             }
 
