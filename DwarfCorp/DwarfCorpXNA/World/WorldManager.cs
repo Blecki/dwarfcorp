@@ -427,9 +427,9 @@ namespace DwarfCorp
         #endregion
 
         [JsonIgnore]
-        public List<System> UpdateSystems = new List<System>();
+        public List<EngineModule> UpdateSystems = new List<EngineModule>();
 
-        public T FindSystem<T>() where T: System
+        public T FindSystem<T>() where T: EngineModule
         {
             return UpdateSystems.FirstOrDefault(s => s is T) as T;
         }

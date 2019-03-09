@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    public class System
+    public class EngineModule
     {
         public virtual void Update(DwarfTime GameTime) { }
         public virtual void ComponentCreated(GameComponent C) { }

@@ -233,8 +233,8 @@ namespace DwarfCorp
             #region Load Components
 
             // Create updateable systems.
-            foreach (var updateSystemFactory in AssetManager.EnumerateModHooks(typeof(UpdateSystemFactoryAttribute), typeof(System), new Type[] { typeof(WorldManager) }))
-                UpdateSystems.Add(updateSystemFactory.Invoke(null, new Object[] { this }) as System);
+            foreach (var updateSystemFactory in AssetManager.EnumerateModHooks(typeof(UpdateSystemFactoryAttribute), typeof(EngineModule), new Type[] { typeof(WorldManager) }))
+                UpdateSystems.Add(updateSystemFactory.Invoke(null, new Object[] { this }) as EngineModule);
 
 
             if (fileExists)
