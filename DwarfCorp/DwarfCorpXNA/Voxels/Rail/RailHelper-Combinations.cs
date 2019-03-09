@@ -90,8 +90,9 @@ namespace DwarfCorp.Rail
 
                 if (Debugger.Switches.DrawBoundingBoxes)
                 {
-                    Drawer3D.DrawBox(entity.GetBoundingBox(), Color.Yellow, 0.1f, false);
+                    Drawer3D.DrawBox(box, Color.Yellow, 0.1f, false);
                 }
+
                 Player.World.ShowTooltip(String.Format("Can't place {0}. Entity in the way: {1}", junctionPiece.RailPiece, entity.ToString()));
                 return false;
             }

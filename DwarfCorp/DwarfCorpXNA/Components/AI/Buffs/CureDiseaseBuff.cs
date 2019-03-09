@@ -22,9 +22,7 @@ namespace DwarfCorp
         public override void OnApply(Creature creature)
         {
             foreach(var disease in creature.Buffs.OfType<Disease>())
-            {
                 disease.OnEnd(creature);
-            }
 
             creature.Buffs.RemoveAll(buff => buff is Disease);
             base.OnApply(creature);

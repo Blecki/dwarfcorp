@@ -15,7 +15,14 @@ namespace DwarfCorp.SteamPipes
         public float SteamPressure = 0.0f;
         public float GeneratedSteam = 0.0f;
         public bool Generator = false;
-        
+        public bool DrawPipes = true;
+
+        private RawPrimitive Primitive;
+        private Color VertexColor = Color.White;
+        private Color LightRamp = Color.White;
+        private SpriteSheet Sheet;
+        private Point Frame;
+
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {
             switch (messageToReceive.Type)
@@ -50,6 +57,7 @@ namespace DwarfCorp.SteamPipes
             {
                 DetachFromNeighbors();
                 AttachToNeighbors();
+                Primitive = null;
             }
 
             base.Update(Time, Chunks, Camera);
@@ -58,6 +66,8 @@ namespace DwarfCorp.SteamPipes
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             base.CreateCosmeticChildren(manager);
+
+            Sheet = new SpriteSheet(ContentPaths.rail_tiles, 32, 32);
         }
 
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
@@ -68,6 +78,22 @@ namespace DwarfCorp.SteamPipes
             base.RenderSelectionBuffer(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect);
             effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
+        }
+
+        private float AngleBetweenVectors(Vector2 A, Vector2 B)
+        {
+            A.Normalize();
+            B.Normalize();
+            float DotProduct = Vector2.Dot(A, B);
+            DotProduct = MathHelper.Clamp(DotProduct, -1.0f, 1.0f);
+            float Angle = (float)global::System.Math.Acos(DotProduct);
+            if (CrossZ(A, B) < 0) return -Angle;
+            return Angle;
+        }
+
+        private float CrossZ(Vector2 A, Vector2 B)
+        {
+            return (B.Y * A.X) - (B.X * A.Y);
         }
 
         override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
@@ -87,7 +113,102 @@ namespace DwarfCorp.SteamPipes
 
                 Drawer3D.DrawBox(GetBoundingBox(), Color.Red, 0.01f, false);
             }
+
+            if (!DrawPipes) return;
+
+            if (Primitive == null)
+            {
+                var bounds = Vector4.Zero;
+                var uvs = Sheet.GenerateTileUVs(new Point(0,0), out bounds);
+               
+                Primitive = new RawPrimitive();
+
+                foreach (var connection in NeighborPipes)
+                {
+                    var neighbor = Manager.FindComponent(connection) as Body;
+                    if (neighbor == null) continue;
+
+                    var pipeAngle = AngleBetweenVectors(new Vector2(neighbor.Position.X - this.Position.X, neighbor.Position.Z - this.Position.Z), new Vector2(0.0f, -1.0f));
+
+                    Primitive.AddQuad(
+                        Matrix.CreateTranslation(0.5f, 0.0f, 0.0f)
+                        * Matrix.CreateScale(0.5f, 0.5f, 0.5f)
+                        * Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                        //* Matrix.CreateTranslation(0.0f, 0.3f, -0.2f)
+                        * Matrix.CreateRotationY(pipeAngle),
+                        //* Matrix.CreateTranslation(bumperOffset + bumperGap),
+                        Color.White, Color.White, uvs, bounds);
+                }
+            }
+
+            if (Primitive.VertexCount == 0) return;
+
+            var under = new VoxelHandle(chunks.ChunkData,
+                    GlobalVoxelCoordinate.FromVector3(Position));
+
+            if (under.IsValid)
+            {
+                Color color = new Color(under.Sunlight ? 255 : 0, 255, 0);
+                LightRamp = color;
+            }
+            else
+                LightRamp = new Color(200, 255, 0);
+
+            Color origTint = effect.VertexColorTint;
+            if (!Active)
+            {
+                DoStipple(effect);
+            }
+            effect.VertexColorTint = VertexColor;
+            effect.LightRamp = LightRamp;
+            effect.World = GlobalTransform;
+
+            effect.MainTexture = Sheet.GetTexture();
+
+
+            effect.EnableWind = false;
+
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                Primitive.Render(graphicsDevice);
+            }
+
+            effect.VertexColorTint = origTint;
+            if (!Active)
+            {
+                EndDraw(effect);
+            }
         }
+        private string previousEffect = null;
+
+        public void DoStipple(Shader effect)
+        {
+#if DEBUG
+            if (effect.CurrentTechnique.Name == Shader.Technique.Stipple)
+            {
+                throw new InvalidOperationException("Stipple technique not cleaned up. Was EndDraw called?");
+            }
+#endif
+            if (effect.CurrentTechnique != effect.Techniques[Shader.Technique.SelectionBuffer] && effect.CurrentTechnique != effect.Techniques[Shader.Technique.SelectionBufferInstanced])
+            {
+                previousEffect = effect.CurrentTechnique.Name;
+                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Stipple];
+            }
+            else
+            {
+                previousEffect = null;
+            }
+        }
+
+        public void EndDraw(Shader shader)
+        {
+            if (!String.IsNullOrEmpty(previousEffect))
+            {
+                shader.CurrentTechnique = shader.Techniques[previousEffect];
+            }
+        }
+
 
         private void DetachFromNeighbors()
         {
@@ -98,11 +219,13 @@ namespace DwarfCorp.SteamPipes
             }
 
             NeighborPipes.Clear();
+            Primitive = null;
         }
 
         private void DetachNeighbor(uint ID)
         {
             NeighborPipes.RemoveAll(connection => connection == ID);
+            Primitive = null;
         }
 
         private void AttachToNeighbors()
@@ -121,11 +244,14 @@ namespace DwarfCorp.SteamPipes
                 AttachNeighbor(neighborPipe.GlobalID);
                 neighborPipe.AttachNeighbor(this.GlobalID);
             }
+
+            Primitive = null;
         }
 
         private void AttachNeighbor(uint ID)
         {
             NeighborPipes.Add(ID);
+            Primitive = null;
         }
 
         public override void Delete()
