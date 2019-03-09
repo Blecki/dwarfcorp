@@ -320,10 +320,8 @@ namespace DwarfCorp
         public void AddBuff(Buff buff)
         {
             if (BuffsToAdd == null)
-            {
                 BuffsToAdd = new List<Buff>();
-            }
-            buff.OnApply(this);
+
             BuffsToAdd.Add(buff);
         }
 
@@ -331,18 +329,27 @@ namespace DwarfCorp
         public void HandleBuffs(DwarfTime time)
         {
             if (BuffsToAdd == null)
-            {
                 BuffsToAdd = new List<Buff>();
-            }
-            Buffs.AddRange(BuffsToAdd);
-            BuffsToAdd.Clear();
-            foreach (Buff buff in Buffs)
+
+            foreach (var newBuff in BuffsToAdd)
             {
-                buff.Update(time, this);
+                var matchingBuffs = Buffs.Where(b => b.GetType() == newBuff.GetType()).ToList();
+                foreach (var matchingBuff in matchingBuffs)
+                {
+                    matchingBuff.OnEnd(this);
+                    Buffs.Remove(matchingBuff);
+                }
+
+                newBuff.OnApply(this);
+                Buffs.Add(newBuff);
             }
 
-            List<Buff> doneBuffs = Buffs.FindAll(buff => !buff.IsInEffect);
-            foreach (Buff buff in doneBuffs)
+            BuffsToAdd.Clear();
+
+            foreach (Buff buff in Buffs)
+                buff.Update(time, this);
+            
+            foreach (Buff buff in Buffs.FindAll(buff => !buff.IsInEffect))
             {
                 buff.OnEnd(this);
                 Buffs.Remove(buff);

@@ -32,7 +32,7 @@ namespace DwarfCorp
                 SoundOnEnd = SoundOnEnd,
                 SoundOnStart = SoundOnStart,
                 DamageType = DamageType,
-                DamagePerSecond = DamagePerSecond
+                DamagePerSecond = DamagePerSecond,
             };
         }
     }
