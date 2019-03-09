@@ -212,6 +212,7 @@
     <Compile Include="Entities\Monsters\Golem\SnowGolem.cs" />
     <Compile Include="Entities\Monsters\Troll\TrollClass.cs" />
     <Compile Include="Entities\Steam\SteamGenerator.cs" />
+    <Compile Include="Entities\Steam\SteamSystem.cs" />
     <Compile Include="Entities\Steam\SteamPoweredObject.cs" />
     <Compile Include="Entities\Steam\PowerAnvil.cs" />
     <Compile Include="Entities\Steam\BuildBuff.cs" />
@@ -659,6 +660,7 @@
     <Compile Include="Voxels\Splasher.cs" />
     <Compile Include="Voxels\GrassLibrary.cs" />
     <Compile Include="Voxels\ChunkUpdate.cs" />
+    <Compile Include="World\UpdateSystem.cs" />
     <Compile Include="World\CompanyInformation.cs" />
     <Compile Include="World\IndicatorManager.cs" />
     <Compile Include="Gui\Enums.cs" />
@@ -914,7 +916,7 @@
     <Compile Include="World\Diplomacy.cs" />
     <Compile Include="World\FaunaData.cs" />
     <Compile Include="World\Overworld.cs" />
-    <Compile Include="World\UpdateFunctionAttribute.cs" />
+    <Compile Include="World\UpdateSystemFactoryAttribute.cs" />
     <Compile Include="World\VegetationData.cs" />
     <Compile Include="World\Weather\Cloud.cs" />
     <Compile Include="World\Weather\Storm.cs" />

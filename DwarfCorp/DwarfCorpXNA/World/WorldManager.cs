@@ -426,6 +426,14 @@ namespace DwarfCorp
         private Splasher Splasher;
         #endregion
 
+        [JsonIgnore]
+        public List<UpdateSystem> UpdateSystems = new List<UpdateSystem>();
+
+        public T FindSystem<T>() where T: UpdateSystem
+        {
+            return UpdateSystems.FirstOrDefault(s => s is T) as T;
+        }
+
         /// <summary>
         /// Creates a new play state
         /// </summary>
@@ -615,6 +623,15 @@ namespace DwarfCorp
             {
                 ParticleManager.Update(gameTime, this);
                 TutorialManager.Update(Gui);
+
+                foreach (var updateSystem in UpdateSystems)
+                {
+                    try
+                    {
+                        updateSystem.Update(gameTime);
+                    }
+                    catch (Exception) { }
+                }
 
                 Diplomacy.Update(gameTime, Time.CurrentDate, this);
                 Factions.Update(gameTime);

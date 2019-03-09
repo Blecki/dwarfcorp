@@ -95,6 +95,9 @@ namespace DwarfCorp
             {
                 if (component.Value is MinimapIcon)
                     MinimapIcons.Add(component.Value as MinimapIcon);
+
+                foreach (var system in World.UpdateSystems)
+                    system.ComponentCreated(component.Value);
             }
 
             MaxGlobalID = Components.Aggregate<KeyValuePair<uint, GameComponent>, uint>(0, (current, component) => Math.Max(current, component.Value.GlobalID));
@@ -206,6 +209,9 @@ namespace DwarfCorp
             if (component is MinimapIcon)
                 MinimapIcons.Remove(component as MinimapIcon);
 
+            foreach (var system in World.UpdateSystems)
+                system.ComponentDestroyed(component);
+
             foreach (var child in new List<GameComponent>(component.EnumerateChildren()))
                 RemoveComponentImmediate(child);
         }
@@ -227,6 +233,9 @@ namespace DwarfCorp
 
             if (component is MinimapIcon)
                 MinimapIcons.Add(component as MinimapIcon);
+
+            foreach (var system in World.UpdateSystems)
+                system.ComponentCreated(component);
         }
 
         public uint k = 0;

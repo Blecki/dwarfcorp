@@ -6,7 +6,7 @@ using System.Text;
 namespace DwarfCorp
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class UpdateFunctionAttribute : Attribute
+    public class UpdateSystemFactoryAttribute : Attribute
     {
     }
 }

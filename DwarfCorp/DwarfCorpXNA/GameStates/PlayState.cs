@@ -24,7 +24,6 @@ namespace DwarfCorp.GameStates
         private DateTime EnterTime;
 
         public WorldManager World { get; set; }
-        public List<Action<DwarfTime>> UpdateFunctions = new List<Action<DwarfTime>>();
 
         public GameMaster Master
         {
@@ -234,29 +233,6 @@ namespace DwarfCorp.GameStates
                 foreach (var contextCommandFactory in AssetManager.EnumerateModHooks(typeof(ContextCommandAttribute), typeof(ContextCommands.ContextCommand), new Type[] { }))
                     ContextCommands.Add(contextCommandFactory.Invoke(null, new Object[] { }) as ContextCommands.ContextCommand);
 
-                // Todo: Use mod hooks to discover these.
-                ContextCommands.Add(new ContextCommands.ChopCommand());
-                ContextCommands.Add(new ContextCommands.AttackCommand());
-                ContextCommands.Add(new ContextCommands.WrangleCommand());
-                ContextCommands.Add(new ContextCommands.CancelCommand());
-                ContextCommands.Add(new ContextCommands.PriorityCommand());
-                ContextCommands.Add(new ContextCommands.GatherCommand());
-                ContextCommands.Add(new ContextCommands.DestroyCommand());
-                ContextCommands.Add(new ContextCommands.MoveCommand());
-                ContextCommands.Add(new ContextCommands.EmptyBackpackCommand());
-                ContextCommands.Add(new ContextCommands.ViewAllowedTasksCommand());
-                ContextCommands.Add(new ContextCommands.CancelDwarfCommand());
-                ContextCommands.Add(new ContextCommands.ChatCommand());
-                ContextCommands.Add(new ContextCommands.FireCommand());
-                ContextCommands.Add(new ContextCommands.PromoteCommand());
-
-
-                foreach (var updateFunc in AssetManager.EnumerateModHooks(typeof(UpdateFunctionAttribute), typeof(void), new Type[] { typeof(DwarfTime) }))
-                {
-                    var lambda = updateFunc;
-                    UpdateFunctions.Add(t => lambda.Invoke(null, new Object[] { t }));
-                }
-
                 World.LogEvent(String.Format("We have arrived at {0}", Overworld.Name));
             }
             base.OnEnter();
@@ -362,15 +338,6 @@ namespace DwarfCorp.GameStates
 
             World.Update(gameTime);
             Input.Update();
-
-            foreach (var updateFunc in UpdateFunctions)
-            {
-                try
-                {
-                    updateFunc(gameTime);
-                }
-                catch (Exception) { }
-            }
 
             #region Update time label
             TimeLabel.Text = String.Format("{0} {1}",
