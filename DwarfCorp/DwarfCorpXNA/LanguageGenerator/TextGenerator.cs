@@ -242,11 +242,11 @@ namespace DwarfCorp
         public static void LoadTemplates()
         {
             string dirname = "." + Path.DirectorySeparatorChar + "Content" + Path.DirectorySeparatorChar + "Text" + Path.DirectorySeparatorChar + "Templates";
-            System.IO.DirectoryInfo directoryInfo = new DirectoryInfo(dirname);
+            global::System.IO.DirectoryInfo directoryInfo = new DirectoryInfo(dirname);
 
             if (!directoryInfo.Exists) throw new FileNotFoundException("Unable to find text directory : " + dirname);
 
-            foreach (System.IO.FileInfo info in directoryInfo.EnumerateFiles())
+            foreach (global::System.IO.FileInfo info in directoryInfo.EnumerateFiles())
             {
                 var match = Regex.Match(info.Name, @"(.*)\.txt");
 
@@ -260,11 +260,11 @@ namespace DwarfCorp
         public static void LoadAtoms()
         {
             string dirname = "." + Path.DirectorySeparatorChar + "Content" + Path.DirectorySeparatorChar + "Text";
-            System.IO.DirectoryInfo directoryInfo = new DirectoryInfo(dirname);
+            global::System.IO.DirectoryInfo directoryInfo = new DirectoryInfo(dirname);
 
             if (!directoryInfo.Exists) throw new FileNotFoundException("Unable to find text directory : " + dirname);
 
-            foreach (System.IO.FileInfo info in directoryInfo.EnumerateFiles())
+            foreach (global::System.IO.FileInfo info in directoryInfo.EnumerateFiles())
             {
                 var match = Regex.Match(info.Name, @"(.*)\.txt");
 

@@ -336,7 +336,7 @@ namespace DwarfCorp
                             updatedPrimative.IndexBuffer = null;
                         }
                     }
-                    catch (System.Threading.AbandonedMutexException e)
+                    catch (global::System.Threading.AbandonedMutexException e)
                     {
                         Console.Error.WriteLine(e.Message);
                     }
@@ -355,7 +355,7 @@ namespace DwarfCorp
                             updatedPrimative.IndexCount = 0;
                         }
                     }
-                    catch (System.Threading.AbandonedMutexException e)
+                    catch (global::System.Threading.AbandonedMutexException e)
                     {
                         Console.Error.WriteLine(e.Message);
                     }

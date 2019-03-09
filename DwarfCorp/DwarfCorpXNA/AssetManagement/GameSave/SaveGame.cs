@@ -49,8 +49,8 @@ namespace DwarfCorp
 
         public void WriteFile(string directory)
         {
-            System.IO.Directory.CreateDirectory(directory);
-            System.IO.Directory.CreateDirectory(directory + Path.DirectorySeparatorChar + "Chunks");
+            global::System.IO.Directory.CreateDirectory(directory);
+            global::System.IO.Directory.CreateDirectory(directory + Path.DirectorySeparatorChar + "Chunks");
 
             foreach (ChunkFile chunk in ChunkData)
             {
@@ -67,7 +67,7 @@ namespace DwarfCorp
 
         public static void DeleteOldestSave(string subdir, int maxToKeep, string blacklist)
         {
-            var dir = System.IO.Directory.CreateDirectory(subdir);
+            var dir = global::System.IO.Directory.CreateDirectory(subdir);
             var parent = dir.Parent;
             var subdirs = parent.GetDirectories();
             var validDirs = subdirs.Where(d => !d.Name.Contains(blacklist)).ToList();
@@ -95,7 +95,7 @@ namespace DwarfCorp
 
             ChunkData = new List<ChunkFile>();
 
-            var chunkDirs = System.IO.Directory.GetDirectories(filePath, "Chunks");
+            var chunkDirs = global::System.IO.Directory.GetDirectories(filePath, "Chunks");
             
             if (chunkDirs.Length > 0)
             {
@@ -149,7 +149,7 @@ namespace DwarfCorp
 
         public bool LoadPlayData(string filePath, WorldManager world)
         {
-            string[] worldFiles = System.IO.Directory.GetFiles(filePath, "*." + PlayData.Extension);
+            string[] worldFiles = global::System.IO.Directory.GetFiles(filePath, "*." + PlayData.Extension);
 
             if (worldFiles.Length > 0)
             {
@@ -168,13 +168,13 @@ namespace DwarfCorp
 
         private bool ReadMetadata(string filePath)
         {
-            if (!System.IO.Directory.Exists(filePath))
+            if (!global::System.IO.Directory.Exists(filePath))
             {
                 return false;
             }
             else
             {
-                string[] metaFiles = System.IO.Directory.GetFiles(filePath, "*." + MetaData.Extension);
+                string[] metaFiles = global::System.IO.Directory.GetFiles(filePath, "*." + MetaData.Extension);
 
                 if (metaFiles.Length > 0)
                     Metadata = FileUtils.LoadJsonFromAbsolutePath<MetaData>(metaFiles[0]);
@@ -184,7 +184,7 @@ namespace DwarfCorp
                     return false;
                 }
 
-                string[] screenshots = System.IO.Directory.GetFiles(filePath, "*.png");
+                string[] screenshots = global::System.IO.Directory.GetFiles(filePath, "*.png");
 
                 if (screenshots.Length > 0)
                     Screenshot = AssetManager.LoadUnbuiltTextureFromAbsolutePath(screenshots[0]);

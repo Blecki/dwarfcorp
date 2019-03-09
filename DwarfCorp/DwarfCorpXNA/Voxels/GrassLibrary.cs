@@ -53,7 +53,7 @@ namespace DwarfCorp
 
         private static GrassType.FringeTileUV[] CreateFringeUVs(Point[] Tiles)
         {
-            System.Diagnostics.Debug.Assert(Tiles.Length == 3);
+            global::System.Diagnostics.Debug.Assert(Tiles.Length == 3);
 
             var r = new GrassType.FringeTileUV[8];
 

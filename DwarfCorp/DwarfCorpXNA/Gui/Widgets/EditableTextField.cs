@@ -131,16 +131,16 @@ namespace DwarfCorp.Gui.Widgets
                         return;
                     }
 #if XNA_BUILD
-                    if (args.KeyValue == (int)System.Windows.Forms.Keys.Up)
+                    if (args.KeyValue == (int)global::System.Windows.Forms.Keys.Up)
                     {
                         Root.SafeCall(ArrowKeyUpDown, this, 1);
                     }
-                    else if (args.KeyValue == (int)System.Windows.Forms.Keys.Down)
+                    else if (args.KeyValue == (int)global::System.Windows.Forms.Keys.Down)
                     {
                         Root.SafeCall(ArrowKeyUpDown, this, -1);
                     }
 
-                    if (args.KeyValue == (int)System.Windows.Forms.Keys.Enter)
+                    if (args.KeyValue == (int)global::System.Windows.Forms.Keys.Enter)
                     {
                         Root.SafeCall(OnEnter, this);
                     }

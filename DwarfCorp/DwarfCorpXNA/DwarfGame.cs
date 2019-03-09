@@ -62,7 +62,7 @@ namespace DwarfCorp
         private class LogWriter : StreamWriter
         {
             private Gui.Widgets.DwarfConsole ConsoleLogOutput = null;
-            private System.Text.StringBuilder PreConsoleLogQueue = new System.Text.StringBuilder();
+            private global::System.Text.StringBuilder PreConsoleLogQueue = new global::System.Text.StringBuilder();
             private TextWriter _mainOut;
             public void SetConsole(Gui.Widgets.DwarfConsole Console)
             {
@@ -349,7 +349,7 @@ namespace DwarfCorp
         {
             var palette = TextureTool.ExtractPaletteFromDirectoryRecursive(Path);
             var paletteTexture = TextureTool.Texture2DFromMemoryTexture(DwarfGame.GuiSkin.Device, TextureTool.MemoryTextureFromPalette(palette));
-            paletteTexture.SaveAsPng(System.IO.File.OpenWrite("palette.png"), paletteTexture.Width, paletteTexture.Height);
+            paletteTexture.SaveAsPng(global::System.IO.File.OpenWrite("palette.png"), paletteTexture.Width, paletteTexture.Height);
             return "Dumped.";
         }
 
@@ -379,7 +379,7 @@ namespace DwarfCorp
             Graphics = new GraphicsDeviceManager(this);
             Window.Title = "DwarfCorp";
             Window.AllowUserResizing = false;
-            MainThreadID = System.Threading.Thread.CurrentThread.ManagedThreadId;
+            MainThreadID = global::System.Threading.Thread.CurrentThread.ManagedThreadId;
             GameSettings.Load();
 
             try
@@ -516,9 +516,9 @@ namespace DwarfCorp
             {
                 Trace.Listeners.Clear();
                 var dir = GetGameDirectory();
-                if (!System.IO.Directory.Exists(dir))
+                if (!global::System.IO.Directory.Exists(dir))
                 {
-                    System.IO.Directory.CreateDirectory(dir);
+                    global::System.IO.Directory.CreateDirectory(dir);
                 }
                 var path = ProgramData.CreatePath(dir, "log.txt");
                 if (!File.Exists(path))
@@ -530,7 +530,7 @@ namespace DwarfCorp
                 if (logFile.Length > 5e7)
                 {
                     Console.Out.WriteLine("Log file at {0} was too large ({1} bytes). Clearing it.", path, logFile.Length);
-                    System.IO.File.WriteAllText(path, string.Empty);
+                    global::System.IO.File.WriteAllText(path, string.Empty);
                 }
                 FileStream writerOutput = new FileStream(path, FileMode.Append, FileAccess.Write);
                 _logwriter = new LogWriter(Console.Out, writerOutput);
@@ -575,9 +575,9 @@ namespace DwarfCorp
             {
 #endif
                 var dir = GetGameDirectory();
-                if (!System.IO.Directory.Exists(dir))
+                if (!global::System.IO.Directory.Exists(dir))
                 {
-                    System.IO.Directory.CreateDirectory(dir);
+                    global::System.IO.Directory.CreateDirectory(dir);
                 }
                 InitializeLogger();
                 Thread.CurrentThread.Name = "Main";
@@ -833,7 +833,7 @@ namespace DwarfCorp
         // If called in the non main thread, will return false;
         public static bool IsMainThread
         {
-            get { return System.Threading.Thread.CurrentThread.ManagedThreadId == MainThreadID; }
+            get { return global::System.Threading.Thread.CurrentThread.ManagedThreadId == MainThreadID; }
         }
 
         public static bool ExitGame = false;

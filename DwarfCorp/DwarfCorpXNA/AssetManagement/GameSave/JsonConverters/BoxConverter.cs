@@ -96,8 +96,8 @@ namespace DwarfCorp
             if (token.Type == JTokenType.String)
             {
                 // customize this to suit your needs
-                return new DwarfBux(Decimal.Parse(token.ToString(),
-                       System.Globalization.CultureInfo.GetCultureInfo("es-ES")));
+                return new DwarfBux(decimal.Parse(token.ToString(),
+                       global::System.Globalization.CultureInfo.GetCultureInfo("es-ES")));
             }
             if (token.Type == JTokenType.Null && objectType == typeof(DwarfBux?))
             {
@@ -162,7 +162,7 @@ namespace DwarfCorp
                         float.Parse((string)properties[5]))
                 };
             }
-            catch (System.OverflowException)
+            catch (global::System.OverflowException)
             {
                 return new BoundingBox(new Vector3(-float.MaxValue, -float.MaxValue, -float.MaxValue),
                     new Vector3(float.MaxValue, float.MaxValue, float.MaxValue));

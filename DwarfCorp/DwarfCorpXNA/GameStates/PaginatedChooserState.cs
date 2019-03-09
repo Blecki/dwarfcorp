@@ -119,7 +119,7 @@ namespace DwarfCorp.GameStates
         private int ItemSelected = 0;
         private Gui.Widget BottomBar;
 
-        public Func<List<System.IO.DirectoryInfo>> ItemSource;
+        public Func<List<global::System.IO.DirectoryInfo>> ItemSource;
         public String NoItemsText = "Nothing to display.";
         public String ProceedButtonText = "Okay";
         public Action<String> OnProceedClicked;
@@ -245,7 +245,7 @@ namespace DwarfCorp.GameStates
                                     Items.Remove(selectedItem);
                                     try
                                     {
-                                        System.IO.Directory.Delete(selectedItem.Path, true);
+                                        global::System.IO.Directory.Delete(selectedItem.Path, true);
                                     }
                                     catch (Exception e)
                                     {
@@ -286,7 +286,7 @@ namespace DwarfCorp.GameStates
                 ItemSelected = Grid.SelectedIndex;
                 if (Items.Count > 0)
                 {
-                    var directoryTime = System.IO.Directory.GetLastWriteTime(Items[ItemSelected].Path);
+                    var directoryTime = global::System.IO.Directory.GetLastWriteTime(Items[ItemSelected].Path);
 
                     BottomBar.Text = Items[ItemSelected].Path;
 

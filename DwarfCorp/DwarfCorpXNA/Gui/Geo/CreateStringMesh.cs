@@ -43,7 +43,7 @@ namespace DwarfCorp.Gui
                 }
             }
 
-            Bounds = new Rectangle(0, 0, (int)System.Math.Max(maxX, pos.X), (int)(pos.Y + ((FontSheet.TileHeight * GlyphScale.Y))));
+            Bounds = new Rectangle(0, 0, (int)global::System.Math.Max(maxX, pos.X), (int)(pos.Y + ((FontSheet.TileHeight * GlyphScale.Y))));
 
             return Merge(glyphMeshes.ToArray());
         }

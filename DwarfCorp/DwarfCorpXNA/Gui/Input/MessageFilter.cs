@@ -12,7 +12,7 @@ namespace DwarfCorp.Gui.Input
     public class MessageFilter : IMessageFilter
     {
         [DllImport("user32.dll")]
-        static extern bool TranslateMessage(ref System.Windows.Forms.Message lpMsg);
+        static extern bool TranslateMessage(ref global::System.Windows.Forms.Message lpMsg);
 
         const int WM_CHAR = 0x0102;
         const int WM_KEYUP = 0x101;
@@ -23,7 +23,7 @@ namespace DwarfCorp.Gui.Input
         const int WM_RBUTTONDOWN = 0x204;
         const int WM_RBUTTONUP = 0x0205;
 
-        public bool PreFilterMessage(ref System.Windows.Forms.Message m)
+        public bool PreFilterMessage(ref global::System.Windows.Forms.Message m)
         {
             if (m.Msg == WM_KEYDOWN)
                 TranslateMessage(ref m);
@@ -32,13 +32,13 @@ namespace DwarfCorp.Gui.Input
             return true;
         }
 
-        private Func<System.Windows.Forms.Message, bool> Handler;
+        private Func<global::System.Windows.Forms.Message, bool> Handler;
 
-        public static void AddMessageFilter(Func<System.Windows.Forms.Message, bool> Handler)
+        public static void AddMessageFilter(Func<global::System.Windows.Forms.Message, bool> Handler)
         {
             var filter = new MessageFilter();
             filter.Handler = Handler;
-            System.Windows.Forms.Application.AddMessageFilter(filter);
+            global::System.Windows.Forms.Application.AddMessageFilter(filter);
         }
     }
 }

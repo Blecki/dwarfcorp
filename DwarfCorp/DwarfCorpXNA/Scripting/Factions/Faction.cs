@@ -639,7 +639,7 @@ namespace DwarfCorp
                         break;
                     foreach (var resource in stockpile.Resources.Where(sResource => sResource.Type == amount.Type))
                     {
-                        int amountToRemove = System.Math.Min(resource.Count, amount.Count - numGot);
+                        int amountToRemove = global::System.Math.Min(resource.Count, amount.Count - numGot);
                         if (amountToRemove <= 0) continue;
                         numGot += amountToRemove;
                         yield return new KeyValuePair<Stockpile, ResourceAmount>(stockpile, new ResourceAmount(resource.Type, amountToRemove));
@@ -663,7 +663,7 @@ namespace DwarfCorp
                     {
                         if (!allowHeterogenous && selectedString != null && selectedString != resource.Type)
                             continue;
-                        int amountToRemove = System.Math.Min(resource.Count, tag.Count - numGot);
+                        int amountToRemove = global::System.Math.Min(resource.Count, tag.Count - numGot);
                         if (amountToRemove <= 0) continue;
                         numGot += amountToRemove;
                         yield return new KeyValuePair<Stockpile, ResourceAmount>(stockpile, new ResourceAmount(resource.Type, amountToRemove));
@@ -698,7 +698,7 @@ namespace DwarfCorp
 
                         if (!ResourceLibrary.GetResourceByName(resource.Type).Tags.Contains(requirement.Key)) continue;
 
-                        int amountToRemove = System.Math.Min(resource.Count, requirement.Value - got);
+                        int amountToRemove = global::System.Math.Min(resource.Count, requirement.Value - got);
 
                         if (amountToRemove <= 0) continue;
 
@@ -1019,7 +1019,7 @@ namespace DwarfCorp
                     World.ComponentManager, "Player", currentApplicant.Class, currentApplicant.Level.Index, currentApplicant.Gender, currentApplicant.RandomSeed);
             World.ComponentManager.RootComponent.AddChild(dwarfPhysics);
             var newMinion = dwarfPhysics.EnumerateAll().OfType<Dwarf>().FirstOrDefault();
-            System.Diagnostics.Debug.Assert(newMinion != null);
+            global::System.Diagnostics.Debug.Assert(newMinion != null);
 
             newMinion.Stats.CurrentClass = currentApplicant.Class;
             newMinion.Stats.AllowedTasks = currentApplicant.Class.Actions;
@@ -1167,7 +1167,7 @@ namespace DwarfCorp
                 DwarfBux amountLeft = -money;
                 foreach (Treasury treasury in Treasurys)
                 {
-                    DwarfBux amountToTake = System.Math.Min(treasury.Money, amountLeft);
+                    DwarfBux amountToTake = global::System.Math.Min(treasury.Money, amountLeft);
                     treasury.Money -= amountToTake;
                     amountLeft -= amountToTake;
                     Economy.CurrentMoney -= amountToTake;
@@ -1182,7 +1182,7 @@ namespace DwarfCorp
                     break;
 
                 DwarfBux maxInTreasury = treasury.Voxels.Count * Treasury.MoneyPerPile - treasury.Money;
-                DwarfBux amountToTake = System.Math.Min(maxInTreasury, amountRemaining);
+                DwarfBux amountToTake = global::System.Math.Min(maxInTreasury, amountRemaining);
 
                 amountRemaining -= amountToTake;
                 treasury.Money += amountToTake;

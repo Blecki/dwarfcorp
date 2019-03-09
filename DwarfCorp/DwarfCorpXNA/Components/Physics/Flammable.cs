@@ -25,7 +25,7 @@ namespace DwarfCorp
                 if (_health == null)
                 {
                     _health = Parent.EnumerateAll().Where(c => c is Health).FirstOrDefault() as Health;
-                    System.Diagnostics.Debug.Assert(_health != null, "Flammable could not find a Health component.");
+                    global::System.Diagnostics.Debug.Assert(_health != null, "Flammable could not find a Health component.");
                 }
 
                 return _health;
@@ -179,7 +179,7 @@ namespace DwarfCorp
             if (!Active) return;
             base.Update(gameTime, chunks, camera);
             var body = Parent as Body;
-            System.Diagnostics.Debug.Assert(body != null);
+            global::System.Diagnostics.Debug.Assert(body != null);
 
             DamageTimer.Update(gameTime);
             CheckLavaTimer.Update(gameTime);

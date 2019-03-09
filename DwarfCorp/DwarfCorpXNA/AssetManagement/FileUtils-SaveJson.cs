@@ -152,7 +152,7 @@ namespace DwarfCorp
         {
             if (!compress)
             {
-                using (StreamWriter filestream = new StreamWriter(File.Open(filePath, System.IO.FileMode.OpenOrCreate)))
+                using (StreamWriter filestream = new StreamWriter(File.Open(filePath, global::System.IO.FileMode.OpenOrCreate)))
                 using (JsonWriter writer = new JsonTextWriter(filestream))
                 {
                     serializer.Serialize(writer, obj);

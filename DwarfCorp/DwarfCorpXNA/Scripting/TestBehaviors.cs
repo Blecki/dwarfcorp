@@ -209,7 +209,7 @@ namespace DwarfCorp
                 DwarfTime.LastTime = new DwarfTime(DateTime.Now - first, DateTime.Now - last);
                 Console.Out.WriteLine("Wait status: " + status.ToString() + "," + wait.Time.CurrentTimeSeconds);
                 last = DateTime.Now;
-                System.Threading.Thread.Sleep(10);
+                global::System.Threading.Thread.Sleep(10);
             }
 
             complex.Initialize();
@@ -218,7 +218,7 @@ namespace DwarfCorp
                 DwarfTime.LastTime = new DwarfTime(DateTime.Now - first, DateTime.Now - last);
                 Console.Out.WriteLine("Complex status: " + status.ToString());
                 last = DateTime.Now;
-                System.Threading.Thread.Sleep(10);
+                global::System.Threading.Thread.Sleep(10);
             }
 
             overloader.Initialize();
@@ -227,7 +227,7 @@ namespace DwarfCorp
                 DwarfTime.LastTime = new DwarfTime(DateTime.Now - first, DateTime.Now - last);
                 Console.Out.WriteLine("Overloader status: " + status.ToString());
                 last = DateTime.Now;
-                System.Threading.Thread.Sleep(10);
+                global::System.Threading.Thread.Sleep(10);
             }
 
             converter.Initialize();
@@ -236,7 +236,7 @@ namespace DwarfCorp
                 DwarfTime.LastTime = new DwarfTime(DateTime.Now - first, DateTime.Now - last);
                 Console.Out.WriteLine("converter status: " + status.ToString());
                 last = DateTime.Now;
-                System.Threading.Thread.Sleep(10);
+                global::System.Threading.Thread.Sleep(10);
             }
         }
     }

@@ -41,7 +41,7 @@ namespace DwarfCorp
     /// <summary>
     /// Used to mark certain plants as motes.
     /// </summary>
-    public class MoteAttribute : System.Attribute
+    public class MoteAttribute : global::System.Attribute
     { }
 
     /// <summary>

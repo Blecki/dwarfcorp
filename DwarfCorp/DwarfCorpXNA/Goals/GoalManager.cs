@@ -42,7 +42,7 @@ namespace DwarfCorp.Goals
         {
             // Discover all possible goals.
             // If loading a save game, half of these will be thrown away. :(
-            foreach (var type in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
+            foreach (var type in global::System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
             {
                 if (type.IsSubclassOf(typeof(Goal)))
                 {

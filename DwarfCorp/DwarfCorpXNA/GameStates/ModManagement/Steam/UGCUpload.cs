@@ -82,8 +82,8 @@ namespace DwarfCorp.AssetManagement.Steam
                     SteamUGC.SetItemTitle(UpdateHandle, Mod.Name);
                     SteamUGC.SetItemDescription(UpdateHandle, Mod.Description);
                     SteamUGC.SetItemVisibility(UpdateHandle, ERemoteStoragePublishedFileVisibility.k_ERemoteStoragePublishedFileVisibilityPublic);
-                    SteamUGC.SetItemPreview(UpdateHandle, System.IO.Path.GetFullPath(Mod.Directory) + Program.DirChar + Mod.PreviewURL);
-                    SteamUGC.SetItemContent(UpdateHandle, System.IO.Path.GetFullPath(Mod.Directory));
+                    SteamUGC.SetItemPreview(UpdateHandle, global::System.IO.Path.GetFullPath(Mod.Directory) + Program.DirChar + Mod.PreviewURL);
+                    SteamUGC.SetItemContent(UpdateHandle, global::System.IO.Path.GetFullPath(Mod.Directory));
                     State = States.Submitting;
                     Message = "Submitting";
                     return;

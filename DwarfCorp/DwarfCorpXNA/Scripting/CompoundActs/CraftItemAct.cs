@@ -438,7 +438,7 @@ namespace DwarfCorp
                                                 Item.PreviewResource.LocalPosition = location.Position + Vector3.Up * 0.25f;
                                             var buff = location.GetComponent<SteamPipes.BuildBuff>();
                                             if (buff != null)
-                                                workstationBuff = buff.BuffMultiplier;
+                                                workstationBuff = buff.GetBuffMultiplier();
                                         }
 
                                         // Todo: Account for environment buff & 'anvil' buff.

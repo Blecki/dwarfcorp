@@ -96,18 +96,18 @@ namespace DwarfCorp
             {
                 Die();
                 ExitThreads = false;
-                
+
                 WorkerThreads.Clear();
 
                 for (int i = 0; i < ThreadCount; i++)
                 {
                     var thread = new Thread(this.ServiceThread);
-                    thread.Name = String.Format("{0} : {1}", ServiceName, i);
+                    thread.Name = string.Format("{0} : {1}", ServiceName, i);
                     thread.Start();
                     WorkerThreads.Add(thread);
                 }
             }
-            catch (System.AccessViolationException e)
+            catch (global::System.AccessViolationException e)
             {
                 Console.Error.WriteLine(e.Message);
             }

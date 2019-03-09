@@ -9,7 +9,7 @@ namespace DwarfCorp.Gui.Widgets
     public class InfoTicker : Gui.Widget
     {
         private List<String> Messages = new List<String>();
-        private System.Threading.Mutex MessageLock = new System.Threading.Mutex();
+        private global::System.Threading.Mutex MessageLock = new global::System.Threading.Mutex();
         private bool NeedsInvalidated = false;
 
         public Vector4 TextBackgroundColor = new Vector4(0.0f, 0.0f, 0.0f, 0.25f);

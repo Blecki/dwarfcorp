@@ -68,9 +68,9 @@ namespace DwarfCorp
 
         public static IEnumerable<Switch> EnumerateSwitches()
         {
-            foreach (var member in typeof(Switches).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static))
+            foreach (var member in typeof(Switches).GetFields(global::System.Reflection.BindingFlags.Public | global::System.Reflection.BindingFlags.Static))
             {
-                System.Diagnostics.Debug.Assert(member.FieldType == typeof(bool));
+                global::System.Diagnostics.Debug.Assert(member.FieldType == typeof(bool));
                 yield return new Switch
                 {
                     Name = member.Name,

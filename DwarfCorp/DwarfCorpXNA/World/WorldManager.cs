@@ -427,9 +427,9 @@ namespace DwarfCorp
         #endregion
 
         [JsonIgnore]
-        public List<UpdateSystem> UpdateSystems = new List<UpdateSystem>();
+        public List<System> UpdateSystems = new List<System>();
 
-        public T FindSystem<T>() where T: UpdateSystem
+        public T FindSystem<T>() where T: System
         {
             return UpdateSystems.FirstOrDefault(s => s is T) as T;
         }
@@ -752,10 +752,10 @@ namespace DwarfCorp
             try
             {
 #endif
-                System.Threading.Thread.CurrentThread.Name = "Save";
+                global::System.Threading.Thread.CurrentThread.Name = "Save";
                 // Ensure we're using the invariant culture.
-                System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-                System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+                global::System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                global::System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
                 DirectoryInfo worldDirectory =
                     Directory.CreateDirectory(DwarfGame.GetWorldDirectory() +
                                               Path.DirectorySeparatorChar + Overworld.Name);

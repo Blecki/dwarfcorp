@@ -64,9 +64,9 @@ namespace DwarfCorp
         {
             try
             {
-               var cwd = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
+               var cwd = global::System.IO.Path.GetDirectoryName(global::System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
                 Directory.SetCurrentDirectory(new Uri(cwd).LocalPath);
-                using (Stream stream = System.Reflection.Assembly.GetExecutingAssembly()
+                using (Stream stream = global::System.Reflection.Assembly.GetExecutingAssembly()
                         .GetManifestResourceStream("DwarfCorp.version.txt"))
                 using (StreamReader reader = new StreamReader(stream))
                     Commit = reader.ReadToEnd();
@@ -75,8 +75,8 @@ namespace DwarfCorp
             }
             catch (Exception) { }
 
-            Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-            Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentCulture = global::System.Globalization.CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = global::System.Globalization.CultureInfo.InvariantCulture;
 
 #if !DEBUG
             try

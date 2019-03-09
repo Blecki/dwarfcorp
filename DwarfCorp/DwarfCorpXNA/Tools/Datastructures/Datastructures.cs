@@ -128,7 +128,7 @@ namespace DwarfCorp
         {
             int iHandle = WaitHandle.WaitAny(waitHandles, 500);
 
-            if (iHandle == System.Threading.WaitHandle.WaitTimeout)
+            if (iHandle == global::System.Threading.WaitHandle.WaitTimeout)
             {
                 return null;
             }

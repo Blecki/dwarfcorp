@@ -244,10 +244,10 @@ namespace DwarfCorp
 
         private void PositionItems()
         {
-            int w = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 256, 550);
-            int h = System.Math.Min(GuiRoot.RenderData.VirtualScreen.Height - 256, 300);
+            int w = global::System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 256, 550);
+            int h = global::System.Math.Min(GuiRoot.RenderData.VirtualScreen.Height - 256, 300);
             int x = GuiRoot.RenderData.VirtualScreen.Width / 2 - w / 2;
-            int y = System.Math.Max(GuiRoot.RenderData.VirtualScreen.Height / 2 - h / 2, 280);
+            int y = global::System.Math.Max(GuiRoot.RenderData.VirtualScreen.Height / 2 - h / 2, 280);
 
             _Output.Rect = new Rectangle(x, y - 260, w, 260);
             ChoicePanel.Rect = new Rectangle(x, y, w, h);
@@ -368,7 +368,7 @@ namespace DwarfCorp
 
             SpeakerBorder.Rect = new Rectangle(16, GuiRoot.RenderData.VirtualScreen.Height - (256 - 16), 256 - 32, 256 - 32);
             SpeakerRectangle = Gui.Mesh.Quad().Scale(256, 256).Translate(0, GuiRoot.RenderData.VirtualScreen.Height - 256);
-            _Output.Rect = new Rectangle(256, GuiRoot.RenderData.VirtualScreen.Height - 260, System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 256, 550), 260);
+            _Output.Rect = new Rectangle(256, GuiRoot.RenderData.VirtualScreen.Height - 260, global::System.Math.Min(GuiRoot.RenderData.VirtualScreen.Width - 256, 550), 260);
 
             SpeakerBorder.Invalidate();
             _Output.Invalidate();

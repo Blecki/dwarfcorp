@@ -30,7 +30,7 @@ namespace DwarfCorp.Gui.Widgets
 
                 if (ItemSource != null)
                 {
-                    SizeToGrid = new Point(Columns, (int)System.Math.Ceiling((float)ItemSource.Count() / (float)Columns));
+                    SizeToGrid = new Point(Columns, (int)global::System.Math.Ceiling((float)ItemSource.Count() / (float)Columns));
                 }
 
                 // Calculate perfect size. Margins + item sizes + padding.

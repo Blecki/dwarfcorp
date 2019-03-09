@@ -19,7 +19,7 @@ namespace DwarfCorp.GameStates
 
             this.ItemSource = () =>
             {
-                System.IO.DirectoryInfo savedirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetSaveDirectory());
+                global::System.IO.DirectoryInfo savedirectory = global::System.IO.Directory.CreateDirectory(DwarfGame.GetSaveDirectory());
                 var dirs = savedirectory.EnumerateDirectories().ToList();
                 dirs.Sort((a, b) => b.LastWriteTime.CompareTo(a.LastWriteTime));
                 return dirs.ToList();
@@ -27,7 +27,7 @@ namespace DwarfCorp.GameStates
 
             this.ScreenshotSource = (path) =>
             {
-                var screenshots = System.IO.Directory.GetFiles(path, "*.png");
+                var screenshots = global::System.IO.Directory.GetFiles(path, "*.png");
                 if (screenshots.Length == 0)
                     return null;
                 else
@@ -55,9 +55,9 @@ namespace DwarfCorp.GameStates
                         return String.Format("Incompatible version {0}", saveGame.Metadata.Version);
                     }
                     var overworld = saveGame.Metadata.OverworldFile;
-                    if(!System.IO.Directory.Exists(DwarfGame.GetWorldDirectory() + Program.DirChar + overworld))
+                    if(!global::System.IO.Directory.Exists(DwarfGame.GetWorldDirectory() + Program.DirChar + overworld))
                     {
-                        return String.Format("Overworld \"{0}\" does not exist.", overworld);
+                        return string.Format("Overworld \"{0}\" does not exist.", overworld);
                     }
                     return "";
                 }

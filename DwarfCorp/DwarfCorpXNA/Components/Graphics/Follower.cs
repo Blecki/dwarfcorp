@@ -68,7 +68,7 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
 
             var body = Parent as Body;
-            System.Diagnostics.Debug.Assert(body != null);
+            global::System.Diagnostics.Debug.Assert(body != null);
 
             Vector3 parentCurrentPos = body.Position;
             if ((parentCurrentPos - TargetPos).Length() > FollowRadius)

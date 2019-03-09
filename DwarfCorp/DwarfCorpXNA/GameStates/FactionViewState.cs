@@ -579,7 +579,7 @@ namespace DwarfCorp.GameStates
                 });
                 titlebar.AddChild(new Widget()
                 {
-                    Text = System.String.Format("{0} ({1}){2}", faction.Value.Name, faction.Value.Race.Name, diplomacy.WasAtWar ? " -- At war!" : ""),
+                    Text = global::System.String.Format("{0} ({1}){2}", faction.Value.Name, faction.Value.Race.Name, diplomacy.WasAtWar ? " -- At war!" : ""),
                     TextHorizontalAlign = HorizontalAlign.Right,
                     TextVerticalAlign = VerticalAlign.Bottom,
                     Font = "font10",
@@ -679,7 +679,7 @@ namespace DwarfCorp.GameStates
                 }
                 entry.AddChild(new Widget()
                 {
-                    Text = System.String.Format("    Relationship: {0}{1}", diplomacy.GetCurrentRelationship(), faction.Value.ClaimsColony ? " (Claims this territory)" : ""),
+                    Text = global::System.String.Format("    Relationship: {0}{1}", diplomacy.GetCurrentRelationship(), faction.Value.ClaimsColony ? " (Claims this territory)" : ""),
                     TextHorizontalAlign = HorizontalAlign.Left,
                     TextVerticalAlign = VerticalAlign.Top,
                     Font = "font8",
@@ -688,7 +688,7 @@ namespace DwarfCorp.GameStates
                 });
                 entry.AddChild(new Widget()
                 {
-                    Text = System.String.Format("    GDP: {0}    Size: {1}    Distance to capital: {2} miles", faction.Value.TradeMoney, faction.Value.TerritorySize, (int)faction.Value.DistanceToCapital),
+                    Text = global::System.String.Format("    GDP: {0}    Size: {1}    Distance to capital: {2} miles", faction.Value.TradeMoney, faction.Value.TerritorySize, (int)faction.Value.DistanceToCapital),
                     TextHorizontalAlign = HorizontalAlign.Left,
                     TextVerticalAlign = VerticalAlign.Top,
                     Font = "font8",

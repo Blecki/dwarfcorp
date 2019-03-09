@@ -12,7 +12,7 @@ namespace DwarfCorp.Saving
     /// </summary>
     public class Nugget
     {
-        public System.Type AssociatedType;
+        public global::System.Type AssociatedType;
         public int Version;
 
         [JsonIgnore]
@@ -50,19 +50,19 @@ namespace DwarfCorp.Saving
 
     public class NuggetUpgrader
     {
-        public System.Type AssociatedType;
+        public global::System.Type AssociatedType;
         public int SourceVersion;
         public int DestinationVersion;
-        public System.Reflection.MethodInfo Method;
+        public global::System.Reflection.MethodInfo Method;
     }
 
     public class NuggetUpgraderAttribute : Attribute
     {
-        public System.Type AssociatedType;
+        public global::System.Type AssociatedType;
         public int SourceVersion;
         public int DestinationVersion;
 
-        public NuggetUpgraderAttribute(System.Type AssociatedType, int SourceVersion, int DestinationVersion)
+        public NuggetUpgraderAttribute(global::System.Type AssociatedType, int SourceVersion, int DestinationVersion)
         {
             this.AssociatedType = AssociatedType;
             this.SourceVersion = SourceVersion;
@@ -122,7 +122,7 @@ namespace DwarfCorp.Saving
 
             Upgraders = new List<NuggetUpgrader>();
 
-            foreach (var @class in System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
+            foreach (var @class in global::System.Reflection.Assembly.GetExecutingAssembly().GetTypes())
             {
                 foreach (var method in @class.GetMethods())
                 {

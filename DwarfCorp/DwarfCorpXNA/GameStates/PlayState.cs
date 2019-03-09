@@ -72,7 +72,7 @@ namespace DwarfCorp.GameStates
 
             public ToolbarItem(Gui.Widget Icon, Func<bool> Available)
             {
-                System.Diagnostics.Debug.Assert(Icon is Gui.Widgets.FramedIcon);
+                global::System.Diagnostics.Debug.Assert(Icon is Gui.Widgets.FramedIcon);
                 this.Icon = Icon as Gui.Widgets.FramedIcon;
                 this.Available = Available;
             }
@@ -435,7 +435,7 @@ namespace DwarfCorp.GameStates
                 statsDisplay.Lines.Add("** STATISTICS **");
                 statsDisplay.Lines.Add(String.Format("{0} ENTITIES", World.ComponentManager.RootComponent.Children.Count));
                 statsDisplay.Lines.Add(String.Format("{0} INSTANCES DRAWN", World.InstanceRenderer.InstancesDrawn));
-                statsDisplay.Lines.Add(String.Format("{0} MEMORY", BytesToString(System.GC.GetTotalMemory(false))));
+                statsDisplay.Lines.Add(string.Format("{0} MEMORY", BytesToString(global::System.GC.GetTotalMemory(false))));
                 statsDisplay.Invalidate();
 
                 // Todo: Employee AI debug display

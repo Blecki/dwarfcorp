@@ -99,7 +99,7 @@ namespace DwarfCorp
 
         protected bool Equals(Task other)
         {
-            if (System.Object.ReferenceEquals(other, null))
+            if (global::System.Object.ReferenceEquals(other, null))
             {
                 return false;
             }
@@ -123,7 +123,7 @@ namespace DwarfCorp
 
         public override bool Equals(object obj)
         {
-            return !System.Object.ReferenceEquals(obj, null) && obj is Task && string.Equals(Name, ((Task) (obj)).Name);
+            return !global::System.Object.ReferenceEquals(obj, null) && obj is Task && string.Equals(Name, ((Task) (obj)).Name);
         }
 
         public virtual Act CreateScript(Creature agent)

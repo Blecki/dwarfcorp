@@ -98,7 +98,7 @@ namespace DwarfCorp
         [ConsoleCommandHandler("STRINGS")]
         private static String DumpStrings(String arg)
         {
-            System.IO.File.WriteAllLines("strings.txt", Strings.Select(s => s.Key + ": " + s.Value));
+            global::System.IO.File.WriteAllLines("strings.txt", Strings.Select((KeyValuePair<string, string> s) => s.Key + ": " + s.Value));
             return "Dumped strings.";
         }
     }

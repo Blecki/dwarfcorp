@@ -135,8 +135,8 @@ namespace DwarfCorp.GameStates
         {
             WaitThread = new Thread(() =>
             {
-                System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-                System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+                global::System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                global::System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
                 runRoutine(routine);
             })
             { IsBackground = true };

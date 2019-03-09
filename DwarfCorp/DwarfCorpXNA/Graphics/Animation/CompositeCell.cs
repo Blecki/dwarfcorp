@@ -27,7 +27,7 @@ namespace DwarfCorp
         public static bool operator ==(CompositeCell a, CompositeCell b)
         {
             // If both are null, or both are same instance, return true.
-            if (System.Object.ReferenceEquals(a, b))
+            if (global::System.Object.ReferenceEquals(a, b))
                 return true;
 
             // If one is null, but not both, return false.

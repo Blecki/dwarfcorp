@@ -200,14 +200,14 @@ namespace DwarfCorp.GameStates
                         if (keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) ||
                             keyboard.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift))
                         {
-                            zoom = System.Math.Min((float)System.Math.Max(zoom + delta.Y * 0.001f, 0.1f), 1.5f);
+                            zoom = global::System.Math.Min((float)global::System.Math.Max(zoom + delta.Y * 0.001f, 0.1f), 1.5f);
                         }
                         else
                         {
                             phi += delta.Y * 0.01f;
                             theta -= delta.X * 0.01f;
-                            phi = System.Math.Max(phi, 0.5f);
-                            phi = System.Math.Min(phi, 1.5f);
+                            phi = global::System.Math.Max(phi, 0.5f);
+                            phi = global::System.Math.Min(phi, 1.5f);
                         }
                     }
                 },
@@ -217,7 +217,7 @@ namespace DwarfCorp.GameStates
                     {
                         return;
                     }
-                    zoom = System.Math.Min((float)System.Math.Max(args.ScrollValue > 0 ? zoom - 0.1f : zoom + 0.1f, 0.1f), 1.5f);
+                    zoom = global::System.Math.Min((float)global::System.Math.Max(args.ScrollValue > 0 ? zoom - 0.1f : zoom + 0.1f, 0.1f), 1.5f);
                 }
             });
         }
@@ -395,7 +395,7 @@ namespace DwarfCorp.GameStates
             if (worldCenter.Z < 0.9999f)
             {
                 float scale = GetIconScale(new Point((int)spawnCenter.X, (int)spawnCenter.Y));
-                Rectangle balloon = new Rectangle((int)(worldCenter.X - 8 * scale), (int)(worldCenter.Y + 5 * System.Math.Sin(DwarfTime.LastTime.TotalRealTime.TotalSeconds * 2.0f)) - (int)(8 * scale), (int)(16 * scale), (int)(16 * scale));
+                Rectangle balloon = new Rectangle((int)(worldCenter.X - 8 * scale), (int)(worldCenter.Y + 5 * global::System.Math.Sin(DwarfTime.LastTime.TotalRealTime.TotalSeconds * 2.0f)) - (int)(8 * scale), (int)(16 * scale), (int)(16 * scale));
                 var balloonMesh = Gui.Mesh.FittedSprite(MathFunctions.SnapRect(balloon, PreviewPanel.Rect), icon, 2);
                 Root.DrawMesh(balloonMesh, Root.RenderData.Texture);
 

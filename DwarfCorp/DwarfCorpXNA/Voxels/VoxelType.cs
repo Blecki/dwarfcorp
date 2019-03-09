@@ -41,7 +41,7 @@ namespace DwarfCorp
     /// Specifies a specific kind of voxel.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class VoxelType : System.IEquatable<VoxelType>
+    public class VoxelType : global::System.IEquatable<VoxelType>
     {
         public enum TransitionType
         {

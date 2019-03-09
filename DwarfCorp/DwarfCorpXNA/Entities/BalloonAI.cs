@@ -95,7 +95,7 @@ namespace DwarfCorp
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             var body = Parent as Body;
-            System.Diagnostics.Debug.Assert(body != null);
+            global::System.Diagnostics.Debug.Assert(body != null);
 
             Vector3 targetVelocity = TargetPosition - body.GlobalTransform.Translation;
 

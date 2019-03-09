@@ -29,7 +29,7 @@ namespace DwarfCorp
 
         public static int SizeOf<T>(T obj)
         {
-            return System.Runtime.InteropServices.Marshal.SizeOf(obj);
+            return global::System.Runtime.InteropServices.Marshal.SizeOf(obj);
         }
 
 

@@ -113,10 +113,10 @@ namespace DwarfCorp.GameStates
                         GuiRoot.ShowTooltip(GuiRoot.MousePosition, "Generator is not finished.");
                     else
                     {
-                        System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + System.IO.Path.DirectorySeparatorChar + Settings.Name);
+                        global::System.IO.DirectoryInfo worldDirectory = global::System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + global::System.IO.Path.DirectorySeparatorChar + Settings.Name);
                         NewOverworldFile file = new NewOverworldFile(Game.GraphicsDevice, Overworld.Map, Settings.Name, Settings.SeaLevel);
                         file.WriteFile(worldDirectory.FullName);
-                        file.SaveScreenshot(worldDirectory.FullName + System.IO.Path.DirectorySeparatorChar + "screenshot.png");
+                        file.SaveScreenshot(worldDirectory.FullName + global::System.IO.Path.DirectorySeparatorChar + "screenshot.png");
                         GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new Gui.Widgets.Popup
                         {
                             Text = "File saved."
@@ -234,8 +234,8 @@ namespace DwarfCorp.GameStates
                     float w = worldSize.X;
                     float h = worldSize.Z;
 
-                    float clickX = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.X, Settings.Width - w), 0);
-                    float clickY = System.Math.Max(System.Math.Min(Settings.WorldGenerationOrigin.Y, Settings.Height - h), 0);
+                    float clickX = global::System.Math.Max(global::System.Math.Min(Settings.WorldGenerationOrigin.X, Settings.Width - w), 0);
+                    float clickY = global::System.Math.Max(global::System.Math.Min(Settings.WorldGenerationOrigin.Y, Settings.Height - h), 0);
 
                     Settings.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
                 }
@@ -310,7 +310,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnLayout = (sender) =>
                 {
-                    var space = System.Math.Min(
+                    var space = global::System.Math.Min(
                         layerSetting.Rect.Width, StartButton.Rect.Top - layerSetting.Rect.Bottom - 4);
                     sender.Rect.Height = space;
                     sender.Rect.Width = space;

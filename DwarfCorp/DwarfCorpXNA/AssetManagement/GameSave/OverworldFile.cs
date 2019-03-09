@@ -79,7 +79,7 @@ namespace DwarfCorp
                 Texture2D toReturn = null;
                 Overworld.MapData[,] mapData = CreateMap();
                 toReturn = new Texture2D(device, width, height);
-                System.Threading.Mutex imageMutex = new System.Threading.Mutex();
+                global::System.Threading.Mutex imageMutex = new global::System.Threading.Mutex();
                 Color[] worldData = new Color[width * height];
                 Overworld.TextureFromHeightMap("Height", mapData, Overworld.ScalarFieldType.Height, width, height, imageMutex, worldData, toReturn, seaLevel);
 
@@ -150,8 +150,8 @@ namespace DwarfCorp
         public NewOverworldFile(GraphicsDevice device, Overworld.MapData[,] map, string name, float seaLevel)
         {
 
-            var worldFilePath = name + System.IO.Path.DirectorySeparatorChar + "world.png";
-            var metaFilePath = name + System.IO.Path.DirectorySeparatorChar + "meta.txt";
+            var worldFilePath = name + global::System.IO.Path.DirectorySeparatorChar + "world.png";
+            var metaFilePath = name + global::System.IO.Path.DirectorySeparatorChar + "meta.txt";
             if (File.Exists(worldFilePath) && File.Exists(metaFilePath))
             {
                 // Do nothing since overworlds should be saved precisely once.
@@ -172,7 +172,7 @@ namespace DwarfCorp
         {
             try
             {
-                var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
+                var metaFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "meta.txt";
                 var metadata = FileUtils.LoadJsonFromAbsolutePath<OverworldData>(metaFilePath);
 
                 return Program.CompatibleVersions.Contains(metadata.Version);
@@ -187,7 +187,7 @@ namespace DwarfCorp
         {
             try
             {
-                var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
+                var metaFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "meta.txt";
                 return FileUtils.LoadJsonFromAbsolutePath<OverworldData>(metaFilePath).Name;
             }
             catch (Exception)
@@ -198,8 +198,8 @@ namespace DwarfCorp
 
         public bool ReadFile(string filePath)
         {
-            var worldFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "world.png";
-            var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
+            var worldFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "world.png";
+            var metaFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "meta.txt";
 
             Data = FileUtils.LoadJsonFromAbsolutePath<OverworldData>(metaFilePath);
 
@@ -219,7 +219,7 @@ namespace DwarfCorp
         
         public void SaveScreenshot(string filename)
         {
-            using (var stream = new System.IO.FileStream(filename, System.IO.FileMode.Create))
+            using (var stream = new global::System.IO.FileStream(filename, global::System.IO.FileMode.Create))
             {
                 Data.Screenshot.SaveAsPng(stream, Data.Screenshot.Width, Data.Screenshot.Height);
             }
@@ -227,8 +227,8 @@ namespace DwarfCorp
 
         public bool WriteFile(string filePath)
         {
-            var worldFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "world.png";
-            var metaFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "meta.txt";
+            var worldFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "world.png";
+            var metaFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "meta.txt";
 
             if (File.Exists(worldFilePath) && File.Exists(metaFilePath))
             {
@@ -242,7 +242,7 @@ namespace DwarfCorp
 
             // Save Image
             var texture = Data.CreateSaveTexture(Device, Width, Height);
-            using (var stream = new System.IO.FileStream(worldFilePath, System.IO.FileMode.Create))
+            using (var stream = new global::System.IO.FileStream(worldFilePath, global::System.IO.FileMode.Create))
             {
                 texture.SaveAsPng(stream, Width, Height);
             }

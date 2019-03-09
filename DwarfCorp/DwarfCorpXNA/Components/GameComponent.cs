@@ -180,7 +180,7 @@ namespace DwarfCorp
 
         public GameComponent(ComponentManager Manager) : this()
         {
-            System.Diagnostics.Debug.Assert(Manager != null, "Manager cannot be null");
+            global::System.Diagnostics.Debug.Assert(Manager != null, "Manager cannot be null");
 
             Children = new List<GameComponent>();
             Tags = new List<string>();
@@ -311,7 +311,7 @@ namespace DwarfCorp
             }
             lock (Children)
             {
-                System.Diagnostics.Debug.Assert(child.Parent == null, "Child was already added to another component. Child is a " + child.GetType().Name);
+                global::System.Diagnostics.Debug.Assert(child.Parent == null, "Child was already added to another component. Child is a " + child.GetType().Name);
 
                 Children.Add(child);
 

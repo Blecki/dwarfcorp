@@ -7,10 +7,10 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.SteamPipes
 {
-    public class SteamSystem : UpdateSystem
+    public class SteamSystem : System
     {
         [UpdateSystemFactory]
-        private static UpdateSystem __factory(WorldManager World)
+        private static System __factory(WorldManager World)
         {
             return new SteamSystem();
         }

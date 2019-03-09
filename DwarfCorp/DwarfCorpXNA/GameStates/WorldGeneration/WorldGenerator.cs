@@ -239,8 +239,8 @@ namespace DwarfCorp.GameStates
                 Settings.WorldGenerationOrigin = new Vector2(Settings.Width / 2.0f, Settings.Height / 2.0f);
                 genThread = new Thread(unused =>
                 {
-                    System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-                    System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+                    global::System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                    global::System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
                     GenerateWorld(Seed, (int) Settings.Width, (int) Settings.Height);
                 })
                 {
@@ -931,8 +931,8 @@ namespace DwarfCorp.GameStates
             int w = (int)(Settings.ColonySize.X * VoxelConstants.ChunkSizeX / Settings.WorldScale);
             int h = (int)(Settings.ColonySize.Z * VoxelConstants.ChunkSizeZ / Settings.WorldScale);
             return new Vector2(
-                System.Math.Max(System.Math.Min(clickPoint.X - w/2, Settings.Width  - w - 1), 0),
-                System.Math.Max(System.Math.Min(clickPoint.Y - h/2, Settings.Height - h - 1), 0)
+                global::System.Math.Max(global::System.Math.Min(clickPoint.X - w/2, Settings.Width  - w - 1), 0),
+                global::System.Math.Max(global::System.Math.Min(clickPoint.Y - h/2, Settings.Height - h - 1), 0)
             );
         }
     }

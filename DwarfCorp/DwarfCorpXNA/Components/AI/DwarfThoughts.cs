@@ -70,7 +70,7 @@ namespace DwarfCorp
                     return null;
                 if (_cachedCreature == null)
                     _cachedCreature = Parent.EnumerateAll().OfType<Creature>().FirstOrDefault();
-                System.Diagnostics.Debug.Assert(_cachedCreature != null, "AI Could not find creature");
+                global::System.Diagnostics.Debug.Assert(_cachedCreature != null, "AI Could not find creature");
                 return _cachedCreature;
             }
         }

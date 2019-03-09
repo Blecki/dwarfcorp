@@ -82,7 +82,7 @@ namespace DwarfCorp
                 metaData.Source = Source;
 
                 if (dir.StartsWith(GameSettings.Default.SteamModDirectory))
-                    metaData.SteamID = ulong.Parse(System.IO.Path.GetFileName(dir));
+                    metaData.SteamID = ulong.Parse(global::System.IO.Path.GetFileName(dir));
                 return metaData;
             }
             catch (Exception e)

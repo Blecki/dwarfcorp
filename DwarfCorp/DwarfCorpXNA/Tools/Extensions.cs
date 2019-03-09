@@ -159,7 +159,7 @@ namespace DwarfCorp
         {
             if (hexString.StartsWith("#"))
                 hexString = hexString.Substring(1);
-            uint hex = uint.Parse(hexString, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+            uint hex = uint.Parse(hexString, global::System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture);
             Color color = Color.White;
             if (hexString.Length == 8)
             {

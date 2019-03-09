@@ -111,8 +111,8 @@ namespace DwarfCorp.GameStates
             GuiRoot.MousePointer = new Gui.MousePointer("mouse", 4, 0);
             var screen = GuiRoot.RenderData.VirtualScreen;
             float scale = 0.95f;
-            float newWidth = System.Math.Min(System.Math.Max(screen.Width*scale, 640), screen.Width*scale);
-            float newHeight = System.Math.Min(System.Math.Max(screen.Height*scale, 480), screen.Height*scale);
+            float newWidth = global::System.Math.Min(global::System.Math.Max(screen.Width * scale, 640), screen.Width* scale);
+            float newHeight = global::System.Math.Min(global::System.Math.Max(screen.Height * scale, 480), screen.Height* scale);
             Rectangle rect = new Rectangle((int)(screen.Width / 2 - newWidth / 2), (int)(screen.Height/2 - newHeight/2),(int)newWidth, (int)newHeight);
             // CONSTRUCT GUI HERE...
             MainPanel = GuiRoot.RootItem.AddChild(new Gui.Widget
@@ -871,8 +871,8 @@ namespace DwarfCorp.GameStates
             int bestScore = int.MaxValue;
             foreach (var mode in DisplayModes)
             {
-                int score = System.Math.Abs(mode.Value.Width - GameSettings.Default.ResolutionX) +
-                            System.Math.Abs(mode.Value.Height - GameSettings.Default.ResolutionY);
+                int score = global::System.Math.Abs(mode.Value.Width - GameSettings.Default.ResolutionX) +
+                            global::System.Math.Abs(mode.Value.Height - GameSettings.Default.ResolutionY);
 
                 if (score < bestScore)
                 {

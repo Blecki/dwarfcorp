@@ -55,7 +55,7 @@ namespace DwarfCorp
                         String resource, 
                         int numRelease, bool selfIlluminate) :
             base(Manager, "Mushroom", position, MathFunctions.Rand(-0.1f, 0.1f), new Vector3(1.0f, 1.0f, 1.0f), 
-                System.IO.Path.GetFileName(asset), 1.0f)
+                global::System.IO.Path.GetFileName(asset), 1.0f)
         {
 
             Inventory inventory = AddChild(new Inventory(Manager, "Inventory", BoundingBox.Extents(), LocalBoundingBoxOffset)) as Inventory;

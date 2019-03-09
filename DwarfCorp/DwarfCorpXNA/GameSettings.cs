@@ -285,7 +285,7 @@ namespace DwarfCorp
         /// Use this attribute to flag a float setting that can be tweaked during execution, but 
         /// should never be saved. (It does save, but will be reset everytime it's loaded.)
         /// </summary>
-        private class AutoResetFloatAttribute : System.Attribute
+        private class AutoResetFloatAttribute : global::System.Attribute
         {
             public float Value;
 

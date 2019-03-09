@@ -31,7 +31,7 @@ namespace DwarfCorp.Gui.Widgets
 
         public static Widget CreateCombo<T>(Gui.Root Root, String Name, String Tooltip, T[] Values, Action<T> Setter, Func<T> Getter)
         {
-            System.Diagnostics.Debug.Assert(Values.Length == LevelStrings.Length);
+            global::System.Diagnostics.Debug.Assert(Values.Length == LevelStrings.Length);
 
             var r = Root.ConstructWidget(new Widget
             {

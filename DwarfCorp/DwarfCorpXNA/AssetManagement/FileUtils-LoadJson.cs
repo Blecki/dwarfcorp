@@ -132,7 +132,7 @@ namespace DwarfCorp
             var result = new List<String>();
 
             foreach (var resolvedAssetPath in AssetManager.EnumerateMatchingPaths(AssetPath))
-                result.AddRange(System.IO.File.ReadAllLines(resolvedAssetPath));
+                result.AddRange(global::System.IO.File.ReadAllLines(resolvedAssetPath));
 
             return result;
         }

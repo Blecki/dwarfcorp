@@ -128,7 +128,7 @@ namespace DwarfCorp.Rail
             B.Normalize();
             float DotProduct = Vector2.Dot(A, B);
             DotProduct = MathHelper.Clamp(DotProduct, -1.0f, 1.0f);
-            float Angle = (float)System.Math.Acos(DotProduct);
+            float Angle = (float)global::System.Math.Acos(DotProduct);
             if (CrossZ(A, B) < 0) return -Angle;
             return Angle;
         }
@@ -580,7 +580,7 @@ namespace DwarfCorp.Rail
 
         private void AttachToNeighbors()
         {
-            System.Diagnostics.Debug.Assert(NeighborRails.Count == 0);
+            global::System.Diagnostics.Debug.Assert(NeighborRails.Count == 0);
 
             var myPiece = RailLibrary.GetRailPiece(Piece.RailPiece);
 

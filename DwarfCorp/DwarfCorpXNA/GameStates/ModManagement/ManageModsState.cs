@@ -74,8 +74,8 @@ namespace DwarfCorp.GameStates.ModManagement
 
             var screen = GuiRoot.RenderData.VirtualScreen;
             float scale = 0.9f;
-            float newWidth = System.Math.Min(System.Math.Max(screen.Width * scale, 640), screen.Width * scale);
-            float newHeight = System.Math.Min(System.Math.Max(screen.Height * scale, 480), screen.Height * scale);
+            float newWidth = global::System.Math.Min(global::System.Math.Max(screen.Width * scale, 640), screen.Width * scale);
+            float newHeight = global::System.Math.Min(global::System.Math.Max(screen.Height * scale, 480), screen.Height * scale);
             Rectangle rect = new Rectangle((int)(screen.Width / 2 - newWidth / 2), (int)(screen.Height / 2 - newHeight / 2), (int)newWidth, (int)newHeight);
 
             var main = GuiRoot.RootItem.AddChild(new Gui.Widget

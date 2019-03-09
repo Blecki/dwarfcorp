@@ -102,7 +102,7 @@ namespace DwarfCorp
 
             // Compile any code files in the enabled mods.
             foreach (var mod in DirectorySearchList)
-                if (System.IO.Directory.Exists(mod.Directory))
+                if (global::System.IO.Directory.Exists(mod.Directory))
                 {
                     var csFiles = Directory.EnumerateFiles(mod.Directory).Where(s => Path.GetExtension(s) == ".cs");
                     if (csFiles.Count() > 0)

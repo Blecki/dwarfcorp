@@ -107,7 +107,7 @@ namespace DwarfCorp.SteamPipes
 
         private void AttachToNeighbors()
         {
-            System.Diagnostics.Debug.Assert(NeighborPipes.Count == 0);
+            global::System.Diagnostics.Debug.Assert(NeighborPipes.Count == 0);
 
             foreach (var entity in Manager.World.EnumerateIntersectingObjects(this.BoundingBox.Expand(0.1f), CollisionType.Static))
             {

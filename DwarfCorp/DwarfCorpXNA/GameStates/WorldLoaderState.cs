@@ -29,7 +29,7 @@ namespace DwarfCorp.GameStates
 
             this.ItemSource = () =>
             {
-                System.IO.DirectoryInfo worldDirectory = System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory());
+                global::System.IO.DirectoryInfo worldDirectory = global::System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory());
                 var dirs = worldDirectory.EnumerateDirectories().ToList();
                 dirs.Sort((a, b) => b.LastWriteTime.CompareTo(a.LastWriteTime));
                 return dirs;
@@ -39,7 +39,7 @@ namespace DwarfCorp.GameStates
             {
                 try
                 {
-                    return AssetManager.LoadUnbuiltTextureFromAbsolutePath(path + System.IO.Path.DirectorySeparatorChar + "screenshot.png");
+                    return AssetManager.LoadUnbuiltTextureFromAbsolutePath(path + global::System.IO.Path.DirectorySeparatorChar + "screenshot.png");
                 }
                 catch (Exception exception)
                 {
@@ -59,7 +59,7 @@ namespace DwarfCorp.GameStates
                 var settings = new WorldGenerationSettings();
                 settings.Width = Overworld.Map.GetLength(1);
                 settings.Height = Overworld.Map.GetLength(0);
-                settings.Name = System.IO.Path.GetFileName(path);
+                settings.Name = global::System.IO.Path.GetFileName(path);
                 StateManager.PopState();
                 settings.Natives = Overworld.NativeFactions;
                 var genState = new WorldGeneratorState(Game, Game.StateManager, settings, false);

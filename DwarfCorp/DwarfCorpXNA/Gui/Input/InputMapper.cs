@@ -36,7 +36,7 @@ namespace DwarfCorp.Gui.Input
             public Gui.InputEventArgs Args;
         }
 
-        public System.Threading.Mutex QueueLock = new System.Threading.Mutex();
+        public global::System.Threading.Mutex QueueLock = new global::System.Threading.Mutex();
         public List<QueuedInput> Queued = new List<QueuedInput>();
 
         private bool CtrlDown = false;
@@ -68,26 +68,26 @@ namespace DwarfCorp.Gui.Input
             MessageFilter.AddMessageFilter((c) => HandleEvent(c));
         }
 
-        private System.Windows.Forms.Keys TranslateKey(IntPtr LParam, System.Windows.Forms.Keys Key)
+        private global::System.Windows.Forms.Keys TranslateKey(IntPtr LParam, global::System.Windows.Forms.Keys Key)
         {
             var extended = ((int)LParam & 0x01000000) != 0;
             var realCode = Key;
-            if (realCode == System.Windows.Forms.Keys.ControlKey)
-                realCode = extended ? System.Windows.Forms.Keys.RControlKey : System.Windows.Forms.Keys.LControlKey;
-            if (realCode == System.Windows.Forms.Keys.ShiftKey)
+            if (realCode == global::System.Windows.Forms.Keys.ControlKey)
+                realCode = extended ? global::System.Windows.Forms.Keys.RControlKey : global::System.Windows.Forms.Keys.LControlKey;
+            if (realCode == global::System.Windows.Forms.Keys.ShiftKey)
             {
                 //Grab the scan code from LParam... Who would have thought just telling 
                 // left and right shift apart would be such a PITA?
                 var scanCode = ((int)LParam & 0xff0000) >> 16;
-                if (scanCode == 42) return System.Windows.Forms.Keys.LShiftKey;
-                if (scanCode == 54) return System.Windows.Forms.Keys.RShiftKey;
+                if (scanCode == 42) return global::System.Windows.Forms.Keys.LShiftKey;
+                if (scanCode == 54) return global::System.Windows.Forms.Keys.RShiftKey;
                 throw new InvalidOperationException();
             }
             return realCode;
         }
 
         private bool _disableInput = false;
-        private bool HandleEvent(System.Windows.Forms.Message Msg)
+        private bool HandleEvent(global::System.Windows.Forms.Message Msg)
         {
             if (!GameStates.GameState.Game.IsActive)
             {
@@ -107,7 +107,7 @@ namespace DwarfCorp.Gui.Input
             {
                 case WindowMessage.WM_CHAR:
                     {
-                        var args = new System.Windows.Forms.KeyPressEventArgs((char)Msg.WParam);
+                        var args = new global::System.Windows.Forms.KeyPressEventArgs((char)Msg.WParam);
                         Queued.Add(new QueuedInput
                         {
                             Message = Gui.InputEvents.KeyPress,
@@ -124,18 +124,18 @@ namespace DwarfCorp.Gui.Input
                     }
                 case WindowMessage.WM_KEYDOWN:
                     {
-                        var args = new System.Windows.Forms.KeyEventArgs((System.Windows.Forms.Keys)Msg.WParam);
+                        var args = new global::System.Windows.Forms.KeyEventArgs((global::System.Windows.Forms.Keys)Msg.WParam);
                         
-                        if (args.KeyData == System.Windows.Forms.Keys.Alt)
+                        if (args.KeyData == global::System.Windows.Forms.Keys.Alt)
                             AltDown = true;
-                        if (args.KeyData == System.Windows.Forms.Keys.ControlKey)
+                        if (args.KeyData == global::System.Windows.Forms.Keys.ControlKey)
                             CtrlDown = true;
-                        if (args.KeyData == System.Windows.Forms.Keys.ShiftKey)
+                        if (args.KeyData == global::System.Windows.Forms.Keys.ShiftKey)
                             ShiftDown = true;
 
                         var realCode = TranslateKey(Msg.LParam, args.KeyCode);
 
-                        if (realCode == System.Windows.Forms.Keys.Oemtilde)
+                        if (realCode == global::System.Windows.Forms.Keys.Oemtilde)
                         {
                             ConsoleTogglePressed = true;
                         }
@@ -159,13 +159,13 @@ namespace DwarfCorp.Gui.Input
                     }
                 case WindowMessage.WM_KEYUP:
                     {
-                        var args = new System.Windows.Forms.KeyEventArgs((System.Windows.Forms.Keys)Msg.WParam);
+                        var args = new global::System.Windows.Forms.KeyEventArgs((global::System.Windows.Forms.Keys)Msg.WParam);
 
-                        if (args.KeyData == System.Windows.Forms.Keys.Alt)
+                        if (args.KeyData == global::System.Windows.Forms.Keys.Alt)
                             AltDown = false;
-                        if (args.KeyData == System.Windows.Forms.Keys.ControlKey)
+                        if (args.KeyData == global::System.Windows.Forms.Keys.ControlKey)
                             CtrlDown = false;
-                        if (args.KeyData == System.Windows.Forms.Keys.ShiftKey)
+                        if (args.KeyData == global::System.Windows.Forms.Keys.ShiftKey)
                             ShiftDown = false;
                         
                         var realCode = TranslateKey(Msg.LParam, args.KeyCode);

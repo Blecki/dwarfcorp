@@ -171,7 +171,7 @@ namespace DwarfCorp
                 if (pack != null)
                 {
                     pack.Contents.Resources.Clear();
-                    for (int i = currentGood; i < System.Math.Min(currentGood + goodsPerCreature, TradeGoods.Count); i++)
+                    for (int i = currentGood; i < global::System.Math.Min(currentGood + goodsPerCreature, TradeGoods.Count); i++)
                     {
                         pack.Contents.AddResource(TradeGoods[i]);
                     }
