@@ -32,6 +32,25 @@ namespace DwarfCorp.SteamPipes
         public override void Update(DwarfTime GameTime)
         {
             DwarfGame.GetConsoleTile("STEAM PRESSURE").Text = "STEAM OBJECTS " + Objects.Count;
+
+            foreach (var steamObject in Objects)
+            {
+                if (steamObject.Generator)
+                    steamObject.SteamPressure = steamObject.GeneratedSteam;
+                else
+                {
+                    var total = steamObject.SteamPressure;
+                    var count = 1.0f;
+                    foreach (var neighbor in steamObject.NeighborPipes.Select(id => steamObject.Manager.FindComponent(id)).OfType<SteamPoweredObject>())
+                    {
+                        total += neighbor.SteamPressure;
+                        count += 1;
+                    }
+
+                    steamObject.SteamPressure = total / count;
+                    steamObject.SteamPressure *= 0.995f;
+                }
+            }
         }
     }
 }

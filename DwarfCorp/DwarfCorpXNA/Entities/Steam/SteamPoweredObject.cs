@@ -9,11 +9,12 @@ namespace DwarfCorp.SteamPipes
 {
     public class SteamPoweredObject : Body
     {
-        private List<UInt32> NeighborPipes = new List<UInt32>();
+        [JsonIgnore]
+        public List<UInt32> NeighborPipes = new List<UInt32>();
 
-        [JsonProperty] float SteamPressure = 0.0f;
-
-        private float IncomingSteam = 0.0f;
+        public float SteamPressure = 0.0f;
+        public float GeneratedSteam = 0.0f;
+        public bool Generator = false;
         
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {
@@ -43,26 +44,12 @@ namespace DwarfCorp.SteamPipes
             CreateCosmeticChildren(Manager);
         }
 
-        public void AddSteam(float Steam)
-        {
-            IncomingSteam = Steam;
-        }
-
         public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         {
             if (HasMoved)
             {
                 DetachFromNeighbors();
                 AttachToNeighbors();
-            }
-
-            SteamPressure = IncomingSteam;
-
-            if (IncomingSteam > 0.0f)
-            {
-                foreach (var neighbor in NeighborPipes.Select(id => Manager.FindComponent(id)).OfType<SteamPoweredObject>())
-                    neighbor.AddSteam(IncomingSteam);
-                IncomingSteam = 0;
             }
 
             base.Update(Time, Chunks, Camera);

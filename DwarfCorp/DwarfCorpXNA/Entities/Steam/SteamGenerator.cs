@@ -63,7 +63,7 @@ namespace DwarfCorp.SteamPipes
             Tags.Add("Steam");
             CollisionType = CollisionType.Static;
 
-            AddChild(new SteamPoweredObject(manager));
+            AddChild(new SteamPoweredObject(manager) { GeneratedSteam = 1.0f, Generator = true });
 
             CreateCosmeticChildren(Manager);
         }
@@ -89,7 +89,6 @@ namespace DwarfCorp.SteamPipes
 
         public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         {
-            this.GetComponent<SteamPoweredObject>()?.AddSteam(1.0f);
             base.Update(Time, Chunks, Camera);
         }
     }
