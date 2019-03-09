@@ -31,7 +31,7 @@ namespace DwarfCorp.SteamPipes
 
         public override void Update(DwarfTime GameTime)
         {
-            DwarfGame.GetConsoleTile("STEAM PRESSURE").Text = "STEAM OBJECTS " + Objects.Count;
+            // Todo: Limit update rate.
 
             foreach (var steamObject in Objects)
             {
