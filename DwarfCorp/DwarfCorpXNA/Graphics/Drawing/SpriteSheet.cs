@@ -108,8 +108,16 @@ namespace DwarfCorp
             FrameHeight = frameHeight;
             AssetName = name;
             Texture2D tex = AssetManager.GetContentTexture(name);
-            Width = tex.Width;
-            Height = tex.Height;
+            if (tex != null)
+            {
+                Width = tex.Width;
+                Height = tex.Height;
+            }
+            else
+            {
+                Width = frameWidth;
+                Height = frameHeight;
+            }
         }
 
         public SpriteSheet(string name, int frameSize)
@@ -118,8 +126,16 @@ namespace DwarfCorp
             FrameHeight = frameSize;
             AssetName = name;
             Texture2D tex = AssetManager.GetContentTexture(name);
-            Width = tex.Width;
-            Height = tex.Height;
+            if (tex != null)
+            {
+                Width = tex.Width;
+                Height = tex.Height;
+            }
+            else
+            {
+                Width = frameSize;
+                Height = frameSize;
+            }
         }
 
         public override bool Equals(object obj)

@@ -42,7 +42,7 @@ using System.Linq;
 namespace DwarfCorp
 {
     [Serializable]
-    public class NewOverworldFile
+    public class NewOverworldFile : IDisposable
     {
         [Serializable]
         public class OverworldData
@@ -76,6 +76,7 @@ namespace DwarfCorp
 
             public Texture2D CreateTexture(GraphicsDevice device, int width, int height, float seaLevel)
             {
+                GameStates.GameState.Game.LogSentryBreadcrumb("Saving", String.Format("User saving an overworld with size {0} x {1}", width, height), SharpRaven.Data.BreadcrumbLevel.Info);
                 Texture2D toReturn = null;
                 Overworld.MapData[,] mapData = CreateMap();
                 toReturn = new Texture2D(device, width, height);
@@ -248,6 +249,11 @@ namespace DwarfCorp
             }
            
             return true;
+        }
+
+        public void Dispose()
+        {
+            this.Data.Screenshot.Dispose();
         }
     }
 }

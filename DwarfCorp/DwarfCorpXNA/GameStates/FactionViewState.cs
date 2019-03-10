@@ -517,7 +517,8 @@ namespace DwarfCorp.GameStates
                 Font = "font16",
                 OnClick = (sender, args) =>
                 {
-                    StateManager.PopState();
+                    if (StateManager.CurrentState == this)
+                        StateManager.PopState();
                 },
                 AutoLayout = AutoLayout.FloatBottomLeft,
             });

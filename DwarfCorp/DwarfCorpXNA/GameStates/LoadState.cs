@@ -116,12 +116,15 @@ namespace DwarfCorp.GameStates
             {
                 // Todo: Decouple gui/input from world.
                 // Copy important bits to PlayState - This is a hack; decouple world from gui and input instead.
-                PlayState.Input = Input;
-                StateManager.PopState(false);
-                StateManager.PushState(new PlayState(Game, StateManager, World));
+                if (StateManager.CurrentState == this)
+                {
+                    PlayState.Input = Input;
+                    StateManager.PopState(false);
+                    StateManager.PushState(new PlayState(Game, StateManager, World));
 
-                World.OnSetLoadingMessage = null;
-                Overworld.NativeFactions = World.Natives;
+                    World.OnSetLoadingMessage = null;
+                    Overworld.NativeFactions = World.Natives;
+                }
             }
             else
             {
@@ -157,22 +160,28 @@ namespace DwarfCorp.GameStates
                     DwarfTime.LastTime.IsPaused = false;
                     DwarfTime.LastTime.Speed = 1.0f;
                     World = null;
-                    
+                    Game.LogSentryBreadcrumb("Loading", "Loading failed.", SharpRaven.Data.BreadcrumbLevel.Error);
                     GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm()
                     {
                         CancelText = "",
                         Text = "Oh no! Loading failed :( This crash has been automatically reported to the developers: " + exceptionText,
                         OnClick = (s, a) =>
                         {
-                            StateManager.PopState();
-                            StateManager.ClearState();
-                            StateManager.PushState(new MainMenuState(Game, StateManager));
+                            if (StateManager.CurrentState == this)
+                            {
+                                StateManager.PopState();
+                                StateManager.ClearState();
+                                StateManager.PushState(new MainMenuState(Game, StateManager));
+                            }
                         },
                         OnClose = (s) =>
                         {
-                            StateManager.PopState();
-                            StateManager.ClearState();
-                            StateManager.PushState(new MainMenuState(Game, StateManager));
+                            if (StateManager.CurrentState == this)
+                            {
+                                StateManager.PopState();
+                                StateManager.ClearState();
+                                StateManager.PushState(new MainMenuState(Game, StateManager));
+                            }
                         },
                         Rect = GuiRoot.RenderData.VirtualScreen
                     });

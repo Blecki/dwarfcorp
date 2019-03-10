@@ -161,7 +161,8 @@ namespace DwarfCorp.GameStates
                 OnClick = (sender, args) =>
                 {
                     Generator.Abort();
-                    StateManager.PopState();
+                    if (StateManager.CurrentState == this)
+                        StateManager.PopState();
                 }
             });
 
@@ -175,11 +176,11 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnClick = (sender, args) =>
                 {
-                    GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", string.Format("User is starting a game with a {0} x {1} world.", Settings.Width, Settings.Height));
                     if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
                         GuiRoot.ShowTooltip(GuiRoot.MousePosition, "World generation is not finished.");
                     else
                     {
+                        GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", string.Format("User is starting a game with a {0} x {1} world.", Settings.Width, Settings.Height));
                         Overworld.Name = Settings.Name;
                         Settings.ExistingFile = null;
                         Settings.WorldOrigin = Settings.WorldGenerationOrigin;

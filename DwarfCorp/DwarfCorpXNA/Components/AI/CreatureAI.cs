@@ -1353,7 +1353,7 @@ namespace DwarfCorp
         // If true, this creature can fight the other creature. Otherwise, we want to flee it.
         public bool FightOrFlight(CreatureAI creature)
         {
-            if (IsDead || creature.IsDead)
+            if (IsDead || creature == null || creature.IsDead)
                 return false;
 
             float fear = 0;
@@ -1364,8 +1364,8 @@ namespace DwarfCorp
             }
 
             // If there are a lot of nearby threats vs allies, we are even more afraid.
-            if (Faction.Threats.Where(threat => !threat.IsDead).Sum(threat => (threat.AI.Position - Position).Length() < 6.0f ? 1 : 0) - 
-                Faction.Minions.Where(minion => !minion.IsDead).Sum(minion => (minion.Position - Position).Length() < 6.0f ? 1 : 0) > Creature.Stats.BuffedCon)
+            if (Faction.Threats.Where(threat => threat != null &&  threat.AI != null && !threat.IsDead).Sum(threat => (threat.AI.Position - Position).Length() < 6.0f ? 1 : 0) - 
+                Faction.Minions.Where(minion => minion != null && !minion.IsDead).Sum(minion => (minion.Position - Position).Length() < 6.0f ? 1 : 0) > Creature.Stats.BuffedCon)
             {
                 fear += 0.5f;
             }

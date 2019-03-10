@@ -44,6 +44,7 @@ namespace DwarfCorp.GameStates
                 Border = "border-button",
                 OnClick = (sender, args) =>
                 {
+                    if (StateManager.CurrentState == this)
                         StateManager.PopState();
                 },
                 AutoLayout = AutoLayout.FloatBottomRight
