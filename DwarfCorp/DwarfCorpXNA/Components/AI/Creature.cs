@@ -112,7 +112,7 @@ namespace DwarfCorp
             HasMeat = true;
             HasBones = true;
             HasCorpse = false;
-            Buffs = new List<Buff>();
+            Buffs = new List<StatusEffect>();
             IsOnGround = true;
             Faction = faction;
             PlanService = planService;
@@ -312,15 +312,15 @@ namespace DwarfCorp
 
 
         /// <summary> List of ongoing effects the creature is sustaining </summary>
-        public List<Buff> Buffs { get; set; }
-        private List<Buff> BuffsToAdd { get; set; }
+        public List<StatusEffect> Buffs { get; set; }
+        private List<StatusEffect> BuffsToAdd { get; set; }
  
         /// <summary> Adds the specified ongoing effect. </summary>
         /// <param name="buff"> The onging effect to add </param>
-        public void AddBuff(Buff buff)
+        public void AddBuff(StatusEffect buff)
         {
             if (BuffsToAdd == null)
-                BuffsToAdd = new List<Buff>();
+                BuffsToAdd = new List<StatusEffect>();
 
             BuffsToAdd.Add(buff);
         }
@@ -329,7 +329,7 @@ namespace DwarfCorp
         public void HandleBuffs(DwarfTime time)
         {
             if (BuffsToAdd == null)
-                BuffsToAdd = new List<Buff>();
+                BuffsToAdd = new List<StatusEffect>();
 
             foreach (var newBuff in BuffsToAdd)
             {
@@ -346,10 +346,10 @@ namespace DwarfCorp
 
             BuffsToAdd.Clear();
 
-            foreach (Buff buff in Buffs)
+            foreach (StatusEffect buff in Buffs)
                 buff.Update(time, this);
             
-            foreach (Buff buff in Buffs.FindAll(buff => !buff.IsInEffect))
+            foreach (StatusEffect buff in Buffs.FindAll(buff => !buff.IsInEffect))
             {
                 buff.OnEnd(this);
                 Buffs.Remove(buff);

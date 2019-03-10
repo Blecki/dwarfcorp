@@ -7,13 +7,13 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Buff
+    public class StatusEffect
     {
-        public Buff()
+        public StatusEffect()
         {
         }
 
-        public Buff(float time)
+        public StatusEffect(float time)
         {
             EffectTime = new Timer(time, true);
             ParticleTimer = new Timer(0.25f, false, Timer.TimerMode.Real);
@@ -67,9 +67,9 @@ namespace DwarfCorp
         }
 
         /// <summary> Creates a new Buff that is a deep copy of this one. </summary>
-        public virtual Buff Clone()
+        public virtual StatusEffect Clone()
         {
-            return new Buff
+            return new StatusEffect
             {
                 EffectTime = Timer.Clone(EffectTime),
                 Particles = Particles,

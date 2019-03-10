@@ -6,7 +6,7 @@ using System.Text;
 namespace DwarfCorp
 {
     /// <summary> Increases the creature's stats for a time </summary>
-    public class StatBuff : Buff
+    public class StatBuff : StatusEffect
     {
         public StatBuff()
         {
@@ -22,7 +22,7 @@ namespace DwarfCorp
         /// <summary> The amount to add to the creature's stats </summary>
         public StatAdjustment Buffs { get; set; }
 
-        public override Buff Clone()
+        public override StatusEffect Clone()
         {
             return new StatBuff
             {

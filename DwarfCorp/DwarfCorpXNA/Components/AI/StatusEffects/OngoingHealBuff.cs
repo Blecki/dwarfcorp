@@ -8,7 +8,7 @@ namespace DwarfCorp
     /// <summary>
     /// Heals the creature continuously over time.
     /// </summary>
-    public class OngoingHealBuff : Buff
+    public class OngoingHealBuff : StatusEffect
     {
         public OngoingHealBuff()
         {
@@ -39,7 +39,7 @@ namespace DwarfCorp
             base.Update(time, creature);
         }
 
-        public override Buff Clone()
+        public override StatusEffect Clone()
         {
             return new OngoingHealBuff
             {

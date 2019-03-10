@@ -12,7 +12,7 @@ namespace DwarfCorp
 {
     public class RadiusBuffer : RadiusSensor
     {
-        public Buff Buff = null;
+        public StatusEffect Buff = null;
 
         public override void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {

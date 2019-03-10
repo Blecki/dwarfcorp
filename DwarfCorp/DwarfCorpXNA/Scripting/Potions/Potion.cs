@@ -9,7 +9,7 @@ namespace DwarfCorp
     {
         public String Name;
         public string Description;
-        public Buff Effects;
+        public StatusEffect Effects;
         public List<Quantitiy<Resource.ResourceTags>> Ingredients;
         public int Icon;
         public Potion()

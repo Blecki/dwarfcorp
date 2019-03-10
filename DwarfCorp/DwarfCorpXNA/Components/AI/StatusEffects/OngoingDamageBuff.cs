@@ -8,7 +8,7 @@ namespace DwarfCorp
     /// <summary>
     /// Applies damage to the creature over time.
     /// </summary>
-    public class OngoingDamageBuff : Buff
+    public class OngoingDamageBuff : StatusEffect
     {
         /// <summary> The type of damage to apply </summary>
         public Creature.DamageType DamageType { get; set; }
@@ -22,7 +22,7 @@ namespace DwarfCorp
             base.Update(time, creature);
         }
 
-        public override Buff Clone()
+        public override StatusEffect Clone()
         {
             return new OngoingDamageBuff
             {

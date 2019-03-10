@@ -11,7 +11,7 @@ namespace DwarfCorp
     /// Special kind of buff that gets cured under certain conditions and does damage.
     /// May also spread.
     /// </summary>
-    public class Disease : Buff
+    public class Disease : StatusEffect
     {
         public enum HealType
         {
@@ -126,7 +126,7 @@ namespace DwarfCorp
             }
         }
 
-        public override Buff Clone()
+        public override StatusEffect Clone()
         {
             return new Disease()
             {

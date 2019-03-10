@@ -6,7 +6,7 @@ using System.Text;
 namespace DwarfCorp
 {
     ///<summary> A Buff which allows the creature to resist some amount of damage of a specific kind </summary>
-    public class DamageResistBuff : Buff
+    public class DamageResistBuff : StatusEffect
     {
         public DamageResistBuff()
         {
@@ -17,7 +17,7 @@ namespace DwarfCorp
         /// <summary> The amount of damage to ignore. </summary>
         public float Bonus { get; set; }
 
-        public override Buff Clone()
+        public override StatusEffect Clone()
         {
             return new DamageResistBuff
             {

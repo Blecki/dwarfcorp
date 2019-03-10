@@ -66,7 +66,7 @@ namespace DwarfCorp.Rail
             if (voxelUnder.IsEmpty) return false;
             var box = actualPosition.GetBoundingBox().Expand(-0.2f);
 
-            foreach (var entity in Player.World.EnumerateIntersectingObjects(actualPosition.GetBoundingBox().Expand(-0.2f), CollisionType.Static))
+            foreach (var entity in Player.World.EnumerateIntersectingObjects(actualPosition.GetBoundingBox(), CollisionType.Static))
             {
                 if ((entity as GameComponent).IsDead)
                     continue;

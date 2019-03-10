@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    public class CureDiseaseBuff : Buff
+    public class CureDiseaseBuff : StatusEffect
     {
 
         public CureDiseaseBuff()

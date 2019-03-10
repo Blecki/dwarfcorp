@@ -6,7 +6,7 @@ using System.Text;
 namespace DwarfCorp
 {
     /// <summary> Causes the creature to have a Thought for a specified time </summary>
-    public class ThoughtBuff : Buff
+    public class ThoughtBuff : StatusEffect
     {
         public ThoughtBuff()
         {
@@ -33,7 +33,7 @@ namespace DwarfCorp
             base.OnApply(creature);
         }
 
-        public override Buff Clone()
+        public override StatusEffect Clone()
         {
             return new ThoughtBuff
             {
