@@ -547,7 +547,7 @@ namespace DwarfCorp.Scripting.Adventure
                 Time = world.Time.CurrentDate
             });
 
-            politics.WasAtWar = true;
+            politics.IsAtWar = true;
             politics.HasMet = true;
 
             if (Party.Count == 0)
@@ -651,7 +651,7 @@ namespace DwarfCorp.Scripting.Adventure
                     Time = world.Time.CurrentDate
                 });
                 politics.HasMet = true;
-                politics.WasAtWar = false;
+                politics.IsAtWar = false;
                 LastEvent = String.Format("The adventuring party made peace with the {0} of {1}!", des.Race.Plural, des.Name);
                 Money = 0;
                 Resources.Clear();

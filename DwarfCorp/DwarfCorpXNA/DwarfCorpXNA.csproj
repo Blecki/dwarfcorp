@@ -349,6 +349,7 @@
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
     <Compile Include="Scripting\CompoundActs\RechargeObjectAct.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
+    <Compile Include="Scripting\Factions\Trading\MakePeaceYarnCommand.cs" />
     <Compile Include="Scripting\Factions\Trading\DeclareWarYarnCommand.cs" />
     <Compile Include="Scripting\Factions\Trading\PayTributeYarnCommand.cs" />
     <Compile Include="Scripting\Factions\Trading\RecallEnvoyYarnCommand.cs" />

@@ -63,7 +63,7 @@ namespace DwarfCorp
             public IEnumerable<PoliticalEvent> GetEvents() { return RecentEvents; }
 
             public bool HasMet { get; set; }
-            public bool WasAtWar { get; set; }
+            public bool IsAtWar { get; set; }
             public TimeSpan DistanceToCapital { get; set; }
 
             [JsonProperty]
@@ -83,7 +83,7 @@ namespace DwarfCorp
             public Politics(DateTime currentDate, TimeSpan distanceToCapital)
             {
                 DistanceToCapital = distanceToCapital;
-                WasAtWar = false;
+                IsAtWar = false;
                 HasMet = false;
                 RecentEvents = new List<PoliticalEvent>();
             }
@@ -249,7 +249,7 @@ namespace DwarfCorp
                                     Duration = forever,
                                     Time = Now
                                 });
-                                politics.WasAtWar = true;
+                                politics.IsAtWar = true;
                             }
                             if (!politics.HasEvent("you stole our land"))
                             {
@@ -424,7 +424,7 @@ namespace DwarfCorp
             natives.World.Tutorial("war");
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
             Politics politics = GetPolitics(natives, natives.World.PlayerFaction);
-            politics.WasAtWar = true;
+            politics.IsAtWar = true;
             List<CreatureAI> creatures = natives.World.MonsterSpawner.Spawn(natives.World.MonsterSpawner.GenerateSpawnEvent(natives, natives.World.PlayerFaction, MathFunctions.Random.Next(World.InitialEmbark.Difficulty) + 1, false));
             var party = new WarParty(natives.World.Time.CurrentDate)
             {
