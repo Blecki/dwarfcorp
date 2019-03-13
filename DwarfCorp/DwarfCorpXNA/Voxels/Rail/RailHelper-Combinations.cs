@@ -45,8 +45,11 @@ namespace DwarfCorp.Rail
         public static bool CanPlace(GameMaster Player, List<RailEntity> PreviewBodies)
         {
             for (var i = 0; i < PreviewBodies.Count; ++i)
+            {
+                PreviewBodies[i].PropogateTransforms();
                 if (!RailHelper.CanPlace(Player, PreviewBodies[i]))
                     return false;
+            }
             return true;
         }
 
@@ -66,7 +69,7 @@ namespace DwarfCorp.Rail
             if (voxelUnder.IsEmpty) return false;
             var box = actualPosition.GetBoundingBox().Expand(-0.2f);
 
-            foreach (var entity in Player.World.EnumerateIntersectingObjects(actualPosition.GetBoundingBox(), CollisionType.Static))
+            foreach (var entity in Player.World.EnumerateIntersectingObjects(box, CollisionType.Static))
             {
                 if ((entity as GameComponent).IsDead)
                     continue;
@@ -88,10 +91,8 @@ namespace DwarfCorp.Rail
                     return true;
                 }
 
-                if (Debugger.Switches.DrawBoundingBoxes)
-                {
-                    Drawer3D.DrawBox(box, Color.Yellow, 0.1f, false);
-                }
+                if (Debugger.Switches.DrawToolDebugInfo)
+                    Drawer3D.DrawBox(box, Color.Yellow, 0.2f, false);
 
                 Player.World.ShowTooltip(String.Format("Can't place {0}. Entity in the way: {1}", junctionPiece.RailPiece, entity.ToString()));
                 return false;

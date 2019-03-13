@@ -51,6 +51,7 @@ namespace DwarfCorp.Rail
         private bool RightPressed = false;
         private bool LeftPressed = false;
         public bool GodModeSwitch = false;
+        public bool CanPlace = false;
 
         private static CraftItem RailCraftItem = new CraftItem
         {
@@ -80,7 +81,8 @@ namespace DwarfCorp.Rail
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
             if (button == InputManager.MouseButton.Left)
-                if (RailHelper.CanPlace(Player, PreviewBodies))
+                //if (RailHelper.CanPlace(Player, PreviewBodies))
+                if (CanPlace)
                 {
                     RailHelper.Place(Player, PreviewBodies, GodModeSwitch);
                     PreviewBodies.Clear();
@@ -123,6 +125,8 @@ namespace DwarfCorp.Rail
 
         public override void Update(DwarfGame game, DwarfTime time)
         {
+            CanPlace = false;
+
             if (Player.IsCameraRotationModeActive())
             {
                 Player.VoxSelector.Enabled = false;
@@ -164,13 +168,17 @@ namespace DwarfCorp.Rail
                 PreviewBodies[i].UpdatePiece(Pattern.Pieces[i], Player.VoxSelector.VoxelUnderMouse);
 
             if (RailHelper.CanPlace(Player, PreviewBodies))
-                    tint = GameSettings.Default.Colors.GetColor("Positive", Color.Green);
-                else
-                    tint = GameSettings.Default.Colors.GetColor("Negative", Color.Red);
+            {
+                CanPlace = true;
+                tint = GameSettings.Default.Colors.GetColor("Positive", Color.Green);
+            }
+            else
+                tint = GameSettings.Default.Colors.GetColor("Negative", Color.Red);
         
             foreach (var body in PreviewBodies)
                 body.SetVertexColorRecursive(tint);
         }
+
         public override void Render2D(DwarfGame game, DwarfTime time)
         {
         }

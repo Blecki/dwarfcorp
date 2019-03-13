@@ -286,7 +286,7 @@ namespace DwarfCorp.Rail
             if (Debugger.Switches.DrawRailNetwork)
             {
                 //Drawer3D.DrawBox(GetContainingVoxel().GetBoundingBox(), Color.White, 0.01f, true);
-                Drawer3D.DrawLine(GetContainingVoxel().GetBoundingBox().Center(), GlobalTransform.Translation, Color.White, 0.01f);
+                //Drawer3D.DrawLine(GetContainingVoxel().GetBoundingBox().Center(), GlobalTransform.Translation, Color.White, 0.01f);
                 var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
                 var piece = Rail.RailLibrary.GetRailPiece(Piece.RailPiece);
 
@@ -301,21 +301,16 @@ namespace DwarfCorp.Rail
                         Color.Brown, 0.1f);
 
 
-                foreach (var neighborConnection in NeighborRails)
-                {
-                    var neighbor = Manager.FindComponent(neighborConnection.NeighborID);
-                    if (neighbor == null)
-                        Drawer3D.DrawLine(Position, Position + Vector3.UnitY, Color.CornflowerBlue, 0.1f);
-                    else
-                        Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.5f, 0.0f), (neighbor as Body).Position + new Vector3(0.0f, 0.5f, 0.0f), Color.Teal, 0.1f);
-                }
+                //foreach (var neighborConnection in NeighborRails)
+                //{
+                //    var neighbor = Manager.FindComponent(neighborConnection.NeighborID);
+                //    if (neighbor == null)
+                //        Drawer3D.DrawLine(Position, Position + Vector3.UnitY, Color.CornflowerBlue, 0.1f);
+                //    else
+                //        Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.5f, 0.0f), (neighbor as Body).Position + new Vector3(0.0f, 0.5f, 0.0f), Color.Teal, 0.1f);
+                //}
 
-                foreach (var compassConnection in piece.CompassConnections)
-                {
-                    var localConnection = compassConnection.RotateToPiece(Piece.Orientation);
-                    Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.7f, 0.0f), Position + Vector3.Transform(new Vector3(0.0f, 0.7f, 0.5f), Matrix.CreateRotationY(((float)Math.PI / 4) * (float)localConnection.A)), Color.DarkBlue, 0.1f);
-                    Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.7f, 0.0f), Position + Vector3.Transform(new Vector3(0.0f, 0.7f, 0.5f), Matrix.CreateRotationY(((float)Math.PI / 4) * (float)localConnection.B)), Color.DarkBlue, 0.1f);
-                }
+                
             }
 
             if (!IsVisible)

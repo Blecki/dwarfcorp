@@ -63,6 +63,24 @@ namespace DwarfCorp.Rail
                 Result = Combination.Result,
                 ResultRelativeOrientation = PieceOrientation.North
             };
+
+            //yield return new Combination
+            //{
+            //    BasePiece = Combination.BasePiece,
+            //    OverlayPiece = Combination.Result,
+            //    OverlayRelativeOrientation = Combination.ResultRelativeOrientation,
+            //    Result = Combination.Result,
+            //    ResultRelativeOrientation = Combination.ResultRelativeOrientation
+            //};
+
+            //yield return new Combination
+            //{
+            //    BasePiece = Combination.OverlayPiece,
+            //    OverlayPiece = Combination.Result,
+            //    OverlayRelativeOrientation = OrientationHelper.Relative(Combination.OverlayRelativeOrientation, Combination.ResultRelativeOrientation),
+            //    Result = Combination.Result,
+            //    ResultRelativeOrientation = OrientationHelper.Relative(Combination.OverlayRelativeOrientation, Combination.ResultRelativeOrientation)
+            //};
         }
 
         private void ParseConfigurationLine(String Line)
