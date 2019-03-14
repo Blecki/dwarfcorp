@@ -176,7 +176,8 @@ namespace DwarfCorp.Scripting.Adventure
         private void ReturnCreature(CreatureAI creature)
         {
             var owner = creature.World.Factions.Factions[OwnerFaction];
-            owner.Minions.Add(creature);
+            if (!owner.Minions.Contains(creature))
+                owner.Minions.Add(creature);
             creature.CancelCurrentTask();
             creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Active, true);
             creature.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
@@ -184,9 +185,9 @@ namespace DwarfCorp.Scripting.Adventure
 
         private void DestroyCreature(CreatureAI creature)
         {
-            if (!creature.Active)
+            //if (!creature.Active)
             {
-                return;
+            //    return;
             }
 
             var owner = creature.World.Factions.Factions[OwnerFaction];
@@ -397,12 +398,12 @@ namespace DwarfCorp.Scripting.Adventure
                                     creature.AssignTask(new GoToZoneTask(balloonPorts.First()) { Priority = Task.PriorityType.High, Wait = true });
                                 }
                                 allOnZone = false;
-                                break;
+                                //break;
                             }
                             else
                             {
-                                DestroyCreature(creature);
-                                allOnZone = false;
+                                //DestroyCreature(creature);
+                                //allOnZone = false;
                             }
                         }
 
