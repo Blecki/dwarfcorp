@@ -67,13 +67,19 @@ namespace DwarfCorp.GameStates
 
             if (IntroTimer.HasTriggered)
             {
-                StateManager.PopState();
-                StateManager.PushState(new MainMenuState(Game, StateManager));
+                if (StateManager.CurrentState == this)
+                {
+                    StateManager.PopState();
+                    StateManager.PushState(new MainMenuState(Game, StateManager));
+                }
             }
             else if (Keyboard.GetState().GetPressedKeys().Length > 0)
             {
-                StateManager.PopState();
-                StateManager.PushState(new MainMenuState(Game, StateManager));
+                if (StateManager.CurrentState == this)
+                {
+                    StateManager.PopState();
+                    StateManager.PushState(new MainMenuState(Game, StateManager));
+                }
             }
 
             base.Update(gameTime);

@@ -728,6 +728,9 @@ namespace DwarfCorp
                     for (; y >= 0; y--)
                     {
                         var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(x, y, z));
+                        if (!v.IsValid)
+                            continue;
+
                         v.Sunlight = true;
                         if (v.Type.ID != 0 && !v.Type.IsTransparent)
                             break;
@@ -736,6 +739,8 @@ namespace DwarfCorp
                     for (y -= 1; y >= 0; y--)
                     {
                         var v = new VoxelHandle(Chunk, new LocalVoxelCoordinate(x, y, z));
+                        if (!v.IsValid)
+                            continue;
                         v.Sunlight = false;
                     }
                 }

@@ -144,7 +144,6 @@ namespace DwarfCorp.GameStates
             if (CurrentState != null && CurrentState.EnableScreensaver)
                 ScreenSaver.Render(Game.GraphicsDevice, time);
 
-            List<GameState> removals = new List<GameState>();
             for(int i = StateStack.Count - 1; i >= 0; i--)
             {
                 GameState state = StateStack[i];
@@ -170,11 +169,6 @@ namespace DwarfCorp.GameStates
                         state.RenderUnitialized(time);
                     }
                 }
-            }
-
-            foreach (var state in removals)
-            {
-                StateStack.Remove(state);
             }
         }
     }

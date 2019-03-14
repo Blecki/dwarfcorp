@@ -602,6 +602,7 @@ namespace DwarfCorp
             try
             {
 #endif
+            StateManager.Game.LogSentryBreadcrumb("Loading", "LoadContent was called.", BreadcrumbLevel.Info);
             AssetManager.Initialize(Content, GraphicsDevice, GameSettings.Default);
 
             //var palette = TextureTool.ExtractPaletteFromDirectoryRecursive("Entities/Dwarf");
@@ -646,6 +647,7 @@ namespace DwarfCorp
 
                 if (StateManager.StateStack.Count == 0)
                 {
+                    StateManager.Game.LogSentryBreadcrumb("GameState", "There was nothing in the state stack. Starting over.");
                     if (GameSettings.Default.DisplayIntro)
                     {
                         StateManager.PushState(new IntroState(this, StateManager));
@@ -899,7 +901,8 @@ namespace DwarfCorp
             }) as EventLogViewer;
             Viewer.CloseButton.OnClick = (sender, args) =>
             {
-                StateManager.PopState();
+                if (StateManager.CurrentState == this)
+                    StateManager.PopState();
             };
             // Must be true or Render will not be called.
             IsInitialized = true;
@@ -943,7 +946,8 @@ namespace DwarfCorp
                     // Pass event to game...
                     if (@event.Message == InputEvents.KeyUp && @event.Args.KeyValue == (int)Microsoft.Xna.Framework.Input.Keys.Escape)
                     {
-                        StateManager.PopState();
+                        if (StateManager.CurrentState == this)
+                            StateManager.PopState();
                     }
                 }
             }

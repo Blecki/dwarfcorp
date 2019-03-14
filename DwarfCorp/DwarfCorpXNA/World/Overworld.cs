@@ -256,6 +256,7 @@ namespace DwarfCorp
 
         public static void Cleanup()
         {
+            GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "Cleanup was called.");
             NativeFactions = null;
             Map = null;
             Volcanoes = null;

@@ -82,6 +82,10 @@ namespace DwarfCorp.GameStates
 
         public void CreateMesh(GraphicsDevice Device)
         {
+            if (Overworld.Map == null)
+            {
+                return;
+            }
            int resolution = 4;
            int width = Overworld.Map.GetLength(0);
            int height = Overworld.Map.GetLength(1);

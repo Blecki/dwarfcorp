@@ -476,7 +476,6 @@ namespace DwarfCorp.Gui.Widgets
                         idx = 0;
                     else
                         idx--;
-                   
                     Employee = Employee.Faction.Minions[Math.Abs(idx) % Employee.Faction.Minions.Count];
                     Employee.World.Master.SelectedMinions = new List<CreatureAI>() { Employee };
                 }
@@ -501,7 +500,6 @@ namespace DwarfCorp.Gui.Widgets
                         idx = 0;
                     else
                         idx++;
-
                     Employee = Employee.Faction.Minions[idx % Employee.Faction.Minions.Count];
                     Employee.World.Master.SelectedMinions = new List<CreatureAI>() { Employee };
                 }
