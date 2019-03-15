@@ -123,22 +123,10 @@ namespace DwarfCorp
 
         public List<MotionAnimation> AnimationQueue = new List<MotionAnimation>();
 
-        public bool HasMoved
-        {
-            get { return hasMoved; }
-            set
-            {
-                hasMoved = value;
-
-               // if (value)
-               //     foreach (var child in EnumerateChildren().OfType<Body>())
-               //         child.HasMoved = true;
-            }
-        }
+        public bool HasMoved = true;
 
         protected Matrix localTransform = Matrix.Identity;
         protected Matrix globalTransform = Matrix.Identity;
-        private bool hasMoved = true;
 
         public Body()
         {
@@ -200,7 +188,7 @@ namespace DwarfCorp
             {
                 UpdateTransform();
                 for (var i = 0; i < Children.Count; ++i)
-                    if (Children[i] is Body child) child.hasMoved = true;
+                    if (Children[i] is Body child) child.HasMoved = true;
             }
         }
         
@@ -244,7 +232,7 @@ namespace DwarfCorp
                 LastBounds = BoundingBox;
             }
 
-            hasMoved = false;
+            HasMoved = false;
 
             PerformanceMonitor.PopFrame();
         }

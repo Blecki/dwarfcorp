@@ -41,10 +41,10 @@ namespace DwarfCorp.SteamPipes
             return Orientation.North;
         }
 
-        public static Orientation DetectOrientationFromTransform(Matrix Transform)
+        public static Orientation DetectOrientationFromRotation(Quaternion Rotation)
         {
             var unitX = new Vector3(1.0f, 0.0f, 0.0f); // Don't think unit X actually corrosponds to north in the actual game but as long as it's consistent, wgaf.
-            return DetectOrientationFromVector(Vector3.Normalize(Vector3.Transform(unitX, Transform)));
+            return DetectOrientationFromVector(Vector3.Normalize(Vector3.Transform(unitX, Rotation)));
         }
     }
 }

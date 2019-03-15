@@ -52,16 +52,19 @@ namespace DwarfCorp.SteamPipes
         }
 
         public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
-        {
-            base.Update(Time, Chunks, Camera);
-
+        {        
             if (HasMoved)
             {
-                Orientation = OrientationHelper.DetectOrientationFromTransform(GlobalTransform);
+                PropogateTransforms();
+                if (GlobalTransform.Decompose(out Vector3 scale, out Quaternion rotation, out Vector3 translation))
+                Orientation = OrientationHelper.DetectOrientationFromRotation(rotation);
+
                 DetachFromNeighbors();
                 AttachToNeighbors();
                 Primitive = null;
             }
+
+            base.Update(Time, Chunks, Camera);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
