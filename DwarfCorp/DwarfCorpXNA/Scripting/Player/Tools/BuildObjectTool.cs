@@ -299,7 +299,7 @@ namespace DwarfCorp
 
         private void HandleOrientation()
         {
-            // Don't attempt any control if the user is trying to type intoa focus item.
+            // Don't attempt any control if the user is trying to type into a focus item.
             if (World.Gui.FocusItem == null || World.Gui.FocusItem.IsAnyParentTransparent() || World.Gui.FocusItem.IsAnyParentHidden())
             {
                 KeyboardState state = Keyboard.GetState();
@@ -321,7 +321,6 @@ namespace DwarfCorp
                     Orientation -= (float)(Math.PI / 2);
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_confirm_selection, PreviewBody.Position, 0.5f);
                 }
-
 
                 LeftPressed = leftKey;
                 RightPressed = rightKey;

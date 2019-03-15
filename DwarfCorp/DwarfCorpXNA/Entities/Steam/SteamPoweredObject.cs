@@ -16,13 +16,13 @@ namespace DwarfCorp.SteamPipes
         public float GeneratedSteam = 0.0f;
         public bool Generator = false;
         public bool DrawPipes = true;
+        public Orientation Orientation = Orientation.North;
 
         private RawPrimitive Primitive;
         private Color VertexColor = Color.White;
         private Color LightRamp = Color.White;
         private SpriteSheet Sheet;
-        private Point Frame;
-
+        
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {
             switch (messageToReceive.Type)
@@ -53,14 +53,15 @@ namespace DwarfCorp.SteamPipes
 
         public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         {
+            base.Update(Time, Chunks, Camera);
+
             if (HasMoved)
             {
+                Orientation = OrientationHelper.DetectOrientationFromTransform(GlobalTransform);
                 DetachFromNeighbors();
                 AttachToNeighbors();
                 Primitive = null;
             }
-
-            base.Update(Time, Chunks, Camera);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
@@ -109,9 +110,12 @@ namespace DwarfCorp.SteamPipes
                         Drawer3D.DrawLine(Position, Position + Vector3.UnitY, Color.CornflowerBlue, 0.1f);
                     else
                         Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.5f, 0.0f), (neighbor as Body).Position + new Vector3(0.0f, 0.5f, 0.0f), new Color(SteamPressure, 0.0f, 0.0f, 1.0f), 0.1f);
+
+                   
                 }
 
                 Drawer3D.DrawBox(GetBoundingBox(), Color.Red, 0.01f, false);
+                Drawer3D.DrawLine(Position, Position + Vector3.Transform(new Vector3(1, 0, 0), Matrix.CreateRotationY((float)Math.PI / 2 * (float)Orientation)), new Color(1.0f, 1.0f, 1.0f), 0.1f);
             }
 
             if (!DrawPipes) return;

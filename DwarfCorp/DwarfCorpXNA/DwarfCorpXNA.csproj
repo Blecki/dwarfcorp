@@ -214,6 +214,8 @@
     <Compile Include="Entities\Monsters\Kobold\KoboldClass.cs" />
     <Compile Include="Entities\Monsters\Golem\SnowGolem.cs" />
     <Compile Include="Entities\Monsters\Troll\TrollClass.cs" />
+    <Compile Include="Entities\Steam\OrientationHelper.cs" />
+    <Compile Include="Entities\Steam\Orientation.cs" />
     <Compile Include="Entities\Steam\SteamPoweredBuildBuff.cs" />
     <Compile Include="Entities\Steam\SteamGenerator.cs" />
     <Compile Include="Entities\Steam\SteamSystem.cs" />
