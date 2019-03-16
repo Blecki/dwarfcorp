@@ -82,7 +82,7 @@ namespace DwarfCorp.Gui.Widgets
                     return;
                 }
 
-                var menuCenter = World.Camera.Project(Body.Position);
+                var menuCenter = World.Camera.Project(Body.Position) / Root.RenderData.ScaleRatio;
                 Rect = new Rectangle((int)menuCenter.X, (int)menuCenter.Y, Width, Commands.Count * 16 + 32);
                 Layout();
                 Invalidate();
@@ -164,7 +164,7 @@ namespace DwarfCorp.Gui.Widgets
                     return;
                 }
 
-                var menuCenter = World.Camera.Project(Body.Position);
+                var menuCenter = World.Camera.Project(Body.Position) / Root.RenderData.ScaleRatio;
                 Rect = new Rectangle((int)menuCenter.X, (int)menuCenter.Y, Commands.Count * 16 + 32, Height);
                 Layout();
                 Invalidate();

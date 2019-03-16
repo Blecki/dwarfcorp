@@ -10,7 +10,7 @@ namespace DwarfCorp.Gui.Widgets
     public class IconTray : Widget
     {
         public Point ItemSize = new Point(40, 40);
-        public Point ItemSpacing = new Point(10, 2);
+        public Point ItemSpacing = new Point(2, 2);
         public Point SizeToGrid = new Point(1, 1);
         public int WidthLimit = 512;
         public int IconOffset = 0;
@@ -116,9 +116,7 @@ namespace DwarfCorp.Gui.Widgets
             var rect = GetDrawableInterior();
 
             foreach (var child in EnumerateChildren())
-            {
                 child.Hidden = true;
-            }
 
             var totalItemWidth = (IconCount * (ItemSize.X + ItemSpacing.X)) - ItemSpacing.X;
 
@@ -127,7 +125,6 @@ namespace DwarfCorp.Gui.Widgets
             if (totalItemWidth > rect.Width)
             {
                 // Need to paginate.
-                var itemsThatFit = (rect.Width / ItemSize.X) - 1;
                 var pos = new Point(rect.X, rect.Y);
 
                 // Always add Icon 0 first.
@@ -149,7 +146,6 @@ namespace DwarfCorp.Gui.Widgets
                 (GetChild(0) as FramedIcon).DrawHotkey = HotKeys;
                 ++nextHotkey;
 
-
                 (GetChild(1) as FramedIcon).Enabled = false;
 
                 for (var c = IconOffset + 1; c < IconCount; ++c)
@@ -163,9 +159,10 @@ namespace DwarfCorp.Gui.Widgets
                     (child as FramedIcon).DrawHotkey = HotKeys;
                     ++nextHotkey;
 
-                    if (pos.X + ItemSize.X + ItemSpacing.X >= rect.Right)
+                    if (pos.X + ItemSize.X + ItemSpacing.X + ItemSize.X + ItemSpacing.X >= rect.Right)
                     {
-                        (GetChild(1) as FramedIcon).Enabled = true;
+                        if (c < IconCount - 1)
+                            (GetChild(1) as FramedIcon).Enabled = true;
                         break;
                     }
 
@@ -173,7 +170,8 @@ namespace DwarfCorp.Gui.Widgets
 
                 // Add more button.
                 GetChild(1).Hidden = false;
-                GetChild(1).Rect = new Rectangle(Rect.Right - ItemSize.X, Rect.Y, ItemSize.X, ItemSize.Y);
+                GetChild(1).Rect = new Rectangle(pos.X, Rect.Y, ItemSize.X, ItemSize.Y);
+                GetChild(1).Layout();
                 (GetChild(1) as FramedIcon).HotkeyValue = FlatToolTray.Tray.Hotkeys[nextHotkey];
                 (GetChild(1) as FramedIcon).DrawHotkey = HotKeys;
                 ++nextHotkey;

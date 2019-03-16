@@ -901,7 +901,7 @@ namespace DwarfCorp.GameStates
             {
                 Transparent = true,
                 AutoLayout = AutoLayout.DockLeft,
-                MinimumSize = new Point(21, 0)
+                MinimumSize = new Point(8, 0)
             });
 
             #endregion
@@ -967,7 +967,7 @@ namespace DwarfCorp.GameStates
             {
                 Transparent = true,
                 AutoLayout = AutoLayout.DockRight,
-                MinimumSize = new Point(21, 0)
+                MinimumSize = new Point(8, 0)
             });
 
             #endregion
@@ -1155,7 +1155,7 @@ namespace DwarfCorp.GameStates
             {
                 Text = "X-ray",
                 Tooltip = "When checked, enables XRAY view.",
-                MaximumSize = new Point(32, 16),
+                MaximumSize = new Point(64, 16),
                 TextColor = Color.White.ToVector4(),
                 Tag = "xray",
                 OnCheckStateChange = (sender) =>
