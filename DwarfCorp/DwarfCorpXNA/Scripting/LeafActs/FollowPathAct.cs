@@ -321,7 +321,7 @@ namespace DwarfCorp
                 case MoveType.RideVehicle:
                     SetupMinecart();
                     Creature.CurrentCharacterMode = CharacterMode.Minecart;
-                    var rail = action.SourceState.VehicleState.Rail;
+                    var rail = action.SourceState.Rail;
                     if (rail == null)
                     {
                         if (hasNextAction)

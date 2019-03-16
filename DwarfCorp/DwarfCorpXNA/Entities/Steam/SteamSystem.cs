@@ -35,6 +35,17 @@ namespace DwarfCorp.SteamPipes
 
             foreach (var steamObject in Objects)
             {
+                if (steamObject.HasMoved)
+                {
+                    steamObject.PropogateTransforms();
+                    if (steamObject.GlobalTransform.Decompose(out Vector3 scale, out Quaternion rotation, out Vector3 translation))
+                        steamObject.Orientation = OrientationHelper.DetectOrientationFromRotation(rotation);
+
+                    steamObject.DetachFromNeighbors();
+                    steamObject.AttachToNeighbors();
+                    steamObject.Primitive = null;
+                }
+
                 if (steamObject.Generator)
                     steamObject.SteamPressure = steamObject.GeneratedSteam;
                 else
@@ -43,8 +54,11 @@ namespace DwarfCorp.SteamPipes
                     var count = 1.0f;
                     foreach (var neighbor in steamObject.NeighborPipes.Select(id => steamObject.Manager.FindComponent(id)).OfType<SteamPoweredObject>())
                     {
-                        total += neighbor.SteamPressure;
-                        count += 1;
+                        if (neighbor.CanSendSteam(steamObject) && steamObject.CanReceiveSteam(neighbor))
+                        {
+                            total += neighbor.SteamPressure;
+                            count += 1;
+                        }
                     }
 
                     steamObject.SteamPressure = total / count;

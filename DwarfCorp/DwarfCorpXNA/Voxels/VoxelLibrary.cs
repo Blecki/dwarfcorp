@@ -41,11 +41,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A static collection of voxel types and their properties.
-    /// </summary>
-    [JsonObject(IsReference = true)]
-    public class VoxelLibrary
+    public static class VoxelLibrary
     {
         public static Dictionary<String, BoxPrimitive> PrimitiveMap = new Dictionary<String, BoxPrimitive>();
         public static VoxelType emptyType = null;
@@ -61,10 +57,6 @@ namespace DwarfCorp
             DesignationType = null;
             Types = new Dictionary<string, VoxelType>();
             TypeList = null;
-        }
-
-        public VoxelLibrary()
-        {
         }
 
         public static Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> CreateTransitionUVs(GraphicsDevice graphics, Texture2D textureMap, int width, int height, Point[] tiles,  VoxelType.TransitionType transitionType = VoxelType.TransitionType.Horizontal)

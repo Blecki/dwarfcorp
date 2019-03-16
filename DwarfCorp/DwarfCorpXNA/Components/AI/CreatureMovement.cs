@@ -41,7 +41,6 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class CreatureMovement
     {
-
         private int TeleportDistance = SummoningCircle.TeleportDistance;
         private int TeleportDistanceSquared = SummoningCircle.TeleportDistance * SummoningCircle.TeleportDistance;
 
@@ -53,7 +52,7 @@ namespace DwarfCorp
         public CreatureMovement(CreatureAI Parent)
         {
             this.Parent = Parent;
-            Actions = new Dictionary<MoveType, ActionStats>
+            Actions = new Dictionary<MoveType, ActionStats> // Todo: This is duplicated for every creature??
             {
                 {
                     MoveType.Teleport,
@@ -91,6 +90,35 @@ namespace DwarfCorp
                         Speed = 10.0f
                     }
                 },
+
+                {
+                    MoveType.EnterElevator,
+                    new ActionStats
+                    {
+                        CanMove = false,
+                        Cost = 1.0f,
+                        Speed = 1.0f
+                    }
+                },
+                {
+                    MoveType.ExitElevator,
+                    new ActionStats
+                    {
+                        CanMove = false,
+                        Cost = 1.0f,
+                        Speed = 1.0f
+                    }
+                },
+                {
+                    MoveType.RideElevator,
+                    new ActionStats
+                    {
+                        CanMove = false,
+                        Cost = 0.1f,
+                        Speed = 10.0f
+                    }
+                },
+                
                 {
                     MoveType.Climb,
                     new ActionStats
@@ -159,7 +187,7 @@ namespace DwarfCorp
                     new ActionStats
                     {
                         CanMove = true,
-                        Cost = 30.0f,
+                        Cost = 90.0f,
                         Speed = 1.0f
                     }
                 },
@@ -347,7 +375,7 @@ namespace DwarfCorp
             bool standingOnGround = (Storage.Neighborhood[1, 0, 1].IsValid && !Storage.Neighborhood[1, 0, 1].IsEmpty);
             bool topCovered = (Storage.Neighborhood[1, 2, 1].IsValid && !Storage.Neighborhood[1, 2, 1].IsEmpty);
             bool hasNeighbors = HasNeighbors(Storage.Neighborhood);
-            bool isRiding = state.VehicleState.IsRidingVehicle;
+            bool isRiding = state.VehicleType != VehicleTypes.None;
 
             var neighborHoodBounds = new BoundingBox(Storage.Neighborhood[0, 0, 0].GetBoundingBox().Min, Storage.Neighborhood[2, 2, 2].GetBoundingBox().Max);
             Storage.NeighborObjects.Clear();
@@ -443,7 +471,7 @@ namespace DwarfCorp
                         SourceState = state,
                         DestinationState = new MoveState()
                         {
-                            VehicleState = new VehicleState(),
+                            VehicleType = VehicleTypes.None,
                             Voxel = state.Voxel
                         },
                         MoveType = MoveType.ExitVehicle,
@@ -453,7 +481,7 @@ namespace DwarfCorp
 
                 if (Can(MoveType.RideVehicle))
                 {
-                    foreach (var neighbor in Rail.RailHelper.EnumerateForwardNetworkConnections(state.VehicleState.PrevRail, state.VehicleState.Rail))
+                    foreach (var neighbor in Rail.RailHelper.EnumerateForwardNetworkConnections(state.PrevRail, state.Rail))
                     {
                         var neighborRail = Creature.Manager.FindComponent(neighbor) as Rail.RailEntity;
                         if (neighborRail == null || !neighborRail.Active)
@@ -465,11 +493,9 @@ namespace DwarfCorp
                             DestinationState = new MoveState()
                             {
                                 Voxel = neighborRail.GetContainingVoxel(),
-                                VehicleState = new VehicleState()
-                                {
-                                    Rail = neighborRail,
-                                    PrevRail = state.VehicleState.Rail
-                                }
+                                Rail = neighborRail,
+                                PrevRail = state.Rail,
+                                VehicleType = VehicleTypes.Rail
                             },
                             MoveType = MoveType.RideVehicle,
                         });
@@ -479,7 +505,7 @@ namespace DwarfCorp
                 yield break; // Nothing can be done without exiting the rails first.
             }
 
-            if (CanClimb || Can(MoveType.RideVehicle))
+            if (CanClimb || Can(MoveType.RideVehicle) || Can(MoveType.RideElevator))
             {
                 //Climbing ladders and riding rails.                
 
@@ -532,10 +558,8 @@ namespace DwarfCorp
                                     SourceState = state,
                                     DestinationState = new MoveState()
                                     {
-                                        VehicleState = new VehicleState()
-                                        {
-                                            Rail = rail
-                                        },
+                                        VehicleType = VehicleTypes.Rail,
+                                        Rail = rail,
                                         Voxel = rail.GetContainingVoxel()
                                     },
                                     MoveType = MoveType.EnterVehicle,
@@ -888,15 +912,20 @@ namespace DwarfCorp
                   
                     foreach (var neighborRail in rail.NeighborRails.Select(neighbor => Creature.Manager.FindComponent(neighbor.NeighborID) as Rail.RailEntity))
                     {
-                        var actions = GetMoveActions(new MoveState() {
-                            Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = neighborRail } }, OctTree, teleportObjects, storage);
+                        var actions = GetMoveActions(new MoveState()
+                        {
+                            Voxel = v,
+                            VehicleType = VehicleTypes.Rail,
+                            Rail = rail,
+                            PrevRail = neighborRail
+                        }, OctTree, teleportObjects, storage);
                         foreach (var a in actions.Where(a => a.DestinationState == currentstate))
                         {
                             yield return a;                           
                         }
                     }
 
-                    foreach (var a in GetMoveActions(new MoveState() { Voxel = v, VehicleState = new VehicleState() { Rail = rail, PrevRail = null } }, OctTree, teleportObjects, storage).Where(a => a.DestinationState == currentstate))
+                    foreach (var a in GetMoveActions(new MoveState() { Voxel = v, VehicleType = VehicleTypes.Rail, Rail = rail, PrevRail = null }, OctTree, teleportObjects, storage).Where(a => a.DestinationState == currentstate))
                         yield return a;
                 }
             }

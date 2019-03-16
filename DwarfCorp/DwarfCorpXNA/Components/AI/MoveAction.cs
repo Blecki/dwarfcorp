@@ -7,54 +7,20 @@ using DwarfCorp.Rail;
 
 namespace DwarfCorp
 {
-    public struct VehicleState : IEquatable<VehicleState>
+    public enum VehicleTypes
     {
-        public Rail.RailEntity Rail;
-        public Rail.RailEntity PrevRail;
-
-        public override bool Equals(object obj)
-        {
-            if (!(obj is VehicleState)) return false;
-            return this == (VehicleState)obj;
-        }
-
-        public bool Equals(VehicleState other)
-        {
-            return this == other;
-        }
-
-        public override int GetHashCode()
-        {
-            var hashCode = -7133344;
-            hashCode = hashCode * -1521134295 + EqualityComparer<RailEntity>.Default.GetHashCode(Rail);
-            hashCode = hashCode * 31 + EqualityComparer<RailEntity>.Default.GetHashCode(PrevRail);
-            return hashCode;
-        }
-
-        public static bool operator ==(VehicleState A, VehicleState B)
-        {
-            return A.Rail == B.Rail && A.PrevRail == B.PrevRail;
-        }
-
-        public static bool operator !=(VehicleState A, VehicleState B)
-        {
-            return A.Rail != B.Rail || A.PrevRail != B.PrevRail;
-        }
-
-        public bool IsRidingVehicle
-        {
-            get
-            {
-                return Rail != null;
-            }
-        }
+        None,
+        Rail,
+        Elevator
     }
 
     public struct MoveState : IEquatable<MoveState>
     {
         public VoxelHandle Voxel;
-        public VehicleState VehicleState;
-
+        public VehicleTypes VehicleType;
+        public Rail.RailEntity Rail;
+        public Rail.RailEntity PrevRail;
+        
         public static MoveState InvalidState
         {
             get
@@ -85,19 +51,27 @@ namespace DwarfCorp
         public override int GetHashCode()
         {
             var hashCode = 68161903;
-            hashCode = hashCode * -1521134295 + EqualityComparer<VoxelHandle>.Default.GetHashCode(Voxel);
-            hashCode = hashCode * -1521134295 + EqualityComparer<VehicleState>.Default.GetHashCode(VehicleState);
+            hashCode = hashCode * -1521134295 + Voxel.GetHashCode();
+            if (PrevRail != null) hashCode = hashCode * -1521134295 + PrevRail.GetHashCode();
+            if (Rail != null) hashCode = hashCode * -1521134295 + Rail.GetHashCode();
+
             return hashCode;
         }
 
         public static bool operator ==(MoveState A, MoveState B)
         {
-            return A.Voxel == B.Voxel && A.VehicleState == B.VehicleState;
+            return A.Voxel == B.Voxel
+                && A.VehicleType == B.VehicleType
+                && Object.ReferenceEquals(A.Rail, B.Rail)
+                && Object.ReferenceEquals(A.PrevRail, B.PrevRail);
         }
 
         public static bool operator !=(MoveState A, MoveState B)
         {
-            return A.Voxel != B.Voxel || A.VehicleState != B.VehicleState;
+            return A.Voxel != B.Voxel
+                || A.VehicleType != B.VehicleType
+                || !Object.ReferenceEquals(A.Rail, B.Rail)
+                || !Object.ReferenceEquals(A.PrevRail, B.PrevRail);
         }
 
     }
@@ -135,7 +109,9 @@ namespace DwarfCorp
                 SourceState = new MoveState()
                 {
                     Voxel = value,
-                    VehicleState = SourceState.VehicleState
+                    VehicleType = SourceState.VehicleType,
+                    Rail = SourceState.Rail,
+                    PrevRail = SourceState.PrevRail
                 };
             }
         }
@@ -151,7 +127,9 @@ namespace DwarfCorp
                 DestinationState = new MoveState()
                 {
                     Voxel = value,
-                    VehicleState = DestinationState.VehicleState
+                    VehicleType = DestinationState.VehicleType,
+                    Rail = SourceState.Rail,
+                    PrevRail = SourceState.PrevRail
                 };
             }
         }

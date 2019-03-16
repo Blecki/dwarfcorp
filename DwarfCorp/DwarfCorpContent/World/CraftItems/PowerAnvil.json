@@ -10,7 +10,7 @@
     },
     {
       "Type": "Magical",
-      "Count":  4
+      "Count": 4
     }
   ],
   "Icon": {
@@ -33,5 +33,6 @@
   "AddToOwnedPool": true,
   "Moveable": true,
   "CraftActBehavior": "Normal",
-  "Tutorial" : "Build anvils to let your dwarfs to construct other objects and crafts. Only one dwarf can use an anvil at a time."
+  "Tutorial": "Build anvils to let your dwarfs to construct other objects and crafts. Only one dwarf can use an anvil at a time.",
+  "Category": "Steam"
 }

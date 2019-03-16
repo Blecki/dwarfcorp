@@ -204,6 +204,7 @@
     <Compile Include="ContextCommands\WrangleCommand.cs" />
     <Compile Include="ContextCommands\ContextCommandAttribute.cs" />
     <Compile Include="Entities\Animals\Chimp.cs" />
+    <Compile Include="Entities\Steam\ElevatorTrack.cs" />
     <Compile Include="Entities\Fixtures\Palisade.cs" />
     <Compile Include="Entities\Fixtures\MagicalObject.cs" />
     <Compile Include="Entities\Monsters\Demon\DemonClass.cs" />
@@ -216,6 +217,7 @@
     <Compile Include="Entities\Monsters\Troll\TrollClass.cs" />
     <Compile Include="Entities\Steam\OrientationHelper.cs" />
     <Compile Include="Entities\Steam\Orientation.cs" />
+    <Compile Include="Entities\Steam\CheckValve.cs" />
     <Compile Include="Entities\Steam\SteamPoweredBuildBuff.cs" />
     <Compile Include="Entities\Steam\SteamGenerator.cs" />
     <Compile Include="Entities\Steam\SteamSystem.cs" />
@@ -404,6 +406,8 @@
     <Compile Include="Scripting\TaskManagement\Tasks\HealAllyTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\RechargeObjectTask.cs" />
     <Compile Include="Tools\PerformanceMonitor.cs" />
+    <Compile Include="Voxels\Generator\OreVein.cs" />
+    <Compile Include="Voxels\Generator\OreCluster.cs" />
     <Compile Include="Voxels\Rail\PaintRailTool.cs" />
     <Compile Include="Voxels\Rail\OrientationHelper.cs" />
     <Compile Include="Voxels\Rail\CompassOrientation.cs" />
@@ -908,7 +912,7 @@
     <Compile Include="Tools\ServiceArchitecture\Subscriber.cs" />
     <Compile Include="Tools\Timer.cs" />
     <Compile Include="Voxels\ChunkData.cs" />
-    <Compile Include="Voxels\ChunkGenerator.cs" />
+    <Compile Include="Voxels\Generator\ChunkGenerator.cs" />
     <Compile Include="Voxels\ChunkManager.cs" />
     <Compile Include="Voxels\DynamicLight.cs" />
     <Compile Include="Voxels\LiquidAsset.cs" />

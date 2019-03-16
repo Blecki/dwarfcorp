@@ -18,10 +18,20 @@ namespace DwarfCorp.SteamPipes
         public bool DrawPipes = true;
         public Orientation Orientation = Orientation.North;
 
-        private RawPrimitive Primitive;
+        public RawPrimitive Primitive;
         private Color VertexColor = Color.White;
         private Color LightRamp = Color.White;
         private SpriteSheet Sheet;
+
+        public virtual bool CanSendSteam(SteamPoweredObject Other)
+        {
+            return true;
+        }
+
+        public virtual bool CanReceiveSteam(SteamPoweredObject Other)
+        {
+            return true;
+        }
         
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {
@@ -49,22 +59,6 @@ namespace DwarfCorp.SteamPipes
             CollisionType = CollisionType.Static;
             
             CreateCosmeticChildren(Manager);
-        }
-
-        public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
-        {        
-            if (HasMoved)
-            {
-                PropogateTransforms();
-                if (GlobalTransform.Decompose(out Vector3 scale, out Quaternion rotation, out Vector3 translation))
-                Orientation = OrientationHelper.DetectOrientationFromRotation(rotation);
-
-                DetachFromNeighbors();
-                AttachToNeighbors();
-                Primitive = null;
-            }
-
-            base.Update(Time, Chunks, Camera);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
@@ -113,12 +107,10 @@ namespace DwarfCorp.SteamPipes
                         Drawer3D.DrawLine(Position, Position + Vector3.UnitY, Color.CornflowerBlue, 0.1f);
                     else
                         Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.5f, 0.0f), (neighbor as Body).Position + new Vector3(0.0f, 0.5f, 0.0f), new Color(SteamPressure, 0.0f, 0.0f, 1.0f), 0.1f);
-
-                   
                 }
 
                 Drawer3D.DrawBox(GetBoundingBox(), Color.Red, 0.01f, false);
-                Drawer3D.DrawLine(Position, Position + Vector3.Transform(new Vector3(1, 0, 0), Matrix.CreateRotationY((float)Math.PI / 2 * (float)Orientation)), new Color(1.0f, 1.0f, 1.0f), 0.1f);
+                Drawer3D.DrawLine(Position, Position + Vector3.Transform(new Vector3(1, 0, 0), Matrix.CreateRotationY((float)Math.PI / 2 * (float)Orientation)), new Color(0.0f, 1.0f, 1.0f), 0.03f);
             }
 
             if (!DrawPipes) return;
@@ -217,8 +209,7 @@ namespace DwarfCorp.SteamPipes
             }
         }
 
-
-        private void DetachFromNeighbors()
+        public void DetachFromNeighbors()
         {
             foreach (var neighbor in NeighborPipes.Select(connection => Manager.FindComponent(connection)))
             {
@@ -236,7 +227,7 @@ namespace DwarfCorp.SteamPipes
             Primitive = null;
         }
 
-        private void AttachToNeighbors()
+        public void AttachToNeighbors()
         {
             global::System.Diagnostics.Debug.Assert(NeighborPipes.Count == 0);
 

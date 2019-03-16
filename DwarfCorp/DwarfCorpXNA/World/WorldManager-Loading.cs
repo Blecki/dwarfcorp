@@ -224,7 +224,7 @@ namespace DwarfCorp
             if (!fileExists)
                 GameID = MathFunctions.Random.Next(0, 1024);
 
-            ChunkGenerator = new ChunkGenerator(VoxelLibrary, Seed, 0.02f)
+            ChunkGenerator = new ChunkGenerator(Seed, 0.02f)
             {
                 SeaLevel = SeaLevel
             };
@@ -239,11 +239,9 @@ namespace DwarfCorp
 
             if (fileExists)
             {
-
                 ChunkManager = new ChunkManager(Content, this,
                     ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
                 Splasher = new Splasher(ChunkManager);
-
 
                 ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
 

@@ -296,7 +296,7 @@ namespace DwarfCorp
                 var neighbors = mover.GetMoveActions(current, octree, teleportObjects, storage).ToList();
                 
 
-                var foundGoalAdjacent = neighbors.FirstOrDefault(n => !n.DestinationState.VehicleState.IsRidingVehicle && goal.IsInGoalRegion(n.DestinationState.Voxel));
+                var foundGoalAdjacent = neighbors.FirstOrDefault(n => n.DestinationState.VehicleType == VehicleTypes.None && goal.IsInGoalRegion(n.DestinationState.Voxel));
 
                 // A quick test to see if we're already adjacent to the goal. If we are, assume
                 // that we can just walk to it.
@@ -342,7 +342,7 @@ namespace DwarfCorp
 
                     // Update the expansion scores for the next voxel.
                     gScore[n.DestinationState] = tenativeGScore;
-                    fScore.Enqueue(n.DestinationState, gScore[n.DestinationState] + weight * (goal.Heuristic(n.DestinationState.Voxel) + (!n.DestinationState.VehicleState.IsRidingVehicle ? 100.0f : 0.0f)));
+                    fScore.Enqueue(n.DestinationState, gScore[n.DestinationState] + weight * (goal.Heuristic(n.DestinationState.Voxel) + (n.DestinationState.VehicleType == VehicleTypes.None ? 100.0f : 0.0f)));
                 }
 
                 // If we've expanded too many voxels, just give up.
@@ -542,7 +542,7 @@ namespace DwarfCorp
 
                     // Update the expansion scores for the next voxel.
                     gScore[n.SourceState] = tenativeGScore;
-                    fScore.Enqueue(n.SourceState, gScore[n.SourceState] + weight * ((n.SourceState.Voxel.WorldPosition - start.Voxel.WorldPosition).LengthSquared() + (!n.SourceState.VehicleState.IsRidingVehicle ? 100.0f : 0.0f)));
+                    fScore.Enqueue(n.SourceState, gScore[n.SourceState] + weight * ((n.SourceState.Voxel.WorldPosition - start.Voxel.WorldPosition).LengthSquared() + (n.SourceState.VehicleType == VehicleTypes.None ? 100.0f : 0.0f)));
                 }
 
                 // If we've expanded too many voxels, just give up.

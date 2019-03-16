@@ -120,9 +120,6 @@ namespace DwarfCorp
         public ChunkManager ChunkManager = null;
         public ChunkRenderer ChunkRenderer = null;
 
-        // Maps a set of voxel types to assets and properties
-        public VoxelLibrary VoxelLibrary = null;
-
         // Responsible for creating terrain
         public ChunkGenerator ChunkGenerator = null;
 

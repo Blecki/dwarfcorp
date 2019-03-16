@@ -1,7 +1,7 @@
 {
-  "Name": "Steam Pipe",
-  "EntityName": "Steam Pipe",
-  "DisplayName": "@anvil",
+  "Name": "Check Valve",
+  "EntityName": "Check Valve",
+  "DisplayName": "Check Valve",
   "ShortDisplayName": "@s-anvil",
   "RequiredResources": [
     {

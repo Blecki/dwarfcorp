@@ -301,6 +301,7 @@ namespace DwarfCorp
                 for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
                     chunk.InvalidateSlice(i);
             }
+
             RecalculateBounds();
         }
 

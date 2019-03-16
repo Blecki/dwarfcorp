@@ -3018,6 +3018,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>SteamGenerator</Name>
     </None>
+    <None Include="World\CraftItems\CheckValve.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CheckValve</Name>
+    </None>
     <None Include="World\CraftItems\SteamPipe.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>SteamPipe</Name>
