@@ -135,14 +135,15 @@ namespace DwarfCorp.SteamPipes
                     var neighbor = Manager.FindComponent(connection) as Body;
                     if (neighbor == null) continue;
 
-                    var pipeAngle = AngleBetweenVectors(new Vector2(neighbor.Position.X - this.Position.X, neighbor.Position.Z - this.Position.Z), new Vector2(0.0f, -1.0f));
+                    var orientationToNeighbor = OrientationHelper.DetectOrientationFromVector(new Vector3(neighbor.Position.X - this.Position.X, 0.0f, neighbor.Position.Z - this.Position.Z));
+                    var pipeAngle = Math.PI * 0.5f * ((float)Orientation - (float)orientationToNeighbor);
 
                     Primitive.AddQuad(
                         Matrix.CreateTranslation(0.5f, 0.0f, 0.0f)
                         * Matrix.CreateScale(0.5f, 0.5f, 0.5f)
-                        * Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                        * Matrix.CreateRotationX((float)Math.PI * 0.5f)
                         //* Matrix.CreateTranslation(0.0f, 0.3f, -0.2f)
-                        * Matrix.CreateRotationY(pipeAngle),
+                        * Matrix.CreateRotationY((float)pipeAngle),
                         //* Matrix.CreateTranslation(bumperOffset + bumperGap),
                         Color.White, Color.White, uvs, bounds);
                 }
