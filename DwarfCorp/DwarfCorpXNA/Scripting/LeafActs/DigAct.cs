@@ -125,7 +125,7 @@ namespace DwarfCorp
                     Creature.Stats.NumBlocksDestroyed++;
                     Creature.World.GoalManager.OnGameEvent(new Goals.Triggers.DigBlock(voxelType, Creature));
 
-                    var items = Creature.World.ChunkManager.KillVoxel(vox);
+                    var items = VoxelHelpers.KillVoxel(Creature.World, vox);
 
                     if (items != null)
                         foreach (Body item in items)

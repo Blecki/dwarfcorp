@@ -92,7 +92,7 @@ namespace DwarfCorp
                 },
 
                 {
-                    MoveType.EnterElevator,
+                    MoveType.WaitForElevator,
                     new ActionStats
                     {
                         CanMove = false,
@@ -100,25 +100,7 @@ namespace DwarfCorp
                         Speed = 1.0f
                     }
                 },
-                {
-                    MoveType.ExitElevator,
-                    new ActionStats
-                    {
-                        CanMove = false,
-                        Cost = 1.0f,
-                        Speed = 1.0f
-                    }
-                },
-                {
-                    MoveType.RideElevator,
-                    new ActionStats
-                    {
-                        CanMove = false,
-                        Cost = 0.1f,
-                        Speed = 10.0f
-                    }
-                },
-                
+                                
                 {
                     MoveType.Climb,
                     new ActionStats
@@ -395,7 +377,7 @@ namespace DwarfCorp
                             }
                         };
 
-            var successors = EnumerateSuccessors(state, state.Voxel, Storage, inWater, standingOnGround, topCovered, hasNeighbors, isRiding);
+            var successors = EnumerateSuccessors(state, state.Voxel, Storage, inWater, standingOnGround, topCovered, hasNeighbors);
 
             // Now, validate each move action that the creature might take.
             foreach (MoveAction v in successors)
@@ -405,7 +387,7 @@ namespace DwarfCorp
                 {
                     // Do one final check to see if there is an object blocking the motion.
                     bool blockedByObject = false;
-                    if (!isRiding)
+                    if (state.VehicleType == VehicleTypes.None)
                     {
                         var objectsAtNeighbor = Storage.NeighborObjects.Where(o => o.GetBoundingBox().Intersects(n.GetBoundingBox()));
 
@@ -457,12 +439,11 @@ namespace DwarfCorp
             bool inWater, 
             bool standingOnGround, 
             bool topCovered, 
-            bool hasNeighbors, 
-            bool isRiding)
+            bool hasNeighbors)
         {
             bool isClimbing = false;
 
-            if (isRiding)
+            if (state.VehicleType == VehicleTypes.Rail)
             {
                 if (Can(MoveType.ExitVehicle)) // Possibly redundant... If they can ride they should be able to exit right?
                 {
@@ -505,7 +486,7 @@ namespace DwarfCorp
                 yield break; // Nothing can be done without exiting the rails first.
             }
 
-            if (CanClimb || Can(MoveType.RideVehicle) || Can(MoveType.RideElevator))
+            if (CanClimb || Can(MoveType.RideVehicle))
             {
                 //Climbing ladders and riding rails.                
 

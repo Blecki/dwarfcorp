@@ -70,7 +70,7 @@ namespace DwarfCorp
             if (DestroyTimer.HasTriggered)
             {
                 Die();
-                chunks.KillVoxel(Voxel);
+                VoxelHelpers.KillVoxel(World, Voxel);
             }
         }  
     }

@@ -211,7 +211,7 @@ namespace DwarfCorp
                                 foreach (var selected in refs)
                                 {
                                     if (!selected.IsEmpty)
-                                        Player.World.ChunkManager.KillVoxel(selected);
+                                        VoxelHelpers.KillVoxel(Player.World, selected);
                                 }
                                 break;
                             case "Fill Water":

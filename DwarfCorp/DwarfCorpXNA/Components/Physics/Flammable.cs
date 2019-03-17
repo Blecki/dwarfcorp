@@ -109,7 +109,7 @@ namespace DwarfCorp
                                 EntityFactory.CreateEntity<Fire>("Fire", voxel.GetBoundingBox().Center());
                             }
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_lava_spread, voxel.GetBoundingBox().Center(), true, 1.0f);
-                            World.ChunkManager.KillVoxel(voxel);
+                            VoxelHelpers.KillVoxel(World, voxel);
                         }
                     }
 

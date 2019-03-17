@@ -216,92 +216,12 @@ namespace DwarfCorp
 
         private readonly ChunkData chunkData;
 
-
-        // Todo: Why isn't this part of the chunk generator?
-        public void GenerateOres()
-        {
-            foreach (VoxelType type in VoxelLibrary.GetTypes())
-            {
-                if (type.SpawnClusters || type.SpawnVeins)
-                {
-                    int numEvents = (int)MathFunctions.Rand(75*(1.0f - type.Rarity), 100*(1.0f - type.Rarity));
-                    for (int i = 0; i < numEvents; i++)
-                    {
-                        BoundingBox clusterBounds = new BoundingBox
-                        {
-                            Max = new Vector3(Bounds.Max.X, type.MaxSpawnHeight, Bounds.Max.Z),
-                            Min = new Vector3(Bounds.Min.X, Math.Max(type.MinSpawnHeight, 2), Bounds.Min.Z)
-                        };
-
-                        if (type.SpawnClusters)
-                        {
-
-                            OreCluster cluster = new OreCluster()
-                            {
-                                Size =
-                                    new Vector3(MathFunctions.Rand(type.ClusterSize*0.25f, type.ClusterSize),
-                                        MathFunctions.Rand(type.ClusterSize*0.25f, type.ClusterSize),
-                                        MathFunctions.Rand(type.ClusterSize*0.25f, type.ClusterSize)),
-                                Transform = MathFunctions.RandomTransform(clusterBounds),
-                                Type = type
-                            };
-                            ChunkGen.GenerateCluster(cluster, ChunkData);
-                        }
-
-                        if (type.SpawnVeins)
-                        {
-                            OreVein vein = new OreVein()
-                            {
-                                Length = MathFunctions.Rand(type.VeinLength*0.75f, type.VeinLength*1.25f),
-                                Start = MathFunctions.RandVector3Box(clusterBounds),
-                                Type = type
-                            };
-                            ChunkGen.GenerateVein(vein, ChunkData);
-                        }
-                    }
-                }
-            }
-        }
-
         // Todo: Move to ChunkGenerator
         public void GenerateInitialChunks(Rectangle spawnRect, GlobalChunkCoordinate origin, Action<String> SetLoadingMessage)
         {
-            var initialChunkCoordinates = new List<GlobalChunkCoordinate>();
-
-            for (int dx = 0; dx < WorldSize.X; dx++)
-                for (int dz = 0; dz < WorldSize.Z; dz++)
-                    initialChunkCoordinates.Add(new GlobalChunkCoordinate(dx, 0, dz));
-                    
             SetLoadingMessage("Generating Chunks...");
-            float maxHeight = Math.Max(Overworld.GetMaxHeight(spawnRect), 0.17f);
-            foreach (var box in initialChunkCoordinates)
-            {
-                Vector3 worldPos = new Vector3(
-                    box.X * VoxelConstants.ChunkSizeX,
-                    box.Y * VoxelConstants.ChunkSizeY,
-                    box.Z * VoxelConstants.ChunkSizeZ);
-                VoxelChunk chunk = ChunkGen.GenerateChunk(worldPos, World, maxHeight);
-                ChunkData.AddChunk(chunk);
-            }
-
-
-            SetLoadingMessage("Generating Ores...");
-
-            GenerateOres();
+            ChunkGen.GenerateInitialChunks(spawnRect, origin, ChunkData, World, WorldSize, Bounds);
             NeedsMinimapUpdate = true;
-
-            SetLoadingMessage("Generating Ruins...");
-            ChunkGen.GenerateRuins(chunkData, World);
-
-            // This is critical at the beginning to allow trees to spawn on ramps correctly,
-            // and also to ensure no inconsistencies in chunk geometry due to ramps.
-            foreach (var chunk in ChunkData.ChunkMap)
-            {
-                ChunkGen.GenerateChunkData(chunk, World, maxHeight);
-                for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
-                    chunk.InvalidateSlice(i);
-            }
-
             RecalculateBounds();
         }
 
@@ -396,42 +316,5 @@ namespace DwarfCorp
                 item.Destroy();
             }
         }
-
-        public List<Body> KillVoxel(VoxelHandle Voxel)
-        {
-            if (World.Master != null)
-                World.Master.Faction.OnVoxelDestroyed(Voxel);
-
-            if (!Voxel.IsValid || Voxel.IsEmpty)
-                return null;
-
-            if (World.ParticleManager != null)
-            {
-                World.ParticleManager.Trigger(Voxel.Type.ParticleType, 
-                    Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
-                World.ParticleManager.Trigger("puff", 
-                    Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f), Color.White, 20);
-            }
-
-            Voxel.Type.ExplosionSound.Play(Voxel.WorldPosition);
-
-            List<Body> emittedResources = null;
-            if (Voxel.Type.ReleasesResource)
-            {
-                if (MathFunctions.Rand() < Voxel.Type.ProbabilityOfRelease)
-                {
-                    emittedResources = new List<Body>
-                    {
-                        EntityFactory.CreateEntity<Body>(Voxel.Type.ResourceToRelease + " Resource",
-                            Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))
-                    };
-                }
-            }
-
-            Voxel.Type = VoxelLibrary.emptyType;
-
-            return emittedResources;
-        }
-
     }
 }

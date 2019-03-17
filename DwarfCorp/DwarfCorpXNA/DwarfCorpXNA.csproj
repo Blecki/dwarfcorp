@@ -406,6 +406,9 @@
     <Compile Include="Scripting\TaskManagement\Tasks\HealAllyTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\RechargeObjectTask.cs" />
     <Compile Include="Tools\PerformanceMonitor.cs" />
+    <Compile Include="Voxels\Generator\GenerateRuins.cs" />
+    <Compile Include="Voxels\Generator\GeneratorSettings.cs" />
+    <Compile Include="Voxels\Generator\GenerateInitialChunks.cs" />
     <Compile Include="Voxels\Generator\OreVein.cs" />
     <Compile Include="Voxels\Generator\OreCluster.cs" />
     <Compile Include="Voxels\Rail\PaintRailTool.cs" />
@@ -590,6 +593,7 @@
     <Compile Include="Graphics\Primitives\GeometricPrimitive.cs" />
     <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />
     <Compile Include="Graphics\Primitives\PrimitiveLibrary.cs" />
+    <Compile Include="Voxels\VoxelHelpers\KillVoxel.cs" />
     <Compile Include="Voxels\VoxelListPrimitive.cs" />
     <Compile Include="Graphics\SelectionBuffer.cs" />
     <Compile Include="Gui\Widgets\AudioMixerWidget.cs" />

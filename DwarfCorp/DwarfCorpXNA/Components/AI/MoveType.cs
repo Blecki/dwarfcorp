@@ -28,9 +28,7 @@ namespace DwarfCorp
         RideVehicle,
         ExitVehicle,
 
-        EnterElevator, // Actually may be able to just be another type of vehicle.
-        RideElevator,
-        ExitElevator,
+        WaitForElevator,
 
         Teleport,
         Dig

@@ -16,9 +16,9 @@ namespace DwarfCorp
     /// <summary>
     /// Creates randomly generated voxel chunks using data from the overworld.
     /// </summary>
-    public class ChunkGenerator
+    public partial class ChunkGenerator
     {
-        public Perlin NoiseGenerator { get; set; }
+        public Generation.GeneratorSettings Settings = new Generation.GeneratorSettings();
         public LibNoise.FastRidgedMultifractal CaveNoise { get; set; }
         public float NoiseScale { get; set; }
         public float CaveNoiseScale { get; set; }
@@ -36,7 +36,7 @@ namespace DwarfCorp
 
         public ChunkGenerator(int randomSeed, float noiseScale)
         {
-            NoiseGenerator = new Perlin(randomSeed);
+            Settings.NoiseGenerator = new Perlin(randomSeed);
             NoiseScale = noiseScale;
 
             CaveNoiseScale = noiseScale * 10.0f;
@@ -129,7 +129,7 @@ namespace DwarfCorp
                             var baseVoxel = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(worldPos));
                             var underVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                                chunks, GlobalVoxelCoordinate.FromVector3(worldPos)));
-                            float decay = NoiseGenerator.Generate(worldPos.X * 0.05f, worldPos.Y * 0.05f, worldPos.Z * 0.05f);
+                            float decay = Settings.NoiseGenerator.Generate(worldPos.X * 0.05f, worldPos.Y * 0.05f, worldPos.Z * 0.05f);
 
                             if (decay > 0.7f)
                                 continue;
@@ -370,7 +370,7 @@ namespace DwarfCorp
                             continue;
 
                         if (MathFunctions.RandEvent(veg.SpawnProbability) &&
-                            NoiseGenerator.Noise(topVoxel.Coordinate.X / veg.ClumpSize,
+                            Settings.NoiseGenerator.Noise(topVoxel.Coordinate.X / veg.ClumpSize,
                             veg.NoiseOffset, topVoxel.Coordinate.Z / veg.ClumpSize) >= veg.ClumpThreshold)
                         {
                             topVoxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
@@ -421,7 +421,7 @@ namespace DwarfCorp
                         double caveNoise = CaveNoise.GetValue((x + origin.X) * CaveNoiseScale * frequency,
                             (y + origin.Y) * CaveNoiseScale * 3.0f, (z + origin.Z) * CaveNoiseScale * frequency);
 
-                        double heightnoise = NoiseGenerator.Noise((x + origin.X) * NoiseScale * frequency,
+                        double heightnoise = Settings.NoiseGenerator.Noise((x + origin.X) * NoiseScale * frequency,
                             (y + origin.Y) * NoiseScale * 3.0f, (z + origin.Z) * NoiseScale * frequency);
 
                         int caveHeight = Math.Min(Math.Max((int)(heightnoise * 5), 1), 3);
@@ -456,7 +456,7 @@ namespace DwarfCorp
 
                         if (!invalidCave && caveNoise > CaveSize * 1.8f && y - caveHeight > 0 && y > LavaLevel)
                         {
-                            GenerateCaveVegetation(chunk, x, y, z, caveHeight, caveBiome, vec, world, NoiseGenerator);
+                            GenerateCaveVegetation(chunk, x, y, z, caveHeight, caveBiome, vec, world, Settings.NoiseGenerator);
                         }
                     }
                 }
@@ -624,7 +624,7 @@ namespace DwarfCorp
                         else if ((y == (int)h || y == stoneHeight) && hNorm > waterHeight)
                         {
                             if (biomeData.ClumpGrass &&
-                                NoiseGenerator.Noise(pos.X / biomeData.ClumpSize, 0, pos.Y / biomeData.ClumpSize) >
+                                Settings.NoiseGenerator.Noise(pos.X / biomeData.ClumpSize, 0, pos.Y / biomeData.ClumpSize) >
                                 biomeData.ClumpTreshold)
                             {
                                 voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
