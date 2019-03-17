@@ -44,7 +44,7 @@ namespace DwarfCorp
                                 Type = type
                             };
 
-                            GenerateCluster(cluster, ChunkData);
+                            Generation.Generator.GenerateCluster(cluster, ChunkData);
                         }
 
                         if (type.SpawnVeins)
@@ -56,7 +56,7 @@ namespace DwarfCorp
                                 Type = type
                             };
 
-                            GenerateVein(vein, ChunkData);
+                            Generation.Generator.GenerateVein(vein, ChunkData);
                         }
                     }
                 }
