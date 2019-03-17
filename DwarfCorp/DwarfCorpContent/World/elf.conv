@@ -152,6 +152,7 @@ $envoy_name: Ho ho, you will rue this day when we cut out your eyes and serve th
 title: MakePeace
 ---
 $envoy_name: Oh wonderous! I did so hate slaughtering you.
+<<make_peace>>
 <<political_event "you made peace with us" 0.4 4>>
 [[Main]]
 ===

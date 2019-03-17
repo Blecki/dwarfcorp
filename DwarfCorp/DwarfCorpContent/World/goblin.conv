@@ -169,6 +169,7 @@ $envoy_name: We break you.
 title: MakePeace
 ---
 $envoy_name: Time of blood ends.
+<<make_peace>>
 <<political_event "you made peace with us" 0.4 4>>
 [[Main]]
 ===

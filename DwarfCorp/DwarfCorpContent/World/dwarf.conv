@@ -175,6 +175,7 @@ title: DeclareWar
 title: MakePeace
 ---
 $envoy_name: War of this kind is not profitable.
+<<make_peace>>
 <<political_event "you made peace with us" 0.4 4>>
 [[Main]]
 ===

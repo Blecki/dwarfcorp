@@ -147,6 +147,7 @@ The moleman extends a claw toward you, then motions as if he is slitting his own
 title: MakePeace
 ---
 The moleman shrugs.
+<<make_peace>>
 <<political_event "you made peace with us" 0.4 4>>
 [[Main]]
 ===

@@ -580,7 +580,7 @@ namespace DwarfCorp.GameStates
                 });
                 titlebar.AddChild(new Widget()
                 {
-                    Text = System.String.Format("{0} ({1}){2}", faction.Value.Name, faction.Value.Race.Name, diplomacy.WasAtWar ? " -- At war!" : ""),
+                    Text = System.String.Format("{0} ({1}){2}", faction.Value.Name, faction.Value.Race.Name, diplomacy.IsAtWar ? " -- At war!" : ""),
                     TextHorizontalAlign = HorizontalAlign.Right,
                     TextVerticalAlign = VerticalAlign.Bottom,
                     Font = "font10",

@@ -154,6 +154,7 @@ title: DeclareWar
 title: MakePeace
 ---
 $envoy_name: Nations that once fought often become the strongest of allies.
+<<make_peace>>
 <<political_event "you made peace with us" 0.4 4>>
 [[Main]]
 ===
