@@ -224,10 +224,8 @@ namespace DwarfCorp
             if (!fileExists)
                 GameID = MathFunctions.Random.Next(0, 1024);
 
-            ChunkGenerator = new ChunkGenerator(Seed, 0.02f)
-            {
-                SeaLevel = SeaLevel
-            };
+            ChunkGenerator = new ChunkGenerator(Seed, 0.02f, GenerationSettings);
+            ChunkGenerator.Settings.SeaLevel = SeaLevel;
 
 
             #region Load Components

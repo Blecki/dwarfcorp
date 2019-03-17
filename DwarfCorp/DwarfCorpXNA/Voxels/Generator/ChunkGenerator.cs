@@ -18,203 +18,14 @@ namespace DwarfCorp
     /// </summary>
     public partial class ChunkGenerator
     {
-        public Generation.GeneratorSettings Settings = new Generation.GeneratorSettings();
-        public LibNoise.FastRidgedMultifractal CaveNoise { get; set; }
-        public float NoiseScale { get; set; }
-        public float CaveNoiseScale { get; set; }
-        public float SeaLevel { get; set; }
-        public LibNoise.FastRidgedMultifractal AquiferNoise { get; set; }
+        public Generation.GeneratorSettings Settings;
         public ChunkManager Manager { get; set; }
-        public List<float> CaveFrequencies { get; set; }
-        public List<int> AquiferLevels { get; set; }
-        public float CaveSize { get; set; }
-        public float AquiferSize { get; set; }
-        public int HellLevel = 10;
-        public int LavaLevel = 5;
 
-        private List<int> CaveLevels = null;
-
-        public ChunkGenerator(int randomSeed, float noiseScale)
+        public ChunkGenerator(int randomSeed, float noiseScale, WorldGenerationSettings WorldGenerationSettings)
         {
-            Settings.NoiseGenerator = new Perlin(randomSeed);
-            NoiseScale = noiseScale;
-
-            CaveNoiseScale = noiseScale * 10.0f;
-            CaveSize = 0.03f;
-            CaveFrequencies = new List<float>() { 0.5f, 0.7f, 0.9f, 1.0f };
-
-            CaveNoise = new FastRidgedMultifractal(randomSeed)
-            {
-                Frequency = 0.5f,
-                Lacunarity = 0.5f,
-                NoiseQuality = NoiseQuality.Standard,
-                OctaveCount = 1,
-                Seed = randomSeed
-            };
-
-            AquiferLevels = new List<int>() { 5 };
-
-            AquiferSize = 0.02f;
-            AquiferNoise = new FastRidgedMultifractal(randomSeed + 100)
-            {
-                Frequency = 0.25f,
-                Lacunarity = 0.5f,
-                NoiseQuality = NoiseQuality.Standard,
-                OctaveCount = 1,
-                Seed = randomSeed
-            };
+            Settings = new Generation.GeneratorSettings(randomSeed, noiseScale, WorldGenerationSettings);
         }
 
-        public void GenerateRuins(ChunkData chunks, WorldManager world)
-        {
-            int numRuinClusters = Math.Max(MathFunctions.RandInt(-6, 4), 0);
-
-            for (int i = 0; i < numRuinClusters; i++)
-            {
-                var clusterChunk = Datastructures.SelectRandom(chunks.ChunkMap);
-                var bounds = clusterChunk.GetBoundingBox();
-                var centerLoc = MathFunctions.RandVector3Box(bounds);
-                var clusterDensity = (MathFunctions.Rand() + 1.0f) * 40;
-                int numStructures = MathFunctions.RandInt(1, 5);
-
-                for (int j = 0; j < numStructures; j++)
-                {
-                    int structureWidth = MathFunctions.RandInt(4, 16);
-                    int structureDepth = MathFunctions.RandInt(4, 16);
-                    int wallHeight = MathFunctions.RandInt(2, 6);
-                    int heightOffset = MathFunctions.RandInt(-4, 2);
-                    var origin = centerLoc + MathFunctions.RandVector3Cube() * clusterDensity;
-
-                    BiomeData biome = BiomeLibrary.Biomes[0];
-
-                    int avgHeight = 0;
-                    int numHeight = 0;
-                    for (int dx = 0; dx < structureWidth; dx++)
-                    {
-                        for (int dz = 0; dz < structureDepth; dz++)
-                        {
-                            Vector3 worldPos = new Vector3(origin.X + dx, VoxelConstants.ChunkSizeY - 1, origin.Z + dz);
-
-                            var baseVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                                chunks, GlobalVoxelCoordinate.FromVector3(worldPos)));
-
-                            if (!baseVoxel.IsValid)
-                                continue;
-
-                            biome = Overworld.GetBiomeAt(worldPos, world.WorldScale, world.WorldOrigin);
-
-                            var h = baseVoxel.Coordinate.Y + 1;
-                            avgHeight += h;
-                            numHeight++;
-                        }
-                    }
-
-                    if (numHeight == 0)
-                        continue;
-                    avgHeight = avgHeight / numHeight;
-
-                    bool[] doors = new bool[4];
-                   
-                    for (int k = 0; k < 4; k++)
-                    {
-                        doors[k] = MathFunctions.RandEvent(0.5f);
-                    }
-
-                    for (int dx = 0; dx < structureWidth; dx++)
-                    {
-                        for (int dz = 0; dz < structureDepth; dz++)
-                        {
-                            Vector3 worldPos = new Vector3(origin.X + dx, avgHeight + heightOffset, origin.Z + dz);
-
-                            var baseVoxel = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(worldPos));
-                            var underVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                               chunks, GlobalVoxelCoordinate.FromVector3(worldPos)));
-                            float decay = Settings.NoiseGenerator.Generate(worldPos.X * 0.05f, worldPos.Y * 0.05f, worldPos.Z * 0.05f);
-
-                            if (decay > 0.7f)
-                                continue;
-
-                            if (!baseVoxel.IsValid)
-                                continue;
-
-                            if (baseVoxel.Coordinate.Y == VoxelConstants.ChunkSizeY - 1)
-                                continue;
-
-                            if (!underVoxel.IsValid)
-                                continue;
-
-                            bool edge = (dx == 0 || dx == structureWidth - 1) || (dz == 0 || dz == structureDepth - 1);
-
-                            if (!edge && !baseVoxel.IsEmpty)
-                                continue;
-
-                            if (edge)
-                            {
-                                baseVoxel.RawSetType(VoxelLibrary.GetVoxelType(biome.RuinWallType));
-                            }
-                            else
-                            {
-                                baseVoxel.RawSetType(VoxelLibrary.GetVoxelType(biome.RuinFloorType));
-                            }
-
-                            bool[] wallState = new bool[4];
-                            wallState[0] = dx == 0;
-                            wallState[1] = dx == structureWidth - 1;
-                            wallState[2] = dz == 0;
-                            wallState[3] = dz == structureDepth - 1;
-
-                            bool[] doorState = new bool[4];
-                            doorState[0] = Math.Abs(dz - structureDepth / 2) < 1;
-                            doorState[1] = doorState[0];
-                            doorState[2] = Math.Abs(dx - structureWidth / 2) < 1;
-                            doorState[3] = doorState[2];
-
-                            for (int dy = 1; dy < (baseVoxel.Coordinate.Y - underVoxel.Coordinate.Y); dy++)
-                            {
-                                var currVoxel = new VoxelHandle(chunks, underVoxel.Coordinate + new GlobalVoxelOffset(0, dy, 0));
-
-                                if (!currVoxel.IsValid)
-                                    continue;
-
-                                if (currVoxel.Coordinate.Y == VoxelConstants.ChunkSizeY - 1)
-                                    continue;
-                                currVoxel.RawSetType(underVoxel.Type);
-                            }
-
-                            if (edge)
-                            {
-                                for (int dy = 1; dy < wallHeight * (1.0f - decay); dy++)
-                                {
-                                    var currVoxel = new VoxelHandle(chunks, baseVoxel.Coordinate + new GlobalVoxelOffset(0, dy, 0));
-
-                                    if (!currVoxel.IsValid)
-                                        continue;
-
-                                    if (currVoxel.Coordinate.Y == VoxelConstants.ChunkSizeY - 1)
-                                        continue;
-
-                                    bool door = false;
-                                    for (int k = 0; k < 4; k++)
-                                    {
-                                        if (wallState[k] && doors[k] && doorState[k])
-                                        {
-                                            door = true;
-                                            break;
-                                        }
-                                    }
-
-                                    if (door && dy < 3)
-                                        continue;
-
-                                    currVoxel.RawSetType(VoxelLibrary.GetVoxelType(biome.RuinWallType));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-  
         public void GenerateCluster(OreCluster cluster, ChunkData chunks)
         {
             for (float x = -cluster.Size.X * 0.5f; x < cluster.Size.X * 0.5f; x += 1.0f)
@@ -278,7 +89,7 @@ namespace DwarfCorp
 
         public void GenerateWater(VoxelChunk chunk, float maxHeight)
         {
-            int waterHeight = Math.Min((int)(VoxelConstants.ChunkSizeY * NormalizeHeight(SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight)), VoxelConstants.ChunkSizeY - 1);
+            int waterHeight = Math.Min((int)(VoxelConstants.ChunkSizeY * NormalizeHeight(Settings.SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight)), VoxelConstants.ChunkSizeY - 1);
             var iceID = VoxelLibrary.GetVoxelType("Ice");
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
             {
@@ -305,13 +116,11 @@ namespace DwarfCorp
 
         public void GenerateLava(VoxelChunk chunk)
         {
-            int lavaHeight = LavaLevel;
-
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
             {
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                 {
-                    for (var y = 0; y < lavaHeight; ++y)
+                    for (var y = 0; y < Settings.LavaLevel; ++y)
                     {
                         var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
                         if (voxel.IsEmpty && voxel.LiquidLevel == 0)
@@ -389,15 +198,6 @@ namespace DwarfCorp
 
         public void GenerateCaves(VoxelChunk chunk, WorldManager world)
         {
-            if (CaveLevels == null)
-            {
-                CaveLevels = new List<int>();
-                var caveStep = 48 / world.GenerationSettings.NumCaveLayers;
-
-                for (var i = 0; i < world.GenerationSettings.NumCaveLayers; ++i)
-                    CaveLevels.Add(4 + (caveStep * i));
-            }
-
             Vector3 origin = chunk.Origin;
             BiomeData biome = BiomeLibrary.GetBiome("Cave");
             var hellBiome = BiomeLibrary.GetBiome("Hell");
@@ -409,24 +209,24 @@ namespace DwarfCorp
                     var topVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                         chunk, new LocalVoxelCoordinate(x, VoxelConstants.ChunkSizeY - 1, z)));
 
-                    for (int i = 0; i < CaveLevels.Count; i++)
+                    for (int i = 0; i < Settings.CaveLevels.Count; i++)
                     {
-                        int y = CaveLevels[i];
+                        int y = Settings.CaveLevels[i];
                         if (y <= 0 || y >= topVoxel.Coordinate.Y) continue;
 
-                        var frequency = i < CaveFrequencies.Count ? CaveFrequencies[i] : CaveFrequencies[CaveFrequencies.Count - 1];
-                        var caveBiome = (y <= HellLevel) ? hellBiome : biome;
+                        var frequency = i < Settings.CaveFrequencies.Count ? Settings.CaveFrequencies[i] : Settings.CaveFrequencies[Settings.CaveFrequencies.Count - 1];
+                        var caveBiome = (y <= Settings.HellLevel) ? hellBiome : biome;
 
                         Vector3 vec = new Vector3(x, y, z) + chunk.Origin;
-                        double caveNoise = CaveNoise.GetValue((x + origin.X) * CaveNoiseScale * frequency,
-                            (y + origin.Y) * CaveNoiseScale * 3.0f, (z + origin.Z) * CaveNoiseScale * frequency);
+                        double caveNoise = Settings.CaveNoise.GetValue((x + origin.X) * Settings.CaveNoiseScale * frequency,
+                            (y + origin.Y) * Settings.CaveNoiseScale * 3.0f, (z + origin.Z) * Settings.CaveNoiseScale * frequency);
 
-                        double heightnoise = Settings.NoiseGenerator.Noise((x + origin.X) * NoiseScale * frequency,
-                            (y + origin.Y) * NoiseScale * 3.0f, (z + origin.Z) * NoiseScale * frequency);
+                        double heightnoise = Settings.NoiseGenerator.Noise((x + origin.X) * Settings.NoiseScale * frequency,
+                            (y + origin.Y) * Settings.NoiseScale * 3.0f, (z + origin.Z) * Settings.NoiseScale * frequency);
 
                         int caveHeight = Math.Min(Math.Max((int)(heightnoise * 5), 1), 3);
 
-                        if (!(caveNoise > CaveSize)) continue;
+                        if (!(caveNoise > Settings.CaveSize)) continue;
 
                         bool invalidCave = false;
                         for (int dy = 0; dy < caveHeight; dy++)
@@ -454,7 +254,7 @@ namespace DwarfCorp
                             }
                         }
 
-                        if (!invalidCave && caveNoise > CaveSize * 1.8f && y - caveHeight > 0 && y > LavaLevel)
+                        if (!invalidCave && caveNoise > Settings.CaveSize * 1.8f && y - caveHeight > 0 && y > Settings.LavaLevel)
                         {
                             GenerateCaveVegetation(chunk, x, y, z, caveHeight, caveBiome, vec, world, Settings.NoiseGenerator);
                         }
@@ -576,7 +376,7 @@ namespace DwarfCorp
 
         public VoxelChunk GenerateChunk(Vector3 origin, WorldManager World, float maxHeight)
         {
-            float waterHeight = NormalizeHeight(SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight);
+            float waterHeight = NormalizeHeight(Settings.SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight);
             VoxelChunk c = new VoxelChunk(Manager, origin, GlobalVoxelCoordinate.FromVector3(origin).GetGlobalChunkCoordinate());
 
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)

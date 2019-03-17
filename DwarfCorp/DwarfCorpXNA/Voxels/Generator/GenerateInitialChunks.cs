@@ -87,7 +87,7 @@ namespace DwarfCorp
 
             GenerateOres(ChunkData, Bounds);
 
-            GenerateRuins(ChunkData, World);
+            Generation.Generator.GenerateRuins(ChunkData, World, Settings);
 
             // This is critical at the beginning to allow trees to spawn on ramps correctly,
             // and also to ensure no inconsistencies in chunk geometry due to ramps.
