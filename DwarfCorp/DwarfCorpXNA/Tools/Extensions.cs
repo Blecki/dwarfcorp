@@ -73,6 +73,16 @@ namespace DwarfCorp
             return expandedBoundingBox;
         }
 
+        public static BoundingBox Offset(this BoundingBox box, Vector3 Amount)
+        {
+            return new BoundingBox(box.Min + Amount, box.Max + Amount);
+        }
+
+        public static BoundingBox Offset(this BoundingBox Box, float X, float Y, float Z)
+        {
+            return Offset(new Vector3(X, Y, Z));
+        }
+
         public static Vector3 Center(this BoundingBox box)
         {
             return (box.Max + box.Min) * 0.5f;
