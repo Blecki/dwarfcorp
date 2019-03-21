@@ -37,12 +37,36 @@ namespace DwarfCorp
                     if (neighbor.IsExplored) continue;
 
                     // We are skipping the invalidation mechanism but still need to trigger events.
-                    Manager.NotifyChangedVoxel(new VoxelChangeEvent
+                    // Because of the shear number of voxel revelations that get queued up - and the fact that this runs last while loading - we can go ahead and
+                    //   trigger entities now. Hopefully.
+                    //Manager.NotifyChangedVoxel(new VoxelChangeEvent
+                    //{
+                    //    Type = VoxelChangeEventType.Explored,
+                    //    Voxel = neighbor
+                    //});
+
+
+                    neighbor.RawSetIsExplored();
+
+                    var box = neighbor.GetBoundingBox();
+                    var hashmap = Manager.World.EnumerateIntersectingObjects(box, CollisionType.Both);
+
+                    foreach (var intersectingBody in hashmap)
+                    {
+                        var listener = intersectingBody as IVoxelListener;
+                        if (listener != null)
+                            listener.OnVoxelChanged(new VoxelChangeEvent
+                            {
+                                Type = VoxelChangeEventType.Explored,
+                                Voxel = neighbor
+                            });
+                    }
+
+                    Manager.World.Master.TaskManager.OnVoxelChanged(new VoxelChangeEvent
                     {
                         Type = VoxelChangeEventType.Explored,
                         Voxel = neighbor
                     });
-                    neighbor.RawSetIsExplored();
 
                     if (neighbor.IsEmpty)
                         queue.Enqueue(neighbor);

@@ -1191,7 +1191,10 @@ namespace DwarfCorp
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
 
-            lock (ScreenshotLock)
+            foreach (var module in UpdateSystems)
+                module.Render(gameTime, ChunkManager, Camera, DwarfGame.SpriteBatch, GraphicsDevice, DefaultShader);
+
+                lock (ScreenshotLock)
             {
                 foreach (Screenshot shot in Screenshots)
                 {

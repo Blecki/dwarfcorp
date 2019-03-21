@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
@@ -10,5 +11,6 @@ namespace DwarfCorp
         public virtual void Update(DwarfTime GameTime) { }
         public virtual void ComponentCreated(GameComponent C) { }
         public virtual void ComponentDestroyed(GameComponent C) { }
+        public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect) { }
     }
 }

@@ -80,7 +80,7 @@ namespace DwarfCorp
 
         public static BoundingBox Offset(this BoundingBox Box, float X, float Y, float Z)
         {
-            return Offset(new Vector3(X, Y, Z));
+            return Box.Offset(new Vector3(X, Y, Z));
         }
 
         public static Vector3 Center(this BoundingBox box)

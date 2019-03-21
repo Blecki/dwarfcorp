@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace DwarfCorp.SteamPipes
+namespace DwarfCorp.Elevators
 {
     public class ElevatorTrack : Body
     {
@@ -24,37 +24,44 @@ namespace DwarfCorp.SteamPipes
 
         public UInt32 TrackAbove = ComponentManager.InvalidID;
         public UInt32 TrackBelow = ComponentManager.InvalidID;
+
+        [JsonIgnore]
+        public ElevatorShaft Shaft = new ElevatorShaft();
+
+        [JsonIgnore]
+        public bool NeedsShaftUpdate = false;
+
+        [JsonIgnore]
+        public bool NeedsConnectionUpdate = true;
         
         public RawPrimitive Primitive;
         private Color VertexColor = Color.White;
         private Color LightRamp = Color.White;
         private SpriteSheet Sheet;
 
-        public override void ReceiveMessageRecursive(Message messageToReceive)
-        {
-            switch (messageToReceive.Type)
-            {
-                case Message.MessageType.OnChunkModified:
-                    HasMoved = true;
-                    break;
-            }
-
-            base.ReceiveMessageRecursive(messageToReceive);
-        }
-
         public ElevatorTrack()
         {
             CollisionType = CollisionType.Static;
+            Shaft.Pieces.Add(this);
         }
 
         public ElevatorTrack(ComponentManager Manager, Vector3 Position, List<ResourceAmount> Resources) :
-            base(Manager, "Elevator Track", Matrix.Identity, Vector3.One, Vector3.Zero)
+            base(Manager, "Elevator Track", Matrix.CreateTranslation(Position), Vector3.One, Vector3.Zero)
         {
             CollisionType = CollisionType.Static;
 
             AddChild(new CraftDetails(Manager, "Elevator Track", Resources));
+            Shaft.Pieces.Add(this);
 
             CreateCosmeticChildren(Manager);
+        }
+
+        public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
+        {
+            if (HasMoved)
+                NeedsConnectionUpdate = true;
+
+            base.Update(Time, Chunks, Camera);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
@@ -115,7 +122,27 @@ namespace DwarfCorp.SteamPipes
 
                 Primitive = new RawPrimitive();
 
-                Primitive.AddQuad(Matrix.CreateTranslation(0.5f, 0.0f, 0.0f), Color.White, Color.White, uvs, bounds);
+                Primitive.AddQuad(
+                    Matrix.CreateRotationX((float)Math.PI * 0.5f)
+                    * Matrix.CreateRotationY((float)Math.PI * 0.5f)
+                    * Matrix.CreateTranslation(0.45f, 0.0f, 0.0f),
+                    Color.White, Color.White, uvs, bounds);
+
+                Primitive.AddQuad(
+                    Matrix.CreateRotationX((float)Math.PI * 0.5f)
+                    * Matrix.CreateTranslation(0.0f, 0.0f, 0.45f),
+                    Color.White, Color.White, uvs, bounds);
+
+                Primitive.AddQuad(
+                    Matrix.CreateRotationX((float)Math.PI * 0.5f)
+                    * Matrix.CreateRotationY((float)Math.PI * 0.5f)
+                    * Matrix.CreateTranslation(-0.45f, 0.0f, 0.0f),
+                    Color.White, Color.White, uvs, bounds);
+
+                Primitive.AddQuad(
+                    Matrix.CreateRotationX((float)Math.PI * 0.5f)
+                    * Matrix.CreateTranslation(0.0f, 0.0f, -0.45f),
+                    Color.White, Color.White, uvs, bounds);
             }
 
             if (Primitive.VertexCount == 0) return;
@@ -196,19 +223,16 @@ namespace DwarfCorp.SteamPipes
 
             TrackAbove = ComponentManager.InvalidID;
             TrackBelow = ComponentManager.InvalidID;
-            Primitive = null;
         }        
 
         public void DetachNeighborBelow()
         {
             TrackBelow = ComponentManager.InvalidID;
-            Primitive = null;
         }
 
         public void DetachNeighborAbove()
         {
             TrackAbove = ComponentManager.InvalidID;
-            Primitive = null;
         }
 
         private bool FindNeighbor(BoundingBox Bounds, out ElevatorTrack Neighbor)
@@ -240,23 +264,19 @@ namespace DwarfCorp.SteamPipes
 
             if (FindNeighbor(this.BoundingBox.Offset(0.0f, -1.0f, 0.0f).Expand(-0.2f), out ElevatorTrack belowNeighbor))
             {
-                AttachNeighborAbove(belowNeighbor.GlobalID);
-                belowNeighbor.AttachNeighborBelow(this.GlobalID);
+                AttachNeighborBelow(belowNeighbor.GlobalID);
+                belowNeighbor.AttachNeighborAbove(this.GlobalID);
             }
-            
-            Primitive = null;
         }
 
         public void AttachNeighborBelow(uint ID)
         {
             TrackBelow = ID;
-            Primitive = null;
         }
 
         public void AttachNeighborAbove(uint ID)
         {
             TrackAbove = ID;
-            Primitive = null;
         }
 
         public override void Delete()
