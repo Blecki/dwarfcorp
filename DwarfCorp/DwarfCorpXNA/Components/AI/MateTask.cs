@@ -49,21 +49,55 @@ namespace DwarfCorp
 
         public MateTask()
         {
-            
+            ReassignOnDeath = false;
         }
         public MateTask(CreatureAI closestMate)
         {
             Them = closestMate;
             Name = "Mate with " + closestMate.GlobalID;
+            ReassignOnDeath = false;
+        }
+
+        public override bool ShouldRetry(Creature agent)
+        {
+            return false;
+        }
+
+        public override bool ShouldDelete(Creature agent)
+        {
+            if (Them == null || Them.IsDead || agent == null || agent.AI == null || agent.IsDead)
+            {
+                return true;
+            }
+
+            return base.ShouldDelete(agent);
+        }
+
+        public override bool IsComplete(Faction faction)
+        {
+            if (Them == null || Them.IsDead)
+            {
+                return true;
+            }
+            return false;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
+            if (Them == null || Them.IsDead ||  agent == null || agent.IsDead || agent.AI == null)
+            {
+                return float.MaxValue;
+            }
+
             return (Them.Position - agent.AI.Position).LengthSquared();
         }
 
         public override Feasibility IsFeasible(Creature agent)
         {
+            if (Them == null || Them.IsDead || agent == null || agent.IsDead || agent.AI == null)
+            {
+                return Feasibility.Infeasible;
+            }
             return Mating.CanMate(agent, Them.Creature) ? Feasibility.Feasible : Feasibility.Infeasible ;
         }
 
