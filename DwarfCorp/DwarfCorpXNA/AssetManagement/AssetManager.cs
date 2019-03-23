@@ -94,6 +94,7 @@ namespace DwarfCorp
                 Directory = "Content",
             });
 
+            Assemblies.Clear();
             Assemblies.Add(Tuple.Create(new ModMetaData
             {
                 Name = "BaseContent",
