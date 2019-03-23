@@ -64,7 +64,12 @@ namespace DwarfCorp.GameStates
 
         public T GetState<T>() where T : class
         {
-            return StateStack.OfType<T>().FirstOrDefault();
+            T state = default(T);
+            lock (_mutex)
+            {
+                state = StateStack.OfType<T>().FirstOrDefault();
+            }
+            return state;
         }
 
         public void PopState(bool enterNext = true)

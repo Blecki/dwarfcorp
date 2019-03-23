@@ -1253,6 +1253,10 @@ namespace DwarfCorp
             }
             WaterRenderer.Dispose();
             CompositeLibrary.Composites.Clear();
+            if (LoadingThread != null && LoadingThread.IsAlive)
+            {
+                LoadingThread.Abort();
+            }
         }
 
         public void InvokeLoss()
