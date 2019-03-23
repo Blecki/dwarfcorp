@@ -119,16 +119,19 @@ namespace DwarfCorp
 
         public void CreateCoins(Vector3 pos)
         {
-            Vector3 startPos = pos + new Vector3(0.5f, -0.1f, 0.5f);
-            Vector3 endPos = pos + new Vector3(0.5f, 1.5f, 0.5f);
+            WorldManager.DoLazy(() =>
+            {
+                Vector3 startPos = pos + new Vector3(0.5f, -0.1f, 0.5f);
+                Vector3 endPos = pos + new Vector3(0.5f, 1.5f, 0.5f);
 
-            Body coins = EntityFactory.CreateEntity<Body>("Coins", startPos);
-            coins.AnimationQueue.Add(new EaseMotion(0.8f, coins.LocalTransform, endPos));
-            Coins.Add(coins);
-            AddBody(coins, false);
-            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_dwarf_stash_money, startPos);
-            if (Faction != null)
-                Faction.World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);
+                Body coins = EntityFactory.CreateEntity<Body>("Coins", startPos);
+                coins.AnimationQueue.Add(new EaseMotion(0.8f, coins.LocalTransform, endPos));
+                Coins.Add(coins);
+                AddBody(coins, false);
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_dwarf_stash_money, startPos);
+                if (Faction != null)
+                    Faction.World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);
+            });
         }
 
         public void HandleCoins()

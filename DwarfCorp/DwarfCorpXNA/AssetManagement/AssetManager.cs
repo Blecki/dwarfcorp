@@ -276,6 +276,12 @@ namespace DwarfCorp
 
         public static Texture2D GetContentTexture(string _asset)
         {
+#if DEBUG
+            if (!DwarfGame.IsMainThread)
+            {
+                throw new InvalidOperationException("Can't load an asset outside of the main thread.");
+            }
+#endif
             string asset = FileUtils.NormalizePath(_asset);
             if (asset == null)
             {

@@ -60,8 +60,11 @@ namespace DwarfCorp
 
         private void CreateFlag(Vector3 At)
         {
-            var flag = EntityFactory.CreateEntity<Flag>("Flag", At + new Vector3(0.5f, 0.5f, 0.5f));
-            AddBody(flag, true);
+            WorldManager.DoLazy(new Action(() =>
+               {
+                   var flag = EntityFactory.CreateEntity<Flag>("Flag", At + new Vector3(0.5f, 0.5f, 0.5f));
+                   AddBody(flag, true);
+               }));
         }
 
         public override void OnBuilt()
