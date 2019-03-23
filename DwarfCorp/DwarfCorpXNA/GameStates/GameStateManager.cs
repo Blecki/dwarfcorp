@@ -181,14 +181,7 @@ namespace DwarfCorp.GameStates
                     {
                         if (state.IsInitialized)
                         {
-                            //try
-                            //{
                             state.Render(time);
-                            //}
-                            //catch (InvalidOperationException exception)
-                            //{
-                            //    removals.Add(state);
-                            //}
                         }
                         else if (!state.IsInitialized)
                         {

@@ -112,6 +112,7 @@ namespace DwarfCorp
                             Assemblies.Add(Tuple.Create(mod, assembly));
                     }
                 }
+            TextureCache.Clear();
         }
 
         public static IEnumerable<Tuple<ModMetaData,Assembly>> EnumerateLoadedModAssemblies()
