@@ -52,6 +52,8 @@ namespace DwarfCorp.GameStates
 
         public Terrain2D ScreenSaver { get; set; }
 
+        private object _mutex = new object();
+
         public GameStateManager(DwarfGame game)
         {
             Game = game;
@@ -67,37 +69,51 @@ namespace DwarfCorp.GameStates
 
         public void PopState(bool enterNext = true)
         {
-            if(StateStack.Count > 0)
+            lock (_mutex)
             {
-                StateStack.RemoveAt(0);
-            }
-            
-            if (StateStack.Count > 0 && enterNext)
-            {
-                var state = StateStack.ElementAt(0);
-                NextState = state;
-                NextState.OnEnter();
+                Game.LogSentryBreadcrumb("GameState", "Popping state.");
+                if (StateStack.Count > 0)
+                {
+                    Game.LogSentryBreadcrumb("GameState", String.Format("Leaving state {0}", StateStack[0].Name));
+                    StateStack.RemoveAt(0);
+                }
+
+                if (StateStack.Count > 0 && enterNext)
+                {
+                    var state = StateStack.ElementAt(0);
+                    NextState = state;
+                    NextState.OnEnter();
+                }
             }
         }
 
         public void ClearState()
         {
-            StateStack.Clear();
-            CurrentState = null;
-            NextState = null;
+            lock (_mutex)
+            {
+                StateStack.Clear();
+                CurrentState = null;
+                NextState = null;
+            }
         }
 
         public void PushState(GameState state)
         {
-            NextState = state;
-            NextState.OnEnter();
-            StateStack.Insert(0, NextState);
+            lock (_mutex)
+            {
+                NextState = state;
+                NextState.OnEnter();
+                StateStack.Insert(0, NextState);
+            }
         }
 
         public void ReinsertState(GameState state)
         {
-            StateStack.Remove(state);
-            PushState(state);
+            lock (_mutex)
+            {
+                StateStack.Remove(state);
+                PushState(state);
+            }
         }
 
         public void Update(DwarfTime time)
@@ -120,53 +136,59 @@ namespace DwarfCorp.GameStates
             if (ScreenSaver == null)
                 ScreenSaver = new Terrain2D(Game);
 
-            if (NextState != null && NextState.IsInitialized)
+            lock (_mutex)
             {
-                if (CurrentState != null)
+                if (NextState != null && NextState.IsInitialized)
                 {
-                    CurrentState.OnExit();
-                    CurrentState.OnPopped();
+                    if (CurrentState != null)
+                    {
+                        CurrentState.OnExit();
+                        CurrentState.OnPopped();
+                    }
+
+                    CurrentState = NextState;
+                    NextState = null;
                 }
 
-                CurrentState = NextState;
-                NextState = null;
-            }
 
-            if (CurrentState != null && CurrentState.IsInitialized)
-                CurrentState.Update(time);
+                if (CurrentState != null && CurrentState.IsInitialized)
+                    CurrentState.Update(time);
+            }
         }
 
         public void Render(DwarfTime time)
         {
-
-            Game.GraphicsDevice.Clear(Color.Black);
-
-            if (CurrentState != null && CurrentState.EnableScreensaver)
-                ScreenSaver.Render(Game.GraphicsDevice, time);
-
-            for(int i = StateStack.Count - 1; i >= 0; i--)
+            lock (_mutex)
             {
-                GameState state = StateStack[i];
-               
-                if(state != null &&
-                    (state.RenderUnderneath || i == 0 
-                    || Object.ReferenceEquals(state, CurrentState) 
-                    || Object.ReferenceEquals(state, NextState)))
+                Game.GraphicsDevice.Clear(Color.Black);
+
+                if (CurrentState != null && CurrentState.EnableScreensaver)
+                    ScreenSaver.Render(Game.GraphicsDevice, time);
+
+                for (int i = StateStack.Count - 1; i >= 0; i--)
                 {
-                    if(state.IsInitialized)
+                    GameState state = StateStack[i];
+
+                    if (state != null &&
+                        (state.RenderUnderneath || i == 0
+                        || Object.ReferenceEquals(state, CurrentState)
+                        || Object.ReferenceEquals(state, NextState)))
                     {
-                        //try
-                        //{
+                        if (state.IsInitialized)
+                        {
+                            //try
+                            //{
                             state.Render(time);
-                        //}
-                        //catch (InvalidOperationException exception)
-                        //{
-                        //    removals.Add(state);
-                        //}
-                    }
-                    else if(!state.IsInitialized)
-                    {
-                        state.RenderUnitialized(time);
+                            //}
+                            //catch (InvalidOperationException exception)
+                            //{
+                            //    removals.Add(state);
+                            //}
+                        }
+                        else if (!state.IsInitialized)
+                        {
+                            state.RenderUnitialized(time);
+                        }
                     }
                 }
             }
