@@ -106,6 +106,12 @@ namespace DwarfCorp
             Timer mateTimer = new Timer(5.0f, true);
             while (!mateTimer.HasTriggered)
             {
+                if (me.IsDead || Them == null || Them.IsDead)
+                {
+                    yield return Act.Status.Fail;
+                    yield break;
+                }
+
                 me.Physics.Velocity = Vector3.Zero;
                 Them.Physics.Velocity = Vector3.Zero;
                 Them.Physics.LocalPosition = me.Physics.Position*0.1f + Them.Physics.Position*0.9f;
@@ -117,6 +123,13 @@ namespace DwarfCorp
                 mateTimer.Update(DwarfTime.LastTime);
                 yield return Act.Status.Running;
             }
+
+            if (me.IsDead || Them == null || Them.IsDead)
+            {
+                yield return Act.Status.Fail;
+                yield break;
+            }
+
 
             if (Mating.CanMate(me, Them.Creature))
             {
