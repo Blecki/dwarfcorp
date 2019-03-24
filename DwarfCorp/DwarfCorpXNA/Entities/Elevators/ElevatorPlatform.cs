@@ -11,7 +11,7 @@ namespace DwarfCorp.Elevators
 {
     public class ElevatorPlatform : Body
     {
-        public RawPrimitive Primitive;
+        private RawPrimitive Primitive;
         private Color VertexColor = Color.White;
         private Color LightRamp = Color.White;
         private SpriteSheet Sheet;
@@ -21,7 +21,7 @@ namespace DwarfCorp.Elevators
             CollisionType = CollisionType.Static;
         }
 
-        public ElevatorPlatform(ComponentManager Manager, Vector3 Position, List<ResourceAmount> Resources) :
+        public ElevatorPlatform(ComponentManager Manager, Vector3 Position) :
             base(Manager, "Elevator Track", Matrix.CreateTranslation(Position), Vector3.One, Vector3.Zero)
         {
             CollisionType = CollisionType.Static;
@@ -32,7 +32,7 @@ namespace DwarfCorp.Elevators
         {
             base.CreateCosmeticChildren(manager);
 
-            Sheet = new SpriteSheet(ContentPaths.rail_tiles, 32, 32);
+            Sheet = new SpriteSheet(ContentPaths.Terrain.terrain_tiles, 32, 32);
         }
 
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
@@ -69,16 +69,12 @@ namespace DwarfCorp.Elevators
                 LightRamp = new Color(200, 255, 0);
 
             Color origTint = effect.VertexColorTint;
-            if (!Active)
-            {
-                DoStipple(effect);
-            }
+
             effect.VertexColorTint = VertexColor;
             effect.LightRamp = LightRamp;
             effect.World = GlobalTransform;
 
             effect.MainTexture = Sheet.GetTexture();
-
 
             effect.EnableWind = false;
 
@@ -89,39 +85,6 @@ namespace DwarfCorp.Elevators
             }
 
             effect.VertexColorTint = origTint;
-            if (!Active)
-            {
-                EndDraw(effect);
-            }
-        }
-
-        private string previousEffect = null;
-
-        public void DoStipple(Shader effect)
-        {
-#if DEBUG
-            if (effect.CurrentTechnique.Name == Shader.Technique.Stipple)
-            {
-                throw new InvalidOperationException("Stipple technique not cleaned up. Was EndDraw called?");
-            }
-#endif
-            if (effect.CurrentTechnique != effect.Techniques[Shader.Technique.SelectionBuffer] && effect.CurrentTechnique != effect.Techniques[Shader.Technique.SelectionBufferInstanced])
-            {
-                previousEffect = effect.CurrentTechnique.Name;
-                effect.CurrentTechnique = effect.Techniques[Shader.Technique.Stipple];
-            }
-            else
-            {
-                previousEffect = null;
-            }
-        }
-
-        public void EndDraw(Shader shader)
-        {
-            if (!String.IsNullOrEmpty(previousEffect))
-            {
-                shader.CurrentTechnique = shader.Techniques[previousEffect];
-            }
         }
     }
 }

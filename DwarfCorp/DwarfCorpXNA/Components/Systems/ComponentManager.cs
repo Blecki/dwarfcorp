@@ -290,11 +290,12 @@ namespace DwarfCorp
             AdditionMutex.ReleaseMutex();
 
             RemovalMutex.WaitOne();
-            foreach (GameComponent component in Removals)
-                RemoveComponentImmediate(component);
-
+            var localRemovals = new List<GameComponent>(Removals);
             Removals.Clear();
             RemovalMutex.ReleaseMutex();
+
+            foreach (var component in localRemovals)
+                RemoveComponentImmediate(component);
         }
 
         public void UpdatePaused(DwarfTime gameTime, ChunkManager chunks, Camera camera)

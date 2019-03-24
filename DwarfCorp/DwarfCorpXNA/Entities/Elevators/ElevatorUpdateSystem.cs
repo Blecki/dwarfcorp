@@ -15,19 +15,37 @@ namespace DwarfCorp.Elevators
             return new ElevatorUpdateSystem();
         }
 
-        private List<ElevatorTrack> Objects = new List<ElevatorTrack>();
-        private List<ElevatorShaft> Shafts = new List<ElevatorShaft>();
-
+        private List<ElevatorShaft> Objects = new List<ElevatorShaft>();
+        private List<ElevatorStack> Shafts = new List<ElevatorStack>();
+        
         public override void ComponentCreated(GameComponent C)
         {
-            if (C is ElevatorTrack elevatorTrack)
+            if (C is ElevatorShaft elevatorTrack)
                 Objects.Add(elevatorTrack);
         }
 
         public override void ComponentDestroyed(GameComponent C)
         {
-            if (C is ElevatorTrack elevatorTrack)
+            if (C is ElevatorShaft elevatorTrack)
+            {
+                RemoveSegmentFromShaft(elevatorTrack);
+                
                 Objects.Remove(elevatorTrack);
+                RemoveShaft(elevatorTrack.Shaft);
+
+                DetachFromNeighbors(elevatorTrack.Manager, elevatorTrack);
+            }
+        }
+
+        private void RemoveShaft(ElevatorStack Shaft)
+        {
+            if (Shaft.Platform != null)
+            {
+                Shaft.Platform.Delete();
+                Shaft.Platform = null;
+            }
+
+            Shafts.Remove(Shaft);
         }
 
         public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)
@@ -40,7 +58,7 @@ namespace DwarfCorp.Elevators
         {
             // Todo: Limit update rate.
 
-            var segmentsNeedingShaftUpdate = new List<ElevatorTrack>();
+            var segmentsNeedingShaftUpdate = new List<ElevatorShaft>();
 
             foreach (var elevatorTrack in Objects)
             {
@@ -51,10 +69,11 @@ namespace DwarfCorp.Elevators
                     RemoveSegmentFromShaft(elevatorTrack);
 
                     elevatorTrack.PropogateTransforms();
-                    elevatorTrack.DetachFromNeighbors();
-                    elevatorTrack.AttachToNeighbors();
+                    DetachFromNeighbors(elevatorTrack.Manager, elevatorTrack);
+                    AttachToNeighbors(elevatorTrack.Manager, elevatorTrack);
 
                     segmentsNeedingShaftUpdate.Add(elevatorTrack);
+                    elevatorTrack.NeedsShaftUpdate = true;
                 }
             }
 
@@ -68,31 +87,28 @@ namespace DwarfCorp.Elevators
             
         }
 
-        private void RemoveSegmentFromShaft(ElevatorTrack Track)
+        private void RemoveSegmentFromShaft(ElevatorShaft Track)
         {
-            var above = Track.Manager.FindComponent(Track.TrackAbove) as ElevatorTrack;
+            var above = Track.Manager.FindComponent(Track.TrackAbove) as ElevatorShaft;
             if (above != null)
                 BuildShaftUpward(above);
 
-            var below = Track.Manager.FindComponent(Track.TrackBelow) as ElevatorTrack;
+            var below = Track.Manager.FindComponent(Track.TrackBelow) as ElevatorShaft;
             if (below != null)
                 BuildShaftDownward(below);
 
-            Shafts.Remove(Track.Shaft);
-            Track.Shaft = ElevatorShaft.Create(Track);
-            Shafts.Add(Track.Shaft);
-            Track.NeedsShaftUpdate = true;
+            CreateNewShaft(new ElevatorShaft[] { Track });
         }
 
-        private void BuildShaftUpward(ElevatorTrack Track)
+        private void BuildShaftUpward(ElevatorShaft Track)
         {
             // Build list of all segments in shaft.
-            var segments = new List<ElevatorTrack>();
+            var segments = new List<ElevatorShaft>();
             segments.Add(Track);
 
             while (true)
             {
-                var upper = Track.Manager.FindComponent(Track.TrackAbove) as ElevatorTrack;
+                var upper = Track.Manager.FindComponent(Track.TrackAbove) as ElevatorShaft;
                 if (upper != null)
                 {
                     segments.Add(upper);
@@ -105,28 +121,29 @@ namespace DwarfCorp.Elevators
             CreateNewShaft(segments);
         }
 
-        private void CreateNewShaft(List<ElevatorTrack> segments)
+        private void CreateNewShaft(IEnumerable<ElevatorShaft> segments)
         {
-            var newShaft = ElevatorShaft.Create(segments);
+            var newShaft = ElevatorStack.Create(segments);
             Shafts.Add(newShaft);
+            newShaft.Platform = new ElevatorPlatform(segments.First().Manager, segments.First().Position);
 
             foreach (var segment in segments)
             {
-                Shafts.Remove(segment.Shaft);
+                RemoveShaft(segment.Shaft);
                 segment.Shaft = newShaft;
                 segment.NeedsShaftUpdate = false;
             }
         }
 
-        private void BuildShaftDownward(ElevatorTrack Track)
+        private void BuildShaftDownward(ElevatorShaft Track)
         {
             // Build list of all segments in shaft.
-            var segments = new List<ElevatorTrack>();
+            var segments = new List<ElevatorShaft>();
             segments.Add(Track);
 
             while (true)
             {
-                var lower = Track.Manager.FindComponent(Track.TrackBelow) as ElevatorTrack;
+                var lower = Track.Manager.FindComponent(Track.TrackBelow) as ElevatorShaft;
                 if (lower != null)
                 {
                     segments.Add(lower);
@@ -139,13 +156,13 @@ namespace DwarfCorp.Elevators
             CreateNewShaft(segments);
         }
 
-        private void MergeShafts(ElevatorTrack Track)
+        private void MergeShafts(ElevatorShaft Track)
         {
             // Find bottom of shaft.
             var bottom = Track;
             while (true)
             {
-                var lower = Track.Manager.FindComponent(bottom.TrackBelow) as ElevatorTrack;
+                var lower = Track.Manager.FindComponent(bottom.TrackBelow) as ElevatorShaft;
                 if (lower != null)
                     bottom = lower;
                 else
@@ -153,6 +170,51 @@ namespace DwarfCorp.Elevators
             }
 
             BuildShaftUpward(bottom);
+        }
+
+        private bool FindNeighbor(ComponentManager Manager, BoundingBox Bounds, out ElevatorShaft Neighbor)
+        {
+            Neighbor = null;
+
+            foreach (var entity in Manager.World.EnumerateIntersectingObjects(Bounds, CollisionType.Static))
+            {
+                if (Object.ReferenceEquals(entity, this)) continue;
+                if (entity is ElevatorShaft found)
+                {
+                    Neighbor = found;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void AttachToNeighbors(ComponentManager Manager, ElevatorShaft Segment)
+        {
+            System.Diagnostics.Debug.Assert(Segment.TrackAbove == ComponentManager.InvalidID && Segment.TrackBelow == ComponentManager.InvalidID);
+
+            if (FindNeighbor(Manager, Segment.BoundingBox.Offset(0.0f, 1.0f, 0.0f).Expand(-0.2f), out ElevatorShaft aboveNeighbor))
+            {
+                Segment.TrackAbove = aboveNeighbor.GlobalID;
+                aboveNeighbor.TrackBelow = Segment.GlobalID;
+            }
+
+            if (FindNeighbor(Manager, Segment.BoundingBox.Offset(0.0f, -1.0f, 0.0f).Expand(-0.2f), out ElevatorShaft belowNeighbor))
+            {
+                Segment.TrackBelow = belowNeighbor.GlobalID;
+                belowNeighbor.TrackAbove = Segment.GlobalID;
+            }
+        }
+
+        public void DetachFromNeighbors(ComponentManager Manager, ElevatorShaft Segment)
+        {
+            if (Manager.FindComponent(Segment.TrackAbove) is ElevatorShaft neighbor)
+                neighbor.TrackBelow = ComponentManager.InvalidID;
+            if (Manager.FindComponent(Segment.TrackBelow) is ElevatorShaft neighbor2)
+                neighbor2.TrackAbove = ComponentManager.InvalidID;
+
+            Segment.TrackAbove = ComponentManager.InvalidID;
+            Segment.TrackBelow = ComponentManager.InvalidID;
         }
     }
 }

@@ -5,7 +5,7 @@ version.txt
 *.user
 *.sln.docstates
 *.userprefs
-
+deploy_steam.bat
 
 # Build results
 [Dd]ebug/
@@ -19,6 +19,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 Out/
+SteamSDK/
 
 # Roslyn cache directories
 *.ide/

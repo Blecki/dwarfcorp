@@ -1,6 +1,6 @@
 {
-  "Name": "Elevator Track",
-  "EntityName": "Elevator Track",
+  "Name": "Elevator Shaft",
+  "EntityName": "Elevator Shaft",
   "DisplayName": "@anvil",
   "ShortDisplayName": "@s-anvil",
   "RequiredResources": [
