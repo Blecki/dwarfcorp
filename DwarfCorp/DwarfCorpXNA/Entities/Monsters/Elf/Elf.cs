@@ -60,6 +60,13 @@ namespace DwarfCorp
                 Position).Physics;
         }
 
+        [EntityFactory("Player Elf")]
+        private static GameComponent __factory5(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            var toReturn = new Elf(new CreatureStats(SharedClass, 0), Manager.World.PlayerFaction.Name, Manager.World.PlanService, Manager.World.PlayerFaction, Manager, "elf", Position);
+            return toReturn.Physics;
+        }
+
         private static ElfClass SharedClass = new ElfClass(true);
 
         public Elf()

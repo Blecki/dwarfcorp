@@ -56,6 +56,17 @@ namespace DwarfCorp
                 Position).Physics;
         }
 
+        [EntityFactory("Player Goblin")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Goblin(
+                new CreatureStats(SharedClass, 0),
+               Manager.World.PlayerFaction.Name, Manager.World.PlanService, Manager.World.PlayerFaction,
+                Manager,
+                "Goblin",
+                Position).Physics;
+        }
+
         private static GoblinClass SharedClass = new GoblinClass(true);
 
         public Goblin()

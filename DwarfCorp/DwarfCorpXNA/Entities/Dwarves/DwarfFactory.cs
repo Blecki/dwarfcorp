@@ -42,13 +42,6 @@ namespace DwarfCorp
             return GenerateDwarf(Position, Manager, "Player", JobLibrary.Classes[JobLibrary.JobType.MusketDwarf], 0, Mating.RandomGender(), MathFunctions.Random.Next());
         }
 
-        [EntityFactory("PlayerElf")]
-        private static GameComponent __factory5(ComponentManager Manager, Vector3 Position, Blackboard Data)
-        {
-            var toReturn = new Elf(new CreatureStats(new ElfClass(true), 0), Manager.World.PlayerFaction.Name, Manager.World.PlanService, Manager.World.PlayerFaction, Manager, "elf", Position);
-            return toReturn.Physics;
-        }
-
         public static GameComponent GenerateDwarf(
             Vector3 Position,
             ComponentManager Manager,

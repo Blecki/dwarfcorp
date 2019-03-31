@@ -99,7 +99,7 @@ ortho-cross + diag-edge-2-opposite West -> ortho-cross-under-diag-edge-2-opposit
 
 ortho-to-diag-left + diag-edge-1 West -> ortho-to-diag-left-under-diag-edge-1-a North
 ortho-to-diag-left + diag-edge-1 East -> ortho-to-diag-left-under-diag-edge-1-b North
-ortho-to-diag-right + diag-edge-1 West -> ortho-to-diag-right-under-diag-edge-1-a East
+ortho-to-diag-right + diag-edge-1 West -> ortho-to-diag-right-under-diag-edge-1-b East
 ortho-to-diag-right + diag-edge-1 East -> ortho-to-diag-right-under-diag-edge-1-a East
 
 ortho-to-diag-left + diag-edge-2-opposite East -> ortho-to-diag-left-under-diag-edge-2-opposite North
