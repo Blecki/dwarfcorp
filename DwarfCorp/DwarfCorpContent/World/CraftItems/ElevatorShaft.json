@@ -1,8 +1,8 @@
 {
   "Name": "Elevator Shaft",
   "EntityName": "Elevator Shaft",
-  "DisplayName": "@anvil",
-  "ShortDisplayName": "@s-anvil",
+  "DisplayName": "Elevator Shaft",
+  "ShortDisplayName": "Elev",
   "RequiredResources": [
     {
       "Type": "Metal",
@@ -14,10 +14,10 @@
     "Tile": 24
   },
   "BaseCraftTime": 30.0,
-  "Description": "@d-anvil",
+  "Description": "Elevators run inside these shafts. Moves dwarves vertically quickly.",
   "Type": "Object",
   "Prerequisites": [
-    "OnGround"
+    "NearWall"
   ],
   "ResourceCreated": "",
   "CraftLocation": "",
@@ -29,6 +29,6 @@
   "AddToOwnedPool": true,
   "Moveable": true,
   "CraftActBehavior": "Normal",
-  "Tutorial": "Build anvils to let your dwarfs to construct other objects and crafts. Only one dwarf can use an anvil at a time.",
+  "Tutorial": "Elevators allow rapid vertical movement.",
   "Category": "Steam"
 }
