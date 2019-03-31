@@ -11,7 +11,9 @@ namespace DwarfCorp
     {
         None,
         Rail,
-        Elevator
+        WaitingForElevator,
+        EnteringElevator,
+        RidingElevator
     }
 
     public struct MoveState : IEquatable<MoveState>
@@ -20,6 +22,7 @@ namespace DwarfCorp
         public VehicleTypes VehicleType;
         public Rail.RailEntity Rail;
         public Rail.RailEntity PrevRail;
+        public Elevators.ElevatorShaft Elevator;
         
         public static MoveState InvalidState
         {
@@ -63,7 +66,8 @@ namespace DwarfCorp
             return A.Voxel == B.Voxel
                 && A.VehicleType == B.VehicleType
                 && Object.ReferenceEquals(A.Rail, B.Rail)
-                && Object.ReferenceEquals(A.PrevRail, B.PrevRail);
+                && Object.ReferenceEquals(A.PrevRail, B.PrevRail)
+                && Object.ReferenceEquals(A.Elevator, B.Elevator);
         }
 
         public static bool operator !=(MoveState A, MoveState B)
@@ -71,7 +75,8 @@ namespace DwarfCorp
             return A.Voxel != B.Voxel
                 || A.VehicleType != B.VehicleType
                 || !Object.ReferenceEquals(A.Rail, B.Rail)
-                || !Object.ReferenceEquals(A.PrevRail, B.PrevRail);
+                || !Object.ReferenceEquals(A.PrevRail, B.PrevRail)
+                || !Object.ReferenceEquals(A.Elevator, B.Elevator);
         }
 
     }
@@ -111,7 +116,8 @@ namespace DwarfCorp
                     Voxel = value,
                     VehicleType = SourceState.VehicleType,
                     Rail = SourceState.Rail,
-                    PrevRail = SourceState.PrevRail
+                    PrevRail = SourceState.PrevRail,
+                    Elevator = SourceState.Elevator
                 };
             }
         }
@@ -128,8 +134,9 @@ namespace DwarfCorp
                 {
                     Voxel = value,
                     VehicleType = DestinationState.VehicleType,
-                    Rail = SourceState.Rail,
-                    PrevRail = SourceState.PrevRail
+                    Rail = DestinationState.Rail,
+                    PrevRail = DestinationState.PrevRail,
+                    Elevator = DestinationState.Elevator
                 };
             }
         }

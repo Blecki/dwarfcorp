@@ -249,6 +249,27 @@ namespace DwarfCorp
             Agent.GetRoot().SetFlag(GameComponent.Flag.Visible, true);
             switch (action.MoveType)
             {
+                case MoveType.WaitForElevator:
+                        // While elevator isn't ready, yield return running;
+                    break;
+
+                case MoveType.EnterElevator:
+                case MoveType.ExitElevator:
+                case MoveType.RideElevator:
+                    CleanupMinecart();
+                    Creature.OverrideCharacterMode = false;
+                    Creature.CurrentCharacterMode = CharacterMode.Walking;
+                    if (hasNextAction)
+                    {
+                        transform.Translation = diff * t + currPosition;
+                        Agent.Physics.Velocity = diff;
+                    }
+                    else
+                    {
+                        transform.Translation = currPosition;
+                    }
+                    break;
+
                 case MoveType.EnterVehicle:
                     if (t < 0.5f)
                     {

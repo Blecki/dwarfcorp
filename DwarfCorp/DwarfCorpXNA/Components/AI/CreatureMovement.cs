@@ -82,6 +82,33 @@ namespace DwarfCorp
                     }
                 },
                 {
+                    MoveType.EnterElevator,
+                    new ActionStats
+                    {
+                        CanMove = false,
+                        Cost = 0.1f,
+                        Speed = 1.0f
+                    }
+                },
+                {
+                    MoveType.ExitElevator,
+                    new ActionStats
+                    {
+                        CanMove = false,
+                        Cost = 0.1f,
+                        Speed = 1.0f
+                    }
+                },
+                {
+                    MoveType.RideElevator,
+                    new ActionStats
+                    {
+                        CanMove = false,
+                        Cost = 0.1f,
+                        Speed = 1.0f
+                    }
+                },
+                {
                     MoveType.RideVehicle,
                     new ActionStats
                     {
@@ -265,7 +292,10 @@ namespace DwarfCorp
         /// <summary> gets the cost of a creature's movement for a particular type </summary>
         public float Cost(MoveType type)
         {
-            return Actions[type].Cost;
+            if (Actions.ContainsKey(type))
+                return Actions[type].Cost;
+            return
+                float.PositiveInfinity;
         }
 
         /// <summary> gets the speed multiplier of a creature's movement for a particular type </summary>
@@ -443,6 +473,68 @@ namespace DwarfCorp
         {
             bool isClimbing = false;
 
+            if (state.VehicleType == VehicleTypes.WaitingForElevator)
+            {
+                yield return new MoveAction()
+                {
+                    SourceState = state,
+                    DestinationState = new MoveState()
+                    {
+                        Voxel = state.Voxel,
+                        Elevator = state.Elevator,
+                        VehicleType = VehicleTypes.EnteringElevator
+                    },
+                    MoveType = MoveType.EnterElevator
+                };
+
+                yield break;
+            }
+
+            if (state.VehicleType == VehicleTypes.EnteringElevator || state.VehicleType == VehicleTypes.RidingElevator)
+            {
+                foreach (var exit in state.Elevator.EnumerateExits())
+                    yield return new MoveAction()
+                    {
+                        SourceState = state,
+                        DestinationState = new MoveState()
+                        {
+                            Voxel = exit,
+                            VehicleType = VehicleTypes.None
+                        },
+                        MoveType = MoveType.ExitElevator
+                    };
+
+                var above = state.Elevator.GetShaftAbove();
+                if (above != null)
+                    yield return new MoveAction()
+                    {
+                        SourceState = state,
+                        DestinationState = new MoveState()
+                        {
+                            Voxel = above.GetContainingVoxel(),
+                            VehicleType = VehicleTypes.RidingElevator,
+                            Elevator = above
+                        },
+                        MoveType = MoveType.RideElevator
+                    };
+
+                var below = state.Elevator.GetShaftBelow();
+                if (below != null)
+                    yield return new MoveAction()
+                    {
+                        SourceState = state,
+                        DestinationState = new MoveState()
+                        {
+                            Voxel = below.GetContainingVoxel(),
+                            VehicleType = VehicleTypes.RidingElevator,
+                            Elevator = below
+                        },
+                        MoveType = MoveType.RideElevator
+                    };
+
+                yield break;
+            }
+
             if (state.VehicleType == VehicleTypes.Rail)
             {
                 if (Can(MoveType.ExitVehicle)) // Possibly redundant... If they can ride they should be able to exit right?
@@ -548,6 +640,25 @@ namespace DwarfCorp
                                 });
                             }
                         }
+                    }
+
+                    var elevators = bodies.OfType<Elevators.ElevatorShaft>().Where(r => r.Active);
+
+                    if (elevators.Count() > 0)
+                    {
+                        foreach (var elevator in elevators)
+                            yield return new MoveAction()
+                            {
+                                SourceState = state,
+                                DestinationState = new MoveState()
+                                {
+                                    VehicleType = VehicleTypes.WaitingForElevator,
+                                    Voxel = elevator.GetContainingVoxel(),
+                                    Elevator = elevator,
+                                },
+                                MoveType = MoveType.WaitForElevator,
+                                Diff = new Vector3(1, 1, 1)
+                            };
                     }
                 }
             }

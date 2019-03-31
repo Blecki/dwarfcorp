@@ -205,8 +205,8 @@
     <Compile Include="ContextCommands\ContextCommandAttribute.cs" />
     <Compile Include="Entities\Animals\Chimp.cs" />
     <Compile Include="Entities\Elevators\ElevatorPlatform.cs" />
-    <Compile Include="Entities\Elevators\ElevatorTrack.cs" />
     <Compile Include="Entities\Elevators\ElevatorShaft.cs" />
+    <Compile Include="Entities\Elevators\ElevatorStack.cs" />
     <Compile Include="Entities\Elevators\ElevatorUpdateSystem.cs" />
     <Compile Include="Entities\Fixtures\Palisade.cs" />
     <Compile Include="Entities\Fixtures\MagicalObject.cs" />

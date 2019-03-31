@@ -29,6 +29,9 @@ namespace DwarfCorp
         ExitVehicle,
 
         WaitForElevator,
+        EnterElevator,
+        RideElevator,
+        ExitElevator,
 
         Teleport,
         Dig

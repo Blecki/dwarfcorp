@@ -1017,7 +1017,7 @@ namespace DwarfCorp
 
 
                 // Find a room to train in, if applicable.
-                if (Stats.IsTaskAllowed(Task.TaskCategory.Attack) && MathFunctions.RandEvent(0.05f))
+                if (Stats.IsTaskAllowed(Task.TaskCategory.Attack) && MathFunctions.RandEvent(GameSettings.Default.TrainChance))
                 {
                     if (!Stats.IsTaskAllowed(Task.TaskCategory.Research))
                     {

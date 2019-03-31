@@ -11,7 +11,7 @@ namespace DwarfCorp.Elevators
 {
     public class ElevatorShaft : Body
     {
-        [EntityFactory("Elevator Track")]
+        [EntityFactory("Elevator Shaft")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             var resources = Data.GetData<List<ResourceAmount>>("Resources", null);
@@ -46,11 +46,11 @@ namespace DwarfCorp.Elevators
         }
 
         public ElevatorShaft(ComponentManager Manager, Vector3 Position, List<ResourceAmount> Resources) :
-            base(Manager, "Elevator Track", Matrix.CreateTranslation(Position), Vector3.One, Vector3.Zero)
+            base(Manager, "Elevator Shaft", Matrix.CreateTranslation(Position), Vector3.One, Vector3.Zero)
         {
             CollisionType = CollisionType.Static;
 
-            AddChild(new CraftDetails(Manager, "Elevator Track", Resources));
+            AddChild(new CraftDetails(Manager, "Elevator Shaft", Resources));
             Shaft.Pieces.Add(this);
 
             CreateCosmeticChildren(Manager);
@@ -79,22 +79,6 @@ namespace DwarfCorp.Elevators
             base.RenderSelectionBuffer(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect);
             effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
             Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
-        }
-
-        private float AngleBetweenVectors(Vector2 A, Vector2 B)
-        {
-            A.Normalize();
-            B.Normalize();
-            float DotProduct = Vector2.Dot(A, B);
-            DotProduct = MathHelper.Clamp(DotProduct, -1.0f, 1.0f);
-            float Angle = (float)global::System.Math.Acos(DotProduct);
-            if (CrossZ(A, B) < 0) return -Angle;
-            return Angle;
-        }
-
-        private float CrossZ(Vector2 A, Vector2 B)
-        {
-            return (B.Y * A.X) - (B.X * A.Y);
         }
 
         private void DrawNeighborConnection(UInt32 NeighborID)
@@ -198,6 +182,36 @@ namespace DwarfCorp.Elevators
             }
             else
                 previousEffect = null;
+        }
+
+        public ElevatorShaft GetShaftAbove()
+        {
+            return Manager.FindComponent(TrackAbove) as ElevatorShaft;
+        }
+
+        public ElevatorShaft GetShaftBelow()
+        {
+            return Manager.FindComponent(TrackBelow) as ElevatorShaft;
+        }
+
+        public IEnumerable<VoxelHandle> EnumerateExits()
+        {
+            foreach (var neighborVoxel in VoxelHelpers.EnumerateManhattanNeighbors2D_Y(GlobalVoxelCoordinate.FromVector3(Position)))
+            {
+                var below = neighborVoxel + new GlobalVoxelOffset(0, -1, 0);
+                var neighborHandle = new VoxelHandle(Manager.World.ChunkManager.ChunkData, neighborVoxel);
+                if (neighborHandle.IsValid && neighborHandle.IsEmpty)
+                {
+                    var belowHandle = new VoxelHandle(Manager.World.ChunkManager.ChunkData, below);
+                    if (belowHandle.IsValid && !belowHandle.IsEmpty)
+                        yield return neighborHandle;
+                }
+            }
+        }
+
+        public VoxelHandle GetContainingVoxel()
+        {
+            return new VoxelHandle(Manager.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position));
         }
     }
 }
