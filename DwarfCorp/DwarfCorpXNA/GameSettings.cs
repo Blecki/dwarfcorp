@@ -232,6 +232,7 @@ namespace DwarfCorp
             [AutoResetFloat(-0.2f)] public float Boredom_Walk = -0.2f;
 
             [AutoResetFloat(0.1f)] public float TrainChance = 0.1f;
+            [AutoResetFloat(0.75f)] public float CreatureMovementAdjust = 0.75f;
 
             public int MaxVoxelDesignations = 1024;
             public uint EntityUpdateRate = 4096;

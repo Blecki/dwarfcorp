@@ -434,8 +434,8 @@ namespace DwarfCorp
                         Creature.AI.Blackboard.SetData("GreedyPath", greedyPath);
                         var greedyPathFollow = new FollowPathAct(Creature.AI, "GreedyPath")
                         {
-                            BlendEnd = true,
-                            BlendStart = false
+                            //BlendEnd = true,
+                            //BlendStart = false
                         };
                         greedyPathFollow.Initialize();
 

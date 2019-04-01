@@ -1,3 +1,4 @@
+/*
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -77,44 +78,35 @@ namespace DwarfCorp
         {
             if (action.MoveType == MoveType.EnterVehicle)
                 return 0.5f;
+
             if (action.MoveType == MoveType.ExitVehicle)
                 return 0.1f;
-            MoveAction nextAction = action;
-            bool hasNextAction = false;
-            Vector3 diff = Vector3.Zero;
-            float diffNorm = 0.0f;
-            Vector3 half = GetBoundingBoxOffset();
-            int nextID = index + 1;
+
+            var diff = Vector3.Zero;
+            var diffNorm = 0.0f;
+            var half = GetBoundingBoxOffset();
+            var nextID = index + 1;
+
             if (nextID < Path.Count)
             {
-                hasNextAction = true;
-                nextAction = Path[nextID];
+                var nextAction = Path[nextID];
                 if (nextAction.SourceVoxel.IsValid)
                 {
-                    diff = (nextAction.SourceVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half)) + Vector3.One * 1e-5f;
+                    diff = nextAction.SourceVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half) + (Vector3.One * 1e-5f);
                     diffNorm = diff.Length();
                 }
                 else
-                {
                     throw new InvalidOperationException("Something is bad.");
-                }
             }
             else
             {
-                diff = (action.DestinationVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half)) + Vector3.One * 1e-5f;
-                diffNorm = diff.Length();
-                hasNextAction = true;
+                diffNorm = (action.DestinationVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half) + (Vector3.One * 1e-5f)).Length();
             }
             var speed = Agent.Movement.Speed(action.MoveType);
 
-            float unitTime = (1.25f / (Agent.Stats.Dexterity + 0.001f) + RandomTimeOffset) /
-                             speed;
+            float unitTime = (1.25f / (Agent.Stats.Dexterity + 0.001f) + RandomTimeOffset) / speed;
             
-            if (hasNextAction)
-            {
                 return unitTime * diffNorm;
-            }
-            return 0.0f;
         }
 
 
@@ -181,21 +173,12 @@ namespace DwarfCorp
             float currentTime = 0;
 
             if (BlendStart && BlendEnd)
-            {
-                currentTime = Easing.LinearQuadBlends(TrajectoryTimer.CurrentTimeSeconds,
-                    TrajectoryTimer.TargetTimeSeconds, 0.5f);
-            }
+                currentTime = Easing.LinearQuadBlends(TrajectoryTimer.CurrentTimeSeconds, TrajectoryTimer.TargetTimeSeconds, 0.5f);
             else if (BlendStart)
-            {
-                currentTime = Easing.CubicEaseIn(TrajectoryTimer.CurrentTimeSeconds, 0, 
-                    TrajectoryTimer.TargetTimeSeconds, 
-                    TrajectoryTimer.TargetTimeSeconds);
-            }
+                currentTime = Easing.CubicEaseIn(TrajectoryTimer.CurrentTimeSeconds, 0, TrajectoryTimer.TargetTimeSeconds, TrajectoryTimer.TargetTimeSeconds);
             else if (BlendEnd)
-            {
-                currentTime = Easing.Linear(TrajectoryTimer.CurrentTimeSeconds, 0, TrajectoryTimer.TargetTimeSeconds,
-                    TrajectoryTimer.TargetTimeSeconds);
-            }
+                currentTime = Easing.Linear(TrajectoryTimer.CurrentTimeSeconds, 0, TrajectoryTimer.TargetTimeSeconds, TrajectoryTimer.TargetTimeSeconds);
+
             float sumTime = 0.001f;
             for (int i = 0; i < ActionTimes.Count; i++)
             {
@@ -249,13 +232,53 @@ namespace DwarfCorp
             Agent.GetRoot().SetFlag(GameComponent.Flag.Visible, true);
             switch (action.MoveType)
             {
+                /*
                 case MoveType.WaitForElevator:
-                        // While elevator isn't ready, yield return running;
+                    if (action.SourceState.Elevator == null || action.SourceState.Elevator.IsDead)
+                        yield return Status.Fail;
+
+                    action.SourceState.Elevator.EnterQueue(Agent);
+
+                    while (!action.SourceState.Elevator.ReadyToBoard(Agent))
+                        yield return Status.Running;
+
                     break;
 
                 case MoveType.EnterElevator:
+                    if (action.SourceState.Elevator == null || action.SourceState.Elevator.IsDead)
+                        yield return Status.Fail;
+                    
+                    if (t < 0.5f)
+                        Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
+
+                    Creature.OverrideCharacterMode = false;
+                    Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping  : CharacterMode.Falling;
+                    if (hasNextAction)
+                    {
+                        float z = Easing.Ballistic(t, 1.0f, 1.0f);
+                        Vector3 start = currPosition;
+                        Vector3 end = nextPosition + Vector3.Up * 0.5f;
+                        Vector3 dx = (end - start) * t + start;
+                        dx.Y = start.Y * (1 - t) + end.Y * (t) + z;
+                        transform.Translation = dx;
+                        Agent.Physics.Velocity = new Vector3(diff.X, (dx.Y - Agent.Physics.Position.Y), diff.Z);
+                    }
+                    else
+                        transform.Translation = currPosition;
+
+                    action.SourceState.Elevator.Board(Agent);
+
+                    break;
+
                 case MoveType.ExitElevator:
+                    if (action.SourceState.Elevator != null)
+                        action.SourceState.Elevator.Disembark(Agent);
+                    transform.Translation = currPosition;
+
+                    break;
+
                 case MoveType.RideElevator:
+
                     CleanupMinecart();
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Walking;
@@ -268,8 +291,9 @@ namespace DwarfCorp
                     {
                         transform.Translation = currPosition;
                     }
-                    break;
 
+                    break;
+                    * /
                 case MoveType.EnterVehicle:
                     if (t < 0.5f)
                     {
@@ -513,12 +537,15 @@ namespace DwarfCorp
             InitializePath();
             if (Path == null || Path.Count == 0)
                 yield return Act.Status.Success;
+
             if (TrajectoryTimer == null) yield break;
+
             while (!TrajectoryTimer.HasTriggered)
             {
                 Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
                 TrajectoryTimer.Update(DwarfTime.LastTime);
                 ValidPathTimer.Update(DwarfTime.LastTime);
+
                 foreach (Status status in PerformCurrentAction())
                 {
                     if (status == Status.Fail)
@@ -589,6 +616,7 @@ namespace DwarfCorp
                 Creature.Physics.AnimationQueue.Clear();
                 yield return Status.Running;
             }
+
             Creature.OverrideCharacterMode = false;
             SetPath(null);
             Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
@@ -609,3 +637,4 @@ namespace DwarfCorp
 
 
 }
+*/

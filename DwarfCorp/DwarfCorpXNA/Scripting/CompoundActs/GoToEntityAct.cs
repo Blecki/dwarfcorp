@@ -154,8 +154,8 @@ namespace DwarfCorp
 
                 FollowPathAct followPath = new FollowPathAct(Creature.AI, "PathToEntity")
                 {
-                    BlendEnd = true,
-                    BlendStart = existingPath == null
+                    //BlendEnd = true,
+                    //BlendStart = existingPath == null
                 };
                 followPath.Initialize();
                 

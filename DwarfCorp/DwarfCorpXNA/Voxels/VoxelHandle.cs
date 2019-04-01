@@ -72,6 +72,9 @@ namespace DwarfCorp
         public Vector3 WorldPosition { get { return Coordinate.ToVector3(); } }
 
         [JsonIgnore]
+        public Vector3 Center { get { return WorldPosition + new Vector3(0.5f, 0.5f, 0.5f); } }
+
+        [JsonIgnore]
         public bool IsValid { get { return _cache_Chunk != null; } }
 
         public BoundingBox GetBoundingBox()

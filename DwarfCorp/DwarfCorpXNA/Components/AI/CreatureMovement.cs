@@ -1,36 +1,3 @@
-// CreatureAI.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
@@ -301,7 +268,9 @@ namespace DwarfCorp
         /// <summary> gets the speed multiplier of a creature's movement for a particular type </summary>
         public float Speed(MoveType type)
         {
-            return Actions[type].Speed;
+            if (Actions.ContainsKey(type))
+                return Actions[type].Speed;
+            return 1.0f;
         }
 
         /// <summary> Sets whether the creature can move using the given type </summary>
@@ -473,6 +442,7 @@ namespace DwarfCorp
         {
             bool isClimbing = false;
 
+            /*
             if (state.VehicleType == VehicleTypes.WaitingForElevator)
             {
                 yield return new MoveAction()
@@ -490,50 +460,41 @@ namespace DwarfCorp
                 yield break;
             }
 
-            if (state.VehicleType == VehicleTypes.EnteringElevator || state.VehicleType == VehicleTypes.RidingElevator)
+            if (state.VehicleType == VehicleTypes.EnteringElevator)
             {
-                foreach (var exit in state.Elevator.EnumerateExits())
+                foreach (var exit in Elevators.Helper.EnumerateExits(state.Elevator.Shaft))
                     yield return new MoveAction()
                     {
                         SourceState = state,
                         DestinationState = new MoveState()
                         {
-                            Voxel = exit,
-                            VehicleType = VehicleTypes.None
-                        },
-                        MoveType = MoveType.ExitElevator
-                    };
-
-                var above = state.Elevator.GetShaftAbove();
-                if (above != null)
-                    yield return new MoveAction()
-                    {
-                        SourceState = state,
-                        DestinationState = new MoveState()
-                        {
-                            Voxel = above.GetContainingVoxel(),
+                            Voxel = exit.OntoVoxel,
                             VehicleType = VehicleTypes.RidingElevator,
-                            Elevator = above
-                        },
-                        MoveType = MoveType.RideElevator
-                    };
-
-                var below = state.Elevator.GetShaftBelow();
-                if (below != null)
-                    yield return new MoveAction()
-                    {
-                        SourceState = state,
-                        DestinationState = new MoveState()
-                        {
-                            Voxel = below.GetContainingVoxel(),
-                            VehicleType = VehicleTypes.RidingElevator,
-                            Elevator = below
+                            Elevator = exit.ShaftSegment,
                         },
                         MoveType = MoveType.RideElevator
                     };
 
                 yield break;
             }
+
+            // May work better if the entire elevator process is a single move action??
+            if (state.VehicleType == VehicleTypes.RidingElevator)
+            {
+                yield return new MoveAction()
+                {
+                    SourceState = state,
+                    DestinationState = new MoveState()
+                    {
+                        Voxel = state.Voxel,
+                        VehicleType = VehicleTypes.None
+                    },
+                    MoveType = MoveType.ExitElevator
+                };
+
+                yield break;
+            }
+            */
 
             if (state.VehicleType == VehicleTypes.Rail)
             {
@@ -594,6 +555,7 @@ namespace DwarfCorp
                     {
                         yield return new MoveAction
                         {
+                            SourceState = state,
                             Diff = new Vector3(1, 2, 1),
                             MoveType = MoveType.Climb,
                             InteractObject = ladder
@@ -603,6 +565,7 @@ namespace DwarfCorp
                         {
                             yield return (new MoveAction
                             {
+                                SourceState = state,
                                 Diff = new Vector3(1, 0, 1),
                                 MoveType = MoveType.Climb,
                                 InteractObject = ladder
@@ -642,6 +605,7 @@ namespace DwarfCorp
                         }
                     }
 
+                    /*
                     var elevators = bodies.OfType<Elevators.ElevatorShaft>().Where(r => r.Active);
 
                     if (elevators.Count() > 0)
@@ -660,6 +624,7 @@ namespace DwarfCorp
                                 Diff = new Vector3(1, 1, 1)
                             };
                     }
+                    */
                 }
             }
 
@@ -679,6 +644,7 @@ namespace DwarfCorp
                             {
                                 yield return (new MoveAction
                                 {
+                                    SourceState = state,
                                     Diff = new Vector3(dx, dy, dz),
                                     MoveType = MoveType.Fly
                                 });
@@ -694,6 +660,7 @@ namespace DwarfCorp
             {
                 yield return (new MoveAction
                 {
+                    SourceState = state,
                     Diff = new Vector3(1, 0, 1),
                     MoveType = MoveType.Fall
                 });
@@ -740,6 +707,7 @@ namespace DwarfCorp
                     isClimbing = true;
                     yield return(new MoveAction
                     {
+                        SourceState = state,
                         Diff = new Vector3(1, 2, 1),
                         MoveType = MoveType.ClimbWalls,
                         ActionVoxel = wall
@@ -749,6 +717,7 @@ namespace DwarfCorp
                     {
                         yield return(new MoveAction
                         {
+                            SourceState = state,
                             Diff = new Vector3(1, 0, 1),
                             MoveType = MoveType.ClimbWalls,
                             ActionVoxel = wall
@@ -767,6 +736,7 @@ namespace DwarfCorp
                     // +- x
                     yield return(new MoveAction
                     {
+                        SourceState = state,
                         Diff = new Vector3(0, 1, 1),
                         MoveType = moveType
                     });
@@ -774,6 +744,7 @@ namespace DwarfCorp
                 if (!Storage.Neighborhood[2, 1, 1].IsValid || Storage.Neighborhood[2, 1, 1].IsEmpty)
                     yield return(new MoveAction
                     {
+                        SourceState = state,
                         Diff = new Vector3(2, 1, 1),
                         MoveType = moveType
                     });
@@ -782,6 +753,7 @@ namespace DwarfCorp
                     // +- z
                     yield return(new MoveAction
                     {
+                        SourceState = state,
                         Diff = new Vector3(1, 1, 0),
                         MoveType = moveType
                     });
@@ -789,6 +761,7 @@ namespace DwarfCorp
                 if (!Storage.Neighborhood[1, 1, 2].IsValid || Storage.Neighborhood[1, 1, 2].IsEmpty)
                     yield return(new MoveAction
                     {
+                        SourceState = state,
                         Diff = new Vector3(1, 1, 2),
                         MoveType = moveType
                     });
@@ -801,6 +774,7 @@ namespace DwarfCorp
                         // +x + z
                         yield return(new MoveAction
                         {
+                            SourceState = state,
                             Diff = new Vector3(2, 1, 2),
                             MoveType = moveType
                         });
@@ -808,6 +782,7 @@ namespace DwarfCorp
                     if (!Storage.Neighborhood[2, 1, 0].IsValid || Storage.Neighborhood[2, 1, 0].IsEmpty)
                         yield return(new MoveAction
                         {
+                            SourceState = state,
                             Diff = new Vector3(2, 1, 0),
                             MoveType = moveType
                         });
@@ -816,6 +791,7 @@ namespace DwarfCorp
                         // -x -z
                         yield return(new MoveAction
                         {
+                            SourceState = state,
                             Diff = new Vector3(0, 1, 2),
                             MoveType = moveType
                         });
@@ -823,6 +799,7 @@ namespace DwarfCorp
                     if (!Storage.Neighborhood[0, 1, 0].IsValid || Storage.Neighborhood[0, 1, 0].IsEmpty)
                         yield return(new MoveAction
                         {
+                            SourceState = state,
                             Diff = new Vector3(0, 1, 0),
                             MoveType = moveType
                         });
@@ -842,10 +819,12 @@ namespace DwarfCorp
 
                         if (Storage.Neighborhood[dx, 1, dz].IsValid && !Storage.Neighborhood[dx, 1, dz].IsEmpty)
                         {
-                            yield return(new MoveAction
+                            yield return (new MoveAction
                             {
+                                SourceState = state,
                                 Diff = new Vector3(dx, 2, dz),
-                                MoveType = MoveType.Jump
+                                MoveType = MoveType.Jump,
+                                DestinationVoxel = Storage.Neighborhood[dx, 2, dz]
                             });
                         }
                     }
@@ -861,6 +840,7 @@ namespace DwarfCorp
                 {
                     yield return (new MoveAction
                     {
+                        SourceState = state,
                         Diff = new Vector3(0, 1, 1),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
@@ -872,6 +852,7 @@ namespace DwarfCorp
                 {
                     yield return (new MoveAction
                     {
+                        SourceState = state,
                         Diff = new Vector3(2, 1, 1),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
@@ -883,6 +864,7 @@ namespace DwarfCorp
                 {
                     yield return (new MoveAction
                     {
+                        SourceState = state,
                         Diff = new Vector3(1, 1, 2),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
@@ -894,6 +876,7 @@ namespace DwarfCorp
                 {
                     yield return (new MoveAction
                     {
+                        SourceState = state,
                         Diff = new Vector3(1, 1, 0),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
@@ -905,6 +888,7 @@ namespace DwarfCorp
                 {
                     yield return (new MoveAction
                     {
+                        SourceState = state,
                         Diff = new Vector3(1, 2, 1),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
@@ -916,6 +900,7 @@ namespace DwarfCorp
                 {
                     yield return (new MoveAction
                     {
+                        SourceState = state,
                         Diff = new Vector3(1, 0, 1),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
