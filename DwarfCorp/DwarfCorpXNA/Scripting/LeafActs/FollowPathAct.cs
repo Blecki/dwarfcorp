@@ -63,27 +63,66 @@ namespace DwarfCorp
 
                         if (shaft.Invalid)
                             yield return Status.Fail;
+
+                        if (Debugger.Switches.DebugElevators)
+                        {
+                            Drawer3D.DrawBox(shafts.Entrance.GetBoundingBox(), Color.Red, 0.1f, false);
+                            Drawer3D.DrawBox(shafts.Exit.GetBoundingBox(), Color.Red, 0.1f, false);
+                            Drawer3D.DrawBox(Step.DestinationVoxel.GetBoundingBox(), Color.Red, 0.1f, false);
+                        }
+
                         yield return Status.Running;
                     }
 
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Walking;
+                    DeltaTime = 0;
                     foreach (var bit in Translate(Agent.Position, shafts.Entrance.Position, actionSpeed))
+                    {
+                        if (Debugger.Switches.DebugElevators)
+                        {
+                            Drawer3D.DrawBox(shafts.Entrance.GetBoundingBox(), Color.Green, 0.1f, false);
+                            Drawer3D.DrawBox(shafts.Exit.GetBoundingBox(), Color.Green, 0.1f, false);
+                            Drawer3D.DrawBox(Step.DestinationVoxel.GetBoundingBox(), Color.Green, 0.1f, false);
+                        }
+
                         yield return Status.Running;
+                    }
 
                     shaft.StartMotion(Agent);
 
+                    var grav = Creature.Physics.Gravity;
+                    Creature.Physics.Gravity = Vector3.Zero;
                     while (!shaft.AtDestination(Agent))
                     {
                         if (shaft.Invalid)
                             yield return Status.Fail;
+
+                        if (Debugger.Switches.DebugElevators)
+                        {
+                            Drawer3D.DrawBox(shafts.Entrance.GetBoundingBox(), Color.Red, 0.1f, false);
+                            Drawer3D.DrawBox(shafts.Exit.GetBoundingBox(), Color.Red, 0.1f, false);
+                            Drawer3D.DrawBox(Step.DestinationVoxel.GetBoundingBox(), Color.Red, 0.1f, false);
+                        }
+
                         yield return Status.Running;
                     }
 
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Walking;
-                    foreach (var bit in Translate(Agent.Position, Step.DestinationVoxel.Center, actionSpeed))
+                    DeltaTime = 0;
+                    foreach (var bit in Translate(Agent.Physics.LocalPosition, Step.DestinationVoxel.Center, actionSpeed))
+                    {
+                        if (Debugger.Switches.DebugElevators)
+                        {
+                            Drawer3D.DrawBox(shafts.Entrance.GetBoundingBox(), Color.Green, 0.1f, false);
+                            Drawer3D.DrawBox(shafts.Exit.GetBoundingBox(), Color.Green, 0.1f, false);
+                            Drawer3D.DrawBox(Step.DestinationVoxel.GetBoundingBox(), Color.Green, 0.1f, false);
+                        }
+
                         yield return Status.Running;
+                    }
+                    Creature.Physics.Gravity = grav;
 
                     shaft.Done(Agent);
 
@@ -134,10 +173,13 @@ namespace DwarfCorp
 
                 case MoveType.Walk:
                     CleanupMinecart();
-                    Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = CharacterMode.Walking;
+
                     foreach (var bit in Translate(Agent.Position, Step.DestinationVoxel.Center, actionSpeed))
+                    {
+                        Creature.OverrideCharacterMode = false;
+                        Creature.CurrentCharacterMode = CharacterMode.Walking;
                         yield return Status.Running;
+                    }
                     break;
 
                 case MoveType.Swim:

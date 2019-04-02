@@ -523,7 +523,7 @@ namespace DwarfCorp
                         }
                     }
 
-                    var elevators = bodies.OfType<Elevators.ElevatorShaft>().Where(r => r.Active);
+                    var elevators = bodies.OfType<Elevators.ElevatorShaft>().Where(r => r.Active && System.Math.Abs(r.Position.Y - voxel.Center.Y) < 0.5f);
 
                     foreach (var elevator in elevators)
                         foreach (var elevatorExit in Elevators.Helper.EnumerateExits(elevator.Shaft))

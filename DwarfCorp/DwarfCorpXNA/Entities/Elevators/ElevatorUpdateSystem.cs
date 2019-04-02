@@ -51,8 +51,11 @@ namespace DwarfCorp.Elevators
 
         public override void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)
         {
-            foreach (var shaft in Shafts)
-                Drawer3D.DrawBox(shaft.BoundingBox, Color.Orange, 0.1f, false);
+            if (Debugger.Switches.DebugElevators)
+            {
+                foreach (var shaft in Shafts)
+                    Drawer3D.DrawBox(shaft.BoundingBox, Color.Orange, 0.1f, false);
+            }
         }
 
         public override void Update(DwarfTime GameTime)
@@ -84,7 +87,11 @@ namespace DwarfCorp.Elevators
                 MergeShafts(elevatorTrack);
             }
 
-                // Todo: Generate platform object possibly
+                
+            foreach (var shaft in Shafts)
+            {
+                shaft.Update(GameTime);
+            }
             
         }
 

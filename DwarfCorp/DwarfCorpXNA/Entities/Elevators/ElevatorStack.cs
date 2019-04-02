@@ -33,6 +33,8 @@ namespace DwarfCorp.Elevators
         public bool Invalid { get; private set; }
         public List<EnqueuedRider> RiderQueue = new List<EnqueuedRider>();
 
+        private Timer TimeoutTimer = new Timer(10.0f, true, Timer.TimerMode.Game);
+
         public static ElevatorStack Create(IEnumerable<ElevatorShaft> Pieces)
         {
             var r = new ElevatorStack();
@@ -95,11 +97,67 @@ namespace DwarfCorp.Elevators
             }
         }
 
-        public void Update(GameTime Time)
+        public void Update(DwarfTime Time)
         {
-            // Todo: State machine.
-            // Time out when rider doesn't enter fast enough. 
-            // Time out and forget a rider when they don't exit fast enough.
+            if (Invalid) return; // ??
+            TimeoutTimer.Update(Time);
+
+            switch (State)
+            {
+                case States.Idle:
+                    if (RiderQueue.Count == 0)
+                        return;
+                    CurrentRider = RiderQueue[0];
+                    RiderQueue.RemoveAt(0);
+                    State = States.MovingToRider;
+                    TimeoutTimer.Reset();
+                    break;
+                case States.MovingToRider:
+                    if (MovePlatform(CurrentRider.RidePlan.Entrance, null, Time))
+                        State = States.PickingUpRider;
+                    break;
+                case States.PickingUpRider:
+                    if (TimeoutTimer.HasTriggered)
+                    {
+                        CurrentRider = null;
+                        State = States.Idle;
+                    }
+                    break;
+                case States.TransportingRider:
+                    if (MovePlatform(CurrentRider.RidePlan.Exit, CurrentRider.Rider, Time))
+                        State = States.DroppingOffRider;
+                    break;
+                case States.DroppingOffRider:
+                    if (TimeoutTimer.HasTriggered)
+                    {
+                        CurrentRider = null;
+                        State = States.Idle;
+                    }
+
+                    break;
+            }
+            
+            // Todo: Time out when rider doesn't enter fast enough. 
+            // Todo: Time out and forget a rider when they don't exit fast enough.
+        }
+
+        private bool MovePlatform(ElevatorShaft Destination, CreatureAI Rider, DwarfTime Time)
+        {
+            var dest = Destination.Position - new Vector3(0, 0.5f, 0);
+            var delta = dest - Platform.LocalPosition;
+            if (delta.LengthSquared() < 0.05f)
+                return true;
+            delta.Normalize();
+            delta *= (float)Time.ElapsedGameTime.TotalSeconds;
+
+            Platform.LocalPosition = Platform.LocalPosition + delta;
+            if (Rider != null)
+            {
+                Rider.Physics.LocalPosition = Platform.LocalPosition + new Vector3(0, Rider.Physics.BoundingBoxSize.Y, 0);
+                Rider.Physics.PropogateTransforms();
+            }
+
+            return false;
         }
     }
 }

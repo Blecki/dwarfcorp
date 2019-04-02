@@ -37,7 +37,10 @@ namespace DwarfCorp.Elevators
         private RawPrimitive Primitive;
         private Color VertexColor = Color.White;
         private Color LightRamp = Color.White;
+
         private SpriteSheet Sheet;
+        private Vector4[] Bounds = new Vector4[2];
+        private Vector2[][] UVs = new Vector2[2][];
 
         public ElevatorShaft()
         {
@@ -68,7 +71,15 @@ namespace DwarfCorp.Elevators
         {
             base.CreateCosmeticChildren(manager);
 
-            Sheet = new SpriteSheet(ContentPaths.rail_tiles, 32, 32);
+            Sheet = new SpriteSheet(ContentPaths.Entities.Furniture.elevator, 32, 32);
+
+            AddChild(new GenericVoxelListener(manager, Matrix.Identity, new Vector3(1.5f, 1.5f, 1.5f), Vector3.Zero, (_event) =>
+            {
+                Primitive = null;
+            })).SetFlag(Flag.ShouldSerialize, false);
+
+            UVs[0] = Sheet.GenerateTileUVs(new Point(0, 0), out Bounds[0]);
+            UVs[1] = Sheet.GenerateTileUVs(new Point(1, 0), out Bounds[1]);
         }
 
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
@@ -89,6 +100,31 @@ namespace DwarfCorp.Elevators
                 Drawer3D.DrawLine(Position, neighborElevator.Position, new Color(0.0f, 1.0f, 1.0f), 0.1f);
         }
 
+        private void AddSideQuad(VoxelHandle Voxel, GlobalVoxelOffset VoxelOffset, float YRotation, Vector3 Offset)
+        {
+            var neighborVoxel = new VoxelHandle(Voxel.Chunk.Manager.ChunkData, Voxel.Coordinate + VoxelOffset);
+            var texture = 0;
+
+            if (!neighborVoxel.IsValid)
+                texture = 1;
+            else if (!neighborVoxel.IsEmpty)
+                texture = 1;
+            else
+            {
+                var below = new VoxelHandle(Voxel.Chunk.Manager.ChunkData, neighborVoxel.Coordinate + new GlobalVoxelOffset(0, -1, 0));
+                if (!below.IsValid || below.IsEmpty)
+                    texture = 1;
+            }
+
+            Primitive.AddQuad(
+                Matrix.CreateRotationX(-(float)Math.PI * 0.5f)
+                * Matrix.CreateRotationY(YRotation)
+                * Matrix.CreateTranslation(Offset),
+                Color.White, Color.White,
+                UVs[texture],
+                Bounds[texture]);
+        }
+
         override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
@@ -101,32 +137,12 @@ namespace DwarfCorp.Elevators
 
             if (Primitive == null)
             {
-                var bounds = Vector4.Zero;
-                var uvs = Sheet.GenerateTileUVs(new Point(0, 0), out bounds);
-
                 Primitive = new RawPrimitive();
-
-                Primitive.AddQuad(
-                    Matrix.CreateRotationX((float)Math.PI * 0.5f)
-                    * Matrix.CreateRotationY((float)Math.PI * 0.5f)
-                    * Matrix.CreateTranslation(0.45f, 0.0f, 0.0f),
-                    Color.White, Color.White, uvs, bounds);
-
-                Primitive.AddQuad(
-                    Matrix.CreateRotationX((float)Math.PI * 0.5f)
-                    * Matrix.CreateTranslation(0.0f, 0.0f, 0.45f),
-                    Color.White, Color.White, uvs, bounds);
-
-                Primitive.AddQuad(
-                    Matrix.CreateRotationX((float)Math.PI * 0.5f)
-                    * Matrix.CreateRotationY((float)Math.PI * 0.5f)
-                    * Matrix.CreateTranslation(-0.45f, 0.0f, 0.0f),
-                    Color.White, Color.White, uvs, bounds);
-
-                Primitive.AddQuad(
-                    Matrix.CreateRotationX((float)Math.PI * 0.5f)
-                    * Matrix.CreateTranslation(0.0f, 0.0f, -0.45f),
-                    Color.White, Color.White, uvs, bounds);
+                var voxel = GetContainingVoxel();
+                AddSideQuad(voxel, new GlobalVoxelOffset(1, 0, 0), (float)Math.PI * 0.5f, new Vector3(0.45f, 0.0f, 0.0f));
+                AddSideQuad(voxel, new GlobalVoxelOffset(0, 0, 1), 0.0f, new Vector3(0.0f, 0.0f, 0.45f));
+                AddSideQuad(voxel, new GlobalVoxelOffset(-1, 0, 0), (float)Math.PI * 0.5f, new Vector3(-0.45f, 0.0f, 0.0f));
+                AddSideQuad(voxel, new GlobalVoxelOffset(0, 0, -1), 0.0f, new Vector3(0.0f, 0.0f, -0.45f));
             }
 
             if (Primitive.VertexCount == 0) return;

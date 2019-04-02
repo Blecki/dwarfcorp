@@ -20,7 +20,7 @@ namespace DwarfCorp
     internal static class Program
     {
         public static string Version = "19.07.XX_XNA_DEV";
-        public static string[] CompatibleVersions = { "19.07.XX_FNA_DEV" };
+        public static string[] CompatibleVersions = { "19.07.XX_XNA_DEV" };
         public static string Commit = "UNKNOWN";
         public static char DirChar = Path.DirectorySeparatorChar;
         

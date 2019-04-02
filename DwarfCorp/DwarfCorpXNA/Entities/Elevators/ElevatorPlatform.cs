@@ -22,7 +22,7 @@ namespace DwarfCorp.Elevators
         }
 
         public ElevatorPlatform(ComponentManager Manager, Vector3 Position) :
-            base(Manager, "Elevator Track", Matrix.CreateTranslation(Position), Vector3.One, Vector3.Zero)
+            base(Manager, "Elevator Track", Matrix.CreateTranslation(Position), new Vector3(1.0f, 0.1f, 1.0f), Vector3.Zero)
         {
             CollisionType = CollisionType.Static;
             CreateCosmeticChildren(Manager);
@@ -32,7 +32,7 @@ namespace DwarfCorp.Elevators
         {
             base.CreateCosmeticChildren(manager);
 
-            Sheet = new SpriteSheet(ContentPaths.Terrain.terrain_tiles, 32, 32);
+            Sheet = new SpriteSheet(ContentPaths.Entities.Furniture.elevator, 32, 32);
         }
 
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
@@ -48,7 +48,7 @@ namespace DwarfCorp.Elevators
             if (Primitive == null)
             {
                 var bounds = Vector4.Zero;
-                var uvs = Sheet.GenerateTileUVs(new Point(0, 0), out bounds);
+                var uvs = Sheet.GenerateTileUVs(new Point(2, 0), out bounds);
 
                 Primitive = new RawPrimitive();
 
