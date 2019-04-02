@@ -11,18 +11,15 @@ namespace DwarfCorp
     {
         None,
         Rail,
-        WaitingForElevator,
-        EnteringElevator,
-        RidingElevator
     }
 
     public struct MoveState : IEquatable<MoveState>
     {
         public VoxelHandle Voxel;
         public VehicleTypes VehicleType;
-        public Rail.RailEntity Rail;
+        public Rail.RailEntity Rail; // Todo: Ditch this, use the Tag below.
         public Rail.RailEntity PrevRail;
-        public Elevators.ElevatorShaft Elevator;
+        public Object Tag;
         
         public static MoveState InvalidState
         {
@@ -67,7 +64,7 @@ namespace DwarfCorp
                 && A.VehicleType == B.VehicleType
                 && Object.ReferenceEquals(A.Rail, B.Rail)
                 && Object.ReferenceEquals(A.PrevRail, B.PrevRail)
-                && Object.ReferenceEquals(A.Elevator, B.Elevator);
+                && ((A.Tag == null && B.Tag == null) || Object.ReferenceEquals(A.Tag, B.Tag));
         }
 
         public static bool operator !=(MoveState A, MoveState B)
@@ -76,7 +73,7 @@ namespace DwarfCorp
                 || A.VehicleType != B.VehicleType
                 || !Object.ReferenceEquals(A.Rail, B.Rail)
                 || !Object.ReferenceEquals(A.PrevRail, B.PrevRail)
-                || !Object.ReferenceEquals(A.Elevator, B.Elevator);
+                || !((A.Tag == null && B.Tag == null) || Object.ReferenceEquals(A.Tag, B.Tag));
         }
 
     }
@@ -92,14 +89,14 @@ namespace DwarfCorp
         /// <summary> The type of motion applied to get to the voxel </summary>
         public MoveType MoveType { get; set; }
         /// <summary> The offset between the start and destination </summary>
-        public Vector3 Diff { get; set; }
+        public Vector3 Diff { get; set; } // Todo: Can be ditched?
         /// <summary> And object to interact with to get between the start and destination </summary>
         public GameComponent InteractObject { get; set; }
 
         /// <summary>
         /// For climbing, this is the voxel the dwarf climbed on.
         /// </summary>
-        public VoxelHandle ActionVoxel { get; set; }
+        public VoxelHandle ActionVoxel { get; set; } // Todo: Can be ditched?
 
         public MoveState SourceState { get; set; }
 
@@ -117,7 +114,7 @@ namespace DwarfCorp
                     VehicleType = SourceState.VehicleType,
                     Rail = SourceState.Rail,
                     PrevRail = SourceState.PrevRail,
-                    Elevator = SourceState.Elevator
+                    Tag = SourceState.Tag
                 };
             }
         }
@@ -136,7 +133,7 @@ namespace DwarfCorp
                     VehicleType = DestinationState.VehicleType,
                     Rail = DestinationState.Rail,
                     PrevRail = DestinationState.PrevRail,
-                    Elevator = DestinationState.Elevator
+                    Tag = DestinationState.Tag
                 };
             }
         }

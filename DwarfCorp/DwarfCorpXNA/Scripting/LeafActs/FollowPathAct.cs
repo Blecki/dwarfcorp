@@ -1,4 +1,3 @@
-/*
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,465 +9,218 @@ namespace DwarfCorp
 {
     public class FollowPathAct : CreatureAct
     {
-        public FollowPathAct(CreatureAI agent, string pathName) :
-            base(agent)
+        public FollowPathAct(CreatureAI agent, string pathName) : base(agent)
         {
             Name = "Follow path";
             PathName = pathName;
-            ValidPathTimer = new Timer(.75f + MathFunctions.Rand(), false, Timer.TimerMode.Real);
-            RandomTimeOffset = MathFunctions.Rand(0.0f, 0.1f);
-            BlendStart = true;
-            BlendEnd = true;
         }
 
-        private string PathName { get; set; }
-        public Timer ValidPathTimer { get; set; }
+        private string PathName;
+        private float DeltaTime = 0.0f;
 
-        public Timer TrajectoryTimer { get; set; }
-        public List<MoveAction> Path { get; set; }
-        public float RandomTimeOffset { get; set; }
-        public List<Vector3> RandomPositionOffsets { get; set; }
-        public List<float> ActionTimes { get; set; }
-        public bool BlendStart { get; set; }
-        public bool BlendEnd { get; set; }
-
-        private MoveActionTempStorage __storage = new MoveActionTempStorage();
-
-        // Offset from voxel location to bounding box center.
-        public Vector3 GetBoundingBoxOffset()
+        private float GetAgentSpeed(MoveType Action)
         {
-            Vector3 half = Vector3.One * 0.5f;
-            half.Y = Creature.Physics.BoundingBox.Extents().Y * 1.5f;
-            return half;
+            var speed = Agent.Movement.Speed(Action);
+
+            return GameSettings.Default.CreatureMovementAdjust * Agent.Stats.Dexterity * speed;
         }
 
-        public List<MoveAction> GetPath()
+        public List<MoveAction> Path
         {
-            return Agent.Blackboard.GetData<List<MoveAction>>(PathName);
+            get
+            {
+                return Agent.Blackboard.GetData<List<MoveAction>>(PathName);
+            }
+
+            set
+            {
+                Agent.Blackboard.SetData(PathName, value);
+            }
         }
 
-        public void SetPath(List<MoveAction> path)
+        public IEnumerable<Status> PerformStep(MoveAction Step)
         {
-            Agent.Blackboard.SetData(PathName, path);
-        }
+            var actionSpeed = GetAgentSpeed(Step.MoveType);
 
-        public bool IsPathValid(List<MoveAction> path, int idx)
-        {
-            if (path.Count == 0)
+            switch (Step.MoveType)
             {
-                return false;
-            }
-            var bodies = Agent.World.PlayerFaction.OwnedObjects.Where(o => o.Tags.Contains("Teleporter")).ToList();
-            for (int i = idx; i < path.Count - 1; i++)
-            {
-                if (!path[i].SourceVoxel.IsValid)
-                {
-                    continue;
-                }
-                var neighbors = Agent.Movement.GetMoveActions(path[i].SourceState, Agent.World.OctTree, bodies, __storage);
-                if (!neighbors.Any(n => n.DestinationState == path[i + 1].SourceState))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public float GetActionTime(MoveAction action, int index)
-        {
-            if (action.MoveType == MoveType.EnterVehicle)
-                return 0.5f;
-
-            if (action.MoveType == MoveType.ExitVehicle)
-                return 0.1f;
-
-            var diff = Vector3.Zero;
-            var diffNorm = 0.0f;
-            var half = GetBoundingBoxOffset();
-            var nextID = index + 1;
-
-            if (nextID < Path.Count)
-            {
-                var nextAction = Path[nextID];
-                if (nextAction.SourceVoxel.IsValid)
-                {
-                    diff = nextAction.SourceVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half) + (Vector3.One * 1e-5f);
-                    diffNorm = diff.Length();
-                }
-                else
-                    throw new InvalidOperationException("Something is bad.");
-            }
-            else
-            {
-                diffNorm = (action.DestinationVoxel.WorldPosition + half - (action.SourceVoxel.WorldPosition + half) + (Vector3.One * 1e-5f)).Length();
-            }
-            var speed = Agent.Movement.Speed(action.MoveType);
-
-            float unitTime = (1.25f / (Agent.Stats.Dexterity + 0.001f) + RandomTimeOffset) / speed;
-            
-                return unitTime * diffNorm;
-        }
-
-
-        public bool InitializePath()
-        {
-            // ERROR CHECKS / INITIALIZING
-            Creature.CurrentCharacterMode = CharacterMode.Walking;
-            Creature.OverrideCharacterMode = false;
-            Agent.Physics.Orientation = Physics.OrientMode.RotateY;
-            ActionTimes = new List<float>();
-            Path = GetPath();
-            if (Path == null)
-            {
-                SetPath(null);
-                Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                return false;
-            }
-            if (Path.Count > 0)
-            {
-                RandomPositionOffsets = new List<Vector3>();
-                int i = 0;
-                float dt = 0;
-                float time = 0;
-                foreach (MoveAction action in Path)
-                {
-                    RandomPositionOffsets.Add(MathFunctions.RandVector3Box(-0.1f, 0.1f, 0.0f, 0.0f, -0.1f, 0.1f));
-                    dt = Math.Max(GetActionTime(action, i), 1e-3f);
-                    ActionTimes.Add(dt);
-                    time += dt;
-                    i++;
-                }
-                Vector3 half = GetBoundingBoxOffset();
-                RandomPositionOffsets[0] = Agent.Position - (Path[0].SourceVoxel.WorldPosition + half);
-                TrajectoryTimer = new Timer(time, true);
-                return true;
-            }
-            return true;
-        }
-
-        public IEnumerable<Status> SnapToFirst()
-        {
-            Vector3 half = GetBoundingBoxOffset();
-
-            if (!Path[0].SourceVoxel.IsValid)
-                yield break;
-            Vector3 target = Path[0].SourceVoxel.WorldPosition + half + RandomPositionOffsets[0];
-            Matrix transform = Agent.Physics.LocalTransform;
-            if ((target - Agent.Physics.Position).Length() > 4.0f)
-            {
-                Agent.SetMessage("Failed to follow path. First voxel too far away.");
-                yield return Act.Status.Fail;
-                yield break;
-            }
-            do
-            {
-                transform.Translation = target * 0.15f + transform.Translation * 0.85f;
-                Agent.Physics.LocalTransform = transform;
-                yield return Status.Running;
-            } while ((target - Agent.Physics.Position).Length() > 0.1f);
-        }
-
-        public bool GetCurrentAction(ref MoveAction action, ref float time, ref int index)
-        {
-            float currentTime = 0;
-
-            if (BlendStart && BlendEnd)
-                currentTime = Easing.LinearQuadBlends(TrajectoryTimer.CurrentTimeSeconds, TrajectoryTimer.TargetTimeSeconds, 0.5f);
-            else if (BlendStart)
-                currentTime = Easing.CubicEaseIn(TrajectoryTimer.CurrentTimeSeconds, 0, TrajectoryTimer.TargetTimeSeconds, TrajectoryTimer.TargetTimeSeconds);
-            else if (BlendEnd)
-                currentTime = Easing.Linear(TrajectoryTimer.CurrentTimeSeconds, 0, TrajectoryTimer.TargetTimeSeconds, TrajectoryTimer.TargetTimeSeconds);
-
-            float sumTime = 0.001f;
-            for (int i = 0; i < ActionTimes.Count; i++)
-            {
-                sumTime += ActionTimes[i];
-                if (currentTime < sumTime)
-                {
-                    action = Path[i];
-                    time = 1.0f - (sumTime - currentTime) / ActionTimes[i];
-                    index = i;
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private MoveType lastMovement = MoveType.Walk;
-        public IEnumerable<Status> PerformCurrentAction()
-        { 
-            MoveAction action = Path.First();
-            float t = 0;
-            int currentIndex = 0;
-            if (!GetCurrentAction(ref action, ref t, ref currentIndex))
-            {
-                CleanupMinecart();
-                yield break;
-            }
-            //Trace.Assert(t >= 0);
-            Trace.Assert(action.SourceVoxel.IsValid);
-            int nextID = currentIndex + 1;
-            bool hasNextAction = false;
-            Vector3 half = GetBoundingBoxOffset();
-            Vector3 nextPosition = Vector3.Zero;
-            Vector3 currPosition = action.SourceVoxel.WorldPosition + half;
-
-            currPosition += RandomPositionOffsets[currentIndex];
-            if (nextID < Path.Count)
-            {
-                hasNextAction = true;
-                nextPosition = Path[nextID].SourceVoxel.WorldPosition;
-                nextPosition += RandomPositionOffsets[nextID] + half;
-            }
-            else
-            {
-                hasNextAction = true;
-                nextPosition = action.DestinationVoxel.WorldPosition + half;
-            }
-
-            Matrix transform = Agent.Physics.LocalTransform;
-            Vector3 diff = (nextPosition - currPosition);
-            Agent.GetRoot().SetFlag(GameComponent.Flag.Visible, true);
-            switch (action.MoveType)
-            {
-                /*
-                case MoveType.WaitForElevator:
-                    if (action.SourceState.Elevator == null || action.SourceState.Elevator.IsDead)
-                        yield return Status.Fail;
-
-                    action.SourceState.Elevator.EnterQueue(Agent);
-
-                    while (!action.SourceState.Elevator.ReadyToBoard(Agent))
-                        yield return Status.Running;
-
-                    break;
-
-                case MoveType.EnterElevator:
-                    if (action.SourceState.Elevator == null || action.SourceState.Elevator.IsDead)
-                        yield return Status.Fail;
-                    
-                    if (t < 0.5f)
-                        Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
-
-                    Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping  : CharacterMode.Falling;
-                    if (hasNextAction)
-                    {
-                        float z = Easing.Ballistic(t, 1.0f, 1.0f);
-                        Vector3 start = currPosition;
-                        Vector3 end = nextPosition + Vector3.Up * 0.5f;
-                        Vector3 dx = (end - start) * t + start;
-                        dx.Y = start.Y * (1 - t) + end.Y * (t) + z;
-                        transform.Translation = dx;
-                        Agent.Physics.Velocity = new Vector3(diff.X, (dx.Y - Agent.Physics.Position.Y), diff.Z);
-                    }
-                    else
-                        transform.Translation = currPosition;
-
-                    action.SourceState.Elevator.Board(Agent);
-
-                    break;
-
-                case MoveType.ExitElevator:
-                    if (action.SourceState.Elevator != null)
-                        action.SourceState.Elevator.Disembark(Agent);
-                    transform.Translation = currPosition;
-
-                    break;
-
                 case MoveType.RideElevator:
+                    var shafts = Step.DestinationState.Tag as Elevators.ElevatorMoveState;
+                    if (shafts == null || shafts.Entrance == null || shafts.Entrance.IsDead || shafts.Exit == null || shafts.Exit.IsDead)
+                        yield return Status.Fail;
 
-                    CleanupMinecart();
+                    var shaft = shafts.Entrance.Shaft;
+                    if (shaft == null || shaft.Invalid)
+                        yield return Status.Fail;
+
+                    if (!shaft.EnqueuDwarf(Agent, shafts))
+                        yield return Status.Fail;
+
+                    while (!shaft.ReadyToBoard(Agent))
+                    {
+                        if (DeltaTime > 10.0f)
+                            yield return Status.Fail; // We waited too long.
+
+                        if (shaft.Invalid)
+                            yield return Status.Fail;
+                        yield return Status.Running;
+                    }
+
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Walking;
-                    if (hasNextAction)
+                    foreach (var bit in Translate(Agent.Position, shafts.Entrance.Position, actionSpeed))
+                        yield return Status.Running;
+
+                    shaft.StartMotion(Agent);
+
+                    while (!shaft.AtDestination(Agent))
                     {
-                        transform.Translation = diff * t + currPosition;
-                        Agent.Physics.Velocity = diff;
-                    }
-                    else
-                    {
-                        transform.Translation = currPosition;
+                        if (shaft.Invalid)
+                            yield return Status.Fail;
+                        yield return Status.Running;
                     }
 
-                    break;
-                    * /
-                case MoveType.EnterVehicle:
-                    if (t < 0.5f)
-                    {
-                        Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
-                    }
                     Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0
-                        ? CharacterMode.Jumping
-                        : CharacterMode.Falling;
-                    if (hasNextAction)
-                    {
-                        float z = Easing.Ballistic(t, 1.0f, 1.0f);
-                        Vector3 start = currPosition;
-                        Vector3 end = nextPosition + Vector3.Up * 0.5f;
-                        Vector3 dx = (end - start) * t + start;
-                        dx.Y = start.Y * (1 - t) + end.Y * (t) + z;
-                        transform.Translation = dx;
-                        Agent.Physics.Velocity = new Vector3(diff.X, (dx.Y - Agent.Physics.Position.Y), diff.Z);
-                    }
-                    else
-                    {
-                        transform.Translation = currPosition;
-                    }
-                    if (t > 0.9f)
-                        SetupMinecart();
+                    Creature.CurrentCharacterMode = CharacterMode.Walking;
+                    foreach (var bit in Translate(Agent.Position, Step.DestinationVoxel.Center, actionSpeed))
+                        yield return Status.Running;
+
+                    shaft.Done(Agent);
 
                     break;
+
+                case MoveType.EnterVehicle:
+
+                    Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
+                    Creature.OverrideCharacterMode = false;
+
+                    foreach (var bit in Jump(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, Step.DestinationVoxel.Center - Step.SourceVoxel.Center, actionSpeed))
+                    {
+                        Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling;
+                        yield return Status.Running;
+                    }
+
+                    SetupMinecart();
+
+                    break;
+
                 case MoveType.ExitVehicle:
                     CleanupMinecart();
-                    transform.Translation = currPosition;
+                    {
+                        var transform = Agent.Physics.LocalTransform;
+                        transform.Translation = Step.DestinationVoxel.Center;
+                        Agent.Physics.LocalTransform = transform;
+                    }
                     break;
+
                 case MoveType.RideVehicle:
                     SetupMinecart();
                     Creature.CurrentCharacterMode = CharacterMode.Minecart;
-                    var rail = action.SourceState.Rail;
+                    var rail = Step.SourceState.Rail;
                     if (rail == null)
+                        yield return Status.Fail;
+
+                    while (DeltaTime < 1.0f / actionSpeed)
                     {
-                        if (hasNextAction)
-                        {
-                            transform.Translation = diff * t + currPosition;
-                            Agent.Physics.Velocity = diff;
-                        }
-                        else
-                        {
-                            transform.Translation = currPosition;
-                        }
-                    }
-                    else
-                    {
-                        //Drawer3D.DrawBox(rail.GetContainingVoxel().GetBoundingBox(), Color.Green, 0.1f, true);
-                        var pos = rail.InterpolateSpline(t, action.SourceVoxel.WorldPosition + Vector3.One * 0.5f, action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f);
+                        var pos = rail.InterpolateSpline(DeltaTime, Step.SourceVoxel.Center, Step.DestinationVoxel.Center);
+                        var transform = Agent.Physics.LocalTransform;
                         transform.Translation = pos + Vector3.Up * 0.5f;
-                        Agent.Physics.Velocity = diff;
+                        Agent.Physics.LocalTransform = transform;
+                        Agent.Physics.Velocity = Step.DestinationVoxel.Center - Step.SourceVoxel.Center;
+                        yield return Status.Running;
                     }
+
                     break;
+
                 case MoveType.Walk:
                     CleanupMinecart();
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Walking;
-                    if (hasNextAction)
-                    {
-                        transform.Translation = diff * t + currPosition;
-                        Agent.Physics.Velocity = diff;
-                    }
-                    else
-                    {
-                        transform.Translation = currPosition;
-                    }
+                    foreach (var bit in Translate(Agent.Position, Step.DestinationVoxel.Center, actionSpeed))
+                        yield return Status.Running;
                     break;
+
                 case MoveType.Swim:
                     CleanupMinecart();
-                    Creature.NoiseMaker.MakeNoise("Swim", Agent.Position, true);
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Swimming;
-                    if (hasNextAction)
+                    foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center + (0.5f * Vector3.Up * Agent.Physics.BoundingBox.Extents().Y), actionSpeed))
                     {
-                        transform.Translation = diff * t + currPosition - 0.5f * Vector3.Up * Agent.Physics.BoundingBox.Extents().Y;
-                        Agent.Physics.Velocity = diff;
+                        Creature.NoiseMaker.MakeNoise("Swim", Agent.Position, true);
+
+                        yield return Status.Running;
                     }
-                    else
-                    {
-                        transform.Translation = currPosition - 0.5f * Vector3.Up * Agent.Physics.BoundingBox.Extents().Y;
-                    }
+
                     break;
+
                 case MoveType.Jump:
                     CleanupMinecart();
-                    if (t < 0.5f)
-                    {
-                        Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
-                    }
+                    Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
                     Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0
-                        ? CharacterMode.Jumping
-                        : CharacterMode.Falling;
-                    if (hasNextAction)
+
+                    foreach (var bit in Jump(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, Step.DestinationVoxel.Center - Step.SourceVoxel.Center, actionSpeed))
                     {
-                        float z = Easing.Ballistic(t, 1.0f, 1.0f);
-                        Vector3 start = currPosition;
-                        Vector3 end = nextPosition;
-                        Vector3 dx = (end - start) * t + start;
-                        dx.Y = start.Y * (1 - t) + end.Y * (t) + z;
-                        transform.Translation = dx;
-                        Agent.Physics.Velocity = new Vector3(diff.X, (dx.Y - Agent.Physics.Position.Y), diff.Z);
+                        Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling;
+                        yield return Status.Running;
                     }
-                    else
-                    {
-                        transform.Translation = currPosition;
-                    }
+
                     break;
+
                 case MoveType.Fall:
                     CleanupMinecart();
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Falling;
-                    if (hasNextAction)
-                    {
-                        transform.Translation = diff * t + currPosition;
-                        Agent.Physics.Velocity = diff;
-                    }
-                    else
-                    {
-                        transform.Translation = currPosition;
-                    }
+                    foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
+                        yield return Status.Running;
                     break;
-                case MoveType.Climb:
-                case MoveType.ClimbWalls:
-                    CleanupMinecart();
-                    if (((int)((t + 1) * 100)) % 50 == 0)
-                    {
-                        Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
-                    }
-                    Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = CharacterMode.Climbing;
-                    Creature.OverrideCharacterMode = true;
-                    if (hasNextAction)
-                    {
 
-                        if (action.MoveType == MoveType.ClimbWalls && action.ActionVoxel.IsValid)
-                        {
-                            Agent.Physics.Velocity = (action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f) - currPosition;
-                            transform.Translation = diff * t + currPosition;
-                        }
-                        else if (action.MoveType == MoveType.Climb && action.InteractObject != null)
-                        {
-                            var ladderPosition = action.InteractObject.GetRoot().GetComponent<Body>().Position;
-                            transform.Translation = diff * t + currPosition;
-                            Agent.Physics.Velocity = ladderPosition - currPosition;
-                        }
-                    }
-                    else
+                case MoveType.Climb:
+                    CleanupMinecart();
+
+                    foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
                     {
-                        transform.Translation = currPosition;
+                        if (Step.InteractObject == null || Step.InteractObject.IsDead)
+                            yield return Status.Fail;
+                        Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
+                        Creature.OverrideCharacterMode = false;
+                        Creature.CurrentCharacterMode = CharacterMode.Climbing;
+                        yield return Status.Running;
                     }
+
+                    break;
+
+                case MoveType.ClimbWalls:
+
+                    CleanupMinecart();
+
+                    foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
+                    {
+                        //if (Step.InteractObject == null || Step.InteractObject.IsDead)
+                        //    yield return Status.Fail;
+                        Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
+                        Creature.OverrideCharacterMode = false;
+                        Creature.CurrentCharacterMode = CharacterMode.Climbing;
+                        yield return Status.Running;
+                    }
+
                     break;
                 case MoveType.Fly:
+
                     CleanupMinecart();
-                    if (((int)((t + 1) * 100)) % 2 == 0)
-                    {
-                        Creature.NoiseMaker.MakeNoise("Flap", Agent.Position, false);
-                    }
                     Creature.OverrideCharacterMode = false;
                     Creature.CurrentCharacterMode = CharacterMode.Flying;
-                    Creature.OverrideCharacterMode = true;
-                    if (hasNextAction)
+                    foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
                     {
-                        transform.Translation = diff * t + currPosition;
-                        Agent.Physics.Velocity = diff;
+                        if ((int)(DeltaTime * 100) % 2 == 0)
+                            Creature.NoiseMaker.MakeNoise("Flap", Agent.Position, false);
+                        yield return Status.Running;
                     }
-                    else
-                    {
-                        transform.Translation = currPosition;
-                    }
+
                     break;
+
                 case MoveType.Dig:
                     CleanupMinecart();
-                    var destroy = new DigAct(Creature.AI, new KillVoxelTask(action.DestinationVoxel)) { CheckOwnership = false } ;
+                    var destroy = new DigAct(Creature.AI, new KillVoxelTask(Step.DestinationVoxel)) { CheckOwnership = false } ;
                     destroy.Initialize();
                     foreach (var status in destroy.Run())
                     {
@@ -476,11 +228,12 @@ namespace DwarfCorp
                             yield return Act.Status.Fail;
                         yield return Act.Status.Running;
                     }
-                    yield return Act.Status.Fail;
-                    yield break;
+                    yield return Act.Status.Fail; // Abort the path so that they stop digging if a path has opened.
+                    break;
+
                 case MoveType.DestroyObject:
                     CleanupMinecart();
-                    var melee = new MeleeAct(Creature.AI, (Body) action.InteractObject);
+                    var melee = new MeleeAct(Creature.AI, (Body) Step.InteractObject);
                     melee.Initialize();
                     foreach (var status in melee.Run())
                     {
@@ -488,137 +241,79 @@ namespace DwarfCorp
                             yield return Act.Status.Fail;
                         yield return Act.Status.Running;
                     }
-                    yield return Act.Status.Success;
-                    yield break;
-                case MoveType.Teleport:
-                    if (lastMovement != MoveType.Teleport)
-                    {
-                        if (action.InteractObject != null)
-                        {
-                            var teleporter = action.InteractObject.GetComponent<MagicalObject>();
-                            if (teleporter != null)
-                                teleporter.CurrentCharges--;
-                        }
-                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_dwarf_magic_research, currPosition, true, 1.0f);
-                    }
-                    Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
-                    Agent.World.ParticleManager.Trigger("star_particle", diff * t + currPosition, Color.White, 1);
-                    if (action.InteractObject != null)
-                    {
-                        Agent.World.ParticleManager.Trigger("green_flame", (action.InteractObject as Body).Position, Color.White, 1);
-                    }
-                    transform.Translation = action.DestinationVoxel.WorldPosition + Vector3.One * 0.5f;
+                    yield return Act.Status.Fail; // Abort the path so that they stop destroying things if a path has opened.
                     break;
-            }
 
-            Agent.Physics.LocalTransform = transform;
-            lastMovement = action.MoveType;
+                case MoveType.Teleport:
+
+                    if (Step.InteractObject == null || Step.InteractObject.IsDead)
+                        yield return Status.Fail;
+
+                    var teleporter = Step.InteractObject.GetComponent<MagicalObject>();
+                    if (teleporter != null)
+                        teleporter.CurrentCharges--;
+                    SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_dwarf_magic_research, Agent.Position, true, 1.0f);
+                    Agent.World.ParticleManager.Trigger("green_flame", (Step.InteractObject as Body).Position, Color.White, 1);
+                    Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
+
+                    foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
+                    {
+                        Agent.World.ParticleManager.Trigger("star_particle", Agent.Position, Color.White, 1);
+                        yield return Status.Running;
+                    }
+
+                    Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
+                        break;
+            }
         }
 
         private void SetupMinecart()
         {
             var layers = Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>();
-            if (layers != null)
-            {
-                if (layers.GetLayers().GetLayer("minecart") == null)
+            if (layers != null && layers.GetLayers().GetLayer("minecart") == null)
                     layers.AddLayer(LayeredSprites.LayerLibrary.EnumerateLayers("minecart").FirstOrDefault(), LayeredSprites.LayerLibrary.BaseDwarfPalette);
-            }
         }
 
         private void CleanupMinecart()
         {
             var layers = Agent.GetRoot().GetComponent<LayeredSprites.LayeredCharacterSprite>();
-            if (layers != null && layers.GetLayers().GetLayer("minecart") != null)
+            if (layers != null)
                 layers.RemoveLayer("minecart");
         }
 
         public override IEnumerable<Status> Run()
         {
-            InitializePath();
+            // Todo: Re-add random offsets?
+            Creature.CurrentCharacterMode = CharacterMode.Walking;
+            Creature.OverrideCharacterMode = false;
+            Agent.Physics.Orientation = Physics.OrientMode.RotateY;
             if (Path == null || Path.Count == 0)
-                yield return Act.Status.Success;
-
-            if (TrajectoryTimer == null) yield break;
-
-            while (!TrajectoryTimer.HasTriggered)
             {
-                Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
-                TrajectoryTimer.Update(DwarfTime.LastTime);
-                ValidPathTimer.Update(DwarfTime.LastTime);
+                Path = null;
+                Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
+                yield return Act.Status.Success;
+            }
 
-                foreach (Status status in PerformCurrentAction())
+            foreach (var step in Path)
+            {
+                //DeltaTime = (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds;
+
+                foreach (var status in PerformStep(step))
                 {
+                    DeltaTime += (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds;
+
                     if (status == Status.Fail)
                     {
                         CleanupMinecart();
                         yield return Status.Fail;
                     }
-                    else if (status == Status.Success)
-                    {
-                        break;
-                    }
-                    Creature.Physics.AnimationQueue.Clear();
-                    yield return Status.Running;
+                    else
+                        yield return Status.Running;
                 }
-
-                if (Debugger.Switches.DrawPaths)
-                {
-                    List<Vector3> points =
-                        Path.Select(
-                            (v, i) => v.SourceVoxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f) + RandomPositionOffsets[i])
-                            .ToList();
-                    points.Add(Path[Path.Count - 1].DestinationVoxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f));
-
-                    List<Color> colors =
-                            Path.Select((v, i) =>
-                            {
-                                switch (v.MoveType)
-                                {
-                                    case MoveType.Climb:
-                                        return Color.Cyan;
-                                    case MoveType.ClimbWalls:
-                                        return Color.DarkCyan;
-                                    case MoveType.DestroyObject:
-                                        return Color.Orange;
-                                    case MoveType.Fall:
-                                        return Color.LightBlue;
-                                    case MoveType.Fly:
-                                        return Color.Green;
-                                    case MoveType.Jump:
-                                        return Color.Yellow;
-                                    case MoveType.Swim:
-                                        return Color.Blue;
-                                    case MoveType.Walk:
-                                        return Color.Red;
-                                }
-                                return Color.White;
-                            })
-                            .ToList();
-                    colors.Add(Color.White);
-                    Drawer3D.DrawLineList(points, colors, 0.1f);
-                }
-
-                float t = 0;
-                int currentIndex = 0;
-                MoveAction action = new MoveAction();
-                if (GetCurrentAction(ref action, ref t, ref currentIndex))
-                { 
-                    // Check if the path has been made invalid
-                    if (ValidPathTimer.HasTriggered && !IsPathValid(Path, currentIndex))
-                    {
-                        Creature.OverrideCharacterMode = false;
-                        Creature.DrawIndicator(IndicatorManager.StandardIndicators.Question);
-                        CleanupMinecart();
-                        Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
-                        yield return Status.Fail;
-                    }
-                 }
-                Creature.Physics.AnimationQueue.Clear();
-                yield return Status.Running;
             }
 
             Creature.OverrideCharacterMode = false;
-            SetPath(null);
+            Path = null;
             Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
             CleanupMinecart();
             yield return Status.Success;
@@ -628,13 +323,50 @@ namespace DwarfCorp
         {
             Creature.OverrideCharacterMode = false;
             CleanupMinecart();
-            SetPath(null);
+            Path = null;
             Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
 
             base.OnCanceled();
         }
+
+        private IEnumerable<Status> Jump(Vector3 Start, Vector3 End, Vector3 JumpDelta, float MovementSpeed)
+        {
+            var jumpTime = 1.0f / MovementSpeed;
+            while (DeltaTime < jumpTime)
+            {
+                var jumpProgress = DeltaTime / jumpTime;
+                float z = Easing.Ballistic(DeltaTime, jumpTime, 1.0f);
+                Vector3 dx = (End - Start) * DeltaTime + Start;
+                dx.Y = Start.Y * (1.0f - jumpProgress) + End.Y * jumpProgress + z;
+                SetAgentTranslation(dx);
+                Agent.Physics.Velocity = new Vector3(JumpDelta.X, (dx.Y - Agent.Physics.Position.Y), JumpDelta.Z);
+                yield return Status.Running;
+            }
+
+            DeltaTime -= jumpTime;
+        }
+
+        private IEnumerable<Status> Translate(Vector3 Start, Vector3 End, float MovementSpeed)
+        {
+            var targetDeltaTime = (End - Start).Length() / MovementSpeed;
+
+            while (DeltaTime < targetDeltaTime)
+            {
+                Vector3 dx = (End - Start) * (DeltaTime / targetDeltaTime) + Start;
+                SetAgentTranslation(dx);
+                Agent.Physics.Velocity = Vector3.Normalize(End - Start) * MovementSpeed;
+                yield return Status.Running;
+            }
+
+            //SetAgentTranslation(End);
+            DeltaTime -= targetDeltaTime;
+        }
+
+        private void SetAgentTranslation(Vector3 T)
+        {
+            var transform = Agent.Physics.LocalTransform;
+            transform.Translation = T;
+            Agent.Physics.LocalTransform = transform;
+        }
     }
-
-
 }
-*/

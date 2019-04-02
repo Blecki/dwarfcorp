@@ -49,24 +49,6 @@ namespace DwarfCorp
                     }
                 },
                 {
-                    MoveType.EnterElevator,
-                    new ActionStats
-                    {
-                        CanMove = false,
-                        Cost = 0.1f,
-                        Speed = 1.0f
-                    }
-                },
-                {
-                    MoveType.ExitElevator,
-                    new ActionStats
-                    {
-                        CanMove = false,
-                        Cost = 0.1f,
-                        Speed = 1.0f
-                    }
-                },
-                {
                     MoveType.RideElevator,
                     new ActionStats
                     {
@@ -85,16 +67,6 @@ namespace DwarfCorp
                     }
                 },
 
-                {
-                    MoveType.WaitForElevator,
-                    new ActionStats
-                    {
-                        CanMove = false,
-                        Cost = 1.0f,
-                        Speed = 1.0f
-                    }
-                },
-                                
                 {
                     MoveType.Climb,
                     new ActionStats
@@ -442,60 +414,6 @@ namespace DwarfCorp
         {
             bool isClimbing = false;
 
-            /*
-            if (state.VehicleType == VehicleTypes.WaitingForElevator)
-            {
-                yield return new MoveAction()
-                {
-                    SourceState = state,
-                    DestinationState = new MoveState()
-                    {
-                        Voxel = state.Voxel,
-                        Elevator = state.Elevator,
-                        VehicleType = VehicleTypes.EnteringElevator
-                    },
-                    MoveType = MoveType.EnterElevator
-                };
-
-                yield break;
-            }
-
-            if (state.VehicleType == VehicleTypes.EnteringElevator)
-            {
-                foreach (var exit in Elevators.Helper.EnumerateExits(state.Elevator.Shaft))
-                    yield return new MoveAction()
-                    {
-                        SourceState = state,
-                        DestinationState = new MoveState()
-                        {
-                            Voxel = exit.OntoVoxel,
-                            VehicleType = VehicleTypes.RidingElevator,
-                            Elevator = exit.ShaftSegment,
-                        },
-                        MoveType = MoveType.RideElevator
-                    };
-
-                yield break;
-            }
-
-            // May work better if the entire elevator process is a single move action??
-            if (state.VehicleType == VehicleTypes.RidingElevator)
-            {
-                yield return new MoveAction()
-                {
-                    SourceState = state,
-                    DestinationState = new MoveState()
-                    {
-                        Voxel = state.Voxel,
-                        VehicleType = VehicleTypes.None
-                    },
-                    MoveType = MoveType.ExitElevator
-                };
-
-                yield break;
-            }
-            */
-
             if (state.VehicleType == VehicleTypes.Rail)
             {
                 if (Can(MoveType.ExitVehicle)) // Possibly redundant... If they can ride they should be able to exit right?
@@ -605,26 +523,29 @@ namespace DwarfCorp
                         }
                     }
 
-                    /*
                     var elevators = bodies.OfType<Elevators.ElevatorShaft>().Where(r => r.Active);
 
-                    if (elevators.Count() > 0)
-                    {
-                        foreach (var elevator in elevators)
+                    foreach (var elevator in elevators)
+                        foreach (var elevatorExit in Elevators.Helper.EnumerateExits(elevator.Shaft))
+                        {
+                            if (object.ReferenceEquals(elevator, elevatorExit.ShaftSegment)) continue; // Ignore exits from the segment we are entering at.
+
                             yield return new MoveAction()
                             {
                                 SourceState = state,
                                 DestinationState = new MoveState()
                                 {
-                                    VehicleType = VehicleTypes.WaitingForElevator,
-                                    Voxel = elevator.GetContainingVoxel(),
-                                    Elevator = elevator,
+                                    Voxel = elevatorExit.OntoVoxel,
+                                    VehicleType = VehicleTypes.None,
+                                    Tag = new Elevators.ElevatorMoveState
+                                    {
+                                        Entrance = elevator,
+                                        Exit = elevatorExit.ShaftSegment
+                                    }
                                 },
-                                MoveType = MoveType.WaitForElevator,
-                                Diff = new Vector3(1, 1, 1)
+                                MoveType = MoveType.RideElevator,
                             };
-                    }
-                    */
+                        }
                 }
             }
 

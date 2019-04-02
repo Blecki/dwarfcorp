@@ -43,6 +43,7 @@ namespace DwarfCorp.Elevators
             {
                 Shaft.Platform.Delete();
                 Shaft.Platform = null;
+                Shaft.Destroy();
             }
 
             Shafts.Remove(Shaft);

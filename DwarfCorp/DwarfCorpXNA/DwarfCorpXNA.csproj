@@ -204,6 +204,7 @@
     <Compile Include="ContextCommands\WrangleCommand.cs" />
     <Compile Include="ContextCommands\ContextCommandAttribute.cs" />
     <Compile Include="Entities\Animals\Chimp.cs" />
+    <Compile Include="Entities\Elevators\ElevatorMoveState.cs" />
     <Compile Include="Entities\Elevators\Helper.cs" />
     <Compile Include="Entities\Elevators\ElevatorPlatform.cs" />
     <Compile Include="Entities\Elevators\ElevatorShaft.cs" />
@@ -258,7 +259,7 @@
     <Compile Include="Components\AI\StatusEffects\StatusEffect.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
-    <Compile Include="Scripting\LeafActs\NewFollowPathAct.cs" />
+    <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />
     <Compile Include="Scripting\Potions\GatherPotionsTask.cs" />
     <Compile Include="Scripting\Potions\PotionLibrary.cs" />
     <Compile Include="Scripting\Potions\Potion.cs" />
@@ -831,7 +832,6 @@
     <Compile Include="Scripting\LeafActs\CreatureExtensions.cs" />
     <Compile Include="Scripting\LeafActs\DigAct.cs" />
     <Compile Include="Scripting\LeafActs\FlyWanderAct.cs" />
-    <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />
     <Compile Include="Scripting\LeafActs\MeleeAct.cs" />
     <Compile Include="Scripting\LeafActs\PlaceRoomResourcesAct.cs" />
     <Compile Include="Scripting\LeafActs\PlaceVoxelAct.cs" />
