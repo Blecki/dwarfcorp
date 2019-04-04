@@ -58,11 +58,13 @@ namespace DwarfCorp
 
                     while (!shaft.ReadyToBoard(Agent))
                     {
-                        if (DeltaTime > 10.0f)
+                        if (DeltaTime > 30.0f)
                             yield return Status.Fail; // We waited too long.
 
                         if (shaft.Invalid)
                             yield return Status.Fail;
+
+                        SetCharacterMode(CharacterMode.Idle);
 
                         if (Debugger.Switches.DebugElevators)
                         {
@@ -74,11 +76,11 @@ namespace DwarfCorp
                         yield return Status.Running;
                     }
 
-                    Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = CharacterMode.Walking;
                     DeltaTime = 0;
                     foreach (var bit in Translate(Agent.Position, shafts.Entrance.Position, actionSpeed))
                     {
+                        SetCharacterMode(CharacterMode.Walking);
+
                         if (Debugger.Switches.DebugElevators)
                         {
                             Drawer3D.DrawBox(shafts.Entrance.GetBoundingBox(), Color.Green, 0.1f, false);
@@ -92,12 +94,14 @@ namespace DwarfCorp
                     shaft.StartMotion(Agent);
 
                     var grav = Creature.Physics.Gravity;
-                    Creature.Physics.Gravity = Vector3.Zero;
+                    //Creature.Physics.Gravity = Vector3.Zero;
                     while (!shaft.AtDestination(Agent))
                     {
                         if (shaft.Invalid)
                             yield return Status.Fail;
 
+                        SetCharacterMode(CharacterMode.Idle);
+                        
                         if (Debugger.Switches.DebugElevators)
                         {
                             Drawer3D.DrawBox(shafts.Entrance.GetBoundingBox(), Color.Red, 0.1f, false);
@@ -108,11 +112,11 @@ namespace DwarfCorp
                         yield return Status.Running;
                     }
 
-                    Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = CharacterMode.Walking;
                     DeltaTime = 0;
                     foreach (var bit in Translate(Agent.Physics.LocalPosition, Step.DestinationVoxel.Center, actionSpeed))
                     {
+                        SetCharacterMode(CharacterMode.Walking);
+
                         if (Debugger.Switches.DebugElevators)
                         {
                             Drawer3D.DrawBox(shafts.Entrance.GetBoundingBox(), Color.Green, 0.1f, false);
@@ -131,11 +135,10 @@ namespace DwarfCorp
                 case MoveType.EnterVehicle:
 
                     Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
-                    Creature.OverrideCharacterMode = false;
 
                     foreach (var bit in Jump(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, Step.DestinationVoxel.Center - Step.SourceVoxel.Center, actionSpeed))
                     {
-                        Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling;
+                        SetCharacterMode(Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling);
                         yield return Status.Running;
                     }
 
@@ -144,17 +147,14 @@ namespace DwarfCorp
                     break;
 
                 case MoveType.ExitVehicle:
+
                     CleanupMinecart();
-                    {
-                        var transform = Agent.Physics.LocalTransform;
-                        transform.Translation = Step.DestinationVoxel.Center;
-                        Agent.Physics.LocalTransform = transform;
-                    }
+                    SetAgentTranslation(Step.DestinationVoxel.Center);
                     break;
 
                 case MoveType.RideVehicle:
+
                     SetupMinecart();
-                    Creature.CurrentCharacterMode = CharacterMode.Minecart;
                     var rail = Step.SourceState.Rail;
                     if (rail == null)
                         yield return Status.Fail;
@@ -166,57 +166,64 @@ namespace DwarfCorp
                         transform.Translation = pos + Vector3.Up * 0.5f;
                         Agent.Physics.LocalTransform = transform;
                         Agent.Physics.Velocity = Step.DestinationVoxel.Center - Step.SourceVoxel.Center;
+
+                        SetCharacterMode(CharacterMode.Minecart);
                         yield return Status.Running;
                     }
 
                     break;
 
                 case MoveType.Walk:
+
                     CleanupMinecart();
 
                     foreach (var bit in Translate(Agent.Position, Step.DestinationVoxel.Center, actionSpeed))
                     {
-                        Creature.OverrideCharacterMode = false;
-                        Creature.CurrentCharacterMode = CharacterMode.Walking;
+                        SetCharacterMode(CharacterMode.Walking);
                         yield return Status.Running;
                     }
                     break;
 
                 case MoveType.Swim:
+
                     CleanupMinecart();
-                    Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = CharacterMode.Swimming;
+
                     foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center + (0.5f * Vector3.Up * Agent.Physics.BoundingBox.Extents().Y), actionSpeed))
                     {
                         Creature.NoiseMaker.MakeNoise("Swim", Agent.Position, true);
-
+                        SetCharacterMode(CharacterMode.Swimming);
                         yield return Status.Running;
                     }
 
                     break;
 
                 case MoveType.Jump:
+
                     CleanupMinecart();
                     Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
-                    Creature.OverrideCharacterMode = false;
 
                     foreach (var bit in Jump(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, Step.DestinationVoxel.Center - Step.SourceVoxel.Center, actionSpeed))
                     {
-                        Creature.CurrentCharacterMode = Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling;
+                        SetCharacterMode(Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling);
                         yield return Status.Running;
                     }
 
                     break;
 
                 case MoveType.Fall:
+
                     CleanupMinecart();
-                    Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = CharacterMode.Falling;
+
                     foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
+                    {
+                        SetCharacterMode(CharacterMode.Falling);
                         yield return Status.Running;
+                    }
+
                     break;
 
                 case MoveType.Climb:
+
                     CleanupMinecart();
 
                     foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
@@ -224,8 +231,7 @@ namespace DwarfCorp
                         if (Step.InteractObject == null || Step.InteractObject.IsDead)
                             yield return Status.Fail;
                         Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
-                        Creature.OverrideCharacterMode = false;
-                        Creature.CurrentCharacterMode = CharacterMode.Climbing;
+                        SetCharacterMode(CharacterMode.Climbing);
                         yield return Status.Running;
                     }
 
@@ -237,11 +243,9 @@ namespace DwarfCorp
 
                     foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
                     {
-                        //if (Step.InteractObject == null || Step.InteractObject.IsDead)
-                        //    yield return Status.Fail;
                         Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
-                        Creature.OverrideCharacterMode = false;
-                        Creature.CurrentCharacterMode = CharacterMode.Climbing;
+                        SetCharacterMode(CharacterMode.Climbing);
+
                         yield return Status.Running;
                     }
 
@@ -249,19 +253,22 @@ namespace DwarfCorp
                 case MoveType.Fly:
 
                     CleanupMinecart();
-                    Creature.OverrideCharacterMode = false;
-                    Creature.CurrentCharacterMode = CharacterMode.Flying;
+
                     foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
                     {
                         if ((int)(DeltaTime * 100) % 2 == 0)
                             Creature.NoiseMaker.MakeNoise("Flap", Agent.Position, false);
+                        SetCharacterMode(CharacterMode.Flying);
+
                         yield return Status.Running;
                     }
 
                     break;
 
                 case MoveType.Dig:
+
                     CleanupMinecart();
+
                     var destroy = new DigAct(Creature.AI, new KillVoxelTask(Step.DestinationVoxel)) { CheckOwnership = false } ;
                     destroy.Initialize();
                     foreach (var status in destroy.Run())
@@ -274,7 +281,9 @@ namespace DwarfCorp
                     break;
 
                 case MoveType.DestroyObject:
+
                     CleanupMinecart();
+
                     var melee = new MeleeAct(Creature.AI, (Body) Step.InteractObject);
                     melee.Initialize();
                     foreach (var status in melee.Run())
@@ -294,6 +303,7 @@ namespace DwarfCorp
                     var teleporter = Step.InteractObject.GetComponent<MagicalObject>();
                     if (teleporter != null)
                         teleporter.CurrentCharges--;
+
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_dwarf_magic_research, Agent.Position, true, 1.0f);
                     Agent.World.ParticleManager.Trigger("green_flame", (Step.InteractObject as Body).Position, Color.White, 1);
                     Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
@@ -307,6 +317,12 @@ namespace DwarfCorp
                     Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
                         break;
             }
+        }
+
+        private void SetCharacterMode(CharacterMode Mode)
+        {
+            Creature.OverrideCharacterMode = false;
+            Creature.CurrentCharacterMode = Mode;
         }
 
         private void SetupMinecart()
@@ -338,8 +354,6 @@ namespace DwarfCorp
 
             foreach (var step in Path)
             {
-                //DeltaTime = (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds;
-
                 foreach (var status in PerformStep(step))
                 {
                     DeltaTime += (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds;

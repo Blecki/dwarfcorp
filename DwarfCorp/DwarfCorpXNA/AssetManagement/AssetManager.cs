@@ -279,7 +279,8 @@ namespace DwarfCorp
 #if DEBUG
             if (!DwarfGame.IsMainThread)
             {
-                throw new InvalidOperationException("Can't load an asset outside of the main thread.");
+                // This completely breaks loading...
+                //throw new InvalidOperationException("Can't load an asset outside of the main thread.");
             }
 #endif
             string asset = FileUtils.NormalizePath(_asset);
