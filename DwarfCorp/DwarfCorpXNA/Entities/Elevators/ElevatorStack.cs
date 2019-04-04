@@ -154,6 +154,7 @@ namespace DwarfCorp.Elevators
             if (Rider != null)
             {
                 Rider.Physics.LocalPosition = Platform.LocalPosition + new Vector3(0, Rider.Physics.BoundingBoxSize.Y, 0);
+                Rider.Physics.Velocity = Vector3.Zero;
                 Rider.Physics.PropogateTransforms();
             }
 
