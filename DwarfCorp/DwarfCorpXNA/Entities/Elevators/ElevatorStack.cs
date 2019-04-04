@@ -9,6 +9,8 @@ namespace DwarfCorp.Elevators
 {
     public class ElevatorStack
     {
+        public const float ElevatorSpeed = 4.0f;
+
         public class EnqueuedRider
         {
             public CreatureAI Rider;
@@ -33,7 +35,7 @@ namespace DwarfCorp.Elevators
         public bool Invalid { get; private set; }
         public List<EnqueuedRider> RiderQueue = new List<EnqueuedRider>();
 
-        private Timer TimeoutTimer = new Timer(10.0f, true, Timer.TimerMode.Game);
+        private Timer TimeoutTimer = new Timer(1.0f, true, Timer.TimerMode.Game);
 
         public static ElevatorStack Create(IEnumerable<ElevatorShaft> Pieces)
         {
@@ -66,6 +68,13 @@ namespace DwarfCorp.Elevators
                 RidePlan = RidePlan
             });
             return true;
+        }
+
+        public void WaitForMe(CreatureAI Rider)
+        {
+            if (State != States.PickingUpRider && State != States.DroppingOffRider) return;
+            if (CurrentRider == null || !Object.ReferenceEquals(Rider, CurrentRider.Rider)) return;
+            TimeoutTimer.Reset();
         }
 
         public bool ReadyToBoard(CreatureAI Rider)
@@ -148,7 +157,7 @@ namespace DwarfCorp.Elevators
             if (delta.LengthSquared() < 0.05f)
                 return true;
             delta.Normalize();
-            delta *= (float)Time.ElapsedGameTime.TotalSeconds;
+            delta *= (float)Time.ElapsedGameTime.TotalSeconds * ElevatorSpeed;
 
             Platform.LocalPosition = Platform.LocalPosition + delta;
             if (Rider != null)

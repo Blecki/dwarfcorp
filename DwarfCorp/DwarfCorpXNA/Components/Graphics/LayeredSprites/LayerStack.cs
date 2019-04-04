@@ -97,8 +97,8 @@ namespace DwarfCorp.LayeredSprites
 
         public void RemoveLayer(String Type)
         {
-            Layers.RemoveAll(l => l.Layer.Type == Type);
-            CompositeValid = false;
+            if (Layers.RemoveAll(l => l.Layer.Type == Type) != 0)
+                CompositeValid = false;
         }
 
         public void Update(GraphicsDevice Device)
@@ -110,6 +110,9 @@ namespace DwarfCorp.LayeredSprites
 
             if (!CompositeValid)
             {
+                if (Composite != null && !Composite.IsDisposed)
+                    Composite.Dispose();
+
                 CompositeValid = true;
                 Layers.Sort((a, b) => a.Layer.Precedence - b.Layer.Precedence);
 

@@ -93,6 +93,8 @@ namespace DwarfCorp
         /// <summary> And object to interact with to get between the start and destination </summary>
         public GameComponent InteractObject { get; set; }
 
+        public float CostMultiplier;
+
         /// <summary>
         /// For climbing, this is the voxel the dwarf climbed on.
         /// </summary>

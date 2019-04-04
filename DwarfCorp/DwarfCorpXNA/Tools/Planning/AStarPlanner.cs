@@ -325,13 +325,11 @@ namespace DwarfCorp
                     }
 
                     // Otherwise, consider the case of moving to that neighbor.
-                    float tenativeGScore = gScore[current] + GetDistance(current.Voxel, n.DestinationState.Voxel, n.MoveType, mover);
+                    float tenativeGScore = gScore[current] + GetDistance(current.Voxel, n.DestinationState.Voxel, n.MoveType, mover) * n.CostMultiplier;
 
                     // IF the neighbor can already be reached more efficiently, ignore it.
                     if (openSet.Contains(n.DestinationState) && !(tenativeGScore < gScore[n.DestinationState]))
-                    {
                         continue;
-                    }
 
                     // Otherwise, add it to the list of voxels for consideration.
                     openSet.Add(n.DestinationState);
@@ -525,7 +523,7 @@ namespace DwarfCorp
                     }
 
                     // Otherwise, consider the case of moving to that neighbor.
-                    float tenativeGScore = gScore[current] + GetDistance(current.Voxel, n.SourceState.Voxel, n.MoveType, mover);
+                    float tenativeGScore = gScore[current] + GetDistance(current.Voxel, n.SourceState.Voxel, n.MoveType, mover) * n.CostMultiplier;
 
                     // IF the neighbor can already be reached more efficiently, ignore it.
                     if (openSet.Contains(n.SourceState) && gScore.ContainsKey(n.SourceState) && !(tenativeGScore < gScore[n.SourceState]))

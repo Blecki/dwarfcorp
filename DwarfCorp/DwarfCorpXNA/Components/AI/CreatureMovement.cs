@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using System;
 
 namespace DwarfCorp
 {
@@ -345,7 +346,8 @@ namespace DwarfCorp
                             DestinationState = new MoveState()
                             {
                                 Voxel = new VoxelHandle(state.Voxel.Chunk.Manager.ChunkData, GlobalVoxelCoordinate.FromVector3(obj.Position))
-                            }
+                            },
+                            CostMultiplier = 1.0f
                         };
 
             var successors = EnumerateSuccessors(state, state.Voxel, Storage, inWater, standingOnGround, topCovered, hasNeighbors);
@@ -353,6 +355,11 @@ namespace DwarfCorp
             // Now, validate each move action that the creature might take.
             foreach (MoveAction v in successors)
             {
+#if DEBUG
+                if (!v.DestinationVoxel.IsValid)
+                    throw new InvalidOperationException();
+#endif
+
                 var n = v.DestinationVoxel.IsValid ? v.DestinationVoxel : Storage.Neighborhood[(int)v.Diff.X, (int)v.Diff.Y, (int)v.Diff.Z];
                 if (n.IsValid && (v.MoveType == MoveType.Dig || isRiding || n.IsEmpty || n.LiquidLevel > 0))
                 {
@@ -383,7 +390,8 @@ namespace DwarfCorp
                                             MoveType = MoveType.DestroyObject,
                                             InteractObject = door,
                                             DestinationVoxel = n,
-                                            SourceState = state
+                                            SourceState = state,
+                                            CostMultiplier = 1.0f // Todo: Multiply by toughness of object?
                                         });
                                     blockedByObject = true;
                                 }
@@ -394,7 +402,7 @@ namespace DwarfCorp
                     // If no object blocked us, we can move freely as normal.
                     if (!blockedByObject && n.LiquidType != LiquidType.Lava)
                     {
-                        MoveAction newAction = v;
+                        var newAction = v;
                         newAction.SourceState = state;
                         newAction.DestinationVoxel = n;
                         yield return newAction;
@@ -427,7 +435,8 @@ namespace DwarfCorp
                             Voxel = state.Voxel
                         },
                         MoveType = MoveType.ExitVehicle,
-                        Diff = new Vector3(1, 1, 1)
+                        Diff = new Vector3(1, 1, 1),
+                        CostMultiplier = 1.0f
                     });
                 }
 
@@ -450,6 +459,7 @@ namespace DwarfCorp
                                 VehicleType = VehicleTypes.Rail
                             },
                             MoveType = MoveType.RideVehicle,
+                            CostMultiplier = 1.0f
                         });
                     }
                 }
@@ -476,7 +486,9 @@ namespace DwarfCorp
                             SourceState = state,
                             Diff = new Vector3(1, 2, 1),
                             MoveType = MoveType.Climb,
-                            InteractObject = ladder
+                            InteractObject = ladder,
+                            CostMultiplier = 1.0f,
+                            DestinationVoxel = Storage.Neighborhood[1,2,1]
                         };
 
                         if (!standingOnGround)
@@ -486,7 +498,9 @@ namespace DwarfCorp
                                 SourceState = state,
                                 Diff = new Vector3(1, 0, 1),
                                 MoveType = MoveType.Climb,
-                                InteractObject = ladder
+                                InteractObject = ladder,
+                                CostMultiplier = 1.0f,
+                                DestinationVoxel = Storage.Neighborhood[1,2,1]
                             });
                         }
                         standingOnGround = true;
@@ -517,7 +531,8 @@ namespace DwarfCorp
                                         Voxel = rail.GetContainingVoxel()
                                     },
                                     MoveType = MoveType.EnterVehicle,
-                                    Diff = new Vector3(1, 1, 1)
+                                    Diff = new Vector3(1, 1, 1),
+                                    CostMultiplier = 1.0f
                                 });
                             }
                         }
@@ -544,6 +559,7 @@ namespace DwarfCorp
                                     }
                                 },
                                 MoveType = MoveType.RideElevator,
+                                CostMultiplier = elevator.GetQueueSize() + 1.0f
                             };
                         }
                 }
@@ -561,13 +577,15 @@ namespace DwarfCorp
                         {
                             if (dx == 1 && dz == 1 && dy == 1) continue;
 
-                            if (!Storage.Neighborhood[dx, 1, dz].IsValid || Storage.Neighborhood[dx, 1, dz].IsEmpty)
+                            if (Storage.Neighborhood[dx, dy, dz].IsValid && Storage.Neighborhood[dx, dy, dz].IsEmpty)
                             {
                                 yield return (new MoveAction
                                 {
                                     SourceState = state,
                                     Diff = new Vector3(dx, dy, dz),
-                                    MoveType = MoveType.Fly
+                                    MoveType = MoveType.Fly,
+                                    CostMultiplier = 1.0f,
+                                    DestinationVoxel = Storage.Neighborhood[dx,dy,dz]
                                 });
                             }
                         }
@@ -583,7 +601,9 @@ namespace DwarfCorp
                 {
                     SourceState = state,
                     Diff = new Vector3(1, 0, 1),
-                    MoveType = MoveType.Fall
+                    MoveType = MoveType.Fall,
+                    CostMultiplier = 1.0f,
+                    DestinationVoxel = Storage.Neighborhood[1,0,1]
                 });
             }
 
@@ -631,7 +651,9 @@ namespace DwarfCorp
                         SourceState = state,
                         Diff = new Vector3(1, 2, 1),
                         MoveType = MoveType.ClimbWalls,
-                        ActionVoxel = wall
+                        ActionVoxel = wall,
+                        CostMultiplier = 1.0f,
+                        DestinationVoxel = Storage.Neighborhood[1,2,1]
                     });
 
                     if (!standingOnGround)
@@ -641,7 +663,9 @@ namespace DwarfCorp
                             SourceState = state,
                             Diff = new Vector3(1, 0, 1),
                             MoveType = MoveType.ClimbWalls,
-                            ActionVoxel = wall
+                            ActionVoxel = wall,
+                            CostMultiplier = 1.0f,
+                            DestinationVoxel = Storage.Neighborhood[1,0,1]
                         });
                     }
                 }
@@ -653,76 +677,92 @@ namespace DwarfCorp
             {
                 // If the creature is in water, it can swim. Otherwise, it will walk.
                 var moveType = inWater ? MoveType.Swim : MoveType.Walk;
-                if (!Storage.Neighborhood[0, 1, 1].IsValid || Storage.Neighborhood[0, 1, 1].IsEmpty)
+                if (Storage.Neighborhood[0, 1, 1].IsValid && Storage.Neighborhood[0, 1, 1].IsEmpty)
                     // +- x
                     yield return(new MoveAction
                     {
                         SourceState = state,
+                        DestinationVoxel = Storage.Neighborhood[0,1,1],
                         Diff = new Vector3(0, 1, 1),
-                        MoveType = moveType
+                        MoveType = moveType,
+                        CostMultiplier = 1.0f
                     });
 
-                if (!Storage.Neighborhood[2, 1, 1].IsValid || Storage.Neighborhood[2, 1, 1].IsEmpty)
+                if (Storage.Neighborhood[2, 1, 1].IsValid && Storage.Neighborhood[2, 1, 1].IsEmpty)
                     yield return(new MoveAction
                     {
                         SourceState = state,
                         Diff = new Vector3(2, 1, 1),
-                        MoveType = moveType
+                        MoveType = moveType,
+                        CostMultiplier = 1.0f,
+                        DestinationVoxel = Storage.Neighborhood[2,1,1]
                     });
 
-                if (!Storage.Neighborhood[1, 1, 0].IsValid || Storage.Neighborhood[1, 1, 0].IsEmpty)
+                if (Storage.Neighborhood[1, 1, 0].IsValid && Storage.Neighborhood[1, 1, 0].IsEmpty)
                     // +- z
                     yield return(new MoveAction
                     {
                         SourceState = state,
                         Diff = new Vector3(1, 1, 0),
-                        MoveType = moveType
+                        MoveType = moveType,
+                        CostMultiplier = 1.0f,
+                        DestinationVoxel = Storage.Neighborhood[1,1,0]
                     });
 
-                if (!Storage.Neighborhood[1, 1, 2].IsValid || Storage.Neighborhood[1, 1, 2].IsEmpty)
+                if (Storage.Neighborhood[1, 1, 2].IsValid && Storage.Neighborhood[1, 1, 2].IsEmpty)
                     yield return(new MoveAction
                     {
                         SourceState = state,
                         Diff = new Vector3(1, 1, 2),
-                        MoveType = moveType
+                        MoveType = moveType,
+                        CostMultiplier = 1.0f,
+                        DestinationVoxel = Storage.Neighborhood[1,1,2]
                     });
 
                 // Only bother worrying about 8-connected movement if there are
                 // no full neighbors around the voxel.
                 if (!hasNeighbors)
                 {
-                    if (!Storage.Neighborhood[2, 1, 2].IsValid || Storage.Neighborhood[2, 1, 2].IsEmpty)
+                    if (Storage.Neighborhood[2, 1, 2].IsValid && Storage.Neighborhood[2, 1, 2].IsEmpty)
                         // +x + z
                         yield return(new MoveAction
                         {
                             SourceState = state,
                             Diff = new Vector3(2, 1, 2),
-                            MoveType = moveType
+                            MoveType = moveType,
+                            CostMultiplier = 1.0f,
+                            DestinationVoxel = Storage.Neighborhood[2,1,2]
                         });
 
-                    if (!Storage.Neighborhood[2, 1, 0].IsValid || Storage.Neighborhood[2, 1, 0].IsEmpty)
+                    if (Storage.Neighborhood[2, 1, 0].IsValid && Storage.Neighborhood[2, 1, 0].IsEmpty)
                         yield return(new MoveAction
                         {
                             SourceState = state,
                             Diff = new Vector3(2, 1, 0),
-                            MoveType = moveType
+                            MoveType = moveType,
+                            CostMultiplier = 1.0f,
+                            DestinationVoxel = Storage.Neighborhood[2,1,0]
                         });
 
-                    if (!Storage.Neighborhood[0, 1, 2].IsValid || Storage.Neighborhood[0, 1, 2].IsEmpty)
+                    if (Storage.Neighborhood[0, 1, 2].IsValid && Storage.Neighborhood[0, 1, 2].IsEmpty)
                         // -x -z
                         yield return(new MoveAction
                         {
                             SourceState = state,
                             Diff = new Vector3(0, 1, 2),
-                            MoveType = moveType
+                            MoveType = moveType,
+                            CostMultiplier = 1.0f,
+                            DestinationVoxel = Storage.Neighborhood[0,1,2]
                         });
 
-                    if (!Storage.Neighborhood[0, 1, 0].IsValid || Storage.Neighborhood[0, 1, 0].IsEmpty)
+                    if (Storage.Neighborhood[0, 1, 0].IsValid && Storage.Neighborhood[0, 1, 0].IsEmpty)
                         yield return(new MoveAction
                         {
                             SourceState = state,
                             Diff = new Vector3(0, 1, 0),
-                            MoveType = moveType
+                            MoveType = moveType,
+                            CostMultiplier = 1.0f,
+                            DestinationVoxel = Storage.Neighborhood[0,1,0]
                         });
                 }
             }
@@ -745,7 +785,8 @@ namespace DwarfCorp
                                 SourceState = state,
                                 Diff = new Vector3(dx, 2, dz),
                                 MoveType = MoveType.Jump,
-                                DestinationVoxel = Storage.Neighborhood[dx, 2, dz]
+                                DestinationVoxel = Storage.Neighborhood[dx, 2, dz],
+                                CostMultiplier = 1.0f
                             });
                         }
                     }
@@ -765,6 +806,7 @@ namespace DwarfCorp
                         Diff = new Vector3(0, 1, 1),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
+                        CostMultiplier = 1.0f
                     });
                 }
 
@@ -777,6 +819,7 @@ namespace DwarfCorp
                         Diff = new Vector3(2, 1, 1),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
+                        CostMultiplier = 1.0f
                     });
                 }
 
@@ -789,6 +832,7 @@ namespace DwarfCorp
                         Diff = new Vector3(1, 1, 2),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
+                        CostMultiplier = 1.0f
                     });
                 }
 
@@ -801,6 +845,7 @@ namespace DwarfCorp
                         Diff = new Vector3(1, 1, 0),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
+                        CostMultiplier = 1.0f
                     });
                 }
 
@@ -813,6 +858,7 @@ namespace DwarfCorp
                         Diff = new Vector3(1, 2, 1),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
+                        CostMultiplier = 1.0f
                     });
                 }
 
@@ -825,6 +871,7 @@ namespace DwarfCorp
                         Diff = new Vector3(1, 0, 1),
                         MoveType = MoveType.Dig,
                         DestinationVoxel = neighbor,
+                        CostMultiplier = 1.0f
                     });
                 }
             }
@@ -874,7 +921,8 @@ namespace DwarfCorp
                                         Diff = new Vector3(dx, dx, dz),
                                         SourceVoxel = teleportNeighbor,
                                         DestinationState = currentstate,
-                                        MoveType = MoveType.Teleport
+                                        MoveType = MoveType.Teleport,
+                                        CostMultiplier = 1.0f
                                     };
                                 }
                             }

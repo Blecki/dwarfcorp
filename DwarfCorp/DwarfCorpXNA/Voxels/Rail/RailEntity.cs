@@ -234,7 +234,8 @@ namespace DwarfCorp.Rail
             int k = MathFunctions.Clamp((int)idx, 0, selectedSpline.Count - 1);
             float remainder = idx - k;
             //Drawer3D.DrawLine(Vector3.Transform(selectedSpline[k], transform), Vector3.Transform(selectedSpline[k + 1], transform), isReversed ? Color.Red : Color.Blue, 0.1f);
-            return Vector3.Transform(selectedSpline[k] * (1.0f - remainder) + selectedSpline[k + 1] * remainder, transform);
+            var next = ((int)k + 1) >= selectedSpline.Count ? (int)k : ((int)k + 1);
+            return Vector3.Transform(selectedSpline[k] * (1.0f - remainder) + selectedSpline[next] * remainder, transform);
         }
 
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,

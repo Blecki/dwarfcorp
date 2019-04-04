@@ -79,6 +79,11 @@ namespace DwarfCorp
                     DeltaTime = 0;
                     foreach (var bit in Translate(Agent.Position, shafts.Entrance.Position, actionSpeed))
                     {
+                        if (shaft.Invalid)
+                            yield return Status.Fail;
+
+                        shaft.WaitForMe(Agent);
+
                         SetCharacterMode(CharacterMode.Walking);
 
                         if (Debugger.Switches.DebugElevators)
@@ -87,7 +92,6 @@ namespace DwarfCorp
                             Drawer3D.DrawBox(shafts.Exit.GetBoundingBox(), Color.Green, 0.1f, false);
                             Drawer3D.DrawBox(Step.DestinationVoxel.GetBoundingBox(), Color.Green, 0.1f, false);
                         }
-
                         yield return Status.Running;
                     }
 
@@ -115,6 +119,11 @@ namespace DwarfCorp
                     DeltaTime = 0;
                     foreach (var bit in Translate(Agent.Physics.LocalPosition, Step.DestinationVoxel.Center, actionSpeed))
                     {
+                        if (shaft.Invalid)
+                            yield return Status.Fail;
+
+                        shaft.WaitForMe(Agent);
+
                         SetCharacterMode(CharacterMode.Walking);
 
                         if (Debugger.Switches.DebugElevators)
@@ -142,6 +151,7 @@ namespace DwarfCorp
                         yield return Status.Running;
                     }
 
+                    DeltaTime = 0.0f;
                     SetupMinecart();
 
                     break;
@@ -170,6 +180,7 @@ namespace DwarfCorp
                         SetCharacterMode(CharacterMode.Minecart);
                         yield return Status.Running;
                     }
+                    DeltaTime -= (1.0f / actionSpeed);
 
                     break;
 
@@ -226,6 +237,7 @@ namespace DwarfCorp
 
                     CleanupMinecart();
 
+                    DeltaTime = 0.0f;
                     foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
                     {
                         if (Step.InteractObject == null || Step.InteractObject.IsDead)
@@ -241,6 +253,7 @@ namespace DwarfCorp
 
                     CleanupMinecart();
 
+                    DeltaTime = 0.0f;
                     foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
                     {
                         Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
@@ -254,6 +267,7 @@ namespace DwarfCorp
 
                     CleanupMinecart();
 
+                    DeltaTime = 0.0f;
                     foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
                     {
                         if ((int)(DeltaTime * 100) % 2 == 0)
@@ -387,6 +401,8 @@ namespace DwarfCorp
 
         private IEnumerable<Status> Jump(Vector3 Start, Vector3 End, Vector3 JumpDelta, float MovementSpeed)
         {
+            DeltaTime = 0.0f;
+
             var jumpTime = 1.0f / MovementSpeed;
             while (DeltaTime < jumpTime)
             {
@@ -404,6 +420,7 @@ namespace DwarfCorp
 
         private IEnumerable<Status> Translate(Vector3 Start, Vector3 End, float MovementSpeed)
         {
+            DeltaTime = 0.0f;
             var targetDeltaTime = (End - Start).Length() / MovementSpeed;
 
             while (DeltaTime < targetDeltaTime)

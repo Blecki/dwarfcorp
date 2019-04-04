@@ -42,6 +42,12 @@ namespace DwarfCorp.Elevators
         private Vector4[] Bounds = new Vector4[2];
         private Vector2[][] UVs = new Vector2[2][];
 
+        public float GetQueueSize()
+        {
+            if (Shaft == null) return 0.0f;
+            return Shaft.RiderQueue.Count();
+        }
+
         public ElevatorShaft()
         {
             CollisionType = CollisionType.Static;

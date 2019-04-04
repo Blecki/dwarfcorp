@@ -71,8 +71,8 @@ namespace DwarfCorp
             AI.Movement.SetCan(MoveType.EnterVehicle, true);
             AI.Movement.SetCan(MoveType.ExitVehicle, true);
             AI.Movement.SetCan(MoveType.RideVehicle, true);
-            AI.Movement.SetCost(MoveType.EnterVehicle, 1.0f);
-            AI.Movement.SetCost(MoveType.ExitVehicle, 1.0f);
+            AI.Movement.SetCost(MoveType.EnterVehicle, 0.01f);
+            AI.Movement.SetCost(MoveType.ExitVehicle, 0.01f);
             AI.Movement.SetCost(MoveType.RideVehicle, 0.01f);
             AI.Movement.SetSpeed(MoveType.RideVehicle, 3.0f);
             AI.Movement.SetSpeed(MoveType.EnterVehicle, 1.0f);
