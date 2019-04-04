@@ -162,44 +162,52 @@ namespace DwarfCorp
 
             #region Initialize static data
 
+            bool actionComplete = false;
+
+            Game.DoLazyAction(new Action(() =>
+           {
+               Vector3 origin = new Vector3(0, 0, 0);
+               Vector3 extents = new Vector3(1500, 1500, 1500);
+               OctTree = new OctTreeNode<Body>(origin - extents, origin + extents);
+
+               PrimitiveLibrary.Initialize(GraphicsDevice, Content);
+
+               InstanceRenderer = new InstanceRenderer(GraphicsDevice, Content);
+
+               Color[] white = new Color[1];
+               white[0] = Color.White;
+               pixel = new Texture2D(GraphicsDevice, 1, 1);
+               pixel.SetData(white);
+
+               Tilesheet = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
+               AspectRatio = GraphicsDevice.Viewport.AspectRatio;
+               DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
+               DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
+               DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
+               CraftLibrary.InitializeDefaultLibrary();
+               PotionLibrary.Initialize();
+               VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice);
+               GrassLibrary.InitializeDefaultLibrary();
+               DecalLibrary.InitializeDefaultLibrary();
+
+               bloom = new BloomComponent(Game)
+               {
+                   Settings = BloomSettings.PresetSettings[5]
+               };
+               bloom.Initialize();
+
+               SoundManager.Content = Content;
+               if (PlanService != null)
+                   PlanService.Restart();
+
+               JobLibrary.Initialize();
+               MonsterSpawner = new MonsterSpawner(this);
+               EntityFactory.Initialize(this);
+           }), () => { actionComplete = true; return true; });
+
+            while (!actionComplete)
             {
-                Vector3 origin = new Vector3(0, 0, 0);
-                Vector3 extents = new Vector3(1500, 1500, 1500);
-                OctTree = new OctTreeNode<Body>(origin - extents, origin + extents);
-
-                PrimitiveLibrary.Initialize(GraphicsDevice, Content);
-
-                InstanceRenderer = new InstanceRenderer(GraphicsDevice, Content);
-
-                Color[] white = new Color[1];
-                white[0] = Color.White;
-                pixel = new Texture2D(GraphicsDevice, 1, 1);
-                pixel.SetData(white);
-
-                Tilesheet = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
-                AspectRatio = GraphicsDevice.Viewport.AspectRatio;
-                DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
-                DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
-                DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
-                CraftLibrary.InitializeDefaultLibrary();
-                PotionLibrary.Initialize();
-                VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice);
-                GrassLibrary.InitializeDefaultLibrary();
-                DecalLibrary.InitializeDefaultLibrary();
-
-                bloom = new BloomComponent(Game)
-                {
-                    Settings = BloomSettings.PresetSettings[5]
-                };
-                bloom.Initialize();
-
-                SoundManager.Content = Content;
-                if (PlanService != null)
-                    PlanService.Restart();
-
-                JobLibrary.Initialize();
-                MonsterSpawner = new MonsterSpawner(this);
-                EntityFactory.Initialize(this);
+                Thread.Sleep(10);
             }
 
             #endregion
@@ -401,7 +409,7 @@ namespace DwarfCorp
             #endregion
 
             SetLoadingMessage("Creating Particles ...");
-            ParticleManager = new ParticleManager(ComponentManager);
+            Game.DoLazyAction(new Action(() => ParticleManager = new ParticleManager(ComponentManager)));
 
             SetLoadingMessage("Creating GameMaster ...");
             Master = new GameMaster(Factions.Factions["Player"], Game, ComponentManager, ChunkManager,

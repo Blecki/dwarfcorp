@@ -425,8 +425,10 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    stockpile.Resources.AddResource(amount);
-                    amount.Count -= space;
+                    var amountToMove = space;
+                    stockpile.Resources.AddResource(new ResourceAmount(resources.Type, amountToMove));
+                    amount.Count -= amountToMove;
+
                     stockpile.HandleBoxes();
                     foreach (var tag in resource.Tags)
                     {
@@ -434,7 +436,7 @@ namespace DwarfCorp
                         {
                             CachedResourceTagCounts[tag] = 0;
                         }
-                        CachedResourceTagCounts[tag] += space;
+                        CachedResourceTagCounts[tag] += amountToMove;
                     }
                     RecomputeCachedVoxelstate();
                     if (amount.Count == 0)

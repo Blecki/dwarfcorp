@@ -50,7 +50,7 @@ namespace DwarfCorp
         {
             if (item == null)
             {
-                throw new ArgumentNullException("{0} is null.", typeof(T).Name);
+                throw new ArgumentNullException(String.Format("{0} is null.", typeof(T).Name));
             }
         }
     }

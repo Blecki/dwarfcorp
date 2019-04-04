@@ -291,11 +291,6 @@ namespace DwarfCorp.GameStates
             Points[2] = new Vector2(spawnRect.X + spawnRect.Width, spawnRect.Height + spawnRect.Y);
             Points[3] = new Vector2(spawnRect.X, spawnRect.Height + spawnRect.Y);
 
-            newTarget = new Vector3(
-                (Points[0].X + Points[2].X) / (float)Overworld.Map.GetLength(0), 0, 
-                (Points[0].Y + Points[2].Y) / (float)(Overworld.Map.GetLength(1)))
-                * 0.5f;
-
             for (var i = 0; i < 4; ++i)
             {
                 var vec3 = WorldToScreen(Points[i]);  
@@ -326,11 +321,8 @@ namespace DwarfCorp.GameStates
 
             try
             {
-                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin,
-                null, null, null, Matrix.Identity);
+                DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin, null, null, null, Matrix.Identity);
                 Drawer2D.DrawPolygon(DwarfGame.SpriteBatch, Color.Yellow, 1, SpawnRectanglePoints);
-                //Drawer2D.DrawStrokedText(DwarfGame.SpriteBatch, "Spawn", DefaultFont, new Vector2(a.X - 5, a.Y - 20),
-                //    Color.White, Color.Black);
             }
             finally
             {

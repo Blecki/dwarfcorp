@@ -228,7 +228,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "AUTO SAVE",
                     OnClick = (sender, args) =>
                     {
-                        Master.World.gameState.StateManager.StateStack.OfType<GameStates.PlayState>().FirstOrDefault().AutoSave();
+                        Master.World.gameState.StateManager.GetState<GameStates.PlayState>().AutoSave();
                     }
                 },
                 new HorizontalMenuTray.MenuItem

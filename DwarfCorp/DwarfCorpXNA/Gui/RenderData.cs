@@ -37,11 +37,15 @@ namespace DwarfCorp.Gui
 
         public int CalculateScale()
         {
-            if (!DwarfCorp.GameSettings.Default.GuiAutoScale) return DwarfCorp.GameSettings.Default.GuiScale;
+            if (!DwarfCorp.GameSettings.Default.GuiAutoScale)
+                return DwarfCorp.GameSettings.Default.GuiScale;
+
             float scaleX = ActualScreenBounds.X/1920.0f;
             float scaleY = ActualScreenBounds.Y/1080.0f;
             float maxScale = Math.Max(scaleX, scaleY);
-            return (int) MathFunctions.Clamp((int)Math.Ceiling(maxScale), 1, 10);
+            var scale = MathFunctions.Clamp((int)Math.Ceiling(maxScale), 1, 10);
+            GameSettings.Default.GuiScale = scale;
+            return scale;
         }
 
         public RenderData(GraphicsDevice Device, ContentManager Content)

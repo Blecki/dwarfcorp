@@ -81,11 +81,14 @@ namespace DwarfCorp
             }
             else
             {
-                ComponentManager.RootComponent.AddChild(Balloon.CreateBalloon(
-                    portBox.Center() + new Vector3(0, 100, 0),
-                    portBox.Center() + new Vector3(0, 10, 0), ComponentManager,
-                    Master.Faction));
-                CreateInitialDwarves(port.GetBoundingBox().Center() + new Vector3(0, 10.0f, 0));
+                DoLazy(new Action(() =>
+                {
+                    ComponentManager.RootComponent.AddChild(Balloon.CreateBalloon(
+                        portBox.Center() + new Vector3(0, 100, 0),
+                        portBox.Center() + new Vector3(0, 10, 0), ComponentManager,
+                        Master.Faction));
+                    CreateInitialDwarves(port.GetBoundingBox().Center() + new Vector3(0, 10.0f, 0));
+                }));
             }
 
             Camera.Target = portBox.Center();
@@ -261,10 +264,12 @@ namespace DwarfCorp
                                 GlobalVoxelCoordinate.FromVector3(ladderPos));
                             if (ladderVox.IsValid && ladderVox.IsEmpty)
                             {
-                                var ladder = EntityFactory.CreateEntity<Ladder>("Ladder", ladderPos);
-                                Master.Faction.OwnedObjects.Add(ladder);
-                                ladder.Tags.Add("Moveable");
-                                ladder.Tags.Add("Deconstructable");
+                                DoLazy(new Action(() => {
+                                    var ladder = EntityFactory.CreateEntity<Ladder>("Ladder", ladderPos);
+                                    Master.Faction.OwnedObjects.Add(ladder);
+                                    ladder.Tags.Add("Moveable");
+                                    ladder.Tags.Add("Deconstructable");
+                                }));
                             }
 
                         }

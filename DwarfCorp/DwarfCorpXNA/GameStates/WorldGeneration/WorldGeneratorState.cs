@@ -116,7 +116,6 @@ namespace DwarfCorp.GameStates
                         global::System.IO.DirectoryInfo worldDirectory = global::System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + global::System.IO.Path.DirectorySeparatorChar + Settings.Name);
                         NewOverworldFile file = new NewOverworldFile(Game.GraphicsDevice, Overworld.Map, Settings.Name, Settings.SeaLevel);
                         file.WriteFile(worldDirectory.FullName);
-                        file.SaveScreenshot(worldDirectory.FullName + global::System.IO.Path.DirectorySeparatorChar + "screenshot.png");
                         GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new Gui.Widgets.Popup
                         {
                             Text = "File saved."
