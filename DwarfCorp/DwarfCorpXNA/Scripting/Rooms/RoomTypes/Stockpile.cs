@@ -132,16 +132,19 @@ namespace DwarfCorp
 
         public void CreateBox(Vector3 pos)
         {
-            Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f) + BoxOffset;
-            Vector3 endPos = pos + new Vector3(0.0f, 0.9f, 0.0f) + BoxOffset;
+            WorldManager.DoLazy(() =>
+            {
+                Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f) + BoxOffset;
+                Vector3 endPos = pos + new Vector3(0.0f, 0.9f, 0.0f) + BoxOffset;
 
-            Body crate = EntityFactory.CreateEntity<Body>(BoxType, startPos);
-            crate.AnimationQueue.Add(new EaseMotion(0.8f, crate.LocalTransform, endPos));
-            Boxes.Add(crate);
-            AddBody(crate, false);
-            SoundManager.PlaySound(ContentPaths.Audio.whoosh, startPos);
-            if (Faction != null)
-                Faction.World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);
+                Body crate = EntityFactory.CreateEntity<Body>(BoxType, startPos);
+                crate.AnimationQueue.Add(new EaseMotion(0.8f, crate.LocalTransform, endPos));
+                Boxes.Add(crate);
+                AddBody(crate, false);
+                SoundManager.PlaySound(ContentPaths.Audio.whoosh, startPos);
+                if (Faction != null)
+                    Faction.World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);
+            });
         }
 
         public void HandleBoxes()

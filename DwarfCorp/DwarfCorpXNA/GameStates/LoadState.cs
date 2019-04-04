@@ -167,18 +167,20 @@ namespace DwarfCorp.GameStates
                         Text = "Oh no! Loading failed :( This crash has been automatically reported to the developers: " + exceptionText,
                         OnClick = (s, a) =>
                         {
+                            StateManager.Game.LogSentryBreadcrumb("Loading", "Loading failed. Player going back to start.");
                             if (StateManager.CurrentState == this)
                             {
-                                StateManager.PopState();
+                                StateManager.PopState(false);
                                 StateManager.ClearState();
                                 StateManager.PushState(new MainMenuState(Game, StateManager));
                             }
                         },
                         OnClose = (s) =>
                         {
+                            StateManager.Game.LogSentryBreadcrumb("Loading", "Loading failed. Player going back to start.");
                             if (StateManager.CurrentState == this)
                             {
-                                StateManager.PopState();
+                                StateManager.PopState(false);
                                 StateManager.ClearState();
                                 StateManager.PushState(new MainMenuState(Game, StateManager));
                             }

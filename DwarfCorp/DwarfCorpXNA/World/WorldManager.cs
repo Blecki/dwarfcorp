@@ -543,13 +543,22 @@ namespace DwarfCorp
         public void Update(DwarfTime gameTime)
         {
             ValidateShader();
+            int MAX_LAZY_ACTIONS = 32;
+            int action = 0;
             foreach (var func in LazyActions)
             {
                 if (func != null)
                     func.Invoke();
+                action++;
+                if (action > MAX_LAZY_ACTIONS)
+                {
+                    break;
+                }
             }
-            LazyActions.Clear();
-
+            if (action > 0)
+            {
+                LazyActions.RemoveRange(0, action);
+            }
             if (FastForwardToDay)
             {
                 if (Time.IsDay())
@@ -1245,6 +1254,10 @@ namespace DwarfCorp
             }
             WaterRenderer.Dispose();
             CompositeLibrary.Composites.Clear();
+            if (LoadingThread != null && LoadingThread.IsAlive)
+            {
+                LoadingThread.Abort();
+            }
         }
 
         public void InvokeLoss()

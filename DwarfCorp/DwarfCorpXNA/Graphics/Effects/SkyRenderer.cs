@@ -28,10 +28,10 @@ namespace DwarfCorp
         public IndexBuffer BackgroundIndex { get; set; }
         public Effect BackgroundEffect { get; set; }
         public List<Vector3> StarPositions { get; set; }
+        private bool firstIter = true;
 
         public SkyRenderer()
         {
-            CreateContent();
         }
 
         public void CreateContent()
@@ -40,6 +40,8 @@ namespace DwarfCorp
             {
                 return;
             }
+
+            firstIter = false;
 
             SkyTexture = GameState.Game.Content.Load<TextureCube>(AssetManager.ResolveContentPath(ContentPaths.Sky.day_sky));
             NightTexture = GameState.Game.Content.Load<TextureCube>(AssetManager.ResolveContentPath(ContentPaths.Sky.night_sky));
@@ -73,6 +75,11 @@ namespace DwarfCorp
 
         public void Render(DwarfTime time, GraphicsDevice device, Camera camera, float scale, Color fogColor, BoundingBox backgroundScale, bool drawBackground=true)
         {
+            if (firstIter)
+            {
+                CreateContent();
+            }
+
             ValidateBuffers();
             device.DepthStencilState = DepthStencilState.None;
             RenderNightSky(time, device, camera);

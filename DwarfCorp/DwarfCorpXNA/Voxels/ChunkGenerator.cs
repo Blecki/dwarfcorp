@@ -404,8 +404,11 @@ namespace DwarfCorp
                             }
                             if (dict[animal.Name] < animal.MaxPopulation)
                             {
-                                EntityFactory.CreateEntity<Body>(animal.Name,
-                                    topVoxel.WorldPosition + Vector3.Up * 1.5f);
+                                WorldManager.DoLazy(() =>
+                                {
+                                    EntityFactory.CreateEntity<Body>(animal.Name,
+                                        topVoxel.WorldPosition + Vector3.Up * 1.5f);
+                                });
                             }
                             break;
                         }

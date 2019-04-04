@@ -140,6 +140,16 @@ namespace DwarfCorp
 
         private static int MainThreadID;
 
+        public class LazyAction
+        {
+            public Action Action;
+            public Func<bool> Result;
+        }
+
+
+        private List<LazyAction> _lazyActions = new List<LazyAction>();
+        private object _actionMutex = new object();
+
         public class SaveLoadTester
         {
             public enum State
@@ -506,6 +516,14 @@ namespace DwarfCorp
                 return GameSettings.Default.SaveLocation + Path.DirectorySeparatorChar + "Worlds";
         }
 
+
+        public void DoLazyAction(Action action, Func<bool> callback = null)
+        {
+            lock(_actionMutex)
+            {
+                _lazyActions.Add(new LazyAction() { Action = action, Result = callback });
+            }
+        }
      
         public static void InitializeLogger()
         {
@@ -740,6 +758,17 @@ namespace DwarfCorp
             AssetManagement.Steam.Steam.Update();
             DwarfTime.LastTime.Update(time);
             StateManager.Update(DwarfTime.LastTime);
+
+            lock (_actionMutex)
+            {
+                foreach (var action in _lazyActions)
+                {
+                    action.Action();
+                    action.Result?.Invoke();
+                }
+                _lazyActions.Clear();
+            }
+
             base.Update(time);
             PerformanceMonitor.PopFrame();
 #if SHARP_RAVEN && !DEBUG

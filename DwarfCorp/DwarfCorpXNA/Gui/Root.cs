@@ -720,7 +720,7 @@ namespace DwarfCorp.Gui
 
         public void DrawMouse()
         {
-            if (RootItem.Hidden)
+            if (RootItem == null || RootItem.Hidden || RenderData == null)
                 return;
 
             RenderData.Effect.Parameters["Texture"].SetValue(RenderData.Texture);

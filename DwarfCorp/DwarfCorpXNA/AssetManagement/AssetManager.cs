@@ -94,6 +94,7 @@ namespace DwarfCorp
                 Directory = "Content",
             });
 
+            Assemblies.Clear();
             Assemblies.Add(Tuple.Create(new ModMetaData
             {
                 Name = "BaseContent",
@@ -112,6 +113,7 @@ namespace DwarfCorp
                             Assemblies.Add(Tuple.Create(mod, assembly));
                     }
                 }
+            TextureCache.Clear();
         }
 
         public static IEnumerable<Tuple<ModMetaData,Assembly>> EnumerateLoadedModAssemblies()
@@ -274,6 +276,12 @@ namespace DwarfCorp
 
         public static Texture2D GetContentTexture(string _asset)
         {
+#if DEBUG
+            if (!DwarfGame.IsMainThread)
+            {
+                throw new InvalidOperationException("Can't load an asset outside of the main thread.");
+            }
+#endif
             string asset = FileUtils.NormalizePath(_asset);
             if (asset == null)
             {
