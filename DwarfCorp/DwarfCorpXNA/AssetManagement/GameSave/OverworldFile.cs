@@ -1,35 +1,3 @@
-// OverworldFile.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -42,7 +10,7 @@ using System.Linq;
 namespace DwarfCorp
 {
     [Serializable]
-    public class NewOverworldFile : IDisposable
+    public class NewOverworldFile
     {
         [Serializable]
         public class OverworldData
@@ -67,14 +35,12 @@ namespace DwarfCorp
 
             public List<FactionDescriptor> FactionList;
 
-            [JsonIgnore] [NonSerialized] public Texture2D Screenshot;
-
             public Overworld.MapData[,] CreateMap()
             {
                 return Data;
             }
 
-            public Texture2D CreateTexture(GraphicsDevice device, int width, int height, float seaLevel)
+            public Texture2D CreateScreenshot(GraphicsDevice device, int width, int height, float seaLevel)
             {
                 GameStates.GameState.Game.LogSentryBreadcrumb("Saving", String.Format("User saving an overworld with size {0} x {1}", width, height), SharpRaven.Data.BreadcrumbLevel.Info);
                 Texture2D toReturn = null;
@@ -118,7 +84,6 @@ namespace DwarfCorp
                 SeaLevel = seaLevel;
                 Data = map;
                 
-                Screenshot = CreateTexture(device, sizeX, sizeY, seaLevel);
                 FactionList = new List<FactionDescriptor>();
                 byte id = 0;
                 foreach (Faction f in Overworld.NativeFactions)
@@ -150,7 +115,6 @@ namespace DwarfCorp
 
         public NewOverworldFile(GraphicsDevice device, Overworld.MapData[,] map, string name, float seaLevel)
         {
-
             var worldFilePath = name + System.IO.Path.DirectorySeparatorChar + "world.png";
             var metaFilePath = name + System.IO.Path.DirectorySeparatorChar + "meta.txt";
             if (File.Exists(worldFilePath) && File.Exists(metaFilePath))
@@ -218,14 +182,6 @@ namespace DwarfCorp
             return true;
         }
         
-        public void SaveScreenshot(string filename)
-        {
-            using (var stream = new System.IO.FileStream(filename, System.IO.FileMode.Create))
-            {
-                Data.Screenshot.SaveAsPng(stream, Data.Screenshot.Width, Data.Screenshot.Height);
-            }
-        }
-
         public bool WriteFile(string filePath)
         {
             var worldFilePath = filePath + System.IO.Path.DirectorySeparatorChar + "world.png";
@@ -242,18 +198,15 @@ namespace DwarfCorp
             FileUtils.SaveJSon(Data, metaFilePath, false);
 
             // Save Image
-            var texture = Data.CreateSaveTexture(Device, Width, Height);
+            using (var texture = Data.CreateSaveTexture(Device, Width, Height))
             using (var stream = new System.IO.FileStream(worldFilePath, System.IO.FileMode.Create))
-            {
                 texture.SaveAsPng(stream, Width, Height);
-            }
-           
-            return true;
-        }
 
-        public void Dispose()
-        {
-            this.Data.Screenshot.Dispose();
+            using (var texture = Data.CreateScreenshot(Device, Width, Height, Data.SeaLevel))
+            using (var stream = new System.IO.FileStream(filePath + Path.DirectorySeparatorChar + "screenshot.png", System.IO.FileMode.Create))
+                texture.SaveAsPng(stream, Width, Height);
+
+                return true;
         }
     }
 }

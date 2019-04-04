@@ -748,15 +748,6 @@ namespace DwarfCorp
                 NewOverworldFile file = new NewOverworldFile(Game.GraphicsDevice, Overworld.Map, Overworld.Name, SeaLevel);
                 file.WriteFile(worldDirectory.FullName);
 
-                try
-                {
-                    file.SaveScreenshot(worldDirectory.FullName + Path.DirectorySeparatorChar + "screenshot.png");
-                }
-                catch(Exception exception)
-                {
-                    Console.Error.WriteLine(exception.ToString());
-                }
-
                 gameFile = SaveGame.CreateFromWorld(this);
                 var path = DwarfGame.GetSaveDirectory() + Path.DirectorySeparatorChar +
                 filename;
@@ -774,6 +765,7 @@ namespace DwarfCorp
                         Resolution = new Point(128, 128)
                     });
                 }
+
 #if !DEBUG
             }
             catch (Exception exception)
