@@ -721,7 +721,7 @@ namespace DwarfCorp
             if (type == OrbitCamera.ControlType.Walk)
             {
                 Master.SetMaxViewingLevel(VoxelConstants.WorldSizeY + 1);
-                var below = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(new Vector3(Camera.Position.X, VoxelConstants.WorldSizeY - 1, Camera.Position.Z))));
+                var below = VoxelHelpers.FindFirstVoxelBelowIncludingWater(new VoxelHandle(ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(new Vector3(Camera.Position.X, VoxelConstants.WorldSizeY - 1, Camera.Position.Z))));
                 Camera.Position = below.WorldPosition + Vector3.One * 0.5f + Vector3.Up;
             }
         }

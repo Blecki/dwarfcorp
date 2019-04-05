@@ -247,7 +247,7 @@ namespace DwarfCorp
                         break;
                     }
 
-                    var voxUnder = VoxelHelpers.GetValidVoxelNear(chunks, Agent.Position);
+                    var voxUnder = VoxelHelpers.FindValidVoxelNear(chunks, Agent.Position);
 
                     if (!voxUnder.IsValid)
                     {

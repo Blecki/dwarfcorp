@@ -124,7 +124,7 @@ namespace DwarfCorp
             {
                 for (var offsetY = -size; offsetY <= size; ++offsetY)
                 {
-                    var topVoxel = VoxelHelpers.FindFirstVoxelBelowIncludeWater(
+                    var topVoxel = VoxelHelpers.FindFirstVoxelBelowIncludingWater(
                         new VoxelHandle(chunkManager.ChunkData,
                             centerCoordinate + new GlobalVoxelOffset(offsetX, 0, offsetY)));
 

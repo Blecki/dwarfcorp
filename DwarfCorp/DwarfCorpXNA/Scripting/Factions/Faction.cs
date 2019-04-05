@@ -1068,7 +1068,7 @@ namespace DwarfCorp
                 string creature = Race.CreatureTypes[MathFunctions.Random.Next(Race.CreatureTypes.Count)];
                 Vector3 offset = MathFunctions.RandVector3Cube() * 2;
 
-                var voxelUnder = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(
+                var voxelUnder = VoxelHelpers.FindFirstVoxelBelowIncludingWater(new VoxelHandle(
                     World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(position + offset)));
                 if (voxelUnder.IsValid)
                 {

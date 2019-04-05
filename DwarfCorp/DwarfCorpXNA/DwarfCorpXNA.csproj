@@ -603,6 +603,8 @@
     <Compile Include="Graphics\Primitives\GeometricPrimitive.cs" />
     <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />
     <Compile Include="Graphics\Primitives\PrimitiveLibrary.cs" />
+    <Compile Include="Voxels\VoxelHelpers\FindFirstVoxelBelowIncludingWater.cs" />
+    <Compile Include="Voxels\VoxelHelpers\FindValidVoxelNear.cs" />
     <Compile Include="Voxels\VoxelHelpers\KillVoxel.cs" />
     <Compile Include="Voxels\VoxelListPrimitive.cs" />
     <Compile Include="Graphics\SelectionBuffer.cs" />

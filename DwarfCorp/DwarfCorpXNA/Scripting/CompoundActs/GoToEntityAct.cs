@@ -184,7 +184,7 @@ namespace DwarfCorp
                             yield return Act.Status.Fail;
                             yield break;
                         }
-                        var under = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(entity.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(entity.Position)));
+                        var under = VoxelHelpers.FindFirstVoxelBelowIncludingWater(new VoxelHandle(entity.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(entity.Position)));
 
                         bool targetMoved = under == VoxelHandle.InvalidHandle || (path.Last().DestinationVoxel.WorldPosition - under.WorldPosition).Length() > Math.Max(Radius, 2) * 2;
 

@@ -121,7 +121,7 @@ namespace DwarfCorp
 
             if (generateLightning)
             {
-                var below = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(new Vector3(Position.X, Math.Min(VoxelConstants.ChunkSizeY - 1, Position.Y), Position.Z))));
+                var below = VoxelHelpers.FindFirstVoxelBelowIncludingWater(new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(new Vector3(Position.X, Math.Min(VoxelConstants.ChunkSizeY - 1, Position.Y), Position.Z))));
                 if (below.IsValid && !below.IsEmpty)
                 {
                     var above = VoxelHelpers.GetVoxelAbove(below);
