@@ -153,7 +153,7 @@ namespace DwarfCorp
             var sliceStack = new List<RawPrimitive>();
             var cache = new Cache();
             int maxViewingLevel = chunk.Manager.World.Master == null ? VoxelConstants.ChunkSizeY : chunk.Manager.World.Master.MaxViewingLevel;
-            for (var y = 0; y < maxViewingLevel; ++y)
+            for (var y = 0; y < maxViewingLevel; ++y) // Todo: Only iterate inside the chunk.
             {
                 RawPrimitive sliceGeometry = null;
 

@@ -70,20 +70,11 @@ namespace DwarfCorp
 
             for (int dx = 0; dx < WorldSize.X; dx++)
                 for (int dz = 0; dz < WorldSize.Z; dz++)
-                    initialChunkCoordinates.Add(new GlobalChunkCoordinate(dx, 0, dz));
+                    initialChunkCoordinates.Add(new GlobalChunkCoordinate(dx, 0, dz)); // Todo: Add Z dimension here.
                     
             float maxHeight = Math.Max(Overworld.GetMaxHeight(spawnRect), 0.17f);
             foreach (var box in initialChunkCoordinates)
-            {
-                Vector3 worldPos = new Vector3(
-                    box.X * VoxelConstants.ChunkSizeX,
-                    box.Y * VoxelConstants.ChunkSizeY,
-                    box.Z * VoxelConstants.ChunkSizeZ);
-                VoxelChunk chunk = GenerateChunk(worldPos, World, maxHeight);
-                ChunkData.AddChunk(chunk);
-            }
-
-
+                ChunkData.AddChunk(GenerateChunk(box, World, maxHeight));
 
             GenerateOres(ChunkData, Bounds);
 

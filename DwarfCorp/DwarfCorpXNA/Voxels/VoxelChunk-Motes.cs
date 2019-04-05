@@ -92,7 +92,7 @@ namespace DwarfCorp
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                 {
                     // Don't generate motes if above is not empty
-                    if (Y < VoxelConstants.ChunkSizeY - 1)
+                    if (Y < VoxelConstants.WorldSizeY - 1)
                     {
                         var voxelAbove = new VoxelHandle(this, new LocalVoxelCoordinate(x, Y + 1, z));
                         if (voxelAbove.IsValid && !voxelAbove.IsEmpty || voxelAbove.LiquidLevel != 0)

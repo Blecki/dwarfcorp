@@ -124,7 +124,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return (agent.AI.Position - Voxel.WorldPosition).LengthSquared() + 10 * Math.Abs(VoxelConstants.ChunkSizeY - Voxel.Coordinate.Y);
+            return (agent.AI.Position - Voxel.WorldPosition).LengthSquared() + 10 * Math.Abs(VoxelConstants.WorldSizeY - Voxel.Coordinate.Y); // Is this a bias to make deeper voxels more costly?
         }
 
         public override bool IsComplete(Faction faction)

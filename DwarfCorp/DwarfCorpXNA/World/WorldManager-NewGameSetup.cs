@@ -116,7 +116,7 @@ namespace DwarfCorp
         public Room GenerateInitialBalloonPort(RoomBuilder roomDes, ChunkManager chunkManager, float x, float z,
             int size)
         {
-            var centerCoordinate = GlobalVoxelCoordinate.FromVector3(new Vector3(x, VoxelConstants.ChunkSizeY - 1, z));
+            var centerCoordinate = GlobalVoxelCoordinate.FromVector3(new Vector3(x, VoxelConstants.WorldSizeY - 1, z));
 
             var accumulator = 0;
             var count = 0;
@@ -232,7 +232,7 @@ namespace DwarfCorp
                     }
 
                     // Fill from the top height down to the bottom.
-                    for (int y = Math.Max(0, h - 1); y < averageHeight && y < VoxelConstants.ChunkSizeY; y++)
+                    for (int y = Math.Max(0, h - 1); y < averageHeight && y < VoxelConstants.WorldSizeY; y++)
                     {
                         var v = new VoxelHandle(baseVoxel.Chunk, 
                             new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));

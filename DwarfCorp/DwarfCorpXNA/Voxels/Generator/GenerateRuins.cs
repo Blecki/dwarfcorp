@@ -15,7 +15,6 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        // Todo: This needs to run on a single chunk at a time.
         public static void GenerateRuins(ChunkData chunks, WorldManager world, GeneratorSettings Settings)
         {
             int numRuinClusters = Math.Max(MathFunctions.RandInt(-6, 4), 0);
@@ -44,13 +43,11 @@ namespace DwarfCorp.Generation
                     {
                         for (int dz = 0; dz < structureDepth; dz++)
                         {
-                            Vector3 worldPos = new Vector3(origin.X + dx, VoxelConstants.ChunkSizeY - 1, origin.Z + dz);
+                            var worldPos = new Vector3(origin.X + dx, VoxelConstants.WorldSizeY - 1, origin.Z + dz);
 
-                            var baseVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                                chunks, GlobalVoxelCoordinate.FromVector3(worldPos)));
+                            var baseVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(worldPos)));
 
-                            if (!baseVoxel.IsValid)
-                                continue;
+                            if (!baseVoxel.IsValid) continue;
 
                             biome = Overworld.GetBiomeAt(worldPos, world.WorldScale, world.WorldOrigin);
 
@@ -67,20 +64,17 @@ namespace DwarfCorp.Generation
                     bool[] doors = new bool[4];
                    
                     for (int k = 0; k < 4; k++)
-                    {
                         doors[k] = MathFunctions.RandEvent(0.5f);
-                    }
 
                     for (int dx = 0; dx < structureWidth; dx++)
                     {
                         for (int dz = 0; dz < structureDepth; dz++)
                         {
-                            Vector3 worldPos = new Vector3(origin.X + dx, avgHeight + heightOffset, origin.Z + dz);
+                            var worldPos = new Vector3(origin.X + dx, avgHeight + heightOffset, origin.Z + dz);
 
                             var baseVoxel = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(worldPos));
-                            var underVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                               chunks, GlobalVoxelCoordinate.FromVector3(worldPos)));
-                            float decay = Settings.NoiseGenerator.Generate(worldPos.X * 0.05f, worldPos.Y * 0.05f, worldPos.Z * 0.05f);
+                            var underVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(worldPos)));
+                            var decay = Settings.NoiseGenerator.Generate(worldPos.X * 0.05f, worldPos.Y * 0.05f, worldPos.Z * 0.05f);
 
                             if (decay > 0.7f)
                                 continue;
@@ -88,7 +82,7 @@ namespace DwarfCorp.Generation
                             if (!baseVoxel.IsValid)
                                 continue;
 
-                            if (baseVoxel.Coordinate.Y == VoxelConstants.ChunkSizeY - 1)
+                            if (baseVoxel.Coordinate.Y == VoxelConstants.WorldSizeY - 1)
                                 continue;
 
                             if (!underVoxel.IsValid)

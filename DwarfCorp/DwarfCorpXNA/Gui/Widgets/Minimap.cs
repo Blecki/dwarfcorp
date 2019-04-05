@@ -156,7 +156,7 @@ namespace DwarfCorp.Gui.Widgets
             World.Camera.UpdateViewMatrix();
             World.Camera.ZoomTargets.Clear();
             World.Camera.ZoomTargets.Add(HomePosition);
-            World.Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY);
+            World.Master.SetMaxViewingLevel(VoxelConstants.WorldSizeY);
         }
 
 
@@ -312,7 +312,7 @@ namespace DwarfCorp.Gui.Widgets
                                 {
                                     if (parentBody.Position.Y > World.Master.MaxViewingLevel + 1)
                                         continue;
-                                    var firstVisible = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager.ChunkData, parentBody.Position, parentBody.Position + Vector3.Up * VoxelConstants.ChunkSizeY);
+                                    var firstVisible = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager.ChunkData, parentBody.Position, parentBody.Position + Vector3.Up * VoxelConstants.WorldSizeY);
                                     if (firstVisible.IsValid)
                                         continue;
                                 }

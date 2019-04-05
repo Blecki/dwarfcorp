@@ -196,7 +196,7 @@ namespace DwarfCorp
                 {
                     var x = layerOrder[i] % VoxelConstants.ChunkSizeX;
                     var z = (layerOrder[i] >> VoxelConstants.XDivShift) % VoxelConstants.ChunkSizeZ;
-                    var currentVoxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
+                    var currentVoxel = VoxelHandle.UnsafeCreateLocalHandle(chunk, new LocalVoxelCoordinate(x, y, z));
 
                     if (currentVoxel.TypeID != 0)
                         continue;

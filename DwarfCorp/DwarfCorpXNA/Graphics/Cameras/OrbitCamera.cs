@@ -207,16 +207,16 @@ namespace DwarfCorp
 
         private Vector3 ProjectToSurface(Vector3 pos)
         {
-            var vox = VoxelHelpers.FindFirstVisibleVoxelOnRay(
-                World.ChunkManager.ChunkData,
-                new Vector3(pos.X, VoxelConstants.ChunkSizeY - 1, pos.Z),
+            var vox = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager.ChunkData,
+                new Vector3(pos.X, VoxelConstants.WorldSizeY - 1, pos.Z),
                 new Vector3(pos.X, 0, pos.Z));
+
             if (!vox.IsValid) return pos;
-            float diffY = (vox.WorldPosition.Y + 0.5f) - pos.Y;
+
+            var diffY = (vox.WorldPosition.Y + 0.5f) - pos.Y;
             if (Math.Abs(diffY) > 10)
-            {
                 diffY = Math.Sign(diffY) * 10;
-            }
+
             return new Vector3(pos.X, pos.Y + diffY, pos.Z);
         }
 

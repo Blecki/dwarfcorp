@@ -104,7 +104,7 @@ namespace DwarfCorp
         private bool sliceUpheld = false;
         private Timer sliceDownTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
         private Timer sliceUpTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
-        public int MaxViewingLevel = VoxelConstants.ChunkSizeY;
+        public int MaxViewingLevel = VoxelConstants.WorldSizeY;
 
         public Scripting.Gambling GamblingState = new Scripting.Gambling();
 
@@ -280,11 +280,11 @@ namespace DwarfCorp
         {
             if (level == MaxViewingLevel)
                 return;
-            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_click_voxel, 0.15f, (float)(level / (float)VoxelConstants.ChunkSizeY) - 0.5f);
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_click_voxel, 0.15f, (float)(level / (float)VoxelConstants.WorldSizeY) - 0.5f);
 
             var oldLevel = MaxViewingLevel;
 
-            MaxViewingLevel = Math.Max(Math.Min(level, VoxelConstants.ChunkSizeY), 1);
+            MaxViewingLevel = Math.Max(Math.Min(level, VoxelConstants.WorldSizeY), 1);
 
             foreach (var c in World.ChunkManager.ChunkData.ChunkMap)
             {
@@ -566,13 +566,9 @@ namespace DwarfCorp
                     World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(dwarf.Position)));
 
                 if (above.IsValid)
-                {
                     SetMaxViewingLevel(above.Coordinate.Y);
-                }
                 else
-                {
-                    SetMaxViewingLevel(VoxelConstants.ChunkSizeY);
-                }
+                    SetMaxViewingLevel(VoxelConstants.WorldSizeY);
             }
 
             Vector3 forward = CameraController.GetForwardVector();

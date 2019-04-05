@@ -173,7 +173,7 @@ namespace DwarfCorp
                     if (numPlants < 10)
                     {
                         Vector3 randomPoint = MathFunctions.RandVector3Box(GetBoundingBox().Expand(4));
-                        randomPoint.Y = VoxelConstants.ChunkSizeY - 1;
+                        randomPoint.Y = VoxelConstants.WorldSizeY - 1;
                
                         VoxelHandle under = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(randomPoint)));
                         if (under.IsValid && under.Type.IsSoil)

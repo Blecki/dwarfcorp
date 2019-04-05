@@ -51,7 +51,7 @@ namespace DwarfCorp
         public bool NewPrimitiveReceived = false;
         public bool NewLiquidReceived = false;
         
-        public Vector3 Origin { get; set; }
+        public GlobalVoxelCoordinate Origin { get; set; }
         public ChunkManager Manager { get; set; }
 
         public Mutex PrimitiveMutex { get; set; }
@@ -96,10 +96,10 @@ namespace DwarfCorp
 
         #endregion
 
-        public VoxelChunk(ChunkManager manager, Vector3 origin, GlobalChunkCoordinate id)
+        public VoxelChunk(ChunkManager manager, GlobalChunkCoordinate id)
         {
             ID = id;
-            Origin = origin;
+            Origin = new GlobalVoxelCoordinate(id, new LocalVoxelCoordinate(0,0,0));
             Data = VoxelData.Allocate();
             Primitive = new VoxelListPrimitive();
             Manager = manager;
@@ -120,8 +120,8 @@ namespace DwarfCorp
         {
             if (!m_boundingBoxCreated)
             {
-                Vector3 max = new Vector3(VoxelConstants.ChunkSizeX, VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeZ) + Origin;
-                m_boundingBox = new BoundingBox(Origin, max);
+                Vector3 max = new Vector3(VoxelConstants.ChunkSizeX, VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeZ) + Origin.ToVector3();
+                m_boundingBox = new BoundingBox(Origin.ToVector3(), max);
                 m_boundingBoxCreated = true;
             }
 

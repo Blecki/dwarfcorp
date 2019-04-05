@@ -112,6 +112,11 @@ namespace DwarfCorp
             this._cache_Index = VoxelConstants.DataIndexOf(Coordinate);
         }
 
+        public static VoxelHandle UnsafeCreateLocalHandle(VoxelChunk Chunk, LocalVoxelCoordinate Coordinate)
+        {
+            return new VoxelHandle(Chunk, Coordinate);
+        }
+
         #region Equality
         public static bool operator ==(VoxelHandle A, VoxelHandle B)
         {

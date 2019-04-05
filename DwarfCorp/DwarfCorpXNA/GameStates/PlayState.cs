@@ -359,7 +359,7 @@ namespace DwarfCorp.GameStates
             StocksLabel.Invalidate();
             LevelLabel.Text = String.Format("{0}/{1}",
                 Master.MaxViewingLevel,
-                VoxelConstants.ChunkSizeY);
+                VoxelConstants.WorldSizeY);
             LevelLabel.Invalidate();
             #endregion
 

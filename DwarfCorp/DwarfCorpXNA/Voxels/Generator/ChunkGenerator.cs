@@ -26,33 +26,6 @@ namespace DwarfCorp
             Settings = new Generation.GeneratorSettings(randomSeed, noiseScale, WorldGenerationSettings);
         }
 
-        public void GenerateWater(VoxelChunk chunk, float maxHeight)
-        {
-            int waterHeight = Math.Min((int)(VoxelConstants.ChunkSizeY * NormalizeHeight(Settings.SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight)), VoxelConstants.ChunkSizeY - 1);
-            var iceID = VoxelLibrary.GetVoxelType("Ice");
-            for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
-            {
-                for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
-                {
-                    var biome = Overworld.GetBiomeAt(new Vector3(x, 0, z) + chunk.Origin, chunk.Manager.World.WorldScale, chunk.Manager.World.WorldOrigin);
-                    var topVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                        chunk, new LocalVoxelCoordinate(x, VoxelConstants.ChunkSizeY - 1, z)));
-
-                    for (var y = 0; y <= waterHeight; ++y)
-                    {
-                        var vox = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
-                        if (vox.IsEmpty && y > topVoxel.Coordinate.Y)
-                        {
-                            if (biome.WaterSurfaceIce && y == waterHeight)
-                                vox.RawSetType(iceID);
-                            else
-                                vox.QuickSetLiquid(biome.WaterIsLava ? LiquidType.Lava : LiquidType.Water, WaterManager.maxWaterLevel);
-                        }
-                    }
-                }
-            }
-        }
-
         public void GenerateLava(VoxelChunk chunk)
         {
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
@@ -71,7 +44,7 @@ namespace DwarfCorp
 
         public void GenerateCaves(VoxelChunk chunk, WorldManager world)
         {
-            Vector3 origin = chunk.Origin;
+            var origin = chunk.Origin;
             BiomeData biome = BiomeLibrary.GetBiome("Cave");
             var hellBiome = BiomeLibrary.GetBiome("Hell");
 
@@ -79,8 +52,7 @@ namespace DwarfCorp
             {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
-                    var topVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                        chunk, new LocalVoxelCoordinate(x, VoxelConstants.ChunkSizeY - 1, z)));
+                    var topVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(chunk, new LocalVoxelCoordinate(x, VoxelConstants.WorldSizeY - 1, z)));
 
                     for (int i = 0; i < Settings.CaveLevels.Count; i++)
                     {
@@ -90,7 +62,7 @@ namespace DwarfCorp
                         var frequency = i < Settings.CaveFrequencies.Count ? Settings.CaveFrequencies[i] : Settings.CaveFrequencies[Settings.CaveFrequencies.Count - 1];
                         var caveBiome = (y <= Settings.HellLevel) ? hellBiome : biome;
 
-                        Vector3 vec = new Vector3(x, y, z) + chunk.Origin;
+                        Vector3 vec = new Vector3(x, y, z) + chunk.Origin.ToVector3();
                         double caveNoise = Settings.CaveNoise.GetValue((x + origin.X) * Settings.CaveNoiseScale * frequency,
                             (y + origin.Y) * Settings.CaveNoiseScale * 3.0f, (z + origin.Z) * Settings.CaveNoiseScale * frequency);
 
@@ -247,10 +219,11 @@ namespace DwarfCorp
             GenerateLava(c);
         }
 
-        public VoxelChunk GenerateChunk(Vector3 origin, WorldManager World, float maxHeight)
+        public VoxelChunk GenerateChunk(GlobalChunkCoordinate ID, WorldManager World, float maxHeight)
         {
-            float waterHeight = NormalizeHeight(Settings.SeaLevel + 1.0f / VoxelConstants.ChunkSizeY, maxHeight);
-            VoxelChunk c = new VoxelChunk(Manager, origin, GlobalVoxelCoordinate.FromVector3(origin).GetGlobalChunkCoordinate());
+            var origin = new GlobalVoxelCoordinate(ID, new LocalVoxelCoordinate(0, 0, 0));
+            float waterHeight = NormalizeHeight(Settings.SeaLevel + 1.0f / VoxelConstants.WorldSizeY, maxHeight);
+            VoxelChunk c = new VoxelChunk(Manager, ID);
 
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
@@ -264,14 +237,14 @@ namespace DwarfCorp
 
                     Vector2 pos = Overworld.WorldToOverworld(new Vector2(x + origin.X, z + origin.Z), World.WorldScale, World.WorldOrigin);
                     float hNorm = NormalizeHeight(Overworld.LinearInterpolate(pos, Overworld.Map, Overworld.ScalarFieldType.Height), maxHeight);
-                    float h = MathFunctions.Clamp(hNorm * VoxelConstants.ChunkSizeY, 0.0f, VoxelConstants.ChunkSizeY - 2);
+                    float h = MathFunctions.Clamp(hNorm * VoxelConstants.ChunkSizeY, 0.0f, VoxelConstants.WorldSizeY - 2);
                     int stoneHeight = (int)(MathFunctions.Clamp((int)(h - (biomeData.SoilLayer.Depth + (Math.Sin(v.X) + Math.Cos(v.Y)))), 1, h));
 
                     int currentSubsurfaceLayer = 0;
                     int depthWithinSubsurface = 0;
                     for (int y = VoxelConstants.ChunkSizeY - 1; y >= 0; y--)
                     {
-                        var voxel = new VoxelHandle(c, new LocalVoxelCoordinate(x, y, z));
+                        var voxel = VoxelHandle.UnsafeCreateLocalHandle(c, new LocalVoxelCoordinate(x, y, z));
 
                         if (y == 0)
                         {
@@ -288,9 +261,7 @@ namespace DwarfCorp
                                 depthWithinSubsurface = 0;
                                 currentSubsurfaceLayer++;
                                 if (currentSubsurfaceLayer > biomeData.SubsurfaceLayers.Count - 1)
-                                {
                                     currentSubsurfaceLayer = biomeData.SubsurfaceLayers.Count - 1;
-                                }
                             }
                         }
 

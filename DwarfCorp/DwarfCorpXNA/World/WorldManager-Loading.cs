@@ -324,9 +324,9 @@ namespace DwarfCorp
 
                 Camera = new OrbitCamera(this,
                     new Vector3(VoxelConstants.ChunkSizeX,
-                        VoxelConstants.ChunkSizeY - 1.0f,
+                        VoxelConstants.WorldSizeY - 1.0f,
                         VoxelConstants.ChunkSizeZ),
-                    new Vector3(VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeY - 1.0f,
+                    new Vector3(VoxelConstants.ChunkSizeX, VoxelConstants.WorldSizeY - 1.0f,
                         VoxelConstants.ChunkSizeZ) +
                     Vector3.Up * 10.0f + Vector3.Backward * 10,
                     MathHelper.PiOver4, AspectRatio, 0.1f,
@@ -457,7 +457,7 @@ namespace DwarfCorp
 
             if (RevealSurface)
                 VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, new VoxelHandle(
-                    ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.ChunkSizeY - 1, 0)));
+                    ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.WorldSizeY - 1, 0)));
 
             foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
                 ChunkManager.InvalidateChunk(chunk);

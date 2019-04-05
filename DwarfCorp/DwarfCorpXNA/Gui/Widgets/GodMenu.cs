@@ -468,12 +468,10 @@ namespace DwarfCorp.Gui.Widgets
                                     continue;
                                 }
 
-                                Vector3 pos = MathFunctions.Clamp(gridCenter + new Vector3(dx, VoxelConstants.ChunkSizeY, dz), Master.World.ChunkManager.Bounds);
+                                Vector3 pos = MathFunctions.Clamp(gridCenter + new Vector3(dx, VoxelConstants.WorldSizeY, dz), Master.World.ChunkManager.Bounds);
                                 VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(Master.World.ChunkManager.ChunkData, pos, pos + Vector3.Down * 100);
                                 if (handle.IsValid)
-                                {
                                     EntityFactory.CreateEntity<GameComponent>(keys[i], handle.WorldPosition + Vector3.Up);
-                                }
                                 i++;
                             }
                         }
@@ -500,7 +498,7 @@ namespace DwarfCorp.Gui.Widgets
                                     var item = itemTypes[i];
                                     if (item.Name != "Explosive")
                                     {
-                                        Vector3 pos = MathFunctions.Clamp(gridCenter + new Vector3(dx, VoxelConstants.ChunkSizeY, dz), Master.World.ChunkManager.Bounds);
+                                        Vector3 pos = MathFunctions.Clamp(gridCenter + new Vector3(dx, VoxelConstants.WorldSizeY, dz), Master.World.ChunkManager.Bounds);
                                         VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(Master.World.ChunkManager.ChunkData, pos, pos + Vector3.Down * 100);
 
                                         if (handle.IsValid)

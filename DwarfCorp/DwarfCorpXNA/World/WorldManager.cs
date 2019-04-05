@@ -720,8 +720,8 @@ namespace DwarfCorp
             Camera.Control = type;
             if (type == OrbitCamera.ControlType.Walk)
             {
-                Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY + 1);
-                var below = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(new Vector3(Camera.Position.X, VoxelConstants.ChunkSizeY - 1, Camera.Position.Z))));
+                Master.SetMaxViewingLevel(VoxelConstants.WorldSizeY + 1);
+                var below = VoxelHelpers.FindFirstVoxelBelowIncludeWater(new VoxelHandle(ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(new Vector3(Camera.Position.X, VoxelConstants.WorldSizeY - 1, Camera.Position.Z))));
                 Camera.Position = below.WorldPosition + Vector3.One * 0.5f + Vector3.Up;
             }
         }
@@ -950,15 +950,9 @@ namespace DwarfCorp
             {
                 lastWaterHeight = 0;
                 foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
-                {
                     for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
-                    {
                         if (chunk.Data.LiquidPresent[y] > 0)
-                        {
                             lastWaterHeight = Math.Max(y, lastWaterHeight);
-                        }
-                    }
-                }
             }
 
             // Computes the water height.

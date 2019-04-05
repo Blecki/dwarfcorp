@@ -47,6 +47,7 @@ namespace DwarfCorp
     /// <summary>
     /// Has a collection of voxel chunks, and methods for accessing them.
     /// </summary>
+    /// Todo: Add Y axis
     public class ChunkData
     {
         public ChunkData(int ChunkMapWidth, int ChunkMapHeight, int ChunkMapMinX, int ChunkMapMinZ)

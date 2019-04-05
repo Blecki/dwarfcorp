@@ -184,7 +184,7 @@ namespace DwarfCorp
             bool isNewVoxelUnderMouse = currentHoverVoxel.IsValid && currentHoverVoxel != VoxelUnderMouse;
             
             // Prevent selection of top layer because building here causes graphical glitches.
-            if (SelectionType == VoxelSelectionType.SelectEmpty && currentHoverVoxel.Coordinate.Y == VoxelConstants.ChunkSizeY - 1)
+            if (SelectionType == VoxelSelectionType.SelectEmpty && currentHoverVoxel.Coordinate.Y == VoxelConstants.WorldSizeY - 1)
                 return;
 
             VoxelUnderMouse = currentHoverVoxel;
@@ -262,9 +262,9 @@ namespace DwarfCorp
 
                         // Update the selection box to account for offsets from mouse wheel.
                         if (BoxYOffset > 0)
-                            buffer.Max.Y = MathFunctions.Clamp(buffer.Max.Y + (int)BoxYOffset, 0, VoxelConstants.ChunkSizeY - 1);
+                            buffer.Max.Y = MathFunctions.Clamp(buffer.Max.Y + (int)BoxYOffset, 0, VoxelConstants.WorldSizeY - 1);
                         else if (BoxYOffset < 0)
-                            buffer.Min.Y = MathFunctions.Clamp(buffer.Min.Y - (int)BoxYOffset, 0, VoxelConstants.ChunkSizeY - 1);
+                            buffer.Min.Y = MathFunctions.Clamp(buffer.Min.Y - (int)BoxYOffset, 0, VoxelConstants.WorldSizeY - 1);
 
                         SelectionBuffer = Select(buffer, FirstVoxel.WorldPosition, underMouse.WorldPosition).ToList();
 
