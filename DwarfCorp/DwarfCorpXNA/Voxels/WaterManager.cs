@@ -178,12 +178,12 @@ namespace DwarfCorp
             
             foreach(var chunk in Chunks.ChunkData.GetChunkEnumerator())
             {
-                DiscreteUpdate(chunk);
+                DiscreteUpdate(Chunks, chunk);
                 chunk.RebuildLiquids();
             }
         }
 
-        private void DiscreteUpdate(VoxelChunk chunk)
+        private void DiscreteUpdate(ChunkManager ChunkManager, VoxelChunk chunk)
         {
             for (var y = 0; y < VoxelConstants.ChunkSizeY; ++y)
             {
@@ -215,8 +215,7 @@ namespace DwarfCorp
                         continue;
                     }
 
-                    var voxBelow = (y > 0) ? new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z)) : VoxelHandle.InvalidHandle;
-
+                    var voxBelow = ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(currentVoxel.Coordinate.X, currentVoxel.Coordinate.Y - 1, currentVoxel.Coordinate.Z));
 
                     if (voxBelow.IsValid && voxBelow.IsEmpty)
                     {

@@ -26,64 +26,75 @@ namespace DwarfCorp
             Settings = new Generation.GeneratorSettings(randomSeed, noiseScale, WorldGenerationSettings);
         }
 
-        public void GenerateLava(VoxelChunk chunk)
+        private struct CaveGenerationData
         {
-            for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
+            public bool Exists;
+            public double Noise;
+            public int Height;
+        }
+
+        private const int CaveHeightScaleFactor = 5;
+        private const int MaxCaveHeight = 3;
+
+        private CaveGenerationData GetCaveGenerationData(GlobalVoxelCoordinate At, int LayerIndex)
+        {
+            var frequency = LayerIndex < Settings.CaveFrequencies.Count ? Settings.CaveFrequencies[LayerIndex] : Settings.CaveFrequencies[Settings.CaveFrequencies.Count - 1];
+
+            var noiseVector = At.ToVector3() * Settings.CaveNoiseScale * new Vector3(frequency, 3.0f, frequency);
+            var noise = Settings.CaveNoise.GetValue(noiseVector.X, noiseVector.Y, noiseVector.Z);
+
+            var heightVector = At.ToVector3() * Settings.NoiseScale * new Vector3(frequency, 3.0f, frequency);
+            var height = Settings.NoiseGenerator.Noise(heightVector);
+            
+            return new CaveGenerationData
             {
-                for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
-                {
-                    for (var y = 0; y < Settings.LavaLevel; ++y)
-                    {
-                        var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
-                        if (voxel.IsEmpty && voxel.LiquidLevel == 0)
-                            voxel.QuickSetLiquid(LiquidType.Lava, WaterManager.maxWaterLevel);
-                    }
-                }
-            }
+                Exists = noise > Settings.CaveSize,
+                Noise = noise,
+                Height = Math.Min(Math.Max((int)(height * CaveHeightScaleFactor), 1), MaxCaveHeight)
+            };
         }
 
         public void GenerateCaves(VoxelChunk chunk, WorldManager world)
         {
             var origin = chunk.Origin;
-            BiomeData biome = BiomeLibrary.GetBiome("Cave");
+            var biome = BiomeLibrary.GetBiome("Cave");
             var hellBiome = BiomeLibrary.GetBiome("Hell");
 
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
-                    var topVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(chunk, new LocalVoxelCoordinate(x, VoxelConstants.WorldSizeY - 1, z)));
-
                     for (int i = 0; i < Settings.CaveLevels.Count; i++)
                     {
+                        // Does layer intersect this voxel?
                         int y = Settings.CaveLevels[i];
-                        if (y <= 0 || y >= topVoxel.Coordinate.Y) continue;
+                        if (y + MaxCaveHeight < origin.Y) continue;
+                        if (y >= origin.Y + VoxelConstants.ChunkSizeY) continue; 
 
-                        var frequency = i < Settings.CaveFrequencies.Count ? Settings.CaveFrequencies[i] : Settings.CaveFrequencies[Settings.CaveFrequencies.Count - 1];
+                        var coordinate = new GlobalVoxelCoordinate(origin.X + x, y, origin.Z + z);
+
+                        var data = GetCaveGenerationData(coordinate, i);
+
                         var caveBiome = (y <= Settings.HellLevel) ? hellBiome : biome;
 
-                        Vector3 vec = new Vector3(x, y, z) + chunk.Origin.ToVector3();
-                        double caveNoise = Settings.CaveNoise.GetValue((x + origin.X) * Settings.CaveNoiseScale * frequency,
-                            (y + origin.Y) * Settings.CaveNoiseScale * 3.0f, (z + origin.Z) * Settings.CaveNoiseScale * frequency);
-
-                        double heightnoise = Settings.NoiseGenerator.Noise((x + origin.X) * Settings.NoiseScale * frequency,
-                            (y + origin.Y) * Settings.NoiseScale * 3.0f, (z + origin.Z) * Settings.NoiseScale * frequency);
-
-                        int caveHeight = Math.Min(Math.Max((int)(heightnoise * 5), 1), 3);
-
-                        if (!(caveNoise > Settings.CaveSize)) continue;
+                        if (!data.Exists) continue;
 
                         bool invalidCave = false;
-                        for (int dy = 0; dy < caveHeight; dy++)
+                        for (int dy = 0; dy < data.Height; dy++)
                         {
-                            if (y - dy <= 0)
-                                continue;
+                            var globalY = y + dy;
 
-                            var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y - dy, z));
+                            // Prevent caves punching holes in bedrock.
+                            if (globalY <= 0) continue;
 
-                            foreach (var coord in VoxelHelpers.EnumerateAllNeighbors(voxel.Coordinate))
+                            // Check if voxel is inside chunk.
+                            if (globalY <= 0 || globalY < origin.Y || globalY >= origin.Y + VoxelConstants.ChunkSizeY) continue;
+
+                            var voxel = VoxelHandle.UnsafeCreateLocalHandle(chunk, new LocalVoxelCoordinate(x, globalY - origin.Y, z));
+
+                            foreach (var neighborCoordinate in VoxelHelpers.EnumerateAllNeighbors(voxel.Coordinate))
                             {
-                                VoxelHandle v = new VoxelHandle(Manager.ChunkData, coord);
+                                var v = Manager.CreateVoxelHandle(neighborCoordinate);
                                 if (!v.IsValid || (v.Sunlight))
                                 {
                                     invalidCave = true;
@@ -91,51 +102,74 @@ namespace DwarfCorp
                                 }
                             }
 
-                            if (!invalidCave)
-                                voxel.RawSetType(VoxelLibrary.emptyType);
-                            else
-                            {
+                            if (invalidCave)
                                 break;
+
+                            if (dy == 0)
+                            {
+                                // Place soil voxel and grass below cave.
+
+                                var below = VoxelHelpers.GetVoxelBelow(voxel);
+                                if (below.IsValid)
+                                {
+                                    below.RawSetType(VoxelLibrary.GetVoxelType(caveBiome.SoilLayer.VoxelType));
+                                    var grassType = GrassLibrary.GetGrassType(caveBiome.GrassDecal);
+                                    if (grassType != null)
+                                        below.RawSetGrass(grassType.ID);
+                                }
+
+                                // Spawn vegetation.
+                                if (data.Noise > Settings.CaveSize * 1.8f && globalY > Settings.LavaLevel)
+                                {
+                                    GenerateCaveFlora(below, caveBiome, Settings.NoiseGenerator, world);
+                                }
                             }
-                        }
 
-                        if (!invalidCave && caveNoise > Settings.CaveSize * 1.8f && y - caveHeight > 0 && y > Settings.LavaLevel)
-                        {
-                            GenerateCaveVegetation(chunk, x, y, z, caveHeight, caveBiome, vec, world, Settings.NoiseGenerator);
-                        }
+                            voxel.RawSetType(VoxelLibrary.emptyType);
+                        }                        
                     }
                 }
             }
+        }
 
-            /*
-            // Second pass sets the caves to empty as needed
-            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
+        private static void GenerateCaveFlora(VoxelHandle CaveFloor, BiomeData Biome, Perlin NoiseGenerator, WorldManager WorldManager)
+        {
+            foreach (var floraType in Biome.Vegetation)
             {
-                for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
+                if (!MathFunctions.RandEvent(floraType.SpawnProbability))
+                    continue;
+
+                if (NoiseGenerator.Noise(CaveFloor.Coordinate.X / floraType.ClumpSize, floraType.NoiseOffset, CaveFloor.Coordinate.Z / floraType.ClumpSize) < floraType.ClumpThreshold)
+                    continue;
+
+                CaveFloor.RawSetGrass(0); // I preferred when grass existed under trees.
+
+                var plantSize = MathFunctions.Rand() * floraType.SizeVariance + floraType.MeanSize;
+
+                WorldManager.DoLazy(() =>
                 {
-                    for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
-                    {
-                        VoxelHandle handle = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
-                        if (handle.Type == magicCube)
+                    if (!GameSettings.Default.FogofWar)
+                        EntityFactory.CreateEntity<GameComponent>(
+                            floraType.Name,
+                            CaveFloor.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f), // Todo: Is this the correct offset?
+                            Blackboard.Create("Scale", plantSize));
+                    else
+                        WorldManager.ComponentManager.RootComponent.AddChild(new ExploredListener(WorldManager.ComponentManager, CaveFloor)
                         {
-                            handle.RawSetType(VoxelLibrary.emptyType);
-                        }
-                    }
-                }
+                            EntityToSpawn = floraType.Name,
+                            SpawnLocation = CaveFloor.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
+                            BlackboardData = Blackboard.Create("Scale", plantSize)
+                        });
+                });
+
+                break; // Don't risk spawning multiple plants in the same spot.
             }
-             */
         }
 
         public static void GenerateCaveVegetation(VoxelChunk chunk, int x, int y, int z, int caveHeight, BiomeData biome, Vector3 vec, WorldManager world, Perlin NoiseGenerator)
         {
             var vUnder = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y - 1, z));
             var wayUnder = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y - caveHeight, z));
-
-            wayUnder.RawSetType(VoxelLibrary.GetVoxelType(biome.SoilLayer.VoxelType));
-
-            var grassType = GrassLibrary.GetGrassType(biome.GrassDecal);
-            if (grassType != null)
-                wayUnder.RawSetGrass(grassType.ID);
 
             foreach (VegetationData veg in biome.Vegetation)
             {

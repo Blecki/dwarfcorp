@@ -456,8 +456,10 @@ namespace DwarfCorp
             }
 
             if (RevealSurface)
-                VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, new VoxelHandle(
-                    ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault(), new LocalVoxelCoordinate(0, VoxelConstants.WorldSizeY - 1, 0)));
+            {
+                var firstChunkOrigin = ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault().Origin;
+                VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(firstChunkOrigin.X, VoxelConstants.WorldSizeY - 1, firstChunkOrigin.Z)));
+            }
 
             foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
                 ChunkManager.InvalidateChunk(chunk);

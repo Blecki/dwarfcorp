@@ -147,16 +147,14 @@ namespace DwarfCorp
                 {
                     for (var offsetY = -size; offsetY <= size; ++offsetY)
                     {
-                        var topVoxel = VoxelHelpers.FindFirstVoxelBelow(
-                            new VoxelHandle(chunkManager.ChunkData,
-                                centerCoordinate + new GlobalVoxelOffset(offsetX, 0, offsetY)));
+                        var topVoxel = VoxelHelpers.FindFirstVoxelBelow(chunkManager.CreateVoxelHandle(centerCoordinate + new GlobalVoxelOffset(offsetX, 0, offsetY)));
                        
                         if (topVoxel.Coordinate.Y > 0)
                         {
                             var vox = topVoxel;
                             for (int dy = topVoxel.Coordinate.Y; dy > 0; dy--)
                             {
-                                vox = new VoxelHandle(chunkManager.ChunkData, new GlobalVoxelCoordinate(topVoxel.Coordinate.X, dy, topVoxel.Coordinate.Z));
+                                vox = chunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(topVoxel.Coordinate.X, dy, topVoxel.Coordinate.Z));
                                 if (vox.IsValid && !vox.IsEmpty && !illegalTypes.Contains(vox.Type.Name))
                                 {
                                     break;
@@ -178,21 +176,18 @@ namespace DwarfCorp
             {
                 for (int dz = -size; dz <= size; dz++)
                 {
-                    Vector3 worldPos = new Vector3(centerCoordinate.X + dx, centerCoordinate.Y, centerCoordinate.Z + dz);
+                    var worldPos = new Vector3(centerCoordinate.X + dx, centerCoordinate.Y, centerCoordinate.Z + dz);
 
-                    var baseVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                        chunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(worldPos)));
+                    var baseVoxel = VoxelHelpers.FindFirstVoxelBelow(chunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(worldPos)));
 
                     if (!baseVoxel.IsValid)
                         continue;
 
                     var h = baseVoxel.Coordinate.Y + 1;
-                    var localCoord = baseVoxel.Coordinate.GetLocalVoxelCoordinate();
 
-                    for (int y = averageHeight; y < (StartUnderground ? averageHeight + 2 : h); y++)
+                    for (int y = averageHeight; y < (StartUnderground ? averageHeight + 2 : h) && y < VoxelConstants.WorldSizeY; y++)
                     {
-                        var v = new VoxelHandle(baseVoxel.Chunk,
-                            new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));
+                        var v = chunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(baseVoxel.Coordinate.X, y, baseVoxel.Coordinate.Z));
                         v.RawSetType(VoxelLibrary.GetVoxelType(0));
                         v.RawSetIsExplored();
                         v.QuickSetLiquid(LiquidType.None, 0);
@@ -234,8 +229,7 @@ namespace DwarfCorp
                     // Fill from the top height down to the bottom.
                     for (int y = Math.Max(0, h - 1); y < averageHeight && y < VoxelConstants.WorldSizeY; y++)
                     {
-                        var v = new VoxelHandle(baseVoxel.Chunk, 
-                            new LocalVoxelCoordinate((int)localCoord.X, y, (int)localCoord.Z));
+                        var v = chunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(baseVoxel.Coordinate.X, y, baseVoxel.Coordinate.Z));
                         if (!v.IsValid) throw new InvalidProgramException("Voxel was invalid while creating a new game's initial zones. This should not happen.");
 
                         v.RawSetType(VoxelLibrary.GetVoxelType("Scaffold"));
@@ -258,10 +252,8 @@ namespace DwarfCorp
 
                         if (isSide)
                         {
-                            var ladderPos = new Vector3(worldPos.X, y, worldPos.Z) + offset +
-                                Vector3.One * 0.5f;
-                            var ladderVox = new VoxelHandle(chunkManager.ChunkData,
-                                GlobalVoxelCoordinate.FromVector3(ladderPos));
+                            var ladderPos = new Vector3(worldPos.X, y, worldPos.Z) + offset + Vector3.One * 0.5f;
+                            var ladderVox = chunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(ladderPos));
                             if (ladderVox.IsValid && ladderVox.IsEmpty)
                             {
                                 DoLazy(new Action(() => {

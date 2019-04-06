@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -208,6 +209,11 @@ the accompanying demo.
         public float Noise(float x, float y, float z)
         {
             return 0.5f * (Generate(x, y, z) + 1.0f);
+        }
+
+        public float Noise(Vector3 V)
+        {
+            return Noise(V.X, V.Y, V.Z);
         }
 
         public float Generate(float x, float y, float z)

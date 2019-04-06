@@ -1322,7 +1322,7 @@ namespace DwarfCorp
 
             if (vox.IsValid)
             {
-                float height = WaterRenderer.GetTotalWaterHeightCells(vox);
+                float height = WaterRenderer.GetTotalWaterHeightCells(ChunkManager, vox);
                 if (height > 0)
                 {
                     PlaySpecialAmbient("sfx_amb_ocean");

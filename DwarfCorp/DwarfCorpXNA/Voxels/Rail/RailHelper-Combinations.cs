@@ -64,8 +64,7 @@ namespace DwarfCorp.Rail
 
             if (actualPosition.Coordinate.Y == 0) return false; // ???
 
-            var local = actualPosition.Coordinate.GetLocalVoxelCoordinate();
-            var voxelUnder = new VoxelHandle(actualPosition.Chunk, new LocalVoxelCoordinate(local.X, local.Y - 1, local.Z));
+            var voxelUnder = VoxelHelpers.GetVoxelBelow(actualPosition);
             if (voxelUnder.IsEmpty) return false;
             var box = actualPosition.GetBoundingBox().Expand(-0.2f);
 

@@ -148,15 +148,14 @@ namespace DwarfCorp
             return finalPlane;
         }
 
-        public static float GetTotalWaterHeightCells(VoxelHandle vox)
+        public static float GetTotalWaterHeightCells(ChunkManager ChunkManager, VoxelHandle vox)
         {
             float tot = 0;
 
             var localVoxelCoordinate = vox.Coordinate.GetLocalVoxelCoordinate();
-            for (var y = vox.Coordinate.Y; y < VoxelConstants.ChunkSizeY; y++)
+            for (var y = vox.Coordinate.Y; y < VoxelConstants.WorldSizeY; y++)
             {
-                var v = new VoxelHandle(vox.Chunk, new LocalVoxelCoordinate(
-                    localVoxelCoordinate.X, y, localVoxelCoordinate.Z));
+                var v = ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(vox.Coordinate.X, y, vox.Coordinate.Z));
                 tot += v.LiquidLevel / (float)WaterManager.maxWaterLevel;
                 if (y > vox.Coordinate.Y && v.LiquidLevel == 0)
                     return tot;
@@ -171,7 +170,7 @@ namespace DwarfCorp
 
             if(vox.IsValid)
             {
-                float h = GetTotalWaterHeightCells(vox) - 0.75f;
+                float h = GetTotalWaterHeightCells(chunkManager, vox) - 0.75f;
                 if(h < 0.01f)
                     return defaultHeight;
 
