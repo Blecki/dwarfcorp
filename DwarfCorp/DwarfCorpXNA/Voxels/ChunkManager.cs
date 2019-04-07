@@ -189,10 +189,10 @@ namespace DwarfCorp
         private readonly ChunkData chunkData;
 
         // Todo: Move to ChunkGenerator
-        public void GenerateInitialChunks(Rectangle spawnRect, GlobalChunkCoordinate origin, Action<String> SetLoadingMessage)
+        public void GenerateInitialChunks(Rectangle spawnRect, Action<String> SetLoadingMessage)
         {
             SetLoadingMessage("Generating Chunks...");
-            ChunkGen.GenerateInitialChunks(spawnRect, origin, ChunkData, World, WorldSize, Bounds);
+            ChunkGen.GenerateInitialChunks(spawnRect, ChunkData, World, WorldSize, Bounds);
             NeedsMinimapUpdate = true;
             RecalculateBounds();
         }

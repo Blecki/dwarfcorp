@@ -23,7 +23,7 @@ namespace DwarfCorp
             {
                 if (type.SpawnClusters || type.SpawnVeins)
                 {
-                    int numEvents = (int)MathFunctions.Rand(75*(1.0f - type.Rarity), 100*(1.0f - type.Rarity));
+                    int numEvents = (int)MathFunctions.Rand(75 * (1.0f - type.Rarity), 100 * (1.0f - type.Rarity));
                     for (int i = 0; i < numEvents; i++)
                     {
                         BoundingBox clusterBounds = new BoundingBox
@@ -37,9 +37,9 @@ namespace DwarfCorp
                             OreCluster cluster = new OreCluster()
                             {
                                 Size =
-                                    new Vector3(MathFunctions.Rand(type.ClusterSize*0.25f, type.ClusterSize),
-                                        MathFunctions.Rand(type.ClusterSize*0.25f, type.ClusterSize),
-                                        MathFunctions.Rand(type.ClusterSize*0.25f, type.ClusterSize)),
+                                    new Vector3(MathFunctions.Rand(type.ClusterSize * 0.25f, type.ClusterSize),
+                                        MathFunctions.Rand(type.ClusterSize * 0.25f, type.ClusterSize),
+                                        MathFunctions.Rand(type.ClusterSize * 0.25f, type.ClusterSize)),
                                 Transform = MathFunctions.RandomTransform(clusterBounds),
                                 Type = type
                             };
@@ -51,7 +51,7 @@ namespace DwarfCorp
                         {
                             OreVein vein = new OreVein()
                             {
-                                Length = MathFunctions.Rand(type.VeinLength*0.75f, type.VeinLength*1.25f),
+                                Length = MathFunctions.Rand(type.VeinLength * 0.75f, type.VeinLength * 1.25f),
                                 Start = MathFunctions.RandVector3Box(clusterBounds),
                                 Type = type
                             };
@@ -64,30 +64,47 @@ namespace DwarfCorp
         }
 
         // Todo: Move to ChunkGenerator
-        public void GenerateInitialChunks(Rectangle spawnRect, GlobalChunkCoordinate origin, ChunkData ChunkData, WorldManager World, Point3 WorldSize, BoundingBox Bounds)
+        public void GenerateInitialChunks(Rectangle spawnRect, ChunkData ChunkData, WorldManager World, Point3 WorldSize, BoundingBox Bounds)
         {
             var initialChunkCoordinates = new List<GlobalChunkCoordinate>();
 
             for (int dx = 0; dx < WorldSize.X; dx++)
                 for (int dz = 0; dz < WorldSize.Z; dz++)
                     initialChunkCoordinates.Add(new GlobalChunkCoordinate(dx, 0, dz)); // Todo: Add Z dimension here.
-                    
+
             float maxHeight = Math.Max(Overworld.GetMaxHeight(spawnRect), 0.17f);
-            foreach (var box in initialChunkCoordinates)
-                ChunkData.AddChunk(GenerateChunk(box, World, maxHeight));
+            foreach (var ID in initialChunkCoordinates)
+                ChunkData.AddChunk(GenerateChunk(ID, World, maxHeight));
 
+            UpdateSunlight(World.ChunkManager, WorldSize);
             GenerateOres(ChunkData, Bounds);
-
             Generation.Generator.GenerateRuins(ChunkData, World, Settings);
 
             // This is critical at the beginning to allow trees to spawn on ramps correctly,
             // and also to ensure no inconsistencies in chunk geometry due to ramps.
             foreach (var chunk in ChunkData.ChunkMap)
             {
-                GenerateChunkData(chunk, World, maxHeight);
+                GenerateCaves(chunk, World);
+                GenerateWater(chunk, maxHeight);
+                GenerateLava(chunk);
+
                 for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
                     chunk.InvalidateSlice(i);
             }
+        }
+
+        private static void UpdateSunlight(ChunkManager ChunkManager, Point3 WorldSize)
+        {
+            for (var x = 0; x < WorldSize.X * VoxelConstants.ChunkSizeX; x++)
+                for (var z = 0; z < WorldSize.Z * VoxelConstants.ChunkSizeZ; z++)
+                    for (var y = VoxelConstants.WorldSizeY - 1; y >= 0; y--)
+                    {
+                        var v = ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(x, y, z));
+                        if (!v.IsValid) break;
+                        v.Sunlight = true;
+                        if (v.Type.ID != 0 && !v.Type.IsTransparent)
+                            break;
+                    }
         }
     }
 }

@@ -412,6 +412,7 @@
     <Compile Include="Scripting\TaskManagement\Tasks\HealAllyTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\RechargeObjectTask.cs" />
     <Compile Include="Tools\PerformanceMonitor.cs" />
+    <Compile Include="Voxels\Generator\ChunkGenerator-GenerateCaves.cs" />
     <Compile Include="Voxels\Generator\ChunkGenerator-GenerateLava.cs" />
     <Compile Include="Voxels\Generator\ChunkGenerator-GenerateWater.cs" />
     <Compile Include="Voxels\Generator\GenerateCluster.cs" />

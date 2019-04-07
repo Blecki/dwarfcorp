@@ -423,9 +423,7 @@ namespace DwarfCorp
                 {
                     throw new InvalidProgramException("Tried to start game with an empty overworld. This should not happen.");
                 }
-                ChunkManager.GenerateInitialChunks(SpawnRect,
-                    new GlobalChunkCoordinate(0, 0, 0),
-                    SetLoadingMessage);
+                ChunkManager.GenerateInitialChunks(SpawnRect, SetLoadingMessage);
             }
 
             if (gameFile != null)
@@ -466,6 +464,9 @@ namespace DwarfCorp
 
             SetLoadingMessage("Creating Geometry...");
             ChunkManager.GenerateAllGeometry();
+
+            if (MathFunctions.RandEvent(0.01f))
+                SetLoadingMessage("Reticulating Splines...");
 
             ChunkManager.StartThreads();
             SetLoadingMessage("Presimulating ...");

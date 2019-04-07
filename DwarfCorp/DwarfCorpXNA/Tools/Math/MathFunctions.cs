@@ -177,11 +177,11 @@ namespace DwarfCorp
             value = value < min ? min : value;
             return value;
         }
+
         public static Vector3 Clamp(Vector3 vect, Rectangle rect)
         {
             return new Vector3(Clamp(vect.X, rect.Left, rect.Right), Clamp(vect.Y, rect.Top, rect.Bottom), vect.Z);
         }
-
 
         /// <summary>
         /// Restricts a value to be within a specified range.

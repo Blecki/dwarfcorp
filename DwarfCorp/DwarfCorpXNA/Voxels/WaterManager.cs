@@ -255,7 +255,7 @@ namespace DwarfCorp
                             continue;
                         }
                     }
-                    else if (currentVoxel.LiquidType == LiquidType.Lava && !voxBelow.IsEmpty && voxBelow.GrassType > 0)
+                    else if (voxBelow.IsValid && currentVoxel.LiquidType == LiquidType.Lava && !voxBelow.IsEmpty && voxBelow.GrassType > 0)
                     {
                         voxBelow.GrassType = 0;
                     }

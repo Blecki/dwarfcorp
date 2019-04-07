@@ -84,6 +84,11 @@ namespace DwarfCorp
 
         public void RebuildMoteLayer(int Y)
         {
+#if DEBUG
+            if (Y < Origin.Y || Y >= Origin.Y + VoxelConstants.ChunkSizeY)
+                throw new InvalidOperationException();
+#endif
+
             var moteList = new List<NewInstanceData>();
             
             // Enumerate voxels.
@@ -91,16 +96,7 @@ namespace DwarfCorp
             {
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                 {
-                    // Don't generate motes if above is not empty
-                    if (Y < VoxelConstants.WorldSizeY - 1)
-                    {
-                        var voxelAbove = new VoxelHandle(this, new LocalVoxelCoordinate(x, Y + 1, z));
-                        if (voxelAbove.IsValid && !voxelAbove.IsEmpty || voxelAbove.LiquidLevel != 0)
-                            continue;
-                    }
-
-                    var v = new VoxelHandle(this, new LocalVoxelCoordinate(x, Y, z));
-
+                    var v = VoxelHandle.UnsafeCreateLocalHandle(this, new LocalVoxelCoordinate(x, Y, z));
                     if (!v.IsValid)
                         continue;
 
@@ -110,6 +106,11 @@ namespace DwarfCorp
 
                     if (!v.IsExplored)
                         continue;
+
+                    // Don't generate motes if above is not empty
+                    var voxelAbove = VoxelHelpers.GetVoxelAbove(v);
+                        if (voxelAbove.IsValid && !voxelAbove.IsEmpty || voxelAbove.LiquidLevel != 0)
+                            continue;
 
                     // Find biome type.
                     var biomeData = Overworld.GetBiomeAt(v.WorldPosition, Manager.World.WorldScale, Manager.World.WorldOrigin);  

@@ -78,6 +78,7 @@ namespace DwarfCorp
         public bool WaterIsLava { get; set; }
         public string RuinFloorType { get; set; }
         public string RuinWallType { get; set; }
+
         public BiomeData()
         {
             ShoreVoxel = "Sand";
