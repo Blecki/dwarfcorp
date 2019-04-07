@@ -84,10 +84,6 @@ namespace DwarfCorp
                 RampsSunlightExplored.CopyTo(c.Data.RampsSunlightExploredPlayerBuilt, 0);
             if (GrassType != null)
                 GrassType.CopyTo(c.Data.Grass, 0);
-            //if (Decals != null)
-            //    Decals.CopyTo(c.Data.Decals, 0);
-
-            c.CalculateInitialSunlight();
             return c;
         }
     }

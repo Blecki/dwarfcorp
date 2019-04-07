@@ -182,21 +182,5 @@ namespace DwarfCorp
                  Primitive.IndexBuffer.Dispose();
             }
         }
-
-        public void CalculateInitialSunlight()
-        {
-            for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
-            {
-                for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
-                {
-                    for (int y = VoxelConstants.ChunkSizeY - 1; y >= 0; y--)
-                    {
-                        LocalVoxelCoordinate coord = new LocalVoxelCoordinate(x, y, z);
-                        VoxelHandle voxel = new VoxelHandle(this, coord) { Sunlight = true };
-                        if (!voxel.IsEmpty && !voxel.Type.IsTransparent) break;
-                    }
-                }
-            }
-        }
     }
 }

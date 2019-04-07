@@ -91,6 +91,8 @@ namespace DwarfCorp
                 for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
                     chunk.InvalidateSlice(i);
             }
+
+            Generation.Generator.GenerateSurfaceLife(World, World.ChunkManager, WorldSize, maxHeight, Settings);
         }
 
         private static void UpdateSunlight(ChunkManager ChunkManager, Point3 WorldSize)

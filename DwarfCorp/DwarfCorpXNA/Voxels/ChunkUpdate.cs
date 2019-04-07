@@ -69,7 +69,7 @@ namespace DwarfCorp
                 for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                     for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                     {
-                        var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
+                        var voxel = VoxelHandle.UnsafeCreateLocalHandle(chunk, new LocalVoxelCoordinate(x, y, z));
 
                         // Allow grass to decay
                         if (voxel.GrassType != 0)

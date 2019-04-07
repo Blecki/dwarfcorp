@@ -105,7 +105,7 @@ namespace DwarfCorp
             UpdateCache(((WorldManager)context.Context).ChunkManager.ChunkData);
         }
 
-        public VoxelHandle(VoxelChunk Chunk, LocalVoxelCoordinate Coordinate)
+        private VoxelHandle(VoxelChunk Chunk, LocalVoxelCoordinate Coordinate)
         {
             this.Coordinate = Chunk.ID + Coordinate;
             this._cache_Chunk = Chunk;
@@ -397,15 +397,15 @@ namespace DwarfCorp
             {
                 var localCoordinate = Coordinate.GetLocalVoxelCoordinate();
                 var Y = localCoordinate.Y - 1;
-                var sunColor = (NewType.ID == 0 || NewType.IsTransparent) ? this.Sunlight : false;
+                var sunlight = (NewType.ID == 0 || NewType.IsTransparent) ? this.Sunlight : false;
                 var below = VoxelHandle.InvalidHandle;
 
                 while (Y >= 0)
                 {
-                    below = new VoxelHandle(Chunk, new LocalVoxelCoordinate(localCoordinate.X, Y,
-                        localCoordinate.Z));
-                    below.Sunlight = sunColor;
-                    InvalidateVoxel(Chunk, new GlobalVoxelCoordinate(Coordinate.X, Y, Coordinate.Z), Y);
+                    below = VoxelHelpers.GetVoxelBelow(this);
+                    below.Sunlight = sunlight;
+                    if (!below.IsEmpty)
+                        InvalidateVoxel(Chunk, new GlobalVoxelCoordinate(Coordinate.X, Y, Coordinate.Z), Y);
                     if (!below.IsEmpty && !below.Type.IsTransparent)
                         break;
                     Y -= 1;

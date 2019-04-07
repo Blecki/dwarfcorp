@@ -183,15 +183,16 @@ namespace DwarfCorp
             int totalFaces = 6;
             bool fogOfWar = GameSettings.Default.FogofWar;
 
-            for (int y = 0; y < Math.Min(chunk.Manager.World.Master.MaxViewingLevel + 1, VoxelConstants.ChunkSizeY); y++)
+            for (int globalY = chunk.Origin.Y; globalY < Math.Min(chunk.Manager.World.Master.MaxViewingLevel + 1, chunk.Origin.Y + VoxelConstants.ChunkSizeY); globalY++)
             {
+                var y = globalY - chunk.Origin.Y;
                 if (chunk.Data.LiquidPresent[y] == 0) continue;
 
                 for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                 {
                     for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                     {
-                        var voxel = new VoxelHandle(chunk, new LocalVoxelCoordinate(x, y, z));
+                        var voxel = VoxelHandle.UnsafeCreateLocalHandle(chunk, new LocalVoxelCoordinate(x, y, z));
                         if (fogOfWar && !voxel.IsExplored) continue;
 
                         if (voxel.LiquidLevel > 0)

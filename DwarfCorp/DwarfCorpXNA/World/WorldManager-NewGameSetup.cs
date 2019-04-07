@@ -93,16 +93,6 @@ namespace DwarfCorp
 
             Camera.Target = portBox.Center();
             Camera.Position = Camera.Target + new Vector3(0, 15, -15);
-
-            GenerateInitialObjects();
-        }
-
-        private void GenerateInitialObjects()
-        {
-            float maxHeight = Overworld.GetMaxHeight(SpawnRect);
-            Dictionary<string, Dictionary<string, int>> creatures = new Dictionary<string, Dictionary<string, int>>();
-            foreach (var chunk in ChunkManager.ChunkData.GetChunkEnumerator())
-                Generation.Generator.GenerateSurfaceLife(creatures, chunk, maxHeight, ChunkManager.ChunkGen.Settings);
         }
 
         /// <summary>

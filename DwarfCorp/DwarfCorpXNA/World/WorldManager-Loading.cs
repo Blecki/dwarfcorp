@@ -448,10 +448,6 @@ namespace DwarfCorp
                 Master.Faction.Economy.Company.Information = new CompanyInformation();
 
             CreateInitialEmbarkment();
-            foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
-            {
-                chunk.CalculateInitialSunlight();
-            }
 
             if (RevealSurface)
             {

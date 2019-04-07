@@ -999,15 +999,13 @@ namespace DwarfCorp
         {
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
-                    UpdateVoxelRamps(Chunks, new VoxelHandle(Chunk, new LocalVoxelCoordinate(x, Y, z)));               
+                    UpdateVoxelRamps(Chunks, VoxelHandle.UnsafeCreateLocalHandle(Chunk, new LocalVoxelCoordinate(x, Y, z)));               
         }
 
         private static void UpdateNeighborEdgeRamps(ChunkManager Chunks, VoxelChunk Chunk, int Y)
         {
-            var startChunkCorner = new GlobalVoxelCoordinate(Chunk.ID, new LocalVoxelCoordinate(0, 0, 0))
-                + new GlobalVoxelOffset(-1, 0, -1);
-            var endChunkCorner = new GlobalVoxelCoordinate(Chunk.ID, new LocalVoxelCoordinate(0, 0, 0))
-                + new GlobalVoxelOffset(VoxelConstants.ChunkSizeX, 0, VoxelConstants.ChunkSizeZ);
+            var startChunkCorner = new GlobalVoxelCoordinate(Chunk.ID, new LocalVoxelCoordinate(0, 0, 0))  + new GlobalVoxelOffset(-1, 0, -1);
+            var endChunkCorner = new GlobalVoxelCoordinate(Chunk.ID, new LocalVoxelCoordinate(0, 0, 0)) + new GlobalVoxelOffset(VoxelConstants.ChunkSizeX, 0, VoxelConstants.ChunkSizeZ);
 
             for (int x = startChunkCorner.X; x <= endChunkCorner.X; ++x)
             {
