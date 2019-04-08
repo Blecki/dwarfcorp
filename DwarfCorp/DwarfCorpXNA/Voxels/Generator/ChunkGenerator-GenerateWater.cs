@@ -15,9 +15,8 @@ namespace DwarfCorp
 {
     public partial class ChunkGenerator
     {
-        public void GenerateWater(VoxelChunk chunk, float maxHeight)
+        public void GenerateWater(VoxelChunk chunk, float waterHeight)
         {
-            int waterHeight = Math.Min((int)(VoxelConstants.WorldSizeY * NormalizeHeight(Settings.SeaLevel + 1.0f / VoxelConstants.WorldSizeY, maxHeight)), VoxelConstants.WorldSizeY - 1);
             var iceID = VoxelLibrary.GetVoxelType("Ice");
 
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)

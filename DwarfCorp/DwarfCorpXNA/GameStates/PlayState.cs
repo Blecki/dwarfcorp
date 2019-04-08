@@ -357,9 +357,7 @@ namespace DwarfCorp.GameStates
             StocksLabel.Text = String.Format("    Stocks: {0}/{1}", totalSpace - availableSpace, totalSpace);
             StocksLabel.TextColor = availableSpace > 0 ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
             StocksLabel.Invalidate();
-            LevelLabel.Text = String.Format("{0}/{1}",
-                Master.MaxViewingLevel,
-                VoxelConstants.WorldSizeY);
+            LevelLabel.Text = String.Format("{0}/{1}", Master.MaxViewingLevel, World.WorldSizeInVoxels.Y);
             LevelLabel.Invalidate();
             #endregion
 

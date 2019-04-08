@@ -321,11 +321,11 @@ namespace DwarfCorp
             {
                 Time = new WorldTime();
 
-                Camera = new OrbitCamera(this,
+                Camera = new OrbitCamera(this, // Todo: Is setting the camera position and target redundant here?
                     new Vector3(VoxelConstants.ChunkSizeX,
-                        VoxelConstants.WorldSizeY - 1.0f,
+                        WorldSizeInVoxels.Y - 1.0f,
                         VoxelConstants.ChunkSizeZ),
-                    new Vector3(VoxelConstants.ChunkSizeX, VoxelConstants.WorldSizeY - 1.0f,
+                    new Vector3(VoxelConstants.ChunkSizeX, WorldSizeInVoxels.Y - 1.0f,
                         VoxelConstants.ChunkSizeZ) +
                     Vector3.Up * 10.0f + Vector3.Backward * 10,
                     MathHelper.PiOver4, AspectRatio, 0.1f,
@@ -450,7 +450,7 @@ namespace DwarfCorp
             if (RevealSurface)
             {
                 var firstChunkOrigin = ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault().Origin;
-                VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(firstChunkOrigin.X, VoxelConstants.WorldSizeY - 1, firstChunkOrigin.Z)));
+                VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(firstChunkOrigin.X, WorldSizeInVoxels.Y - 1, firstChunkOrigin.Z)));
             }
 
             foreach (var chunk in ChunkManager.ChunkData.ChunkMap)

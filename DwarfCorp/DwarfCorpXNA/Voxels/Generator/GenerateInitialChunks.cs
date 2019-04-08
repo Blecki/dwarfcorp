@@ -75,18 +75,21 @@ namespace DwarfCorp
 
             float maxHeight = Math.Max(Overworld.GetMaxHeight(spawnRect), 0.17f);
             foreach (var ID in initialChunkCoordinates)
-                ChunkData.AddChunk(GenerateChunk(ID, World, maxHeight));
+                ChunkData.AddChunk(GenerateChunk(ID, World, maxHeight, WorldSizeInChunks));
 
             UpdateSunlight(World.ChunkManager, WorldSizeInChunks);
             GenerateOres(ChunkData);
-            Generation.Generator.GenerateRuins(ChunkData, World, Settings);
+            Generation.Generator.GenerateRuins(ChunkData, World, Settings, WorldSizeInChunks);
+
+            var worldDepth = WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
+            var waterHeight = Math.Min((int)(worldDepth * NormalizeHeight(Settings.SeaLevel + 1.0f / worldDepth, maxHeight)), worldDepth - 1);
 
             // This is critical at the beginning to allow trees to spawn on ramps correctly,
             // and also to ensure no inconsistencies in chunk geometry due to ramps.
             foreach (var chunk in ChunkData.ChunkMap)
             {
                 GenerateCaves(chunk, World);
-                GenerateWater(chunk, maxHeight);
+                GenerateWater(chunk, waterHeight);
                 GenerateLava(chunk);
 
                 for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
@@ -100,7 +103,7 @@ namespace DwarfCorp
         {
             for (var x = 0; x < WorldSize.X * VoxelConstants.ChunkSizeX; x++)
                 for (var z = 0; z < WorldSize.Z * VoxelConstants.ChunkSizeZ; z++)
-                    for (var y = VoxelConstants.WorldSizeY - 1; y >= 0; y--)
+                    for (var y = (WorldSize.Y * VoxelConstants.ChunkSizeY) - 1; y >= 0; y--)
                     {
                         var v = ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(x, y, z));
                         if (!v.IsValid) break;

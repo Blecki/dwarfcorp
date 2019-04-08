@@ -153,7 +153,7 @@ namespace DwarfCorp
             float tot = 0;
 
             var localVoxelCoordinate = vox.Coordinate.GetLocalVoxelCoordinate();
-            for (var y = vox.Coordinate.Y; y < VoxelConstants.WorldSizeY; y++)
+            for (var y = vox.Coordinate.Y; y < ChunkManager.World.WorldSizeInVoxels.Y; y++)
             {
                 var v = ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(vox.Coordinate.X, y, vox.Coordinate.Z));
                 tot += v.LiquidLevel / (float)WaterManager.maxWaterLevel;

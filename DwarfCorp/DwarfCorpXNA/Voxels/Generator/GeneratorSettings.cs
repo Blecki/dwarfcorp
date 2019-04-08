@@ -25,6 +25,7 @@ namespace DwarfCorp.Generation
         public float CaveSize;
         public int HellLevel = 10;
         public int LavaLevel = 5;
+        public int TreeLine = 8;
 
         public List<int> CaveLevels = null;
 

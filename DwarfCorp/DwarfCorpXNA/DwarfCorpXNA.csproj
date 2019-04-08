@@ -607,7 +607,6 @@
     <Compile Include="Graphics\Primitives\PrimitiveLibrary.cs" />
     <Compile Include="Voxels\VoxelHelpers\FindFirstVoxelBelowIncludingWater.cs" />
     <Compile Include="Voxels\VoxelHelpers\FindValidVoxelNear.cs" />
-    <Compile Include="Voxels\VoxelHelpers\GetWorldCeiling.cs" />
     <Compile Include="Voxels\VoxelHelpers\GetVoxelBelow.cs" />
     <Compile Include="Voxels\VoxelHelpers\KillVoxel.cs" />
     <Compile Include="Voxels\VoxelListPrimitive.cs" />

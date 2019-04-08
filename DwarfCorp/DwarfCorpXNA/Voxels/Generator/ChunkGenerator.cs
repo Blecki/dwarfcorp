@@ -31,14 +31,15 @@ namespace DwarfCorp
             return height + (upperBound - maxHeight);
         }
 
-        public VoxelChunk GenerateChunk(GlobalChunkCoordinate ID, WorldManager World, float maxHeight)
+        public VoxelChunk GenerateChunk(GlobalChunkCoordinate ID, WorldManager World, float maxHeight, Point3 WorldSizeInChunks)
         {
             var origin = new GlobalVoxelCoordinate(ID, new LocalVoxelCoordinate(0, 0, 0));
-            var waterHeight = NormalizeHeight(Settings.SeaLevel + 1.0f / VoxelConstants.WorldSizeY, maxHeight);
+            var worldDepth = WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
+            var waterHeight = NormalizeHeight(Settings.SeaLevel + 1.0f / worldDepth, maxHeight);
+
             var c = new VoxelChunk(Manager, ID);
 
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
-            {
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
                     var overworldPosition = Overworld.WorldToOverworld(new Vector2(x + origin.X, z + origin.Z), World.WorldScale, World.WorldOrigin);
@@ -46,7 +47,7 @@ namespace DwarfCorp
                     var biomeData = BiomeLibrary.Biomes[biome];
 
                     var normalizedHeight = NormalizeHeight(Overworld.LinearInterpolate(overworldPosition, Overworld.Map, Overworld.ScalarFieldType.Height), maxHeight);
-                    var height = MathFunctions.Clamp(normalizedHeight * VoxelConstants.WorldSizeY, 0.0f, VoxelConstants.WorldSizeY - 2);
+                    var height = MathFunctions.Clamp(normalizedHeight * worldDepth, 0.0f, worldDepth - 2);
                     var stoneHeight = (int)MathFunctions.Clamp((int)(height - (biomeData.SoilLayer.Depth + (Math.Sin(overworldPosition.X) + Math.Cos(overworldPosition.Y)))), 1, height);
 
                     for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
@@ -91,7 +92,6 @@ namespace DwarfCorp
                             voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
                     }
                 }
-            }
 
             return c;
         }

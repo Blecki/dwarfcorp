@@ -106,7 +106,7 @@ namespace DwarfCorp
         public Room GenerateInitialBalloonPort(RoomBuilder roomDes, ChunkManager chunkManager, float x, float z,
             int size)
         {
-            var centerCoordinate = GlobalVoxelCoordinate.FromVector3(new Vector3(x, VoxelConstants.WorldSizeY - 1, z));
+            var centerCoordinate = GlobalVoxelCoordinate.FromVector3(new Vector3(x, chunkManager.World.WorldSizeInVoxels.Y - 1, z));
 
             var accumulator = 0;
             var count = 0;
@@ -175,7 +175,7 @@ namespace DwarfCorp
 
                     var h = baseVoxel.Coordinate.Y + 1;
 
-                    for (int y = averageHeight; y < (StartUnderground ? averageHeight + 2 : h) && y < VoxelConstants.WorldSizeY; y++)
+                    for (int y = averageHeight; y < (StartUnderground ? averageHeight + 2 : h) && y < chunkManager.World.WorldSizeInVoxels.Y; y++)
                     {
                         var v = chunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(baseVoxel.Coordinate.X, y, baseVoxel.Coordinate.Z));
                         v.RawSetType(VoxelLibrary.GetVoxelType(0));
@@ -217,7 +217,7 @@ namespace DwarfCorp
                     }
 
                     // Fill from the top height down to the bottom.
-                    for (int y = Math.Max(0, h - 1); y < averageHeight && y < VoxelConstants.WorldSizeY; y++)
+                    for (int y = Math.Max(0, h - 1); y < averageHeight && y < chunkManager.World.WorldSizeInVoxels.Y; y++)
                     {
                         var v = chunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(baseVoxel.Coordinate.X, y, baseVoxel.Coordinate.Z));
                         if (!v.IsValid) throw new InvalidProgramException("Voxel was invalid while creating a new game's initial zones. This should not happen.");

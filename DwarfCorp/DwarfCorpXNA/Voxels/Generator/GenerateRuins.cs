@@ -15,7 +15,7 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static void GenerateRuins(ChunkData chunks, WorldManager world, GeneratorSettings Settings)
+        public static void GenerateRuins(ChunkData chunks, WorldManager world, GeneratorSettings Settings, Point3 WorldSizeInChunks)
         {
             int numRuinClusters = Math.Max(MathFunctions.RandInt(-6, 4), 0);
 
@@ -43,7 +43,7 @@ namespace DwarfCorp.Generation
                     {
                         for (int dz = 0; dz < structureDepth; dz++)
                         {
-                            var worldPos = new Vector3(origin.X + dx, VoxelConstants.WorldSizeY - 1, origin.Z + dz);
+                            var worldPos = new Vector3(origin.X + dx, (WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1, origin.Z + dz);
 
                             var baseVoxel = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(worldPos)));
 
@@ -82,7 +82,7 @@ namespace DwarfCorp.Generation
                             if (!baseVoxel.IsValid)
                                 continue;
 
-                            if (baseVoxel.Coordinate.Y == VoxelConstants.WorldSizeY - 1)
+                            if (baseVoxel.Coordinate.Y == (WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1)
                                 continue;
 
                             if (!underVoxel.IsValid)

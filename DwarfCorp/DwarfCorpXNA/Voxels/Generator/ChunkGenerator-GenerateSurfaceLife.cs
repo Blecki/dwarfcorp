@@ -18,6 +18,7 @@ namespace DwarfCorp.Generation
         public static void GenerateSurfaceLife(WorldManager World, ChunkManager ChunkManager, Point3 WorldSize, float maxHeight, GeneratorSettings Settings)
         {
             var creatureCounts = new Dictionary<string, Dictionary<string, int>>();
+            var worldDepth = WorldSize.Y * VoxelConstants.ChunkSizeY;
 
             for (var x = 0; x < WorldSize.X * VoxelConstants.ChunkSizeX; x++)
                 for (var z = 0; z < WorldSize.Z * VoxelConstants.ChunkSizeZ; z++)
@@ -27,13 +28,13 @@ namespace DwarfCorp.Generation
                     var biomeData = BiomeLibrary.Biomes[biome];
 
                     var normalizedHeight = ChunkGenerator.NormalizeHeight(Overworld.LinearInterpolate(overworldPosition, Overworld.Map, Overworld.ScalarFieldType.Height), maxHeight);
-                    var height = (int)MathFunctions.Clamp(normalizedHeight * VoxelConstants.WorldSizeY, 0.0f, VoxelConstants.WorldSizeY - 2);
+                    var height = (int)MathFunctions.Clamp(normalizedHeight * worldDepth, 0.0f, worldDepth - 2);
 
                     var voxel = ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(x, height, z));
 
                     if (!voxel.IsValid
                         || voxel.Coordinate.Y == 0
-                        || voxel.Coordinate.Y >= VoxelConstants.WorldSizeY - 8) // Lift to some kind of generator settings?
+                        || voxel.Coordinate.Y >= worldDepth - Settings.TreeLine)
                         continue;
 
                     if (voxel.LiquidLevel != 0)

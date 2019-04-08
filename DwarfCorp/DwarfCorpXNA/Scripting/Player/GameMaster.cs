@@ -104,7 +104,7 @@ namespace DwarfCorp
         private bool sliceUpheld = false;
         private Timer sliceDownTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
         private Timer sliceUpTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
-        public int MaxViewingLevel = VoxelConstants.WorldSizeY;
+        public int MaxViewingLevel = 0;
 
         public Scripting.Gambling GamblingState = new Scripting.Gambling();
 
@@ -135,6 +135,7 @@ namespace DwarfCorp
             BodySelector.MouseOver += OnMouseOver;
             World.Master = this;
             World.Time.NewDay += Time_NewDay;
+            MaxViewingLevel = World.WorldSizeInVoxels.Y;
         }
 
         public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
@@ -280,11 +281,11 @@ namespace DwarfCorp
         {
             if (level == MaxViewingLevel)
                 return;
-            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_click_voxel, 0.15f, (float)(level / (float)VoxelConstants.WorldSizeY) - 0.5f);
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_click_voxel, 0.15f, (float)(level / (float)World.WorldSizeInVoxels.Y) - 0.5f);
 
             var oldLevel = MaxViewingLevel;
 
-            MaxViewingLevel = Math.Max(Math.Min(level, VoxelConstants.WorldSizeY), 1);
+            MaxViewingLevel = Math.Max(Math.Min(level, World.WorldSizeInVoxels.Y), 1);
 
             foreach (var c in World.ChunkManager.ChunkData.ChunkMap)
             {
@@ -568,7 +569,7 @@ namespace DwarfCorp
                 if (above.IsValid)
                     SetMaxViewingLevel(above.Coordinate.Y);
                 else
-                    SetMaxViewingLevel(VoxelConstants.WorldSizeY);
+                    SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
             }
 
             Vector3 forward = CameraController.GetForwardVector();
