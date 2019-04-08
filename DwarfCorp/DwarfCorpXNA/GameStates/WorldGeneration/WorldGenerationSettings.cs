@@ -35,7 +35,7 @@ namespace DwarfCorp.GameStates
         public bool StartUnderground = false;
         public bool RevealSurface = true;
         public int NumCaveLayers = 8;
-        public int zLevels = 4;
+        public int zLevels = 4; // This is actually y levels but genre convention is to call depth Z.
         public Rectangle SpawnRect;
 
         public static string GetRandomWorldName()
