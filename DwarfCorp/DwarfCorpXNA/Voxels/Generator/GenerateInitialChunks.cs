@@ -17,21 +17,21 @@ namespace DwarfCorp
     public partial class ChunkGenerator
     {
         // Todo: Why isn't this part of the chunk generator?
-        public void GenerateOres(ChunkData ChunkData, BoundingBox Bounds)
+        public void GenerateOres(ChunkData ChunkData)
         {
             foreach (VoxelType type in VoxelLibrary.GetTypes())
             {
                 if (type.SpawnClusters || type.SpawnVeins)
                 {
+                    BoundingBox clusterBounds = new BoundingBox
+                    {
+                        Max = new Vector3(ChunkData.MapOrigin.X + ChunkData.MapDimensions.X, type.MaxSpawnHeight, ChunkData.MapOrigin.Z + ChunkData.MapDimensions.Z),
+                        Min = new Vector3(ChunkData.MapOrigin.X, Math.Max(type.MinSpawnHeight, 2), ChunkData.MapOrigin.Z)
+                    };
+
                     int numEvents = (int)MathFunctions.Rand(75 * (1.0f - type.Rarity), 100 * (1.0f - type.Rarity));
                     for (int i = 0; i < numEvents; i++)
                     {
-                        BoundingBox clusterBounds = new BoundingBox
-                        {
-                            Max = new Vector3(Bounds.Max.X, type.MaxSpawnHeight, Bounds.Max.Z),
-                            Min = new Vector3(Bounds.Min.X, Math.Max(type.MinSpawnHeight, 2), Bounds.Min.Z)
-                        };
-
                         if (type.SpawnClusters)
                         {
                             OreCluster cluster = new OreCluster()
@@ -64,20 +64,21 @@ namespace DwarfCorp
         }
 
         // Todo: Move to ChunkGenerator
-        public void GenerateInitialChunks(Rectangle spawnRect, ChunkData ChunkData, WorldManager World, Point3 WorldSize, BoundingBox Bounds)
+        public void GenerateInitialChunks(Rectangle spawnRect, ChunkData ChunkData, WorldManager World, Point3 WorldSizeInChunks)
         {
             var initialChunkCoordinates = new List<GlobalChunkCoordinate>();
 
-            for (int dx = 0; dx < WorldSize.X; dx++)
-                for (int dz = 0; dz < WorldSize.Z; dz++)
-                    initialChunkCoordinates.Add(new GlobalChunkCoordinate(dx, 0, dz)); // Todo: Add Z dimension here.
+            for (int dx = 0; dx < WorldSizeInChunks.X; dx++)
+                for (int dy = 0; dy < WorldSizeInChunks.Y; dy++)
+                    for (int dz = 0; dz < WorldSizeInChunks.Z; dz++)
+                        initialChunkCoordinates.Add(new GlobalChunkCoordinate(dx, dy, dz));
 
             float maxHeight = Math.Max(Overworld.GetMaxHeight(spawnRect), 0.17f);
             foreach (var ID in initialChunkCoordinates)
                 ChunkData.AddChunk(GenerateChunk(ID, World, maxHeight));
 
-            UpdateSunlight(World.ChunkManager, WorldSize);
-            GenerateOres(ChunkData, Bounds);
+            UpdateSunlight(World.ChunkManager, WorldSizeInChunks);
+            GenerateOres(ChunkData);
             Generation.Generator.GenerateRuins(ChunkData, World, Settings);
 
             // This is critical at the beginning to allow trees to spawn on ramps correctly,
@@ -92,7 +93,7 @@ namespace DwarfCorp
                     chunk.InvalidateSlice(i);
             }
 
-            Generation.Generator.GenerateSurfaceLife(World, World.ChunkManager, WorldSize, maxHeight, Settings);
+            Generation.Generator.GenerateSurfaceLife(World, World.ChunkManager, WorldSizeInChunks, maxHeight, Settings);
         }
 
         private static void UpdateSunlight(ChunkManager ChunkManager, Point3 WorldSize)

@@ -91,7 +91,7 @@ namespace DwarfCorp.GameStates
                 // Todo: Just keep a reference to the settings OMG.
                 WorldOrigin = Settings.WorldOrigin,
                 WorldScale = Settings.WorldScale,
-                WorldSize = Settings.ColonySize,
+                WorldSizeInChunks = Settings.ColonySize,
                 InitialEmbark = Settings.InitalEmbarkment,
                 ExistingFile = Settings.ExistingFile,
                 SeaLevel = Settings.SeaLevel,

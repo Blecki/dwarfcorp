@@ -288,8 +288,8 @@ namespace DwarfCorp
 
             foreach (var c in World.ChunkManager.ChunkData.ChunkMap)
             {
-                c.InvalidateSlice(oldLevel - 1);
-                c.InvalidateSlice(MaxViewingLevel - 1);
+                c.InvalidateSlice(oldLevel - 1 - c.Origin.Y);
+                c.InvalidateSlice(MaxViewingLevel - 1 - c.Origin.Y);
             }
         }
 

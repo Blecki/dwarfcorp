@@ -145,14 +145,15 @@ namespace DwarfCorp
 
 
             for (var x = minChunk.X; x <= maxChunk.X; ++x)
-                for (var z = minChunk.Z; z <= maxChunk.Z; ++z)
-                {
-                    var chunkCoord = new GlobalChunkCoordinate(x, 0, z);
-                    var min = new GlobalVoxelCoordinate(chunkCoord, new LocalVoxelCoordinate(0, 0, 0));
-                    var box = new BoundingBox(min.ToVector3(), min.ToVector3() + new Vector3(VoxelConstants.ChunkSizeX, VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeZ));
-                    if (Frustum.Contains(box) != ContainmentType.Disjoint)
-                        chunks.Add(ChunkData.GetChunk(chunkCoord));
-                }
+                for (var y = minChunk.Y; y <= maxChunk.Y; ++y)
+                    for (var z = minChunk.Z; z <= maxChunk.Z; ++z)
+                    {
+                        var chunkCoord = new GlobalChunkCoordinate(x, y, z);
+                        var min = new GlobalVoxelCoordinate(chunkCoord, new LocalVoxelCoordinate(0, 0, 0));
+                        var box = new BoundingBox(min.ToVector3(), min.ToVector3() + new Vector3(VoxelConstants.ChunkSizeX, VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeZ));
+                        if (Frustum.Contains(box) != ContainmentType.Disjoint)
+                            chunks.Add(ChunkData.GetChunk(chunkCoord));
+                    }
         }
 
         public void Update(DwarfTime gameTime, Camera camera, GraphicsDevice g)

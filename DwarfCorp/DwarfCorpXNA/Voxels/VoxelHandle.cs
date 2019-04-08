@@ -20,45 +20,55 @@ namespace DwarfCorp
         [JsonIgnore]
         private int _cache_Index;
 
+        [JsonIgnore]
+        private int _cache_Local_Y;
+
         private void UpdateCache(ChunkData Chunks)
         {
-            // Were inlining the coordinate conversions because we can gain a few cycles from not
-            //  calculating the Y coordinates and from function call overhead.
-
-            if (Coordinate.Y < 0 || Coordinate.Y >= VoxelConstants.ChunkSizeY)
-                goto Invalid;
+            // Were inlining the coordinate conversions because we can gain a few cycles from function call overhead.
 
             var sX = (Coordinate.X & 0x80000000) >> 31;
+            var sY = (Coordinate.Y & 0x80000000) >> 31;
             var sZ = (Coordinate.Z & 0x80000000) >> 31;
 
             // If the world was always at 0,0 this could be simplified further.
             // Inline GlobalVoxelCoordinate.GetGlobalChunkCoordinate
             // Inline ChunkData.CheckBounds
             var chunkX = (Coordinate.X >> VoxelConstants.XDivShift) - sX;
-            if (chunkX < Chunks.ChunkMapMinX || chunkX >= Chunks.ChunkMapMinX + Chunks.ChunkMapWidth)
+            if (chunkX < Chunks.MapOrigin.X || chunkX >= Chunks.MapOrigin.X + Chunks.MapDimensions.X)
+                goto Invalid;
+
+            var chunkY = (Coordinate.Y >> VoxelConstants.YDivShift) - sY;
+            if (chunkY < Chunks.MapOrigin.Y || chunkY >= Chunks.MapOrigin.Y + Chunks.MapDimensions.Y)
                 goto Invalid;
 
             var chunkZ = (Coordinate.Z >> VoxelConstants.ZDivShift) - sZ;
-            if (chunkZ < Chunks.ChunkMapMinZ || chunkZ >= Chunks.ChunkMapMinZ + Chunks.ChunkMapHeight)
+            if (chunkZ < Chunks.MapOrigin.Z || chunkZ >= Chunks.MapOrigin.Z + Chunks.MapDimensions.Z)
                 goto Invalid;
 
             // Inline ChunkData.GetChunk
-            _cache_Chunk = Chunks.ChunkMap[(chunkZ - Chunks.ChunkMapMinZ) * Chunks.ChunkMapWidth
-                + (chunkX - Chunks.ChunkMapMinX)];
+            _cache_Chunk = Chunks.ChunkMap[
+                (chunkY - Chunks.MapOrigin.Y) * Chunks.MapDimensions.X * Chunks.MapDimensions.Z
+                + (chunkZ - Chunks.MapOrigin.Z) * Chunks.MapDimensions.X
+                + (chunkX - Chunks.MapOrigin.X)];
 
             // Inline GlobalVoxelCoordinate.GetLocalVoxelCoordinate
             var localX = (sX << VoxelConstants.XDivShift) + (Coordinate.X & VoxelConstants.XModMask) - sX;
+            var localY = (sY << VoxelConstants.YDivShift) + (Coordinate.Y & VoxelConstants.YModMask) - sY;
             var localZ = (sZ << VoxelConstants.ZDivShift) + (Coordinate.Z & VoxelConstants.ZModMask) - sZ;
 
             // Inline VoxelConstants.DataIndexOf
             _cache_Index = (Int32)((Coordinate.Y * VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ) +
                 (localZ * VoxelConstants.ChunkSizeX) + localX);
 
+            _cache_Local_Y = (int)localY;
+
             return;
 
             Invalid:
             _cache_Chunk = null;
             _cache_Index = 0;
+            _cache_Local_Y = 0;
         }
 
         [JsonIgnore]
@@ -88,6 +98,7 @@ namespace DwarfCorp
             this.Coordinate = Coordinate;
             this._cache_Chunk = null;
             this._cache_Index = 0;
+            this._cache_Local_Y = 0;
             UpdateCache(Chunks);
         }
 
@@ -97,6 +108,7 @@ namespace DwarfCorp
             this.Coordinate = Coordinate;
             this._cache_Chunk = null;
             this._cache_Index = 0;
+            this._cache_Local_Y = 0;
         }
 
         [OnDeserialized]
@@ -110,6 +122,7 @@ namespace DwarfCorp
             this.Coordinate = Chunk.ID + Coordinate;
             this._cache_Chunk = Chunk;
             this._cache_Index = VoxelConstants.DataIndexOf(Coordinate);
+            this._cache_Local_Y = Coordinate.Y;
         }
 
         public static VoxelHandle UnsafeCreateLocalHandle(VoxelChunk Chunk, LocalVoxelCoordinate Coordinate)
@@ -225,7 +238,7 @@ namespace DwarfCorp
                 if (value && (_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.ExploredMask) == 0)
                 {
                     _cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] = (byte)((_cache_Chunk.Data.RampsSunlightExploredPlayerBuilt[_cache_Index] & VoxelConstants.InverseExploredMask) | VoxelConstants.ExploredMask);
-                    InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
+                    InvalidateVoxel(this);
 
                     _cache_Chunk.Manager.NotifyChangedVoxel(new VoxelChangeEvent
                     {
@@ -247,17 +260,6 @@ namespace DwarfCorp
             }
         }
 
-        //[JsonIgnore]
-        //public byte Decal
-        //{
-        //    get { return _cache_Chunk.Data.Decals[_cache_Index]; }
-        //    set
-        //    {
-        //        _cache_Chunk.Data.Decals[_cache_Index] = value;
-        //        InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
-        //    }
-        //}
-
         [JsonIgnore]
         public byte GrassType
         {
@@ -265,7 +267,7 @@ namespace DwarfCorp
             set
             {
                 _cache_Chunk.Data.Grass[_cache_Index] = (byte)((_cache_Chunk.Data.Grass[_cache_Index] & VoxelConstants.GrassDecayMask) | (value << VoxelConstants.GrassTypeShift));
-               InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
+               InvalidateVoxel(this);
             }
         }
 
@@ -284,9 +286,9 @@ namespace DwarfCorp
             {
                 var existingLiquid = (LiquidType)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift);
                 if (existingLiquid != LiquidType.None && value == LiquidType.None)
-                    _cache_Chunk.Data.LiquidPresent[Coordinate.Y] -= 1;
+                    _cache_Chunk.Data.LiquidPresent[_cache_Local_Y] -= 1;
                 if (existingLiquid == LiquidType.None && value != LiquidType.None)
-                    _cache_Chunk.Data.LiquidPresent[Coordinate.Y] += 1;
+                    _cache_Chunk.Data.LiquidPresent[_cache_Local_Y] += 1;
 
                 _cache_Chunk.Data._Water[_cache_Index] = (byte)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.InverseLiquidTypeMask) 
                     | ((byte)value << VoxelConstants.LiquidTypeShift));
@@ -312,9 +314,9 @@ namespace DwarfCorp
         {
             var existingLiquid = (LiquidType)((_cache_Chunk.Data._Water[_cache_Index] & VoxelConstants.LiquidTypeMask) >> VoxelConstants.LiquidTypeShift);
             if (existingLiquid != LiquidType.None && Type == LiquidType.None)
-                _cache_Chunk.Data.LiquidPresent[Coordinate.Y] -= 1;
+                _cache_Chunk.Data.LiquidPresent[_cache_Local_Y] -= 1;
             if (existingLiquid == LiquidType.None && Type != LiquidType.None)
-                _cache_Chunk.Data.LiquidPresent[Coordinate.Y] += 1;
+                _cache_Chunk.Data.LiquidPresent[_cache_Local_Y] += 1;
 
             _cache_Chunk.Data._Water[_cache_Index] = (byte)(((byte)Type << VoxelConstants.LiquidTypeShift) | (Level & VoxelConstants.LiquidLevelMask));
         }
@@ -350,9 +352,9 @@ namespace DwarfCorp
 
             // Did we go from empty to filled or vice versa? Update filled counter.
             if (previous == 0 && NewType.ID != 0)
-                _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] += 1;
+                _cache_Chunk.Data.VoxelsPresentInSlice[_cache_Local_Y] += 1;
             else if (previous != 0 && NewType.ID == 0)
-                _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] -= 1;
+                _cache_Chunk.Data.VoxelsPresentInSlice[_cache_Local_Y] -= 1;
         }
 
         /// <summary>
@@ -381,35 +383,32 @@ namespace DwarfCorp
 
             // Did we go from empty to filled or vice versa? Update filled counter.
             if (previous == 0 && NewType.ID != 0)
-                _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] += 1;
+                _cache_Chunk.Data.VoxelsPresentInSlice[_cache_Local_Y] += 1;
             else if (previous != 0 && NewType.ID == 0)
             {
                 blockDestroyed = true;
-                _cache_Chunk.Data.VoxelsPresentInSlice[Coordinate.Y] -= 1;
+                _cache_Chunk.Data.VoxelsPresentInSlice[_cache_Local_Y] -= 1;
             }
 
-            if (Coordinate.Y < VoxelConstants.ChunkSizeY - 1)
-                InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y + 1);
-            InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
+            var voxelAbove = VoxelHelpers.GetVoxelAbove(this);
+            if (voxelAbove.IsValid)
+                InvalidateVoxel(voxelAbove);
+            InvalidateVoxel(this);
 
             // Propogate sunlight (or lack thereof) downwards.
-            if (Coordinate.Y > 0)
-            {
-                var localCoordinate = Coordinate.GetLocalVoxelCoordinate();
-                var Y = localCoordinate.Y - 1;
-                var sunlight = (NewType.ID == 0 || NewType.IsTransparent) ? this.Sunlight : false;
-                var below = VoxelHandle.InvalidHandle;
+            var sunlight = (NewType.ID == 0 || NewType.IsTransparent) ? this.Sunlight : false;
+            var below = this;
 
-                while (Y >= 0)
-                {
-                    below = VoxelHelpers.GetVoxelBelow(this);
-                    below.Sunlight = sunlight;
-                    if (!below.IsEmpty)
-                        InvalidateVoxel(Chunk, new GlobalVoxelCoordinate(Coordinate.X, Y, Coordinate.Z), Y);
-                    if (!below.IsEmpty && !below.Type.IsTransparent)
-                        break;
-                    Y -= 1;
-                }
+            while (true)
+            {
+                below = VoxelHelpers.GetVoxelBelow(below);
+                if (!below.IsValid)
+                    break;
+                below.Sunlight = sunlight;
+                if (!below.IsEmpty)
+                    InvalidateVoxel(below);
+                if (!below.IsEmpty && !below.Type.IsTransparent)
+                    break;
             }
 
             if (blockDestroyed)
@@ -433,46 +432,42 @@ namespace DwarfCorp
 
         public void Invalidate()
         {
-            InvalidateVoxel(_cache_Chunk, Coordinate, Coordinate.Y);
+            InvalidateVoxel(this);
         }
 
-        private static void InvalidateVoxel(
-            VoxelChunk Chunk,
-            GlobalVoxelCoordinate Coordinate,
-            int Y)
+        private static void InvalidateVoxel(VoxelHandle Voxel)
         {
-            Chunk.InvalidateSlice(Y);
-
-            var localCoordinate = Coordinate.GetLocalVoxelCoordinate();
+            Voxel._cache_Chunk.InvalidateSlice(Voxel._cache_Local_Y);
+            var localCoordinate = Voxel.Coordinate.GetLocalVoxelCoordinate();
 
             // Invalidate slice cache for neighbor chunks.
             if (localCoordinate.X == 0)
             {
-                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(-1, 0, 0), Y);
+                InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(-1, 0, 0), localCoordinate.Y);
                 if (localCoordinate.Z == 0)
-                    InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(-1, 0, -1), Y);
+                    InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(-1, 0, -1), localCoordinate.Y);
                 if (localCoordinate.Z == VoxelConstants.ChunkSizeZ - 1)
-                    InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(-1, 0, 1), Y);
+                    InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(-1, 0, 1), localCoordinate.Y);
             }
 
             if (localCoordinate.X == VoxelConstants.ChunkSizeX - 1)
             {
-                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(1, 0, 0), Y);
+                InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(1, 0, 0), localCoordinate.Y);
                 if (localCoordinate.Z == 0)
-                    InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(1, 0, -1), Y);
+                    InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(1, 0, -1), localCoordinate.Y);
                 if (localCoordinate.Z == VoxelConstants.ChunkSizeZ - 1)
-                    InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(1, 0, 1), Y);
+                    InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(1, 0, 1), localCoordinate.Y);
             }
 
             if (localCoordinate.Z == 0)
-                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(0, 0, -1), Y);
+                InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(0, 0, -1), localCoordinate.Y);
 
             if (localCoordinate.Z == VoxelConstants.ChunkSizeZ - 1)
-                InvalidateNeighborSlice(Chunk.Manager.ChunkData, Chunk.ID, new Point3(0, 0, 1), Y);
+                InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(0, 0, 1), localCoordinate.Y);
         }
 
         private static void InvalidateNeighborSlice(ChunkData Chunks, GlobalChunkCoordinate ChunkCoordinate,
-            Point3 NeighborOffset, int Y)
+            Point3 NeighborOffset, int LocalY)
         {
             var neighborCoordinate = new GlobalChunkCoordinate(
                 ChunkCoordinate.X + NeighborOffset.X,
@@ -482,7 +477,7 @@ namespace DwarfCorp
             if (Chunks.CheckBounds(neighborCoordinate))
             {
                 var chunk = Chunks.GetChunk(neighborCoordinate);
-                chunk.InvalidateSlice(Y);
+                chunk.InvalidateSlice(LocalY);
             }
         }
 

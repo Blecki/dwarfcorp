@@ -137,7 +137,7 @@ namespace DwarfCorp
                 Time = gameFile.Metadata.Time;
                 WorldOrigin = gameFile.Metadata.WorldOrigin;
                 WorldScale = gameFile.Metadata.WorldScale;
-                WorldSize = gameFile.Metadata.NumChunks;
+                WorldSizeInChunks = gameFile.Metadata.NumChunks;
                 GameID = gameFile.Metadata.GameID;
 
                 if (gameFile.Metadata.OverworldFile != null && gameFile.Metadata.OverworldFile != "flat")
@@ -245,8 +245,7 @@ namespace DwarfCorp
 
             if (fileExists)
             {
-                ChunkManager = new ChunkManager(Content, this,
-                    ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+                ChunkManager = new ChunkManager(Content, this, ChunkGenerator, WorldSizeInChunks);
                 Splasher = new Splasher(ChunkManager);
 
                 ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
@@ -332,15 +331,14 @@ namespace DwarfCorp
                     MathHelper.PiOver4, AspectRatio, 0.1f,
                     GameSettings.Default.VertexCullDistance);
 
-                ChunkManager = new ChunkManager(Content, this,
-                    ChunkGenerator, WorldSize.X, WorldSize.Y, WorldSize.Z);
+                ChunkManager = new ChunkManager(Content, this, ChunkGenerator, WorldSizeInChunks);
                 Splasher = new Splasher(ChunkManager);
 
 
                 ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
 
-                Camera.Position = new Vector3(0, 10, 0) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
-                Camera.Target = new Vector3(0, 10, 1) + new Vector3(WorldSize.X * VoxelConstants.ChunkSizeX, 0, WorldSize.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
+                Camera.Position = new Vector3(0, 10, 0) + new Vector3(WorldSizeInChunks.X * VoxelConstants.ChunkSizeX, 0, WorldSizeInChunks.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
+                Camera.Target = new Vector3(0, 10, 1) + new Vector3(WorldSizeInChunks.X * VoxelConstants.ChunkSizeX, 0, WorldSizeInChunks.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
              
 
                 ComponentManager = new ComponentManager(this);

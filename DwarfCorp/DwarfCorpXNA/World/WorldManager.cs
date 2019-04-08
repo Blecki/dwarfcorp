@@ -230,7 +230,7 @@ namespace DwarfCorp
 
         private SaveGame gameFile;
 
-        public Point3 WorldSize { get; set; }
+        public Point3 WorldSizeInChunks { get; set; }
 
         public Action<QueuedAnnouncement> OnAnnouncement;
 

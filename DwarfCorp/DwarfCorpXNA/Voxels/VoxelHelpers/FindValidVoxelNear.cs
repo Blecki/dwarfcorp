@@ -15,8 +15,6 @@ namespace DwarfCorp
         /// <returns></returns>
         public static VoxelHandle FindValidVoxelNear(ChunkManager chunks, Microsoft.Xna.Framework.Vector3 pos)
         {
-            Microsoft.Xna.Framework.BoundingBox bounds = chunks.Bounds;
-            bounds.Max = new Microsoft.Xna.Framework.Vector3(bounds.Max.X, VoxelConstants.WorldSizeY, bounds.Max.Z);
             var clampedPos = MathFunctions.Clamp(pos, chunks.Bounds) + Microsoft.Xna.Framework.Vector3.Down * 0.05f;
 
             return chunks.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(clampedPos));

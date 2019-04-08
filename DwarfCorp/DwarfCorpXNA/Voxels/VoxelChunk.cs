@@ -63,13 +63,13 @@ namespace DwarfCorp
 
         public GlobalChunkCoordinate ID { get; set; }
 
-        public void InvalidateSlice(int Y)
+        public void InvalidateSlice(int LocalY)
         {
-            if (Y < 0 || Y >= VoxelConstants.ChunkSizeY) throw new InvalidOperationException();
+            if (LocalY < 0 || LocalY >= VoxelConstants.ChunkSizeY) throw new InvalidOperationException();
 
             lock (Data.SliceCache)
             {
-                Data.SliceCache[Y] = null;
+                Data.SliceCache[LocalY] = null;
                 Manager.InvalidateChunk(this);
             }
         }

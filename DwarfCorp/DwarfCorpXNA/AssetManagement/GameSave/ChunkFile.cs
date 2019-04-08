@@ -27,7 +27,6 @@ namespace DwarfCorp
         public byte[] Liquid;
         public byte[] Types;
         public byte[] GrassType;
-        //public byte[] Decals;
         public byte[] RampsSunlightExplored;
         
         public ChunkFile()
@@ -42,14 +41,12 @@ namespace DwarfCorp
                 Types = new byte[VoxelConstants.ChunkVoxelCount],
                 Liquid = new byte[VoxelConstants.ChunkVoxelCount],
                 GrassType = new byte[VoxelConstants.ChunkVoxelCount],
-                //Decals = new byte[VoxelConstants.ChunkVoxelCount],
                 RampsSunlightExplored = new byte[VoxelConstants.ChunkVoxelCount],
                 Origin = chunk.Origin
             };
 
             chunk.Data.Types.CopyTo(r.Types, 0);
             chunk.Data.Grass.CopyTo(r.GrassType, 0);
-            //chunk.Data.Decals.CopyTo(r.Decals, 0);
             chunk.Data.RampsSunlightExploredPlayerBuilt.CopyTo(r.RampsSunlightExplored, 0);
             chunk.Data._Water.CopyTo(r.Liquid, 0);
 

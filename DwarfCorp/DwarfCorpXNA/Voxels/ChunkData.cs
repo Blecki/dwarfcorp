@@ -1,35 +1,3 @@
-// ChunkData.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -50,43 +18,38 @@ namespace DwarfCorp
     /// Todo: Add Y axis
     public class ChunkData
     {
-        public ChunkData(int ChunkMapWidth, int ChunkMapHeight, int ChunkMapMinX, int ChunkMapMinZ)
-        {           
-            this.ChunkMapWidth = ChunkMapWidth;
-            this.ChunkMapHeight = ChunkMapHeight;
-            this.ChunkMapMinX = ChunkMapMinX;
-            this.ChunkMapMinZ = ChunkMapMinZ;
-            this.ChunkMap = new VoxelChunk[ChunkMapWidth * ChunkMapHeight];
+        public ChunkData(Point3 MapOrigin, Point3 MapDimensions)
+        {
+            this.MapOrigin = MapOrigin;
+            this.MapDimensions = MapDimensions;
+            this.ChunkMap = new VoxelChunk[MapDimensions.X * MapDimensions.Y * MapDimensions.Z];
         }
 
         // These have to be public so that VoxelHandle can access them effeciently. ;_;
         public VoxelChunk[] ChunkMap;
-        public int ChunkMapWidth;
-        public int ChunkMapHeight;
-        public int ChunkMapMinX;
-        public int ChunkMapMinZ;
+        public Point3 MapDimensions;
+        public Point3 MapOrigin;
 
         public VoxelChunk GetChunk(GlobalChunkCoordinate Coordinate)
         {
             if (!CheckBounds(Coordinate)) throw new IndexOutOfRangeException();
-            return ChunkMap[(Coordinate.Z - ChunkMapMinZ) * ChunkMapWidth + (Coordinate.X - ChunkMapMinX)];
+            return ChunkMap[GetChunkIndex(Coordinate)];
         }
 
         public bool CheckBounds(GlobalChunkCoordinate Coordinate)
         {
-            if (Coordinate.X < ChunkMapMinX || Coordinate.X >= ChunkMapMinX + ChunkMapWidth) return false;
-            if (Coordinate.Z < ChunkMapMinZ || Coordinate.Z >= ChunkMapMinZ + ChunkMapHeight) return false;
-            if (Coordinate.Y != 0) return false;
+            if (Coordinate.X < MapOrigin.X || Coordinate.X >= MapOrigin.X + MapDimensions.X) return false;
+            if (Coordinate.Y < MapOrigin.Y || Coordinate.Y >= MapOrigin.Y + MapDimensions.Y) return false;
+            if (Coordinate.Z < MapOrigin.Z || Coordinate.Z >= MapOrigin.Z + MapDimensions.Z) return false;
             return true;
         }
 
         public GlobalChunkCoordinate ConfineToBounds(GlobalChunkCoordinate Coordinate)
         {
-            var x = (Coordinate.X < ChunkMapMinX) ? ChunkMapMinX :
-                (Coordinate.X >= (ChunkMapMinX + ChunkMapWidth) ? (ChunkMapMinX + ChunkMapWidth - 1) : Coordinate.X);
-            var z = (Coordinate.Z < ChunkMapMinZ) ? ChunkMapMinZ :
-                (Coordinate.Z >= (ChunkMapMinZ + ChunkMapHeight) ? (ChunkMapMinZ + ChunkMapHeight - 1) : Coordinate.Z);
-            return new GlobalChunkCoordinate(x, 0, z);
+            var x = (Coordinate.X < MapOrigin.X) ? MapOrigin.X : (Coordinate.X >= (MapOrigin.X + MapDimensions.X) ? (MapOrigin.X + MapDimensions.X - 1) : Coordinate.X);
+            var y = (Coordinate.Y < MapOrigin.Y) ? MapOrigin.Y : (Coordinate.Y >= (MapOrigin.Y + MapDimensions.Y) ? (MapOrigin.Y + MapDimensions.Y - 1) : Coordinate.Y);
+            var z = (Coordinate.Z < MapOrigin.Z) ? MapOrigin.Z : (Coordinate.Z >= (MapOrigin.Z + MapDimensions.Z) ? (MapOrigin.Z + MapDimensions.Z - 1) : Coordinate.Z);
+            return new GlobalChunkCoordinate(x, y, z);
         }
 
         public IEnumerable<VoxelChunk> GetChunkEnumerator()
@@ -94,28 +57,38 @@ namespace DwarfCorp
             return ChunkMap;
         }
 
+        public int GetChunkIndex(GlobalChunkCoordinate ID)
+        {
+            return (ID.Y - MapOrigin.Y) * MapDimensions.X * MapDimensions.Z
+                + (ID.Z - MapOrigin.Z) * MapDimensions.X
+                + (ID.X - MapOrigin.X);
+        }
+
         public bool AddChunk(VoxelChunk Chunk)
         {
             if (!CheckBounds(Chunk.ID)) throw new IndexOutOfRangeException();
 
-            ChunkMap[(Chunk.ID.Z - ChunkMapMinZ) * ChunkMapWidth + (Chunk.ID.X - ChunkMapMinX)] = Chunk;
+            ChunkMap[GetChunkIndex(Chunk.ID)] = Chunk;
             return true;
         }
 
         public void LoadFromFile(ChunkManager Manager, SaveGame gameFile, Action<String> SetLoadingMessage)
         {
             if (gameFile.ChunkData.Count == 0)
-            {
                 throw new Exception("Game file corrupt. It has no chunk files.");
-            }
-            var maxChunkX = gameFile.ChunkData.Max(c => c.ID.X) + 1;
-            var maxChunkZ = gameFile.ChunkData.Max(c => c.ID.Z) + 1;
-            ChunkMapMinX = gameFile.ChunkData.Min(c => c.ID.X);
-            ChunkMapMinZ = gameFile.ChunkData.Min(c => c.ID.Z);
-            ChunkMapWidth = maxChunkX - ChunkMapMinX;
-            ChunkMapHeight = maxChunkZ - ChunkMapMinZ;
 
-            ChunkMap = new VoxelChunk[ChunkMapWidth * ChunkMapHeight];
+            var maxChunkX = gameFile.ChunkData.Max(c => c.ID.X) + 1;
+            var maxChunkY = gameFile.ChunkData.Max(c => c.ID.Y) + 1;
+            var maxChunkZ = gameFile.ChunkData.Max(c => c.ID.Z) + 1;
+
+            var minChunkX = gameFile.ChunkData.Min(c => c.ID.X);
+            var minChunkY = gameFile.ChunkData.Min(c => c.ID.Y);
+            var minChunkZ = gameFile.ChunkData.Min(c => c.ID.Z);
+
+            MapOrigin = new Point3(minChunkX, minChunkY, minChunkZ);
+            MapDimensions = new Point3(maxChunkX - minChunkX, maxChunkY - minChunkY, maxChunkZ - minChunkZ);
+
+            ChunkMap = new VoxelChunk[MapDimensions.X * MapDimensions.Y * MapDimensions.Z];
 
             foreach (VoxelChunk chunk in gameFile.ChunkData.Select(file => file.ToChunk(Manager)))
                 AddChunk(chunk);

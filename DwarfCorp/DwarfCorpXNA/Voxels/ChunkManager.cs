@@ -95,15 +95,15 @@ namespace DwarfCorp
 
         public ChunkManager(ContentManager content, 
             WorldManager world,
-            ChunkGenerator chunkGen, int maxChunksX, int maxChunksY, int maxChunksZ)
+            ChunkGenerator chunkGen, Point3 WorldSizeInChunks)
         {
-            WorldSize = new Point3(maxChunksX, maxChunksY, maxChunksZ);
+            this.WorldSize = WorldSizeInChunks;
 
             World = world;
             ExitThreads = false;
             Content = content;
 
-            chunkData = new ChunkData(maxChunksX, maxChunksZ, 0, 0);             
+            chunkData = new ChunkData(Point3.Zero, WorldSize);             
 
             ChunkGen = chunkGen;
 
@@ -126,10 +126,10 @@ namespace DwarfCorp
             PauseThreads = false;
 
             Vector3 maxBounds = new Vector3(
-                maxChunksX * VoxelConstants.ChunkSizeX / 2.0f,
-                maxChunksY * VoxelConstants.ChunkSizeY / 2.0f, 
-                maxChunksZ * VoxelConstants.ChunkSizeZ / 2.0f);
-            Vector3 minBounds = -maxBounds;
+                WorldSize.X * VoxelConstants.ChunkSizeX / 2.0f,
+                WorldSize.Y * VoxelConstants.ChunkSizeY / 2.0f, 
+                WorldSize.Z * VoxelConstants.ChunkSizeZ / 2.0f);
+            Vector3 minBounds = -maxBounds; // Todo: Can this just be 0,0,0?
             Bounds = new BoundingBox(minBounds, maxBounds);
 
         }
@@ -192,7 +192,7 @@ namespace DwarfCorp
         public void GenerateInitialChunks(Rectangle spawnRect, Action<String> SetLoadingMessage)
         {
             SetLoadingMessage("Generating Chunks...");
-            ChunkGen.GenerateInitialChunks(spawnRect, ChunkData, World, WorldSize, Bounds);
+            ChunkGen.GenerateInitialChunks(spawnRect, ChunkData, World, WorldSize);
             NeedsMinimapUpdate = true;
             RecalculateBounds();
         }
