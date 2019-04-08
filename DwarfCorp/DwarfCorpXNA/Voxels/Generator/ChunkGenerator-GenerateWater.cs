@@ -28,7 +28,7 @@ namespace DwarfCorp
                     for (var y = 0; y < VoxelConstants.ChunkSizeY; ++y)
                     {
                         var globalY = y + chunk.Origin.Y;
-                        if (y > waterHeight)
+                        if (globalY > waterHeight)
                             break;
 
                         var voxel = VoxelHandle.UnsafeCreateLocalHandle(chunk, new LocalVoxelCoordinate(x, y, z));
