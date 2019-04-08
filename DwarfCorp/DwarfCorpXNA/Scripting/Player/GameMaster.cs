@@ -136,6 +136,7 @@ namespace DwarfCorp
             World.Master = this;
             World.Time.NewDay += Time_NewDay;
             MaxViewingLevel = World.WorldSizeInVoxels.Y;
+            rememberedViewValue = MaxViewingLevel;
         }
 
         public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
@@ -691,7 +692,7 @@ namespace DwarfCorp
             }
             return false;
         }
-        private int rememberedViewValue = VoxelConstants.ChunkSizeY;
+        private int rememberedViewValue = 0;
 
         public bool OnKeyReleased(Keys key)
         {
@@ -725,7 +726,7 @@ namespace DwarfCorp
             else if (key == ControlSettings.Mappings.Unslice)
             {
                 rememberedViewValue = MaxViewingLevel;
-                SetMaxViewingLevel(VoxelConstants.ChunkSizeY);
+                SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
                 return true;
             }
             return false;

@@ -1005,19 +1005,19 @@ namespace DwarfCorp
 
             for (int x = startChunkCorner.X; x <= endChunkCorner.X; ++x)
             {
-                var v1 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(x, LocalY, startChunkCorner.Z));
+                var v1 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(x, Chunk.Origin.Y + LocalY, startChunkCorner.Z));
                 if (v1.IsValid) UpdateVoxelRamps(Chunks, v1);
 
-                var v2 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(x, LocalY, endChunkCorner.Z));
+                var v2 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(x, Chunk.Origin.Y + LocalY, endChunkCorner.Z));
                 if (v2.IsValid) UpdateVoxelRamps(Chunks, v2);
             }
 
             for (int z = startChunkCorner.Z + 1; z < endChunkCorner.Z; ++z)
             {
-                var v1 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(startChunkCorner.X, LocalY, z));
+                var v1 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(startChunkCorner.X, Chunk.Origin.Y + LocalY, z));
                 if (v1.IsValid) UpdateVoxelRamps(Chunks, v1);
 
-                var v2 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(endChunkCorner.X, LocalY, z));
+                var v2 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(endChunkCorner.X, Chunk.Origin.Y + LocalY, z));
                 if (v2.IsValid) UpdateVoxelRamps(Chunks, v2);
             }
         }

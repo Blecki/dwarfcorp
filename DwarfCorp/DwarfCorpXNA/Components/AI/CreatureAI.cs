@@ -389,7 +389,7 @@ namespace DwarfCorp
             }
             else
             {
-                World.Master.SetMaxViewingLevel(VoxelConstants.ChunkSizeY);
+                World.Master.SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
             }
         }
 

@@ -955,13 +955,13 @@ namespace DwarfCorp
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.BlendState = BlendState.Opaque;
 
-            if (lastWaterHeight < 0)
+            if (lastWaterHeight < 0) // Todo: Seriously, every single frame??
             {
                 lastWaterHeight = 0;
                 foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
                     for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
                         if (chunk.Data.LiquidPresent[y] > 0)
-                            lastWaterHeight = Math.Max(y, lastWaterHeight);
+                            lastWaterHeight = Math.Max(y + chunk.Origin.Y, lastWaterHeight);
             }
 
             // Computes the water height.
