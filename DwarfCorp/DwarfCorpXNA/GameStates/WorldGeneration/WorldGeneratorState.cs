@@ -282,7 +282,7 @@ namespace DwarfCorp.GameStates
 
             rightPanel.AddChild(new Gui.Widget
             {
-                Text = "Cave Layers",
+                Text = "Caves",
                 AutoLayout = Gui.AutoLayout.DockTop,
                 Font = "font8",
                 TextColor = new Vector4(0, 0, 0, 1),
@@ -306,6 +306,33 @@ namespace DwarfCorp.GameStates
                     }
                 }
             }) as Gui.Widgets.ComboBox;
+
+            rightPanel.AddChild(new Gui.Widget
+            {
+                Text = "Z Levels",
+                AutoLayout = Gui.AutoLayout.DockTop,
+                Font = "font8",
+                TextColor = new Vector4(0, 0, 0, 1),
+            });
+
+            var zLevelSetting = rightPanel.AddChild(new Gui.Widgets.ComboBox
+            {
+                AutoLayout = AutoLayout.DockTop,
+                Items = new List<string>(new string[] { "16", "64", "128" }),
+                Font = "font8",
+                TextColor = new Vector4(0, 0, 0, 1),
+                OnSelectedIndexChanged = (sender) =>
+                {
+                    switch ((sender as Gui.Widgets.ComboBox).SelectedItem)
+                    {
+                        case "16": Settings.zLevels = 1; break;
+                        case "64": Settings.zLevels = 4; break;
+                        case "128": Settings.zLevels = 8; break;
+                    }
+                }
+            }) as Gui.Widgets.ComboBox;
+
+            zLevelSetting.SelectedIndex = 1;
 
             ZoomedPreview = rightPanel.AddChild(new Gui.Widget
             {

@@ -35,6 +35,7 @@ namespace DwarfCorp.GameStates
         public bool StartUnderground = false;
         public bool RevealSurface = true;
         public int NumCaveLayers = 8;
+        public int zLevels = 4;
         public Rectangle SpawnRect;
 
         public static string GetRandomWorldName()

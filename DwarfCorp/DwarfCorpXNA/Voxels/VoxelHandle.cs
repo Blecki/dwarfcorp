@@ -58,7 +58,7 @@ namespace DwarfCorp
             var localZ = (sZ << VoxelConstants.ZDivShift) + (Coordinate.Z & VoxelConstants.ZModMask) - sZ;
 
             // Inline VoxelConstants.DataIndexOf
-            _cache_Index = (Int32)((Coordinate.Y * VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ) +
+            _cache_Index = (Int32)((localY * VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ) +
                 (localZ * VoxelConstants.ChunkSizeX) + localX);
 
             _cache_Local_Y = (int)localY;

@@ -152,8 +152,8 @@ namespace DwarfCorp
             BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
             var sliceStack = new List<RawPrimitive>();
             var cache = new Cache();
-            int maxViewingLevel = chunk.Manager.World.Master == null ? VoxelConstants.ChunkSizeY : chunk.Manager.World.Master.MaxViewingLevel;
-            for (var y = 0; y < maxViewingLevel; ++y) // Todo: Only iterate inside the chunk.
+            int maxViewingLevel = chunk.Manager.World.Master == null ? chunk.Manager.World.WorldSizeInVoxels.Y : chunk.Manager.World.Master.MaxViewingLevel;
+            for (var y = 0; y < maxViewingLevel - chunk.Origin.Y && y < VoxelConstants.ChunkSizeY; ++y) // Todo: Only iterate inside the chunk.
             {
                 RawPrimitive sliceGeometry = null;
 
