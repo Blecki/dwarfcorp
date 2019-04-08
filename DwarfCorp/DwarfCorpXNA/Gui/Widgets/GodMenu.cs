@@ -126,6 +126,12 @@ namespace DwarfCorp.Gui.Widgets
 
                 new HorizontalMenuTray.MenuItem
                 {
+                    Text = "NUKE COLUMN",
+                    OnClick = (sender, args) => ActivateGodTool("Nuke Column")
+                },
+
+                new HorizontalMenuTray.MenuItem
+                {
                     Text = "KILL BLOCK",
                     OnClick = (sender, args) => ActivateGodTool("Kill Block")
                 },

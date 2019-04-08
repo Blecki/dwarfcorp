@@ -82,7 +82,7 @@ namespace DwarfCorp
                     new ActionStats
                     {
                         CanMove = false,
-                        Cost = 500.0f,
+                        Cost = 50000.0f,
                         Speed = 1.0f
                     }
                 },
@@ -793,6 +793,7 @@ namespace DwarfCorp
                 }
             }            
 
+            /*
             if (CanDig)
             {
                 // This loop is unrolled for speed. It gets the manhattan neighbors and tells the creature that it can mine
@@ -875,6 +876,7 @@ namespace DwarfCorp
                     });
                 }
             }
+            */
 
         }
 

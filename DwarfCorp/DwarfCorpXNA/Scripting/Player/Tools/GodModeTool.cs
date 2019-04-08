@@ -82,6 +82,8 @@ namespace DwarfCorp
             {
                 return VoxelSelectionType.SelectFilled;
             }
+            else if (arg == "Nuke Column")
+                return VoxelSelectionType.SelectFilled;
             else
             {
                 return VoxelSelectionType.SelectEmpty;
@@ -205,6 +207,16 @@ namespace DwarfCorp
                                     Player.World.Master.Faction.OnVoxelDestroyed(vox);
                                     v.Type = VoxelLibrary.emptyType;
                                     v.QuickSetLiquid(LiquidType.None, 0);
+                                }
+                                break;
+                            case "Nuke Column":
+                                {
+                                    for (var y = 1; y < Player.World.WorldSizeInVoxels.Y; ++y)
+                                    {
+                                        var v = Player.World.ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(vox.Coordinate.X, y, vox.Coordinate.Z));
+                                        v.Type = VoxelLibrary.emptyType;
+                                        v.QuickSetLiquid(LiquidType.None, 0);
+                                    }
                                 }
                                 break;
                             case "Kill Block":

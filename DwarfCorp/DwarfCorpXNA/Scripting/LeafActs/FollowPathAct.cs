@@ -186,6 +186,8 @@ namespace DwarfCorp
 
                 case MoveType.Walk:
 
+                    // Todo: Fail if distance is too great.
+
                     CleanupMinecart();
 
                     foreach (var bit in Translate(Agent.Position, Step.DestinationVoxel.Center, actionSpeed))
@@ -258,6 +260,12 @@ namespace DwarfCorp
                     {
                         Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
                         SetCharacterMode(CharacterMode.Climbing);
+
+                        if (Step.ActionVoxel.IsValid)
+                        {
+                            var voxelVector = new Vector3(Step.ActionVoxel.Coordinate.X + 0.5f, Agent.Physics.Position.Y, Step.ActionVoxel.Coordinate.Z + 0.5f);
+                            Agent.Physics.Velocity = Vector3.Normalize(voxelVector - Agent.Physics.Position) * actionSpeed;
+                        }
 
                         yield return Status.Running;
                     }
@@ -407,7 +415,7 @@ namespace DwarfCorp
             while (DeltaTime < jumpTime)
             {
                 var jumpProgress = DeltaTime / jumpTime;
-                float z = Easing.Ballistic(DeltaTime, jumpTime, 1.0f);
+                float z = Easing.Ballistic(DeltaTime, jumpTime, 2.0f);
                 Vector3 dx = (End - Start) * DeltaTime + Start;
                 dx.Y = Start.Y * (1.0f - jumpProgress) + End.Y * jumpProgress + z;
                 SetAgentTranslation(dx);

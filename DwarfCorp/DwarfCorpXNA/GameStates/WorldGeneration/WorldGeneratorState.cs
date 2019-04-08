@@ -339,13 +339,11 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnLayout = (sender) =>
                 {
-                    var space = global::System.Math.Min(
-                        layerSetting.Rect.Width, StartButton.Rect.Top - layerSetting.Rect.Bottom - 4);
+                    var space = global::System.Math.Min(zLevelSetting.Rect.Width, StartButton.Rect.Top - zLevelSetting.Rect.Bottom - 4);
                     sender.Rect.Height = space;
                     sender.Rect.Width = space;
-                    sender.Rect.Y = layerSetting.Rect.Bottom + 2;
-                    sender.Rect.X = layerSetting.Rect.X + 
-                        ((layerSetting.Rect.Width - space) / 2);
+                    sender.Rect.Y = zLevelSetting.Rect.Bottom + 2;
+                    sender.Rect.X = zLevelSetting.Rect.X + ((zLevelSetting.Rect.Width - space) / 2);
                     
                 }
             });
