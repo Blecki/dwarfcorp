@@ -153,13 +153,13 @@ namespace DwarfCorp
             var sliceStack = new List<RawPrimitive>();
             var cache = new Cache();
             int maxViewingLevel = chunk.Manager.World.Master == null ? chunk.Manager.World.WorldSizeInVoxels.Y : chunk.Manager.World.Master.MaxViewingLevel;
-            for (var y = 0; y < maxViewingLevel - chunk.Origin.Y && y < VoxelConstants.ChunkSizeY; ++y) // Todo: Only iterate inside the chunk.
+            for (var localY = 0; localY < maxViewingLevel - chunk.Origin.Y && localY < VoxelConstants.ChunkSizeY; ++localY) // Todo: Only iterate inside the chunk.
             {
                 RawPrimitive sliceGeometry = null;
 
                 lock (chunk.Data.SliceCache)
                 {
-                    var cachedSlice = chunk.Data.SliceCache[y];
+                    var cachedSlice = chunk.Data.SliceCache[localY];
                     
                     //if (chunk.Data.VoxelsPresentInSlice[y] == 0)
                     //{
@@ -177,7 +177,7 @@ namespace DwarfCorp
                         sliceStack.Add(cachedSlice);
 
                         if (GameSettings.Default.GrassMotes)
-                            chunk.RebuildMoteLayerIfNull(y);
+                            chunk.RebuildMoteLayerIfNull(localY);
 
                         continue;
                     }
@@ -188,21 +188,21 @@ namespace DwarfCorp
                         Indexes = null
                     };
 
-                    chunk.Data.SliceCache[y] = sliceGeometry;
+                    chunk.Data.SliceCache[localY] = sliceGeometry;
                 }
 
                 if (GameSettings.Default.CalculateRamps)
                 {
-                    UpdateCornerRamps(World.ChunkManager, chunk, y);
-                    UpdateNeighborEdgeRamps(World.ChunkManager, chunk, y);
+                    UpdateCornerRamps(World.ChunkManager, chunk, localY);
+                    UpdateNeighborEdgeRamps(World.ChunkManager, chunk, localY);
                 }
 
                 if (GameSettings.Default.GrassMotes)
-                    chunk.RebuildMoteLayer(y);
+                    chunk.RebuildMoteLayer(localY);
 
 
                 DebugHelper.AssertNotNull(sliceGeometry);
-                BuildSliceGeometry(chunk, bedrockModel, cache, y, sliceGeometry, DesignationSet, DesignationDrawer, World);
+                BuildSliceGeometry(chunk, bedrockModel, cache, localY, sliceGeometry, DesignationSet, DesignationDrawer, World);
 
                 sliceStack.Add(sliceGeometry);
             }
@@ -224,7 +224,7 @@ namespace DwarfCorp
             VoxelChunk chunk, 
             BoxPrimitive bedrockModel, 
             Cache Cache,
-            int y, 
+            int LocalY, 
             RawPrimitive sliceGeometry,
             DesignationSet DesignationSet,
             DesignationDrawer DesignationDrawer,
@@ -233,7 +233,7 @@ namespace DwarfCorp
 
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
-                    BuildVoxelGeometry(sliceGeometry, x, y, z, chunk, bedrockModel, Cache, DesignationSet, DesignationDrawer, World);
+                    BuildVoxelGeometry(sliceGeometry, x, LocalY, z, chunk, bedrockModel, Cache, DesignationSet, DesignationDrawer, World);
         }
 
         private static GlobalVoxelCoordinate GetCacheKey(VoxelHandle Handle, VoxelVertex Vertex)
@@ -305,7 +305,7 @@ namespace DwarfCorp
         private static void BuildDesignationGeometry(RawPrimitive Into, VoxelChunk Chunk, Cache Cache, DesignationSet Designations, DesignationDrawer DesignationDrawer, WorldManager World, VoxelHandle v)
         {
             var designations = Designations == null ? new List<DesignationSet.VoxelDesignation>() : Designations.EnumerateDesignations(v).ToList();
-            int maxViewingLevel = World.Master == null ? VoxelConstants.ChunkSizeY : World.Master.MaxViewingLevel;
+            int maxViewingLevel = World.Master == null ? World.WorldSizeInVoxels.Y : World.Master.MaxViewingLevel;
             foreach (var designation in designations)
             {
                 if ((designation.Type & DesignationDrawer.VisibleTypes) == designation.Type)
@@ -364,8 +364,7 @@ namespace DwarfCorp
             var face = (BoxFace)i;
             var delta = FaceDeltas[i];
 
-            var faceVoxel = new VoxelHandle(Chunk.Manager.ChunkData,
-                V.Coordinate + GlobalVoxelOffset.FromVector3(delta));
+            var faceVoxel = new VoxelHandle(Chunk.Manager.ChunkData, V.Coordinate + GlobalVoxelOffset.FromVector3(delta));
 
             if (!IsFaceVisible(V, faceVoxel, face))
                 return;
@@ -945,21 +944,18 @@ namespace DwarfCorp
         private static void UpdateVoxelRamps(ChunkManager Chunks, VoxelHandle V)
         {
             if (!V.IsValid) return;
-            
+
             if (V.IsEmpty || !V.IsVisible || V.Type == null || !V.Type.CanRamp)
             {
                 V.RampType = RampType.None;
                 return;
             }
 
-            if (V.Coordinate.Y < VoxelConstants.ChunkSizeY - 1)
+            var vAbove = VoxelHelpers.GetVoxelAbove(V);
+            if (vAbove.IsValid && !vAbove.IsEmpty)
             {
-                var vAbove = Chunks.CreateVoxelHandle(V.Coordinate + new GlobalVoxelOffset(0, 1, 0));
-                if (!vAbove.IsEmpty)
-                {
-                    V.RampType = RampType.None;
-                    return;
-                }
+                V.RampType = RampType.None;
+                return;
             }
 
             var compositeRamp = RampType.None;
@@ -995,37 +991,33 @@ namespace DwarfCorp
             V.RampType = compositeRamp;
         }
 
-        public static void UpdateCornerRamps(ChunkManager Chunks, VoxelChunk Chunk, int Y)
+        public static void UpdateCornerRamps(ChunkManager Chunks, VoxelChunk Chunk, int LocalY)
         {
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
-                    UpdateVoxelRamps(Chunks, VoxelHandle.UnsafeCreateLocalHandle(Chunk, new LocalVoxelCoordinate(x, Y, z)));               
+                    UpdateVoxelRamps(Chunks, VoxelHandle.UnsafeCreateLocalHandle(Chunk, new LocalVoxelCoordinate(x, LocalY, z)));               
         }
 
-        private static void UpdateNeighborEdgeRamps(ChunkManager Chunks, VoxelChunk Chunk, int Y)
+        private static void UpdateNeighborEdgeRamps(ChunkManager Chunks, VoxelChunk Chunk, int LocalY)
         {
             var startChunkCorner = new GlobalVoxelCoordinate(Chunk.ID, new LocalVoxelCoordinate(0, 0, 0))  + new GlobalVoxelOffset(-1, 0, -1);
             var endChunkCorner = new GlobalVoxelCoordinate(Chunk.ID, new LocalVoxelCoordinate(0, 0, 0)) + new GlobalVoxelOffset(VoxelConstants.ChunkSizeX, 0, VoxelConstants.ChunkSizeZ);
 
             for (int x = startChunkCorner.X; x <= endChunkCorner.X; ++x)
             {
-                var v1 = new VoxelHandle(Chunk.Manager.ChunkData,
-                    new GlobalVoxelCoordinate(x, Y, startChunkCorner.Z));
+                var v1 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(x, LocalY, startChunkCorner.Z));
                 if (v1.IsValid) UpdateVoxelRamps(Chunks, v1);
 
-                var v2 = new VoxelHandle(Chunk.Manager.ChunkData,
-                    new GlobalVoxelCoordinate(x, Y, endChunkCorner.Z));
+                var v2 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(x, LocalY, endChunkCorner.Z));
                 if (v2.IsValid) UpdateVoxelRamps(Chunks, v2);
             }
 
             for (int z = startChunkCorner.Z + 1; z < endChunkCorner.Z; ++z)
             {
-                var v1 = new VoxelHandle(Chunk.Manager.ChunkData,
-                    new GlobalVoxelCoordinate(startChunkCorner.X, Y, z));
+                var v1 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(startChunkCorner.X, LocalY, z));
                 if (v1.IsValid) UpdateVoxelRamps(Chunks, v1);
 
-                var v2 = new VoxelHandle(Chunk.Manager.ChunkData,
-                    new GlobalVoxelCoordinate(endChunkCorner.X, Y, z));
+                var v2 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(endChunkCorner.X, LocalY, z));
                 if (v2.IsValid) UpdateVoxelRamps(Chunks, v2);
             }
         }

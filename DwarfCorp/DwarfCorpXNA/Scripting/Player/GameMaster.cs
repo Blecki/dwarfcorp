@@ -289,8 +289,11 @@ namespace DwarfCorp
 
             foreach (var c in World.ChunkManager.ChunkData.ChunkMap)
             {
-                c.InvalidateSlice(oldLevel - 1 - c.Origin.Y);
-                c.InvalidateSlice(MaxViewingLevel - 1 - c.Origin.Y);
+                var oldSliceIndex = oldLevel - 1 - c.Origin.Y;
+                if (oldSliceIndex >= 0 && oldSliceIndex < VoxelConstants.ChunkSizeY) c.InvalidateSlice(oldSliceIndex);
+
+                var newSliceIndex = MaxViewingLevel - 1 - c.Origin.Y;
+                if (newSliceIndex >= 0 && newSliceIndex < VoxelConstants.ChunkSizeY) c.InvalidateSlice(newSliceIndex);
             }
         }
 

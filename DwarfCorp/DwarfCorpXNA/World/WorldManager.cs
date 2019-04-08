@@ -1030,7 +1030,7 @@ namespace DwarfCorp
 
             // Defines the current slice for the GPU
             float level = ChunkManager.World.Master.MaxViewingLevel + 0.25f;
-            if (level > VoxelConstants.ChunkSizeY)
+            if (level > WorldSizeInVoxels.Y)
             {
                 level = 1000;
             }
