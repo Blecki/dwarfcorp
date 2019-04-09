@@ -38,6 +38,11 @@ namespace DwarfCorp
             }
         }
 
+        private Vector3 GetPathPoint(VoxelHandle Voxel)
+        {
+            return Voxel.WorldPosition + new Vector3(0.5f, Agent.Physics.BoundingBoxSize.Y, 0.5f);
+        }
+
         public IEnumerable<Status> PerformStep(MoveAction Step)
         {
             var actionSpeed = GetAgentSpeed(Step.MoveType);
@@ -45,6 +50,7 @@ namespace DwarfCorp
             switch (Step.MoveType)
             {
                 case MoveType.RideElevator:
+
                     var shafts = Step.DestinationState.Tag as Elevators.ElevatorMoveState;
                     if (shafts == null || shafts.Entrance == null || shafts.Entrance.IsDead || shafts.Exit == null || shafts.Exit.IsDead)
                         yield return Status.Fail;
@@ -77,7 +83,7 @@ namespace DwarfCorp
                     }
 
                     DeltaTime = 0;
-                    foreach (var bit in Translate(Agent.Position, shafts.Entrance.Position, actionSpeed))
+                    foreach (var bit in Translate(Agent.Position, GetPathPoint(shafts.Entrance.GetContainingVoxel()), actionSpeed))
                     {
                         if (shaft.Invalid)
                             yield return Status.Fail;
@@ -117,7 +123,7 @@ namespace DwarfCorp
                     }
 
                     DeltaTime = 0;
-                    foreach (var bit in Translate(Agent.Physics.LocalPosition, Step.DestinationVoxel.Center, actionSpeed))
+                    foreach (var bit in Translate(Agent.Physics.LocalPosition, GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
                         if (shaft.Invalid)
                             yield return Status.Fail;
@@ -145,7 +151,7 @@ namespace DwarfCorp
 
                     Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
 
-                    foreach (var bit in Jump(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, Step.DestinationVoxel.Center - Step.SourceVoxel.Center, actionSpeed))
+                    foreach (var bit in Jump(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), Step.DestinationVoxel.Center - Step.SourceVoxel.Center, actionSpeed))
                     {
                         SetCharacterMode(Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling);
                         yield return Status.Running;
@@ -159,7 +165,7 @@ namespace DwarfCorp
                 case MoveType.ExitVehicle:
 
                     CleanupMinecart();
-                    SetAgentTranslation(Step.DestinationVoxel.Center);
+                    SetAgentTranslation(GetPathPoint(Step.DestinationVoxel));
                     break;
 
                 case MoveType.RideVehicle:
@@ -171,11 +177,11 @@ namespace DwarfCorp
 
                     while (DeltaTime < 1.0f / actionSpeed)
                     {
-                        var pos = rail.InterpolateSpline(DeltaTime, Step.SourceVoxel.Center, Step.DestinationVoxel.Center);
+                        var pos = rail.InterpolateSpline(DeltaTime, GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel));
                         var transform = Agent.Physics.LocalTransform;
                         transform.Translation = pos + Vector3.Up * 0.5f;
                         Agent.Physics.LocalTransform = transform;
-                        Agent.Physics.Velocity = Step.DestinationVoxel.Center - Step.SourceVoxel.Center;
+                        Agent.Physics.Velocity = GetPathPoint(Step.DestinationVoxel) - GetPathPoint(Step.SourceVoxel);
 
                         SetCharacterMode(CharacterMode.Minecart);
                         yield return Status.Running;
@@ -190,7 +196,7 @@ namespace DwarfCorp
 
                     CleanupMinecart();
 
-                    foreach (var bit in Translate(Agent.Position, Step.DestinationVoxel.Center, actionSpeed))
+                    foreach (var bit in Translate(Agent.Position, GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
                         SetCharacterMode(CharacterMode.Walking);
                         yield return Status.Running;
@@ -201,7 +207,7 @@ namespace DwarfCorp
 
                     CleanupMinecart();
 
-                    foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center + (0.5f * Vector3.Up * Agent.Physics.BoundingBox.Extents().Y), actionSpeed))
+                    foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel) + (0.5f * Vector3.Up * Agent.Physics.BoundingBox.Extents().Y), actionSpeed))
                     {
                         Creature.NoiseMaker.MakeNoise("Swim", Agent.Position, true);
                         SetCharacterMode(CharacterMode.Swimming);
@@ -215,14 +221,14 @@ namespace DwarfCorp
                     CleanupMinecart();
                     Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
 
-                    foreach (var bit in Jump(Step.SourceVoxel.Center, Step.DestinationVoxel.Center + new Vector3(0.0f, 0.5f, 0.0f), Step.DestinationVoxel.Center - Step.SourceVoxel.Center, actionSpeed))
+                    foreach (var bit in Jump(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel) + new Vector3(0.0f, 0.5f, 0.0f), GetPathPoint(Step.DestinationVoxel) - GetPathPoint(Step.SourceVoxel), actionSpeed))
                     {
                         Creature.OverrideCharacterMode = false;
                         SetCharacterMode(Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling);
                         yield return Status.Running;
                     }
 
-                    SetAgentTranslation(Step.DestinationVoxel.Center);
+                    SetAgentTranslation(GetPathPoint(Step.DestinationVoxel));
 
                     break;
 
@@ -230,7 +236,7 @@ namespace DwarfCorp
 
                     CleanupMinecart();
 
-                    foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
+                    foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
                         SetCharacterMode(CharacterMode.Falling);
                         yield return Status.Running;
@@ -243,7 +249,7 @@ namespace DwarfCorp
                     CleanupMinecart();
 
                     DeltaTime = 0.0f;
-                    foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
+                    foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
                         if (Step.InteractObject == null || Step.InteractObject.IsDead)
                             yield return Status.Fail;
@@ -259,7 +265,7 @@ namespace DwarfCorp
                     CleanupMinecart();
 
                     DeltaTime = 0.0f;
-                    foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
+                    foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
                         Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
                         SetCharacterMode(CharacterMode.Climbing);
@@ -279,7 +285,7 @@ namespace DwarfCorp
                     CleanupMinecart();
 
                     DeltaTime = 0.0f;
-                    foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
+                    foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
                         if ((int)(DeltaTime * 100) % 2 == 0)
                             Creature.NoiseMaker.MakeNoise("Flap", Agent.Position, false);
@@ -333,7 +339,7 @@ namespace DwarfCorp
                     Agent.World.ParticleManager.Trigger("green_flame", (Step.InteractObject as Body).Position, Color.White, 1);
                     Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
 
-                    foreach (var bit in Translate(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, actionSpeed))
+                    foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
                         Agent.World.ParticleManager.Trigger("star_particle", Agent.Position, Color.White, 1);
                         yield return Status.Running;
@@ -389,7 +395,10 @@ namespace DwarfCorp
                         yield return Status.Fail;
                     }
                     else
+                    {
+                        DrawDebugPath();
                         yield return Status.Running;
+                    }
                 }
             }
 
@@ -398,6 +407,13 @@ namespace DwarfCorp
             Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, true);
             CleanupMinecart();
             yield return Status.Success;
+        }
+
+        private void DrawDebugPath()
+        {
+            if (Debugger.Switches.DrawPaths)
+                for (var i = 0; i < Path.Count; ++i)
+                    Drawer3D.DrawLine(GetPathPoint(Path[i].SourceVoxel), GetPathPoint(Path[i].DestinationVoxel), Color.Red, 0.1f);
         }
 
         public override void OnCanceled()
