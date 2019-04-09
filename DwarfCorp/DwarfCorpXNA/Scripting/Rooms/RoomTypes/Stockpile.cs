@@ -144,10 +144,10 @@ namespace DwarfCorp
             }
 
             int numBoxes = Math.Min(Math.Max(Resources.CurrentResourceCount / ResourcesPerVoxel, 1), Voxels.Count);
+
             if (Resources.CurrentResourceCount == 0)
-            {
                 numBoxes = 0;
-            }
+
             if (Boxes.Count > numBoxes)
             {
                 for (int i = Boxes.Count - 1; i >= numBoxes; i--)
