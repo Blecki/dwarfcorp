@@ -215,11 +215,14 @@ namespace DwarfCorp
                     CleanupMinecart();
                     Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
 
-                    foreach (var bit in Jump(Step.SourceVoxel.Center, Step.DestinationVoxel.Center, Step.DestinationVoxel.Center - Step.SourceVoxel.Center, actionSpeed))
+                    foreach (var bit in Jump(Step.SourceVoxel.Center, Step.DestinationVoxel.Center + new Vector3(0.0f, 0.5f, 0.0f), Step.DestinationVoxel.Center - Step.SourceVoxel.Center, actionSpeed))
                     {
+                        Creature.OverrideCharacterMode = false;
                         SetCharacterMode(Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling);
                         yield return Status.Running;
                     }
+
+                    SetAgentTranslation(Step.DestinationVoxel.Center);
 
                     break;
 
@@ -415,7 +418,7 @@ namespace DwarfCorp
             while (DeltaTime < jumpTime)
             {
                 var jumpProgress = DeltaTime / jumpTime;
-                float z = Easing.Ballistic(DeltaTime, jumpTime, 2.0f);
+                float z = Easing.Ballistic(DeltaTime, jumpTime, 1.0f);
                 Vector3 dx = (End - Start) * DeltaTime + Start;
                 dx.Y = Start.Y * (1.0f - jumpProgress) + End.Y * jumpProgress + z;
                 SetAgentTranslation(dx);
