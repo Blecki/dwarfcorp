@@ -2536,7 +2536,7 @@ namespace DwarfCorp.GameStates
         {
             Menu.AddChild(new Gui.Widget
             {
-                AutoLayout = Gui.AutoLayout.DockBottom,
+                AutoLayout = Gui.AutoLayout.DockTop,
                 Border = "border-thin",
                 Font = "font16",
                 Text = Name,
@@ -2554,22 +2554,21 @@ namespace DwarfCorp.GameStates
             if (PausePanel != null) return;
             bool pausedRightNow = Paused;
             GameSpeedControls.Pause();
+
             PausePanel = new Gui.Widget
             {
                 Rect = new Rectangle(GuiRoot.RenderData.VirtualScreen.Center.X - 128,
-                    GuiRoot.RenderData.VirtualScreen.Center.Y - 100, 256, 200),
+                    GuiRoot.RenderData.VirtualScreen.Center.Y - 150, 256, 230),
                 Border = "border-fancy",
                 TextHorizontalAlign = Gui.HorizontalAlign.Center,
                 Text = "- Paused -",
-                InteriorMargin = new Gui.Margin(12, 0, 0, 0),
+                InteriorMargin = new Gui.Margin(24, 0, 0, 0),
                 Padding = new Gui.Margin(2, 2, 2, 2),
                 OnClose = (sender) =>
                 {
                     PausePanel = null;
                     if (!pausedRightNow)
-                    {
                         GameSpeedControls.Resume();
-                    }
                     Paused = pausedRightNow;
                 },
                 Font = "font16"
@@ -2636,8 +2635,23 @@ namespace DwarfCorp.GameStates
                 });
 #endif
 
-            MakeMenuItem(PausePanel, "Quit", "", (sender, args) => QuitOnNextUpdate = true);
-
+            MakeMenuItem(PausePanel, "Quit", "", (sender, args) =>
+            {
+                GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm
+                {
+                    Text = "Are you sure you want to quit?",
+                    OkayText = "Yes",
+                    CancelText = "No",
+                    Font = "Font16",
+                    OnClose = (_sender) =>
+                    {
+                        var result = (_sender as Confirm).DialogResult;
+                        if (result == Confirm.Result.OKAY)
+                            QuitOnNextUpdate = true;
+                    }
+                });
+            });
+            
             PausePanel.Layout();
 
             GuiRoot.ShowModalPopup(PausePanel);

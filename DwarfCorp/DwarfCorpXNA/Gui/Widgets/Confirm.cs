@@ -25,13 +25,15 @@ namespace DwarfCorp.Gui.Widgets
             if (Rect.Width == 0)
             {
                 Rect = new Rectangle(0, 0, 400, 100 + (String.IsNullOrEmpty(Text) ? 0 : 100));
-                Rect.X = (Root.RenderData.VirtualScreen.Width/2) - 128;
-                Rect.Y = (Root.RenderData.VirtualScreen.Height/2) - 32;
+                Rect.X = (Root.RenderData.VirtualScreen.Width/2) - 200;
+                Rect.Y = (Root.RenderData.VirtualScreen.Height/2) - 50;
             }
+
             Border = "border-fancy";
             Font = "font10";
             TextVerticalAlign = VerticalAlign.Center;
             TextHorizontalAlign = HorizontalAlign.Center;
+
             if (!String.IsNullOrEmpty(OkayText))
             {
                 AddChild(new Gui.Widgets.Button
@@ -39,6 +41,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = OkayText,
                     TextHorizontalAlign = HorizontalAlign.Center,
                     TextVerticalAlign = VerticalAlign.Center,
+                    MinimumSize = new Point(64, 32),
                     Border = "border-button",
                     OnClick = (sender, args) =>
                     {
@@ -56,6 +59,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = CancelText,
                     TextHorizontalAlign = HorizontalAlign.Center,
                     TextVerticalAlign = VerticalAlign.Center,
+                    MinimumSize = new Point(64, 32),
                     Border = "border-button",
                     OnClick = (sender, args) =>
                     {
