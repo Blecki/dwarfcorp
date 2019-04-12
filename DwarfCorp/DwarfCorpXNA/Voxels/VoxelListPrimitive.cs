@@ -161,15 +161,6 @@ namespace DwarfCorp
                 {
                     var cachedSlice = chunk.Data.SliceCache[localY];
                     
-                    //if (chunk.Data.VoxelsPresentInSlice[y] == 0)
-                    //{
-                    //    cache.Clear();
-
-                    //    if (cachedSlice != null)
-                    //        chunk.Data.SliceCache[y] = null;
-                    //    continue;
-                    //}
-
                     if (cachedSlice != null)
                     {
                         cache.Clear();
@@ -286,6 +277,7 @@ namespace DwarfCorp
 
             var primitive = VoxelLibrary.GetPrimitive(v.Type);
             if (v.IsExplored && primitive == null) return;
+            if (!v.IsExplored && v.Sunlight) return;
 
             if (primitive == null) primitive = BedrockModel;
 

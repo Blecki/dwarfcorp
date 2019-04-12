@@ -59,8 +59,20 @@ namespace DwarfCorp.Generation
                             }
                             if (dict[animal.Name] < animal.MaxPopulation)
                             {
-                                EntityFactory.CreateEntity<Body>(animal.Name,
-                                    voxel.WorldPosition + Vector3.Up * 1.5f);
+                                if (Settings.RevealSurface)
+                                {
+                                    EntityFactory.CreateEntity<Body>(animal.Name,
+                                        voxel.WorldPosition + Vector3.Up * 1.5f);
+                                }
+                                else
+                                {
+                                    var lambdaAnimal = animal;
+                                    World.ComponentManager.RootComponent.AddChild(new ExploredListener(World.ComponentManager, voxel)
+                                    {
+                                        EntityToSpawn = lambdaAnimal.Name,
+                                        SpawnLocation = voxel.WorldPosition + new Vector3(0.5f, 1.5f, 0.5f)
+                                    });
+                                }
                             }
                             break;
                         }
@@ -81,9 +93,22 @@ namespace DwarfCorp.Generation
                             voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
 
                             var treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
-                            var tree = EntityFactory.CreateEntity<Plant>(veg.Name,
+                            if (Settings.RevealSurface)
+                            {
+                                EntityFactory.CreateEntity<Plant>(veg.Name,
                                 voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
                                 Blackboard.Create("Scale", treeSize));
+                            }
+                            else
+                            {
+                                var lambdaFloraType = veg;
+                                World.ComponentManager.RootComponent.AddChild(new ExploredListener(World.ComponentManager, voxel)
+                                {
+                                    EntityToSpawn = lambdaFloraType.Name,
+                                    SpawnLocation = voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
+                                    BlackboardData = Blackboard.Create("Scale", treeSize)
+                                });
+                            }
 
                             break;
                         }

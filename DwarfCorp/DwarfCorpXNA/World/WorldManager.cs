@@ -738,6 +738,7 @@ namespace DwarfCorp
         public void Quit()
         {
             ChunkManager.Destroy();
+            ComponentManager.Destroy();
             ComponentManager = null;
 
             Master.Destroy();
@@ -1034,6 +1035,9 @@ namespace DwarfCorp
             {
                 level = 1000;
             }
+
+            DefaultShader.FogEnd = GameSettings.Default.ChunkDrawDistance;
+            DefaultShader.FogStart = GameSettings.Default.ChunkDrawDistance * 0.8f;
 
             SlicePlane = level;
             CaveView = CaveView * 0.9f + TargetCaveView * 0.1f;

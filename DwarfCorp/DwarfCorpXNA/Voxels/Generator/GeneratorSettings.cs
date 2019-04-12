@@ -13,6 +13,7 @@ using Math = System.Math;
 
 namespace DwarfCorp.Generation
 {
+    // Todo: Why are these different settings from WorldGenerationSettings?
     public class GeneratorSettings
     {
         public Perlin NoiseGenerator;
@@ -28,6 +29,8 @@ namespace DwarfCorp.Generation
         public int TreeLine = 8;
 
         public List<int> CaveLevels = null;
+
+        public bool RevealSurface = true;
 
         public GeneratorSettings(int randomSeed, float noiseScale, WorldGenerationSettings WorldGenerationSettings)
         {
@@ -52,6 +55,8 @@ namespace DwarfCorp.Generation
 
             for (var i = 0; i < WorldGenerationSettings.NumCaveLayers; ++i)
                 CaveLevels.Add(4 + (caveStep * i));
+
+            RevealSurface = WorldGenerationSettings.RevealSurface;
         }
     }
 }

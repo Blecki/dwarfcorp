@@ -10,6 +10,8 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using System.Threading;
 using Newtonsoft.Json;
+using System.Globalization;
+using System.Collections.Concurrent;
 
 namespace DwarfCorp
 {
@@ -78,6 +80,15 @@ namespace DwarfCorp
                 component.Value.SerializableChildren = null;
         }
 
+        private void StartThreads()
+        {
+            for (var i = 0; i < 4; ++i)
+            {
+                //var updateThread = new System.Threading.Thread(EntityTransformUpdateThread);
+                //updateThread.Start();
+            }
+        }
+
         public ComponentManager(ComponentSaveData SaveData, WorldManager World)
         {
             this.World = World;
@@ -119,7 +130,7 @@ namespace DwarfCorp
                 SaveData.SaveableComponents.Remove(component);
             }
 
-           
+            StartThreads();
 
             /*
             foreach (var component in Components)
@@ -135,6 +146,7 @@ namespace DwarfCorp
         {
             World = state;
             Components = new Dictionary<uint, GameComponent>();
+            StartThreads();
         }
 
         public List<Body> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
@@ -253,19 +265,57 @@ namespace DwarfCorp
             {
                 var c = (k + j) % (uint)_componentList.Count;
                 if (iter % (ulong)_componentList[(int)c].UpdateRate == 0)
+                {
                     _componentList[(int)c].Update(gameTime, chunks, camera);
+                    if (_componentList[(int)c] is Body body)
+                        //WorkOrders.Enqueue(body);
+                        body.ProcessTransformChange();
+                }
             }
 
             k += (uint)Math.Min(GameSettings.Default.EntityUpdateRate, _componentList.Count);
 
-            /*
-            foreach (var component in Components.Values)
-                component.Update(gameTime, chunks, camera);
-            */
             PerformanceMonitor.PopFrame();
 
             AddRemove();
             ReceiveMessage();
+        }
+
+        private bool ExitThreads = false;
+
+        public void Destroy()
+        {
+            ExitThreads = true;
+        }
+
+        private ConcurrentQueue<Body> WorkOrders = new ConcurrentQueue<Body>();
+
+        private void EntityTransformUpdateThread()
+        {
+            Console.Out.WriteLine("Starting chunk regeneration thread.");
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+
+#if !DEBUG
+            try
+#endif
+            {
+                while (!DwarfGame.ExitGame && !ExitThreads)
+                {
+                    if (WorkOrders.TryDequeue(out Body body))
+                        body.ProcessTransformChange();
+                    else
+                        Thread.Sleep(100); // Nothing in the queue - lets take a break.
+                }
+            }
+#if !DEBUG
+            catch (Exception exception)
+            {
+                Console.Out.WriteLine("Component transform update thread exited due to an exception.");
+                ProgramData.WriteExceptionLog(exception);
+                throw;
+            }
+#endif
         }
 
         private void ReceiveMessage()
