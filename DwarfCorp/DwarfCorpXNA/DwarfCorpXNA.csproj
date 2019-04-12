@@ -86,7 +86,7 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Demo|x86'">
     <OutputPath>bin\x86\Demo\</OutputPath>
@@ -1028,9 +1028,10 @@
     <PreBuildEvent>"C:\Program Files\Git\bin\git.exe" rev-parse --short HEAD &gt; "$(ProjectDir)\version.txt" &amp;&amp; ( (call )) || ( "C:\Program Files (x86)\Git\bin\git.exe" rev-parse --short HEAD &gt; "$(ProjectDir)\version.txt" )</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>MKDIR "$(SolutionDir)DwarfCorpFNA\bin\$(ConfigurationName)\Content" &amp; XCOPY "$(ProjectDir)$(OutDir)Content" "$(SolutionDir)DwarfCorpFNA\bin\$(ConfigurationName)\Content" /Y /E
-
-XCOPY "$(ProjectDir)version.txt" "$(SolutionDir)DwarfCorpFNA\bin\$(ConfigurationName)" /Y /E</PostBuildEvent>
+    <PostBuildEvent>echo "Building for windows XNA"
+DEL /Q "$(SolutionDir)\build\win32XNA"
+if not exist "$(SolutionDir)\build\win32XNA" MD "$(SolutionDir)\build\win32XNA"
+XCOPY "$(ProjectDir)$(OutDir)\." "$(SolutionDir)build\win32XNA" /Y /E /V /D</PostBuildEvent>
   </PropertyGroup>
   <!--
       To modify your build process, add your task inside one of the targets below and uncomment it. 

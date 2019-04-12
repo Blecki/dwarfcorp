@@ -47,9 +47,6 @@ namespace DwarfCorpCore
 
 namespace DwarfCorp
 {
-
-
-
 #if WINDOWS || XBOX
     internal static class Program
     {
@@ -58,7 +55,6 @@ namespace DwarfCorp
         public static string Commit = "UNKNOWN";
         public static char DirChar = Path.DirectorySeparatorChar;
         
-
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

@@ -7,8 +7,8 @@
     <ProjectGuid>{76AE20DE-26D9-4841-9F8C-DFE9F5BC2B94}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DwarfCorpFNA</RootNamespace>
-    <AssemblyName>DwarfCorpFNA</AssemblyName>
+    <RootNamespace>DwarfCorp</RootNamespace>
+    <AssemblyName>DwarfCorp</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -173,54 +173,54 @@
   <PropertyGroup>
     <PostBuildEvent>echo "Building for OSX"
 
-DEL /Q "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS"
-if not exist "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" MD "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS"
-XCOPY "$(ProjectDir)Build_Metadata\osx\*" "$(ProjectDir)build\osx" /Y /E /V
-XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\osx\*" "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
+DEL /Q "$(SolutionDir)\build\osx\DwarfCorp.app\Contents\MacOS"
+if not exist "$(SolutionDir)\build\osx\DwarfCorp.app\Contents\MacOS" MD "$(SolutionDir)\build\osx\DwarfCorp.app\Contents\MacOS"
+XCOPY "$(ProjectDir)Build_Metadata\osx\*" "$(SolutionDir)build\osx" /Y /E /V
+XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\osx\*" "$(SolutionDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
 
-XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\mono\*" "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
+XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\mono\*" "$(SolutionDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
 
-XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
+XCOPY "$(ProjectDir)$(OutDir)\." "$(SolutionDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
 
 
 echo "Building for linux 32"
 
-DEL /Q "$(ProjectDir)\build\linux32"
-MD "$(ProjectDir)\build\linux32"
+DEL /Q "$(SolutionDir)\build\linux32"
+MD "$(SolutionDir)\build\linux32"
 
-XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\lib\*" "$(ProjectDir)\build\linux32" /Y /E /V /D
+XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\lib\*" "$(SolutionDir)\build\linux32" /Y /E /V /D
 
-XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\mono\*" "$(ProjectDir)\build\linux32" /Y /E /V /D
+XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\mono\*" "$(SolutionDir)\build\linux32" /Y /E /V /D
 
-XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\linux32" /Y /E /V /D
+XCOPY "$(ProjectDir)$(OutDir)\." "$(SolutionDir)\build\linux32" /Y /E /V /D
 
 
 echo "Building for linux 64"
-DEL /Q "$(ProjectDir)\build\linux64"
-MD "$(ProjectDir)\build\linux64"
+DEL /Q "$(SolutionDir)\build\linux64"
+MD "$(SolutionDir)\build\linux64"
 
-XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\lib64\*" "$(ProjectDir)\build\linux64" /Y /E /V /D
-XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\mono\*" "$(ProjectDir)\build\linux64" /Y /E /V /D
+XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\lib64\*" "$(SolutionDir)\build\linux64" /Y /E /V /D
+XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\mono\*" "$(SolutionDir)\build\linux64" /Y /E /V /D
 
-XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)\build\linux64" /Y /E /V /D
+XCOPY "$(ProjectDir)$(OutDir)\." "$(SolutionDir)\build\linux64" /Y /E /V /D
 
 
-echo "Building for windows"
-DEL /Q "$(ProjectDir)\build\win32"
-if not exist "$(ProjectDir)\build\win32" MD "$(ProjectDir)\build\win32"
+echo "Building for windows FNA"
+DEL /Q "$(SolutionDir)\build\win32FNA"
+if not exist "$(SolutionDir)\build\win32FNA" MD "$(SolutionDir)\build\win32FNA"
 XCOPY "$(ProjectDir)..\DwarfCorpFNA\FNA_libs\win32\*" "$(ProjectDir)\$(OutDir)" /Y /E /V /D
-XCOPY "$(ProjectDir)$(OutDir)\." "$(ProjectDir)build\win32" /Y /E /V /D</PostBuildEvent>
+XCOPY "$(ProjectDir)$(OutDir)\." "$(SolutionDir)build\win32FNA" /Y /E /V /D</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>RD /S /Q "$(ProjectDir)$(OutDir)"
 if not exist "$(ProjectDir)$(OutDir)" MD "$(ProjectDir)$(OutDir)"
 
 if not exist "$(ProjectDir)$(OutDir)Content" MD "$(ProjectDir)$(OutDir)Content"
-ECHO "$(ProjectDir)..\DwarfCorpXNA\bin\x86\$(ConfigurationName)\Content" 
+ECHO "$(ProjectDir)bin\x86\$(ConfigurationName)\Content" 
 
-XCOPY "$(ProjectDir)\..\DwarfCorpXNA\bin\x86\$(ConfigurationName)\Content" "$(ProjectDir)$(OutDir)Content" /Y /E /D
+XCOPY "$(ProjectDir)bin\x86\$(ConfigurationName)\Content" "$(ProjectDir)$(OutDir)Content" /Y /E /D
 
-"C:\Program Files\Git\bin\git.exe" rev-parse --short HEAD &gt; "$(ProjectDir)\version.txt" &amp;&amp; ( (call )) || ( "C:\Program Files (x86)\Git\bin\git.exe" rev-parse --short HEAD &gt; "$(ProjectDir)\version.txt" )</PreBuildEvent>
+"C:\Program Files\Git\bin\git.exe" rev-parse --short HEAD &gt; "$(ProjectDir)version.txt" &amp;&amp; ( (call )) || ( "C:\Program Files (x86)\Git\bin\git.exe" rev-parse --short HEAD &gt; "$(ProjectDir)version.txt" )</PreBuildEvent>
   </PropertyGroup>
   <!--
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

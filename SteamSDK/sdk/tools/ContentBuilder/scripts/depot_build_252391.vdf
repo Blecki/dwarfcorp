@@ -14,7 +14,7 @@
   "FileMapping"
   {
     // This can be a full path, or a path relative to ContentRoot
-    "LocalPath" "../../../../DwarfCorp/DwarfCorpXNA/bin/x86/Release/*"
+    "LocalPath" "../../../../build/win32XNA/*"
     
     // This is a path relative to the install folder of your game
     "DepotPath" "."
