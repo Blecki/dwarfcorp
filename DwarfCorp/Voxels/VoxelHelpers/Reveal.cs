@@ -25,6 +25,8 @@ namespace DwarfCorp
             var queue = new Queue<VoxelHandle>(128);
             queue.Enqueue(voxel);
 
+            // Todo: Just... iterate straight down?
+
             while (queue.Count > 0)
             {
                 var v = queue.Dequeue();
@@ -48,6 +50,8 @@ namespace DwarfCorp
 
                     neighbor.RawSetIsExplored();
 
+                    // Todo: Reveal before fauna, and just spawn/don't spawn if the voxel is explored.
+
                     var box = neighbor.GetBoundingBox();
                     var hashmap = Manager.World.EnumerateIntersectingObjects(box, CollisionType.Both);
 
@@ -62,11 +66,11 @@ namespace DwarfCorp
                             });
                     }
 
-                    Manager.World.Master.TaskManager.OnVoxelChanged(new VoxelChangeEvent
-                    {
-                        Type = VoxelChangeEventType.Explored,
-                        Voxel = neighbor
-                    });
+                    //Manager.World.Master.TaskManager.OnVoxelChanged(new VoxelChangeEvent
+                    //{
+                    //    Type = VoxelChangeEventType.Explored,
+                    //    Voxel = neighbor
+                    //});
 
                     if (neighbor.IsEmpty)
                         queue.Enqueue(neighbor);

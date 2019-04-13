@@ -181,6 +181,7 @@ namespace DwarfCorp
             SkyEffect.Parameters["xRot"].SetValue(Matrix.CreateRotationZ(-(CosTime + 0.5f * (float) Math.PI)));
             SkyEffect.Parameters["xTint"].SetValue(0.0f);
             SkyEffect.CurrentTechnique = SkyEffect.Techniques[0];
+
             foreach(ModelMesh mesh in SkyMesh.Meshes)
             {
                 mesh.Draw();
