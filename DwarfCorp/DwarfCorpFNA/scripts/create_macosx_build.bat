@@ -1,2 +1,0 @@
-XCOPY "$(ProjectDir)\FNA_libs\osx\*" "$(ProjectDir)\FNA_libs\osx_app\DwarfCorpFNA.app\Contents\MacOS" /Y /E
-XCOPY "$(ProjectDir)\$(OutDir)\*" "$(ProjectDir)\FNA_libs\osx_app\DwarfCorpFNA.app\Contents\MacOS" /Y /E
