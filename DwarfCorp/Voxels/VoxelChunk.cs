@@ -131,12 +131,17 @@ namespace DwarfCorp
         public void RecieveNewPrimitive(DwarfTime t)
         {
             PrimitiveMutex.WaitOne();
+
             if (NewPrimitiveReceived)
             {
+                if (Primitive != null)
+                    Primitive.Dispose();
+
                 Primitive = NewPrimitive;
                 NewPrimitive = null;
                 NewPrimitiveReceived = false;
             }
+
             PrimitiveMutex.ReleaseMutex();
         }
 

@@ -160,7 +160,7 @@ namespace DwarfCorp
                 lock (chunk.Data.SliceCache)
                 {
                     var cachedSlice = chunk.Data.SliceCache[localY];
-                    
+
                     if (cachedSlice != null)
                     {
                         cache.Clear();
@@ -191,7 +191,6 @@ namespace DwarfCorp
                 if (GameSettings.Default.GrassMotes)
                     chunk.RebuildMoteLayer(localY);
 
-
                 DebugHelper.AssertNotNull(sliceGeometry);
                 BuildSliceGeometry(chunk, bedrockModel, cache, localY, sliceGeometry, DesignationSet, DesignationDrawer, World);
 
@@ -200,15 +199,15 @@ namespace DwarfCorp
 
             var combinedGeometry = RawPrimitive.Concat(sliceStack);
 
-                Vertices = combinedGeometry.Vertices;
-                VertexCount = combinedGeometry.VertexCount;
-                Indexes = combinedGeometry.Indexes.Select(s => (ushort)s).ToArray();
-                IndexCount = combinedGeometry.IndexCount;
+            Vertices = combinedGeometry.Vertices;
+            VertexCount = combinedGeometry.VertexCount;
+            Indexes = combinedGeometry.Indexes.Select(s => (ushort)s).ToArray();
+            IndexCount = combinedGeometry.IndexCount;
 
-                chunk.PrimitiveMutex.WaitOne();
-                chunk.NewPrimitive = this;
-                chunk.NewPrimitiveReceived = true;
-                chunk.PrimitiveMutex.ReleaseMutex();
+            chunk.PrimitiveMutex.WaitOne();
+            chunk.NewPrimitive = this;
+            chunk.NewPrimitiveReceived = true;
+            chunk.PrimitiveMutex.ReleaseMutex();
         }
 
         private static void BuildSliceGeometry(
@@ -251,6 +250,7 @@ namespace DwarfCorp
             };
 
             base.Render(device);
+
             device.RasterizerState = new RasterizerState()
             {
                 CullMode = CullMode.None

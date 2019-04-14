@@ -15,7 +15,7 @@ namespace DwarfCorp
     /// Simple class representing a geometric object with verticies, textures, and whatever else.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class GeometricPrimitive
+    public class GeometricPrimitive : IDisposable
     {
         public int IndexCount = 0;
         public int VertexCount = 0;
@@ -36,9 +36,7 @@ namespace DwarfCorp
         public DynamicVertexBuffer VertexBuffer = null;
 
         [JsonIgnore]
-        protected object VertexLock = new object();
-
-        [JsonIgnore] public RenderTarget2D Lightmap = null;
+        protected object VertexLock = new object(); // Todo: Need this?
 
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
@@ -63,31 +61,22 @@ namespace DwarfCorp
                 device.SamplerStates[4].Filter = TextureFilter.MinLinearMagPointMipLinear;
 #endif
                 if (Vertices == null || Vertices.Length < 3)
-                {
                     return;
-                }
 
                 if (VertexBuffer == null ||  VertexBuffer.IsDisposed || VertexBuffer.GraphicsDevice.IsDisposed || VertexBuffer.IsContentLost)
-                {
                     ResetBuffer(device);
-                }
 
                 if (VertexBuffer == null)
-                {
                     return;
-                }
 
                 if (VertexCount <= 0)
-                {
                     VertexCount = Vertices.Length;
-                }
 
                 if (IndexCount <= 0 && Indexes != null)
-                {
                     IndexCount = Indexes.Length;
-                }
 
                 device.SetVertexBuffer(VertexBuffer);
+
                 if (IndexBuffer != null)
                 {
                     device.Indices = IndexBuffer;
@@ -132,37 +121,25 @@ namespace DwarfCorp
             //lock (VertexLock)
             {
                 if (VertexBuffer != null && !VertexBuffer.IsDisposed)
-                {
                     VertexBuffer.Dispose();
-                }
                 VertexBuffer = null;
 
                 if (IndexBuffer != null && !IndexBuffer.IsDisposed)
-                {
                     IndexBuffer.Dispose();
-                }
                 IndexBuffer = null;
 
                 if (IndexCount <= 0 && Indexes != null)
-                {
                     IndexCount = Indexes.Length;
-                }
 
                 if (VertexCount <= 0 && Vertices != null)
-                {
                     VertexCount = Vertices.Length;
-                }
-
-
 
                 if (Vertices != null)
                 {
                     try
                     {
-                        DynamicVertexBuffer newBuff = new DynamicVertexBuffer(device, ExtendedVertex.VertexDeclaration, Vertices.Length,
-                            BufferUsage.WriteOnly);
-                        newBuff.SetData(Vertices, 0, VertexCount);
-                        VertexBuffer = newBuff;
+                        VertexBuffer = new DynamicVertexBuffer(device, ExtendedVertex.VertexDeclaration, Vertices.Length, BufferUsage.WriteOnly);
+                        VertexBuffer.SetData(Vertices, 0, VertexCount);
                     }
                     catch (Exception exception)
                     {
@@ -175,9 +152,8 @@ namespace DwarfCorp
                 {
                     try
                     {
-                        DynamicIndexBuffer newIndexBuff = new DynamicIndexBuffer(device, typeof(ushort), Indexes.Length, BufferUsage.None);
-                        newIndexBuff.SetData(Indexes, 0, IndexCount);
-                        IndexBuffer = newIndexBuff;
+                        IndexBuffer = new DynamicIndexBuffer(device, typeof(ushort), Indexes.Length, BufferUsage.None);
+                        IndexBuffer.SetData(Indexes, 0, IndexCount);
                     }
                     catch (Exception exception)
                     {
@@ -189,6 +165,49 @@ namespace DwarfCorp
             }
 
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects).
+                }
+
+                if (IndexBuffer != null)
+                    IndexBuffer.Dispose();
+                IndexBuffer = null;
+
+                if (VertexBuffer != null)
+                    VertexBuffer.Dispose();
+                VertexBuffer = null;
+
+                Vertices = null;
+                Indexes = null;
+
+                disposedValue = true;
+            }
+        }
+
+        ~GeometricPrimitive()
+        {
+           // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+           Dispose(false);
+        }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 
 }

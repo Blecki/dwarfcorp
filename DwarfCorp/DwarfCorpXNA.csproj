@@ -1033,10 +1033,8 @@
     <PreBuildEvent>"C:\Program Files\Git\bin\git.exe" rev-parse --short HEAD &gt; "$(ProjectDir)\version.txt" &amp;&amp; ( (call )) || ( "C:\Program Files (x86)\Git\bin\git.exe" rev-parse --short HEAD &gt; "$(ProjectDir)\version.txt" )</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>echo "Building for windows XNA"
-DEL /Q "$(SolutionDir)\build\win32XNA"
-MD "$(SolutionDir)\build\win32XNA"
-XCOPY "$(ProjectDir)$(OutDir)\." "$(SolutionDir)build\win32XNA" /Y /E /V /D</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!--
       To modify your build process, add your task inside one of the targets below and uncomment it. 

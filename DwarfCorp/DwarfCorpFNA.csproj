@@ -904,33 +904,8 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>echo "Building for OSX"
-DEL /Q "$(SolutionDir)\build\osx\DwarfCorp.app\Contents\MacOS"
-MD "$(SolutionDir)\build\osx\DwarfCorp.app\Contents\MacOS"
-XCOPY "$(ProjectDir)Build_Metadata\osx\*" "$(SolutionDir)build\osx" /Y /E /V
-XCOPY "$(SolutionDir)FNA_libs\osx\*" "$(SolutionDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
-XCOPY "$(SolutionDir)FNA_libs\mono\*" "$(SolutionDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
-XCOPY "$(ProjectDir)$(OutDir)\." "$(SolutionDir)\build\osx\DwarfCorp.app\Contents\MacOS" /Y /E /V
-
-echo "Building for linux 32"
-DEL /Q "$(SolutionDir)\build\linux32"
-MD "$(SolutionDir)\build\linux32"
-XCOPY "$(SolutionDir)FNA_libs\lib\*" "$(SolutionDir)\build\linux32" /Y /E /V /D
-XCOPY "$(SolutionDir)FNA_libs\mono\*" "$(SolutionDir)\build\linux32" /Y /E /V /D
-XCOPY "$(ProjectDir)$(OutDir)\." "$(SolutionDir)\build\linux32" /Y /E /V /D
-
-echo "Building for linux 64"
-DEL /Q "$(SolutionDir)\build\linux64"
-MD "$(SolutionDir)\build\linux64"
-XCOPY "$(SolutionDir)FNA_libs\lib64\*" "$(SolutionDir)\build\linux64" /Y /E /V /D
-XCOPY "$(SolutionDir)FNA_libs\mono\*" "$(SolutionDir)\build\linux64" /Y /E /V /D
-XCOPY "$(ProjectDir)$(OutDir)\." "$(SolutionDir)\build\linux64" /Y /E /V /D
-
-echo "Building for windows FNA"
-DEL /Q "$(SolutionDir)\build\win32FNA"
-if not exist "$(SolutionDir)\build\win32FNA" MD "$(SolutionDir)\build\win32FNA"
-XCOPY "$(SolutionDir)FNA_libs\win32\*" "$(ProjectDir)\$(OutDir)" /Y /E /V /D
-XCOPY "$(ProjectDir)$(OutDir)\." "$(SolutionDir)build\win32FNA" /Y /E /V /D</PostBuildEvent>
+    <PostBuildEvent>XCOPY "$(SolutionDir)FNA_libs\win32\*" "$(ProjectDir)\$(OutDir)" /Y /E /V /D
+</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>RD /S /Q "$(ProjectDir)$(OutDir)"
