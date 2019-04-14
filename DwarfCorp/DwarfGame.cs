@@ -677,7 +677,6 @@ namespace DwarfCorp
                 }
                 BiomeLibrary.InitializeStatics();
                 EmbarkmentLibrary.InitializeDefaultLibrary();
-                VoxelChunk.InitializeStatics();
                 ControlSettings.Load();
                 Drawer2D.Initialize(Content, GraphicsDevice);
                 ResourceLibrary.Initialize();

@@ -1,35 +1,3 @@
-// VoxelChunk.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -58,9 +26,6 @@ namespace DwarfCorp
 
         public List<DynamicLight> DynamicLights { get; set; }
 
-        private static bool staticsInitialized = false;
-        private static Vector3[] faceDeltas = new Vector3[6];
-
         public GlobalChunkCoordinate ID { get; set; }
 
         public void InvalidateSlice(int LocalY)
@@ -74,28 +39,6 @@ namespace DwarfCorp
             }
         }
 
-        #region statics
-
-        public static void InitializeStatics()
-        {
-            if (staticsInitialized)
-            {
-                return;
-            }
-            
-            faceDeltas[(int)BoxFace.Top] = new Vector3(0.5f, 0.0f, 0.5f);
-            faceDeltas[(int)BoxFace.Bottom] = new Vector3(0.5f, 1.0f, 0.5f);
-            faceDeltas[(int)BoxFace.Left] = new Vector3(1.0f, 0.5f, 0.5f);
-            faceDeltas[(int)BoxFace.Right] = new Vector3(0.0f, 0.5f, 0.5f);
-            faceDeltas[(int)BoxFace.Front] = new Vector3(0.5f, 0.5f, 0.0f);
-            faceDeltas[(int)BoxFace.Back] = new Vector3(0.5f, 0.5f, 1.0f);
-            
-
-            staticsInitialized = true;
-        }
-
-        #endregion
-
         public VoxelChunk(ChunkManager manager, GlobalChunkCoordinate id)
         {
             ID = id;
@@ -104,7 +47,6 @@ namespace DwarfCorp
             Primitive = new VoxelListPrimitive();
             Manager = manager;
 
-            InitializeStatics();
             PrimitiveMutex = new Mutex();
             DynamicLights = new List<DynamicLight>();
 
@@ -172,6 +114,8 @@ namespace DwarfCorp
                 designations = Manager.World.PlayerFaction.Designations;
             }
             primitive.InitializeFromChunk(this, designations, Manager.World.DesignationDrawer, Manager.World);
+
+            // Todo: This can be tossed over into the other voxel event system and handled there.
             var changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");
             foreach (var c in Manager.World.EnumerateIntersectingObjects(GetBoundingBox(), CollisionType.Both))
                 c.ReceiveMessageLater(changedMessage);
@@ -180,12 +124,7 @@ namespace DwarfCorp
         public void Destroy()
         {
             if (Primitive != null)
-            {
-                if (Primitive.VertexBuffer != null)
-                    Primitive.VertexBuffer.Dispose();
-                if (Primitive.IndexBuffer != null)
-                 Primitive.IndexBuffer.Dispose();
-            }
+                Primitive.Dispose();
         }
     }
 }
