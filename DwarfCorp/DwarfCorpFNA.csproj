@@ -28,7 +28,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\..\..\bin\FNA\Release\</OutputPath>
+    <OutputPath>bin\FNA\Release\</OutputPath>
     <DefineConstants>WINDOWS GEMFNA</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

@@ -192,7 +192,7 @@ namespace DwarfCorp
         public void GenerateInitialChunks(Rectangle spawnRect, Action<String> SetLoadingMessage)
         {
             SetLoadingMessage("Generating Chunks...");
-            ChunkGen.GenerateInitialChunks(spawnRect, ChunkData, World, WorldSize);
+            ChunkGen.GenerateInitialChunks(spawnRect, ChunkData, World, WorldSize, SetLoadingMessage);
             NeedsMinimapUpdate = true;
             RecalculateBounds();
         }

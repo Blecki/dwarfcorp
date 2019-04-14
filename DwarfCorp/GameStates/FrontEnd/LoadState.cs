@@ -97,7 +97,6 @@ namespace DwarfCorp.GameStates
                 SeaLevel = Settings.SeaLevel,
                 Natives = Settings.Natives,
                 StartUnderground = Settings.StartUnderground,
-                RevealSurface = Settings.RevealSurface,
                 GenerationSettings = Settings,
             };
 

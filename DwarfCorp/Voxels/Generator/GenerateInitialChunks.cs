@@ -64,7 +64,8 @@ namespace DwarfCorp
         }
 
         // Todo: Move to ChunkGenerator
-        public void GenerateInitialChunks(Rectangle spawnRect, ChunkData ChunkData, WorldManager World, Point3 WorldSizeInChunks)
+        // Todo: Thread it, so that multiple cores can create larger worlds faster.
+        public void GenerateInitialChunks(Rectangle spawnRect, ChunkData ChunkData, WorldManager World, Point3 WorldSizeInChunks, Action<String> SetLoadingMessage)
         {
             var initialChunkCoordinates = new List<GlobalChunkCoordinate>();
 
@@ -74,11 +75,21 @@ namespace DwarfCorp
                         initialChunkCoordinates.Add(new GlobalChunkCoordinate(dx, dy, dz));
 
             float maxHeight = Math.Max(Overworld.GetMaxHeight(spawnRect), 0.17f);
+            SetLoadingMessage(String.Format("{0} chunks to generate!", initialChunkCoordinates.Count));
+            SetLoadingMessage("");
             foreach (var ID in initialChunkCoordinates)
+            {
+                SetLoadingMessage(String.Format("#Chunk {0} {1} {2}...", ID.X, ID.Y, ID.Z));
                 ChunkData.AddChunk(GenerateChunk(ID, World, maxHeight, WorldSizeInChunks));
+            }
 
-            UpdateSunlight(World.ChunkManager, WorldSizeInChunks);
+            SetLoadingMessage("Cascading sunlight...");
+            UpdateSunlight(World.ChunkManager, WorldSizeInChunks, Settings, SetLoadingMessage);
+
+            SetLoadingMessage("Requiring minerals...");
             GenerateOres(ChunkData);
+
+            SetLoadingMessage("Discovering lost civilizations...");
             Generation.Generator.GenerateRuins(ChunkData, World, Settings, WorldSizeInChunks);
 
             var worldDepth = WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
@@ -88,6 +99,7 @@ namespace DwarfCorp
             // and also to ensure no inconsistencies in chunk geometry due to ramps.
             foreach (var chunk in ChunkData.ChunkMap)
             {
+                SetLoadingMessage(String.Format("#Exploring caves in chunk {0} {1} {2}...", chunk.ID.X, chunk.ID.Y, chunk.ID.Z));
                 GenerateCaves(chunk, World);
                 GenerateWater(chunk, waterHeight);
                 GenerateLava(chunk);
@@ -96,21 +108,32 @@ namespace DwarfCorp
                     chunk.InvalidateSlice(i);
             }
 
+            if (MathFunctions.RandEvent(0.01f))
+                SetLoadingMessage("Spawning way to many rabbits...");
+            else
+                SetLoadingMessage("Spawning surface life...");
             Generation.Generator.GenerateSurfaceLife(World, World.ChunkManager, WorldSizeInChunks, maxHeight, Settings);
         }
 
-        private static void UpdateSunlight(ChunkManager ChunkManager, Point3 WorldSize)
+        private static void UpdateSunlight(ChunkManager ChunkManager, Point3 WorldSize, Generation.GeneratorSettings Settings, Action<String> SetLoadingMessage)
         {
+            var totalRays = WorldSize.X * WorldSize.Z * VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ;
+            SetLoadingMessage(String.Format("{0} rays of sunshine to propogate.", totalRays));
+            SetLoadingMessage("");
             for (var x = 0; x < WorldSize.X * VoxelConstants.ChunkSizeX; x++)
+            {
                 for (var z = 0; z < WorldSize.Z * VoxelConstants.ChunkSizeZ; z++)
                     for (var y = (WorldSize.Y * VoxelConstants.ChunkSizeY) - 1; y >= 0; y--)
                     {
                         var v = ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(x, y, z));
                         if (!v.IsValid) break;
                         v.Sunlight = true;
+                        if (Settings.RevealSurface) v.RawSetIsExplored();
                         if (v.Type.ID != 0 && !v.Type.IsTransparent)
                             break;
                     }
+                SetLoadingMessage(String.Format("#{0} of {1} rays...", (x + 1) * WorldSize.Z * VoxelConstants.ChunkSizeZ, totalRays));
+            }
         }
     }
 }

@@ -447,14 +447,14 @@ namespace DwarfCorp
 
             CreateInitialEmbarkment();
 
-            if (RevealSurface)
-            {
-                var firstChunkOrigin = ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault().Origin;
-                VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(firstChunkOrigin.X, WorldSizeInVoxels.Y - 1, firstChunkOrigin.Z)));
-            }
+            //if (GenerationSettings.RevealSurface)
+            //{
+            //    var firstChunkOrigin = ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault().Origin;
+            //    VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(firstChunkOrigin.X, WorldSizeInVoxels.Y - 1, firstChunkOrigin.Z)));
+            //}
 
-            foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
-                ChunkManager.InvalidateChunk(chunk);
+            //foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
+            //    ChunkManager.InvalidateChunk(chunk);
 
             SetLoadingMessage("Creating Geometry...");
             ChunkManager.GenerateAllGeometry();

@@ -42,7 +42,13 @@ namespace DwarfCorp.Gui.Widgets
             // AddMessage is called by another thread - need to protect the list.
             MessageLock.WaitOne();
 
-            Messages.Add(Message);
+            if (Message.StartsWith("#"))
+            {
+                if (Messages.Count > 0) Messages.RemoveAt(Messages.Count - 1);
+                Messages.Add(Message.Substring(1));
+            }
+            else
+                Messages.Add(Message);
 
             if (Messages.Count > VisibleLines)
                 Messages.RemoveAt(0);

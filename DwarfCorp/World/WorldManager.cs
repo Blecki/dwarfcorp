@@ -84,7 +84,6 @@ namespace DwarfCorp
         public Vector2 WorldOrigin { get; set; }
 
         public bool StartUnderground = false;
-        public bool RevealSurface = true;
         public WorldGenerationSettings GenerationSettings = null;
 
         // The current coordinate of the cursor light
