@@ -1,37 +1,29 @@
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Globalization;
-using System.Security.Policy;
-using System.Threading;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Newtonsoft.Json.Converters;
+using System.Collections.Generic;
 
 namespace DwarfCorp.GameStates
 {
-    public class WorldGenerationSettings
+    public class OverworldGenerationSettings
     {
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public string Name { get; set; }
-        public int NumCivilizations { get; set; }
-        public int NumRains { get; set; }
-        public int NumVolcanoes { get; set; }
-        public float RainfallScale { get; set; }
-        public int NumFaults { get; set; }
-        public float SeaLevel { get; set; }
-        public float TemperatureScale { get; set; }
-        public Point3 ColonySize { get; set; }
-        public Vector2 WorldGenerationOrigin { get; set; }
-        public float WorldScale { get; set; }
-        public Embarkment InitalEmbarkment { get; set; }
-        public Vector2 WorldOrigin { get; set; }
-        public string ExistingFile { get; set; }
-        public List<Faction> Natives { get; set; }
-        public bool GenerateFromScratch { get; set; }
-        public int Seed { get; set; }
+        public int Width;
+        public int Height;
+        public string Name;
+        public int NumCivilizations;
+        public int NumRains;
+        public int NumVolcanoes;
+        public float RainfallScale;
+        public int NumFaults;
+        public float SeaLevel;
+        public float TemperatureScale;
+        public Point3 ColonySize;
+        public Vector2 WorldGenerationOrigin;
+        public float WorldScale;
+        public Embarkment InitalEmbarkment;
+        public Vector2 WorldOrigin;
+        public string ExistingFile;
+        public List<Faction> Natives;
+        public bool GenerateFromScratch;
+        public int Seed;
         public bool StartUnderground = false;
         public bool RevealSurface = true;
         public int NumCaveLayers = 8;
@@ -44,7 +36,7 @@ namespace DwarfCorp.GameStates
             return TextGenerator.GenerateRandom(templates);
         }
 
-        public WorldGenerationSettings()
+        public OverworldGenerationSettings()
         {
             Width = 512;
             Height = 512;

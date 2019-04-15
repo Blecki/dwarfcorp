@@ -23,7 +23,7 @@ namespace DwarfCorp.GameStates
 
         public GenerationState CurrentState { get; private set; }
 
-        public WorldGenerationSettings Settings { get; set; }
+        public OverworldGenerationSettings Settings { get; set; }
         public VertexBuffer LandMesh { get; set; }
         public IndexBuffer LandIndex { get; set; }
         public Color[] worldData;
@@ -42,7 +42,7 @@ namespace DwarfCorp.GameStates
 
         public List<Faction> NativeCivilizations = new List<Faction>();
 
-        public WorldGenerator(WorldGenerationSettings Settings)
+        public WorldGenerator(OverworldGenerationSettings Settings)
         {
             CurrentState = GenerationState.NotStarted;
             Seed = Settings.Seed;
@@ -331,7 +331,7 @@ namespace DwarfCorp.GameStates
 
                 if (Overworld.Name == null)
                 {
-                    Overworld.Name = WorldGenerationSettings.GetRandomWorldName();
+                    Overworld.Name = OverworldGenerationSettings.GetRandomWorldName();
                 }
 
                 LoadingMessage = "Init..";

@@ -232,20 +232,15 @@ namespace DwarfCorp
             if (!fileExists)
                 GameID = MathFunctions.Random.Next(0, 1024);
 
-            ChunkGenerator = new ChunkGenerator(Seed, 0.02f, GenerationSettings);
-            ChunkGenerator.Settings.SeaLevel = SeaLevel;
-
-
             #region Load Components
 
             // Create updateable systems.
             foreach (var updateSystemFactory in AssetManager.EnumerateModHooks(typeof(UpdateSystemFactoryAttribute), typeof(EngineModule), new Type[] { typeof(WorldManager) }))
                 UpdateSystems.Add(updateSystemFactory.Invoke(null, new Object[] { this }) as EngineModule);
 
-
             if (fileExists)
             {
-                ChunkManager = new ChunkManager(Content, this, ChunkGenerator, WorldSizeInChunks);
+                ChunkManager = new ChunkManager(Content, this, WorldSizeInChunks);
                 Splasher = new Splasher(ChunkManager);
 
                 ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
@@ -331,7 +326,7 @@ namespace DwarfCorp
                     MathHelper.PiOver4, AspectRatio, 0.1f,
                     GameSettings.Default.VertexCullDistance);
 
-                ChunkManager = new ChunkManager(Content, this, ChunkGenerator, WorldSizeInChunks);
+                ChunkManager = new ChunkManager(Content, this, WorldSizeInChunks);
                 Splasher = new Splasher(ChunkManager);
 
 
@@ -413,16 +408,26 @@ namespace DwarfCorp
             Master = new GameMaster(Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
                 Camera, GraphicsDevice);
 
-            // If there's no file, we have to initialize the first chunk coordinate
-            if (gameFile == null)
-            {
-                    Game.LogSentryBreadcrumb("Loading", "Started new game without an existing file.");
-                if (Overworld.Map == null)
+                // If there's no file, we have to initialize the first chunk coordinate
+                if (gameFile == null)
                 {
-                    throw new InvalidProgramException("Tried to start game with an empty overworld. This should not happen.");
+                    Game.LogSentryBreadcrumb("Loading", "Started new game without an existing file.");
+                    if (Overworld.Map == null)
+                        throw new InvalidProgramException("Tried to start game with an empty overworld. This should not happen.");
+
+                    var generatorSettings = new Generation.GeneratorSettings(Seed, 0.02f, GenerationSettings)
+                    {
+                        SeaLevel = SeaLevel,
+                        WorldSizeInChunks = WorldSizeInChunks,
+                        SetLoadingMessage = SetLoadingMessage,
+                        World = this
+                    };
+
+                    SetLoadingMessage("Generating Chunks...");
+                    Generation.Generator.Generate(SpawnRect, ChunkManager.ChunkData, this, generatorSettings, SetLoadingMessage);
+                    ChunkManager.NeedsMinimapUpdate = true;
+                    ChunkManager.RecalculateBounds();
                 }
-                ChunkManager.GenerateInitialChunks(SpawnRect, SetLoadingMessage);
-            }
 
             if (gameFile != null)
             {

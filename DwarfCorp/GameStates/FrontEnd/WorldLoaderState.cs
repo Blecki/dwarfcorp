@@ -56,7 +56,7 @@ namespace DwarfCorp.GameStates
                 Overworld.NativeFactions = new List<Faction>();
                 foreach (var faction in file.Data.FactionList)
                     Overworld.NativeFactions.Add(new Faction(faction));
-                var settings = new WorldGenerationSettings();
+                var settings = new OverworldGenerationSettings();
                 settings.Width = Overworld.Map.GetLength(1);
                 settings.Height = Overworld.Map.GetLength(0);
                 settings.Name = global::System.IO.Path.GetFileName(path);

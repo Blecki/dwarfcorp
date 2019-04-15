@@ -11,11 +11,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Math = System.Math;
 
-namespace DwarfCorp
+namespace DwarfCorp.Generation
 {
-    public partial class ChunkGenerator
+    public static partial class Generator
     {
-        public void GenerateLava(VoxelChunk chunk)
+        public static void GenerateLava(VoxelChunk chunk, GeneratorSettings Settings)
         {
             if (chunk.Origin.Y >= Settings.LavaLevel)
                 return;

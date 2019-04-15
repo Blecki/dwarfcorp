@@ -25,9 +25,9 @@ namespace DwarfCorp.GameStates
         public Tutorial.TutorialManager TutorialManager;
 
         private Timer TipTimer = new Timer(1, false, Timer.TimerMode.Real);
-        public WorldGenerationSettings Settings { get; set; }
+        public OverworldGenerationSettings Settings { get; set; }
 
-        public LoadState(DwarfGame game, GameStateManager stateManager, WorldGenerationSettings settings) :
+        public LoadState(DwarfGame game, GameStateManager stateManager, OverworldGenerationSettings settings) :
             base(game, "LoadState", stateManager)
         {
             Settings = settings;

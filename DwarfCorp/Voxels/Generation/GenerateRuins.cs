@@ -15,6 +15,7 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
+        // Todo: Kill uneeded worldsize parameter
         public static void GenerateRuins(ChunkData chunks, WorldManager world, GeneratorSettings Settings, Point3 WorldSizeInChunks)
         {
             int numRuinClusters = Math.Max(MathFunctions.RandInt(-6, 4), 0);

@@ -11,12 +11,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Math = System.Math;
 
-namespace DwarfCorp
+namespace DwarfCorp.Generation
 {
-    public struct OreVein
+    public struct OreCluster
     {
         public VoxelType Type { get; set; }
-        public Vector3 Start { get; set; }
-        public float Length { get; set; }
+        public Vector3 Size { get; set; }
+        public Matrix Transform { get; set; }
     }
 }

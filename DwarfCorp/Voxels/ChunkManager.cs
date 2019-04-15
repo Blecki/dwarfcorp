@@ -58,8 +58,6 @@ namespace DwarfCorp
             }
         }
 
-        public ChunkGenerator ChunkGen { get; set; }
-
         private Thread RebuildThread { get; set; }
         private Thread ChunkUpdateThread { get; set; }
         private AutoScaleThread WaterUpdateThread;
@@ -94,8 +92,7 @@ namespace DwarfCorp
         }
 
         public ChunkManager(ContentManager content, 
-            WorldManager world,
-            ChunkGenerator chunkGen, Point3 WorldSizeInChunks)
+            WorldManager world, Point3 WorldSizeInChunks)
         {
             this.WorldSize = WorldSizeInChunks;
 
@@ -105,15 +102,11 @@ namespace DwarfCorp
 
             chunkData = new ChunkData(Point3.Zero, WorldSize);             
 
-            ChunkGen = chunkGen;
-
             RebuildThread = new Thread(RebuildVoxelsThread) { IsBackground = true };
             RebuildThread.Name = "RebuildVoxels";
 
             WaterUpdateThread = new AutoScaleThread(this, (f) => Water.UpdateWater());
             this.ChunkUpdateThread = new Thread(UpdateChunks) { IsBackground = true, Name = "Update Chunks" };
-
-            chunkGen.Manager = this;
 
             GameSettings.Default.ChunkGenerateTime = 0.5f;
             GameSettings.Default.ChunkRebuildTime = 0.1f;
@@ -188,15 +181,6 @@ namespace DwarfCorp
 
         private readonly ChunkData chunkData;
 
-        // Todo: Move to ChunkGenerator
-        public void GenerateInitialChunks(Rectangle spawnRect, Action<String> SetLoadingMessage)
-        {
-            SetLoadingMessage("Generating Chunks...");
-            ChunkGen.GenerateInitialChunks(spawnRect, ChunkData, World, WorldSize, SetLoadingMessage);
-            NeedsMinimapUpdate = true;
-            RecalculateBounds();
-        }
-
         public void GenerateAllGeometry()
         {
             while (RebuildQueue.Count > 0)
@@ -206,7 +190,7 @@ namespace DwarfCorp
             }
         }
 
-        private void RecalculateBounds()
+        public void RecalculateBounds()
         {
             List<BoundingBox> boxes = ChunkData.GetChunkEnumerator().Select(c => c.GetBoundingBox()).ToList();
             Bounds = MathFunctions.GetBoundingBox(boxes);

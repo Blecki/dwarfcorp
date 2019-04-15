@@ -84,7 +84,7 @@ namespace DwarfCorp
         public Vector2 WorldOrigin { get; set; }
 
         public bool StartUnderground = false;
-        public WorldGenerationSettings GenerationSettings = null;
+        public OverworldGenerationSettings GenerationSettings = null;
 
         // The current coordinate of the cursor light
         public Vector3 CursorLightPos = Vector3.Zero;
@@ -118,9 +118,6 @@ namespace DwarfCorp
         // Responsible for managing terrain
         public ChunkManager ChunkManager = null;
         public ChunkRenderer ChunkRenderer = null;
-
-        // Responsible for creating terrain
-        public ChunkGenerator ChunkGenerator = null;
 
         // Responsible for managing game entities
         public ComponentManager ComponentManager = null;
@@ -744,7 +741,6 @@ namespace DwarfCorp
             Master = null;
 
             ChunkManager = null;
-            ChunkGenerator = null;
             GC.Collect();
             PlanService.Die();
         }

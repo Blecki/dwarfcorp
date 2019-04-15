@@ -136,7 +136,7 @@
     <Compile Include=".\Components\AI\Pregnancy.cs" />
     <Compile Include=".\Components\AI\Sensors\DestroyOnTimer.cs" />
     <Compile Include=".\Components\AI\Sensors\EnemySensor.cs" />
-    <Compile Include=".\Components\AI\Sensors\ExploredListener.cs" />
+    <Compile Include="Components\AI\Sensors\SpawnOnExploredTrigger.cs" />
     <Compile Include=".\Components\AI\Sensors\RadiusSensor.cs" />
     <Compile Include=".\Components\AI\Sensors\Sensor.cs" />
     <Compile Include=".\Components\AI\Sensors\TrapSensor.cs" />
@@ -351,7 +351,7 @@
     <Compile Include=".\GameStates\Play\EconomyState.cs" />
     <Compile Include=".\GameStates\Play\FactionViewState.cs" />
     <Compile Include=".\GameStates\Play\PlayState.cs" />
-    <Compile Include=".\GameStates\WorldGeneration\WorldGenerationSettings.cs" />
+    <Compile Include="GameStates\WorldGeneration\OverworldGenerationSettings.cs" />
     <Compile Include=".\GameStates\WorldGeneration\WorldGenerationSettingsDialog.cs" />
     <Compile Include=".\GameStates\WorldGeneration\WorldGenerator.cs" />
     <Compile Include=".\GameStates\WorldGeneration\WorldGeneratorPreview.cs" />
@@ -797,18 +797,20 @@
     <Compile Include=".\Voxels\DecalType.cs" />
     <Compile Include=".\Voxels\DynamicLight.cs" />
     <Compile Include=".\Voxels\Enums.cs" />
-    <Compile Include=".\Voxels\Generator\ChunkGenerator-GenerateCaves.cs" />
-    <Compile Include=".\Voxels\Generator\ChunkGenerator-GenerateLava.cs" />
-    <Compile Include=".\Voxels\Generator\ChunkGenerator-GenerateSurfaceLife.cs" />
-    <Compile Include=".\Voxels\Generator\ChunkGenerator-GenerateWater.cs" />
-    <Compile Include=".\Voxels\Generator\ChunkGenerator.cs" />
-    <Compile Include=".\Voxels\Generator\GenerateCluster.cs" />
-    <Compile Include=".\Voxels\Generator\GenerateInitialChunks.cs" />
-    <Compile Include=".\Voxels\Generator\GenerateRuins.cs" />
-    <Compile Include=".\Voxels\Generator\GenerateVein.cs" />
-    <Compile Include=".\Voxels\Generator\GeneratorSettings.cs" />
-    <Compile Include=".\Voxels\Generator\OreCluster.cs" />
-    <Compile Include=".\Voxels\Generator\OreVein.cs" />
+    <Compile Include="Voxels\Generation\GenerateCaves.cs" />
+    <Compile Include="Voxels\Generation\CastSunlight.cs" />
+    <Compile Include="Voxels\Generation\GenerateChunk.cs" />
+    <Compile Include="Voxels\Generation\GenerateLava.cs" />
+    <Compile Include="Voxels\Generation\GenerateSurfaceLife.cs" />
+    <Compile Include="Voxels\Generation\GenerateWater.cs" />
+    <Compile Include="Voxels\Generation\GenerateCluster.cs" />
+    <Compile Include="Voxels\Generation\GenerateInitialChunks.cs" />
+    <Compile Include="Voxels\Generation\GenerateRuins.cs" />
+    <Compile Include="Voxels\Generation\GenerateVein.cs" />
+    <Compile Include="Voxels\Generation\GeneratorSettings.cs" />
+    <Compile Include="Voxels\Generation\Misc.cs" />
+    <Compile Include="Voxels\Generation\OreCluster.cs" />
+    <Compile Include="Voxels\Generation\OreVein.cs" />
     <Compile Include=".\Voxels\GrassLibrary.cs" />
     <Compile Include=".\Voxels\GrassType.cs" />
     <Compile Include=".\Voxels\LiquidAsset.cs" />
@@ -873,6 +875,7 @@
     <Compile Include=".\World\WorldManager-OctTree.cs" />
     <Compile Include=".\World\WorldManager.cs" />
     <Compile Include=".\World\WorldTime.cs" />
+    <Compile Include="Voxels\Generation\GenerateOres.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

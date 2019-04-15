@@ -38,7 +38,7 @@ namespace DwarfCorp.GameStates
             {
                 StateManager.ClearState();
                 StateManager.PushState(new LoadState(Game, Game.StateManager,
-                    new WorldGenerationSettings
+                    new OverworldGenerationSettings
                     {
                         ExistingFile = path,
                         Name = path

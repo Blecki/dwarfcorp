@@ -11,12 +11,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Math = System.Math;
 
-namespace DwarfCorp
+namespace DwarfCorp.Generation
 {
-    /// <summary>
-    /// Creates randomly generated voxel chunks using data from the overworld.
-    /// </summary>
-    public partial class ChunkGenerator
+    public partial class Generator
     {
         private struct CaveGenerationData
         {
@@ -25,10 +22,7 @@ namespace DwarfCorp
             public int Height;
         }
 
-        private const int CaveHeightScaleFactor = 5;
-        private const int MaxCaveHeight = 3;
-
-        private CaveGenerationData GetCaveGenerationData(GlobalVoxelCoordinate At, int LayerIndex)
+        private static CaveGenerationData GetCaveGenerationData(GlobalVoxelCoordinate At, int LayerIndex, GeneratorSettings Settings)
         {
             var frequency = LayerIndex < Settings.CaveFrequencies.Count ? Settings.CaveFrequencies[LayerIndex] : Settings.CaveFrequencies[Settings.CaveFrequencies.Count - 1];
 
@@ -42,11 +36,11 @@ namespace DwarfCorp
             {
                 CaveHere = noise > Settings.CaveSize,
                 Noise = noise,
-                Height = Math.Min(Math.Max((int)(height * CaveHeightScaleFactor), 1), MaxCaveHeight)
+                Height = Math.Min(Math.Max((int)(height * Settings.CaveHeightScaleFactor), 1), Settings.MaxCaveHeight)
             };
         }
 
-        public void GenerateCaves(VoxelChunk Chunk, WorldManager World)
+        public static void GenerateCaves(VoxelChunk Chunk, GeneratorSettings Settings)
         {
             var caveBiome = BiomeLibrary.GetBiome("Cave");
             var hellBiome = BiomeLibrary.GetBiome("Hell");
@@ -59,12 +53,12 @@ namespace DwarfCorp
                     {
                         // Does layer intersect this voxel?
                         int y = Settings.CaveLevels[i];
-                        if (y + MaxCaveHeight < Chunk.Origin.Y) continue;
+                        if (y + Settings.MaxCaveHeight < Chunk.Origin.Y) continue;
                         if (y >= Chunk.Origin.Y + VoxelConstants.ChunkSizeY) continue;
 
                         var coordinate = new GlobalVoxelCoordinate(Chunk.Origin.X + x, y, Chunk.Origin.Z + z);
 
-                        var data = GetCaveGenerationData(coordinate, i);
+                        var data = GetCaveGenerationData(coordinate, i, Settings);
 
                         var biome = (y <= Settings.HellLevel) ? hellBiome : caveBiome;
 
@@ -87,7 +81,7 @@ namespace DwarfCorp
 
                             foreach (var neighborCoordinate in VoxelHelpers.EnumerateAllNeighbors(voxel.Coordinate))
                             {
-                                var v = Manager.CreateVoxelHandle(neighborCoordinate);
+                                var v = Chunk.Manager.CreateVoxelHandle(neighborCoordinate);
                                 if (!v.IsValid || (v.Sunlight))
                                 {
                                     caveBreaksSurface = true;
@@ -115,8 +109,8 @@ namespace DwarfCorp
                                 // Spawn flora and fauna.
                                 if (data.Noise > Settings.CaveSize * 1.8f && globalY > Settings.LavaLevel)
                                 {
-                                    GenerateCaveFlora(below, biome, Settings.NoiseGenerator, World);
-                                    GenerateCaveFauna(below, biome, World);
+                                    GenerateCaveFlora(below, biome, Settings);
+                                    GenerateCaveFauna(below, biome, Settings);
                                 }
                             }
                         }
@@ -125,14 +119,14 @@ namespace DwarfCorp
             }
         }
 
-        private static void GenerateCaveFlora(VoxelHandle CaveFloor, BiomeData Biome, Perlin NoiseGenerator, WorldManager WorldManager)
+        private static void GenerateCaveFlora(VoxelHandle CaveFloor, BiomeData Biome, GeneratorSettings Settings)
         {
             foreach (var floraType in Biome.Vegetation)
             {
                 if (!MathFunctions.RandEvent(floraType.SpawnProbability))
                     continue;
 
-                if (NoiseGenerator.Noise(CaveFloor.Coordinate.X / floraType.ClumpSize, floraType.NoiseOffset, CaveFloor.Coordinate.Z / floraType.ClumpSize) < floraType.ClumpThreshold)
+                if (Settings.NoiseGenerator.Noise(CaveFloor.Coordinate.X / floraType.ClumpSize, floraType.NoiseOffset, CaveFloor.Coordinate.Z / floraType.ClumpSize) < floraType.ClumpThreshold)
                     continue;
 
                 CaveFloor.RawSetGrass(0); // I preferred when grass existed under trees.
@@ -148,7 +142,7 @@ namespace DwarfCorp
                             CaveFloor.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f), // Todo: Is this the correct offset?
                             Blackboard.Create("Scale", plantSize));
                     else
-                        WorldManager.ComponentManager.RootComponent.AddChild(new ExploredListener(WorldManager.ComponentManager, CaveFloor)
+                        Settings.World.ComponentManager.RootComponent.AddChild(new SpawnOnExploredTrigger(Settings.World.ComponentManager, CaveFloor)
                         {
                             EntityToSpawn = lambdaFloraType.Name,
                             SpawnLocation = CaveFloor.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
@@ -160,9 +154,9 @@ namespace DwarfCorp
             }
         }
 
-        public static void GenerateCaveFauna(VoxelHandle CaveFloor, BiomeData Biome, WorldManager World)
+        public static void GenerateCaveFauna(VoxelHandle CaveFloor, BiomeData Biome, GeneratorSettings Settings)
         {
-            var spawnLikelihood = (World.InitialEmbark.Difficulty + 0.1f);
+            var spawnLikelihood = (Settings.World.InitialEmbark.Difficulty + 0.1f);
 
             foreach (var animalType in Biome.Fauna)
             {
@@ -176,7 +170,7 @@ namespace DwarfCorp
                     if (!GameSettings.Default.FogofWar)
                         EntityFactory.CreateEntity<GameComponent>(lambdaAnimalType.Name, CaveFloor.WorldPosition + new Vector3(0.5f, 1.5f, 0.5f));
                     else
-                        World.ComponentManager.RootComponent.AddChild(new ExploredListener(World.ComponentManager, CaveFloor)
+                        Settings.World.ComponentManager.RootComponent.AddChild(new SpawnOnExploredTrigger(Settings.World.ComponentManager, CaveFloor)
                         {
                             EntityToSpawn = lambdaAnimalType.Name,
                             SpawnLocation = CaveFloor.WorldPosition + new Vector3(0.5f, 1.5f, 0.5f)

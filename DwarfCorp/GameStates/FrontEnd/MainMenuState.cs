@@ -28,7 +28,7 @@ namespace DwarfCorp.GameStates
                     StringLibrary.GetString("continue-tooltip", latestSave),
                     (sender, args) => {
                         GameStates.GameState.Game.LogSentryBreadcrumb("Menu", "User is continuing from a save file.");
-                        StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings()
+                        StateManager.PushState(new LoadState(Game, Game.StateManager, new OverworldGenerationSettings()
                         {
                             ExistingFile = latestSave
                         }));

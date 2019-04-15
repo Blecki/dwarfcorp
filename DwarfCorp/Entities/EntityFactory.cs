@@ -54,6 +54,7 @@ namespace DwarfCorp
 
     internal class EntityFactory
     {
+        // Todo: Dear god. Kill these statics!
         public static WorldManager World = null;
         private static ComponentManager Components { get { return World.ComponentManager; } }
 
@@ -114,6 +115,7 @@ namespace DwarfCorp
                 // Todo: This is a hack. Creatures create a physics component and add themselves to it. 
                 // Instead heirarchy should be creature -> physics -> everything else.
                 // Todo: Make creature factories return their physics component, handily solving this issue.
+                // Todo: Why is the component manager a static member, rather than being passed in?
                 Components.RootComponent.AddChild(r.Parent == null ? r : r.Parent);
                 return r as T;
             }

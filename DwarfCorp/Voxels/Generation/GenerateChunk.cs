@@ -11,42 +11,26 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Math = System.Math;
 
-namespace DwarfCorp
+namespace DwarfCorp.Generation
 {
-    /// <summary>
-    /// Creates randomly generated voxel chunks using data from the overworld.
-    /// </summary>
-    public partial class ChunkGenerator
+    public static partial class Generator
     {
-        public Generation.GeneratorSettings Settings;
-        public ChunkManager Manager { get; set; }
-
-        public ChunkGenerator(int randomSeed, float noiseScale, WorldGenerationSettings WorldGenerationSettings)
-        {
-            Settings = new Generation.GeneratorSettings(randomSeed, noiseScale, WorldGenerationSettings);
-        }
-
-        public static float NormalizeHeight(float height, float maxHeight, float upperBound = 0.9f)
-        {
-            return height + (upperBound - maxHeight);
-        }
-
-        public VoxelChunk GenerateChunk(GlobalChunkCoordinate ID, WorldManager World, float maxHeight, Point3 WorldSizeInChunks)
+        public static VoxelChunk GenerateChunk(GlobalChunkCoordinate ID, GeneratorSettings Settings)
         {
             var origin = new GlobalVoxelCoordinate(ID, new LocalVoxelCoordinate(0, 0, 0));
-            var worldDepth = WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
-            var waterHeight = NormalizeHeight(Settings.SeaLevel + 1.0f / worldDepth, maxHeight);
+            var worldDepth = Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
+            var waterHeight = NormalizeHeight(Settings.SeaLevel + 1.0f / worldDepth, Settings.MaxHeight);
 
-            var c = new VoxelChunk(Manager, ID);
+            var c = new VoxelChunk(Settings.World.ChunkManager, ID);
 
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
-                    var overworldPosition = Overworld.WorldToOverworld(new Vector2(x + origin.X, z + origin.Z), World.WorldScale, World.WorldOrigin);
+                    var overworldPosition = Overworld.WorldToOverworld(new Vector2(x + origin.X, z + origin.Z), Settings.World.WorldScale, Settings.World.WorldOrigin);
                     var biome = Overworld.Map[(int)MathFunctions.Clamp(overworldPosition.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(overworldPosition.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
                     var biomeData = BiomeLibrary.Biomes[biome];
 
-                    var normalizedHeight = NormalizeHeight(Overworld.LinearInterpolate(overworldPosition, Overworld.Map, Overworld.ScalarFieldType.Height), maxHeight);
+                    var normalizedHeight = NormalizeHeight(Overworld.LinearInterpolate(overworldPosition, Overworld.Map, Overworld.ScalarFieldType.Height), Settings.MaxHeight);
                     var height = MathFunctions.Clamp(normalizedHeight * worldDepth, 0.0f, worldDepth - 2);
                     var stoneHeight = (int)MathFunctions.Clamp((int)(height - (biomeData.SoilLayer.Depth + (Math.Sin(overworldPosition.X) + Math.Cos(overworldPosition.Y)))), 1, height);
 

@@ -11,11 +11,11 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Math = System.Math;
 
-namespace DwarfCorp
+namespace DwarfCorp.Generation
 {
-    public partial class ChunkGenerator
+    public static partial class Generator
     {
-        public void GenerateWater(VoxelChunk chunk, float waterHeight)
+        public static void GenerateWater(VoxelChunk chunk, float waterHeight)
         {
             var iceID = VoxelLibrary.GetVoxelType("Ice");
 

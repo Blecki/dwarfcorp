@@ -42,20 +42,20 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class ExploredListener : Body, IVoxelListener
+    public class SpawnOnExploredTrigger : Body, IVoxelListener
     {
         public VoxelHandle Voxel;
         public string EntityToSpawn { get; set; }
         public Vector3 SpawnLocation { get; set; }
         public Blackboard BlackboardData { get; set; }
 
-        public ExploredListener()
+        public SpawnOnExploredTrigger()
         {
             CollisionType = CollisionType.Static;
             UpdateRate = 100;
         }
 
-        public ExploredListener(ComponentManager Manager, VoxelHandle Voxel) :
+        public SpawnOnExploredTrigger(ComponentManager Manager, VoxelHandle Voxel) :
             base(Manager, "ExplorationSpawner", Matrix.CreateTranslation(Voxel.GetBoundingBox().Center()), new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
         {
             CollisionType = CollisionType.Static;

@@ -19,16 +19,16 @@ namespace DwarfCorp.GameStates
         private Gui.Widgets.CheckBox StartUnderground;
         private Gui.Widgets.CheckBox RevealSurface;
         private WorldGenerator Generator;
-        private WorldGenerationSettings Settings;
+        private OverworldGenerationSettings Settings;
         private bool AutoGenerate;
         
-        public WorldGeneratorState(DwarfGame Game, GameStateManager StateManager, WorldGenerationSettings Settings, bool AutoGenerate) :
+        public WorldGeneratorState(DwarfGame Game, GameStateManager StateManager, OverworldGenerationSettings Settings, bool AutoGenerate) :
             base(Game, "NewWorldGeneratorState", StateManager)
         {
             this.AutoGenerate = AutoGenerate;
             this.Settings = Settings;
             if (this.Settings == null)
-                this.Settings = new WorldGenerationSettings()
+                this.Settings = new OverworldGenerationSettings()
                 {
                     Width = 512,
                     Height = 512,
@@ -93,7 +93,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) => {
                     GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", "User is regeneating the world.");
-                    Settings = new WorldGenerationSettings();
+                    Settings = new OverworldGenerationSettings();
                     RestartGeneration();
                 }
             });

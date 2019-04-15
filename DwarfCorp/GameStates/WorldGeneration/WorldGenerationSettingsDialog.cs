@@ -9,7 +9,7 @@ namespace DwarfCorp.Gui.Widgets
 {
     public class WorldGenerationSettingsDialog : Widget
     {
-        public GameStates.WorldGenerationSettings Settings;
+        public GameStates.OverworldGenerationSettings Settings;
         private Gui.Widget NameEditBox;
 
         public static string[] LevelStrings = new string[]

@@ -171,7 +171,7 @@ namespace DwarfCorp
                 {
                     case State.StartingNewGame:
                         Console.Error.WriteLine("Save/load test: starting new game...");
-                        game.StateManager.PushState(new LoadState(game, game.StateManager, new WorldGenerationSettings() { GenerateFromScratch = true }));
+                        game.StateManager.PushState(new LoadState(game, game.StateManager, new OverworldGenerationSettings() { GenerateFromScratch = true }));
                         LoadState = State.WaitingForGameStart;
                         break;
                     case State.WaitingForGameStart:
@@ -206,7 +206,7 @@ namespace DwarfCorp
                                 PlayState state = game.StateManager.CurrentState as PlayState;
                                 if (state != null && state.IsInitialized && !state.Paused)
                                 {
-                                    state.QuitGame(new LoadState(game, game.StateManager, new WorldGenerationSettings()
+                                    state.QuitGame(new LoadState(game, game.StateManager, new OverworldGenerationSettings()
                                     {
                                         ExistingFile = latestSave
                                     }));
@@ -256,7 +256,7 @@ namespace DwarfCorp
                 {
                     case State.StartingNewGame:
                         Console.Error.WriteLine("Save/load test: starting new game...");
-                        game.StateManager.PushState(new LoadState(game, game.StateManager, new WorldGenerationSettings() { GenerateFromScratch = true }));
+                        game.StateManager.PushState(new LoadState(game, game.StateManager, new OverworldGenerationSettings() { GenerateFromScratch = true }));
                         LoadState = State.WaitingForGameStart;
                         break;
                     case State.WaitingForGameStart:
@@ -308,7 +308,7 @@ namespace DwarfCorp
                                 PlayState state = game.StateManager.CurrentState as PlayState;
                                 if (state != null && state.IsInitialized && !state.Paused)
                                 {
-                                    state.QuitGame(new LoadState(game, game.StateManager, new WorldGenerationSettings()
+                                    state.QuitGame(new LoadState(game, game.StateManager, new OverworldGenerationSettings()
                                     {
                                         ExistingFile = latestSave
                                     }));
