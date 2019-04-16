@@ -804,7 +804,7 @@
     <Compile Include="Voxels\Generation\GenerateSurfaceLife.cs" />
     <Compile Include="Voxels\Generation\GenerateWater.cs" />
     <Compile Include="Voxels\Generation\GenerateCluster.cs" />
-    <Compile Include="Voxels\Generation\GenerateInitialChunks.cs" />
+    <Compile Include="Voxels\Generation\Generate.cs" />
     <Compile Include="Voxels\Generation\GenerateRuins.cs" />
     <Compile Include="Voxels\Generation\GenerateVein.cs" />
     <Compile Include="Voxels\Generation\GeneratorSettings.cs" />

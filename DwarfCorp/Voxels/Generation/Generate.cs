@@ -34,14 +34,11 @@ namespace DwarfCorp.Generation
                 ChunkData.AddChunk(GenerateChunk(ID, Settings));
             }
 
-            SetLoadingMessage("Cascading sunlight...");
-            Generation.Generator.CastSunlight(World.ChunkManager, Settings);
-
             SetLoadingMessage("Requiring minerals...");
             Generation.Generator.GenerateOres(ChunkData);
 
             SetLoadingMessage("Discovering lost civilizations...");
-            Generation.Generator.GenerateRuins(ChunkData, World, Settings, Settings.WorldSizeInChunks);
+            Generation.Generator.GenerateRuins(Settings);
 
             var worldDepth = Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
             var waterHeight = Math.Min((int)(worldDepth * NormalizeHeight(Settings.SeaLevel + 1.0f / worldDepth, Settings.MaxHeight)), worldDepth - 1);
@@ -51,9 +48,10 @@ namespace DwarfCorp.Generation
             foreach (var chunk in ChunkData.ChunkMap)
             {
                 SetLoadingMessage(String.Format("#Exploring caves in chunk {0} {1} {2}...", chunk.ID.X, chunk.ID.Y, chunk.ID.Z));
-                Generation.Generator.GenerateCaves(chunk, Settings);
-                Generation.Generator.GenerateWater(chunk, waterHeight);
-                Generation.Generator.GenerateLava(chunk, Settings);
+                CastSunlight(chunk, Settings);
+                GenerateCaves(chunk, Settings);
+                GenerateWater(chunk, waterHeight);
+                GenerateLava(chunk, Settings);
 
                 for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
                     chunk.InvalidateSlice(i);
@@ -63,7 +61,12 @@ namespace DwarfCorp.Generation
                 SetLoadingMessage("Spawning way to many rabbits...");
             else
                 SetLoadingMessage("Spawning surface life...");
-            Generation.Generator.GenerateSurfaceLife(Settings);
-        }        
+            SetLoadingMessage("");
+            foreach (var chunk in EnumerateTopChunks(Settings))
+            {
+                SetLoadingMessage(String.Format("#Spawning life in chunk {0} {1} {2}...", chunk.ID.X, chunk.ID.Y, chunk.ID.Z));
+                GenerateSurfaceLife(chunk, Settings);
+            }
+        }
     }
 }

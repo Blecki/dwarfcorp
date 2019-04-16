@@ -421,11 +421,11 @@
     <Compile Include="Tools\SparseVoxelTree-Levels.cs" />
     <Compile Include="Tools\SparseVoxelTree.cs" />
     <Compile Include="Voxels\Generation\CastSunlight.cs" />
+    <Compile Include="Voxels\Generation\Generate.cs" />
     <Compile Include="Voxels\Generation\Misc.cs" />
     <Compile Include="Voxels\Generation\GenerateChunk.cs" />
     <Compile Include="Voxels\Generation\GenerateCaves.cs" />
     <Compile Include="Voxels\Generation\GenerateCluster.cs" />
-    <Compile Include="Voxels\Generation\GenerateInitialChunks.cs" />
     <Compile Include="Voxels\Generation\GenerateLava.cs" />
     <Compile Include="Voxels\Generation\GenerateOres.cs" />
     <Compile Include="Voxels\Generation\GenerateRuins.cs" />

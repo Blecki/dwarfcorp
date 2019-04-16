@@ -18,6 +18,8 @@ namespace DwarfCorp.Generation
     {
         public static  void GenerateOres(ChunkData ChunkData)
         {
+            // This needs to be changed to a method to determine if any particular voxel should be grouped into an ore cluster. 
+
             foreach (VoxelType type in VoxelLibrary.GetTypes())
             {
                 if (type.SpawnClusters || type.SpawnVeins)
@@ -28,6 +30,7 @@ namespace DwarfCorp.Generation
                         Min = new Vector3(ChunkData.MapOrigin.X, Math.Max(type.MinSpawnHeight, 2), ChunkData.MapOrigin.Z)
                     };
 
+                    // Rarity is an inverse, but the max for any type is 100...
                     int numEvents = (int)MathFunctions.Rand(75 * (1.0f - type.Rarity), 100 * (1.0f - type.Rarity)); // Todo: Jesus christ, larger worlds don't have any more resources than small ones!
                     for (int i = 0; i < numEvents; i++)
                     {

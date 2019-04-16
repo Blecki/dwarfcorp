@@ -16,25 +16,20 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static void CastSunlight(ChunkManager ChunkManager, GeneratorSettings Settings)
+        public static void CastSunlight(VoxelChunk TopChunk, GeneratorSettings Settings)
         {
             var totalRays = Settings.WorldSizeInChunks.X * Settings.WorldSizeInChunks.Z * VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ;
-            Settings.SetLoadingMessage(String.Format("{0} rays of sunshine to propogate.", totalRays));
-            Settings.SetLoadingMessage("");
-            for (var x = 0; x < Settings.WorldSizeInChunks.X * VoxelConstants.ChunkSizeX; x++)
-            {
-                for (var z = 0; z < Settings.WorldSizeInChunks.Z * VoxelConstants.ChunkSizeZ; z++)
+            for (var x = TopChunk.Origin.X; x < TopChunk.Origin.X + VoxelConstants.ChunkSizeX; x++)
+                for (var z = TopChunk.Origin.Z; z < TopChunk.Origin.Z + VoxelConstants.ChunkSizeZ; z++)
                     for (var y = (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1; y >= 0; y--)
                     {
-                        var v = ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(x, y, z));
+                        var v = TopChunk.Manager.CreateVoxelHandle(new GlobalVoxelCoordinate(x, y, z));
                         if (!v.IsValid) break;
                         v.Sunlight = true;
                         if (Settings.OverworldSettings.RevealSurface) v.RawSetIsExplored();
                         if (v.Type.ID != 0 && !v.Type.IsTransparent)
                             break;
                     }
-                Settings.SetLoadingMessage(String.Format("#{0} of {1} rays...", (x + 1) * Settings.WorldSizeInChunks.Z * VoxelConstants.ChunkSizeZ, totalRays));
-            }
         }
     }
 }

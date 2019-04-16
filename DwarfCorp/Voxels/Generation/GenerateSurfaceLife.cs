@@ -15,13 +15,13 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static void GenerateSurfaceLife(GeneratorSettings Settings)
+        public static void GenerateSurfaceLife(VoxelChunk TopChunk, GeneratorSettings Settings)
         {
             var creatureCounts = new Dictionary<string, Dictionary<string, int>>();
             var worldDepth = Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
 
-            for (var x = 0; x < Settings.WorldSizeInChunks.X * VoxelConstants.ChunkSizeX; x++)
-                for (var z = 0; z < Settings.WorldSizeInChunks.Z * VoxelConstants.ChunkSizeZ; z++)
+            for (var x = TopChunk.Origin.X; x < TopChunk.Origin.X + VoxelConstants.ChunkSizeX; x++)
+                for (var z = TopChunk.Origin.Z; z < TopChunk.Origin.Z + VoxelConstants.ChunkSizeZ; z++)
                 {
                     var overworldPosition = Overworld.WorldToOverworld(new Vector2(x, z), Settings.World.WorldScale, Settings.World.WorldOrigin);
                     var biome = Overworld.Map[(int)MathFunctions.Clamp(overworldPosition.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(overworldPosition.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
