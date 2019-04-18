@@ -35,7 +35,7 @@ namespace DwarfCorp.Generation
             }
 
             SetLoadingMessage("Requiring minerals...");
-            Generation.Generator.GenerateOres(ChunkData);
+            //Generation.Generator.GenerateOres(ChunkData);
 
             SetLoadingMessage("Discovering lost civilizations...");
             Generation.Generator.GenerateRuins(Settings);
@@ -43,10 +43,9 @@ namespace DwarfCorp.Generation
             var worldDepth = Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
             var waterHeight = Math.Min((int)(worldDepth * NormalizeHeight(Settings.SeaLevel + 1.0f / worldDepth, Settings.MaxHeight)), worldDepth - 1);
 
-            // This is critical at the beginning to allow trees to spawn on ramps correctly,
-            // and also to ensure no inconsistencies in chunk geometry due to ramps.
-            foreach (var chunk in ChunkData.ChunkMap)
+            foreach (var chunk in ChunkData.ChunkMap) // Todo: Move this to GenerateChunk.
             {
+                _GenerateOres(chunk, Settings);
                 SetLoadingMessage(String.Format("#Exploring caves in chunk {0} {1} {2}...", chunk.ID.X, chunk.ID.Y, chunk.ID.Z));
                 CastSunlight(chunk, Settings);
                 GenerateCaves(chunk, Settings);

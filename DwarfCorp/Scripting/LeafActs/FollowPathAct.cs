@@ -447,7 +447,7 @@ namespace DwarfCorp
 
         private IEnumerable<Status> Translate(Vector3 Start, Vector3 End, float MovementSpeed)
         {
-            DeltaTime = 0.0f;
+            //DeltaTime = 0.0f;
             var targetDeltaTime = (End - Start).Length() / MovementSpeed;
 
             while (DeltaTime < targetDeltaTime)
@@ -467,6 +467,7 @@ namespace DwarfCorp
             var transform = Agent.Physics.LocalTransform;
             transform.Translation = T;
             Agent.Physics.LocalTransform = transform;
+            //Agent.Physics.PropogateTransforms();
         }
     }
 }

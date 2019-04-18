@@ -19,7 +19,7 @@
   "MinSpawnHeight": 0.0,
   "MaxSpawnHeight": 18.0,
   "SpawnProbability": 0.8,
-  "Rarity": 0.9,
+  "Rarity": 0.005,
   "SpawnVeins": false,
   "SpawnClusters": true,
   "ClusterSize": 3.0,
