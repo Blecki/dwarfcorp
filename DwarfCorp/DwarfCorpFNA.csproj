@@ -801,6 +801,7 @@
     <Compile Include="Voxels\Generation\CastSunlight.cs" />
     <Compile Include="Voxels\Generation\GenerateChunk.cs" />
     <Compile Include="Voxels\Generation\GenerateLava.cs" />
+    <Compile Include="Voxels\Generation\GetAverageHeight.cs" />
     <Compile Include="Voxels\Generation\GenerateSurfaceLife.cs" />
     <Compile Include="Voxels\Generation\GenerateWater.cs" />
     <Compile Include="Voxels\Generation\Generate.cs" />

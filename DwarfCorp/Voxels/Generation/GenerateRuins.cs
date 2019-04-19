@@ -19,41 +19,15 @@ namespace DwarfCorp.Generation
         {
             var noiseVector = Chunk.Origin.ToVector3() * Settings.CaveNoiseScale;
             var ruinsNoise = Settings.CaveNoise.GetValue(noiseVector.X, noiseVector.Y, noiseVector.Z);
-            // Todo: Don't actually generate ruins on every chunk, holy S.
+            if (Math.Abs(ruinsNoise) < Settings.RuinsRate) return;
 
             int structureWidth = MathFunctions.RandInt(4, 16);
             int structureDepth = MathFunctions.RandInt(4, 16);
             int wallHeight = MathFunctions.RandInt(2, 6);
             int heightOffset = MathFunctions.RandInt(-4, 2);
-            var origin = Chunk.Origin;
 
-            BiomeData biome = BiomeLibrary.Biomes[0];
-
-            // Todo: Lift; use for balloon port too.
-            int avgHeight = 0;
-            int numHeight = 0;
-            for (int dx = 0; dx < structureWidth; dx++)
-            {
-                for (int dz = 0; dz < structureDepth; dz++)
-                {
-                    var worldPos = new Vector3(origin.X + dx, (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1, origin.Z + dz);
-
-                    var baseVoxel = VoxelHelpers.FindFirstVoxelBelow(Settings.World.ChunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(worldPos)));
-
-                    if (!baseVoxel.IsValid) continue;
-
-                    biome = Overworld.GetBiomeAt(worldPos, Settings.World.WorldScale, Settings.World.WorldOrigin);
-
-                    var h = baseVoxel.Coordinate.Y + 1;
-                    avgHeight += h;
-                    numHeight++;
-                }
-            }
-
-            if (numHeight == 0)
-                return;
-
-            avgHeight = avgHeight / numHeight;
+            var biome = Overworld.GetBiomeAt(Chunk.Origin.ToVector3(), Settings.World.WorldScale, Settings.World.WorldOrigin);
+            var avgHeight = GetAverageHeight(Chunk.Origin.X, Chunk.Origin.Z, structureWidth, structureDepth, Settings);
 
             bool[] doors = new bool[4];
 
@@ -64,37 +38,24 @@ namespace DwarfCorp.Generation
             {
                 for (int dz = 0; dz < structureDepth; dz++)
                 {
-                    var worldPos = new Vector3(origin.X + dx, avgHeight + heightOffset, origin.Z + dz);
+                    var worldPos = new Vector3(Chunk.Origin.X + dx, avgHeight + heightOffset, Chunk.Origin.Z + dz);
 
                     var baseVoxel = Settings.World.ChunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(worldPos));
                     var underVoxel = VoxelHelpers.FindFirstVoxelBelow(Settings.World.ChunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(worldPos)));
                     var decay = Settings.NoiseGenerator.Generate(worldPos.X * 0.05f, worldPos.Y * 0.05f, worldPos.Z * 0.05f);
 
-                    if (decay > 0.7f)
-                        continue;
+                    if (decay > 0.7f) continue;
+                    if (!baseVoxel.IsValid) continue;
+                    if (baseVoxel.Coordinate.Y == (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1)  continue;
+                    if (!underVoxel.IsValid) continue;
 
-                    if (!baseVoxel.IsValid)
-                        continue;
-
-                    if (baseVoxel.Coordinate.Y == (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1)
-                        continue;
-
-                    if (!underVoxel.IsValid)
-                        continue;
-
-                    bool edge = (dx == 0 || dx == structureWidth - 1) || (dz == 0 || dz == structureDepth - 1);
-
-                    if (!edge && !baseVoxel.IsEmpty)
-                        continue;
+                    var edge = (dx == 0 || dx == structureWidth - 1) || (dz == 0 || dz == structureDepth - 1);
+                    if (!edge && !baseVoxel.IsEmpty) continue;
 
                     if (edge)
-                    {
                         baseVoxel.RawSetType(VoxelLibrary.GetVoxelType(biome.RuinWallType));
-                    }
                     else
-                    {
                         baseVoxel.RawSetType(VoxelLibrary.GetVoxelType(biome.RuinFloorType));
-                    }
 
                     bool[] wallState = new bool[4];
                     wallState[0] = dx == 0;
