@@ -16,7 +16,7 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static void _GenerateOres(VoxelChunk Chunk, GeneratorSettings Settings)
+        public static void GenerateOres(VoxelChunk Chunk, GeneratorSettings Settings)
         {
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
             {
@@ -50,55 +50,6 @@ namespace DwarfCorp.Generation
                                 if (Math.Abs(oreNoise) < voxelType.Rarity * fade)
                                     Chunk.Manager.CreateVoxelHandle(new GlobalVoxelCoordinate(Chunk.Origin.X + x, Chunk.Origin.Y + y, Chunk.Origin.Z + z)).RawSetType(voxelType);
                             }
-                        }
-                    }
-                }
-            }
-        }
-
-        public static  void GenerateOres(ChunkData ChunkData)
-        {
-            // This needs to be changed to a method to determine if any particular voxel should be grouped into an ore cluster. 
-
-            foreach (VoxelType type in VoxelLibrary.GetTypes())
-            {
-                if (type.SpawnClusters || type.SpawnVeins)
-                {
-                    BoundingBox clusterBounds = new BoundingBox
-                    {
-                        Max = new Vector3(ChunkData.MapOrigin.X + ChunkData.MapDimensions.X, type.MaxSpawnHeight, ChunkData.MapOrigin.Z + ChunkData.MapDimensions.Z),
-                        Min = new Vector3(ChunkData.MapOrigin.X, Math.Max(type.MinSpawnHeight, 2), ChunkData.MapOrigin.Z)
-                    };
-
-                    // Rarity is an inverse, but the max for any type is 100...
-                    int numEvents = (int)MathFunctions.Rand(75 * (1.0f - type.Rarity), 100 * (1.0f - type.Rarity)); // Todo: Jesus christ, larger worlds don't have any more resources than small ones!
-                    for (int i = 0; i < numEvents; i++)
-                    {
-                        if (type.SpawnClusters)
-                        {
-                            OreCluster cluster = new OreCluster()
-                            {
-                                Size =
-                                    new Vector3(MathFunctions.Rand(type.ClusterSize * 0.25f, type.ClusterSize),
-                                        MathFunctions.Rand(type.ClusterSize * 0.25f, type.ClusterSize),
-                                        MathFunctions.Rand(type.ClusterSize * 0.25f, type.ClusterSize)),
-                                Transform = MathFunctions.RandomTransform(clusterBounds),
-                                Type = type
-                            };
-
-                            GenerateCluster(cluster, ChunkData);
-                        }
-
-                        if (type.SpawnVeins)
-                        {
-                            OreVein vein = new OreVein()
-                            {
-                                Length = MathFunctions.Rand(type.VeinLength * 0.75f, type.VeinLength * 1.25f),
-                                Start = MathFunctions.RandVector3Box(clusterBounds),
-                                Type = type
-                            };
-
-                            GenerateVein(vein, ChunkData);
                         }
                     }
                 }
