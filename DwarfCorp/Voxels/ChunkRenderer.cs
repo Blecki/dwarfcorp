@@ -16,7 +16,8 @@ namespace DwarfCorp
     public class ChunkRenderer
     {
         public List<VoxelChunk> RenderList = new List<VoxelChunk>();
-        private readonly Timer visibilityChunksTimer = new Timer(0.03f, false, Timer.TimerMode.Real);
+        private readonly Timer visibilityChunksTimer = new Timer(0.03f, false, Timer.TimerMode.Real); // This timer is so quick, what's the point?
+        private int RenderCycle = 1;
 
         public ChunkData ChunkData;
 
@@ -31,6 +32,8 @@ namespace DwarfCorp
 
         public void RenderForMinimap(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Shader effect, Matrix worldMatrix, Texture2D tilemap)
         {
+            // Todo: Render to a texture stored in the chunk; render that texture to the screen.
+
             effect.SelfIlluminationTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_illumination);
             effect.MainTexture = tilemap;
             effect.SunlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient);
@@ -129,9 +132,29 @@ namespace DwarfCorp
             visibilityChunksTimer.Update(gameTime);
             if (visibilityChunksTimer.HasTriggered)
             {
+                
                 var visibleSet = new HashSet<VoxelChunk>();
                 GetChunksIntersecting(camera.GetDrawFrustum(), visibleSet);
                 RenderList = visibleSet.ToList();
+                foreach (var chunk in visibleSet)
+                {
+                    if (chunk.Visible == false)
+                    {
+                        chunk.Visible = true;
+                        chunk.Manager.InvalidateChunk(chunk);
+                    }
+
+                    chunk.RenderCycleWhenLastVisible = RenderCycle;
+                }
+
+                foreach (var chunk in RenderList)
+                {
+                    if (chunk.RenderCycleWhenLastVisible != RenderCycle)
+                        chunk.Visible = false;
+                }
+
+                RenderList = visibleSet.ToList();
+                RenderCycle += 1;
             }
         }
     }

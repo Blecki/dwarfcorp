@@ -6,17 +6,14 @@ using System.Threading;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A 3D grid of voxels, water, and light.
-    /// </summary>
     public partial class VoxelChunk
     {
         public VoxelData Data { get; set; }
+        public int RenderCycleWhenLastVisible = 0;
+        public bool Visible = false;
 
-        public VoxelListPrimitive Primitive { get; set; }
-        public VoxelListPrimitive NewPrimitive = null;
+        public VoxelListPrimitive Primitive = null;
         public Dictionary<LiquidType, LiquidPrimitive> Liquids { get; set; }
-        public bool NewPrimitiveReceived = false;
         public bool NewLiquidReceived = false;
         
         public GlobalVoxelCoordinate Origin { get; set; }
@@ -39,12 +36,22 @@ namespace DwarfCorp
             }
         }
 
+        public void DiscardPrimitive()
+        {
+            PrimitiveMutex.WaitOne();
+            if (Primitive != null)
+                Primitive.Dispose();
+            Primitive = null;
+            for (var y = 0; y < VoxelConstants.ChunkSizeY; ++y)
+                Data.SliceCache[y] = null;
+            PrimitiveMutex.ReleaseMutex();
+        }
+
         public VoxelChunk(ChunkManager manager, GlobalChunkCoordinate id)
         {
             ID = id;
             Origin = new GlobalVoxelCoordinate(id, new LocalVoxelCoordinate(0,0,0));
             Data = VoxelData.Allocate();
-            Primitive = new VoxelListPrimitive();
             Manager = manager;
 
             PrimitiveMutex = new Mutex();
@@ -69,27 +76,12 @@ namespace DwarfCorp
 
             return m_boundingBox;
         }
-
-        public void RecieveNewPrimitive(DwarfTime t)
-        {
-            PrimitiveMutex.WaitOne();
-
-            if (NewPrimitiveReceived)
-            {
-                if (Primitive != null)
-                    Primitive.Dispose();
-
-                Primitive = NewPrimitive;
-                NewPrimitive = null;
-                NewPrimitiveReceived = false;
-            }
-
-            PrimitiveMutex.ReleaseMutex();
-        }
-
+        
         public void Render(GraphicsDevice device)
         {
-            Primitive.Render(device);
+            PrimitiveMutex.WaitOne();
+            if (Primitive != null) Primitive.Render(device);
+            PrimitiveMutex.ReleaseMutex();
         }
 
         public void RebuildLiquids()
@@ -110,10 +102,14 @@ namespace DwarfCorp
             VoxelListPrimitive primitive = new VoxelListPrimitive();
             DesignationSet designations = null;
             if (Manager.World.Master != null)
-            {
                 designations = Manager.World.PlayerFaction.Designations;
-            }
             primitive.InitializeFromChunk(this, designations, Manager.World.DesignationDrawer, Manager.World);
+
+            PrimitiveMutex.WaitOne();
+            if (Primitive != null)
+                Primitive.Dispose();
+            Primitive = primitive;
+            PrimitiveMutex.ReleaseMutex();
 
             // Todo: This can be tossed over into the other voxel event system and handled there.
             var changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");

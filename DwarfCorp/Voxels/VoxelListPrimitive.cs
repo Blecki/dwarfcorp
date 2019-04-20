@@ -203,11 +203,6 @@ namespace DwarfCorp
             VertexCount = combinedGeometry.VertexCount;
             Indexes = combinedGeometry.Indexes.Select(s => (ushort)s).ToArray();
             IndexCount = combinedGeometry.IndexCount;
-
-            chunk.PrimitiveMutex.WaitOne();
-            chunk.NewPrimitive = this;
-            chunk.NewPrimitiveReceived = true;
-            chunk.PrimitiveMutex.ReleaseMutex();
         }
 
         private static void BuildSliceGeometry(

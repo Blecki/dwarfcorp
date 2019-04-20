@@ -41,17 +41,20 @@ namespace DwarfCorp.Generation
                 GenerateRuin(chunk, Settings);
             }
 
-            SetLoadingMessage("");
-            foreach (var chunk in ChunkData.ChunkMap)
+            if (!GameSettings.Default.FastGen)
             {
-                SetLoadingMessage(String.Format("#Generating caves, ore, water in chunk {0} {1} {2}...", chunk.ID.X, chunk.ID.Y, chunk.ID.Z));
-                GenerateOres(chunk, Settings);
-                GenerateCaves(chunk, Settings);
-                GenerateWater(chunk, waterHeight);
-                GenerateLava(chunk, Settings);
+                SetLoadingMessage("");
+                foreach (var chunk in ChunkData.ChunkMap)
+                {
+                    SetLoadingMessage(String.Format("#Generating caves, ore, water in chunk {0} {1} {2}...", chunk.ID.X, chunk.ID.Y, chunk.ID.Z));
+                    GenerateOres(chunk, Settings);
+                    GenerateCaves(chunk, Settings);
+                    GenerateWater(chunk, waterHeight);
+                    GenerateLava(chunk, Settings);
 
-                for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
-                    chunk.InvalidateSlice(i);
+                    //for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
+                    //    chunk.InvalidateSlice(i);
+                }
             }
 
             SetLoadingMessage("");

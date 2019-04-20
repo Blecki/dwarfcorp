@@ -408,26 +408,25 @@ namespace DwarfCorp
             Master = new GameMaster(Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
                 Camera, GraphicsDevice);
 
-                // If there's no file, we have to initialize the first chunk coordinate
-                if (gameFile == null)
+            if (gameFile == null)
+            {
+                Game.LogSentryBreadcrumb("Loading", "Started new game without an existing file.");
+                if (Overworld.Map == null)
+                    throw new InvalidProgramException("Tried to start game with an empty overworld. This should not happen.");
+
+                var generatorSettings = new Generation.GeneratorSettings(Seed, 0.02f, GenerationSettings)
                 {
-                    Game.LogSentryBreadcrumb("Loading", "Started new game without an existing file.");
-                    if (Overworld.Map == null)
-                        throw new InvalidProgramException("Tried to start game with an empty overworld. This should not happen.");
+                    SeaLevel = SeaLevel,
+                    WorldSizeInChunks = WorldSizeInChunks,
+                    SetLoadingMessage = SetLoadingMessage,
+                    World = this
+                };
 
-                    var generatorSettings = new Generation.GeneratorSettings(Seed, 0.02f, GenerationSettings)
-                    {
-                        SeaLevel = SeaLevel,
-                        WorldSizeInChunks = WorldSizeInChunks,
-                        SetLoadingMessage = SetLoadingMessage,
-                        World = this
-                    };
-
-                    SetLoadingMessage("Generating Chunks...");
-                    Generation.Generator.Generate(SpawnRect, ChunkManager.ChunkData, this, generatorSettings, SetLoadingMessage);
-                    ChunkManager.NeedsMinimapUpdate = true;
-                    ChunkManager.RecalculateBounds();
-                }
+                SetLoadingMessage("Generating Chunks...");
+                Generation.Generator.Generate(SpawnRect, ChunkManager.ChunkData, this, generatorSettings, SetLoadingMessage);
+                ChunkManager.NeedsMinimapUpdate = true;
+                ChunkManager.RecalculateBounds();
+            }
 
             if (gameFile != null)
             {
@@ -442,9 +441,7 @@ namespace DwarfCorp
                 {
                     InitialEmbark = gameFile.PlayData.InitialEmbark;
                 }
-                ChunkManager.World.Master.SetMaxViewingLevel(gameFile.Metadata.Slice > 0
-                ? gameFile.Metadata.Slice
-                : ChunkManager.World.Master.MaxViewingLevel);
+                ChunkManager.World.Master.SetMaxViewingLevel(gameFile.Metadata.Slice > 0 ? gameFile.Metadata.Slice : ChunkManager.World.Master.MaxViewingLevel);
             }
 
             if (Master.Faction.Economy.Company.Information == null)
@@ -452,17 +449,8 @@ namespace DwarfCorp
 
             CreateInitialEmbarkment();
 
-            //if (GenerationSettings.RevealSurface)
-            //{
-            //    var firstChunkOrigin = ChunkManager.ChunkData.GetChunkEnumerator().FirstOrDefault().Origin;
-            //    VoxelHelpers.InitialReveal(ChunkManager, ChunkManager.ChunkData, ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(firstChunkOrigin.X, WorldSizeInVoxels.Y - 1, firstChunkOrigin.Z)));
-            //}
-
-            //foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
-            //    ChunkManager.InvalidateChunk(chunk);
-
             SetLoadingMessage("Creating Geometry...");
-            ChunkManager.GenerateAllGeometry();
+            //ChunkManager.GenerateAllGeometry();
 
             if (MathFunctions.RandEvent(0.01f))
                 SetLoadingMessage("Reticulating Splines...");

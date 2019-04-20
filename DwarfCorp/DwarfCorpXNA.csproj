@@ -422,6 +422,7 @@
     <Compile Include="Tools\SparseVoxelTree.cs" />
     <Compile Include="Voxels\Generation\CastSunlight.cs" />
     <Compile Include="Voxels\Generation\Generate.cs" />
+    <Compile Include="Voxels\Generation\GetAverageHeight.cs" />
     <Compile Include="Voxels\Generation\Misc.cs" />
     <Compile Include="Voxels\Generation\GenerateChunk.cs" />
     <Compile Include="Voxels\Generation\GenerateCaves.cs" />

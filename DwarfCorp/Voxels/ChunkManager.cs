@@ -140,6 +140,8 @@ namespace DwarfCorp
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 
+            var liveChunks = new List<VoxelChunk>();
+
 #if !DEBUG
             try
 #endif
@@ -154,13 +156,26 @@ namespace DwarfCorp
                     {
                         continue;
                     }
+
                     VoxelChunk chunk = null;
+
                     do
                     {
                         chunk = PopInvalidChunk();
                         if (chunk != null)
                         {
+                            if (!chunk.Visible) continue; // Don't bother rebuilding chunks that won't be rendered.
                             chunk.Rebuild(GameState.Game.GraphicsDevice);
+
+                            liveChunks.Add(chunk);
+                            if (liveChunks.Count() > GameSettings.Default.MaxLiveChunks)
+                            {
+                                liveChunks.Sort((a, b) => a.RenderCycleWhenLastVisible - b.RenderCycleWhenLastVisible);
+                                if (liveChunks[0].Visible) continue;
+                                liveChunks[0].DiscardPrimitive();
+                                liveChunks.RemoveAt(0);
+                            }
+
                             NeedsMinimapUpdate = true;
                         }
                     }
@@ -227,9 +242,6 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, Camera camera, GraphicsDevice g)
         {
-            foreach (var chunk in ChunkData.GetChunkEnumerator())
-                chunk.RecieveNewPrimitive(gameTime);
-
             List<VoxelChangeEvent> localList = null;
             lock (ChangedVoxels)
             {

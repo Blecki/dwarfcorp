@@ -76,8 +76,6 @@ namespace DwarfCorp.Generation
                         if (!currVoxel.IsValid)
                             continue;
 
-                        if (currVoxel.Coordinate.Y == VoxelConstants.ChunkSizeY - 1)
-                            continue;
                         currVoxel.RawSetType(underVoxel.Type);
                     }
 
