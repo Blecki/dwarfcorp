@@ -79,19 +79,6 @@ namespace DwarfCorp
             AnimPlayer.ChangeAnimation(Animation, Play ? AnimationPlayer.ChangeAnimationOptions.Play : AnimationPlayer.ChangeAnimationOptions.Stop);
         }
 
-        public override void ReceiveMessageRecursive(Message messageToReceive)
-        {
-            switch(messageToReceive.Type)
-            {
-                case Message.MessageType.OnChunkModified:
-                    HasMoved = true;
-                    break;
-            }
-
-
-            base.ReceiveMessageRecursive(messageToReceive);
-        }
-
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             AnimPlayer.Update(gameTime, !DrawSilhouette); // Can't use instancing if we want the silhouette.

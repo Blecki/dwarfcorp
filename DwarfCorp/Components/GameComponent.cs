@@ -152,6 +152,7 @@ namespace DwarfCorp
             }
         }
         
+        // Todo: Kill
         public virtual void ReceiveMessageLater(Message message)
         {
             if (Manager == null)
@@ -162,6 +163,7 @@ namespace DwarfCorp
             Manager.ReceiveMessageLater(this, message);
         }
 
+        // Todo: Kill
         public virtual void ReceiveMessageRecursive(Message messageToReceive)
         {
             var children = Children.ToArray();

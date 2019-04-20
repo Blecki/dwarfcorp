@@ -8,22 +8,22 @@ namespace DwarfCorp
 {
     public partial class VoxelChunk
     {
+        public GlobalChunkCoordinate ID;
+        public GlobalVoxelCoordinate Origin;
+        public ChunkManager Manager { get; set; }
         public VoxelData Data { get; set; }
+
+        private VoxelListPrimitive Primitive = null;
         public int RenderCycleWhenLastVisible = 0;
         public bool Visible = false;
-
-        public VoxelListPrimitive Primitive = null;
-        public Dictionary<LiquidType, LiquidPrimitive> Liquids { get; set; }
-        public bool NewLiquidReceived = false;
-        
-        public GlobalVoxelCoordinate Origin { get; set; }
-        public ChunkManager Manager { get; set; }
-
         public Mutex PrimitiveMutex { get; set; }
 
+        private List<NewInstanceData>[] MoteRecords = new List<NewInstanceData>[VoxelConstants.ChunkSizeY];
+        public Dictionary<LiquidType, LiquidPrimitive> Liquids { get; set; }
+        public bool NewLiquidReceived = false;
+                
         public List<DynamicLight> DynamicLights { get; set; }
 
-        public GlobalChunkCoordinate ID { get; set; }
 
         public void InvalidateSlice(int LocalY)
         {
@@ -43,7 +43,11 @@ namespace DwarfCorp
                 Primitive.Dispose();
             Primitive = null;
             for (var y = 0; y < VoxelConstants.ChunkSizeY; ++y)
+            {
                 Data.SliceCache[y] = null;
+                MoteRecords[y] = null;
+            }
+           
             PrimitiveMutex.ReleaseMutex();
         }
 
@@ -110,11 +114,6 @@ namespace DwarfCorp
                 Primitive.Dispose();
             Primitive = primitive;
             PrimitiveMutex.ReleaseMutex();
-
-            // Todo: This can be tossed over into the other voxel event system and handled there.
-            var changedMessage = new Message(Message.MessageType.OnChunkModified, "Chunk Modified");
-            foreach (var c in Manager.World.EnumerateIntersectingObjects(GetBoundingBox(), CollisionType.Both))
-                c.ReceiveMessageLater(changedMessage);
         }
 
         public void Destroy()

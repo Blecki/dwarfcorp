@@ -710,9 +710,6 @@ namespace DwarfCorp
         {
             switch (messageToReceive.Type)
             {
-                case Message.MessageType.OnChunkModified:
-                    break;
-
                 case Message.MessageType.OnHurt:
                     NoiseMaker.MakeNoise("Hurt", AI.Position);
                     Sprite.Blink(0.5f);

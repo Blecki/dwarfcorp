@@ -24,8 +24,8 @@ namespace DwarfCorp.Generation
             {
                 for (var dz = 0; dz < Height; dz++)
                 {
-                    var worldPos = new Vector3(dx, (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1, dz);
-                    var baseVoxel = VoxelHelpers.FindFirstVoxelBelow(Settings.World.ChunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(worldPos)));
+                    var worldPos = new Vector3(X + dx, (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1, Z + dz);
+                    var baseVoxel = VoxelHelpers.FindFirstVoxelBelowIncludingWater(Settings.World.ChunkManager.CreateVoxelHandle(GlobalVoxelCoordinate.FromVector3(worldPos)));
 
                     if (!baseVoxel.IsValid) continue;
 

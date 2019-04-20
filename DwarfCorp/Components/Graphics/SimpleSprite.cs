@@ -52,19 +52,6 @@ namespace DwarfCorp
             this.Frame = Frame;
         }
 
-        // Perhaps should be handled in base class?
-        public override void ReceiveMessageRecursive(Message messageToReceive)
-        {
-            switch (messageToReceive.Type)
-            {
-                case Message.MessageType.OnChunkModified:
-                    HasMoved = true;
-                    break;
-            }
-
-            base.ReceiveMessageRecursive(messageToReceive);
-        }
-
         private void PrepareInstanceData(Camera Camera)
         {
             if (InstanceData == null) InstanceData = new NewInstanceData("combined-tiled-instances", Matrix.Identity, Color.White);

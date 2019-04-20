@@ -15,7 +15,6 @@ namespace DwarfCorp
         //  should ever access this data.
         public byte[] Types;                // Storage per-voxel
         public byte[] Grass;
-        //public byte[] Decals;
         public byte[] _Water;
         public byte[] RampsSunlightExploredPlayerBuilt;
 

@@ -458,16 +458,16 @@ namespace DwarfCorp
 
         public override void ReceiveMessageRecursive(Message messageToReceive)
         {
-            switch (messageToReceive.Type)
-            {
-                case Message.MessageType.OnChunkModified:
-                    overrideSleepThisFrame = true;
-                    IsSleeping = false;
-                    SleepTimer.Reset();
-                    HandleCollisions(true, neighborHood, World.ChunkManager, DwarfTime.Dt);
-                    queryNeighborhood = false;
-                    break;
-            }
+            //switch (messageToReceive.Type)
+            //{
+            //    case Message.MessageType.OnChunkModified:
+            //        overrideSleepThisFrame = true;
+            //        IsSleeping = false;
+            //        SleepTimer.Reset();
+            //        HandleCollisions(true, neighborHood, World.ChunkManager, DwarfTime.Dt);
+            //        queryNeighborhood = false;
+            //        break;
+            //}
 
 
             base.ReceiveMessageRecursive(messageToReceive);

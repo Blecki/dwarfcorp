@@ -16,8 +16,9 @@ namespace DwarfCorp
     public class ChunkRenderer
     {
         public List<VoxelChunk> RenderList = new List<VoxelChunk>();
-        private readonly Timer visibilityChunksTimer = new Timer(0.03f, false, Timer.TimerMode.Real); // This timer is so quick, what's the point?
+        public List<VoxelChunk> LiveVoxelList = new List<VoxelChunk>();
         private int RenderCycle = 1;
+
 
         public ChunkData ChunkData;
 
@@ -26,8 +27,6 @@ namespace DwarfCorp
             ChunkData = Data;
 
             GameSettings.Default.VisibilityUpdateTime = 0.05f;
-            visibilityChunksTimer = new Timer(GameSettings.Default.VisibilityUpdateTime, false, Timer.TimerMode.Real);
-            visibilityChunksTimer.HasTriggered = true;
         }
 
         public void RenderForMinimap(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Shader effect, Matrix worldMatrix, Texture2D tilemap)
@@ -129,9 +128,6 @@ namespace DwarfCorp
 
         public void Update(DwarfTime gameTime, Camera camera, GraphicsDevice g)
         {
-            visibilityChunksTimer.Update(gameTime);
-            if (visibilityChunksTimer.HasTriggered)
-            {
                 
                 var visibleSet = new HashSet<VoxelChunk>();
                 GetChunksIntersecting(camera.GetDrawFrustum(), visibleSet);
@@ -155,7 +151,6 @@ namespace DwarfCorp
 
                 RenderList = visibleSet.ToList();
                 RenderCycle += 1;
-            }
         }
     }
 }

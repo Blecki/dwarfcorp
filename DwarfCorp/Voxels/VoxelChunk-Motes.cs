@@ -42,8 +42,6 @@ namespace DwarfCorp
             return new NewInstanceData(Name, Matrix.CreateScale(Scale) * Matrix.CreateRotationY(Scale * Scale) * Matrix.CreateTranslation(Position), Color);
         }
         
-        private List<NewInstanceData>[] MoteRecords = new List<NewInstanceData>[VoxelConstants.ChunkSizeY];
-
         public void RebuildMoteLayerIfNull(int LocalY)
         {
             if (MoteRecords[LocalY] == null)

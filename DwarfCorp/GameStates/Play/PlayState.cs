@@ -434,6 +434,7 @@ namespace DwarfCorp.GameStates
                 statsDisplay.Lines.Add(String.Format("{0} ENTITIES", World.ComponentManager.RootComponent.Children.Count));
                 statsDisplay.Lines.Add(String.Format("{0} INSTANCES DRAWN", World.InstanceRenderer.InstancesDrawn));
                 statsDisplay.Lines.Add(string.Format("{0} MEMORY", BytesToString(global::System.GC.GetTotalMemory(false))));
+                statsDisplay.Lines.Add(String.Format("{0} LIVE CHUNKS", World.ChunkManager.TotalLiveChunks));
                 statsDisplay.Invalidate();
 
                 // Todo: Employee AI debug display

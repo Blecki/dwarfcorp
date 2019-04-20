@@ -33,18 +33,6 @@ namespace DwarfCorp.SteamPipes
             return true;
         }
         
-        public override void ReceiveMessageRecursive(Message messageToReceive)
-        {
-            switch (messageToReceive.Type)
-            {
-                case Message.MessageType.OnChunkModified:
-                    HasMoved = true;
-                    break;
-            }
-
-            base.ReceiveMessageRecursive(messageToReceive);
-        }
-
         public SteamPoweredObject()
         {
             CollisionType = CollisionType.Static;
