@@ -35,6 +35,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace DwarfCorp
 {
@@ -74,6 +75,35 @@ namespace DwarfCorp
                 OctTree.EnumerateItems(box, hash, Filter);
             PerformanceMonitor.PopFrame();
             return hash;
+        }
+
+        public IEnumerable<GlobalChunkCoordinate> EnumerateChunkIDsInBounds(BoundingBox Box)
+        {
+            var minChunkID = GlobalVoxelCoordinate.FromVector3(Box.Min).GetGlobalChunkCoordinate();
+            var maxChunkID = GlobalVoxelCoordinate.FromVector3(Box.Max).GetGlobalChunkCoordinate();
+
+            for (var x = minChunkID.X; x <= maxChunkID.X; ++x)
+                for (var y = minChunkID.Y; y < maxChunkID.Y; ++y)
+                    for (var z = minChunkID.Z; z < maxChunkID.Z; ++z)
+                        yield return new GlobalChunkCoordinate(x, y, z);
+        }
+
+        public IEnumerable<VoxelChunk> EnumerateChunksInBounds(BoundingBox Box)
+        {
+            return EnumerateChunkIDsInBounds(Box)
+                .Where(id => ChunkManager.ChunkData.CheckBounds(id))
+                .Select(id => ChunkManager.ChunkData.GetChunk(id));
+        }
+
+        public IEnumerable<VoxelChunk> EnumerateChunksInBounds(BoundingFrustum Frustum)
+        {
+            return EnumerateChunksInBounds(MathFunctions.GetBoundingBox(Frustum.GetCorners()))
+                .Where(c =>
+                {
+                    var min = new GlobalVoxelCoordinate(c.ID, new LocalVoxelCoordinate(0, 0, 0));
+                    var box = new BoundingBox(min.ToVector3(), min.ToVector3() + new Vector3(VoxelConstants.ChunkSizeX, VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeZ));
+                    return Frustum.Contains(box) != ContainmentType.Disjoint;
+                });
         }
     }
 }
