@@ -196,7 +196,6 @@ namespace DwarfCorp
             public int NumMotes = 512;
             public bool InvertZoom = false;
             public float ChunkRebuildTime = 0.5f;
-            public float ChunkUnloadDistance = 250.0f;
             public bool DrawDebugData = false;
             public float VisibilityUpdateTime = 0.1f;
             public float ChunkGenerateTime = 0.5f;

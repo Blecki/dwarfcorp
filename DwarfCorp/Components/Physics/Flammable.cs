@@ -74,8 +74,7 @@ namespace DwarfCorp
         {
             if (Heat > Flashpoint)
             {
-                HashSet<GameComponent> insideBodies = new HashSet<GameComponent>();
-                World.OctTree.EnumerateItems(Body.GetBoundingBox(), insideBodies);
+                var insideBodies = World.EnumerateIntersectingObjects(Body.GetBoundingBox());
 
                 foreach (var body in insideBodies.Where(b => b != Parent && b.Active && b.Parent == Manager.RootComponent))
                 {
@@ -101,8 +100,8 @@ namespace DwarfCorp
                     {
                         if (MathFunctions.RandEvent(0.1f))
                         {
-                            HashSet<GameComponent> existingItems = new HashSet<GameComponent>();
-                            World.OctTree.EnumerateItems(voxel.GetBoundingBox().Expand(-0.1f), existingItems);
+                            var existingItems = World.EnumerateIntersectingObjects(voxel.GetBoundingBox().Expand(-0.1f));
+
 
                             if (!existingItems.Any(e => e is Fire))
                             {
@@ -117,16 +116,13 @@ namespace DwarfCorp
                     {
                         if (MathFunctions.RandEvent(0.1f))
                         {
-                            HashSet<GameComponent> existingItems = new HashSet<GameComponent>();
                             var box = voxel.GetBoundingBox().Expand(-0.1f);
-                            box.Min += Vector3.One;
+                            box.Min += Vector3.One; // Todo: Why shifting one on every axis?
                             box.Max += Vector3.One;
-                            World.OctTree.EnumerateItems(box, existingItems);
-                            if (!existingItems.Any(e => e is Fire))
-                            {
+                            if (!World.EnumerateIntersectingObjects(box).Any(e => e is Fire))
                                 EntityFactory.CreateEntity<Fire>("Fire", box.Center());
-                            }
                         }
+
                         if (MathFunctions.RandEvent(0.5f))
                         {
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_env_lava_spread, voxel.GetBoundingBox().Center(), true, 1.0f);

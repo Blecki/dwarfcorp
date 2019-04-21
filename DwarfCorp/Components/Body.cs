@@ -195,7 +195,7 @@ namespace DwarfCorp
                     {
                         RemoveFromOctTree();
                         if (!IsDead)
-                            CachedOcttreeNode = Manager.World.OctTree.Add(this, BoundingBox);
+                            CachedOcttreeNode = Manager.World.AddGameObject(this, BoundingBox);
                     }
                     else // Drill down to the lowest level of the tree possible,
                     {
@@ -278,7 +278,7 @@ namespace DwarfCorp
         private void RemoveFromOctTree()
         {
             if (Manager != null)
-                Manager.World.OctTree.Remove(this, LastBounds);
+                Manager.World.RemoveGameObject(this, LastBounds);
             CachedOcttreeNode = null;
         }
     }

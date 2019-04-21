@@ -166,8 +166,7 @@ namespace DwarfCorp
                
                 if (!isSeedling && MathFunctions.RandEvent(0.01f))
                 {
-                    HashSet<GameComponent> bodies = new HashSet<GameComponent>();
-                    World.OctTree.EnumerateItems(GetBoundingBox().Expand(2), bodies);
+                    var bodies = World.EnumerateIntersectingObjects(GetBoundingBox().Expand(2));
 
                     int numPlants = bodies.Count(b => b is Plant);
                     if (numPlants < 10)

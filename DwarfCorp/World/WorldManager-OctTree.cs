@@ -44,6 +44,16 @@ namespace DwarfCorp
         [JsonIgnore]
         public OctTreeNode<GameComponent> OctTree = null;
 
+        public void RemoveGameObject(GameComponent GameObject, BoundingBox LastBounds)
+        {
+            OctTree.Remove(GameObject, LastBounds);
+        }
+
+        public OctTreeNode<GameComponent> AddGameObject(GameComponent GameObject, BoundingBox LastBounds)
+        {
+            return OctTree.Add(GameObject, LastBounds);
+        }
+
         public IEnumerable<GameComponent> EnumerateIntersectingObjects(BoundingBox box, CollisionType queryType)
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects");

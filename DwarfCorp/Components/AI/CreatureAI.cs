@@ -512,8 +512,7 @@ namespace DwarfCorp
         private Timer AutoGatherTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
         public void AutoGather()
         {
-            HashSet<GameComponent> intersections = new HashSet<GameComponent>();
-            World.OctTree.EnumerateItems(Physics.BoundingBox.Expand(3.0f), intersections);
+            var intersections = World.EnumerateIntersectingObjects(Physics.BoundingBox.Expand(3.0f));
 
             foreach (var body in intersections.OfType<ResourceEntity>())
             {

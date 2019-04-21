@@ -216,7 +216,7 @@ namespace DwarfCorp
             Components.Remove(component.GlobalID);
 
             if (component is GameComponent)
-                World.OctTree.Remove((component as GameComponent), (component as GameComponent).GetBoundingBox());
+                World.RemoveGameObject((component as GameComponent), (component as GameComponent).GetBoundingBox());
 
             if (component is MinimapIcon)
                 MinimapIcons.Remove(component as MinimapIcon);
