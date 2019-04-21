@@ -63,7 +63,7 @@ namespace DwarfCorp
 
         }
 
-        public override void OnMouseOver(IEnumerable<Body> bodies)
+        public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
             if (bodies == null)
                 return;
@@ -101,7 +101,7 @@ namespace DwarfCorp
         public override void Render3D(DwarfGame game, DwarfTime time)
         {
             NamedImageFrame frame = new NamedImageFrame("newgui/pointers", 32, 5, 0);
-            foreach (Body tree in Player.BodySelector.CurrentBodies)
+            foreach (GameComponent tree in Player.BodySelector.CurrentBodies)
             {
                 if (tree.Tags.Contains("Vegetation"))
                 {
@@ -121,7 +121,7 @@ namespace DwarfCorp
 
         }
 
-        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
             var plantsPicked = bodies.Where(c => c.Tags.Contains("Vegetation"));
 

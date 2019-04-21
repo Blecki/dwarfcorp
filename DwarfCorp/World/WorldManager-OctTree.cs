@@ -42,21 +42,21 @@ namespace DwarfCorp
     public partial class WorldManager
     {
         [JsonIgnore]
-        public OctTreeNode<Body> OctTree = null;
+        public OctTreeNode<GameComponent> OctTree = null;
 
-        public IEnumerable<Body> EnumerateIntersectingObjects(BoundingBox box, CollisionType queryType)
+        public IEnumerable<GameComponent> EnumerateIntersectingObjects(BoundingBox box, CollisionType queryType)
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects");
-            var hash = new HashSet<Body>();
+            var hash = new HashSet<GameComponent>();
             OctTree.EnumerateItems(box, hash, t => (t.CollisionType & queryType) == t.CollisionType);
             PerformanceMonitor.PopFrame();
             return hash;
         }
 
-        public IEnumerable<Body> EnumerateIntersectingObjects(BoundingFrustum Frustum, Func<Body, bool> Filter = null)
+        public IEnumerable<GameComponent> EnumerateIntersectingObjects(BoundingFrustum Frustum, Func<GameComponent, bool> Filter = null)
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateFrustum");
-            var hash = new HashSet<Body>();
+            var hash = new HashSet<GameComponent>();
             if (Filter == null)
                 OctTree.EnumerateItems(Frustum, hash);
             else
@@ -65,10 +65,10 @@ namespace DwarfCorp
             return hash;
         }
 
-        public IEnumerable<Body> EnumerateIntersectingObjects(BoundingBox box, Func<Body, bool> Filter = null)
+        public IEnumerable<GameComponent> EnumerateIntersectingObjects(BoundingBox box, Func<GameComponent, bool> Filter = null)
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects w/ Filter");
-            var hash = new HashSet<Body>();
+            var hash = new HashSet<GameComponent>();
             if (Filter == null)
                 OctTree.EnumerateItems(box, hash);
             else

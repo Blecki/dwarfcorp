@@ -12,14 +12,14 @@ namespace DwarfCorp.Gui.Widgets
     public class ContextMenu : Widget
     {
         public List<ContextCommands.ContextCommand> Commands;
-        public Body Body;
-        public List<Body> MultiBody;
+        public GameComponent Body;
+        public List<GameComponent> MultiBody;
 
         public WorldManager World;
         public int Width;
         public override void Construct()
         {
-            var text = Body != null ? DwarfSelectorTool.GetMouseOverText(new List<Body>() { Body }) : "Selected Objects";
+            var text = Body != null ? DwarfSelectorTool.GetMouseOverText(new List<GameComponent>() { Body }) : "Selected Objects";
             var font = Root.GetTileSheet("font10");
             var size = font.MeasureString(text).Scale(TextSize);
             Width = Math.Max(size.X + 32, 128);
@@ -94,8 +94,8 @@ namespace DwarfCorp.Gui.Widgets
     public class HorizontalContextMenu : Widget
     {
         public List<ContextCommands.ContextCommand> Commands;
-        public Body Body;
-        public List<Body> MultiBody;
+        public GameComponent Body;
+        public List<GameComponent> MultiBody;
         public Action ClickAction;
 
         public WorldManager World;

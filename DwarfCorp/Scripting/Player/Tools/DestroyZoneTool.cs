@@ -112,7 +112,7 @@ namespace DwarfCorp
             Player.VoxSelector.Clear();
         }
 
-        public override void OnMouseOver(IEnumerable<Body> bodies)
+        public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
             
         }
@@ -157,7 +157,7 @@ namespace DwarfCorp
 
 
 
-        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
             
         }

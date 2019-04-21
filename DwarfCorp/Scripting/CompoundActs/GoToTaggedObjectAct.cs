@@ -63,7 +63,7 @@ namespace DwarfCorp
 
         public IEnumerable<Status> TeleportFunction()
         {
-            Body closestItem = Creature.AI.Blackboard.GetData<Body>(ObjectName);
+            GameComponent closestItem = Creature.AI.Blackboard.GetData<GameComponent>(ObjectName);
 
             if (closestItem != null)
             {

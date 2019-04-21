@@ -11,12 +11,12 @@ namespace DwarfCorp.ContextCommands
         public string Description = "";
         public Gui.TileReference Icon;
 
-        public virtual bool CanBeAppliedTo(Body Entity, WorldManager World)
+        public virtual bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
             return false;
         }
 
-        public virtual void Apply(Body Entity, WorldManager World)
+        public virtual void Apply(GameComponent Entity, WorldManager World)
         {
 
         }

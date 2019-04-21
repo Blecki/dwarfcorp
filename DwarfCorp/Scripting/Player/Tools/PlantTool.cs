@@ -92,7 +92,7 @@ namespace DwarfCorp
                 {
                     Drawer3D.DrawBox(boundingBox, Color.Red, 0.03f, false);
                     foreach (var entity in entities)
-                        Drawer3D.DrawBox((entity as Body).GetBoundingBox(), Color.Yellow, 0.03f, false);
+                        Drawer3D.DrawBox((entity as GameComponent).GetBoundingBox(), Color.Yellow, 0.03f, false);
                 }
 
                 Player.World.ShowTooltip("There's something in the way.");
@@ -164,12 +164,12 @@ namespace DwarfCorp
             }
         }
 
-        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
 
         }
 
-        public override void OnMouseOver(IEnumerable<Body> bodies)
+        public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
 
         }

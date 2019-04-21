@@ -58,7 +58,7 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> DoMagicResearch()
         {
-            var obj = Agent.Blackboard.GetData<Body>("Research");
+            var obj = Agent.Blackboard.GetData<GameComponent>("Research");
             if (obj == null)
             {
                 Agent.SetMessage("Failed to find magical object for research purposes.");

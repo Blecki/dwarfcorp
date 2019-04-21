@@ -43,7 +43,7 @@ namespace DwarfCorp
     /// </summary>
     internal class GatherItemTask : Task
     {
-        public Body EntityToGather = null;
+        public GameComponent EntityToGather = null;
         public string ZoneType = "Stockpile";
 
         public GatherItemTask()
@@ -53,7 +53,7 @@ namespace DwarfCorp
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
-        public GatherItemTask(Body entity)
+        public GatherItemTask(GameComponent entity)
         {
             EntityToGather = entity;
             Name = "Gather Entity: " + entity.Name + " " + entity.GlobalID;

@@ -67,7 +67,7 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            Body closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true, Agent);
+            GameComponent closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true, Agent);
             Zone closestZone = Agent.Faction.GetNearestRoom(Agent.Position);
            
             if (!Agent.Status.Energy.IsSatisfied() && closestItem != null)
@@ -140,7 +140,7 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            Body closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true, Agent);
+            GameComponent closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true, Agent);
 
 
             if (closestItem != null && !Creature.Status.Health.IsCritical())

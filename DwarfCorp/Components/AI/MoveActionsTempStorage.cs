@@ -9,6 +9,6 @@ namespace DwarfCorp
     public class MoveActionTempStorage
     {
         public VoxelHandle[,,] Neighborhood = new VoxelHandle[3, 3, 3];
-        public HashSet<Body> NeighborObjects = new HashSet<Body>();
+        public HashSet<GameComponent> NeighborObjects = new HashSet<GameComponent>();
     }
 }

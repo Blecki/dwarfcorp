@@ -59,7 +59,7 @@ namespace DwarfCorp
         public string StashedItemOut { get; set; }
 
         [Newtonsoft.Json.JsonIgnore]
-        public Body Target { get { return GetTarget(); } set { SetTarget(value); } }
+        public GameComponent Target { get { return GetTarget(); } set { SetTarget(value); } }
 
         public StashAct()
         {
@@ -76,12 +76,12 @@ namespace DwarfCorp
             StashedItemOut = stashedItemOut;
         }
 
-        public Body GetTarget()
+        public GameComponent GetTarget()
         {
-            return Agent.Blackboard.GetData<Body>(TargetName);
+            return Agent.Blackboard.GetData<GameComponent>(TargetName);
         }
 
-        public void SetTarget(Body targt)
+        public void SetTarget(GameComponent targt)
         {
             Agent.Blackboard.SetData(TargetName, targt);
         }

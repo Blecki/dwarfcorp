@@ -123,7 +123,7 @@ namespace DwarfCorp
             base.CreateCosmeticChildren(manager);
         }
 
-        void Sensor_OnSensed(IEnumerable<Body> sensed)
+        void Sensor_OnSensed(IEnumerable<GameComponent> sensed)
         {
             if (!Active)
                 return;
@@ -133,7 +133,7 @@ namespace DwarfCorp
                 return;
             }
 
-            foreach (Body body in sensed)
+            foreach (GameComponent body in sensed)
             {
                 var creature = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
 

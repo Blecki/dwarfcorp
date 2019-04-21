@@ -512,7 +512,7 @@ namespace DwarfCorp
         private Timer AutoGatherTimer = new Timer(MathFunctions.Rand() * 5 + 3, false);
         public void AutoGather()
         {
-            HashSet<Body> intersections = new HashSet<Body>();
+            HashSet<GameComponent> intersections = new HashSet<GameComponent>();
             World.OctTree.EnumerateItems(Physics.BoundingBox.Expand(3.0f), intersections);
 
             foreach (var body in intersections.OfType<ResourceEntity>())
@@ -1128,7 +1128,7 @@ namespace DwarfCorp
        
 
         /// <summary> Tell the creature to kill the given body. </summary>
-        public void Kill(Body entity)
+        public void Kill(GameComponent entity)
         {
             var killTask = new KillEntityTask(entity, KillEntityTask.KillType.Auto) { ReassignOnDeath = false } ;
             if (!Tasks.Contains(killTask))

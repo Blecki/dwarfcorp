@@ -114,13 +114,13 @@ namespace DwarfCorp
                 yield break;
             }
 
-            List<Body> createdItems = Creature.Inventory.RemoveAndCreate(Resource, Inventory.RestockType.RestockResource);
+            List<GameComponent> createdItems = Creature.Inventory.RemoveAndCreate(Resource, Inventory.RestockType.RestockResource);
             if(createdItems.Count == 0)
             {
                 yield return Status.Success;
             }
 
-            foreach (Body b in createdItems)
+            foreach (GameComponent b in createdItems)
             {
                 if (Zone.AddItem(b))
                 {

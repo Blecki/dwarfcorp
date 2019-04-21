@@ -68,7 +68,7 @@ namespace DwarfCorp.Goals
         public string AnnouncementSound;
         public bool PauseOnAnnouncementDetails;
 
-        protected void Announce(WorldManager world, Body entity, bool zoomToEntity)
+        protected void Announce(WorldManager world, GameComponent entity, bool zoomToEntity)
         {
             if (!String.IsNullOrEmpty(AnnouncementSound))
             {

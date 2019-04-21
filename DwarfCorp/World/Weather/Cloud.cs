@@ -188,7 +188,7 @@ namespace DwarfCorp
 
                 RainDrops[i].IsAlive = false;
 
-                HashSet<Body> hitBodies = new HashSet<Body>();
+                HashSet<GameComponent> hitBodies = new HashSet<GameComponent>();
                 World.OctTree.EnumerateItems(new BoundingBox(RainDrops[i].Pos - Vector3.One, RainDrops[i].Pos + Vector3.One), hitBodies);
 
                 foreach (var body in hitBodies)

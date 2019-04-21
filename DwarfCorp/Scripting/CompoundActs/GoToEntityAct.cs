@@ -45,8 +45,8 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GoToEntityAct : CompoundCreatureAct
     {
-        private Body _entity = null;
-        public Body Entity { get { return Agent.Blackboard.GetData<Body>(EntityName);  } set { _entity = value; Agent.Blackboard.SetData(EntityName, value);} }
+        private GameComponent _entity = null;
+        public GameComponent Entity { get { return Agent.Blackboard.GetData<GameComponent>(EntityName);  } set { _entity = value; Agent.Blackboard.SetData(EntityName, value);} }
         public bool MovingTarget { get; set; }
         public string EntityName { get; set; }
         public PlanAct.PlanType PlanType { get; set; }
@@ -66,7 +66,7 @@ namespace DwarfCorp
             MovingTarget = true;
         }
 
-        public GoToEntityAct(Body entity, CreatureAI creature) :
+        public GoToEntityAct(GameComponent entity, CreatureAI creature) :
             base(creature)
         {
             Name = "Go to entity";
@@ -100,7 +100,7 @@ namespace DwarfCorp
                 }
                 Creature.AI.Blackboard.Erase("EntityVoxel");
                 Act.Status status = SetTargetVoxelFromEntityAct.SetTarget("EntityVoxel", EntityName, Creature);
-                Body entity = Agent.Blackboard.GetData<Body>(EntityName);
+                GameComponent entity = Agent.Blackboard.GetData<GameComponent>(EntityName);
 
                 if (entity == null || entity.IsDead)
                 {

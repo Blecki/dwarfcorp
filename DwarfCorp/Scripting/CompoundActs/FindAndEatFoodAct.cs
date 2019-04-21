@@ -77,7 +77,7 @@ namespace DwarfCorp
 
     public class EatFoodAct : CreatureAct
     {
-        private Body FoodBody = null;
+        private GameComponent FoodBody = null;
 
         public EatFoodAct()
         {
@@ -121,7 +121,7 @@ namespace DwarfCorp
             {
                 if (resourceAmount.Count > 0)
                 {
-                    List<Body> bodies = Agent.Creature.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.Type, 1), 
+                    List<GameComponent> bodies = Agent.Creature.Inventory.RemoveAndCreate(new ResourceAmount(resourceAmount.Type, 1), 
                         Inventory.RestockType.Any);
                     var resource = ResourceLibrary.GetResourceByName(resourceAmount.Type);
                     Agent.Creature.NoiseMaker.MakeNoise("Chew", Agent.Creature.AI.Position);

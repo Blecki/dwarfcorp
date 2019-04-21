@@ -43,7 +43,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class GatherItemAct : CompoundCreatureAct
     {
-        public Body ItemToGather { get; set; }
+        public GameComponent ItemToGather { get; set; }
         public string ItemID { get; set; }
 
         public GatherItemAct()
@@ -122,7 +122,7 @@ namespace DwarfCorp
             Name = "Gather Item";
         }
 
-        public GatherItemAct(CreatureAI agent, Body item) :
+        public GatherItemAct(CreatureAI agent, GameComponent item) :
             base(agent)
         {
             ItemToGather = item;
@@ -143,14 +143,14 @@ namespace DwarfCorp
             {
                 if(ItemToGather == null)
                 {
-                    ItemToGather = Agent.Blackboard.GetData<Body>(ItemID);
+                    ItemToGather = Agent.Blackboard.GetData<GameComponent>(ItemID);
                 }
 
 
                 if(ItemToGather != null)
                 {
                     Tree = new Sequence(
-                        new SetBlackboardData<Body>(Agent, "GatherItem", ItemToGather),
+                        new SetBlackboardData<GameComponent>(Agent, "GatherItem", ItemToGather),
                         new Wrap(AddItemToGatherManager),
                         new GoToEntityAct(ItemToGather, Agent),
                         new StashAct(Agent, StashAct.PickUpType.None, null, "GatherItem", "GatheredResource"),

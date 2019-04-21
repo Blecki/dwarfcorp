@@ -48,13 +48,13 @@ namespace DwarfCorp
     {
         public string Adult { get; set; }
         public DateTime Birthday { get; set; }
-        public Body ParentBody { get; set; }
+        public GameComponent ParentBody { get; set; }
         public BoundingBox PositionConstrain { get; set; }
         public Egg()
         {
         }
 
-        public Egg(Body body, string adult, ComponentManager manager, Vector3 position, BoundingBox positionConstraint) :
+        public Egg(GameComponent body, string adult, ComponentManager manager, Vector3 position, BoundingBox positionConstraint) :
             base(manager)
         {
             UpdateRate = 100;
@@ -74,7 +74,7 @@ namespace DwarfCorp
 
         public void Hatch()
         {
-            var adult = EntityFactory.CreateEntity<Body>(Adult, ParentBody.Position);
+            var adult = EntityFactory.CreateEntity<GameComponent>(Adult, ParentBody.Position);
             if (adult != null)
             {
                 adult.GetRoot().GetComponent<CreatureAI>().PositionConstraint = PositionConstrain;

@@ -59,7 +59,7 @@ namespace DwarfCorp
 
         public static IEnumerable<Act.Status> FindAndReserve(this Creature agent, string tag, string thing)
         {
-            Body closestItem = agent.Faction.FindNearestItemWithTags(tag, agent.AI.Position, true, agent.AI);
+            GameComponent closestItem = agent.Faction.FindNearestItemWithTags(tag, agent.AI.Position, true, agent.AI);
 
             if (closestItem != null)
             {
@@ -76,7 +76,7 @@ namespace DwarfCorp
 
         public static IEnumerable<Act.Status> Reserve(this Creature agent, string thing)
         {
-            Body objectToHit = agent.AI.Blackboard.GetData<Body>(thing);
+            GameComponent objectToHit = agent.AI.Blackboard.GetData<GameComponent>(thing);
 
             if (objectToHit != null && objectToHit.ReservedFor == null && !objectToHit.IsReserved)
             {
@@ -94,7 +94,7 @@ namespace DwarfCorp
                 yield return Act.Status.Success;
                 yield break;
             }
-            Body objectToHit = agent.AI.Blackboard.GetData<Body>(thing);
+            GameComponent objectToHit = agent.AI.Blackboard.GetData<GameComponent>(thing);
 
             if (objectToHit != null && objectToHit.ReservedFor == agent.AI)
             {

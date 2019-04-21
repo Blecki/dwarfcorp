@@ -66,14 +66,14 @@ namespace DwarfCorp
         }
 
 
-        public List<Body> ItemsToGather { get; set; }
+        public List<GameComponent> ItemsToGather { get; set; }
         public List<StockOrder> StockOrders { get; set; }
         public List<StockMoneyOrder> StockMoneyOrders { get; set; } 
 
         public GatherManager(CreatureAI creature)
         {
             Creature = creature;
-            ItemsToGather = new List<Body>();
+            ItemsToGather = new List<GameComponent>();
             StockOrders = new List<StockOrder>();
             StockMoneyOrders = new List<StockMoneyOrder>();
         }

@@ -21,7 +21,7 @@ namespace DwarfCorp
         }
 
         public static void RenderSelectionBuffer(
-            IEnumerable<Body> Renderables,
+            IEnumerable<GameComponent> Renderables,
             DwarfTime time,
             ChunkManager chunks,
             Camera camera,
@@ -30,12 +30,12 @@ namespace DwarfCorp
             Shader effect)
         {
             effect.CurrentTechnique = effect.Techniques["Selection"];
-            foreach (var bodyToDraw in Renderables.OfType<Body>()) // Why does RenderSelectionBuffer belong to Body and not IRenderable?
+            foreach (var bodyToDraw in Renderables.OfType<GameComponent>()) // Why does RenderSelectionBuffer belong to Body and not IRenderable?
                 bodyToDraw.RenderSelectionBuffer(time, chunks, camera, spriteBatch, graphics, effect);
         }
 
         public static void Render(
-            IEnumerable<Body> Renderables,
+            IEnumerable<GameComponent> Renderables,
             DwarfTime gameTime,
             ChunkManager chunks,
             Camera Camera,

@@ -315,7 +315,7 @@ namespace DwarfCorp
 
                     CleanupMinecart();
 
-                    var melee = new MeleeAct(Creature.AI, (Body) Step.InteractObject);
+                    var melee = new MeleeAct(Creature.AI, (GameComponent) Step.InteractObject);
                     melee.Initialize();
                     foreach (var status in melee.Run())
                     {
@@ -336,7 +336,7 @@ namespace DwarfCorp
                         teleporter.CurrentCharges--;
 
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_dwarf_magic_research, Agent.Position, true, 1.0f);
-                    Agent.World.ParticleManager.Trigger("green_flame", (Step.InteractObject as Body).Position, Color.White, 1);
+                    Agent.World.ParticleManager.Trigger("green_flame", (Step.InteractObject as GameComponent).Position, Color.White, 1);
                     Agent.GetRoot().SetFlagRecursive(GameComponent.Flag.Visible, false);
 
                     foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), actionSpeed))

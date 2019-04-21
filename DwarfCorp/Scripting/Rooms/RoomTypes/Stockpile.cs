@@ -37,7 +37,7 @@ namespace DwarfCorp
         protected Stockpile(RoomData Data, Faction Faction, WorldManager World) :
             base(Data, World, Faction)
         {
-            Boxes = new List<Body>();
+            Boxes = new List<GameComponent>();
             Faction.Stockpiles.Add(this);
             ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
             this.Faction = Faction;
@@ -49,7 +49,7 @@ namespace DwarfCorp
         }
 
         private static uint maxID = 0;
-        public List<Body> Boxes { get; set; }
+        public List<GameComponent> Boxes { get; set; }
         public string BoxType = "Crate";
         public Vector3 BoxOffset = Vector3.Zero;
 
@@ -88,7 +88,7 @@ namespace DwarfCorp
             return WhitelistResources.Count == 0 || WhitelistResources.Any(tag => resource.Tags.Any(otherTag => otherTag == tag));
         }
 
-        public void KillBox(Body component)
+        public void KillBox(GameComponent component)
         {
             ZoneBodies.Remove(component);
             EaseMotion deathMotion = new EaseMotion(0.8f, component.LocalTransform, component.LocalTransform.Translation + new Vector3(0, -1, 0));
@@ -105,7 +105,7 @@ namespace DwarfCorp
                 Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f) + BoxOffset;
                 Vector3 endPos = pos + new Vector3(0.0f, 0.9f, 0.0f) + BoxOffset;
 
-                Body crate = EntityFactory.CreateEntity<Body>(BoxType, startPos);
+                GameComponent crate = EntityFactory.CreateEntity<GameComponent>(BoxType, startPos);
                 crate.AnimationQueue.Add(new EaseMotion(0.8f, crate.LocalTransform, endPos));
                 Boxes.Add(crate);
                 AddBody(crate, false);
@@ -136,7 +136,7 @@ namespace DwarfCorp
 
             if (Voxels.Count == 0)
             {
-                foreach(Body component in Boxes)
+                foreach(GameComponent component in Boxes)
                 {
                     KillBox(component);
                 }
@@ -165,7 +165,7 @@ namespace DwarfCorp
             }
         }
         
-        public override bool AddItem(Body component)
+        public override bool AddItem(GameComponent component)
         {
             if (component.Tags.Count == 0)
             {

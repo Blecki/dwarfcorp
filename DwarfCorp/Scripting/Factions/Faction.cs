@@ -56,7 +56,7 @@ namespace DwarfCorp
         public Economy Economy { get; set; }
         public List<TradeEnvoy> TradeEnvoys { get; set; }
         public List<WarParty> WarParties { get; set; }
-        public List<Body> OwnedObjects { get; set; }
+        public List<GameComponent> OwnedObjects { get; set; }
         public List<Stockpile> Stockpiles { get; set; }
         public List<CreatureAI> Minions { get; set; }
         public RoomBuilder RoomBuilder { get; set; }
@@ -137,7 +137,7 @@ namespace DwarfCorp
             Stockpiles = new List<Stockpile>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
-            OwnedObjects = new List<Body>();
+            OwnedObjects = new List<GameComponent>();
             RoomBuilder = new RoomBuilder(this, world);
             IsRaceFaction = false;
             TradeMoney = 0.0m;
@@ -152,7 +152,7 @@ namespace DwarfCorp
             Stockpiles = new List<Stockpile>();
             TradeEnvoys = new List<TradeEnvoy>();
             WarParties = new List<WarParty>();
-            OwnedObjects = new List<Body>();
+            OwnedObjects = new List<GameComponent>();
             IsRaceFaction = false;
             TradeMoney = 0.0m;
             GoodWill = descriptor.GoodWill;
@@ -536,12 +536,12 @@ namespace DwarfCorp
             return Treasurys.Any(s => s.IsBuilt && !s.IsFull());
         }
 
-        public Body FindNearestItemWithTags(string tag, Vector3 location, bool filterReserved, GameComponent queryObject)
+        public GameComponent FindNearestItemWithTags(string tag, Vector3 location, bool filterReserved, GameComponent queryObject)
         {
-            Body closestItem = null;
+            GameComponent closestItem = null;
             float closestDist = float.MaxValue;
 
-            foreach (Body i in OwnedObjects)
+            foreach (GameComponent i in OwnedObjects)
             {
                 if (i == null || i.IsDead || (i.IsReserved && filterReserved && i.ReservedFor != queryObject) || !(i.Tags.Any(t => tag == t))) continue;
                 float d = (i.GlobalTransform.Translation - location).LengthSquared();
@@ -883,8 +883,8 @@ namespace DwarfCorp
             {
                 foreach (Vector3 vec in positions)
                 {
-                    Body newEntity =
-                        EntityFactory.CreateEntity<Body>(resources.Type + " Resource",
+                    GameComponent newEntity =
+                        EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource",
                             vec + MathFunctions.RandVector3Cube() * 0.5f);
 
                     TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f),
@@ -965,8 +965,8 @@ namespace DwarfCorp
                 {
                     foreach (Vector3 vec in positions)
                     {
-                        Body newEntity =
-                            EntityFactory.CreateEntity<Body>(resource.Type + " Resource",
+                        GameComponent newEntity =
+                            EntityFactory.CreateEntity<GameComponent>(resource.Type + " Resource",
                                 vec + MathFunctions.RandVector3Cube() * 0.5f);
 
                         TossMotion toss = new TossMotion(1.0f + MathFunctions.Rand(0.1f, 0.2f),
@@ -984,7 +984,7 @@ namespace DwarfCorp
             return true;
         }
 
-        void toss_OnComplete(Body entity)
+        void toss_OnComplete(GameComponent entity)
         {
             entity.Die();
 
@@ -1042,7 +1042,7 @@ namespace DwarfCorp
             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_positive_generic, 0.15f);
         }
 
-        public Body DispatchBalloon()
+        public GameComponent DispatchBalloon()
         {
             List<Room> rooms = GetRooms().Where(room => room.RoomData.Name == "Balloon Port").ToList();
 
@@ -1055,14 +1055,14 @@ namespace DwarfCorp
             return Balloon.CreateBalloon(pos + new Vector3(0, 1000, 0), pos + Vector3.UnitY * 15, World.ComponentManager, this);
         }
 
-        public List<Body> GenerateRandomSpawn(int numCreatures, Vector3 position)
+        public List<GameComponent> GenerateRandomSpawn(int numCreatures, Vector3 position)
         {
             if (Race.CreatureTypes.Count == 0)
             {
-                return new List<Body>();
+                return new List<GameComponent>();
             }
 
-            List<Body> toReturn = new List<Body>();
+            List<GameComponent> toReturn = new List<GameComponent>();
             for (int i = 0; i < numCreatures; i++)
             {
                 string creature = Race.CreatureTypes[MathFunctions.Random.Next(Race.CreatureTypes.Count)];
@@ -1072,7 +1072,7 @@ namespace DwarfCorp
                     World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(position + offset)));
                 if (voxelUnder.IsValid)
                 {
-                    var body = EntityFactory.CreateEntity<Body>(creature, voxelUnder.WorldPosition + new Vector3(0.5f, 1, 0.5f));
+                    var body = EntityFactory.CreateEntity<GameComponent>(creature, voxelUnder.WorldPosition + new Vector3(0.5f, 1, 0.5f));
                     var ai = body.EnumerateAll().OfType<CreatureAI>().FirstOrDefault();
 
                     if (ai != null)

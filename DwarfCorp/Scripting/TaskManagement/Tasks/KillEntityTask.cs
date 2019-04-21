@@ -53,7 +53,7 @@ namespace DwarfCorp
             Attack,
             Auto
         }
-        public Body EntityToKill = null;
+        public GameComponent EntityToKill = null;
         public KillType Mode { get; set; }
 
         public KillEntityTask()
@@ -62,7 +62,7 @@ namespace DwarfCorp
             BoredomIncrease = GameSettings.Default.Boredom_ExcitingTask;
         }
 
-        public KillEntityTask(Body entity, KillType type)
+        public KillEntityTask(GameComponent entity, KillType type)
         {
             MaxAssignable = 3;
             Mode = type;

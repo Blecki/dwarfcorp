@@ -70,11 +70,11 @@ namespace DwarfCorp
         }
 
 
-        public void CheckSurroundings(Body Body, DwarfTime gameTime, ChunkManager chunks)
+        public void CheckSurroundings(GameComponent Body, DwarfTime gameTime, ChunkManager chunks)
         {
             if (Heat > Flashpoint)
             {
-                HashSet<Body> insideBodies = new HashSet<Body>();
+                HashSet<GameComponent> insideBodies = new HashSet<GameComponent>();
                 World.OctTree.EnumerateItems(Body.GetBoundingBox(), insideBodies);
 
                 foreach (var body in insideBodies.Where(b => b != Parent && b.Active && b.Parent == Manager.RootComponent))
@@ -101,7 +101,7 @@ namespace DwarfCorp
                     {
                         if (MathFunctions.RandEvent(0.1f))
                         {
-                            HashSet<Body> existingItems = new HashSet<Body>();
+                            HashSet<GameComponent> existingItems = new HashSet<GameComponent>();
                             World.OctTree.EnumerateItems(voxel.GetBoundingBox().Expand(-0.1f), existingItems);
 
                             if (!existingItems.Any(e => e is Fire))
@@ -117,7 +117,7 @@ namespace DwarfCorp
                     {
                         if (MathFunctions.RandEvent(0.1f))
                         {
-                            HashSet<Body> existingItems = new HashSet<Body>();
+                            HashSet<GameComponent> existingItems = new HashSet<GameComponent>();
                             var box = voxel.GetBoundingBox().Expand(-0.1f);
                             box.Min += Vector3.One;
                             box.Max += Vector3.One;
@@ -144,7 +144,7 @@ namespace DwarfCorp
             }
         }
 
-        public int GetNumTrigger(Body Body)
+        public int GetNumTrigger(GameComponent Body)
         {
             return
                 (int)
@@ -154,7 +154,7 @@ namespace DwarfCorp
 
         private void CreateFlameSprite(Vector3 pos)
         {
-            var tf = Matrix.CreateTranslation(pos - (Parent as Body).Position);
+            var tf = Matrix.CreateTranslation(pos - (Parent as GameComponent).Position);
             SoundManager.PlaySound(ContentPaths.Audio.fire, pos, true, 1.0f);
             var sprite = Parent.AddChild(new AnimatedSprite(Manager, "Flame", tf)
             {
@@ -178,7 +178,7 @@ namespace DwarfCorp
         {
             if (!Active) return;
             base.Update(gameTime, chunks, camera);
-            var body = Parent as Body;
+            var body = Parent as GameComponent;
             global::System.Diagnostics.Debug.Assert(body != null);
 
             DamageTimer.Update(gameTime);
@@ -245,7 +245,7 @@ namespace DwarfCorp
     /// Standalone fire entity for spreading in the world.
     /// </summary>
     [JsonObject(IsReference =true)]
-    public class Fire : Body
+    public class Fire : GameComponent
     {
         public Timer LifeTimer = new Timer(5.0f, true);
 

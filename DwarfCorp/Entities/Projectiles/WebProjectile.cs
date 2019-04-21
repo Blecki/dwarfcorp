@@ -50,7 +50,7 @@ namespace DwarfCorp
                 Manager,
                 Position,
                 Data.GetData("Velocity", Vector3.Up * 10 * MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)),
-                Data.GetData<Body>("Target", null));
+                Data.GetData<GameComponent>("Target", null));
         }
 
         public WebProjectile()
@@ -58,7 +58,7 @@ namespace DwarfCorp
 
         }
 
-        public WebProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
+        public WebProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, GameComponent target) :
             base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Acid }, 0.25f, ContentPaths.Entities.Animals.Spider.webshot, "puff", ContentPaths.Audio.whoosh, target)
         {
             HitAnimation = AnimationLibrary.CreateSimpleAnimation(ContentPaths.Entities.Animals.Spider.webstick);

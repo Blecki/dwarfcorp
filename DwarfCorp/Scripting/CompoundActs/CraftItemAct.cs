@@ -429,7 +429,7 @@ namespace DwarfCorp
                                     () => 1.0f, // Max Progress
                                     () => Item.Progress, // Current Progress
                                     () => { // Increment Progress
-                                        var location = Creature.AI.Blackboard.GetData<Body>(Item.ItemType.CraftLocation);
+                                        var location = Creature.AI.Blackboard.GetData<GameComponent>(Item.ItemType.CraftLocation);
                                         float workstationBuff = 1.0f;
                                         if (location != null)
                                         {
@@ -446,7 +446,7 @@ namespace DwarfCorp
                                         Item.Progress += (Creature.Stats.BuildSpeed * workstationBuff) / Item.ItemType.BaseCraftTime;
                                     },
                                     () => { // Get Position
-                                        var location = Creature.AI.Blackboard.GetData<Body>(Item.ItemType.CraftLocation);
+                                        var location = Creature.AI.Blackboard.GetData<GameComponent>(Item.ItemType.CraftLocation);
                                         if (location != null)
                                             return location.Position;
                                         return Agent.Position;

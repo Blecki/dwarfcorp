@@ -168,7 +168,7 @@ namespace DwarfCorp
            {
                Vector3 origin = new Vector3(0, 0, 0);
                Vector3 extents = new Vector3(1500, 1500, 1500);
-               OctTree = new OctTreeNode<Body>(origin - extents, origin + extents);
+               OctTree = new OctTreeNode<GameComponent>(origin - extents, origin + extents);
 
                PrimitiveLibrary.Initialize(GraphicsDevice, Content);
 
@@ -337,7 +337,7 @@ namespace DwarfCorp
              
 
                 ComponentManager = new ComponentManager(this);
-                ComponentManager.SetRootComponent(new Body(ComponentManager, "root", Matrix.Identity, Vector3.Zero, Vector3.Zero));
+                ComponentManager.SetRootComponent(new GameComponent(ComponentManager, "root", Matrix.Identity, Vector3.Zero, Vector3.Zero));
 
                 if (Natives == null) // Todo: Always true??
                 {

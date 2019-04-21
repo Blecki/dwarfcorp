@@ -20,7 +20,7 @@ namespace DwarfCorp.ContextCommands
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
-        public override void Apply(Body Entity, WorldManager World)
+        public override void Apply(GameComponent Entity, WorldManager World)
         {
             var creature = Entity.GetComponent<CreatureAI>();
             if (creature == null)
@@ -40,7 +40,7 @@ namespace DwarfCorp.ContextCommands
             base.Apply(Entity, World);
         }
 
-        public override bool CanBeAppliedTo(Body Entity, WorldManager World)
+        public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
             var creature = Entity.GetComponent<CreatureAI>();
             if (creature == null)

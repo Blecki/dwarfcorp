@@ -128,7 +128,7 @@ namespace DwarfCorp
                     var items = VoxelHelpers.KillVoxel(Creature.World, vox);
 
                     if (items != null)
-                        foreach (Body item in items)
+                        foreach (GameComponent item in items)
                             Creature.Gather(item);
 
                     yield return Act.Status.Success;

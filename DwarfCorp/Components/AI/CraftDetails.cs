@@ -87,7 +87,7 @@ namespace DwarfCorp
 
         public override void Die()
         {
-            var body = Parent.GetRoot().GetComponent<Body>();
+            var body = Parent.GetRoot().GetComponent<GameComponent>();
             if (body != null)
             {
                 var bounds = body.GetBoundingBox();
@@ -103,7 +103,7 @@ namespace DwarfCorp
                 */
                 Resource resource = CraftLibrary.GetCraftable(this.CraftType).ToResource(World, Resources);
                 Vector3 pos = MathFunctions.RandVector3Box(bounds);
-                EntityFactory.CreateEntity<Body>(resource.Name + " Resource", pos);
+                EntityFactory.CreateEntity<GameComponent>(resource.Name + " Resource", pos);
             }
             base.Die();
         }
@@ -212,7 +212,7 @@ namespace DwarfCorp
     }
 
     [JsonObject(IsReference = true)]
-    public class CraftedBody : Body
+    public class CraftedBody : GameComponent
     {
         [JsonIgnore]
         public FixtureCraftDetails CraftDetails { get { return GetRoot().GetComponent<FixtureCraftDetails>(); } }

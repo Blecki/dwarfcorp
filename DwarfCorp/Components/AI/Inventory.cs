@@ -43,7 +43,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference=true)]
-    public class Inventory : Body
+    public class Inventory : GameComponent
     {
         //public ResourceContainer Resources { get; set; }
         public class InventoryItem
@@ -159,7 +159,7 @@ namespace DwarfCorp
         }
 
 
-        public bool Pickup(Body item, RestockType restockType)
+        public bool Pickup(GameComponent item, RestockType restockType)
         {
             if(item == null || item.IsDead)
             {
@@ -191,7 +191,7 @@ namespace DwarfCorp
 
             item.SetFlag(Flag.Active, false);
             BodyTossMotion toss = new BodyTossMotion(0.5f + MathFunctions.Rand(0.05f, 0.08f),
-                1.0f, item.GlobalTransform, Parent as Body);
+                1.0f, item.GlobalTransform, Parent as GameComponent);
             item.SetUpdateRateRecursive(1);
             item.AnimationQueue.Add(toss);
             toss.OnComplete += () => item.GetRoot().Delete();
@@ -204,7 +204,7 @@ namespace DwarfCorp
             bool createdAny = false;
             foreach (var resource in resources)
             {
-                List<Body> things = RemoveAndCreate(resource, type);
+                List<GameComponent> things = RemoveAndCreate(resource, type);
                 foreach (var body in things)
                 {
                     TossMotion toss = new TossMotion(1.0f, 2.5f, body.LocalTransform, pos);
@@ -218,11 +218,11 @@ namespace DwarfCorp
             return createdAny;
         }
 
-        public List<Body> RemoveAndCreate(ResourceAmount resources, RestockType type)
+        public List<GameComponent> RemoveAndCreate(ResourceAmount resources, RestockType type)
         {
-            var parentBody = GetRoot() as Body;
+            var parentBody = GetRoot() as GameComponent;
             var pos = parentBody == null ? GlobalTransform.Translation : parentBody.Position;
-            List<Body> toReturn = new List<Body>();
+            List<GameComponent> toReturn = new List<GameComponent>();
 
             if(!Remove(resources.CloneResource(), type))
             {
@@ -231,7 +231,7 @@ namespace DwarfCorp
 
             for(int i = 0; i < resources.Count; i++)
             {
-                Body newEntity = EntityFactory.CreateEntity<Body>(resources.Type + " Resource",
+                GameComponent newEntity = EntityFactory.CreateEntity<GameComponent>(resources.Type + " Resource",
                     pos + MathFunctions.RandVector3Cube()*0.5f);
                 toReturn.Add(newEntity);
             }
@@ -277,7 +277,7 @@ namespace DwarfCorp
                 }
                 resourceCounts[resource.Resource]++;
             }
-            var parentBody = GetRoot() as Body;
+            var parentBody = GetRoot() as GameComponent;
             var myBox = GetBoundingBox();
             var box = parentBody == null ? GetBoundingBox() : new BoundingBox(myBox.Min - myBox.Center() + parentBody.Position, myBox.Max - myBox.Center() + parentBody.Position);
             var aggregatedResources = resourceCounts.Select(c => new ResourceAmount(c.Key, c.Value));

@@ -53,7 +53,7 @@ namespace DwarfCorp
 
         public static Act.Status SetTarget(string voxelOutName, string entityName, Creature creature)
         {
-            Body target = creature.AI.Blackboard.GetData<Body>(entityName);
+            GameComponent target = creature.AI.Blackboard.GetData<GameComponent>(entityName);
             if (target == null)
             {
                 return Status.Fail;

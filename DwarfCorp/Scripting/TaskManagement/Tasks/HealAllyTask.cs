@@ -30,7 +30,7 @@ namespace DwarfCorp
             base.OnCanceled();
         }
 
-        public IEnumerable<Act.Status> PlaceOnBed(Body bed)
+        public IEnumerable<Act.Status> PlaceOnBed(GameComponent bed)
         {
             Ally.ResetPositionConstraint();
             var pos = bed.GetRotatedBoundingBox().Center() + Vector3.Up * 0.5f;

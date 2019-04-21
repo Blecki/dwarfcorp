@@ -41,14 +41,14 @@ namespace DwarfCorp
 {
     public class FleeEntityTask : Task
     {
-        public Body ScaryEntity = null;
+        public GameComponent ScaryEntity = null;
         public int Distance = 10;
 
         public FleeEntityTask()
         {
         }
 
-        public FleeEntityTask(Body entity, int Distance)
+        public FleeEntityTask(GameComponent entity, int Distance)
         {
             Name = "Kill Entity: " + entity.Name + " " + entity.GlobalID;
             ScaryEntity = entity;

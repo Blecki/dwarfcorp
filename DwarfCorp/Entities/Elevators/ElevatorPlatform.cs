@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp.Elevators
 {
-    public class ElevatorPlatform : Body
+    public class ElevatorPlatform : GameComponent
     {
         private RawPrimitive Primitive;
         private Color VertexColor = Color.White;

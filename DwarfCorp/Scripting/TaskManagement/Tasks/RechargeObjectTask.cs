@@ -75,7 +75,7 @@ namespace DwarfCorp
                 return 10000;
             }
 
-            else return (agent.AI.Position - (Entity.GetRoot() as Body).LocalTransform.Translation).LengthSquared() * 0.01f;
+            else return (agent.AI.Position - (Entity.GetRoot() as GameComponent).LocalTransform.Translation).LengthSquared() * 0.01f;
         }
 
         public override bool ShouldRetry(Creature agent)
@@ -85,7 +85,7 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            if (Entity == null || Entity.IsDead || ((Entity.GetRoot() as Body).Position - agent.AI.Position).Length() > 100)
+            if (Entity == null || Entity.IsDead || ((Entity.GetRoot() as GameComponent).Position - agent.AI.Position).Length() > 100)
             {
                 return true;
             }

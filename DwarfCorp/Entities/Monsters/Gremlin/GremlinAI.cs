@@ -63,7 +63,7 @@ namespace DwarfCorp
                 bool plantBomb = !String.IsNullOrEmpty(PlantBomb) && MathFunctions.RandEvent(0.5f);
                 if (!plantBomb && World.PlayerFaction.OwnedObjects.Count > 0)
                 {
-                    var thing = Datastructures.SelectRandom<Body>(World.PlayerFaction.OwnedObjects);
+                    var thing = Datastructures.SelectRandom<GameComponent>(World.PlayerFaction.OwnedObjects);
                     AssignTask(new KillEntityTask(thing, KillEntityTask.KillType.Auto));
                 }
                 else if (plantBomb)
@@ -71,12 +71,12 @@ namespace DwarfCorp
                     var room = World.PlayerFaction.GetNearestRoom(Position);
                     if (room != null)
                     {
-                        AssignTask(new ActWrapperTask(new Sequence(new GoToZoneAct(this, room), new Do(() => { EntityFactory.CreateEntity<Body>(PlantBomb, Position); return true; }))) { Priority = Task.PriorityType.High });
+                        AssignTask(new ActWrapperTask(new Sequence(new GoToZoneAct(this, room), new Do(() => { EntityFactory.CreateEntity<GameComponent>(PlantBomb, Position); return true; }))) { Priority = Task.PriorityType.High });
                     }
                     else if (World.PlayerFaction.OwnedObjects.Count > 0)
                     {
-                        var thing = Datastructures.SelectRandom<Body>(World.PlayerFaction.OwnedObjects);
-                        AssignTask(new ActWrapperTask(new Sequence(new GoToEntityAct(thing, this), new Do(() => { EntityFactory.CreateEntity<Body>(PlantBomb, Position); return true; }))) { Priority = Task.PriorityType.High });
+                        var thing = Datastructures.SelectRandom<GameComponent>(World.PlayerFaction.OwnedObjects);
+                        AssignTask(new ActWrapperTask(new Sequence(new GoToEntityAct(thing, this), new Do(() => { EntityFactory.CreateEntity<GameComponent>(PlantBomb, Position); return true; }))) { Priority = Task.PriorityType.High });
                     }
                 }
             }

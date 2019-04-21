@@ -307,7 +307,7 @@ namespace DwarfCorp.Gui.Widgets
                             if (RenderTarget.Bounds.Contains((int)screenPos.X, (int)screenPos.Y))
                             {
 
-                                Body parentBody = icon.Parent as Body;
+                                GameComponent parentBody = icon.Parent as GameComponent;
                                 if (parentBody != null)
                                 {
                                     if (parentBody.Position.Y > World.Master.MaxViewingLevel + 1)

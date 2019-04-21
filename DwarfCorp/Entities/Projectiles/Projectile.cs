@@ -47,7 +47,7 @@ namespace DwarfCorp
         public Tinter Sprite2 { get; set; }
         public ParticleTrigger HitParticles { get; set; }
         public Health.DamageAmount Damage { get; set; }
-        public Body Target { get; set; }
+        public GameComponent Target { get; set; }
         public float DamageRadius { get; set; }
 
         [JsonIgnore]
@@ -58,7 +58,7 @@ namespace DwarfCorp
             
         }
 
-        public Projectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Health.DamageAmount damage, float size, string asset, string hitParticles, string hitNoise, Body target, bool animated = false, bool singleSprite = false) :
+        public Projectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Health.DamageAmount damage, float size, string asset, string hitParticles, string hitNoise, GameComponent target, bool animated = false, bool singleSprite = false) :
             base(manager, "Projectile", Matrix.CreateTranslation(position), new Vector3(size, size, size), Vector3.One, 1.0f, 1.0f, 1.0f, 1.0f, new Vector3(0, -10, 0), OrientMode.Fixed)
         {
             this.AllowPhysicsSleep = false; 

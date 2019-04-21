@@ -385,7 +385,7 @@ namespace DwarfCorp
         public class WorldPopup
         {
             public Widget Widget;
-            public Body BodyToTrack;
+            public GameComponent BodyToTrack;
             public Vector2 ScreenOffset;
 
             public void Update(DwarfTime time, Camera camera, Viewport viewport)
@@ -1393,12 +1393,12 @@ namespace DwarfCorp
             }
         }
 
-        public WorldPopup MakeWorldPopup(string text, Body body, float screenOffset = -10, float time = 30.0f)
+        public WorldPopup MakeWorldPopup(string text, GameComponent body, float screenOffset = -10, float time = 30.0f)
         {
             return MakeWorldPopup(new TimedIndicatorWidget() { Text = text, DeathTimer = new Timer(time, true, Timer.TimerMode.Real) }, body, new Vector2(0, screenOffset));
         }
 
-        public WorldPopup MakeWorldPopup(Widget widget, Body body, Vector2 ScreenOffset)
+        public WorldPopup MakeWorldPopup(Widget widget, GameComponent body, Vector2 ScreenOffset)
         {
             if (LastWorldPopup.ContainsKey(body.GlobalID))
                 Gui.DestroyWidget(LastWorldPopup[body.GlobalID].Widget);

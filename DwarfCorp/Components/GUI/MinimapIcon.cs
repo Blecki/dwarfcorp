@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class MinimapIcon : Body
+    public class MinimapIcon : GameComponent
     {
         public NamedImageFrame Icon;
         public float IconScale;

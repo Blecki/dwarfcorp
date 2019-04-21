@@ -108,7 +108,7 @@ namespace DwarfCorp.Rail
             Player.VoxSelector.DrawBox = true;
         }
 
-        public override void OnMouseOver(IEnumerable<Body> bodies)
+        public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
 
         }
@@ -188,7 +188,7 @@ namespace DwarfCorp.Rail
         }
 
 
-        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
 
         }

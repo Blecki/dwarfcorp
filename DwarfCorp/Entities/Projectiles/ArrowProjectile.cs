@@ -50,7 +50,7 @@ namespace DwarfCorp
                 Manager,
                 Position,
                 Data.GetData("Velocity", Vector3.Up * 10 * MathFunctions.RandVector3Box(-10, 10, 0, 0, -10, 10)),
-                Data.GetData<Body>("Target", null));
+                Data.GetData<GameComponent>("Target", null));
         }
         
         public ArrowProjectile()
@@ -58,7 +58,7 @@ namespace DwarfCorp
             
         }
 
-        public ArrowProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, Body target) :
+        public ArrowProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, GameComponent target) :
             base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Slashing }, 0.25f, ContentPaths.Entities.Elf.Sprites.arrow, "puff", ContentPaths.Audio.Oscar.sfx_ic_elf_arrow_hit, target)
         {
             HitAnimation = AnimationLibrary.CreateSimpleAnimation(ContentPaths.Effects.pierce);

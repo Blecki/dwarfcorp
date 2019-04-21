@@ -47,12 +47,12 @@ namespace DwarfCorp
     {
         public float EnergyLoss { get; set; }
         public Attack CurrentAttack { get; set; }
-        public Body Target { get; set; }
+        public GameComponent Target { get; set; }
         public bool Training { get; set; }
         public Timer Timeout { get; set; }
         public string TargetName { get; set; }
         public Timer FailTimer { get; set; }
-        public Body DefensiveStructure { get; set; }
+        public GameComponent DefensiveStructure { get; set; }
 
         public MeleeAct(CreatureAI agent, string target) :
             base(agent)
@@ -74,7 +74,7 @@ namespace DwarfCorp
 
         public float LastHp = 0.0f;
 
-        public MeleeAct(CreatureAI agent, Body target) :
+        public MeleeAct(CreatureAI agent, GameComponent target) :
             base(agent)
         {
             FailTimer = new Timer(5.0f, false, Timer.TimerMode.Real);
@@ -191,7 +191,7 @@ namespace DwarfCorp
             FailTimer.Reset();
             if (Target == null && TargetName != null)
             {
-                Target = Agent.Blackboard.GetData<Body>(TargetName);
+                Target = Agent.Blackboard.GetData<GameComponent>(TargetName);
 
                 if (Target == null)
                 {
@@ -475,7 +475,7 @@ namespace DwarfCorp
     {
         public int PathLength { get; set; }
         public bool Is2D { get; set; }
-        public Body Target { get; set; }
+        public GameComponent Target { get; set; }
         public float Threshold { get; set; }
 
         public GreedyPathAct()
@@ -483,7 +483,7 @@ namespace DwarfCorp
 
         }
 
-        public GreedyPathAct(CreatureAI creature, Body target, float threshold)
+        public GreedyPathAct(CreatureAI creature, GameComponent target, float threshold)
             : base(creature)
         {
             Target = target;

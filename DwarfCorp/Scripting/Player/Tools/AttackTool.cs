@@ -67,7 +67,7 @@ namespace DwarfCorp
             
         }
 
-        public bool CanAttack(Body other)
+        public bool CanAttack(GameComponent other)
         {
             var creature = other.EnumerateAll().OfType<Creature>().FirstOrDefault();
             if (creature == null)
@@ -83,10 +83,10 @@ namespace DwarfCorp
             return true;
         }
 
-        public override void OnMouseOver(IEnumerable<Body> bodies)
+        public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
             bool shown = false;
-            foreach (Body other in bodies)
+            foreach (GameComponent other in bodies)
             {
                 var creature = other.EnumerateAll().OfType<Creature>().FirstOrDefault();
                 if (creature == null)
@@ -139,10 +139,10 @@ namespace DwarfCorp
 
         }
 
-        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
 
-            foreach (Body other in bodies)
+            foreach (GameComponent other in bodies)
             {
                 var creature = other.EnumerateAll().OfType<Creature>().FirstOrDefault();
                 if (creature == null)

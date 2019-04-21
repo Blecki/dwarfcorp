@@ -59,7 +59,7 @@ namespace DwarfCorp
             Count = 1;
         }
         
-        public ResourceAmount(Body component)
+        public ResourceAmount(GameComponent component)
         {
             // Assume that the first tag of the body is
             // the name of the resource.

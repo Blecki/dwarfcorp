@@ -52,7 +52,7 @@ namespace DwarfCorp
         // This is a list of voxel type ids that existed before this zone
         // was created. When the zone is destroyed, the voxel types will be restored.
         public List<byte> OriginalVoxelTypes = new List<byte>(); 
-        public List<Body> ZoneBodies = new List<Body>();
+        public List<GameComponent> ZoneBodies = new List<GameComponent>();
         
         [JsonProperty]
         protected int ResPerVoxel = 32;
@@ -88,7 +88,7 @@ namespace DwarfCorp
             World = (WorldManager)ctx.Context;
             foreach (var body in ZoneBodies)
             {
-                Body body1 = body;
+                GameComponent body1 = body;
                 body.OnDestroyed += () => body_onDestroyed(body1);
             }
         }
@@ -111,12 +111,12 @@ namespace DwarfCorp
 
         }
 
-        public Body GetNearestBody(Vector3 location)
+        public GameComponent GetNearestBody(Vector3 location)
         {
-            Body toReturn = null;
+            GameComponent toReturn = null;
             float nearestDistance = float.MaxValue;
 
-            foreach (Body body in ZoneBodies)
+            foreach (GameComponent body in ZoneBodies)
             {
                 float dist = (location - body.GlobalTransform.Translation).LengthSquared();
                 if (dist < nearestDistance)
@@ -142,12 +142,12 @@ namespace DwarfCorp
                 sprite.VertexColorTint = color;
         }
 
-        public Body GetNearestBodyWithTag(Vector3 location, string tag, bool filterReserved)
+        public GameComponent GetNearestBodyWithTag(Vector3 location, string tag, bool filterReserved)
         {
-            Body toReturn = null;
+            GameComponent toReturn = null;
             float nearestDistance = float.MaxValue;
 
-            foreach (Body body in ZoneBodies)
+            foreach (GameComponent body in ZoneBodies)
             {
                 if (!body.Tags.Contains(tag)) continue;
                 if (filterReserved && (body.IsReserved || body.ReservedFor != null)) continue;
@@ -161,7 +161,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public void AddBody(Body body, bool addToOwnedObjects = true)
+        public void AddBody(GameComponent body, bool addToOwnedObjects = true)
         {
             if (addToOwnedObjects)
                 this.Faction.OwnedObjects.Add(body);
@@ -169,16 +169,16 @@ namespace DwarfCorp
             body.OnDestroyed += () => body_onDestroyed(body);
         }
 
-        public void body_onDestroyed(Body body)
+        public void body_onDestroyed(GameComponent body)
         {
             ZoneBodies.Remove(body);
         }
 
         public virtual void Destroy()
         {
-            List<Body> toKill = new List<Body>();
+            List<GameComponent> toKill = new List<GameComponent>();
             toKill.AddRange(ZoneBodies);
-            foreach (Body body in toKill)
+            foreach (GameComponent body in toKill)
             {
                 body.Die();
             }
@@ -296,7 +296,7 @@ namespace DwarfCorp
         }
 
 
-        public virtual bool AddItem(Body component)
+        public virtual bool AddItem(GameComponent component)
         {
             return Resources.AddItem(component);
         }

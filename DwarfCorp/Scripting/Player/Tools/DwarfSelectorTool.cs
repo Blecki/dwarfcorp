@@ -47,7 +47,7 @@ namespace DwarfCorp
     public class DwarfSelectorTool : PlayerTool
     {
 
-        public Func<Body, bool> DrawSelectionRect = (b) => true;
+        public Func<GameComponent, bool> DrawSelectionRect = (b) => true;
         public DwarfSelectorTool(GameMaster master)
         {
            
@@ -122,7 +122,7 @@ namespace DwarfCorp
           
         }
 
-        bool IsNotSelectedDwarf(Body body)
+        bool IsNotSelectedDwarf(GameComponent body)
         {
             if (body == null)
             {
@@ -140,7 +140,7 @@ namespace DwarfCorp
             return dwarf.Faction == Player.Faction && !Player.SelectedMinions.Contains(dwarf.AI);
         }
 
-        bool IsDwarf(Body body)
+        bool IsDwarf(GameComponent body)
         {
             if (body == null)
             {
@@ -158,7 +158,7 @@ namespace DwarfCorp
             return dwarf.Faction == Player.Faction;
         }
 
-        protected void SelectDwarves(List<Body> bodies)
+        protected void SelectDwarves(List<GameComponent> bodies)
         {
             KeyboardState keyState = Keyboard.GetState();
 
@@ -168,7 +168,7 @@ namespace DwarfCorp
                 Player.SelectedMinions.Clear();
             }
             List<CreatureAI> newDwarves = new List<CreatureAI>();
-            foreach(Body body in bodies)
+            foreach(GameComponent body in bodies)
             {
                 if (IsNotSelectedDwarf(body))
                 {
@@ -181,7 +181,7 @@ namespace DwarfCorp
             OnConfirm(newDwarves);
         }
 
-        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
             switch(button)
             {
@@ -191,11 +191,11 @@ namespace DwarfCorp
             }
         }
 
-        public static string GetMouseOverText(IEnumerable<Body> bodies)
+        public static string GetMouseOverText(IEnumerable<GameComponent> bodies)
         {
             StringBuilder sb = new StringBuilder();
 
-            List<Body> bodyList = bodies.ToList();
+            List<GameComponent> bodyList = bodies.ToList();
             for (int i = 0; i < bodyList.Count; i++)
             {
                 Creature dwarf = bodyList[i].GetComponent<Creature>();
@@ -225,15 +225,15 @@ namespace DwarfCorp
             return sb.ToString();
         }
 
-        private List<Body> underMouse = null;
+        private List<GameComponent> underMouse = null;
 
-        public override void DefaultOnMouseOver(IEnumerable<Body> bodies)
+        public override void DefaultOnMouseOver(IEnumerable<GameComponent> bodies)
         {
             Player.World.ShowTooltip(GetMouseOverText(bodies));
             underMouse = bodies.ToList();
         }
 
-        public override void OnMouseOver(IEnumerable<Body> bodies)
+        public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
             DefaultOnMouseOver(bodies);
         }

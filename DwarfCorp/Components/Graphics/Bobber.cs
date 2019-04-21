@@ -67,7 +67,7 @@ namespace DwarfCorp
 
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            var body = Parent as Body;
+            var body = Parent as GameComponent;
             global::System.Diagnostics.Debug.Assert(body != null);
 
             float x = (float)Math.Sin((gameTime.TotalGameTime.TotalSeconds + Offset) * Rate) * Magnitude;
@@ -78,8 +78,8 @@ namespace DwarfCorp
 
             body.HasMoved = true;
 
-            if (Parent.Parent is Body)
-                (Parent.Parent as Body).HasMoved = true;
+            if (Parent.Parent is GameComponent)
+                (Parent.Parent as GameComponent).HasMoved = true;
         }
     }
 }

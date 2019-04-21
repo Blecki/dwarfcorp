@@ -49,7 +49,7 @@ namespace DwarfCorp
             return new AnimalPen(Data, Faction, World);
         }
 
-        public List<Body> Animals = new List<Body>();
+        public List<GameComponent> Animals = new List<GameComponent>();
 
         public string Species = "";
 
@@ -85,7 +85,7 @@ namespace DwarfCorp
             }
         }
 
-        public IEnumerable<Act.Status> AddAnimal(Body animal, Faction faction)
+        public IEnumerable<Act.Status> AddAnimal(GameComponent animal, Faction faction)
         {
             Animals.Add(animal);
             BoundingBox animalBounds = GetBoundingBox();
@@ -98,7 +98,7 @@ namespace DwarfCorp
            yield return Act.Status.Success;
         }
 
-        public IEnumerable<Act.Status> RemoveAnimal(Body animal)
+        public IEnumerable<Act.Status> RemoveAnimal(GameComponent animal)
         {
             if (!Animals.Contains(animal))
             {
@@ -111,7 +111,7 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        private void ClampBody(Body body)
+        private void ClampBody(GameComponent body)
         {
             bool inZone = Voxels.Any(v => VoxelHelpers.GetVoxelAbove(v).GetBoundingBox().Contains(body.Position) == ContainmentType.Contains);
             if (!inZone)

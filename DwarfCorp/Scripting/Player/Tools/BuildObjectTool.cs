@@ -47,7 +47,7 @@ namespace DwarfCorp
     public class BuildObjectTool : PlayerTool
     {
         public CraftItem CraftType { get; set; }
-        public Body PreviewBody { get; set; }
+        public GameComponent PreviewBody { get; set; }
         public List<ResourceAmount> SelectedResources;
         private float Orientation = 0.0f;
         private bool OverrideOrientation = false;
@@ -66,7 +66,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public WorldManager World { get; set; }
 
-        private Body CreatePreviewBody()
+        private GameComponent CreatePreviewBody()
         {
             Blackboard blackboard = new Blackboard();
             if (SelectedResources != null && SelectedResources.Count > 0)
@@ -78,7 +78,7 @@ namespace DwarfCorp
             var previewBody = EntityFactory.CreateEntity<GameComponent>(
                 CraftType.EntityName, 
                 Player.VoxSelector.VoxelUnderMouse.WorldPosition,
-                blackboard).GetRoot() as Body;
+                blackboard).GetRoot() as GameComponent;
             previewBody.SetFlagRecursive(GameComponent.Flag.Active, false);
             previewBody.SetVertexColorRecursive(Color.White);
             previewBody.SetFlag(GameComponent.Flag.ShouldSerialize, false);
@@ -225,7 +225,7 @@ namespace DwarfCorp
             CraftType = null;
         }
 
-        public override void OnMouseOver(IEnumerable<Body> bodies)
+        public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
 
         }
@@ -287,7 +287,7 @@ namespace DwarfCorp
         }
 
 
-        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
 
         }

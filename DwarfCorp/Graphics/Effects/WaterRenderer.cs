@@ -185,7 +185,7 @@ namespace DwarfCorp
         private Vector3 prevCameraPos = Vector3.Zero;
         private Vector3 prevCameraTarget = Vector3.Zero;
 
-        public void DrawReflectionMap(IEnumerable<Body> Renderables, DwarfTime gameTime, WorldManager game, float waterHeight, Matrix reflectionViewMatrix, Shader effect, GraphicsDevice device)
+        public void DrawReflectionMap(IEnumerable<GameComponent> Renderables, DwarfTime gameTime, WorldManager game, float waterHeight, Matrix reflectionViewMatrix, Shader effect, GraphicsDevice device)
         {
             if (!DrawReflections) return;
             ValidateBuffers();

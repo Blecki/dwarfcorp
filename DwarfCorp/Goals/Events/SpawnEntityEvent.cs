@@ -24,7 +24,7 @@ namespace DwarfCorp.Goals
 
         public override void Trigger(WorldManager world)
         {
-            Body entity = null;
+            GameComponent entity = null;
             Microsoft.Xna.Framework.Vector3 location = GetSpawnLocation(world, SpawnLocation);
 
             string faction = GetFaction(world, EntityFaction, EntityFactionFilter);
@@ -33,7 +33,7 @@ namespace DwarfCorp.Goals
 
             if (!String.IsNullOrEmpty(EntityToSpawn))
             {
-                entity = EntityFactory.CreateEntity<Body>(EntityToSpawn, location);
+                entity = EntityFactory.CreateEntity<GameComponent>(EntityToSpawn, location);
                 if (validFaction)
                 {
                     var creatures = entity.EnumerateAll().OfType<CreatureAI>();

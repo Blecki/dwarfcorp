@@ -42,7 +42,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Plant : Body
+    public class Plant : GameComponent
     {
         public bool IsGrown { get; set; }
         public string MeshAsset { get; set; }
@@ -166,7 +166,7 @@ namespace DwarfCorp
                
                 if (!isSeedling && MathFunctions.RandEvent(0.01f))
                 {
-                    HashSet<Body> bodies = new HashSet<Body>();
+                    HashSet<GameComponent> bodies = new HashSet<GameComponent>();
                     World.OctTree.EnumerateItems(GetBoundingBox().Expand(2), bodies);
 
                     int numPlants = bodies.Count(b => b is Plant);

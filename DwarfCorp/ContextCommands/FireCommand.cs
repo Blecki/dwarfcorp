@@ -20,7 +20,7 @@ namespace DwarfCorp.ContextCommands
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
-        public override bool CanBeAppliedTo(Body Entity, WorldManager World)
+        public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
             var creature = Entity.GetComponent<CreatureAI>();
             if (creature == null)
@@ -28,7 +28,7 @@ namespace DwarfCorp.ContextCommands
             return World.Master.Faction.Minions.Contains(creature);
         }
         
-        public override void Apply(Body Entity, WorldManager World)
+        public override void Apply(GameComponent Entity, WorldManager World)
         {
             var creature = Entity.GetComponent<CreatureAI>();
             World.PlayerFaction.Minions.Remove(creature);

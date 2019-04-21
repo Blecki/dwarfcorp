@@ -62,7 +62,7 @@ namespace DwarfCorp
 
         public Treasury()
         {
-            Coins = new List<Body>();
+            Coins = new List<GameComponent>();
             ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
             Faction = null;
         }
@@ -70,7 +70,7 @@ namespace DwarfCorp
         private Treasury(RoomData Data, Faction Faction, WorldManager World) :
             base(Data, World, Faction)
         {
-            Coins = new List<Body>();
+            Coins = new List<GameComponent>();
             ReplacementType = VoxelLibrary.GetVoxelType("Blue Tile");
             Faction.Treasurys.Add(this);
             this.Faction = Faction;
@@ -83,7 +83,7 @@ namespace DwarfCorp
         }
 
         private static uint maxID = 0;
-        public List<Body> Coins { get; set; }
+        public List<GameComponent> Coins { get; set; }
 
         public static DwarfBux MoneyPerPile = 1024m;
 
@@ -107,7 +107,7 @@ namespace DwarfCorp
             return maxID;
         }
 
-        public void KillCoins(Body component)
+        public void KillCoins(GameComponent component)
         {
             ZoneBodies.Remove(component);
             EaseMotion deathMotion = new EaseMotion(0.8f, component.LocalTransform, component.LocalTransform.Translation + new Vector3(0, -1, 0));
@@ -124,7 +124,7 @@ namespace DwarfCorp
                 Vector3 startPos = pos + new Vector3(0.5f, -0.1f, 0.5f);
                 Vector3 endPos = pos + new Vector3(0.5f, 1.5f, 0.5f);
 
-                Body coins = EntityFactory.CreateEntity<Body>("Coins", startPos);
+                GameComponent coins = EntityFactory.CreateEntity<GameComponent>("Coins", startPos);
                 coins.AnimationQueue.Add(new EaseMotion(0.8f, coins.LocalTransform, endPos));
                 Coins.Add(coins);
                 AddBody(coins, false);
@@ -156,7 +156,7 @@ namespace DwarfCorp
 
             if (Voxels.Count == 0)
             {
-                foreach (Body component in Coins)
+                foreach (GameComponent component in Coins)
                 {
                     KillCoins(component);
                 }
@@ -215,13 +215,13 @@ namespace DwarfCorp
                 return false;
             }
 
-            Body lastCoins = Coins.LastOrDefault();
+            GameComponent lastCoins = Coins.LastOrDefault();
 
             if (lastCoins == null)
             {
                 return false;
             }
-            Body component = EntityFactory.CreateEntity<Body>("Coins", lastCoins.Position);
+            GameComponent component = EntityFactory.CreateEntity<GameComponent>("Coins", lastCoins.Position);
             TossMotion toss = new TossMotion(1.0f, 2.5f, component.LocalTransform, dwarfPos);
             component.UpdateRate = 1;
             component.AnimationQueue.Add(toss);
@@ -250,7 +250,7 @@ namespace DwarfCorp
             }
 
             Vector3 targetToss = Coins.Count == 0 ? Voxels[0].WorldPosition + new Vector3(0.5f, 0.5f, 0.5f) : Coins[Coins.Count - 1].LocalTransform.Translation + new Vector3(0.5f, 0.5f, 0.5f);
-            Body component = EntityFactory.CreateEntity<Body>("Coins", dwarfPos);
+            GameComponent component = EntityFactory.CreateEntity<GameComponent>("Coins", dwarfPos);
             component.UpdateRate = 1;
             TossMotion toss = new TossMotion(1.0f, 2.5f, component.LocalTransform,
                targetToss);
@@ -268,7 +268,7 @@ namespace DwarfCorp
         public override void Destroy()
         {
             DwarfBux moneyLeft = Money;
-            foreach (Body coinPile in Coins)
+            foreach (GameComponent coinPile in Coins)
             {
                 CoinPile coins = EntityFactory.CreateEntity<CoinPile>("Coins Resource", coinPile.Position);
                 coins.Money = Math.Min(MoneyPerPile, moneyLeft);

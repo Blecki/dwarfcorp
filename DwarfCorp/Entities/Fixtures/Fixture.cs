@@ -40,7 +40,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Fixture : Body
+    public class Fixture : GameComponent
     {
         public SpriteSheet Asset;
         public Point Frame;

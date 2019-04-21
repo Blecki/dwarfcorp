@@ -41,7 +41,7 @@ namespace DwarfCorp
 {
     public class ChopEntityTask : Task
     {
-        public Body EntityToKill = null;
+        public GameComponent EntityToKill = null;
 
         public ChopEntityTask()
         {
@@ -49,7 +49,7 @@ namespace DwarfCorp
             BoredomIncrease = GameSettings.Default.Boredom_NormalTask;
         }
 
-        public ChopEntityTask(Body entity)
+        public ChopEntityTask(GameComponent entity)
         {
             MaxAssignable = 3;
             Name = "Harvest Plant: " + entity.Name + " " + entity.GlobalID;

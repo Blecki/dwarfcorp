@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Balloon : Body
+    public class Balloon : GameComponent
     {
         [EntityFactory("Balloon")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
@@ -15,7 +15,7 @@ namespace DwarfCorp
             return new Balloon(Manager, Position, Position + new Vector3(0, 1000, 0), Manager.World.PlayerFaction);
         }
 
-        public static Body CreateBalloon(
+        public static GameComponent CreateBalloon(
             Vector3 target, 
             Vector3 position, 
             ComponentManager componentManager, 

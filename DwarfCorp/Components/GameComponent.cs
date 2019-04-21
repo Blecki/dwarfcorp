@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class GameComponent
+    public partial class GameComponent
     {
         public string Name { get; set; }
         public uint GlobalID { get; set; }
@@ -78,10 +78,10 @@ namespace DwarfCorp
             World = ((WorldManager)context.Context);
         }
 
-        public virtual void CreateCosmeticChildren(ComponentManager Manager)
-        {
+        //public virtual void CreateCosmeticChildren(ComponentManager Manager)
+        //{
 
-        }
+        //}
 
         #endregion
 
@@ -203,8 +203,8 @@ namespace DwarfCorp
 
         #endregion
 
-        public virtual void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera) {
-        }
+        //public virtual void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera) {
+        //}
 
         public virtual void UpdatePaused(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         { }
@@ -230,6 +230,8 @@ namespace DwarfCorp
 
             IsDead = true;
 
+            RemoveFromOctTree();
+
             var localList = new List<GameComponent>(Children);
             foreach (var child in localList)
                 child.Delete();
@@ -251,6 +253,9 @@ namespace DwarfCorp
                 return;
 
             IsDead = true;
+
+            RemoveFromOctTree();
+            if (OnDestroyed != null) OnDestroyed();
 
             var localList = new List<GameComponent>(Children);
             foreach (var child in localList)

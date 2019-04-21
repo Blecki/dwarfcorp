@@ -50,7 +50,7 @@ namespace DwarfCorp
             VoxelHandle Location, 
             CraftItem CraftType, 
             GameMaster Player, 
-            Body PreviewBody,
+            GameComponent PreviewBody,
             String Verb,
             String PastParticple)
         {            
@@ -113,7 +113,7 @@ namespace DwarfCorp
                 foreach (var intersectingObject in Player.World.EnumerateIntersectingObjects(sensorBox, CollisionType.Static))
                 {
                     if (Object.ReferenceEquals(intersectingObject, sensor)) continue;
-                    var objectRoot = intersectingObject.GetRoot() as Body;
+                    var objectRoot = intersectingObject.GetRoot() as GameComponent;
                     if (objectRoot is WorkPile) continue;
                     if (objectRoot == PreviewBody) continue; 
                     if (objectRoot != null && objectRoot.GetRotatedBoundingBox().Intersects(previewBox))

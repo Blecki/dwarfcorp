@@ -39,7 +39,7 @@ namespace DwarfCorp
 {
     public class ChopEntityAct : CompoundCreatureAct
     {
-        public Body Entity { get; set; }
+        public GameComponent Entity { get; set; }
         public bool PathExists { get; set; }
         
         public ChopEntityAct()
@@ -74,7 +74,7 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public ChopEntityAct(Body entity, CreatureAI creature) :
+        public ChopEntityAct(GameComponent entity, CreatureAI creature) :
             base(creature)
         {
             Entity = entity;

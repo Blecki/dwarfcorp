@@ -17,26 +17,26 @@ namespace DwarfCorp
         ///     Called whenever the left mouse button is released.
         /// </summary>
         /// <returns>A list of bodies selected by the mouse.</returns>
-        public delegate List<Body> OnLeftReleased();
+        public delegate List<GameComponent> OnLeftReleased();
 
         /// <summary>
         ///     Called whenever the right mouse button is released.
         /// </summary>
         /// <returns>A list of bodies deselected by the mouse.</returns>
-        public delegate List<Body> OnRightReleased();
+        public delegate List<GameComponent> OnRightReleased();
 
         /// <summary>
         ///     Called whenever a list of bodies were selected.
         /// </summary>
         /// <param name="bodies">List of bodies selected by the mouse</param>
         /// <param name="button">The mouse button pressed during selection</param>
-        public delegate void OnSelected(List<Body> bodies, InputManager.MouseButton button);
+        public delegate void OnSelected(List<GameComponent> bodies, InputManager.MouseButton button);
 
         /// <summary>
         /// Called whenever the mouse hovers over some bodies.
         /// </summary>
         /// <param name="bodies">The bodies that the mouse was hovering over.</param>
-        public delegate void OnMouseOverEvent(IEnumerable<Body> bodies);
+        public delegate void OnMouseOverEvent(IEnumerable<GameComponent> bodies);
 
 
         /// <summary>
@@ -63,8 +63,8 @@ namespace DwarfCorp
             CurrentColor = Color.White;
             CameraController = camera;
             Components = components;
-            SelectionBuffer = new List<Body>();
-            CurrentBodies = new List<Body>();
+            SelectionBuffer = new List<GameComponent>();
+            CurrentBodies = new List<GameComponent>();
             LeftReleased = LeftReleasedCallback;
             RightReleased = RightReleasedCallback;
             MouseOver = bodies => { };
@@ -113,7 +113,7 @@ namespace DwarfCorp
         /// <summary>
         ///     List of bodies currently selected.
         /// </summary>
-        public List<Body> SelectionBuffer { get; set; }
+        public List<GameComponent> SelectionBuffer { get; set; }
 
         /// <summary>
         ///     If true, the body selector will be active.
@@ -152,7 +152,7 @@ namespace DwarfCorp
         ///     These are all the bodies in the selection rectangle (note: this is not the same as the SelectionBuffer,
         ///     which is the list of bodies in the selection rectange *at the time the mouse was last released*)
         /// </summary>
-        public List<Body> CurrentBodies { get; set; }
+        public List<GameComponent> CurrentBodies { get; set; }
 
         /// <summary>
         ///     Called whenever the left mouse button is released.
@@ -176,7 +176,7 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="screenRectangle">A rectangle on the screen (in pixls)</param>
         /// <returns>The list of bodies whose screen-space bounding boxes intersect the rectangle.</returns>
-        public List<Body> SelectBodies(Rectangle screenRectangle)
+        public List<GameComponent> SelectBodies(Rectangle screenRectangle)
         {
             return Components.SelectRootBodiesOnScreen(screenRectangle, CameraController);
         }
@@ -185,12 +185,12 @@ namespace DwarfCorp
         ///     Called when some number of bodies are underneath the mouse for a certain amount of time.
         /// </summary>
         /// <param name="entities">A list of bodies that were underneath the mouse.</param>
-        public void OnMouseOver(IEnumerable<Body> entities)
+        public void OnMouseOver(IEnumerable<GameComponent> entities)
         {
             MouseOver.Invoke(entities);
             string desc = "";
             bool first = true;
-            foreach (Body body in entities)
+            foreach (GameComponent body in entities)
             {
                 if (!first) desc += "\n";
                 desc += body.GetDescription();
@@ -199,7 +199,7 @@ namespace DwarfCorp
             // Create a description of the body and display it on the screen.
             World.ShowInfo(desc);
         }
-        private List<Body> SelectedEntities = new List<Body>();
+        private List<GameComponent> SelectedEntities = new List<GameComponent>();
         /// <summary>
         ///     Called every tick.
         /// </summary>
@@ -225,7 +225,7 @@ namespace DwarfCorp
                 }
                 else
                 {
-                    OnMouseOver(new List<Body>());
+                    OnMouseOver(new List<GameComponent>());
                 }
             }
 
@@ -314,7 +314,7 @@ namespace DwarfCorp
         /// </summary>
         /// <param name="bodies">The bodies that were selected.</param>
         /// <param name="button">The mouse button (left, right, middle) that was pressed to select the bodies.</param>
-        public void SelectedCallback(List<Body> bodies, InputManager.MouseButton button)
+        public void SelectedCallback(List<GameComponent> bodies, InputManager.MouseButton button)
         {
         }
 
@@ -343,9 +343,9 @@ namespace DwarfCorp
         ///     Called whenever the left mouse button was released.
         /// </summary>
         /// <returns>A list of selected bodies.</returns>
-        public List<Body> LeftReleasedCallback()
+        public List<GameComponent> LeftReleasedCallback()
         {
-            var toReturn = new List<Body>();
+            var toReturn = new List<GameComponent>();
             toReturn.AddRange(SelectionBuffer);
             SelectionBuffer.Clear();
             Selected.Invoke(toReturn, InputManager.MouseButton.Left);
@@ -356,9 +356,9 @@ namespace DwarfCorp
         ///     Called whenever the right mouse button was released.
         /// </summary>
         /// <returns>A list of selected bodies.</returns>
-        public List<Body> RightReleasedCallback()
+        public List<GameComponent> RightReleasedCallback()
         {
-            var toReturn = new List<Body>();
+            var toReturn = new List<GameComponent>();
             toReturn.AddRange(SelectionBuffer);
             SelectionBuffer.Clear();
             Selected.Invoke(toReturn, InputManager.MouseButton.Right);

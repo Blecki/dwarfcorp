@@ -126,7 +126,7 @@ namespace DwarfCorp
             }
         }
 
-        public static IEnumerable<Body> CreateResourcePiles(IEnumerable<ResourceAmount> resources, BoundingBox box)
+        public static IEnumerable<GameComponent> CreateResourcePiles(IEnumerable<ResourceAmount> resources, BoundingBox box)
         {
             const int maxPileSize = 64;
             foreach (ResourceAmount resource in resources)

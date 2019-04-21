@@ -42,7 +42,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class SelectionCircle : Body
+    public class SelectionCircle : GameComponent
     {
         public SelectionCircle()
             : base()
@@ -64,7 +64,7 @@ namespace DwarfCorp
         public void FitToParent()
         {
             var shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            var bbox = (Parent as Body).GetBoundingBox();
+            var bbox = (Parent as GameComponent).GetBoundingBox();
             shadowTransform.Translation = new Vector3(0.0f, -0.5f * (bbox.Max.Y - bbox.Min.Y), 0.0f);
             float scale = bbox.Max.X - bbox.Min.X;
             shadowTransform = shadowTransform * Matrix.CreateScale(scale);

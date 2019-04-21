@@ -61,7 +61,7 @@ namespace DwarfCorp.Generation
                             {
                                 if (Settings.OverworldSettings.RevealSurface)
                                 {
-                                    EntityFactory.CreateEntity<Body>(animal.Name,
+                                    EntityFactory.CreateEntity<GameComponent>(animal.Name,
                                         voxel.WorldPosition + Vector3.Up * 1.5f);
                                 }
                                 else

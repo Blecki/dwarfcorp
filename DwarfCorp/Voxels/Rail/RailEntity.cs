@@ -602,7 +602,7 @@ namespace DwarfCorp.Rail
         {
             base.Die();
             DetachFromNeighbors();
-            EntityFactory.CreateEntity<Body>("Rail Resource", MathFunctions.RandVector3Box(GetBoundingBox()));
+            EntityFactory.CreateEntity<GameComponent>("Rail Resource", MathFunctions.RandVector3Box(GetBoundingBox()));
         }
 
         public void UpdatePiece(JunctionPiece Piece, VoxelHandle Location)

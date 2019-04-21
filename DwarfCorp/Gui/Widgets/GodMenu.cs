@@ -519,7 +519,7 @@ namespace DwarfCorp.Gui.Widgets
                                             if (entity != null)
                                             {
                                                 if (item.AddToOwnedPool)
-                                                    Master.Faction.OwnedObjects.Add(entity as Body);
+                                                    Master.Faction.OwnedObjects.Add(entity as GameComponent);
                                                 if (item.Moveable)
                                                     entity.Tags.Add("Moveable");
                                                 if (item.Deconstructable)

@@ -35,9 +35,9 @@ namespace DwarfCorp
         private List<GameComponent> Removals = new List<GameComponent>();
         private List<GameComponent> Additions = new List<GameComponent>();
 
-        public Body RootComponent { get; private set; }
+        public GameComponent RootComponent { get; private set; }
 
-        public void SetRootComponent(Body Component)
+        public void SetRootComponent(GameComponent Component)
         {
             RootComponent = Component;
         }
@@ -100,7 +100,7 @@ namespace DwarfCorp
                 Components.Add(component.GlobalID, component);
                 component.World = World;
             }
-            RootComponent = Components[SaveData.RootComponent] as Body;
+            RootComponent = Components[SaveData.RootComponent] as GameComponent;
 
             foreach (var component in Components)
             {
@@ -149,12 +149,12 @@ namespace DwarfCorp
             StartThreads();
         }
 
-        public List<Body> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
+        public List<GameComponent> SelectRootBodiesOnScreen(Rectangle selectionRectangle, Camera camera)
         {
             if (World.SelectionBuffer == null)
-                return new List<Body>();
+                return new List<GameComponent>();
 
-            HashSet<Body> toReturn = new HashSet<Body>(); // Hashset ensures all bodies are unique.
+            HashSet<GameComponent> toReturn = new HashSet<GameComponent>(); // Hashset ensures all bodies are unique.
             foreach (uint id in World.SelectionBuffer.GetIDsSelected(selectionRectangle))
             {
                 GameComponent component;
@@ -162,7 +162,7 @@ namespace DwarfCorp
                     continue;
 
                 if (!component.IsVisible) continue; // Then why was it drawn in the selection buffer??
-                var toAdd = component.GetRoot().GetComponent<Body>();
+                var toAdd = component.GetRoot().GetComponent<GameComponent>();
                 if (!toReturn.Contains(toAdd))
                     toReturn.Add(toAdd);
             }
@@ -215,8 +215,8 @@ namespace DwarfCorp
             _componentList.Remove(component);
             Components.Remove(component.GlobalID);
 
-            if (component is Body)
-                World.OctTree.Remove((component as Body), (component as Body).GetBoundingBox());
+            if (component is GameComponent)
+                World.OctTree.Remove((component as GameComponent), (component as GameComponent).GetBoundingBox());
 
             if (component is MinimapIcon)
                 MinimapIcons.Remove(component as MinimapIcon);
@@ -267,7 +267,7 @@ namespace DwarfCorp
                 if (iter % (ulong)_componentList[(int)c].UpdateRate == 0)
                 {
                     _componentList[(int)c].Update(gameTime, chunks, camera);
-                    if (_componentList[(int)c] is Body body)
+                    if (_componentList[(int)c] is GameComponent body)
                         //WorkOrders.Enqueue(body);
                         body.ProcessTransformChange();
                 }
@@ -288,7 +288,7 @@ namespace DwarfCorp
             ExitThreads = true;
         }
 
-        private ConcurrentQueue<Body> WorkOrders = new ConcurrentQueue<Body>();
+        private ConcurrentQueue<GameComponent> WorkOrders = new ConcurrentQueue<GameComponent>();
 
         private void EntityTransformUpdateThread()
         {
@@ -302,7 +302,7 @@ namespace DwarfCorp
             {
                 while (!DwarfGame.ExitGame && !ExitThreads)
                 {
-                    if (WorkOrders.TryDequeue(out Body body))
+                    if (WorkOrders.TryDequeue(out GameComponent body))
                         body.ProcessTransformChange();
                     else
                         Thread.Sleep(100); // Nothing in the queue - lets take a break.

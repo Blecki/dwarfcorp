@@ -75,7 +75,7 @@ namespace DwarfCorp
 
         public bool ValidateSit()
         {
-            Body chair = Agent.Blackboard.GetData<Body>("Chair");
+            GameComponent chair = Agent.Blackboard.GetData<GameComponent>("Chair");
             if (chair == null || chair.IsDead || !chair.Active)
             {
                 return false;
@@ -87,7 +87,7 @@ namespace DwarfCorp
         public IEnumerable<Status> WaitUntilBored()
         {
             Timer waitTimer = new Timer(SitTime, false);
-            Body body = Creature.AI.Blackboard.GetData<Body>("Chair");
+            GameComponent body = Creature.AI.Blackboard.GetData<GameComponent>("Chair");
 
             // Snap relative the chair's position, not their own...
             Vector3 snapPosition = body.Position + new Vector3(0, 0.4f, 0);

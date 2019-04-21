@@ -20,12 +20,12 @@ namespace DwarfCorp.ContextCommands
             Icon = new Gui.TileReference("tool-icons", 1);
         }
 
-        public override bool CanBeAppliedTo(Body Entity, WorldManager World)
+        public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
             return (World.Master.Tools[GameMaster.ToolMode.MoveObjects] as MoveObjectTool).CanMove(Entity);
         }
 
-        public override void Apply(Body Entity, WorldManager World)
+        public override void Apply(GameComponent Entity, WorldManager World)
         {
             World.Master.ChangeTool(GameMaster.ToolMode.MoveObjects);
         }

@@ -225,7 +225,7 @@ namespace DwarfCorp
             return CurrentResourceCount >= MaxResources;
         }
 
-        public bool AddItem(Body component)
+        public bool AddItem(GameComponent component)
         {
             if(IsFull())
             {

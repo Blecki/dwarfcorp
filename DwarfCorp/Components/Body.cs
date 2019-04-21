@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    public class Body : GameComponent
+    public partial class GameComponent
     {
         public virtual void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
@@ -34,7 +34,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public GameComponent ReservedFor = null;
         private BoundingBox LastBounds = new BoundingBox();
-        private OctTreeNode<Body> CachedOcttreeNode = null;
+        private OctTreeNode<GameComponent> CachedOcttreeNode = null;
         [JsonIgnore]
         public Matrix GlobalTransform
         {
@@ -96,13 +96,9 @@ namespace DwarfCorp
         protected Matrix localTransform = Matrix.Identity;
         protected Matrix globalTransform = Matrix.Identity;
 
-        public Body()
-        {
-        }
-
         // Todo: Remove unused argument addToCollisionManager
-        public Body(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
-            base(name, manager)
+        public GameComponent(ComponentManager manager, string name, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos) :
+            this(name, manager)
         {
             BoundingBoxSize = boundingBoxExtents;
             LocalBoundingBoxOffset = boundingBoxPos;
@@ -139,7 +135,7 @@ namespace DwarfCorp
             PropogateTransforms();
         }
 
-        override public void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
+        public virtual void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         {
             if (AnimationQueue.Count > 0)
             {
@@ -166,7 +162,7 @@ namespace DwarfCorp
             {
                 UpdateTransform();
                 for (var i = 0; i < Children.Count; ++i)
-                    if (Children[i] is Body child) child.HasMoved = true;
+                    if (Children[i] is GameComponent child) child.HasMoved = true;
             }
         }
 
@@ -183,8 +179,8 @@ namespace DwarfCorp
 
             var newTransform = Matrix.Identity;
 
-            if ((Parent as Body) != null)
-                newTransform = LocalTransform * (Parent as Body).GlobalTransform;
+            if ((Parent as GameComponent) != null)
+                newTransform = LocalTransform * (Parent as GameComponent).GlobalTransform;
             else
                 newTransform = LocalTransform;
 
@@ -221,7 +217,7 @@ namespace DwarfCorp
 
             UpdateTransform();
             for (var i = 0; i < Children.Count; ++i)
-                if (Children[i] is Body child) child.PropogateTransforms();
+                if (Children[i] is GameComponent child) child.PropogateTransforms();
 
             PerformanceMonitor.PopFrame();
         }
@@ -251,24 +247,24 @@ namespace DwarfCorp
             }
         }
 
-        public override void Delete()
-        {
-            RemoveFromOctTree();
-            base.Delete();
-        }
+        //public override void Delete()
+        //{
+        //    RemoveFromOctTree();
+        //    base.Delete();
+        //}
 
-        public override void Die()
-        {
-            RemoveFromOctTree();
-            if (OnDestroyed != null) OnDestroyed();
+        //public override void Die()
+        //{
+        //    RemoveFromOctTree();
+        //    if (OnDestroyed != null) OnDestroyed();
 
-            base.Die();
-        }
+        //    base.Die();
+        //}
 
-        public override void CreateCosmeticChildren(ComponentManager Manager)
+        public virtual void CreateCosmeticChildren(ComponentManager Manager)
         {
             PropogateTransforms();
-            base.CreateCosmeticChildren(Manager);
+            //base.CreateCosmeticChildren(Manager);
         }
 
         public void Face(Vector3 target)

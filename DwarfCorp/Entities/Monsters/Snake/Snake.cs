@@ -58,7 +58,7 @@ namespace DwarfCorp
         
         public class TailSegment
         {
-            public Body Sprite;
+            public GameComponent Sprite;
             public Vector3 Target;
         }
 
@@ -157,7 +157,7 @@ namespace DwarfCorp
                 Tail.Add(
                     new TailSegment()
                     {
-                        Sprite = Manager.RootComponent.AddChild(tailPiece) as Body,
+                        Sprite = Manager.RootComponent.AddChild(tailPiece) as GameComponent,
                         Target = Physics.LocalTransform.Translation
                     });
 

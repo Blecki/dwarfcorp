@@ -117,7 +117,7 @@ namespace DwarfCorp
                         if (craftItem != null)
                             offset = craftItem.SpawnOffset;
 
-                        var body = EntityFactory.CreateEntity<Body>(type, vox.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + offset);
+                        var body = EntityFactory.CreateEntity<GameComponent>(type, vox.WorldPosition + new Vector3(0.5f, 0.0f, 0.5f) + offset);
                         if (body != null)
                         {
                             body.PropogateTransforms();
@@ -272,7 +272,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void OnMouseOver(IEnumerable<Body> bodies)
+        public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
         }
 
@@ -328,7 +328,7 @@ namespace DwarfCorp
         }
 
 
-        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
             
         }

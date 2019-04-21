@@ -47,7 +47,7 @@ namespace DwarfCorp
     /// All objects are just axis-aligned boxes that are treated as point masses.
     /// </summary>
     [Saving.SaveableObject(0)]
-    public class Physics : Body
+    public class Physics : GameComponent
     {
         public Vector3 AngularVelocity { get; set; }
         public Vector3 Velocity { get; set; }
@@ -363,7 +363,7 @@ namespace DwarfCorp
                     {
                         // Assume all physics are attached to the root.
                         if (Parent != null)
-                            globalTransform = LocalTransform * (Parent as Body).GlobalTransform;
+                            globalTransform = LocalTransform * (Parent as GameComponent).GlobalTransform;
                         else
                             globalTransform = LocalTransform;
                         UpdateBoundingBox();

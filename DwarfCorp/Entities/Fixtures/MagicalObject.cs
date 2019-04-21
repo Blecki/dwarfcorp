@@ -73,7 +73,7 @@ namespace DwarfCorp
         {
             DrawLoadBarTimer.Update(Time);
             if (!DrawLoadBarTimer.HasTriggered)
-                Drawer2D.DrawLoadBar(World.Camera, (GetRoot() as Body).Position, Color.Cyan, Color.Black, 32, 4, (float)(_currentCharges) / MaxCharges);
+                Drawer2D.DrawLoadBar(World.Camera, (GetRoot() as GameComponent).Position, Color.Cyan, Color.Black, 32, 4, (float)(_currentCharges) / MaxCharges);
             base.Update(Time, Chunks, Camera);
         }
 
@@ -81,7 +81,7 @@ namespace DwarfCorp
         {
             if (active != Active)
             {
-                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_dwarf_magic_research, (GetRoot() as Body).Position, true, 1.0f);
+                SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_ic_dwarf_magic_research, (GetRoot() as GameComponent).Position, true, 1.0f);
             }
             GetRoot().SetFlagRecursive(GameComponent.Flag.Active, active);
             GetRoot().SetVertexColorRecursive(active ? Color.White : Color.DarkGray);

@@ -120,7 +120,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void OnMouseOver(IEnumerable<Body> bodies)
+        public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
             throw new NotImplementedException();
         }
@@ -160,7 +160,7 @@ namespace DwarfCorp
         }
 
 
-        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
             
         }

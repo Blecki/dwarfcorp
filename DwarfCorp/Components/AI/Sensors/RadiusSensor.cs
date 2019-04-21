@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class RadiusSensor : Body
+    public class RadiusSensor : GameComponent
     {
         public List<Creature> Creatures = new List<Creature>();
         private Timer SenseTimer = new Timer(0.5f, false, Timer.TimerMode.Real);

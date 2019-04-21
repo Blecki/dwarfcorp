@@ -63,7 +63,7 @@ namespace DwarfCorp
         }
 
 
-        public bool CanGather(Body c)
+        public bool CanGather(GameComponent c)
         {
             return c.Tags.Contains("Resource") &&
                 c.Active &&
@@ -71,7 +71,7 @@ namespace DwarfCorp
                 c.Parent == Player.World.ComponentManager.RootComponent;
         }
 
-        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
             List<Task> assignments = new List<Task>();
 
@@ -96,7 +96,7 @@ namespace DwarfCorp
             OnConfirm(Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, Task.TaskCategory.Gather));
         }
 
-        public override void OnMouseOver(IEnumerable<Body> bodies)
+        public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
             DefaultOnMouseOver(bodies);
         }

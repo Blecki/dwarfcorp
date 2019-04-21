@@ -43,7 +43,7 @@ namespace DwarfCorp
 {
     public class VoxelRevealer : GameComponent
     {
-        private Body Body;
+        private GameComponent Body;
         private int Radius;
         private GlobalVoxelCoordinate OwnerCoordinate;
 
@@ -53,7 +53,7 @@ namespace DwarfCorp
             throw new InvalidProgramException("DO NOT SERIALIZE VOXEL REVEALER");
         }
 
-        public VoxelRevealer(ComponentManager Manager, Body Body, int Radius) :
+        public VoxelRevealer(ComponentManager Manager, GameComponent Body, int Radius) :
             base(Manager)
         {
             this.Body = Body;

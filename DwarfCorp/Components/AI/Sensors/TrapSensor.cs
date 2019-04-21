@@ -62,9 +62,9 @@ namespace DwarfCorp
             FireTimer = new Timer(0.5f, false);
         }
 
-        private void TrapSensor_OnSensed(IEnumerable<Body> sensed)
+        private void TrapSensor_OnSensed(IEnumerable<GameComponent> sensed)
         {
-            foreach (Body lc in sensed)
+            foreach (GameComponent lc in sensed)
             {
                 foreach (Health hc in lc.EnumerateAll().OfType<Health>())
                 {

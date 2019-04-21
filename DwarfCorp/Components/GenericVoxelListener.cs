@@ -41,7 +41,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class GenericVoxelListener : Body, IVoxelListener
+    public class GenericVoxelListener : GameComponent, IVoxelListener
     {
         private Action<VoxelChangeEvent> Handler;
 

@@ -126,7 +126,7 @@ namespace DwarfCorp
                         _state = State.Prep;
                         PrepThread.Start();
 
-                            foreach (Body body in Manager.World.EnumerateIntersectingObjects(
+                            foreach (GameComponent body in Manager.World.EnumerateIntersectingObjects(
                                 new BoundingBox(LocalPosition - new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f), LocalPosition + new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f)), CollisionType.Both))
                             {
                                 var distance = (body.Position - LocalPosition).Length();
@@ -159,7 +159,7 @@ namespace DwarfCorp
                             Manager.World.ParticleManager.Effects["explode"].Trigger(10, Position, Color.White);
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_trap_destroyed, 0.5f);
 
-                            foreach (Body body in Manager.World.EnumerateIntersectingObjects(
+                            foreach (GameComponent body in Manager.World.EnumerateIntersectingObjects(
                                 new BoundingBox(LocalPosition - new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f), LocalPosition + new Vector3(VoxelRadius * 2.0f, VoxelRadius * 2.0f, VoxelRadius * 2.0f)), CollisionType.Both))
                             {
                                 var distance = (body.Position - LocalPosition).Length();

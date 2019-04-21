@@ -45,7 +45,7 @@ namespace DwarfCorp
     /// <summary>
     /// This component follows its parent at a specified radius;
     /// </summary>
-    public class Follower : Body
+    public class Follower : GameComponent
     {
         public float FollowRadius { get; set;  }
         public Vector3 TargetPos { get; set; }
@@ -67,7 +67,7 @@ namespace DwarfCorp
         {
             base.Update(gameTime, chunks, camera);
 
-            var body = Parent as Body;
+            var body = Parent as GameComponent;
             global::System.Diagnostics.Debug.Assert(body != null);
 
             Vector3 parentCurrentPos = body.Position;

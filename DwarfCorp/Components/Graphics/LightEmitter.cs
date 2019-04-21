@@ -45,7 +45,7 @@ namespace DwarfCorp
     /// This component dynamically lights up voxels around it with torch light.
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class LightEmitter : Body
+    public class LightEmitter : GameComponent
     {
         public DynamicLight Light { get; set; }
 

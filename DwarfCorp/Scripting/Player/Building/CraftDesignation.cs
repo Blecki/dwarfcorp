@@ -39,11 +39,11 @@ namespace DwarfCorp
         public ResourceEntity PreviewResource = null;
         public CraftItem ItemType;
         public VoxelHandle Location;
-        public Body WorkPile;
+        public GameComponent WorkPile;
         public bool OverrideOrientation;
         public float Orientation;
         public bool Valid;
-        public Body Entity;
+        public GameComponent Entity;
         public float Progress = 0.0f;
         public bool Finished = false;
         public bool HasResources = false;

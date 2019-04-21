@@ -66,7 +66,7 @@ namespace DwarfCorp
         {
             Timer waitTimer = new Timer(SitTime, false);
             Vector3 snapPosition = Agent.Position;
-            Body body = Creature.AI.Blackboard.GetData<Body>("Grave");
+            GameComponent body = Creature.AI.Blackboard.GetData<GameComponent>("Grave");
 
             if (body == null || body.IsDead)
             {

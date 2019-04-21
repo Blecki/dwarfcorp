@@ -49,8 +49,8 @@ namespace DwarfCorp
 
         public abstract void OnVoxelsDragged(List<VoxelHandle> voxels, InputManager.MouseButton button);
         public abstract void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button);
-        public abstract void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button);
-        public abstract void OnMouseOver(IEnumerable<Body> bodies);
+        public abstract void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button);
+        public abstract void OnMouseOver(IEnumerable<GameComponent> bodies);
         public abstract void Update(DwarfGame game, DwarfTime time);
         public abstract void Render2D(DwarfGame game, DwarfTime time);
         public abstract void Render3D(DwarfGame game, DwarfTime time);
@@ -71,11 +71,11 @@ namespace DwarfCorp
             }
         }
 
-        public virtual void DefaultOnMouseOver(IEnumerable<Body> bodies)
+        public virtual void DefaultOnMouseOver(IEnumerable<GameComponent> bodies)
         {
             StringBuilder sb = new StringBuilder();
 
-            List<Body> bodyList = bodies.ToList();
+            List<GameComponent> bodyList = bodies.ToList();
             for (int i = 0; i < bodyList.Count; i++)
             {
                 sb.Append(bodyList[i].GetMouseOverText());

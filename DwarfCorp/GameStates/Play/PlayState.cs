@@ -2359,7 +2359,7 @@ namespace DwarfCorp.GameStates
             (Master.Tools[GameMaster.ToolMode.SelectUnits] as DwarfSelectorTool).DrawSelectionRect = b => ContextCommands.Any(c => c.CanBeAppliedTo(b, World));
         }
 
-        private List<Body> BodySelector_LeftReleased()
+        private List<GameComponent> BodySelector_LeftReleased()
         {
             if (MultiContextMenu != null)
             {

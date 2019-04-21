@@ -110,7 +110,7 @@ namespace DwarfCorp
             },
         };
 
-        public static IEnumerable<Body> CreateFences(
+        public static IEnumerable<GameComponent> CreateFences(
             ComponentManager components,
             string asset, 
             IEnumerable<VoxelHandle> Voxels, 

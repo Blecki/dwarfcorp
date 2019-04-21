@@ -59,12 +59,12 @@ namespace DwarfCorp
         }
 
 
-        public bool CanDestroy(Body body)
+        public bool CanDestroy(GameComponent body)
         {
             return body.Tags.Any(tag => tag == "Deconstructable") && !body.IsReserved;
         }
 
-        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
             if (bodies.Count == 0)
                 return;
@@ -86,9 +86,9 @@ namespace DwarfCorp
         }
 
 
-        private List<Body> selectedBodies = new List<Body>();
+        private List<GameComponent> selectedBodies = new List<GameComponent>();
 
-        public override void OnMouseOver(IEnumerable<Body> bodies)
+        public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
             DefaultOnMouseOver(bodies);
 

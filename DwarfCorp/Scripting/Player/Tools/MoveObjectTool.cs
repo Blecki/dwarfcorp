@@ -55,7 +55,7 @@ namespace DwarfCorp
 
         private ToolState State = ToolState.Selecting;
 
-        private Body SelectedBody { get; set; }
+        private GameComponent SelectedBody { get; set; }
         private bool OverrideOrientation = false;
         private float CurrentOrientation = 0.0f;
 
@@ -91,12 +91,12 @@ namespace DwarfCorp
             }
         }
 
-        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
             
         }
 
-        public override void OnMouseOver(IEnumerable<Body> bodies)
+        public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
            
         }
@@ -111,12 +111,12 @@ namespace DwarfCorp
 
         }
 
-        public bool CanMove(Body entity)
+        public bool CanMove(GameComponent entity)
         {
             return entity.Tags.Contains("Moveable") && !entity.IsReserved;
         }
 
-        public void StartDragging(Body entity)
+        public void StartDragging(GameComponent entity)
         {
             SelectedBody = entity;
             OrigTransform = SelectedBody.LocalTransform;

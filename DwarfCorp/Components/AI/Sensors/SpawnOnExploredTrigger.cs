@@ -42,7 +42,7 @@ using Newtonsoft.Json;
 namespace DwarfCorp
 {
     [JsonObject(IsReference = true)]
-    public class SpawnOnExploredTrigger : Body, IVoxelListener
+    public class SpawnOnExploredTrigger : GameComponent, IVoxelListener
     {
         public VoxelHandle Voxel;
         public string EntityToSpawn { get; set; }

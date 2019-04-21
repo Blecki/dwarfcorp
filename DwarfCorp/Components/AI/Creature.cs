@@ -138,7 +138,7 @@ namespace DwarfCorp
                 newEggResource.Name = Species + " Egg";
                 ResourceLibrary.Add(newEggResource);
             }
-            var parent = EntityFactory.CreateEntity<Body>(this.Species + " Egg Resource", Physics.Position);
+            var parent = EntityFactory.CreateEntity<GameComponent>(this.Species + " Egg Resource", Physics.Position);
             parent.AddChild(new Egg(parent, this.Species, Manager, Physics.Position, AI.PositionConstraint));
         }
 
@@ -911,7 +911,7 @@ namespace DwarfCorp
             return damage;
         }
 
-        public void GatherImmediately(Body item, Inventory.RestockType restockType = Inventory.RestockType.None)
+        public void GatherImmediately(GameComponent item, Inventory.RestockType restockType = Inventory.RestockType.None)
         {
             if (item is CoinPile)
             {
@@ -929,7 +929,7 @@ namespace DwarfCorp
                 Inventory.Pickup(item, restockType);
         }
 
-        public void Gather(Body item)
+        public void Gather(GameComponent item)
         {
 
             var task = new GatherItemTask(item) { Priority = Task.PriorityType.High };

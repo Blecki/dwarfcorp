@@ -43,7 +43,7 @@ namespace DwarfCorp
     [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class KillEntityAct : CompoundCreatureAct
     {
-        public Body Entity { get; set; }
+        public GameComponent Entity { get; set; }
         public bool PathExists { get; set; }
         public float RadiusDomain { get; set; }
         public KillEntityAct()
@@ -82,7 +82,7 @@ namespace DwarfCorp
             return true;
         }
 
-        private Body closestDefensiveStructure = null;
+        private GameComponent closestDefensiveStructure = null;
 
         public IEnumerable<Act.Status> OnAttackEnd(CreatureAI creature)
         {
@@ -96,7 +96,7 @@ namespace DwarfCorp
             yield return Act.Status.Success;
         }
 
-        public KillEntityAct(Body entity, CreatureAI creature) :
+        public KillEntityAct(GameComponent entity, CreatureAI creature) :
             base(creature)
         {
             Entity = entity;

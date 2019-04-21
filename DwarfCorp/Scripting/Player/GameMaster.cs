@@ -76,7 +76,7 @@ namespace DwarfCorp
         {
             if (NewTool != ToolMode.SelectUnits)
             {
-                SelectedObjects = new List<Body>();
+                SelectedObjects = new List<GameComponent>();
             }
 
             // Todo: Should probably clean up existing tool even if they are the same tool.
@@ -93,7 +93,7 @@ namespace DwarfCorp
         public List<CreatureAI> SelectedMinions { get { return Faction.SelectedMinions; } set { Faction.SelectedMinions = value; } }
 
         [JsonIgnore]
-        public List<Body> SelectedObjects = new List<Body>();
+        public List<GameComponent> SelectedObjects = new List<GameComponent>();
 
         [JsonIgnore]
         public WorldManager World { get; set; }
@@ -250,12 +250,12 @@ namespace DwarfCorp
             PayEmployees();
         }
 
-        public void OnMouseOver(IEnumerable<Body> bodies)
+        public void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
             CurrentTool.OnMouseOver(bodies);
         }
 
-        public void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        public void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
             CurrentTool.OnBodiesSelected(bodies, button);
             if (CurrentToolMode == ToolMode.SelectUnits)

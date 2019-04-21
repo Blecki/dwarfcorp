@@ -115,7 +115,7 @@ namespace DwarfCorp
             }
         }
 
-        public IEnumerable<Act.Status> SummonSkeleton(Body grave)
+        public IEnumerable<Act.Status> SummonSkeleton(GameComponent grave)
         {
             if (grave.IsDead)
             {
@@ -168,7 +168,7 @@ namespace DwarfCorp
 
         public Act SummonFromGraves()
         {
-            List<Body> graves = (from faction in Creature.Manager.World.Factions.Factions
+            List<GameComponent> graves = (from faction in Creature.Manager.World.Factions.Factions
                 where
                     Manager.World.Diplomacy.GetPolitics(Creature.Faction, faction.Value)
                         .GetCurrentRelationship() == Relationship.Hateful

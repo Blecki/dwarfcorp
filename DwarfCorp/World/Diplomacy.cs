@@ -357,7 +357,7 @@ namespace DwarfCorp
             }
             else
             {
-                Body balloon = world.PlayerFaction.DispatchBalloon();
+                GameComponent balloon = world.PlayerFaction.DispatchBalloon();
 
                 if (balloon != null)
                 {

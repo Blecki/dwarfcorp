@@ -67,7 +67,7 @@ namespace DwarfCorp
             foreach (var status in Agent.Creature.HitAndWait(true,
                 () => { return Entity.MaxCharges; },
                 () => { return Entity.CurrentCharges; },
-                () => { Entity.CurrentCharges++; }, () => { return (Entity.GetRoot() as Body).Position; }))
+                () => { Entity.CurrentCharges++; }, () => { return (Entity.GetRoot() as GameComponent).Position; }))
             {
                 yield return Act.Status.Running;
             }
@@ -83,7 +83,7 @@ namespace DwarfCorp
             Tree =
                 new Domain(Verify(creature), new Sequence
                     (
-                    new GoToEntityAct(Entity.GetRoot() as Body, creature)
+                    new GoToEntityAct(Entity.GetRoot() as GameComponent, creature)
                     {
                         MovingTarget = true,
                         PlanType = planType,

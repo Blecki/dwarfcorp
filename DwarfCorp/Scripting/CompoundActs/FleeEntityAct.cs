@@ -8,7 +8,7 @@ namespace DwarfCorp
     public class FleeEntityAct : CompoundCreatureAct
     {
         public int PathLength;
-        public Body Entity;
+        public GameComponent Entity;
 
         public FleeEntityAct()
         {
@@ -35,7 +35,7 @@ namespace DwarfCorp
 
             for (int i = 0; i < PathLength; i++)
             {
-                var actions = Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, Creature.World.OctTree, new List<Body>(), storage);
+                var actions = Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, Creature.World.OctTree, new List<GameComponent>(), storage);
 
                 MoveAction? bestAction = null;
                 float bestDist = float.MinValue;

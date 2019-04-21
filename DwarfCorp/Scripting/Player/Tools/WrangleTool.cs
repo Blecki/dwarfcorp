@@ -51,7 +51,7 @@ namespace DwarfCorp
 
         }
 
-        public bool CanCatch(Body animal, bool print=false)
+        public bool CanCatch(GameComponent animal, bool print=false)
         {
             var creature = animal.GetRoot().GetComponent<Creature>();
             if (creature == null)
@@ -78,10 +78,10 @@ namespace DwarfCorp
             return false;
         }
 
-        public override void OnBodiesSelected(List<Body> bodies, InputManager.MouseButton button)
+        public override void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
             List<Task> tasks = new List<Task>();
-            foreach (Body animal in bodies.Where(c => c.Tags.Contains("DomesticAnimal")))
+            foreach (GameComponent animal in bodies.Where(c => c.Tags.Contains("DomesticAnimal")))
             {
                 Drawer3D.DrawBox(animal.BoundingBox, Color.Tomato, 0.1f, false);
                 switch (button)
@@ -112,7 +112,7 @@ namespace DwarfCorp
             }
         }
 
-        public override void OnMouseOver(IEnumerable<Body> bodies)
+        public override void OnMouseOver(IEnumerable<GameComponent> bodies)
         {
 
         }

@@ -48,7 +48,7 @@ namespace DwarfCorp
     /// REQUIRES that the EnemySensor be attached to a creature
     /// </summary>
     [JsonObject(IsReference = true)]
-    public class EnemySensor : Body
+    public class EnemySensor : GameComponent
     {
         public delegate void EnemySensed(List<CreatureAI> enemies);
 

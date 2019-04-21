@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp.SteamPipes
 {
-    public class SteamPoweredObject : Body
+    public class SteamPoweredObject : GameComponent
     {
         [JsonIgnore]
         public List<UInt32> NeighborPipes = new List<UInt32>();
@@ -94,7 +94,7 @@ namespace DwarfCorp.SteamPipes
                     if (neighbor == null)
                         Drawer3D.DrawLine(Position, Position + Vector3.UnitY, Color.CornflowerBlue, 0.1f);
                     else
-                        Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.5f, 0.0f), (neighbor as Body).Position + new Vector3(0.0f, 0.5f, 0.0f), new Color(SteamPressure, 0.0f, 0.0f, 1.0f), 0.1f);
+                        Drawer3D.DrawLine(Position + new Vector3(0.0f, 0.5f, 0.0f), (neighbor as GameComponent).Position + new Vector3(0.0f, 0.5f, 0.0f), new Color(SteamPressure, 0.0f, 0.0f, 1.0f), 0.1f);
                 }
 
                 Drawer3D.DrawBox(GetBoundingBox(), Color.Red, 0.01f, false);
@@ -112,7 +112,7 @@ namespace DwarfCorp.SteamPipes
 
                 foreach (var connection in NeighborPipes)
                 {
-                    var neighbor = Manager.FindComponent(connection) as Body;
+                    var neighbor = Manager.FindComponent(connection) as GameComponent;
                     if (neighbor == null) continue;
 
                     var orientationToNeighbor = OrientationHelper.DetectOrientationFromVector(new Vector3(neighbor.Position.X - this.Position.X, 0.0f, neighbor.Position.Z - this.Position.Z));

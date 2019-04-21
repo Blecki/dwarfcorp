@@ -114,7 +114,7 @@ namespace DwarfCorp
 
             if (closestCreature != null)
             {
-                closestCreature.Kill(this.GetRoot() as Body);
+                closestCreature.Kill(this.GetRoot() as GameComponent);
             }
         }
 

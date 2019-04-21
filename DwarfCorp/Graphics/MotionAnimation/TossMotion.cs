@@ -45,13 +45,13 @@ namespace DwarfCorp
     {
         public Matrix Start { get; set; }
         public float Height { get; set; }
-        public Body Target { get; set; }
+        public GameComponent Target { get; set; }
         public BodyTossMotion()
         {
 
         }
 
-        public BodyTossMotion(float animTime, float height, Matrix start, Body end) :
+        public BodyTossMotion(float animTime, float height, Matrix start, GameComponent end) :
             base(animTime, false)
         {
             Start = start;

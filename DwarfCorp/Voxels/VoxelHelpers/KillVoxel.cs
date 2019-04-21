@@ -16,7 +16,7 @@ namespace DwarfCorp
 {
     public partial class VoxelHelpers
     {
-        public static List<Body> KillVoxel(WorldManager World, VoxelHandle Voxel)
+        public static List<GameComponent> KillVoxel(WorldManager World, VoxelHandle Voxel)
         {
             if (World.Master != null)
                 World.Master.Faction.OnVoxelDestroyed(Voxel);
@@ -34,14 +34,14 @@ namespace DwarfCorp
 
             Voxel.Type.ExplosionSound.Play(Voxel.WorldPosition);
 
-            List<Body> emittedResources = null;
+            List<GameComponent> emittedResources = null;
             if (Voxel.Type.ReleasesResource)
             {
                 if (MathFunctions.Rand() < Voxel.Type.ProbabilityOfRelease)
                 {
-                    emittedResources = new List<Body>
+                    emittedResources = new List<GameComponent>
                     {
-                        EntityFactory.CreateEntity<Body>(Voxel.Type.ResourceToRelease + " Resource",
+                        EntityFactory.CreateEntity<GameComponent>(Voxel.Type.ResourceToRelease + " Resource",
                             Voxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f))
                     };
                 }

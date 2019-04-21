@@ -182,10 +182,10 @@ namespace DwarfCorp
 
         public List<CreatureAI> Spawn(SpawnEvent spawnEvent)
         {
-            List<Body> bodies = 
+            List<GameComponent> bodies = 
             spawnEvent.SpawnFaction.GenerateRandomSpawn(spawnEvent.NumCreatures, spawnEvent.WorldLocation);
             List<CreatureAI> toReturn = new List<CreatureAI>();
-            foreach (Body body in bodies)
+            foreach (GameComponent body in bodies)
             {
                 foreach (CreatureAI creature in body.EnumerateAll().OfType<CreatureAI>().ToList())
                 {

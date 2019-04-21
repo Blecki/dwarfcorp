@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp.Elevators
 {
-    public class ElevatorShaft : Body
+    public class ElevatorShaft : GameComponent
     {
         [EntityFactory("Elevator Shaft")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)

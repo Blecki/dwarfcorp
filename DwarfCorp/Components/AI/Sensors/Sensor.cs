@@ -39,9 +39,9 @@ namespace DwarfCorp
     /// <summary>
     /// Generic component with a box that fires when other components enter it.
     /// </summary>
-    public class Sensor : Body
+    public class Sensor : GameComponent
     {
-        public delegate void Sense(IEnumerable<Body> sensed);
+        public delegate void Sense(IEnumerable<GameComponent> sensed);
         
         public event Sense OnSensed;
         public Timer FireTimer { get; set; }

@@ -97,7 +97,7 @@ namespace DwarfCorp
             UpdateTimer.Update(gameTime);
             if (UpdateTimer.HasTriggered)
             {
-                Body p = (Body)Parent;
+                GameComponent p = (GameComponent)Parent;
 
                 var voxelBelow = new VoxelHandle(chunks.ChunkData,
                     GlobalVoxelCoordinate.FromVector3(p.GlobalTransform.Translation

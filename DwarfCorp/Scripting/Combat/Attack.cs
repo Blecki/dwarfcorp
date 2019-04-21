@@ -185,7 +185,7 @@ namespace DwarfCorp
 
         }
 
-        public void LaunchProjectile(Vector3 start, Vector3 end, Body target)
+        public void LaunchProjectile(Vector3 start, Vector3 end, GameComponent target)
         {
             Vector3 velocity = (end - start);
             float dist = velocity.Length();
@@ -194,7 +194,7 @@ namespace DwarfCorp
             Blackboard data = new Blackboard();
             data.SetData("Velocity", velocity);
             data.SetData("Target", target);
-            EntityFactory.CreateEntity<Body>(ProjectileType, start, data);
+            EntityFactory.CreateEntity<GameComponent>(ProjectileType, start, data);
         }
 
         public bool PerformNoDamage(Creature performer, DwarfTime time, Vector3 pos)
@@ -236,7 +236,7 @@ namespace DwarfCorp
             return true;
         }
 
-        public void DoDamage(Creature performer, Body other, float bonus)
+        public void DoDamage(Creature performer, GameComponent other, float bonus)
         {
 
             if (!String.IsNullOrEmpty(DiseaseToSpread))
@@ -304,7 +304,7 @@ namespace DwarfCorp
             }
         }
 
-        public bool Perform(Creature performer, Body other, DwarfTime time, float bonus, Vector3 pos, string faction)
+        public bool Perform(Creature performer, GameComponent other, DwarfTime time, float bonus, Vector3 pos, string faction)
         {
 
             switch (TriggerMode)

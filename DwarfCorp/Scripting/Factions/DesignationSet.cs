@@ -55,7 +55,7 @@ namespace DwarfCorp
 
         public class EntityDesignation
         {
-            public Body Body;
+            public GameComponent Body;
             public DesignationType Type;
             public Object Tag;
             public Task Task;
@@ -201,7 +201,7 @@ namespace DwarfCorp
             }
         }
 
-        public AddDesignationResult AddEntityDesignation(Body Entity, DesignationType Type, Object Tag, Task Task)
+        public AddDesignationResult AddEntityDesignation(GameComponent Entity, DesignationType Type, Object Tag, Task Task)
         {
             lock (designationLock)
             {
@@ -222,7 +222,7 @@ namespace DwarfCorp
             }
         }
 
-        public RemoveDesignationResult RemoveEntityDesignation(Body Entity, DesignationType Type)
+        public RemoveDesignationResult RemoveEntityDesignation(GameComponent Entity, DesignationType Type)
         {
             lock (designationLock)
             {
@@ -233,7 +233,7 @@ namespace DwarfCorp
             }
         }
 
-        public bool IsDesignation(Body Entity, DesignationType Type)
+        public bool IsDesignation(GameComponent Entity, DesignationType Type)
         {
             lock (designationLock)
             {
@@ -249,7 +249,7 @@ namespace DwarfCorp
             }
         }
 
-        public IEnumerable<EntityDesignation> EnumerateEntityDesignations(Body Entity)
+        public IEnumerable<EntityDesignation> EnumerateEntityDesignations(GameComponent Entity)
         {
             lock (designationLock)
             {
@@ -265,7 +265,7 @@ namespace DwarfCorp
             }
         }
 
-        public EntityDesignation GetEntityDesignation(Body Entity, DesignationType Type)
+        public EntityDesignation GetEntityDesignation(GameComponent Entity, DesignationType Type)
         {
             foreach (var des in EnumerateEntityDesignations(Type))
                 if (Object.ReferenceEquals(des.Body, Entity))
