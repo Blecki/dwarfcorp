@@ -95,11 +95,13 @@ namespace DwarfCorp
             World.ComponentManager = this;
             Components = new Dictionary<uint, GameComponent>();
             SaveData.SaveableComponents.RemoveAll(c => c == null);
+
             foreach (var component in SaveData.SaveableComponents)
             {
                 Components.Add(component.GlobalID, component);
                 component.World = World;
             }
+
             RootComponent = Components[SaveData.RootComponent] as GameComponent;
 
             foreach (var component in Components)
@@ -118,6 +120,7 @@ namespace DwarfCorp
 
             foreach (var component in SaveData.SaveableComponents)
             {
+                component.ProcessTransformChange();
                 component.CreateCosmeticChildren(this);
             }
 
@@ -245,6 +248,8 @@ namespace DwarfCorp
 
             foreach (var system in World.UpdateSystems)
                 system.ComponentCreated(component);
+
+            component.ProcessTransformChange();
         }
 
         public uint k = 0;
@@ -258,17 +263,30 @@ namespace DwarfCorp
             if (_componentList == null)
                 _componentList = Components.Values.ToList();
 
-            for (uint j = 0; j < Math.Min(GameSettings.Default.EntityUpdateRate, _componentList.Count); j++)
+            var playerPoint = World.Camera.Position;
+            var updateBox = new BoundingBox(playerPoint - new Vector3(64, 64, 64), playerPoint + new Vector3(64, 64, 64));
+            var componentsToUpdate = World.EnumerateIntersectingObjectsLoose(updateBox);
+            foreach (var body in componentsToUpdate)
             {
-                var c = (k + j) % (uint)_componentList.Count;
-                if (iter % (ulong)_componentList[(int)c].UpdateRate == 0)
-                {
-                    _componentList[(int)c].Update(gameTime, chunks, camera);
-                    if (_componentList[(int)c] is GameComponent body)
-                        //WorkOrders.Enqueue(body);
-                        body.ProcessTransformChange();
-                }
+                body.Update(gameTime, chunks, camera);
+                body.ProcessTransformChange();
             }
+
+            if (Debugger.Switches.ShowUpdateBox)
+                foreach (var chunk in World.EnumerateChunksInBounds(updateBox))
+                    Drawer3D.DrawBox(chunk.GetBoundingBox(), Color.Red, 0.4f, false);
+
+            //for (uint j = 0; j < Math.Min(GameSettings.Default.EntityUpdateRate, _componentList.Count); j++)
+            //{
+            //    var c = (k + j) % (uint)_componentList.Count;
+            //    if (iter % (ulong)_componentList[(int)c].UpdateRate == 0)
+            //    {
+            //        _componentList[(int)c].Update(gameTime, chunks, camera);
+            //        if (_componentList[(int)c] is GameComponent body)
+            //            //WorkOrders.Enqueue(body);
+            //            body.ProcessTransformChange();
+            //    }
+            //}
 
             k += (uint)Math.Min(GameSettings.Default.EntityUpdateRate, _componentList.Count);
 

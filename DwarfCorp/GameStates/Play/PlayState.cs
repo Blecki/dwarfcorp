@@ -427,14 +427,15 @@ namespace DwarfCorp.GameStates
 
             if (DwarfGame.IsConsoleVisible)
             {
+                PerformanceMonitor.SetMetric("ENTITIES", World.ComponentManager.RootComponent.Children.Count);
+                PerformanceMonitor.SetMetric("MEMORY", BytesToString(System.GC.GetTotalMemory(false)));
+
                 var statsDisplay = DwarfGame.GetConsoleTile("STATS");
 
                 statsDisplay.Lines.Clear();
                 statsDisplay.Lines.Add("** STATISTICS **");
-                statsDisplay.Lines.Add(String.Format("{0} ENTITIES", World.ComponentManager.RootComponent.Children.Count));
-                statsDisplay.Lines.Add(String.Format("{0} INSTANCES DRAWN", World.InstanceRenderer.InstancesDrawn));
-                statsDisplay.Lines.Add(string.Format("{0} MEMORY", BytesToString(global::System.GC.GetTotalMemory(false))));
-                statsDisplay.Lines.Add(String.Format("{0} LIVE CHUNKS", World.ChunkManager.TotalLiveChunks));
+                foreach (var metric in PerformanceMonitor.EnumerateMetrics())
+                    statsDisplay.Lines.Add(String.Format("{0} {1}", metric.Value.ToString(), metric.Key));
                 statsDisplay.Invalidate();
 
                 // Todo: Employee AI debug display

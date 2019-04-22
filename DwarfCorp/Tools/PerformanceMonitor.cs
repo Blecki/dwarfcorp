@@ -24,6 +24,19 @@ namespace DwarfCorp
             public long Ticks;
             public PerformanceFunction Function;
         }
+
+        private static Dictionary<String, Object> Metrics = new Dictionary<String, Object>();
+
+        public static void SetMetric(String Name, Object Value)
+        {
+            Metrics.Upsert(Name, Value);
+        }
+
+        public static IEnumerable<KeyValuePair<String, Object>> EnumerateMetrics()
+        {
+            return Metrics;
+        }
+
         private static float[] FPSBuffer = new float[100];
         private static int k = 0;
         [ThreadStatic]

@@ -74,7 +74,6 @@ namespace DwarfCorp
         public WaterManager Water { get; set; }
 
         public Timer ChunkUpdateTimer = new Timer(0.1f, false, Timer.TimerMode.Game);
-        public int TotalLiveChunks { get; private set; }
 
         // Todo: Move this.
         public bool IsAboveCullPlane(BoundingBox Box)
@@ -182,7 +181,7 @@ namespace DwarfCorp
                     }
                     while (chunk != null);
 
-                    TotalLiveChunks = liveChunks.Count;
+                    PerformanceMonitor.SetMetric("VISIBLE CHUNK", liveChunks.Count);
                 }
             }
 #if !DEBUG
