@@ -129,7 +129,7 @@ namespace DwarfCorp
                     yield break;
                 }
 
-                List<MoveAction> neighbors = Agent.Movement.GetMoveActions(Agent.Position, Creature.World.OctTree, bodies).ToList();
+                List<MoveAction> neighbors = Agent.Movement.GetMoveActions(Agent.Position, bodies).ToList();
                 neighbors.Sort((a, b) =>
                 {
                     if (a.Equals(b)) return 0;
@@ -502,7 +502,7 @@ namespace DwarfCorp
             for (int i = 0; i < PathLength; i++)
             {
                 IEnumerable<MoveAction> actions =
-                    Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, Agent.World.OctTree, bodies, storage);
+                    Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, bodies, storage);
 
                 MoveAction? bestAction = null;
                 float bestDist = float.MaxValue;

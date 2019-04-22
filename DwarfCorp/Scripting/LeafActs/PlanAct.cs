@@ -162,7 +162,7 @@ namespace DwarfCorp
 
             while (toReturn.Count < maxsteps)
             {
-                var actions = Agent.Movement.GetMoveActions(new MoveState() { Voxel = currentVoxel }, Creature.World.OctTree, bodies, storage);
+                var actions = Agent.Movement.GetMoveActions(new MoveState() { Voxel = currentVoxel }, bodies, storage);
 
                 float minCost = float.MaxValue;
                 var minAction = new MoveAction();

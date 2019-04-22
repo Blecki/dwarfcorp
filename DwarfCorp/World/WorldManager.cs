@@ -1059,25 +1059,25 @@ namespace DwarfCorp
             DefaultShader.ClipPlane = new Vector4(slicePlane.Normal, slicePlane.D);
             DefaultShader.ClippingEnabled = true;
 
-            if (Debugger.Switches.DrawOcttree)
-            {
-                foreach (var box in OctTree.EnumerateBounds(frustum))
-                {
-                    if (box.Item1.IsLeaf() && box.Item2.Contains(CursorLightPos) != ContainmentType.Disjoint)
-                    {
-                        Drawer3D.DrawBox(box.Item2, Color.OrangeRed, 0.25f, false);
+            //if (Debugger.Switches.DrawOcttree)
+            //{
+            //    foreach (var box in OctTree.EnumerateBounds(frustum))
+            //    {
+            //        if (box.Item1.IsLeaf() && box.Item2.Contains(CursorLightPos) != ContainmentType.Disjoint)
+            //        {
+            //            Drawer3D.DrawBox(box.Item2, Color.OrangeRed, 0.25f, false);
 
-                        foreach (var item in box.Item1.EnumerateItemsNonRecursive())
-                        {
-                            Drawer3D.DrawBox(item.GetBoundingBox(), Color.LightBlue, 0.1f, false);
-                        }
-                    }
-                    else
-                    {
-                        Drawer3D.DrawBox(box.Item2, Color.Yellow, 0.01f, false);
-                    }
-                }
-            }
+            //            foreach (var item in box.Item1.EnumerateItemsNonRecursive())
+            //            {
+            //                Drawer3D.DrawBox(item.GetBoundingBox(), Color.LightBlue, 0.1f, false);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            Drawer3D.DrawBox(box.Item2, Color.Yellow, 0.01f, false);
+            //        }
+            //    }
+            //}
 
             // Render simple geometry (boxes, etc.)
             Drawer3D.Render(GraphicsDevice, DefaultShader, Camera, DesignationDrawer, PlayerFaction.Designations, this);

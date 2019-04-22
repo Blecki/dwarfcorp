@@ -300,17 +300,17 @@ namespace DwarfCorp
         }
 
         /// <summary> gets a list of actions that the creature can take from the given position </summary>
-        public IEnumerable<MoveAction> GetMoveActions(Vector3 Pos, OctTreeNode<GameComponent> octree, List<GameComponent> teleportObjects)
+        public IEnumerable<MoveAction> GetMoveActions(Vector3 Pos, List<GameComponent> teleportObjects)
         {
             var vox = new VoxelHandle(Creature.World.ChunkManager.ChunkData,
                 GlobalVoxelCoordinate.FromVector3(Pos));
-            return GetMoveActions(new MoveState() { Voxel = vox }, octree, teleportObjects, null);
+            return GetMoveActions(new MoveState() { Voxel = vox }, teleportObjects, null);
         }
 
 
 
         /// <summary> gets the list of actions that the creature can take from a given voxel. </summary>
-        public IEnumerable<MoveAction> GetMoveActions(MoveState state, OctTreeNode<GameComponent> OctTree, List<GameComponent> teleportObjects, MoveActionTempStorage Storage)
+        public IEnumerable<MoveAction> GetMoveActions(MoveState state, List<GameComponent> teleportObjects, MoveActionTempStorage Storage)
         {
             if (Parent == null)
                 yield break;
@@ -334,7 +334,7 @@ namespace DwarfCorp
 
             var neighborHoodBounds = new BoundingBox(Storage.Neighborhood[0, 0, 0].GetBoundingBox().Min, Storage.Neighborhood[2, 2, 2].GetBoundingBox().Max);
             Storage.NeighborObjects.Clear();
-            OctTree.EnumerateItems(neighborHoodBounds, Storage.NeighborObjects);
+            Parent.World.EnumerateIntersectingObjects(neighborHoodBounds, Storage.NeighborObjects);
 
             if (Can(MoveType.Teleport))
                 foreach (var obj in teleportObjects)
@@ -891,7 +891,7 @@ namespace DwarfCorp
 
         // Inverts GetMoveActions. So, returns the list of move actions whose target is the current voxel.
         // Very, very slow.
-        public IEnumerable<MoveAction> GetInverseMoveActions(MoveState currentstate, OctTreeNode<GameComponent> OctTree, List<GameComponent> teleportObjects)
+        public IEnumerable<MoveAction> GetInverseMoveActions(MoveState currentstate, List<GameComponent> teleportObjects)
         {
             if (Parent == null)
                 yield break;
@@ -938,7 +938,7 @@ namespace DwarfCorp
                 .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
                 .Where(h => h.IsValid))
             {
-                foreach (var a in GetMoveActions(new MoveState() { Voxel = v}, OctTree, teleportObjects, storage).Where(a => a.DestinationState == currentstate))
+                foreach (var a in GetMoveActions(new MoveState() { Voxel = v}, teleportObjects, storage).Where(a => a.DestinationState == currentstate))
                     yield return a;
 
                 if (!Can(MoveType.RideVehicle))
@@ -950,6 +950,8 @@ namespace DwarfCorp
                 // Yay!
 
                 // Actually - why not just not bother with rails when inverse pathing, since it should only be invoked when forward pathing fails anyway?
+                // Also NOT hacking in inverse elevators!
+                /*
                 var bodies = new HashSet<GameComponent>();
                 OctTree.EnumerateItems(v.GetBoundingBox(), bodies);
 
@@ -977,6 +979,7 @@ namespace DwarfCorp
                     foreach (var a in GetMoveActions(new MoveState() { Voxel = v, VehicleType = VehicleTypes.Rail, Rail = rail, PrevRail = null }, OctTree, teleportObjects, storage).Where(a => a.DestinationState == currentstate))
                         yield return a;
                 }
+                */
             }
         }
     }

@@ -189,7 +189,7 @@ namespace DwarfCorp
 
             for (int i = 0; i < PathLength; i++)
             {
-                var actions = Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, Creature.World.OctTree, bodies, storage);
+                var actions = Creature.AI.Movement.GetMoveActions(new MoveState() { Voxel = curr }, bodies, storage);
 
                 MoveAction? bestAction = null;
                 float bestDist = float.MaxValue;
