@@ -168,7 +168,7 @@ namespace DwarfCorp
            {
                Vector3 origin = new Vector3(0, 0, 0);
                Vector3 extents = new Vector3(1500, 1500, 1500);
-               OctTree = new OctTreeNode<GameComponent>(origin - extents, origin + extents);
+               //OctTree = new OctTreeNode<GameComponent>(origin - extents, origin + extents);
 
                PrimitiveLibrary.Initialize(GraphicsDevice, Content);
 

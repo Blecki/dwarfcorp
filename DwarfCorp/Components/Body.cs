@@ -188,6 +188,11 @@ namespace DwarfCorp
 
             UpdateBoundingBox();
 
+            Manager.World.RemoveGameObject(this, LastBounds);
+            Manager.World.AddGameObject(this, BoundingBox);
+            LastBounds = BoundingBox;
+
+            /*
             if (CollisionType != CollisionType.None && (CachedOcttreeNode == null || MaxDiff(LastBounds, BoundingBox) > 0.1f))
             {
                 {
@@ -207,6 +212,7 @@ namespace DwarfCorp
 
                 LastBounds = BoundingBox;
             }
+            */
 
             PerformanceMonitor.PopFrame();
         }

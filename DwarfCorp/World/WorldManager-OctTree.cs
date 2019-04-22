@@ -8,36 +8,54 @@ namespace DwarfCorp
 {
     public partial class WorldManager
     {
-        [JsonIgnore]
-        public OctTreeNode<GameComponent> OctTree = null;
+        //[JsonIgnore]
+        //public OctTreeNode<GameComponent> OctTree = null;
 
         public void RemoveGameObject(GameComponent GameObject, BoundingBox LastBounds)
         {
-            OctTree.Remove(GameObject, LastBounds);
+            foreach (var chunk in EnumerateChunksInBounds(LastBounds))
+                lock (chunk)
+                    chunk.Entities.RemoveAll(e => Object.ReferenceEquals(e, GameObject));
+            //OctTree.Remove(GameObject, LastBounds);
         }
 
         public OctTreeNode<GameComponent> AddGameObject(GameComponent GameObject, BoundingBox LastBounds)
         {
-            return OctTree.Add(GameObject, LastBounds);
+            foreach (var chunk in EnumerateChunksInBounds(LastBounds))
+                lock (chunk)
+                    chunk.Entities.Add(GameObject);
+
+            return null;
+            //return OctTree.Add(GameObject, LastBounds);
         }
 
         public IEnumerable<GameComponent> EnumerateIntersectingObjects(BoundingBox box, CollisionType queryType)
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects");
-            var hash = new HashSet<GameComponent>();
-            OctTree.EnumerateItems(box, hash, t => (t.CollisionType & queryType) == t.CollisionType);
+            var r = EnumerateIntersectingObjects(box, t => (t.CollisionType & queryType) == t.CollisionType);
+            //var hash = new HashSet<GameComponent>();
+            //OctTree.EnumerateItems(box, hash, t => (t.CollisionType & queryType) == t.CollisionType);
             PerformanceMonitor.PopFrame();
-            return hash;
+            //return hash;
+            return r;
         }
 
         public IEnumerable<GameComponent> EnumerateIntersectingObjects(BoundingFrustum Frustum, Func<GameComponent, bool> Filter = null)
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateFrustum");
             var hash = new HashSet<GameComponent>();
-            if (Filter == null)
-                OctTree.EnumerateItems(Frustum, hash);
-            else
-                OctTree.EnumerateItems(Frustum, hash, Filter);
+            foreach (var chunk in EnumerateChunksInBounds(Frustum))
+                lock (chunk)
+                {
+                    foreach (var entity in chunk.Entities)
+                        if (Frustum.Contains(entity.BoundingBox) != ContainmentType.Disjoint)
+                            if (Filter == null || Filter(entity))
+                                hash.Add(entity);
+                }
+            //if (Filter == null)
+            //    OctTree.EnumerateItems(Frustum, hash);
+            //else
+            //    OctTree.EnumerateItems(Frustum, hash, Filter);
             PerformanceMonitor.PopFrame();
             return hash;
         }
@@ -46,18 +64,27 @@ namespace DwarfCorp
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects w/ Filter");
             var hash = new HashSet<GameComponent>();
-            if (Filter == null)
-                OctTree.EnumerateItems(box, hash);
-            else
-                OctTree.EnumerateItems(box, hash, Filter);
+            EnumerateIntersectingObjects(box, hash, Filter);
+            //if (Filter == null)
+            //    OctTree.EnumerateItems(box, hash);
+            //else
+            //    OctTree.EnumerateItems(box, hash, Filter);
             PerformanceMonitor.PopFrame();
             return hash;
         }
 
-        public void EnumerateIntersectingObjects(BoundingBox box, HashSet<GameComponent> Into)
+        public void EnumerateIntersectingObjects(BoundingBox box, HashSet<GameComponent> Into, Func<GameComponent, bool> Filter = null)
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects w/ Filter");
-            OctTree.EnumerateItems(box, Into);
+            foreach (var chunk in EnumerateChunksInBounds(box))
+                lock (chunk)
+                {
+                    foreach (var entity in chunk.Entities)
+                        if (box.Contains(entity.BoundingBox) != ContainmentType.Disjoint)
+                            if (Filter == null || Filter(entity))
+                                Into.Add(entity);
+                }
+            //OctTree.EnumerateItems(box, Into);
             PerformanceMonitor.PopFrame();
         }
 
@@ -67,8 +94,8 @@ namespace DwarfCorp
             var maxChunkID = GlobalVoxelCoordinate.FromVector3(Box.Max).GetGlobalChunkCoordinate();
 
             for (var x = minChunkID.X; x <= maxChunkID.X; ++x)
-                for (var y = minChunkID.Y; y < maxChunkID.Y; ++y)
-                    for (var z = minChunkID.Z; z < maxChunkID.Z; ++z)
+                for (var y = minChunkID.Y; y <= maxChunkID.Y; ++y)
+                    for (var z = minChunkID.Z; z <= maxChunkID.Z; ++z)
                         yield return new GlobalChunkCoordinate(x, y, z);
         }
 
@@ -86,7 +113,8 @@ namespace DwarfCorp
                 {
                     var min = new GlobalVoxelCoordinate(c.ID, new LocalVoxelCoordinate(0, 0, 0));
                     var box = new BoundingBox(min.ToVector3(), min.ToVector3() + new Vector3(VoxelConstants.ChunkSizeX, VoxelConstants.ChunkSizeY, VoxelConstants.ChunkSizeZ));
-                    return Frustum.Contains(box) != ContainmentType.Disjoint;
+                    var r = Frustum.Contains(box) != ContainmentType.Disjoint;
+                    return r;
                 });
         }
     }
