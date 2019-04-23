@@ -172,6 +172,7 @@ namespace DwarfCorp
             public bool GuiAutoScale = true;
             public float ChunkDrawDistance = 100;
             public float VertexCullDistance = 1000;
+            public float EntityUpdateDistance = 64;
             public int AntiAliasing = 16;
             public bool Fullscreen = false;
             public bool EnableGlow = true;
@@ -195,13 +196,10 @@ namespace DwarfCorp
             public bool GrassMotes = true;
             public int NumMotes = 512;
             public bool InvertZoom = false;
-            public float ChunkRebuildTime = 0.5f;
-            public bool DrawDebugData = false;
             public float VisibilityUpdateTime = 0.1f;
-            public float ChunkGenerateTime = 0.5f;
             public bool FogofWar = true;
             public bool AutoSave = true;
-            public float AutoSaveTimeMinutes = 2.0f;
+            public float AutoSaveTimeMinutes = 20.0f;
             public string SaveLocation = null;
             public bool VSync = true;
             public bool AllowReporting = true;
@@ -279,7 +277,6 @@ namespace DwarfCorp
         public static void Load()
         {
             Load(ContentPaths.settings);
-            Default.DrawDebugData = false;
         }
 
         public static void Save(string file)

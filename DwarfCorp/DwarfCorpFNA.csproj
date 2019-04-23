@@ -797,6 +797,7 @@
     <Compile Include=".\Voxels\DecalType.cs" />
     <Compile Include=".\Voxels\DynamicLight.cs" />
     <Compile Include=".\Voxels\Enums.cs" />
+    <Compile Include="Voxels\Generation\GenerateBalloonPort.cs" />
     <Compile Include="Voxels\Generation\GenerateCaves.cs" />
     <Compile Include="Voxels\Generation\CastSunlight.cs" />
     <Compile Include="Voxels\Generation\GenerateChunk.cs" />

@@ -73,7 +73,7 @@ namespace DwarfCorp
             return hash;
         }
 
-        public IEnumerable<GameComponent> EnumerateIntersectingObjectsLoose(BoundingBox box, Func<GameComponent, bool> Filter = null)
+        public HashSet<GameComponent> EnumerateIntersectingObjectsLoose(BoundingBox box, Func<GameComponent, bool> Filter = null)
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects w/ Filter");
             var hash = new HashSet<GameComponent>();

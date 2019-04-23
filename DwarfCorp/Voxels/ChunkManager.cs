@@ -108,11 +108,7 @@ namespace DwarfCorp
             WaterUpdateThread = new AutoScaleThread(this, (f) => Water.UpdateWater());
             this.ChunkUpdateThread = new Thread(UpdateChunks) { IsBackground = true, Name = "Update Chunks" };
 
-            GameSettings.Default.ChunkGenerateTime = 0.5f;
-            GameSettings.Default.ChunkRebuildTime = 0.1f;
-            Timer rebuildChunksTimer = new Timer(GameSettings.Default.ChunkRebuildTime, false, Timer.TimerMode.Real);
             GameSettings.Default.VisibilityUpdateTime = 0.05f;
-            rebuildChunksTimer.HasTriggered = true;
 
             Water = new WaterManager(this);
 
@@ -181,7 +177,7 @@ namespace DwarfCorp
                     }
                     while (chunk != null);
 
-                    PerformanceMonitor.SetMetric("VISIBLE CHUNK", liveChunks.Count);
+                    PerformanceMonitor.SetMetric("VISIBLE CHUNKS", liveChunks.Count);
                 }
             }
 #if !DEBUG

@@ -81,7 +81,7 @@ namespace DwarfCorp.Generation
 
                     if (edge)
                     {
-                        for (int dy = 1; dy < wallHeight * (1.0f - decay); dy++)
+                        for (int dy = 1; dy < wallHeight * (1.0f - decay) && dy < (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 2; dy++)
                         {
                             var currVoxel = Settings.World.ChunkManager.CreateVoxelHandle(baseVoxel.Coordinate + new GlobalVoxelOffset(0, dy, 0));
 

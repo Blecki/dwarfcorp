@@ -19,7 +19,7 @@ namespace DwarfCorp.Generation
         {
             var origin = new GlobalVoxelCoordinate(ID, new LocalVoxelCoordinate(0, 0, 0));
             var worldDepth = Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
-            var waterHeight = NormalizeHeight(Settings.SeaLevel + 1.0f / worldDepth, Settings.MaxHeight);
+            var waterHeight = NormalizeHeight(Settings.SeaLevel + 1.0f / worldDepth);
 
             var c = new VoxelChunk(Settings.World.ChunkManager, ID);
 
@@ -30,7 +30,7 @@ namespace DwarfCorp.Generation
                     var biome = Overworld.Map[(int)MathFunctions.Clamp(overworldPosition.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(overworldPosition.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
                     var biomeData = BiomeLibrary.Biomes[biome];
 
-                    var normalizedHeight = NormalizeHeight(Overworld.LinearInterpolate(overworldPosition, Overworld.Map, Overworld.ScalarFieldType.Height), Settings.MaxHeight);
+                    var normalizedHeight = NormalizeHeight(Overworld.LinearInterpolate(overworldPosition, Overworld.Map, Overworld.ScalarFieldType.Height));
                     var height = MathFunctions.Clamp(normalizedHeight * worldDepth, 0.0f, worldDepth - 2);
                     var stoneHeight = (int)MathFunctions.Clamp((int)(height - (biomeData.SoilLayer.Depth + (Math.Sin(overworldPosition.X) + Math.Cos(overworldPosition.Y)))), 1, height);
 

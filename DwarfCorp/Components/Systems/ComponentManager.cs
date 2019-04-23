@@ -264,8 +264,12 @@ namespace DwarfCorp
                 _componentList = Components.Values.ToList();
 
             var playerPoint = World.Camera.Position;
-            var updateBox = new BoundingBox(playerPoint - new Vector3(64, 64, 64), playerPoint + new Vector3(64, 64, 64));
+            // Todo: Make this a sphere?
+            var distanceVec = new Vector3(GameSettings.Default.EntityUpdateDistance, GameSettings.Default.EntityUpdateDistance, GameSettings.Default.EntityUpdateDistance);
+            var updateBox = new BoundingBox(playerPoint - distanceVec, playerPoint + distanceVec);
             var componentsToUpdate = World.EnumerateIntersectingObjectsLoose(updateBox);
+            PerformanceMonitor.SetMetric("ENTITIES UPDATED", componentsToUpdate.Count);
+
             foreach (var body in componentsToUpdate)
             {
                 body.Update(gameTime, chunks, camera);

@@ -424,6 +424,7 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Generating Chunks...");
                 Generation.Generator.Generate(SpawnRect, ChunkManager.ChunkData, this, generatorSettings, SetLoadingMessage);
+                CreateInitialEmbarkment(generatorSettings);
                 ChunkManager.NeedsMinimapUpdate = true;
                 ChunkManager.RecalculateBounds();
             }
@@ -447,7 +448,7 @@ namespace DwarfCorp
             if (Master.Faction.Economy.Company.Information == null)
                 Master.Faction.Economy.Company.Information = new CompanyInformation();
 
-            CreateInitialEmbarkment();
+            
 
             SetLoadingMessage("Creating Geometry...");
             //ChunkManager.GenerateAllGeometry();

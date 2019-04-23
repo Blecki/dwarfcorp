@@ -18,7 +18,6 @@ namespace DwarfCorp.Generation
     {
         public static void Generate(Rectangle spawnRect, ChunkData ChunkData, WorldManager World, GeneratorSettings Settings, Action<String> SetLoadingMessage)
         {
-            Settings.MaxHeight = Math.Max(Overworld.GetMaxHeight(spawnRect), 0.17f);
             SetLoadingMessage(String.Format("{0} chunks to generate!", Settings.WorldSizeInChunks.X * Settings.WorldSizeInChunks.Y * Settings.WorldSizeInChunks.Z));
             SetLoadingMessage("");
 
@@ -31,7 +30,7 @@ namespace DwarfCorp.Generation
                     }
 
             var worldDepth = Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
-            var waterHeight = Math.Min((int)(worldDepth * NormalizeHeight(Settings.SeaLevel + 1.0f / worldDepth, Settings.MaxHeight)), worldDepth - 1);
+            var waterHeight = Math.Min((int)(worldDepth * NormalizeHeight(Settings.SeaLevel + 1.0f / worldDepth)), worldDepth - 1);
 
             SetLoadingMessage("");
             foreach (var chunk in EnumerateTopChunks(Settings))

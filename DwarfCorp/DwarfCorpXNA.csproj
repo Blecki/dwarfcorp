@@ -432,6 +432,7 @@
     <Compile Include="Voxels\Generation\GenerateSurfaceLife.cs" />
     <Compile Include="Voxels\Generation\GenerateWater.cs" />
     <Compile Include="Voxels\Generation\GeneratorSettings.cs" />
+    <Compile Include="Voxels\Generation\GenerateBalloonPort.cs" />
     <Compile Include="Voxels\Rail\PaintRailTool.cs" />
     <Compile Include="Voxels\Rail\OrientationHelper.cs" />
     <Compile Include="Voxels\Rail\CompassOrientation.cs" />
