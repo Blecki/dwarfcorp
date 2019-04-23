@@ -79,6 +79,8 @@ namespace DwarfCorp.Generation
                         currVoxel.RawSetType(underVoxel.Type);
                     }
 
+                    underVoxel.RawSetGrass(0);
+
                     if (edge)
                     {
                         for (int dy = 1; dy < wallHeight * (1.0f - decay) && dy < (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 2; dy++)
