@@ -159,7 +159,7 @@ namespace DwarfCorp.GameStates
                 TextColor = new Vector4(0, 0, 0, 1)
             }) as Gui.Widgets.ComboBox;
 
-            PreviewSelector.SelectedIndex = 0;
+            PreviewSelector.SelectedIndex = 1;
             
             PreviewPanel = AddChild(new Gui.Widget
             {

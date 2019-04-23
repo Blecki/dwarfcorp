@@ -29,12 +29,19 @@ namespace DwarfCorp
 
         public static void SetMetric(String Name, Object Value)
         {
-            Metrics.Upsert(Name, Value);
+            lock (Metrics)
+                Metrics.Upsert(Name, Value);
         }
 
         public static IEnumerable<KeyValuePair<String, Object>> EnumerateMetrics()
         {
-            return Metrics;
+            var result = new List<KeyValuePair<String, Object>>();
+            lock (Metrics)
+            {
+                foreach (var metric in Metrics)
+                    result.Add(metric);
+            }
+            return result;
         }
 
         private static float[] FPSBuffer = new float[100];
