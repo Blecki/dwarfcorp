@@ -154,7 +154,7 @@ namespace DwarfCorp
                 else
                 {
                     SetLoadingMessage("Generating flat world..");
-                    Overworld.CreateUniformLand(GraphicsDevice);
+                    DebugOverworlds.CreateUniformLand();
                 }
             }
 

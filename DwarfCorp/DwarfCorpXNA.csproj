@@ -698,6 +698,7 @@
     <Compile Include="Voxels\Splasher.cs" />
     <Compile Include="Voxels\GrassLibrary.cs" />
     <Compile Include="Voxels\ChunkUpdate.cs" />
+    <Compile Include="World\DebugOverworlds.cs" />
     <Compile Include="World\EngineModule.cs" />
     <Compile Include="World\CompanyInformation.cs" />
     <Compile Include="World\IndicatorManager.cs" />

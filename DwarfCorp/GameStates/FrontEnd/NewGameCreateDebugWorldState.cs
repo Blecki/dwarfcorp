@@ -19,7 +19,7 @@ namespace DwarfCorp.GameStates
 
             CreateMenuItem(frame, "Hills", "Create a hilly world.", (sender, args) =>
                 {
-                    Overworld.CreateHillsLand(Game.GraphicsDevice);
+                    DebugOverworlds.CreateHillsLand();
                     StateManager.ClearState();
                     OverworldGenerationSettings settings = new OverworldGenerationSettings()
                     {
@@ -37,7 +37,7 @@ namespace DwarfCorp.GameStates
 
             CreateMenuItem(frame, "Cliffs", "Create a cliff-y world.", (sender, args) =>
                 {
-                    Overworld.CreateCliffsLand(Game.GraphicsDevice);
+                    DebugOverworlds.CreateCliffsLand();
                     StateManager.ClearState();
                     OverworldGenerationSettings settings = new OverworldGenerationSettings()
                     {
@@ -55,7 +55,7 @@ namespace DwarfCorp.GameStates
 
             CreateMenuItem(frame, "Flat", "Create a flat world.", (sender, args) =>
                 {
-                    Overworld.CreateUniformLand(Game.GraphicsDevice);
+                    DebugOverworlds.CreateUniformLand();
                     StateManager.ClearState();
                     OverworldGenerationSettings settings = new OverworldGenerationSettings()
                     {
@@ -73,7 +73,7 @@ namespace DwarfCorp.GameStates
 
             CreateMenuItem(frame, "Ocean", "Create an ocean world", (sender, args) =>
                 {
-                    Overworld.CreateOceanLand(Game.GraphicsDevice, 0.17f);
+                    DebugOverworlds.CreateOceanLand(0.17f);
                     StateManager.ClearState();
                     OverworldGenerationSettings settings = new OverworldGenerationSettings()
                     {

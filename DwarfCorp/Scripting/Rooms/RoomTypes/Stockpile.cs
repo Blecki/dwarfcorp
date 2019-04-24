@@ -8,7 +8,6 @@ using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
-
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
@@ -16,11 +15,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-
-    /// <summary>
-    /// A stockpile is a kind of zone which contains items on top of it.
-    /// </summary>
-    [JsonObject(IsReference = true)]
     public class Stockpile : Room
     {
         [RoomFactory("Stockpile")]
@@ -73,13 +67,11 @@ namespace DwarfCorp
 
         public bool IsAllowed(String type)
         {
-            Resource resource = ResourceLibrary.GetResourceByName(type);
+            var resource = ResourceLibrary.GetResourceByName(type);
             if (WhitelistResources.Count == 0)
             {
                 if (BlacklistResources.Count == 0)
-                {
                     return true;
-                }
 
                 return !BlacklistResources.Any(tag => resource.Tags.Any(otherTag => otherTag == tag));
             }
@@ -91,7 +83,7 @@ namespace DwarfCorp
         public void KillBox(GameComponent component)
         {
             ZoneBodies.Remove(component);
-            EaseMotion deathMotion = new EaseMotion(0.8f, component.LocalTransform, component.LocalTransform.Translation + new Vector3(0, -1, 0));
+            var deathMotion = new EaseMotion(0.8f, component.LocalTransform, component.LocalTransform.Translation + new Vector3(0, -1, 0));
             component.AnimationQueue.Add(deathMotion);
             deathMotion.OnComplete += component.Die;
             SoundManager.PlaySound(ContentPaths.Audio.whoosh, component.LocalTransform.Translation);
@@ -100,10 +92,10 @@ namespace DwarfCorp
 
         public void CreateBox(Vector3 pos)
         {
-            WorldManager.DoLazy(() =>
-            {
+            //WorldManager.DoLazy(() =>
+            //{
                 Vector3 startPos = pos + new Vector3(0.0f, -0.1f, 0.0f) + BoxOffset;
-                Vector3 endPos = pos + new Vector3(0.0f, 0.9f, 0.0f) + BoxOffset;
+                Vector3 endPos = pos + new Vector3(0.0f, 1.1f, 0.0f) + BoxOffset;
 
                 GameComponent crate = EntityFactory.CreateEntity<GameComponent>(BoxType, startPos);
                 crate.AnimationQueue.Add(new EaseMotion(0.8f, crate.LocalTransform, endPos));
@@ -112,34 +104,27 @@ namespace DwarfCorp
                 SoundManager.PlaySound(ContentPaths.Audio.whoosh, startPos);
                 if (Faction != null)
                     Faction.World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);
-            });
+            //});
         }
 
         public void HandleBoxes()
         {
             if (Voxels == null || Boxes == null)
-            {
                 return;
-            }
 
-            bool anyDead = Boxes.Any(b => b.IsDead);
-            if (anyDead)
+            if (Boxes.Any(b => b.IsDead))
             {
                 ZoneBodies.RemoveAll(z => z.IsDead);
                 Boxes.RemoveAll(c => c.IsDead);
 
                 for (int i = 0; i < Boxes.Count; i++)
-                {
-                    Boxes[i].LocalPosition = new Vector3(0.5f, 1.5f, 0.5f) + Voxels[i].WorldPosition + VertexNoise.GetNoiseVectorFromRepeatingTexture(Voxels[i].WorldPosition);
-                }
+                    Boxes[i].LocalPosition = new Vector3(0.5f, 1.5f, 0.5f) + Voxels[i].WorldPosition + VertexNoise.GetNoiseVectorFromRepeatingTexture(Voxels[i].WorldPosition + new Vector3(0.5f, 0, 0.5f));
             }
 
             if (Voxels.Count == 0)
             {
                 foreach(GameComponent component in Boxes)
-                {
                     KillBox(component);
-                }
                 Boxes.Clear();
             }
 
@@ -159,24 +144,18 @@ namespace DwarfCorp
             else if (Boxes.Count < numBoxes)
             {
                 for (int i = Boxes.Count; i < numBoxes; i++)
-                {
-                    CreateBox(Voxels[i].WorldPosition + VertexNoise.GetNoiseVectorFromRepeatingTexture(Voxels[i].WorldPosition));
-                }
+                    CreateBox(Voxels[i].WorldPosition + VertexNoise.GetNoiseVectorFromRepeatingTexture(Voxels[i].WorldPosition + new Vector3(0.5f, 0, 0.5f)));
             }
         }
         
         public override bool AddItem(GameComponent component)
         {
             if (component.Tags.Count == 0)
-            {
                 return false;
-            }
 
             var resourceType = component.Tags[0];
             if (!IsAllowed(resourceType))
-            {
                 return false;
-            }
 
             bool worked =  base.AddItem(component);
             HandleBoxes();
@@ -191,9 +170,8 @@ namespace DwarfCorp
                 toss.OnComplete += component.Die;
             }
             else
-            {
                 component.Die();
-            }
+
             Faction.RecomputeCachedResourceState();
             return worked;
         }
@@ -209,18 +187,15 @@ namespace DwarfCorp
             }
 
             if (Faction != null)
-            {
                 Faction.Stockpiles.Remove(this);
-            }
+
             base.Destroy();
         }
 
         public override void RecalculateMaxResources()
         {
-
             HandleBoxes();
             base.RecalculateMaxResources();
         }        
-
     }
 }

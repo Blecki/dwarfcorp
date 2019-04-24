@@ -874,6 +874,7 @@
     <Compile Include=".\World\WorldManager.cs" />
     <Compile Include=".\World\WorldTime.cs" />
     <Compile Include="Voxels\Generation\GenerateOres.cs" />
+    <Compile Include="World\DebugOverworlds.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
