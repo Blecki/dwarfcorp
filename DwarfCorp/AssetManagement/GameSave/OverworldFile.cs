@@ -18,7 +18,7 @@ namespace DwarfCorp
             public string Version;
             public string Name;
             public float SeaLevel;
-            [JsonIgnore] [NonSerialized] public Overworld.MapData[,] Data;
+            [JsonIgnore] [NonSerialized] public OverworldCell[,] Data;
             
             [Serializable]
             public struct FactionDescriptor
@@ -35,7 +35,7 @@ namespace DwarfCorp
 
             public List<FactionDescriptor> FactionList;
 
-            public Overworld.MapData[,] CreateMap()
+            public OverworldCell[,] CreateMap()
             {
                 return Data;
             }
@@ -44,11 +44,11 @@ namespace DwarfCorp
             {
                 GameStates.GameState.Game.LogSentryBreadcrumb("Saving", String.Format("User saving an overworld with size {0} x {1}", width, height), SharpRaven.Data.BreadcrumbLevel.Info);
                 Texture2D toReturn = null;
-                Overworld.MapData[,] mapData = CreateMap();
+                var mapData = CreateMap();
                 toReturn = new Texture2D(device, width, height);
                 global::System.Threading.Mutex imageMutex = new global::System.Threading.Mutex();
                 Color[] worldData = new Color[width * height];
-                Overworld.TextureFromHeightMap("Height", mapData, Overworld.ScalarFieldType.Height, width, height, imageMutex, worldData, toReturn, seaLevel);
+                Overworld.TextureFromHeightMap("Height", mapData, ScalarFieldType.Height, width, height, imageMutex, worldData, toReturn, seaLevel);
 
                 return toReturn;
             }
@@ -64,7 +64,7 @@ namespace DwarfCorp
 
             public void LoadFromTexture(Texture2D Texture)
             {
-                Data = new Overworld.MapData[Texture.Width, Texture.Height];
+                Data = new OverworldCell[Texture.Width, Texture.Height];
                 var colorData = new Color[Texture.Width * Texture.Height];
                 GameState.Game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
                 Texture.GetData(colorData);
@@ -75,7 +75,7 @@ namespace DwarfCorp
             {
             }
 
-            public OverworldData(GraphicsDevice device, Overworld.MapData[,] map, string name, float seaLevel)
+            public OverworldData(GraphicsDevice device, OverworldCell[,] map, string name, float seaLevel)
             {
                 int sizeX = map.GetLength(0);
                 int sizeY = map.GetLength(1);
@@ -113,7 +113,7 @@ namespace DwarfCorp
         {
         }
 
-        public NewOverworldFile(GraphicsDevice device, Overworld.MapData[,] map, string name, float seaLevel)
+        public NewOverworldFile(GraphicsDevice device, OverworldCell[,] map, string name, float seaLevel)
         {
             var worldFilePath = name + System.IO.Path.DirectorySeparatorChar + "world.png";
             var metaFilePath = name + System.IO.Path.DirectorySeparatorChar + "meta.txt";

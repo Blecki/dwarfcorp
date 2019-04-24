@@ -24,7 +24,7 @@ namespace DwarfCorp.Generation
                 {
                     var overworldPosition = Overworld.WorldToOverworld(new Vector2(x + Chunk.Origin.X, z + Chunk.Origin.Z), Settings.World.WorldScale, Settings.World.WorldOrigin);
 
-                    var normalizedHeight = NormalizeHeight(Overworld.LinearInterpolate(overworldPosition, Overworld.Map, Overworld.ScalarFieldType.Height));
+                    var normalizedHeight = NormalizeHeight(Overworld.LinearInterpolate(overworldPosition, Overworld.Map, ScalarFieldType.Height));
                     var height = MathFunctions.Clamp(normalizedHeight * Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY, 0.0f, Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY - 2);
 
                     for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)

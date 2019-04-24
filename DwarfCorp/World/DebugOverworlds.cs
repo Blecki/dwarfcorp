@@ -18,7 +18,7 @@ namespace DwarfCorp
         {
             GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created a hills world.");
             int size = 512;
-            Overworld.Map = new Overworld.MapData[size, size];
+            Overworld.Map = new OverworldCell[size, size];
 
             for (int x = 0; x < size; x++)
             {
@@ -44,7 +44,7 @@ namespace DwarfCorp
         {
             GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created a cliffs world.");
             int size = 512;
-            Overworld.Map = new Overworld.MapData[size, size];
+            Overworld.Map = new OverworldCell[size, size];
 
             for (int x = 0; x < size; x++)
             {
@@ -71,7 +71,7 @@ namespace DwarfCorp
         {
             GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created a flat world.");
             int size = 512;
-            Overworld.Map = new Overworld.MapData[size, size];
+            Overworld.Map = new OverworldCell[size, size];
 
             for (int x = 0; x < size; x++)
             {
@@ -94,7 +94,7 @@ namespace DwarfCorp
         {
             GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created an ocean world.");
             int size = 512;
-            Overworld.Map = new Overworld.MapData[size, size];
+            Overworld.Map = new OverworldCell[size, size];
 
             for (int x = 0; x < size; x++)
             {

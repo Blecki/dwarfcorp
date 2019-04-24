@@ -20,139 +20,6 @@ namespace DwarfCorp
     /// </summary>
     public class Overworld
     {
-        public enum WaterType
-        {
-            None,
-            River,
-            Lake,
-            Ocean,
-            Spring,
-            Volcano
-        }
-
-        public enum ScalarFieldType
-        {
-            Erosion,
-            Weathering,
-            Faults,
-            Height,
-            Temperature,
-            Rainfall,
-            Factions
-        }
-
-        [Serializable]
-        public struct MapData
-        {
-            private static byte ClampValue(float f)
-            {
-                return (byte)(Math.Min(Math.Max(f * 255.0f, 0.0f), 255.0f));
-            }
-
-            [JsonIgnore]
-            public float Erosion
-            {
-                get { return (Erosion_) / 255.0f; }
-                set { Erosion_ = ClampValue(value); }
-            }
-
-            [JsonIgnore]
-            public float Weathering
-            {
-                get { return (Weathering_) / 255.0f; }
-                set { Weathering_ = ClampValue(value); }
-            }
-
-            [JsonIgnore]
-            public float Faults
-            {
-                get { return (Faults_) / 255.0f; }
-                set { Faults_ = ClampValue(value); }
-            }
-
-            [JsonIgnore]
-            public float Height
-            {
-                get { return (Height_) / 255.0f; }
-                set { Height_ = ClampValue(value); }
-            }
-
-            [JsonIgnore]
-            public float Temperature
-            {
-                get { return (Temperature_) / 255.0f; }
-                set { Temperature_ = ClampValue(value); }
-            }
-
-            [JsonIgnore]
-            public float Rainfall
-            {
-                get { return (Rainfall_) / 255.0f; }
-                set { Rainfall_ = ClampValue(value); }
-            }
-
-            public byte Faction { get; set; }
-
-            [JsonProperty] private byte Erosion_;
-            [JsonProperty] private byte Weathering_;
-            [JsonProperty] private byte Faults_;
-            [JsonProperty] public byte Height_;
-            [JsonProperty] private byte Temperature_;
-            [JsonProperty] public byte Rainfall_;
-            public byte Biome;
-
-            public float GetValue(ScalarFieldType type)
-            {
-                switch(type)
-                {
-                    case ScalarFieldType.Erosion:
-                        return Erosion;
-                    case ScalarFieldType.Faults:
-                        return Faults;
-                    case ScalarFieldType.Height:
-                        return Height;
-                    case ScalarFieldType.Rainfall:
-                        return Rainfall;
-                    case ScalarFieldType.Temperature:
-                        return Temperature;
-                    case ScalarFieldType.Weathering:
-                        return Weathering;
-                    case ScalarFieldType.Factions:
-                        return Faction;
-                }
-
-                return -1.0f;
-            }
-
-            public void SetValue(ScalarFieldType type, float value)
-            {
-                switch(type)
-                {
-                    case ScalarFieldType.Erosion:
-                        Erosion = value;
-                        break;
-                    case ScalarFieldType.Faults:
-                        Faults = value;
-                        break;
-                    case ScalarFieldType.Height:
-                        Height = value;
-                        break;
-                    case ScalarFieldType.Rainfall:
-                        Rainfall = value;
-                        break;
-                    case ScalarFieldType.Temperature:
-                        Temperature = value;
-                        break;
-                    case ScalarFieldType.Weathering:
-                        Weathering = value;
-                        break;
-                    case ScalarFieldType.Factions:
-                        Faction = (byte) (value*255.0f);
-                        break;
-                }
-            }
-        }
-
         public static Dictionary<string, Color> JetColors = new Dictionary<string, Color>
         {
             {"Lowest", Color.Cyan},
@@ -187,7 +54,7 @@ namespace DwarfCorp
 
         public static List<Vector2> Volcanoes { get; set; }
         
-        public static MapData[,] Map { get; set; }
+        public static OverworldCell[,] Map { get; set; }
         public static string Name { get; set; }
         public static List<Faction> NativeFactions { get; set; }
 
@@ -266,7 +133,7 @@ namespace DwarfCorp
             return  toReturn;
         }
 
-        public static void MinBlend(MapData[,] heightMap, Vector2 pos, float height, Overworld.ScalarFieldType type)
+        public static void MinBlend(OverworldCell[,] heightMap, Vector2 pos, float height, ScalarFieldType type)
         {
             int x = Math.Max(Math.Min((int) pos.X, heightMap.GetLength(0) - 1), 0);
             int y = Math.Max(Math.Min((int) pos.Y, heightMap.GetLength(1) - 1), 0);
@@ -307,7 +174,7 @@ namespace DwarfCorp
             return heightMap[x, y];
         }
 
-        public static float GetValue(MapData[,] map, Vector2 pos, ScalarFieldType value)
+        public static float GetValue(OverworldCell[,] map, Vector2 pos, ScalarFieldType value)
         {
             DebugHelper.AssertNotNull(map);
             int x = Math.Max(Math.Min((int) pos.X, map.GetLength(0) - 1), 0);
@@ -316,7 +183,7 @@ namespace DwarfCorp
             return map[x, y].GetValue(value);
         }
 
-        public static void AddValue(MapData[,] map, Vector2 pos, ScalarFieldType value, float amount)
+        public static void AddValue(OverworldCell[,] map, Vector2 pos, ScalarFieldType value, float amount)
         {
             DebugHelper.AssertNotNull(map);
             int x = Math.Max(Math.Min((int) pos.X, map.GetLength(0) - 1), 0);
@@ -325,7 +192,7 @@ namespace DwarfCorp
             map[x, y].SetValue(value, map[x, y].GetValue(value) + amount);
         }
 
-        public static void MultValue(MapData[,] heightMap, Vector2 pos, ScalarFieldType value, float height)
+        public static void MultValue(OverworldCell[,] heightMap, Vector2 pos, ScalarFieldType value, float height)
         {
             DebugHelper.AssertNotNull(heightMap);
             int x = Math.Max(Math.Min((int) pos.X, heightMap.GetLength(0) - 1), 0);
@@ -385,7 +252,7 @@ namespace DwarfCorp
             return kernel;
         }
 
-        public static void Blur(MapData[,] array, int width, int height, ScalarFieldType type)
+        public static void Blur(OverworldCell[,] array, int width, int height, ScalarFieldType type)
         {
             float[,] b = new float[width, height];
             float[,] kernel = CalculateGaussianKernel(10, 0.75f);
@@ -493,7 +360,7 @@ namespace DwarfCorp
 
         }
 
-        public static float LinearInterpolate(Vector2 position, MapData[,] map, ScalarFieldType fieldType)
+        public static float LinearInterpolate(Vector2 position, OverworldCell[,] map, ScalarFieldType fieldType)
         {
             float x = position.X;
             float y = position.Y;
@@ -630,7 +497,7 @@ namespace DwarfCorp
         }
 
         public static void GenerateSaveTexture(
-            MapData[,] map,
+            OverworldCell[,] map,
             int width,
             int height,
             Color[] worldData)
@@ -642,7 +509,7 @@ namespace DwarfCorp
         }
 
         public static void DecodeSaveTexture(
-            MapData[,] map,
+            OverworldCell[,] map,
             int width,
             int height,
             Color[] worldData)
@@ -660,7 +527,7 @@ namespace DwarfCorp
         }
 
         public static void TextureFromHeightMap(string displayMode,
-            MapData[,] map,
+            OverworldCell[,] map,
             ScalarFieldType type,
             int width, int height,
             Mutex imageMutex,
