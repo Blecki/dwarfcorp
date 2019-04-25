@@ -20,15 +20,6 @@ namespace DwarfCorp
     /// </summary>
     public class Overworld
     {
-        public static Dictionary<string, Color> JetColors = new Dictionary<string, Color>
-        {
-            {"Lowest", Color.Cyan},
-            {"Low", Color.Blue},
-            {"Med", Color.Yellow},
-            {"High", Color.Red},
-            {"Highest", Color.White}
-        };
-
         public static Dictionary<string, Color> HeightColors = new Dictionary<string, Color>
         {
             {"Sea", new Color(30, 30, 150)},
@@ -60,14 +51,6 @@ namespace DwarfCorp
 
         public static ColorGradient JetGradient = null;
 
-        private static Vector2[] deltas2d =
-        {
-            new Vector2(-1, 0),
-            new Vector2(1, 0),
-            new Vector2(0, -1),
-            new Vector2(0, 1)
-        };
-
         public static BiomeData GetBiome(float temp, float rainfall, float height)
         {
 
@@ -98,269 +81,7 @@ namespace DwarfCorp
             Name = null;
         }
 
-
-        #region image_processing
-
-        public static Vector2 GetMinNeighbor(float[,] heightMap, Vector2 pos)
-        {
-            float toReturn = float.MaxValue;
-            Vector2 vec = Vector2.Zero;
-            for(float dx = -1; dx < 2; dx++)
-            {
-                for(float dy = -1; dy < 2; dy++)
-                {
-                    Vector2 nVec = new Vector2(dx, dy);
-                    float hn = GetHeight(heightMap, pos + nVec);
-
-                    if(hn < toReturn)
-                    {
-                        toReturn = hn;
-                        vec = nVec;
-                    }
-                }
-            }
-
-            return vec;
-        }
-
-        public static Vector2 ApproximateGradient(float[,] heightMap, Vector2 pos)
-        {
-            float hx = GetHeight(heightMap, pos + new Vector2(1, 0));
-            float hy = GetHeight(heightMap, pos + new Vector2(0, 1));
-            float ch = GetHeight(heightMap, pos);
-            Vector2 toReturn = new Vector2(hx - ch, hy - ch);
-
-            return  toReturn;
-        }
-
-        public static void MinBlend(OverworldCell[,] heightMap, Vector2 pos, float height, ScalarFieldType type)
-        {
-            int x = Math.Max(Math.Min((int) pos.X, heightMap.GetLength(0) - 1), 0);
-            int y = Math.Max(Math.Min((int) pos.Y, heightMap.GetLength(1) - 1), 0);
-
-            float orig = heightMap[x, y].GetValue(type);
-            heightMap[x, y].SetValue(type, Math.Min(orig, height));
-        }
-
-        public static void AddHeight(float[,] heightMap, Vector2 pos, float height)
-        {
-            int x = Math.Max(Math.Min((int) pos.X, heightMap.GetLength(0) - 1), 0);
-            int y = Math.Max(Math.Min((int) pos.Y, heightMap.GetLength(1) - 1), 0);
-
-            heightMap[x, y] += height;
-        }
-
-        public static void MultHeight(float[,] heightMap, Vector2 pos, float height)
-        {
-            int x = Math.Max(Math.Min((int) pos.X, heightMap.GetLength(0) - 1), 0);
-            int y = Math.Max(Math.Min((int) pos.Y, heightMap.GetLength(1) - 1), 0);
-
-            heightMap[x, y] *= height;
-        }
-
-        public static void SetHeight(float[,] heightMap, Vector2 pos, float height)
-        {
-            int x = Math.Max(Math.Min((int) pos.X, heightMap.GetLength(0) - 1), 0);
-            int y = Math.Max(Math.Min((int) pos.Y, heightMap.GetLength(1) - 1), 0);
-
-            heightMap[x, y] = height;
-        }
-
-        public static float GetHeight(float[,] heightMap, Vector2 pos)
-        {
-            int x = Math.Max(Math.Min((int) pos.X, heightMap.GetLength(0) - 1), 0);
-            int y = Math.Max(Math.Min((int) pos.Y, heightMap.GetLength(1) - 1), 0);
-
-            return heightMap[x, y];
-        }
-
-        public static float GetValue(OverworldCell[,] map, Vector2 pos, ScalarFieldType value)
-        {
-            DebugHelper.AssertNotNull(map);
-            int x = Math.Max(Math.Min((int) pos.X, map.GetLength(0) - 1), 0);
-            int y = Math.Max(Math.Min((int) pos.Y, map.GetLength(1) - 1), 0);
-
-            return map[x, y].GetValue(value);
-        }
-
-        public static void AddValue(OverworldCell[,] map, Vector2 pos, ScalarFieldType value, float amount)
-        {
-            DebugHelper.AssertNotNull(map);
-            int x = Math.Max(Math.Min((int) pos.X, map.GetLength(0) - 1), 0);
-            int y = Math.Max(Math.Min((int) pos.Y, map.GetLength(1) - 1), 0);
-
-            map[x, y].SetValue(value, map[x, y].GetValue(value) + amount);
-        }
-
-        public static void MultValue(OverworldCell[,] heightMap, Vector2 pos, ScalarFieldType value, float height)
-        {
-            DebugHelper.AssertNotNull(heightMap);
-            int x = Math.Max(Math.Min((int) pos.X, heightMap.GetLength(0) - 1), 0);
-            int y = Math.Max(Math.Min((int) pos.Y, heightMap.GetLength(1) - 1), 0);
-            float c = heightMap[x, y].GetValue(value);
-            heightMap[x, y].SetValue(value, c * height);
-        }
-
-        public static float noise(float x, float y, float z, float s)
-        {
-            return (float) heightNoise.GetValue(x*s, y*s, z*s);
-        }
-
-        private static float clamp(float x, float min, float max)
-        {
-            return Math.Max(Math.Min(x, max), min);
-        }
-
-        private static float pow(float x, float y)
-        {
-            return (float) Math.Pow(x, y);
-        }
-
-        private static float abs(float x)
-        {
-            return (float) Math.Abs(x);
-        }
-
-        private static float sqrt(float x)
-        {
-            return (float) Math.Sqrt(x);
-        }
-
-        public static float[,] CalculateGaussianKernel(int W, double sigma)
-        {
-            float[,] kernel = new float[W, W];
-            double mean = W / 2.0;
-            float sum = 0.0f;
-            for(int x = 0; x < W; ++x)
-            {
-                for(int y = 0; y < W; ++y)
-                {
-                    kernel[x, y] = (float) (Math.Exp(-0.5 * (Math.Pow((x - mean) / sigma, 2.0) + Math.Pow((y - mean) / sigma, 2.0)))
-                                            / (2 * Math.PI * sigma * sigma));
-                    sum += kernel[x, y];
-                }
-            }
-
-            for(int x = 0; x < W; ++x)
-            {
-                for(int y = 0; y < W; ++y)
-                {
-                    kernel[x, y] *= (1.0f) / sum;
-                }
-            }
-
-            return kernel;
-        }
-
-        public static void Blur(OverworldCell[,] array, int width, int height, ScalarFieldType type)
-        {
-            float[,] b = new float[width, height];
-            float[,] kernel = CalculateGaussianKernel(10, 0.75f);
-
-            const int kernelSizeX = 10;
-            const int kernelSizeY = 10;
-
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    b[x, y] = array[x, y].GetValue(type);
-                }
-            }
-
-            for(int x = kernelSizeX; x < width - kernelSizeX; x++)
-            {
-                for(int y =kernelSizeY; y < height - kernelSizeY; y++)
-                {
-                    b[x, y] = 0.0f;
-                    for(int dx = 0; dx < kernelSizeX; dx++)
-                    {
-                        for(int dy = 0; dy < kernelSizeY; dy++)
-                        {
-                            int nx = x + dx - kernelSizeX / 2;
-                            int ny = y + dy - kernelSizeY / 2;
-
-                            float a = array[nx, ny].GetValue(type);
-                            float h = kernel[dx, dy] * a;
-                            b[x, y] += h;
-                        }
-                    }
-                }
-            }
-
-
-            for(int x = 0; x < width; x++)
-            {
-                for(int y = 0; y < height; y++)
-                {
-                    array[x, y].SetValue(type, (float)(b[x, y]));
-                }
-            }
-        }
-
-        public static float ComputeMaxSlope(float[,] heightMap, Vector2 pos)
-        {
-            float h = GetHeight(heightMap, pos);
-
-            float max = 0;
-            for(int i = 0; i < 4; i++)
-            {
-                float s = Math.Abs(h - GetHeight(heightMap, pos + deltas2d[i]));
-
-                if(s > max)
-                {
-                    max = s;
-                }
-            }
-
-            return max;
-        }
-
-        private static readonly Perlin XDistort = new Perlin(MathFunctions.Random.Next());
-        private static readonly Perlin YDistort = new Perlin(MathFunctions.Random.Next());
-
-        public static void Distort(int width, int height, float distortAmount, float distortScale, ScalarFieldType fieldType)
-        {
-            float[,] buffer = new float[width, height];
-
-            for(int x = 0; x < width; x++)
-            {
-                for(int y = 0; y < height; y++)
-                {
-                    buffer[x, y] = GetValue(Map, new Vector2(x, y) + new Vector2((XDistort.Noise(x * distortScale, y * distortScale, 0) * 2.0f - 1.0f) * distortAmount,
-                        (YDistort.Noise(x * distortScale, y * distortScale, 0) * 2.0f - 1.0f) * distortAmount), fieldType);
-                }
-            }
-
-            for(int x = 0; x < width; x++)
-            {
-                for(int y = 0; y < height; y++)
-                {
-                    Map[x, y].SetValue(fieldType, buffer[x, y]);
-                }
-            }
-        }
-
-        #endregion
-
-        // Normalize the height such that the maximum height within the spawnrectangle is a little bit below (10%)
-        // the highest possible value.
-        public static float GetMaxHeight(Rectangle spawnRect)
-        {
-            float maxHeight = 0.0f;
-            for (int x = spawnRect.X; x < spawnRect.Right; x++)
-            {
-                for (int y = spawnRect.Y; y < spawnRect.Bottom; y++)
-                {
-                    maxHeight = Math.Max(maxHeight, Map[x, y].Height);
-                }
-            }
-            return maxHeight;
-
-        }
-
-        public static float LinearInterpolate(Vector2 position, OverworldCell[,] map, ScalarFieldType fieldType)
+        public static float LinearInterpolate(Vector2 position, OverworldCell[,] map, OverworldField fieldType)
         {
             float x = position.X;
             float y = position.Y;
@@ -370,16 +91,11 @@ namespace DwarfCorp
             float y2 = (int) MathFunctions.Clamp((float) Math.Floor(y), 0, map.GetLength(1) - 2);
 
             if(Math.Abs(x1 - x2) < 0.5f)
-            {
                 x1 = x1 + 1;
-            }
-
+            
             if(Math.Abs(y1 - y2) < 0.5f)
-            {
                 y1 = y1 + 1;
-            }
-
-
+         
             float q11 = map[(int) x1, (int) y1].GetValue(fieldType);
             float q12 = map[(int) x1, (int) y2].GetValue(fieldType);
             float q21 = map[(int) x2, (int) y1].GetValue(fieldType);
@@ -388,54 +104,15 @@ namespace DwarfCorp
             return MathFunctions.LinearCombination(x, y, x1, y1, x2, y2, q11, q12, q21, q22);
         }
 
-
         public static float Interpolate(float wx, float wy, float globalScale, float[,] map)
         {
             float x = (wx) / globalScale;
             float y = (wy) / globalScale;
 
-
             return MathFunctions.LinearInterpolate(new Vector2(x, y), map);
         }
 
 
-        public static float ComputeHeight(float wx, float wy, float worldWidth, float worldHeight, float globalScale, bool erode, bool cliffs = false)
-        {
-            float x = (wx) / globalScale;
-            float y = (wy) / globalScale;
-
-            const float mountainWidth = 0.04f;
-            float mountain = (float) Math.Pow(noise(x, y, 0, mountainWidth), 1);
-            const float continentSize = 0.03f;
-            float continent = noise(x, y, 10, continentSize);
-            const float hillSize = 0.1f;
-            float hill = noise(x, y, 20, hillSize) * 0.02f;
-            const float smallNoiseSize = 0.15f;
-            float smallnoise = noise(x, y, 100, smallNoiseSize) * 0.01f;
-
-            float h = pow(clamp((continent * mountain) + hill, 0, 1), 1);
-            h += smallnoise;
-            h += 0.4f;
-
-            if (cliffs)
-            {
-                float cliffiness = noise(x, y, 200, 0.01f);
-                float hCliff = (int) (h/0.1f)*0.01f;
-
-                h = (1.0f - cliffiness)*h + hCliff*cliffiness;
-            }
-            if(erode)
-            {
-                Vector2 vec = new Vector2(x, y);
-                h *= LinearInterpolate(vec, Map, ScalarFieldType.Faults);
-                h += LinearInterpolate(vec, Map, ScalarFieldType.Weathering);
-                h *= LinearInterpolate(vec, Map, ScalarFieldType.Erosion);
-            }
-
-            h = clamp(h, 0, 1);
-
-            return h;
-        }
 
         public static float[,] GenerateHeightMapLookup(int width, int height)
         {
@@ -451,12 +128,12 @@ namespace DwarfCorp
             {
                 for (int y = 0; y < height; y++)
                 {
-                    float mountain = (float)Math.Pow(noise(x, y, 0, mountainWidth), 1);
-                    float continent = noise(x, y, 10, continentSize);
-                    float hill = noise(x, y, 20, hillSize) * 0.02f;
-                    float smallnoise = noise(x, y, 100, smallNoiseSize) * 0.01f;
-                    float cliffs = noise(x, y, 200, continentSize) + 0.5f;
-                    float h = pow(clamp((continent * mountain) + hill, 0, 1), 1);
+                    float mountain = (float)Math.Pow(OverworldImageOperations.noise(heightNoise, x, y, 0, mountainWidth), 1);
+                    float continent = OverworldImageOperations.noise(heightNoise, x, y, 10, continentSize);
+                    float hill = OverworldImageOperations.noise(heightNoise, x, y, 20, hillSize) * 0.02f;
+                    float smallnoise = OverworldImageOperations.noise(heightNoise, x, y, 100, smallNoiseSize) * 0.01f;
+                    float cliffs = OverworldImageOperations.noise(heightNoise, x, y, 200, continentSize) + 0.5f;
+                    float h = OverworldImageOperations.pow(OverworldImageOperations.clamp((continent * mountain) + hill, 0, 1), 1);
                     h += smallnoise;
                     h += 0.4f;
                     h = ((int)(h * invCliffHeight)) * cliffHeight;
@@ -475,7 +152,7 @@ namespace DwarfCorp
                 {
                     for (int y = 0; y < height; y++)
                     {
-                        Map[x, y].Height = clamp(lookup[x, y], 0, 1);
+                        Map[x, y].Height = OverworldImageOperations.clamp(lookup[x, y], 0, 1);
                     }
                 }
             }
@@ -487,10 +164,10 @@ namespace DwarfCorp
                     {
                         float h = lookup[x, y];
                         Vector2 vec = new Vector2(x, y);
-                        h *= LinearInterpolate(vec, Map, ScalarFieldType.Faults);
-                        h += LinearInterpolate(vec, Map, ScalarFieldType.Weathering);
-                        h *= LinearInterpolate(vec, Map, ScalarFieldType.Erosion);
-                        Map[x, y].Height = clamp(h, 0, 1);
+                        h *= LinearInterpolate(vec, Map, OverworldField.Faults);
+                        h += LinearInterpolate(vec, Map, OverworldField.Weathering);
+                        h *= LinearInterpolate(vec, Map, OverworldField.Erosion);
+                        Map[x, y].Height = OverworldImageOperations.clamp(h, 0, 1);
                     }
                 }
             }
@@ -528,7 +205,7 @@ namespace DwarfCorp
 
         public static void TextureFromHeightMap(string displayMode,
             OverworldCell[,] map,
-            ScalarFieldType type,
+            OverworldField type,
             int width, int height,
             Mutex imageMutex,
             Color[] worldData,
@@ -667,39 +344,33 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        Color ci = Color.Black;
+                        var ci = Color.Black;
                         if (displayMode == "Biomes" && index != "Water" && index != "Sea")
                         {
                             if ((int)biome < BiomeLibrary.Biomes.Count)
                                 ci = BiomeLibrary.Biomes[biome].MapColor;
-                                    }
-                                    else
+                        }
+                        else
                             ci = HeightColors[index];
 
-                        Color toDraw = new Color((float) (ci.R) * (h1 + 0.5f) / 255.0f, (float) (ci.G * (h1 + 0.5f)) / 255.0f, (float) (ci.B * (h1 + 0.5f)) / 255.0f);
+                        var toDraw = new Color((float) (ci.R) * (h1 + 0.5f) / 255.0f, (float) (ci.G * (h1 + 0.5f)) / 255.0f, (float) (ci.B * (h1 + 0.5f)) / 255.0f);
                         worldData[ty * width + tx] = toDraw;
                     }
                 }
             }
 
             if(imageMutex != null)
-            {
                 imageMutex.WaitOne();
-            }
 
             GameState.Game.GraphicsDevice.Textures[0] = null;
 
             if (worldMap.IsDisposed || worldMap.GraphicsDevice.IsDisposed)
-            {
                 worldMap = new Texture2D(GameState.Game.GraphicsDevice, width, height);
-            }
 
             worldMap.SetData(worldData);
 
             if(imageMutex != null)
-            {
                 imageMutex.ReleaseMutex();
-            }
         }
 
         public static Vector2 WorldToOverworld(Vector2 worldXZ, float scale, Vector2 origin)
@@ -720,10 +391,10 @@ namespace DwarfCorp
             return BiomeLibrary.Biomes[biome];
         }
 
-        public static float GetValueAt(Vector3 worldPos, ScalarFieldType fieldType, float scale, Vector2 origin)
+        public static float GetValueAt(Vector3 worldPos, OverworldField fieldType, float scale, Vector2 origin)
         {
             Vector2 v = WorldToOverworld(worldPos, scale, origin);
-            return GetValue(Overworld.Map, v, fieldType);
+            return OverworldImageOperations.GetValue(Overworld.Map, v, fieldType);
         }
 
     }

@@ -373,7 +373,7 @@ namespace DwarfCorp.GameStates
                 }
 
                 //Overworld.Distort(width, height, 60.0f, 0.005f, Overworld.ScalarFieldType.Rainfall);
-                Overworld.Distort(width, height, 30.0f, 0.005f, ScalarFieldType.Temperature);
+                OverworldImageOperations.Distort(Overworld.Map, width, height, 30.0f, 0.005f, OverworldField.Temperature);
                 for (int x = 0; x < width; x++)
                 {
                     for (int y = 0; y < height; y++)
@@ -417,7 +417,7 @@ namespace DwarfCorp.GameStates
 
 
                 LoadingMessage = "Blur.";
-                Overworld.Blur(Overworld.Map, width, height, ScalarFieldType.Erosion);
+                OverworldImageOperations.Blur(Overworld.Map, width, height, OverworldField.Erosion);
 
                 LoadingMessage = "Generate height.";
                 Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, true);
@@ -523,7 +523,7 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-            Overworld.Distort(width, height, 5.0f, 0.03f, ScalarFieldType.Rainfall);
+            OverworldImageOperations.Distort(Overworld.Map, width, height, 5.0f, 0.03f, OverworldField.Rainfall);
 
         }
 
@@ -601,8 +601,8 @@ namespace DwarfCorp.GameStates
                 }
             }
 
-            ScaleMap(Overworld.Map, width, height, ScalarFieldType.Faults);
-            Overworld.Distort(width, height, 20, 0.01f, ScalarFieldType.Faults);
+            ScaleMap(Overworld.Map, width, height, OverworldField.Faults);
+            OverworldImageOperations.Distort(Overworld.Map, width, height, 20, 0.01f, OverworldField.Faults);
         }
 
         private void Erode(int width, int height, float seaLevel, OverworldCell[,] heightMap, int numRains, int rainLength, int numRainSamples, float[,] buffer)
@@ -629,7 +629,7 @@ namespace DwarfCorp.GameStates
                     int randY = MathFunctions.Random.Next(1, height - 1);
 
                     currentPos = new Vector2(randX, randY);
-                    float h = Overworld.GetHeight(buffer, currentPos);
+                    float h = OverworldImageOperations.GetHeight(buffer, currentPos);
 
                     if(h > bestHeight)
                     {
@@ -644,16 +644,16 @@ namespace DwarfCorp.GameStates
                 Vector2 velocity = Vector2.Zero;
                 for(int j = 0; j < rainLength; j++)
                 {
-                    Vector2 g = Overworld.GetMinNeighbor(buffer, currentPos);
+                    Vector2 g = OverworldImageOperations.GetMinNeighbor(buffer, currentPos);
 
-                    float h = Overworld.GetHeight(buffer, currentPos);
+                    float h = OverworldImageOperations.GetHeight(buffer, currentPos);
 
                     if(h < seaLevel|| g.LengthSquared() < 1e-12)
                     {
                         break;
                     }
 
-                    Overworld.MinBlend(Overworld.Map, currentPos, erosionRate * Overworld.GetValue(Overworld.Map, currentPos, ScalarFieldType.Erosion), ScalarFieldType.Erosion);
+                    OverworldImageOperations.MinBlend(Overworld.Map, currentPos, erosionRate * OverworldImageOperations.GetValue(Overworld.Map, currentPos, OverworldField.Erosion), OverworldField.Erosion);
 
                     velocity = 0.1f * g + 0.7f * velocity + 0.2f * MathFunctions.RandVector2Circle();
                     currentPos += velocity;
@@ -683,11 +683,11 @@ namespace DwarfCorp.GameStates
                         Vector2 maxDiffNeigh = Vector2.Zero;
                         float maxDiff = 0;
                         float totalDiff = 0;
-                        float h = Overworld.GetHeight(buffer, p);
+                        float h = OverworldImageOperations.GetHeight(buffer, p);
                         float lowestNeighbor = 0.0f;
                         for(int i = 0; i < 4; i++)
                         {
-                            float nh = Overworld.GetHeight(buffer, p + neighbs[i]);
+                            float nh = OverworldImageOperations.GetHeight(buffer, p + neighbs[i]);
                             float diff = h - nh;
                             totalDiff += diff;
                             if(diff > maxDiff)
@@ -700,8 +700,8 @@ namespace DwarfCorp.GameStates
 
                         if(maxDiff > T)
                         {
-                            Overworld.AddValue(Overworld.Map, p + maxDiffNeigh, ScalarFieldType.Weathering, (float)(maxDiff * 0.4f));
-                            Overworld.AddValue(Overworld.Map, p, ScalarFieldType.Weathering, (float)(-maxDiff * 0.4f));
+                            OverworldImageOperations.AddValue(Overworld.Map, p + maxDiffNeigh, OverworldField.Weathering, (float)(maxDiff * 0.4f));
+                            OverworldImageOperations.AddValue(Overworld.Map, p, OverworldField.Weathering, (float)(-maxDiff * 0.4f));
                         }
                     }
                 }
@@ -711,8 +711,8 @@ namespace DwarfCorp.GameStates
                     for(int y = 0; y < height; y++)
                     {
                         Vector2 p = new Vector2(x, y);
-                        float w = Overworld.GetValue(Overworld.Map, p, ScalarFieldType.Weathering);
-                        Overworld.AddHeight(buffer, p, w);
+                        float w = OverworldImageOperations.GetValue(Overworld.Map, p, OverworldField.Weathering);
+                        OverworldImageOperations.AddHeight(buffer, p, w);
                         Overworld.Map[x, y].Weathering = 0.0f;
                     }
                 }
@@ -732,7 +732,7 @@ namespace DwarfCorp.GameStates
             return new Vector2(MathFunctions.Random.Next(0, width), MathFunctions.Random.Next(0, height));
         }
 
-        private static void ScaleMap(OverworldCell[,] map, int width, int height, ScalarFieldType fieldType)
+        private static void ScaleMap(OverworldCell[,] map, int width, int height, OverworldField fieldType)
         {
             float min = 99999;
             float max = -99999;

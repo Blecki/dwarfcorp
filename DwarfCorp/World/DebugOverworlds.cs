@@ -14,6 +14,27 @@ namespace DwarfCorp
 {
     public static class DebugOverworlds
     {
+        private static float ComputeHeight(float wx, float wy, float worldWidth, float worldHeight, float globalScale)
+        {
+            float x = (wx) / globalScale;
+            float y = (wy) / globalScale;
+
+            const float mountainWidth = 0.04f;
+            float mountain = (float)Math.Pow(OverworldImageOperations.noise(Overworld.heightNoise, x, y, 0, mountainWidth), 1);
+            const float continentSize = 0.03f;
+            float continent = OverworldImageOperations.noise(Overworld.heightNoise, x, y, 10, continentSize);
+            const float hillSize = 0.1f;
+            float hill = OverworldImageOperations.noise(Overworld.heightNoise, x, y, 20, hillSize) * 0.02f;
+            const float smallNoiseSize = 0.15f;
+            float smallnoise = OverworldImageOperations.noise(Overworld.heightNoise, x, y, 100, smallNoiseSize) * 0.01f;
+
+            var h = Math.Max(Math.Min((continent * mountain) + hill, 1), 0);
+            h += smallnoise;
+            h += 0.4f;
+            h = Math.Max(Math.Min(h, 1), 0);
+            return h;
+        }
+
         public static void CreateHillsLand()
         {
             GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created a hills world.");
@@ -24,9 +45,9 @@ namespace DwarfCorp
             {
                 for (int y = 0; y < size; y++)
                 {
-                    float temp = Overworld.ComputeHeight(x, y, size, size, 3.0f, false);
-                    float rain = Overworld.ComputeHeight(x, y, size, size, 2.0f, false);
-                    float height = Overworld.ComputeHeight(x, y, size, size, 1.6f, false);
+                    float temp = ComputeHeight(x, y, size, size, 3.0f);
+                    float rain = ComputeHeight(x, y, size, size, 2.0f);
+                    float height = ComputeHeight(x, y, size, size, 1.6f);
                     Overworld.Map[x, y].Erosion = 1.0f;
                     Overworld.Map[x, y].Weathering = 0;
                     Overworld.Map[x, y].Faults = 1.0f;
@@ -50,7 +71,7 @@ namespace DwarfCorp
             {
                 for (int y = 0; y < size; y++)
                 {
-                    float height = Overworld.ComputeHeight(x * 1.0f, y * 2.0f, size, size, 1.0f, false);
+                    float height = ComputeHeight(x * 1.0f, y * 2.0f, size, size, 1.0f);
                     float level = (int)(height/0.15f) * 0.15f + 0.08f;
 
 

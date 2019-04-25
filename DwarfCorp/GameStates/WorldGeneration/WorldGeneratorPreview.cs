@@ -92,9 +92,9 @@ namespace DwarfCorp.GameStates
         {
             public Func<WorldGenerator, Dictionary<string, Color>> GetColorKeys;
             public String DisplayType;
-            public ScalarFieldType Scalar;
+            public OverworldField Scalar;
 
-            public PreviewRenderType(String DisplayType, ScalarFieldType Scalar, Func<WorldGenerator, Dictionary<String, Color>> GetColorKeys)
+            public PreviewRenderType(String DisplayType, OverworldField Scalar, Func<WorldGenerator, Dictionary<String, Color>> GetColorKeys)
             {
                 this.DisplayType = DisplayType;
                 this.Scalar = Scalar;
@@ -109,10 +109,10 @@ namespace DwarfCorp.GameStates
             if (PreviewRenderTypes != null) return;
             PreviewRenderTypes = new Dictionary<string, PreviewRenderType>();
             PreviewRenderTypes.Add("Height",
-                new PreviewRenderType("Height", ScalarFieldType.Height,
+                new PreviewRenderType("Height", OverworldField.Height,
                 (g) => Overworld.HeightColors));
             PreviewRenderTypes.Add("Biomes",
-                new PreviewRenderType("Biomes", ScalarFieldType.Height,
+                new PreviewRenderType("Biomes", OverworldField.Height,
                 (g) => BiomeLibrary.CreateBiomeColors()));
 #if false
             PreviewRenderTypes.Add("Temperature",
@@ -129,7 +129,7 @@ namespace DwarfCorp.GameStates
                 (g) => Overworld.JetColors));
 #endif
             PreviewRenderTypes.Add("Factions",
-                new PreviewRenderType("Factions", ScalarFieldType.Factions,
+                new PreviewRenderType("Factions", OverworldField.Factions,
                 (g) =>
                 {
                     Overworld.NativeFactions = g.NativeCivilizations;

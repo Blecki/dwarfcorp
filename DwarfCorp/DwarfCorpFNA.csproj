@@ -875,6 +875,7 @@
     <Compile Include=".\World\WorldTime.cs" />
     <Compile Include="Voxels\Generation\GenerateOres.cs" />
     <Compile Include="World\DebugOverworlds.cs" />
+    <Compile Include="World\OverworldImageOperations.cs" />
     <Compile Include="World\OverworldCell.cs" />
   </ItemGroup>
   <ItemGroup>

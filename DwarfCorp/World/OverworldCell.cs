@@ -12,15 +12,16 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public enum ScalarFieldType
+    public enum OverworldField
     {
-        Erosion,
-        Weathering,
-        Faults,
-        Height,
-        Temperature,
-        Rainfall,
-        Factions
+        Erosion = 0,
+        Weathering = 1,
+        Faults = 2,
+        Height = 3,
+        Temperature = 4,
+        Rainfall = 5,
+        Factions = 6,
+        NumFields = 7
     }
 
     [Serializable]
@@ -83,52 +84,52 @@ namespace DwarfCorp
         [JsonProperty] public byte Rainfall_;
         public byte Biome;
 
-        public float GetValue(ScalarFieldType type)
+        public float GetValue(OverworldField type)
         {
             switch (type)
             {
-                case ScalarFieldType.Erosion:
+                case OverworldField.Erosion:
                     return Erosion;
-                case ScalarFieldType.Faults:
+                case OverworldField.Faults:
                     return Faults;
-                case ScalarFieldType.Height:
+                case OverworldField.Height:
                     return Height;
-                case ScalarFieldType.Rainfall:
+                case OverworldField.Rainfall:
                     return Rainfall;
-                case ScalarFieldType.Temperature:
+                case OverworldField.Temperature:
                     return Temperature;
-                case ScalarFieldType.Weathering:
+                case OverworldField.Weathering:
                     return Weathering;
-                case ScalarFieldType.Factions:
+                case OverworldField.Factions:
                     return Faction;
             }
 
             return -1.0f;
         }
 
-        public void SetValue(ScalarFieldType type, float value)
+        public void SetValue(OverworldField type, float value)
         {
             switch (type)
             {
-                case ScalarFieldType.Erosion:
+                case OverworldField.Erosion:
                     Erosion = value;
                     break;
-                case ScalarFieldType.Faults:
+                case OverworldField.Faults:
                     Faults = value;
                     break;
-                case ScalarFieldType.Height:
+                case OverworldField.Height:
                     Height = value;
                     break;
-                case ScalarFieldType.Rainfall:
+                case OverworldField.Rainfall:
                     Rainfall = value;
                     break;
-                case ScalarFieldType.Temperature:
+                case OverworldField.Temperature:
                     Temperature = value;
                     break;
-                case ScalarFieldType.Weathering:
+                case OverworldField.Weathering:
                     Weathering = value;
                     break;
-                case ScalarFieldType.Factions:
+                case OverworldField.Factions:
                     Faction = (byte)(value * 255.0f);
                     break;
             }

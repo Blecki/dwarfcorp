@@ -48,7 +48,7 @@ namespace DwarfCorp
                 toReturn = new Texture2D(device, width, height);
                 global::System.Threading.Mutex imageMutex = new global::System.Threading.Mutex();
                 Color[] worldData = new Color[width * height];
-                Overworld.TextureFromHeightMap("Height", mapData, ScalarFieldType.Height, width, height, imageMutex, worldData, toReturn, seaLevel);
+                Overworld.TextureFromHeightMap("Height", mapData, OverworldField.Height, width, height, imageMutex, worldData, toReturn, seaLevel);
 
                 return toReturn;
             }

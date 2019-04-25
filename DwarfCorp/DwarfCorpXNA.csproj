@@ -954,6 +954,7 @@
     <Compile Include="World\FaunaData.cs" />
     <Compile Include="World\OverworldCell.cs" />
     <Compile Include="World\Overworld.cs" />
+    <Compile Include="World\OverworldImageOperations.cs" />
     <Compile Include="World\UpdateSystemFactoryAttribute.cs" />
     <Compile Include="World\VegetationData.cs" />
     <Compile Include="World\Weather\Cloud.cs" />
