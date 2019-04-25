@@ -541,9 +541,16 @@ namespace DwarfCorp
             GameComponent closestItem = null;
             float closestDist = float.MaxValue;
 
+            if (OwnedObjects == null)
+                return null;
+
             foreach (GameComponent i in OwnedObjects)
             {
-                if (i == null || i.IsDead || (i.IsReserved && filterReserved && i.ReservedFor != queryObject) || !(i.Tags.Any(t => tag == t))) continue;
+                if (i == null) continue;
+                if (i.IsDead) continue;
+                if (i.IsReserved && filterReserved && i.ReservedFor != queryObject) continue;
+                if (i.Tags == null || !(i.Tags.Any(t => tag == t))) continue;
+
                 float d = (i.GlobalTransform.Translation - location).LengthSquared();
                 if (!(d < closestDist)) continue;
                 closestDist = d;
