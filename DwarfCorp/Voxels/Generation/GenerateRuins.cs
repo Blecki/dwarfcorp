@@ -19,7 +19,7 @@ namespace DwarfCorp.Generation
         {
             var noiseVector = Chunk.Origin.ToVector3() * Settings.CaveNoiseScale;
             var ruinsNoise = Settings.CaveNoise.GetValue(noiseVector.X, noiseVector.Y, noiseVector.Z);
-            if (Math.Abs(ruinsNoise) < Settings.RuinsRate) return;
+            if (Math.Abs(ruinsNoise) > GameSettings.Default.GenerationRuinsRate) return;
 
             int structureWidth = MathFunctions.RandInt(4, 16);
             int structureDepth = MathFunctions.RandInt(4, 16);

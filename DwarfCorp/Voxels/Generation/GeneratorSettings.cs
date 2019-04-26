@@ -39,7 +39,6 @@ namespace DwarfCorp.Generation
         public int MaxCaveHeight = 3;
 
         public WorldManager World;
-        public float RuinsRate = 0.25f;
 
         public GeneratorSettings(int Seed, float NoiseScale, OverworldGenerationSettings OverworldSettings)
         {
