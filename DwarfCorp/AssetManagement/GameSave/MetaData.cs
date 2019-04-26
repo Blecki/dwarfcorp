@@ -53,7 +53,7 @@ namespace DwarfCorp
         public String Version;
         public String Commit;
         public Dictionary<int, String> VoxelTypeMap = new Dictionary<int, string>();
-
+        
         public static string Extension = "meta";
         public static string CompressedExtension = "zmeta";
 

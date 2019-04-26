@@ -144,7 +144,7 @@ namespace DwarfCorp
             GoodWill = 0.0f;
         }
 
-        public Faction(NewOverworldFile.OverworldMetaData.FactionDescriptor descriptor)
+        public Faction(OverworldMetaData.FactionDescriptor descriptor)
         {
             Threats = new List<Creature>();
             Minions = new List<CreatureAI>();

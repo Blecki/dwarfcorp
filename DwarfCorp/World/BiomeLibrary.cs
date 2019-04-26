@@ -14,7 +14,6 @@ namespace DwarfCorp
     {
         private static List<BiomeData> Biomes = null;
 
-        // Todo: Split biome into multiple files and stabalize ids using same method as voxels.
         private static void InitializeStatics()
         {
             if (Biomes == null)
@@ -73,6 +72,14 @@ namespace DwarfCorp
             }
 
             return closest;
+        }
+
+        public static Dictionary<int, String> GetBiomeTypeMap()
+        {
+            var r = new Dictionary<int, String>();
+            for (var i = 0; i < Biomes.Count; ++i)
+                r.Add(i, Biomes[i].Name);
+            return r;
         }
     }
 

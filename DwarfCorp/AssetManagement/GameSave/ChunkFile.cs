@@ -10,7 +10,6 @@ using System.IO.Compression;
 
 namespace DwarfCorp
 {
-
     /// <summary>
     ///     Minimal representation of a chunk.
     ///     Exists to write to and from files.

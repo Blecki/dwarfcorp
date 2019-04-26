@@ -12,61 +12,6 @@ namespace DwarfCorp
     [Serializable]
     public class NewOverworldFile
     {
-        // Todo: This should be meta data only; no cell map.
-        [Serializable]
-        public class OverworldMetaData
-        {
-            public string Version;
-            public string Name;
-            public float SeaLevel;
-            
-            [Serializable]
-            public struct FactionDescriptor
-            {
-                public string Name { get; set; }
-                public byte Id { get; set; }
-                public string Race { get; set; }
-                public Color PrimaryColory { get; set; }
-                public Color SecondaryColor { get; set; }
-                public int CenterX { get; set; }
-                public int CenterY { get; set; }
-                public float GoodWill { get; set; }
-            }
-
-            public List<FactionDescriptor> FactionList;
-
-            public OverworldMetaData()
-            {
-            }
-
-            public OverworldMetaData(GraphicsDevice device, Overworld Overworld, string name, float seaLevel)
-            {
-                int sizeX = Overworld.Map.GetLength(0);
-                int sizeY = Overworld.Map.GetLength(1);
-                
-                Name = name;
-                SeaLevel = seaLevel;
-                
-                FactionList = new List<FactionDescriptor>();
-                byte id = 0;
-                foreach (Faction f in Overworld.NativeFactions)
-                {
-                    FactionList.Add(new FactionDescriptor()
-                    {
-                        Name = f.Name,
-                        PrimaryColory = f.PrimaryColor,
-                        SecondaryColor = f.SecondaryColor,
-                        Id = id,
-                        Race = f.Race.Name,
-                        CenterX = f.Center.X,
-                        CenterY = f.Center.Y, 
-                        GoodWill = f.GoodWill
-                    });
-                    id++;
-                }
-            }
-        }
-
         public OverworldMetaData MetaData;
         public OverworldCell[,] OverworldMap;
         private GraphicsDevice Device {  get { return GameState.Game.GraphicsDevice; } }
@@ -122,6 +67,37 @@ namespace DwarfCorp
             GameState.Game.GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             Texture.GetData(colorData);
             Overworld.DecodeSaveTexture(OverworldMap, Texture.Width, Texture.Height, colorData);
+
+            // Remap the saved voxel ids to the ids of the currently loaded voxels.
+            if (MetaData.BiomeTypeMap != null)
+            {
+                // First build a replacement mapping.
+
+                var newBiomeMap = BiomeLibrary.GetBiomeTypeMap();
+                var newReverseMap = new Dictionary<String, int>();
+                foreach (var mapping in newBiomeMap)
+                    newReverseMap.Add(mapping.Value, mapping.Key);
+
+                var replacementMap = new Dictionary<int, int>();
+                foreach (var mapping in MetaData.BiomeTypeMap)
+                {
+                    if (newReverseMap.ContainsKey(mapping.Value))
+                    {
+                        var newId = newReverseMap[mapping.Value];
+                        if (mapping.Key != newId)
+                            replacementMap.Add(mapping.Key, newId);
+                    }
+                }
+
+                // If there are no changes, skip the expensive iteration.
+                if (replacementMap.Count != 0)
+                {
+                    for (var x = 0; x < OverworldMap.GetLength(0); ++x)
+                        for (var y = 0; y < OverworldMap.GetLength(1); ++y)
+                            if (replacementMap.ContainsKey(OverworldMap[x, y].Biome))
+                                OverworldMap[x, y].Biome = (byte)replacementMap[OverworldMap[x, y].Biome];
+                }
+            }
         }
 
         public NewOverworldFile(string fileName)

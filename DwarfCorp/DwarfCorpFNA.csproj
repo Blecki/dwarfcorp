@@ -136,6 +136,7 @@
     <Compile Include=".\Components\AI\Pregnancy.cs" />
     <Compile Include=".\Components\AI\Sensors\DestroyOnTimer.cs" />
     <Compile Include=".\Components\AI\Sensors\EnemySensor.cs" />
+    <Compile Include="AssetManagement\GameSave\OverworldMetaData.cs" />
     <Compile Include="Components\AI\Sensors\SpawnOnExploredTrigger.cs" />
     <Compile Include=".\Components\AI\Sensors\RadiusSensor.cs" />
     <Compile Include=".\Components\AI\Sensors\Sensor.cs" />
