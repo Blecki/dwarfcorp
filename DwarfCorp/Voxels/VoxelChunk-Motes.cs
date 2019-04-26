@@ -79,7 +79,7 @@ namespace DwarfCorp
                             continue;
 
                     // Find biome type.
-                    var biomeData = Overworld.GetBiomeAt(v.WorldPosition, Manager.World.WorldScale, Manager.World.WorldOrigin);  
+                    var biomeData = Overworld.GetBiomeAt(Manager.World.GenerationSettings.Overworld.Map, v.WorldPosition, Manager.World.WorldScale, Manager.World.WorldOrigin);  
 
                     // Don't generate if not on grass type.
                     if (v.GrassType == 0 || GrassLibrary.GetGrassType(v.GrassType).Name != biomeData.GrassDecal)

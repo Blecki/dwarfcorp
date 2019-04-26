@@ -22,7 +22,7 @@ namespace DwarfCorp.GameStates
 
             CreateMenuItem(frame, "Random World", "Just start a game on a completely random world.", (sender, args) => {
                 GameStates.GameState.Game.LogSentryBreadcrumb("Menu", "User generating a random world.");
-                StateManager.PushState(new LoadState(Game, Game.StateManager, new OverworldGenerationSettings() { GenerateFromScratch = true }));
+                StateManager.PushState(new LoadState(Game, Game.StateManager, new OverworldGenerationSettings() { GenerateFromScratch = true, ColonySize = new Point3(8, 4, 8) }));
             });
 
             CreateMenuItem(frame, "Load World", "Load a continent from an existing file.", (sender, args) =>

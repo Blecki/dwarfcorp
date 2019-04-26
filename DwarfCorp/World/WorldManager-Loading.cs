@@ -143,13 +143,9 @@ namespace DwarfCorp
                 if (gameFile.Metadata.OverworldFile != null && gameFile.Metadata.OverworldFile != "flat")
                 {
                     SetLoadingMessage("Loading world " + gameFile.Metadata.OverworldFile);
-                    Overworld.Name = gameFile.Metadata.OverworldFile;
-                    DirectoryInfo worldDirectory =
-                        Directory.CreateDirectory(DwarfGame.GetWorldDirectory() +
-                                                  Path.DirectorySeparatorChar + Overworld.Name);
-                    var overWorldFile = new NewOverworldFile(worldDirectory.FullName);
-                    Overworld.Map = overWorldFile.Data.Data;
-                    Overworld.Name = overWorldFile.Data.Name;
+                    var worldDirectory = Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + gameFile.Metadata.OverworldFile);
+                    var overWorldFile = NewOverworldFile.Load(worldDirectory.FullName);
+                    GenerationSettings.Overworld = overWorldFile.CreateOverworld();
                 }
                 else
                 {
@@ -346,7 +342,7 @@ namespace DwarfCorp
                     Natives = new List<Faction>();
                     for (int i = 0; i < 10; i++)
                     {
-                        Natives.Add(library.GenerateFaction(this, i, 10));
+                        Natives.Add(library.GenerateFaction(GenerationSettings, i, 10));
                     }
 
                 }
@@ -411,7 +407,7 @@ namespace DwarfCorp
             if (gameFile == null)
             {
                 Game.LogSentryBreadcrumb("Loading", "Started new game without an existing file.");
-                if (Overworld.Map == null)
+                if (GenerationSettings.Overworld.Map == null)
                     throw new InvalidProgramException("Tried to start game with an empty overworld. This should not happen.");
 
                 var generatorSettings = new Generation.GeneratorSettings(Seed, 0.02f, GenerationSettings)

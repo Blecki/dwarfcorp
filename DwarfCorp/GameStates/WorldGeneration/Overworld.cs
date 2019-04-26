@@ -43,23 +43,25 @@ namespace DwarfCorp
         };
 
 
-        public static List<Vector2> Volcanoes { get; set; }
-        
-        public static OverworldCell[,] Map { get; set; }
-        public static string Name { get; set; }
-        public static List<Faction> NativeFactions { get; set; }
+        public List<Vector2> Volcanoes { get; set; }
+        public OverworldCell[,] Map { get; set; }
+        public string Name { get; set; }
+        public List<Faction> NativeFactions { get; set; }
 
         public static ColorGradient JetGradient = null;
 
+        public Overworld(int Width, int Height)
+        {
+            Map = new OverworldCell[Width, Height];
+        }
+
         public static BiomeData GetBiome(float temp, float rainfall, float height)
         {
-
             BiomeData closest = null;
             float closestDist = float.MaxValue;
             foreach (var biome in BiomeLibrary.Biomes)
             {
-                float dist = Math.Abs(biome.Temp - temp) + Math.Abs(biome.Rain - rainfall) +
-                             Math.Abs(biome.Height - height);
+                float dist = Math.Abs(biome.Temp - temp) + Math.Abs(biome.Rain - rainfall) +  Math.Abs(biome.Height - height);
 
                 if (dist < closestDist)
                 {
@@ -69,10 +71,9 @@ namespace DwarfCorp
             }
 
             return closest;
-
         }
 
-        public static void Cleanup()
+        public void Cleanup()
         {
             GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "Cleanup was called.");
             NativeFactions = null;
@@ -112,8 +113,6 @@ namespace DwarfCorp
             return MathFunctions.LinearInterpolate(new Vector2(x, y), map);
         }
 
-
-
         public static float[,] GenerateHeightMapLookup(int width, int height)
         {
             float[,] toReturn = new float[width, height];
@@ -144,7 +143,7 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public static void GenerateHeightMapFromLookup(float[,] lookup, int width, int height, float globalScale, bool erode)
+        public static void GenerateHeightMapFromLookup(OverworldCell[,] Map, float[,] lookup, int width, int height, float globalScale, bool erode)
         {
             if (!erode)
             {
@@ -205,6 +204,7 @@ namespace DwarfCorp
 
         public static void TextureFromHeightMap(string displayMode,
             OverworldCell[,] map,
+            List<Faction> NativeFactions,
             OverworldField type,
             int width, int height,
             Mutex imageMutex,
@@ -267,7 +267,7 @@ namespace DwarfCorp
                     int y = ty * stepY;
    
                     float h1 = map[x, y].GetValue(type);
-                    var biome = Map[x, y].Biome;
+                    var biome = map[x, y].Biome;
                     if(h1 < 0.1f)
                     {
                         index = "Sea";
@@ -383,18 +383,18 @@ namespace DwarfCorp
             return WorldToOverworld(new Vector2(worldXYZ.X, worldXYZ.Z), scale, origin);
         }
 
-        public static BiomeData GetBiomeAt(Vector3 worldPos, float scale, Vector2 origin)
+        public static BiomeData GetBiomeAt(OverworldCell[,] Map, Vector3 worldPos, float scale, Vector2 origin)
         {
-            DebugHelper.AssertNotNull(Overworld.Map);
+            DebugHelper.AssertNotNull(Map);
             Vector2 v = WorldToOverworld(worldPos, scale, origin);
-            var biome = Overworld.Map[(int)MathFunctions.Clamp(v.X, 0, Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Overworld.Map.GetLength(1) - 1)].Biome;
+            var biome = Map[(int)MathFunctions.Clamp(v.X, 0, Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Map.GetLength(1) - 1)].Biome;
             return BiomeLibrary.Biomes[biome];
         }
 
-        public static float GetValueAt(Vector3 worldPos, OverworldField fieldType, float scale, Vector2 origin)
+        public static float GetValueAt(OverworldCell[,] Map, Vector3 worldPos, OverworldField fieldType, float scale, Vector2 origin)
         {
             Vector2 v = WorldToOverworld(worldPos, scale, origin);
-            return OverworldImageOperations.GetValue(Overworld.Map, v, fieldType);
+            return OverworldImageOperations.GetValue(Map, v, fieldType);
         }
 
     }

@@ -108,7 +108,7 @@ namespace DwarfCorp.GameStates
             EntityFactory.Cleanup();
             Drawer3D.Cleanup();
             ParticleEmitter.Cleanup();
-            Overworld.Cleanup();
+            //Overworld.Cleanup();
             ResourceLibrary.Cleanup();
             CraftLibrary.Cleanup();
             VoxelLibrary.Cleanup();

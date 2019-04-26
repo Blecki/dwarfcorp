@@ -351,6 +351,8 @@
     <Compile Include=".\GameStates\Play\EconomyState.cs" />
     <Compile Include=".\GameStates\Play\FactionViewState.cs" />
     <Compile Include=".\GameStates\Play\PlayState.cs" />
+    <Compile Include="GameStates\WorldGeneration\Overworld.cs" />
+    <Compile Include="GameStates\WorldGeneration\OverworldCell.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldGenerationSettings.cs" />
     <Compile Include=".\GameStates\WorldGeneration\WorldGenerationSettingsDialog.cs" />
     <Compile Include=".\GameStates\WorldGeneration\WorldGenerator.cs" />
@@ -797,6 +799,7 @@
     <Compile Include=".\Voxels\DecalType.cs" />
     <Compile Include=".\Voxels\DynamicLight.cs" />
     <Compile Include=".\Voxels\Enums.cs" />
+    <Compile Include="GameStates\WorldGeneration\OverworldImageOperations.cs" />
     <Compile Include="Voxels\Generation\GenerateBalloonPort.cs" />
     <Compile Include="Voxels\Generation\GenerateCaves.cs" />
     <Compile Include="Voxels\Generation\CastSunlight.cs" />
@@ -861,7 +864,6 @@
     <Compile Include=".\World\EngineModule.cs" />
     <Compile Include=".\World\FaunaData.cs" />
     <Compile Include=".\World\IndicatorManager.cs" />
-    <Compile Include=".\World\Overworld.cs" />
     <Compile Include=".\World\UpdateSystemFactoryAttribute.cs" />
     <Compile Include=".\World\VegetationData.cs" />
     <Compile Include=".\World\Weather\Cloud.cs" />
@@ -875,8 +877,6 @@
     <Compile Include=".\World\WorldTime.cs" />
     <Compile Include="Voxels\Generation\GenerateOres.cs" />
     <Compile Include="World\DebugOverworlds.cs" />
-    <Compile Include="World\OverworldImageOperations.cs" />
-    <Compile Include="World\OverworldCell.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

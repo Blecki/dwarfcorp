@@ -48,7 +48,7 @@ namespace DwarfCorp.Generation
                     SetLoadingMessage(String.Format("#Generating caves, ore, water in chunk {0} {1} {2}...", chunk.ID.X, chunk.ID.Y, chunk.ID.Z));
                     GenerateOres(chunk, Settings);
                     GenerateCaves(chunk, Settings);
-                    GenerateWater(chunk, waterHeight);
+                    GenerateWater(chunk, waterHeight, Settings);
                     GenerateLava(chunk, Settings);
 
                     //for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)

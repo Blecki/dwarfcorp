@@ -35,11 +35,12 @@ namespace DwarfCorp
             return h;
         }
 
-        public static void CreateHillsLand()
+        public static Overworld CreateHillsLand()
         {
             GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created a hills world.");
             int size = 512;
-            Overworld.Map = new OverworldCell[size, size];
+
+            var r = new Overworld(size, size);
 
             for (int x = 0; x < size; x++)
             {
@@ -48,24 +49,27 @@ namespace DwarfCorp
                     float temp = ComputeHeight(x, y, size, size, 3.0f);
                     float rain = ComputeHeight(x, y, size, size, 2.0f);
                     float height = ComputeHeight(x, y, size, size, 1.6f);
-                    Overworld.Map[x, y].Erosion = 1.0f;
-                    Overworld.Map[x, y].Weathering = 0;
-                    Overworld.Map[x, y].Faults = 1.0f;
-                    Overworld.Map[x, y].Temperature = (float)(temp * 1.0f);
-                    Overworld.Map[x, y].Rainfall = (float)(rain * 1.0f);
-                    Overworld.Map[x, y].Biome = Overworld.GetBiome(temp, rain, height).Biome;
-                    Overworld.Map[x, y].Height = height;
+                    r.Map[x, y].Erosion = 1.0f;
+                    r.Map[x, y].Weathering = 0;
+                    r.Map[x, y].Faults = 1.0f;
+                    r.Map[x, y].Temperature = (float)(temp * 1.0f);
+                    r.Map[x, y].Rainfall = (float)(rain * 1.0f);
+                    r.Map[x, y].Biome = Overworld.GetBiome(temp, rain, height).Biome;
+                    r.Map[x, y].Height = height;
                 }
             }
 
-            Overworld.Name = "hills" + MathFunctions.Random.Next(9999);
+            r.Name = "hills" + MathFunctions.Random.Next(9999);
+
+            return r;
         }
 
-        public static void CreateCliffsLand()
+        public static Overworld CreateCliffsLand()
         {
             GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created a cliffs world.");
             int size = 512;
-            Overworld.Map = new OverworldCell[size, size];
+
+            var r = new Overworld(size, size);
 
             for (int x = 0; x < size; x++)
             {
@@ -75,63 +79,71 @@ namespace DwarfCorp
                     float level = (int)(height/0.15f) * 0.15f + 0.08f;
 
 
-                    Overworld.Map[x, y].Height = level;
-                    Overworld.Map[x, y].Biome = BiomeLibrary.GetBiome("Deciduous Forest").Biome;
-                    Overworld.Map[x, y].Erosion = 1.0f;
-                    Overworld.Map[x, y].Weathering = 0;
-                    Overworld.Map[x, y].Faults = 1.0f;
-                    Overworld.Map[x, y].Temperature = 0.6f;
-                    Overworld.Map[x, y].Rainfall = 0.6f;
+                    r.Map[x, y].Height = level;
+                    r.Map[x, y].Biome = BiomeLibrary.GetBiome("Deciduous Forest").Biome;
+                    r.Map[x, y].Erosion = 1.0f;
+                    r.Map[x, y].Weathering = 0;
+                    r.Map[x, y].Faults = 1.0f;
+                    r.Map[x, y].Temperature = 0.6f;
+                    r.Map[x, y].Rainfall = 0.6f;
                 }
             }
 
-            Overworld.Name = "Cliffs_" + MathFunctions.Random.Next(9999);
+            r.Name = "Cliffs_" + MathFunctions.Random.Next(9999);
+
+            return r;
         }
 
-        public static void CreateUniformLand()
+        public static Overworld CreateUniformLand()
         {
             GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created a flat world.");
             int size = 512;
-            Overworld.Map = new OverworldCell[size, size];
+
+            var r = new Overworld(size, size);
 
             for (int x = 0; x < size; x++)
             {
                 for (int y = 0; y < size; y++)
                 {
-                    Overworld.Map[x, y].Biome = BiomeLibrary.GetBiome("Desert").Biome;
-                    Overworld.Map[x, y].Erosion = 1.0f;
-                    Overworld.Map[x, y].Weathering = 0.0f;
-                    Overworld.Map[x, y].Faults = 1.0f;
-                    Overworld.Map[x, y].Temperature = size;
-                    Overworld.Map[x, y].Rainfall = size;
-                    Overworld.Map[x, y].Height = 0.3f; //ComputeHeight(x, y, size0, size0, 5.0f, false);
+                    r.Map[x, y].Biome = BiomeLibrary.GetBiome("Desert").Biome;
+                    r.Map[x, y].Erosion = 1.0f;
+                    r.Map[x, y].Weathering = 0.0f;
+                    r.Map[x, y].Faults = 1.0f;
+                    r.Map[x, y].Temperature = size;
+                    r.Map[x, y].Rainfall = size;
+                    r.Map[x, y].Height = 0.3f; //ComputeHeight(x, y, size0, size0, 5.0f, false);
                 }
             }
 
-            Overworld.Name = "flat_" + MathFunctions.Random.Next(9999);
+            r.Name = "flat_" + MathFunctions.Random.Next(9999);
+
+            return r;
         }
 
-        public static void CreateOceanLand(float seaLevel)
+        public static Overworld CreateOceanLand(float seaLevel)
         {
             GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "User created an ocean world.");
             int size = 512;
-            Overworld.Map = new OverworldCell[size, size];
+
+            var r = new Overworld(size, size);
 
             for (int x = 0; x < size; x++)
             {
                 for (int y = 0; y < size; y++)
                 {
-                    Overworld.Map[x, y].Biome = BiomeLibrary.GetBiome("Grassland").Biome;
-                    Overworld.Map[x, y].Erosion = 1.0f;
-                    Overworld.Map[x, y].Weathering = 0;
-                    Overworld.Map[x, y].Faults = 1.0f;
-                    Overworld.Map[x, y].Temperature = size;
-                    Overworld.Map[x, y].Rainfall = size;
-                    Overworld.Map[x, y].Height = 0.05f; //ComputeHeight(x, y, size0, size0, 5.0f, false);
+                    r.Map[x, y].Biome = BiomeLibrary.GetBiome("Grassland").Biome;
+                    r.Map[x, y].Erosion = 1.0f;
+                    r.Map[x, y].Weathering = 0;
+                    r.Map[x, y].Faults = 1.0f;
+                    r.Map[x, y].Temperature = size;
+                    r.Map[x, y].Rainfall = size;
+                    r.Map[x, y].Height = 0.05f; //ComputeHeight(x, y, size0, size0, 5.0f, false);
                 }
             }
 
-            Overworld.Name = "ocean_" + MathFunctions.Random.Next(9999);
+            r.Name = "ocean_" + MathFunctions.Random.Next(9999);
+
+            return r;
         }
     }
 }

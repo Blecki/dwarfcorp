@@ -92,7 +92,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockTop,
                 OnClick = (sender, args) => {
                     GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", "User is regeneating the world.");
-                    Settings = new OverworldGenerationSettings();
+                    //Settings = new OverworldGenerationSettings();
                     RestartGeneration();
                 }
             });
@@ -113,7 +113,7 @@ namespace DwarfCorp.GameStates
                     else
                     {
                         global::System.IO.DirectoryInfo worldDirectory = global::System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + global::System.IO.Path.DirectorySeparatorChar + Settings.Name);
-                        NewOverworldFile file = new NewOverworldFile(Game.GraphicsDevice, Overworld.Map, Settings.Name, Settings.SeaLevel);
+                        var file = new NewOverworldFile(Game.GraphicsDevice, Settings.Overworld, Settings.Name, Settings.SeaLevel);
                         file.WriteFile(worldDirectory.FullName);
                         GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new Gui.Widgets.Popup
                         {
@@ -179,7 +179,7 @@ namespace DwarfCorp.GameStates
                     else
                     {
                         GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", string.Format("User is starting a game with a {0} x {1} world.", Settings.Width, Settings.Height));
-                        Overworld.Name = Settings.Name;
+                        Settings.Overworld.Name = Settings.Name;
                         Settings.ExistingFile = null;
                         Settings.WorldOrigin = Settings.WorldGenerationOrigin;
                         Settings.SpawnRect = Generator.GetSpawnRectangle();
@@ -357,7 +357,8 @@ namespace DwarfCorp.GameStates
             Preview = mainPanel.AddChild(new WorldGeneratorPreview(Game.GraphicsDevice)
             {
                 Border = "border-thin",
-                AutoLayout = Gui.AutoLayout.DockFill
+                AutoLayout = Gui.AutoLayout.DockFill,
+                Overworld = Settings.Overworld
             }) as WorldGeneratorPreview;
 
             GuiRoot.RootItem.Layout();
@@ -374,7 +375,7 @@ namespace DwarfCorp.GameStates
             {
                 Generator = new WorldGenerator(Settings);
                 Generator.LoadDummy(
-                    new Color[Overworld.Map.GetLength(0) * Overworld.Map.GetLength(1)], 
+                    new Color[Settings.Overworld.Map.GetLength(0) * Settings.Overworld.Map.GetLength(1)], 
                     Game.GraphicsDevice);
                 Preview.SetGenerator(Generator);
             }

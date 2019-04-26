@@ -13,80 +13,48 @@ namespace DwarfCorp.GameStates
         {
         }
 
+        private OverworldGenerationSettings GetSettings(Overworld Overworld)
+        {
+            return new OverworldGenerationSettings()
+            {
+                ExistingFile = null,
+                ColonySize = new Point3(8, 1, 8),
+                WorldScale = 2.0f,
+                WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / 2.0f,
+                                        Overworld.Map.GetLength(1) / 2.0f) * 0.5f,
+                SpawnRect = new Rectangle((int)(Overworld.Map.GetLength(0) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
+                                        (int)(Overworld.Map.GetLength(1) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
+                                        8 * VoxelConstants.ChunkSizeX, 8 * VoxelConstants.ChunkSizeX),
+                Overworld = Overworld
+            };
+        }
+
         public void MakeDebugWorldMenu()
         {
             var frame = CreateMenu("SPECIAL WORLDS");
 
             CreateMenuItem(frame, "Hills", "Create a hilly world.", (sender, args) =>
                 {
-                    DebugOverworlds.CreateHillsLand();
                     StateManager.ClearState();
-                    OverworldGenerationSettings settings = new OverworldGenerationSettings()
-                    {
-                        ExistingFile = null,
-                        ColonySize = new Point3(8, 1, 8),
-                        WorldScale =  2.0f,
-                        WorldOrigin = new Vector2(Overworld.Map.GetLength(0)/2.0f,
-                            Overworld.Map.GetLength(1)/2.0f)*0.5f,
-                        SpawnRect = new Rectangle((int)(Overworld.Map.GetLength(0) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
-                            (int)(Overworld.Map.GetLength(1) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
-                            8 * VoxelConstants.ChunkSizeX, 8 * VoxelConstants.ChunkSizeX)
-                    };
-                    StateManager.PushState(new LoadState(Game, StateManager, settings));
+                    StateManager.PushState(new LoadState(Game, StateManager, GetSettings(DebugOverworlds.CreateHillsLand())));
                 });
 
             CreateMenuItem(frame, "Cliffs", "Create a cliff-y world.", (sender, args) =>
                 {
-                    DebugOverworlds.CreateCliffsLand();
                     StateManager.ClearState();
-                    OverworldGenerationSettings settings = new OverworldGenerationSettings()
-                    {
-                        ExistingFile = null,
-                        ColonySize = new Point3(8, 1, 8),
-                        WorldScale = 2.0f,
-                        WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / 2.0f,
-                            Overworld.Map.GetLength(1) / 2.0f) * 0.5f,
-                        SpawnRect = new Rectangle((int)(Overworld.Map.GetLength(0) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
-                            (int)(Overworld.Map.GetLength(1) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
-                            8 * VoxelConstants.ChunkSizeX, 8 * VoxelConstants.ChunkSizeX)
-                    };
-                    StateManager.PushState(new LoadState(Game, StateManager, settings));
+                    StateManager.PushState(new LoadState(Game, StateManager, GetSettings(DebugOverworlds.CreateCliffsLand())));
                 });
 
             CreateMenuItem(frame, "Flat", "Create a flat world.", (sender, args) =>
                 {
-                    DebugOverworlds.CreateUniformLand();
                     StateManager.ClearState();
-                    OverworldGenerationSettings settings = new OverworldGenerationSettings()
-                    {
-                        ExistingFile = null,
-                        ColonySize = new Point3(8, 1, 8),
-                        WorldScale = 2.0f,
-                        WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / 2.0f,
-                            Overworld.Map.GetLength(1) / 2.0f) * 0.5f,
-                        SpawnRect = new Rectangle((int)(Overworld.Map.GetLength(0) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
-                            (int)(Overworld.Map.GetLength(1) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
-                            8 * VoxelConstants.ChunkSizeX, 8 * VoxelConstants.ChunkSizeX)
-                    };
-                    StateManager.PushState(new LoadState(Game, StateManager, settings));
+                    StateManager.PushState(new LoadState(Game, StateManager, GetSettings(DebugOverworlds.CreateUniformLand())));
                 });
 
             CreateMenuItem(frame, "Ocean", "Create an ocean world", (sender, args) =>
                 {
-                    DebugOverworlds.CreateOceanLand(0.17f);
                     StateManager.ClearState();
-                    OverworldGenerationSettings settings = new OverworldGenerationSettings()
-                    {
-                        ExistingFile = null,
-                        ColonySize = new Point3(8, 1, 8),
-                        WorldScale = 2.0f,
-                        WorldOrigin = new Vector2(Overworld.Map.GetLength(0) / 2.0f,
-                            Overworld.Map.GetLength(1) / 2.0f) * 0.5f,
-                        SpawnRect = new Rectangle((int)(Overworld.Map.GetLength(0) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
-                            (int)(Overworld.Map.GetLength(1) / 2.0f - 8 * VoxelConstants.ChunkSizeX),
-                            8 * VoxelConstants.ChunkSizeX, 8 * VoxelConstants.ChunkSizeX)
-                    };
-                    StateManager.PushState(new LoadState(Game, StateManager, settings));
+                    StateManager.PushState(new LoadState(Game, StateManager, GetSettings(DebugOverworlds.CreateOceanLand(0.17f))));
                 });
 
             CreateMenuItem(frame, "Back", "Go back to the main menu.", (sender, args) => StateManager.PopState());

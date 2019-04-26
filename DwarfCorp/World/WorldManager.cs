@@ -769,11 +769,11 @@ namespace DwarfCorp
                 global::System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
                 DirectoryInfo worldDirectory =
                     Directory.CreateDirectory(DwarfGame.GetWorldDirectory() +
-                                              Path.DirectorySeparatorChar + Overworld.Name);
+                                              Path.DirectorySeparatorChar + GenerationSettings.Overworld.Name);
 
                 // This is a hack. Why does the overworld have this as a static field??
-                Overworld.NativeFactions = this.Natives;
-                NewOverworldFile file = new NewOverworldFile(Game.GraphicsDevice, Overworld.Map, Overworld.Name, SeaLevel);
+                GenerationSettings.Overworld.NativeFactions = this.Natives;
+                NewOverworldFile file = new NewOverworldFile(Game.GraphicsDevice, GenerationSettings.Overworld, GenerationSettings.Overworld.Name, SeaLevel);
                 file.WriteFile(worldDirectory.FullName);
 
                 gameFile = SaveGame.CreateFromWorld(this);
@@ -1363,7 +1363,7 @@ namespace DwarfCorp
 
             // Now check for biome ambience.
             var pos = vox.WorldPosition;
-            var biome = Overworld.GetBiomeAt(pos, WorldScale, WorldOrigin);
+            var biome = Overworld.GetBiomeAt(GenerationSettings.Overworld.Map, pos, WorldScale, WorldOrigin);
 
             if (biome != null && !string.IsNullOrEmpty(biome.DayAmbience))
             {

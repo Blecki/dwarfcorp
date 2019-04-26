@@ -31,7 +31,6 @@ namespace DwarfCorp.GameStates
             base(game, "LoadState", stateManager)
         {
             Settings = settings;
-            Overworld.Name = settings.Name;
             EnableScreensaver = true;
 
             Runner = new DwarfRunner(game);
@@ -100,6 +99,7 @@ namespace DwarfCorp.GameStates
                 GenerationSettings = Settings,
             };
 
+            // Todo: Get rid of duplication.
             World.WorldScale = Settings.WorldScale;
             World.WorldGenerationOrigin = Settings.WorldGenerationOrigin;
             World.SpawnRect = Settings.SpawnRect;
@@ -122,14 +122,13 @@ namespace DwarfCorp.GameStates
                     StateManager.PushState(new PlayState(Game, StateManager, World));
 
                     World.OnSetLoadingMessage = null;
-                    Overworld.NativeFactions = World.Natives;
+                    World.GenerationSettings.Overworld.NativeFactions = World.Natives;
                 }
             }
             else
             {
                 if (Settings.GenerateFromScratch && Generator.CurrentState == WorldGenerator.GenerationState.Finished && World == null)
                 {
-                    Settings = Generator.Settings;
                     CreateWorld();
                 }
                 else if (Settings.GenerateFromScratch)

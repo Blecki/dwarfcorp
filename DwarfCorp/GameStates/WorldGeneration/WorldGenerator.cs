@@ -30,6 +30,7 @@ namespace DwarfCorp.GameStates
         public string LoadingMessage = "";
         private Thread genThread;
         public float Progress = 0.0f;
+        public Overworld Overworld;
 
         public Action UpdatePreview;
 
@@ -48,6 +49,8 @@ namespace DwarfCorp.GameStates
             Seed = Settings.Seed;
             this.Settings = Settings;
             MathFunctions.Random = new ThreadSafeRandom(Seed);
+            Overworld = new Overworld(Settings.Width, Settings.Height);
+            Settings.Overworld = Overworld;
             Overworld.Volcanoes = new List<Vector2>();
             LandMesh = null;
             LandIndex = null;
@@ -344,7 +347,7 @@ namespace DwarfCorp.GameStates
                 LoadingMessage = "Height Map ...";
                 float[,] heightMapLookup = null;
                 heightMapLookup = Overworld.GenerateHeightMapLookup(width, height);
-                Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, false);
+                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, width, height, 1.0f, false);
 
                 Progress = 0.05f;
 
@@ -395,11 +398,11 @@ namespace DwarfCorp.GameStates
 
                 #endregion
 
-                Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, true);
+                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, width, height, 1.0f, true);
 
                 Progress = 0.2f;
 
-                Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, true);
+                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, width, height, 1.0f, true);
 
                 Progress = 0.25f;
                 if (UpdatePreview != null) UpdatePreview();
@@ -409,7 +412,7 @@ namespace DwarfCorp.GameStates
 
                 float[,] buffer = new float[width, height];
                 Erode(width, height, Settings.SeaLevel, Overworld.Map, numRains, rainLength, numRainSamples, buffer);
-                Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, true);
+                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, width, height, 1.0f, true);
 
                 #endregion
 
@@ -420,7 +423,7 @@ namespace DwarfCorp.GameStates
                 OverworldImageOperations.Blur(Overworld.Map, width, height, OverworldField.Erosion);
 
                 LoadingMessage = "Generate height.";
-                Overworld.GenerateHeightMapFromLookup(heightMapLookup, width, height, 1.0f, true);
+                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, width, height, 1.0f, true);
 
 
                 LoadingMessage = "Rain";
@@ -447,7 +450,7 @@ namespace DwarfCorp.GameStates
                     NativeCivilizations = new List<Faction>();
                     for (int i = 0; i < Settings.NumCivilizations; i++)
                     {
-                        NativeCivilizations.Add(library.GenerateFaction(null, i, Settings.NumCivilizations));
+                        NativeCivilizations.Add(library.GenerateFaction(Settings, i, Settings.NumCivilizations));
                     }
                     Settings.Natives = NativeCivilizations;
                 }
@@ -460,7 +463,7 @@ namespace DwarfCorp.GameStates
                         int count = Settings.Natives.Count;
                         for (int i = count; i < Settings.NumCivilizations; i++)
                         {
-                            NativeCivilizations.Add(library.GenerateFaction(null, i, Settings.NumCivilizations));
+                            NativeCivilizations.Add(library.GenerateFaction(Settings, i, Settings.NumCivilizations));
                         }
                     }
                 }

@@ -15,7 +15,7 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static void GenerateWater(VoxelChunk chunk, float waterHeight)
+        public static void GenerateWater(VoxelChunk chunk, float waterHeight, GeneratorSettings Settings)
         {
             var iceID = VoxelLibrary.GetVoxelType("Ice");
 
@@ -23,7 +23,7 @@ namespace DwarfCorp.Generation
             {
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                 {
-                    var biome = Overworld.GetBiomeAt(new Vector3(x, 0, z) + chunk.Origin.ToVector3(), chunk.Manager.World.WorldScale, chunk.Manager.World.WorldOrigin);
+                    var biome = Overworld.GetBiomeAt(Settings.OverworldSettings.Overworld.Map, new Vector3(x, 0, z) + chunk.Origin.ToVector3(), chunk.Manager.World.WorldScale, chunk.Manager.World.WorldOrigin);
 
                     for (var y = 0; y < VoxelConstants.ChunkSizeY; ++y)
                     {

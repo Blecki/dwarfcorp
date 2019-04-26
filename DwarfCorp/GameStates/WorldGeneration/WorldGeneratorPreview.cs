@@ -37,6 +37,7 @@ namespace DwarfCorp.GameStates
         private List<Point3> Trees { get; set; }
         private float TreeProbability = 0.001f;
         private SamplerState previewSampler = null;
+        public Overworld Overworld;
 
         public Matrix ZoomedPreviewMatrix
         {
@@ -104,7 +105,7 @@ namespace DwarfCorp.GameStates
 
         private static Dictionary<String, PreviewRenderType> PreviewRenderTypes;
 
-        private static void InitializePreviewRenderTypes()
+        private void InitializePreviewRenderTypes()
         {
             if (PreviewRenderTypes != null) return;
             PreviewRenderTypes = new Dictionary<string, PreviewRenderType>();
@@ -234,6 +235,7 @@ namespace DwarfCorp.GameStates
         public void SetGenerator(WorldGenerator Generator)
         {
             this.Generator = Generator;
+            this.Overworld = Generator.Settings.Overworld;
             //PreviewTexture = new Texture2D(Device, Generator.Settings.Width, Generator.Settings.Height);
             Generator.UpdatePreview += () => UpdatePreview = true;
         }
@@ -420,7 +422,7 @@ namespace DwarfCorp.GameStates
         {
             var bkg = Root.GetTileSheet("basic");
             var style = PreviewRenderTypes[PreviewSelector.SelectedItem];
-            Overworld.TextureFromHeightMap(style.DisplayType, Overworld.Map,
+            Overworld.TextureFromHeightMap(style.DisplayType, Overworld.Map, Overworld.NativeFactions,
                 style.Scalar, Overworld.Map.GetLength(0), Overworld.Map.GetLength(1), null,
                 Generator.worldData, PreviewTexture, Generator.Settings.SeaLevel);
 

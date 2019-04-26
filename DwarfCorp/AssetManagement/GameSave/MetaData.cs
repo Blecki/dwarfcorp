@@ -61,7 +61,7 @@ namespace DwarfCorp
         {
             return new MetaData
             {
-                OverworldFile = Overworld.Name,
+                OverworldFile = World.GenerationSettings.Overworld.Name,
                 WorldOrigin = World.WorldOrigin,
                 WorldScale = World.WorldScale,
                 TimeOfDay = World.Sky.TimeOfDay,

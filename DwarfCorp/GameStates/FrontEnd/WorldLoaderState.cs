@@ -50,19 +50,9 @@ namespace DwarfCorp.GameStates
 
             this.OnProceedClicked = (path) =>
             {
-                var file = new NewOverworldFile(path);
-                Overworld.Map = file.Data.CreateMap();
-                Overworld.Name = file.Data.Name;
-                Overworld.NativeFactions = new List<Faction>();
-                foreach (var faction in file.Data.FactionList)
-                    Overworld.NativeFactions.Add(new Faction(faction));
-                var settings = new OverworldGenerationSettings();
-                settings.Width = Overworld.Map.GetLength(1);
-                settings.Height = Overworld.Map.GetLength(0);
-                settings.Name = global::System.IO.Path.GetFileName(path);
+                var file = NewOverworldFile.Load(path);
                 StateManager.PopState();
-                settings.Natives = Overworld.NativeFactions;
-                var genState = new WorldGeneratorState(Game, Game.StateManager, settings, false);
+                var genState = new WorldGeneratorState(Game, Game.StateManager, file.CreateSettings(), false);
                 StateManager.PushState(genState);
             };
         }
