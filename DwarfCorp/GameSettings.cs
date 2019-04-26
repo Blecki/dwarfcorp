@@ -220,7 +220,7 @@ namespace DwarfCorp
             public int DwarfArrivalDelayHours = 4;
             public float SigningBonus = 100;
             public int MaxLiveChunks = 10; // How many chunks can have geometry saved
-            public bool FastGen = false;
+            [AutoResetBool(false)] public bool FastGen = false;
             [AutoResetFloat(0.15f)] public float GenerationRuinsRate = 0.15f;
 
             [AutoResetFloat(-10.0f)] public float Boredom_Gamble = -10.0f;
@@ -255,7 +255,7 @@ namespace DwarfCorp
         /// Use this attribute to flag a float setting that can be tweaked during execution, but 
         /// should never be saved. (It does save, but will be reset everytime it's loaded.)
         /// </summary>
-        private class AutoResetFloatAttribute : global::System.Attribute
+        private class AutoResetFloatAttribute : Attribute
         {
             public float Value;
 
@@ -263,7 +263,17 @@ namespace DwarfCorp
             {
                 this.Value = Value;
             }
-        }        
+        }       
+        
+        private class AutoResetBoolAttribute : Attribute
+        {
+            public bool Value;
+
+            public AutoResetBoolAttribute(bool Value)
+            {
+                this.Value = Value;
+            }
+        }
 
         public static void Reset()
         {
@@ -306,11 +316,16 @@ namespace DwarfCorp
                 foreach (var member in Default.GetType().GetFields())
                     foreach (var attribute in member.GetCustomAttributes(false))
                     {
-                        var resetFloat = attribute as AutoResetFloatAttribute;
-                        if (resetFloat != null)
+                        if (attribute is AutoResetFloatAttribute resetFloat)
                         {
                             member.SetValue(Default, resetFloat.Value);
                             Console.Out.WriteLine("Auto Reset Float Setting: {0} to {1}", member.Name, resetFloat.Value);
+                        }
+
+                        if (attribute is AutoResetBoolAttribute resetBool)
+                        {
+                            member.SetValue(Default, resetBool.Value);
+                            Console.Out.WriteLine("Auto Reset Bool Setting: {0} to {1}", member.Name, resetBool.Value);
                         }
                     }
 
