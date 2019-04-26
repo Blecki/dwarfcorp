@@ -54,7 +54,7 @@ namespace DwarfCorp
                     r.Map[x, y].Faults = 1.0f;
                     r.Map[x, y].Temperature = (float)(temp * 1.0f);
                     r.Map[x, y].Rainfall = (float)(rain * 1.0f);
-                    r.Map[x, y].Biome = Overworld.GetBiome(temp, rain, height).Biome;
+                    r.Map[x, y].Biome = BiomeLibrary.GetBiomeForConditions(temp, rain, height).Biome;
                     r.Map[x, y].Height = height;
                 }
             }

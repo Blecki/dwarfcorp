@@ -193,14 +193,15 @@ namespace DwarfCorp.GameStates
             yield return new KeyValuePair<string, Color>("Biomes: ", Color.White);
             foreach (var biome in biomes)
             {
-                if (biome < 0 || biome > BiomeLibrary.Biomes.Count - 1)
+                var _biome = BiomeLibrary.GetBiome(biome);
+                if (_biome == null)
                     continue;
 
-                var biomeColor = BiomeLibrary.Biomes[biome].MapColor;
+                var biomeColor = _biome.MapColor;
                 biomeColor.R = (byte)Math.Min(255, biomeColor.R + 80);
                 biomeColor.G = (byte)Math.Min(255, biomeColor.G + 80);
                 biomeColor.B = (byte)Math.Min(255, biomeColor.B + 80);
-                yield return new KeyValuePair<string, Color>("    " + BiomeLibrary.Biomes[biome].Name, biomeColor);
+                yield return new KeyValuePair<string, Color>("    " + _biome.Name, biomeColor);
             }
         }
 
@@ -432,7 +433,7 @@ namespace DwarfCorp.GameStates
                 LoadingMessage = "Biome";
                 for (int x = 0; x < width; x++)
                     for (int y = 0; y < height; y++)
-                        Overworld.Map[x, y].Biome = Overworld.GetBiome(Overworld.Map[x, y].Temperature, Overworld.Map[x, y].Rainfall, Overworld.Map[x, y].Height).Biome;
+                        Overworld.Map[x, y].Biome = BiomeLibrary.GetBiomeForConditions(Overworld.Map[x, y].Temperature, Overworld.Map[x, y].Rainfall, Overworld.Map[x, y].Height).Biome;
 
                 LoadingMessage = "Volcanoes";
 
@@ -887,7 +888,7 @@ namespace DwarfCorp.GameStates
                                 var faction = map[x, y].Faction;
                                 map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Faction = faction;
                                 var biome = map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Biome;
-                                var biomeName = BiomeLibrary.Biomes[biome].Name;
+                                var biomeName = BiomeLibrary.GetBiome(biome).Name;
                                 var myFaction = civs[faction - 1];
                                 if (myFaction.Race.Biomes.ContainsKey(biomeName))
                                     map[x + deltas[minNeighbor].X, y + deltas[minNeighbor].Y].Biome =

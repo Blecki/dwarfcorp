@@ -510,7 +510,7 @@ namespace DwarfCorp.GameStates
                     if (!MathFunctions.RandEvent(TreeProbability)) continue;
                     var h = Overworld.Map[x, y].Height;
                     if (!(h > Generator.Settings.SeaLevel)) continue;
-                    var biome = BiomeLibrary.Biomes[Overworld.Map[x, y].Biome];
+                    var biome = BiomeLibrary.GetBiome(Overworld.Map[x, y].Biome);
                     if (biome.Icon > 0)
                     {
                         Trees.Add(new Point3(x, y, biome.Icon));

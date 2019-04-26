@@ -55,33 +55,6 @@ namespace DwarfCorp
             Map = new OverworldCell[Width, Height];
         }
 
-        public static BiomeData GetBiome(float temp, float rainfall, float height)
-        {
-            BiomeData closest = null;
-            float closestDist = float.MaxValue;
-            foreach (var biome in BiomeLibrary.Biomes)
-            {
-                float dist = Math.Abs(biome.Temp - temp) + Math.Abs(biome.Rain - rainfall) +  Math.Abs(biome.Height - height);
-
-                if (dist < closestDist)
-                {
-                    closest = biome;
-                    closestDist = dist;
-                }
-            }
-
-            return closest;
-        }
-
-        public void Cleanup()
-        {
-            GameStates.GameState.Game.LogSentryBreadcrumb("Overworld", "Cleanup was called.");
-            NativeFactions = null;
-            Map = null;
-            Volcanoes = null;
-            Name = null;
-        }
-
         public static float LinearInterpolate(Vector2 position, OverworldCell[,] map, OverworldField fieldType)
         {
             float x = position.X;
@@ -192,8 +165,8 @@ namespace DwarfCorp
                     map[x, y].Height_ = color.R;
                     map[x, y].Faction = color.G;
                     map[x, y].Biome = color.B;
-                    map[x, y].Rainfall_ = (byte)(BiomeLibrary.Biomes[map[x, y].Biome].Rain * 255);
-                    map[x, y].Temperature = (float)(BiomeLibrary.Biomes[map[x, y].Biome].Temp);
+                    map[x, y].Rainfall_ = (byte)(BiomeLibrary.GetBiome(map[x, y].Biome).Rain * 255);
+                    map[x, y].Temperature = (float)(BiomeLibrary.GetBiome(map[x, y].Biome).Temp);
                 }
         }
 
@@ -342,8 +315,9 @@ namespace DwarfCorp
                         var ci = Color.Black;
                         if (displayMode == "Biomes" && index != "Water" && index != "Sea")
                         {
-                            if ((int)biome < BiomeLibrary.Biomes.Count)
-                                ci = BiomeLibrary.Biomes[biome].MapColor;
+                            var _biome = BiomeLibrary.GetBiome(biome);
+                            if (_biome != null)
+                                ci = _biome.MapColor;
                         }
                         else
                             ci = HeightColors[index];
@@ -383,7 +357,7 @@ namespace DwarfCorp
             DebugHelper.AssertNotNull(Map);
             Vector2 v = WorldToOverworld(worldPos, scale, origin);
             var biome = Map[(int)MathFunctions.Clamp(v.X, 0, Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Map.GetLength(1) - 1)].Biome;
-            return BiomeLibrary.Biomes[biome];
+            return BiomeLibrary.GetBiome(biome);
         }
 
         public static float GetValueAt(OverworldCell[,] Map, Vector3 worldPos, OverworldField fieldType, float scale, Vector2 origin)

@@ -24,6 +24,7 @@ namespace DwarfCorp.Generation
         public float NoiseScale;
         public float CaveNoiseScale;
         public float SeaLevel;
+        public int NormalizedSeaLevel;
 
         public Point3 WorldSizeInChunks;
 

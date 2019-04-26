@@ -30,7 +30,7 @@ namespace DwarfCorp.Generation
                     }
 
             var worldDepth = Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
-            var waterHeight = Math.Min((int)(worldDepth * NormalizeHeight(Settings.SeaLevel + 1.0f / worldDepth)), worldDepth - 1);
+            Settings.NormalizedSeaLevel = Math.Min((int)(worldDepth * NormalizeHeight(Settings.SeaLevel + 1.0f / worldDepth)), worldDepth - 1);
 
             SetLoadingMessage("");
             foreach (var chunk in EnumerateTopChunks(Settings))
@@ -48,7 +48,7 @@ namespace DwarfCorp.Generation
                     SetLoadingMessage(String.Format("#Generating caves, ore, water in chunk {0} {1} {2}...", chunk.ID.X, chunk.ID.Y, chunk.ID.Z));
                     GenerateOres(chunk, Settings);
                     GenerateCaves(chunk, Settings);
-                    GenerateWater(chunk, waterHeight, Settings);
+                    GenerateWater(chunk, Settings);
                     GenerateLava(chunk, Settings);
 
                     //for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)

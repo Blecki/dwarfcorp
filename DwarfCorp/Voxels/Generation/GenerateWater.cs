@@ -15,7 +15,7 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static void GenerateWater(VoxelChunk chunk, float waterHeight, GeneratorSettings Settings)
+        public static void GenerateWater(VoxelChunk chunk, GeneratorSettings Settings)
         {
             var iceID = VoxelLibrary.GetVoxelType("Ice");
 
@@ -28,13 +28,13 @@ namespace DwarfCorp.Generation
                     for (var y = 0; y < VoxelConstants.ChunkSizeY; ++y)
                     {
                         var globalY = y + chunk.Origin.Y;
-                        if (globalY > waterHeight)
+                        if (globalY > Settings.NormalizedSeaLevel)
                             break;
 
                         var voxel = VoxelHandle.UnsafeCreateLocalHandle(chunk, new LocalVoxelCoordinate(x, y, z));
                         if (voxel.IsEmpty && voxel.Sunlight)
                         {
-                            if (globalY == waterHeight && biome.WaterSurfaceIce)
+                            if (globalY == Settings.NormalizedSeaLevel && biome.WaterSurfaceIce)
                                 voxel.RawSetType(iceID);
                             else
                                 voxel.QuickSetLiquid(biome.WaterIsLava ? LiquidType.Lava : LiquidType.Water, WaterManager.maxWaterLevel);

@@ -675,7 +675,6 @@ namespace DwarfCorp
                         StateManager.PushState(new MainMenuState(this, StateManager));
                     }
                 }
-                BiomeLibrary.InitializeStatics();
                 EmbarkmentLibrary.InitializeDefaultLibrary();
                 ControlSettings.Load();
                 Drawer2D.Initialize(Content, GraphicsDevice);

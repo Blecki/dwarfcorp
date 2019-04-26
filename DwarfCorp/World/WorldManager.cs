@@ -212,9 +212,6 @@ namespace DwarfCorp
         // Handles a thread which constantly runs A* plans for whoever needs them.
         public PlanService PlanService = null;
 
-        // Maintains a dictionary of biomes (forest, desert, etc.)
-        public BiomeLibrary BiomeLibrary = new BiomeLibrary();
-
         // Contains the storm forecast
         public Weather Weather = new Weather();
 
