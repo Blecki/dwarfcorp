@@ -172,16 +172,11 @@ namespace DwarfCorp
             }
         }
 
-        public static void GenerateSaveTexture(
-            OverworldCell[,] map,
-            int width,
-            int height,
-            Color[] worldData)
+        public static void GenerateSaveTexture(OverworldCell[,] map, Color[] worldData)
         {
-            for (var x = 0; x < width; ++x)
-                for (var y = 0; y < height; ++y)
-                    worldData[(y * width) + x] = new Color(
-                        map[x, y].Height_, map[x, y].Faction, (byte)map[x, y].Biome, (byte)255);
+            for (var x = 0; x < map.GetLength(0); ++x)
+                for (var y = 0; y < map.GetLength(1); ++y)
+                    worldData[(y * map.GetLength(0)) + x] = new Color(map[x, y].Height_, map[x, y].Faction, (byte)map[x, y].Biome, (byte)255);
         }
 
         public static void DecodeSaveTexture(

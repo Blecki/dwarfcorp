@@ -112,15 +112,6 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public void ReinsertState(GameState state)
-        {
-            lock (_mutex)
-            {
-                StateStack.Remove(state);
-                PushState(state);
-            }
-        }
-
         public void Update(DwarfTime time)
         {
 #if DEBUG
@@ -154,7 +145,6 @@ namespace DwarfCorp.GameStates
                     CurrentState = NextState;
                     NextState = null;
                 }
-
 
                 if (CurrentState != null && CurrentState.IsInitialized)
                     CurrentState.Update(time);

@@ -106,11 +106,11 @@ namespace DwarfCorp
             return toReturn;
         }
 
-        public Texture2D CreateSaveTexture(GraphicsDevice Device, int Width, int Height)
+        public Texture2D CreateSaveTexture(GraphicsDevice Device)
         {
-            var r = new Texture2D(Device, Width, Height, false, SurfaceFormat.Color);
-            var data = new Color[Width * Height];
-            Overworld.GenerateSaveTexture(OverworldMap, Width, Height, data);
+            var r = new Texture2D(Device, OverworldMap.GetLength(0), OverworldMap.GetLength(1), false, SurfaceFormat.Color);
+            var data = new Color[OverworldMap.GetLength(0) * OverworldMap.GetLength(1)];
+            Overworld.GenerateSaveTexture(OverworldMap, data);
             r.SetData(data);
             return r;
         }
@@ -193,11 +193,11 @@ namespace DwarfCorp
             MetaData.Version = Program.Version;
             FileUtils.SaveJSon(MetaData, metaFilePath, false);
 
-            using (var texture = CreateSaveTexture(Device, Width, Height))
+            using (var texture = CreateSaveTexture(Device))
             using (var stream = new System.IO.FileStream(worldFilePath, System.IO.FileMode.Create))
                 texture.SaveAsPng(stream, Width, Height);
 
-            using (var texture = CreateScreenshot(Device, Width, Height, MetaData.SeaLevel))
+            using (var texture = CreateScreenshot(Device, OverworldMap.GetLength(0), OverworldMap.GetLength(1), MetaData.SeaLevel))
             using (var stream = new System.IO.FileStream(filePath + Path.DirectorySeparatorChar + "screenshot.png", System.IO.FileMode.Create))
                 texture.SaveAsPng(stream, Width, Height);
 
