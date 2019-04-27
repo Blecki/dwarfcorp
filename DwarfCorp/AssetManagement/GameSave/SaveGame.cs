@@ -63,7 +63,7 @@ namespace DwarfCorp
 
             ChunkData = new List<ChunkFile>();
 
-            var chunkDirs = global::System.IO.Directory.GetDirectories(filePath, "Chunks");
+            var chunkDirs = System.IO.Directory.GetDirectories(filePath, "Chunks");
             
             if (chunkDirs.Length > 0)
             {
@@ -81,36 +81,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            // Remap the saved voxel ids to the ids of the currently loaded voxels.
-            if (Metadata.VoxelTypeMap != null)
-            {
-                // First build a replacement mapping.
-
-                var newVoxelMap = VoxelLibrary.GetVoxelTypeMap();
-                var newReverseMap = new Dictionary<String, int>();
-                foreach (var mapping in newVoxelMap)
-                    newReverseMap.Add(mapping.Value, mapping.Key);
-
-                var replacementMap = new Dictionary<int, int>();
-                foreach (var mapping in Metadata.VoxelTypeMap)
-                {
-                    if (newReverseMap.ContainsKey(mapping.Value))
-                    {
-                        var newId = newReverseMap[mapping.Value];
-                        if (mapping.Key != newId)
-                            replacementMap.Add(mapping.Key, newId);
-                    }
-                }
-
-                // If there are no changes, skip the expensive iteration.
-                if (replacementMap.Count != 0)
-                {
-                    foreach (var chunk in ChunkData)
-                        for (var i = 0; i < chunk.Types.Length; ++i)
-                            if (replacementMap.ContainsKey(chunk.Types[i]))
-                                chunk.Types[i] = (byte)replacementMap[chunk.Types[i]];
-                }
-            }
+            
 
             return true;
         }
