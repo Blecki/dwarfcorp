@@ -40,6 +40,7 @@ namespace DwarfCorp.Generation
                 GenerateRuin(chunk, Settings);
             }
 
+            // Todo: Can these be sped up by doing multiple in one iteration of the outer x,z?
             if (!GameSettings.Default.FastGen)
             {
                 SetLoadingMessage("");
@@ -50,9 +51,6 @@ namespace DwarfCorp.Generation
                     GenerateCaves(chunk, Settings);
                     GenerateWater(chunk, Settings);
                     GenerateLava(chunk, Settings);
-
-                    //for (var i = 0; i < VoxelConstants.ChunkSizeY; ++i)
-                    //    chunk.InvalidateSlice(i);
                 }
             }
 

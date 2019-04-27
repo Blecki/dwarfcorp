@@ -212,10 +212,6 @@ namespace DwarfCorp
             if (!Components.ContainsKey(component.GlobalID))
                 return;
 
-            if (_componentList == null)
-                _componentList = Components.Values.ToList();
-
-            _componentList.Remove(component);
             Components.Remove(component.GlobalID);
 
             if (component is MinimapIcon)
@@ -238,11 +234,6 @@ namespace DwarfCorp
 
             Components[component.GlobalID] = component;
 
-            if (_componentList == null)
-                _componentList = Components.Values.ToList();
-
-            _componentList.Add(component);
-
             if (component is MinimapIcon)
                 MinimapIcons.Add(component as MinimapIcon);
 
@@ -252,16 +243,9 @@ namespace DwarfCorp
             component.ProcessTransformChange();
         }
 
-        public uint k = 0;
-        private List<GameComponent> _componentList = null; // Why are we keeping this list twice????
-        public ulong iter = 0;
-        
         public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            iter++;
             PerformanceMonitor.PushFrame("Component Update");
-            if (_componentList == null)
-                _componentList = Components.Values.ToList();
 
             var playerPoint = World.Camera.Position;
             // Todo: Make this a sphere?
@@ -279,20 +263,6 @@ namespace DwarfCorp
             if (Debugger.Switches.ShowUpdateBox)
                 foreach (var chunk in World.EnumerateChunksInBounds(updateBox))
                     Drawer3D.DrawBox(chunk.GetBoundingBox(), Color.Red, 0.4f, false);
-
-            //for (uint j = 0; j < Math.Min(GameSettings.Default.EntityUpdateRate, _componentList.Count); j++)
-            //{
-            //    var c = (k + j) % (uint)_componentList.Count;
-            //    if (iter % (ulong)_componentList[(int)c].UpdateRate == 0)
-            //    {
-            //        _componentList[(int)c].Update(gameTime, chunks, camera);
-            //        if (_componentList[(int)c] is GameComponent body)
-            //            //WorkOrders.Enqueue(body);
-            //            body.ProcessTransformChange();
-            //    }
-            //}
-
-            k += (uint)Math.Min(GameSettings.Default.EntityUpdateRate, _componentList.Count);
 
             PerformanceMonitor.PopFrame();
 
