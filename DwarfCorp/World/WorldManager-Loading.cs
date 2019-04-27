@@ -124,7 +124,7 @@ namespace DwarfCorp
             {
                 SetLoadingMessage("Loading " + ExistingFile);
 
-                gameFile = SaveGame.CreateFromDirectory(ExistingFile);
+                gameFile = SaveGame.LoadMetaFromDirectory(ExistingFile);
                 if (gameFile == null) throw new InvalidOperationException("Game File does not exist.");
 
                 if (gameFile.Metadata.Version != Program.Version && !Program.CompatibleVersions.Contains(gameFile.Metadata.Version))

@@ -49,7 +49,7 @@ namespace DwarfCorp.GameStates
             {
                 try
                 {
-                    var saveGame = SaveGame.CreateFromDirectory(path);
+                    var saveGame = SaveGame.LoadMetaFromDirectory(path);
                     if(!Program.CompatibleVersions.Contains(saveGame.Metadata.Version))
                     {
                         return String.Format("Incompatible version {0}", saveGame.Metadata.Version);
@@ -71,7 +71,7 @@ namespace DwarfCorp.GameStates
             {
                 try
                 {
-                    var saveGame = SaveGame.CreateFromDirectory(path);
+                    var saveGame = SaveGame.LoadMetaFromDirectory(path);
                     return saveGame.Metadata.OverworldFile;
                 }
                 catch (Exception)

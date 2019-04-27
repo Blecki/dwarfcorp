@@ -457,13 +457,7 @@ namespace DwarfCorp
             string platform = SDL.SDL_GetPlatform();
             if (platform.Equals("Windows"))
             {
-                return Path.Combine(
-                    Environment.GetFolderPath(
-                        Environment.SpecialFolder.MyDocuments
-                    ),
-                    "SavedGames",
-                    GameName
-                );
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), GameName);
             }
             else if (platform.Equals("Mac OS X"))
             {

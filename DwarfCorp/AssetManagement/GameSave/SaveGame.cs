@@ -107,34 +107,30 @@ namespace DwarfCorp
 
         private bool ReadMetadata(string filePath)
         {
-            if (!global::System.IO.Directory.Exists(filePath))
-            {
+            if (!Directory.Exists(filePath))
                 return false;
-            }
+
+            var metaFiles = Directory.GetFiles(filePath, "*." + MetaData.Extension);
+
+            if (metaFiles.Length > 0)
+                Metadata = FileUtils.LoadJsonFromAbsolutePath<MetaData>(metaFiles[0]);
             else
             {
-                string[] metaFiles = global::System.IO.Directory.GetFiles(filePath, "*." + MetaData.Extension);
-
-                if (metaFiles.Length > 0)
-                    Metadata = FileUtils.LoadJsonFromAbsolutePath<MetaData>(metaFiles[0]);
-                else
-                {
-                    Console.Error.WriteLine("Can't load file {0}, no metadata found", filePath);
-                    return false;
-                }
-
-                string[] screenshots = global::System.IO.Directory.GetFiles(filePath, "*.png");
-
-                if (screenshots.Length > 0)
-                    Screenshot = AssetManager.LoadUnbuiltTextureFromAbsolutePath(screenshots[0]);
-
-                return true;
+                Console.Error.WriteLine("Can't load file {0}, no metadata found", filePath);
+                return false;
             }
+
+            var screenshots = Directory.GetFiles(filePath, "*.png");
+
+            if (screenshots.Length > 0)
+                Screenshot = AssetManager.LoadUnbuiltTextureFromAbsolutePath(screenshots[0]);
+
+            return true;
         }
 
         public static string GetLatestSaveFile()
         {
-            DirectoryInfo saveDirectory = Directory.CreateDirectory(DwarfGame.GetSaveDirectory());
+            var saveDirectory = Directory.CreateDirectory(DwarfGame.GetSaveDirectory());
 
             DirectoryInfo newest = null;
             foreach (var dir in saveDirectory.EnumerateDirectories())
@@ -144,7 +140,7 @@ namespace DwarfCorp
                     var valid = false;
                     try
                     {
-                        var saveGame = SaveGame.CreateFromDirectory(dir.FullName);
+                        var saveGame = SaveGame.LoadMetaFromDirectory(dir.FullName);
                         valid = Program.CompatibleVersions.Contains(saveGame.Metadata.Version);
                     }
                     catch (Exception)
@@ -167,7 +163,7 @@ namespace DwarfCorp
             };
         }
 
-        public static SaveGame CreateFromDirectory(String Directory)
+        public static SaveGame LoadMetaFromDirectory(String Directory)
         {
             var r = new SaveGame();
             if (r.ReadMetadata(Directory))
