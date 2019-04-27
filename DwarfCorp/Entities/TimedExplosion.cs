@@ -244,7 +244,7 @@ namespace DwarfCorp
                             explodeList.Add(Tuple.Create(new GlobalVoxelCoordinate(x, y, z), distance));
                     }
 
-            OrderedExplosionList = explodeList.OrderBy(t => t.Item2).Select(t => new VoxelHandle(World.ChunkManager.ChunkData, t.Item1)).ToList();
+            OrderedExplosionList = explodeList.OrderBy(t => t.Item2).Select(t => new VoxelHandle(World.ChunkManager, t.Item1)).ToList();
             _state = State.Ready;
         }
     }

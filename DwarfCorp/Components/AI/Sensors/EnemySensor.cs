@@ -93,7 +93,7 @@ namespace DwarfCorp
                 Allies = Creature.Faction;
 
             // Don't sense enemies if we're inside the ground??
-            var currentVoxel = new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position));
+            var currentVoxel = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(Position));
             if (!(currentVoxel.IsValid && currentVoxel.IsEmpty))
                 return;
 
@@ -136,11 +136,8 @@ namespace DwarfCorp
 
                 float dist = (minion.Position - GlobalTransform.Translation).LengthSquared();
 
-                if (dist < SenseRadius && !VoxelHelpers.DoesRayHitSolidVoxel(
-                    Manager.World.ChunkManager.ChunkData, Position, minion.Position))
-                {
+                if (dist < SenseRadius && !VoxelHelpers.DoesRayHitSolidVoxel(Manager.World.ChunkManager, Position, minion.Position))
                     sensed.Add(minion);
-                }
             }
 
             if (sensed.Count > 0)
@@ -154,9 +151,7 @@ namespace DwarfCorp
             SenseTimer.Update(gameTime);
             
             if (SenseTimer.HasTriggered)
-            {
                 Sense();
-            }
             Enemies.RemoveAll(ai => ai.IsDead);
         }
 
@@ -164,7 +159,5 @@ namespace DwarfCorp
         {
             Enemies = enemies;
         }
-
     }
-
 }

@@ -475,7 +475,7 @@ namespace DwarfCorp.Gui.Widgets
                                 }
 
                                 Vector3 pos = MathFunctions.Clamp(gridCenter + new Vector3(dx, Master.World.WorldSizeInVoxels.Y, dz), Master.World.ChunkManager.Bounds);
-                                VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(Master.World.ChunkManager.ChunkData, pos, pos + Vector3.Down * 100);
+                                VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(Master.World.ChunkManager, pos, pos + Vector3.Down * 100);
                                 if (handle.IsValid)
                                     EntityFactory.CreateEntity<GameComponent>(keys[i], handle.WorldPosition + Vector3.Up);
                                 i++;
@@ -505,7 +505,7 @@ namespace DwarfCorp.Gui.Widgets
                                     if (item.Name != "Explosive")
                                     {
                                         Vector3 pos = MathFunctions.Clamp(gridCenter + new Vector3(dx, Master.World.WorldSizeInVoxels.Y, dz), Master.World.ChunkManager.Bounds);
-                                        VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(Master.World.ChunkManager.ChunkData, pos, pos + Vector3.Down * 100);
+                                        VoxelHandle handle = VoxelHelpers.FindFirstVisibleVoxelOnRay(Master.World.ChunkManager, pos, pos + Vector3.Down * 100);
 
                                         if (handle.IsValid)
                                         {
@@ -548,7 +548,7 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "FORCE REBUILD",
                     OnClick = (sender, args) =>
                     {
-                         foreach (var chunk in Master.World.ChunkManager.ChunkData.ChunkMap)
+                         foreach (var chunk in Master.World.ChunkManager.ChunkMap)
                             for (int Y = 0; Y < VoxelConstants.ChunkSizeY; ++Y)
                                 chunk.InvalidateSlice(Y);
                     }

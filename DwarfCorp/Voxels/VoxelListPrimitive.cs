@@ -281,7 +281,7 @@ namespace DwarfCorp
             var uvs = primitive.UVs;
 
             if (v.Type.HasTransitionTextures && v.IsExplored)
-                uvs = ComputeTransitionTexture(new VoxelHandle(v.Chunk.Manager.ChunkData, v.Coordinate));
+                uvs = ComputeTransitionTexture(new VoxelHandle(v.Chunk.Manager, v.Coordinate));
 
             BuildVoxelTopFaceGeometry(Into, Chunk, Cache, primitive, v, uvs, 0);
 
@@ -351,7 +351,7 @@ namespace DwarfCorp
             var face = (BoxFace)i;
             var delta = FaceDeltas[i];
 
-            var faceVoxel = new VoxelHandle(Chunk.Manager.ChunkData, V.Coordinate + GlobalVoxelOffset.FromVector3(delta));
+            var faceVoxel = new VoxelHandle(Chunk.Manager, V.Coordinate + GlobalVoxelOffset.FromVector3(delta));
 
             if (!IsFaceVisible(V, faceVoxel, face))
                 return;
@@ -423,8 +423,7 @@ namespace DwarfCorp
             var face = (BoxFace)i;
             var delta = FaceDeltas[i];
 
-            var faceVoxel = new VoxelHandle(Chunk.Manager.ChunkData,
-                V.Coordinate + GlobalVoxelOffset.FromVector3(delta));
+            var faceVoxel = new VoxelHandle(Chunk.Manager, V.Coordinate + GlobalVoxelOffset.FromVector3(delta));
 
             if (!IsFaceVisible(V, faceVoxel, face))
                 return;
@@ -465,7 +464,7 @@ namespace DwarfCorp
                     if (!Cache.ExploredCache.TryGetValue(cacheKey, out anyNeighborExplored))
                     {
                         anyNeighborExplored = VoxelHelpers.EnumerateVertexNeighbors2D(V.Coordinate, voxelVertex)
-                            .Select(c => new VoxelHandle(V.Chunk.Manager.ChunkData, c))
+                            .Select(c => new VoxelHandle(V.Chunk.Manager, c))
                             .Any(n => n.IsValid && n.IsExplored);
                         Cache.ExploredCache.Add(cacheKey, anyNeighborExplored);
                     }
@@ -584,11 +583,11 @@ namespace DwarfCorp
             for (var s = 0; s < 4; ++s)
             {
                 var neighborCoord = V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s];
-                var neighbor = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord);
+                var neighbor = new VoxelHandle(Chunk.Manager, neighborCoord);
 
                 if (!neighbor.IsValid) continue;
 
-                var aboveNeighbor = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord + new GlobalVoxelOffset(0, 1, 0));
+                var aboveNeighbor = new VoxelHandle(Chunk.Manager, neighborCoord + new GlobalVoxelOffset(0, 1, 0));
 
                 if (!aboveNeighbor.IsValid || aboveNeighbor.IsEmpty)
                 {
@@ -681,7 +680,7 @@ namespace DwarfCorp
             for (var s = 0; s < 4; ++s)
             {
                 var neighborCoord = V.Coordinate + VoxelHelpers.DiagonalNeighbors2D[s];
-                var handle = new VoxelHandle(Chunk.Manager.ChunkData, neighborCoord);
+                var handle = new VoxelHandle(Chunk.Manager, neighborCoord);
 
                 if (handle.IsValid)
                 {
@@ -692,13 +691,11 @@ namespace DwarfCorp
                             continue;
                     }
 
-                    var manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
-                        V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s]);
+                    var manhattanA = new VoxelHandle(Chunk.Manager, V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[s]);
                     if (!manhattanA.IsValid || (manhattanA.GrassType == V.GrassType))
                         continue;
 
-                    manhattanA = new VoxelHandle(Chunk.Manager.ChunkData,
-                        V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[FringeIndicies[4 + s, 5]]);
+                    manhattanA = new VoxelHandle(Chunk.Manager, V.Coordinate + VoxelHelpers.ManhattanNeighbors2D[FringeIndicies[4 + s, 5]]);
                     if (!manhattanA.IsValid || (manhattanA.GrassType == V.GrassType))
                         continue;
 
@@ -992,19 +989,19 @@ namespace DwarfCorp
 
             for (int x = startChunkCorner.X; x <= endChunkCorner.X; ++x)
             {
-                var v1 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(x, Chunk.Origin.Y + LocalY, startChunkCorner.Z));
+                var v1 = new VoxelHandle(Chunk.Manager, new GlobalVoxelCoordinate(x, Chunk.Origin.Y + LocalY, startChunkCorner.Z));
                 if (v1.IsValid) UpdateVoxelRamps(Chunks, v1);
 
-                var v2 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(x, Chunk.Origin.Y + LocalY, endChunkCorner.Z));
+                var v2 = new VoxelHandle(Chunk.Manager, new GlobalVoxelCoordinate(x, Chunk.Origin.Y + LocalY, endChunkCorner.Z));
                 if (v2.IsValid) UpdateVoxelRamps(Chunks, v2);
             }
 
             for (int z = startChunkCorner.Z + 1; z < endChunkCorner.Z; ++z)
             {
-                var v1 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(startChunkCorner.X, Chunk.Origin.Y + LocalY, z));
+                var v1 = new VoxelHandle(Chunk.Manager, new GlobalVoxelCoordinate(startChunkCorner.X, Chunk.Origin.Y + LocalY, z));
                 if (v1.IsValid) UpdateVoxelRamps(Chunks, v1);
 
-                var v2 = new VoxelHandle(Chunk.Manager.ChunkData, new GlobalVoxelCoordinate(endChunkCorner.X, Chunk.Origin.Y + LocalY, z));
+                var v2 = new VoxelHandle(Chunk.Manager, new GlobalVoxelCoordinate(endChunkCorner.X, Chunk.Origin.Y + LocalY, z));
                 if (v2.IsValid) UpdateVoxelRamps(Chunks, v2);
             }
         }
@@ -1033,7 +1030,7 @@ namespace DwarfCorp
 
             foreach (var c in VoxelHelpers.EnumerateVertexNeighbors(Vox.Coordinate, Vertex))
             {
-                var v = new VoxelHandle(chunks.ChunkData, c);
+                var v = new VoxelHandle(chunks, c);
                 if (!v.IsValid) continue;
 
                 color.SunColor += v.Sunlight ? 255 : 0;
@@ -1066,13 +1063,13 @@ namespace DwarfCorp
                 return null;
             else
             {
-                var transition = ComputeTransitions(V.Chunk.Manager.ChunkData, V, type);
+                var transition = ComputeTransitions(V.Chunk.Manager, V, type);
                 return type.TransitionTextures[transition];
             }
         }
 
         private static BoxTransition ComputeTransitions(
-            ChunkData Data,
+            ChunkManager Data,
             VoxelHandle V,
             VoxelType Type)
         {

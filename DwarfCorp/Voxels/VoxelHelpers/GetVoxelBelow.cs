@@ -11,8 +11,7 @@ namespace DwarfCorp
         public static VoxelHandle GetVoxelBelow(VoxelHandle V)
         {
             if (!V.IsValid) return VoxelHandle.InvalidHandle;
-            return new VoxelHandle(V.Chunk.Manager.ChunkData,
-                new GlobalVoxelCoordinate(V.Coordinate.X, V.Coordinate.Y - 1, V.Coordinate.Z));
+            return new VoxelHandle(V.Chunk.Manager, new GlobalVoxelCoordinate(V.Coordinate.X, V.Coordinate.Y - 1, V.Coordinate.Z));
         }
     }
 }

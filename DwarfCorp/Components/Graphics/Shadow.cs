@@ -99,9 +99,7 @@ namespace DwarfCorp
             {
                 GameComponent p = (GameComponent)Parent;
 
-                var voxelBelow = new VoxelHandle(chunks.ChunkData,
-                    GlobalVoxelCoordinate.FromVector3(p.GlobalTransform.Translation
-                        + Vector3.Down * 0.25f));
+                var voxelBelow = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(p.GlobalTransform.Translation + Vector3.Down * 0.25f));
 
                 if (voxelBelow.IsValid)
                 {

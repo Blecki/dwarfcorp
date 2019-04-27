@@ -16,7 +16,7 @@ namespace DwarfCorp.Generation
 {
     public static partial class Generator
     {
-        public static void Generate(Rectangle spawnRect, ChunkData ChunkData, WorldManager World, GeneratorSettings Settings, Action<String> SetLoadingMessage)
+        public static void Generate(Rectangle spawnRect, ChunkManager ChunkData, WorldManager World, GeneratorSettings Settings, Action<String> SetLoadingMessage)
         {
             SetLoadingMessage(String.Format("{0} chunks to generate!", Settings.WorldSizeInChunks.X * Settings.WorldSizeInChunks.Y * Settings.WorldSizeInChunks.Z));
             SetLoadingMessage("");

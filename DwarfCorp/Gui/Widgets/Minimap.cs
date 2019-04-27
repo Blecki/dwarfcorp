@@ -127,7 +127,7 @@ namespace DwarfCorp.Gui.Widgets
             Vector3 pos = viewPort.Unproject(new Vector3(X, Y, 0), Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity);
             Vector3 target = new Vector3(pos.X, World.Camera.Position.Y, pos.Z);
             var height = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(target)))
+                World.ChunkManager, GlobalVoxelCoordinate.FromVector3(target)))
                 .Coordinate.Y + 1;
             target.Y = Math.Max(height + 15, target.Y);
             target = MathFunctions.Clamp(target, World.ChunkManager.Bounds);
@@ -164,15 +164,18 @@ namespace DwarfCorp.Gui.Widgets
         {
             Gui.DrawQuad(Where, RenderTarget);
         }
+
         private int _iters = 0;
         public void ReDrawChunks(DwarfTime time)
         {
             _renderTimer.Update(time);
             if (!_renderTimer.HasTriggered)
                 return;
+
             _iters++;
             if (_iters > 5 && !(World.ChunkManager.NeedsMinimapUpdate || World.ChunkManager.Water.NeedsMinimapUpdate))
                 return;
+
             World.ChunkManager.NeedsMinimapUpdate = false;
             World.ChunkManager.Water.NeedsMinimapUpdate = false;
 
@@ -182,9 +185,7 @@ namespace DwarfCorp.Gui.Widgets
             int numPixelsZ = (int)((bounds.Max.Z - bounds.Min.Z) * scale);
 
             if (TerrainTexture == null || TerrainTexture.IsDisposed || TerrainTexture.IsContentLost)
-            {
                 TerrainTexture = new RenderTarget2D(GameState.Game.GraphicsDevice, numPixelsX, numPixelsZ, false, SurfaceFormat.Color, DepthFormat.Depth24);
-            }
 
             World.GraphicsDevice.SetRenderTarget(TerrainTexture);
 
@@ -250,8 +251,10 @@ namespace DwarfCorp.Gui.Widgets
                         }
                         HomeSet = true;
                     }
+
                     ReDrawChunks(time);
-                    World.GraphicsDevice.SetRenderTarget(RenderTarget);
+
+                World.GraphicsDevice.SetRenderTarget(RenderTarget);
                     World.GraphicsDevice.Clear(Color.Black);
                     Camera.Target = World.Camera.Target;
                     Vector3 cameraToTarget = World.Camera.Target - World.Camera.Position;
@@ -312,7 +315,7 @@ namespace DwarfCorp.Gui.Widgets
                                 {
                                     if (parentBody.Position.Y > World.Master.MaxViewingLevel + 1)
                                         continue;
-                                    var firstVisible = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager.ChunkData, parentBody.Position, parentBody.Position + Vector3.Up * World.WorldSizeInVoxels.Y);
+                                    var firstVisible = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager, parentBody.Position, parentBody.Position + Vector3.Up * World.WorldSizeInVoxels.Y);
                                     if (firstVisible.IsValid)
                                         continue;
                                 }

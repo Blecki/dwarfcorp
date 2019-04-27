@@ -451,7 +451,7 @@ namespace DwarfCorp
             // Starting conditions of the search.
 
             foreach (var goalVoxel in VoxelHelpers.EnumerateCube(goal.GetVoxel().Coordinate)
-                .Select(c => new VoxelHandle(start.Voxel.Chunk.Manager.ChunkData, c))) 
+                .Select(c => new VoxelHandle(start.Voxel.Chunk.Manager, c))) 
             {
                 if (!goalVoxel.IsValid) continue;
                 var goalState = new MoveState() { Voxel = goalVoxel };
@@ -573,7 +573,7 @@ namespace DwarfCorp
             }
 
             var p = vox.Coordinate;
-            var data = vox.Chunk.Manager.ChunkData;
+            var data = vox.Chunk.Manager;
 
             float sumLength = 0;
             for (int x = -10; x < 1; x++)

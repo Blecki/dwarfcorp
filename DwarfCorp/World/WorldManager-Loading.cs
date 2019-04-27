@@ -239,11 +239,10 @@ namespace DwarfCorp
                 ChunkManager = new ChunkManager(Content, this, WorldSizeInChunks);
                 Splasher = new Splasher(ChunkManager);
 
-                ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
+                ChunkRenderer = new ChunkRenderer(ChunkManager);
 
                 SetLoadingMessage("Loading Terrain...");
-                gameFile.ReadChunks(ExistingFile);
-                ChunkManager.ChunkData.LoadFromFile(ChunkManager, gameFile, SetLoadingMessage);
+                ChunkManager.LoadChunks(gameFile.LoadChunks(), ChunkManager);
 
                 SetLoadingMessage("Loading Entities...");
                 gameFile.LoadPlayData(ExistingFile, this);
@@ -326,7 +325,7 @@ namespace DwarfCorp
                 Splasher = new Splasher(ChunkManager);
 
 
-                ChunkRenderer = new ChunkRenderer(ChunkManager.ChunkData);
+                ChunkRenderer = new ChunkRenderer(ChunkManager);
 
                 Camera.Position = new Vector3(0, 10, 0) + new Vector3(WorldSizeInChunks.X * VoxelConstants.ChunkSizeX, 0, WorldSizeInChunks.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
                 Camera.Target = new Vector3(0, 10, 1) + new Vector3(WorldSizeInChunks.X * VoxelConstants.ChunkSizeX, 0, WorldSizeInChunks.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
@@ -419,7 +418,7 @@ namespace DwarfCorp
                 };
 
                 SetLoadingMessage("Generating Chunks...");
-                Generation.Generator.Generate(SpawnRect, ChunkManager.ChunkData, this, generatorSettings, SetLoadingMessage);
+                Generation.Generator.Generate(SpawnRect, ChunkManager, this, generatorSettings, SetLoadingMessage);
                 CreateInitialEmbarkment(generatorSettings);
                 ChunkManager.NeedsMinimapUpdate = true;
                 ChunkManager.RecalculateBounds();

@@ -178,7 +178,7 @@ namespace DwarfCorp.Rail
                         Valid = true,
                         ItemType = RailCraftItem,
                         SelectedResources = new List<ResourceAmount> { new ResourceAmount("Rail", 1) },
-                        Location = new VoxelHandle(Player.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(body.Position)),
+                        Location = new VoxelHandle(Player.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(body.Position)),
                         HasResources = hasResources,
                         ResourcesReservedFor = null,
                         Orientation = 0.0f,

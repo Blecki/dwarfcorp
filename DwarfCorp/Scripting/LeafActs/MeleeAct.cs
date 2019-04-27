@@ -357,9 +357,7 @@ namespace DwarfCorp
                 {
                     FailTimer.Reset();
                     foreach (Act.Status stat in AvoidTarget(CurrentAttack.Range, 3.0f))
-                    {
                         yield return Status.Running;
-                    }
                     avoided = true;
                 }
                 // Else, stop and attack
@@ -367,8 +365,7 @@ namespace DwarfCorp
                          (DefensiveStructure != null && dist < CurrentAttack.Range * 2.0))
                 {
                     if (CurrentAttack.Mode == Attack.AttackMode.Ranged 
-                        && VoxelHelpers.DoesRayHitSolidVoxel(Creature.World.ChunkManager.ChunkData,
-                            Creature.AI.Position, Target.Position))
+                        && VoxelHelpers.DoesRayHitSolidVoxel(Creature.World.ChunkManager, Creature.AI.Position, Target.Position))
                     {
                         yield return Status.Fail;
                         yield break;
@@ -390,15 +387,11 @@ namespace DwarfCorp
                     {
                         timeout.Update(DwarfTime.LastTime);
                         if (timeout.HasTriggered)
-                        {
                             break;
-                        }
 
                         Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
                         if (Creature.AI.Movement.CanFly)
-                        {
                             Creature.Physics.ApplyForce(-Creature.Physics.Gravity * 0.1f, DwarfTime.Dt);
-                        }
                         yield return Status.Running;
                     }
 
@@ -407,13 +400,9 @@ namespace DwarfCorp
                     {
                         timeout.Update(DwarfTime.LastTime);
                         if (timeout.HasTriggered)
-                        {
                             break;
-                        }
                         if (Creature.AI.Movement.CanFly)
-                        {
                             Creature.Physics.ApplyForce(-Creature.Physics.Gravity * 0.1f, DwarfTime.Dt);
-                        }
                         yield return Status.Running;
                     }
 

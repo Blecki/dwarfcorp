@@ -10,7 +10,7 @@ namespace DwarfCorp
     public partial class VoxelHelpers
     {
         public static VoxelHandle FindFirstVisibleVoxelOnRay(
-            ChunkData Data,
+            ChunkManager Data,
             Vector3 Start,
             Vector3 End)
         {
@@ -26,7 +26,7 @@ namespace DwarfCorp
         }
 
         public static VoxelHandle FindFirstVisibleVoxelOnRayEx(
-            ChunkData Data,
+            ChunkManager Data,
             Vector3 Start,
             Vector3 End,
             bool SelectEmpty,
@@ -57,7 +57,7 @@ namespace DwarfCorp
         }
 
         public static VoxelHandle FindFirstVisibleVoxelOnScreenRay(
-            ChunkData Data,
+            ChunkManager Data,
             int X, int Y,
             Camera Camera,
             Viewport Viewport,

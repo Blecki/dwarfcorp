@@ -271,7 +271,7 @@ namespace DwarfCorp
         /// Returns a 3 x 3 x 3 voxel grid corresponding to the immediate neighborhood
         /// around the given voxel..
         /// </summary>
-        private void GetNeighborhood(ChunkData chunks, VoxelHandle Voxel, VoxelHandle[,,] Into)
+        private void GetNeighborhood(ChunkManager chunks, VoxelHandle Voxel, VoxelHandle[,,] Into)
         {
             for (var dx = -1; dx <= 1; ++dx)
                 for (var dy = -1; dy <= 1; ++dy)
@@ -302,8 +302,7 @@ namespace DwarfCorp
         /// <summary> gets a list of actions that the creature can take from the given position </summary>
         public IEnumerable<MoveAction> GetMoveActions(Vector3 Pos, List<GameComponent> teleportObjects)
         {
-            var vox = new VoxelHandle(Creature.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(Pos));
+            var vox = new VoxelHandle(Creature.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(Pos));
             return GetMoveActions(new MoveState() { Voxel = vox }, teleportObjects, null);
         }
 
@@ -324,7 +323,7 @@ namespace DwarfCorp
             if (Storage == null)
                 Storage = new MoveActionTempStorage();
 
-            GetNeighborhood(state.Voxel.Chunk.Manager.ChunkData, state.Voxel, Storage.Neighborhood);
+            GetNeighborhood(state.Voxel.Chunk.Manager, state.Voxel, Storage.Neighborhood);
 
             bool inWater = (Storage.Neighborhood[1, 1, 1].IsValid && Storage.Neighborhood[1, 1, 1].LiquidLevel > WaterManager.inWaterThreshold);
             bool standingOnGround = (Storage.Neighborhood[1, 0, 1].IsValid && !Storage.Neighborhood[1, 0, 1].IsEmpty);
@@ -346,7 +345,7 @@ namespace DwarfCorp
                             SourceVoxel = state.Voxel,
                             DestinationState = new MoveState()
                             {
-                                Voxel = new VoxelHandle(state.Voxel.Chunk.Manager.ChunkData, GlobalVoxelCoordinate.FromVector3(obj.Position))
+                                Voxel = new VoxelHandle(state.Voxel.Chunk.Manager, GlobalVoxelCoordinate.FromVector3(obj.Position))
                             },
                             CostMultiplier = 1.0f
                         };
@@ -914,7 +913,7 @@ namespace DwarfCorp
                             {
                                 if (dx * dx + dy * dy + dz * dz > TeleportDistanceSquared)
                                     continue;
-                                VoxelHandle teleportNeighbor = new VoxelHandle(Parent.World.ChunkManager.ChunkData, current.Coordinate + new GlobalVoxelOffset(dx, dy, dz));
+                                VoxelHandle teleportNeighbor = new VoxelHandle(Parent.World.ChunkManager, current.Coordinate + new GlobalVoxelOffset(dx, dy, dz));
                                 var adjacent = VoxelHelpers.GetNeighbor(teleportNeighbor, new GlobalVoxelOffset(0, -1, 0));
                                 if (teleportNeighbor.IsValid && teleportNeighbor.IsEmpty && adjacent.IsValid &&  adjacent.IsEmpty)
                                 {
@@ -935,7 +934,7 @@ namespace DwarfCorp
             var storage = new MoveActionTempStorage();
 
             foreach (var v in VoxelHelpers.EnumerateCube(current.Coordinate)
-                .Select(n => new VoxelHandle(current.Chunk.Manager.ChunkData, n))
+                .Select(n => new VoxelHandle(current.Chunk.Manager, n))
                 .Where(h => h.IsValid))
             {
                 foreach (var a in GetMoveActions(new MoveState() { Voxel = v}, teleportObjects, storage).Where(a => a.DestinationState == currentstate))

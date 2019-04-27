@@ -110,8 +110,7 @@ namespace DwarfCorp
         private bool CreateSprite()
         {
             PropogateTransforms();
-            var voxel = new VoxelHandle(Manager.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(LocalPosition));
+            var voxel = new VoxelHandle(Manager.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(LocalPosition));
             if (!voxel.IsValid && _orientationType != OrientationType.Standing)
             {
                 CreateSpriteStanding();
@@ -125,8 +124,7 @@ namespace DwarfCorp
                     if (Math.Abs(dx) + Math.Abs(dz) != 1)
                         continue;
 
-                    var vox = new VoxelHandle(Manager.World.ChunkManager.ChunkData,
-                        voxel.Coordinate + new GlobalVoxelOffset(dx, 0, dz));
+                    var vox = new VoxelHandle(Manager.World.ChunkManager, voxel.Coordinate + new GlobalVoxelOffset(dx, 0, dz));
 
                     if (vox.IsValid && !vox.IsEmpty)
                     {

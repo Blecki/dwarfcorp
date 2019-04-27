@@ -16,9 +16,9 @@ namespace DwarfCorp
     /// Has a collection of voxel chunks, and methods for accessing them.
     /// </summary>
     /// Todo: Add Y axis
-    public class ChunkData
+    public partial class ChunkManager
     {
-        public ChunkData(Point3 MapOrigin, Point3 MapDimensions)
+        public void InitializeChunkMap(Point3 MapOrigin, Point3 MapDimensions)
         {
             this.MapOrigin = MapOrigin;
             this.MapDimensions = MapDimensions;
@@ -72,25 +72,25 @@ namespace DwarfCorp
             return true;
         }
 
-        public void LoadFromFile(ChunkManager Manager, SaveGame gameFile, Action<String> SetLoadingMessage)
+        public void LoadChunks(List<ChunkFile> Chunks, ChunkManager Manager)
         {
-            if (gameFile.ChunkData.Count == 0)
+            if (Chunks.Count == 0)
                 throw new Exception("Game file corrupt. It has no chunk files.");
 
-            var maxChunkX = gameFile.ChunkData.Max(c => c.ID.X) + 1;
-            var maxChunkY = gameFile.ChunkData.Max(c => c.ID.Y) + 1;
-            var maxChunkZ = gameFile.ChunkData.Max(c => c.ID.Z) + 1;
+            var maxChunkX = Chunks.Max(c => c.ID.X) + 1;
+            var maxChunkY = Chunks.Max(c => c.ID.Y) + 1;
+            var maxChunkZ = Chunks.Max(c => c.ID.Z) + 1;
 
-            var minChunkX = gameFile.ChunkData.Min(c => c.ID.X);
-            var minChunkY = gameFile.ChunkData.Min(c => c.ID.Y);
-            var minChunkZ = gameFile.ChunkData.Min(c => c.ID.Z);
+            var minChunkX = Chunks.Min(c => c.ID.X);
+            var minChunkY = Chunks.Min(c => c.ID.Y);
+            var minChunkZ = Chunks.Min(c => c.ID.Z);
 
             MapOrigin = new Point3(minChunkX, minChunkY, minChunkZ);
             MapDimensions = new Point3(maxChunkX - minChunkX, maxChunkY - minChunkY, maxChunkZ - minChunkZ);
 
             ChunkMap = new VoxelChunk[MapDimensions.X * MapDimensions.Y * MapDimensions.Z];
 
-            foreach (VoxelChunk chunk in gameFile.ChunkData.Select(file => file.ToChunk(Manager)))
+            foreach (VoxelChunk chunk in Chunks.Select(file => file.ToChunk(Manager)))
                 AddChunk(chunk);
 
             Manager.UpdateBounds();

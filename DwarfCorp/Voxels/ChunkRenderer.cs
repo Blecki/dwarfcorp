@@ -20,9 +20,9 @@ namespace DwarfCorp
         private int RenderCycle = 1;
 
 
-        public ChunkData ChunkData;
+        public ChunkManager ChunkData;
 
-        public ChunkRenderer(ChunkData Data)
+        public ChunkRenderer(ChunkManager Data)
         {
             ChunkData = Data;
 

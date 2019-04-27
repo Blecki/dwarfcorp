@@ -121,7 +121,7 @@ namespace DwarfCorp
 
             if (generateLightning)
             {
-                var below = VoxelHelpers.FindFirstVoxelBelowIncludingWater(new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(new Vector3(Position.X, Math.Min(World.WorldSizeInVoxels.Y - 1, Position.Y), Position.Z))));
+                var below = VoxelHelpers.FindFirstVoxelBelowIncludingWater(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(new Vector3(Position.X, Math.Min(World.WorldSizeInVoxels.Y - 1, Position.Y), Position.Z))));
                 if (below.IsValid && !below.IsEmpty)
                 {
                     var above = VoxelHelpers.GetVoxelAbove(below);
@@ -182,8 +182,7 @@ namespace DwarfCorp
                     RainDrops[i].Particle.Velocity = RainDrops[i].Vel;
                 }
 
-                var test = new VoxelHandle(chunks.ChunkData,
-                    GlobalVoxelCoordinate.FromVector3(RainDrops[i].Pos));
+                var test = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(RainDrops[i].Pos));
                 if (!test.IsValid || (test.IsEmpty && test.LiquidLevel == 0)) continue;
 
                 RainDrops[i].IsAlive = false;

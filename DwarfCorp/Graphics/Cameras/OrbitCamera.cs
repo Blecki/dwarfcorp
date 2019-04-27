@@ -207,7 +207,7 @@ namespace DwarfCorp
 
         private Vector3 ProjectToSurface(Vector3 pos)
         {
-            var vox = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager.ChunkData,
+            var vox = VoxelHelpers.FindFirstVisibleVoxelOnRay(World.ChunkManager,
                 new Vector3(pos.X, World.WorldSizeInVoxels.Y - 1, pos.Z),
                 new Vector3(pos.X, 0, pos.Z));
 
@@ -255,7 +255,7 @@ namespace DwarfCorp
                 var currentCoordinate = GlobalVoxelCoordinate.FromVector3(Position);
                 if (currentCoordinate != _prevVoxelCoord)
                 {
-                    VoxelHelpers.RadiusReveal(chunks.ChunkData, new VoxelHandle(chunks.ChunkData, currentCoordinate), 10);
+                    VoxelHelpers.RadiusReveal(chunks, new VoxelHandle(chunks, currentCoordinate), 10);
                     _prevVoxelCoord = currentCoordinate;
                 }
             }
@@ -428,7 +428,7 @@ namespace DwarfCorp
             crouched = false;
             for (int i = 0; i < subSteps; i++)
             {
-                VoxelHandle currentVoxel = new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position));
+                VoxelHandle currentVoxel = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(Position));
 
                 var below = VoxelHelpers.GetNeighbor(currentVoxel, new GlobalVoxelOffset(0, -1, 0));
                 var above = VoxelHelpers.GetNeighbor(currentVoxel, new GlobalVoxelOffset(0, 1, 0));
@@ -470,7 +470,7 @@ namespace DwarfCorp
                     MoveTarget(Velocity * dt * subStepLength);
                 }
             }
-            VoxelHandle voxelAfterMove = new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position));
+            VoxelHandle voxelAfterMove = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(Position));
             if (voxelAfterMove.IsValid && !voxelAfterMove.IsEmpty)
             {
                 float distCenter = (voxelAfterMove.GetBoundingBox().Center() - Position).Length();
@@ -478,7 +478,7 @@ namespace DwarfCorp
                 {
                     float closest = float.MaxValue;
                     VoxelHandle closestVoxel = VoxelHandle.InvalidHandle;
-                    foreach (var voxel in VoxelHelpers.EnumerateAllNeighbors(voxelAfterMove.Coordinate).Select(c => new VoxelHandle(World.ChunkManager.ChunkData, c)).Where(v => v.IsEmpty))
+                    foreach (var voxel in VoxelHelpers.EnumerateAllNeighbors(voxelAfterMove.Coordinate).Select(c => new VoxelHandle(World.ChunkManager, c)).Where(v => v.IsEmpty))
                     {
                         float d = (voxel.GetBoundingBox().Center() - Position).Length();
                         if (d < closest)
@@ -902,7 +902,7 @@ namespace DwarfCorp
             bool gotCollision = false;
             
             foreach (var v in VoxelHelpers.EnumerateCube(GlobalVoxelCoordinate.FromVector3(pos))
-                .Select(n => new VoxelHandle(chunks.ChunkData, n)))                
+                .Select(n => new VoxelHandle(chunks, n)))                
             {
                 if (!v.IsValid) continue;
                 if (v.IsEmpty) continue;

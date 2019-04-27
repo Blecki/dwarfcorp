@@ -129,8 +129,8 @@ namespace DwarfCorp
         public IEnumerable<VoxelChunk> EnumerateChunksInBounds(BoundingBox Box)
         {
             return EnumerateChunkIDsInBounds(Box)
-                .Where(id => ChunkManager.ChunkData.CheckBounds(id))
-                .Select(id => ChunkManager.ChunkData.GetChunk(id));
+                .Where(id => ChunkManager.CheckBounds(id))
+                .Select(id => ChunkManager.GetChunk(id));
         }
 
         public IEnumerable<VoxelChunk> EnumerateChunksInBounds(BoundingFrustum Frustum)

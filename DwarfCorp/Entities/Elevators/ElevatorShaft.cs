@@ -108,7 +108,7 @@ namespace DwarfCorp.Elevators
 
         private void AddSideQuad(VoxelHandle Voxel, GlobalVoxelOffset VoxelOffset, float YRotation, Vector3 Offset)
         {
-            var neighborVoxel = new VoxelHandle(Voxel.Chunk.Manager.ChunkData, Voxel.Coordinate + VoxelOffset);
+            var neighborVoxel = new VoxelHandle(Voxel.Chunk.Manager, Voxel.Coordinate + VoxelOffset);
             var texture = 0;
 
             if (!neighborVoxel.IsValid)
@@ -117,7 +117,7 @@ namespace DwarfCorp.Elevators
                 texture = 1;
             else
             {
-                var below = new VoxelHandle(Voxel.Chunk.Manager.ChunkData, neighborVoxel.Coordinate + new GlobalVoxelOffset(0, -1, 0));
+                var below = new VoxelHandle(Voxel.Chunk.Manager, neighborVoxel.Coordinate + new GlobalVoxelOffset(0, -1, 0));
                 if (!below.IsValid || below.IsEmpty)
                     texture = 1;
             }
@@ -153,8 +153,7 @@ namespace DwarfCorp.Elevators
 
             if (Primitive.VertexCount == 0) return;
 
-            var under = new VoxelHandle(chunks.ChunkData,
-                    GlobalVoxelCoordinate.FromVector3(Position));
+            var under = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(Position));
 
             if (under.IsValid)
             {
@@ -221,10 +220,10 @@ namespace DwarfCorp.Elevators
             foreach (var neighborVoxel in VoxelHelpers.EnumerateManhattanNeighbors2D_Y(GlobalVoxelCoordinate.FromVector3(Position)))
             {
                 var below = neighborVoxel + new GlobalVoxelOffset(0, -1, 0);
-                var neighborHandle = new VoxelHandle(Manager.World.ChunkManager.ChunkData, neighborVoxel);
+                var neighborHandle = new VoxelHandle(Manager.World.ChunkManager, neighborVoxel);
                 if (neighborHandle.IsValid && neighborHandle.IsEmpty)
                 {
-                    var belowHandle = new VoxelHandle(Manager.World.ChunkManager.ChunkData, below);
+                    var belowHandle = new VoxelHandle(Manager.World.ChunkManager, below);
                     if (belowHandle.IsValid && !belowHandle.IsEmpty)
                         yield return neighborHandle;
                 }
@@ -233,7 +232,7 @@ namespace DwarfCorp.Elevators
 
         public VoxelHandle GetContainingVoxel()
         {
-            return new VoxelHandle(Manager.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position));
+            return new VoxelHandle(Manager.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(Position));
         }
     }
 }

@@ -53,7 +53,7 @@ namespace DwarfCorp
         }
 
         public VoxelHandle FindLand(
-            ChunkData Data,
+            ChunkManager Data,
             GlobalVoxelCoordinate Start,
             int Radius)
         { 
@@ -72,7 +72,8 @@ namespace DwarfCorp
             return VoxelHandle.InvalidHandle;
         }
          
-        public IEnumerable<VoxelHandle> FindLandNonBlocking(ChunkData Data,
+        public IEnumerable<VoxelHandle> FindLandNonBlocking(
+            ChunkManager Data,
             GlobalVoxelCoordinate Start,
             int Radius)
         {
@@ -119,7 +120,7 @@ namespace DwarfCorp
 
         public IEnumerable<Act.Status> FindLandEnum(Creature creature)
         {
-            foreach (var handle in FindLandNonBlocking(creature.World.ChunkManager.ChunkData,
+            foreach (var handle in FindLandNonBlocking(creature.World.ChunkManager,
                 creature.Physics.CurrentVoxel.Coordinate, 100))
             {
                if (handle.IsValid)

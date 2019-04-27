@@ -45,14 +45,14 @@ namespace DwarfCorp
 
         public static void RunUpdate(ChunkManager Chunks)
         {
-            if (CurrentUpdateChunk < 0 || CurrentUpdateChunk >= Chunks.ChunkData.ChunkMap.Length)
+            if (CurrentUpdateChunk < 0 || CurrentUpdateChunk >= Chunks.ChunkMap.Length)
             {
                 return;
             }
 
-            var chunk = Chunks.ChunkData.ChunkMap[CurrentUpdateChunk];
+            var chunk = Chunks.ChunkMap[CurrentUpdateChunk];
             CurrentUpdateChunk += 1;
-            if (CurrentUpdateChunk >= Chunks.ChunkData.ChunkMap.Length)
+            if (CurrentUpdateChunk >= Chunks.ChunkMap.Length)
                 CurrentUpdateChunk = 0;
 
             UpdateChunk(chunk);
@@ -106,7 +106,7 @@ namespace DwarfCorp
                             var biome = Overworld.GetBiomeAt(chunk.Manager.World.GenerationSettings.Overworld.Map, voxel.Coordinate.ToVector3(), chunk.Manager.World.WorldScale, chunk.Manager.World.WorldOrigin);
 
                             var grassyNeighbors = VoxelHelpers.EnumerateManhattanNeighbors2D(voxel.Coordinate)
-                                .Select(c => new VoxelHandle(voxel.Chunk.Manager.ChunkData, c))
+                                .Select(c => new VoxelHandle(voxel.Chunk.Manager, c))
                                 .Where(v => v.IsValid && v.GrassType != 0)
                                 .Where(v => GrassLibrary.GetGrassType(v.GrassType).Spreads)
                                 .Where(v => biome == Overworld.GetBiomeAt(chunk.Manager.World.GenerationSettings.Overworld.Map, v.Coordinate.ToVector3(), chunk.Manager.World.WorldScale, chunk.Manager.World.WorldOrigin))

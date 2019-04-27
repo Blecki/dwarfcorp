@@ -115,8 +115,7 @@ namespace DwarfCorp
             {
                 case BalloonState.DeliveringGoods:
                     {
-                        var voxel = new VoxelHandle(chunks.ChunkData,
-                            GlobalVoxelCoordinate.FromVector3(body.GlobalTransform.Translation));
+                        var voxel = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(body.GlobalTransform.Translation));
 
                         if (voxel.IsValid)
                         {
@@ -151,7 +150,7 @@ namespace DwarfCorp
                     TargetPosition = body.GlobalTransform.Translation;
                     if (!WaitTimer.HasTriggered)
                     {
-                        var voxel = new VoxelHandle(chunks.ChunkData, GlobalVoxelCoordinate.FromVector3(body.GlobalTransform.Translation));
+                        var voxel = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(body.GlobalTransform.Translation));
 
                         if (voxel.IsValid)
                         {

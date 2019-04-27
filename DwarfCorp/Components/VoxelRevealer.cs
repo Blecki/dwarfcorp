@@ -66,8 +66,7 @@ namespace DwarfCorp
             var currentCoordinate = GlobalVoxelCoordinate.FromVector3(Body.Position);
             if (currentCoordinate != OwnerCoordinate)
             {
-                VoxelHelpers.RadiusReveal(Manager.World.ChunkManager.ChunkData, new VoxelHandle(
-                    Manager.World.ChunkManager.ChunkData, currentCoordinate), Radius);
+                VoxelHelpers.RadiusReveal(Manager.World.ChunkManager, new VoxelHandle(Manager.World.ChunkManager, currentCoordinate), Radius);
                 OwnerCoordinate = currentCoordinate;
             }
         }

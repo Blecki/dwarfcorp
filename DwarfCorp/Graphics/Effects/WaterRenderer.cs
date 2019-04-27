@@ -166,7 +166,7 @@ namespace DwarfCorp
 
         public float GetVisibleWaterHeight(ChunkManager chunkManager, Camera camera, Viewport port, float defaultHeight)
         {
-            var vox = VoxelHelpers.FindFirstVisibleVoxelOnScreenRay(chunkManager.ChunkData, port.Width / 2, port.Height / 2, camera, port, 100.0f, false, null);
+            var vox = VoxelHelpers.FindFirstVisibleVoxelOnScreenRay(chunkManager, port.Width / 2, port.Height / 2, camera, port, 100.0f, false, null);
 
             if(vox.IsValid)
             {
@@ -265,7 +265,7 @@ namespace DwarfCorp
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
-                        foreach (var c in chunks.ChunkData.GetChunkEnumerator())
+                        foreach (var c in chunks.GetChunkEnumerator())
                             c.Liquids[asset.Key].Render(device);
                     }
                 }

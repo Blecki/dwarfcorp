@@ -17,7 +17,7 @@ namespace DwarfCorp
 
             foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors(V.Coordinate))
             {
-                var neighbor = new VoxelHandle(World.ChunkManager.ChunkData, neighborCoordinate);
+                var neighbor = new VoxelHandle(World.ChunkManager, neighborCoordinate);
                 if (!neighbor.IsValid) return true;
                 if (neighbor.IsEmpty && neighbor.IsExplored) return true;
             }

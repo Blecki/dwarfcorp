@@ -452,9 +452,7 @@ namespace DwarfCorp
                         // Run through the successors and count up the water in each voxel.
                         for (int v = 0; v < vertexSucc.Length; v++)
                         {
-                            var neighborVoxel = new VoxelHandle(chunk.Manager.ChunkData,
-                                voxel.Coordinate + vertexSucc[v]);
-                            // Only continue if it's a valid (non-null) voxel.
+                            var neighborVoxel = new VoxelHandle(chunk.Manager, voxel.Coordinate + vertexSucc[v]);
                             if (!neighborVoxel.IsValid) continue;
 
                             // Now actually do the math.
@@ -482,7 +480,7 @@ namespace DwarfCorp
                                 pos.Y -= 0.6f;// Minimum ramp position 
 
                             var neighbors = VoxelHelpers.EnumerateVertexNeighbors2D(voxel.Coordinate, currentVertex)
-                                .Select(c => new VoxelHandle(chunk.Manager.ChunkData, c))
+                                .Select(c => new VoxelHandle(chunk.Manager, c))
                                 .Where(h => h.IsValid)
                                 .Select(h => MathFunctions.Clamp((float)h.LiquidLevel / 8.0f, 0.25f, 1.0f));
 

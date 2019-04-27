@@ -337,7 +337,7 @@ namespace DwarfCorp
         public static VoxelHandle GetNeighbor(VoxelHandle Of, GlobalVoxelOffset Offset)
         {
             if (!Of.IsValid) return VoxelHandle.InvalidHandle;
-            return new VoxelHandle(Of.Chunk.Manager.ChunkData, Of.Coordinate + Offset);
+            return new VoxelHandle(Of.Chunk.Manager, Of.Coordinate + Offset);
         }
     }
 }

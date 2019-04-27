@@ -63,7 +63,7 @@ namespace DwarfCorp.Rail
 
         public VoxelHandle GetContainingVoxel()
         {
-            return new VoxelHandle(Location.Chunk.Manager.ChunkData, Location.Coordinate + new GlobalVoxelOffset(Piece.Offset.X, 0, Piece.Offset.Y));
+            return new VoxelHandle(Location.Chunk.Manager, Location.Coordinate + new GlobalVoxelOffset(Piece.Offset.X, 0, Piece.Offset.Y));
         }
 
         public JunctionPiece GetPiece()
@@ -400,8 +400,7 @@ namespace DwarfCorp.Rail
 
             // Everything that draws should set it's tint, making this pointless.
 
-            var under = new VoxelHandle(chunks.ChunkData,
-                    GlobalVoxelCoordinate.FromVector3(Position));
+            var under = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(Position));
 
                 if (under.IsValid)
                 {

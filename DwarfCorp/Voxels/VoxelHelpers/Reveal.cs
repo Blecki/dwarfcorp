@@ -15,7 +15,7 @@ namespace DwarfCorp
         }
 
         public static void RadiusReveal(
-            ChunkData Data,
+            ChunkManager Data,
             VoxelHandle Voxel,
             int Radius)
         {

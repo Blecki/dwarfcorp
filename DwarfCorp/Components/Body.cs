@@ -110,13 +110,12 @@ namespace DwarfCorp
         public virtual void OrientToWalls()
         {
             Orient(0);
-            var curr = new VoxelHandle(Manager.World.ChunkManager.ChunkData,
-                GlobalVoxelCoordinate.FromVector3(LocalTransform.Translation));
+            var curr = new VoxelHandle(Manager.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(LocalTransform.Translation));
             if (curr.IsValid)
             {
                 foreach (var n in VoxelHelpers.EnumerateManhattanNeighbors2D(curr.Coordinate))
                 {
-                    var v = new VoxelHandle(World.ChunkManager.ChunkData, n);
+                    var v = new VoxelHandle(World.ChunkManager, n);
                     if (v.IsValid && !v.IsEmpty)
                     { 
                         Vector3 diff = n.ToVector3() - curr.WorldPosition;

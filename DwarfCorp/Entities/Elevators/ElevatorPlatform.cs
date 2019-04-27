@@ -57,8 +57,7 @@ namespace DwarfCorp.Elevators
 
             if (Primitive.VertexCount == 0) return;
 
-            var under = new VoxelHandle(chunks.ChunkData,
-                    GlobalVoxelCoordinate.FromVector3(Position));
+            var under = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(Position));
 
             if (under.IsValid)
             {

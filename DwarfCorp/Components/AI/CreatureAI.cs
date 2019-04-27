@@ -380,17 +380,12 @@ namespace DwarfCorp
         {
             Manager.World.Camera.ZoomTo(Position + Vector3.Up * 8.0f);
 
-            var above = VoxelHelpers.FindFirstVoxelAbove(new VoxelHandle(
-                World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Position)));
+            var above = VoxelHelpers.FindFirstVoxelAbove(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(Position)));
 
             if (above.IsValid)
-            {
                 World.Master.SetMaxViewingLevel(above.Coordinate.Y);
-            }
             else
-            {
                 World.Master.SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
-            }
         }
 
         public void HandleReproduction()
@@ -856,7 +851,7 @@ namespace DwarfCorp
         {
             var above = VoxelHelpers.GetVoxelAbove(Physics.CurrentVoxel);
             foreach (var vox in VoxelHelpers.EnumerateAllNeighbors(Physics.CurrentVoxel.Coordinate)
-                .Select(c => new VoxelHandle(World.ChunkManager.ChunkData, c)))
+                .Select(c => new VoxelHandle(World.ChunkManager, c)))
             {
                 if (!vox.IsValid) continue;
                 if (vox.IsEmpty) continue;
@@ -866,8 +861,7 @@ namespace DwarfCorp
                 if (above.IsValid && !above.IsEmpty && vox.Coordinate.Y >= above.Coordinate.Y)
                     continue;
 
-                var voxAbove = new VoxelHandle(World.ChunkManager.ChunkData,
-                    new GlobalVoxelCoordinate(vox.Coordinate.X, vox.Coordinate.Y + 1, vox.Coordinate.Z));
+                var voxAbove = new VoxelHandle(World.ChunkManager, new GlobalVoxelCoordinate(vox.Coordinate.X, vox.Coordinate.Y + 1, vox.Coordinate.Z));
                 if (voxAbove.IsValid && !voxAbove.IsEmpty) continue;
 
                 Vector3 target = voxAbove.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);

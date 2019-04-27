@@ -57,7 +57,7 @@ namespace DwarfCorp
                     if (dist > SenseRadius)
                         continue;
 
-                    if (CheckLineOfSight && VoxelHelpers.DoesRayHitSolidVoxel(Manager.World.ChunkManager.ChunkData, Position, body.Position))
+                    if (CheckLineOfSight && VoxelHelpers.DoesRayHitSolidVoxel(Manager.World.ChunkManager, Position, body.Position))
                         continue;
 
                     Creatures.Add(minion);

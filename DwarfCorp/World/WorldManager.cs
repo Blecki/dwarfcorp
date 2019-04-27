@@ -519,7 +519,7 @@ namespace DwarfCorp
 
         public bool IsCameraUnderwater()
         {
-            var handle = new VoxelHandle(ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Camera.Position + Vector3.Up));
+            var handle = new VoxelHandle(ChunkManager, GlobalVoxelCoordinate.FromVector3(Camera.Position + Vector3.Up));
             return handle.IsValid && handle.LiquidLevel > 0 && handle.Coordinate.Y <= SlicePlane;
         }
 
@@ -723,7 +723,7 @@ namespace DwarfCorp
             if (type == OrbitCamera.ControlType.Walk)
             {
                 Master.SetMaxViewingLevel(WorldSizeInVoxels.Y);
-                var below = VoxelHelpers.FindFirstVoxelBelowIncludingWater(new VoxelHandle(ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(new Vector3(Camera.Position.X, WorldSizeInVoxels.Y - 1, Camera.Position.Z))));
+                var below = VoxelHelpers.FindFirstVoxelBelowIncludingWater(new VoxelHandle(ChunkManager, GlobalVoxelCoordinate.FromVector3(new Vector3(Camera.Position.X, WorldSizeInVoxels.Y - 1, Camera.Position.Z))));
                 Camera.Position = below.WorldPosition + Vector3.One * 0.5f + Vector3.Up;
             }
         }
@@ -951,7 +951,7 @@ namespace DwarfCorp
             if (lastWaterHeight < 0) // Todo: Seriously, every single frame??
             {
                 lastWaterHeight = 0;
-                foreach (var chunk in ChunkManager.ChunkData.ChunkMap)
+                foreach (var chunk in ChunkManager.ChunkMap)
                     for (int y = 0; y < VoxelConstants.ChunkSizeY; y++)
                         if (chunk.Data.LiquidPresent[y] > 0)
                             lastWaterHeight = Math.Max(y + chunk.Origin.Y, lastWaterHeight);
@@ -1323,7 +1323,7 @@ namespace DwarfCorp
             }
 
             // First check voxels to see if we're underground or underwater.
-            var vox = VoxelHelpers.FindFirstVisibleVoxelOnScreenRay(ChunkManager.ChunkData, GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2, Camera, GraphicsDevice.Viewport, 100.0f, false, null);
+            var vox = VoxelHelpers.FindFirstVisibleVoxelOnScreenRay(ChunkManager, GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2, Camera, GraphicsDevice.Viewport, 100.0f, false, null);
 
             if (vox.IsValid)
             {

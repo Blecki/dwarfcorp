@@ -94,7 +94,6 @@ namespace DwarfCorp
         {
             Chunks = chunks;
             EvaporationLevel = 1;
-            ChunkData data = chunks.ChunkData;
 
             // Create permutation arrays for random update orders.
             SlicePermutations = new int[16][];
@@ -176,7 +175,7 @@ namespace DwarfCorp
             if(Chunks.World.Paused)
                 return;
             
-            foreach(var chunk in Chunks.ChunkData.GetChunkEnumerator())
+            foreach(var chunk in Chunks.GetChunkEnumerator())
             {
                 DiscreteUpdate(Chunks, chunk);
                 chunk.RebuildLiquids();
@@ -269,8 +268,7 @@ namespace DwarfCorp
                     for (var n = 0; n < NeighborScratch.Length; ++n)
                     {
                         var neighborOffset = VoxelHelpers.ManhattanNeighbors2D[NeighborScratch[n]];
-                        var neighborVoxel = new VoxelHandle(Chunks.ChunkData,
-                            currentVoxel.Coordinate + neighborOffset);
+                        var neighborVoxel = new VoxelHandle(Chunks, currentVoxel.Coordinate + neighborOffset);
 
                         if (neighborVoxel.IsValid && neighborVoxel.IsEmpty)
                         {

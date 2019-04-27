@@ -138,12 +138,9 @@ namespace DwarfCorp
                     for (int i = 0; i < maxIters; i++)
                     {
                         Vector3 pos = MathFunctions.RandVector3Box(box);
-                        var voxel = new VoxelHandle(World.ChunkManager.ChunkData,
-                        GlobalVoxelCoordinate.FromVector3(pos));
+                        var voxel = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(pos));
                         if ((!voxel.IsValid) || !voxel.IsEmpty)
-                        {
                             continue;
-                        }
 
                         Physics body = EntityFactory.CreateEntity<Physics>(resource.Type + " Resource",
                         pos, Blackboard.Create<int>("num", Math.Min(numRemaining, maxPileSize))) as Physics;

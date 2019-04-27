@@ -20,7 +20,7 @@ namespace DwarfCorp
     /// it is a virtual memory lookup table for the world's voxels. It imitates
     /// a gigantic 3D array.
     /// </summary>
-    public class ChunkManager
+    public partial class ChunkManager
     {
         private Queue<VoxelChunk> RebuildQueue = new Queue<VoxelChunk>();
         private Mutex RebuildQueueLock = new Mutex();
@@ -81,14 +81,9 @@ namespace DwarfCorp
             return Box.Min.Y > (World.Master.MaxViewingLevel + 5);
         }
 
-        public ChunkData ChunkData
-        {
-            get { return chunkData; }
-        }
-
         public VoxelHandle CreateVoxelHandle(GlobalVoxelCoordinate Coordinate)
         {
-            return new VoxelHandle(ChunkData, Coordinate);
+            return new VoxelHandle(this, Coordinate);
         }
 
         public ChunkManager(ContentManager content, 
@@ -100,7 +95,7 @@ namespace DwarfCorp
             ExitThreads = false;
             Content = content;
 
-            chunkData = new ChunkData(Point3.Zero, WorldSize);             
+            InitializeChunkMap(Point3.Zero, WorldSize);             
 
             RebuildThread = new Thread(RebuildVoxelsThread) { IsBackground = true };
             RebuildThread.Name = "RebuildVoxels";
@@ -191,8 +186,6 @@ namespace DwarfCorp
             Console.Out.WriteLine(String.Format("Chunk regeneration thread exited cleanly Exit Game: {0} Exit Thread: {1}.", DwarfGame.ExitGame, ExitThreads));
         }
 
-        private readonly ChunkData chunkData;
-
         public void GenerateAllGeometry()
         {
             while (RebuildQueue.Count > 0)
@@ -204,7 +197,7 @@ namespace DwarfCorp
 
         public void RecalculateBounds()
         {
-            List<BoundingBox> boxes = ChunkData.GetChunkEnumerator().Select(c => c.GetBoundingBox()).ToList();
+            List<BoundingBox> boxes = GetChunkEnumerator().Select(c => c.GetBoundingBox()).ToList();
             Bounds = MathFunctions.GetBoundingBox(boxes);
         }
 
@@ -216,8 +209,8 @@ namespace DwarfCorp
                     {
                         var adjacentCoord = new GlobalChunkCoordinate(
                             Chunk.ID.X + dx, 0, Chunk.ID.Z + dz);
-                        if (ChunkData.CheckBounds(adjacentCoord))
-                            yield return ChunkData.GetChunk(adjacentCoord);
+                        if (CheckBounds(adjacentCoord))
+                            yield return GetChunk(adjacentCoord);
                     }
         }
 
@@ -264,7 +257,7 @@ namespace DwarfCorp
 
         public void UpdateBounds()
         {
-            var boundingBoxes = chunkData.GetChunkEnumerator().Select(c => c.GetBoundingBox());
+            var boundingBoxes = GetChunkEnumerator().Select(c => c.GetBoundingBox());
             Bounds = MathFunctions.GetBoundingBox(boundingBoxes);
         }
 
@@ -276,10 +269,8 @@ namespace DwarfCorp
             RebuildThread.Join();
             WaterUpdateThread.Join();
             ChunkUpdateThread.Join();
-            foreach (var item in ChunkData.ChunkMap)
-            {
+            foreach (var item in ChunkMap)
                 item.Destroy();
-            }
         }
     }
 }

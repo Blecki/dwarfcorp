@@ -327,7 +327,7 @@ namespace DwarfCorp
         public IEnumerable<VoxelHandle> Select(BoundingBox buffer, Vector3 start, Vector3 end)
         {
             return Brush.Select(buffer, start, end, SelectionType == VoxelSelectionType.SelectFilled)
-                .Select(c => new VoxelHandle(Chunks.ChunkData, c))
+                .Select(c => new VoxelHandle(Chunks, c))
                 .Where(v => VoxelPassesSelectionCriteria(v));
         }
 
@@ -393,7 +393,7 @@ namespace DwarfCorp
             var mouse = KeyManager.TrueMousePos;
 
             var v = VoxelHelpers.FindFirstVisibleVoxelOnScreenRay(
-                Chunks.ChunkData,
+                Chunks,
                 mouse.X,
                 mouse.Y,
                 CameraController,

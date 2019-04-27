@@ -791,7 +791,7 @@
     <Compile Include=".\Tutorial\TutorialSaveData.cs" />
     <Compile Include=".\Voxels\AutoScaleThread.cs" />
     <Compile Include=".\Voxels\BoxTransition.cs" />
-    <Compile Include=".\Voxels\ChunkData.cs" />
+    <Compile Include="Voxels\ChunkManager-Data.cs" />
     <Compile Include=".\Voxels\ChunkManager.cs" />
     <Compile Include=".\Voxels\ChunkRenderer.cs" />
     <Compile Include=".\Voxels\ChunkUpdate.cs" />

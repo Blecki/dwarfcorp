@@ -97,20 +97,13 @@ namespace DwarfCorp
 
             if (entityLighting && LightsWithVoxels)
             {
-                var under = new VoxelHandle(chunks.ChunkData,
-                    GlobalVoxelCoordinate.FromVector3(Position));
+                var under = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(Position));
 
                 if (under.IsValid)
-                {
-                    Color color = new Color(under.Sunlight ? 255 : 80, 255, 0);
-
-                    LightRamp = color;
-                }
+                    LightRamp = new Color(under.Sunlight ? 255 : 80, 255, 0);
             }
             else
-            {
                 LightRamp = new Color(200, 255, 0);
-            }
         }
 
         public void ApplyTintingToEffect(Shader effect)

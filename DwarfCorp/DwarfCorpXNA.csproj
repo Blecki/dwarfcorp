@@ -421,6 +421,7 @@
     <Compile Include="Tools\PerformanceMonitor.cs" />
     <Compile Include="Tools\SparseVoxelTree-Levels.cs" />
     <Compile Include="Tools\SparseVoxelTree.cs" />
+    <Compile Include="Voxels\ChunkManager-Data.cs" />
     <Compile Include="Voxels\Generation\CastSunlight.cs" />
     <Compile Include="Voxels\Generation\Generate.cs" />
     <Compile Include="Voxels\Generation\GetAverageHeight.cs" />
@@ -939,7 +940,6 @@
     <Compile Include="Tools\ServiceArchitecture\Service.cs" />
     <Compile Include="Tools\ServiceArchitecture\Subscriber.cs" />
     <Compile Include="Tools\Timer.cs" />
-    <Compile Include="Voxels\ChunkData.cs" />
     <Compile Include="Voxels\ChunkManager.cs" />
     <Compile Include="Voxels\DynamicLight.cs" />
     <Compile Include="Voxels\LiquidAsset.cs" />

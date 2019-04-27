@@ -10,7 +10,7 @@ namespace DwarfCorp
     {
 
         public static IEnumerable<GlobalVoxelCoordinate> BreadthFirstSearchNonBlocking(
-            ChunkData Data,
+            ChunkManager Data,
             GlobalVoxelCoordinate Start,
             float Radius,
             Func<GlobalVoxelCoordinate, bool> IsGoal)
@@ -54,7 +54,7 @@ namespace DwarfCorp
         }
 
         public static bool BreadthFirstSearch(
-            ChunkData Data,
+            ChunkManager Data,
             GlobalVoxelCoordinate Start,
             float Radius,
             Func<GlobalVoxelCoordinate, bool> IsGoal,

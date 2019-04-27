@@ -81,7 +81,7 @@ namespace DwarfCorp
             var mouseState = KeyManager.TrueMousePos;
 
             var vox = VoxelHelpers.FindFirstVisibleVoxelOnScreenRay(
-                Player.World.ChunkManager.ChunkData,
+                Player.World.ChunkManager,
                 mouseState.X, mouseState.Y,
                 Player.World.Camera, 
                 GameState.Game.GraphicsDevice.Viewport,

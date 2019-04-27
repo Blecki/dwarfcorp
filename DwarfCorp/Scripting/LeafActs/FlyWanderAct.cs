@@ -142,7 +142,7 @@ namespace DwarfCorp
 
                 // Get the height of the terrain beneath the bird.
                 var surfaceHeight = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
-                    Agent.Chunks.ChunkData, GlobalVoxelCoordinate.FromVector3(oldPosition)))
+                    Agent.Chunks, GlobalVoxelCoordinate.FromVector3(oldPosition)))
                     .Coordinate.Y + 1;
 
                 // Immediately start flying.
@@ -223,7 +223,7 @@ namespace DwarfCorp
                         if (CanPerchOnGround)
                         {
                             Creature.Physics.ApplyForce(OriginalGravity * 2, (float)DwarfTime.LastTime.ElapsedGameTime.TotalSeconds);
-                            var below = new VoxelHandle(Creature.World.ChunkManager.ChunkData,
+                            var below = new VoxelHandle(Creature.World.ChunkManager,
                                 vox.Coordinate + new GlobalVoxelOffset(0, -1, 0));
 
                             if (below.IsValid && !below.IsEmpty && below.LiquidLevel == 0)
@@ -236,7 +236,7 @@ namespace DwarfCorp
                         if (CanPerchOnWalls)
                         {
                             foreach (var n in VoxelHelpers.EnumerateManhattanNeighbors(Creature.Physics.CurrentVoxel.Coordinate)
-                                .Select(c => new VoxelHandle(Creature.World.ChunkManager.ChunkData, c)))
+                                .Select(c => new VoxelHandle(Creature.World.ChunkManager, c)))
                             {
                                 if (n.IsValid && n.Coordinate.Y >= vox.Coordinate.Y && !n.IsEmpty)
                                     State = FlyState.Perching;

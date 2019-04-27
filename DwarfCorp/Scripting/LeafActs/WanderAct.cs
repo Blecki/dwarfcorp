@@ -102,9 +102,9 @@ namespace DwarfCorp
                         iters++;
                         Vector2 randTarget = MathFunctions.RandVector2Circle() * Radius;
                         LocalTarget = new Vector3(randTarget.X, 0, randTarget.Y) + oldPosition;
-                        VoxelHandle voxel = new VoxelHandle(Agent.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(LocalTarget));
+                        VoxelHandle voxel = new VoxelHandle(Agent.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(LocalTarget));
                         bool foundLava = false;
-                        foreach (VoxelHandle neighbor in VoxelHelpers.EnumerateAllNeighbors(voxel.Coordinate).Select(coord => new VoxelHandle(Agent.World.ChunkManager.ChunkData, coord)))
+                        foreach (VoxelHandle neighbor in VoxelHelpers.EnumerateAllNeighbors(voxel.Coordinate).Select(coord => new VoxelHandle(Agent.World.ChunkManager, coord)))
                         {
                             if (neighbor.IsValid && neighbor.Chunk != null)
                             {

@@ -66,7 +66,7 @@ namespace DwarfCorp
             this.RandomAngle = RandomAngle;
 
             // Needs this to ensure plants are initially placed correctly. Listener below only fires when voxels change.
-            var under = new VoxelHandle(Manager.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(BasePosition - new Vector3(0.0f, 0.5f, 0.0f)));
+            var under = new VoxelHandle(Manager.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(BasePosition - new Vector3(0.0f, 0.5f, 0.0f)));
             if (under.IsValid && under.RampType != RampType.None)
                 LocalTransform = Matrix.CreateRotationY(RandomAngle) * Matrix.CreateTranslation(BasePosition - new Vector3(0.0f, 0.5f, 0.0f));
             else
@@ -174,7 +174,7 @@ namespace DwarfCorp
                         Vector3 randomPoint = MathFunctions.RandVector3Box(GetBoundingBox().Expand(4));
                         randomPoint.Y = World.WorldSizeInVoxels.Y - 1;
                
-                        VoxelHandle under = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(randomPoint)));
+                        VoxelHandle under = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(randomPoint)));
                         if (under.IsValid && under.Type.IsSoil)
                         {
                             EntityFactory.CreateEntity<Seedling>(Name + " Sprout", under.GetBoundingBox().Center() + Vector3.Up);

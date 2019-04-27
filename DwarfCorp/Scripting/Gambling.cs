@@ -60,7 +60,7 @@ namespace DwarfCorp.Scripting
             Name = "Gamble";
             Game.Join(Agent.Creature);
 
-            VoxelHandle voxel = new VoxelHandle(Agent.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(Game.Location));
+            VoxelHandle voxel = new VoxelHandle(Agent.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(Game.Location));
 
             if (voxel.IsValid)
             {

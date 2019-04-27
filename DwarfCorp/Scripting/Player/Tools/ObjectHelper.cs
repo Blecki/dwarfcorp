@@ -73,7 +73,7 @@ namespace DwarfCorp
                     case CraftItem.CraftPrereq.NearWall:
                         {
                             var neighborFound = VoxelHelpers.EnumerateManhattanNeighbors2D(Location.Coordinate)
-                                    .Select(c => new VoxelHandle(Player.World.ChunkManager.ChunkData, c))
+                                    .Select(c => new VoxelHandle(Player.World.ChunkManager, c))
                                     .Any(v => v.IsValid && !v.IsEmpty);
 
                             if (!neighborFound)
@@ -127,10 +127,10 @@ namespace DwarfCorp
                     (PreviewBody.GetRotatedBoundingBox().Expand(-0.1f)).Any(
                     v =>
                     {
-                        var tvh = new VoxelHandle(Player.World.ChunkManager.ChunkData, v);
+                        var tvh = new VoxelHandle(Player.World.ChunkManager, v);
                         return tvh.IsValid && !tvh.IsEmpty;
                     });
-                var current = new VoxelHandle(Player.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(PreviewBody.Position));
+                var current = new VoxelHandle(Player.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(PreviewBody.Position));
                 bool underwater = current.IsValid && current.LiquidType != LiquidType.None;
                 if (underwater)
                 {

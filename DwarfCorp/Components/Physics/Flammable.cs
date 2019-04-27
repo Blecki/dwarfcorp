@@ -91,7 +91,7 @@ namespace DwarfCorp
 
             foreach (var coordinate in VoxelHelpers.EnumerateCoordinatesInBoundingBox(Body.BoundingBox.Expand(expansion)))
             {
-                var voxel = new VoxelHandle(chunks.ChunkData, coordinate);
+                var voxel = new VoxelHandle(chunks, coordinate);
                 if (!voxel.IsValid) continue;
 
                 if (Heat > Flashpoint && MathFunctions.RandEvent(0.5f))

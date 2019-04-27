@@ -133,7 +133,7 @@ namespace DwarfCorp
                     for (int i = 0; i < randomNum; i++)
                     {
                         var randompos = MathFunctions.Clamp(pos + MathFunctions.RandVector3Cube() * 2, World.ChunkManager.Bounds);
-                        var vox = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(pos)));
+                        var vox = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(pos)));
                         if (!vox.IsValid)
                             continue;
                         EntityFactory.CreateEntity<GameComponent>(randomFauna.Name, vox.GetBoundingBox().Center() + Vector3.Up * 1.5f);

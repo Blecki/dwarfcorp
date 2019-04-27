@@ -23,7 +23,7 @@ namespace DwarfCorp
         [JsonIgnore]
         private int _cache_Local_Y;
 
-        private void UpdateCache(ChunkData Chunks)
+        private void UpdateCache(ChunkManager Chunks)
         {
             // Were inlining the coordinate conversions because we can gain a few cycles from function call overhead.
 
@@ -93,7 +93,7 @@ namespace DwarfCorp
             return new BoundingBox(pos, pos + Vector3.One);
         }
 
-        public VoxelHandle(ChunkData Chunks, GlobalVoxelCoordinate Coordinate)
+        public VoxelHandle(ChunkManager Chunks, GlobalVoxelCoordinate Coordinate)
         {
             this.Coordinate = Coordinate;
             this._cache_Chunk = null;
@@ -114,7 +114,7 @@ namespace DwarfCorp
         [OnDeserialized]
         private void OnDeserialized(StreamingContext context)
         {
-            UpdateCache(((WorldManager)context.Context).ChunkManager.ChunkData);
+            UpdateCache(((WorldManager)context.Context).ChunkManager);
         }
 
         private VoxelHandle(VoxelChunk Chunk, LocalVoxelCoordinate Coordinate)
@@ -414,7 +414,7 @@ namespace DwarfCorp
             if (blockDestroyed)
             {
                 // Reveal!
-                VoxelHelpers.RadiusReveal(_cache_Chunk.Manager.ChunkData, this, 10);
+                VoxelHelpers.RadiusReveal(_cache_Chunk.Manager, this, 10);
 
                 // Clear player built flag!
                 IsPlayerBuilt = false;
@@ -443,30 +443,30 @@ namespace DwarfCorp
             // Invalidate slice cache for neighbor chunks.
             if (localCoordinate.X == 0)
             {
-                InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(-1, 0, 0), localCoordinate.Y);
+                InvalidateNeighborSlice(Voxel._cache_Chunk.Manager, Voxel._cache_Chunk.ID, new Point3(-1, 0, 0), localCoordinate.Y);
                 if (localCoordinate.Z == 0)
-                    InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(-1, 0, -1), localCoordinate.Y);
+                    InvalidateNeighborSlice(Voxel._cache_Chunk.Manager, Voxel._cache_Chunk.ID, new Point3(-1, 0, -1), localCoordinate.Y);
                 if (localCoordinate.Z == VoxelConstants.ChunkSizeZ - 1)
-                    InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(-1, 0, 1), localCoordinate.Y);
+                    InvalidateNeighborSlice(Voxel._cache_Chunk.Manager, Voxel._cache_Chunk.ID, new Point3(-1, 0, 1), localCoordinate.Y);
             }
 
             if (localCoordinate.X == VoxelConstants.ChunkSizeX - 1)
             {
-                InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(1, 0, 0), localCoordinate.Y);
+                InvalidateNeighborSlice(Voxel._cache_Chunk.Manager, Voxel._cache_Chunk.ID, new Point3(1, 0, 0), localCoordinate.Y);
                 if (localCoordinate.Z == 0)
-                    InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(1, 0, -1), localCoordinate.Y);
+                    InvalidateNeighborSlice(Voxel._cache_Chunk.Manager, Voxel._cache_Chunk.ID, new Point3(1, 0, -1), localCoordinate.Y);
                 if (localCoordinate.Z == VoxelConstants.ChunkSizeZ - 1)
-                    InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(1, 0, 1), localCoordinate.Y);
+                    InvalidateNeighborSlice(Voxel._cache_Chunk.Manager, Voxel._cache_Chunk.ID, new Point3(1, 0, 1), localCoordinate.Y);
             }
 
             if (localCoordinate.Z == 0)
-                InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(0, 0, -1), localCoordinate.Y);
+                InvalidateNeighborSlice(Voxel._cache_Chunk.Manager, Voxel._cache_Chunk.ID, new Point3(0, 0, -1), localCoordinate.Y);
 
             if (localCoordinate.Z == VoxelConstants.ChunkSizeZ - 1)
-                InvalidateNeighborSlice(Voxel._cache_Chunk.Manager.ChunkData, Voxel._cache_Chunk.ID, new Point3(0, 0, 1), localCoordinate.Y);
+                InvalidateNeighborSlice(Voxel._cache_Chunk.Manager, Voxel._cache_Chunk.ID, new Point3(0, 0, 1), localCoordinate.Y);
         }
 
-        private static void InvalidateNeighborSlice(ChunkData Chunks, GlobalChunkCoordinate ChunkCoordinate,
+        private static void InvalidateNeighborSlice(ChunkManager Chunks, GlobalChunkCoordinate ChunkCoordinate,
             Point3 NeighborOffset, int LocalY)
         {
             var neighborCoordinate = new GlobalChunkCoordinate(

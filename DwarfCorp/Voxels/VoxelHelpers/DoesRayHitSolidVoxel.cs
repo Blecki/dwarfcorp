@@ -8,7 +8,7 @@ namespace DwarfCorp
 {
     public partial class VoxelHelpers
     {
-        public static bool DoesRayHitSolidVoxel(ChunkData Data, Vector3 Start, Vector3 End)
+        public static bool DoesRayHitSolidVoxel(ChunkManager Data, Vector3 Start, Vector3 End)
         {
             foreach (var coordinate in MathFunctions.FastVoxelTraversal(Start, End))
             {

@@ -70,15 +70,15 @@ namespace DwarfCorp
                 var location = TeleportOffset + closestItem.BoundingBox.Center();
                 if (CheckForOcclusion)
                 {
-                    VoxelHandle voxAt = new VoxelHandle(Agent.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(location));
+                    VoxelHandle voxAt = new VoxelHandle(Agent.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(location));
                     bool gotLocation = false;
                     if (!voxAt.IsValid || !voxAt.IsEmpty)
                     {
                         // If we can't go to the preferred location, just try any free neighbor.
-                        voxAt = new VoxelHandle(Agent.World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(closestItem.BoundingBox.Center()));
+                        voxAt = new VoxelHandle(Agent.World.ChunkManager, GlobalVoxelCoordinate.FromVector3(closestItem.BoundingBox.Center()));
                         foreach (var neighbor in VoxelHelpers.EnumerateManhattanNeighbors2D(voxAt.Coordinate))
                         {
-                            VoxelHandle newVox = new VoxelHandle(Agent.World.ChunkManager.ChunkData, neighbor);
+                            VoxelHandle newVox = new VoxelHandle(Agent.World.ChunkManager, neighbor);
 
                             if (newVox.IsValid && newVox.IsEmpty)
                             {

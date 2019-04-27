@@ -15,7 +15,7 @@ namespace DwarfCorp
 
             foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors(V.Coordinate))
             {
-                var voxelHandle = new VoxelHandle(V.Chunk.Manager.ChunkData, neighborCoordinate);
+                var voxelHandle = new VoxelHandle(V.Chunk.Manager, neighborCoordinate);
                 if (!voxelHandle.IsValid) return false;
                 if (voxelHandle.IsEmpty) return false;
             }
@@ -30,7 +30,7 @@ namespace DwarfCorp
 
             foreach (var neighborCoordinate in VoxelHelpers.EnumerateManhattanNeighbors(V.Coordinate))
             {
-                var voxelHandle = new VoxelHandle(V.Chunk.Manager.ChunkData, neighborCoordinate);
+                var voxelHandle = new VoxelHandle(V.Chunk.Manager, neighborCoordinate);
                 if (!voxelHandle.IsValid) return false;
                 if (voxelHandle.IsEmpty && voxelHandle.LiquidLevel < 4) return false;
             }

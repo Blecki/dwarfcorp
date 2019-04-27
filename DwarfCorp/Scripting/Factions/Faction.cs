@@ -1076,7 +1076,7 @@ namespace DwarfCorp
                 Vector3 offset = MathFunctions.RandVector3Cube() * 2;
 
                 var voxelUnder = VoxelHelpers.FindFirstVoxelBelowIncludingWater(new VoxelHandle(
-                    World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(position + offset)));
+                    World.ChunkManager, GlobalVoxelCoordinate.FromVector3(position + offset)));
                 if (voxelUnder.IsValid)
                 {
                     var body = EntityFactory.CreateEntity<GameComponent>(creature, voxelUnder.WorldPosition + new Vector3(0.5f, 1, 0.5f));

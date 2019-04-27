@@ -288,7 +288,7 @@ namespace DwarfCorp
 
             MaxViewingLevel = Math.Max(Math.Min(level, World.WorldSizeInVoxels.Y), 1);
 
-            foreach (var c in World.ChunkManager.ChunkData.ChunkMap)
+            foreach (var c in World.ChunkManager.ChunkMap)
             {
                 var oldSliceIndex = oldLevel - 1 - c.Origin.Y;
                 if (oldSliceIndex >= 0 && oldSliceIndex < VoxelConstants.ChunkSizeY) c.InvalidateSlice(oldSliceIndex);
@@ -567,8 +567,7 @@ namespace DwarfCorp
 
             if (dwarf.Velocity.Length() > 0.1)
             {
-                var above = VoxelHelpers.FindFirstVoxelAbove(new VoxelHandle(
-                    World.ChunkManager.ChunkData, GlobalVoxelCoordinate.FromVector3(dwarf.Position)));
+                var above = VoxelHelpers.FindFirstVoxelAbove(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(dwarf.Position)));
 
                 if (above.IsValid)
                     SetMaxViewingLevel(above.Coordinate.Y);

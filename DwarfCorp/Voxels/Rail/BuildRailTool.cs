@@ -95,7 +95,7 @@ namespace DwarfCorp.Rail
             Faction.World.Tutorial("place rail");
             global::System.Diagnostics.Debug.Assert(Pattern != null);
             GodModeSwitch = false;
-            CreatePreviewBodies(Faction.World.ComponentManager, new VoxelHandle(Faction.World.ChunkManager.ChunkData, new GlobalVoxelCoordinate(0, 0, 0)));
+            CreatePreviewBodies(Faction.World.ComponentManager, new VoxelHandle(Faction.World.ChunkManager, new GlobalVoxelCoordinate(0, 0, 0)));
         }
 
         public override void OnEnd()
