@@ -2672,10 +2672,6 @@
       <Name>snowman_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="decal-types.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>decal-types</Name>
-    </None>
     <None Include="resource-items.json">
       <Name>resource-items</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -798,8 +798,6 @@
     <Compile Include=".\Voxels\ChunkRenderer.cs" />
     <Compile Include=".\Voxels\ChunkUpdate.cs" />
     <Compile Include=".\Voxels\Coordinate.cs" />
-    <Compile Include=".\Voxels\DecalLibrary.cs" />
-    <Compile Include=".\Voxels\DecalType.cs" />
     <Compile Include=".\Voxels\DynamicLight.cs" />
     <Compile Include=".\Voxels\Enums.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldImageOperations.cs" />

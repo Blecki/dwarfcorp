@@ -19,8 +19,8 @@ namespace DwarfCorp.Gui.Widgets.Minimap
 
         public MinimapCell(GraphicsDevice Device)
         {
-            Texture = new Texture2D(Device, VoxelConstants.ChunkSizeX, VoxelConstants.ChunkSizeZ);
-            ColorData = new Color[VoxelConstants.ChunkSizeX * VoxelConstants.ChunkSizeZ];
+            Texture = new Texture2D(Device, VoxelConstants.ChunkSizeX * 2, VoxelConstants.ChunkSizeZ * 2);
+            ColorData = new Color[VoxelConstants.ChunkSizeX * 2 * VoxelConstants.ChunkSizeZ * 2];
         }
 
         public void RedrawFromColumn(GlobalChunkCoordinate Column, ChunkManager Chunks)
@@ -28,19 +28,28 @@ namespace DwarfCorp.Gui.Widgets.Minimap
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                 {
-                    var index = (z * VoxelConstants.ChunkSizeX) + x;
+                    var index = (z * VoxelConstants.ChunkSizeX * 2 * 2) + (x * 2);
                     var surface = VoxelHelpers.FindFirstVisibleVoxelBelowIncludingWater(Chunks.CreateVoxelHandle(new GlobalVoxelCoordinate((Column.X * VoxelConstants.ChunkSizeX) + x, Chunks.World.WorldSizeInVoxels.Y - 1, (Column.Z * VoxelConstants.ChunkSizeZ) + z)));
-                    ColorData[index] = ChooseColor(surface);
+                    var color = ChooseColor(surface);
+
+                    ColorData[index] = new Color(color);
+                    ColorData[index + 1] = new Color(color * new Vector4(0.75f, 0.75f, 0.75f, 1.0f));
+                    ColorData[index + (VoxelConstants.ChunkSizeX * 2)] = new Color(color * new Vector4(0.75f, 0.75f, 0.75f, 1.0f));
+                    ColorData[index + (VoxelConstants.ChunkSizeX * 2) + 1] = new Color(color);
                 }
 
             Texture.SetData(ColorData);
         }
 
-        private Color ChooseColor(VoxelHandle Of)
+        private Vector4 ChooseColor(VoxelHandle Of)
         {
-            if (!Of.IsValid) return new Color(0.0f, 0.0f, 0.0f, 1.0f);
+            if (!Of.IsValid) return new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+            if (Of.GrassType != 0)
+            {
+                var grass = GrassLibrary.GetGrassType(Of.GrassType);
+            }
 
-            return new Color((byte)(Of.Coordinate.Y * 4), (byte)(Of.Coordinate.Y * 4), (byte)(Of.Coordinate.Y * 4), 255);
+            return new Vector4((Of.Coordinate.Y * 4) / 256.0f, (Of.Coordinate.Y * 4) / 256.0f, (Of.Coordinate.Y * 4) / 256.0f, 1.0f);
         }
 
         #region IDisposable Support

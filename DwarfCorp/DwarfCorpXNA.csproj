@@ -266,6 +266,8 @@
     <Compile Include="Components\AI\StatusEffects\StatusEffect.cs" />
     <Compile Include="Components\AI\CharacterMode.cs" />
     <Compile Include="Components\AI\CraftDetails.cs" />
+    <Compile Include="Gui\Widgets\Minimap\MinimapCell.cs" />
+    <Compile Include="Gui\Widgets\Minimap\MinimapRenderer.cs" />
     <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />
     <Compile Include="Scripting\Potions\GatherPotionsTask.cs" />
     <Compile Include="Scripting\Potions\PotionLibrary.cs" />
@@ -667,8 +669,6 @@
     <Compile Include="Voxels\AutoScaleThread.cs" />
     <Compile Include="Voxels\ChunkRenderer.cs" />
     <Compile Include="Voxels\Coordinate.cs" />
-    <Compile Include="Voxels\DecalType.cs" />
-    <Compile Include="Voxels\DecalLibrary.cs" />
     <Compile Include="Voxels\GrassType.cs" />
     <Compile Include="Voxels\LiquidType.cs" />
     <Compile Include="Voxels\Rail\RailHelper-Combinations.cs" />
@@ -778,7 +778,7 @@
     <Compile Include="Gui\Widgets\GameSpeedControls.cs" />
     <Compile Include="Gui\Widgets\InfoTray.cs" />
     <Compile Include="Gui\Widgets\InfoTicker.cs" />
-    <Compile Include="Gui\Widgets\Minimap.cs" />
+    <Compile Include="Gui\Widgets\Minimap\MinimapFrame.cs" />
     <Compile Include="Gui\Widgets\Popup.cs" />
     <Compile Include="Gui\Widgets\Confirm.cs" />
     <Compile Include="Gui\TileSheetExtension.cs" />

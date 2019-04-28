@@ -184,7 +184,6 @@ namespace DwarfCorp
                PotionLibrary.Initialize();
                VoxelLibrary.InitializeDefaultLibrary(GraphicsDevice);
                GrassLibrary.InitializeDefaultLibrary();
-               DecalLibrary.InitializeDefaultLibrary();
 
                bloom = new BloomComponent(Game)
                {

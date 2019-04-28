@@ -522,15 +522,6 @@ namespace DwarfCorp
                 if (V.GrassType != 0)
                     BuildGrassFringeGeometry(Into, Chunk, Cache, Primitive, V, vertexColors,
                         vertexTint, vertexPositions, faceDescriptor, exploredVerts);
-
-                //if (V.Decal != 0)
-                //{
-                //    var decalTypeID = DecalType.DecodeDecalType(V.Decal);
-                //    var decalOrientation = DecalType.DecodeDecalOrientation(V.Decal);
-                //    var decalType = DecalLibrary.GetGrassType(decalTypeID);
-
-                //    AddDecalGeometry(Into, Cache.AmbientValues, Primitive, V, faceDescriptor, exploredVerts, vertexPositions, vertexColors, vertexTint, decalType, (byte)decalOrientation);
-                //}
             }
             else
             {
@@ -825,61 +816,6 @@ namespace DwarfCorp
                 Into.AddIndex((short)(indexOffset + offset - offset0));
             }
         }
-
-        private static void AddDecalGeometry(
-            RawPrimitive Into,
-            int[] AmbientScratchSpace,
-            BoxPrimitive Primitive,
-            VoxelHandle V,
-            BoxPrimitive.FaceDescriptor faceDescriptor,
-            int exploredVerts,
-            Vector3[] VertexPositions,
-            VertexColorInfo[] VertexColors,
-            Color[] VertexTints,
-            DecalType Decal,
-            byte Orientation)
-        {
-            var indexOffset = Into.VertexCount;
-            var UV = new Vector2(Decal.Tile.X * (1.0f / 16.0f), Decal.Tile.Y * (1.0f / 16.0f));
-            var UVBounds = new Vector4(UV.X + 0.001f, UV.Y + 0.001f, UV.X + (1.0f / 16.0f) - 0.001f, UV.Y + (1.0f / 16.0f) - 0.001f);
-            var UVs = new Vector2[faceDescriptor.VertexCount];
-
-            for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
-            {
-                var vertex = Primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
-                UVs[faceVertex] = UV + new Vector2(vertex.Position.X / 16.0f, vertex.Position.Z / 16.0f);
-            }
-
-            for (int faceVertex = 0; faceVertex < faceDescriptor.VertexCount; faceVertex++)
-            {
-                var vertex = Primitive.Vertices[faceDescriptor.VertexOffset + faceVertex];
-
-                AmbientScratchSpace[faceVertex] = VertexColors[faceVertex].AmbientColor;
-
-                var uv = faceVertex + Orientation;
-                uv %= faceDescriptor.VertexCount; // This will only work if the face has 4 verts...
-
-                Into.AddVertex(new ExtendedVertex(
-                    VertexPositions[faceVertex] + VertexNoise.GetNoiseVectorFromRepeatingTexture(VertexPositions[faceVertex]),
-                    VertexColors[faceVertex].AsColor(),
-                    VertexTints[faceVertex],
-                    UVs[uv],
-                    UVBounds));
-            }
-
-            bool flippedQuad = AmbientScratchSpace[0] + AmbientScratchSpace[2] >
-                              AmbientScratchSpace[1] + AmbientScratchSpace[3];
-
-            for (int idx = faceDescriptor.IndexOffset; idx < faceDescriptor.IndexCount +
-                faceDescriptor.IndexOffset; idx++)
-            {
-                ushort offset = flippedQuad ? Primitive.FlippedIndexes[idx] : Primitive.Indexes[idx];
-                ushort offset0 = flippedQuad ? Primitive.FlippedIndexes[faceDescriptor.IndexOffset] : Primitive.Indexes[faceDescriptor.IndexOffset];
-                Into.AddIndex((short)(indexOffset + offset - offset0));
-            }
-        }
-
-
 
         public static bool ShouldRamp(VoxelVertex vertex, RampType rampType)
         {

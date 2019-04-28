@@ -22,6 +22,7 @@ namespace DwarfCorp.Gui.Widgets.Minimap
         public OrbitCamera Camera { get; set; }
         public WorldManager World { get; set; }
         private BasicEffect DrawShader = null;
+        private VertexPositionTexture[] quad2 = null;
 
         private Dictionary<GlobalChunkCoordinate, MinimapCell> Cells = new Dictionary<GlobalChunkCoordinate, MinimapCell>();
 
@@ -36,6 +37,16 @@ namespace DwarfCorp.Gui.Widgets.Minimap
             Camera = new OrbitCamera(World, new Vector3(0, 0, 0), new Vector3(0, 0, 0), 2.5f, 1.0f, 0.1f, 1000.0f)
             {
                 Projection = DwarfCorp.Camera.ProjectionMode.Orthographic
+            };
+
+            quad2 = new VertexPositionTexture[]
+            {
+                new VertexPositionTexture(new Vector3(0, 0, 0), new Vector2(0, 0)),
+                new VertexPositionTexture(new Vector3(VoxelConstants.ChunkSizeX, 0, 0), new Vector2(1, 0)),
+                new VertexPositionTexture(new Vector3(VoxelConstants.ChunkSizeX, 0, VoxelConstants.ChunkSizeZ), new Vector2(1, 1)),
+                new VertexPositionTexture(new Vector3(VoxelConstants.ChunkSizeX, 0, VoxelConstants.ChunkSizeZ), new Vector2(1, 1)),
+                new VertexPositionTexture(new Vector3(0, 0, VoxelConstants.ChunkSizeZ), new Vector2(0, 1)),
+                new VertexPositionTexture(new Vector3(0, 0, 0), new Vector2(0, 0)),
             };
         }
 
@@ -99,13 +110,11 @@ namespace DwarfCorp.Gui.Widgets.Minimap
                 } while (cellToDraw.HasValue);
         }
 
-        private VertexPositionTexture[] quad2 = null;
-
         public void ValidateShader()
         {
         }
 
-        public void PreRender(DwarfTime time, SpriteBatch sprites)
+        public void PreRender(SpriteBatch sprites)
         {
             if (sprites.IsDisposed || sprites.GraphicsDevice.IsDisposed)
                 return;
@@ -149,19 +158,6 @@ namespace DwarfCorp.Gui.Widgets.Minimap
                 DrawShader.World = Matrix.Identity;
                 DrawShader.VertexColorEnabled = false;
                 DrawShader.Alpha = 1.0f;
-
-                if (quad2 == null)
-                {
-                    quad2 = new VertexPositionTexture[]
-                    {
-                        new VertexPositionTexture(new Vector3(0, 0, 0), new Vector2(0, 0)),
-                        new VertexPositionTexture(new Vector3(VoxelConstants.ChunkSizeX, 0, 0), new Vector2(1, 0)),
-                        new VertexPositionTexture(new Vector3(VoxelConstants.ChunkSizeX, 0, VoxelConstants.ChunkSizeZ), new Vector2(1, 1)),
-                        new VertexPositionTexture(new Vector3(VoxelConstants.ChunkSizeX, 0, VoxelConstants.ChunkSizeZ), new Vector2(1, 1)),
-                        new VertexPositionTexture(new Vector3(0, 0, VoxelConstants.ChunkSizeZ), new Vector2(0, 1)),
-                        new VertexPositionTexture(new Vector3(0, 0, 0), new Vector2(0, 0)),
-                    };
-                }
 
                 foreach (var cell in Cells)
                 {

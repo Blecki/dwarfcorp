@@ -74,15 +74,15 @@ namespace DwarfCorp
                         // Allow grass to decay
                         if (voxel.GrassType != 0)
                         {
-                            var decal = GrassLibrary.GetGrassType(voxel.GrassType);
+                            var grass = GrassLibrary.GetGrassType(voxel.GrassType);
 
-                            if (decal.NeedsSunlight && !voxel.Sunlight)
+                            if (grass.NeedsSunlight && !voxel.Sunlight)
                                 voxel.GrassType = 0;
-                            else if (decal.Decay)
+                            else if (grass.Decay)
                             {                                
                                 if (voxel.GrassDecay == 0)
                                 {
-                                    var newDecal = GrassLibrary.GetGrassType(decal.BecomeWhenDecays);
+                                    var newDecal = GrassLibrary.GetGrassType(grass.BecomeWhenDecays);
                                     if (newDecal != null)
                                         voxel.GrassType = newDecal.ID;
                                     else

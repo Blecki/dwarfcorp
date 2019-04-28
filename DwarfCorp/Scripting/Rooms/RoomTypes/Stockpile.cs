@@ -102,7 +102,7 @@ namespace DwarfCorp
                 Boxes.Add(crate);
                 AddBody(crate, false);
                 SoundManager.PlaySound(ContentPaths.Audio.whoosh, startPos);
-                if (Faction != null)
+                if (Faction != null && Faction.World.ParticleManager != null)
                     Faction.World.ParticleManager.Trigger("puff", pos + new Vector3(0.5f, 1.5f, 0.5f), Color.White, 90);
             //});
         }

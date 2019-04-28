@@ -483,7 +483,7 @@ namespace DwarfCorp.GameStates
                  */
                 World.ValidateShader();
                 if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
-                    MinimapRenderer.PreRender(gameTime, DwarfGame.SpriteBatch);
+                    MinimapRenderer.PreRender(DwarfGame.SpriteBatch);
 
                 World.Render(gameTime);
 

@@ -358,7 +358,7 @@ namespace DwarfCorp
         }
 
         /// <summary>
-        /// Set the decal of the voxel without triggering all the bookkeeping mechanisms.
+        /// Set the grass type of the voxel without triggering all the bookkeeping mechanisms.
         /// Should only be used by ChunkGenerator as it can break geometry building.
         /// </summary>
         /// <param name="Type"></param>
