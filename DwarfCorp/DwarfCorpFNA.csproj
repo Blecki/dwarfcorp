@@ -533,7 +533,6 @@
     <Compile Include=".\Gui\Widgets\KeyEditor.cs" />
     <Compile Include=".\Gui\Widgets\KeyField.cs" />
     <Compile Include=".\Gui\Widgets\ListView.cs" />
-    <Compile Include=".\Gui\Widgets\Minimap.cs" />
     <Compile Include=".\Gui\Widgets\MoneyEditor.cs" />
     <Compile Include=".\Gui\Widgets\PlantInfo.cs" />
     <Compile Include=".\Gui\Widgets\Popup.cs" />
@@ -791,6 +790,9 @@
     <Compile Include=".\Tutorial\TutorialSaveData.cs" />
     <Compile Include=".\Voxels\AutoScaleThread.cs" />
     <Compile Include=".\Voxels\BoxTransition.cs" />
+    <Compile Include="Gui\Widgets\Minimap\MinimapCell.cs" />
+    <Compile Include="Gui\Widgets\Minimap\MinimapFrame.cs" />
+    <Compile Include="Gui\Widgets\Minimap\MinimapRenderer.cs" />
     <Compile Include="Voxels\ChunkManager-Data.cs" />
     <Compile Include=".\Voxels\ChunkManager.cs" />
     <Compile Include=".\Voxels\ChunkRenderer.cs" />

@@ -46,8 +46,8 @@ namespace DwarfCorp.GameStates
         private Gui.Widgets.FlatToolTray.Tray MainMenu;
         private Gui.Widget TimeLabel;
         private Gui.Widget PausePanel;
-        private MinimapFrame MinimapFrame;
-        private Gui.Widgets.MinimapRenderer MinimapRenderer;
+        private Gui.Widgets.Minimap.MinimapFrame MinimapFrame;
+        private Gui.Widgets.Minimap.MinimapRenderer MinimapRenderer;
         private Gui.Widgets.GameSpeedControls GameSpeedControls;
         private Widget PausedWidget;
         private Gui.Widgets.InfoTray InfoTray;
@@ -688,16 +688,16 @@ namespace DwarfCorp.GameStates
 
             #region Toggle panel buttons
 
-            MinimapRenderer = new Gui.Widgets.MinimapRenderer(192, 192, World, ContentPaths.Terrain.terrain_colormap);
+            MinimapRenderer = new Gui.Widgets.Minimap.MinimapRenderer(192, 192, World);
 
-            MinimapFrame = GuiRoot.RootItem.AddChild(new MinimapFrame
+            MinimapFrame = GuiRoot.RootItem.AddChild(new Gui.Widgets.Minimap.MinimapFrame
             {
                 Tag = "minimap",
                 Renderer = MinimapRenderer,
                 AutoLayout = AutoLayout.FloatBottomLeft,
                 MinimumSize = new Point(208, 204),
                 OnLayout = (sender) => sender.Rect.Y += 4
-            }) as MinimapFrame;
+            }) as Gui.Widgets.Minimap.MinimapFrame;
 
             SelectedEmployeeInfo = GuiRoot.RootItem.AddChild(new EmployeeInfo
             {

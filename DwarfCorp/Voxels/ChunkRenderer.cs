@@ -29,30 +29,6 @@ namespace DwarfCorp
             GameSettings.Default.VisibilityUpdateTime = 0.05f;
         }
 
-        public void RenderForMinimap(Camera renderCamera, DwarfTime gameTime, GraphicsDevice graphicsDevice, Shader effect, Matrix worldMatrix, Texture2D tilemap)
-        {
-            // Todo: Render to a texture stored in the chunk; render that texture to the screen.
-
-            effect.SelfIlluminationTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_illumination);
-            effect.MainTexture = tilemap;
-            effect.SunlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.sungradient);
-            effect.AmbientOcclusionGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.ambientgradient);
-            effect.TorchlightGradient = AssetManager.GetContentTexture(ContentPaths.Gradients.torchgradient);
-            effect.LightRamp = Color.White;
-            effect.VertexColorTint = Color.White;
-            effect.SelfIlluminationEnabled = true;
-            effect.EnableShadows = false;
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                foreach (var chunk in ChunkData.GetChunkEnumerator())
-                {
-                    chunk.Render(GameState.Game.GraphicsDevice);
-                }
-            }
-            effect.SelfIlluminationEnabled = false;
-        }
-
         public void RenderSelectionBuffer(Shader effect, GraphicsDevice graphicsDevice,
             Matrix viewmatrix)
         {

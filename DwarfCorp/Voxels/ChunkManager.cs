@@ -27,6 +27,9 @@ namespace DwarfCorp
         private AutoResetEvent RebuildEvent = new AutoResetEvent(true);
         public bool NeedsMinimapUpdate = true;
 
+        private Queue<GlobalChunkCoordinate> InvalidColumns = new Queue<GlobalChunkCoordinate>();
+        private Mutex InvalidColumnLock = new Mutex();
+
         public void InvalidateChunk(VoxelChunk Chunk)
         {
             RebuildQueueLock.WaitOne();
@@ -34,6 +37,8 @@ namespace DwarfCorp
             if (!RebuildQueue.Contains(Chunk))
                 RebuildQueue.Enqueue(Chunk);
             RebuildQueueLock.ReleaseMutex();
+
+            EnqueueInvalidColumn(Chunk.ID.X, Chunk.ID.Z);
         }
 
         public VoxelChunk PopInvalidChunk()
@@ -43,6 +48,25 @@ namespace DwarfCorp
             if (RebuildQueue.Count > 0)
                 result = RebuildQueue.Dequeue();
             RebuildQueueLock.ReleaseMutex();
+            return result;
+        }
+
+        public void EnqueueInvalidColumn(int X, int Z)
+        {
+            var columnCoordinate = new GlobalChunkCoordinate(X, 0, Z);
+            InvalidColumnLock.WaitOne();
+            if (!InvalidColumns.Contains(columnCoordinate))
+                InvalidColumns.Enqueue(columnCoordinate);
+            InvalidColumnLock.ReleaseMutex();
+        }
+
+        public GlobalChunkCoordinate? PopInvalidColumn()
+        {
+            GlobalChunkCoordinate? result = null;
+            InvalidColumnLock.WaitOne();
+            if (InvalidColumns.Count > 0)
+                result = InvalidColumns.Dequeue();
+            InvalidColumnLock.ReleaseMutex();
             return result;
         }
 
@@ -167,7 +191,7 @@ namespace DwarfCorp
                                 liveChunks.RemoveAt(0);
                             }
 
-                            NeedsMinimapUpdate = true;
+                            NeedsMinimapUpdate = true; // Soon to be redundant.
                         }
                     }
                     while (chunk != null);

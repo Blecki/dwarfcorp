@@ -246,34 +246,6 @@ namespace DwarfCorp
             }
         }
 
-        public void DrawWaterFlat(GraphicsDevice device, Matrix view, Matrix projection, Shader effect, ChunkManager chunks)
-        {
-            ValidateBuffers();
-            try // Release day hack fix. Just eat any exceptions in case the fix applied to LiquidPrimitive 
-            // doesn't actually work.
-            {
-                effect.CurrentTechnique = effect.Techniques[Shader.Technique.WaterFlat];
-                Matrix worldMatrix = Matrix.Identity;
-                effect.World = worldMatrix;
-                effect.View = view;
-                effect.Projection = projection;
-
-                foreach (KeyValuePair<LiquidType, LiquidAsset> asset in LiquidAssets)
-                {
-                    effect.FlatWaterColor = new Color(asset.Value.FlatColor);
-
-                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                    {
-                        pass.Apply();
-                        foreach (var c in chunks.GetChunkEnumerator())
-                            c.Liquids[asset.Key].Render(device);
-                    }
-                }
-            }
-            catch (Exception) { }
-        }
-        
-
         public void DrawWater(GraphicsDevice device,
             float time,
             Shader effect,

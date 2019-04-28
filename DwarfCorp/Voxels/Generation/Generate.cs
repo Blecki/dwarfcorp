@@ -59,6 +59,7 @@ namespace DwarfCorp.Generation
             {
                 SetLoadingMessage(String.Format("#Spawning life in chunk {0} {1} {2}...", chunk.ID.X, chunk.ID.Y, chunk.ID.Z));
                 GenerateSurfaceLife(chunk, Settings);
+                ChunkData.EnqueueInvalidColumn(chunk.ID.X, chunk.ID.Z);
             }
         }
     }
