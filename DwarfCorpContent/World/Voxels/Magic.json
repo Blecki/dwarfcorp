@@ -37,5 +37,6 @@
   "ExplosionSoundResource": "Audio\\wurp",
   "HitSoundResources": [
     "Audio\\pick"
-  ]
+  ],
+  "MinimapColor": "26,227,194,255"
 }

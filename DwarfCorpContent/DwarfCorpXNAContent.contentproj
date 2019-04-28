@@ -3347,6 +3347,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Slate</Name>
     </None>
+    <None Include="World\Voxels\Lava.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Lava</Name>
+    </None>
     <None Include="World\Voxels\_empty.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>_empty</Name>

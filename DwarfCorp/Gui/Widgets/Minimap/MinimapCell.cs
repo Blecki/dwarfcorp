@@ -23,35 +23,92 @@ namespace DwarfCorp.Gui.Widgets.Minimap
             ColorData = new Color[VoxelConstants.ChunkSizeX * 2 * VoxelConstants.ChunkSizeZ * 2];
         }
 
+        private static void FindSurfaceColor(VoxelHandle V, WorldManager World, out Color Color, out VoxelHandle SurfaceVoxel)
+        {
+            Color = Color.Black;
+            SurfaceVoxel = V;
+
+            if (!V.IsValid) return;
+
+            SurfaceVoxel = V.Chunk.Manager.CreateVoxelHandle(V.Coordinate + new GlobalVoxelOffset(0, -1, 0));
+
+            while (true)
+            {
+                if (!SurfaceVoxel.IsValid) return;
+
+                if (SurfaceVoxel.IsVisible)
+                {
+                    foreach (var designation in World.PlayerFaction.Designations.EnumerateDesignations(SurfaceVoxel))
+                    {
+                        if ((designation.Type & World.DesignationDrawer.VisibleTypes) == designation.Type)
+                        {
+                            var props = DesignationDrawer.DefaultProperties;
+                            if (DesignationDrawer.DesignationProperties.ContainsKey(designation.Type))
+                                props = DesignationDrawer.DesignationProperties[designation.Type];
+
+                            Color = props.Color;
+                            return;
+                        }
+                    }
+
+                    if (!SurfaceVoxel.IsExplored)
+                    {
+                        Color = Color.Black;
+                        return;
+                    }
+                    else if (SurfaceVoxel.LiquidType == LiquidType.Water)
+                    {
+                        Color = VoxelLibrary.GetVoxelType("water").MinimapColor;
+                        return;
+                    }
+                    else if (SurfaceVoxel.LiquidType == LiquidType.Lava)
+                    {
+                        Color = VoxelLibrary.GetVoxelType("lava").MinimapColor;
+                        return;
+                    }
+                    else if (SurfaceVoxel.GrassType != 0)
+                    {
+                        Color = GrassLibrary.GetGrassType(SurfaceVoxel.GrassType).MinimapColor;
+                        return;
+                    }
+                    else if (!SurfaceVoxel.IsEmpty)
+                    {
+                        Color = SurfaceVoxel.Type.MinimapColor;
+                        return;
+                    }
+                }
+
+                SurfaceVoxel = SurfaceVoxel.Chunk.Manager.CreateVoxelHandle(SurfaceVoxel.Coordinate + new GlobalVoxelOffset(0, -1, 0));
+            }
+        }
+
         public void RedrawFromColumn(GlobalChunkCoordinate Column, ChunkManager Chunks)
         {
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
                 for (var z = 0; z < VoxelConstants.ChunkSizeZ; ++z)
                 {
-                    var index = (z * VoxelConstants.ChunkSizeX * 2 * 2) + (x * 2);
-                    var surface = VoxelHelpers.FindFirstVisibleVoxelBelowIncludingWater(Chunks.CreateVoxelHandle(new GlobalVoxelCoordinate((Column.X * VoxelConstants.ChunkSizeX) + x, Chunks.World.WorldSizeInVoxels.Y - 1, (Column.Z * VoxelConstants.ChunkSizeZ) + z)));
-                    var color = ChooseColor(surface);
+                    var v = Chunks.CreateVoxelHandle(new GlobalVoxelCoordinate((Column.X * VoxelConstants.ChunkSizeX) + x, Chunks.World.WorldSizeInVoxels.Y - 1, (Column.Z * VoxelConstants.ChunkSizeZ) + z));
 
-                    ColorData[index] = new Color(color);
-                    ColorData[index + 1] = new Color(color * new Vector4(0.75f, 0.75f, 0.75f, 1.0f));
-                    ColorData[index + (VoxelConstants.ChunkSizeX * 2)] = new Color(color * new Vector4(0.75f, 0.75f, 0.75f, 1.0f));
-                    ColorData[index + (VoxelConstants.ChunkSizeX * 2) + 1] = new Color(color);
+                    var color = Color.Black;
+                    var surface = VoxelHandle.InvalidHandle;
+                    FindSurfaceColor(v, Chunks.World, out color, out surface);
+                    color *= (float)surface.Coordinate.Y / Chunks.World.WorldSizeInVoxels.Y;
+                    color.A = 255;
+
+                    var secondary = color * 0.75f;
+                    secondary.A = 255;
+
+                    var index = (z * VoxelConstants.ChunkSizeX * 2 * 2) + (x * 2);
+
+                    ColorData[index] = color;
+                    ColorData[index + 1] = secondary;
+                    ColorData[index + (VoxelConstants.ChunkSizeX * 2)] = secondary;
+                    ColorData[index + (VoxelConstants.ChunkSizeX * 2) + 1] = color;
                 }
 
             Texture.SetData(ColorData);
         }
-
-        private Vector4 ChooseColor(VoxelHandle Of)
-        {
-            if (!Of.IsValid) return new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-            if (Of.GrassType != 0)
-            {
-                var grass = GrassLibrary.GetGrassType(Of.GrassType);
-            }
-
-            return new Vector4((Of.Coordinate.Y * 4) / 256.0f, (Of.Coordinate.Y * 4) / 256.0f, (Of.Coordinate.Y * 4) / 256.0f, 1.0f);
-        }
-
+        
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 

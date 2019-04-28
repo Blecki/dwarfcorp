@@ -13,7 +13,7 @@
   ],
   "ReleasesResource": false,
   "ResourceToRelease": "Wood",
-  "IsFlammable" : true,
+  "IsFlammable": true,
   "BuildRequirements": [ "Wood" ],
   "StartingHealth": 20.0,
   "ProbabilityOfRelease": 1.0,
@@ -41,5 +41,6 @@
     "Audio\\oscar\\sfx_ic_dwarf_pick_wood_1",
     "Audio\\oscar\\sfx_ic_dwarf_pick_wood_2",
     "Audio\\oscar\\sfx_ic_dwarf_pick_wood_3"
-  ]
+  ],
+  "MinimapColor": "193,152,114,255"
 }

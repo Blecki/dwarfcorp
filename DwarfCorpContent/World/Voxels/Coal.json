@@ -35,5 +35,6 @@
     "Audio\\oscar\\sfx_ic_dwarf_pick_stone_1",
     "Audio\\oscar\\sfx_ic_dwarf_pick_stone_2",
     "Audio\\oscar\\sfx_ic_dwarf_pick_stone_3"
-  ]
+  ],
+  "MinimapColor": "15,15,15,255"
 }

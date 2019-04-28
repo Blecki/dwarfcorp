@@ -40,5 +40,7 @@ namespace DwarfCorp
         public bool NeedsSunlight = true;
 
         public bool Spreads = true;
+
+        public Color MinimapColor = Color.White;
     }
 }

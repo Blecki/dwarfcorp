@@ -33,5 +33,6 @@
   "ExplosionSoundResource": "Audio\\gravel",
   "HitSoundResources": [
     "Audio\\pick"
-  ]
+  ],
+  "MinimapColor": "99,138,206,255"
 }
