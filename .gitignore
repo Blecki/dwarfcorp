@@ -6,6 +6,10 @@ version.txt
 *.sln.docstates
 *.userprefs
 deploy_steam.bat
+deploy_itch.bat
+butler.exe
+c7zip.dll
+7z.dll
 
 # Build results
 [Dd]ebug/

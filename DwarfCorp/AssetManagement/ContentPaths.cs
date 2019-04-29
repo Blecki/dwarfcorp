@@ -30,7 +30,7 @@ namespace DwarfCorp
         public static string mixer = ProgramData.CreatePath("Audio", "mixer.json");
         public static string voxel_types = ProgramData.CreatePath("World", "Voxels");
         public static string room_types = ProgramData.CreatePath("World", "Rooms");
-        public static string grass_types = ProgramData.CreatePath("grass-types.json");
+        public static string grass_types = ProgramData.CreatePath("World", "GrassTypes");
         public static string rail_pieces = ProgramData.CreatePath("rail-pieces.json");
         public static string rail_patterns = ProgramData.CreatePath("rail-patterns.json");
         public static string rail_combinations = ProgramData.CreatePath("rail-combinations.txt");

@@ -29,6 +29,7 @@ namespace DwarfCorp
         public byte[] RampsSunlightExplored;
 
         public Dictionary<int, String> VoxelTypeMap;
+        public Dictionary<int, String> GrassTypeMap;
 
         public ChunkFile()
         {
@@ -52,8 +53,36 @@ namespace DwarfCorp
             chunk.Data._Water.CopyTo(r.Liquid, 0);
 
             r.VoxelTypeMap = VoxelLibrary.GetVoxelTypeMap();
+            r.GrassTypeMap = GrassLibrary.GetGrassTypeMap();
 
             return r;
+        }
+
+        private void Remap(int ElementCount, Dictionary<int, String> StoredMap, Dictionary<int, String> NewMap, Func<int, int> Lookup, Action<int, int> Set)
+        {
+            if (StoredMap == null) return;
+
+            var newReverseMap = new Dictionary<String, int>();
+            foreach (var mapping in NewMap)
+                newReverseMap.Add(mapping.Value, mapping.Key);
+
+            var replacementMap = new Dictionary<int, int>();
+            foreach (var mapping in StoredMap)
+                if (newReverseMap.ContainsKey(mapping.Value))
+                {
+                    var newId = newReverseMap[mapping.Value];
+                    if (mapping.Key != newId)
+                        replacementMap.Add(mapping.Key, newId);
+                }
+
+            // If there are no changes, skip the expensive iteration.
+            if (replacementMap.Count != 0)
+                for (var i = 0; i < ElementCount; ++i)
+                {
+                    var value = Lookup(i);
+                    if (replacementMap.ContainsKey(value))
+                        Set(i, replacementMap[value]);
+                }
         }
 
         public VoxelChunk ToChunk(ChunkManager Manager)
@@ -64,29 +93,7 @@ namespace DwarfCorp
                 c.Data.Types[i] = Types[i];
 
             // Remap the saved voxel ids to the ids of the currently loaded voxels.
-            if (VoxelTypeMap != null)
-            {
-                // First build a replacement mapping.
-                var newVoxelMap = VoxelLibrary.GetVoxelTypeMap();
-                var newReverseMap = new Dictionary<String, int>();
-                foreach (var mapping in newVoxelMap)
-                    newReverseMap.Add(mapping.Value, mapping.Key);
-
-                var replacementMap = new Dictionary<int, int>();
-                foreach (var mapping in VoxelTypeMap)
-                    if (newReverseMap.ContainsKey(mapping.Value))
-                    {
-                        var newId = newReverseMap[mapping.Value];
-                        if (mapping.Key != newId)
-                            replacementMap.Add(mapping.Key, newId);
-                    }
-
-                // If there are no changes, skip the expensive iteration.
-                if (replacementMap.Count != 0)
-                    for (var i = 0; i < c.Data.Types.Length; ++i)
-                        if (replacementMap.ContainsKey(Types[i]))
-                            c.Data.Types[i] = (byte)replacementMap[c.Data.Types[i]];
-            }
+            Remap(c.Data.Types.Length, VoxelTypeMap, VoxelLibrary.GetVoxelTypeMap(), (index) => Types[index], (index, value) => c.Data.Types[index] = (byte)value);
 
             for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
                 if (c.Data.Types[i] > 0)
@@ -103,8 +110,15 @@ namespace DwarfCorp
 
             if (RampsSunlightExplored != null)
                 RampsSunlightExplored.CopyTo(c.Data.RampsSunlightExploredPlayerBuilt, 0);
+
             if (GrassType != null)
                 GrassType.CopyTo(c.Data.Grass, 0);
+
+            // Remap grass.
+            Remap(c.Data.Grass.Length, GrassTypeMap, GrassLibrary.GetGrassTypeMap(),
+                (index) => c.Data.Grass[index] >> VoxelConstants.GrassTypeShift,
+                (index, value) => c.Data.Grass[index] = (byte)((c.Data.Grass[index] & VoxelConstants.GrassDecayMask) | (value << VoxelConstants.GrassTypeShift)));
+
 
             return c;
         }

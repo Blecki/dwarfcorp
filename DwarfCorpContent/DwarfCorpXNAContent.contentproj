@@ -2967,10 +2967,6 @@
       <Name>animal</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="grass-types.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>grass-types</Name>
-    </None>
     <None Include="World\Biomes\Grassland.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Grassland</Name>
@@ -3238,6 +3234,46 @@
     <None Include="World\goblin.conv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>goblin</Name>
+    </None>
+    <None Include="World\GrassTypes\Empty.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Empty</Name>
+    </None>
+    <None Include="World\GrassTypes\Snow.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Snow</Name>
+    </None>
+    <None Include="World\GrassTypes\Grass.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Grass</Name>
+    </None>
+    <None Include="World\GrassTypes\SnowGrass.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SnowGrass</Name>
+    </None>
+    <None Include="World\GrassTypes\DesertGrass.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>DesertGrass</Name>
+    </None>
+    <None Include="World\GrassTypes\HauntedGrass.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>HauntedGrass</Name>
+    </None>
+    <None Include="World\GrassTypes\SnowDesertGrass.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SnowDesertGrass</Name>
+    </None>
+    <None Include="World\GrassTypes\SnowHauntedGrass.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SnowHauntedGrass</Name>
+    </None>
+    <None Include="World\GrassTypes\Cavemoss.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Cavemoss</Name>
+    </None>
+    <None Include="World\GrassTypes\PermafrostGrass.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PermafrostGrass</Name>
     </None>
     <None Include="World\moleman.conv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

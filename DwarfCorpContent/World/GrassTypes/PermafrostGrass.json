@@ -1,0 +1,11 @@
+{
+  "Name": "permafrost-grass",
+  "Tile": "4, 3",
+  "FringeTiles": [
+    "0, 3",
+    "1, 3",
+    "2, 3"
+  ],
+  "FringePrecedence": 255,
+  "MinimapColor": "196, 196, 196, 255"
+}
