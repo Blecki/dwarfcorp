@@ -92,7 +92,8 @@ namespace DwarfCorp.Gui.Widgets.Minimap
                     var color = Color.Black;
                     var surface = VoxelHandle.InvalidHandle;
                     FindSurfaceColor(v, Chunks.World, out color, out surface);
-                    color *= (float)surface.Coordinate.Y / Chunks.World.WorldSizeInVoxels.Y;
+                    var depthAdjust = ((float)surface.Coordinate.Y / (Chunks.World.WorldSizeInVoxels.Y * 2.0f)) + 0.5f;
+                    color *= depthAdjust;
                     color.A = 255;
 
                     var secondary = color * 0.75f;

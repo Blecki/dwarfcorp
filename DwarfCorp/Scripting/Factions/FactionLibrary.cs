@@ -8,11 +8,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A static collection of factions.
-    /// </summary>
-    [Saving.SaveableObject(0)]
-    public class FactionLibrary : Saving.ISaveableObject
+    public class FactionLibrary
     {
         public Dictionary<string, Faction> Factions { get; set; }
         
@@ -186,31 +182,6 @@ namespace DwarfCorp
             {
                 Factions[faction.Name] = faction;
             }
-        }
-
-        public class SaveNugget : Saving.Nugget
-        {
-            public Dictionary<string, Saving.Nugget> Factions;
-        }
-
-        Saving.Nugget Saving.ISaveableObject.SaveToNugget(Saving.Saver SaveSystem)
-        {
-            var r = new SaveNugget();
-
-            r.Factions = new Dictionary<string, Saving.Nugget>();
-            foreach (var faction in Factions)
-                r.Factions.Add(faction.Key, SaveSystem.SaveObject(faction.Value));
-
-            return r;
-        }
-
-        void Saving.ISaveableObject.LoadFromNugget(Saving.Loader SaveSystem, Saving.Nugget From)
-        {
-            var n = From as SaveNugget;
-
-            Factions = new Dictionary<string, Faction>();
-            foreach (var savedFaction in n.Factions)
-                Factions.Add(savedFaction.Key, SaveSystem.LoadObject(savedFaction.Value) as Faction);
         }
     }
 }

@@ -11,7 +11,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO.Compression;
 using Newtonsoft.Json;
-using DwarfCorp.Saving;
 
 namespace DwarfCorp
 {

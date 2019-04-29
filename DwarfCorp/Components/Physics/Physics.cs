@@ -3,18 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using DwarfCorp.GameStates;
-using DwarfCorp.Saving;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-
     /// <summary>
     /// Basic physics object. When attached to an entity, it causes it to obey gravity, and collide with stuff.
     /// All objects are just axis-aligned boxes that are treated as point masses.
     /// </summary>
-    [Saving.SaveableObject(0)]
     public class Physics : GameComponent
     {
         public Vector3 AngularVelocity { get; set; }
@@ -44,91 +41,6 @@ namespace DwarfCorp
         private bool applyGravityThisFrame = true;
         private float Rotation = 0.0f;
         private bool overrideSleepThisFrame = true;
-
-        /*
-        public class PhysicsSaveNugget : Saving.Nugget
-        {
-            public Saving.Nugget Base;
-
-            public Vector3 AngularVelocity;
-            public Vector3 Velocity;
-            public float Mass;
-            public float I;
-            public float LinearDamping;
-            public float AngularDamping;
-            public float Restitution;
-            public float Friction;
-            public Vector3 Gravity;
-            public Vector3 PreviousPosition;
-            public bool isSleeping;
-            public bool IsInLiquid;
-            public Vector3 PreviousVelocity;
-            public OrientMode Orientation;
-            public CollisionMode CollideMode;
-            public VoxelHandle CurrentVoxel;
-            public bool AllowPhysicsSleep;
-            public Timer SleepTimer;
-            public Timer WakeTimer;
-        }
-
-        protected override Nugget PrepareSaveNugget(Saver SaveSystem)
-        {
-            return new PhysicsSaveNugget
-            {
-                AssociatedType = typeof(Physics),
-                Version = 0,
-
-                Base = base.PrepareSaveNugget(SaveSystem),
-
-                AngularVelocity = AngularVelocity,
-                Velocity = Velocity,
-                Mass = Mass,
-                I = I,
-                LinearDamping = LinearDamping,
-                AngularDamping = AngularDamping,
-                Restitution = Restitution,
-                Friction = Friction,
-                Gravity = Gravity,
-                PreviousPosition = PreviousPosition,
-                isSleeping = isSleeping,
-                IsInLiquid = IsInLiquid,
-                PreviousVelocity = PreviousVelocity,
-                Orientation = Orientation,
-                CollideMode = CollideMode,
-                CurrentVoxel = CurrentVoxel,
-                AllowPhysicsSleep = AllowPhysicsSleep,
-                SleepTimer = SleepTimer,
-                WakeTimer = WakeTimer
-            };
-        }
-
-        protected override void LoadFromSaveNugget(Loader SaveSystem, Nugget From)
-        {
-            var n = SaveSystem.UpgradeNugget(From, 0) as PhysicsSaveNugget;
-
-            base.LoadFromSaveNugget(SaveSystem, n.Base);
-
-            AngularVelocity = n.AngularVelocity;
-            Velocity = n.Velocity;
-            Mass = n.Mass;
-            I = n.I;
-            LinearDamping = n.LinearDamping;
-            AngularDamping = n.AngularDamping;
-            Restitution = n.Restitution;
-            Friction = n.Friction;
-            Gravity = n.Gravity;
-            PreviousPosition = n.PreviousPosition;
-            isSleeping = n.isSleeping;
-            IsInLiquid = n.IsInLiquid;
-            PreviousVelocity = n.PreviousVelocity;
-            Orientation = n.Orientation;
-            CollideMode = n.CollideMode;
-            CurrentVoxel = n.CurrentVoxel;
-            AllowPhysicsSleep = n.AllowPhysicsSleep;
-            SleepTimer = n.SleepTimer;
-            WakeTimer = n.WakeTimer;
-        }
-        */
 
         /// <summary>
         /// Does this physics object collide on all sides, none,
