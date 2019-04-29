@@ -8,15 +8,16 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class GrassLibrary
+    public static class GrassLibrary
     {
-        public static GrassType emptyType = null;
+        private static Dictionary<string, GrassType> Types = new Dictionary<string, GrassType>();
+        private static List<GrassType> TypeList;
+        private static bool Initialized = false;
 
-        public static Dictionary<string, GrassType> Types = new Dictionary<string, GrassType>();
-        public static List<GrassType> TypeList;
-
-        public GrassLibrary()
+        public static IEnumerable<GrassType> EnumerateTypes()
         {
+            InitializeLibrary();
+            return TypeList;
         }
 
         private static GrassType.FringeTileUV[] CreateFringeUVs(Point[] Tiles)
@@ -46,8 +47,11 @@ namespace DwarfCorp
             return r;
         }
 
-        public static void InitializeDefaultLibrary()
+        private static void InitializeLibrary()
         {
+            if (Initialized) return;
+            Initialized = true;
+
             TypeList = FileUtils.LoadJsonListFromDirectory<GrassType>(ContentPaths.grass_types, null, g => g.Name);
 
             byte ID = 1;
@@ -55,13 +59,14 @@ namespace DwarfCorp
             {
                 if (type.Name == "_empty")
                 {
-                    emptyType = type;
                     type.ID = 0;
                     continue;
                 }
-
-                type.ID = ID;
-                ++ID;
+                else
+                {
+                    type.ID = ID;
+                    ++ID;
+                }
 
                 Types[type.Name] = type;
 
@@ -83,11 +88,13 @@ namespace DwarfCorp
 
         public static GrassType GetGrassType(byte id)
         {
+            InitializeLibrary();
             return TypeList[id];
         }
 
         public static GrassType GetGrassType(string name)
         {
+            InitializeLibrary();
             if (name == null)
             {
                 return null;
@@ -99,6 +106,7 @@ namespace DwarfCorp
 
         public static Dictionary<int, String> GetGrassTypeMap()
         {
+            InitializeLibrary();
             var r = new Dictionary<int, String>();
             for (var i = 0; i < TypeList.Count; ++i)
                 r.Add(i, TypeList[i].Name);

@@ -10,23 +10,18 @@ namespace DwarfCorp
 {
     public static class VoxelLibrary
     {
-        public static Dictionary<String, BoxPrimitive> PrimitiveMap = new Dictionary<String, BoxPrimitive>();
-        public static VoxelType emptyType = null;
-        public static VoxelType DesignationType = null;
+        private static VoxelType _EmptyType = null;
+        public static VoxelType EmptyType { get { InitializeLibrary(); return _EmptyType; } }
+        private static VoxelType _DesignationType = null;
+        public static VoxelType DesignationType { get { InitializeLibrary(); return _DesignationType; } }
 
-        public static Dictionary<string, VoxelType> Types = new Dictionary<string, VoxelType>();
-        public static List<VoxelType> TypeList = null;
+        private static Dictionary<string, VoxelType> Types = new Dictionary<string, VoxelType>();
+        private static List<VoxelType> TypeList = null;
+        private static Dictionary<String, BoxPrimitive> PrimitiveMap = new Dictionary<String, BoxPrimitive>();
 
-        public static void Cleanup()
-        {
-            PrimitiveMap = new Dictionary<String, BoxPrimitive>();
-            emptyType = null;
-            DesignationType = null;
-            Types = new Dictionary<string, VoxelType>();
-            TypeList = null;
-        }
+        private static bool Initialized = false;
 
-        public static Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> CreateTransitionUVs(GraphicsDevice graphics, Texture2D textureMap, int width, int height, Point[] tiles,  VoxelType.TransitionType transitionType = VoxelType.TransitionType.Horizontal)
+        private static Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords> CreateTransitionUVs(Texture2D textureMap, int width, int height, Point[] tiles,  VoxelType.TransitionType transitionType = VoxelType.TransitionType.Horizontal)
         {
             var transitionTextures = new Dictionary<BoxTransition, BoxPrimitive.BoxTextureCoords>();
 
@@ -65,23 +60,21 @@ namespace DwarfCorp
             return transitionTextures;
         }
 
-        public static BoxPrimitive CreatePrimitive(GraphicsDevice graphics, Texture2D textureMap, int width, int height, Point top, Point sides, Point bottom)
+        private static BoxPrimitive CreatePrimitive(Texture2D textureMap, int width, int height, Point top, Point sides, Point bottom)
         {
             BoxPrimitive.BoxTextureCoords coords = new BoxPrimitive.BoxTextureCoords(textureMap.Width, textureMap.Height, width, height, sides, sides, top, bottom, sides, sides);
-            BoxPrimitive cube = new BoxPrimitive(graphics, 1.0f, 1.0f, 1.0f, coords);
+            BoxPrimitive cube = new BoxPrimitive(1.0f, 1.0f, 1.0f, coords);
 
             return cube;
         }
 
-        public static void InitializeDefaultLibrary(GraphicsDevice graphics)
+        private static void InitializeLibrary()
         {
-            if (TypeList != null) return;
+            if (Initialized) return;
+            Initialized = true;
 
             var cubeTexture = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
             TypeList = FileUtils.LoadJsonListFromDirectory<VoxelType>(ContentPaths.voxel_types, null, v => v.Name);
-
-            emptyType = TypeList.FirstOrDefault(v => v.Name == "_empty");
-            DesignationType = TypeList.FirstOrDefault(v => v.Name == "_designation");
 
             short id = 2;
             foreach (VoxelType type in TypeList)
@@ -90,15 +83,15 @@ namespace DwarfCorp
 
                 if (type.Name == "_empty")
                 {
-                    emptyType = type;
+                    _EmptyType = type;
                     type.ID = 0;
                 }
                 else
                 {
-                    PrimitiveMap[type.Name] = CreatePrimitive(graphics, cubeTexture, 32, 32, type.Top, type.Bottom, type.Sides);
+                    PrimitiveMap[type.Name] = CreatePrimitive(cubeTexture, 32, 32, type.Top, type.Bottom, type.Sides);
                     if (type.Name == "_designation")
                     {
-                        DesignationType = type;
+                        _DesignationType = type;
                         type.ID = 1;
                     }
                     else
@@ -109,7 +102,7 @@ namespace DwarfCorp
                 }
 
                 if (type.HasTransitionTextures)
-                    type.TransitionTextures = CreateTransitionUVs(graphics, cubeTexture, 32, 32, type.TransitionTiles, type.Transitions);
+                    type.TransitionTextures = CreateTransitionUVs(cubeTexture, 32, 32, type.TransitionTiles, type.Transitions);
 
                 type.ExplosionSound = SoundSource.Create(type.ExplosionSoundResource);
                 type.HitSound = SoundSource.Create(type.HitSoundResources);
@@ -139,16 +132,19 @@ namespace DwarfCorp
 
         public static VoxelType GetVoxelType(short id)
         {
+            InitializeLibrary();
             return TypeList[id];
         }
 
         public static VoxelType GetVoxelType(string name)
         {
+            InitializeLibrary();
             return Types[name];
         }
 
         public static BoxPrimitive GetPrimitive(string name)
         {
+            InitializeLibrary();
             if (PrimitiveMap.ContainsKey(name))
                 return PrimitiveMap[name];
             return null;
@@ -156,33 +152,36 @@ namespace DwarfCorp
 
         public static BoxPrimitive GetPrimitive(VoxelType type)
         {
+            InitializeLibrary();
             return GetPrimitive(type.Name);
         }
 
         public static BoxPrimitive GetPrimitive(short id)
         {
+            InitializeLibrary();
             return GetPrimitive(GetVoxelType(id));
         }
 
-        public static List<VoxelType> GetTypes()
+        public static IEnumerable<VoxelType> EnumerateTypes()
         {
+            InitializeLibrary();
             return TypeList;
         }
 
         public static Dictionary<int, String> GetVoxelTypeMap()
         {
+            InitializeLibrary();
             var r = new Dictionary<int, String>();
             for (var i = 0; i < TypeList.Count; ++i)
                 r.Add(i, TypeList[i].Name);
             return r;
         }
 
-        // Do not delete: Used to generate block icon texture for menu.
         // Todo: Use Sheet.TileHeight as well.
         [TextureGenerator("Voxels")]
         public static Texture2D RenderIcons(GraphicsDevice device, Microsoft.Xna.Framework.Content.ContentManager Content, Gui.JsonTileSheet Sheet)
         {
-            InitializeDefaultLibrary(device);
+            InitializeLibrary();
 
             var shader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
 
@@ -231,7 +230,7 @@ namespace DwarfCorp
                         continue;
 
                     if (type.HasTransitionTextures)
-                        primitive = new BoxPrimitive(device, 1, 1, 1, type.TransitionTextures[new BoxTransition()]);
+                        primitive = new BoxPrimitive(1, 1, 1, type.TransitionTextures[new BoxTransition()]);
 
                     device.Viewport = new Viewport(col * Sheet.TileWidth, row * Sheet.TileWidth, Sheet.TileWidth, Sheet.TileWidth);
                     Matrix viewMatrix = Matrix.CreateLookAt(new Vector3(-1.2f, 1.0f, -1.5f), Vector3.Zero, Vector3.Up);
@@ -249,5 +248,4 @@ namespace DwarfCorp
             return (Texture2D) toReturn;
         }
     }
-
 }

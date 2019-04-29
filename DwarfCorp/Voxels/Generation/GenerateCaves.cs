@@ -92,7 +92,7 @@ namespace DwarfCorp.Generation
                             if (caveBreaksSurface)
                                 break;
 
-                            voxel.RawSetType(VoxelLibrary.emptyType);
+                            voxel.RawSetType(VoxelLibrary.EmptyType);
 
                             if (dy == 0)
                             {

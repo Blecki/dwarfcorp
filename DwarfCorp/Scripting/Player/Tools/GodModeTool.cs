@@ -172,7 +172,7 @@ namespace DwarfCorp
                                 {
                                     var v = vox;
                                     Player.World.Master.Faction.OnVoxelDestroyed(vox);
-                                    v.Type = VoxelLibrary.emptyType;
+                                    v.Type = VoxelLibrary.EmptyType;
                                     v.QuickSetLiquid(LiquidType.None, 0);
                                 }
                                 break;
@@ -181,7 +181,7 @@ namespace DwarfCorp
                                     for (var y = 1; y < Player.World.WorldSizeInVoxels.Y; ++y)
                                     {
                                         var v = Player.World.ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(vox.Coordinate.X, y, vox.Coordinate.Z));
-                                        v.Type = VoxelLibrary.emptyType;
+                                        v.Type = VoxelLibrary.EmptyType;
                                         v.QuickSetLiquid(LiquidType.None, 0);
                                     }
                                 }

@@ -106,7 +106,7 @@ namespace DwarfCorp.Gui.Widgets
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
                         Columns = 3,
-                        ItemSource = VoxelLibrary.GetTypes()
+                        ItemSource = VoxelLibrary.EnumerateTypes()
                             .Where(t => t.Name != "_empty" && t.Name != "water")
                             .OrderBy(s => s.Name)
                             .Select(s =>
@@ -142,7 +142,7 @@ namespace DwarfCorp.Gui.Widgets
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
                         Columns = 3,
-                        ItemSource = GrassLibrary.TypeList
+                        ItemSource = GrassLibrary.EnumerateTypes()
                             .OrderBy(s => s.Name)
                             .Select(s =>
                                 new HorizontalMenuTray.MenuItem

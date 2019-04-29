@@ -32,7 +32,7 @@ namespace DwarfCorp.Generation
                         if (Chunk.Origin.Y + y > height) break;
                         if (Chunk.Origin.Y + y == 0) continue;
 
-                        foreach (var voxelType in VoxelLibrary.GetTypes())
+                        foreach (var voxelType in VoxelLibrary.EnumerateTypes())
                         {
                             if (voxelType.SpawnClusters || voxelType.SpawnVeins) // Todo: Just use one or the other.
                             {

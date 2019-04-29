@@ -754,7 +754,7 @@ namespace DwarfCorp
 
         public void RecomputeCachedVoxelstate()
         {
-            foreach (var type in VoxelLibrary.GetTypes())
+            foreach (var type in VoxelLibrary.EnumerateTypes())
             {
                 bool nospecialRequried = type.BuildRequirements.Count == 0;
                 CachedCanBuildVoxel[type.Name] = type.IsBuildable && ((nospecialRequried && HasResources(type.ResourceToRelease)) ||

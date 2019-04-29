@@ -1332,7 +1332,7 @@ namespace DwarfCorp.GameStates
                     widget.Clear();
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_WallTypes_Return }).Concat(
-                        VoxelLibrary.GetTypes()
+                        VoxelLibrary.EnumerateTypes()
                         .Where(voxel => voxel.IsBuildable && World.PlayerFaction.ListResources().Any(r =>voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.Type))))
                         .Select(data => new FlatToolTray.Icon
                         {
@@ -1382,7 +1382,7 @@ namespace DwarfCorp.GameStates
                     widget.Clear();
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_WallTypes_Return }).Concat(
-                        VoxelLibrary.GetTypes()
+                        VoxelLibrary.EnumerateTypes()
                         .Where(voxel => voxel.IsBuildable && World.PlayerFaction.ListResources().Any(r => voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.Type))))
                         .Select(data => new FlatToolTray.Icon
                         {

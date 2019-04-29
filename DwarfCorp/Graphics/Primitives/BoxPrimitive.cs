@@ -479,7 +479,7 @@ namespace DwarfCorp
         }
 
 
-        public BoxPrimitive(GraphicsDevice device, float width, float height, float depth, BoxTextureCoords uvs)
+        public BoxPrimitive(float width, float height, float depth, BoxTextureCoords uvs)
         {
             Width = width;
             Height = height;

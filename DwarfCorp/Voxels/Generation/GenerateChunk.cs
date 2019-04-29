@@ -69,7 +69,7 @@ namespace DwarfCorp.Generation
                                     voxel.RawSetGrass(GrassLibrary.GetGrassType(biomeData.GrassDecal).ID);
                         }
                         else if (globalY > height && globalY > 0)
-                            voxel.RawSetType(VoxelLibrary.emptyType);
+                            voxel.RawSetType(VoxelLibrary.EmptyType);
                         else if (normalizedHeight <= waterHeight)
                             voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.ShoreVoxel));
                         else

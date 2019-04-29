@@ -209,7 +209,7 @@ namespace DwarfCorp
                                 if (!nextVoxel.Type.IsInvincible && !nextVoxel.IsEmpty)
                                 {
                                     voxelsExploded += 1;
-                                    nextVoxel.Type = VoxelLibrary.emptyType;
+                                    nextVoxel.Type = VoxelLibrary.EmptyType;
                                     Manager.World.ParticleManager.Effects["explode"].Trigger(1, nextVoxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), Color.White);
                                     Manager.World.ParticleManager.Effects["dirt_particle"].Trigger(3, nextVoxel.Coordinate.ToVector3() + new Vector3(0.5f, 0.5f, 0.5f), Color.White);
 

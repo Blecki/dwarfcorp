@@ -47,7 +47,7 @@ namespace DwarfCorp
                 }
             }
 
-            Voxel.Type = VoxelLibrary.emptyType;
+            Voxel.Type = VoxelLibrary.EmptyType;
 
             return emittedResources;
         }

@@ -111,7 +111,6 @@ namespace DwarfCorp.GameStates
             //Overworld.Cleanup();
             ResourceLibrary.Cleanup();
             CraftLibrary.Cleanup();
-            VoxelLibrary.Cleanup();
             PlayState.Input = null;
             InputManager.Cleanup();
             LayeredSprites.LayerLibrary.Cleanup();

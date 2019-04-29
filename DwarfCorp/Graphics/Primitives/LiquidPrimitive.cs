@@ -105,7 +105,7 @@ namespace DwarfCorp
                 caches = new List<LiquidRebuildCache>();
 
                 StaticsInitialized = true;
-                primitive = new BoxPrimitive(GameStates.GameState.Game.GraphicsDevice, 1.0f, 1.0f, 1.0f, new BoxPrimitive.BoxTextureCoords(32, 32, 32, 32, Point.Zero, Point.Zero, Point.Zero, Point.Zero, Point.Zero, Point.Zero));
+                primitive = new BoxPrimitive(1.0f, 1.0f, 1.0f, new BoxPrimitive.BoxTextureCoords(32, 32, 32, 32, Point.Zero, Point.Zero, Point.Zero, Point.Zero, Point.Zero, Point.Zero));
             }
         }
 
