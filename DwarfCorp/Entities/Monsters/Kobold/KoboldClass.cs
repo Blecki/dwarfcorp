@@ -103,11 +103,6 @@ namespace DwarfCorp
             };
         }
 
-        void InitializeAnimations()
-        {
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Kobold.kobold_animations, "Kobold");
-        }
-
         void InitializeActions()
         {
             Actions =
@@ -134,7 +129,6 @@ namespace DwarfCorp
         {
             Name = "Kobold";
             InitializeLevels();
-            InitializeAnimations();
             InitializeWeapons();
             InitializeActions();
             base.InitializeStatics();

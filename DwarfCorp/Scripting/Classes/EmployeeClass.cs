@@ -21,10 +21,6 @@ namespace DwarfCorp
             public int HealingPower = 0;
         }
 
-        [JsonIgnore]
-        public List<Animation> Animations { get; set; }
-        public String AnimationFilename;
-        public string MinecartAnimations { get; set; }
         public List<Attack> Attacks { get; set; }
         public List<Level> Levels { get; set; }
         public string Name { get; set; }
@@ -40,13 +36,6 @@ namespace DwarfCorp
 
         [JsonIgnore]
         public static Dictionary<string, EmployeeClass> Classes { get; set; }
-
-        [OnDeserialized]
-        internal void OnDeserializedMethod(StreamingContext context)
-        {
-            if (!String.IsNullOrEmpty(AnimationFilename))
-                Animations = AnimationLibrary.LoadCompositeAnimationSet(AnimationFilename, Name);
-        }
 
         protected static bool staticClassInitialized = false;
         protected bool staticsInitiailized = false;

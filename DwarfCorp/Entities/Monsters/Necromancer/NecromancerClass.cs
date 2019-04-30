@@ -204,11 +204,6 @@ namespace DwarfCorp
             };
         }
 
-        void InitializeAnimations()
-        {
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Skeleton.necro_animations, "Skeleton");
-        }
-
         void InitializeActions()
         {
             Actions =
@@ -234,7 +229,6 @@ namespace DwarfCorp
         {
             Name = "Necromancer";
             InitializeLevels();
-            InitializeAnimations();
             InitializeWeapons();
             InitializeActions();
             base.InitializeStatics();

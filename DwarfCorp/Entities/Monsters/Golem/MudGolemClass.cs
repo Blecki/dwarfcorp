@@ -82,11 +82,6 @@ namespace DwarfCorp
                 Task.TaskCategory.Attack;
         }
 
-        void InitializeAnimations()
-        {
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.mudman_animation, "MudGolem");
-        }
-
         public void InitializeWeapons()
         {
             Attacks = new List<Attack>()
@@ -106,7 +101,6 @@ namespace DwarfCorp
         {
             Name = "Mud Golem";
             InitializeLevels();
-            InitializeAnimations();
             InitializeWeapons();
             InitializeActions();
             base.InitializeStatics();

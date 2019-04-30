@@ -146,11 +146,6 @@ namespace DwarfCorp
                 Task.TaskCategory.Attack;
         }
 
-        void InitializeAnimations()
-        {
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Elf.Sprites.elf_animation, "Elf");
-        }
-
         public void InitializeWeapons()
         {
             Attacks = new List<Attack>()
@@ -170,7 +165,6 @@ namespace DwarfCorp
         {
             Name = "Bow Elf";
             InitializeLevels();
-            InitializeAnimations();
             InitializeWeapons();
             InitializeActions();
             base.InitializeStatics();

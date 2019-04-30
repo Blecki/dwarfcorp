@@ -74,7 +74,7 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             Stats.CurrentClass = SharedClass;
-            CreateSprite(Stats.CurrentClass, manager);
+            CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Golems.mud_golem, "Mudgolem"), manager);
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 3))).SetFlag(Flag.ShouldSerialize, false);
 
             NoiseMaker = new NoiseMaker();

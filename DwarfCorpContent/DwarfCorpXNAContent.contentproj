@@ -2361,18 +2361,18 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Mudman\mudball.png">
+    <Compile Include="Entities\Golems\mudball.png">
       <Name>mudball</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Mudman\snowball.png">
+    <Compile Include="Entities\Golems\snowball.png">
       <Name>snowball</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Entities\Mudman\snowman.png">
-      <Name>snowman</Name>
+    <Compile Include="Entities\Golems\snowgolem.png">
+      <Name>snowgolem</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -2693,8 +2693,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>bonesnake_animation</Name>
     </None>
-    <None Include="Entities\Mudman\snowman_animation.json">
-      <Name>snowman_animation</Name>
+    <None Include="Entities\Golems\snowgolem_animation.json">
+      <Name>snowgolem_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="resource-items.json">
@@ -2748,8 +2748,8 @@
       <Name>chicken_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <Compile Include="Entities\Mudman\mudman.png">
-      <Name>mudman</Name>
+    <Compile Include="Entities\Golems\mudgolem.png">
+      <Name>mudgolem</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -2788,8 +2788,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <None Include="Entities\Mudman\mudman_animation.json">
-      <Name>mudman_animation</Name>
+    <None Include="Entities\Golems\mudgolem_animation.json">
+      <Name>mudgolem_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Entities\Skeleton\skele_animation.json">

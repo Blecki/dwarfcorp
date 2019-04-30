@@ -99,7 +99,7 @@ namespace DwarfCorp
         {
             Stats.CurrentClass = SharedClass;
 
-            CreateSprite(Stats.CurrentClass, Manager);
+            CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Skeleton.skeleton_animation, "Skeleton"), Manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1))).SetFlag(Flag.ShouldSerialize, false);
 

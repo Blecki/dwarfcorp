@@ -66,11 +66,6 @@ namespace DwarfCorp
             };
         }
 
-        void InitializeAnimations()
-        {
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Troll.troll_animation, "Troll");
-        }
-
         void InitializeActions()
         {
             Actions =
@@ -99,7 +94,6 @@ namespace DwarfCorp
         {
             Name = "Troll";
             InitializeLevels();
-            InitializeAnimations();
             InitializeWeapons();
             InitializeActions();
             base.InitializeStatics();

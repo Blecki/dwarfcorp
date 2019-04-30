@@ -92,7 +92,7 @@
    "Layers" : [
       {
          "$id" : "1",
-         "AssetName" : "Entities\\Mudman\\snowman",
+         "AssetName" : "Entities\\Golems\\snowgolem",
          "FrameHeight" : 64,
          "FrameWidth" : 80
       },

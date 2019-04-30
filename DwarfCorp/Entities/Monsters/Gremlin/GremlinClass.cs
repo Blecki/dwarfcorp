@@ -103,11 +103,6 @@ namespace DwarfCorp
             };
         }
 
-        void InitializeAnimations()
-        {
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Gremlin.gremlin_animations, "Gremlin");
-        }
-
         void InitializeActions()
         {
             Actions =
@@ -134,7 +129,6 @@ namespace DwarfCorp
         {
             Name = "Gremlin";
             InitializeLevels();
-            InitializeAnimations();
             InitializeWeapons();
             InitializeActions();
             base.InitializeStatics();

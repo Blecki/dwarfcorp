@@ -60,7 +60,7 @@ namespace DwarfCorp
         }
 
         public SnowballProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, GameComponent target) :
-            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Entities.snowball, "snow_particle", ContentPaths.Audio.Oscar.sfx_env_voxel_snow_destroy, target, true, true)
+            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Entities.Golems.snowball, "snow_particle", ContentPaths.Audio.Oscar.sfx_env_voxel_snow_destroy, target, true, true)
         {
             HitAnimation = AnimationLibrary.CreateSimpleAnimation(ContentPaths.Effects.flash);
         }
@@ -90,7 +90,7 @@ namespace DwarfCorp
         }
 
         public MudProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, GameComponent target) :
-            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Entities.mudball, "dirt_particle", ContentPaths.Audio.gravel, target, true, true)
+            base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Entities.Golems.mudball, "dirt_particle", ContentPaths.Audio.gravel, target, true, true)
         {
             HitAnimation = AnimationLibrary.CreateSimpleAnimation(ContentPaths.Effects.flash);
         }

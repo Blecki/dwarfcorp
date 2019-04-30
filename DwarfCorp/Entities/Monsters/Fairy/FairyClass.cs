@@ -100,11 +100,6 @@ namespace DwarfCorp
                 Task.TaskCategory.Wrangle;
         }
 
-        void InitializeAnimations()
-        {
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Dwarf.Sprites.fairy_animation, "Dwarf");
-        }
-
         public void InitializeWeapons()
         {
             Attacks = new List<Attack>()
@@ -123,7 +118,6 @@ namespace DwarfCorp
         {
             Name = "Fairy Helper";
             InitializeLevels();
-            InitializeAnimations();
             InitializeWeapons();
             InitializeActions();
             base.InitializeStatics();

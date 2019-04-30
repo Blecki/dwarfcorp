@@ -144,11 +144,6 @@ namespace DwarfCorp
             Actions = Task.TaskCategory.Gather | Task.TaskCategory.Guard | Task.TaskCategory.Attack;
         }
 
-        void InitializeAnimations()
-        {
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Demon.demon_animations, "Demon");
-        }
-
         public void InitializeWeapons()
         {
             Attacks = new List<Attack>()
@@ -169,7 +164,6 @@ namespace DwarfCorp
         {
             Name = "Demon";
             InitializeLevels();
-            InitializeAnimations();
             InitializeWeapons();
             InitializeActions();
             base.InitializeStatics();

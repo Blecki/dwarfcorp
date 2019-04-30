@@ -212,11 +212,6 @@ namespace DwarfCorp
                 Task.TaskCategory.Wrangle;
         }
 
-        void InitializeAnimations()
-        {
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Moleman.moleman_animations, "Dwarf");
-        }
-
         public void InitializeWeapons()
         {
             Attacks = new List<Attack>()
@@ -234,7 +229,6 @@ namespace DwarfCorp
         {
             Name = "Moleman Miner";
             InitializeLevels();
-            InitializeAnimations();
             InitializeWeapons();
             InitializeActions();
             base.InitializeStatics();

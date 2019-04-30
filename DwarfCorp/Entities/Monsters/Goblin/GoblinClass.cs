@@ -203,11 +203,6 @@ namespace DwarfCorp
             };
         }
 
-        void InitializeAnimations()
-        {
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Goblin.Sprites.goblin_animations, "Goblin");
-        }
-
         void InitializeActions()
         {
             Actions =
@@ -234,7 +229,6 @@ namespace DwarfCorp
         {
             Name = "SwordGoblin";
             InitializeLevels();
-            InitializeAnimations();
             InitializeWeapons();
             InitializeActions();
             base.InitializeStatics();

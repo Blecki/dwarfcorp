@@ -72,7 +72,7 @@ namespace DwarfCorp
         {
             Stats.CurrentClass = SharedClass;
 
-            CreateSprite(Stats.CurrentClass, manager);
+            CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Dwarf.Sprites.fairy_animation, "Fairy"), manager);
             Sprite.AddChild(new Bobber(Manager, 0.25f, 3.0f, MathFunctions.Rand(), Sprite.LocalTransform.Translation.Y)).SetFlag(Flag.ShouldSerialize, false);
             Sprite.LightsWithVoxels = false;
 
