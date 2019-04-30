@@ -11,7 +11,7 @@
     "9, 0",
     "4, 1"
   ],
-  "ReleasesResource": false,
+  "ReleasesResource": true,
   "ResourceToRelease": "Stone",
   "BuildRequirements": [ "Stone" ],
   "StartingHealth": 20.0,

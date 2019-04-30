@@ -1,17 +1,17 @@
 [
   {
     "Name": "Dwarf",
-	"Plural": "Dwarfs",
+	  "Plural": "Dwarfs",
     "Posessive": "Dwarvish",
     "DiplomacyConversation": "World/dwarf.conv",
     "CreatureTypes": [
       "Dwarf",
       "AxeDwarf"
     ],
-    "TradeEnvoys": [ [ "CraftDwarf", "AxeDwarf", "AxeDwarf" ] ],
+    "TradeEnvoys": [ [ "Dwarf Crafter", "Dwarf Soldier", "Dwarf Soldier" ] ],
     "WarParties": [
-      [ "AxeDwarf", "AxeDwarf", "AxeDwarf" ],
-      [ "AxeDwarf", "AxeDwarf", "AxeDwarf", "AxeDwarf" ]
+      [ "Dwarf Soldier", "Dwarf Soldier", "Dwarf Soldier" ],
+      [ "Dwarf Soldier", "Dwarf Soldier", "Dwarf Soldier", "Dwarf Soldier" ]
     ],
     "IsIntelligent": true,
     "IsNative": false,

@@ -4,21 +4,21 @@
     "Precedence": 0,
     "Asset": "Entities/Dwarf/Layers/crafter-body",
     "RestrictionType": "Class",
-    "RestrictionValue": "Craftdwarf"
+    "RestrictionValue": "Crafter"
   },
   {
     "Type": "body",
     "Precedence": 0,
     "Asset": "Entities/Dwarf/Layers/musket-body",
     "RestrictionType": "Class",
-    "RestrictionValue": "Musket"
+    "RestrictionValue": "Musketeer"
   },
   {
     "Type": "body",
     "Precedence": 0,
     "Asset": "Entities/Dwarf/Layers/soldier-body",
     "RestrictionType": "Class",
-    "RestrictionValue": "AxeDwarf"
+    "RestrictionValue": "Soldier"
   },
   {
     "Type": "body",
@@ -172,6 +172,11 @@
     "Precedence": 4,
     "Asset": "Entities/Dwarf/Layers/blank"
   },
+  {
+    "Type": "hair",
+    "Precedence": 4,
+    "Asset": "Entities/Dwarf/Layers/partedbob-hair"
+  },
 
 
   {
@@ -179,21 +184,21 @@
     "Precedence": 6,
     "Asset": "Entities/Dwarf/Layers/crafter-hammer",
     "RestrictionType": "Class",
-    "RestrictionValue": "Craftdwarf"
+    "RestrictionValue": "Crafter"
   },
   {
     "Type": "tool",
     "Precedence": 6,
     "Asset": "Entities/Dwarf/Layers/musket-musket",
     "RestrictionType": "Class",
-    "RestrictionValue": "Musket"
+    "RestrictionValue": "Musketeer"
   },
   {
     "Type": "tool",
     "Precedence": 6,
     "Asset": "Entities/Dwarf/Layers/soldier-axe",
     "RestrictionType": "Class",
-    "RestrictionValue": "AxeDwarf"
+    "RestrictionValue": "Soldier"
   },
   {
     "Type": "tool",
@@ -221,14 +226,14 @@
     "Precedence": 5,
     "Asset": "Entities/Dwarf/Layers/musket-hat",
     "RestrictionType": "Class",
-    "RestrictionValue": "Musket"
+    "RestrictionValue": "Musketeer"
   },
   {
     "Type": "hat",
     "Precedence": 5,
     "Asset": "Entities/Dwarf/Layers/soldier-helmet-new",
     "RestrictionType": "Class",
-    "RestrictionValue": "AxeDwarf"
+    "RestrictionValue": "Soldier"
   },
   {
     "Type": "hat",

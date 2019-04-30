@@ -63,7 +63,7 @@ namespace DwarfCorp
         public static void Cleanup()
         {
             World = null;
-            EntityFuncs = null;
+            //EntityFuncs = null;
         }
 
         public static IEnumerable<String> EnumerateEntityTypes()

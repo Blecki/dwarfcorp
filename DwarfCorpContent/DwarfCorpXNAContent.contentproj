@@ -2054,6 +2054,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Dwarf\Layers\partedbob-hair.png">
+      <Name>partedbob-hair</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Text\Templates\names_demon.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>names_demon</Name>
@@ -2080,6 +2085,26 @@
     </Content>
     <None Include="diseases.json">
       <Name>diseases</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="EmployeeClasses\Soldier.json">
+      <Name>Soldier</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="EmployeeClasses\Crafter.json">
+      <Name>Crafter</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="EmployeeClasses\Musketeer.json">
+      <Name>Musketeer</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="EmployeeClasses\Wizard.json">
+      <Name>Wizard</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="EmployeeClasses\Miner.json">
+      <Name>Miner</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Entities\Dwarf\Layers\dwarf-palettes.json">
@@ -2740,14 +2765,6 @@
     <None Include="Entities\Moleman\moleman_animation.json">
       <Name>moleman_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Entities\Dwarf\dwarf.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>dwarf</Name>
-    </None>
-    <None Include="Entities\Dwarf\dwarf_classes.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>dwarf_classes</Name>
     </None>
     <None Include="Entities\Goblin\goblin_classes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -49,6 +49,7 @@ namespace DwarfCorp
         public static string Strings = ProgramData.CreatePath("strings.txt");
         public static string diseases = ProgramData.CreatePath("diseases.json");
         public static string potions = ProgramData.CreatePath("potions.json");
+        public static string employee_classes = ProgramData.CreatePath("EmployeeClasses");
 
         public class Audio
     {
@@ -529,9 +530,6 @@ namespace DwarfCorp
 
             public class Dwarf
             {
-                public static string dwarf_classes = ProgramData.CreatePath("Entities", "Dwarf", "dwarf_classes.json");
-                public static string dwarf = ProgramData.CreatePath("Entities", "Dwarf", "dwarf.json");
-
                 public class Audio
                 {
                     public static string dwarfhurt1 = ProgramData.CreatePath("Entities", "Dwarf", "Audio", "dwarfhurt1");

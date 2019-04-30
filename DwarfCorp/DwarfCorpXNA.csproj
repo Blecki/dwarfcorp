@@ -246,7 +246,6 @@
     <Compile Include="AssetManagement\TextureTool.cs" />
     <Compile Include="AssetManagement\Palette.cs" />
     <Compile Include="AssetManagement\MemoryTexture.cs" />
-    <Compile Include="AssetManagement\ContentPathGenerator.cs" />
     <Compile Include="AssetManagement\ContentPaths.cs" />
     <Compile Include="AssetManagement\GameSave\ChunkFile.cs" />
     <Compile Include="AssetManagement\FileUtils-SaveJson.cs" />
@@ -789,19 +788,14 @@
     <Compile Include="Scripting\Act.cs" />
     <Compile Include="Scripting\BehaviorExtensions.cs" />
     <Compile Include="Scripting\Classes\Applicant.cs" />
-    <Compile Include="Scripting\Classes\AxeDwarfClass.cs" />
-    <Compile Include="Scripting\Classes\CraftDwarfClass.cs" />
     <Compile Include="Entities\Monsters\Elf\ElfClass.cs" />
     <Compile Include="Scripting\Classes\EmployeeClass.cs" />
     <Compile Include="Entities\Monsters\Fairy\FairyClass.cs" />
     <Compile Include="Scripting\Classes\JobLibrary.cs" />
     <Compile Include="Entities\Monsters\Moleman\MolemanClass.cs" />
-    <Compile Include="Scripting\Classes\MusketDwarfClass.cs" />
     <Compile Include="Entities\Monsters\Necromancer\NecromancerClass.cs" />
     <Compile Include="Entities\Monsters\Skeleton\SkeletonClass.cs" />
     <Compile Include="Entities\Monsters\Goblin\GoblinClass.cs" />
-    <Compile Include="Scripting\Classes\WizardClass.cs" />
-    <Compile Include="Scripting\Classes\WorkerClass.cs" />
     <Compile Include="Scripting\Combat\Alliance.cs" />
     <Compile Include="Scripting\Combat\Attack.cs" />
     <Compile Include="Scripting\CompoundActs\BuildRoomAct.cs" />
@@ -839,7 +833,6 @@
     <Compile Include="Scripting\Data\Blackboard.cs" />
     <Compile Include="Scripting\Data\CreatureStats.cs" />
     <Compile Include="Scripting\Data\CreatureStatus.cs" />
-    <Compile Include="Scripting\Items\Item.cs" />
     <Compile Include="Scripting\Items\TagList.cs" />
     <Compile Include="Scripting\LeafActs\ClearBlackboardData.cs" />
     <Compile Include="Scripting\LeafActs\ConsumeItemAct.cs" />

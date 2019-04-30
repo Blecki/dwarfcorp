@@ -1,0 +1,127 @@
+{
+  "Name": "Soldier",
+  "Actions": 24596,
+  "AttackMode": "Attacking",
+  "Attacks": [
+    {
+      "DamageAmount": 4.0,
+      "Name": "Axe",
+      "Range": 2.0,
+      "HitNoise": {
+        "Sounds": [
+          "Audio\\oscar\\sfx_ic_dwarf_attack_sword_1",
+          "Audio\\oscar\\sfx_ic_dwarf_attack_sword_2",
+          "Audio\\oscar\\sfx_ic_dwarf_attack_sword_3"
+        ],
+        "Volume": 1.0,
+        "RandomPitch": true
+      },
+      "HitColor": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "Mode": "Melee",
+      "RechargeTimer": {
+        "TargetTimeSeconds": 0.321399182,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": false,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "Knockback": 10.0,
+      "AnimationAsset": "Effects\\slash",
+      "HitParticles": "",
+      "ProjectileType": "",
+      "LaunchSpeed": 0.0,
+      "HasTriggered": false,
+      "TriggerMode": "Animation",
+      "TriggerFrame": 2,
+      "DiseaseToSpread": null,
+      "ShootLaser": false
+    }
+  ],
+  "Levels": [
+    {
+      "Index": 0,
+      "Name": "Thug",
+      "Pay": {
+        "Value": 5.0
+      },
+      "XP": 0,
+      "BaseStats": {
+        "Name": "",
+        "Dexterity": 5.0,
+        "Constitution": 5.0,
+        "Strength": 6.0,
+        "Wisdom": 5.0,
+        "Charisma": 5.0,
+        "Intelligence": 5.0,
+        "Size": 5.0
+      },
+      "ExtraAttacks": [],
+      "HealingPower": 0
+    },
+    {
+      "Index": 1,
+      "Name": "Sellsword",
+      "Pay": {
+        "Value": 10.0
+      },
+      "XP": 200,
+      "BaseStats": {
+        "Name": "",
+        "Dexterity": 5.0,
+        "Constitution": 6.0,
+        "Strength": 7.0,
+        "Wisdom": 5.0,
+        "Charisma": 6.0,
+        "Intelligence": 5.0,
+        "Size": 5.0
+      },
+      "ExtraAttacks": [],
+      "HealingPower": 0
+    },
+    {
+      "Index": 2,
+      "Name": "Mercenary",
+      "Pay": {
+        "Value": 20.0
+      },
+      "XP": 1000,
+      "BaseStats": {
+        "Name": "",
+        "Dexterity": 5.0,
+        "Constitution": 7.0,
+        "Strength": 7.0,
+        "Wisdom": 5.0,
+        "Charisma": 6.0,
+        "Intelligence": 5.0,
+        "Size": 5.0
+      },
+      "ExtraAttacks": [],
+      "HealingPower": 0
+    },
+    {
+      "Index": 3,
+      "Name": "Captain",
+      "Pay": {
+        "Value": 200.0
+      },
+      "XP": 5000,
+      "BaseStats": {
+        "Name": "",
+        "Dexterity": 6.0,
+        "Constitution": 7.0,
+        "Strength": 7.0,
+        "Wisdom": 5.0,
+        "Charisma": 6.0,
+        "Intelligence": 5.0,
+        "Size": 5.0
+      },
+      "ExtraAttacks": [],
+      "HealingPower": 0
+    }
+  ]
+}

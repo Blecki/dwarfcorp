@@ -1,0 +1,127 @@
+{
+  "Name": "Musketeer",
+  "Actions": 24592,
+  "AttackMode": "Attacking02",
+  "Attacks": [
+    {
+      "DamageAmount": 20.0,
+      "Name": "Musket",
+      "Range": 5.0,
+      "HitNoise": {
+        "Sounds": [
+          "Audio\\oscar\\sfx_ic_dwarf_attack_musket_1",
+          "Audio\\oscar\\sfx_ic_dwarf_attack_musket_2",
+          "Audio\\oscar\\sfx_ic_dwarf_attack_musket_3"
+        ],
+        "Volume": 1.0,
+        "RandomPitch": true
+      },
+      "HitColor": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "Mode": "Ranged",
+      "RechargeTimer": {
+        "TargetTimeSeconds": 2.05207849,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": false,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "Knockback": 0.0,
+      "AnimationAsset": "Effects\\explode",
+      "HitParticles": "",
+      "ProjectileType": "Bullet",
+      "LaunchSpeed": 30.0,
+      "HasTriggered": false,
+      "TriggerMode": "Animation",
+      "TriggerFrame": 2,
+      "DiseaseToSpread": null,
+      "ShootLaser": false
+    }
+  ],
+  "Levels": [
+    {
+      "Index": 0,
+      "Name": "Cannon Fodder",
+      "Pay": {
+        "Value": 15.0
+      },
+      "XP": 0,
+      "BaseStats": {
+        "Name": "",
+        "Dexterity": 5.0,
+        "Constitution": 5.0,
+        "Strength": 5.0,
+        "Wisdom": 5.0,
+        "Charisma": 5.0,
+        "Intelligence": 5.0,
+        "Size": 5.0
+      },
+      "ExtraAttacks": [],
+      "HealingPower": 0
+    },
+    {
+      "Index": 1,
+      "Name": "Private",
+      "Pay": {
+        "Value": 25.0
+      },
+      "XP": 200,
+      "BaseStats": {
+        "Name": "",
+        "Dexterity": 5.0,
+        "Constitution": 6.0,
+        "Strength": 6.0,
+        "Wisdom": 5.0,
+        "Charisma": 6.0,
+        "Intelligence": 5.0,
+        "Size": 5.0
+      },
+      "ExtraAttacks": [],
+      "HealingPower": 0
+    },
+    {
+      "Index": 2,
+      "Name": "Sargeant",
+      "Pay": {
+        "Value": 40.0
+      },
+      "XP": 1000,
+      "BaseStats": {
+        "Name": "",
+        "Dexterity": 6.0,
+        "Constitution": 7.0,
+        "Strength": 7.0,
+        "Wisdom": 5.0,
+        "Charisma": 6.0,
+        "Intelligence": 5.0,
+        "Size": 5.0
+      },
+      "ExtraAttacks": [],
+      "HealingPower": 0
+    },
+    {
+      "Index": 3,
+      "Name": "Master Sargeant",
+      "Pay": {
+        "Value": 80.0
+      },
+      "XP": 5000,
+      "BaseStats": {
+        "Name": "",
+        "Dexterity": 7.0,
+        "Constitution": 8.0,
+        "Strength": 8.0,
+        "Wisdom": 5.0,
+        "Charisma": 6.0,
+        "Intelligence": 5.0,
+        "Size": 5.0
+      },
+      "ExtraAttacks": [],
+      "HealingPower": 0
+    }
+  ]
+}

@@ -12,34 +12,34 @@ namespace DwarfCorp
 {
     public static class DwarfFactory
     {
-        [EntityFactory("Dwarf")]
+        [EntityFactory("Dwarf Miner")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return GenerateDwarf(Position, Manager, "Player", JobLibrary.Classes[JobLibrary.JobType.Worker], 0, Mating.RandomGender(), MathFunctions.Random.Next());
+            return GenerateDwarf(Position, Manager, "Player", JobLibrary.Classes["Miner"], 0, Mating.RandomGender(), MathFunctions.Random.Next());
         }
 
-        [EntityFactory("AxeDwarf")]
+        [EntityFactory("Dwarf Soldier")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return GenerateDwarf(Position, Manager, "Player", JobLibrary.Classes[JobLibrary.JobType.AxeDwarf], 0, Mating.RandomGender(), MathFunctions.Random.Next());
+            return GenerateDwarf(Position, Manager, "Player", JobLibrary.Classes["Soldier"], 0, Mating.RandomGender(), MathFunctions.Random.Next());
         }
 
-        [EntityFactory("CraftsDwarf")]
+        [EntityFactory("Dwarf Crafter")]
         private static GameComponent __factory2(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return GenerateDwarf(Position, Manager, "Player", JobLibrary.Classes[JobLibrary.JobType.CraftsDwarf], 0, Mating.RandomGender(), MathFunctions.Random.Next());
+            return GenerateDwarf(Position, Manager, "Player", JobLibrary.Classes["Crafter"], 0, Mating.RandomGender(), MathFunctions.Random.Next());
         }
 
-        [EntityFactory("Wizard")]
+        [EntityFactory("Dwarf Wizard")]
         private static GameComponent __factory3(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return GenerateDwarf(Position, Manager, "Player", JobLibrary.Classes[JobLibrary.JobType.Wizard], 0, Mating.RandomGender(), MathFunctions.Random.Next());
+            return GenerateDwarf(Position, Manager, "Player", JobLibrary.Classes["Wizard"], 0, Mating.RandomGender(), MathFunctions.Random.Next());
         }
 
-        [EntityFactory("MusketDwarf")]
+        [EntityFactory("Dwarf Musketeer")]
         private static GameComponent __factory4(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return GenerateDwarf(Position, Manager, "Player", JobLibrary.Classes[JobLibrary.JobType.MusketDwarf], 0, Mating.RandomGender(), MathFunctions.Random.Next());
+            return GenerateDwarf(Position, Manager, "Player", JobLibrary.Classes["Musketeer"], 0, Mating.RandomGender(), MathFunctions.Random.Next());
         }
 
         public static GameComponent GenerateDwarf(

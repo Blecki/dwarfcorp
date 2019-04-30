@@ -94,7 +94,6 @@
     <Compile Include=".\Ancora\TestGrammar.cs" />
     <Compile Include=".\AssetManagement\AssetManager-ModDiscovery.cs" />
     <Compile Include=".\AssetManagement\AssetManager.cs" />
-    <Compile Include=".\AssetManagement\ContentPathGenerator.cs" />
     <Compile Include=".\AssetManagement\ContentPaths.cs" />
     <Compile Include=".\AssetManagement\FileUtils-Binary.cs" />
     <Compile Include=".\AssetManagement\FileUtils-LoadJson.cs" />
@@ -570,13 +569,8 @@
     <Compile Include=".\Scripting\Adventure\Adventure.cs" />
     <Compile Include=".\Scripting\BehaviorExtensions.cs" />
     <Compile Include=".\Scripting\Classes\Applicant.cs" />
-    <Compile Include=".\Scripting\Classes\AxeDwarfClass.cs" />
-    <Compile Include=".\Scripting\Classes\CraftDwarfClass.cs" />
     <Compile Include=".\Scripting\Classes\EmployeeClass.cs" />
     <Compile Include=".\Scripting\Classes\JobLibrary.cs" />
-    <Compile Include=".\Scripting\Classes\MusketDwarfClass.cs" />
-    <Compile Include=".\Scripting\Classes\WizardClass.cs" />
-    <Compile Include=".\Scripting\Classes\WorkerClass.cs" />
     <Compile Include=".\Scripting\Combat\Alliance.cs" />
     <Compile Include=".\Scripting\Combat\Attack.cs" />
     <Compile Include=".\Scripting\CompoundActs\BuildRoomAct.cs" />
@@ -644,7 +638,6 @@
     <Compile Include=".\Scripting\Factions\Trading\TradeYarnCommand.cs" />
     <Compile Include=".\Scripting\Factions\WarParty.cs" />
     <Compile Include=".\Scripting\Gambling.cs" />
-    <Compile Include=".\Scripting\Items\Item.cs" />
     <Compile Include=".\Scripting\Items\TagList.cs" />
     <Compile Include=".\Scripting\LeafActs\ClearBlackboardData.cs" />
     <Compile Include=".\Scripting\LeafActs\ConsumeItemAct.cs" />

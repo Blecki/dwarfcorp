@@ -13,7 +13,7 @@ namespace DwarfCorp.Gui.Widgets
         public Faction Faction;
         public CompanyInformation Company;
         private Button HireButton;
-        public Applicant GenerateApplicant(CompanyInformation info, JobLibrary.JobType type)
+        public Applicant GenerateApplicant(CompanyInformation info, String type)
         {
             Applicant applicant = new Applicant();
             applicant.GenerateRandom(JobLibrary.Classes[type], 0, info);

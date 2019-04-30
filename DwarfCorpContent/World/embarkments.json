@@ -1,7 +1,7 @@
 {
   "Tranquil": {
     "Difficulty": 0,
-    "Party": [ "Dwarf", "Dwarf", "Dwarf", "Dwarf", "CraftsDwarf", "AxeDwarf", "AxeDwarf" ],
+    "Party": [ "Dwarf Miner", "Dwarf Miner", "Dwarf Miner", "Dwarf Miner", "Dwarf Crafter", "Dwarf Soldier", "Dwarf Soldier" ],
     "Resources": {
       "Wood": 32,
       "Coal": 16,
@@ -15,7 +15,7 @@
   },
   "Easy": {
     "Difficulty": 1,
-    "Party": [ "Dwarf", "Dwarf", "Dwarf", "Dwarf", "CraftsDwarf", "AxeDwarf", "AxeDwarf" ],
+    "Party": [ "Dwarf Miner", "Dwarf Miner", "Dwarf Miner", "Dwarf Miner", "Dwarf Crafter", "Dwarf Soldier", "Dwarf Soldier" ],
     "Resources": {
       "Wood": 32,
       "Coal": 16,
@@ -29,7 +29,7 @@
   },
   "Normal": {
     "Difficulty": 2,
-    "Party": [ "Dwarf", "Dwarf", "Dwarf", "CraftsDwarf", "AxeDwarf" ],
+    "Party": [ "Dwarf Miner", "Dwarf Miner", "Dwarf Miner", "Dwarf Crafter", "Dwarf Soldier" ],
     "Resources": {
       "Wood": 8,
       "Iron": 8,
@@ -40,13 +40,13 @@
   },
   "Normal Hardcore": {
     "Difficulty": 2,
-    "Party": [ "Dwarf" ],
+    "Party": [ "Dwarf Miner" ],
     "Resources": {},
     "Money": 0.0
   },
   "Hard": {
     "Difficulty": 3,
-    "Party": [ "Dwarf", "Dwarf", "Dwarf", "CraftsDwarf" ],
+    "Party": [ "Dwarf Miner", "Dwarf Miner", "Dwarf Miner", "Dwarf Crafter" ],
     "Resources": {
       "Wood": 4,
       "Iron": 4,
@@ -57,7 +57,7 @@
   },
   "Extreme": {
     "Difficulty": 4,
-    "Party": [ "Dwarf" ],
+    "Party": [ "Dwarf Miner" ],
     "Resources": {},
     "Money": 0.0
   }

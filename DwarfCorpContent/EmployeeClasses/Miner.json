@@ -1,0 +1,125 @@
+{
+  "Name": "Miner",
+  "Actions": 112662,
+  "AttackMode": "Attacking",
+  "Attacks": [
+    {
+      "DamageAmount": 1.0,
+      "Name": "Pickaxe",
+      "Range": 2.0,
+      "HitNoise": {
+        "Sounds": [
+          "Audio\\pick"
+        ],
+        "Volume": 1.0,
+        "RandomPitch": true
+      },
+      "HitColor": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "Mode": "Melee",
+      "RechargeTimer": {
+        "TargetTimeSeconds": 0.44747448,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": false,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "Knockback": 2.5,
+      "AnimationAsset": "Effects\\hit",
+      "HitParticles": "",
+      "ProjectileType": "",
+      "LaunchSpeed": 0.0,
+      "HasTriggered": false,
+      "TriggerMode": "Animation",
+      "TriggerFrame": 2,
+      "DiseaseToSpread": null,
+      "ShootLaser": false
+    }
+  ],
+  "Levels": [
+    {
+      "Index": 0,
+      "Name": "Apprentice Miner",
+      "Pay": {
+        "Value": 10.0
+      },
+      "XP": 0,
+      "BaseStats": {
+        "Name": "",
+        "Dexterity": 5.0,
+        "Constitution": 5.0,
+        "Strength": 5.0,
+        "Wisdom": 5.0,
+        "Charisma": 5.0,
+        "Intelligence": 5.0,
+        "Size": 5.0
+      },
+      "ExtraAttacks": [],
+      "HealingPower": 0
+    },
+    {
+      "Index": 1,
+      "Name": "Journeyman Miner",
+      "Pay": {
+        "Value": 15.0
+      },
+      "XP": 1000,
+      "BaseStats": {
+        "Name": "",
+        "Dexterity": 5.0,
+        "Constitution": 6.0,
+        "Strength": 6.0,
+        "Wisdom": 5.0,
+        "Charisma": 6.0,
+        "Intelligence": 5.0,
+        "Size": 5.0
+      },
+      "ExtraAttacks": [],
+      "HealingPower": 0
+    },
+    {
+      "Index": 2,
+      "Name": "Working Miner",
+      "Pay": {
+        "Value": 20.0
+      },
+      "XP": 10000,
+      "BaseStats": {
+        "Name": "",
+        "Dexterity": 6.0,
+        "Constitution": 6.0,
+        "Strength": 7.0,
+        "Wisdom": 5.0,
+        "Charisma": 6.0,
+        "Intelligence": 5.0,
+        "Size": 5.0
+      },
+      "ExtraAttacks": [],
+      "HealingPower": 0
+    },
+    {
+      "Index": 3,
+      "Name": "Master Miner",
+      "Pay": {
+        "Value": 30.0
+      },
+      "XP": 50000,
+      "BaseStats": {
+        "Name": "",
+        "Dexterity": 6.0,
+        "Constitution": 8.0,
+        "Strength": 9.0,
+        "Wisdom": 5.0,
+        "Charisma": 6.0,
+        "Intelligence": 5.0,
+        "Size": 5.0
+      },
+      "ExtraAttacks": [],
+      "HealingPower": 0
+    }
+  ]
+}

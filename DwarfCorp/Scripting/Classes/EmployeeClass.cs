@@ -1,35 +1,3 @@
-// EmployeeClass.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,34 +8,11 @@ using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
-    public class EmployeeClassDef
-    {
-        [OnSerializing]
-        internal void OnSerializingMethod(StreamingContext context)
-        {
-            throw new InvalidOperationException("Employee Class Def should not be serialized.");
-        }
-
-        public string Name { get; set; }
-        public string Animations { get; set; }
-        public List<EmployeeClass.Level> Levels { get; set; }
-        public List<Attack> Attacks { get; set; }
-        public List<string> Actions { get; set; }
-        public CharacterMode AttackMode = CharacterMode.Attacking;
-    }
-
-    [JsonObject(IsReference = true)]
     public class EmployeeClass 
     {
-        //[OnSerializing]
-        //internal void OnSerializingMethod(StreamingContext context)
-        //{
-        //    throw new InvalidOperationException();
-        //}
-
         public class Level
         {
-            public int Index;
+            public int Index; // Todo: Kill this.
             public string Name;
             public DwarfBux Pay;
             public int XP;
@@ -112,34 +57,6 @@ namespace DwarfCorp
             {
                 InitializeClassStatics();
             }
-        }
-
-        public EmployeeClass(EmployeeClassDef definition)
-        {
-            Name = definition.Name;
-            Levels = definition.Levels;
-            foreach (string s in definition.Actions)
-            {
-                var value = Task.TaskCategory.None;
-                if (Enum.TryParse(s, true, out value))
-                    Actions |= value;
-            }
-
-            Animations = AnimationLibrary.LoadCompositeAnimationSet(definition.Animations, Name);
-            AnimationFilename = definition.Animations;
-            Attacks = definition.Attacks;
-            AttackMode = definition.AttackMode;
-        }
-
-        public static void AddClasses(string file)
-        {
-            if (!staticClassInitialized)
-                InitializeClassStatics();
-
-            List<EmployeeClassDef> defs = FileUtils.LoadJsonListFromMultipleSources<EmployeeClassDef>(file, null, c => c.Name);
-
-            foreach (EmployeeClassDef empClass in defs)
-                Classes[empClass.Name] = new EmployeeClass(empClass);
         }
 
         protected virtual void InitializeStatics()
