@@ -34,7 +34,7 @@ namespace DwarfCorp
             if (!string.IsNullOrEmpty(ExistingFile)) return;
 
             var port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager, Camera.Position.X, Camera.Position.Z, 3, Settings);
-            PlayerFaction.AddMoney(InitialEmbark.Money);
+            PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
 
             foreach (var res in InitialEmbark.Resources)
                 PlayerFaction.AddResources(new ResourceAmount(res.Key, res.Value));
@@ -79,11 +79,6 @@ namespace DwarfCorp
             var toBuild = RoomLibrary.CreateRoom(PlayerFaction, "Balloon Port", this);
             roomDes.DesignatedRooms.Add(toBuild);
             RoomLibrary.CompleteRoomImmediately(toBuild, roomVoxels.StockpileVoxels);
-
-            // Also add a treasury
-            var treasury = RoomLibrary.CreateRoom(PlayerFaction, "Treasury", this);
-            roomDes.DesignatedRooms.Add(treasury);
-            RoomLibrary.CompleteRoomImmediately(treasury, roomVoxels.TreasuryVoxels);
 
             return toBuild;
         }

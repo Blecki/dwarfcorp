@@ -122,9 +122,6 @@ namespace DwarfCorp.Gui.Widgets
                 var freeStockPile = Faction.ComputeRemainingStockpileSpace();
                 var totalStockPile = Math.Max(Faction.ComputeTotalStockpileSpace(), 1);
                 AddRow("Stockpile space:", String.Format("{0} used of {1} ({2:00.00}%)\n", totalStockPile - freeStockPile, totalStockPile, (float)(totalStockPile - freeStockPile) / (float)totalStockPile * 100.0f));
-                var freeTreasury = Faction.ComputeRemainingTreasurySpace();
-                var totalTreasury = Math.Max(Faction.ComputeTotalTreasurySpace(), 1.0m);
-                AddRow("Treasury space:", String.Format("{0} used of {1} ({2:00.00}%)\n", Faction.Economy.CurrentMoney, (DwarfBux)totalTreasury, 100.0f * (1.0f - ((float)(decimal)(totalTreasury - Faction.Economy.CurrentMoney) / (float)totalTreasury))));
                 AddRow("Average dwarf happiness:", String.Format("{0}%", (int)(float)Faction.Minions.Sum(m => m.Status.Happiness.Percentage) / Math.Max(Faction.Minions.Count, 1)));
                 InfoWidget.Layout();
             };

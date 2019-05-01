@@ -120,7 +120,7 @@ namespace DwarfCorp.Gui.Widgets
                             }
                         });
 
-                        if (lambdaCopy is Stockpile && !(lambdaCopy is Graveyard) && !(lambdaCopy is Treasury))
+                        if (lambdaCopy is Stockpile && !(lambdaCopy is Graveyard))
                         {
 
                             tag.AddChild(new Button

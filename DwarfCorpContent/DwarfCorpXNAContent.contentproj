@@ -3348,10 +3348,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>elf</Name>
     </None>
-    <None Include="World\Rooms\Treasury.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Treasury</Name>
-    </None>
     <None Include="World\Rooms\Balloon Port.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Balloon Port</Name>

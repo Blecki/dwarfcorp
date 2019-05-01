@@ -112,50 +112,15 @@ namespace DwarfCorp
             }
         }
 
-        public int CompareTreasurys(Zone A, Zone B)
-        {
-            if (A == B)
-            {
-                return 0;
-            }
-            else
-            {
-                BoundingBox boxA = A.GetBoundingBox();
-                Vector3 centerA = (boxA.Min + boxA.Max) * 0.5f;
-                float costA = (Creature.Physics.GlobalTransform.Translation - centerA).LengthSquared() * (float)(decimal)(A as Treasury).Money;
-
-                BoundingBox boxB = B.GetBoundingBox();
-                Vector3 centerB = (boxB.Min + boxB.Max) * 0.5f;
-                float costB = (Creature.Physics.GlobalTransform.Translation - centerB).LengthSquared() * (float)(decimal)(B as Treasury).Money;
-
-                if (costA < costB)
-                {
-                    return -1;
-                }
-                else
-                {
-                    return 1;
-                }
-            }
-        }
-
         public override IEnumerable<Status> Run()
         {
             bool validTargetFound = false;
 
             List<Zone> sortedPiles;
 
-            if (ResourceLibrary.GetResourceByName(this.Item.Type).Tags.Contains(Resource.ResourceTags.Money))
-            {
-                sortedPiles = new List<Zone>(Creature.Faction.Treasurys);
-                sortedPiles.Sort(CompareTreasurys);
-            }
-            else
-            {
                 sortedPiles =
                     new List<Zone>(Creature.Faction.Stockpiles.Where(pile => pile.IsAllowed(Item.Type)));
                 sortedPiles.Sort(CompareStockpiles);
-            }
 
             foreach (Zone s in sortedPiles)
             {

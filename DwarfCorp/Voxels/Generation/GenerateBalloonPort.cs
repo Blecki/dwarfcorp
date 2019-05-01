@@ -9,7 +9,6 @@ namespace DwarfCorp.Generation
         public class BalloonPortVoxelSets
         {
             public List<VoxelHandle> StockpileVoxels;
-            public List<VoxelHandle> TreasuryVoxels;
         }
 
         public static BalloonPortVoxelSets GenerateBalloonPort(ChunkManager chunkManager, float x, float z, int size, GeneratorSettings Settings)
@@ -54,7 +53,6 @@ namespace DwarfCorp.Generation
 
             // Next, create the balloon port by deciding which voxels to fill.
             var balloonPortDesignations = new List<VoxelHandle>();
-            var treasuryDesignations = new List<VoxelHandle>();
             for (int dx = -size; dx <= size; dx++)
             {
                 for (int dz = -size; dz <= size; dz++)
@@ -124,14 +122,7 @@ namespace DwarfCorp.Generation
                         {
                             v.RawSetIsExplored();
 
-                            if (dz >= 0)
-                            {
-                                balloonPortDesignations.Add(v);
-                            }
-                            else
-                            {
-                                treasuryDesignations.Add(v);
-                            }
+                            balloonPortDesignations.Add(v);
                         }
 
                         if (isSide)
@@ -160,7 +151,6 @@ namespace DwarfCorp.Generation
             return new BalloonPortVoxelSets
             {
                 StockpileVoxels = balloonPortDesignations,
-                TreasuryVoxels = treasuryDesignations
             };
         }
     }

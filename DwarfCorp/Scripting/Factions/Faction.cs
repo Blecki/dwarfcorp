@@ -1,36 +1,3 @@
-// Faction.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,8 +65,6 @@ namespace DwarfCorp
 
         [JsonIgnore]
         public WorldManager World { get; set; }
-
-        public List<Treasury> Treasurys = new List<Treasury>();
 
         [OnDeserialized]
         public void OnDeserialized(StreamingContext ctx)
@@ -390,16 +355,6 @@ namespace DwarfCorp
             return Stockpiles.Where(pile => !((pile is Graveyard))).Sum(pile => pile.Resources.MaxResources);
         }
 
-        public decimal ComputeRemainingTreasurySpace()
-        {
-            return Treasurys.Sum(treasury => treasury.Voxels.Count * Treasury.MoneyPerPile - treasury.Money);
-        }
-
-        public decimal ComputeTotalTreasurySpace()
-        {
-            return Treasurys.Sum(pile => pile.Voxels.Count * Treasury.MoneyPerPile);
-        }
-
         public bool AddResources(ResourceAmount resources)
         {
             ResourceAmount amount = new ResourceAmount(resources.Type, resources.Count);
@@ -521,19 +476,9 @@ namespace DwarfCorp
             return Stockpiles.Any(s => s.IsBuilt && !s.IsFull());
         }
 
-        public bool HasFreeTreasury()
-        {
-            return Treasurys.Any(s => s.IsBuilt && !s.IsFull());
-        }
-
         public bool HasFreeStockpile(ResourceAmount toPut)
         {
             return Stockpiles.Any(s => s.IsBuilt && !s.IsFull() && s.IsAllowed(toPut.Type));
-        }
-
-        public bool HasFreeTreasury(DwarfBux toPut)
-        {
-            return Treasurys.Any(s => s.IsBuilt && !s.IsFull());
         }
 
         public GameComponent FindNearestItemWithTags(string tag, Vector3 location, bool filterReserved, GameComponent queryObject)
@@ -1164,68 +1109,9 @@ namespace DwarfCorp
         public void AddMoney(DwarfBux money)
         {
             if (money == 0.0m)
-            {
                 return;
-            }
 
-            // In this case, we need to remove money from the economy.
-            // This means that we first take money from treasuries. If there is any left,
-            // we subtract it from the current money count.
-            if (money < 0)
-            {
-                DwarfBux amountLeft = -money;
-                foreach (Treasury treasury in Treasurys)
-                {
-                    DwarfBux amountToTake = global::System.Math.Min(treasury.Money, amountLeft);
-                    treasury.Money -= amountToTake;
-                    amountLeft -= amountToTake;
-                    Economy.CurrentMoney -= amountToTake;
-                }
-                return;
-            }
-
-            DwarfBux amountRemaining = money;
-            foreach (Treasury treasury in Treasurys)
-            {
-                if (amountRemaining <= 0)
-                    break;
-
-                DwarfBux maxInTreasury = treasury.Voxels.Count * Treasury.MoneyPerPile - treasury.Money;
-                DwarfBux amountToTake = global::System.Math.Min(maxInTreasury, amountRemaining);
-
-                amountRemaining -= amountToTake;
-                treasury.Money += amountToTake;
-                Economy.CurrentMoney += amountToTake;
-            }
-            if (amountRemaining > 0 && RoomBuilder.DesignatedRooms.Count > 0)
-            {
-                World.MakeAnnouncement("We need more treasuries!", null, () => 
-                {
-                    DwarfBux remainingSpace = 0;
-                    foreach(var treasury in Treasurys)
-                    {
-                        remainingSpace += treasury.Money - treasury.Voxels.Count * Treasury.MoneyPerPile;
-                    }
-                    return remainingSpace > 0;
-                });
-                // Generate a number of coin piles.
-                for (DwarfBux total = 0m; total < amountRemaining; total += (DwarfBux)1024m)
-                {
-                    Zone randomZone = Datastructures.SelectRandom(RoomBuilder.DesignatedRooms);
-                    Vector3 point = MathFunctions.RandVector3Box(randomZone.GetBoundingBox()) +
-                                    new Vector3(0, 1.0f, 0);
-                    CoinPile pile = EntityFactory.CreateEntity<CoinPile>("Coins Resource", point);
-                    pile.Money = 1024m;
-
-                    // Special case where we just need to add a little bit of money (less than 64 coins)
-                    if (money - total < 1024m)
-                    {
-                        pile.Money = money - total;
-                    }
-                }
-            }
-
+                Economy.CurrentMoney += money;
         }
-
     }
 }

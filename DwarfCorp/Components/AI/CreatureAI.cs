@@ -964,7 +964,7 @@ namespace DwarfCorp
 
             if (!IsPosessed &&
                 (GatherManager.StockOrders.Count == 0 || !Faction.HasFreeStockpile()) &&
-                (GatherManager.StockMoneyOrders.Count == 0 || !Faction.HasFreeTreasury())
+                (GatherManager.StockMoneyOrders.Count == 0)
                 && Tasks.Count == 0)
             {
                 // Craft random items for fun.
@@ -1085,14 +1085,11 @@ namespace DwarfCorp
             if (GatherManager.StockMoneyOrders.Count > 0)
             {
                 var order = GatherManager.StockMoneyOrders[0];
-                if (Faction.HasFreeTreasury(order.Money))
-                {
                     GatherManager.StockMoneyOrders.RemoveAt(0);
                     return new ActWrapperTask(new StockMoneyAct(this, order.Money))
                     {
                         Priority = Task.PriorityType.Medium
                     };
-                }
             }
 
 

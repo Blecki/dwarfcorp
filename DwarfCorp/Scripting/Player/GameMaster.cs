@@ -306,15 +306,12 @@ namespace DwarfCorp
             foreach (CreatureAI creature in Faction.Minions)
             {
                 if (creature.Stats.IsOverQualified)
-                {
                     creature.Creature.AddThought(Thought.ThoughtType.IsOverQualified);
-                }
 
                 var thoughts = creature.Physics.GetComponent<DwarfThoughts>();
 
                 if (thoughts != null)
                     thoughts.Thoughts.RemoveAll(thought => thought.Description.Contains("paid"));
-
 
                 DwarfBux pay = creature.Stats.CurrentLevel.Pay;
                 total += pay;
@@ -491,8 +488,6 @@ namespace DwarfCorp
                     sliceUpTimer.Reset(sliceUpTimer.TargetTimeSeconds * 0.6f);
                 }
             }
-            // Make sure that the faction's money is identical to the money in treasuries.
-            Faction.Economy.CurrentMoney = Faction.Treasurys.Sum(treasury => treasury.Money);
 
             checkFoodTimer.Update(time);
             if (checkFoodTimer.HasTriggered)

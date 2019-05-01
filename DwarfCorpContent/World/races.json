@@ -5,8 +5,8 @@
     "Posessive": "Dwarvish",
     "DiplomacyConversation": "World/dwarf.conv",
     "CreatureTypes": [
-      "Dwarf",
-      "AxeDwarf"
+      "Dwarf Crafter",
+      "Dwarf Soldier"
     ],
     "TradeEnvoys": [ [ "Dwarf Crafter", "Dwarf Soldier", "Dwarf Soldier" ] ],
     "WarParties": [
