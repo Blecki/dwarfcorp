@@ -1,0 +1,74 @@
+{
+  "$id": "1",
+  "Actions": 24596,
+  "AttackMode": "Walking",
+  "Attacks": [
+    {
+      "$id": "2",
+      "DamageAmount": 15.0,
+      "Name": "Slam",
+      "Range": 5.0,
+      "HitNoise": {
+        "$id": "3",
+        "Sounds": [
+          "Audio\\oscar\\sfx_ic_demon_hurt_1",
+          "Audio\\oscar\\sfx_ic_demon_hurt_2",
+          "Audio\\oscar\\sfx_ic_demon_mumble_1"
+        ],
+        "Volume": 1.0,
+        "RandomPitch": true
+      },
+      "HitColor": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "Mode": "Area",
+      "RechargeTimer": {
+        "$id": "4",
+        "TargetTimeSeconds": 2.06139684,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": false,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "Knockback": 2.5,
+      "AnimationAsset": "Effects\\ring",
+      "HitParticles": "dirt_particle",
+      "ProjectileType": "",
+      "LaunchSpeed": 0.0,
+      "HasTriggered": false,
+      "TriggerMode": "Animation",
+      "TriggerFrame": 3,
+      "DiseaseToSpread": null,
+      "ShootLaser": false
+    }
+  ],
+  "Levels": [
+    {
+      "$id": "5",
+      "Index": 0,
+      "Name": "Troll",
+      "Pay": {
+        "$id": "6",
+        "Value": 25.0
+      },
+      "XP": 0,
+      "BaseStats": {
+        "$id": "7",
+        "Name": "",
+        "Dexterity": 3.0,
+        "Constitution": 9.0,
+        "Strength": 8.0,
+        "Wisdom": 5.0,
+        "Charisma": 5.0,
+        "Intelligence": 1.0,
+        "Size": 10.0
+      },
+      "ExtraAttacks": [],
+      "HealingPower": 0
+    }
+  ],
+  "Name": "Troll"
+}

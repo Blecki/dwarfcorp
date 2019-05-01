@@ -118,10 +118,19 @@ namespace DwarfCorp
 
             foreach (var resolvedAssetPath in AssetManager.EnumerateAllFiles(DirectoryPath))
             {
-                var item = LoadJsonFromAbsolutePath<T>(resolvedAssetPath, Context);
-                var name = Name(item);
-                if (!result.ContainsKey(name))
-                    result.Add(name, item);
+                try
+                {
+                    var item = LoadJsonFromAbsolutePath<T>(resolvedAssetPath, Context);
+                    var name = Name(item);
+
+                    if (!result.ContainsKey(name))
+                        result.Add(name, item);
+                }
+                catch (Exception e)
+                {
+                    GameStates.GameState.Game.LogSentryBreadcrumb("AssetManager", String.Format("Could not load json: {0} msg: {1}", resolvedAssetPath, e.Message), SharpRaven.Data.BreadcrumbLevel.Error);
+                    Console.WriteLine("Error loading asset {0}: {1}", resolvedAssetPath, e.Message);
+                }
             }
 
             return new List<T>(result.Values);

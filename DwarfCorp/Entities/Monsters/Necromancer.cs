@@ -9,52 +9,52 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
-    public class Moleman : Creature
+    public class Necromancer : Creature
     {
-        [EntityFactory("Moleman")]
+        [EntityFactory("Necromancer")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Moleman(
-                new CreatureStats(SharedClass, 0),
-                "Molemen",
+            return new Necromancer(
+                new CreatureStats(JobLibrary.GetClass("Necromancer"), 0),
+                "Undead",
                 Manager.World.PlanService,
-                Manager.World.Factions.Factions["Molemen"],
+                Manager.World.Factions.Factions["Undead"],
                 Manager,
-                "Moleman",
+                "Necromancer",
                 Position).Physics;
         }
 
-        [EntityFactory("Player Moleman")]
+        [EntityFactory("Player Necromancer")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Moleman(
-                new CreatureStats(SharedClass, 0),
+            return new Necromancer(
+                new CreatureStats(JobLibrary.GetClass("Necromancer"), 0),
                 Manager.World.PlayerFaction.Name, Manager.World.PlanService, Manager.World.PlayerFaction,
                 Manager,
-                "Moleman",
+                "Necromancer",
                 Position).Physics;
         }
 
-        private static MolemanClass SharedClass = new MolemanClass(true);
-        
-        public Moleman()
+        public Necromancer()
         {
             
         }
 
-        public Moleman(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
+        public Necromancer(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
-            Physics = new Physics(manager, "Moleman", Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            Physics = new Physics(manager, "Necromancer", Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             Physics.AddChild(this);
 
+            HasMeat = false;
+           
             Physics.Orientation = Physics.OrientMode.RotateY;
             CreateCosmeticChildren(Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
-            Physics.AddChild(new CreatureAI(Manager, "Moleman AI", Sensors));
+            Physics.AddChild(new NecromancerAI(Manager, "Necromancer AI", Sensors));
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
@@ -63,9 +63,8 @@ namespace DwarfCorp
             Physics.Tags.Add("Necromancer");
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
-
-            Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
-            //Stats.LastName = TextGenerator.GenerateRandom("$goblinfamily");
+            
+            Stats.FullName = TextGenerator.GenerateRandom("$title") + " " + TextGenerator.ToTitleCase(TextGenerator.GenerateRandom("$names_undead"));
             Stats.BaseSize = 4;
             Stats.CanSleep = false;
             Stats.CanEat = false;
@@ -73,28 +72,29 @@ namespace DwarfCorp
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             AI.Movement.SetCan(MoveType.Dig, true);
-            Species = "Moleman";
+            Species = "Necromancer";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = SharedClass;
-            CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Moleman.moleman_animations, "Moleman"), manager);
+            Stats.CurrentClass = JobLibrary.GetClass("Necromancer");
+            CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Skeleton.necro_animations, "Necromancer"), manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 0, 1))).SetFlag(Flag.ShouldSerialize, false);
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1))).SetFlag(Flag.ShouldSerialize, false);
 
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
-                ContentPaths.Audio.Oscar.sfx_ic_moleman_hurt_1,
-                ContentPaths.Audio.Oscar.sfx_ic_moleman_hurt_2
+                ContentPaths.Audio.Oscar.sfx_ic_necromancer_angered,
+                ContentPaths.Audio.skel1,
+                ContentPaths.Audio.skel2
             };
 
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger("sand_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_moleman_death
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_necromancer_angered
             }).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);

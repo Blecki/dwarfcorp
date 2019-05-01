@@ -1,4 +1,4 @@
-﻿// Goblin.cs
+// Skeleton.cs
 // 
 //  Modified MIT License (MIT)
 //  
@@ -41,80 +41,78 @@ using Microsoft.Xna.Framework.Content;
 
 namespace DwarfCorp
 {
-    public class Troll : Creature
+    public class Skeleton : Creature
     {
-        [EntityFactory("Troll")]
+        [EntityFactory("Skeleton")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Troll(
-                new CreatureStats(SharedClass, 0),
-                "Goblins",
+            return new Skeleton(
+                new CreatureStats(JobLibrary.GetClass("Skeleton"), 0),
+                "Undead",
                 Manager.World.PlanService,
-                Manager.World.Factions.Factions["Goblins"],
+                Manager.World.Factions.Factions["Undead"],
                 Manager,
-                "Troll",
+                "Skeleton",
                 Position).Physics;
         }
 
-        private static TrollClass SharedClass = new TrollClass();
-
-        public Troll()
+        public Skeleton()
         {
-
+            
         }
-        public Troll(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
+
+        public Skeleton(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
-            Physics = new Physics(manager, "Troll", Matrix.CreateTranslation(position), new Vector3(0.5f, 0.9f, 0.5f), new Vector3(0.0f, 0.0f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            Physics = new Physics(manager, "Skeleton", Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             Physics.AddChild(this);
 
+            HasMeat = false;
             Physics.Orientation = Physics.OrientMode.RotateY;
-            CreateCosmeticChildren(Manager);
-
-            HasMeat = true;
-            HasBones = true;
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
-
-            Physics.AddChild(new CreatureAI(Manager, "Troll AI", Sensors));
+            Physics.AddChild(new CreatureAI(Manager, "Skeleton AI", Sensors));
 
             Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
-            Physics.Tags.Add("Troll");
+            Physics.Tags.Add("Skeleton");
 
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
-            Stats.FullName = TextGenerator.GenerateRandom("$goblinname");
+            Stats.FullName = TextGenerator.ToTitleCase(TextGenerator.GenerateRandom("$names_undead"));
+            Stats.BaseSize = 3;
             AI.Movement.CanClimbWalls = true;
-            AI.Movement.CanSwim = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
-            AI.Movement.SetSpeed(MoveType.Swim, 0.15f);
             AI.Movement.SetCan(MoveType.Dig, true);
-            Species = "Troll";
+            Species = "Skeleton";
+
+            CreateCosmeticChildren(Manager);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = SharedClass;
-            CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Troll.troll_animation, "Troll"), manager);
+            Stats.CurrentClass = JobLibrary.GetClass("Skeleton");
+
+            CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Skeleton.skeleton_animation, "Skeleton"), Manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 3))).SetFlag(Flag.ShouldSerialize, false);
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1))).SetFlag(Flag.ShouldSerialize, false);
 
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
             {
-                ContentPaths.Audio.Oscar.sfx_ic_goblin_angered,
+                ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_1,
+                ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_2,
             };
 
-            Physics.AddChild(new ParticleTrigger("blood_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger("sand_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
-                TriggerAmount = 3,
-                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_demon_hurt_1,
+                TriggerAmount = 5,
+                SoundToPlay = ContentPaths.Audio.Oscar.sfx_ic_necromancer_skeleton_hurt_1
             }).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);

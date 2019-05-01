@@ -10,29 +10,27 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class SnowGolem : Creature
+    public class MudGolem : Creature
     {
-        [EntityFactory("SnowGolem")]
-        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        [EntityFactory("MudGolem")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new SnowGolem(
-                new CreatureStats(SharedClass, 0),
+            return new MudGolem(
+                new CreatureStats(JobLibrary.GetClass("MudGolem"), 0),
                 "Evil",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Evil"],
                 Manager,
-                "Snow Golem",
+                "Mud Golem",
                 Position);
         }
 
-        private static SnowGolemClass SharedClass = new SnowGolemClass();
-
-        public SnowGolem()
+        public MudGolem()
         {
-
+            
         }
 
-        public SnowGolem(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
+        public MudGolem(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
             Physics = new Physics(Manager, name, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
@@ -42,7 +40,6 @@ namespace DwarfCorp
             HasMeat = false;
             HasBones = false;
             Physics.Orientation = Physics.OrientMode.RotateY;
-
             CreateCosmeticChildren(Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
@@ -54,7 +51,7 @@ namespace DwarfCorp
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
             var gems = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.Gem);
-            for (int i = 0; i < 16; i++)
+            for (int i = 0; i < 16;  i++)
             {
                 int num = MathFunctions.RandInt(1, 32 - i);
                 Inventory.AddResource(new ResourceAmount(Datastructures.SelectRandom(gems), num));
@@ -69,14 +66,14 @@ namespace DwarfCorp
             Resistances[DamageType.Fire] = 5;
             Resistances[DamageType.Acid] = 5;
             Resistances[DamageType.Cold] = 5;
-            Species = "Snow Golem";
+            Species = "Mud Golem";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = SharedClass;
-            CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Golems.snow_golem, "Snowgolem"), manager);
-            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 3))).SetFlag(Flag.ShouldSerialize, false);
+            Stats.CurrentClass = JobLibrary.GetClass("MudGolem");
+            CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Golems.mud_golem, "Mudgolem"), manager);
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 3))).SetFlag(Flag.ShouldSerialize, false);
 
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>
@@ -85,7 +82,7 @@ namespace DwarfCorp
                 ContentPaths.Audio.gravel,
             };
 
-            Physics.AddChild(new ParticleTrigger("snow_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
+            Physics.AddChild(new ParticleTrigger("dirt_particle", Manager, "Death Gibs", Matrix.Identity, Vector3.One, Vector3.Zero)
             {
                 TriggerOnDeath = true,
                 TriggerAmount = 5,
