@@ -16,7 +16,7 @@ namespace DwarfCorp
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new MudGolem(
-                new CreatureStats(JobLibrary.GetClass("MudGolem"), 0),
+                new CreatureStats(CreatureClassLibrary.GetClass("MudGolem"), 0),
                 "Evil",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Evil"],
@@ -71,7 +71,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = JobLibrary.GetClass("MudGolem");
+            Stats.CurrentClass = CreatureClassLibrary.GetClass("MudGolem");
             CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Golems.mud_golem, "Mudgolem"), manager);
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 3))).SetFlag(Flag.ShouldSerialize, false);
 

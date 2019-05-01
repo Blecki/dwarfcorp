@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
-    public class EmployeeClass 
+    public class CreatureClass 
     {
         public class Level
         {
@@ -26,6 +26,7 @@ namespace DwarfCorp
         public string Name { get; set; }
         public Task.TaskCategory Actions = Task.TaskCategory.None;
         public CharacterMode AttackMode;
+        public bool PlayerClass = false;
 
         // Todo: Should just include name of attack animation. Kinda what the AttackMode is.
 
@@ -34,32 +35,8 @@ namespace DwarfCorp
             return (Actions & TaskCategory) == TaskCategory;
         }
 
-        [JsonIgnore]
-        public static Dictionary<string, EmployeeClass> Classes { get; set; }
-
-        protected static bool staticClassInitialized = false;
-        protected bool staticsInitiailized = false;
-
-        public EmployeeClass()
+        public CreatureClass()
         {
-            if (!staticClassInitialized)
-            {
-                InitializeClassStatics();
-            }
-        }
-
-        protected virtual void InitializeStatics()
-        {
-            staticsInitiailized = true;
-        }
-
-        protected static void InitializeClassStatics()
-        {
-            if (!staticClassInitialized)
-            {
-                Classes = new Dictionary<string, EmployeeClass>();
-                staticClassInitialized = true;
-            }
         }
     }
 }

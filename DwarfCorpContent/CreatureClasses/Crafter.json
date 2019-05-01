@@ -1,5 +1,6 @@
 {
   "Name": "Crafter",
+  "PlayerClass": true,
   "Actions": 114576,
   "AttackMode": "Attacking",
   "Attacks": [

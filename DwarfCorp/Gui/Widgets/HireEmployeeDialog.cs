@@ -13,10 +13,11 @@ namespace DwarfCorp.Gui.Widgets
         public Faction Faction;
         public CompanyInformation Company;
         private Button HireButton;
+
         public Applicant GenerateApplicant(CompanyInformation info, String type)
         {
             Applicant applicant = new Applicant();
-            applicant.GenerateRandom(JobLibrary.Classes[type], 0, info);
+            applicant.GenerateRandom(CreatureClassLibrary.GetClass(type), 0, info);
             return applicant;
         }
 
@@ -33,11 +34,13 @@ namespace DwarfCorp.Gui.Widgets
             int h = Math.Min(Math.Max(2*(Root.RenderData.VirtualScreen.Height/3), 600), 700);
             Rect = new Rectangle(Root.RenderData.VirtualScreen.Center.X - w / 2, Root.RenderData.VirtualScreen.Center.Y - h/2, w, h);
 
+            var playerClasses = CreatureClassLibrary.EnumerateClasses().Where(c => c.PlayerClass).ToList();
+
             var left = AddChild(new Widget()
             {
                 AutoLayout = AutoLayout.DockTop,
                 Padding = new Margin(5, 5, 32, 32),
-                MinimumSize = new Point(32 * 2 * JobLibrary.Classes.Count, 48 * 2 + 40)
+                MinimumSize = new Point(32 * 2 * playerClasses.Count, 48 * 2 + 40)
             });
 
             var right = AddChild(new Widget()
@@ -68,18 +71,20 @@ namespace DwarfCorp.Gui.Widgets
             });
 
 
-            foreach (var job in JobLibrary.Classes)
+            foreach (var job in playerClasses)
             {
-                var newJob = job.Key;
+                var newJob = job.Name;
                 var frame = left.AddChild(new Widget()
                 {
                     MinimumSize = new Point(32*2, 48*2 + 15),
                     AutoLayout = AutoLayout.DockLeft
                 });
-                var idx = EmployeePanel.GetIconIndex(job.Value.Name);
+
+                var idx = EmployeePanel.GetIconIndex(job.Name);
+
                 frame.AddChild(new ImageButton()
                 {
-                    Tooltip = "Click to review applications for " + job.Value.Name,
+                    Tooltip = "Click to review applications for " + job.Name,
                     AutoLayout = AutoLayout.DockTop,
                     TextHorizontalAlign = HorizontalAlign.Center,
                     TextVerticalAlign = VerticalAlign.Bottom,
@@ -94,9 +99,10 @@ namespace DwarfCorp.Gui.Widgets
                     MinimumSize = new Point(32 * 2, 48 * 2),
                     MaximumSize = new Point(32 * 2, 48 * 2)
                 });
+
                 frame.AddChild(new Widget()
                 {
-                    Text = job.Value.Name,
+                    Text = job.Name,
                     MinimumSize = new Point(0, 15),
                     TextColor = Color.Black.ToVector4(),
                     Font = "font8",

@@ -14,14 +14,14 @@ namespace DwarfCorp
     public class Dwarf : Creature
     {
         [JsonProperty]
-        private EmployeeClass SavedDwarfEmployeeClass = null;
+        private CreatureClass SavedDwarfEmployeeClass = null;
 
         public Dwarf()
         {
             
         }
 
-        public Dwarf(ComponentManager manager, CreatureStats stats, string allies, PlanService planService, Faction faction,  string name, EmployeeClass workerClass, Vector3 position) :
+        public Dwarf(ComponentManager manager, CreatureStats stats, string allies, PlanService planService, Faction faction,  string name, CreatureClass workerClass, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
             Physics = new Physics(manager, "Dwarf", Matrix.CreateTranslation(position),
@@ -148,7 +148,7 @@ namespace DwarfCorp
             base.CreateCosmeticChildren(manager);
         }
 
-        protected void CreateDwarfSprite(EmployeeClass employeeClass, ComponentManager manager)
+        protected void CreateDwarfSprite(CreatureClass employeeClass, ComponentManager manager)
         {
             if (Physics == null)
             {

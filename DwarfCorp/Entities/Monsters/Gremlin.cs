@@ -15,7 +15,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Gremlin(
-                new CreatureStats(JobLibrary.GetClass("Gremlin"), 0),
+                new CreatureStats(CreatureClassLibrary.GetClass("Gremlin"), 0),
                 "Goblins",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Goblins"],
@@ -70,7 +70,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = JobLibrary.GetClass("Gremlin");
+            Stats.CurrentClass = CreatureClassLibrary.GetClass("Gremlin");
 
             CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Gremlin.gremlin_animations, "Gremlin"), manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));

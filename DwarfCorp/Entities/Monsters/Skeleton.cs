@@ -47,7 +47,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Skeleton(
-                new CreatureStats(JobLibrary.GetClass("Skeleton"), 0),
+                new CreatureStats(CreatureClassLibrary.GetClass("Skeleton"), 0),
                 "Undead",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Undead"],
@@ -95,7 +95,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = JobLibrary.GetClass("Skeleton");
+            Stats.CurrentClass = CreatureClassLibrary.GetClass("Skeleton");
 
             CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Skeleton.skeleton_animation, "Skeleton"), Manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));

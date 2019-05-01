@@ -283,12 +283,12 @@ namespace DwarfCorp
             base.Update(gameTime, chunks, camera);
         }
 
-        private static EmployeeClass SharedClass = new EmployeeClass()
+        private static CreatureClass SharedClass = new CreatureClass()
         {
             Name = "Giant Snake",
-                Levels = new List<EmployeeClass.Level>()
+                Levels = new List<CreatureClass.Level>()
                 {
-                    new EmployeeClass.Level()
+                    new CreatureClass.Level()
                     {
                         Name = "Giant Snake",
                         Index = 0

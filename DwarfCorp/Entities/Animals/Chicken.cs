@@ -148,24 +148,24 @@ namespace DwarfCorp
             base.CreateCosmeticChildren(manager);
         }
 
-        private static Dictionary<String, EmployeeClass> SharedClasses = new Dictionary<string, EmployeeClass>
+        private static Dictionary<String, CreatureClass> SharedClasses = new Dictionary<string, CreatureClass>
         {
-            { "Chicken", new EmployeeClass()
+            { "Chicken", new CreatureClass()
                 {
                     Name = "Chicken",
-                    Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Chicken" } }
+                    Levels = new List<CreatureClass.Level>() { new CreatureClass.Level() { Index = 0, Name = "Chicken" } }
                 }
             },
-            { "Turkey", new EmployeeClass()
+            { "Turkey", new CreatureClass()
                 {
                     Name = "Turkey",
-                    Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Turkey" } }
+                    Levels = new List<CreatureClass.Level>() { new CreatureClass.Level() { Index = 0, Name = "Turkey" } }
                 }
             },
-            { "Penguin", new EmployeeClass()
+            { "Penguin", new CreatureClass()
                 {
                     Name = "Penguin",
-                    Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Penguin" } }
+                    Levels = new List<CreatureClass.Level>() { new CreatureClass.Level() { Index = 0, Name = "Penguin" } }
                 }
             },
         };

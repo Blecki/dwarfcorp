@@ -193,7 +193,6 @@ namespace DwarfCorp
                     if (PlanService != null)
                         PlanService.Restart();
 
-                    JobLibrary.Initialize();
                     MonsterSpawner = new MonsterSpawner(this);
                     EntityFactory.Initialize(this);
                 }), () => { actionComplete = true; return true; });

@@ -126,10 +126,10 @@ namespace DwarfCorp
             base.CreateCosmeticChildren(manager);
         }
 
-        private static EmployeeClass SharedClass = new EmployeeClass()
+        private static CreatureClass SharedClass = new CreatureClass()
         {
             Name = "Bird",
-            Levels = new List<EmployeeClass.Level>() { new EmployeeClass.Level() { Index = 0, Name = "Bird" } }
+            Levels = new List<CreatureClass.Level>() { new CreatureClass.Level() { Index = 0, Name = "Bird" } }
         };
     }
 }

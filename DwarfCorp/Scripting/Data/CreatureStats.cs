@@ -134,7 +134,7 @@ namespace DwarfCorp
         public int LevelIndex { get; set; }
 
         [JsonIgnore]
-        public EmployeeClass CurrentClass { get; set; }
+        public CreatureClass CurrentClass { get; set; }
         public Task.TaskCategory AllowedTasks = Task.TaskCategory.None;
 
         public bool IsMigratory { get; set; }
@@ -145,7 +145,7 @@ namespace DwarfCorp
         }
 
         [JsonIgnore]
-        public EmployeeClass.Level CurrentLevel { get { return CurrentClass.Levels[LevelIndex]; } }
+        public CreatureClass.Level CurrentLevel { get { return CurrentClass.Levels[LevelIndex]; } }
 
         private int xp = 0;
         public int XP
@@ -190,7 +190,7 @@ namespace DwarfCorp
             AddStatAdjustment(new StatAdjustment { Name = "base stats" });
         }
 
-        public CreatureStats(EmployeeClass creatureClass, int level)
+        public CreatureStats(CreatureClass creatureClass, int level)
         {
             CanSleep = false;
             CanEat = false;

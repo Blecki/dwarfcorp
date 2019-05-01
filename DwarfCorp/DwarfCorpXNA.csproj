@@ -782,8 +782,8 @@
     <Compile Include="Scripting\Act.cs" />
     <Compile Include="Scripting\BehaviorExtensions.cs" />
     <Compile Include="Scripting\Classes\Applicant.cs" />
-    <Compile Include="Scripting\Classes\EmployeeClass.cs" />
-    <Compile Include="Scripting\Classes\JobLibrary.cs" />
+    <Compile Include="Scripting\Classes\CreatureClass.cs" />
+    <Compile Include="Scripting\Classes\CreatureClassLibrary.cs" />
     <Compile Include="Scripting\Combat\Alliance.cs" />
     <Compile Include="Scripting\Combat\Attack.cs" />
     <Compile Include="Scripting\CompoundActs\BuildRoomAct.cs" />

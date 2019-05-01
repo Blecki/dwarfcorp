@@ -1,5 +1,6 @@
 {
   "Name": "Wizard",
+  "PlayerClass": true,
   "Actions": 8272,
   "AttackMode": "Attacking01",
   "Attacks": [

@@ -15,7 +15,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Demon(
-                new CreatureStats(JobLibrary.GetClass("Demon"), 0),
+                new CreatureStats(CreatureClassLibrary.GetClass("Demon"), 0),
                 "Demon",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Demon"],
@@ -28,7 +28,7 @@ namespace DwarfCorp
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Demon(
-                new CreatureStats(JobLibrary.GetClass("Demon"), 0),
+                new CreatureStats(CreatureClassLibrary.GetClass("Demon"), 0),
                 Manager.World.PlayerFaction.Name, Manager.World.PlanService, Manager.World.PlayerFaction,
                 Manager,
                 "Demon",
@@ -68,7 +68,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = JobLibrary.GetClass("Demon");
+            Stats.CurrentClass = CreatureClassLibrary.GetClass("Demon");
             CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Demon.demon_animations, "Demon"), manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 1))).SetFlag(Flag.ShouldSerialize, false);

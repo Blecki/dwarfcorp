@@ -557,8 +557,6 @@
     <Compile Include=".\Scripting\Adventure\Adventure.cs" />
     <Compile Include=".\Scripting\BehaviorExtensions.cs" />
     <Compile Include=".\Scripting\Classes\Applicant.cs" />
-    <Compile Include=".\Scripting\Classes\EmployeeClass.cs" />
-    <Compile Include=".\Scripting\Classes\JobLibrary.cs" />
     <Compile Include=".\Scripting\Combat\Alliance.cs" />
     <Compile Include=".\Scripting\Combat\Attack.cs" />
     <Compile Include=".\Scripting\CompoundActs\BuildRoomAct.cs" />
@@ -773,6 +771,8 @@
     <Compile Include="Gui\Widgets\Minimap\MinimapCell.cs" />
     <Compile Include="Gui\Widgets\Minimap\MinimapFrame.cs" />
     <Compile Include="Gui\Widgets\Minimap\MinimapRenderer.cs" />
+    <Compile Include="Scripting\Classes\CreatureClass.cs" />
+    <Compile Include="Scripting\Classes\CreatureClassLibrary.cs" />
     <Compile Include="Voxels\ChunkManager-Data.cs" />
     <Compile Include=".\Voxels\ChunkManager.cs" />
     <Compile Include=".\Voxels\ChunkRenderer.cs" />

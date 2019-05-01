@@ -1,5 +1,6 @@
 {
   "Name": "Miner",
+  "PlayerClass": true,
   "Actions": 112662,
   "AttackMode": "Attacking",
   "Attacks": [

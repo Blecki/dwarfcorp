@@ -42,8 +42,8 @@ namespace DwarfCorp
     [JsonObject(IsReference = true)]
     public class Applicant
     {
-        public EmployeeClass Class { get; set; }
-        public EmployeeClass.Level Level { get; set; }
+        public CreatureClass Class { get; set; }
+        public CreatureClass.Level Level { get; set; }
         public string Name { get; set; }
         public string CoverLetter { get; set; }
         public string FormerProfession { get; set; }
@@ -68,7 +68,7 @@ namespace DwarfCorp
 
         }
 
-        public void GenerateRandom(EmployeeClass employeeClass, int level, CompanyInformation info)
+        public void GenerateRandom(CreatureClass employeeClass, int level, CompanyInformation info)
         {
             Class = employeeClass;
             Level = Class.Levels[level];

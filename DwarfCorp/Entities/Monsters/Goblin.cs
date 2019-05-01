@@ -15,7 +15,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Goblin(
-                new CreatureStats(JobLibrary.GetClass("Goblin"), 0),
+                new CreatureStats(CreatureClassLibrary.GetClass("Goblin"), 0),
                 "Goblins",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Goblins"],
@@ -28,7 +28,7 @@ namespace DwarfCorp
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Goblin(
-                new CreatureStats(JobLibrary.GetClass("Goblin"), 0),
+                new CreatureStats(CreatureClassLibrary.GetClass("Goblin"), 0),
                Manager.World.PlayerFaction.Name, Manager.World.PlanService, Manager.World.PlayerFaction,
                 Manager,
                 "Goblin",
@@ -78,7 +78,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = JobLibrary.GetClass("Goblin");
+            Stats.CurrentClass = CreatureClassLibrary.GetClass("Goblin");
 
             CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Goblin.Sprites.goblin_animations, "Goblin"), manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));

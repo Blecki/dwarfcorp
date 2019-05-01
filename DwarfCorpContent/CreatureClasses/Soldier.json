@@ -1,5 +1,6 @@
 {
   "Name": "Soldier",
+  "PlayerClass": true,
   "Actions": 24596,
   "AttackMode": "Attacking",
   "Attacks": [
