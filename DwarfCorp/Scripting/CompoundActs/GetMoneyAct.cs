@@ -162,7 +162,7 @@ namespace DwarfCorp
 
                 Tree = new WhileLoop(new Sequence(new Wrap(() => GetNextTreasury()),
                                                   new GoToZoneAct(Agent, "Treasury"),
-                                                  new StashMoneyAct(Agent, "MoneyNeeded", "Treasury")),
+                                                  new StashMoneyAct(Agent, "MoneyNeeded", "Treasury")), // Todo: Obliviate need for treasury.
                                      new Wrap(() => ShouldContinue())
                     );
 

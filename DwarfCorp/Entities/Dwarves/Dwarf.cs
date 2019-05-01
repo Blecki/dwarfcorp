@@ -13,7 +13,7 @@ namespace DwarfCorp
 {
     public class Dwarf : Creature
     {
-        [JsonProperty]
+        [JsonProperty] // Dwarves need to save the class because, unlike every single other creature, the class isn't implied by their type.
         private CreatureClass SavedDwarfEmployeeClass = null;
 
         public Dwarf()

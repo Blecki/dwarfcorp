@@ -68,6 +68,7 @@ namespace DwarfCorp
         {
             Agent.Blackboard.SetData(MoneyName, value);
         }
+
         public StashMoneyAct()
         {
 
