@@ -108,7 +108,7 @@ namespace DwarfCorp.Gui.Widgets
             {
                 numrows = 0;
                 InfoWidget.Clear();
-                AddRow("Liquid assets:", Faction.Economy.CurrentMoney.ToString());
+                AddRow("Liquid assets:", Faction.Economy.Funds.ToString());
                 var resources = Faction.ListResourcesInStockpilesPlusMinions();
                 AddRow("Material assets:", String.Format("{0} goods valued at ${1}", resources.Values.Select(r => r.First.Count + r.Second.Count).Sum(),
                     resources.Values.Select(r =>
@@ -118,7 +118,7 @@ namespace DwarfCorp.Gui.Widgets
                     }).Sum()));
                 var payPerDay = (DwarfBux)Faction.Minions.Select(m => m.Stats.CurrentLevel.Pay.Value).Sum();
                 AddRow("Employees:", String.Format("{0} at {1} per day.", Faction.Minions.Count, payPerDay));
-                AddRow("Runway:", String.Format("{0} day(s).\n", (int)(Faction.Economy.CurrentMoney / Math.Max(payPerDay, (decimal)0.01))));
+                AddRow("Runway:", String.Format("{0} day(s).\n", (int)(Faction.Economy.Funds / Math.Max(payPerDay, (decimal)0.01))));
                 var freeStockPile = Faction.ComputeRemainingStockpileSpace();
                 var totalStockPile = Math.Max(Faction.ComputeTotalStockpileSpace(), 1);
                 AddRow("Stockpile space:", String.Format("{0} used of {1} ({2:00.00}%)\n", totalStockPile - freeStockPile, totalStockPile, (float)(totalStockPile - freeStockPile) / (float)totalStockPile * 100.0f));

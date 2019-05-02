@@ -139,7 +139,7 @@ namespace DwarfCorp.Gui.Widgets
                             return;
                         }
 #endif
-                        if (GameSettings.Default.SigningBonus > Faction.Economy.CurrentMoney)
+                        if (GameSettings.Default.SigningBonus > Faction.Economy.Funds)
                         {
                             Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Popup
                             {

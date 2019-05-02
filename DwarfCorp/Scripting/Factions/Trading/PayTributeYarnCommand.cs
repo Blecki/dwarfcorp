@@ -21,7 +21,7 @@ namespace DwarfCorp.Scripting.Factions.Trading
             }
 
             envoy.TributeDemanded = (decimal)0.0f;
-            playerFaction.AddMoney(-Math.Min(world.PlayerFaction.Economy.CurrentMoney,
+            playerFaction.AddMoney(-Math.Min(world.PlayerFaction.Economy.Funds,
                 envoy.TributeDemanded));
             Memory.SetValue("$envoy_tribute_demanded", new Yarn.Value(0.0f));
             Memory.SetValue("$envoy_demands_tribute", new Yarn.Value(false));

@@ -60,7 +60,7 @@ namespace DwarfCorp
             if (StealFromPlayerProbability > 0 && MathFunctions.RandEvent(StealFromPlayerProbability))
             {
                 bool stealMoney = MathFunctions.RandEvent(0.5f);
-                if (World.PlayerFaction.Economy.CurrentMoney > 0 && stealMoney)
+                if (World.PlayerFaction.Economy.Funds > 0 && stealMoney)
                     AssignTask(new ActWrapperTask(new GetMoneyAct(this, 100m, World.PlayerFaction)) { Name = "Steal money", Priority = Task.PriorityType.High });
                 else
                 {

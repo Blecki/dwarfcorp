@@ -316,7 +316,7 @@ namespace DwarfCorp
                 DwarfBux pay = creature.Stats.CurrentLevel.Pay;
                 total += pay;
 
-                if (total >= Faction.Economy.CurrentMoney)
+                if (total >= Faction.Economy.Funds)
                 {
                     if (!noMoney)
                     {

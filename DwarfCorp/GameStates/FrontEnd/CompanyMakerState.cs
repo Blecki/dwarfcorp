@@ -144,7 +144,7 @@ namespace DwarfCorp.GameStates
                 Border = "border-button",
                 OnClick = (sender, args) =>
                     {
-                        var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.company_exploration);
+                        var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.company);
                         NameField.Text = TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
                     }
             });

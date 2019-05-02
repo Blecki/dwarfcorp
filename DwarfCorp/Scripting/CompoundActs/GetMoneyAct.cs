@@ -50,7 +50,7 @@ namespace DwarfCorp
                 yield break;
             }
 
-            if (Faction.Economy.CurrentMoney < needed)
+            if (Faction.Economy.Funds < needed)
             {
                 Agent.World.MakeAnnouncement(String.Format("Could not pay {0}, not enough money!", Agent.Stats.FullName));
                 Agent.SetMessage("Failed to get money, not enough in treasury.");
@@ -94,7 +94,7 @@ namespace DwarfCorp
             {
                 Agent.Blackboard.SetData<DwarfBux>("MoneyNeeded", Money);
 
-                Tree = new WhileLoop(new Sequence(new StashMoneyAct(Agent, "MoneyNeeded")), 
+                Tree = new WhileLoop(new Sequence(new CollectPay(Agent, "MoneyNeeded")), 
                                      new Wrap(() => ShouldContinue())
                     );
 

@@ -1,9 +1,0 @@
-<firstname>'s <military>
-<military> of <noun>s
-<lastname>'s <military>
-<color> <material> <military>
-<adjective> <military>
-<material> <military>
-<place> <military>
-<firstname> <lastname>
-<adjective> <military>

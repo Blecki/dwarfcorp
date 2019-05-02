@@ -311,7 +311,7 @@ namespace DwarfCorp
 
         public Company PlayerCompany
         {
-            get { return Master.Faction.Economy.Company; }
+            get { return Master.Faction.Economy; }
         }
 
         public Faction PlayerFaction
@@ -321,7 +321,7 @@ namespace DwarfCorp
 
         public DesignationDrawer DesignationDrawer = new DesignationDrawer();
 
-        public Economy PlayerEconomy
+        public Company PlayerEconomy
         {
             get { return Master.Faction.Economy; }
         }
@@ -525,7 +525,7 @@ namespace DwarfCorp
 
         private void TrackStats()
         {
-            LogStat("Money", (float)(decimal)PlayerFaction.Economy.CurrentMoney);
+            LogStat("Money", (float)(decimal)PlayerFaction.Economy.Funds);
 
             var resources = PlayerFaction.ListResourcesInStockpilesPlusMinions();
             LogStat("Resources", resources.Values.Select(r => r.First.Count + r.Second.Count).Sum());

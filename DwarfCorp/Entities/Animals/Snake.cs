@@ -185,11 +185,11 @@ namespace DwarfCorp
 
                 if (HasBones)
                 {
-                    String type = Name + " " + ResourceType.Bones;
+                    String type = Name + " Bone";
 
                     if (!ResourceLibrary.Resources.ContainsKey(type))
                     {
-                        ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceType.Bones])
+                        ResourceLibrary.Add(new Resource(ResourceLibrary.Resources["Bone"])
                         {
                             Name = type,
                             ShortName = type

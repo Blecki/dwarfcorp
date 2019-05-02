@@ -99,7 +99,7 @@ namespace DwarfCorp.Trade
         public Race TraderRace { get { return Faction.Race; } }
         public Faction TraderFaction { get { return Faction; } }
         public int AvailableSpace { get { return Faction.ComputeRemainingStockpileSpace(); } }
-        public DwarfBux Money { get { return Faction.Economy.CurrentMoney; } }
+        public DwarfBux Money { get { return Faction.Economy.Funds; } }
         public List<ResourceAmount> Resources { get { return Faction.ListResources().Where(r => 
             ResourceLibrary.GetResourceByName(r.Value.Type).MoneyValue > 0).Select(r => r.Value).ToList(); } }
 

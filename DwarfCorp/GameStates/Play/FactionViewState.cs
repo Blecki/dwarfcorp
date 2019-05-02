@@ -317,7 +317,7 @@ namespace DwarfCorp.GameStates
             var TradeEntity = new ExpeditionTradeEntity()
             {
                 Faction = this.Faction,
-                AvailableMoney = this.Faction.Economy.CurrentMoney,
+                AvailableMoney = this.Faction.Economy.Funds,
                 AvailableResources = StayingResources,
                 Space = 9999
             };
@@ -336,7 +336,7 @@ namespace DwarfCorp.GameStates
                 
             }) as ResourceColumns;
 
-            columns.Reconstruct(StayingResources, new List<ResourceAmount>(), (int)Faction.Economy.CurrentMoney);
+            columns.Reconstruct(StayingResources, new List<ResourceAmount>(), (int)Faction.Economy.Funds);
 
             AddChild(new Button()
             {

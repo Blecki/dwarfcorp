@@ -7,11 +7,11 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class PutMoneyInZoneAct : CreatureAct
+    public class DepositMoney : CreatureAct
     {
         public DwarfBux Money { get; set; }
 
-        public PutMoneyInZoneAct(CreatureAI agent, DwarfBux money) :
+        public DepositMoney(CreatureAI agent, DwarfBux money) :
             base(agent)
         {
             Money = money;

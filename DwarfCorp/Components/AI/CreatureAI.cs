@@ -947,9 +947,9 @@ namespace DwarfCorp
 
             if (Faction == World.PlayerFaction && NumDaysNotPaid > 0)
             {
-                if (Faction.Economy.CurrentMoney >= Stats.CurrentLevel.Pay)
+                if (Faction.Economy.Funds >= Stats.CurrentLevel.Pay)
                 {
-                    var task = new ActWrapperTask(new GetMoneyAct(this, Math.Min(Stats.CurrentLevel.Pay * NumDaysNotPaid, Faction.Economy.CurrentMoney)) { IncrementDays = false })
+                    var task = new ActWrapperTask(new GetMoneyAct(this, Math.Min(Stats.CurrentLevel.Pay * NumDaysNotPaid, Faction.Economy.Funds)) { IncrementDays = false })
                     { AutoRetry = true, Name = "Get paid.", Priority = Task.PriorityType.High };
                     if (!HasTaskWithName(task))
                     {
@@ -1550,7 +1550,7 @@ namespace DwarfCorp
             cMem.SetValue("$injuries", new Yarn.Value(injuries));
             cMem.SetValue("$employee_pay", new Yarn.Value((float)(decimal)Employee.Stats.CurrentLevel.Pay));
             cMem.SetValue("$employee_bonus", new Yarn.Value(4 * (float)(decimal)Employee.Stats.CurrentLevel.Pay));
-            cMem.SetValue("$company_money", new Yarn.Value((float)(decimal)Employee.Faction.Economy.CurrentMoney));
+            cMem.SetValue("$company_money", new Yarn.Value((float)(decimal)Employee.Faction.Economy.Funds));
             cMem.SetValue("$is_on_fire", new Yarn.Value(Employee.Physics.GetComponent<Flammable>().IsOnFire));
 
             var state = new YarnState(World, ContentPaths.employee_conversation, "Start", cMem);

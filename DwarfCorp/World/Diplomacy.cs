@@ -343,7 +343,7 @@ namespace DwarfCorp
             {
                 if (natives.Economy == null)
                 {
-                    natives.Economy = new Economy(natives, 1000.0m, World, new CompanyInformation()
+                    natives.Economy = new Company(natives, 1000.0m, new CompanyInformation()
                     {
                         Name = natives.Name
                     });
@@ -352,7 +352,7 @@ namespace DwarfCorp
                 foreach (CreatureAI creature in envoy.Creatures)
                 {
                     creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
-                    creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information));
+                    creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Information));
                 }
             }
             else
@@ -372,7 +372,7 @@ namespace DwarfCorp
                 {
                     if (natives.Economy == null)
                     {
-                        natives.Economy = new Economy(natives, 1000.0m, World, new CompanyInformation()
+                        natives.Economy = new Company(natives, 1000.0m, new CompanyInformation()
                         {
                             Name = natives.Name
                         });
@@ -381,7 +381,7 @@ namespace DwarfCorp
                     foreach (CreatureAI creature in envoy.Creatures)
                     {
                         creature.Physics.AddChild(new ResourcePack(World.ComponentManager));
-                        creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information));
+                        creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Information));
                     }
                 }
             }
@@ -456,12 +456,12 @@ namespace DwarfCorp
             {
                 if (natives.Economy == null)
                 {
-                    natives.Economy = new Economy(natives, (decimal)MathFunctions.Rand(1000, 9999), World, null);
+                    natives.Economy = new Company(natives, (decimal)MathFunctions.Rand(1000, 9999), null);
                 }
-                if (natives.Economy.Company.Information == null)
-                    natives.Economy.Company.Information = new CompanyInformation();
+                if (natives.Economy.Information == null)
+                    natives.Economy.Information = new CompanyInformation();
 
-                creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Company.Information));
+                creature.Physics.AddChild(new Flag(World.ComponentManager, Vector3.Up * 0.5f + Vector3.Backward * 0.25f, natives.Economy.Information));
             }
             return party;
         }

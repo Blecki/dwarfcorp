@@ -381,11 +381,8 @@ namespace DwarfCorp
                 public static string nations_undead = ProgramData.CreatePath("Text", "Templates", "nations_undead.txt");
                 public static string mottos = ProgramData.CreatePath("Text", "Templates", "mottos.txt");
 
-                public static string company_exploration = ProgramData.CreatePath("Text", "Templates", "company_exploration.txt");
-                public static string company_finance = ProgramData.CreatePath("Text", "Templates", "company_finance.txt");
-                public static string company_industrial = ProgramData.CreatePath("Text", "Templates", "company_industrial.txt");
-                public static string company_magical = ProgramData.CreatePath("Text", "Templates", "company_magical.txt");
-                public static string company_military = ProgramData.CreatePath("Text", "Templates", "company_military.txt");
+                public static string company = ProgramData.CreatePath("Text", "Templates", "company.txt");
+
                 public static string worlds = ProgramData.CreatePath("Text", "Templates", "worlds.txt");
                 public static string names_dwarf = ProgramData.CreatePath("Text", "Templates", "names_dwarf.txt");
                 public static string names_goblin = ProgramData.CreatePath("Text", "Templates", "names_goblin.txt");

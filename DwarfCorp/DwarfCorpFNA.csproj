@@ -256,6 +256,17 @@
     <Compile Include=".\Entities\Fixtures\Target.cs" />
     <Compile Include=".\Entities\Fixtures\WeightRack.cs" />
     <Compile Include=".\Entities\Fixtures\WorkPile.cs" />
+    <Compile Include="Economy\Company.cs" />
+    <Compile Include="Economy\Money.cs" />
+    <Compile Include="Economy\Payroll\CollectMoney.cs" />
+    <Compile Include="Economy\Payroll\DepositMoney.cs" />
+    <Compile Include="Economy\Payroll\HireEmployeeDialog.cs" />
+    <Compile Include="Economy\Quantity.cs" />
+    <Compile Include="Economy\Resources\Resource.cs" />
+    <Compile Include="Economy\Resources\ResourceAmount.cs" />
+    <Compile Include="Economy\Resources\ResourceContainer.cs" />
+    <Compile Include="Economy\Resources\ResourceLibrary.cs" />
+    <Compile Include="Economy\Resources\ResourceType.cs" />
     <Compile Include="Entities\Monsters\Demon.cs" />
     <Compile Include="Entities\Monsters\Elf.cs" />
     <Compile Include="Entities\Monsters\Fairy.cs" />
@@ -510,7 +521,6 @@
     <Compile Include=".\Gui\Widgets\Graph.cs" />
     <Compile Include=".\Gui\Widgets\GridChooser.cs" />
     <Compile Include=".\Gui\Widgets\GridPanel.cs" />
-    <Compile Include=".\Gui\Widgets\HireEmployeeDialog.cs" />
     <Compile Include=".\Gui\Widgets\HorizontalFloatSlider.cs" />
     <Compile Include=".\Gui\Widgets\HorizontalMenuTray.cs" />
     <Compile Include=".\Gui\Widgets\HorizontalSlider.cs" />
@@ -527,7 +537,6 @@
     <Compile Include=".\Gui\Widgets\ResourceColumns.cs" />
     <Compile Include=".\Gui\Widgets\ResourcePanel.cs" />
     <Compile Include=".\Gui\Widgets\RoomListPanel.cs" />
-    <Compile Include=".\Gui\Widgets\StockTicker.cs" />
     <Compile Include=".\Gui\Widgets\TabPanel.cs" />
     <Compile Include=".\Gui\Widgets\TaskListPanel.cs" />
     <Compile Include=".\Gui\Widgets\TextBox.cs" />
@@ -637,7 +646,6 @@
     <Compile Include=".\Scripting\LeafActs\PlaceRoomResourcesAct.cs" />
     <Compile Include=".\Scripting\LeafActs\PlaceVoxelAct.cs" />
     <Compile Include=".\Scripting\LeafActs\PlanAct.cs" />
-    <Compile Include=".\Scripting\LeafActs\PutMoneyInZoneAct.cs" />
     <Compile Include=".\Scripting\LeafActs\PutResourceInZoneAct.cs" />
     <Compile Include=".\Scripting\LeafActs\SearchFreeStockpileAct.cs" />
     <Compile Include=".\Scripting\LeafActs\SetBlackboardData.cs" />
@@ -645,7 +653,6 @@
     <Compile Include=".\Scripting\LeafActs\SetTargetVoxelFromEntityAct.cs" />
     <Compile Include=".\Scripting\LeafActs\SleepAct.cs" />
     <Compile Include=".\Scripting\LeafActs\StashAct.cs" />
-    <Compile Include=".\Scripting\LeafActs\StashMoneyAct.cs" />
     <Compile Include=".\Scripting\LeafActs\StashResourcesAct.cs" />
     <Compile Include=".\Scripting\LeafActs\StopAct.cs" />
     <Compile Include=".\Scripting\LeafActs\TeleportAct.cs" />
@@ -658,15 +665,6 @@
     <Compile Include=".\Scripting\Player\Building\BuildVoxelOrder.cs" />
     <Compile Include=".\Scripting\Player\Building\CraftDesignation.cs" />
     <Compile Include=".\Scripting\Player\Building\RoomBuilder.cs" />
-    <Compile Include=".\Scripting\Player\Economy\Company.cs" />
-    <Compile Include=".\Scripting\Player\Economy\Economy.cs" />
-    <Compile Include=".\Scripting\Player\Economy\Money.cs" />
-    <Compile Include=".\Scripting\Player\Economy\Quantity.cs" />
-    <Compile Include=".\Scripting\Player\Economy\Resource.cs" />
-    <Compile Include=".\Scripting\Player\Economy\ResourceAmount.cs" />
-    <Compile Include=".\Scripting\Player\Economy\ResourceContainer.cs" />
-    <Compile Include=".\Scripting\Player\Economy\ResourceLibrary.cs" />
-    <Compile Include=".\Scripting\Player\Economy\ResourceType.cs" />
     <Compile Include=".\Scripting\Player\GameMaster.cs" />
     <Compile Include=".\Scripting\Player\InputManager.cs" />
     <Compile Include=".\Scripting\Player\IVoxelBrush.cs" />

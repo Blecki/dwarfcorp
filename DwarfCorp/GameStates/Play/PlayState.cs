@@ -349,8 +349,8 @@ namespace DwarfCorp.GameStates
 
             #region Update top left panel
             var pulse = 0.25f * (float)Math.Sin(gameTime.TotalRealTime.TotalSeconds * 4) + 0.25f;
-            MoneyLabel.Text = Master.Faction.Economy.CurrentMoney.ToString();
-            MoneyLabel.TextColor = Master.Faction.Economy.CurrentMoney > 1.0m ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
+            MoneyLabel.Text = Master.Faction.Economy.Funds.ToString();
+            MoneyLabel.TextColor = Master.Faction.Economy.Funds > 1.0m ? Color.White.ToVector4() : new Vector4(1.0f, pulse, pulse, 1.0f);
             MoneyLabel.Invalidate();
             int availableSpace = Master.Faction.ComputeRemainingStockpileSpace();
             int totalSpace = Master.Faction.ComputeTotalStockpileSpace();

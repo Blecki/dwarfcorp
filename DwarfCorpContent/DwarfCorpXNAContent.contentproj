@@ -3592,25 +3592,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>material</Name>
     </None>
-    <None Include="Text\Templates\company_military.txt">
+    <None Include="Text\Templates\company.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>company_military</Name>
-    </None>
-    <None Include="Text\Templates\company_industrial.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>company_industrial</Name>
-    </None>
-    <None Include="Text\Templates\company_exploration.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>company_exploration</Name>
-    </None>
-    <None Include="Text\Templates\company_magical.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>company_magical</Name>
-    </None>
-    <None Include="Text\Templates\company_finance.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>company_finance</Name>
+      <Name>company</Name>
     </None>
     <None Include="Text\Templates\mottos.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

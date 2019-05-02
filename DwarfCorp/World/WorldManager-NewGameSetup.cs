@@ -34,7 +34,7 @@ namespace DwarfCorp
             if (!string.IsNullOrEmpty(ExistingFile)) return;
 
             var port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager, Camera.Position.X, Camera.Position.Z, 3, Settings);
-            PlayerFaction.Economy.CurrentMoney = InitialEmbark.Money;
+            PlayerFaction.Economy.Funds = InitialEmbark.Money;
 
             foreach (var res in InitialEmbark.Resources)
                 PlayerFaction.AddResources(new ResourceAmount(res.Key, res.Value));

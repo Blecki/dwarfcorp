@@ -66,7 +66,7 @@ namespace DwarfCorp
 
         public static string GenerateRandomName()
         {
-            var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.company_exploration);
+            var templates = TextGenerator.GetAtoms(ContentPaths.Text.Templates.company);
             return TextGenerator.GenerateRandom(Datastructures.SelectRandom(templates).ToArray());
         }
     }

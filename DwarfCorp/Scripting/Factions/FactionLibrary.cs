@@ -28,7 +28,7 @@ namespace DwarfCorp
                 DistanceToCapital = MathFunctions.Rand(100, 500),
                 ClaimsColony = MathFunctions.RandEvent(0.1f)
             };
-            fact.Economy = new Economy(fact, fact.TradeMoney, null, new CompanyInformation() {LogoBackgroundColor = fact.SecondaryColor.ToVector4(), LogoSymbolColor = fact.PrimaryColor.ToVector4(), Name = fact.Name});
+            fact.Economy = new Company(fact, fact.TradeMoney, new CompanyInformation() {LogoBackgroundColor = fact.SecondaryColor.ToVector4(), LogoSymbolColor = fact.PrimaryColor.ToVector4(), Name = fact.Name});
             return fact;
         }
 
@@ -113,7 +113,7 @@ namespace DwarfCorp
                 IsRaceFaction = true
             };
             
-            Factions["Player"].Economy = new Economy(Factions["Player"], 300.0m, state, CompanyInformation);
+            Factions["Player"].Economy = new Company(Factions["Player"], 300.0m, CompanyInformation);
         }
 
 

@@ -30,7 +30,7 @@ namespace DwarfCorp
         {
             if (Tree != null) return base.Run();
             ResourceAmount coins = new ResourceAmount(ResourceType.Coins, 1);
-            Tree = new PutMoneyInZoneAct(Agent, Money);
+            Tree = new DepositMoney(Agent, Money);
             Tree.Initialize();
             return base.Run();
         }

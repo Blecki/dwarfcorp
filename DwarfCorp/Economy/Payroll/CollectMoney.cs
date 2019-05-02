@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class StashMoneyAct : CreatureAct
+    public class CollectPay : CreatureAct
     {
         public DwarfBux Money { get { return GetMoney(); } set { SetMoney(value); } }
 
@@ -22,18 +22,18 @@ namespace DwarfCorp
             Agent.Blackboard.SetData(MoneyName, value);
         }
 
-        public StashMoneyAct()
+        public CollectPay()
         {
 
         }
 
-        public StashMoneyAct(CreatureAI agent, string moneyAmountName) : base(agent)
+        public CollectPay(CreatureAI agent, string moneyAmountName) : base(agent)
         {
             MoneyName = moneyAmountName;
             Name = "Stash " + moneyAmountName;
         }
 
-        public StashMoneyAct(CreatureAI agent, DwarfBux money) :
+        public CollectPay(CreatureAI agent, DwarfBux money) :
             base(agent)
         {
             Money = money;
@@ -45,7 +45,7 @@ namespace DwarfCorp
             Creature.IsCloaked = false;
             Timer waitTimer = new Timer(1.0f, true);
 
-            if(Agent.Faction.Economy.CurrentMoney < Money)
+            if(Agent.Faction.Economy.Funds < Money)
             {
                 Agent.SetMessage("Failed to remove money from zone.");
                 yield return Status.Fail;
@@ -53,7 +53,7 @@ namespace DwarfCorp
             else
             {
                 Agent.AddMoney(Money);
-                Agent.Faction.Economy.CurrentMoney -= Money;
+                Agent.Faction.Economy.Funds -= Money;
                 Money = 0;
 
                 var component = EntityFactory.CreateEntity<GameComponent>("Coins", Agent.Physics.Position + new Microsoft.Xna.Framework.Vector3(0.0f, 2.0f, 0.0f));

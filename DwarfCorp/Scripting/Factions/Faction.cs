@@ -20,7 +20,7 @@ namespace DwarfCorp
         public DwarfBux TradeMoney { get; set; }
         public Point Center { get; set; }
         public int TerritorySize { get; set; }
-        public Economy Economy { get; set; }
+        public Company Economy { get; set; }
         public List<TradeEnvoy> TradeEnvoys { get; set; }
         public List<WarParty> WarParties { get; set; }
         public List<GameComponent> OwnedObjects { get; set; }
@@ -1111,7 +1111,7 @@ namespace DwarfCorp
             if (money == 0.0m)
                 return;
 
-                Economy.CurrentMoney += money;
+                Economy.Funds += money;
         }
     }
 }

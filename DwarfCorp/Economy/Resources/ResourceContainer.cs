@@ -1,35 +1,3 @@
-// ResourceContainer.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,56 +10,21 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class ResourceContainer : IEnumerable<ResourceAmount>
     {
         public int MaxResources { get; set; }
-        [JsonProperty]
-        private int currentResourceCount = 0;
-        public  int CurrentResourceCount { get { return currentResourceCount; } }
-        [JsonProperty]
-        public Dictionary<String, ResourceAmount> Resources { get; set; }
+        public int CurrentResourceCount { get; private set; }
 
-        private void InitializeResources()
-        {
-            Resources = new Dictionary<String, ResourceAmount>();
-            
-            /*
-            foreach(var pair in ResourceLibrary.Resources)
-            {
-                if (Resources == null)
-                {
-                    Resources = new Dictionary<ResourceLibrary.String, ResourceAmount>();
-                }
-                if (!Resources.ContainsKey(pair.Key) || Resources[pair.Key] == null)
-                {
-                    Resources[pair.Key] = new ResourceAmount
-                    {
-                        NumResources = 0,
-                        String = pair.Key
-                    };
-                }
-            }
-             */
-        }
-
-        [OnDeserialized]
-        private void OnDeserialized(StreamingContext context)
-        {
-            //InitializeResources();
-        }
-       
+        [JsonProperty]
+        public Dictionary<String, ResourceAmount> Resources = new Dictionary<string, ResourceAmount>();
 
         public ResourceContainer()
         {
-            InitializeResources();
         }
-
 
         public void Clear()
         {
-            InitializeResources();
-            currentResourceCount = 0;
+            CurrentResourceCount = 0;
         }
 
         public bool HasResources(ResourceAmount resource)
@@ -112,7 +45,7 @@ namespace DwarfCorp
                 int toReturn = Math.Min(count, Resources[resource.Type].Count);
 
                 Resources[resource.Type].Count -= toReturn;
-                currentResourceCount -= toReturn;
+                CurrentResourceCount -= toReturn;
 
                 return toReturn;   
             }
@@ -147,7 +80,7 @@ namespace DwarfCorp
                     int rm = Math.Min(resource.Count, numLeft);
                     resource.Count -= rm;
                     numLeft -= rm;
-                    currentResourceCount -= rm;
+                    CurrentResourceCount -= rm;
                 }
             }
 
@@ -184,7 +117,7 @@ namespace DwarfCorp
             if (!Resources.ContainsKey(resource.Type)) return false;
 
             Resources[resource.Type].Count -= resource.Count;
-            currentResourceCount -= resource.Count;
+            CurrentResourceCount -= resource.Count;
             return true;
         }
 
@@ -206,7 +139,7 @@ namespace DwarfCorp
             }
 
             Resources[resource.Type].Count += resource.Count;
-            currentResourceCount += resource.Count;
+            CurrentResourceCount += resource.Count;
             return true;
         }
 
@@ -246,7 +179,7 @@ namespace DwarfCorp
                 if(resource.Value.Count > 0)
                 {
                     resource.Value.Count = Math.Max(resource.Value.Count - 1, 0);
-                    currentResourceCount -= 1;
+                    CurrentResourceCount -= 1;
                     return;
                 }
             }
@@ -317,7 +250,6 @@ namespace DwarfCorp
         {
             return !Resources.ContainsKey(resourceType) ? 0 : Resources[resourceType].Count;
         }
-
 
         public bool HasResource(ResourceAmount resourceType)
         {
