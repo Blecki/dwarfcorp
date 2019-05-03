@@ -155,7 +155,7 @@ namespace DwarfCorp
             if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Wrangle))
                 return Feasibility.Infeasible;
 
-            if (agent.AI.Status.IsAsleep)
+            if (agent.AI.Stats.IsAsleep)
                 return Feasibility.Infeasible;
 
             return Animal != null

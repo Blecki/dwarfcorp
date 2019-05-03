@@ -417,7 +417,7 @@ namespace DwarfCorp
                         cost += 99999;
                     }
 
-                    if (agent.Creature.Status.IsAsleep || agent.IsDead || agent.GetRoot().IsDead)
+                    if (agent.Creature.Stats.IsAsleep || agent.IsDead || agent.GetRoot().IsDead)
                     {
                         cost += 99999;
                     }

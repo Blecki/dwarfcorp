@@ -86,7 +86,7 @@ namespace DwarfCorp
                     }
                     break;
                 case HealType.Sleep:
-                    if (!creature.Status.IsAsleep)
+                    if (!creature.Stats.IsAsleep)
                     {
                         DoDamage(DwarfTime.Dt, creature);
                     }

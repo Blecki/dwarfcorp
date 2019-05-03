@@ -132,7 +132,7 @@ namespace DwarfCorp
             if (CraftDesignation.ItemType.IsMagical && !agent.Stats.IsTaskAllowed(TaskCategory.Research))
                 return Feasibility.Infeasible;
 
-            if (agent.AI.Status.IsAsleep)
+            if (agent.AI.Stats.IsAsleep)
                 return Feasibility.Infeasible;
 
             return CanBuild(agent) && !IsComplete(agent.Faction) ? Feasibility.Feasible : Feasibility.Infeasible;

@@ -269,7 +269,7 @@ namespace DwarfCorp
         /// <summary> Convenience wrapper around Status.IsAsleep </summary>
         public bool IsAsleep
         {
-            get { return Status.IsAsleep; }
+            get { return Stats.IsAsleep; }
         }
 
         /// <summary> If true there is a filled voxel immediately beneath this creature </summary>
@@ -538,7 +538,7 @@ namespace DwarfCorp
                 CurrentCharacterMode = CharacterMode.Idle;
             }
 
-            if (Status.IsAsleep)
+            if (Stats.IsAsleep)
             {
                 CurrentCharacterMode = CharacterMode.Sleeping;
 
@@ -552,9 +552,9 @@ namespace DwarfCorp
                 CurrentCharacterMode = CharacterMode.Idle;
             }
 
-            if (World.Time.IsDay() && Status.IsAsleep && !Status.Energy.IsDissatisfied() && !Status.Health.IsCritical())
+            if (World.Time.IsDay() && Stats.IsAsleep && !Status.Energy.IsDissatisfied() && !Status.Health.IsCritical())
             {
-                Status.IsAsleep = false;
+                Stats.IsAsleep = false;
             }
         }
 

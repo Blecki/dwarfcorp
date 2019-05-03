@@ -104,7 +104,7 @@ namespace DwarfCorp
             if (!agent.Stats.IsTaskAllowed(Task.TaskCategory.Dig))
                 return Feasibility.Infeasible;
 
-            if (agent.AI.Status.IsAsleep)
+            if (agent.AI.Stats.IsAsleep)
                 return Feasibility.Infeasible;
 
             if (!CacheDirty)

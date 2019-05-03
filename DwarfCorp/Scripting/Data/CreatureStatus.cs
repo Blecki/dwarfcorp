@@ -12,31 +12,26 @@ namespace DwarfCorp
     /// </summary>
     public class CreatureStatus
     {
-        public Dictionary<string, Status> Statuses { get; set; }
+        [JsonProperty] private Dictionary<string, Status> Statuses;
 
-        public bool IsAsleep { get; set; }
-        public bool IsOnStrike { get; set; }
+        public bool IsOnStrike = false;
 
-        [JsonIgnore]
-        public Status Hunger { get { return Statuses["Hunger"]; } set { Statuses["Hunger"] = value; } }
-        [JsonIgnore]
-        public Status Energy { get { return Statuses["Energy"]; } set { Statuses["Energy"] = value; } }
-        [JsonIgnore]
-        public Status Happiness { get { return Statuses["Happiness"]; } set { Statuses["Happiness"] = value; } }
-        [JsonIgnore]
-        public Status Health { get { return Statuses["Health"]; } set { Statuses["Health"] = value; } }
-        [JsonIgnore]
-        public Status Boredom { get { return Statuses["Boredom"]; } set { Statuses["Boredom"] = value; } }
-        public DwarfBux Money { get; set; }
+        [JsonIgnore] public Status Hunger { get { return Statuses["Hunger"]; } set { Statuses["Hunger"] = value; } }
+        [JsonIgnore] public Status Energy { get { return Statuses["Energy"]; } set { Statuses["Energy"] = value; } }
+        [JsonIgnore] public Status Happiness { get { return Statuses["Happiness"]; } set { Statuses["Happiness"] = value; } }
+        [JsonIgnore] public Status Health { get { return Statuses["Health"]; } set { Statuses["Health"] = value; } }
+        [JsonIgnore] public Status Boredom { get { return Statuses["Boredom"]; } set { Statuses["Boredom"] = value; } }
+
+        public DwarfBux Money = 0;
         private float HungerDamageRate = 10.0f;
         private DateTime LastHungerDamageTime = DateTime.Now;
 
         public CreatureStatus()
         {
             Money = 0;
-            IsAsleep = false;
             IsOnStrike = false;
             Statuses = new Dictionary<string, Status>();
+
             Hunger = new Status
             {
                 MaxValue = 100.0f,
@@ -101,7 +96,7 @@ namespace DwarfCorp
             else
                 creature.Hp += (float)gameTime.ElapsedGameTime.TotalSeconds * 0.1f;
 
-            Health.CurrentValue = (creature.Hp - creature.MinHealth) / (creature.MaxHealth - creature.MinHealth);
+            Health.CurrentValue = (creature.Hp - creature.MinHealth) / (creature.MaxHealth - creature.MinHealth); // Todo: MinHealth always 0?
 
             // Todo: Why is energy just tied to time of day? Lets make them actually recover at night and spend it during the day.
             if(creature.Stats.CanSleep)
@@ -133,6 +128,48 @@ namespace DwarfCorp
 
             if (!statAdjustments.IsAllZero)
                 creature.Stats.AddStatAdjustment(statAdjustments);
+        }
+
+        public string get_status()
+        {
+            Status minStatus = null;
+            float minValue = float.MaxValue;
+            foreach (var status in Statuses)
+            {
+                if (status.Value.IsDissatisfied() && status.Value.CurrentValue < minValue)
+                {
+                    minStatus = status.Value;
+                    minValue = status.Value.CurrentValue;
+                }
+            }
+            if (minStatus == null)
+            {
+                return "OK";
+            }
+            else if (minStatus.Name == "Energy")
+            {
+                return "Tired";
+            }
+            else if (minStatus.Name == "Hunger")
+            {
+                return "Hungry";
+            }
+            else if (minStatus.Name == "Boredom")
+            {
+                return "Bored";
+            }
+            else if (minStatus.Name == "Health")
+            {
+                return "Injured";
+            }
+            else if (minStatus.Name == "Happiness")
+            {
+                return "Unhappy";
+            }
+            else
+            {
+                return "Weird";
+            }
         }
     }
 }

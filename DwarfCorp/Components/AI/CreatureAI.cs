@@ -1,36 +1,3 @@
-// CreatureAI.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +12,6 @@ namespace DwarfCorp
     /// <summary>
     ///     Component which manages the AI, scripting, and status of a particular creature (such as a Dwarf or Goblin)
     /// </summary>
-    [JsonObject(IsReference = true)]
     public class CreatureAI : GameComponent
     {
         public CreatureAI()
@@ -1250,7 +1216,7 @@ namespace DwarfCorp
                 desc += "\n    Last failed: " + LastFailedAct;
             }
 
-            if (Status.IsAsleep)
+            if (Stats.IsAsleep)
             {
                 desc += "\n UNCONSCIOUS";
             }
@@ -1468,47 +1434,7 @@ namespace DwarfCorp
         public void Chat()
         {
             var Employee = this;
-            Func<string> get_status = () =>
-            {
-                Status minStatus = null;
-                float minValue = float.MaxValue;
-                foreach (var status in Employee.Status.Statuses)
-                {
-                    if (status.Value.IsDissatisfied() && status.Value.CurrentValue < minValue)
-                    {
-                        minStatus = status.Value;
-                        minValue = status.Value.CurrentValue;
-                    }
-                }
-                if (minStatus == null)
-                {
-                    return "OK";
-                }
-                else if (minStatus.Name == "Energy")
-                {
-                    return "Tired";
-                }
-                else if (minStatus.Name == "Hunger")
-                {
-                    return "Hungry";
-                }
-                else if (minStatus.Name == "Boredom")
-                {
-                    return "Bored";
-                }
-                else if (minStatus.Name == "Health")
-                {
-                    return "Injured";
-                }
-                else if (minStatus.Name == "Happiness")
-                {
-                    return "Unhappy";
-                }
-                else
-                {
-                    return "Weird";
-                }
-            };
+            Func<string> get_status = () => Employee.Status.get_status();
 
             Employee.World.Paused = true;
             // Prepare conversation memory for an envoy conversation.
@@ -1529,7 +1455,7 @@ namespace DwarfCorp
                 timeOfDay = "Evening";
             }
             cMem.SetValue("$time_of_day", new Yarn.Value(timeOfDay));
-            cMem.SetValue("$is_asleep", new Yarn.Value(Employee.Status.IsAsleep));
+            cMem.SetValue("$is_asleep", new Yarn.Value(Employee.Stats.IsAsleep));
             cMem.SetValue("$is_on_strike", new Yarn.Value(Employee.Status.IsOnStrike));
             string grievences = TextGenerator.GetListString(Employee.Creature.Physics.GetComponent<DwarfThoughts>().Thoughts.Where(thought => thought.HappinessModifier < 0).Select(thought => thought.Description));
             string goodThings = TextGenerator.GetListString(Employee.Creature.Physics.GetComponent<DwarfThoughts>().Thoughts.Where(thought => thought.HappinessModifier >= 0).Select(thought => thought.Description));

@@ -94,6 +94,7 @@ namespace DwarfCorp
         public bool IsMigratory = false;
         [JsonIgnore] public bool IsOverQualified => CurrentClass != null ? CurrentClass.Levels.Count > LevelIndex + 1 && XP > CurrentClass.Levels[LevelIndex + 1].XP : false;
         public bool LaysEggs = false;
+        public bool IsAsleep = false;
 
         public bool IsTaskAllowed(Task.TaskCategory TaskCategory)
         {

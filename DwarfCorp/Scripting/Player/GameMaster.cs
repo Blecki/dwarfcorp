@@ -504,7 +504,7 @@ namespace DwarfCorp
                 if (minion == null) throw new InvalidProgramException("Null minion?");
                 if (minion.Status == null) throw new InvalidProgramException("Minion has null status?");
 
-                if (minion.Status.IsAsleep)
+                if (minion.Stats.IsAsleep)
                     continue;
 
                 if (minion.CurrentTask == null)

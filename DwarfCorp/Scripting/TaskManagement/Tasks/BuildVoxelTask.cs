@@ -72,7 +72,7 @@ namespace DwarfCorp
             if (!agent.AI.Stats.CurrentClass.IsTaskAllowed(TaskCategory.BuildBlock))
                 return Feasibility.Infeasible;
 
-            if (agent.AI.Status.IsAsleep)
+            if (agent.AI.Stats.IsAsleep)
                 return Feasibility.Infeasible;
 
             if (!agent.AI.Faction.Designations.IsVoxelDesignation(Voxel, DesignationType.Put))

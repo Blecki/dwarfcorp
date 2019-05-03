@@ -578,7 +578,7 @@ namespace DwarfCorp.Gui.Widgets
                     thoughtsBuilder.Append("Conditions: ");
                 }
 
-                if (Employee.Status.IsAsleep)
+                if (Employee.Stats.IsAsleep)
                 {
                     thoughtsBuilder.AppendLine("Unconscious");
                 }
