@@ -397,7 +397,7 @@
     <Compile Include="Scripting\Adventure\Adventure.cs" />
     <Compile Include="Scripting\CompoundActs\ChopEntityAct.cs" />
     <Compile Include="Scripting\CompoundActs\RechargeObjectAct.cs" />
-    <Compile Include="Scripting\Data\StatAdjustment.cs" />
+    <Compile Include="Components\AI\StatAdjustment.cs" />
     <Compile Include="Scripting\Factions\EmbarkmentLibrary.cs" />
     <Compile Include="Scripting\Factions\Trading\MakePeaceYarnCommand.cs" />
     <Compile Include="Scripting\Factions\Trading\DeclareWarYarnCommand.cs" />
@@ -642,7 +642,7 @@
     <Compile Include="Scripting\Player\Tools\MoveObjectTool.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\AnimalPen.cs" />
     <Compile Include="Scripting\Rooms\RoomTypes\Graveyard.cs" />
-    <Compile Include="Scripting\Data\Status.cs" />
+    <Compile Include="Components\AI\Status.cs" />
     <Compile Include="Scripting\Factions\Expedition.cs" />
     <Compile Include="Scripting\Factions\TradeEnvoy.cs" />
     <Compile Include="Scripting\Factions\Race.cs" />
@@ -817,8 +817,8 @@
     <Compile Include="Scripting\Crafting\CraftLibrary.cs" />
     <Compile Include="Scripting\Data\ActData.cs" />
     <Compile Include="Scripting\Data\Blackboard.cs" />
-    <Compile Include="Scripting\Data\CreatureStats.cs" />
-    <Compile Include="Scripting\Data\CreatureStatus.cs" />
+    <Compile Include="Components\AI\CreatureStats.cs" />
+    <Compile Include="Components\AI\CreatureStatus.cs" />
     <Compile Include="Scripting\Items\TagList.cs" />
     <Compile Include="Scripting\LeafActs\ClearBlackboardData.cs" />
     <Compile Include="Scripting\LeafActs\ConsumeItemAct.cs" />

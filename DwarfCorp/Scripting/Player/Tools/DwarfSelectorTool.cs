@@ -1,35 +1,3 @@
-// DwarfSelectorTool.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,14 +11,13 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class DwarfSelectorTool : PlayerTool
     {
-
         public Func<GameComponent, bool> DrawSelectionRect = (b) => true;
+        private List<GameComponent> underMouse = null;
+
         public DwarfSelectorTool(GameMaster master)
         {
-           
             Player = master;
             InputManager.MouseClickedCallback += InputManager_MouseClickedCallback;
         }
@@ -70,13 +37,10 @@ namespace DwarfCorp
 
         }
 
-
         void InputManager_MouseClickedCallback(InputManager.MouseButton button)
         {
             if(button != InputManager.MouseButton.Right || Player.CurrentTool != this || KeyManager.RotationEnabled(Player.World.Camera))
-            {
                 return;
-            }
 
             var mouseState = KeyManager.TrueMousePos;
 
@@ -111,12 +75,11 @@ namespace DwarfCorp
                 IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.DownArrow, vox.WorldPosition + Vector3.One * 0.5f, 0.5f, 2.0f, new Vector2(0, -50), Color.LightGreen);
         }
 
-
-
         public DwarfSelectorTool()
         {
             
         }
+
         public override void OnVoxelsSelected(List<VoxelHandle> voxels, InputManager.MouseButton button)
         {
           
@@ -125,16 +88,12 @@ namespace DwarfCorp
         bool IsNotSelectedDwarf(GameComponent body)
         {
             if (body == null)
-            {
                 return true;
-            }
 
             var dwarves = body.EnumerateAll().OfType<Creature>().ToList();
 
             if (dwarves.Count <= 0)
-            {
                 return false;
-            }
 
             Creature dwarf = dwarves[0];
             return dwarf.Faction == Player.Faction && !Player.SelectedMinions.Contains(dwarf.AI);
@@ -143,32 +102,26 @@ namespace DwarfCorp
         bool IsDwarf(GameComponent body)
         {
             if (body == null)
-            {
                 return false;
-            }
 
             var dwarves = body.EnumerateAll().OfType<Creature>().ToList();
 
             if (dwarves.Count <= 0)
-            {
                 return false;
-            }
 
-            Creature dwarf = dwarves[0];
-            return dwarf.Faction == Player.Faction;
+            return dwarves[0].Faction == Player.Faction;
         }
 
         protected void SelectDwarves(List<GameComponent> bodies)
         {
             KeyboardState keyState = Keyboard.GetState();
 
-
             if(!keyState.IsKeyDown(Keys.LeftShift))
-            {
                 Player.SelectedMinions.Clear();
-            }
-            List<CreatureAI> newDwarves = new List<CreatureAI>();
-            foreach(GameComponent body in bodies)
+
+            var newDwarves = new List<CreatureAI>();
+
+            foreach (GameComponent body in bodies)
             {
                 if (IsNotSelectedDwarf(body))
                 {
@@ -178,6 +131,7 @@ namespace DwarfCorp
                     Player.World.Tutorial("dwarf selected");
                 }
             }
+
             OnConfirm(newDwarves);
         }
 
@@ -203,29 +157,20 @@ namespace DwarfCorp
                 {
                     sb.Append(dwarf.Stats.FullName + " (" + (dwarf.Stats.Title ?? dwarf.Stats.CurrentClass.Name) + ")");
                     if (dwarf.IsAsleep)
-                    {
                         sb.Append(" UNCONSCIOUS ");
-                    }
 
-                    if (dwarf.Status.IsOnStrike)
-                    {
+                    if (dwarf.Stats.IsOnStrike)
                         sb.Append(" ON STRIKE");
-                    }
 
                     if (i < bodyList.Count - 1)
-                    {
                         sb.Append("\n");
-                    }
                 }
                 else
-                {
                     sb.Append(bodyList[i].GetDescription());
-                }
             }
+
             return sb.ToString();
         }
-
-        private List<GameComponent> underMouse = null;
 
         public override void DefaultOnMouseOver(IEnumerable<GameComponent> bodies)
         {
@@ -252,14 +197,12 @@ namespace DwarfCorp
             Vector3 ext = (Box.Max - Box.Min);
             Vector3 center = Box.Center();
 
-
             Vector3 p1 = Camera.Project(Box.Min);
             Vector3 p2 = Camera.Project(Box.Max);
             Vector3 p3 = Camera.Project(Box.Min + new Vector3(ext.X, 0, 0));
             Vector3 p4 = Camera.Project(Box.Min + new Vector3(0, ext.Y, 0));
             Vector3 p5 = Camera.Project(Box.Min + new Vector3(0, 0, ext.Z));
             Vector3 p6 = Camera.Project(Box.Min + new Vector3(ext.X, ext.Y, 0));
-
 
             Vector3 min = MathFunctions.Min(p1, p2, p3, p4, p5, p6);
             Vector3 max = MathFunctions.Max(p1, p2, p3, p4, p5, p6);

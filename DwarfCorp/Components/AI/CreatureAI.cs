@@ -312,7 +312,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (_preEmptTimer.HasTriggered && newTask == null && Faction == World.PlayerFaction && !Status.IsOnStrike)
+            if (_preEmptTimer.HasTriggered && newTask == null && Faction == World.PlayerFaction && !Stats.IsOnStrike)
                 newTask = World.Master.TaskManager.GetBestTask(this, (int)CurrentTask.Priority);
 
             if (newTask != null)
@@ -616,11 +616,11 @@ namespace DwarfCorp
                 {
                     if (Status.Happiness.IsSatisfied()) // We're happy, so make sure we aren't on strike.
                     {
-                        Status.IsOnStrike = false;
+                        Stats.IsOnStrike = false;
                         UnhappinessTime = 0.0f;
                     }
 
-                    if (Status.IsOnStrike) // We're on strike, so track how long this job has sucked.
+                    if (Stats.IsOnStrike) // We're on strike, so track how long this job has sucked.
                     {
                         UnhappinessTime += gameTime.ElapsedGameTime.TotalMinutes;
                         if (UnhappinessTime > GameSettings.Default.HoursUnhappyBeforeQuitting) // If we've been unhappy long enough, quit.
@@ -659,11 +659,11 @@ namespace DwarfCorp
                                    Stats.FullName, Stats.CurrentClass.Name), Creature.Physics, -10, 10);
                             Manager.World.Tutorial("happiness");
                             SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.25f);
-                            Status.IsOnStrike = true;
+                            Stats.IsOnStrike = true;
                         }
                     }
 
-                    if (!Status.IsOnStrike) // We aren't on strike, so find a new task.
+                    if (!Stats.IsOnStrike) // We aren't on strike, so find a new task.
                     {
                         var goal = GetEasiestTask(Tasks);
 
@@ -895,7 +895,7 @@ namespace DwarfCorp
                 }
             }
 
-            if (Faction == World.PlayerFaction && !Status.IsOnStrike)
+            if (Faction == World.PlayerFaction && !Stats.IsOnStrike)
             {
                 var candidate = World.Master.TaskManager.GetBestTask(this);
                 if (candidate != null)
@@ -1231,7 +1231,7 @@ namespace DwarfCorp
                 desc += "\n CLOAKED";
             }
 
-            if (Status.IsOnStrike)
+            if (Stats.IsOnStrike)
             {
                 desc += "\n ON STRIKE";
             }
@@ -1456,7 +1456,7 @@ namespace DwarfCorp
             }
             cMem.SetValue("$time_of_day", new Yarn.Value(timeOfDay));
             cMem.SetValue("$is_asleep", new Yarn.Value(Employee.Stats.IsAsleep));
-            cMem.SetValue("$is_on_strike", new Yarn.Value(Employee.Status.IsOnStrike));
+            cMem.SetValue("$is_on_strike", new Yarn.Value(Employee.Stats.IsOnStrike));
             string grievences = TextGenerator.GetListString(Employee.Creature.Physics.GetComponent<DwarfThoughts>().Thoughts.Where(thought => thought.HappinessModifier < 0).Select(thought => thought.Description));
             string goodThings = TextGenerator.GetListString(Employee.Creature.Physics.GetComponent<DwarfThoughts>().Thoughts.Where(thought => thought.HappinessModifier >= 0).Select(thought => thought.Description));
             cMem.SetValue("$grievences", new Yarn.Value(grievences));

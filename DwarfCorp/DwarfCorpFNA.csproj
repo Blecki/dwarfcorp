@@ -136,6 +136,8 @@
     <Compile Include=".\Components\AI\Sensors\DestroyOnTimer.cs" />
     <Compile Include=".\Components\AI\Sensors\EnemySensor.cs" />
     <Compile Include="AssetManagement\GameSave\OverworldMetaData.cs" />
+    <Compile Include="Components\AI\CreatureStats.cs" />
+    <Compile Include="Components\AI\CreatureStatus.cs" />
     <Compile Include="Components\AI\Sensors\SpawnOnExploredTrigger.cs" />
     <Compile Include=".\Components\AI\Sensors\RadiusSensor.cs" />
     <Compile Include=".\Components\AI\Sensors\Sensor.cs" />
@@ -256,6 +258,8 @@
     <Compile Include=".\Entities\Fixtures\Target.cs" />
     <Compile Include=".\Entities\Fixtures\WeightRack.cs" />
     <Compile Include=".\Entities\Fixtures\WorkPile.cs" />
+    <Compile Include="Components\AI\StatAdjustment.cs" />
+    <Compile Include="Components\AI\Status.cs" />
     <Compile Include="Economy\Company.cs" />
     <Compile Include="Economy\Money.cs" />
     <Compile Include="Economy\Payroll\CollectMoney.cs" />
@@ -607,10 +611,6 @@
     <Compile Include=".\Scripting\Crafting\CraftLibrary.cs" />
     <Compile Include=".\Scripting\Data\ActData.cs" />
     <Compile Include=".\Scripting\Data\Blackboard.cs" />
-    <Compile Include=".\Scripting\Data\CreatureStats.cs" />
-    <Compile Include=".\Scripting\Data\CreatureStatus.cs" />
-    <Compile Include=".\Scripting\Data\StatAdjustment.cs" />
-    <Compile Include=".\Scripting\Data\Status.cs" />
     <Compile Include=".\Scripting\Factions\DesignationDrawer.cs" />
     <Compile Include=".\Scripting\Factions\DesignationSet.cs" />
     <Compile Include=".\Scripting\Factions\DesignationType.cs" />

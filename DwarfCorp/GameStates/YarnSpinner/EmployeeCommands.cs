@@ -43,7 +43,7 @@ namespace DwarfCorp.GameStates.YarnSpinner
             var creature = employee.AsObject as CreatureAI;
             if (creature == null)
                 return;
-            creature.Status.IsOnStrike = false;
+            creature.Stats.IsOnStrike = false;
             var thoughts = creature.GetRoot().GetComponent<DwarfThoughts>();
             if (thoughts != null)
             {
