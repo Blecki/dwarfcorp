@@ -145,38 +145,34 @@ namespace DwarfCorp
             var objectName = String.IsNullOrEmpty(ObjectName) ? Name : ObjectName;
             string resourceName = prefix + objectName + " (" + TextGenerator.GetListString(MergeResources(selectedResources).Select(r => (string)r.Type)) + ")";
 
-            Resource toReturn = ResourceLibrary.GetResourceByName(resourceName);
+            if (ResourceLibrary.Exists(resourceName))
+                return ResourceLibrary.GetResourceByName(resourceName);
 
-            if (toReturn ==  null)
-            {
-                var sheet = world.Gui.RenderData.SourceSheets[Icon.Sheet];
+            var sheet = world.Gui.RenderData.SourceSheets[Icon.Sheet];
 
-                var tex = AssetManager.GetContentTexture(sheet.Texture);
-                var numTilesX = tex.Width / sheet.TileWidth;
-                var numTilesY = tex.Height / sheet.TileHeight;
-                var point = new Point(Icon.Tile % numTilesX, Icon.Tile / numTilesX);
-                toReturn = new Resource()
-                {
-                    Name = resourceName,
-                    Tags = new List<Resource.ResourceTags>()
+            var tex = AssetManager.GetContentTexture(sheet.Texture);
+            var numTilesX = tex.Width / sheet.TileWidth;
+            var numTilesY = tex.Height / sheet.TileHeight;
+            var point = new Point(Icon.Tile % numTilesX, Icon.Tile / numTilesX);
+            var toReturn = ResourceLibrary.GenerateResource();
+            toReturn.Name = resourceName;
+            toReturn.Tags = new List<Resource.ResourceTags>()
                     {
                         Resource.ResourceTags.CraftItem,
                         Resource.ResourceTags.Craft
-                    },
-                    MoneyValue = selectedResources.Sum(r => ResourceLibrary.GetResourceByName(r.Type).MoneyValue) * 2.0m,
-                    CraftInfo = new Resource.CraftItemInfo
-                    {
-                        Resources = selectedResources,
-                        CraftItemType = objectName
-                    },
-                    ShortName = Name,
-                    Description = Description,
-                    GuiLayers = new List<Gui.TileReference>() {  Icon },
-                    CompositeLayers = new List<Resource.CompositeLayer>() { new Resource.CompositeLayer() { Asset = sheet.Texture, Frame = point, FrameSize = new Point(sheet.TileWidth, sheet.TileHeight)} },
-                    Tint = Color.White,
-                };
-                ResourceLibrary.Add(toReturn);
-            }
+                    };
+            toReturn.MoneyValue = selectedResources.Sum(r => ResourceLibrary.GetResourceByName(r.Type).MoneyValue) * 2.0m;
+            toReturn.CraftInfo = new Resource.CraftItemInfo
+            {
+                Resources = selectedResources,
+                CraftItemType = objectName
+            };
+            toReturn.ShortName = Name;
+            toReturn.Description = Description;
+            toReturn.GuiLayers = new List<Gui.TileReference>() { Icon };
+            toReturn.CompositeLayers = new List<Resource.CompositeLayer>() { new Resource.CompositeLayer() { Asset = sheet.Texture, Frame = point, FrameSize = new Point(sheet.TileWidth, sheet.TileHeight) } };
+            toReturn.Tint = Color.White;
+            ResourceLibrary.Add(toReturn);
 
             return toReturn;
         }

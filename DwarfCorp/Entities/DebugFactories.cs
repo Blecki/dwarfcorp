@@ -57,7 +57,7 @@ namespace DwarfCorp
         [EntityFactory("RandFood")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            IEnumerable<Resource> foods = ResourceLibrary.GetResourcesByTag(Resource.ResourceTags.RawFood);
+            IEnumerable<Resource> foods = ResourceLibrary.FindResourcesWithTag(Resource.ResourceTags.RawFood);
             Resource randresource = ResourceLibrary.CreateMeal(Datastructures.SelectRandom(foods).Name, Datastructures.SelectRandom(foods).Name);
             return new ResourceEntity(Manager, new ResourceAmount(randresource.Name), Position);
         }

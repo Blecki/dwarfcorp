@@ -7,9 +7,6 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp.Gui.Widgets
 {
-    /// <summary>
-    /// A properly framed Icon for use in an icon tray.
-    /// </summary>
     public class BuildCraftInfo : Widget
     {
         public CraftItem Data;
@@ -39,7 +36,7 @@ namespace DwarfCorp.Gui.Widgets
                 int k = 0;
                 foreach(var ingredient in Data.RequiredResources)
                 {
-                    var resource = ResourceLibrary.GetAverageWithTag(ingredient.Type);
+                    var resource = ResourceLibrary.FindMedianWithTag(ingredient.Type);
                     titleBar.AddChild(new Gui.Widget
                     {
                         MinimumSize = new Point(32, 32),

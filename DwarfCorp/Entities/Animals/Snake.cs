@@ -173,11 +173,10 @@ namespace DwarfCorp
 
                     if (!ResourceLibrary.Exists(type))
                     {
-                        ResourceLibrary.Add(new Resource(ResourceLibrary.GetResourceByName(ResourceType.Meat))
-                        {
-                            Name = type,
-                            ShortName = type
-                        });
+                        var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName(ResourceType.Meat));
+                        r.Name = type;
+                        r.ShortName = type;
+                        ResourceLibrary.Add(r);
                     }
 
                     inventory.AddResource(new ResourceAmount(type, 1));
@@ -189,11 +188,10 @@ namespace DwarfCorp
 
                     if (!ResourceLibrary.Exists(type))
                     {
-                        ResourceLibrary.Add(new Resource(ResourceLibrary.GetResourceByName("Bone"))
-                        {
-                            Name = type,
-                            ShortName = type
-                        });
+                        var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName("Bone"));
+                        r.Name = type;
+                        r.ShortName = type;
+                        ResourceLibrary.Add(r);
                     }
 
                     inventory.AddResource(new ResourceAmount(type, 1));

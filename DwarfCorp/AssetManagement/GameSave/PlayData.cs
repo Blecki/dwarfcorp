@@ -42,7 +42,7 @@ namespace DwarfCorp
                 TutorialSaveData = World.TutorialManager.GetSaveData(),
                 Diplomacy = World.Diplomacy,
                 Factions = World.Factions,
-                Resources = ResourceLibrary.Enumerate().ToList(),
+                Resources = ResourceLibrary.Enumerate().Where(r => r.Generated).ToList(),
                 Designations = World.DesignationDrawer,
                 Tasks = World.Master.TaskManager,
                 InitialEmbark = World.InitialEmbark,

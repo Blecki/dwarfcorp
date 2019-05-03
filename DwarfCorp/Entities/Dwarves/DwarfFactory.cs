@@ -49,9 +49,23 @@ namespace DwarfCorp
             CreatureClass DwarfClass, 
             int Level, Gender gender, int seed)
         {
-            Dwarf toReturn = new Dwarf(Manager, new CreatureStats(DwarfClass, Level) { Gender = gender, RandomSeed = seed, VoicePitch  = CreatureStats.GetRandomVoicePitch(gender) }, Allies, Manager.World.PlanService, Manager.World.PlayerFaction, "Dwarf", DwarfClass, Position);
+            Dwarf toReturn = new Dwarf(Manager, new CreatureStats(DwarfClass, Level) { Gender = gender, RandomSeed = seed, VoicePitch  = GetRandomVoicePitch(gender) }, Allies, Manager.World.PlanService, Manager.World.PlayerFaction, "Dwarf", DwarfClass, Position);
             toReturn.AddThought(Thought.CreateStandardThought(Thought.ThoughtType.JustArrived, Manager.World.Time.CurrentDate), false);
             return toReturn.Physics;
+        }
+
+        private static float GetRandomVoicePitch(Gender gender)
+        {
+            switch (gender)
+            {
+                case Gender.Female:
+                    return MathFunctions.Rand(0.2f, 1.0f);
+                case Gender.Male:
+                    return MathFunctions.Rand(-1.0f, 0.3f);
+                case Gender.Nonbinary:
+                    return MathFunctions.Rand(-1.0f, 1.0f);
+            }
+            return 1.0f;
         }
     }
 }

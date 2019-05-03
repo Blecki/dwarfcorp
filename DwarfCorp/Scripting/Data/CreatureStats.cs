@@ -11,8 +11,9 @@ namespace DwarfCorp
 {
     public class CreatureStats
     {
-        [JsonProperty]
-        private List<StatAdjustment> StatAdjustments = new List<StatAdjustment>();
+        #region Stat Stack
+
+        [JsonProperty] private List<StatAdjustment> StatAdjustments = new List<StatAdjustment>();
 
         public void AddStatAdjustment(StatAdjustment Adjustment)
         {
@@ -34,6 +35,11 @@ namespace DwarfCorp
             return StatAdjustments;
         }
 
+        public void ResetBuffs()
+        {
+            StatAdjustments.RemoveAll(a => a.Name != "base stats");
+        }
+
         public float BaseDexterity { set { FindAdjustment("base stats").Dexterity = value; } }
         public float BaseConstitution { set { FindAdjustment("base stats").Constitution = value; } }
         public float BaseStrength { set { FindAdjustment("base stats").Strength = value; } }
@@ -50,151 +56,75 @@ namespace DwarfCorp
         public float Intelligence { get { return Math.Max(1, StatAdjustments.Sum(a => a.Intelligence)); } }
         public float Size { get { return Math.Max(1, StatAdjustments.Sum(a => a.Size)); } }
 
-        public float MaxSpeed { get { return Dexterity; } }
-        public float MaxAcceleration { get { return MaxSpeed * 2.0f; }  }
-        public float StoppingForce { get { return MaxAcceleration * 6.0f; } }
-        public float BaseDigSpeed { get { return Strength + Size; }}
-        public float BaseChopSpeed { get { return Strength * 3.0f + Dexterity * 1.0f; } }
-        public float JumpForce { get { return 1000.0f; } }
-        public float MaxHealth { get { return (Strength + Constitution + Size) * 10.0f; }}
+        #endregion
 
-        public float EatSpeed { get { return Size + Strength; }}
+        public float MaxSpeed => Dexterity;
+        public float MaxAcceleration => MaxSpeed * 2.0f;
+        public float StoppingForce => MaxAcceleration * 6.0f;
+        public float BaseDigSpeed => Strength + Size;
+        public float BaseChopSpeed => Strength * 3.0f + Dexterity * 1.0f;
+        public float JumpForce => 1000.0f;
+        public float MaxHealth => (Strength + Constitution + Size) * 10.0f;
+        public float EatSpeed => Size + Strength;
+        public float HungerGrowth => Size * 0.025f;
+        public float BaseFarmSpeed => Intelligence + Strength;
+        public float BuildSpeed => (Intelligence + Dexterity) / 10.0f;
+        public float HungerResistance => Constitution;
+        public float Tiredness => CanSleep ? 1.0f / Constitution : 0.0f;
 
-        public float HungerGrowth { get { return Size * 0.025f; } }
-
-        public float BaseFarmSpeed { get { return Intelligence + Strength; } }
-        public bool CanEat { get; set; }
-        public float BuildSpeed { get { return (Intelligence + Dexterity) / 10.0f; } }
-
-        public int Age { get; set; }
-
+        public bool CanEat = false;
+        public int Age = 0;
         public int RandomSeed;
-        public float VoicePitch { get; set; }
-        public Gender Gender { get; set; }
-        
-        public float Tiredness
-        {
-            get
-            {
-                if(CanSleep)
-                {
-                    return 1.0f / Constitution;
-                }
-                else
-                {
-                    return 0.0f;
-                }
-            }
-        } 
-
-        public float HungerResistance { get { return Constitution; } }
-
-        public bool CanSleep { get; set; }
-        public bool CanGetBored { get; set; }
-        public string FullName { get; set; }
-        public string Title { get; set; }
-        public int NumBlocksDestroyed { get; set; }
-        public int NumItemsGathered { get; set; }
-        public int NumRoomsBuilt { get; set; }
-        public int NumThingsKilled { get; set; }
-        public int NumBlocksPlaced { get; set; }
-
-        public int LevelIndex { get; set; }
-
-        [JsonIgnore]
-        public CreatureClass CurrentClass { get; set; } // Todo: Does not belong here.
-        public Task.TaskCategory AllowedTasks = Task.TaskCategory.None; // Todo: Does not belong here.
-
-        public bool IsMigratory { get; set; } // Todo: Does not belong here.
+        public float VoicePitch = 1.0f;
+        public Gender Gender = Gender.Male;
+        public bool CanSleep = false;
+        public bool CanGetBored = false;
+        public string FullName = "";
+        public string Title = "";
+        public int NumBlocksDestroyed = 0;
+        public int NumItemsGathered = 0;
+        public int NumRoomsBuilt = 0;
+        public int NumThingsKilled = 0;
+        public int NumBlocksPlaced = 0;
+        public int XP = 0;
+        public int LevelIndex = 0;
+        [JsonIgnore] public CreatureClass CurrentClass = null;
+        [JsonIgnore] public CreatureClass.Level CurrentLevel => CurrentClass.Levels[LevelIndex]; 
+        public Task.TaskCategory AllowedTasks = Task.TaskCategory.Attack | Task.TaskCategory.Gather | Task.TaskCategory.Plant | Task.TaskCategory.Harvest | Task.TaskCategory.Chop | Task.TaskCategory.Wrangle | Task.TaskCategory.TillSoil;
+        public bool IsMigratory = false;
+        [JsonIgnore] public bool IsOverQualified => CurrentClass != null ? CurrentClass.Levels.Count > LevelIndex + 1 && XP > CurrentClass.Levels[LevelIndex + 1].XP : false;
+        public bool LaysEggs = false;
 
         public bool IsTaskAllowed(Task.TaskCategory TaskCategory)
         {
             return (AllowedTasks & TaskCategory) == TaskCategory;
         }
 
-        [JsonIgnore]
-        public CreatureClass.Level CurrentLevel { get { return CurrentClass.Levels[LevelIndex]; } }
-
-        private int xp = 0;
-        public int XP
-        {
-            get { return xp; }
-            set
-            {
-                xp = value;
-            }
-        }
-
-        [JsonIgnore]
-        public bool IsOverQualified
-        {
-            get
-            {
-                return CurrentClass != null ? CurrentClass.Levels.Count > LevelIndex + 1 && XP > CurrentClass.Levels[LevelIndex + 1].XP : false;
-            }
-        }
-
-
-        /// <summary>
-        /// If true, the creature will occasionally lay eggs.
-        /// </summary>
-        public bool LaysEggs { get; set; } // Todo: Does not belong here.
-
         public CreatureStats()
         {
-            CanSleep = false;
-            CanEat = false;
-            CanGetBored = false;
-            FullName = "";
-            CurrentClass = null;
-            AllowedTasks = Task.TaskCategory.Attack |  Task.TaskCategory.Gather | Task.TaskCategory.Plant | Task.TaskCategory.Harvest | Task.TaskCategory.Chop | Task.TaskCategory.Wrangle | Task.TaskCategory.TillSoil;
-            LevelIndex = 0;
-            XP = 0;
-            IsMigratory = false;
             Age = (int)Math.Max(MathFunctions.RandNormalDist(30, 15), 10);
             RandomSeed = MathFunctions.RandInt(int.MinValue, int.MaxValue);
-            VoicePitch = 1.0f;
-
             AddStatAdjustment(new StatAdjustment { Name = "base stats" });
         }
 
-        public CreatureStats(CreatureClass creatureClass, int level)
+        public CreatureStats(CreatureClass creatureClass, int level) : this()
         {
-            CanSleep = false;
-            CanEat = false;
-            CanGetBored = false;
-            FullName = "";
             CurrentClass = creatureClass;
             AllowedTasks = CurrentClass.Actions;
             LevelIndex = level;
             XP = creatureClass.Levels[level].XP;
 
-            // Todo: Should be added by the controlling creature.
-            StatAdjustments.Add(new StatAdjustment
-            {
-                Name = "base stats",
-                Dexterity = CurrentLevel.BaseStats.Dexterity,
-                Constitution = CurrentLevel.BaseStats.Constitution,
-                Strength = CurrentLevel.BaseStats.Strength,
-                Wisdom = CurrentLevel.BaseStats.Wisdom,
-                Charisma = CurrentLevel.BaseStats.Charisma,
-                Intelligence = CurrentLevel.BaseStats.Intelligence,
-                Size = 0
-            });
-
-            Age = (int)Math.Max(MathFunctions.RandNormalDist(30, 15), 10);
-            RandomSeed = MathFunctions.RandInt(int.MinValue, int.MaxValue);
+            BaseCharisma = CurrentLevel.BaseStats.Charisma;
+            BaseConstitution = CurrentLevel.BaseStats.Constitution;
+            BaseDexterity = CurrentLevel.BaseStats.Dexterity;
+            BaseIntelligence = CurrentLevel.BaseStats.Intelligence;
+            BaseStrength = CurrentLevel.BaseStats.Strength;
+            BaseWisdom = CurrentLevel.BaseStats.Wisdom;
         }
-
-        public void ResetBuffs()
-        {
-            StatAdjustments.RemoveAll(a => a.Name != "base stats");
-        }
-
+        
         public void LevelUp()
         {
             LevelIndex = Math.Min(LevelIndex + 1, CurrentClass.Levels.Count - 1);
-
             StatAdjustments.RemoveAll(a => a.Name == "base stats");
 
             StatAdjustments.Add(new StatAdjustment
@@ -208,20 +138,5 @@ namespace DwarfCorp
                 Intelligence = CurrentLevel.BaseStats.Intelligence
             });
         }
-
-        public static float GetRandomVoicePitch(Gender gender)
-        {
-            switch (gender)
-            {
-                case Gender.Female:
-                    return MathFunctions.Rand(0.2f, 1.0f);
-                case Gender.Male:
-                    return MathFunctions.Rand(-1.0f, 0.3f);
-                case Gender.Nonbinary:
-                    return MathFunctions.Rand(-1.0f, 1.0f);
-            }
-            return 1.0f;
-        }
     }
-
 }

@@ -97,14 +97,13 @@ namespace DwarfCorp
         {
             NoiseMaker.MakeNoise("Lay Egg", AI.Position, true, 1.0f);
 
-            if (ResourceLibrary.GetResourceByName(Species + " Egg") == null
-                || !EntityFactory.EnumerateEntityTypes().Contains(Species + " Egg Resource"))
+            if (!ResourceLibrary.Exists(Species + " Egg") || !EntityFactory.EnumerateEntityTypes().Contains(Species + " Egg Resource"))
             {
-                Resource newEggResource =
-                    new Resource(ResourceLibrary.GetResourceByName(ResourceType.Egg));
+                var newEggResource = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName(ResourceType.Egg));
                 newEggResource.Name = Species + " Egg";
                 ResourceLibrary.Add(newEggResource);
             }
+
             var parent = EntityFactory.CreateEntity<GameComponent>(this.Species + " Egg Resource", Physics.Position);
             parent.AddChild(new Egg(parent, this.Species, Manager, Physics.Position, AI.PositionConstraint));
         }
@@ -592,11 +591,10 @@ namespace DwarfCorp
 
                 if (!ResourceLibrary.Exists(type))
                 {
-                    ResourceLibrary.Add(new Resource(ResourceLibrary.GetResourceByName(BaseMeatResource))
-                    {
-                        Name = type,
-                        ShortName = type
-                    });
+                    var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName(BaseMeatResource));
+                    r.Name = type;
+                    r.ShortName = type;
+                    ResourceLibrary.Add(r);
                 }
 
                 Inventory.AddResource(new ResourceAmount(type, 1));
@@ -608,11 +606,10 @@ namespace DwarfCorp
 
                 if (!ResourceLibrary.Exists(type))
                 {
-                    ResourceLibrary.Add(new Resource(ResourceLibrary.GetResourceByName(ResourceType.Bones))
-                    {
-                        Name = type,
-                        ShortName = type
-                    });
+                    var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName(ResourceType.Bones));
+                    r.Name = type;
+                    r.ShortName = type;
+                    ResourceLibrary.Add(r);
                 }
 
                 Inventory.AddResource(new ResourceAmount(type, 1));
@@ -624,17 +621,15 @@ namespace DwarfCorp
 
                 if (!ResourceLibrary.Exists(type))
                 {
-                    ResourceLibrary.Add(new Resource(ResourceLibrary.GetResourceByName("Corpse"))
-                    {
-                        Name = type,
-                        ShortName = type
-                    });
+                    var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName("Corpse"));
+                    r.Name = type;
+                    r.ShortName = type;
+                    ResourceLibrary.Add(r);
                 }
 
                 Inventory.AddResource(new ResourceAmount(type, 1));
             }
         }
-
 
         /// <summary>
         /// Draws an indicator image over the creature telling us what its thinking.

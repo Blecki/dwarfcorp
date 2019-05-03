@@ -671,7 +671,6 @@ namespace DwarfCorp
                 EmbarkmentLibrary.InitializeDefaultLibrary();
                 ControlSettings.Load();
                 Drawer2D.Initialize(Content, GraphicsDevice);
-                ResourceLibrary.Initialize();
                 base.LoadContent();
 #if SHARP_RAVEN && !DEBUG
             }

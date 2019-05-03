@@ -40,17 +40,13 @@ namespace DwarfCorp
         public bool Generated = true;
         public string ShortName;
         public float MaterialStrength = 5;
-        public string PlantToGenerate { get; set; }
-
-        public bool CanCraft { get; set; }
-        public List<Quantitiy<ResourceTags>> CraftPrerequisites { get; set; }
-
-        public Color Tint { get; set; }
-        public string AleName { get; set; }
-
-        public CraftItemInfo CraftInfo { get; set; }
-
-        public string PotionType { get; set; }
+        public string PlantToGenerate;
+        public bool CanCraft;
+        public List<Quantitiy<ResourceTags>> CraftPrerequisites;
+        public Color Tint;
+        public string AleName = "";
+        public CraftItemInfo CraftInfo;
+        public string PotionType;
 
         // Todo: Replace this with strings so mods can extend it.
         public enum ResourceTags
@@ -107,60 +103,7 @@ namespace DwarfCorp
 
         public Resource()
         {
-            AleName = "";
-        }
 
-        public Resource(Resource other)
-        {
-            Name = other.Name;
-            ShortName = other.ShortName;
-            MoneyValue = other.MoneyValue;
-            Description = new string(other.Description.ToCharArray());
-            GuiLayers = new List<TileReference>();
-            GuiLayers.AddRange(other.GuiLayers);
-            Tint = other.Tint;
-            Tags = new List<ResourceTags>();
-            Tags.AddRange(other.Tags);
-            FoodContent = other.FoodContent;
-            ShortName = other.ShortName;
-            PlantToGenerate = other.PlantToGenerate;
-            CanCraft = other.CanCraft;
-            CraftPrerequisites = new List<Quantitiy<Resource.ResourceTags>>();
-            CraftPrerequisites.AddRange(other.CraftPrerequisites);
-            CraftInfo = other.CraftInfo;
-            Generated = true;
-            MaterialStrength = other.MaterialStrength;
-            if (other.CompositeLayers != null)
-            {
-                CompositeLayers = new List<CompositeLayer>();
-                CompositeLayers.AddRange(other.CompositeLayers);
-            }
-            else
-            {
-                CompositeLayers = null;
-            }
-
-            TrinketData = other.TrinketData;
-            AleName = other.AleName;
-        }
-
-        public string GetTagDescription(string delimiter)
-        {
-            string s = "";
-
-            for (int i = 0; i < Tags.Count; i++)
-            {
-                string tag = Tags[i].ToString();
-                s += tag.ToString();
-
-                if (i < Tags.Count - 1)
-                {
-                    s += delimiter;
-                }
-            }
-
-            return s;
         }
     }
-
 }

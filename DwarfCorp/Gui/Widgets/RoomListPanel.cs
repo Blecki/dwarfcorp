@@ -191,8 +191,8 @@ namespace DwarfCorp.Gui.Widgets
                                     List<CheckBox> boxes = new List<CheckBox>();
                                     foreach (Resource.ResourceTags tagType in blacklistableResources)
                                     {
-                                        var resource = ResourceLibrary.GetAverageWithTag(tagType);
-                                        var resources = ResourceLibrary.GetResourcesByTag(tagType);
+                                        var resource = ResourceLibrary.FindMedianWithTag(tagType);
+                                        var resources = ResourceLibrary.FindResourcesWithTag(tagType);
                                         Resource.ResourceTags lambdaType = tagType;
                                         var entry = grid.AddChild(new Widget());
 
