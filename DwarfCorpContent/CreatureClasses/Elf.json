@@ -1,14 +1,12 @@
 {
   "Actions": 24592,
-  "AttackMode": "Walking",
+  "AttackMode": "Attacking",
   "Attacks": [
     {
-      "$id": "2",
-      "DamageAmount": 0.1,
+      "DamageAmount": 1.0,
       "Name": "Elf Bow",
-      "Range": 5.0,
+      "Range": 15.0,
       "HitNoise": {
-        "$id": "3",
         "Sounds": [
           "Audio\\oscar\\sfx_ic_elf_shoot_bow"
         ],
@@ -23,8 +21,7 @@
       ],
       "Mode": "Ranged",
       "RechargeTimer": {
-        "$id": "4",
-        "TargetTimeSeconds": 1.00692081,
+        "TargetTimeSeconds": 1.0,
         "CurrentTimeSeconds": 0.0,
         "TriggerOnce": false,
         "HasTriggered": false,

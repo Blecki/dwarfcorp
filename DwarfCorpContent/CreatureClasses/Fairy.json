@@ -1,15 +1,12 @@
 {
-  "$id": "1",
   "Actions": 112518,
-  "AttackMode": "Walking",
+  "AttackMode": "Attacking",
   "Attacks": [
     {
-      "$id": "2",
       "DamageAmount": 10.0,
       "Name": "Fairy Dust",
       "Range": 2.0,
       "HitNoise": {
-        "$id": "3",
         "Sounds": [
           "Audio\\tinkle"
         ],
@@ -24,8 +21,7 @@
       ],
       "Mode": "Melee",
       "RechargeTimer": {
-        "$id": "4",
-        "TargetTimeSeconds": 0.233407855,
+        "TargetTimeSeconds": 0.5,
         "CurrentTimeSeconds": 0.0,
         "TriggerOnce": false,
         "HasTriggered": false,

@@ -5,7 +5,7 @@
   "AttackMode": "Attacking",
   "Attacks": [
     {
-      "DamageAmount": 1.0,
+      "DamageAmount": 1.5,
       "Name": "Pickaxe",
       "Range": 2.0,
       "HitNoise": {
@@ -23,7 +23,7 @@
       ],
       "Mode": "Melee",
       "RechargeTimer": {
-        "TargetTimeSeconds": 0.44747448,
+        "TargetTimeSeconds": 0.5,
         "CurrentTimeSeconds": 0.0,
         "TriggerOnce": false,
         "HasTriggered": false,

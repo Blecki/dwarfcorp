@@ -23,7 +23,7 @@
       ],
       "Mode": "Melee",
       "RechargeTimer": {
-        "TargetTimeSeconds": 0.61900723,
+        "TargetTimeSeconds": 0.5,
         "CurrentTimeSeconds": 0.0,
         "TriggerOnce": false,
         "HasTriggered": false,

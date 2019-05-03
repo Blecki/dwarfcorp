@@ -1,15 +1,12 @@
 {
-  "$id": "1",
   "Actions": 24596,
-  "AttackMode": "Walking",
+  "AttackMode": "Attacking",
   "Attacks": [
     {
-      "$id": "2",
       "DamageAmount": 1.0,
       "Name": "Claws",
       "Range": 2.0,
       "HitNoise": {
-        "$id": "3",
         "Sounds": [
           "Audio\\oscar\\sfx_ic_necromancer_skeleton_attack_1",
           "Audio\\oscar\\sfx_ic_necromancer_skeleton_hurt_2"
@@ -25,8 +22,7 @@
       ],
       "Mode": "Melee",
       "RechargeTimer": {
-        "$id": "4",
-        "TargetTimeSeconds": 0.550857246,
+        "TargetTimeSeconds": 0.5,
         "CurrentTimeSeconds": 0.0,
         "TriggerOnce": false,
         "HasTriggered": false,

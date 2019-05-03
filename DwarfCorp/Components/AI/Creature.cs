@@ -268,6 +268,7 @@ namespace DwarfCorp
 
         public bool FirstUpdate = true;
 
+        // Todo: Remove
         public CharacterMode AttackMode = CharacterMode.Attacking;
 
         /// <summary>

@@ -1,15 +1,13 @@
 {
   "$id": "1",
   "Actions": 24592,
-  "AttackMode": "Walking",
+  "AttackMode": "Attacking",
   "Attacks": [
     {
-      "$id": "2",
-      "DamageAmount": 0.1,
+      "DamageAmount": 5.0,
       "Name": "Mud",
-      "Range": 50.0,
+      "Range": 20.0,
       "HitNoise": {
-        "$id": "3",
         "Sounds": [
           "Audio\\demon_attack"
         ],
@@ -24,8 +22,7 @@
       ],
       "Mode": "Ranged",
       "RechargeTimer": {
-        "$id": "4",
-        "TargetTimeSeconds": 2.13581562,
+        "TargetTimeSeconds": 2.0,
         "CurrentTimeSeconds": 0.0,
         "TriggerOnce": false,
         "HasTriggered": false,

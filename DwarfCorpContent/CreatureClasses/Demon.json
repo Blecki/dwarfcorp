@@ -1,14 +1,12 @@
 {
   "Actions": 24592,
-  "AttackMode": "Walking",
+  "AttackMode": "Attacking",
   "Attacks": [
     {
-      "$id": "2",
       "DamageAmount": 15.0,
       "Name": "Fireball",
       "Range": 5.0,
       "HitNoise": {
-        "$id": "3",
         "Sounds": [
           "Audio\\oscar\\sfx_ic_demon_fire_spit_1",
           "Audio\\oscar\\sfx_ic_demon_fire_spit_2"
@@ -24,8 +22,7 @@
       ],
       "Mode": "Ranged",
       "RechargeTimer": {
-        "$id": "4",
-        "TargetTimeSeconds": 1.06095147,
+        "TargetTimeSeconds": 1.5,
         "CurrentTimeSeconds": 0.0,
         "TriggerOnce": false,
         "HasTriggered": false,

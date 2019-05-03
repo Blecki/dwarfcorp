@@ -1,15 +1,12 @@
 {
-  "$id": "1",
   "Actions": 24596,
-  "AttackMode": "Walking",
+  "AttackMode": "Attacking",
   "Attacks": [
     {
-      "$id": "2",
       "DamageAmount": 1.0,
       "Name": "Wrench",
       "Range": 1.5,
       "HitNoise": {
-        "$id": "3",
         "Sounds": [
           "Audio\\oscar\\sfx_ic_goblin_attack_1",
           "Audio\\oscar\\sfx_ic_goblin_attack_2",
@@ -26,8 +23,7 @@
       ],
       "Mode": "Melee",
       "RechargeTimer": {
-        "$id": "4",
-        "TargetTimeSeconds": 1.14073563,
+        "TargetTimeSeconds": 1.0,
         "CurrentTimeSeconds": 0.0,
         "TriggerOnce": false,
         "HasTriggered": false,

@@ -7,7 +7,7 @@
     {
       "DamageAmount": 20.0,
       "Name": "Musket",
-      "Range": 5.0,
+      "Range": 10.0,
       "HitNoise": {
         "Sounds": [
           "Audio\\oscar\\sfx_ic_dwarf_attack_musket_1",
@@ -25,7 +25,7 @@
       ],
       "Mode": "Ranged",
       "RechargeTimer": {
-        "TargetTimeSeconds": 2.05207849,
+        "TargetTimeSeconds": 2.0,
         "CurrentTimeSeconds": 0.0,
         "TriggerOnce": false,
         "HasTriggered": false,

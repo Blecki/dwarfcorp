@@ -11,11 +11,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A weapon allows one entity to attack another. (This is assumed to be a melee weapon). A weapon just has a damage
-    /// amount, a range, and a hit noise.
-    /// </summary>
-    [JsonObject(IsReference =  true)]
     public class Attack
     {
         public enum AttackMode

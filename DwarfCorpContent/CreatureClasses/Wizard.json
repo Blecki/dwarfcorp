@@ -7,7 +7,7 @@
     {
       "DamageAmount": 1.0,
       "Name": "Magic Missile",
-      "Range": 3.0,
+      "Range": 5.0,
       "HitNoise": {
         "Sounds": [
           "Audio\\oscar\\sfx_ic_dwarf_spell_cast_1"
@@ -23,7 +23,7 @@
       ],
       "Mode": "Melee",
       "RechargeTimer": {
-        "TargetTimeSeconds": 0.5829702,
+        "TargetTimeSeconds": 0.6,
         "CurrentTimeSeconds": 0.0,
         "TriggerOnce": false,
         "HasTriggered": false,

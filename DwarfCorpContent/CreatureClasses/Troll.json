@@ -1,6 +1,6 @@
 {
   "Actions": 24596,
-  "AttackMode": "Walking",
+  "AttackMode": "Attacking",
   "Attacks": [
     {
       "DamageAmount": 15.0,

@@ -1,15 +1,12 @@
 {
-  "$id": "1",
   "Actions": 24596,
-  "AttackMode": "Walking",
+  "AttackMode": "Attacking",
   "Attacks": [
     {
-      "$id": "2",
       "DamageAmount": 2.0,
       "Name": "Spark",
       "Range": 2.0,
       "HitNoise": {
-        "$id": "3",
         "Sounds": [
           "Audio\\tinkle"
         ],
@@ -24,8 +21,7 @@
       ],
       "Mode": "Melee",
       "RechargeTimer": {
-        "$id": "4",
-        "TargetTimeSeconds": 0.997561336,
+        "TargetTimeSeconds": 1.0,
         "CurrentTimeSeconds": 0.0,
         "TriggerOnce": false,
         "HasTriggered": false,
