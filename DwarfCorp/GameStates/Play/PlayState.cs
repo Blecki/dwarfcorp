@@ -1689,8 +1689,8 @@ namespace DwarfCorp.GameStates
                 ItemSource = (new Widget[] { icon_menu_Strings_Return }).Concat(
                     CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && item.AllowUserCrafting
-                    && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated) &&
-                    !ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible) &&
+                    && ResourceLibrary.Exists(item.ResourceCreated) &&
+                    !ResourceLibrary.GetResourceByName(item.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible) &&
                     item.CraftLocation != "Apothecary")
                     .Select(data => new FlatToolTray.Icon
                     {
@@ -1904,8 +1904,8 @@ namespace DwarfCorp.GameStates
                 ItemSource = (new Widget[] { icon_menu_Edibles_Return }).Concat(
                     CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && item.AllowUserCrafting
-                    && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated)
-                    && ResourceLibrary.Resources[item.ResourceCreated].Tags.Contains(Resource.ResourceTags.Edible))
+                    && ResourceLibrary.Exists(item.ResourceCreated)
+                    && ResourceLibrary.GetResourceByName(item.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible))
                     .Select(data => new FlatToolTray.Icon
                     {
                         Icon = data.Icon,
@@ -1980,7 +1980,7 @@ namespace DwarfCorp.GameStates
                 ItemSource = (new Widget[] { icon_menu_Edibles_Return }).Concat(
                     CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && item.AllowUserCrafting
-                    && ResourceLibrary.Resources.ContainsKey(item.ResourceCreated)
+                    && ResourceLibrary.Exists(item.ResourceCreated)
                     && item.CraftLocation == "Apothecary")
                     .Select(data => new FlatToolTray.Icon
                     {

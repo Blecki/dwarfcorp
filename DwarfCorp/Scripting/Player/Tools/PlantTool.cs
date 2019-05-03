@@ -59,7 +59,7 @@ namespace DwarfCorp
                 return false;
             }
 
-            if (ResourceLibrary.Resources[PlantType].Tags.Contains(Resource.ResourceTags.AboveGroundPlant))
+            if (ResourceLibrary.GetResourceByName(PlantType).Tags.Contains(Resource.ResourceTags.AboveGroundPlant))
             {
                 if (voxel.Sunlight == false)
                 {
@@ -67,7 +67,7 @@ namespace DwarfCorp
                     return false;
                 }
             }
-            else if (ResourceLibrary.Resources[PlantType].Tags.Contains(Resource.ResourceTags.BelowGroundPlant))
+            else if (ResourceLibrary.GetResourceByName(PlantType).Tags.Contains(Resource.ResourceTags.BelowGroundPlant))
             {
                 if (voxel.Sunlight)
                 {

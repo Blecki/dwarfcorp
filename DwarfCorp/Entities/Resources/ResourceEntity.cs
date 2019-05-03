@@ -21,7 +21,7 @@ namespace DwarfCorp
         }
 
         public ResourceEntity(ComponentManager manager, ResourceAmount resourceType, Vector3 position) :
-            base(manager, ResourceLibrary.Resources[resourceType.Type].Name, 
+            base(manager, resourceType.Type, 
                 Matrix.CreateTranslation(position), new Vector3(0.75f, 0.75f, 0.75f), Vector3.Zero, 0.5f, 0.5f, 0.999f, 0.999f, new Vector3(0, -10, 0))
         {
             Resource = resourceType;
@@ -31,11 +31,12 @@ namespace DwarfCorp
             }
             Restitution = 0.1f;
             Friction = 0.1f;
-            Resource type = ResourceLibrary.Resources[resourceType.Type];
+            Resource type = ResourceLibrary.GetResourceByName(resourceType.Type);
             
             Tags.Add(type.Name);
             Tags.Add("Resource");
             
+            // Todo: Clean this whole thing up
             if (type.Tags.Contains(DwarfCorp.Resource.ResourceTags.Flammable))
             {
                 AddChild(new Health(Manager, "health", 10.0f, 0.0f, 10.0f));

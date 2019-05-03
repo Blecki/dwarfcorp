@@ -171,9 +171,9 @@ namespace DwarfCorp
                 {
                     String type = Species + " " + ResourceType.Meat;
 
-                    if (!ResourceLibrary.Resources.ContainsKey(type))
+                    if (!ResourceLibrary.Exists(type))
                     {
-                        ResourceLibrary.Add(new Resource(ResourceLibrary.Resources[ResourceType.Meat])
+                        ResourceLibrary.Add(new Resource(ResourceLibrary.GetResourceByName(ResourceType.Meat))
                         {
                             Name = type,
                             ShortName = type
@@ -187,9 +187,9 @@ namespace DwarfCorp
                 {
                     String type = Name + " Bone";
 
-                    if (!ResourceLibrary.Resources.ContainsKey(type))
+                    if (!ResourceLibrary.Exists(type))
                     {
-                        ResourceLibrary.Add(new Resource(ResourceLibrary.Resources["Bone"])
+                        ResourceLibrary.Add(new Resource(ResourceLibrary.GetResourceByName("Bone"))
                         {
                             Name = type,
                             ShortName = type

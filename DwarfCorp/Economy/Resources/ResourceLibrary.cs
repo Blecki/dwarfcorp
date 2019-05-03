@@ -15,7 +15,7 @@ namespace DwarfCorp
     // Todo: Lock down.
     public static class ResourceLibrary
     {
-        public static Dictionary<String, Resource> Resources = new Dictionary<String, Resource>();
+        private static Dictionary<String, Resource> Resources = new Dictionary<String, Resource>();
         public static bool IsInitialized = false;
 
         public static IEnumerable<Resource> GetResourcesByTag(Resource.ResourceTags tag)
@@ -73,6 +73,17 @@ namespace DwarfCorp
                 ResourceLibrary.Initialize();
 
             return Resources.ContainsKey((String) name) ? Resources[name] : null;
+        }
+
+        public static bool Exists(String Name)
+        {
+            if (!IsInitialized) Initialize();
+            return Resources.ContainsKey(Name);
+        }
+
+        public static IEnumerable<Resource> Enumerate()
+        {
+            return Resources.Values;
         }
 
         private static Rectangle GetRect(int x, int y)

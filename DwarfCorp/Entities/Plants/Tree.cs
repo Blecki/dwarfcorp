@@ -70,12 +70,12 @@ namespace DwarfCorp
             // Can these be spawned when the tree dies rather than when it is created?
             if (emitWood)
             {
-                var wood = new Resource(ResourceLibrary.Resources[ResourceType.Wood]);
+                var wood = new Resource(ResourceLibrary.GetResourceByName(ResourceType.Wood));
                 wood.Name = String.Format("{0} Wood", Name.Split(' ').First());
                 wood.ShortName = wood.Name;
-                if (!ResourceLibrary.Resources.ContainsKey(wood.Name))
+                if (!ResourceLibrary.Exists(wood.Name))
                 {
-                    ResourceLibrary.Add(wood);
+                    ResourceLibrary.Add(wood); // Todo: Add if new function?
                 }
 
                 for (int i = 0; i < treeSize * 2; i++)

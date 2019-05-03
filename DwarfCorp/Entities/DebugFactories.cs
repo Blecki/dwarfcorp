@@ -46,10 +46,10 @@ namespace DwarfCorp
         [EntityFactory("RandTrinket")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            var randResource = ResourceLibrary.GenerateTrinket(Datastructures.SelectRandom(ResourceLibrary.Resources.Where(r => r.Value.Tags.Contains(Resource.ResourceTags.Material))).Key, MathFunctions.Rand(0.1f, 3.5f));
+            var randResource = ResourceLibrary.GenerateTrinket(Datastructures.SelectRandom(ResourceLibrary.Enumerate().Where(r => r.Tags.Contains(Resource.ResourceTags.Material))).Name, MathFunctions.Rand(0.1f, 3.5f));
 
             if (MathFunctions.RandEvent(0.5f))
-                randResource = ResourceLibrary.EncrustTrinket(randResource.Name, Datastructures.SelectRandom(ResourceLibrary.Resources.Where(r => r.Value.Tags.Contains(Resource.ResourceTags.Gem))).Key);
+                randResource = ResourceLibrary.EncrustTrinket(randResource.Name, Datastructures.SelectRandom(ResourceLibrary.Enumerate().Where(r => r.Tags.Contains(Resource.ResourceTags.Gem))).Name);
 
             return new ResourceEntity(Manager, new ResourceAmount(randResource.Name), Position);
         }

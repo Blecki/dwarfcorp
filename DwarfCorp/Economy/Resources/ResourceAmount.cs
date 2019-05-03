@@ -3,6 +3,7 @@ using System.Diagnostics;
 
 namespace DwarfCorp
 {
+    // Todo: Hate the quantity class. Also, Clean!
     public class ResourceAmount : Quantitiy<String>
     {
         public ResourceAmount(ResourceAmount amount)
@@ -37,10 +38,10 @@ namespace DwarfCorp
             Count = numResources;
         }
 
-        public ResourceAmount(String type, int num) :
-            this(ResourceLibrary.Resources[type], num)
+        public ResourceAmount(String type, int num)
         {
-            
+            Type = type;
+            Count = num;
         }
 
         public ResourceAmount()

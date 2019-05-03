@@ -245,7 +245,7 @@ namespace DwarfCorp
                     break;
             }
 
-            Resource resource = ResourceLibrary.Resources[ResourceCreated];
+            Resource resource = ResourceLibrary.GetResourceByName(ResourceCreated);
             Item.PreviewResource = EntityFactory.CreateEntity<ResourceEntity>(resource.Name + " Resource", Agent.Position);
             Item.PreviewResource.SetFlagRecursive(GameComponent.Flag.Active, false);
             Item.PreviewResource.SetVertexColorRecursive(new Color(200, 200, 255, 200));

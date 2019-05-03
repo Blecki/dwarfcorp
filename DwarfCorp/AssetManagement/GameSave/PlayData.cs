@@ -24,7 +24,7 @@ namespace DwarfCorp
         public Tutorial.TutorialSaveData TutorialSaveData;
         public Diplomacy Diplomacy;
         public FactionLibrary Factions;
-        public Dictionary<String, Resource> Resources;
+        public List<Resource> Resources;
         public DesignationDrawer Designations;
         public TaskManager Tasks;
         public Embarkment InitialEmbark;
@@ -42,7 +42,7 @@ namespace DwarfCorp
                 TutorialSaveData = World.TutorialManager.GetSaveData(),
                 Diplomacy = World.Diplomacy,
                 Factions = World.Factions,
-                Resources = ResourceLibrary.Resources,
+                Resources = ResourceLibrary.Enumerate().ToList(),
                 Designations = World.DesignationDrawer,
                 Tasks = World.Master.TaskManager,
                 InitialEmbark = World.InitialEmbark,
