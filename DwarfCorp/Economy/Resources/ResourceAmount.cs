@@ -3,10 +3,6 @@ using System.Diagnostics;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// This is just a struct of two things: a resource, and a number of that resource.
-    /// This is used instead of a list, since there is nothing distinguishing resources from each other.
-    /// </summary>
     public class ResourceAmount : Quantitiy<String>
     {
         public ResourceAmount(ResourceAmount amount)

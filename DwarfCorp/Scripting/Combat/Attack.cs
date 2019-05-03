@@ -344,25 +344,23 @@ namespace DwarfCorp
                 case AttackMode.Area:
                 {
                         BoundingBox box = new BoundingBox(performer.AI.Position - Vector3.One * Range, performer.AI.Position + Vector3.One * Range);
-                        foreach(var body in performer.World.EnumerateIntersectingObjects(box, CollisionType.Both))
+                        foreach(var body in performer.World.EnumerateIntersectingObjects(box, CollisionType.Both).Where(b => b.IsRoot()))
                         {
                             var creature = body.GetRoot().GetComponent<CreatureAI>();
+
                             if (creature == null)
                             {
                                 var health = body.GetRoot().GetComponent<Health>();
                                 if (health != null)
-                                {
                                     DoDamage(performer, body, bonus);
-                                }
                                 continue;
                             }
+
                             if (creature.Faction == performer.Faction)
                                 continue;
                             var alliance = performer.World.Diplomacy.GetPolitics(creature.Faction, performer.Faction).GetCurrentRelationship() != Relationship.Hateful;
                             if (alliance)
-                            {
                                 continue;
-                            }
 
                             DoDamage(performer, body, bonus);
                         }

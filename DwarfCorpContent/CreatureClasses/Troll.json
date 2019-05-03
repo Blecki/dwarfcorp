@@ -1,15 +1,12 @@
 {
-  "$id": "1",
   "Actions": 24596,
   "AttackMode": "Walking",
   "Attacks": [
     {
-      "$id": "2",
       "DamageAmount": 15.0,
       "Name": "Slam",
-      "Range": 5.0,
+      "Range": 4.0,
       "HitNoise": {
-        "$id": "3",
         "Sounds": [
           "Audio\\oscar\\sfx_ic_demon_hurt_1",
           "Audio\\oscar\\sfx_ic_demon_hurt_2",
@@ -26,8 +23,7 @@
       ],
       "Mode": "Area",
       "RechargeTimer": {
-        "$id": "4",
-        "TargetTimeSeconds": 2.06139684,
+        "TargetTimeSeconds": 4.0,
         "CurrentTimeSeconds": 0.0,
         "TriggerOnce": false,
         "HasTriggered": false,
@@ -47,16 +43,13 @@
   ],
   "Levels": [
     {
-      "$id": "5",
       "Index": 0,
       "Name": "Troll",
       "Pay": {
-        "$id": "6",
         "Value": 25.0
       },
       "XP": 0,
       "BaseStats": {
-        "$id": "7",
         "Name": "",
         "Dexterity": 3.0,
         "Constitution": 9.0,
