@@ -12,20 +12,14 @@ namespace DwarfCorp
     /// </summary>
     public class CreatureStatus
     {
-        [JsonProperty] private Dictionary<string, Status> Statuses;
-
-        [JsonIgnore] public Status Hunger { get { return Statuses["Hunger"]; } set { Statuses["Hunger"] = value; } }
-        [JsonIgnore] public Status Energy { get { return Statuses["Energy"]; } set { Statuses["Energy"] = value; } }
-        [JsonIgnore] public Status Happiness { get { return Statuses["Happiness"]; } set { Statuses["Happiness"] = value; } }
-        [JsonIgnore] public Status Health { get { return Statuses["Health"]; } set { Statuses["Health"] = value; } }
-        [JsonIgnore] public Status Boredom { get { return Statuses["Boredom"]; } set { Statuses["Boredom"] = value; } }
-
-        private DateTime LastHungerDamageTime = DateTime.Now;
+        public Status Hunger;
+        public Status Energy;
+        public Status Happiness;
+        public Status Health;
+        public Status Boredom;
 
         public CreatureStatus()
         {
-            Statuses = new Dictionary<string, Status>();
-
             Hunger = new Status
             {
                 MaxValue = 100.0f,
@@ -77,63 +71,25 @@ namespace DwarfCorp
             };
         }
 
-        public void Update(Creature creature, DwarfTime gameTime, ChunkManager chunks, Camera camera)
+        private IEnumerable<Status> EnumerateStatuses()
         {
-            var statAdjustments = creature.Stats.FindAdjustment("status");
-            creature.Stats.RemoveStatAdjustment("status");
-            if (statAdjustments == null)
-                statAdjustments = new StatAdjustment() { Name = "status" };
-            statAdjustments.Reset();
-
-            if (!creature.IsAsleep)
-                Hunger.CurrentValue -= (float)gameTime.ElapsedGameTime.TotalSeconds * creature.Stats.HungerGrowth;
-            else
-                creature.Hp += (float)gameTime.ElapsedGameTime.TotalSeconds * 0.1f;
-
-            Health.CurrentValue = (creature.Hp - creature.MinHealth) / (creature.MaxHealth - creature.MinHealth); // Todo: MinHealth always 0?
-
-            // Todo: Why is energy just tied to time of day? Lets make them actually recover at night and spend it during the day.
-            if(creature.Stats.CanSleep)
-                Energy.CurrentValue = (float) (100*Math.Sin(creature.Manager.World.Time.GetTotalHours()*Math.PI / 24.0f));
-            else
-                Energy.CurrentValue = 100.0f;
-
-            if (Energy.IsDissatisfied())
-            {
-                creature.DrawIndicator(IndicatorManager.StandardIndicators.Sleepy);
-                statAdjustments.Strength += -2.0f;
-                statAdjustments.Intelligence += -2.0f;
-                statAdjustments.Dexterity += -2.0f;
-            }
-
-            if(creature.Stats.CanEat && Hunger.IsDissatisfied() && !creature.IsAsleep)
-            {
-                creature.DrawIndicator(IndicatorManager.StandardIndicators.Hungry);
-
-                statAdjustments.Intelligence += -1.0f;
-                statAdjustments.Dexterity += -1.0f;
-
-                if(Hunger.CurrentValue <= 1e-12 && (DateTime.Now - LastHungerDamageTime).TotalSeconds > creature.Stats.HungerDamageRate)
-                {
-                    creature.Damage(1.0f / (creature.Stats.HungerResistance) * creature.Stats.HungerDamageRate);
-                    LastHungerDamageTime = DateTime.Now;
-                }
-            }
-
-            if (!statAdjustments.IsAllZero)
-                creature.Stats.AddStatAdjustment(statAdjustments);
+            yield return Hunger;
+            yield return Energy;
+            yield return Happiness;
+            yield return Boredom;
+            yield return Health;
         }
 
         public string get_status()
         {
             Status minStatus = null;
             float minValue = float.MaxValue;
-            foreach (var status in Statuses)
+            foreach (var status in EnumerateStatuses())
             {
-                if (status.Value.IsDissatisfied() && status.Value.CurrentValue < minValue)
+                if (status.IsDissatisfied() && status.CurrentValue < minValue)
                 {
-                    minStatus = status.Value;
-                    minValue = status.Value.CurrentValue;
+                    minStatus = status;
+                    minValue = status.CurrentValue;
                 }
             }
             if (minStatus == null)

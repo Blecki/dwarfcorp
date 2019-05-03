@@ -26,6 +26,7 @@ namespace DwarfCorp
         /// can be drawn.
         /// </summary>
         private DateTime LastIndicatorTime = DateTime.Now;
+        private DateTime LastHungerDamageTime = DateTime.Now;
 
         /// <summary> This is what the character is currently doing (used for animation) </summary>
         protected CharacterMode currentCharacterMode = CharacterMode.Idle;
@@ -357,7 +358,7 @@ namespace DwarfCorp
                 addToSpeciesCount();
             }
 
-            if (_selectionCircle != null && 
+            if (_selectionCircle != null &&
                 Faction == World.PlayerFaction && World.Master.SelectedMinions.Contains(AI))
             {
                 _selectionCircle.IsVisible = true;
@@ -381,7 +382,55 @@ namespace DwarfCorp
             UpdateHealthBar(gameTime);
             CheckNeighborhood(chunks, (float)gameTime.ElapsedGameTime.TotalSeconds);
             UpdateAnimation(gameTime, chunks, camera);
-            Status.Update(this, gameTime, chunks, camera);
+
+            #region Update Status Stat Effects
+            var statAdjustments = Stats.FindAdjustment("status");
+            Stats.RemoveStatAdjustment("status");
+            if (statAdjustments == null)
+                statAdjustments = new StatAdjustment() { Name = "status" };
+            statAdjustments.Reset();
+
+            if (!IsAsleep)
+                Status.Hunger.CurrentValue -= (float)gameTime.ElapsedGameTime.TotalSeconds * Stats.HungerGrowth;
+            else
+                Hp += (float)gameTime.ElapsedGameTime.TotalSeconds * 0.1f;
+
+            Status.Health.CurrentValue = (Hp - MinHealth) / (MaxHealth - MinHealth); // Todo: MinHealth always 0?
+
+            // Todo: Why is energy just tied to time of day? Lets make them actually recover at night and spend it during the day.
+            if (Stats.CanSleep)
+                Status.Energy.CurrentValue = (float)(100 * Math.Sin(Manager.World.Time.GetTotalHours() * Math.PI / 24.0f));
+            else
+                Status.Energy.CurrentValue = 100.0f;
+
+            if (Status.Energy.IsDissatisfied())
+            {
+                DrawIndicator(IndicatorManager.StandardIndicators.Sleepy);
+                statAdjustments.Strength += -2.0f;
+                statAdjustments.Intelligence += -2.0f;
+                statAdjustments.Dexterity += -2.0f;
+            }
+
+            if (Stats.CanEat && Status.Hunger.IsDissatisfied() && !IsAsleep)
+            {
+                DrawIndicator(IndicatorManager.StandardIndicators.Hungry);
+
+                statAdjustments.Intelligence += -1.0f;
+                statAdjustments.Dexterity += -1.0f;
+
+                if (Status.Hunger.CurrentValue <= 1e-12 && (DateTime.Now - LastHungerDamageTime).TotalSeconds > Stats.HungerDamageRate)
+                {
+                    Damage(1.0f / (Stats.HungerResistance) * Stats.HungerDamageRate);
+                    LastHungerDamageTime = DateTime.Now;
+                }
+            }
+
+            if (!statAdjustments.IsAllZero)
+                Stats.AddStatAdjustment(statAdjustments);
+
+            #endregion
+
+
             JumpTimer.Update(gameTime);
             HandleBuffs(gameTime);
             UpdateMigration(gameTime);
