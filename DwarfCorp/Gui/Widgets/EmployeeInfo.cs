@@ -616,7 +616,7 @@ namespace DwarfCorp.Gui.Widgets
                 }
 
                 PayLabel.Text = String.Format("Pay: {0}/day\nWealth: {1}", Employee.Stats.CurrentLevel.Pay,
-                    Employee.Status.Money);
+                    Employee.Stats.Money);
 
                 if (Employee.CurrentTask != null)
                 {

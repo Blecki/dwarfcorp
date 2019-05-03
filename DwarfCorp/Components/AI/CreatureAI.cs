@@ -1153,7 +1153,7 @@ namespace DwarfCorp
         /// <summary> Pay the creature this amount of money. The money goes into the creature's wallet. </summary>
         public void AddMoney(DwarfBux pay)
         {
-            Status.Money += pay;
+            Stats.Money += pay;
             bool good = pay > 0;
             Color textColor = good ? GameSettings.Default.Colors.GetColor("Positive", Color.Green) : GameSettings.Default.Colors.GetColor("Negative", Color.Red);
             string prefix = good ? "+" : "";

@@ -571,9 +571,9 @@ namespace DwarfCorp
             CreateMeatAndBones();
             NoiseMaker.MakeNoise("Die", Physics.Position, true);
 
-            if (AI.Status.Money > 0)
+            if (AI.Stats.Money > 0)
             {
-                EntityFactory.CreateEntity<CoinPile>("Coins Resource", AI.Position, Blackboard.Create("Money", AI.Status.Money));
+                EntityFactory.CreateEntity<CoinPile>("Coins Resource", AI.Position, Blackboard.Create("Money", AI.Stats.Money));
             }
 
             base.Die();

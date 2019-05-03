@@ -82,7 +82,7 @@ namespace DwarfCorp
             AI.TriggersMourning = true;
             AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Stats.Gender);
             Species = "Dwarf";
-            Status.Money = (decimal)MathFunctions.Rand(0, 150);
+            Stats.Money = (decimal)MathFunctions.Rand(0, 150);
 
             Physics.AddChild(new DwarfThoughts(Manager, "Thoughts"));
         }

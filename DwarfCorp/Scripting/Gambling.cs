@@ -16,7 +16,7 @@ namespace DwarfCorp.Scripting
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (agent.IsAsleep || agent.IsDead || agent.Status.Money < 10.0m || agent.World.Master.GamblingState.Participants.Count > 4 || agent.Status.Boredom.IsSatisfied())
+            if (agent.IsAsleep || agent.IsDead || agent.Stats.Money < 10.0m || agent.World.Master.GamblingState.Participants.Count > 4 || agent.Status.Boredom.IsSatisfied())
             {
                 return Feasibility.Infeasible;
             }
@@ -207,7 +207,7 @@ namespace DwarfCorp.Scripting
             {
                 case Status.WaitingForPlayers:
                     {
-                        Participants.RemoveAll(creature => creature == null || creature.IsDead || creature.Status.Money < 10.0m || creature.Physics.IsInLiquid);
+                        Participants.RemoveAll(creature => creature == null || creature.IsDead || creature.Stats.Money < 10.0m || creature.Physics.IsInLiquid);
                         WaitTimer.Update(time);
                         if (WaitTimer.HasTriggered || Participants.Count >= 4)
                         {
@@ -276,7 +276,7 @@ namespace DwarfCorp.Scripting
                 DwarfBux potDistribution = Pot / (decimal)Participants.Count;
                 foreach (var participant in Participants)
                 {
-                    participant.Status.Money += potDistribution;
+                    participant.Stats.Money += potDistribution;
                     IndicatorManager.DrawIndicator((potDistribution).ToString(),
                      participant.AI.Position + Microsoft.Xna.Framework.Vector3.Up + Microsoft.Xna.Framework.Vector3.Forward * 0.1f, 10.0f,
                         GameSettings.Default.Colors.GetColor("Positive", Microsoft.Xna.Framework.Color.Green));
@@ -297,7 +297,7 @@ namespace DwarfCorp.Scripting
 
             RoundTimer.Reset();
             int countBefore = Participants.Count;
-            Participants.RemoveAll(creature => creature == null || creature.IsDead || creature.Status.Money < 10.0m || creature.Physics.IsInLiquid);
+            Participants.RemoveAll(creature => creature == null || creature.IsDead || creature.Stats.Money < 10.0m || creature.Physics.IsInLiquid);
             int countAfter = Participants.Count;
 
             if (countAfter > 0 && countAfter < countBefore)
@@ -314,11 +314,11 @@ namespace DwarfCorp.Scripting
 
             foreach (var participant in Participants)
             {
-                var money = participant.Status.Money;
+                var money = participant.Stats.Money;
 
                 var bet = (decimal)(int)(MathFunctions.Rand(0.1f, 0.25f) * money);
                 Pot += (DwarfBux)bet;
-                participant.Status.Money -= (DwarfBux)bet;
+                participant.Stats.Money -= (DwarfBux)bet;
 
                 IndicatorManager.DrawIndicator((-(DwarfBux)bet).ToString(),
                     participant.AI.Position + Microsoft.Xna.Framework.Vector3.Up , 4.0f, 
@@ -355,7 +355,7 @@ namespace DwarfCorp.Scripting
             if (winners.Count == 1)
             {
                 var maxParticipant = winners[0];
-                maxParticipant.Status.Money += Pot;
+                maxParticipant.Stats.Money += Pot;
                 winners[0].World.LogEvent(String.Format("{0} won {1} at dice.", maxParticipant.Stats.FullName, Pot));
                 maxParticipant.NoiseMaker.MakeNoise("Pleased", maxParticipant.AI.Position, true, 0.5f);
                 IndicatorManager.DrawIndicator((Pot).ToString(),
