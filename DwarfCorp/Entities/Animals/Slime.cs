@@ -13,17 +13,31 @@ namespace DwarfCorp
 {
     public class Slime : Creature
     {
-        
-        private static string GetRandomBird()
+        [EntityFactory("Slime - Blue")]
+        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return ContentPaths.Entities.Animals.Slimes[MathFunctions.RandInt(0, ContentPaths.Entities.Animals.Slimes.Count)];
+            return new Slime("Entities\\Animals\\Slimes\\slime_blue", Position, Manager, "Slime");
         }
 
-        [EntityFactory("Slime")]
-        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        [EntityFactory("Slime - Green")]
+        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Slime(GetRandomBird(), Position, Manager, "Slime");
+            return new Slime("Entities\\Animals\\Slimes\\slime_green", Position, Manager, "Slime");
         }
+
+
+        [EntityFactory("Slime - Red")]
+        private static GameComponent __factory2(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Slime("Entities\\Animals\\Slimes\\slime_red", Position, Manager, "Slime");
+        }
+
+        [EntityFactory("Slime - Yellow")]
+        private static GameComponent __factory3(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        {
+            return new Slime("Entities\\Animals\\Slimes\\slime_yellow", Position, Manager, "Slime");
+        }
+
 
         public string SpriteAsset { get; set; }
 
@@ -36,22 +50,10 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats
-                {
-                    BaseDexterity = 6,
-                    BaseConstitution = 1,
-                    BaseStrength = 1,
-                    BaseWisdom = 1,
-                    BaseCharisma = 1,
-                    BaseIntelligence = 1,
-                    BaseSize = 0.25f,
-                    CanSleep = false,
-                    LaysEggs = true,
-                    IsMigratory = true
-                },
-                "Herbivore",
+                new CreatureStats(CreatureClassLibrary.GetClass("Slime"), 0),
+                "Demon",
                 manager.World.PlanService,
-                manager.World.Factions.Factions["Herbivore"],
+                manager.World.Factions.Factions["Demon"],
                 name
             )
         {
@@ -70,31 +72,22 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-
             SpriteAsset = sprites;
-            BaseMeatResource = "Slime";
+            BaseMeatResource = null;
+            HasMeat = false;
 
             CreateCosmeticChildren(Manager);
 
-            // Used to sense hostile creatures
-             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
-
-            // Controls the behavior of the creature
-            Physics.AddChild(new PacingCreatureAI(Manager, "Bird AI", Sensors));
+            Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
+            Physics.AddChild(new PacingCreatureAI(Manager, "Alime AI", Sensors));
             
-            // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack> { new Attack("Peck", 0.1f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_bird_attack), ContentPaths.Effects.pierce) { Mode = Attack.AttackMode.Dogfight } };
+            Attacks = new List<Attack> { new Attack("Chomp", 1.0f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_bird_attack), ContentPaths.Effects.pierce) { Mode = Attack.AttackMode.Dogfight } };
 
-            // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
-
-            // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
-            // Tag the physics component with some information 
-            // that can be used later
             Physics.Tags.Add("Animal");
-            Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the bird";
+            Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the slime";
 
             AI.Movement.CanWalk = true;
             AI.Movement.CanClimbWalls = false;
@@ -109,7 +102,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = SharedClass;
+            Stats.CurrentClass = CreatureClassLibrary.GetClass("Slime");
 
             var spriteSheet = new SpriteSheet(SpriteAsset, 48, 48);
             var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, 0.35f, 0));
@@ -138,11 +131,5 @@ namespace DwarfCorp
 
             base.CreateCosmeticChildren(manager);
         }
-
-        private static CreatureClass SharedClass = new CreatureClass()
-        {
-            Name = "Bird",
-            Levels = new List<CreatureClass.Level>() { new CreatureClass.Level() { Index = 0, Name = "Bird" } }
-        };
     }
 }

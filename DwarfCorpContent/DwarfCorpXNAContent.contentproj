@@ -2103,6 +2103,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>goblin_phoneme</Name>
     </Content>
+    <None Include="CreatureClasses\Slime.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Slime</Name>
+    </None>
     <None Include="diseases.json">
       <Name>diseases</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
