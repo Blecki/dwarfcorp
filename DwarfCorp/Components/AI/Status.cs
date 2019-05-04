@@ -11,12 +11,13 @@ namespace DwarfCorp
     {
         private float currentValue;
 
-        public string Name { get; set; }
+        public string Name;
+        public string Adjective;
 
         public float CurrentValue
         {
             get { return currentValue; }
-            set { SetValue(value); }
+            set { SetValue(value); } // Todo: Migrate all to SetValue function?
         }
 
         public float MinValue { get; set; }
@@ -24,11 +25,7 @@ namespace DwarfCorp
         public float DissatisfiedThreshold { get; set; }
         public float SatisfiedThreshold { get; set; }
 
-        [JsonIgnore]
-        public int Percentage
-        {
-            get { return (int)((CurrentValue - MinValue) / (MaxValue - MinValue) * 100); }
-        }
+        [JsonIgnore] public int Percentage => (int)((CurrentValue - MinValue) / (MaxValue - MinValue) * 100);
 
         public bool IsSatisfied()
         {

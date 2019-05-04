@@ -205,7 +205,7 @@ namespace DwarfCorp
         public GraphicsDevice Graphics { get { return Manager.World.GraphicsDevice; } }
 
         /// <summary> List of attacks the creature can perform. </summary>
-        public List<Attack> Attacks { get; set; }
+        public List<Attack> Attacks { get; set; } // Todo: Oh god, kill this.
 
         /// <summary> Faction that the creature belongs to </summary>
         public Faction Faction { get; set; }

@@ -2059,6 +2059,26 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Animals\Slimes\slime_blue.png">
+      <Name>slime_blue</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Animals\Slimes\slime_green.png">
+      <Name>slime_green</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Animals\Slimes\slime_red.png">
+      <Name>slime_red</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Entities\Animals\Slimes\slime_yellow.png">
+      <Name>slime_yellow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Text\Templates\names_demon.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>names_demon</Name>
@@ -2154,6 +2174,10 @@
     <None Include="CreatureClasses\Miner.json">
       <Name>Miner</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Entities\Animals\Slimes\slime-animations.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>slime-animations</Name>
     </None>
     <None Include="Entities\Dwarf\Layers\dwarf-palettes.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -271,6 +271,7 @@
     <Compile Include="Economy\Resources\ResourceContainer.cs" />
     <Compile Include="Economy\Resources\ResourceLibrary.cs" />
     <Compile Include="Economy\Resources\ResourceType.cs" />
+    <Compile Include="Entities\Animals\Slime.cs" />
     <Compile Include="Entities\Monsters\Demon.cs" />
     <Compile Include="Entities\Monsters\Elf.cs" />
     <Compile Include="Entities\Monsters\Fairy.cs" />

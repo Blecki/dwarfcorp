@@ -433,6 +433,16 @@ namespace DwarfCorp
                     }
                 };
 
+                public static List<string> Slimes = new List<string>()
+                {
+                    ProgramData.CreatePath("Entities", "Animals", "Slimes", "slime_blue"),
+                    ProgramData.CreatePath("Entities", "Animals", "Slimes", "slime_green"),
+                    ProgramData.CreatePath("Entities", "Animals", "Slimes", "slime_red"),
+                    ProgramData.CreatePath("Entities", "Animals", "Slimes", "slime_yellow"),
+                };
+
+                public static string slime_animations = ProgramData.CreatePath("Entities", "Animals", "Slimes", "slime-animations.json");
+
                 public class Bat
                 {
                     public static string bat = ProgramData.CreatePath("Entities", "Animals", "bat");
