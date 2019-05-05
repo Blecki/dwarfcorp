@@ -1,0 +1,25 @@
+{
+  "$type": "DwarfCorp.Goals.SpawnEntityEvent, BaseContent",
+  "EntityToSpawn": "Gremlin",
+  "EntityFaction": "Carnivore",
+  "ZoomToEntity": true,
+  "SpawnLocation": "WorldEdge",
+  "EntityFactionFilter": {
+    "$id": "4",
+    "Hostility": "Any",
+    "Specification": "Specific",
+    "Claim": "Any"
+  },
+  "SpawnOnTranquil": false,
+  "MinEntityLevel": 1,
+  "MaxEntityLevel": 1,
+  "Likelihood": 1,
+  "Name": "Spawn Gremlin",
+  "Difficulty": 20.0,
+  "AllowedTime": "All",
+  "CooldownHours": 2,
+  "AnnouncementText": "A Gremlin has come!",
+  "AnnouncementDetails": "A Gremlin has snuck into our colony. It will try to sabotage us. Be on alert!",
+  "AnnouncementSound": "Audio\\oscar\\sfx_gui_negative_generic",
+  "PauseOnAnnouncementDetails": true
+}

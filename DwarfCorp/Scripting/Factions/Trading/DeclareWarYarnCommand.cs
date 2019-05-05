@@ -21,12 +21,6 @@ namespace DwarfCorp.Scripting.Factions.Trading
             }
 
             world.Diplomacy.GetPolitics(playerFaction, envoy.OwnerFaction).IsAtWar = true;
-            
-            world.GoalManager.OnGameEvent(new Goals.Triggers.DeclareWar
-            {
-                PlayerFaction = playerFaction,
-                OtherFaction = envoy.OwnerFaction
-            });
         }
     }
 }

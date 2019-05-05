@@ -5,24 +5,21 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace DwarfCorp.Goals
+namespace DwarfCorp.Events
 {
-    public class SpawnTradeEnvoyEvent : ScheduledEvent
+    public class SpawnWarPartyEvent : ScheduledEvent
     {
         public string PartyFaction;
         public FactionFilter PartyFactionFilter;
-        public DwarfBux TributeDemanded = 0m;
 
         public override void Trigger(WorldManager world)
         {
+            if (world.InitialEmbark.Difficulty == 0) return;
+
             var faction = GetFaction(world, PartyFaction, PartyFactionFilter);
             if (!String.IsNullOrEmpty(faction) && world.Factions.Factions.ContainsKey(faction))
             {
-                var envoy = world.Diplomacy.SendTradeEnvoy(world.Factions.Factions[faction], world);
-                if (envoy != null)
-                {
-                    envoy.TributeDemanded = (int)(TributeDemanded * world.InitialEmbark.Difficulty * MathFunctions.Rand(0.9f, 1.5f));
-                }
+                world.Diplomacy.SendWarParty(world.Factions.Factions[faction]);
             }
             base.Trigger(world);
         }

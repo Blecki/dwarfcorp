@@ -123,7 +123,6 @@ namespace DwarfCorp
                         Creature.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));
                     }
                     Creature.Stats.NumBlocksDestroyed++;
-                    Creature.World.GoalManager.OnGameEvent(new Goals.Triggers.DigBlock(voxelType, Creature));
 
                     var items = VoxelHelpers.KillVoxel(Creature.World, vox);
 

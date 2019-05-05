@@ -3325,6 +3325,34 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Turret</Name>
     </None>
+    <None Include="World\Events\SpawnKobold.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SpawnKobold</Name>
+    </None>
+    <None Include="World\Events\SpawnGremlin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SpawnGremlin</Name>
+    </None>
+    <None Include="World\Events\SendTradeEnvoy.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SendTradeEnvoy</Name>
+    </None>
+    <None Include="World\Events\MotherlandTradeEnvoy.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>MotherlandTradeEnvoy</Name>
+    </None>
+    <None Include="World\Events\DemandTribute.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>DemandTribute</Name>
+    </None>
+    <None Include="World\Events\SendWarParty.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SendWarParty</Name>
+    </None>
+    <None Include="World\Events\Plague.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Plague</Name>
+    </None>
     <None Include="World\goblin.conv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>goblin</Name>

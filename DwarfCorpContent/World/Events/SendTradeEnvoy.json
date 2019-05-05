@@ -1,0 +1,21 @@
+{
+  "$type": "DwarfCorp.Goals.SpawnTradeEnvoyEvent, BaseContent",
+  "PartyFaction": null,
+  "PartyFactionFilter": {
+    "Hostility": "NotHostile",
+    "Specification": "Random",
+    "Claim": "Any"
+  },
+  "TributeDemanded": {
+    "Value": 0.0
+  },
+  "Likelihood": 5,
+  "Name": "Send Trade Envoy",
+  "Difficulty": -10.0,
+  "AllowedTime": "OnlyDayTime",
+  "CooldownHours": 4,
+  "AnnouncementText": null,
+  "AnnouncementDetails": null,
+  "AnnouncementSound": null,
+  "PauseOnAnnouncementDetails": false
+}

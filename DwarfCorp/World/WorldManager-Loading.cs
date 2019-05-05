@@ -290,8 +290,7 @@ namespace DwarfCorp
 
                 Diplomacy = gameFile.PlayData.Diplomacy;
 
-                GoalManager = new Goals.GoalManager();
-                GoalManager.Initialize(new List<Goals.Goal>());// gameFile.PlayData.Goals);
+                EventScheduler = new Events.Scheduler();
 
                 TutorialManager = new Tutorial.TutorialManager();
                 TutorialManager.SetFromSaveData(gameFile.PlayData.TutorialSaveData);
@@ -364,8 +363,7 @@ namespace DwarfCorp
                 Diplomacy.Initialize(Time.CurrentDate);
 
                 // Initialize goal manager here.
-                GoalManager = new Goals.GoalManager();
-                GoalManager.Initialize(new List<Goals.Goal>());
+                EventScheduler = new Events.Scheduler();
 
                 TutorialManager = new Tutorial.TutorialManager();
                 TutorialManager.TutorialEnabled = !GameSettings.Default.TutorialDisabledGlobally;

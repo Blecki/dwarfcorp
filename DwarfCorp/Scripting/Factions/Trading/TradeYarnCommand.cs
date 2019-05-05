@@ -77,16 +77,6 @@ namespace DwarfCorp.Scripting.Factions.Trading
             }
 
             transaction.Apply(world);
-            
-            world.GoalManager.OnGameEvent(new Goals.Triggers.Trade
-            {
-                PlayerFaction = playerFaction,
-                PlayerGold = transaction.PlayerMoney,
-                PlayerGoods = transaction.PlayerItems,
-                OtherFaction = envoy.OwnerFaction,
-                OtherGold = transaction.EnvoyMoney,
-                OtherGoods = transaction.EnvoyItems
-            });
         }
     }
 }

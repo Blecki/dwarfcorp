@@ -368,12 +368,6 @@ namespace DwarfCorp.GameStates
 
             #endregion
 
-            #region Update Economy Indicator
-
-            EconomyIcon.IndicatorValue = World.GoalManager.NewAvailableGoals + World.GoalManager.NewCompletedGoals;
-
-            #endregion
-
             BottomBar.Layout();
 
             if (GameSpeedControls.CurrentSpeed != (int) DwarfTime.LastTime.Speed)
@@ -443,10 +437,10 @@ namespace DwarfCorp.GameStates
                 var scheduleDisplay = DwarfGame.GetConsoleTile("SCHEDULE");
                 scheduleDisplay.TextSize = 1;
                 scheduleDisplay.Lines.Clear();
-                foreach (var scheduledEvent in World.GoalManager.EventScheduler.Forecast)
+                foreach (var scheduledEvent in World.EventScheduler.Forecast)
                     scheduleDisplay.Lines.Add(String.Format("{0} : {1}, {2}", scheduledEvent.Event.Name, (scheduledEvent.Date - World.Time.CurrentDate).ToString(@"hh\:mm"), scheduledEvent.Event.Difficulty));
 
-                scheduleDisplay.Lines.Add(String.Format("Difficulty: {0} Forecast {1}", World.GoalManager.EventScheduler.CurrentDifficulty, World.GoalManager.EventScheduler.ForecastDifficulty(World.Time.CurrentDate)));
+                scheduleDisplay.Lines.Add(String.Format("Difficulty: {0} Forecast {1}", World.EventScheduler.CurrentDifficulty, World.EventScheduler.ForecastDifficulty(World.Time.CurrentDate)));
 
                 scheduleDisplay.Invalidate();
             }

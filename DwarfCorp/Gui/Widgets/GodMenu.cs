@@ -313,12 +313,12 @@ namespace DwarfCorp.Gui.Widgets
                     Text = "EVENT",
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
-                            ItemSource = Master.World.GoalManager.EventScheduler.Events.Events.Select(e =>
+                            ItemSource = Events.Library.Enumerate().Select(e =>
                             {
                                 return new HorizontalMenuTray.MenuItem
                                 {
                                     Text = e.Name,
-                                    OnClick = (sender, args) => Master.World.GoalManager.EventScheduler.ActivateEvent(Master.World, e)
+                                    OnClick = (sender, args) => Master.World.EventScheduler.ActivateEvent(Master.World, e)
                                 };
 
                             }),

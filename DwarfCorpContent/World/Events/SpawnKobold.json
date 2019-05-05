@@ -1,0 +1,24 @@
+{
+  "$type": "DwarfCorp.Goals.SpawnEntityEvent, BaseContent",
+  "EntityToSpawn": "Kobold",
+  "EntityFaction": "Carnivore",
+  "ZoomToEntity": true,
+  "SpawnLocation": "WorldEdge",
+  "EntityFactionFilter": {
+    "Hostility": "Any",
+    "Specification": "Specific",
+    "Claim": "Any"
+  },
+  "SpawnOnTranquil": false,
+  "MinEntityLevel": 1,
+  "MaxEntityLevel": 1,
+  "Likelihood": 1,
+  "Name": "Spawn Kobold",
+  "Difficulty": 5.0,
+  "AllowedTime": "OnlyNightTime",
+  "CooldownHours": 2,
+  "AnnouncementText": "A Kobold has come!",
+  "AnnouncementDetails": "A Kobold has snuck into our colony. It will try to steal from us. Be on alert!",
+  "AnnouncementSound": "Audio\\oscar\\sfx_gui_negative_generic",
+  "PauseOnAnnouncementDetails": true
+}

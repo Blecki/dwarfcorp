@@ -5,10 +5,16 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace DwarfCorp.Goals
+namespace DwarfCorp.Events
 {
-    public class EventScheduler
+    public class Scheduler
     {
+        public struct EventEntry
+        {
+            public ScheduledEvent Event;
+            public DateTime Date;
+        }
+
         public float CurrentDifficulty = 5;
         public float TargetDifficulty = 5;
         public float MaxDifficulty = 30;
@@ -17,18 +23,11 @@ namespace DwarfCorp.Goals
         public int MinSpacingHours = 1;
         public int MaxSpacingHours = 4;
         public int MinimumStartTime = 8;
-        public struct EventEntry
-        {
-            public ScheduledEvent Event;
-            public DateTime Date;
-        }
-
         public List<EventEntry> Forecast = new List<EventEntry>();
         public List<ScheduledEvent> ActiveEvents = new List<ScheduledEvent>();
-        public EventLibrary Events = new EventLibrary();
         private int previousHour = -1;
 
-        public EventScheduler()
+        public Scheduler()
         {
 
         }
@@ -74,11 +73,11 @@ namespace DwarfCorp.Goals
 
         public void AddRandomEvent(WorldManager World, DateTime now)
         {
-            float forecast = ForecastDifficulty(now);
+            var forecastDifficulty = ForecastDifficulty(now);
             bool foundEvent = false;
             var randomEvent = new ScheduledEvent();
             int iters = 0;
-            var filteredEvents = Forecast.Count == 0 ? Events.Events : Events.Events.Where(e => e.Name != Forecast.Last().Event.Name).ToList();
+            var filteredEvents = Forecast.Count == 0 ? Library.Enumerate() : Library.Enumerate().Where(e => e.Name != Forecast.Last().Event.Name).ToList();
 
             if (World.InitialEmbark.Difficulty == 0)
                 filteredEvents = filteredEvents.Where(e => e.SpawnOnTranquil).ToList();
@@ -86,18 +85,15 @@ namespace DwarfCorp.Goals
             while (!foundEvent && iters < 100)
             {
                 iters++;
-
                 
-
                 float sumLikelihood = filteredEvents.Sum(ev => ev.Likelihood);
                 float randLikelihood = MathFunctions.Rand(0, sumLikelihood);
                 float p = 0;
                 foreach (var ev in filteredEvents)
                 {
-                    if (forecast + ev.Difficulty > TargetDifficulty)
-                    {
+                    if (forecastDifficulty + ev.Difficulty > TargetDifficulty)
                         continue;
-                    }
+
                     p += ev.Likelihood;
                     if (randLikelihood < p)
                     {
@@ -114,34 +110,22 @@ namespace DwarfCorp.Goals
             }
             DateTime randomTime = now;
             if (Forecast.Count == 0)
-            {
                 randomTime = now + new TimeSpan(MinimumStartTime + MathFunctions.RandInt(MinSpacingHours, MaxSpacingHours), 0, 0);
-            }
             else
-            {
                 randomTime = Forecast.Last().Date + new TimeSpan(MathFunctions.RandInt(MinSpacingHours, MaxSpacingHours) + Forecast.Last().Event.CooldownHours, 0, 0);
-            }
 
             if (randomEvent.AllowedTime == ScheduledEvent.TimeRestriction.OnlyDayTime)
-            {
                 while (IsNight(randomTime))
-                {
                     randomTime += new TimeSpan(1, 0, 0);
-                }
-            }
             else if (randomEvent.AllowedTime == ScheduledEvent.TimeRestriction.OnlyNightTime)
-            {
                 while (!IsNight(randomTime))
-                {
                     randomTime += new TimeSpan(1, 0, 0);
-                }
-            }
+
             Forecast.Add(new EventEntry()
             {
                 Event = randomEvent,
                 Date = randomTime
             });
-
         }
 
         public void Update(WorldManager world, DateTime now)
@@ -149,16 +133,11 @@ namespace DwarfCorp.Goals
             int hour = now.Hour;
 
             foreach (var e in ActiveEvents)
-            {
                 if (e.ShouldKeep(world))
-                {
                     e.Update(world);
-                }
                 else
-                {
                     e.Deactivate(world);
-                }
-            }
+
             ActiveEvents.RemoveAll(e => !e.ShouldKeep(world));
             if (hour == previousHour)
              return;
@@ -167,9 +146,7 @@ namespace DwarfCorp.Goals
             CurrentDifficulty = Math.Max(CurrentDifficulty - DifficultyDecayPerHour, 0);
 
             if (Forecast.Count > 0 && now > Forecast[0].Date)
-            {
                 PopEvent(world);
-            }
 
             int iters = 0;
             while (Forecast.Count < MaxForecast && iters < MaxForecast * 2)

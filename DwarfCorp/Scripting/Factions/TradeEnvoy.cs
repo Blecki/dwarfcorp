@@ -107,7 +107,7 @@ namespace DwarfCorp
                 closestCreature = liveCreatures.First();
             }
 
-            TradeWidget = World.MakeWorldPopup(new Goals.TimedIndicatorWidget()
+            TradeWidget = World.MakeWorldPopup(new Events.TimedIndicatorWidget()
             {
                 Text = string.Format("Click here to trade with the {0}!", OwnerFaction.Race.Name),
                 OnClick = (gui, sender) =>

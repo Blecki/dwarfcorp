@@ -1,0 +1,19 @@
+{
+  "$type": "DwarfCorp.Goals.SpawnWarPartyEvent, BaseContent",
+  "PartyFaction": null,
+  "PartyFactionFilter": {
+    "Hostility": "Hostile",
+    "Specification": "Random",
+    "Claim": "Any"
+  },
+  "SpawnOnTranquil": false,
+  "Likelihood": 4,
+  "Name": "Send War Party",
+  "Difficulty": 10.0,
+  "AllowedTime": "All",
+  "CooldownHours": 8,
+  "AnnouncementText": null,
+  "AnnouncementDetails": null,
+  "AnnouncementSound": null,
+  "PauseOnAnnouncementDetails": false
+}

@@ -1,0 +1,21 @@
+{
+  "$type": "DwarfCorp.Goals.SpawnTradeEnvoyEvent, BaseContent",
+  "PartyFaction": "Motherland",
+  "PartyFactionFilter": {
+    "Hostility": "NotHostile",
+    "Specification": "Motherland",
+    "Claim": "Any"
+  },
+  "TributeDemanded": {
+    "Value": 0.0
+  },
+  "Likelihood": 8,
+  "Name": "Motherland Trade Envoy",
+  "Difficulty": -10.0,
+  "AllowedTime": "OnlyDayTime",
+  "CooldownHours": 4,
+  "AnnouncementText": null,
+  "AnnouncementDetails": null,
+  "AnnouncementSound": null,
+  "PauseOnAnnouncementDetails": false
+}
