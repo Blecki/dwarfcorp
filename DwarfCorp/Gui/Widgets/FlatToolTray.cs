@@ -64,7 +64,8 @@ namespace DwarfCorp.Gui.Widgets
         public class Tray : IconTray
         {
             public static List<Keys> Hotkeys = null;
-            static Tray()
+
+            public static void DetectHotKeys()
             {
                 Hotkeys = new List<Keys>()
                 {

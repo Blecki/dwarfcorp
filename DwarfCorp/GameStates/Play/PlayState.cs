@@ -559,6 +559,8 @@ namespace DwarfCorp.GameStates
         /// </summary>
         public void CreateGUIComponents()
         {
+            Gui.Widgets.FlatToolTray.Tray.DetectHotKeys();
+
             BottomBackground = GuiRoot.RootItem.AddChild(new TrayBackground
             {
                 Corners = Scale9Corners.Top,
