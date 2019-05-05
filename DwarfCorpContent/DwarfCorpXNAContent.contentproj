@@ -2079,6 +2079,11 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <Compile Include="Entities\Animals\Slimes\Slime_Goo.png">
+      <Name>Slime_Goo</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="Text\Templates\names_demon.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>names_demon</Name>

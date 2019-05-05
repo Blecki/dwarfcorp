@@ -50,22 +50,27 @@
     {
       "Name": "Bird",
       "SpawnProbability": 0.001,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
     },
     {
       "Name": "Tree Frog",
       "SpawnProbability": 0.001,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
     },
     {
       "Name": "Chimp",
       "SpawnProbability": 0.003,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
     },
     {
       "Name": "Chicken",
       "SpawnProbability": 0.0001,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
+    },
+    {
+      "Name": "Slime - Green",
+      "SpawnProbability": 0.0005,
+      "MaxPopulation": 100
     }
   ],
   "SoilLayer": {

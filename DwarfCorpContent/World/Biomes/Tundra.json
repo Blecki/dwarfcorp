@@ -12,7 +12,12 @@
     {
       "Name": "Penguin",
       "SpawnProbability": 0.0001,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
+    },
+    {
+      "Name": "Slime - Blue",
+      "SpawnProbability": 0.0005,
+      "MaxPopulation": 100
     }
   ],
   "SoilLayer": {

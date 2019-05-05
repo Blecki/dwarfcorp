@@ -60,37 +60,42 @@
     {
       "Name": "Bird",
       "SpawnProbability": 0.0005,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
     },
     {
       "Name": "Turkey",
       "SpawnProbability": 0.0003,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
     },
     {
       "Name": "Deer",
       "SpawnProbability": 0.0005,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
     },
     {
       "Name": "Brown Rabbit",
       "SpawnProbability": 0.0005,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
     },
     {
       "Name": "Frog",
       "SpawnProbability": 0.0001,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
     },
     {
       "Name": "White Rabbit",
       "SpawnProbability": 0.00005,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
     },
     {
       "Name": "Spider",
       "SpawnProbability": 0.00005,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
+    },
+    {
+      "Name": "Slime - Green",
+      "SpawnProbability": 0.0005,
+      "MaxPopulation": 100
     }
   ],
   "SoilLayer": {

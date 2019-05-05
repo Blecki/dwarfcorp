@@ -368,6 +368,12 @@
     "Texture": "Entities\\Furniture\\conveyor",
     "TileWidth": 32,
     "TileHeight": 32
+  },
+  {
+    "Name": "slime",
+    "Texture": "Entities\\Animals\\Slimes\\Slime_Goo",
+    "TileWidth": 32,
+    "TileHeight":  32
   }
 ]
 

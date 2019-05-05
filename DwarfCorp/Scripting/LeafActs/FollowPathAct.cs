@@ -17,6 +17,7 @@ namespace DwarfCorp
 
         private string PathName;
         private float DeltaTime = 0.0f;
+        private float LastNoiseTime = 0.0f;
 
         private float GetAgentSpeed(MoveType Action)
         {
@@ -49,8 +50,9 @@ namespace DwarfCorp
 
             switch (Step.MoveType)
             {
+                #region Ride Elevator
                 case MoveType.RideElevator:
-
+                 
                     var shafts = Step.DestinationState.Tag as Elevators.ElevatorMoveState;
                     if (shafts == null || shafts.Entrance == null || shafts.Entrance.IsDead || shafts.Exit == null || shafts.Exit.IsDead)
                         yield return Status.Fail;
@@ -146,7 +148,7 @@ namespace DwarfCorp
                     shaft.Done(Agent);
 
                     break;
-
+                #endregion
                 case MoveType.EnterVehicle:
 
                     Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
@@ -221,14 +223,14 @@ namespace DwarfCorp
                     CleanupMinecart();
                     Creature.NoiseMaker.MakeNoise("Jump", Agent.Position, false);
 
-                    foreach (var bit in Jump(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel) + new Vector3(0.0f, 0.5f, 0.0f), GetPathPoint(Step.DestinationVoxel) - GetPathPoint(Step.SourceVoxel), actionSpeed))
+                    foreach (var bit in Jump(Agent.Position, GetPathPoint(Step.DestinationVoxel), Agent.Position - GetPathPoint(Step.SourceVoxel), actionSpeed / 2.0f))
                     {
                         Creature.OverrideCharacterMode = false;
                         SetCharacterMode(Creature.Physics.Velocity.Y > 0 ? CharacterMode.Jumping : CharacterMode.Falling);
                         yield return Status.Running;
                     }
 
-                    SetAgentTranslation(GetPathPoint(Step.DestinationVoxel));
+                    //SetAgentTranslation(GetPathPoint(Step.DestinationVoxel));
 
                     break;
 
@@ -236,7 +238,7 @@ namespace DwarfCorp
 
                     CleanupMinecart();
 
-                    foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), actionSpeed))
+                    foreach (var bit in Translate(Agent.Position, GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
                         SetCharacterMode(CharacterMode.Falling);
                         yield return Status.Running;
@@ -253,7 +255,13 @@ namespace DwarfCorp
                     {
                         if (Step.InteractObject == null || Step.InteractObject.IsDead)
                             yield return Status.Fail;
-                        Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
+
+                        if (DeltaTime - LastNoiseTime > 1.0f)
+                        {
+                            Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
+                            LastNoiseTime = DeltaTime;
+                        }
+
                         SetCharacterMode(CharacterMode.Climbing);
                         yield return Status.Running;
                     }
@@ -267,7 +275,12 @@ namespace DwarfCorp
                     DeltaTime = 0.0f;
                     foreach (var bit in Translate(GetPathPoint(Step.SourceVoxel), GetPathPoint(Step.DestinationVoxel), actionSpeed))
                     {
-                        Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
+                        if (DeltaTime - LastNoiseTime > 1.0f)
+                        {
+                            Creature.NoiseMaker.MakeNoise("Climb", Agent.Position, false);
+                            LastNoiseTime = DeltaTime;
+                        }
+
                         SetCharacterMode(CharacterMode.Climbing);
 
                         if (Step.ActionVoxel.IsValid)
@@ -434,11 +447,10 @@ namespace DwarfCorp
             while (DeltaTime < jumpTime)
             {
                 var jumpProgress = DeltaTime / jumpTime;
-                float z = Easing.Ballistic(DeltaTime, jumpTime, 1.0f);
                 Vector3 dx = (End - Start) * DeltaTime + Start;
-                dx.Y = Start.Y * (1.0f - jumpProgress) + End.Y * jumpProgress + z;
+                dx.Y += Easing.Ballistic(DeltaTime, jumpTime, 1.0f);
                 SetAgentTranslation(dx);
-                Agent.Physics.Velocity = new Vector3(JumpDelta.X, (dx.Y - Agent.Physics.Position.Y), JumpDelta.Z);
+                Agent.Physics.Velocity = JumpDelta;
                 yield return Status.Running;
             }
 

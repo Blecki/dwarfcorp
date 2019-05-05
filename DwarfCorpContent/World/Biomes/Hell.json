@@ -28,12 +28,17 @@
     {
       "Name": "Demon",
       "SpawnProbability": 0.015,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
     },
     {
       "Name": "Necrosnake",
       "SpawnProbability": 0.0015,
-	  "MaxPopulation" : 10
+      "MaxPopulation": 10
+    },
+    {
+      "Name": "Slime - Red",
+      "SpawnProbability": 0.0015,
+      "MaxPopulation": 100
     }
   ],
   "SoilLayer": {

@@ -172,7 +172,7 @@ namespace DwarfCorp
             public bool GuiAutoScale = true;
             public float ChunkDrawDistance = 100;
             public float VertexCullDistance = 1000;
-            public float EntityUpdateDistance = 64;
+            public float EntityUpdateDistance = 128;
             public int AntiAliasing = 0;
             public bool Fullscreen = false;
             public bool EnableGlow = true;

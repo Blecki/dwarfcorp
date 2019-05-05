@@ -20,7 +20,12 @@
     {
       "Name": "Demon",
       "SpawnProbability": 0.0005,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
+    },
+    {
+      "Name": "Slime - Red",
+      "SpawnProbability": 0.0005,
+      "MaxPopulation": 100
     }
   ],
   "SoilLayer": {

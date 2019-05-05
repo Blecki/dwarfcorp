@@ -39,22 +39,32 @@
     {
       "Name": "Bird",
       "SpawnProbability": 0.0001,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
     },
     {
       "Name": "White Rabbit",
       "SpawnProbability": 0.0005,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
     },
     {
       "Name": "Penguin",
       "SpawnProbability": 0.0005,
-	  "MaxPopulation" : 100
+      "MaxPopulation": 100
     },
     {
       "Name": "SnowGolem",
       "SpawnProbability": 0.00005,
-	  "MaxPopulation" : 10
+      "MaxPopulation": 10
+    },
+    {
+      "Name": "Slime - Green",
+      "SpawnProbability": 0.0005,
+      "MaxPopulation": 100
+    },
+    {
+      "Name": "Slime - Red",
+      "SpawnProbability": 0.0005,
+      "MaxPopulation": 100
     }
   ],
   "SoilLayer": {

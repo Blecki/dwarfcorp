@@ -16,28 +16,27 @@ namespace DwarfCorp
         [EntityFactory("Slime - Blue")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Slime("Entities\\Animals\\Slimes\\slime_blue", Position, Manager, "Slime");
+            return new Slime("Entities\\Animals\\Slimes\\slime_blue", "Blue Slime", Position, Manager, "Slime");
         }
 
         [EntityFactory("Slime - Green")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Slime("Entities\\Animals\\Slimes\\slime_green", Position, Manager, "Slime");
+            return new Slime("Entities\\Animals\\Slimes\\slime_green", "Green Slime", Position, Manager, "Slime");
         }
 
 
         [EntityFactory("Slime - Red")]
         private static GameComponent __factory2(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Slime("Entities\\Animals\\Slimes\\slime_red", Position, Manager, "Slime");
+            return new Slime("Entities\\Animals\\Slimes\\slime_red", "Red Slime", Position, Manager, "Slime");
         }
 
         [EntityFactory("Slime - Yellow")]
         private static GameComponent __factory3(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Slime("Entities\\Animals\\Slimes\\slime_yellow", Position, Manager, "Slime");
+            return new Slime("Entities\\Animals\\Slimes\\slime_yellow", "Yellow Slime", Position, Manager, "Slime");
         }
-
 
         public string SpriteAsset { get; set; }
 
@@ -46,7 +45,7 @@ namespace DwarfCorp
             
         }
 
-        public Slime(string sprites, Vector3 position, ComponentManager manager, string name) :
+        public Slime(string sprites, String SlimeType, Vector3 position, ComponentManager manager, string name) :
             base
             (
                 manager,
@@ -84,6 +83,8 @@ namespace DwarfCorp
             Attacks = new List<Attack> { new Attack("Chomp", 1.0f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_bird_attack), ContentPaths.Effects.pierce) { Mode = Attack.AttackMode.Dogfight } };
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
+            Inventory.AddResource(new ResourceAmount(ResourceLibrary.GetResourceByName(SlimeType), MathFunctions.RandInt(1, 3)));
+
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
             Physics.Tags.Add("Animal");
@@ -106,7 +107,7 @@ namespace DwarfCorp
 
             var spriteSheet = new SpriteSheet(SpriteAsset, 48, 48);
             var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, 0.35f, 0));
-            foreach (var animation in AnimationLibrary.LoadNewLayeredAnimationFormat(ContentPaths.Entities.Animals.slime_animations))
+            foreach (var animation in AnimationLibrary.LoadNewLayeredAnimationFormat("Entities\\Animals\\Slimes\\slime-animations.json"))
             {
                 animation.SpriteSheet = spriteSheet;
                 sprite.AddAnimation(animation);

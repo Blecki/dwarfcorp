@@ -98,7 +98,8 @@ namespace DwarfCorp
             CraftItem,
             Mana,
             Potion,
-            Seed
+            Seed,
+            Slime
         }
 
         public Resource()

@@ -204,8 +204,6 @@ namespace DwarfCorp.GameStates
             }
 
             EnableScreensaver = true;
-            if (World != null)
-                World.Render(gameTime);
             base.Render(gameTime);
 
             Runner.Render(Game.GraphicsDevice, DwarfGame.SpriteBatch, gameTime);
