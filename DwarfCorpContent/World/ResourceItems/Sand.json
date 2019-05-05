@@ -1,0 +1,40 @@
+{
+  "Name": "Sand",
+  "MoneyValue": 2.0,
+  "Description": "Can be used to make glass.",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 9
+    }
+  ],
+  "Tags": [
+    "Material",
+    "Sand"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "1, 1"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": "newgui\\trinkets-sculpt",
+    "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
+    "SpriteRow": 3,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Sand",
+  "PlantToGenerate": null,
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": ""
+}

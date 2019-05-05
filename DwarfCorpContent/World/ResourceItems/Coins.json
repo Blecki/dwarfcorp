@@ -1,0 +1,40 @@
+{
+  "Name": "Coins",
+  "MoneyValue": 64.0,
+  "Description": "Dwarfbux container.",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 6
+    }
+  ],
+  "Tags": [
+    "Precious",
+    "Money"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "6, 0"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Coins",
+  "PlantToGenerate": null,
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": ""
+}

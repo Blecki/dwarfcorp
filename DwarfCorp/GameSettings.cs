@@ -179,7 +179,7 @@ namespace DwarfCorp
             public bool DrawSkyReflected = true;
             public bool DrawChunksReflected = true;
             public bool DrawEntityReflected = true;
-            public bool AmbientOcclusion = true;
+            public bool AmbientOcclusion = false;
             public bool CalculateRamps = true;
             public float CameraScrollSpeed = 10.0f;
             public float CameraZoomSpeed = 0.5f;
@@ -235,7 +235,6 @@ namespace DwarfCorp
             [AutoResetFloat(0.75f)] public float CreatureMovementAdjust = 0.75f;
 
             public int MaxVoxelDesignations = 1024;
-            public uint EntityUpdateRate = 4096;
             public int NumPathingThreads = 2;
 
             public Settings Clone()

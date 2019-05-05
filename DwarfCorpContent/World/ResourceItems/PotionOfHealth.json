@@ -1,0 +1,55 @@
+{
+  "Name": "Potion Of Health",
+  "MoneyValue": 100.0,
+  "Description": "Dwarfs drink this potion when they take damage.",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 44
+    }
+  ],
+  "Tags": [
+    "Potion"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "4, 5"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "Generated": true,
+  "ShortName": "Potion Of Health",
+  "MaterialStrength": 5.0,
+  "PlantToGenerate": null,
+  "CanCraft": true,
+  "CraftPrerequisites": [
+    {
+      "Type": "Magical",
+      "Count": 1
+    },
+    {
+      "Type": "Edible",
+      "Count": 1
+    }
+  ],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+  "CraftInfo": {
+    "CraftItemType": "Potion Of Health",
+    "Resources": null
+  },
+  "PotionType": "Potion Of Health"
+}

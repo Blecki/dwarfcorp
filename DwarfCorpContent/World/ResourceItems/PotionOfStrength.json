@@ -1,0 +1,55 @@
+{
+  "Name": "Potion Of Strength",
+  "MoneyValue": 100.0,
+  "Description": "Dwarfs drink this potion to get strong.",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 44
+    }
+  ],
+  "Tags": [
+    "Potion"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "4, 5"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "Generated": true,
+  "ShortName": "Potion Of Strength",
+  "MaterialStrength": 5.0,
+  "PlantToGenerate": null,
+  "CanCraft": true,
+  "CraftPrerequisites": [
+    {
+      "Type": "Magical",
+      "Count": 1
+    },
+    {
+      "Type": "Bone",
+      "Count": 1
+    }
+  ],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "",
+  "CraftInfo": {
+    "CraftItemType": "Potion Of Strength",
+    "Resources": null
+  },
+  "PotionType": "Potion Of Strength"
+}

@@ -1,0 +1,42 @@
+{
+  "Name": "Ice",
+  "MoneyValue": 1.0,
+  "MaterialStrength": 1.0,
+  "Description": "A weak building material found in glaciers.",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 37
+    }
+  ],
+  "Tags": [
+    "Material",
+    "Flammable",
+    "HardMaterial"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "5, 4"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": "newgui\\trinkets-sculpt",
+    "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Ice",
+  "PlantToGenerate": null,
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": ""
+}

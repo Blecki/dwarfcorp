@@ -1,0 +1,45 @@
+{
+  "Name": "Apple",
+  "MoneyValue": 3.0,
+  "Description": "Grows apple trees.",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 28
+    }
+  ],
+  "Tags": [
+    "Plantable",
+    "Fruit",
+    "Flammable",
+    "AboveGroundPlant",
+    "Edible",
+    "RawFood",
+    "Brewable"
+  ],
+  "FoodContent": 50.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "4, 3"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Apple",
+  "PlantToGenerate": "Apple Tree Sprout",
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "Cider"
+}

@@ -1,0 +1,40 @@
+{
+  "Name": "Coal",
+  "MoneyValue": 15.0,
+  "Description": "Used as fuel",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 18
+    }
+  ],
+  "Tags": [
+    "Fuel",
+    "Flammable"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "2, 2"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Coal",
+  "PlantToGenerate": null,
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": ""
+}

@@ -1,0 +1,43 @@
+{
+  "Name": "Slate",
+  "MoneyValue": 5.0,
+  "MaterialStrength": 15.0,
+  "Description": "A sedimentary rock that forms thin layers.",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 50
+    }
+  ],
+  "Tags": [
+    "Stone",
+    "Material",
+    "HardMaterial",
+    "Slate"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "2, 6"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": "newgui\\trinkets-sculpt",
+    "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Slate",
+  "PlantToGenerate": null,
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": ""
+}

@@ -33,7 +33,7 @@ namespace DwarfCorp
             // If no file exists, we have to create the balloon and balloon port.
             if (!string.IsNullOrEmpty(ExistingFile)) return;
 
-            var port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager, Camera.Position.X, Camera.Position.Z, 3, Settings);
+            var port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager, Camera.Position.X, Camera.Position.Z, 1, Settings);
             PlayerFaction.Economy.Funds = InitialEmbark.Money;
 
             foreach (var res in InitialEmbark.Resources)

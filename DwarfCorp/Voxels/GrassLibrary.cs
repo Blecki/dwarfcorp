@@ -84,6 +84,8 @@ namespace DwarfCorp
                 Console.WriteLine("Allowed number of grass types exceeded. Limit is " + VoxelConstants.MaximumGrassTypes);
 
             TypeList = TypeList.OrderBy(v => v.ID).ToList();
+
+            Console.WriteLine("Loaded Grass Library.");
         }
 
         public static GrassType GetGrassType(byte id)

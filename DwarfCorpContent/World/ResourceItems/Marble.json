@@ -1,0 +1,43 @@
+{
+  "Name": "Marble",
+  "MoneyValue": 8.0,
+  "MaterialStrength": 30.0,
+  "Description": "Marble is created when limestone is compressed deep under ground.",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 52
+    }
+  ],
+  "Tags": [
+    "Stone",
+    "Material",
+    "HardMaterial",
+    "Marble"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "4, 6"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": "newgui\\trinkets-sculpt",
+    "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Marble",
+  "PlantToGenerate": null,
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": ""
+}

@@ -1,0 +1,44 @@
+{
+  "Name": "Cactus",
+  "MoneyValue": 4.0,
+  "Description": "Grows cacti.",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 15
+    }
+  ],
+  "Tags": [
+    "Fruit",
+    "Plantable",
+    "Flammable",
+    "AboveGroundPlant",
+    "Edible",
+    "RawFood"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "7, 1"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Cactus",
+  "PlantToGenerate": "Cactus Sprout",
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": ""
+}

@@ -1,0 +1,42 @@
+{
+  "Name": "Stone",
+  "MoneyValue": 4.0,
+  "MaterialStrength": 20.0,
+  "Description": "Dwarf's favorite material! Comes from the earth.",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 3
+    }
+  ],
+  "Tags": [
+    "Stone",
+    "Material",
+    "HardMaterial"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "3, 0"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": "newgui\\trinkets-sculpt",
+    "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Stone",
+  "PlantToGenerate": null,
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": ""
+}

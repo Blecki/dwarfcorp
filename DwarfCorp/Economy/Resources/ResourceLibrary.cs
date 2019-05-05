@@ -26,13 +26,15 @@ namespace DwarfCorp
 
             Resources = new Dictionary<String, Resource>();
 
-            var resourceList = FileUtils.LoadJsonListFromMultipleSources<Resource>(ContentPaths.resource_items, null, r => r.Name);
+            var resourceList = FileUtils.LoadJsonListFromDirectory<Resource>("World\\ResourceItems", null, r => r.Name);
 
             foreach (var resource in resourceList)
             {
                 resource.Generated = false;
                 Add(resource);
             }
+
+            Console.WriteLine("Loaded Resource Library.");
         }
 
         public static IEnumerable<Resource> FindResourcesWithTag(Resource.ResourceTags tag)

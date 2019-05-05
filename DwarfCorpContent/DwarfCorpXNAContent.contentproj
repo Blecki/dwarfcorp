@@ -2778,10 +2778,6 @@
       <Name>snowgolem_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="resource-items.json">
-      <Name>resource-items</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="tutorial.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>tutorial</Name>
@@ -3380,6 +3376,242 @@
     <None Include="World\elf.conv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>elf</Name>
+    </None>
+    <None Include="World\ResourceItems\YellowSlime.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>YellowSlime</Name>
+    </None>
+    <None Include="World\ResourceItems\Wood.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Wood</Name>
+    </None>
+    <None Include="World\ResourceItems\CaveMushroom.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>CaveMushroom</Name>
+    </None>
+    <None Include="World\ResourceItems\Mana.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Mana</Name>
+    </None>
+    <None Include="World\ResourceItems\Gold.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Gold</Name>
+    </None>
+    <None Include="World\ResourceItems\Coal.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Coal</Name>
+    </None>
+    <None Include="World\ResourceItems\Charcoal.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Charcoal</Name>
+    </None>
+    <None Include="World\ResourceItems\Iron.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Iron</Name>
+    </None>
+    <None Include="World\ResourceItems\Berry.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Berry</Name>
+    </None>
+    <None Include="World\ResourceItems\Mushroom.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Mushroom</Name>
+    </None>
+    <None Include="World\ResourceItems\Grain.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Grain</Name>
+    </None>
+    <None Include="World\ResourceItems\Stone.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Stone</Name>
+    </None>
+    <None Include="World\ResourceItems\SandStone.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SandStone</Name>
+    </None>
+    <None Include="World\ResourceItems\Obsidian.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Obsidian</Name>
+    </None>
+    <None Include="World\ResourceItems\Slate.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Slate</Name>
+    </None>
+    <None Include="World\ResourceItems\Granite.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Granite</Name>
+    </None>
+    <None Include="World\ResourceItems\Marble.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Marble</Name>
+    </None>
+    <None Include="World\ResourceItems\Ice.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Ice</Name>
+    </None>
+    <None Include="World\ResourceItems\Dirt.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Dirt</Name>
+    </None>
+    <None Include="World\ResourceItems\Invalid.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Invalid</Name>
+    </None>
+    <None Include="World\ResourceItems\Sand.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Sand</Name>
+    </None>
+    <None Include="World\ResourceItems\RefinedMana.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>RefinedMana</Name>
+    </None>
+    <None Include="World\ResourceItems\Bone.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Bone</Name>
+    </None>
+    <None Include="World\ResourceItems\Pumpkin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Pumpkin</Name>
+    </None>
+    <None Include="World\ResourceItems\Coconut.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Coconut</Name>
+    </None>
+    <None Include="World\ResourceItems\Peppermint.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Peppermint</Name>
+    </None>
+    <None Include="World\ResourceItems\SeedOfEvil.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SeedOfEvil</Name>
+    </None>
+    <None Include="World\ResourceItems\PineCone.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PineCone</Name>
+    </None>
+    <None Include="World\ResourceItems\BirdMeat.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>BirdMeat</Name>
+    </None>
+    <None Include="World\ResourceItems\Meat.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Meat</Name>
+    </None>
+    <None Include="World\ResourceItems\Corpse.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Corpse</Name>
+    </None>
+    <None Include="World\ResourceItems\Apple.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Apple</Name>
+    </None>
+    <None Include="World\ResourceItems\Cactus.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Cactus</Name>
+    </None>
+    <None Include="World\ResourceItems\Citrine.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Citrine</Name>
+    </None>
+    <None Include="World\ResourceItems\Garnet.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Garnet</Name>
+    </None>
+    <None Include="World\ResourceItems\Amethyst.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Amethyst</Name>
+    </None>
+    <None Include="World\ResourceItems\Emerald.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Emerald</Name>
+    </None>
+    <None Include="World\ResourceItems\Ruby.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Ruby</Name>
+    </None>
+    <None Include="World\ResourceItems\Ale.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Ale</Name>
+    </None>
+    <None Include="World\ResourceItems\Meal.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Meal</Name>
+    </None>
+    <None Include="World\ResourceItems\Bread.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Bread</Name>
+    </None>
+    <None Include="World\ResourceItems\Glass.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Glass</Name>
+    </None>
+    <None Include="World\ResourceItems\Sapphire.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Sapphire</Name>
+    </None>
+    <None Include="World\ResourceItems\Object.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Object</Name>
+    </None>
+    <None Include="World\ResourceItems\Egg.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Egg</Name>
+    </None>
+    <None Include="World\ResourceItems\Trinket.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Trinket</Name>
+    </None>
+    <None Include="World\ResourceItems\Gem-setTrinket.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Gem-setTrinket</Name>
+    </None>
+    <None Include="World\ResourceItems\Brick.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Brick</Name>
+    </None>
+    <None Include="World\ResourceItems\Coins.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Coins</Name>
+    </None>
+    <None Include="World\ResourceItems\Rail.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Rail</Name>
+    </None>
+    <None Include="World\ResourceItems\PotionOfHealth.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PotionOfHealth</Name>
+    </None>
+    <None Include="World\ResourceItems\PotionOfCuring.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PotionOfCuring</Name>
+    </None>
+    <None Include="World\ResourceItems\PotionOfGlee.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PotionOfGlee</Name>
+    </None>
+    <None Include="World\ResourceItems\RedSlime.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>RedSlime</Name>
+    </None>
+    <None Include="World\ResourceItems\PotionOfStrength.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PotionOfStrength</Name>
+    </None>
+    <None Include="World\ResourceItems\PotionOfLearned.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PotionOfLearned</Name>
+    </None>
+    <None Include="World\ResourceItems\PotionOfSpeed.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>PotionOfSpeed</Name>
+    </None>
+    <None Include="World\ResourceItems\GreenSlime.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>GreenSlime</Name>
+    </None>
+    <None Include="World\ResourceItems\BlueSlime.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>BlueSlime</Name>
     </None>
     <None Include="World\Rooms\Balloon Port.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

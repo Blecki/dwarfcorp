@@ -1,0 +1,43 @@
+{
+  "Name": "Granite",
+  "MaterialStrength": 50.0,
+  "MoneyValue": 6.0,
+  "Description": "A metamorphic rock, granite is produced when sandstones and shales are compressed deep under ground.",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 51
+    }
+  ],
+  "Tags": [
+    "Stone",
+    "Material",
+    "HardMaterial",
+    "Granite"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "3, 6"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": "newgui\\trinkets-sculpt",
+    "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Granite",
+  "PlantToGenerate": null,
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": ""
+}

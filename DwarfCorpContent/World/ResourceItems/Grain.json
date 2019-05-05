@@ -1,0 +1,46 @@
+{
+  "Name": "Grain",
+  "MoneyValue": 2.5,
+  "Description": "Dwarves can eat this.",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 16
+    }
+  ],
+  "Tags": [
+    "Edible",
+    "Grain",
+    "Flammable",
+    "RawFood",
+    "Brewable",
+    "Bakeable",
+    "Plantable",
+    "AboveGroundPlant"
+  ],
+  "FoodContent": 100.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "0, 2"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Grain",
+  "PlantToGenerate": "Wheat Sprout",
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "Ale"
+}

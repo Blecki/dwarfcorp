@@ -107,7 +107,6 @@ namespace DwarfCorp.Gui
 
             foreach (var texture in atlas.Textures)
             {
-                Console.Out.WriteLine("Loading {0}", texture.Sheet.Name);
                 // Copy source texture into the atlas
                 var realTexture = texture.RealTexture;
                 if (realTexture == null || realTexture.IsDisposed || realTexture.GraphicsDevice.IsDisposed)
@@ -146,6 +145,7 @@ namespace DwarfCorp.Gui
                 Texture.SetData(0, texture.Rect, textureData, 0, realTexture.Width * realTexture.Height);
 
             }
+
             Console.Out.WriteLine("Done with texture atlas.");
         }
 

@@ -128,6 +128,8 @@ namespace DwarfCorp
 
             if (TypeList.Count > VoxelConstants.MaximumVoxelTypes)
                 throw new InvalidProgramException(String.Format("There can be only {0} voxel types.", VoxelConstants.MaximumVoxelTypes));
+
+            Console.WriteLine("Loaded Voxel Library.");
         }
 
         public static VoxelType GetVoxelType(short id)

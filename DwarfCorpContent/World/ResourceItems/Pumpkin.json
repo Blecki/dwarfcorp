@@ -1,0 +1,45 @@
+{
+  "Name": "Pumpkin",
+  "MoneyValue": 6.0,
+  "Description": "Grows pumpkins.",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 30
+    }
+  ],
+  "Tags": [
+    "Plantable",
+    "Flammable",
+    "AboveGroundPlant",
+    "Edible",
+    "Gourd",
+    "Bakeable",
+    "RawFood"
+  ],
+  "FoodContent": 50.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "6, 3"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Pumpkin",
+  "PlantToGenerate": "Pumpkin Sprout",
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": ""
+}

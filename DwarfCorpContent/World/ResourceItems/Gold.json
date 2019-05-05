@@ -1,0 +1,43 @@
+{
+  "Name": "Gold",
+  "MaterialStrength": 15.0,
+  "MoneyValue": 500.0,
+  "Description": "Shiny!",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 0
+    }
+  ],
+  "Tags": [
+    "Material",
+    "Metal",
+    "Precious",
+    "HardMaterial"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "0, 0"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": "newgui\\trinkets-cast",
+    "EncrustingAsset": "newgui\\trinkets-cast-insets",
+    "SpriteRow": 1,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Gold",
+  "PlantToGenerate": null,
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": ""
+}

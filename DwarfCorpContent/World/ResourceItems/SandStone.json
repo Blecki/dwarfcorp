@@ -1,0 +1,42 @@
+{
+  "Name": "Sandstone",
+  "MoneyValue": 3.0,
+  "Description": "A sedimentary rock made from concreted sand.",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 48
+    }
+  ],
+  "Tags": [
+    "Stone",
+    "Material",
+    "HardMaterial",
+    "Sandstone"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "0, 6"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": "newgui\\trinkets-sculpt",
+    "EncrustingAsset": "newgui\\trinkets-sculpt-insets",
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Sandstone",
+  "PlantToGenerate": null,
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": ""
+}

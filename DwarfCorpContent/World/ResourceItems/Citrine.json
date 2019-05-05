@@ -1,0 +1,41 @@
+{
+  "Name": "Citrine",
+  "MoneyValue": 350.0,
+  "Description": "Shiny!",
+  "GuiLayers": [
+    {
+      "Sheet": "resources",
+      "Tile": 26
+    }
+  ],
+  "Tags": [
+    "Precious",
+    "Gem",
+    "HardMaterial"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "newgui\\resources",
+      "FrameSize": "32, 32",
+      "Frame": "2, 3"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 2,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Citrine",
+  "PlantToGenerate": null,
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": ""
+}

@@ -1,0 +1,43 @@
+{
+  "Name": "Blue Slime",
+  "MaterialStrength": 5.0,
+  "MoneyValue": 25.0,
+  "Description": "Goop from a blue slime.",
+  "GuiLayers": [
+    {
+      "Sheet": "slime",
+      "Tile": 0
+    }
+  ],
+  "Tags": [
+    "Slime",
+    "Edible",
+    "RawFood",
+    "Brewable"
+  ],
+  "FoodContent": 0.0,
+  "CompositeLayers": [
+    {
+      "Asset": "Entities\\Animals\\Slimes\\Slime_Goo",
+      "FrameSize": "32, 32",
+      "Frame": "0, 0"
+    }
+  ],
+  "TrinketData": {
+    "BaseAsset": null,
+    "EncrustingAsset": null,
+    "SpriteRow": 0,
+    "SpriteColumn": 0
+  },
+  "ShortName": "Blue Slime",
+  "PlantToGenerate": null,
+  "CanCraft": false,
+  "CraftPrerequisites": [],
+  "Tint": [
+    255,
+    255,
+    255,
+    255
+  ],
+  "AleName": "Wine"
+}
