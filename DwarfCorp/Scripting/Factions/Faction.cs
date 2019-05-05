@@ -326,7 +326,7 @@ namespace DwarfCorp
 
             foreach (Stockpile s in toRemove)
             {
-                foreach (var resource in s.Resources)
+                foreach (var resource in s.Resources.Enumerate())
                 {
                     var resourceType = ResourceLibrary.GetResourceByName(resource.Type);
 
@@ -561,7 +561,7 @@ namespace DwarfCorp
 
             foreach (Stockpile stockpile in Stockpiles)
             {
-                foreach (ResourceAmount resource in stockpile.Resources)
+                foreach (ResourceAmount resource in stockpile.Resources.Enumerate())
                 {
                     if (resource.Count == 0)
                     {
@@ -591,7 +591,7 @@ namespace DwarfCorp
                 {
                     if (numGot >= amount.Count)
                         break;
-                    foreach (var resource in stockpile.Resources.Where(sResource => sResource.Type == amount.Type))
+                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => sResource.Type == amount.Type))
                     {
                         int amountToRemove = global::System.Math.Min(resource.Count, amount.Count - numGot);
                         if (amountToRemove <= 0) continue;
@@ -613,7 +613,7 @@ namespace DwarfCorp
                 {
                     if (numGot >= tag.Count)
                         break;
-                    foreach (var resource in stockpile.Resources.Where(sResource => ResourceLibrary.GetResourceByName(sResource.Type).Tags.Contains(tag.Type)))
+                    foreach (var resource in stockpile.Resources.Enumerate().Where(sResource => ResourceLibrary.GetResourceByName(sResource.Type).Tags.Contains(tag.Type)))
                     {
                         if (!allowHeterogenous && selectedString != null && selectedString != resource.Type)
                             continue;
@@ -642,7 +642,7 @@ namespace DwarfCorp
 
             foreach (Stockpile stockpile in Stockpiles)
             {
-                foreach (ResourceAmount resource in stockpile.Resources.OrderBy(x => r.Next()))
+                foreach (ResourceAmount resource in stockpile.Resources.Enumerate().OrderBy(x => r.Next()))
                 {
                     foreach (var requirement in tagsRequired)
                     {

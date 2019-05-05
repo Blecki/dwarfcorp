@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class ResourceContainer : IEnumerable<ResourceAmount>
+    public class ResourceContainer
     {
         public int MaxResources { get; set; }
         public int CurrentResourceCount { get; private set; }
@@ -143,14 +143,9 @@ namespace DwarfCorp
             return true;
         }
 
-        public IEnumerator<ResourceAmount> GetEnumerator()
+        public IEnumerable<ResourceAmount> Enumerate()
         {
-            return Resources.Values.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            return Resources.Values;
         }
 
         public bool IsFull()
