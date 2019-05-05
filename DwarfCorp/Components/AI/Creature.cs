@@ -87,7 +87,6 @@ namespace DwarfCorp
             Allies = allies;
             Controller = new PIDController(Stats.MaxAcceleration, Stats.StoppingForce * 2, 0.0f);
             JumpTimer = new Timer(0.2f, true, Timer.TimerMode.Real);
-            Status = new CreatureStatus();
             IsHeadClear = true;
             NoiseMaker = new NoiseMaker();
             NoiseMaker.BasePitch = stats.VoicePitch;
@@ -222,7 +221,6 @@ namespace DwarfCorp
         /// <summary> The creature's stat numbers (WIS, DEX, STR etc.) </summary>
         public CreatureStats Stats { get; set; }
         /// <summary> The creature's current status (energy, hunger, happiness, etc.) </summary>
-        public CreatureStatus Status { get; set; }
 
         /// <summary> Timer that rate-limits how quickly the creature can jump. DEPRECATED TODO(mklingen): DELETE </summary>
         public Timer JumpTimer { get; set; }
@@ -391,19 +389,19 @@ namespace DwarfCorp
             statAdjustments.Reset();
 
             if (!IsAsleep)
-                Status.Hunger.CurrentValue -= (float)gameTime.ElapsedGameTime.TotalSeconds * Stats.HungerGrowth;
+                Stats.Status.Hunger.CurrentValue -= (float)gameTime.ElapsedGameTime.TotalSeconds * Stats.HungerGrowth;
             else
                 Hp += (float)gameTime.ElapsedGameTime.TotalSeconds * 0.1f;
 
-            Status.Health.CurrentValue = (Hp - MinHealth) / (MaxHealth - MinHealth); // Todo: MinHealth always 0?
+            Stats.Status.Health.CurrentValue = (Hp - MinHealth) / (MaxHealth - MinHealth); // Todo: MinHealth always 0?
 
             // Todo: Why is energy just tied to time of day? Lets make them actually recover at night and spend it during the day.
             if (Stats.CanSleep)
-                Status.Energy.CurrentValue = (float)(100 * Math.Sin(Manager.World.Time.GetTotalHours() * Math.PI / 24.0f));
+                Stats.Status.Energy.CurrentValue = (float)(100 * Math.Sin(Manager.World.Time.GetTotalHours() * Math.PI / 24.0f));
             else
-                Status.Energy.CurrentValue = 100.0f;
+                Stats.Status.Energy.CurrentValue = 100.0f;
 
-            if (Status.Energy.IsDissatisfied())
+            if (Stats.Status.Energy.IsDissatisfied())
             {
                 DrawIndicator(IndicatorManager.StandardIndicators.Sleepy);
                 statAdjustments.Strength += -2.0f;
@@ -411,14 +409,14 @@ namespace DwarfCorp
                 statAdjustments.Dexterity += -2.0f;
             }
 
-            if (Stats.CanEat && Status.Hunger.IsDissatisfied() && !IsAsleep)
+            if (Stats.CanEat && Stats.Status.Hunger.IsDissatisfied() && !IsAsleep)
             {
                 DrawIndicator(IndicatorManager.StandardIndicators.Hungry);
 
                 statAdjustments.Intelligence += -1.0f;
                 statAdjustments.Dexterity += -1.0f;
 
-                if (Status.Hunger.CurrentValue <= 1e-12 && (DateTime.Now - LastHungerDamageTime).TotalSeconds > Stats.HungerDamageRate)
+                if (Stats.Status.Hunger.CurrentValue <= 1e-12 && (DateTime.Now - LastHungerDamageTime).TotalSeconds > Stats.HungerDamageRate)
                 {
                     Damage(1.0f / (Stats.HungerResistance) * Stats.HungerDamageRate);
                     LastHungerDamageTime = DateTime.Now;
@@ -601,7 +599,7 @@ namespace DwarfCorp
                 CurrentCharacterMode = CharacterMode.Idle;
             }
 
-            if (World.Time.IsDay() && Stats.IsAsleep && !Status.Energy.IsDissatisfied() && !Status.Health.IsCritical())
+            if (World.Time.IsDay() && Stats.IsAsleep && !Stats.Status.Energy.IsDissatisfied() && !Stats.Status.Health.IsCritical())
             {
                 Stats.IsAsleep = false;
             }

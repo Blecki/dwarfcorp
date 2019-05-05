@@ -77,7 +77,7 @@ namespace DwarfCorp
             yield return Health;
         }
 
-        public string get_status()
+        public string GetStatusAdjective()
         {
             return EnumerateStatuses().Where(s => s.IsDissatisfied()).OrderBy(s => s.CurrentValue).FirstOrDefault()?.Adjective ?? "OK";
         }

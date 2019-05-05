@@ -70,8 +70,8 @@ namespace DwarfCorp
 
         public override void Update(DwarfTime time, Creature creature)
         {
-            float hungerChange = creature.Status.Hunger.CurrentValue - LastHunger;
-            LastHunger = creature.Status.Hunger.CurrentValue;
+            float hungerChange = creature.Stats.Status.Hunger.CurrentValue - LastHunger;
+            LastHunger = creature.Stats.Status.Hunger.CurrentValue;
             switch (Type)
             {
                 case HealType.Food:

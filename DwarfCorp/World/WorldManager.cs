@@ -506,7 +506,7 @@ namespace DwarfCorp
             LogStat("Furniture",  PlayerFaction.OwnedObjects.Count);
             LogStat("Zones", PlayerFaction.GetRooms().Count);
             LogStat("Employee Level", PlayerFaction.Minions.Sum(r => r.Stats.CurrentLevel.Index));
-            LogStat("Employee Happiness", (float)PlayerFaction.Minions.Sum(m => m.Status.Happiness.Percentage) / Math.Max(PlayerFaction.Minions.Count, 1));
+            LogStat("Employee Happiness", (float)PlayerFaction.Minions.Sum(m => m.Stats.Status.Happiness.Percentage) / Math.Max(PlayerFaction.Minions.Count, 1));
         }
 
         private int _prevHour = 0;
@@ -539,9 +539,7 @@ namespace DwarfCorp
                 {
                     FastForwardToDay = false;
                     foreach (CreatureAI minion in Master.Faction.Minions)
-                    {
-                        minion.Status.Energy.CurrentValue = minion.Status.Energy.MaxValue;
-                    }
+                        minion.Stats.Status.Energy.CurrentValue = minion.Stats.Status.Energy.MaxValue;
                     //Master.ToolBar.SpeedButton.SetSpeed(1);
                     Time.Speed = 100;
                 }

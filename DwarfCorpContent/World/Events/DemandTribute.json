@@ -1,5 +1,5 @@
 {
-  "$type": "DwarfCorp.Goals.SpawnTradeEnvoyEvent, BaseContent",
+  "$type": "DwarfCorp.Events.SpawnTradeEnvoyEvent, BaseContent",
   "PartyFaction": null,
   "PartyFactionFilter": {
     "Hostility": "Neutral",

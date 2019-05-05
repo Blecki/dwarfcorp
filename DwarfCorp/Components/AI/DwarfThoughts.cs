@@ -38,31 +38,10 @@ namespace DwarfCorp
             }
         }
 
-        [JsonIgnore]
-        public CreatureStatus Status
-        {
-            get { return Creature.Status; }
-            set { Creature.Status = value; }
-        }
-
-        public List<Thought> Thoughts { get; set; }
-    
-
-        /// <summary> Wrapper around Creature.Physics.GlobalTransform.Translation </summary>
-        [JsonIgnore]
-        public Vector3 Position
-        {
-            get { return Creature.Physics.GlobalTransform.Translation; }
-            set
-            {
-                Matrix newTransform = Creature.Physics.LocalTransform;
-                newTransform.Translation = value;
-                Creature.Physics.LocalTransform = newTransform;
-            }
-        }
+        public List<Thought> Thoughts { get; set; }     // Todo: Make thoughts more generic. No ThoughtType enum!
 
         /// <summary> returns whether or not the creature already has a thought of the given type. </summary>
-        public bool HasThought(Thought.ThoughtType type)
+        public bool HasThought(Thought.ThoughtType type) 
         {
             return Thoughts.Any(existingThought => existingThought.Type == type);
         }
@@ -76,13 +55,9 @@ namespace DwarfCorp
                 AddThought(thought, true);
 
                 if (thought.HappinessModifier > 0.01)
-                {
-                    Creature.NoiseMaker.MakeNoise("Pleased", Position, true);
-                }
+                    Creature.NoiseMaker.MakeNoise("Pleased", Creature.Physics.Position, true);
                 else
-                {
-                    Creature.NoiseMaker.MakeNoise("Tantrum", Position, true);
-                }
+                    Creature.NoiseMaker.MakeNoise("Tantrum", Creature.Physics.Position, true);
             }
         }
 
@@ -113,23 +88,23 @@ namespace DwarfCorp
             string prefix = good ? "+" : "";
             string postfix = good ? ":)" : ":(";
             IndicatorManager.DrawIndicator(prefix + thought.HappinessModifier + " " + postfix,
-                Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 1.0f, textColor);
+                Creature.Physics.Position + Vector3.Up + MathFunctions.RandVector3Cube() * 0.5f, 1.0f, textColor);
         }
 
         override public void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         {
             Thoughts.RemoveAll(thought => thought.IsOver(Manager.World.Time.CurrentDate));
-            Status.Happiness.CurrentValue = 50.0f;
+            Creature.Stats.Status.Happiness.CurrentValue = 50.0f;
 
             foreach (Thought thought in Thoughts)
-                Status.Happiness.CurrentValue += thought.HappinessModifier;
+                Creature.Stats.Status.Happiness.CurrentValue += thought.HappinessModifier;
 
             if (Creature.Stats.IsAsleep)
                 AddThought(Thought.ThoughtType.Slept);
-            else if (Status.Energy.IsDissatisfied())
+            else if (Creature.Stats.Status.Energy.IsDissatisfied())
                 AddThought(Thought.ThoughtType.FeltSleepy);
 
-            if (Status.Hunger.IsDissatisfied())
+            if (Creature.Stats.Status.Hunger.IsDissatisfied())
                 AddThought(Thought.ThoughtType.FeltHungry);
         }
     }

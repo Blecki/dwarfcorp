@@ -1,5 +1,5 @@
 {
-  "$type": "DwarfCorp.Goals.PlagueEvent, BaseContent",
+  "$type": "DwarfCorp.Events.PlagueEvent, BaseContent",
   "Likelihood": 1,
   "Name": "Plague",
   "SpawnOnTranquil": false,

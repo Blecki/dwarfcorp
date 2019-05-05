@@ -367,7 +367,7 @@ namespace DwarfCorp.Gui.Widgets
                                 OnClick = (sender, args) =>
                                 {
                                     foreach(var minion in Master.Faction.Minions)
-                                        minion.Status.Hunger.CurrentValue = 0;
+                                        minion.Stats.Status.Hunger.CurrentValue = 0;
                                 }
                             },                
                             new HorizontalMenuTray.MenuItem
@@ -417,7 +417,7 @@ namespace DwarfCorp.Gui.Widgets
                                 {
                                     foreach(var employee in Master.Faction.Minions)
                                     {
-                                        employee.Status.Boredom.SetValue(employee.Status.Boredom.MinValue);
+                                        employee.Stats.Status.Boredom.SetValue(employee.Stats.Status.Boredom.MinValue);
                                         employee.AddMoney(100);
                                         employee.AssignTask(new Scripting.GambleTask() { Priority = Task.PriorityType.High });
                                     }
@@ -430,7 +430,7 @@ namespace DwarfCorp.Gui.Widgets
                                 {
                                     var employee = Datastructures.SelectRandom(Master.Faction.Minions);
                                     if (employee != null)
-                                        employee.Creature.Heal(-employee.Status.Health.CurrentValue * employee.Creature.MaxHealth + 1);
+                                        employee.Creature.Heal(-employee.Stats.Status.Health.CurrentValue * employee.Creature.MaxHealth + 1);
                                 }
                             }
                         }

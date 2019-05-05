@@ -55,7 +55,7 @@ namespace DwarfCorp
         public IEnumerable<Act.Status> HealAlly()
         {
             Timer healTimer = new Timer(5.0f, false);
-            while (!Ally.IsDead && Ally.Status.Health.IsDissatisfied())
+            while (!Ally.IsDead && Ally.Stats.Status.Health.IsDissatisfied())
             {
                 Agent.Physics.Face(Ally.Position);
                 Agent.Creature.CurrentCharacterMode = CharacterMode.Sitting;
@@ -82,7 +82,7 @@ namespace DwarfCorp
             if (closestBed == null)
             {
                 Tree = new Select(new Sequence(
-                    new Domain(() => !Ally.IsDead && Ally.Status.Health.IsDissatisfied(),
+                    new Domain(() => !Ally.IsDead && Ally.Stats.Status.Health.IsDissatisfied(),
                         new GoToEntityAct(Ally.Physics, Agent)),
                         new Wrap(() => PickupAlly()),
                         new Wrap(() => HealAlly()) { Name = "Do CPR." }),
@@ -92,13 +92,13 @@ namespace DwarfCorp
             {
                 Tree = new Select(
                         new Sequence(
-                            new Domain(() => !Ally.IsDead && Ally.Status.Health.IsDissatisfied(), 
+                            new Domain(() => !Ally.IsDead && Ally.Stats.Status.Health.IsDissatisfied(), 
                                 new GoToEntityAct(Ally.Physics, Agent)),
-                            new Domain(() => !Ally.IsDead && Ally.Status.Health.IsDissatisfied(), 
+                            new Domain(() => !Ally.IsDead && Ally.Stats.Status.Health.IsDissatisfied(), 
                                 new Parallel(
                                         new Repeat(new Wrap(() => PickupAlly()), -1, false),
                                         new GoToEntityAct(closestBed, Agent)) { ReturnOnAllSucces = false }),
-                            new Domain(() => !Ally.IsDead && Ally.Status.Health.IsDissatisfied(), 
+                            new Domain(() => !Ally.IsDead && Ally.Stats.Status.Health.IsDissatisfied(), 
                                 new Wrap(() => PlaceOnBed(closestBed))),
                             new Wrap(() => HealAlly()) {  Name = "Do CPR."}, new Wrap(() => ReleaseAlly())),
                         new Wrap(() => ReleaseAlly()));
@@ -128,7 +128,7 @@ namespace DwarfCorp
         public IEnumerable<Act.Status> HealAlly()
         {
             Timer healTimer = new Timer(1.0f, false);
-            while (!Ally.IsDead && !Ally.Status.Health.IsSatisfied() && (Ally.Position - Agent.Position).Length() < 3)
+            while (!Ally.IsDead && !Ally.Stats.Status.Health.IsSatisfied() && (Ally.Position - Agent.Position).Length() < 3)
             {
                 Agent.Physics.Face(Ally.Position);
                 Agent.Creature.CurrentCharacterMode = Agent.Creature.AttackMode;
@@ -153,7 +153,7 @@ namespace DwarfCorp
         public override void Initialize()
         {
             Tree = new Select(new Sequence(
-                    new Domain(() => !Ally.IsDead &&! Ally.Status.Health.IsSatisfied(),
+                    new Domain(() => !Ally.IsDead &&! Ally.Stats.Status.Health.IsSatisfied(),
            new GoToEntityAct(Ally.Physics, Agent)),
            new Wrap(() => HealAlly()) { Name = "Heal ally." }));
             base.Initialize();
@@ -181,12 +181,12 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return agent.AI != Ally && !Ally.IsDead && !Ally.Status.Health.IsSatisfied() && agent.Stats.CurrentLevel.HealingPower > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
+            return agent.AI != Ally && !Ally.IsDead && !Ally.Stats.Status.Health.IsSatisfied() && agent.Stats.CurrentLevel.HealingPower > 0 ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool IsComplete(Faction faction)
         {
-            return Ally.IsDead || Ally.Status.Health.IsSatisfied();
+            return Ally.IsDead || Ally.Stats.Status.Health.IsSatisfied();
         }
 
         public override Act CreateScript(Creature agent)
@@ -214,12 +214,12 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return agent.AI != Ally && !Ally.IsDead && Ally.Status.Health.IsDissatisfied() ? Feasibility.Feasible : Feasibility.Infeasible;
+            return agent.AI != Ally && !Ally.IsDead && Ally.Stats.Status.Health.IsDissatisfied() ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override bool IsComplete(Faction faction)
         {
-            return Ally.IsDead || !Ally.Status.Health.IsDissatisfied();
+            return Ally.IsDead || !Ally.Stats.Status.Health.IsDissatisfied();
         }
 
         public override Act CreateScript(Creature agent)

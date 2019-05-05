@@ -122,7 +122,7 @@ namespace DwarfCorp.Gui.Widgets
                 var freeStockPile = Faction.ComputeRemainingStockpileSpace();
                 var totalStockPile = Math.Max(Faction.ComputeTotalStockpileSpace(), 1);
                 AddRow("Stockpile space:", String.Format("{0} used of {1} ({2:00.00}%)\n", totalStockPile - freeStockPile, totalStockPile, (float)(totalStockPile - freeStockPile) / (float)totalStockPile * 100.0f));
-                AddRow("Average dwarf happiness:", String.Format("{0}%", (int)(float)Faction.Minions.Sum(m => m.Status.Happiness.Percentage) / Math.Max(Faction.Minions.Count, 1)));
+                AddRow("Average dwarf happiness:", String.Format("{0}%", (int)(float)Faction.Minions.Sum(m => m.Stats.Status.Happiness.Percentage) / Math.Max(Faction.Minions.Count, 1)));
                 InfoWidget.Layout();
             };
             var selector = AddChild(new ComboBox()

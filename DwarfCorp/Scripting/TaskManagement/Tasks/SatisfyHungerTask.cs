@@ -57,7 +57,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return agent.Status.Hunger.IsDissatisfied() ? 0.0f : 1e13f;
+            return agent.Stats.Status.Hunger.IsDissatisfied() ? 0.0f : 1e13f;
         }
 
         public override Feasibility IsFeasible(Creature agent)

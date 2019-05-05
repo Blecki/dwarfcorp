@@ -1,5 +1,5 @@
 {
-  "$type": "DwarfCorp.Goals.SpawnWarPartyEvent, BaseContent",
+  "$type": "DwarfCorp.Events.SpawnWarPartyEvent, BaseContent",
   "PartyFaction": null,
   "PartyFactionFilter": {
     "Hostility": "Hostile",

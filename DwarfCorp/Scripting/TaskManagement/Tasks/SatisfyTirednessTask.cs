@@ -62,7 +62,7 @@ namespace DwarfCorp
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
         {
-            return agent.Status.Hunger.IsDissatisfied() ? 0.0f : 1e13f;
+            return agent.Stats.Status.Hunger.IsDissatisfied() ? 0.0f : 1e13f;
         }
 
     }
@@ -88,7 +88,7 @@ namespace DwarfCorp
         {
             GameComponent closestItem = agent.Faction.FindNearestItemWithTags("Bed", agent.AI.Position, true, agent.AI);
 
-            return (closestItem != null && agent.AI.Status.Health.IsDissatisfied()) || agent.AI.Status.Health.IsCritical() ? Feasibility.Feasible : Feasibility.Infeasible;
+            return (closestItem != null && agent.AI.Stats.Status.Health.IsDissatisfied()) || agent.AI.Stats.Status.Health.IsCritical() ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

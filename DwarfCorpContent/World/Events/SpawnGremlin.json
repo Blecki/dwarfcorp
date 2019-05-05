@@ -1,5 +1,5 @@
 {
-  "$type": "DwarfCorp.Goals.SpawnEntityEvent, BaseContent",
+  "$type": "DwarfCorp.Events.SpawnEntityEvent, BaseContent",
   "EntityToSpawn": "Gremlin",
   "EntityFaction": "Carnivore",
   "ZoomToEntity": true,

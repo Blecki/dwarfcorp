@@ -88,6 +88,7 @@ namespace DwarfCorp
         public int NumBlocksPlaced = 0;
         public int XP = 0;
         public int LevelIndex = 0;
+        public CreatureStatus Status;
         [JsonIgnore] public CreatureClass CurrentClass = null;
         [JsonIgnore] public CreatureClass.Level CurrentLevel => CurrentClass.Levels[LevelIndex]; 
         public Task.TaskCategory AllowedTasks = Task.TaskCategory.Attack | Task.TaskCategory.Gather | Task.TaskCategory.Plant | Task.TaskCategory.Harvest | Task.TaskCategory.Chop | Task.TaskCategory.Wrangle | Task.TaskCategory.TillSoil;
@@ -109,6 +110,7 @@ namespace DwarfCorp
             Age = (int)Math.Max(MathFunctions.RandNormalDist(30, 15), 10);
             RandomSeed = MathFunctions.RandInt(int.MinValue, int.MaxValue);
             AddStatAdjustment(new StatAdjustment { Name = "base stats" });
+            Status = new CreatureStatus();
         }
 
         public CreatureStats(CreatureClass creatureClass, int level) : this()

@@ -1,35 +1,3 @@
-// FindBedAndSleepAct.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,7 +38,7 @@ namespace DwarfCorp
             GameComponent closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true, Agent);
             Zone closestZone = Agent.Faction.GetNearestRoom(Agent.Position);
            
-            if (!Agent.Status.Energy.IsSatisfied() && closestItem != null)
+            if (!Agent.Stats.Status.Energy.IsSatisfied() && closestItem != null)
             {
                 closestItem.ReservedFor = Agent;
                 Creature.AI.Blackboard.SetData("Bed", closestItem);
@@ -85,7 +53,7 @@ namespace DwarfCorp
                         unreserveAct
                     ) | unreserveAct;
             }
-            else if (!Agent.Status.Energy.IsSatisfied() && closestItem == null && closestZone != null)
+            else if (!Agent.Stats.Status.Energy.IsSatisfied() && closestItem == null && closestZone != null)
             {
                 Creature.AddThought(Thought.ThoughtType.SleptOnGround);
 
@@ -95,7 +63,7 @@ namespace DwarfCorp
                                         RechargeRate = 1.0f
                                     });
             }
-            else if (!Agent.Status.Energy.IsSatisfied() && closestItem == null && closestZone == null)
+            else if (!Agent.Stats.Status.Energy.IsSatisfied() && closestItem == null && closestZone == null)
             {
                 Creature.AddThought(Thought.ThoughtType.SleptOnGround);
 
@@ -143,7 +111,7 @@ namespace DwarfCorp
             GameComponent closestItem = Agent.Faction.FindNearestItemWithTags("Bed", Agent.Position, true, Agent);
 
 
-            if (closestItem != null && !Creature.Status.Health.IsCritical())
+            if (closestItem != null && !Creature.Stats.Status.Health.IsCritical())
             {
                 closestItem.ReservedFor = Agent;
                 Creature.AI.Blackboard.SetData("Bed", closestItem);
