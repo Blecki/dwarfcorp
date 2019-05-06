@@ -284,11 +284,13 @@ namespace DwarfCorp
                 {
                     var applicablePotions = inventory.Resources.Where(resource => !resource.MarkedForRestock).
                         Select(resource => ResourceLibrary.GetResourceByName(resource.Resource)).
-                        Where(resource => resource.Tags.Contains(Resource.ResourceTags.Potion) && PotionLibrary.Potions[resource.PotionType].ShouldDrink(Creature));
+                        Where(resource => resource.Tags.Contains(Resource.ResourceTags.Potion) 
+                        && resource.PotionType != null
+                        && resource.PotionType.ShouldDrink(Creature));
                     var potion = applicablePotions.FirstOrDefault();
                     if (potion != null)
                     {
-                        PotionLibrary.Potions[potion.PotionType].Drink(Creature);
+                        potion.PotionType.Drink(Creature);
                         inventory.Remove(new ResourceAmount(potion), Inventory.RestockType.Any);
                     }
                 }

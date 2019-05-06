@@ -51,5 +51,50 @@
     "CraftItemType": "Potion Of Speed",
     "Resources": null
   },
-  "PotionType": "Potion Of Speed"
+  "PotionType": {
+    "Name": "Potion Of Speed",
+    "Description": "Dwarfs drink this potion to get a bit faster.",
+    "Effects": {
+      "$type": "DwarfCorp.StatBuff, /Content",
+      "Buffs": {
+        "Name": "Potion Of Speed",
+        "Dexterity": 3.0,
+        "Constitution": 0.0,
+        "Strength": 0.0,
+        "Wisdom": 0.0,
+        "Charisma": 0.0,
+        "Intelligence": 0.0,
+        "Size": 0.0
+      },
+      "EffectTime": {
+        "TargetTimeSeconds": 120.0,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": true,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "IsInEffect": true,
+      "Particles": "star_particle",
+      "ParticleTimer": {
+        "TargetTimeSeconds": 0.25,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": false,
+        "HasTriggered": false,
+        "Mode": "Real"
+      },
+      "SoundOnStart": null,
+      "SoundOnEnd": null
+    },
+    "Ingredients": [
+      {
+        "Type": "Magical",
+        "Count": 1
+      },
+      {
+        "Type": "Fungus",
+        "Count": 1
+      }
+    ],
+    "Icon": 45
+  }
 }

@@ -46,7 +46,7 @@ namespace DwarfCorp
         public Color Tint;
         public string AleName = "";
         public CraftItemInfo CraftInfo;
-        public string PotionType;
+        public Potion PotionType = null;
 
         // Todo: Replace this with strings so mods can extend it.
         public enum ResourceTags

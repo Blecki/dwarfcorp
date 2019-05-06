@@ -48,5 +48,4 @@ namespace DwarfCorp
             return creature.Hp < creature.MaxHealth;
         }
     }
-
 }

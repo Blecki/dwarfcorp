@@ -51,5 +51,41 @@
     "CraftItemType": "Potion Of Health",
     "Resources": null
   },
-  "PotionType": "Potion Of Health"
+  "PotionType": {
+    "Name": "Potion Of Health",
+    "Description": "Dwarfs drink this potion when they take damage.",
+    "Effects": {
+      "$type": "DwarfCorp.OngoingHealBuff, /Content",
+      "DamagePerSecond": 10.0,
+      "EffectTime": {
+        "TargetTimeSeconds": 4.0,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": true,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "IsInEffect": true,
+      "Particles": "star_particle",
+      "ParticleTimer": {
+        "TargetTimeSeconds": 0.25,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": false,
+        "HasTriggered": false,
+        "Mode": "Real"
+      },
+      "SoundOnStart": null,
+      "SoundOnEnd": null
+    },
+    "Ingredients": [
+      {
+        "Type": "Magical",
+        "Count": 1
+      },
+      {
+        "Type": "Edible",
+        "Count": 1
+      }
+    ],
+    "Icon": 44
+  }
 }

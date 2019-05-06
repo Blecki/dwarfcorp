@@ -51,5 +51,41 @@
     "CraftItemType": "Potion Of Glee",
     "Resources": null
   },
-  "PotionType": "Potion Of Glee"
+  "PotionType": {
+    "Name": "Potion Of Glee",
+    "Description": "Dwarfs drink this potion when they are feeling down.",
+    "Effects": {
+      "$type": "DwarfCorp.ThoughtBuff, /Content",
+      "ThoughtType": "Magic",
+      "EffectTime": {
+        "TargetTimeSeconds": 120.0,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": true,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "IsInEffect": true,
+      "Particles": "star_particle",
+      "ParticleTimer": {
+        "TargetTimeSeconds": 0.25,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": false,
+        "HasTriggered": false,
+        "Mode": "Real"
+      },
+      "SoundOnStart": null,
+      "SoundOnEnd": null
+    },
+    "Ingredients": [
+      {
+        "Type": "Magical",
+        "Count": 1
+      },
+      {
+        "Type": "Alcohol",
+        "Count": 1
+      }
+    ],
+    "Icon": 45
+  }
 }

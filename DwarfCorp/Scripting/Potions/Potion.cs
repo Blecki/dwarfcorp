@@ -12,6 +12,7 @@ namespace DwarfCorp
         public StatusEffect Effects;
         public List<Quantitiy<Resource.ResourceTags>> Ingredients;
         public int Icon;
+
         public Potion()
         {
 

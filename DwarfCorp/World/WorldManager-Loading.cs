@@ -143,7 +143,6 @@ namespace DwarfCorp
                     DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
                     DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
                     CraftLibrary.InitializeDefaultLibrary();
-                    PotionLibrary.Initialize();
 
                     bloom = new BloomComponent(Game)
                     {

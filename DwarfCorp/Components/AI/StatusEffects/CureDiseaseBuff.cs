@@ -27,6 +27,18 @@ namespace DwarfCorp
             creature.Buffs.RemoveAll(buff => buff is Disease);
             base.OnApply(creature);
         }
+
+        public override StatusEffect Clone()
+        {
+            return new CureDiseaseBuff
+            {
+                EffectTime = Timer.Clone(EffectTime),
+                Particles = Particles,
+                ParticleTimer = Timer.Clone(ParticleTimer),
+                SoundOnEnd = SoundOnEnd,
+                SoundOnStart = SoundOnStart,
+            };
+        }
     }
 
 }

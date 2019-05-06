@@ -51,5 +51,40 @@
     "CraftItemType": "Potion Of Curing",
     "Resources": null
   },
-  "PotionType": "Potion Of Curing"
+  "PotionType": {
+    "Name": "Potion Of Curing",
+    "Description": "Dwarfs drink this potion to cure all disease.",
+    "Effects": {
+      "$type": "DwarfCorp.CureDiseaseBuff, /Content",
+      "EffectTime": {
+        "TargetTimeSeconds": 1.0,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": true,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "IsInEffect": true,
+      "Particles": null,
+      "ParticleTimer": {
+        "TargetTimeSeconds": 1.0,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": true,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "SoundOnStart": null,
+      "SoundOnEnd": null
+    },
+    "Ingredients": [
+      {
+        "Type": "Magical",
+        "Count": 1
+      },
+      {
+        "Type": "AnimalProduct",
+        "Count": 1
+      }
+    ],
+    "Icon": 44
+  }
 }
