@@ -192,6 +192,7 @@
     <Compile Include="Components\AI\PacingCreatureAI.cs" />
     <Compile Include="Components\AI\StatusEffects\RadiusBuffer.cs" />
     <Compile Include="Components\AI\Sensors\RadiusSensor.cs" />
+    <Compile Include="Components\Graphics\PrimitiveComponent.cs" />
     <Compile Include="ContextCommands\AttackCommand.cs" />
     <Compile Include="ContextCommands\CancelCommand.cs" />
     <Compile Include="ContextCommands\ChatCommand.cs" />
@@ -328,7 +329,6 @@
     <Compile Include="Components\GameComponentExtensions.cs" />
     <Compile Include="Components\GameComponent.cs" />
     <Compile Include="Components\Graphics\Bobber.cs" />
-    <Compile Include="Components\Graphics\Box.cs" />
     <Compile Include="Components\Graphics\CharacterSprite.cs" />
     <Compile Include="Components\Graphics\Follower.cs" />
     <Compile Include="Components\Graphics\LightEmitter.cs" />
@@ -588,7 +588,6 @@
     <Compile Include="Graphics\Primitives\ExtendedVertex.cs" />
     <Compile Include="Graphics\Primitives\GeometricPrimitive.cs" />
     <Compile Include="Graphics\Primitives\LiquidPrimitive.cs" />
-    <Compile Include="Graphics\Primitives\PrimitiveLibrary.cs" />
     <Compile Include="Voxels\VoxelHelpers\FindFirstVoxelBelowIncludingWater.cs" />
     <Compile Include="Voxels\VoxelHelpers\FindValidVoxelNear.cs" />
     <Compile Include="Voxels\VoxelHelpers\GetVoxelBelow.cs" />

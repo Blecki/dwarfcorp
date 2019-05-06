@@ -10,6 +10,8 @@ namespace DwarfCorp
     {
         private static Perlin MoteNoise = new Perlin(0);
         private static Perlin MoteScaleNoise = new Perlin(250);
+        private static List<Matrix> treeTransforms = new List<Matrix> { Matrix.Identity, Matrix.CreateRotationY((float)Math.PI / 2.0f) };
+        private static List<Color> treeTints = new List<Color> { Color.White, Color.White };
 
         private static float Clamp(float v, float a)
         {
@@ -37,11 +39,33 @@ namespace DwarfCorp
             }
         }
 
-        private static NewInstanceData GenerateGrassMote(WorldManager World, Vector3 Position, Color Color, float Scale, String Name)
+        private static NewInstanceData GenerateGrassMote(WorldManager World, Vector3 Position, Color Color, float Scale, DetailMoteData Data)
         {
-            return new NewInstanceData(Name, Matrix.CreateScale(Scale) * Matrix.CreateRotationY(Scale * Scale) * Matrix.CreateTranslation(Position), Color);
+            if (!World.InstanceRenderer.DoesGroupExist(Data.Asset))
+                World.InstanceRenderer.AddInstanceGroup(new PrimitiveInstanceGroup
+                {
+                    RenderData = new InstanceRenderData
+                    {
+                        EnableGhostClipping = true,
+                        EnableWind = true,
+                        RenderInSelectionBuffer = true,
+                        Model = CreateCrossPrimitive(new NamedImageFrame(Data.Asset))
+                    },
+                    Name = Data.Asset
+                });
+
+            return new NewInstanceData(Data.Asset, Matrix.CreateScale(Scale) * Matrix.CreateRotationY(Scale * Scale) * Matrix.CreateTranslation(Position), Color);
         }
-        
+
+        private static GeometricPrimitive CreateCrossPrimitive(NamedImageFrame spriteSheet)
+        {
+            int width = spriteSheet.SafeGetImage().Width;
+            int height = spriteSheet.SafeGetImage().Height;
+
+            return new BatchBillboardPrimitive(spriteSheet, width, height,
+                new Point(0, 0), width / 32.0f, height / 32.0f, false, treeTransforms, treeTints, treeTints);
+        }
+
         public void RebuildMoteLayerIfNull(int LocalY)
         {
             if (MoteRecords[LocalY] == null)
@@ -109,7 +133,7 @@ namespace DwarfCorp
                             v.WorldPosition + new Vector3(0.5f, 1.0f + s * 0.5f + vOffset, 0.5f) + smallNoise,
                             new Color(v.Sunlight ? 255 : 0, 128, 0),
                             s,
-                            moteDetail.Name);
+                            moteDetail);
 
                         moteList.Add(mote);
                     }

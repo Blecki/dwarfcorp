@@ -29,7 +29,6 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            RenderData.Model = PrimitiveLibrary.Primitives[RenderData.PrimitiveName];
         }
 
         private Vector4 GetTileBounds(NewInstanceData Instance)

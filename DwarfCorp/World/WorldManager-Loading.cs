@@ -131,16 +131,11 @@ namespace DwarfCorp
                 {
                     Vector3 origin = new Vector3(0, 0, 0);
                     Vector3 extents = new Vector3(1500, 1500, 1500);
-                    //OctTree = new OctTreeNode<GameComponent>(origin - extents, origin + extents);
 
-                    PrimitiveLibrary.Initialize(Content);
+                    InstanceRenderer = new InstanceRenderer();
 
-                    InstanceRenderer = new InstanceRenderer(GraphicsDevice, Content);
-
-                    Color[] white = new Color[1];
-                    white[0] = Color.White;
                     pixel = new Texture2D(GraphicsDevice, 1, 1);
-                    pixel.SetData(white);
+                    pixel.SetData(new Color[] { Color.White });
 
                     Tilesheet = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
                     AspectRatio = GraphicsDevice.Viewport.AspectRatio;

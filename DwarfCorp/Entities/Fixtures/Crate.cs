@@ -17,6 +17,8 @@ namespace DwarfCorp
             return new Crate(Manager, Position);
         }
 
+        private static GeometricPrimitive SharedPrimitive = null;
+
         public Crate()
         {
         }
@@ -34,13 +36,26 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(Manager);
 
-            AddChild(new Box(Manager,
-                "Cratebox",
+            if (SharedPrimitive == null)
+            {
+                var spriteSheet = new NamedImageFrame("Terrain\\terrain_tiles");
+                SharedPrimitive = new OldBoxPrimitive(DwarfGame.GuiSkin.Device, 0.9f, 0.9f, 0.9f,
+                        new OldBoxPrimitive.BoxTextureCoords(spriteSheet.SafeGetImage().Width, spriteSheet.SafeGetImage().Height,
+                            new OldBoxPrimitive.FaceData(new Rectangle(224, 0, 32, 32), true),
+                            new OldBoxPrimitive.FaceData(new Rectangle(224, 0, 32, 32), true),
+                            new OldBoxPrimitive.FaceData(new Rectangle(256, 0, 32, 32), false),
+                            new OldBoxPrimitive.FaceData(new Rectangle(224, 0, 32, 32), true),
+                            new OldBoxPrimitive.FaceData(new Rectangle(224, 0, 32, 32), true),
+                            new OldBoxPrimitive.FaceData(new Rectangle(224, 0, 32, 32), true)));
+            }
+
+            AddChild(new PrimitiveComponent(Manager,
                 Matrix.CreateRotationY(MathFunctions.Rand(-0.25f, 0.25f)),
                 new Vector3(1.0f, 1.0f, 1.0f),
                 new Vector3(0.5f, 0.5f, 0.5f),
-                "crate",
-                ContentPaths.Terrain.terrain_tiles)).SetFlag(Flag.ShouldSerialize, false);
+                SharedPrimitive,
+                "Terrain\\terrain_tiles"))
+                .SetFlag(Flag.ShouldSerialize, false);
         }
     }
 }

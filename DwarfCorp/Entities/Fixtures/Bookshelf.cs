@@ -17,6 +17,8 @@ namespace DwarfCorp
             return new Bookshelf(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null)) { Tags = new List<string>() { "Research" } };
         }
 
+        private static GeometricPrimitive SharedPrimitive = null;
+
         public Bookshelf()
         {
             CollisionType = CollisionType.Static;
@@ -38,14 +40,12 @@ namespace DwarfCorp
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)
         {
             effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
-            GetComponent<Box>().Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
+            GetComponent<PrimitiveComponent>().Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
         override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
             GraphicsDevice graphicsDevice, Shader effect, bool renderingForWater)
         {
-            // Only renders to selection buffer
-
             base.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, renderingForWater);
         }
 
@@ -53,13 +53,26 @@ namespace DwarfCorp
         {
             base.CreateCosmeticChildren(Manager);
 
-            AddChild(new Box(Manager,
-                "model",
+            if (SharedPrimitive == null)
+            {
+                var spriteSheet = new NamedImageFrame("Entities\\Furniture\\bookshelf");
+                SharedPrimitive = new OldBoxPrimitive(DwarfGame.GuiSkin.Device, 0.625f, 1.0f, 0.25f,
+                        new OldBoxPrimitive.BoxTextureCoords(spriteSheet.SafeGetImage().Width, spriteSheet.SafeGetImage().Height,
+                            new OldBoxPrimitive.FaceData(new Rectangle(0, 20, 20, 32), true),
+                            new OldBoxPrimitive.FaceData(new Rectangle(28, 20, 20, 32), true),
+                            new OldBoxPrimitive.FaceData(new Rectangle(20, 0, 8, 20), false),
+                            new OldBoxPrimitive.FaceData(new Rectangle(0, 0, 1, 1), true),
+                            new OldBoxPrimitive.FaceData(new Rectangle(20, 20, 8, 32), true),
+                            new OldBoxPrimitive.FaceData(new Rectangle(20, 52, 8, 32), true)));
+            }
+
+            AddChild(new PrimitiveComponent(Manager,
                 Matrix.CreateTranslation(new Vector3(-0.25f, 0.0f, 0.35f - 0.15f)),
                 new Vector3(0.5f, 0.5f, 0.5f),
                 new Vector3(0.0f, 0.0f, 0.0f),
-                "bookshelf",
-                ContentPaths.Entities.Furniture.bookshelf)).SetFlag(Flag.ShouldSerialize, false);
+                SharedPrimitive,
+                "Entities\\Furniture\\bookshelf"))
+                .SetFlag(Flag.ShouldSerialize, false);
 
             AddChild(new GenericVoxelListener(Manager, Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.5f, 0.0f), (changeEvent) =>
             {

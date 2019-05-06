@@ -11,9 +11,8 @@ namespace DwarfCorp
     public class InstanceRenderData
     {
         [JsonIgnore]
-        public GeometricPrimitive Model;
+        public GeometricPrimitive Model; // Todo: Should probably not be serialized.
 
-        public String PrimitiveName;
         public bool EnableWind = false;
         public bool RenderInSelectionBuffer = true;
         public bool EnableGhostClipping = true;

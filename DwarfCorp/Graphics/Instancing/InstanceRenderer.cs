@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using System;
+using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
@@ -8,16 +10,6 @@ namespace DwarfCorp
     {
         private Dictionary<string, InstanceGroup> InstanceTypes = new Dictionary<string, InstanceGroup>();
         private int _instanceCounter = 0;
-
-        public InstanceRenderer(GraphicsDevice Device, ContentManager Content)
-        {
-            var instanceGroups = FileUtils.LoadJsonListFromMultipleSources<InstanceGroup>(ContentPaths.instance_groups, null, g => g.Name);
-            foreach (var group in instanceGroups)
-            {
-                group.Initialize();
-                InstanceTypes.Add(group.Name, group);
-            }
-        }
 
         public bool DoesGroupExist(string Name)
         {
@@ -53,6 +45,28 @@ namespace DwarfCorp
 
             PerformanceMonitor.SetMetric("INSTANCES DRAWN", _instanceCounter);
             _instanceCounter = 0;
+        }
+
+        internal String PrepareCombinedTiledInstance()
+        {
+            if (!DoesGroupExist("combined-tiled-instance"))
+                AddInstanceGroup(new TiledInstanceGroup
+                {
+                    RenderData = new InstanceRenderData
+                    {
+                        EnableWind = false,
+                        RenderInSelectionBuffer = true,
+                        EnableGhostClipping = true,
+                        Model = new BatchBillboardPrimitive(new NamedImageFrame("newgui\\error"), 32, 32,
+                        new Point(0, 0), 1.0f, 1.0f, false,
+                        new List<Matrix> { Matrix.Identity },
+                        new List<Color> { Color.White },
+                        new List<Color> { Color.White })
+                    },
+                    Name = "combined-tiled-instance"
+                });
+
+            return "combined-tiled-instance";
         }
     }
 }

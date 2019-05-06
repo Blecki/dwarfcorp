@@ -12,6 +12,9 @@ namespace DwarfCorp
 {
     public class Plant : GameComponent
     {
+        private static List<Matrix> treeTransforms = new List<Matrix> { Matrix.Identity, Matrix.CreateRotationY((float)Math.PI / 2.0f) };
+        private static List<Color> treeTints = new List<Color> { Color.White, Color.White };
+
         public bool IsGrown { get; set; }
         public string MeshAsset { get; set; }
         public float MeshScale { get; set; }
@@ -19,6 +22,7 @@ namespace DwarfCorp
         public float RandomAngle = 0.0f;
         public Farm Farm;
         public int LastGrowthHour = 0;
+
         public Plant()
         {
         }
@@ -160,10 +164,19 @@ namespace DwarfCorp
                         EnableGhostClipping = true,
                         EnableWind = true,
                         RenderInSelectionBuffer = true,
-                        Model = PrimitiveLibrary.CreateCrossPrimitive(new NamedImageFrame(Asset))
+                        Model = CreateCrossPrimitive(new NamedImageFrame(Asset))
                     },
                     Name = Asset
                 });
+        }
+
+        private static GeometricPrimitive CreateCrossPrimitive(NamedImageFrame spriteSheet)
+        {
+            int width = spriteSheet.SafeGetImage().Width;
+            int height = spriteSheet.SafeGetImage().Height;
+
+            return new BatchBillboardPrimitive(spriteSheet, width, height,
+                new Point(0, 0), width / 32.0f, height / 32.0f, false, treeTransforms, treeTints, treeTints);
         }
     }
 }

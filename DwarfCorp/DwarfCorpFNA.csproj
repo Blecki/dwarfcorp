@@ -159,7 +159,6 @@
     <Compile Include=".\Components\GenericVoxelListener.cs" />
     <Compile Include=".\Components\Graphics\AnimatedSprite.cs" />
     <Compile Include=".\Components\Graphics\Bobber.cs" />
-    <Compile Include=".\Components\Graphics\Box.cs" />
     <Compile Include=".\Components\Graphics\CharacterSprite.cs" />
     <Compile Include=".\Components\Graphics\Follower.cs" />
     <Compile Include=".\Components\Graphics\InstanceMesh.cs" />
@@ -260,6 +259,7 @@
     <Compile Include=".\Entities\Fixtures\WorkPile.cs" />
     <Compile Include="Components\AI\StatAdjustment.cs" />
     <Compile Include="Components\AI\Status.cs" />
+    <Compile Include="Components\Graphics\PrimitiveComponent.cs" />
     <Compile Include="Economy\Company.cs" />
     <Compile Include="Economy\Money.cs" />
     <Compile Include="Economy\Payroll\CollectMoney.cs" />
@@ -435,7 +435,6 @@
     <Compile Include=".\Graphics\Primitives\ExtendedVertex.cs" />
     <Compile Include=".\Graphics\Primitives\GeometricPrimitive.cs" />
     <Compile Include=".\Graphics\Primitives\LiquidPrimitive.cs" />
-    <Compile Include=".\Graphics\Primitives\PrimitiveLibrary.cs" />
     <Compile Include=".\Graphics\Primitives\RawPrimitive.cs" />
     <Compile Include=".\Graphics\SelectionBuffer.cs" />
     <Compile Include=".\Gui\Enums.cs" />

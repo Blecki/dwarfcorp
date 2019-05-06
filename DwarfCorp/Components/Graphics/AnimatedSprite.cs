@@ -96,7 +96,8 @@ namespace DwarfCorp
 
         private void PrepareInstanceData(Camera Camera)
         {
-            if (InstanceData == null) InstanceData = new NewInstanceData("combined-tiled-instances", Matrix.Identity, Color.White);
+            if (InstanceData == null)
+                InstanceData = new NewInstanceData(Manager.World.InstanceRenderer.PrepareCombinedTiledInstance(), Matrix.Identity, Color.White);
             
             InstanceData.Transform = GetWorldMatrix(Camera);
             InstanceData.LightRamp = LightRamp;

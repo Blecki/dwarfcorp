@@ -2611,10 +2611,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>dwarf-animations</Name>
     </None>
-    <None Include="instance-groups.json">
-      <Name>instance-groups</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="newgui\fonts\font10_def.font">
       <Name>font10_def</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -2648,10 +2644,6 @@
     </Compile>
     <None Include="potions.json">
       <Name>potions</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="primitives.json">
-      <Name>primitives</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="employee.conv">

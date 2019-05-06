@@ -17,6 +17,8 @@ namespace DwarfCorp
             return new Bed(Manager, Position, Data.GetData<List<ResourceAmount>>("Resources", null));
         }
 
+        private static GeometricPrimitive SharedPrimitive = null;
+        
         public Bed()
         {
 
@@ -40,7 +42,7 @@ namespace DwarfCorp
         public override void RenderSelectionBuffer(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Shader effect)
         {
             effect.SelectionBufferColor = this.GetGlobalIDColor().ToVector4();
-            GetComponent<Box>()?.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
+            GetComponent<PrimitiveComponent>()?.Render(gameTime, chunks, camera, spriteBatch, graphicsDevice, effect, false);
         }
 
         override public void Render(DwarfTime gameTime, ChunkManager chunks, Camera camera, SpriteBatch spriteBatch,
@@ -52,13 +54,28 @@ namespace DwarfCorp
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
             base.CreateCosmeticChildren(Manager);
-            AddChild(new Box(Manager, 
-                "bedbox", 
-                Matrix.CreateTranslation(-0.40f, 0.00f, -0.45f) * Matrix.CreateRotationY((float)Math.PI * 0.5f), 
-                new Vector3(1.0f, 1.0f, 2.0f), 
-                new Vector3(0.0f, 0.0f, 0.0f), 
-                "bed",
-                ContentPaths.Entities.Furniture.bedtex)).SetFlag(Flag.ShouldSerialize, false);
+
+            if (SharedPrimitive == null)
+            {
+                var spriteSheet = new NamedImageFrame("Entities\\Furniture\\bedtex");
+                SharedPrimitive = new OldBoxPrimitive(DwarfGame.GuiSkin.Device, 0.8f, 0.5f, 1.8f,
+                        new OldBoxPrimitive.BoxTextureCoords(spriteSheet.SafeGetImage().Width, spriteSheet.SafeGetImage().Height,
+                            new OldBoxPrimitive.FaceData(new Rectangle(0, 24, 24, 16), true),
+                            new OldBoxPrimitive.FaceData(new Rectangle(72, 24, 24, 16), true),
+                            new OldBoxPrimitive.FaceData(new Rectangle(24, 0, 48, 24), false),
+                            new OldBoxPrimitive.FaceData(new Rectangle(0, 0, 1, 1), true),
+                            new OldBoxPrimitive.FaceData(new Rectangle(24, 24, 48, 16), true),
+                            new OldBoxPrimitive.FaceData(new Rectangle(24, 40, 48, 16), true)));
+            }
+
+            AddChild(new PrimitiveComponent(Manager,
+                Matrix.CreateTranslation(-0.40f, 0.00f, -0.45f) * Matrix.CreateRotationY((float)Math.PI * 0.5f),
+                new Vector3(1.0f, 1.0f, 2.0f),
+                new Vector3(0.0f, 0.0f, 0.0f),
+                SharedPrimitive,
+                "Entities\\Furniture\\bedtex"))
+                .SetFlag(Flag.ShouldSerialize, false)
+                .SetFlag(Flag.RotateBoundingBox, true);
 
             AddChild(new GenericVoxelListener(Manager,
                 Matrix.Identity,

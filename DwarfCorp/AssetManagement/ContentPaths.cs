@@ -37,8 +37,6 @@ namespace DwarfCorp
         public static string craft_items = ProgramData.CreatePath("World", "CraftItems");
         public static string resource_items = "resource-items.json";
         public static string rail_tiles = ProgramData.CreatePath("Terrain", "rail");
-        public static string primitives = ProgramData.CreatePath("primitives.json");
-        public static string instance_groups = ProgramData.CreatePath("instance-groups.json");
         public static string tutorials = ProgramData.CreatePath("tutorial.json");
         public static string events = ProgramData.CreatePath("World", "Events");
         public static string dwarf_layers = ProgramData.CreatePath("Entities", "Dwarf", "Layers", "dwarf-layers.json");
