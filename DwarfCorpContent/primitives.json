@@ -96,18 +96,6 @@
     "BoxSize": "0.9, 0.9, 0.9"
   },
   {
-    "Name": "berrybush",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\berrybush",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "berrybushsprout",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\berrybush-sprout",
-    "BoxFaceData": null
-  },
-  {
     "Name": "deadbush",
     "Type": "Cross",
     "Asset": "Entities\\Plants\\deadbush",
@@ -138,141 +126,9 @@
     "BoxFaceData": null
   },
   {
-    "Name": "mushroom",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\mushroom",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "mushroomsprout",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\mushroom-sprout",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "caveshroom",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\caveshroom",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "caveshroomsprout",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\caveshroom-sprout",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "palm",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\palmtree",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "palmsprout",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\palmtree-sprout",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "pine",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\pinetree",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "pinesprout",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\pinetree-sprout",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "snowpine",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\snowpine",
-    "BoxFaceData": null
-  },
-  {
     "Name": "vine",
     "Type": "Cross",
     "Asset": "Entities\\Plants\\vine",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "wheat",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\wheat",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "wheatsprout",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\wheat-sprout",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "appletree",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\appletree",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "appletreesprout",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\appletree-sprout",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "eviltree",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\eviltree",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "eviltreesprout",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\eviltree-sprout",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "pumpkinvine",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\pumpkinvine",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "pumpkinvinesprout",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\pumpkinvine-sprout",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "cactus",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\cactus",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "cactussprout",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\cactus-sprout",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "candycane",
-    "Type": "Quad",
-    "Asset": "Entities\\Plants\\candycane",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "candycane_snow",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\candycane-snow",
-    "BoxFaceData": null
-  },
-  {
-    "Name": "candycanesprout",
-    "Type": "Cross",
-    "Asset": "Entities\\Plants\\candycane-sprout",
     "BoxFaceData": null
   },
   {

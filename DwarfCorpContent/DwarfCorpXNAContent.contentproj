@@ -2611,10 +2611,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>dwarf-animations</Name>
     </None>
-    <None Include="events.json">
-      <Name>events</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="instance-groups.json">
       <Name>instance-groups</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -19,6 +19,17 @@ namespace DwarfCorp
             }
         }
 
+        public bool DoesGroupExist(string Name)
+        {
+            return InstanceTypes.ContainsKey(Name);
+        }
+
+        public void AddInstanceGroup(InstanceGroup Group)
+        {
+            Group.Initialize();
+            InstanceTypes[Group.Name] = Group;
+        }
+
         public void RenderInstance(
             NewInstanceData Instance,
             GraphicsDevice Device, Shader Effect, Camera Camera, InstanceRenderMode Mode)

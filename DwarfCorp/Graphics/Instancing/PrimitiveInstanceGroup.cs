@@ -25,7 +25,8 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            RenderData.Model = PrimitiveLibrary.Primitives[RenderData.PrimitiveName];
+            if (RenderData.Model == null)
+                RenderData.Model = PrimitiveLibrary.Primitives[RenderData.PrimitiveName];
         }
 
         public override void RenderInstance(NewInstanceData Instance, GraphicsDevice Device, Shader Effect, Camera Camera, InstanceRenderMode Mode)

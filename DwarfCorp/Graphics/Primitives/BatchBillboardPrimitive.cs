@@ -21,7 +21,7 @@ namespace DwarfCorp
         public List<Color> Tints;
         public List<Color> VertColors;
 
-        public BatchBillboardPrimitive(GraphicsDevice device,
+        public BatchBillboardPrimitive(
             NamedImageFrame spriteSheet,
             int frameWidth,
             int frameHeight,
