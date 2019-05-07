@@ -1,35 +1,3 @@
-// TextGenerator.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -44,27 +12,11 @@ using Newtonsoft.Json.Converters;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Generates random strings of text based on patterns. Like mad libs.
-    /// </summary>
     public class TextGenerator
     {
-        public static Dictionary<string, TextAtom> TextAtoms { get; set; }
+        private static Dictionary<string, TextAtom> TextAtoms { get; set; }
         public static Dictionary<string, List<List<string>>> Templates { get; set; }
         private static bool staticsInitialized = false;
-
-        public static string SplitCamelCase(string str)
-        {
-            return Regex.Replace(
-                Regex.Replace(
-                    str,
-                    @"(\P{Ll})(\P{Ll}\p{Ll})",
-                    "$1 $2"
-                ),
-                @"(\p{Ll})(\P{Ll})",
-                "$1 $2"
-            );
-        }
 
         public static string TimeToString(TimeSpan age)
         {
@@ -96,7 +48,7 @@ namespace DwarfCorp
             return String.Format("{0} ago", TimeToString(age));
         }
 
-        public static string[] Literals =
+        private static string[] Literals =
         {
             " ",
             ".",
@@ -119,7 +71,7 @@ namespace DwarfCorp
             "\'"
         };
 
-        public static bool IsVowel(char character)
+        private static bool IsVowel(char character)
         {
             return character == 'a' || character == 'i' || character == 'e' || character == 'o' || character == 'u' ||
                    character == 'y' || character == 'A' || character == 'E' || character == 'I' || character == 'U' || character == 'Y';
@@ -128,9 +80,7 @@ namespace DwarfCorp
         public static string IndefiniteArticle(string item)
         {
             if (item.Length > 0)
-            {
                 return IsVowel(item[0]) ? "an " + item : "a " + item;
-            }
 
             return item;
         }
@@ -160,6 +110,7 @@ namespace DwarfCorp
         public static List<List<string>> GetAtoms(string type)
         {
             string text = "";
+
             using (var stream = TitleContainer.OpenStream("Content" + Path.DirectorySeparatorChar + type))
             {
                 using (var reader = new StreamReader(stream))
@@ -167,11 +118,12 @@ namespace DwarfCorp
                     text = reader.ReadToEnd();
                 }
             }
+
             char[] delimiters = { '!', '\'', ',', '.', '(', ')', ';', '?', '|', ' ', '\t' };
             List<List<string>> toReturn = new List<List<string>>();
+
             foreach (string line in text.Split('\n', '\r'))
             {
-
                 if (string.IsNullOrEmpty(line) || line == "\n" || line == "\r")
                 {
                     continue;
@@ -187,7 +139,6 @@ namespace DwarfCorp
 
                 foreach (string word in transformed.Split('~'))
                 {
-
                     var match = Regex.Match(word, @"\<(.*?)\>");
 
                     if (match.Success)
@@ -207,8 +158,6 @@ namespace DwarfCorp
                     {
                         current.Add(word);
                     }
-
-
                 }
 
                 toReturn.Add(current);
