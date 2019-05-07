@@ -1,0 +1,15 @@
+{
+  "Name": "Tranquil",
+  "Difficulty": 0,
+  "Party": [ "Dwarf Miner", "Dwarf Miner", "Dwarf Miner", "Dwarf Miner", "Dwarf Crafter", "Dwarf Soldier", "Dwarf Soldier" ],
+  "Resources": {
+    "Wood": 32,
+    "Coal": 16,
+    "Iron": 16,
+    "Ale": 16,
+    "Mushroom": 32,
+    "Gold": 4,
+    "Mana": 8
+  },
+  "Money": 1000
+}

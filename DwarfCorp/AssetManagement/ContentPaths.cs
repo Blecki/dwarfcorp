@@ -357,8 +357,8 @@ namespace DwarfCorp
         public class World
         {
             public static string biomes = ProgramData.CreatePath("World", "Biomes");
-            public static string races = ProgramData.CreatePath("World", "races.json");
-            public static string embarks = ProgramData.CreatePath("World", "embarkments.json");
+            public static string races = ProgramData.CreatePath("World", "Races");
+            public static string embarks = ProgramData.CreatePath("World", "Embarkments");
         }
                 
         public class Text

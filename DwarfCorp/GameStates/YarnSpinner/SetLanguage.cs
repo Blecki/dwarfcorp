@@ -12,7 +12,7 @@ namespace DwarfCorp.GameStates.YarnSpinner
         {
             var race = RaceLibrary.FindRace(Arguments[0].Value.ToString());
             if (race != null)
-                State.PlayerInterface.SetLanguage(race.Speech.Language);
+                State.PlayerInterface.SetLanguage(race.Language);
             else
                 State.PlayerInterface.Output("ERROR setting language: Race not found.");
         }

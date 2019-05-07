@@ -325,7 +325,6 @@
     <Compile Include=".\GameSettings.cs" />
     <Compile Include=".\GameStates\Debug\DwarfDesignerState.cs" />
     <Compile Include=".\GameStates\Debug\GuiDebugState.cs" />
-    <Compile Include=".\GameStates\Diplomacy\DialogueTreeTypes.cs" />
     <Compile Include=".\GameStates\FrontEnd\CompanyMakerState.cs" />
     <Compile Include=".\GameStates\FrontEnd\CreditsState.cs" />
     <Compile Include=".\GameStates\FrontEnd\IntroState.cs" />

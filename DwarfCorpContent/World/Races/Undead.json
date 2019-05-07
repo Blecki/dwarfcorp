@@ -1,0 +1,50 @@
+{
+  "Name": "Undead",
+  "Plural": "Undead",
+  "Posessive": "Undead",
+  "DiplomacyConversation": "World/undead.conv",
+  "NumFurniture": 2,
+  "CreatureTypes": [
+    "Necromancer",
+    "Skeleton"
+  ],
+  "IsIntelligent": true,
+  "IsNative": true,
+  "FactionNameFile": "Text\\Templates\\nations_undead.txt",
+  "NameFile": "Text\\Templates\\names_undead.txt",
+  "NaturalEnemies": [ "Elf", "Goblins", "Evil" ],
+  "Language": {
+    "Syllables": [
+      "Audio/oscar/sfx_ic_necromancer_mumble_1",
+      "Audio/oscar/sfx_ic_necromancer_mumble_2",
+      "Audio/oscar/sfx_ic_necromancer_mumble_3",
+      "Audio/oscar/sfx_ic_necromancer_mumble_4",
+      "Audio/oscar/sfx_ic_necromancer_mumble_5",
+      "Audio/oscar/sfx_ic_necromancer_mumble_6"
+    ],
+    "Yays": [
+      "Audio/oscar/sfx_ic_necromancer_pleased"
+    ],
+    "Boos": [
+      "Audio/oscar/sfx_ic_necromancer_angered"
+    ]
+  },
+  "LikedResources": [ "AnimalProduct", "Magical", "Evil" ],
+  "HatedResources": [ "AboveGroundPlant", "BelowGroundPlant", "PreparedFood" ],
+  "CommonResources": [ "Bone", "Magical", "Evil" ],
+  "RareResources": [ "RawFood", "AnimalProduct", "Metal", "Gem" ],
+  "TradeGoods": {
+    "Bone": 128,
+    "Magical": 64,
+    "Precious": 5,
+    "Craft": 16,
+    "Evil": 4
+  },
+  "Biomes": {
+    "Boreal Forest": "Haunted Forest"
+  },
+  "Crafts": [ "Bone" ],
+  "Encrustings": [ "Gem" ],
+  "TradeMusic": "undead",
+  "Icon": 6
+}

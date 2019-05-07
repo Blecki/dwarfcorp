@@ -487,7 +487,6 @@
     <Compile Include="Components\Systems\Message.cs" />
     <Compile Include="ControlSettings.cs" />
     <Compile Include="DeProfiler.cs" />
-    <Compile Include="GameStates\Diplomacy\DialogueTreeTypes.cs" />
     <Compile Include="Scripting\Factions\Trading\ITradeEntity.cs" />
     <Compile Include="Scripting\Factions\Trading\TradeTransaction.cs" />
     <Compile Include="DwarfGame.cs" />

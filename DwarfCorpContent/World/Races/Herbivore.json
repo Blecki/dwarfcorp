@@ -1,0 +1,20 @@
+{
+  "Name": "Herbivore",
+  "Plural": "Herbivores",
+  "EatsPlants": true,
+  "CreatureTypes": [
+    "Bird",
+    "Deer",
+    "Brown Rabbit",
+    "White Rabbit",
+    "Frog",
+    "Tree Frog"
+  ],
+  "NaturalEnemies": [ "Demon", "Evil" ],
+  "IsIntelligent": false,
+  "IsNative": true,
+  "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
+  "NameFile": "Text\\Templates\\names_dwarf.txt",
+  "LikedResources": [],
+  "HatedResources": []
+}

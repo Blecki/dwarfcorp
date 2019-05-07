@@ -1,0 +1,54 @@
+{
+  "Name": "Dwarf",
+  "Plural": "Dwarfs",
+  "Posessive": "Dwarvish",
+  "DiplomacyConversation": "World/dwarf.conv",
+  "CreatureTypes": [
+    "Dwarf Crafter",
+    "Dwarf Soldier"
+  ],
+  "IsIntelligent": true,
+  "IsNative": false,
+  "FactionNameFile": "Text\\Templates\\nations_dwarf.txt",
+  "NameFile": "Text\\Templates\\names_dwarf.txt",
+  "NaturalEnemies": [ "Demon", "Evil" ],
+  "Language": {
+    "Syllables": [
+      "Audio/oscar/sfx_ic_dwarf_mumble_1",
+      "Audio/oscar/sfx_ic_dwarf_mumble_2",
+      "Audio/oscar/sfx_ic_dwarf_mumble_3",
+      "Audio/oscar/sfx_ic_dwarf_mumble_4",
+      "Audio/oscar/sfx_ic_dwarf_mumble_5",
+      "Audio/oscar/sfx_ic_dwarf_mumble_6"
+    ],
+    "Yays": [
+      "Audio/oscar/sfx_ic_dwarf_pleased"
+    ],
+    "Boos": [
+      "Audio/oscar/sfx_ic_dwarf_tantrum_1",
+      "Audio/oscar/sfx_ic_dwarf_tantrum_2",
+      "Audio/oscar/sfx_ic_dwarf_tantrum_3"
+    ]
+  },
+  "LikedResources": [ "Metal", "Precious", "Gem", "Craft" ],
+  "CommonResources": [ "Stone", "Metal", "Fungus", "Alcohol" ],
+  "RareResources": [ "Magical", "Wood", "Gem", "Precious", "Craft" ],
+  "HatedResources": [],
+  "TradeGoods": {
+    "Alcohol": 20,
+    "Craft": 5,
+    "Fuel": 10,
+    "Encrustable": 3,
+    "Wood": 10,
+    "Precious": 4,
+    "Fungus": 32,
+    "Stone": 64,
+    "Metal": 64,
+    "Sand": 16,
+    "Glass": 8
+  },
+  "NumFurniture": 4,
+  "Crafts": [ "Metal" ],
+  "Encrustings": [ "Gem" ],
+  "Icon": 0
+}

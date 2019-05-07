@@ -3309,6 +3309,26 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Turret</Name>
     </None>
+    <None Include="World\Embarkments\NormalHardcore.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>NormalHardcore</Name>
+    </None>
+    <None Include="World\Embarkments\Tranquil.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Tranquil</Name>
+    </None>
+    <None Include="World\Embarkments\Easy.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Easy</Name>
+    </None>
+    <None Include="World\Embarkments\Normal.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Normal</Name>
+    </None>
+    <None Include="World\Embarkments\Hard.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Hard</Name>
+    </None>
     <None Include="World\Events\SpawnKobold.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>SpawnKobold</Name>
@@ -3388,6 +3408,42 @@
     <None Include="World\elf.conv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>elf</Name>
+    </None>
+    <None Include="World\Races\Dwarf.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Dwarf</Name>
+    </None>
+    <None Include="World\Races\Undead.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Undead</Name>
+    </None>
+    <None Include="World\Races\Goblins.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Goblins</Name>
+    </None>
+    <None Include="World\Races\Molemen.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Molemen</Name>
+    </None>
+    <None Include="World\Races\Elf.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Elf</Name>
+    </None>
+    <None Include="World\Races\Demon.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Demon</Name>
+    </None>
+    <None Include="World\Races\Herbivore.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Herbivore</Name>
+    </None>
+    <None Include="World\Races\Carnivore.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Carnivore</Name>
+    </None>
+    <None Include="World\Races\Evil.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Evil</Name>
     </None>
     <None Include="World\ResourceItems\YellowSlime.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3645,13 +3701,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>undead</Name>
     </None>
-    <None Include="World\races.json">
+    <None Include="World\Embarkments\Extreme.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>races</Name>
-    </None>
-    <None Include="World\embarkments.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>embarkments</Name>
+      <Name>Extreme</Name>
     </None>
     <None Include="World\dwarf.conv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

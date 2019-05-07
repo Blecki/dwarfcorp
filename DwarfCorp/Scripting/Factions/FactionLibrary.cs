@@ -14,7 +14,7 @@ namespace DwarfCorp
         
         public Faction GenerateFaction(OverworldGenerationSettings Settings, int idx , int n)
         {
-            var race = RaceLibrary.RandomIntelligentRace();
+            var race = RaceLibrary.GetRandomIntelligentRace();
 
             var fact = new Faction(null)
             {

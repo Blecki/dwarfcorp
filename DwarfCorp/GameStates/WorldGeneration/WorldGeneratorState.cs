@@ -253,12 +253,12 @@ namespace DwarfCorp.GameStates
             var difficultySelectorCombo = rightPanel.AddChild(new Gui.Widgets.ComboBox
             {
                 AutoLayout = Gui.AutoLayout.DockTop,
-                Items = EmbarkmentLibrary.Embarkments.Select(e => e.Key).ToList(),
+                Items = EmbarkmentLibrary.Enumerate().Select(e => e.Name).ToList(),
                 TextColor = new Vector4(0, 0, 0, 1),
                 Font = "font8",
                 OnSelectedIndexChanged = (sender) =>
                 {
-                    Settings.InitalEmbarkment = EmbarkmentLibrary.Embarkments[(sender as Gui.Widgets.ComboBox).SelectedItem];
+                    Settings.InitalEmbarkment = EmbarkmentLibrary.GetEmbarkment((sender as Gui.Widgets.ComboBox).SelectedItem);
                 }
             }) as Gui.Widgets.ComboBox;
 
