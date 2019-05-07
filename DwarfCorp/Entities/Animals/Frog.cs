@@ -107,7 +107,7 @@ namespace DwarfCorp
             Stats.CurrentClass = SharedClass;
 
             Species = "Frog";
-            CanReproduce = true;
+            Stats.CanReproduce = true;
             BabyType = "Frog";
         }
 

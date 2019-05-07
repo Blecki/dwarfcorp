@@ -11,7 +11,6 @@ namespace DwarfCorp
     ///     Component which keeps track of a large number of other components (AI, physics, sprites, etc.)
     ///     related to creatures (such as dwarves and goblins).
     /// </summary>
-    [JsonObject(IsReference = true)]
     public class Creature : Health
     {
         /// <summary> 
@@ -26,12 +25,12 @@ namespace DwarfCorp
         /// can be drawn.
         /// </summary>
         private DateTime LastIndicatorTime = DateTime.Now;
+
         private DateTime LastHungerDamageTime = DateTime.Now;
 
         /// <summary> This is what the character is currently doing (used for animation) </summary>
         protected CharacterMode currentCharacterMode = CharacterMode.Idle;
 
-        public bool CanReproduce = false;
 
         protected int _maxPerSpecies = 50;
         private static Dictionary<string, int> _speciesCounts = new Dictionary<string, int>();

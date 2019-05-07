@@ -100,6 +100,7 @@ namespace DwarfCorp
         public bool IsOnStrike = false;
         public DwarfBux Money = 0;
         public bool IsFleeing = false;
+        public bool CanReproduce = false;
 
         public bool IsTaskAllowed(Task.TaskCategory TaskCategory)
         {

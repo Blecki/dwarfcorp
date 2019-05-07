@@ -114,7 +114,7 @@ namespace DwarfCorp
             Stats.FullName = TextGenerator.GenerateRandom("$firstname");
             Stats.CurrentClass = SharedClass;
             Species = "Deer";
-            CanReproduce = true;
+            Stats.CanReproduce = true;
             BabyType = "Deer";
         }
 

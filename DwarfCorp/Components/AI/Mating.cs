@@ -11,9 +11,9 @@ namespace DwarfCorp
         {
             return A.Stats.Gender != Gender.Nonbinary 
                 && A.Stats.Gender != B.Stats.Gender 
-                && A.CanReproduce
+                && A.Stats.CanReproduce
                 && !A.IsPregnant 
-                && B.CanReproduce 
+                && B.Stats.CanReproduce 
                 && A.Species == B.Species 
                 && !B.IsPregnant;
         }

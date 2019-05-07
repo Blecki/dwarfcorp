@@ -102,7 +102,7 @@ namespace DwarfCorp
             AI.Movement.SetSpeed(MoveType.Climb, 1.5f);
             AI.Movement.SetCost(MoveType.Climb, 0.1f);
             Species = "Scorpion";
-            CanReproduce = true;
+            Stats.CanReproduce = true;
             BabyType = "Scorpion";
         }
 

@@ -92,7 +92,7 @@ namespace DwarfCorp
             Stats.CurrentClass = SharedClass;
             
             Species = "Chimp";
-            CanReproduce = true;
+            Stats.CanReproduce = true;
             BabyType = Name;
 
             AI.Movement.SetCan(MoveType.ClimbWalls, true);

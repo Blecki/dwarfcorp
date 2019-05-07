@@ -2112,10 +2112,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Slime</Name>
     </None>
-    <None Include="diseases.json">
-      <Name>diseases</Name>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="CreatureClasses\Demon.json">
       <Name>Demon</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
