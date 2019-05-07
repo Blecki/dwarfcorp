@@ -5,6 +5,7 @@ using System.Text;
 using DwarfCorp.Gui;
 using DwarfCorp.Gui.Widgets;
 using Microsoft.Xna.Framework;
+using System.Text.RegularExpressions;
 
 namespace DwarfCorp.Gui.Widgets
 {
@@ -212,7 +213,7 @@ namespace DwarfCorp.Gui.Widgets
 
                                         boxes.Add(entry.AddChild(new CheckBox()
                                         {
-                                            Text = TextGenerator.SplitCamelCase(tagType.ToString()),
+                                            Text = SplitCamelCase(tagType.ToString()),
                                             Tooltip = "Check to allow this stockpile to store " + tagType.ToString() + " resources." + extraTooltip,
                                             CheckState = !stockpile.BlacklistResources.Contains(tagType),
                                             OnCheckStateChange = (checkSender) =>
@@ -279,6 +280,17 @@ namespace DwarfCorp.Gui.Widgets
             base.Construct();
         }
 
-       
+        private static string SplitCamelCase(string str)
+        {
+            return Regex.Replace(
+                Regex.Replace(
+                    str,
+                    @"(\P{Ll})(\P{Ll}\p{Ll})",
+                    "$1 $2"
+                ),
+                @"(\p{Ll})(\P{Ll})",
+                "$1 $2"
+            );
+        }
     }
 }
