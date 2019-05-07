@@ -572,14 +572,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Terrain\terrain_colormap.png">
-      <Name>terrain_colormap</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <ProcessorParameters_PremultiplyAlpha>False</ProcessorParameters_PremultiplyAlpha>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="GUI\map_icons.png">
       <Name>map_icons</Name>
       <Importer>TextureImporter</Importer>
@@ -2084,10 +2076,18 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <None Include="Text\leftright.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>leftright</Name>
+    </None>
     <Content Include="Text\Templates\names_demon.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>names_demon</Name>
     </Content>
+    <None Include="Text\Templates\injuries.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>injuries</Name>
+    </None>
     <Content Include="Text\violence.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>violence</Name>
@@ -2636,7 +2636,7 @@
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
-    <Compile Include="Terrain\rail.png">
+    <Compile Include="Entities\Rail\rail.png">
       <Name>rail</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
@@ -2694,15 +2694,15 @@
       <Name>gremlin_animation</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="rail-patterns.json">
+    <None Include="Entities\Rail\rail-patterns.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>rail-patterns</Name>
     </None>
-    <None Include="rail-combinations.txt">
+    <None Include="Entities\Rail\rail-combinations.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>rail-combinations</Name>
     </None>
-    <None Include="rail-pieces.json">
+    <None Include="Entities\Rail\rail-pieces.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>rail-pieces</Name>
     </None>
@@ -3308,6 +3308,38 @@
     <None Include="World\CraftItems\Turret.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Turret</Name>
+    </None>
+    <None Include="World\Diseases\Injury.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Injury</Name>
+    </None>
+    <None Include="World\Diseases\Tuberculosis.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Tuberculosis</Name>
+    </None>
+    <None Include="World\Diseases\ScarletFever.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>ScarletFever</Name>
+    </None>
+    <None Include="World\Diseases\YellowFever.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>YellowFever</Name>
+    </None>
+    <None Include="World\Diseases\Cholera.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Cholera</Name>
+    </None>
+    <None Include="World\Diseases\Dysentery.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Dysentery</Name>
+    </None>
+    <None Include="World\Diseases\Rabies.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Rabies</Name>
+    </None>
+    <None Include="World\Diseases\Necrorot.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Necrorot</Name>
     </None>
     <None Include="World\Embarkments\NormalHardcore.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

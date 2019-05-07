@@ -1,0 +1,7 @@
+A bruised <leftright> <bodypart>
+A broken <leftright> <bodypart>
+A deep cut on the <leftright> <bodypart>
+A dislocated <leftright> <bodypart>
+A scraped <leftright> <bodypart>
+An injured <leftright> <bodypart>
+Blunt force trauma to the <leftright> <bodypart>

@@ -1,0 +1,54 @@
+{
+  "$id": "16",
+  "SpreadTimer": {
+    "$id": "17",
+    "TargetTimeSeconds": 1.0,
+    "CurrentTimeSeconds": 0.0,
+    "TriggerOnce": false,
+    "HasTriggered": false,
+    "Mode": "Game"
+  },
+  "AcquiredRandomly": true,
+  "ChanceofRandomAcquisitionPerDay": 0.01,
+  "Type": "Time",
+  "Name": "Cholera",
+  "Description": "The dwarf will move very slowly and get damaged until healed.",
+  "IsContagious": true,
+  "LikelihoodOfSpread": 0.1,
+  "SecondsUntilHealed": 0.0,
+  "DamagePerSecond": 0.2,
+  "FoodValueUntilHealed": 100.0,
+  "StatDamage": {
+    "$id": "18",
+    "Name": "cholera",
+    "Dexterity": -3.0,
+    "Constitution": -1.0,
+    "Strength": -3.0,
+    "Wisdom": -1.0,
+    "Charisma": -1.0,
+    "Intelligence": -1.0,
+    "Size": 0.0
+  },
+  "DamageEveryNSeconds": 20,
+  "IsInjury": false,
+  "EffectTime": {
+    "$id": "19",
+    "TargetTimeSeconds": 120.0,
+    "CurrentTimeSeconds": 0.0,
+    "TriggerOnce": true,
+    "HasTriggered": false,
+    "Mode": "Game"
+  },
+  "IsInEffect": true,
+  "Particles": "blood_particle",
+  "ParticleTimer": {
+    "$id": "20",
+    "TargetTimeSeconds": 5.0,
+    "CurrentTimeSeconds": 0.0,
+    "TriggerOnce": false,
+    "HasTriggered": false,
+    "Mode": "Game"
+  },
+  "SoundOnStart": "Audio\\oscar\\sfx_ic_dwarf_tantrum_1",
+  "SoundOnEnd": null
+}

@@ -25,11 +25,11 @@ namespace DwarfCorp
         public static string voxel_types = ProgramData.CreatePath("World", "Voxels");
         public static string room_types = ProgramData.CreatePath("World", "Rooms");
         public static string grass_types = ProgramData.CreatePath("World", "GrassTypes");
-        public static string rail_pieces = ProgramData.CreatePath("rail-pieces.json");
-        public static string rail_patterns = ProgramData.CreatePath("rail-patterns.json");
-        public static string rail_combinations = ProgramData.CreatePath("rail-combinations.txt");
+        public static string rail_pieces = ProgramData.CreatePath("Entities", "Rail", "rail-pieces.json");
+        public static string rail_patterns = ProgramData.CreatePath("Entities", "Rail", "rail-patterns.json");
+        public static string rail_combinations = ProgramData.CreatePath("Entities", "Rail", "rail-combinations.txt");
         public static string craft_items = ProgramData.CreatePath("World", "CraftItems");
-        public static string rail_tiles = ProgramData.CreatePath("Terrain", "rail");
+        public static string rail_tiles = ProgramData.CreatePath("Entities", "Rail", "rail");
         public static string tutorials = ProgramData.CreatePath("tutorial.json");
         public static string events = ProgramData.CreatePath("World", "Events");
         public static string dwarf_layers = ProgramData.CreatePath("Entities", "Dwarf", "Layers", "dwarf-layers.json");
@@ -38,7 +38,7 @@ namespace DwarfCorp
         public static string dwarf_base_palette = ProgramData.CreatePath("Entities", "Dwarf", "Layers", "base-palette");
         public static string employee_conversation = ProgramData.CreatePath("employee.conv");
         public static string Strings = ProgramData.CreatePath("strings.txt");
-        public static string diseases = ProgramData.CreatePath("diseases.json");
+        public static string diseases = ProgramData.CreatePath("World", "Diseases");
         public static string creature_classes = ProgramData.CreatePath("CreatureClasses");
 
         public class Audio
