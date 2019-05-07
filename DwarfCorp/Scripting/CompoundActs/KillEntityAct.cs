@@ -46,6 +46,8 @@ namespace DwarfCorp
         public GameComponent Entity { get; set; }
         public bool PathExists { get; set; }
         public float RadiusDomain { get; set; }
+        public bool Defensive = false;
+
         public KillEntityAct()
         {
             PathExists = false;
@@ -66,18 +68,20 @@ namespace DwarfCorp
                 }
                 return false;
             }
-            if(Entity == null && Entity.IsDead)
-            {
+
+            if(Entity == null || Entity.IsDead)
                 return false;
-            }
 
             if (RadiusDomain > 0.0)
-            {
                 if ((creature.Position - Entity.Position).LengthSquared() > RadiusDomain)
-                {
                     return false;
-                }
+
+            if (Defensive)
+            {
+                var ai = Entity.GetRoot().GetComponent<CreatureAI>();
+                return !ai.Stats.IsFleeing;
             }
+
 
             return true;
         }
@@ -124,10 +128,11 @@ namespace DwarfCorp
                 planType = PlanAct.PlanType.Radius;
                 radius = creature.Creature.Attacks[0].Range;
             }
+
             if (creature.Movement.IsSessile)
             {
                 Tree =
-                    new Domain(Verify(creature),
+                    new Domain(() => Verify(creature),
                         new Sequence
                         (
                             new MeleeAct(Agent, entity)
@@ -139,7 +144,8 @@ namespace DwarfCorp
                 if (closestDefensiveStructure == null || (closestDefensiveStructure.Position - creature.Position).Length() > 20.0f)
                 {
                     Tree =
-                        new Domain(Verify(creature), new Sequence
+                        new Domain(() => Verify(creature),
+                        new Sequence
                             (
                             new GoToEntityAct(entity, creature)
                             {
@@ -155,7 +161,8 @@ namespace DwarfCorp
                 {
                     closestDefensiveStructure.ReservedFor = creature;
                     Tree =
-                        new Domain(Verify(creature), new Sequence
+                        new Domain(() => Verify(creature), 
+                        new Sequence
                             (
                             new GoToEntityAct(closestDefensiveStructure, creature)
                             {

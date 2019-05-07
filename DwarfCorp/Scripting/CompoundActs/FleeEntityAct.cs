@@ -21,6 +21,23 @@ namespace DwarfCorp
 
         }
 
+        public override void OnCanceled()
+        {
+            ClearFleeing();
+        }
+
+        public IEnumerable<Status> SetFleeing()
+        {
+            Creature.Stats.IsFleeing = true;
+            yield return Status.Success;
+        }
+
+        public IEnumerable<Status> ClearFleeing()
+        {
+            Creature.Stats.IsFleeing = false;
+            yield return Status.Success;
+        }
+
         public IEnumerable<Status> FindPath()
         {
             Vector3 target = Entity.Position;
@@ -77,7 +94,11 @@ namespace DwarfCorp
 
         public override void Initialize()
         {
-            Tree = new Sequence(new Wrap(FindPath), new FollowPathAct(Creature.AI, "FleePath"));
+            Tree = new Sequence(
+                new Wrap(SetFleeing),
+                new Wrap(FindPath), 
+                new FollowPathAct(Creature.AI, "FleePath"),
+                new Wrap(ClearFleeing));
             base.Initialize();
         }
     }

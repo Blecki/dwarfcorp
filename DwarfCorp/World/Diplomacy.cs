@@ -705,7 +705,7 @@ namespace DwarfCorp
                         if (creature.Tasks.Count == 0)
                         {
                             CreatureAI enemyMinion = party.OtherFaction.GetNearestMinion(creature.Position);
-                            if (enemyMinion != null)
+                            if (enemyMinion != null && !enemyMinion.Stats.IsFleeing)
                             {
                                 creature.AssignTask(new KillEntityTask(enemyMinion.Physics, KillEntityTask.KillType.Auto));
                             }

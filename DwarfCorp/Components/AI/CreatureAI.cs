@@ -136,7 +136,7 @@ namespace DwarfCorp
 
         /// <summary> Wrapper around Creature.Physics.GlobalTransform.Translation </summary>
         [JsonIgnore]
-        public Vector3 Position
+        public Vector3 Position // Todo: Remove wrapper
         {
             get { return Creature.Physics.GlobalTransform.Translation; }
             set
@@ -1115,6 +1115,9 @@ namespace DwarfCorp
         {
             foreach (CreatureAI enemy in Sensor.Enemies.Where(e => e != null && !e.IsDead && e.Creature != null))
             {
+                if (enemy.Stats.IsFleeing)
+                    continue;
+
                 Task task = new KillEntityTask(enemy.Physics, KillEntityTask.KillType.Auto);
                 if (!HasTaskWithName(task))
                 {

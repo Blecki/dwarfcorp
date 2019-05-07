@@ -1,35 +1,3 @@
-// KillEntityTask.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,13 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-
     // Todo: Seperate tasks for chop/attack
-
-    /// <summary>
-    /// Tells a creature that it should kill an entity.
-    /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class KillEntityTask : Task
     {
         public enum KillType
@@ -88,18 +50,7 @@ namespace DwarfCorp
 
             if (otherCreature != null && (!otherCreature.IsDead && otherCreature.AI != null))
             {
-
-                var otherKill = new KillEntityTask(creature.Physics, KillType.Auto)
-                {
-                    AutoRetry = true,
-                    ReassignOnDeath = false
-                };
-
-                if (!otherCreature.AI.HasTaskWithName(otherKill))
-                {
-                    otherCreature.AI.AssignTask(otherKill);
-                }
-
+                // Flee if the other creature is too scary.
                 if (otherCreature != null && !creature.AI.FightOrFlight(otherCreature.AI))
                 {
                     Name = "Flee Entity: " + EntityToKill.Name + " " + EntityToKill.GlobalID;
@@ -107,9 +58,20 @@ namespace DwarfCorp
                     IndicatorManager.DrawIndicator(IndicatorManager.StandardIndicators.Exclaim, creature.AI.Position, 1.0f, 1.0f, Vector2.UnitY * -32);
                     return new FleeEntityAct(creature.AI) { Entity = EntityToKill, PathLength = 20 };
                 }
+
+                // Make the other creature defend itself.
+                var otherKill = new KillEntityTask(creature.Physics, KillType.Auto)
+                {
+                    AutoRetry = true,
+                    ReassignOnDeath = false
+                };
+
+                if (!otherCreature.AI.HasTaskWithName(otherKill))
+                    otherCreature.AI.AssignTask(otherKill);                
             }
+
             float radius = this.Mode == KillType.Auto ? 20.0f : 0.0f;
-            return new KillEntityAct(EntityToKill, creature.AI) { RadiusDomain = radius };
+            return new KillEntityAct(EntityToKill, creature.AI) { RadiusDomain = radius, Defensive = Mode == KillType.Auto };
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)
@@ -143,11 +105,10 @@ namespace DwarfCorp
                 return Feasibility.Infeasible;
             else
             {
-                var ai = EntityToKill.EnumerateAll().OfType<Creature>().FirstOrDefault();
-
                 if (Mode == KillType.Attack && !agent.Stats.IsTaskAllowed(TaskCategory.Attack))
                     return Feasibility.Infeasible;
-                else if (Mode == KillType.Auto && (agent.AI.Position - EntityToKill.Position).Length() > 20)
+
+                if (Mode == KillType.Auto && (agent.AI.Position - EntityToKill.Position).Length() > 20)
                     return Feasibility.Infeasible;
 
                 return Feasibility.Feasible;
