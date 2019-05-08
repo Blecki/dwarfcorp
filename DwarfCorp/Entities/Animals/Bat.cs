@@ -28,16 +28,8 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats
+                new CreatureStats(CreatureClassLibrary.GetClass("Bat"), 0)
                 {
-
-                    BaseDexterity = 6,
-                    BaseConstitution = 1,
-                    BaseStrength = 1,
-                    BaseWisdom = 1,
-                    BaseCharisma = 1,
-                    BaseIntelligence = 1,
-                    BaseSize = 0.25f,
                     CanSleep = false,
                     CanEat = true
                 },
@@ -60,33 +52,23 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            // When true, causes the bird to face the direction its moving in
             Physics.Orientation = Physics.OrientMode.RotateY;
 
             CreateCosmeticChildren(Manager);
 
-            // Used to sense hostile creatures
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
-            // Controls the behavior of the creature
             Physics.AddChild(new BatAI(Manager, "Bat AI", Sensors));
             AI.Movement.CanFly = true;
             AI.Movement.CanSwim = false;
             AI.Movement.CanClimb = false;
             AI.Movement.CanWalk = false;
 
-            // The bird can peck at its enemies (0.1 damage)
             Attacks = new List<Attack> { new Attack("Bite", 0.01f, 2.0f, 1.0f, ContentPaths.Audio.Oscar.sfx_oc_bat_attack_1, ContentPaths.Effects.bite) { TriggerMode = Attack.AttackTrigger.Animation, TriggerFrame = 1, Mode = Attack.AttackMode.Dogfight, DiseaseToSpread = "Rabies" } };
 
-
-            // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
-
-            // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
-            // Tag the physics component with some information 
-            // that can be used later
             Physics.Tags.Add("Bat");
             Physics.Tags.Add("Animal");
 
@@ -99,7 +81,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = SharedClass;
+            Stats.CurrentClass = CreatureClassLibrary.GetClass("Bat");
 
             CreateSprite(ContentPaths.Entities.Animals.Bat.bat_animations, manager, 0.0f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
@@ -115,53 +97,6 @@ namespace DwarfCorp
             }).SetFlag(Flag.ShouldSerialize, false);
 
             base.CreateCosmeticChildren(manager);
-        }
-
-        private static CreatureClass SharedClass = new CreatureClass()
-        {
-            Name = "Bat",
-                Levels = new List<CreatureClass.Level>() { new CreatureClass.Level() { Index = 0, Name = "Bat" } },
-            };
-    }
-
-
-    /// <summary>
-    /// Extends CreatureAI specifically for
-    /// bat behavior.
-    /// </summary>
-    public class BatAI : CreatureAI
-    {
-        public BatAI()
-        {
-
-        }
-
-        public BatAI(ComponentManager Manager, string name, EnemySensor sensor) :
-            base(Manager, name, sensor)
-        {
-
-        }
-
-        IEnumerable<Act.Status> ChirpRandomly()
-        {
-            Timer chirpTimer = new Timer(MathFunctions.Rand(6f, 10f), false);
-            while (true)
-            {
-                chirpTimer.Update(DwarfTime.LastTime);
-                if (chirpTimer.HasTriggered)
-                    Creature.NoiseMaker.MakeNoise(ContentPaths.Audio.bunny, Creature.AI.Position, true, 0.01f);
-                yield return Act.Status.Running;
-            }
-        }
-
-
-        // Overrides the default ActOnIdle so we can
-        // have the bird act in any way we wish.
-        public override Task ActOnIdle()
-        {
-            return new ActWrapperTask(
-                new Parallel(new FlyWanderAct(this, 10.0f + MathFunctions.Rand() * 2.0f, 2.0f + MathFunctions.Rand() * 0.5f, 20.0f, 4.0f + MathFunctions.Rand() * 2, 10.0f) { CanPerchOnGround =  false, CanPerchOnWalls = true}
-                , new Wrap(ChirpRandomly)) { ReturnOnAllSucces = false, Name = "Fly" });
         }
     }
 }

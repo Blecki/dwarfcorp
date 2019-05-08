@@ -861,9 +861,12 @@ namespace DwarfCorp
 
         public List<Disease.Immunity> Immunities = new List<Disease.Immunity>(); 
 
-        public void AcquireDisease(string disease)
+        public void AcquireDisease(Disease disease)
         {
-            if (Immunities.Any(immunity => immunity.Disease == disease))
+            if (disease == null)
+                return;
+
+            if (Immunities.Any(immunity => immunity.Disease == disease.Name))
                 return;
 
             bool hasDisease = false;
@@ -872,18 +875,18 @@ namespace DwarfCorp
                 Disease diseaseBuff = buff as Disease;
                 if (diseaseBuff != null)
                 {
-                    hasDisease = hasDisease || diseaseBuff.Name == disease;
+                    hasDisease = hasDisease || diseaseBuff.Name == disease.Name;
                 }
             }
             if (!hasDisease)
             {
-                var buff = DiseaseLibrary.GetDisease(disease).Clone();
+                var buff = disease.Clone();
                 AddBuff(buff);
                 if (!(buff as Disease).IsInjury)
                 {
                     Immunities.Add(new Disease.Immunity()
                     {
-                        Disease = disease
+                        Disease = disease.Name
                     });
                 }
             }

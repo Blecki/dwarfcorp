@@ -108,7 +108,7 @@ namespace DwarfCorp
                     {
                         if (other == creature.AI) continue;
                         if ((other.Position - creature.AI.Position).LengthSquared() > 2) continue;
-                        other.Creature.AcquireDisease(Name);
+                        other.Creature.AcquireDisease(DiseaseLibrary.GetDisease(Name));
                     }
                 }
             }

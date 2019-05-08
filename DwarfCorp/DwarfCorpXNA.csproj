@@ -208,6 +208,7 @@
     <Compile Include="ContextCommands\WrangleCommand.cs" />
     <Compile Include="ContextCommands\ContextCommandAttribute.cs" />
     <Compile Include="Economy\Company.cs" />
+    <Compile Include="Entities\Animals\BatAI.cs" />
     <Compile Include="Entities\Animals\Slime.cs" />
     <Compile Include="Entities\Animals\Chimp.cs" />
     <Compile Include="Entities\Animals\Snake.cs" />
