@@ -28,15 +28,8 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats
+                new CreatureStats(CreatureClassLibrary.GetClass("Chimp"), 0)
                 {
-                    BaseDexterity = 6,
-                    BaseConstitution = 5,
-                    BaseStrength = 6,
-                    BaseWisdom = 2,
-                    BaseCharisma = 1,
-                    BaseIntelligence = 1,
-                    BaseSize = 0.25f,
                     CanSleep = false,
                     IsMigratory = true
                 },
@@ -89,7 +82,6 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the Chimp";
-            Stats.CurrentClass = SharedClass;
             
             Species = "Chimp";
             Stats.CanReproduce = true;
@@ -100,7 +92,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = SharedClass;
+            Stats.CurrentClass = CreatureClassLibrary.GetClass("Chimp");
 
             CreateSprite(ContentPaths.Entities.Animals.Chimp.chimp_animations, manager, 0.6f);
             Physics.AddChild(Shadow.Create(0.5f, manager));
@@ -122,11 +114,5 @@ namespace DwarfCorp
 
             base.CreateCosmeticChildren(manager);
         }
-
-        private static CreatureClass SharedClass = new CreatureClass()
-        {
-            Name = "Chimp",
-            Levels = new List<CreatureClass.Level>() { new CreatureClass.Level() { Index = 0, Name = "Chimp" } }
-        };
     }
 }

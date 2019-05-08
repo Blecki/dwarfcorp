@@ -28,15 +28,8 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats
+                new CreatureStats(CreatureClassLibrary.GetClass("Spider"), 0)
                 {
-                    BaseDexterity = 6,
-                    BaseConstitution = 3,
-                    BaseStrength = 3,
-                    BaseWisdom = 3,
-                    BaseCharisma = 3,
-                    BaseIntelligence = 3,
-                    BaseSize = 0.25f,
                     CanSleep = false,
                     CanEat = true
                 },
@@ -63,7 +56,7 @@ namespace DwarfCorp
             Physics.Orientation = Physics.OrientMode.RotateY;
 
             CreateCosmeticChildren(Manager);
-                
+
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
             Physics.AddChild(new PacingCreatureAI(Manager, "Spider AI", Sensors));
@@ -89,7 +82,6 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the Spider";
-            Stats.CurrentClass = SharedClass;
 
             AI.Movement.CanClimbWalls = true;
             AI.Movement.CanSwim = false;
@@ -100,7 +92,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = SharedClass;
+            Stats.CurrentClass = CreatureClassLibrary.GetClass("Spider");
 
             CreateSprite(ContentPaths.Entities.Animals.Spider.spider_animation, manager, 0.3f);
             Physics.AddChild(Shadow.Create(0.4f, manager));
@@ -121,11 +113,5 @@ namespace DwarfCorp
 
             base.CreateCosmeticChildren(manager);
         }
-
-        private static CreatureClass SharedClass = new CreatureClass()
-        {
-            Name = "Spider",
-            Levels = new List<CreatureClass.Level>() { new CreatureClass.Level() { Index = 0, Name = "Spider" } }
-        };
     }
 }

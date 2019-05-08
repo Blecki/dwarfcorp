@@ -1,0 +1,66 @@
+{
+  "Name": "Scorpion",
+  "Actions": 24592,
+  "AttackMode": "Attacking",
+  "Attacks": [
+    {
+      "DamageAmount": 4.0,
+      "Name": "Sting",
+      "Range": 1.5,
+      "HitNoise": {
+        "Sounds": [
+          "Audio\\oscar\\sfx_oc_scorpion_attack_1",
+          "Audio\\oscar\\sfx_oc_scorpion_attack_2"
+        ],
+        "Volume": 1.0,
+        "RandomPitch": true
+      },
+      "HitColor": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "Mode": "Melee",
+      "RechargeTimer": {
+        "TargetTimeSeconds": 2.0,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": false,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "Knockback": 0.0,
+      "AnimationAsset": "Effects\\pierce",
+      "HitParticles": "",
+      "ProjectileType": "",
+      "LaunchSpeed": 0.0,
+      "HasTriggered": false,
+      "TriggerMode": "Animation",
+      "TriggerFrame": 2,
+      "DiseaseToSpread": null,
+      "ShootLaser": false
+    }
+  ],
+  "Levels": [
+    {
+      "Index": 0,
+      "Name": "Frog",
+      "Pay": {
+        "Value": 0.0
+      },
+      "XP": 0,
+      "BaseStats": {
+        "Name": "",
+        "Dexterity": 2.0,
+        "Constitution": 2.0,
+        "Strength": 2.0,
+        "Wisdom": 1.0,
+        "Charisma": 1.0,
+        "Intelligence": 1.0,
+        "Size": 0.25
+      },
+      "ExtraAttacks": [],
+      "HealingPower": 0
+    }
+  ]
+}

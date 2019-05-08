@@ -42,15 +42,8 @@ namespace DwarfCorp
             (
                 manager,
                 // Default stats
-                new CreatureStats
+                new CreatureStats(CreatureClassLibrary.GetClass("Chicken"), 0)
                 {
-                    BaseDexterity = 2,
-                    BaseConstitution = 1,
-                    BaseStrength = 1,
-                    BaseWisdom = 1,
-                    BaseCharisma = 1,
-                    BaseIntelligence = 1,
-                    BaseSize = 0.25f,
                     CanSleep = false,
                     LaysEggs = true,
                     IsMigratory = true
@@ -122,7 +115,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = SharedClasses[Species];
+            Stats.CurrentClass = CreatureClassLibrary.GetClass("Chicken");
 
             CreateSprite(ContentPaths.Entities.Animals.fowl[Species], manager);
             Physics.AddChild(Shadow.Create(0.5f, manager));
@@ -148,26 +141,5 @@ namespace DwarfCorp
             base.CreateCosmeticChildren(manager);
         }
 
-        private static Dictionary<String, CreatureClass> SharedClasses = new Dictionary<string, CreatureClass>
-        {
-            { "Chicken", new CreatureClass()
-                {
-                    Name = "Chicken",
-                    Levels = new List<CreatureClass.Level>() { new CreatureClass.Level() { Index = 0, Name = "Chicken" } }
-                }
-            },
-            { "Turkey", new CreatureClass()
-                {
-                    Name = "Turkey",
-                    Levels = new List<CreatureClass.Level>() { new CreatureClass.Level() { Index = 0, Name = "Turkey" } }
-                }
-            },
-            { "Penguin", new CreatureClass()
-                {
-                    Name = "Penguin",
-                    Levels = new List<CreatureClass.Level>() { new CreatureClass.Level() { Index = 0, Name = "Penguin" } }
-                }
-            },
-        };
     }
 }

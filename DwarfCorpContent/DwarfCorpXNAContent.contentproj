@@ -2076,6 +2076,10 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <None Include="CreatureClasses\Chicken.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Chicken</Name>
+    </None>
     <None Include="CreatureClasses\Bird.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Bird</Name>
@@ -2083,6 +2087,38 @@
     <None Include="CreatureClasses\Bat.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Bat</Name>
+    </None>
+    <None Include="CreatureClasses\Snake.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Snake</Name>
+    </None>
+    <None Include="CreatureClasses\Chimp.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Chimp</Name>
+    </None>
+    <None Include="CreatureClasses\Rabbit.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Rabbit</Name>
+    </None>
+    <None Include="CreatureClasses\Frog.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Frog</Name>
+    </None>
+    <None Include="CreatureClasses\Deer.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Deer</Name>
+    </None>
+    <None Include="CreatureClasses\Necrosnake.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Necrosnake</Name>
+    </None>
+    <None Include="CreatureClasses\Spider.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Spider</Name>
+    </None>
+    <None Include="CreatureClasses\Scorpion.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Scorpion</Name>
     </None>
     <None Include="Text\leftright.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

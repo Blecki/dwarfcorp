@@ -1,35 +1,3 @@
-// Deer.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using DwarfCorp.GameStates;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -59,15 +27,8 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats
+                new CreatureStats(CreatureClassLibrary.GetClass("Deer"), 0)
                 {
-                    BaseDexterity = 12,
-                    BaseConstitution = 6,
-                    BaseStrength = 3,
-                    BaseWisdom = 2,
-                    BaseCharisma = 1,
-                    BaseIntelligence = 3,
-                    BaseSize = 3,
                     IsMigratory = true
                 },
                 "Herbivore",
@@ -112,7 +73,6 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname");
-            Stats.CurrentClass = SharedClass;
             Species = "Deer";
             Stats.CanReproduce = true;
             BabyType = "Deer";
@@ -120,7 +80,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = SharedClass;
+            Stats.CurrentClass = CreatureClassLibrary.GetClass("Deer");
 
             CreateSprite(ContentPaths.Entities.Animals.Deer.animations, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
@@ -139,11 +99,5 @@ namespace DwarfCorp
 
             base.CreateCosmeticChildren(manager);
         }
-
-        private static CreatureClass SharedClass = new CreatureClass()
-        {
-            Name = "Deer",
-            Levels = new List<CreatureClass.Level>() { new CreatureClass.Level() { Index = 0, Name = "Deer" } }
-        };
     }
 }

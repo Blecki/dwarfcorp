@@ -10,12 +10,12 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    public class Snake : Creature
+    public class Necrosnake : Creature
     {
-        [EntityFactory("Snake")]
-        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
+        [EntityFactory("Necrosnake")]
+        private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Snake(Position, Manager, "Snake").Physics;
+            return new Necrosnake(Position, Manager, "Snake");
         }
 
         public class TailSegment
@@ -27,15 +27,15 @@ namespace DwarfCorp
         [JsonIgnore]
         public List<TailSegment> Tail;
 
-        public Snake()
+        public Necrosnake()
         {
         }
 
-        public Snake(Vector3 position, ComponentManager manager, string name) :
+        public Necrosnake(Vector3 position, ComponentManager manager, string name) :
             base
             (
                 manager,
-                new CreatureStats(CreatureClassLibrary.GetClass("Snake"), 0)
+                new CreatureStats(CreatureClassLibrary.GetClass("Necrosnake"), 0)
                 {
                 },
                 "Evil",
@@ -45,7 +45,7 @@ namespace DwarfCorp
             )
         {
             UpdateRate = 1;
-            HasMeat = true;
+            HasMeat = false;
             HasBones = true;
             _maxPerSpecies = 4;
             Physics = new Physics
@@ -93,9 +93,9 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
-            Stats.CurrentClass = CreatureClassLibrary.GetClass("Snake");
+            Stats.CurrentClass = CreatureClassLibrary.GetClass("Necrosnake");
 
-            CreateSprite(ContentPaths.Entities.Animals.Snake.snake_animation, Manager, 0.35f);
+            CreateSprite(ContentPaths.Entities.Animals.Snake.bonesnake_animation, Manager, 0.35f);
 
             #region Create Tail Pieces
 
@@ -103,7 +103,7 @@ namespace DwarfCorp
 
             for (int i = 0; i < 10; ++i)
             {
-                var tailPiece = CreateSprite(ContentPaths.Entities.Animals.Snake.tail_animation, Manager, 0.25f, false);
+                var tailPiece = CreateSprite(ContentPaths.Entities.Animals.Snake.bonetail_animation, Manager, 0.25f, false);
                 tailPiece.Name = "Snake Tail";
                 Tail.Add(
                     new TailSegment()
@@ -153,7 +153,7 @@ namespace DwarfCorp
 
             Physics.AddChild(Shadow.Create(0.75f, Manager));
 
-                Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 4))).SetFlag(Flag.ShouldSerialize, false);
+            Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 4))).SetFlag(Flag.ShouldSerialize, false);
 
             NoiseMaker = new NoiseMaker();
             NoiseMaker.Noises["Hurt"] = new List<string>() { ContentPaths.Audio.Oscar.sfx_oc_giant_snake_hurt_1 };
@@ -225,5 +225,6 @@ namespace DwarfCorp
             }
             base.Update(gameTime, chunks, camera);
         }
+
     }
 }

@@ -36,15 +36,8 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats
+                new CreatureStats(CreatureClassLibrary.GetClass("Frog"), 0)
                 {
-                    BaseDexterity = 6,
-                    BaseConstitution = 1,
-                    BaseStrength = 1,
-                    BaseWisdom = 1,
-                    BaseCharisma = 1,
-                    BaseIntelligence = 1,
-                    BaseSize = 0.25f,
                     CanSleep = false,
                     IsMigratory = true
                 },
@@ -104,7 +97,6 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the frog";
-            Stats.CurrentClass = SharedClass;
 
             Species = "Frog";
             Stats.CanReproduce = true;
@@ -113,7 +105,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = SharedClass;
+            Stats.CurrentClass = CreatureClassLibrary.GetClass("Frog");
 
             CreateSprite(SpriteAsset, manager, 0.35f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
@@ -132,11 +124,5 @@ namespace DwarfCorp
 
             base.CreateCosmeticChildren(manager);
         }
-
-        private static CreatureClass SharedClass = new CreatureClass()
-        {
-            Name = "Frog",
-            Levels = new List<CreatureClass.Level>() { new CreatureClass.Level() { Index = 0, Name = "Frog" } }
-        };
     }
 }

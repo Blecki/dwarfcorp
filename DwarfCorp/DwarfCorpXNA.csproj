@@ -214,6 +214,7 @@
     <Compile Include="Entities\Animals\BatAI.cs" />
     <Compile Include="Entities\Animals\Slime.cs" />
     <Compile Include="Entities\Animals\Chimp.cs" />
+    <Compile Include="Entities\Animals\Necrosnake.cs" />
     <Compile Include="Entities\Animals\Snake.cs" />
     <Compile Include="Entities\Animals\SnakeAi.cs" />
     <Compile Include="Entities\Elevators\ElevatorMoveState.cs" />

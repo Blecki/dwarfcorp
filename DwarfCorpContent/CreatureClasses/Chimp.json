@@ -1,0 +1,65 @@
+{
+  "Name": "Chimp",
+  "Actions": 24592,
+  "AttackMode": "Attacking",
+  "Attacks": [
+    {
+      "DamageAmount": 5.0,
+      "Name": "Hit",
+      "Range": 0.5,
+      "HitNoise": {
+        "Sounds": [
+          "Audio\\oscar\\sfx_oc_rabbit_attack"
+        ],
+        "Volume": 1.0,
+        "RandomPitch": true
+      },
+      "HitColor": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "Mode": "Melee",
+      "RechargeTimer": {
+        "TargetTimeSeconds": 2.0,
+        "CurrentTimeSeconds": 0.0,
+        "TriggerOnce": false,
+        "HasTriggered": false,
+        "Mode": "Game"
+      },
+      "Knockback": 0.0,
+      "AnimationAsset": "Effects\\hit",
+      "HitParticles": "",
+      "ProjectileType": "",
+      "LaunchSpeed": 0.0,
+      "HasTriggered": false,
+      "TriggerMode": "Animation",
+      "TriggerFrame": 2,
+      "DiseaseToSpread": "Rabies",
+      "ShootLaser": false
+    }
+  ],
+  "Levels": [
+    {
+      "Index": 0,
+      "Name": "Chimp",
+      "Pay": {
+        "Value": 0.0
+      },
+      "XP": 0,
+      "BaseStats": {
+        "Name": "",
+        "Dexterity": 6.0,
+        "Constitution": 5.0,
+        "Strength": 6.0,
+        "Wisdom": 2.0,
+        "Charisma": 1.0,
+        "Intelligence": 1.0,
+        "Size": 0.25
+      },
+      "ExtraAttacks": [],
+      "HealingPower": 0
+    }
+  ]
+}

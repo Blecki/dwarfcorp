@@ -28,15 +28,8 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats
+                new CreatureStats(CreatureClassLibrary.GetClass("Scorpion"), 0)
                 {
-                    BaseDexterity = 2,
-                    BaseConstitution = 2,
-                    BaseStrength = 2,
-                    BaseWisdom = 1,
-                    BaseCharisma = 1,
-                    BaseIntelligence = 1,
-                    BaseSize = 0.25f,
                     CanSleep = false,
                     CanEat = true
                 },
@@ -94,7 +87,6 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the Scorpion";
-            Stats.CurrentClass = SharedClass;
 
             AI.Movement.CanClimbWalls = true;
             AI.Movement.CanSwim = false;
@@ -108,7 +100,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = SharedClass;
+            Stats.CurrentClass = CreatureClassLibrary.GetClass("Scorpion");
 
             CreateSprite(ContentPaths.Entities.Animals.Scorpion.scorption_animation, manager, 0.35f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
@@ -125,11 +117,5 @@ namespace DwarfCorp
 
             base.CreateCosmeticChildren(manager);
         }
-
-        private static CreatureClass SharedClass = new CreatureClass()
-        {
-            Name = "Scorpion",
-            Levels = new List<CreatureClass.Level>() { new CreatureClass.Level() { Index = 0, Name = "Scorpion" } }
-        };
     }
 }
