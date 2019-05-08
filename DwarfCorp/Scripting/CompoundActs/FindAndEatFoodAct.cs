@@ -122,7 +122,7 @@ namespace DwarfCorp
                             yield return Act.Status.Running;
                         }
 
-                        Agent.Creature.Stats.Status.Hunger.CurrentValue += resource.FoodContent;
+                        Agent.Creature.Stats.Hunger.CurrentValue += resource.FoodContent;
                         Agent.Creature.AddThought(Thought.ThoughtType.AteFood);
                         if (resource.Tags.Contains(Resource.ResourceTags.Alcohol))
                         {

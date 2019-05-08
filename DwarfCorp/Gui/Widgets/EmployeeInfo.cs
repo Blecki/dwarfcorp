@@ -551,11 +551,11 @@ namespace DwarfCorp.Gui.Widgets
                 StatIntelligence.Text = String.Format("Int: {0}", Employee.Stats.Intelligence);
                 StatSize.Text = String.Format("Size: {0}", Employee.Stats.Size);
                 StatCharisma.Text = String.Format("Cha: {0}", Employee.Stats.Charisma);
-                SetStatusBar(Hunger, Employee.Stats.Status.Hunger);
-                SetStatusBar(Energy, Employee.Stats.Status.Energy);
-                SetStatusBar(Happiness, Employee.Stats.Status.Happiness);
-                SetStatusBar(Health, Employee.Stats.Status.Health);
-                SetStatusBar(Boredom, Employee.Stats.Status.Boredom);
+                SetStatusBar(Hunger, Employee.Stats.Hunger);
+                SetStatusBar(Energy, Employee.Stats.Energy);
+                SetStatusBar(Happiness, Employee.Stats.Happiness);
+                SetStatusBar(Health, Employee.Stats.Health);
+                SetStatusBar(Boredom, Employee.Stats.Boredom);
                 TitleEditor.Text = Employee.Stats.Title ?? Employee.Stats.CurrentClass.Name;
                 LevelLabel.Text = String.Format("Level {0} {1}\n({2} xp). {3}",
                     Employee.Stats.LevelIndex,

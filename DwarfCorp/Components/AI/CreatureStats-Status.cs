@@ -7,11 +7,7 @@ using System.Linq;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// A creature has a set of "statuses" (such as health, energy, etc.) which get
-    /// modified over its lifetime. A creature can be "satisfied" or "unsatisfied" depending on its status.
-    /// </summary>
-    public class CreatureStatus
+    public partial class CreatureStats
     {
         public Status Hunger = new Status
         {

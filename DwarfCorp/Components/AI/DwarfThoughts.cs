@@ -94,17 +94,17 @@ namespace DwarfCorp
         override public void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
         {
             Thoughts.RemoveAll(thought => thought.IsOver(Manager.World.Time.CurrentDate));
-            Creature.Stats.Status.Happiness.CurrentValue = 50.0f;
+            Creature.Stats.Happiness.CurrentValue = 50.0f;
 
             foreach (Thought thought in Thoughts)
-                Creature.Stats.Status.Happiness.CurrentValue += thought.HappinessModifier;
+                Creature.Stats.Happiness.CurrentValue += thought.HappinessModifier;
 
             if (Creature.Stats.IsAsleep)
                 AddThought(Thought.ThoughtType.Slept);
-            else if (Creature.Stats.Status.Energy.IsDissatisfied())
+            else if (Creature.Stats.Energy.IsDissatisfied())
                 AddThought(Thought.ThoughtType.FeltSleepy);
 
-            if (Creature.Stats.Status.Hunger.IsDissatisfied())
+            if (Creature.Stats.Hunger.IsDissatisfied())
                 AddThought(Thought.ThoughtType.FeltHungry);
         }
     }

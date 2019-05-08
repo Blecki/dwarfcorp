@@ -344,19 +344,19 @@ namespace DwarfCorp
             statAdjustments.Reset();
 
             if (!IsAsleep)
-                Stats.Status.Hunger.CurrentValue -= (float)gameTime.ElapsedGameTime.TotalSeconds * Stats.HungerGrowth;
+                Stats.Hunger.CurrentValue -= (float)gameTime.ElapsedGameTime.TotalSeconds * Stats.HungerGrowth;
             else
                 Hp += (float)gameTime.ElapsedGameTime.TotalSeconds * 0.1f;
 
-            Stats.Status.Health.CurrentValue = (Hp - MinHealth) / (MaxHealth - MinHealth); // Todo: MinHealth always 0?
+            Stats.Health.CurrentValue = (Hp - MinHealth) / (MaxHealth - MinHealth); // Todo: MinHealth always 0?
 
             // Todo: Why is energy just tied to time of day? Lets make them actually recover at night and spend it during the day.
             if (Stats.CanSleep)
-                Stats.Status.Energy.CurrentValue = (float)(100 * Math.Sin(Manager.World.Time.GetTotalHours() * Math.PI / 24.0f));
+                Stats.Energy.CurrentValue = (float)(100 * Math.Sin(Manager.World.Time.GetTotalHours() * Math.PI / 24.0f));
             else
-                Stats.Status.Energy.CurrentValue = 100.0f;
+                Stats.Energy.CurrentValue = 100.0f;
 
-            if (Stats.Status.Energy.IsDissatisfied())
+            if (Stats.Energy.IsDissatisfied())
             {
                 DrawIndicator(IndicatorManager.StandardIndicators.Sleepy);
                 statAdjustments.Strength += -2.0f;
@@ -364,14 +364,14 @@ namespace DwarfCorp
                 statAdjustments.Dexterity += -2.0f;
             }
 
-            if (Stats.CanEat && Stats.Status.Hunger.IsDissatisfied() && !IsAsleep)
+            if (Stats.CanEat && Stats.Hunger.IsDissatisfied() && !IsAsleep)
             {
                 DrawIndicator(IndicatorManager.StandardIndicators.Hungry);
 
                 statAdjustments.Intelligence += -1.0f;
                 statAdjustments.Dexterity += -1.0f;
 
-                if (Stats.Status.Hunger.CurrentValue <= 1e-12 && (DateTime.Now - LastHungerDamageTime).TotalSeconds > Stats.HungerDamageRate)
+                if (Stats.Hunger.CurrentValue <= 1e-12 && (DateTime.Now - LastHungerDamageTime).TotalSeconds > Stats.HungerDamageRate)
                 {
                     Damage(1.0f / (Stats.HungerResistance) * Stats.HungerDamageRate);
                     LastHungerDamageTime = DateTime.Now;
@@ -554,7 +554,7 @@ namespace DwarfCorp
                 CurrentCharacterMode = CharacterMode.Idle;
             }
 
-            if (World.Time.IsDay() && Stats.IsAsleep && !Stats.Status.Energy.IsDissatisfied() && !Stats.Status.Health.IsCritical())
+            if (World.Time.IsDay() && Stats.IsAsleep && !Stats.Energy.IsDissatisfied() && !Stats.Health.IsCritical())
             {
                 Stats.IsAsleep = false;
             }

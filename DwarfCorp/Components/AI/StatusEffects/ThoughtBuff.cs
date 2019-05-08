@@ -48,7 +48,7 @@ namespace DwarfCorp
 
         public override bool IsRelevant(Creature creature)
         {
-            return creature.Stats.Status.Happiness.IsDissatisfied();
+            return creature.Stats.Happiness.IsDissatisfied();
         }
     }
 }

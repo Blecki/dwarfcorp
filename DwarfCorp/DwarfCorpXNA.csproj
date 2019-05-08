@@ -187,6 +187,7 @@
     <Compile Include="AssetManagement\StringLibrary.cs" />
     <Compile Include="Components\AI\CreatureStats-Buffs.cs" />
     <Compile Include="Components\AI\CreatureStats-Disease.cs" />
+    <Compile Include="Components\AI\CreatureStats-Status.cs" />
     <Compile Include="Components\AI\Sensors\SpawnOnExploredTrigger.cs" />
     <Compile Include="Components\AI\StatusEffects\DiseaseLibrary.cs" />
     <Compile Include="Components\AI\StatusEffects\CureDiseaseBuff.cs" />
@@ -795,7 +796,6 @@
     <Compile Include="Scripting\Data\ActData.cs" />
     <Compile Include="Scripting\Data\Blackboard.cs" />
     <Compile Include="Components\AI\CreatureStats.cs" />
-    <Compile Include="Components\AI\CreatureStatus.cs" />
     <Compile Include="Scripting\Items\TagList.cs" />
     <Compile Include="Scripting\LeafActs\ClearBlackboardData.cs" />
     <Compile Include="Scripting\LeafActs\ConsumeItemAct.cs" />

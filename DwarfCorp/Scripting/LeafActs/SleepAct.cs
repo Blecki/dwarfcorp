@@ -59,11 +59,11 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         {
-            float startingHealth = Creature.Stats.Status.Health.CurrentValue;
+            float startingHealth = Creature.Stats.Health.CurrentValue;
             PreTeleport = Creature.AI.Position;
             if (Type == SleepType.Sleep)
             {
-                while (!Creature.Stats.Status.Energy.IsSatisfied() && Creature.Manager.World.Time.IsNight())
+                while (!Creature.Stats.Energy.IsSatisfied() && Creature.Manager.World.Time.IsNight())
                 {
                     if (Creature.Physics.IsInLiquid)
                     {
@@ -81,8 +81,8 @@ namespace DwarfCorp
                         Creature.Physics.IsSleeping = true;
                     }
                     Creature.CurrentCharacterMode = CharacterMode.Sleeping;
-                    Creature.Stats.Status.Energy.CurrentValue += DwarfTime.Dt*RechargeRate;
-                    if (Creature.Stats.Status.Health.CurrentValue < startingHealth)
+                    Creature.Stats.Energy.CurrentValue += DwarfTime.Dt*RechargeRate;
+                    if (Creature.Stats.Health.CurrentValue < startingHealth)
                     {
                         Creature.Stats.IsAsleep = false;
                         Creature.CurrentCharacterMode = CharacterMode.Idle;
@@ -112,7 +112,7 @@ namespace DwarfCorp
             }
             else
             {
-                while (Creature.Stats.Status.Health.IsDissatisfied() || Creature.Stats.Buffs.Any(buff => buff is Disease))
+                while (Creature.Stats.Health.IsDissatisfied() || Creature.Stats.Buffs.Any(buff => buff is Disease))
                 {
                     if (Creature.Physics.IsInLiquid)
                     {
@@ -130,7 +130,7 @@ namespace DwarfCorp
                         Creature.Physics.AllowPhysicsSleep = true;
                     }
                     Creature.CurrentCharacterMode = CharacterMode.Sleeping;
-                    Creature.Stats.Status.Energy.CurrentValue += DwarfTime.Dt*RechargeRate;
+                    Creature.Stats.Energy.CurrentValue += DwarfTime.Dt*RechargeRate;
                     Creature.Heal(DwarfTime.Dt * HealRate);
                     Creature.Stats.IsAsleep = true;
                     Creature.OverrideCharacterMode = false;

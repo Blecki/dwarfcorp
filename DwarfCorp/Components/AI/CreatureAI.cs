@@ -434,7 +434,7 @@ namespace DwarfCorp
                     if (Faction.ListResourcesWithTag(Resource.ResourceTags.Alcohol).Count > 0)
                         return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this) { FoodTag = Resource.ResourceTags.Alcohol, FallbackTag = Resource.ResourceTags.Alcohol}, 3, false) { Name = "Binge drink." }) { Name = "Binge drink.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
 
-                    if (!Stats.Status.Hunger.IsSatisfied())
+                    if (!Stats.Hunger.IsSatisfied())
                         return new ActWrapperTask(new Repeat(new FindAndEatFoodAct(this), 3, false) { Name = "Binge eat." }) { Name = "Binge eat.", Priority = Task.PriorityType.High, BoredomIncrease = GameSettings.Default.Boredom_Eat };
 
                     return ActOnIdle();
@@ -549,14 +549,14 @@ namespace DwarfCorp
             if (CurrentTask != null && Stats.CanGetBored)
             {
                 float randomness = MathFunctions.Rand() * CurrentTask.BoredomIncrease * 0.25f;
-                Stats.Status.Boredom.SetValue(Stats.Status.Boredom.CurrentValue - (float)((CurrentTask.BoredomIncrease + randomness) * gameTime.ElapsedGameTime.TotalSeconds));
+                Stats.Boredom.SetValue(Stats.Boredom.CurrentValue - (float)((CurrentTask.BoredomIncrease + randomness) * gameTime.ElapsedGameTime.TotalSeconds));
 
-                if (Stats.Status.Boredom.IsCritical())
+                if (Stats.Boredom.IsCritical())
                     Creature.AddThought(Thought.ThoughtType.FeltBored);
             }
 
             // Heal thyself
-            if (Stats.Status.Health.IsDissatisfied() && Stats.CanSleep)
+            if (Stats.Health.IsDissatisfied() && Stats.CanSleep)
             {
                 Task toReturn = new GetHealedTask();
                 if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
@@ -564,7 +564,7 @@ namespace DwarfCorp
             }
 
             // Try to go to sleep if we are low on energy and it is night time.
-            if (!Stats.Status.Energy.IsSatisfied() && Manager.World.Time.IsNight())
+            if (!Stats.Energy.IsSatisfied() && Manager.World.Time.IsNight())
             {
                 Task toReturn = new SatisfyTirednessTask();
                 if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
@@ -572,16 +572,16 @@ namespace DwarfCorp
             }
 
             // Try to find food if we are hungry.
-            if (Stats.Status.Hunger.IsDissatisfied() && Faction.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
+            if (Stats.Hunger.IsDissatisfied() && Faction.CountResourcesWithTag(Resource.ResourceTags.Edible) > 0)
             {
                 Task toReturn = new SatisfyHungerTask();
-                if (Stats.Status.Hunger.IsCritical())
+                if (Stats.Hunger.IsCritical())
                     toReturn.Priority = Task.PriorityType.Urgent;
                 if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)
                     AssignTask(toReturn);
             }
 
-            if (Stats.CanGetBored && Stats.Status.Boredom.IsDissatisfied())
+            if (Stats.CanGetBored && Stats.Boredom.IsDissatisfied())
             {
                 if (!Tasks.Any(task => task.BoredomIncrease < 0))
                 {
@@ -600,7 +600,7 @@ namespace DwarfCorp
             {
                 if (Object.ReferenceEquals(Creature.Faction, Manager.World.PlayerFaction))
                 {
-                    if (Stats.Status.Happiness.IsSatisfied()) // We're happy, so make sure we aren't on strike.
+                    if (Stats.Happiness.IsSatisfied()) // We're happy, so make sure we aren't on strike.
                     {
                         Stats.IsOnStrike = false;
                         UnhappinessTime = 0.0f;
@@ -636,7 +636,7 @@ namespace DwarfCorp
                             return;
                         }
                     }
-                    else if (Stats.Status.Happiness.IsDissatisfied()) // We aren't on strike, but we hate this place.
+                    else if (Stats.Happiness.IsDissatisfied()) // We aren't on strike, but we hate this place.
                     {
                         if (MathFunctions.Rand(0, 1) < 0.25f) // We hate it so much that we might just go on strike! This can probably be tweaked. As it stands,
                             // dorfs go on strike almost immediately every time.
@@ -887,9 +887,9 @@ namespace DwarfCorp
                 if (candidate != null)
                     return candidate;
 
-                if (Stats.CurrentLevel.HealingPower > 0 && Faction.Minions.Any(minion => !minion.Creature.Stats.Status.Health.IsSatisfied()))
+                if (Stats.CurrentLevel.HealingPower > 0 && Faction.Minions.Any(minion => !minion.Creature.Stats.Health.IsSatisfied()))
                 {
-                    var minion = Faction.Minions.FirstOrDefault(m => m != this && !m.Stats.Status.Health.IsSatisfied());
+                    var minion = Faction.Minions.FirstOrDefault(m => m != this && !m.Stats.Health.IsSatisfied());
                     if (minion != null)
                     {
                         return new MagicHealAllyTask(minion);
@@ -1170,8 +1170,8 @@ namespace DwarfCorp
             string desc = Stats.FullName + ", level " + Stats.CurrentLevel.Index +
                           " " +
                           Stats.CurrentClass.Name + ", " + Stats.Gender.ToString() + "\n    " +
-                          "Happiness: " + GetHappinessDescription(Stats.Status.Happiness) + ". Health: " + Stats.Status.Health.Percentage +
-                          ". Hunger: " + (100 - Stats.Status.Hunger.Percentage) + ". Energy: " + Stats.Status.Energy.Percentage +
+                          "Happiness: " + GetHappinessDescription(Stats.Happiness) + ". Health: " + Stats.Health.Percentage +
+                          ". Hunger: " + (100 - Stats.Hunger.Percentage) + ". Energy: " + Stats.Energy.Percentage +
                           "\n";
             if (CurrentTask != null)
             {
@@ -1423,7 +1423,7 @@ namespace DwarfCorp
         public void Chat()
         {
             var Employee = this;
-            Func<string> get_status = () => Employee.Stats.Status.GetStatusAdjective();
+            Func<string> get_status = () => Employee.Stats.GetStatusAdjective();
 
             Employee.World.Paused = true;
             // Prepare conversation memory for an envoy conversation.
