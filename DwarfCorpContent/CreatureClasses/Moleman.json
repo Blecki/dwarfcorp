@@ -2,7 +2,7 @@
   "$id": "1",
   "Actions": 110614,
   "AttackMode": "Attacking",
-  "Attacks": [
+  "Weapons": [
     {
       "DamageAmount": 1.5,
       "Name": "Claws",
@@ -57,7 +57,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -80,7 +80,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -103,7 +103,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -126,7 +126,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -149,7 +149,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -172,7 +172,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -195,7 +195,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -218,7 +218,7 @@
         "Intelligence": 6.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -241,7 +241,7 @@
         "Intelligence": 6.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -264,7 +264,7 @@
         "Intelligence": 10.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -287,7 +287,7 @@
         "Intelligence": 10.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     }
   ],

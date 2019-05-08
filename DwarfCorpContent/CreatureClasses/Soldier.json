@@ -3,7 +3,7 @@
   "PlayerClass": true,
   "Actions": 24596,
   "AttackMode": "Attacking",
-  "Attacks": [
+  "Weapons": [
     {
       "DamageAmount": 4.0,
       "Name": "Axe",
@@ -55,7 +55,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -75,7 +75,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -95,7 +95,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -115,7 +115,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     }
   ]

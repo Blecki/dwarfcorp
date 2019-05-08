@@ -38,9 +38,9 @@ namespace DwarfCorp.ContextCommands
                 World.MakeAnnouncement(String.Format("{0}'s healing power increased to {1}!", Employee.Stats.FullName, Employee.Stats.CurrentLevel.HealingPower));
             }
 
-            if (Employee.Stats.CurrentLevel.ExtraAttacks.Count > prevLevel.ExtraAttacks.Count)
+            if (Employee.Stats.CurrentLevel.ExtraWeapons.Count > prevLevel.ExtraWeapons.Count)
             {
-                World.MakeAnnouncement(String.Format("{0} learned to cast {1}!", Employee.Stats.FullName, Employee.Stats.CurrentLevel.ExtraAttacks.Last().Name));
+                World.MakeAnnouncement(String.Format("{0} learned to cast {1}!", Employee.Stats.FullName, Employee.Stats.CurrentLevel.ExtraWeapons.Last().Name));
             }
             SoundManager.PlaySound(ContentPaths.Audio.change, 0.5f);
             Employee.Creature.AddThought(Thought.ThoughtType.GotPromoted);

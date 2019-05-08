@@ -2,7 +2,7 @@
   "Name": "Chimp",
   "Actions": 24592,
   "AttackMode": "Attacking",
-  "Attacks": [
+  "Weapons": [
     {
       "DamageAmount": 5.0,
       "Name": "Hit",
@@ -52,7 +52,7 @@
         "Intelligence": 1.0,
         "Size": 0.25
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     }
   ]

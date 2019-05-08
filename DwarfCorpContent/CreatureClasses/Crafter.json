@@ -3,7 +3,7 @@
   "PlayerClass": true,
   "Actions": 114576,
   "AttackMode": "Attacking",
-  "Attacks": [
+  "Weapons": [
     {
       "DamageAmount": 1.0,
       "Name": "Hammer",
@@ -53,7 +53,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -73,7 +73,7 @@
         "Intelligence": 6.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -93,7 +93,7 @@
         "Intelligence": 7.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -113,7 +113,7 @@
         "Intelligence": 8.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     }
   ]

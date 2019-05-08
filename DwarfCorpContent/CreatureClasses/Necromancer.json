@@ -1,7 +1,7 @@
 {
   "Actions": 24596,
   "AttackMode": "Attacking",
-  "Attacks": [
+  "Weapons": [
     {
       "DamageAmount": 2.0,
       "Name": "Spark",
@@ -54,7 +54,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -77,7 +77,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -100,7 +100,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -123,7 +123,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -146,7 +146,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -169,7 +169,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -192,7 +192,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -215,7 +215,7 @@
         "Intelligence": 6.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -238,7 +238,7 @@
         "Intelligence": 6.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -261,7 +261,7 @@
         "Intelligence": 10.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -284,7 +284,7 @@
         "Intelligence": 10.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     }
   ],

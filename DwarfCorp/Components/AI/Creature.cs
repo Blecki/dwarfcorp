@@ -90,8 +90,8 @@ namespace DwarfCorp
             NoiseMaker.BasePitch = stats.VoicePitch;
             OverrideCharacterMode = false;
 
-            Attacks = stats.CurrentClass.Attacks.Select(a => new Attack(a)).ToList();
-            foreach (var attack in stats.CurrentClass.Levels.Where(l => l.Index <= stats.LevelIndex).SelectMany(l => l.ExtraAttacks))
+            Attacks = stats.CurrentClass.Weapons.Select(a => new Attack(a)).ToList();
+            foreach (var attack in stats.CurrentClass.Levels.Where(l => l.Index <= stats.LevelIndex).SelectMany(l => l.ExtraWeapons))
                 Attacks.Add(new Attack(attack));
         }
 

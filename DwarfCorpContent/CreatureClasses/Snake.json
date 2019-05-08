@@ -2,7 +2,7 @@
   "Name": "Snake",
   "Actions": 24592,
   "AttackMode": "Attacking",
-  "Attacks": [
+  "Weapons": [
     {
       "DamageAmount": 50.0,
       "Name": "Bite",
@@ -52,7 +52,7 @@
         "Intelligence": 3.0,
         "Size": 3
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     }
   ]

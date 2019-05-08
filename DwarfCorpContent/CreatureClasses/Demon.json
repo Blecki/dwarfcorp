@@ -1,7 +1,7 @@
 {
   "Actions": 24592,
   "AttackMode": "Attacking",
-  "Attacks": [
+  "Weapons": [
     {
       "DamageAmount": 15.0,
       "Name": "Fireball",
@@ -55,7 +55,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -78,7 +78,7 @@
         "Intelligence": 6.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -101,7 +101,7 @@
         "Intelligence": 7.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -124,7 +124,7 @@
         "Intelligence": 7.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -147,7 +147,7 @@
         "Intelligence": 8.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -170,7 +170,7 @@
         "Intelligence": 9.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -193,7 +193,7 @@
         "Intelligence": 10.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     }
   ],

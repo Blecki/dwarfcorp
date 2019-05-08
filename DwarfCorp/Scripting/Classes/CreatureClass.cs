@@ -17,13 +17,13 @@ namespace DwarfCorp
             public DwarfBux Pay;
             public int XP;
             public StatAdjustment BaseStats;
-            public List<Weapon> ExtraAttacks = new List<Weapon>();
+            public List<Weapon> ExtraWeapons = new List<Weapon>();
             public int HealingPower = 0;
         }
 
-        public List<Weapon> Attacks { get; set; }
-        public List<Level> Levels { get; set; }
-        public string Name { get; set; }
+        public List<Weapon> Weapons;
+        public List<Level> Levels;
+        public string Name;
         public Task.TaskCategory Actions = Task.TaskCategory.None;
         public CharacterMode AttackMode;
         public bool PlayerClass = false;

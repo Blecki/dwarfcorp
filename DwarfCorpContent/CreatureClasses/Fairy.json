@@ -1,7 +1,7 @@
 {
   "Actions": 112518,
   "AttackMode": "Attacking",
-  "Attacks": [
+  "Weapons": [
     {
       "DamageAmount": 10.0,
       "Name": "Fairy Dust",
@@ -54,7 +54,7 @@
         "Intelligence": 10.0,
         "Size": 1.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -77,7 +77,7 @@
         "Intelligence": 10.0,
         "Size": 1.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     }
   ],

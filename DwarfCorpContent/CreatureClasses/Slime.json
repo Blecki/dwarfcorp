@@ -2,7 +2,7 @@
   "Name": "Slime",
   "Actions": 24592,
   "AttackMode": "Attacking",
-  "Attacks": [
+  "Weapons": [
     {
       "DamageAmount": 1.5,
       "Name": "Chomp",
@@ -53,7 +53,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     }
   ]

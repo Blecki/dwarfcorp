@@ -2,9 +2,7 @@
   "Name": "Bat",
   "Actions": 24592,
   "AttackMode": "Attacking",
-
-
-  "Attacks": [
+  "Weapons": [
     {
       "DamageAmount": 0.1,
       "Name": "Chomp",
@@ -54,7 +52,7 @@
         "Intelligence": 1.0,
         "Size": 1.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     }
   ]

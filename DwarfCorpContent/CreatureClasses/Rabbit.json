@@ -2,7 +2,7 @@
   "Name": "Rabbit",
   "Actions": 24592,
   "AttackMode": "Attacking",
-  "Attacks": [
+  "Weapons": [
     {
       "DamageAmount": 0.01,
       "Name": "Bite",
@@ -52,7 +52,7 @@
         "Intelligence": 1.0,
         "Size": 0.25
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     }
   ]

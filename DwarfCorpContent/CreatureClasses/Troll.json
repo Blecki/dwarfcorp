@@ -1,7 +1,7 @@
 {
   "Actions": 24596,
   "AttackMode": "Attacking",
-  "Attacks": [
+  "Weapons": [
     {
       "DamageAmount": 15.0,
       "Name": "Slam",
@@ -53,7 +53,7 @@
         "Intelligence": 1.0,
         "Size": 10.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     }
   ],

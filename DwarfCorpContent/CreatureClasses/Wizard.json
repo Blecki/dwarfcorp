@@ -3,7 +3,7 @@
   "PlayerClass": true,
   "Actions": 8272,
   "AttackMode": "Attacking01",
-  "Attacks": [
+  "Weapons": [
     {
       "DamageAmount": 1.0,
       "Name": "Magic Missile",
@@ -53,7 +53,7 @@
         "Intelligence": 5.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -73,7 +73,7 @@
         "Intelligence": 6.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 0
     },
     {
@@ -93,7 +93,7 @@
         "Intelligence": 7.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [],
+      "ExtraWeapons": [],
       "HealingPower": 1
     },
     {
@@ -113,7 +113,7 @@
         "Intelligence": 7.0,
         "Size": 5.0
       },
-      "ExtraAttacks": [
+      "ExtraWeapons": [
         {
           "DamageAmount": 5.0,
           "Name": "Fireball",
@@ -132,13 +132,7 @@
             255
           ],
           "Mode": "Area",
-          "RechargeTimer": {
-            "TargetTimeSeconds": 2.93088412,
-            "CurrentTimeSeconds": 0.0,
-            "TriggerOnce": false,
-            "HasTriggered": false,
-            "Mode": "Game"
-          },
+          "RechargeRate": 3.0,
           "Knockback": 0.0,
           "AnimationAsset": "Effects\\explode",
           "HitParticles": "flame",
