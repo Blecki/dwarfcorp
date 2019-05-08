@@ -17,8 +17,8 @@ namespace DwarfCorp
             return new TurretTrap(Manager, Position, Manager.World.PlayerFaction, Data.GetData<List<ResourceAmount>>("Resources", null));
         }
 
-        public Attack Weapon { get; set; }
-        [JsonIgnore] public ActualActOfAttacking TheAttack;
+        public Weapon Weapon { get; set; }
+        [JsonIgnore] public Attack TheAttack;
         [JsonIgnore]
         public SimpleSprite BaseSprite { get; set; }
         [JsonIgnore]
@@ -46,14 +46,14 @@ namespace DwarfCorp
         {
             Allies = faction;
             SpriteSheet spriteSheet = new SpriteSheet(ContentPaths.Entities.Furniture.interior_furniture, 32, 32);
-            Weapon = new Attack("BowAttack", 5.0f, 1.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_trap_turret_shoot_1, ContentPaths.Audio.Oscar.sfx_trap_turret_shoot_2), ContentPaths.Effects.pierce)
+            Weapon = new Weapon("BowAttack", 5.0f, 1.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_trap_turret_shoot_1, ContentPaths.Audio.Oscar.sfx_trap_turret_shoot_2), ContentPaths.Effects.pierce)
             {
                 ProjectileType = "Arrow",
-                Mode = Attack.AttackMode.Ranged,
+                Mode = Weapon.AttackMode.Ranged,
                 LaunchSpeed = 15
             };
 
-            TheAttack = new ActualActOfAttacking(Weapon);
+            TheAttack = new Attack(Weapon);
 
             AddChild(new ParticleTrigger("explode", Manager, "DeathParticles",
             Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)

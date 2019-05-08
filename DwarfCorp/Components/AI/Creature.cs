@@ -90,9 +90,9 @@ namespace DwarfCorp
             NoiseMaker.BasePitch = stats.VoicePitch;
             OverrideCharacterMode = false;
 
-            Attacks = stats.CurrentClass.Attacks.Select(a => new ActualActOfAttacking(a)).ToList();
+            Attacks = stats.CurrentClass.Attacks.Select(a => new Attack(a)).ToList();
             foreach (var attack in stats.CurrentClass.Levels.Where(l => l.Index <= stats.LevelIndex).SelectMany(l => l.ExtraAttacks))
-                Attacks.Add(new ActualActOfAttacking(attack));
+                Attacks.Add(new Attack(attack));
         }
 
         public void LayEgg()
@@ -206,7 +206,7 @@ namespace DwarfCorp
         public GraphicsDevice Graphics { get { return Manager.World.GraphicsDevice; } }
 
         /// <summary> List of attacks the creature can perform. </summary>
-        [JsonIgnore] public List<ActualActOfAttacking> Attacks { get; set; } // Todo: Oh god, kill this. 
+        [JsonIgnore] public List<Attack> Attacks { get; set; } // Todo: Oh god, kill this. 
         // To remove, need to abstract performance of attack out of data controlling attack
 
         /// <summary> Faction that the creature belongs to </summary>

@@ -285,7 +285,7 @@
     <Compile Include="Components\AI\CraftDetails.cs" />
     <Compile Include="Gui\Widgets\Minimap\MinimapCell.cs" />
     <Compile Include="Gui\Widgets\Minimap\MinimapRenderer.cs" />
-    <Compile Include="Scripting\Combat\ActualActOfAttacking.cs" />
+    <Compile Include="Scripting\Combat\Attack.cs" />
     <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />
     <Compile Include="Scripting\Potions\GatherPotionsTask.cs" />
     <Compile Include="Scripting\Potions\Potion.cs" />
@@ -763,7 +763,7 @@
     <Compile Include="Scripting\Classes\CreatureClass.cs" />
     <Compile Include="Scripting\Classes\CreatureClassLibrary.cs" />
     <Compile Include="Scripting\Combat\Alliance.cs" />
-    <Compile Include="Scripting\Combat\Attack.cs" />
+    <Compile Include="Scripting\Combat\Weapon.cs" />
     <Compile Include="Scripting\CompoundActs\BuildRoomAct.cs" />
     <Compile Include="Scripting\CompoundActs\CompoundAct.cs" />
     <Compile Include="Scripting\CompoundActs\CompoundCreatureAct.cs" />

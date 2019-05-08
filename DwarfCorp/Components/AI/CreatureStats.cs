@@ -144,7 +144,7 @@ namespace DwarfCorp
                 Intelligence = CurrentLevel.BaseStats.Intelligence
             });
 
-            Creature.Attacks.AddRange(CurrentLevel.ExtraAttacks.Select(a => new ActualActOfAttacking(a)));
+            Creature.Attacks.AddRange(CurrentLevel.ExtraAttacks.Select(a => new Attack(a)));
         }
     }
 }

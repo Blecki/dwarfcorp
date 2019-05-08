@@ -46,7 +46,7 @@ namespace DwarfCorp
     public class MeleeAct : CreatureAct
     {
         public float EnergyLoss { get; set; }
-        public ActualActOfAttacking CurrentAttack { get; set; }
+        public Attack CurrentAttack { get; set; }
         public GameComponent Target { get; set; }
         public bool Training { get; set; }
         public Timer Timeout { get; set; }
@@ -253,7 +253,7 @@ namespace DwarfCorp
                 bool intersectsbounds = Creature.Physics.BoundingBox.Intersects(Target.BoundingBox);
                 float dist = diff.Length();
                 // If we are really far from the target, something must have gone wrong.
-                if (DefensiveStructure == null && !intersectsbounds && dist > CurrentAttack.Attack.Range * 4)
+                if (DefensiveStructure == null && !intersectsbounds && dist > CurrentAttack.Weapon.Range * 4)
                 {
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                     Creature.OverrideCharacterMode = false;
@@ -278,7 +278,7 @@ namespace DwarfCorp
                         LastHp = Creature.Hp;
                     }
 
-                    if (dist > CurrentAttack.Attack.Range)
+                    if (dist > CurrentAttack.Weapon.Range)
                     {
                         float sqrDist = dist * dist;
                         foreach(var threat in Creature.AI.Faction.Threats)
@@ -294,7 +294,7 @@ namespace DwarfCorp
                         dist = (float)Math.Sqrt(sqrDist);
                     }
 
-                    if (dist > CurrentAttack.Attack.Range * 4)
+                    if (dist > CurrentAttack.Weapon.Range * 4)
                     {
                         yield return Status.Fail;
                         yield break;
@@ -310,7 +310,7 @@ namespace DwarfCorp
 
                
                 // If we're out of attack range, run toward the target.
-                if(DefensiveStructure == null && !Creature.AI.Movement.IsSessile && !intersectsbounds && diff.Length() > CurrentAttack.Attack.Range)
+                if(DefensiveStructure == null && !Creature.AI.Movement.IsSessile && !intersectsbounds && diff.Length() > CurrentAttack.Weapon.Range)
                 {
                     Creature.CurrentCharacterMode = defaultCharachterMode;
                     /*
@@ -327,7 +327,7 @@ namespace DwarfCorp
                     Creature.Physics.ApplyForce(output, DwarfTime.Dt);
                     Creature.Physics.Orientation = Physics.OrientMode.RotateY;
                      */
-                    GreedyPathAct greedyPath = new GreedyPathAct(Creature.AI, Target, CurrentAttack.Attack.Range * 0.75f) {PathLength = 5};
+                    GreedyPathAct greedyPath = new GreedyPathAct(Creature.AI, Target, CurrentAttack.Weapon.Range * 0.75f) {PathLength = 5};
                     greedyPath.Initialize();
 
                     foreach (Act.Status stat in greedyPath.Run())
@@ -340,19 +340,19 @@ namespace DwarfCorp
                     }
                 }
                 // If we have a ranged weapon, try avoiding the target for a few seconds to get within range.
-                else if (DefensiveStructure == null && !Creature.AI.Movement.IsSessile && !intersectsbounds && !avoided && (CurrentAttack.Attack.Mode == Attack.AttackMode.Ranged &&
-                    dist < CurrentAttack.Attack.Range *0.15f))
+                else if (DefensiveStructure == null && !Creature.AI.Movement.IsSessile && !intersectsbounds && !avoided && (CurrentAttack.Weapon.Mode == Weapon.AttackMode.Ranged &&
+                    dist < CurrentAttack.Weapon.Range *0.15f))
                 {
                     FailTimer.Reset();
-                    foreach (Act.Status stat in AvoidTarget(CurrentAttack.Attack.Range, 3.0f))
+                    foreach (Act.Status stat in AvoidTarget(CurrentAttack.Weapon.Range, 3.0f))
                         yield return Status.Running;
                     avoided = true;
                 }
                 // Else, stop and attack
-                else if ((DefensiveStructure == null && dist < CurrentAttack.Attack.Range) ||
-                         (DefensiveStructure != null && dist < CurrentAttack.Attack.Range * 2.0))
+                else if ((DefensiveStructure == null && dist < CurrentAttack.Weapon.Range) ||
+                         (DefensiveStructure != null && dist < CurrentAttack.Weapon.Range * 2.0))
                 {
-                    if (CurrentAttack.Attack.Mode == Attack.AttackMode.Ranged 
+                    if (CurrentAttack.Weapon.Mode == Weapon.AttackMode.Ranged 
                         && VoxelHelpers.DoesRayHitSolidVoxel(Creature.World.ChunkManager, Creature.AI.Position, Target.Position))
                     {
                         yield return Status.Fail;
@@ -363,7 +363,7 @@ namespace DwarfCorp
                     avoided = false;
                     Creature.Physics.Orientation = Physics.OrientMode.Fixed;
                     Creature.Physics.Velocity = new Vector3(Creature.Physics.Velocity.X * 0.9f, Creature.Physics.Velocity.Y, Creature.Physics.Velocity.Z * 0.9f);
-                    CurrentAttack.RechargeTimer.Reset(CurrentAttack.Attack.RechargeRate);
+                    CurrentAttack.RechargeTimer.Reset(CurrentAttack.Weapon.RechargeRate);
 
                     Creature.Sprite.ResetAnimations(Creature.AttackMode);
                     Creature.Sprite.PlayAnimations(Creature.AttackMode);
@@ -406,7 +406,7 @@ namespace DwarfCorp
                     while (!CurrentAttack.RechargeTimer.HasTriggered && !Target.IsDead)
                     {
                         CurrentAttack.RechargeTimer.Update(DwarfTime.LastTime);
-                        if (CurrentAttack.Attack.Mode == Attack.AttackMode.Dogfight)
+                        if (CurrentAttack.Weapon.Mode == Weapon.AttackMode.Dogfight)
                         {
                             dogfightTarget += MathFunctions.RandVector3Cube()*0.1f;
                             Vector3 output = Creature.Controller.GetOutput(DwarfTime.Dt, dogfightTarget + Target.Position, Creature.Physics.GlobalTransform.Translation) * 0.9f;

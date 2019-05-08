@@ -15,7 +15,7 @@ namespace DwarfCorp
         public float EnergyLoss { get; set; }
         public KillVoxelTask OwnerTask;
         public bool CheckOwnership = true;
-        public ActualActOfAttacking Attack;
+        public Attack Attack;
 
         public DigAct(CreatureAI creature, KillVoxelTask OwnerTask) :
             base(creature)
