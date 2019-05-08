@@ -22,13 +22,7 @@
         255
       ],
       "Mode": "Melee",
-      "RechargeTimer": {
-        "TargetTimeSeconds": 0.5,
-        "CurrentTimeSeconds": 0.0,
-        "TriggerOnce": false,
-        "HasTriggered": false,
-        "Mode": "Game"
-      },
+      "RechargeRate": 0.5,
       "Knockback": 2.5,
       "AnimationAsset": "Effects\\slash",
       "HitParticles": "",

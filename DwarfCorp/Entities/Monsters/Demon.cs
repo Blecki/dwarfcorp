@@ -55,8 +55,6 @@ namespace DwarfCorp
 
             Physics.AddChild(new PacingCreatureAI(Manager, "Demon AI", Sensors) { Movement = { CanFly = true, CanSwim = false, CanDig = true} });
 
-            Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
-
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
             
             Physics.Tags.Add("Demon");

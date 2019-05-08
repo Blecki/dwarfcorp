@@ -61,16 +61,6 @@ namespace DwarfCorp
 
             Physics.AddChild(new PacingCreatureAI(Manager, "Spider AI", Sensors));
 
-            Attacks = new List<Attack> {
-                new Attack("Sting", 0.01f, 1.0f, 3.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_giant_spider_attack_1, ContentPaths.Audio.Oscar.sfx_oc_giant_spider_attack_2), ContentPaths.Effects.bite),
-                new Attack("Web", 0.0f, 1.0f, 5.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_giant_spider_attack_1, ContentPaths.Audio.Oscar.sfx_oc_giant_spider_attack_2), ContentPaths.Effects.claw)
-                {
-                    Mode = Attack.AttackMode.Ranged,
-                    LaunchSpeed = 10,
-                    ProjectileType = "Web"
-                }
-            };
-
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
             // The bird is flammable, and can die when exposed to fire.

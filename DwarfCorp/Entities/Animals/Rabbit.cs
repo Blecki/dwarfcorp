@@ -72,9 +72,6 @@ namespace DwarfCorp
             // Controls the behavior of the creature
             Physics.AddChild(new PacingCreatureAI(Manager, "Rabbit AI", Sensors));
 
-            // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack> { new Attack("Bite", 0.01f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_rabbit_attack), ContentPaths.Effects.bite) { DiseaseToSpread = "Rabies" } };
-
             // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 

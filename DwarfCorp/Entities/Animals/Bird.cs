@@ -74,10 +74,6 @@ namespace DwarfCorp
             // Controls the behavior of the creature
             Physics.AddChild(new BirdAI(Manager, "Bird AI", Sensors));
             
-            // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack> { new Attack("Peck", 0.1f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_bird_attack), ContentPaths.Effects.pierce) { Mode = Attack.AttackMode.Dogfight } };
-
-
             // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 

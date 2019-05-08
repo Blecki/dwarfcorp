@@ -748,6 +748,7 @@
     <Compile Include="Gui\Widgets\Minimap\MinimapRenderer.cs" />
     <Compile Include="Scripting\Classes\CreatureClass.cs" />
     <Compile Include="Scripting\Classes\CreatureClassLibrary.cs" />
+    <Compile Include="Scripting\Combat\ActualActOfAttacking.cs" />
     <Compile Include="Voxels\ChunkManager-Data.cs" />
     <Compile Include=".\Voxels\ChunkManager.cs" />
     <Compile Include=".\Voxels\ChunkRenderer.cs" />

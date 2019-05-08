@@ -71,10 +71,6 @@ namespace DwarfCorp
             // Controls the behavior of the creature
             Physics.AddChild(new PacingCreatureAI(Manager, "Scorpion AI", Sensors));
 
-            // The bird can peck at its enemies (0.1 damage)
-            Attacks = new List<Attack> { new Attack("Sting", 4.0f, 2.0f, 1.5f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_scorpion_attack_1, ContentPaths.Audio.Oscar.sfx_oc_scorpion_attack_2), ContentPaths.Effects.pierce) { TriggerFrame = 2, TriggerMode = Attack.AttackTrigger.Animation} };
-
-
             // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 

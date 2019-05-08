@@ -20,13 +20,7 @@
         255
       ],
       "Mode": "Melee",
-      "RechargeTimer": {
-        "TargetTimeSeconds": 1.0,
-        "CurrentTimeSeconds": 0.0,
-        "TriggerOnce": false,
-        "HasTriggered": false,
-        "Mode": "Game"
-      },
+      "RechargeRate": 1.0,
       "Knockback": 2.5,
       "AnimationAsset": "Effects\\hit",
       "HitParticles": "green_flame",

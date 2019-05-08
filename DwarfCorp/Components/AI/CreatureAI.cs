@@ -1316,13 +1316,13 @@ namespace DwarfCorp
             }
 
             // In this case, we have a very very weak weapon in comparison to our enemy.
-            if (Creature.Attacks[0].DamageAmount*20 < creature.Creature.Hp)
+            if (Creature.Attacks[0].Attack.DamageAmount * 20 < creature.Creature.Hp)
             {
                 fear += 0.25f;
             }
 
             // If the creature has formidible weapons, we're in trouble.
-            if (creature.Creature.Attacks[0].DamageAmount * 4 > Creature.Hp)
+            if (creature.Creature.Attacks[0].Attack.DamageAmount * 4 > Creature.Hp)
             {
                 fear += 0.25f;
             }

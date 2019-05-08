@@ -978,7 +978,7 @@ namespace DwarfCorp
             newMinion.Stats.CurrentClass = currentApplicant.Class;
             newMinion.Stats.AllowedTasks = currentApplicant.Class.Actions;
             newMinion.Stats.LevelIndex = currentApplicant.Level.Index - 1;
-            newMinion.Stats.LevelUp();
+            newMinion.Stats.LevelUp(newMinion);
             newMinion.Stats.FullName = currentApplicant.Name;
             newMinion.AI.AddMoney(currentApplicant.Level.Pay * 4m);
             newMinion.AI.Biography = currentApplicant.Biography;

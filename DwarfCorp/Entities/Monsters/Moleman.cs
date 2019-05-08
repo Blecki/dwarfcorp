@@ -54,8 +54,6 @@ namespace DwarfCorp
 
             Physics.AddChild(new CreatureAI(Manager, "Moleman AI", Sensors));
 
-            Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
-
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
             Physics.Tags.Add("Necromancer");

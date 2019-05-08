@@ -32,7 +32,7 @@ namespace DwarfCorp.ContextCommands
         {
             var Employee = Entity.GetComponent<CreatureAI>();
             var prevLevel = Employee.Stats.CurrentLevel;
-            Employee.Stats.LevelUp();
+            Employee.Stats.LevelUp(Employee.Creature);
             if (Employee.Stats.CurrentLevel.HealingPower > prevLevel.HealingPower)
             {
                 World.MakeAnnouncement(String.Format("{0}'s healing power increased to {1}!", Employee.Stats.FullName, Employee.Stats.CurrentLevel.HealingPower));

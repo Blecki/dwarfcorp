@@ -64,15 +64,6 @@ namespace DwarfCorp
             Physics.Orientation = Physics.OrientMode.Fixed;
             Species = "Snake";
 
-            Attacks = new List<Attack>()
-            {
-                new Attack("Bite", 50.0f, 1.0f, 3.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_giant_snake_attack_1), ContentPaths.Effects.bite)
-                {
-                    TriggerMode = Attack.AttackTrigger.Animation,
-                    TriggerFrame = 2,
-                }
-            };
-
             CreateCosmeticChildren(Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));

@@ -123,10 +123,10 @@ namespace DwarfCorp
 
             PlanAct.PlanType planType = PlanAct.PlanType.Adjacent;
             float radius = 0.0f;
-            if (creature.Creature.Attacks[0].Mode == Attack.AttackMode.Ranged)
+            if (creature.Creature.Attacks[0].Attack.Mode == Attack.AttackMode.Ranged)
             {
                 planType = PlanAct.PlanType.Radius;
-                radius = creature.Creature.Attacks[0].Range;
+                radius = creature.Creature.Attacks[0].Attack.Range;
             }
 
             if (creature.Movement.IsSessile)

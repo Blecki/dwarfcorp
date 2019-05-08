@@ -22,13 +22,7 @@
         255
       ],
       "Mode": "Area",
-      "RechargeTimer": {
-        "TargetTimeSeconds": 4.0,
-        "CurrentTimeSeconds": 0.0,
-        "TriggerOnce": false,
-        "HasTriggered": false,
-        "Mode": "Game"
-      },
+      "RechargeRate": 4.0,
       "Knockback": 2.5,
       "AnimationAsset": "Effects\\ring",
       "HitParticles": "dirt_particle",

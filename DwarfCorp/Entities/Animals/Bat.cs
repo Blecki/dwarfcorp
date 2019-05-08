@@ -64,8 +64,6 @@ namespace DwarfCorp
             AI.Movement.CanClimb = false;
             AI.Movement.CanWalk = false;
 
-            Attacks = new List<Attack> { new Attack("Bite", 0.01f, 2.0f, 1.0f, ContentPaths.Audio.Oscar.sfx_oc_bat_attack_1, ContentPaths.Effects.bite) { TriggerMode = Attack.AttackTrigger.Animation, TriggerFrame = 1, Mode = Attack.AttackMode.Dogfight, DiseaseToSpread = "Rabies" } };
-
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
             Physics.AddChild(new Flammable(Manager, "Flames"));
 

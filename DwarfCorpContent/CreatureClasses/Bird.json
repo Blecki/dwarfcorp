@@ -21,13 +21,7 @@
         255
       ],
       "Mode": "Dogfight",
-      "RechargeTimer": {
-        "TargetTimeSeconds": 2.0,
-        "CurrentTimeSeconds": 0.0,
-        "TriggerOnce": false,
-        "HasTriggered": false,
-        "Mode": "Game"
-      },
+      "RechargeRate": 2.0,
       "Knockback": 0.0,
       "AnimationAsset": "Effects\\pierce",
       "HitParticles": "",

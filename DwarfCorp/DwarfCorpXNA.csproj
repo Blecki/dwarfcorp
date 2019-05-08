@@ -285,6 +285,7 @@
     <Compile Include="Components\AI\CraftDetails.cs" />
     <Compile Include="Gui\Widgets\Minimap\MinimapCell.cs" />
     <Compile Include="Gui\Widgets\Minimap\MinimapRenderer.cs" />
+    <Compile Include="Scripting\Combat\ActualActOfAttacking.cs" />
     <Compile Include="Scripting\LeafActs\FollowPathAct.cs" />
     <Compile Include="Scripting\Potions\GatherPotionsTask.cs" />
     <Compile Include="Scripting\Potions\Potion.cs" />

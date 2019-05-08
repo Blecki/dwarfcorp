@@ -434,7 +434,7 @@ namespace DwarfCorp.Gui.Widgets
                 OnClick = (sender, args) =>
                 {
                     var prevLevel = Employee.Stats.CurrentLevel;
-                    Employee.Stats.LevelUp();
+                    Employee.Stats.LevelUp(Employee.Creature);
                     if (Employee.Stats.CurrentLevel.HealingPower > prevLevel.HealingPower)
                     {
                         Employee.World.MakeAnnouncement(String.Format("{0}'s healing power increased to {1}!", Employee.Stats.FullName, Employee.Stats.CurrentLevel.HealingPower));

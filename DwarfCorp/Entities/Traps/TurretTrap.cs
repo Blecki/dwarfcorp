@@ -18,6 +18,7 @@ namespace DwarfCorp
         }
 
         public Attack Weapon { get; set; }
+        [JsonIgnore] public ActualActOfAttacking TheAttack;
         [JsonIgnore]
         public SimpleSprite BaseSprite { get; set; }
         [JsonIgnore]
@@ -51,6 +52,8 @@ namespace DwarfCorp
                 Mode = Attack.AttackMode.Ranged,
                 LaunchSpeed = 15
             };
+
+            TheAttack = new ActualActOfAttacking(Weapon);
 
             AddChild(new ParticleTrigger("explode", Manager, "DeathParticles",
             Matrix.Identity, new Vector3(0.5f, 0.5f, 0.5f), Vector3.Zero)
@@ -140,16 +143,16 @@ namespace DwarfCorp
                     return;
                 }
 
-                Weapon.RechargeTimer.Update(gameTime);
+                TheAttack.RechargeTimer.Update(gameTime);
 
                 _targetAngle = (float)Math.Atan2(offset.X, offset.Z);
 
-                if (Weapon.RechargeTimer.HasTriggered)
+                if (TheAttack.RechargeTimer.HasTriggered)
                 {
                     closestCreature.Kill(this);
-                    Weapon.LaunchProjectile(Position + Vector3.Up * 0.5f, closestCreature.Position, closestCreature.Physics);
-                    Weapon.PlayNoise(Position);
-                    Weapon.RechargeTimer.Reset();
+                    TheAttack.LaunchProjectile(Position + Vector3.Up * 0.5f, closestCreature.Position, closestCreature.Physics);
+                    TheAttack.PlayNoise(Position);
+                    TheAttack.RechargeTimer.Reset();
                     GetComponent<MagicalObject>().CurrentCharges--;
                 }
             }

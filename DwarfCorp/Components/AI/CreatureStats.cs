@@ -128,7 +128,7 @@ namespace DwarfCorp
             BaseWisdom = CurrentLevel.BaseStats.Wisdom;
         }
         
-        public void LevelUp()
+        public void LevelUp(Creature Creature)
         {
             LevelIndex = Math.Min(LevelIndex + 1, CurrentClass.Levels.Count - 1);
             StatAdjustments.RemoveAll(a => a.Name == "base stats");
@@ -143,6 +143,8 @@ namespace DwarfCorp
                 Charisma = CurrentLevel.BaseStats.Charisma,
                 Intelligence = CurrentLevel.BaseStats.Intelligence
             });
+
+            Creature.Attacks.AddRange(CurrentLevel.ExtraAttacks.Select(a => new ActualActOfAttacking(a)));
         }
     }
 }

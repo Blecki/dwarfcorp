@@ -80,8 +80,6 @@ namespace DwarfCorp
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
             Physics.AddChild(new PacingCreatureAI(Manager, "Alime AI", Sensors));
             
-            Attacks = new List<Attack> { new Attack("Chomp", 1.0f, 2.0f, 1.0f, SoundSource.Create(ContentPaths.Audio.Oscar.sfx_oc_bird_attack), ContentPaths.Effects.pierce) { Mode = Attack.AttackMode.Dogfight } };
-
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
             Inventory.AddResource(new ResourceAmount(ResourceLibrary.GetResourceByName(SlimeType), MathFunctions.RandInt(1, 3)));
 

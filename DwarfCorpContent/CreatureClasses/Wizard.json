@@ -22,13 +22,7 @@
         255
       ],
       "Mode": "Melee",
-      "RechargeTimer": {
-        "TargetTimeSeconds": 0.6,
-        "CurrentTimeSeconds": 0.0,
-        "TriggerOnce": false,
-        "HasTriggered": false,
-        "Mode": "Game"
-      },
+      "RechargeRate": 0.6,
       "Knockback": 0.5,
       "AnimationAsset": "Effects\\pierce",
       "HitParticles": "star_particle",

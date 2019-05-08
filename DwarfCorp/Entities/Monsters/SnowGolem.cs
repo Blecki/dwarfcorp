@@ -47,8 +47,6 @@ namespace DwarfCorp
 
             Physics.AddChild(new GolemAI(Manager, Sensors) { Movement = { IsSessile = true, CanFly = false, CanSwim = false, CanWalk = false, CanClimb = false, CanClimbWalls = false } });
 
-            Attacks = new List<Attack>() { new Attack(Stats.CurrentClass.Attacks[0]) };
-
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
             var gems = ResourceLibrary.FindResourcesWithTag(Resource.ResourceTags.Gem);
