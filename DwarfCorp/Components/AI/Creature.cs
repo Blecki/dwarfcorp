@@ -79,7 +79,6 @@ namespace DwarfCorp
             HasMeat = true;
             HasBones = true;
             HasCorpse = false;
-            Buffs = new List<StatusEffect>();
             IsOnGround = true;
             Faction = faction;
             PlanService = planService;
@@ -276,50 +275,7 @@ namespace DwarfCorp
         public bool IsHeadClear { get; set; }
 
 
-        /// <summary> List of ongoing effects the creature is sustaining </summary>
-        public List<StatusEffect> Buffs { get; set; }
-        private List<StatusEffect> BuffsToAdd { get; set; }
- 
-        /// <summary> Adds the specified ongoing effect. </summary>
-        /// <param name="buff"> The onging effect to add </param>
-        public void AddBuff(StatusEffect buff)
-        {
-            if (BuffsToAdd == null)
-                BuffsToAdd = new List<StatusEffect>();
-
-            BuffsToAdd.Add(buff);
-        }
-
-        /// <summary> Updates the creature's ongoing effects </summary>
-        public void HandleBuffs(DwarfTime time)
-        {
-            if (BuffsToAdd == null)
-                BuffsToAdd = new List<StatusEffect>();
-
-            foreach (var newBuff in BuffsToAdd)
-            {
-                var matchingBuffs = Buffs.Where(b => b.GetType() == newBuff.GetType()).ToList();
-                foreach (var matchingBuff in matchingBuffs)
-                {
-                    matchingBuff.OnEnd(this);
-                    Buffs.Remove(matchingBuff);
-                }
-
-                newBuff.OnApply(this);
-                Buffs.Add(newBuff);
-            }
-
-            BuffsToAdd.Clear();
-
-            foreach (StatusEffect buff in Buffs)
-                buff.Update(time, this);
-            
-            foreach (StatusEffect buff in Buffs.FindAll(buff => !buff.IsInEffect))
-            {
-                buff.OnEnd(this);
-                Buffs.Remove(buff);
-            }
-        }
+        
 
         private void addToSpeciesCount()
         {
@@ -429,7 +385,7 @@ namespace DwarfCorp
 
 
             JumpTimer.Update(gameTime);
-            HandleBuffs(gameTime);
+            Stats.HandleBuffs(this, gameTime);
             UpdateMigration(gameTime);
             UpdateEggs(gameTime);
             UpdatePregnancy();
@@ -859,38 +815,7 @@ namespace DwarfCorp
             yield break;
         }
 
-        public List<Disease.Immunity> Immunities = new List<Disease.Immunity>(); 
-
-        public void AcquireDisease(Disease disease)
-        {
-            if (disease == null)
-                return;
-
-            if (Immunities.Any(immunity => immunity.Disease == disease.Name))
-                return;
-
-            bool hasDisease = false;
-            foreach (var buff in Buffs)
-            {
-                Disease diseaseBuff = buff as Disease;
-                if (diseaseBuff != null)
-                {
-                    hasDisease = hasDisease || diseaseBuff.Name == disease.Name;
-                }
-            }
-            if (!hasDisease)
-            {
-                var buff = disease.Clone();
-                AddBuff(buff);
-                if (!(buff as Disease).IsInjury)
-                {
-                    Immunities.Add(new Disease.Immunity()
-                    {
-                        Disease = disease.Name
-                    });
-                }
-            }
-        }
+       
 
         /// <summary>
         /// Called whenever the creature takes damage.

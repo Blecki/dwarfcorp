@@ -20,7 +20,7 @@ namespace DwarfCorp
 
         public void Drink(Creature creature)
         {
-            creature.AddBuff(Effects.Clone());
+            creature.Stats.AddBuff(Effects.Clone());
         }
 
         public bool ShouldDrink(Creature creature)

@@ -16,15 +16,15 @@ namespace DwarfCorp
 
         public override bool IsRelevant(Creature creature)
         {
-            return creature.Buffs.Any(buff => buff is Disease);
+            return creature.Stats.Buffs.Any(buff => buff is Disease);
         }
 
         public override void OnApply(Creature creature)
         {
-            foreach(var disease in creature.Buffs.OfType<Disease>())
+            foreach(var disease in creature.Stats.Buffs.OfType<Disease>())
                 disease.OnEnd(creature);
 
-            creature.Buffs.RemoveAll(buff => buff is Disease);
+            creature.Stats.Buffs.RemoveAll(buff => buff is Disease);
             base.OnApply(creature);
         }
 

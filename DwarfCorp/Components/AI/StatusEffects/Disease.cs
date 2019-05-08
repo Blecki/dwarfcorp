@@ -20,11 +20,6 @@ namespace DwarfCorp
             Sleep
         }
 
-        public struct Immunity
-        {
-            public string Disease;
-        }
-
         public bool AcquiredRandomly { get; set; }
         public float ChanceofRandomAcquisitionPerDay { get; set; }
         public HealType Type { get; set; }
@@ -108,7 +103,7 @@ namespace DwarfCorp
                     {
                         if (other == creature.AI) continue;
                         if ((other.Position - creature.AI.Position).LengthSquared() > 2) continue;
-                        other.Creature.AcquireDisease(DiseaseLibrary.GetDisease(Name));
+                        other.Creature.Stats.AcquireDisease(DiseaseLibrary.GetDisease(Name));
                     }
                 }
             }

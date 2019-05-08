@@ -54,7 +54,7 @@ namespace DwarfCorp
 
         public override bool IsRelevant(Creature creature)
         {
-            return creature.Buffs.Count == 0;
+            return creature.Stats.Buffs.Count == 0;
         }
     }
 }

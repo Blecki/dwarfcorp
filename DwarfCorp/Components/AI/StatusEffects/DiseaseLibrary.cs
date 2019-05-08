@@ -52,7 +52,7 @@ namespace DwarfCorp
             var creature = Datastructures.SelectRandom(creatures);
             if (creature == null)
                 return;
-            creature.Creature.AcquireDisease(disease);
+            creature.Creature.Stats.AcquireDisease(disease);
         }
     }
 }

@@ -242,7 +242,7 @@ namespace DwarfCorp
                     var disease = DiseaseLibrary.GetDisease(DiseaseToSpread);
                     if (disease != null)
                         if (MathFunctions.RandEvent(disease.LikelihoodOfSpread))
-                            otherCreature.AcquireDisease(disease);
+                            otherCreature.Stats.AcquireDisease(disease);
                 }
             }
 
@@ -256,7 +256,7 @@ namespace DwarfCorp
                 {
                     var creature = other.GetRoot().GetComponent<Creature>();
                     if (creature != null)
-                        creature.AcquireDisease(injury);
+                        creature.Stats.AcquireDisease(injury);
                 }
 
                 Vector3 knock = other.Position - performer.Physics.Position;
@@ -373,7 +373,7 @@ namespace DwarfCorp
                     {
                         var creature = other.GetRoot().GetComponent<Creature>();
                         if (creature != null)
-                            creature.AcquireDisease(injury);
+                            creature.Stats.AcquireDisease(injury);
                     }
                     break;
                 }

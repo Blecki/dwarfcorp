@@ -572,7 +572,7 @@ namespace DwarfCorp.Gui.Widgets
                     foreach (var thought in thoughts.Thoughts)
                         thoughtsBuilder.Append(String.Format("{0} ({1})\n", thought.Description, thought.HappinessModifier));
    
-                var diseases = Employee.Creature.Buffs.OfType<Disease>();
+                var diseases = Employee.Creature.Stats.Buffs.OfType<Disease>();
                 if (diseases.Any())
                 {
                     thoughtsBuilder.Append("Conditions: ");

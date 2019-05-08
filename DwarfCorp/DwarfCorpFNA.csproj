@@ -136,6 +136,8 @@
     <Compile Include=".\Components\AI\Sensors\DestroyOnTimer.cs" />
     <Compile Include=".\Components\AI\Sensors\EnemySensor.cs" />
     <Compile Include="AssetManagement\GameSave\OverworldMetaData.cs" />
+    <Compile Include="Components\AI\CreatureStats-Buffs.cs" />
+    <Compile Include="Components\AI\CreatureStats-Disease.cs" />
     <Compile Include="Components\AI\CreatureStats.cs" />
     <Compile Include="Components\AI\CreatureStatus.cs" />
     <Compile Include="Components\AI\Sensors\SpawnOnExploredTrigger.cs" />

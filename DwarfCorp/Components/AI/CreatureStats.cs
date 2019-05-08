@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace DwarfCorp
 {
-    public class CreatureStats
+    public partial class CreatureStats
     {
         #region Stat Stack
 

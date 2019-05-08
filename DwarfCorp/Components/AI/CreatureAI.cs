@@ -1457,7 +1457,7 @@ namespace DwarfCorp
             cMem.SetValue("$company_name", new Yarn.Value(Employee.World.PlayerCompany.Information.Name));
             cMem.SetValue("$employee_task", new Yarn.Value(Employee.CurrentTask == null ? "Nothing" : Employee.CurrentTask.Name));
             cMem.SetValue("$employee_class", new Yarn.Value(Employee.Stats.CurrentClass.Name));
-            var injuries = TextGenerator.GetListString(Employee.Creature.Buffs.OfType<Disease>().Select(disease => disease.Name));
+            var injuries = TextGenerator.GetListString(Employee.Creature.Stats.Buffs.OfType<Disease>().Select(disease => disease.Name));
             if (injuries == "")
             {
                 injuries = "no problems";
