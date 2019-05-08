@@ -1,17 +1,15 @@
 {
-  "Name": "Bat",
+  "Name": "Bird",
   "Actions": 24592,
   "AttackMode": "Attacking",
-
-
   "Attacks": [
     {
-      "DamageAmount": 0.1,
-      "Name": "Chomp",
+      "DamageAmount": 0.2,
+      "Name": "Peck",
       "Range": 1.0,
       "HitNoise": {
         "Sounds": [
-          "Audio\\oscar\\sfx_oc_bat_attack_1"
+          "Audio\\oscar\\sfx_oc_bird_attack"
         ],
         "Volume": 1.0,
         "RandomPitch": true
@@ -31,21 +29,21 @@
         "Mode": "Game"
       },
       "Knockback": 0.0,
-      "AnimationAsset": "Effects\\bite",
+      "AnimationAsset": "Effects\\pierce",
       "HitParticles": "",
       "ProjectileType": "",
       "LaunchSpeed": 0.0,
       "HasTriggered": false,
       "TriggerMode": "Animation",
       "TriggerFrame": 1,
-      "DiseaseToSpread": "Rabies",
+      "DiseaseToSpread": null,
       "ShootLaser": false
     }
   ],
   "Levels": [
     {
       "Index": 0,
-      "Name": "Bat",
+      "Name": "Bird",
       "Pay": {
         "Value": 0.0
       },
@@ -58,11 +56,10 @@
         "Wisdom": 1.0,
         "Charisma": 1.0,
         "Intelligence": 1.0,
-        "Size": 1.0
+        "Size": 0.25
       },
       "ExtraAttacks": [],
       "HealingPower": 0
     }
   ]
-
 }

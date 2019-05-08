@@ -35,15 +35,8 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats
+                new CreatureStats(CreatureClassLibrary.GetClass("Bird"), 0)
                 {
-                    BaseDexterity = 6,
-                    BaseConstitution = 1,
-                    BaseStrength = 1,
-                    BaseWisdom = 1,
-                    BaseCharisma = 1,
-                    BaseIntelligence = 1,
-                    BaseSize = 0.25f,
                     CanSleep = false,
                     LaysEggs = true,
                     IsMigratory = true
@@ -106,7 +99,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = SharedClass;
+            Stats.CurrentClass = CreatureClassLibrary.GetClass("Bird");
 
             CreateSprite(SpriteAsset + "_animation.json", Manager, 0.35f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
@@ -125,11 +118,5 @@ namespace DwarfCorp
 
             base.CreateCosmeticChildren(manager);
         }
-
-        private static CreatureClass SharedClass = new CreatureClass()
-        {
-            Name = "Bird",
-            Levels = new List<CreatureClass.Level>() { new CreatureClass.Level() { Index = 0, Name = "Bird" } }
-        };
     }
 }
