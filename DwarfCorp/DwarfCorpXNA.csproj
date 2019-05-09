@@ -185,7 +185,9 @@
     <Compile Include="AssetManagement\IndexedDecomposition.cs" />
     <Compile Include="AssetManagement\ModMetaData.cs" />
     <Compile Include="AssetManagement\StringLibrary.cs" />
+    <Compile Include="Components\AI\ClassLibrary.cs" />
     <Compile Include="Components\AI\Creature-Indicators.cs" />
+    <Compile Include="Components\AI\Creature-Reproduction.cs" />
     <Compile Include="Components\AI\CreatureStats-Buffs.cs" />
     <Compile Include="Components\AI\CreatureStats-Disease.cs" />
     <Compile Include="Components\AI\CreatureStats-Status.cs" />
@@ -213,6 +215,7 @@
     <Compile Include="ContextCommands\ContextCommandAttribute.cs" />
     <Compile Include="Economy\Company.cs" />
     <Compile Include="Entities\Animals\BatAI.cs" />
+    <Compile Include="Entities\Animals\BrownRabbit.cs" />
     <Compile Include="Entities\Animals\Slime.cs" />
     <Compile Include="Entities\Animals\Chimp.cs" />
     <Compile Include="Entities\Animals\Necrosnake.cs" />
@@ -503,7 +506,7 @@
     <Compile Include="Entities\Animals\Chicken.cs" />
     <Compile Include="Entities\Animals\Deer.cs" />
     <Compile Include="Entities\Animals\Frog.cs" />
-    <Compile Include="Entities\Animals\Rabbit.cs" />
+    <Compile Include="Entities\Animals\WhiteRabbit.cs" />
     <Compile Include="Entities\Animals\Scorpion.cs" />
     <Compile Include="Entities\Animals\Spider.cs" />
     <Compile Include="Entities\BalloonAI.cs" />
@@ -760,9 +763,8 @@
     <Compile Include="Screensaver\Terrain2D.cs" />
     <Compile Include="Scripting\Act.cs" />
     <Compile Include="Scripting\BehaviorExtensions.cs" />
-    <Compile Include="Scripting\Classes\Applicant.cs" />
-    <Compile Include="Scripting\Classes\CreatureClass.cs" />
-    <Compile Include="Scripting\Classes\CreatureClassLibrary.cs" />
+    <Compile Include="Scripting\Factions\Applicant.cs" />
+    <Compile Include="Components\AI\CreatureClass.cs" />
     <Compile Include="Scripting\Combat\Alliance.cs" />
     <Compile Include="Scripting\Combat\Weapon.cs" />
     <Compile Include="Scripting\CompoundActs\BuildRoomAct.cs" />

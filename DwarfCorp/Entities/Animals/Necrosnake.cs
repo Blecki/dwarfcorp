@@ -35,7 +35,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats(CreatureClassLibrary.GetClass("Necrosnake"), 0)
+                new CreatureStats("Necrosnake", 0)
                 {
                 },
                 "Evil",
@@ -82,8 +82,6 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
-            Stats.CurrentClass = CreatureClassLibrary.GetClass("Necrosnake");
-
             CreateSprite(ContentPaths.Entities.Animals.Snake.bonesnake_animation, Manager, 0.35f);
 
             #region Create Tail Pieces

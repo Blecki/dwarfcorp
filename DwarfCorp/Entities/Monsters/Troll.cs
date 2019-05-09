@@ -15,7 +15,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Troll(
-                new CreatureStats(CreatureClassLibrary.GetClass("Troll"), 0),
+                new CreatureStats("Troll", 0),
                 "Goblins",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Goblins"],
@@ -62,7 +62,6 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = CreatureClassLibrary.GetClass("Troll");
             CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Troll.troll_animation, "Troll"), manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 1, 3))).SetFlag(Flag.ShouldSerialize, false);

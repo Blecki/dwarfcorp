@@ -13,15 +13,12 @@ namespace DwarfCorp
 {
     public class Dwarf : Creature
     {
-        [JsonProperty] // Dwarves need to save the class because, unlike every single other creature, the class isn't implied by their type.
-        private CreatureClass SavedDwarfEmployeeClass = null;
-
         public Dwarf()
         {
             
         }
 
-        public Dwarf(ComponentManager manager, CreatureStats stats, string allies, PlanService planService, Faction faction,  string name, CreatureClass workerClass, Vector3 position) :
+        public Dwarf(ComponentManager manager, CreatureStats stats, string allies, PlanService planService, Faction faction,  string name, Vector3 position) :
             base(manager, stats, allies, planService, faction, name)
         {
             Physics = new Physics(manager, "Dwarf", Matrix.CreateTranslation(position),
@@ -37,8 +34,6 @@ namespace DwarfCorp
             HasMeat = false;
             HasBones = false;
             HasCorpse = true;
-
-            SavedDwarfEmployeeClass = workerClass;
 
             Stats.Gender = Mating.RandomGender();
             Physics.Orientation = Physics.OrientMode.RotateY;
@@ -86,7 +81,6 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = SavedDwarfEmployeeClass;
             CreateDwarfSprite(Stats.CurrentClass, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new VoxelRevealer(manager, Physics, 5)).SetFlag(Flag.ShouldSerialize, false);

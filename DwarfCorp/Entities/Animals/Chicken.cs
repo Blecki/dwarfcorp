@@ -44,10 +44,9 @@ namespace DwarfCorp
             (
                 manager,
                 // Default stats
-                new CreatureStats(CreatureClassLibrary.GetClass("Chicken"), 0)
+                new CreatureStats("Chicken", 0)
                 {
                     CanSleep = false,
-                    LaysEggs = true,
                     IsMigratory = true
                 },
                 // Belongs to herbivore team
@@ -90,8 +89,6 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = CreatureClassLibrary.GetClass("Chicken");
-
             CreateSprite(ContentPaths.Entities.Animals.fowl[Asset], manager);
             Physics.AddChild(Shadow.Create(0.5f, manager));
 

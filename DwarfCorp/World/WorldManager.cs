@@ -505,7 +505,7 @@ namespace DwarfCorp
             LogStat("Employee Pay", (float)PlayerFaction.Minions.Select(m => m.Stats.CurrentLevel.Pay.Value).Sum());
             LogStat("Furniture",  PlayerFaction.OwnedObjects.Count);
             LogStat("Zones", PlayerFaction.GetRooms().Count);
-            LogStat("Employee Level", PlayerFaction.Minions.Sum(r => r.Stats.CurrentLevel.Index));
+            LogStat("Employee Level", PlayerFaction.Minions.Sum(r => r.Stats.LevelIndex));
             LogStat("Employee Happiness", (float)PlayerFaction.Minions.Sum(m => m.Stats.Happiness.Percentage) / Math.Max(PlayerFaction.Minions.Count, 1));
         }
 

@@ -1,15 +1,18 @@
 {
-  "Name": "Chicken",
+  "Name": "Scorpion",
   "Actions": 24592,
   "AttackMode": "Attacking",
+  "BabyType": "Scorpion",
+  "CanReproduce": true,
   "Weapons": [
     {
-      "DamageAmount": 0.2,
-      "Name": "Peck",
-      "Range": 0.5,
+      "DamageAmount": 4.0,
+      "Name": "Sting",
+      "Range": 1.5,
       "HitNoise": {
         "Sounds": [
-          "Audio\\oscar\\sfx_oc_chicken_attack"
+          "Audio\\oscar\\sfx_oc_scorpion_attack_1",
+          "Audio\\oscar\\sfx_oc_scorpion_attack_2"
         ],
         "Volume": 1.0,
         "RandomPitch": true
@@ -37,7 +40,7 @@
   "Levels": [
     {
       "Index": 0,
-      "Name": "Poultry",
+      "Name": "Frog",
       "Pay": {
         "Value": 0.0
       },
@@ -45,8 +48,8 @@
       "BaseStats": {
         "Name": "",
         "Dexterity": 2.0,
-        "Constitution": 1.0,
-        "Strength": 1.0,
+        "Constitution": 2.0,
+        "Strength": 2.0,
         "Wisdom": 1.0,
         "Charisma": 1.0,
         "Intelligence": 1.0,

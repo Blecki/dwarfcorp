@@ -1,15 +1,17 @@
 {
-  "Name": "Frog",
+  "Name": "Chimp",
   "Actions": 24592,
   "AttackMode": "Attacking",
+  "BabyType": "Chimp",
+  "CanReproduce": true,
   "Weapons": [
     {
-      "DamageAmount": 0.01,
-      "Name": "Bite",
-      "Range": 1.0,
+      "DamageAmount": 5.0,
+      "Name": "Hit",
+      "Range": 0.5,
       "HitNoise": {
         "Sounds": [
-          "Audio\\oscar\\sfx_oc_frog_attack"
+          "Audio\\oscar\\sfx_oc_rabbit_attack"
         ],
         "Volume": 1.0,
         "RandomPitch": true
@@ -23,21 +25,21 @@
       "Mode": "Melee",
       "RechargeRate": 2.0,
       "Knockback": 0.0,
-      "AnimationAsset": "Effects\\bite",
+      "AnimationAsset": "Effects\\hit",
       "HitParticles": "",
       "ProjectileType": "",
       "LaunchSpeed": 0.0,
       "HasTriggered": false,
       "TriggerMode": "Animation",
       "TriggerFrame": 2,
-      "DiseaseToSpread": null,
+      "DiseaseToSpread": "Rabies",
       "ShootLaser": false
     }
   ],
   "Levels": [
     {
       "Index": 0,
-      "Name": "Frog",
+      "Name": "Chimp",
       "Pay": {
         "Value": 0.0
       },
@@ -45,9 +47,9 @@
       "BaseStats": {
         "Name": "",
         "Dexterity": 6.0,
-        "Constitution": 1.0,
-        "Strength": 1.0,
-        "Wisdom": 1.0,
+        "Constitution": 5.0,
+        "Strength": 6.0,
+        "Wisdom": 2.0,
         "Charisma": 1.0,
         "Intelligence": 1.0,
         "Size": 0.25

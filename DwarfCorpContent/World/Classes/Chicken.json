@@ -1,15 +1,17 @@
 {
-  "Name": "Rabbit",
+  "Name": "Chicken",
   "Actions": 24592,
   "AttackMode": "Attacking",
+  "BabyType": "Chicken",
+  "LaysEggs": true,
   "Weapons": [
     {
-      "DamageAmount": 0.01,
-      "Name": "Bite",
-      "Range": 1.0,
+      "DamageAmount": 0.2,
+      "Name": "Peck",
+      "Range": 0.5,
       "HitNoise": {
         "Sounds": [
-          "Audio\\oscar\\sfx_oc_rabbit_attack"
+          "Audio\\oscar\\sfx_oc_chicken_attack"
         ],
         "Volume": 1.0,
         "RandomPitch": true
@@ -23,28 +25,28 @@
       "Mode": "Melee",
       "RechargeRate": 2.0,
       "Knockback": 0.0,
-      "AnimationAsset": "Effects\\bite",
+      "AnimationAsset": "Effects\\pierce",
       "HitParticles": "",
       "ProjectileType": "",
       "LaunchSpeed": 0.0,
       "HasTriggered": false,
       "TriggerMode": "Animation",
       "TriggerFrame": 2,
-      "DiseaseToSpread": "Rabies",
+      "DiseaseToSpread": null,
       "ShootLaser": false
     }
   ],
   "Levels": [
     {
       "Index": 0,
-      "Name": "Rabbit",
+      "Name": "Poultry",
       "Pay": {
         "Value": 0.0
       },
       "XP": 0,
       "BaseStats": {
         "Name": "",
-        "Dexterity": 6.0,
+        "Dexterity": 2.0,
         "Constitution": 1.0,
         "Strength": 1.0,
         "Wisdom": 1.0,

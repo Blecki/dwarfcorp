@@ -28,7 +28,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats(CreatureClassLibrary.GetClass("Chimp"), 0)
+                new CreatureStats("Chimp", 0)
                 {
                     CanSleep = false,
                     IsMigratory = true
@@ -75,17 +75,12 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the Chimp";
-            
-            Stats.CanReproduce = true;
-            BabyType = Name;
 
             AI.Movement.SetCan(MoveType.ClimbWalls, true);
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = CreatureClassLibrary.GetClass("Chimp");
-
             CreateSprite(ContentPaths.Entities.Animals.Chimp.chimp_animations, manager, 0.6f);
             Physics.AddChild(Shadow.Create(0.5f, manager));
 

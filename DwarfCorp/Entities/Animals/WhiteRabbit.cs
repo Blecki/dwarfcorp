@@ -11,32 +11,24 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class Rabbit : Creature
+    public class WhiteRabbit : Creature
     {
-        [EntityFactory("Brown Rabbit")]
-        private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
-        {
-            return new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit0_animation, Position, Manager, "Brown Rabbit");
-        }
-
         [EntityFactory("White Rabbit")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Rabbit(ContentPaths.Entities.Animals.Rabbit.rabbit1_animation, Position, Manager, "White Rabbit");
+            return new WhiteRabbit(Position, Manager);
         }
 
-        public string SpriteAsset;
-
-        public Rabbit()
+        public WhiteRabbit()
         {
 
         }
 
-        public Rabbit(string sprites, Vector3 position, ComponentManager manager, string name) :
+        public WhiteRabbit(Vector3 position, ComponentManager manager) :
             base
             (
                 manager,
-                new CreatureStats(CreatureClassLibrary.GetClass("Rabbit"), 0)
+                new CreatureStats("White Rabbit", 0)
                 {
                     CanSleep = false,
                     IsMigratory = true
@@ -44,13 +36,13 @@ namespace DwarfCorp
                 "Herbivore",
                 manager.World.PlanService,
                 manager.World.Factions.Factions["Herbivore"],
-                name
+                "White Rabbit"
             )
         {
             Physics = new Physics
                 (
                 Manager,
-                    "A Rabbit",
+                    "White Rabbit",
                     Matrix.CreateTranslation(position),
                     new Vector3(0.25f, 0.25f, 0.25f),
                     new Vector3(0.0f, 0.0f, 0.0f),
@@ -60,40 +52,24 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            SpriteAsset = sprites;
-            // When true, causes the bird to face the direction its moving in
             Physics.Orientation = Physics.OrientMode.RotateY;
 
             CreateCosmeticChildren(Manager);
 
-            // Used to sense hostile creatures
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
-
-            // Controls the behavior of the creature
             Physics.AddChild(new PacingCreatureAI(Manager, "Rabbit AI", Sensors));
-
-            // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
-
-            // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
-            // Tag the physics component with some information 
-            // that can be used later
             Physics.Tags.Add("Rabbit");
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the rabbit";
-
-            Stats.CanReproduce = true;
-            BabyType = Name;
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = CreatureClassLibrary.GetClass("Rabbit");
-
-            CreateSprite(SpriteAsset, manager, 0.35f);
+            CreateSprite(ContentPaths.Entities.Animals.Rabbit.rabbit1_animation, manager, 0.35f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
 
             NoiseMaker = new NoiseMaker();

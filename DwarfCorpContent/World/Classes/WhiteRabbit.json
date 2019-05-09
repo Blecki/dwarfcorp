@@ -1,16 +1,17 @@
 {
-  "Name": "Scorpion",
+  "Name": "White Rabbit",
   "Actions": 24592,
   "AttackMode": "Attacking",
+  "BabyType": "White Rabbit",
+  "CanReproduce": true,
   "Weapons": [
     {
-      "DamageAmount": 4.0,
-      "Name": "Sting",
-      "Range": 1.5,
+      "DamageAmount": 0.01,
+      "Name": "Bite",
+      "Range": 1.0,
       "HitNoise": {
         "Sounds": [
-          "Audio\\oscar\\sfx_oc_scorpion_attack_1",
-          "Audio\\oscar\\sfx_oc_scorpion_attack_2"
+          "Audio\\oscar\\sfx_oc_rabbit_attack"
         ],
         "Volume": 1.0,
         "RandomPitch": true
@@ -24,30 +25,30 @@
       "Mode": "Melee",
       "RechargeRate": 2.0,
       "Knockback": 0.0,
-      "AnimationAsset": "Effects\\pierce",
+      "AnimationAsset": "Effects\\bite",
       "HitParticles": "",
       "ProjectileType": "",
       "LaunchSpeed": 0.0,
       "HasTriggered": false,
       "TriggerMode": "Animation",
       "TriggerFrame": 2,
-      "DiseaseToSpread": null,
+      "DiseaseToSpread": "Rabies",
       "ShootLaser": false
     }
   ],
   "Levels": [
     {
       "Index": 0,
-      "Name": "Frog",
+      "Name": "White Rabbit",
       "Pay": {
         "Value": 0.0
       },
       "XP": 0,
       "BaseStats": {
         "Name": "",
-        "Dexterity": 2.0,
-        "Constitution": 2.0,
-        "Strength": 2.0,
+        "Dexterity": 6.0,
+        "Constitution": 1.0,
+        "Strength": 1.0,
         "Wisdom": 1.0,
         "Charisma": 1.0,
         "Intelligence": 1.0,

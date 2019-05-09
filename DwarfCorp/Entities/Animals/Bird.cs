@@ -35,10 +35,9 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats(CreatureClassLibrary.GetClass("Bird"), 0)
+                new CreatureStats("Bird", 0)
                 {
                     CanSleep = false,
-                    LaysEggs = true,
                     IsMigratory = true
                 },
                 "Herbivore",
@@ -94,8 +93,6 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = CreatureClassLibrary.GetClass("Bird");
-
             CreateSprite(SpriteAsset + "_animation.json", Manager, 0.35f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
 

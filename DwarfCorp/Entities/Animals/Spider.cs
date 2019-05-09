@@ -28,7 +28,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats(CreatureClassLibrary.GetClass("Spider"), 0)
+                new CreatureStats("Spider", 0)
                 {
                     CanSleep = false,
                     CanEat = true
@@ -75,14 +75,10 @@ namespace DwarfCorp
 
             AI.Movement.CanClimbWalls = true;
             AI.Movement.CanSwim = false;
-            Stats.CanReproduce = true;
-            BabyType = "Spider";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = CreatureClassLibrary.GetClass("Spider");
-
             CreateSprite(ContentPaths.Entities.Animals.Spider.spider_animation, manager, 0.3f);
             Physics.AddChild(Shadow.Create(0.4f, manager));
 

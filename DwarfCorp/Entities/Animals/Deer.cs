@@ -27,7 +27,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats(CreatureClassLibrary.GetClass("Deer"), 0)
+                new CreatureStats("Deer", 0)
                 {
                     IsMigratory = true
                 },
@@ -71,14 +71,10 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname");
-            Stats.CanReproduce = true;
-            BabyType = "Deer";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = CreatureClassLibrary.GetClass("Deer");
-
             CreateSprite(ContentPaths.Entities.Animals.Deer.animations, manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
 

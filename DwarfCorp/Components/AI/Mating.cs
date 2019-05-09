@@ -11,9 +11,9 @@ namespace DwarfCorp
         {
             return A.Stats.Gender != Gender.Nonbinary 
                 && A.Stats.Gender != B.Stats.Gender 
-                && A.Stats.CanReproduce
+                && A.Stats.CurrentClass.CanReproduce
                 && !A.IsPregnant 
-                && B.Stats.CanReproduce 
+                && B.Stats.CurrentClass.CanReproduce 
                 && A.Stats.CurrentClass.Name == B.Stats.CurrentClass.Name
                 && !B.IsPregnant;
         }
@@ -32,7 +32,7 @@ namespace DwarfCorp
 
             A.CurrentPregnancy = new Pregnancy()
             {
-                EndDate = time.CurrentDate + new TimeSpan(0, A.PregnancyLengthHours, 0, 0)
+                EndDate = time.CurrentDate + new TimeSpan(0, A.Stats.CurrentClass.PregnancyLengthHours, 0, 0)
             };
         }
 

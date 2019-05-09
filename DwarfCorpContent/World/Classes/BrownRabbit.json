@@ -1,15 +1,17 @@
 {
-  "Name": "Bird",
+  "Name": "Brown Rabbit",
   "Actions": 24592,
   "AttackMode": "Attacking",
+  "BabyType": "Brown Rabbit",
+  "CanReproduce": true,
   "Weapons": [
     {
-      "DamageAmount": 0.2,
-      "Name": "Peck",
+      "DamageAmount": 0.01,
+      "Name": "Bite",
       "Range": 1.0,
       "HitNoise": {
         "Sounds": [
-          "Audio\\oscar\\sfx_oc_bird_attack"
+          "Audio\\oscar\\sfx_oc_rabbit_attack"
         ],
         "Volume": 1.0,
         "RandomPitch": true
@@ -20,24 +22,24 @@
         255,
         255
       ],
-      "Mode": "Dogfight",
+      "Mode": "Melee",
       "RechargeRate": 2.0,
       "Knockback": 0.0,
-      "AnimationAsset": "Effects\\pierce",
+      "AnimationAsset": "Effects\\bite",
       "HitParticles": "",
       "ProjectileType": "",
       "LaunchSpeed": 0.0,
       "HasTriggered": false,
       "TriggerMode": "Animation",
-      "TriggerFrame": 1,
-      "DiseaseToSpread": null,
+      "TriggerFrame": 2,
+      "DiseaseToSpread": "Rabies",
       "ShootLaser": false
     }
   ],
   "Levels": [
     {
       "Index": 0,
-      "Name": "Bird",
+      "Name": "Brown Rabbit",
       "Pay": {
         "Value": 0.0
       },

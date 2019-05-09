@@ -5,16 +5,16 @@ using System.Text;
 
 namespace DwarfCorp
 {
-    public static class CreatureClassLibrary
+    public static partial class Library
     {
         private static Dictionary<String, CreatureClass> Classes = null;
-        private static bool Initialized = false;
+        private static bool ClassesInitialized = false;
 
-        private static void Initialize()
+        private static void InitializeClasses()
         {
-            if (Initialized)
+            if (ClassesInitialized)
                 return;
-            Initialized = true;
+            ClassesInitialized = true;
 
             var list = FileUtils.LoadJsonListFromDirectory<CreatureClass>(ContentPaths.creature_classes, null, c => c.Name);
 
@@ -25,13 +25,13 @@ namespace DwarfCorp
 
         public static CreatureClass GetClass(String Name)
         {
-            Initialize();
+            InitializeClasses();
             return Classes[Name];
         }
 
         public static IEnumerable<CreatureClass> EnumerateClasses()
         {
-            Initialize();
+            InitializeClasses();
             return Classes.Values;
         }
     }

@@ -12,7 +12,6 @@ namespace DwarfCorp
     {
         public class Level
         {
-            public int Index; // Todo: Kill this.
             public string Name;
             public DwarfBux Pay;
             public int XP;
@@ -27,7 +26,12 @@ namespace DwarfCorp
         public Task.TaskCategory Actions = Task.TaskCategory.None;
         public CharacterMode AttackMode;
         public bool PlayerClass = false;
+
         public int SpeciesLimit = 50;
+        public String BabyType = "";
+        public int PregnancyLengthHours = 24;
+        public bool CanReproduce = false;
+        public bool LaysEggs = false;
 
         // Todo: Should just include name of attack animation. Kinda what the AttackMode is.
 

@@ -349,7 +349,7 @@ namespace DwarfCorp
 
         public void HandleReproduction()
         {
-            if (!Creature.Stats.CanReproduce) return;
+            if (!Creature.Stats.CurrentClass.CanReproduce) return;
             if (Creature.IsPregnant) return;
             if (!MathFunctions.RandEvent(0.0002f)) return;
             if (CurrentTask != null) return;
@@ -1167,7 +1167,7 @@ namespace DwarfCorp
         /// <summary> gets a description of the creature to display to the player </summary>
         public override string GetDescription()
         {
-            string desc = Stats.FullName + ", level " + Stats.CurrentLevel.Index +
+            string desc = Stats.FullName + ", level " + Stats.LevelIndex +
                           " " +
                           Stats.CurrentClass.Name + ", " + Stats.Gender.ToString() + "\n    " +
                           "Happiness: " + GetHappinessDescription(Stats.Happiness) + ". Health: " + Stats.Health.Percentage +

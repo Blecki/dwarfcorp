@@ -136,7 +136,10 @@
     <Compile Include=".\Components\AI\Sensors\DestroyOnTimer.cs" />
     <Compile Include=".\Components\AI\Sensors\EnemySensor.cs" />
     <Compile Include="AssetManagement\GameSave\OverworldMetaData.cs" />
+    <Compile Include="Components\AI\Creature-Reproduction.cs" />
     <Compile Include="Components\AI\Creature-Indicators.cs" />
+    <Compile Include="Components\AI\CreatureClass.cs" />
+    <Compile Include="Components\AI\ClassLibrary.cs" />
     <Compile Include="Components\AI\CreatureStats-Buffs.cs" />
     <Compile Include="Components\AI\CreatureStats-Disease.cs" />
     <Compile Include="Components\AI\CreatureStats.cs" />
@@ -216,7 +219,6 @@
     <Compile Include=".\Entities\Animals\Chimp.cs" />
     <Compile Include=".\Entities\Animals\Deer.cs" />
     <Compile Include=".\Entities\Animals\Frog.cs" />
-    <Compile Include=".\Entities\Animals\Rabbit.cs" />
     <Compile Include=".\Entities\Animals\Scorpion.cs" />
     <Compile Include=".\Entities\Animals\Spider.cs" />
     <Compile Include=".\Entities\Balloon.cs" />
@@ -275,8 +277,10 @@
     <Compile Include="Economy\Resources\ResourceLibrary.cs" />
     <Compile Include="Economy\Resources\ResourceType.cs" />
     <Compile Include="Entities\Animals\BatAI.cs" />
+    <Compile Include="Entities\Animals\BrownRabbit.cs" />
     <Compile Include="Entities\Animals\Necrosnake.cs" />
     <Compile Include="Entities\Animals\Slime.cs" />
+    <Compile Include="Entities\Animals\WhiteRabbit.cs" />
     <Compile Include="Entities\Monsters\Demon.cs" />
     <Compile Include="Entities\Monsters\Elf.cs" />
     <Compile Include="Entities\Monsters\Fairy.cs" />
@@ -549,7 +553,6 @@
     <Compile Include=".\Scripting\Act.cs" />
     <Compile Include=".\Scripting\Adventure\Adventure.cs" />
     <Compile Include=".\Scripting\BehaviorExtensions.cs" />
-    <Compile Include=".\Scripting\Classes\Applicant.cs" />
     <Compile Include=".\Scripting\Combat\Alliance.cs" />
     <Compile Include=".\Scripting\CompoundActs\BuildRoomAct.cs" />
     <Compile Include=".\Scripting\CompoundActs\ChopEntityAct.cs" />
@@ -746,10 +749,9 @@
     <Compile Include="Gui\Widgets\Minimap\MinimapCell.cs" />
     <Compile Include="Gui\Widgets\Minimap\MinimapFrame.cs" />
     <Compile Include="Gui\Widgets\Minimap\MinimapRenderer.cs" />
-    <Compile Include="Scripting\Classes\CreatureClass.cs" />
-    <Compile Include="Scripting\Classes\CreatureClassLibrary.cs" />
     <Compile Include="Scripting\Combat\Attack.cs" />
     <Compile Include="Scripting\Combat\Weapon.cs" />
+    <Compile Include="Scripting\Factions\Applicant.cs" />
     <Compile Include="Voxels\ChunkManager-Data.cs" />
     <Compile Include=".\Voxels\ChunkManager.cs" />
     <Compile Include=".\Voxels\ChunkRenderer.cs" />

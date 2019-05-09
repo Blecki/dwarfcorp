@@ -39,7 +39,7 @@ namespace DwarfCorp
         public static string employee_conversation = ProgramData.CreatePath("employee.conv");
         public static string Strings = ProgramData.CreatePath("strings.txt");
         public static string diseases = ProgramData.CreatePath("World", "Diseases");
-        public static string creature_classes = ProgramData.CreatePath("CreatureClasses");
+        public static string creature_classes = ProgramData.CreatePath("World", "Classes");
 
         public class Audio
     {

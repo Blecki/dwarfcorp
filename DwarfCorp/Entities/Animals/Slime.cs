@@ -13,6 +13,7 @@ namespace DwarfCorp
 {
     public class Slime : Creature
     {
+        // Todo: These need split up if I want to allow them to reproduce.
         [EntityFactory("Slime - Blue")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
@@ -49,7 +50,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats(CreatureClassLibrary.GetClass("Slime"), 0),
+                new CreatureStats("Slime", 0),
                 "Demon",
                 manager.World.PlanService,
                 manager.World.Factions.Factions["Demon"],
@@ -94,14 +95,10 @@ namespace DwarfCorp
             AI.Movement.SetSpeed(MoveType.Jump, 1.5f);
             AI.Movement.SetSpeed(MoveType.Climb, 1.5f);
             AI.Movement.SetCost(MoveType.Climb, 0.1f);
-            Stats.CanReproduce = true;
-            BabyType = "Slime";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = CreatureClassLibrary.GetClass("Slime");
-
             var spriteSheet = new SpriteSheet(SpriteAsset, 48, 48);
             var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, 0.35f, 0));
             foreach (var animation in AnimationLibrary.LoadNewLayeredAnimationFormat("Entities\\Animals\\Slimes\\slime-animations.json"))

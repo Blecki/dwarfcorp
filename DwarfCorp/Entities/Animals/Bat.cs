@@ -28,7 +28,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats(CreatureClassLibrary.GetClass("Bat"), 0)
+                new CreatureStats("Bat", 0)
                 {
                     CanSleep = false,
                     CanEat = true
@@ -71,15 +71,10 @@ namespace DwarfCorp
             Physics.Tags.Add("Animal");
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the bat";
-
-            Stats.CanReproduce = true;
-            BabyType = "Bat";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = CreatureClassLibrary.GetClass("Bat");
-
             CreateSprite(ContentPaths.Entities.Animals.Bat.bat_animations, manager, 0.0f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
 

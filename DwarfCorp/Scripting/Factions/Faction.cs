@@ -968,16 +968,16 @@ namespace DwarfCorp
             {
                 spawnLoc = rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15;
             }
+
             var dwarfPhysics = DwarfFactory.GenerateDwarf(
                     spawnLoc,
-                    World.ComponentManager, "Player", currentApplicant.Class, currentApplicant.Level.Index, currentApplicant.Gender, currentApplicant.RandomSeed);
+                    World.ComponentManager, "Player", currentApplicant.ClassName, currentApplicant.LevelIndex, currentApplicant.Gender, currentApplicant.RandomSeed);
             World.ComponentManager.RootComponent.AddChild(dwarfPhysics);
             var newMinion = dwarfPhysics.EnumerateAll().OfType<Dwarf>().FirstOrDefault();
             global::System.Diagnostics.Debug.Assert(newMinion != null);
 
-            newMinion.Stats.CurrentClass = currentApplicant.Class;
             newMinion.Stats.AllowedTasks = currentApplicant.Class.Actions;
-            newMinion.Stats.LevelIndex = currentApplicant.Level.Index - 1;
+            newMinion.Stats.LevelIndex = currentApplicant.LevelIndex - 1;
             newMinion.Stats.LevelUp(newMinion);
             newMinion.Stats.FullName = currentApplicant.Name;
             newMinion.AI.AddMoney(currentApplicant.Level.Pay * 4m);

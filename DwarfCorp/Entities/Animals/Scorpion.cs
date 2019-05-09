@@ -28,7 +28,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats(CreatureClassLibrary.GetClass("Scorpion"), 0)
+                new CreatureStats("Scorpion", 0)
                 {
                     CanSleep = false,
                     CanEat = true
@@ -89,14 +89,10 @@ namespace DwarfCorp
             AI.Movement.SetSpeed(MoveType.Jump, 1.5f);
             AI.Movement.SetSpeed(MoveType.Climb, 1.5f);
             AI.Movement.SetCost(MoveType.Climb, 0.1f);
-            Stats.CanReproduce = true;
-            BabyType = "Scorpion";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = CreatureClassLibrary.GetClass("Scorpion");
-
             CreateSprite(ContentPaths.Entities.Animals.Scorpion.scorption_animation, manager, 0.35f);
             Physics.AddChild(Shadow.Create(0.3f, manager));
 

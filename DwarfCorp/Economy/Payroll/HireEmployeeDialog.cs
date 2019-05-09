@@ -17,7 +17,7 @@ namespace DwarfCorp.Gui.Widgets
         public Applicant GenerateApplicant(CompanyInformation info, String type)
         {
             Applicant applicant = new Applicant();
-            applicant.GenerateRandom(CreatureClassLibrary.GetClass(type), 0, info);
+            applicant.GenerateRandom(type, 0, info);
             return applicant;
         }
 
@@ -34,7 +34,7 @@ namespace DwarfCorp.Gui.Widgets
             int h = Math.Min(Math.Max(2*(Root.RenderData.VirtualScreen.Height/3), 600), 700);
             Rect = new Rectangle(Root.RenderData.VirtualScreen.Center.X - w / 2, Root.RenderData.VirtualScreen.Center.Y - h/2, w, h);
 
-            var playerClasses = CreatureClassLibrary.EnumerateClasses().Where(c => c.PlayerClass).ToList();
+            var playerClasses = Library.EnumerateClasses().Where(c => c.PlayerClass).ToList();
 
             var left = AddChild(new Widget()
             {

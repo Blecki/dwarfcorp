@@ -15,7 +15,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Necromancer(
-                new CreatureStats(CreatureClassLibrary.GetClass("Necromancer"), 0),
+                new CreatureStats("Necromancer", 0),
                 "Undead",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Undead"],
@@ -28,7 +28,7 @@ namespace DwarfCorp
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Necromancer(
-                new CreatureStats(CreatureClassLibrary.GetClass("Necromancer"), 0),
+                new CreatureStats("Necromancer", 0),
                 Manager.World.PlayerFaction.Name, Manager.World.PlanService, Manager.World.PlayerFaction,
                 Manager,
                 "Necromancer",
@@ -74,7 +74,6 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = CreatureClassLibrary.GetClass("Necromancer");
             CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Skeleton.necro_animations, "Necromancer"), manager);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1))).SetFlag(Flag.ShouldSerialize, false);

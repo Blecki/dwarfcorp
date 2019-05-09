@@ -2076,47 +2076,51 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <None Include="CreatureClasses\Chicken.json">
+    <None Include="World\Classes\Chicken.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Chicken</Name>
     </None>
-    <None Include="CreatureClasses\Bird.json">
+    <None Include="World\Classes\Bird.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Bird</Name>
     </None>
-    <None Include="CreatureClasses\Bat.json">
+    <None Include="World\Classes\Bat.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Bat</Name>
     </None>
-    <None Include="CreatureClasses\Snake.json">
+    <None Include="World\Classes\WhiteRabbit.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WhiteRabbit</Name>
+    </None>
+    <None Include="World\Classes\Snake.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Snake</Name>
     </None>
-    <None Include="CreatureClasses\Chimp.json">
+    <None Include="World\Classes\Chimp.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Chimp</Name>
     </None>
-    <None Include="CreatureClasses\Rabbit.json">
+    <None Include="World\Classes\BrownRabbit.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Rabbit</Name>
+      <Name>BrownRabbit</Name>
     </None>
-    <None Include="CreatureClasses\Frog.json">
+    <None Include="World\Classes\Frog.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Frog</Name>
     </None>
-    <None Include="CreatureClasses\Deer.json">
+    <None Include="World\Classes\Deer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Deer</Name>
     </None>
-    <None Include="CreatureClasses\Necrosnake.json">
+    <None Include="World\Classes\Necrosnake.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Necrosnake</Name>
     </None>
-    <None Include="CreatureClasses\Spider.json">
+    <None Include="World\Classes\Spider.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Spider</Name>
     </None>
-    <None Include="CreatureClasses\Scorpion.json">
+    <None Include="World\Classes\Scorpion.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Scorpion</Name>
     </None>
@@ -2152,75 +2156,75 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>goblin_phoneme</Name>
     </Content>
-    <None Include="CreatureClasses\Slime.json">
+    <None Include="World\Classes\Slime.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Slime</Name>
     </None>
-    <None Include="CreatureClasses\Demon.json">
+    <None Include="World\Classes\Demon.json">
       <Name>Demon</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\Elf.json">
+    <None Include="World\Classes\Elf.json">
       <Name>Elf</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\Fairy.json">
+    <None Include="World\Classes\Fairy.json">
       <Name>Fairy</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\Goblin.json">
+    <None Include="World\Classes\Goblin.json">
       <Name>Goblin</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\Gremlin.json">
+    <None Include="World\Classes\Gremlin.json">
       <Name>Gremlin</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\Kobold.json">
+    <None Include="World\Classes\Kobold.json">
       <Name>Kobold</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\Moleman.json">
+    <None Include="World\Classes\Moleman.json">
       <Name>Moleman</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\MudGolem.json">
+    <None Include="World\Classes\MudGolem.json">
       <Name>MudGolem</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\Necromancer.json">
+    <None Include="World\Classes\Necromancer.json">
       <Name>Necromancer</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\Skeleton.json">
+    <None Include="World\Classes\Skeleton.json">
       <Name>Skeleton</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\SnowGolem.json">
+    <None Include="World\Classes\SnowGolem.json">
       <Name>SnowGolem</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\Soldier.json">
+    <None Include="World\Classes\Soldier.json">
       <Name>Soldier</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\Crafter.json">
+    <None Include="World\Classes\Crafter.json">
       <Name>Crafter</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\Musketeer.json">
+    <None Include="World\Classes\Musketeer.json">
       <Name>Musketeer</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\Troll.json">
+    <None Include="World\Classes\Troll.json">
       <Name>Troll</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\Wizard.json">
+    <None Include="World\Classes\Wizard.json">
       <Name>Wizard</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="CreatureClasses\Miner.json">
+    <None Include="World\Classes\Miner.json">
       <Name>Miner</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

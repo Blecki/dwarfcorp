@@ -15,17 +15,9 @@ namespace DwarfCorp
         /// <summary> This is what the character is currently doing (used for animation) </summary>
         protected CharacterMode currentCharacterMode = CharacterMode.Idle;
 
-        public bool IsPregnant
-        {
-            get { return CurrentPregnancy != null; }
-        }
-
-        public int PregnancyLengthHours = 24;
-        public string BabyType = "";
         public String BaseMeatResource = ResourceType.Meat;
         private bool _lastIsCloaked = false;
         public bool IsCloaked = false;
-        public Pregnancy CurrentPregnancy = null;
 
         public Creature()
         {
@@ -59,23 +51,8 @@ namespace DwarfCorp
             OverrideCharacterMode = false;
 
             Attacks = stats.CurrentClass.Weapons.Select(a => new Attack(a)).ToList();
-            foreach (var attack in stats.CurrentClass.Levels.Where(l => l.Index <= stats.LevelIndex).SelectMany(l => l.ExtraWeapons))
-                Attacks.Add(new Attack(attack));
-        }
-
-        public void LayEgg()
-        {
-            NoiseMaker.MakeNoise("Lay Egg", AI.Position, true, 1.0f);
-
-            if (!ResourceLibrary.Exists(Stats.CurrentClass.Name + " Egg") || !EntityFactory.EnumerateEntityTypes().Contains(Stats.CurrentClass.Name + " Egg Resource"))
-            {
-                var newEggResource = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName(ResourceType.Egg));
-                newEggResource.Name = Stats.CurrentClass.Name + " Egg";
-                ResourceLibrary.Add(newEggResource);
-            }
-
-            var parent = EntityFactory.CreateEntity<GameComponent>(Stats.CurrentClass.Name + " Egg Resource", Physics.Position);
-            parent.AddChild(new Egg(parent, Stats.CurrentClass.Name, Manager, Physics.Position, AI.PositionConstraint));
+            for (var i = 0; i <= stats.LevelIndex && i < stats.CurrentClass.Levels.Count; ++i)
+                Attacks.AddRange(stats.CurrentClass.Levels[i].ExtraWeapons.Select(w => new Attack(w)));
         }
 
         private T _get<T>(ref T cached) where T : GameComponent
@@ -166,7 +143,6 @@ namespace DwarfCorp
         }
         private Inventory _inventory = null;
 
-        public Timer EggTimer { get; set; }
         public Timer MigrationTimer { get; set; }
 
         /// <summary> Reference to the graphics device. </summary>
@@ -363,43 +339,7 @@ namespace DwarfCorp
             }
         }
 
-        private void UpdatePregnancy()
-        {
-            if (IsPregnant && World.Time.CurrentDate > CurrentPregnancy.EndDate)
-            {
-                // Todo: This check really belongs before the creature becomes pregnant.
-                if (World.GetSpeciesPopulation(Stats.CurrentClass) < Stats.CurrentClass.SpeciesLimit)
-                {
-                    if (EntityFactory.HasEntity(BabyType))
-                    {
-                        var baby = EntityFactory.CreateEntity<GameComponent>(BabyType, Physics.Position);
-                        baby.GetRoot().GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint;
-                    }
-                }
-                CurrentPregnancy = null;
-            }
-        }
-
-        private void UpdateEggs(DwarfTime gameTime)
-        {
-            if (Stats.LaysEggs)
-            {
-                if (EggTimer == null)
-                {
-                    EggTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
-                }
-                EggTimer.Update(gameTime);
-
-                if (EggTimer.HasTriggered)
-                {
-                    if (World.GetSpeciesPopulation(Stats.CurrentClass) < Stats.CurrentClass.SpeciesLimit)
-                    {
-                        LayEgg();
-                        EggTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
-                    }
-                }
-            }
-        }
+        
 
         private void UpdateMigration(DwarfTime gameTime)
         {

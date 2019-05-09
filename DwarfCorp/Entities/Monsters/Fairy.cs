@@ -26,7 +26,7 @@ namespace DwarfCorp
         }
 
         public Fairy(ComponentManager manager, string allies, Vector3 position) :
-            base(manager, new CreatureStats(CreatureClassLibrary.GetClass("Fairy"), 0), "Player", manager.World.PlanService, manager.World.Factions.Factions[allies], "Fairy")
+            base(manager, new CreatureStats("Fairy", 0), "Player", manager.World.PlanService, manager.World.Factions.Factions[allies], "Fairy")
         {
             Physics = new Physics(manager, "Fairy", Matrix.CreateTranslation(position),
                       new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
@@ -65,8 +65,6 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            Stats.CurrentClass = CreatureClassLibrary.GetClass("Fairy");
-
             CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Dwarf.Sprites.fairy_animation, "Fairy"), manager);
             Sprite.AddChild(new Bobber(Manager, 0.25f, 3.0f, MathFunctions.Rand(), Sprite.LocalTransform.Translation.Y)).SetFlag(Flag.ShouldSerialize, false);
             Sprite.LightsWithVoxels = false;

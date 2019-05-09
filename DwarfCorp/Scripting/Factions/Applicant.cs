@@ -1,35 +1,3 @@
-// Applicant.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,11 +7,12 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class Applicant
     {
         public CreatureClass Class { get; set; }
-        public CreatureClass.Level Level { get; set; }
+        public String ClassName;
+        public CreatureClass.Level Level => Class.Levels[LevelIndex];
+        public int LevelIndex = 0;
         public string Name { get; set; }
         public string CoverLetter { get; set; }
         public string FormerProfession { get; set; }
@@ -68,10 +37,11 @@ namespace DwarfCorp
 
         }
 
-        public void GenerateRandom(CreatureClass employeeClass, int level, CompanyInformation info)
+        public void GenerateRandom(String ClassName, int level, CompanyInformation info)
         {
-            Class = employeeClass;
-            Level = Class.Levels[level];
+            this.ClassName = ClassName;
+            Class = Library.GetClass(ClassName);
+            LevelIndex = level;
             Gender = Mating.RandomGender();
             Name = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
             List<string> justifications = new List<string>()
@@ -116,7 +86,8 @@ namespace DwarfCorp
             var hairPalette = LayeredSprites.LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("hair")).SelectRandom(random);
             var skinPalette = LayeredSprites.LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("face")).SelectRandom(random);
             LayeredSprites.LayerStack sprite = new LayeredSprites.LayerStack();
-            CreatureStats stats = new CreatureStats(Class, Level.Index)
+
+            CreatureStats stats = new CreatureStats(ClassName, LevelIndex)
             {
                 Gender = this.Gender
             };

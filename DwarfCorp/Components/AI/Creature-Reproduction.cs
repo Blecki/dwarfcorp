@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Newtonsoft.Json;
+using System.Linq;
+
+namespace DwarfCorp
+{
+    public partial class Creature : Health
+    {
+        [JsonIgnore] public bool IsPregnant => CurrentPregnancy != null;
+        public Pregnancy CurrentPregnancy = null;
+        public Timer EggTimer;
+
+        public void LayEgg()
+        {
+            NoiseMaker.MakeNoise("Lay Egg", AI.Position, true, 1.0f);
+
+            // Todo: Egg resource type and the baby made need to be in the species.
+            if (!ResourceLibrary.Exists(Stats.CurrentClass.Name + " Egg") || !EntityFactory.EnumerateEntityTypes().Contains(Stats.CurrentClass.Name + " Egg Resource"))
+            {
+                var newEggResource = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName(ResourceType.Egg));
+                newEggResource.Name = Stats.CurrentClass.Name + " Egg";
+                ResourceLibrary.Add(newEggResource);
+            }
+
+            var parent = EntityFactory.CreateEntity<GameComponent>(Stats.CurrentClass.Name + " Egg Resource", Physics.Position);
+            parent.AddChild(new Egg(parent, Stats.CurrentClass.BabyType, Manager, Physics.Position, AI.PositionConstraint));
+        }
+
+        private void UpdatePregnancy()
+        {
+            if (IsPregnant && World.Time.CurrentDate > CurrentPregnancy.EndDate)
+            {
+                // Todo: This check really belongs before the creature becomes pregnant.
+                if (World.GetSpeciesPopulation(Stats.CurrentClass) < Stats.CurrentClass.SpeciesLimit)
+                {
+                    if (EntityFactory.HasEntity(Stats.CurrentClass.BabyType))
+                    {
+                        var baby = EntityFactory.CreateEntity<GameComponent>(Stats.CurrentClass.BabyType, Physics.Position);
+                        baby.GetRoot().GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint;
+                    }
+                }
+                CurrentPregnancy = null;
+            }
+        }
+
+        private void UpdateEggs(DwarfTime gameTime)
+        {
+            if (Stats.CurrentClass.LaysEggs)
+            {
+                if (EggTimer == null)
+                    EggTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
+                EggTimer.Update(gameTime);
+
+                if (EggTimer.HasTriggered)
+                {
+                    if (World.GetSpeciesPopulation(Stats.CurrentClass) < Stats.CurrentClass.SpeciesLimit)
+                    {
+                        LayEgg(); // Todo: Egg rate in species
+                        EggTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
+                    }
+                }
+            }
+        }
+    }
+}

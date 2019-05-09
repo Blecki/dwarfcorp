@@ -1,15 +1,17 @@
 {
-  "Name": "Deer",
+  "Name": "Bird",
   "Actions": 24592,
   "AttackMode": "Attacking",
+  "BabyType": "Bird",
+  "LaysEggs": true,
   "Weapons": [
     {
-      "DamageAmount": 0.0,
-      "Name": "None",
-      "Range": 0.0,
+      "DamageAmount": 0.2,
+      "Name": "Peck",
+      "Range": 1.0,
       "HitNoise": {
         "Sounds": [
-          "Audio\\oscar\\sfx_oc_deer_attack"
+          "Audio\\oscar\\sfx_oc_bird_attack"
         ],
         "Volume": 1.0,
         "RandomPitch": true
@@ -20,16 +22,16 @@
         255,
         255
       ],
-      "Mode": "Melee",
+      "Mode": "Dogfight",
       "RechargeRate": 2.0,
       "Knockback": 0.0,
-      "AnimationAsset": "Effects\\hit",
+      "AnimationAsset": "Effects\\pierce",
       "HitParticles": "",
       "ProjectileType": "",
       "LaunchSpeed": 0.0,
       "HasTriggered": false,
       "TriggerMode": "Animation",
-      "TriggerFrame": 2,
+      "TriggerFrame": 1,
       "DiseaseToSpread": null,
       "ShootLaser": false
     }
@@ -37,20 +39,20 @@
   "Levels": [
     {
       "Index": 0,
-      "Name": "Deer",
+      "Name": "Bird",
       "Pay": {
         "Value": 0.0
       },
       "XP": 0,
       "BaseStats": {
         "Name": "",
-        "Dexterity": 12.0,
-        "Constitution": 6.0,
-        "Strength": 3.0,
-        "Wisdom": 2.0,
+        "Dexterity": 6.0,
+        "Constitution": 1.0,
+        "Strength": 1.0,
+        "Wisdom": 1.0,
         "Charisma": 1.0,
-        "Intelligence": 3.0,
-        "Size": 3
+        "Intelligence": 1.0,
+        "Size": 0.25
       },
       "ExtraWeapons": [],
       "HealingPower": 0
