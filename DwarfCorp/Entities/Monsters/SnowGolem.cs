@@ -65,7 +65,6 @@ namespace DwarfCorp
             Resistances[DamageType.Fire] = 5;
             Resistances[DamageType.Acid] = 5;
             Resistances[DamageType.Cold] = 5;
-            Species = "Snow Golem";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)

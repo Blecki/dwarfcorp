@@ -85,7 +85,6 @@ namespace DwarfCorp
             Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the rabbit";
 
-            Species = "Rabbit";
             Stats.CanReproduce = true;
             BabyType = Name;
         }

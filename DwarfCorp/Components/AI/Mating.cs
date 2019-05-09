@@ -14,7 +14,7 @@ namespace DwarfCorp
                 && A.Stats.CanReproduce
                 && !A.IsPregnant 
                 && B.Stats.CanReproduce 
-                && A.Species == B.Species 
+                && A.Stats.CurrentClass.Name == B.Stats.CurrentClass.Name
                 && !B.IsPregnant;
         }
 

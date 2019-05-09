@@ -61,7 +61,6 @@ namespace DwarfCorp
 
             Stats.FullName = TextGenerator.ToTitleCase(TextGenerator.GenerateRandom("$names_demon"));
             Stats.BaseSize = 4;
-            Species = "Demon";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)

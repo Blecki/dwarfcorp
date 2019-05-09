@@ -31,12 +31,14 @@ namespace DwarfCorp
             return new Chicken(Position, Manager, "Penguin", "Penguin");
         }
 
+        [JsonProperty] private String Asset = "";
+
         public Chicken()
         {
 
         }
 
-        public Chicken(Vector3 position, ComponentManager manager, string name, string species) :
+        public Chicken(Vector3 position, ComponentManager manager, string name, string Asset) :
             // Creature base constructor
             base
             (
@@ -60,53 +62,37 @@ namespace DwarfCorp
             Physics = new Physics
                 (
                 manager,
-                    // It is called "bird"
-                    species,
-                    // It's attached to the root component of the component manager
-                    // It is located at a position passed in as an argument
+                    Asset,
                     Matrix.CreateTranslation(position),
-                    // It has a size of 0.25 blocks
                     new Vector3(0.25f, 0.25f, 0.25f),
-                    // Its bounding box is located in its center
                     new Vector3(0.0f, 0.0f, 0.0f),
-                    //It has a mass of 1, a moment of intertia of 1, and very small friction/restitution
                     1.0f, 1.0f, 0.999f, 0.999f,
-                    // It has a gravity of 10 blocks per second downward
                     new Vector3(0, -10, 0)
                 );
 
             Physics.AddChild(this);
             BaseMeatResource = "Bird Meat";
-            Species = species;
+            this.Asset = Asset;
             Physics.Orientation = Physics.OrientMode.RotateY;
 
             CreateCosmeticChildren(Manager);
 
-            // Used to sense hostile creatures
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
-
-            // Controls the behavior of the creature
             Physics.AddChild(new PacingCreatureAI(Manager, "AI", Sensors));
-
-            // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
-
-            // The bird is flammable, and can die when exposed to fire.
             Physics.AddChild(new Flammable(Manager, "Flames"));
 
-            // Tag the physics component with some information 
-            // that can be used later
-            Physics.Tags.Add(species);
+            Physics.Tags.Add(Asset);
             Physics.Tags.Add("Animal");
             Physics.Tags.Add("DomesticAnimal");
-            Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the " + species;
+            Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the " + Asset;
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
             Stats.CurrentClass = CreatureClassLibrary.GetClass("Chicken");
 
-            CreateSprite(ContentPaths.Entities.Animals.fowl[Species], manager);
+            CreateSprite(ContentPaths.Entities.Animals.fowl[Asset], manager);
             Physics.AddChild(Shadow.Create(0.5f, manager));
 
             NoiseMaker = new NoiseMaker();

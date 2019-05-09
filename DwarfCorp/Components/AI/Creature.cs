@@ -7,44 +7,13 @@ using System.Linq;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    ///     Component which keeps track of a large number of other components (AI, physics, sprites, etc.)
-    ///     related to creatures (such as dwarves and goblins).
-    /// </summary>
-    public class Creature : Health
+    public partial class Creature : Health
     {
-        /// <summary> 
-        /// Creatures can draw indicators showing the user what they're thinking.
-        /// This is the minimum time in seconds between which indicators will be drawn.
-        /// </summary>
-        private float IndicatorRateLimit = 2.0f;
-
-        /// <summary>
-        /// This is the last time that the creature produced an indicator.
-        /// This is compared against the rate limit to determine if a new indicator
-        /// can be drawn.
-        /// </summary>
-        private DateTime LastIndicatorTime = DateTime.Now;
 
         private DateTime LastHungerDamageTime = DateTime.Now;
 
         /// <summary> This is what the character is currently doing (used for animation) </summary>
         protected CharacterMode currentCharacterMode = CharacterMode.Idle;
-
-
-        protected int _maxPerSpecies = 50;
-        private static Dictionary<string, int> _speciesCounts = new Dictionary<string, int>();
-        private bool _addedToSpeciesRegister = false;
-
-        public static int GetNumSpecies(string species)
-        {
-            if (!_speciesCounts.ContainsKey(species))
-            {
-                return 0;
-            }
-
-            return _speciesCounts[species];
-        }
 
         public bool IsPregnant
         {
@@ -52,7 +21,6 @@ namespace DwarfCorp
         }
 
         public int PregnancyLengthHours = 24;
-        public string Species = "";
         public string BabyType = "";
         public String BaseMeatResource = ResourceType.Meat;
         private bool _lastIsCloaked = false;
@@ -99,15 +67,15 @@ namespace DwarfCorp
         {
             NoiseMaker.MakeNoise("Lay Egg", AI.Position, true, 1.0f);
 
-            if (!ResourceLibrary.Exists(Species + " Egg") || !EntityFactory.EnumerateEntityTypes().Contains(Species + " Egg Resource"))
+            if (!ResourceLibrary.Exists(Stats.CurrentClass.Name + " Egg") || !EntityFactory.EnumerateEntityTypes().Contains(Stats.CurrentClass.Name + " Egg Resource"))
             {
                 var newEggResource = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName(ResourceType.Egg));
-                newEggResource.Name = Species + " Egg";
+                newEggResource.Name = Stats.CurrentClass.Name + " Egg";
                 ResourceLibrary.Add(newEggResource);
             }
 
-            var parent = EntityFactory.CreateEntity<GameComponent>(this.Species + " Egg Resource", Physics.Position);
-            parent.AddChild(new Egg(parent, this.Species, Manager, Physics.Position, AI.PositionConstraint));
+            var parent = EntityFactory.CreateEntity<GameComponent>(Stats.CurrentClass.Name + " Egg Resource", Physics.Position);
+            parent.AddChild(new Egg(parent, Stats.CurrentClass.Name, Manager, Physics.Position, AI.PositionConstraint));
         }
 
         private T _get<T>(ref T cached) where T : GameComponent
@@ -206,8 +174,7 @@ namespace DwarfCorp
         public GraphicsDevice Graphics { get { return Manager.World.GraphicsDevice; } }
 
         /// <summary> List of attacks the creature can perform. </summary>
-        [JsonIgnore] public List<Attack> Attacks { get; set; } // Todo: Oh god, kill this. 
-        // To remove, need to abstract performance of attack out of data controlling attack
+        [JsonIgnore] public List<Attack> Attacks;
 
         /// <summary> Faction that the creature belongs to </summary>
         public Faction Faction { get; set; }
@@ -279,30 +246,7 @@ namespace DwarfCorp
         /// <summary> If true there is an empty voxel immediately above this creature </summary>
         public bool IsHeadClear { get; set; }
 
-
-        
-
-        private void addToSpeciesCount()
-        {
-            if (_addedToSpeciesRegister)
-                return;
-            if (!_speciesCounts.ContainsKey(Species))
-                _speciesCounts.Add(Species, 1);
-            else
-                _speciesCounts[Species]++;
-
-            _addedToSpeciesRegister = true;
-        }
-
-        private void removeFromSpeciesCount()
-        {
-            if (!_speciesCounts.ContainsKey(Species))
-                _speciesCounts.Add(Species, 0);
-            else
-                _speciesCounts[Species]--;
-        }
-
-        /// <summary> Updates the creature </summary>
+                /// <summary> Updates the creature </summary>
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
             base.Update(gameTime, chunks, camera);
@@ -312,8 +256,7 @@ namespace DwarfCorp
                 FirstUpdate = false;
                 Faction.Minions.Add(AI);
                 Physics.AllowPhysicsSleep = false;
-
-                addToSpeciesCount();
+                World.AddToSpeciesTracking(Stats.CurrentClass);
             }
 
             if (_selectionCircle != null &&
@@ -424,7 +367,8 @@ namespace DwarfCorp
         {
             if (IsPregnant && World.Time.CurrentDate > CurrentPregnancy.EndDate)
             {
-                if (!_speciesCounts.ContainsKey(Species) || _speciesCounts[Species] < _maxPerSpecies)
+                // Todo: This check really belongs before the creature becomes pregnant.
+                if (World.GetSpeciesPopulation(Stats.CurrentClass) < Stats.CurrentClass.SpeciesLimit)
                 {
                     if (EntityFactory.HasEntity(BabyType))
                     {
@@ -448,7 +392,7 @@ namespace DwarfCorp
 
                 if (EggTimer.HasTriggered)
                 {
-                    if (!_speciesCounts.ContainsKey(Species) || _speciesCounts[Species] < _maxPerSpecies)
+                    if (World.GetSpeciesPopulation(Stats.CurrentClass) < Stats.CurrentClass.SpeciesLimit)
                     {
                         LayEgg();
                         EggTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
@@ -504,65 +448,52 @@ namespace DwarfCorp
             var above = new VoxelHandle(chunks, GlobalVoxelCoordinate.FromVector3(Physics.GlobalTransform.Translation + Vector3.UnitY * 0.8f));
 
             if (above.IsValid)
-            {
                 IsHeadClear = above.IsEmpty;
-            }
+
             if (below.IsValid && Physics.IsInLiquid)
-            {
                 IsOnGround = false;
-            }
             else if (below.IsValid)
-            {
                 IsOnGround = !below.IsEmpty;
-            }
             else
-            {
-                    IsOnGround = false;
-            }
+                IsOnGround = false;
 
             if (!IsOnGround)
             {
                 if (CurrentCharacterMode != CharacterMode.Flying)
                 {
                     if (Physics.Velocity.Y > 0.05)
-                    {
                         CurrentCharacterMode = CharacterMode.Jumping;
-                    }
                     else if (Physics.Velocity.Y < -0.05)
-                    {
                         CurrentCharacterMode = CharacterMode.Falling;
-                    }
                 }
 
                 if (Physics.IsInLiquid)
-                {
                     CurrentCharacterMode = CharacterMode.Swimming;
-                }
             }
 
             if (CurrentCharacterMode == CharacterMode.Falling && IsOnGround)
-            {
                 CurrentCharacterMode = CharacterMode.Idle;
-            }
 
             if (Stats.IsAsleep)
             {
                 CurrentCharacterMode = CharacterMode.Sleeping;
 
                 if (MathFunctions.RandEvent(0.01f))
-                {
                     NoiseMaker.MakeNoise("Sleep", AI.Position, true);
-                }
             }
             else if (currentCharacterMode == CharacterMode.Sleeping)
-            {
                 CurrentCharacterMode = CharacterMode.Idle;
-            }
 
             if (World.Time.IsDay() && Stats.IsAsleep && !Stats.Energy.IsDissatisfied() && !Stats.Health.IsCritical())
-            {
                 Stats.IsAsleep = false;
-            }
+        }
+
+
+        public override void Delete()
+        {
+            World.RemoveFromSpeciesTracking(Stats.CurrentClass);
+
+            base.Delete();
         }
 
 
@@ -574,14 +505,12 @@ namespace DwarfCorp
             // This is just a silly hack to make sure that creatures
             // carrying resources to a trade depot release their resources
             // when they die.
-            removeFromSpeciesCount();
+            World.RemoveFromSpeciesTracking(Stats.CurrentClass);
             CreateMeatAndBones();
             NoiseMaker.MakeNoise("Die", Physics.Position, true);
 
             if (AI.Stats.Money > 0)
-            {
                 EntityFactory.CreateEntity<CoinPile>("Coins Resource", AI.Position, Blackboard.Create("Money", AI.Stats.Money));
-            }
 
             base.Die();
         }
@@ -594,7 +523,7 @@ namespace DwarfCorp
         {
             if (HasMeat)
             {
-                String type = Species + " " + ResourceType.Meat;
+                String type = Stats.CurrentClass.Name + " " + ResourceType.Meat;
 
                 if (!ResourceLibrary.Exists(type))
                 {
@@ -609,11 +538,11 @@ namespace DwarfCorp
 
             if (HasBones)
             {
-                String type = Species + " " + ResourceType.Bones;
+                String type = Stats.CurrentClass.Name + " Bone";
 
                 if (!ResourceLibrary.Exists(type))
                 {
-                    var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName(ResourceType.Bones));
+                    var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName("Bone"));
                     r.Name = type;
                     r.ShortName = type;
                     ResourceLibrary.Add(r);
@@ -638,35 +567,7 @@ namespace DwarfCorp
             }
         }
 
-        /// <summary>
-        /// Draws an indicator image over the creature telling us what its thinking.
-        /// </summary>
-        public void DrawIndicator(NamedImageFrame image, Color tint)
-        {
-            if (!((DateTime.Now - LastIndicatorTime).TotalSeconds >= IndicatorRateLimit))
-            {
-                return;
-            }
-
-            IndicatorManager.DrawIndicator(image, AI.Position + new Vector3(0, 0.5f, 0), 1, 1.5f,
-                new Vector2(image.SourceRect.Width / 2.0f, -image.SourceRect.Height / 2.0f), tint);
-            LastIndicatorTime = DateTime.Now;
-        }
-
-
-        /// <summary>
-        /// Draws an indicator above the creature from the list of standard indicators.
-        /// </summary>
-        public void DrawIndicator(IndicatorManager.StandardIndicators indicator)
-        {
-            if (!((DateTime.Now - LastIndicatorTime).TotalSeconds >= IndicatorRateLimit))
-            {
-                return;
-            }
-
-            IndicatorManager.DrawIndicator(indicator, AI.Position + new Vector3(0, 0.5f, 0), 1, 2, new Vector2(16, -16));
-            LastIndicatorTime = DateTime.Now;
-        }
+       
 
 
         /// <summary>
@@ -721,7 +622,7 @@ namespace DwarfCorp
         /// Basic Act that causes the creature to wait for the specified time.
         /// Also draws a loading bar above the creature's head when relevant.
         /// </summary>
-        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar, Func<Vector3> pos, string playSound = "", Func<bool> continueHitting = null)
+        public IEnumerable<Act.Status> HitAndWait(float f, bool loadBar, Func<Vector3> pos)
         {
             var waitTimer = new Timer(f, true);
 
@@ -733,31 +634,22 @@ namespace DwarfCorp
             {
                 waitTimer.Update(DwarfTime.LastTime);
 
-                if (continueHitting != null && !continueHitting())
-                {
-                    yield break;
-                }
-                Physics.Active = false;
                 if (loadBar)
-                {
-                    Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
-                        waitTimer.CurrentTimeSeconds / waitTimer.TargetTimeSeconds);
-                }
+                    Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4, waitTimer.CurrentTimeSeconds / waitTimer.TargetTimeSeconds);
+
+                Physics.Active = false;
 
                 Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos());
                 Physics.Velocity = Vector3.Zero;
                 Sprite.ReloopAnimations(AttackMode);
 
-                if (!String.IsNullOrEmpty(playSound))
-                {
-                    NoiseMaker.MakeNoise(playSound, AI.Position, true);
-                }
-
                 yield return Act.Status.Running;
             }
+
             Sprite.PauseAnimations(AttackMode);
             CurrentCharacterMode = CharacterMode.Idle;
             Physics.Active = true;
+
             yield return Act.Status.Success;
             yield break;
         }
@@ -874,15 +766,12 @@ namespace DwarfCorp
 
             var task = new GatherItemTask(item) { Priority = Task.PriorityType.High };
             if (AI.Faction == World.PlayerFaction)
-            {
                 World.Master.TaskManager.AddTask(task);
-            }
             else
-            {
                 AI.AssignTask(task);
-            }
         }
 
+        // Todo: This func is redundant.
         protected void CreateSprite(List<Animation> Animations, ComponentManager manager, float heightOffset=0.15f)
         {
             if (Physics == null)
@@ -891,16 +780,14 @@ namespace DwarfCorp
                 // ended up with a null Physics here on loading.
                 Physics = GetRoot().GetComponent<Physics>();
             }
+
             if (Physics == null)
-            {
                 return;
-            }
 
             var sprite = Physics.AddChild(new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, heightOffset, 0)))) as CharacterSprite;
             // Todo: Share the list of animations too? DOUBLE TODO
-            foreach (Animation animation in Animations)
+            foreach (var animation in Animations)
                 sprite.AddAnimation(animation);
-
 
             sprite.SetCurrentAnimation(Sprite.Animations.First().Value);
             sprite.SetFlag(Flag.ShouldSerialize, false);

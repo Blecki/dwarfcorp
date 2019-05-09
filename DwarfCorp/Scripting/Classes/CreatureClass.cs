@@ -27,6 +27,7 @@ namespace DwarfCorp
         public Task.TaskCategory Actions = Task.TaskCategory.None;
         public CharacterMode AttackMode;
         public bool PlayerClass = false;
+        public int SpeciesLimit = 50;
 
         // Todo: Should just include name of attack animation. Kinda what the AttackMode is.
 

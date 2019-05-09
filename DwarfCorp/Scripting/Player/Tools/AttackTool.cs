@@ -101,7 +101,7 @@ namespace DwarfCorp
                     shown = true;
                     continue;
                 }
-                Player.Faction.World.ShowTooltip("Click to attack this " + creature.Species);
+                Player.Faction.World.ShowTooltip("Click to attack this " + creature.Stats.CurrentClass.Name);
                 shown = true;
             }
             if (!shown)
@@ -162,7 +162,7 @@ namespace DwarfCorp
                 {
                     var task = new KillEntityTask(other, KillEntityTask.KillType.Attack);
                     Player.TaskManager.AddTask(task);
-                    Player.Faction.World.ShowToolPopup("Will attack this " + creature.Species);
+                    Player.Faction.World.ShowToolPopup("Will attack this " + creature.Stats.CurrentClass.Name);
                     OnConfirm(Player.Faction.SelectedMinions);
                 }
                 else if (button == InputManager.MouseButton.Right)
@@ -171,7 +171,7 @@ namespace DwarfCorp
                     if (designation != null)
                     {
                         Player.TaskManager.CancelTask(designation.Task);
-                        Player.Faction.World.ShowToolPopup("Attack cancelled for " + creature.Species);
+                        Player.Faction.World.ShowToolPopup("Attack cancelled for " + creature.Stats.CurrentClass.Name);
                     }
                 }
             }

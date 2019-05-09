@@ -47,7 +47,6 @@ namespace DwarfCorp
             UpdateRate = 1;
             HasMeat = false;
             HasBones = true;
-            _maxPerSpecies = 4;
             Physics = new Physics
                 (
                     manager,
@@ -62,7 +61,6 @@ namespace DwarfCorp
             Physics.AddChild(this);
 
             Physics.Orientation = Physics.OrientMode.Fixed;
-            Species = "Snake";
 
             CreateCosmeticChildren(Manager);
 
@@ -109,24 +107,9 @@ namespace DwarfCorp
                 var inventory = tailPiece.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
                 inventory.SetFlag(Flag.ShouldSerialize, false);
 
-                if (HasMeat)
-                {
-                    String type = Species + " " + ResourceType.Meat;
-
-                    if (!ResourceLibrary.Exists(type))
-                    {
-                        var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName(ResourceType.Meat));
-                        r.Name = type;
-                        r.ShortName = type;
-                        ResourceLibrary.Add(r);
-                    }
-
-                    inventory.AddResource(new ResourceAmount(type, 1));
-                }
-
                 if (HasBones)
                 {
-                    String type = Name + " Bone";
+                    String type = Stats.CurrentClass.Name + " Bone";
 
                     if (!ResourceLibrary.Exists(type))
                     {

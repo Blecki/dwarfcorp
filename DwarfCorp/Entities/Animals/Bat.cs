@@ -72,7 +72,6 @@ namespace DwarfCorp
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the bat";
 
-            Species = "Bat";
             Stats.CanReproduce = true;
             BabyType = "Bat";
         }

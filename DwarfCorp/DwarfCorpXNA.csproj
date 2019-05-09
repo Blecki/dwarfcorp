@@ -185,6 +185,7 @@
     <Compile Include="AssetManagement\IndexedDecomposition.cs" />
     <Compile Include="AssetManagement\ModMetaData.cs" />
     <Compile Include="AssetManagement\StringLibrary.cs" />
+    <Compile Include="Components\AI\Creature-Indicators.cs" />
     <Compile Include="Components\AI\CreatureStats-Buffs.cs" />
     <Compile Include="Components\AI\CreatureStats-Disease.cs" />
     <Compile Include="Components\AI\CreatureStats-Status.cs" />
@@ -920,6 +921,7 @@
     <Compile Include="World\WorldManager-OctTree.cs" />
     <Compile Include="World\WorldManager-NewGameSetup.cs" />
     <Compile Include="World\WorldManager-Loading.cs" />
+    <Compile Include="World\WorldManager-SpeciesLimits.cs" />
     <Compile Include="World\WorldManager.cs" />
     <Compile Include="World\WorldTime.cs" />
   </ItemGroup>

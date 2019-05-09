@@ -94,7 +94,6 @@ namespace DwarfCorp
             Physics.Tags.Add("DomesticAnimal");
             Stats.FullName = TextGenerator.GenerateRandom("$firstname") + " the frog";
 
-            Species = "Frog";
             Stats.CanReproduce = true;
             BabyType = "Frog";
         }

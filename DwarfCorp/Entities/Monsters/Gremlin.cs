@@ -63,7 +63,6 @@ namespace DwarfCorp
             AI.Movement.SetCan(MoveType.Dig, true);
             (AI as GremlinAI).DestroyPlayerObjectProbability = 0.5f;
             (AI as GremlinAI).PlantBomb = "Explosive";
-            Species = "Gremlin";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)

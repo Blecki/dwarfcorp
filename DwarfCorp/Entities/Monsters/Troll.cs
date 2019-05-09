@@ -58,7 +58,6 @@ namespace DwarfCorp
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             AI.Movement.SetSpeed(MoveType.Swim, 0.15f);
             AI.Movement.SetCan(MoveType.Dig, true);
-            Species = "Troll";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)

@@ -61,7 +61,6 @@ namespace DwarfCorp
             AI.Movement.SetCost(MoveType.ClimbWalls, 1.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 1.0f);
             AI.Movement.SetCan(MoveType.Dig, true);
-            Species = "Fairy";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)

@@ -79,7 +79,6 @@ namespace DwarfCorp
                 AI.Movement.SetCan(MoveType.Dig, true);
             AI.TriggersMourning = true;
             AI.Biography = Applicant.GenerateBiography(AI.Stats.FullName, Stats.Gender);
-            Species = "Dwarf";
             Stats.Money = (decimal)MathFunctions.Rand(0, 150);
 
             Physics.AddChild(new DwarfThoughts(Manager, "Thoughts"));

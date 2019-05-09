@@ -47,7 +47,6 @@ namespace DwarfCorp
             UpdateRate = 1;
             HasMeat = true;
             HasBones = true;
-            _maxPerSpecies = 4;
             Physics = new Physics
                 (
                     manager,
@@ -62,7 +61,6 @@ namespace DwarfCorp
             Physics.AddChild(this);
 
             Physics.Orientation = Physics.OrientMode.Fixed;
-            Species = "Snake";
 
             CreateCosmeticChildren(Manager);
 
@@ -111,7 +109,7 @@ namespace DwarfCorp
 
                 if (HasMeat)
                 {
-                    String type = Species + " " + ResourceType.Meat;
+                    String type = Stats.CurrentClass.Name + " " + ResourceType.Meat;
 
                     if (!ResourceLibrary.Exists(type))
                     {
@@ -126,7 +124,7 @@ namespace DwarfCorp
 
                 if (HasBones)
                 {
-                    String type = Name + " Bone";
+                    String type = Stats.CurrentClass.Name + " Bone";
 
                     if (!ResourceLibrary.Exists(type))
                     {

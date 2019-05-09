@@ -74,7 +74,7 @@ namespace DwarfCorp
             }
             Animals.Remove(animal);
             animal.GetComponent<CreatureAI>().ResetPositionConstraint();
-            Species = animal.GetComponent<Creature>().Species;
+            Species = animal.GetComponent<Creature>().Stats.CurrentClass.Name;
             yield return Act.Status.Success;
         }
 

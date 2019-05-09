@@ -90,7 +90,6 @@ namespace DwarfCorp
             AI.Movement.CanFly = true;
             AI.Movement.CanWalk = false;
             AI.Movement.CanClimb = false;
-            Species = "Bird";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)

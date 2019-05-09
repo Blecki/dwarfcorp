@@ -75,7 +75,6 @@ namespace DwarfCorp
 
             AI.Movement.CanClimbWalls = true;
             AI.Movement.CanSwim = false;
-            Species = "Spider";
             Stats.CanReproduce = true;
             BabyType = "Spider";
         }

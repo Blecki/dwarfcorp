@@ -61,18 +61,18 @@ namespace DwarfCorp
                 return false;
 
             var pens = Player.Faction.GetRooms().Where(room => room is AnimalPen).Cast<AnimalPen>().Where(pen => pen.IsBuilt &&
-                            (pen.Species == "" || pen.Species == creature.Species));
+                            (pen.Species == "" || pen.Species == creature.Stats.CurrentClass.Name));
 
             if (pens.Any())
             {
                 if (print)
-                    Player.World.ShowTooltip("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Species);
+                    Player.World.ShowTooltip("Will wrangle this " + animal.GetRoot().GetComponent<Creature>().Stats.CurrentClass.Name);
                 return true;
             }
             else
             {
                 if (print)
-                    Player.World.ShowTooltip("Can't wrangle this " + animal.GetRoot().GetComponent<Creature>().Species + " : need more animal pens.");
+                    Player.World.ShowTooltip("Can't wrangle this " + animal.GetRoot().GetComponent<Creature>().Stats.CurrentClass.Name + " : need more animal pens.");
             }
 
             return false;

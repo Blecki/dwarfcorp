@@ -89,8 +89,7 @@ namespace DwarfCorp
                     continue;
                 }
 
-
-                var count = Creature.GetNumSpecies(testCreatureAI.Creature.Species);
+                var count = World.GetSpeciesPopulation(testCreatureAI.Stats.CurrentClass);
 
                 testCreature.GetRoot().Delete();
 

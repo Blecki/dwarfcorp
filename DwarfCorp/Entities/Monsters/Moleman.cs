@@ -69,7 +69,6 @@ namespace DwarfCorp
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);
             AI.Movement.SetSpeed(MoveType.ClimbWalls, 0.15f);
             AI.Movement.SetCan(MoveType.Dig, true);
-            Species = "Moleman";
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
