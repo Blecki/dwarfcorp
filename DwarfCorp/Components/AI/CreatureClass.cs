@@ -27,12 +27,6 @@ namespace DwarfCorp
         public CharacterMode AttackMode;
         public bool PlayerClass = false;
 
-        public int SpeciesLimit = 50;
-        public String BabyType = "";
-        public int PregnancyLengthHours = 24;
-        public bool CanReproduce = false;
-        public bool LaysEggs = false;
-
         // Todo: Should just include name of attack animation. Kinda what the AttackMode is.
 
         public bool IsTaskAllowed(Task.TaskCategory TaskCategory)

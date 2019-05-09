@@ -2,8 +2,6 @@
   "Name": "Chimp",
   "Actions": 24592,
   "AttackMode": "Attacking",
-  "BabyType": "Chimp",
-  "CanReproduce": true,
   "Weapons": [
     {
       "DamageAmount": 5.0,

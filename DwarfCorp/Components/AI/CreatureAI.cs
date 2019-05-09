@@ -349,7 +349,7 @@ namespace DwarfCorp
 
         public void HandleReproduction()
         {
-            if (!Creature.Stats.CurrentClass.CanReproduce) return;
+            if (!Creature.Stats.Species.CanReproduce) return;
             if (Creature.IsPregnant) return;
             if (!MathFunctions.RandEvent(0.0002f)) return;
             if (CurrentTask != null) return;

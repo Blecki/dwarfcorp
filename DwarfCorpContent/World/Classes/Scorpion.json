@@ -2,8 +2,6 @@
   "Name": "Scorpion",
   "Actions": 24592,
   "AttackMode": "Attacking",
-  "BabyType": "Scorpion",
-  "CanReproduce": true,
   "Weapons": [
     {
       "DamageAmount": 4.0,

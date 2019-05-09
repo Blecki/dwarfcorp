@@ -2188,9 +2188,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>WhiteRabbit</Name>
     </None>
-    <None Include="World\Classes\Chicken.json">
+    <None Include="World\Classes\Fowl.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Chicken</Name>
+      <Name>Fowl</Name>
     </None>
     <None Include="World\Classes\Bird.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

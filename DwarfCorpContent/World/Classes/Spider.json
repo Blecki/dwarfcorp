@@ -2,8 +2,6 @@
   "Name": "Spider",
   "Actions": 24592,
   "AttackMode": "Attacking",
-  "BabyType": "Spider",
-  "CanReproduce": true,
   "Weapons": [
     {
       "DamageAmount": 0.01,

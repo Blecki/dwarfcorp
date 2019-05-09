@@ -2,8 +2,6 @@
   "Name": "White Rabbit",
   "Actions": 24592,
   "AttackMode": "Attacking",
-  "BabyType": "White Rabbit",
-  "CanReproduce": true,
   "Weapons": [
     {
       "DamageAmount": 0.01,

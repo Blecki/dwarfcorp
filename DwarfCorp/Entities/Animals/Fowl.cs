@@ -44,7 +44,7 @@ namespace DwarfCorp
             (
                 manager,
                 // Default stats
-                new CreatureStats(Asset, "Chicken", 0)
+                new CreatureStats(Asset, "Fowl", 0)
                 {
                     CanSleep = false,
                     IsMigratory = true

@@ -2,8 +2,6 @@
   "Name": "Frog",
   "Actions": 24592,
   "AttackMode": "Attacking",
-  "BabyType": "Frog",
-  "CanReproduce": true,
   "Weapons": [
     {
       "DamageAmount": 0.01,

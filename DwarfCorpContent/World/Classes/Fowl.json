@@ -1,9 +1,7 @@
 {
-  "Name": "Chicken",
+  "Name": "Fowl",
   "Actions": 24592,
   "AttackMode": "Attacking",
-  "BabyType": "Chicken",
-  "LaysEggs": true,
   "Weapons": [
     {
       "DamageAmount": 0.2,
@@ -39,7 +37,7 @@
   "Levels": [
     {
       "Index": 0,
-      "Name": "Poultry",
+      "Name": "Fowl",
       "Pay": {
         "Value": 0.0
       },

@@ -2,8 +2,6 @@
   "Name": "Bird",
   "Actions": 24592,
   "AttackMode": "Attacking",
-  "BabyType": "Bird",
-  "LaysEggs": true,
   "Weapons": [
     {
       "DamageAmount": 0.2,

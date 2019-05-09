@@ -2,8 +2,6 @@
   "Name": "Brown Rabbit",
   "Actions": 24592,
   "AttackMode": "Attacking",
-  "BabyType": "Brown Rabbit",
-  "CanReproduce": true,
   "Weapons": [
     {
       "DamageAmount": 0.01,

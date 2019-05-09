@@ -218,6 +218,7 @@
     <Compile Include="Economy\Company.cs" />
     <Compile Include="Entities\Animals\BatAI.cs" />
     <Compile Include="Entities\Animals\BrownRabbit.cs" />
+    <Compile Include="Entities\Animals\Fowl.cs" />
     <Compile Include="Entities\Animals\Slime.cs" />
     <Compile Include="Entities\Animals\Chimp.cs" />
     <Compile Include="Entities\Animals\Necrosnake.cs" />
@@ -505,7 +506,6 @@
     <Compile Include="Entities\Animals\Bat.cs" />
     <Compile Include="Entities\Animals\Bird.cs" />
     <Compile Include="Entities\Animals\BirdAI.cs" />
-    <Compile Include="Entities\Animals\Chicken.cs" />
     <Compile Include="Entities\Animals\Deer.cs" />
     <Compile Include="Entities\Animals\Frog.cs" />
     <Compile Include="Entities\Animals\WhiteRabbit.cs" />

@@ -2,8 +2,6 @@
   "Name": "Deer",
   "Actions": 24592,
   "AttackMode": "Attacking",
-  "BabyType": "Deer",
-  "CanReproduce": true,
   "Weapons": [
     {
       "DamageAmount": 0.0,

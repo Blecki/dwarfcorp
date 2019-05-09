@@ -26,7 +26,7 @@ namespace DwarfCorp
             }
 
             var parent = EntityFactory.CreateEntity<GameComponent>(Stats.CurrentClass.Name + " Egg Resource", Physics.Position);
-            parent.AddChild(new Egg(parent, Stats.CurrentClass.BabyType, Manager, Physics.Position, AI.PositionConstraint));
+            parent.AddChild(new Egg(parent, Stats.Species.BabyType, Manager, Physics.Position, AI.PositionConstraint));
         }
 
         private void UpdatePregnancy()
@@ -34,11 +34,11 @@ namespace DwarfCorp
             if (IsPregnant && World.Time.CurrentDate > CurrentPregnancy.EndDate)
             {
                 // Todo: This check really belongs before the creature becomes pregnant.
-                if (World.GetSpeciesPopulation(Stats.CurrentClass) < Stats.CurrentClass.SpeciesLimit)
+                if (World.GetSpeciesPopulation(Stats.CurrentClass) < Stats.Species.SpeciesLimit)
                 {
-                    if (EntityFactory.HasEntity(Stats.CurrentClass.BabyType))
+                    if (EntityFactory.HasEntity(Stats.Species.BabyType))
                     {
-                        var baby = EntityFactory.CreateEntity<GameComponent>(Stats.CurrentClass.BabyType, Physics.Position);
+                        var baby = EntityFactory.CreateEntity<GameComponent>(Stats.Species.BabyType, Physics.Position);
                         baby.GetRoot().GetComponent<CreatureAI>().PositionConstraint = AI.PositionConstraint;
                     }
                 }
@@ -48,7 +48,7 @@ namespace DwarfCorp
 
         private void UpdateEggs(DwarfTime gameTime)
         {
-            if (Stats.CurrentClass.LaysEggs)
+            if (Stats.Species.LaysEggs)
             {
                 if (EggTimer == null)
                     EggTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
@@ -56,7 +56,7 @@ namespace DwarfCorp
 
                 if (EggTimer.HasTriggered)
                 {
-                    if (World.GetSpeciesPopulation(Stats.CurrentClass) < Stats.CurrentClass.SpeciesLimit)
+                    if (World.GetSpeciesPopulation(Stats.CurrentClass) < Stats.Species.SpeciesLimit)
                     {
                         LayEgg(); // Todo: Egg rate in species
                         EggTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
