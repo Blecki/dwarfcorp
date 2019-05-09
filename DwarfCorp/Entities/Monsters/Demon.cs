@@ -15,7 +15,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Demon(
-                new CreatureStats("Demon", 0),
+                new CreatureStats("Demon", "Demon", 0),
                 "Demon",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Demon"],
@@ -28,7 +28,7 @@ namespace DwarfCorp
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Demon(
-                new CreatureStats("Demon", 0),
+                new CreatureStats("Demon", "Demon", 0),
                 Manager.World.PlayerFaction.Name, Manager.World.PlanService, Manager.World.PlayerFaction,
                 Manager,
                 "Demon",

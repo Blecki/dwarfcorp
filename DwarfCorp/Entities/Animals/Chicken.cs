@@ -16,19 +16,19 @@ namespace DwarfCorp
         [EntityFactory("Chicken")]
         private static GameComponent __factory0(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Chicken(Position, Manager, "Chicken", "Chicken");
+            return new Chicken(Position, Manager, "Chicken");
         }
 
         [EntityFactory("Turkey")]
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Chicken(Position, Manager, "Turkey", "Turkey");
+            return new Chicken(Position, Manager, "Turkey");
         }
 
         [EntityFactory("Penguin")]
         private static GameComponent __factory2(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Chicken(Position, Manager, "Penguin", "Penguin");
+            return new Chicken(Position, Manager, "Penguin");
         }
 
         [JsonProperty] private String Asset = "";
@@ -38,13 +38,13 @@ namespace DwarfCorp
 
         }
 
-        public Chicken(Vector3 position, ComponentManager manager, string name, string Asset) :
+        public Chicken(Vector3 position, ComponentManager manager, string Asset) :
             // Creature base constructor
             base
             (
                 manager,
                 // Default stats
-                new CreatureStats("Chicken", 0)
+                new CreatureStats(Asset, "Chicken", 0)
                 {
                     CanSleep = false,
                     IsMigratory = true
@@ -55,7 +55,7 @@ namespace DwarfCorp
                 manager.World.PlanService,
                 // Belongs to the herbivore team
                 manager.World.Factions.Factions["Herbivore"],
-                name
+                Asset
             )
         {
             Physics = new Physics

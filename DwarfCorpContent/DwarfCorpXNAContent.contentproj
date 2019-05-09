@@ -2076,6 +2076,118 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+    <None Include="World\Species\Bat.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Bat</Name>
+    </None>
+    <None Include="World\Species\Bird.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Bird</Name>
+    </None>
+    <None Include="World\Species\BrownRabbit.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>BrownRabbit</Name>
+    </None>
+    <None Include="World\Species\Turkey.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Turkey</Name>
+    </None>
+    <None Include="World\Species\Penquin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Penquin</Name>
+    </None>
+    <None Include="World\Species\Chicken.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Chicken</Name>
+    </None>
+    <None Include="World\Species\Chimp.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Chimp</Name>
+    </None>
+    <None Include="World\Species\Dwarf.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Dwarf</Name>
+    </None>
+    <None Include="World\Species\Deer.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Deer</Name>
+    </None>
+    <None Include="World\Species\Demon.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Demon</Name>
+    </None>
+    <None Include="World\Species\Elf.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Elf</Name>
+    </None>
+    <None Include="World\Species\Fairy.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Fairy</Name>
+    </None>
+    <None Include="World\Species\Frog.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Frog</Name>
+    </None>
+    <None Include="World\Species\Goblin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Goblin</Name>
+    </None>
+    <None Include="World\Species\Gremlin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Gremlin</Name>
+    </None>
+    <None Include="World\Species\Kobold.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Kobold</Name>
+    </None>
+    <None Include="World\Species\Moleman.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Moleman</Name>
+    </None>
+    <None Include="World\Species\MudGolem.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>MudGolem</Name>
+    </None>
+    <None Include="World\Species\Necromancer.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Necromancer</Name>
+    </None>
+    <None Include="World\Species\Necrosnake.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Necrosnake</Name>
+    </None>
+    <None Include="World\Species\Scorpion.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Scorpion</Name>
+    </None>
+    <None Include="World\Species\Skeleton.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Skeleton</Name>
+    </None>
+    <None Include="World\Species\Slime.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Slime</Name>
+    </None>
+    <None Include="World\Species\Snake.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Snake</Name>
+    </None>
+    <None Include="World\Species\SnowGolem.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>SnowGolem</Name>
+    </None>
+    <None Include="World\Species\Spider.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Spider</Name>
+    </None>
+    <None Include="World\Species\Troll.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>Troll</Name>
+    </None>
+    <None Include="World\Species\WhiteRabbit.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>WhiteRabbit</Name>
+    </None>
     <None Include="World\Classes\Chicken.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Chicken</Name>

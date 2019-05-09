@@ -89,9 +89,14 @@ namespace DwarfCorp
         public int NumBlocksPlaced = 0;
         public int XP = 0;
         public int LevelIndex = 0;
+
         public String ClassName = "";
         [JsonIgnore] public CreatureClass CurrentClass { get; private set; }
-        [JsonIgnore] public CreatureClass.Level CurrentLevel => CurrentClass.Levels[LevelIndex]; 
+        [JsonIgnore] public CreatureClass.Level CurrentLevel => CurrentClass.Levels[LevelIndex];
+
+        public String SpeciesName = "";
+        [JsonIgnore] public CreatureSpecies Species { get; private set; }
+
         public Task.TaskCategory AllowedTasks = Task.TaskCategory.Attack | Task.TaskCategory.Gather | Task.TaskCategory.Plant | Task.TaskCategory.Harvest | Task.TaskCategory.Chop | Task.TaskCategory.Wrangle | Task.TaskCategory.TillSoil;
         public bool IsMigratory = false;
         [JsonIgnore] public bool IsOverQualified => CurrentClass != null ? CurrentClass.Levels.Count > LevelIndex + 1 && XP > CurrentClass.Levels[LevelIndex + 1].XP : false;
@@ -117,12 +122,17 @@ namespace DwarfCorp
         void OnDeserializing(StreamingContext context)
         {
             CurrentClass = Library.GetClass(ClassName);
+            Species = Library.GetSpecies(SpeciesName);
         }
 
-        public CreatureStats(String ClassName, int level) : this()
+        public CreatureStats(String SpeciesName, String ClassName, int level) : this()
         {
             this.ClassName = ClassName;
             CurrentClass = Library.GetClass(ClassName);
+
+            this.SpeciesName = SpeciesName;
+            Species = Library.GetSpecies(SpeciesName);
+
             AllowedTasks = CurrentClass.Actions;
             LevelIndex = level;
             XP = CurrentClass.Levels[level].XP;

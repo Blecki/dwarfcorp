@@ -15,7 +15,7 @@ namespace DwarfCorp
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new Troll(
-                new CreatureStats("Troll", 0),
+                new CreatureStats("Troll", "Troll", 0),
                 "Goblins",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Goblins"],

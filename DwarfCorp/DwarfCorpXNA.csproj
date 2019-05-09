@@ -185,9 +185,11 @@
     <Compile Include="AssetManagement\IndexedDecomposition.cs" />
     <Compile Include="AssetManagement\ModMetaData.cs" />
     <Compile Include="AssetManagement\StringLibrary.cs" />
+    <Compile Include="Components\AI\SpeciesLibrary.cs" />
     <Compile Include="Components\AI\ClassLibrary.cs" />
     <Compile Include="Components\AI\Creature-Indicators.cs" />
     <Compile Include="Components\AI\Creature-Reproduction.cs" />
+    <Compile Include="Components\AI\CreatureSpecies.cs" />
     <Compile Include="Components\AI\CreatureStats-Buffs.cs" />
     <Compile Include="Components\AI\CreatureStats-Disease.cs" />
     <Compile Include="Components\AI\CreatureStats-Status.cs" />

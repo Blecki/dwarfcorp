@@ -35,7 +35,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats("Snake", 0)
+                new CreatureStats("Snake", "Snake", 0)
                 {
                 },
                 "Evil",

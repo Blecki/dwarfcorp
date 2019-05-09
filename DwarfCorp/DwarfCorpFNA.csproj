@@ -140,6 +140,7 @@
     <Compile Include="Components\AI\Creature-Indicators.cs" />
     <Compile Include="Components\AI\CreatureClass.cs" />
     <Compile Include="Components\AI\ClassLibrary.cs" />
+    <Compile Include="Components\AI\CreatureSpecies.cs" />
     <Compile Include="Components\AI\CreatureStats-Buffs.cs" />
     <Compile Include="Components\AI\CreatureStats-Disease.cs" />
     <Compile Include="Components\AI\CreatureStats.cs" />
@@ -262,6 +263,7 @@
     <Compile Include=".\Entities\Fixtures\Target.cs" />
     <Compile Include=".\Entities\Fixtures\WeightRack.cs" />
     <Compile Include=".\Entities\Fixtures\WorkPile.cs" />
+    <Compile Include="Components\AI\SpeciesLibrary.cs" />
     <Compile Include="Components\AI\StatAdjustment.cs" />
     <Compile Include="Components\AI\Status.cs" />
     <Compile Include="Components\Graphics\PrimitiveComponent.cs" />

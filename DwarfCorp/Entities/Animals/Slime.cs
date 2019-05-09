@@ -50,7 +50,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats("Slime", 0),
+                new CreatureStats("Slime", "Slime", 0),
                 "Demon",
                 manager.World.PlanService,
                 manager.World.Factions.Factions["Demon"],

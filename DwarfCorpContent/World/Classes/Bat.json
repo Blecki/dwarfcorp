@@ -2,8 +2,6 @@
   "Name": "Bat",
   "Actions": 24592,
   "AttackMode": "Attacking",
-  "BabyType": "Bat",
-  "CanReproduce": true,
   "Weapons": [
     {
       "DamageAmount": 0.1,
@@ -58,5 +56,4 @@
       "HealingPower": 0
     }
   ]
-
 }

@@ -87,7 +87,7 @@ namespace DwarfCorp
             var skinPalette = LayeredSprites.LayerLibrary.EnumeratePalettes().Where(p => p.Layer.Contains("face")).SelectRandom(random);
             LayeredSprites.LayerStack sprite = new LayeredSprites.LayerStack();
 
-            CreatureStats stats = new CreatureStats(ClassName, LevelIndex)
+            CreatureStats stats = new CreatureStats("Dwarf", ClassName, LevelIndex)
             {
                 Gender = this.Gender
             };

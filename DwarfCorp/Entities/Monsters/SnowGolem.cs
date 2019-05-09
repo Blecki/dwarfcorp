@@ -16,7 +16,7 @@ namespace DwarfCorp
         private static GameComponent __factory1(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
             return new SnowGolem(
-                new CreatureStats("SnowGolem", 0),
+                new CreatureStats("SnowGolem", "SnowGolem", 0),
                 "Evil",
                 Manager.World.PlanService,
                 Manager.World.Factions.Factions["Evil"],

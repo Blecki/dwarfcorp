@@ -16,7 +16,7 @@ namespace DwarfCorp
                 return;
             ClassesInitialized = true;
 
-            var list = FileUtils.LoadJsonListFromDirectory<CreatureClass>(ContentPaths.creature_classes, null, c => c.Name);
+            var list = FileUtils.LoadJsonListFromDirectory<CreatureClass>("World\\Classes", null, c => c.Name);
 
             Classes = new Dictionary<String, CreatureClass>();
             foreach (var item in list)

@@ -28,7 +28,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats("Chimp", 0)
+                new CreatureStats("Chimp", "Chimp", 0)
                 {
                     CanSleep = false,
                     IsMigratory = true
