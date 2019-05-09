@@ -88,7 +88,7 @@ namespace DwarfCorp
                 // If the voxel has been destroyed by you, gather it.
                 if (OwnerTask.VoxelHealth <= 0.0f)
                 {
-                    var voxelType = VoxelLibrary.GetVoxelType(vox.Type.Name);
+                    var voxelType = Library.GetVoxelType(vox.Type.Name);
                     if (MathFunctions.RandEvent(0.5f))
                     {
                         Creature.AI.AddXP(Math.Max((int)(voxelType.StartingHealth / 4), 1));

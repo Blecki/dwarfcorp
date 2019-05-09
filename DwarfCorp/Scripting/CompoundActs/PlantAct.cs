@@ -81,7 +81,7 @@ namespace DwarfCorp
 
                     if (FarmToWork.Progress >= (FarmToWork.TargetProgress * 0.5f) && FarmToWork.Voxel.Type.Name != "TilledSoil")
                     {
-                        FarmToWork.Voxel.Type = VoxelLibrary.GetVoxelType("TilledSoil");
+                        FarmToWork.Voxel.Type = Library.GetVoxelType("TilledSoil");
                     }
 
                     if (FarmToWork.Progress >= FarmToWork.TargetProgress && !FarmToWork.Finished)

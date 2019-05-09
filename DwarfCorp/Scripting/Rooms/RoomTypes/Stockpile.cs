@@ -33,7 +33,7 @@ namespace DwarfCorp
         {
             Boxes = new List<GameComponent>();
             Faction.Stockpiles.Add(this);
-            ReplacementType = VoxelLibrary.GetVoxelType("Stockpile");
+            ReplacementType = Library.GetVoxelType("Stockpile");
             this.Faction = Faction;
             BlacklistResources = new List<Resource.ResourceTags>()
             {

@@ -539,7 +539,7 @@ namespace DwarfCorp.GameStates
 
             int newNum = Math.Max(resourceCount -
                 World.PlayerFaction.Designations.EnumerateDesignations(DesignationType.Put).Count(d =>
-                    BuildRequirementsEqual(VoxelLibrary.GetVoxelType(d.Tag.ToString()), data)), 0);
+                    BuildRequirementsEqual(Library.GetVoxelType(d.Tag.ToString()), data)), 0);
 
             if (newNum != numResources)
             {
@@ -1328,7 +1328,7 @@ namespace DwarfCorp.GameStates
                     widget.Clear();
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_WallTypes_Return }).Concat(
-                        VoxelLibrary.EnumerateTypes()
+                        Library.EnumerateVoxelTypes()
                         .Where(voxel => voxel.IsBuildable && World.PlayerFaction.ListResources().Any(r =>voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.Type))))
                         .Select(data => new FlatToolTray.Icon
                         {
@@ -1378,7 +1378,7 @@ namespace DwarfCorp.GameStates
                     widget.Clear();
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_WallTypes_Return }).Concat(
-                        VoxelLibrary.EnumerateTypes()
+                        Library.EnumerateVoxelTypes()
                         .Where(voxel => voxel.IsBuildable && World.PlayerFaction.ListResources().Any(r => voxel.CanBuildWith(ResourceLibrary.GetResourceByName(r.Value.Type))))
                         .Select(data => new FlatToolTray.Icon
                         {
@@ -1786,7 +1786,7 @@ namespace DwarfCorp.GameStates
                     widget.Clear();
                     (widget as FlatToolTray.Tray).ItemSource =
                         (new Widget[] { icon_menu_Rail_Return, icon_menu_Rail_Paint }).Concat(
-                            Rail.RailLibrary.EnumeratePatterns()
+                            Library.EnumerateRailPatterns()
                             .Select(data => new FlatToolTray.Icon
                             {
                                 Tooltip = "Build " + data.Name,

@@ -89,7 +89,7 @@ namespace DwarfCorp
                                 continue;
                             }
 
-                            assignments.Add(new BuildVoxelTask(r, VoxelLibrary.GetVoxelType(CurrentVoxelType).Name));
+                            assignments.Add(new BuildVoxelTask(r, Library.GetVoxelType(CurrentVoxelType).Name));
                         }
 
                         //TaskManager.AssignTasks(assignments, Faction.FilterMinionsWithCapability(Player.World.Master.SelectedMinions, GameMaster.ToolMode.BuildZone));
@@ -163,7 +163,7 @@ namespace DwarfCorp
                 foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    VoxelLibrary.GetPrimitive(CurrentVoxelType).Render(GameState.Game.GraphicsDevice);
+                    Library.GetVoxelPrimitive(CurrentVoxelType).Render(GameState.Game.GraphicsDevice);
                 }
             }
         }

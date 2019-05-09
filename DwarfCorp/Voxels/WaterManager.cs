@@ -112,7 +112,7 @@ namespace DwarfCorp
             if ((From == LiquidType.Lava && To == LiquidType.Water)
                 || (From == LiquidType.Water && To == LiquidType.Lava))
             {
-                Vox.Type = VoxelLibrary.GetVoxelType("Stone");
+                Vox.Type = Library.GetVoxelType("Stone");
                 Vox.QuickSetLiquid(LiquidType.None, 0);
             }            
         }
@@ -207,7 +207,7 @@ namespace DwarfCorp
                     if (currentVoxel.LiquidLevel <= EvaporationLevel && MathFunctions.RandEvent(0.01f))
                     {
                         if (currentVoxel.LiquidType == LiquidType.Lava)
-                            currentVoxel.Type = VoxelLibrary.GetVoxelType("Stone");
+                            currentVoxel.Type = Library.GetVoxelType("Stone");
 
                         NeedsMinimapUpdate = true;
                         currentVoxel.QuickSetLiquid(LiquidType.None, 0);

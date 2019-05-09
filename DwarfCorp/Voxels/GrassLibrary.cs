@@ -8,16 +8,16 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public static class GrassLibrary
+    public static partial class Library
     {
-        private static Dictionary<string, GrassType> Types = new Dictionary<string, GrassType>();
-        private static List<GrassType> TypeList;
-        private static bool Initialized = false;
+        private static Dictionary<string, GrassType> GrassTypes = new Dictionary<string, GrassType>();
+        private static List<GrassType> GrassTypeList;
+        private static bool GrassLibraryInitialized = false;
 
-        public static IEnumerable<GrassType> EnumerateTypes()
+        public static IEnumerable<GrassType> EnumerateGrassTypes()
         {
-            InitializeLibrary();
-            return TypeList;
+            InitializeGrassLibrary();
+            return GrassTypeList;
         }
 
         private static GrassType.FringeTileUV[] CreateFringeUVs(Point[] Tiles)
@@ -47,15 +47,15 @@ namespace DwarfCorp
             return r;
         }
 
-        private static void InitializeLibrary()
+        private static void InitializeGrassLibrary()
         {
-            if (Initialized) return;
-            Initialized = true;
+            if (GrassLibraryInitialized) return;
+            GrassLibraryInitialized = true;
 
-            TypeList = FileUtils.LoadJsonListFromDirectory<GrassType>(ContentPaths.grass_types, null, g => g.Name);
+            GrassTypeList = FileUtils.LoadJsonListFromDirectory<GrassType>(ContentPaths.grass_types, null, g => g.Name);
 
             byte ID = 1;
-            foreach (var type in TypeList)
+            foreach (var type in GrassTypeList)
             {
                 if (type.Name == "_empty")
                 {
@@ -68,7 +68,7 @@ namespace DwarfCorp
                     ++ID;
                 }
 
-                Types[type.Name] = type;
+                GrassTypes[type.Name] = type;
 
                 if (type.FringeTiles != null)
                     type.FringeTransitionUVs = CreateFringeUVs(type.FringeTiles);
@@ -83,35 +83,35 @@ namespace DwarfCorp
             if (ID > VoxelConstants.MaximumGrassTypes)
                 Console.WriteLine("Allowed number of grass types exceeded. Limit is " + VoxelConstants.MaximumGrassTypes);
 
-            TypeList = TypeList.OrderBy(v => v.ID).ToList();
+            GrassTypeList = GrassTypeList.OrderBy(v => v.ID).ToList();
 
             Console.WriteLine("Loaded Grass Library.");
         }
 
         public static GrassType GetGrassType(byte id)
         {
-            InitializeLibrary();
-            return TypeList[id];
+            InitializeGrassLibrary();
+            return GrassTypeList[id];
         }
 
         public static GrassType GetGrassType(string name)
         {
-            InitializeLibrary();
+            InitializeGrassLibrary();
             if (name == null)
             {
                 return null;
             }
             GrassType r = null;
-            Types.TryGetValue(name, out r);
+            GrassTypes.TryGetValue(name, out r);
             return r;
         }
 
         public static Dictionary<int, String> GetGrassTypeMap()
         {
-            InitializeLibrary();
+            InitializeGrassLibrary();
             var r = new Dictionary<int, String>();
-            for (var i = 0; i < TypeList.Count; ++i)
-                r.Add(i, TypeList[i].Name);
+            for (var i = 0; i < GrassTypeList.Count; ++i)
+                r.Add(i, GrassTypeList[i].Name);
             return r;
         }
     }

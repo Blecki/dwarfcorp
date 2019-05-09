@@ -193,7 +193,7 @@ namespace DwarfCorp
             set
             {
                 //_cache_Chunk.Data.Types[_cache_Index] = value;
-                OnTypeSet(VoxelLibrary.GetVoxelType(value));
+                OnTypeSet(Library.GetVoxelType(value));
             }
         }
 
@@ -203,7 +203,7 @@ namespace DwarfCorp
         {
             get
             {
-                return VoxelLibrary.GetVoxelType(_cache_Chunk.Data.Types[_cache_Index]);
+                return Library.GetVoxelType(_cache_Chunk.Data.Types[_cache_Index]);
             }
             set
             {
@@ -364,7 +364,7 @@ namespace DwarfCorp
         /// <param name="Type"></param>
         public void RawSetGrass(byte Type)
         {
-            _cache_Chunk.Data.Grass[_cache_Index] = (byte)((Type << VoxelConstants.GrassTypeShift) + (GrassLibrary.GetGrassType(Type).InitialDecayValue & VoxelConstants.GrassDecayMask));
+            _cache_Chunk.Data.Grass[_cache_Index] = (byte)((Type << VoxelConstants.GrassTypeShift) + (Library.GetGrassType(Type).InitialDecayValue & VoxelConstants.GrassDecayMask));
         }
 
         private void OnTypeSet(VoxelType NewType)

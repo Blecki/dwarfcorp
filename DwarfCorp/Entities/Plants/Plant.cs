@@ -65,7 +65,7 @@ namespace DwarfCorp
                 (v) =>
                 {
                     if (v.Type == VoxelChangeEventType.VoxelTypeChanged
-                        && (v.NewVoxelType == 0 || !VoxelLibrary.GetVoxelType(v.NewVoxelType).IsSoil))
+                        && (v.NewVoxelType == 0 || !Library.GetVoxelType(v.NewVoxelType).IsSoil))
                     {
                         Die();
                     }

@@ -128,7 +128,7 @@ namespace DwarfCorp.Rail
         {
             base.CreateCosmeticChildren(manager);
 
-            var piece = RailLibrary.GetRailPiece(Piece.RailPiece);
+            var piece = Library.GetRailPiece(Piece.RailPiece);
             Sheet = new SpriteSheet(ContentPaths.rail_tiles, 32, 32);
             
             AddChild(new GenericVoxelListener(manager, Matrix.Identity, new Vector3(0.8f, 1.5f, 0.8f), Vector3.Zero, (_event) =>
@@ -154,7 +154,7 @@ namespace DwarfCorp.Rail
 
         public Vector3 InterpolateSpline(float t, Vector3 origin, Vector3 destination)
         {
-            var piece = Rail.RailLibrary.GetRailPiece(Piece.RailPiece);
+            var piece = Library.GetRailPiece(Piece.RailPiece);
             List<Vector3> selectedSpline = null;
             bool isReversed = false;
             var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
@@ -243,7 +243,7 @@ namespace DwarfCorp.Rail
                 //Drawer3D.DrawBox(GetContainingVoxel().GetBoundingBox(), Color.White, 0.01f, true);
                 //Drawer3D.DrawLine(GetContainingVoxel().GetBoundingBox().Center(), GlobalTransform.Translation, Color.White, 0.01f);
                 var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
-                var piece = Rail.RailLibrary.GetRailPiece(Piece.RailPiece);
+                var piece = Library.GetRailPiece(Piece.RailPiece);
 
                 foreach (var spline in piece.SplinePoints)
                     for (var i = 1; i < spline.Count; ++i)
@@ -275,7 +275,7 @@ namespace DwarfCorp.Rail
             {
                 var bounds = Vector4.Zero;
                 var uvs = Sheet.GenerateTileUVs(Frame, out bounds);
-                var rawPiece = RailLibrary.GetRailPiece(Piece.RailPiece);
+                var rawPiece = Library.GetRailPiece(Piece.RailPiece);
 
                 var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation);
 
@@ -470,7 +470,7 @@ namespace DwarfCorp.Rail
         {
             var uvDelta = sideUvs[1].X - sideUvs[0].X;
 
-            foreach (var railSpline in RailLibrary.GetRailPiece(Piece.RailPiece).RailSplines)
+            foreach (var railSpline in Library.GetRailPiece(Piece.RailPiece).RailSplines)
             {
                 var uvStep = 1.0f / (railSpline.Count - 1);
 
@@ -505,7 +505,7 @@ namespace DwarfCorp.Rail
 
         public List<Tuple<Vector3, Vector3>> GetTransformedConnections()
         {
-            var piece = RailLibrary.GetRailPiece(Piece.RailPiece);
+            var piece = Library.GetRailPiece(Piece.RailPiece);
             var transform = Matrix.CreateRotationY((float)Math.PI * 0.5f * (float)Piece.Orientation) * GlobalTransform;
             return piece.EnumerateConnections().Select(l => Tuple.Create(Vector3.Transform(l.Item1, transform), Vector3.Transform(l.Item2, transform))).ToList();
         }
@@ -531,7 +531,7 @@ namespace DwarfCorp.Rail
         {
             global::System.Diagnostics.Debug.Assert(NeighborRails.Count == 0);
 
-            var myPiece = RailLibrary.GetRailPiece(Piece.RailPiece);
+            var myPiece = Library.GetRailPiece(Piece.RailPiece);
 
             var myEndPoints = GetTransformedConnections().SelectMany(l => new Vector3[] { l.Item1, l.Item2 });
             foreach (var entity in Manager.World.EnumerateIntersectingObjects(this.BoundingBox.Expand(0.5f), CollisionType.Static))
@@ -562,7 +562,7 @@ namespace DwarfCorp.Rail
                             }
                     }
 
-                    var neighborPiece = RailLibrary.GetRailPiece(neighborRail.Piece.RailPiece);
+                    var neighborPiece = Library.GetRailPiece(neighborRail.Piece.RailPiece);
                     if (neighborPiece.AutoSlope)
                     {
                         var loweredPoint = point - new Vector3(0.0f, 1.0f, 0.0f);
@@ -613,7 +613,7 @@ namespace DwarfCorp.Rail
 
             LocalTransform = Matrix.CreateTranslation(Location.WorldPosition + new Vector3(Piece.Offset.X, 0, Piece.Offset.Y) + new Vector3(0.5f, 0.2f, 0.5f));
 
-            var piece = RailLibrary.GetRailPiece(Piece.RailPiece);
+            var piece = Library.GetRailPiece(Piece.RailPiece);
             Frame = piece.Tile;
             ResetPrimitive();
 

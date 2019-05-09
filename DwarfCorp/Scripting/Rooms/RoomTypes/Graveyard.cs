@@ -51,7 +51,7 @@ namespace DwarfCorp
 
         public Graveyard()
         {
-            ReplacementType = VoxelLibrary.GetVoxelType("Dirt");
+            ReplacementType = Library.GetVoxelType("Dirt");
         }
 
         public override string GetDescriptionString()
@@ -63,7 +63,7 @@ namespace DwarfCorp
             base(Data, Faction, World)
         {
             Resources = new ResourceContainer();
-            ReplacementType = VoxelLibrary.GetVoxelType("Dirt");
+            ReplacementType = Library.GetVoxelType("Dirt");
 
             WhitelistResources = new List<Resource.ResourceTags>()
             {

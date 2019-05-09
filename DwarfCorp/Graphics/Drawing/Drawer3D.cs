@@ -383,7 +383,7 @@ namespace DwarfCorp
                         foreach (EffectPass pass in Effect.CurrentTechnique.Passes)
                         {
                             pass.Apply();
-                            VoxelLibrary.GetPrimitive(type).Render(Device);
+                            Library.GetVoxelPrimitive(type).Render(Device);
                         }
 
                         Effect.LightRamp = Color.White;

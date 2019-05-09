@@ -106,7 +106,7 @@ namespace DwarfCorp.Gui.Widgets
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
                         Columns = 3,
-                        ItemSource = VoxelLibrary.EnumerateTypes()
+                        ItemSource = Library.EnumerateVoxelTypes()
                             .Where(t => t.Name != "_empty" && t.Name != "water")
                             .OrderBy(s => s.Name)
                             .Select(s =>
@@ -142,7 +142,7 @@ namespace DwarfCorp.Gui.Widgets
                     ExpansionChild = new HorizontalMenuTray.Tray
                     {
                         Columns = 3,
-                        ItemSource = GrassLibrary.EnumerateTypes()
+                        ItemSource = Library.EnumerateGrassTypes()
                             .OrderBy(s => s.Name)
                             .Select(s =>
                                 new HorizontalMenuTray.MenuItem
@@ -168,7 +168,7 @@ namespace DwarfCorp.Gui.Widgets
                                 {
                                     Columns = 2,
                                     ItemSize = new Point(200, 20),
-                                    ItemSource = Rail.RailLibrary.EnumeratePieces().Select(p =>
+                                    ItemSource = Library.EnumerateRailPieces().Select(p =>
                                         new HorizontalMenuTray.MenuItem
                                         {
                                             Text = p.Name,
@@ -183,7 +183,7 @@ namespace DwarfCorp.Gui.Widgets
                                 ExpansionChild = new HorizontalMenuTray.Tray
                                 {
                                     Columns = 1,
-                                    ItemSource = Rail.RailLibrary.EnumeratePatterns().Select( p =>
+                                    ItemSource = Library.EnumerateRailPatterns().Select( p =>
                                         new HorizontalMenuTray.MenuItem
                                         {
                                             Text = p.Name,

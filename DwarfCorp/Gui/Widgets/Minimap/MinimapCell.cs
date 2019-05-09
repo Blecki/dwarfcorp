@@ -58,17 +58,17 @@ namespace DwarfCorp.Gui.Widgets.Minimap
                     }
                     else if (SurfaceVoxel.LiquidType == LiquidType.Water)
                     {
-                        Color = VoxelLibrary.GetVoxelType("water").MinimapColor;
+                        Color = Library.GetVoxelType("water").MinimapColor;
                         return;
                     }
                     else if (SurfaceVoxel.LiquidType == LiquidType.Lava)
                     {
-                        Color = VoxelLibrary.GetVoxelType("lava").MinimapColor;
+                        Color = Library.GetVoxelType("lava").MinimapColor;
                         return;
                     }
                     else if (SurfaceVoxel.GrassType != 0)
                     {
-                        Color = GrassLibrary.GetGrassType(SurfaceVoxel.GrassType).MinimapColor;
+                        Color = Library.GetGrassType(SurfaceVoxel.GrassType).MinimapColor;
                         return;
                     }
                     else if (!SurfaceVoxel.IsEmpty)

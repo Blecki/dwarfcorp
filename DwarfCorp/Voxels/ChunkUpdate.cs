@@ -74,7 +74,7 @@ namespace DwarfCorp
                         // Allow grass to decay
                         if (voxel.GrassType != 0)
                         {
-                            var grass = GrassLibrary.GetGrassType(voxel.GrassType);
+                            var grass = Library.GetGrassType(voxel.GrassType);
 
                             if (grass.NeedsSunlight && !voxel.Sunlight)
                                 voxel.GrassType = 0;
@@ -82,7 +82,7 @@ namespace DwarfCorp
                             {                                
                                 if (voxel.GrassDecay == 0)
                                 {
-                                    var newDecal = GrassLibrary.GetGrassType(grass.BecomeWhenDecays);
+                                    var newDecal = Library.GetGrassType(grass.BecomeWhenDecays);
                                     if (newDecal != null)
                                         voxel.GrassType = newDecal.ID;
                                     else
@@ -108,7 +108,7 @@ namespace DwarfCorp
                             var grassyNeighbors = VoxelHelpers.EnumerateManhattanNeighbors2D(voxel.Coordinate)
                                 .Select(c => new VoxelHandle(voxel.Chunk.Manager, c))
                                 .Where(v => v.IsValid && v.GrassType != 0)
-                                .Where(v => GrassLibrary.GetGrassType(v.GrassType).Spreads)
+                                .Where(v => Library.GetGrassType(v.GrassType).Spreads)
                                 .Where(v => biome == Overworld.GetBiomeAt(chunk.Manager.World.GenerationSettings.Overworld.Map, v.Coordinate.ToVector3(), chunk.Manager.World.WorldScale, chunk.Manager.World.WorldOrigin))
                                 .ToList();
 
@@ -123,7 +123,7 @@ namespace DwarfCorp
             foreach (var v in addGrassToThese)
             {
                 var l = v.Item1;
-                var grassType = GrassLibrary.GetGrassType(v.Item2);
+                var grassType = Library.GetGrassType(v.Item2);
                 if (grassType.NeedsSunlight && !l.Sunlight)
                     continue;
                 l.GrassType = v.Item2;

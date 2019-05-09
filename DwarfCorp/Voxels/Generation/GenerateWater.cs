@@ -17,7 +17,7 @@ namespace DwarfCorp.Generation
     {
         public static void GenerateWater(VoxelChunk chunk, GeneratorSettings Settings)
         {
-            var iceID = VoxelLibrary.GetVoxelType("Ice");
+            var iceID = Library.GetVoxelType("Ice");
 
             for (var x = 0; x < VoxelConstants.ChunkSizeX; ++x)
             {

@@ -123,7 +123,7 @@ namespace DwarfCorp
                 grabbed.GetRoot().GetComponent<Physics>().CollideMode = Physics.CollisionMode.None;
                 grabbed.AnimationQueue.Add(motion);
 
-                var putType = VoxelLibrary.GetVoxelType(VoxelType);
+                var putType = Library.GetVoxelType(VoxelType);
 
                 motion.OnComplete += () =>
                 {

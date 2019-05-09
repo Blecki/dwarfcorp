@@ -41,7 +41,7 @@ namespace DwarfCorp.Generation
 
                         if (globalY == 0)
                         {
-                            voxel.RawSetType(VoxelLibrary.GetVoxelType("Bedrock"));
+                            voxel.RawSetType(Library.GetVoxelType("Bedrock"));
                             continue;
                         }
 
@@ -56,24 +56,24 @@ namespace DwarfCorp.Generation
                                 subsurfaceLayer += 1;
                             }
 
-                            voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SubsurfaceLayers[subsurfaceLayer].VoxelType));
+                            voxel.RawSetType(Library.GetVoxelType(biomeData.SubsurfaceLayers[subsurfaceLayer].VoxelType));
                         }
                         // Otherwise, on the surface.
                         else if ((globalY == (int)height || globalY == stoneHeight) && normalizedHeight > waterHeight)
                         {
-                            voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
+                            voxel.RawSetType(Library.GetVoxelType(biomeData.SoilLayer.VoxelType));
 
                             if (!String.IsNullOrEmpty(biomeData.GrassDecal))
                                 if (!biomeData.ClumpGrass || (biomeData.ClumpGrass 
                                     && Settings.NoiseGenerator.Noise(overworldPosition.X / biomeData.ClumpSize, 0, overworldPosition.Y / biomeData.ClumpSize) > biomeData.ClumpTreshold))
-                                    voxel.RawSetGrass(GrassLibrary.GetGrassType(biomeData.GrassDecal).ID);
+                                    voxel.RawSetGrass(Library.GetGrassType(biomeData.GrassDecal).ID);
                         }
                         else if (globalY > height && globalY > 0)
-                            voxel.RawSetType(VoxelLibrary.EmptyType);
+                            voxel.RawSetType(Library.EmptyVoxelType);
                         else if (normalizedHeight <= waterHeight)
-                            voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.ShoreVoxel));
+                            voxel.RawSetType(Library.GetVoxelType(biomeData.ShoreVoxel));
                         else
-                            voxel.RawSetType(VoxelLibrary.GetVoxelType(biomeData.SoilLayer.VoxelType));
+                            voxel.RawSetType(Library.GetVoxelType(biomeData.SoilLayer.VoxelType));
                     }
                 }
 

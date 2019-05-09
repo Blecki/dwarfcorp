@@ -125,7 +125,7 @@ namespace DwarfCorp
             }
             else if (Command.Contains("Grass/"))
             {
-                var type = GrassLibrary.GetGrassType(Command.Substring(6));
+                var type = Library.GetGrassType(Command.Substring(6));
                 foreach (var vox in refs.Where(v => v.IsValid))
                 {
                     var v = vox;
@@ -154,7 +154,7 @@ namespace DwarfCorp
                     {
                         string type = Command.Substring(6);
                         var v = vox;
-                        v.Type = VoxelLibrary.GetVoxelType(type);
+                        v.Type = Library.GetVoxelType(type);
                         v.QuickSetLiquid(LiquidType.None, 0);
 
                         if (type == "Magic")
@@ -172,7 +172,7 @@ namespace DwarfCorp
                                 {
                                     var v = vox;
                                     Player.World.Master.Faction.OnVoxelDestroyed(vox);
-                                    v.Type = VoxelLibrary.EmptyType;
+                                    v.Type = Library.EmptyVoxelType;
                                     v.QuickSetLiquid(LiquidType.None, 0);
                                 }
                                 break;
@@ -181,7 +181,7 @@ namespace DwarfCorp
                                     for (var y = 1; y < Player.World.WorldSizeInVoxels.Y; ++y)
                                     {
                                         var v = Player.World.ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(vox.Coordinate.X, y, vox.Coordinate.Z));
-                                        v.Type = VoxelLibrary.EmptyType;
+                                        v.Type = Library.EmptyVoxelType;
                                         v.QuickSetLiquid(LiquidType.None, 0);
                                     }
                                 }

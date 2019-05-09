@@ -105,7 +105,7 @@ namespace DwarfCorp.Rail
             if (Entity is RailEntity)
             {
                 var baseJunction = (Entity as RailEntity).GetPiece();
-                var basePiece = Rail.RailLibrary.GetRailPiece(baseJunction.RailPiece);
+                var basePiece = Library.GetRailPiece(baseJunction.RailPiece);
                 var relativeOrientation = Rail.OrientationHelper.Relative(baseJunction.Orientation, Piece.Orientation);
 
                 if (basePiece.Name == Piece.RailPiece && relativeOrientation == PieceOrientation.North)
@@ -115,8 +115,7 @@ namespace DwarfCorp.Rail
                         ResultRelativeOrientation = PieceOrientation.North
                     };
 
-                var matchingCombination = RailLibrary.CombinationTable.FindCombination(
-                    basePiece.Name, Piece.RailPiece, relativeOrientation);
+                var matchingCombination = Library.FindRailCombination(basePiece.Name, Piece.RailPiece, relativeOrientation);
                 return matchingCombination;
             }
 

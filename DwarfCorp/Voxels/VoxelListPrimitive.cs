@@ -149,7 +149,7 @@ namespace DwarfCorp
             DebugHelper.AssertNotNull(DesignationDrawer);
             DebugHelper.AssertNotNull(World);
 
-            BoxPrimitive bedrockModel = VoxelLibrary.GetPrimitive("Bedrock");
+            BoxPrimitive bedrockModel = Library.GetVoxelPrimitive("Bedrock");
             var sliceStack = new List<RawPrimitive>();
             var cache = new Cache();
             int maxViewingLevel = chunk.Manager.World.Master == null ? chunk.Manager.World.WorldSizeInVoxels.Y : chunk.Manager.World.Master.MaxViewingLevel;
@@ -270,7 +270,7 @@ namespace DwarfCorp
 
             if ((v.IsExplored && v.IsEmpty)) return;
 
-            var primitive = VoxelLibrary.GetPrimitive(v.Type);
+            var primitive = Library.GetVoxelPrimitive(v.Type);
             if (v.IsExplored && primitive == null) return;
             if (!v.IsExplored && v.Sunlight) return;
 
@@ -310,7 +310,7 @@ namespace DwarfCorp
 
                     if (designationVisible)
                     {
-                        var desPrim = VoxelLibrary.GetPrimitive(VoxelLibrary.DesignationType);
+                        var desPrim = Library.GetVoxelPrimitive(Library.DesignationVoxelType);
                         switch (props.DrawType)
                         {
                             case DesignationDrawer.DesignationTypeProperties.DrawBoxType.FullBox:
@@ -322,7 +322,7 @@ namespace DwarfCorp
                                 break;
                             case DesignationDrawer.DesignationTypeProperties.DrawBoxType.PreviewVoxel:
                                 {
-                                    var previewPrim = VoxelLibrary.GetPrimitive(VoxelLibrary.GetVoxelType(designation.Tag.ToString()));
+                                    var previewPrim = Library.GetVoxelPrimitive(Library.GetVoxelType(designation.Tag.ToString()));
                                     var offsetMatrix = Matrix.Identity;
                                     if (!v.IsEmpty)
                                         offsetMatrix = Matrix.CreateTranslation(0.0f, 0.1f, 0.0f);
@@ -564,7 +564,7 @@ namespace DwarfCorp
         {
             if (V.GrassType == 0) return;
 
-            var decalType = GrassLibrary.GetGrassType(V.GrassType);
+            var decalType = Library.GetGrassType(V.GrassType);
 
             AddGrassGeometry(Into, Cache.AmbientValues, Primitive, V, Face, ExploredVerts, VertexPositions, VertexColors, VertexTint, decalType);
 
@@ -586,7 +586,7 @@ namespace DwarfCorp
                     if (!neighbor.IsEmpty)
                     {
                         if (neighbor.GrassType != 0 &&
-                            GrassLibrary.GetGrassType(neighbor.GrassType).FringePrecedence >= decalType.FringePrecedence)
+                            Library.GetGrassType(neighbor.GrassType).FringePrecedence >= decalType.FringePrecedence)
                             continue;
                     }
 
@@ -678,7 +678,7 @@ namespace DwarfCorp
                     if (!handle.IsEmpty)
                     {
                         if (handle.GrassType != 0 &&
-                            GrassLibrary.GetGrassType(handle.GrassType).FringePrecedence >= decalType.FringePrecedence)
+                            Library.GetGrassType(handle.GrassType).FringePrecedence >= decalType.FringePrecedence)
                             continue;
                     }
 
@@ -991,7 +991,7 @@ namespace DwarfCorp
         private static BoxPrimitive.BoxTextureCoords ComputeTransitionTexture(VoxelHandle V)
         {
             var type = V.Type;
-            var primitive = VoxelLibrary.GetPrimitive(type);
+            var primitive = Library.GetVoxelPrimitive(type);
 
             if (!type.HasTransitionTextures && primitive != null)
                 return primitive.UVs;

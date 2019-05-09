@@ -81,7 +81,7 @@ namespace DwarfCorp
             }
 
 
-            var voxtype = VoxelLibrary.GetVoxelType(VoxType);
+            var voxtype = Library.GetVoxelType(VoxType);
             return agent.Faction.CanBuildVoxel(voxtype) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
@@ -117,7 +117,7 @@ namespace DwarfCorp
 
         public override Act CreateScript(Creature creature)
         {
-            var voxtype = VoxelLibrary.GetVoxelType(VoxType);
+            var voxtype = Library.GetVoxelType(VoxType);
             var resource = creature.Faction.ListResources().Where(r => voxtype.CanBuildWith(ResourceLibrary.GetResourceByName(r.Key))).FirstOrDefault();
             
             if (resource.Key == null)

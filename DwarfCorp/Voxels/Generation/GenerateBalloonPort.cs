@@ -69,7 +69,7 @@ namespace DwarfCorp.Generation
                     for (int y = averageHeight; y < (Settings.OverworldSettings.StartUnderground ? averageHeight + 2 : h) && y < chunkManager.World.WorldSizeInVoxels.Y; y++)
                     {
                         var v = chunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(baseVoxel.Coordinate.X, y, baseVoxel.Coordinate.Z));
-                        v.RawSetType(VoxelLibrary.GetVoxelType(0));
+                        v.RawSetType(Library.GetVoxelType(0));
                         v.RawSetIsExplored();
                         v.QuickSetLiquid(LiquidType.None, 0);
                     }
@@ -113,7 +113,7 @@ namespace DwarfCorp.Generation
                         var v = chunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(baseVoxel.Coordinate.X, y, baseVoxel.Coordinate.Z));
                         if (!v.IsValid) throw new InvalidProgramException("Voxel was invalid while creating a new game's initial zones. This should not happen.");
 
-                        v.RawSetType(VoxelLibrary.GetVoxelType("Scaffold"));
+                        v.RawSetType(Library.GetVoxelType("Scaffold"));
                         v.IsPlayerBuilt = true;
                         v.QuickSetLiquid(LiquidType.None, 0);
                         v.Sunlight = false;

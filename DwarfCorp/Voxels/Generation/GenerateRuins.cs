@@ -53,9 +53,9 @@ namespace DwarfCorp.Generation
                     if (!edge && !baseVoxel.IsEmpty) continue;
 
                     if (edge)
-                        baseVoxel.RawSetType(VoxelLibrary.GetVoxelType(biome.RuinWallType));
+                        baseVoxel.RawSetType(Library.GetVoxelType(biome.RuinWallType));
                     else
-                        baseVoxel.RawSetType(VoxelLibrary.GetVoxelType(biome.RuinFloorType));
+                        baseVoxel.RawSetType(Library.GetVoxelType(biome.RuinFloorType));
 
                     bool[] wallState = new bool[4];
                     wallState[0] = dx == 0;
@@ -106,7 +106,7 @@ namespace DwarfCorp.Generation
                             if (door && dy < 3)
                                 continue;
 
-                            currVoxel.RawSetType(VoxelLibrary.GetVoxelType(biome.RuinWallType));
+                            currVoxel.RawSetType(Library.GetVoxelType(biome.RuinWallType));
                         }
                     }
                 }

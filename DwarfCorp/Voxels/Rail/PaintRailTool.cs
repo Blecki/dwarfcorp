@@ -151,7 +151,7 @@ namespace DwarfCorp.Rail
                     for (; orientationDelta < 8 && !matched; ++orientationDelta)
                     {
                         firstConnection.A = CompassOrientationHelper.Rotate(firstConnection.A, 1);
-                        foreach (var piece in RailLibrary.EnumeratePieces().Where(p => p.CompassConnections.Count != 0))
+                        foreach (var piece in Library.EnumerateRailPieces().Where(p => p.CompassConnections.Count != 0))
                         {
                             for (int j = 0; j < 4 && !matched; ++j)
                                 foreach (var compassConnection in piece.CompassConnections)
@@ -181,7 +181,7 @@ namespace DwarfCorp.Rail
                     for (; orientationDelta < 8 && !matched; ++orientationDelta)
                     {
                         lastConnection.B = CompassOrientationHelper.Rotate(lastConnection.B, 1);
-                        foreach (var piece in RailLibrary.EnumeratePieces().Where(p => p.CompassConnections.Count != 0))
+                        foreach (var piece in Library.EnumerateRailPieces().Where(p => p.CompassConnections.Count != 0))
                         {
                             for (int j = 0; j < 4 && !matched; ++j)
                                 foreach (var compassConnection in piece.CompassConnections)
@@ -275,7 +275,7 @@ namespace DwarfCorp.Rail
                     {
                         var pieceAdded = false;
 
-                        foreach (var piece in RailLibrary.EnumeratePieces().Where(p => p.CompassConnections.Count != 0))
+                        foreach (var piece in Library.EnumerateRailPieces().Where(p => p.CompassConnections.Count != 0))
                         {
                             var matchedOrientation = PieceOrientation.North;
                             CompassConnection matchedConnection = new CompassConnection();

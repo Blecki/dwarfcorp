@@ -52,8 +52,8 @@ namespace DwarfCorp
             chunk.Data.RampsSunlightExploredPlayerBuilt.CopyTo(r.RampsSunlightExplored, 0);
             chunk.Data._Water.CopyTo(r.Liquid, 0);
 
-            r.VoxelTypeMap = VoxelLibrary.GetVoxelTypeMap();
-            r.GrassTypeMap = GrassLibrary.GetGrassTypeMap();
+            r.VoxelTypeMap = Library.GetVoxelTypeMap();
+            r.GrassTypeMap = Library.GetGrassTypeMap();
 
             return r;
         }
@@ -93,7 +93,7 @@ namespace DwarfCorp
                 c.Data.Types[i] = Types[i];
 
             // Remap the saved voxel ids to the ids of the currently loaded voxels.
-            Remap(c.Data.Types.Length, VoxelTypeMap, VoxelLibrary.GetVoxelTypeMap(), (index) => Types[index], (index, value) => c.Data.Types[index] = (byte)value);
+            Remap(c.Data.Types.Length, VoxelTypeMap, Library.GetVoxelTypeMap(), (index) => Types[index], (index, value) => c.Data.Types[index] = (byte)value);
 
             for (var i = 0; i < VoxelConstants.ChunkVoxelCount; ++i)
                 if (c.Data.Types[i] > 0)
@@ -115,7 +115,7 @@ namespace DwarfCorp
                 GrassType.CopyTo(c.Data.Grass, 0);
 
             // Remap grass.
-            Remap(c.Data.Grass.Length, GrassTypeMap, GrassLibrary.GetGrassTypeMap(),
+            Remap(c.Data.Grass.Length, GrassTypeMap, Library.GetGrassTypeMap(),
                 (index) => c.Data.Grass[index] >> VoxelConstants.GrassTypeShift,
                 (index, value) => c.Data.Grass[index] = (byte)((c.Data.Grass[index] & VoxelConstants.GrassDecayMask) | (value << VoxelConstants.GrassTypeShift)));
 

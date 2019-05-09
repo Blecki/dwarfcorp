@@ -92,7 +92,7 @@ namespace DwarfCorp.Generation
                             if (caveBreaksSurface)
                                 break;
 
-                            voxel.RawSetType(VoxelLibrary.EmptyType);
+                            voxel.RawSetType(Library.EmptyVoxelType);
 
                             if (dy == 0)
                             {
@@ -100,8 +100,8 @@ namespace DwarfCorp.Generation
                                 var below = VoxelHelpers.GetVoxelBelow(voxel);
                                 if (below.IsValid)
                                 {
-                                    below.RawSetType(VoxelLibrary.GetVoxelType(biome.SoilLayer.VoxelType));
-                                    var grassType = GrassLibrary.GetGrassType(biome.GrassDecal);
+                                    below.RawSetType(Library.GetVoxelType(biome.SoilLayer.VoxelType));
+                                    var grassType = Library.GetGrassType(biome.GrassDecal);
                                     if (grassType != null)
                                         below.RawSetGrass(grassType.ID);
                                 }

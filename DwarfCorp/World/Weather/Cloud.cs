@@ -230,15 +230,15 @@ namespace DwarfCorp
                 {
                     if (test.GrassType == 0)
                     {
-                        test.GrassType = GrassLibrary.GetGrassType("snow").ID;
-                        test.GrassDecay = GrassLibrary.GetGrassType("snow").InitialDecayValue;
+                        test.GrassType = Library.GetGrassType("snow").ID;
+                        test.GrassDecay = Library.GetGrassType("snow").InitialDecayValue;
                     }
                     else
                     {
-                        var existingGrass = GrassLibrary.GetGrassType((byte)test.GrassType);
+                        var existingGrass = Library.GetGrassType((byte)test.GrassType);
                         if (!String.IsNullOrEmpty(existingGrass.BecomeWhenSnowedOn))
                         {
-                            var newGrass = GrassLibrary.GetGrassType(existingGrass.BecomeWhenSnowedOn);
+                            var newGrass = Library.GetGrassType(existingGrass.BecomeWhenSnowedOn);
                             test.GrassType = newGrass.ID;
                             test.GrassDecay = newGrass.InitialDecayValue;
                         }

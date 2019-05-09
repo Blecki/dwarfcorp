@@ -72,7 +72,7 @@ namespace DwarfCorp
             base((Counter + 1) + ". " + data.Name, world, faction)
         {
             RoomData = data;
-            ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
+            ReplacementType = Library.GetVoxelType(RoomData.FloorType);
             Designations = new List<VoxelHandle>();
             Counter++;
         }
@@ -82,7 +82,7 @@ namespace DwarfCorp
         private void Deserialized(StreamingContext context)
         {
             wasDeserialized = true;
-            ReplacementType = VoxelLibrary.GetVoxelType(RoomData.FloorType);
+            ReplacementType = Library.GetVoxelType(RoomData.FloorType);
         }
 
         public virtual void OnBuilt()
