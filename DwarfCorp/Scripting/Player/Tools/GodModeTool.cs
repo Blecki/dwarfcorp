@@ -78,7 +78,7 @@ namespace DwarfCorp
                 {
                     if (vox.IsEmpty)
                     {
-                        var craftItem = CraftLibrary.GetCraftable(type);
+                        var craftItem = Library.GetCraftable(type);
                         var offset = Vector3.Zero;
 
                         if (craftItem != null)

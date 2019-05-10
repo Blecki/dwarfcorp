@@ -472,7 +472,7 @@ namespace DwarfCorp.Gui.Widgets
                     OnClick = (sender, args) =>
                     {
                         // Copy is required because spawning some types results in the creation of new types. EG, snakes create snake meat.
-                        var itemTypes = CraftLibrary.EnumerateCraftables().Where(craft => craft.Type == CraftItem.CraftType.Object).ToList();
+                        var itemTypes = Library.EnumerateCraftables().Where(craft => craft.Type == CraftItem.CraftType.Object).ToList();
                         int num = itemTypes.Count();
                         float gridSize = (float)Math.Ceiling(Math.Sqrt((double)num));
                         Vector3 gridCenter = Master.World.CursorLightPos;

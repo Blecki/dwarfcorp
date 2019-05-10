@@ -49,7 +49,7 @@ namespace DwarfCorp
             if (resources == null && craftType != null)
             {
                 resources = new List<ResourceAmount>();
-                var craftItem = CraftLibrary.GetCraftable(craftType);
+                var craftItem = Library.GetCraftable(craftType);
                 foreach (var resource in craftItem.RequiredResources)
                 {
                     var genericResource = ResourceLibrary.FindResourcesWithTag(resource.Type).FirstOrDefault();

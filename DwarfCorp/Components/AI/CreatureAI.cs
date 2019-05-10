@@ -919,7 +919,7 @@ namespace DwarfCorp
                 // Craft random items for fun.
                 if (Stats.IsTaskAllowed(Task.TaskCategory.CraftItem) && MathFunctions.RandEvent(0.0005f))
                 {
-                    var item = CraftLibrary.GetRandomApplicableCraftItem(Faction);
+                    var item = Library.GetRandomApplicableCraftItem(Faction);
 
                     if (item != null)
                     {

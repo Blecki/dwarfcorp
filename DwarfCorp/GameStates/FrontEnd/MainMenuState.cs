@@ -109,7 +109,6 @@ namespace DwarfCorp.GameStates
             Drawer3D.Cleanup();
             ParticleEmitter.Cleanup();
             //Overworld.Cleanup();
-            CraftLibrary.Cleanup();
             PlayState.Input = null;
             InputManager.Cleanup();
             LayeredSprites.LayerLibrary.Cleanup();

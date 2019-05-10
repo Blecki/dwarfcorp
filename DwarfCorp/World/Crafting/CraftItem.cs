@@ -1,35 +1,3 @@
-// CraftItem.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +7,6 @@ using Microsoft.Xna.Framework;
 
 namespace DwarfCorp
 {
-    [JsonObject(IsReference = true)]
     public class CraftItem
     {
         public enum CraftType
@@ -65,18 +32,8 @@ namespace DwarfCorp
             Object
         }
 
-        /// <summary>
-        /// Unique ID of the craft item.
-        /// </summary>
         public string Name = "";
-        /// <summary>
-        /// Entity factory handle that generates an object from this craft item.
-        /// </summary>
         public string EntityName = "";
-        /// <summary>
-        /// When converting between object and resource representations of the craft item, this is the object corresponding to 
-        /// an individual resource.
-        /// </summary>
         public string ObjectName = "";
 
         public String DisplayName = null;
@@ -105,10 +62,6 @@ namespace DwarfCorp
         public string Category = "";
         public bool IsMagical = false;
         public string Tutorial = "";
-
-        /// <summary>
-        /// If true, this will be displayed in the list of resources that the player can craft.
-        /// </summary>
         public bool AllowUserCrafting = true;
 
         public void InitializeStrings()
@@ -180,7 +133,7 @@ namespace DwarfCorp
         public CraftItem ObjectAsCraftableResource()
         {
             string resourceName = Name + "...";
-            CraftItem toReturn = CraftLibrary.GetCraftable(resourceName);
+            var toReturn = Library.GetCraftable(resourceName);
             if (toReturn == null)
             {
                 toReturn = this.MemberwiseClone() as CraftItem;
@@ -191,7 +144,7 @@ namespace DwarfCorp
                 toReturn.CraftLocation = String.IsNullOrEmpty(CraftLocation) ? "Anvil" : CraftLocation;
                 toReturn.ObjectName = Name;
                 toReturn.AllowUserCrafting = false;
-                CraftLibrary.Add(toReturn);
+                Library.AddCraftable(toReturn);
             }
             return toReturn;
         }

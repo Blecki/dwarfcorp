@@ -142,7 +142,6 @@ namespace DwarfCorp
                     DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
                     DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
                     DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
-                    CraftLibrary.InitializeDefaultLibrary();
 
                     bloom = new BloomComponent(Game)
                     {
@@ -330,7 +329,7 @@ namespace DwarfCorp
                 TutorialManager.TutorialEnabled = !GameSettings.Default.TutorialDisabledGlobally;
                 Tutorial("new game start");
 
-                foreach (var item in CraftLibrary.EnumerateCraftables())
+                foreach (var item in Library.EnumerateCraftables())
                 {
                     if (!String.IsNullOrEmpty(item.Tutorial))
                     {

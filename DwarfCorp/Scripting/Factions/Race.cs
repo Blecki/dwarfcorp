@@ -112,7 +112,7 @@ namespace DwarfCorp
 
             for (int i = 0; i < NumFurniture; i++)
             {
-                var randomObject = Datastructures.SelectRandom(CraftLibrary.EnumerateCraftables().Where(type => type.Type == CraftItem.CraftType.Object && type.RequiredResources.All((tags) =>
+                var randomObject = Datastructures.SelectRandom(Library.EnumerateCraftables().Where(type => type.Type == CraftItem.CraftType.Object && type.RequiredResources.All((tags) =>
                     TradeGoods.Any(good => good.Key == tags.Type))));
                 if (randomObject == null)
                     continue;

@@ -180,7 +180,7 @@ namespace DwarfCorp
                 if (SelectedBody == null) throw new InvalidProgramException();
 
                 var craftDetails = SelectedBody.GetRoot().GetComponent<CraftDetails>();
-                if (craftDetails != null && CraftLibrary.GetCraftable(craftDetails.CraftType).AllowRotation)
+                if (craftDetails != null && Library.GetCraftable(craftDetails.CraftType).AllowRotation)
                 {
                     HandleOrientation();
                     Player.World.ShowTooltip(String.Format("Press {0}/{1} to rotate.", ControlSettings.Mappings.RotateObjectLeft, ControlSettings.Mappings.RotateObjectRight));
@@ -194,7 +194,7 @@ namespace DwarfCorp
 
                     if (craftDetails != null)
                     {
-                        craftItem = CraftLibrary.GetCraftable(craftDetails.CraftType);
+                        craftItem = Library.GetCraftable(craftDetails.CraftType);
                         if (craftItem != null)
                             spawnOffset = craftItem.SpawnOffset;
                         else

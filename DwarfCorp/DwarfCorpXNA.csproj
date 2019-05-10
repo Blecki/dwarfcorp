@@ -677,6 +677,8 @@
     <Compile Include="Voxels\Splasher.cs" />
     <Compile Include="Voxels\GrassLibrary.cs" />
     <Compile Include="Voxels\ChunkUpdate.cs" />
+    <Compile Include="World\Crafting\CraftItem.cs" />
+    <Compile Include="World\Crafting\CraftLibrary.cs" />
     <Compile Include="World\DebugOverworlds.cs" />
     <Compile Include="World\EngineModule.cs" />
     <Compile Include="World\CompanyInformation.cs" />
@@ -798,8 +800,6 @@
     <Compile Include="Scripting\ControlFlow\Wait.cs" />
     <Compile Include="Scripting\ControlFlow\WhileLoop.cs" />
     <Compile Include="Scripting\ControlFlow\Wrap.cs" />
-    <Compile Include="Scripting\Crafting\CraftItem.cs" />
-    <Compile Include="Scripting\Crafting\CraftLibrary.cs" />
     <Compile Include="Scripting\Data\ActData.cs" />
     <Compile Include="Scripting\Data\Blackboard.cs" />
     <Compile Include="Components\AI\CreatureStats.cs" />

@@ -1606,10 +1606,10 @@ namespace DwarfCorp.GameStates
                 var menu_category = new FlatToolTray.Tray
                 {
                     ItemSource = (new Widget[] { category_return_button }).Concat(
-                    CraftLibrary.EnumerateCraftables().ToList().Where(item => item.Type == CraftItem.CraftType.Object && item.Category == category)
+                    Library.EnumerateCraftables().ToList().Where(item => item.Type == CraftItem.CraftType.Object && item.Category == category)
                     .Select(data => createCraftIcon(data)))
                 };
-                var firstItem = CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.Category == category).First();
+                var firstItem = Library.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.Category == category).First();
                 var category_icon = new FlatToolTray.Icon
                 {
                     Icon = firstItem.Icon,
@@ -1625,7 +1625,7 @@ namespace DwarfCorp.GameStates
 
             List<CraftItem> rootObjects = new List<CraftItem>();
 
-            foreach (var item in CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.AllowUserCrafting))
+            foreach (var item in Library.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Object && item.AllowUserCrafting))
             {
                 if (string.IsNullOrEmpty(item.Category) || !categoryExists.ContainsKey(item.Category))
                 {
@@ -1683,7 +1683,7 @@ namespace DwarfCorp.GameStates
                 Tag = "craft resource",
                 Tooltip = "Craft resource",
                 ItemSource = (new Widget[] { icon_menu_Strings_Return }).Concat(
-                    CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
+                    Library.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && item.AllowUserCrafting
                     && ResourceLibrary.Exists(item.ResourceCreated) &&
                     !ResourceLibrary.GetResourceByName(item.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible) &&
@@ -1898,7 +1898,7 @@ namespace DwarfCorp.GameStates
             var menu_Edibles = new FlatToolTray.Tray
             {
                 ItemSource = (new Widget[] { icon_menu_Edibles_Return }).Concat(
-                    CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
+                    Library.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && item.AllowUserCrafting
                     && ResourceLibrary.Exists(item.ResourceCreated)
                     && ResourceLibrary.GetResourceByName(item.ResourceCreated).Tags.Contains(Resource.ResourceTags.Edible))
@@ -1974,7 +1974,7 @@ namespace DwarfCorp.GameStates
             var menu_potions = new FlatToolTray.Tray
             {
                 ItemSource = (new Widget[] { icon_menu_Edibles_Return }).Concat(
-                    CraftLibrary.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
+                    Library.EnumerateCraftables().Where(item => item.Type == CraftItem.CraftType.Resource
                     && item.AllowUserCrafting
                     && ResourceLibrary.Exists(item.ResourceCreated)
                     && item.CraftLocation == "Apothecary")
