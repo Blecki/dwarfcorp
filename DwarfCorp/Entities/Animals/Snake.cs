@@ -39,13 +39,11 @@ namespace DwarfCorp
                 {
                 },
                 "Evil",
-                manager.World.PlanService,
                 manager.World.Factions.Factions["Evil"],
                 name
             )
         {
             UpdateRate = 1;
-            HasMeat = true;
             HasBones = true;
             Physics = new Physics
                 (
@@ -105,7 +103,6 @@ namespace DwarfCorp
                 var inventory = tailPiece.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
                 inventory.SetFlag(Flag.ShouldSerialize, false);
 
-                if (HasMeat)
                 {
                     String type = Stats.CurrentClass.Name + " " + ResourceType.Meat;
 
@@ -120,7 +117,6 @@ namespace DwarfCorp
                     inventory.AddResource(new ResourceAmount(type, 1));
                 }
 
-                if (HasBones)
                 {
                     String type = Stats.CurrentClass.Name + " Bone";
 

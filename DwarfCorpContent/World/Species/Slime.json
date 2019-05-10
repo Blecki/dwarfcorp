@@ -1,3 +1,5 @@
 {
-  "Name": "Slime"
+  "Name": "Slime",
+  "BaseMeatResource": null,
+  "HasMeat": false
 }

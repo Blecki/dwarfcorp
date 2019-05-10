@@ -37,11 +37,9 @@ namespace DwarfCorp
                 manager,
                 new CreatureStats("Bird", "Bird", 0)
                 {
-                    CanSleep = false,
                     IsMigratory = true
                 },
                 "Herbivore",
-                manager.World.PlanService,
                 manager.World.Factions.Factions["Herbivore"],
                 name
             )
@@ -63,7 +61,6 @@ namespace DwarfCorp
 
 
             SpriteAsset = sprites;
-            BaseMeatResource = "Bird Meat";
 
             CreateCosmeticChildren(Manager);
 

@@ -1,3 +1,4 @@
 {
-  "Name": "Snake"
+  "Name": "Snake",
+  "HasMeat": true
 }

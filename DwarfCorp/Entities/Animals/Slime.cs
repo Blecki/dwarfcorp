@@ -52,7 +52,6 @@ namespace DwarfCorp
                 manager,
                 new CreatureStats("Slime", "Slime", 0),
                 "Demon",
-                manager.World.PlanService,
                 manager.World.Factions.Factions["Demon"],
                 name
             )
@@ -73,13 +72,11 @@ namespace DwarfCorp
             Physics.AddChild(this);
 
             SpriteAsset = sprites;
-            BaseMeatResource = null;
-            HasMeat = false;
 
             CreateCosmeticChildren(Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
-            Physics.AddChild(new PacingCreatureAI(Manager, "Alime AI", Sensors));
+            Physics.AddChild(new PacingCreatureAI(Manager, "Slime AI", Sensors));
             
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
             Inventory.AddResource(new ResourceAmount(ResourceLibrary.GetResourceByName(SlimeType), MathFunctions.RandInt(1, 3)));

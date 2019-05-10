@@ -17,7 +17,6 @@ namespace DwarfCorp
             return new Necromancer(
                 new CreatureStats("Necromancer", "Necromancer", 0),
                 "Undead",
-                Manager.World.PlanService,
                 Manager.World.Factions.Factions["Undead"],
                 Manager,
                 "Necromancer",
@@ -29,7 +28,7 @@ namespace DwarfCorp
         {
             return new Necromancer(
                 new CreatureStats("Necromancer", "Necromancer", 0),
-                Manager.World.PlayerFaction.Name, Manager.World.PlanService, Manager.World.PlayerFaction,
+                Manager.World.PlayerFaction.Name, Manager.World.PlayerFaction,
                 Manager,
                 "Necromancer",
                 Position).Physics;
@@ -40,15 +39,13 @@ namespace DwarfCorp
             
         }
 
-        public Necromancer(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
-            base(manager, stats, allies, planService, faction, name)
+        public Necromancer(CreatureStats stats, string allies, Faction faction, ComponentManager manager, string name, Vector3 position) :
+            base(manager, stats, allies, faction, name)
         {
             Physics = new Physics(manager, "Necromancer", Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             Physics.AddChild(this);
 
-            HasMeat = false;
-           
             Physics.Orientation = Physics.OrientMode.RotateY;
             CreateCosmeticChildren(Manager);
 
@@ -64,7 +61,6 @@ namespace DwarfCorp
             
             Stats.FullName = TextGenerator.GenerateRandom("$title") + " " + TextGenerator.ToTitleCase(TextGenerator.GenerateRandom("$names_undead"));
             Stats.BaseSize = 4;
-            Stats.CanSleep = false;
             Stats.CanEat = false;
             AI.Movement.CanClimbWalls = true;
             AI.Movement.SetCost(MoveType.ClimbWalls, 50.0f);

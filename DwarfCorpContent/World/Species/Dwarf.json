@@ -1,3 +1,5 @@
 {
-  "Name": "Dwarf"
+  "Name": "Dwarf",
+  "HasMeat": false,
+  "CanSleep": true
 }

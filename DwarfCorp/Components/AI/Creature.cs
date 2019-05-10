@@ -15,7 +15,6 @@ namespace DwarfCorp
         /// <summary> This is what the character is currently doing (used for animation) </summary>
         protected CharacterMode currentCharacterMode = CharacterMode.Idle;
 
-        public String BaseMeatResource = ResourceType.Meat;
         private bool _lastIsCloaked = false;
         public bool IsCloaked = false;
 
@@ -27,7 +26,6 @@ namespace DwarfCorp
             ComponentManager Manager,
             CreatureStats stats,
             string allies,
-            PlanService planService,
             Faction faction,
             string name) :
             base(Manager, name, stats.MaxHealth, 0.0f, stats.MaxHealth)
@@ -36,12 +34,10 @@ namespace DwarfCorp
             Stats = stats;
             Stats.Gender = Mating.RandomGender();
             DrawLifeTimer.HasTriggered = true;
-            HasMeat = true;
             HasBones = true;
             HasCorpse = false;
             IsOnGround = true;
             Faction = faction;
-            PlanService = planService;
             Allies = allies;
             Controller = new PIDController(Stats.MaxAcceleration, Stats.StoppingForce * 2, 0.0f);
             JumpTimer = new Timer(0.2f, true, Timer.TimerMode.Real);
@@ -120,7 +116,6 @@ namespace DwarfCorp
 
         private EnemySensor _sensors = null;
         /// <summary> If true, the creature will generate meat when it dies. </summary>
-        public bool HasMeat { get; set; }
         /// <summary> If true, the creature will generate bones when it dies. </summary>
         public bool HasBones { get; set; }
         /// <summary>
@@ -145,19 +140,11 @@ namespace DwarfCorp
 
         public Timer MigrationTimer { get; set; }
 
-        /// <summary> Reference to the graphics device. </summary>
-        [JsonIgnore]
-        public GraphicsDevice Graphics { get { return Manager.World.GraphicsDevice; } }
-
         /// <summary> List of attacks the creature can perform. </summary>
         [JsonIgnore] public List<Attack> Attacks;
 
         /// <summary> Faction that the creature belongs to </summary>
         public Faction Faction { get; set; }
-
-        /// <summary> Reference to the planning service for path planning </summary>
-        // Todo: Remove this and stop passing it in as everything uses the same one anyway.
-        public PlanService PlanService { get; set; }
 
         /// <summary> DEPRECATED. TODO(mklingen): DELETE </summary>
         public string Allies { get; set; }
@@ -275,7 +262,7 @@ namespace DwarfCorp
             Stats.Health.CurrentValue = (Hp - MinHealth) / (MaxHealth - MinHealth); // Todo: MinHealth always 0?
 
             // Todo: Why is energy just tied to time of day? Lets make them actually recover at night and spend it during the day.
-            if (Stats.CanSleep)
+            if (Stats.Species.CanSleep)
                 Stats.Energy.CurrentValue = (float)(100 * Math.Sin(Manager.World.Time.GetTotalHours() * Math.PI / 24.0f));
             else
                 Stats.Energy.CurrentValue = 100.0f;
@@ -461,13 +448,13 @@ namespace DwarfCorp
         /// </summary>
         public virtual void CreateMeatAndBones()
         {
-            if (HasMeat)
+            if (Stats.Species.HasMeat)
             {
                 String type = Stats.CurrentClass.Name + " " + ResourceType.Meat;
 
                 if (!ResourceLibrary.Exists(type))
                 {
-                    var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName(BaseMeatResource));
+                    var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName(Stats.Species.BaseMeatResource));
                     r.Name = type;
                     r.ShortName = type;
                     ResourceLibrary.Add(r);

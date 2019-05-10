@@ -18,8 +18,8 @@ namespace DwarfCorp
             
         }
 
-        public Dwarf(ComponentManager manager, CreatureStats stats, string allies, PlanService planService, Faction faction,  string name, Vector3 position) :
-            base(manager, stats, allies, planService, faction, name)
+        public Dwarf(ComponentManager manager, CreatureStats stats, string allies, Faction faction,  string name, Vector3 position) :
+            base(manager, stats, allies, faction, name)
         {
             Physics = new Physics(manager, "Dwarf", Matrix.CreateTranslation(position),
                         new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
@@ -31,7 +31,6 @@ namespace DwarfCorp
                 IsVisible = false
             });
 
-            HasMeat = false;
             HasBones = false;
             HasCorpse = true;
 
@@ -52,7 +51,6 @@ namespace DwarfCorp
 
             Stats.FullName = TextGenerator.GenerateRandom("$firstname", " ", "$lastname");
             Stats.FindAdjustment("base stats").Size = 5;
-            Stats.CanSleep = true;
             Stats.CanEat = true;
             Stats.CanGetBored = true;
             AI.Movement.CanClimbWalls = true; // Why isn't this a flag like the below?

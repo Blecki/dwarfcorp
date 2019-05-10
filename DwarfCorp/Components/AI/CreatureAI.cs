@@ -556,7 +556,7 @@ namespace DwarfCorp
             }
 
             // Heal thyself
-            if (Stats.Health.IsDissatisfied() && Stats.CanSleep)
+            if (Stats.Health.IsDissatisfied() && Stats.Species.CanSleep)
             {
                 Task toReturn = new GetHealedTask();
                 if (!Tasks.Contains(toReturn) && CurrentTask != toReturn)

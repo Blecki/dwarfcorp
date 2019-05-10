@@ -71,15 +71,14 @@ namespace DwarfCorp
         public float BaseFarmSpeed => Intelligence + Strength;
         public float BuildSpeed => (Intelligence + Dexterity) / 10.0f;
         public float HungerResistance => Constitution;
-        public float Tiredness => CanSleep ? 1.0f / Constitution : 0.0f;
+        public float Tiredness => Species.CanSleep ? 1.0f / Constitution : 0.0f;
 
         public bool CanEat = false;
         public int Age = 0;
         public int RandomSeed;
         public float VoicePitch = 1.0f;
         public Gender Gender = Gender.Male;
-        public bool CanSleep = false;
-        public bool CanGetBored = false;
+        public bool CanGetBored = false; // Todo: -> Species
         public string FullName = "";
         public string Title = "";
         public int NumBlocksDestroyed = 0;

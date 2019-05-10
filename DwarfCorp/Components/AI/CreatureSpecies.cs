@@ -16,5 +16,8 @@ namespace DwarfCorp
         public int PregnancyLengthHours = 24;
         public bool CanReproduce = false;
         public bool LaysEggs = false;
+        public String BaseMeatResource = "Meat";
+        public bool HasMeat = true;
+        public bool CanSleep = false;
     }
 }

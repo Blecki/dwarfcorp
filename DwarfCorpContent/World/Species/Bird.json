@@ -1,5 +1,6 @@
 {
   "Name": "Bird",
   "BabyType": "Bird",
-  "LaysEggs": true
+  "LaysEggs": true,
+  "BaseMeatResource": "Bird Meat"
 }

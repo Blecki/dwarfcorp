@@ -46,14 +46,9 @@ namespace DwarfCorp
                 // Default stats
                 new CreatureStats(Asset, "Fowl", 0)
                 {
-                    CanSleep = false,
                     IsMigratory = true
                 },
-                // Belongs to herbivore team
                 "Herbivore",
-                // Uses the default plan service
-                manager.World.PlanService,
-                // Belongs to the herbivore team
                 manager.World.Factions.Factions["Herbivore"],
                 Asset
             )
@@ -70,7 +65,6 @@ namespace DwarfCorp
                 );
 
             Physics.AddChild(this);
-            BaseMeatResource = "Bird Meat";
             this.Asset = Asset;
             Physics.Orientation = Physics.OrientMode.RotateY;
 

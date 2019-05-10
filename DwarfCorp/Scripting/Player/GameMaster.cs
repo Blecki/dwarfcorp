@@ -274,7 +274,7 @@ namespace DwarfCorp
 
         public bool AreAllEmployeesAsleep()
         {
-            return (Faction.Minions.Count > 0) && Faction.Minions.All(minion => !minion.Active || ((!minion.Stats.CanSleep || minion.Creature.IsAsleep) && !minion.IsDead));
+            return (Faction.Minions.Count > 0) && Faction.Minions.All(minion => !minion.Active || ((!minion.Stats.Species.CanSleep || minion.Creature.IsAsleep) && !minion.IsDead));
         }
 
         // Todo: %KILL% - does not belong here.

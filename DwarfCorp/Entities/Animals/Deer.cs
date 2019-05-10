@@ -32,7 +32,6 @@ namespace DwarfCorp
                     IsMigratory = true
                 },
                 "Herbivore",
-                manager.World.PlanService,
                 manager.World.Factions.Factions["Herbivore"],
                 name
             )

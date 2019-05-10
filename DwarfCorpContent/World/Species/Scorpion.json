@@ -1,5 +1,6 @@
 {
   "Name": "Scorpion",
   "BabyType": "Scorpion",
-  "CanReproduce": true
+  "CanReproduce": true,
+  "HasMeat": false
 }

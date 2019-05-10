@@ -17,7 +17,6 @@ namespace DwarfCorp
             return new Elf(
                 new CreatureStats("Elf", "Elf", 0),
                 "Elf",
-                Manager.World.PlanService,
                 Manager.World.Factions.Factions["Elf"],
                 Manager,
                 "Elf",
@@ -27,7 +26,7 @@ namespace DwarfCorp
         [EntityFactory("Player Elf")]
         private static GameComponent __factory5(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            var toReturn = new Elf(new CreatureStats("Elf", "Elf", 0), Manager.World.PlayerFaction.Name, Manager.World.PlanService, Manager.World.PlayerFaction, Manager, "elf", Position);
+            var toReturn = new Elf(new CreatureStats("Elf", "Elf", 0), Manager.World.PlayerFaction.Name, Manager.World.PlayerFaction, Manager, "elf", Position);
             return toReturn.Physics;
         }
 
@@ -36,8 +35,8 @@ namespace DwarfCorp
             
         }
 
-        public Elf(CreatureStats stats, string allies, PlanService planService, Faction faction, ComponentManager manager, string name, Vector3 position) :
-            base(manager, stats, allies, planService, faction, name)
+        public Elf(CreatureStats stats, string allies, Faction faction, ComponentManager manager, string name, Vector3 position) :
+            base(manager, stats, allies, faction, name)
         {
             Physics = new Physics(manager, "Elf", Matrix.CreateTranslation(position), new Vector3(0.5f, 1.0f, 0.5f), new Vector3(0.0f, -0.0f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
             Physics.AddChild(this);
@@ -49,7 +48,6 @@ namespace DwarfCorp
             Physics.Orientation = Physics.OrientMode.RotateY;
             CreateCosmeticChildren(Manager);
 
-            HasMeat = false;
             HasBones = false;
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));

@@ -1,5 +1,6 @@
 {
   "Name": "Penquin",
   "BabyType": "Penquin",
-  "LaysEggs": true
+  "LaysEggs": true,
+  "BaseMeatResource": "Bird Meat"
 }

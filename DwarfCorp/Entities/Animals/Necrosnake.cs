@@ -39,13 +39,11 @@ namespace DwarfCorp
                 {
                 },
                 "Evil",
-                manager.World.PlanService,
                 manager.World.Factions.Factions["Evil"],
                 name
             )
         {
             UpdateRate = 1;
-            HasMeat = false;
             HasBones = true;
             Physics = new Physics
                 (

@@ -26,14 +26,13 @@ namespace DwarfCorp
         }
 
         public Fairy(ComponentManager manager, string allies, Vector3 position) :
-            base(manager, new CreatureStats("Fairy", "Fairy", 0), "Player", manager.World.PlanService, manager.World.Factions.Factions[allies], "Fairy")
+            base(manager, new CreatureStats("Fairy", "Fairy", 0), "Player", manager.World.Factions.Factions[allies], "Fairy")
         {
             Physics = new Physics(manager, "Fairy", Matrix.CreateTranslation(position),
                       new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             Physics.AddChild(this);
 
-            HasMeat = false;
             HasBones = false;
             ParticleTimer = new Timer(0.2f, false);
             DeathTimer = new DateTimer(manager.World.Time.CurrentDate, new TimeSpan(1, 0, 0, 0, 0));
@@ -52,7 +51,6 @@ namespace DwarfCorp
           
             Stats.FullName = TextGenerator.GenerateRandom("$firstname");
             
-            Stats.CanSleep = false;
             Stats.CanEat = false;
             AI.Movement.CanClimbWalls = true;
             AI.Movement.CanFly = true;

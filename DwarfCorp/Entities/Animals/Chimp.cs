@@ -30,11 +30,9 @@ namespace DwarfCorp
                 manager,
                 new CreatureStats("Chimp", "Chimp", 0)
                 {
-                    CanSleep = false,
                     IsMigratory = true
                 },
                 "Herbivore",
-                manager.World.PlanService,
                 manager.World.Factions.Factions["Herbivore"],
                 name
             )
