@@ -15,7 +15,7 @@ namespace DwarfCorp
         [EntityFactory("Fairy")]
         private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
         {
-            return new Fairy(Manager, "Player", Position);
+            return new Fairy(Manager, Position);
         }
 
         public Timer ParticleTimer { get; set; }
@@ -25,8 +25,8 @@ namespace DwarfCorp
 
         }
 
-        public Fairy(ComponentManager manager, string allies, Vector3 position) :
-            base(manager, new CreatureStats("Fairy", "Fairy", 0), "Player", manager.World.Factions.Factions[allies], "Fairy")
+        public Fairy(ComponentManager manager, Vector3 position) :
+            base(manager, new CreatureStats("Fairy", "Fairy", 0), manager.World.Factions.Factions["Player"], "Fairy")
         {
             Physics = new Physics(manager, "Fairy", Matrix.CreateTranslation(position),
                       new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));

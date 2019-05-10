@@ -1,5 +1,6 @@
 {
   "Name": "Frog",
   "BabyType": "Frog",
-  "CanReproduce": true
+  "CanReproduce": true,
+  "IsMigratory": true
 }

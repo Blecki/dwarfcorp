@@ -2092,9 +2092,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Turkey</Name>
     </None>
-    <None Include="World\Species\Penquin.json">
+    <None Include="World\Species\Penguin.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>Penquin</Name>
+      <Name>Penguin</Name>
     </None>
     <None Include="World\Species\Chicken.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

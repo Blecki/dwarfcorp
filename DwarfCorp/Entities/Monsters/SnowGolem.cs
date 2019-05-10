@@ -17,7 +17,6 @@ namespace DwarfCorp
         {
             return new SnowGolem(
                 new CreatureStats("SnowGolem", "SnowGolem", 0),
-                "Evil",
                 Manager.World.Factions.Factions["Evil"],
                 Manager,
                 "Snow Golem",
@@ -29,8 +28,8 @@ namespace DwarfCorp
 
         }
 
-        public SnowGolem(CreatureStats stats, string allies, Faction faction, ComponentManager manager, string name, Vector3 position) :
-            base(manager, stats, allies, faction, name)
+        public SnowGolem(CreatureStats stats, Faction faction, ComponentManager manager, string name, Vector3 position) :
+            base(manager, stats, faction, name)
         {
             Physics = new Physics(Manager, name, Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 

@@ -343,24 +343,12 @@ namespace DwarfCorp
         public void Render2D(DwarfGame game, DwarfTime time)
         {
             CurrentTool.Render2D(game, time);
-            foreach (var m in Faction.Minions)
-            {
-                if (m.Creature.SelectionCircle != null)
-                    m.Creature.SelectionCircle.IsVisible = false;
-                m.Creature.Sprite.DrawSilhouette = false;
-            };
-            Faction.SelectedMinions.RemoveAll(m => m.IsDead || !m.Active);
+            
             foreach (CreatureAI creature in Faction.SelectedMinions)
             {
-                if (creature.Creature.SelectionCircle != null)
-                    creature.Creature.SelectionCircle.IsVisible = true;
-                creature.Creature.Sprite.DrawSilhouette = true;
-
                 foreach (Task task in creature.Tasks)
-                {
                     if (task.IsFeasible(creature.Creature) == Task.Feasibility.Feasible)
                         task.Render(time);
-                }
 
                 if (creature.CurrentTask != null)
                     creature.CurrentTask.Render(time);

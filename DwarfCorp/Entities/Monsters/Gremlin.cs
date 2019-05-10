@@ -16,7 +16,6 @@ namespace DwarfCorp
         {
             return new Gremlin(
                 new CreatureStats("Gremlin", "Gremlin", 0),
-                "Goblins",
                 Manager.World.Factions.Factions["Goblins"],
                 Manager,
                 "Gremlin",
@@ -28,8 +27,8 @@ namespace DwarfCorp
 
         }
 
-        public Gremlin(CreatureStats stats, string allies, Faction faction, ComponentManager manager, string name, Vector3 position) :
-            base(manager, stats, allies, faction, name)
+        public Gremlin(CreatureStats stats, Faction faction, ComponentManager manager, string name, Vector3 position) :
+            base(manager, stats, faction, name)
         {
             IsCloaked = true;
 

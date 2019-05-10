@@ -2,5 +2,6 @@
   "Name": "Turkey",
   "BabyType": "Turkey",
   "LaysEggs": true,
-  "BaseMeatResource": "Bird Meat"
+  "BaseMeatResource": "Bird Meat",
+  "IsMigratory": true
 }

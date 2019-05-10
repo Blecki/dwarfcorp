@@ -97,7 +97,6 @@ namespace DwarfCorp
         [JsonIgnore] public CreatureSpecies Species { get; private set; }
 
         public Task.TaskCategory AllowedTasks = Task.TaskCategory.Attack | Task.TaskCategory.Gather | Task.TaskCategory.Plant | Task.TaskCategory.Harvest | Task.TaskCategory.Chop | Task.TaskCategory.Wrangle | Task.TaskCategory.TillSoil;
-        public bool IsMigratory = false;
         [JsonIgnore] public bool IsOverQualified => CurrentClass != null ? CurrentClass.Levels.Count > LevelIndex + 1 && XP > CurrentClass.Levels[LevelIndex + 1].XP : false;
         public bool IsAsleep = false;
         public float HungerDamageRate = 10.0f;

@@ -38,7 +38,6 @@ namespace DwarfCorp
                 new CreatureStats("Snake", "Snake", 0)
                 {
                 },
-                "Evil",
                 manager.World.Factions.Factions["Evil"],
                 name
             )

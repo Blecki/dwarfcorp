@@ -32,7 +32,6 @@ namespace DwarfCorp
                 {
                     CanEat = true
                 },
-                "Carnivore",
                 manager.World.Factions.Factions["Carnivore"],
                 "Bat"
             )

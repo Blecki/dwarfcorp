@@ -27,11 +27,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats("Deer", "Deer", 0)
-                {
-                    IsMigratory = true
-                },
-                "Herbivore",
+                new CreatureStats("Deer", "Deer", 0),
                 manager.World.Factions.Factions["Herbivore"],
                 name
             )

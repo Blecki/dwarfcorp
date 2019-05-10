@@ -158,64 +158,47 @@ namespace DwarfCorp
             if (this == World.PlayerFaction)
             {
                 foreach (var body in OwnedObjects)
-                {
                     if (body.ReservedFor != null && body.ReservedFor.IsDead)
-                    {
                         body.ReservedFor = null;
-                    }
-                }
-                foreach (var m in Minions.Where(c => !SelectedMinions.Contains(c)))
-                {
-                    if (m.Creature.SelectionCircle != null)
-                    {
-                        m.Creature.DeleteSelectionCircle();
 
-                    }
+                foreach (var m in Minions)
+                {
+                    var selectionCircle = m.GetRoot().GetComponent<SelectionCircle>();
+                    if (selectionCircle != null)
+                        selectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, false);
                     m.Creature.Sprite.DrawSilhouette = false;
                 };
 
-                foreach (CreatureAI creature in SelectedMinions)
+                foreach (var creature in SelectedMinions)
                 {
-                    if (creature.Creature.SelectionCircle == null)
-                    {
-                        creature.Creature.Physics.AddChild(new SelectionCircle(creature.Manager));
-                    }
-                    creature.Creature.SelectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, true);
+                    var selectionCircle = creature.GetRoot().GetComponent<SelectionCircle>();
+                    if (selectionCircle == null)
+                        selectionCircle = creature.GetRoot().AddChild(new SelectionCircle(creature.Manager)) as SelectionCircle;
+                    selectionCircle.SetFlag(GameComponent.Flag.ShouldSerialize, false);
+                    selectionCircle.SetFlagRecursive(GameComponent.Flag.Visible, true);
                     creature.Creature.Sprite.DrawSilhouette = true;
                 }
             }
 
             foreach (Room zone in GetRooms())
-            {
                 zone.ZoneBodies.RemoveAll(body => body.IsDead);
-            }
 
             Designations.CleanupDesignations();
 
             foreach (var zone in RoomBuilder.DesignatedRooms)
-            {
                 zone.Update();
-            }
 
             if (HandleThreatsTimer == null)
-            {
-                HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real
-                    );
-            }
+                HandleThreatsTimer = new Timer(1.0f, false, Timer.TimerMode.Real);
 
             if (HandleStockpilesTimer == null)
-            {
-                HandleStockpilesTimer = new Timer(5.5f, false, Timer.TimerMode.Real
-                    );
-            }
+                HandleStockpilesTimer = new Timer(5.5f, false, Timer.TimerMode.Real);
 
             HandleThreatsTimer.Update(time);
-            HandleStockpilesTimer.Update(time);
             if (HandleThreatsTimer.HasTriggered)
-            {
                 HandleThreats();
-            }
 
+            HandleStockpilesTimer.Update(time);
             if (HandleStockpilesTimer.HasTriggered)
             {
                 if (this == World.PlayerFaction)
@@ -244,15 +227,7 @@ namespace DwarfCorp
             }
 
             if (World.ComponentManager.NumComponents() > 0)
-            {
                 OwnedObjects.RemoveAll(obj => obj.IsDead || obj.Parent == null || !obj.Manager.HasComponent(obj.GlobalID));
-            }
-
-        }
-
-        public bool IsTaskAssigned(Task task)
-        {
-            return Minions.Any(minion => minion.Tasks.Contains(task));
         }
 
         public CreatureAI GetNearestMinion(Vector3 location)
@@ -971,7 +946,7 @@ namespace DwarfCorp
 
             var dwarfPhysics = DwarfFactory.GenerateDwarf(
                     spawnLoc,
-                    World.ComponentManager, "Player", currentApplicant.ClassName, currentApplicant.LevelIndex, currentApplicant.Gender, currentApplicant.RandomSeed);
+                    World.ComponentManager, currentApplicant.ClassName, currentApplicant.LevelIndex, currentApplicant.Gender, currentApplicant.RandomSeed);
             World.ComponentManager.RootComponent.AddChild(dwarfPhysics);
             var newMinion = dwarfPhysics.EnumerateAll().OfType<Dwarf>().FirstOrDefault();
             global::System.Diagnostics.Debug.Assert(newMinion != null);
@@ -1032,8 +1007,7 @@ namespace DwarfCorp
                         ai.Faction.Minions.Remove(ai);
 
                         Minions.Add(ai);
-                        ai.Faction = this;
-                        ai.Creature.Allies = Name;
+                        ai.Creature.Faction = this;
                     }
 
                     toReturn.Add(body);

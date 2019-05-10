@@ -25,7 +25,6 @@ namespace DwarfCorp
         public Creature(
             ComponentManager Manager,
             CreatureStats stats,
-            string allies,
             Faction faction,
             string name) :
             base(Manager, name, stats.MaxHealth, 0.0f, stats.MaxHealth)
@@ -38,7 +37,6 @@ namespace DwarfCorp
             HasCorpse = false;
             IsOnGround = true;
             Faction = faction;
-            Allies = allies;
             Controller = new PIDController(Stats.MaxAcceleration, Stats.StoppingForce * 2, 0.0f);
             JumpTimer = new Timer(0.2f, true, Timer.TimerMode.Real);
             IsHeadClear = true;
@@ -84,26 +82,6 @@ namespace DwarfCorp
             }
         }
 
-
-        public void DeleteSelectionCircle()
-        {
-            if (_selectionCircle != null)
-            {
-                _selectionCircle.Delete();
-                _selectionCircle = null;
-            }
-        }
-
-        /// <summary> The selection circle is drawn when the character is selected </summary>
-        private SelectionCircle _selectionCircle = null;
-        [JsonIgnore] public SelectionCircle SelectionCircle
-        {
-            get
-            {
-                return _get(ref _selectionCircle);
-            }
-        }
-
         /// <summary> Finds enemies nearby and triggers when it sees them </summary>
         [JsonIgnore]
         public EnemySensor Sensors
@@ -145,9 +123,6 @@ namespace DwarfCorp
 
         /// <summary> Faction that the creature belongs to </summary>
         public Faction Faction { get; set; }
-
-        /// <summary> DEPRECATED. TODO(mklingen): DELETE </summary>
-        public string Allies { get; set; }
 
         /// <summary> Used to smoothly apply forces to the creature </summary>
         public PIDController Controller { get; set; }
@@ -220,16 +195,6 @@ namespace DwarfCorp
                 Faction.Minions.Add(AI);
                 Physics.AllowPhysicsSleep = false;
                 World.AddToSpeciesTracking(Stats.CurrentClass);
-            }
-
-            if (_selectionCircle != null &&
-                Faction == World.PlayerFaction && World.Master.SelectedMinions.Contains(AI))
-            {
-                _selectionCircle.IsVisible = true;
-            }
-            else if (_selectionCircle != null)
-            {
-                _selectionCircle.IsVisible = false;
             }
 
             if (AI == null)
@@ -326,21 +291,16 @@ namespace DwarfCorp
             }
         }
 
-        
-
         private void UpdateMigration(DwarfTime gameTime)
         {
-            if (Stats.IsMigratory && !AI.IsPositionConstrained())
+            if (Stats.Species.IsMigratory && !AI.IsPositionConstrained())
             {
                 if (MigrationTimer == null)
-                {
                     MigrationTimer = new Timer(3600f + MathFunctions.Rand(-120, 120), false);
-                }
+
                 MigrationTimer.Update(gameTime);
                 if (MigrationTimer.HasTriggered)
-                {
                     AI.LeaveWorld();
-                }
             }
         }
 

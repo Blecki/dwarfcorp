@@ -517,9 +517,6 @@ namespace DwarfCorp
                 */
             }
 
-            if (Faction == null && !string.IsNullOrEmpty(Creature.Allies))
-                Faction = Manager.World.Factions.Factions[Creature.Allies];
-
             AutoGatherTimer.Update(gameTime);
             IdleTimer.Update(gameTime);
             SpeakTimer.Update(gameTime);

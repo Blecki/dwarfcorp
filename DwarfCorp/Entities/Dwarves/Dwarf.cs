@@ -18,18 +18,13 @@ namespace DwarfCorp
             
         }
 
-        public Dwarf(ComponentManager manager, CreatureStats stats, string allies, Faction faction,  string name, Vector3 position) :
-            base(manager, stats, allies, faction, name)
+        public Dwarf(ComponentManager manager, CreatureStats stats, Faction faction,  string name, Vector3 position) :
+            base(manager, stats, faction, name)
         {
             Physics = new Physics(manager, "Dwarf", Matrix.CreateTranslation(position),
                         new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 
             Physics.AddChild(this);
-
-            Physics.AddChild(new SelectionCircle(Manager)
-            {
-                IsVisible = false
-            });
 
             HasBones = false;
             HasCorpse = true;

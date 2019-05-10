@@ -16,7 +16,6 @@ namespace DwarfCorp
         {
             return new Demon(
                 new CreatureStats("Demon", "Demon", 0),
-                "Demon",
                 Manager.World.Factions.Factions["Demon"],
                 Manager,
                 "Demon",
@@ -28,7 +27,7 @@ namespace DwarfCorp
         {
             return new Demon(
                 new CreatureStats("Demon", "Demon", 0),
-                Manager.World.PlayerFaction.Name, Manager.World.PlayerFaction,
+                Manager.World.PlayerFaction,
                 Manager,
                 "Demon",
                 Position).Physics;
@@ -39,8 +38,8 @@ namespace DwarfCorp
             
         }
 
-        public Demon(CreatureStats stats, string allies, Faction faction, ComponentManager manager, string name, Vector3 position) :
-            base(manager, stats, allies, faction, name)
+        public Demon(CreatureStats stats, Faction faction, ComponentManager manager, string name, Vector3 position) :
+            base(manager, stats, faction, name)
         {
             Physics = new Physics(manager, "Demon", Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
 

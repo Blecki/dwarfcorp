@@ -16,7 +16,6 @@ namespace DwarfCorp
         {
             return new Kobold(
                 new CreatureStats("Kobold", "Kobold", 0),
-                "Goblins",
                 Manager.World.Factions.Factions["Goblins"],
                 Manager,
                 "Kobold",
@@ -28,8 +27,8 @@ namespace DwarfCorp
 
         }
 
-        public Kobold(CreatureStats stats, string allies, Faction faction, ComponentManager manager, string name, Vector3 position) :
-            base(manager, stats, allies, faction, name)
+        public Kobold(CreatureStats stats, Faction faction, ComponentManager manager, string name, Vector3 position) :
+            base(manager, stats, faction, name)
         {
             IsCloaked = true;
             Physics = new Physics(manager, "Kobold", Matrix.CreateTranslation(position), new Vector3(0.5f, 0.5f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f), 1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));

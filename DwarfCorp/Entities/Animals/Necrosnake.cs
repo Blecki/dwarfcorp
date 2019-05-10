@@ -35,10 +35,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                new CreatureStats("Necrosnake", "Necrosnake", 0)
-                {
-                },
-                "Evil",
+                new CreatureStats("Necrosnake", "Necrosnake", 0),
                 manager.World.Factions.Factions["Evil"],
                 name
             )

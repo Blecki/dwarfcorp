@@ -43,12 +43,7 @@ namespace DwarfCorp
             base
             (
                 manager,
-                // Default stats
-                new CreatureStats(Asset, "Fowl", 0)
-                {
-                    IsMigratory = true
-                },
-                "Herbivore",
+                new CreatureStats(Asset, "Fowl", 0),
                 manager.World.Factions.Factions["Herbivore"],
                 Asset
             )
