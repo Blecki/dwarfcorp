@@ -43,7 +43,6 @@ namespace DwarfCorp
             )
         {
             UpdateRate = 1;
-            HasBones = true;
             Physics = new Physics
                 (
                     manager,

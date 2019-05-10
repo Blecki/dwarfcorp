@@ -185,6 +185,7 @@
     <Compile Include="AssetManagement\IndexedDecomposition.cs" />
     <Compile Include="AssetManagement\ModMetaData.cs" />
     <Compile Include="AssetManagement\StringLibrary.cs" />
+    <Compile Include="Components\AI\Creature-Death.cs" />
     <Compile Include="Components\AI\SpeciesLibrary.cs" />
     <Compile Include="Components\AI\ClassLibrary.cs" />
     <Compile Include="Components\AI\Creature-Indicators.cs" />

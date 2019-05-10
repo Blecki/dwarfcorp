@@ -18,6 +18,7 @@ namespace DwarfCorp
         public bool LaysEggs = false;
         public String BaseMeatResource = "Meat";
         public bool HasMeat = true;
+        public bool HasBones = true;
         public bool CanSleep = false;
         public bool IsMigratory = false;
     }

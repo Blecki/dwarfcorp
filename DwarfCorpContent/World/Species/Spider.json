@@ -2,5 +2,6 @@
   "Name": "Spider",
   "BabyType": "Spider",
   "CanReproduce": true,
-  "HasMeat": false
+  "HasMeat": false,
+  "HasBones": false
 }

@@ -33,7 +33,6 @@ namespace DwarfCorp
             Stats = stats;
             Stats.Gender = Mating.RandomGender();
             DrawLifeTimer.HasTriggered = true;
-            HasBones = true;
             HasCorpse = false;
             IsOnGround = true;
             Faction = faction;
@@ -93,12 +92,7 @@ namespace DwarfCorp
         }
 
         private EnemySensor _sensors = null;
-        /// <summary> If true, the creature will generate meat when it dies. </summary>
-        /// <summary> If true, the creature will generate bones when it dies. </summary>
-        public bool HasBones { get; set; }
-        /// <summary>
-        /// If true, the creature will generate a corpse.
-        /// </summary>
+
         public bool HasCorpse { get; set; }
 
         /// <summary> Used to make sounds for the creature </summary>
@@ -382,80 +376,6 @@ namespace DwarfCorp
 
             base.Delete();
         }
-
-
-        /// <summary>
-        /// Kills the creature and releases its resources.
-        /// </summary>
-        public override void Die()
-        {
-            // This is just a silly hack to make sure that creatures
-            // carrying resources to a trade depot release their resources
-            // when they die.
-            World.RemoveFromSpeciesTracking(Stats.CurrentClass);
-            CreateMeatAndBones();
-            NoiseMaker.MakeNoise("Die", Physics.Position, true);
-
-            if (AI.Stats.Money > 0)
-                EntityFactory.CreateEntity<CoinPile>("Coins Resource", AI.Position, Blackboard.Create("Money", AI.Stats.Money));
-
-            base.Die();
-        }
-
-        /// <summary>
-        /// If the creature has meat or bones, creates resources
-        /// which get released when the creature dies.
-        /// </summary>
-        public virtual void CreateMeatAndBones()
-        {
-            if (Stats.Species.HasMeat)
-            {
-                String type = Stats.CurrentClass.Name + " " + ResourceType.Meat;
-
-                if (!ResourceLibrary.Exists(type))
-                {
-                    var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName(Stats.Species.BaseMeatResource));
-                    r.Name = type;
-                    r.ShortName = type;
-                    ResourceLibrary.Add(r);
-                }
-
-                Inventory.AddResource(new ResourceAmount(type, 1));
-            }
-
-            if (HasBones)
-            {
-                String type = Stats.CurrentClass.Name + " Bone";
-
-                if (!ResourceLibrary.Exists(type))
-                {
-                    var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName("Bone"));
-                    r.Name = type;
-                    r.ShortName = type;
-                    ResourceLibrary.Add(r);
-                }
-
-                Inventory.AddResource(new ResourceAmount(type, 1));
-            }
-
-            if (HasCorpse)
-            {
-                String type = AI.Stats.FullName + "'s " + "Corpse";
-
-                if (!ResourceLibrary.Exists(type))
-                {
-                    var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName("Corpse"));
-                    r.Name = type;
-                    r.ShortName = type;
-                    ResourceLibrary.Add(r);
-                }
-
-                Inventory.AddResource(new ResourceAmount(type, 1));
-            }
-        }
-
-       
-
 
         /// <summary>
         /// Called when the creature receives an event message from another source.

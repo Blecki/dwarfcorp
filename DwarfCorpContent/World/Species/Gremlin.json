@@ -1,4 +1,5 @@
 {
   "Name": "Gremlin",
-  "HasMeat": false
+  "HasMeat": false,
+  "HasBones": false
 }

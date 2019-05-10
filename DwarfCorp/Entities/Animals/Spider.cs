@@ -48,8 +48,6 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            HasBones = false;
-
             Physics.Orientation = Physics.OrientMode.RotateY;
 
             CreateCosmeticChildren(Manager);

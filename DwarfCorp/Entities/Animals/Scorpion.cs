@@ -56,7 +56,6 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            HasBones = false;
             // When true, causes the bird to face the direction its moving in
             Physics.Orientation = Physics.OrientMode.RotateY;
 

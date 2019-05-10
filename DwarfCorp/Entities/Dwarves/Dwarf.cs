@@ -26,7 +26,6 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            HasBones = false;
             HasCorpse = true;
 
             Stats.Gender = Mating.RandomGender();

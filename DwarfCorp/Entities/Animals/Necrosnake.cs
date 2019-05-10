@@ -41,7 +41,7 @@ namespace DwarfCorp
             )
         {
             UpdateRate = 1;
-            HasBones = true;
+
             Physics = new Physics
                 (
                     manager,
@@ -100,7 +100,6 @@ namespace DwarfCorp
                 var inventory = tailPiece.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset)) as Inventory;
                 inventory.SetFlag(Flag.ShouldSerialize, false);
 
-                if (HasBones)
                 {
                     String type = Stats.CurrentClass.Name + " Bone";
 

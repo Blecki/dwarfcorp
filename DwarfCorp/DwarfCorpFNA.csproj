@@ -136,6 +136,7 @@
     <Compile Include=".\Components\AI\Sensors\DestroyOnTimer.cs" />
     <Compile Include=".\Components\AI\Sensors\EnemySensor.cs" />
     <Compile Include="AssetManagement\GameSave\OverworldMetaData.cs" />
+    <Compile Include="Components\AI\Creature-Death.cs" />
     <Compile Include="Components\AI\Creature-Reproduction.cs" />
     <Compile Include="Components\AI\Creature-Indicators.cs" />
     <Compile Include="Components\AI\CreatureClass.cs" />

@@ -33,7 +33,6 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            HasBones = false;
             ParticleTimer = new Timer(0.2f, false);
             DeathTimer = new DateTimer(manager.World.Time.CurrentDate, new TimeSpan(1, 0, 0, 0, 0));
             

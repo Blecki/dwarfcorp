@@ -40,8 +40,6 @@ namespace DwarfCorp
 
             CreateCosmeticChildren(Manager);
 
-            HasBones = false;
-
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
             Physics.AddChild(new GremlinAI(Manager, "Gremlin AI", Sensors));

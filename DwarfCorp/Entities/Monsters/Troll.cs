@@ -36,8 +36,6 @@ namespace DwarfCorp
             Physics.Orientation = Physics.OrientMode.RotateY;
             CreateCosmeticChildren(Manager);
 
-            HasBones = true;
-
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
             Physics.AddChild(new CreatureAI(Manager, "Troll AI", Sensors));

@@ -1,4 +1,5 @@
 {
   "Name": "Goblin",
-  "HasMeat": false
+  "HasMeat": false,
+  "HasBones": false
 }
