@@ -59,7 +59,7 @@ namespace DwarfCorp
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
-            Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensors));
+            Physics.AddChild(new PacingCreatureAI(Manager, "snake AI", Sensor));
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
@@ -80,10 +80,17 @@ namespace DwarfCorp
             #region Create Tail Pieces
 
             Tail = new List<TailSegment>();
+            var tailAnimations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Animals.Snake.bonetail_animation, "Necrosnake");
 
             for (int i = 0; i < 10; ++i)
             {
-                var tailPiece = CreateSprite(ContentPaths.Entities.Animals.Snake.bonetail_animation, Manager, 0.25f, false);
+                var tailPiece = new CharacterSprite(Manager, "Sprite", Matrix.CreateTranslation(0, 0.25f, 0));
+
+                foreach (var animation in tailAnimations)
+                    tailPiece.AddAnimation(animation);
+
+                tailPiece.SetFlag(Flag.ShouldSerialize, false);
+
                 tailPiece.Name = "Snake Tail";
                 Tail.Add(
                     new TailSegment()

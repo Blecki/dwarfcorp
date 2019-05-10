@@ -9,14 +9,35 @@ namespace DwarfCorp
 {
     public partial class Creature : Health
     {
-
         private DateTime LastHungerDamageTime = DateTime.Now;
-
-        /// <summary> This is what the character is currently doing (used for animation) </summary>
-        protected CharacterMode currentCharacterMode = CharacterMode.Idle;
-
+        private CharacterMode _currentCharacterMode = CharacterMode.Idle;
         private bool _lastIsCloaked = false;
         public bool IsCloaked = false;
+        [JsonIgnore] public CreatureAI AI => _get(ref _ai);
+        private CreatureAI _ai = null;
+        public Physics Physics { get; set; }
+        private CharacterSprite _characterSprite = null;
+        [JsonIgnore] public CharacterSprite Sprite => _get(ref _characterSprite);
+        [JsonIgnore] public EnemySensor Sensor => _get(ref _sensor);
+        private EnemySensor _sensor = null;
+        [JsonIgnore] public NoiseMaker NoiseMaker { get; set; }
+        [JsonIgnore] public Inventory Inventory => _get(ref _inventory);
+        private Inventory _inventory = null;
+        public Timer MigrationTimer { get; set; }
+        [JsonIgnore] public List<Attack> Attacks;
+        public Faction Faction { get; set; }
+        public PIDController Controller { get; set; }
+        public CreatureStats Stats { get; set; }
+        public Timer DrawLifeTimer = new Timer(0.25f, true, Timer.TimerMode.Real);
+        public bool IsOnGround { get; set; }
+        public bool IsHeadClear { get; set; }
+        /// <summary>
+        /// If true, the character mode will not be updated automatically by the creature's movement.
+        /// This is used to make the character animate in a certain way without interference.
+        /// </summary> 
+        public bool OverrideCharacterMode { get; set; }
+        [JsonProperty] private bool FirstUpdate = true;
+
 
         public Creature()
         {
@@ -32,11 +53,9 @@ namespace DwarfCorp
             Stats = stats;
             Stats.Gender = Mating.RandomGender();
             DrawLifeTimer.HasTriggered = true;
-            HasCorpse = false;
             IsOnGround = true;
             Faction = faction;
             Controller = new PIDController(Stats.MaxAcceleration, Stats.StoppingForce * 2, 0.0f);
-            JumpTimer = new Timer(0.2f, true, Timer.TimerMode.Real);
             IsHeadClear = true;
             NoiseMaker = new NoiseMaker();
             NoiseMaker.BasePitch = stats.VoicePitch;
@@ -55,127 +74,29 @@ namespace DwarfCorp
             return cached;
         }
 
-        /// <summary> The creature's AI determines how it will behave. </summary>
-        [JsonIgnore]
-        public CreatureAI AI
-        {
-            get
-            {
-                return _get(ref _ai);
-            }
-        }
-        private CreatureAI _ai = null;
 
-        /// <summary> The crature's physics determines how it moves around </summary>
-        public Physics Physics { get; set; }
-
-        /// <summary> The selection circle is drawn when the character is selected </summary>
-        private CharacterSprite _characterSprite = null;
-        [JsonIgnore]
-        public CharacterSprite Sprite
-        {
-            get
-            {
-                return _get(ref _characterSprite);
-            }
-        }
-
-        /// <summary> Finds enemies nearby and triggers when it sees them </summary>
-        [JsonIgnore]
-        public EnemySensor Sensors
-        {
-            get
-            {
-                return _get(ref _sensors);
-            }
-        }
-
-        private EnemySensor _sensors = null;
-
-        public bool HasCorpse { get; set; }
-
-        /// <summary> Used to make sounds for the creature </summary>
-        [JsonIgnore]
-        public NoiseMaker NoiseMaker { get; set; }
-        
-        /// <summary> The creature can hold objects in its inventory </summary>
-        [JsonIgnore]
-        public Inventory Inventory
-        {
-            get
-            {
-                return _get(ref _inventory);
-            }
-        }
-        private Inventory _inventory = null;
-
-        public Timer MigrationTimer { get; set; }
-
-        /// <summary> List of attacks the creature can perform. </summary>
-        [JsonIgnore] public List<Attack> Attacks;
-
-        /// <summary> Faction that the creature belongs to </summary>
-        public Faction Faction { get; set; }
-
-        /// <summary> Used to smoothly apply forces to the creature </summary>
-        public PIDController Controller { get; set; }
-        /// <summary> The creature's stat numbers (WIS, DEX, STR etc.) </summary>
-        public CreatureStats Stats { get; set; }
-        /// <summary> The creature's current status (energy, hunger, happiness, etc.) </summary>
-
-        /// <summary> Timer that rate-limits how quickly the creature can jump. DEPRECATED TODO(mklingen): DELETE </summary>
-        public Timer JumpTimer { get; set; }
-
-        /// <summary>
-        /// If true, the character mode will not be updated automatically by the creature's movement.
-        /// This is used to make the character animate in a certain way without interference.
-        /// </summary> 
-        public bool OverrideCharacterMode { get; set; }
-
-        public bool FirstUpdate = true;
-
-        // Todo: Remove
-        public CharacterMode AttackMode = CharacterMode.Attacking;
 
         /// <summary>
         /// Gets or sets the current character mode for animations.
         /// </summary>
-        [JsonIgnore]public CharacterMode CurrentCharacterMode
+        [JsonIgnore] public CharacterMode CurrentCharacterMode
         {
-            get { return currentCharacterMode; }
+            get { return _currentCharacterMode; }
             set
             {
                 if (OverrideCharacterMode) return;
 
-                currentCharacterMode = value;
+                _currentCharacterMode = value;
                 if (Parent != null && Sprite != null)
                 {
-                    if (Sprite.HasAnimation(currentCharacterMode, OrientedAnimatedSprite.Orientation.Forward))
-                    {
+                    if (Sprite.HasAnimation(_currentCharacterMode, OrientedAnimatedSprite.Orientation.Forward))
                         Sprite.SetCurrentAnimation(value.ToString());
-                    }
                     else
-                    {
-                        Sprite.SetCurrentAnimation(currentCharacterMode != CharacterMode.Walking
-                            ? CharacterMode.Walking.ToString()
-                            : CharacterMode.Idle.ToString());
-                    }
+                        Sprite.SetCurrentAnimation(_currentCharacterMode != CharacterMode.Walking ? CharacterMode.Walking.ToString() : CharacterMode.Idle.ToString());
                 }
             }
         }
 
-        public Timer DrawLifeTimer = new Timer(0.25f, true, Timer.TimerMode.Real);
-
-        /// <summary> Convenience wrapper around Status.IsAsleep </summary>
-        public bool IsAsleep
-        {
-            get { return Stats.IsAsleep; }
-        }
-
-        /// <summary> If true there is a filled voxel immediately beneath this creature </summary>
-        public bool IsOnGround { get; set; }
-        /// <summary> If true there is an empty voxel immediately above this creature </summary>
-        public bool IsHeadClear { get; set; }
 
                 /// <summary> Updates the creature </summary>
         override public void Update(DwarfTime gameTime, ChunkManager chunks, Camera camera)
@@ -197,7 +118,6 @@ namespace DwarfCorp
                 return;
             }
 
-
             if (!Active) return;
 
             UpdateCloak();
@@ -206,13 +126,14 @@ namespace DwarfCorp
             UpdateAnimation(gameTime, chunks, camera);
 
             #region Update Status Stat Effects
+
             var statAdjustments = Stats.FindAdjustment("status");
             Stats.RemoveStatAdjustment("status");
             if (statAdjustments == null)
                 statAdjustments = new StatAdjustment() { Name = "status" };
             statAdjustments.Reset();
 
-            if (!IsAsleep)
+            if (!Stats.IsAsleep)
                 Stats.Hunger.CurrentValue -= (float)gameTime.ElapsedGameTime.TotalSeconds * Stats.HungerGrowth;
             else
                 Hp += (float)gameTime.ElapsedGameTime.TotalSeconds * 0.1f;
@@ -233,7 +154,7 @@ namespace DwarfCorp
                 statAdjustments.Dexterity += -2.0f;
             }
 
-            if (Stats.CanEat && Stats.Hunger.IsDissatisfied() && !IsAsleep)
+            if (Stats.CanEat && Stats.Hunger.IsDissatisfied() && !Stats.IsAsleep)
             {
                 DrawIndicator(IndicatorManager.StandardIndicators.Hungry);
 
@@ -251,9 +172,7 @@ namespace DwarfCorp
                 Stats.AddStatAdjustment(statAdjustments);
 
             #endregion
-
-
-            JumpTimer.Update(gameTime);
+            
             Stats.HandleBuffs(this, gameTime);
             UpdateMigration(gameTime);
             UpdateEggs(gameTime);
@@ -310,11 +229,11 @@ namespace DwarfCorp
 
             if (IsCloaked)
             {
-                Sensors.Active = false;
+                Sensor.Active = false;
             }
             else
             {
-                Sensors.Active = true;
+                Sensor.Active = true;
             }
         }
 
@@ -361,7 +280,7 @@ namespace DwarfCorp
                 if (MathFunctions.RandEvent(0.01f))
                     NoiseMaker.MakeNoise("Sleep", AI.Position, true);
             }
-            else if (currentCharacterMode == CharacterMode.Sleeping)
+            else if (CurrentCharacterMode == CharacterMode.Sleeping)
                 CurrentCharacterMode = CharacterMode.Idle;
 
             if (World.Time.IsDay() && Stats.IsAsleep && !Stats.Energy.IsDissatisfied() && !Stats.Health.IsCritical())
@@ -416,10 +335,8 @@ namespace DwarfCorp
         /// </summary>
         public void UpdateAnimation(DwarfTime gameTime, ChunkManager chunks, Camera camera)
         {
-            if (CurrentCharacterMode == AttackMode)
-            {
+            if (CurrentCharacterMode == Stats.CurrentClass.AttackMode)
                 return;
-            }
 
             Physics.Velocity = MathFunctions.ClampXZ(Physics.Velocity, Stats.MaxSpeed);
         }
@@ -432,7 +349,7 @@ namespace DwarfCorp
         {
             var waitTimer = new Timer(f, true);
 
-            CurrentCharacterMode = AttackMode;
+            CurrentCharacterMode = Stats.CurrentClass.AttackMode;
             Sprite.ResetAnimations(CurrentCharacterMode);
             Sprite.PlayAnimations(CurrentCharacterMode);
 
@@ -447,12 +364,12 @@ namespace DwarfCorp
 
                 Attacks[0].PerformNoDamage(this, DwarfTime.LastTime, pos());
                 Physics.Velocity = Vector3.Zero;
-                Sprite.ReloopAnimations(AttackMode);
+                Sprite.ReloopAnimations(Stats.CurrentClass.AttackMode);
 
                 yield return Act.Status.Running;
             }
 
-            Sprite.PauseAnimations(AttackMode);
+            Sprite.PauseAnimations(Stats.CurrentClass.AttackMode);
             CurrentCharacterMode = CharacterMode.Idle;
             Physics.Active = true;
 
@@ -465,7 +382,7 @@ namespace DwarfCorp
             Func<Vector3> pos, string playSound = "", Func<bool> continueHitting = null, bool maintainPos = true)
         {
             Vector3 currentPos = Physics.LocalTransform.Translation;
-            CurrentCharacterMode = AttackMode;
+            CurrentCharacterMode = Stats.CurrentClass.AttackMode;
             Sprite.ResetAnimations(CurrentCharacterMode);
             Sprite.PlayAnimations(CurrentCharacterMode);
             var p_current = pos();
@@ -498,7 +415,7 @@ namespace DwarfCorp
                 incrementTimer.Update(DwarfTime.LastTime);
                 if (incrementTimer.HasTriggered)
                 {
-                    Sprite.ReloopAnimations(AttackMode);
+                    Sprite.ReloopAnimations(Stats.CurrentClass.AttackMode);
                     incrementProgress();
                 }
 
@@ -511,7 +428,7 @@ namespace DwarfCorp
 
                 yield return Act.Status.Running;
             }
-            Sprite.PauseAnimations(AttackMode);
+            Sprite.PauseAnimations(Stats.CurrentClass.AttackMode);
             CurrentCharacterMode = CharacterMode.Idle;
             Physics.Active = true;
             yield return Act.Status.Success;
@@ -577,38 +494,16 @@ namespace DwarfCorp
                 AI.AssignTask(task);
         }
 
-        // Todo: This func is redundant.
-        protected void CreateSprite(List<Animation> Animations, ComponentManager manager, float heightOffset=0.15f)
-        {
-            if (Physics == null)
-            {
-                // Not sure under what circumstances this happens, but apparently a user
-                // ended up with a null Physics here on loading.
-                Physics = GetRoot().GetComponent<Physics>();
-            }
-
-            if (Physics == null)
-                return;
-
-            var sprite = Physics.AddChild(new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(new Vector3(0, heightOffset, 0)))) as CharacterSprite;
-            // Todo: Share the list of animations too? DOUBLE TODO
-            foreach (var animation in Animations)
-                sprite.AddAnimation(animation);
-
-            sprite.SetCurrentAnimation(Sprite.Animations.First().Value);
-            sprite.SetFlag(Flag.ShouldSerialize, false);
-        }
-
-        protected CharacterSprite CreateSprite(string animations, ComponentManager manager, float VerticalOffset = 0.5f, bool AddToPhysics = true)
+        protected CharacterSprite CreateSprite(string animations, ComponentManager manager, float VerticalOffset)
         {
             var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, VerticalOffset, 0));
 
-            if (AddToPhysics)
-                Physics.AddChild(sprite);
+            Physics.AddChild(sprite);
 
             foreach (var animation in AnimationLibrary.LoadCompositeAnimationSet(animations, Name))
-                sprite.AddAnimation(animation);
+                sprite.AddAnimation(animation); // Todo: Share animation list.
 
+            sprite.SetCurrentAnimation(Sprite.Animations.First().Value);
             sprite.SetFlag(Flag.ShouldSerialize, false);
 
             return sprite;

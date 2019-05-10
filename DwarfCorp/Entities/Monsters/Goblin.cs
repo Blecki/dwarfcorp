@@ -51,7 +51,7 @@ namespace DwarfCorp
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
-            Physics.AddChild(new CreatureAI(Manager, "Goblin AI", Sensors));
+            Physics.AddChild(new CreatureAI(Manager, "Goblin AI", Sensor));
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
           
@@ -70,7 +70,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Goblin.Sprites.goblin_animations, "Goblin"), manager);
+            CreateSprite(ContentPaths.Entities.Goblin.Sprites.goblin_animations, manager, 0.15f);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 0))).SetFlag(Flag.ShouldSerialize, false);
 

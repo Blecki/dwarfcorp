@@ -42,7 +42,7 @@ namespace DwarfCorp
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
-            Physics.AddChild(new CreatureAI(Manager, "Fairy AI", Sensors));
+            Physics.AddChild(new CreatureAI(Manager, "Fairy AI", Sensor));
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
@@ -62,7 +62,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Dwarf.Sprites.fairy_animation, "Fairy"), manager);
+            CreateSprite(ContentPaths.Entities.Dwarf.Sprites.fairy_animation, manager, 0.15f);
             Sprite.AddChild(new Bobber(Manager, 0.25f, 3.0f, MathFunctions.Rand(), Sprite.LocalTransform.Translation.Y)).SetFlag(Flag.ShouldSerialize, false);
             Sprite.LightsWithVoxels = false;
 

@@ -53,7 +53,7 @@ namespace DwarfCorp
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
             // Add AI
-            Physics.AddChild(new PacingCreatureAI(Manager, "Deer AI", Sensors));
+            Physics.AddChild(new PacingCreatureAI(Manager, "Deer AI", Sensor));
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
@@ -70,7 +70,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(ContentPaths.Entities.Animals.Deer.animations, manager);
+            CreateSprite(ContentPaths.Entities.Animals.Deer.animations, manager, 0.5f);
             Physics.AddChild(Shadow.Create(0.75f, manager));
 
             NoiseMaker = new NoiseMaker();

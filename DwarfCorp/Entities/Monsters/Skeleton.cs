@@ -37,7 +37,7 @@ namespace DwarfCorp
             Physics.Orientation = Physics.OrientMode.RotateY;
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
-            Physics.AddChild(new CreatureAI(Manager, "Skeleton AI", Sensors));
+            Physics.AddChild(new CreatureAI(Manager, "Skeleton AI", Sensor));
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
@@ -57,7 +57,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Skeleton.skeleton_animation, "Skeleton"), Manager);
+            CreateSprite(ContentPaths.Entities.Skeleton.skeleton_animation, Manager, 0.15f);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 2, 1))).SetFlag(Flag.ShouldSerialize, false);
 

@@ -28,7 +28,7 @@ namespace DwarfCorp
         {
             foreach (CreatureAI minion in Creature.Faction.Minions)
             {
-                if (minion == Creature.AI || minion.Creature.IsAsleep)
+                if (minion == Creature.AI || minion.Creature.Stats.IsAsleep)
                     continue;
 
                 float dist = (minion.Position - Creature.AI.Position).Length();
@@ -117,7 +117,7 @@ namespace DwarfCorp
         {
             Creature.OverrideCharacterMode = false;
            
-            Tree = new Domain(  () => !Agent.IsDead && !Agent.Creature.IsAsleep,
+            Tree = new Domain(  () => !Agent.IsDead && !Agent.Creature.Stats.IsAsleep,
                                 new Sequence(new ClearBlackboardData(Creature.AI, "Chair"),
                                 new Wrap(() => Creature.FindAndReserve("Chair", "Chair")),
                                 new Domain(ValidateSit, new Sequence(

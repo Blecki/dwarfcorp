@@ -26,8 +26,6 @@ namespace DwarfCorp
 
             Physics.AddChild(this);
 
-            HasCorpse = true;
-
             Stats.Gender = Mating.RandomGender();
             Physics.Orientation = Physics.OrientMode.RotateY;
 
@@ -35,7 +33,7 @@ namespace DwarfCorp
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
-            Physics.AddChild(new CreatureAI(Manager, "Dwarf AI", Sensors));
+            Physics.AddChild(new CreatureAI(Manager, "Dwarf AI", Sensor));
          
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
 
@@ -69,6 +67,23 @@ namespace DwarfCorp
             Stats.Money = (decimal)MathFunctions.Rand(0, 150);
 
             Physics.AddChild(new DwarfThoughts(Manager, "Thoughts"));
+        }
+
+        public override void Die()
+        {
+            String type = AI.Stats.FullName + "'s " + "Corpse";
+
+            if (!ResourceLibrary.Exists(type))
+            {
+                var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName("Corpse"));
+                r.Name = type;
+                r.ShortName = type;
+                ResourceLibrary.Add(r);
+            }
+
+            Inventory.AddResource(new ResourceAmount(type, 1));
+
+            base.Die();
         }
 
         public override void CreateCosmeticChildren(ComponentManager manager)
@@ -152,8 +167,6 @@ namespace DwarfCorp
             AddLayerOrDefault(sprite, random, "hair", hairPalette);
             AddLayerOrDefault(sprite, random, "tool");
             AddLayerOrDefault(sprite, random, "hat", hairPalette);
-
-            AttackMode = Stats.CurrentClass.AttackMode;
 
             foreach (Animation animation in AnimationLibrary.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations))
                 sprite.AddAnimation(animation);

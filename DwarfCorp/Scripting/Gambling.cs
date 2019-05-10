@@ -16,7 +16,7 @@ namespace DwarfCorp.Scripting
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            if (agent.IsAsleep || agent.IsDead || agent.Stats.Money < 10.0m || agent.World.Master.GamblingState.Participants.Count > 4 || agent.Stats.Boredom.IsSatisfied())
+            if (agent.Stats.IsAsleep || agent.IsDead || agent.Stats.Money < 10.0m || agent.World.Master.GamblingState.Participants.Count > 4 || agent.Stats.Boredom.IsSatisfied())
             {
                 return Feasibility.Infeasible;
             }
@@ -193,7 +193,7 @@ namespace DwarfCorp.Scripting
 
         public void Update(DwarfTime time)
         {
-            Participants.RemoveAll(r => r == null || r.IsDead || r.Physics == null || r.AI == null || r.IsAsleep || !r.Active);
+            Participants.RemoveAll(r => r == null || r.IsDead || r.Physics == null || r.AI == null || r.Stats.IsAsleep || !r.Active);
             if (Participants.Count == 0)
             {
                 if (PotFixture != null)

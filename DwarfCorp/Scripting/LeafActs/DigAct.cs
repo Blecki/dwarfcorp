@@ -9,7 +9,6 @@ namespace DwarfCorp
     /// <summary>
     /// A creature attacks a voxel until it is destroyed.
     /// </summary>
-    [Newtonsoft.Json.JsonObject(IsReference = true)]
     public class DigAct : CreatureAct
     {
         public float EnergyLoss { get; set; }
@@ -29,7 +28,7 @@ namespace DwarfCorp
 
         public override IEnumerable<Status> Run()
         { 
-           Creature.Sprite.ResetAnimations(Creature.AttackMode);
+           Creature.Sprite.ResetAnimations(Creature.Stats.CurrentClass.AttackMode);
 
             // Block since we're in a coroutine.
             while (true)
@@ -58,7 +57,7 @@ namespace DwarfCorp
                 Creature.Physics.Velocity *= 0.01f;
 
                 // Play the attack animations.
-                Creature.CurrentCharacterMode = Creature.AttackMode;
+                Creature.CurrentCharacterMode = Creature.Stats.CurrentClass.AttackMode;
                 Creature.OverrideCharacterMode = true;
                 Creature.Sprite.ResetAnimations(Creature.CurrentCharacterMode);
                 Creature.Sprite.PlayAnimations(Creature.CurrentCharacterMode);

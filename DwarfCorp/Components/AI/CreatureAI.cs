@@ -1050,22 +1050,6 @@ namespace DwarfCorp
             return new LookInterestingTask();
         }
 
-
-        /// <summary> Tell the creature to jump straight up </summary>
-        public void Jump(DwarfTime dt)
-        {
-            if (!Creature.JumpTimer.HasTriggered)
-            {
-                return;
-            }
-
-            Creature.Physics.ApplyForce(Vector3.Up * Creature.Stats.JumpForce, (float)dt.ElapsedGameTime.TotalSeconds);
-            Creature.JumpTimer.Reset(Creature.JumpTimer.TargetTimeSeconds);
-            SoundManager.PlaySound(ContentPaths.Audio.jump, Creature.Physics.GlobalTransform.Translation);
-        }
-
-       
-
         /// <summary> Tell the creature to kill the given body. </summary>
         public void Kill(GameComponent entity)
         {

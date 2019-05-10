@@ -51,7 +51,7 @@ namespace DwarfCorp
             CreateCosmeticChildren(Manager);
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
-            Physics.AddChild(new PacingCreatureAI(Manager, "Rabbit AI", Sensors));
+            Physics.AddChild(new PacingCreatureAI(Manager, "Rabbit AI", Sensor));
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
             Physics.AddChild(new Flammable(Manager, "Flames"));
 

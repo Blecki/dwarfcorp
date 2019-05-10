@@ -62,7 +62,7 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return agent.Sensors.Enemies.Count == 0 ? Feasibility.Feasible : Feasibility.Infeasible ;
+            return agent.Sensor.Enemies.Count == 0 ? Feasibility.Feasible : Feasibility.Infeasible ;
         }
     }
 }

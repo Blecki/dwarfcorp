@@ -55,7 +55,7 @@ namespace DwarfCorp
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
-            Physics.AddChild(new BatAI(Manager, "Bat AI", Sensors));
+            Physics.AddChild(new BatAI(Manager, "Bat AI", Sensor));
             AI.Movement.CanFly = true;
             AI.Movement.CanSwim = false;
             AI.Movement.CanClimb = false;

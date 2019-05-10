@@ -57,7 +57,7 @@ namespace DwarfCorp
             CreatureAI minionToConverse = null;
             foreach (CreatureAI minion in c.Faction.Minions)
             {
-                if (minion == c || minion.Creature.IsAsleep)
+                if (minion == c || minion.Creature.Stats.IsAsleep)
                     continue;
 
                 float dist = (minion.Position - c.Position).Length();
@@ -83,12 +83,12 @@ namespace DwarfCorp
 
         public override Feasibility IsFeasible(Creature agent)
         {
-            return !(agent.AI.IsPosessed || agent.IsAsleep) ? Feasibility.Feasible : Feasibility.Infeasible;
+            return !(agent.AI.IsPosessed || agent.Stats.IsAsleep) ? Feasibility.Feasible : Feasibility.Infeasible;
         }
 
         public override Act CreateScript(Creature creature)
         {
-            if (creature.AI.IsPosessed || creature.IsAsleep)
+            if (creature.AI.IsPosessed || creature.Stats.IsAsleep)
             {
                 return null;
             }
@@ -118,7 +118,7 @@ namespace DwarfCorp
 
         public override bool ShouldDelete(Creature agent)
         {
-            return agent.IsDead || agent.IsAsleep || !agent.Active || agent.AI.IsPosessed;
+            return agent.IsDead || agent.Stats.IsAsleep || !agent.Active || agent.AI.IsPosessed;
         }
 
         public override float ComputeCost(Creature agent, bool alreadyCheckedFeasible = false)

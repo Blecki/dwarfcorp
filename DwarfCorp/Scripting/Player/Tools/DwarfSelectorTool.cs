@@ -58,7 +58,7 @@ namespace DwarfCorp
 
             foreach(CreatureAI minion in Player.SelectedMinions)
             {
-                if (minion.Creature.IsAsleep) continue;
+                if (minion.Creature.Stats.IsAsleep) continue;
                 if(minion.CurrentTask != null)
                     minion.AssignTask(minion.CurrentTask);
 
@@ -156,7 +156,7 @@ namespace DwarfCorp
                 if (dwarf != null)
                 {
                     sb.Append(dwarf.Stats.FullName + " (" + (dwarf.Stats.Title ?? dwarf.Stats.CurrentClass.Name) + ")");
-                    if (dwarf.IsAsleep)
+                    if (dwarf.Stats.IsAsleep)
                         sb.Append(" UNCONSCIOUS ");
 
                     if (dwarf.Stats.IsOnStrike)

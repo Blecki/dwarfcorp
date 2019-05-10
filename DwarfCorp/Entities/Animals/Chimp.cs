@@ -55,7 +55,7 @@ namespace DwarfCorp
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
             // Controls the behavior of the creature
-            Physics.AddChild(new PacingCreatureAI(Manager, "Chimp AI", Sensors));
+            Physics.AddChild(new PacingCreatureAI(Manager, "Chimp AI", Sensor));
 
             // The bird can hold one item at a time in its inventory
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));

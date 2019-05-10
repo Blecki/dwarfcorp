@@ -51,7 +51,7 @@ namespace DwarfCorp
 
             Physics.AddChild(new EnemySensor(Manager, "EnemySensor", Matrix.Identity, new Vector3(20, 5, 20), Vector3.Zero));
 
-            Physics.AddChild(new PacingCreatureAI(Manager, "Demon AI", Sensors) { Movement = { CanFly = true, CanSwim = false, CanDig = true} });
+            Physics.AddChild(new PacingCreatureAI(Manager, "Demon AI", Sensor) { Movement = { CanFly = true, CanSwim = false, CanDig = true} });
 
             Physics.AddChild(new Inventory(Manager, "Inventory", Physics.BoundingBox.Extents(), Physics.LocalBoundingBoxOffset));
             
@@ -63,7 +63,7 @@ namespace DwarfCorp
 
         public override void CreateCosmeticChildren(ComponentManager manager)
         {
-            CreateSprite(AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Demon.demon_animations, "Demon"), manager);
+            CreateSprite(ContentPaths.Entities.Demon.demon_animations, manager, 0.15f);
             Physics.AddChild(Shadow.Create(0.75f, manager));
             Physics.AddChild(new MinimapIcon(Manager, new NamedImageFrame(ContentPaths.GUI.map_icons, 16, 3, 1))).SetFlag(Flag.ShouldSerialize, false);
 

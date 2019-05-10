@@ -47,21 +47,6 @@ namespace DwarfCorp
                 Inventory.AddResource(new ResourceAmount(type, 1));
             }
 
-            if (HasCorpse)
-            {
-                String type = AI.Stats.FullName + "'s " + "Corpse";
-
-                if (!ResourceLibrary.Exists(type))
-                {
-                    var r = ResourceLibrary.GenerateResource(ResourceLibrary.GetResourceByName("Corpse"));
-                    r.Name = type;
-                    r.ShortName = type;
-                    ResourceLibrary.Add(r);
-                }
-
-                Inventory.AddResource(new ResourceAmount(type, 1));
-            }
-
             base.Die();
         }
     }
