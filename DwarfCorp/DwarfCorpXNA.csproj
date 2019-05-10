@@ -803,7 +803,6 @@
     <Compile Include="Scripting\Data\ActData.cs" />
     <Compile Include="Scripting\Data\Blackboard.cs" />
     <Compile Include="Components\AI\CreatureStats.cs" />
-    <Compile Include="Scripting\Items\TagList.cs" />
     <Compile Include="Scripting\LeafActs\ClearBlackboardData.cs" />
     <Compile Include="Scripting\LeafActs\ConsumeItemAct.cs" />
     <Compile Include="Scripting\LeafActs\CreateCraftItemAct.cs" />
@@ -865,12 +864,10 @@
     <Compile Include="Scripting\TaskManagement\Tasks\CraftItemTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\PlantTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\GatherItemTask.cs" />
-    <Compile Include="Scripting\TaskManagement\Tasks\GetItemWithTagsTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\KillEntityTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\KillVoxelTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\LookInterestingTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\PutItemInZoneTask.cs" />
-    <Compile Include="Scripting\TaskManagement\Tasks\PutItemWithTagTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\SatisfyHungerTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\SatisfyTirednessTask.cs" />
     <Compile Include="Scripting\TaskManagement\Tasks\StockResourceTask.cs" />

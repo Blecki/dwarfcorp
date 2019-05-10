@@ -617,7 +617,6 @@
     <Compile Include=".\Scripting\Factions\Trading\TradeYarnCommand.cs" />
     <Compile Include=".\Scripting\Factions\WarParty.cs" />
     <Compile Include=".\Scripting\Gambling.cs" />
-    <Compile Include=".\Scripting\Items\TagList.cs" />
     <Compile Include=".\Scripting\LeafActs\ClearBlackboardData.cs" />
     <Compile Include=".\Scripting\LeafActs\ConsumeItemAct.cs" />
     <Compile Include=".\Scripting\LeafActs\CreateCraftItemAct.cs" />
@@ -697,14 +696,12 @@
     <Compile Include=".\Scripting\TaskManagement\Tasks\FindLandTask.cs" />
     <Compile Include=".\Scripting\TaskManagement\Tasks\FleeEntityTask.cs" />
     <Compile Include=".\Scripting\TaskManagement\Tasks\GatherItemTask.cs" />
-    <Compile Include=".\Scripting\TaskManagement\Tasks\GetItemWithTagsTask.cs" />
     <Compile Include=".\Scripting\TaskManagement\Tasks\HealAllyTask.cs" />
     <Compile Include=".\Scripting\TaskManagement\Tasks\KillEntityTask.cs" />
     <Compile Include=".\Scripting\TaskManagement\Tasks\KillVoxelTask.cs" />
     <Compile Include=".\Scripting\TaskManagement\Tasks\LookInterestingTask.cs" />
     <Compile Include=".\Scripting\TaskManagement\Tasks\PlantTask.cs" />
     <Compile Include=".\Scripting\TaskManagement\Tasks\PutItemInZoneTask.cs" />
-    <Compile Include=".\Scripting\TaskManagement\Tasks\PutItemWithTagTask.cs" />
     <Compile Include=".\Scripting\TaskManagement\Tasks\RechargeObjectTask.cs" />
     <Compile Include=".\Scripting\TaskManagement\Tasks\SatisfyHungerTask.cs" />
     <Compile Include=".\Scripting\TaskManagement\Tasks\SatisfyTirednessTask.cs" />
