@@ -19,7 +19,6 @@ namespace DwarfCorp
         public MinimapIcon(ComponentManager Manager, NamedImageFrame icon) :
             base(Manager, "Icon", Matrix.Identity, Vector3.One, Vector3.Zero)
         {
-            UpdateRate = 10;
             Icon = icon;
             IconScale = 1.0f;
             IsVisible = false;

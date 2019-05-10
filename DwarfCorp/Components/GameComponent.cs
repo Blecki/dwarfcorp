@@ -41,7 +41,6 @@ namespace DwarfCorp
             }
         }
 
-        public int UpdateRate = 1;
         public Flag Flags = 0;
         public List<string> Tags { get; set; }
         public List<uint> SerializableChildren;
@@ -100,13 +99,6 @@ namespace DwarfCorp
         public bool IsFlagSet(Flag F)
         {
             return (Flags & F) == F;
-        }
-
-        public void SetUpdateRateRecursive(int rate)
-        {
-            UpdateRate = rate;
-            foreach (var child in Children)
-                child.SetUpdateRateRecursive(rate);
         }
 
         public GameComponent SetFlag(Flag F, bool Value)

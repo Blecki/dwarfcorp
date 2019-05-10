@@ -25,7 +25,6 @@ namespace DwarfCorp
             LocalTransform = shadowTransform;
             CreateCosmeticChildren(manager);
             SetFlagRecursive(Flag.Visible, false);
-            UpdateRate = 1;
         }
 
         public void FitToParent()

@@ -9,11 +9,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Component causes the object its attached to to become flammable. Flammable objects have "heat"
-    /// when the heat is above a "flashpoint" they get damaged until they are destroyed, and emit flames.
-    /// </summary>
-    [JsonObject(IsReference = true)]
     public class Flammable : GameComponent
     {
         private Health _health = null;
@@ -60,7 +55,6 @@ namespace DwarfCorp
             base(name, manager)
         {
             FlameSprites = new List<AnimatedSprite>();
-            UpdateRate = 10;
             Heat = 0.0f;
             Flashpoint = 100.0f;
             Damage = 5.0f;
@@ -188,7 +182,6 @@ namespace DwarfCorp
 
             if(Heat > Flashpoint)
             {
-                UpdateRate = 1;
                 if(DamageTimer.HasTriggered)
                     Health.Damage(Damage, Health.DamageType.Fire);
 
@@ -232,52 +225,6 @@ namespace DwarfCorp
                     sprite.Die();
                 }
                 FlameSprites.Clear();
-                UpdateRate = 10;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Standalone fire entity for spreading in the world.
-    /// </summary>
-    [JsonObject(IsReference =true)]
-    public class Fire : GameComponent
-    {
-        public Timer LifeTimer = new Timer(5.0f, true);
-
-        [EntityFactory("Fire")]
-        private static GameComponent __factory(ComponentManager Manager, Vector3 Position, Blackboard Data)
-        {
-            return new Fire(Manager, Position);
-        }
-
-        public Fire() :
-            base()
-        {
-            LifeTimer = new Timer(MathFunctions.Rand(4.0f, 10.0f), true);
-        }
-
-        public Fire(ComponentManager manager, Vector3 pos) :
-            base(manager, "Fire", Matrix.CreateTranslation(pos), Vector3.One, Vector3.Zero)
-        {
-            CollisionType = CollisionType.Static;
-            Tags.Add("Fire");
-            AddChild(new Flammable(manager, "Flammable")
-            {
-                Heat = 999,
-            });
-            AddChild(new Health(manager, "Health", 10.0f, 0.0f, 10.0f));
-        }
-
-        public override void Update(DwarfTime Time, ChunkManager Chunks, Camera Camera)
-        {
-            base.Update(Time, Chunks, Camera);
-
-            LifeTimer.Update(Time);
-            
-            if (LifeTimer.HasTriggered)
-            {
-                Die();
             }
         }
     }

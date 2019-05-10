@@ -58,7 +58,6 @@ namespace DwarfCorp
 
                 var component = EntityFactory.CreateEntity<GameComponent>("Coins", Agent.Physics.Position + new Microsoft.Xna.Framework.Vector3(0.0f, 2.0f, 0.0f));
                 var toss = new TossMotion(1.0f, 2.5f, component.LocalTransform, Agent.Physics.Position);
-                component.UpdateRate = 1;
                 component.AnimationQueue.Add(toss);
                 toss.OnComplete += component.Die;
 

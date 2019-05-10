@@ -116,7 +116,8 @@
     <Compile Include=".\AssetManagement\StringLibrary.cs" />
     <Compile Include=".\AssetManagement\TextureTool.cs" />
     <Compile Include=".\Components\AI\CharacterMode.cs" />
-    <Compile Include=".\Components\AI\CraftDetails.cs" />
+    <Compile Include="Components\Physics\Fire.cs" />
+    <Compile Include="World\Crafting\CraftDetails.cs" />
     <Compile Include=".\Components\AI\Creature.cs" />
     <Compile Include=".\Components\AI\CreatureAI.cs" />
     <Compile Include=".\Components\AI\CreatureMovement.cs" />
@@ -136,6 +137,9 @@
     <Compile Include=".\Components\AI\Sensors\DestroyOnTimer.cs" />
     <Compile Include=".\Components\AI\Sensors\EnemySensor.cs" />
     <Compile Include="AssetManagement\GameSave\OverworldMetaData.cs" />
+    <Compile Include="World\Crafting\CraftedBody.cs" />
+    <Compile Include="World\Crafting\CraftedFixture.cs" />
+    <Compile Include="World\Crafting\FixtureCraftDetails.cs" />
     <Compile Include="Components\AI\Creature-Death.cs" />
     <Compile Include="Components\AI\Creature-Reproduction.cs" />
     <Compile Include="Components\AI\Creature-Indicators.cs" />

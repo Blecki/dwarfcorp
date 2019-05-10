@@ -40,8 +40,6 @@ namespace DwarfCorp
                 name
             )
         {
-            UpdateRate = 1;
-
             Physics = new Physics
                 (
                     manager,

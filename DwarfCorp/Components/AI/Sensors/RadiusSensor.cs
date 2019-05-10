@@ -19,7 +19,6 @@ namespace DwarfCorp
 
         public RadiusSensor() : base()
         {
-            UpdateRate = 10;
             CollisionType = CollisionType.None;
         }
 
@@ -27,7 +26,6 @@ namespace DwarfCorp
             base(manager, name, localTransform, boundingBoxExtents, boundingBoxPos)
         {
             // Todo: Calculate bounding box from radius.
-            UpdateRate = 10;
             Tags.Add("Sensor");
             CollisionType = CollisionType.None;
         }

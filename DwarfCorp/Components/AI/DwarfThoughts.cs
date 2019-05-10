@@ -21,7 +21,6 @@ namespace DwarfCorp
         public DwarfThoughts(ComponentManager Manager, string name) : base(name, Manager)
         {
             Thoughts = new List<Thought>();
-            UpdateRate = 100;
         }
 
         private Creature _cachedCreature = null;
