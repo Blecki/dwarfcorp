@@ -22,7 +22,7 @@ namespace DwarfCorp
             //throw new InvalidOperationException();
         }
 
-        public Dictionary<string, Animation> Animations { get; set; }
+        protected Dictionary<string, Animation> Animations { get; set; }
 
         [JsonIgnore]
         public AnimationPlayer AnimPlayer = new AnimationPlayer();
@@ -61,6 +61,11 @@ namespace DwarfCorp
         {
             AnimPlayer.Play(animation);
             Animations[animation.Name] = animation;
+        }
+
+        public virtual void SetAnimations(Dictionary<String, Animation> Animations)
+        {
+            this.Animations = Animations;
         }
 
         public Animation GetAnimation(string name)

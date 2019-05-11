@@ -104,9 +104,9 @@ namespace DwarfCorp
 
         public AnimationPlayer GetAnimationPlayer(LayeredSprites.LayerStack stack)
         {
-            foreach (Animation animation in AnimationLibrary.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations))
-                if (animation.Name == "IdleFORWARD")
-                    return new AnimationPlayer(stack.ProxyAnimation(animation));
+            foreach (var animation in AnimationLibrary.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations))
+                if (animation.Key == "IdleFORWARD")
+                    return new AnimationPlayer(stack.ProxyAnimation(animation.Value));
             return null;
         }
 

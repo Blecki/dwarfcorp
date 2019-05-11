@@ -45,16 +45,6 @@ namespace DwarfCorp
             return Frames.Count;
         }
 
-        public struct SimpleDescriptor
-        {
-            public string AssetName;
-            public int Width;
-            public int Height;
-            public List<int> Frames;
-            public float Speed;
-            public float YOffset;
-        }
-
         public Animation()
         {
             SpriteSheet = null;

@@ -87,9 +87,7 @@ namespace DwarfCorp
             for (int i = 0; i < 10; ++i)
             {
                 var tailPiece = new CharacterSprite(Manager, "Sprite", Matrix.CreateTranslation(0, 0.25f, 0));
-
-                foreach (var animation in tailAnimations)
-                    tailPiece.AddAnimation(animation);
+                tailPiece.SetAnimations(tailAnimations);
 
                 tailPiece.SetFlag(Flag.ShouldSerialize, false);
                 tailPiece.Name = "Snake Tail";

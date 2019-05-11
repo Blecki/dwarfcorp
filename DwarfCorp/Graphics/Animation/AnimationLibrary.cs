@@ -1,35 +1,3 @@
-// AnimationLibrary.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,29 +10,9 @@ namespace DwarfCorp
 {
     public class AnimationLibrary
     {
-        private static Dictionary<String, List<Animation>> Animations = new Dictionary<String, List<Animation>>();
+        private static Dictionary<String, Dictionary<String, Animation>> Animations = new Dictionary<String, Dictionary<String, Animation>>();
 
-        // Kill this already.
-        public static Animation CreateAnimation(Animation.SimpleDescriptor Descriptor)
-        {
-            // Can't cache these guys, unfortunately. Thankfully, they
-            //  are only used by the dialogue screen.
-            var anim = new Animation()
-            {
-                SpriteSheet = new SpriteSheet(Descriptor.AssetName, Descriptor.Width, Descriptor.Height),
-                Frames = Descriptor.Frames.Select(s => new Point(s, 0)).ToList(),
-                Speeds = new List<float>(),
-                YOffset = new List<float>() { Descriptor.YOffset }
-            };
-
-            foreach(var frame in anim.Frames)
-            {
-                anim.Speeds.Add(Descriptor.Speed);
-            }
-            return anim;
-        }
-
-        public static Animation CreateSimpleAnimation(String TextureAsset, bool loop = false)
+        public static Animation CreateSimpleAnimation(String TextureAsset)
         {
             if (!Animations.ContainsKey(TextureAsset))
             {
@@ -77,77 +25,64 @@ namespace DwarfCorp
                 for (var i = 0; i < spriteSheet.Width / spriteSheet.FrameWidth; ++i)
                     frames.Add(new Point(i, 0));
 
-                Animations.Add(TextureAsset, new List<Animation>
-                {
-                    new Animation()
-                    {
-                        SpriteSheet = spriteSheet,
-                        Frames = frames,
-                        Name = TextureAsset,
-                        FrameHZ = 15.0f,
-                        Loops = loop
-                    }
-                });
+                return CreateAnimation(spriteSheet, frames, TextureAsset);
             }
 
-            return Animations[TextureAsset][0];
+            return Animations[TextureAsset].Values.FirstOrDefault();
         }
 
-
-        public static Animation CreateAnimation(
-            SpriteSheet Sheet,
-            List<Point> Frames,
-            String UniqueName)
+        public static Animation CreateAnimation(SpriteSheet Sheet, List<Point> Frames, String UniqueName)
         {
             if (!Animations.ContainsKey(UniqueName))
-            {
-                Animations.Add(UniqueName, new List<Animation>
+                Animations.Add(UniqueName, new Dictionary<String, Animation>
                 {
-                    new Animation()
                     {
-                        SpriteSheet = Sheet,
-                        Frames = Frames,
-                        Name = UniqueName,
-                        FrameHZ = 5.0f,
-                        Tint = Color.White
+                        "simple",
+                        new Animation()
+                        {
+                            SpriteSheet = Sheet,
+                            Frames = Frames,
+                            Name = UniqueName,
+                            FrameHZ = 5.0f,
+                            Tint = Color.White
+                        }
                     }
                 });
-            }
 
-            return Animations[UniqueName][0];
+            return Animations[UniqueName].Values.FirstOrDefault();
         }
 
-        public static List<Animation> LoadNewLayeredAnimationFormat(String Path)
+        public static Dictionary<String, Animation> LoadNewLayeredAnimationFormat(String Path)
         {
             if (!Animations.ContainsKey(Path))
             {
                 try
                 {
                     var anims = FileUtils.LoadJsonListFromMultipleSources<NewAnimationDescriptor>(Path, null, a => a.Name)
-                        .Select(a => a.CreateAnimation()).ToList();
+                        .Select(a => a.CreateAnimation()).ToDictionary(a => a.Name);
                     Animations.Add(Path, anims);
                 }
                 catch
                 {
-                    var errorAnimations = new List<Animation>();
-
-                    errorAnimations.Add(
-                        new Animation()
+                    Animations.Add(Path, new Dictionary<string, Animation>
+                    {
                         {
-                            SpriteSheet = new SpriteSheet(ContentPaths.Error, 32),
-                            Frames = new List<Point> { Point.Zero },
-                            Name = "ERROR"
-                        });
-
-
-                    Animations.Add(Path, errorAnimations);
+                            "ERROR",
+                            new Animation()
+                            {
+                                SpriteSheet = new SpriteSheet(ContentPaths.Error, 32),
+                                Frames = new List<Point> { Point.Zero },
+                                Name = "ERROR"
+                            }
+                        }
+                    });
                 }
             }
 
             return Animations[Path];
         }
 
-        public static List<Animation> LoadCompositeAnimationSet(String Path, String CompositeName)
+        public static Dictionary<String, Animation> LoadCompositeAnimationSet(String Path, String CompositeName)
         {
             if (!Animations.ContainsKey(Path))
             {
@@ -196,22 +131,22 @@ namespace DwarfCorp
                         a.PushFrames();
                         return a as Animation;
                         
-                        }).ToList());
+                        }).ToDictionary(a => a.Name));
                 }
                 catch (Exception)
                 {
-                    var errorAnimations = new List<Animation>();
-
-                    errorAnimations.Add(
-                        new Animation()
+                    Animations.Add(Path, new Dictionary<string, Animation>
+                    {
                         {
-                            SpriteSheet = new SpriteSheet(ContentPaths.Error, 32),
-                            Frames = new List<Point> { Point.Zero },
-                            Name = "ERROR"
-                        });
-
-                    
-                    Animations.Add(Path, errorAnimations);
+                            "ERROR",
+                            new Animation()
+                            {
+                                SpriteSheet = new SpriteSheet(ContentPaths.Error, 32),
+                                Frames = new List<Point> { Point.Zero },
+                                Name = "ERROR"
+                            }
+                        }
+                    });
                 }
             }
 

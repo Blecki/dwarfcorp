@@ -169,15 +169,9 @@ namespace DwarfCorp
 
         public void SetPortrait(String Gfx, int FrameWidth, int FrameHeight, float Speed, List<int> Frames)
         {
-            SpeakerAnimation = AnimationLibrary.CreateAnimation(new Animation.SimpleDescriptor
-            {
-                AssetName = Gfx,
-                Speed = 1.0f/Speed,
-                Frames = Frames,
-                Width = FrameWidth,
-                Height = FrameHeight
-            });
-
+            var sheet = new SpriteSheet(Gfx, FrameWidth, FrameHeight);
+            SpeakerAnimation = AnimationLibrary.CreateAnimation(sheet, Frames.Select(f => new Point(sheet.Column(f), sheet.Row(f))).ToList(), "yarn__" + Gfx);
+            SpeakerAnimation.Speeds = new List<float> { 1.0f / Speed };
             SpeakerAnimation.Loops = true;
 
             SpeakerAnimationPlayer = new AnimationPlayer(SpeakerAnimation);
