@@ -168,7 +168,7 @@ namespace DwarfCorp
             AddLayerOrDefault(sprite, random, "tool");
             AddLayerOrDefault(sprite, random, "hat", hairPalette);
 
-            sprite.SetAnimations(AnimationLibrary.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations));
+            sprite.SetAnimations(Library.LoadNewLayeredAnimationFormat(ContentPaths.dwarf_animations));
 
             sprite.SetFlag(Flag.ShouldSerialize, false);
         }

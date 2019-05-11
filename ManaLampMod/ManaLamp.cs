@@ -40,7 +40,7 @@ namespace ManaLampMod
                 new Point(2, 0)
             };
 
-            var lampAnimation = AnimationLibrary.CreateAnimation(spriteSheet, frames, "ManaLampAnimation");
+            var lampAnimation = Library.CreateAnimation(spriteSheet, frames, "ManaLampAnimation");
             lampAnimation.Loops = true;
 
             var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.Identity)

@@ -499,7 +499,7 @@ namespace DwarfCorp
             var sprite = new CharacterSprite(manager, "Sprite", Matrix.CreateTranslation(0, VerticalOffset, 0));
 
             Physics.AddChild(sprite);
-            sprite.SetAnimations(AnimationLibrary.LoadCompositeAnimationSet(animations, Name));
+            sprite.SetAnimations(Library.LoadCompositeAnimationSet(animations, Name));
             sprite.SetFlag(Flag.ShouldSerialize, false);
 
             return sprite;

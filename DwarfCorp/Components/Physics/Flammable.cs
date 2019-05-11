@@ -153,7 +153,7 @@ namespace DwarfCorp
             }) as AnimatedSprite;
             var frames = new List<Point>() { new Point(0, 0), new Point(1, 0), new Point(2, 0), new Point(3, 0) };
             frames.Shuffle();
-            var animation = AnimationLibrary.CreateAnimation(new SpriteSheet(ContentPaths.Particles.more_flames, 32),
+            var animation = Library.CreateAnimation(new SpriteSheet(ContentPaths.Particles.more_flames, 32),
                 frames, "Flames");
             animation.FrameHZ = MathFunctions.Rand(8.0f, 20.0f);
             animation.Loops = true;

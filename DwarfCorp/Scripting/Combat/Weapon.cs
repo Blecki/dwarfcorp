@@ -44,7 +44,7 @@ namespace DwarfCorp
             get
             {
                 if (_hitAnimation == null)
-                    _hitAnimation = AnimationLibrary.CreateSimpleAnimation(AnimationAsset);
+                    _hitAnimation = Library.CreateSimpleAnimation(AnimationAsset);
                 return _hitAnimation;
             }
         }

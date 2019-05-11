@@ -82,9 +82,9 @@ namespace DwarfCorp
 
             var sprite = AddChild(new AnimatedSprite(Manager, "Sprite", Matrix.Identity)) as AnimatedSprite;
 
-            sprite.AddAnimation(AnimationLibrary.CreateAnimation(spriteSheet, new List<Point> { Point.Zero }, "BearTrapIdle"));
+            sprite.AddAnimation(Library.CreateAnimation(spriteSheet, new List<Point> { Point.Zero }, "BearTrapIdle"));
 
-            var sprung = AnimationLibrary.CreateAnimation
+            var sprung = Library.CreateAnimation
                 (spriteSheet, new List<Point>
                 {
                     new Point(0,1),

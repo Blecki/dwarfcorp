@@ -61,13 +61,13 @@ namespace DwarfCorp
         public BulletProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, GameComponent target) :
             base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 30.0f, DamageType = Health.DamageType.Normal }, 0.25f, ContentPaths.Particles.stone_particle, null, ContentPaths.Audio.Oscar.sfx_ic_dwarf_musket_bullet_explode_1, target)
         {
-            HitAnimation = AnimationLibrary.CreateSimpleAnimation(ContentPaths.Effects.explode);
+            HitAnimation = Library.CreateSimpleAnimation(ContentPaths.Effects.explode);
         }
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
             base.CreateCosmeticChildren(Manager);
-            HitAnimation = AnimationLibrary.CreateSimpleAnimation(ContentPaths.Effects.explode);
+            HitAnimation = Library.CreateSimpleAnimation(ContentPaths.Effects.explode);
         }
     }
 }

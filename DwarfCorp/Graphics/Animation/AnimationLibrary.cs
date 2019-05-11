@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    public class AnimationLibrary
+    public static partial class Library
     {
         private static Dictionary<String, Dictionary<String, Animation>> Animations = new Dictionary<String, Dictionary<String, Animation>>();
 

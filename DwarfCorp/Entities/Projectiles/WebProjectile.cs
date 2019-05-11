@@ -61,13 +61,13 @@ namespace DwarfCorp
         public WebProjectile(ComponentManager manager, Vector3 position, Vector3 initialVelocity, GameComponent target) :
             base(manager, position, initialVelocity, new Health.DamageAmount() { Amount = 10.0f, DamageType = Health.DamageType.Acid }, 0.25f, ContentPaths.Entities.Animals.Spider.webshot, "puff", ContentPaths.Audio.whoosh, target)
         {
-            HitAnimation = AnimationLibrary.CreateSimpleAnimation(ContentPaths.Entities.Animals.Spider.webstick);
+            HitAnimation = Library.CreateSimpleAnimation(ContentPaths.Entities.Animals.Spider.webstick);
         }
 
         public override void CreateCosmeticChildren(ComponentManager Manager)
         {
             base.CreateCosmeticChildren(Manager);
-            HitAnimation = AnimationLibrary.CreateSimpleAnimation(ContentPaths.Entities.Animals.Spider.webstick);
+            HitAnimation = Library.CreateSimpleAnimation(ContentPaths.Entities.Animals.Spider.webstick);
         }
     }
 }

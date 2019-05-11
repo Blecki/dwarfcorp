@@ -84,7 +84,7 @@ namespace DwarfCorp
                     OrientationType = AnimatedSprite.OrientMode.Fixed
                 }) as AnimatedSprite;
 
-                var anim = AnimationLibrary.CreateSimpleAnimation(asset);
+                var anim = Library.CreateSimpleAnimation(asset);
                 anim.Loops = true;
                 (Sprite as AnimatedSprite).AddAnimation(anim);
 
@@ -120,7 +120,7 @@ namespace DwarfCorp
                         OrientationType = AnimatedSprite.OrientMode.Fixed
                     }) as AnimatedSprite;
 
-                    var anim = AnimationLibrary.CreateSimpleAnimation(asset);
+                    var anim = Library.CreateSimpleAnimation(asset);
                     anim.Loops = true;
                     (Sprite2 as AnimatedSprite).AddAnimation(anim);
                 }

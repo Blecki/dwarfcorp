@@ -80,7 +80,7 @@ namespace DwarfCorp
             #region Create Tail Pieces
 
             Tail = new List<TailSegment>();
-            var tailAnimations = AnimationLibrary.LoadCompositeAnimationSet(ContentPaths.Entities.Animals.Snake.bonetail_animation, "Necrosnake");
+            var tailAnimations = Library.LoadCompositeAnimationSet(ContentPaths.Entities.Animals.Snake.bonetail_animation, "Necrosnake");
 
             for (int i = 0; i < 10; ++i)
             {

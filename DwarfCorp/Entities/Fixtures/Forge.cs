@@ -78,7 +78,7 @@ namespace DwarfCorp
                 new Point(3, 3)
             };
 
-            var forgeAnimation = AnimationLibrary.CreateAnimation(spriteSheet, frames, "ForgeLightAnimation");
+            var forgeAnimation = Library.CreateAnimation(spriteSheet, frames, "ForgeLightAnimation");
             forgeAnimation.Loops = true;
 
             var sprite = AddChild(new AnimatedSprite(Manager, "sprite", Matrix.Identity)
