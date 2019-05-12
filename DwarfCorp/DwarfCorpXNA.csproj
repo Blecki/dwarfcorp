@@ -261,7 +261,9 @@
     <Compile Include="Entities\Steam\BuildBuff.cs" />
     <Compile Include="Entities\Steam\SteamPipe.cs" />
     <Compile Include="Events\Library.cs" />
+    <Compile Include="GameStates\WorldGeneration\NewWorldGeneratorState.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldGenerationSettings.cs" />
+    <Compile Include="GameStates\WorldGeneration\OverworldTileChooserState.cs" />
     <Compile Include="Gui\Widgets\EmployeePortrait.cs" />
     <Compile Include="GameStates\FrontEnd\MenuState.cs" />
     <Compile Include="GameStates\ModManagement\Steam\UGCStatus.cs" />

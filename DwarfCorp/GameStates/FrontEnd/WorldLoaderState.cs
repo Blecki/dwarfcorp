@@ -16,12 +16,13 @@ namespace DwarfCorp.GameStates
         {
             this.ProceedButtonText = "Load";
             this.NoItemsText = "No worlds found.";
-
             this.InvalidItemText = "This world was saved by an earlier version of DwarfCorp and is not compatible.";
+
             this.ValidateItem = (item) =>
             {
                 return NewOverworldFile.CheckCompatibility(item) ? "" : "Incompatible save file.";
             };
+
             this.GetItemName = (item) =>
             {
                 return NewOverworldFile.GetOverworldName(item);
@@ -52,11 +53,9 @@ namespace DwarfCorp.GameStates
             {
                 var file = NewOverworldFile.Load(path);
                 StateManager.PopState();
-                var genState = new WorldGeneratorState(Game, Game.StateManager, file.CreateSettings(), false);
+                var genState = new OverworldTileChooseState(Game, Game.StateManager, file.CreateSettings());
                 StateManager.PushState(genState);
             };
-        }
-        
+        }        
     }
-
 }

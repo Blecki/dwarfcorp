@@ -115,20 +115,6 @@ namespace DwarfCorp.GameStates
             PreviewRenderTypes.Add("Biomes",
                 new PreviewRenderType("Biomes", OverworldField.Height,
                 (g) => BiomeLibrary.CreateBiomeColors()));
-#if false
-            PreviewRenderTypes.Add("Temperature",
-                new PreviewRenderType("Gray", Overworld.ScalarFieldType.Temperature,
-                (g) => Overworld.JetColors));
-            PreviewRenderTypes.Add("Rain",
-                new PreviewRenderType("Gray", Overworld.ScalarFieldType.Rainfall,
-                (g) => Overworld.JetColors));
-            PreviewRenderTypes.Add("Erosion",
-                new PreviewRenderType("Gray", Overworld.ScalarFieldType.Erosion,
-                (g) => Overworld.JetColors));
-            PreviewRenderTypes.Add("Faults",
-                new PreviewRenderType("Gray", Overworld.ScalarFieldType.Faults,
-                (g) => Overworld.JetColors));
-#endif
             PreviewRenderTypes.Add("Factions",
                 new PreviewRenderType("Factions", OverworldField.Factions,
                 (g) =>
@@ -145,12 +131,6 @@ namespace DwarfCorp.GameStates
                 Items = new List<string>(new string[] {
                     "Height",
                     "Biomes",
-#if false
-                    "Temperature",
-                    "Rain",
-                    "Erosion",
-                    "Faults",
-#endif
                     "Factions" }),
                 AutoLayout = Gui.AutoLayout.FloatTopLeft,
                 MinimumSize = new Point(128, 0),

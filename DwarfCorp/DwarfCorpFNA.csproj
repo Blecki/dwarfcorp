@@ -117,6 +117,8 @@
     <Compile Include=".\AssetManagement\TextureTool.cs" />
     <Compile Include=".\Components\AI\CharacterMode.cs" />
     <Compile Include="Components\Physics\Fire.cs" />
+    <Compile Include="GameStates\WorldGeneration\OverworldTileChooserState.cs" />
+    <Compile Include="GameStates\WorldGeneration\NewWorldGeneratorState.cs" />
     <Compile Include="World\Crafting\CraftDetails.cs" />
     <Compile Include=".\Components\AI\Creature.cs" />
     <Compile Include=".\Components\AI\CreatureAI.cs" />

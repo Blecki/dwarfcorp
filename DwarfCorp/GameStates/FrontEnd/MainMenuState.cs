@@ -18,47 +18,15 @@ namespace DwarfCorp.GameStates
         {
             var frame = CreateMenu(StringLibrary.GetString("main-menu-title"));
 
-#if !DEMO
-            string latestSave = SaveGame.GetLatestSaveFile();
-
-            if (latestSave != null)
-            {
-                CreateMenuItem(frame,
-                    StringLibrary.GetString("continue"),
-                    StringLibrary.GetString("continue-tooltip", latestSave),
-                    (sender, args) => {
-                        GameStates.GameState.Game.LogSentryBreadcrumb("Menu", "User is continuing from a save file.");
-                        StateManager.PushState(new LoadState(Game, Game.StateManager, new OverworldGenerationSettings()
-                        {
-                            ExistingFile = latestSave
-                        }));
-                    }
-                    );
-                     
-            }
-#endif
-            /*
-            CreateMenuItem(frame, 
-                StringLibrary.GetString("new-game"), 
-                StringLibrary.GetString("new-game-tooltip"), 
-                (sender, args) => StateManager.PushState(new LoadState(Game, Game.StateManager, new WorldGenerationSettings() {GenerateFromScratch = true})));
-            */
             CreateMenuItem(frame, 
                 StringLibrary.GetString("new-game"), 
                 StringLibrary.GetString("new-game-tooltip"),
-#if !DEMO
                 (sender, args) => StateManager.PushState(new CompanyMakerState(Game, Game.StateManager)));
-#else
-                (sender, args) => this.GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = StringLibrary.GetString("advanced-world-creation-denied") }));
-#endif
+
             CreateMenuItem(frame, 
                 StringLibrary.GetString("load-game"),
                 StringLibrary.GetString("load-game-tooltip"),
-#if !DEMO
-                (sender, args) => StateManager.PushState(new LoadSaveGameState(Game, StateManager)));
-#else
-                (sender, args) => this.GuiRoot.ShowModalPopup(new Gui.Widgets.Confirm() { CancelText = "", Text = StringLibrary.GetString("save-load-denied") }));
-#endif
+                (sender, args) => StateManager.PushState(new WorldLoaderState(Game, StateManager)));
 
             CreateMenuItem(frame, 
                 StringLibrary.GetString("options"),
