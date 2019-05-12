@@ -49,7 +49,7 @@ namespace DwarfCorp.GameStates
                 Generator.Abort();
             if (Settings.Natives != null)
                 Settings.Natives.Clear();
-            Generator = new WorldGenerator(Settings);
+            Generator = new WorldGenerator(Settings, true);
             if (Preview != null) Preview.SetGenerator(Generator);
             Generator.Generate();
             GuiRoot.RootItem.GetChild(0).Text = Settings.Name;
@@ -186,35 +186,6 @@ namespace DwarfCorp.GameStates
                 TextColor = new Vector4(0, 0, 0, 1),
             });
 
-            var colonySizeCombo = rightPanel.AddChild(new Gui.Widgets.ComboBox
-            {
-                AutoLayout = Gui.AutoLayout.DockTop,
-                Items = new List<string>(new string[] { "Small", "Medium", "Large", "Enormous!", "RAM Killer" }),
-                Font = "font8",
-                TextColor = new Vector4(0, 0, 0, 1),
-                OnSelectedIndexChanged = (sender) =>
-                {
-                    switch ((sender as Gui.Widgets.ComboBox).SelectedItem)
-                    {
-                        case "Small": Settings.ColonySize = new Point3(4, 1, 4); break;
-                        case "Medium": Settings.ColonySize = new Point3(8, 1, 8); break;
-                        case "Large": Settings.ColonySize = new Point3(10, 1, 10); break;
-                        case "Enormous!": Settings.ColonySize = new Point3(20, 1, 20); break;
-                        case "RAM Killer": Settings.ColonySize = new Point3(80, 1, 80); break;
-                    }
-                    GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", string.Format("User selected colony size of {0}", (sender as Gui.Widgets.ComboBox).SelectedItem));
-                    var worldSize = Settings.ColonySize.ToVector3() * VoxelConstants.ChunkSizeX / Settings.WorldScale;
-
-                    float w = worldSize.X;
-                    float h = worldSize.Z;
-
-                    float clickX = global::System.Math.Max(global::System.Math.Min(Settings.WorldGenerationOrigin.X, Settings.Width - w), 0);
-                    float clickY = global::System.Math.Max(global::System.Math.Min(Settings.WorldGenerationOrigin.Y, Settings.Height - h), 0);
-
-                    Settings.WorldGenerationOrigin = new Vector2((int)(clickX), (int)(clickY));
-                }
-            }) as Gui.Widgets.ComboBox;
-
             rightPanel.AddChild(new Gui.Widget
             {
                 Text = "Difficulty",
@@ -337,7 +308,6 @@ namespace DwarfCorp.GameStates
             GuiRoot.RootItem.Layout();
 
             difficultySelectorCombo.SelectedIndex = difficultySelectorCombo.Items.IndexOf("Normal");
-            colonySizeCombo.SelectedIndex = colonySizeCombo.Items.IndexOf("Medium");
             layerSetting.SelectedIndex = layerSetting.Items.IndexOf("Normal");
 
             IsInitialized = true;
@@ -346,7 +316,7 @@ namespace DwarfCorp.GameStates
                 RestartGeneration();
             else // Setup a dummy generator for now.
             {
-                Generator = new WorldGenerator(Settings);
+                Generator = new WorldGenerator(Settings, true);
                 Generator.LoadDummy(
                     new Color[Settings.Overworld.Map.GetLength(0) * Settings.Overworld.Map.GetLength(1)], 
                     Game.GraphicsDevice);

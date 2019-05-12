@@ -49,7 +49,7 @@ namespace DwarfCorp.GameStates
                 Generator.Abort();
             if (Settings.Natives != null)
                 Settings.Natives.Clear();
-            Generator = new WorldGenerator(Settings);
+            Generator = new WorldGenerator(Settings, true);
             if (Preview != null) Preview.SetGenerator(Generator);
             Generator.Generate();
             GuiRoot.RootItem.GetChild(0).Text = Settings.Name;
@@ -373,7 +373,7 @@ namespace DwarfCorp.GameStates
                 RestartGeneration();
             else // Setup a dummy generator for now.
             {
-                Generator = new WorldGenerator(Settings);
+                Generator = new WorldGenerator(Settings, true);
                 Generator.LoadDummy(
                     new Color[Settings.Overworld.Map.GetLength(0) * Settings.Overworld.Map.GetLength(1)], 
                     Game.GraphicsDevice);

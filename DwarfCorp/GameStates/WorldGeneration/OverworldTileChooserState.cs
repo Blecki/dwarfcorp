@@ -6,6 +6,7 @@ using LibNoise;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
+using System.IO;
 
 namespace DwarfCorp.GameStates
 {
@@ -84,38 +85,45 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnClick = (sender, args) =>
                 {
-                    // If save file exists -> Load it
-                    // If not -> generate new instance
+                    var saveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Overworld.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.WorldGenerationOrigin.X, (int)Settings.WorldGenerationOrigin.Y);
+                    var saveGame = SaveGame.LoadMetaFromDirectory(saveName);
+                    if (saveGame != null)
+                    {
+                        StateManager.ClearState();
+                        StateManager.PushState(new LoadState(Game, Game.StateManager,
+                            new OverworldGenerationSettings
+                            {
+                                ExistingFile = saveName,
+                                Name = saveName
+                            }));
+                    }
+                    else
+                    {
 
+                        GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", string.Format("User is starting a game with a {0} x {1} world.", Settings.Width, Settings.Height));
+                        Settings.Overworld.Name = Settings.Name;
+                            Settings.ExistingFile = null;
+                            Settings.WorldOrigin = Settings.WorldGenerationOrigin;
+                            Settings.SpawnRect = Generator.GetSpawnRectangle();
+                            if (Settings.Natives == null || Settings.Natives.Count == 0)
+                                Settings.Natives = Generator.NativeCivilizations;
+                        Settings.StartUnderground = false;// StartUnderground.CheckState;
+                        Settings.RevealSurface = true;// RevealSurface.CheckState;
 
-                    //if (Generator.CurrentState != WorldGenerator.GenerationState.Finished)
-                    //    GuiRoot.ShowTooltip(GuiRoot.MousePosition, "World generation is not finished.");
-                    //else
-                    //{
-                    //    GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", string.Format("User is starting a game with a {0} x {1} world.", Settings.Width, Settings.Height));
-                    //    Settings.Overworld.Name = Settings.Name;
-                    //    Settings.ExistingFile = null;
-                    //    Settings.WorldOrigin = Settings.WorldGenerationOrigin;
-                    //    Settings.SpawnRect = Generator.GetSpawnRectangle();
-                    //    if (Settings.Natives == null || Settings.Natives.Count == 0)
-                    //        Settings.Natives = Generator.NativeCivilizations;
-                    //    Settings.StartUnderground = StartUnderground.CheckState;
-                    //    Settings.RevealSurface = RevealSurface.CheckState;
+                            foreach (var faction in Settings.Natives)
+                            {
+                                Vector2 center = new Vector2(faction.Center.X, faction.Center.Y);
+                                Vector2 spawn = new Vector2(Generator.GetSpawnRectangle().Center.X, Generator.GetSpawnRectangle().Center.Y);
+                                faction.DistanceToCapital = (center - spawn).Length();
+                                faction.ClaimsColony = false;
+                            }
 
-                    //    foreach (var faction in Settings.Natives)
-                    //    {
-                    //        Vector2 center = new Vector2(faction.Center.X, faction.Center.Y);
-                    //        Vector2 spawn = new Vector2(Generator.GetSpawnRectangle().Center.X, Generator.GetSpawnRectangle().Center.Y);
-                    //        faction.DistanceToCapital = (center - spawn).Length();
-                    //        faction.ClaimsColony = false;
-                    //    }
+                            foreach (var faction in Generator.GetFactionsInSpawn())
+                                faction.ClaimsColony = true;
 
-                    //    foreach (var faction in Generator.GetFactionsInSpawn())
-                    //        faction.ClaimsColony = true;
-
-                    //    StateManager.ClearState();
-                    //    StateManager.PushState(new LoadState(Game, StateManager, Settings));
-                    //}
+                            StateManager.ClearState();
+                            StateManager.PushState(new LoadState(Game, StateManager, Settings));
+                    }
                 }
             });
 
@@ -128,7 +136,7 @@ namespace DwarfCorp.GameStates
 
             if (Generator == null)
             {
-                Generator = new WorldGenerator(Settings);
+                Generator = new WorldGenerator(Settings, false);
                 Generator.LoadDummy(
                     new Color[Settings.Overworld.Map.GetLength(0) * Settings.Overworld.Map.GetLength(1)],
                     Game.GraphicsDevice);

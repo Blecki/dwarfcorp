@@ -12,7 +12,6 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    // Todo: Why is this static?
     /// <summary>
     /// The overworld is a 2D map specifying biomes,
     /// temperature, terrain height, etc.  Chunks are generated
@@ -31,7 +30,6 @@ namespace DwarfCorp
             {"Peaks", new Color(200, 200, 200)},
         };
 
-
         public static LibNoise.Perlin heightNoise = new LibNoise.Perlin()
         {
             Frequency = 0.7f,
@@ -42,17 +40,17 @@ namespace DwarfCorp
             Persistence = 0.2f
         };
 
-
         public List<Vector2> Volcanoes { get; set; }
         public OverworldCell[,] Map { get; set; }
         public string Name { get; set; }
         public List<Faction> NativeFactions { get; set; }
-
+        public List<ColonyCell> ColonyCells;
         public static ColorGradient JetGradient = null;
 
         public Overworld(int Width, int Height)
         {
             Map = new OverworldCell[Width, Height];
+            ColonyCells = ColonyCell.DeriveFromTexture("World\\colonies");
         }
 
         public static float LinearInterpolate(Vector2 position, OverworldCell[,] map, OverworldField fieldType)

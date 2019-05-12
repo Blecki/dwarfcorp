@@ -43,14 +43,21 @@ namespace DwarfCorp.GameStates
 
         public List<Faction> NativeCivilizations = new List<Faction>();
 
-        public WorldGenerator(OverworldGenerationSettings Settings)
+        public WorldGenerator(OverworldGenerationSettings Settings, bool ClearOverworld)
         {
             CurrentState = GenerationState.NotStarted;
             Seed = Settings.Seed;
             this.Settings = Settings;
             MathFunctions.Random = new ThreadSafeRandom(Seed);
-            Overworld = new Overworld(Settings.Width, Settings.Height);
-            Settings.Overworld = Overworld;
+
+            if (ClearOverworld)
+            {
+                Overworld = new Overworld(Settings.Width, Settings.Height);
+                Settings.Overworld = Overworld;
+            }
+            else
+                Overworld = Settings.Overworld;
+
             Overworld.Volcanoes = new List<Vector2>();
             LandMesh = null;
             LandIndex = null;

@@ -160,8 +160,14 @@ namespace DwarfCorp.GameStates
                         int chunkSize = 16;
                         var worldSize = Generator.Settings.ColonySize.ToVector3() * chunkSize / Generator.Settings.WorldScale;
                         var clickPoint = ScreenToWorld(new Vector2(args.X, args.Y));
-                        Generator.Settings.WorldGenerationOrigin = Generator.GetOrigin(clickPoint, worldSize);
-                        previewText = Generator.GetSpawnStats();
+
+                        var colonyCell = Overworld.ColonyCells.FirstOrDefault(c => c.Bounds.Contains(new Point(clickPoint.X, clickPoint.Y)));
+                        if (colonyCell != null)
+                        {
+                            Generator.Settings.WorldGenerationOrigin = new Vector2(colonyCell.Bounds.X, colonyCell.Bounds.Y); //  Generator.GetOrigin(clickPoint, worldSize);
+                            Generator.Settings.ColonySize = new Point3(colonyCell.Bounds.Width / 4, Generator.Settings.ColonySize.Y, colonyCell.Bounds.Height / 4);
+                            previewText = Generator.GetSpawnStats();
+                        }
                         UpdatePreview = true;
                     }
                 },
@@ -264,13 +270,12 @@ namespace DwarfCorp.GameStates
             return port.Project(worldSpace, ProjectionMatrix, ViewMatrix, Matrix.Identity);
         }
 
-        public void GetSpawnRectangleInScreenSpace(List<Vector2> Points)
+        public void GetSpawnRectangleInScreenSpace(List<Vector2> Points, Rectangle Rect)
         {
-            Rectangle spawnRect = Generator.GetSpawnRectangle();
-            Points[0] = new Vector2(spawnRect.X, spawnRect.Y);
-            Points[1] = new Vector2(spawnRect.X + spawnRect.Width, spawnRect.Y);
-            Points[2] = new Vector2(spawnRect.X + spawnRect.Width, spawnRect.Height + spawnRect.Y);
-            Points[3] = new Vector2(spawnRect.X, spawnRect.Height + spawnRect.Y);
+            Points[0] = new Vector2(Rect.X, Rect.Y);
+            Points[1] = new Vector2(Rect.X + Rect.Width, Rect.Y);
+            Points[2] = new Vector2(Rect.X + Rect.Width, Rect.Height + Rect.Y);
+            Points[3] = new Vector2(Rect.X, Rect.Height + Rect.Y);
 
             for (var i = 0; i < 4; ++i)
             {
@@ -298,12 +303,19 @@ namespace DwarfCorp.GameStates
 
             Root.DrawQuad(PreviewPanel.Rect, PreviewRenderTarget);
 
-            GetSpawnRectangleInScreenSpace(SpawnRectanglePoints);
 
             try
             {
                 DwarfGame.SafeSpriteBatchBegin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Drawer2D.PointMagLinearMin, null, null, null, Matrix.Identity);
-                Drawer2D.DrawPolygon(DwarfGame.SpriteBatch, Color.Yellow, 1, SpawnRectanglePoints);
+
+                foreach (var cell in Overworld.ColonyCells)
+                {
+                    GetSpawnRectangleInScreenSpace(SpawnRectanglePoints, cell.Bounds);
+                    Drawer2D.DrawPolygon(DwarfGame.SpriteBatch, Color.Yellow, 1, SpawnRectanglePoints);
+                }
+
+                GetSpawnRectangleInScreenSpace(SpawnRectanglePoints, Generator.GetSpawnRectangle());
+                Drawer2D.DrawPolygon(DwarfGame.SpriteBatch, Color.Red, 2, SpawnRectanglePoints);
             }
             finally
             {

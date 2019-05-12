@@ -72,7 +72,7 @@ namespace DwarfCorp.GameStates
 
             if (Settings.GenerateFromScratch)
             {
-                Generator = new WorldGenerator(Settings) { Seed = MathFunctions.Random.Next() };
+                Generator = new WorldGenerator(Settings, true) { Seed = MathFunctions.Random.Next() };
                 Generator.Generate();
             }
             else

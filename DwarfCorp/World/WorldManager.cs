@@ -740,8 +740,7 @@ namespace DwarfCorp
                 file.WriteFile(worldDirectory.FullName);
 
                 gameFile = SaveGame.CreateFromWorld(this);
-                var path = DwarfGame.GetSaveDirectory() + Path.DirectorySeparatorChar +
-                filename;
+            var path = worldDirectory.FullName + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)GenerationSettings.WorldGenerationOrigin.X, (int)GenerationSettings.WorldGenerationOrigin.Y);
                 SaveGame.DeleteOldestSave(path, GameSettings.Default.MaxSaves, "Autosave");
                 gameFile.WriteFile(path);
                 ComponentManager.CleanupSaveData();

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace DwarfCorp
 {
@@ -38,6 +39,11 @@ namespace DwarfCorp
         public bool OverrideCharacterMode { get; set; }
         [JsonProperty] private bool FirstUpdate = true;
 
+        [OnDeserialized]
+        public void OnDeserialize(StreamingContext ctx)
+        {
+            InitializeAttacks();
+        }
 
         public Creature()
         {
@@ -60,10 +66,14 @@ namespace DwarfCorp
             NoiseMaker = new NoiseMaker();
             NoiseMaker.BasePitch = stats.VoicePitch;
             OverrideCharacterMode = false;
+            InitializeAttacks();
+        }
 
-            Attacks = stats.CurrentClass.Weapons.Select(a => new Attack(a)).ToList();
-            for (var i = 0; i <= stats.LevelIndex && i < stats.CurrentClass.Levels.Count; ++i)
-                Attacks.AddRange(stats.CurrentClass.Levels[i].ExtraWeapons.Select(w => new Attack(w)));
+        private void InitializeAttacks()
+        {
+            Attacks = Stats.CurrentClass.Weapons.Select(a => new Attack(a)).ToList();
+            for (var i = 0; i <= Stats.LevelIndex && i < Stats.CurrentClass.Levels.Count; ++i)
+                Attacks.AddRange(Stats.CurrentClass.Levels[i].ExtraWeapons.Select(w => new Attack(w)));
         }
 
         private T _get<T>(ref T cached) where T : GameComponent
