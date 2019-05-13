@@ -8,35 +8,25 @@ namespace DwarfCorp
 {
     public partial class WorldManager
     {
-        //[JsonIgnore]
-        //public OctTreeNode<GameComponent> OctTree = null;
-
         public void RemoveGameObject(GameComponent GameObject, BoundingBox LastBounds)
         {
             foreach (var chunk in EnumerateChunksInBounds(LastBounds))
                 lock (chunk)
                     chunk.Entities.RemoveAll(e => Object.ReferenceEquals(e, GameObject));
-            //OctTree.Remove(GameObject, LastBounds);
         }
 
-        public OctTreeNode<GameComponent> AddGameObject(GameComponent GameObject, BoundingBox LastBounds)
+        public void AddGameObject(GameComponent GameObject, BoundingBox LastBounds)
         {
             foreach (var chunk in EnumerateChunksInBounds(LastBounds))
                 lock (chunk)
                     chunk.Entities.Add(GameObject);
-
-            return null;
-            //return OctTree.Add(GameObject, LastBounds);
         }
 
         public IEnumerable<GameComponent> EnumerateIntersectingObjects(BoundingBox box, CollisionType queryType)
         {
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects");
             var r = EnumerateIntersectingObjects(box, t => (t.CollisionType & queryType) == t.CollisionType);
-            //var hash = new HashSet<GameComponent>();
-            //OctTree.EnumerateItems(box, hash, t => (t.CollisionType & queryType) == t.CollisionType);
             PerformanceMonitor.PopFrame();
-            //return hash;
             return r;
         }
 
@@ -52,10 +42,6 @@ namespace DwarfCorp
                             if (Filter == null || Filter(entity))
                                 hash.Add(entity);
                 }
-            //if (Filter == null)
-            //    OctTree.EnumerateItems(Frustum, hash);
-            //else
-            //    OctTree.EnumerateItems(Frustum, hash, Filter);
             PerformanceMonitor.PopFrame();
             return hash;
         }
@@ -65,10 +51,6 @@ namespace DwarfCorp
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects w/ Filter");
             var hash = new HashSet<GameComponent>();
             EnumerateIntersectingObjects(box, hash, Filter);
-            //if (Filter == null)
-            //    OctTree.EnumerateItems(box, hash);
-            //else
-            //    OctTree.EnumerateItems(box, hash, Filter);
             PerformanceMonitor.PopFrame();
             return hash;
         }
@@ -78,10 +60,6 @@ namespace DwarfCorp
             PerformanceMonitor.PushFrame("CollisionManager.EnumerateIntersectingObjects w/ Filter");
             var hash = new HashSet<GameComponent>();
             EnumerateIntersectingObjects(box, hash, Filter);
-            //if (Filter == null)
-            //    OctTree.EnumerateItems(box, hash);
-            //else
-            //    OctTree.EnumerateItems(box, hash, Filter);
             PerformanceMonitor.PopFrame();
             return hash;
         }
@@ -97,7 +75,6 @@ namespace DwarfCorp
                             if (Filter == null || Filter(entity))
                                 Into.Add(entity);
                 }
-            //OctTree.EnumerateItems(box, Into);
             PerformanceMonitor.PopFrame();
         }
 
@@ -111,7 +88,6 @@ namespace DwarfCorp
                         if (Filter == null || Filter(entity))
                             Into.Add(entity);
                 }
-            //OctTree.EnumerateItems(box, Into);
             PerformanceMonitor.PopFrame();
         }
 
