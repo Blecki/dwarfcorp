@@ -79,7 +79,7 @@ namespace DwarfCorp.Events
             int iters = 0;
             var filteredEvents = Forecast.Count == 0 ? Library.Enumerate() : Library.Enumerate().Where(e => e.Name != Forecast.Last().Event.Name).ToList();
 
-            if (World.InitialEmbark.Difficulty == 0)
+            if (World.Settings.InitalEmbarkment.Difficulty == 0)
                 filteredEvents = filteredEvents.Where(e => e.SpawnOnTranquil).ToList();
 
             while (!foundEvent && iters < 100)

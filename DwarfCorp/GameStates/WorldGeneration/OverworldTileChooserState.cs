@@ -173,7 +173,7 @@ namespace DwarfCorp.GameStates
                 if (saveGame != null)
                 {
                     StartButton.Text = "Load";
-                    CellInfo.Text = saveGame.Metadata.GameID.ToString();
+                    CellInfo.Text = "";
                     StartButton.Hidden = false;
                 }
                 else

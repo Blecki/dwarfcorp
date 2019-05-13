@@ -27,7 +27,7 @@ namespace DwarfCorp.Gui.Widgets
                     {
                         // Show hire dialog.
                         var dialog = Root.ConstructWidget(
-                            new HireEmployeeDialog(Faction.World.PlayerCompany.Information)
+                            new HireEmployeeDialog(Faction.Economy.Information)
                             {
                                 Faction = Faction,
                                 OnClose = (_s) =>

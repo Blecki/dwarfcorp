@@ -582,7 +582,6 @@
     <Compile Include="Graphics\Effects\FXAA.cs" />
     <Compile Include="ParticleEffects\ParticleManager.cs" />
     <Compile Include="Graphics\Effects\Shader.cs" />
-    <Compile Include="Graphics\Effects\ShadowRenderer.cs" />
     <Compile Include="Graphics\Effects\SkyRenderer.cs" />
     <Compile Include="Graphics\Instancing\FixedInstanceArray.cs" />
     <Compile Include="Graphics\Instancing\InstanceData.cs" />

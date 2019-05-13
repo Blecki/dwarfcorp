@@ -23,7 +23,6 @@ namespace DwarfCorp.Generation
         public LibNoise.FastRidgedMultifractal CaveNoise;
         public float NoiseScale;
         public float CaveNoiseScale;
-        public float SeaLevel;
         public int NormalizedSeaLevel;
 
         public Point3 WorldSizeInChunks;

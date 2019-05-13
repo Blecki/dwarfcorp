@@ -19,7 +19,7 @@ namespace DwarfCorp.Generation
         {
             var origin = new GlobalVoxelCoordinate(ID, new LocalVoxelCoordinate(0, 0, 0));
             var worldDepth = Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY;
-            var waterHeight = NormalizeHeight(Settings.SeaLevel + 1.0f / worldDepth);
+            var waterHeight = NormalizeHeight(Settings.OverworldSettings.SeaLevel + 1.0f / worldDepth);
 
             var c = new VoxelChunk(Settings.World.ChunkManager, ID);
 

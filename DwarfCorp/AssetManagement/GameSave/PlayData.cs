@@ -26,7 +26,6 @@ namespace DwarfCorp
         public List<Resource> Resources;
         public DesignationDrawer Designations;
         public TaskManager Tasks;
-        public Embarkment InitialEmbark;
         public Yarn.MemoryVariableStore ConversationMemory;
         public List<GameMaster.ApplicantArrival> NewArrivals;
         public DwarfCorp.Gui.Widgets.StatsTracker Stats;
@@ -43,7 +42,6 @@ namespace DwarfCorp
                 Resources = ResourceLibrary.Enumerate().Where(r => r.Generated).ToList(),
                 Designations = World.DesignationDrawer,
                 Tasks = World.Master.TaskManager,
-                InitialEmbark = World.InitialEmbark,
                 ConversationMemory = World.ConversationMemory,
                 NewArrivals = World.Master.NewArrivals,
                 Stats = World.Stats

@@ -1434,8 +1434,8 @@ namespace DwarfCorp
             String[] personalities = { "happy", "grumpy", "anxious" };
             var myRandom = new Random(Employee.Stats.RandomSeed);
             cMem.SetValue("$personality", new Yarn.Value(personalities[myRandom.Next(0, personalities.Length)]));
-            cMem.SetValue("$motto", new Yarn.Value(Employee.World.PlayerCompany.Information.Motto));
-            cMem.SetValue("$company_name", new Yarn.Value(Employee.World.PlayerCompany.Information.Name));
+            cMem.SetValue("$motto", new Yarn.Value(Employee.World.PlayerFaction.Economy.Information.Motto));
+            cMem.SetValue("$company_name", new Yarn.Value(Employee.World.PlayerFaction.Economy.Information.Name));
             cMem.SetValue("$employee_task", new Yarn.Value(Employee.CurrentTask == null ? "Nothing" : Employee.CurrentTask.Name));
             cMem.SetValue("$employee_class", new Yarn.Value(Employee.Stats.CurrentClass.Name));
             var injuries = TextGenerator.GetListString(Employee.Creature.Stats.Buffs.OfType<Disease>().Select(disease => disease.Name));

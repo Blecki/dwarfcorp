@@ -15,10 +15,7 @@ namespace DwarfCorp
         /// </summary>
         public void CreateInitialDwarves(Vector3 SpawnPos)
         {
-            if (InitialEmbark == null)
-                InitialEmbark = EmbarkmentLibrary.DefaultEmbarkment;
-
-            foreach (string ent in InitialEmbark.Party)
+            foreach (string ent in Settings.InitalEmbarkment.Party)
             {
                 Physics creat = (Physics)EntityFactory.CreateEntity<Physics>(ent, SpawnPos);
                 creat.Velocity = new Vector3(1, 0, 0);
@@ -31,12 +28,12 @@ namespace DwarfCorp
         public void CreateInitialEmbarkment(Generation.GeneratorSettings Settings)
         {
             // If no file exists, we have to create the balloon and balloon port.
-            if (!string.IsNullOrEmpty(ExistingFile)) return;
+            if (!string.IsNullOrEmpty(Settings.OverworldSettings.ExistingFile)) return;
 
             var port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager, Camera.Position.X, Camera.Position.Z, 1, Settings);
-            PlayerFaction.Economy.Funds = InitialEmbark.Money;
+            PlayerFaction.Economy.Funds = Settings.OverworldSettings.InitalEmbarkment.Money;
 
-            foreach (var res in InitialEmbark.Resources)
+            foreach (var res in Settings.OverworldSettings.InitalEmbarkment.Resources)
                 PlayerFaction.AddResources(new ResourceAmount(res.Key, res.Value));
 
             var portBox = port.GetBoundingBox();

@@ -169,6 +169,7 @@ namespace DwarfCorp
             BodySelector = null;
         }
 
+        // Todo: Give these the mod hook treatment.
         private void CreateTools()
         {
             Tools = new Dictionary<ToolMode, PlayerTool>();
@@ -272,6 +273,7 @@ namespace DwarfCorp
             CurrentTool.OnVoxelsSelected(voxels, button);
         }
 
+        // Todo: Belongs in... uh WorldManager maybe?
         public bool AreAllEmployeesAsleep()
         {
             return (Faction.Minions.Count > 0) && Faction.Minions.All(minion => !minion.Active || ((!minion.Stats.Species.CanSleep || minion.Creature.Stats.IsAsleep) && !minion.IsDead));
@@ -299,6 +301,7 @@ namespace DwarfCorp
         }
 
         // Todo: Why exactly is Faction.Minions a list of CreatureAI and not a list of Creature?
+        // Todo: Belongs in Faction
         public void PayEmployees()
         {
             DwarfBux total = 0;
@@ -379,6 +382,8 @@ namespace DwarfCorp
 
         // This hack exists to find orphaned tasks not assigned to any dwarf, and to then
         // put them on the task list.
+        // Todo: With the new task pool, how often is this used?
+        // Todo: Belongs in... WorldManager?
         public void UpdateOrphanedTasks()
         {
             orphanedTaskRateLimiter.Update(DwarfTime.LastTime);
@@ -420,19 +425,15 @@ namespace DwarfCorp
 
         public void Update(DwarfGame game, DwarfTime time)
         {
+            // Todo: All input handling should be in one spot. PlayState!
             GamblingState.Update(time);
             TaskManager.Update(Faction.Minions);
             CurrentTool.Update(game, time);
             Faction.RoomBuilder.Update();
             UpdateOrphanedTasks();
-            if (!World.Paused)
-            {
 
-            }
-            else
-            {
+            if (World.Paused)
                 CameraController.LastWheel = Mouse.GetState().ScrollWheelValue;
-            }
 
             UpdateInput(game, time);
 
@@ -444,8 +445,7 @@ namespace DwarfCorp
 
                     if (!minion.IsDead) continue;
 
-                    World.MakeAnnouncement(
-                        String.Format("{0} ({1}) died!", minion.Stats.FullName, minion.Stats.CurrentClass.Name));
+                    World.MakeAnnouncement(String.Format("{0} ({1}) died!", minion.Stats.FullName, minion.Stats.CurrentClass.Name));
                     SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic);
                     World.Tutorial("death");
                 }
@@ -499,9 +499,7 @@ namespace DwarfCorp
                     continue;
 
                 if (minion.Stats.IsTaskAllowed(Task.TaskCategory.Dig))
-                {
                     minion.Movement.SetCan(MoveType.Dig, GameSettings.Default.AllowAutoDigging);
-                }
 
                 minion.ResetPositionConstraint();
             }

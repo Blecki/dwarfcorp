@@ -34,21 +34,14 @@ namespace DwarfCorp.GameStates
 
         public Action UpdatePreview;
 
-        public int Seed
-        {
-            get { return MathFunctions.Seed; }
-            set { MathFunctions.Seed = value; }
-        }
-
-
         public List<Faction> NativeCivilizations = new List<Faction>();
 
         public WorldGenerator(OverworldGenerationSettings Settings, bool ClearOverworld)
         {
             CurrentState = GenerationState.NotStarted;
-            Seed = Settings.Seed;
             this.Settings = Settings;
-            MathFunctions.Random = new ThreadSafeRandom(Seed);
+
+            MathFunctions.Random = new ThreadSafeRandom(Settings.Seed);
 
             if (ClearOverworld)
             {
@@ -249,9 +242,9 @@ namespace DwarfCorp.GameStates
                 Settings.Origin = new Vector2(Settings.Width / 2.0f, Settings.Height / 2.0f);
                 genThread = new Thread(unused =>
                 {
-                    global::System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-                    global::System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-                    GenerateWorld(Seed, (int) Settings.Width, (int) Settings.Height);
+                    Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                    Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+                    GenerateWorld();
                 })
                 {
                     Name = "GenerateWorld",
@@ -324,33 +317,32 @@ namespace DwarfCorp.GameStates
             }
         }
 
-        public void GenerateWorld(int seed, int width, int height)
+        public void GenerateWorld()
         {
 #if !DEBUG
            try
 #endif
             {
-                Seed = seed;
-                MathFunctions.Random = new ThreadSafeRandom(Seed);
-                Overworld.heightNoise.Seed = seed;
-                CurrentState = GenerationState.Generating;
-
                 if (Overworld.Name == null)
                 {
                     Overworld.Name = OverworldGenerationSettings.GetRandomWorldName();
                 }
 
+                MathFunctions.Random = new ThreadSafeRandom(Settings.Seed);
+                CurrentState = GenerationState.Generating;
+
+
                 LoadingMessage = "Init..";
-                Overworld.heightNoise.Seed = Seed;
-                worldData = new Color[width * height];
-                Overworld.Map = new OverworldCell[width, height];
+                Overworld.heightNoise.Seed = Settings.Seed;
+                worldData = new Color[Settings.Width * Settings.Height];
+                Overworld.Map = new OverworldCell[Settings.Width, Settings.Height];
 
                 Progress = 0.01f;
 
                 LoadingMessage = "Height Map ...";
                 float[,] heightMapLookup = null;
-                heightMapLookup = Overworld.GenerateHeightMapLookup(width, height);
-                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, width, height, 1.0f, false);
+                heightMapLookup = Overworld.GenerateHeightMapLookup(Settings.Width, Settings.Height);
+                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, false);
 
                 Progress = 0.05f;
 
@@ -358,9 +350,9 @@ namespace DwarfCorp.GameStates
                 int rainLength = 250;
                 int numRainSamples = 3;
 
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < Settings.Width; x++)
                 {
-                    for (int y = 0; y < height; y++)
+                    for (int y = 0; y < Settings.Height; y++)
                     {
                         Overworld.Map[x, y].Erosion = 1.0f;
                         Overworld.Map[x, y].Weathering = 0;
@@ -369,20 +361,20 @@ namespace DwarfCorp.GameStates
                 }
 
                 LoadingMessage = "Climate";
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < Settings.Width; x++)
                 {
-                    for (int y = 0; y < height; y++)
+                    for (int y = 0; y < Settings.Height; y++)
                     {
-                        Overworld.Map[x, y].Temperature = ((float)(y) / (float)(height)) * Settings.TemperatureScale;
+                        Overworld.Map[x, y].Temperature = ((float)(y) / (float)(Settings.Height)) * Settings.TemperatureScale;
                         //Overworld.Map[x, y].Rainfall = Math.Max(Math.Min(Overworld.noise(x, y, 1000.0f, 0.01f) + Overworld.noise(x, y, 100.0f, 0.1f) * 0.05f, 1.0f), 0.0f) * RainfallScale;
                     }
                 }
 
                 //Overworld.Distort(width, height, 60.0f, 0.005f, Overworld.ScalarFieldType.Rainfall);
-                OverworldImageOperations.Distort(Overworld.Map, width, height, 30.0f, 0.005f, OverworldField.Temperature);
-                for (int x = 0; x < width; x++)
+                OverworldImageOperations.Distort(Overworld.Map, Settings.Width, Settings.Height, 30.0f, 0.005f, OverworldField.Temperature);
+                for (int x = 0; x < Settings.Width; x++)
                 {
-                    for (int y = 0; y < height; y++)
+                    for (int y = 0; y < Settings.Height; y++)
                     {
                         Overworld.Map[x, y].Temperature = Math.Max(Math.Min(Overworld.Map[x, y].Temperature, 1.0f), 0.0f);
                     }
@@ -397,15 +389,15 @@ namespace DwarfCorp.GameStates
 
                 #region voronoi
 
-                Voronoi(width, height, numVoronoiPoints);
+                Voronoi(Settings.Width, Settings.Height, numVoronoiPoints);
 
                 #endregion
 
-                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, width, height, 1.0f, true);
+                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
 
                 Progress = 0.2f;
 
-                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, width, height, 1.0f, true);
+                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
 
                 Progress = 0.25f;
                 if (UpdatePreview != null) UpdatePreview();
@@ -413,9 +405,9 @@ namespace DwarfCorp.GameStates
 
                 #region erosion
 
-                float[,] buffer = new float[width, height];
-                Erode(width, height, Settings.SeaLevel, Overworld.Map, numRains, rainLength, numRainSamples, buffer);
-                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, width, height, 1.0f, true);
+                float[,] buffer = new float[Settings.Width, Settings.Height];
+                Erode(Settings.Width, Settings.Height, Settings.SeaLevel, Overworld.Map, numRains, rainLength, numRainSamples, buffer);
+                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
 
                 #endregion
 
@@ -423,23 +415,23 @@ namespace DwarfCorp.GameStates
 
 
                 LoadingMessage = "Blur.";
-                OverworldImageOperations.Blur(Overworld.Map, width, height, OverworldField.Erosion);
+                OverworldImageOperations.Blur(Overworld.Map, Settings.Width, Settings.Height, OverworldField.Erosion);
 
                 LoadingMessage = "Generate height.";
-                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, width, height, 1.0f, true);
+                Overworld.GenerateHeightMapFromLookup(Overworld.Map, heightMapLookup, Settings.Width, Settings.Height, 1.0f, true);
 
 
                 LoadingMessage = "Rain";
-                CalculateRain(width, height);
+                CalculateRain(Settings.Width, Settings.Height);
 
                 LoadingMessage = "Biome";
-                for (int x = 0; x < width; x++)
-                    for (int y = 0; y < height; y++)
+                for (int x = 0; x < Settings.Width; x++)
+                    for (int y = 0; y < Settings.Height; y++)
                         Overworld.Map[x, y].Biome = BiomeLibrary.GetBiomeForConditions(Overworld.Map[x, y].Temperature, Overworld.Map[x, y].Rainfall, Overworld.Map[x, y].Height).Biome;
 
                 LoadingMessage = "Volcanoes";
 
-                GenerateVolcanoes(width, height);
+                GenerateVolcanoes(Settings.Width, Settings.Height);
 
                 if (UpdatePreview != null) UpdatePreview();
 
@@ -474,16 +466,16 @@ namespace DwarfCorp.GameStates
                 GrowCivs(Overworld.Map, 200, NativeCivilizations);
 
 
-                for (int x = 0; x < width; x++)
+                for (int x = 0; x < Settings.Width; x++)
                 {
                     Overworld.Map[x, 0] = Overworld.Map[x, 1];
-                    Overworld.Map[x, height - 1] = Overworld.Map[x, height - 2];
+                    Overworld.Map[x, Settings.Height - 1] = Overworld.Map[x, Settings.Height - 2];
                 }
 
-                for (int y = 0; y < height; y++)
+                for (int y = 0; y < Settings.Height; y++)
                 {
                     Overworld.Map[0, y] = Overworld.Map[1, y];
-                    Overworld.Map[width - 1, y] = Overworld.Map[width - 2, y];
+                    Overworld.Map[Settings.Width - 1, y] = Overworld.Map[Settings.Width - 2, y];
                 }
 
                 LoadingMessage = "Selecting Spawn Point";

@@ -57,7 +57,6 @@ namespace DwarfCorp.Gui.Widgets
                         var previousSetting = DwarfGame.COMPRESSED_BINARY_SAVES;
                         DwarfGame.COMPRESSED_BINARY_SAVES = false;
                         Master.World.Save(
-                            String.Format("{0}_{1}_DEBUG", Master.World.Settings.Overworld.Name, Master.World.GameID),
                                 (success, exception) =>
                                     {
                                         Master.World.MakeAnnouncement(success ? "Debug save created.": "Debug save failed - " + exception.Message);

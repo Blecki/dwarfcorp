@@ -18,7 +18,7 @@ namespace DwarfCorp.GameStates
         public float SeaLevel = 0.17f;
         public float TemperatureScale = 1.0f;
         public Point3 ColonySize = new Point3(0, 1, 0);
-        public Vector2 Origin; // Todo: Does this belong in a cell-specific settings object?
+        public Vector2 Origin; // Todo: Does this belong in a cell-specific settings object? PRIORITY!
         public Embarkment InitalEmbarkment = EmbarkmentLibrary.DefaultEmbarkment;
         public string ExistingFile = null;
         public bool GenerateFromScratch = false;

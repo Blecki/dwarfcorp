@@ -72,7 +72,7 @@ namespace DwarfCorp.GameStates
 
             if (Settings.GenerateFromScratch)
             {
-                Generator = new WorldGenerator(Settings, true) { Seed = MathFunctions.Random.Next() };
+                Generator = new WorldGenerator(Settings, true);
                 Generator.Generate();
             }
             else
@@ -89,19 +89,14 @@ namespace DwarfCorp.GameStates
             {
                 // Todo: Just keep a reference to the settings OMG.
                 WorldSizeInChunks = new Point3(Settings.ColonySize.X, Settings.zLevels, Settings.ColonySize.Z),
-                InitialEmbark = Settings.InitalEmbarkment,
-                ExistingFile = Settings.ExistingFile,
-                SeaLevel = Settings.SeaLevel,
                 Natives = Settings.Natives,
                 Settings = Settings,
             };
 
-            // Todo: Get rid of duplication.
-            World.SpawnRect = Settings.SpawnRect;
             World.OnLoadedEvent += () => DoneLoading = true;
+            World.OnSetLoadingMessage = (s) => LoadTicker.AddMessage(s);
 
             World.Setup();
-            World.OnSetLoadingMessage = (s) => LoadTicker.AddMessage(s);
         }
 
         public override void Update(DwarfTime gameTime)

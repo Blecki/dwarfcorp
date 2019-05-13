@@ -79,7 +79,7 @@ namespace DwarfCorp
             try
             {
 #endif
-                bool fileExists = !string.IsNullOrEmpty(ExistingFile);
+                bool fileExists = !string.IsNullOrEmpty(Settings.ExistingFile);
 
                 SetLoadingMessage("Creating Sky...");
 
@@ -89,9 +89,9 @@ namespace DwarfCorp
 
                 if (fileExists)
                 {
-                    SetLoadingMessage("Loading " + ExistingFile);
+                    SetLoadingMessage("Loading " + Settings.ExistingFile);
 
-                    gameFile = SaveGame.LoadMetaFromDirectory(ExistingFile);
+                    gameFile = SaveGame.LoadMetaFromDirectory(Settings.ExistingFile);
                     if (gameFile == null) throw new InvalidOperationException("Game File does not exist.");
 
                     if (gameFile.Metadata.Version != Program.Version && !Program.CompatibleVersions.Contains(gameFile.Metadata.Version))
@@ -103,7 +103,6 @@ namespace DwarfCorp
                     Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
                     Time = gameFile.Metadata.Time;
                     WorldSizeInChunks = gameFile.Metadata.NumChunks;
-                    GameID = gameFile.Metadata.GameID;
 
                     if (gameFile.Metadata.OverworldFile != null && gameFile.Metadata.OverworldFile != "flat")
                     {
@@ -127,16 +126,8 @@ namespace DwarfCorp
 
                 Game.DoLazyAction(new Action(() =>
                 {
-                    Vector3 origin = new Vector3(0, 0, 0);
-                    Vector3 extents = new Vector3(1500, 1500, 1500);
-
                     InstanceRenderer = new InstanceRenderer();
 
-                    pixel = new Texture2D(GraphicsDevice, 1, 1);
-                    pixel.SetData(new Color[] { Color.White });
-
-                    Tilesheet = AssetManager.GetContentTexture(ContentPaths.Terrain.terrain_tiles);
-                    AspectRatio = GraphicsDevice.Viewport.AspectRatio;
                     DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
                     DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
                     DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
@@ -167,7 +158,6 @@ namespace DwarfCorp
                 PlanService = new PlanService();
 
                 SetLoadingMessage("Creating Shadows...");
-                Shadows = new ShadowRenderer(GraphicsDevice, 1024, 1024);
 
                 SetLoadingMessage("Creating Liquids ...");
 
@@ -176,11 +166,6 @@ namespace DwarfCorp
                 WaterRenderer = new WaterRenderer(GraphicsDevice);
 
                 #endregion
-
-                SetLoadingMessage("Generating Initial Terrain Chunks ...");
-
-                if (!fileExists)
-                    GameID = MathFunctions.Random.Next(0, 1024);
 
                 #region Load Components
 
@@ -199,7 +184,7 @@ namespace DwarfCorp
                 ChunkManager.LoadChunks(gameFile.LoadChunks(), ChunkManager);
 
                 SetLoadingMessage("Loading Entities...");
-                gameFile.LoadPlayData(ExistingFile, this);
+                gameFile.LoadPlayData(Settings.ExistingFile, this);
                 Camera = gameFile.PlayData.Camera;
                 DesignationDrawer = gameFile.PlayData.Designations;
 
@@ -234,13 +219,9 @@ namespace DwarfCorp
                 // Restore native factions from deserialized data.
                 Natives = new List<Faction>();
 
-                foreach (Faction faction in Factions.Factions.Values)
-                {
+                foreach (var faction in Factions.Factions.Values)
                     if (faction.Race.IsNative && faction.Race.IsIntelligent && !faction.IsRaceFaction)
-                    {
                         Natives.Add(faction);
-                    }
-                }
 
                 Diplomacy = gameFile.PlayData.Diplomacy;
 
@@ -261,7 +242,7 @@ namespace DwarfCorp
                     new Vector3(VoxelConstants.ChunkSizeX, WorldSizeInVoxels.Y - 1.0f,
                         VoxelConstants.ChunkSizeZ) +
                     Vector3.Up * 10.0f + Vector3.Backward * 10,
-                    MathHelper.PiOver4, AspectRatio, 0.1f,
+                    MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 0.1f,
                     GameSettings.Default.VertexCullDistance);
 
                 ChunkManager = new ChunkManager(Content, this, WorldSizeInChunks);
@@ -351,16 +332,15 @@ namespace DwarfCorp
                     if (Settings.Overworld.Map == null)
                         throw new InvalidProgramException("Tried to start game with an empty overworld. This should not happen.");
 
-                    var generatorSettings = new Generation.GeneratorSettings(Seed, 0.02f, Settings)
+                    var generatorSettings = new Generation.GeneratorSettings(MathFunctions.Random.Next(), 0.02f, Settings)
                     {
-                        SeaLevel = SeaLevel,
                         WorldSizeInChunks = WorldSizeInChunks,
                         SetLoadingMessage = SetLoadingMessage,
                         World = this
                     };
 
                     SetLoadingMessage("Generating Chunks...");
-                    Generation.Generator.Generate(SpawnRect, ChunkManager, this, generatorSettings, SetLoadingMessage);
+                    Generation.Generator.Generate(Settings.SpawnRect, ChunkManager, this, generatorSettings, SetLoadingMessage);
                     CreateInitialEmbarkment(generatorSettings);
                     ChunkManager.NeedsMinimapUpdate = true;
                     ChunkManager.RecalculateBounds();
@@ -375,20 +355,12 @@ namespace DwarfCorp
                         Master.TaskManager = gameFile.PlayData.Tasks;
                         Master.TaskManager.Faction = Master.Faction;
                     }
-                    if (gameFile.PlayData.InitialEmbark != null)
-                    {
-                        InitialEmbark = gameFile.PlayData.InitialEmbark;
-                    }
+
                     ChunkManager.World.Master.SetMaxViewingLevel(gameFile.Metadata.Slice > 0 ? gameFile.Metadata.Slice : ChunkManager.World.Master.MaxViewingLevel);
                 }
 
-                if (Master.Faction.Economy.Information == null)
-                    Master.Faction.Economy.Information = new CompanyInformation();
-
-
-
-                SetLoadingMessage("Creating Geometry...");
-                //ChunkManager.GenerateAllGeometry();
+            if (Master.Faction.Economy.Information == null)
+                throw new InvalidProgramException();
 
                 if (MathFunctions.RandEvent(0.01f))
                     SetLoadingMessage("Reticulating Splines...");
