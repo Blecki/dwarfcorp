@@ -13,7 +13,6 @@ namespace DwarfCorp.GameStates
     {
         private Gui.Root GuiRoot;
         private Gui.Widgets.ProgressBar GenerationProgress;
-        private Gui.Widget ZoomedPreview;
         private WorldGeneratorPreview Preview;
         private Gui.Widget StartButton;
         private Gui.Widgets.CheckBox StartUnderground;
@@ -22,16 +21,16 @@ namespace DwarfCorp.GameStates
         private OverworldGenerationSettings Settings;
         private bool AutoGenerate;
         
-        public NewWorldGeneratorState(DwarfGame Game, GameStateManager StateManager, OverworldGenerationSettings Settings, bool AutoGenerate) :
+        public NewWorldGeneratorState(DwarfGame Game, GameStateManager StateManager, CompanyInformation Company, bool AutoGenerate) :
             base(Game, "NewWorldGeneratorState", StateManager)
         {
             this.AutoGenerate = AutoGenerate;
-            this.Settings = Settings;
-            if (this.Settings == null)
-                this.Settings = new OverworldGenerationSettings()
+
+            this.Settings = new OverworldGenerationSettings()
                 {
-                    Width = 512,
-                    Height = 512,
+                    Company = Company,
+                    Width = 128,
+                    Height = 128,
                     Name = TextGenerator.GenerateRandom(TextGenerator.GetAtoms(ContentPaths.Text.Templates.worlds)),
                     NumCivilizations = 5,
                     NumFaults = 3,
@@ -275,20 +274,6 @@ namespace DwarfCorp.GameStates
 
             zLevelSetting.SelectedIndex = 1;
 
-            ZoomedPreview = rightPanel.AddChild(new Gui.Widget
-            {
-                AutoLayout = Gui.AutoLayout.DockBottom,
-                OnLayout = (sender) =>
-                {
-                    var space = global::System.Math.Min(zLevelSetting.Rect.Width, StartButton.Rect.Top - zLevelSetting.Rect.Bottom - 4);
-                    sender.Rect.Height = space;
-                    sender.Rect.Width = space;
-                    sender.Rect.Y = zLevelSetting.Rect.Bottom + 2;
-                    sender.Rect.X = zLevelSetting.Rect.X + ((zLevelSetting.Rect.Width - space) / 2);
-                    
-                }
-            });
-
             GenerationProgress = mainPanel.AddChild(new Gui.Widgets.ProgressBar
             {
                 AutoLayout = Gui.AutoLayout.DockBottom,
@@ -357,14 +342,6 @@ namespace DwarfCorp.GameStates
             if (Generator.CurrentState == WorldGenerator.GenerationState.Finished)
             {
                 Preview.DrawPreview();
-                GuiRoot.DrawMesh(
-                        Gui.Mesh.Quad()
-                        .Scale(-ZoomedPreview.Rect.Width, -ZoomedPreview.Rect.Height)
-                        .Translate(ZoomedPreview.Rect.X + ZoomedPreview.Rect.Width, 
-                            ZoomedPreview.Rect.Y + ZoomedPreview.Rect.Height)
-                        .Texture(Preview.ZoomedPreviewMatrix),
-                        Preview.PreviewTexture);
-
                 GuiRoot.MousePointer = new MousePointer("mouse", 1, 0);
             }
 

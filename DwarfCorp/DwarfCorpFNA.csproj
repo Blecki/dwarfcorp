@@ -351,8 +351,6 @@
     <Compile Include=".\GameStates\FrontEnd\LoadState.cs" />
     <Compile Include=".\GameStates\FrontEnd\MainMenuState.cs" />
     <Compile Include=".\GameStates\FrontEnd\MenuState.cs" />
-    <Compile Include=".\GameStates\FrontEnd\NewGameChooseWorldState.cs" />
-    <Compile Include=".\GameStates\FrontEnd\NewGameCreateDebugWorldState.cs" />
     <Compile Include=".\GameStates\FrontEnd\OptionsState.cs" />
     <Compile Include=".\GameStates\FrontEnd\TutorialViewState.cs" />
     <Compile Include=".\GameStates\FrontEnd\WorldLoaderState.cs" />
@@ -387,7 +385,6 @@
     <Compile Include=".\GameStates\WorldGeneration\WorldGenerationSettingsDialog.cs" />
     <Compile Include=".\GameStates\WorldGeneration\WorldGenerator.cs" />
     <Compile Include=".\GameStates\WorldGeneration\WorldGeneratorPreview.cs" />
-    <Compile Include=".\GameStates\WorldGeneration\WorldGeneratorState.cs" />
     <Compile Include=".\GameStates\YarnSpinner\EmployeeCommands.cs" />
     <Compile Include=".\GameStates\YarnSpinner\EndConversation.cs" />
     <Compile Include=".\GameStates\YarnSpinner\HidePortrait.cs" />

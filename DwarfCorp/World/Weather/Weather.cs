@@ -75,8 +75,8 @@ namespace DwarfCorp
             {
                 // Each day, a storm could originate from a randomly selected biome
                 Vector3 randomSample = MathFunctions.RandVector3Box(bounds);
-                float rain = Overworld.GetValueAt(world.GenerationSettings.Overworld.Map, randomSample, OverworldField.Rainfall, world.WorldScale, world.WorldOrigin);
-                float temperature = Overworld.GetValueAt(world.GenerationSettings.Overworld.Map, randomSample, OverworldField.Temperature, world.WorldScale, world.WorldOrigin);
+                float rain = Overworld.GetValueAt(world.GenerationSettings.Overworld.Map, randomSample, OverworldField.Rainfall, world.WorldOrigin);
+                float temperature = Overworld.GetValueAt(world.GenerationSettings.Overworld.Map, randomSample, OverworldField.Temperature, world.WorldOrigin);
                 // Generate storms according to the rainfall in the biome. Up to 4 storms per day.
                 int numStorms = (int) MathFunctions.Rand(0, rain*4);
 

@@ -557,13 +557,10 @@
     <Compile Include="GameStates\FrontEnd\LoadSaveGameState.cs" />
     <Compile Include="GameStates\Play\EconomyState.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorPreview.cs" />
-    <Compile Include="GameStates\WorldGeneration\WorldGeneratorState.cs" />
     <Compile Include="GameStates\FrontEnd\IntroState.cs" />
     <Compile Include="GameStates\FrontEnd\LoadState.cs" />
     <Compile Include="GameStates\Debug\GuiDebugState.cs" />
     <Compile Include="GameStates\FrontEnd\MainMenuState.cs" />
-    <Compile Include="GameStates\FrontEnd\NewGameChooseWorldState.cs" />
-    <Compile Include="GameStates\FrontEnd\NewGameCreateDebugWorldState.cs" />
     <Compile Include="GameStates\FrontEnd\OptionsState.cs" />
     <Compile Include="GameStates\Play\PlayState.cs" />
     <Compile Include="GameStates\WorldGeneration\WorldGenerator.cs" />

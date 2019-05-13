@@ -157,15 +157,13 @@ namespace DwarfCorp.GameStates
 
                     if (args.MouseButton == 0)
                     {
-                        int chunkSize = 16;
-                        var worldSize = Generator.Settings.ColonySize.ToVector3() * chunkSize / Generator.Settings.WorldScale;
                         var clickPoint = ScreenToWorld(new Vector2(args.X, args.Y));
 
                         var colonyCell = Overworld.ColonyCells.FirstOrDefault(c => c.Bounds.Contains(new Point(clickPoint.X, clickPoint.Y)));
                         if (colonyCell != null)
                         {
                             Generator.Settings.WorldGenerationOrigin = new Vector2(colonyCell.Bounds.X, colonyCell.Bounds.Y); //  Generator.GetOrigin(clickPoint, worldSize);
-                            Generator.Settings.ColonySize = new Point3(colonyCell.Bounds.Width / 4, Generator.Settings.ColonySize.Y, colonyCell.Bounds.Height / 4);
+                            Generator.Settings.ColonySize = new Point3(colonyCell.Bounds.Width, Generator.Settings.ColonySize.Y, colonyCell.Bounds.Height);
                             previewText = Generator.GetSpawnStats();
                         }
                         UpdatePreview = true;
@@ -257,9 +255,7 @@ namespace DwarfCorp.GameStates
             var height = 0.0f;
             if ((int)worldCoord.X > 0 && (int)worldCoord.Y > 0 &&
                 (int)worldCoord.X < Overworld.Map.GetLength(0) && (int)worldCoord.Y < Overworld.Map.GetLength(1))
-            {
                 height = Overworld.Map[(int)worldCoord.X, (int)worldCoord.Y].Height * 0.05f;
-            }
             return new Vector3(worldCoord.X / Overworld.Map.GetLength(0), height, worldCoord.Y / Overworld.Map.GetLength(1));
         }
 

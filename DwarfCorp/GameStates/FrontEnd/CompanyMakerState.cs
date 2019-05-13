@@ -15,7 +15,7 @@ namespace DwarfCorp.GameStates
         private Gui.Widgets.EditableTextField MottoField;
         private Gui.Widgets.CompanyLogo CompanyLogoDisplay;
 
-        public static CompanyInformation CompanyInformation { get; set; }
+        private CompanyInformation CompanyInformation;
 
         public CompanyMakerState(DwarfGame game, GameStateManager stateManager) :
             base(game, "CompanyMakerState", stateManager)
@@ -54,12 +54,10 @@ namespace DwarfCorp.GameStates
                 Border = "border-button",
                 OnClick = (sender, args) =>
                 {
-                    // Grab string values from widgets!
                     CompanyInformation.Name = NameField.Text;
                     CompanyInformation.Motto = MottoField.Text;
 
-                    // Why are they stored as statics on this class???
-                    StateManager.PushState(new NewWorldGeneratorState(Game, Game.StateManager, null, true));
+                    StateManager.PushState(new NewWorldGeneratorState(Game, Game.StateManager, CompanyInformation, true));
                 },
                 AutoLayout = AutoLayout.FloatBottomRight
             });

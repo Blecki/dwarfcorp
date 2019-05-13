@@ -44,6 +44,13 @@ namespace DwarfCorp.GameStates
                 (sender, args) => StateManager.PushState(new CreditsState(GameState.Game, StateManager)));
 
 #if DEBUG
+            CreateMenuItem(frame, "QUICKPLAY", "",
+                (sender, args) =>
+                {
+                    GameStates.GameState.Game.LogSentryBreadcrumb("Menu", "User generating a random world.");
+                    StateManager.PushState(new LoadState(Game, Game.StateManager, new OverworldGenerationSettings() { Company = new CompanyInformation(), GenerateFromScratch = true, ColonySize = new Point3(8, 4, 8) }));
+                });
+
             CreateMenuItem(frame, "GUI Debug", "Open the GUI debug screen.",
                 (sender, args) =>
                 {

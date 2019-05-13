@@ -934,22 +934,7 @@ namespace DwarfCorp.GameStates
         // Spawn rectangle in world map pixel units
         public Rectangle GetSpawnRectangle()
         {
-            int w = (int)(Settings.ColonySize.X * VoxelConstants.ChunkSizeX / Settings.WorldScale);
-            int h = (int)(Settings.ColonySize.Z * VoxelConstants.ChunkSizeZ / Settings.WorldScale);
-            return new Rectangle(
-                (int)Settings.WorldGenerationOrigin.X , (int)Settings.WorldGenerationOrigin.Y, w, h);
-        }
-
-        // Get origin in world map pixel units
-        public Vector2 GetOrigin(Point clickPoint, Vector3 worldSize)
-        {
-            int w = (int)(Settings.ColonySize.X * VoxelConstants.ChunkSizeX / Settings.WorldScale);
-            int h = (int)(Settings.ColonySize.Z * VoxelConstants.ChunkSizeZ / Settings.WorldScale);
-            return new Vector2(
-                global::System.Math.Max(global::System.Math.Min(clickPoint.X - w/2, Settings.Width  - w - 1), 0),
-                global::System.Math.Max(global::System.Math.Min(clickPoint.Y - h/2, Settings.Height - h - 1), 0)
-            );
+            return new Rectangle((int)Settings.WorldGenerationOrigin.X , (int)Settings.WorldGenerationOrigin.Y, Settings.ColonySize.X, Settings.ColonySize.Z);
         }
     }
-    
 }

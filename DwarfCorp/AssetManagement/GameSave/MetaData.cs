@@ -11,7 +11,6 @@ namespace DwarfCorp
     public class MetaData
     {
         public string OverworldFile { get; set; }
-        public float WorldScale { get; set; }
         public Vector2 WorldOrigin { get; set; }
         public float TimeOfDay { get; set; }
         public int GameID { get; set; }
@@ -30,7 +29,6 @@ namespace DwarfCorp
             {
                 OverworldFile = World.GenerationSettings.Overworld.Name,
                 WorldOrigin = World.WorldOrigin,
-                WorldScale = World.WorldScale,
                 TimeOfDay = World.Sky.TimeOfDay,
                 GameID = World.GameID,
                 Time = World.Time,

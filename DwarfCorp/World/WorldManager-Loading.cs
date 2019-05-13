@@ -103,7 +103,6 @@ namespace DwarfCorp
                     Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
                     Time = gameFile.Metadata.Time;
                     WorldOrigin = gameFile.Metadata.WorldOrigin;
-                    WorldScale = gameFile.Metadata.WorldScale;
                     WorldSizeInChunks = gameFile.Metadata.NumChunks;
                     GameID = gameFile.Metadata.GameID;
 
@@ -235,7 +234,6 @@ namespace DwarfCorp
                 Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
                 Time = gameFile.Metadata.Time;
                 WorldOrigin = gameFile.Metadata.WorldOrigin;
-                WorldScale = gameFile.Metadata.WorldScale;
 
                 // Restore native factions from deserialized data.
                 Natives = new List<Faction>();
@@ -286,7 +284,7 @@ namespace DwarfCorp
                 if (Natives == null) // Todo: Always true??
                 {
                     FactionLibrary library = new FactionLibrary();
-                    library.Initialize(this, CompanyMakerState.CompanyInformation);
+                    library.Initialize(this, GenerationSettings.Company);
                     Natives = new List<Faction>();
                     for (int i = 0; i < 10; i++)
                     {
@@ -311,7 +309,7 @@ namespace DwarfCorp
                     Factions.AddFactions(this, Natives);
                 }
 
-                Factions.Initialize(this, CompanyMakerState.CompanyInformation);
+                Factions.Initialize(this, GenerationSettings.Company);
                 Point playerOrigin = new Point((int)(WorldOrigin.X), (int)(WorldOrigin.Y));
 
                 Factions.Factions["Player"].Center = playerOrigin;

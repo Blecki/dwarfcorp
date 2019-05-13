@@ -5,8 +5,9 @@ namespace DwarfCorp.GameStates
 {
     public class OverworldGenerationSettings
     {
-        public int Width = 512;
-        public int Height = 512;
+        public CompanyInformation Company;
+        public int Width = 128;
+        public int Height = 128;
         public string Name = GetRandomWorldName();
         public int NumCivilizations = 5;
         public int NumRains = 1000;
@@ -17,15 +18,14 @@ namespace DwarfCorp.GameStates
         public float TemperatureScale = 1.0f;
         public Point3 ColonySize = new Point3(0, 1, 0);
         public Vector2 WorldGenerationOrigin;
-        public float WorldScale = 4.0f;
         public Embarkment InitalEmbarkment = EmbarkmentLibrary.DefaultEmbarkment;
         public Vector2 WorldOrigin = Vector2.Zero;
         public string ExistingFile = null;
         public List<Faction> Natives;
         public bool GenerateFromScratch = false;
         public int Seed = 0;
-        public bool StartUnderground = false;
-        public bool RevealSurface = true;
+        public bool StartUnderground = false; // Todo: Discard
+        public bool RevealSurface = true; // Todo: Discard
         public int NumCaveLayers = 8;
         public int zLevels = 4; // This is actually y levels but genre convention is to call depth Z.
         public Rectangle SpawnRect;
@@ -39,7 +39,7 @@ namespace DwarfCorp.GameStates
 
         public OverworldGenerationSettings()
         {
-            WorldOrigin = new Vector2(Width / WorldScale, Height / WorldScale) * 0.5f;
+            WorldOrigin = new Vector2(Width, Height) * 0.5f;
             Seed = Name.GetHashCode();
             Overworld = new Overworld(Width, Height);
         }

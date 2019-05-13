@@ -32,13 +32,6 @@ namespace DwarfCorp
         // The random seed of the whole game
         public int Seed { get; set; }
 
-        // Defines the number of pixels in the overworld to number of voxels conversion
-        public float WorldScale
-        {
-            get { return GameSettings.Default.WorldScale; }
-            set { GameSettings.Default.WorldScale = value; }
-        }
-
         public float CaveView = 0;
         public float TargetCaveView = 0;
 
@@ -1325,7 +1318,7 @@ namespace DwarfCorp
 
             // Now check for biome ambience.
             var pos = vox.WorldPosition;
-            var biome = Overworld.GetBiomeAt(GenerationSettings.Overworld.Map, pos, WorldScale, WorldOrigin);
+            var biome = Overworld.GetBiomeAt(GenerationSettings.Overworld.Map, pos, WorldOrigin);
 
             if (biome != null && !string.IsNullOrEmpty(biome.DayAmbience))
             {

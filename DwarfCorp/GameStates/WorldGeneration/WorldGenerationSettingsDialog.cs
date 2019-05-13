@@ -146,14 +146,6 @@ namespace DwarfCorp.Gui.Widgets
                 }
             });
 
-
-            AddChild(CreateCombo<int>(Root, "World Size", "Size of the world to generate",
-                new int[] { 256, 384, 512, 1024, 2048 }, (i) =>
-                {
-                    Settings.Width = i;
-                    Settings.Height = i;
-                }, () => Settings.Width));
-
             AddChild(CreateCombo<int>(Root, "Natives", "Number of native civilizations",
                 new int[] { 0, 2, 4, 8, 16 }, (i) => Settings.NumCivilizations = i,
                 () => Settings.NumCivilizations));

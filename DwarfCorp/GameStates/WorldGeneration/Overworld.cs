@@ -340,27 +340,27 @@ namespace DwarfCorp
                 imageMutex.ReleaseMutex();
         }
 
-        public static Vector2 WorldToOverworld(Vector2 worldXZ, float scale, Vector2 origin)
+        public static Vector2 WorldToOverworld(Vector2 worldXZ, Vector2 origin)
         {
-            return worldXZ / scale + origin;
+            return worldXZ / 16.0f + origin;
         }
 
-        public static Vector2 WorldToOverworld(Vector3 worldXYZ, float scale, Vector2 origin)
+        public static Vector2 WorldToOverworld(Vector3 worldXYZ, Vector2 origin)
         {
-            return WorldToOverworld(new Vector2(worldXYZ.X, worldXYZ.Z), scale, origin);
+            return WorldToOverworld(new Vector2(worldXYZ.X, worldXYZ.Z), origin);
         }
 
-        public static BiomeData GetBiomeAt(OverworldCell[,] Map, Vector3 worldPos, float scale, Vector2 origin)
+        public static BiomeData GetBiomeAt(OverworldCell[,] Map, Vector3 worldPos, Vector2 origin)
         {
             DebugHelper.AssertNotNull(Map);
-            Vector2 v = WorldToOverworld(worldPos, scale, origin);
+            Vector2 v = WorldToOverworld(worldPos, origin);
             var biome = Map[(int)MathFunctions.Clamp(v.X, 0, Map.GetLength(0) - 1), (int)MathFunctions.Clamp(v.Y, 0, Map.GetLength(1) - 1)].Biome;
             return BiomeLibrary.GetBiome(biome);
         }
 
-        public static float GetValueAt(OverworldCell[,] Map, Vector3 worldPos, OverworldField fieldType, float scale, Vector2 origin)
+        public static float GetValueAt(OverworldCell[,] Map, Vector3 worldPos, OverworldField fieldType, Vector2 origin)
         {
-            Vector2 v = WorldToOverworld(worldPos, scale, origin);
+            Vector2 v = WorldToOverworld(worldPos, origin);
             return OverworldImageOperations.GetValue(Map, v, fieldType);
         }
 

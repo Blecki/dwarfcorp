@@ -26,7 +26,7 @@ namespace DwarfCorp.Generation
             int wallHeight = MathFunctions.RandInt(2, 6);
             int heightOffset = MathFunctions.RandInt(-4, 2);
 
-            var biome = Overworld.GetBiomeAt(Settings.OverworldSettings.Overworld.Map, Chunk.Origin.ToVector3(), Settings.World.WorldScale, Settings.World.WorldOrigin);
+            var biome = Overworld.GetBiomeAt(Settings.OverworldSettings.Overworld.Map, Chunk.Origin.ToVector3(), Settings.World.WorldOrigin);
             var avgHeight = GetAverageHeight(Chunk.Origin.X, Chunk.Origin.Z, structureWidth, structureDepth, Settings);
 
             bool[] doors = new bool[4];
