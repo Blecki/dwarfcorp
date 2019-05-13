@@ -15,8 +15,6 @@ namespace DwarfCorp.GameStates
         private Gui.Widgets.ProgressBar GenerationProgress;
         private WorldGeneratorPreview Preview;
         private Gui.Widget StartButton;
-        private Gui.Widgets.CheckBox StartUnderground;
-        private Gui.Widgets.CheckBox RevealSurface;
         private WorldGenerator Generator;
         private OverworldGenerationSettings Settings;
         private bool AutoGenerate;
@@ -112,7 +110,7 @@ namespace DwarfCorp.GameStates
                     else
                     {
                         global::System.IO.DirectoryInfo worldDirectory = global::System.IO.Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + global::System.IO.Path.DirectorySeparatorChar + Settings.Name);
-                        var file = new NewOverworldFile(Game.GraphicsDevice, Settings.Overworld, Settings.Name, Settings.SeaLevel);
+                        var file = new NewOverworldFile(Game.GraphicsDevice, Settings);
                         file.WriteFile(worldDirectory.FullName);
                         GuiRoot.ShowModalPopup(GuiRoot.ConstructWidget(new Gui.Widgets.Popup
                         {
@@ -204,21 +202,6 @@ namespace DwarfCorp.GameStates
                     Settings.InitalEmbarkment = EmbarkmentLibrary.GetEmbarkment((sender as Gui.Widgets.ComboBox).SelectedItem);
                 }
             }) as Gui.Widgets.ComboBox;
-
-            StartUnderground = rightPanel.AddChild(new Gui.Widgets.CheckBox
-            {
-                AutoLayout = Gui.AutoLayout.DockTop,
-                Font = "font8",
-                Text = "@world-generation-start-underground"
-            }) as Gui.Widgets.CheckBox;
-
-            RevealSurface = rightPanel.AddChild(new Gui.Widgets.CheckBox
-            {
-                AutoLayout = Gui.AutoLayout.DockTop,
-                Font = "font8",
-                Text = "@world-generation-reveal-surface",
-                CheckState = true
-            }) as Gui.Widgets.CheckBox;
 
             rightPanel.AddChild(new Gui.Widget
             {

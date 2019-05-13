@@ -11,7 +11,7 @@ namespace DwarfCorp
     public class MetaData
     {
         public string OverworldFile { get; set; }
-        public Vector2 WorldOrigin { get; set; }
+        public Vector2 WorldOrigin { get; set; } // Todo: Kill?
         public float TimeOfDay { get; set; }
         public int GameID { get; set; }
         public int Slice { get; set; }
@@ -27,8 +27,8 @@ namespace DwarfCorp
         {
             return new MetaData
             {
-                OverworldFile = World.GenerationSettings.Overworld.Name,
-                WorldOrigin = World.WorldOrigin,
+                OverworldFile = World.Settings.Overworld.Name,
+                WorldOrigin = World.Settings.Origin,
                 TimeOfDay = World.Sky.TimeOfDay,
                 GameID = World.GameID,
                 Time = World.Time,

@@ -140,7 +140,6 @@ namespace DwarfCorp.GameStates
         public void AutoSelectSpawnRegion()
         {
             LoadingMessage = "Selecting spawn.";
-            Settings.WorldOrigin = Settings.WorldGenerationOrigin;
             bool inWater = true;
             do
             {
@@ -149,11 +148,7 @@ namespace DwarfCorp.GameStates
                 inWater = Overworld.Map[center.X, center.Y].Height < Settings.SeaLevel;
                 Settings.SpawnRect = rect;
                 if (inWater)
-                {
-                    Settings.WorldGenerationOrigin = 
-                        new Vector2(MathFunctions.Rand(0, Settings.Width - rect.Width), MathFunctions.Rand(0, Settings.Height - rect.Height));
-                    Settings.WorldOrigin = Settings.WorldGenerationOrigin;
-                }
+                    Settings.Origin = new Vector2(MathFunctions.Rand(0, Settings.Width - rect.Width), MathFunctions.Rand(0, Settings.Height - rect.Height));
             } while (inWater);
         }
 
@@ -251,7 +246,7 @@ namespace DwarfCorp.GameStates
             LandIndex = null;
             if (CurrentState == GenerationState.NotStarted)
             {
-                Settings.WorldGenerationOrigin = new Vector2(Settings.Width / 2.0f, Settings.Height / 2.0f);
+                Settings.Origin = new Vector2(Settings.Width / 2.0f, Settings.Height / 2.0f);
                 genThread = new Thread(unused =>
                 {
                     global::System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -934,7 +929,7 @@ namespace DwarfCorp.GameStates
         // Spawn rectangle in world map pixel units
         public Rectangle GetSpawnRectangle()
         {
-            return new Rectangle((int)Settings.WorldGenerationOrigin.X , (int)Settings.WorldGenerationOrigin.Y, Settings.ColonySize.X, Settings.ColonySize.Z);
+            return new Rectangle((int)Settings.Origin.X , (int)Settings.Origin.Y, Settings.ColonySize.X, Settings.ColonySize.Z);
         }
     }
 }

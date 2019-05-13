@@ -15,41 +15,7 @@ namespace DwarfCorp.Generation
         {
             var centerCoordinate = GlobalVoxelCoordinate.FromVector3(new Vector3(x, (Settings.WorldSizeInChunks.Y * VoxelConstants.ChunkSizeY) - 1, z));
 
-            var averageHeight = 0;
-
-            if (Settings.OverworldSettings.StartUnderground)
-            {
-                var accumulator = 0;
-                var count = 0;
-                List<string> illegalTypes = new List<string>() { "Sand", "Dirt", "DarkDirt", "Ice" };
-                for (var offsetX = -size; offsetX <= size; ++offsetX)
-                {
-                    for (var offsetY = -size; offsetY <= size; ++offsetY)
-                    {
-                        var topVoxel = VoxelHelpers.FindFirstVoxelBelow(chunkManager.CreateVoxelHandle(centerCoordinate + new GlobalVoxelOffset(offsetX, 0, offsetY)));
-
-                        if (topVoxel.Coordinate.Y > 0)
-                        {
-                            var vox = topVoxel;
-                            for (int dy = topVoxel.Coordinate.Y; dy > 0; dy--)
-                            {
-                                vox = chunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(topVoxel.Coordinate.X, dy, topVoxel.Coordinate.Z));
-                                if (vox.IsValid && !vox.IsEmpty && !illegalTypes.Contains(vox.Type.Name))
-                                {
-                                    break;
-                                }
-                            }
-                            accumulator += vox.Coordinate.Y + 1;
-                            count += 1;
-                        }
-
-                    }
-                }
-                averageHeight = Math.Max((int)Math.Round(((float)accumulator / (float)count)) - 5, 0);
-            }
-            else
-                averageHeight = (int)GetAverageHeight(centerCoordinate.X - size, centerCoordinate.Y - size, size * 2 + 1, size * 2 + 1, Settings);
-
+            var averageHeight = (int)GetAverageHeight(centerCoordinate.X - size, centerCoordinate.Y - size, size * 2 + 1, size * 2 + 1, Settings);
 
             // Next, create the balloon port by deciding which voxels to fill.
             var balloonPortDesignations = new List<VoxelHandle>();
@@ -66,7 +32,7 @@ namespace DwarfCorp.Generation
 
                     var h = baseVoxel.Coordinate.Y + 1;
 
-                    for (int y = averageHeight; y < (Settings.OverworldSettings.StartUnderground ? averageHeight + 2 : h) && y < chunkManager.World.WorldSizeInVoxels.Y; y++)
+                    for (int y = averageHeight; y < h && y < chunkManager.World.WorldSizeInVoxels.Y; y++)
                     {
                         var v = chunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(baseVoxel.Coordinate.X, y, baseVoxel.Coordinate.Z));
                         v.RawSetType(Library.GetVoxelType(0));

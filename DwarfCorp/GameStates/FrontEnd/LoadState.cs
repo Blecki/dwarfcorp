@@ -88,18 +88,15 @@ namespace DwarfCorp.GameStates
             World = new WorldManager(Game)
             {
                 // Todo: Just keep a reference to the settings OMG.
-                WorldOrigin = Settings.WorldOrigin,
                 WorldSizeInChunks = new Point3(Settings.ColonySize.X, Settings.zLevels, Settings.ColonySize.Z),
                 InitialEmbark = Settings.InitalEmbarkment,
                 ExistingFile = Settings.ExistingFile,
                 SeaLevel = Settings.SeaLevel,
                 Natives = Settings.Natives,
-                StartUnderground = Settings.StartUnderground,
-                GenerationSettings = Settings,
+                Settings = Settings,
             };
 
             // Todo: Get rid of duplication.
-            World.WorldGenerationOrigin = Settings.WorldGenerationOrigin;
             World.SpawnRect = Settings.SpawnRect;
             World.OnLoadedEvent += () => DoneLoading = true;
 
@@ -120,7 +117,7 @@ namespace DwarfCorp.GameStates
                     StateManager.PushState(new PlayState(Game, StateManager, World));
 
                     World.OnSetLoadingMessage = null;
-                    World.GenerationSettings.Overworld.NativeFactions = World.Natives;
+                    World.Settings.Overworld.NativeFactions = World.Natives;
                 }
             }
             else

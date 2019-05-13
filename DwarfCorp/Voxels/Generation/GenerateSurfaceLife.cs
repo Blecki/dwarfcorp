@@ -23,7 +23,7 @@ namespace DwarfCorp.Generation
             for (var x = TopChunk.Origin.X; x < TopChunk.Origin.X + VoxelConstants.ChunkSizeX; x++)
                 for (var z = TopChunk.Origin.Z; z < TopChunk.Origin.Z + VoxelConstants.ChunkSizeZ; z++)
                 {
-                    var overworldPosition = Overworld.WorldToOverworld(new Vector2(x, z), Settings.World.WorldOrigin);
+                    var overworldPosition = Overworld.WorldToOverworld(new Vector2(x, z), Settings.OverworldSettings.Origin);
                     var biome = Settings.OverworldSettings.Overworld.Map[(int)MathFunctions.Clamp(overworldPosition.X, 0, Settings.OverworldSettings.Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(overworldPosition.Y, 0, Settings.OverworldSettings.Overworld.Map.GetLength(1) - 1)].Biome;
                     var biomeData = BiomeLibrary.GetBiome(biome);
 
@@ -43,7 +43,7 @@ namespace DwarfCorp.Generation
                     var above = VoxelHelpers.GetVoxelAbove(voxel);
                     if (above.IsValid && (above.LiquidLevel != 0 || !above.IsEmpty))
                         continue;
-                    
+
                     foreach (var animal in biomeData.Fauna)
                     {
                         if (MathFunctions.RandEvent(animal.SpawnProbability))
@@ -59,20 +59,8 @@ namespace DwarfCorp.Generation
                             }
                             if (dict[animal.Name] < animal.MaxPopulation)
                             {
-                                if (Settings.OverworldSettings.RevealSurface)
-                                {
-                                    EntityFactory.CreateEntity<GameComponent>(animal.Name,
-                                        voxel.WorldPosition + Vector3.Up * 1.5f);
-                                }
-                                else
-                                {
-                                    var lambdaAnimal = animal;
-                                    Settings.World.ComponentManager.RootComponent.AddChild(new SpawnOnExploredTrigger(Settings.World.ComponentManager, voxel)
-                                    {
-                                        EntityToSpawn = lambdaAnimal.Name,
-                                        SpawnLocation = voxel.WorldPosition + new Vector3(0.5f, 1.5f, 0.5f)
-                                    });
-                                }
+                                EntityFactory.CreateEntity<GameComponent>(animal.Name,
+                                    voxel.WorldPosition + Vector3.Up * 1.5f);
                             }
                             break;
                         }
@@ -91,22 +79,10 @@ namespace DwarfCorp.Generation
                             veg.NoiseOffset, voxel.Coordinate.Z / veg.ClumpSize) >= veg.ClumpThreshold)
                         {
                             var treeSize = MathFunctions.Rand() * veg.SizeVariance + veg.MeanSize;
-                            if (Settings.OverworldSettings.RevealSurface)
-                            {
-                                EntityFactory.CreateEntity<Plant>(veg.Name,
+
+                            EntityFactory.CreateEntity<Plant>(veg.Name,
                                 voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
                                 Blackboard.Create("Scale", treeSize));
-                            }
-                            else
-                            {
-                                var lambdaFloraType = veg;
-                                Settings.World.ComponentManager.RootComponent.AddChild(new SpawnOnExploredTrigger(Settings.World.ComponentManager, voxel)
-                                {
-                                    EntityToSpawn = lambdaFloraType.Name,
-                                    SpawnLocation = voxel.WorldPosition + new Vector3(0.5f, 1.0f, 0.5f),
-                                    BlackboardData = Blackboard.Create("Scale", treeSize)
-                                });
-                            }
 
                             break;
                         }

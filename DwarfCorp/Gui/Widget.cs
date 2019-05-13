@@ -117,6 +117,7 @@ namespace DwarfCorp.Gui
         public bool WrapWithinWords = false;
         public bool AutoResizeToTextHeight = false;
 
+        // Todo: WTF??
         private class HoverClickHelper
         {
             public InputEventArgs EventArgs = null;

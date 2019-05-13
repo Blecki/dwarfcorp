@@ -18,6 +18,8 @@ namespace DwarfCorp.GameStates
         private Gui.Widget StartButton;
         private WorldGenerator Generator = null;
         private OverworldGenerationSettings Settings;
+        private Widget CellInfo;
+        private String SaveName;
 
         public OverworldTileChooseState(DwarfGame Game, GameStateManager StateManager, WorldGenerator Generator, OverworldGenerationSettings Settings) :
             base(Game, "NewWorldGeneratorState", StateManager)
@@ -85,7 +87,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnClick = (sender, args) =>
                 {
-                    var saveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Overworld.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.WorldGenerationOrigin.X, (int)Settings.WorldGenerationOrigin.Y);
+                    var saveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Overworld.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.Origin.X, (int)Settings.Origin.Y);
                     var saveGame = SaveGame.LoadMetaFromDirectory(saveName);
                     if (saveGame != null)
                     {
@@ -99,16 +101,12 @@ namespace DwarfCorp.GameStates
                     }
                     else
                     {
-
                         GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", string.Format("User is starting a game with a {0} x {1} world.", Settings.Width, Settings.Height));
                         Settings.Overworld.Name = Settings.Name;
                             Settings.ExistingFile = null;
-                            Settings.WorldOrigin = Settings.WorldGenerationOrigin;
                             Settings.SpawnRect = Generator.GetSpawnRectangle();
                             if (Settings.Natives == null || Settings.Natives.Count == 0)
                                 Settings.Natives = Generator.NativeCivilizations;
-                        Settings.StartUnderground = false;// StartUnderground.CheckState;
-                        Settings.RevealSurface = true;// RevealSurface.CheckState;
 
                             foreach (var faction in Settings.Natives)
                             {
@@ -127,11 +125,18 @@ namespace DwarfCorp.GameStates
                 }
             });
 
+            CellInfo = rightPanel.AddChild(new Widget
+            {
+                AutoLayout = AutoLayout.DockFill,
+                TextColor = new Vector4(0, 0, 0, 1)
+            });
+
             Preview = mainPanel.AddChild(new WorldGeneratorPreview(Game.GraphicsDevice)
             {
                 Border = "border-thin",
                 AutoLayout = Gui.AutoLayout.DockFill,
-                Overworld = Settings.Overworld
+                Overworld = Settings.Overworld,
+                OnCellSelectionMade = UpdateCellInfo
             }) as WorldGeneratorPreview;
 
             if (Generator == null)
@@ -143,12 +148,41 @@ namespace DwarfCorp.GameStates
             }
 
             Preview.SetGenerator(Generator);
+            UpdateCellInfo();
 
             GuiRoot.RootItem.Layout();
                         
             IsInitialized = true;
 
             base.OnEnter();
+        }
+
+        private void UpdateCellInfo()
+        {
+            if (Settings.Origin.X < 0 || Settings.Origin.X >= Settings.Width ||
+                Settings.Origin.Y < 0 || Settings.Origin.Y >= Settings.Height)
+            {
+                StartButton.Hidden = true;
+                CellInfo.Text = "Select a spawn cell to continue";
+                SaveName = "";
+            }
+            else
+            {
+                SaveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Overworld.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.Origin.X, (int)Settings.Origin.Y);
+                var saveGame = SaveGame.LoadMetaFromDirectory(SaveName);
+                if (saveGame != null)
+                {
+                    StartButton.Text = "Load";
+                    CellInfo.Text = saveGame.Metadata.GameID.ToString();
+                    StartButton.Hidden = false;
+                }
+                else
+                {
+                    StartButton.Hidden = false;
+                    StartButton.Text = "Create";
+                    CellInfo.Text = "";
+                }
+            }
         }
 
         public override void Update(DwarfTime gameTime)

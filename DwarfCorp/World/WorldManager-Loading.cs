@@ -102,7 +102,6 @@ namespace DwarfCorp
 
                     Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
                     Time = gameFile.Metadata.Time;
-                    WorldOrigin = gameFile.Metadata.WorldOrigin;
                     WorldSizeInChunks = gameFile.Metadata.NumChunks;
                     GameID = gameFile.Metadata.GameID;
 
@@ -111,7 +110,7 @@ namespace DwarfCorp
                         SetLoadingMessage("Loading world " + gameFile.Metadata.OverworldFile);
                         var worldDirectory = Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + gameFile.Metadata.OverworldFile);
                         var overWorldFile = NewOverworldFile.Load(worldDirectory.FullName);
-                        GenerationSettings.Overworld = overWorldFile.CreateOverworld();
+                        Settings.Overworld = overWorldFile.CreateOverworld();
                     }
                     else
                     {
@@ -204,8 +203,6 @@ namespace DwarfCorp
                 Camera = gameFile.PlayData.Camera;
                 DesignationDrawer = gameFile.PlayData.Designations;
 
-                Vector3 origin = new Vector3(WorldOrigin.X, 0, WorldOrigin.Y);
-                Vector3 extents = new Vector3(1500, 1500, 1500);
                 if (gameFile.PlayData.Stats != null)
                     Stats = gameFile.PlayData.Stats;
 
@@ -233,7 +230,6 @@ namespace DwarfCorp
 
                 Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
                 Time = gameFile.Metadata.Time;
-                WorldOrigin = gameFile.Metadata.WorldOrigin;
 
                 // Restore native factions from deserialized data.
                 Natives = new List<Faction>();
@@ -284,11 +280,11 @@ namespace DwarfCorp
                 if (Natives == null) // Todo: Always true??
                 {
                     FactionLibrary library = new FactionLibrary();
-                    library.Initialize(this, GenerationSettings.Company);
+                    library.Initialize(this, Settings.Company);
                     Natives = new List<Faction>();
                     for (int i = 0; i < 10; i++)
                     {
-                        Natives.Add(library.GenerateFaction(GenerationSettings, i, 10));
+                        Natives.Add(library.GenerateFaction(Settings, i, 10));
                     }
 
                 }
@@ -309,8 +305,8 @@ namespace DwarfCorp
                     Factions.AddFactions(this, Natives);
                 }
 
-                Factions.Initialize(this, GenerationSettings.Company);
-                Point playerOrigin = new Point((int)(WorldOrigin.X), (int)(WorldOrigin.Y));
+                Factions.Initialize(this, Settings.Company);
+                Point playerOrigin = new Point((int)(Settings.Origin.X), (int)(Settings.Origin.Y));
 
                 Factions.Factions["Player"].Center = playerOrigin;
                 Factions.Factions["The Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
@@ -352,10 +348,10 @@ namespace DwarfCorp
                 if (gameFile == null)
                 {
                     Game.LogSentryBreadcrumb("Loading", "Started new game without an existing file.");
-                    if (GenerationSettings.Overworld.Map == null)
+                    if (Settings.Overworld.Map == null)
                         throw new InvalidProgramException("Tried to start game with an empty overworld. This should not happen.");
 
-                    var generatorSettings = new Generation.GeneratorSettings(Seed, 0.02f, GenerationSettings)
+                    var generatorSettings = new Generation.GeneratorSettings(Seed, 0.02f, Settings)
                     {
                         SeaLevel = SeaLevel,
                         WorldSizeInChunks = WorldSizeInChunks,

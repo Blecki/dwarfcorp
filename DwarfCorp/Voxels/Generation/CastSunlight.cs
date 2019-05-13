@@ -23,7 +23,7 @@ namespace DwarfCorp.Generation
                 var v = Settings.World.ChunkManager.CreateVoxelHandle(new GlobalVoxelCoordinate(X, y, Z));
                 if (!v.IsValid) break;
                 v.Sunlight = true;
-                if (Settings.OverworldSettings.RevealSurface) v.RawSetIsExplored();
+                v.RawSetIsExplored();
                 if (v.Type.ID != 0 && !v.Type.IsTransparent)
                     break;
             }

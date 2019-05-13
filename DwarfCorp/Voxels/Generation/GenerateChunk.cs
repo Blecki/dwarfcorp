@@ -26,7 +26,7 @@ namespace DwarfCorp.Generation
             for (int x = 0; x < VoxelConstants.ChunkSizeX; x++)
                 for (int z = 0; z < VoxelConstants.ChunkSizeZ; z++)
                 {
-                    var overworldPosition = Overworld.WorldToOverworld(new Vector2(x + origin.X, z + origin.Z), Settings.World.WorldOrigin);
+                    var overworldPosition = Overworld.WorldToOverworld(new Vector2(x + origin.X, z + origin.Z), Settings.OverworldSettings.Origin);
                     var biome = Settings.OverworldSettings.Overworld.Map[(int)MathFunctions.Clamp(overworldPosition.X, 0, Settings.OverworldSettings.Overworld.Map.GetLength(0) - 1), (int)MathFunctions.Clamp(overworldPosition.Y, 0, Settings.OverworldSettings.Overworld.Map.GetLength(1) - 1)].Biome;
                     var biomeData = BiomeLibrary.GetBiome(biome);
 

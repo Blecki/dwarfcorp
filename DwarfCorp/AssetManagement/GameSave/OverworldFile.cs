@@ -13,6 +13,7 @@ namespace DwarfCorp
     public class NewOverworldFile
     {
         public OverworldMetaData MetaData;
+        public OverworldGenerationSettings Settings;
         public OverworldCell[,] OverworldMap;
         private GraphicsDevice Device {  get { return GameState.Game.GraphicsDevice; } }
         private int Width;
@@ -22,10 +23,12 @@ namespace DwarfCorp
         {
         }
 
-        public NewOverworldFile(GraphicsDevice device, Overworld Overworld, string name, float seaLevel)
+        public NewOverworldFile(GraphicsDevice device, OverworldGenerationSettings Settings)
         {
-            var worldFilePath = name + System.IO.Path.DirectorySeparatorChar + "world.png";
-            var metaFilePath = name + System.IO.Path.DirectorySeparatorChar + "meta.txt";
+            this.Settings = Settings;
+
+            var worldFilePath = Settings.Name + System.IO.Path.DirectorySeparatorChar + "world.png";
+            var metaFilePath = Settings.Name + System.IO.Path.DirectorySeparatorChar + "meta.txt";
 
             if (File.Exists(worldFilePath) && File.Exists(metaFilePath))
             {
@@ -33,10 +36,10 @@ namespace DwarfCorp
                 return;
             }
 
-            OverworldMap = Overworld.Map;
-            MetaData = new OverworldMetaData(device, Overworld, name, seaLevel);
-            Width = Overworld.Map.GetLength(0);
-            Height = Overworld.Map.GetLength(1);
+            OverworldMap = Settings.Overworld.Map;
+            MetaData = new OverworldMetaData(device, Settings);
+            Width = Settings.Overworld.Map.GetLength(0);
+            Height = Settings.Overworld.Map.GetLength(1);
         }
         
         public Texture2D CreateScreenshot(GraphicsDevice device, int width, int height, float seaLevel)
@@ -124,8 +127,8 @@ namespace DwarfCorp
         {
             try
             {
-                var metaFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "meta.txt";
-                return FileUtils.LoadJsonFromAbsolutePath<OverworldMetaData>(metaFilePath).Name;
+                var metaFilePath = filePath + Path.DirectorySeparatorChar + "meta.txt";
+                return FileUtils.LoadJsonFromAbsolutePath<OverworldMetaData>(metaFilePath).Settings.Name;
             }
             catch (Exception)
             {
@@ -159,11 +162,11 @@ namespace DwarfCorp
             var worldFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "world.png";
             var metaFilePath = filePath + global::System.IO.Path.DirectorySeparatorChar + "meta.txt";
 
-            if (File.Exists(worldFilePath) && File.Exists(metaFilePath))
-            {
-                Console.Out.WriteLine("Overworld {0} already exists. Just assuming it is correct.", worldFilePath);
-                return false;
-            }
+            //if (File.Exists(worldFilePath) && File.Exists(metaFilePath))
+            //{
+            //    Console.Out.WriteLine("Overworld {0} already exists. Just assuming it is correct.", worldFilePath);
+            //    return false;
+            //}
 
             // Write meta info
             MetaData.Version = Program.Version;
@@ -173,7 +176,7 @@ namespace DwarfCorp
             using (var stream = new System.IO.FileStream(worldFilePath, System.IO.FileMode.Create))
                 texture.SaveAsPng(stream, Width, Height);
 
-            using (var texture = CreateScreenshot(Device, OverworldMap.GetLength(0), OverworldMap.GetLength(1), MetaData.SeaLevel))
+            using (var texture = CreateScreenshot(Device, OverworldMap.GetLength(0), OverworldMap.GetLength(1), Settings.SeaLevel))
             using (var stream = new System.IO.FileStream(filePath + Path.DirectorySeparatorChar + "screenshot.png", System.IO.FileMode.Create))
                 texture.SaveAsPng(stream, Width, Height);
 
@@ -184,7 +187,7 @@ namespace DwarfCorp
         {
             var Overworld = new Overworld(OverworldMap.GetLength(0), OverworldMap.GetLength(1));
             Overworld.Map = OverworldMap;
-            Overworld.Name = MetaData.Name;
+            Overworld.Name = MetaData.Settings.Name;
             Overworld.NativeFactions = new List<Faction>();
             foreach (var faction in MetaData.FactionList)
                 Overworld.NativeFactions.Add(new Faction(faction));
@@ -193,13 +196,9 @@ namespace DwarfCorp
 
         public OverworldGenerationSettings CreateSettings()
         {
-            var settings = new OverworldGenerationSettings();
-            settings.Overworld = CreateOverworld();
-            settings.Width = settings.Overworld.Map.GetLength(1);
-            settings.Height = settings.Overworld.Map.GetLength(0);
-            settings.Name = MetaData.Name;
-            settings.Natives = settings.Overworld.NativeFactions;
-            return settings;
+            MetaData.Settings.Overworld = CreateOverworld();
+            MetaData.Settings.Natives = MetaData.Settings.Overworld.NativeFactions;
+            return MetaData.Settings;
         }
 
         public static NewOverworldFile Load(String Path)

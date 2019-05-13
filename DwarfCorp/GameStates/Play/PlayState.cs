@@ -233,7 +233,7 @@ namespace DwarfCorp.GameStates
                 foreach (var contextCommandFactory in AssetManager.EnumerateModHooks(typeof(ContextCommandAttribute), typeof(ContextCommands.ContextCommand), new Type[] { }))
                     ContextCommands.Add(contextCommandFactory.Invoke(null, new Object[] { }) as ContextCommands.ContextCommand);
 
-                World.LogEvent(String.Format("We have arrived at {0}", World.GenerationSettings.Overworld.Name));
+                World.LogEvent(String.Format("We have arrived at {0}", World.Settings.Overworld.Name));
             }
             base.OnEnter();
         }
@@ -2621,7 +2621,7 @@ namespace DwarfCorp.GameStates
                 (sender, args) =>
                 {
                     World.Save(
-                        String.Format("{0}_{1}_{2}", World.GenerationSettings.Overworld.Name, World.GameID, DateTime.Now.ToFileTimeUtc()),
+                        String.Format("{0}_{1}_{2}", World.Settings.Overworld.Name, World.GameID, DateTime.Now.ToFileTimeUtc()),
                         (success, exception) =>
                         {
                             GuiRoot.ShowModalPopup(new Gui.Widgets.Popup
@@ -2678,7 +2678,7 @@ namespace DwarfCorp.GameStates
         {
 #if !DEMO
             bool paused = World.Paused;
-            var saveName = String.Format("{0}_{1}_{2}", World.GenerationSettings.Overworld.Name, World.GameID, "Autosave");
+            var saveName = String.Format("{0}_{1}_{2}", World.Settings.Overworld.Name, World.GameID, "Autosave");
             World.Save(
                     saveName,
                     (success, exception) =>

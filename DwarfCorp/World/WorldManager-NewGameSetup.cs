@@ -41,22 +41,14 @@ namespace DwarfCorp
 
             var portBox = port.GetBoundingBox();
 
-            if (StartUnderground)
+            DoLazy(new Action(() =>
             {
-                Master.MaxViewingLevel = (int)(port.GetBoundingBox().Max.Y + 1);
-                CreateInitialDwarves(port.GetBoundingBox().Center() + new Vector3(0, 2.0f, 0));
-            }
-            else
-            {
-                DoLazy(new Action(() =>
-                {
-                    ComponentManager.RootComponent.AddChild(Balloon.CreateBalloon(
-                        portBox.Center() + new Vector3(0, 100, 0),
-                        portBox.Center() + new Vector3(0, 10, 0), ComponentManager,
-                        Master.Faction));
-                    CreateInitialDwarves(port.GetBoundingBox().Center() + new Vector3(0, VoxelConstants.ChunkSizeZ * 0.5f, 0));
-                }));
-            }
+                ComponentManager.RootComponent.AddChild(Balloon.CreateBalloon(
+                    portBox.Center() + new Vector3(0, 100, 0),
+                    portBox.Center() + new Vector3(0, 10, 0), ComponentManager,
+                    Master.Faction));
+                CreateInitialDwarves(port.GetBoundingBox().Center() + new Vector3(0, VoxelConstants.ChunkSizeZ * 0.5f, 0));
+            }));
 
             Camera.Target = portBox.Center();
             Camera.Position = Camera.Target + new Vector3(0, 15, -15);

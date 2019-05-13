@@ -13,8 +13,7 @@ namespace DwarfCorp
     public class OverworldMetaData
     {
         public string Version;
-        public string Name;
-        public float SeaLevel;
+        public OverworldGenerationSettings Settings;
 
         [Serializable]
         public struct FactionDescriptor
@@ -36,17 +35,16 @@ namespace DwarfCorp
         {
         }
 
-        public OverworldMetaData(GraphicsDevice device, Overworld Overworld, string name, float seaLevel)
+        public OverworldMetaData(GraphicsDevice device, OverworldGenerationSettings Settings)
         {
-            int sizeX = Overworld.Map.GetLength(0);
-            int sizeY = Overworld.Map.GetLength(1);
+            this.Settings = Settings;
 
-            Name = name;
-            SeaLevel = seaLevel;
+            int sizeX = Settings.Overworld.Map.GetLength(0);
+            int sizeY = Settings.Overworld.Map.GetLength(1);
 
             FactionList = new List<FactionDescriptor>();
             byte id = 0;
-            foreach (Faction f in Overworld.NativeFactions)
+            foreach (Faction f in Settings.Overworld.NativeFactions)
             {
                 FactionList.Add(new FactionDescriptor()
                 {

@@ -37,14 +37,7 @@ namespace DwarfCorp
 
         public float SlicePlane = 0;
 
-        // Used to pass WorldOrigin from the WorldGenState into 
-        public Vector2 WorldGenerationOrigin { get; set; }
-
-        // The origin of the overworld in pixels [(0, 0, 0) in world space.]
-        public Vector2 WorldOrigin { get; set; }
-
-        public bool StartUnderground = false;
-        public OverworldGenerationSettings GenerationSettings = null;
+        public OverworldGenerationSettings Settings = null;
 
         // The current coordinate of the cursor light
         public Vector3 CursorLightPos = Vector3.Zero;
@@ -130,23 +123,15 @@ namespace DwarfCorp
         // Draws a selection buffer (for pixel-perfect selection)
         public SelectionBuffer SelectionBuffer;
 
-        // Responsible for handling instances of particular primitives (or models)
-        // and drawing them to the screen
         public InstanceRenderer InstanceRenderer;
 
-        // Handles loading of game assets
         public ContentManager Content;
 
-        // Reference to XNA Game
         public DwarfGame Game;
 
-        // Interfaces with the graphics card
         public GraphicsDevice GraphicsDevice { get { return GameState.Game.GraphicsDevice; } }
 
-        // Loads the game in the background while a loading message displays
         public Thread LoadingThread { get; set; }
-
-        // Callback to set message on loading screen.
         public Action<String> OnSetLoadingMessage = null;
 
         public void SetLoadingMessage(String Message)
@@ -403,7 +388,6 @@ namespace DwarfCorp
             this.Game = Game;
             Content = Game.Content;
             Seed = MathFunctions.Random.Next();
-            WorldOrigin = WorldGenerationOrigin;
             Time = new WorldTime();
         }
 
@@ -719,21 +703,21 @@ namespace DwarfCorp
             try
             {
 #endif
-                global::System.Threading.Thread.CurrentThread.Name = "Save";
+                Thread.CurrentThread.Name = "Save";
                 // Ensure we're using the invariant culture.
-                global::System.Threading.Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-                global::System.Threading.Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
                 DirectoryInfo worldDirectory =
                     Directory.CreateDirectory(DwarfGame.GetWorldDirectory() +
-                                              Path.DirectorySeparatorChar + GenerationSettings.Overworld.Name);
+                                              Path.DirectorySeparatorChar + Settings.Overworld.Name);
 
                 // This is a hack. Why does the overworld have this as a static field??
-                GenerationSettings.Overworld.NativeFactions = this.Natives;
-                NewOverworldFile file = new NewOverworldFile(Game.GraphicsDevice, GenerationSettings.Overworld, GenerationSettings.Overworld.Name, SeaLevel);
+                Settings.Overworld.NativeFactions = this.Natives;
+            NewOverworldFile file = new NewOverworldFile(Game.GraphicsDevice, Settings);
                 file.WriteFile(worldDirectory.FullName);
 
                 gameFile = SaveGame.CreateFromWorld(this);
-            var path = worldDirectory.FullName + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)GenerationSettings.WorldGenerationOrigin.X, (int)GenerationSettings.WorldGenerationOrigin.Y);
+            var path = worldDirectory.FullName + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.Origin.X, (int)Settings.Origin.Y);
                 SaveGame.DeleteOldestSave(path, GameSettings.Default.MaxSaves, "Autosave");
                 gameFile.WriteFile(path);
                 ComponentManager.CleanupSaveData();
@@ -1318,7 +1302,7 @@ namespace DwarfCorp
 
             // Now check for biome ambience.
             var pos = vox.WorldPosition;
-            var biome = Overworld.GetBiomeAt(GenerationSettings.Overworld.Map, pos, WorldOrigin);
+            var biome = Overworld.GetBiomeAt(Settings.Overworld.Map, pos, Settings.Origin);
 
             if (biome != null && !string.IsNullOrEmpty(biome.DayAmbience))
             {
