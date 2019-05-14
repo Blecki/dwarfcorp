@@ -171,7 +171,7 @@ namespace DwarfCorp
         private void DrawVoxels(DwarfTime time, IEnumerable<VoxelHandle> selected)
         {
             GameState.Game.GraphicsDevice.DepthStencilState = DepthStencilState.None;
-            Effect = Player.World.DefaultShader;
+            Effect = Player.World.Renderer.DefaultShader;
 
             float t = (float)time.TotalGameTime.TotalSeconds;
             float st = (float)Math.Sin(t * 4) * 0.5f + 0.5f;

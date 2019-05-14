@@ -35,14 +35,14 @@ namespace DwarfCorp
                 var motes = MoteRecords[i];
                 if (motes != null)
                     for (int k = 0; k < motes.Count; k++)
-                        Manager.World.InstanceRenderer.RenderInstance(motes[k], Device, Effect, Camera, InstanceRenderMode.Normal);
+                        Manager.World.Renderer.InstanceRenderer.RenderInstance(motes[k], Device, Effect, Camera, InstanceRenderMode.Normal);
             }
         }
 
         private static NewInstanceData GenerateGrassMote(WorldManager World, Vector3 Position, Color Color, float Scale, DetailMoteData Data)
         {
-            if (!World.InstanceRenderer.DoesGroupExist(Data.Asset))
-                World.InstanceRenderer.AddInstanceGroup(new PrimitiveInstanceGroup
+            if (!World.Renderer.InstanceRenderer.DoesGroupExist(Data.Asset))
+                World.Renderer.InstanceRenderer.AddInstanceGroup(new PrimitiveInstanceGroup
                 {
                     RenderData = new InstanceRenderData
                     {

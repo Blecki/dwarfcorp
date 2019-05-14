@@ -53,18 +53,18 @@ namespace DwarfCorp.Gui.Widgets.Minimap
         public void OnClicked(int X, int Y)
         {
             Viewport viewPort = new Viewport(RenderTarget.Bounds);
-            Vector3 forward = (World.Camera.Target - World.Camera.Position);
+            Vector3 forward = (World.Renderer.Camera.Target - World.Renderer.Camera.Position);
             forward.Normalize();
 
             Vector3 pos = viewPort.Unproject(new Vector3(X, Y, 0), Camera.ProjectionMatrix, Camera.ViewMatrix, Matrix.Identity);
-            Vector3 target = new Vector3(pos.X, World.Camera.Position.Y, pos.Z);
+            Vector3 target = new Vector3(pos.X, World.Renderer.Camera.Position.Y, pos.Z);
             var height = VoxelHelpers.FindFirstVoxelBelow(new VoxelHandle(
                 World.ChunkManager, GlobalVoxelCoordinate.FromVector3(target)))
                 .Coordinate.Y + 1;
             target.Y = Math.Max(height + 15, target.Y);
             target = MathFunctions.Clamp(target, World.ChunkManager.Bounds);
-            World.Camera.ZoomTargets.Clear();
-            World.Camera.ZoomTargets.Add(target);
+            World.Renderer.Camera.ZoomTargets.Clear();
+            World.Renderer.Camera.ZoomTargets.Add(target);
         }
 
         public void Zoom(float f)
@@ -85,9 +85,9 @@ namespace DwarfCorp.Gui.Widgets.Minimap
 
         public void ZoomHome()
         {
-            World.Camera.UpdateViewMatrix();
-            World.Camera.ZoomTargets.Clear();
-            World.Camera.ZoomTargets.Add(HomePosition);
+            World.Renderer.Camera.UpdateViewMatrix();
+            World.Renderer.Camera.ZoomTargets.Clear();
+            World.Renderer.Camera.ZoomTargets.Add(HomePosition);
             World.Master.SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
         }
 
@@ -142,14 +142,14 @@ namespace DwarfCorp.Gui.Widgets.Minimap
 
                 World.GraphicsDevice.SetRenderTarget(RenderTarget);
                 World.GraphicsDevice.Clear(Color.Black);
-                Camera.Target = World.Camera.Target;
-                Vector3 cameraToTarget = World.Camera.Target - World.Camera.Position;
+                Camera.Target = World.Renderer.Camera.Target;
+                Vector3 cameraToTarget = World.Renderer.Camera.Target - World.Renderer.Camera.Position;
                 cameraToTarget.Normalize();
-                Camera.Position = World.Camera.Target + Vector3.Up * 50 - cameraToTarget * 4;
+                Camera.Position = World.Renderer.Camera.Target + Vector3.Up * 50 - cameraToTarget * 4;
                 Camera.UpdateViewMatrix();
                 Camera.UpdateProjectionMatrix();
-                World.DefaultShader.View = Camera.ViewMatrix;
-                World.DefaultShader.Projection = Camera.ProjectionMatrix;
+                World.Renderer.DefaultShader.View = Camera.ViewMatrix;
+                World.Renderer.DefaultShader.Projection = Camera.ProjectionMatrix;
                 var bounds = World.ChunkManager.Bounds;
                 DrawShader.TextureEnabled = true;
                 DrawShader.LightingEnabled = false;
@@ -171,7 +171,7 @@ namespace DwarfCorp.Gui.Widgets.Minimap
                     }
                 }
 
-                World.DefaultShader.EnbleFog = true;
+                World.Renderer.DefaultShader.EnbleFog = true;
 
                 try
                 {

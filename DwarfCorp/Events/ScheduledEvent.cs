@@ -108,7 +108,7 @@ namespace DwarfCorp.Events
 
                     if (zoomToEntity && entity != null)
                     {
-                        world.Camera.ZoomTo(entity.Position);
+                        world.Renderer.Camera.ZoomTo(entity.Position);
                     }
 
                 }, keep);

@@ -840,6 +840,9 @@
     <Compile Include=".\World\WorldTime.cs" />
     <Compile Include="Voxels\Generation\GenerateOres.cs" />
     <Compile Include="World\DebugOverworlds.cs" />
+    <Compile Include="World\WorldManager-Saving.cs" />
+    <Compile Include="World\WorldManager-Ambients.cs" />
+    <Compile Include="World\WorldRenderer.cs" />
     <Compile Include="World\WorldManager-SpeciesLimits.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -93,7 +93,7 @@ namespace DwarfCorp.ContextCommands
         public void CreateTaskPrioritySelector(WorldManager world, Task task, DesignationSet.EntityDesignation des)
         {
             Vector3 pos = des.Body.Position;
-            Vector3 screenPos = world.Camera.Project(pos);
+            Vector3 screenPos = world.Renderer.Camera.Project(pos);
             if (screenPos.Z > 0.999)
             {
                 return;

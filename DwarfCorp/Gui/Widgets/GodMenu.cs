@@ -235,42 +235,42 @@ namespace DwarfCorp.Gui.Widgets
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "SPIN +",
-                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Zero, 2.0f, 0.0f),
+                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Zero, 2.0f, 0.0f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "SPIN -",
-                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Zero, -2.0f, 0.0f),
+                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Zero, -2.0f, 0.0f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "ZOOM -",
-                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Zero, 0.0f, 2.5f),
+                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Zero, 0.0f, 2.5f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "ZOOM +",
-                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Zero, 0.0f, -2.5f),
+                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Zero, 0.0f, -2.5f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "FWD",
-                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Forward * 5, 0.0f, 0.0f),
+                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Forward * 5, 0.0f, 0.0f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "BACK",
-                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Backward * 5, 0.0f, 0.0f),
+                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Backward * 5, 0.0f, 0.0f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "LEFT",
-                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Left * 5, 0.0f, 0.0f),
+                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Left * 5, 0.0f, 0.0f),
                                 },
                                 new HorizontalMenuTray.MenuItem
                                 {
                                     Text = "RIGHT",
-                                    OnClick = (sender, args) => this.Master.World.Camera.Trailer(Vector3.Right * 5, 0.0f, 0.0f),
+                                    OnClick = (sender, args) => this.Master.World.Renderer.Camera.Trailer(Vector3.Right * 5, 0.0f, 0.0f),
                                 },
                         }
 
@@ -445,7 +445,7 @@ namespace DwarfCorp.Gui.Widgets
                         var keys = EntityFactory.EnumerateEntityTypes().ToList();
                         int num = keys.Count();
                         float gridSize = (float)Math.Ceiling(Math.Sqrt((double)num));
-                        Vector3 gridCenter = Master.World.CursorLightPos;
+                        Vector3 gridCenter = Master.World.Renderer.CursorLightPos;
                         int i = 0;
                         for (float dx = -gridSize/2; dx <= gridSize/2; dx++)
                         {
@@ -474,7 +474,7 @@ namespace DwarfCorp.Gui.Widgets
                         var itemTypes = Library.EnumerateCraftables().Where(craft => craft.Type == CraftItem.CraftType.Object).ToList();
                         int num = itemTypes.Count();
                         float gridSize = (float)Math.Ceiling(Math.Sqrt((double)num));
-                        Vector3 gridCenter = Master.World.CursorLightPos;
+                        Vector3 gridCenter = Master.World.Renderer.CursorLightPos;
 
                         int i = 0;
                         for (float dx = -gridSize/2; dx <= gridSize/2; dx++)

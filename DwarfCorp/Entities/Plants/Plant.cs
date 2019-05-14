@@ -156,8 +156,8 @@ namespace DwarfCorp
 
         protected void CreateCrossPrimitive(String Asset)
         {
-            if (!Manager.World.InstanceRenderer.DoesGroupExist(Asset))
-                Manager.World.InstanceRenderer.AddInstanceGroup(new PrimitiveInstanceGroup
+            if (!Manager.World.Renderer.InstanceRenderer.DoesGroupExist(Asset))
+                Manager.World.Renderer.InstanceRenderer.AddInstanceGroup(new PrimitiveInstanceGroup
                 {
                     RenderData = new InstanceRenderData
                     {

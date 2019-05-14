@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DwarfCorp
 {
-    class FXAA
+    public class FXAA
     {
 
         // This effects sub-pixel AA quality and inversely sharpness.

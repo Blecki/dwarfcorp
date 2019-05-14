@@ -771,11 +771,11 @@ namespace DwarfCorp
                         {
                             float diffxy =
                                 (new Vector3(Target.X, 0, Target.Z) -
-                                 new Vector3(World.CursorLightPos.X, 0, World.CursorLightPos.Z)).Length();
+                                 new Vector3(World.Renderer.CursorLightPos.X, 0, World.Renderer.CursorLightPos.Z)).Length();
 
                             if (diffxy > 5)
                             {
-                                Vector3 slewTarget = Target * 0.9f + World.CursorLightPos * 0.1f;
+                                Vector3 slewTarget = Target * 0.9f + World.Renderer.CursorLightPos * 0.1f;
                                 Vector3 slewDiff = slewTarget - Target;
                                 Target += slewDiff;
                                 Position += slewDiff;

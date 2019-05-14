@@ -34,7 +34,7 @@ namespace DwarfCorp
                     yield break;
                 }
 
-                Drawer2D.DrawLoadBar(performer.World.Camera, DigAct.Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, Color.Black, 32, 1, (float)DigAct.VoxelHealth / DigAct.Voxel.Type.StartingHealth);
+                Drawer2D.DrawLoadBar(performer.World.Renderer.Camera, DigAct.Voxel.WorldPosition + Vector3.One * 0.5f, Color.White, Color.Black, 32, 1, (float)DigAct.VoxelHealth / DigAct.Voxel.Type.StartingHealth);
 
                 switch (Weapon.TriggerMode)
                 {

@@ -133,7 +133,7 @@ namespace DwarfCorp
         /// Called when voxels are selected.
         /// </summary>
         public OnSelected Selected { get; set; }
-        public Camera CameraController { get { return World.Camera; } }
+        public Camera CameraController { get { return World.Renderer.Camera; } }
         public GraphicsDevice Graphics { get { return GameState.Game.GraphicsDevice; } }
         public ChunkManager Chunks { get { return World.ChunkManager; } }
         /// <summary>
@@ -188,7 +188,7 @@ namespace DwarfCorp
                 return;
 
             VoxelUnderMouse = currentHoverVoxel;
-            World.CursorLightPos = currentHoverVoxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
+            World.Renderer.CursorLightPos = currentHoverVoxel.WorldPosition + new Vector3(0.5f, 0.5f, 0.5f);
 
             if (!Enabled)
                 return;
@@ -232,7 +232,7 @@ namespace DwarfCorp
                 // On release, select voxels.
                 if (ButtonState == ButtonState.Released)
                 {
-                    ReleaseSound.Play(World.CursorLightPos);
+                    ReleaseSound.Play(World.Renderer.CursorLightPos);
                     ButtonPressed = false;
 
                     if (SelectionBuffer.Count > 0)
@@ -280,7 +280,7 @@ namespace DwarfCorp
 
                         if (newVoxel)
                         {
-                            DragSound.Play(World.CursorLightPos, SelectionBuffer.Count / 20.0f);
+                            DragSound.Play(World.Renderer.CursorLightPos, SelectionBuffer.Count / 20.0f);
                             Dragged.Invoke(SelectionBuffer, Button);
                         }
                     }
@@ -289,7 +289,7 @@ namespace DwarfCorp
             // If the mouse was not previously pressed, but is now pressed, then notify us of that.
             else if (ButtonState == ButtonState.Pressed)
             {
-                ClickSound.Play(World.CursorLightPos); ;
+                ClickSound.Play(World.Renderer.CursorLightPos); ;
                 ButtonPressed = true;
                 BoxYOffset = 0;
                 PrevBoxYOffsetInt = 0;
@@ -308,7 +308,7 @@ namespace DwarfCorp
                 int offset = (int)BoxYOffset;
                 if (offset != PrevBoxYOffsetInt)
                 {
-                    DragSound.Play(World.CursorLightPos);
+                    DragSound.Play(World.Renderer.CursorLightPos);
                     newVoxel = true;
                 }
                 PrevBoxYOffsetInt = offset;
@@ -383,7 +383,7 @@ namespace DwarfCorp
                     if (!v.IsValid) continue;
 
                     if (!v.IsExplored || VoxelPassesSelectionCriteria(v))
-                        Drawer2D.DrawRect(World.Camera, v.WorldPosition + half, screenRect, dotColor, Color.Transparent, 0.0f);
+                        Drawer2D.DrawRect(World.Renderer.Camera, v.WorldPosition + half, screenRect, dotColor, Color.Transparent, 0.0f);
                 }
             }
         }

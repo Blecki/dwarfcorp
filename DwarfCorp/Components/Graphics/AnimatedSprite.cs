@@ -102,7 +102,7 @@ namespace DwarfCorp
         private void PrepareInstanceData(Camera Camera)
         {
             if (InstanceData == null)
-                InstanceData = new NewInstanceData(Manager.World.InstanceRenderer.PrepareCombinedTiledInstance(), Matrix.Identity, Color.White);
+                InstanceData = new NewInstanceData(Manager.World.Renderer.InstanceRenderer.PrepareCombinedTiledInstance(), Matrix.Identity, Color.White);
             
             InstanceData.Transform = GetWorldMatrix(Camera);
             InstanceData.LightRamp = LightRamp;
@@ -136,7 +136,7 @@ namespace DwarfCorp
             if (AnimPlayer.InstancingPossible)
             {
                 PrepareInstanceData(camera);
-                Manager.World.InstanceRenderer.RenderInstance(InstanceData, graphicsDevice, effect, camera, Mode);
+                Manager.World.Renderer.InstanceRenderer.RenderInstance(InstanceData, graphicsDevice, effect, camera, Mode);
             }
             else
             {

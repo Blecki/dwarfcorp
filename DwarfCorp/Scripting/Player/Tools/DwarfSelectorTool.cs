@@ -39,7 +39,7 @@ namespace DwarfCorp
 
         void InputManager_MouseClickedCallback(InputManager.MouseButton button)
         {
-            if(button != InputManager.MouseButton.Right || Player.CurrentTool != this || KeyManager.RotationEnabled(Player.World.Camera))
+            if(button != InputManager.MouseButton.Right || Player.CurrentTool != this || KeyManager.RotationEnabled(Player.World.Renderer.Camera))
                 return;
 
             var mouseState = KeyManager.TrueMousePos;
@@ -47,7 +47,7 @@ namespace DwarfCorp
             var vox = VoxelHelpers.FindFirstVisibleVoxelOnScreenRay(
                 Player.World.ChunkManager,
                 mouseState.X, mouseState.Y,
-                Player.World.Camera, 
+                Player.World.Renderer.Camera, 
                 GameState.Game.GraphicsDevice.Viewport,
                 150.0f, 
                 false,
@@ -216,11 +216,11 @@ namespace DwarfCorp
 
             foreach (var body in Player.BodySelector.CurrentBodies.Where(DrawSelectionRect))
             {
-                Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, Player.World.Camera), Color.White, 1.0f);
+                Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, Player.World.Renderer.Camera), Color.White, 1.0f);
             }
             if (underMouse != null)
                 foreach (var body in underMouse.Where(DrawSelectionRect))
-                    Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, Player.World.Camera), Color.White, 1.0f);
+                    Drawer2D.DrawRect(DwarfGame.SpriteBatch, GetScreenRect(body.BoundingBox, Player.World.Renderer.Camera), Color.White, 1.0f);
 
             DwarfGame.SpriteBatch.End();
         }

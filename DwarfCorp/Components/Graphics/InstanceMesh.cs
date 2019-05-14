@@ -85,7 +85,7 @@ namespace DwarfCorp
                 Instance.Transform = GlobalTransform;
                 Instance.VertexColorTint = VertexColorTint;
                 Instance.SelectionBufferColor = this.GetGlobalIDColor();
-                Manager.World.InstanceRenderer.RenderInstance(Instance, graphicsDevice, effect, camera, InstanceRenderMode.Normal);
+                Manager.World.Renderer.InstanceRenderer.RenderInstance(Instance, graphicsDevice, effect, camera, InstanceRenderMode.Normal);
             }
         }
 
@@ -99,7 +99,7 @@ namespace DwarfCorp
                 Instance.LightRamp = LightRamp;
                 Instance.Transform = GlobalTransform;
                 Instance.SelectionBufferColor = this.GetGlobalIDColor();
-                Manager.World.InstanceRenderer.RenderInstance(Instance, graphicsDevice, effect, camera, InstanceRenderMode.SelectionBuffer);
+                Manager.World.Renderer.InstanceRenderer.RenderInstance(Instance, graphicsDevice, effect, camera, InstanceRenderMode.SelectionBuffer);
             }
         }
     }

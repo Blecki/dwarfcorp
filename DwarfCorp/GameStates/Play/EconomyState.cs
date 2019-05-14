@@ -73,32 +73,6 @@ namespace DwarfCorp.GameStates
                 Faction = World.PlayerFaction
             });
 
-            /*
-            TabPanel.AddTab("Available Goals", new Gui.Widgets.GoalPanel
-            {
-                GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
-                    g.State == Goals.GoalState.Available),
-                World = World,
-                OnShown = (sender) => World.GoalManager.ResetNewAvailableGoals()
-            });
-
-            TabPanel.AddTab("Active Goals", new Gui.Widgets.GoalPanel
-            {
-                GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
-                    g.State == Goals.GoalState.Active && g.GoalType != Goals.GoalTypes.Achievement)
-            });
-
-            TabPanel.AddTab("Completed Goals", new Gui.Widgets.GoalPanel
-            {
-                GoalSource = World.GoalManager.EnumerateGoals().Where(g =>
-                    g.State == Goals.GoalState.Complete),
-                OnShown = (sender) => World.GoalManager.ResetNewCompletedGoals()
-            });
-
-            TabPanel.GetTabButton(1).DrawIndicator = true;
-            TabPanel.GetTabButton(3).DrawIndicator = true;
-            */
-
             TabPanel.SelectedTab = 0;
             
             GuiRoot.RootItem.Layout();
@@ -119,11 +93,9 @@ namespace DwarfCorp.GameStates
                     // Pass event to game...
                 }
             }
-            SoundManager.Update(gameTime, World.Camera, World.Time);
-            World.TutorialManager.Update(GuiRoot);
 
-            //TabPanel.GetTabButton(1).IndicatorValue = World.GoalManager.NewAvailableGoals;
-            //TabPanel.GetTabButton(3).IndicatorValue = World.GoalManager.NewCompletedGoals;
+            SoundManager.Update(gameTime, World.Renderer.Camera, World.Time);
+            World.TutorialManager.Update(GuiRoot);
 
             GuiRoot.Update(gameTime.ToRealTime());
             base.Update(gameTime);

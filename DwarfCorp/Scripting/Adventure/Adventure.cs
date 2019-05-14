@@ -462,7 +462,7 @@ namespace DwarfCorp.Scripting.Adventure
                         if (RemainingTravelTime.TotalHours < 1)
                         {
                             var balloonPorts = world.PlayerFaction.GetRooms().OfType<BalloonPort>().ToList();
-                            Vector3 location = world.Camera.Position;
+                            Vector3 location = world.Renderer.Camera.Position;
                             if (balloonPorts.Count != 0)
                             {
                                 location = balloonPorts.First().GetBoundingBox().Center() + Vector3.Up * 10;

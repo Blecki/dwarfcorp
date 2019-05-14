@@ -151,7 +151,7 @@ namespace DwarfCorp
                         tinter.Stipple = false;
                     }
                 
-                SelectedBody = Player.World.ComponentManager.SelectRootBodiesOnScreen(new Rectangle(mouse.X, mouse.Y, 1, 1), Player.World.Camera)
+                SelectedBody = Player.World.ComponentManager.SelectRootBodiesOnScreen(new Rectangle(mouse.X, mouse.Y, 1, 1), Player.World.Renderer.Camera)
                     .Where(body => body.Tags.Contains("Moveable"))
                     .FirstOrDefault();
 

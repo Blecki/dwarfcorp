@@ -337,7 +337,7 @@ namespace DwarfCorp
         /// <summary> Animate the PlayState Camera to look at this creature </summary>
         public void ZoomToMe()
         {
-            Manager.World.Camera.ZoomTo(Position + Vector3.Up * 8.0f);
+            Manager.World.Renderer.Camera.ZoomTo(Position + Vector3.Up * 8.0f);
 
             var above = VoxelHelpers.FindFirstVoxelAbove(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(Position)));
 

@@ -170,9 +170,9 @@ namespace DwarfCorp
                 if (Target != null)
                 {
                     Vector3 camvelocity0 = GameState.Game.GraphicsDevice.Viewport.Project( Position,
-                        Manager.World.Camera.ProjectionMatrix, Manager.World.Camera.ViewMatrix, Matrix.Identity);
+                        Manager.World.Renderer.Camera.ProjectionMatrix, Manager.World.Renderer.Camera.ViewMatrix, Matrix.Identity);
                     Vector3 camvelocity1 = GameState.Game.GraphicsDevice.Viewport.Project(Position + Velocity,
-                        Manager.World.Camera.ProjectionMatrix, Manager.World.Camera.ViewMatrix, Matrix.Identity);
+                        Manager.World.Renderer.Camera.ProjectionMatrix, Manager.World.Renderer.Camera.ViewMatrix, Matrix.Identity);
                     IndicatorManager.DrawIndicator(HitAnimation, Target.Position,
                         HitAnimation.FrameHZ*HitAnimation.Frames.Count + 1.0f, 1.0f, Vector2.Zero, Color.White, camvelocity1.X - camvelocity0.X > 0);
                 }

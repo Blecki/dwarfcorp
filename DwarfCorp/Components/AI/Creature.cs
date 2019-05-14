@@ -198,7 +198,7 @@ namespace DwarfCorp
             {
                 float val = Hp / MaxHealth;
                 Color color = val < 0.75f ? (val < 0.5f ? GameSettings.Default.Colors.GetColor("Low Health", Color.Red) : GameSettings.Default.Colors.GetColor("Medium Health", Color.Orange)) : GameSettings.Default.Colors.GetColor("High Health", Color.LightGreen);
-                Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position - Vector3.Up * 0.5f, color, Color.Black, 32, 2, Hp / MaxHealth);
+                Drawer2D.DrawLoadBar(Manager.World.Renderer.Camera, AI.Position - Vector3.Up * 0.5f, color, Color.Black, 32, 2, Hp / MaxHealth);
             }
         }
 
@@ -368,7 +368,7 @@ namespace DwarfCorp
                 waitTimer.Update(DwarfTime.LastTime);
 
                 if (loadBar)
-                    Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4, waitTimer.CurrentTimeSeconds / waitTimer.TargetTimeSeconds);
+                    Drawer2D.DrawLoadBar(Manager.World.Renderer.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4, waitTimer.CurrentTimeSeconds / waitTimer.TargetTimeSeconds);
 
                 Physics.Active = false;
 
@@ -406,7 +406,7 @@ namespace DwarfCorp
 
                 if (loadBar)
                 {
-                    Drawer2D.DrawLoadBar(Manager.World.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
+                    Drawer2D.DrawLoadBar(Manager.World.Renderer.Camera, AI.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
                         progress() / maxProgress());
                 }
                 Physics.Active = false;

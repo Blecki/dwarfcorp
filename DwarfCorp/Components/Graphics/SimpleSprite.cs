@@ -55,7 +55,7 @@ namespace DwarfCorp
         private void PrepareInstanceData(Camera Camera)
         {
             if (InstanceData == null)
-                InstanceData = new NewInstanceData(Manager.World.InstanceRenderer.PrepareCombinedTiledInstance(), Matrix.Identity, Color.White);
+                InstanceData = new NewInstanceData(Manager.World.Renderer.InstanceRenderer.PrepareCombinedTiledInstance(), Matrix.Identity, Color.White);
 
             InstanceData.Transform = GetWorldMatrix(Camera);
             InstanceData.LightRamp = LightRamp;
@@ -78,7 +78,7 @@ namespace DwarfCorp
 
             PrepareInstanceData(camera);
 
-            Manager.World.InstanceRenderer.RenderInstance(InstanceData, graphicsDevice, effect, camera, InstanceRenderMode.SelectionBuffer);
+            Manager.World.Renderer.InstanceRenderer.RenderInstance(InstanceData, graphicsDevice, effect, camera, InstanceRenderMode.SelectionBuffer);
         }
 
         public void AutoSetWorldSize()
@@ -103,7 +103,7 @@ namespace DwarfCorp
 
             PrepareInstanceData(camera);
 
-            Manager.World.InstanceRenderer.RenderInstance(InstanceData, graphicsDevice, effect, camera, InstanceRenderMode.Normal);
+            Manager.World.Renderer.InstanceRenderer.RenderInstance(InstanceData, graphicsDevice, effect, camera, InstanceRenderMode.Normal);
         }
 
         private Matrix GetWorldMatrix(Camera camera)

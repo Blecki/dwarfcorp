@@ -37,7 +37,7 @@ namespace DwarfCorp
 
         public void Setup()
         {
-            Screenshots = new List<Screenshot>();
+            Renderer.Screenshots = new List<WorldRenderer.Screenshot>(); // Todo: ?? Why is this updated every single frame?
             Game.Graphics.PreferMultiSampling = GameSettings.Default.AntiAliasing > 1;
           
             try
@@ -83,7 +83,7 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Creating Sky...");
 
-                Sky = new SkyRenderer();
+                Renderer.Sky = new SkyRenderer();
 
                 #region Reading game file
 
@@ -100,7 +100,7 @@ namespace DwarfCorp
                             TextGenerator.GetListString(Program.CompatibleVersions)));
                     }
 
-                    Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
+                    Renderer.Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
                     Time = gameFile.Metadata.Time;
                     WorldSizeInChunks = gameFile.Metadata.NumChunks;
 
@@ -126,17 +126,13 @@ namespace DwarfCorp
 
                 Game.DoLazyAction(new Action(() =>
                 {
-                    InstanceRenderer = new InstanceRenderer();
+                    Renderer.InstanceRenderer = new InstanceRenderer();
 
-                    DefaultShader = new Shader(Content.Load<Effect>(ContentPaths.Shaders.TexturedShaders), true);
-                    DefaultShader.ScreenWidth = GraphicsDevice.Viewport.Width;
-                    DefaultShader.ScreenHeight = GraphicsDevice.Viewport.Height;
-
-                    bloom = new BloomComponent(Game)
+                    Renderer.bloom = new BloomComponent(Game)
                     {
                         Settings = BloomSettings.PresetSettings[5]
                     };
-                    bloom.Initialize();
+                    Renderer.bloom.Initialize();
 
                     SoundManager.Content = Content;
                     if (PlanService != null)
@@ -161,9 +157,9 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Creating Liquids ...");
 
-                #region liquids
+            #region liquids
 
-                WaterRenderer = new WaterRenderer(GraphicsDevice);
+            Renderer.WaterRenderer = new WaterRenderer(GraphicsDevice);
 
                 #endregion
 
@@ -178,15 +174,15 @@ namespace DwarfCorp
                 ChunkManager = new ChunkManager(Content, this, WorldSizeInChunks);
                 Splasher = new Splasher(ChunkManager);
 
-                ChunkRenderer = new ChunkRenderer(ChunkManager);
+                Renderer.ChunkRenderer = new ChunkRenderer(ChunkManager);
 
                 SetLoadingMessage("Loading Terrain...");
                 ChunkManager.LoadChunks(gameFile.LoadChunks(), ChunkManager);
 
                 SetLoadingMessage("Loading Entities...");
                 gameFile.LoadPlayData(Settings.ExistingFile, this);
-                Camera = gameFile.PlayData.Camera;
-                DesignationDrawer = gameFile.PlayData.Designations;
+                Renderer.Camera = gameFile.PlayData.Camera;
+                Renderer.DesignationDrawer = gameFile.PlayData.Designations;
 
                 if (gameFile.PlayData.Stats != null)
                     Stats = gameFile.PlayData.Stats;
@@ -213,7 +209,7 @@ namespace DwarfCorp
                 Factions = gameFile.PlayData.Factions;
                 ComponentManager.World = this;
 
-                Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
+                Renderer.Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
                 Time = gameFile.Metadata.Time;
 
                 // Restore native factions from deserialized data.
@@ -235,7 +231,7 @@ namespace DwarfCorp
             {
                 Time = new WorldTime();
 
-                Camera = new OrbitCamera(this, // Todo: Is setting the camera position and target redundant here?
+                Renderer.Camera = new OrbitCamera(this, // Todo: Is setting the camera position and target redundant here?
                     new Vector3(VoxelConstants.ChunkSizeX,
                         WorldSizeInVoxels.Y - 1.0f,
                         VoxelConstants.ChunkSizeZ),
@@ -249,10 +245,10 @@ namespace DwarfCorp
                 Splasher = new Splasher(ChunkManager);
 
 
-                ChunkRenderer = new ChunkRenderer(ChunkManager);
+                Renderer.ChunkRenderer = new ChunkRenderer(ChunkManager);
 
-                Camera.Position = new Vector3(0, 10, 0) + new Vector3(WorldSizeInChunks.X * VoxelConstants.ChunkSizeX, 0, WorldSizeInChunks.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
-                Camera.Target = new Vector3(0, 10, 1) + new Vector3(WorldSizeInChunks.X * VoxelConstants.ChunkSizeX, 0, WorldSizeInChunks.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
+                Renderer.Camera.Position = new Vector3(0, 10, 0) + new Vector3(WorldSizeInChunks.X * VoxelConstants.ChunkSizeX, 0, WorldSizeInChunks.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
+                Renderer.Camera.Target = new Vector3(0, 10, 1) + new Vector3(WorldSizeInChunks.X * VoxelConstants.ChunkSizeX, 0, WorldSizeInChunks.Z * VoxelConstants.ChunkSizeZ) * 0.5f;
 
 
                 ComponentManager = new ComponentManager(this);
@@ -313,7 +309,7 @@ namespace DwarfCorp
                 }
             }
 
-                Camera.World = this;
+                Renderer.Camera.World = this;
                 //Drawer3D.Camera = Camera;
 
 
@@ -324,7 +320,7 @@ namespace DwarfCorp
 
                 SetLoadingMessage("Creating GameMaster ...");
                 Master = new GameMaster(Factions.Factions["Player"], Game, ComponentManager, ChunkManager,
-                    Camera, GraphicsDevice);
+                    Renderer.Camera, GraphicsDevice);
 
                 if (gameFile == null)
                 {

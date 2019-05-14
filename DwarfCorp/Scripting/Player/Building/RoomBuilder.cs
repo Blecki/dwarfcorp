@@ -272,7 +272,7 @@ namespace DwarfCorp
                         else
                         {
                             var center = buildOrder.GetBoundingBox().Center();
-                            var projection = Faction.World.Camera.Project(center);
+                            var projection = Faction.World.Renderer.Camera.Project(center);
                             if (projection.Z < 0.9999)
                             {
                                 buildOrder.DisplayWidget.Rect = new Rectangle((int)(projection.X - buildOrder.DisplayWidget.Rect.Width / 2),

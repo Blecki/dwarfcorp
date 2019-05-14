@@ -44,7 +44,7 @@ namespace DwarfCorp
                     Creature.Physics.Velocity *= 0.1f;
                     FarmToWork.Progress += 3 * Creature.Stats.BaseFarmSpeed*DwarfTime.Dt;
 
-                    Drawer2D.DrawLoadBar(Agent.Manager.World.Camera, Agent.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
+                    Drawer2D.DrawLoadBar(Agent.Manager.World.Renderer.Camera, Agent.Position + Vector3.Up, Color.LightGreen, Color.Black, 64, 4,
                         FarmToWork.Progress / FarmToWork.TargetProgress);
 
                     if (FarmToWork.Progress >= (FarmToWork.TargetProgress * 0.5f) && FarmToWork.Voxel.Type.Name != "TilledSoil")

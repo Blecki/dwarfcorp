@@ -24,6 +24,7 @@ namespace DwarfCorp.GameStates
         private DateTime EnterTime;
 
         public WorldManager World { get; set; }
+        public WorldRenderer Renderer;
 
         public GameMaster Master
         {
@@ -135,6 +136,8 @@ namespace DwarfCorp.GameStates
             RenderUnderneath = true;
             EnableScreensaver = false;
             IsInitialized = false;
+
+            Renderer = World.Renderer; // Todo: Kill
         }
 
         private void World_OnLoseEvent()
@@ -293,7 +296,8 @@ namespace DwarfCorp.GameStates
                         float now = (float)gameTime.TotalRealTime.TotalSeconds;
                         if (now - timeOnLastClick < doubleClickThreshold)
                         {
-                            World.Camera.ZoomTo(World.CursorLightPos);
+                            World.Renderer.Camera.ZoomTo(World.Renderer.CursorLightPos);
+                            Renderer.Camera.ZoomTo(Renderer.CursorLightPos);
                         }
                         timeOnLastClick = now;
                     }
@@ -301,7 +305,7 @@ namespace DwarfCorp.GameStates
                     if (args.MouseButton == 1) // Right mouse click.
                     {
                         var bodiesClicked = World.ComponentManager.SelectRootBodiesOnScreen(
-                            new Rectangle(args.X, args.Y, 1, 1), World.Camera);
+                            new Rectangle(args.X, args.Y, 1, 1), Renderer.Camera);
 
                         if (bodiesClicked.Count > 0)
                         {
@@ -337,6 +341,7 @@ namespace DwarfCorp.GameStates
             });
 
             World.Update(gameTime);
+            Renderer.Update(gameTime);
             Input.Update();
 
             #region Update time label
@@ -466,6 +471,7 @@ namespace DwarfCorp.GameStates
             Game.Graphics.GraphicsDevice.SetRenderTarget(null);
             Game.Graphics.GraphicsDevice.Clear(Color.Black);
             EnableScreensaver = !World.ShowingWorld;
+
             if (World.ShowingWorld)
             {
                 /*For regenerating the voxel icon image! Do not delete!*/
@@ -475,11 +481,12 @@ namespace DwarfCorp.GameStates
                 tex.SaveAsPng(new FileStream("voxels.png", FileMode.Create),  256, 256);
                 Game.Exit();
                  */
-                World.ValidateShader();
+                Renderer.ValidateShader();
+
                 if (!MinimapFrame.Hidden && !GuiRoot.RootItem.Hidden)
                     MinimapRenderer.PreRender(DwarfGame.SpriteBatch);
 
-                World.Render(gameTime);
+                Renderer.Render(gameTime);
 
                 if (GuiRoot.RenderData.RealScreen.Width != GuiRoot.RenderData.Device.Viewport.Width || GuiRoot.RenderData.RealScreen.Height != GuiRoot.RenderData.Device.Viewport.Height)
                 {
@@ -514,7 +521,7 @@ namespace DwarfCorp.GameStates
         public override void RenderUnitialized(DwarfTime gameTime)
         {
             EnableScreensaver = true;
-            World.Render(gameTime);
+            Renderer.Render(gameTime);
             base.RenderUnitialized(gameTime);
         }
 
@@ -743,7 +750,7 @@ namespace DwarfCorp.GameStates
 
             var markerFilter = GuiRoot.RootItem.AddChild(new DesignationFilter
             {
-                DesignationDrawer = World.DesignationDrawer,
+                DesignationDrawer = Renderer.DesignationDrawer,
                 DesignationSet = World.PlayerFaction.Designations,
                 Hidden = true,
                 Border = "border-fancy",
@@ -1126,7 +1133,7 @@ namespace DwarfCorp.GameStates
                                 ChangeTextColorOnEnable = false,
                                 OnClick = (widget, args) =>
                                 {
-                                    World.ChangeCameraMode(OrbitCamera.ControlType.Overhead);
+                                    Renderer.ChangeCameraMode(OrbitCamera.ControlType.Overhead);
                                 }
                             },
                             new Gui.Widgets.FramedIcon
@@ -1142,7 +1149,7 @@ namespace DwarfCorp.GameStates
                                 OnClick = (widget, args) =>
                                 {
                                     World.Tutorial("walk_camera");
-                                    World.ChangeCameraMode(OrbitCamera.ControlType.Walk);
+                                    Renderer.ChangeCameraMode(OrbitCamera.ControlType.Walk);
                                 }
                             }
                   }
@@ -1158,13 +1165,13 @@ namespace DwarfCorp.GameStates
                 OnCheckStateChange = (sender) =>
                 {
                     bool isChecked = (sender as CheckBox).CheckState;
-                    World.TargetCaveView = isChecked ? 1.0f : 0.0f;
+                    Renderer.TargetCaveView = isChecked ? 1.0f : 0.0f;
                     World.Tutorial("xray");
                 },
                 AutoLayout = AutoLayout.DockLeftCentered
             }) as CheckBox;
 
-            if (World.Camera.Control == OrbitCamera.ControlType.Overhead)
+            if (Renderer.Camera.Control == OrbitCamera.ControlType.Overhead)
             {
                 CameraTray.Select(0);
             }

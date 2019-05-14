@@ -936,7 +936,7 @@ namespace DwarfCorp
         public void HireImmediately(Applicant currentApplicant)
         {
             List<Room> rooms = GetRooms().Where(room => room.RoomData.Name == "Balloon Port").ToList();
-            Vector3 spawnLoc = World.Camera.Position;
+            Vector3 spawnLoc = World.Renderer.Camera.Position;
             if (rooms.Count > 0)
             {
                 spawnLoc = rooms.First().GetBoundingBox().Center() + Vector3.UnitY * 15;

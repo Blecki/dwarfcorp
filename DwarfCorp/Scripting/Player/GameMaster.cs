@@ -112,7 +112,7 @@ namespace DwarfCorp
         protected void OnDeserialized(StreamingContext context)
         {
             World = (WorldManager)(context.Context);
-            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Camera, GameState.Game.GraphicsDevice);
+            Initialize(GameState.Game, World.ComponentManager, World.ChunkManager, World.Renderer.Camera, GameState.Game.GraphicsDevice);
             World.Master = this;
             TaskManager.Faction = Faction;
         }
@@ -617,14 +617,14 @@ namespace DwarfCorp
 
         public bool IsCameraRotationModeActive()
         {
-            return KeyManager.RotationEnabled(World.Camera);
+            return KeyManager.RotationEnabled(World.Renderer.Camera);
 
         }
 
 
         public void UpdateMouse(MouseState mouseState, KeyboardState keyState, DwarfGame game, DwarfTime time)
         {
-            if (KeyManager.RotationEnabled(World.Camera))
+            if (KeyManager.RotationEnabled(World.Renderer.Camera))
             {
                 World.SetMouse(null);
             }

@@ -28,7 +28,7 @@ namespace DwarfCorp
             {
                 OverworldFile = World.Settings.Overworld.Name,
                 WorldOrigin = World.Settings.Origin,
-                TimeOfDay = World.Sky.TimeOfDay,
+                TimeOfDay = World.Renderer.Sky.TimeOfDay,
                 Time = World.Time,
                 Slice = (int)World.Master.MaxViewingLevel,
                 NumChunks = World.ChunkManager.WorldSize,

@@ -30,7 +30,7 @@ namespace DwarfCorp
             // If no file exists, we have to create the balloon and balloon port.
             if (!string.IsNullOrEmpty(Settings.OverworldSettings.ExistingFile)) return;
 
-            var port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager, Camera.Position.X, Camera.Position.Z, 1, Settings);
+            var port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager, Renderer.Camera.Position.X, Renderer.Camera.Position.Z, 1, Settings);
             PlayerFaction.Economy.Funds = Settings.OverworldSettings.InitalEmbarkment.Money;
 
             foreach (var res in Settings.OverworldSettings.InitalEmbarkment.Resources)
@@ -47,8 +47,8 @@ namespace DwarfCorp
                 CreateInitialDwarves(port.GetBoundingBox().Center() + new Vector3(0, VoxelConstants.ChunkSizeZ * 0.5f, 0));
             }));
 
-            Camera.Target = portBox.Center();
-            Camera.Position = Camera.Target + new Vector3(0, 15, -15);
+            Renderer.Camera.Target = portBox.Center();
+            Renderer.Camera.Position = Renderer.Camera.Target + new Vector3(0, 15, -15);
         }
 
         /// <summary>

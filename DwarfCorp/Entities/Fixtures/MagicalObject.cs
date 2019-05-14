@@ -73,7 +73,7 @@ namespace DwarfCorp
         {
             DrawLoadBarTimer.Update(Time);
             if (!DrawLoadBarTimer.HasTriggered)
-                Drawer2D.DrawLoadBar(World.Camera, (GetRoot() as GameComponent).Position, Color.Cyan, Color.Black, 32, 4, (float)(_currentCharges) / MaxCharges);
+                Drawer2D.DrawLoadBar(World.Renderer.Camera, (GetRoot() as GameComponent).Position, Color.Cyan, Color.Black, 32, 4, (float)(_currentCharges) / MaxCharges);
             base.Update(Time, Chunks, Camera);
         }
 

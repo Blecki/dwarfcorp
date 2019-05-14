@@ -34,13 +34,13 @@ namespace DwarfCorp
         {
             return new PlayData()
             {
-                Camera = World.Camera,
+                Camera = World.Renderer.Camera,
                 Components = World.ComponentManager.GetSaveData(),
                 TutorialSaveData = World.TutorialManager.GetSaveData(),
                 Diplomacy = World.Diplomacy,
                 Factions = World.Factions,
                 Resources = ResourceLibrary.Enumerate().Where(r => r.Generated).ToList(),
-                Designations = World.DesignationDrawer,
+                Designations = World.Renderer.DesignationDrawer,
                 Tasks = World.Master.TaskManager,
                 ConversationMemory = World.ConversationMemory,
                 NewArrivals = World.Master.NewArrivals,

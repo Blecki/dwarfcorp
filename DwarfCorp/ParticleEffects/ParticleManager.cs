@@ -117,7 +117,7 @@ namespace DwarfCorp
             {
                 foreach(var emitter in effect.Value.Emitters)
                 {
-                    emitter.Update(this, time, world.ChunkManager, world.Camera);
+                    emitter.Update(this, time, world.ChunkManager, world.Renderer.Camera);
                 }
             }
         }
@@ -128,7 +128,7 @@ namespace DwarfCorp
             {
                 foreach (var emitter in effect.Value.Emitters)
                 {
-                    emitter.Render(world.Camera, DwarfGame.SpriteBatch, device, world.DefaultShader);
+                    emitter.Render(world.Renderer.Camera, DwarfGame.SpriteBatch, device, world.Renderer.DefaultShader);
                 }
             }
         }

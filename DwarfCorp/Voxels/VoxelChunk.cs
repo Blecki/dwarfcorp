@@ -109,7 +109,7 @@ namespace DwarfCorp
             DesignationSet designations = null;
             if (Manager.World.Master != null)
                 designations = Manager.World.PlayerFaction.Designations;
-            primitive.InitializeFromChunk(this, designations, Manager.World.DesignationDrawer, Manager.World);
+            primitive.InitializeFromChunk(this, designations, Manager.World.Renderer.DesignationDrawer, Manager.World);
 
             PrimitiveMutex.WaitOne();
             if (Primitive != null)

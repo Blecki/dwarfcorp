@@ -249,7 +249,7 @@ namespace DwarfCorp
             {
                 isLeftPressed = true;
                 ClickPoint = new Point(mouse.X, mouse.Y);
-                ClickPoint3D = World.CursorLightPos;
+                ClickPoint3D = World.Renderer.CursorLightPos;
                 SelectionRectangle = new Rectangle(mouse.X, mouse.Y, 0, 0);
             }
 
@@ -275,7 +275,7 @@ namespace DwarfCorp
                 {
                     isRightPressed = true;
                     ClickPoint = new Point(mouse.X, mouse.Y);
-                    ClickPoint3D = World.CursorLightPos;
+                    ClickPoint3D = World.Renderer.CursorLightPos;
                     SelectionRectangle = new Rectangle(mouse.X, mouse.Y, 0, 0);
                 }
             }

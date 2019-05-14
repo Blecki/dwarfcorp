@@ -276,7 +276,7 @@ namespace DwarfCorp
         {
             if (PreviewBody != null)
             {
-                Drawer2D.DrawPolygon(World.Camera, new List<Vector3>() { PreviewBody.Position, PreviewBody.Position + PreviewBody.GlobalTransform.Right * 0.5f },
+                Drawer2D.DrawPolygon(World.Renderer.Camera, new List<Vector3>() { PreviewBody.Position, PreviewBody.Position + PreviewBody.GlobalTransform.Right * 0.5f },
                     Color.White, 1, false, GameState.Game.GraphicsDevice.Viewport);
             }
         }

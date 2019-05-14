@@ -923,11 +923,14 @@
     <Compile Include="World\Weather\Storm.cs" />
     <Compile Include="World\Weather\StormType.cs" />
     <Compile Include="World\Weather\Weather.cs" />
+    <Compile Include="World\WorldManager-Ambients.cs" />
     <Compile Include="World\WorldManager-OctTree.cs" />
     <Compile Include="World\WorldManager-NewGameSetup.cs" />
     <Compile Include="World\WorldManager-Loading.cs" />
+    <Compile Include="World\WorldManager-Saving.cs" />
     <Compile Include="World\WorldManager-SpeciesLimits.cs" />
     <Compile Include="World\WorldManager.cs" />
+    <Compile Include="World\WorldRenderer.cs" />
     <Compile Include="World\WorldTime.cs" />
   </ItemGroup>
   <ItemGroup>

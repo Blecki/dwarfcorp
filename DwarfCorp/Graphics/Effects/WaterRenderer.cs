@@ -1,35 +1,3 @@
-// WaterRenderer.cs
-// 
-//  Modified MIT License (MIT)
-//  
-//  Copyright (c) 2015 Completely Fair Games Ltd.
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-// 
-// The following content pieces are considered PROPRIETARY and may not be used
-// in any derivative works, commercial or non commercial, without explicit 
-// written permission from Completely Fair Games:
-// 
-// * Images (sprites, textures, etc.)
-// * 3D Models
-// * Sound Effects
-// * Music
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -190,11 +158,11 @@ namespace DwarfCorp
             if (!DrawReflections) return;
             ValidateBuffers();
             reflectionTimer.Update(gameTime);
-            if (!reflectionTimer.HasTriggered && (prevCameraPos - game.Camera.Position).LengthSquared() < 0.001 && (prevCameraTarget - game.Camera.Target).LengthSquared() < 0.001)
+            if (!reflectionTimer.HasTriggered && (prevCameraPos - game.Renderer.Camera.Position).LengthSquared() < 0.001 && (prevCameraTarget - game.Renderer.Camera.Target).LengthSquared() < 0.001)
                 return;
 
-            prevCameraPos = game.Camera.Position;
-            prevCameraTarget = game.Camera.Target;
+            prevCameraPos = game.Renderer.Camera.Position;
+            prevCameraTarget = game.Renderer.Camera.Target;
 
             Plane reflectionPlane = CreatePlane(waterHeight, new Vector3(0, -1, 0), reflectionViewMatrix, true);
 
@@ -211,12 +179,12 @@ namespace DwarfCorp
 
             if(DrawTerrainReflected)
             {
-                game.DrawSky(gameTime, reflectionViewMatrix, 0.25f, effect.FogColor, false);
-                game.Draw3DThings(gameTime, effect, reflectionViewMatrix);
+                game.Renderer.DrawSky(gameTime, reflectionViewMatrix, 0.25f, effect.FogColor, false);
+                game.Renderer.Draw3DThings(gameTime, effect, reflectionViewMatrix);
             }
             else
             {
-                game.DrawSky(gameTime, reflectionViewMatrix, 0.25f, effect.FogColor, false);
+                game.Renderer.DrawSky(gameTime, reflectionViewMatrix, 0.25f, effect.FogColor, false);
             }
 
             effect.View = reflectionViewMatrix;
@@ -225,10 +193,10 @@ namespace DwarfCorp
             if(DrawComponentsReflected)
             {
                 effect.View = reflectionViewMatrix;
-                ComponentRenderer.Render(Renderables, gameTime, game.ChunkManager, game.Camera,
+                ComponentRenderer.Render(Renderables, gameTime, game.ChunkManager, game.Renderer.Camera,
                     DwarfGame.SpriteBatch, game.GraphicsDevice, effect,
                     ComponentRenderer.WaterRenderType.Reflective, waterHeight);
-                game.InstanceRenderer.Flush(device, effect, game.Camera, InstanceRenderMode.Normal);
+                game.Renderer.InstanceRenderer.Flush(device, effect, game.Renderer.Camera, InstanceRenderMode.Normal);
             }
 
             effect.ClippingEnabled = false;
@@ -314,7 +282,7 @@ namespace DwarfCorp
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
-                        foreach (var chunk in chunks.World.ChunkRenderer.RenderList)
+                        foreach (var chunk in chunks.World.Renderer.ChunkRenderer.RenderList)
                             chunk.Liquids[asset.Key].Render(device);
                     }
                 }

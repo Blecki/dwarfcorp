@@ -240,7 +240,7 @@ namespace DwarfCorp
                         if (health != null)
                         {
                             health.Damage(damage);
-                            Drawer2D.DrawLoadBar(health.World.Camera, DefensiveStructure.Position, Color.White, Color.Black, 32, 1, health.Hp / health.MaxHealth, 0.1f);
+                            Drawer2D.DrawLoadBar(health.World.Renderer.Camera, DefensiveStructure.Position, Color.White, Color.Black, 32, 1, health.Hp / health.MaxHealth, 0.1f);
                         }
                         LastHp = Creature.Hp;
                     }
