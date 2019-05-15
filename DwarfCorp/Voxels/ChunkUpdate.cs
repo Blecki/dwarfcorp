@@ -71,13 +71,13 @@ namespace DwarfCorp
                                 CollisionType.Static).Any();
                             if (entityPresent) continue;
 
-                            var biome = Overworld.GetBiomeAt(chunk.Manager.World.Settings.Overworld.Map, voxel.Coordinate.ToVector3(), chunk.Manager.World.Settings.Origin);
+                            var biome = Overworld.GetBiomeAt(chunk.Manager.World.Settings.Overworld.Map, voxel.Coordinate.ToVector3(), chunk.Manager.World.Settings.InstanceSettings.Origin);
 
                             var grassyNeighbors = VoxelHelpers.EnumerateManhattanNeighbors2D(voxel.Coordinate)
                                 .Select(c => new VoxelHandle(voxel.Chunk.Manager, c))
                                 .Where(v => v.IsValid && v.GrassType != 0)
                                 .Where(v => Library.GetGrassType(v.GrassType).Spreads)
-                                .Where(v => biome == Overworld.GetBiomeAt(chunk.Manager.World.Settings.Overworld.Map, v.Coordinate.ToVector3(), chunk.Manager.World.Settings.Origin))
+                                .Where(v => biome == Overworld.GetBiomeAt(chunk.Manager.World.Settings.Overworld.Map, v.Coordinate.ToVector3(), chunk.Manager.World.Settings.InstanceSettings.Origin))
                                 .ToList();
 
                             if (grassyNeighbors.Count > 0)

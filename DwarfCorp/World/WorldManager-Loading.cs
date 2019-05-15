@@ -79,7 +79,7 @@ namespace DwarfCorp
             try
             {
 #endif
-                bool fileExists = !string.IsNullOrEmpty(Settings.ExistingFile);
+                bool fileExists = !string.IsNullOrEmpty(Settings.InstanceSettings.ExistingFile);
 
                 SetLoadingMessage("Creating Sky...");
 
@@ -89,9 +89,9 @@ namespace DwarfCorp
 
                 if (fileExists)
                 {
-                    SetLoadingMessage("Loading " + Settings.ExistingFile);
+                    SetLoadingMessage("Loading " + Settings.InstanceSettings.ExistingFile);
 
-                    gameFile = SaveGame.LoadMetaFromDirectory(Settings.ExistingFile);
+                    gameFile = SaveGame.LoadMetaFromDirectory(Settings.InstanceSettings.ExistingFile);
                     if (gameFile == null) throw new InvalidOperationException("Game File does not exist.");
 
                     if (gameFile.Metadata.Version != Program.Version && !Program.CompatibleVersions.Contains(gameFile.Metadata.Version))
@@ -101,15 +101,18 @@ namespace DwarfCorp
                     }
 
                     Renderer.Sky.TimeOfDay = gameFile.Metadata.TimeOfDay;
+                Renderer.PersistentSettings = gameFile.Metadata.RendererSettings;
                     Time = gameFile.Metadata.Time;
                     WorldSizeInChunks = gameFile.Metadata.NumChunks;
 
                     if (gameFile.Metadata.OverworldFile != null && gameFile.Metadata.OverworldFile != "flat")
                     {
-                        SetLoadingMessage("Loading world " + gameFile.Metadata.OverworldFile);
+                        SetLoadingMessage("Loading Overworld " + gameFile.Metadata.OverworldFile);
                         var worldDirectory = Directory.CreateDirectory(DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + gameFile.Metadata.OverworldFile);
                         var overWorldFile = NewOverworldFile.Load(worldDirectory.FullName);
-                        Settings.Overworld = overWorldFile.CreateOverworld();
+                    var instanceSettings = Settings.InstanceSettings;
+                    Settings = overWorldFile.CreateSettings();
+                    Settings.InstanceSettings = instanceSettings;
                     }
                     else
                     {
@@ -180,7 +183,7 @@ namespace DwarfCorp
                 ChunkManager.LoadChunks(gameFile.LoadChunks(), ChunkManager);
 
                 SetLoadingMessage("Loading Entities...");
-                gameFile.LoadPlayData(Settings.ExistingFile, this);
+                gameFile.LoadPlayData(Settings.InstanceSettings.ExistingFile, this);
                 Renderer.Camera = gameFile.PlayData.Camera;
                 Renderer.DesignationDrawer = gameFile.PlayData.Designations;
 
@@ -283,7 +286,7 @@ namespace DwarfCorp
                 }
 
                 Factions.Initialize(this, Settings.Company);
-                Point playerOrigin = new Point((int)(Settings.Origin.X), (int)(Settings.Origin.Y));
+                Point playerOrigin = new Point((int)(Settings.InstanceSettings.Origin.X), (int)(Settings.InstanceSettings.Origin.Y));
 
                 Factions.Factions["Player"].Center = playerOrigin;
                 Factions.Factions["The Motherland"].Center = new Point(playerOrigin.X + 50, playerOrigin.Y + 50);
@@ -336,7 +339,7 @@ namespace DwarfCorp
                     };
 
                     SetLoadingMessage("Generating Chunks...");
-                    Generation.Generator.Generate(Settings.SpawnRect, ChunkManager, this, generatorSettings, SetLoadingMessage);
+                    Generation.Generator.Generate(Settings.InstanceSettings.SpawnRect, ChunkManager, this, generatorSettings, SetLoadingMessage);
                     CreateInitialEmbarkment(generatorSettings);
                     ChunkManager.NeedsMinimapUpdate = true;
                     ChunkManager.RecalculateBounds();
@@ -347,12 +350,9 @@ namespace DwarfCorp
                     Game.LogSentryBreadcrumb("Loading", "Started new game with an existing file.");
                     if (gameFile.PlayData.Tasks != null)
                     {
-                        Master.NewArrivals = gameFile.PlayData.NewArrivals ?? new List<GameMaster.ApplicantArrival>();
                         Master.TaskManager = gameFile.PlayData.Tasks;
                         Master.TaskManager.Faction = Master.Faction;
                     }
-
-                    ChunkManager.World.Master.SetMaxViewingLevel(gameFile.Metadata.Slice > 0 ? gameFile.Metadata.Slice : ChunkManager.World.Master.MaxViewingLevel);
                 }
 
             if (Master.Faction.Economy.Information == null)

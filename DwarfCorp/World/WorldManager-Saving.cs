@@ -60,7 +60,7 @@ namespace DwarfCorp
                 file.WriteFile(worldDirectory.FullName);
 
                 gameFile = SaveGame.CreateFromWorld(this);
-            var path = worldDirectory.FullName + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.Origin.X, (int)Settings.Origin.Y);
+            var path = worldDirectory.FullName + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.InstanceSettings.Origin.X, (int)Settings.InstanceSettings.Origin.Y);
                 SaveGame.DeleteOldestSave(path, GameSettings.Default.MaxSaves, "Autosave");
                 gameFile.WriteFile(path);
                 ComponentManager.CleanupSaveData();

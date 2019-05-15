@@ -70,7 +70,7 @@ namespace DwarfCorp
             return result;
         }
 
-        public Point3 WorldSize { get; set; }
+        public Point3 WorldSize { get; set; } // Todo: Redundant?
 
         private List<VoxelChangeEvent> ChangedVoxels = new List<VoxelChangeEvent>();
 
@@ -102,7 +102,7 @@ namespace DwarfCorp
         // Todo: Move this.
         public bool IsAboveCullPlane(BoundingBox Box)
         {
-            return Box.Min.Y > (World.Master.MaxViewingLevel + 5);
+            return Box.Min.Y > (World.Renderer.PersistentSettings.MaxViewingLevel + 5);
         }
 
         public VoxelHandle CreateVoxelHandle(GlobalVoxelCoordinate Coordinate)

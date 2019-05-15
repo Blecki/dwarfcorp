@@ -214,7 +214,7 @@ namespace DwarfCorp
         [JsonIgnore]
         public bool IsVisible
         {
-            get { return Coordinate.Y < _cache_Chunk.Manager.World.Master.MaxViewingLevel; }
+            get { return Coordinate.Y < _cache_Chunk.Manager.World.Renderer.PersistentSettings.MaxViewingLevel; }
         }
 
         [JsonIgnore]

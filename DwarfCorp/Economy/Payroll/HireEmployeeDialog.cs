@@ -153,7 +153,7 @@ namespace DwarfCorp.Gui.Widgets
                                 Text = "We need a balloon port to hire someone.",
                             }));
                         }
-                        else if (Faction.Minions.Count + Faction.World.Master.NewArrivals.Count >= GameSettings.Default.MaxDwarfs)
+                        else if (Faction.Minions.Count + Faction.NewArrivals.Count >= GameSettings.Default.MaxDwarfs)
                         {
                             Root.ShowModalPopup(Root.ConstructWidget(new Gui.Widgets.Popup
                             {

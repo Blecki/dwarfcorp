@@ -139,9 +139,9 @@ namespace DwarfCorp.GameStates
                 Rectangle rect = GetSpawnRectangle();
                 var center = rect.Center;
                 inWater = Overworld.Map[center.X, center.Y].Height < Settings.SeaLevel;
-                Settings.SpawnRect = rect;
+                Settings.InstanceSettings.SpawnRect = rect;
                 if (inWater)
-                    Settings.Origin = new Vector2(MathFunctions.Rand(0, Settings.Width - rect.Width), MathFunctions.Rand(0, Settings.Height - rect.Height));
+                    Settings.InstanceSettings.Origin = new Vector2(MathFunctions.Rand(0, Settings.Width - rect.Width), MathFunctions.Rand(0, Settings.Height - rect.Height));
             } while (inWater);
         }
 
@@ -239,7 +239,7 @@ namespace DwarfCorp.GameStates
             LandIndex = null;
             if (CurrentState == GenerationState.NotStarted)
             {
-                Settings.Origin = new Vector2(Settings.Width / 2.0f, Settings.Height / 2.0f);
+                Settings.InstanceSettings.Origin = new Vector2(Settings.Width / 2.0f, Settings.Height / 2.0f);
                 genThread = new Thread(unused =>
                 {
                     Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -919,9 +919,9 @@ namespace DwarfCorp.GameStates
         }
 
         // Spawn rectangle in world map pixel units
-        public Rectangle GetSpawnRectangle()
+        public Rectangle GetSpawnRectangle() // Todo: Kill
         {
-            return new Rectangle((int)Settings.Origin.X , (int)Settings.Origin.Y, Settings.ColonySize.X, Settings.ColonySize.Z);
+            return new Rectangle((int)Settings.InstanceSettings.Origin.X , (int)Settings.InstanceSettings.Origin.Y, Settings.InstanceSettings.ColonySize.X, Settings.InstanceSettings.ColonySize.Z);
         }
     }
 }

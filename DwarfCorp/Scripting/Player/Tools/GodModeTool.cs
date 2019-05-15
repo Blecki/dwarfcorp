@@ -10,16 +10,15 @@ using Microsoft.Xna.Framework.Input;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// This is the debug tool that allows the player to mess with the engine.
-    /// </summary>
-    [JsonObject(IsReference = true)]
     public class GodModeTool : PlayerTool
     {
-        public String Command;
-        private bool RotateLeftPressed = false;
-        private bool RotateRightPressed = false;
+        [ToolFactory("God")]
+        private static PlayerTool _factory(GameMaster Master)
+        {
+            return new GodModeTool(Master);
+        }
 
+        public String Command;
         public ChunkManager Chunks { get; set; }
 
         public override void OnBegin()
@@ -136,16 +135,6 @@ namespace DwarfCorp
                     }
                 }
             }
-            //else if (Command.Contains("Decal/"))
-            //{
-            //    var type = DecalLibrary.GetGrassType(Command.Substring(6));
-            //    foreach (var vox in refs.Where(v => v.IsValid))
-            //    {
-            //        var v = vox;
-            //        if (!vox.IsEmpty)
-            //            v.Decal = DecalType.EncodeDecal(DecalOrientation, type.ID);
-            //    }
-            //}
             else
             {
                 foreach (var vox in refs.Where(vox => vox.IsValid))

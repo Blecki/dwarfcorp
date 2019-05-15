@@ -27,7 +27,6 @@ namespace DwarfCorp
         public DesignationDrawer Designations;
         public TaskManager Tasks;
         public Yarn.MemoryVariableStore ConversationMemory;
-        public List<GameMaster.ApplicantArrival> NewArrivals;
         public DwarfCorp.Gui.Widgets.StatsTracker Stats;
 
         public static PlayData CreateFromWorld(WorldManager World)
@@ -43,7 +42,6 @@ namespace DwarfCorp
                 Designations = World.Renderer.DesignationDrawer,
                 Tasks = World.Master.TaskManager,
                 ConversationMemory = World.ConversationMemory,
-                NewArrivals = World.Master.NewArrivals,
                 Stats = World.Stats
             };
         }

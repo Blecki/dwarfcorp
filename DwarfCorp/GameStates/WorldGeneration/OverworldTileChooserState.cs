@@ -87,7 +87,7 @@ namespace DwarfCorp.GameStates
                 AutoLayout = Gui.AutoLayout.DockBottom,
                 OnClick = (sender, args) =>
                 {
-                    var saveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Overworld.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.Origin.X, (int)Settings.Origin.Y);
+                    var saveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Overworld.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.InstanceSettings.Origin.X, (int)Settings.InstanceSettings.Origin.Y);
                     var saveGame = SaveGame.LoadMetaFromDirectory(saveName);
                     if (saveGame != null)
                     {
@@ -95,7 +95,10 @@ namespace DwarfCorp.GameStates
                         StateManager.PushState(new LoadState(Game, Game.StateManager,
                             new OverworldGenerationSettings
                             {
-                                ExistingFile = saveName,
+                                InstanceSettings = new InstanceSettings
+                                {
+                                    ExistingFile = saveName
+                                },
                                 Name = saveName
                             }));
                     }
@@ -103,8 +106,8 @@ namespace DwarfCorp.GameStates
                     {
                         GameStates.GameState.Game.LogSentryBreadcrumb("WorldGenerator", string.Format("User is starting a game with a {0} x {1} world.", Settings.Width, Settings.Height));
                         Settings.Overworld.Name = Settings.Name;
-                            Settings.ExistingFile = null;
-                            Settings.SpawnRect = Generator.GetSpawnRectangle();
+                            Settings.InstanceSettings.ExistingFile = null;
+                            Settings.InstanceSettings.SpawnRect = Generator.GetSpawnRectangle();
                             if (Settings.Natives == null || Settings.Natives.Count == 0)
                                 Settings.Natives = Generator.NativeCivilizations;
 
@@ -159,8 +162,8 @@ namespace DwarfCorp.GameStates
 
         private void UpdateCellInfo()
         {
-            if (Settings.Origin.X < 0 || Settings.Origin.X >= Settings.Width ||
-                Settings.Origin.Y < 0 || Settings.Origin.Y >= Settings.Height)
+            if (Settings.InstanceSettings.Origin.X < 0 || Settings.InstanceSettings.Origin.X >= Settings.Width ||
+                Settings.InstanceSettings.Origin.Y < 0 || Settings.InstanceSettings.Origin.Y >= Settings.Height)
             {
                 StartButton.Hidden = true;
                 CellInfo.Text = "Select a spawn cell to continue";
@@ -168,7 +171,7 @@ namespace DwarfCorp.GameStates
             }
             else
             {
-                SaveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Overworld.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.Origin.X, (int)Settings.Origin.Y);
+                SaveName = DwarfGame.GetWorldDirectory() + Path.DirectorySeparatorChar + Settings.Overworld.Name + Path.DirectorySeparatorChar + String.Format("{0}-{1}", (int)Settings.InstanceSettings.Origin.X, (int)Settings.InstanceSettings.Origin.Y);
                 var saveGame = SaveGame.LoadMetaFromDirectory(SaveName);
                 if (saveGame != null)
                 {

@@ -342,9 +342,9 @@ namespace DwarfCorp
             var above = VoxelHelpers.FindFirstVoxelAbove(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(Position)));
 
             if (above.IsValid)
-                World.Master.SetMaxViewingLevel(above.Coordinate.Y);
+                World.Renderer.SetMaxViewingLevel(above.Coordinate.Y);
             else
-                World.Master.SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
+                World.Renderer.SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
         }
 
         public void HandleReproduction()

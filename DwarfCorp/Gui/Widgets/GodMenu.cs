@@ -13,8 +13,8 @@ namespace DwarfCorp.Gui.Widgets
 
         private void ActivateGodTool(String Command)
         {
-            (Master.Tools[GameMaster.ToolMode.God] as GodModeTool).Command = Command;
-            Master.ChangeTool(GameMaster.ToolMode.God);
+            (Master.Tools["God"] as GodModeTool).Command = Command;
+            Master.ChangeTool("God");
         }
 
         public override void Construct()
@@ -188,9 +188,9 @@ namespace DwarfCorp.Gui.Widgets
                                             Text = p.Name,
                                             OnClick = (sender, args) =>
                                             {
-                                                var railTool = Master.Tools[GameMaster.ToolMode.BuildRail] as Rail.BuildRailTool;
+                                                var railTool = Master.Tools["BuildRail"] as Rail.BuildRailTool;
                                                 railTool.Pattern = p;
-                                                Master.ChangeTool(GameMaster.ToolMode.BuildRail);
+                                                Master.ChangeTool("BuildRail");
                                                 railTool.GodModeSwitch = true;
                                             }
                                         })
@@ -202,9 +202,9 @@ namespace DwarfCorp.Gui.Widgets
                                 Text = "PAINT",
                                 OnClick = (sender, args) =>
                                 {
-                                    var railTool = Master.Tools[GameMaster.ToolMode.PaintRail] as Rail.PaintRailTool;
+                                    var railTool = Master.Tools["PaintRail"] as Rail.PaintRailTool;
                                     railTool.SelectedResources = new List<ResourceAmount>(new ResourceAmount[] { new ResourceAmount("Rail", 1) });
-                                    Master.ChangeTool(GameMaster.ToolMode.PaintRail);
+                                    Master.ChangeTool("PaintRail");
                                     railTool.GodModeSwitch = true;
                                 }
                             }
@@ -358,7 +358,7 @@ namespace DwarfCorp.Gui.Widgets
                             new HorizontalMenuTray.MenuItem
                             {
                                 Text = "PAY",
-                                OnClick = (sender, args) => Master.PayEmployees()
+                                OnClick = (sender, args) => Master.World.PlayerFaction.PayEmployees()
                             },
                             new HorizontalMenuTray.MenuItem
                             {

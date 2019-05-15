@@ -39,6 +39,16 @@ namespace DwarfCorp
         public bool IsMotherland = false;
         public float DistanceToCapital = 0.0f;
 
+        public struct ApplicantArrival
+        {
+            public Applicant Applicant;
+            public DateTime ArrivalTime;
+        }
+
+        public List<ApplicantArrival> NewArrivals = new List<ApplicantArrival>();
+
+
+
         [JsonProperty]
         private string _race;
 
@@ -228,6 +238,12 @@ namespace DwarfCorp
 
             if (World.ComponentManager.NumComponents() > 0)
                 OwnedObjects.RemoveAll(obj => obj.IsDead || obj.Parent == null || !obj.Manager.HasComponent(obj.GlobalID));
+
+            foreach (var applicant in NewArrivals)
+                if (World.Time.CurrentDate >= applicant.ArrivalTime)
+                    HireImmediately(applicant.Applicant);
+
+            NewArrivals.RemoveAll(a => World.Time.CurrentDate >= a.ArrivalTime);
         }
 
         public CreatureAI GetNearestMinion(Vector3 location)
@@ -917,19 +933,18 @@ namespace DwarfCorp
 
         public DateTime Hire(Applicant currentApplicant, int delay)
         {
-            DateTime startDate = World.Time.CurrentDate;
-            if (World.Master.NewArrivals.Count > 0)
-            {
-                startDate = World.Master.NewArrivals.Last().ArrivalTime;
-            }
-            World.Master.NewArrivals.Add(new GameMaster.ApplicantArrival()
+            var startDate = World.Time.CurrentDate;
+            if (NewArrivals.Count > 0)
+                startDate = NewArrivals.Last().ArrivalTime;
+
+            NewArrivals.Add(new ApplicantArrival()
             {
                 Applicant = currentApplicant,
                 ArrivalTime = startDate+ new TimeSpan(0, delay, 0, 0, 0)
             });
 
             AddMoney(-(decimal)GameSettings.Default.SigningBonus);
-            return World.Master.NewArrivals.Last().ArrivalTime;
+            return NewArrivals.Last().ArrivalTime;
 
         }
 
@@ -1084,6 +1099,47 @@ namespace DwarfCorp
                 return;
 
                 Economy.Funds += money;
+        }
+
+        public void PayEmployees()
+        {
+            DwarfBux total = 0;
+            bool noMoney = false;
+            foreach (CreatureAI creature in Minions)
+            {
+                if (creature.Stats.IsOverQualified)
+                    creature.Creature.AddThought(Thought.ThoughtType.IsOverQualified);
+
+                var thoughts = creature.Physics.GetComponent<DwarfThoughts>();
+
+                if (thoughts != null)
+                    thoughts.Thoughts.RemoveAll(thought => thought.Description.Contains("paid"));
+
+                DwarfBux pay = creature.Stats.CurrentLevel.Pay;
+                total += pay;
+
+                if (total >= Economy.Funds)
+                {
+                    if (!noMoney)
+                    {
+                        World.MakeAnnouncement("We have no money!");
+                        World.Tutorial("money");
+                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
+                    }
+                    noMoney = true;
+                }
+                else
+                {
+                    creature.Creature.AddThought(Thought.ThoughtType.GotPaid);
+                }
+
+                creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, pay)) { AutoRetry = true, Name = "Get paid.", Priority = Task.PriorityType.High });
+            }
+
+            World.MakeAnnouncement(String.Format("We paid our employees {0} today.",
+                total));
+            SoundManager.PlaySound(ContentPaths.Audio.change, 0.15f);
+            World.Tutorial("pay");
         }
     }
 }

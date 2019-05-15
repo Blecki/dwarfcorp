@@ -13,6 +13,12 @@ namespace DwarfCorp
 {
     public class DwarfSelectorTool : PlayerTool
     {
+        [ToolFactory("SelectUnits")]
+        private static PlayerTool _factory(GameMaster Master)
+        {
+            return new DwarfSelectorTool(Master);
+        }
+        
         public Func<GameComponent, bool> DrawSelectionRect = (b) => true;
         private List<GameComponent> underMouse = null;
 

@@ -39,6 +39,7 @@ namespace DwarfCorp
         public ParticleManager ParticleManager = null;
         public GameMaster Master = null;
         public Events.Scheduler EventScheduler;
+        public int MaxViewingLevel = 0;
 
         #region Tutorial Hooks
 
@@ -89,10 +90,7 @@ namespace DwarfCorp
 
         // The current calendar date/time of the game.
         public WorldTime Time = new WorldTime();
-
-        // Hack to smooth water reflections TODO: Put into water manager
-        private float lastWaterHeight = -1.0f;
-
+        
         private SaveGame gameFile;
 
         public Point3 WorldSizeInChunks { get; set; }

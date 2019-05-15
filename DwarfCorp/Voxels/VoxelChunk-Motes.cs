@@ -30,7 +30,7 @@ namespace DwarfCorp
 
         public void RenderMotes(GraphicsDevice Device, Shader Effect, Camera Camera)
         {
-            for (var i = 0; i < Manager.World.Master.MaxViewingLevel + 1 && i < VoxelConstants.ChunkSizeY; ++i)
+            for (var i = 0; i < Manager.World.Renderer.PersistentSettings.MaxViewingLevel + 1 && i < VoxelConstants.ChunkSizeY; ++i)
             {
                 var motes = MoteRecords[i];
                 if (motes != null)
@@ -103,7 +103,7 @@ namespace DwarfCorp
                             continue;
 
                     // Find biome type.
-                    var biomeData = Overworld.GetBiomeAt(Manager.World.Settings.Overworld.Map, v.WorldPosition, Manager.World.Settings.Origin);  
+                    var biomeData = Overworld.GetBiomeAt(Manager.World.Settings.Overworld.Map, v.WorldPosition, Manager.World.Settings.InstanceSettings.Origin);  
 
                     // Don't generate if not on grass type.
                     if (v.GrassType == 0 || Library.GetGrassType(v.GrassType).Name != biomeData.GrassDecal)

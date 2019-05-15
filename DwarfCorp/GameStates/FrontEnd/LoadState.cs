@@ -88,7 +88,7 @@ namespace DwarfCorp.GameStates
             World = new WorldManager(Game)
             {
                 // Todo: Just keep a reference to the settings OMG.
-                WorldSizeInChunks = new Point3(Settings.ColonySize.X, Settings.zLevels, Settings.ColonySize.Z),
+                WorldSizeInChunks = new Point3(Settings.InstanceSettings.ColonySize.X, Settings.zLevels, Settings.InstanceSettings.ColonySize.Z),
                 Natives = Settings.Natives,
                 Settings = Settings,
             };

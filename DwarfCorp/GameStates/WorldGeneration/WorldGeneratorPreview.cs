@@ -161,8 +161,8 @@ namespace DwarfCorp.GameStates
                         var colonyCell = Overworld.ColonyCells.FirstOrDefault(c => c.Bounds.Contains(new Point(clickPoint.X, clickPoint.Y)));
                         if (colonyCell != null)
                         {
-                            Generator.Settings.Origin = new Vector2(colonyCell.Bounds.X, colonyCell.Bounds.Y);
-                            Generator.Settings.ColonySize = new Point3(colonyCell.Bounds.Width, Generator.Settings.ColonySize.Y, colonyCell.Bounds.Height);
+                            Generator.Settings.InstanceSettings.Origin = new Vector2(colonyCell.Bounds.X, colonyCell.Bounds.Y);
+                            Generator.Settings.InstanceSettings.ColonySize = new Point3(colonyCell.Bounds.Width, Generator.Settings.InstanceSettings.ColonySize.Y, colonyCell.Bounds.Height);
                             previewText = Generator.GetSpawnStats();
                         }
                         UpdatePreview = true;

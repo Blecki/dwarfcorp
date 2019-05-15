@@ -784,7 +784,7 @@ namespace DwarfCorp
                     }
                     else
                     {
-                        World.Master.SetMaxViewingLevel(World.Master.MaxViewingLevel + (int)((float)change * 0.01f));
+                        World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel + (int)((float)change * 0.01f));
                     }
                 }
             }

@@ -10,34 +10,8 @@ using Newtonsoft.Json;
 
 namespace DwarfCorp
 {
-    /// <summary>
-    /// Handles the player's controls, tools, and factions.
-    /// </summary>
-    [JsonObject(IsReference = true)]
     public class GameMaster
     {
-        public enum ToolMode
-        {
-            SelectUnits,
-            Dig,
-            BuildZone,
-            BuildWall,
-            BuildObject,
-            Gather,
-            Chop,
-            Attack,
-            Plant,
-            Wrangle,
-            Craft,
-            MoveObjects,
-            DeconstructObjects,
-            BuildRail,
-            PaintRail,
-            God,
-            CancelTasks,
-            DestroyZone
-        }
-        
         public OrbitCamera CameraController { get; set; }
 
         [JsonIgnore]
@@ -46,35 +20,21 @@ namespace DwarfCorp
         [JsonIgnore]
         public BodySelector BodySelector { get; set; }
 
-        public struct ApplicantArrival
-        {
-            //[OnSerializing]
-            //internal void OnSerializingMethod(StreamingContext context)
-            //{
-            //    throw new InvalidOperationException();
-            //}
-
-            public Applicant Applicant;
-            public DateTime ArrivalTime;
-        }
-
-        public List<ApplicantArrival> NewArrivals = new List<ApplicantArrival>();
-
-        public Faction Faction { get; set; }
+        public Faction Faction { get; set; } // Todo: Move to WorldManager
 
         #region  Player tool management
 
         [JsonIgnore]
-        public Dictionary<ToolMode, PlayerTool> Tools { get; set; }
+        public Dictionary<String, PlayerTool> Tools { get; set; }
 
         [JsonIgnore]
         public PlayerTool CurrentTool { get { return Tools[CurrentToolMode]; } }
 
-        public ToolMode CurrentToolMode { get; set; }
+        public String CurrentToolMode = "SelectUnits";
 
-        public void ChangeTool(ToolMode NewTool)
+        public void ChangeTool(String NewTool)
         {
-            if (NewTool != ToolMode.SelectUnits)
+            if (NewTool != "SelectUnits")
             {
                 SelectedObjects = new List<GameComponent>();
             }
@@ -104,9 +64,8 @@ namespace DwarfCorp
         private bool sliceUpheld = false;
         private Timer sliceDownTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
         private Timer sliceUpTimer = new Timer(0.5f, true, Timer.TimerMode.Real);
-        public int MaxViewingLevel = 0;
 
-        public Scripting.Gambling GamblingState = new Scripting.Gambling();
+        public Scripting.Gambling GamblingState = new Scripting.Gambling(); // Todo: Belongs in WorldManager?
 
         [OnDeserialized]
         protected void OnDeserialized(StreamingContext context)
@@ -135,8 +94,7 @@ namespace DwarfCorp
             BodySelector.MouseOver += OnMouseOver;
             World.Master = this;
             World.Time.NewDay += Time_NewDay;
-            MaxViewingLevel = World.WorldSizeInVoxels.Y;
-            rememberedViewValue = MaxViewingLevel;
+            rememberedViewValue = World.WorldSizeInVoxels.Y;
         }
 
         public void Initialize(DwarfGame game, ComponentManager components, ChunkManager chunks, OrbitCamera camera, GraphicsDevice graphics)
@@ -147,9 +105,6 @@ namespace DwarfCorp
             SelectedMinions = new List<CreatureAI>();
 
             CreateTools();
-            
-            //InputManager.KeyReleasedCallback += OnKeyReleased;
-            //InputManager.KeyPressedCallback += OnKeyPressed;
         }
 
         public void Destroy()
@@ -159,10 +114,8 @@ namespace DwarfCorp
             BodySelector.Selected -= OnBodiesSelected;
             BodySelector.MouseOver -= OnMouseOver;
             World.Time.NewDay -= Time_NewDay;
-            //InputManager.KeyReleasedCallback -= OnKeyReleased;
-            //InputManager.KeyPressedCallback -= OnKeyPressed;
-            Tools[ToolMode.God].Destroy();
-            Tools[ToolMode.SelectUnits].Destroy();
+            Tools["God"].Destroy();
+            Tools["SelectUnits"].Destroy();
             Tools.Clear();
             Faction = null;
             VoxSelector = null;
@@ -172,83 +125,22 @@ namespace DwarfCorp
         // Todo: Give these the mod hook treatment.
         private void CreateTools()
         {
-            Tools = new Dictionary<ToolMode, PlayerTool>();
-            Tools[ToolMode.God] = new GodModeTool(this);
+            Tools = new Dictionary<String, PlayerTool>();
 
-            Tools[ToolMode.SelectUnits] = new DwarfSelectorTool(this);
-
-            Tools[ToolMode.Plant] = new PlantTool
+            foreach (var method in AssetManager.EnumerateModHooks(typeof(ToolFactoryAttribute), typeof(PlayerTool), new Type[]
             {
-                Player = this
-            };
-
-            Tools[ToolMode.Wrangle] = new WrangleTool
+                typeof(GameMaster)
+            }))
             {
-                Player = this
-            };
-
-            Tools[ToolMode.Dig] = new DigTool
-            {
-                Player = this,
-            };
-
-            Tools[ToolMode.Gather] = new GatherTool
-            {
-                Player = this,
-            };
-
-            Tools[ToolMode.Chop] = new ChopTool
-            {
-                Player = this,
-            };
-
-            Tools[ToolMode.Attack] = new AttackTool
-            {
-                Player = this,
-            };
-
-            Tools[ToolMode.BuildZone] = new BuildZoneTool
-            {
-                Player = this,
-            };
-
-            Tools[ToolMode.BuildWall] = new BuildWallTool
-            {
-                Player = this
-            };
-
-            Tools[ToolMode.BuildObject] = new BuildObjectTool
-            {
-                Player = this,
-                World = World
-            };
-
-            Tools[ToolMode.MoveObjects] = new MoveObjectTool()
-            {
-                Player = this
-            };
-
-            Tools[ToolMode.DeconstructObjects] = new DeconstructObjectTool()
-            {
-                Player = this
-            };
-
-            Tools[ToolMode.BuildRail] = new Rail.BuildRailTool(this);
-            Tools[ToolMode.PaintRail] = new Rail.PaintRailTool(this);
-            Tools[ToolMode.CancelTasks] = new CancelTasksTool()
-            {
-                Player = this
-            };
-
-            Tools[ToolMode.DestroyZone] = new DestroyZoneTool
-            {
-                Player = this
-            };
+                var attribute = method.GetCustomAttributes(false).FirstOrDefault(a => a is ToolFactoryAttribute) as ToolFactoryAttribute;
+                if (attribute == null) continue;
+                Tools[attribute.Name] = method.Invoke(null, new Object[] { this }) as PlayerTool;
+            }
         }
 
         void Time_NewDay(DateTime time)
         {
-            PayEmployees();
+            Faction.PayEmployees();
         }
 
         public void OnMouseOver(IEnumerable<GameComponent> bodies)
@@ -259,7 +151,7 @@ namespace DwarfCorp
         public void OnBodiesSelected(List<GameComponent> bodies, InputManager.MouseButton button)
         {
             CurrentTool.OnBodiesSelected(bodies, button);
-            if (CurrentToolMode == ToolMode.SelectUnits)
+            if (CurrentToolMode == "SelectUnits")
                 SelectedObjects = bodies;
         }
 
@@ -277,70 +169,6 @@ namespace DwarfCorp
         public bool AreAllEmployeesAsleep()
         {
             return (Faction.Minions.Count > 0) && Faction.Minions.All(minion => !minion.Active || ((!minion.Stats.Species.CanSleep || minion.Creature.Stats.IsAsleep) && !minion.IsDead));
-        }
-
-        // Todo: %KILL% - does not belong here.
-        public void SetMaxViewingLevel(int level)
-        {
-            if (level == MaxViewingLevel)
-                return;
-            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_click_voxel, 0.15f, (float)(level / (float)World.WorldSizeInVoxels.Y) - 0.5f);
-
-            var oldLevel = MaxViewingLevel;
-
-            MaxViewingLevel = Math.Max(Math.Min(level, World.WorldSizeInVoxels.Y), 1);
-
-            foreach (var c in World.ChunkManager.ChunkMap)
-            {
-                var oldSliceIndex = oldLevel - 1 - c.Origin.Y;
-                if (oldSliceIndex >= 0 && oldSliceIndex < VoxelConstants.ChunkSizeY) c.InvalidateSlice(oldSliceIndex);
-
-                var newSliceIndex = MaxViewingLevel - 1 - c.Origin.Y;
-                if (newSliceIndex >= 0 && newSliceIndex < VoxelConstants.ChunkSizeY) c.InvalidateSlice(newSliceIndex);
-            }
-        }
-
-        // Todo: Why exactly is Faction.Minions a list of CreatureAI and not a list of Creature?
-        // Todo: Belongs in Faction
-        public void PayEmployees()
-        {
-            DwarfBux total = 0;
-            bool noMoney = false;
-            foreach (CreatureAI creature in Faction.Minions)
-            {
-                if (creature.Stats.IsOverQualified)
-                    creature.Creature.AddThought(Thought.ThoughtType.IsOverQualified);
-
-                var thoughts = creature.Physics.GetComponent<DwarfThoughts>();
-
-                if (thoughts != null)
-                    thoughts.Thoughts.RemoveAll(thought => thought.Description.Contains("paid"));
-
-                DwarfBux pay = creature.Stats.CurrentLevel.Pay;
-                total += pay;
-
-                if (total >= Faction.Economy.Funds)
-                {
-                    if (!noMoney)
-                    {
-                        World.MakeAnnouncement("We have no money!");
-                        World.Tutorial("money");
-                        SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_negative_generic, 0.5f);
-                    }
-                    noMoney = true;
-                }
-                else
-                {
-                    creature.Creature.AddThought(Thought.ThoughtType.GotPaid);
-                }
-
-                creature.AssignTask(new ActWrapperTask(new GetMoneyAct(creature, pay)) { AutoRetry = true, Name = "Get paid.", Priority = Task.PriorityType.High });
-            }
-
-            World.MakeAnnouncement(String.Format("We paid our employees {0} today.",
-                total));
-            SoundManager.PlaySound(ContentPaths.Audio.change, 0.15f);
-            World.Tutorial("pay");
         }
 
         public void Render2D(DwarfGame game, DwarfTime time)
@@ -370,11 +198,6 @@ namespace DwarfCorp
             foreach (var obj in SelectedObjects)
                 if (obj.IsVisible && !obj.IsDead)
                     Drawer3D.DrawBox(obj.GetBoundingBox(), Color.White, 0.01f, true);
-        }
-
-        public void UpdateRooms()
-        {
-
         }
 
         private Timer orphanedTaskRateLimiter = new Timer(10.0f, false, Timer.TimerMode.Real);
@@ -454,8 +277,6 @@ namespace DwarfCorp
 
             Faction.Minions.RemoveAll(m => m.IsDead);
 
-            UpdateRooms();
-
             HandlePosessedDwarf();
 
             if (sliceDownheld)
@@ -463,7 +284,7 @@ namespace DwarfCorp
                 sliceDownTimer.Update(time);
                 if (sliceDownTimer.HasTriggered)
                 {
-                    SetMaxViewingLevel(MaxViewingLevel - 1);
+                    World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel - 1);
                     sliceDownTimer.Reset(sliceDownTimer.TargetTimeSeconds * 0.6f);
                 }
             }
@@ -472,7 +293,7 @@ namespace DwarfCorp
                 sliceUpTimer.Update(time);
                 if (sliceUpTimer.HasTriggered)
                 {
-                    SetMaxViewingLevel(MaxViewingLevel + 1);
+                    World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel + 1);
                     sliceUpTimer.Reset(sliceUpTimer.TargetTimeSeconds * 0.6f);
                 }
             }
@@ -503,18 +324,7 @@ namespace DwarfCorp
 
                 minion.ResetPositionConstraint();
             }
-
-            foreach (var applicant in NewArrivals)
-            {
-                if (World.Time.CurrentDate >= applicant.ArrivalTime)
-                {
-                    Faction.HireImmediately(applicant.Applicant);
-                }
-            }
-
-            NewArrivals.RemoveAll(a => World.Time.CurrentDate >= a.ArrivalTime);
         }
-
 
         public void HandlePosessedDwarf()
         {
@@ -551,9 +361,9 @@ namespace DwarfCorp
                 var above = VoxelHelpers.FindFirstVoxelAbove(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(dwarf.Position)));
 
                 if (above.IsValid)
-                    SetMaxViewingLevel(above.Coordinate.Y);
+                    World.Renderer.SetMaxViewingLevel(above.Coordinate.Y);
                 else
-                    SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
+                    World.Renderer.SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
             }
 
             Vector3 forward = CameraController.GetForwardVector();
@@ -655,7 +465,7 @@ namespace DwarfCorp
                     sliceUpheld = true;
                     World.Tutorial("unslice");
                     sliceUpTimer.Reset(0.5f);
-                    SetMaxViewingLevel(MaxViewingLevel + 1);
+                    World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel + 1);
                     return true;
                 }
             }
@@ -666,7 +476,7 @@ namespace DwarfCorp
                     World.Tutorial("unslice");
                     sliceDownheld = true;
                     sliceDownTimer.Reset(0.5f);
-                    SetMaxViewingLevel(MaxViewingLevel - 1);
+                    World.Renderer.SetMaxViewingLevel(World.Renderer.PersistentSettings.MaxViewingLevel - 1);
                     return true;
                 }
             }
@@ -692,21 +502,21 @@ namespace DwarfCorp
             {
                 if (keys.IsKeyDown(Keys.LeftControl) || keys.IsKeyDown(Keys.RightControl))
                 {
-                    SetMaxViewingLevel(rememberedViewValue);
+                    World.Renderer.SetMaxViewingLevel(rememberedViewValue);
                     return true;
                 }
                 else if (VoxSelector.VoxelUnderMouse.IsValid)
                 {
                     World.Tutorial("unslice");
-                    SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1);
+                    World.Renderer.SetMaxViewingLevel(VoxSelector.VoxelUnderMouse.Coordinate.Y + 1);
                     Drawer3D.DrawBox(VoxSelector.VoxelUnderMouse.GetBoundingBox(), Color.White, 0.15f, true);
                     return true;
                 }
             }
             else if (key == ControlSettings.Mappings.Unslice)
             {
-                rememberedViewValue = MaxViewingLevel;
-                SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
+                rememberedViewValue = World.Renderer.PersistentSettings.MaxViewingLevel;
+                World.Renderer.SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
                 return true;
             }
             return false;

@@ -28,8 +28,8 @@ namespace DwarfCorp
         public void CreateInitialEmbarkment(Generation.GeneratorSettings Settings)
         {
             // If no file exists, we have to create the balloon and balloon port.
-            if (!string.IsNullOrEmpty(Settings.OverworldSettings.ExistingFile)) return;
-
+            if (!string.IsNullOrEmpty(Settings.OverworldSettings.InstanceSettings.ExistingFile)) return; // Todo: Don't call in the first place??
+             
             var port = GenerateInitialBalloonPort(Master.Faction.RoomBuilder, ChunkManager, Renderer.Camera.Position.X, Renderer.Camera.Position.Z, 1, Settings);
             PlayerFaction.Economy.Funds = Settings.OverworldSettings.InitalEmbarkment.Money;
 

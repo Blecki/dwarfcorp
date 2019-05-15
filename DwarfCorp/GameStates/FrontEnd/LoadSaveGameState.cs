@@ -40,7 +40,10 @@ namespace DwarfCorp.GameStates
                 StateManager.PushState(new LoadState(Game, Game.StateManager,
                     new OverworldGenerationSettings
                     {
-                        ExistingFile = path,
+                        InstanceSettings = new InstanceSettings
+                        {
+                            ExistingFile = path
+                        },
                         Name = path
                     }));
             };

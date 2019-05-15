@@ -65,7 +65,7 @@ namespace DwarfCorp
                         break;
                 }
 
-                var biome = Overworld.GetBiomeAt(World.Settings.Overworld.Map, pos, World.Settings.Origin);
+                var biome = Overworld.GetBiomeAt(World.Settings.Overworld.Map, pos, World.Settings.InstanceSettings.Origin);
                 if (biome.Fauna.Count == 0)
                 {
                     tries++;

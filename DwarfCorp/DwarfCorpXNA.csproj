@@ -262,6 +262,7 @@
     <Compile Include="Entities\Steam\SteamPipe.cs" />
     <Compile Include="Events\Library.cs" />
     <Compile Include="GameStates\WorldGeneration\ColonyCell.cs" />
+    <Compile Include="GameStates\WorldGeneration\InstanceSettings.cs" />
     <Compile Include="GameStates\WorldGeneration\NewWorldGeneratorState.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldGenerationSettings.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldTileChooserState.cs" />
@@ -559,7 +560,6 @@
     <Compile Include="GameStates\WorldGeneration\WorldGeneratorPreview.cs" />
     <Compile Include="GameStates\FrontEnd\IntroState.cs" />
     <Compile Include="GameStates\FrontEnd\LoadState.cs" />
-    <Compile Include="GameStates\Debug\GuiDebugState.cs" />
     <Compile Include="GameStates\FrontEnd\MainMenuState.cs" />
     <Compile Include="GameStates\FrontEnd\OptionsState.cs" />
     <Compile Include="GameStates\Play\PlayState.cs" />
@@ -930,6 +930,7 @@
     <Compile Include="World\WorldManager-Saving.cs" />
     <Compile Include="World\WorldManager-SpeciesLimits.cs" />
     <Compile Include="World\WorldManager.cs" />
+    <Compile Include="World\WorldRendererPersistentSettings.cs" />
     <Compile Include="World\WorldRenderer.cs" />
     <Compile Include="World\WorldTime.cs" />
   </ItemGroup>

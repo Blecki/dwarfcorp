@@ -152,7 +152,7 @@ namespace DwarfCorp
             BoxPrimitive bedrockModel = Library.GetVoxelPrimitive("Bedrock");
             var sliceStack = new List<RawPrimitive>();
             var cache = new Cache();
-            int maxViewingLevel = chunk.Manager.World.Master == null ? chunk.Manager.World.WorldSizeInVoxels.Y : chunk.Manager.World.Master.MaxViewingLevel;
+            int maxViewingLevel = chunk.Manager.World.Master == null ? chunk.Manager.World.WorldSizeInVoxels.Y : chunk.Manager.World.Renderer.PersistentSettings.MaxViewingLevel;
             for (var localY = 0; localY < maxViewingLevel - chunk.Origin.Y && localY < VoxelConstants.ChunkSizeY; ++localY) // Todo: Only iterate inside the chunk.
             {
                 RawPrimitive sliceGeometry = null;
@@ -292,7 +292,7 @@ namespace DwarfCorp
         private static void BuildDesignationGeometry(RawPrimitive Into, VoxelChunk Chunk, Cache Cache, DesignationSet Designations, DesignationDrawer DesignationDrawer, WorldManager World, VoxelHandle v)
         {
             var designations = Designations == null ? new List<DesignationSet.VoxelDesignation>() : Designations.EnumerateDesignations(v).ToList();
-            int maxViewingLevel = World.Master == null ? World.WorldSizeInVoxels.Y : World.Master.MaxViewingLevel;
+            int maxViewingLevel = World.Master == null ? World.WorldSizeInVoxels.Y : World.Renderer.PersistentSettings.MaxViewingLevel;
             foreach (var designation in designations)
             {
                 if ((designation.Type & DesignationDrawer.VisibleTypes) == designation.Type)

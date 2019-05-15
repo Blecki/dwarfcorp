@@ -28,6 +28,7 @@ namespace DwarfCorp
         public float CaveView = 0;
         public float TargetCaveView = 0;
         public OverworldGenerationSettings Settings = null;
+        public WorldRendererPersistentSettings PersistentSettings = new WorldRendererPersistentSettings();
         public Vector3 CursorLightPos = Vector3.Zero;
         public Vector3[] LightPositions = new Vector3[16];
         public Shader DefaultShader;
@@ -77,6 +78,7 @@ namespace DwarfCorp
             this.World = World;
             this.Game = Game;
             Content = Game.Content;
+            PersistentSettings.MaxViewingLevel = World.WorldSizeInVoxels.Y;
         }
 
         /// <summary>
@@ -134,7 +136,7 @@ namespace DwarfCorp
         public bool IsCameraUnderwater()
         {
             var handle = new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(Camera.Position + Vector3.Up));
-            return handle.IsValid && handle.LiquidLevel > 0 && handle.Coordinate.Y <= (World.Master.MaxViewingLevel >= World.WorldSizeInVoxels.Y ? 1000.0f : World.ChunkManager.World.Master.MaxViewingLevel + 0.25f);
+            return handle.IsValid && handle.LiquidLevel > 0 && handle.Coordinate.Y <= (PersistentSettings.MaxViewingLevel >= World.WorldSizeInVoxels.Y ? 1000.0f : PersistentSettings.MaxViewingLevel + 0.25f);
         }
 
         private int _prevHour = 0;
@@ -162,7 +164,7 @@ namespace DwarfCorp
             Camera.Control = type;
             if (type == OrbitCamera.ControlType.Walk)
             {
-                World.Master.SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
+                SetMaxViewingLevel(World.WorldSizeInVoxels.Y);
                 var below = VoxelHelpers.FindFirstVoxelBelowIncludingWater(new VoxelHandle(World.ChunkManager, GlobalVoxelCoordinate.FromVector3(new Vector3(Camera.Position.X, World.WorldSizeInVoxels.Y - 1, Camera.Position.Z))));
                 Camera.Position = below.WorldPosition + Vector3.One * 0.5f + Vector3.Up;
             }
@@ -344,7 +346,7 @@ namespace DwarfCorp
             GraphicsDevice.BlendState = BlendState.Opaque;
 
             // Defines the current slice for the GPU
-            var level = World.Master.MaxViewingLevel >= World.WorldSizeInVoxels.Y ? 1000.0f : World.Master.MaxViewingLevel + 0.25f;
+            var level = PersistentSettings.MaxViewingLevel >= World.WorldSizeInVoxels.Y ? 1000.0f : PersistentSettings.MaxViewingLevel + 0.25f;
             Plane slicePlane = WaterRenderer.CreatePlane(level, new Vector3(0, -1, 0), Camera.ViewMatrix, false);
 
             if (SelectionBuffer.Begin(GraphicsDevice))
@@ -432,9 +434,9 @@ namespace DwarfCorp
                 ComponentRenderer.WaterRenderType.None, lastWaterHeight);
             InstanceRenderer.Flush(GraphicsDevice, DefaultShader, Camera, InstanceRenderMode.Normal);
 
-            if (World.Master.CurrentToolMode == GameMaster.ToolMode.BuildZone // Todo: ??
-                || World.Master.CurrentToolMode == GameMaster.ToolMode.BuildWall ||
-                World.Master.CurrentToolMode == GameMaster.ToolMode.BuildObject)
+            if (World.Master.CurrentToolMode == "BuildZone" // Todo: ??
+                || World.Master.CurrentToolMode == "BuildWall" ||
+                World.Master.CurrentToolMode == "BuildObject")
             {
                 DefaultShader.View = Camera.ViewMatrix;
                 DefaultShader.Projection = Camera.ProjectionMatrix;
@@ -604,6 +606,26 @@ namespace DwarfCorp
         {
             bloom.Dispose();
             WaterRenderer.Dispose();
+        }
+
+        public void SetMaxViewingLevel(int level)
+        {
+            if (level == PersistentSettings.MaxViewingLevel)
+                return;
+            SoundManager.PlaySound(ContentPaths.Audio.Oscar.sfx_gui_click_voxel, 0.15f, (float)(level / (float)World.WorldSizeInVoxels.Y) - 0.5f);
+
+            var oldLevel = PersistentSettings.MaxViewingLevel;
+
+            PersistentSettings.MaxViewingLevel = Math.Max(Math.Min(level, World.WorldSizeInVoxels.Y), 1);
+
+            foreach (var c in World.ChunkManager.ChunkMap)
+            {
+                var oldSliceIndex = oldLevel - 1 - c.Origin.Y;
+                if (oldSliceIndex >= 0 && oldSliceIndex < VoxelConstants.ChunkSizeY) c.InvalidateSlice(oldSliceIndex);
+
+                var newSliceIndex = PersistentSettings.MaxViewingLevel - 1 - c.Origin.Y;
+                if (newSliceIndex >= 0 && newSliceIndex < VoxelConstants.ChunkSizeY) c.InvalidateSlice(newSliceIndex);
+            }
         }
     }
 }

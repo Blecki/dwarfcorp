@@ -22,12 +22,12 @@ namespace DwarfCorp.ContextCommands
 
         public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
-            return (World.Master.Tools[GameMaster.ToolMode.MoveObjects] as MoveObjectTool).CanMove(Entity);
+            return (World.Master.Tools["MoveObjects"] as MoveObjectTool).CanMove(Entity);
         }
 
         public override void Apply(GameComponent Entity, WorldManager World)
         {
-            World.Master.ChangeTool(GameMaster.ToolMode.MoveObjects);
+            World.Master.ChangeTool("MoveObjects");
         }
     }
 }

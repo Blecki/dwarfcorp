@@ -22,7 +22,7 @@ namespace DwarfCorp.ContextCommands
 
         public override bool CanBeAppliedTo(GameComponent Entity, WorldManager World)
         {
-            return (World.Master.Tools[GameMaster.ToolMode.Wrangle] as WrangleTool).CanCatch(Entity);
+            return (World.Master.Tools["Wrangle"] as WrangleTool).CanCatch(Entity);
         }
 
         public override void Apply(GameComponent Entity, WorldManager World)

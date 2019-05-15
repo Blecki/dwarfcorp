@@ -118,6 +118,7 @@
     <Compile Include=".\Components\AI\CharacterMode.cs" />
     <Compile Include="Components\Physics\Fire.cs" />
     <Compile Include="GameStates\WorldGeneration\ColonyCell.cs" />
+    <Compile Include="GameStates\WorldGeneration\InstanceSettings.cs" />
     <Compile Include="GameStates\WorldGeneration\OverworldTileChooserState.cs" />
     <Compile Include="GameStates\WorldGeneration\NewWorldGeneratorState.cs" />
     <Compile Include="World\Crafting\CraftDetails.cs" />
@@ -343,7 +344,6 @@
     <Compile Include=".\FNAProgram.cs" />
     <Compile Include=".\GameSettings.cs" />
     <Compile Include=".\GameStates\Debug\DwarfDesignerState.cs" />
-    <Compile Include=".\GameStates\Debug\GuiDebugState.cs" />
     <Compile Include=".\GameStates\FrontEnd\CompanyMakerState.cs" />
     <Compile Include=".\GameStates\FrontEnd\CreditsState.cs" />
     <Compile Include=".\GameStates\FrontEnd\IntroState.cs" />
@@ -844,6 +844,7 @@
     <Compile Include="World\WorldManager-Ambients.cs" />
     <Compile Include="World\WorldRenderer.cs" />
     <Compile Include="World\WorldManager-SpeciesLimits.cs" />
+    <Compile Include="World\WorldRendererPersistentSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
